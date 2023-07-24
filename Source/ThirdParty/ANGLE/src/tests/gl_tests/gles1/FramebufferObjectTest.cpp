@@ -80,7 +80,7 @@ TEST_P(FramebufferObjectTest, TextureObject)
 TEST_P(FramebufferObjectTest, TextureObjectDifferentFormats)
 {
     // http://anglebug.com/5642
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     GLuint fboId;
 

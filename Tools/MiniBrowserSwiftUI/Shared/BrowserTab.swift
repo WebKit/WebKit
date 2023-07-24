@@ -160,7 +160,9 @@ private struct ExternalURLNavigation : Identifiable, Hashable {
 
 struct BrowserTab_Previews: PreviewProvider {
     static var previews: some View {
-#if os(iOS)
+#if os(macOS)
+        BrowserTab()
+#else
         NavigationView {
             BrowserTab()
         }

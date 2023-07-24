@@ -21,6 +21,7 @@
 #include "p2p/base/port_allocator.h"
 #include "rtc_base/async_resolver_interface.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
@@ -142,13 +143,7 @@ void UDPPort::AddressResolver::Resolve(
       done_(it->first, it->second->result().GetError());
     }
   };
-  // Bug fix for STUN hostname resolution on IPv6.
-  // Field trial key reserved in bugs.webrtc.org/14334
-  if (field_trials.IsEnabled("WebRTC-IPv6NetworkResolutionFixes")) {
-    resolver_ptr->Start(address, family, std::move(callback));
-  } else {
-    resolver_ptr->Start(address, std::move(callback));
-  }
+  resolver_ptr->Start(address, family, std::move(callback));
 }
 
 bool UDPPort::AddressResolver::GetResolvedAddress(
@@ -313,9 +308,9 @@ int UDPPort::SendTo(const void* data,
     if (send_error_count_ < kSendErrorLogLimit) {
       ++send_error_count_;
       RTC_LOG(LS_ERROR) << ToString() << ": UDP send of " << size
-                        << " bytes to host " << addr.ToSensitiveString() << " ("
-                        << addr.ToResolvedSensitiveString()
-                        << ") failed with error " << error_;
+                        << " bytes to host "
+                        << addr.ToSensitiveNameAndAddressString()
+                        << " failed with error " << error_;
     }
   } else {
     send_error_count_ = 0;
@@ -612,9 +607,8 @@ void UDPPort::OnSendPacket(const void* data, size_t size, StunRequest* req) {
   if (socket_->SendTo(data, size, sreq->server_addr(), options) < 0) {
     RTC_LOG_ERR_EX(LS_ERROR, socket_->GetError())
         << "UDP send of " << size << " bytes to host "
-        << sreq->server_addr().ToSensitiveString() << " ("
-        << sreq->server_addr().ToResolvedSensitiveString()
-        << ") failed with error " << error_;
+        << sreq->server_addr().ToSensitiveNameAndAddressString()
+        << " failed with error " << error_;
   }
   stats_.stun_binding_requests_sent++;
 }

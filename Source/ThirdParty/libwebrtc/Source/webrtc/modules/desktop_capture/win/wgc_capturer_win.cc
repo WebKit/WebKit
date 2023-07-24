@@ -140,10 +140,12 @@ bool IsWgcSupported(CaptureType capture_type) {
 }
 
 WgcCapturerWin::WgcCapturerWin(
+    const DesktopCaptureOptions& options,
     std::unique_ptr<WgcCaptureSourceFactory> source_factory,
     std::unique_ptr<SourceEnumerator> source_enumerator,
     bool allow_delayed_capturable_check)
-    : source_factory_(std::move(source_factory)),
+    : options_(options),
+      source_factory_(std::move(source_factory)),
       source_enumerator_(std::move(source_enumerator)),
       allow_delayed_capturable_check_(allow_delayed_capturable_check) {
   if (!core_messaging_library_)
@@ -166,7 +168,7 @@ std::unique_ptr<DesktopCapturer> WgcCapturerWin::CreateRawWindowCapturer(
     const DesktopCaptureOptions& options,
     bool allow_delayed_capturable_check) {
   return std::make_unique<WgcCapturerWin>(
-      std::make_unique<WgcWindowSourceFactory>(),
+      options, std::make_unique<WgcWindowSourceFactory>(),
       std::make_unique<WindowEnumerator>(
           options.enumerate_current_process_windows()),
       allow_delayed_capturable_check);
@@ -176,7 +178,7 @@ std::unique_ptr<DesktopCapturer> WgcCapturerWin::CreateRawWindowCapturer(
 std::unique_ptr<DesktopCapturer> WgcCapturerWin::CreateRawScreenCapturer(
     const DesktopCaptureOptions& options) {
   return std::make_unique<WgcCapturerWin>(
-      std::make_unique<WgcScreenSourceFactory>(),
+      options, std::make_unique<WgcScreenSourceFactory>(),
       std::make_unique<ScreenEnumerator>(), false);
 }
 
@@ -309,7 +311,7 @@ void WgcCapturerWin::CaptureFrame() {
   }
 
   if (!capture_session->IsCaptureStarted()) {
-    hr = capture_session->StartCapture();
+    hr = capture_session->StartCapture(options_);
     if (FAILED(hr)) {
       RTC_LOG(LS_ERROR) << "Failed to start capture: " << hr;
       ongoing_captures_.erase(capture_source_->GetSourceId());
@@ -321,9 +323,8 @@ void WgcCapturerWin::CaptureFrame() {
   }
 
   std::unique_ptr<DesktopFrame> frame;
-  hr = capture_session->GetFrame(&frame);
-  if (FAILED(hr)) {
-    RTC_LOG(LS_ERROR) << "GetFrame failed: " << hr;
+  if (!capture_session->GetFrame(&frame)) {
+    RTC_LOG(LS_ERROR) << "GetFrame failed.";
     ongoing_captures_.erase(capture_source_->GetSourceId());
     callback_->OnCaptureResult(DesktopCapturer::Result::ERROR_PERMANENT,
                                /*frame=*/nullptr);
@@ -344,7 +345,7 @@ void WgcCapturerWin::CaptureFrame() {
                             capture_time_ms);
   frame->set_capture_time_ms(capture_time_ms);
   frame->set_capturer_id(DesktopCapturerId::kWgcCapturerWin);
-  frame->set_may_contain_cursor(true);
+  frame->set_may_contain_cursor(options_.prefer_cursor_embedded());
   frame->set_top_left(capture_source_->GetTopLeft());
   RecordWgcCapturerResult(WgcCapturerResult::kSuccess);
   callback_->OnCaptureResult(DesktopCapturer::Result::SUCCESS,

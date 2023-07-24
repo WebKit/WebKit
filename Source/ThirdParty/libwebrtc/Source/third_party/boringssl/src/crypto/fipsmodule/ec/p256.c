@@ -22,7 +22,6 @@
 #include <openssl/ec.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
-#include <openssl/type_check.h>
 
 #include <assert.h>
 #include <string.h>
@@ -31,11 +30,10 @@
 #include "../delocate.h"
 #include "./internal.h"
 
-
-// MSVC does not implement uint128_t, and crashes with intrinsics
 #if defined(BORINGSSL_HAS_UINT128)
-#define BORINGSSL_NISTP256_64BIT 1
 #include "../../../third_party/fiat/p256_64.h"
+#elif defined(OPENSSL_64_BIT)
+#include "../../../third_party/fiat/p256_64_msvc.h"
 #else
 #include "../../../third_party/fiat/p256_32.h"
 #endif
@@ -43,7 +41,7 @@
 
 // utility functions, handwritten
 
-#if defined(BORINGSSL_NISTP256_64BIT)
+#if defined(OPENSSL_64_BIT)
 #define FIAT_P256_NLIMBS 4
 typedef uint64_t fiat_p256_limb_t;
 typedef uint64_t fiat_p256_felem[FIAT_P256_NLIMBS];
@@ -79,17 +77,22 @@ static void fiat_p256_cmovznz(fiat_p256_limb_t out[FIAT_P256_NLIMBS],
   fiat_p256_selectznz(out, !!t, z, nz);
 }
 
+static void fiat_p256_from_words(fiat_p256_felem out,
+                                 const BN_ULONG in[32 / sizeof(BN_ULONG)]) {
+  // Typically, |BN_ULONG| and |fiat_p256_limb_t| will be the same type, but on
+  // 64-bit platforms without |uint128_t|, they are different. However, on
+  // little-endian systems, |uint64_t[4]| and |uint32_t[8]| have the same
+  // layout.
+  OPENSSL_memcpy(out, in, 32);
+}
+
 static void fiat_p256_from_generic(fiat_p256_felem out, const EC_FELEM *in) {
-  fiat_p256_from_bytes(out, in->bytes);
+  fiat_p256_from_words(out, in->words);
 }
 
 static void fiat_p256_to_generic(EC_FELEM *out, const fiat_p256_felem in) {
-  // This works because 256 is a multiple of 64, so there are no excess bytes to
-  // zero when rounding up to |BN_ULONG|s.
-  OPENSSL_STATIC_ASSERT(
-      256 / 8 == sizeof(BN_ULONG) * ((256 + BN_BITS2 - 1) / BN_BITS2),
-      "fiat_p256_to_bytes leaves bytes uninitialized");
-  fiat_p256_to_bytes(out->bytes, in);
+  // See |fiat_p256_from_words|.
+  OPENSSL_memcpy(out->words, in, 32);
 }
 
 // fiat_p256_inv_square calculates |out| = |in|^{-2}
@@ -392,12 +395,18 @@ static void fiat_p256_select_point(const fiat_p256_limb_t idx, size_t size,
   }
 }
 
-// fiat_p256_get_bit returns the |i|th bit in |in|
-static crypto_word_t fiat_p256_get_bit(const uint8_t *in, int i) {
+// fiat_p256_get_bit returns the |i|th bit in |in|.
+static crypto_word_t fiat_p256_get_bit(const EC_SCALAR *in, int i) {
   if (i < 0 || i >= 256) {
     return 0;
   }
-  return (in[i >> 3] >> (i & 7)) & 1;
+#if defined(OPENSSL_64_BIT)
+  static_assert(sizeof(BN_ULONG) == 8, "BN_ULONG was not 64-bit");
+  return (in->words[i >> 6] >> (i & 63)) & 1;
+#else
+  static_assert(sizeof(BN_ULONG) == 4, "BN_ULONG was not 32-bit");
+  return (in->words[i >> 5] >> (i & 31)) & 1;
+#endif
 }
 
 // OPENSSL EC_METHOD FUNCTIONS
@@ -405,7 +414,7 @@ static crypto_word_t fiat_p256_get_bit(const uint8_t *in, int i) {
 // Takes the Jacobian coordinates (X, Y, Z) of a point and returns (X', Y') =
 // (X/Z^2, Y/Z^3).
 static int ec_GFp_nistp256_point_get_affine_coordinates(
-    const EC_GROUP *group, const EC_RAW_POINT *point, EC_FELEM *x_out,
+    const EC_GROUP *group, const EC_JACOBIAN *point, EC_FELEM *x_out,
     EC_FELEM *y_out) {
   if (ec_GFp_simple_is_at_infinity(group, point)) {
     OPENSSL_PUT_ERROR(EC, EC_R_POINT_AT_INFINITY);
@@ -435,8 +444,8 @@ static int ec_GFp_nistp256_point_get_affine_coordinates(
   return 1;
 }
 
-static void ec_GFp_nistp256_add(const EC_GROUP *group, EC_RAW_POINT *r,
-                                const EC_RAW_POINT *a, const EC_RAW_POINT *b) {
+static void ec_GFp_nistp256_add(const EC_GROUP *group, EC_JACOBIAN *r,
+                                const EC_JACOBIAN *a, const EC_JACOBIAN *b) {
   fiat_p256_felem x1, y1, z1, x2, y2, z2;
   fiat_p256_from_generic(x1, &a->X);
   fiat_p256_from_generic(y1, &a->Y);
@@ -451,8 +460,8 @@ static void ec_GFp_nistp256_add(const EC_GROUP *group, EC_RAW_POINT *r,
   fiat_p256_to_generic(&r->Z, z1);
 }
 
-static void ec_GFp_nistp256_dbl(const EC_GROUP *group, EC_RAW_POINT *r,
-                                const EC_RAW_POINT *a) {
+static void ec_GFp_nistp256_dbl(const EC_GROUP *group, EC_JACOBIAN *r,
+                                const EC_JACOBIAN *a) {
   fiat_p256_felem x, y, z;
   fiat_p256_from_generic(x, &a->X);
   fiat_p256_from_generic(y, &a->Y);
@@ -463,8 +472,8 @@ static void ec_GFp_nistp256_dbl(const EC_GROUP *group, EC_RAW_POINT *r,
   fiat_p256_to_generic(&r->Z, z);
 }
 
-static void ec_GFp_nistp256_point_mul(const EC_GROUP *group, EC_RAW_POINT *r,
-                                      const EC_RAW_POINT *p,
+static void ec_GFp_nistp256_point_mul(const EC_GROUP *group, EC_JACOBIAN *r,
+                                      const EC_JACOBIAN *p,
                                       const EC_SCALAR *scalar) {
   fiat_p256_felem p_pre_comp[17][3];
   OPENSSL_memset(&p_pre_comp, 0, sizeof(p_pre_comp));
@@ -498,12 +507,12 @@ static void ec_GFp_nistp256_point_mul(const EC_GROUP *group, EC_RAW_POINT *r,
 
     // do other additions every 5 doublings
     if (i % 5 == 0) {
-      crypto_word_t bits = fiat_p256_get_bit(scalar->bytes, i + 4) << 5;
-      bits |= fiat_p256_get_bit(scalar->bytes, i + 3) << 4;
-      bits |= fiat_p256_get_bit(scalar->bytes, i + 2) << 3;
-      bits |= fiat_p256_get_bit(scalar->bytes, i + 1) << 2;
-      bits |= fiat_p256_get_bit(scalar->bytes, i) << 1;
-      bits |= fiat_p256_get_bit(scalar->bytes, i - 1);
+      crypto_word_t bits = fiat_p256_get_bit(scalar, i + 4) << 5;
+      bits |= fiat_p256_get_bit(scalar, i + 3) << 4;
+      bits |= fiat_p256_get_bit(scalar, i + 2) << 3;
+      bits |= fiat_p256_get_bit(scalar, i + 1) << 2;
+      bits |= fiat_p256_get_bit(scalar, i) << 1;
+      bits |= fiat_p256_get_bit(scalar, i - 1);
       crypto_word_t sign, digit;
       ec_GFp_nistp_recode_scalar_bits(&sign, &digit, bits);
 
@@ -531,7 +540,7 @@ static void ec_GFp_nistp256_point_mul(const EC_GROUP *group, EC_RAW_POINT *r,
 }
 
 static void ec_GFp_nistp256_point_mul_base(const EC_GROUP *group,
-                                           EC_RAW_POINT *r,
+                                           EC_JACOBIAN *r,
                                            const EC_SCALAR *scalar) {
   // Set nq to the point at infinity.
   fiat_p256_felem nq[3] = {{0}, {0}, {0}}, tmp[3];
@@ -543,10 +552,10 @@ static void ec_GFp_nistp256_point_mul_base(const EC_GROUP *group,
     }
 
     // First, look 32 bits upwards.
-    crypto_word_t bits = fiat_p256_get_bit(scalar->bytes, i + 224) << 3;
-    bits |= fiat_p256_get_bit(scalar->bytes, i + 160) << 2;
-    bits |= fiat_p256_get_bit(scalar->bytes, i + 96) << 1;
-    bits |= fiat_p256_get_bit(scalar->bytes, i + 32);
+    crypto_word_t bits = fiat_p256_get_bit(scalar, i + 224) << 3;
+    bits |= fiat_p256_get_bit(scalar, i + 160) << 2;
+    bits |= fiat_p256_get_bit(scalar, i + 96) << 1;
+    bits |= fiat_p256_get_bit(scalar, i + 32);
     // Select the point to add, in constant time.
     fiat_p256_select_point_affine((fiat_p256_limb_t)bits, 15,
                                   fiat_p256_g_pre_comp[1], tmp);
@@ -562,10 +571,10 @@ static void ec_GFp_nistp256_point_mul_base(const EC_GROUP *group,
     }
 
     // Second, look at the current position.
-    bits = fiat_p256_get_bit(scalar->bytes, i + 192) << 3;
-    bits |= fiat_p256_get_bit(scalar->bytes, i + 128) << 2;
-    bits |= fiat_p256_get_bit(scalar->bytes, i + 64) << 1;
-    bits |= fiat_p256_get_bit(scalar->bytes, i);
+    bits = fiat_p256_get_bit(scalar, i + 192) << 3;
+    bits |= fiat_p256_get_bit(scalar, i + 128) << 2;
+    bits |= fiat_p256_get_bit(scalar, i + 64) << 1;
+    bits |= fiat_p256_get_bit(scalar, i);
     // Select the point to add, in constant time.
     fiat_p256_select_point_affine((fiat_p256_limb_t)bits, 15,
                                   fiat_p256_g_pre_comp[0], tmp);
@@ -579,9 +588,9 @@ static void ec_GFp_nistp256_point_mul_base(const EC_GROUP *group,
 }
 
 static void ec_GFp_nistp256_point_mul_public(const EC_GROUP *group,
-                                             EC_RAW_POINT *r,
+                                             EC_JACOBIAN *r,
                                              const EC_SCALAR *g_scalar,
-                                             const EC_RAW_POINT *p,
+                                             const EC_JACOBIAN *p,
                                              const EC_SCALAR *p_scalar) {
 #define P256_WSIZE_PUBLIC 4
   // Precompute multiples of |p|. p_pre_comp[i] is (2*i+1) * |p|.
@@ -615,10 +624,10 @@ static void ec_GFp_nistp256_point_mul_public(const EC_GROUP *group,
     // constant-time lookup.
     if (i <= 31) {
       // First, look 32 bits upwards.
-      crypto_word_t bits = fiat_p256_get_bit(g_scalar->bytes, i + 224) << 3;
-      bits |= fiat_p256_get_bit(g_scalar->bytes, i + 160) << 2;
-      bits |= fiat_p256_get_bit(g_scalar->bytes, i + 96) << 1;
-      bits |= fiat_p256_get_bit(g_scalar->bytes, i + 32);
+      crypto_word_t bits = fiat_p256_get_bit(g_scalar, i + 224) << 3;
+      bits |= fiat_p256_get_bit(g_scalar, i + 160) << 2;
+      bits |= fiat_p256_get_bit(g_scalar, i + 96) << 1;
+      bits |= fiat_p256_get_bit(g_scalar, i + 32);
       if (bits != 0) {
         size_t index = (size_t)(bits - 1);
         fiat_p256_point_add(ret[0], ret[1], ret[2], ret[0], ret[1], ret[2],
@@ -629,10 +638,10 @@ static void ec_GFp_nistp256_point_mul_public(const EC_GROUP *group,
       }
 
       // Second, look at the current position.
-      bits = fiat_p256_get_bit(g_scalar->bytes, i + 192) << 3;
-      bits |= fiat_p256_get_bit(g_scalar->bytes, i + 128) << 2;
-      bits |= fiat_p256_get_bit(g_scalar->bytes, i + 64) << 1;
-      bits |= fiat_p256_get_bit(g_scalar->bytes, i);
+      bits = fiat_p256_get_bit(g_scalar, i + 192) << 3;
+      bits |= fiat_p256_get_bit(g_scalar, i + 128) << 2;
+      bits |= fiat_p256_get_bit(g_scalar, i + 64) << 1;
+      bits |= fiat_p256_get_bit(g_scalar, i);
       if (bits != 0) {
         size_t index = (size_t)(bits - 1);
         fiat_p256_point_add(ret[0], ret[1], ret[2], ret[0], ret[1], ret[2],
@@ -671,7 +680,7 @@ static void ec_GFp_nistp256_point_mul_public(const EC_GROUP *group,
 }
 
 static int ec_GFp_nistp256_cmp_x_coordinate(const EC_GROUP *group,
-                                            const EC_RAW_POINT *p,
+                                            const EC_JACOBIAN *p,
                                             const EC_SCALAR *r) {
   if (ec_GFp_simple_is_at_infinity(group, p)) {
     return 0;
@@ -685,7 +694,7 @@ static int ec_GFp_nistp256_cmp_x_coordinate(const EC_GROUP *group,
   fiat_p256_mul(Z2_mont, Z2_mont, Z2_mont);
 
   fiat_p256_felem r_Z2;
-  fiat_p256_from_bytes(r_Z2, r->bytes);  // r < order < p, so this is valid.
+  fiat_p256_from_words(r_Z2, r->words);  // r < order < p, so this is valid.
   fiat_p256_mul(r_Z2, r_Z2, Z2_mont);
 
   fiat_p256_felem X;
@@ -731,10 +740,12 @@ DEFINE_METHOD_FUNCTION(EC_METHOD, EC_GFp_nistp256_method) {
   out->felem_sqr = ec_GFp_mont_felem_sqr;
   out->felem_to_bytes = ec_GFp_mont_felem_to_bytes;
   out->felem_from_bytes = ec_GFp_mont_felem_from_bytes;
+  out->felem_reduce = ec_GFp_mont_felem_reduce;
+  // TODO(davidben): This should use the specialized field arithmetic
+  // implementation, rather than the generic one.
+  out->felem_exp = ec_GFp_mont_felem_exp;
   out->scalar_inv0_montgomery = ec_simple_scalar_inv0_montgomery;
   out->scalar_to_montgomery_inv_vartime =
       ec_simple_scalar_to_montgomery_inv_vartime;
   out->cmp_x_coordinate = ec_GFp_nistp256_cmp_x_coordinate;
 }
-
-#undef BORINGSSL_NISTP256_64BIT

@@ -16,38 +16,17 @@
 #include "api/array_view.h"
 #include "api/rtp_headers.h"
 #include "api/task_queue/task_queue_base.h"
-#include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_bitrate_allocation.h"
+#include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
 class ReceiveStatisticsProvider;
 class Transport;
-
-// Interface to watch incoming rtcp packets related to the link in general.
-// All message handlers have default empty implementation. This way users only
-// need to implement the ones they are interested in.
-// All message handles pass `receive_time` parameter, which is receive time
-// of the rtcp packet that triggered the update.
-class NetworkLinkRtcpObserver {
- public:
-  virtual ~NetworkLinkRtcpObserver() = default;
-
-  virtual void OnTransportFeedback(Timestamp receive_time,
-                                   const rtcp::TransportFeedback& feedback) {}
-  virtual void OnReceiverEstimatedMaxBitrate(Timestamp receive_time,
-                                             DataRate bitrate) {}
-  virtual void OnReportBlocks(
-      Timestamp receive_time,
-      rtc::ArrayView<const rtcp::ReportBlock> report_blocks) {}
-  virtual void OnRttUpdate(Timestamp receive_time, TimeDelta rtt) {}
-};
 
 // Interface to watch incoming rtcp packets by media (rtp) receiver.
 // All message handlers have default empty implementation. This way users only
@@ -102,8 +81,10 @@ class RtpStreamRtcpHandler {
                       rtc::ArrayView<const uint16_t> sequence_numbers) {}
   virtual void OnFir(uint32_t sender_ssrc) {}
   virtual void OnPli(uint32_t sender_ssrc) {}
-  virtual void OnReportBlock(uint32_t sender_ssrc,
-                             const rtcp::ReportBlock& report_block) {}
+
+  // Called on an RTCP packet with sender or receiver reports with a report
+  // block for the handled RTP stream.
+  virtual void OnReport(const ReportBlockData& report_block) {}
 };
 
 struct RtcpTransceiverConfig {

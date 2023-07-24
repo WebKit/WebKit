@@ -167,6 +167,10 @@ void PacketBuffer::ForceSpsPpsIdrIsH264Keyframe() {
   sps_pps_idr_is_h264_keyframe_ = true;
 }
 
+void PacketBuffer::ResetSpsPpsIdrIsH264Keyframe() {
+  sps_pps_idr_is_h264_keyframe_ = false;
+}
+
 void PacketBuffer::ClearInternal() {
   for (auto& entry : buffer_) {
     entry = nullptr;
@@ -252,7 +256,9 @@ std::vector<std::unique_ptr<PacketBuffer::Packet>> PacketBuffer::FindFrames(
       int64_t frame_timestamp = buffer_[start_index]->timestamp;
 
       // Identify H.264 keyframes by means of SPS, PPS, and IDR.
-      bool is_h264 = buffer_[start_index]->codec() == kVideoCodecH264;
+      bool is_generic = buffer_[start_index]->video_header.generic.has_value();
+      bool is_h264_descriptor =
+          (buffer_[start_index]->codec() == kVideoCodecH264) && !is_generic;
       bool has_h264_sps = false;
       bool has_h264_pps = false;
       bool has_h264_idr = false;
@@ -263,7 +269,7 @@ std::vector<std::unique_ptr<PacketBuffer::Packet>> PacketBuffer::FindFrames(
       while (true) {
         ++tested_packets;
 
-        if (!is_h264) {
+        if (!is_h264_descriptor) {
           if (buffer_[start_index] == nullptr ||
               buffer_[start_index]->is_first_packet_in_frame()) {
             full_frame_found = buffer_[start_index] != nullptr;
@@ -271,7 +277,7 @@ std::vector<std::unique_ptr<PacketBuffer::Packet>> PacketBuffer::FindFrames(
           }
         }
 
-        if (is_h264) {
+        if (is_h264_descriptor) {
           const auto* h264_header = absl::get_if<RTPVideoHeaderH264>(
               &buffer_[start_index]->video_header.video_type_header);
           if (!h264_header || h264_header->nalus_length >= kMaxNalusPerPacket)
@@ -313,15 +319,16 @@ std::vector<std::unique_ptr<PacketBuffer::Packet>> PacketBuffer::FindFrames(
         // the timestamp of that packet is the same as this one. This may cause
         // the PacketBuffer to hand out incomplete frames.
         // See: https://bugs.chromium.org/p/webrtc/issues/detail?id=7106
-        if (is_h264 && (buffer_[start_index] == nullptr ||
-                        buffer_[start_index]->timestamp != frame_timestamp)) {
+        if (is_h264_descriptor &&
+            (buffer_[start_index] == nullptr ||
+             buffer_[start_index]->timestamp != frame_timestamp)) {
           break;
         }
 
         --start_seq_num;
       }
 
-      if (is_h264) {
+      if (is_h264_descriptor) {
         // Warn if this is an unsafe frame.
         if (has_h264_idr && (!has_h264_sps || !has_h264_pps)) {
           RTC_LOG(LS_WARNING)
@@ -359,7 +366,7 @@ std::vector<std::unique_ptr<PacketBuffer::Packet>> PacketBuffer::FindFrames(
         }
       }
 
-      if (is_h264 || full_frame_found) {
+      if (is_h264_descriptor || full_frame_found) {
         const uint16_t end_seq_num = seq_num + 1;
         // Use uint16_t type to handle sequence number wrap around case.
         uint16_t num_packets = end_seq_num - start_seq_num;

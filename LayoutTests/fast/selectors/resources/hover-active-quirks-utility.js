@@ -54,9 +54,9 @@ var testCases = [
     ["[id|=target]PLACEHOLDER[webkit|=rocks]", true],
 
     // A pseudo-class other than :active/:hover qualify the pseudo class.
-    [":nth-child(1)PLACEHOLDER", true],
-    ["PLACEHOLDER:nth-child(1)", true],
-    [":nth-child(1)PLACEHOLDER:nth-child(1)", true],
+    ["#target:nth-child(1)PLACEHOLDER", true],
+    ["#targetPLACEHOLDER:nth-child(1)", true],
+    ["#target:nth-child(1)PLACEHOLDER:nth-child(1)", true],
     // Same with child.
     [":nth-child(n)PLACEHOLDER > #target", true],
     ["PLACEHOLDER:nth-child(n) > #target", true],

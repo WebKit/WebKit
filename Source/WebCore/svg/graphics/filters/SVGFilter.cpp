@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-static constexpr unsigned maxTotalNumberFilterEffects = 100;
 static constexpr unsigned maxCountChildNodes = 200;
 
 RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
@@ -137,10 +136,10 @@ std::optional<std::tuple<SVGFilterExpression, FilterEffectVector>> SVGFilter::bu
         ASSERT(index != notFound);
         expression.append({ static_cast<unsigned>(index), level, effectGeometry(effect) });
     });
-    
-    if (!success || expression.size() > maxTotalNumberFilterEffects)
+
+    if (!success)
         return std::nullopt;
-    
+
     expression.reverse();
     expression.shrinkToFit();
     return { { WTFMove(expression), WTFMove(effects) } };
@@ -222,10 +221,8 @@ OptionSet<FilterRenderingMode> SVGFilter::supportedFilterRenderingModes() const
 {
     OptionSet<FilterRenderingMode> modes = allFilterRenderingModes;
 
-    for (auto& term : m_expression) {
-        auto& effect = m_effects[term.index];
+    for (auto& effect : m_effects)
         modes = modes & effect->supportedFilterRenderingModes();
-    }
 
     ASSERT(modes);
     return modes;
@@ -233,15 +230,14 @@ OptionSet<FilterRenderingMode> SVGFilter::supportedFilterRenderingModes() const
 
 FilterEffectVector SVGFilter::effectsOfType(FilterFunction::Type filterType) const
 {
-    HashSet<Ref<FilterEffect>> effects;
+    FilterEffectVector effects;
 
-    for (auto& term : m_expression) {
-        auto& effect = m_effects[term.index];
+    for (auto& effect : m_effects) {
         if (effect->filterType() == filterType)
-            effects.add(effect);
+            effects.append(effect);
     }
 
-    return copyToVector(effects);
+    return effects;
 }
 
 FilterResults& SVGFilter::ensureResults(const FilterResultsCreator& resultsCreator)
@@ -278,6 +274,7 @@ RefPtr<FilterImage> SVGFilter::apply(const Filter&, FilterImage& sourceImage, Fi
 RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& results)
 {
     ASSERT(!m_expression.isEmpty());
+    ASSERT(supportedFilterRenderingModes().contains(FilterRenderingMode::Software));
 
     FilterImageVector stack;
 

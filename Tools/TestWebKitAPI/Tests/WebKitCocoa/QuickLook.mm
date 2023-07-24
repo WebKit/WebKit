@@ -278,7 +278,7 @@ static RetainPtr<WKWebView> runTestDecideBeforeLoading(QuickLookDelegate *delega
     return runTest(delegate, request, YES);
 }
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400) || PLATFORM(VISION)
 static RetainPtr<WKWebView> runTestDecideAfterLoading(QuickLookDelegate *delegate, NSURLRequest *request)
 {
     return runTest(delegate, request, NO);
@@ -322,7 +322,7 @@ TEST(QuickLook, AllowResponseAfterLoadingPreview)
 
 @end
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400) || PLATFORM(VISION)
 TEST(QuickLook, AsyncAllowResponseBeforeLoadingPreview)
 {
     auto delegate = adoptNS([[QuickLookAsyncDelegate alloc] initWithExpectedFileURL:pagesDocumentURL().get() responsePolicy:WKNavigationResponsePolicyAllow]);
@@ -355,7 +355,7 @@ TEST(QuickLook, CancelResponseBeforeLoadingPreview)
     EXPECT_TRUE([delegate didFailNavigation]);
 }
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400) || PLATFORM(VISION)
 TEST(QuickLook, CancelResponseAfterLoadingPreview)
 {
     auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL().get() previewMIMEType:pagesDocumentPreviewMIMEType responsePolicy:WKNavigationResponsePolicyCancel]);
@@ -382,7 +382,7 @@ TEST(QuickLook, DownloadResponseBeforeLoadingPreview)
     [delegate verifyDownload];
 }
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400) || PLATFORM(VISION)
 TEST(QuickLook, DownloadResponseAfterLoadingPreview)
 {
     auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL().get() previewMIMEType:pagesDocumentPreviewMIMEType responsePolicy:WKNavigationResponsePolicyDownload]);
@@ -409,7 +409,7 @@ TEST(QuickLook, DownloadResponseAfterLoadingPreview)
 
 @end
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400) || PLATFORM(VISION)
 TEST(QuickLook, RequestPasswordBeforeLoadingPreview)
 {
     NSURL *passwordProtectedDocumentURL = [NSBundle.mainBundle URLForResource:@"password-protected" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"];
@@ -479,7 +479,7 @@ TEST(QuickLook, ReloadAndSameDocumentNavigation)
 
 @end
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400) || PLATFORM(VISION)
 TEST(QuickLook, LegacyQuickLookContent)
 {
     WebKitInitialize();

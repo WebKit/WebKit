@@ -177,7 +177,7 @@ FontFace::~FontFace()
 
 ExceptionOr<void> FontFace::setFamily(ScriptExecutionContext& context, const String& family)
 {
-    if (family.isEmpty())
+    if (family.isNull())
         return Exception { SyntaxError };
     // FIXME: Don't use a list here. https://bugs.webkit.org/show_bug.cgi?id=196381
     m_backing->setFamilies(CSSValueList::createCommaSeparated(context.cssValuePool().createFontFamilyValue(AtomString { family })));

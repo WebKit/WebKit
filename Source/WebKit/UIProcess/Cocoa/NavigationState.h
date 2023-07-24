@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,22 +54,22 @@ namespace WebKit {
 
 struct WebNavigationDataStore;
 
-class NavigationState final : private PageLoadState::Observer, public CanMakeWeakPtr<NavigationState> {
+class NavigationState final : public PageLoadState::Observer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit NavigationState(WKWebView *);
     ~NavigationState();
 
-    static NavigationState& fromWebPage(WebPageProxy&);
+    static NavigationState* fromWebPage(WebPageProxy&);
 
     UniqueRef<API::NavigationClient> createNavigationClient();
     UniqueRef<API::HistoryClient> createHistoryClient();
 
-    RetainPtr<id <WKNavigationDelegate> > navigationDelegate();
-    void setNavigationDelegate(id <WKNavigationDelegate>);
+    RetainPtr<id<WKNavigationDelegate>> navigationDelegate() const;
+    void setNavigationDelegate(id<WKNavigationDelegate>);
 
-    RetainPtr<id <WKHistoryDelegatePrivate> > historyDelegate();
-    void setHistoryDelegate(id <WKHistoryDelegatePrivate>);
+    RetainPtr<id<WKHistoryDelegatePrivate>> historyDelegate() const;
+    void setHistoryDelegate(id<WKHistoryDelegatePrivate>);
 
     // Called by the page client.
     void navigationGestureDidBegin();
@@ -77,8 +77,10 @@ public:
     void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&);
     void willRecordNavigationSnapshot(WebBackForwardListItem&);
     void navigationGestureSnapshotWasRemoved();
-#if USE(QUICK_LOOK)
+
+#if PLATFORM(IOS_FAMILY)
     void didRequestPasswordForQuickLookDocument();
+    void didStopRequestingPasswordForQuickLookDocument();
 #endif
 
     void didFirstPaint();
@@ -108,11 +110,11 @@ private:
         void didFinishDocumentLoad(WebPageProxy&, API::Navigation*, API::Object*) override;
         void didFinishNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
         void didFinishLoadForFrame(WebPageProxy&, WebCore::ResourceRequest&&, FrameInfoData&&) override;
-        void didFailLoadDueToNetworkConnectionIntegrity(WebPageProxy&, const URL&) override;
+        void didBlockLoadToKnownTracker(WebPageProxy&, const URL&) override;
         void didFailNavigationWithError(WebPageProxy&, const FrameInfoData&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
         void didFailLoadWithErrorForFrame(WebPageProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceError&, FrameInfoData&&) override;
         void didSameDocumentNavigation(WebPageProxy&, API::Navigation*, SameDocumentNavigationType, API::Object*) override;
-        void didChangeLookalikeCharacters(WebPageProxy&, const URL&, const URL&) override;
+        void didApplyLinkDecorationFiltering(WebPageProxy&, const URL&, const URL&) override;
 
         void renderingProgressDidChange(WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) override;
 
@@ -199,8 +201,10 @@ private:
     void releaseNetworkActivityAfterLoadCompletion() { releaseNetworkActivity(NetworkActivityReleaseReason::LoadCompleted); }
 #endif
 
-    WKWebView *m_webView;
-    WeakObjCPtr<id <WKNavigationDelegate> > m_navigationDelegate;
+    RetainPtr<WKWebView> webView() const { return m_webView.get(); }
+
+    WeakObjCPtr<WKWebView> m_webView;
+    WeakObjCPtr<id<WKNavigationDelegate>> m_navigationDelegate;
 
     struct {
         bool webViewDecidePolicyForNavigationActionDecisionHandler : 1;
@@ -254,8 +258,9 @@ private:
 #if USE(QUICK_LOOK)
         bool webViewDidStartLoadForQuickLookDocumentInMainFrame : 1;
         bool webViewDidFinishLoadForQuickLookDocumentInMainFrame : 1;
-        bool webViewDidRequestPasswordForQuickLookDocument : 1;
 #endif
+        bool webViewDidRequestPasswordForQuickLookDocument : 1;
+        bool webViewDidStopRequestingPasswordForQuickLookDocument : 1;
 
 #if PLATFORM(MAC)
         bool webViewBackForwardListItemAddedRemoved : 1;
@@ -267,7 +272,7 @@ private:
 #endif
     } m_navigationDelegateMethods;
 
-    WeakObjCPtr<id <WKHistoryDelegatePrivate> > m_historyDelegate;
+    WeakObjCPtr<id<WKHistoryDelegatePrivate>> m_historyDelegate;
     struct {
         bool webViewDidNavigateWithNavigationData : 1;
         bool webViewDidPerformClientRedirectFromURLToURL : 1;

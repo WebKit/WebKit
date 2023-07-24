@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -39,4 +39,4 @@ TEST(WebKit, GrantAccessToMobileAssetsCrash)
     [webView _revokeAccessToAssetServices];
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)

@@ -9,15 +9,20 @@
  */
 
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
+#include "api/test/metrics/global_metrics_logger_and_exporter.h"
+#include "api/test/metrics/metric.h"
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
-#include "test/testsupport/perf_test.h"
 
 namespace webrtc {
-
 namespace {
+
+using ::webrtc::test::GetGlobalMetricsLogger;
+using ::webrtc::test::ImprovementDirection;
+using ::webrtc::test::Unit;
+
 int64_t RunComplexityTest(const AudioEncoderOpusConfig& config) {
   // Create encoder.
   constexpr int payload_type = 17;
@@ -46,7 +51,6 @@ int64_t RunComplexityTest(const AudioEncoderOpusConfig& config) {
   }
   return rtc::TimeMillis() - start_time_ms;
 }
-}  // namespace
 
 // This test encodes an audio file using Opus twice with different bitrates
 // (~11 kbps and 15.5 kbps). The runtime for each is measured, and the ratio
@@ -70,9 +74,10 @@ TEST(AudioEncoderOpusComplexityAdaptationTest, Adaptation_On) {
   config.bitrate_bps = 15500;
   int64_t runtime_15500bps = RunComplexityTest(config);
 
-  test::PrintResult("opus_encoding_complexity_ratio", "", "adaptation_on",
-                    100.0 * runtime_10999bps / runtime_15500bps, "percent",
-                    true);
+  GetGlobalMetricsLogger()->LogSingleValueMetric(
+      "opus_encoding_complexity_ratio", "adaptation_on",
+      100.0 * runtime_10999bps / runtime_15500bps, Unit::kPercent,
+      ImprovementDirection::kNeitherIsBetter);
 }
 
 // This test is identical to the one above, but without the complexity
@@ -90,8 +95,11 @@ TEST(AudioEncoderOpusComplexityAdaptationTest, Adaptation_Off) {
   config.bitrate_bps = 15500;
   int64_t runtime_15500bps = RunComplexityTest(config);
 
-  test::PrintResult("opus_encoding_complexity_ratio", "", "adaptation_off",
-                    100.0 * runtime_10999bps / runtime_15500bps, "percent",
-                    true);
+  GetGlobalMetricsLogger()->LogSingleValueMetric(
+      "opus_encoding_complexity_ratio", "adaptation_off",
+      100.0 * runtime_10999bps / runtime_15500bps, Unit::kPercent,
+      ImprovementDirection::kNeitherIsBetter);
 }
+
+}  // namespace
 }  // namespace webrtc

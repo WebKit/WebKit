@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,16 +37,22 @@ Ref<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescrip
     if (descriptor.nextInChain)
         return PipelineLayout::createInvalid(*this);
 
-    Vector<Ref<BindGroupLayout>> bindGroupLayouts;
-    bindGroupLayouts.reserveInitialCapacity(descriptor.bindGroupLayoutCount);
-    for (uint32_t i = 0; i < descriptor.bindGroupLayoutCount; ++i) {
-        auto* bindGroupLayout = descriptor.bindGroupLayouts[i];
-        bindGroupLayouts.uncheckedAppend(WebGPU::fromAPI(bindGroupLayout));
+    std::optional<Vector<Ref<BindGroupLayout>>> optionalBindGroupLayouts = std::nullopt;
+    if (descriptor.bindGroupLayouts) {
+        Vector<Ref<BindGroupLayout>> bindGroupLayouts;
+        bindGroupLayouts.reserveInitialCapacity(descriptor.bindGroupLayoutCount);
+        for (uint32_t i = 0; i < descriptor.bindGroupLayoutCount; ++i) {
+            auto* bindGroupLayout = descriptor.bindGroupLayouts[i];
+            bindGroupLayouts.uncheckedAppend(WebGPU::fromAPI(bindGroupLayout));
+        }
+
+        optionalBindGroupLayouts = bindGroupLayouts;
     }
-    return PipelineLayout::create(WTFMove(bindGroupLayouts), *this);
+
+    return PipelineLayout::create(WTFMove(optionalBindGroupLayouts), *this);
 }
 
-PipelineLayout::PipelineLayout(Vector<Ref<BindGroupLayout>>&& bindGroupLayouts, Device& device)
+PipelineLayout::PipelineLayout(std::optional<Vector<Ref<BindGroupLayout>>>&& bindGroupLayouts, Device& device)
     : m_bindGroupLayouts(WTFMove(bindGroupLayouts))
     , m_device(device)
 {
@@ -54,6 +60,7 @@ PipelineLayout::PipelineLayout(Vector<Ref<BindGroupLayout>>&& bindGroupLayouts, 
 
 PipelineLayout::PipelineLayout(Device& device)
     : m_device(device)
+    , m_isValid(false)
 {
 }
 
@@ -71,9 +78,27 @@ bool PipelineLayout::operator==(const PipelineLayout& other) const
     return false;
 }
 
+BindGroupLayout& PipelineLayout::bindGroupLayout(size_t i) const
+{
+    RELEASE_ASSERT(m_bindGroupLayouts.has_value());
+    return (*m_bindGroupLayouts)[i];
+}
+
+void PipelineLayout::makeInvalid()
+{
+    m_isValid = false;
+    if (m_bindGroupLayouts)
+        m_bindGroupLayouts->clear();
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuPipelineLayoutReference(WGPUPipelineLayout pipelineLayout)
+{
+    WebGPU::fromAPI(pipelineLayout).ref();
+}
 
 void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)
 {

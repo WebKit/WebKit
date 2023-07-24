@@ -23,18 +23,18 @@
 static void siphash_round(uint64_t v[4]) {
   v[0] += v[1];
   v[2] += v[3];
-  v[1] = (v[1] << 13) | (v[1] >> (64 - 13));
-  v[3] = (v[3] << 16) | (v[3] >> (64 - 16));
+  v[1] = CRYPTO_rotl_u64(v[1], 13);
+  v[3] = CRYPTO_rotl_u64(v[3], 16);
   v[1] ^= v[0];
   v[3] ^= v[2];
-  v[0] = (v[0] << 32) | (v[0] >> 32);
+  v[0] = CRYPTO_rotl_u64(v[0], 32);
   v[2] += v[1];
   v[0] += v[3];
-  v[1] = (v[1] << 17) | (v[1] >> (64 - 17));
-  v[3] = (v[3] << 21) | (v[3] >> (64 - 21));
+  v[1] = CRYPTO_rotl_u64(v[1], 17);
+  v[3] = CRYPTO_rotl_u64(v[3], 21);
   v[1] ^= v[2];
   v[3] ^= v[0];
-  v[2] = (v[2] << 32) | (v[2] >> 32);
+  v[2] = CRYPTO_rotl_u64(v[2], 32);
 }
 
 uint64_t SIPHASH_24(const uint64_t key[2], const uint8_t *input,
@@ -48,8 +48,7 @@ uint64_t SIPHASH_24(const uint64_t key[2], const uint8_t *input,
   v[3] = key[1] ^ UINT64_C(0x7465646279746573);
 
   while (input_len >= sizeof(uint64_t)) {
-    uint64_t m;
-    memcpy(&m, input, sizeof(m));
+    uint64_t m = CRYPTO_load_u64_le(input);
     v[3] ^= m;
     siphash_round(v);
     siphash_round(v);
@@ -59,18 +58,16 @@ uint64_t SIPHASH_24(const uint64_t key[2], const uint8_t *input,
     input_len -= sizeof(uint64_t);
   }
 
-  union {
-    uint8_t bytes[8];
-    uint64_t word;
-  } last_block;
-  last_block.word = 0;
-  OPENSSL_memcpy(last_block.bytes, input, input_len);
-  last_block.bytes[7] = orig_input_len & 0xff;
+  uint8_t last_block[8];
+  OPENSSL_memset(last_block, 0, sizeof(last_block));
+  OPENSSL_memcpy(last_block, input, input_len);
+  last_block[7] = orig_input_len & 0xff;
 
-  v[3] ^= last_block.word;
+  uint64_t last_block_word = CRYPTO_load_u64_le(last_block);
+  v[3] ^= last_block_word;
   siphash_round(v);
   siphash_round(v);
-  v[0] ^= last_block.word;
+  v[0] ^= last_block_word;
 
   v[2] ^= 0xff;
   siphash_round(v);

@@ -39,21 +39,22 @@ public:
     static ServiceWorkerNotificationHandler& singleton();
 
     void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
-    void cancelNotification(const UUID& notificationID) final;
-    void clearNotifications(const Vector<UUID>& notificationIDs) final;
-    void didDestroyNotification(const UUID& notificationID) final;
+
+    void cancelNotification(const WTF::UUID& notificationID) final;
+    void clearNotifications(const Vector<WTF::UUID>& notificationIDs) final;
+    void didDestroyNotification(const WTF::UUID& notificationID) final;
     void pageWasNotifiedOfNotificationPermission() final { }
 
-    bool handlesNotification(UUID value) const { return m_notificationToSessionMap.contains(value); }
+    bool handlesNotification(WTF::UUID value) const { return m_notificationToSessionMap.contains(value); }
 
 private:
     explicit ServiceWorkerNotificationHandler() = default;
 
     void requestSystemNotificationPermission(const String&, CompletionHandler<void(bool)>&&) final;
 
-    WebsiteDataStore* dataStoreForNotificationID(const UUID&);
+    WebsiteDataStore* dataStoreForNotificationID(const WTF::UUID&);
 
-    HashMap<UUID, PAL::SessionID> m_notificationToSessionMap;
+    HashMap<WTF::UUID, PAL::SessionID> m_notificationToSessionMap;
 };
 
 } // namespace WebKit

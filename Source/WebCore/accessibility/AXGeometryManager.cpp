@@ -55,15 +55,15 @@ AXGeometryManager::~AXGeometryManager()
         m_updateObjectRegionsTimer.stop();
 }
 
-std::optional<IntRect> AXGeometryManager::paintRectForID(AXID axID)
+std::optional<IntRect> AXGeometryManager::cachedRectForID(AXID axID)
 {
-    auto paintRectIterator = m_paintRects.find(axID);
-    if (paintRectIterator != m_paintRects.end())
-        return paintRectIterator->value;
+    auto rectIterator = m_cachedRects.find(axID);
+    if (rectIterator != m_cachedRects.end())
+        return rectIterator->value;
     return std::nullopt;
 }
 
-void AXGeometryManager::onPaint(AXID axID, IntRect&& paintRect)
+void AXGeometryManager::cacheRect(AXID axID, IntRect&& rect)
 {
     // We shouldn't call this method on a geometry manager that has no page ID.
     ASSERT(m_cache->pageID());
@@ -71,25 +71,25 @@ void AXGeometryManager::onPaint(AXID axID, IntRect&& paintRect)
 
     if (!axID.isValid())
         return;
-    auto paintRectIterator = m_paintRects.find(axID);
+    auto rectIterator = m_cachedRects.find(axID);
 
-    bool paintRectChanged = false;
-    if (paintRectIterator != m_paintRects.end()) {
-        paintRectChanged = paintRectIterator->value != paintRect;
-        if (paintRectChanged)
-            paintRectIterator->value = paintRect;
+    bool rectChanged = false;
+    if (rectIterator != m_cachedRects.end()) {
+        rectChanged = rectIterator->value != rect;
+        if (rectChanged)
+            rectIterator->value = rect;
     } else {
-        paintRectChanged = true;
-        m_paintRects.set(axID, paintRect);
+        rectChanged = true;
+        m_cachedRects.set(axID, rect);
     }
 
-    if (!paintRectChanged)
+    if (!rectChanged)
         return;
 
     RefPtr tree = AXIsolatedTree::treeForPageID(*m_cache->pageID());
     if (!tree)
         return;
-    tree->updateFrame(axID, WTFMove(paintRect));
+    tree->updateFrame(axID, WTFMove(rect));
 }
 
 void AXGeometryManager::scheduleObjectRegionsUpdate(bool scheduleImmediately)

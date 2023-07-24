@@ -385,6 +385,7 @@ void WebContextMenuProxyMac::removeBackgroundFromControlledImage()
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 
+#if !HAVE(SHARING_SERVICE_PICKER_STANDARD_SHARE_MENU_ITEM)
 static void getStandardShareMenuItem(NSArray *items, void (^completionHandler)(NSMenuItem *))
 {
 #if HAVE(NSSHARINGSERVICEPICKER_ASYNC_MENUS)
@@ -403,6 +404,7 @@ static void getStandardShareMenuItem(NSArray *items, void (^completionHandler)(N
     completionHandler([NSMenuItem standardShareMenuItemForItems:items]);
 #endif
 }
+#endif
 
 void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem *)>&& completionHandler)
 {
@@ -446,15 +448,13 @@ void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem 
         return;
     }
 
+#if HAVE(SHARING_SERVICE_PICKER_STANDARD_SHARE_MENU_ITEM)
     auto sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items.get()]);
-    if ([sharingServicePicker respondsToSelector:@selector(standardShareMenuItem)]) {
-        NSMenuItem *shareMenuItem = [sharingServicePicker standardShareMenuItem];
-        [shareMenuItem setRepresentedObject:sharingServicePicker.get()];
-        shareMenuItem.identifier = _WKMenuItemIdentifierShareMenu;
-        completionHandler(shareMenuItem);
-        return;
-    }
-
+    NSMenuItem *shareMenuItem = [sharingServicePicker standardShareMenuItem];
+    [shareMenuItem setRepresentedObject:sharingServicePicker.get()];
+    shareMenuItem.identifier = _WKMenuItemIdentifierShareMenu;
+    completionHandler(shareMenuItem);
+#else
     getStandardShareMenuItem(items.get(), makeBlockPtr([completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }, this](NSMenuItem *item) mutable {
         if (!item) {
             completionHandler(nil);
@@ -476,6 +476,7 @@ void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem 
 
         completionHandler(item);
     }).get());
+#endif
 }
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUCanvasConfiguration.h>
+#include <WebCore/WebGPUCanvasConfiguration.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<CanvasConfiguration> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::CanvasConfiguration& canvasConfiguration)
+std::optional<CanvasConfiguration> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::CanvasConfiguration& canvasConfiguration)
 {
     auto device = convertToBacking(canvasConfiguration.device);
     if (!device)
@@ -43,7 +43,7 @@ std::optional<CanvasConfiguration> ConvertToBackingContext::convertToBacking(con
     return { { device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode } };
 }
 
-std::optional<PAL::WebGPU::CanvasConfiguration> ConvertFromBackingContext::convertFromBacking(const CanvasConfiguration& canvasConfiguration)
+std::optional<WebCore::WebGPU::CanvasConfiguration> ConvertFromBackingContext::convertFromBacking(const CanvasConfiguration& canvasConfiguration)
 {
     auto* device = convertDeviceFromBacking(canvasConfiguration.device);
     if (!device)

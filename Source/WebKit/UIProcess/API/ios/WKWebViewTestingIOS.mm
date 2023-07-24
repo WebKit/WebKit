@@ -136,6 +136,14 @@ static void dumpSeparatedLayerProperties(TextStream&, CALayer *) { }
     }];
 }
 
+- (void)applyAutocorrection:(NSString *)newString toString:(NSString *)oldString isCandidate:(BOOL)isCandidate withCompletionHandler:(void (^)(void))completionHandler
+{
+    [_contentView applyAutocorrection:newString toString:oldString isCandidate:isCandidate withCompletionHandler:[capturedCompletionHandler = makeBlockPtr(completionHandler)] (UIWKAutocorrectionRects *rects) {
+        capturedCompletionHandler();
+    }];
+}
+
+
 - (void)dismissFormAccessoryView
 {
     [_contentView accessoryDone];

@@ -1,0 +1,7 @@
+[package]
+name = "bssl-sys"
+version = "0.1.0"
+authors = ["Benjamin Brittain <bwb@google.com>"]
+edition = "2018"
+publish = false
+license = "MIT"

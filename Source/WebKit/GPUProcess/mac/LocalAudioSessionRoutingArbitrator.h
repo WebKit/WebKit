@@ -29,6 +29,10 @@
 
 #include "AudioSessionRoutingArbitratorProxy.h"
 
+namespace WTF {
+class Logger;
+}
+
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
@@ -53,7 +57,14 @@ private:
     void beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, ArbitrationCallback&&) final;
     void leaveRoutingAbritration() final;
 
+    Logger& logger();
+    const char* logClassName() const { return "LocalAudioSessionRoutingArbitrator"; }
+    WTFLogChannel& logChannel() const;
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    bool canLog() const final;
+
     GPUConnectionToWebProcess& m_connectionToWebProcess;
+    const void* m_logIdentifier;
 };
 
 }

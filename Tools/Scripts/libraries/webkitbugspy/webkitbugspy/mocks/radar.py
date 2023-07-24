@@ -61,6 +61,9 @@ class AppleDirectoryQuery(object):
             return None
         return AppleDirectoryUserEntry(found)
 
+    def member_dsid_list_for_group_name(self, name):
+        return [user.username for user in self.parent.users]
+
 
 class RadarModel(object):
     class Person(object):
@@ -114,8 +117,51 @@ class RadarModel(object):
             self.email = user.email
 
     class Milestone(object):
+        def __init__(
+            self, name,
+            isClosed=False,
+            isRestricted=False, restrictedAccessGroup='',
+            isProtected=False, protectedAccessGroup='',
+            isCategoryRequired=False, categories=None,
+            isEventRequired=False, events=None,
+            isTentpoleRequired=False, tentpoles=None,
+        ):
+            self.name = name
+            self.isClosed = isClosed
+            self.isRestricted = isRestricted
+            self.restrictedAccessGroup = restrictedAccessGroup
+            self.isProtected = isProtected
+            self.protectedAccessGroup = protectedAccessGroup
+
+            self._isCategoryRequired = isCategoryRequired
+            self._categories = [RadarModel.Category(category) for category in (categories or [])]
+
+            self._isEventRequired = isEventRequired
+            self._events = [RadarModel.Event(event) for event in (events or [])]
+
+            self._isTentpoleRequired = isTentpoleRequired
+            self._tentpoles = [RadarModel.Tentpole(tentpole) for tentpole in (tentpoles or [])]
+
+    class Category(object):
         def __init__(self, name):
             self.name = name
+
+    class Event(object):
+        def __init__(self, name):
+            self.name = name
+
+    class Tentpole(object):
+        def __init__(self, name):
+            self.name = name
+
+    class MilestoneAssociations(object):
+        def __init__(self, milestone):
+            self.isCategoryRequired = milestone._isCategoryRequired
+            self.categories = milestone._categories
+            self.isEventRequired = milestone._isEventRequired
+            self.events = milestone._events
+            self.isTentpoleRequired = milestone._isTentpoleRequired
+            self.tentpoles = milestone._tentpoles
 
     class Keyword(object):
         def __init__(self, name):
@@ -134,7 +180,6 @@ class RadarModel(object):
         self.description = self.CollectionProperty(self, self.DescriptionEntry(issue['description']))
         self.state = 'Analyze' if issue['opened'] else 'Verify'
         self.substate = 'Investigate' if issue['opened'] else None
-        self.milestone = self.Milestone(issue.get('milestone', '?'))
         self.priority = 2
         self.resolution = 'Unresolved' if issue['opened'] else 'Software Changed'
         self.originator = self.Person(Radar.transform_user(issue['creator']))
@@ -148,6 +193,18 @@ class RadarModel(object):
         self.cc_memberships = self.CollectionProperty(self, *[
             self.CCMembership(Radar.transform_user(watcher)) for watcher in issue.get('watchers', [])
         ])
+
+        self.milestone = self.Milestone(issue.get('milestone', '?'))
+        if self.client.parent.milestones:
+            self.milestone = self.client.parent.milestones.get(self.milestone.name, self.milestone)
+
+        category = issue.get('category')
+        self.category = RadarModel.Category(category) if category else None
+        event = issue.get('event')
+        self.event = RadarModel.Event(event) if event else None
+        tentpole = issue.get('tentpole')
+        self.tentpole = RadarModel.Tentpole(tentpole) if tentpole else None
+
         components = []
         if issue.get('project') and issue.get('component') and issue.get('version'):
             components = self.client.find_components(dict(
@@ -179,6 +236,11 @@ class RadarModel(object):
         self.client.parent.issues[self.id]['assignee'] = self.client.parent.users[self.assignee.dsid]
         self.client.parent.issues[self.id]['opened'] = self.state not in ('Verify', 'Closed')
 
+        for key in ('milestone', 'category', 'event', 'tentpole'):
+            attribute = getattr(self, key, None)
+            if attribute:
+                self.client.parent.issues[self.id][key] = attribute.name
+
         if self.component:
             project = ''
             component = self.component.name
@@ -191,6 +253,9 @@ class RadarModel(object):
             self.client.parent.issues[self.id]['component'] = component
             self.client.parent.issues[self.id]['version'] = self.component.version
 
+    def milestone_associations(self, milestone=None):
+        return RadarModel.MilestoneAssociations(milestone or self.milestone)
+
 
 class RadarClient(object):
     def __init__(self, parent, authentication_strategy):
@@ -202,6 +267,9 @@ class RadarClient(object):
         if not found:
             return None
         return RadarModel(self, found)
+
+    def milestones_for_component(self, component, include_access_groups=False):
+        return list(self.parent.milestones.values())
 
     def find_components(self, request_data):
         filters = []
@@ -273,6 +341,28 @@ class RadarClient(object):
 
         return self.radar_for_id(id)
 
+    def clone_radar(self, problem_id, reason_text, component=None):
+        original = self.radar_for_id(problem_id)
+        if not original:
+            raise Radar.exceptions.UnsuccessfulResponseException("'{}' does not match a known radar".format(problem_id))
+
+        if not isinstance(reason_text, str) and not isinstance(reason_text, string_utils.unicode):
+            raise ValueError("Expected reason_text to be '{}' not '{}'".format(str, type(reason_text)))
+        if not component:
+            component = dict(name=original.component.name.strip(), version=original.component.version)
+        description = 'Reason for clone:\n{}\n\n<original text - begin>\n\n{}'.format(
+            reason_text,
+            '\n'.join([desc.text for desc in original.description.items()]),
+        )
+        return self.create_radar(dict(
+            title=original.title,
+            description=description,
+            component=component,
+            classification=original.classification,
+            reproducible='Always',
+        ))
+
+
 class Radar(Base, ContextStack):
     top = None
 
@@ -323,7 +413,7 @@ class Radar(Base, ContextStack):
             emails=user.emails + [user.email.split('@')[0] + '@APPLECONNECT.APPLE.COM'],
         )
 
-    def __init__(self, users=None, issues=None, projects=None):
+    def __init__(self, users=None, issues=None, projects=None, milestones=None):
         Base.__init__(self, users=users, issues=issues, projects=projects)
         ContextStack.__init__(self, Radar)
 
@@ -334,6 +424,10 @@ class Radar(Base, ContextStack):
         self.issues = {}
         for issue in issues or []:
             self.add(issue)
+        self.milestones = {}
+        for kwargs in milestones or []:
+            ms = RadarModel.Milestone(**kwargs)
+            self.milestones[ms.name] = ms
 
         self.AppleDirectoryQuery = AppleDirectoryQuery(self)
         self.RadarClient = lambda authentication_strategy, client_system_identifier: RadarClient(self, authentication_strategy)

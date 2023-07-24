@@ -58,6 +58,8 @@
 
 #include <openssl/bn.h>
 
+#include "internal.h"
+
 
 int DH_check_pub_key(const DH *dh, const BIGNUM *pub_key, int *out_flags) {
   *out_flags = 0;
@@ -164,9 +166,6 @@ int DH_check(const DH *dh, int *out_flags) {
     }
     if (!BN_is_one(t2)) {
       *out_flags |= DH_CHECK_INVALID_Q_VALUE;
-    }
-    if (dh->j && BN_cmp(dh->j, t1)) {
-      *out_flags |= DH_CHECK_INVALID_J_VALUE;
     }
   } else if (BN_is_word(dh->g, DH_GENERATOR_2)) {
     l = BN_mod_word(dh->p, 24);

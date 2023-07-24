@@ -11,4 +11,4 @@ features: [Temporal]
 const calendar = TemporalHelpers.calendarThrowEverything();
 const plainDate = new Temporal.PlainDate(2000, 5, 2, calendar);
 const result = plainDate.toPlainDateTime("11:30:23");
-assert.sameValue(result.calendar, calendar, "calendar");
+assert.sameValue(result.getCalendar(), calendar, "calendar");

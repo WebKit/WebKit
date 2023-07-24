@@ -33,6 +33,7 @@
 #include "GetterSetterAccessCase.h"
 #include "ICStatusUtils.h"
 #include "InlineCacheCompiler.h"
+#include "InlineCallFrame.h"
 #include "ProxyObjectAccessCase.h"
 #include "StructureInlines.h"
 #include "StructureStubInfo.h"

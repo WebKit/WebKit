@@ -79,6 +79,11 @@ public:
     bool isEphemeral() const { return m_isEphemeral; }
     void setIsEphemeral(bool isEphemeral) { m_isEphemeral = isEphemeral; }
 
+    bool isInputDevice() const
+    {
+        return m_type == DeviceType::Microphone || m_type == DeviceType::Camera;
+    }
+
     explicit operator bool() const { return m_type != DeviceType::Unknown; }
 
     CaptureDevice isolatedCopy() &&;

@@ -4,16 +4,16 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (25,23) size 745x469
-      RenderSVGContainer {g} at (51,23) size 698x43
-        RenderSVGText {text} at (65,13) size 350x15 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 101x13
-            RenderSVGInlineText {#text} at (0,1) size 101x12
-              chunk 1 (middle anchor) text run 1 at (65.81,25.00) startOffset 0 endOffset 22 width 100.92: "Testing pointer-events"
-          RenderSVGInlineText {#text} at (100,0) size 248x14
-            chunk 1 (middle anchor) text run 1 at (166.73,25.00) startOffset 0 endOffset 44 width 247.46: " - pale RED rect should appear on mouseover."
-        RenderSVGText {text} at (30,27) size 420x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 419x12
-            chunk 1 (middle anchor) text run 1 at (30.80,37.00) startOffset 0 endOffset 96 width 418.40: "2nd and 3rd columns represent respectively rects with no fill/stroke and transparent fill/stroke"
+      RenderSVGContainer {g} at (58,23) size 684x43
+        RenderSVGText {text} at (66,13) size 348x15 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 99x13
+            RenderSVGInlineText {#text} at (0,1) size 99x12
+              chunk 1 (middle anchor) text run 1 at (66.80,25.00) startOffset 0 endOffset 22 width 98.94: "Testing pointer-events"
+          RenderSVGInlineText {#text} at (98,0) size 248x14
+            chunk 1 (middle anchor) text run 1 at (165.74,25.00) startOffset 0 endOffset 44 width 247.46: " - pale RED rect should appear on mouseover."
+        RenderSVGText {text} at (34,27) size 412x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 411x12
+            chunk 1 (middle anchor) text run 1 at (34.90,37.00) startOffset 0 endOffset 96 width 410.20: "2nd and 3rd columns represent respectively rects with no fill/stroke and transparent fill/stroke"
       RenderSVGContainer {g} at (25,75) size 745x417 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
         RenderSVGContainer {g} at (25,75) size 745x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,50.00)}]
           RenderSVGRect {rect} at (25,75) size 334x84 [fill={[type=SOLID] [color=#FF0000] [opacity=0.00]}] [x=-10.00] [y=-10.00] [width=200.00] [height=50.00]
@@ -105,8 +105,8 @@ layer at (0,0) size 800x600
             RenderSVGText {text} at (200,18) size 103x15 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 103x14
                 chunk 1 text run 1 at (200.00,30.00) startOffset 0 endOffset 21 width 102.06: "nothing is to trigger"
-    RenderSVGContainer {g} at (16,517) size 381x62
-      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 229x37
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.3 $"
+    RenderSVGContainer {g} at (16,517) size 384x62
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.3 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -8,6 +8,7 @@
     var loader;
     var source;
     var sourceBuffer;
+    var bufferedChangeEvent;
 
     function loaderPromise(loader) {
         return new Promise((resolve, reject) => {
@@ -37,6 +38,12 @@
             run('sourceBuffer = source.addSourceBuffer(loader.type())');
             testExpected('sourceBuffer.__proto__', ManagedSourceBuffer.prototype);
             testExpected('sourceBuffer.onbufferedchange !== undefined', true);
+
+            sourceBuffer.onbufferedchange = (e) => {
+                consoleWrite('onbufferedchange called.')
+                bufferedChangeEvent = e;
+                testExpected('bufferedChangeEvent.__proto__', BufferedChangeEvent.prototype);
+            };
 
             run('sourceBuffer.appendBuffer(loader.initSegment())');
             await waitFor(sourceBuffer, 'update');

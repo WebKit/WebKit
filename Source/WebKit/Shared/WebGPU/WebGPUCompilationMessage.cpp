@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,18 +30,18 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUCompilationMessage.h>
+#include <WebCore/WebGPUCompilationMessage.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<CompilationMessage> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::CompilationMessage& compilationMessage)
+std::optional<CompilationMessage> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::CompilationMessage& compilationMessage)
 {
     return { { compilationMessage.message(), compilationMessage.type(), compilationMessage.lineNum(), compilationMessage.linePos(), compilationMessage.offset(), compilationMessage.length() } };
 }
 
-RefPtr<PAL::WebGPU::CompilationMessage> ConvertFromBackingContext::convertFromBacking(const CompilationMessage& compilationMessage)
+RefPtr<WebCore::WebGPU::CompilationMessage> ConvertFromBackingContext::convertFromBacking(const CompilationMessage& compilationMessage)
 {
-    return PAL::WebGPU::CompilationMessage::create(compilationMessage.message, compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);
+    return WebCore::WebGPU::CompilationMessage::create(compilationMessage.message, compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);
 }
 
 } // namespace WebKit

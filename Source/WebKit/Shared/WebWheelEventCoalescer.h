@@ -38,7 +38,7 @@ public:
     bool shouldDispatchEvent(const NativeWebWheelEvent&);
     std::optional<WebWheelEvent> nextEventToDispatch();
 
-    NativeWebWheelEvent takeOldestEventBeingProcessed();
+    std::optional<NativeWebWheelEvent> takeOldestEventBeingProcessed();
 
     bool hasEventsBeingProcessed() const { return !m_eventsBeingProcessed.isEmpty(); }
     

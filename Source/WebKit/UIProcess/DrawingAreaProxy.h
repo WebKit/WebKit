@@ -56,7 +56,7 @@ class WebPageProxy;
 class WebProcessProxy;
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-class UpdateInfo;
+struct UpdateInfo;
 #endif
 
 class DrawingAreaProxy : public IPC::MessageReceiver {
@@ -70,13 +70,15 @@ public:
     DrawingAreaIdentifier identifier() const { return m_identifier; }
 
     void startReceivingMessages(WebProcessProxy&);
-    virtual void attachToProvisionalFrameProcess(WebProcessProxy&) = 0;
+    void stopReceivingMessages(WebProcessProxy&);
+    virtual std::span<IPC::ReceiverName> messageReceiverNames() const;
 
     virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
     virtual void deviceScaleFactorDidChange() = 0;
     virtual void colorSpaceDidChange() { }
-    virtual void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond> /* nominalFramesPerSecond */) { }
+    virtual void windowScreenDidChange(WebCore::PlatformDisplayID) { }
+    virtual std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() { return std::nullopt; }
 
     // FIXME: These should be pure virtual.
     virtual void setBackingStoreIsDiscardable(bool) { }
@@ -105,8 +107,6 @@ public:
     virtual void updateDebugIndicator() { }
 
     virtual void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) { }
-    
-    virtual void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&) = 0;
 
     // Hide the content until the currently pending update arrives.
     virtual void hideContentUntilPendingUpdate() { ASSERT_NOT_REACHED(); }
@@ -131,19 +131,18 @@ public:
     virtual void viewWillStartLiveResize() { };
     virtual void viewWillEndLiveResize() { };
 
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+
 protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&);
 
     DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
     WebPageProxy& m_webPageProxy;
-    Vector<Ref<WebProcessProxy>> m_processesWithRegisteredDrawingAreaProxyMessageReceiver;
 
     WebCore::IntSize m_size;
     WebCore::IntSize m_scrollOffset;
-
-    // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
 private:
     virtual void sizeDidChange() = 0;

@@ -146,14 +146,15 @@ void SVGTextPathElement::buildPendingResource()
     if (!isConnected())
         return;
 
-    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
+    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScopeForSVGReferences());
     if (!target.element) {
         // Do not register as pending if we are already pending this resource.
-        if (document().accessSVGExtensions().isPendingResource(*this, target.identifier))
+        auto& treeScope = treeScopeForSVGReferences();
+        if (treeScope.isPendingSVGResource(*this, target.identifier))
             return;
 
         if (!target.identifier.isEmpty()) {
-            document().accessSVGExtensions().addPendingResource(target.identifier, *this);
+            treeScope.addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
     } else if (target.element->hasTagName(SVGNames::pathTag))

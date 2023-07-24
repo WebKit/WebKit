@@ -26,7 +26,7 @@
 #import "config.h"
 #import "DragAndDropSimulator.h"
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(COCOA)
+#if ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)
 
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -52,4 +52,4 @@
 
 @end
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(COCOA)
+#endif // ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)

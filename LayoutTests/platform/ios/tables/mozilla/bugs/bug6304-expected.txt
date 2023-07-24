@@ -238,4 +238,4 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 483x19
           text run at (0,0) width 483: "Tested with Apr25, M4 and 1999051109 (win95, opt.) Dated: May 11 1999"
 layer at (8,232) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,224) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,224) size 784x2 [color=#808080] [border: (1px inset #808080)]

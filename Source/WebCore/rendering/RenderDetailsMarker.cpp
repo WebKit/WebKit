@@ -27,6 +27,8 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "PaintInfo.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

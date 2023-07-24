@@ -502,18 +502,30 @@ JSString* NumericStrings::addJSString(VM& vm, int i)
     return entry.jsString;
 }
 
+void NumericStrings::initializeSmallIntCache(VM& vm)
+{
+    for (int i = 0; i < 10; ++i) {
+        auto* string = vm.smallStrings.singleCharacterString(i + '0');
+        auto& entry = lookupSmallString(static_cast<unsigned>(i));
+        entry.jsString = string;
+        ASSERT(string->tryGetValueImpl());
+        entry.value = string->tryGetValue();
+    }
+}
+
 static ALWAYS_INLINE JSString* int32ToStringInternal(VM& vm, int32_t value, int32_t radix)
 {
     ASSERT(!(radix < 2 || radix > 36));
+
+    if (radix == 10)
+        return vm.numericStrings.addJSString(vm, value);
+
     // A negative value casted to unsigned would be bigger than 36 (the max radix).
     if (static_cast<unsigned>(value) < static_cast<unsigned>(radix)) {
         ASSERT(value <= 36);
         ASSERT(value >= 0);
         return vm.smallStrings.singleCharacterString(radixDigits[value]);
     }
-
-    if (radix == 10)
-        return vm.numericStrings.addJSString(vm, value);
 
     return jsNontrivialString(vm, toStringWithRadixInternal(value, radix));
 

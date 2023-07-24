@@ -81,6 +81,7 @@ struct PluginInfo;
 struct PrewarmInformation;
 class SecurityOriginData;
 enum class PermissionName : uint8_t;
+enum class RenderAsTextFlag : uint16_t;
 enum class ThirdPartyCookieBlockingMode : uint8_t;
 using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
@@ -97,6 +98,7 @@ class ObjCObjectGraph;
 class PageClient;
 class ProvisionalFrameProxy;
 class ProvisionalPageProxy;
+class SuspendedPageProxy;
 class UserMediaCaptureManagerProxy;
 class VisitedLinkStore;
 class WebBackForwardListItem;
@@ -141,7 +143,7 @@ enum class CheckBackForwardList : bool { No, Yes };
 class WebProcessProxy : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
 public:
     using WebPageProxyMap = HashMap<WebPageProxyIdentifier, WeakPtr<WebPageProxy>>;
-    using UserInitiatedActionByAuthorizationTokenMap = HashMap<UUID, RefPtr<API::UserInitiatedAction>>;
+    using UserInitiatedActionByAuthorizationTokenMap = HashMap<WTF::UUID, RefPtr<API::UserInitiatedAction>>;
     typedef HashMap<WebCore::FrameIdentifier, WeakPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
@@ -164,9 +166,9 @@ public:
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
 
-    unsigned suspendedPageCount() const { return m_suspendedPageCount; }
-    void incrementSuspendedPageCount();
-    void decrementSuspendedPageCount();
+    unsigned suspendedPageCount() const { return m_suspendedPages.computeSize(); }
+    void addSuspendedPageProxy(SuspendedPageProxy&);
+    void removeSuspendedPageProxy(SuspendedPageProxy&);
 
     WebProcessPool* processPoolIfExists() const;
     WebProcessPool& processPool() const;
@@ -238,11 +240,11 @@ public:
     void addWebUserContentControllerProxy(WebUserContentControllerProxy&);
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
 
-    void recordUserGestureAuthorizationToken(UUID);
+    void recordUserGestureAuthorizationToken(WTF::UUID);
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(uint64_t);
-    RefPtr<API::UserInitiatedAction> userInitiatedActivity(std::optional<UUID>, uint64_t);
+    RefPtr<API::UserInitiatedAction> userInitiatedActivity(std::optional<WTF::UUID>, uint64_t);
 
-    void consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction&, std::optional<UUID>);
+    void consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction&, std::optional<WTF::UUID>);
 
     bool isResponsive() const;
 
@@ -363,6 +365,7 @@ public:
     void sendProcessDidResume(ResumeReason) final;
     void didChangeThrottleState(ProcessThrottleState) final;
     void prepareToDropLastAssertion(CompletionHandler<void()>&&) final;
+    void didDropLastAssertion() final;
     ASCIILiteral clientName() const final { return "WebProcess"_s; }
     String environmentIdentifier() const final;
 
@@ -425,7 +428,7 @@ public:
     bool hasNetworkExtensionSandboxAccess() const { return m_hasNetworkExtensionSandboxAccess; }
     void markHasNetworkExtensionSandboxAccess() { m_hasNetworkExtensionSandboxAccess = true; }
 #endif
-#if PLATFORM(IOS) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if (PLATFORM(IOS) || PLATFORM(VISION)) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     bool hasManagedSessionSandboxAccess() const { return m_hasManagedSessionSandboxAccess; }
     void markHasManagedSessionSandboxAccess() { m_hasManagedSessionSandboxAccess = true; }
 #endif
@@ -487,7 +490,11 @@ public:
     const WeakHashSet<WebProcessProxy>* sharedWorkerClientProcesses() const;
 
     static void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
-    void sendPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
+    void processPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
+
+    void addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain&);
+
+    Logger& logger();
 
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
@@ -525,6 +532,9 @@ private:
     static WebPageProxyMap& globalPageMap();
     static Vector<RefPtr<WebPageProxy>> globalPages();
 
+    void reportProcessDisassociatedWithPageIfNecessary(WebPageProxyIdentifier);
+    bool isAssociatedWithPage(WebPageProxyIdentifier) const;
+
     void platformInitialize();
     void platformDestroy();
 
@@ -533,6 +543,7 @@ private:
     void didDestroyFrame(WebCore::FrameIdentifier, WebPageProxyIdentifier);
     void didDestroyUserGestureToken(uint64_t);
     void postMessageToRemote(WebCore::ProcessIdentifier, WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&);
+    void renderTreeAsText(WebCore::ProcessIdentifier, WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String)>&&);
 
     bool canBeAddedToWebProcessCache() const;
     void shouldTerminate(CompletionHandler<void(bool)>&&);
@@ -553,6 +564,9 @@ private:
     void updateBackgroundResponsivenessTimer();
 
     void updateBlobRegistryPartitioningState() const;
+
+    void updateWebGPUEnabledStateInGPUProcess();
+    void updateDOMRenderingStateInGPUProcess();
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
@@ -649,6 +663,7 @@ private:
     WebFrameProxyMap m_frameMap;
     WeakHashSet<ProvisionalPageProxy> m_provisionalPages;
     WeakHashSet<ProvisionalFrameProxy> m_provisionalFrames;
+    WeakHashSet<SuspendedPageProxy> m_suspendedPages;
     UserInitiatedActionMap m_userInitiatedActionMap;
     UserInitiatedActionByAuthorizationTokenMap m_userInitiatedActionByAuthorizationTokenMap;
 
@@ -664,10 +679,6 @@ private:
 
 #if HAVE(CVDISPLAYLINK)
     DisplayLinkProcessProxyClient m_displayLinkClient;
-#endif
-
-#if ENABLE(ROUTING_ARBITRATION)
-    UniqueRef<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;
 #endif
 
 #if PLATFORM(COCOA)
@@ -694,8 +705,6 @@ private:
     std::unique_ptr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
 #endif
 
-    unsigned m_suspendedPageCount { 0 };
-
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isPrewarmed;
     LockdownMode m_lockdownMode { LockdownMode::Disabled };
@@ -703,7 +712,7 @@ private:
 #if PLATFORM(COCOA)
     bool m_hasNetworkExtensionSandboxAccess { false };
 #endif
-#if PLATFORM(IOS) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if (PLATFORM(IOS) || PLATFORM(VISION)) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     bool m_hasManagedSessionSandboxAccess { false };
 #endif
 
@@ -754,6 +763,9 @@ private:
 #endif
     std::unique_ptr<WebLockRegistryProxy> m_webLockRegistry;
     std::unique_ptr<WebPermissionControllerProxy> m_webPermissionController;
+#if ENABLE(ROUTING_ARBITRATION)
+    UniqueRef<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;
+#endif
     bool m_isConnectedToHardwareConsole { true };
 #if PLATFORM(MAC)
     bool m_platformSuspendDidReleaseNearSuspendedAssertion { false };

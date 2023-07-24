@@ -61,9 +61,9 @@ PlatformLayer* VideoLayerManagerObjC::videoInlineLayer() const
     return m_videoInlineLayer.get();
 }
 
-void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize contentSize)
+void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, FloatSize contentSize)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, contentSize.width(), ", ", contentSize.height());
+    ALWAYS_LOG(LOGIDENTIFIER, contentSize);
 
     m_videoLayer = videoLayer;
     [m_videoLayer web_disableAllActions];

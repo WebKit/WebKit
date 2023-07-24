@@ -134,6 +134,10 @@ private:
 
 class RemoteGraphicsContextGLProxyCocoa final : public RemoteGraphicsContextGLProxy {
 public:
+    // GraphicsContextGL override.
+    std::optional<WebCore::GraphicsContextGL::EGLImageAttachResult> createAndBindEGLImage(GCGLenum, WebCore::GraphicsContextGL::EGLImageSource) final;
+    GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;
+
     // RemoteGraphicsContextGLProxy overrides.
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
     void prepareForDisplay() final;
@@ -156,13 +160,42 @@ private:
     friend class RemoteGraphicsContextGLProxy;
 };
 
+std::optional<WebCore::GraphicsContextGL::EGLImageAttachResult> RemoteGraphicsContextGLProxyCocoa::createAndBindEGLImage(GCGLenum target, WebCore::GraphicsContextGL::EGLImageSource source)
+{
+    if (isContextLost())
+        return std::nullopt;
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateAndBindEGLImage(target, source));
+    if (!sendResult.succeeded()) {
+        markContextLost();
+        return std::nullopt;
+    }
+    auto [handle, size] = sendResult.takeReply();
+    if (!handle)
+        return std::nullopt;
+    return std::make_tuple(reinterpret_cast<GCEGLImage>(static_cast<intptr_t>(handle)), size);
+}
+
+GCEGLSync RemoteGraphicsContextGLProxyCocoa::createEGLSync(ExternalEGLSyncEvent syncEvent)
+{
+    if (isContextLost())
+        return { };
+    auto [eventHandle, signalValue] = syncEvent;
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateEGLSync(eventHandle, signalValue));
+    if (!sendResult.succeeded()) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(returnValue));
+}
+
 void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
 {
     if (isContextLost())
         return;
     IPC::Semaphore finishedSignaller;
     auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(finishedSignaller));
-    if (!sendResult) {
+    if (!sendResult.succeeded()) {
         markContextLost();
         return;
     }

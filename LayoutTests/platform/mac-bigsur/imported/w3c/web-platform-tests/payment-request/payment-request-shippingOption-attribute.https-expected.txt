@@ -1,8 +1,0 @@
-
-PASS Must have a .shippingOption IDL attribute.
-PASS .shippingOption attribute must default to null.
-FAIL If there is a single shipping option, but selected is false, then .shippingOption must be null. assert_equals: expected null expected (object) null but got (string) "valid"
-FAIL If there are multiple shipping options all with `selected` set to false, then .shippingOption is null. assert_equals: expected null expected (object) null but got (string) "valid"
-PASS Given multiple shipping options, it must use the selected shipping option for .shippingOption value.
-FAIL If there are multiple of the shipping options with selected true, then .shippingOption is the last selected shipping option in order. assert_equals: expected 'pass' expected "pass" but got "fail"
-

@@ -89,12 +89,14 @@ extern "C" {
   "vsli.u16   d2, d2, #8                     \n" \
   "vsri.u16   d3, d3, #8                     \n"
 
+// TODO: Use single register for kUVCoeff and multiply by lane
 #define YUVTORGB_SETUP                                        \
+  "vld1.16    {d31}, [%[kRGBCoeffBias]]                   \n" \
   "vld4.8     {d26[], d27[], d28[], d29[]}, [%[kUVCoeff]] \n" \
-  "vld1.16    {d31[]}, [%[kRGBCoeffBias]]!   \n"              \
-  "vld1.16    {d20[], d21[]}, [%[kRGBCoeffBias]]! \n"         \
-  "vld1.16    {d22[], d23[]}, [%[kRGBCoeffBias]]! \n"         \
-  "vld1.16    {d24[], d25[]}, [%[kRGBCoeffBias]] \n"
+  "vdup.u16   q10, d31[1]                                 \n" \
+  "vdup.u16   q11, d31[2]                                 \n" \
+  "vdup.u16   q12, d31[3]                                 \n" \
+  "vdup.u16   d31, d31[0]                                 \n"
 
 // q0: B uint16x8_t
 // q1: G uint16x8_t
@@ -154,6 +156,29 @@ void I444ToARGBRow_NEON(const uint8_t* src_y,
       : [kUVCoeff] "r"(&yuvconstants->kUVCoeff),           // %[kUVCoeff]
         [kRGBCoeffBias] "r"(&yuvconstants->kRGBCoeffBias)  // %[kRGBCoeffBias]
       : "cc", "memory", YUVTORGB_REGS, "d6");
+}
+
+void I444ToRGB24Row_NEON(const uint8_t* src_y,
+                         const uint8_t* src_u,
+                         const uint8_t* src_v,
+                         uint8_t* dst_rgb24,
+                         const struct YuvConstants* yuvconstants,
+                         int width) {
+  asm volatile(
+      YUVTORGB_SETUP
+      "1:                                        \n" READYUV444 YUVTORGB
+          RGBTORGB8
+      "subs        %[width], %[width], #8        \n"
+      "vst3.8      {d0, d2, d4}, [%[dst_rgb24]]! \n"
+      "bgt         1b                            \n"
+      : [src_y] "+r"(src_y),                               // %[src_y]
+        [src_u] "+r"(src_u),                               // %[src_u]
+        [src_v] "+r"(src_v),                               // %[src_v]
+        [dst_rgb24] "+r"(dst_rgb24),                       // %[dst_argb]
+        [width] "+r"(width)                                // %[width]
+      : [kUVCoeff] "r"(&yuvconstants->kUVCoeff),           // %[kUVCoeff]
+        [kRGBCoeffBias] "r"(&yuvconstants->kRGBCoeffBias)  // %[kRGBCoeffBias]
+      : "cc", "memory", YUVTORGB_REGS);
 }
 
 void I422ToARGBRow_NEON(const uint8_t* src_y,
@@ -586,16 +611,36 @@ void DetileRow_NEON(const uint8_t* src,
                     int width) {
   asm volatile(
       "1:                                        \n"
-      "vld1.16     {q0}, [%0], %3                \n"  // load 16 bytes
+      "vld1.8      {q0}, [%0], %3                \n"  // load 16 bytes
       "subs        %2, %2, #16                   \n"  // 16 processed per loop
-      "pld         [%0, 1792]                    \n"
-      "vst1.16     {q0}, [%1]!                   \n"  // store 16 bytes
+      "pld         [%0, #1792]                   \n"
+      "vst1.8      {q0}, [%1]!                   \n"  // store 16 bytes
       "bgt         1b                            \n"
       : "+r"(src),            // %0
         "+r"(dst),            // %1
         "+r"(width)           // %2
       : "r"(src_tile_stride)  // %3
       : "cc", "memory", "q0"  // Clobber List
+  );
+}
+
+// Reads 16 byte Y's of 16 bits from tile and writes out 16 Y's.
+void DetileRow_16_NEON(const uint16_t* src,
+                       ptrdiff_t src_tile_stride,
+                       uint16_t* dst,
+                       int width) {
+  asm volatile(
+      "1:                                        \n"
+      "vld1.16     {q0, q1}, [%0], %3            \n"  // load 16 pixels
+      "subs        %2, %2, #16                   \n"  // 16 processed per loop
+      "pld         [%0, #3584]                   \n"
+      "vst1.16     {q0, q1}, [%1]!               \n"  // store 16 pixels
+      "bgt         1b                            \n"
+      : "+r"(src),                  // %0
+        "+r"(dst),                  // %1
+        "+r"(width)                 // %2
+      : "r"(src_tile_stride * 2)    // %3
+      : "cc", "memory", "q0", "q1"  // Clobber List
   );
 }
 
@@ -609,7 +654,7 @@ void DetileSplitUVRow_NEON(const uint8_t* src_uv,
       "1:                                        \n"
       "vld2.8      {d0, d1}, [%0], %4            \n"
       "subs        %3, %3, #16                   \n"
-      "pld         [%0, 1792]                    \n"
+      "pld         [%0, #1792]                   \n"
       "vst1.8      {d0}, [%1]!                   \n"
       "vst1.8      {d1}, [%2]!                   \n"
       "bgt         1b                            \n"
@@ -625,20 +670,20 @@ void DetileSplitUVRow_NEON(const uint8_t* src_uv,
 #if LIBYUV_USE_ST2
 // Read 16 Y, 8 UV, and write 8 YUYV.
 void DetileToYUY2_NEON(const uint8_t* src_y,
-                         ptrdiff_t src_y_tile_stride,
-                         const uint8_t* src_uv,
-                         ptrdiff_t src_uv_tile_stride,
-                         uint8_t* dst_yuy2,
-                         int width) {
+                       ptrdiff_t src_y_tile_stride,
+                       const uint8_t* src_uv,
+                       ptrdiff_t src_uv_tile_stride,
+                       uint8_t* dst_yuy2,
+                       int width) {
   asm volatile(
-      "1:                                       \n"
-      "vld1.8     q0, [%0], %4                  \n" // Load 16 Y
-      "pld        [%0, 1792]                    \n"
-      "vld1.8     q1, [%1], %5                  \n" // Load 8 UV
-      "pld        [%1, 1792]                    \n"
-      "subs       %3, %3, #16                   \n"
-      "vst2.8     {q0, q1}, [%2]!               \n"
-      "bgt        1b                            \n"
+      "1:                                        \n"
+      "vld1.8      {q0}, [%0], %4                \n"  // Load 16 Y
+      "pld         [%0, #1792]                   \n"
+      "vld1.8      {q1}, [%1], %5                \n"  // Load 8 UV
+      "pld         [%1, #1792]                   \n"
+      "subs        %3, %3, #16                   \n"
+      "vst2.8      {q0, q1}, [%2]!               \n"
+      "bgt         1b                            \n"
       : "+r"(src_y),                            // %0
         "+r"(src_uv),                           // %1
         "+r"(dst_yuy2),                         // %2
@@ -651,21 +696,21 @@ void DetileToYUY2_NEON(const uint8_t* src_y,
 #else
 // Read 16 Y, 8 UV, and write 8 YUYV.
 void DetileToYUY2_NEON(const uint8_t* src_y,
-                         ptrdiff_t src_y_tile_stride,
-                         const uint8_t* src_uv,
-                         ptrdiff_t src_uv_tile_stride,
-                         uint8_t* dst_yuy2,
-                         int width) {
+                       ptrdiff_t src_y_tile_stride,
+                       const uint8_t* src_uv,
+                       ptrdiff_t src_uv_tile_stride,
+                       uint8_t* dst_yuy2,
+                       int width) {
   asm volatile(
-      "1:                                       \n"
-      "vld1.8     q0, [%0], %4                  \n" // Load 16 Y
-      "vld1.8     q1, [%1], %5                  \n" // Load 8 UV
-      "subs       %3, %3, #16                   \n"
-      "pld        [%0, 1792]                    \n"
-      "vzip.8     q0, q1                        \n"
-      "pld        [%1, 1792]                    \n"
-      "vst1.8     {q0, q1}, [%2]!               \n"
-      "bgt        1b                            \n"
+      "1:                                        \n"
+      "vld1.8      {q0}, [%0], %4                \n"  // Load 16 Y
+      "vld1.8      {q1}, [%1], %5                \n"  // Load 8 UV
+      "subs        %3, %3, #16                   \n"
+      "pld         [%0, #1792]                   \n"
+      "vzip.8      q0, q1                        \n"
+      "pld         [%1, #1792]                   \n"
+      "vst1.8      {q0, q1}, [%2]!               \n"
+      "bgt         1b                            \n"
       : "+r"(src_y),                            // %0
         "+r"(src_uv),                           // %1
         "+r"(dst_yuy2),                         // %2
@@ -676,6 +721,46 @@ void DetileToYUY2_NEON(const uint8_t* src_y,
   );
 }
 #endif
+
+void UnpackMT2T_NEON(const uint8_t* src, uint16_t* dst, size_t size) {
+  asm volatile(
+      "1:                                        \n"
+      "vld1.8      q14, [%0]!                    \n"  // Load lower bits.
+      "vld1.8      q9, [%0]!                     \n"  // Load upper bits row
+                                                      // by row.
+      "vld1.8      q11, [%0]!                    \n"
+      "vld1.8      q13, [%0]!                    \n"
+      "vld1.8      q15, [%0]!                    \n"
+      "vshl.u8     q8, q14, #6                   \n"  // Shift lower bit data
+                                                      // appropriately.
+      "vshl.u8     q10, q14, #4                  \n"
+      "vshl.u8     q12, q14, #2                  \n"
+      "vzip.u8     q8, q9                        \n"  // Interleave upper and
+                                                      // lower bits.
+      "vzip.u8     q10, q11                      \n"
+      "vzip.u8     q12, q13                      \n"
+      "vzip.u8     q14, q15                      \n"
+      "vsri.u16    q8, q8, #10                   \n"  // Copy upper 6 bits
+                                                      // into lower 6 bits for
+                                                      // better accuracy in
+                                                      // conversions.
+      "vsri.u16    q9, q9, #10                   \n"
+      "vsri.u16    q10, q10, #10                 \n"
+      "vsri.u16    q11, q11, #10                 \n"
+      "vsri.u16    q12, q12, #10                 \n"
+      "vsri.u16    q13, q13, #10                 \n"
+      "vsri.u16    q14, q14, #10                 \n"
+      "vsri.u16    q15, q15, #10                 \n"
+      "vstmia      %1!, {q8-q15}                 \n"  // Store pixel block (64
+                                                      // pixels).
+      "subs        %2, %2, #80                   \n"
+      "bgt         1b                            \n"
+      : "+r"(src),  // %0
+        "+r"(dst),  // %1
+        "+r"(size)  // %2
+      :
+      : "cc", "memory", "q8", "q9", "q10", "q11", "q12", "q13", "q14", "q15");
+}
 
 // Reads 16 U's and V's and writes out 16 pairs of UV.
 void MergeUVRow_NEON(const uint8_t* src_u,
@@ -1554,6 +1639,29 @@ void UYVYToUVRow_NEON(const uint8_t* src_uyvy,
         "+r"(dst_u),        // %2
         "+r"(dst_v),        // %3
         "+r"(width)         // %4
+      :
+      : "cc", "memory", "d0", "d1", "d2", "d3", "d4", "d5", "d6",
+        "d7"  // Clobber List
+  );
+}
+
+void YUY2ToNVUVRow_NEON(const uint8_t* src_yuy2,
+                        int stride_yuy2,
+                        uint8_t* dst_uv,
+                        int width) {
+  asm volatile(
+      "add         %1, %0, %1                    \n"  // stride + src_yuy2
+      "1:                                        \n"
+      "vld2.8      {q0, q1}, [%0]!               \n"  // load 16 pixels of YUY2.
+      "subs        %3, %3, #16                   \n"  // 16 pixels = 8 UVs.
+      "vld2.8      {q2, q3}, [%1]!               \n"  // load next row YUY2.
+      "vrhadd.u8   q4, q1, q3                    \n"  // average rows of UV
+      "vst1.8      {q4}, [%2]!                   \n"  // store 8 UV.
+      "bgt         1b                            \n"
+      : "+r"(src_yuy2),     // %0
+        "+r"(stride_yuy2),  // %1
+        "+r"(dst_uv),       // %2
+        "+r"(width)         // %3
       :
       : "cc", "memory", "d0", "d1", "d2", "d3", "d4", "d5", "d6",
         "d7"  // Clobber List
@@ -3791,31 +3899,25 @@ void DivideRow_16_NEON(const uint16_t* src_y,
                        int scale,
                        int width) {
   asm volatile(
-      "vdup.16     q0, %3                        \n"
+      "vdup.16     d8, %3                        \n"
       "1:                                        \n"
-      "vld1.16     {q1}, [%0]!                   \n"
-      "vld1.16     {q2}, [%0]!                   \n"
-      "vmovl.u16   q3, d2                        \n"
-      "vmovl.u16   q1, d3                        \n"
-      "vmovl.u16   q4, d4                        \n"
-      "vmovl.u16   q2, d5                        \n"
-      "vshl.u32    q3, q3, q0                    \n"
-      "vshl.u32    q4, q4, q0                    \n"
-      "vshl.u32    q1, q1, q0                    \n"
-      "vshl.u32    q2, q2, q0                    \n"
-      "vmovn.u32   d2, q3                        \n"
-      "vmovn.u32   d3, q1                        \n"
-      "vmovn.u32   d4, q4                        \n"
-      "vmovn.u32   d5, q2                        \n"
-      "vst1.16     {q1}, [%1]!                   \n"
-      "vst1.16     {q2}, [%1]!                   \n"
+      "vld1.16     {q2, q3}, [%0]!               \n"
+      "vmull.u16   q0, d4, d8                    \n"
+      "vmull.u16   q1, d5, d8                    \n"
+      "vmull.u16   q2, d6, d8                    \n"
+      "vmull.u16   q3, d7, d8                    \n"
+      "vshrn.u32   d0, q0, #16                   \n"
+      "vshrn.u32   d1, q1, #16                   \n"
+      "vshrn.u32   d2, q2, #16                   \n"
+      "vshrn.u32   d3, q3, #16                   \n"
+      "vst1.16     {q0, q1}, [%1]!               \n"  // store 16 pixels
       "subs        %2, %2, #16                   \n"  // 16 src pixels per loop
       "bgt         1b                            \n"
       : "+r"(src_y),  // %0
         "+r"(dst_y),  // %1
         "+r"(width)   // %2
       : "r"(scale)    // %3
-      : "cc", "memory", "q0", "q1", "q2", "q3", "q4");
+      : "cc", "memory", "q0", "q1", "q2", "q3", "d8");
 }
 
 // Use scale to convert lsb formats to msb, depending how many bits there are:

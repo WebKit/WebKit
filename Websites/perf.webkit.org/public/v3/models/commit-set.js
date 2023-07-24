@@ -72,7 +72,7 @@ class CommitSet extends DataModelObject {
     topLevelRepositories() { return Repository.sortByNamePreferringOnesWithURL(this._repositories.filter((repository) => !this.ownerRevisionForRepository(repository))); }
     ownedRepositoriesForOwnerRepository(repository) { return this._ownerRepositoryToOwnedRepositoriesMap.get(repository); }
     commitsWithTestability() { return this.commits().filter((commit) => !!commit.testability()); }
-    commits() { return  Array.from(this._repositoryToCommitMap.values()); }
+    commits() { return Array.from(this._repositoryToCommitMap.values()); }
 
     areAllRootsAvailable(earliestCreationTime)
     {

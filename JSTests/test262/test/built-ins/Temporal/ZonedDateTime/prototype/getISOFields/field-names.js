@@ -20,5 +20,5 @@ assert.sameValue(result.isoMillisecond, 987, "isoMillisecond result");
 assert.sameValue(result.isoMicrosecond, 654, "isoMicrosecond result");
 assert.sameValue(result.isoNanosecond, 321, "isoNanosecond result");
 assert.sameValue(result.offset, "+00:00", "offset result");
-assert.sameValue(result.calendar.id, "iso8601", "calendar result");
-assert.sameValue(result.timeZone.id, "UTC", "timeZone result");
+assert.sameValue(result.calendar, "iso8601", "calendar result");
+assert.sameValue(result.timeZone, "UTC", "timeZone result");

@@ -151,10 +151,7 @@ class Manager(object):
                 self._stream.writeln('')
 
     def _initialize_devices(self):
-        # FIXME: Remove the special-case for iOS Simulator once https://bugs.webkit.org/show_bug.cgi?id=256806 is resolved
-        if self._port.port_name in ('iphone-simulator', 'ios-simulator'):
-            SimulatedDeviceManager.initialize_devices(DeviceRequest(DeviceType(hardware_family='iPhone', hardware_type='SE (3rd generation)'), allow_incomplete_match=True), self.host, simulator_ui=False)
-        elif 'simulator' in self._port.port_name:
+        if 'simulator' in self._port.port_name:
             SimulatedDeviceManager.initialize_devices(DeviceRequest(self._port.supported_device_types()[0], allow_incomplete_match=True), self.host, simulator_ui=False)
         elif 'device' in self._port.port_name:
             raise RuntimeError('Running api tests on {} is not supported'.format(self._port.port_name))
@@ -293,9 +290,12 @@ class Manager(object):
                     start_time=start_time,
                     end_time=end_time,
                     tests_skipped=len(result_dictionary['Skipped']),
-                ),
-                results={test: Upload.create_test_result(actual=status_to_test_result[result[0]])
-                         for test, result in iteritems(runner.results) if result[0] in status_to_test_result},
+                ), results={
+                    test: Upload.create_test_result(
+                        actual=status_to_test_result[result[0]],
+                        time=int(result[2] * 1000),
+                    ) for test, result in iteritems(runner.results) if result[0] in status_to_test_result
+                },
             )
             for url in self._options.report_urls:
                 self._stream.write_update('Uploading to {} ...'.format(url))

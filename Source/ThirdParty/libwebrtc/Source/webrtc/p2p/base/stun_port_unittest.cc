@@ -14,6 +14,7 @@
 
 #include "api/test/mock_async_dns_resolver.h"
 #include "p2p/base/basic_packet_socket_factory.h"
+#include "p2p/base/mock_dns_resolving_packet_socket_factory.h"
 #include "p2p/base/test_stun_server.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/helpers.h"
@@ -33,10 +34,6 @@ using ::testing::InvokeArgument;
 using ::testing::Return;
 using ::testing::ReturnPointee;
 using ::testing::SetArgPointee;
-
-using DnsResolverExpectations =
-    std::function<void(webrtc::MockAsyncDnsResolver*,
-                       webrtc::MockAsyncDnsResolverResult*)>;
 
 static const SocketAddress kLocalAddr("127.0.0.1", 0);
 static const SocketAddress kIPv6LocalAddr("::1", 0);
@@ -59,33 +56,7 @@ static const uint32_t kIPv6StunCandidatePriority =
 static const int kInfiniteLifetime = -1;
 static const int kHighCostPortKeepaliveLifetimeMs = 2 * 60 * 1000;
 
-// A PacketSocketFactory implementation that uses a mock DnsResolver and allows
-// setting expectations on the resolver and results.
-class MockDnsResolverPacketSocketFactory
-    : public rtc::BasicPacketSocketFactory {
- public:
-  explicit MockDnsResolverPacketSocketFactory(
-      rtc::SocketFactory* socket_factory)
-      : rtc::BasicPacketSocketFactory(socket_factory) {}
-
-  std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver()
-      override {
-    std::unique_ptr<webrtc::MockAsyncDnsResolver> resolver =
-        std::make_unique<webrtc::MockAsyncDnsResolver>();
-    if (expectations_) {
-      expectations_(resolver.get(), &resolver_result_);
-    }
-    return resolver;
-  }
-
-  void SetExpectations(DnsResolverExpectations expectations) {
-    expectations_ = expectations;
-  }
-
- private:
-  webrtc::MockAsyncDnsResolverResult resolver_result_;
-  DnsResolverExpectations expectations_;
-};
+constexpr uint64_t kTiebreakerDefault = 44444;
 
 class FakeMdnsResponder : public webrtc::MdnsResponderInterface {
  public:
@@ -165,6 +136,7 @@ class StunPortTestBase : public ::testing::Test, public sigslot::has_slots<> {
         rtc::Thread::Current(), socket_factory(), &network_, 0, 0,
         rtc::CreateRandomString(16), rtc::CreateRandomString(22), stun_servers,
         absl::nullopt, field_trials);
+    stun_port_->SetIceTiebreaker(kTiebreakerDefault);
     stun_port_->set_stun_keepalive_delay(stun_keepalive_delay_);
     // If `stun_keepalive_lifetime_` is negative, let the stun port
     // choose its lifetime from the network type.
@@ -195,6 +167,7 @@ class StunPortTestBase : public ::testing::Test, public sigslot::has_slots<> {
         rtc::CreateRandomString(16), rtc::CreateRandomString(22), false,
         absl::nullopt, field_trials);
     ASSERT_TRUE(stun_port_ != NULL);
+    stun_port_->SetIceTiebreaker(kTiebreakerDefault);
     ServerAddresses stun_servers;
     stun_servers.insert(server_addr);
     stun_port_->set_server_addresses(stun_servers);
@@ -330,12 +303,13 @@ class StunPortWithMockDnsResolverTest : public StunPortTest {
     return &socket_factory_;
   }
 
-  void SetDnsResolverExpectations(DnsResolverExpectations expectations) {
+  void SetDnsResolverExpectations(
+      rtc::MockDnsResolvingPacketSocketFactory::Expectations expectations) {
     socket_factory_.SetExpectations(expectations);
   }
 
  private:
-  MockDnsResolverPacketSocketFactory socket_factory_;
+  rtc::MockDnsResolvingPacketSocketFactory socket_factory_;
 };
 
 // Test that we can get an address from a STUN server specified by a hostname.
@@ -343,8 +317,8 @@ TEST_F(StunPortWithMockDnsResolverTest, TestPrepareAddressHostname) {
   SetDnsResolverExpectations(
       [](webrtc::MockAsyncDnsResolver* resolver,
          webrtc::MockAsyncDnsResolverResult* resolver_result) {
-        EXPECT_CALL(*resolver, Start(kValidHostnameAddr, _))
-            .WillOnce(InvokeArgument<1>());
+        EXPECT_CALL(*resolver, Start(kValidHostnameAddr, /*family=*/AF_INET, _))
+            .WillOnce(InvokeArgument<2>());
         EXPECT_CALL(*resolver, result)
             .WillRepeatedly(ReturnPointee(resolver_result));
         EXPECT_CALL(*resolver_result, GetError).WillOnce(Return(0));
@@ -678,12 +652,13 @@ class StunIPv6PortTestWithMockDnsResolver : public StunIPv6PortTest {
     return &socket_factory_;
   }
 
-  void SetDnsResolverExpectations(DnsResolverExpectations expectations) {
+  void SetDnsResolverExpectations(
+      rtc::MockDnsResolvingPacketSocketFactory::Expectations expectations) {
     socket_factory_.SetExpectations(expectations);
   }
 
  private:
-  MockDnsResolverPacketSocketFactory socket_factory_;
+  rtc::MockDnsResolvingPacketSocketFactory socket_factory_;
 };
 
 // Test that we can get an address from a STUN server specified by a hostname.
@@ -691,30 +666,8 @@ TEST_F(StunIPv6PortTestWithMockDnsResolver, TestPrepareAddressHostname) {
   SetDnsResolverExpectations(
       [](webrtc::MockAsyncDnsResolver* resolver,
          webrtc::MockAsyncDnsResolverResult* resolver_result) {
-        EXPECT_CALL(*resolver, Start(kValidHostnameAddr, _))
-            .WillOnce(InvokeArgument<1>());
-        EXPECT_CALL(*resolver, result)
-            .WillRepeatedly(ReturnPointee(resolver_result));
-        EXPECT_CALL(*resolver_result, GetError).WillOnce(Return(0));
-        EXPECT_CALL(*resolver_result, GetResolvedAddress(AF_INET6, _))
-            .WillOnce(DoAll(SetArgPointee<1>(SocketAddress("::1", 5000)),
-                            Return(true)));
-      });
-  CreateStunPort(kValidHostnameAddr);
-  PrepareAddress();
-  EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
-  ASSERT_EQ(1U, port()->Candidates().size());
-  EXPECT_TRUE(kIPv6LocalAddr.EqualIPs(port()->Candidates()[0].address()));
-  EXPECT_EQ(kIPv6StunCandidatePriority, port()->Candidates()[0].priority());
-}
-
-TEST_F(StunIPv6PortTestWithMockDnsResolver, TestPrepareAddressHostnameFamily) {
-  webrtc::test::ScopedKeyValueConfig field_trials(
-      "WebRTC-IPv6NetworkResolutionFixes/Enabled/");
-  SetDnsResolverExpectations(
-      [](webrtc::MockAsyncDnsResolver* resolver,
-         webrtc::MockAsyncDnsResolverResult* resolver_result) {
-        EXPECT_CALL(*resolver, Start(kValidHostnameAddr, AF_INET6, _))
+        EXPECT_CALL(*resolver,
+                    Start(kValidHostnameAddr, /*family=*/AF_INET6, _))
             .WillOnce(InvokeArgument<2>());
         EXPECT_CALL(*resolver, result)
             .WillRepeatedly(ReturnPointee(resolver_result));
@@ -723,7 +676,7 @@ TEST_F(StunIPv6PortTestWithMockDnsResolver, TestPrepareAddressHostnameFamily) {
             .WillOnce(DoAll(SetArgPointee<1>(SocketAddress("::1", 5000)),
                             Return(true)));
       });
-  CreateStunPort(kValidHostnameAddr, &field_trials);
+  CreateStunPort(kValidHostnameAddr);
   PrepareAddress();
   EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
   ASSERT_EQ(1U, port()->Candidates().size());

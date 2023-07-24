@@ -98,7 +98,7 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (240,215) size 230x13 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 230x12
               chunk 1 text run 1 at (240.00,225.00) startOffset 0 endOffset 43 width 230.00: "http://purl.org/dc/elements/1.1/description"
-    RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 269x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.7 $"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.40: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

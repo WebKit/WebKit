@@ -410,6 +410,46 @@ void TransposeUVWx8_NEON(const uint8_t* src,
       : "r"(&kVTbl4x4TransposeDi)  // %8
       : "memory", "cc", "q0", "q1", "q2", "q3", "q8", "q9", "q10", "q11");
 }
+
+// Transpose 32 bit values (ARGB)
+void Transpose4x4_32_NEON(const uint8_t* src,
+                          int src_stride,
+                          uint8_t* dst,
+                          int dst_stride,
+                          int width) {
+  const uint8_t* src1 = src + src_stride;
+  const uint8_t* src2 = src1 + src_stride;
+  const uint8_t* src3 = src2 + src_stride;
+  uint8_t* dst1 = dst + dst_stride;
+  uint8_t* dst2 = dst1 + dst_stride;
+  uint8_t* dst3 = dst2 + dst_stride;
+  asm volatile(
+      // Main loop transpose 4x4.  Read a column, write a row.
+      "1:                                        \n"
+      "vld4.32     {d0[0], d2[0], d4[0], d6[0]}, [%0], %9 \n"
+      "vld4.32     {d0[1], d2[1], d4[1], d6[1]}, [%1], %9 \n"
+      "vld4.32     {d1[0], d3[0], d5[0], d7[0]}, [%2], %9 \n"
+      "vld4.32     {d1[1], d3[1], d5[1], d7[1]}, [%3], %9 \n"
+      "subs        %8, %8, #4                    \n"  // w -= 4
+      "vst1.8      {q0}, [%4]!                   \n"
+      "vst1.8      {q1}, [%5]!                   \n"
+      "vst1.8      {q2}, [%6]!                   \n"
+      "vst1.8      {q3}, [%7]!                   \n"
+      "bgt         1b                            \n"
+
+      : "+r"(src),                        // %0
+        "+r"(src1),                       // %1
+        "+r"(src2),                       // %2
+        "+r"(src3),                       // %3
+        "+r"(dst),                        // %4
+        "+r"(dst1),                       // %5
+        "+r"(dst2),                       // %6
+        "+r"(dst3),                       // %7
+        "+r"(width)                       // %8
+      : "r"((ptrdiff_t)(src_stride * 4))  // %9
+      : "memory", "cc", "q0", "q1", "q2", "q3");
+}
+
 #endif  // defined(__ARM_NEON__) && !defined(__aarch64__)
 
 #ifdef __cplusplus

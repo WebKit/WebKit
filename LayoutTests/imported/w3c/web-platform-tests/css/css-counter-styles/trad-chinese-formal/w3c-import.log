@@ -14,13 +14,22 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/counter-trad-chinese-formal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/counter-trad-chinese-formal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/counter-trad-chinese-formal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-086-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-086-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-086.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-087-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-087-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-087.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-088-alt-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-088-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-088-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-088.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-089-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-089-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-089.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-090-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-090-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/css3-counter-styles-090.html

@@ -57,8 +57,8 @@ public:
     JS_EXPORT_PRIVATE unsigned endColumn() const;
 
     std::optional<int> overrideLineNumber(VM&) const;
-    unsigned typeProfilingStartOffset(VM&) const;
-    unsigned typeProfilingEndOffset(VM&) const;
+    unsigned typeProfilingStartOffset() const;
+    unsigned typeProfilingEndOffset() const;
 
     bool usesArguments() const { return m_features & ArgumentsFeature; }
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }

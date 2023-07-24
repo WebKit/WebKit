@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -218,7 +218,7 @@ static GlyphOverflow computedVisualOverflowForDecorations(const RenderStyle& lin
     GlyphOverflow overflowResult;
 
     if (decorationStyle == TextDecorationStyle::Wavy) {
-        wavyStrokeParameters = WebCore::wavyStrokeParameters(lineStyle.computedFontPixelSize());
+        wavyStrokeParameters = WebCore::wavyStrokeParameters(lineStyle.computedFontSize());
         wavyOffset = wavyOffsetFromDecoration();
         overflowResult.left = strokeThickness;
         overflowResult.right = strokeThickness;

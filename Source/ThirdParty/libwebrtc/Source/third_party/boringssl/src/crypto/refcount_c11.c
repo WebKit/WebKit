@@ -22,8 +22,6 @@
 #include <stdatomic.h>
 #include <stdlib.h>
 
-#include <openssl/type_check.h>
-
 
 // See comment above the typedef of CRYPTO_refcount_t about these tests.
 static_assert(alignof(CRYPTO_refcount_t) == alignof(_Atomic CRYPTO_refcount_t),

@@ -6,10 +6,6 @@
 # the RTC_NO_SANITIZE macro. Please think twice before adding new exceptions.
 
 #############################################################################
-# YASM does some funny things that UBsan doesn't like.
-# https://crbug.com/489901
-src:*/third_party/yasm/*
-
 # OpenH264 triggers some errors that are out of our control.
 src:*/third_party/ffmpeg/libavcodec/*
 src:*/third_party/openh264/*
@@ -22,3 +18,9 @@ src:*/third_party/libvpx/source/libvpx/vp8/*
 #############################################################################
 # Ignore system libraries.
 src:*/usr/*
+
+#############################################################################
+[alignment]
+# Libaom and libsrtp are doing unaligned memory access.
+src:*/third_party/libaom/source/libaom/*
+src:*/third_party/libsrtp/srtp/srtp.c

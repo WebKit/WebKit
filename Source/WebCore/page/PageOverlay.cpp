@@ -64,6 +64,11 @@ PageOverlay::PageOverlay(Client& client, OverlayType overlayType, AlwaysTileOver
 
 PageOverlay::~PageOverlay() = default;
 
+Page* PageOverlay::page() const
+{
+    return m_page.get();
+}
+
 PageOverlayController* PageOverlay::controller() const
 {
     if (!m_page)

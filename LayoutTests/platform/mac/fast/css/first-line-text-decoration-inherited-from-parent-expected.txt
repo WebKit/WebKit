@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {H3} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 584x22
-          text run at (0,0) width 584: "Test case for First-line text-decoration style inherited from Parent Block"
+        RenderText {#text} at (0,0) size 575x22
+          text run at (0,0) width 575: "Test case for First-line text-decoration style inherited from Parent Block"
       RenderBlock {P} at (0,40) size 784x19
         RenderText {#text} at (0,0) size 461x18
           text run at (0,0) width 461: "The First line text and its text-decoration must be of the same color."

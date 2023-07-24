@@ -11,18 +11,10 @@ const instance = new Temporal.Calendar("iso8601");
 
 const calendar = "2016-12-31T23:59:60";
 
-let arg = { year: 1976, monthCode: "M11", day: 18, calendar };
-const result1 = instance.weekOfYear(arg);
+const arg = { year: 1976, monthCode: "M11", day: 18, calendar };
+const result = instance.weekOfYear(arg);
 assert.sameValue(
-  result1,
+  result,
   47,
   "leap second is a valid ISO string for calendar"
-);
-
-arg = { year: 1976, monthCode: "M11", day: 18, calendar: { calendar } };
-const result2 = instance.weekOfYear(arg);
-assert.sameValue(
-  result2,
-  47,
-  "leap second is a valid ISO string for calendar (nested property)"
 );

@@ -1428,6 +1428,45 @@ void ScaleARGBFilterCols_NEON(uint8_t* dst_argb,
 
 #undef LOAD2_DATA32_LANE
 
+void ScaleUVRowDown2_NEON(const uint8_t* src_ptr,
+                          ptrdiff_t src_stride,
+                          uint8_t* dst,
+                          int dst_width) {
+  (void)src_stride;
+  asm volatile(
+      "1:                                        \n"
+      "vld2.16     {d0, d2}, [%0]!               \n"  // load 8 UV pixels.
+      "vld2.16     {d1, d3}, [%0]!               \n"  // load next 8 UV
+      "subs        %2, %2, #8                    \n"  // 8 processed per loop.
+      "vst1.16     {q1}, [%1]!                   \n"  // store 8 UV
+      "bgt         1b                            \n"
+      : "+r"(src_ptr),   // %0
+        "+r"(dst),       // %1
+        "+r"(dst_width)  // %2
+      :
+      : "memory", "cc", "q0", "q1");
+}
+
+void ScaleUVRowDown2Linear_NEON(const uint8_t* src_ptr,
+                                ptrdiff_t src_stride,
+                                uint8_t* dst,
+                                int dst_width) {
+  (void)src_stride;
+  asm volatile(
+      "1:                                        \n"
+      "vld2.16     {d0, d2}, [%0]!               \n"  // load 8 UV pixels.
+      "vld2.16     {d1, d3}, [%0]!               \n"  // load next 8 UV
+      "subs        %2, %2, #8                    \n"  // 8 processed per loop.
+      "vrhadd.u8   q0, q0, q1                    \n"  // rounding half add
+      "vst1.16     {q0}, [%1]!                   \n"  // store 8 UV
+      "bgt         1b                            \n"
+      : "+r"(src_ptr),   // %0
+        "+r"(dst),       // %1
+        "+r"(dst_width)  // %2
+      :
+      : "memory", "cc", "q0", "q1");
+}
+
 void ScaleUVRowDown2Box_NEON(const uint8_t* src_ptr,
                              ptrdiff_t src_stride,
                              uint8_t* dst,

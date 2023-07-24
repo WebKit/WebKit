@@ -48,8 +48,7 @@ public:
     Element& element() { return m_element; }
     const Element& element() const { return m_element; }
 
-    enum LegacyTypeSupport { DisallowLegacyTypeInTypeAttribute, AllowLegacyTypeInTypeAttribute };
-    bool prepareScript(const TextPosition& scriptStartPosition = TextPosition(), LegacyTypeSupport = DisallowLegacyTypeInTypeAttribute);
+    bool prepareScript(const TextPosition& scriptStartPosition = TextPosition());
 
     String scriptCharset() const { return m_characterEncoding; }
     WEBCORE_EXPORT String scriptContent() const;
@@ -81,6 +80,8 @@ public:
     void ref();
     void deref();
 
+    static std::optional<ScriptType> determineScriptType(const String& typeAttribute, const String& languageAttribute, bool isHTMLDocument = true);
+
 protected:
     ScriptElement(Element&, bool createdByParser, bool isEvaluated);
 
@@ -106,9 +107,8 @@ protected:
 private:
     void executeScriptAndDispatchEvent(LoadableScript&);
 
-    std::optional<ScriptType> determineScriptType(LegacyTypeSupport) const;
+    std::optional<ScriptType> determineScriptType() const;
     bool ignoresLoadRequest() const;
-    bool isScriptForEventSupported() const;
     void dispatchLoadEventRespectingUserGestureIndicator();
 
     bool requestClassicScript(const String& sourceURL);
@@ -119,10 +119,10 @@ private:
     virtual String charsetAttributeValue() const = 0;
     virtual String typeAttributeValue() const = 0;
     virtual String languageAttributeValue() const = 0;
-    virtual String forAttributeValue() const = 0;
-    virtual String eventAttributeValue() const = 0;
     virtual ReferrerPolicy referrerPolicy() const = 0;
     virtual RequestPriority fetchPriorityHint() const { return RequestPriority::Auto; }
+
+    virtual bool isScriptPreventedByAttributes() const { return false; }
 
     Element& m_element;
     OrdinalNumber m_startLineNumber { OrdinalNumber::beforeFirst() };

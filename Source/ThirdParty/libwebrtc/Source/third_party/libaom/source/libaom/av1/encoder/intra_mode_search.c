@@ -10,6 +10,7 @@
  */
 
 #include "av1/common/av1_common_int.h"
+#include "av1/common/cfl.h"
 #include "av1/common/reconintra.h"
 
 #include "av1/encoder/intra_mode_search.h"
@@ -149,7 +150,7 @@ static void compute_avg_log_variance(const AV1_COMP *const cpi, MACROBLOCK *x,
             x->plane[0].src.buf + i * x->plane[0].src.stride + j,
             x->plane[0].src.stride, is_hbd);
         block_4x4_var_info->var = src_var;
-        log_src_var = log(1.0 + src_var / 16.0);
+        log_src_var = log1p(src_var / 16.0);
         block_4x4_var_info->log_var = log_src_var;
       } else {
         // When source variance is already calculated and available for
@@ -157,7 +158,7 @@ static void compute_avg_log_variance(const AV1_COMP *const cpi, MACROBLOCK *x,
         // available, then retrieve from buffer. Else, calculate the same and
         // store to the buffer.
         if (log_src_var < 0) {
-          log_src_var = log(1.0 + src_var / 16.0);
+          log_src_var = log1p(src_var / 16.0);
           block_4x4_var_info->log_var = log_src_var;
         }
       }
@@ -167,7 +168,7 @@ static void compute_avg_log_variance(const AV1_COMP *const cpi, MACROBLOCK *x,
           cpi->ppi->fn_ptr[BLOCK_4X4].vf,
           xd->plane[0].dst.buf + i * xd->plane[0].dst.stride + j,
           xd->plane[0].dst.stride, is_hbd);
-      *avg_log_recon_variance += log(1.0 + recon_var / 16.0);
+      *avg_log_recon_variance += log1p(recon_var / 16.0);
     }
   }
 
@@ -228,7 +229,7 @@ static double intra_rd_variance_factor(const AV1_COMP *cpi, MACROBLOCK *x,
  */
 static int rd_pick_filter_intra_sby(const AV1_COMP *const cpi, MACROBLOCK *x,
                                     int *rate, int *rate_tokenonly,
-                                    int64_t *distortion, int *skippable,
+                                    int64_t *distortion, uint8_t *skippable,
                                     BLOCK_SIZE bsize, int mode_cost,
                                     PREDICTION_MODE best_mode_so_far,
                                     int64_t *best_rd, int64_t *best_model_rd,
@@ -640,6 +641,12 @@ static int cfl_pick_plane_parameter(const AV1_COMP *const cpi, MACROBLOCK *x,
   return est_best_cfl_idx;
 }
 
+static AOM_INLINE void set_invalid_cfl_parameters(
+    uint8_t *best_cfl_alpha_idx, int8_t *best_cfl_alpha_signs) {
+  *best_cfl_alpha_idx = 0;
+  *best_cfl_alpha_signs = 0;
+}
+
 static void cfl_pick_plane_rd(const AV1_COMP *const cpi, MACROBLOCK *x,
                               int plane, TX_SIZE tx_size, int cfl_search_range,
                               RD_STATS cfl_rd_arr[CFL_MAGS_SIZE],
@@ -717,28 +724,44 @@ static int cfl_rd_pick_alpha(MACROBLOCK *const x, const AV1_COMP *const cpi,
   av1_invalid_rd_stats(best_rd_stats);
 
   // As the dc pred data is same for different values of alpha, enable the
-  // caching of dc pred data.
-  xd->cfl.use_dc_pred_cache = 1;
+  // caching of dc pred data. Call clear_cfl_dc_pred_cache_flags() before
+  // returning to avoid the unintentional usage of cached dc pred data.
+  xd->cfl.use_dc_pred_cache = true;
   // Evaluate alpha parameter of each chroma plane.
   est_best_cfl_idx_u =
       cfl_pick_plane_parameter(cpi, x, 1, tx_size, cfl_search_range);
   est_best_cfl_idx_v =
       cfl_pick_plane_parameter(cpi, x, 2, tx_size, cfl_search_range);
 
-  // For cfl_search_range=1, further refinement of alpha is not enabled. Hence
-  // CfL index=0 for both the chroma planes implies invalid CfL mode.
-  if (cfl_search_range == 1 && est_best_cfl_idx_u == CFL_INDEX_ZERO &&
-      est_best_cfl_idx_v == CFL_INDEX_ZERO) {
-    // Set invalid CfL parameters here as CfL mode is invalid.
-    *best_cfl_alpha_idx = 0;
-    *best_cfl_alpha_signs = 0;
+  if (cfl_search_range == 1) {
+    // For cfl_search_range=1, further refinement of alpha is not enabled. Hence
+    // CfL index=0 for both the chroma planes implies invalid CfL mode.
+    if (est_best_cfl_idx_u == CFL_INDEX_ZERO &&
+        est_best_cfl_idx_v == CFL_INDEX_ZERO) {
+      set_invalid_cfl_parameters(best_cfl_alpha_idx, best_cfl_alpha_signs);
+      clear_cfl_dc_pred_cache_flags(&xd->cfl);
+      return 0;
+    }
 
-    // Clear the following flags to avoid the unintentional usage of cached dc
-    // pred data.
-    xd->cfl.use_dc_pred_cache = 0;
-    xd->cfl.dc_pred_is_cached[0] = 0;
-    xd->cfl.dc_pred_is_cached[1] = 0;
-    return 0;
+    int cfl_alpha_u, cfl_alpha_v;
+    CFL_SIGN_TYPE cfl_sign_u, cfl_sign_v;
+    const MB_MODE_INFO *mbmi = xd->mi[0];
+    cfl_idx_to_sign_and_alpha(est_best_cfl_idx_u, &cfl_sign_u, &cfl_alpha_u);
+    cfl_idx_to_sign_and_alpha(est_best_cfl_idx_v, &cfl_sign_v, &cfl_alpha_v);
+    const int joint_sign = cfl_sign_u * CFL_SIGNS + cfl_sign_v - 1;
+    // Compute alpha and mode signaling rate.
+    const int rate_overhead =
+        mode_costs->cfl_cost[joint_sign][CFL_PRED_U][cfl_alpha_u] +
+        mode_costs->cfl_cost[joint_sign][CFL_PRED_V][cfl_alpha_v] +
+        mode_costs
+            ->intra_uv_mode_cost[is_cfl_allowed(xd)][mbmi->mode][UV_CFL_PRED];
+    // Skip the CfL mode evaluation if the RD cost derived using the rate needed
+    // to signal the CfL mode and alpha parameter exceeds the ref_best_rd.
+    if (RDCOST(x->rdmult, rate_overhead, 0) > ref_best_rd) {
+      set_invalid_cfl_parameters(best_cfl_alpha_idx, best_cfl_alpha_signs);
+      clear_cfl_dc_pred_cache_flags(&xd->cfl);
+      return 0;
+    }
   }
 
   // Compute the rd cost of each chroma plane using the alpha parameters which
@@ -748,11 +771,7 @@ static int cfl_rd_pick_alpha(MACROBLOCK *const x, const AV1_COMP *const cpi,
   cfl_pick_plane_rd(cpi, x, 2, tx_size, cfl_search_range, cfl_rd_arr_v,
                     est_best_cfl_idx_v);
 
-  // Clear the following flags to avoid the unintentional usage of cached dc
-  // pred data.
-  xd->cfl.use_dc_pred_cache = 0;
-  xd->cfl.dc_pred_is_cached[0] = 0;
-  xd->cfl.dc_pred_is_cached[1] = 0;
+  clear_cfl_dc_pred_cache_flags(&xd->cfl);
 
   for (int ui = 0; ui < CFL_MAGS_SIZE; ++ui) {
     if (cfl_rd_arr_u[ui].rate == INT_MAX) continue;
@@ -789,8 +808,7 @@ static int cfl_rd_pick_alpha(MACROBLOCK *const x, const AV1_COMP *const cpi,
     av1_invalid_rd_stats(best_rd_stats);
     // Set invalid CFL parameters here since the rdcost is not better than
     // ref_best_rd.
-    *best_cfl_alpha_idx = 0;
-    *best_cfl_alpha_signs = 0;
+    set_invalid_cfl_parameters(best_cfl_alpha_idx, best_cfl_alpha_signs);
     return 0;
   }
   return 1;
@@ -812,7 +830,7 @@ static bool should_prune_chroma_smooth_pred_based_on_source_variance(
 
 int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
                                     int *rate, int *rate_tokenonly,
-                                    int64_t *distortion, int *skippable,
+                                    int64_t *distortion, uint8_t *skippable,
                                     BLOCK_SIZE bsize, TX_SIZE max_tx_size) {
   const AV1_COMMON *const cm = &cpi->common;
   MACROBLOCKD *xd = &x->e_mbd;
@@ -850,12 +868,20 @@ int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
   }
   IntraModeSearchState intra_search_state;
   init_intra_mode_search_state(&intra_search_state);
+  const CFL_ALLOWED_TYPE cfl_allowed = is_cfl_allowed(xd);
 
   // Search through all non-palette modes.
   for (int mode_idx = 0; mode_idx < UV_INTRA_MODES; ++mode_idx) {
     int this_rate;
     RD_STATS tokenonly_rd_stats;
     UV_PREDICTION_MODE mode = uv_rd_search_mode_order[mode_idx];
+
+    // Skip the current mode evaluation if the RD cost derived using the mode
+    // signaling rate exceeds the best_rd so far.
+    const int mode_rate =
+        mode_costs->intra_uv_mode_cost[cfl_allowed][mbmi->mode][mode];
+    if (RDCOST(x->rdmult, mode_rate, 0) > best_rd) continue;
+
     const int is_diagonal_mode = av1_is_diagonal_mode(get_uv_mode(mode));
     const int is_directional_mode = av1_is_directional_mode(get_uv_mode(mode));
 
@@ -885,7 +911,7 @@ int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
     const SPEED_FEATURES *sf = &cpi->sf;
     mbmi->angle_delta[PLANE_TYPE_UV] = 0;
     if (mode == UV_CFL_PRED) {
-      if (!is_cfl_allowed(xd) || !intra_mode_cfg->enable_cfl_intra) continue;
+      if (!cfl_allowed || !intra_mode_cfg->enable_cfl_intra) continue;
       assert(!is_directional_mode);
       const TX_SIZE uv_tx_size = av1_get_tx_size(AOM_PLANE_U, xd);
       if (!cfl_rd_pick_alpha(x, cpi, uv_tx_size, best_rd,
@@ -916,7 +942,7 @@ int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
 
       // Search through angle delta
       const int rate_overhead =
-          mode_costs->intra_uv_mode_cost[is_cfl_allowed(xd)][mbmi->mode][mode];
+          mode_costs->intra_uv_mode_cost[cfl_allowed][mbmi->mode][mode];
       if (!rd_pick_intra_angle_sbuv(cpi, x, bsize, rate_overhead, best_rd,
                                     &this_rate, &tokenonly_rd_stats))
         continue;
@@ -932,7 +958,7 @@ int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
       }
     }
     const int mode_cost =
-        mode_costs->intra_uv_mode_cost[is_cfl_allowed(xd)][mbmi->mode][mode];
+        mode_costs->intra_uv_mode_cost[cfl_allowed][mbmi->mode][mode];
     this_rate = tokenonly_rd_stats.rate +
                 intra_mode_info_cost_uv(cpi, x, mbmi, bsize, mode_cost);
     this_rd = RDCOST(x->rdmult, this_rate, tokenonly_rd_stats.dist);
@@ -956,8 +982,7 @@ int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
     uint8_t *best_palette_color_map = x->palette_buffer->best_palette_color_map;
     av1_rd_pick_palette_intra_sbuv(
         cpi, x,
-        mode_costs
-            ->intra_uv_mode_cost[is_cfl_allowed(xd)][mbmi->mode][UV_DC_PRED],
+        mode_costs->intra_uv_mode_cost[cfl_allowed][mbmi->mode][UV_DC_PRED],
         best_palette_color_map, &best_mbmi, &best_rd, rate, rate_tokenonly,
         distortion, skippable);
   }
@@ -1137,14 +1162,19 @@ static AOM_INLINE int intra_block_yrd(const AV1_COMP *const cpi, MACROBLOCK *x,
                                       BLOCK_SIZE bsize, const int *bmode_costs,
                                       int64_t *best_rd, int *rate,
                                       int *rate_tokenonly, int64_t *distortion,
-                                      int *skippable, MB_MODE_INFO *best_mbmi,
+                                      uint8_t *skippable,
+                                      MB_MODE_INFO *best_mbmi,
                                       PICK_MODE_CONTEXT *ctx) {
   MACROBLOCKD *const xd = &x->e_mbd;
   MB_MODE_INFO *const mbmi = xd->mi[0];
   RD_STATS rd_stats;
-  // In order to improve txfm search avoid rd based breakouts during winner
-  // mode evaluation. Hence passing ref_best_rd as a maximum value
-  av1_pick_uniform_tx_size_type_yrd(cpi, x, &rd_stats, bsize, INT64_MAX);
+  // In order to improve txfm search, avoid rd based breakouts during winner
+  // mode evaluation. Hence passing ref_best_rd as INT64_MAX by default when the
+  // speed feature use_rd_based_breakout_for_intra_tx_search is disabled.
+  int64_t ref_best_rd = cpi->sf.tx_sf.use_rd_based_breakout_for_intra_tx_search
+                            ? *best_rd
+                            : INT64_MAX;
+  av1_pick_uniform_tx_size_type_yrd(cpi, x, &rd_stats, bsize, ref_best_rd);
   if (rd_stats.rate == INT_MAX) return 0;
   int this_rate_tokenonly = rd_stats.rate;
   if (!xd->lossless[mbmi->segment_id] && block_signals_txsize(mbmi->bsize)) {
@@ -1179,7 +1209,7 @@ static AOM_INLINE int intra_block_yrd(const AV1_COMP *const cpi, MACROBLOCK *x,
  * \callergraph
  * This function loops through all filter_intra modes to find the best one.
  *
- * \return Returns nothing, but updates the mbmi and rd_stats.
+ * \remark Returns nothing, but updates the mbmi and rd_stats.
  */
 static INLINE void handle_filter_intra_mode(const AV1_COMP *cpi, MACROBLOCK *x,
                                             BLOCK_SIZE bsize,
@@ -1431,7 +1461,7 @@ static AOM_INLINE int prune_luma_odd_delta_angles_using_rd_cost(
 // Finds the best non-intrabc mode on an intra frame.
 int64_t av1_rd_pick_intra_sby_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
                                    int *rate, int *rate_tokenonly,
-                                   int64_t *distortion, int *skippable,
+                                   int64_t *distortion, uint8_t *skippable,
                                    BLOCK_SIZE bsize, int64_t best_rd,
                                    PICK_MODE_CONTEXT *ctx) {
   MACROBLOCKD *const xd = &x->e_mbd;

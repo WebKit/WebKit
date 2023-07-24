@@ -1,11 +1,8 @@
 
 PASS Interfaces
 PASS Caching is allowed
-FAIL Shouldn't be able to set unsigned properties on a HTMLCollection (non-strict mode) assert_equals: expected (undefined) undefined but got (string) "foopy"
-FAIL Shouldn't be able to set unsigned properties on a HTMLCollection (strict mode) assert_throws_js: function "function () {
-      "use strict";
-      l[5] = "foopy"
-    }" did not throw
+PASS Shouldn't be able to set unsigned properties on a HTMLCollection (non-strict mode)
+PASS Shouldn't be able to set unsigned properties on a HTMLCollection (strict mode)
 PASS Should be able to set expando shadowing a proto prop (item)
 PASS Should be able to set expando shadowing a proto prop (namedItem)
 PASS hasOwnProperty, getOwnPropertyDescriptor, getOwnPropertyNames

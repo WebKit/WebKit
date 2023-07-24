@@ -23,13 +23,13 @@ RUN(video.muted = false)
 EVENT(volumechange)
 
 EXPECTED (internals.audioSessionCategory() == 'MediaPlayback') OK
-EXPECTED (internals.audioSessionMode() == 'MoviePlayback') OK
+EXPECTED (internals.audioSessionMode() == 'Default') OK
 EXPECTED (internals.routeSharingPolicy() == 'LongFormAudio') OK
 
 ** Mute the element, check again after 500ms.
 RUN(video.pause())
 RUN(video.muted = true)
-EXPECTED (internals.audioSessionCategory() == 'MoviePlayback'), OBSERVED 'MediaPlayback' FAIL
+EXPECTED (internals.audioSessionCategory() == 'MediaPlayback') OK
 EXPECTED (internals.audioSessionMode() == 'Default') OK
 EXPECTED (internals.routeSharingPolicy() == 'LongFormAudio') OK
 

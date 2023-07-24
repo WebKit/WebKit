@@ -137,7 +137,6 @@ var staticWindowProperties = [
     'onreset',
     'onresize',
     'onscroll',
-    'onsearch',
     'onselect',
     'onsubmit',
     'onunload',

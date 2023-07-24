@@ -7,8 +7,8 @@ layer at (0,0) size 785x1715
         RenderText {#text} at (0,0) size 515x30
           text run at (0,0) width 515: "CSS2 Table Backgrounds Test Suite"
       RenderBlock {H2} at (0,47) size 769x24
-        RenderText {#text} at (0,0) size 61x23
-          text run at (0,0) width 61: "Notes"
+        RenderText {#text} at (0,0) size 59x23
+          text run at (0,0) width 59: "Notes"
       RenderBlock {P} at (0,86) size 769x76
         RenderText {#text} at (0,0) size 710x30
           text run at (0,0) width 710: "This test suite is not endorsed or approved by the W3C or anyone besides fantasai. It tests"
@@ -76,8 +76,8 @@ layer at (0,0) size 785x1715
         RenderText {#text} at (709,30) size 9x15
           text run at (709,30) width 9: "."
       RenderBlock {H2} at (0,1191) size 769x24
-        RenderText {#text} at (0,0) size 205x23
-          text run at (0,0) width 205: "Table of Contents"
+        RenderText {#text} at (0,0) size 199x23
+          text run at (0,0) width 199: "Table of Contents"
       RenderBlock {OL} at (0,1230) size 769x455
         RenderListItem {LI} at (40,0) size 729x105
           RenderBlock (anonymous) at (0,0) size 729x15

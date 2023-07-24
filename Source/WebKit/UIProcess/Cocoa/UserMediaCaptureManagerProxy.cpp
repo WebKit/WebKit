@@ -330,7 +330,7 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createMicrophoneSource(const 
     auto& perPageSources = m_pageSources.ensure(pageIdentifier, [] { return PageSources { }; }).iterator->value;
 
     // FIXME: Support multiple microphones simultaneously.
-    if (auto* microphoneSource = perPageSources.microphoneSource.get()) {
+    if (auto microphoneSource = perPageSources.microphoneSource.get()) {
         if (microphoneSource->persistentID() != device.persistentId() && !microphoneSource->isEnded()) {
             RELEASE_LOG_ERROR(WebRTC, "Ending microphone source as new source is using a different device.");
             // FIXME: We should probably fail the capture in a way that shows a specific console log message.
@@ -339,7 +339,7 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createMicrophoneSource(const 
     }
 
     auto source = sourceOrError.source();
-    perPageSources.microphoneSource = WeakPtr { source.get() };
+    perPageSources.microphoneSource = ThreadSafeWeakPtr { source.get() };
     return source;
 }
 
@@ -453,7 +453,7 @@ void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentif
 #if ENABLE(APP_PRIVACY_REPORT)
     m_connectionProxy->setTCCIdentity();
 #endif
-    m_connectionProxy->startProducingData(proxy->source().type());
+    m_connectionProxy->startProducingData(proxy->source().deviceType());
     proxy->start();
 }
 
@@ -528,6 +528,13 @@ void UserMediaCaptureManagerProxy::setIsInBackground(RealtimeMediaSourceIdentifi
 void UserMediaCaptureManagerProxy::clear()
 {
     m_proxies.clear();
+}
+
+void UserMediaCaptureManagerProxy::close()
+{
+    auto proxies = std::exchange(m_proxies, { });
+    for (auto& proxy : proxies.values())
+        proxy->stop();
 }
 
 void UserMediaCaptureManagerProxy::setOrientation(WebCore::IntDegrees orientation)

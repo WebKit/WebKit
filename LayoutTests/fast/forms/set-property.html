@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<form id="testForm">
+<input type="text" id="action" name="action">
+<input type="text" id="target" name="target">
+<input type="text" id="testInput" name="testInput">
+</form>
+<script>
+description("Tests setting properties on HTMLFormElement");
+
+form = document.getElementById("testForm");
+shouldBe("form.action", "document.getElementById('action')");
+shouldBe("form[0]", "document.getElementById('action')");
+shouldBe("form.testInput", "document.getElementById('testInput')");
+shouldBeUndefined("form.foo");
+
+evalAndLog("form.action = 'about:blank'");
+evalAndLog("form[0] = 'bar'");
+shouldBe("form.action", "document.getElementById('action')");
+evalAndLog("document.getElementById('action').remove()");
+shouldBeEqualToString("form.action", "about:blank");
+
+evalAndLog("form.target = 'about:blank'");
+shouldBe("form.target", "document.getElementById('target')");
+evalAndLog("document.getElementById('target').remove()");
+shouldBeEqualToString("form.target", "about:blank");
+
+evalAndLog("form.testInput = 'test'");
+shouldBe("form.testInput", "document.getElementById('testInput')");
+evalAndLog("document.getElementById('testInput').remove()");
+shouldBeUndefined("form.testInput");
+
+evalAndLog("form.foo = 'test'");
+shouldBeEqualToString("form.foo", "test");
+
+shouldBeUndefined("form[0]", "bar");
+</script>
+</body>
+</html>

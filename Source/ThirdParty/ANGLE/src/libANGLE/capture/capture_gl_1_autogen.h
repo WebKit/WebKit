@@ -472,7 +472,7 @@ angle::CallCapture CapturePixelZoom(const State &glState,
 angle::CallCapture CapturePolygonMode(const State &glState,
                                       bool isCallValid,
                                       GLenum face,
-                                      GLenum mode);
+                                      PolygonMode modePacked);
 angle::CallCapture CapturePolygonStipple(const State &glState,
                                          bool isCallValid,
                                          const GLubyte *mask);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUObjectDescriptorBase.h>
+#include <WebCore/WebGPUObjectDescriptorBase.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ObjectDescriptorBase> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ObjectDescriptorBase& objectDescriptorBase)
+std::optional<ObjectDescriptorBase> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ObjectDescriptorBase& objectDescriptorBase)
 {
     return { { objectDescriptorBase.label } };
 }
 
-std::optional<PAL::WebGPU::ObjectDescriptorBase> ConvertFromBackingContext::convertFromBacking(const ObjectDescriptorBase& objectDescriptorBase)
+std::optional<WebCore::WebGPU::ObjectDescriptorBase> ConvertFromBackingContext::convertFromBacking(const ObjectDescriptorBase& objectDescriptorBase)
 {
     return { { objectDescriptorBase.label } };
 }

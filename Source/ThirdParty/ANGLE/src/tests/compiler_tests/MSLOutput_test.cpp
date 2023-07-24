@@ -21,7 +21,6 @@ class MSLVertexOutputTest : public MatchOutputCodeTest
     MSLVertexOutputTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_MSL_METAL_OUTPUT)
     {
         ShCompileOptions defaultCompileOptions = {};
-        defaultCompileOptions.variables        = true;
         setDefaultCompileOptions(defaultCompileOptions);
     }
 };
@@ -32,7 +31,6 @@ class MSLOutputTest : public MatchOutputCodeTest
     MSLOutputTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_MSL_METAL_OUTPUT)
     {
         ShCompileOptions defaultCompileOptions = {};
-        defaultCompileOptions.variables        = true;
         setDefaultCompileOptions(defaultCompileOptions);
     }
 };

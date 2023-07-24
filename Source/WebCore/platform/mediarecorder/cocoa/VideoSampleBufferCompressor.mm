@@ -67,6 +67,9 @@ VideoSampleBufferCompressor::VideoSampleBufferCompressor(CMVideoCodecType output
 
 VideoSampleBufferCompressor::~VideoSampleBufferCompressor()
 {
+    if (m_outputBufferQueue)
+        PAL::CMBufferQueueRemoveTrigger(m_outputBufferQueue.get(), m_triggerToken);
+
     if (m_vtSession) {
         PAL::VTCompressionSessionInvalidate(m_vtSession.get());
         m_vtSession = nullptr;
@@ -81,7 +84,7 @@ bool VideoSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callba
         return false;
     }
     m_outputBufferQueue = adoptCF(outputBufferQueue);
-    PAL::CMBufferQueueInstallTrigger(m_outputBufferQueue.get(), callback, callbackObject, kCMBufferQueueTrigger_WhenDataBecomesReady, PAL::kCMTimeZero, NULL);
+    PAL::CMBufferQueueInstallTrigger(m_outputBufferQueue.get(), callback, callbackObject, kCMBufferQueueTrigger_WhenDataBecomesReady, PAL::kCMTimeZero, &m_triggerToken);
 
     m_isEncoding = true;
     return true;
@@ -143,7 +146,7 @@ CFStringRef VideoSampleBufferCompressor::vtProfileLevel() const
 bool VideoSampleBufferCompressor::initCompressionSession(CMVideoFormatDescriptionRef formatDescription)
 {
     CMVideoDimensions dimensions = PAL::CMVideoFormatDescriptionGetDimensions(formatDescription);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     NSDictionary *encoderSpecifications = nil;
 #else
     NSDictionary *encoderSpecifications = @{(__bridge NSString *)PAL::kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder:@YES};

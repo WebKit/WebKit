@@ -1,7 +1,0 @@
-
-
-PASS Ensure getDisplayMedia size can be reduced with applyConstraints
-PASS Ensure getDisplayMedia size can be increased with applyConstraints
-PASS original source should stay at a small size
-PASS original source should stay at a big size
-

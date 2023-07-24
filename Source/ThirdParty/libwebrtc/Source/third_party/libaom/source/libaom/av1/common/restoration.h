@@ -332,7 +332,7 @@ typedef struct {
 } RestorationTileLimits;
 
 typedef void (*rest_unit_visitor_t)(const RestorationTileLimits *limits,
-                                    const AV1PixelRect *tile_rect,
+                                    const PixelRect *tile_rect,
                                     int rest_unit_idx, void *priv,
                                     int32_t *tmpbuf,
                                     RestorationLineBuffers *rlbs);
@@ -344,7 +344,7 @@ typedef struct FilterFrameCtxt {
   int highbd, bit_depth;
   uint8_t *data8, *dst8;
   int data_stride, dst_stride;
-  AV1PixelRect tile_rect;
+  PixelRect tile_rect;
 } FilterFrameCtxt;
 
 typedef struct AV1LrStruct {
@@ -397,13 +397,13 @@ void av1_decode_xq(const int *xqd, int *xq, const sgr_params_type *params);
  *                           should be at least SGRPROJ_TMPBUF_SIZE big.
  * \param[in]  optimized_lr  Whether to use fast optimized Loop Restoration
  *
- * \return Nothing is returned. Instead, the filtered unit is output in
+ * \remark Nothing is returned. Instead, the filtered unit is output in
  * \c dst8 at the proper restoration unit offset.
  */
 void av1_loop_restoration_filter_unit(
     const RestorationTileLimits *limits, const RestorationUnitInfo *rui,
     const RestorationStripeBoundaries *rsb, RestorationLineBuffers *rlbs,
-    const AV1PixelRect *tile_rect, int tile_stripe0, int ss_x, int ss_y,
+    const PixelRect *tile_rect, int tile_stripe0, int ss_x, int ss_y,
     int highbd, int bit_depth, uint8_t *data8, int stride, uint8_t *dst8,
     int dst_stride, int32_t *tmpbuf, int optimized_lr);
 
@@ -417,7 +417,7 @@ void av1_loop_restoration_filter_unit(
  * \param[in]       optimized_lr  Whether to use fast optimized Loop Restoration
  * \param[in]       lr_ctxt       Loop restoration context
  *
- * \return Nothing is returned. Instead, the filtered frame is output in
+ * \remark Nothing is returned. Instead, the filtered frame is output in
  * \c frame.
  */
 void av1_loop_restoration_filter_frame(YV12_BUFFER_CONFIG *frame,
@@ -439,7 +439,7 @@ typedef void (*sync_write_fn_t)(void *const lr_sync, int r, int c,
 // Call on_rest_unit for each loop restoration unit in the plane.
 void av1_foreach_rest_unit_in_plane(const struct AV1Common *cm, int plane,
                                     rest_unit_visitor_t on_rest_unit,
-                                    void *priv, AV1PixelRect *tile_rect,
+                                    void *priv, PixelRect *tile_rect,
                                     int32_t *tmpbuf,
                                     RestorationLineBuffers *rlbs);
 
@@ -467,13 +467,13 @@ void av1_loop_restoration_filter_frame_init(AV1LrStruct *lr_ctxt,
 void av1_loop_restoration_copy_planes(AV1LrStruct *loop_rest_ctxt,
                                       struct AV1Common *cm, int num_planes);
 void av1_foreach_rest_unit_in_row(
-    RestorationTileLimits *limits, const AV1PixelRect *tile_rect,
+    RestorationTileLimits *limits, const PixelRect *tile_rect,
     rest_unit_visitor_t on_rest_unit, int row_number, int unit_size,
     int unit_idx0, int hunits_per_tile, int vunits_per_tile, int plane,
     void *priv, int32_t *tmpbuf, RestorationLineBuffers *rlbs,
     sync_read_fn_t on_sync_read, sync_write_fn_t on_sync_write,
     struct AV1LrSyncData *const lr_sync);
-AV1PixelRect av1_whole_frame_rect(const struct AV1Common *cm, int is_uv);
+PixelRect av1_whole_frame_rect(const struct AV1Common *cm, int is_uv);
 int av1_lr_count_units_in_tile(int unit_size, int tile_size);
 void av1_lr_sync_read_dummy(void *const lr_sync, int r, int c, int plane);
 void av1_lr_sync_write_dummy(void *const lr_sync, int r, int c,

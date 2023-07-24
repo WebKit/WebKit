@@ -28,8 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIAlertControllerUtilities.h"
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "WKWebViewPrivateForTesting.h"
 #import <CoreLocation/CoreLocation.h>
 #import <WebCore/LocalizedStrings.h>

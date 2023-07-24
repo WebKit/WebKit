@@ -1,0 +1,16 @@
+
+PASS cookieStore.delete with positional name
+PASS cookieStore.delete with name in options
+FAIL cookieStore.delete domain starts with "." assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.delete with domain that is not equal current host assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.delete with domain set to the current hostname assert_equals: expected null but got object "[object Object]"
+FAIL cookieStore.delete with domain set to a subdomain of the current hostname assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.delete with domain set to a non-domain-matching suffix of the current hostname assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.delete with path set to the current directory assert_equals: expected null but got object "[object Object]"
+PASS cookieStore.delete with path set to subdirectory of the current directory
+FAIL cookieStore.delete with missing / at the end of path assert_equals: expected null but got object "[object Object]"
+FAIL cookieStore.delete with path that does not start with / assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.delete with get result assert_equals: expected null but got object "[object Object]"
+FAIL cookieStore.delete with positional empty name promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL cookieStore.delete with empty name in options promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

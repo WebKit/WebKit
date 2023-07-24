@@ -1,7 +1,10 @@
 Focus between tests
 
-PASS show: No autofocus, no delegatesFocus, no siblings
-PASS showModal: No autofocus, no delegatesFocus, no siblings
+FAIL show: No autofocus, no delegatesFocus, no siblings assert_equals: expected Element node <dialog data-description="No autofocus, no delegatesFocus... but got Element node <button id="focus-between-tests">Focus between tests</but...
+FAIL showModal: No autofocus, no delegatesFocus, no siblings assert_equals: expected Element node <dialog data-description="No autofocus, no delegatesFocus... but got Element node <body>
+
+<!--
+  We focus this one between each test, to en...
 PASS show: No autofocus, no delegatesFocus, sibling before
 PASS showModal: No autofocus, no delegatesFocus, sibling before
 PASS show: No autofocus, no delegatesFocus, sibling after
@@ -26,8 +29,11 @@ PASS show: Autofocus on shadow host, yes delegatesFocus, sibling before
 PASS showModal: Autofocus on shadow host, yes delegatesFocus, sibling before
 PASS show: Autofocus on shadow host, yes delegatesFocus, sibling after
 PASS showModal: Autofocus on shadow host, yes delegatesFocus, sibling after
-PASS show: Autofocus on shadow host, no delegatesFocus, no siblings
-PASS showModal: Autofocus on shadow host, no delegatesFocus, no siblings
+FAIL show: Autofocus on shadow host, no delegatesFocus, no siblings assert_equals: expected Element node <dialog data-description="Autofocus on shadow host, no de... but got Element node <button id="focus-between-tests">Focus between tests</but...
+FAIL showModal: Autofocus on shadow host, no delegatesFocus, no siblings assert_equals: expected Element node <dialog data-description="Autofocus on shadow host, no de... but got Element node <body>
+
+<!--
+  We focus this one between each test, to en...
 PASS show: Autofocus on shadow host, no delegatesFocus, sibling before
 PASS showModal: Autofocus on shadow host, no delegatesFocus, sibling before
 PASS show: Autofocus on shadow host, no delegatesFocus, sibling after
@@ -38,8 +44,11 @@ PASS show: Autofocus inside shadow tree, yes delegatesFocus, sibling before
 PASS showModal: Autofocus inside shadow tree, yes delegatesFocus, sibling before
 PASS show: Autofocus inside shadow tree, yes delegatesFocus, sibling after
 PASS showModal: Autofocus inside shadow tree, yes delegatesFocus, sibling after
-PASS show: Autofocus inside shadow tree, no delegatesFocus, no siblings
-PASS showModal: Autofocus inside shadow tree, no delegatesFocus, no siblings
+FAIL show: Autofocus inside shadow tree, no delegatesFocus, no siblings assert_equals: expected Element node <dialog data-description="Autofocus inside shadow tree, n... but got Element node <button id="focus-between-tests">Focus between tests</but...
+FAIL showModal: Autofocus inside shadow tree, no delegatesFocus, no siblings assert_equals: expected Element node <dialog data-description="Autofocus inside shadow tree, n... but got Element node <body>
+
+<!--
+  We focus this one between each test, to en...
 PASS show: Autofocus inside shadow tree, no delegatesFocus, sibling before
 PASS showModal: Autofocus inside shadow tree, no delegatesFocus, sibling before
 PASS show: Autofocus inside shadow tree, no delegatesFocus, sibling after

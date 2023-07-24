@@ -28,6 +28,7 @@
 #include "PlatformLayer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
@@ -42,7 +43,7 @@ enum class VideoFrameRotation : uint16_t;
 
 using LayerHostingContextID = uint32_t;
 
-class SampleBufferDisplayLayer {
+class SampleBufferDisplayLayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SampleBufferDisplayLayer, WTF::DestructionThread::MainRunLoop> {
 public:
     class Client : public CanMakeWeakPtr<Client> {
     public:
@@ -50,8 +51,8 @@ public:
         virtual void sampleBufferDisplayLayerStatusDidFail() = 0;
     };
 
-    WEBCORE_EXPORT static std::unique_ptr<SampleBufferDisplayLayer> create(Client&);
-    using LayerCreator = std::unique_ptr<SampleBufferDisplayLayer> (*)(Client&);
+    WEBCORE_EXPORT static RefPtr<SampleBufferDisplayLayer> create(Client&);
+    using LayerCreator = RefPtr<SampleBufferDisplayLayer> (*)(Client&);
     WEBCORE_EXPORT static void setCreator(LayerCreator);
 
     virtual ~SampleBufferDisplayLayer() = default;
@@ -64,8 +65,7 @@ public:
 
     virtual void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) = 0;
 
-    virtual void updateAffineTransform(CGAffineTransform) = 0;
-    virtual void updateBoundsAndPosition(CGRect, VideoFrameRotation, std::optional<WTF::MachSendRight>&& = std::nullopt) = 0;
+    virtual void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&& = std::nullopt) = 0;
 
     virtual void flush() = 0;
     virtual void flushAndRemoveImage() = 0;

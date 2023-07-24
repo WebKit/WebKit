@@ -135,7 +135,7 @@ private:
     RefPtr<StyleRuleBase> consumeQualifiedRule(CSSParserTokenRange&, AllowedRulesType);
 
     // This function is used for all the nested group rules (@media, @supports,..etc)
-    Vector<RefPtr<StyleRuleBase>> consumeRegularRuleList(CSSParserTokenRange block);
+    Vector<Ref<StyleRuleBase>> consumeRegularRuleList(CSSParserTokenRange block);
 
     static RefPtr<StyleRuleCharset> consumeCharsetRule(CSSParserTokenRange prelude);
     RefPtr<StyleRuleImport> consumeImportRule(CSSParserTokenRange prelude);
@@ -172,7 +172,7 @@ private:
 
     static Vector<double> consumeKeyframeKeyList(CSSParserTokenRange);
 
-    RefPtr<StyleRuleBase> createNestingParentRule();
+    Ref<StyleRuleBase> createNestingParentRule();
     void runInNewNestingContext(auto&& run);
     NestingContext& topContext()
     {
@@ -181,11 +181,13 @@ private:
     }
     bool isNestedContext()
     {
-        return (m_isAlwaysNestedContext == CSSParserEnum::IsNestedContext::Yes || m_styleRuleNestingDepth) && context().cssNestingEnabled;
+        return (m_isAlwaysNestedContext == CSSParserEnum::IsNestedContext::Yes || m_styleRuleNestingLevel) && context().cssNestingEnabled;
     }
 
     CSSParserEnum::IsNestedContext m_isAlwaysNestedContext { CSSParserEnum::IsNestedContext::No }; // Do we directly start in a nested context (for CSSOM)
-    unsigned m_styleRuleNestingDepth { 0 };
+    unsigned m_styleRuleNestingLevel { 0 };
+    unsigned m_ruleListNestingLevel { 0 };
+
     Vector<NestingContext> m_nestingContextStack { NestingContext { } };
     const CSSParserContext& m_context;
 

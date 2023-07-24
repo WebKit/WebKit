@@ -18,9 +18,4 @@ invalidStrings.forEach((timeZone) => {
     () => instance.since({ year: 2020, month: 5, day: 2, timeZone }),
     "reject minus zero as extended year"
   );
-  assert.throws(
-    RangeError,
-    () => instance.since({ year: 2020, month: 5, day: 2, timeZone: { timeZone } }),
-    "reject minus zero as extended year (nested property)"
-  );
 });

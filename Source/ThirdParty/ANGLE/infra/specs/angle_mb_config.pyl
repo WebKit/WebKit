@@ -23,7 +23,9 @@
       'android-pixel6-perf': 'angle_goma_android_perf_bot',
       'linux-asan-test': 'angle_asan_lsan_ubsan_bot',
       'linux-dbg-compile': 'angle_goma_debug_bot',
+      'linux-exp-asan-test': 'angle_asan_lsan_ubsan_bot',
       'linux-exp-test': 'angle_goma_release_bot',
+      'linux-exp-tsan-test': 'angle_tsan_bot',
       'linux-intel-uhd630-perf': 'angle_goma_perf_bot',
       'linux-nvidia-gtx1660-perf': 'angle_goma_perf_bot',
       'linux-test': 'angle_goma_release_bot',
@@ -57,11 +59,11 @@
   'configs': {
     'angle_asan_bot': ['angle', 'opencl', 'goma', 'asan', 'release', 'desktop'],
     'angle_asan_lsan_ubsan_bot': ['angle', 'opencl', 'goma', 'asan', 'lsan', 'ubsan', 'release', 'desktop'],
-    'angle_goma_android_arm64_debug_bot': ['angle', 'opencl', 'goma', 'android', 'arm64', 'debug'],
-    'angle_goma_android_arm64_release_bot': ['angle', 'opencl', 'goma', 'android', 'arm64', 'release'],
+    'angle_goma_android_arm64_debug_bot': ['angle', 'opencl', 'goma', 'android', 'arm64', 'debug', 'no_cfi'],
+    'angle_goma_android_arm64_release_bot': ['angle', 'opencl', 'goma', 'android', 'arm64', 'release', 'no_cfi'],
     'angle_goma_android_arm_debug_bot': ['angle', 'opencl', 'goma', 'android', 'arm', 'debug'],
     'angle_goma_android_arm_release_bot': ['angle', 'opencl', 'goma', 'android', 'arm', 'release'],
-    'angle_goma_android_perf_bot': ['angle', 'goma', 'android', 'arm64', 'perf'],
+    'angle_goma_android_perf_bot': ['angle', 'goma', 'android', 'arm64', 'perf', 'no_cfi'],
     'angle_goma_debug_bot': ['angle', 'opencl', 'goma', 'debug', 'desktop'],
     'angle_goma_perf_bot': ['angle', 'goma', 'perf'],
     'angle_goma_release_bot': ['angle', 'capture', 'opencl', 'goma', 'release', 'desktop'],
@@ -109,6 +111,9 @@
     },
     'lsan': {
       'gn_args': 'is_lsan=true',
+    },
+    'no_cfi': {
+      'gn_args': 'arm_control_flow_integrity="none"',
     },
     'non_clang': {
       'gn_args': 'is_clang=false',

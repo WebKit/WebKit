@@ -11,7 +11,7 @@ class Triggerable extends LabeledObject {
 
         this._triggerableConfigurationList = object.configurations.map(config => {
             this._acceptedTests.add(config.test);
-            return TriggerableConfiguration.createForTriggerable(this, config.test, config.platform, config.supportedRepetitionTypes);
+            return TriggerableConfiguration.createForTriggerable(this, config.test, config.platform, config.supportedRepetitionTypes, config.testParameters);
         });
     }
 
@@ -43,6 +43,7 @@ class TriggerableConfiguration extends DataModelObject {
     #test;
     #platform;
     #supportedRepetitionTypes;
+    #testParameters;
 
     constructor(id, object)
     {
@@ -52,18 +53,20 @@ class TriggerableConfiguration extends DataModelObject {
         this.#platform = object.platform;
         console.assert(object.supportedRepetitionTypes.every(TriggerableConfiguration.isValidRepetitionType.bind(TriggerableConfiguration)));
         this.#supportedRepetitionTypes = object.supportedRepetitionTypes;
+        this.#testParameters = object.testParameters;
     }
 
     get triggerable() { return this.#triggerable; }
     get supportedRepetitionTypes() { return [...this.#supportedRepetitionTypes]; }
+    get testParameters() { return this.#testParameters; }
     isSupportedRepetitionType(repetitionType) { return this.#supportedRepetitionTypes.includes(repetitionType); }
 
     static idForTestAndPlatform(test, platform) { return `${test.id()}-${platform.id()}`; }
 
-    static createForTriggerable(triggerable, test, platform, supportedRepetitionTypes)
+    static createForTriggerable(triggerable, test, platform, supportedRepetitionTypes, testParameters)
     {
         const id = this.idForTestAndPlatform(test, platform);
-        return TriggerableConfiguration.ensureSingleton(id, {test, platform, supportedRepetitionTypes, triggerable});
+        return TriggerableConfiguration.ensureSingleton(id, {test, platform, supportedRepetitionTypes, triggerable, testParameters});
     }
 
     static findByTestAndPlatform(test, platform)

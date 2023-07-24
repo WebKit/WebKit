@@ -36,18 +36,13 @@ class MemoryLogWriter final : public RtcEventLogOutput {
   std::string buffer_;
 };
 
-class MemoryLogWriterFactory : public LogWriterFactoryInterface {
+class MemoryLogWriterFactory final : public LogWriterFactoryInterface {
  public:
   explicit MemoryLogWriterFactory(std::map<std::string, std::string>* target)
       : target_(target) {}
-<<<<<<< HEAD
   ~MemoryLogWriterFactory() override {}
   std::unique_ptr<RtcEventLogOutput> Create(
       absl::string_view filename) override {
-=======
-  ~MemoryLogWriterFactory() final {}
-  std::unique_ptr<RtcEventLogOutput> Create(std::string filename) override {
->>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
     return std::make_unique<MemoryLogWriter>(target_, filename);
   }
 

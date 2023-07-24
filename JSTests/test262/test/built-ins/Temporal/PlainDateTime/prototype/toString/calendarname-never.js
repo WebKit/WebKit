@@ -7,12 +7,35 @@ description: If calendarName is "never", the calendar ID should be omitted.
 features: [Temporal]
 ---*/
 
+const calendarMethods = {
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  day() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  inLeapYear() {},
+  mergeFields() {},
+  month() {},
+  monthCode() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  year() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
+};
+
 const tests = [
   [[], "1976-11-18T15:23:00", "built-in ISO"],
-  [[{ toString() { return "custom"; } }], "1976-11-18T15:23:00", "custom"],
-  [[{ toString() { return "iso8601"; } }], "1976-11-18T15:23:00", "custom with iso8601 toString"],
-  [[{ toString() { return "ISO8601"; } }], "1976-11-18T15:23:00", "custom with caps toString"],
-  [[{ toString() { return "\u0131so8601"; } }], "1976-11-18T15:23:00", "custom with dotless i toString"],
+  [[{ id: "custom", ...calendarMethods }], "1976-11-18T15:23:00", "custom"],
+  [[{ id: "iso8601", ...calendarMethods }], "1976-11-18T15:23:00", "custom with iso8601 id"],
+  [[{ id: "ISO8601", ...calendarMethods }], "1976-11-18T15:23:00", "custom with caps id"],
+  [[{ id: "\u0131so8601", ...calendarMethods }], "1976-11-18T15:23:00", "custom with dotless i id"],
 ];
 
 for (const [args, expected, description] of tests) {

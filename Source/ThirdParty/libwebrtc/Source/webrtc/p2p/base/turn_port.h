@@ -13,7 +13,6 @@
 
 #include <stdio.h>
 
-#include <list>
 #include <map>
 #include <memory>
 #include <set>
@@ -24,6 +23,7 @@
 #include "absl/strings/string_view.h"
 #include "api/async_dns_resolver.h"
 #include "api/task_queue/pending_task_safety_flag.h"
+#include "api/task_queue/task_queue_base.h"
 #include "p2p/base/port.h"
 #include "p2p/client/basic_port_allocator.h"
 #include "rtc_base/async_packet_socket.h"
@@ -81,7 +81,7 @@ class TurnPort : public Port {
     return absl::WrapUnique(
         new TurnPort(args.network_thread, args.socket_factory, args.network,
                      socket, args.username, args.password, *args.server_address,
-                     args.config->credentials, args.config->priority,
+                     args.config->credentials, args.relative_priority,
                      args.config->tls_alpn_protocols,
                      args.config->tls_elliptic_curves, args.turn_customizer,
                      args.config->tls_cert_verifier, args.field_trials));
@@ -100,7 +100,7 @@ class TurnPort : public Port {
         new TurnPort(args.network_thread, args.socket_factory, args.network,
                      min_port, max_port, args.username, args.password,
                      *args.server_address, args.config->credentials,
-                     args.config->priority, args.config->tls_alpn_protocols,
+                     args.relative_priority, args.config->tls_alpn_protocols,
                      args.config->tls_elliptic_curves, args.turn_customizer,
                      args.config->tls_cert_verifier, args.field_trials));
   }
@@ -150,6 +150,14 @@ class TurnPort : public Port {
                             int64_t packet_time_us) override;
   bool CanHandleIncomingPacketsFrom(
       const rtc::SocketAddress& addr) const override;
+
+  // Checks if a connection exists for `addr` before forwarding the call to
+  // the base class.
+  void SendBindingErrorResponse(StunMessage* message,
+                                const rtc::SocketAddress& addr,
+                                int error_code,
+                                absl::string_view reason) override;
+
   virtual void OnReadPacket(rtc::AsyncPacketSocket* socket,
                             const char* data,
                             size_t size,
@@ -174,23 +182,6 @@ class TurnPort : public Port {
   rtc::AsyncPacketSocket* socket() const { return socket_; }
   StunRequestManager& request_manager() { return request_manager_; }
 
-  // Signal with resolved server address.
-  // Parameters are port, server address and resolved server address.
-  // This signal will be sent only if server address is resolved successfully.
-  sigslot::
-      signal3<TurnPort*, const rtc::SocketAddress&, const rtc::SocketAddress&>
-          SignalResolvedServerAddress;
-
-  // Signal when TurnPort is closed,
-  // e.g remote socket closed (TCP)
-  //  or receiveing a REFRESH response with lifetime 0.
-  sigslot::signal1<TurnPort*> SignalTurnPortClosed;
-
-  // All public methods/signals below are for testing only.
-  sigslot::signal2<TurnPort*, int> SignalTurnRefreshResult;
-  sigslot::signal3<TurnPort*, const rtc::SocketAddress&, int>
-      SignalCreatePermissionResult;
-
   bool HasRequests() { return !request_manager_.empty(); }
   void set_credentials(const RelayCredentials& credentials) {
     credentials_ = credentials;
@@ -203,8 +194,18 @@ class TurnPort : public Port {
 
   void CloseForTest() { Close(); }
 
+  // TODO(solenberg): Tests should be refactored to not peek at internal state.
+  class CallbacksForTest {
+   public:
+    virtual ~CallbacksForTest() {}
+    virtual void OnTurnCreatePermissionResult(int code) = 0;
+    virtual void OnTurnRefreshResult(int code) = 0;
+    virtual void OnTurnPortClosed() = 0;
+  };
+  void SetCallbacksForTest(CallbacksForTest* callbacks);
+
  protected:
-  TurnPort(rtc::Thread* thread,
+  TurnPort(webrtc::TaskQueueBase* thread,
            rtc::PacketSocketFactory* factory,
            const rtc::Network* network,
            rtc::AsyncPacketSocket* socket,
@@ -219,7 +220,7 @@ class TurnPort : public Port {
            rtc::SSLCertificateVerifier* tls_cert_verifier = nullptr,
            const webrtc::FieldTrialsView* field_trials = nullptr);
 
-  TurnPort(rtc::Thread* thread,
+  TurnPort(webrtc::TaskQueueBase* thread,
            rtc::PacketSocketFactory* factory,
            const rtc::Network* network,
            uint16_t min_port,
@@ -237,11 +238,7 @@ class TurnPort : public Port {
 
   // NOTE: This method needs to be accessible for StunPort
   // return true if entry was created (i.e channel_number consumed).
-  bool CreateOrRefreshEntry(const rtc::SocketAddress& addr, int channel_number);
-
-  bool CreateOrRefreshEntry(const rtc::SocketAddress& addr,
-                            int channel_number,
-                            absl::string_view remote_ufrag);
+  bool CreateOrRefreshEntry(Connection* conn, int channel_number);
 
   rtc::DiffServCodePoint StunDscpValue() const override;
 
@@ -249,21 +246,12 @@ class TurnPort : public Port {
   void Close();
 
  private:
-  enum {
-    MSG_ALLOCATE_ERROR = MSG_FIRST_AVAILABLE,
-    MSG_ALLOCATE_MISMATCH,
-    MSG_TRY_ALTERNATE_SERVER,
-    MSG_REFRESH_ERROR,
-    MSG_ALLOCATION_RELEASED
-  };
-
-  typedef std::list<TurnEntry*> EntryList;
   typedef std::map<rtc::Socket::Option, int> SocketOptionsMap;
   typedef std::set<rtc::SocketAddress> AttemptedServerSet;
 
   static bool AllowedTurnPort(int port,
                               const webrtc::FieldTrialsView* field_trials);
-  void OnMessage(rtc::Message* pmsg) override;
+  void TryAlternateServer();
 
   bool CreateTurnClientSocket();
 
@@ -314,11 +302,6 @@ class TurnPort : public Port {
   bool HasPermission(const rtc::IPAddress& ipaddr) const;
   TurnEntry* FindEntry(const rtc::SocketAddress& address) const;
   TurnEntry* FindEntry(int channel_id) const;
-  bool EntryExists(TurnEntry* e);
-  void DestroyEntry(TurnEntry* entry);
-  // Destroys the entry only if `timestamp` matches the destruction timestamp
-  // in `entry`.
-  void DestroyEntryIfNotCancelled(TurnEntry* entry, int64_t timestamp);
 
   // Marks the connection with remote address `address` failed and
   // pruned (a.k.a. write-timed-out). Returns true if a connection is found.
@@ -354,7 +337,7 @@ class TurnPort : public Port {
   std::string hash_;   // Digest of username:realm:password
 
   int next_channel_number_;
-  EntryList entries_;
+  std::vector<std::unique_ptr<TurnEntry>> entries_;
 
   PortState state_;
   // By default the value will be set to 0. This value will be used in
@@ -377,6 +360,8 @@ class TurnPort : public Port {
   std::string turn_logging_id_;
 
   webrtc::ScopedTaskSafety task_safety_;
+
+  CallbacksForTest* callbacks_for_test_ = nullptr;
 
   friend class TurnEntry;
   friend class TurnAllocateRequest;

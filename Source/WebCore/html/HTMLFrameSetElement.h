@@ -51,6 +51,7 @@ public:
     
     Vector<AtomString> supportedPropertyNames() const;
     WindowProxy* namedItem(const AtomString&);
+    bool isSupportedPropertyName(const AtomString&);
 
 private:
     constexpr static auto CreateHTMLFrameSetElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;

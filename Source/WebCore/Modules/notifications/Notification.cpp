@@ -59,9 +59,9 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(Notification);
 
 static Lock nonPersistentNotificationMapLock;
-static HashMap<UUID, Notification*>& nonPersistentNotificationMap() WTF_REQUIRES_LOCK(nonPersistentNotificationMapLock)
+static HashMap<WTF::UUID, Notification*>& nonPersistentNotificationMap() WTF_REQUIRES_LOCK(nonPersistentNotificationMapLock)
 {
-    static NeverDestroyed<HashMap<UUID, Notification*>> map;
+    static NeverDestroyed<HashMap<WTF::UUID, Notification*>> map;
     return map;
 }
 
@@ -94,7 +94,7 @@ ExceptionOr<Ref<Notification>> Notification::create(ScriptExecutionContext& cont
     if (dataResult.hasException())
         return dataResult.releaseException();
 
-    auto notification = adoptRef(*new Notification(context, UUID::createVersion4(), WTFMove(title), WTFMove(options), dataResult.releaseReturnValue()));
+    auto notification = adoptRef(*new Notification(context, WTF::UUID::createVersion4(), WTFMove(title), WTFMove(options), dataResult.releaseReturnValue()));
     notification->suspendIfNeeded();
     addNotificationToMapIfNecessary(notification);
     notification->showSoon();
@@ -107,7 +107,7 @@ ExceptionOr<Ref<Notification>> Notification::createForServiceWorker(ScriptExecut
     if (dataResult.hasException())
         return dataResult.releaseException();
 
-    auto notification = adoptRef(*new Notification(context, UUID::createVersion4(), WTFMove(title), WTFMove(options), dataResult.releaseReturnValue()));
+    auto notification = adoptRef(*new Notification(context, WTF::UUID::createVersion4(), WTFMove(title), WTFMove(options), dataResult.releaseReturnValue()));
     notification->m_serviceWorkerRegistrationURL = serviceWorkerRegistrationURL;
     notification->suspendIfNeeded();
     addNotificationToMapIfNecessary(notification);
@@ -125,7 +125,7 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, Notifica
     return notification;
 }
 
-Notification::Notification(ScriptExecutionContext& context, UUID identifier, String&& title, Options&& options, Ref<SerializedScriptValue>&& dataForBindings)
+Notification::Notification(ScriptExecutionContext& context, WTF::UUID identifier, String&& title, Options&& options, Ref<SerializedScriptValue>&& dataForBindings)
     : ActiveDOMObject(&context)
     , m_identifier(identifier)
     , m_title(WTFMove(title).isolatedCopy())
@@ -425,7 +425,7 @@ NotificationData Notification::data() const
     };
 }
 
-void Notification::ensureOnNotificationThread(ScriptExecutionContextIdentifier contextIdentifier, UUID notificationIdentifier, Function<void(Notification*)>&& task)
+void Notification::ensureOnNotificationThread(ScriptExecutionContextIdentifier contextIdentifier, WTF::UUID notificationIdentifier, Function<void(Notification*)>&& task)
 {
     ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [notificationIdentifier = notificationIdentifier, task = WTFMove(task)](auto&) mutable {
         RefPtr<Notification> notification;

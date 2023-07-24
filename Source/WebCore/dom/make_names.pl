@@ -122,9 +122,9 @@ END
     print F "        return Vector<T, inlineCapacity>::at(static_cast<size_t>(i));\n";
     print F "    }\n";
     print F "};\n\n";
-    print F "extern LazyNeverDestroyed<FamilyNamesList<const StringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
-    print F "extern LazyNeverDestroyed<FamilyNamesList<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
-    printMacros($F, "extern LazyNeverDestroyed<const AtomString>", "", \%parameters);
+    print F "extern LazyNeverDestroyed<FamilyNamesList<const StaticStringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
+    print F "extern MainThreadLazyNeverDestroyed<FamilyNamesList<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
+    printMacros($F, "extern MainThreadLazyNeverDestroyed<const AtomString>", "", \%parameters);
     print F "\n";
     print F "\n";
 
@@ -139,10 +139,10 @@ END
 
     print F StaticString::GenerateStrings(\%parameters);
 
-    print F "LazyNeverDestroyed<FamilyNamesList<const StringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
-    print F "LazyNeverDestroyed<FamilyNamesList<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
+    print F "LazyNeverDestroyed<FamilyNamesList<const StaticStringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
+    print F "MainThreadLazyNeverDestroyed<FamilyNamesList<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
 
-    printMacros($F, "LazyNeverDestroyed<const AtomString>", "", \%parameters);
+    printMacros($F, "MainThreadLazyNeverDestroyed<const AtomString>", "", \%parameters);
 
     printInit($F, 0);
 
@@ -151,12 +151,12 @@ END
 
     print F "    familyNamesData.construct();\n";
     for my $name (sort keys %parameters) {
-        print F "    familyNamesData->uncheckedAppend(s_${name}Data.get());\n";
+        print F "    familyNamesData->uncheckedAppend(&${name}Data);\n";
     }
 
     print F "\n";
     for my $name (sort keys %parameters) {
-        print F "    ${name}.construct(s_${name}Data.get());\n";
+        print F "    ${name}.construct(&${name}Data);\n";
     }
 
     print F "\n";
@@ -859,6 +859,7 @@ sub byAttrNameOrder
 {
     attributeCount($allAttrs{$a}{localName}) <=> attributeCount($allAttrs{$b}{localName})
         || $allAttrs{$a}{nodeNameEnumValue} cmp $allAttrs{$b}{nodeNameEnumValue}
+        || $allAttrs{$a}{cppNamespace} cmp $allAttrs{$b}{cppNamespace}
 }
 
 sub byElementThenAttrNameOrder
@@ -996,18 +997,10 @@ sub printTagNameCppFile
     }
     print F "};\n";
     print F "\n";
-    my $unadjustedTagNamesCount = 0;
-    print F "static constexpr const char* const unadjustedTagNames[] = {\n";
+    print F "static constexpr StringImpl::StaticStringImpl unadjustedTagNames[] = {\n";
     for my $elementKey (sort byElementNameOrder keys %allElements) {
         next if $allElements{$elementKey}{unadjustedTagEnumValue} eq "";
-        ++$unadjustedTagNamesCount;
-        print F "    \"$allElements{$elementKey}{parsedTagName}\",\n";
-    }
-    print F "};\n";
-    print F "static constexpr size_t unadjustedTagNamesLengths[$unadjustedTagNamesCount] = {\n";
-    for my $elementKey (sort byElementNameOrder keys %allElements) {
-        next if $allElements{$elementKey}{unadjustedTagEnumValue} eq "";
-        print F "    \"$allElements{$elementKey}{parsedTagName}\"_s.length(),\n";
+        print F "    StringImpl::StaticStringImpl { \"$allElements{$elementKey}{parsedTagName}\" },\n";
     }
     print F "};\n";
     print F "\n";
@@ -1021,10 +1014,9 @@ sub printTagNameCppFile
     print F "    ++tagNamesEntry; // Skip TagName::Unknown\n";
     print F "    for (auto* qualifiedName : tagQualifiedNamePointers)\n";
     print F "        *(tagNamesEntry++) = reinterpret_cast<LazyNeverDestroyed<QualifiedName>*>(qualifiedName)->get().localName();\n";
-    print F "    for (unsigned i = 0; i < $unadjustedTagNamesCount; ++i) {\n";
-    print F "        auto impl = StringImpl::createStaticStringImpl(unadjustedTagNames[i], unadjustedTagNamesLengths[i]);\n";
-    print F "        impl->assertHashIsCorrect();\n";
-    print F "        *(tagNamesEntry++) = AtomString(impl.get());\n";
+    print F "    for (auto& string : unadjustedTagNames) {\n";
+    print F "        reinterpret_cast<const StringImpl&>(string).assertHashIsCorrect();\n";
+    print F "        *(tagNamesEntry++) = AtomString(&string);\n";
     print F "    }\n";
     print F "    ASSERT(tagNamesEntry == tagNameStrings->end());\n";
     print F "}\n";
@@ -1624,7 +1616,7 @@ sub printDefinitions
 
     my @tableEntryFields = (
         "LazyNeverDestroyed<const QualifiedName>* targetAddress",
-        "StringImpl* name",
+        "const StaticStringImpl& name",
         "NodeName nodeName"
     );
 
@@ -1643,13 +1635,13 @@ sub printDefinitions
         my $identifier = $namesRef->{$key}{identifier};
         my $nodeNameEnumValue = $namesRef->{$key}{nodeNameEnumValue} || "Unknown";
         # Attribute names never correspond to a recognized NodeName.
-        print F "        { $cast&$identifier$shortCamelType, s_${identifier}Data.get(), NodeName::$nodeNameEnumValue },\n";
+        print F "        { $cast&$identifier$shortCamelType, *(&${identifier}Data), NodeName::$nodeNameEnumValue },\n";
     }
 
     print F "    };\n";
     print F "\n";
     print F "    for (auto& entry : ${type}Table)\n";
-    print F "        entry.targetAddress->construct(nullAtom(), AtomString(entry.name), $namespaceURI, Namespace::$namespaceEnumValue, entry.nodeName);\n";
+    print F "        entry.targetAddress->construct(nullAtom(), AtomString(&entry.name), $namespaceURI, Namespace::$namespaceEnumValue, entry.nodeName);\n";
 }
 
 ## ElementFactory routines

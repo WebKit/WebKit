@@ -14,6 +14,7 @@ info: |
     ...
     `delete` UnaryExpression
     ...
+features: [exponentiation]
 
 negative:
   phase: parse

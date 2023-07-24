@@ -115,6 +115,7 @@ class TType
           qualifier(q),
           invariant(false),
           precise(false),
+          interpolant(false),
           memoryQualifier(TMemoryQualifier::Create()),
           layoutQualifier(TLayoutQualifier::Create()),
           primarySize(ps),
@@ -134,6 +135,7 @@ class TType
           qualifier(t.qualifier),
           invariant(t.invariant),
           precise(t.precise),
+          interpolant(t.interpolant),
           memoryQualifier(t.memoryQualifier),
           layoutQualifier(t.layoutQualifier),
           primarySize(t.primarySize),
@@ -163,6 +165,9 @@ class TType
 
     bool isPrecise() const { return precise; }
     void setPrecise(bool i) { precise = i; }
+
+    bool isInterpolant() const { return interpolant; }
+    void setInterpolant(bool i) { interpolant = i; }
 
     TMemoryQualifier getMemoryQualifier() const { return memoryQualifier; }
     void setMemoryQualifier(const TMemoryQualifier &mq) { memoryQualifier = mq; }
@@ -372,6 +377,7 @@ class TType
     TQualifier qualifier;
     bool invariant;
     bool precise;
+    bool interpolant;
 
     TMemoryQualifier memoryQualifier;
     TLayoutQualifier layoutQualifier;

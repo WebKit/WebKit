@@ -23,8 +23,8 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x142
           RenderBlock (floating) {DIV} at (3,3) size 75x75 [bgcolor=#008000]
           RenderBlock {H3} at (0,0) size 784x23
-            RenderText {#text} at (81,0) size 162x22
-              text run at (81,0) width 162: "Stanley Park Forest"
+            RenderText {#text} at (81,0) size 159x22
+              text run at (81,0) width 159: "Stanley Park Forest"
           RenderBlock {P} at (0,41) size 784x101
             RenderText {#text} at (81,0) size 770x99
               text run at (81,0) width 689: "The forest is primarily second and third growth. The area was saved from development because of its status"
@@ -33,4 +33,4 @@ layer at (0,0) size 800x600
               text run at (0,60) width 766: "operations there in the mid-nineteenth century. Large swathes of the park were also deforested by natural causes on two"
               text run at (0,80) width 190: "occasions in the 20th century."
 layer at (8,100) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,92) size 784x2 [color=#808080] [border: (1px inset #808080)]

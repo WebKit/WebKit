@@ -19,6 +19,7 @@ __attribute__((objc_runtime_name("WK_RTCVideoEncoderH265")))
 @interface RTCVideoEncoderH265 : NSObject <RTCVideoEncoder>
 
 - (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo;
+- (void)setLowLatency:(bool)enabled;
 - (void)setUseAnnexB:(bool)useAnnexB;
 - (void)setDescriptionCallback:(RTCVideoEncoderDescriptionCallback)callback;
 - (void)flush;

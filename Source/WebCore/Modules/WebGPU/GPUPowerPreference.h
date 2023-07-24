@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUPowerPreference.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUPowerPreference.h>
 
 namespace WebCore {
 
@@ -35,13 +35,13 @@ enum class GPUPowerPreference : uint8_t {
     HighPerformance,
 };
 
-inline PAL::WebGPU::PowerPreference convertToBacking(GPUPowerPreference powerPreference)
+inline WebGPU::PowerPreference convertToBacking(GPUPowerPreference powerPreference)
 {
     switch (powerPreference) {
     case GPUPowerPreference::LowPower:
-        return PAL::WebGPU::PowerPreference::LowPower;
+        return WebGPU::PowerPreference::LowPower;
     case GPUPowerPreference::HighPerformance:
-        return PAL::WebGPU::PowerPreference::HighPerformance;
+        return WebGPU::PowerPreference::HighPerformance;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

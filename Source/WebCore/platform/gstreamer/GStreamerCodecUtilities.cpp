@@ -76,6 +76,8 @@ uint8_t GStreamerCodecUtilities::parseVP9Profile(const String& codec)
     return profile;
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER)

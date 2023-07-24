@@ -52,6 +52,7 @@
 #include "CompositionEvent.h"
 #include "ConstantPropertyMap.h"
 #include "ContentSecurityPolicy.h"
+#include "ContentVisibilityDocumentState.h"
 #include "ContentfulPaintChecker.h"
 #include "CookieJar.h"
 #include "CustomEffect.h"
@@ -119,7 +120,6 @@
 #include "HTMLMediaElement.h"
 #include "HTMLMetaElement.h"
 #include "HTMLNameCollection.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLPictureElement.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLScriptElement.h"
@@ -413,13 +413,13 @@ static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry
                 observer.unobserve(*target);
                 continue;
             }
-            ASSERT(!box->shouldSkipContent());
+            ASSERT(!box->isSkippedContentRoot());
             ASSERT(box->style().hasAutoLengthContainIntrinsicSize());
 
             auto contentBoxSize = entry->contentBoxSize().at(0);
-            if (box->style().containIntrinsicLogicalWidthType() == ContainIntrinsicSizeType::AutoAndLength)
+            if (box->style().containIntrinsicLogicalWidthHasAuto())
                 target->setLastRememberedLogicalWidth(LayoutUnit(contentBoxSize->inlineSize()));
-            if (box->style().containIntrinsicLogicalHeightType() == ContainIntrinsicSizeType::AutoAndLength)
+            if (box->style().containIntrinsicLogicalHeightHasAuto())
                 target->setLastRememberedLogicalHeight(LayoutUnit(contentBoxSize->blockSize()));
         }
     }
@@ -933,11 +933,11 @@ void Document::invalidateAccessKeyCacheSlowCase()
 ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selectorString)
 {
     if (selectorString.isEmpty())
-        return Exception { SyntaxError };
+        return Exception { SyntaxError, makeString("'", selectorString, "' is not a valid selector.") };
 
     auto* query = SelectorQueryCache::singleton().add(selectorString, *this);
     if (!query)
-        return Exception { SyntaxError };
+        return Exception { SyntaxError, makeString("'", selectorString, "' is not a valid selector.") };
 
     return *query;
 }
@@ -1672,7 +1672,7 @@ std::optional<BoundaryPoint> Document::caretPositionFromPoint(const LayoutPoint&
     if (!renderer)
         return std::nullopt;
 
-    if (renderer->shouldSkipContent())
+    if (renderer->isSkippedContentRoot())
         return { { *node, 0 } };
 
     auto rangeCompliantPosition = renderer->positionForPoint(localPoint).parentAnchoredEquivalent();
@@ -2988,9 +2988,10 @@ void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>&
 {
     for (auto& highlight : highlightRegister.map()) {
         for (auto& rangeData : highlight.value->rangesData()) {
-            if (rangeData->startPosition && rangeData->endPosition)
+            if (rangeData->startPosition().isNotNull() && rangeData->endPosition().isNotNull())
                 continue;
-            if (&rangeData->range->startContainer().treeScope() != &rangeData->range->endContainer().treeScope())
+            auto simpleRange = makeSimpleRange(rangeData->range());
+            if (&simpleRange.startContainer().treeScope() != &simpleRange.endContainer().treeScope())
                 continue;
             rangesData.append(rangeData.get());
         }
@@ -3011,18 +3012,19 @@ void Document::updateHighlightPositions()
 
     for (auto& weakRangeData : rangesData) {
         if (auto* rangeData = weakRangeData.get()) {
-            VisibleSelection visibleSelection(rangeData->range);
+            VisibleSelection visibleSelection(makeSimpleRange(rangeData->range()));
             Position startPosition;
             Position endPosition;
-            if (!rangeData->startPosition.has_value())
+            if (rangeData->startPosition().isNull())
                 startPosition = visibleSelection.visibleStart().deepEquivalent();
-            if (!rangeData->endPosition.has_value())
+            if (rangeData->endPosition().isNull())
                 endPosition = visibleSelection.visibleEnd().deepEquivalent();
             if (!weakRangeData.get())
                 continue;
-
-            rangeData->startPosition = startPosition;
-            rangeData->endPosition = endPosition;
+            if (!startPosition.isNull())
+                rangeData->setStartPosition(WTFMove(startPosition));
+            if (!endPosition.isNull())
+                rangeData->setEndPosition(WTFMove(endPosition));
         }
     }
 }
@@ -3430,6 +3432,9 @@ void Document::enqueuePaintTimingEntryIfNeeded()
     if (!ContentfulPaintChecker::qualifiesForContentfulPaint(*view()))
         return;
 
+    if (frame() && frame()->isMainFrame())
+        WTFEmitSignpost(this, "Page Load: First Contentful Paint");
+
     domWindow()->performance().reportFirstContentfulPaint();
     m_didEnqueueFirstContentfulPaint = true;
 }
@@ -3571,7 +3576,7 @@ const URL& Document::urlForBindings() const
         if (policySourceLoader && !policySourceLoader->request().url().hasSpecialScheme() && url().protocolIsInHTTPFamily())
             policySourceLoader = loader();
 
-        if (!policySourceLoader || !policySourceLoader->originatorNetworkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::Enabled))
+        if (!policySourceLoader || !policySourceLoader->originatorAdvancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections))
             return false;
 
         auto preNavigationURL = URL { loader()->originalRequest().httpReferrer() };
@@ -3617,7 +3622,7 @@ const URL& Document::urlForBindings() const
 
 URL Document::adjustedURL() const
 {
-    return page() ? page()->chrome().client().allowedLookalikeCharacters(m_url.url()) : m_url.url();
+    return page() ? page()->chrome().client().allowedQueryParametersForAdvancedPrivacyProtections(m_url.url()) : m_url.url();
 }
 
 // https://html.spec.whatwg.org/#fallback-base-url
@@ -3696,9 +3701,9 @@ void Document::processBaseElement()
     // FIXME: Since this doesn't share code with completeURL it may not handle encodings correctly.
     URL baseElementURL;
     if (href) {
-        String strippedHref = stripLeadingAndTrailingHTMLSpaces(*href);
-        if (!strippedHref.isEmpty())
-            baseElementURL = URL(fallbackBaseURL(), strippedHref);
+        auto trimmedHref = href->string().trim(isASCIIWhitespace);
+        if (!trimmedHref.isEmpty())
+            baseElementURL = URL(fallbackBaseURL(), trimmedHref);
     }
     if (m_baseElementURL != baseElementURL && contentSecurityPolicy()->allowBaseURI(baseElementURL)) {
         if (settings().shouldRestrictBaseURLSchemes() && !SecurityPolicy::isBaseURLSchemeAllowed(baseElementURL))
@@ -4909,6 +4914,8 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         oldFocusedElement->setFocus(false);
         setFocusNavigationStartingNode(nullptr);
 
+        scheduleContentRelevancyUpdate(ContentRelevancyStatus::Focused);
+
         if (options.removalEventsMode == FocusRemovalEventsMode::Dispatch) {
             // Dispatch a change event for form control elements that have been edited.
             if (is<HTMLFormControlElement>(*oldFocusedElement)) {
@@ -4987,6 +4994,8 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         m_focusedElement->setFocus(true, options.visibility);
         if (options.trigger != FocusTrigger::Bindings)
             m_latestFocusTrigger = options.trigger;
+
+        scheduleContentRelevancyUpdate(ContentRelevancyStatus::Focused);
 
         // The setFocus call triggers a blur and a focus event. Event handlers could cause the focused element to be cleared.
         if (m_focusedElement != newFocusedElement) {
@@ -5112,11 +5121,11 @@ void Document::setCSSTarget(Element* newTarget)
 
     std::optional<Style::PseudoClassChangeInvalidation> oldInvalidation;
     if (m_cssTarget)
-        emplace(oldInvalidation, *m_cssTarget, { { CSSSelector::PseudoClassTarget, false } });
+        emplace(oldInvalidation, *m_cssTarget, { { CSSSelector::PseudoClassType::Target, false } });
 
     std::optional<Style::PseudoClassChangeInvalidation> newInvalidation;
     if (newTarget)
-        emplace(newInvalidation, *newTarget, { { CSSSelector::PseudoClassTarget, true } });
+        emplace(newInvalidation, *newTarget, { { CSSSelector::PseudoClassType::Target, true } });
     m_cssTarget = newTarget;
 }
 
@@ -5173,23 +5182,22 @@ void Document::collectionWillClearIdNameMap(const HTMLCollection& collection)
 
 void Document::attachNodeIterator(NodeIterator& iterator)
 {
-    m_nodeIterators.add(&iterator);
+    m_nodeIterators.add(iterator);
 }
 
 void Document::detachNodeIterator(NodeIterator& iterator)
 {
     // The node iterator can be detached without having been attached if its root node didn't have a document
     // when the iterator was created, but has it now.
-    m_nodeIterators.remove(&iterator);
+    m_nodeIterators.remove(iterator);
 }
 
-void Document::moveNodeIteratorsToNewDocumentSlowCase(Node& node, Document& newDocument)
+void Document::moveNodeIteratorsToNewDocument(Node& node, Document& newDocument)
 {
-    ASSERT(!m_nodeIterators.isEmpty());
-    for (auto* iterator : copyToVector(m_nodeIterators)) {
-        if (&iterator->root() == &node) {
-            detachNodeIterator(*iterator);
-            newDocument.attachNodeIterator(*iterator);
+    for (auto& it : copyToVectorOf<Ref<NodeIterator>>(m_nodeIterators)) {
+        if (&it->root() == &node) {
+            detachNodeIterator(it.get());
+            newDocument.attachNodeIterator(it.get());
         }
     }
 }
@@ -5210,9 +5218,9 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
     for (auto& range : m_ranges)
         range.nodeChildrenWillBeRemoved(container);
 
-    for (auto* it : m_nodeIterators) {
+    for (auto& it : m_nodeIterators) {
         for (Node* n = container.firstChild(); n; n = n->nextSibling())
-            it->nodeWillBeRemoved(*n);
+            it.nodeWillBeRemoved(*n);
     }
 
     if (RefPtr frame = this->frame()) {
@@ -5236,8 +5244,8 @@ void Document::nodeWillBeRemoved(Node& node)
     adjustFocusedNodeOnNodeRemoval(node);
     adjustFocusNavigationNodeOnNodeRemoval(node);
 
-    for (auto* it : m_nodeIterators)
-        it->nodeWillBeRemoved(node);
+    for (auto& it : m_nodeIterators)
+        it.nodeWillBeRemoved(node);
 
     for (auto& range : m_ranges)
         range.nodeWillBeRemoved(node);
@@ -5576,7 +5584,7 @@ bool Document::isCookieAverse() const
 
     // This is not part of the specification but we have historically allowed cookies over file protocol
     // and some developers rely on this for testing.
-    if (cookieURL.isLocalFile())
+    if (cookieURL.protocolIsFile())
         return false;
 
     // A Document whose URL's scheme is not a network scheme is cookie-averse (https://fetch.spec.whatwg.org/#network-scheme).
@@ -5656,7 +5664,7 @@ String Document::referrerForBindings()
     if (!policySourceLoader->request().url().hasSpecialScheme() && url().protocolIsInHTTPFamily())
         policySourceLoader = loader();
 
-    if (policySourceLoader && policySourceLoader->originatorNetworkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::Enabled)
+    if (policySourceLoader && policySourceLoader->originatorAdvancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections)
         && !RegistrableDomain { URL { frame()->loader().referrer() } }.matches(securityOrigin().data()))
         return String();
     return referrer();
@@ -5888,17 +5896,21 @@ bool Document::shouldMaskURLForBindingsInternal(const URL& urlToMask) const
     return maskedURLSchemes.contains<StringViewHashTranslator>(urlToMask.protocol());
 }
 
+static StaticStringImpl maskedURLString { "webkit-masked-url://hidden/" };
+StaticStringImpl& Document::maskedURLStringForBindings()
+{
+    return maskedURLString;
+}
+
 const URL& Document::maskedURLForBindings()
 {
     // This function can be called from GC heap thread, thus we need to use StaticStringImpl as a source of URL.
-    // StaticStringImpl is never converted to AtomString, and it is safe to be used in any thread.
-    static LazyNeverDestroyed<StringImpl*> maskedURLStringForBindings;
+    // StaticStringImpl is never converted to AtomString, and it is safe to be used in any threads.
     static LazyNeverDestroyed<URL> url;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        maskedURLStringForBindings.construct(&StringImpl::createStaticStringImplWithoutCopying("webkit-masked-url://hidden/", "webkit-masked-url://hidden/"_s.length()).leakRef());
-        url.construct(maskedURLStringForBindings.get());
-        ASSERT(url->string().impl() == static_cast<StringImpl*>(maskedURLStringForBindings.get()));
+        url.construct(maskedURLStringForBindings());
+        ASSERT(url->string().impl() == &static_cast<StringImpl&>(maskedURLStringForBindings()));
     });
     return url;
 }
@@ -6459,7 +6471,15 @@ void Document::finishedParsing()
     bool isInMiddleOfInitializingIframe = documentLoader && documentLoader->isInFinishedLoadingOfEmptyDocument();
     if (!isInMiddleOfInitializingIframe)
         eventLoop().performMicrotaskCheckpoint();
+
+    bool isMainFrame = m_frame && m_frame->isMainFrame();
+    if (isMainFrame)
+        WTFBeginSignpost(this, "Page Load: DOM Content Loaded");
+
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+
+    if (isMainFrame)
+        WTFEndSignpost(this, "Page Load: DOM Content Loaded");
 
     if (!m_eventTiming.domContentLoadedEventEnd) {
         auto now = MonotonicTime::now();
@@ -6538,7 +6558,7 @@ String Document::originIdentifierForPasteboard() const
     if (origin != "null"_s)
         return origin;
     if (!m_uniqueIdentifier)
-        m_uniqueIdentifier = makeString("null:"_s, UUID::createVersion4());
+        m_uniqueIdentifier = makeString("null:"_s, WTF::UUID::createVersion4());
     return m_uniqueIdentifier;
 }
 
@@ -7061,8 +7081,7 @@ void Document::serviceRequestAnimationFrameCallbacks()
 
 void Document::serviceCaretAnimation()
 {
-    if (auto* window = domWindow())
-        selection().caretAnimator().serviceCaretAnimation(window->frozenNowTimestamp());
+    selection().caretAnimator().serviceCaretAnimation();
 }
 
 void Document::serviceRequestVideoFrameCallbacks()
@@ -7093,11 +7112,6 @@ void Document::serviceRequestVideoFrameCallbacks()
 
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
-    if (RenderView* view = renderView()) {
-        if (view->usesCompositing())
-            view->compositor().windowScreenDidChange(displayID);
-    }
-
     for (auto& observer : copyToVector(m_displayChangedObservers)) {
         if (observer)
             (*observer)(displayID);
@@ -7837,16 +7851,16 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             setter(*element);
     };
 
-    changeState(elementsToClearActive, CSSSelector::PseudoClassActive, false, [](auto& element) {
+    changeState(elementsToClearActive, CSSSelector::PseudoClassType::Active, false, [](auto& element) {
         element.setActive(false, Style::InvalidationScope::SelfChildrenAndSiblings);
     });
-    changeState(elementsToSetActive, CSSSelector::PseudoClassActive, true, [](auto& element) {
+    changeState(elementsToSetActive, CSSSelector::PseudoClassType::Active, true, [](auto& element) {
         element.setActive(true, Style::InvalidationScope::SelfChildrenAndSiblings);
     });
-    changeState(elementsToClearHover, CSSSelector::PseudoClassHover, false, [request](auto& element) {
+    changeState(elementsToClearHover, CSSSelector::PseudoClassType::Hover, false, [request](auto& element) {
         element.setHovered(false, Style::InvalidationScope::SelfChildrenAndSiblings, request);
     });
-    changeState(elementsToSetHover, CSSSelector::PseudoClassHover, true, [request](auto& element) {
+    changeState(elementsToSetHover, CSSSelector::PseudoClassType::Hover, true, [request](auto& element) {
         element.setHovered(true, Style::InvalidationScope::SelfChildrenAndSiblings, request);
     });
 }
@@ -8305,130 +8319,6 @@ void Document::removeIntersectionObserver(IntersectionObserver& observer)
     m_intersectionObservers.removeFirst(&observer);
 }
 
-static void expandRootBoundsWithRootMargin(FloatRect& localRootBounds, const LengthBox& rootMargin, float zoomFactor)
-{
-    auto zoomAdjustedLength = [](const Length& length, float maximumValue, float zoomFactor) {
-        if (length.isPercent())
-            return floatValueForLength(length, maximumValue);
-
-        return floatValueForLength(length, maximumValue) * zoomFactor;
-    };
-
-    auto rootMarginEdges = FloatBoxExtent {
-        zoomAdjustedLength(rootMargin.top(), localRootBounds.height(), zoomFactor),
-        zoomAdjustedLength(rootMargin.right(), localRootBounds.width(), zoomFactor),
-        zoomAdjustedLength(rootMargin.bottom(), localRootBounds.height(), zoomFactor),
-        zoomAdjustedLength(rootMargin.left(), localRootBounds.width(), zoomFactor)
-    };
-
-    localRootBounds.expand(rootMarginEdges);
-}
-
-static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const LayoutRect& rect, const RenderElement* renderer)
-{
-    OptionSet<RenderObject::VisibleRectContextOption> visibleRectOptions = { RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection, RenderObject::VisibleRectContextOption::ApplyCompositedClips, RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls };
-    std::optional<LayoutRect> rectInFrameAbsoluteSpace = renderer->computeVisibleRectInContainer(rect, &renderer->view(),  {false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
-    if (!rectInFrameAbsoluteSpace || renderer->frame().isMainFrame())
-        return rectInFrameAbsoluteSpace;
-
-    bool intersects = rectInFrameAbsoluteSpace->edgeInclusiveIntersect(renderer->view().frameView().layoutViewportRect());
-    if (!intersects)
-        return std::nullopt;
-
-    auto* ownerRenderer = renderer->frame().ownerRenderer();
-    if (!ownerRenderer)
-        return std::nullopt;
-
-    LayoutRect rectInFrameViewSpace { renderer->view().frameView().contentsToView(*rectInFrameAbsoluteSpace) };
-
-    rectInFrameViewSpace.moveBy(ownerRenderer->contentBoxLocation());
-    return computeClippedRectInRootContentsSpace(rectInFrameViewSpace, ownerRenderer);
-}
-
-struct IntersectionObservationState {
-    FloatRect absoluteTargetRect;
-    FloatRect absoluteRootBounds;
-    FloatRect absoluteIntersectionRect;
-    bool isIntersecting { false };
-};
-
-static std::optional<IntersectionObservationState> computeIntersectionState(LocalFrameView& frameView, const IntersectionObserver& observer, Element& target, bool applyRootMargin)
-{
-    auto* targetRenderer = target.renderer();
-    if (!targetRenderer)
-        return std::nullopt;
-
-    FloatRect localRootBounds;
-    RenderBlock* rootRenderer;
-    if (observer.root()) {
-        if (observer.trackingDocument() != &target.document())
-            return std::nullopt;
-
-        if (!observer.root()->renderer() || !is<RenderBlock>(observer.root()->renderer()))
-            return std::nullopt;
-
-        rootRenderer = downcast<RenderBlock>(observer.root()->renderer());
-        if (!rootRenderer->isContainingBlockAncestorFor(*targetRenderer))
-            return std::nullopt;
-
-        if (observer.root() == &target.document())
-            localRootBounds = frameView.layoutViewportRect();
-        else if (rootRenderer->hasNonVisibleOverflow())
-            localRootBounds = rootRenderer->contentBoxRect();
-        else
-            localRootBounds = { FloatPoint(), rootRenderer->size() };
-    } else {
-        ASSERT(is<LocalFrame>(frameView.frame()) && downcast<LocalFrame>(frameView.frame()).isMainFrame());
-        // FIXME: Handle the case of an implicit-root observer that has a target in a different frame tree.
-        if (dynamicDowncast<LocalFrame>(targetRenderer->frame().mainFrame()) != &frameView.frame())
-            return std::nullopt;
-        rootRenderer = frameView.renderView();
-        localRootBounds = frameView.layoutViewportRect();
-    }
-
-    if (applyRootMargin)
-        expandRootBoundsWithRootMargin(localRootBounds, observer.rootMarginBox(), rootRenderer->style().effectiveZoom());
-
-    LayoutRect localTargetBounds;
-    if (is<RenderBox>(*targetRenderer))
-        localTargetBounds = downcast<RenderBox>(targetRenderer)->borderBoundingBox();
-    else if (is<RenderInline>(targetRenderer)) {
-        auto pair = target.boundingAbsoluteRectWithoutLayout();
-        if (pair) {
-            FloatRect absoluteTargetBounds = pair->second;
-            localTargetBounds = enclosingLayoutRect(targetRenderer->absoluteToLocalQuad(absoluteTargetBounds).boundingBox());
-        }
-    } else if (is<RenderLineBreak>(targetRenderer))
-        localTargetBounds = downcast<RenderLineBreak>(targetRenderer)->linesBoundingBox();
-
-    std::optional<LayoutRect> rootLocalTargetRect;
-    if (observer.root()) {
-        OptionSet<RenderObject::VisibleRectContextOption> visibleRectOptions = { RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection, RenderObject::VisibleRectContextOption::ApplyCompositedClips, RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls };
-        rootLocalTargetRect = targetRenderer->computeVisibleRectInContainer(localTargetBounds, rootRenderer, { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
-    } else
-        rootLocalTargetRect = computeClippedRectInRootContentsSpace(localTargetBounds, targetRenderer);
-
-    FloatRect rootLocalIntersectionRect = localRootBounds;
-
-    IntersectionObservationState intersectionState;
-    intersectionState.isIntersecting = rootLocalTargetRect && rootLocalIntersectionRect.edgeInclusiveIntersect(*rootLocalTargetRect) && !targetRenderer->isSkippedContent();
-    intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
-    intersectionState.absoluteRootBounds = rootRenderer->localToAbsoluteQuad(localRootBounds).boundingBox();
-
-    if (intersectionState.isIntersecting) {
-        FloatRect rootAbsoluteIntersectionRect = rootRenderer->localToAbsoluteQuad(rootLocalIntersectionRect).boundingBox();
-        if (&targetRenderer->frame() == &rootRenderer->frame())
-            intersectionState.absoluteIntersectionRect = rootAbsoluteIntersectionRect;
-        else {
-            FloatRect rootViewIntersectionRect = frameView.contentsToView(rootAbsoluteIntersectionRect);
-            intersectionState.absoluteIntersectionRect = targetRenderer->view().frameView().rootViewToContents(rootViewIntersectionRect);
-        }
-        intersectionState.isIntersecting = intersectionState.absoluteIntersectionRect.edgeInclusiveIntersect(intersectionState.absoluteTargetRect);
-    }
-
-    return intersectionState;
-}
-
 void Document::updateIntersectionObservations()
 {
     RefPtr frameView = view();
@@ -8441,76 +8331,13 @@ void Document::updateIntersectionObservations()
 
     Vector<WeakPtr<IntersectionObserver>> intersectionObserversWithPendingNotifications;
 
-    for (const auto& observer : m_intersectionObservers) {
-        bool needNotify = false;
-        auto timestamp = observer->nowTimestamp();
-        if (!timestamp)
+    for (auto& weakObserver : m_intersectionObservers) {
+        RefPtr observer = weakObserver.get();
+        if (!observer)
             continue;
-        for (auto& target : observer->observationTargets()) {
-            auto& targetRegistrations = target->intersectionObserverDataIfExists()->registrations;
-            auto index = targetRegistrations.findIf([observer](auto& registration) {
-                return registration.observer.get() == observer;
-            });
-            ASSERT(index != notFound);
-            auto& registration = targetRegistrations[index];
 
-            bool isSameOriginObservation = &target->document() == this || target->document().securityOrigin().isSameOriginDomain(securityOrigin());
-            auto intersectionState = computeIntersectionState(*frameView, *observer, *target, isSameOriginObservation);
-
-            float intersectionRatio = 0;
-            size_t thresholdIndex = 0;
-            if (intersectionState) {
-                if (intersectionState->isIntersecting) {
-                    float absTargetArea = intersectionState->absoluteTargetRect.area();
-                    if (absTargetArea)
-                        intersectionRatio = intersectionState->absoluteIntersectionRect.area() / absTargetArea;
-                    else
-                        intersectionRatio = 1;
-
-                    for (auto threshold : observer->thresholds()) {
-                        if (!(threshold <= intersectionRatio || WTF::areEssentiallyEqual<float>(threshold, intersectionRatio)))
-                            break;
-                        ++thresholdIndex;
-                    }
-                }
-            }
-
-            if (!registration.previousThresholdIndex || thresholdIndex != registration.previousThresholdIndex) {
-                FloatRect targetBoundingClientRect;
-                FloatRect clientIntersectionRect;
-                FloatRect clientRootBounds;
-                if (intersectionState) {
-                    RefPtr targetFrameView = target->document().view();
-                    targetBoundingClientRect = targetFrameView->absoluteToClientRect(intersectionState->absoluteTargetRect, target->renderer()->style().effectiveZoom());
-                    clientRootBounds = frameView->absoluteToLayoutViewportRect(intersectionState->absoluteRootBounds);
-                    if (intersectionState->isIntersecting)
-                        clientIntersectionRect = targetFrameView->absoluteToClientRect(intersectionState->absoluteIntersectionRect, target->renderer()->style().effectiveZoom());
-                }
-
-                std::optional<DOMRectInit> reportedRootBounds;
-                if (isSameOriginObservation) {
-                    reportedRootBounds = DOMRectInit({
-                        clientRootBounds.x(),
-                        clientRootBounds.y(),
-                        clientRootBounds.width(),
-                        clientRootBounds.height()
-                    });
-                }
-
-                observer->appendQueuedEntry(IntersectionObserverEntry::create({
-                    timestamp->milliseconds(),
-                    reportedRootBounds,
-                    { targetBoundingClientRect.x(), targetBoundingClientRect.y(), targetBoundingClientRect.width(), targetBoundingClientRect.height() },
-                    { clientIntersectionRect.x(), clientIntersectionRect.y(), clientIntersectionRect.width(), clientIntersectionRect.height() },
-                    intersectionRatio,
-                    target.get(),
-                    thresholdIndex > 0,
-                }));
-                needNotify = true;
-                registration.previousThresholdIndex = thresholdIndex;
-            }
-        }
-        if (needNotify)
+        auto needNotify = observer->updateObservations(*this);
+        if (needNotify == IntersectionObserver::NeedNotify::Yes)
             intersectionObserversWithPendingNotifications.append(observer);
     }
 
@@ -8604,6 +8431,10 @@ void Document::setHasSkippedResizeObservations(bool skipped)
 
 void Document::updateResizeObservations(Page& page)
 {
+    if (quirks().shouldSilenceResizeObservers()) {
+        addConsoleMessage(MessageSource::Other, MessageLevel::Info, "ResizeObservers silenced due to: http://webkit.org/b/258597"_s);
+        return;
+    }
     if (!hasResizeObservers() && !m_resizeObserverForContainIntrinsicSize)
         return;
 
@@ -8986,9 +8817,18 @@ void Document::keyframesRuleDidChange(const String& name)
 void Document::addTopLayerElement(Element& element)
 {
     RELEASE_ASSERT(&element.document() == this && element.isConnected() && !element.isInTopLayer());
-    // To add an element to a top layer, remove it from top layer and then append it to top layer.
     auto result = m_topLayerElements.add(element);
     RELEASE_ASSERT(result.isNewEntry);
+    if (auto* candidatePopover = dynamicDowncast<HTMLElement>(element); candidatePopover && candidatePopover->popoverState() == PopoverState::Auto) {
+#if ENABLE(FULLSCREEN_API)
+        if (candidatePopover->hasFullscreenFlag())
+            return;
+#endif
+        if (is<HTMLDialogElement>(*candidatePopover) && downcast<HTMLDialogElement>(*candidatePopover).isModal())
+            return;
+        auto result = m_autoPopoverList.add(*candidatePopover);
+        RELEASE_ASSERT(result.isNewEntry);
+    }
 }
 
 void Document::removeTopLayerElement(Element& element)
@@ -8996,6 +8836,10 @@ void Document::removeTopLayerElement(Element& element)
     RELEASE_ASSERT(&element.document() == this && element.isInTopLayer());
     auto didRemove = m_topLayerElements.remove(element);
     RELEASE_ASSERT(didRemove);
+    if (auto* candidatePopover = dynamicDowncast<HTMLElement>(element); candidatePopover && candidatePopover->isPopoverShowing() && candidatePopover->popoverState() == PopoverState::Auto) {
+        auto didRemove = m_autoPopoverList.remove(*candidatePopover);
+        RELEASE_ASSERT(didRemove);
+    }
 }
 
 HTMLDialogElement* Document::activeModalDialog() const
@@ -9010,31 +8854,45 @@ HTMLDialogElement* Document::activeModalDialog() const
 
 HTMLElement* Document::topmostAutoPopover() const
 {
-    for (auto& element : makeReversedRange(m_topLayerElements)) {
-        if (auto* candidate = dynamicDowncast<HTMLElement>(element.get()); candidate && candidate->popoverState() == PopoverState::Auto)
-            return candidate;
-    }
-
-    return nullptr;
+    if (m_autoPopoverList.isEmpty())
+        return nullptr;
+    return m_autoPopoverList.last().ptr();
 }
 
 // https://html.spec.whatwg.org/#hide-all-popovers-until
-void Document::hideAllPopoversUntil(Element* endpoint, FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
+void Document::hideAllPopoversUntil(HTMLElement* endpoint, FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
 {
-    Vector<Ref<HTMLElement>> popoversToHide;
-    for (auto& item : makeReversedRange(m_topLayerElements)) {
-        if (!is<HTMLElement>(item))
-            continue;
-        auto& element = downcast<HTMLElement>(item.get());
-        if (element.popoverState() == PopoverState::Auto) {
-            if (&element == endpoint)
-                break;
-            popoversToHide.append(element);
-        }
-    }
+    auto closeAllOpenPopovers = [&]() {
+        while (RefPtr popover = topmostAutoPopover())
+            popover->hidePopoverInternal(focusPreviousElement, fireEvents);
+    };
+    if (!endpoint)
+        return closeAllOpenPopovers();
 
-    for (auto& popover : popoversToHide)
-        popover->hidePopoverInternal(focusPreviousElement, fireEvents);
+    bool repeatingHide = false;
+    do {
+        RefPtr<Element> lastToHide;
+        bool foundEndPoint = false;
+        for (auto& popover : autoPopoverList()) {
+            if (popover.ptr() == endpoint)
+                foundEndPoint = true;
+            else if (foundEndPoint) {
+                lastToHide = popover.ptr();
+                break;
+            }
+        }
+        if (!foundEndPoint)
+            return closeAllOpenPopovers();
+        while (lastToHide && lastToHide->isPopoverShowing()) {
+            auto* topmostAutoPopover = this->topmostAutoPopover();
+            if (!topmostAutoPopover)
+                break;
+            topmostAutoPopover->hidePopoverInternal(focusPreviousElement, fireEvents);
+        }
+        repeatingHide = m_autoPopoverList.contains(*endpoint) && topmostAutoPopover() != endpoint;
+        if (repeatingHide)
+            fireEvents = FireEvents::No;
+    } while (repeatingHide);
 }
 
 // https://html.spec.whatwg.org/#popover-light-dismiss
@@ -9075,9 +8933,9 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
                 return second;
             if (!second)
                 return first;
-            for (auto& element : makeReversedRange(m_topLayerElements)) {
+            for (auto& element : makeReversedRange(m_autoPopoverList)) {
                 if (element.ptr() == first || element.ptr() == second)
-                    return downcast<HTMLElement>(element.ptr());
+                    return element.ptr();
             }
             ASSERT_NOT_REACHED();
             return nullptr;
@@ -9310,16 +9168,23 @@ bool Document::hitTest(const HitTestRequest& request, HitTestResult& result)
 bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& location, HitTestResult& result)
 {
     Ref<Document> protectedThis(*this);
-    updateLayout();
+
     if (!renderView())
         return false;
+
+    auto& frameView = renderView()->frameView();
+    Ref<FrameView> protector(frameView);
+
+    // If hit testing can descend into child frames, then we should make sure those frames have an updated layout
+    // before proceeding
+    if (request.allowsAnyFrameContent())
+        frameView.updateLayoutAndStyleIfNeededRecursive();
+    else
+        updateLayout();
 
 #if ASSERT_ENABLED
     SetForScope hitTestRestorer { m_inHitTesting, true };
 #endif
-
-    auto& frameView = renderView()->frameView();
-    Ref<LocalFrameView> protector(frameView);
 
     bool resultLayer = renderView()->layer()->hitTest(request, location, result);
 
@@ -9460,11 +9325,11 @@ void Document::setPictureInPictureElement(HTMLVideoElement* element)
 
     std::optional<Style::PseudoClassChangeInvalidation> oldInvalidation;
     if (oldElement)
-        emplace(oldInvalidation, *oldElement, { { CSSSelector::PseudoClassPictureInPicture, false } });
+        emplace(oldInvalidation, *oldElement, { { CSSSelector::PseudoClassType::PictureInPicture, false } });
 
     std::optional<Style::PseudoClassChangeInvalidation> newInvalidation;
     if (element)
-        emplace(newInvalidation, *element, { { CSSSelector::PseudoClassPictureInPicture, true } });
+        emplace(newInvalidation, *element, { { CSSSelector::PseudoClassType::PictureInPicture, true } });
 
     m_pictureInPictureElement = element;
 }
@@ -9685,20 +9550,48 @@ void Document::resetObservationSizeForContainIntrinsicSize(Element& target)
     m_resizeObserverForContainIntrinsicSize->resetObservationSize(target);
 }
 
-#if __has_include(<WebKitAdditions/DocumentAdditions.cpp>)
-#include <WebKitAdditions/DocumentAdditions.cpp>
-#else
 NoiseInjectionPolicy Document::noiseInjectionPolicy() const
 {
+    if (auto* loader = topDocument().loader()) {
+        if (loader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections))
+            return NoiseInjectionPolicy::Minimal;
+    }
     return NoiseInjectionPolicy::None;
 }
-#endif
 
 std::optional<uint64_t> Document::noiseInjectionHashSalt() const
 {
     if (!page() || noiseInjectionPolicy() == NoiseInjectionPolicy::None)
         return std::nullopt;
     return page()->noiseInjectionHashSaltForDomain(RegistrableDomain { m_url });
+}
+
+ContentVisibilityDocumentState& Document::contentVisibilityDocumentState()
+{
+    if (!m_contentVisibilityDocumentState)
+        m_contentVisibilityDocumentState = makeUnique<ContentVisibilityDocumentState>();
+    return *m_contentVisibilityDocumentState;
+}
+
+bool Document::isObservingContentVisibilityTargets() const
+{
+    return m_contentVisibilityDocumentState && m_contentVisibilityDocumentState->hasObservationTargets();
+}
+
+void Document::updateRelevancyOfContentVisibilityElements()
+{
+    if (!isObservingContentVisibilityTargets())
+        return;
+    if (m_contentVisibilityDocumentState->updateRelevancyOfContentVisibilityElements(m_contentRelevancyStatusUpdate))
+        updateLayoutIgnorePendingStylesheets();
+    m_contentRelevancyStatusUpdate = { };
+}
+
+void Document::scheduleContentRelevancyUpdate(ContentRelevancyStatus status)
+{
+    if (!isObservingContentVisibilityTargets())
+        return;
+    m_contentRelevancyStatusUpdate.add(status);
 }
 
 } // namespace WebCore

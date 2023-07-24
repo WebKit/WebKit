@@ -77,7 +77,7 @@ void CanvasPath::lineTo(float x, float y)
         return;
 
     FloatPoint p1 = FloatPoint(x, y);
-    if (!m_path.hasCurrentPoint())
+    if (m_path.isEmpty())
         m_path.moveTo(p1);
     else if (p1 != m_path.currentPoint())
         m_path.addLineTo(p1);
@@ -89,7 +89,7 @@ void CanvasPath::quadraticCurveTo(float cpx, float cpy, float x, float y)
         return;
     if (!hasInvertibleTransform())
         return;
-    if (!m_path.hasCurrentPoint())
+    if (m_path.isEmpty())
         m_path.moveTo(FloatPoint(cpx, cpy));
 
     FloatPoint p1 = FloatPoint(x, y);
@@ -104,7 +104,7 @@ void CanvasPath::bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, f
         return;
     if (!hasInvertibleTransform())
         return;
-    if (!m_path.hasCurrentPoint())
+    if (m_path.isEmpty())
         m_path.moveTo(FloatPoint(cp1x, cp1y));
 
     FloatPoint p1 = FloatPoint(x, y);
@@ -128,7 +128,7 @@ ExceptionOr<void> CanvasPath::arcTo(float x1, float y1, float x2, float y2, floa
     FloatPoint p1 = FloatPoint(x1, y1);
     FloatPoint p2 = FloatPoint(x2, y2);
 
-    if (!m_path.hasCurrentPoint())
+    if (m_path.isEmpty())
         m_path.moveTo(p1);
     else if (p1 == m_path.currentPoint() || p1 == p2 || !r)
         lineTo(x1, y1);
@@ -176,7 +176,7 @@ ExceptionOr<void> CanvasPath::arc(float x, float y, float radius, float startAng
         return { };
     }
 
-    m_path.addArc(FloatPoint(x, y), radius, startAngle, endAngle, anticlockwise);
+    m_path.addArc(FloatPoint(x, y), radius, startAngle, endAngle, anticlockwise ?  RotationDirection::Counterclockwise :  RotationDirection::Clockwise);
     return { };
 }
     
@@ -219,7 +219,7 @@ ExceptionOr<void> CanvasPath::ellipse(float x, float y, float radiusX, float rad
         return { };
     }
 
-    m_path.addEllipse(FloatPoint(x, y), radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
+    m_path.addEllipse(FloatPoint(x, y), radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise ?  RotationDirection::Counterclockwise :  RotationDirection::Clockwise);
     return { };
 }
 

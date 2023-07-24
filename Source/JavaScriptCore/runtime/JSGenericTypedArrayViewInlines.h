@@ -343,6 +343,59 @@ bool JSGenericTypedArrayView<Adaptor>::setFromTypedArray(JSGlobalObject* globalO
 }
 
 template<typename Adaptor>
+void JSGenericTypedArrayView<Adaptor>::copyFromInt32ShapeArray(size_t offset, JSArray* array, size_t objectOffset, size_t length)
+{
+    ASSERT(canAccessRangeQuickly(offset, length));
+    ASSERT((array->indexingType() & IndexingShapeMask) == Int32Shape);
+    ASSERT(Adaptor::typeValue != TypeBigInt64 || Adaptor::typeValue != TypeBigUint64);
+    ASSERT((length + objectOffset) <= array->length());
+    ASSERT(array->isIteratorProtocolFastAndNonObservable());
+
+    // If the destination is uint32_t or int32_t, we can use copyElements.
+    // 1. int32_t -> uint32_t conversion does not change any bit representation. So we can simply copy them.
+    // 2. Hole is represented as JSEmpty in Int32Shape, which lower 32bits is zero. And we expect 0 for undefined, thus this copying simply works.
+    if constexpr (Adaptor::typeValue == TypeUint8 || Adaptor::typeValue == TypeInt8) {
+        WTF::copyElements(bitwise_cast<uint8_t*>(typedVector() + offset), bitwise_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
+        return;
+    }
+    if constexpr (Adaptor::typeValue == TypeUint16 || Adaptor::typeValue == TypeInt16) {
+        WTF::copyElements(bitwise_cast<uint16_t*>(typedVector() + offset), bitwise_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
+        return;
+    }
+    if constexpr (Adaptor::typeValue == TypeUint32 || Adaptor::typeValue == TypeInt32) {
+        WTF::copyElements(bitwise_cast<uint32_t*>(typedVector() + offset), bitwise_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length);
+        return;
+    }
+    for (size_t i = 0; i < length; ++i) {
+        JSValue value = array->butterfly()->contiguous().at(array, static_cast<unsigned>(i + objectOffset)).get();
+        if (LIKELY(!!value))
+            setIndexQuicklyToNativeValue(offset + i, Adaptor::toNativeFromInt32(value.asInt32()));
+        else
+            setIndexQuicklyToNativeValue(offset + i, Adaptor::toNativeFromUndefined());
+    }
+}
+
+template<typename Adaptor>
+void JSGenericTypedArrayView<Adaptor>::copyFromDoubleShapeArray(size_t offset, JSArray* array, size_t objectOffset, size_t length)
+{
+    ASSERT(canAccessRangeQuickly(offset, length));
+    ASSERT((array->indexingType() & IndexingShapeMask) == DoubleShape);
+    ASSERT(Adaptor::typeValue != TypeBigInt64 || Adaptor::typeValue != TypeBigUint64);
+    ASSERT((length + objectOffset) <= array->length());
+    ASSERT(array->isIteratorProtocolFastAndNonObservable());
+
+    if constexpr (Adaptor::typeValue == TypeFloat64) {
+        // Double to double copy. Thus we can use memcpy (since Array will never overlap with TypedArrays' backing store).
+        WTF::copyElements(typedVector() + offset, array->butterfly()->contiguousDouble().data() + objectOffset, length);
+        return;
+    }
+    for (size_t i = 0; i < length; ++i) {
+        double d = array->butterfly()->contiguousDouble().at(array, static_cast<unsigned>(i + objectOffset));
+        setIndexQuicklyToNativeValue(offset + i, Adaptor::toNativeFromDouble(d));
+    }
+}
+
+template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalObject, size_t offset, JSObject* object, size_t objectOffset, size_t length)
 {
     VM& vm = globalObject->vm();
@@ -357,6 +410,23 @@ bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalOb
     // So we iterate in the optimized loop up to MAX_ARRAY_INDEX, then if there is anything to do beyond this, we rely on slower code.
     size_t safeUnadjustedLength = std::min(length, static_cast<size_t>(MAX_ARRAY_INDEX) + 1);
     size_t safeLength = objectOffset <= safeUnadjustedLength ? safeUnadjustedLength - objectOffset : 0;
+
+    if constexpr (TypedArrayStorageType != TypeBigInt64 || TypedArrayStorageType != TypeBigUint64) {
+        if (JSArray* array = jsDynamicCast<JSArray*>(object); LIKELY(array)) {
+            if (safeLength == length && (safeLength + objectOffset) >= array->length() && array->isIteratorProtocolFastAndNonObservable()) {
+                IndexingType indexingType = array->indexingType() & IndexingShapeMask;
+                if (indexingType == Int32Shape) {
+                    copyFromInt32ShapeArray(offset, array, objectOffset, safeLength);
+                    return true;
+                }
+                if (indexingType == DoubleShape) {
+                    copyFromDoubleShapeArray(offset, array, objectOffset, safeLength);
+                    return true;
+                }
+            }
+        }
+    }
+
     for (size_t i = 0; i < safeLength; ++i) {
         ASSERT(i + objectOffset <= MAX_ARRAY_INDEX);
         JSValue value = object->get(globalObject, static_cast<unsigned>(i + objectOffset));
@@ -389,6 +459,9 @@ bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalOb
         throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
         return false;
     }
+
+    if (JSArray* array = jsDynamicCast<JSArray*>(sourceValue); LIKELY(array))
+        RELEASE_AND_RETURN(scope, setFromArrayLike(globalObject, offset, array, 0, array->length()));
 
     size_t targetLength = this->length();
 

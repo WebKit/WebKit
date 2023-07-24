@@ -10,6 +10,8 @@
 
 #include "common_video/h264/pps_parser.h"
 
+#include <vector>
+
 #include "common_video/h264/h264_common.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/buffer.h"
@@ -213,10 +215,19 @@ TEST_F(PpsParserTest, MaxPps) {
 }
 
 TEST_F(PpsParserTest, PpsIdFromSlice) {
-  absl::optional<uint32_t> pps_id = PpsParser::ParsePpsIdFromSlice(
-      kH264BitstreamChunk, sizeof(kH264BitstreamChunk));
-  ASSERT_TRUE(pps_id);
-  EXPECT_EQ(2u, *pps_id);
+  std::vector<H264::NaluIndex> nalu_indices =
+      H264::FindNaluIndices(kH264BitstreamChunk, sizeof(kH264BitstreamChunk));
+  EXPECT_EQ(nalu_indices.size(), 3ull);
+  for (const auto& index : nalu_indices) {
+    H264::NaluType nalu_type =
+        H264::ParseNaluType(kH264BitstreamChunk[index.payload_start_offset]);
+    if (nalu_type == H264::NaluType::kIdr) {
+      absl::optional<uint32_t> pps_id = PpsParser::ParsePpsIdFromSlice(
+          kH264BitstreamChunk + index.payload_start_offset, index.payload_size);
+      EXPECT_EQ(pps_id, 0u);
+      break;
+    }
+  }
 }
 
 }  // namespace webrtc

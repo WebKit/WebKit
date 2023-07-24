@@ -1,0 +1,8 @@
+--- !tapi-tbd-v3
+archs:           [ x86_64, arm64, arm64e ]
+install-name:    '/System/Library/PrivateFrameworks/FontServices.framework/libFontParser.dylib'
+platform: zippered
+exports:
+  - archs:           [ x86_64, arm64, arm64e ]
+    symbols:         [ _FPFontCopyPostScriptName, _FPFontCopySFNTData, _FPFontCreateFontsFromData ]
+...

@@ -69,12 +69,14 @@ typedef struct {
 
 struct AV1_COMP;
 struct SVC;
+struct RTC_REF;
 
 void av1_denoiser_update_frame_info(
-    AV1_DENOISER *denoiser, YV12_BUFFER_CONFIG src, struct SVC *svc,
-    FRAME_TYPE frame_type, int refresh_alt_ref_frame, int refresh_golden_frame,
-    int refresh_last_frame, int alt_fb_idx, int gld_fb_idx, int lst_fb_idx,
-    int resized, int svc_refresh_denoiser_buffers, int second_spatial_layer);
+    AV1_DENOISER *denoiser, YV12_BUFFER_CONFIG src, struct RTC_REF *rtc_ref,
+    struct SVC *svc, FRAME_TYPE frame_type, int refresh_alt_ref_frame,
+    int refresh_golden_frame, int refresh_last_frame, int alt_fb_idx,
+    int gld_fb_idx, int lst_fb_idx, int resized,
+    int svc_refresh_denoiser_buffers, int second_spatial_layer);
 
 void av1_denoiser_denoise(struct AV1_COMP *cpi, MACROBLOCK *mb, int mi_row,
                           int mi_col, BLOCK_SIZE bs, PICK_MODE_CONTEXT *ctx,
@@ -88,9 +90,10 @@ void av1_denoiser_update_frame_stats(MB_MODE_INFO *mi, int64_t sse,
                                      PICK_MODE_CONTEXT *ctx);
 
 int av1_denoiser_realloc_svc(AV1_COMMON *cm, AV1_DENOISER *denoiser,
-                             struct SVC *svc, int svc_buf_shift,
-                             int refresh_alt, int refresh_gld, int refresh_lst,
-                             int alt_fb_idx, int gld_fb_idx, int lst_fb_idx);
+                             struct RTC_REF *rtc, struct SVC *svc,
+                             int svc_buf_shift, int refresh_alt,
+                             int refresh_gld, int refresh_lst, int alt_fb_idx,
+                             int gld_fb_idx, int lst_fb_idx);
 
 int av1_denoiser_alloc(AV1_COMMON *cm, struct SVC *svc, AV1_DENOISER *denoiser,
                        int use_svc, int noise_sen, int width, int height,

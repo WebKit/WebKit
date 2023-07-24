@@ -140,6 +140,7 @@ VkResult AllocateAndBindMemoryForImage(VmaAllocator allocator,
                                        VkImage *pImage,
                                        VkMemoryPropertyFlags requiredFlags,
                                        VkMemoryPropertyFlags preferredFlags,
+                                       bool allocateDedicatedMemory,
                                        VmaAllocation *pAllocationOut,
                                        uint32_t *pMemoryTypeIndexOut,
                                        VkDeviceSize *sizeOut)
@@ -148,8 +149,9 @@ VkResult AllocateAndBindMemoryForImage(VmaAllocator allocator,
     VmaAllocationCreateInfo allocationCreateInfo = {};
     allocationCreateInfo.requiredFlags           = requiredFlags;
     allocationCreateInfo.preferredFlags          = preferredFlags;
-    allocationCreateInfo.flags                   = 0;
-    VmaAllocationInfo allocationInfo             = {};
+    allocationCreateInfo.flags =
+        allocateDedicatedMemory ? VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT : 0;
+    VmaAllocationInfo allocationInfo = {};
 
     result = vmaAllocateMemoryForImage(allocator, *pImage, &allocationCreateInfo, pAllocationOut,
                                        &allocationInfo);
@@ -185,6 +187,23 @@ VkResult FindMemoryTypeIndexForBufferInfo(VmaAllocator allocator,
 
     return vmaFindMemoryTypeIndexForBufferInfo(allocator, pBufferCreateInfo, &allocationCreateInfo,
                                                pMemoryTypeIndexOut);
+}
+
+VkResult FindMemoryTypeIndexForImageInfo(VmaAllocator allocator,
+                                         const VkImageCreateInfo *pImageCreateInfo,
+                                         VkMemoryPropertyFlags requiredFlags,
+                                         VkMemoryPropertyFlags preferredFlags,
+                                         bool allocateDedicatedMemory,
+                                         uint32_t *pMemoryTypeIndexOut)
+{
+    VmaAllocationCreateInfo allocationCreateInfo = {};
+    allocationCreateInfo.requiredFlags           = requiredFlags;
+    allocationCreateInfo.preferredFlags          = preferredFlags;
+    allocationCreateInfo.flags =
+        allocateDedicatedMemory ? VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT : 0;
+
+    return vmaFindMemoryTypeIndexForImageInfo(allocator, pImageCreateInfo, &allocationCreateInfo,
+                                              pMemoryTypeIndexOut);
 }
 
 void GetMemoryTypeProperties(VmaAllocator allocator,

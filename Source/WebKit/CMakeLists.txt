@@ -271,6 +271,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/GPU/GPUProcessConnection
 
     WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy
+    WebProcess/GPU/graphics/RemoteImageBufferProxy
     WebProcess/GPU/graphics/RemoteRenderingBackendProxy
 
     WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy
@@ -335,6 +336,163 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebStorage/StorageAreaMap
 
     WebProcess/XR/PlatformXRSystemProxy
+)
+
+set(WebKit_SERIALIZATION_IN_FILES
+    GPUProcess/GPUProcessSessionParameters.serialization.in
+
+    GPUProcess/graphics/PathSegment.serialization.in
+    GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
+
+    GPUProcess/graphics/WebGPU/RemoteGPURequestAdapterResponse.serialization.in
+
+    GPUProcess/media/AudioTrackPrivateRemoteConfiguration.serialization.in
+    GPUProcess/media/InitializationSegmentInfo.serialization.in
+    GPUProcess/media/MediaDescriptionInfo.serialization.in
+    GPUProcess/media/RemoteMediaPlayerProxyConfiguration.serialization.in
+    GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
+    GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in
+    GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in
+
+    NetworkProcess/NetworkProcessCreationParameters.serialization.in
+    NetworkProcess/NetworkResourceLoadParameters.serialization.in
+
+    Platform/SharedMemory.serialization.in
+
+    Shared/BackgroundFetchState.serialization.in
+    Shared/CallbackID.serialization.in
+    Shared/DisplayListArgumentCoders.serialization.in
+    Shared/EditorState.serialization.in
+    Shared/FileSystemSyncAccessHandleInfo.serialization.in
+    Shared/FocusedElementInformation.serialization.in
+    Shared/FrameInfoData.serialization.in
+    Shared/FrameTreeCreationParameters.serialization.in
+    Shared/FrameTreeNodeData.serialization.in
+    Shared/GPUProcessConnectionParameters.serialization.in
+    Shared/LayerTreeContext.serialization.in
+    Shared/LocalFrameCreationParameters.serialization.in
+    Shared/Model.serialization.in
+    Shared/NavigationActionData.serialization.in
+    Shared/NetworkProcessConnectionParameters.serialization.in
+    Shared/Pasteboard.serialization.in
+    Shared/PlatformPopupMenuData.serialization.in
+    Shared/PolicyDecision.serialization.in
+    Shared/RemoteWorkerType.serialization.in
+    Shared/SameDocumentNavigationType.serialization.in
+    Shared/SessionState.serialization.in
+    Shared/ShareableBitmap.serialization.in
+    Shared/TextFlags.serialization.in
+    Shared/TextRecognitionResult.serialization.in
+    Shared/UpdateInfo.serialization.in
+    Shared/WTFArgumentCoders.serialization.in
+    Shared/WebCoreArgumentCoders.serialization.in
+    Shared/WebEvent.serialization.in
+    Shared/WebHitTestResultData.serialization.in
+    Shared/WebPageCreationParameters.serialization.in
+    Shared/WebPopupItem.serialization.in
+    Shared/WebProcessCreationParameters.serialization.in
+    Shared/WebProcessDataStoreParameters.serialization.in
+    Shared/WebPushDaemonConnectionConfiguration.serialization.in
+    Shared/WebPushMessage.serialization.in
+    Shared/WebsiteDataStoreParameters.serialization.in
+    Shared/WebsitePoliciesData.serialization.in
+
+    Shared/API/APIData.serialization.in
+    Shared/API/APIError.serialization.in
+    Shared/API/APIFrameHandle.serialization.in
+    Shared/API/APIGeometry.serialization.in
+    Shared/API/APIPageHandle.serialization.in
+    Shared/API/APIURL.serialization.in
+    Shared/API/APIURLRequest.serialization.in
+    Shared/API/APIURLResponse.serialization.in
+
+    Shared/Databases/IndexedDB/WebIDBResult.serialization.in
+
+    Shared/Extensions/WebExtensionEventListenerType.serialization.in
+
+    Shared/Gamepad/GamepadData.serialization.in
+
+    Shared/WebGPU/WebGPUBindGroupDescriptor.serialization.in
+    Shared/WebGPU/WebGPUBindGroupEntry.serialization.in
+    Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.serialization.in
+    Shared/WebGPU/WebGPUBindGroupLayoutEntry.serialization.in
+    Shared/WebGPU/WebGPUBlendComponent.serialization.in
+    Shared/WebGPU/WebGPUBlendState.serialization.in
+    Shared/WebGPU/WebGPUBufferBinding.serialization.in
+    Shared/WebGPU/WebGPUBufferBindingLayout.serialization.in
+    Shared/WebGPU/WebGPUBufferDescriptor.serialization.in
+    Shared/WebGPU/WebGPUCanvasConfiguration.serialization.in
+    Shared/WebGPU/WebGPUColor.serialization.in
+    Shared/WebGPU/WebGPUColorTargetState.serialization.in
+    Shared/WebGPU/WebGPUCommandBufferDescriptor.serialization.in
+    Shared/WebGPU/WebGPUCommandEncoderDescriptor.serialization.in
+    Shared/WebGPU/WebGPUCompilationMessage.serialization.in
+    Shared/WebGPU/WebGPUComputePassDescriptor.serialization.in
+    Shared/WebGPU/WebGPUComputePassTimestampWrites.serialization.in
+    Shared/WebGPU/WebGPUComputePipelineDescriptor.serialization.in
+    Shared/WebGPU/WebGPUDepthStencilState.serialization.in
+    Shared/WebGPU/WebGPUDeviceDescriptor.serialization.in
+    Shared/WebGPU/WebGPUExtent3D.serialization.in
+    Shared/WebGPU/WebGPUExternalTextureBindingLayout.serialization.in
+    Shared/WebGPU/WebGPUExternalTextureDescriptor.serialization.in
+    Shared/WebGPU/WebGPUFeatureName.serialization.in
+    Shared/WebGPU/WebGPUFragmentState.serialization.in
+    Shared/WebGPU/WebGPUImageCopyBuffer.serialization.in
+    Shared/WebGPU/WebGPUImageCopyExternalImage.serialization.in
+    Shared/WebGPU/WebGPUImageCopyTexture.serialization.in
+    Shared/WebGPU/WebGPUImageCopyTextureTagged.serialization.in
+    Shared/WebGPU/WebGPUImageDataLayout.serialization.in
+    Shared/WebGPU/WebGPUMultisampleState.serialization.in
+    Shared/WebGPU/WebGPUObjectDescriptorBase.serialization.in
+    Shared/WebGPU/WebGPUOrigin2D.serialization.in
+    Shared/WebGPU/WebGPUOrigin3D.serialization.in
+    Shared/WebGPU/WebGPUOutOfMemoryError.serialization.in
+    Shared/WebGPU/WebGPUPipelineDescriptorBase.serialization.in
+    Shared/WebGPU/WebGPUPipelineLayoutDescriptor.serialization.in
+    Shared/WebGPU/WebGPUPresentationContextDescriptor.serialization.in
+    Shared/WebGPU/WebGPUPrimitiveState.serialization.in
+    Shared/WebGPU/WebGPUProgrammableStage.serialization.in
+    Shared/WebGPU/WebGPUQuerySetDescriptor.serialization.in
+    Shared/WebGPU/WebGPURenderBundleDescriptor.serialization.in
+    Shared/WebGPU/WebGPURenderBundleEncoderDescriptor.serialization.in
+    Shared/WebGPU/WebGPURenderPassColorAttachment.serialization.in
+    Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.serialization.in
+    Shared/WebGPU/WebGPURenderPassDescriptor.serialization.in
+    Shared/WebGPU/WebGPURenderPassLayout.serialization.in
+    Shared/WebGPU/WebGPURenderPassTimestampWrites.serialization.in
+    Shared/WebGPU/WebGPURenderPipelineDescriptor.serialization.in
+    Shared/WebGPU/WebGPURequestAdapterOptions.serialization.in
+    Shared/WebGPU/WebGPUSamplerBindingLayout.serialization.in
+    Shared/WebGPU/WebGPUSamplerDescriptor.serialization.in
+    Shared/WebGPU/WebGPUShaderModuleCompilationHint.serialization.in
+    Shared/WebGPU/WebGPUShaderModuleDescriptor.serialization.in
+    Shared/WebGPU/WebGPUStencilFaceState.serialization.in
+    Shared/WebGPU/WebGPUStorageTextureBindingLayout.serialization.in
+    Shared/WebGPU/WebGPUSupportedFeatures.serialization.in
+    Shared/WebGPU/WebGPUSupportedLimits.serialization.in
+    Shared/WebGPU/WebGPUTextureBindingLayout.serialization.in
+    Shared/WebGPU/WebGPUTextureDescriptor.serialization.in
+    Shared/WebGPU/WebGPUTextureViewDescriptor.serialization.in
+    Shared/WebGPU/WebGPUValidationError.serialization.in
+    Shared/WebGPU/WebGPUVertexAttribute.serialization.in
+    Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
+    Shared/WebGPU/WebGPUVertexState.serialization.in
+
+    Shared/WebsiteData/WebsiteData.serialization.in
+    Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
+    Shared/WebsiteData/WebsiteDataType.serialization.in
+
+    Shared/XR/XRSystem.serialization.in
+
+    WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in
+    WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in
+
+    WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in
+    WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
+    WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
+    WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
+
+    WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in
 )
 
 set(WebKit_FRAMEWORKS
@@ -509,167 +667,11 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
 endmacro()
 GENERATE_MESSAGE_SOURCES(WebKit_DERIVED_SOURCES "${WebKit_MESSAGES_IN_FILES}")
 
-set(WebKit_SERIALIZATION_IN_FILES
-    GPUProcess/GPUProcessSessionParameters.serialization.in
-
-    GPUProcess/graphics/InlinePathData.serialization.in
-    GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
-
-    GPUProcess/graphics/WebGPU/RemoteGPURequestAdapterResponse.serialization.in
-
-    GPUProcess/media/AudioTrackPrivateRemoteConfiguration.serialization.in
-    GPUProcess/media/InitializationSegmentInfo.serialization.in
-    GPUProcess/media/MediaDescriptionInfo.serialization.in
-    GPUProcess/media/RemoteMediaPlayerProxyConfiguration.serialization.in
-    GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
-    GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in
-    GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in
-
-    NetworkProcess/NetworkProcessCreationParameters.serialization.in
-    NetworkProcess/NetworkResourceLoadParameters.serialization.in
-
-    Shared/BackgroundFetchState.serialization.in
-    Shared/CallbackID.serialization.in
-    Shared/DisplayListArgumentCoders.serialization.in
-    Shared/EditorState.serialization.in
-    Shared/FileSystemSyncAccessHandleInfo.serialization.in
-    Shared/FocusedElementInformation.serialization.in
-    Shared/FrameInfoData.serialization.in
-    Shared/FrameTreeCreationParameters.serialization.in
-    Shared/FrameTreeNodeData.serialization.in
-    Shared/GPUProcessConnectionParameters.serialization.in
-    Shared/LayerTreeContext.serialization.in
-    Shared/LocalFrameCreationParameters.serialization.in
-    Shared/Model.serialization.in
-    Shared/NavigationActionData.serialization.in
-    Shared/NetworkProcessConnectionParameters.serialization.in
-    Shared/PALArgumentCoders.serialization.in
-    Shared/Pasteboard.serialization.in
-    Shared/PlatformPopupMenuData.serialization.in
-    Shared/PolicyDecision.serialization.in
-    Shared/RemoteWorkerType.serialization.in
-    Shared/SameDocumentNavigationType.serialization.in
-    Shared/SessionState.serialization.in
-    Shared/ShareableBitmap.serialization.in
-    Shared/TextFlags.serialization.in
-    Shared/TextRecognitionResult.serialization.in
-    Shared/WTFArgumentCoders.serialization.in
-    Shared/WebCoreArgumentCoders.serialization.in
-    Shared/WebEvent.serialization.in
-    Shared/WebHitTestResultData.serialization.in
-    Shared/WebPopupItem.serialization.in
-    Shared/WebProcessCreationParameters.serialization.in
-    Shared/WebProcessDataStoreParameters.serialization.in
-    Shared/WebPushDaemonConnectionConfiguration.serialization.in
-    Shared/WebPushMessage.serialization.in
-    Shared/WebsiteDataStoreParameters.serialization.in
-    Shared/WebsitePoliciesData.serialization.in
-
-    Shared/API/APIData.serialization.in
-    Shared/API/APIError.serialization.in
-    Shared/API/APIFrameHandle.serialization.in
-    Shared/API/APIGeometry.serialization.in
-    Shared/API/APIPageHandle.serialization.in
-    Shared/API/APIURL.serialization.in
-    Shared/API/APIURLRequest.serialization.in
-    Shared/API/APIURLResponse.serialization.in
-
-    Shared/Databases/IndexedDB/WebIDBResult.serialization.in
-
-    Shared/Extensions/WebExtensionEventListenerType.serialization.in
-
-    Shared/Gamepad/GamepadData.serialization.in
-
-    Shared/RemoteLayerTree/RemoteLayerTree.serialization.in
-
-    Shared/WebGPU/WebGPUBindGroupDescriptor.serialization.in
-    Shared/WebGPU/WebGPUBindGroupEntry.serialization.in
-    Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.serialization.in
-    Shared/WebGPU/WebGPUBindGroupLayoutEntry.serialization.in
-    Shared/WebGPU/WebGPUBlendComponent.serialization.in
-    Shared/WebGPU/WebGPUBlendState.serialization.in
-    Shared/WebGPU/WebGPUBufferBinding.serialization.in
-    Shared/WebGPU/WebGPUBufferBindingLayout.serialization.in
-    Shared/WebGPU/WebGPUBufferDescriptor.serialization.in
-    Shared/WebGPU/WebGPUCanvasConfiguration.serialization.in
-    Shared/WebGPU/WebGPUColor.serialization.in
-    Shared/WebGPU/WebGPUColorTargetState.serialization.in
-    Shared/WebGPU/WebGPUCommandBufferDescriptor.serialization.in
-    Shared/WebGPU/WebGPUCommandEncoderDescriptor.serialization.in
-    Shared/WebGPU/WebGPUCompilationMessage.serialization.in
-    Shared/WebGPU/WebGPUComputePassDescriptor.serialization.in
-    Shared/WebGPU/WebGPUComputePassTimestampWrites.serialization.in
-    Shared/WebGPU/WebGPUComputePipelineDescriptor.serialization.in
-    Shared/WebGPU/WebGPUDepthStencilState.serialization.in
-    Shared/WebGPU/WebGPUDeviceDescriptor.serialization.in
-    Shared/WebGPU/WebGPUExtent3D.serialization.in
-    Shared/WebGPU/WebGPUExternalTextureBindingLayout.serialization.in
-    Shared/WebGPU/WebGPUExternalTextureDescriptor.serialization.in
-    Shared/WebGPU/WebGPUFeatureName.serialization.in
-    Shared/WebGPU/WebGPUFragmentState.serialization.in
-    Shared/WebGPU/WebGPUImageCopyBuffer.serialization.in
-    Shared/WebGPU/WebGPUImageCopyExternalImage.serialization.in
-    Shared/WebGPU/WebGPUImageCopyTexture.serialization.in
-    Shared/WebGPU/WebGPUImageCopyTextureTagged.serialization.in
-    Shared/WebGPU/WebGPUImageDataLayout.serialization.in
-    Shared/WebGPU/WebGPUMultisampleState.serialization.in
-    Shared/WebGPU/WebGPUObjectDescriptorBase.serialization.in
-    Shared/WebGPU/WebGPUOrigin2D.serialization.in
-    Shared/WebGPU/WebGPUOrigin3D.serialization.in
-    Shared/WebGPU/WebGPUOutOfMemoryError.serialization.in
-    Shared/WebGPU/WebGPUPipelineDescriptorBase.serialization.in
-    Shared/WebGPU/WebGPUPipelineLayoutDescriptor.serialization.in
-    Shared/WebGPU/WebGPUPresentationContextDescriptor.serialization.in
-    Shared/WebGPU/WebGPUPrimitiveState.serialization.in
-    Shared/WebGPU/WebGPUProgrammableStage.serialization.in
-    Shared/WebGPU/WebGPUQuerySetDescriptor.serialization.in
-    Shared/WebGPU/WebGPURenderBundleDescriptor.serialization.in
-    Shared/WebGPU/WebGPURenderBundleEncoderDescriptor.serialization.in
-    Shared/WebGPU/WebGPURenderPassColorAttachment.serialization.in
-    Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.serialization.in
-    Shared/WebGPU/WebGPURenderPassDescriptor.serialization.in
-    Shared/WebGPU/WebGPURenderPassLayout.serialization.in
-    Shared/WebGPU/WebGPURenderPassTimestampWrites.serialization.in
-    Shared/WebGPU/WebGPURenderPipelineDescriptor.serialization.in
-    Shared/WebGPU/WebGPURequestAdapterOptions.serialization.in
-    Shared/WebGPU/WebGPUSamplerBindingLayout.serialization.in
-    Shared/WebGPU/WebGPUSamplerDescriptor.serialization.in
-    Shared/WebGPU/WebGPUShaderModuleCompilationHint.serialization.in
-    Shared/WebGPU/WebGPUShaderModuleDescriptor.serialization.in
-    Shared/WebGPU/WebGPUStencilFaceState.serialization.in
-    Shared/WebGPU/WebGPUStorageTextureBindingLayout.serialization.in
-    Shared/WebGPU/WebGPUSupportedFeatures.serialization.in
-    Shared/WebGPU/WebGPUSupportedLimits.serialization.in
-    Shared/WebGPU/WebGPUTextureBindingLayout.serialization.in
-    Shared/WebGPU/WebGPUTextureDescriptor.serialization.in
-    Shared/WebGPU/WebGPUTextureViewDescriptor.serialization.in
-    Shared/WebGPU/WebGPUValidationError.serialization.in
-    Shared/WebGPU/WebGPUVertexAttribute.serialization.in
-    Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
-    Shared/WebGPU/WebGPUVertexState.serialization.in
-
-    Shared/WebsiteData/WebsiteData.serialization.in
-    Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
-    Shared/WebsiteData/WebsiteDataType.serialization.in
-
-
-    Shared/XR/XRSystem.serialization.in
-
-    WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in
-    WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in
-
-    WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in
-    WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
-    WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
-    WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
-
-    WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in
-)
-
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.cpp
     ${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.cpp
+    ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.cpp
 )
 
 add_custom_command(
@@ -677,6 +679,7 @@ add_custom_command(
         ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
         ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.cpp
         ${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.cpp
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-serializers.py
     DEPENDS
         ${WebKit_SERIALIZATION_IN_FILES}

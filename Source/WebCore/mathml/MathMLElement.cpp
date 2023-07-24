@@ -248,11 +248,10 @@ void MathMLElement::defaultEventHandler(Event& event)
             return;
         }
         if (MouseEvent::canTriggerActivationBehavior(event)) {
-            auto& href = attributeWithoutSynchronization(hrefAttr);
-            const auto& url = stripLeadingAndTrailingHTMLSpaces(href);
+            const auto& href = attributeWithoutSynchronization(hrefAttr);
             event.setDefaultHandled();
             if (auto* frame = document().frame())
-                frame->loader().changeLocation(document().completeURL(url), selfTargetFrameName(), &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+                frame->loader().changeLocation(document().completeURL(href), selfTargetFrameName(), &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }

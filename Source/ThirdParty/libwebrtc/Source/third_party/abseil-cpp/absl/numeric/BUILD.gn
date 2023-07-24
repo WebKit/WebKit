@@ -1,4 +1,4 @@
-# Copyright 2018 The Chromium Authors. All rights reserved.
+# Copyright 2018 The Chromium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -26,6 +26,19 @@ absl_source_set("int128") {
     ":bits",
     "//third_party/abseil-cpp/absl/base:config",
     "//third_party/abseil-cpp/absl/base:core_headers",
+  ]
+}
+
+absl_test("int128_test") {
+  sources = [
+    "int128_stream_test.cc",
+    "int128_test.cc",
+  ]
+  deps = [
+    ":int128",
+    "//third_party/abseil-cpp/absl/base",
+    "//third_party/abseil-cpp/absl/hash:hash_testing",
+    "//third_party/abseil-cpp/absl/meta:type_traits",
   ]
 }
 

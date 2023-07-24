@@ -9,5 +9,5 @@ layer at (8,10) size 203x11
     RenderHTMLCanvas {CANVAS} at (60,0) size 62x61 [bgcolor=#008000]
     RenderHTMLCanvas {CANVAS} at (0,60) size 122x61 [bgcolor=#008000]
     RenderBlock {PRE} at (0,0) size 204x11
-      RenderText {#text} at (121,0) size 25x11
-        text run at (121,0) width 25: "PASS"
+      RenderText {#text} at (121,0) size 26x11
+        text run at (121,0) width 26: "PASS"

@@ -1904,6 +1904,8 @@ void INTERNAL_GL_APIENTRY glPointSizeNULL(GLfloat size) {}
 
 void INTERNAL_GL_APIENTRY glPolygonModeNULL(GLenum face, GLenum mode) {}
 
+void INTERNAL_GL_APIENTRY glPolygonModeNVNULL(GLenum face, GLenum mode) {}
+
 void INTERNAL_GL_APIENTRY glPolygonOffsetNULL(GLfloat factor, GLfloat units) {}
 
 void INTERNAL_GL_APIENTRY glPolygonOffsetClampEXTNULL(GLfloat factor, GLfloat units, GLfloat clamp)

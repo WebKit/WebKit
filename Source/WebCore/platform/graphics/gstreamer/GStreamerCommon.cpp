@@ -23,12 +23,12 @@
 
 #if USE(GSTREAMER)
 
-#include "AppSinkWorkaround.h"
 #include "ApplicationGLib.h"
 #include "DMABufVideoSinkGStreamer.h"
 #include "GLVideoSinkGStreamer.h"
 #include "GStreamerAudioMixer.h"
 #include "GStreamerRegistryScanner.h"
+#include "GStreamerSinksWorkarounds.h"
 #include "GUniquePtrGStreamer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
@@ -303,18 +303,20 @@ bool ensureGStreamerInitialized()
             gst_mpegts_initialize();
 #endif
 
-        // Workaround for https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2413
-        registerAppsinkWorkaroundIfNeeded();
+        registerAppsinkWithWorkaroundsIfNeeded();
 #endif
     });
     return isGStreamerInitialized;
 }
 
-static void registerInternalVideoEncoder()
+static bool registerInternalVideoEncoder()
 {
 #if ENABLE(VIDEO)
-    gst_element_register(nullptr, "webkitvideoencoder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_VIDEO_ENCODER);
+    if (auto factory = adoptGRef(gst_element_factory_find("webkitvideoencoder")))
+        return false;
+    return gst_element_register(nullptr, "webkitvideoencoder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_VIDEO_ENCODER);
 #endif
+    return false;
 }
 
 void registerWebKitGStreamerElements()
@@ -385,6 +387,14 @@ void registerWebKitGStreamerElements()
                 gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory.get()), GST_RANK_NONE);
         }
 
+        // Prevent decodebin(3) from auto-plugging dashdemux if it was disabled. UAs should be able
+        // to fallback to MSE when this happens.
+        const char* dashSupport = g_getenv("WEBKIT_GST_ENABLE_DASH_SUPPORT");
+        if (!dashSupport || !g_strcmp0(dashSupport, "0")) {
+            if (auto factory = adoptGRef(gst_element_factory_find("dashdemux")))
+                gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory.get()), GST_RANK_NONE);
+        }
+
         // The new demuxers based on adaptivedemux2 cannot be used in WebKit yet because this new
         // base class does not abstract away network access. They can't work in a sandboxed
         // media process, so demote their rank in order to prevent decodebin3 from auto-plugging them.
@@ -419,8 +429,7 @@ void registerWebKitGStreamerVideoEncoder()
     static std::once_flag onceFlag;
     bool registryWasUpdated = false;
     std::call_once(onceFlag, [&registryWasUpdated] {
-        registerInternalVideoEncoder();
-        registryWasUpdated = true;
+        registryWasUpdated = registerInternalVideoEncoder();
     });
 
     // The video encoder might be registered after the scanner was initialized, so in this situation
@@ -627,18 +636,28 @@ GstBuffer* gstBufferNewWrappedFast(void* data, size_t length)
 
 GstElement* makeGStreamerElement(const char* factoryName, const char* name)
 {
+    static Lock lock;
+    static Vector<const char*> cache WTF_GUARDED_BY_LOCK(lock);
     auto* element = gst_element_factory_make(factoryName, name);
-    if (!element)
+    Locker locker { lock };
+    if (!element && !cache.contains(factoryName)) {
+        cache.append(factoryName);
         WTFLogAlways("GStreamer element %s not found. Please install it", factoryName);
+    }
     return element;
 }
 
 GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads)
 {
+    static Lock lock;
+    static Vector<const char*> cache WTF_GUARDED_BY_LOCK(lock);
     GUniqueOutPtr<GError> error;
     auto* bin = gst_parse_bin_from_description(description, ghostUnlinkedPads, &error.outPtr());
-    if (!bin)
+    Locker locker { lock };
+    if (!bin && !cache.contains(description)) {
+        cache.append(description);
         WTFLogAlways("Unable to create bin for description: \"%s\". Error: %s", description, error->message);
+    }
     return bin;
 }
 
@@ -654,6 +673,15 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
         auto array = JSON::Array::create();
         for (unsigned i = 0; i < size; i++) {
             if (auto innerJson = gstStructureValueToJSON(gst_value_array_get_value(value, i)))
+                array->pushValue(innerJson->releaseNonNull());
+        }
+        return array->asArray()->asValue();
+    }
+    if (GST_VALUE_HOLDS_LIST(value)) {
+        unsigned size = gst_value_list_get_size(value);
+        auto array = JSON::Array::create();
+        for (unsigned i = 0; i < size; i++) {
+            if (auto innerJson = gstStructureValueToJSON(gst_value_list_get_value(value, i)))
                 array->pushValue(innerJson->releaseNonNull());
         }
         return array->asArray()->asValue();
@@ -1019,6 +1047,8 @@ bool gstObjectHasProperty(GstPad* pad, const char* name)
 {
     return gstObjectHasProperty(GST_OBJECT_CAST(pad), name);
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

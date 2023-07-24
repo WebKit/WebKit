@@ -41,6 +41,7 @@ namespace JSC { namespace Wasm {
 
 Instance::Instance(VM& vm, JSGlobalObject* globalObject, Ref<Module>&& module)
     : m_vm(&vm)
+    , m_softStackLimit(vm.softStackLimit())
     , m_globalObject(globalObject)
     , m_module(WTFMove(module))
     , m_globalsToMark(m_module.get().moduleInformation().globalCount())
@@ -77,6 +78,7 @@ Instance::Instance(VM& vm, JSGlobalObject* globalObject, Ref<Module>&& module)
         if (dataSegment->isPassive())
             m_passiveDataSegments.quickSet(dataSegmentIndex);
     }
+    vm.registerWasmInstance(*this);
 }
 
 Ref<Instance> Instance::create(VM& vm, JSGlobalObject* globalObject, Ref<Module>&& module)

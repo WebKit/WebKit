@@ -267,6 +267,15 @@ bool ImageBuffer::flushDrawingContextAsync()
     return true;
 }
 
+void ImageBuffer::setBackend(std::unique_ptr<ImageBufferBackend>&& backend)
+{
+    if (m_backend.get() == backend.get())
+        return;
+
+    m_backend = WTFMove(backend);
+    ++m_backendGeneration;
+}
+
 std::unique_ptr<ImageBufferBackend> ImageBuffer::takeBackend()
 {
     return WTFMove(m_backend);
@@ -576,10 +585,15 @@ std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBuffer::createFlusher()
     return nullptr;
 }
 
+unsigned ImageBuffer::backendGeneration() const
+{
+    return m_backendGeneration;
+}
+
 String ImageBuffer::debugDescription() const
 {
     TextStream stream;
-    stream << "ImageBuffer " << this << " " << renderingResourceIdentifier() << " " << logicalSize() << " " << resolutionScale() << "x " << renderingMode();
+    stream << "ImageBuffer " << this << " " << renderingResourceIdentifier() << " " << logicalSize() << " " << resolutionScale() << "x " << renderingMode() << " backend " << ValueOrNull(m_backend.get());
     return stream.release();
 }
 

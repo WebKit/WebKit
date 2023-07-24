@@ -169,13 +169,16 @@ void Vp9HeaderParser::ParseColorSpace() {
 void Vp9HeaderParser::ParseFrameResolution() {
   width_ = VpxReadLiteral(16) + 1;
   height_ = VpxReadLiteral(16) + 1;
+  if (ReadBit()) {
+    display_width_ = VpxReadLiteral(16) + 1;
+    display_height_ = VpxReadLiteral(16) + 1;
+  } else {
+    display_width_ = width_;
+    display_height_ = height_;
+  }
 }
 
 void Vp9HeaderParser::ParseFrameParallelMode() {
-  if (ReadBit()) {
-    VpxReadLiteral(16);  // display width
-    VpxReadLiteral(16);  // display height
-  }
   if (!error_resilient_mode_) {
     ReadBit();  // Consume refresh frame context
     frame_parallel_mode_ = ReadBit();

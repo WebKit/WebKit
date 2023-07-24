@@ -307,16 +307,16 @@ void CSSToStyleMap::mapAnimationDirection(Animation& layer, const CSSValue& valu
 
     switch (value.valueID()) {
     case CSSValueNormal:
-        layer.setDirection(Animation::AnimationDirectionNormal);
+        layer.setDirection(Animation::Direction::Normal);
         break;
     case CSSValueAlternate:
-        layer.setDirection(Animation::AnimationDirectionAlternate);
+        layer.setDirection(Animation::Direction::Alternate);
         break;
     case CSSValueReverse:
-        layer.setDirection(Animation::AnimationDirectionReverse);
+        layer.setDirection(Animation::Direction::Reverse);
         break;
     case CSSValueAlternateReverse:
-        layer.setDirection(Animation::AnimationDirectionAlternateReverse);
+        layer.setDirection(Animation::Direction::AlternateReverse);
         break;
     default:
         break;

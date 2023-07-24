@@ -127,8 +127,9 @@ TEST_P(ObmcVarianceTest, DISABLED_Speed) {
   const int elapsed_time_simd =
       static_cast<int>(aom_usec_timer_elapsed(&test_timer));
 
-  printf("c_time=%d \t simd_time=%d \t gain=%d \n", elapsed_time_c,
-         elapsed_time_simd, (elapsed_time_c / elapsed_time_simd));
+  printf("c_time=%d \t simd_time=%d \t gain=%f \n", elapsed_time_c,
+         elapsed_time_simd,
+         static_cast<double>(elapsed_time_c) / elapsed_time_simd);
 }
 
 #if HAVE_SSE4_1
@@ -192,6 +193,37 @@ const ObmcVarianceTest::ParamType avx2_functions[] = {
 INSTANTIATE_TEST_SUITE_P(AVX2, ObmcVarianceTest,
                          ::testing::ValuesIn(avx2_functions));
 #endif  // HAVE_AVX2
+
+#if HAVE_NEON
+const ObmcVarianceTest::ParamType neon_functions[] = {
+  TestFuncs(aom_obmc_variance128x128_c, aom_obmc_variance128x128_neon),
+  TestFuncs(aom_obmc_variance128x64_c, aom_obmc_variance128x64_neon),
+  TestFuncs(aom_obmc_variance64x128_c, aom_obmc_variance64x128_neon),
+  TestFuncs(aom_obmc_variance64x64_c, aom_obmc_variance64x64_neon),
+  TestFuncs(aom_obmc_variance64x32_c, aom_obmc_variance64x32_neon),
+  TestFuncs(aom_obmc_variance32x64_c, aom_obmc_variance32x64_neon),
+  TestFuncs(aom_obmc_variance32x32_c, aom_obmc_variance32x32_neon),
+  TestFuncs(aom_obmc_variance32x16_c, aom_obmc_variance32x16_neon),
+  TestFuncs(aom_obmc_variance16x32_c, aom_obmc_variance16x32_neon),
+  TestFuncs(aom_obmc_variance16x16_c, aom_obmc_variance16x16_neon),
+  TestFuncs(aom_obmc_variance16x8_c, aom_obmc_variance16x8_neon),
+  TestFuncs(aom_obmc_variance8x16_c, aom_obmc_variance8x16_neon),
+  TestFuncs(aom_obmc_variance8x8_c, aom_obmc_variance8x8_neon),
+  TestFuncs(aom_obmc_variance8x4_c, aom_obmc_variance8x4_neon),
+  TestFuncs(aom_obmc_variance4x8_c, aom_obmc_variance4x8_neon),
+  TestFuncs(aom_obmc_variance4x4_c, aom_obmc_variance4x4_neon),
+
+  TestFuncs(aom_obmc_variance64x16_c, aom_obmc_variance64x16_neon),
+  TestFuncs(aom_obmc_variance16x64_c, aom_obmc_variance16x64_neon),
+  TestFuncs(aom_obmc_variance32x8_c, aom_obmc_variance32x8_neon),
+  TestFuncs(aom_obmc_variance8x32_c, aom_obmc_variance8x32_neon),
+  TestFuncs(aom_obmc_variance16x4_c, aom_obmc_variance16x4_neon),
+  TestFuncs(aom_obmc_variance4x16_c, aom_obmc_variance4x16_neon),
+};
+
+INSTANTIATE_TEST_SUITE_P(NEON, ObmcVarianceTest,
+                         ::testing::ValuesIn(neon_functions));
+#endif  // HAVE_NEON
 
 ////////////////////////////////////////////////////////////////////////////////
 // High bit-depth

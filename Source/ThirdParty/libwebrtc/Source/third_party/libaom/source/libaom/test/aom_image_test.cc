@@ -42,7 +42,9 @@ TEST(AomImageTest, AomImgSetRectOverflow) {
 
   EXPECT_EQ(aom_img_set_rect(&img, 0, 0, kWidth, kHeight, 0), 0);
   // This would result in overflow because -1 is cast to UINT_MAX.
-  EXPECT_NE(aom_img_set_rect(&img, -1, -1, kWidth, kHeight, 0), 0);
+  EXPECT_NE(aom_img_set_rect(&img, static_cast<unsigned int>(-1),
+                             static_cast<unsigned int>(-1), kWidth, kHeight, 0),
+            0);
 }
 
 TEST(AomImageTest, AomImgAllocNv12) {

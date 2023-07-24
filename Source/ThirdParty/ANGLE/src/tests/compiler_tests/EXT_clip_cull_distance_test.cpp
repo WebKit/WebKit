@@ -284,7 +284,6 @@ class EXTClipCullDistanceTest : public sh::ShaderExtensionTest
     {
         ShCompileOptions compileOptions = {};
         compileOptions.objectCode       = true;
-        compileOptions.variables        = true;
 
         const char *shaderStrings[] = {testing::get<1>(GetParam()), pragma,
                                        testing::get<2>(GetParam())};

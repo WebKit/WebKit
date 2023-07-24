@@ -70,7 +70,7 @@ static void _notificationCallback(WKViewRef v, WKViewNotificationType type, void
     viewContext.notificationCallback = _notificationCallback;
     viewContext.notificationUserInfo = self;
     self = [super _initWithViewRef:(WKViewRef)view];
-    WKRelease(view);
+    WAKRelease(view);
 
     _contentView = [[WAKClipView alloc] initWithFrame:rect];
     [self addSubview:_contentView];

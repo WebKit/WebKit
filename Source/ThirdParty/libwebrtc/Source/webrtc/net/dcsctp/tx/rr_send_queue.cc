@@ -36,11 +36,11 @@ RRSendQueue::RRSendQueue(absl::string_view log_prefix,
                          size_t mtu,
                          StreamPriority default_priority,
                          size_t total_buffered_amount_low_threshold)
-    : log_prefix_(std::string(log_prefix) + "fcfs: "),
+    : log_prefix_(log_prefix),
       callbacks_(*callbacks),
       buffer_size_(buffer_size),
       default_priority_(default_priority),
-      scheduler_(mtu),
+      scheduler_(log_prefix_, mtu),
       total_buffered_amount_(
           [this]() { callbacks_.OnTotalBufferedAmountLow(); }) {
   total_buffered_amount_.SetLowThreshold(total_buffered_amount_low_threshold);

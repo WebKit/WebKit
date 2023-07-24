@@ -190,7 +190,8 @@ angle::Result RenderStateCache::getRasterizerState(const gl::Context *context,
     }
 
     D3D11_RASTERIZER_DESC rasterDesc;
-    rasterDesc.FillMode              = D3D11_FILL_SOLID;
+    rasterDesc.FillMode =
+        rasterState.polygonMode == gl::PolygonMode::Fill ? D3D11_FILL_SOLID : D3D11_FILL_WIREFRAME;
     rasterDesc.CullMode              = cullMode;
     rasterDesc.FrontCounterClockwise = (rasterState.frontFace == GL_CCW) ? FALSE : TRUE;
     rasterDesc.DepthClipEnable       = !rasterState.depthClamp;
@@ -198,7 +199,7 @@ angle::Result RenderStateCache::getRasterizerState(const gl::Context *context,
     rasterDesc.MultisampleEnable     = rasterState.multiSample;
     rasterDesc.AntialiasedLineEnable = FALSE;
 
-    if (rasterState.polygonOffsetFill)
+    if (rasterState.isPolygonOffsetEnabled())
     {
         rasterDesc.DepthBias            = (INT)rasterState.polygonOffsetUnits;
         rasterDesc.DepthBiasClamp       = rasterState.polygonOffsetClamp;

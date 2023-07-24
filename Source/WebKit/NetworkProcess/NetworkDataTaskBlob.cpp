@@ -62,7 +62,7 @@ static constexpr auto httpPartialContentText = "Partial Content"_s;
 
 static constexpr auto webKitBlobResourceDomain = "WebKitBlobResource"_s;
 
-NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, BlobRegistryImpl& blobRegistry, NetworkDataTaskClient& client, const ResourceRequest& request, ContentSniffingPolicy shouldContentSniff, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
+NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& request, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
     : NetworkDataTask(session, client, request, StoredCredentialsPolicy::DoNotUse, false, false)
     , m_stream(makeUnique<AsyncFileStream>(*this))
     , m_fileReferences(fileReferences)
@@ -71,7 +71,7 @@ NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, BlobRegistryIm
     for (auto& fileReference : m_fileReferences)
         fileReference->prepareForFileAccess();
 
-    m_blobData = blobRegistry.getBlobDataFromURL(request.url());
+    m_blobData = session.blobRegistry().getBlobDataFromURL(request.url());
 
     m_session->registerNetworkDataTask(*this);
     LOG(NetworkSession, "%p - Created NetworkDataTaskBlob for %s", this, request.url().string().utf8().data());
@@ -164,7 +164,10 @@ void NetworkDataTaskBlob::getSizeForNext()
 
     // Do we finish validating and counting size for all items?
     if (m_sizeItemCount >= m_blobData->items().size()) {
-        seek();
+        if (auto error = seek()) {
+            didFail(*error);
+            return;
+        }
         dispatchDidReceiveResponse();
         return;
     }
@@ -186,6 +189,7 @@ void NetworkDataTaskBlob::getSizeForNext()
 void NetworkDataTaskBlob::didGetSize(long long size)
 {
     ASSERT(RunLoop::isMain());
+    Ref protectedThis { *this };
 
     if (m_state == State::Canceling || m_state == State::Completed || (!m_client && !isDownload())) {
         clearStream();
@@ -214,23 +218,21 @@ void NetworkDataTaskBlob::didGetSize(long long size)
     getSizeForNext();
 }
 
-void NetworkDataTaskBlob::seek()
+auto NetworkDataTaskBlob::seek() -> std::optional<Error>
 {
     ASSERT(RunLoop::isMain());
 
     // Bail out if the range is not provided.
     if (!m_isRangeRequest)
-        return;
+        return std::nullopt;
 
     // Adjust m_rangeStart / m_rangeEnd
     if (m_rangeStart == kPositionNotSpecified) {
         m_rangeStart = m_totalSize - m_rangeEnd;
         m_rangeEnd = m_rangeStart + m_rangeEnd - 1;
     } else {
-        if (m_rangeStart >= m_totalSize) {
-            didFail(Error::RangeError);
-            return;
-        }
+        if (m_rangeStart >= m_totalSize)
+            return Error::RangeError;
         if (m_rangeEnd == kPositionNotSpecified || m_rangeEnd >= m_totalSize)
             m_rangeEnd = m_totalSize - 1;
     }
@@ -247,6 +249,7 @@ void NetworkDataTaskBlob::seek()
     long long rangeSize = m_rangeEnd - m_rangeStart + 1;
     if (m_totalRemainingSize > rangeSize)
         m_totalRemainingSize = rangeSize;
+    return std::nullopt;
 }
 
 void NetworkDataTaskBlob::dispatchDidReceiveResponse()

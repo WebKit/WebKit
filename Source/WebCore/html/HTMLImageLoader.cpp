@@ -29,7 +29,6 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLVideoElement.h"
 #include "LocalDOMWindow.h"
 #include "Settings.h"
@@ -75,7 +74,8 @@ void HTMLImageLoader::dispatchLoadEvent()
 
 String HTMLImageLoader::sourceURI(const AtomString& attr) const
 {
-    return stripLeadingAndTrailingHTMLSpaces(attr);
+    // FIXME: trimming whitespace is probably redundant with the URL parser
+    return attr.string().trim(isASCIIWhitespace);
 }
 
 void HTMLImageLoader::notifyFinished(CachedResource&, const NetworkLoadMetrics& metrics)

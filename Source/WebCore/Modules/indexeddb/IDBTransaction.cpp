@@ -608,7 +608,6 @@ void IDBTransaction::enqueueEvent(Ref<Event>&& event)
     if (!scriptExecutionContext() || isContextStopped())
         return;
 
-    m_abortOrCommitEvent = event.ptr();
     queueTaskToDispatchEvent(*this, TaskSource::DatabaseAccess, WTFMove(event));
 }
 
@@ -624,8 +623,8 @@ void IDBTransaction::dispatchEvent(Event& event)
     Ref protectedThis { *this };
 
     EventDispatcher::dispatchEvent({ this, m_database.ptr() }, event);
-    
-    if (m_abortOrCommitEvent != &event)
+
+    if (!event.isTrusted())
         return;
     
     ASSERT(event.type() == eventNames().completeEvent || event.type() == eventNames().abortEvent);

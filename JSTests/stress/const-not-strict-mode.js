@@ -9,18 +9,6 @@ function assert(cond) {
 }
 noInline(assert);
 
-function shouldThrowTDZ(func) {
-    var hasThrown = false;
-    try {
-        func();
-    } catch(e) {
-        if (e.name.indexOf("ReferenceError") !== -1)
-            hasThrown = true;
-    }
-    assert(hasThrown);
-}
-noInline(shouldThrowTDZ);
-
 
 // Tests
 
@@ -28,19 +16,21 @@ noInline(shouldThrowTDZ);
 const NUM_LOOPS = 1000;
 
 ;(function() {
-function foo() {
+function foo(i) {
     delete x;
-    const x = 20;
+    const x = i;
+    assert(x === i);
 }
-function bar() {
+function bar(i) {
     delete x;
-    const x = 20;
+    const x = i;
     function capX() { return x; }
+    assert(x === i);
 }
 
 for (var i = 0; i < NUM_LOOPS; i++) {
-    shouldThrowTDZ(foo);
-    shouldThrowTDZ(bar);
+    foo(i);
+    bar(i);
 }
 
 })();
@@ -72,13 +62,13 @@ function foo() {
         try {
             eval("var x = 20;");
         } catch(e) {
-            if (e.name.indexOf("TypeError") !== -1 && e.message.indexOf("readonly") !== -1)
-                threw = true;
+            threw = true;
+            assert(e.toString() === "SyntaxError: Can't create duplicate variable in eval: 'x'");
         }
         assert(threw);
         assert(x === 40);
     }
-    assert(x === undefined);
+    assert(typeof x === "undefined");
 }
 
 function bar() {
@@ -97,13 +87,13 @@ function bar() {
         try {
             eval("var x = 20;");
         } catch(e) {
-            if (e.name.indexOf("TypeError") !== -1 && e.message.indexOf("readonly") !== -1)
-                threw = true;
+            threw = true;
+            assert(e.toString() === "SyntaxError: Can't create duplicate variable in eval: 'x'");
         }
         assert(threw);
         assert(x === 40);
     }
-    assert(x === undefined);
+    assert(typeof x === "undefined");
 }
 
 function baz() {

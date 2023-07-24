@@ -6,13 +6,14 @@
 # in the file PATENTS. All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-import("//build_overrides/build.gni")
 import("//build/config/arm.gni")
 import("//build/config/mips.gni")
+import("//build_overrides/build.gni")
 
 declare_args() {
   libyuv_include_tests = !build_with_chromium
   libyuv_disable_jpeg = false
+  libyuv_disable_rvv = false
   libyuv_use_neon =
       current_cpu == "arm64" ||
       (current_cpu == "arm" && (arm_use_neon || arm_optionally_use_neon))

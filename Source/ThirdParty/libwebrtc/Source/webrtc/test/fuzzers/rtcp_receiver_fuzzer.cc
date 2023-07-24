@@ -47,6 +47,6 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
 
   RTCPReceiver receiver(config, &rtp_rtcp_module);
 
-  receiver.IncomingPacket(data, size);
+  receiver.IncomingPacket(rtc::MakeArrayView(data, size));
 }
 }  // namespace webrtc

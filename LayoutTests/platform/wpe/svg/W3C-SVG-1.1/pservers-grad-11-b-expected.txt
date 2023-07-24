@@ -20,9 +20,9 @@ layer at (0,0) size 800x600
       RenderSVGResourceRadialGradient {radialGradient} [id="Grad3"] [gradientUnits=userSpaceOnUse] [center=(225,180)] [focal=(225,180)] [radius=90.00] [focalRadius=0.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
-      RenderSVGText {text} at (10,164) size 414x57 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 414x56
-          chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 21 width 414.00: "Gradient on text fill"
+      RenderSVGText {text} at (10,164) size 417x57 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 417x56
+          chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 21 width 416.40: "Gradient on text fill"
       RenderSVGText {text} at (10,214) size 205x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 205x14
           chunk 1 text run 1 at (10.00,225.00) startOffset 0 endOffset 40 width 204.60: "Radial gradient on text, black to yellow"
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,274) size 240x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 240x14
           chunk 1 text run 1 at (10.00,285.00) startOffset 0 endOffset 47 width 240.00: "Radial gradient on stroke of text, black to red"
-    RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 269x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.7 $"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.40: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

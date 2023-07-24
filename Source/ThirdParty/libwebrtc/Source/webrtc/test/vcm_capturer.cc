@@ -27,6 +27,8 @@ bool VcmCapturer::Init(size_t width,
                        size_t height,
                        size_t target_fps,
                        size_t capture_device_index) {
+  width_ = width;
+  height_ = height;
   std::unique_ptr<VideoCaptureModule::DeviceInfo> device_info(
       VideoCaptureFactory::CreateDeviceInfo());
 

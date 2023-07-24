@@ -19,16 +19,16 @@ README.md                {#LREADME}
     - [Build with VMAF support](#build-with-vmaf)
 2. [Testing the library](#testing-the-av1-codec)
     - [Basics](#testing-basics)
-        - [Unit tests](#1_unit-tests)
-        - [Example tests](#2_example-tests)
-        - [Encoder tests](#3_encoder-tests)
+        - [Unit tests](#unit-tests)
+        - [Example tests](#example-tests)
+        - [Encoder tests](#encoder-tests)
     - [IDE hosted tests](#ide-hosted-tests)
     - [Downloading test data](#downloading-the-test-data)
     - [Adding a new test data file](#adding-a-new-test-data-file)
     - [Additional test data](#additional-test-data)
     - [Sharded testing](#sharded-testing)
-        - [Running tests directly](#1_running-test_libaom-directly)
-        - [Running tests via CMake](#2_running-the-tests-via-the-cmake-build)
+        - [Running tests directly](#running-test_libaom-directly)
+        - [Running tests via CMake](#running-the-tests-via-the-cmake-build)
 3. [Coding style](#coding-style)
 4. [Submitting patches](#submitting-patches)
     - [Login cookie](#login-cookie)
@@ -165,8 +165,8 @@ The toolchain files available at the time of this writing are:
  - armv7-linux-gcc.cmake
  - armv7-mingw-gcc.cmake
  - armv7s-ios.cmake
- - mips32-linux-gcc.cmake
- - mips64-linux-gcc.cmake
+ - ppc-linux-gcc.cmake
+ - riscv-linux-gcc.cmake
  - x86-ios-simulator.cmake
  - x86-linux.cmake
  - x86-macos.cmake
@@ -217,27 +217,26 @@ compiler documentation to determine which, if any, are available.
 ### Microsoft Visual Studio builds {#microsoft-visual-studio-builds}
 
 Building the AV1 codec library in Microsoft Visual Studio is supported. Visual
-Studio 2017 (15.0) or later is required. The following example demonstrates
+Studio 2019 (16.0) or later is required. The following example demonstrates
 generating projects and a solution for the Microsoft IDE:
 
 ~~~
     # This does not require a bash shell; Command Prompt (cmd.exe) is fine.
     # This assumes the build host is a Windows x64 computer.
 
-    # To build with Visual Studio 2019 for the x64 target:
+    # To create a Visual Studio 2022 solution for the x64 target:
+    $ cmake path/to/aom -G "Visual Studio 17 2022"
+
+    # To create a Visual Studio 2022 solution for the 32-bit x86 target:
+    $ cmake path/to/aom -G "Visual Studio 17 2022" -A Win32
+
+    # To create a Visual Studio 2019 solution for the x64 target:
     $ cmake path/to/aom -G "Visual Studio 16 2019"
-    $ cmake --build .
 
-    # To build with Visual Studio 2019 for the 32-bit x86 target:
+    # To create a Visual Studio 2019 solution for the 32-bit x86 target:
     $ cmake path/to/aom -G "Visual Studio 16 2019" -A Win32
-    $ cmake --build .
 
-    # To build with Visual Studio 2017 for the x64 target:
-    $ cmake path/to/aom -G "Visual Studio 15 2017" -T host=x64 -A x64
-    $ cmake --build .
-
-    # To build with Visual Studio 2017 for the 32-bit x86 target:
-    $ cmake path/to/aom -G "Visual Studio 15 2017" -T host=x64
+    # To build the solution:
     $ cmake --build .
 ~~~
 
@@ -341,7 +340,7 @@ There are several methods of testing the AV1 codec. All of these methods require
 the presence of the AV1 source code and a working build of the AV1 library and
 applications.
 
-#### 1. Unit tests: {#1_unit-tests}
+#### 1. Unit tests: {#unit-tests}
 
 The unit tests can be run at build time:
 
@@ -355,7 +354,7 @@ The unit tests can be run at build time:
     $ make runtests
 ~~~
 
-#### 2. Example tests: {#2_example-tests}
+#### 2. Example tests: {#example-tests}
 
 The example tests require a bash shell and can be run in the following manner:
 
@@ -370,7 +369,7 @@ The example tests require a bash shell and can be run in the following manner:
     $ path/to/aom/test/examples.sh --bin-path examples
 ~~~
 
-#### 3. Encoder tests: {#3_encoder-tests}
+#### 3. Encoder tests: {#encoder-tests}
 
 When making a change to the encoder run encoder tests to confirm that your
 change has a positive or negligible impact on encode quality. When running these
@@ -487,7 +486,7 @@ https://media.xiph.org/video/derf/
 The AV1 codec library unit tests are built upon gtest which supports sharding of
 test jobs. Sharded test runs can be achieved in a couple of ways.
 
-#### 1. Running test\_libaom directly: {#1_running-test_libaom-directly}
+#### 1. Running test\_libaom directly: {#running-test_libaom-directly}
 
 ~~~
    # Set the environment variable GTEST_TOTAL_SHARDS to control the number of
@@ -501,7 +500,7 @@ test jobs. Sharded test runs can be achieved in a couple of ways.
 To create a test shard for each CPU core available on the current system set
 `GTEST_TOTAL_SHARDS` to the number of CPU cores on your system minus one.
 
-#### 2. Running the tests via the CMake build: {#2_running-the-tests-via-the-cmake-build}
+#### 2. Running the tests via the CMake build: {#running-the-tests-via-the-cmake-build}
 
 ~~~
     # For IDE based builds, ENABLE_IDE_TEST_HOSTING must be enabled. See
@@ -575,11 +574,18 @@ your account (Gmail credentials, for example). Next, follow the
 `Generate Password` Password link at the top of the page. You’ll be given
 instructions for creating a cookie to use with our Git repos.
 
+You must also have a Gerrit account associated with your Google account. To do
+this visit the [Gerrit review server](https://aomedia-review.googlesource.com)
+and click "Sign in" (top right).
+
 ### Contributor agreement {#contributor-agreement}
 
 You will be required to execute a
 [contributor agreement](http://aomedia.org/license) to ensure that the AOMedia
 Project has the right to distribute your changes.
+
+Note: If you are pushing changes on behalf of an Alliance for Open Media member
+organization this step is not necessary.
 
 ### Testing your code {#testing-your-code}
 

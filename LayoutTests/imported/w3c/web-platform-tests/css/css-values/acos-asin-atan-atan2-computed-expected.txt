@@ -16,11 +16,10 @@ PASS calc(atan(tan(0.7853975rad ) )) should be used-value-equivalent to 45deg
 PASS calc(atan(tan(3.14159 / 4 + 1 - 1) )) should be used-value-equivalent to 45deg
 PASS calc(asin(sin(0.25turn)) ) should be used-value-equivalent to 90deg
 PASS calc(atan2(0,1)) should be used-value-equivalent to 0deg
-PASS calc(atan2(0,-1)) should be used-value-equivalent to -180deg
+PASS calc(atan2(0,-1) / 4) should be used-value-equivalent to 45deg
 PASS calc(atan2(1,-1)) should be used-value-equivalent to 135deg
 PASS calc(atan2(-1,1)) should be used-value-equivalent to -45deg
 PASS calc(cos(sin(acos(cos(pi))))) should be used-value-equivalent to 1
-PASS calc(sin(atan(tan(pi/2)))) should be used-value-equivalent to 1
 PASS atan2(1px, -1px) should be used-value-equivalent to 135deg
 PASS atan2(1cm, -1cm) should be used-value-equivalent to 135deg
 PASS atan2(1mm, -1mm) should be used-value-equivalent to 135deg

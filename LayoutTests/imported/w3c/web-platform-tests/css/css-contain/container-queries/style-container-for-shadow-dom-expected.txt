@@ -1,0 +1,14 @@
+
+FAIL Match container in outer tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container in same tree, not walking flat tree ancestors assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container in ::slotted selector's originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container in outer tree for :host assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container in ::part selector's originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container for ::before in ::slotted selector's originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container in outer tree for :host::before assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container for ::before in ::part selector's originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container for ::part selector's originating element tree for exportparts assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container for slot light tree child fallback assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Should not match container inside shadow tree for ::part()
+FAIL A :host::part rule should match containers in the originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+

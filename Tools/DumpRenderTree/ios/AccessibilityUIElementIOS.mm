@@ -499,6 +499,11 @@ void AccessibilityUIElement::resetSelectedTextMarkerRange()
 {
 }
 
+AccessibilityTextMarkerRange AccessibilityUIElement::textInputMarkedTextMarkerRange() const
+{
+    return nullptr;
+}
+
 int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange* range)
 {
     id textMarkers = range->platformTextMarkerRange();
@@ -1056,6 +1061,11 @@ void AccessibilityUIElement::assistiveTechnologySimulatedFocus()
 
 void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
 {
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::textInputMarkedRange() const
+{
+    return WTR::createJSString();
 }
 
 void AccessibilityUIElement::increment()

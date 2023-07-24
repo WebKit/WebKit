@@ -2,4 +2,6 @@ CONSOLE MESSAGE: ReferenceError: Can't find variable: testComputedValueGreaterOr
 
 Harness Error (FAIL), message = ReferenceError: Can't find variable: testComputedValueGreaterOrLowerThan
 
+PASS Property width value 'calc(NaN * 1px)'
+PASS Property width value 'calc(NaN * 1%)'
 

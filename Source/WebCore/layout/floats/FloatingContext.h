@@ -35,7 +35,6 @@ namespace Layout {
 
 class FloatAvoider;
 class Box;
-class LayoutState;
 
 // FloatingContext is responsible for adjusting the position of a box in the current formatting context
 // by taking the floating boxes into account.
@@ -81,7 +80,6 @@ private:
     bool isFloatingCandidateLeftPositionedInFloatingState(const Box&) const;
     Clear clearInFloatingState(const Box&) const;
 
-    const LayoutState& layoutState() const { return m_floatingState.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }
     const ElementBox& root() const { return m_formattingContext.root(); }
 

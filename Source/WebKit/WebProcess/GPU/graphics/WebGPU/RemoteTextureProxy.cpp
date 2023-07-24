@@ -48,7 +48,7 @@ RemoteTextureProxy::~RemoteTextureProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-Ref<PAL::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional<PAL::WebGPU::TextureViewDescriptor>& descriptor)
+Ref<WebCore::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional<WebCore::WebGPU::TextureViewDescriptor>& descriptor)
 {
     std::optional<TextureViewDescriptor> convertedDescriptor;
     if (descriptor) {

@@ -82,6 +82,7 @@ namespace JSC { namespace DFG {
     macro(GetStack, NodeResultJS) \
     \
     macro(MovHint, NodeMustGenerate) \
+    macro(ZombieHint, NodeMustGenerate) \
     macro(ExitOK, NodeMustGenerate) /* Indicates that exit state is intact and it is safe to exit back to the beginning of the exit origin. */ \
     macro(Phantom, NodeMustGenerate) \
     macro(Check, NodeMustGenerate) /* Used if we want just a type check but not liveness. Non-checking uses will be removed. */\
@@ -341,6 +342,7 @@ namespace JSC { namespace DFG {
     macro(StringReplace, NodeResultJS | NodeMustGenerate) \
     macro(StringReplaceRegExp, NodeResultJS | NodeMustGenerate) \
     macro(StringReplaceString, NodeResultJS | NodeMustGenerate) \
+    macro(StringIndexOf, NodeResultInt32) \
     \
     /* Optimizations for string access */ \
     macro(StringCharCodeAt, NodeResultInt32) \
@@ -388,6 +390,7 @@ namespace JSC { namespace DFG {
     macro(NewArrayWithSpread, NodeResultJS | NodeHasVarArgs) \
     macro(NewArrayWithSpecies, NodeResultJS | NodeMustGenerate) \
     macro(NewArrayWithSize, NodeResultJS | NodeMustGenerate) \
+    macro(NewArrayWithConstantSize, NodeResultJS | NodeMustGenerate) \
     macro(NewArrayBuffer, NodeResultJS) \
     macro(NewInternalFieldObject, NodeResultJS) \
     macro(NewTypedArray, NodeResultJS | NodeMustGenerate) \
@@ -431,6 +434,8 @@ namespace JSC { namespace DFG {
     macro(IsNumber, NodeResultBoolean) \
     /* IsBigInt is only used when USE_BIGINT32. Otherwise we emit IsCellWithType */\
     macro(IsBigInt, NodeResultBoolean) \
+    macro(GlobalIsNaN, NodeMustGenerate | NodeResultBoolean) \
+    macro(NumberIsNaN, NodeResultBoolean) \
     macro(NumberIsInteger, NodeResultBoolean) \
     macro(IsObject, NodeResultBoolean) \
     macro(IsCallable, NodeResultBoolean) \
@@ -582,11 +587,12 @@ namespace JSC { namespace DFG {
     /* Date access */ \
     macro(DateGetInt32OrNaN, NodeResultJS) \
     macro(DateGetTime, NodeResultDouble) \
+    macro(DateSetTime, NodeMustGenerate | NodeResultDouble) \
 
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).
-enum NodeType {
+enum NodeType : uint16_t {
 #define DFG_OP_ENUM(opcode, flags) opcode,
     FOR_EACH_DFG_OP(DFG_OP_ENUM)
 #undef DFG_OP_ENUM
@@ -596,6 +602,7 @@ enum NodeType {
 #define DFG_OP_COUNT(opcode, flags) + 1
 constexpr unsigned numberOfNodeTypes = FOR_EACH_DFG_OP(DFG_OP_COUNT);
 #undef DFG_OP_COUNT
+static_assert(numberOfNodeTypes <= UINT16_MAX);
 
 // Specifies the default flags for each node.
 inline NodeFlags defaultFlags(NodeType op)

@@ -37,34 +37,34 @@ const fullFields = {
 };
 
 assertEntriesEqual(instance.mergeFields(fullFields, { era: "bce", eraYear: 1 }), [
+  ["era", "bce"],
+  ["eraYear", 1],
   ["month", 12],
   ["monthCode", "M12"],
   ["day", 15],
-  ["era", "bce"],
-  ["eraYear", 1],
 ], "era and eraYear together exclude year");
 
 assertEntriesEqual(instance.mergeFields(fullFields, { year: -2 }), [
+  ["year", -2],
   ["month", 12],
   ["monthCode", "M12"],
   ["day", 15],
-  ["year", -2],
 ], "year excludes era and eraYear");
 
 assertEntriesEqual(instance.mergeFields(fullFields, { month: 5 }), [
   ["era", "ce"],
   ["eraYear", 1981],
   ["year", 1981],
-  ["day", 15],
   ["month", 5],
+  ["day", 15],
 ], "month excludes monthCode");
 
 assertEntriesEqual(instance.mergeFields(fullFields, { monthCode: "M05" }), [
   ["era", "ce"],
   ["eraYear", 1981],
   ["year", 1981],
-  ["day", 15],
   ["monthCode", "M05"],
+  ["day", 15],
 ], "monthCode excludes month");
 
 // Specific test cases, of mergeFields on information that is not complete
@@ -100,6 +100,6 @@ assertEntriesEqual(instance.mergeFields({ day: 25, monthCode: "M12", year: 1997,
 assertEntriesEqual(instance.mergeFields({ day: 25, monthCode: "M12", year: 1997 }, { eraYear: 1, year: 2 }), [
   ["day", 25],
   ["monthCode", "M12"],
-  ["eraYear", 1],
   ["year", 2],
+  ["eraYear", 1],
 ], "eraYear excludes year and era, year overwritten");

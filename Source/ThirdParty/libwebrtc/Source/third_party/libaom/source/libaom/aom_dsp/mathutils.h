@@ -63,32 +63,51 @@ static INLINE int linsolve(int n, double *A, int stride, double *b, double *x) {
 // Solves for n-dim x in a least squares sense to minimize |Ax - b|^2
 // The solution is simply x = (A'A)^-1 A'b or simply the solution for
 // the system: A'A x = A'b
-static INLINE int least_squares(int n, double *A, int rows, int stride,
-                                double *b, double *scratch, double *x) {
-  int i, j, k;
-  double *scratch_ = NULL;
-  double *AtA, *Atb;
-  if (!scratch) {
-    scratch_ = (double *)aom_malloc(sizeof(*scratch) * n * (n + 1));
-    if (!scratch_) return 0;
-    scratch = scratch_;
-  }
-  AtA = scratch;
-  Atb = scratch + n * n;
+//
+// This process is split into three steps in order to avoid needing to
+// explicitly allocate the A matrix, which may be very large if there
+// are many equations to solve.
+//
+// The process for using this is (in pseudocode):
+//
+// Allocate mat (size n*n), y (size n), a (size n), x (size n)
+// least_squares_init(mat, y, n)
+// for each equation a . x = b {
+//    least_squares_accumulate(mat, y, a, b, n)
+// }
+// least_squares_solve(mat, y, x, n)
+//
+// where:
+// * mat, y are accumulators for the values A'A and A'b respectively,
+// * a, b are the coefficients of each individual equation,
+// * x is the result vector
+// * and n is the problem size
+static INLINE void least_squares_init(double *mat, double *y, int n) {
+  memset(mat, 0, n * n * sizeof(double));
+  memset(y, 0, n * sizeof(double));
+}
 
-  for (i = 0; i < n; ++i) {
-    for (j = i; j < n; ++j) {
-      AtA[i * n + j] = 0.0;
-      for (k = 0; k < rows; ++k)
-        AtA[i * n + j] += A[k * stride + i] * A[k * stride + j];
-      AtA[j * n + i] = AtA[i * n + j];
+// Round the given positive value to nearest integer
+static AOM_FORCE_INLINE int iroundpf(float x) {
+  assert(x >= 0.0);
+  return (int)(x + 0.5f);
+}
+
+static INLINE void least_squares_accumulate(double *mat, double *y,
+                                            const double *a, double b, int n) {
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      mat[i * n + j] += a[i] * a[j];
     }
-    Atb[i] = 0;
-    for (k = 0; k < rows; ++k) Atb[i] += A[k * stride + i] * b[k];
   }
-  int ret = linsolve(n, AtA, n, Atb, x);
-  aom_free(scratch_);
-  return ret;
+  for (int i = 0; i < n; i++) {
+    y[i] += a[i] * b;
+  }
+}
+
+static INLINE int least_squares_solve(double *mat, double *y, double *x,
+                                      int n) {
+  return linsolve(n, mat, n, y, x);
 }
 
 // Matrix multiply
@@ -108,255 +127,19 @@ static INLINE void multiply_mat(const double *m1, const double *m2, double *res,
   }
 }
 
-//
-// The functions below are needed only for homography computation
-// Remove if the homography models are not used.
-//
-///////////////////////////////////////////////////////////////////////////////
-// svdcmp
-// Adopted from Numerical Recipes in C
-
-static INLINE double apply_sign(double a, double b) {
-  return ((b) >= 0 ? fabs(a) : -fabs(a));
+static AOM_INLINE float approx_exp(float y) {
+#define A ((1 << 23) / 0.69314718056f)  // (1 << 23) / ln(2)
+#define B \
+  127  // Offset for the exponent according to IEEE floating point standard.
+#define C 60801  // Magic number controls the accuracy of approximation
+  union {
+    float as_float;
+    int32_t as_int32;
+  } container;
+  container.as_int32 = ((int32_t)(y * A)) + ((B << 23) - C);
+  return container.as_float;
+#undef A
+#undef B
+#undef C
 }
-
-static INLINE double pythag(double a, double b) {
-  double ct;
-  const double absa = fabs(a);
-  const double absb = fabs(b);
-
-  if (absa > absb) {
-    ct = absb / absa;
-    return absa * sqrt(1.0 + ct * ct);
-  } else {
-    ct = absa / absb;
-    return (absb == 0) ? 0 : absb * sqrt(1.0 + ct * ct);
-  }
-}
-
-static INLINE int svdcmp(double **u, int m, int n, double w[], double **v) {
-  const int max_its = 30;
-  int flag, i, its, j, jj, k, l, nm;
-  double anorm, c, f, g, h, s, scale, x, y, z;
-  double *rv1 = (double *)aom_malloc(sizeof(*rv1) * (n + 1));
-  if (!rv1) return 0;
-  g = scale = anorm = 0.0;
-  for (i = 0; i < n; i++) {
-    l = i + 1;
-    rv1[i] = scale * g;
-    g = s = scale = 0.0;
-    if (i < m) {
-      for (k = i; k < m; k++) scale += fabs(u[k][i]);
-      if (scale != 0.) {
-        for (k = i; k < m; k++) {
-          u[k][i] /= scale;
-          s += u[k][i] * u[k][i];
-        }
-        f = u[i][i];
-        g = -apply_sign(sqrt(s), f);
-        h = f * g - s;
-        u[i][i] = f - g;
-        for (j = l; j < n; j++) {
-          for (s = 0.0, k = i; k < m; k++) s += u[k][i] * u[k][j];
-          f = s / h;
-          for (k = i; k < m; k++) u[k][j] += f * u[k][i];
-        }
-        for (k = i; k < m; k++) u[k][i] *= scale;
-      }
-    }
-    w[i] = scale * g;
-    g = s = scale = 0.0;
-    if (i < m && i != n - 1) {
-      for (k = l; k < n; k++) scale += fabs(u[i][k]);
-      if (scale != 0.) {
-        for (k = l; k < n; k++) {
-          u[i][k] /= scale;
-          s += u[i][k] * u[i][k];
-        }
-        f = u[i][l];
-        g = -apply_sign(sqrt(s), f);
-        h = f * g - s;
-        u[i][l] = f - g;
-        for (k = l; k < n; k++) rv1[k] = u[i][k] / h;
-        for (j = l; j < m; j++) {
-          for (s = 0.0, k = l; k < n; k++) s += u[j][k] * u[i][k];
-          for (k = l; k < n; k++) u[j][k] += s * rv1[k];
-        }
-        for (k = l; k < n; k++) u[i][k] *= scale;
-      }
-    }
-    anorm = fmax(anorm, (fabs(w[i]) + fabs(rv1[i])));
-  }
-
-  for (i = n - 1; i >= 0; i--) {
-    if (i < n - 1) {
-      if (g != 0.) {
-        for (j = l; j < n; j++) v[j][i] = (u[i][j] / u[i][l]) / g;
-        for (j = l; j < n; j++) {
-          for (s = 0.0, k = l; k < n; k++) s += u[i][k] * v[k][j];
-          for (k = l; k < n; k++) v[k][j] += s * v[k][i];
-        }
-      }
-      for (j = l; j < n; j++) v[i][j] = v[j][i] = 0.0;
-    }
-    v[i][i] = 1.0;
-    g = rv1[i];
-    l = i;
-  }
-  for (i = AOMMIN(m, n) - 1; i >= 0; i--) {
-    l = i + 1;
-    g = w[i];
-    for (j = l; j < n; j++) u[i][j] = 0.0;
-    if (g != 0.) {
-      g = 1.0 / g;
-      for (j = l; j < n; j++) {
-        for (s = 0.0, k = l; k < m; k++) s += u[k][i] * u[k][j];
-        f = (s / u[i][i]) * g;
-        for (k = i; k < m; k++) u[k][j] += f * u[k][i];
-      }
-      for (j = i; j < m; j++) u[j][i] *= g;
-    } else {
-      for (j = i; j < m; j++) u[j][i] = 0.0;
-    }
-    ++u[i][i];
-  }
-  for (k = n - 1; k >= 0; k--) {
-    for (its = 0; its < max_its; its++) {
-      flag = 1;
-      for (l = k; l >= 0; l--) {
-        nm = l - 1;
-        if ((double)(fabs(rv1[l]) + anorm) == anorm || nm < 0) {
-          flag = 0;
-          break;
-        }
-        if ((double)(fabs(w[nm]) + anorm) == anorm) break;
-      }
-      if (flag) {
-        c = 0.0;
-        s = 1.0;
-        for (i = l; i <= k; i++) {
-          f = s * rv1[i];
-          rv1[i] = c * rv1[i];
-          if ((double)(fabs(f) + anorm) == anorm) break;
-          g = w[i];
-          h = pythag(f, g);
-          w[i] = h;
-          h = 1.0 / h;
-          c = g * h;
-          s = -f * h;
-          for (j = 0; j < m; j++) {
-            y = u[j][nm];
-            z = u[j][i];
-            u[j][nm] = y * c + z * s;
-            u[j][i] = z * c - y * s;
-          }
-        }
-      }
-      z = w[k];
-      if (l == k) {
-        if (z < 0.0) {
-          w[k] = -z;
-          for (j = 0; j < n; j++) v[j][k] = -v[j][k];
-        }
-        break;
-      }
-      if (its == max_its - 1) {
-        aom_free(rv1);
-        return 1;
-      }
-      assert(k > 0);
-      x = w[l];
-      nm = k - 1;
-      y = w[nm];
-      g = rv1[nm];
-      h = rv1[k];
-      f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2.0 * h * y);
-      g = pythag(f, 1.0);
-      f = ((x - z) * (x + z) + h * ((y / (f + apply_sign(g, f))) - h)) / x;
-      c = s = 1.0;
-      for (j = l; j <= nm; j++) {
-        i = j + 1;
-        g = rv1[i];
-        y = w[i];
-        h = s * g;
-        g = c * g;
-        z = pythag(f, h);
-        rv1[j] = z;
-        c = f / z;
-        s = h / z;
-        f = x * c + g * s;
-        g = g * c - x * s;
-        h = y * s;
-        y *= c;
-        for (jj = 0; jj < n; jj++) {
-          x = v[jj][j];
-          z = v[jj][i];
-          v[jj][j] = x * c + z * s;
-          v[jj][i] = z * c - x * s;
-        }
-        z = pythag(f, h);
-        w[j] = z;
-        if (z != 0.) {
-          z = 1.0 / z;
-          c = f * z;
-          s = h * z;
-        }
-        f = c * g + s * y;
-        x = c * y - s * g;
-        for (jj = 0; jj < m; jj++) {
-          y = u[jj][j];
-          z = u[jj][i];
-          u[jj][j] = y * c + z * s;
-          u[jj][i] = z * c - y * s;
-        }
-      }
-      rv1[l] = 0.0;
-      rv1[k] = f;
-      w[k] = x;
-    }
-  }
-  aom_free(rv1);
-  return 0;
-}
-
-static INLINE int SVD(double *U, double *W, double *V, double *matx, int M,
-                      int N) {
-  // Assumes allocation for U is MxN
-  double **nrU = (double **)aom_malloc((M) * sizeof(*nrU));
-  double **nrV = (double **)aom_malloc((N) * sizeof(*nrV));
-  int problem, i;
-
-  problem = !(nrU && nrV);
-  if (!problem) {
-    for (i = 0; i < M; i++) {
-      nrU[i] = &U[i * N];
-    }
-    for (i = 0; i < N; i++) {
-      nrV[i] = &V[i * N];
-    }
-  } else {
-    aom_free(nrU);
-    aom_free(nrV);
-    return 1;
-  }
-
-  /* copy from given matx into nrU */
-  for (i = 0; i < M; i++) {
-    memcpy(&(nrU[i][0]), matx + N * i, N * sizeof(*matx));
-  }
-
-  /* HERE IT IS: do SVD */
-  if (svdcmp(nrU, M, N, W, nrV)) {
-    aom_free(nrU);
-    aom_free(nrV);
-    return 1;
-  }
-
-  /* aom_free Numerical Recipes arrays */
-  aom_free(nrU);
-  aom_free(nrV);
-
-  return 0;
-}
-
 #endif  // AOM_AOM_DSP_MATHUTILS_H_

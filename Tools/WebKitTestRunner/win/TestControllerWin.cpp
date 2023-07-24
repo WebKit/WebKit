@@ -120,11 +120,6 @@ void TestController::platformInitialize(const Options&)
     webProcessCrashingEvent = ::CreateEventA(0, FALSE, FALSE, webProcessCrashingEventName);
 }
 
-WKPreferencesRef TestController::platformPreferences()
-{
-    return WKPageGroupGetPreferences(m_pageGroup.get());
-}
-
 void TestController::platformDestroy()
 {
 }

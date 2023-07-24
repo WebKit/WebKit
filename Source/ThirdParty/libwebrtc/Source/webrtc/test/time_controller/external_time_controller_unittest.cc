@@ -140,7 +140,7 @@ TEST(ExternalTimeControllerTest, YieldForTask) {
 
   rtc::Event event;
   task_queue.PostTask([&] { event.Set(); });
-  EXPECT_TRUE(event.Wait(200));
+  EXPECT_TRUE(event.Wait(TimeDelta::Millis(200)));
 }
 
 TEST(ExternalTimeControllerTest, TasksYieldToEachOther) {
@@ -157,7 +157,7 @@ TEST(ExternalTimeControllerTest, TasksYieldToEachOther) {
   task_queue.PostTask([&] {
     rtc::Event event;
     other_queue.PostTask([&] { event.Set(); });
-    EXPECT_TRUE(event.Wait(200));
+    EXPECT_TRUE(event.Wait(TimeDelta::Millis(200)));
   });
 
   time_simulation.AdvanceTime(TimeDelta::Millis(300));

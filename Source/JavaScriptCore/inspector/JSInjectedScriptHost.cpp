@@ -347,7 +347,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
             array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "status"_s, jsNontrivialString(vm, "pending"_s)));
             return array;
         case JSPromise::Status::Fulfilled:
-            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "status"_s, jsNontrivialString(vm, "resolved"_s)));
+            array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "status"_s, jsNontrivialString(vm, "fulfilled"_s)));
             RETURN_IF_EXCEPTION(scope, JSValue());
             scope.release();
             array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "result"_s, promise->result(vm)));

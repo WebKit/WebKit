@@ -64,7 +64,7 @@ public:
 
 private:
     // PageClient
-    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&) override;
+    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;
     void setViewNeedsDisplay(const WebCore::Region&) override;
     void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, WebCore::ScrollIsAnimated) override;
     WebCore::FloatPoint viewScrollPosition() override;
@@ -73,9 +73,7 @@ private:
     bool isViewWindowActive() override;
     bool isViewFocused() override;
     bool isViewVisible() override;
-#if USE(RUNNINGBOARD)
     bool canTakeForegroundAssertions() override { return true; };
-#endif
     bool isViewVisibleOrOccluded() override;
     bool isViewInWindow() override;
     bool isVisuallyIdle() override;
@@ -198,8 +196,6 @@ private:
     void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext) final;
 
     void setEditableElementIsFocused(bool) override;
-
-    void setCaretDecorationVisibility(bool) override;
 
     void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
     void layerTreeCommitComplete() override;

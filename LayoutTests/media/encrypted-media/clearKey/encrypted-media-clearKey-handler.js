@@ -46,6 +46,7 @@ function EncryptedMediaHandler(video, videoConf, audioConf)
     }
     this.videoConf = videoConf;
     this.sessions = [];
+    this.skipUpdateCallback = undefined;
     this.setMediaKeyPromise;
     waitForEventOn(video, "encrypted", this.onEncrypted.bind(this));
     return this;
@@ -93,6 +94,12 @@ EncryptedMediaHandler.prototype = {
 
     onMessage : function(event)
     {
+        if (this.skipUpdateCallback) {
+            logResult(true, "Skipping keys update");
+            this.skipUpdateCallback();
+            return;
+        }
+
         let session = event.target;
         let msgStr = String.fromCharCode.apply(String, new Uint8Array(event.message));
         let msg = JSON.parse(msgStr);

@@ -233,7 +233,7 @@ void LegacyRenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& 
     }
 }
 
-void LegacyRenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& originalContext)
+void LegacyRenderSVGShape::strokeShapeInternal(const RenderStyle& style, GraphicsContext& originalContext)
 {
     GraphicsContext* context = &originalContext;
     Color fallbackColor;
@@ -249,9 +249,9 @@ void LegacyRenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext
     }
 }
 
-void LegacyRenderSVGShape::strokeShape(GraphicsContext& context)
+void LegacyRenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& context)
 {
-    if (!style().hasVisibleStroke())
+    if (!style.hasVisibleStroke())
         return;
 
     GraphicsContextStateSaver stateSaver(context, false);
@@ -260,7 +260,7 @@ void LegacyRenderSVGShape::strokeShape(GraphicsContext& context)
         if (!setupNonScalingStrokeContext(nonScalingTransform, stateSaver))
             return;
     }
-    strokeShape(style(), context);
+    strokeShapeInternal(style, context);
 }
 
 void LegacyRenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
@@ -271,7 +271,7 @@ void LegacyRenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
             fillShape(style(), childPaintInfo.context());
             break;
         case PaintType::Stroke:
-            strokeShape(childPaintInfo.context());
+            strokeShape(style(), childPaintInfo.context());
             break;
         case PaintType::Markers:
             if (!m_markerPositions.isEmpty())
@@ -503,7 +503,7 @@ void LegacyRenderSVGShape::processMarkerPositions()
     ASSERT(m_path);
 
     SVGMarkerData markerData(m_markerPositions, SVGResourcesCache::cachedResourcesForRenderer(*this)->markerReverseStart());
-    m_path->apply([&markerData](const PathElement& pathElement) {
+    m_path->applyElements([&markerData](const PathElement& pathElement) {
         SVGMarkerData::updateFromPathElement(markerData, pathElement);
     });
     markerData.pathIsDone();

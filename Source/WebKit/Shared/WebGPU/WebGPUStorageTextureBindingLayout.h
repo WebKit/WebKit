@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,17 +27,17 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/WebGPUStorageTextureAccess.h>
+#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUTextureViewDimension.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUStorageTextureAccess.h>
-#include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
-#include <pal/graphics/WebGPU/WebGPUTextureViewDimension.h>
 
 namespace WebKit::WebGPU {
 
 struct StorageTextureBindingLayout {
-    PAL::WebGPU::StorageTextureAccess access { PAL::WebGPU::StorageTextureAccess::WriteOnly };
-    PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
-    PAL::WebGPU::TextureViewDimension viewDimension { PAL::WebGPU::TextureViewDimension::_2d };
+    WebCore::WebGPU::StorageTextureAccess access { WebCore::WebGPU::StorageTextureAccess::WriteOnly };
+    WebCore::WebGPU::TextureFormat format { WebCore::WebGPU::TextureFormat::R8unorm };
+    WebCore::WebGPU::TextureViewDimension viewDimension { WebCore::WebGPU::TextureViewDimension::_2d };
 };
 
 } // namespace WebKit::WebGPU

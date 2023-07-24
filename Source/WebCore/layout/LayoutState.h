@@ -97,9 +97,6 @@ public:
     bool isInlineFormattingContextIntegration() const { return m_formattingContextIntegrationType && *m_formattingContextIntegrationType == FormattingContextIntegrationType::Inline; }
     bool isFlexFormattingContextIntegration() const { return m_formattingContextIntegrationType && *m_formattingContextIntegrationType == FormattingContextIntegrationType::Flex; }
 
-    void setViewportSize(const LayoutSize&);
-    LayoutSize viewportSize() const;
-    bool shouldIgnoreTrailingLetterSpacing() const;
     bool shouldNotSynthesizeInlineBlockBaseline() const;
 
 private:
@@ -124,7 +121,6 @@ private:
 
     // LFC integration only.
     std::optional<FormattingContextIntegrationType> m_formattingContextIntegrationType;
-    LayoutSize m_viewportSize;
 };
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const

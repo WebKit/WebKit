@@ -56,7 +56,7 @@ static Path pathFromCircleElement(const SVGElement& element)
     if (r > 0) {
         float cx = lengthContext.valueForLength(style.svgStyle().cx(), SVGLengthMode::Width);
         float cy = lengthContext.valueForLength(style.svgStyle().cy(), SVGLengthMode::Height);
-        path.addEllipse(FloatRect(cx - r, cy - r, r * 2, r * 2));
+        path.addEllipseInRect(FloatRect(cx - r, cy - r, r * 2, r * 2));
     }
     return path;
 }
@@ -80,7 +80,7 @@ static Path pathFromEllipseElement(const SVGElement& element)
     Path path;
     float cx = lengthContext.valueForLength(style.svgStyle().cx(), SVGLengthMode::Width);
     float cy = lengthContext.valueForLength(style.svgStyle().cy(), SVGLengthMode::Height);
-    path.addEllipse(FloatRect(cx - rx, cy - ry, rx * 2, ry * 2));
+    path.addEllipseInRect(FloatRect(cx - rx, cy - ry, rx * 2, ry * 2));
     return path;
 }
 
@@ -163,7 +163,7 @@ static Path pathFromRectElement(const SVGElement& element)
         // FIXME: We currently enforce using beziers here, as at least on CoreGraphics/Lion, as
         // the native method uses a different line dash origin, causing svg/custom/dashOrigin.svg to fail.
         // See bug https://bugs.webkit.org/show_bug.cgi?id=79932 which tracks this issue.
-        path.addRoundedRect(FloatRect(x, y, width, height), FloatSize(rx, ry), Path::RoundedRectStrategy::PreferBezier);
+        path.addRoundedRect(FloatRect(x, y, width, height), FloatSize(rx, ry), PathRoundedRect::Strategy::PreferBezier);
         return path;
     }
 

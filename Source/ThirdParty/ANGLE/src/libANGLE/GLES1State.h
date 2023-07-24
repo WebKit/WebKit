@@ -84,6 +84,15 @@ struct FogParameters
     ColorF color;
 };
 
+struct AlphaTestParameters
+{
+    AlphaTestParameters();
+    bool operator!=(const AlphaTestParameters &other) const;
+
+    AlphaTestFunc func = AlphaTestFunc::AlwaysPass;
+    GLfloat ref        = 0.0f;
+};
+
 struct TextureEnvironmentParameters
 {
     TextureEnvironmentParameters();
@@ -163,7 +172,9 @@ class GLES1State final : angle::NonCopyable
 
     void initialize(const Context *context, const State *state);
 
-    void setAlphaFunc(AlphaTestFunc func, GLfloat ref);
+    void setAlphaTestParameters(AlphaTestFunc func, GLfloat ref);
+    const AlphaTestParameters &getAlphaTestParameters() const;
+
     void setClientTextureUnit(unsigned int unit);
     unsigned int getClientTextureUnit() const;
 
@@ -332,8 +343,7 @@ class GLES1State final : angle::NonCopyable
     PointParameters mPointParameters;
 
     // Table 6.16
-    AlphaTestFunc mAlphaTestFunc;
-    GLfloat mAlphaTestRef;
+    AlphaTestParameters mAlphaTestParameters;
     LogicalOperation mLogicOp;
 
     // Table 6.7

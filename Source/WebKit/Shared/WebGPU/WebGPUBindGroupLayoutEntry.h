@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,15 +32,15 @@
 #include "WebGPUSamplerBindingLayout.h"
 #include "WebGPUStorageTextureBindingLayout.h"
 #include "WebGPUTextureBindingLayout.h"
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUShaderStage.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUShaderStage.h>
 
 namespace WebKit::WebGPU {
 
 struct BindGroupLayoutEntry {
-    PAL::WebGPU::Index32 binding { 0 };
-    PAL::WebGPU::ShaderStageFlags visibility;
+    WebCore::WebGPU::Index32 binding { 0 };
+    WebCore::WebGPU::ShaderStageFlags visibility;
 
     std::optional<BufferBindingLayout> buffer;
     std::optional<SamplerBindingLayout> sampler;

@@ -13,7 +13,7 @@ function test()
         async test() {
             InspectorTest.expectTrue(WI.DefaultAudits, "Expect that default audits source is present.");
 
-            const expectedLevelPassString = `function () {\n    return {level: "pass"};\n}`;
+            const expectedLevelPassString = `function() {\n    return {level: "pass"};\n}`;
             InspectorTest.expectEqual(WI.DefaultAudits.levelPass.toString(), expectedLevelPassString, "Expect that the testPass test case has correct number of spaces and indentation.");
         },
     });

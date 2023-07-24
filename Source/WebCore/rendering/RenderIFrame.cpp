@@ -30,6 +30,9 @@
 #include "HTMLNames.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include <wtf/IsoMallocInlines.h>
@@ -64,13 +67,6 @@ bool RenderIFrame::isInlineBlockOrInlineTable() const
 bool RenderIFrame::requiresLayer() const
 {
     return RenderFrameBase::requiresLayer() || style().resize() != Resize::None;
-}
-
-RenderView* RenderIFrame::contentRootRenderer() const
-{
-    auto* childFrameView = childView();
-    auto* localFrame = childFrameView ? dynamicDowncast<LocalFrame>(childFrameView->frame()) : nullptr;
-    return localFrame ? localFrame->contentRenderer() : nullptr;
 }
 
 bool RenderIFrame::isFullScreenIFrame() const

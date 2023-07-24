@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-class MockRealtimeAudioSource : public RealtimeMediaSource {
+class MockRealtimeAudioSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MockRealtimeAudioSource, WTF::DestructionThread::MainRunLoop> {
 public:
     static CaptureSourceOrError create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
     virtual ~MockRealtimeAudioSource();
@@ -48,6 +48,10 @@ public:
     static void setIsInterrupted(bool);
 
     WEBCORE_EXPORT void setChannelCount(unsigned);
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MockRealtimeAudioSource, WTF::DestructionThread::MainRunLoop>::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MockRealtimeAudioSource, WTF::DestructionThread::MainRunLoop>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MockRealtimeAudioSource, WTF::DestructionThread::MainRunLoop>::controlBlock(); }
 
 protected:
     MockRealtimeAudioSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, PageIdentifier);
@@ -58,11 +62,13 @@ protected:
     static Seconds renderInterval() { return 60_ms; }
 
 private:
+    friend class MockRealtimeAudioSourceGStreamer;
+
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
 
-    void startProducingData() final;
-    void stopProducingData() final;
+    void startProducingData() override;
+    void stopProducingData() override;
 
     bool isCaptureSource() const final { return true; }
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Microphone; }

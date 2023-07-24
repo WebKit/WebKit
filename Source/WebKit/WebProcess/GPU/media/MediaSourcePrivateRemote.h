@@ -87,9 +87,9 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void seekToTime(const MediaTime&);
     void mediaSourcePrivateShuttingDown(CompletionHandler<void()>&&);
-    bool isGPURunning() const { return !m_shutdown && m_gpuProcessConnection; }
+    bool isGPURunning() const { return !m_shutdown && m_gpuProcessConnection.get(); }
 
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteMediaSourceIdentifier m_identifier;
     RemoteMediaPlayerMIMETypeCache& m_mimeTypeCache;
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;

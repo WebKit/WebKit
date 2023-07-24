@@ -192,6 +192,15 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::ScreenOrientationAPIEnabled);
     }
 
+    if (linkedBefore(dyld_fall_2023_os_versions, DYLD_IOS_VERSION_17_0, DYLD_MACOSX_VERSION_14_0)) {
+        disableBehavior(SDKAlignedBehavior::FullySuspendsBackgroundContent);
+        disableBehavior(SDKAlignedBehavior::RunningBoardThrottling);
+        disableBehavior(SDKAlignedBehavior::PopoverAttributeEnabled);
+        disableBehavior(SDKAlignedBehavior::LiveRangeSelectionEnabledForAllApps);
+        disableBehavior(SDKAlignedBehavior::DoesNotOverrideUAFromNSUserDefault);
+        disableBehavior(SDKAlignedBehavior::EvaluateJavaScriptWithoutTransientActivation);
+    }
+
     disableAdditionalSDKAlignedBehaviors(behaviors);
 
     return behaviors;

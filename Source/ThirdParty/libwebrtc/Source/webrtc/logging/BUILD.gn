@@ -33,6 +33,12 @@ rtc_source_set("rtc_event_log_api") {
   deps = [ "../api/rtc_event_log" ]
 }
 
+rtc_source_set("rtc_event_log_parse_status") {
+  sources = [ "rtc_event_log/events/rtc_event_log_parse_status.h" ]
+  deps = [ "../rtc_base:checks" ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
 rtc_library("rtc_event_field") {
   sources = [
     "rtc_event_log/events/fixed_length_encoding_parameters_v3.cc",
@@ -47,6 +53,7 @@ rtc_library("rtc_event_field") {
   ]
 
   deps = [
+    ":rtc_event_log_parse_status",
     ":rtc_event_number_encodings",
     "../api:array_view",
     "../api/rtc_event_log",
@@ -101,6 +108,8 @@ rtc_library("rtc_event_audio") {
     "rtc_event_log/events/rtc_event_audio_receive_stream_config.h",
     "rtc_event_log/events/rtc_event_audio_send_stream_config.cc",
     "rtc_event_log/events/rtc_event_audio_send_stream_config.h",
+    "rtc_event_log/events/rtc_event_neteq_set_minimum_delay.cc",
+    "rtc_event_log/events/rtc_event_neteq_set_minimum_delay.h",
   ]
 
   deps = [
@@ -282,15 +291,58 @@ rtc_library("rtc_event_number_encodings") {
   ]
 }
 
-# TODO(eladalon): Break down into (1) encoder and (2) decoder; we don't need
-# the decoder code in the WebRTC library, only in unit tests and tools.
-rtc_library("rtc_event_log_impl_encoder") {
+rtc_library("rtc_event_log_blob_encoding") {
   sources = [
     "rtc_event_log/encoder/blob_encoding.cc",
     "rtc_event_log/encoder/blob_encoding.h",
+  ]
+  deps = [
+    ":rtc_event_number_encodings",
+    "../rtc_base:checks",
+    "../rtc_base:logging",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+rtc_library("rtc_event_log_optional_blob_encoding") {
+  sources = [
+    "rtc_event_log/encoder/optional_blob_encoding.cc",
+    "rtc_event_log/encoder/optional_blob_encoding.h",
+  ]
+  deps = [
+    "../rtc_base:bit_buffer",
+    "../rtc_base:bitstream_reader",
+    "../rtc_base:checks",
+    "../rtc_base:logging",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("rtc_event_log_delta_encoding") {
+  sources = [
     "rtc_event_log/encoder/delta_encoding.cc",
     "rtc_event_log/encoder/delta_encoding.h",
   ]
+  deps = [
+    ":rtc_event_number_encodings",
+    "../rtc_base:bit_buffer",
+    "../rtc_base:bitstream_reader",
+    "../rtc_base:checks",
+    "../rtc_base:logging",
+    "../rtc_base:safe_conversions",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("rtc_event_log_impl_encoder") {
+  sources = []
 
   defines = []
 
@@ -306,6 +358,7 @@ rtc_library("rtc_event_log_impl_encoder") {
     "../rtc_base:ignore_wundef",
     "../rtc_base:logging",
     "../rtc_base:safe_conversions",
+    "../system_wrappers:field_trial",
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/memory",
@@ -315,6 +368,7 @@ rtc_library("rtc_event_log_impl_encoder") {
 
   if (rtc_enable_protobuf) {
     deps += [
+      ":dependency_descriptor_encoder_decoder",
       ":ice_log",
       ":rtc_event_audio",
       ":rtc_event_begin_end",
@@ -324,6 +378,8 @@ rtc_library("rtc_event_log_impl_encoder") {
       ":rtc_event_generic_packet_events",
       ":rtc_event_log2_proto",
       ":rtc_event_log_api",
+      ":rtc_event_log_blob_encoding",
+      ":rtc_event_log_delta_encoding",
       ":rtc_event_log_proto",
       ":rtc_event_pacing",
       ":rtc_event_rtp_rtcp",
@@ -345,6 +401,39 @@ rtc_library("rtc_event_log_impl_encoder") {
   }
 }
 
+if (rtc_enable_protobuf) {
+  rtc_library("dependency_descriptor_encoder_decoder") {
+    sources = [
+      "rtc_event_log/dependency_descriptor_encoder_decoder.cc",
+      "rtc_event_log/dependency_descriptor_encoder_decoder.h",
+    ]
+    deps = [
+      ":rtc_event_log2_proto_include",
+      ":rtc_event_log_delta_encoding",
+      ":rtc_event_log_optional_blob_encoding",
+      ":rtc_event_log_parse_status",
+      ":rtc_event_log_proto",  # Why does this need to be included here?
+      "../rtc_base:bitstream_reader",
+      "../rtc_base:checks",
+      "../rtc_base:logging",
+    ]
+    absl_deps = [
+      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
+  }
+}
+
+if (rtc_enable_protobuf) {
+  rtc_source_set("rtc_event_log2_proto_include") {
+    sources = [ "rtc_event_log/rtc_event_log2_proto_include.h" ]
+    deps = [
+      ":rtc_event_log2_proto",
+      "../rtc_base:ignore_wundef",
+    ]
+  }
+}
+
 # TODO(bugs.webrtc.org/6463): For backwards compatibility; delete as
 # soon as downstream dependencies are updated.
 rtc_source_set("rtc_event_log_impl_output") {
@@ -354,7 +443,10 @@ rtc_source_set("rtc_event_log_impl_output") {
 
 if (rtc_enable_protobuf) {
   rtc_library("rtc_event_log_impl") {
-    visibility = [ "../api/rtc_event_log:rtc_event_log_factory" ]
+    visibility = [
+      ":rtc_event_log_tests",
+      "../api/rtc_event_log:rtc_event_log_factory",
+    ]
     sources = [
       "rtc_event_log/rtc_event_log_impl.cc",
       "rtc_event_log/rtc_event_log_impl.h",
@@ -396,7 +488,6 @@ rtc_library("fake_rtc_event_log") {
 
   deps = [
     "../api/rtc_event_log",
-    "../rtc_base",
     "../rtc_base:macromagic",
     "../rtc_base/synchronization:mutex",
   ]
@@ -418,7 +509,6 @@ if (rtc_enable_protobuf) {
   rtc_library("rtc_event_log_parser") {
     visibility = [ "*" ]
     sources = [
-      "rtc_event_log/logged_events.h",
       "rtc_event_log/rtc_event_log_parser.cc",
       "rtc_event_log/rtc_event_log_parser.h",
       "rtc_event_log/rtc_event_processor.cc",
@@ -426,6 +516,7 @@ if (rtc_enable_protobuf) {
     ]
 
     deps = [
+      ":dependency_descriptor_encoder_decoder",
       ":ice_log",
       ":rtc_event_audio",
       ":rtc_event_begin_end",
@@ -433,6 +524,8 @@ if (rtc_enable_protobuf) {
       ":rtc_event_frame_events",
       ":rtc_event_generic_packet_events",
       ":rtc_event_log2_proto",
+      ":rtc_event_log_blob_encoding",
+      ":rtc_event_log_delta_encoding",
       ":rtc_event_log_impl_encoder",
       ":rtc_event_log_proto",
       ":rtc_event_number_encodings",
@@ -463,6 +556,7 @@ if (rtc_enable_protobuf) {
       "../rtc_base/system:file_wrapper",
     ]
     absl_deps = [
+      "//third_party/abseil-cpp/absl/base:core_headers",
       "//third_party/abseil-cpp/absl/memory",
       "//third_party/abseil-cpp/absl/strings",
       "//third_party/abseil-cpp/absl/types:optional",
@@ -474,18 +568,22 @@ if (rtc_enable_protobuf) {
       testonly = true
       assert(rtc_enable_protobuf)
       sources = [
+        "rtc_event_log/dependency_descriptor_encoder_decoder_unittest.cc",
         "rtc_event_log/encoder/blob_encoding_unittest.cc",
         "rtc_event_log/encoder/delta_encoding_unittest.cc",
+        "rtc_event_log/encoder/optional_blob_encoding_unittest.cc",
         "rtc_event_log/encoder/rtc_event_log_encoder_common_unittest.cc",
         "rtc_event_log/encoder/rtc_event_log_encoder_unittest.cc",
         "rtc_event_log/events/rtc_event_field_encoding_unittest.cc",
         "rtc_event_log/events/rtc_event_field_extraction_unittest.cc",
+        "rtc_event_log/rtc_event_log_impl_unittest.cc",
         "rtc_event_log/rtc_event_log_unittest.cc",
         "rtc_event_log/rtc_event_log_unittest_helper.cc",
         "rtc_event_log/rtc_event_log_unittest_helper.h",
         "rtc_event_log/rtc_event_processor_unittest.cc",
       ]
       deps = [
+        ":dependency_descriptor_encoder_decoder",
         ":ice_log",
         ":rtc_event_audio",
         ":rtc_event_bwe",
@@ -493,7 +591,12 @@ if (rtc_enable_protobuf) {
         ":rtc_event_frame_events",
         ":rtc_event_generic_packet_events",
         ":rtc_event_log2_proto",
+        ":rtc_event_log2_proto_include",
+        ":rtc_event_log_blob_encoding",
+        ":rtc_event_log_delta_encoding",
+        ":rtc_event_log_impl",
         ":rtc_event_log_impl_encoder",
+        ":rtc_event_log_optional_blob_encoding",
         ":rtc_event_log_parser",
         ":rtc_event_log_proto",
         ":rtc_event_number_encodings",
@@ -522,9 +625,12 @@ if (rtc_enable_protobuf) {
         "../rtc_base:rtc_base_tests_utils",
         "../rtc_base:timeutils",
         "../system_wrappers",
+        "../system_wrappers:field_trial",
+        "../test:field_trial",
         "../test:fileutils",
         "../test:test_support",
         "../test/logging:log_writer",
+        "../test/time_controller",
         "//testing/gtest",
       ]
       absl_deps = [

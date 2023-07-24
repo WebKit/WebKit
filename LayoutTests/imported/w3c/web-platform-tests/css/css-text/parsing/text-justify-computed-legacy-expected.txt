@@ -1,0 +1,3 @@
+
+PASS Property text-justify value 'distribute'
+

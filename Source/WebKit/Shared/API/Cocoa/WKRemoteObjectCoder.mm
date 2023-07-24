@@ -43,6 +43,9 @@
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/CString.h>
 
+@interface NSURLError : NSError
+@end
+
 static constexpr auto classNameKey = "$class"_s;
 static constexpr auto objectStreamKey = "$objectStream"_s;
 static constexpr auto stringKey = "$string"_s;
@@ -794,6 +797,8 @@ static const HashSet<CFTypeRef> alwaysAllowedClasses()
         (__bridge CFTypeRef)NSHTTPURLResponse.class,
         (__bridge CFTypeRef)NSURLResponse.class,
         (__bridge CFTypeRef)NSUUID.class,
+        (__bridge CFTypeRef)NSError.class,
+        (__bridge CFTypeRef)NSURLError.class,
     } };
     return classes.get();
 }

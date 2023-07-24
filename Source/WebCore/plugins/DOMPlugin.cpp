@@ -90,6 +90,11 @@ RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomString& propertyName)
     return nullptr;
 }
 
+bool DOMPlugin::isSupportedPropertyName(const AtomString& propertyName) const
+{
+    return m_mimeTypes.containsIf([&](auto& type) { return type->type() == propertyName; });
+}
+
 Vector<AtomString> DOMPlugin::supportedPropertyNames() const
 {
     return m_mimeTypes.map([](auto& type) {

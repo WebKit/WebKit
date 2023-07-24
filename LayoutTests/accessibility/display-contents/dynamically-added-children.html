@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="display-contents-div" aria-label="Div with display:contents" style="display:contents">
+    <div id="div-to-insert-into">
+    </div>
+</div>
+
+<script>
+var testOutput = "This test ensures that we include dynamically added content in the AX tree when said content is added as a subtree of a display:contents element.\n\n";
+
+var axRoot = accessibilityController.rootElement;
+function traversePage() {
+    let searchResult = null;
+    while (true) {
+        searchResult = axRoot.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+        const role = searchResult.role;
+        testOutput += `\n${role}`;
+        if (role.includes("StaticText")) {
+            let textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
+            testOutput += `\n${textContent}`;
+        }
+        testOutput += "\n";
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    testOutput += "Traversing page based on initial state.\n";
+    traversePage();
+
+    testOutput += "\nAdding list elements to #div-to-insert-into and performing another page traversal.\n";
+
+    const ul = document.createElement("ul");
+    const li = document.createElement("li");
+    li.innerHTML = "List item one";
+    ul.appendChild(li);
+    document.getElementById("div-to-insert-into").appendChild(ul);
+    setTimeout(async function() {
+        await waitFor(() => axRoot.uiElementForSearchPredicate(axRoot, true, "AXListSearchKey", "", false));
+        traversePage();
+
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+
+

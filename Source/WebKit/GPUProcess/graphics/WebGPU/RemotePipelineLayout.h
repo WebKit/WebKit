@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class PipelineLayout;
 }
 
@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemotePipelineLayout final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemotePipelineLayout> create(PAL::WebGPU::PipelineLayout& pipelineLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemotePipelineLayout> create(WebCore::WebGPU::PipelineLayout& pipelineLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemotePipelineLayout(pipelineLayout, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -61,21 +61,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemotePipelineLayout(PAL::WebGPU::PipelineLayout&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemotePipelineLayout(WebCore::WebGPU::PipelineLayout&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemotePipelineLayout(const RemotePipelineLayout&) = delete;
     RemotePipelineLayout(RemotePipelineLayout&&) = delete;
     RemotePipelineLayout& operator=(const RemotePipelineLayout&) = delete;
     RemotePipelineLayout& operator=(RemotePipelineLayout&&) = delete;
 
-    PAL::WebGPU::PipelineLayout& backing() { return m_backing; }
+    WebCore::WebGPU::PipelineLayout& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    Ref<PAL::WebGPU::PipelineLayout> m_backing;
+    Ref<WebCore::WebGPU::PipelineLayout> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

@@ -102,7 +102,7 @@ PointerEvent::PointerEvent(const AtomString& type, short button, const MouseEven
 }
 
 PointerEvent::PointerEvent(const AtomString& type, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
-    : MouseEvent(type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), nullptr, 0, { }, { }, 0, 0, { }, 0, 0, 0, nullptr)
+    : MouseEvent(type, typeCanBubble(type), typeIsCancelable(type), typeIsComposed(type), nullptr, 0, { }, { }, 0, 0, { }, 0, 0, SyntheticClickType::NoTap, nullptr)
     , m_pointerId(pointerId)
     , m_pointerType(pointerType)
     , m_isPrimary(isPrimary == IsPrimary::Yes)

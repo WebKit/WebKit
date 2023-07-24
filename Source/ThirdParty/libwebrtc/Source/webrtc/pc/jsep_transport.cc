@@ -22,7 +22,6 @@
 #include "api/candidate.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/p2p_transport_channel.h"
-#include "pc/sctp_data_channel_transport.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/logging.h"
@@ -99,10 +98,6 @@ JsepTransport::JsepTransport(
                                ? rtc::make_ref_counted<webrtc::DtlsTransport>(
                                      std::move(rtcp_dtls_transport))
                                : nullptr),
-      sctp_data_channel_transport_(
-          sctp_transport ? std::make_unique<webrtc::SctpDataChannelTransport>(
-                               sctp_transport.get())
-                         : nullptr),
       sctp_transport_(sctp_transport
                           ? rtc::make_ref_counted<webrtc::SctpTransport>(
                                 std::move(sctp_transport))
@@ -420,21 +415,9 @@ webrtc::RTCError JsepTransport::SetNegotiatedDtlsParameters(
     absl::optional<rtc::SSLRole> dtls_role,
     rtc::SSLFingerprint* remote_fingerprint) {
   RTC_DCHECK(dtls_transport);
-  // Set SSL role. Role must be set before fingerprint is applied, which
-  // initiates DTLS setup.
-  if (dtls_role && !dtls_transport->SetDtlsRole(*dtls_role)) {
-    return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
-                            "Failed to set SSL role for the transport.");
-  }
-  // Apply remote fingerprint.
-  if (!remote_fingerprint ||
-      !dtls_transport->SetRemoteFingerprint(
-          remote_fingerprint->algorithm, remote_fingerprint->digest.cdata(),
-          remote_fingerprint->digest.size())) {
-    return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
-                            "Failed to apply remote fingerprint.");
-  }
-  return webrtc::RTCError::OK();
+  return dtls_transport->SetRemoteParameters(
+      remote_fingerprint->algorithm, remote_fingerprint->digest.cdata(),
+      remote_fingerprint->digest.size(), dtls_role);
 }
 
 bool JsepTransport::SetRtcpMux(bool enable,

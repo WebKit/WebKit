@@ -251,7 +251,6 @@ private:
     Deque<RefPtr<IDBClient::TransactionOperation>> m_pendingTransactionOperationQueue;
     Deque<IDBClient::TransactionOperation*> m_transactionOperationsInProgressQueue;
     Deque<RefPtr<IDBClient::TransactionOperation>> m_abortQueue;
-    Event* m_abortOrCommitEvent;
     HashMap<RefPtr<IDBClient::TransactionOperation>, IDBResultData> m_transactionOperationResultMap;
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::TransactionOperation>> m_transactionOperationMap;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,22 +27,22 @@
 
 #include "GPUObjectDescriptorBase.h"
 #include "GPUShaderModuleCompilationHint.h"
+#include "WebGPUShaderModuleDescriptor.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
-#include <pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct GPUShaderModuleDescriptor : public GPUObjectDescriptorBase {
-    PAL::WebGPU::ShaderModuleDescriptor convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
+    WebGPU::ShaderModuleDescriptor convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
     {
         return {
             { label },
             code,
             // FIXME: Handle the sourceMap.
-            hints.map([&autoLayout] (auto& hint) {
-                return KeyValuePair<String, PAL::WebGPU::ShaderModuleCompilationHint>(hint.key, hint.value.convertToBacking(autoLayout));
+            hints.map([&autoLayout](auto& hint) {
+                return KeyValuePair<String, WebGPU::ShaderModuleCompilationHint>(hint.key, hint.value.convertToBacking(autoLayout));
             }),
         };
     }

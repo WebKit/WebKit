@@ -1,20 +1,20 @@
 
-FAIL page-created Error (structuredClone()) The object can not be cloned.
-FAIL page-created Error (worker) The object can not be cloned.
-FAIL page-created Error (cross-site iframe) The object can not be cloned.
-FAIL page-created Error (same-origin iframe) The object can not be cloned.
+PASS page-created Error (structuredClone())
+PASS page-created Error (worker)
+PASS page-created Error (cross-site iframe)
+PASS page-created Error (same-origin iframe)
 PASS page-created DOMException (structuredClone())
 PASS page-created DOMException (worker)
 PASS page-created DOMException (cross-site iframe)
 PASS page-created DOMException (same-origin iframe)
-FAIL JS-engine-created TypeError (structuredClone()) The object can not be cloned.
-FAIL JS-engine-created TypeError (worker) The object can not be cloned.
-FAIL JS-engine-created TypeError (cross-site iframe) The object can not be cloned.
-FAIL JS-engine-created TypeError (same-origin iframe) The object can not be cloned.
-FAIL web API-created TypeError (structuredClone()) The object can not be cloned.
-FAIL web API-created TypeError (worker) The object can not be cloned.
-FAIL web API-created TypeError (cross-site iframe) The object can not be cloned.
-FAIL web API-created TypeError (same-origin iframe) The object can not be cloned.
+PASS JS-engine-created TypeError (structuredClone())
+PASS JS-engine-created TypeError (worker)
+PASS JS-engine-created TypeError (cross-site iframe)
+PASS JS-engine-created TypeError (same-origin iframe)
+PASS web API-created TypeError (structuredClone())
+PASS web API-created TypeError (worker)
+PASS web API-created TypeError (cross-site iframe)
+PASS web API-created TypeError (same-origin iframe)
 FAIL web API-created DOMException (structuredClone()) assert_equals: expected (string) "createElement@[native code]\n@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:33:27\n@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:41:31\n@http://web-platform.test:8800/resources/testharness.js:2591:30\ntest@http://web-platform.test:8800/resources/testharness.js:628:34\nstackTests@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:40:7\nglobal code@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:31:11" but got (undefined) undefined
 FAIL web API-created DOMException (worker) assert_equals: expected (string) "createElement@[native code]\n@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:33:27\n@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:53:31\n@http://web-platform.test:8800/resources/testharness.js:2591:30\nasync_test@http://web-platform.test:8800/resources/testharness.js:676:38\nstackTests@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:52:13\nglobal code@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:31:11" but got (undefined) undefined
 FAIL web API-created DOMException (cross-site iframe) assert_equals: expected (string) "createElement@[native code]\n@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:33:27\niframeTest@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:72:31\n@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:99:15\n@http://web-platform.test:8800/resources/testharness.js:2591:30\nasync_test@http://web-platform.test:8800/resources/testharness.js:676:38\nstackTests@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:96:13\nglobal code@http://web-platform.test:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:31:11" but got (undefined) undefined

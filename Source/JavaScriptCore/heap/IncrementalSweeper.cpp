@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,19 +58,28 @@ IncrementalSweeper::IncrementalSweeper(Heap* heap)
 {
 }
 
-void IncrementalSweeper::doWork(VM& vm)
+void IncrementalSweeper::doWorkUntil(VM& vm, MonotonicTime deadline)
 {
-    doSweep(vm, MonotonicTime::now());
+    if (!m_currentDirectory)
+        m_currentDirectory = vm.heap.objectSpace().firstDirectory();
+
+    if (m_currentDirectory)
+        doSweep(vm, deadline, SweepTrigger::OpportunisticTask);
 }
 
-void IncrementalSweeper::doSweep(VM& vm, MonotonicTime sweepBeginTime)
+void IncrementalSweeper::doWork(VM& vm)
 {
-    while (sweepNextBlock(vm)) {
-        Seconds elapsedTime = MonotonicTime::now() - sweepBeginTime;
-        if (elapsedTime < sweepTimeSlice)
+    doSweep(vm, MonotonicTime::now() + sweepTimeSlice, SweepTrigger::Timer);
+}
+
+void IncrementalSweeper::doSweep(VM& vm, MonotonicTime deadline, SweepTrigger trigger)
+{
+    while (sweepNextBlock(vm, trigger)) {
+        if (MonotonicTime::now() < deadline)
             continue;
 
-        scheduleTimer();
+        if (trigger == SweepTrigger::Timer)
+            scheduleTimer();
         return;
     }
 
@@ -86,7 +95,7 @@ void IncrementalSweeper::doSweep(VM& vm, MonotonicTime sweepBeginTime)
     cancelTimer();
 }
 
-bool IncrementalSweeper::sweepNextBlock(VM& vm)
+bool IncrementalSweeper::sweepNextBlock(VM& vm, SweepTrigger trigger)
 {
     vm.heap.stopIfNecessary();
 
@@ -101,7 +110,8 @@ bool IncrementalSweeper::sweepNextBlock(VM& vm)
     if (block) {
         DeferGCForAWhile deferGC(vm);
         block->sweep(nullptr);
-        vm.heap.objectSpace().freeOrShrinkBlock(block);
+        if (trigger == SweepTrigger::Timer)
+            vm.heap.objectSpace().freeOrShrinkBlock(block);
         return true;
     }
 

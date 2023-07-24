@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="./resources/timeline-event-utilities.js"></script>
+<script>
+
+function testPerformanceMark() {
+    let startTime = performance.now();
+    while (startTime + 10 > performance.now());
+    performance.mark('foo');
+    performance.mark('bar', {startTime});
+    savePageData({});
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TimelineEvent.PerformanceMark");
+
+    suite.addTestCase({
+        name: "TimelineEvent.PerformanceMark.performanceMark",
+        async test() {
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithMarker({
+                expression: `testPerformanceMark()`,
+                markerType: WI.TimelineMarker.Type.TimeStamp,
+            });
+
+            let recording = WI.timelineManager.activeRecording;
+
+            InspectorTest.expectEqual(recording.markersForTesting.length, 2);
+            InspectorTest.expectEqual(recording.markersForTesting[0].type, "timestamp");
+            InspectorTest.expectEqual(recording.markersForTesting[0].details, "foo");
+            InspectorTest.expectEqual(recording.markersForTesting[1].type, "timestamp");
+            InspectorTest.expectEqual(recording.markersForTesting[1].details, "bar");
+            InspectorTest.assert(recording.markersForTesting[0].time > recording.markersForTesting[1].time);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests 'performance.mark' Timeline event records.</p>
+</body>
+</html>

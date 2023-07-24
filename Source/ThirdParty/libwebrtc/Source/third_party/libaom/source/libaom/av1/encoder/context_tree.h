@@ -16,6 +16,7 @@
 
 #include "av1/common/blockd.h"
 #include "av1/encoder/block.h"
+#include "av1/encoder/speed_features.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -107,7 +108,8 @@ void av1_free_shared_coeff_buffer(PC_TREE_SHARED_BUFFERS *shared_bufs);
 
 PC_TREE *av1_alloc_pc_tree_node(BLOCK_SIZE bsize);
 void av1_free_pc_tree_recursive(PC_TREE *tree, int num_planes, int keep_best,
-                                int keep_none);
+                                int keep_none,
+                                PARTITION_SEARCH_TYPE partition_search_type);
 
 PICK_MODE_CONTEXT *av1_alloc_pmc(const struct AV1_COMP *const cpi,
                                  BLOCK_SIZE bsize,

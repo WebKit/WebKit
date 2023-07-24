@@ -50,8 +50,6 @@ TEST_F(PayloadTypeMapperTest, WebRTCPayloadTypes) {
   // Tests that the payload mapper knows about the audio formats we've
   // been using in WebRTC, with their hard coded values.
   EXPECT_EQ(102, mapper_.FindMappingFor({kIlbcCodecName, 8000, 1}));
-  EXPECT_EQ(103, mapper_.FindMappingFor({kIsacCodecName, 16000, 1}));
-  EXPECT_EQ(104, mapper_.FindMappingFor({kIsacCodecName, 32000, 1}));
   EXPECT_EQ(105, mapper_.FindMappingFor({kCnCodecName, 16000, 1}));
   EXPECT_EQ(106, mapper_.FindMappingFor({kCnCodecName, 32000, 1}));
   EXPECT_EQ(111, mapper_.FindMappingFor(

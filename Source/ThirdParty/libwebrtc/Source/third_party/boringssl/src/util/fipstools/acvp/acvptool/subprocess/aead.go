@@ -61,7 +61,7 @@ type aeadTestResponse struct {
 	Passed        *bool   `json:"testPassed,omitempty"`
 }
 
-func (a *aead) Process(vectorSet []byte, m Transactable) (interface{}, error) {
+func (a *aead) Process(vectorSet []byte, m Transactable) (any, error) {
 	var parsed aeadVectorSet
 	if err := json.Unmarshal(vectorSet, &parsed); err != nil {
 		return nil, err
@@ -161,46 +161,48 @@ func (a *aead) Process(vectorSet []byte, m Transactable) (interface{}, error) {
 			testResp := aeadTestResponse{ID: test.ID}
 
 			if encrypt {
-				result, err := m.Transact(op, 1, uint32le(uint32(tagBytes)), key, input, nonce, aad)
-				if err != nil {
-					return nil, err
-				}
+				m.TransactAsync(op, 1, [][]byte{uint32le(uint32(tagBytes)), key, input, nonce, aad}, func(result [][]byte) error {
+					if len(result[0]) < tagBytes {
+						return fmt.Errorf("ciphertext from subprocess for test case %d/%d is shorter than the tag (%d vs %d)", group.ID, test.ID, len(result[0]), tagBytes)
+					}
 
-				if len(result[0]) < tagBytes {
-					return nil, fmt.Errorf("ciphertext from subprocess for test case %d/%d is shorter than the tag (%d vs %d)", group.ID, test.ID, len(result[0]), tagBytes)
-				}
-
-				if a.tagMergedWithCiphertext {
-					ciphertextHex := hex.EncodeToString(result[0])
-					testResp.CiphertextHex = &ciphertextHex
-				} else {
-					ciphertext := result[0][:len(result[0])-tagBytes]
-					ciphertextHex := hex.EncodeToString(ciphertext)
-					testResp.CiphertextHex = &ciphertextHex
-					tag := result[0][len(result[0])-tagBytes:]
-					testResp.TagHex = hex.EncodeToString(tag)
-				}
+					if a.tagMergedWithCiphertext {
+						ciphertextHex := hex.EncodeToString(result[0])
+						testResp.CiphertextHex = &ciphertextHex
+					} else {
+						ciphertext := result[0][:len(result[0])-tagBytes]
+						ciphertextHex := hex.EncodeToString(ciphertext)
+						testResp.CiphertextHex = &ciphertextHex
+						tag := result[0][len(result[0])-tagBytes:]
+						testResp.TagHex = hex.EncodeToString(tag)
+					}
+					response.Tests = append(response.Tests, testResp)
+					return nil
+				})
 			} else {
-				result, err := m.Transact(op, 2, uint32le(uint32(tagBytes)), key, append(input, tag...), nonce, aad)
-				if err != nil {
-					return nil, err
-				}
-
-				if len(result[0]) != 1 || (result[0][0]&0xfe) != 0 {
-					return nil, fmt.Errorf("invalid AEAD status result from subprocess")
-				}
-				passed := result[0][0] == 1
-				testResp.Passed = &passed
-				if passed {
-					plaintextHex := hex.EncodeToString(result[1])
-					testResp.PlaintextHex = &plaintextHex
-				}
+				m.TransactAsync(op, 2, [][]byte{uint32le(uint32(tagBytes)), key, append(input, tag...), nonce, aad}, func(result [][]byte) error {
+					if len(result[0]) != 1 || (result[0][0]&0xfe) != 0 {
+						return fmt.Errorf("invalid AEAD status result from subprocess")
+					}
+					passed := result[0][0] == 1
+					testResp.Passed = &passed
+					if passed {
+						plaintextHex := hex.EncodeToString(result[1])
+						testResp.PlaintextHex = &plaintextHex
+					}
+					response.Tests = append(response.Tests, testResp)
+					return nil
+				})
 			}
-
-			response.Tests = append(response.Tests, testResp)
 		}
 
-		ret = append(ret, response)
+		m.Barrier(func() {
+			ret = append(ret, response)
+		})
+	}
+
+	if err := m.Flush(); err != nil {
+		return nil, err
 	}
 
 	return ret, nil

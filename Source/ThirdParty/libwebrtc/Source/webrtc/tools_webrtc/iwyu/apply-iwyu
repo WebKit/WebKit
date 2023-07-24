@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # Run the include-what-you-use tool (iwyu) on a file in the webrtc source
 # directory.
@@ -24,16 +24,29 @@ if [ $DEBUG -gt 0 ]; then
   set -x
 fi
 
-IWYU_TOOL="${IWYU_TOOL:-/usr/bin/iwyu_tool}"
-FIX_INCLUDE="${FIX_INCLUDE:-/usr/bin/fix_include}"
-FIX_INCLUDE_ARGS=''
-IWYU_TOOL_DIR="${IWYU_TOOL_DIR:-tools_webrtc/iwyu}"
-COMPILE_COMMANDS=''
-
 error() {
   echo "$*" >&2
   exit 1
 }
+
+find_alternates() {
+  for name in "$@"
+  do
+    name_path=$(which "${name}")
+    if [ ! -z "${name_path}" ]; then
+      echo ${name_path}
+      return 0
+    fi
+  done
+  error "Could not find any of the tools '$@' in PATH."
+  return 1
+}
+
+IWYU_TOOL=$(find_alternates iwyu_tool iwyu_tool.py)
+FIX_INCLUDE=$(find_alternates fix_include fix_includes.py)
+FIX_INCLUDE_ARGS=''
+IWYU_TOOL_DIR="${IWYU_TOOL_DIR:-tools_webrtc/iwyu}"
+COMPILE_COMMANDS=''
 
 usage() {
   echo "Usage: $0 [ -c compile-commands-file.json ] [-r] file.cc"
@@ -81,26 +94,27 @@ else
   FILE_H=""
 fi
 
+tmpfile=$(realpath $(mktemp iwyu.XXXXXXX))
+trap 'rm -f -- "${tmpfile}"' EXIT
+
 # IWYU has a confusing set of exit codes. Discard it.
 "$IWYU_TOOL" -p "$COMPILE_COMMANDS" "$FILE_CC" -- -Xiwyu --no_fwd_decls \
   -Xiwyu --mapping_file=../../$IWYU_TOOL_DIR/mappings.imp \
-  >& /tmp/includefixes$$ || echo "IWYU done, code $?"
+  >& ${tmpfile} || echo "IWYU done, code $?"
 
-if grep 'fatal error' /tmp/includefixes$$; then
+if grep 'fatal error' ${tmpfile}; then
   echo "iwyu run failed"
-  cat /tmp/includefixes$$
-  rm /tmp/includefixes$$
+  cat ${tmpfile}
   exit 1
 else
   if [ $DEBUG -gt 1 ]; then
-    cat /tmp/includefixes$$
+    cat ${tmpfile}
   fi
   # In compile_commands.json, the file name is recorded
   # as a relative path to the build directory.
   pushd "$(dirname "$COMPILE_COMMANDS")" || error "pushd failed"
-  "$FIX_INCLUDE" $FIX_INCLUDE_ARGS < /tmp/includefixes$$ || echo "Some files modified"
+  "$FIX_INCLUDE" $FIX_INCLUDE_ARGS < ${tmpfile} || echo "Some files modified"
   popd
-  rm /tmp/includefixes$$
 fi
 
 grep -v -f tools_webrtc/iwyu/iwyu-filter-list $FILE_CC > $FILE_CC.new

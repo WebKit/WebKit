@@ -155,9 +155,11 @@ absl::optional<DelayEstimate> RenderDelayControllerImpl::GetDelay(
     last_delay_estimate_quality_ = delay_samples_->quality;
   }
 
-  metrics_.Update(delay_samples_ ? absl::optional<size_t>(delay_samples_->delay)
-                                 : absl::nullopt,
-                  delay_ ? delay_->delay : 0, 0, delay_estimator_.Clockdrift());
+  metrics_.Update(
+      delay_samples_ ? absl::optional<size_t>(delay_samples_->delay)
+                     : absl::nullopt,
+      delay_ ? absl::optional<size_t>(delay_->delay) : absl::nullopt,
+      delay_estimator_.Clockdrift());
 
   data_dumper_->DumpRaw("aec3_render_delay_controller_delay",
                         delay_samples ? delay_samples->delay : 0);

@@ -155,4 +155,10 @@ void RemoteFrameView::updateCompositingLayersAfterScrolling()
 {
 }
 
+void RemoteFrameView::writeRenderTreeAsText(TextStream& ts, OptionSet<RenderAsTextFlag> behavior)
+{
+    auto& remoteFrame = frame();
+    ts << remoteFrame.renderTreeAsText(ts.indent(), behavior);
+}
+
 } // namespace WebCore

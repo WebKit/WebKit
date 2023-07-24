@@ -185,7 +185,7 @@ SVGElement::~SVGElement()
     document().accessSVGExtensions().removeElementToRebuild(*this);
 
     if (hasPendingResources()) {
-        document().accessSVGExtensions().removeElementFromPendingResources(*this);
+        treeScopeForSVGReferences().removeElementFromPendingSVGResources(*this);
         ASSERT(!hasPendingResources());
     }
 }
@@ -269,7 +269,7 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
     StyledElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (hasPendingResources())
-        document().accessSVGExtensions().removeElementFromPendingResources(*this);
+        treeScopeForSVGReferences().removeElementFromPendingSVGResources(*this);
 
     if (removalType.disconnectedFromDocument) {
         auto& extensions = document().accessSVGExtensions();
@@ -980,9 +980,7 @@ Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType 
     updateRelativeLengthsInformation();
 
     if (needsPendingResourceHandling() && insertionType.connectedToDocument && !isInShadowTree()) {
-        SVGDocumentExtensions& extensions = document().accessSVGExtensions();
-        auto& resourceId = getIdAttribute();
-        if (extensions.isIdOfPendingResource(resourceId))
+        if (treeScopeForSVGReferences().isIdOfPendingSVGResource(getIdAttribute()))
             return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     }
 
@@ -1001,16 +999,15 @@ void SVGElement::buildPendingResourcesIfNeeded()
     if (!needsPendingResourceHandling() || !isConnected() || isInShadowTree())
         return;
 
-    SVGDocumentExtensions& extensions = document().accessSVGExtensions();
+    auto& treeScope = treeScopeForSVGReferences();
     auto resourceId = getIdAttribute();
-    if (!extensions.isIdOfPendingResource(resourceId))
+    if (!treeScope.isIdOfPendingSVGResource(resourceId))
         return;
 
-    // Mark pending resources as pending for removal.
-    extensions.markPendingResourcesForRemoval(resourceId);
+    treeScope.markPendingSVGResourcesForRemoval(resourceId);
 
     // Rebuild pending resources for each client of a pending resource that is being removed.
-    while (auto clientElement = extensions.takeElementFromPendingResourcesForRemovalMap(resourceId)) {
+    while (auto clientElement = treeScope.takeElementFromPendingSVGResourcesForRemovalMap(resourceId)) {
         ASSERT(clientElement->hasPendingResources());
         if (clientElement->hasPendingResources()) {
             clientElement->buildPendingResource();
@@ -1018,7 +1015,7 @@ void SVGElement::buildPendingResourcesIfNeeded()
                 for (auto& ancestor : ancestorsOfType<RenderSVGResourceContainer>(*renderer))
                     ancestor.markAllClientsForRepaint();
             }
-            extensions.clearHasPendingResourcesIfPossible(*clientElement);
+            treeScope.clearHasPendingSVGResourcesIfPossible(*clientElement);
         }
     }
 }

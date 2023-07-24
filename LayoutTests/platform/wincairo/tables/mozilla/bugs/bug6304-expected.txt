@@ -199,7 +199,7 @@ layer at (0,0) size 800x600
                       RenderTableCell {TD} at (32,91) size 22x22 [border: (1px inset #808080)] [r=4 c=1 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 20x19
                           text run at (1,1) width 20: "5,2"
-      RenderBlock {HR} at (0,224) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,224) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,242) size 784x20
         RenderInline {B} at (0,0) size 544x19
           RenderText {#text} at (120,0) size 544x19

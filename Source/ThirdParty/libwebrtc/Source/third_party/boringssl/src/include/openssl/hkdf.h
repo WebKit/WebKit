@@ -41,6 +41,10 @@ OPENSSL_EXPORT int HKDF(uint8_t *out_key, size_t out_len, const EVP_MD *digest,
 // keying material |secret| and salt |salt| using |digest|, and outputs
 // |out_len| bytes to |out_key|. The maximum output size is |EVP_MAX_MD_SIZE|.
 // It returns one on success and zero on error.
+//
+// WARNING: This function orders the inputs differently from RFC 5869
+// specification. Double-check which parameter is the secret/IKM and which is
+// the salt when using.
 OPENSSL_EXPORT int HKDF_extract(uint8_t *out_key, size_t *out_len,
                                 const EVP_MD *digest, const uint8_t *secret,
                                 size_t secret_len, const uint8_t *salt,

@@ -18,7 +18,7 @@ PASS ImageData: [object ImageData]
 PASS Blob: [object Blob]
 PASS File: [object File]
 PASS FileList: [object FileList]
-PASS Not serializable: function: function () {}
+PASS Not serializable: function: function() {}
 PASS Not serializable: symbol: Symbol(desc)
 PASS Not serializable: Window: [object Window]
 PASS Not serializable: Event: [object Event]

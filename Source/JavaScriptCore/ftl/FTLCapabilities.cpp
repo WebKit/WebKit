@@ -51,6 +51,7 @@ inline CapabilityLevel canCompile(Node* node)
     case KillStack:
     case GetStack:
     case MovHint:
+    case ZombieHint:
     case ExitOK:
     case Phantom:
     case Flush:
@@ -168,6 +169,7 @@ inline CapabilityLevel canCompile(Node* node)
     case StringCharCodeAt:
     case StringCodePointAt:
     case StringFromCharCode:
+    case StringIndexOf:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
     case NukeStructureAndSetButterfly:
@@ -239,6 +241,7 @@ inline CapabilityLevel canCompile(Node* node)
     case MakeRope:
     case MakeAtomString:
     case NewArrayWithSize:
+    case NewArrayWithConstantSize:
     case NewArrayWithSpecies:
     case TryGetById:
     case GetById:
@@ -286,6 +289,8 @@ inline CapabilityLevel canCompile(Node* node)
     case IsNumber:
     case IsBigInt:
     case NumberIsInteger:
+    case GlobalIsNaN:
+    case NumberIsNaN:
     case IsObject:
     case IsCallable:
     case IsConstructor:
@@ -445,6 +450,7 @@ inline CapabilityLevel canCompile(Node* node)
     case DataViewSet:
     case DateGetInt32OrNaN:
     case DateGetTime:
+    case DateSetTime:
         // These are OK.
         break;
 

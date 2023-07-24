@@ -53,9 +53,14 @@ class RtpTransportInternal : public sigslot::has_slots<> {
   sigslot::signal1<bool> SignalReadyToSend;
 
   // Called whenever an RTCP packet is received. There is no equivalent signal
-  // for RTP packets because they would be forwarded to the BaseChannel through
-  // the RtpDemuxer callback.
+  // for demuxable RTP packets because they would be forwarded to the
+  // BaseChannel through the RtpDemuxer callback.
   sigslot::signal2<rtc::CopyOnWriteBuffer*, int64_t> SignalRtcpPacketReceived;
+
+  // Called whenever a RTP packet that can not be demuxed by the transport is
+  // received.
+  sigslot::signal<const webrtc::RtpPacketReceived&>
+      SignalUnDemuxableRtpPacketReceived;
 
   // Called whenever the network route of the P2P layer transport changes.
   // The argument is an optional network route.

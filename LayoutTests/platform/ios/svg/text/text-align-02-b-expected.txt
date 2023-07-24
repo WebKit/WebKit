@@ -2,10 +2,10 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (8,15) size 779x459
-      RenderSVGText {text} at (5,9) size 468x39 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 468x39
-          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 34 width 467.02: "Test 'baseline-shift' (horizontal)"
+    RenderSVGContainer {g} at (8,15) size 782x459
+      RenderSVGText {text} at (5,9) size 469x39 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 469x39
+          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 34 width 468.40: "Test 'baseline-shift' (horizontal)"
       RenderSVGContainer {g} at (25,142) size 667x332 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,120.00)}]
         RenderSVGText {text} at (0,-35) size 347x42 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,7) size 97x34
@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (220.09,140.00) startOffset 0 endOffset 2 width 25.02: "te"
           RenderSVGInlineText {#text} at (245,17) size 24x34
             chunk 1 text run 1 at (245.11,140.00) startOffset 0 endOffset 2 width 23.33: "xt"
-    RenderSVGText {text} at (10,304) size 263x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 263x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 262.68: "$Revision: 1.5 $"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.5 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

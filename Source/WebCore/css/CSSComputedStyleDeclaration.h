@@ -33,14 +33,14 @@ namespace WebCore {
 class Element;
 class MutableStyleProperties;
 
-class CSSComputedStyleDeclaration final : public CSSStyleDeclaration {
+class CSSComputedStyleDeclaration final : public CSSStyleDeclaration, public RefCounted<CSSComputedStyleDeclaration> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(CSSComputedStyleDeclaration, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> create(Element&, bool allowVisitedStyle = false, StringView pseudoElementName = StringView { });
-    virtual ~CSSComputedStyleDeclaration();
+    WEBCORE_EXPORT virtual ~CSSComputedStyleDeclaration();
 
-    WEBCORE_EXPORT void ref() final;
-    WEBCORE_EXPORT void deref() final;
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
     String getPropertyValue(CSSPropertyID) const;
 
@@ -73,7 +73,6 @@ private:
     mutable Ref<Element> m_element;
     PseudoId m_pseudoElementSpecifier;
     bool m_allowVisitedStyle;
-    unsigned m_refCount { 1 };
 };
 
 } // namespace WebCore

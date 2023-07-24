@@ -79,7 +79,6 @@ class OESSampleVariablesTest : public sh::ShaderExtensionTest
 
         ShCompileOptions compileOptions = {};
         compileOptions.objectCode       = true;
-        compileOptions.variables        = true;
 
         bool success = sh::Compile(mCompiler, shaderStrings, 3, compileOptions);
         if (success)

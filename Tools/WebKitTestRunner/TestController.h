@@ -392,7 +392,7 @@ public:
     void setIsMediaKeySystemPermissionGranted(bool);
     WKRetainPtr<WKStringRef> takeViewPortSnapshot();
 
-    WKPreferencesRef platformPreferences();
+    WKPreferencesRef platformPreferences() { return m_preferences.get(); }
 
     bool grantNotificationPermission(WKStringRef origin);
     bool denyNotificationPermission(WKStringRef origin);
@@ -402,7 +402,7 @@ public:
 
     void handleQueryPermission(WKStringRef, WKSecurityOriginRef, WKQueryPermissionResultCallbackRef);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     void lockScreenOrientation(WKScreenOrientationType);
     void unlockScreenOrientation();
 #endif
@@ -419,6 +419,10 @@ public:
     WKRetainPtr<WKStringRef> backgroundFetchState(WKStringRef);
 
     void receivedServiceWorkerConsoleMessage(const String&);
+
+#if ENABLE(IMAGE_ANALYSIS)
+    static uint64_t currentImageAnalysisRequestID();
+#endif
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
@@ -604,6 +608,9 @@ private:
     std::unique_ptr<ClassMethodSwizzler> m_calendarSwizzler;
     std::pair<RetainPtr<NSString>, RetainPtr<NSString>> m_overriddenCalendarAndLocaleIdentifiers;
 #endif // PLATFORM(COCOA)
+#if ENABLE(IMAGE_ANALYSIS)
+    std::unique_ptr<InstanceMethodSwizzler> m_imageAnalysisRequestSwizzler;
+#endif
     bool m_verbose { false };
     bool m_printSeparators { false };
     bool m_usingServerMode { false };
@@ -627,7 +634,7 @@ private:
     std::unique_ptr<PlatformWebView> m_mainWebView;
     Vector<UniqueRef<PlatformWebView>> m_auxiliaryWebViews;
     WKRetainPtr<WKContextRef> m_context;
-    WKRetainPtr<WKPageGroupRef> m_pageGroup;
+    WKRetainPtr<WKPreferencesRef> m_preferences;
     WKRetainPtr<WKUserContentControllerRef> m_userContentController;
 
 #if PLATFORM(IOS_FAMILY)

@@ -10,7 +10,7 @@ info: |
   2. Perform ? RequireInternalSlot(O, [[ArrayBufferData]]).
   3. If IsSharedArrayBuffer(O) is true, throw a TypeError exception.
   [...]
-features: [SharedArrayBuffer, resizable-arraybuffer, ArrayBuffer, arraybuffer-transfer]
+features: [SharedArrayBuffer, ArrayBuffer, arraybuffer-transfer]
 ---*/
 
 var detached = Object.getOwnPropertyDescriptor(

@@ -174,14 +174,7 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
 - (void)encodeWithCoder:(NSCoder *)coder
 {
     RELEASE_ASSERT(m_wrappedURL);
-    auto baseURL = m_wrappedURL.get().baseURL;
-    BOOL hasBaseURL = !!baseURL;
-
-    [coder encodeValueOfObjCType:"c" at:&hasBaseURL];
-    if (hasBaseURL)
-        [coder encodeObject:baseURL forKey:baseURLKey];
-
-    auto bytes = bytesAsVector(bridge_cast(m_wrappedURL.get()));
+    auto bytes = bytesAsVector(bridge_cast([m_wrappedURL.get() absoluteURL]));
     [coder encodeBytes:bytes.data() length:bytes.size()];
 }
 
@@ -191,16 +184,9 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
     if (!selfPtr)
         return nil;
 
-    BOOL hasBaseURL;
-    [coder decodeValueOfObjCType:"c" at:&hasBaseURL size:sizeof(hasBaseURL)];
-
-    RetainPtr<NSURL> baseURL;
-    if (hasBaseURL)
-        baseURL = (NSURL *)[coder decodeObjectOfClass:NSURL.class forKey:baseURLKey];
-
     NSUInteger length;
     if (auto bytes = (UInt8 *)[coder decodeBytesWithReturnedLength:&length]) {
-        m_wrappedURL = bridge_cast(adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, bridge_cast(baseURL.get()), true)));
+        m_wrappedURL = bridge_cast(adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, nullptr, true)));
         if (!m_wrappedURL)
             LOG_ERROR("Failed to decode NSURL due to invalid encoding of length %d. Substituting a blank URL", length);
     }
@@ -562,7 +548,15 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
 #if ENABLE(DATA_DETECTION)
     if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:PAL::getDDScannerResultClass()])
         [delegate setRewriteMutableString:YES];
-#endif
+#if PLATFORM(MAC)
+    if (PAL::isDataDetectorsFrameworkAvailable() && [object isKindOfClass:PAL::getWKDDActionContextClass()])
+        [delegate setRewriteMutableString:YES];
+#endif // PLATFORM(MAC)
+#endif // ENABLE(DATA_DETECTION)
+#if ENABLE(REVEAL)
+    if (PAL::isRevealCoreFrameworkAvailable() && [object isKindOfClass:PAL::getRVItemClass()])
+        [delegate setRewriteMutableString:YES];
+#endif // ENABLE(REVEAL)
 
     if ([object isKindOfClass:NSTextAttachment.class]) {
         [delegate setRewriteMutableData:YES];
@@ -667,6 +661,14 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         && isDecodingKnownVKCImageAnalysisMessageFromUIProcess(decoder)
         && isInWebProcess())
         return false;
+#endif
+
+#if HAVE(STRICT_DECODABLE_NSTEXTTABLE) \
+    && HAVE(STRICT_DECODABLE_PKCONTACT) \
+    && HAVE(STRICT_DECODABLE_CNCONTACT)
+    // Shortcut the following unnecessary Class checks on newer OSes to fix rdar://111926152.
+    if (strictSecureDecodingForAllObjCEnabled())
+        return true;
 #endif
 
 #if ENABLE(DATA_DETECTION)

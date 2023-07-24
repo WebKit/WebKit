@@ -72,6 +72,13 @@ Vector<AtomString> UserMessageHandlersNamespace::supportedPropertyNames() const
     return { };
 }
 
+bool UserMessageHandlersNamespace::isSupportedPropertyName(const AtomString&)
+{
+    // FIXME: Consider adding support for this. It would require adding support for passing the
+    // DOMWrapperWorld to isSupportedPropertyName().
+    return false;
+}
+
 UserMessageHandler* UserMessageHandlersNamespace::namedItem(DOMWrapperWorld& world, const AtomString& name)
 {
     auto* frame = this->frame();

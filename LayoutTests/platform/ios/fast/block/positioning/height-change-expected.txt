@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,202) size 784x20
         RenderBR {BR} at (0,0) size 0x19
 layer at (8,100) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,92) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,110) size 784x100
   RenderBlock (relative positioned) {DIV} at (0,102) size 784x100
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#87CEEB]

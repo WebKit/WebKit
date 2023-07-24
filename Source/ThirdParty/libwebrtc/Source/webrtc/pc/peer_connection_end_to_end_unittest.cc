@@ -694,37 +694,6 @@ TEST_P(PeerConnectionEndToEndTest,
   CloseDataChannels(caller_dc.get(), callee_signaled_data_channels_, 1);
 }
 
-// Similar to the above test, but don't wait for the first channel to finish
-// closing before creating the second one.
-TEST_P(PeerConnectionEndToEndTest,
-       DataChannelFromOpenWorksWhilePreviousChannelClosing) {
-  CreatePcs(webrtc::MockAudioEncoderFactory::CreateEmptyFactory(),
-            webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
-
-  webrtc::DataChannelInit init;
-  rtc::scoped_refptr<DataChannelInterface> caller_dc(
-      caller_->CreateDataChannel("data", init));
-
-  Negotiate();
-  WaitForConnection();
-
-  WaitForDataChannelsToOpen(caller_dc.get(), callee_signaled_data_channels_, 0);
-  int first_channel_id = caller_dc->id();
-  caller_dc->Close();
-
-  // Immediately create a new channel, before waiting for the previous one to
-  // transition to "closed".
-  caller_dc = caller_->CreateDataChannel("data2", init);
-  WaitForDataChannelsToOpen(caller_dc.get(), callee_signaled_data_channels_, 1);
-  // Since the second channel was created while the first was still closing,
-  // it should have been assigned a different ID.
-  EXPECT_NE(first_channel_id, caller_dc->id());
-  TestDataChannelSendAndReceive(caller_dc.get(),
-                                callee_signaled_data_channels_[1].get());
-
-  CloseDataChannels(caller_dc.get(), callee_signaled_data_channels_, 1);
-}
-
 // This tests that if a data channel is closed remotely while not referenced
 // by the application (meaning only the PeerConnection contributes to its
 // reference count), no memory access violation will occur.

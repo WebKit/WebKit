@@ -51,6 +51,7 @@ $(PROJECT_DIR)/builtins/GlobalOperations.js
 $(PROJECT_DIR)/builtins/InternalPromiseConstructor.js
 $(PROJECT_DIR)/builtins/IteratorHelpers.js
 $(PROJECT_DIR)/builtins/IteratorPrototype.js
+$(PROJECT_DIR)/builtins/MapConstructor.js
 $(PROJECT_DIR)/builtins/MapIteratorPrototype.js
 $(PROJECT_DIR)/builtins/MapPrototype.js
 $(PROJECT_DIR)/builtins/ModuleLoader.js
@@ -174,6 +175,7 @@ $(PROJECT_DIR)/runtime/JSModuleLoader.cpp
 $(PROJECT_DIR)/runtime/JSONObject.cpp
 $(PROJECT_DIR)/runtime/JSPromiseConstructor.cpp
 $(PROJECT_DIR)/runtime/JSPromisePrototype.cpp
+$(PROJECT_DIR)/runtime/MapConstructor.cpp
 $(PROJECT_DIR)/runtime/MapPrototype.cpp
 $(PROJECT_DIR)/runtime/NumberConstructor.cpp
 $(PROJECT_DIR)/runtime/NumberPrototype.cpp

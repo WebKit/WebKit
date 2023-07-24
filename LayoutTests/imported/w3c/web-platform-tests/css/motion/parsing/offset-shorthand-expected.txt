@@ -1,10 +1,10 @@
 
-PASS e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should set offset-anchor
-PASS e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should set offset-distance
-PASS e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should set offset-path
-PASS e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should set offset-position
-PASS e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should set offset-rotate
-PASS e.style['offset'] = "left bottom ray(0rad closest-side) 10px auto 30deg / right bottom" should not set unrelated longhands
+PASS e.style['offset'] = "left bottom ray(0rad closest-corner) 10px auto 30deg / right bottom" should set offset-anchor
+PASS e.style['offset'] = "left bottom ray(0rad closest-corner) 10px auto 30deg / right bottom" should set offset-distance
+PASS e.style['offset'] = "left bottom ray(0rad closest-corner) 10px auto 30deg / right bottom" should set offset-path
+PASS e.style['offset'] = "left bottom ray(0rad closest-corner) 10px auto 30deg / right bottom" should set offset-position
+PASS e.style['offset'] = "left bottom ray(0rad closest-corner) 10px auto 30deg / right bottom" should set offset-rotate
+PASS e.style['offset'] = "left bottom ray(0rad closest-corner) 10px auto 30deg / right bottom" should not set unrelated longhands
 PASS e.style['offset'] = "top right / top left" should set offset-anchor
 PASS e.style['offset'] = "top right / top left" should set offset-distance
 PASS e.style['offset'] = "top right / top left" should set offset-path

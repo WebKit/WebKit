@@ -509,7 +509,7 @@ void HTMLConstructionSite::insertHTMLBodyElement(AtomHTMLToken&& token)
     m_openElements.pushHTMLBodyElement(HTMLStackItem(WTFMove(body), WTFMove(token)));
 }
 
-void HTMLConstructionSite::insertHTMLFormElement(AtomHTMLToken&& token, bool isDemoted)
+void HTMLConstructionSite::insertHTMLFormElement(AtomHTMLToken&& token)
 {
     auto element = createHTMLElement(token);
     auto& formElement = downcast<HTMLFormElement>(element.get());
@@ -517,7 +517,6 @@ void HTMLConstructionSite::insertHTMLFormElement(AtomHTMLToken&& token, bool isD
     // form element pointer to point to the element created.
     if (!openElements().hasTemplateInHTMLScope())
         m_form = &formElement;
-    formElement.setDemoted(isDemoted);
     attachLater(currentNode(), formElement);
     m_openElements.push(HTMLStackItem(formElement, WTFMove(token)));
 }

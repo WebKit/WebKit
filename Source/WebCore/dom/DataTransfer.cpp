@@ -39,7 +39,6 @@
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLImageElement.h"
-#include "HTMLParserIdioms.h"
 #include "Image.h"
 #include "LocalFrame.h"
 #include "Page.h"
@@ -128,7 +127,7 @@ static String normalizeType(const String& type)
     if (type.isNull())
         return type;
 
-    String lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
+    auto lowercaseType = type.trim(isASCIIWhitespace).convertToASCIILowercase();
     if (lowercaseType == "text"_s || lowercaseType.startsWith("text/plain;"_s))
         return textPlainContentTypeAtom();
     if (lowercaseType == "url"_s || lowercaseType.startsWith("text/uri-list;"_s))
@@ -159,7 +158,7 @@ static String readURLsFromPasteboardAsString(Page* page, Pasteboard& pasteboard,
     auto urlStrings = pasteboard.readAllStrings("text/uri-list"_s);
     if (page) {
         urlStrings = urlStrings.map([&](auto& string) {
-            return page->sanitizeLookalikeCharacters(string, LookalikeCharacterSanitizationTrigger::Paste);
+            return page->applyLinkDecorationFiltering(string, LinkDecorationFilteringTrigger::Paste);
         });
     }
 
@@ -175,7 +174,7 @@ String DataTransfer::getDataForItem(Document& document, const String& type) cons
     if (!canReadData())
         return { };
 
-    auto lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
+    auto lowercaseType = type.trim(isASCIIWhitespace).convertToASCIILowercase();
     if (shouldSuppressGetAndSetDataToAvoidExposingFilePaths()) {
         if (lowercaseType == "text/uri-list"_s) {
             return readURLsFromPasteboardAsString(document.page(), *m_pasteboard, [] (auto& urlString) {
@@ -228,7 +227,7 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
 
     auto string = m_pasteboard->readString(lowercaseType);
     if (auto* page = document.page())
-        return page->sanitizeLookalikeCharacters(string, LookalikeCharacterSanitizationTrigger::Paste);
+        return page->applyLinkDecorationFiltering(string, LinkDecorationFilteringTrigger::Paste);
 
     return string;
 }
@@ -281,7 +280,7 @@ void DataTransfer::setDataFromItemList(Document& document, const String& type, c
 
     if (type == "text/uri-list"_s || type == textPlainContentTypeAtom()) {
         if (auto* page = document.page())
-            sanitizedData = page->sanitizeLookalikeCharacters(sanitizedData, LookalikeCharacterSanitizationTrigger::Copy);
+            sanitizedData = page->applyLinkDecorationFiltering(sanitizedData, LinkDecorationFilteringTrigger::Copy);
     }
 
     if (sanitizedData != data)

@@ -37,9 +37,9 @@ ContextProvider<Value>::Context::Context(const Context *const parent)
 }
 
 template<typename Value>
-const Value* ContextProvider<Value>::Context::lookup(const AST::Identifier& name) const
+const Value* ContextProvider<Value>::Context::lookup(const String& name) const
 {
-    auto it = m_map.find(name.id());
+    auto it = m_map.find(name);
     if (it != m_map.end())
         return &it->value;
     if (m_parent)
@@ -48,9 +48,9 @@ const Value* ContextProvider<Value>::Context::lookup(const AST::Identifier& name
 }
 
 template<typename Value>
-const Value& ContextProvider<Value>::Context::add(const AST::Identifier& name, const Value& value)
+const Value& ContextProvider<Value>::Context::add(const String& name, const Value& value)
 {
-    auto result = m_map.add(name.id(), value);
+    auto result = m_map.add(name, value);
     ASSERT(result.isNewEntry);
     return result.iterator->value;
 }
@@ -80,13 +80,13 @@ ContextProvider<Value>::ContextProvider()
 }
 
 template<typename Value>
-auto ContextProvider<Value>::introduceVariable(const AST::Identifier& name, const Value& value) -> const Value&
+auto ContextProvider<Value>::introduceVariable(const String& name, const Value& value) -> const Value&
 {
     return m_context->add(name, value);
 }
 
 template<typename Value>
-auto ContextProvider<Value>::readVariable(const AST::Identifier& name) const -> const Value*
+auto ContextProvider<Value>::readVariable(const String& name) const -> const Value*
 {
     return m_context->lookup(name);
 }

@@ -149,7 +149,7 @@ void ObjCCallClient::CreatePeerConnection() {
   RTC_LOG(LS_INFO) << "PeerConnection created: " << pc_.get();
 
   rtc::scoped_refptr<webrtc::VideoTrackInterface> local_video_track =
-      pcf_->CreateVideoTrack("video", video_source_.get());
+      pcf_->CreateVideoTrack(video_source_, "video");
   pc_->AddTransceiver(local_video_track);
   RTC_LOG(LS_INFO) << "Local video sink set up: " << local_video_track.get();
 

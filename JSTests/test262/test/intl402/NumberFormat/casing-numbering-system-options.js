@@ -6,6 +6,7 @@ esid: sec-initializenumberformat
 description: >
     Tests that the options numberingSystem are mapped to lower case.
 author: Caio Lima
+features: [Array.prototype.includes]
 ---*/
 
 let defaultLocale = new Intl.NumberFormat().resolvedOptions().locale;

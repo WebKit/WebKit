@@ -5,7 +5,7 @@ endif
 ifneq ($(USE_WORKSPACE),NO)
 
 include ../Makefile.shared
-SCHEME = Everything up to WebKit + Tools
+SCHEME = Everything up to WebKit
 
 else
 

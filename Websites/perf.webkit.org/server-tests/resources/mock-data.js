@@ -54,6 +54,10 @@ MockData = {
             db.insert('commits', {id: 2017, repository: this.ownedJSCRepositoryId(), revision: 'owned-jsc-9191', time: '2016-05-02T23:13:57.1Z'}),
             db.insert('commit_ownerships', {owner: 93116, owned: 1797}),
             db.insert('commit_ownerships', {owner: 96336, owned: 2017}),
+            db.insert('test_parameters', {id: 1, name: 'diagnose', disabled: false, type: 'test', has_value: true, has_file: false, description: 'Run test in diagnostic mode.'}),
+            db.insert('test_parameters', {id: 2, name: 'Custom SDK', disabled: false, type: 'build', has_value: true, has_file: false, description: 'Use custom SDK to build.'}),
+            db.insert('test_parameters', {id: 3, name: 'Test Assets', disabled: false, type: 'test', has_value: false, has_file: true, description: 'Additional test assets.'}),
+            db.insert('test_parameters', {id: 4, name: 'test-diagnose', disabled: false, type: 'test', has_value: true, has_file: false, description: 'Diagnostic mode for test'}),
             db.insert('builds', {id: 901, tag: '901', time: '2015-10-27T12:05:27.1Z'}),
             db.insert('platforms', {id: MockData.somePlatformId(), name: 'some platform'}),
             db.insert('platforms', {id: MockData.otherPlatformId(), name: 'other platform'}),
@@ -90,6 +94,65 @@ MockData = {
             db.insert('build_requests', {id: 701, status: statusList[1], url: urlList[1], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 1, commit_set: commitSetList[1]}),
             db.insert('build_requests', {id: 702, status: statusList[2], url: urlList[2], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 2, commit_set: commitSetList[2]}),
             db.insert('build_requests', {id: 703, status: statusList[3], url: urlList[3], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 3, commit_set: commitSetList[3]}),
+        ]);
+    },
+    addMockDataWithBuildAndTestTypeTestParameterSets: async function(db, testParameterSetList=[1, 2, 1, 2, 1, 2])
+    {
+        await Promise.all([
+            this.addMockConfiguration(db),
+            db.insert('commit_sets', {id: 401}),
+            db.insert('commit_set_items', {set: 401, commit: 87832}),
+            db.insert('commit_set_items', {set: 401, commit: 93116}),
+            db.insert('commit_sets', {id: 402}),
+            db.insert('commit_set_items', {set: 402, commit: 87832}),
+            db.insert('commit_set_items', {set: 402, commit: 96336}),
+            db.insert('test_parameter_sets', {id: 1}),
+            db.insert('test_parameter_set_items', {set: 1, parameter: 1, value: 'true'}),
+            db.insert('test_parameter_sets', {id: 2}),
+            db.insert('test_parameter_set_items', {set: 2, parameter: 2, value: '"Xcode 14.3"'}),
+            db.insert('uploaded_files', {id: 1001, filename: 'test-asset-1001', extension: '.tgz', size: 1, sha256: crypto.createHash('sha256').update('root-1001').digest('hex')}),
+            db.insert('test_parameter_set_items', {set: 2, parameter: 3, value: null, file: 1001}),
+            db.insert('analysis_tasks', {id: 500, platform: 65, metric: 300, name: 'some task',
+                start_run: 801, start_run_time: '2015-10-27T12:05:27.1Z',
+                end_run: 801, end_run_time: '2015-10-27T12:05:27.1Z'}),
+            db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group', initial_repetition_count: 2,
+                needs_notification: false, repetition_type: 'alternating',
+                may_need_more_requests: false, hidden: false}),
+            db.insert('build_requests', {id: 698, status: 'pending', url: null, triggerable: 1000, repository_group: 2001, platform: 65, group: 600, order: -2, commit_set: 401, test_parameter_set: testParameterSetList[0]}),
+            db.insert('build_requests', {id: 699, status: 'pending', url: null, triggerable: 1000, repository_group: 2001, platform: 65, group: 600, order: -1, commit_set: 402, test_parameter_set: testParameterSetList[1]}),
+            db.insert('build_requests', {id: 700, status: 'pending', url: null, triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 0, commit_set: 401, test_parameter_set: testParameterSetList[2]}),
+            db.insert('build_requests', {id: 701, status: 'pending', url: null, triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 1, commit_set: 402, test_parameter_set: testParameterSetList[3]}),
+            db.insert('build_requests', {id: 702, status: 'pending', url: null, triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 2, commit_set: 401, test_parameter_set: testParameterSetList[4]}),
+            db.insert('build_requests', {id: 703, status: 'pending', url: null, triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 3, commit_set: 402, test_parameter_set: testParameterSetList[5]}),
+        ]);
+    },
+    addMockDataWithTestParameterSets: async function(db, testParameterSetList=[1, 2, 1, 2])
+    {
+        await Promise.all([
+            this.addMockConfiguration(db),
+            db.insert('commit_sets', {id: 401}),
+            db.insert('commit_set_items', {set: 401, commit: 87832}),
+            db.insert('commit_set_items', {set: 401, commit: 93116}),
+            db.insert('commit_sets', {id: 402}),
+            db.insert('commit_set_items', {set: 402, commit: 87832}),
+            db.insert('commit_set_items', {set: 402, commit: 96336}),
+            db.insert('uploaded_files', {id: 1001, filename: 'test-asset-1001', extension: '.tgz', size: 1, sha256: crypto.createHash('sha256').update('root-1001').digest('hex')}),
+            db.insert('test_parameter_sets', {id: 1}),
+            db.insert('test_parameter_set_items', {set: 1, parameter: 1, value: 'true'}),
+            db.insert('test_parameter_set_items', {set: 1, parameter: 4, value: 'true'}),
+            db.insert('test_parameter_set_items', {set: 1, parameter: 3, value: null, file: 1001}),
+            db.insert('test_parameter_sets', {id: 2}),
+            db.insert('test_parameter_set_items', {set: 2, parameter: 3, value: null, file: 1001}),
+            db.insert('analysis_tasks', {id: 500, platform: 65, metric: 300, name: 'some task',
+                start_run: 801, start_run_time: '2015-10-27T12:05:27.1Z',
+                end_run: 801, end_run_time: '2015-10-27T12:05:27.1Z'}),
+            db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group', initial_repetition_count: 2,
+                needs_notification: false, repetition_type: 'alternating',
+                may_need_more_requests: false, hidden: false}),
+            db.insert('build_requests', {id: 700, status: 'pending', url: null, triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 0, commit_set: 401, test_parameter_set: testParameterSetList[0]}),
+            db.insert('build_requests', {id: 701, status: 'pending', url: null, triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 1, commit_set: 402, test_parameter_set: testParameterSetList[1]}),
+            db.insert('build_requests', {id: 702, status: 'pending', url: null, triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 2, commit_set: 401, test_parameter_set: testParameterSetList[2]}),
+            db.insert('build_requests', {id: 703, status: 'pending', url: null, triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 3, commit_set: 402, test_parameter_set: testParameterSetList[3]}),
         ]);
     },
     addMockBuildRequestsWithRoots(db, statusList, needsNotification = true, addMockConfiguration = true)
@@ -431,6 +494,40 @@ MockData = {
                     'types': ['some-test'],
                     'builders': ['builder-1', 'builder-2'],
                     'supportedRepetitionTypes': ['alternating', 'sequential'],
+                }
+            ]
+        }
+    },
+    mockTestSyncConfigWithTestParameters: function (testConfigParameters=['diagnose', 'Custom SDK', 'Test Assets'], typeTestParameters=['test-diagnose'])
+    {
+        return {
+            'triggerableName': 'build-webkit',
+            'lookbackCount': 2,
+            'buildRequestArgument': 'build-request-id',
+            'testParametersArgument': 'test-parameters',
+            'repositoryGroups': {
+                'webkit-svn': {
+                    'repositories': {'WebKit': {}, 'macOS': {}},
+                    'testProperties': {
+                        'os': {'revision': 'macOS'},
+                        'wk': {'revision': 'WebKit'},
+                    }
+                }
+            },
+            'types': {
+                'some-test': {'test': ['some test'], 'testParameters': typeTestParameters},
+            },
+            'builders': {
+                'builder-1': {'builder': 'some-builder-1', properties: {forcescheduler: 'force-some-builder-1'}, supportedRepetitionTypes: ['alternating', 'sequential'],},
+                'builder-2': {'builder': 'some builder 2', properties: {forcescheduler: 'force-some-builder-2'}, supportedRepetitionTypes: ['alternating', 'sequential'],},
+            },
+            'testConfigurations': [
+                {
+                    'platforms': ['some platform'],
+                    'types': ['some-test'],
+                    'builders': ['builder-1', 'builder-2'],
+                    'supportedRepetitionTypes': ['alternating', 'sequential'],
+                    'testParameters': testConfigParameters,
                 }
             ]
         }

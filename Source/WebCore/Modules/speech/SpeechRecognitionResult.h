@@ -36,6 +36,7 @@ class SpeechRecognitionResult final : public RefCounted<SpeechRecognitionResult>
 public:
     static Ref<SpeechRecognitionResult> create(Vector<Ref<SpeechRecognitionAlternative>>&&, bool isFinal);
 
+    bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     uint64_t length() const { return m_alternatives.size(); }
     bool isFinal() const { return m_isFinal; }
     SpeechRecognitionAlternative* item(uint64_t index) const;

@@ -142,7 +142,7 @@ bool IsVeriSilicon(VendorID vendorId);
 bool IsVMWare(VendorID vendorId);
 bool IsVirtIO(VendorID vendorId);
 bool IsVivante(VendorID vendorId);
-bool IsApple(VendorID vendorId);
+bool IsAppleGPU(VendorID vendorId);
 bool IsMicrosoft(VendorID vendorId);
 
 // Returns a readable vendor name given the VendorID

@@ -22,7 +22,7 @@ info: |
     collations for which the implementation provides the functionality of
     Intl.Collator objects.
 includes: [compareArray.js]
-features: [Intl-enumeration, Intl.Locale]
+features: [Intl-enumeration, Intl.Locale, Array.prototype.includes]
 ---*/
 
 const collations = Intl.supportedValuesOf("collation");

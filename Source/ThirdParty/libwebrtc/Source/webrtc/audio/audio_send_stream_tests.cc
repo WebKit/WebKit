@@ -19,6 +19,7 @@
 #include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
+#include "test/video_test_constants.h"
 
 namespace webrtc {
 namespace test {
@@ -31,7 +32,7 @@ enum : int {  // The first valid value is 1.
 
 class AudioSendTest : public SendTest {
  public:
-  AudioSendTest() : SendTest(CallTest::kDefaultTimeout) {}
+  AudioSendTest() : SendTest(VideoTestConstants::kDefaultTimeout) {}
 
   size_t GetNumVideoStreams() const override { return 0; }
   size_t GetNumAudioStreams() const override { return 1; }

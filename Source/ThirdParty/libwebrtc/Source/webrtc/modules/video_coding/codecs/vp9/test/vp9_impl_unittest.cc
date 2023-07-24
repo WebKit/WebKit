@@ -218,6 +218,19 @@ TEST_P(TestVp9ImplForPixelFormat, DecodedQpEqualsEncodedQp) {
   EXPECT_EQ(encoded_frame.qp_, *decoded_qp);
 }
 
+TEST_P(TestVp9ImplForPixelFormat, CheckCaptureTimeID) {
+  constexpr Timestamp kCaptureTimeIdentifier = Timestamp::Micros(1000);
+  VideoFrame input_frame = NextInputFrame();
+  input_frame.set_capture_time_identifier(kCaptureTimeIdentifier);
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Encode(input_frame, nullptr));
+  EncodedImage encoded_frame;
+  CodecSpecificInfo codec_specific_info;
+  ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_specific_info));
+  ASSERT_TRUE(encoded_frame.CaptureTimeIdentifier().has_value());
+  EXPECT_EQ(kCaptureTimeIdentifier.us(),
+            encoded_frame.CaptureTimeIdentifier()->us());
+}
+
 TEST_F(TestVp9Impl, SwitchInputPixelFormatsWithoutReconfigure) {
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Encode(NextInputFrame(), nullptr));
   EncodedImage encoded_frame;

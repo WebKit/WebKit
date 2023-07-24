@@ -27,6 +27,7 @@
 
 #include "ASTAttribute.h"
 #include "ASTBuilder.h"
+#include "ASTExpression.h"
 
 namespace WGSL::AST {
 
@@ -34,15 +35,15 @@ class BindingAttribute final : public Attribute {
     WGSL_AST_BUILDER_NODE(BindingAttribute);
 public:
     NodeKind kind() const override;
-    unsigned binding() const { return m_value; }
+    Expression& binding() const { return m_value; }
 
 private:
-    BindingAttribute(SourceSpan span, unsigned binding)
+    BindingAttribute(SourceSpan span, Expression::Ref&& binding)
         : Attribute(span)
         , m_value(binding)
     { }
 
-    unsigned m_value;
+    Expression::Ref m_value;
 };
 
 } // namespace WGSL::AST

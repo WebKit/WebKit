@@ -974,6 +974,15 @@ void GraphicsLayerCA::setContentsRectClipsDescendants(bool contentsRectClipsDesc
     noteLayerPropertyChanged(ChildrenChanged | ContentsRectsChanged);
 }
 
+void GraphicsLayerCA::setVideoGravity(MediaPlayerVideoGravity gravity)
+{
+    if (gravity == m_videoGravity)
+        return;
+
+    GraphicsLayer::setVideoGravity(gravity);
+    noteLayerPropertyChanged(VideoGravityChanged);
+}
+
 void GraphicsLayerCA::setShapeLayerPath(const Path& path)
 {
     // FIXME: need to check for path equality. No bool Path::operator==(const Path&)!.
@@ -1042,8 +1051,13 @@ static bool keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFuncti
         return false;
 
     auto* timingFunction = valueList.at(0).timingFunction();
-    if (!timingFunction || is<LinearTimingFunction>(timingFunction))
+    if (!timingFunction)
         return true;
+
+    if (is<LinearTimingFunction>(timingFunction)) {
+        ASSERT(LinearTimingFunction::identity() == *timingFunction);
+        return true;
+    }
 
     return is<CubicBezierTimingFunction>(timingFunction) && downcast<CubicBezierTimingFunction>(*timingFunction).isLinear();
 }
@@ -1282,6 +1296,7 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
             m_contentsLayer = WTFMove(platformCALayer);
         else
             m_contentsLayer = createPlatformCALayer(platformLayer, this);
+        m_contentsLayer->setBackingStoreAttached(false);
     } else
         m_contentsLayer = nullptr;
 
@@ -1310,6 +1325,7 @@ void GraphicsLayerCA::setContentsToVideoElement(HTMLVideoElement& videoElement, 
         }
         m_contentsLayerPurpose = purpose;
         m_contentsDisplayDelegate = nullptr;
+        updateVideoGravity();
         noteSublayersChanged();
         noteLayerPropertyChanged(ContentsPlatformLayerChanged);
         return;
@@ -1505,22 +1521,26 @@ TiledBacking* GraphicsLayerCA::tiledBacking() const
 
 TransformationMatrix GraphicsLayerCA::layerTransform(const FloatPoint& position, const TransformationMatrix* customTransform) const
 {
-    TransformationMatrix transform;
-    transform.translate(position.x(), position.y());
+    auto transform = TransformationMatrix(position.x(), position.y());
 
-    TransformationMatrix currentTransform;
-    if (customTransform)
-        currentTransform = *customTransform;
-    else if (m_transform)
-        currentTransform = *m_transform;
+    auto currentTransform = [&]() -> const TransformationMatrix* {
+        if (customTransform)
+            return customTransform;
 
-    transform.multiply(transformByApplyingAnchorPoint(currentTransform));
+        if (m_transform)
+            return m_transform.get();
 
-    if (GraphicsLayer* parentLayer = parent()) {
+        return nullptr;
+    }();
+
+    if (currentTransform)
+        transform.multiply(transformByApplyingAnchorPoint(*currentTransform));
+
+    if (auto* parentLayer = parent()) {
         if (parentLayer->hasNonIdentityChildrenTransform()) {
-            FloatPoint boundsOrigin = parentLayer->boundsOrigin();
+            auto boundsOrigin = parentLayer->boundsOrigin();
 
-            FloatPoint3D parentAnchorPoint(parentLayer->anchorPoint());
+            auto parentAnchorPoint(parentLayer->anchorPoint());
             parentAnchorPoint.scale(parentLayer->size().width(), parentLayer->size().height(), 1);
             parentAnchorPoint += boundsOrigin;
 
@@ -1592,16 +1612,17 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
     FloatPoint position = approximatePosition();
     client().customPositionForVisibleRectComputation(this, position);
 
-    TransformationMatrix layerTransform;
     TransformationMatrix currentTransform;
-    if ((flags & RespectAnimatingTransforms) && client().getCurrentTransform(this, currentTransform))
-        layerTransform = this->layerTransform(position, &currentTransform);
-    else
-        layerTransform = this->layerTransform(position);
+    auto transform = [&]() {
+        if ((flags & RespectAnimatingTransforms) && client().getCurrentTransform(this, currentTransform))
+            return layerTransform(position, &currentTransform);
+
+        return layerTransform(position);
+    }();
 
     bool applyWasClamped;
     TransformState::TransformAccumulation accumulation = preserves3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
-    state.applyTransform(layerTransform, accumulation, &applyWasClamped);
+    state.applyTransform(transform, accumulation, &applyWasClamped);
 
     bool mapWasClamped;
     auto clipRectFromParent = state.mappedQuad(&mapWasClamped).boundingBox();
@@ -1842,7 +1863,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     commitLayerChangesAfterSublayers(childCommitState);
 
     if (affectedByTransformAnimation && m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
-        client().notifyFlushBeforeDisplayRefresh(this);
+        client().notifySubsequentFlushRequired(this);
 
     if (layerTypeChanged)
         client().didChangePlatformLayerForLayer(this);
@@ -2037,6 +2058,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & BlendModeChanged)
         updateBlendMode();
 #endif
+
+    if (m_uncommittedChanges & VideoGravityChanged)
+        updateVideoGravity();
 
     if (m_uncommittedChanges & ShapeChanged)
         updateShape();
@@ -2533,6 +2557,12 @@ void GraphicsLayerCA::updateBlendMode()
 }
 #endif
 
+void GraphicsLayerCA::updateVideoGravity()
+{
+    if (m_contentsLayer)
+        m_contentsLayer->setVideoGravity(m_videoGravity);
+}
+
 void GraphicsLayerCA::updateShape()
 {
     m_layer->setShapePath(m_shapeLayerPath);
@@ -2698,6 +2728,10 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
         backing->setVisibleRect(m_visibleRect);
         backing->setCoverageRect(m_coverageRect);
     }
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    m_layer->setCoverageRect(m_coverageRect);
+#endif
 
     bool requiresBacking = m_intersectsCoverageRect
         || !allowsBackingStoreDetaching()
@@ -3088,7 +3122,7 @@ void GraphicsLayerCA::updateAnimations()
         caAnimationGroup->setDuration(infiniteDuration);
         caAnimationGroup->setAnimations(animations);
 
-        auto animationGroup = LayerPropertyAnimation(WTFMove(caAnimationGroup), makeString("group-"_s, UUID::createVersion4()), property, 0, 0_s);
+        auto animationGroup = LayerPropertyAnimation(WTFMove(caAnimationGroup), makeString("group-"_s, WTF::UUID::createVersion4()), property, 0, 0_s);
         animationGroup.m_beginTime = animationGroupBeginTime;
 
         setAnimationOnLayer(animationGroup);
@@ -3136,7 +3170,7 @@ void GraphicsLayerCA::updateAnimations()
         caAnimation->setFromValue(matrix);
         caAnimation->setToValue(matrix);
 
-        auto animation = LayerPropertyAnimation(WTFMove(caAnimation), makeString("base-transform-"_s, UUID::createVersion4()), property, 0, 0_s);
+        auto animation = LayerPropertyAnimation(WTFMove(caAnimation), makeString("base-transform-"_s, WTF::UUID::createVersion4()), property, 0, 0_s);
         if (delay)
             animation.m_beginTime = currentTime - animationGroupBeginTime;
 
@@ -3630,7 +3664,7 @@ void GraphicsLayerCA::setupAnimation(PlatformCAAnimation* propertyAnim, const An
     float repeatCount = anim->iterationCount();
     if (repeatCount == Animation::IterationCountInfinite)
         repeatCount = std::numeric_limits<float>::max();
-    else if (anim->direction() == Animation::AnimationDirectionAlternate || anim->direction() == Animation::AnimationDirectionAlternateReverse)
+    else if (anim->direction() == Animation::Direction::Alternate || anim->direction() == Animation::Direction::AlternateReverse)
         repeatCount /= 2;
 
     PlatformCAAnimation::FillModeType fillMode = PlatformCAAnimation::NoFillMode;
@@ -3651,7 +3685,7 @@ void GraphicsLayerCA::setupAnimation(PlatformCAAnimation* propertyAnim, const An
 
     propertyAnim->setDuration(duration);
     propertyAnim->setRepeatCount(repeatCount);
-    propertyAnim->setAutoreverses(anim->direction() == Animation::AnimationDirectionAlternate || anim->direction() == Animation::AnimationDirectionAlternateReverse);
+    propertyAnim->setAutoreverses(anim->direction() == Animation::Direction::Alternate || anim->direction() == Animation::Direction::AlternateReverse);
     propertyAnim->setRemovedOnCompletion(false);
     propertyAnim->setAdditive(additive);
     propertyAnim->setFillMode(fillMode);
@@ -3678,7 +3712,7 @@ const TimingFunction& GraphicsLayerCA::timingFunctionForAnimationValue(const Ani
         return *animValue.timingFunction();
     if (anim.defaultTimingFunctionForKeyframes())
         return *anim.defaultTimingFunctionForKeyframes();
-    return LinearTimingFunction::sharedLinearTimingFunction();
+    return LinearTimingFunction::identity();
 }
 
 bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim)
@@ -4333,6 +4367,7 @@ const char* GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
 #endif
 #endif
     case LayerChange::ContentsScalingFiltersChanged: return "ContentsScalingFiltersChanged";
+    case LayerChange::VideoGravityChanged: return "VideoGravityChanged";
     }
     ASSERT_NOT_REACHED();
     return "";
@@ -4972,8 +5007,12 @@ Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesti
     return animations;
 }
 
-RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCA::createAsyncContentsDisplayDelegate()
+RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCA::createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate* existing)
 {
+    if (existing && existing->isGraphicsLayerAsyncContentsDisplayDelegateCocoa()) {
+        static_cast<GraphicsLayerAsyncContentsDisplayDelegateCocoa*>(existing)->updateGraphicsLayerCA(*this);
+        return existing;
+    }
     return adoptRef(new GraphicsLayerAsyncContentsDisplayDelegateCocoa(*this));
 }
 

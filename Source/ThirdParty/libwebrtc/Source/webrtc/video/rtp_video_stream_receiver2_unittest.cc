@@ -19,6 +19,7 @@
 #include "call/test/mock_rtp_packet_sink_interface.h"
 #include "common_video/h264/h264_common.h"
 #include "media/base/media_constants.h"
+#include "modules/rtp_rtcp/source/frame_object.h"
 #include "modules/rtp_rtcp/source/rtp_descriptor_authentication.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp9.h"
@@ -27,7 +28,6 @@
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
-#include "modules/video_coding/frame_object.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/rtp_frame_reference_finder.h"
 #include "rtc_base/byte_buffer.h"
@@ -369,6 +369,16 @@ TEST_F(RtpVideoStreamReceiver2Test, GenericKeyFrame) {
   EXPECT_CALL(mock_on_complete_frame_callback_, DoOnCompleteFrame(_));
   rtp_video_stream_receiver_->OnReceivedPayloadData(data, rtp_packet,
                                                     video_header);
+}
+
+TEST_F(RtpVideoStreamReceiver2Test, SetProtectionPayloadTypes) {
+  EXPECT_NE(rtp_video_stream_receiver_->red_payload_type(), 104);
+  EXPECT_NE(rtp_video_stream_receiver_->ulpfec_payload_type(), 107);
+
+  rtp_video_stream_receiver_->SetProtectionPayloadTypes(104, 107);
+
+  EXPECT_EQ(rtp_video_stream_receiver_->red_payload_type(), 104);
+  EXPECT_EQ(rtp_video_stream_receiver_->ulpfec_payload_type(), 107);
 }
 
 TEST_F(RtpVideoStreamReceiver2Test, PacketInfoIsPropagatedIntoVideoFrames) {

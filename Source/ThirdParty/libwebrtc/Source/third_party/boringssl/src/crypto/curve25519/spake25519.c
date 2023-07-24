@@ -22,6 +22,7 @@
 #include <openssl/rand.h>
 #include <openssl/sha.h>
 
+#include "../fipsmodule/bn/internal.h"
 #include "../internal.h"
 #include "./internal.h"
 
@@ -314,46 +315,30 @@ static void left_shift_3(uint8_t n[32]) {
   }
 }
 
-typedef union {
-  uint8_t bytes[32];
-  uint32_t words[8];
+typedef struct {
+  BN_ULONG words[32 / sizeof(BN_ULONG)];
 } scalar;
 
-// kOrder is the order of the prime-order subgroup of curve25519 in
-// little-endian order.
-static const scalar kOrder = {{0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58,
-                               0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14,
-                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                               0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10}};
+// kOrder is the order of the prime-order subgroup of curve25519.
+static const scalar kOrder = {
+    {TOBN(0x5812631a, 0x5cf5d3ed), TOBN(0x14def9de, 0xa2f79cd6),
+     TOBN(0x00000000, 0x00000000), TOBN(0x10000000, 0x00000000)}};
 
 // scalar_cmov copies |src| to |dest| if |mask| is all ones.
 static void scalar_cmov(scalar *dest, const scalar *src, crypto_word_t mask) {
-  for (size_t i = 0; i < 8; i++) {
-    dest->words[i] =
-        constant_time_select_w(mask, src->words[i], dest->words[i]);
-  }
+  bn_select_words(dest->words, mask, src->words, dest->words,
+                  OPENSSL_ARRAY_SIZE(dest->words));
 }
 
 // scalar_double sets |s| to |2×s|.
 static void scalar_double(scalar *s) {
-  uint32_t carry = 0;
-
-  for (size_t i = 0; i < 8; i++) {
-    const uint32_t carry_out = s->words[i] >> 31;
-    s->words[i] = (s->words[i] << 1) | carry;
-    carry = carry_out;
-  }
+  bn_add_words(s->words, s->words, s->words, OPENSSL_ARRAY_SIZE(s->words));
 }
 
 // scalar_add sets |dest| to |dest| plus |src|.
 static void scalar_add(scalar *dest, const scalar *src) {
-  uint32_t carry = 0;
-
-  for (size_t i = 0; i < 8; i++) {
-    uint64_t tmp = ((uint64_t)dest->words[i] + src->words[i]) + carry;
-    dest->words[i] = (uint32_t)tmp;
-    carry = (uint32_t)(tmp >> 32);
-  }
+  bn_add_words(dest->words, dest->words, src->words,
+               OPENSSL_ARRAY_SIZE(dest->words));
 }
 
 int SPAKE2_generate_msg(SPAKE2_CTX *ctx, uint8_t *out, size_t *out_len,
@@ -412,25 +397,25 @@ int SPAKE2_generate_msg(SPAKE2_CTX *ctx, uint8_t *out, size_t *out_len,
 
     OPENSSL_memset(&tmp, 0, sizeof(tmp));
     scalar_cmov(&tmp, &order,
-                constant_time_eq_w(password_scalar.bytes[0] & 1, 1));
+                constant_time_eq_w(password_scalar.words[0] & 1, 1));
     scalar_add(&password_scalar, &tmp);
 
     scalar_double(&order);
     OPENSSL_memset(&tmp, 0, sizeof(tmp));
     scalar_cmov(&tmp, &order,
-                constant_time_eq_w(password_scalar.bytes[0] & 2, 2));
+                constant_time_eq_w(password_scalar.words[0] & 2, 2));
     scalar_add(&password_scalar, &tmp);
 
     scalar_double(&order);
     OPENSSL_memset(&tmp, 0, sizeof(tmp));
     scalar_cmov(&tmp, &order,
-                constant_time_eq_w(password_scalar.bytes[0] & 4, 4));
+                constant_time_eq_w(password_scalar.words[0] & 4, 4));
     scalar_add(&password_scalar, &tmp);
 
-    assert((password_scalar.bytes[0] & 7) == 0);
+    assert((password_scalar.words[0] & 7) == 0);
   }
 
-  OPENSSL_memcpy(ctx->password_scalar, password_scalar.bytes,
+  OPENSSL_memcpy(ctx->password_scalar, password_scalar.words,
                  sizeof(ctx->password_scalar));
 
   ge_p3 mask;

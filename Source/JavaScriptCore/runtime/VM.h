@@ -51,6 +51,8 @@
 #include "NumericStrings.h"
 #include "SlotVisitorMacros.h"
 #include "SmallStrings.h"
+#include "StringReplaceCache.h"
+#include "StringSplitCache.h"
 #include "Strong.h"
 #include "SubspaceAccess.h"
 #include "ThunkGenerator.h"
@@ -70,6 +72,7 @@
 #include <wtf/StackPointer.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/text/SymbolImpl.h>
 #include <wtf/text/SymbolRegistry.h>
@@ -161,6 +164,9 @@ class Database;
 }
 namespace DOMJIT {
 class Signature;
+}
+namespace Wasm {
+class Instance;
 }
 
 struct EntryFrame;
@@ -406,6 +412,8 @@ public:
         m_entryScopeServices.add(service);
     }
 
+    JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
+
 private:
     VMIdentifier m_identifier;
     RefPtr<JSLock> m_apiLock;
@@ -564,6 +572,9 @@ public:
     Ref<AtomStringImpl> lastAtomizedIdentifierAtomStringImpl { *static_cast<AtomStringImpl*>(StringImpl::empty()) };
     JSONAtomStringCache jsonAtomStringCache;
     KeyAtomStringCache keyAtomStringCache;
+    StringSplitCache stringSplitCache;
+    Vector<unsigned> stringSplitIndice;
+    StringReplaceCache stringReplaceCache;
 
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
@@ -885,6 +896,24 @@ public:
     bool disableControlFlowProfiler();
 
     void queueMicrotask(QueuedTask&& task) { m_microtaskQueue.enqueue(WTFMove(task)); }
+    class JS_EXPORT_PRIVATE DrainMicrotaskDelayScope {
+    public:
+        explicit DrainMicrotaskDelayScope(VM&);
+        ~DrainMicrotaskDelayScope();
+
+        DrainMicrotaskDelayScope(DrainMicrotaskDelayScope&&) = default;
+        DrainMicrotaskDelayScope& operator=(DrainMicrotaskDelayScope&&);
+        DrainMicrotaskDelayScope(const DrainMicrotaskDelayScope&);
+        DrainMicrotaskDelayScope& operator=(const DrainMicrotaskDelayScope&);
+
+    private:
+        void increment();
+        void decrement();
+
+        RefPtr<VM> m_vm;
+    };
+
+    DrainMicrotaskDelayScope drainMicrotaskDelayScope() { return DrainMicrotaskDelayScope { *this }; }
     JS_EXPORT_PRIVATE void drainMicrotasks();
     void setOnEachMicrotaskTick(WTF::Function<void(VM&)>&& func) { m_onEachMicrotaskTick = WTFMove(func); }
     
@@ -968,6 +997,10 @@ public:
     void forEachDebugger(const Func&);
 
     Ref<Waiter> syncWaiter();
+
+#if ENABLE(WEBASSEMBLY)
+    void registerWasmInstance(Wasm::Instance&);
+#endif
 
 private:
     VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);
@@ -1073,6 +1106,7 @@ private:
     std::unique_ptr<FuzzerAgent> m_fuzzerAgent;
     std::unique_ptr<ShadowChicken> m_shadowChicken;
     std::unique_ptr<BytecodeIntrinsicRegistry> m_bytecodeIntrinsicRegistry;
+    uint64_t m_drainMicrotaskDelayScopeCount { 0 };
 
     // FIXME: We should remove handled promises from this list at GC flip. <https://webkit.org/b/201005>
     Vector<Strong<JSPromise>> m_aboutToBeNotifiedRejectedPromises;
@@ -1091,6 +1125,9 @@ private:
     Ref<Waiter> m_syncWaiter;
 
     Vector<Function<void()>> m_didPopListeners;
+#if ENABLE(WEBASSEMBLY)
+    ThreadSafeWeakHashSet<Wasm::Instance> m_wasmInstances;
+#endif
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck m_doesGC;

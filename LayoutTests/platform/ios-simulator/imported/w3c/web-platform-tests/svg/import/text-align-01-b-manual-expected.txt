@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (8,14) size 751x465
-      RenderSVGText {text} at (5,8) size 437x40 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 437x40
-          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 31 width 436.86: "Test 'text-anchor' (horizontal)"
+      RenderSVGText {text} at (5,8) size 439x41 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 439x40
+          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 31 width 438.15: "Test 'text-anchor' (horizontal)"
       RenderSVGContainer {g} at (35,169) size 724x310
         RenderSVGContainer {g} at (378,169) size 381x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,130.00)}]
           RenderSVGPath {line} at (383,215) size 84x3 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=50.00] [y2=0.00]
@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (-209,-29) size 209x36 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 209x36
               chunk 1 (end anchor) text run 1 at (-208.46,0.00) startOffset 0 endOffset 15 width 208.46: "text-anchor:end"
-    RenderSVGContainer {g} at (16,516) size 385x64
-      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x38
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.8 $"
+    RenderSVGContainer {g} at (16,516) size 384x64
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

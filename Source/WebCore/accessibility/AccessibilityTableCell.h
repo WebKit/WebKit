@@ -38,37 +38,50 @@ class AccessibilityTableRow;
 class AccessibilityTableCell : public AccessibilityRenderObject {
 public:
     static Ref<AccessibilityTableCell> create(RenderObject*);
+    static Ref<AccessibilityTableCell> create(Node&);
     virtual ~AccessibilityTableCell();
+    bool isTableCell() const final { return true; }
 
-    bool isTableCell() const final;
+    bool isExposedTableCell() const final;
     bool isTableHeaderCell() const;
     bool isColumnHeaderCell() const override;
     bool isRowHeaderCell() const override;
 
+    virtual AccessibilityTable* parentTable() const;
+
     // Returns the start location and row span of the cell.
-    std::pair<unsigned, unsigned> rowIndexRange() const override;
+    std::pair<unsigned, unsigned> rowIndexRange() const final;
     // Returns the start location and column span of the cell.
-    std::pair<unsigned, unsigned> columnIndexRange() const override;
+    std::pair<unsigned, unsigned> columnIndexRange() const final;
 
     AccessibilityChildrenVector columnHeaders() override;
     AccessibilityChildrenVector rowHeaders() override;
 
     int axColumnIndex() const override;
     int axRowIndex() const override;
+    unsigned colSpan() const;
+    unsigned rowSpan() const;
+    void setAXColIndexFromRow(int index) { m_axColIndexFromRow = index; }
+
+    void setRowIndex(unsigned index) { m_rowIndex = index; }
+    void setColumnIndex(unsigned index) { m_columnIndex = index; }
+
+#if USE(ATSPI)
     int axColumnSpan() const;
     int axRowSpan() const;
-    void setAXColIndexFromRow(int index) { m_axColIndexFromRow = index; }
+#endif
 
 protected:
     explicit AccessibilityTableCell(RenderObject*);
+    explicit AccessibilityTableCell(Node&);
 
     AccessibilityTableRow* parentRow() const;
-    virtual AccessibilityTable* parentTable() const;
     AccessibilityRole determineAccessibilityRole() final;
     AccessibilityObject* parentObjectUnignored() const override;
 
-    int m_rowIndex;
-    int m_axColIndexFromRow;
+    unsigned m_rowIndex { 0 };
+    unsigned m_columnIndex { 0 };
+    int m_axColIndexFromRow { -1 };
 
 private:
     // If a table cell is not exposed as a table cell, a TH element can serve as its title UI element.
@@ -78,6 +91,7 @@ private:
     String expandedTextValue() const final;
     bool supportsExpandedTextValue() const final;
     AccessibilityTableRow* ariaOwnedByParent() const;
+    void ensureIndexesUpToDate() const;
 
     bool isTableCellInSameRowGroup(AXCoreObject*);
     bool isTableCellInSameColGroup(AXCoreObject*);

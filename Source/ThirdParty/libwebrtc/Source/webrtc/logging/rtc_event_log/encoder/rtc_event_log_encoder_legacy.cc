@@ -374,11 +374,16 @@ std::string RtcEventLogEncoderLegacy::Encode(const RtcEvent& event) {
       // and stopping the log, and only as part of version 3 of the format.
       RTC_DCHECK_NOTREACHED();
       break;
+    case RtcEvent::Type::FakeEvent:
+      // Fake event used for unit test.
+      RTC_DCHECK_NOTREACHED();
+      break;
     case RtcEvent::Type::RouteChangeEvent:
     case RtcEvent::Type::GenericPacketReceived:
     case RtcEvent::Type::GenericPacketSent:
     case RtcEvent::Type::GenericAckReceived:
     case RtcEvent::Type::FrameDecoded:
+    case RtcEvent::Type::NetEqSetMinimumDelay:
       // These are unsupported in the old format, but shouldn't crash.
       return "";
   }

@@ -41,6 +41,7 @@
 #include "RemoteFaceDetector.h"
 #include "RemoteFaceDetectorMessages.h"
 #include "RemoteImageBuffer.h"
+#include "RemoteImageBufferProxyMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteRenderingBackendCreationParameters.h"
@@ -100,28 +101,26 @@
 namespace WebKit {
 using namespace WebCore;
 
+#if PLATFORM(COCOA)
 static bool isSmallLayerBacking(const ImageBufferBackendParameters& parameters)
 {
-#if PLATFORM(COCOA)
     const unsigned maxSmallLayerBackingArea = 64u * 64u; // 4096 == 16kb backing store which equals 1 page on AS.
     return parameters.purpose == RenderingPurpose::LayerBacking
         && ImageBufferBackend::calculateBackendSize(parameters).area() <= maxSmallLayerBackingArea
         && (parameters.pixelFormat == PixelFormat::BGRA8 || parameters.pixelFormat == PixelFormat::BGRX8);
-#else
-    return false;
-#endif
 }
+#endif
 
-Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamServerConnection::Handle&& connectionHandle)
+Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, Ref<IPC::StreamServerConnection>&& streamConnection)
 {
-    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(creationParameters), WTFMove(connectionHandle)));
+    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(creationParameters), WTFMove(streamConnection)));
     instance->startListeningForIPC();
     return instance;
 }
 
-RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamServerConnection::Handle&& connectionHandle)
+RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, Ref<IPC::StreamServerConnection>&& streamConnection)
     : m_workQueue(IPC::StreamConnectionWorkQueue::create("RemoteRenderingBackend work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), m_workQueue.get()))
+    , m_streamConnection(WTFMove(streamConnection))
     , m_remoteResourceCache(gpuConnectionToWebProcess.webProcessIdentifier())
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
@@ -145,27 +144,27 @@ void RemoteRenderingBackend::startListeningForIPC()
 
 void RemoteRenderingBackend::stopListeningForIPC()
 {
-    dispatch([this] {
+    workQueue().stopAndWaitForCompletion([this] {
         workQueueUninitialize();
     });
-    workQueue().stopAndWaitForCompletion();
 }
 
 void RemoteRenderingBackend::workQueueInitialize()
 {
+    assertIsCurrent(workQueue());
+    m_streamConnection->open(m_workQueue.get());
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
-    m_streamConnection->open();
     send(Messages::RemoteRenderingBackendProxy::DidInitialize(workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()), m_renderingBackendIdentifier);
 }
 
 void RemoteRenderingBackend::workQueueUninitialize()
 {
     assertIsCurrent(workQueue());
-    m_streamConnection->invalidate();
-    m_streamConnection->stopReceivingMessages(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
     m_remoteDisplayLists.clear();
     // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
     m_remoteResourceCache = { m_gpuConnectionToWebProcess->webProcessIdentifier() };
+    m_streamConnection->stopReceivingMessages(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
+    m_streamConnection->invalidate();
 }
 
 void RemoteRenderingBackend::dispatch(Function<void()>&& task)
@@ -192,10 +191,10 @@ void RemoteRenderingBackend::didCreateImageBuffer(Ref<RemoteImageBuffer> imageBu
     auto* sharing = imageBuffer->backend()->toBackendSharing();
     auto handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
     m_remoteResourceCache.cacheImageBuffer(WTFMove(imageBuffer), renderingResourceIdentifier);
-    send(Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend(WTFMove(handle), renderingResourceIdentifier.object()), m_renderingBackendIdentifier);
+    send(Messages::RemoteImageBufferProxy::DidCreateBackend(WTFMove(handle)), renderingResourceIdentifier.object());
 }
 
-void RemoteRenderingBackend::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier, RemoteSerializedImageBufferWriteReference&& reference)
+void RemoteRenderingBackend::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     QualifiedRenderingResourceIdentifier qualifiedIdentifier { identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
@@ -207,20 +206,19 @@ void RemoteRenderingBackend::moveToSerializedBuffer(WebCore::RenderingResourceId
         ASSERT_IS_TESTING_IPC();
         return;
     }
-    m_gpuConnectionToWebProcess->serializedImageBufferHeap().retire(WTFMove(reference), WTFMove(imageBuffer), std::nullopt);
+    m_gpuConnectionToWebProcess->serializedImageBufferHeap().add({ identifier, 0 }, WTFMove(imageBuffer));
 }
 
-void RemoteRenderingBackend::moveToImageBuffer(RemoteSerializedImageBufferWriteReference&& reference, WebCore::RenderingResourceIdentifier identifier)
+void RemoteRenderingBackend::moveToImageBuffer(WebCore::RenderingResourceIdentifier identifier)
 {
     assertIsCurrent(workQueue());
-    QualifiedRenderingResourceIdentifier qualifiedIdentifier { identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
-    RemoteSerializedImageBufferReadReference readReference(reference.reference());
-    auto imageBuffer = m_gpuConnectionToWebProcess->serializedImageBufferHeap().retire(WTFMove(readReference), IPC::Timeout::infinity());
-    m_gpuConnectionToWebProcess->serializedImageBufferHeap().retireRemove(WTFMove(reference));
+    auto imageBuffer = m_gpuConnectionToWebProcess->serializedImageBufferHeap().take({ { identifier, 0 }, 0 }, IPC::Timeout::infinity());
     if (!imageBuffer) {
         ASSERT_IS_TESTING_IPC();
         return;
     }
+    QualifiedRenderingResourceIdentifier qualifiedIdentifier { identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
+
     WebCore::ImageBufferCreationContext creationContext { nullptr };
 #if HAVE(IOSURFACE)
     creationContext.surfacePool = &ioSurfacePool();
@@ -281,7 +279,6 @@ void RemoteRenderingBackend::getPixelBufferForImageBufferWithNewMemory(Rendering
     m_getPixelBufferSharedMemory = nullptr;
     auto sharedMemory = WebKit::SharedMemory::map(WTFMove(handle), WebKit::SharedMemory::Protection::ReadWrite);
     MESSAGE_CHECK(sharedMemory, "Shared memory could not be mapped.");
-    MESSAGE_CHECK(sharedMemory->size() <= HTMLCanvasElement::maxActivePixelMemory(), "Shared memory too big.");
     m_getPixelBufferSharedMemory = WTFMove(sharedMemory);
     getPixelBufferForImageBuffer(imageBuffer, WTFMove(destinationFormat), WTFMove(srcRect), WTFMove(completionHandler));
 }
@@ -494,7 +491,7 @@ static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buf
     return std::nullopt;
 }
 
-void RemoteRenderingBackend::prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&& completionHandler)
+void RemoteRenderingBackend::prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(Vector<PrepareBackingStoreBuffersOutputData>&&)>&& completionHandler)
 {
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
     outputData.resizeToFit(swapBuffersInput.size());

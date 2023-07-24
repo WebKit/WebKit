@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ReplayKitCaptureSource.h"
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
+#if ENABLE(MEDIA_STREAM) && (PLATFORM(IOS) || PLATFORM(VISION))
 
 #import "Logging.h"
 #import "RealtimeVideoUtilities.h"
@@ -278,4 +278,4 @@ void ReplayKitCaptureSource::screenCaptureDevices(Vector<CaptureDevice>& display
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
+#endif // ENABLE(MEDIA_STREAM) && (PLATFORM(IOS) || PLATFORM(VISION))

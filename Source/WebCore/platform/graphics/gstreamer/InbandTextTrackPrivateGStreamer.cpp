@@ -97,6 +97,8 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
     }
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

@@ -17,7 +17,7 @@ info: |
     6. Let r be the result of applying op to lval and rval as if evaluating the expression lval op rval.
     7. Perform ? PutValue(lref, r).
     8. Return r.
-
+features: [exponentiation]
 ---*/
 
 var base = -3;

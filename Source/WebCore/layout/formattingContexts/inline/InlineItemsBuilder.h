@@ -40,7 +40,7 @@ public:
     void build(InlineItemPosition startPosition);
 
 private:
-    void collectInlineItems(InlineItems&, InlineItemPosition startPosition);
+    void collectInlineItems(InlineItems&, FormattingState::OutOfFlowBoxList&, InlineItemPosition startPosition);
     void breakAndComputeBidiLevels(InlineItems&);
     void computeInlineTextItemWidths(InlineItems&);
 

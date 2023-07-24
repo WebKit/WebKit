@@ -53,7 +53,7 @@ class HeartbeatHandler {
   absl::optional<DurationMs> OnIntervalTimerExpiry();
   absl::optional<DurationMs> OnTimeoutTimerExpiry();
 
-  const std::string log_prefix_;
+  const absl::string_view log_prefix_;
   Context* ctx_;
   TimerManager* timer_manager_;
   // The time for a connection to be idle before a heartbeat is sent.

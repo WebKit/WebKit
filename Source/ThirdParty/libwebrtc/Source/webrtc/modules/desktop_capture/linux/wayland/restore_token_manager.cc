@@ -30,4 +30,8 @@ std::string RestoreTokenManager::TakeToken(DesktopCapturer::SourceId id) {
   return token;
 }
 
+DesktopCapturer::SourceId RestoreTokenManager::GetUnusedId() {
+  return ++last_source_id_;
+}
+
 }  // namespace webrtc

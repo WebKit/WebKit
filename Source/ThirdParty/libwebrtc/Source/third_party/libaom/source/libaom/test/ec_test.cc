@@ -93,11 +93,8 @@ TEST(EC_TEST, random_ec_test) {
       int dec_method;
       unsigned int sym = data[j] + 1;  // Initialize sym to an invalid value.
 
-      if (CDF_SHIFT == 0) {
-        dec_method = 3 + (rand() & 1);
-      } else {
-        dec_method = enc_method[j];
-      }
+      dec_method = 3 + (rand() & 1);
+
       switch (dec_method) {
         case 3: {
           sym = od_ec_decode_bool_q15(
@@ -128,30 +125,28 @@ TEST(EC_TEST, random_ec_test) {
     }
   }
   od_ec_enc_reset(&enc);
-  if (CDF_SHIFT == 0) {
-    od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
-    od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
-    od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
-    od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
-    od_ec_encode_bool_q15(&enc, 0, OD_ICDF(24576));
-    od_ec_enc_patch_initial_bits(&enc, 3, 2);
-    EXPECT_FALSE(enc.error) << "od_ec_enc_patch_initial_bits() failed.\n";
-    od_ec_enc_patch_initial_bits(&enc, 0, 5);
-    EXPECT_TRUE(enc.error)
-        << "od_ec_enc_patch_initial_bits() didn't fail when it should have.\n";
-    od_ec_enc_reset(&enc);
-    od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
-    od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
-    od_ec_encode_bool_q15(&enc, 1, OD_ICDF(32256));
-    od_ec_encode_bool_q15(&enc, 0, OD_ICDF(24576));
-    od_ec_enc_patch_initial_bits(&enc, 0, 2);
-    EXPECT_FALSE(enc.error) << "od_ec_enc_patch_initial_bits() failed.\n";
-    ptr = od_ec_enc_done(&enc, &ptr_sz);
-    EXPECT_EQ(ptr_sz, 2u);
-    EXPECT_EQ(ptr[0], 63)
-        << "Got " << ptr[0]
-        << " when expecting 63 for od_ec_enc_patch_initial_bits().\n";
-  }
+  od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
+  od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
+  od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
+  od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
+  od_ec_encode_bool_q15(&enc, 0, OD_ICDF(24576));
+  od_ec_enc_patch_initial_bits(&enc, 3, 2);
+  EXPECT_FALSE(enc.error) << "od_ec_enc_patch_initial_bits() failed.\n";
+  od_ec_enc_patch_initial_bits(&enc, 0, 5);
+  EXPECT_TRUE(enc.error)
+      << "od_ec_enc_patch_initial_bits() didn't fail when it should have.\n";
+  od_ec_enc_reset(&enc);
+  od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
+  od_ec_encode_bool_q15(&enc, 0, OD_ICDF(16384));
+  od_ec_encode_bool_q15(&enc, 1, OD_ICDF(32256));
+  od_ec_encode_bool_q15(&enc, 0, OD_ICDF(24576));
+  od_ec_enc_patch_initial_bits(&enc, 0, 2);
+  EXPECT_FALSE(enc.error) << "od_ec_enc_patch_initial_bits() failed.\n";
+  ptr = od_ec_enc_done(&enc, &ptr_sz);
+  EXPECT_EQ(ptr_sz, 2u);
+  EXPECT_EQ(ptr[0], 63)
+      << "Got " << ptr[0]
+      << " when expecting 63 for od_ec_enc_patch_initial_bits().\n";
   od_ec_enc_clear(&enc);
   EXPECT_EQ(ret, 0);
 }

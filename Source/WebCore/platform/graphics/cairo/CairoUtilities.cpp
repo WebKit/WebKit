@@ -131,7 +131,7 @@ void appendWebCorePathToCairoContext(cairo_t* context, const Path& path)
 {
     if (path.isEmpty())
         return;
-    appendPathToCairoContext(context, path.cairoPath());
+    appendPathToCairoContext(context, path.platformPath());
 }
 
 void appendRegionToCairoContext(cairo_t* to, const cairo_region_t* region)

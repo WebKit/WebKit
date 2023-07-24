@@ -27,14 +27,18 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
-
 #import <AppKit/NSSpellChecker.h>
+using PlatformTextChecker = NSSpellChecker;
+#else
+#import <UIKit/UITextChecker.h>
+using PlatformTextChecker = UITextChecker;
+#endif
 
 @class LayoutTestTextCheckingResult;
 
 using TextCheckingResultsDictionary = NSDictionary<NSString *, NSArray<LayoutTestTextCheckingResult *> *>;
 
-@interface LayoutTestSpellChecker : NSSpellChecker {
+@interface LayoutTestSpellChecker : PlatformTextChecker {
 @private
     RetainPtr<TextCheckingResultsDictionary> _results;
     BOOL _spellCheckerLoggingEnabled;
@@ -47,5 +51,3 @@ using TextCheckingResultsDictionary = NSDictionary<NSString *, NSArray<LayoutTes
 @property (nonatomic, copy) TextCheckingResultsDictionary *results;
 @property (nonatomic) BOOL spellCheckerLoggingEnabled;
 @end
-
-#endif // PLATFORM(MAC)

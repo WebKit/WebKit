@@ -502,7 +502,7 @@ gl::SwizzleState GetFormatSwizzle(const angle::Format &angleFormat, const bool s
             // In OES_depth_texture/ARB_depth_texture, depth
             // textures are treated as luminance.
             // If the internalformat was not sized, use OES_depth_texture behavior
-            bool hasGB = (angleFormat.depthBits > 0) && !sized;
+            bool hasGB = angleFormat.depthBits > 0 && !sized;
 
             internalSwizzle.swizzleRed   = GL_RED;
             internalSwizzle.swizzleGreen = hasGB ? GL_RED : GL_ZERO;

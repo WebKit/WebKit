@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static void setEligibleForSmartRouting(bool eligible)
+void AudioSessionCocoa::setEligibleForSmartRoutingInternal(bool eligible)
 {
 #if HAVE(AVAUDIOSESSION_SMARTROUTING)
     if (!AudioSession::shouldManageAudioSessionCategory())
@@ -49,8 +49,9 @@ static void setEligibleForSmartRouting(bool eligible)
     if (!supportsEligibleForBT)
         return;
 
-    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    RELEASE_LOG(Media, "AudioSession::setEligibleForSmartRouting() %s", eligible ? "true" : "false");
 
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
     if (session.eligibleForBTSmartRoutingConsideration == eligible)
         return;
 
@@ -65,14 +66,22 @@ static void setEligibleForSmartRouting(bool eligible)
 AudioSessionCocoa::AudioSessionCocoa()
     : m_workQueue(WorkQueue::create("AudioSession Activation Queue"))
 {
-    m_workQueue->dispatch([] {
-        setEligibleForSmartRouting(false);
-    });
-
 }
 
 AudioSessionCocoa::~AudioSessionCocoa()
 {
+    setEligibleForSmartRouting(false, ForceUpdate::Yes);
+}
+
+void AudioSessionCocoa::setEligibleForSmartRouting(bool isEligible, ForceUpdate forceUpdate)
+{
+    if (forceUpdate == ForceUpdate::No && m_isEligibleForSmartRouting == isEligible)
+        return;
+
+    m_isEligibleForSmartRouting = isEligible;
+    m_workQueue->dispatch([this, isEligible] {
+        setEligibleForSmartRoutingInternal(isEligible);
+    });
 }
 
 bool AudioSessionCocoa::tryToSetActiveInternal(bool active)
@@ -89,9 +98,9 @@ bool AudioSessionCocoa::tryToSetActiveInternal(bool active)
     // returns, so do it synchronously on the same serial queue.
     if (active) {
         bool success = false;
+        setEligibleForSmartRouting(true);
         m_workQueue->dispatchSync([&success] {
             NSError *error = nil;
-            setEligibleForSmartRouting(true);
             if (supportsSetActive)
                 [[PAL::getAVAudioSessionClass() sharedInstance] setActive:YES withOptions:0 error:&error];
             success = !error;
@@ -103,13 +112,19 @@ bool AudioSessionCocoa::tryToSetActiveInternal(bool active)
         NSError *error = nil;
         if (supportsSetActive)
             [[PAL::getAVAudioSessionClass() sharedInstance] setActive:NO withOptions:0 error:&error];
-        setEligibleForSmartRouting(false);
     });
+    setEligibleForSmartRouting(false);
 #else
     UNUSED_PARAM(active);
     notImplemented();
 #endif
     return true;
+}
+
+void AudioSessionCocoa::setCategory(CategoryType newCategory, Mode, RouteSharingPolicy)
+{
+    // Disclaim support for Smart Routing when we are not generating audio.
+    setEligibleForSmartRouting(isActive() && newCategory != AudioSessionCategory::None);
 }
 
 }

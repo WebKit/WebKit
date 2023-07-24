@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x316
-  RenderBlock {HTML} at (0,0) size 800x316
-    RenderBody {BODY} at (8,8) size 784x292
+layer at (0,0) size 800x317
+  RenderBlock {HTML} at (0,0) size 800x317
+    RenderBody {BODY} at (8,8) size 784x293
       RenderBlock (anonymous) at (0,0) size 784x60
         RenderText {#text} at (0,0) size 756x59
           text run at (0,0) width 539: "Tests of WebKit's intepretation of font sizes when no absolute font size is specified. "
@@ -36,8 +36,8 @@ layer at (0,0) size 800x316
           RenderInline {SPAN} at (0,0) size 101x19
             RenderText {#text} at (0,0) size 101x19
               text run at (0,0) width 101: "Should be 16px"
-      RenderBlock {P} at (0,269) size 784x23
-        RenderInline {TT} at (0,0) size 120x14
-          RenderInline {SPAN} at (0,0) size 120x22
-            RenderText {#text} at (0,0) size 120x22
-              text run at (0,0) width 120: "Should be 19px"
+      RenderBlock {P} at (0,269) size 784x24
+        RenderInline {TT} at (0,0) size 121x14
+          RenderInline {SPAN} at (0,0) size 121x23
+            RenderText {#text} at (0,0) size 121x23
+              text run at (0,0) width 121: "Should be 19px"

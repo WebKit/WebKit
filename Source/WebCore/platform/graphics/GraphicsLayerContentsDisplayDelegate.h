@@ -54,11 +54,14 @@ public:
 #endif
 };
 
-class WEBCORE_EXPORT GraphicsLayerAsyncContentsDisplayDelegate : public GraphicsLayerContentsDisplayDelegate {
+class GraphicsLayerAsyncContentsDisplayDelegate : public GraphicsLayerContentsDisplayDelegate {
 public:
     virtual ~GraphicsLayerAsyncContentsDisplayDelegate() = default;
 
-    virtual bool tryCopyToLayer(ImageBuffer&) = 0;
+    virtual bool WEBCORE_EXPORT tryCopyToLayer(ImageBuffer&) = 0;
+
+    virtual bool isGraphicsLayerAsyncContentsDisplayDelegateCocoa() const { return false; }
+    virtual bool isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const { return false; }
 };
 
 }

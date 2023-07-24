@@ -78,6 +78,15 @@ void RealtimeOutgoingVideoSource::unobserveSource()
     m_videoSource->source().removeVideoFrameObserver(*this);
 }
 
+void RealtimeOutgoingVideoSource::startObservingVideoFrames()
+{
+    if (m_maxFrameRate) {
+        m_videoSource->source().addVideoFrameObserver(*this, { }, *m_maxFrameRate);
+        return;
+    }
+    m_videoSource->source().addVideoFrameObserver(*this);
+}
+
 void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
 {
     ASSERT(isMainThread());
@@ -114,13 +123,19 @@ void RealtimeOutgoingVideoSource::stop()
 void RealtimeOutgoingVideoSource::updateBlackFramesSending()
 {
     if (!m_muted && m_enabled) {
-        m_videoSource->source().addVideoFrameObserver(*this);
+        if (!m_isObservingVideoFrames) {
+            m_isObservingVideoFrames = true;
+            startObservingVideoFrames();
+        }
         if (m_blackFrameTimer.isActive())
             m_blackFrameTimer.stop();
         return;
     }
 
-    m_videoSource->source().removeVideoFrameObserver(*this);
+    if (m_isObservingVideoFrames) {
+        m_isObservingVideoFrames = false;
+        m_videoSource->source().removeVideoFrameObserver(*this);
+    }
     sendBlackFramesIfNeeded();
 }
 
@@ -160,6 +175,20 @@ void RealtimeOutgoingVideoSource::AddOrUpdateSink(rtc::VideoSinkInterface<webrtc
 
     if (sinkWants.rotation_applied)
         applyRotation();
+
+    std::optional<double> maxFrameRate;
+    if (sinkWants.max_framerate_fps != std::numeric_limits<int>::max())
+        maxFrameRate = sinkWants.max_framerate_fps;
+    ensureOnMainThread([this, protectedThis = Ref { *this }, maxFrameRate] {
+        if (m_maxFrameRate == maxFrameRate)
+            return;
+        m_maxFrameRate = maxFrameRate;
+        if (!m_isObservingVideoFrames)
+            return;
+        m_videoSource->source().removeVideoFrameObserver(*this);
+        m_isObservingVideoFrames = false;
+        updateBlackFramesSending();
+    });
 
     Locker locker { m_sinksLock };
     m_sinks.add(sink);

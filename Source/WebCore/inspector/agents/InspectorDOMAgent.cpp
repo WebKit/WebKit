@@ -123,6 +123,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -131,7 +132,7 @@ using namespace Inspector;
 using namespace HTMLNames;
 
 static const size_t maxTextSize = 10000;
-static const UChar ellipsisUChar[] = { 0x2026, 0 };
+static const UChar horizontalEllipsisUChar[] = { horizontalEllipsis, 0 };
 
 static std::optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
 {
@@ -238,11 +239,6 @@ public:
     static Ref<EventFiredCallback> create(InspectorDOMAgent& domAgent)
     {
         return adoptRef(*new EventFiredCallback(domAgent));
-    }
-
-    bool operator==(const EventListener& other) const final
-    {
-        return this == &other;
     }
 
     void handleEvent(ScriptExecutionContext&, Event& event) final
@@ -807,7 +803,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributesAsText(Protocol::D
             return makeUnexpected(errorString);
     }
 
-    if (!foundOriginalAttribute && name.find(isNotSpaceOrNewline) != notFound) {
+    if (!foundOriginalAttribute && name.find(deprecatedIsNotSpaceOrNewline) != notFound) {
         if (!m_domEditor->removeAttribute(*element, AtomString { name }, errorString))
             return makeUnexpected(errorString);
     }
@@ -1251,7 +1247,7 @@ void InspectorDOMAgent::focusNode()
     injectedScript.inspectObject(nodeAsScriptValue(globalObject, node.get()));
 }
 
-void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
+void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<PlatformEventModifier>)
 {
     m_mousedOverNode = result.innerNode();
 
@@ -1481,7 +1477,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(const String&
         auto& pseudo = descendantElement.pseudo();
 
         for (const auto* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector)) {
-            if (isInUserAgentShadowTree && (selector->match() != CSSSelector::PseudoElement || selector->value() != pseudo))
+            if (isInUserAgentShadowTree && (selector->match() != CSSSelector::Match::PseudoElement || selector->value() != pseudo))
                 continue;
 
             SelectorChecker::CheckingContext context(SelectorChecker::Mode::ResolvingStyle);
@@ -1923,7 +1919,7 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
     case Node::CDATA_SECTION_NODE:
         nodeValue = node->nodeValue();
         if (nodeValue.length() > maxTextSize)
-            nodeValue = makeString(StringView(nodeValue).left(maxTextSize), ellipsisUChar);
+            nodeValue = makeString(StringView(nodeValue).left(maxTextSize), horizontalEllipsisUChar);
         break;
     case Node::ATTRIBUTE_NODE:
         localName = node->localName();
@@ -2492,16 +2488,16 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
     return value;
 }
 
-static bool containsOnlyHTMLWhitespace(Node* node)
+static bool containsOnlyASCIIWhitespace(Node* node)
 {
     // FIXME: Respect ignoreWhitespace setting from inspector front end?
-    return is<Text>(node) && downcast<Text>(*node).data().isAllSpecialCharacters<isASCIIWhitespace>();
+    return is<Text>(node) && downcast<Text>(*node).data().containsOnly<isASCIIWhitespace>();
 }
 
 Node* InspectorDOMAgent::innerFirstChild(Node* node)
 {
     node = node->firstChild();
-    while (containsOnlyHTMLWhitespace(node))
+    while (containsOnlyASCIIWhitespace(node))
         node = node->nextSibling();
     return node;
 }
@@ -2510,7 +2506,7 @@ Node* InspectorDOMAgent::innerNextSibling(Node* node)
 {
     do {
         node = node->nextSibling();
-    } while (containsOnlyHTMLWhitespace(node));
+    } while (containsOnlyASCIIWhitespace(node));
     return node;
 }
 
@@ -2518,7 +2514,7 @@ Node* InspectorDOMAgent::innerPreviousSibling(Node* node)
 {
     do {
         node = node->previousSibling();
-    } while (containsOnlyHTMLWhitespace(node));
+    } while (containsOnlyASCIIWhitespace(node));
     return node;
 }
 
@@ -2617,7 +2613,7 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
 
 void InspectorDOMAgent::didInsertDOMNode(Node& node)
 {
-    if (containsOnlyHTMLWhitespace(&node))
+    if (containsOnlyASCIIWhitespace(&node))
         return;
 
     // We could be attaching existing subtree. Forget the bindings.
@@ -2644,7 +2640,7 @@ void InspectorDOMAgent::didInsertDOMNode(Node& node)
 
 void InspectorDOMAgent::didRemoveDOMNode(Node& node)
 {
-    if (containsOnlyHTMLWhitespace(&node))
+    if (containsOnlyASCIIWhitespace(&node))
         return;
 
     ContainerNode* parent = node.parentNode();
@@ -2666,7 +2662,7 @@ void InspectorDOMAgent::didRemoveDOMNode(Node& node)
 
 void InspectorDOMAgent::willDestroyDOMNode(Node& node)
 {
-    if (containsOnlyHTMLWhitespace(&node))
+    if (containsOnlyASCIIWhitespace(&node))
         return;
 
     auto nodeId = m_nodeToId.take(node);

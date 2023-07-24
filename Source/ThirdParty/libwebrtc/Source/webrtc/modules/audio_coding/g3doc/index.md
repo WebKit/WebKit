@@ -1,5 +1,5 @@
-<?% config.freshness.owner = 'minyue' %?>
-<?% config.freshness.reviewed = '2021-04-13' %?>
+<!-- go/cmark -->
+<!--* freshness: {owner: 'hlundin' reviewed: '2021-04-13'} *-->
 
 # The WebRTC Audio Coding Module
 

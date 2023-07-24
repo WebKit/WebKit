@@ -1,0 +1,28 @@
+abc
+
+PASS Highlight initializes empty (if no ranges are provided) and with priority 0.
+PASS Highlight add and has methods work as expected (using the following combination of ranges [[object Range], [object Range], [object Range]])
+PASS Highlight delete method works as expected (using the following combination of ranges [[object Range], [object Range], [object Range]])
+PASS Highlight constructor behaves like a set when using equal ranges (using the following combination of ranges [[object Range], [object Range], [object Range]])
+PASS Highlight constructor works as expected when called with one range (using the following combination of ranges [[object Range], [object Range], [object Range]])
+PASS Highlight constructor works as expected when called with two ranges (using the following combination of ranges [[object Range], [object Range], [object Range]])
+PASS Highlight clear method works as expected (using the following combination of ranges [[object Range], [object Range], [object Range]])
+PASS Highlight add and has methods work as expected (using the following combination of ranges [[object StaticRange], [object StaticRange], [object StaticRange]])
+PASS Highlight delete method works as expected (using the following combination of ranges [[object StaticRange], [object StaticRange], [object StaticRange]])
+PASS Highlight constructor behaves like a set when using equal ranges (using the following combination of ranges [[object StaticRange], [object StaticRange], [object StaticRange]])
+PASS Highlight constructor works as expected when called with one range (using the following combination of ranges [[object StaticRange], [object StaticRange], [object StaticRange]])
+PASS Highlight constructor works as expected when called with two ranges (using the following combination of ranges [[object StaticRange], [object StaticRange], [object StaticRange]])
+PASS Highlight clear method works as expected (using the following combination of ranges [[object StaticRange], [object StaticRange], [object StaticRange]])
+PASS Highlight add and has methods work as expected (using the following combination of ranges [[object Range], [object StaticRange], [object Range]])
+PASS Highlight delete method works as expected (using the following combination of ranges [[object Range], [object StaticRange], [object Range]])
+PASS Highlight constructor behaves like a set when using equal ranges (using the following combination of ranges [[object Range], [object StaticRange], [object Range]])
+PASS Highlight constructor works as expected when called with one range (using the following combination of ranges [[object Range], [object StaticRange], [object Range]])
+PASS Highlight constructor works as expected when called with two ranges (using the following combination of ranges [[object Range], [object StaticRange], [object Range]])
+PASS Highlight clear method works as expected (using the following combination of ranges [[object Range], [object StaticRange], [object Range]])
+PASS Highlight add and has methods work as expected (using the following combination of ranges [[object StaticRange], [object Range], [object StaticRange]])
+PASS Highlight delete method works as expected (using the following combination of ranges [[object StaticRange], [object Range], [object StaticRange]])
+PASS Highlight constructor behaves like a set when using equal ranges (using the following combination of ranges [[object StaticRange], [object Range], [object StaticRange]])
+PASS Highlight constructor works as expected when called with one range (using the following combination of ranges [[object StaticRange], [object Range], [object StaticRange]])
+PASS Highlight constructor works as expected when called with two ranges (using the following combination of ranges [[object StaticRange], [object Range], [object StaticRange]])
+PASS Highlight clear method works as expected (using the following combination of ranges [[object StaticRange], [object Range], [object StaticRange]])
+

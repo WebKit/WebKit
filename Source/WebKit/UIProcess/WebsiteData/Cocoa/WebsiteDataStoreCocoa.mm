@@ -267,13 +267,13 @@ static String defaultWebsiteDataStoreRootDirectory()
     return websiteDataStoreDirectory.get().get().absoluteURL.path;
 }
 
-void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vector<UUID>&&)>&& completionHandler)
+void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vector<WTF::UUID>&&)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
 
     websiteDataStoreIOQueue().dispatch([completionHandler = WTFMove(completionHandler), directory = defaultWebsiteDataStoreRootDirectory().isolatedCopy()]() mutable {
         auto identifiers = WTF::compactMap(FileSystem::listDirectory(directory), [](auto&& identifierString) {
-            return UUID::parse(identifierString);
+            return WTF::UUID::parse(identifierString);
         });
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), identifiers = crossThreadCopy(WTFMove(identifiers))]() mutable {
             completionHandler(WTFMove(identifiers));
@@ -281,7 +281,7 @@ void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vecto
     });
 }
 
-void WebsiteDataStore::removeDataStoreWithIdentifier(const UUID& identifier, CompletionHandler<void(const String&)>&& completionHandler)
+void WebsiteDataStore::removeDataStoreWithIdentifier(const WTF::UUID& identifier, CompletionHandler<void(const String&)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
 
@@ -315,7 +315,7 @@ void WebsiteDataStore::removeDataStoreWithIdentifier(const UUID& identifier, Com
     });
 }
 
-String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const UUID& identifier)
+String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const WTF::UUID& identifier)
 {
     return FileSystem::pathByAppendingComponent(defaultWebsiteDataStoreRootDirectory(), identifier.toString());
 }

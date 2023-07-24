@@ -67,9 +67,9 @@
 #include "../internal.h"
 
 
-static const unsigned kParametersTag =
+static const CBS_ASN1_TAG kParametersTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0;
-static const unsigned kPublicKeyTag =
+static const CBS_ASN1_TAG kPublicKeyTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 1;
 
 EC_KEY *EC_KEY_parse_private_key(CBS *cbs, const EC_GROUP *group) {
@@ -504,7 +504,6 @@ EC_KEY *o2i_ECPublicKey(EC_KEY **keyp, const uint8_t **inp, long len) {
   ret = *keyp;
   if (ret->pub_key == NULL &&
       (ret->pub_key = EC_POINT_new(ret->group)) == NULL) {
-    OPENSSL_PUT_ERROR(EC, ERR_R_MALLOC_FAILURE);
     return NULL;
   }
   if (!EC_POINT_oct2point(ret->group, ret->pub_key, *inp, len, NULL)) {
@@ -518,42 +517,18 @@ EC_KEY *o2i_ECPublicKey(EC_KEY **keyp, const uint8_t **inp, long len) {
 }
 
 int i2o_ECPublicKey(const EC_KEY *key, uint8_t **outp) {
-  size_t buf_len = 0;
-  int new_buffer = 0;
-
   if (key == NULL) {
     OPENSSL_PUT_ERROR(EC, ERR_R_PASSED_NULL_PARAMETER);
     return 0;
   }
-
-  buf_len = EC_POINT_point2oct(key->group, key->pub_key, key->conv_form, NULL,
-                               0, NULL);
-
-  if (outp == NULL || buf_len == 0) {
-    // out == NULL => just return the length of the octet string
-    return buf_len;
+  CBB cbb;
+  if (!CBB_init(&cbb, 0) ||  //
+      !EC_POINT_point2cbb(&cbb, key->group, key->pub_key, key->conv_form,
+                          NULL)) {
+    CBB_cleanup(&cbb);
+    return -1;
   }
-
-  if (*outp == NULL) {
-    *outp = OPENSSL_malloc(buf_len);
-    if (*outp == NULL) {
-      OPENSSL_PUT_ERROR(EC, ERR_R_MALLOC_FAILURE);
-      return 0;
-    }
-    new_buffer = 1;
-  }
-  if (!EC_POINT_point2oct(key->group, key->pub_key, key->conv_form, *outp,
-                          buf_len, NULL)) {
-    OPENSSL_PUT_ERROR(EC, ERR_R_EC_LIB);
-    if (new_buffer) {
-      OPENSSL_free(*outp);
-      *outp = NULL;
-    }
-    return 0;
-  }
-
-  if (!new_buffer) {
-    *outp += buf_len;
-  }
-  return buf_len;
+  int ret = CBB_finish_i2d(&cbb, outp);
+  // Historically, this function used the wrong return value on error.
+  return ret > 0 ? ret : 0;
 }

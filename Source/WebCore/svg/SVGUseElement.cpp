@@ -262,7 +262,7 @@ void SVGUseElement::updateUserAgentShadowTree()
     AtomString targetID;
     auto* target = findTarget(&targetID);
     if (!target) {
-        document().accessSVGExtensions().addPendingResource(targetID, *this);
+        treeScopeForSVGReferences().addPendingSVGResource(targetID, *this);
         return;
     }
 

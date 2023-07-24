@@ -87,6 +87,8 @@
 #define WIRTypeWebPage                          @"WIRTypeWebPage"
 #define WIRAutomaticallyPause                   @"WIRAutomaticallyPause"
 #define WIRMessageDataTypeChunkSupportedKey     @"WIRMessageDataTypeChunkSupportedKey"
+#define WIRPingMessage                          @"WIRPingMessage"
+#define WIRPingSuccessMessage                   @"WIRPingSuccessMessage"
 
 // Allowed values for WIRMessageDataTypeKey.
 #define WIRMessageDataTypeFull                  @"WIRMessageDataTypeFull"

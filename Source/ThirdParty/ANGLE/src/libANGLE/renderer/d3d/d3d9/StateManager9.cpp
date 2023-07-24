@@ -113,8 +113,8 @@ void StateManager9::updateStencilSizeIfChanged(bool depthStencilInitialized,
 }
 
 void StateManager9::syncState(const gl::State &state,
-                              const gl::State::DirtyBits &dirtyBits,
-                              const gl::State::ExtendedDirtyBits &extendedDirtyBits)
+                              const gl::state::DirtyBits &dirtyBits,
+                              const gl::state::ExtendedDirtyBits &extendedDirtyBits)
 {
     if (!dirtyBits.any())
     {
@@ -125,7 +125,7 @@ void StateManager9::syncState(const gl::State &state,
     {
         switch (dirtyBit)
         {
-            case gl::State::DIRTY_BIT_BLEND_ENABLED:
+            case gl::state::DIRTY_BIT_BLEND_ENABLED:
                 if (state.getBlendState().blend != mCurBlendState.blend)
                 {
                     mDirtyBits.set(DIRTY_BIT_BLEND_ENABLED);
@@ -140,7 +140,7 @@ void StateManager9::syncState(const gl::State &state,
                     }
                 }
                 break;
-            case gl::State::DIRTY_BIT_BLEND_FUNCS:
+            case gl::state::DIRTY_BIT_BLEND_FUNCS:
             {
                 const gl::BlendState &blendState = state.getBlendState();
                 if (blendState.sourceBlendRGB != mCurBlendState.sourceBlendRGB ||
@@ -160,7 +160,7 @@ void StateManager9::syncState(const gl::State &state,
                 }
                 break;
             }
-            case gl::State::DIRTY_BIT_BLEND_EQUATIONS:
+            case gl::state::DIRTY_BIT_BLEND_EQUATIONS:
             {
                 const gl::BlendState &blendState = state.getBlendState();
                 if (blendState.blendEquationRGB != mCurBlendState.blendEquationRGB ||
@@ -176,13 +176,13 @@ void StateManager9::syncState(const gl::State &state,
                 }
                 break;
             }
-            case gl::State::DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE_ENABLED:
+            case gl::state::DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE_ENABLED:
                 if (state.isSampleAlphaToCoverageEnabled() != mCurSampleAlphaToCoverage)
                 {
                     mDirtyBits.set(DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE);
                 }
                 break;
-            case gl::State::DIRTY_BIT_COLOR_MASK:
+            case gl::state::DIRTY_BIT_COLOR_MASK:
             {
                 const gl::BlendState &blendState = state.getBlendState();
                 if (blendState.colorMaskRed != mCurBlendState.colorMaskRed ||
@@ -202,31 +202,31 @@ void StateManager9::syncState(const gl::State &state,
                 }
                 break;
             }
-            case gl::State::DIRTY_BIT_DITHER_ENABLED:
+            case gl::state::DIRTY_BIT_DITHER_ENABLED:
                 if (state.getRasterizerState().dither != mCurRasterState.dither)
                 {
                     mDirtyBits.set(DIRTY_BIT_DITHER);
                 }
                 break;
-            case gl::State::DIRTY_BIT_BLEND_COLOR:
+            case gl::state::DIRTY_BIT_BLEND_COLOR:
                 if (state.getBlendColor() != mCurBlendColor)
                 {
                     mDirtyBits.set(DIRTY_BIT_BLEND_COLOR);
                 }
                 break;
-            case gl::State::DIRTY_BIT_CULL_FACE_ENABLED:
+            case gl::state::DIRTY_BIT_CULL_FACE_ENABLED:
                 if (state.getRasterizerState().cullFace != mCurRasterState.cullFace)
                 {
                     mDirtyBits.set(DIRTY_BIT_CULL_MODE);
                 }
                 break;
-            case gl::State::DIRTY_BIT_CULL_FACE:
+            case gl::state::DIRTY_BIT_CULL_FACE:
                 if (state.getRasterizerState().cullMode != mCurRasterState.cullMode)
                 {
                     mDirtyBits.set(DIRTY_BIT_CULL_MODE);
                 }
                 break;
-            case gl::State::DIRTY_BIT_FRONT_FACE:
+            case gl::state::DIRTY_BIT_FRONT_FACE:
                 if (state.getRasterizerState().frontFace != mCurRasterState.frontFace)
                 {
                     mDirtyBits.set(DIRTY_BIT_CULL_MODE);
@@ -235,14 +235,14 @@ void StateManager9::syncState(const gl::State &state,
                     mDirtyBits.set(DIRTY_BIT_VIEWPORT);
                 }
                 break;
-            case gl::State::DIRTY_BIT_POLYGON_OFFSET_FILL_ENABLED:
+            case gl::state::DIRTY_BIT_POLYGON_OFFSET_FILL_ENABLED:
                 if (state.getRasterizerState().polygonOffsetFill !=
                     mCurRasterState.polygonOffsetFill)
                 {
                     mDirtyBits.set(DIRTY_BIT_DEPTH_BIAS);
                 }
                 break;
-            case gl::State::DIRTY_BIT_POLYGON_OFFSET:
+            case gl::state::DIRTY_BIT_POLYGON_OFFSET:
             {
                 const gl::RasterizerState &rasterizerState = state.getRasterizerState();
                 if (rasterizerState.polygonOffsetFactor != mCurRasterState.polygonOffsetFactor ||
@@ -254,19 +254,19 @@ void StateManager9::syncState(const gl::State &state,
             }
             // Depth and stencil redundant state changes are guarded in the
             // frontend so for related cases here just set the dirty bit.
-            case gl::State::DIRTY_BIT_DEPTH_MASK:
+            case gl::state::DIRTY_BIT_DEPTH_MASK:
                 if (state.getDepthStencilState().depthMask != mCurDepthStencilState.depthMask)
                 {
                     mDirtyBits.set(DIRTY_BIT_STENCIL_DEPTH_MASK);
                 }
                 break;
-            case gl::State::DIRTY_BIT_DEPTH_TEST_ENABLED:
+            case gl::state::DIRTY_BIT_DEPTH_TEST_ENABLED:
                 mDirtyBits.set(DIRTY_BIT_STENCIL_DEPTH_FUNC);
                 break;
-            case gl::State::DIRTY_BIT_DEPTH_FUNC:
+            case gl::state::DIRTY_BIT_DEPTH_FUNC:
                 mDirtyBits.set(DIRTY_BIT_STENCIL_DEPTH_FUNC);
                 break;
-            case gl::State::DIRTY_BIT_STENCIL_TEST_ENABLED:
+            case gl::state::DIRTY_BIT_STENCIL_TEST_ENABLED:
                 mDirtyBits.set(DIRTY_BIT_STENCIL_TEST_ENABLED);
                 // If we enable the stencil test, all of these must be set
                 mDirtyBits.set(DIRTY_BIT_STENCIL_WRITEMASK_BACK);
@@ -276,25 +276,25 @@ void StateManager9::syncState(const gl::State &state,
                 mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_FRONT);
                 mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_BACK);
                 break;
-            case gl::State::DIRTY_BIT_STENCIL_FUNCS_FRONT:
+            case gl::state::DIRTY_BIT_STENCIL_FUNCS_FRONT:
                 mDirtyBits.set(DIRTY_BIT_STENCIL_FUNCS_FRONT);
                 break;
-            case gl::State::DIRTY_BIT_STENCIL_FUNCS_BACK:
+            case gl::state::DIRTY_BIT_STENCIL_FUNCS_BACK:
                 mDirtyBits.set(DIRTY_BIT_STENCIL_FUNCS_BACK);
                 break;
-            case gl::State::DIRTY_BIT_STENCIL_WRITEMASK_FRONT:
+            case gl::state::DIRTY_BIT_STENCIL_WRITEMASK_FRONT:
                 mDirtyBits.set(DIRTY_BIT_STENCIL_WRITEMASK_FRONT);
                 break;
-            case gl::State::DIRTY_BIT_STENCIL_WRITEMASK_BACK:
+            case gl::state::DIRTY_BIT_STENCIL_WRITEMASK_BACK:
                 mDirtyBits.set(DIRTY_BIT_STENCIL_WRITEMASK_BACK);
                 break;
-            case gl::State::DIRTY_BIT_STENCIL_OPS_FRONT:
+            case gl::state::DIRTY_BIT_STENCIL_OPS_FRONT:
                 mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_FRONT);
                 break;
-            case gl::State::DIRTY_BIT_STENCIL_OPS_BACK:
+            case gl::state::DIRTY_BIT_STENCIL_OPS_BACK:
                 mDirtyBits.set(DIRTY_BIT_STENCIL_OPS_BACK);
                 break;
-            case gl::State::DIRTY_BIT_SCISSOR_TEST_ENABLED:
+            case gl::state::DIRTY_BIT_SCISSOR_TEST_ENABLED:
                 if (state.isScissorTestEnabled() != mCurScissorEnabled)
                 {
                     mDirtyBits.set(DIRTY_BIT_SCISSOR_ENABLED);
@@ -302,16 +302,16 @@ void StateManager9::syncState(const gl::State &state,
                     mDirtyBits.set(DIRTY_BIT_SCISSOR_RECT);
                 }
                 break;
-            case gl::State::DIRTY_BIT_SCISSOR:
+            case gl::state::DIRTY_BIT_SCISSOR:
                 if (state.getScissor() != mCurScissorRect)
                 {
                     mDirtyBits.set(DIRTY_BIT_SCISSOR_RECT);
                 }
                 break;
-            case gl::State::DIRTY_BIT_DEPTH_RANGE:
+            case gl::state::DIRTY_BIT_DEPTH_RANGE:
                 mDirtyBits.set(DIRTY_BIT_VIEWPORT);
                 break;
-            case gl::State::DIRTY_BIT_VIEWPORT:
+            case gl::state::DIRTY_BIT_VIEWPORT:
                 if (state.getViewport() != mCurViewport)
                 {
                     mDirtyBits.set(DIRTY_BIT_VIEWPORT);

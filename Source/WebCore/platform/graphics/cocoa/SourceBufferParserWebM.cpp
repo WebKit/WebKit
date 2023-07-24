@@ -32,6 +32,7 @@
 #include "CMUtilities.h"
 #include "ContentType.h"
 #include "InbandTextTrackPrivate.h"
+#include "LibWebRTCMacros.h"
 #include "Logging.h"
 #include "MediaDescription.h"
 #include "MediaSampleAVFObjC.h"

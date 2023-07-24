@@ -12,5 +12,5 @@ assert.sameValue(afterEpoch.epochMicroseconds, 217175010_123_456n, "epochMicrose
 assert.sameValue(typeof afterEpoch.epochMicroseconds, "bigint", "epochMicroseconds value is a bigint");
 
 const beforeEpoch = new Temporal.Instant(-217175010_876_543_211n);
-assert.sameValue(beforeEpoch.epochMicroseconds, -217175010_876_543n, "epochMicroseconds pre epoch");
+assert.sameValue(beforeEpoch.epochMicroseconds, -217175010_876_544n, "epochMicroseconds pre epoch");
 assert.sameValue(typeof beforeEpoch.epochMicroseconds, "bigint", "epochMicroseconds value is a bigint");

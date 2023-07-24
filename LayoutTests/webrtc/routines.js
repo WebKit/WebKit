@@ -263,7 +263,7 @@ function getReceivedTrackStats(connection)
     return connection.getStats().then((report) => {
         var stats;
         report.forEach((statItem) => {
-            if (statItem.type === "track") {
+            if (statItem.type === "inbound-rtp") {
                 stats = statItem;
             }
         });

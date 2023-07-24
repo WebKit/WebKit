@@ -66,6 +66,7 @@ private:
 #if USE(GSTREAMER)
     // WebCore::RealtimeMediaSourceCenter::Observer
     void devicesChanged() final;
+    void deviceWillBeRemoved(const String& persistentId) final { }
 #endif
 
     void sendUserMediaRequest(WebCore::UserMediaRequest&);

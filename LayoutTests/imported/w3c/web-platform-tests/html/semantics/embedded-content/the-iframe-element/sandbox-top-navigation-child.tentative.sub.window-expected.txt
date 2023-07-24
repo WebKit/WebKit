@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+Blocked access to external URL https://google.com/
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+Blocked access to external URL https://google.com/
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+Blocked access to external URL https://google.com/
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+Blocked access to external URL https://google.com/
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object Event]
+Blocked access to external URL https://google.com/
+
+PASS A same-origin frame with delivered sandbox flags can navigate top
+PASS A same-origin frame with frame sandbox flags can navigate top
+PASS A same-origin unsandboxed frame can navigate top
+PASS A frame with both top navigation delivered sandbox flags uses the less     restrictive one
+PASS A frame with both top navigation frame sandbox flags uses the less     restrictive one
+

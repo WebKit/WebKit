@@ -114,7 +114,7 @@ Go to [https://webrtc.googlesource.com/src][webrtc-repo-link].
 
 We have put sample applications [here][examples-link].
 
-[examples-link]: https://webrtc.googlesource.com/src/+/main/docs/native-code/development/index.md#example-applications
+[examples-link]: https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/development/README.md#example-applications
 
 
 ### Are WebRTC components subject to change?
@@ -133,7 +133,7 @@ feature set.
 Please see [Getting Started][getting-started-link] and
 [Contributing bug fixes][contributing-link] for more information.
 
-[getting-started-link]: https://webrtc.googlesource.com/src/+/main/docs/native-code/development/index.md
+[getting-started-link]: https://webrtc.googlesource.com/src/+/main/docs/native-code/development/
 [contributing-link]: https://webrtc.org/support/contributing
 
 

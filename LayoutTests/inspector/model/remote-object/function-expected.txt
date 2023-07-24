@@ -4,7 +4,7 @@ EXPRESSION: (function(){})
 {
   "_type": "function",
   "_objectId": "<filtered>",
-  "_description": "function (){}"
+  "_description": "function(){}"
 }
 
 -----------------------------------------------------
@@ -52,7 +52,7 @@ EXPRESSION: Object.getOwnPropertyDescriptor({ get getter() { return 1 } }, "gett
 {
   "_type": "function",
   "_objectId": "<filtered>",
-  "_description": "function () { return 1 }"
+  "_description": "get getter() { return 1 }"
 }
 
 -----------------------------------------------------
@@ -60,6 +60,6 @@ EXPRESSION: Object.getOwnPropertyDescriptor({ set setter(v) { console.log(v); } 
 {
   "_type": "function",
   "_objectId": "<filtered>",
-  "_description": "function (v) { console.log(v); }"
+  "_description": "set setter(v) { console.log(v); }"
 }
 

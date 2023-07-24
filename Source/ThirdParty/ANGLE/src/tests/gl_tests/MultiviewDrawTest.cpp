@@ -7,7 +7,7 @@
 // Test issuing multiview Draw* commands.
 //
 
-#include "platform/FeaturesD3D_autogen.h"
+#include "platform/autogen/FeaturesD3D_autogen.h"
 #include "test_utils/MultiviewTest.h"
 #include "test_utils/gl_raii.h"
 

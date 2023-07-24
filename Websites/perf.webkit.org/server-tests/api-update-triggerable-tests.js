@@ -20,16 +20,16 @@ describe('/api/update-triggerable/', function () {
         'configurations': [],
     };
 
-    function createUpdateWithRepetitionTypes(supportedRepetitionTypes) {
+    function createUpdateWithCustomization(supportedRepetitionTypes, testParameters) {
         return {
             'workerName': 'someWorker',
             'workerPassword': 'somePassword',
             'triggerable': 'build-webkit',
-            'configurations': [{test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes}],
+            'configurations': [{test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes, testParameters}],
         }
     }
 
-    const smallUpdate = createUpdateWithRepetitionTypes(['alternating', 'sequential']);
+    const smallUpdate = createUpdateWithCustomization(['alternating', 'sequential']);
 
     it('should reject when worker name is missing', () => {
         return TestServer.remoteAPI().postJSON('/api/update-triggerable/', {}).then((response) => {
@@ -475,7 +475,7 @@ describe('/api/update-triggerable/', function () {
     it('should allow adding "paired-parallel" repetition type to triggerable configuration', async () => {
         const db = TestServer.database();
         await MockData.addMockData(db);
-        const initialUpdate = createUpdateWithRepetitionTypes(['alternating', 'sequential']);
+        const initialUpdate = createUpdateWithCustomization(['alternating', 'sequential']);
         await addWorkerForReport(initialUpdate);
         await TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable', initialUpdate);
 
@@ -483,11 +483,39 @@ describe('/api/update-triggerable/', function () {
         assert.strictEqual(rows.length, 2);
         assert.deepEqual(rows.map(row => row.type).sort(), ['alternating', 'sequential']);
 
-        const updateWithParallelRepetition = createUpdateWithRepetitionTypes(['alternating', 'sequential', 'paired-parallel']);
+        const updateWithParallelRepetition = createUpdateWithCustomization(['alternating', 'sequential', 'paired-parallel']);
         await TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable', updateWithParallelRepetition);
         rows = await db.selectAll('triggerable_configuration_repetition_types', 'type');
         assert.strictEqual(rows.length, 3);
         assert.deepEqual(rows.map(row => row.type).sort(), ['alternating', 'paired-parallel', 'sequential']);
+    });
+
+    it('should throw "InvalidTestParameterName" while updating triggerable configuration with invalid test parameter name', async () => {
+        const db = TestServer.database();
+        await MockData.addMockDataWithBuildAndTestTypeTestParameterSets(db);
+        const update = createUpdateWithCustomization(['alternating', 'sequential'], ['Invalid']);
+        await addWorkerForReport(update);
+
+        assertThrows('InvalidTestParameterName',
+            async() => TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable', update));
+    });
+
+    it('should allow update test parameters to triggerable configuration', async () => {
+        const db = TestServer.database();
+        await MockData.addMockDataWithBuildAndTestTypeTestParameterSets(db);
+        const initialUpdate = createUpdateWithCustomization(['alternating', 'sequential'], [1]);
+        await addWorkerForReport(initialUpdate);
+        await TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable', initialUpdate);
+
+        let rows = await db.selectAll('triggerable_configuration_test_parameters', 'parameter');
+        assert.strictEqual(rows.length, 1);
+        assert.deepEqual(rows.map(row => row.parameter), [1]);
+
+        const updateWithExtraTestParameters = createUpdateWithCustomization(['alternating', 'sequential'], [1, 2, 3]);
+        await TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable', updateWithExtraTestParameters);
+        rows = await db.selectAll('triggerable_configuration_test_parameters', 'parameter');
+        assert.strictEqual(rows.length, 3);
+        assert.deepEqual(rows.map(row => row.parameter), [1, 2, 3]);
     });
 
     it('should allow updating an empty triggerable', async () => {
@@ -500,7 +528,7 @@ describe('/api/update-triggerable/', function () {
         let rows = await db.selectAll('triggerable_configuration_repetition_types', 'type');
         assert.strictEqual(rows.length, 0);
 
-        const updateWithParallelRepetition = createUpdateWithRepetitionTypes(['alternating', 'sequential', 'paired-parallel']);
+        const updateWithParallelRepetition = createUpdateWithCustomization(['alternating', 'sequential', 'paired-parallel']);
         await TestServer.remoteAPI().postJSONWithStatus('/api/update-triggerable', updateWithParallelRepetition);
         rows = await db.selectAll('triggerable_configuration_repetition_types', 'type');
         assert.strictEqual(rows.length, 3);

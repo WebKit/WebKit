@@ -1,3 +1,3 @@
 
-PASS Only trailing *block* margins should affect overflow
+FAIL Scrollable container with orthogonal writing-mode child with inline-end margin assert_equals: expected 300 but got 100
 

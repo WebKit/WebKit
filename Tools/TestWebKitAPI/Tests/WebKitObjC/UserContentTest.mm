@@ -51,19 +51,16 @@ namespace {
     class WebKit2UserContentTest : public ::testing::Test {
     public:
         RetainPtr<WKProcessGroup> processGroup;
-        RetainPtr<WKBrowsingContextGroup> browsingContextGroup;
 
         WebKit2UserContentTest() = default;
         
         virtual void SetUp()
         {
             processGroup = adoptNS([[WKProcessGroup alloc] init]);
-            browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"UserContentIdentifier"]);
         }
         
         virtual void TearDown()
         {
-            browsingContextGroup = nullptr;
             processGroup = nullptr;
         }
     };

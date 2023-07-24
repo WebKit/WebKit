@@ -10,13 +10,13 @@ layer at (0,0) size 800x600
             text run at (326,0) width 305: "If it were a large collection of inlines, the page would "
             text run at (630,0) width 77: "hang forever."
           RenderInline {A} at (0,0) size 0x15
-      RenderBlock (anonymous) at (0,32) size 784x46
-        RenderBlock {H2} at (0,0) size 784x25
-          RenderInline {A} at (0,0) size 168x24
-            RenderText {#text} at (0,0) size 168x24
-              text run at (0,0) width 168: "Table of Contents"
-        RenderTable {TABLE} at (0,41) size 4x5
+      RenderBlock (anonymous) at (0,32) size 784x45
+        RenderBlock {H2} at (0,0) size 784x24
+          RenderInline {A} at (0,0) size 164x23
+            RenderText {#text} at (0,0) size 164x23
+              text run at (0,0) width 164: "Table of Contents"
+        RenderTable {TABLE} at (0,40) size 4x5
           RenderTableSection {TBODY} at (0,0) size 4x4
             RenderTableRow {TR} at (0,2) size 4x0
-      RenderBlock (anonymous) at (0,77) size 784x0
+      RenderBlock (anonymous) at (0,76) size 784x0
         RenderInline {FONT} at (0,0) size 0x0

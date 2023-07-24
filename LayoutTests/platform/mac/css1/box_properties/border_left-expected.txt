@@ -160,4 +160,4 @@ layer at (0,0) size 785x1028
                     text run at (50,18) width 630: "The first item's border should travel the entire height the nested list (to end near the baseline of the"
                     text run at (3,36) width 638: "line \"...nested within the list item.\"), even though the nested list does not have any border styles set."
 layer at (8,160) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,152) size 769x2 [color=#808080] [border: (1px inset #808080)]

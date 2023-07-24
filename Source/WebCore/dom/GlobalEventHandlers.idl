@@ -105,7 +105,7 @@ interface mixin GlobalEventHandlers {
     // Non-standard additions.
 
     attribute EventHandler onmousewheel;
-    [NotEnumerable] attribute EventHandler onsearch;
+    [NotEnumerable, EnabledBySetting=SearchInputIncrementalAttributeAndSearchEventEnabled] attribute EventHandler onsearch;
     [NotEnumerable, Conditional=TOUCH_EVENTS, EnabledBySetting=TouchEventsEnabled] attribute EventHandler ontouchcancel;
     [NotEnumerable, Conditional=TOUCH_EVENTS, EnabledBySetting=TouchEventsEnabled] attribute EventHandler ontouchend;
     [NotEnumerable, Conditional=TOUCH_EVENTS, EnabledBySetting=TouchEventsEnabled] attribute EventHandler ontouchmove;

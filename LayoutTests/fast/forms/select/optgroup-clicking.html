@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body onload="test()">
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="../resources/common.js"></script>
 
 <form id="form">
@@ -62,6 +62,12 @@ function test()
     eventSender.mouseUp();
     shouldBe('$("listbox").selectedIndex', '1');
 
+    debug("\nClick on optgroup, should not deselect selectedIndex");
+    mouseMoveToIndexInListbox(0, 'listbox'); // Select on optgroup
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    shouldBe('$("listbox").selectedIndex', '1');
+
     debug("\nClick disabled option - doesn't change selectedIndex");
     mouseMoveToIndexInListbox(5 + 2, 'listbox'); // +2 for optgroup's
     eventSender.mouseDown();
@@ -78,6 +84,5 @@ function test()
     finishJSTest();
 }
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -40,10 +40,13 @@ namespace WebCore {
 
 static double magnitudeToIntensity(double magnitude)
 {
-    // GameController doesn't use the intensity as-is and values below 0.1 would end up
-    // not triggering any gamepad vibration. Per GameController developers, we should
-    // pass sqrt(magnitude) to address this issue.
-    return std::sqrt(std::clamp<double>(magnitude, 0, 1));
+    auto intensity = std::clamp<double>(magnitude, 0, 1);
+#if HAVE(GCCONTROLLER_REQUIRING_HAPTICS_SQUARING)
+    // Older versions of GameController didn't use the intensity as-is and required the values to
+    // be squared. Without this, values below 0.1 would end up not triggering any gamepad vibration.
+    intensity = std::sqrt(intensity);
+#endif
+    return intensity;
 }
 
 std::unique_ptr<GameControllerHapticEffect> GameControllerHapticEffect::create(GameControllerHapticEngines& engines, GamepadHapticEffectType type, const GamepadEffectParameters& parameters)

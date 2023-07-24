@@ -51,19 +51,6 @@ class EchoDetector;
 class CustomAudioAnalyzer;
 class CustomProcessing;
 
-// Use to enable experimental gain control (AGC). At startup the experimental
-// AGC moves the microphone volume up to `startup_min_volume` if the current
-// microphone volume is set too low. The value is clamped to its operating range
-// [12, 255]. Here, 255 maps to 100%.
-//
-// Must be provided through AudioProcessingBuilder().Create(config).
-#if defined(WEBRTC_CHROMIUM_BUILD)
-static constexpr int kAgcStartupMinVolume = 85;
-#else
-static constexpr int kAgcStartupMinVolume = 0;
-#endif  // defined(WEBRTC_CHROMIUM_BUILD)
-static constexpr int kClippedLevelMin = 70;
-
 // The Audio Processing Module (APM) provides a collection of voice processing
 // components designed for real-time communications software.
 //
@@ -94,11 +81,12 @@ static constexpr int kClippedLevelMin = 70;
 //      setter.
 //
 // APM accepts only linear PCM audio data in chunks of ~10 ms (see
-// AudioProcessing::GetFrameSize() for details). The int16 interfaces use
-// interleaved data, while the float interfaces use deinterleaved data.
+// AudioProcessing::GetFrameSize() for details) and sample rates ranging from
+// 8000 Hz to 384000 Hz. The int16 interfaces use interleaved data, while the
+// float interfaces use deinterleaved data.
 //
 // Usage example, omitting error checking:
-// AudioProcessing* apm = AudioProcessingBuilder().Create();
+// rtc::scoped_refptr<AudioProcessing> apm = AudioProcessingBuilder().Create();
 //
 // AudioProcessing::Config config;
 // config.echo_canceller.enabled = true;
@@ -115,9 +103,6 @@ static constexpr int kClippedLevelMin = 70;
 // config.high_pass_filter.enabled = true;
 //
 // apm->ApplyConfig(config)
-//
-// apm->noise_reduction()->set_level(kHighSuppression);
-// apm->noise_reduction()->Enable(true);
 //
 // // Start a voice call...
 //
@@ -140,7 +125,7 @@ static constexpr int kClippedLevelMin = 70;
 // apm->Initialize();
 //
 // // Close the application...
-// delete apm;
+// apm.reset();
 //
 class RTC_EXPORT AudioProcessing : public rtc::RefCountInterface {
  public:
@@ -161,6 +146,12 @@ class RTC_EXPORT AudioProcessing : public rtc::RefCountInterface {
   struct RTC_EXPORT Config {
     // Sets the properties of the audio processing pipeline.
     struct RTC_EXPORT Pipeline {
+      // Ways to downmix a multi-channel track to mono.
+      enum class DownmixMethod {
+        kAverageChannels,  // Average across channels.
+        kUseFirstChannel   // Use the first channel.
+      };
+
       // Maximum allowed processing rate used internally. May only be set to
       // 32000 or 48000 and any differing values will be treated as 48000.
       int maximum_internal_processing_rate = 48000;
@@ -169,6 +160,9 @@ class RTC_EXPORT AudioProcessing : public rtc::RefCountInterface {
       // Allow multi-channel processing of capture audio when AEC3 is active
       // or a custom AEC is injected..
       bool multi_channel_capture = false;
+      // Indicates how to downmix multi-channel capture audio to mono (when
+      // needed).
+      DownmixMethod capture_downmix_method = DownmixMethod::kAverageChannels;
     } pipeline;
 
     // Enabled the pre-amplifier. It amplifies the capture signal
@@ -287,11 +281,11 @@ class RTC_EXPORT AudioProcessing : public rtc::RefCountInterface {
       // Enables the analog gain controller functionality.
       struct AnalogGainController {
         bool enabled = true;
-        // TODO(bugs.webrtc.org/1275566): Describe `startup_min_volume`.
-        int startup_min_volume = kAgcStartupMinVolume;
+        // TODO(bugs.webrtc.org/7494): Deprecated. Stop using and remove.
+        int startup_min_volume = 0;
         // Lowest analog microphone level that will be applied in response to
         // clipping.
-        int clipped_level_min = kClippedLevelMin;
+        int clipped_level_min = 70;
         // If true, an adaptive digital gain is applied.
         bool enable_digital_adaptive = true;
         // Amount the microphone level is lowered with every clipping event.
@@ -334,42 +328,56 @@ class RTC_EXPORT AudioProcessing : public rtc::RefCountInterface {
       } analog_gain_controller;
     } gain_controller1;
 
-    // Enables the next generation AGC functionality. This feature replaces the
-    // standard methods of gain control in the previous AGC. Enabling this
-    // submodule enables an adaptive digital AGC followed by a limiter. By
-    // setting `fixed_gain_db`, the limiter can be turned into a compressor that
-    // first applies a fixed gain. The adaptive digital AGC can be turned off by
-    // setting |adaptive_digital_mode=false|.
+    // Parameters for AGC2, an Automatic Gain Control (AGC) sub-module which
+    // replaces the AGC sub-module parametrized by `gain_controller1`.
+    // AGC2 brings the captured audio signal to the desired level by combining
+    // three different controllers (namely, input volume controller, adapative
+    // digital controller and fixed digital controller) and a limiter.
+    // TODO(bugs.webrtc.org:7494): Name `GainController` when AGC1 removed.
     struct RTC_EXPORT GainController2 {
       bool operator==(const GainController2& rhs) const;
       bool operator!=(const GainController2& rhs) const {
         return !(*this == rhs);
       }
 
+      // AGC2 must be created if and only if `enabled` is true.
       bool enabled = false;
-      struct FixedDigital {
-        float gain_db = 0.0f;
-      } fixed_digital;
+
+      // Parameters for the input volume controller, which adjusts the input
+      // volume applied when the audio is captured (e.g., microphone volume on
+      // a soundcard, input volume on HAL).
+      struct InputVolumeController {
+        bool operator==(const InputVolumeController& rhs) const;
+        bool operator!=(const InputVolumeController& rhs) const {
+          return !(*this == rhs);
+        }
+        bool enabled = false;
+      } input_volume_controller;
+
+      // Parameters for the adaptive digital controller, which adjusts and
+      // applies a digital gain after echo cancellation and after noise
+      // suppression.
       struct RTC_EXPORT AdaptiveDigital {
         bool operator==(const AdaptiveDigital& rhs) const;
         bool operator!=(const AdaptiveDigital& rhs) const {
           return !(*this == rhs);
         }
-
         bool enabled = false;
-        // When true, the adaptive digital controller runs but the signal is not
-        // modified.
-        bool dry_run = false;
         float headroom_db = 6.0f;
-        // TODO(bugs.webrtc.org/7494): Consider removing and inferring from
-        // `max_output_noise_level_dbfs`.
         float max_gain_db = 30.0f;
         float initial_gain_db = 8.0f;
-        int vad_reset_period_ms = 1500;
-        int adjacent_speech_frames_threshold = 12;
         float max_gain_change_db_per_second = 3.0f;
         float max_output_noise_level_dbfs = -50.0f;
       } adaptive_digital;
+
+      // Parameters for the fixed digital controller, which applies a fixed
+      // digital gain after the adaptive digital controller and before the
+      // limiter.
+      struct FixedDigital {
+        // By setting `gain_db` to a value greater than zero, the limiter can be
+        // turned into a compressor that first applies a fixed gain.
+        float gain_db = 0.0f;
+      } fixed_digital;
     } gain_controller2;
 
     std::string ToString() const;
@@ -589,9 +597,10 @@ class RTC_EXPORT AudioProcessing : public rtc::RefCountInterface {
   // HAL. Must be within the range [0, 255].
   virtual void set_stream_analog_level(int level) = 0;
 
-  // When an analog mode is set, this should be called after ProcessStream()
-  // to obtain the recommended new analog level for the audio HAL. It is the
-  // user's responsibility to apply this level.
+  // When an analog mode is set, this should be called after
+  // `set_stream_analog_level()` and `ProcessStream()` to obtain the recommended
+  // new analog level for the audio HAL. It is the user's responsibility to
+  // apply this level.
   virtual int recommended_stream_analog_level() const = 0;
 
   // This must be called if and only if echo processing is enabled.

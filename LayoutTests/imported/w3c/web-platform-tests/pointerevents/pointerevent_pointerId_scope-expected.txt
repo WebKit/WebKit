@@ -1,0 +1,15 @@
+Pointer Events pointerdown tests
+
+Complete the following actions:
+Start with your pointing device outside of black box, then move it into black box. If using touch just press in black box and don't release.
+Move your pointing device into purple box (without leaving the digitizer range if you are using hover supported pen or without releasing touch if using touch). Then move it out of the purple box.
+
+The following pointer types were detected: mouse.
+
+Refresh the page to run the tests again with a different pointer type.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT pointerId of an active pointer is the same across iframes Test timed out
+

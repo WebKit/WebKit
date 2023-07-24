@@ -1,5 +1,5 @@
-<?% config.freshness.reviewed = '2021-05-13' %?>
-<?% config.freshness.owner = 'hta' %?>
+<!-- go/cmark -->
+<!--* freshness: {owner: 'hta' reviewed: '2021-05-13'} *-->
 
 # SRTP in WebRTC
 

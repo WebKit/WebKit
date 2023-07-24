@@ -46,7 +46,7 @@ typedef struct _WebKitMediaCommonEncryptionDecryptPrivate WebKitMediaCommonEncry
 
 GType webkit_media_common_encryption_decrypt_get_type(void);
 
-bool webKitMediaCommonEncryptionDecryptIsFlushing(WebKitMediaCommonEncryptionDecrypt*);
+bool webKitMediaCommonEncryptionDecryptIsAborting(WebKitMediaCommonEncryptionDecrypt*);
 
 struct _WebKitMediaCommonEncryptionDecrypt {
     GstBaseTransform parent;

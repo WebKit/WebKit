@@ -21,6 +21,7 @@
 #include "api/array_view.h"
 #include "api/rtp_packet_info.h"
 #include "api/rtp_packet_infos.h"
+#include "api/units/timestamp.h"
 #include "audio/utility/audio_frame_operations.h"
 #include "modules/audio_mixer/gain_change_calculator.h"
 #include "modules/audio_mixer/sine_wave_generator.h"
@@ -36,8 +37,6 @@ namespace {
 using ::testing::ElementsAreArray;
 using ::testing::IsEmpty;
 using ::testing::UnorderedElementsAreArray;
-
-using LimiterType = FrameCombiner::LimiterType;
 
 struct FrameCombinerConfig {
   bool use_limiter;
@@ -69,18 +68,15 @@ AudioFrame frame1;
 AudioFrame frame2;
 
 void SetUpFrames(int sample_rate_hz, int number_of_channels) {
-  RtpPacketInfo packet_info1(
-      /*ssrc=*/1001, /*csrcs=*/{}, /*rtp_timestamp=*/1000,
-      /*audio_level=*/absl::nullopt, /*absolute_capture_time=*/absl::nullopt,
-      /*receive_time_ms=*/1);
-  RtpPacketInfo packet_info2(
-      /*ssrc=*/4004, /*csrcs=*/{}, /*rtp_timestamp=*/1234,
-      /*audio_level=*/absl::nullopt, /*absolute_capture_time=*/absl::nullopt,
-      /*receive_time_ms=*/2);
-  RtpPacketInfo packet_info3(
-      /*ssrc=*/7007, /*csrcs=*/{}, /*rtp_timestamp=*/1333,
-      /*audio_level=*/absl::nullopt, /*absolute_capture_time=*/absl::nullopt,
-      /*receive_time_ms=*/2);
+  RtpPacketInfo packet_info1(/*ssrc=*/1001, /*csrcs=*/{},
+                             /*rtp_timestamp=*/1000,
+                             /*receive_time=*/Timestamp::Millis(1));
+  RtpPacketInfo packet_info2(/*ssrc=*/4004, /*csrcs=*/{},
+                             /*rtp_timestamp=*/1234,
+                             /*receive_time=*/Timestamp::Millis(2));
+  RtpPacketInfo packet_info3(/*ssrc=*/7007, /*csrcs=*/{},
+                             /*rtp_timestamp=*/1333,
+                             /*receive_time=*/Timestamp::Millis(2));
 
   frame1.packet_infos_ = RtpPacketInfos({packet_info1});
   frame2.packet_infos_ = RtpPacketInfos({packet_info2, packet_info3});

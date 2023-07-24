@@ -41,25 +41,23 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteMediaSessionHelper::RemoteMediaSessionHelper(WebProcess& process)
-    : m_process(process)
-{
-}
+RemoteMediaSessionHelper::RemoteMediaSessionHelper() = default;
 
 IPC::Connection& RemoteMediaSessionHelper::ensureConnection()
 {
-    if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = m_process.ensureGPUProcessConnection();
-        m_gpuProcessConnection->addClient(*this);
-        m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSessionHelper::messageReceiverName(), *this);
-        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::EnsureMediaSessionHelper(), { });
+    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    if (!gpuProcessConnection) {
+        gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
+        m_gpuProcessConnection = gpuProcessConnection;
+        gpuProcessConnection->addClient(*this);
+        gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSessionHelper::messageReceiverName(), *this);
+        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::EnsureMediaSessionHelper(), { });
     }
-    return m_gpuProcessConnection->connection();
+    return gpuProcessConnection->connection();
 }
 
 void RemoteMediaSessionHelper::gpuProcessConnectionDidClose(GPUProcessConnection& gpuProcessConnection)
 {
-    gpuProcessConnection.removeClient(*this);
     gpuProcessConnection.messageReceiverMap().removeMessageReceiver(*this);
     m_gpuProcessConnection = nullptr;
 }
@@ -74,8 +72,9 @@ void RemoteMediaSessionHelper::stopMonitoringWirelessRoutesInternal()
     ensureConnection().send(Messages::RemoteMediaSessionHelperProxy::StopMonitoringWirelessRoutes(), { });
 }
 
-void RemoteMediaSessionHelper::providePresentingApplicationPID(int pid)
+void RemoteMediaSessionHelper::providePresentingApplicationPID(int pid, ShouldOverride shouldOverride)
 {
+    ASSERT_UNUSED(shouldOverride, shouldOverride == ShouldOverride::No);
     ensureConnection().send(Messages::RemoteMediaSessionHelperProxy::ProvidePresentingApplicationPID(pid), { });
 }
 

@@ -20,6 +20,7 @@
 namespace dcsctp {
 namespace {
 using ::testing::_;
+using ::testing::Field;
 using ::testing::MockFunction;
 using ::testing::NiceMock;
 
@@ -118,7 +119,14 @@ TEST_F(TaskQueueTimeoutTest, KilledBeforeExpired) {
 
 TEST(TaskQueueTimeoutWithMockTaskQueueTest, CanSetTimeoutPrecisionToLow) {
   NiceMock<webrtc::MockTaskQueueBase> mock_task_queue;
-  EXPECT_CALL(mock_task_queue, PostDelayedTask(_, _));
+  EXPECT_CALL(
+      mock_task_queue,
+      PostDelayedTaskImpl(
+          _, _,
+          Field(
+              &webrtc::MockTaskQueueBase::PostDelayedTaskTraits::high_precision,
+              false),
+          _));
   TaskQueueTimeoutFactory factory(
       mock_task_queue, []() { return TimeMs(1337); },
       [](TimeoutID timeout_id) {});
@@ -129,7 +137,14 @@ TEST(TaskQueueTimeoutWithMockTaskQueueTest, CanSetTimeoutPrecisionToLow) {
 
 TEST(TaskQueueTimeoutWithMockTaskQueueTest, CanSetTimeoutPrecisionToHigh) {
   NiceMock<webrtc::MockTaskQueueBase> mock_task_queue;
-  EXPECT_CALL(mock_task_queue, PostDelayedHighPrecisionTask(_, _));
+  EXPECT_CALL(
+      mock_task_queue,
+      PostDelayedTaskImpl(
+          _, _,
+          Field(
+              &webrtc::MockTaskQueueBase::PostDelayedTaskTraits::high_precision,
+              true),
+          _));
   TaskQueueTimeoutFactory factory(
       mock_task_queue, []() { return TimeMs(1337); },
       [](TimeoutID timeout_id) {});
@@ -140,7 +155,14 @@ TEST(TaskQueueTimeoutWithMockTaskQueueTest, CanSetTimeoutPrecisionToHigh) {
 
 TEST(TaskQueueTimeoutWithMockTaskQueueTest, TimeoutPrecisionIsLowByDefault) {
   NiceMock<webrtc::MockTaskQueueBase> mock_task_queue;
-  EXPECT_CALL(mock_task_queue, PostDelayedTask(_, _));
+  EXPECT_CALL(
+      mock_task_queue,
+      PostDelayedTaskImpl(
+          _, _,
+          Field(
+              &webrtc::MockTaskQueueBase::PostDelayedTaskTraits::high_precision,
+              false),
+          _));
   TaskQueueTimeoutFactory factory(
       mock_task_queue, []() { return TimeMs(1337); },
       [](TimeoutID timeout_id) {});

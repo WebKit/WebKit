@@ -10,9 +10,10 @@
 #include "test/scenario/network_node.h"
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 
-#include <memory>
+#include "absl/cleanup/cleanup.h"
 #include "rtc_base/net_helper.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
@@ -28,8 +29,6 @@ SimulatedNetwork::Config CreateSimulationConfig(
   sim_config.queue_delay_ms = config.delay.ms();
   sim_config.delay_standard_deviation_ms = config.delay_std_dev.ms();
   sim_config.packet_overhead = config.packet_overhead.bytes<int>();
-  sim_config.codel_active_queue_management =
-      config.codel_active_queue_management;
   sim_config.queue_length_packets =
       config.packet_queue_length_limit.value_or(0);
   return sim_config;
@@ -129,13 +128,25 @@ void NetworkNodeTransport::Connect(EmulatedEndpoint* endpoint,
     current_network_route_ = route;
   }
 
-  sender_call_->GetTransportControllerSend()->OnNetworkRouteChanged(
-      kDummyTransportName, route);
+  // Must be called from the worker thread.
+  rtc::Event event;
+  auto cleanup = absl::MakeCleanup([&event] { event.Set(); });
+  auto&& task = [this, &route, cleanup = std::move(cleanup)] {
+    sender_call_->GetTransportControllerSend()->OnNetworkRouteChanged(
+        kDummyTransportName, route);
+  };
+  if (!sender_call_->worker_thread()->IsCurrent()) {
+    sender_call_->worker_thread()->PostTask(std::move(task));
+  } else {
+    std::move(task)();
+  }
+  event.Wait(TimeDelta::Seconds(1));
 }
 
 void NetworkNodeTransport::Disconnect() {
   MutexLock lock(&mutex_);
   current_network_route_.connected = false;
+
   sender_call_->GetTransportControllerSend()->OnNetworkRouteChanged(
       kDummyTransportName, current_network_route_);
   current_network_route_ = {};

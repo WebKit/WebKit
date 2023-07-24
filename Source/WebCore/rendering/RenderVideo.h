@@ -76,6 +76,7 @@ private:
     void paintReplaced(PaintInfo&, const LayoutPoint&) final;
 
     void layout() final;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
     void visibleInViewportStateChanged() final;
 

@@ -225,6 +225,7 @@ if (rtc_include_tests) {
       ":mock_context",
       ":packet_sender",
       ":stream_reset_handler",
+      ":transmission_control_block",
       "../../../api:array_view",
       "../../../api:create_network_emulation_manager",
       "../../../api:network_emulation_manager_api",
@@ -273,6 +274,7 @@ if (rtc_include_tests) {
       "packet_sender_test.cc",
       "state_cookie_test.cc",
       "stream_reset_handler_test.cc",
+      "transmission_control_block_test.cc",
     ]
   }
 }

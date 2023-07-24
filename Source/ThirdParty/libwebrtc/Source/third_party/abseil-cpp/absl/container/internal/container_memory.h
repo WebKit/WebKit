@@ -17,6 +17,7 @@
 
 #include <cassert>
 #include <cstddef>
+#include <cstring>
 #include <memory>
 #include <new>
 #include <tuple>
@@ -164,7 +165,7 @@ decltype(std::declval<F>()(std::declval<T>())) WithConstructed(
       std::forward<F>(f));
 }
 
-// Given arguments of an std::pair's consructor, PairArgs() returns a pair of
+// Given arguments of an std::pair's constructor, PairArgs() returns a pair of
 // tuples with references to the passed arguments. The tuples contain
 // constructor arguments for the first and the second elements of the pair.
 //
@@ -340,7 +341,8 @@ template <class K, class V>
 struct map_slot_policy {
   using slot_type = map_slot_type<K, V>;
   using value_type = std::pair<const K, V>;
-  using mutable_value_type = std::pair<K, V>;
+  using mutable_value_type =
+      std::pair<absl::remove_const_t<K>, absl::remove_const_t<V>>;
 
  private:
   static void emplace(slot_type* slot) {
@@ -424,6 +426,16 @@ struct map_slot_policy {
   static void transfer(Allocator* alloc, slot_type* new_slot,
                        slot_type* old_slot) {
     emplace(new_slot);
+#if defined(__cpp_lib_launder) && __cpp_lib_launder >= 201606
+    if (absl::is_trivially_relocatable<value_type>()) {
+      // TODO(b/247130232,b/251814870): remove casts after fixing warnings.
+      std::memcpy(static_cast<void*>(std::launder(&new_slot->value)),
+                  static_cast<const void*>(&old_slot->value),
+                  sizeof(value_type));
+      return;
+    }
+#endif
+
     if (kMutableKeys::value) {
       absl::allocator_traits<Allocator>::construct(
           *alloc, &new_slot->mutable_value, std::move(old_slot->mutable_value));

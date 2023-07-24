@@ -50,10 +50,7 @@
 #include "NotImplemented.h"
 #include "VideoTrackPrivateGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
-
-#if PLATFORM(WPE)
 #include <wtf/text/StringToIntegerConversion.h>
-#endif
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
 #define GST_CAT_DEFAULT webkit_mse_debug
@@ -138,7 +135,7 @@ void SourceBufferPrivateGStreamer::flush(const AtomString& trackId)
 
     // This is only for on-the-fly reenqueues after appends. When seeking, the seek will do its own flush.
 
-    if (!m_playerPrivate.hasAllTracks()) {
+    if (!m_mediaSource->hasAllTracks()) {
         GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Source element has not emitted tracks yet, so we only need to clear the queue. trackId = '%s'", trackId.string().utf8().data());
         MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
         track->clearQueue();
@@ -306,8 +303,8 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
                 Vector<String> keyvalue = entry.split(':');
                 if (keyvalue.size() != 2)
                     continue;
-                String key = keyvalue[0].stripWhiteSpace().convertToLowercaseWithoutLocale();
-                String value = keyvalue[1].stripWhiteSpace().convertToLowercaseWithoutLocale();
+                auto key = keyvalue[0].trim(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
+                auto value = keyvalue[1].trim(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
                 size_t units = 1;
                 if (value.endsWith('k'))
                     units = 1024;
@@ -380,5 +377,20 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
     return 0;
 }
 
+size_t SourceBufferPrivateGStreamer::platformEvictionThreshold() const
+{
+    static size_t evictionThreshold = 0;
+    static std::once_flag once;
+    std::call_once(once, []() {
+        auto stringView = StringView::fromLatin1(std::getenv("MSE_BUFFER_SAMPLES_EVICTION_THRESHOLD"));
+        if (!stringView.isEmpty())
+            evictionThreshold = parseInteger<size_t>(stringView, 10).value_or(0);
+    });
+    return evictionThreshold;
 }
-#endif
+
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)

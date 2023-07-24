@@ -9,9 +9,8 @@
  */
 
 #include <iostream>
-#include <vector>
-
 #include <memory>
+#include <vector>
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"

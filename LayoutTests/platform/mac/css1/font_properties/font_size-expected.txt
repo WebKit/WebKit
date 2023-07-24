@@ -1,8 +1,8 @@
-layer at (0,0) size 785x2824
+layer at (0,0) size 785x2812
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2824
-  RenderBlock {HTML} at (0,0) size 785x2824
-    RenderBody {BODY} at (8,8) size 769x2808 [bgcolor=#CCCCCC]
+layer at (0,0) size 785x2812
+  RenderBlock {HTML} at (0,0) size 785x2812
+    RenderBody {BODY} at (8,8) size 769x2796 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 363x18
           text run at (0,0) width 363: "The style declarations which apply to the text below are:"
@@ -59,11 +59,11 @@ layer at (0,0) size 785x2824
         RenderText {#text} at (236,0) size 368x18
           text run at (236,0) width 368: ", which may or may not be the same size as unstyled text."
       RenderBlock {P} at (0,436) size 769x23
-        RenderText {#text} at (0,0) size 376x22
-          text run at (0,0) width 376: "This sentence should be larger than unstyled text."
+        RenderText {#text} at (0,0) size 380x22
+          text run at (0,0) width 380: "This sentence should be larger than unstyled text."
       RenderBlock {P} at (0,477) size 769x16
-        RenderText {#text} at (0,0) size 265x15
-          text run at (0,0) width 265: "This sentence should be smaller than unstyled text."
+        RenderText {#text} at (0,0) size 272x15
+          text run at (0,0) width 272: "This sentence should be smaller than unstyled text."
       RenderBlock {P} at (0,505) size 769x19
         RenderText {#text} at (0,6) size 286x10
           text run at (0,6) width 286: "This sentence should be very small, but the last word in the sentence should be "
@@ -117,45 +117,45 @@ layer at (0,0) size 785x2824
         RenderText {#text} at (0,0) size 699x110
           text run at (0,0) width 699: "This sentence should be half an inch"
           text run at (0,55) width 74: "tall."
-      RenderBlock {P} at (0,1014) size 769x46
-        RenderText {#text} at (0,0) size 666x45
-          text run at (0,0) width 666: "This sentence should be one centimeter tall."
-      RenderBlock {P} at (0,1097) size 769x46
-        RenderText {#text} at (0,0) size 671x45
-          text run at (0,0) width 671: "This sentence should be ten millimeters tall."
-      RenderBlock {P} at (0,1180) size 769x29
+      RenderBlock {P} at (0,1014) size 769x44
+        RenderText {#text} at (0,0) size 663x43
+          text run at (0,0) width 663: "This sentence should be one centimeter tall."
+      RenderBlock {P} at (0,1095) size 769x44
+        RenderText {#text} at (0,0) size 667x43
+          text run at (0,0) width 667: "This sentence should be ten millimeters tall."
+      RenderBlock {P} at (0,1176) size 769x29
         RenderText {#text} at (0,0) size 425x28
           text run at (0,0) width 425: "This sentence should be eighteen points tall."
-      RenderBlock {P} at (0,1232) size 769x29
+      RenderBlock {P} at (0,1228) size 769x29
         RenderText {#text} at (0,0) size 494x28
           text run at (0,0) width 494: "This sentence should be one and one half picas tall."
-      RenderBlock {P} at (0,1292) size 769x38
+      RenderBlock {P} at (0,1288) size 769x38
         RenderText {#text} at (0,0) size 467x37
           text run at (0,0) width 467: "This sentence should be two em tall."
-      RenderBlock {P} at (0,1361) size 769x27
-        RenderText {#text} at (0,0) size 326x26
-          text run at (0,0) width 326: "This sentence should be three ex tall."
-      RenderBlock {P} at (0,1412) size 769x30
+      RenderBlock {P} at (0,1357) size 769x25
+        RenderText {#text} at (0,0) size 319x24
+          text run at (0,0) width 319: "This sentence should be three ex tall."
+      RenderBlock {P} at (0,1406) size 769x30
         RenderText {#text} at (0,0) size 471x29
           text run at (0,0) width 471: "This sentence should be twenty-five pixels tall."
-      RenderBlock {P} at (0,1473) size 769x38
+      RenderBlock {P} at (0,1467) size 769x38
         RenderText {#text} at (0,0) size 549x37
           text run at (0,0) width 549: "This sentence should be twice normal size."
-      RenderBlock {P} at (0,1542) size 769x19
+      RenderBlock {P} at (0,1536) size 769x19
         RenderText {#text} at (0,0) size 686x18
           text run at (0,0) width 686: "This sentence should be normal size, since no negative values are allowed and therefore should be ignored."
-      RenderTable {TABLE} at (0,1576) size 769x1232 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 767x1230
+      RenderTable {TABLE} at (0,1570) size 769x1226 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x1224
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 767x1204
-            RenderTableCell {TD} at (0,614) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 767x1198
+            RenderTableCell {TD} at (0,611) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,3) size 4x20
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 755x1204 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 755x1198 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x18
                 RenderText {#text} at (0,0) size 707x18
                   text run at (0,0) width 707: "This paragraph element is unstyled, so the size of the font in this element is the default size for this user agent."
@@ -168,11 +168,11 @@ layer at (0,0) size 785x2824
                 RenderText {#text} at (236,0) size 368x18
                   text run at (236,0) width 368: ", which may or may not be the same size as unstyled text."
               RenderBlock {P} at (4,75) size 747x23
-                RenderText {#text} at (0,0) size 376x22
-                  text run at (0,0) width 376: "This sentence should be larger than unstyled text."
+                RenderText {#text} at (0,0) size 380x22
+                  text run at (0,0) width 380: "This sentence should be larger than unstyled text."
               RenderBlock {P} at (4,116) size 747x16
-                RenderText {#text} at (0,0) size 265x15
-                  text run at (0,0) width 265: "This sentence should be smaller than unstyled text."
+                RenderText {#text} at (0,0) size 272x15
+                  text run at (0,0) width 272: "This sentence should be smaller than unstyled text."
               RenderBlock {P} at (4,144) size 747x19
                 RenderText {#text} at (0,6) size 286x10
                   text run at (0,6) width 286: "This sentence should be very small, but the last word in the sentence should be "
@@ -227,32 +227,32 @@ layer at (0,0) size 785x2824
                 RenderText {#text} at (0,0) size 699x110
                   text run at (0,0) width 699: "This sentence should be half an inch"
                   text run at (0,55) width 74: "tall."
-              RenderBlock {P} at (4,653) size 747x46
-                RenderText {#text} at (0,0) size 666x45
-                  text run at (0,0) width 666: "This sentence should be one centimeter tall."
-              RenderBlock {P} at (4,736) size 747x46
-                RenderText {#text} at (0,0) size 671x45
-                  text run at (0,0) width 671: "This sentence should be ten millimeters tall."
-              RenderBlock {P} at (4,819) size 747x29
+              RenderBlock {P} at (4,653) size 747x44
+                RenderText {#text} at (0,0) size 663x43
+                  text run at (0,0) width 663: "This sentence should be one centimeter tall."
+              RenderBlock {P} at (4,734) size 747x44
+                RenderText {#text} at (0,0) size 667x43
+                  text run at (0,0) width 667: "This sentence should be ten millimeters tall."
+              RenderBlock {P} at (4,815) size 747x29
                 RenderText {#text} at (0,0) size 425x28
                   text run at (0,0) width 425: "This sentence should be eighteen points tall."
-              RenderBlock {P} at (4,871) size 747x29
+              RenderBlock {P} at (4,867) size 747x29
                 RenderText {#text} at (0,0) size 494x28
                   text run at (0,0) width 494: "This sentence should be one and one half picas tall."
-              RenderBlock {P} at (4,931) size 747x38
+              RenderBlock {P} at (4,927) size 747x38
                 RenderText {#text} at (0,0) size 467x37
                   text run at (0,0) width 467: "This sentence should be two em tall."
-              RenderBlock {P} at (4,1000) size 747x27
-                RenderText {#text} at (0,0) size 326x26
-                  text run at (0,0) width 326: "This sentence should be three ex tall."
-              RenderBlock {P} at (4,1051) size 747x30
+              RenderBlock {P} at (4,996) size 747x25
+                RenderText {#text} at (0,0) size 319x24
+                  text run at (0,0) width 319: "This sentence should be three ex tall."
+              RenderBlock {P} at (4,1045) size 747x30
                 RenderText {#text} at (0,0) size 471x29
                   text run at (0,0) width 471: "This sentence should be twenty-five pixels tall."
-              RenderBlock {P} at (4,1112) size 747x38
+              RenderBlock {P} at (4,1106) size 747x38
                 RenderText {#text} at (0,0) size 549x37
                   text run at (0,0) width 549: "This sentence should be twice normal size."
-              RenderBlock {P} at (4,1181) size 747x19
+              RenderBlock {P} at (4,1175) size 747x19
                 RenderText {#text} at (0,0) size 686x18
                   text run at (0,0) width 686: "This sentence should be normal size, since no negative values are allowed and therefore should be ignored."
 layer at (8,355) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,347) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,347) size 769x2 [color=#808080] [border: (1px inset #808080)]

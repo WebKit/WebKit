@@ -261,13 +261,5 @@ template<> struct EnumTraits<WebCore::PreflightPolicy> {
     >;
 };
 
-template<> struct EnumTraits<WebCore::ServiceWorkersMode> {
-    using values = EnumValues<
-        WebCore::ServiceWorkersMode,
-        WebCore::ServiceWorkersMode::All,
-        WebCore::ServiceWorkersMode::None,
-        WebCore::ServiceWorkersMode::Only
-    >;
-};
 
 } // namespace WTF

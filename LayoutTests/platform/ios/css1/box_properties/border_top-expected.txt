@@ -149,4 +149,4 @@ layer at (0,0) size 800x1015
                   RenderText {#text} at (0,3) size 493x19
                     text run at (0,3) width 493: "Each list item in this list should have a medium-width black border at its top."
 layer at (8,113) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,105) size 784x2 [color=#808080] [border: (1px inset #808080)]

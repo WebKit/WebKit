@@ -4,6 +4,7 @@
 /*---
 esid: sec-applying-the-exp-operator
 description: If base is +0 and exponent < 0, the result is +∞.
+features: [exponentiation]
 ---*/
 
 

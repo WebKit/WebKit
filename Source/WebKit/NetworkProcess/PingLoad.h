@@ -40,7 +40,7 @@ class NetworkLoadChecker;
 class NetworkProcess;
 class NetworkSchemeRegistry;
 
-class PingLoad final : public CanMakeWeakPtr<PingLoad>, private NetworkDataTaskClient {
+class PingLoad final : public NetworkDataTaskClient {
 public:
     PingLoad(NetworkProcess&, PAL::SessionID, NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&);
     PingLoad(NetworkConnectionToWebProcess&, NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&);

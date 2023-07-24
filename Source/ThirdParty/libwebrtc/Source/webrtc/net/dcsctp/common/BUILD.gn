@@ -22,7 +22,10 @@ rtc_source_set("math") {
 }
 
 rtc_source_set("sequence_numbers") {
-  deps = [ ":internal_types" ]
+  deps = [
+    ":internal_types",
+    "../../../rtc_base:rtc_numerics",
+  ]
   sources = [ "sequence_numbers.h" ]
 }
 

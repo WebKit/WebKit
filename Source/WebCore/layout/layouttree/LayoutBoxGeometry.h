@@ -131,6 +131,7 @@ public:
 
     void setContentBoxHeight(LayoutUnit);
     void setContentBoxWidth(LayoutUnit);
+    void setContentBoxSize(const LayoutSize&);
 
     void setHorizontalMargin(HorizontalMargin);
     void setVerticalMargin(VerticalMargin);
@@ -164,13 +165,13 @@ private:
     void setHasValidBorder() { m_hasValidBorder = true; }
     void setHasValidPadding() { m_hasValidPadding = true; }
 
-    void setHasValidContentHeight() { m_hasValidContentHeight = true; }
-    void setHasValidContentWidth() { m_hasValidContentWidth = true; }
+    void setHasValidContentBoxHeight() { m_hasValidContentBoxHeight = true; }
+    void setHasValidContentBoxWidth() { m_hasValidContentBoxWidth = true; }
 #endif // ASSERT_ENABLED
 
     LayoutPoint m_topLeft;
-    LayoutUnit m_contentWidth;
-    LayoutUnit m_contentHeight;
+    LayoutUnit m_contentBoxWidth;
+    LayoutUnit m_contentBoxHeight;
 
     HorizontalMargin m_horizontalMargin;
     VerticalMargin m_verticalMargin;
@@ -188,8 +189,8 @@ private:
     bool m_hasValidVerticalMargin { false };
     bool m_hasValidBorder { false };
     bool m_hasValidPadding { false };
-    bool m_hasValidContentHeight { false };
-    bool m_hasValidContentWidth { false };
+    bool m_hasValidContentBoxHeight { false };
+    bool m_hasValidContentBoxWidth { false };
     bool m_hasPrecomputedMarginBefore { false };
 #endif // ASSERT_ENABLED
 };
@@ -249,29 +250,35 @@ inline void BoxGeometry::setLogicalLeft(LayoutUnit left)
 inline void BoxGeometry::setContentBoxHeight(LayoutUnit height)
 { 
 #if ASSERT_ENABLED
-    setHasValidContentHeight();
+    setHasValidContentBoxHeight();
 #endif
-    m_contentHeight = height;
+    m_contentBoxHeight = height;
 }
 
 inline void BoxGeometry::setContentBoxWidth(LayoutUnit width)
 { 
 #if ASSERT_ENABLED
-    setHasValidContentWidth();
+    setHasValidContentBoxWidth();
 #endif
-    m_contentWidth = width;
+    m_contentBoxWidth = width;
+}
+
+inline void BoxGeometry::setContentBoxSize(const LayoutSize& size)
+{
+    setContentBoxWidth(size.width());
+    setContentBoxHeight(size.height());
 }
 
 inline LayoutUnit BoxGeometry::contentBoxHeight() const
 {
-    ASSERT(m_hasValidContentHeight);
-    return m_contentHeight;
+    ASSERT(m_hasValidContentBoxHeight);
+    return m_contentBoxHeight;
 }
 
 inline LayoutUnit BoxGeometry::contentBoxWidth() const
 {
-    ASSERT(m_hasValidContentWidth);
-    return m_contentWidth;
+    ASSERT(m_hasValidContentBoxWidth);
+    return m_contentBoxWidth;
 }
 
 inline void BoxGeometry::setHorizontalMargin(HorizontalMargin margin)
@@ -443,8 +450,8 @@ inline BoxGeometry BoxGeometry::geometryForWritingModeAndDirection(bool isHorizo
     }
 
     // Vertical flip.
-    visualGeometry.m_contentWidth = m_contentHeight;
-    visualGeometry.m_contentHeight = m_contentWidth;
+    visualGeometry.m_contentBoxWidth = m_contentBoxHeight;
+    visualGeometry.m_contentBoxHeight = m_contentBoxWidth;
 
     visualGeometry.m_horizontalMargin = { m_verticalMargin.after, m_verticalMargin.before };
     visualGeometry.m_verticalMargin = { m_horizontalMargin.start, m_horizontalMargin.end };

@@ -37,6 +37,7 @@ class GitHub(bmocks.GitHub):
         self, remote='github.example.com/WebKit/WebKit', datafile=None,
         default_branch='main', git_svn=False, environment=None,
         releases=None, issues=None, projects=None, labels=None,
+        private=False,
     ):
         if not scmremote.GitHub.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid GitHub remote'.format(remote))
@@ -44,6 +45,7 @@ class GitHub(bmocks.GitHub):
         self.default_branch = default_branch
         self.remote = remote
         self.forks = []
+        self.private = private
 
         super(GitHub, self).__init__(remote, environment=environment, issues=issues, projects=projects, labels=labels)
 
@@ -122,11 +124,16 @@ class GitHub(bmocks.GitHub):
             'name': self.remote.split('/')[2],
             'url': url,
             'default_branch': self.default_branch,
+            'visibility': 'private' if self.private else 'public',
             'owner': {
                 'login': self.remote.split('/')[1],
             }, 'organization': {
                 'login': self.remote.split('/')[1],
             }, 'html_url': self.remote,
+            'security_and_analysis': {
+                'secret_scanning': dict(status='disabled'),
+                'secret_scanning_push_protection': dict(status='disabled'),
+            },
         }, url=url)
 
     def _list_refs_response(self, url, type):

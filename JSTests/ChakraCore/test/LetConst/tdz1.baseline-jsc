@@ -4,7 +4,7 @@ ReferenceError: Cannot access uninitialized variable.
 local x
 ReferenceError: Cannot access uninitialized variable.
 a is a string
-ReferenceError: Cannot access uninitialized variable.
+did not delete a
 did not delete a
 ReferenceError: Cannot access uninitialized variable.
 ReferenceError: Cannot access uninitialized variable.

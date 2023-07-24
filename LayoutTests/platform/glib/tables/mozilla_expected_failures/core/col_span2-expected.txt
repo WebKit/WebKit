@@ -1251,10 +1251,10 @@ layer at (0,0) size 785x5451
                 text run at (2,182) width 27: "auto"
                 text run at (2,200) width 27: "auto"
 layer at (8,802) size 202x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,794) size 202x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,794) size 202x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,890) size 202x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,882) size 202x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,882) size 202x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,1270) size 402x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,1262) size 402x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,1262) size 402x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,3808) size 602x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,3800) size 602x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,3800) size 602x2 [color=#808080] [border: (1px inset #808080)]

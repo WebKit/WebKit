@@ -31,12 +31,12 @@ static INLINE uint8x8_t vldh_dup_u8(const uint8_t *ptr) {
 
 // Store half of a vector.
 static INLINE void vsth_u16(uint16_t *ptr, uint16x4_t val) {
-  *((uint32_t *)ptr) = vreinterpret_u32_u16(val)[0];
+  vst1_lane_u32((uint32_t *)ptr, vreinterpret_u32_u16(val), 0);
 }
 
 // Store half of a vector.
 static INLINE void vsth_u8(uint8_t *ptr, uint8x8_t val) {
-  *((uint32_t *)ptr) = vreinterpret_u32_u8(val)[0];
+  vst1_lane_u32((uint32_t *)ptr, vreinterpret_u32_u8(val), 0);
 }
 
 static void cfl_luma_subsampling_420_lbd_neon(const uint8_t *input,
@@ -269,7 +269,7 @@ static INLINE void subtract_average_neon(const uint16_t *src, int16_t *dst,
   // unsigned integer for the sum, we can do one addition operation inside 16
   // bits (8 lanes) before having to convert to 32 bits (4 lanes).
   const uint16_t *sum_buf = src;
-  uint32x4_t sum_32x4 = { 0, 0, 0, 0 };
+  uint32x4_t sum_32x4 = vdupq_n_u32(0);
   do {
     // For all widths, we load, add and combine the data so it fits in 4 lanes.
     if (width == 4) {

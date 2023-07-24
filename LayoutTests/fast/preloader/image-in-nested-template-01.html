@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<body>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpResourceResponseMIMETypes();
+    }
+    </script>
+    This test requires DumpRenderTree to see the log of what resources are loaded.
+    <template>
+        <template></template>
+        <script src=resources/non-existant.js></script>
+        <script>document.write("<plaintext>");</script>
+        <!-- This test is copy of 'image-in-nested-template' with incorrect <image> tag -->
+        <image src=resources/image1.png>
+    </template>
+</body>

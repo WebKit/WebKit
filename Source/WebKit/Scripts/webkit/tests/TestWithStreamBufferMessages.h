@@ -54,9 +54,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:

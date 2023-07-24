@@ -232,6 +232,7 @@ int ssl_handle_open_record(SSL *ssl, bool *out_retry, ssl_open_record_t ret,
       return 1;
 
     case ssl_open_record_close_notify:
+      ssl->s3->rwstate = SSL_ERROR_ZERO_RETURN;
       return 0;
 
     case ssl_open_record_error:

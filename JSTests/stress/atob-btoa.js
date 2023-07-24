@@ -40,3 +40,4 @@ assert(atob(btoa(null)) === "null");
 assert(atob(btoa(undefined)) === "undefined");
 shouldThrow(() => { btoa("嗨"); }, "Error: Invalid character in argument for btoa.");
 shouldThrow(() => { btoa(); }, "Error: Missing input for btoa.");
+assert(atob("") === "");

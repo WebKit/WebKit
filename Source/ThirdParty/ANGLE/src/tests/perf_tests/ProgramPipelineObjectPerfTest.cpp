@@ -130,11 +130,11 @@ void ProgramPipelineObjectBenchmark::drawBenchmark()
     glUseProgramStages(mPpo, GL_VERTEX_SHADER_BIT, mVertProg2);
     glUseProgramStages(mPpo, GL_FRAGMENT_SHADER_BIT, mFragProg2);
 
-    // Set the output color to blue
-    location = glGetUniformLocation(mFragProg2, "greenColorIn");
+    // Set the output color to green
+    location = glGetUniformLocation(mFragProg2, "redColorIn");
     glActiveShaderProgram(mPpo, mFragProg2);
     glUniform1f(location, 0.0);
-    location = glGetUniformLocation(mFragProg2, "blueColorIn");
+    location = glGetUniformLocation(mFragProg2, "greenColorIn");
     glActiveShaderProgram(mPpo, mFragProg2);
     glUniform1f(location, 1.0);
 

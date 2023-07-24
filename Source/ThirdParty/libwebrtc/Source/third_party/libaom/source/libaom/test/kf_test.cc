@@ -84,8 +84,7 @@ class KeyFrameIntervalTestLarge
           is_kf_interval_violated_ = true;
         }
       }
-      if ((frame_flags & AOM_FRAME_IS_KEY) ==
-          static_cast<aom_codec_frame_flags_t>(AOM_FRAME_IS_KEY)) {
+      if ((frame_flags & AOM_FRAME_IS_KEY) == AOM_FRAME_IS_KEY) {
         if (kf_dist_ != -1 && kf_dist_ < (int)kf_dist_param_.min_kf_dist) {
           is_kf_interval_violated_ = true;
         }
@@ -186,8 +185,7 @@ class ForcedKeyTestLarge
         int frame_flags = 0;
         AOM_CODEC_CONTROL_TYPECHECKED(ctx_dec, AOMD_GET_FRAME_FLAGS,
                                       &frame_flags);
-        if ((frame_flags & AOM_FRAME_IS_KEY) !=
-            static_cast<aom_codec_frame_flags_t>(AOM_FRAME_IS_KEY)) {
+        if ((frame_flags & AOM_FRAME_IS_KEY) != AOM_FRAME_IS_KEY) {
           is_kf_placement_violated_ = true;
         }
       }

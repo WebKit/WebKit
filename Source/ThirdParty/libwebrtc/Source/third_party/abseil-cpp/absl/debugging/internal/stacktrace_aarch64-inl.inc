@@ -19,7 +19,7 @@
 #include "absl/debugging/internal/vdso_support.h"  // a no-op on non-elf or non-glibc systems
 #include "absl/debugging/stacktrace.h"
 
-static const uintptr_t kUnknownFrameSize = 0;
+static const size_t kUnknownFrameSize = 0;
 
 #if defined(__linux__)
 // Returns the address of the VDSO __kernel_rt_sigreturn function, if present.
@@ -65,11 +65,12 @@ static const unsigned char* GetKernelRtSigreturnAddress() {
 // Compute the size of a stack frame in [low..high).  We assume that
 // low < high.  Return size of kUnknownFrameSize.
 template<typename T>
-static inline uintptr_t ComputeStackFrameSize(const T* low,
-                                              const T* high) {
+static inline size_t ComputeStackFrameSize(const T* low,
+                                           const T* high) {
   const char* low_char_ptr = reinterpret_cast<const char *>(low);
   const char* high_char_ptr = reinterpret_cast<const char *>(high);
-  return low < high ? high_char_ptr - low_char_ptr : kUnknownFrameSize;
+  return low < high ? static_cast<size_t>(high_char_ptr - low_char_ptr)
+                    : kUnknownFrameSize;
 }
 
 // Given a pointer to a stack frame, locate and return the calling
@@ -117,8 +118,8 @@ static void **NextStackFrame(void **old_frame_pointer, const void *uc) {
   // Check frame size.  In strict mode, we assume frames to be under
   // 100,000 bytes.  In non-strict mode, we relax the limit to 1MB.
   if (check_frame_size) {
-    const uintptr_t max_size = STRICT_UNWINDING ? 100000 : 1000000;
-    const uintptr_t frame_size =
+    const size_t max_size = STRICT_UNWINDING ? 100000 : 1000000;
+    const size_t frame_size =
         ComputeStackFrameSize(old_frame_pointer, new_frame_pointer);
     if (frame_size == kUnknownFrameSize || frame_size > max_size)
       return nullptr;
@@ -137,41 +138,45 @@ static int UnwindImpl(void** result, int* sizes, int max_depth, int skip_count,
 #else
 # error reading stack point not yet supported on this platform.
 #endif
-
   skip_count++;    // Skip the frame for this function.
   int n = 0;
 
   // The frame pointer points to low address of a frame.  The first 64-bit
   // word of a frame points to the next frame up the call chain, which normally
   // is just after the high address of the current frame.  The second word of
-  // a frame contains return adress of to the caller.   To find a pc value
+  // a frame contains return address of to the caller.   To find a pc value
   // associated with the current frame, we need to go down a level in the call
   // chain.  So we remember return the address of the last frame seen.  This
   // does not work for the first stack frame, which belongs to UnwindImp() but
   // we skip the frame for UnwindImp() anyway.
   void* prev_return_address = nullptr;
+  // The nth frame size is the difference between the nth frame pointer and the
+  // the frame pointer below it in the call chain. There is no frame below the
+  // leaf frame, but this function is the leaf anyway, and we skip it.
+  void** prev_frame_pointer = nullptr;
 
-  while (frame_pointer && n < max_depth) {
-    // The absl::GetStackFrames routine is called when we are in some
-    // informational context (the failure signal handler for example).
-    // Use the non-strict unwinding rules to produce a stack trace
-    // that is as complete as possible (even if it contains a few bogus
-    // entries in some rare cases).
-    void **next_frame_pointer =
-        NextStackFrame<!IS_STACK_FRAMES, IS_WITH_CONTEXT>(frame_pointer, ucp);
-
+   while (frame_pointer && n < max_depth) {
     if (skip_count > 0) {
       skip_count--;
     } else {
       result[n] = prev_return_address;
       if (IS_STACK_FRAMES) {
-        sizes[n] = ComputeStackFrameSize(frame_pointer, next_frame_pointer);
+        sizes[n] = static_cast<int>(
+            ComputeStackFrameSize(prev_frame_pointer, frame_pointer));
       }
       n++;
     }
     prev_return_address = frame_pointer[1];
-    frame_pointer = next_frame_pointer;
+    prev_frame_pointer = frame_pointer;
+    // The absl::GetStackFrames routine is called when we are in some
+    // informational context (the failure signal handler for example).
+    // Use the non-strict unwinding rules to produce a stack trace
+    // that is as complete as possible (even if it contains a few bogus
+    // entries in some rare cases).
+    frame_pointer =
+        NextStackFrame<!IS_STACK_FRAMES, IS_WITH_CONTEXT>(frame_pointer, ucp);
   }
+
   if (min_dropped_frames != nullptr) {
     // Implementation detail: we clamp the max of frames we are willing to
     // count, so as not to spend too much time in the loop below.

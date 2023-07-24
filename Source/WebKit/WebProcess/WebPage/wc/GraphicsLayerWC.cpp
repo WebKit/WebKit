@@ -42,7 +42,7 @@ public:
     WCTiledBacking(GraphicsLayerWC& owner)
         : m_owner(owner) { }
 
-    bool paintAndFlush(WCLayerUpateInfo& update)
+    bool paintAndFlush(WCLayerUpdateInfo& update)
     {
         bool repainted = false;
         for (auto& entry : m_tileGrid.tiles()) {
@@ -402,6 +402,14 @@ void GraphicsLayerWC::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
     updateDebugIndicators();
 }
 
+void GraphicsLayerWC::setContentsToPlatformLayerHost(WebCore::LayerHostingContextIdentifier identifier)
+{
+    if (m_hostIdentifier && *m_hostIdentifier == identifier)
+        return;
+    m_hostIdentifier = identifier;
+    noteLayerPropertyChanged(WCLayerChange::RemoteFrame);
+}
+
 void GraphicsLayerWC::setContentsDisplayDelegate(RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate>&& displayDelegate, ContentsLayerPurpose purpose)
 {
     auto platformLayer = displayDelegate ? displayDelegate->platformLayer() : nullptr;
@@ -510,7 +518,7 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
 {
     if (!m_uncommittedChanges)
         return;
-    WCLayerUpateInfo update;
+    WCLayerUpdateInfo update;
     update.id = primaryLayerID();
     update.changes = std::exchange(m_uncommittedChanges, { });
     if (update.changes & WCLayerChange::Children) {
@@ -591,7 +599,9 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
             update.contentBufferIdentifiers = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->takeContentBufferIdentifiers();
 #endif
     }
-    m_observer->commitLayerUpateInfo(WTFMove(update));
+    if (update.changes & WCLayerChange::RemoteFrame)
+        update.hostIdentifier = m_hostIdentifier;
+    m_observer->commitLayerUpdateInfo(WTFMove(update));
 }
 
 TiledBacking* GraphicsLayerWC::tiledBacking() const

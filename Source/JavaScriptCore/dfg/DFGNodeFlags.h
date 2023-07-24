@@ -61,18 +61,20 @@ namespace JSC { namespace DFG {
 #define NodeBytecodeUseBottom            0x00000
 #define NodeBytecodeUsesAsNumber         0x04000 // The result of this computation may be used in a context that observes fractional, or bigger-than-int32, results.
 #define NodeBytecodeNeedsNegZero         0x08000 // The result of this computation may be used in a context that observes -0.
-#define NodeBytecodeUsesAsOther          0x10000 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
-#define NodeBytecodeUsesAsInt            0x20000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
-#define NodeBytecodeUsesAsArrayIndex     0x40000 // The result of this computation is known to be used in a context that strongly prefers integer values, to the point that we should avoid using doubles if at all possible.
-#define NodeBytecodeUsesAsValue          (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther)
-#define NodeBytecodeBackPropMask         (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex)
+#define NodeBytecodeNeedsNaNOrInfinity   0x10000 // The result of this computation may be used in a context that observes NaN or Infinity.
+#define NodeBytecodeUsesAsOther          0x20000 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
+#define NodeBytecodeUsesAsInt            0x40000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
+#define NodeBytecodePrefersArrayIndex    0x80000 // The result of this computation is known to be used in a context that strongly prefers integer values, to the point that we should avoid using doubles if at all possible.
+#define NodeBytecodeUsesAsArrayIndex     (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex)
+#define NodeBytecodeUsesAsValue          (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther)
+#define NodeBytecodeBackPropMask         (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex)
 
 #define NodeArithFlagsMask               (NodeBehaviorMask | NodeBytecodeBackPropMask)
 
-#define NodeIsFlushed                    0x80000 // Computed by CPSRethreadingPhase, will tell you which local nodes are backwards-reachable from a Flush.
+#define NodeIsFlushed                   0x100000 // Computed by CPSRethreadingPhase, will tell you which local nodes are backwards-reachable from a Flush.
 
-#define NodeMiscFlag1                   0x100000
-#define NodeMiscFlag2                   0x200000
+#define NodeMiscFlag1                   0x200000
+#define NodeMiscFlag2                   0x400000
 
 typedef uint32_t NodeFlags;
 
@@ -89,6 +91,11 @@ static inline bool bytecodeCanTruncateInteger(NodeFlags flags)
 static inline bool bytecodeCanIgnoreNegativeZero(NodeFlags flags)
 {
     return !(flags & NodeBytecodeNeedsNegZero);
+}
+
+static inline bool bytecodeCanIgnoreNaNAndInfinity(NodeFlags flags)
+{
+    return !(flags & NodeBytecodeNeedsNaNOrInfinity);
 }
 
 enum RareCaseProfilingSource {

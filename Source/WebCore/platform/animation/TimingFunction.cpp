@@ -41,9 +41,19 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
 {
     switch (timingFunction.type()) {
-    case TimingFunction::Type::LinearFunction:
-        ts << "linear";
+    case TimingFunction::Type::LinearFunction: {
+        auto& function = downcast<LinearTimingFunction>(timingFunction);
+        ts << "linear(";
+        for (size_t i = 0; i < function.points().size(); ++i) {
+            if (i)
+                ts << ", ";
+
+            const auto& point = function.points()[i];
+            ts << point.value << ' ' << point.progress * 100.0 << '%';
+        }
+        ts << ")";
         break;
+    }
     case TimingFunction::Type::CubicBezierFunction: {
         auto& function = downcast<CubicBezierTimingFunction>(timingFunction);
         ts << "cubic-bezier(" << function.x1() << ", " << function.y1() << ", " <<  function.x2() << ", " << function.y2() << ")";
@@ -138,8 +148,26 @@ double TimingFunction::transformProgress(double progress, double duration, bool 
         auto& function = downcast<SpringTimingFunction>(*this);
         return SpringSolver(function.mass(), function.stiffness(), function.damping(), function.initialVelocity()).solve(progress * duration);
     }
-    case Type::LinearFunction:
-        return progress;
+    case Type::LinearFunction: {
+        auto& function = downcast<LinearTimingFunction>(*this);
+
+        auto& points = function.points();
+        if (points.size() < 2)
+            return progress;
+
+        auto i = points.reverseFindIf([&] (auto& point) {
+            return point.progress <= progress;
+        });
+        if (i == notFound)
+            i = 0;
+        else if (i == points.size() - 1)
+            --i;
+
+        if (points[i].progress == points[i + 1].progress)
+            return points[i + 1].value;
+
+        return points[i].value + ((progress - points[i].progress) / (points[i + 1].progress - points[i].progress) * (points[i + 1].value - points[i].value));
+    }
     }
 
     ASSERT_NOT_REACHED();
@@ -180,6 +208,10 @@ RefPtr<TimingFunction> TimingFunction::createFromCSSValue(const CSSValue& value)
         }
     }
 
+    if (is<CSSLinearTimingFunctionValue>(value)) {
+        auto& linearTimingFunction = downcast<CSSLinearTimingFunctionValue>(value);
+        return LinearTimingFunction::create(linearTimingFunction.points());
+    }
     if (is<CSSCubicBezierTimingFunctionValue>(value)) {
         auto& cubicTimingFunction = downcast<CSSCubicBezierTimingFunctionValue>(value);
         return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::Custom, cubicTimingFunction.x1(), cubicTimingFunction.y1(), cubicTimingFunction.x2(), cubicTimingFunction.y2());
@@ -198,6 +230,12 @@ RefPtr<TimingFunction> TimingFunction::createFromCSSValue(const CSSValue& value)
 
 String TimingFunction::cssText() const
 {
+    if (type() == Type::LinearFunction) {
+        auto& function = downcast<LinearTimingFunction>(*this);
+        if (function.points().isEmpty())
+            return "linear"_s;
+    }
+
     if (type() == Type::CubicBezierFunction) {
         auto& function = downcast<CubicBezierTimingFunction>(*this);
         if (function.x1() == 0.25 && function.y1() == 0.1 && function.x2() == 0.25 && function.y2() == 1.0)

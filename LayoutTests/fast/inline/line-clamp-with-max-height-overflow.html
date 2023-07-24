@@ -1,0 +1,16 @@
+<style>
+.container {
+  width: 300px;
+  font-family: Monospace;
+}
+.line_clamp {
+  -webkit-line-clamp: 2;
+  max-height: 50px;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+}
+</style>
+<div class="container">
+  <div class=line_clamp>This is a long text. PASS if there's no content overflow after the ellipsis long long long long long long long long long</div>
+</div>

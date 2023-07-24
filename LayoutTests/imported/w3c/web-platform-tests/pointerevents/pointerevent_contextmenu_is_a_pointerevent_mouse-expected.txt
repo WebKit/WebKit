@@ -1,0 +1,8 @@
+
+
+FAIL contextmenu is a PointerEvent assert_equals: contextmenu should use a PointerEvent constructor expected function "function PointerEvent() {
+    [native code]
+}" but got function "function MouseEvent() {
+    [native code]
+}"
+

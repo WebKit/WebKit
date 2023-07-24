@@ -36,6 +36,9 @@
 namespace WebCore {
 
 class FlexItem;
+namespace LayoutIntegration {
+class FlexLayout;
+}
     
 class RenderFlexibleBox : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderFlexibleBox);
@@ -89,7 +92,7 @@ public:
     // be laid out again.
     bool setStaticPositionForPositionedLayout(const RenderBox&);
 
-    enum class GapType { BetweenLines, BetweenItems };
+    enum class GapType : uint8_t { BetweenLines, BetweenItems };
     LayoutUnit computeGap(GapType) const;
 
     bool shouldApplyMinBlockSizeAutoForChild(const RenderBox&) const;
@@ -103,19 +106,19 @@ protected:
 
 private:
     friend class FlexLayoutAlgorithm;
-    enum FlexSign {
+    enum class FlexSign : uint8_t {
         PositiveFlexibility,
         NegativeFlexibility,
     };
     
-    enum ChildLayoutType { LayoutIfNeeded, ForceLayout, NeverLayout };
+    enum class ChildLayoutType : uint8_t { LayoutIfNeeded, ForceLayout, NeverLayout };
     
-    enum class SizeDefiniteness { Definite, Indefinite, Unknown };
+    enum class SizeDefiniteness : uint8_t { Definite, Indefinite, Unknown };
     
     // Use an inline capacity of 8, since flexbox containers usually have less than 8 children.
     typedef Vector<LayoutRect, 8> ChildFrameRects;
 
-    struct LineContext;
+    struct LineState;
     
     bool mainAxisIsChildInlineAxis(const RenderBox&) const;
     bool isColumnFlow() const;
@@ -195,7 +198,7 @@ private:
     bool isChildEligibleForMarginTrim(MarginTrimType, const RenderBox&) const final;
     bool hasAutoMarginsInCrossAxis(const RenderBox& child) const;
     bool updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUnit availableAlignmentSpace);
-    void repositionLogicalHeightDependentFlexItems(Vector<LineContext>&, LayoutUnit gapBetweenLines);
+    void repositionLogicalHeightDependentFlexItems(Vector<LineState>&, LayoutUnit gapBetweenLines);
     
     LayoutUnit availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, const RenderBox& child);
     LayoutUnit marginBoxAscentForChild(const RenderBox& child);
@@ -213,13 +216,13 @@ private:
     void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox& child);
     void setOverridingMainSizeForChild(RenderBox&, LayoutUnit);
     void prepareChildForPositionedLayout(RenderBox& child);
-    void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>&, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineContext>&, LayoutUnit gapBetweenItems);
+    void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>&, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineState>&, LayoutUnit gapBetweenItems);
     void layoutColumnReverse(const Vector<FlexItem>&, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems);
-    void alignFlexLines(Vector<LineContext>&, LayoutUnit gapBetweenLines);
-    void alignChildren(const Vector<LineContext>&);
+    void alignFlexLines(Vector<LineState>&, LayoutUnit gapBetweenLines);
+    void alignChildren(const Vector<LineState>&);
     void applyStretchAlignmentToChild(RenderBox& child, LayoutUnit lineCrossAxisExtent);
-    void flipForRightToLeftColumn(const Vector<LineContext>& lineContexts);
-    void flipForWrapReverse(const Vector<LineContext>&, LayoutUnit crossAxisStartEdge);
+    void flipForRightToLeftColumn(const Vector<LineState>& linesState);
+    void flipForWrapReverse(const Vector<LineState>&, LayoutUnit crossAxisStartEdge);
     
     void appendChildFrameRects(ChildFrameRects&);
     void repaintChildrenDuringLayoutIfMoved(const ChildFrameRects&);
@@ -261,6 +264,8 @@ private:
     bool m_inLayout { false };
     bool m_shouldResetChildLogicalHeightBeforeLayout { false };
     bool m_isComputingFlexBaseSizes { false };
+
+    std::unique_ptr<LayoutIntegration::FlexLayout> m_modernFlexLayout;
 };
 
 } // namespace WebCore

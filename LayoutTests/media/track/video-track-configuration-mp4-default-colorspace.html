@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>video-track-configuration-mp4-default-colorspace</title>
+	<script src="../video-test.js"></script>
+	<script>
+    window.addEventListener('load', async event => {
+      findMediaElement();
+      run('video.src = "../content/video-as-img.mp4"');
+      const timeout = 100;
+      await waitFor(video, 'canplay');
+      await testExpectedEventually('video.videoTracks.length', 1, '==', timeout);
+      await testExpectedEventually('video.videoTracks[0].configuration.colorSpace.matrix', null, '!=', timeout);
+      await testExpectedEventually('video.videoTracks[0].configuration.colorSpace.primaries', null, '!=', timeout);
+      await testExpectedEventually('video.videoTracks[0].configuration.colorSpace.transfer', null, '!=', timeout);
+      endTest();
+		});
+	</script>
+</head>
+<body>
+	<video controls></video>
+</body>
+</html>

@@ -13,7 +13,6 @@
 
 #include <openssl/err.h>
 #include <openssl/mem.h>
-#include <openssl/type_check.h>
 
 #include "../internal.h"
 
@@ -30,9 +29,7 @@
 // A block_t is a Salsa20 block.
 typedef struct { uint32_t words[16]; } block_t;
 
-OPENSSL_STATIC_ASSERT(sizeof(block_t) == 64, "block_t has padding");
-
-#define R(a, b) (((a) << (b)) | ((a) >> (32 - (b))))
+static_assert(sizeof(block_t) == 64, "block_t has padding");
 
 // salsa208_word_specification implements the Salsa20/8 core function, also
 // described in RFC 7914, section 3. It modifies the block at |inout|
@@ -42,38 +39,38 @@ static void salsa208_word_specification(block_t *inout) {
   OPENSSL_memcpy(&x, inout, sizeof(x));
 
   for (int i = 8; i > 0; i -= 2) {
-    x.words[4] ^= R(x.words[0] + x.words[12], 7);
-    x.words[8] ^= R(x.words[4] + x.words[0], 9);
-    x.words[12] ^= R(x.words[8] + x.words[4], 13);
-    x.words[0] ^= R(x.words[12] + x.words[8], 18);
-    x.words[9] ^= R(x.words[5] + x.words[1], 7);
-    x.words[13] ^= R(x.words[9] + x.words[5], 9);
-    x.words[1] ^= R(x.words[13] + x.words[9], 13);
-    x.words[5] ^= R(x.words[1] + x.words[13], 18);
-    x.words[14] ^= R(x.words[10] + x.words[6], 7);
-    x.words[2] ^= R(x.words[14] + x.words[10], 9);
-    x.words[6] ^= R(x.words[2] + x.words[14], 13);
-    x.words[10] ^= R(x.words[6] + x.words[2], 18);
-    x.words[3] ^= R(x.words[15] + x.words[11], 7);
-    x.words[7] ^= R(x.words[3] + x.words[15], 9);
-    x.words[11] ^= R(x.words[7] + x.words[3], 13);
-    x.words[15] ^= R(x.words[11] + x.words[7], 18);
-    x.words[1] ^= R(x.words[0] + x.words[3], 7);
-    x.words[2] ^= R(x.words[1] + x.words[0], 9);
-    x.words[3] ^= R(x.words[2] + x.words[1], 13);
-    x.words[0] ^= R(x.words[3] + x.words[2], 18);
-    x.words[6] ^= R(x.words[5] + x.words[4], 7);
-    x.words[7] ^= R(x.words[6] + x.words[5], 9);
-    x.words[4] ^= R(x.words[7] + x.words[6], 13);
-    x.words[5] ^= R(x.words[4] + x.words[7], 18);
-    x.words[11] ^= R(x.words[10] + x.words[9], 7);
-    x.words[8] ^= R(x.words[11] + x.words[10], 9);
-    x.words[9] ^= R(x.words[8] + x.words[11], 13);
-    x.words[10] ^= R(x.words[9] + x.words[8], 18);
-    x.words[12] ^= R(x.words[15] + x.words[14], 7);
-    x.words[13] ^= R(x.words[12] + x.words[15], 9);
-    x.words[14] ^= R(x.words[13] + x.words[12], 13);
-    x.words[15] ^= R(x.words[14] + x.words[13], 18);
+    x.words[4] ^= CRYPTO_rotl_u32(x.words[0] + x.words[12], 7);
+    x.words[8] ^= CRYPTO_rotl_u32(x.words[4] + x.words[0], 9);
+    x.words[12] ^= CRYPTO_rotl_u32(x.words[8] + x.words[4], 13);
+    x.words[0] ^= CRYPTO_rotl_u32(x.words[12] + x.words[8], 18);
+    x.words[9] ^= CRYPTO_rotl_u32(x.words[5] + x.words[1], 7);
+    x.words[13] ^= CRYPTO_rotl_u32(x.words[9] + x.words[5], 9);
+    x.words[1] ^= CRYPTO_rotl_u32(x.words[13] + x.words[9], 13);
+    x.words[5] ^= CRYPTO_rotl_u32(x.words[1] + x.words[13], 18);
+    x.words[14] ^= CRYPTO_rotl_u32(x.words[10] + x.words[6], 7);
+    x.words[2] ^= CRYPTO_rotl_u32(x.words[14] + x.words[10], 9);
+    x.words[6] ^= CRYPTO_rotl_u32(x.words[2] + x.words[14], 13);
+    x.words[10] ^= CRYPTO_rotl_u32(x.words[6] + x.words[2], 18);
+    x.words[3] ^= CRYPTO_rotl_u32(x.words[15] + x.words[11], 7);
+    x.words[7] ^= CRYPTO_rotl_u32(x.words[3] + x.words[15], 9);
+    x.words[11] ^= CRYPTO_rotl_u32(x.words[7] + x.words[3], 13);
+    x.words[15] ^= CRYPTO_rotl_u32(x.words[11] + x.words[7], 18);
+    x.words[1] ^= CRYPTO_rotl_u32(x.words[0] + x.words[3], 7);
+    x.words[2] ^= CRYPTO_rotl_u32(x.words[1] + x.words[0], 9);
+    x.words[3] ^= CRYPTO_rotl_u32(x.words[2] + x.words[1], 13);
+    x.words[0] ^= CRYPTO_rotl_u32(x.words[3] + x.words[2], 18);
+    x.words[6] ^= CRYPTO_rotl_u32(x.words[5] + x.words[4], 7);
+    x.words[7] ^= CRYPTO_rotl_u32(x.words[6] + x.words[5], 9);
+    x.words[4] ^= CRYPTO_rotl_u32(x.words[7] + x.words[6], 13);
+    x.words[5] ^= CRYPTO_rotl_u32(x.words[4] + x.words[7], 18);
+    x.words[11] ^= CRYPTO_rotl_u32(x.words[10] + x.words[9], 7);
+    x.words[8] ^= CRYPTO_rotl_u32(x.words[11] + x.words[10], 9);
+    x.words[9] ^= CRYPTO_rotl_u32(x.words[8] + x.words[11], 13);
+    x.words[10] ^= CRYPTO_rotl_u32(x.words[9] + x.words[8], 18);
+    x.words[12] ^= CRYPTO_rotl_u32(x.words[15] + x.words[14], 7);
+    x.words[13] ^= CRYPTO_rotl_u32(x.words[12] + x.words[15], 9);
+    x.words[14] ^= CRYPTO_rotl_u32(x.words[13] + x.words[12], 13);
+    x.words[15] ^= CRYPTO_rotl_u32(x.words[14] + x.words[13], 18);
   }
 
   for (int i = 0; i < 16; ++i) {
@@ -173,14 +170,13 @@ int EVP_PBE_scrypt(const char *password, size_t password_len,
 
   // Allocate and divide up the scratch space. |max_mem| fits in a size_t, which
   // is no bigger than uint64_t, so none of these operations may overflow.
-  OPENSSL_STATIC_ASSERT(UINT64_MAX >= ((size_t)-1), "size_t exceeds uint64_t");
+  static_assert(UINT64_MAX >= ((size_t)-1), "size_t exceeds uint64_t");
   size_t B_blocks = p * 2 * r;
   size_t B_bytes = B_blocks * sizeof(block_t);
   size_t T_blocks = 2 * r;
   size_t V_blocks = N * 2 * r;
   block_t *B = OPENSSL_malloc((B_blocks + T_blocks + V_blocks) * sizeof(block_t));
   if (B == NULL) {
-    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
     return 0;
   }
 

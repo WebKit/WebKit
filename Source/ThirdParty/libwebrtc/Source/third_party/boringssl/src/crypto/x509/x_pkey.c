@@ -66,41 +66,46 @@
 #include "../internal.h"
 
 
-X509_PKEY *X509_PKEY_new(void)
-{
-    X509_PKEY *ret = OPENSSL_malloc(sizeof(X509_PKEY));
-    if (ret == NULL) {
-        OPENSSL_PUT_ERROR(X509, ERR_R_MALLOC_FAILURE);
-        goto err;
-    }
-    OPENSSL_memset(ret, 0, sizeof(X509_PKEY));
+X509_PKEY *X509_PKEY_new(void) {
+  X509_PKEY *ret = OPENSSL_malloc(sizeof(X509_PKEY));
+  if (ret == NULL) {
+    goto err;
+  }
+  OPENSSL_memset(ret, 0, sizeof(X509_PKEY));
 
-    ret->enc_algor = X509_ALGOR_new();
-    if (ret->enc_algor == NULL)
-        goto err;
-    ret->enc_pkey = ASN1_OCTET_STRING_new();
-    if (ret->enc_pkey == NULL)
-        goto err;
-    return ret;
+  ret->enc_algor = X509_ALGOR_new();
+  if (ret->enc_algor == NULL) {
+    goto err;
+  }
+  ret->enc_pkey = ASN1_OCTET_STRING_new();
+  if (ret->enc_pkey == NULL) {
+    goto err;
+  }
+  return ret;
 
- err:
-    if (ret != NULL)
-        X509_PKEY_free(ret);
-    return NULL;
+err:
+  if (ret != NULL) {
+    X509_PKEY_free(ret);
+  }
+  return NULL;
 }
 
-void X509_PKEY_free(X509_PKEY *x)
-{
-    if (x == NULL)
-        return;
+void X509_PKEY_free(X509_PKEY *x) {
+  if (x == NULL) {
+    return;
+  }
 
-    if (x->enc_algor != NULL)
-        X509_ALGOR_free(x->enc_algor);
-    if (x->enc_pkey != NULL)
-        ASN1_OCTET_STRING_free(x->enc_pkey);
-    if (x->dec_pkey != NULL)
-        EVP_PKEY_free(x->dec_pkey);
-    if ((x->key_data != NULL) && (x->key_free))
-        OPENSSL_free(x->key_data);
-    OPENSSL_free(x);
+  if (x->enc_algor != NULL) {
+    X509_ALGOR_free(x->enc_algor);
+  }
+  if (x->enc_pkey != NULL) {
+    ASN1_OCTET_STRING_free(x->enc_pkey);
+  }
+  if (x->dec_pkey != NULL) {
+    EVP_PKEY_free(x->dec_pkey);
+  }
+  if ((x->key_data != NULL) && (x->key_free)) {
+    OPENSSL_free(x->key_data);
+  }
+  OPENSSL_free(x);
 }

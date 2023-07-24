@@ -29,15 +29,15 @@
 
 #include "RemoteGPUProxy.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUPresentationContext.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUPresentationContext.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 class RemoteTextureProxy;
 
-class RemotePresentationContextProxy final : public PAL::WebGPU::PresentationContext {
+class RemotePresentationContextProxy final : public WebCore::WebGPU::PresentationContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemotePresentationContextProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -66,7 +66,7 @@ private:
 
     static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
-    WARN_UNUSED_RETURN bool send(T&& message)
+    WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
@@ -76,10 +76,10 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    void configure(const PAL::WebGPU::CanvasConfiguration&) final;
+    void configure(const WebCore::WebGPU::CanvasConfiguration&) final;
     void unconfigure() final;
 
-    RefPtr<PAL::WebGPU::Texture> getCurrentTexture() final;
+    RefPtr<WebCore::WebGPU::Texture> getCurrentTexture() final;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

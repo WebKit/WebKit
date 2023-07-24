@@ -251,6 +251,46 @@
             "issue": "http://anglebug.com/7573"
         },
         {
+            "name": "always_use_staged_buffer_updates",
+            "category": "Features",
+            "description": [
+                "Always update buffers by copying the data to a staging buffer and then blitting it to the actual buffer"
+            ],
+            "issue": "http://anglebug.com/7544"
+        },
+        {
+            "name": "use_shadow_buffers_when_appropriate",
+            "category": "Features",
+            "description": [
+                "On some architectures using a shadow buffer can be faster for certain size buffers"
+            ],
+            "issue": "http://anglebug.com/7544"
+        },
+        {
+            "name": "always_use_managed_storage_mode_for_buffers",
+            "category": "Features",
+            "description": [
+                "Metal buffers can be managed, shared, or private. Sometimes managed is fastest"
+            ],
+            "issue": "http://anglebug.com/7544"
+        },
+        {
+            "name": "always_use_shared_storage_mode_for_buffers",
+            "category": "Features",
+            "description": [
+                "Metal buffers can be managed, shared, or private. Sometimes shared is fastest"
+            ],
+            "issue": "http://anglebug.com/7544"
+        },
+        {
+            "name": "prefer_cpu_for_buffersubdata",
+            "category": "Features",
+            "description": [
+                "Makes bufferSubData always update via CPU"
+            ],
+            "issue": "http://anglebug.com/7544"
+        },
+        {
             "name": "disable_programmable_blending",
             "category": "Features",
             "description": [
@@ -323,6 +363,47 @@
                 "generate shaders."
             ],
             "issue": "http://crbug.com/1423136"
+        },
+        {
+            "name": "print_metal_shaders",
+            "category": "Features",
+            "description": [
+                "Prints the source to a shader before it's compiled."
+            ],
+            "issue": "http://crbug.com/1423136"
+        },
+        {
+            "name": "generate_shareable_shaders",
+            "category": "Features",
+            "description": [
+                "Attempts to generate shaders that are shareable. More specifically, shaders",
+                " end up with conditionals that are decided at run time via input parameters vs",
+                " compile time. This results in bigger shaders."
+            ],
+            "issue": "http://crbug.com/1423136"
+        },
+        {
+            "name": "disable_metal_on_gpu_family_1",
+            "category": "Features",
+            "description": [
+                "GPUs that don't support Mac GPU family 2 or greater are unsupported by the Metal backend."
+            ],
+            "issue": "http://anglebug.com/7952"
+        },
+        {
+            "name": "disable_metal_on_nvidia",
+            "category": "Features",
+            "description": [
+                "NVIDIA GPUs are unsupported due to scarcity of the hardware."
+            ],
+            "issue": "http://anglebug.com/8170"
+        },
+        {
+            "name": "flush_after_stream_vertex_data",
+            "category": "Features",
+            "description": [
+                "Flush after calls to StreamVertexData to work around driver bugs."
+            ]
         }
     ]
 }

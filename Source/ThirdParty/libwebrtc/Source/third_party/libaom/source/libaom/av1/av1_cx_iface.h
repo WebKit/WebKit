@@ -39,10 +39,6 @@ void av1_destroy_context_and_bufferpool(AV1_COMP *cpi,
 
 int av1_get_image_bps(const aom_image_t *img);
 
-void av1_reduce_ratio(aom_rational64_t *ratio);
-
-int av1_gcd(int64_t a, int b);
-
 #ifdef __cplusplus
 }  // extern "C"
 #endif

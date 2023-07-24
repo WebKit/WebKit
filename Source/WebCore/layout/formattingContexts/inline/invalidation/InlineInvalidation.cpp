@@ -218,25 +218,30 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
         return candidatePosition;
     }
     auto candidateInlineItem = inlineItems[candidatePosition.index];
-    if (&candidateInlineItem.layoutBox() != &damagedContent.layoutBox || !is<InlineTextItem>(candidateInlineItem))
+    if (&candidateInlineItem.layoutBox() != &damagedContent.layoutBox || (!is<InlineTextItem>(candidateInlineItem) && !is<InlineSoftLineBreakItem>(candidateInlineItem)))
         return candidatePosition;
-    auto& inlineTextItem = downcast<InlineTextItem>(candidateInlineItem);
     if (!damagedContent.offset) {
         // When damage points to "after" the layout box, whatever InlineItem we found is surely before the damage.
         return candidatePosition;
     }
-    if (inlineTextItem.start() + candidatePosition.offset <= *damagedContent.offset)
+
+    auto startPosition = [&](auto& inlineItem) {
+        return is<InlineTextItem>(inlineItem) ? downcast<InlineTextItem>(inlineItem).start() : downcast<InlineSoftLineBreakItem>(inlineItem).position();
+    };
+
+    if (startPosition(candidateInlineItem) + candidatePosition.offset <= *damagedContent.offset)
         return candidatePosition;
+
     // The damage offset is in front of the first display box we managed to find for this layout box.
     // Let's adjust the candidate position by moving it over to the damaged offset.
     for (auto index = candidatePosition.index; index--;) {
-        if (&candidateInlineItem.layoutBox() != &inlineItems[index].layoutBox()) {
+        auto& previousInlineItem = inlineItems[index];
+        if (&candidateInlineItem.layoutBox() != &previousInlineItem.layoutBox()) {
             // We should stay on the same layout box.
             ASSERT_NOT_REACHED();
             return { };
         }
-        auto& previousInlineItem = downcast<InlineTextItem>(inlineItems[index]);
-        if (previousInlineItem.start() <= *damagedContent.offset)
+        if (startPosition(previousInlineItem) <= *damagedContent.offset)
             return InlineItemPosition { index, { } };
     }
     return { };

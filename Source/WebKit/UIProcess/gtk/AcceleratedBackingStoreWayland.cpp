@@ -58,32 +58,6 @@ using namespace WebCore;
 enum class WaylandImpl { Unsupported, EGL, SHM };
 static std::optional<WaylandImpl> s_waylandImpl;
 
-static bool isEGLImageAvailable(bool useIndexedGetString)
-{
-#if USE(OPENGL_ES)
-    UNUSED_PARAM(useIndexedGetString);
-#else
-    if (useIndexedGetString) {
-        GLint numExtensions = 0;
-        ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-        for (GLint i = 0; i < numExtensions; ++i) {
-            String extension = String::fromLatin1(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
-            if (extension == "GL_OES_EGL_image"_s || extension == "GL_OES_EGL_image_external"_s)
-                return true;
-        }
-    } else
-#endif
-    {
-        String extensionsString = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
-        for (auto& extension : extensionsString.split(' ')) {
-            if (extension == "GL_OES_EGL_image"_s || extension == "GL_OES_EGL_image_external"_s)
-                return true;
-        }
-    }
-
-    return false;
-}
-
 static bool tryInitializeEGL()
 {
     auto* eglDisplay = PlatformDisplay::sharedDisplay().eglDisplay();
@@ -94,19 +68,8 @@ static bool tryInitializeEGL()
     if (!wpe_fdo_initialize_for_egl_display(eglDisplay))
         return false;
 
-    std::unique_ptr<WebCore::GLContext> eglContext = GLContext::createOffscreen(PlatformDisplay::sharedDisplay());
-    if (!eglContext)
-        return false;
-
-    if (!eglContext->makeContextCurrent())
-        return false;
-
-#if USE(OPENGL_ES)
-    if (!isEGLImageAvailable(false))
-        return false;
-#else
-    if (!isEGLImageAvailable(GLContext::current()->version() >= 320))
-#endif
+    GLContext::ScopedGLContext glContext(GLContext::createOffscreen(PlatformDisplay::sharedDisplay()));
+    if (!epoxy_has_gl_extension("GL_OES_EGL_image") && !epoxy_has_gl_extension("GL_OES_EGL_image_external"))
         return false;
 
     s_waylandImpl = WaylandImpl::EGL;
@@ -244,12 +207,8 @@ void AcceleratedBackingStoreWayland::ensureGLContext()
     if (!m_gdkGLContext)
         g_error("GDK is not able to create a GL context: %s.", error->message);
 
-#if USE(OPENGL_ES)
-    gdk_gl_context_set_use_es(m_gdkGLContext.get(), TRUE);
-#endif
-
     if (!gdk_gl_context_realize(m_gdkGLContext.get(), &error.outPtr()))
-        g_error("GDK failed to relaize the GLK context: %s.", error->message);
+        g_error("GDK failed to relaize the GL context: %s.", error->message);
 }
 
 bool AcceleratedBackingStoreWayland::makeContextCurrent()

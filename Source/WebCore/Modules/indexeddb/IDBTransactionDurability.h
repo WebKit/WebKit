@@ -37,15 +37,3 @@ enum class IDBTransactionDurability : uint8_t {
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::IDBTransactionDurability> {
-    using values = EnumValues<
-        WebCore::IDBTransactionDurability,
-        WebCore::IDBTransactionDurability::Strict,
-        WebCore::IDBTransactionDurability::Relaxed,
-        WebCore::IDBTransactionDurability::Default
-    >;
-};
-
-} // namespace WTF

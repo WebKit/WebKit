@@ -409,12 +409,15 @@ void CGroupMemoryController::setMemoryControllerPath(CString memoryControllerPat
     m_cgroupV2MemoryHighFile = getCgroupFile("/", memoryControllerPath, CString("memory.high"));
 
     m_cgroupMemoryMemswLimitInBytesFile = getCgroupFile("memory", memoryControllerPath, CString("memory.memsw.limit_in_bytes"));
+    m_cgroupMemoryMemswUsageInBytesFile = getCgroupFile("memory", memoryControllerPath, CString("memory.memsw.usage_in_bytes"));
     m_cgroupMemoryLimitInBytesFile = getCgroupFile("memory", memoryControllerPath, CString("memory.limit_in_bytes"));
     m_cgroupMemoryUsageInBytesFile = getCgroupFile("memory", memoryControllerPath, CString("memory.usage_in_bytes"));
 }
 
 void CGroupMemoryController::disposeMemoryController()
 {
+    if (m_cgroupMemoryMemswUsageInBytesFile)
+        fclose(m_cgroupMemoryMemswUsageInBytesFile);
     if (m_cgroupMemoryMemswLimitInBytesFile)
         fclose(m_cgroupMemoryMemswLimitInBytesFile);
     if (m_cgroupMemoryLimitInBytesFile)
@@ -464,6 +467,7 @@ size_t CGroupMemoryController::getMemoryTotalWithCgroup()
     if (value != notSet)
         return value;
 
+    // Check memory limits in cgroupV1 (fallback)
     value = getCgroupFileValue(m_cgroupMemoryLimitInBytesFile);
     if (value != notSet)
         return value;
@@ -475,12 +479,18 @@ size_t CGroupMemoryController::getMemoryUsageWithCgroup()
 {
     size_t value = notSet;
 
-    // Check memory limits in cgroupV2
+    // Get the total amount of memory currently being used by the cgroup
+    // and its descendants in cgroupV2
     value = getCgroupFileValue(m_cgroupV2MemoryCurrentFile);
     if (value != notSet)
         return value;
 
-    // Check memory limits in cgroupV1
+    // Get current memory used (memory+Swap) in cgroupV1
+    value = getCgroupFileValue(m_cgroupMemoryMemswUsageInBytesFile);
+    if (value != notSet)
+        return value;
+
+    // Get current memory used in cgroupV1 (fallback)
     value = getCgroupFileValue(m_cgroupMemoryUsageInBytesFile);
     if (value != notSet)
         return value;

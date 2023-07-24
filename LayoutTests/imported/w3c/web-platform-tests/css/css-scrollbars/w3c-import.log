@@ -17,7 +17,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/auto-scrollbar-inline-children.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/input-scrollbar-color-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/input-scrollbar-color-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/input-scrollbar-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/multicol-in-orthogonal-writing-mode-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-003.html
@@ -26,6 +30,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-keywords.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001-ref.html

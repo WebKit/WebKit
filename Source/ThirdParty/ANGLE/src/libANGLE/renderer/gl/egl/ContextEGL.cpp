@@ -23,7 +23,9 @@ ContextEGL::~ContextEGL() {}
 
 angle::Result ContextEGL::onMakeCurrent(const gl::Context *context)
 {
-    if (context->isExternal())
+    // If this context is wrapping an external native context, save state from
+    // that external context when first making this context current.
+    if (!mIsCurrent && context->isExternal())
     {
         if (!mExtState)
         {
@@ -35,20 +37,39 @@ angle::Result ContextEGL::onMakeCurrent(const gl::Context *context)
         getStateManager()->syncFromNativeContext(getNativeExtensions(), mExtState.get());
 
         // Use current FBO as the default framebuffer when the external context is current.
+        // First save the current ID of the default framebuffer to restore in
+        // onUnMakeCurrent().
         gl::Framebuffer *framebuffer = mState.getDefaultFramebuffer();
-        GetImplAs<FramebufferGL>(framebuffer)
-            ->updateDefaultFramebufferID(mExtState->framebufferBinding);
+        auto framebufferGL           = GetImplAs<FramebufferGL>(framebuffer);
+        mPrevDefaultFramebufferID    = framebufferGL->getFramebufferID();
+        framebufferGL->updateDefaultFramebufferID(mExtState->framebufferBinding);
     }
+    mIsCurrent = true;
     return ContextGL::onMakeCurrent(context);
 }
 
 angle::Result ContextEGL::onUnMakeCurrent(const gl::Context *context)
 {
+    mIsCurrent = false;
+
     if (context->saveAndRestoreState())
     {
         ASSERT(context->isExternal());
         ASSERT(mExtState);
         getStateManager()->restoreNativeContext(getNativeExtensions(), mExtState.get());
+    }
+
+    if (context->isExternal())
+    {
+        // If the default framebuffer exists, update its ID (note that there can
+        // be multiple consecutive onUnMakeCurrent() calls in destruction, and
+        // the default FBO will have been unset by the first one).
+        gl::Framebuffer *framebuffer = mState.getDefaultFramebuffer();
+        if (framebuffer)
+        {
+            auto framebufferGL = GetImplAs<FramebufferGL>(framebuffer);
+            framebufferGL->updateDefaultFramebufferID(mPrevDefaultFramebufferID);
+        }
     }
 
     return ContextGL::onUnMakeCurrent(context);

@@ -40,7 +40,7 @@ info: |
 negative:
     phase: parse
     type: SyntaxError
-features: [dynamic-import]
+features: [dynamic-import, exponentiation]
 ---*/
 
 $DONOTEVALUATE();

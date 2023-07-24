@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import platform
 import sys
 
 from webkitscmpy import AutoInstall, Package, Version
@@ -32,7 +33,11 @@ if sys.version_info >= (3, 0):
     AutoInstall.install(Package('twisted', Version(20, 3, 0), pypi_name='Twisted'))
 
     AutoInstall.install(Package('pyOpenSSL', Version(20, 0, 0)))
-    AutoInstall.install(Package('bcrypt', Version(4), wheel=True))
+    # There are no prebuilt binaries for arm-32 of 'bcrypt' and building it requires cargo/rust
+    # Since this dep is not really needed for the current arm-32 bots we skip it instead of
+    # adding the overhead of a cargo/rust toolchain into the yocto-based image the bots run.
+    if not (platform.machine().startswith('arm') and platform.architecture()[0] == '32bit'):
+        AutoInstall.install(Package('bcrypt', Version(4), wheel=True))
     AutoInstall.install(Package('pycparser', Version(2, 21), wheel=True))
 
     from twisted.protocols.tls import TLSMemoryBIOFactory

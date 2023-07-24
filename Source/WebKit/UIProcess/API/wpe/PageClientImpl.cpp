@@ -63,7 +63,7 @@ UnixFileDescriptor PageClientImpl::hostFileDescriptor()
     return UnixFileDescriptor { wpe_view_backend_get_renderer_host_fd(m_view.backend()), UnixFileDescriptor::Adopt };
 }
 
-std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
+std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
     return makeUnique<DrawingAreaProxyCoordinatedGraphics>(m_view.page());
 }
@@ -380,7 +380,6 @@ void PageClientImpl::exitFullScreen()
         fullScreenManagerProxy->willExitFullScreen();
         if (!m_view.setFullScreen(false))
             fullScreenManagerProxy->didEnterFullScreen();
-
     }
 }
 

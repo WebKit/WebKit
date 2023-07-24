@@ -61,19 +61,38 @@
 
 #include "internal.h"
 
+void bn_big_endian_to_words(BN_ULONG *out, size_t out_len, const uint8_t *in,
+                            size_t in_len) {
+  for (size_t i = 0; i < out_len; i++) {
+    if (in_len < sizeof(BN_ULONG)) {
+      // Load the last partial word.
+      BN_ULONG word = 0;
+      for (size_t j = 0; j < in_len; j++) {
+        word = (word << 8) | in[j];
+      }
+      in_len = 0;
+      out[i] = word;
+      // Fill the remainder with zeros.
+      OPENSSL_memset(out + i + 1, 0, (out_len - i - 1) * sizeof(BN_ULONG));
+      break;
+    }
 
-BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
-  size_t num_words;
-  unsigned m;
-  BN_ULONG word = 0;
-  BIGNUM *bn = NULL;
-
-  if (ret == NULL) {
-    ret = bn = BN_new();
+    in_len -= sizeof(BN_ULONG);
+    out[i] = CRYPTO_load_word_be(in + in_len);
   }
 
+  // The caller should have sized the output to avoid truncation.
+  assert(in_len == 0);
+}
+
+BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
+  BIGNUM *bn = NULL;
   if (ret == NULL) {
-    return NULL;
+    bn = BN_new();
+    if (bn == NULL) {
+      return NULL;
+    }
+    ret = bn;
   }
 
   if (len == 0) {
@@ -81,12 +100,9 @@ BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
     return ret;
   }
 
-  num_words = ((len - 1) / BN_BYTES) + 1;
-  m = (len - 1) % BN_BYTES;
+  size_t num_words = ((len - 1) / BN_BYTES) + 1;
   if (!bn_wexpand(ret, num_words)) {
-    if (bn) {
-      BN_free(bn);
-    }
+    BN_free(bn);
     return NULL;
   }
 
@@ -96,15 +112,7 @@ BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   ret->width = (int)num_words;
   ret->neg = 0;
 
-  while (len--) {
-    word = (word << 8) | *(in++);
-    if (m-- == 0) {
-      ret->d[--num_words] = word;
-      word = 0;
-      m = BN_BYTES - 1;
-    }
-  }
-
+  bn_big_endian_to_words(ret->d, ret->width, in, len);
   return ret;
 }
 
@@ -112,11 +120,10 @@ BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   BIGNUM *bn = NULL;
   if (ret == NULL) {
     bn = BN_new();
+    if (bn == NULL) {
+      return NULL;
+    }
     ret = bn;
-  }
-
-  if (ret == NULL) {
-    return NULL;
   }
 
   if (len == 0) {
@@ -131,7 +138,7 @@ BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
     BN_free(bn);
     return NULL;
   }
-  ret->width = num_words;
+  ret->width = (int)num_words;
 
   // Make sure the top bytes will be zeroed.
   ret->d[num_words - 1] = 0;
@@ -142,38 +149,70 @@ BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   return ret;
 }
 
-size_t BN_bn2bin(const BIGNUM *in, uint8_t *out) {
-  size_t n, i;
-  BN_ULONG l;
-
-  n = i = BN_num_bytes(in);
-  while (i--) {
-    l = in->d[i / BN_BYTES];
-    *(out++) = (unsigned char)(l >> (8 * (i % BN_BYTES))) & 0xff;
-  }
-  return n;
-}
-
-static int fits_in_bytes(const uint8_t *bytes, size_t num_bytes, size_t len) {
+// fits_in_bytes returns one if the |num_words| words in |words| can be
+// represented in |num_bytes| bytes.
+static int fits_in_bytes(const BN_ULONG *words, size_t num_words,
+                         size_t num_bytes) {
+  const uint8_t *bytes = (const uint8_t *)words;
+  size_t tot_bytes = num_words * sizeof(BN_ULONG);
   uint8_t mask = 0;
-  for (size_t i = len; i < num_bytes; i++) {
+  for (size_t i = num_bytes; i < tot_bytes; i++) {
     mask |= bytes[i];
   }
   return mask == 0;
 }
 
-int BN_bn2le_padded(uint8_t *out, size_t len, const BIGNUM *in) {
-  const uint8_t *bytes = (const uint8_t *)in->d;
-  size_t num_bytes = in->width * BN_BYTES;
-  if (len < num_bytes) {
-    if (!fits_in_bytes(bytes, num_bytes, len)) {
-      return 0;
+void bn_assert_fits_in_bytes(const BIGNUM *bn, size_t num) {
+  const uint8_t *bytes = (const uint8_t *)bn->d;
+  size_t tot_bytes = bn->width * sizeof(BN_ULONG);
+  if (tot_bytes > num) {
+    CONSTTIME_DECLASSIFY(bytes + num, tot_bytes - num);
+    for (size_t i = num; i < tot_bytes; i++) {
+      assert(bytes[i] == 0);
     }
-    num_bytes = len;
+    (void)bytes;
+  }
+}
+
+void bn_words_to_big_endian(uint8_t *out, size_t out_len, const BN_ULONG *in,
+                            size_t in_len) {
+  // The caller should have selected an output length without truncation.
+  assert(fits_in_bytes(in, in_len, out_len));
+
+  // We only support little-endian platforms, so the internal representation is
+  // also little-endian as bytes. We can simply copy it in reverse.
+  const uint8_t *bytes = (const uint8_t *)in;
+  size_t num_bytes = in_len * sizeof(BN_ULONG);
+  if (out_len < num_bytes) {
+    num_bytes = out_len;
+  }
+
+  for (size_t i = 0; i < num_bytes; i++) {
+    out[out_len - i - 1] = bytes[i];
+  }
+  // Pad out the rest of the buffer with zeroes.
+  OPENSSL_memset(out, 0, out_len - num_bytes);
+}
+
+size_t BN_bn2bin(const BIGNUM *in, uint8_t *out) {
+  size_t n = BN_num_bytes(in);
+  bn_words_to_big_endian(out, n, in->d, in->width);
+  return n;
+}
+
+int BN_bn2le_padded(uint8_t *out, size_t len, const BIGNUM *in) {
+  if (!fits_in_bytes(in->d, in->width, len)) {
+    return 0;
   }
 
   // We only support little-endian platforms, so we can simply memcpy into the
   // internal representation.
+  const uint8_t *bytes = (const uint8_t *)in->d;
+  size_t num_bytes = in->width * BN_BYTES;
+  if (len < num_bytes) {
+    num_bytes = len;
+  }
+
   OPENSSL_memcpy(out, bytes, num_bytes);
   // Pad out the rest of the buffer with zeroes.
   OPENSSL_memset(out + num_bytes, 0, len - num_bytes);
@@ -181,22 +220,11 @@ int BN_bn2le_padded(uint8_t *out, size_t len, const BIGNUM *in) {
 }
 
 int BN_bn2bin_padded(uint8_t *out, size_t len, const BIGNUM *in) {
-  const uint8_t *bytes = (const uint8_t *)in->d;
-  size_t num_bytes = in->width * BN_BYTES;
-  if (len < num_bytes) {
-    if (!fits_in_bytes(bytes, num_bytes, len)) {
-      return 0;
-    }
-    num_bytes = len;
+  if (!fits_in_bytes(in->d, in->width, len)) {
+    return 0;
   }
 
-  // We only support little-endian platforms, so we can simply write the buffer
-  // in reverse.
-  for (size_t i = 0; i < num_bytes; i++) {
-    out[len - i - 1] = bytes[i];
-  }
-  // Pad out the rest of the buffer with zeroes.
-  OPENSSL_memset(out, 0, len - num_bytes);
+  bn_words_to_big_endian(out, len, in->d, in->width);
   return 1;
 }
 

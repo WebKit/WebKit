@@ -28,7 +28,8 @@ static const char *monochrome_colorspace(unsigned int bit_depth) {
 
 // Return the Y4M name of the 8-bit colorspace, given the chroma position and
 // image format.
-const char *colorspace8(aom_chroma_sample_position_t csp, aom_img_fmt_t fmt) {
+static const char *colorspace8(aom_chroma_sample_position_t csp,
+                               aom_img_fmt_t fmt) {
   switch (fmt) {
     case AOM_IMG_FMT_I444: return "C444";
     case AOM_IMG_FMT_I422: return "C422";
@@ -52,30 +53,25 @@ static const char *colorspace(unsigned int bit_depth,
   switch (bit_depth) {
     case 8: return colorspace8(csp, fmt);
     case 9:
-      return fmt == AOM_IMG_FMT_I44416
-                 ? "C444p9 XYSCSS=444P9"
-                 : fmt == AOM_IMG_FMT_I42216 ? "C422p9 XYSCSS=422P9"
-                                             : "C420p9 XYSCSS=420P9";
+      return fmt == AOM_IMG_FMT_I44416   ? "C444p9 XYSCSS=444P9"
+             : fmt == AOM_IMG_FMT_I42216 ? "C422p9 XYSCSS=422P9"
+                                         : "C420p9 XYSCSS=420P9";
     case 10:
-      return fmt == AOM_IMG_FMT_I44416
-                 ? "C444p10 XYSCSS=444P10"
-                 : fmt == AOM_IMG_FMT_I42216 ? "C422p10 XYSCSS=422P10"
-                                             : "C420p10 XYSCSS=420P10";
+      return fmt == AOM_IMG_FMT_I44416   ? "C444p10 XYSCSS=444P10"
+             : fmt == AOM_IMG_FMT_I42216 ? "C422p10 XYSCSS=422P10"
+                                         : "C420p10 XYSCSS=420P10";
     case 12:
-      return fmt == AOM_IMG_FMT_I44416
-                 ? "C444p12 XYSCSS=444P12"
-                 : fmt == AOM_IMG_FMT_I42216 ? "C422p12 XYSCSS=422P12"
-                                             : "C420p12 XYSCSS=420P12";
+      return fmt == AOM_IMG_FMT_I44416   ? "C444p12 XYSCSS=444P12"
+             : fmt == AOM_IMG_FMT_I42216 ? "C422p12 XYSCSS=422P12"
+                                         : "C420p12 XYSCSS=420P12";
     case 14:
-      return fmt == AOM_IMG_FMT_I44416
-                 ? "C444p14 XYSCSS=444P14"
-                 : fmt == AOM_IMG_FMT_I42216 ? "C422p14 XYSCSS=422P14"
-                                             : "C420p14 XYSCSS=420P14";
+      return fmt == AOM_IMG_FMT_I44416   ? "C444p14 XYSCSS=444P14"
+             : fmt == AOM_IMG_FMT_I42216 ? "C422p14 XYSCSS=422P14"
+                                         : "C420p14 XYSCSS=420P14";
     case 16:
-      return fmt == AOM_IMG_FMT_I44416
-                 ? "C444p16 XYSCSS=444P16"
-                 : fmt == AOM_IMG_FMT_I42216 ? "C422p16 XYSCSS=422P16"
-                                             : "C420p16 XYSCSS=420P16";
+      return fmt == AOM_IMG_FMT_I44416   ? "C444p16 XYSCSS=444P16"
+             : fmt == AOM_IMG_FMT_I42216 ? "C422p16 XYSCSS=422P16"
+                                         : "C420p16 XYSCSS=420P16";
     default: assert(0); return NULL;
   }
 }

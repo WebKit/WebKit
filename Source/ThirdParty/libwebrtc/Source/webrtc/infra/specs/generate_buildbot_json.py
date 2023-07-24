@@ -55,7 +55,12 @@ def generate_mixins_file_from_used_mixins(generator):
       seen_mixins = seen_mixins.union(tester.get('mixins', set()))
   for suite in generator.test_suites.values():
     for test in suite.values():
-      seen_mixins = seen_mixins.union(test.get('mixins', set()))
+      if isinstance(test, list):
+        # This is for mixins defined in variants.pyl.
+        for variant in test:
+          seen_mixins = seen_mixins.union(variant.get('mixins', set()))
+      else:
+        seen_mixins = seen_mixins.union(test.get('mixins', set()))
 
   found_mixins = ast.literal_eval(open(WEBRTC_MIXIN_FILE_NAME).read())
   for mixin in seen_mixins:

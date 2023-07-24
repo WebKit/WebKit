@@ -135,6 +135,7 @@
     WeakObjCPtr<WKWebView> _webView;
     RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
     RetainPtr<WKShareSheet> _shareSheet;
+    BOOL _isShowingPasswordView;
 #if HAVE(UIFINDINTERACTION)
     RetainPtr<id<UITextSearchAggregator>> _searchAggregator;
     RetainPtr<NSString> _searchString;
@@ -191,14 +192,25 @@
     if (!(self = [super initWithFrame:frame webView:webView]))
         return nil;
 
-    UIColor *backgroundColor = PDFHostViewController.backgroundColor;
-    self.backgroundColor = backgroundColor;
-    [webView._wkScrollView _setBackgroundColorInternal:backgroundColor];
-
     _keyboardScrollingAnimator = adoptNS([[WKKeyboardScrollViewAnimator alloc] initWithScrollView:webView.scrollView]);
-
     _webView = webView;
+
+    [self updateBackgroundColor];
+
     return self;
+}
+
+- (void)updateBackgroundColor
+{
+    UIColor *backgroundColor = PDFHostViewController.backgroundColor;
+
+#if PLATFORM(VISION)
+    if (_isShowingPasswordView)
+        backgroundColor = UIColor.clearColor;
+#endif
+
+    self.backgroundColor = backgroundColor;
+    [[_webView _wkScrollView] _setBackgroundColorInternal:backgroundColor];
 }
 
 - (void)web_setContentProviderData:(NSData *)data suggestedFilename:(NSString *)filename
@@ -492,7 +504,6 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     return self.isBackground;
 }
 
-
 #pragma mark PDFHostViewControllerDelegate
 
 - (void)pdfHostViewController:(PDFHostViewController *)controller updatePageCount:(NSInteger)pageCount
@@ -500,9 +511,21 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     [self _scrollToURLFragment:[_webView URL].fragment];
 }
 
+- (void)pdfHostViewControllerDocumentDidRequestPassword:(PDFHostViewController *)controller
+{
+    [_webView _didRequestPasswordForDocument];
+
+    _isShowingPasswordView = YES;
+    [self updateBackgroundColor];
+}
+
 - (void)pdfHostViewController:(PDFHostViewController *)controller documentDidUnlockWithPassword:(NSString *)password
 {
     _passwordForPrinting = [password UTF8String];
+    [_webView _didStopRequestingPasswordForDocument];
+
+    _isShowingPasswordView = NO;
+    [self updateBackgroundColor];
 }
 
 - (void)pdfHostViewController:(PDFHostViewController *)controller findStringUpdate:(NSUInteger)numFound done:(BOOL)done

@@ -35,8 +35,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(BoxGeometry);
 
 BoxGeometry::BoxGeometry(const BoxGeometry& other)
     : m_topLeft(other.m_topLeft)
-    , m_contentWidth(other.m_contentWidth)
-    , m_contentHeight(other.m_contentHeight)
+    , m_contentBoxWidth(other.m_contentBoxWidth)
+    , m_contentBoxHeight(other.m_contentBoxHeight)
     , m_horizontalMargin(other.m_horizontalMargin)
     , m_verticalMargin(other.m_verticalMargin)
     , m_border(other.m_border)
@@ -50,8 +50,8 @@ BoxGeometry::BoxGeometry(const BoxGeometry& other)
     , m_hasValidVerticalMargin(other.m_hasValidVerticalMargin)
     , m_hasValidBorder(other.m_hasValidBorder)
     , m_hasValidPadding(other.m_hasValidPadding)
-    , m_hasValidContentHeight(other.m_hasValidContentHeight)
-    , m_hasValidContentWidth(other.m_hasValidContentWidth)
+    , m_hasValidContentBoxHeight(other.m_hasValidContentBoxHeight)
+    , m_hasValidContentBoxWidth(other.m_hasValidContentBoxWidth)
     , m_hasPrecomputedMarginBefore(other.m_hasPrecomputedMarginBefore)
 #endif
 {

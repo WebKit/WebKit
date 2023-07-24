@@ -22,7 +22,6 @@
 
 #include <openssl/aead.h>
 #include <openssl/aes.h>
-#include <openssl/cpu.h>
 #include <openssl/mem.h>
 
 #include <gtest/gtest.h>
@@ -34,9 +33,9 @@ class ImplDispatchTest : public ::testing::Test {
  public:
   void SetUp() override {
 #if defined(OPENSSL_X86) || defined(OPENSSL_X86_64)
-    aesni_ = OPENSSL_ia32cap_P[1] & (1 << (57 - 32));
-    avx_movbe_ = ((OPENSSL_ia32cap_P[1] >> 22) & 0x41) == 0x41;
-    ssse3_ = OPENSSL_ia32cap_P[1] & (1 << (41 - 32));
+    aesni_ = CRYPTO_is_AESNI_capable();
+    avx_movbe_ = CRYPTO_is_AVX_capable() && CRYPTO_is_MOVBE_capable();
+    ssse3_ = CRYPTO_is_SSSE3_capable();
     is_x86_64_ =
 #if defined(OPENSSL_X86_64)
         true;

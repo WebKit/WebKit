@@ -35,7 +35,7 @@ void av1_disable_segmentation(struct segmentation *seg) {
 
 void av1_disable_segfeature(struct segmentation *seg, int segment_id,
                             SEG_LVL_FEATURES feature_id) {
-  seg->feature_mask[segment_id] &= ~(1 << feature_id);
+  seg->feature_mask[segment_id] &= ~(1u << feature_id);
 }
 
 void av1_clear_segdata(struct segmentation *seg, int segment_id,

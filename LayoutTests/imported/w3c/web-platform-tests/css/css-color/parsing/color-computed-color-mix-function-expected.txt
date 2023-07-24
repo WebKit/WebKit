@@ -82,36 +82,36 @@ FAIL Property color value 'color-mix(in hwb, transparent, hwb(30deg 30% 40%))' a
 FAIL Property color value 'color-mix(in hwb, transparent 10%, hwb(30deg 30% 40%))' assert_equals: expected "rgba(153, 115, 77, 0.9)" but got "rgba(153, 111, 77, 0.9)"
 PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / 0), hwb(30deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / 0) 10%, hwb(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
+FAIL Property color value 'color-mix(in hwb, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' assert_equals: expected "rgb(153, 140, 77)" but got "rgb(153, 141, 77)"
+FAIL Property color value 'color-mix(in hwb, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' assert_equals: expected "rgb(153, 140, 77)" but got "rgb(153, 141, 77)"
 PASS Property color value 'color-mix(in hwb, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb shorter hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb shorter hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
+FAIL Property color value 'color-mix(in hwb shorter hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' assert_equals: expected "rgb(153, 140, 77)" but got "rgb(153, 141, 77)"
+FAIL Property color value 'color-mix(in hwb shorter hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' assert_equals: expected "rgb(153, 140, 77)" but got "rgb(153, 141, 77)"
 PASS Property color value 'color-mix(in hwb shorter hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb shorter hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb shorter hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb shorter hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb longer hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb longer hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb longer hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb longer hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb longer hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb longer hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb increasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
+FAIL Property color value 'color-mix(in hwb longer hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' assert_equals: expected "rgb(77, 140, 153)" but got "rgb(77, 141, 153)"
+FAIL Property color value 'color-mix(in hwb longer hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' assert_equals: expected "rgb(77, 140, 153)" but got "rgb(77, 141, 153)"
+FAIL Property color value 'color-mix(in hwb longer hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' assert_equals: expected "rgb(77, 153, 140)" but got "rgb(77, 153, 141)"
+FAIL Property color value 'color-mix(in hwb longer hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' assert_equals: expected "rgb(77, 153, 140)" but got "rgb(77, 153, 141)"
+FAIL Property color value 'color-mix(in hwb increasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' assert_equals: expected "rgb(153, 140, 77)" but got "rgb(153, 141, 77)"
 PASS Property color value 'color-mix(in hwb increasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb increasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
+FAIL Property color value 'color-mix(in hwb increasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' assert_equals: expected "rgb(77, 140, 153)" but got "rgb(77, 141, 153)"
 PASS Property color value 'color-mix(in hwb increasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb increasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
+FAIL Property color value 'color-mix(in hwb increasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' assert_equals: expected "rgb(77, 153, 140)" but got "rgb(77, 153, 141)"
 PASS Property color value 'color-mix(in hwb increasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb decreasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb decreasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
+FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' assert_equals: expected "rgb(153, 140, 77)" but got "rgb(153, 141, 77)"
 PASS Property color value 'color-mix(in hwb decreasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb decreasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
+FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' assert_equals: expected "rgb(77, 140, 153)" but got "rgb(77, 141, 153)"
 PASS Property color value 'color-mix(in hwb decreasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb decreasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
+FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' assert_equals: expected "rgb(77, 153, 140)" but got "rgb(77, 153, 141)"
 PASS Property color value 'color-mix(in hwb, hwb(none none none), hwb(none none none))'
 PASS Property color value 'color-mix(in hwb, hwb(none none none), hwb(30deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(none none none))'
@@ -475,4 +475,3 @@ PASS Property color value 'color-mix(in xyz-d65, color(xyz-d65 none .2 .3), colo
 PASS Property color value 'color-mix(in xyz-d65, color(xyz-d65 .1 .2 .3 / none), color(xyz-d65 .5 .6 .7))'
 PASS Property color value 'color-mix(in xyz-d65, color(xyz-d65 .1 .2 .3 / none), color(xyz-d65 .5 .6 .7 / 0.5))'
 PASS Property color value 'color-mix(in xyz-d65, color(xyz-d65 .1 .2 .3 / none), color(xyz-d65 .5 .6 .7 / none))'
-

@@ -222,8 +222,7 @@ static INLINE void horizontal_filter_neon(uint8x16_t src_1, uint8x16_t src_2,
                                           int16x8_t *tmp_dst, int sx, int alpha,
                                           int k, const int offset_bits_horiz,
                                           const int reduce_bits_horiz) {
-  const uint8x16_t mask = { 255, 0, 255, 0, 255, 0, 255, 0,
-                            255, 0, 255, 0, 255, 0, 255, 0 };
+  const uint8x16_t mask = vreinterpretq_u8_u16(vdupq_n_u16(0x00ff));
   const int32x4_t add_const = vdupq_n_s32((int32_t)(1 << offset_bits_horiz));
   const int16x8_t shift = vdupq_n_s16(-(int16_t)reduce_bits_horiz);
 
@@ -488,9 +487,9 @@ void av1_warp_affine_neon(const int32_t *mat, const uint8_t *ref, int width,
   int32x4_t res_lo, res_hi;
   int16x8_t result_final;
   uint8x16_t src_1, src_2, src_3, src_4;
-  uint8x16_t indx_vec = {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-  };
+  static const uint8_t k0To15[16] = { 0, 1, 2,  3,  4,  5,  6,  7,
+                                      8, 9, 10, 11, 12, 13, 14, 15 };
+  uint8x16_t indx_vec = vld1q_u8(k0To15);
   uint8x16_t cmp_vec;
 
   const int reduce_bits_horiz = conv_params->round_0;

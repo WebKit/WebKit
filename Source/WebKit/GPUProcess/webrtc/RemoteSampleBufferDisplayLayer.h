@@ -71,8 +71,7 @@ private:
     void setLogIdentifier(String&&);
 #endif
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer);
-    void updateAffineTransform(CGAffineTransform);
-    void updateBoundsAndPosition(CGRect, WebCore::VideoFrameRotation, std::optional<WTF::MachSendRight>&&);
+    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&);
     void flush();
     void flushAndRemoveImage();
     void play();
@@ -93,7 +92,7 @@ private:
     SampleBufferDisplayLayerIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
-    std::unique_ptr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    RefPtr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     SharedVideoFrameReader m_sharedVideoFrameReader;
     ThreadLikeAssertion m_consumeThread NO_UNIQUE_ADDRESS;

@@ -51,6 +51,9 @@ EVP_AEAD_CTX *EVP_AEAD_CTX_new(const EVP_AEAD *aead, const uint8_t *key,
 }
 
 void EVP_AEAD_CTX_free(EVP_AEAD_CTX *ctx) {
+  if (ctx == NULL) {
+    return;
+  }
   EVP_AEAD_CTX_cleanup(ctx);
   OPENSSL_free(ctx);
 }

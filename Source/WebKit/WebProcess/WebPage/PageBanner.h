@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "WebMouseEvent.h"
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(MAC)
 OBJC_CLASS CALayer;
@@ -50,16 +51,13 @@ public:
     };
 
     class Client {
-    protected:
-        virtual ~Client() { }
-    
     public:
-        virtual void pageBannerDestroyed(PageBanner*) = 0;
+        virtual ~Client() { }
         virtual bool mouseEvent(PageBanner*, WebEventType, WebMouseEventButton, const WebCore::IntPoint&) = 0;
     };
 
 #if PLATFORM(MAC)
-    static Ref<PageBanner> create(CALayer *, int height, Client*);
+    static Ref<PageBanner> create(CALayer *, int height, std::unique_ptr<Client>&&);
     CALayer *layer();
 #endif
 
@@ -78,14 +76,14 @@ public:
 
 private:
 #if PLATFORM(MAC)
-    explicit PageBanner(CALayer *, int height, Client*);
+    explicit PageBanner(CALayer *, int height, std::unique_ptr<Client>&&);
 #endif
 
-    Client* m_client;
+    std::unique_ptr<Client> m_client;
 
 #if PLATFORM(MAC)
     Type m_type = NotSet;
-    WebPage* m_webPage = 0;
+    WeakPtr<WebPage> m_webPage;
     bool m_mouseDownInBanner = false;
     bool m_isHidden = false;
 

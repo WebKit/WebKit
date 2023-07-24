@@ -15,7 +15,7 @@ PASS fontface.unicodeRange = '' threw exception SyntaxError: The string did not 
 PASS fontface = new FontFace('WebFont', 'url(\'asdf\')', {featureSettings: ''}) did not throw exception.
 PASS fontface.featureSettings is "normal"
 PASS fontface.featureSettings = '' threw exception SyntaxError: The string did not match the expected pattern..
-PASS fontface.family = '' threw exception SyntaxError: The string did not match the expected pattern..
+PASS fontface.family = '' did not throw exception.
 PASS successfullyParsed is true
 
 TEST COMPLETE

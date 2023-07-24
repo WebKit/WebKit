@@ -94,7 +94,8 @@
 #import <wtf/text/WTFString.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
-#import <pal/graphics/WebGPU/Impl/WebGPUCreateImpl.h>
+#import <WebCore/WebGPU.h>
+#import <WebCore/WebGPUCreateImpl.h>
 #endif
 
 #if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
@@ -633,10 +634,10 @@ void WebChromeClient::unavailablePluginButtonClicked(Element& element, RenderEmb
     CallUIDelegate(m_webView, @selector(webView:didPressMissingPluginButton:), kit(&element));
 }
 
-void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags, const String& toolTip, TextDirection)
+void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<WebCore::PlatformEventModifier> modifiers, const String& toolTip, TextDirection)
 {
     auto element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:result]);
-    [m_webView _mouseDidMoveOverElement:element.get() modifierFlags:modifierFlags];
+    [m_webView _mouseDidMoveOverElement:element.get() modifierFlags:modifiers.toRaw()];
     setToolTip(toolTip);
 }
 
@@ -1160,10 +1161,10 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
 }
 #endif
 
-RefPtr<PAL::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
+RefPtr<WebCore::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 {
 #if HAVE(WEBGPU_IMPLEMENTATION)
-    return PAL::WebGPU::create([](PAL::WebGPU::WorkItem&& workItem) {
+    return WebCore::WebGPU::create([](WebCore::WebGPU::WorkItem&& workItem) {
         callOnMainRunLoop(WTFMove(workItem));
     });
 #else

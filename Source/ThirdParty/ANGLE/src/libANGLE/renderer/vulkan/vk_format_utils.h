@@ -14,7 +14,7 @@
 #include "libANGLE/renderer/Format.h"
 #include "libANGLE/renderer/copyvertex.h"
 #include "libANGLE/renderer/renderer_utils.h"
-#include "platform/FeaturesVk_autogen.h"
+#include "platform/autogen/FeaturesVk_autogen.h"
 
 #include <array>
 

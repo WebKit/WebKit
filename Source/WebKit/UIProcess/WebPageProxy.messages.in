@@ -28,7 +28,7 @@ messages -> WebPageProxy {
     RunJavaScriptAlert(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message) -> () Synchronous
     RunJavaScriptConfirm(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message) -> (bool result) Synchronous
     RunJavaScriptPrompt(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message, String defaultValue) -> (String result) Synchronous
-    MouseDidMoveOverElement(struct WebKit::WebHitTestResultData hitTestResultData, uint32_t modifiers, WebKit::UserData userData)
+    MouseDidMoveOverElement(struct WebKit::WebHitTestResultData hitTestResultData, OptionSet<WebKit::WebEventModifier> modifiers, WebKit::UserData userData)
 
     DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
     DidReceiveEvent(enum:int8_t WebKit::WebEventType eventType, bool handled)
@@ -372,8 +372,6 @@ messages -> WebPageProxy {
 
     SetEditableElementIsFocused(bool editableElementIsFocused)
 
-    SetCaretDecorationVisibility(bool visibility)
-
     HandleAcceptsFirstMouse(bool acceptsFirstMouse)
 #endif
 
@@ -625,7 +623,7 @@ messages -> WebPageProxy {
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    HandleSystemPreview(URL url, struct WebCore::SystemPreviewInfo systemPreviewInfo)
+    BeginSystemPreview(URL url, struct WebCore::SystemPreviewInfo systemPreviewInfo) -> ()
 #endif
 
     DidCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, String reason, bool display)
@@ -633,5 +631,5 @@ messages -> WebPageProxy {
 
     RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result)
 
-    DidChangeLookalikeCharacters(URL originalURL, URL adjustedURL)
+    DidApplyLinkDecorationFiltering(URL originalURL, URL adjustedURL)
 }

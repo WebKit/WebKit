@@ -229,7 +229,8 @@ const AtomString& HTMLImageElement::imageSourceURL() const
 void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidate& candidate)
 {
     m_bestFitImageURL = candidate.string.toAtomString();
-    m_currentSrc = AtomString(document().completeURL(imageSourceURL()).string());
+    m_currentURL = document().completeURL(imageSourceURL());
+    m_currentSrc = AtomString(m_currentURL.string());
     if (candidate.density >= 0)
         m_imageDevicePixelRatio = 1 / candidate.density;
     if (is<RenderImage>(renderer()))
@@ -240,8 +241,8 @@ static String extractMIMETypeFromTypeAttributeForLookup(const String& typeAttrib
 {
     auto semicolonIndex = typeAttribute.find(';');
     if (semicolonIndex == notFound)
-        return stripLeadingAndTrailingHTMLSpaces(typeAttribute);
-    return StringView(typeAttribute).left(semicolonIndex).stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toStringWithoutCopying();
+        return typeAttribute.trim(isASCIIWhitespace);
+    return StringView(typeAttribute).left(semicolonIndex).trim(isASCIIWhitespace<UChar>).toStringWithoutCopying();
 }
 
 ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
@@ -792,7 +793,7 @@ bool HTMLImageElement::isServerMap() const
     if (usemap.string()[0] == '#')
         return false;
 
-    return document().completeURL(stripLeadingAndTrailingHTMLSpaces(usemap)).isEmpty();
+    return document().completeURL(usemap).isEmpty();
 }
 
 void HTMLImageElement::setCrossOrigin(const AtomString& value)
@@ -1066,6 +1067,32 @@ RequestPriority HTMLImageElement::fetchPriorityHint() const
     if (document().settings().fetchPriorityEnabled())
         return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
     return RequestPriority::Auto;
+}
+
+bool HTMLImageElement::originClean(const SecurityOrigin& origin) const
+{
+    UNUSED_PARAM(origin);
+
+    auto* cachedImage = this->cachedImage();
+    if (!cachedImage)
+        return true;
+
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return true;
+
+    if (image->renderingTaintsOrigin())
+        return false;
+
+    if (image->sourceURL().protocolIsData())
+        return true;
+
+    if (cachedImage->isCORSCrossOrigin())
+        return false;
+
+    ASSERT(cachedImage->origin());
+    ASSERT(origin.toString() == cachedImage->origin()->toString());
+    return true;
 }
 
 }

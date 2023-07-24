@@ -64,8 +64,9 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
     // Currently we only choose the first track as the recorded track.
 
     auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [this, weakThis = WeakPtr { *this }, audioTrack = RefPtr { selectedTracks.audioTrack }, videoTrack = RefPtr { selectedTracks.videoTrack }, callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
-        if (!weakThis) {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [this, weakThis = ThreadSafeWeakPtr { *this }, audioTrack = RefPtr { selectedTracks.audioTrack }, videoTrack = RefPtr { selectedTracks.videoTrack }, callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
+        auto strongThis = weakThis.get();
+        if (!strongThis) {
             callback(Exception { InvalidStateError }, 0, 0);
             return;
         }
@@ -86,7 +87,6 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
 MediaRecorderPrivate::~MediaRecorderPrivate()
 {
     m_connection->send(Messages::RemoteMediaRecorderManager::ReleaseRecorder { m_identifier }, 0);
-    WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
 }
 
 void MediaRecorderPrivate::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)

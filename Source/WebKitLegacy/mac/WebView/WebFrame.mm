@@ -95,6 +95,7 @@
 #import <WebCore/OriginAccessPatterns.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>
@@ -308,7 +309,7 @@ WebView *getWebView(WebFrame *webFrame)
     auto coreFrame = WebCore::LocalFrame::createSubframe(page, makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), ownerElement);
     frame->_private->coreFrame = coreFrame.ptr();
 
-    coreFrame.get().tree().setName(name);
+    coreFrame.get().tree().setSpecifiedName(name);
 
     coreFrame.get().init();
 
@@ -328,7 +329,7 @@ WebView *getWebView(WebFrame *webFrame)
     frame->_private->coreFrame = localMainFrame;
     static_cast<WebFrameLoaderClient&>(localMainFrame->loader().client()).setWebFrame(*frame.get());
 
-    localMainFrame->tree().setName(name);
+    localMainFrame->tree().setSpecifiedName(name);
     localMainFrame->init();
 
     [webView _setZoomMultiplier:[webView _realZoomMultiplier] isTextOnly:[webView _realZoomMultiplierIsTextOnly]];
@@ -950,7 +951,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     WebCore::PlatformMouseEvent event(WebCore::IntPoint(windowLoc), WebCore::IntPoint(WebCore::globalPoint(windowLoc, [view->platformWidget() window])),
-        WebCore::LeftButton, WebCore::PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
+        WebCore::LeftButton, WebCore::PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap);
     _private->coreFrame->eventHandler().dragSourceEndedAt(event, coreDragOperationMask(dragOperationMask));
 }
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
@@ -1528,7 +1529,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (BOOL)spaceFollowsWordInRange:(DOMRange *)range
 {
-    return range && isSpaceOrNewline(WebCore::VisiblePosition(makeDeprecatedLegacyPosition(makeSimpleRange(core(range))->end)).characterAfter());
+    return range && deprecatedIsSpaceOrNewline(WebCore::VisiblePosition(makeDeprecatedLegacyPosition(makeSimpleRange(core(range))->end)).characterAfter());
 }
 
 - (NSArray *)wordsInCurrentParagraph
@@ -1610,7 +1611,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     
     Vector<WebCore::CompositionUnderline> underlines;
     frame->page()->chrome().client().suppressFormNotifications();
-    frame->editor().setComposition(text, underlines, { }, newSelRange.location, NSMaxRange(newSelRange));
+    frame->editor().setComposition(text, underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
     frame->page()->chrome().client().restoreFormNotifications();
 }
 
@@ -1621,7 +1622,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
         return;
         
     Vector<WebCore::CompositionUnderline> underlines;
-    frame->editor().setComposition(text, underlines, { }, 0, [text length]);
+    frame->editor().setComposition(text, underlines, { }, { }, 0, [text length]);
 }
 
 - (void)confirmMarkedText:(NSString *)text
@@ -2528,7 +2529,7 @@ static NSURL *createUniqueWebDataURL()
     auto coreFrame = _private->coreFrame;
     if (!coreFrame)
         return nil;
-    return kit(dynamicDowncast<WebCore::LocalFrame>(coreFrame->tree().find(name, *coreFrame)));
+    return kit(dynamicDowncast<WebCore::LocalFrame>(coreFrame->tree().findByUniqueName(name, *coreFrame)));
 }
 
 - (WebFrame *)parentFrame

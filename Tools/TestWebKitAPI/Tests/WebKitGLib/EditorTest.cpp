@@ -37,12 +37,12 @@ private:
 
         WebKitWebEditor* editor = webkit_web_page_get_editor(page);
         g_assert_true(WEBKIT_IS_WEB_EDITOR(editor));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(editor));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(editor));
         g_signal_connect_swapped(editor, "selection-changed", G_CALLBACK(selectionChangedCallback), &selectionChanged);
 
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(webkit_web_page_get_main_frame(page)));
         g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
 
         static const char* steps[] = {
             "document.execCommand('SelectAll')",

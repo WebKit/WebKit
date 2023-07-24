@@ -15,6 +15,7 @@ info: |
     c. Let actualDeleteCount be min(max(dc, 0), len - actualStart).
   8. If len+insertCount-actualDeleteCount > 2^53-1, throw a TypeError exception.
   ...
+features: [exponentiation]
 ---*/
 
 var arrayLike = {};

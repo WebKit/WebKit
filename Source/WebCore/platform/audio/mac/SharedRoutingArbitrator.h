@@ -30,6 +30,10 @@
 #include "AudioSession.h"
 #include <wtf/UniqueRef.h>
 
+namespace WTF {
+class Logger;
+}
+
 namespace WebCore {
 
 class WEBCORE_EXPORT SharedRoutingArbitrator {
@@ -44,19 +48,28 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         static UniqueRef<Token> create();
+        const void* logIdentifier() const;
     private:
         friend UniqueRef<Token> WTF::makeUniqueRefWithoutFastMallocCheck<Token>();
         Token() = default;
+        mutable const void* m_logIdentifier;
     };
 
     bool isInRoutingArbitrationForToken(const Token&);
     void beginRoutingArbitrationForToken(const Token&, AudioSession::CategoryType, ArbitrationCallback&&);
     void endRoutingArbitrationForToken(const Token&);
 
+    void setLogger(const Logger&);
+
 private:
+    const Logger& logger();
+    const char* logClassName() const { return "SharedRoutingArbitrator"; }
+    WTFLogChannel& logChannel() const;
+
     std::optional<AudioSession::CategoryType> m_currentCategory { AudioSession::CategoryType::None };
     WeakHashSet<Token> m_tokens;
     Vector<ArbitrationCallback> m_enqueuedCallbacks;
+    RefPtr<const Logger> m_logger;
     bool m_setupArbitrationOngoing { false };
 };
 

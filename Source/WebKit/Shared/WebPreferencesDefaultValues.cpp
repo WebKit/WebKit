@@ -68,17 +68,15 @@ bool defaultShouldPrintBackgrounds()
     return result;
 }
 
-#if !USE(APPLE_INTERNAL_SDK)
 bool defaultAlternateFormControlDesignEnabled()
 {
-    return false;
+    return currentUserInterfaceIdiomIsReality();
 }
 
 bool defaultVideoFullscreenRequiresElementFullscreen()
 {
-    return false;
+    return currentUserInterfaceIdiomIsReality();
 }
-#endif
 
 #endif
 
@@ -273,7 +271,7 @@ bool defaultShouldEnableScreenOrientationAPI()
 #if PLATFORM(MAC)
     return true;
 #elif PLATFORM(IOS_FAMILY)
-    static bool shouldEnableScreenOrientationAPI = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScreenOrientationAPIEnabled) || IOSApplication::isHoYoLAB();
+    static bool shouldEnableScreenOrientationAPI = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScreenOrientationAPIEnabled) || WebCore::IOSApplication::isHoYoLAB();
     return shouldEnableScreenOrientationAPI;
 #else
     return false;
@@ -314,6 +312,16 @@ bool defaultUseGPUProcessForDOMRenderingEnabled()
 #endif
 
     return false;
+}
+
+bool defaultSearchInputIncrementalAttributeAndSearchEventEnabled()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoSearchInputIncrementalAttributeAndSearchEvent);
+    return !newSDK;
+#else
+    return false;
+#endif
 }
 
 } // namespace WebKit

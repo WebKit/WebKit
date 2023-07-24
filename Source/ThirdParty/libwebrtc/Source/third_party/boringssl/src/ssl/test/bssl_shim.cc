@@ -278,6 +278,20 @@ static uint16_t GetProtocolVersion(const SSL *ssl) {
   return 0x0201 + ~version;
 }
 
+static bool CheckListContains(const char *type,
+                              size_t (*list_func)(const char **, size_t),
+                              const char *str) {
+  std::vector<const char *> list(list_func(nullptr, 0));
+  list_func(list.data(), list.size());
+  for (const char *expected : list) {
+    if (strcmp(expected, str) == 0) {
+      return true;
+    }
+  }
+  fprintf(stderr, "Unexpected %s: %s\n", type, str);
+  return false;
+}
+
 // CheckAuthProperties checks, after the initial handshake is completed or
 // after a renegotiation, that authentication-related properties match |config|.
 static bool CheckAuthProperties(SSL *ssl, bool is_resume,
@@ -407,9 +421,9 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
   }
 
   if (config->expect_version != 0 &&
-      SSL_version(ssl) != config->expect_version) {
+      SSL_version(ssl) != int{config->expect_version}) {
     fprintf(stderr, "want version %04x, got %04x\n", config->expect_version,
-            SSL_version(ssl));
+            static_cast<uint16_t>(SSL_version(ssl)));
     return false;
   }
 
@@ -546,18 +560,6 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
     }
   }
 
-  if (config->expect_token_binding_param != -1) {
-    if (!SSL_is_token_binding_negotiated(ssl)) {
-      fprintf(stderr, "no Token Binding negotiated\n");
-      return false;
-    }
-    if (SSL_get_negotiated_token_binding_param(ssl) !=
-        static_cast<uint8_t>(config->expect_token_binding_param)) {
-      fprintf(stderr, "Token Binding param mismatch\n");
-      return false;
-    }
-  }
-
   if (config->expect_extended_master_secret && !SSL_get_extms_support(ssl)) {
     fprintf(stderr, "No EMS for connection when expected\n");
     return false;
@@ -587,34 +589,32 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
 
   if (config->expect_curve_id != 0) {
     uint16_t curve_id = SSL_get_curve_id(ssl);
-    if (static_cast<uint16_t>(config->expect_curve_id) != curve_id) {
+    if (config->expect_curve_id != curve_id) {
       fprintf(stderr, "curve_id was %04x, wanted %04x\n", curve_id,
-              static_cast<uint16_t>(config->expect_curve_id));
+              config->expect_curve_id);
       return false;
     }
   }
 
   uint16_t cipher_id = SSL_CIPHER_get_protocol_id(SSL_get_current_cipher(ssl));
-  if (config->expect_cipher_aes != 0 &&
-      EVP_has_aes_hardware() &&
-      static_cast<uint16_t>(config->expect_cipher_aes) != cipher_id) {
+  if (config->expect_cipher_aes != 0 && EVP_has_aes_hardware() &&
+      config->expect_cipher_aes != cipher_id) {
     fprintf(stderr, "Cipher ID was %04x, wanted %04x (has AES hardware)\n",
-            cipher_id, static_cast<uint16_t>(config->expect_cipher_aes));
+            cipher_id, config->expect_cipher_aes);
     return false;
   }
 
-  if (config->expect_cipher_no_aes != 0 &&
-      !EVP_has_aes_hardware() &&
-      static_cast<uint16_t>(config->expect_cipher_no_aes) != cipher_id) {
+  if (config->expect_cipher_no_aes != 0 && !EVP_has_aes_hardware() &&
+      config->expect_cipher_no_aes != cipher_id) {
     fprintf(stderr, "Cipher ID was %04x, wanted %04x (no AES hardware)\n",
-            cipher_id, static_cast<uint16_t>(config->expect_cipher_no_aes));
+            cipher_id, config->expect_cipher_no_aes);
     return false;
   }
 
   if (config->expect_cipher != 0 &&
-      static_cast<uint16_t>(config->expect_cipher) != cipher_id) {
+      config->expect_cipher != cipher_id) {
     fprintf(stderr, "Cipher ID was %04x, wanted %04x\n", cipher_id,
-            static_cast<uint16_t>(config->expect_cipher));
+            config->expect_cipher);
     return false;
   }
 
@@ -672,14 +672,56 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
     return false;
   }
 
+  if (config->expect_ech_accept != !!SSL_ech_accepted(ssl)) {
+    fprintf(stderr, "ECH was %saccepted, but wanted opposite.\n",
+            SSL_ech_accepted(ssl) ? "" : "not ");
+    return false;
+  }
+
+  if (config->expect_key_usage_invalid != !!SSL_was_key_usage_invalid(ssl)) {
+    fprintf(stderr, "X.509 key usage was %svalid, but wanted opposite.\n",
+            SSL_was_key_usage_invalid(ssl) ? "in" : "");
+    return false;
+  }
+
+  // Check all the selected parameters are covered by the string APIs.
+  if (!CheckListContains("version", SSL_get_all_version_names,
+                         SSL_get_version(ssl)) ||
+      !CheckListContains(
+          "cipher", SSL_get_all_standard_cipher_names,
+          SSL_CIPHER_standard_name(SSL_get_current_cipher(ssl))) ||
+      !CheckListContains("OpenSSL cipher name", SSL_get_all_cipher_names,
+                         SSL_CIPHER_get_name(SSL_get_current_cipher(ssl))) ||
+      (SSL_get_curve_id(ssl) != 0 &&
+       !CheckListContains("curve", SSL_get_all_curve_names,
+                          SSL_get_curve_name(SSL_get_curve_id(ssl)))) ||
+      (SSL_get_peer_signature_algorithm(ssl) != 0 &&
+       !CheckListContains(
+           "sigalg", SSL_get_all_signature_algorithm_names,
+           SSL_get_signature_algorithm_name(
+               SSL_get_peer_signature_algorithm(ssl), /*include_curve=*/0))) ||
+      (SSL_get_peer_signature_algorithm(ssl) != 0 &&
+       !CheckListContains(
+           "sigalg with curve", SSL_get_all_signature_algorithm_names,
+           SSL_get_signature_algorithm_name(
+               SSL_get_peer_signature_algorithm(ssl), /*include_curve=*/1)))) {
+    return false;
+  }
+
   // Test that handshake hints correctly skipped the expected operations.
-  //
-  // TODO(davidben): Add support for TLS 1.2 hints and remove the version check.
-  // Also add a check for the session cache lookup.
-  if (config->handshake_hints && !config->allow_hint_mismatch &&
-      SSL_version(ssl) == TLS1_3_VERSION) {
+  if (config->handshake_hints && !config->allow_hint_mismatch) {
     const TestState *state = GetTestState(ssl);
-    if (!SSL_used_hello_retry_request(ssl) && state->used_private_key) {
+    // If the private key operation is performed in the first roundtrip, a hint
+    // match should have skipped it. This is ECDHE-based cipher suites in TLS
+    // 1.2 and non-HRR handshakes in TLS 1.3.
+    bool private_key_allowed;
+    if (SSL_version(ssl) == TLS1_3_VERSION) {
+      private_key_allowed = SSL_used_hello_retry_request(ssl);
+    } else {
+      private_key_allowed =
+          SSL_CIPHER_get_kx_nid(SSL_get_current_cipher(ssl)) == NID_kx_rsa;
+    }
+    if (!private_key_allowed && state->used_private_key) {
       fprintf(
           stderr,
           "Performed private key operation, but hint should have skipped it\n");
@@ -691,6 +733,9 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
               "Performed ticket decryption, but hint should have skipped it\n");
       return false;
     }
+
+    // TODO(davidben): Decide what we want to do with TLS 1.2 stateful
+    // resumption.
   }
   return true;
 }
@@ -815,7 +860,42 @@ static bool DoConnection(bssl::UniquePtr<SSL_SESSION> *out_session,
     }
 
     assert(!config->handoff);
+    config = retry_config;
     ret = DoExchange(out_session, &ssl, retry_config, is_resume, true, writer);
+  }
+
+  // An ECH rejection appears as a failed connection. Note |ssl| may use a
+  // different config on ECH rejection.
+  if (config->expect_no_ech_retry_configs ||
+      !config->expect_ech_retry_configs.empty()) {
+    bssl::Span<const uint8_t> expected =
+        config->expect_no_ech_retry_configs
+            ? bssl::Span<const uint8_t>()
+            : bssl::MakeConstSpan(reinterpret_cast<const uint8_t *>(
+                                      config->expect_ech_retry_configs.data()),
+                                  config->expect_ech_retry_configs.size());
+    if (ret) {
+      fprintf(stderr, "Expected ECH rejection, but connection succeeded.\n");
+      return false;
+    }
+    uint32_t err = ERR_peek_error();
+    if (SSL_get_error(ssl.get(), -1) != SSL_ERROR_SSL ||
+        ERR_GET_LIB(err) != ERR_LIB_SSL ||
+        ERR_GET_REASON(err) != SSL_R_ECH_REJECTED) {
+      fprintf(stderr, "Expected ECH rejection, but connection succeeded.\n");
+      return false;
+    }
+    const uint8_t *retry_configs;
+    size_t retry_configs_len;
+    SSL_get0_ech_retry_configs(ssl.get(), &retry_configs, &retry_configs_len);
+    if (bssl::MakeConstSpan(retry_configs, retry_configs_len) != expected) {
+      fprintf(stderr, "ECH retry configs did not match expectations.\n");
+      // Clear the error queue. Otherwise |SSL_R_ECH_REJECTED| will be printed
+      // to stderr and the test framework will think the test had the expected
+      // expectations.
+      ERR_clear_error();
+      return false;
+    }
   }
 
   if (!ret) {

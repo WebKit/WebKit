@@ -811,3 +811,238 @@ TEST(WKHTTPCookieStore, CookieAccessAfterNetworkProcessTermination)
     [webView stringByEvaluatingJavaScript:@"document.cookie = 'key=value'"];
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.cookie"], "key=value");
 }
+
+TEST(WKHTTPCookieStore, WebSocketCookies)
+{
+    using namespace TestWebKitAPI;
+    bool receivedThirdRequest { false };
+    uint16_t serverPort { 0 };
+    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        auto path = HTTPServer::parsePath(request);
+        request.append(0);
+        if (path == "/com"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Length: 0\r\n"
+                "Set-Cookie: Default=1\r\n"
+                "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
+                "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
+                "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
+                "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
+                "\r\n"_s);
+        } else if (path == "/websocket"_s) {
+            EXPECT_TRUE(strnstr(request.data(), "Host: 127.0.0.1:", request.size()));
+            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            receivedThirdRequest = true;
+        } else if (path == "/ninja"_s) {
+            auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://127.0.0.1:%d/websocket')</script>", serverPort];
+            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+        } else
+            EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
+    } });
+    serverPort = server.port();
+
+    auto webView = adoptNS([WKWebView new]);
+    [[[webView configuration] websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/com", serverPort]]]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%d/ninja", serverPort]]]];
+    Util::run(&receivedThirdRequest);
+}
+
+TEST(WKHTTPCookieStore, WebSocketCookiesFromRedirect)
+{
+    using namespace TestWebKitAPI;
+    bool receivedWebSocket { false };
+    uint16_t serverPort { 0 };
+    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        auto path = HTTPServer::parsePath(request);
+        request.append(0);
+        if (path == "/redirect"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 302 Found\r\n"
+                "Location: http://localhost:"_s + serverPort + "/com\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+        } else if (path == "/com"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 302 Found\r\n"
+                "Location: http://127.0.0.1:"_s + serverPort + "/destination\r\n"_s
+                "Set-Cookie: Default=1\r\n"
+                "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
+                "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
+                "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
+                "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+        } else if (path == "/destination"_s) {
+            EXPECT_TRUE(strnstr(request.data(), "Host: 127.0.0.1:", request.size()));
+            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            co_await connection.awaitableSend(
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+        } else if (path == "/websocket"_s) {
+            EXPECT_TRUE(strnstr(request.data(), "Host: localhost:", request.size()));
+            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            EXPECT_TRUE(strnstr(request.data(), "Origin: http://127.0.0.1:", request.size()));
+            receivedWebSocket = true;
+        } else if (path == "/ninja"_s) {
+            auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://localhost:%d/websocket')</script>", serverPort];
+            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+        } else
+            EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
+    } });
+    serverPort = server.port();
+
+    auto webView = adoptNS([WKWebView new]);
+    [[[webView configuration] websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/redirect", serverPort]]]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/ninja", serverPort]]]];
+    Util::run(&receivedWebSocket);
+}
+
+TEST(WKHTTPCookieStore, WebSocketCookiesThroughRedirect)
+{
+    using namespace TestWebKitAPI;
+    bool receivedWebSocket { false };
+    uint16_t serverPort { 0 };
+    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        auto path = HTTPServer::parsePath(request);
+        request.append(0);
+        if (path == "/redirect"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 302 Found\r\n"
+                "Location: http://localhost:"_s + serverPort + "/com\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+        } else if (path == "/com"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 302 Found\r\n"
+                "Location: http://127.0.0.1:"_s + serverPort + "/ninja\r\n"_s
+                "Set-Cookie: Default=1\r\n"
+                "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
+                "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
+                "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
+                "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+        } else if (path == "/websocket"_s) {
+            EXPECT_TRUE(strnstr(request.data(), "Host: localhost:", request.size()));
+            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            EXPECT_TRUE(strnstr(request.data(), "Origin: http://127.0.0.1:", request.size()));
+            receivedWebSocket = true;
+        } else if (path == "/ninja"_s) {
+            EXPECT_TRUE(strnstr(request.data(), "Host: 127.0.0.1:", request.size()));
+            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://localhost:%d/websocket')</script>", serverPort];
+            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+        } else
+            EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
+    } });
+    serverPort = server.port();
+
+    auto webView = adoptNS([WKWebView new]);
+    [[[webView configuration] websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/redirect", serverPort]]]];
+    Util::run(&receivedWebSocket);
+}
+
+TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughFirstPartyRedirect)
+{
+    using namespace TestWebKitAPI;
+    bool receivedWebSocket { false };
+    uint16_t serverPort { 0 };
+    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        auto path = HTTPServer::parsePath(request);
+        request.append(0);
+        if (path == "/redirect"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 302 Found\r\n"
+                "Location: ws://localhost:"_s + serverPort + "/websocket\r\n"
+                "Set-Cookie: Default=1\r\n"
+                "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
+                "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
+                "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
+                "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+        } else if (path == "/websocket"_s) {
+            EXPECT_TRUE(strnstr(request.data(), "Host: localhost:", request.size()));
+            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            EXPECT_FALSE(strnstr(request.data(), "Origin: http://127.0.0.1:", request.size()));
+            receivedWebSocket = true;
+        } else if (path == "/ninja"_s) {
+            EXPECT_TRUE(strnstr(request.data(), "Host: 127.0.0.1:", request.size()));
+            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://127.0.0.1:%d/redirect')</script>", serverPort];
+            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+        } else
+            EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
+    } });
+    serverPort = server.port();
+
+    auto webView = adoptNS([WKWebView new]);
+    [[[webView configuration] websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/ninja", serverPort]]]];
+    Util::run(&receivedWebSocket);
+}
+
+TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughRedirectToThirdParty)
+{
+    using namespace TestWebKitAPI;
+    bool receivedWebSocket { false };
+    uint16_t serverPort { 0 };
+    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        auto path = HTTPServer::parsePath(request);
+        request.append(0);
+        if (path == "/redirect"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 302 Found\r\n"
+                "Location: ws://localhost:"_s + serverPort + "/com\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+        } else if (path == "/com"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 302 Found\r\n"
+                "Location: ws://127.0.0.1:"_s + serverPort + "/redirect2\r\n"_s
+                "Set-Cookie: Default=1\r\n"
+                "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
+                "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
+                "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
+                "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+        } else if (path == "/redirect2"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 302 Found\r\n"
+                "Location: ws://localhost:"_s + serverPort + "/websocket\r\n"
+                "Content-Length: 0\r\n"
+                "\r\n"_s);
+        } else if (path == "/websocket"_s) {
+            EXPECT_TRUE(strnstr(request.data(), "Host: localhost:", request.size()));
+            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            receivedWebSocket = true;
+        } else if (path == "/ninja"_s) {
+            EXPECT_TRUE(strnstr(request.data(), "Host: 127.0.0.1:", request.size()));
+            EXPECT_FALSE(strnstr(request.data(), "Cookie:", request.size()));
+            auto html = [NSString stringWithFormat:@"<script>new WebSocket('ws://127.0.0.1:%d/redirect')</script>", serverPort];
+            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+        } else
+            EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
+    } });
+    serverPort = server.port();
+
+    auto webView = adoptNS([WKWebView new]);
+    [[[webView configuration] websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/ninja", serverPort]]]];
+    Util::run(&receivedWebSocket);
+}

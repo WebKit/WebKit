@@ -74,7 +74,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteColorSchemePreference) {
     _WKWebsiteColorSchemePreferenceDark,
 } WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
-// Allow controlling a per-page network connection integrity policy.
 typedef NS_OPTIONS(NSUInteger, _WKWebsiteNetworkConnectionIntegrityPolicy) {
     _WKWebsiteNetworkConnectionIntegrityPolicyNone = 0,
     _WKWebsiteNetworkConnectionIntegrityPolicyEnabled = 1 << 0,

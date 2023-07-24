@@ -101,6 +101,7 @@ namespace WebCore {
     macro(BiquadFilterNode) \
     macro(BlobEvent) \
     macro(BroadcastChannel) \
+    macro(BufferedChangeEvent) \
     macro(Cache) \
     macro(CacheStorage) \
     macro(ChannelMergerNode) \
@@ -158,6 +159,7 @@ namespace WebCore {
     macro(CSSUnitValue) \
     macro(CSSUnparsedValue) \
     macro(CSSVariableReferenceValue) \
+    macro(CookieStore) \
     macro(CustomElementRegistry) \
     macro(CustomEffect) \
     macro(Database) \
@@ -511,6 +513,7 @@ namespace WebCore {
     macro(consumeChunk) \
     macro(controlledReadableStream) \
     macro(controller) \
+    macro(cookieStore) \
     macro(createAbortSignal) \
     macro(createImageBitmap) \
     macro(createReadableStream) \
@@ -577,6 +580,7 @@ namespace WebCore {
     macro(onpush) \
     macro(onpushsubscriptionchange) \
     macro(onrtctransform) \
+    macro(onsearch) \
     macro(ontouchcancel) \
     macro(ontouchend) \
     macro(ontouchmove) \

@@ -59,7 +59,7 @@ public:
 
     WEBCORE_EXPORT PlatformLayer* videoInlineLayer() const final;
 
-    WEBCORE_EXPORT void setVideoLayer(PlatformLayer*, IntSize) final;
+    WEBCORE_EXPORT void setVideoLayer(PlatformLayer*, FloatSize) final;
     WEBCORE_EXPORT void didDestroyVideoLayer() final;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)

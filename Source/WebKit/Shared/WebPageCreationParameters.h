@@ -61,8 +61,8 @@
 #include <WebCore/ApplicationManifest.h>
 #endif
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-#include <WebCore/LookalikeCharactersSanitizationData.h>
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+#include <WebCore/LinkDecorationFilteringData.h>
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -77,9 +77,6 @@ class Encoder;
 namespace WebKit {
 
 struct WebPageCreationParameters {
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebPageCreationParameters> decode(IPC::Decoder&);
-
     WebCore::IntSize viewSize;
 
     OptionSet<WebCore::ActivityState> activityState;
@@ -274,7 +271,7 @@ struct WebPageCreationParameters {
     
     bool httpsUpgradeEnabled { true };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload { false };
 #endif
     
@@ -291,10 +288,12 @@ struct WebPageCreationParameters {
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
     std::optional<FrameTreeCreationParameters> subframeProcessFrameTreeCreationParameters;
+    std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
+    std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    Vector<WebCore::LookalikeCharactersSanitizationData> lookalikeCharacterStrings;
-    Vector<WebCore::LookalikeCharactersSanitizationData> allowedLookalikeCharacterStrings;
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData;
+    Vector<WebCore::LinkDecorationFilteringData> allowedQueryParametersForAdvancedPrivacyProtections;
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)

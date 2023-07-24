@@ -31,8 +31,8 @@ info: |
 
     DecoratorMemberExpression[Yield, Await] :
       IdentifierReference[?Yield, ?Await]
-      PrivateIdentifier
       DecoratorMemberExpression[?Yield, ?Await] . IdentifierName
+      DecoratorMemberExpression[?Yield, ?Await] . PrivateIdentifier
 
     IdentifierReference[Yield, Await] :
       Identifier

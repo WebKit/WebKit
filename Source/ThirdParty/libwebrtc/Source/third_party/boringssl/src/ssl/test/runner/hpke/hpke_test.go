@@ -23,7 +23,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 )
@@ -38,7 +38,7 @@ var (
 
 // Simple round-trip test for fixed inputs.
 func TestRoundTrip(t *testing.T) {
-	publicKeyR, secretKeyR, err := GenerateKeyPair()
+	publicKeyR, secretKeyR, err := GenerateKeyPairX25519()
 	if err != nil {
 		t.Errorf("failed to generate key pair: %s", err)
 		return
@@ -86,9 +86,9 @@ type HpkeTestVector struct {
 	Exports     []ExportTestVector     `json:"exports"`
 }
 type EncryptionTestVector struct {
-	Plaintext      HexString `json:"plaintext"`
+	Plaintext      HexString `json:"pt"`
 	AdditionalData HexString `json:"aad"`
-	Ciphertext     HexString `json:"ciphertext"`
+	Ciphertext     HexString `json:"ct"`
 }
 type ExportTestVector struct {
 	ExportContext HexString `json:"exporter_context"`
@@ -98,7 +98,7 @@ type ExportTestVector struct {
 
 // TestVectors checks all relevant test vectors in test-vectors.json.
 func TestVectors(t *testing.T) {
-	jsonStr, err := ioutil.ReadFile(filepath.Join(*testDataDir, "test-vectors.json"))
+	jsonStr, err := os.ReadFile(filepath.Join(*testDataDir, "test-vectors.json"))
 	if err != nil {
 		t.Errorf("error reading test vectors: %s", err)
 		return

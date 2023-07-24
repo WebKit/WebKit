@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,14 @@ namespace WebCore {
 class JSLocalDOMWindow;
 enum class RejectAsHandled : bool { No, Yes };
 
+#define DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, globalObject) do { \
+        if (UNLIKELY(scope.exception())) { \
+            handleUncaughtException(scope, *jsCast<JSDOMGlobalObject*>(globalObject)); \
+            return; \
+        } \
+    } while (false)
+
+
 class DeferredPromise : public DOMGuarded<JSC::JSPromise> {
 public:
     enum class Mode {
@@ -66,8 +74,13 @@ public:
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
-        JSC::JSLockHolder locker(lexicalGlobalObject);
-        resolve(*lexicalGlobalObject, toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
+        auto& vm = lexicalGlobalObject->vm();
+        JSC::JSLockHolder locker(vm);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto jsValue = toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
+        DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
+        resolve(*lexicalGlobalObject, jsValue);
+        DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
     }
 
     void resolveWithJSValue(JSC::JSValue resolution)
@@ -103,8 +116,12 @@ public:
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
-        JSC::JSLockHolder locker(lexicalGlobalObject);
-        resolve(*lexicalGlobalObject, toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
+        auto& vm = lexicalGlobalObject->vm();
+        JSC::JSLockHolder locker(vm);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto jsValue = toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
+        DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
+        resolve(*lexicalGlobalObject, jsValue);
     }
 
     template<class IDLType>
@@ -116,8 +133,12 @@ public:
         ASSERT(deferred());
         ASSERT(globalObject());
         auto* lexicalGlobalObject = globalObject();
-        JSC::JSLockHolder locker(lexicalGlobalObject);
-        resolve(*lexicalGlobalObject, toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), createValue(*globalObject()->scriptExecutionContext())));
+        auto& vm = lexicalGlobalObject->vm();
+        JSC::JSLockHolder locker(vm);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto jsValue = toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), createValue(*globalObject()->scriptExecutionContext()));
+        DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
+        resolve(*lexicalGlobalObject, jsValue);
     }
 
     template<class IDLType>
@@ -129,8 +150,12 @@ public:
         ASSERT(deferred());
         ASSERT(globalObject());
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
-        JSC::JSLockHolder locker(lexicalGlobalObject);
-        reject(*lexicalGlobalObject, toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value)), rejectAsHandled);
+        auto& vm = lexicalGlobalObject->vm();
+        JSC::JSLockHolder locker(vm);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto jsValue = toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
+        DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
+        reject(*lexicalGlobalObject, jsValue, rejectAsHandled);
     }
 
     void reject(RejectAsHandled = RejectAsHandled::No);
@@ -148,12 +173,12 @@ public:
         ASSERT(deferred());
         ASSERT(globalObject());
         auto* lexicalGlobalObject = globalObject();
-        JSC::VM& vm = lexicalGlobalObject->vm();
+        auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
-        resolve(*lexicalGlobalObject, callback(*globalObject()));
-        if (UNLIKELY(scope.exception()))
-            handleUncaughtException(scope, *lexicalGlobalObject);
+        auto jsValue = callback(*globalObject());
+        DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
+        resolve(*lexicalGlobalObject, jsValue);
     }
 
     template<typename Callback>
@@ -168,14 +193,15 @@ public:
         JSC::VM& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
-        reject(*lexicalGlobalObject, callback(*globalObject()), rejectAsHandled);
-        if (UNLIKELY(scope.exception()))
-            handleUncaughtException(scope, *lexicalGlobalObject);
+        auto jsValue = callback(*globalObject());
+        DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
+        reject(*lexicalGlobalObject, jsValue, rejectAsHandled);
     }
 
     JSC::JSValue promise() const;
 
     void whenSettled(Function<void()>&&);
+    bool needsAbort() const { return m_needsAbort; }
 
 private:
     DeferredPromise(JSDOMGlobalObject& globalObject, JSC::JSPromise& deferred, Mode mode)
@@ -198,9 +224,10 @@ private:
     }
 
     bool handleTerminationExceptionIfNeeded(JSC::CatchScope&, JSDOMGlobalObject& lexicalGlobalObject);
-    void handleUncaughtException(JSC::CatchScope&, JSDOMGlobalObject& lexicalGlobalObject);
+    WEBCORE_EXPORT void handleUncaughtException(JSC::CatchScope&, JSDOMGlobalObject& lexicalGlobalObject);
 
     Mode m_mode;
+    bool m_needsAbort { false };
 };
 
 class DOMPromiseDeferredBase {

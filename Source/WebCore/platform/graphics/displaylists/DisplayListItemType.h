@@ -51,7 +51,9 @@ enum class ItemType : uint8_t {
     SetMiterLimit,
     ClearShadow,
     Clip,
+    ClipRoundedRect,
     ClipOut,
+    ClipOutRoundedRect,
     ClipToImageBuffer,
     ClipOutToPath,
     ClipPath,
@@ -84,6 +86,7 @@ enum class ItemType : uint8_t {
     FillQuadCurve,
     FillBezierCurve,
 #endif
+    FillPathSegment,
     FillPath,
     FillEllipse,
 #if ENABLE(VIDEO)
@@ -96,6 +99,7 @@ enum class ItemType : uint8_t {
     StrokeQuadCurve,
     StrokeBezierCurve,
 #endif
+    StrokePathSegment,
     StrokePath,
     StrokeEllipse,
     ClearRect,

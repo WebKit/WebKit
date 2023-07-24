@@ -138,36 +138,36 @@ void SelectorFilter::popParentsUntil(Element* parent)
 void SelectorFilter::collectSimpleSelectorHash(CollectedSelectorHashes& collectedHashes, const CSSSelector& selector)
 {
     switch (selector.match()) {
-    case CSSSelector::Id:
+    case CSSSelector::Match::Id:
         if (!selector.value().isEmpty())
             collectedHashes.ids.append(selector.value().impl()->existingHash() * IdSalt);
         break;
-    case CSSSelector::Class:
+    case CSSSelector::Match::Class:
         if (!selector.value().isEmpty())
             collectedHashes.classes.append(selector.value().impl()->existingHash() * ClassSalt);
         break;
-    case CSSSelector::Tag: {
+    case CSSSelector::Match::Tag: {
         auto& tagLowercaseLocalName = selector.tagLowercaseLocalName();
         if (tagLowercaseLocalName != starAtom())
             collectedHashes.tags.append(tagLowercaseLocalName.impl()->existingHash() * TagNameSalt);
         break;
     }
-    case CSSSelector::Exact:
-    case CSSSelector::Set:
-    case CSSSelector::List:
-    case CSSSelector::Hyphen:
-    case CSSSelector::Contain:
-    case CSSSelector::Begin:
-    case CSSSelector::End: {
+    case CSSSelector::Match::Exact:
+    case CSSSelector::Match::Set:
+    case CSSSelector::Match::List:
+    case CSSSelector::Match::Hyphen:
+    case CSSSelector::Match::Contain:
+    case CSSSelector::Match::Begin:
+    case CSSSelector::Match::End: {
         auto attributeName = selector.attribute().localNameLowercase();
         if (!isExcludedAttribute(attributeName))
             collectedHashes.attributes.append(attributeName.impl()->existingHash() * AttributeSalt);
         break;
     }
-    case CSSSelector::PseudoClass:
+    case CSSSelector::Match::PseudoClass:
         switch (selector.pseudoClassType()) {
-        case CSSSelector::PseudoClassIs:
-        case CSSSelector::PseudoClassWhere:
+        case CSSSelector::PseudoClassType::Is:
+        case CSSSelector::PseudoClassType::Where:
             // We can use the filter in the trivial case of single argument :is()/:where().
             // Supporting the multiargument case would require more than one hash.
             if (selector.selectorList()->listSize() == 1)
@@ -188,25 +188,25 @@ void SelectorFilter::collectSelectorHashes(CollectedSelectorHashes& collectedHas
         if (includeRightmost == IncludeRightmost::No)
             return std::tuple { rightmostSelector.tagHistory(), rightmostSelector.relation(), true };
 
-        return std::tuple { &rightmostSelector, CSSSelector::Subselector, false };
+        return std::tuple { &rightmostSelector, CSSSelector::RelationType::Subselector, false };
     }();
 
     for (; selector; selector = selector->tagHistory()) {
         // Only collect identifiers that match ancestors.
         switch (relation) {
-        case CSSSelector::Subselector:
+        case CSSSelector::RelationType::Subselector:
             if (!skipOverSubselectors)
                 collectSimpleSelectorHash(collectedHashes, *selector);
             break;
-        case CSSSelector::DirectAdjacent:
-        case CSSSelector::IndirectAdjacent:
-        case CSSSelector::ShadowDescendant:
-        case CSSSelector::ShadowPartDescendant:
-        case CSSSelector::ShadowSlotted:
+        case CSSSelector::RelationType::DirectAdjacent:
+        case CSSSelector::RelationType::IndirectAdjacent:
+        case CSSSelector::RelationType::ShadowDescendant:
+        case CSSSelector::RelationType::ShadowPartDescendant:
+        case CSSSelector::RelationType::ShadowSlotted:
             skipOverSubselectors = true;
             break;
-        case CSSSelector::DescendantSpace:
-        case CSSSelector::Child:
+        case CSSSelector::RelationType::DescendantSpace:
+        case CSSSelector::RelationType::Child:
             skipOverSubselectors = false;
             collectSimpleSelectorHash(collectedHashes, *selector);
             break;

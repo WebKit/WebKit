@@ -83,7 +83,8 @@ class ScreenEnumerator final : public SourceEnumerator {
 // capturer appropriate for the type of source they want to capture.
 class WgcCapturerWin : public DesktopCapturer {
  public:
-  WgcCapturerWin(std::unique_ptr<WgcCaptureSourceFactory> source_factory,
+  WgcCapturerWin(const DesktopCaptureOptions& options,
+                 std::unique_ptr<WgcCaptureSourceFactory> source_factory,
                  std::unique_ptr<SourceEnumerator> source_enumerator,
                  bool allow_delayed_capturable_check);
 
@@ -113,6 +114,8 @@ class WgcCapturerWin : public DesktopCapturer {
   typedef HRESULT(WINAPI* CreateDispatcherQueueControllerFunc)(
       DispatcherQueueOptions,
       ABI::Windows::System::IDispatcherQueueController**);
+
+  DesktopCaptureOptions options_;
 
   // We need to either create or ensure that someone else created a
   // `DispatcherQueue` on the current thread so that events will be delivered

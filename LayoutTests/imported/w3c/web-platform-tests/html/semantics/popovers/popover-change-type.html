@@ -8,8 +8,6 @@
 <script src="/resources/testdriver-actions.js"></script>
 <script src="/html/semantics/popovers/resources/popover-utils.js"></script>
 
-<body style="margin: 0px">
-
 <div id=mypopover>popover</div>
 
 <script>
@@ -37,11 +35,8 @@ promise_test(async () => {
   assert_true(mypopover.matches(':popover-open'),
     'The popover should be open after the toggling sequence.');
 
-  await new test_driver.send_keys(mypopover,'\uE00C'); // Escape
-
+  await sendEscape();
   assert_false(mypopover.matches(':popover-open'),
     'The popover should light dismiss because it is in the auto state.');
 }, 'Changing the popover attribute should always update the auto/manual behavior.');
 </script>
-
-</body>

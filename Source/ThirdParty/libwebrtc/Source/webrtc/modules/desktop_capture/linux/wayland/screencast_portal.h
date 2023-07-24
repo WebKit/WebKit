@@ -15,14 +15,16 @@
 
 #include <string>
 
-#include "modules/desktop_capture/linux/wayland/portal_request_response.h"
+#include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/linux/wayland/screen_capture_portal_interface.h"
-#include "modules/desktop_capture/linux/wayland/xdg_desktop_portal_utils.h"
-#include "modules/desktop_capture/linux/wayland/xdg_session_details.h"
+#include "modules/portal/portal_request_response.h"
+#include "modules/portal/xdg_desktop_portal_utils.h"
+#include "modules/portal/xdg_session_details.h"
 
 namespace webrtc {
 
-class ScreenCastPortal : public xdg_portal::ScreenCapturePortalInterface {
+class RTC_EXPORT ScreenCastPortal
+    : public xdg_portal::ScreenCapturePortalInterface {
  public:
   using ProxyRequestResponseHandler = void (*)(GObject* object,
                                                GAsyncResult* result,
@@ -37,18 +39,9 @@ class ScreenCastPortal : public xdg_portal::ScreenCapturePortalInterface {
                GVariant* parameters,
                gpointer user_data);
 
-  // Values are set based on source type property in
-  // xdg-desktop-portal/screencast
-  // https://github.com/flatpak/xdg-desktop-portal/blob/master/data/org.freedesktop.portal.ScreenCast.xml
-  enum class CaptureSourceType : uint32_t {
-    kScreen = 0b01,
-    kWindow = 0b10,
-    kAnyScreenContent = kScreen | kWindow
-  };
-
   // Values are set based on cursor mode property in
   // xdg-desktop-portal/screencast
-  // https://github.com/flatpak/xdg-desktop-portal/blob/master/data/org.freedesktop.portal.ScreenCast.xml
+  // https://github.com/flatpak/xdg-desktop-portal/blob/main/data/org.freedesktop.portal.ScreenCast.xml
   enum class CursorMode : uint32_t {
     // Mouse cursor will not be included in any form
     kHidden = 0b01,
@@ -60,7 +53,7 @@ class ScreenCastPortal : public xdg_portal::ScreenCapturePortalInterface {
 
   // Values are set based on persist mode property in
   // xdg-desktop-portal/screencast
-  // https://github.com/flatpak/xdg-desktop-portal/blob/master/data/org.freedesktop.portal.ScreenCast.xml
+  // https://github.com/flatpak/xdg-desktop-portal/blob/main/data/org.freedesktop.portal.ScreenCast.xml
   enum class PersistMode : uint32_t {
     // Do not allow to restore stream
     kDoNotPersist = 0b00,
@@ -86,15 +79,17 @@ class ScreenCastPortal : public xdg_portal::ScreenCapturePortalInterface {
     virtual ~PortalNotifier() = default;
   };
 
-  explicit ScreenCastPortal(ScreenCastPortal::CaptureSourceType source_type,
-                            PortalNotifier* notifier);
-  explicit ScreenCastPortal(
-      CaptureSourceType source_type,
-      PortalNotifier* notifier,
-      ProxyRequestResponseHandler proxy_request_response_handler,
-      SourcesRequestResponseSignalHandler
-          sources_request_response_signal_handler,
-      gpointer user_data);
+  ScreenCastPortal(CaptureType type, PortalNotifier* notifier);
+  ScreenCastPortal(CaptureType type,
+                   PortalNotifier* notifier,
+                   ProxyRequestResponseHandler proxy_request_response_handler,
+                   SourcesRequestResponseSignalHandler
+                       sources_request_response_signal_handler,
+                   gpointer user_data,
+                   // TODO(chromium:1291247): Remove the default option once
+                   // downstream has been adjusted.
+                   bool prefer_cursor_embedded = false);
+
   ~ScreenCastPortal();
 
   // Initialize ScreenCastPortal with series of DBus calls where we try to
@@ -105,6 +100,7 @@ class ScreenCastPortal : public xdg_portal::ScreenCapturePortalInterface {
   // was successful and only then you will be able to get all the required
   // information in order to continue working with PipeWire.
   void Start() override;
+  void Stop() override;
   xdg_portal::SessionDetails GetSessionDetails() override;
 
   // Method to notify the reason for failure of a portal request.
@@ -112,7 +108,6 @@ class ScreenCastPortal : public xdg_portal::ScreenCapturePortalInterface {
 
   // Sends a create session request to the portal.
   void RequestSession(GDBusProxy* proxy) override;
-  void Cleanup();
 
   // Set of methods leveraged by remote desktop portal to setup a common session
   // with screen cast portal.
@@ -127,6 +122,16 @@ class ScreenCastPortal : public xdg_portal::ScreenCapturePortalInterface {
   std::string RestoreToken() const;
 
  private:
+  // Values are set based on source type property in
+  // xdg-desktop-portal/screencast
+  // https://github.com/flatpak/xdg-desktop-portal/blob/main/data/org.freedesktop.portal.ScreenCast.xml
+  enum class CaptureSourceType : uint32_t {
+    kScreen = 0b01,
+    kWindow = 0b10,
+    kAnyScreenContent = kScreen | kWindow
+  };
+  static CaptureSourceType ToCaptureSourceType(CaptureType type);
+
   PortalNotifier* notifier_;
 
   // A PipeWire stream ID of stream we will be connecting to
@@ -139,7 +144,7 @@ class ScreenCastPortal : public xdg_portal::ScreenCapturePortalInterface {
   CaptureSourceType capture_source_type_ =
       ScreenCastPortal::CaptureSourceType::kScreen;
 
-  CursorMode cursor_mode_ = ScreenCastPortal::CursorMode::kMetadata;
+  CursorMode cursor_mode_ = CursorMode::kMetadata;
 
   PersistMode persist_mode_ = ScreenCastPortal::PersistMode::kDoNotPersist;
 

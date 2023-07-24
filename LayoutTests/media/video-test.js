@@ -141,6 +141,16 @@ function testExpectedEventually(testFuncString, expected, comparison, timeout)
     });
 }
 
+async function runUntil(run, until, timeout) {
+    while (timeout === undefined || timeout--) {
+        run();
+        if (until())
+            return;
+        await sleepFor(1);
+    }
+    failTest("Did not end fast enough.");
+}
+
 function testArraysEqual(testFuncString, expected)
 {
     var observed;

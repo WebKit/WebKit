@@ -165,4 +165,6 @@ static bool decrypt(WebKitMediaCommonEncryptionDecrypt* decryptor, GstBuffer* iv
     return result;
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER) && USE(GSTREAMER)

@@ -42,8 +42,3 @@ int main(int argc, char** argv)
 
     return passed ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-
-extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, char** argv)
-{
-    return main(argc, argv);
-}

@@ -283,9 +283,6 @@
                 "settings-flag": "accentColorEnabled",
                 "parser-grammar": "auto | <color>"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-ui",
                 "url": "https://www.w3.org/TR/css-ui-4/#widget-accent"
@@ -312,7 +309,7 @@
             "codegen-properties": {
                 "initial": "initialAlignTracks",
                 "converter": "ContentAlignmentDataList",
-                "settings-flag": "masonryEnabled",
+                "settings-flag": "masonryTrackAlignmentEnabled",
                 "parser-function": "consumeAlignTracks",
                 "parser-grammar-unused": "normal | <baseline-position> | <content-distribution> | [ <overflow-position>? <content-position> ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals",
@@ -321,7 +318,8 @@
             "specification": {
                 "category": "css-grid",
                 "url": "https://drafts.csswg.org/css-grid-3/#tracks-alignment"
-            }
+            },
+            "status": "in development"
         },
         "block-step-size": {
             "codegen-properties": {
@@ -332,7 +330,8 @@
             "specification": {
                 "category": "css-rhythm",
                 "url": "https://drafts.csswg.org/css-rhythm/#block-step-size"
-            }
+            },
+            "status": "in development"
         },
         "block-step-insert": {
             "values": [
@@ -342,7 +341,12 @@
             "codegen-properties": {
                 "settings-flag": "cssRhythmicSizingEnabled",
                 "parser-grammar": "<<values>>"
-            }
+            },
+            "specification": {
+                "category": "css-rhythm",
+                "url": "https://drafts.csswg.org/css-rhythm/#block-step-size"
+            },
+            "status": "in development"
         },
         "caret-color": {
             "inherited": true,
@@ -365,7 +369,7 @@
             "codegen-properties": {
                 "visited-link-color-support": true,
                 "color-property": true,
-                "custom": "Value",
+                "custom": "All",
                 "high-priority": true,
                 "fast-path-inherited": true,
                 "parser-grammar": "<color accept-quirky-colors-in-quirks-mode>"
@@ -470,7 +474,6 @@
                 }
             ],
             "codegen-properties": {
-                "custom": "Inherit|Value",
                 "high-priority": true,
                 "parser-function": "consumeDisplay",
                 "parser-grammar-unused": "[ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy> | <-webkit-display>",
@@ -698,7 +701,25 @@
             "specification": {
                 "category": "css-inline",
                 "url": "https://www.w3.org/TR/css-inline-3/#text-edges"
-            }
+            },
+            "status": "experimental"
+        },
+        "text-box-trim": {
+            "values": [
+                "none",
+                "start",
+                "end",
+                "both"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssTextBoxTrimEnabled",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-inline",
+                "url": "https://www.w3.org/TR/css-inline-3/#leading-trim"
+            },
+            "status": "experimental"
         },
         "text-rendering": {
             "inherited": true,
@@ -846,10 +867,6 @@
                 "high-priority": true,
                 "parser-grammar": "<<values>>",
                 "parser-exported": true
-            },
-            "status": {
-                "status": "in development",
-                "enabled-by-default": true
             },
             "specification": {
                 "category": "css-fonts",
@@ -1101,7 +1118,7 @@
             "codegen-properties": {
                 "initial": "initialJustifyTracks",
                 "converter": "ContentAlignmentDataList",
-                "settings-flag": "masonryEnabled",
+                "settings-flag": "masonryTrackAlignmentEnabled",
                 "parser-function": "consumeJustifyTracks",
                 "parser-grammar-unused": "normal | <content-distribution> | [ <overflow-position>? [ <content-position> | left | right ] ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups and optionals.",
@@ -1110,7 +1127,8 @@
             "specification": {
                 "category": "css-grid",
                 "url": "https://drafts.csswg.org/css-grid-3/#tracks-alignment"
-            }
+            },
+            "status": "in development"
         },
         "-webkit-locale": {
             "inherited": true,
@@ -1191,7 +1209,7 @@
                 "parser-grammar-unused": "auto | space-all | trim-all | [ allow-end || space-first ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."
             },
-            "status": "experimental",
+            "status": "in development",
             "specification": {
                 "category": "css-text",
                 "non-canonical-url": "https://www.w3.org/TR/css-text-4/#text-spacing-property"
@@ -1210,7 +1228,7 @@
                 "parser-grammar-unused": "normal | auto | no-autospace | [ [ ideograph-alpha || ideograph-numeric || punctuation ] || [ insert | replace ] ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."
             },
-            "status": "experimental",
+            "status": "in development",
             "specification": {
                 "category": "css-text",
                 "non-canonical-url": "https://www.w3.org/TR/css-text-4/#text-spacing-property"
@@ -1335,6 +1353,7 @@
                 "comment": "This is a top priority property to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>).",
                 "parser-grammar": "<<values>>"
             },
+            "status": "experimental",
             "specification": {
                 "category": "css-ruby",
                 "url": "https://www.w3.org/TR/css-ruby-1/#rubypos"
@@ -1414,9 +1433,6 @@
             "specification": {
                 "category": "css-animations",
                 "url": "https://drafts.csswg.org/css-animations-2/#animation-composition"
-            },
-            "status": {
-                "status": "experimental"
             }
         },
         "animation-delay": {
@@ -3256,18 +3272,6 @@
                 "url": "https://www.w3.org/TR/css-lists-3/#counter-properties"
             }
         },
-        "counter-set": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": {
-                "status": "not implemented"
-            },
-            "specification": {
-                "category": "css-lists",
-                "url": "https://www.w3.org/TR/css-lists-3/#propdef-counter-set"
-            }
-        },
         "cursor": {
             "inherited": true,
             "values": [
@@ -3627,28 +3631,6 @@
                 "url": "https://drafts.csswg.org/css-images-3/#propdef-image-rendering"
             }
         },
-        "image-resolution": {
-            "inherited": true,
-            "values": [
-                "from-image",
-                "snap"
-            ],
-            "codegen-properties": {
-                "custom": "All",
-                "enable-if": "ENABLE_CSS_IMAGE_RESOLUTION",
-                "parser-function": "consumeImageResolution",
-                "parser-grammar-unused": "[ from-image || <resolution> ] && snap?",
-                "parser-grammar-unused-reason": "Needs support for '||' groups and optionals."
-            },
-            "status": {
-                "status": "under consideration",
-                "enabled-by-default": false
-            },
-            "specification": {
-                "category": "css-images",
-                "url": "https://www.w3.org/TR/css-images-4/#image-resolution"
-            }
-        },
         "inline-size": {
             "codegen-properties": {
                 "aliases": [
@@ -3784,22 +3766,6 @@
             "specification": {
                 "category": "svg",
                 "url": "https://www.w3.org/TR/SVG11/text.html#KerningProperty"
-            }
-        },
-        "text-box-trim": {
-            "values": [
-                "none",
-                "start",
-                "end",
-                "both"
-            ],
-            "codegen-properties": {
-                "settings-flag": "cssTextBoxTrimEnabled",
-                "parser-grammar": "<<values>>"
-            },
-            "specification": {
-                "category": "css-inline",
-                "url": "https://www.w3.org/TR/css-inline-3/#leading-trim"
             }
         },
         "left": {
@@ -4398,9 +4364,7 @@
                     "-webkit-mask-position-y"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking",
                 "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
@@ -4413,7 +4377,7 @@
                 "parser-grammar": "<single-webkit-mask-position-x>#"
             },
             "status": {
-                "status": "experimental",
+                "status": "non-standard",
                 "comment": "The unprefixed property should be internal-only"
             },
             "specification": {
@@ -4428,7 +4392,7 @@
                 "parser-grammar": "<single-webkit-mask-position-y>#"
             },
             "status": {
-                "status": "experimental",
+                "status": "non-standard",
                 "comment": "The unprefixed property should be internal-only"
             },
             "specification": {
@@ -4495,7 +4459,8 @@
             "specification": {
                 "category": "css-grid",
                 "url": "https://drafts.csswg.org/css-grid-3/#masonry-auto-flow"
-            }
+            },
+            "status": "experimental"
         },
         "math-style": {
             "values": [
@@ -4878,7 +4843,8 @@
             "specification": {
                 "category": "css-scroll-anchoring",
                 "url": "https://www.w3.org/TR/css-scroll-anchoring-1/#propdef-overflow-anchor"
-            }
+            },
+            "status": "in development"
         },
         "overflow-wrap": {
             "inherited": true,
@@ -4960,9 +4926,6 @@
                 ],
                 "settings-flag": "overscrollBehaviorEnabled"
             },
-            "status": {
-                "status": "in development"
-            },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior"
             }
@@ -4981,9 +4944,6 @@
                 },
                 "parser-grammar": "<<values>>",
                 "parser-exported": true
-            },
-            "status": {
-                "status": "in development"
             },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
@@ -5004,9 +4964,6 @@
                 "parser-grammar": "<<values>>",
                 "parser-exported": true
             },
-            "status": {
-                "status": "in development"
-            },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-y"
             }
@@ -5026,9 +4983,6 @@
                 },
                 "parser-grammar": "<<values>>"
             },
-            "status": {
-                "status": "in development"
-            },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
             }
@@ -5047,9 +5001,6 @@
                     "resolver": "block"
                 },
                 "parser-grammar": "<<values>>"
-            },
-            "status": {
-                "status": "in development"
             },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
@@ -5804,7 +5755,8 @@
             "specification": {
                 "category": "css-text",
                 "url": "https://drafts.csswg.org/css-text-4/#text-group-align-property"
-            }
+            },
+            "status": "in development"
         },
         "text-indent": {
             "inherited": true,
@@ -5845,69 +5797,6 @@
                 "url": "https://www.w3.org/TR/css-text-3/#text-justify"
             }
         },
-        "text-line-through": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through"
-            }
-        },
-        "text-line-through-color": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through-color"
-            }
-        },
-        "text-line-through-mode": {
-            "values": [
-                "continuous",
-                "skip-white-space"
-            ],
-            "status": "removed",
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through-mode"
-            }
-        },
-        "text-line-through-style": {
-            "values": [
-                "none",
-                "solid",
-                "double",
-                "dashed",
-                "dot-dash",
-                "dot-dot-dash",
-                "wave"
-            ],
-            "status": "removed",
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through-style"
-            }
-        },
-        "text-line-through-width": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through-width"
-            }
-        },
         "text-overflow": {
             "values": [
                 "clip",
@@ -5919,69 +5808,6 @@
             "specification": {
                 "category": "css-ui",
                 "url": "https://www.w3.org/TR/css-ui-3/#propdef-text-overflow"
-            }
-        },
-        "text-overline": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline"
-            }
-        },
-        "text-overline-color": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-color"
-            }
-        },
-        "text-overline-mode": {
-            "values": [
-                "continuous",
-                "skip-white-space"
-            ],
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-mode"
-            }
-        },
-        "text-overline-style": {
-            "values": [
-                "none",
-                "solid",
-                "double",
-                "dashed",
-                "dot-dash",
-                "dot-dot-dash",
-                "wave"
-            ],
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-style"
-            }
-        },
-        "text-overline-width": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-width"
             }
         },
         "text-shadow": {
@@ -6019,71 +5845,8 @@
                 ]
             },
             "specification": {
-                "category": "css3-text",
-                "url": "https://w3c.github.io/csswg-drafts/css-text/#text-transform-property"
-            }
-        },
-        "text-underline": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline"
-            }
-        },
-        "text-underline-color": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-color"
-            }
-        },
-        "text-underline-mode": {
-            "values": [
-                "continuous",
-                "skip-white-space"
-            ],
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-mode"
-            }
-        },
-        "text-underline-style": {
-            "values": [
-                "none",
-                "solid",
-                "double",
-                "dashed",
-                "dot-dash",
-                "dot-dot-dash",
-                "wave"
-            ],
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-style"
-            }
-        },
-        "text-underline-width": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-width"
+                "category": "css-text",
+                "url": "https://drafts.csswg.org/css-text/#text-transform-property"
             }
         },
         "text-wrap": {
@@ -6091,18 +5854,29 @@
             "values": [
                 "wrap",
                 "nowrap",
-                "balance",
-                "stable",
-                "pretty"
+                {
+                    "value": "balance",
+                    "settings-flag": "cssTextWrapNewValuesEnabled"
+                },
+                {
+                    "value": "stable",
+                    "settings-flag": "cssTextWrapNewValuesEnabled"
+                },
+                {
+                    "value": "pretty",
+                    "settings-flag": "cssTextWrapNewValuesEnabled"
+                }
             ],
             "codegen-properties": {
-                "settings-flag": "cssTextWrapEnabled",
-                "parser-grammar": "<<values>>"
+                "settings-flag": "cssWhiteSpaceLonghandsEnabled",
+                "parser-grammar": "<<values>>",
+                "parser-exported": true
             },
             "specification": {
                 "category": "css-text",
                 "url": "https://www.w3.org/TR/css-text-4/#text-wrap"
-            }
+            },
+            "status": "in development"
         },
         "top": {
             "values": [
@@ -6284,21 +6058,35 @@
         },
         "white-space": {
             "inherited": true,
+            "codegen-properties": {
+                "longhands": [
+                    "white-space-collapse",
+                    "text-wrap"
+                ]
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text-4/#white-space-property"
+            }
+        },
+        "white-space-collapse": {
+            "inherited": true,
             "values": [
-                "normal",
-                "pre",
-                "pre-wrap",
-                "pre-line",
-                "nowrap",
+                "collapse",
+                "preserve",
+                "preserve-breaks",
                 "break-spaces"
             ],
             "codegen-properties": {
-                "parser-grammar": "<<values>>"
+                "settings-flag": "cssWhiteSpaceLonghandsEnabled",
+                "parser-grammar": "<<values>>",
+                "parser-exported": true
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/text.html#propdef-white-space"
-            }
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text-4/#white-space-collapsing"
+            },
+            "status": "in development"
         },
         "widows": {
             "inherited": true,
@@ -6328,7 +6116,7 @@
         },
         "will-change": {
             "codegen-properties": {
-                "custom": "Value",
+                "converter": "WillChange",
                 "parser-function": "consumeWillChange",
                 "parser-function-requires-context": true,
                 "parser-grammar-unused": "auto | [ scroll-position | contents | <custom-ident> ]#",
@@ -6345,7 +6133,11 @@
                 "normal",
                 "break-all",
                 "keep-all",
-                "break-word"
+                "break-word",
+                {
+                    "settings-flag": "cssWordBreakAutoEnabled",
+                    "value": "auto"
+                }
             ],
             "codegen-properties": {
                 "aliases": [
@@ -6470,9 +6262,6 @@
                 ],
                 "parser-grammar": "<<values>>"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-ui",
                 "url": "https://www.w3.org/TR/css-ui-4/#propdef-appearance"
@@ -6489,9 +6278,6 @@
                 "parser-grammar-unused": "auto || <ratio>",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-sizing",
                 "url": "https://drafts.csswg.org/css-sizing-4/#aspect-ratio"
@@ -6504,9 +6290,6 @@
                     "contain-intrinsic-height"
                 ],
                 "settings-flag": "cssContainIntrinsicSizeEnabled"
-            },
-            "status": {
-                "status": "in development"
             },
             "specification": {
                 "category": "css-sizing",
@@ -6526,9 +6309,6 @@
                 "parser-grammar-unused-reason": "Needs support for '&&' groups.",
                 "comment": "Should ensure generator simplifies to 'none | [ <length> && auto? ]"
             },
-            "status": {
-                "status": "in development"
-            },
             "specification": {
                 "category": "css-sizing",
                 "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
@@ -6543,12 +6323,9 @@
                     "resolver": "horizontal"
                 },
                 "parser-function": "consumeContainIntrinsicSize",
-                "parser-grammar-unused": "none | <length> | [ auto && <length> ]",
+                "parser-grammar-unused": "auto? [none | <<length>>]",
                 "parser-grammar-unused-reason": "Needs support for '&&' groups.",
                 "comment": "Should ensure generator simplifies to 'none | [ <length> && auto? ]"
-            },
-            "status": {
-                "status": "in development"
             },
             "specification": {
                 "category": "css-sizing",
@@ -6564,12 +6341,9 @@
                     "resolver": "block"
                 },
                 "parser-function": "consumeContainIntrinsicSize",
-                "parser-grammar-unused": "none | <length> | [ auto && <length> ]",
+                "parser-grammar-unused": "auto? [none | <<length>>]",
                 "parser-grammar-unused-reason": "Needs support for '&&' groups.",
                 "comment": "Should ensure generator simplifies to 'none | [ <length> && auto? ]"
-            },
-            "status": {
-                "status": "in development"
             },
             "specification": {
                 "category": "css-sizing",
@@ -6589,9 +6363,6 @@
                 "parser-grammar-unused-reason": "Needs support for '&&' groups.",
                 "comment": "Should ensure generator simplifies to 'none | [ <length> && auto? ]"
             },
-            "status": {
-                "status": "in development"
-            },
             "specification": {
                 "category": "css-sizing",
                 "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
@@ -6599,15 +6370,13 @@
         },
         "contain": {
             "codegen-properties": {
-                "custom": "All",
+                "converter": "Contain",
+                "initial": "initialContainment",
                 "settings-flag": "cssContainmentEnabled",
                 "parser-function": "consumeContain",
                 "parser-grammar-unused": "none | strict | content | [ size || layout || paint ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups.",
                 "comment": "Implementation also supports 'inline-size' and 'style'"
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-contain",
@@ -6620,9 +6389,6 @@
                     "container-name",
                     "container-type"
                 ]
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-contain",
@@ -6638,9 +6404,6 @@
                 "parser-grammar-unused": "none | <custom-ident>+",
                 "parser-grammar-unused-reason": "Needs support for '+' multipliers and applying restrictions to <custom-ident>."
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-contain",
                 "url": "https://drafts.csswg.org/css-contain-3/#container-name"
@@ -6655,9 +6418,6 @@
             "codegen-properties": {
                 "settings-flag": "cssContainerQueriesEnabled",
                 "parser-grammar": "<<values>>"
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-contain",
@@ -6675,7 +6435,7 @@
                 "parser-grammar": "<<values>>"
             },
             "status": {
-                "status": "experimental"
+                "status": "in development"
             },
             "specification": {
                 "category": "css-content-visibility",
@@ -6886,9 +6646,7 @@
                 "parser-grammar-unused-reason": "Needs support for ordered groups and optionals."
                 
             },
-            "status": {
-                "status": "experimental"
-            }
+            "status": "non-standard"
         },
         "-webkit-box-shadow": {
             "codegen-properties": {
@@ -6914,7 +6672,7 @@
                 "parser-grammar": "<<values>>"
             },
             "status": {
-                "status": "experimental",
+                "status": "non-standard",
                 "comment": "Added in https://bugs.webkit.org/show_bug.cgi?id=71028"
             }
         },
@@ -6924,12 +6682,13 @@
                     "break-after"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification":  {
                 "category": "css-multicol",
                 "url": "https://www.w3.org/TR/css3-multicol/#break-after"
+            },
+            "status": {
+                "status": "non-standard",
+                "comment": "Use break-after instead."
             }
         },
         "-webkit-column-break-before": {
@@ -6938,12 +6697,13 @@
                     "break-before"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification":  {
                 "category": "css-multicol",
                 "url": "https://www.w3.org/TR/css3-multicol/#break-before"
+            },
+            "status": {
+                "status": "non-standard",
+                "comment": "Use break-before instead."
             }
         },
         "-webkit-column-break-inside": {
@@ -6952,12 +6712,13 @@
                     "break-inside"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification":  {
                 "category": "css-multicol",
                 "url": "https://www.w3.org/TR/css3-multicol/#break-inside"
+            },
+            "status": {
+                "status": "non-standard",
+                "comment": "Use break-inside instead."
             }
         },
         "column-count": {
@@ -7043,7 +6804,7 @@
                 "parser-grammar": "<<values>>"
             },
             "status": {
-                "status": "experimental",
+                "status": "non-standard",
                 "comment": "Added in https://bugs.webkit.org/show_bug.cgi?id=89315"
             }
         },
@@ -7791,19 +7552,19 @@
                 "url": "https://www.w3.org/TR/css-grid-1/#propdef-grid-auto-flow"
             }
         },
-        "-webkit-hyphenate-character": {
+        "hyphenate-character": {
             "inherited": true,
             "codegen-properties": {
+                "aliases": [
+                    "-webkit-hyphenate-character"
+                ],
                 "name-for-methods": "HyphenationString",
                 "converter": "StringOrAutoAtom",
                 "parser-grammar": "auto | <string>"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-4/#hyphenate-character"
+                "url": "https://drafts.csswg.org/css-text-4/#propdef-hyphenate-character"
             }
         },
         "-webkit-hyphenate-limit-after": {
@@ -7839,7 +7600,7 @@
                 "url": "https://www.w3.org/TR/css-text-4/#propdef-hyphenate-limit-lines"
             }
         },
-        "-webkit-hyphens": {
+        "hyphens": {
             "inherited": true,
             "values": [
                 "none",
@@ -7848,16 +7609,14 @@
             ],
             "codegen-properties": {
                 "aliases": [
-                    "-epub-hyphens"
+                    "-epub-hyphens",
+                    "-webkit-hyphens"
                 ],
                 "parser-grammar": "<<values>>"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-3/#hyphens-property"
+                "url": "https://drafts.csswg.org/css-text-3/"
             }
         },
         "-webkit-initial-letter": {
@@ -7978,26 +7737,6 @@
             "specification": {
                 "category": "css-line-grid",
                 "url": "https://www.w3.org/TR/css-line-grid-1/#line-snap"
-            }
-        },
-        "-webkit-box-snap": {
-            "inherited": true,
-            "values": [
-                "block-start",
-                "block-end",
-                "center",
-                "first-baseline",
-                "last-baseline"
-            ],
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": {
-                "status": "not implemented"
-            },
-            "specification": {
-                "category": "css-line-grid",
-                "url": "https://www.w3.org/TR/css-line-grid-1/#box-snap"
             }
         },
         "-webkit-marquee-direction": {
@@ -8573,9 +8312,6 @@
                     "text-emphasis-color"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-emphasis"
@@ -8593,9 +8329,6 @@
                 "color-property": true,
                 "parser-grammar": "<color>"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-emphasis-color"
@@ -8611,9 +8344,6 @@
                 "parser-function": "consumeTextEmphasisPosition",
                 "parser-grammar-unused": "[ over | under ] && [ right | left ]?",
                 "parser-grammar-unused-reason": "Needs support for '&&' groups and optionals."
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -8631,9 +8361,6 @@
                 "parser-function": "consumeTextEmphasisStyle",
                 "parser-grammar-unused": "none | [ [ filled | open ] || [ dot | circle | double-circle | triangle | sesame ] ] | <string>",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -8918,9 +8645,6 @@
                 "converter": "SmoothScrolling",
                 "name-for-methods": "UseSmoothScrolling",
                 "parser-grammar": "<<values>>"
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "url": "https://drafts.csswg.org/cssom-view/#propdef-scroll-behavior"
@@ -9287,6 +9011,38 @@
                 "url": "https://drafts.csswg.org/css-scroll-snap-1/#propdef-scroll-snap-stop"
             }
         },
+        "scrollbar-color": {
+            "codegen-properties": {
+                "converter": "ScrollbarColor",
+                "parser-function": "consumeScrollbarColor",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "auto | <color>{2}",
+                "parser-grammar-unused-reason": "Needs support for '{A}' multipliers.",
+                "settings-flag": "cssScrollbarColorEnabled"
+            },
+            "inherited": true,
+            "specification": {
+                "category": "css-scrollbars",
+                "url": "https://drafts.csswg.org/css-scrollbars/#scrollbar-color"
+            },
+            "status": "in development"
+        },
+        "scrollbar-gutter": {
+            "codegen-properties": {
+                "converter": "ScrollbarGutter",
+                "parser-function": "consumeScrollbarGutter",
+                "parser-grammar-unused": "auto | [ stable && both-edges? ]",
+                "parser-grammar-unused-reason": "Needs support for '&&' groups and optionals.",
+                "settings-flag": "cssScrollbarGutterEnabled"
+            },
+            "specification": {
+                "category": "css-overflow",
+                "url": "https://drafts.csswg.org/css-overflow/#scrollbar-gutter-property"
+            },
+            "status": {
+                "status": "in development"
+            }
+        },
         "scrollbar-width": {
             "codegen-properties": {
                 "parser-grammar": "auto | thin | none",
@@ -9295,6 +9051,9 @@
             "specification": {
                 "category": "css-scrollbars",
                 "url": "https://drafts.csswg.org/css-scrollbars/#scrollbar-width"
+            },
+            "status": {
+                "status": "in development"
             }
         },
         "shape-outside": {
@@ -9417,12 +9176,6 @@
             },
             "status": "non-standard"
         },
-        "-apple-trailing-word": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed"
-        },
         "-apple-pay-button-style": {
             "values": [
                 "white",
@@ -9482,51 +9235,6 @@
                 "parser-grammar": "<<values>>"
             },
             "status": "non-standard"
-        },
-        "fill-color": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css-text-fill-and-stroke",
-                "url": "https://drafts.fxtf.org/paint/#fill-color"
-            }
-        },
-        "fill-image": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css-text-fill-and-stroke",
-                "url": "https://drafts.fxtf.org/paint/#fill-image"
-            }
-        },
-        "fill-origin": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css-text-fill-and-stroke",
-                "url": "https://drafts.fxtf.org/paint/#fill-origin"
-            }
-        },
-        "fill-position": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css-text-fill-and-stroke",
-                "url": "https://drafts.fxtf.org/paint/#fill-position"
-            }
-        },
-        "border-boundary": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css-round-display",
-                "url": "https://www.w3.org/TR/css-round-display-1/#border-boundary-property"
-            }
         }
     },
     "descriptors": {
@@ -10092,12 +9800,6 @@
             "longname": "CSS Counter Styles Module",
             "url": "https://www.w3.org/TR/css-counter-styles-3"
         },
-        "css-device-adapt": {
-            "shortname": "CSS Device Adaptation",
-            "longname": "CSS Device Adaptation Module",
-            "url": "https://www.w3.org/TR/css-device-adapt-1/",
-            "status": "under consideration"
-        },
         "css-display": {
             "shortname": "CSS Display",
             "longname": "CSS Display Module",
@@ -10156,8 +9858,7 @@
         "css-logical-props": {
             "shortname": "CSS Logical Properties",
             "longname": "CSS Logical Properties Module",
-            "url": "https://drafts.csswg.org/css-logical-props/",
-            "status": "experimental"
+            "url": "https://drafts.csswg.org/css-logical-props/"
         },
         "css-masking": {
             "shortname": "CSS Masking",
@@ -10167,8 +9868,7 @@
         "css-motion-path": {
             "shortname": "CSS Motion Path",
             "longname": "CSS Motion Path Module",
-            "url": "https://drafts.fxtf.org/motion-1/",
-            "status": "experimental"
+            "url": "https://drafts.fxtf.org/motion-1/"
         },
         "css-multicol": {
             "shortname": "CSS Multi-column Layout",
@@ -10194,12 +9894,6 @@
             "shortname": "CSS Rhythmic Sizing",
             "longname": "CSS Rhythmic Sizing",
             "url": "https://www.w3.org/TR/css-rhythm-1/"
-        },
-        "css-round-display": {
-            "shortname": "CSS Round Display",
-            "longname": "CSS Round Display Module",
-            "url": "https://www.w3.org/TR/css-round-display-1/",
-            "status": "not considering"
         },
         "css-ruby": {
             "shortname": "CSS Ruby",
@@ -10241,22 +9935,15 @@
             "longname": "CSS Text Module",
             "url": "https://www.w3.org/TR/css-text-3/"
         },
+        "css-text-fill-and-stroke": {
+            "shortname": "CSS Text Fill and Stroke",
+            "longname": "CSS Text Fill and Stroke Module",
+            "url": "https://drafts.fxtf.org/paint/"
+        },
         "css-text-decor": {
             "shortname": "CSS Text Decoration",
             "longname": "CSS Text Decoration Module",
             "url": "https://www.w3.org/TR/css-text-decor-3/"
-        },
-        "css3-text": {
-            "shortname": "CSS3 Text",
-            "longname": "CSS3 Text Module",
-            "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/",
-            "status": "obsolete"
-        },
-        "css-text-fill-and-stroke": {
-            "shortname": "CSS Text Fill and Stroke",
-            "longname": "CSS Text Fill and Stroke Module",
-            "url": "https://drafts.fxtf.org/paint/",
-            "status": "under consideration"
         },
         "css-transforms": {
             "shortname": "CSS Transforms",

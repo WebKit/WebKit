@@ -1,0 +1,14 @@
+Pointer Events coordinates support fractional value
+
+Test Description: This test checks pointer events has fractional client coordinates
+Move your pointer over one black square
+Press down the pointer (i.e. press left button with mouse or touch the screen with finger or pen).
+Release the pointer.
+Move to next black square and repreat 2 and 3
+Test passes if pointer events has fractional coordinates.
+
+
+
+PASS pen pointerevent events in capturing
+FAIL pen assert_true: pointerdown should have fractional coordinates expected true got false
+

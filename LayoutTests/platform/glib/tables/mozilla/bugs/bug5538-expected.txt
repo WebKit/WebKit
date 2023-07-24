@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576 [bgcolor=#FFFFFF]
       RenderBlock {H3} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 305x21
-          text run at (0,0) width 305: "Testcase for bug 5538 - distilled from "
-        RenderInline {A} at (0,0) size 117x21 [color=#0000EE]
-          RenderText {#text} at (304,0) size 117x21
-            text run at (304,0) width 117: "www.fool.com"
+        RenderText {#text} at (0,0) size 292x21
+          text run at (0,0) width 292: "Testcase for bug 5538 - distilled from "
+        RenderInline {A} at (0,0) size 114x21 [color=#0000EE]
+          RenderText {#text} at (291,0) size 114x21
+            text run at (291,0) width 114: "www.fool.com"
       RenderTable {TABLE} at (0,40) size 600x90
         RenderTableSection {TBODY} at (0,0) size 600x89
           RenderTableRow {TR} at (0,0) size 600x89

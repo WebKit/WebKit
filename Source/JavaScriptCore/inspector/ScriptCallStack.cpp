@@ -89,6 +89,11 @@ void ScriptCallStack::append(const ScriptCallFrame& frame)
     m_frames.append(frame);
 }
 
+void ScriptCallStack::removeParentStackTrace()
+{
+    m_parentStackTrace = nullptr;
+}
+
 bool ScriptCallStack::isEqual(ScriptCallStack* o) const
 {
     if (!o)

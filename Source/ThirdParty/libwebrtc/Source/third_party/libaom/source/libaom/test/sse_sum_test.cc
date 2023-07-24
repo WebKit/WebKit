@@ -160,6 +160,13 @@ INSTANTIATE_TEST_SUITE_P(SSE2, SumSSETest,
                              &aom_sum_sse_2d_i16_c, &aom_sum_sse_2d_i16_sse2)));
 
 #endif  // HAVE_SSE2
+
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(NEON, SumSSETest,
+                         ::testing::Values(TestFuncs(
+                             &aom_sum_sse_2d_i16_c, &aom_sum_sse_2d_i16_neon)));
+#endif  // HAVE_NEON
+
 #if HAVE_AVX2
 INSTANTIATE_TEST_SUITE_P(AVX2, SumSSETest,
                          ::testing::Values(TestFuncs(

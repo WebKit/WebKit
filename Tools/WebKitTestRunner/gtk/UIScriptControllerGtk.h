@@ -54,6 +54,8 @@ public:
     void removeViewFromWindow(JSValueRef) override;
     void addViewToWindow(JSValueRef) override;
     void setWebViewEditable(bool) override;
+    double zoomScale() const override;
+    void zoomToScale(double, JSValueRef) override;
 
 private:
     void overridePreference(JSStringRef, JSStringRef) override;

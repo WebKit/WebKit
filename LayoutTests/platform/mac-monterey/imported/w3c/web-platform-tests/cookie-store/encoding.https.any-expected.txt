@@ -1,0 +1,4 @@
+
+FAIL BOM not stripped from name promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'cookie.name')"
+FAIL BOM not stripped from value promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'cookie.name')"
+

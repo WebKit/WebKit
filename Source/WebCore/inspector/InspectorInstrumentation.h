@@ -148,7 +148,7 @@ public:
     static void didRegisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement, Node* nextContentElement = nullptr);
     static void didUnregisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement);
 
-    static void mouseDidMoveOverElement(Page&, const HitTestResult&, unsigned modifierFlags);
+    static void mouseDidMoveOverElement(Page&, const HitTestResult&, OptionSet<PlatformEventModifier>);
     static bool handleMousePress(LocalFrame&);
     static bool handleTouchEvent(LocalFrame&, Node&);
     static bool forcePseudoState(const Element&, CSSSelector::PseudoClassType);
@@ -269,6 +269,8 @@ public:
     static void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
     static void consoleStopRecordingCanvas(CanvasRenderingContext&);
 
+    static void performanceMark(ScriptExecutionContext&, const String&, std::optional<MonotonicTime>, LocalFrame*);
+
     static void didRequestAnimationFrame(Document&, int callbackId);
     static void didCancelAnimationFrame(Document&, int callbackId);
     static void willFireAnimationFrame(Document&, int callbackId);
@@ -374,7 +376,7 @@ private:
     static void didRegisterNamedFlowContentElementImpl(InstrumentingAgents&, Document&, WebKitNamedFlow&, Node& contentElement, Node* nextContentElement = nullptr);
     static void didUnregisterNamedFlowContentElementImpl(InstrumentingAgents&, Document&, WebKitNamedFlow&, Node& contentElement);
 
-    static void mouseDidMoveOverElementImpl(InstrumentingAgents&, const HitTestResult&, unsigned modifierFlags);
+    static void mouseDidMoveOverElementImpl(InstrumentingAgents&, const HitTestResult&, OptionSet<PlatformEventModifier>);
     static bool handleMousePressImpl(InstrumentingAgents&);
     static bool handleTouchEventImpl(InstrumentingAgents&, Node&);
     static bool forcePseudoStateImpl(InstrumentingAgents&, const Element&, CSSSelector::PseudoClassType);
@@ -475,6 +477,8 @@ private:
     static void stopProfilingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& title);
     static void consoleStartRecordingCanvasImpl(InstrumentingAgents&, CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
     static void consoleStopRecordingCanvasImpl(InstrumentingAgents&, CanvasRenderingContext&);
+
+    static void performanceMarkImpl(InstrumentingAgents&, const String& label, std::optional<MonotonicTime>, LocalFrame*);
 
     static void didRequestAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
     static void didCancelAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
@@ -761,10 +765,10 @@ inline void InspectorInstrumentation::didUnregisterNamedFlowContentElement(Docum
         didUnregisterNamedFlowContentElementImpl(*agents, document, namedFlow, contentElement);
 }
 
-inline void InspectorInstrumentation::mouseDidMoveOverElement(Page& page, const HitTestResult& result, unsigned modifierFlags)
+inline void InspectorInstrumentation::mouseDidMoveOverElement(Page& page, const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    mouseDidMoveOverElementImpl(instrumentingAgents(page), result, modifierFlags);
+    mouseDidMoveOverElementImpl(instrumentingAgents(page), result, modifiers);
 }
 
 inline bool InspectorInstrumentation::handleTouchEvent(LocalFrame& frame, Node& node)
@@ -1675,6 +1679,13 @@ inline void InspectorInstrumentation::consoleStopRecordingCanvas(CanvasRendering
 {
     if (auto* agents = instrumentingAgents(context.canvasBase().scriptExecutionContext()))
         consoleStopRecordingCanvasImpl(*agents, context);
+}
+
+inline void InspectorInstrumentation::performanceMark(ScriptExecutionContext& context, const String& label, std::optional<MonotonicTime> startTime, LocalFrame* frame)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* agents = instrumentingAgents(context))
+        performanceMarkImpl(*agents, label, WTFMove(startTime), frame);
 }
 
 inline void InspectorInstrumentation::didRequestAnimationFrame(Document& document, int callbackId)

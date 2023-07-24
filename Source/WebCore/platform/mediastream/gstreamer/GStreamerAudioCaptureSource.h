@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class GStreamerAudioCaptureSource : public RealtimeMediaSource {
+class GStreamerAudioCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerAudioCaptureSource>,  public GStreamerCapturer::Observer {
 public:
     static CaptureSourceOrError create(String&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*);
     WEBCORE_EXPORT static AudioCaptureFactory& factory();
@@ -41,9 +41,16 @@ public:
     GstElement* pipeline() { return m_capturer->pipeline(); }
     GStreamerCapturer* capturer() { return m_capturer.get(); }
 
-protected:
-    GStreamerAudioCaptureSource(GStreamerCaptureDevice, MediaDeviceHashSalts&&);
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerAudioCaptureSource>::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerAudioCaptureSource>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerAudioCaptureSource>::controlBlock(); }
     virtual ~GStreamerAudioCaptureSource();
+
+    // GStreamerCapturer::Observer
+    void captureEnded()final;
+
+protected:
+    GStreamerAudioCaptureSource(GStreamerCaptureDevice&&, MediaDeviceHashSalts&&);
     void startProducingData() override;
     void stopProducingData() override;
     CaptureDevice::DeviceType deviceType() const override { return CaptureDevice::DeviceType::Microphone; }
@@ -58,10 +65,7 @@ private:
     bool isCaptureSource() const final { return true; }
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
-    std::unique_ptr<GStreamerAudioCapturer> m_capturer;
-
-    static GstFlowReturn newSampleCallback(GstElement*, GStreamerAudioCaptureSource*);
-    void triggerSampleAvailable(GstSample*);
+    RefPtr<GStreamerAudioCapturer> m_capturer;
 };
 
 } // namespace WebCore

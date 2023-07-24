@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <pal/graphics/WebGPU/WebGPURenderBundle.h>
+#include "WebGPURenderBundle.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -34,7 +34,7 @@ namespace WebCore {
 
 class GPURenderBundle : public RefCounted<GPURenderBundle> {
 public:
-    static Ref<GPURenderBundle> create(Ref<PAL::WebGPU::RenderBundle>&& backing)
+    static Ref<GPURenderBundle> create(Ref<WebGPU::RenderBundle>&& backing)
     {
         return adoptRef(*new GPURenderBundle(WTFMove(backing)));
     }
@@ -42,16 +42,16 @@ public:
     String label() const;
     void setLabel(String&&);
 
-    PAL::WebGPU::RenderBundle& backing() { return m_backing; }
-    const PAL::WebGPU::RenderBundle& backing() const { return m_backing; }
+    WebGPU::RenderBundle& backing() { return m_backing; }
+    const WebGPU::RenderBundle& backing() const { return m_backing; }
 
 private:
-    GPURenderBundle(Ref<PAL::WebGPU::RenderBundle>&& backing)
+    GPURenderBundle(Ref<WebGPU::RenderBundle>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
-    Ref<PAL::WebGPU::RenderBundle> m_backing;
+    Ref<WebGPU::RenderBundle> m_backing;
 };
 
 }

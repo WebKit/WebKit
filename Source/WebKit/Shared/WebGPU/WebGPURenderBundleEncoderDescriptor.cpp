@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,20 +30,20 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPURenderBundleEncoderDescriptor.h>
+#include <WebCore/WebGPURenderBundleEncoderDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<RenderBundleEncoderDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderBundleEncoderDescriptor& renderBundleEncoderDescriptor)
+std::optional<RenderBundleEncoderDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderBundleEncoderDescriptor& renderBundleEncoderDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::RenderPassLayout&>(renderBundleEncoderDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::RenderPassLayout&>(renderBundleEncoderDescriptor));
     if (!base)
         return std::nullopt;
 
     return { { WTFMove(*base), renderBundleEncoderDescriptor.depthReadOnly, renderBundleEncoderDescriptor.stencilReadOnly } };
 }
 
-std::optional<PAL::WebGPU::RenderBundleEncoderDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderBundleEncoderDescriptor& renderBundleEncoderDescriptor)
+std::optional<WebCore::WebGPU::RenderBundleEncoderDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderBundleEncoderDescriptor& renderBundleEncoderDescriptor)
 {
     auto base = convertFromBacking(static_cast<const RenderPassLayout&>(renderBundleEncoderDescriptor));
     if (!base)

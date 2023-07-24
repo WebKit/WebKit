@@ -58,4 +58,4 @@ layer at (0,0) size 800x600
                   text run at (0,18) width 758: "case a red square-- or, indeed, any red at all-- is seen there, then the browser has incorrectly interpreted a URL in relation"
                   text run at (0,36) width 313: "to the document's URL, not the stylesheet's URL."
 layer at (8,115) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,107) size 784x2 [color=#808080] [border: (1px inset #808080)]

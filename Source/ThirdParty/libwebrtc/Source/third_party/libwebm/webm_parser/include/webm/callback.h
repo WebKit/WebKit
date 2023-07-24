@@ -335,7 +335,9 @@ class Callback {
    */
   virtual Status OnSegmentEnd(const ElementMetadata& metadata);
 
+#if defined(WEBRTC_WEBKIT_BUILD)
   virtual Status OnElementEnd(const ElementMetadata& metadata);
+#endif
 
  protected:
   /**

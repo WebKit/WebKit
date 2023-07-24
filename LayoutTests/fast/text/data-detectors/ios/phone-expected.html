@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>
+These phone numbers should be linkified:<br />
+<a href="tel:1 866 MY APPLE">1-866-MY-APPLE</a><br/>
+<a href="tel:312 961 0509">(312) 961 - 0509</a><br/>
+<a href="tel:01 42 84 90">01 42 84 90 00</a><br/>
+<a href="tel:33 01 42 84 90 00">+33 (0)1 42 84 90 00</a><br/>
+<a href="tel:33 1 52 05 15 00">(+33) 1 53 05 15 00</a><br/>
+<a href="tel:01 55 54 45 45">(0)1 55 54 45 45</a><br/>
+<a href="tel:010 1 800 MY APPLE">010-1-800-MY-APPLE</a><br/>
+<a href="tel:604 736 7331">604 736 7331</a><br />
+<a href="tel:00447782326380">00447782326380</a>
+</p>
+
+<p>This is a phone number, but it should not be linkified because it's inside a <pre>pre</pre> tag: <br />
+<pre>1-866-MY-APPLE</pre>
+</p>
+
+<p>
+These are not phone numbers, so they should not get linkified:<br />
+KSY-24339-985<br/>
+in 1.158970 seconds <br/>
+rdar://1234567
+</p>
+</body>
+</html>

@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,17 +21,35 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import errno
 import os
+import re
 import sys
 import time
 
+from webkitcorepy import string_utils
+from webkitcorepy.timeout import Timeout
+
 if sys.platform.startswith('win'):
     import msvcrt
-else:
-    import fcntl
 
 
 class FileLock(object):
+    INTEGER_RE = re.compile(r'^\d+$')
+    USE_WINDOWS = sys.platform.startswith('win')
+    USE_EXLOCK = not USE_WINDOWS and getattr(os, 'O_EXLOCK', False)
+
+    @classmethod
+    def is_process_running(cls, pid):
+        if cls.USE_WINDOWS:
+            raise RuntimeError('Funciton does not support Windows')
+        try:
+            os.kill(pid, 0)
+            return True
+        except OSError as e:
+            if e.errno == errno.ESRCH:
+                return False
+            raise
 
     def __init__(self, path, timeout=20):
         self.path = path
@@ -44,42 +62,60 @@ class FileLock(object):
 
     def acquire(self):
         if self._descriptor:
+            raise RuntimeError('Cannot re-enter acquired FileLock')
+
+        if not self.USE_EXLOCK and not self.USE_WINDOWS and os.path.exists(self.path):
+            with open(self.path) as file:
+                pid = file.readline().strip()
+            if self.INTEGER_RE.match(pid) and not self.is_process_running(int(pid)):
+                os.unlink(self.path)
+
+        if self.USE_EXLOCK and self.timeout:
+            with Timeout(
+                seconds=self.timeout, patch=False,
+                handler=OSError(errno.EAGAIN, "Resource temporarily unavailable: '{}'".format(self.path)),
+            ):
+                self._descriptor = os.open(self.path, os.O_CREAT | os.O_WRONLY | os.O_EXLOCK)
             return True
 
-        descriptor = os.open(self.path, os.O_TRUNC | os.O_CREAT)
         start_time = time.time()
         while True:
             try:
-                if sys.platform.startswith('win'):
-                    msvcrt.locking(descriptor, msvcrt.LK_NBLCK, 32)
+                if self.USE_WINDOWS:
+                    self._descriptor = os.open(self.path, os.O_TRUNC | os.O_CREAT)
+                    msvcrt.locking(self._descriptor, msvcrt.LK_NBLCK, 32)
+                elif self.USE_EXLOCK:
+                    self._descriptor = os.open(self.path, os.O_CREAT | os.O_WRONLY | os.O_EXLOCK | os.O_NONBLOCK)
                 else:
-                    fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                self._descriptor = descriptor
+                    self._descriptor = os.open(self.path, os.O_CREAT | os.O_WRONLY | os.O_EXCL)
+                    os.write(self._descriptor, string_utils.encode(str(os.getpid())))
                 return True
 
-            except IOError:
+            except (IOError, OSError):
                 if time.time() - start_time > self.timeout:
-                    os.close(descriptor)
+                    if self._descriptor:
+                        os.close(self._descriptor)
                     self._descriptor = None
-                    return False
+                    raise
                 time.sleep(0.01)
 
     def release(self):
+        if not self._descriptor:
+            raise RuntimeError('Cannot release unclaimed lock')
         try:
-            if self._descriptor:
-                if sys.platform.startswith('win'):
-                    msvcrt.locking(self._descriptor, msvcrt.LK_UNLCK, 32)
-                else:
-                    fcntl.flock(self._descriptor, fcntl.LOCK_UN)
-                os.close(self._descriptor)
-                self._descriptor = None
-            os.unlink(self.path)
-        except (IOError, OSError):
-            pass
+            if self.USE_WINDOWS:
+                msvcrt.locking(self._descriptor, msvcrt.LK_UNLCK, 32)
+            elif not self.USE_EXLOCK:
+                os.unlink(self.path)
+        finally:
+            os.close(self._descriptor)
+            self._descriptor = None
 
     def __enter__(self):
         self.acquire()
         return self
 
     def __exit__(self, *args, **kwargs):
+        if not self._descriptor:
+            return
         self.release()

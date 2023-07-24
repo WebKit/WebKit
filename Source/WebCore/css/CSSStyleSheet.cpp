@@ -58,6 +58,7 @@ static Style::Scope& styleScopeFor(ContainerNode& treeScope)
 }
 
 class StyleSheetCSSRuleList final : public CSSRuleList {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
     
@@ -182,9 +183,9 @@ RefPtr<StyleRuleWithNesting> CSSStyleSheet::prepareChildStyleRuleForNesting(Styl
     RuleMutationScope scope(this);
     auto& rules = m_contents->m_childRules;
     for (size_t i = 0 ; i < rules.size() ; i++) {
-        if (rules[i] == &styleRule) {
+        if (rules[i].ptr() == &styleRule) {
             auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
-            rules[i] = styleRuleWithNesting.ptr();
+            rules[i] = styleRuleWithNesting;
             m_contents->setHasNestingRules();
             return styleRuleWithNesting;
         }        
@@ -494,7 +495,8 @@ ExceptionOr<void> CSSStyleSheet::replaceSync(String&& text)
     RuleMutationScope mutationScope(this, RuleReplace);
     m_contents->clearRules();
     for (auto& childRuleWrapper : m_childRuleCSSOMWrappers)
-        childRuleWrapper->setParentStyleSheet(nullptr);
+        if (childRuleWrapper)
+            childRuleWrapper->setParentStyleSheet(nullptr);
     m_childRuleCSSOMWrappers.clear();
 
     m_contents->parseString(WTFMove(text));

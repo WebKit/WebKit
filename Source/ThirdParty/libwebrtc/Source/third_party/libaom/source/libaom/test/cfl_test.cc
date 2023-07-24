@@ -192,7 +192,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CFLSubAvgTest);
 
 TEST_P(CFLSubAvgTest, SubAvgTest) {
   for (int it = 0; it < NUM_ITERATIONS; it++) {
-    randData(&ACMRandom::Rand15Signed);
+    randData(&ACMRandom::Rand15);
     sub_avg((uint16_t *)data, data);
     sub_avg_ref((uint16_t *)data_ref, data_ref);
     assert_eq<int16_t>(data, data_ref, width, height);
@@ -202,7 +202,7 @@ TEST_P(CFLSubAvgTest, SubAvgTest) {
 TEST_P(CFLSubAvgTest, DISABLED_SubAvgSpeedTest) {
   aom_usec_timer ref_timer;
   aom_usec_timer timer;
-  randData(&ACMRandom::Rand15Signed);
+  randData(&ACMRandom::Rand15);
   aom_usec_timer_start(&ref_timer);
   for (int k = 0; k < NUM_ITERATIONS_SPEED; k++) {
     sub_avg_ref((uint16_t *)data_ref, data_ref);

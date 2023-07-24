@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
 #import "DragAndDropSimulator.h"
 #import "InstanceMethodSwizzler.h"
@@ -2769,4 +2769,4 @@ TEST(WKAttachmentTestsIOS, PasteRichTextCopiedFromNotes)
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(MAC) || PLATFORM(IOS)
+#endif // PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)

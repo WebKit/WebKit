@@ -82,7 +82,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
 
 LineLayout::LineLayout(RenderBlockFlow& flow)
     : m_boxTree(flow)
-    , m_layoutState(flow.view().ensureLayoutState())
+    , m_layoutState(flow.view().layoutState())
     , m_blockFormattingState(layoutState().ensureBlockFormattingState(rootLayoutBox()))
     , m_inlineFormattingState(layoutState().ensureInlineFormattingState(rootLayoutBox()))
 {
@@ -243,11 +243,19 @@ void LineLayout::updateListMarkerDimensions(const RenderListMarker& listMarker)
     if (layoutBox.isListMarkerOutside()) {
         auto* ancestor = listMarker.containingBlock();
         auto offsetFromParentListItem = [&] {
+            auto hasAccountedForBorderAndPadding = false;
             auto offset = LayoutUnit { };
             for (; ancestor; ancestor = ancestor->containingBlock()) {
-                offset -= (ancestor->borderStart() + ancestor->paddingStart());
+                if (!hasAccountedForBorderAndPadding)
+                    offset -= (ancestor->borderStart() + ancestor->paddingStart());
                 if (is<RenderListItem>(*ancestor))
                     break;
+                if (ancestor->isFlexItem()) {
+                    offset -= ancestor->logicalLeft();
+                    hasAccountedForBorderAndPadding = true;
+                    continue;
+                }
+                hasAccountedForBorderAndPadding = false;
             }
             return offset;
         }();
@@ -518,7 +526,7 @@ void LineLayout::updateOverflow()
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, m_lineDamage.get() };
-    auto constraints = inlineFormattingContext.computedIntrinsicWidthConstraintsForIntegration();
+    auto constraints = inlineFormattingContext.computedIntrinsicWidthConstraints();
 
     return { constraints.minimum, constraints.maximum };
 }
@@ -580,8 +588,8 @@ std::optional<LayoutRect> LineLayout::layout()
     auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), textBoxTrim(flow()), intrusiveInitialLetterBottom() };
     auto inlineLayoutState = Layout::InlineLayoutState { parentBlockLayoutState, WTFMove(m_nestedListMarkerOffsets) };
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, m_lineDamage.get() };
-    auto layoutResult = inlineFormattingContext.layoutInFlowAndFloatContentForIntegration(inlineContentConstraints, inlineLayoutState);
-    inlineFormattingContext.layoutOutOfFlowContentForIntegration(inlineContentConstraints, inlineLayoutState, layoutResult.displayContent);
+    auto layoutResult = inlineFormattingContext.layoutInFlowAndFloatContent(inlineContentConstraints, inlineLayoutState);
+    inlineFormattingContext.layoutOutOfFlowContent(inlineContentConstraints, inlineLayoutState, layoutResult.displayContent);
 
     auto repaintRect = LayoutRect { constructContent(inlineLayoutState, WTFMove(layoutResult)) };
 
@@ -631,6 +639,9 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             continue;
 
         auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+        if (auto* layer = renderer.layer())
+            layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
+
         auto& logicalGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
 
         auto logicalOffset = lineAdjustments.isEmpty() ? LayoutSize { } : LayoutSize { 0_lu, lineAdjustments[box.lineIndex()].offset };
@@ -662,8 +673,15 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             floatingObject.setMarginOffset({ marginLeft, marginTop });
             floatingObject.setIsPlaced(true);
 
+            auto oldRect = renderer.frameRect();
             renderer.setLocation(Layout::BoxGeometry::borderBoxRect(visualGeometry).topLeft());
-            renderer.repaint();
+            if (renderer.checkForRepaintDuringLayout()) {
+                auto hasMoved = oldRect.location() != renderer.location();
+                if (hasMoved)
+                    renderer.repaintDuringLayoutIfMoved(oldRect);
+                else
+                    renderer.repaint();
+            }
             continue;
         }
 
@@ -673,22 +691,22 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             auto logicalBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(logicalGeometry) };
             auto previousStaticPosition = LayoutPoint { layer.staticInlinePosition(), layer.staticBlockPosition() };
             auto delta = logicalBorderBoxRect.location() - previousStaticPosition;
+            auto hasStaticInlinePositioning = layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode());
 
             if (layoutBox.style().isOriginalDisplayInlineType()) {
                 blockFlow.setStaticInlinePositionForChild(renderer, logicalBorderBoxRect.y(), logicalBorderBoxRect.x());
-                // A non-statically positioned out-of-flow box's layout will override the top/left values we are setting here.
-                renderer.move(delta.width(), delta.height());
+                if (hasStaticInlinePositioning)
+                    renderer.move(delta.width(), delta.height());
             }
 
             layer.setStaticBlockPosition(logicalBorderBoxRect.y());
             layer.setStaticInlinePosition(logicalBorderBoxRect.x());
 
-            if (!delta.isZero() && layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode()))
+            if (!delta.isZero() && hasStaticInlinePositioning)
                 renderer.setChildNeedsLayout(MarkOnlyThis);
             continue;
         }
     }
-
 }
 
 void LineLayout::updateInlineContentConstraints()

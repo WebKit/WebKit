@@ -855,7 +855,7 @@ window.UIHelper = class UIHelper {
         if (!this.isWebKit2() || this.isIOSFamily())
             return Promise.resolve();
 
-        if (internals.isUsingUISideCompositing() && scroller.nodeName != "SELECT") {
+        if (internals.isUsingUISideCompositing() && (!scroller || scroller.nodeName != "SELECT")) {
             return new Promise(resolve => {
                 testRunner.runUIScript(`(function() {
                     uiController.doAfterNextStablePresentationUpdate(function() {
@@ -889,6 +889,22 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript(`(function() {
                 uiController.doAfterNextStablePresentationUpdate(function() {
                     uiController.uiScriptComplete(JSON.stringify(uiController.selectionCaretViewRect));
+                });
+            })()`, jsonString => {
+                resolve(JSON.parse(jsonString));
+            });
+        });
+    }
+
+    static getUICaretViewRectInGlobalCoordinates()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(function() {
+                uiController.doAfterNextStablePresentationUpdate(function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.selectionCaretViewRectInGlobalCoordinates));
                 });
             })()`, jsonString => {
                 resolve(JSON.parse(jsonString));
@@ -1857,6 +1873,16 @@ window.UIHelper = class UIHelper {
                         uiController.uiScriptComplete(uiController.mayContainEditableElementsInRect(${x}, ${y}, ${width}, ${height}));
                     })
                 })();`, result => resolve(result === "true"));
+        });
+    }
+
+    static currentImageAnalysisRequestID()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve(0);
+
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.uiScriptComplete(uiController.currentImageAnalysisRequestID)", result => resolve(result));
         });
     }
 

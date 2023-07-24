@@ -28,5 +28,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 13x19
             text run at (0,0) width 13: "ar"
 layer at (8,92) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,28) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,28) size 784x2 [color=#808080] [border: (1px inset #808080)]
 caret: position 0 of child 0 {#text} of child 3 {DIV} of child 2 {DIV} of body

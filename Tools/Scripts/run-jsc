@@ -58,9 +58,13 @@ if ($debugger) {
     $jsc = File::Spec->catfile(jscProductDir(), "jsc") . " --useDollarVM=1 @ARGV";
 }
 
-
-$ENV{"DYLD_FRAMEWORK_PATH"} = $dyld;
-print STDERR "Running $count time(s): DYLD_FRAMEWORK_PATH=$dyld $jsc\n";
+if (isWindows()) {
+    setupWindowsWebKitEnvironment();
+    print STDERR "Running $count time(s): $jsc\n";
+} else {
+    $ENV{"DYLD_FRAMEWORK_PATH"} = $dyld;
+    print STDERR "Running $count time(s): DYLD_FRAMEWORK_PATH=$dyld $jsc\n";
+}
 
 while ($count--) {
     system("$jsc");

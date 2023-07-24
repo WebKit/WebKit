@@ -42,7 +42,7 @@
 //
 // `absl::Hash` may also produce different values from different dynamically
 // loaded libraries. For this reason, `absl::Hash` values must never cross
-// boundries in dynamically loaded libraries (including when used in types like
+// boundaries in dynamically loaded libraries (including when used in types like
 // hash containers.)
 //
 // `absl::Hash` is intended to strongly mix input bits with a target of passing
@@ -110,9 +110,12 @@ ABSL_NAMESPACE_BEGIN
 //   * std::unique_ptr and std::shared_ptr
 //   * All string-like types including:
 //     * absl::Cord
-//     * std::string
-//     * std::string_view (as well as any instance of std::basic_string that
-//       uses char and std::char_traits)
+//     * std::string (as well as any instance of std::basic_string that
+//       uses one of {char, wchar_t, char16_t, char32_t} and its associated
+//       std::char_traits)
+//     * std::string_view (as well as any instance of std::basic_string_view
+//       that uses one of {char, wchar_t, char16_t, char32_t} and its associated
+//       std::char_traits)
 //  * All the standard sequence containers (provided the elements are hashable)
 //  * All the standard associative containers (provided the elements are
 //    hashable)

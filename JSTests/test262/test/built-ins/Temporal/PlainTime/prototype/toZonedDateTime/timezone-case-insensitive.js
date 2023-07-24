@@ -7,8 +7,8 @@ description: Time zone names are case insensitive
 features: [Temporal]
 ---*/
 
-const instance = new Temporal.PlainTime(); 
+const instance = new Temporal.PlainTime();
 
 const timeZone = 'uTc';
 const result = instance.toZonedDateTime({ plainDate: new Temporal.PlainDate(2000, 5, 2), timeZone });
-assert.sameValue(result.timeZone.id, 'UTC', `Time zone created from string "${timeZone}"`);
+assert.sameValue(result.timeZoneId, 'UTC', `Time zone created from string "${timeZone}"`);

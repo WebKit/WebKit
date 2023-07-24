@@ -275,7 +275,7 @@ sub ::asciz
 
 sub ::asm_finish
 {   &file_end();
-    my $comment = "#";
+    my $comment = "//";
     $comment = ";" if ($win32);
     print <<___;
 $comment This file is generated from a similarly-named Perl script in the BoringSSL
@@ -284,22 +284,49 @@ $comment source tree. Do not edit by hand.
 ___
     if ($win32) {
         print <<___ unless $masm;
-%ifdef BORINGSSL_PREFIX
-%include "boringssl_prefix_symbols_nasm.inc"
-%endif
+\%ifdef BORINGSSL_PREFIX
+\%include "boringssl_prefix_symbols_nasm.inc"
+\%endif
+\%ifidn __OUTPUT_FORMAT__, win32
+___
+        print @out;
+        print <<___ unless $masm;
+\%else
+; Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392738
+ret
+\%endif
 ___
     } else {
+        my $target;
+        if ($elf) {
+            $target = "defined(__ELF__)";
+        } elsif ($macosx) {
+            $target = "defined(__APPLE__)";
+        } else {
+            die "unknown target";
+        }
+
         print <<___;
-#if defined(__i386__)
+#if defined(__has_feature)
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
+#endif
+
+#if !defined(OPENSSL_NO_ASM) && defined(__i386__) && $target
 #if defined(BORINGSSL_PREFIX)
 #include <boringssl_prefix_symbols_asm.h>
 #endif
 ___
+        print @out;
+        print <<___;
+#endif  // !defined(OPENSSL_NO_ASM) && defined(__i386__) && $target
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",\%progbits
+#endif
+___
     }
-    print @out;
-    print "#endif\n" unless ($win32);
-    # See https://www.airs.com/blog/archives/518.
-    print ".section\t.note.GNU-stack,\"\",\@progbits\n" if ($elf);
 }
 
 sub ::asm_init

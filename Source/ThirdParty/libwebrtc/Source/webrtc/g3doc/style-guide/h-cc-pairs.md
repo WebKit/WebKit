@@ -1,9 +1,9 @@
+<!-- go/cmark -->
+<!--* freshness: {owner: 'danilchap' reviewed: '2021-05-12'} *-->
+
 # `.h` and `.cc` files come in pairs
 
-<?% config.freshness.owner = 'danilchap' %?>
-<?% config.freshness.reviewed = '2021-05-12' %?>
-
-This is an overflow page for [this](../style-guide.md#h-cc-pairs)
+This is an overflow page for [this](/g3doc/style-guide.md#h-cc-pairs)
 style rule.
 
 ## Example violations

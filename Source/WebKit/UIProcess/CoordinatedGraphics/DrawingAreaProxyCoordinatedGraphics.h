@@ -50,6 +50,8 @@ public:
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
     const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
 
+    void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&);
+
 private:
     // DrawingAreaProxy
     void sizeDidChange() override;
@@ -87,9 +89,6 @@ private:
     void discardBackingStoreSoon();
     void discardBackingStore();
 #endif
-
-    void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&) final;
-    void attachToProvisionalFrameProcess(WebProcessProxy&) final { ASSERT_NOT_REACHED(); }
 
     class DrawingMonitor {
         WTF_MAKE_NONCOPYABLE(DrawingMonitor); WTF_MAKE_FAST_ALLOCATED;

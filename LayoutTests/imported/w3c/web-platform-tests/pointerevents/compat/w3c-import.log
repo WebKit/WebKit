@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+user-select
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -17,6 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_compat-mouse-events-when-removing-nodes.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-on-object.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-on-scrollbar.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-preventdefault-passive.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-preventdefault.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-updown-events.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouseevent_key_pressed.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch-action-verification.html

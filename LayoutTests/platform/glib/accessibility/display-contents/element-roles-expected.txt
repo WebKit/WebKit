@@ -1,0 +1,152 @@
+This test ensures elements with CSS display: contents have the correct role.
+
+<a href="https://apple.com" id="link" class="testcase"></a>
+    AXRole: AXLink
+    computedRoleString: link
+
+<article class="testcase" id="article"></article>
+    AXRole: AXArticle
+    computedRoleString: article
+
+<aside class="testcase" id="aside"></aside>
+    AXRole: AXLandmarkComplementary
+    computedRoleString: complementary
+
+<blockquote class="testcase" id="blockquote"></blockquote>
+    AXRole: AXBlockquote
+    computedRoleString: blockquote
+
+<button class="testcase" id="button"></button>
+    AXRole: AXButton
+    computedRoleString: button
+
+<code class="testcase" id="code"></code>
+    AXRole: AXSection
+    computedRoleString: code
+
+<del class="testcase" id="del"></del>
+    AXRole: AXDeletion
+    computedRoleString: deletion
+
+<details class="testcase" id="details"></details>
+    AXRole: AXUnknown
+
+<summary class="testcase" id="summary"></summary>
+    AXRole: AXUnknown
+
+<dfn class="testcase" id="dfn"></dfn>
+    AXRole: AXDefinition
+    computedRoleString: definition
+
+<div class="testcase" id="div"></div>
+    AXRole: AXSection
+    computedRoleString: generic
+
+<dl class="testcase" id="dl"></dl>
+    AXRole: AXDescriptionList
+
+<dt class="testcase" id="dt"></dt>
+    AXRole: AXDescriptionTerm
+
+<dd class="testcase" id="dd"></dd>
+    AXRole: AXDescriptionValue
+
+<legend class="testcase" id="legend"></legend>
+    AXRole: AXLabel
+
+<figure class="testcase" id="figure"></figure>
+    AXRole: AXGroup
+    computedRoleString: figure
+
+<form class="testcase" id="form"></form>
+    AXRole: AXForm
+    computedRoleString: form
+
+<h2 class="testcase" id="h2"></h2>
+    AXRole: AXHeading
+    computedRoleString: heading
+
+<hr class="testcase" id="hr">
+    AXRole: AXSeparator
+    computedRoleString: separator
+
+<ins class="testcase" id="ins"></ins>
+    AXRole: AXInsertion
+    computedRoleString: insertion
+
+<label class="testcase" id="label"></label>
+    AXRole: AXLabel
+
+<main class="testcase" id="main"></main>
+    AXRole: AXLandmarkMain
+    computedRoleString: main
+
+<mark class="testcase" id="mark"></mark>
+
+    computedRoleString: mark
+
+<menu class="testcase" type="toolbar" id="menu-toolbar"></menu>
+    AXRole: AXList
+    computedRoleString: list
+
+<li class="testcase" id="ul-li-element"></li>
+    AXRole: AXListItem
+    computedRoleString: listitem
+
+<nav class="testcase" id="nav"></nav>
+    AXRole: AXLandmarkNavigation
+    computedRoleString: navigation
+
+<ol class="testcase" id="ol"></ol>
+    AXRole: AXList
+    computedRoleString: list
+
+<li class="testcase" id="ol-li-element"></li>
+    AXRole: AXListItem
+    computedRoleString: listitem
+
+<output class="testcase" id="output"></output>
+    AXRole: AXStatusBar
+    computedRoleString: status
+
+<p class="testcase" id="p"></p>
+    AXRole: AXParagraph
+    computedRoleString: paragraph
+
+<pre class="testcase" id="pre"></pre>
+    AXRole: AXSection
+
+<section class="testcase" id="section-with-name" aria-label="Section name"></section>
+    AXRole: AXLandmarkRegion
+    computedRoleString: region
+
+<section class="testcase" id="section-without-name"></section>
+    AXRole: AXSection
+
+<sub class="testcase" id="sub"></sub>
+    AXRole: AXSubscript
+    computedRoleString: subscript
+
+<sup class="testcase" id="sup"></sup>
+    AXRole: AXSuperscript
+    computedRoleString: superscript
+
+<time class="testcase" id="time"></time>
+    AXRole: AXStatic
+    computedRoleString: time
+
+<ul class="testcase" id="ul"></ul>
+    AXRole: AXList
+    computedRoleString: list
+
+<li class="testcase" id="ul-li-element"></li>
+    AXRole: AXListItem
+    computedRoleString: listitem
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

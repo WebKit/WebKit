@@ -82,6 +82,8 @@ public:
     bool attributesEqual(const PropertyDescriptor& other) const;
     unsigned attributesOverridingCurrent(const PropertyDescriptor& current) const;
 
+    JS_EXPORT_PRIVATE bool setPropertySlot(JSGlobalObject*, PropertyName, const PropertySlot&);
+
 private:
     static constexpr unsigned defaultAttributes = PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
 

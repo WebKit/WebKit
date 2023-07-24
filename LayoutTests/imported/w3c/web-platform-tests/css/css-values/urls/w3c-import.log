@@ -16,5 +16,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/empty.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/fragment-only.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/resolve-relative-to-base.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/resolve-relative-to-base.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/resolve-relative-to-stylesheet.html

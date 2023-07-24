@@ -250,6 +250,9 @@ public:
     HTMLSlotElement* manuallyAssignedSlot() const;
     void setManuallyAssignedSlot(HTMLSlotElement*);
 
+    bool hasEverPaintedImages() const;
+    void setHasEverPaintedImages(bool);
+
     bool isUncustomizedCustomElement() const { return customElementState() == CustomElementState::Uncustomized; }
     bool isCustomElementUpgradeCandidate() const { return customElementState() == CustomElementState::Undefined; }
     bool isDefinedCustomElement() const { return customElementState() == CustomElementState::Custom; }
@@ -386,6 +389,8 @@ public:
     }
     void setTreeScopeRecursively(TreeScope&);
     static ptrdiff_t treeScopeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_treeScope); }
+
+    TreeScope& treeScopeForSVGReferences() const;
 
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise (https://dom.spec.whatwg.org/#connected).

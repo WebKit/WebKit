@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 327
+#define ANGLE_SH_VERSION 337
 
 enum ShShaderSpec
 {
@@ -86,6 +86,8 @@ struct ShCompileOptionsMetal
     int defaultUniformsBindingIndex;
     // Binding index for UBO's argument buffer
     int UBOArgumentBufferBindingIndex;
+
+    bool generateShareableShaders;
 };
 
 // For ANGLE_shader_pixel_local_storage.
@@ -145,8 +147,8 @@ struct ShCompileOptions
     // calling sh::GetObjectCode().
     uint64_t objectCode : 1;
 
-    // Extracts attributes, uniforms, and varyings.  Can be queried by calling ShGetVariableInfo().
-    uint64_t variables : 1;
+    // Whether debug info should be output in the shader.
+    uint64_t outputDebugInfo : 1;
 
     // Tracks the source path for shaders.  Can be queried with getSourcePath().
     uint64_t sourcePath : 1;
@@ -423,7 +425,7 @@ struct ShCompileOptions
 
     // issuetracker.google.com/266235549 add aliased memory decoration to ssbo if the variable is
     // not declared with "restrict" memory qualifier in GLSL
-    uint64_t aliasedSSBOUnlessRestrict : 1;
+    uint64_t aliasedUnlessRestrict : 1;
 
     // Use fragment shaders to compute and set coverage mask based on the alpha value
     uint64_t emulateAlphaToCoverage : 1;
@@ -958,17 +960,115 @@ enum ColorAttachmentDitherControl
     kDitherControlDither565  = 3,
 };
 
-// Interface block name containing the aggregate default uniforms
-extern const char kDefaultUniformsNameVS[];
-extern const char kDefaultUniformsNameTCS[];
-extern const char kDefaultUniformsNameTES[];
-extern const char kDefaultUniformsNameGS[];
-extern const char kDefaultUniformsNameFS[];
-extern const char kDefaultUniformsNameCS[];
+namespace spirv
+{
+enum NonSemanticInstruction
+{
+    // The overview instruction containing information such as what predefined ids are present in
+    // the SPIR-V.  Simultaneously, this instruction identifies the location where the
+    // types/constants/variables section ends and the functions section starts.
+    kNonSemanticOverview,
+    // The instruction identifying the entry to the shader, i.e. at the start of main()
+    kNonSemanticEnter,
+    // The instruction identifying where vertex data is output.  This is before return from main()
+    // in vertex and tessellation shaders, and before OpEmitVertex in geometry shaders.
+    kNonSemanticVertexOutput,
+    // The instruction identifying the location where transform feedback emulation should be
+    // written.
+    kNonSemanticTransformFeedbackEmulation,
+};
 
-// Interface block and variable names containing driver uniforms
-extern const char kDriverUniformsBlockName[];
-extern const char kDriverUniformsVarName[];
+// The non-semantic instruction id has many bits available.  With kNonSemanticOverview, they are
+// used to provide additional overview details.  Providing this information in the instruction's
+// payload require OpConstants and recovering those, which is unnecessary complexity.
+constexpr uint32_t kNonSemanticInstructionBits       = 4;
+constexpr uint32_t kNonSemanticInstructionMask       = 0xF;
+constexpr uint32_t kOverviewHasSampleRateShadingMask = 0x10;
+constexpr uint32_t kOverviewHasSampleIDMask          = 0x20;
+constexpr uint32_t kOverviewHasOutputPerVertexMask   = 0x40;
+
+enum ReservedIds
+{
+    kIdInvalid = 0,
+
+    // =============================================================================================
+    // Ids that are fixed and are always present in the SPIR-V where applicable.  The SPIR-V
+    // transformer can thus reliably use these ids.
+
+    // Global information
+    kIdNonSemanticInstructionSet,
+    kIdEntryPoint,
+
+    // Basic types
+    kIdVoid,
+    kIdFloat,
+    kIdVec2,
+    kIdVec3,
+    kIdVec4,
+    kIdMat2,
+    kIdMat3,
+    kIdMat4,
+    kIdInt,
+    kIdIVec4,
+    kIdUint,
+
+    // Common constants
+    kIdIntZero,
+    kIdIntOne,
+    kIdIntTwo,
+    kIdIntThree,
+
+    // Type pointers
+    kIdIntInputTypePointer,
+    kIdVec4OutputTypePointer,
+    kIdIVec4FunctionTypePointer,
+    kIdOutputPerVertexTypePointer,
+
+    // Pre-rotation and Z-correction support
+    kIdTransformPositionFunction,
+    kIdInputPerVertexBlockArray,
+    kIdOutputPerVertexBlockArray,
+    kIdOutputPerVertexVar,
+
+    // Transform feedback support
+    kIdXfbEmulationGetOffsetsFunction,
+    kIdXfbEmulationCaptureFunction,
+    kIdXfbEmulationBufferVarZero,
+    kIdXfbEmulationBufferVarOne,
+    kIdXfbEmulationBufferVarTwo,
+    kIdXfbEmulationBufferVarThree,
+
+    // Multisampling support
+    kIdSampleID,
+
+    // =============================================================================================
+    // ANGLE internal shader variables, which are not produced as ShaderVariables.
+    // kIdShaderVariablesBegin marks the beginning of these ids.  variableId -> info maps in the
+    // backend can use |variableId - kIdShaderVariablesBegin| as key into a flat array.
+    //
+    // Note that for blocks, only the block id is in this section as that is the id used in the
+    // variableId -> info maps.
+    kIdShaderVariablesBegin,
+
+    // gl_PerVertex
+    kIdInputPerVertexBlock = kIdShaderVariablesBegin,
+    kIdOutputPerVertexBlock,
+    // The driver and default uniform blocks
+    kIdDriverUniformsBlock,
+    kIdDefaultUniformsBlock,
+    // The atomic counter block
+    kIdAtomicCounterBlock,
+    // Buffer block used for transform feedback emulation
+    kIdXfbEmulationBufferBlockZero,
+    kIdXfbEmulationBufferBlockOne,
+    kIdXfbEmulationBufferBlockTwo,
+    kIdXfbEmulationBufferBlockThree,
+    // Additional varying added to hold untransformed gl_Position for transform feedback capture
+    kIdXfbExtensionPosition,
+
+    kIdFirstUnreserved,
+};
+}  // namespace spirv
 
 // Packing information for driver uniform's misc field:
 // - 1 bit for whether surface rotation results in swapped axes
@@ -989,38 +1089,21 @@ constexpr uint32_t kDriverUniformsMiscTransformDepthOffset        = 20;
 constexpr uint32_t kDriverUniformsMiscTransformDepthMask          = 0x1;
 constexpr uint32_t kDriverUniformsMiscAlphaToCoverageOffset       = 21;
 constexpr uint32_t kDriverUniformsMiscAlphaToCoverageMask         = 0x1;
-
-// Interface block array name used for atomic counter emulation
-extern const char kAtomicCountersBlockName[];
-
-// Transform feedback emulation support
-extern const char kXfbEmulationGetOffsetsFunctionName[];
-extern const char kXfbEmulationCaptureFunctionName[];
-extern const char kXfbEmulationBufferBlockName[];
-extern const char kXfbEmulationBufferName[];
-extern const char kXfbEmulationBufferFieldName[];
-
-// Transform feedback extension support
-extern const char kXfbExtensionPositionOutName[];
-
-// Pre-rotation support
-extern const char kTransformPositionFunctionName[];
-
-// EXT_shader_framebuffer_fetch and EXT_shader_framebuffer_fetch_non_coherent
-extern const char kInputAttachmentName[];
-
 }  // namespace vk
 
 namespace mtl
 {
-// Specialization constant to enable sample mask output.
-extern const char kSampleMaskEnabledConstName[];
+// Specialization constant to enable multisampled rendering behavior.
+extern const char kMultisampledRenderingConstName[];
 
 // Specialization constant to emulate rasterizer discard.
 extern const char kRasterizerDiscardEnabledConstName[];
 
 // Specialization constant to enable depth write in fragment shaders.
 extern const char kDepthWriteEnabledConstName[];
+
+// Specialization constant to enable alpha to coverage.
+extern const char kEmulateAlphaToCoverageConstName[];
 }  // namespace mtl
 
 }  // namespace sh

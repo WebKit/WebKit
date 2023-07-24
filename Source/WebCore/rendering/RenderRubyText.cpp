@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -83,7 +83,7 @@ void RenderRubyText::adjustInlineDirectionLineBounds(int expansionOpportunityCou
     // ruby character on each side.
     float inset = (logicalWidth - maxPreferredLogicalWidth) / (expansionOpportunityCount + 1);
     if (expansionOpportunityCount)
-        inset = std::min<float>(2 * style().computedFontPixelSize(), inset);
+        inset = std::min(2 * style().computedFontSize(), inset);
 
     logicalLeft += inset / 2;
     logicalWidth -= inset;
@@ -94,14 +94,14 @@ bool RenderRubyText::avoidsFloats() const
     return true;
 }
 
-bool RenderRubyText::canBreakBefore(const LazyLineBreakIterator& iterator) const
+bool RenderRubyText::canBreakBefore(const CachedLineBreakIteratorFactory& lineBreakIteratorFactory) const
 {
     // FIXME: It would be nice to improve this so that it isn't just hard-coded, but lookahead in this
     // case is particularly problematic.
 
-    if (!iterator.priorContextLength())
+    if (!lineBreakIteratorFactory.priorContext().length())
         return true;
-    UChar ch = iterator.lastCharacter();
+    UChar ch = lineBreakIteratorFactory.priorContext().lastCharacter();
     ULineBreak lineBreak = (ULineBreak)u_getIntPropertyValue(ch, UCHAR_LINE_BREAK);
     // UNICODE LINE BREAKING ALGORITHM
     // http://www.unicode.org/reports/tr14/

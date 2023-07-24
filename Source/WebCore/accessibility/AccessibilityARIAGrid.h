@@ -33,28 +33,22 @@
 
 namespace WebCore {
     
-class AccessibilityTableCell;
-class AccessibilityTableHeaderContainer;
-
 class AccessibilityARIAGrid final : public AccessibilityTable {
 public:
     static Ref<AccessibilityARIAGrid> create(RenderObject*);
+    static Ref<AccessibilityARIAGrid> create(Node&);
     virtual ~AccessibilityARIAGrid();
-    
-    void addChildren() override;
-    
+
 private:
     explicit AccessibilityARIAGrid(RenderObject*);
-    bool isAccessibilityARIAGridInstance() const override { return true; }
+    explicit AccessibilityARIAGrid(Node&);
+    bool isAccessibilityARIAGridInstance() const final { return true; }
 
     // ARIA treegrids and grids support selected rows.
-    bool supportsSelectedRows() const override { return true; }
-    bool isMultiSelectable() const override;
-    bool computeIsTableExposableThroughAccessibility() const override { return true; }
-    bool isAriaTable() const override { return true; }
-    
-    void addRowDescendant(AXCoreObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
-    bool addTableCellChild(AXCoreObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
+    bool supportsSelectedRows() const final { return true; }
+    bool isMultiSelectable() const final;
+    bool computeIsTableExposableThroughAccessibility() const final { return true; }
+    bool isAriaTable() const final { return true; }
 };
 
 } // namespace WebCore 

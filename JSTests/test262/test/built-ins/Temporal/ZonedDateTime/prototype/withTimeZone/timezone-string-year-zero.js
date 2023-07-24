@@ -18,9 +18,4 @@ invalidStrings.forEach((timeZone) => {
     () => instance.withTimeZone(timeZone),
     "reject minus zero as extended year"
   );
-  assert.throws(
-    RangeError,
-    () => instance.withTimeZone({ timeZone }),
-    "reject minus zero as extended year (nested property)"
-  );
 });

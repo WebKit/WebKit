@@ -54,7 +54,7 @@ This will define the following variables in your project:
 
 find_package(PkgConfig QUIET)
 if (PkgConfig_FOUND)
-    pkg_check_modules(PC_JPEGXL QUIET jxl)
+    pkg_check_modules(PC_JPEGXL QUIET libjxl)
     set(JPEGXL_COMPILE_OPTIONS ${PC_JPEGXL_CFLAGS_OTHER})
     set(JPEGXL_VERSION ${PC_JPEGXL_VERSION})
 endif ()

@@ -206,7 +206,7 @@ static bool hasValidImportConditions(StringView conditions)
     if (conditions.isEmpty())
         return true;
 
-    conditions = conditions.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
+    conditions = conditions.trim(isASCIIWhitespace<UChar>);
 
     // FIXME: Support multiple conditions.
     // FIXME: Support media queries.

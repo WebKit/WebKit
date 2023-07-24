@@ -24,7 +24,6 @@
 #include "CachedImage.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "HTMLParserIdioms.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
 
@@ -49,8 +48,8 @@ String SVGImageLoader::sourceURI(const AtomString& attribute) const
 {
     URL base = element().baseURI();
     if (base != aboutBlankURL())
-        return URL(base, stripLeadingAndTrailingHTMLSpaces(attribute)).string();
-    return element().document().completeURL(stripLeadingAndTrailingHTMLSpaces(attribute)).string();
+        return URL(base, attribute).string();
+    return element().document().completeURL(attribute).string();
 }
 
 }

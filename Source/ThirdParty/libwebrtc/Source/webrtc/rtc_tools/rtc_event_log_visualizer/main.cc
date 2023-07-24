@@ -322,6 +322,11 @@ int main(int argc, char* argv[]) {
   });
   plots.RegisterPlot("audio_playout",
                      [&](Plot* plot) { analyzer.CreatePlayoutGraph(plot); });
+
+  plots.RegisterPlot("neteq_set_minimum_delay", [&](Plot* plot) {
+    analyzer.CreateNetEqSetMinimumDelay(plot);
+  });
+
   plots.RegisterPlot("incoming_audio_level", [&](Plot* plot) {
     analyzer.CreateAudioLevelGraph(webrtc::kIncomingPacket, plot);
   });
@@ -394,7 +399,7 @@ int main(int argc, char* argv[]) {
         "Fraction lost (outgoing RTCP)", "Loss rate (percent)", plot);
   });
   auto GetCumulativeLost = [](const webrtc::rtcp::ReportBlock& block) -> float {
-    return block.cumulative_lost_signed();
+    return block.cumulative_lost();
   };
   plots.RegisterPlot("incoming_rtcp_cumulative_lost", [&](Plot* plot) {
     analyzer.CreateSenderAndReceiverReportPlot(

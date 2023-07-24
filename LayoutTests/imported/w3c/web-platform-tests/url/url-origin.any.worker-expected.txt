@@ -266,7 +266,7 @@ PASS Origin parsing: <wow:%1G> without base
 PASS Origin parsing: <wow:￿> without base
 PASS Origin parsing: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> without base
 PASS Origin parsing: <http://!"$&'()*+,-.;=_`{}~/> without base
-FAIL Origin parsing: <sc://!"$%&'()*+,-.;=_`{}~/> without base "sc://!"$%&'()*+,-.;=_`{}~/" cannot be parsed as a URL.
+PASS Origin parsing: <sc://!"$%&'()*+,-.;=_`{}~/> without base
 PASS Origin parsing: <ftp://%e2%98%83> without base
 PASS Origin parsing: <https://%e2%98%83> without base
 PASS Origin parsing: <http://127.0.0.1:10100/relative_import.html> without base
@@ -322,8 +322,17 @@ PASS Origin parsing: <git+https://github.com/foo/bar> without base
 PASS Origin parsing: <urn:ietf:rfc:2648> without base
 PASS Origin parsing: <tag:joe@example.org,2001:foo/bar> without base
 PASS Origin parsing: <blob:https://example.com:443/> without base
+PASS Origin parsing: <blob:http://example.org:88/> without base
 PASS Origin parsing: <blob:d3958f5c-0777-0845-9dcf-2cb28783acaf> without base
 PASS Origin parsing: <blob:> without base
+PASS Origin parsing: <blob:blob:> without base
+FAIL Origin parsing: <blob:blob:https://example.org/> without base assert_equals: origin expected "null" but got "blob://"
+PASS Origin parsing: <blob:about:blank> without base
+FAIL Origin parsing: <blob:file://host/path> without base assert_equals: origin expected "null" but got "file://"
+FAIL Origin parsing: <blob:ftp://host/path> without base assert_equals: origin expected "null" but got "ftp://host"
+FAIL Origin parsing: <blob:ws://example.org/> without base assert_equals: origin expected "null" but got "ws://example.org"
+FAIL Origin parsing: <blob:wss://example.org/> without base assert_equals: origin expected "null" but got "wss://example.org"
+FAIL Origin parsing: <blob:http%3a//example.org/> without base assert_equals: origin expected "null" but got "http://example.org"
 PASS Origin parsing: <non-special:cannot-be-a-base-url-\0~> without base
 PASS Origin parsing: <https://www.example.com/path{path.html?query'=query#fragment<fragment> without base
 PASS Origin parsing: <https://user:pass[@foo/bar> against <http://example.org>
@@ -362,4 +371,6 @@ PASS Origin parsing: <turn://test/a/../b> without base
 PASS Origin parsing: <stun://example.com:8080/pathname?search#hash> without base
 PASS Origin parsing: <stun:///test> without base
 PASS Origin parsing: <stun://test/a/../b> without base
+PASS Origin parsing: <w://x:0> without base
+PASS Origin parsing: <west://x:0> without base
 

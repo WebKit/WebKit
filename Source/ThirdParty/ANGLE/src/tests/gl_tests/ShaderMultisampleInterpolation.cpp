@@ -60,7 +60,7 @@ TEST_P(SampleMultisampleInterpolationTest, StateQueries)
 
         GLfloat minOffset = 0.0f;
         glGetFloatv(GL_MIN_FRAGMENT_INTERPOLATION_OFFSET_OES, &minOffset);
-        EXPECT_LE(minOffset, -0.5f);
+        EXPECT_LE(minOffset, -0.5f + std::pow(2, -bits));
 
         GLfloat maxOffset = 0.0f;
         glGetFloatv(GL_MAX_FRAGMENT_INTERPOLATION_OFFSET_OES, &maxOffset);

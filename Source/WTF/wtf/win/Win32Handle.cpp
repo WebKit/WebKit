@@ -43,7 +43,8 @@ static HANDLE duplicateHandle(HANDLE handle)
 
     auto processHandle = ::GetCurrentProcess();
     HANDLE duplicate;
-    ::DuplicateHandle(processHandle, handle, processHandle, &duplicate, 0, FALSE, DUPLICATE_SAME_ACCESS);
+    if (!::DuplicateHandle(processHandle, handle, processHandle, &duplicate, 0, FALSE, DUPLICATE_SAME_ACCESS))
+        return INVALID_HANDLE_VALUE;
 
     return duplicate;
 }
@@ -73,16 +74,6 @@ Win32Handle::~Win32Handle()
     closeHandle(m_handle);
 }
 
-Win32Handle& Win32Handle::operator=(const Win32Handle& other)
-{
-    if (this != &other) {
-        closeHandle(m_handle);
-        m_handle = duplicateHandle(other.get());
-    }
-
-    return *this;
-}
-
 Win32Handle& Win32Handle::operator=(Win32Handle&& other)
 {
     if (this != &other) {
@@ -91,11 +82,6 @@ Win32Handle& Win32Handle::operator=(Win32Handle&& other)
     }
 
     return *this;
-}
-
-Win32Handle Win32Handle::copy() const
-{
-    return Win32Handle(duplicateHandle(m_handle));
 }
 
 HANDLE Win32Handle::leak()

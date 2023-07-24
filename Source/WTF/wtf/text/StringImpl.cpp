@@ -108,6 +108,8 @@ void StringStats::printStats()
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
 
+StringImpl::StaticStringImpl StringImpl::s_emptyAtomString("", StringImpl::StringAtom);
+
 StringImpl::~StringImpl()
 {
     ASSERT(!isStatic());
@@ -271,25 +273,12 @@ Ref<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
     return createInternal(characters, length);
 }
 
-Ref<StringImpl> StringImpl::createStaticStringImplWithoutCopying(const LChar* characters, unsigned length)
-{
-    ASSERT(length);
-    if (!length)
-        return *empty();
-    Ref<StringImpl> result = adoptRef(*new StringImpl(characters, length, ConstructWithoutCopying));
-    result->hash();
-    result->cost();
-    result->m_refCount |= s_refCountFlagIsStaticString;
-    return result;
-}
-
 Ref<StringImpl> StringImpl::createStaticStringImpl(const LChar* characters, unsigned length)
 {
     if (!length)
         return *empty();
     Ref<StringImpl> result = createInternal(characters, length);
     result->hash();
-    result->cost();
     result->m_refCount |= s_refCountFlagIsStaticString;
     return result;
 }
@@ -300,7 +289,6 @@ Ref<StringImpl> StringImpl::createStaticStringImpl(const UChar* characters, unsi
         return *empty();
     Ref<StringImpl> result = create8BitIfPossible(characters, length);
     result->hash();
-    result->cost();
     result->m_refCount |= s_refCountFlagIsStaticString;
     return result;
 }
@@ -725,7 +713,7 @@ Ref<StringImpl> StringImpl::convertToASCIIUppercase()
     return convertASCIICase<CaseConvertType::Upper>(*this, m_data16, m_length);
 }
 
-template<typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::stripMatchedCharacters(CodeUnitPredicate predicate)
+template<typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::trimMatchedCharacters(CodeUnitPredicate predicate)
 {
     if (!m_length)
         return *this;
@@ -752,14 +740,9 @@ template<typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::stripMat
     return create(m_data16 + start, end + 1 - start);
 }
 
-Ref<StringImpl> StringImpl::stripWhiteSpace()
+Ref<StringImpl> StringImpl::trim(CodeUnitMatchFunction predicate)
 {
-    return stripMatchedCharacters(isSpaceOrNewline);
-}
-
-Ref<StringImpl> StringImpl::stripLeadingAndTrailingCharacters(CodeUnitMatchFunction predicate)
-{
-    return stripMatchedCharacters(predicate);
+    return trimMatchedCharacters(predicate);
 }
 
 template<typename CharacterType, class UCharPredicate> inline Ref<StringImpl> StringImpl::simplifyMatchedCharactersToSpace(UCharPredicate predicate)
@@ -796,13 +779,6 @@ template<typename CharacterType, class UCharPredicate> inline Ref<StringImpl> St
     data.shrink(outc);
 
     return adopt(WTFMove(data));
-}
-
-Ref<StringImpl> StringImpl::simplifyWhiteSpace()
-{
-    if (is8Bit())
-        return StringImpl::simplifyMatchedCharactersToSpace<LChar>(isSpaceOrNewline);
-    return StringImpl::simplifyMatchedCharactersToSpace<UChar>(isSpaceOrNewline);
 }
 
 Ref<StringImpl> StringImpl::simplifyWhiteSpace(CodeUnitMatchFunction isWhiteSpace)
@@ -1673,7 +1649,5 @@ bool equalIgnoringNullity(const UChar* a, size_t aLength, StringImpl* b)
     }
     return equal(a, b->characters16(), b->length());
 }
-
-LazyNeverDestroyed<Ref<StringImpl>> StringImpl::s_empty;
 
 } // namespace WTF

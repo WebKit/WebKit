@@ -135,7 +135,7 @@ void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRe
     // Use the GraphicsContext function, because it calculates the blur radius in context space,
     // rather than screen space.
     constexpr auto shadowColor = Color::black.colorWithAlphaByte(26);
-    graphicsContext.setShadow(FloatSize { }, 16, shadowColor);
+    graphicsContext.setDropShadow({ { }, 16, shadowColor, ShadowRadiusMode::Default });
 
     // The circle must have an alpha channel value of 1 for the shadow color to appear.
     CGFloat circleColorComponents[4] = { 0, 0, 0, 1 };

@@ -1492,7 +1492,8 @@ bool ValidateES3TexStorageParametersFormat(const Context *context,
     {
         if (!context->getExtensions().yuvInternalFormatANGLE)
         {
-            context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidFormat);
+            context->validationErrorF(entryPoint, GL_INVALID_ENUM, kInvalidInternalFormat,
+                                      internalformat);
             return false;
         }
 
@@ -1512,13 +1513,15 @@ bool ValidateES3TexStorageParametersFormat(const Context *context,
     const InternalFormat &formatInfo = GetSizedInternalFormatInfo(internalformat);
     if (!formatInfo.textureSupport(context->getClientVersion(), context->getExtensions()))
     {
-        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidFormat);
+        context->validationErrorF(entryPoint, GL_INVALID_ENUM, kInvalidInternalFormat,
+                                  internalformat);
         return false;
     }
 
     if (!formatInfo.sized)
     {
-        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidFormat);
+        context->validationErrorF(entryPoint, GL_INVALID_ENUM, kInvalidInternalFormat,
+                                  internalformat);
         return false;
     }
 

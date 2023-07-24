@@ -148,7 +148,7 @@ static String effectiveApplicationId()
 
     // If it is not possible to obtain the executable path, generate
     // a random identifier as a fallback.
-    auto uuid = UUID::createVersion4Weak();
+    auto uuid = WTF::UUID::createVersion4Weak();
     return makeString("org.webkit.app-", uuid.toString());
 }
 
@@ -385,27 +385,50 @@ static bool bindPathVar(Vector<CString>& args, const char* varname)
     return true;
 }
 
+static const char* environmentVariableValue(const char* name, const char* defaultValue)
+{
+    const char* value = g_getenv(name);
+    return value ? value : defaultValue;
+}
+
 static void bindGStreamerData(Vector<CString>& args)
 {
     if (!bindPathVar(args, "GST_PLUGIN_PATH_1_0"))
         bindPathVar(args, "GST_PLUGIN_PATH");
 
-    if (!bindPathVar(args, "GST_PLUGIN_SYSTEM_PATH_1_0")) {
-        if (!bindPathVar(args, "GST_PLUGIN_SYSTEM_PATH")) {
-            GUniquePtr<char> gstData(g_build_filename(g_get_user_data_dir(), "gstreamer-1.0", nullptr));
-            bindIfExists(args, gstData.get());
-        }
+    if (!bindPathVar(args, "GST_PLUGIN_SYSTEM_PATH_1_0"))
+        bindPathVar(args, "GST_PLUGIN_SYSTEM_PATH");
+
+    // The plugin scanner needs write permissions in the parent directory of GST_REGISTRY in order to
+    // write the registry file.
+    if (const char* registryPath = g_getenv("GST_REGISTRY")) {
+        auto registryDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(registryPath));
+        bindIfExists(args, registryDir.utf8().data(), BindFlags::ReadWrite);
     }
 
-    GUniquePtr<char> gstCache(g_build_filename(g_get_user_cache_dir(), "gstreamer-1.0", nullptr));
-    bindIfExists(args, gstCache.get(), BindFlags::ReadWrite);
+    bindPathVar(args, "GST_PRESET_PATH");
+
+    // GST_DEBUG_FILE points to an absolute file path, so we need write permissions for its parent directory.
+    if (const char* debugFilePath = g_getenv("GST_DEBUG_FILE")) {
+        auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(debugFilePath));
+        bindIfExists(args, parentDir.utf8().data(), BindFlags::ReadWrite);
+    }
+
+    // GST_DEBUG_DUMP_DOT_DIR might not exist when the application starts, so we need write
+    // permissions for its parent directory.
+    if (const char* dotDir = g_getenv("GST_DEBUG_DUMP_DOT_DIR")) {
+        auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(dotDir));
+        bindIfExists(args, parentDir.utf8().data(), BindFlags::ReadWrite);
+    }
 
     // /usr/lib is already added so this is only requried for other dirs
-    const char* scannerPath = g_getenv("GST_PLUGIN_SCANNER") ?: "/usr/libexec/gstreamer-1.0/gst-plugin-scanner";
-    const char* helperPath = g_getenv("GST_INSTALL_PLUGINS_HELPER ") ?: "/usr/libexec/gst-install-plugins-helper";
+    const char* scannerPath = environmentVariableValue("GST_PLUGIN_SCANNER", "/usr/libexec/gstreamer-1.0/gst-plugin-scanner");
+    const char* installPluginsHelperPath = environmentVariableValue("GST_INSTALL_PLUGINS_HELPER", "/usr/libexec/gstreamer-1.0/gst-install-plugins-helper");
+    const char* ptpHelperPath = environmentVariableValue("GST_PTP_HELPER", "/usr/libexec/gstreamer-1.0/gst-ptp-helper");
 
     bindIfExists(args, scannerPath);
-    bindIfExists(args, helperPath);
+    bindIfExists(args, installPluginsHelperPath);
+    bindIfExists(args, ptpHelperPath);
 }
 
 static void bindOpenGL(Vector<CString>& args)
@@ -440,6 +463,18 @@ static void bindV4l(Vector<CString>& args)
         "--dev-bind-try", "/dev/video2", "/dev/video2",
         "--dev-bind-try", "/dev/media0", "/dev/media0",
     }));
+}
+
+static bool enableDebugPermissions()
+{
+    static int enabled = -1;
+
+    if (enabled == -1) {
+        const char* env = g_getenv("WEBKIT_ENABLE_DEBUG_PERMISSIONS_IN_SANDBOX");
+        enabled = !g_strcmp0(env, "1");
+    }
+
+    return enabled;
 }
 
 // Translate a libseccomp error code into an error message. libseccomp
@@ -570,7 +605,13 @@ static int setupSeccomp()
         { SCMP_SYS(fsmount), ENOSYS, nullptr },
         { SCMP_SYS(fspick), ENOSYS, nullptr },
         { SCMP_SYS(mount_setattr), ENOSYS, nullptr },
+    };
 
+    struct {
+        int scall;
+        int errnum;
+        struct scmp_arg_cmp* arg;
+    } nonDebugSyscallBlockList[] = {
         // Profiling operations; we expect these to be done by tools from outside
         // the sandbox. In particular perf has been the source of many CVEs.
         { SCMP_SYS(perf_event_open), EPERM, nullptr },
@@ -600,6 +641,20 @@ static int setupSeccomp()
             g_error("Failed to block syscall %d: %s", rule.scall, seccompStrerror(r));
     }
 
+    if (!enableDebugPermissions()) {
+        for (auto& rule : nonDebugSyscallBlockList) {
+            int r;
+            if (rule.arg)
+                r = seccomp_rule_add(seccomp, SCMP_ACT_ERRNO(rule.errnum), rule.scall, 1, *rule.arg);
+            else
+                r = seccomp_rule_add(seccomp, SCMP_ACT_ERRNO(rule.errnum), rule.scall, 0);
+            if (r == -EFAULT)
+                g_info("Unable to block syscall %d: syscall not known to libseccomp?", rule.scall);
+            else if (r < 0)
+                g_error("Failed to block syscall %d: %s", rule.scall, seccompStrerror(r));
+        }
+    }
+
     int tmpfd = memfd_create("seccomp-bpf", 0);
     if (tmpfd == -1)
         g_error("Failed to create memfd: %s", g_strerror(errno));
@@ -614,8 +669,12 @@ static int setupSeccomp()
     return tmpfd;
 }
 
-static bool shouldUnshareNetwork(ProcessLauncher::ProcessType processType)
+static bool shouldUnshareNetwork(ProcessLauncher::ProcessType processType, char** argv)
 {
+    // gdbserver requires network access for remote debugging.
+    if (enableDebugPermissions() && g_str_has_suffix(argv[0], "gdbserver"))
+        return false;
+
     // xdg-dbus-proxy needs access to host abstract sockets to connect to the a11y bus. Secure
     // host services must not use abstract sockets.
     if (processType == ProcessLauncher::ProcessType::DBusProxy)
@@ -684,7 +743,6 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     const char* runDir = g_get_user_runtime_dir();
     Vector<CString> sandboxArgs = {
         "--die-with-parent",
-        "--unshare-pid",
         "--unshare-uts",
 
         // We assume /etc has safe permissions.
@@ -727,6 +785,24 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         "--ro-bind-try", PKGLIBEXECDIR, PKGLIBEXECDIR,
     };
 
+    if (enableDebugPermissions()) {
+        const char* dataDir = g_get_user_data_dir();
+        GUniquePtr<char> rrOutputDir(g_build_filename(dataDir, "rr", nullptr));
+
+        sandboxArgs.appendVector(Vector<CString>({
+            // Other binaries are helpful for debugging such as gdbserver.
+            "--ro-bind-try", "/bin", "/bin",
+            "--ro-bind-try", "/usr/bin", "/usr/bin",
+            // rr writes to this directory.
+            "--bind-try", rrOutputDir.get(), rrOutputDir.get(),
+        }));
+    } else {
+        sandboxArgs.appendVector(Vector<CString>({
+            // In some configurations cross pid namespace debugging has issues.
+            "--unshare-pid",
+        }));
+    }
+
     addExtraPaths(launchOptions.extraSandboxPaths, sandboxArgs);
 
     if (launchOptions.processType == ProcessLauncher::ProcessType::DBusProxy) {
@@ -754,7 +830,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 #endif
     }
 
-    if (shouldUnshareNetwork(launchOptions.processType))
+    if (shouldUnshareNetwork(launchOptions.processType, argv))
         sandboxArgs.append("--unshare-net");
 
     // We would have to parse ld config files for more info.

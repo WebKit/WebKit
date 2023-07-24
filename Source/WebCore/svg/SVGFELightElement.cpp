@@ -71,8 +71,6 @@ SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElem
 
 void SVGFELightElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::azimuthAttr:
         m_azimuth->setBaseValInternal(newValue.toFloat());
@@ -107,6 +105,8 @@ void SVGFELightElement::attributeChanged(const QualifiedName& name, const AtomSt
     default:
         break;
     }
+
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)

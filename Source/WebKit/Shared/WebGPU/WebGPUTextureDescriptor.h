@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,22 +29,22 @@
 
 #include "WebGPUExtent3D.h"
 #include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUTextureDimension.h>
+#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUTextureUsage.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUTextureDimension.h>
-#include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
-#include <pal/graphics/WebGPU/WebGPUTextureUsage.h>
 
 namespace WebKit::WebGPU {
 
 struct TextureDescriptor : public ObjectDescriptorBase {
     Extent3D size;
-    PAL::WebGPU::IntegerCoordinate mipLevelCount { 1 };
-    PAL::WebGPU::Size32 sampleCount { 1 };
-    PAL::WebGPU::TextureDimension dimension { PAL::WebGPU::TextureDimension::_2d };
-    PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
-    PAL::WebGPU::TextureUsageFlags usage;
-    Vector<PAL::WebGPU::TextureFormat> viewFormats;
+    WebCore::WebGPU::IntegerCoordinate mipLevelCount { 1 };
+    WebCore::WebGPU::Size32 sampleCount { 1 };
+    WebCore::WebGPU::TextureDimension dimension { WebCore::WebGPU::TextureDimension::_2d };
+    WebCore::WebGPU::TextureFormat format { WebCore::WebGPU::TextureFormat::R8unorm };
+    WebCore::WebGPU::TextureUsageFlags usage;
+    Vector<WebCore::WebGPU::TextureFormat> viewFormats;
 };
 
 } // namespace WebKit::WebGPU

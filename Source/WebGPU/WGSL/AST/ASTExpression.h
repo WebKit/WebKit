@@ -30,6 +30,8 @@
 #include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL {
+class ConstantRewriter;
+class RewriteGlobalVariables;
 class TypeChecker;
 struct Type;
 
@@ -37,6 +39,8 @@ namespace AST {
 
 class Expression : public Node {
     WGSL_AST_BUILDER_NODE(Expression);
+    friend ConstantRewriter;
+    friend RewriteGlobalVariables;
     friend TypeChecker;
 
 public:
@@ -54,7 +58,7 @@ protected:
     { }
 
 private:
-    const Type* m_inferredType;
+    const Type* m_inferredType { nullptr };
 };
 
 } // namespace AST

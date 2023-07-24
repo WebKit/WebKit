@@ -108,7 +108,7 @@ static bool tls_set_read_state(SSL *ssl, ssl_encryption_level_t level,
     }
   }
 
-  OPENSSL_memset(ssl->s3->read_sequence, 0, sizeof(ssl->s3->read_sequence));
+  ssl->s3->read_sequence = 0;
   ssl->s3->aead_read_ctx = std::move(aead_ctx);
   ssl->s3->read_level = level;
   return true;
@@ -137,7 +137,7 @@ static bool tls_set_write_state(SSL *ssl, ssl_encryption_level_t level,
     }
   }
 
-  OPENSSL_memset(ssl->s3->write_sequence, 0, sizeof(ssl->s3->write_sequence));
+  ssl->s3->write_sequence = 0;
   ssl->s3->aead_write_ctx = std::move(aead_ctx);
   ssl->s3->write_level = level;
   return true;

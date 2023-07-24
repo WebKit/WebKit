@@ -52,7 +52,10 @@ GLContext::GLContext(PlatformDisplay& display, EGLContext context, EGLSurface su
 
 EGLSurface GLContext::createWindowSurfaceWPE(EGLDisplay display, EGLConfig config, GLNativeWindowType window)
 {
-    return eglCreateWindowSurface(display, config, reinterpret_cast<EGLNativeWindowType>(window), nullptr);
+    // EGLNativeWindowType changes depending on the EGL implementation, reinterpret_cast
+    // would work for pointers, and static_cast for numeric types only; so use a plain
+    // C cast expression which works in all possible cases.
+    return eglCreateWindowSurface(display, config, (EGLNativeWindowType) window, nullptr);
 }
 
 std::unique_ptr<GLContext> GLContext::createWPEContext(PlatformDisplay& platformDisplay, EGLContext sharingContext)

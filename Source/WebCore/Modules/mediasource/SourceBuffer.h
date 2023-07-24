@@ -145,8 +145,10 @@ public:
 
     WebCoreOpaqueRoot opaqueRoot();
 
+#if ENABLE(MANAGED_MEDIA_SOURCE)
     virtual bool isManaged() const { return false; }
     void memoryPressure();
+#endif
 
 protected:
     SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource&);

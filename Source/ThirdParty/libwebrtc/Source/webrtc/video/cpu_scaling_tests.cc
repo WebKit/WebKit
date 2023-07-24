@@ -15,7 +15,6 @@
 #include "api/video/video_frame.h"
 #include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
-#include "api/video_codecs/video_encoder_config.h"
 #include "call/video_receive_stream.h"
 #include "call/video_send_stream.h"
 #include "rtc_base/checks.h"
@@ -24,6 +23,8 @@
 #include "test/field_trial.h"
 #include "test/frame_generator_capturer.h"
 #include "test/gtest.h"
+#include "test/video_test_constants.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 namespace {
@@ -55,7 +56,9 @@ void CpuOveruseTest::RunTestAndCheckForAdaptation(
    public:
     OveruseObserver(const DegradationPreference& degradation_preference,
                     bool expect_adaptation)
-        : SendTest(expect_adaptation ? kLongTimeout : kDefaultTimeout),
+        : SendTest(expect_adaptation
+                       ? test::VideoTestConstants::kLongTimeout
+                       : test::VideoTestConstants::kDefaultTimeout),
           degradation_preference_(degradation_preference),
           expect_adaptation_(expect_adaptation) {}
 

@@ -460,7 +460,7 @@ const uint8_t* WebSocketHandshake::readHTTPHeaders(const uint8_t* start, const u
         if ((headerName == HTTPHeaderName::SecWebSocketExtensions
             || headerName == HTTPHeaderName::SecWebSocketAccept
             || headerName == HTTPHeaderName::SecWebSocketProtocol)
-            && !value.isAllASCII()) {
+            && !value.containsOnlyASCII()) {
             m_failureReason = makeString(name, " header value should only contain ASCII characters");
             return nullptr;
         }

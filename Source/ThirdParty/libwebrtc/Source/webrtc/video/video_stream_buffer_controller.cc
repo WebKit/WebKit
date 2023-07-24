@@ -16,18 +16,21 @@
 
 #include "absl/base/attributes.h"
 #include "absl/functional/bind_front.h"
+#include "absl/types/optional.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/frame_buffer.h"
 #include "api/video/video_content_type.h"
 #include "modules/video_coding/frame_helpers.h"
-#include "modules/video_coding/timing/inter_frame_delay.h"
+#include "modules/video_coding/timing/inter_frame_delay_variation_calculator.h"
 #include "modules/video_coding/timing/jitter_estimator.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/thread_annotations.h"
+#include "video/frame_decode_scheduler.h"
 #include "video/frame_decode_timing.h"
 #include "video/task_queue_frame_decode_scheduler.h"
 #include "video/video_receive_stream_timeout_tracker.h"
@@ -70,73 +73,13 @@ Timestamp ReceiveTime(const EncodedFrame& frame) {
   return *ts;
 }
 
-enum class FrameBufferArm {
-  kFrameBuffer3,
-  kSyncDecode,
-};
-
-constexpr const char* kFrameBufferFieldTrial = "WebRTC-FrameBuffer3";
-
-FrameBufferArm ParseFrameBufferFieldTrial(const FieldTrialsView& field_trials) {
-  webrtc::FieldTrialEnum<FrameBufferArm> arm(
-      "arm", FrameBufferArm::kFrameBuffer3,
-      {
-          {"FrameBuffer3", FrameBufferArm::kFrameBuffer3},
-          {"SyncDecoding", FrameBufferArm::kSyncDecode},
-      });
-  ParseFieldTrial({&arm}, field_trials.Lookup(kFrameBufferFieldTrial));
-  return arm.Get();
-}
-
 }  // namespace
-
-std::unique_ptr<VideoStreamBufferController>
-VideoStreamBufferController::CreateFromFieldTrial(
-    Clock* clock,
-    TaskQueueBase* worker_queue,
-    VCMTiming* timing,
-    VCMReceiveStatisticsCallback* stats_proxy,
-    FrameSchedulingReceiver* receiver,
-    TimeDelta max_wait_for_keyframe,
-    TimeDelta max_wait_for_frame,
-    DecodeSynchronizer* decode_sync,
-    const FieldTrialsView& field_trials) {
-  switch (ParseFrameBufferFieldTrial(field_trials)) {
-    case FrameBufferArm::kSyncDecode: {
-      std::unique_ptr<FrameDecodeScheduler> scheduler;
-      if (decode_sync) {
-        scheduler = decode_sync->CreateSynchronizedFrameScheduler();
-      } else {
-        RTC_LOG(LS_ERROR) << "In FrameBuffer with sync decode trial, but "
-                             "no DecodeSynchronizer was present!";
-        // Crash in debug, but in production use the task queue scheduler.
-        RTC_DCHECK_NOTREACHED();
-        scheduler = std::make_unique<TaskQueueFrameDecodeScheduler>(
-            clock, worker_queue);
-      }
-      return std::make_unique<VideoStreamBufferController>(
-          clock, worker_queue, timing, stats_proxy, receiver,
-          max_wait_for_keyframe, max_wait_for_frame, std::move(scheduler),
-          field_trials);
-    }
-    case FrameBufferArm::kFrameBuffer3:
-      ABSL_FALLTHROUGH_INTENDED;
-    default: {
-      auto scheduler =
-          std::make_unique<TaskQueueFrameDecodeScheduler>(clock, worker_queue);
-      return std::make_unique<VideoStreamBufferController>(
-          clock, worker_queue, timing, stats_proxy, receiver,
-          max_wait_for_keyframe, max_wait_for_frame, std::move(scheduler),
-          field_trials);
-    }
-  }
-}
 
 VideoStreamBufferController::VideoStreamBufferController(
     Clock* clock,
     TaskQueueBase* worker_queue,
     VCMTiming* timing,
-    VCMReceiveStatisticsCallback* stats_proxy,
+    VideoStreamBufferControllerStatsObserver* stats_proxy,
     FrameSchedulingReceiver* receiver,
     TimeDelta max_wait_for_keyframe,
     TimeDelta max_wait_for_frame,
@@ -168,7 +111,6 @@ VideoStreamBufferController::VideoStreamBufferController(
   RTC_DCHECK(timing_);
   RTC_DCHECK(clock_);
   RTC_DCHECK(frame_decode_scheduler_);
-  RTC_LOG(LS_WARNING) << "Using FrameBuffer3";
 
   ParseFieldTrial({&zero_playout_delay_max_decode_queue_size_},
                   field_trials.Lookup("WebRTC-ZeroPlayoutDelay"));
@@ -202,9 +144,12 @@ absl::optional<int64_t> VideoStreamBufferController::InsertFrame(
   int complete_units = buffer_->GetTotalNumberOfContinuousTemporalUnits();
   if (buffer_->InsertFrame(std::move(frame))) {
     RTC_DCHECK(metadata.receive_time) << "Frame receive time must be set!";
-    if (!metadata.delayed_by_retransmission && metadata.receive_time)
+    if (!metadata.delayed_by_retransmission && metadata.receive_time &&
+        (field_trials_.IsDisabled("WebRTC-IncomingTimestampOnMarkerBitOnly") ||
+         metadata.is_last_spatial_layer)) {
       timing_->IncomingTimestamp(metadata.rtp_timestamp,
                                  *metadata.receive_time);
+    }
     if (complete_units < buffer_->GetTotalNumberOfContinuousTemporalUnits()) {
       stats_proxy_->OnCompleteFrame(metadata.is_keyframe, metadata.size,
                                     metadata.contentType);
@@ -248,7 +193,8 @@ void VideoStreamBufferController::OnFrameReady(
     absl::InlinedVector<std::unique_ptr<EncodedFrame>, 4> frames,
     Timestamp render_time) {
   RTC_DCHECK_RUN_ON(&worker_sequence_checker_);
-  RTC_DCHECK(!frames.empty());
+  RTC_CHECK(!frames.empty())
+      << "Callers must ensure there is at least one frame to decode.";
 
   timeout_tracker_.OnEncodedFrameReleased();
 
@@ -262,7 +208,11 @@ void VideoStreamBufferController::OnFrameReady(
     keyframe_required_ = false;
 
   // Gracefully handle bad RTP timestamps and render time issues.
-  if (FrameHasBadRenderTiming(render_time, now, timing_->TargetVideoDelay())) {
+  if (FrameHasBadRenderTiming(render_time, now) ||
+      TargetVideoDelayIsTooLarge(timing_->TargetVideoDelay())) {
+    RTC_LOG(LS_WARNING) << "Resetting jitter estimator and timing module due "
+                           "to bad render timing for rtp_timestamp="
+                        << first_frame.Timestamp();
     jitter_estimator_.Reset();
     timing_->Reset();
     render_time = timing_->RenderTime(first_frame.Timestamp(), now);
@@ -277,10 +227,11 @@ void VideoStreamBufferController::OnFrameReady(
   }
 
   if (!superframe_delayed_by_retransmission) {
-    auto frame_delay = inter_frame_delay_.CalculateDelay(
-        first_frame.Timestamp(), receive_time);
-    if (frame_delay) {
-      jitter_estimator_.UpdateEstimate(*frame_delay, superframe_size);
+    absl::optional<TimeDelta> inter_frame_delay_variation =
+        ifdv_calculator_.Calculate(first_frame.Timestamp(), receive_time);
+    if (inter_frame_delay_variation) {
+      jitter_estimator_.UpdateEstimate(*inter_frame_delay_variation,
+                                       superframe_size);
     }
 
     float rtt_mult = protection_mode_ == kProtectionNackFEC ? 0.0 : 1.0;
@@ -328,11 +279,29 @@ void VideoStreamBufferController::OnTimeout(TimeDelta delay) {
 void VideoStreamBufferController::FrameReadyForDecode(uint32_t rtp_timestamp,
                                                       Timestamp render_time) {
   RTC_DCHECK_RUN_ON(&worker_sequence_checker_);
-  auto frames = buffer_->ExtractNextDecodableTemporalUnit();
-  RTC_DCHECK(frames[0]->Timestamp() == rtp_timestamp)
+  // Check that the frame to decode is still valid before passing the frame for
+  // decoding.
+  auto decodable_tu_info = buffer_->DecodableTemporalUnitsInfo();
+  if (!decodable_tu_info) {
+    RTC_LOG(LS_ERROR)
+        << "The frame buffer became undecodable during the wait "
+           "to decode frame with rtp-timestamp "
+        << rtp_timestamp
+        << ". Cancelling the decode of this frame, decoding "
+           "will resume when the frame buffers become decodable again.";
+    return;
+  }
+  RTC_DCHECK_EQ(rtp_timestamp, decodable_tu_info->next_rtp_timestamp)
       << "Frame buffer's next decodable frame was not the one sent for "
-         "extraction rtp="
-      << rtp_timestamp << " extracted rtp=" << frames[0]->Timestamp();
+         "extraction.";
+  auto frames = buffer_->ExtractNextDecodableTemporalUnit();
+  if (frames.empty()) {
+    RTC_LOG(LS_ERROR)
+        << "The frame buffer should never return an empty temporal until list "
+           "when there is a decodable temporal unit.";
+    RTC_DCHECK_NOTREACHED();
+    return;
+  }
   OnFrameReady(std::move(frames), render_time);
 }
 
@@ -350,8 +319,8 @@ void VideoStreamBufferController::UpdateJitterDelay() {
   auto timings = timing_->GetTimings();
   if (timings.num_decoded_frames) {
     stats_proxy_->OnFrameBufferTimingsUpdated(
-        timings.max_decode_duration.ms(), timings.current_delay.ms(),
-        timings.target_delay.ms(), timings.jitter_buffer_delay.ms(),
+        timings.estimated_max_decode_time.ms(), timings.current_delay.ms(),
+        timings.target_delay.ms(), timings.jitter_delay.ms(),
         timings.min_playout_delay.ms(), timings.render_delay.ms());
   }
 }

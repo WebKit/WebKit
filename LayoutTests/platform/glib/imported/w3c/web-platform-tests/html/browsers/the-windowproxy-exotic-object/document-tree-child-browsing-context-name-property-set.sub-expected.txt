@@ -1,4 +1,4 @@
 
 
-FAIL Cross origin child window's name shadows the second candidate of a same origin iframe assert_equals: expected (undefined) undefined but got (object) object "[object Window]"
+FAIL Cross origin child window's name shadows the second candidate of a same origin iframe assert_equals: expected (undefined) undefined but got (object) [stringifying object threw SecurityError: Blocked a frame with origin "http://web-platform.test:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match. with type object]
 

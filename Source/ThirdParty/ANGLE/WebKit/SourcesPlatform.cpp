@@ -26,5 +26,5 @@
 #include "common/platform.h"
 
 #if !(ANGLE_PLATFORM_MACOS || ANGLE_PLATFORM_MACCATALYST)
-#include "gpu_info_util/SystemInfo_ios.cpp"
+#    include "gpu_info_util/SystemInfo_ios.cpp"
 #endif

@@ -446,4 +446,53 @@ TEST(SystemUtils, MAYBE_PageFaultHandlerDefaultHandler)
 TEST(SystemUtils, MAYBE_PageFaultHandlerDefaultHandler) {}
 #endif
 
+// Tests basic usage of GetCurrentThreadId.
+TEST(SystemUtils, GetCurrentThreadId)
+{
+    constexpr size_t kThreadCount = 64;
+
+    std::mutex mutex;
+    std::condition_variable condVar;
+
+    std::vector<std::thread> threads;
+    std::set<ThreadId> threadIds;
+    size_t readyCount = 0;
+
+    for (size_t i = 0; i < kThreadCount; ++i)
+    {
+        threads.emplace_back([&]() {
+            std::unique_lock<std::mutex> lock(mutex);
+
+            // Get threadId
+            const angle::ThreadId threadId = angle::GetCurrentThreadId();
+            EXPECT_NE(threadId, angle::InvalidThreadId());
+            threadIds.insert(threadId);
+
+            // Allow thread to finish only when all threads received the id.
+            // Otherwise new thread may reuse Id of already completed but not joined thread.
+            // Problem can be reproduced on Window platform, for example.
+            ++readyCount;
+            if (readyCount < kThreadCount)
+            {
+                condVar.wait(lock, [&]() { return readyCount == kThreadCount; });
+            }
+            else
+            {
+                condVar.notify_all();
+            }
+
+            // Check that threadId is still the same.
+            EXPECT_EQ(threadId, angle::GetCurrentThreadId());
+        });
+    }
+
+    for (size_t i = 0; i < kThreadCount; ++i)
+    {
+        threads[i].join();
+    }
+
+    // Check that all threadIds were unique.
+    EXPECT_EQ(threadIds.size(), kThreadCount);
+}
+
 }  // anonymous namespace

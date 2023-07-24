@@ -15,6 +15,7 @@
 #include "system_wrappers/include/metrics.h"
 #include "test/call_test.h"
 #include "test/gtest.h"
+#include "test/video_test_constants.h"
 
 namespace webrtc {
 namespace {
@@ -44,7 +45,7 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
                         public rtc::VideoSinkInterface<VideoFrame> {
    public:
     FrameObserver(bool use_rtx, bool use_fec, bool screenshare)
-        : EndToEndTest(kLongTimeout),
+        : EndToEndTest(test::VideoTestConstants::kLongTimeout),
           use_rtx_(use_rtx),
           use_fec_(use_fec),
           screenshare_(screenshare),
@@ -92,33 +93,43 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
         std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
         VideoEncoderConfig* encoder_config) override {
       // NACK
-      send_config->rtp.nack.rtp_history_ms = kNackRtpHistoryMs;
-      (*receive_configs)[0].rtp.nack.rtp_history_ms = kNackRtpHistoryMs;
+      send_config->rtp.nack.rtp_history_ms =
+          test::VideoTestConstants::kNackRtpHistoryMs;
+      (*receive_configs)[0].rtp.nack.rtp_history_ms =
+          test::VideoTestConstants::kNackRtpHistoryMs;
       (*receive_configs)[0].renderer = this;
       // FEC
       if (use_fec_) {
-        send_config->rtp.ulpfec.ulpfec_payload_type = kUlpfecPayloadType;
-        send_config->rtp.ulpfec.red_payload_type = kRedPayloadType;
+        send_config->rtp.ulpfec.ulpfec_payload_type =
+            test::VideoTestConstants::kUlpfecPayloadType;
+        send_config->rtp.ulpfec.red_payload_type =
+            test::VideoTestConstants::kRedPayloadType;
         send_config->encoder_settings.encoder_factory = &encoder_factory_;
         send_config->rtp.payload_name = "VP8";
         encoder_config->codec_type = kVideoCodecVP8;
         (*receive_configs)[0].decoders[0].video_format = SdpVideoFormat("VP8");
-        (*receive_configs)[0].rtp.red_payload_type = kRedPayloadType;
-        (*receive_configs)[0].rtp.ulpfec_payload_type = kUlpfecPayloadType;
+        (*receive_configs)[0].rtp.red_payload_type =
+            test::VideoTestConstants::kRedPayloadType;
+        (*receive_configs)[0].rtp.ulpfec_payload_type =
+            test::VideoTestConstants::kUlpfecPayloadType;
       }
       // RTX
       if (use_rtx_) {
-        send_config->rtp.rtx.ssrcs.push_back(kSendRtxSsrcs[0]);
-        send_config->rtp.rtx.payload_type = kSendRtxPayloadType;
-        (*receive_configs)[0].rtp.rtx_ssrc = kSendRtxSsrcs[0];
-        (*receive_configs)[0]
-            .rtp.rtx_associated_payload_types[kSendRtxPayloadType] =
-            kFakeVideoSendPayloadType;
+        send_config->rtp.rtx.ssrcs.push_back(
+            test::VideoTestConstants::kSendRtxSsrcs[0]);
+        send_config->rtp.rtx.payload_type =
+            test::VideoTestConstants::kSendRtxPayloadType;
+        (*receive_configs)[0].rtp.rtx_ssrc =
+            test::VideoTestConstants::kSendRtxSsrcs[0];
+        (*receive_configs)[0].rtp.rtx_associated_payload_types
+            [test::VideoTestConstants::kSendRtxPayloadType] =
+            test::VideoTestConstants::kFakeVideoSendPayloadType;
         if (use_fec_) {
-          send_config->rtp.ulpfec.red_rtx_payload_type = kRtxRedPayloadType;
-          (*receive_configs)[0]
-              .rtp.rtx_associated_payload_types[kRtxRedPayloadType] =
-              kSendRtxPayloadType;
+          send_config->rtp.ulpfec.red_rtx_payload_type =
+              test::VideoTestConstants::kRtxRedPayloadType;
+          (*receive_configs)[0].rtp.rtx_associated_payload_types
+              [test::VideoTestConstants::kRtxRedPayloadType] =
+              test::VideoTestConstants::kSendRtxPayloadType;
         }
       }
       // RTT needed for RemoteNtpTimeEstimator for the receive stream.
@@ -201,19 +212,24 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
   EXPECT_METRIC_EQ(
       1, metrics::NumSamples(video_prefix + "ReceivedHeightInPixels"));
 
-  EXPECT_METRIC_EQ(1, metrics::NumEvents(video_prefix + "InputWidthInPixels",
-                                         kDefaultWidth));
-  EXPECT_METRIC_EQ(1, metrics::NumEvents(video_prefix + "InputHeightInPixels",
-                                         kDefaultHeight));
-  EXPECT_METRIC_EQ(
-      1, metrics::NumEvents(video_prefix + "SentWidthInPixels", kDefaultWidth));
-  EXPECT_METRIC_EQ(1, metrics::NumEvents(video_prefix + "SentHeightInPixels",
-                                         kDefaultHeight));
-  EXPECT_METRIC_EQ(1, metrics::NumEvents(video_prefix + "ReceivedWidthInPixels",
-                                         kDefaultWidth));
   EXPECT_METRIC_EQ(1,
-                   metrics::NumEvents(video_prefix + "ReceivedHeightInPixels",
-                                      kDefaultHeight));
+                   metrics::NumEvents(video_prefix + "InputWidthInPixels",
+                                      test::VideoTestConstants::kDefaultWidth));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents(video_prefix + "InputHeightInPixels",
+                            test::VideoTestConstants::kDefaultHeight));
+  EXPECT_METRIC_EQ(1,
+                   metrics::NumEvents(video_prefix + "SentWidthInPixels",
+                                      test::VideoTestConstants::kDefaultWidth));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents(video_prefix + "SentHeightInPixels",
+                            test::VideoTestConstants::kDefaultHeight));
+  EXPECT_METRIC_EQ(1,
+                   metrics::NumEvents(video_prefix + "ReceivedWidthInPixels",
+                                      test::VideoTestConstants::kDefaultWidth));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents(video_prefix + "ReceivedHeightInPixels",
+                            test::VideoTestConstants::kDefaultHeight));
 
   EXPECT_METRIC_EQ(1,
                    metrics::NumSamples(video_prefix + "InputFramesPerSecond"));

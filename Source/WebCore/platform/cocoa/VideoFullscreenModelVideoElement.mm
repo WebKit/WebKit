@@ -49,13 +49,37 @@
 
 namespace WebCore {
 
-VideoFullscreenModelVideoElement::VideoFullscreenModelVideoElement()
+VideoFullscreenModelVideoElement::VideoListener::VideoListener(VideoFullscreenModelVideoElement& parent)
     : EventListener(EventListener::CPPEventListenerType)
+    , m_parent(parent)
+{
+}
+
+void VideoFullscreenModelVideoElement::VideoListener::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
+{
+    if (auto parent = m_parent.get())
+        parent->updateForEventName(event.type());
+}
+
+VideoFullscreenModelVideoElement::VideoFullscreenModelVideoElement()
+    : m_videoListener(VideoListener::create(*this))
 {
 }
 
 VideoFullscreenModelVideoElement::~VideoFullscreenModelVideoElement()
 {
+    cleanVideoListeners();
+}
+
+void VideoFullscreenModelVideoElement::cleanVideoListeners()
+{
+    if (!m_isListening)
+        return;
+    m_isListening = false;
+    if (!m_videoElement)
+        return;
+    for (auto& eventName : observedEventNames())
+        m_videoElement->removeEventListener(eventName, m_videoListener, false);
 }
 
 void VideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
@@ -66,11 +90,7 @@ void VideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* videoEl
     if (m_videoElement && m_videoElement->videoFullscreenLayer())
         m_videoElement->setVideoFullscreenLayer(nullptr);
 
-    if (m_videoElement && m_isListening) {
-        for (auto& eventName : observedEventNames())
-            m_videoElement->removeEventListener(eventName, *this, false);
-    }
-    m_isListening = false;
+    cleanVideoListeners();
 
     if (m_videoElement && !videoElement)
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "-> null");
@@ -80,16 +100,11 @@ void VideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* videoEl
 
     if (m_videoElement) {
         for (auto& eventName : observedEventNames())
-            m_videoElement->addEventListener(eventName, *this, false);
+            m_videoElement->addEventListener(eventName, m_videoListener, false);
         m_isListening = true;
     }
 
     updateForEventName(eventNameAll());
-}
-
-void VideoFullscreenModelVideoElement::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
-{
-    updateForEventName(event.type());
 }
 
 void VideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomString& eventName)
@@ -336,6 +351,11 @@ const Logger* VideoFullscreenModelVideoElement::loggerPtr() const
 const void* VideoFullscreenModelVideoElement::logIdentifier() const
 {
     return m_videoElement ? m_videoElement->logIdentifier() : nullptr;
+}
+
+const void* VideoFullscreenModelVideoElement::nextChildIdentifier() const
+{
+    return LoggerHelper::childLogIdentifier(logIdentifier(), ++m_childIdentifierSeed);
 }
 
 WTFLogChannel& VideoFullscreenModelVideoElement::logChannel() const

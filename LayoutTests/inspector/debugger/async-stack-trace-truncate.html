@@ -20,6 +20,30 @@ function triggerChainedRequestAnimationFrame(count) {
     requestAnimationFrame(handleAnimationFrame);
 }
 
+function triggerDeeplyNestedAsyncMicrotask() {
+    return new Promise((resolve, reject) => {
+        function recursiveMicrotask(iteration = 0) {
+            queueMicrotask(() => {
+                if (iteration !== 0 && (iteration % 1_000_000) == 0) {
+                    try {
+                        // Throwing will log the error to the console.
+                        throw "Reached 1 million iterations";
+                    } catch (error) {
+                        console.error(error);
+                        resolve();
+                    }
+
+                    return;
+                }
+
+                recursiveMicrotask(iteration + 1);
+            });
+        }
+
+        recursiveMicrotask();
+    });
+}
+
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("AsyncStackTrace.Truncate");
@@ -75,6 +99,27 @@ function test()
         pausedHandler(stackTrace) {
             InspectorTest.expectFalse(isTruncated(stackTrace), "Async stack trace should not be truncated.");
         }
+    });
+
+    suite.addTestCase({
+        name: "AsyncStackTrace.CheckDeeplyNestedDoesNotCrash",
+        description: "Ensure that very deeply nested stack traces do not result in a crash.",
+        async test() {
+            InspectorTest.log("Performing deeply nested microtask.")
+            await InspectorTest.evaluateInPage(`triggerDeeplyNestedAsyncMicrotask()`);
+
+            // triggerDeeplyNestedAsyncMicrotask() logged a stack trace to the console that was very deeply nested.
+            // Clear the console to release ownership of the logged stack trace.
+            InspectorTest.log("Clearing console.")
+            let consoleClearedEvent = WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared);
+            ConsoleAgent.clearMessages();
+            await consoleClearedEvent;
+
+            InspectorTest.log("Running GC.")
+            let garbageCollectedEvent = WI.heapManager.awaitEvent(WI.HeapManager.Event.GarbageCollected);
+            HeapAgent.gc();
+            await garbageCollectedEvent;
+        },
     });
 
     suite.runTestCasesAndFinish();

@@ -191,6 +191,12 @@
         _contentRuleListPerformedAction(webView, identifier, action, url);
 }
 
+- (void)_webView:(WKWebView *)webView didChangeLookalikeCharactersFromURL:(NSURL *)originalURL toURL:(NSURL *)adjustedURL
+{
+    if (_didChangeLookalikeCharactersFromURL)
+        _didChangeLookalikeCharactersFromURL(webView, originalURL, adjustedURL);
+}
+
 @end
 
 @implementation WKWebView (TestWebKitAPIExtras)

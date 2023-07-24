@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 #include "Event.h"
 #include "GPUError.h"
 #include "GPUUncapturedErrorEventInit.h"
-#include <pal/graphics/WebGPU/WebGPUUncapturedErrorEvent.h>
+#include "WebGPUUncapturedErrorEvent.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -43,15 +43,15 @@ public:
         return adoptRef(*new GPUUncapturedErrorEvent(WTFMove(type), gpuUncapturedErrorEventInitDict));
     }
 
-    static Ref<GPUUncapturedErrorEvent> create(Ref<PAL::WebGPU::UncapturedErrorEvent>&& backing)
+    static Ref<GPUUncapturedErrorEvent> create(Ref<WebGPU::UncapturedErrorEvent>&& backing)
     {
         return adoptRef(*new GPUUncapturedErrorEvent(WTFMove(backing)));
     }
 
     GPUError error() const;
 
-    PAL::WebGPU::UncapturedErrorEvent* backing() { return m_backing.get(); }
-    const PAL::WebGPU::UncapturedErrorEvent* backing() const { return m_backing.get(); }
+    WebGPU::UncapturedErrorEvent* backing() { return m_backing.get(); }
+    const WebGPU::UncapturedErrorEvent* backing() const { return m_backing.get(); }
 
 private:
     GPUUncapturedErrorEvent(String&& type, const GPUUncapturedErrorEventInit& uncapturedErrorEventInit)
@@ -60,14 +60,14 @@ private:
     {
     }
 
-    GPUUncapturedErrorEvent(Ref<PAL::WebGPU::UncapturedErrorEvent>&& backing)
+    GPUUncapturedErrorEvent(Ref<WebGPU::UncapturedErrorEvent>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
     String m_type;
     GPUUncapturedErrorEventInit m_uncapturedErrorEventInit;
-    RefPtr<PAL::WebGPU::UncapturedErrorEvent> m_backing;
+    RefPtr<WebGPU::UncapturedErrorEvent> m_backing;
 };
 
 }

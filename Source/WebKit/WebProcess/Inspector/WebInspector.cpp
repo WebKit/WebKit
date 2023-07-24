@@ -70,6 +70,11 @@ WebInspector::~WebInspector()
         m_frontendConnection->invalidate();
 }
 
+WebPage* WebInspector::page() const
+{
+    return m_page.get();
+}
+
 void WebInspector::openLocalInspectorFrontend(bool underTest)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::OpenLocalInspectorFrontend(canAttachWindow(), underTest), m_page->identifier());

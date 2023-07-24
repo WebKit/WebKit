@@ -74,7 +74,7 @@ static int32_t parseDecimalInt32(const CharType* characters, unsigned length)
 static void handleFraction(Duration& duration, int factor, StringView fractionString, TemporalUnit fractionType)
 {
     auto fractionLength = fractionString.length();
-    ASSERT(fractionLength && fractionLength <= 9 && fractionString.isAllASCII());
+    ASSERT(fractionLength && fractionLength <= 9 && fractionString.containsOnlyASCII());
     ASSERT(fractionType == TemporalUnit::Hour || fractionType == TemporalUnit::Minute || fractionType == TemporalUnit::Second);
 
     Vector<LChar, 9> padded(9, '0');

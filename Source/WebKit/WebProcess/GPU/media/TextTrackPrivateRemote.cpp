@@ -48,13 +48,14 @@ TextTrackPrivateRemote::TextTrackPrivateRemote(GPUProcessConnection& gpuProcessC
 
 void TextTrackPrivateRemote::setMode(TextTrackMode mode)
 {
-    if (!m_gpuProcessConnection)
+    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    if (!gpuProcessConnection)
         return;
 
     if (mode == InbandTextTrackPrivate::mode())
         return;
 
-    m_gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_identifier, mode), m_playerIdentifier);
+    gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_identifier, mode), m_playerIdentifier);
     InbandTextTrackPrivate::setMode(mode);
 }
 

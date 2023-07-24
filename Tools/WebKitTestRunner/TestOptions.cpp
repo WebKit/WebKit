@@ -133,6 +133,9 @@ const TestFeatures& TestOptions::defaults()
             { "TextAutosizingUsesIdempotentMode", false },
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
+#if ENABLE(WEBGL) && PLATFORM(COCOA)
+            { "WebGLUsingMetal", true },
+#endif
             { "WebRTCRemoteVideoFrameEnabled", true },
             { "XSSAuditorEnabled", false },
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -163,13 +166,12 @@ const TestFeatures& TestOptions::defaults()
             { "editable", false },
             { "enableInAppBrowserPrivacy", false },
             { "enableProcessSwapOnNavigation", true },
-            { "enableProcessSwapOnWindowOpen", false },
             { "findInteractionEnabled", false },
             { "ignoreSynchronousMessagingTimeouts", false },
             { "ignoresViewportScaleLimits", false },
             { "isAppBoundWebView", false },
             { "isAppInitiated", true },
-            { "networkConnectionIntegrityEnabled", false },
+            { "advancedPrivacyProtectionsEnabled", false },
             { "runSingly", false },
             { "shouldHandleRunOpenPanel", true },
             { "shouldPresentPopovers", true },
@@ -184,6 +186,7 @@ const TestFeatures& TestOptions::defaults()
             { "useRemoteLayerTree", false },
             { "noUseRemoteLayerTree", false },
             { "useThreadedScrolling", false },
+            { "suppressInputAccessoryView", false },
         };
         features.doubleTestRunnerFeatures = {
             { "contentInset.top", 0 },
@@ -224,13 +227,12 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "editable", TestHeaderKeyType::BoolTestRunner },
         { "enableInAppBrowserPrivacy", TestHeaderKeyType::BoolTestRunner },
         { "enableProcessSwapOnNavigation", TestHeaderKeyType::BoolTestRunner },
-        { "enableProcessSwapOnWindowOpen", TestHeaderKeyType::BoolTestRunner },
         { "findInteractionEnabled", TestHeaderKeyType::BoolTestRunner },
         { "ignoreSynchronousMessagingTimeouts", TestHeaderKeyType::BoolTestRunner },
         { "ignoresViewportScaleLimits", TestHeaderKeyType::BoolTestRunner },
         { "isAppBoundWebView", TestHeaderKeyType::BoolTestRunner },
         { "isAppInitiated", TestHeaderKeyType::BoolTestRunner },
-        { "networkConnectionIntegrityEnabled", TestHeaderKeyType::BoolTestRunner },
+        { "advancedPrivacyProtectionsEnabled", TestHeaderKeyType::BoolTestRunner },
         { "runSingly", TestHeaderKeyType::BoolTestRunner },
         { "shouldHandleRunOpenPanel", TestHeaderKeyType::BoolTestRunner },
         { "shouldPresentPopovers", TestHeaderKeyType::BoolTestRunner },
@@ -244,6 +246,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "useFlexibleViewport", TestHeaderKeyType::BoolTestRunner },
         { "useRemoteLayerTree", TestHeaderKeyType::BoolTestRunner },
         { "useThreadedScrolling", TestHeaderKeyType::BoolTestRunner },
+        { "suppressInputAccessoryView", TestHeaderKeyType::BoolTestRunner },
     
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },
         { "obscuredInset.top", TestHeaderKeyType::DoubleTestRunner },

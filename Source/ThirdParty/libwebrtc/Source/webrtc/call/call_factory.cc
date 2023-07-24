@@ -67,10 +67,6 @@ std::vector<TimeScopedNetworkConfig> GetNetworkConfigs(
        FieldTrialStructMember(
            "packet_overhead",
            [](TimeScopedNetworkConfig* p) { return &p->packet_overhead; }),
-       FieldTrialStructMember("codel_active_queue_management",
-                              [](TimeScopedNetworkConfig* p) {
-                                return &p->codel_active_queue_management;
-                              }),
        FieldTrialStructMember(
            "duration",
            [](TimeScopedNetworkConfig* p) { return &p->duration; })},

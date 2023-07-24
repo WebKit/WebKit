@@ -24,6 +24,10 @@
  */
 #pragma once
 
+#include "LayoutUnit.h"
+#include "RenderStyleConstants.h"
+#include "WritingMode.h"
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -52,7 +56,7 @@ public:
     int computeSize() const { return m_items.computeSize(); }
 
 private:
-    friend class BaselineContext;
+    friend class BaselineAlignmentState;
     BaselineGroup(WritingMode blockFlow, ItemPosition childPreference);
 
     // Determines whether a baseline-sharing group is compatible with an item, based on its 'block-flow' and
@@ -73,27 +77,24 @@ private:
     WeakHashSet<const RenderBox> m_items;
 };
 
-// https://drafts.csswg.org/css-align-3/#shared-alignment-context
-// Boxes share an alignment context along a particular axis when they are:
 //
-//  * table cells in the same row, along the table's row (inline) axis
-//  * table cells in the same column, along the table's column (block) axis
-//  * grid items in the same row, along the grid's row (inline) axis
-//  * grid items in the same column, along the grid's colum (block) axis
-//  * flex items in the same flex line, along the flex container's main axis
+// BaselineAlignmentState provides an API to interact with baseline sharing groups in various
+// ways such as adding items to appropriate ones and querying the baseline sharing group for
+// an item. A BaselineAlignmentState should be created by a formatting context to use for each
+// of its baseline alignment contexts.
 //
 // https://drafts.csswg.org/css-align-3/#baseline-sharing-group
 // A Baseline alignment-context may handle several baseline-sharing groups. In order to create an instance, we
-// need to pass the required data to define the first baseline-sharing group; a Baseline Context must have at
+// need to pass the required data to define the first baseline-sharing group; a BaselineAlignmentState must have at
 // least one baseline-sharing group.
 //
-// By adding new items to a Baseline Context, the baseline-sharing groups it handles are automatically updated,
+// By adding new items to a BaselineAlignmentState, the baseline-sharing groups it handles are automatically updated,
 // if there is one that is compatible with such item. Otherwise, a new baseline-sharing group is created,
 // compatible with the new item.
-class BaselineContext {
+class BaselineAlignmentState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BaselineContext(const RenderBox& child, ItemPosition preference, LayoutUnit ascent);
+    BaselineAlignmentState(const RenderBox& child, ItemPosition preference, LayoutUnit ascent);
     const BaselineGroup& sharedGroup(const RenderBox& child, ItemPosition preference) const;
 
     // Updates the baseline-sharing group compatible with the item.

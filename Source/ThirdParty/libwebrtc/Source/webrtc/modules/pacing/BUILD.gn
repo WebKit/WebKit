@@ -23,8 +23,6 @@ rtc_library("pacing") {
     "packet_router.h",
     "prioritized_packet_queue.cc",
     "prioritized_packet_queue.h",
-    "round_robin_packet_queue.cc",
-    "round_robin_packet_queue.h",
     "rtp_packet_pacer.h",
     "task_queue_paced_sender.cc",
     "task_queue_paced_sender.h",
@@ -37,6 +35,7 @@ rtc_library("pacing") {
     "../../api:function_view",
     "../../api:sequence_checker",
     "../../api/rtc_event_log",
+    "../../api/task_queue:pending_task_safety_flag",
     "../../api/task_queue:task_queue",
     "../../api/transport:field_trial_based_config",
     "../../api/transport:network_control",
@@ -48,7 +47,6 @@ rtc_library("pacing") {
     "../../logging:rtc_event_pacing",
     "../../rtc_base:checks",
     "../../rtc_base:event_tracer",
-    "../../rtc_base:location",
     "../../rtc_base:logging",
     "../../rtc_base:macromagic",
     "../../rtc_base:rtc_numerics",
@@ -61,8 +59,10 @@ rtc_library("pacing") {
     "../../system_wrappers:metrics",
     "../rtp_rtcp",
     "../rtp_rtcp:rtp_rtcp_format",
+    "../utility:utility",
   ]
   absl_deps = [
+    "//third_party/abseil-cpp/absl/cleanup",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
@@ -91,7 +91,6 @@ if (rtc_include_tests) {
       "pacing_controller_unittest.cc",
       "packet_router_unittest.cc",
       "prioritized_packet_queue_unittest.cc",
-      "round_robin_packet_queue_unittest.cc",
       "task_queue_paced_sender_unittest.cc",
     ]
     deps = [
@@ -100,6 +99,7 @@ if (rtc_include_tests) {
       "../../api/task_queue:task_queue",
       "../../api/transport:network_control",
       "../../api/units:data_rate",
+      "../../api/units:data_size",
       "../../api/units:time_delta",
       "../../api/units:timestamp",
       "../../rtc_base:checks",

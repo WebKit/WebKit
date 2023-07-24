@@ -36,7 +36,6 @@ enum LayoutMilestone : uint16_t {
     DidFirstLayout                                      = 1 << 0,
     DidFirstVisuallyNonEmptyLayout                      = 1 << 1,
     DidHitRelevantRepaintedObjectsAreaThreshold         = 1 << 2,
-    DidFirstFlushForHeaderLayer                         = 1 << 3,
     DidFirstLayoutAfterSuppressedIncrementalRendering   = 1 << 4,
     DidFirstPaintAfterSuppressedIncrementalRendering    = 1 << 5,
     ReachedSessionRestorationRenderTreeSizeThreshold    = 1 << 6, // FIXME: only implemented by WK2 currently.
@@ -54,7 +53,6 @@ template<> struct EnumTraits<WebCore::LayoutMilestone> {
         WebCore::LayoutMilestone::DidFirstLayout,
         WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout,
         WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold,
-        WebCore::LayoutMilestone::DidFirstFlushForHeaderLayer,
         WebCore::LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering,
         WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering,
         WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold,

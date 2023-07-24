@@ -24,10 +24,10 @@ layer at (0,0) size 800x258
         RenderText {#text} at (255,0) size 13x18
           text run at (255,0) width 13: "\x{201D})"
 layer at (301,50) size 198x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (293,34) size 198x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (293,34) size 198x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,102) size 198x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,86) size 198x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,86) size 198x2 [color=#808080] [border: (1px inset #808080)]
 layer at (594,154) size 198x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (586,138) size 198x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (586,138) size 198x2 [color=#808080] [border: (1px inset #808080)]
 layer at (301,206) size 198x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (293,190) size 198x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (293,190) size 198x2 [color=#808080] [border: (1px inset #808080)]

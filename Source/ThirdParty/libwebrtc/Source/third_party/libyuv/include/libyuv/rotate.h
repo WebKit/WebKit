@@ -85,6 +85,60 @@ int I444Rotate(const uint8_t* src_y,
                int height,
                enum RotationMode mode);
 
+// Rotate I010 frame.
+LIBYUV_API
+int I010Rotate(const uint16_t* src_y,
+               int src_stride_y,
+               const uint16_t* src_u,
+               int src_stride_u,
+               const uint16_t* src_v,
+               int src_stride_v,
+               uint16_t* dst_y,
+               int dst_stride_y,
+               uint16_t* dst_u,
+               int dst_stride_u,
+               uint16_t* dst_v,
+               int dst_stride_v,
+               int width,
+               int height,
+               enum RotationMode mode);
+
+// Rotate I210 frame.
+LIBYUV_API
+int I210Rotate(const uint16_t* src_y,
+               int src_stride_y,
+               const uint16_t* src_u,
+               int src_stride_u,
+               const uint16_t* src_v,
+               int src_stride_v,
+               uint16_t* dst_y,
+               int dst_stride_y,
+               uint16_t* dst_u,
+               int dst_stride_u,
+               uint16_t* dst_v,
+               int dst_stride_v,
+               int width,
+               int height,
+               enum RotationMode mode);
+
+// Rotate I410 frame.
+LIBYUV_API
+int I410Rotate(const uint16_t* src_y,
+               int src_stride_y,
+               const uint16_t* src_u,
+               int src_stride_u,
+               const uint16_t* src_v,
+               int src_stride_v,
+               uint16_t* dst_y,
+               int dst_stride_y,
+               uint16_t* dst_u,
+               int dst_stride_u,
+               uint16_t* dst_v,
+               int dst_stride_v,
+               int width,
+               int height,
+               enum RotationMode mode);
+
 // Rotate NV12 input and store in I420.
 LIBYUV_API
 int NV12ToI420Rotate(const uint8_t* src_y,
@@ -155,6 +209,16 @@ void RotatePlane270(const uint8_t* src,
                     int dst_stride,
                     int width,
                     int height);
+
+// Rotate a plane by 0, 90, 180, or 270.
+LIBYUV_API
+int RotatePlane_16(const uint16_t* src,
+                   int src_stride,
+                   uint16_t* dst,
+                   int dst_stride,
+                   int width,
+                   int height,
+                   enum RotationMode mode);
 
 // Rotations for when U and V are interleaved.
 // These functions take one UV input pointer and

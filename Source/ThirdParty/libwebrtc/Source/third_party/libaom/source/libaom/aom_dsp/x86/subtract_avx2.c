@@ -16,14 +16,15 @@ static INLINE void subtract32_avx2(int16_t *diff_ptr, const uint8_t *src_ptr,
                                    const uint8_t *pred_ptr) {
   __m256i s = _mm256_lddqu_si256((__m256i *)(src_ptr));
   __m256i p = _mm256_lddqu_si256((__m256i *)(pred_ptr));
-  __m256i s_0 = _mm256_cvtepu8_epi16(_mm256_castsi256_si128(s));
-  __m256i s_1 = _mm256_cvtepu8_epi16(_mm256_extracti128_si256(s, 1));
-  __m256i p_0 = _mm256_cvtepu8_epi16(_mm256_castsi256_si128(p));
-  __m256i p_1 = _mm256_cvtepu8_epi16(_mm256_extracti128_si256(p, 1));
-  const __m256i d_0 = _mm256_sub_epi16(s_0, p_0);
-  const __m256i d_1 = _mm256_sub_epi16(s_1, p_1);
-  _mm256_store_si256((__m256i *)(diff_ptr), d_0);
-  _mm256_store_si256((__m256i *)(diff_ptr + 16), d_1);
+  __m256i set_one_minusone = _mm256_set1_epi32((int)0xff01ff01);
+  __m256i diff0 = _mm256_unpacklo_epi8(s, p);
+  __m256i diff1 = _mm256_unpackhi_epi8(s, p);
+  diff0 = _mm256_maddubs_epi16(diff0, set_one_minusone);
+  diff1 = _mm256_maddubs_epi16(diff1, set_one_minusone);
+  _mm256_store_si256((__m256i *)(diff_ptr),
+                     _mm256_permute2x128_si256(diff0, diff1, 0x20));
+  _mm256_store_si256((__m256i *)(diff_ptr + 16),
+                     _mm256_permute2x128_si256(diff0, diff1, 0x31));
 }
 
 static INLINE void subtract_block_16xn_avx2(

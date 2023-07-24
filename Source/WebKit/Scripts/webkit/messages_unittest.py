@@ -51,6 +51,7 @@ _test_receiver_names = [
     'TestWithStreamBatched',
     'TestWithStreamBuffer',
     'TestWithCVPixelBuffer',
+    'TestWithStreamServerConnectionHandle',
 ]
 
 

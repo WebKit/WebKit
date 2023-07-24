@@ -19,12 +19,13 @@
 #include "p2p/base/connection.h"
 #include "p2p/base/ice_switch_reason.h"
 #include "p2p/base/ice_transport_internal.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
 
 struct IceFieldTrials;  // Forward declaration to avoid circular dependency.
 
-struct IceRecheckEvent {
+struct RTC_EXPORT IceRecheckEvent {
   IceRecheckEvent(IceSwitchReason _reason, int _recheck_delay_ms)
       : reason(_reason), recheck_delay_ms(_recheck_delay_ms) {}
 

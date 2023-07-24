@@ -30,12 +30,18 @@ class TransportObserver : public RtpPacketSinkInterface,
         this, &TransportObserver::OnRtcpPacketReceived);
     rtp_transport->SignalReadyToSend.connect(this,
                                              &TransportObserver::OnReadyToSend);
+    rtp_transport->SignalUnDemuxableRtpPacketReceived.connect(
+        this, &TransportObserver::OnUndemuxableRtpPacket);
   }
 
   // RtpPacketInterface override.
   void OnRtpPacket(const RtpPacketReceived& packet) override {
     rtp_count_++;
     last_recv_rtp_packet_ = packet.Buffer();
+  }
+
+  void OnUndemuxableRtpPacket(const RtpPacketReceived& packet) {
+    un_demuxable_rtp_count_++;
   }
 
   void OnRtcpPacketReceived(rtc::CopyOnWriteBuffer* packet,
@@ -45,6 +51,7 @@ class TransportObserver : public RtpPacketSinkInterface,
   }
 
   int rtp_count() const { return rtp_count_; }
+  int un_demuxable_rtp_count() const { return un_demuxable_rtp_count_; }
   int rtcp_count() const { return rtcp_count_; }
 
   rtc::CopyOnWriteBuffer last_recv_rtp_packet() {
@@ -67,6 +74,7 @@ class TransportObserver : public RtpPacketSinkInterface,
  private:
   bool ready_to_send_ = false;
   int rtp_count_ = 0;
+  int un_demuxable_rtp_count_ = 0;
   int rtcp_count_ = 0;
   int ready_to_send_signal_count_ = 0;
   rtc::CopyOnWriteBuffer last_recv_rtp_packet_;

@@ -266,9 +266,6 @@ public:
 
     GCGLuint maxTransformFeedbackSeparateAttribs() const;
 
-    PixelStoreParams getPackPixelStoreParams() const override;
-    PixelStoreParams getUnpackPixelStoreParams(TexImageDimension) const override;
-
     bool checkAndTranslateAttachments(const char* functionName, GCGLenum, Vector<GCGLenum>&);
 
     void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&) override;
@@ -282,11 +279,6 @@ private:
     bool isWebGL2() const final { return true; }
 
     void initializeNewContext() final;
-
-    // Set all ES 3.0 unpack parameters to their default value.
-    void resetUnpackParameters() final;
-    // Restore the client's ES 3.0 unpack parameters.
-    void restoreUnpackParameters() final;
 
     RefPtr<ArrayBufferView> arrayBufferViewSliceFactory(const char* const functionName, const ArrayBufferView& data, unsigned startByte, unsigned bytelength);
     RefPtr<ArrayBufferView> sliceArrayBufferView(const char* const functionName, const ArrayBufferView& data, GCGLuint srcOffset, GCGLuint length);
@@ -361,14 +353,6 @@ private:
 
     Vector<RefPtr<WebGLSampler>> m_boundSamplers;
 
-    GCGLint m_packRowLength { 0 };
-    GCGLint m_packSkipPixels { 0 };
-    GCGLint m_packSkipRows { 0 };
-    GCGLint m_unpackSkipPixels { 0 };
-    GCGLint m_unpackSkipRows { 0 };
-    GCGLint m_unpackRowLength { 0 };
-    GCGLint m_unpackImageHeight { 0 };
-    GCGLint m_unpackSkipImages { 0 };
     GCGLint m_uniformBufferOffsetAlignment { 0 };
     GCGLuint m_maxTransformFeedbackSeparateAttribs { 0 };
     GCGLint m_max3DTextureSize { 0 };

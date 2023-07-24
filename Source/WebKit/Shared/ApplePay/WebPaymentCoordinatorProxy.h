@@ -65,7 +65,7 @@ OBJC_CLASS PKPaymentAuthorizationViewController;
 OBJC_CLASS PKPaymentRequest;
 OBJC_CLASS UIViewController;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 OBJC_CLASS PKPaymentSetupViewController;
 #endif
 
@@ -226,7 +226,7 @@ private:
     RetainPtr<NSWindow> m_sheetWindow;
     RetainPtr<NSObject> m_sheetWindowWillCloseObserver;
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     WeakObjCPtr<PKPaymentSetupViewController> m_paymentSetupViewController;
 #endif
 };

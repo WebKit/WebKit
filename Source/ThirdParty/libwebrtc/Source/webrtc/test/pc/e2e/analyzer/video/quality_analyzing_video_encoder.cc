@@ -18,11 +18,15 @@
 #include "api/video/video_codec_type.h"
 #include "api/video_codecs/video_encoder.h"
 #include "modules/video_coding/include/video_error_codes.h"
+#include "modules/video_coding/svc/scalability_mode_util.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
 namespace {
+
+using EmulatedSFUConfigMap =
+    ::webrtc::webrtc_pc_e2e::QualityAnalyzingVideoEncoder::EmulatedSFUConfigMap;
 
 constexpr size_t kMaxFrameInPipelineCount = 1000;
 constexpr double kNoMultiplier = 1.0;
@@ -56,13 +60,13 @@ QualityAnalyzingVideoEncoder::QualityAnalyzingVideoEncoder(
     absl::string_view peer_name,
     std::unique_ptr<VideoEncoder> delegate,
     double bitrate_multiplier,
-    std::map<std::string, absl::optional<int>> stream_required_spatial_index,
+    EmulatedSFUConfigMap stream_to_sfu_config,
     EncodedImageDataInjector* injector,
     VideoQualityAnalyzerInterface* analyzer)
     : peer_name_(peer_name),
       delegate_(std::move(delegate)),
       bitrate_multiplier_(bitrate_multiplier),
-      stream_required_spatial_index_(std::move(stream_required_spatial_index)),
+      stream_to_sfu_config_(std::move(stream_to_sfu_config)),
       injector_(injector),
       analyzer_(analyzer),
       mode_(SimulcastMode::kNormal),
@@ -77,26 +81,33 @@ void QualityAnalyzingVideoEncoder::SetFecControllerOverride(
 int32_t QualityAnalyzingVideoEncoder::InitEncode(
     const VideoCodec* codec_settings,
     const Settings& settings) {
-  MutexLock lock(&lock_);
+  MutexLock lock(&mutex_);
   codec_settings_ = *codec_settings;
   mode_ = SimulcastMode::kNormal;
-  if (codec_settings->codecType == kVideoCodecVP9) {
+  absl::optional<InterLayerPredMode> inter_layer_pred_mode;
+  if (codec_settings->GetScalabilityMode().has_value()) {
+    inter_layer_pred_mode = ScalabilityModeToInterLayerPredMode(
+        *codec_settings->GetScalabilityMode());
+  } else if (codec_settings->codecType == kVideoCodecVP9) {
     if (codec_settings->VP9().numberOfSpatialLayers > 1) {
-      switch (codec_settings->VP9().interLayerPred) {
-        case InterLayerPredMode::kOn:
-          mode_ = SimulcastMode::kSVC;
-          break;
-        case InterLayerPredMode::kOnKeyPic:
-          mode_ = SimulcastMode::kKSVC;
-          break;
-        case InterLayerPredMode::kOff:
-          mode_ = SimulcastMode::kSimulcast;
-          break;
-        default:
-          RTC_DCHECK_NOTREACHED()
-              << "Unknown codec_settings->VP9().interLayerPred";
-          break;
-      }
+      inter_layer_pred_mode = codec_settings->VP9().interLayerPred;
+    }
+  }
+  if (inter_layer_pred_mode.has_value()) {
+    switch (*inter_layer_pred_mode) {
+      case InterLayerPredMode::kOn:
+        mode_ = SimulcastMode::kSVC;
+        break;
+      case InterLayerPredMode::kOnKeyPic:
+        mode_ = SimulcastMode::kKSVC;
+        break;
+      case InterLayerPredMode::kOff:
+        mode_ = SimulcastMode::kSimulcast;
+        break;
+      default:
+        RTC_DCHECK_NOTREACHED()
+            << "Unknown InterLayerPredMode value " << *inter_layer_pred_mode;
+        break;
     }
   }
   if (codec_settings->numberOfSimulcastStreams > 1) {
@@ -109,7 +120,7 @@ int32_t QualityAnalyzingVideoEncoder::RegisterEncodeCompleteCallback(
     EncodedImageCallback* callback) {
   // We need to get a lock here because delegate_callback can be hypothetically
   // accessed from different thread (encoder one) concurrently.
-  MutexLock lock(&lock_);
+  MutexLock lock(&mutex_);
   delegate_callback_ = callback;
   return delegate_->RegisterEncodeCompleteCallback(this);
 }
@@ -119,7 +130,7 @@ int32_t QualityAnalyzingVideoEncoder::Release() {
   // frames, so we don't take a lock to prevent deadlock.
   int32_t result = delegate_->Release();
 
-  MutexLock lock(&lock_);
+  MutexLock lock(&mutex_);
   delegate_callback_ = nullptr;
   return result;
 }
@@ -128,7 +139,7 @@ int32_t QualityAnalyzingVideoEncoder::Encode(
     const VideoFrame& frame,
     const std::vector<VideoFrameType>* frame_types) {
   {
-    MutexLock lock(&lock_);
+    MutexLock lock(&mutex_);
     // Store id to be able to retrieve it in analyzing callback.
     timestamp_to_frame_id_list_.push_back({frame.timestamp(), frame.id()});
     // If this list is growing, it means that we are not receiving new encoded
@@ -140,7 +151,7 @@ int32_t QualityAnalyzingVideoEncoder::Encode(
   if (result != WEBRTC_VIDEO_CODEC_OK) {
     // If origin encoder failed, then cleanup data for this frame.
     {
-      MutexLock lock(&lock_);
+      MutexLock lock(&mutex_);
       // The timestamp-frame_id pair can be not the last one, so we need to
       // find it first and then remove. We will search from the end, because
       // usually it will be the last or close to the last one.
@@ -163,50 +174,50 @@ void QualityAnalyzingVideoEncoder::SetRates(
   RTC_DCHECK_GT(bitrate_multiplier_, 0.0);
   if (fabs(bitrate_multiplier_ - kNoMultiplier) < kEps) {
     {
-      MutexLock lock(&lock_);
+      MutexLock lock(&mutex_);
       bitrate_allocation_ = parameters.bitrate;
     }
     return delegate_->SetRates(parameters);
   }
 
-  // Simulating encoder overshooting target bitrate, by configuring actual
-  // encoder too high. Take care not to adjust past limits of config,
-  // otherwise encoders may crash on DCHECK.
-  VideoBitrateAllocation multiplied_allocation;
-  for (size_t si = 0; si < kMaxSpatialLayers; ++si) {
-    const uint32_t spatial_layer_bitrate_bps =
-        parameters.bitrate.GetSpatialLayerSum(si);
-    if (spatial_layer_bitrate_bps == 0) {
-      continue;
-    }
+  RateControlParameters adjusted_params = parameters;
+  {
+    MutexLock lock(&mutex_);
+    // Simulating encoder overshooting target bitrate, by configuring actual
+    // encoder too high. Take care not to adjust past limits of config,
+    // otherwise encoders may crash on DCHECK.
+    VideoBitrateAllocation multiplied_allocation;
+    for (size_t si = 0; si < kMaxSpatialLayers; ++si) {
+      const uint32_t spatial_layer_bitrate_bps =
+          parameters.bitrate.GetSpatialLayerSum(si);
+      if (spatial_layer_bitrate_bps == 0) {
+        continue;
+      }
 
-    uint32_t min_bitrate_bps;
-    uint32_t max_bitrate_bps;
-    std::tie(min_bitrate_bps, max_bitrate_bps) =
-        GetMinMaxBitratesBps(codec_settings_, si);
-    double bitrate_multiplier = bitrate_multiplier_;
-    const uint32_t corrected_bitrate = rtc::checked_cast<uint32_t>(
-        bitrate_multiplier * spatial_layer_bitrate_bps);
-    if (corrected_bitrate < min_bitrate_bps) {
-      bitrate_multiplier = min_bitrate_bps / spatial_layer_bitrate_bps;
-    } else if (corrected_bitrate > max_bitrate_bps) {
-      bitrate_multiplier = max_bitrate_bps / spatial_layer_bitrate_bps;
-    }
+      uint32_t min_bitrate_bps;
+      uint32_t max_bitrate_bps;
+      std::tie(min_bitrate_bps, max_bitrate_bps) =
+          GetMinMaxBitratesBps(codec_settings_, si);
+      double bitrate_multiplier = bitrate_multiplier_;
+      const uint32_t corrected_bitrate = rtc::checked_cast<uint32_t>(
+          bitrate_multiplier * spatial_layer_bitrate_bps);
+      if (corrected_bitrate < min_bitrate_bps) {
+        bitrate_multiplier = min_bitrate_bps / spatial_layer_bitrate_bps;
+      } else if (corrected_bitrate > max_bitrate_bps) {
+        bitrate_multiplier = max_bitrate_bps / spatial_layer_bitrate_bps;
+      }
 
-    for (size_t ti = 0; ti < kMaxTemporalStreams; ++ti) {
-      if (parameters.bitrate.HasBitrate(si, ti)) {
-        multiplied_allocation.SetBitrate(
-            si, ti,
-            rtc::checked_cast<uint32_t>(bitrate_multiplier *
-                                        parameters.bitrate.GetBitrate(si, ti)));
+      for (size_t ti = 0; ti < kMaxTemporalStreams; ++ti) {
+        if (parameters.bitrate.HasBitrate(si, ti)) {
+          multiplied_allocation.SetBitrate(
+              si, ti,
+              rtc::checked_cast<uint32_t>(
+                  bitrate_multiplier * parameters.bitrate.GetBitrate(si, ti)));
+        }
       }
     }
-  }
 
-  RateControlParameters adjusted_params = parameters;
-  adjusted_params.bitrate = multiplied_allocation;
-  {
-    MutexLock lock(&lock_);
+    adjusted_params.bitrate = multiplied_allocation;
     bitrate_allocation_ = adjusted_params.bitrate;
   }
   return delegate_->SetRates(adjusted_params);
@@ -235,8 +246,9 @@ EncodedImageCallback::Result QualityAnalyzingVideoEncoder::OnEncodedImage(
   uint16_t frame_id;
   bool discard = false;
   uint32_t target_encode_bitrate = 0;
+  std::string codec_name;
   {
-    MutexLock lock(&lock_);
+    MutexLock lock(&mutex_);
     std::pair<uint32_t, uint16_t> timestamp_frame_id;
     while (!timestamp_to_frame_id_list_.empty()) {
       timestamp_frame_id = timestamp_to_frame_id_list_.front();
@@ -246,7 +258,7 @@ EncodedImageCallback::Result QualityAnalyzingVideoEncoder::OnEncodedImage(
       timestamp_to_frame_id_list_.pop_front();
     }
 
-    // After the loop the first element should point to current |encoded_image|
+    // After the loop the first element should point to current `encoded_image`
     // frame id. We don't remove it from the list, because there may be
     // multiple spatial layers for this frame, so encoder can produce more
     // encoded images with this timestamp. The first element will be removed
@@ -267,18 +279,26 @@ EncodedImageCallback::Result QualityAnalyzingVideoEncoder::OnEncodedImage(
 
     discard = ShouldDiscard(frame_id, encoded_image);
     if (!discard) {
-      target_encode_bitrate = bitrate_allocation_.GetSpatialLayerSum(
-          encoded_image.SpatialIndex().value_or(0));
+      // We could either have simulcast layers or spatial layers.
+      // TODO(https://crbug.com/webrtc/14891): If we want to support a mix of
+      // simulcast and SVC we'll also need to consider the case where we have
+      // both simulcast and spatial indices.
+      size_t stream_index = encoded_image.SpatialIndex().value_or(
+          encoded_image.SimulcastIndex().value_or(0));
+      target_encode_bitrate =
+          bitrate_allocation_.GetSpatialLayerSum(stream_index);
     }
+    codec_name =
+        std::string(CodecTypeToPayloadString(codec_settings_.codecType)) + "_" +
+        delegate_->GetEncoderInfo().implementation_name;
   }
 
-  if (!discard) {
-    // Analyzer should see only encoded images, that weren't discarded. But all
-    // not discarded layers have to be passed.
-    VideoQualityAnalyzerInterface::EncoderStats stats;
-    stats.target_encode_bitrate = target_encode_bitrate;
-    analyzer_->OnFrameEncoded(peer_name_, frame_id, encoded_image, stats);
-  }
+  VideoQualityAnalyzerInterface::EncoderStats stats;
+  stats.encoder_name = codec_name;
+  stats.target_encode_bitrate = target_encode_bitrate;
+  stats.qp = encoded_image.qp_;
+  analyzer_->OnFrameEncoded(peer_name_, frame_id, encoded_image, stats,
+                            discard);
 
   // Image data injector injects frame id and discard flag into provided
   // EncodedImage and returns the image with a) modified original buffer (in
@@ -288,7 +308,7 @@ EncodedImageCallback::Result QualityAnalyzingVideoEncoder::OnEncodedImage(
   const EncodedImage& image =
       injector_->InjectData(frame_id, discard, encoded_image);
   {
-    MutexLock lock(&lock_);
+    MutexLock lock(&mutex_);
     RTC_DCHECK(delegate_callback_);
     return delegate_callback_->OnEncodedImage(image, codec_specific_info);
   }
@@ -296,7 +316,7 @@ EncodedImageCallback::Result QualityAnalyzingVideoEncoder::OnEncodedImage(
 
 void QualityAnalyzingVideoEncoder::OnDroppedFrame(
     EncodedImageCallback::DropReason reason) {
-  MutexLock lock(&lock_);
+  MutexLock lock(&mutex_);
   analyzer_->OnFrameDropped(peer_name_, reason);
   RTC_DCHECK(delegate_callback_);
   delegate_callback_->OnDroppedFrame(reason);
@@ -306,41 +326,49 @@ bool QualityAnalyzingVideoEncoder::ShouldDiscard(
     uint16_t frame_id,
     const EncodedImage& encoded_image) {
   std::string stream_label = analyzer_->GetStreamLabel(frame_id);
-  absl::optional<int> required_spatial_index =
-      stream_required_spatial_index_[stream_label];
-  if (required_spatial_index) {
-    if (*required_spatial_index == kAnalyzeAnySpatialStream) {
-      return false;
-    }
-    absl::optional<int> cur_spatial_index = encoded_image.SpatialIndex();
-    if (!cur_spatial_index) {
-      cur_spatial_index = 0;
-    }
-    RTC_CHECK(mode_ != SimulcastMode::kNormal)
-        << "Analyzing encoder is in kNormal "
-           "mode, but spatial layer/simulcast "
-           "stream met.";
-    if (mode_ == SimulcastMode::kSimulcast) {
-      // In simulcast mode only encoded images with required spatial index are
-      // interested, so all others have to be discarded.
-      return *cur_spatial_index != *required_spatial_index;
-    } else if (mode_ == SimulcastMode::kSVC) {
-      // In SVC mode encoded images with spatial indexes that are equal or
-      // less than required one are interesting, so all above have to be
-      // discarded.
-      return *cur_spatial_index > *required_spatial_index;
-    } else if (mode_ == SimulcastMode::kKSVC) {
-      // In KSVC mode for key frame encoded images with spatial indexes that
-      // are equal or less than required one are interesting, so all above
-      // have to be discarded. For other frames only required spatial index
-      // is interesting, so all others have to be discarded.
-      if (encoded_image._frameType == VideoFrameType::kVideoFrameKey) {
-        return *cur_spatial_index > *required_spatial_index;
-      } else {
-        return *cur_spatial_index != *required_spatial_index;
-      }
-    } else {
-      RTC_DCHECK_NOTREACHED() << "Unsupported encoder mode";
+  EmulatedSFUConfigMap::mapped_type emulated_sfu_config =
+      stream_to_sfu_config_[stream_label];
+
+  if (!emulated_sfu_config)
+    return false;
+
+  // We could either have simulcast layers or spatial layers.
+  // TODO(https://crbug.com/webrtc/14891): If we want to support a mix of
+  // simulcast and SVC we'll also need to consider the case where we have both
+  // simulcast and spatial indices.
+  int cur_stream_index = encoded_image.SpatialIndex().value_or(
+      encoded_image.SimulcastIndex().value_or(0));
+  int cur_temporal_index = encoded_image.TemporalIndex().value_or(0);
+
+  if (emulated_sfu_config->target_temporal_index &&
+      cur_temporal_index > *emulated_sfu_config->target_temporal_index)
+    return true;
+
+  if (emulated_sfu_config->target_layer_index) {
+    switch (mode_) {
+      case SimulcastMode::kSimulcast:
+        // In simulcast mode only encoded images with required spatial index are
+        // interested, so all others have to be discarded.
+        return cur_stream_index != *emulated_sfu_config->target_layer_index;
+      case SimulcastMode::kSVC:
+        // In SVC mode encoded images with spatial indexes that are equal or
+        // less than required one are interesting, so all above have to be
+        // discarded.
+        return cur_stream_index > *emulated_sfu_config->target_layer_index;
+      case SimulcastMode::kKSVC:
+        // In KSVC mode for key frame encoded images with spatial indexes that
+        // are equal or less than required one are interesting, so all above
+        // have to be discarded. For other frames only required spatial index
+        // is interesting, so all others except the ones depending on the
+        // keyframes can be discarded. There's no good test for that, so we keep
+        // all of temporal layer 0 for now.
+        if (encoded_image._frameType == VideoFrameType::kVideoFrameKey ||
+            cur_temporal_index == 0)
+          return cur_stream_index > *emulated_sfu_config->target_layer_index;
+        return cur_stream_index != *emulated_sfu_config->target_layer_index;
+      case SimulcastMode::kNormal:
+        RTC_DCHECK_NOTREACHED() << "Analyzing encoder is in kNormal mode, but "
+                                   "target_layer_index is set";
     }
   }
   return false;
@@ -350,13 +378,13 @@ QualityAnalyzingVideoEncoderFactory::QualityAnalyzingVideoEncoderFactory(
     absl::string_view peer_name,
     std::unique_ptr<VideoEncoderFactory> delegate,
     double bitrate_multiplier,
-    std::map<std::string, absl::optional<int>> stream_required_spatial_index,
+    EmulatedSFUConfigMap stream_to_sfu_config,
     EncodedImageDataInjector* injector,
     VideoQualityAnalyzerInterface* analyzer)
     : peer_name_(peer_name),
       delegate_(std::move(delegate)),
       bitrate_multiplier_(bitrate_multiplier),
-      stream_required_spatial_index_(std::move(stream_required_spatial_index)),
+      stream_to_sfu_config_(std::move(stream_to_sfu_config)),
       injector_(injector),
       analyzer_(analyzer) {}
 QualityAnalyzingVideoEncoderFactory::~QualityAnalyzingVideoEncoderFactory() =
@@ -367,12 +395,19 @@ QualityAnalyzingVideoEncoderFactory::GetSupportedFormats() const {
   return delegate_->GetSupportedFormats();
 }
 
+VideoEncoderFactory::CodecSupport
+QualityAnalyzingVideoEncoderFactory::QueryCodecSupport(
+    const SdpVideoFormat& format,
+    absl::optional<std::string> scalability_mode) const {
+  return delegate_->QueryCodecSupport(format, scalability_mode);
+}
+
 std::unique_ptr<VideoEncoder>
 QualityAnalyzingVideoEncoderFactory::CreateVideoEncoder(
     const SdpVideoFormat& format) {
   return std::make_unique<QualityAnalyzingVideoEncoder>(
       peer_name_, delegate_->CreateVideoEncoder(format), bitrate_multiplier_,
-      stream_required_spatial_index_, injector_, analyzer_);
+      stream_to_sfu_config_, injector_, analyzer_);
 }
 
 }  // namespace webrtc_pc_e2e

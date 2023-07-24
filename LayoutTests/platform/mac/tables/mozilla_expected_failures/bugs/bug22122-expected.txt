@@ -52,8 +52,8 @@ layer at (0,0) size 785x862
               RenderText {#text} at (2,2) size 36x18
                 text run at (2,2) width 36: "Cell I"
       RenderBlock {H3} at (0,239) size 769x23
-        RenderText {#text} at (0,0) size 74x22
-          text run at (0,0) width 74: "Table 2.1"
+        RenderText {#text} at (0,0) size 73x22
+          text run at (0,0) width 73: "Table 2.1"
       RenderBlock {PRE} at (0,279) size 769x61
         RenderText {#text} at (0,0) size 219x60
           text run at (0,0) width 219: "<TABLE width=\"500\" border=1>"
@@ -100,8 +100,8 @@ layer at (0,0) size 785x862
               RenderText {#text} at (2,2) size 36x18
                 text run at (2,2) width 36: "Cell I"
       RenderBlock {H3} at (0,447) size 769x23
-        RenderText {#text} at (0,0) size 74x22
-          text run at (0,0) width 74: "Table 2.2"
+        RenderText {#text} at (0,0) size 73x22
+          text run at (0,0) width 73: "Table 2.2"
       RenderBlock {PRE} at (0,488) size 769x61
         RenderText {#text} at (0,0) size 219x60
           text run at (0,0) width 219: "<TABLE width=\"500\" border=1>"
@@ -148,8 +148,8 @@ layer at (0,0) size 785x862
               RenderText {#text} at (2,2) size 36x18
                 text run at (2,2) width 36: "Cell I"
       RenderBlock {H3} at (0,656) size 769x23
-        RenderText {#text} at (0,0) size 74x22
-          text run at (0,0) width 74: "Table 3.1"
+        RenderText {#text} at (0,0) size 73x22
+          text run at (0,0) width 73: "Table 3.1"
       RenderBlock {PRE} at (0,696) size 769x61
         RenderText {#text} at (0,0) size 219x60
           text run at (0,0) width 219: "<TABLE width=\"500\" border=1>"
@@ -196,6 +196,6 @@ layer at (0,0) size 785x862
               RenderText {#text} at (2,2) size 36x18
                 text run at (2,2) width 36: "Cell I"
 layer at (8,8) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,226) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,218) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,218) size 769x3 [color=#808080] [border: (1px inset #808080)]

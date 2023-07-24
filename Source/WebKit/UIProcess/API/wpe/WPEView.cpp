@@ -81,6 +81,11 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
     }
 
     auto* pool = configuration->processPool();
+    if (!pool) {
+        auto processPoolConfiguration = API::ProcessPoolConfiguration::create();
+        pool = &WebProcessPool::create(processPoolConfiguration).leakRef();
+        configuration->setProcessPool(pool);
+    }
     m_pageProxy = pool->createWebPage(*m_pageClient, WTFMove(configuration));
 
 #if ENABLE(MEMORY_SAMPLER)
@@ -451,6 +456,10 @@ bool View::setFullScreen(bool fullScreenState)
         return false;
 #endif
     m_fullScreenModeActive = fullScreenState;
+    if (m_fullScreenModeActive)
+        m_client->enterFullScreen(*this);
+    else
+        m_client->exitFullScreen(*this);
     return true;
 };
 #endif

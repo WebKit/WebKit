@@ -1,4 +1,0 @@
-
-
-PASS grandparent cancels a pending navigation in a cross-origin grandchild
-

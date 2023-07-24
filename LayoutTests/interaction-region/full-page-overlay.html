@@ -25,13 +25,24 @@
         .spacer {
             height: 5000px;
         }
+
+        #fixed-overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.3);
+        }
     </style>
+    <script src="../resources/ui-helper.js"></script>
 </head>
 <body>
 <div class="tappable-overlay overlay"></div>
 <div class="spacer">
     <div id="dynamic" class="overlay"></div>
 </div>
+<div id="fixed-overlay"></div>
 
 <pre id="results"></pre>
 <script>
@@ -39,15 +50,21 @@ document.body.addEventListener("click", function(e) {
     console.log(e, "event delegation");
 });
 
-let dynamicallySizedOverlay = document.querySelector("#dynamic");
-dynamicallySizedOverlay.style.height = dynamicallySizedOverlay.parentElement.offsetHeight + "px";
-
-if (window.testRunner)
+if (window.testRunner) {
+    testRunner.waitUntilDone();
     testRunner.dumpAsText();
+}
 
 window.onload = async function () {
+    await UIHelper.renderingUpdate();
+    let dynamicallySizedOverlay = document.querySelector("#dynamic");
+    dynamicallySizedOverlay.style.height = dynamicallySizedOverlay.parentElement.offsetHeight + "px";
+    await UIHelper.renderingUpdate();
+
     if (window.internals)
        results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    if (window.testRunner)
+        testRunner.notifyDone();
 };
 </script>
 </body>

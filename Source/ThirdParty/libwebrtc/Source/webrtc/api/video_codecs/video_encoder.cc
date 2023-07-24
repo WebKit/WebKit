@@ -11,6 +11,7 @@
 #include "api/video_codecs/video_encoder.h"
 
 #include <string.h>
+
 #include <algorithm>
 
 #include "rtc_base/checks.h"
@@ -328,10 +329,5 @@ void VideoEncoder::OnRttUpdate(int64_t rtt_ms) {}
 
 void VideoEncoder::OnLossNotification(
     const LossNotification& loss_notification) {}
-
-// TODO(webrtc:9722): Remove and make pure virtual.
-VideoEncoder::EncoderInfo VideoEncoder::GetEncoderInfo() const {
-  return EncoderInfo();
-}
 
 }  // namespace webrtc

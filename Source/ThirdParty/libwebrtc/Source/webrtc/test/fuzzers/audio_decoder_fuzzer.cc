@@ -35,12 +35,12 @@ bool ParseInt(const uint8_t** data, size_t* remaining_size, T* value) {
 }
 }  // namespace
 
-// This function reads two bytes from the beginning of |data|, interprets them
+// This function reads two bytes from the beginning of `data`, interprets them
 // as the first packet length, and reads this many bytes if available. The
 // payload is inserted into the decoder, and the process continues until no more
 // data is available. Either AudioDecoder::Decode or
 // AudioDecoder::DecodeRedundant is used, depending on the value of
-// |decode_type|.
+// `decode_type`.
 void FuzzAudioDecoder(DecoderFunctionType decode_type,
                       const uint8_t* data,
                       size_t size,

@@ -29,7 +29,7 @@ void GetOperatingSystemVersionNumbers(int32_t *majorVersion, int32_t *minorVersi
     Gestalt(gestaltSystemVersionMajor, reinterpret_cast<SInt32 *>(majorVersion));
     Gestalt(gestaltSystemVersionMinor, reinterpret_cast<SInt32 *>(minorVersion));
 #else
-    if (ANGLE_APPLE_AVAILABLE_XC(10.10, 13.0))
+    if (ANGLE_APPLE_AVAILABLE_XC(10.10, 13.1))
     {
         NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
         *majorVersion                    = static_cast<int32_t>(version.majorVersion);

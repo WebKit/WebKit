@@ -1,0 +1,6 @@
+
+FAIL Predicted list in boundary events assert_equals: pointerover.getPredictedEvents is a function expected "function" but got "undefined"
+FAIL Predicted list in pointer-capture events assert_equals: gotpointercapture.getPredictedEvents is a function expected "function" but got "undefined"
+FAIL Predicted list in pointerdown/move/up events assert_equals: pointerdown.getPredictedEvents is a function expected "function" but got "undefined"
+PASS Predicted list in pointercancel event
+

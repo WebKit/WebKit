@@ -27,6 +27,6 @@ layer at (0,0) size 800x600
                 text run at (2,22) width 77: "wrap within"
                 text run at (2,42) width 49: "this TD"
 layer at (15,21) size 72x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (3,10) size 73x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (3,10) size 73x2 [color=#808080] [border: (1px inset #808080)]
 layer at (13,155) size 82x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (2,10) size 82x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (2,10) size 82x2 [color=#808080] [border: (1px inset #808080)]

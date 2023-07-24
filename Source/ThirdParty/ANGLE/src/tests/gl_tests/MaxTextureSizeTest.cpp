@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <cmath>
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -284,8 +286,8 @@ TEST_P(MaxTextureSizeTest, Render1xTexture)
 {
     // This is not spec compliant but checking for now anyway. We can fix it
     // if we find a driver for which this is not true.
-    float power = std::roundf(std::logf(mMaxTexture2DSize) / std::logf(2.0f));
-    EXPECT_EQ(std::powf(2, power), mMaxTexture2DSize);
+    float power = std::roundf(std::log(static_cast<float>(mMaxTexture2DSize)) / std::log(2.0f));
+    EXPECT_EQ(std::pow(2.0f, power), mMaxTexture2DSize);
 
     // Make a the largest possbile texture but not too big.
     const GLint testSize = std::min(mMaxTexture2DSize, 128 * 1024);

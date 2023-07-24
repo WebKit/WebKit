@@ -20,13 +20,13 @@
 #include "api/test/video_quality_test_fixture.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_codec.h"
-#include "api/video_codecs/video_encoder_config.h"
 #include "api/video_codecs/vp9_profile.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
+#include "video/config/video_encoder_config.h"
 #include "video/video_quality_test.h"
 
 ABSL_FLAG(std::string,
@@ -723,6 +723,54 @@ TEST(FullStackTest, Conference_Motion_Hd_3tl_Alt_Heavy_Moderate_Limits) {
   conf_motion_hd.config->loss_percent = 3;
   conf_motion_hd.config->queue_delay_ms = 100;
   conf_motion_hd.config->link_capacity_kbps = 2000;
+  fixture->RunWithAnalyzer(conf_motion_hd);
+}
+
+TEST(FullStackTest, Foreman_Cif_30kbps_AV1) {
+  auto fixture = CreateVideoQualityTestFixture();
+  ParamsWithLogging foreman_cif;
+  foreman_cif.call.send_side_bwe = true;
+  foreman_cif.video[0] = {.enabled = true,
+                          .width = 352,
+                          .height = 288,
+                          .fps = 10,
+                          .min_bitrate_bps = 20'000,
+                          .target_bitrate_bps = 30'000,
+                          .max_bitrate_bps = 100'000,
+                          .codec = "AV1",
+                          .num_temporal_layers = 1,
+                          .selected_tl = 0,
+                          .clip_path = ClipNameToClipPath("foreman_cif")};
+  foreman_cif.analyzer = {.test_label = "foreman_cif_30kbps_AV1",
+                          .test_durations_secs = kFullStackTestDurationSecs};
+  foreman_cif.config->link_capacity_kbps = 30;
+  foreman_cif.call.generic_descriptor = true;
+  fixture->RunWithAnalyzer(foreman_cif);
+}
+
+TEST(FullStackTest, Conference_Motion_Hd_3tl_AV1) {
+  auto fixture = CreateVideoQualityTestFixture();
+  ParamsWithLogging conf_motion_hd;
+  conf_motion_hd.call.send_side_bwe = true;
+  conf_motion_hd.video[0] = {
+      .enabled = true,
+      .width = 1280,
+      .height = 720,
+      .fps = 50,
+      .min_bitrate_bps = 20'000,
+      .target_bitrate_bps = 500'000,
+      .max_bitrate_bps = 1'000'000,
+      .codec = "AV1",
+      .num_temporal_layers = 3,
+      .clip_path = ClipNameToClipPath("ConferenceMotion_1280_720_50")};
+
+  conf_motion_hd.analyzer = {.test_label = "conference_motion_hd_3tl_AV1",
+                             .test_durations_secs = kFullStackTestDurationSecs};
+  conf_motion_hd.config->queue_length_packets = 50;
+  conf_motion_hd.config->loss_percent = 3;
+  conf_motion_hd.config->queue_delay_ms = 100;
+  conf_motion_hd.config->link_capacity_kbps = 1000;
+  conf_motion_hd.call.generic_descriptor = true;
   fixture->RunWithAnalyzer(conf_motion_hd);
 }
 

@@ -1,0 +1,5 @@
+Green?
+
+PASS Initially red
+FAIL Green after reducing width assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

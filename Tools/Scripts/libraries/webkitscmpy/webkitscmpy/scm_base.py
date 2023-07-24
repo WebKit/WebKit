@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,13 +22,13 @@
 
 import logging
 import re
-import six
 import sys
 import time
 
 from datetime import datetime
 from logging import NullHandler
 from webkitscmpy import Commit, Contributor, CommitClassifier, log
+from webkitcorepy import string_utils
 
 
 class ScmBase(object):
@@ -57,7 +57,7 @@ class ScmBase(object):
         self.contributors = Contributor.Mapping() if contributors is None else contributors
         self.classifier = CommitClassifier() if classifier is None else classifier
 
-        if id and not isinstance(id, six.string_types):
+        if id and not isinstance(id, string_utils.basestring):
             raise ValueError("Expected 'id' to be a string type, not '{}'".format(type(id)))
         self.id = id
 
@@ -140,7 +140,7 @@ class ScmBase(object):
         return sorted(filtered_candidates)[0]
 
     def find(self, argument, include_log=True, include_identifier=True):
-        if not isinstance(argument, six.string_types):
+        if not isinstance(argument, string_utils.basestring):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
         offset = 0

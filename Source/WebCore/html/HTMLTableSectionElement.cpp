@@ -4,7 +4,8 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -72,7 +73,7 @@ ExceptionOr<Ref<HTMLTableRowElement>> HTMLTableSectionElement::insertRow(int ind
     if (numRows == index || index == -1)
         result = appendChild(row);
     else
-        result = insertBefore(row, index < 1 ? firstChild() : children->item(index));
+        result = insertBefore(row, children->item(index));
     if (result.hasException())
         return result.releaseException();
     return row;

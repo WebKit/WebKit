@@ -13,8 +13,19 @@ PASS calc(abs(sign(0.1) + 0.2) / 2) should be used-value-equivalent to 0.6
 PASS calc(abs(0.1 + 0.2) * -2) should be used-value-equivalent to -0.6
 PASS calc(sign(0.1 - 0.2) - 0.05) should be used-value-equivalent to -1.05
 PASS calc(sign(1) + sign(1) - 0.05) should be used-value-equivalent to 1.95
-PASS calc(sign(-0)) should be used-value-equivalent to -0
-PASS calc(sign(0)) should be used-value-equivalent to 0
+PASS abs(10px) should be used-value-equivalent to 10px
+PASS abs(10%) should be used-value-equivalent to 10px
+PASS abs(10px + 10%) should be used-value-equivalent to 20px
+PASS calc(10px + abs(10%)) should be used-value-equivalent to 20px
+PASS abs(-10px) should be used-value-equivalent to 10px
+PASS abs(-10%) should be used-value-equivalent to 10px
+PASS calc(calc(sign(-0))) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(calc(sign(-0)))), 1) should be used-value-equivalent to -1
+PASS calc(calc(sign(0))) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(calc(sign(0)))), 1) should be used-value-equivalent to 1
+PASS abs(infinity) should be used-value-equivalent to calc(infinity)
+PASS abs(-infinity) should be used-value-equivalent to calc(infinity)
+PASS abs(NaN) should be used-value-equivalent to calc(NaN)
 PASS sign(1px) should be used-value-equivalent to 1
 PASS sign(1cm) should be used-value-equivalent to 1
 PASS sign(1mm) should be used-value-equivalent to 1
@@ -57,48 +68,90 @@ PASS sign(-1deg) should be used-value-equivalent to -1
 PASS sign(-1grad) should be used-value-equivalent to -1
 PASS sign(-1rad) should be used-value-equivalent to -1
 PASS sign(-1turn) should be used-value-equivalent to -1
-PASS sign(0px) should be used-value-equivalent to 0
-PASS sign(0cm) should be used-value-equivalent to 0
-PASS sign(0mm) should be used-value-equivalent to 0
-PASS sign(0Q) should be used-value-equivalent to 0
-PASS sign(0in) should be used-value-equivalent to 0
-PASS sign(0pc) should be used-value-equivalent to 0
-PASS sign(0pt) should be used-value-equivalent to 0
-PASS sign(0em) should be used-value-equivalent to 0
-PASS sign(0ex) should be used-value-equivalent to 0
-PASS sign(0ch) should be used-value-equivalent to 0
-PASS sign(0rem) should be used-value-equivalent to 0
-PASS sign(0vh) should be used-value-equivalent to 0
-PASS sign(0vw) should be used-value-equivalent to 0
-PASS sign(0vmin) should be used-value-equivalent to 0
-PASS sign(0vmax) should be used-value-equivalent to 0
-PASS sign(-0px) should be used-value-equivalent to -0
-PASS sign(-0cm) should be used-value-equivalent to -0
-PASS sign(-0mm) should be used-value-equivalent to -0
-PASS sign(-0Q) should be used-value-equivalent to -0
-PASS sign(-0in) should be used-value-equivalent to -0
-PASS sign(-0pc) should be used-value-equivalent to -0
-PASS sign(-0pt) should be used-value-equivalent to -0
-PASS sign(-0em) should be used-value-equivalent to -0
-PASS sign(-0ex) should be used-value-equivalent to -0
-PASS sign(-0ch) should be used-value-equivalent to -0
-PASS sign(-0rem) should be used-value-equivalent to -0
-PASS sign(-0vh) should be used-value-equivalent to -0
-PASS sign(-0vw) should be used-value-equivalent to -0
-PASS sign(-0vmin) should be used-value-equivalent to -0
-PASS sign(-0vmax) should be used-value-equivalent to -0
-PASS sign(0s) should be used-value-equivalent to 0
-PASS sign(0ms) should be used-value-equivalent to 0
-PASS sign(-0s) should be used-value-equivalent to 0
-PASS sign(-0ms) should be used-value-equivalent to 0
-PASS sign(0deg) should be used-value-equivalent to 0
-PASS sign(0grad) should be used-value-equivalent to 0
-PASS sign(0rad) should be used-value-equivalent to 0
-PASS sign(0turn) should be used-value-equivalent to 0
-PASS sign(-0deg) should be used-value-equivalent to -0
-PASS sign(-0grad) should be used-value-equivalent to -0
-PASS sign(-0rad) should be used-value-equivalent to -0
-PASS sign(-0turn) should be used-value-equivalent to -0
+PASS calc(sign(0px)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0px))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0cm)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0cm))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0mm)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0mm))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0Q)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0Q))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0in)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0in))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0pc)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0pc))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0pt)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0pt))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0em)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0em))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0ex)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0ex))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0ch)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0ch))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0rem)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0rem))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0vh)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0vh))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0vw)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0vw))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0vmin)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0vmin))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0vmax)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0vmax))), 1) should be used-value-equivalent to 1
+PASS calc(sign(-0px)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0px))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0cm)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0cm))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0mm)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0mm))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0Q)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0Q))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0in)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0in))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0pc)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0pc))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0pt)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0pt))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0em)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0em))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0ex)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0ex))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0ch)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0ch))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0rem)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0rem))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0vh)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0vh))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0vw)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0vw))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0vmin)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0vmin))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0vmax)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0vmax))), 1) should be used-value-equivalent to -1
+PASS calc(sign(0s)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0s))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0ms)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0ms))), 1) should be used-value-equivalent to 1
+PASS calc(sign(-0s)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0s))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0ms)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0ms))), 1) should be used-value-equivalent to -1
+PASS calc(sign(0deg)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0deg))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0grad)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0grad))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0rad)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0rad))), 1) should be used-value-equivalent to 1
+PASS calc(sign(0turn)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(0turn))), 1) should be used-value-equivalent to 1
+PASS calc(sign(-0deg)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0deg))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0grad)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0grad))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0rad)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0rad))), 1) should be used-value-equivalent to -1
+PASS calc(sign(-0turn)) should be used-value-equivalent to 0
+PASS clamp(-1, calc( 1 / sign(sign(-0turn))), 1) should be used-value-equivalent to -1
 PASS abs(1px) should be used-value-equivalent to 1px
 PASS abs(1cm) should be used-value-equivalent to 1cm
 PASS abs(1mm) should be used-value-equivalent to 1mm
@@ -141,4 +194,6 @@ PASS abs(-1deg) should be used-value-equivalent to 1deg
 PASS abs(-1grad) should be used-value-equivalent to 1grad
 PASS abs(-1rad) should be used-value-equivalent to 1rad
 PASS abs(-1turn) should be used-value-equivalent to 1turn
+FAIL sign(10px - 1em) should be used-value-equivalent to 0; fontSize=10px assert_equals: sign(10px - 1em) and 0 serialize to the same thing in used values. expected "0" but got "1"
+FAIL sign(10px - 2em) should be used-value-equivalent to -1; fontSize=10px assert_equals: sign(10px - 2em) and -1 serialize to the same thing in used values. expected "-1" but got "1"
 

@@ -138,7 +138,7 @@ class ReassemblyQueue {
     std::vector<std::pair<TSN, Data>> deferred_chunks;
   };
 
-  const std::string log_prefix_;
+  const absl::string_view log_prefix_;
   const size_t max_size_bytes_;
   const size_t watermark_bytes_;
   UnwrappedTSN::Unwrapper tsn_unwrapper_;

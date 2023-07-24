@@ -14,6 +14,7 @@
 
 #include "./wycheproof_util.h"
 
+#include <limits.h>
 #include <stdlib.h>
 
 #include <algorithm>
@@ -138,7 +139,8 @@ bssl::UniquePtr<BIGNUM> GetWycheproofBIGNUM(FileTest *t, const char *key,
     return nullptr;
   }
   BIGNUM *bn = nullptr;
-  if (BN_hex2bn(&bn, value.c_str()) != static_cast<int>(value.size())) {
+  if (value.size() > INT_MAX ||
+      BN_hex2bn(&bn, value.c_str()) != static_cast<int>(value.size())) {
     BN_free(bn);
     t->PrintLine("Could not decode value '%s'", value.c_str());
     return nullptr;
@@ -151,8 +153,9 @@ bssl::UniquePtr<BIGNUM> GetWycheproofBIGNUM(FileTest *t, const char *key,
     // https://github.com/google/wycheproof/blob/0329f5b751ef102bd6b7b7181b6e049522a887f5/java/com/google/security/wycheproof/JsonUtil.java#L62.
     if ('0' > value[0] || value[0] > '7') {
       bssl::UniquePtr<BIGNUM> tmp(BN_new());
-      if (!tmp ||
-          !BN_set_bit(tmp.get(), value.size() * 4) ||
+      if (!tmp ||  //
+          value.size() > INT_MAX / 4 ||
+          !BN_set_bit(tmp.get(), static_cast<int>(value.size() * 4)) ||
           !BN_sub(ret.get(), ret.get(), tmp.get())) {
         return nullptr;
       }

@@ -42,7 +42,7 @@ class Device;
 class BindGroup : public WGPUBindGroupImpl, public RefCounted<BindGroup> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResource>&& resources, Device& device)
+    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, Device& device)
     {
         return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(resources), device));
     }
@@ -61,12 +61,12 @@ public:
     id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
     id<MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer; }
 
-    const Vector<BindableResource>& resources() const { return m_resources; }
+    const Vector<BindableResources>& resources() const { return m_resources; }
 
     Device& device() const { return m_device; }
 
 private:
-    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResource>&&, Device&);
+    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&&, Device&);
     BindGroup(Device&);
 
     const id<MTLBuffer> m_vertexArgumentBuffer { nil };
@@ -74,7 +74,7 @@ private:
     const id<MTLBuffer> m_computeArgumentBuffer { nil };
 
     const Ref<Device> m_device;
-    Vector<BindableResource> m_resources;
+    Vector<BindableResources> m_resources;
 };
 
 } // namespace WebGPU

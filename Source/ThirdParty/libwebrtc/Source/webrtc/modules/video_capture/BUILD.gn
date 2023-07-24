@@ -17,6 +17,7 @@ rtc_library("video_capture_module") {
   sources = [
     "device_info_impl.cc",
     "device_info_impl.h",
+    "raw_video_sink_interface.h",
     "video_capture.h",
     "video_capture_config.h",
     "video_capture_defines.h",
@@ -39,13 +40,14 @@ rtc_library("video_capture_module") {
     "../../rtc_base:stringutils",
     "../../rtc_base:timeutils",
     "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/system:rtc_export",
     "../../system_wrappers",
     "//third_party/libyuv",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
-if (!build_with_chromium) {
+if (!build_with_chromium || is_linux || is_chromeos) {
   rtc_source_set("video_capture_internal_impl") {
     visibility = [ "*" ]
     deps = [
@@ -59,11 +61,16 @@ if (!build_with_chromium) {
       "../../rtc_base:refcount",
       "../../rtc_base:stringutils",
       "../../rtc_base/synchronization:mutex",
+      "../../rtc_base/system:rtc_export",
       "../../system_wrappers",
+    ]
+    sources = [
+      "video_capture_options.cc",
+      "video_capture_options.h",
     ]
 
     if (is_linux || is_chromeos) {
-      sources = [
+      sources += [
         "linux/device_info_linux.cc",
         "linux/device_info_v4l2.cc",
         "linux/device_info_v4l2.h",
@@ -72,9 +79,31 @@ if (!build_with_chromium) {
         "linux/video_capture_v4l2.h",
       ]
       deps += [ "../../media:rtc_media_base" ]
+
+      if (rtc_use_pipewire) {
+        sources += [
+          "linux/device_info_pipewire.cc",
+          "linux/device_info_pipewire.h",
+          "linux/pipewire_session.cc",
+          "linux/pipewire_session.h",
+          "linux/video_capture_pipewire.cc",
+          "linux/video_capture_pipewire.h",
+        ]
+
+        configs += [ "../portal:pipewire_base" ]
+
+        public_configs = [ "../portal:pipewire_config" ]
+
+        deps += [
+          "../../api:refcountedbase",
+          "../../common_video",
+          "../../media:rtc_media_base",
+          "../portal",
+        ]
+      }
     }
     if (is_win) {
-      sources = [
+      sources += [
         "windows/device_info_ds.cc",
         "windows/device_info_ds.h",
         "windows/help_functions_ds.cc",
@@ -103,7 +132,7 @@ if (!build_with_chromium) {
       }
     }
     if (is_fuchsia) {
-      sources = [ "video_capture_factory_null.cc" ]
+      sources += [ "video_capture_factory_null.cc" ]
     }
 
     if (build_with_mozilla && is_android) {
@@ -113,7 +142,7 @@ if (!build_with_chromium) {
         "/nsprpub/pr/include",
       ]
 
-      sources = [
+      sources += [
         "android/device_info_android.cc",
         "android/video_capture_android.cc",
       ]

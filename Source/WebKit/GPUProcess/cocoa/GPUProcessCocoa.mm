@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +31,15 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
 #import "GPUConnectionToWebProcess.h"
+#import "GPUProcessCreationParameters.h"
+#import "Logging.h"
 #import "RemoteRenderingBackend.h"
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(MAC)
+#include <pal/spi/cocoa/LaunchServicesSPI.h>
+#endif
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -80,13 +86,40 @@ void GPUProcess::dispatchSimulatedNotificationsForPreferenceChange(const String&
 #if ENABLE(MEDIA_STREAM)
 void GPUProcess::ensureAVCaptureServerConnection()
 {
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-        if ([PAL::getAVCaptureDeviceClass() respondsToSelector:@selector(ensureServerConnection)])
-            [PAL::getAVCaptureDeviceClass() ensureServerConnection];
-    });
+    RELEASE_LOG(WebRTC, "GPUProcess::ensureAVCaptureServerConnection: Entering.");
+    if ([PAL::getAVCaptureDeviceClass() respondsToSelector:@selector(ensureServerConnection)]) {
+        RELEASE_LOG(WebRTC, "GPUProcess::ensureAVCaptureServerConnection: Calling [AVCaptureDevice ensureServerConnection]");
+        [PAL::getAVCaptureDeviceClass() ensureServerConnection];
+    }
 }
 #endif
+
+void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& parameters)
+{
+#if PLATFORM(MAC)
+    auto launchServicesExtension = SandboxExtension::create(WTFMove(parameters.launchServicesExtensionHandle));
+    if (launchServicesExtension) {
+        bool ok = launchServicesExtension->consume();
+        ASSERT_UNUSED(ok, ok);
+    }
+
+    // It is important to check in with launch services before setting the process name.
+    launchServicesCheckIn();
+
+    // Update process name while holding the Launch Services sandbox extension
+    updateProcessName();
+
+    // Close connection to launch services.
+#if HAVE(HAVE_LS_SERVER_CONNECTION_STATUS_RELEASE_NOTIFICATIONS_MASK)
+    _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask | kLSServerConnectionStatusReleaseNotificationsMask, nullptr);
+#else
+    _LSSetApplicationLaunchServicesServerConnectionStatus(kLSServerConnectionStatusDoNotConnectToServerMask, nullptr);
+#endif
+
+    if (launchServicesExtension)
+        launchServicesExtension->revoke();
+#endif // PLATFORM(MAC)
+}
 
 } // namespace WebKit
 

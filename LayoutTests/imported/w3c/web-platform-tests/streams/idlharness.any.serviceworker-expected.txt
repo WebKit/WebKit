@@ -114,7 +114,7 @@ FAIL ReadableStreamBYOBRequest must be primary interface of self.readableStreamB
 PASS Stringification of self.readableStreamByobRequest
 PASS ReadableStreamBYOBRequest interface: self.readableStreamByobRequest must inherit property "view" with the proper type
 PASS ReadableStreamBYOBRequest interface: self.readableStreamByobRequest must inherit property "respond(unsigned long long)" with the proper type
-FAIL ReadableStreamBYOBRequest interface: calling respond(unsigned long long) on self.readableStreamByobRequest with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
+FAIL ReadableStreamBYOBRequest interface: calling respond(unsigned long long) on self.readableStreamByobRequest with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function() {
             fn.apply(obj, args);
         }" threw object "RangeError: bytesWritten has an incorrect value" ("RangeError") expected instance of function "function TypeError() {
     [native code]
@@ -182,7 +182,7 @@ PASS TransformStream interface: existence and properties of interface prototype 
 PASS TransformStream interface: existence and properties of interface prototype object's "constructor" property
 PASS TransformStream interface: existence and properties of interface prototype object's @@unscopables property
 PASS TransformStream interface: attribute readable
-FAIL TransformStream interface: attribute writable assert_equals: getter must have the name 'get writable' expected "get writable" but got "writable"
+PASS TransformStream interface: attribute writable
 PASS TransformStream must be primary interface of new TransformStream()
 PASS Stringification of new TransformStream()
 PASS TransformStream interface: new TransformStream() must inherit property "readable" with the proper type

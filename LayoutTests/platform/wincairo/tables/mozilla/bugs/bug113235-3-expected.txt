@@ -25,7 +25,7 @@ layer at (0,0) size 785x1054
           RenderInline {FONT} at (0,0) size 0x19
             RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,78) size 769x2
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,88) size 769x20
         RenderInline {FONT} at (0,0) size 102x19
           RenderInline {FONT} at (0,0) size 102x19
@@ -52,7 +52,7 @@ layer at (0,0) size 785x1054
               RenderInline {FONT} at (0,0) size 0x19
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,166) size 769x2
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,176) size 769x20
         RenderInline {FONT} at (0,0) size 11x19
           RenderInline {FONT} at (0,0) size 11x19
@@ -83,7 +83,7 @@ layer at (0,0) size 785x1054
                   RenderInline {FONT} at (0,0) size 0x19
                     RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,254) size 769x2
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,264) size 769x20
         RenderInline {FONT} at (0,0) size 96x19
           RenderInline {FONT} at (0,0) size 96x19
@@ -115,7 +115,7 @@ layer at (0,0) size 785x1054
                       RenderInline {FONT} at (0,0) size 0x19
                         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,342) size 769x2
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,352) size 769x0
         RenderInline {FONT} at (0,0) size 0x0
           RenderInline {FONT} at (0,0) size 0x0
@@ -151,7 +151,7 @@ layer at (0,0) size 785x1054
                           RenderInline {FONT} at (0,0) size 0x19
                             RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,410) size 769x2
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,420) size 769x20
         RenderInline {FONT} at (0,0) size 96x19
           RenderInline {FONT} at (0,0) size 96x19
@@ -188,7 +188,7 @@ layer at (0,0) size 785x1054
                               RenderInline {FONT} at (0,0) size 0x0
                                 RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,478) size 769x2
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,488) size 769x0
         RenderInline {FONT} at (0,0) size 0x0
           RenderInline {FONT} at (0,0) size 0x0
@@ -251,7 +251,7 @@ layer at (0,0) size 785x1054
                                   RenderInline {FONT} at (0,0) size 0x19
                                     RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,586) size 769x2
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,596) size 769x20
         RenderInline {FONT} at (0,0) size 11x19
           RenderInline {FONT} at (0,0) size 11x19
@@ -303,7 +303,7 @@ layer at (0,0) size 785x1054
                                       RenderInline {FONT} at (0,0) size 0x19
                                         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,694) size 769x2
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,704) size 769x20
         RenderInline {FONT} at (0,0) size 11x19
           RenderInline {FONT} at (0,0) size 11x19
@@ -359,7 +359,7 @@ layer at (0,0) size 785x1054
                                           RenderInline {FONT} at (0,0) size 0x19
                                             RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,802) size 769x2
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,812) size 769x0
         RenderInline {FONT} at (0,0) size 0x0
           RenderInline {FONT} at (0,0) size 0x0
@@ -416,7 +416,7 @@ layer at (0,0) size 785x1054
                                               RenderInline {FONT} at (0,0) size 0x19
                                                 RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,890) size 769x2
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,900) size 769x0
         RenderInline {FONT} at (0,0) size 0x0
           RenderInline {FONT} at (0,0) size 0x0
@@ -477,7 +477,7 @@ layer at (0,0) size 785x1054
                                                   RenderInline {FONT} at (0,0) size 0x19
                                                     RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,978) size 769x2
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,988) size 769x0
         RenderInline {FONT} at (0,0) size 0x0
           RenderInline {FONT} at (0,0) size 0x0

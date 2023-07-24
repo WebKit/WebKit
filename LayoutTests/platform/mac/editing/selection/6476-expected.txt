@@ -35,5 +35,5 @@ layer at (0,0) size 800x600
           text run at (0,18) width 170: "the above editable region. "
           text run at (169,18) width 394: "Clicking should create a caret after the first space after the 'e'."
 layer at (8,52) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,44) size 784x2 [color=#808080] [border: (1px inset #808080)]
 caret: position 1 of child 2 {#text} of child 1 {DIV} of body

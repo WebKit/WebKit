@@ -118,13 +118,14 @@ static WKWebsiteDataStore *persistentDataStore(void)
         _WKProcessPoolConfiguration *processConfiguration = [[_WKProcessPoolConfiguration alloc] init];
         if (_settingsController.perWindowWebProcessesDisabled)
             processConfiguration.usesSingleWebProcess = YES;
-        if (_settingsController.processSwapOnWindowOpenWithOpenerEnabled)
-            processConfiguration.processSwapsOnWindowOpenWithOpener = true;
         
         configuration.processPool = [[WKProcessPool alloc] _initWithConfiguration:processConfiguration];
 
         NSArray<_WKFeature *> *features = [WKPreferences _features];
         for (_WKFeature *feature in features) {
+            if ([feature.key isEqualToString:@"MediaDevicesEnabled"])
+                continue;
+
             BOOL enabled;
             if ([[NSUserDefaults standardUserDefaults] objectForKey:feature.key])
                 enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];

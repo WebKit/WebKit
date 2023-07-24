@@ -12,5 +12,5 @@ assert.sameValue(afterEpoch.epochSeconds, 217175010, "epochSeconds post epoch");
 assert.sameValue(typeof afterEpoch.epochSeconds, "number", "epochSeconds value is a number");
 
 const beforeEpoch = new Temporal.ZonedDateTime(-217175010_876_543_211n, "UTC");
-assert.sameValue(beforeEpoch.epochSeconds, -217175010, "epochSeconds pre epoch");
+assert.sameValue(beforeEpoch.epochSeconds, -217175011, "epochSeconds pre epoch");
 assert.sameValue(typeof beforeEpoch.epochSeconds, "number", "epochSeconds value is a number");

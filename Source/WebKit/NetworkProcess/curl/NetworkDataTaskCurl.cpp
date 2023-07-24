@@ -46,7 +46,6 @@
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
-#include <WebCore/SynchronousLoaderClient.h>
 #include <WebCore/TimingAllowOrigin.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/FileSystem.h>
@@ -90,7 +89,6 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
         m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
     }
-    m_curlRequest->start();
 }
 
 NetworkDataTaskCurl::~NetworkDataTaskCurl()
@@ -145,7 +143,7 @@ Ref<CurlRequest> NetworkDataTaskCurl::createCurlRequest(ResourceRequest&& reques
     // Creates a CurlRequest in suspended state.
     // Then, NetworkDataTaskCurl::resume() will be called and communication resumes.
     const auto captureMetrics = shouldCaptureExtraNetworkLoadMetrics() ? CurlRequest::CaptureNetworkLoadMetrics::Extended : CurlRequest::CaptureNetworkLoadMetrics::Basic;
-    return CurlRequest::create(request, *this, CurlRequest::ShouldSuspend::Yes, CurlRequest::EnableMultipart::No, captureMetrics);
+    return CurlRequest::create(request, *this, CurlRequest::EnableMultipart::No, captureMetrics);
 }
 
 void NetworkDataTaskCurl::curlDidSendData(CurlRequest&, unsigned long long totalBytesSent, unsigned long long totalBytesExpectedToSend)
@@ -170,7 +168,7 @@ void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, CurlRespo
 
     handleCookieHeaders(request.resourceRequest(), receivedResponse);
 
-    if (m_response.shouldRedirect()) {
+    if (shouldStartHTTPRedirection()) {
         willPerformHTTPRedirection();
         return;
     }
@@ -262,6 +260,22 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
     }
 
     m_client->didCompleteWithError(resourceError);
+}
+
+bool NetworkDataTaskCurl::shouldStartHTTPRedirection()
+{
+    auto statusCode = m_response.httpStatusCode();
+    if (statusCode < 300 || statusCode >= 400)
+        return false;
+
+    // Some 3xx status codes aren't actually redirects.
+    if (statusCode == 300 || statusCode == 304 || statusCode == 305 || statusCode == 306)
+        return false;
+
+    if (m_response.httpHeaderField(HTTPHeaderName::Location).isEmpty())
+        return false;
+
+    return true;
 }
 
 bool NetworkDataTaskCurl::shouldRedirectAsGET(const ResourceRequest& request, bool crossOrigin)
@@ -397,7 +411,6 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
             m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
         }
-        m_curlRequest->start();
 
         if (m_state != State::Suspended) {
             m_state = State::Suspended;
@@ -517,7 +530,6 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
     m_curlRequest->setUserPass(credential.user(), credential.password());
     if (shouldDisableServerTrustEvaluation)
         m_curlRequest->disableServerTrustEvaluation();
-    m_curlRequest->start();
 
     if (m_state != State::Suspended) {
         m_state = State::Suspended;

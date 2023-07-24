@@ -100,35 +100,25 @@ OPENSSL_EXPORT void NCONF_free(CONF *conf);
 // |conf|. It returns one on success and zero on error. In the event of an
 // error, if |out_error_line| is not NULL, |*out_error_line| is set to the
 // number of the line that contained the error.
-int NCONF_load(CONF *conf, const char *filename, long *out_error_line);
+OPENSSL_EXPORT int NCONF_load(CONF *conf, const char *filename,
+                              long *out_error_line);
 
 // NCONF_load_bio acts like |NCONF_load| but reads from |bio| rather than from
 // a named file.
-int NCONF_load_bio(CONF *conf, BIO *bio, long *out_error_line);
+OPENSSL_EXPORT int NCONF_load_bio(CONF *conf, BIO *bio, long *out_error_line);
 
 // NCONF_get_section returns a stack of values for a given section in |conf|.
 // If |section| is NULL, the default section is returned. It returns NULL on
 // error.
-STACK_OF(CONF_VALUE) *NCONF_get_section(const CONF *conf, const char *section);
+OPENSSL_EXPORT const STACK_OF(CONF_VALUE) *NCONF_get_section(
+    const CONF *conf, const char *section);
 
 // NCONF_get_string returns the value of the key |name|, in section |section|.
 // The |section| argument may be NULL to indicate the default section. It
 // returns the value or NULL on error.
-const char *NCONF_get_string(const CONF *conf, const char *section,
-                             const char *name);
-
-
-// Utility functions
-
-// CONF_parse_list takes a list separated by 'sep' and calls |list_cb| giving
-// the start and length of each member, optionally stripping leading and
-// trailing whitespace. This can be used to parse comma separated lists for
-// example. If |list_cb| returns <= 0, then the iteration is halted and that
-// value is returned immediately. Otherwise it returns one. Note that |list_cb|
-// may be called on an empty member.
-int CONF_parse_list(const char *list, char sep, int remove_whitespace,
-                    int (*list_cb)(const char *elem, int len, void *usr),
-                    void *arg);
+OPENSSL_EXPORT const char *NCONF_get_string(const CONF *conf,
+                                            const char *section,
+                                            const char *name);
 
 
 // Deprecated functions

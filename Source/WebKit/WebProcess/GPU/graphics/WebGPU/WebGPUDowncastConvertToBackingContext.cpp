@@ -55,127 +55,127 @@
 
 namespace WebKit::WebGPU {
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::Adapter& adapter)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Adapter& adapter)
 {
     return static_cast<const RemoteAdapterProxy&>(adapter).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::BindGroup& bindGroup)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BindGroup& bindGroup)
 {
     return static_cast<const RemoteBindGroupProxy&>(bindGroup).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::BindGroupLayout& bindGroupLayout)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BindGroupLayout& bindGroupLayout)
 {
     return static_cast<const RemoteBindGroupLayoutProxy&>(bindGroupLayout).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::Buffer& buffer)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Buffer& buffer)
 {
     return static_cast<const RemoteBufferProxy&>(buffer).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::CommandBuffer& commandBuffer)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::CommandBuffer& commandBuffer)
 {
     return static_cast<const RemoteCommandBufferProxy&>(commandBuffer).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::CommandEncoder& commandEncoder)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::CommandEncoder& commandEncoder)
 {
     return static_cast<const RemoteCommandEncoderProxy&>(commandEncoder).backing();
 }
 
-const RemoteCompositorIntegrationProxy& DowncastConvertToBackingContext::convertToRawBacking(const PAL::WebGPU::CompositorIntegration& compositorIntegration)
+const RemoteCompositorIntegrationProxy& DowncastConvertToBackingContext::convertToRawBacking(const WebCore::WebGPU::CompositorIntegration& compositorIntegration)
 {
     return static_cast<const RemoteCompositorIntegrationProxy&>(compositorIntegration);
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::CompositorIntegration& compositorIntegration)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::CompositorIntegration& compositorIntegration)
 {
     return static_cast<const RemoteCompositorIntegrationProxy&>(compositorIntegration).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::ComputePassEncoder& computePassEncoder)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ComputePassEncoder& computePassEncoder)
 {
     return static_cast<const RemoteComputePassEncoderProxy&>(computePassEncoder).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::ComputePipeline& computePipeline)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ComputePipeline& computePipeline)
 {
     return static_cast<const RemoteComputePipelineProxy&>(computePipeline).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::Device& device)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Device& device)
 {
     return static_cast<const RemoteDeviceProxy&>(device).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::ExternalTexture& externalTexture)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ExternalTexture& externalTexture)
 {
     return static_cast<const RemoteExternalTextureProxy&>(externalTexture).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::GPU& gpu)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::GPU& gpu)
 {
     return static_cast<const RemoteGPUProxy&>(gpu).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::PipelineLayout& pipelineLayout)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::PipelineLayout& pipelineLayout)
 {
     return static_cast<const RemotePipelineLayoutProxy&>(pipelineLayout).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::PresentationContext& presentationContext)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::PresentationContext& presentationContext)
 {
     return static_cast<const RemotePresentationContextProxy&>(presentationContext).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::QuerySet& querySet)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::QuerySet& querySet)
 {
     return static_cast<const RemoteQuerySetProxy&>(querySet).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::Queue& queue)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Queue& queue)
 {
     return static_cast<const RemoteQueueProxy&>(queue).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderBundleEncoder& renderBundleEncoder)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderBundleEncoder& renderBundleEncoder)
 {
     return static_cast<const RemoteRenderBundleEncoderProxy&>(renderBundleEncoder).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderBundle& renderBundle)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderBundle& renderBundle)
 {
     return static_cast<const RemoteRenderBundleProxy&>(renderBundle).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderPassEncoder& renderPassEncoder)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassEncoder& renderPassEncoder)
 {
     return static_cast<const RemoteRenderPassEncoderProxy&>(renderPassEncoder).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderPipeline& renderPipeline)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPipeline& renderPipeline)
 {
     return static_cast<const RemoteRenderPipelineProxy&>(renderPipeline).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::Sampler& sampler)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Sampler& sampler)
 {
     return static_cast<const RemoteSamplerProxy&>(sampler).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::ShaderModule& shaderModule)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ShaderModule& shaderModule)
 {
     return static_cast<const RemoteShaderModuleProxy&>(shaderModule).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::Texture& texture)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Texture& texture)
 {
     return static_cast<const RemoteTextureProxy&>(texture).backing();
 }
 
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::TextureView& textureView)
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::TextureView& textureView)
 {
     return static_cast<const RemoteTextureViewProxy&>(textureView).backing();
 }

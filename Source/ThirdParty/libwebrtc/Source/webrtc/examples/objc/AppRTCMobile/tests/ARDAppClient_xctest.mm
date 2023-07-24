@@ -161,8 +161,6 @@
 
 #pragma mark - Cases
 
-// TODO(crbug.com/webrtc/13991): testSession crashes when running on simulators.
-#if !TARGET_IPHONE_SIMULATOR
 // Tests that an ICE connection is established between two ARDAppClient objects
 // where one is set up as a caller and the other the answerer. Network
 // components are mocked out and messages are relayed directly from object to
@@ -229,7 +227,6 @@
     }
   }];
 }
-#endif
 
 // Test to see that we get a local video connection
 // Note this will currently pass even when no camera is connected as a local

@@ -24,6 +24,7 @@ namespace webrtc {
 class RecordableEncodedFrame {
  public:
   // Encoded resolution in pixels
+  // TODO(bugs.webrtc.org/12114) : remove in favor of Resolution.
   struct EncodedResolution {
     bool empty() const { return width == 0 && height == 0; }
 

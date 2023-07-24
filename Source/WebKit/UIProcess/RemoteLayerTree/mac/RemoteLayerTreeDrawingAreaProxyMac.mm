@@ -82,15 +82,15 @@ void RemoteLayerTreeDisplayLinkClient::displayLinkFired(WebCore::PlatformDisplay
     });
 }
 
-RemoteLayerTreeDrawingAreaProxyMac::RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy& pageProxy, WebProcessProxy& processProxy)
-    : RemoteLayerTreeDrawingAreaProxy(pageProxy, processProxy)
+RemoteLayerTreeDrawingAreaProxyMac::RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy& pageProxy)
+    : RemoteLayerTreeDrawingAreaProxy(pageProxy)
     , m_displayLinkClient(makeUnique<RemoteLayerTreeDisplayLinkClient>(pageProxy.identifier()))
 {
 }
 
 RemoteLayerTreeDrawingAreaProxyMac::~RemoteLayerTreeDrawingAreaProxyMac()
 {
-    if (auto* displayLink = exisingDisplayLink()) {
+    if (auto* displayLink = existingDisplayLink()) {
         if (m_fullSpeedUpdateObserverID)
             displayLink->removeObserver(*m_displayLinkClient, *m_fullSpeedUpdateObserverID);
         if (m_displayRefreshObserverID)
@@ -108,7 +108,7 @@ std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxy
     return makeUnique<RemoteScrollingCoordinatorProxyMac>(m_webPageProxy);
 }
 
-DisplayLink* RemoteLayerTreeDrawingAreaProxyMac::exisingDisplayLink()
+DisplayLink* RemoteLayerTreeDrawingAreaProxyMac::existingDisplayLink()
 {
     if (!m_displayID)
         return nullptr;
@@ -129,7 +129,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeObserver(std::optional<DisplayLin
     if (!observerID)
         return;
 
-    if (auto* displayLink = exisingDisplayLink())
+    if (auto* displayLink = existingDisplayLink())
         displayLink->removeObserver(*m_displayLinkClient, *observerID);
 
     observerID = { };
@@ -354,7 +354,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::setPreferredFramesPerSecond(WebCore::Fr
         return;
     }
 
-    auto* displayLink = exisingDisplayLink();
+    auto* displayLink = existingDisplayLink();
     if (m_displayRefreshObserverID && displayLink)
         displayLink->setObserverPreferredFramesPerSecond(*m_displayLinkClient, *m_displayRefreshObserverID, preferredFramesPerSecond);
 }
@@ -377,9 +377,9 @@ void RemoteLayerTreeDrawingAreaProxyMac::setDisplayLinkWantsFullSpeedUpdates(boo
         removeObserver(m_fullSpeedUpdateObserverID);
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)
+void RemoteLayerTreeDrawingAreaProxyMac::windowScreenDidChange(PlatformDisplayID displayID)
 {
-    if (displayID == m_displayID && m_displayNominalFramesPerSecond == nominalFramesPerSecond)
+    if (displayID == m_displayID)
         return;
 
     bool hadFullSpeedOberver = m_fullSpeedUpdateObserverID.has_value();
@@ -388,17 +388,25 @@ void RemoteLayerTreeDrawingAreaProxyMac::windowScreenDidChange(PlatformDisplayID
 
     pauseDisplayRefreshCallbacks();
 
-    m_displayID = displayID;
-    m_displayNominalFramesPerSecond = nominalFramesPerSecond;
+    if (m_displayID)
+        m_webPageProxy.scrollingCoordinatorProxy()->windowScreenWillChange();
 
-    m_webPageProxy.scrollingCoordinatorProxy()->windowScreenDidChange(displayID, nominalFramesPerSecond);
+    m_displayID = displayID;
+    m_displayNominalFramesPerSecond = displayNominalFramesPerSecond();
+
+    m_webPageProxy.scrollingCoordinatorProxy()->windowScreenDidChange(displayID, m_displayNominalFramesPerSecond);
 
     scheduleDisplayRefreshCallbacks();
     if (hadFullSpeedOberver) {
         m_fullSpeedUpdateObserverID = DisplayLinkObserverID::generate();
-        if (auto* displayLink = exisingDisplayLink())
+        if (auto* displayLink = existingDisplayLink())
             displayLink->addObserver(*m_displayLinkClient, *m_fullSpeedUpdateObserverID, displayLink->nominalFramesPerSecond());
     }
+}
+
+std::optional<WebCore::FramesPerSecond> RemoteLayerTreeDrawingAreaProxyMac::displayNominalFramesPerSecond()
+{
+    return displayLink().nominalFramesPerSecond();
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::didRefreshDisplay()

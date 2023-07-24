@@ -51,10 +51,10 @@ function printStringCodePoints(string) {
 function testPropertyEscapes(regExp, string, expression) {
   if (!regExp.test(string)) {
     for (const symbol of string) {
-      const hex = printCodePoint(symbol.codePointAt(0));
+      const formatted = printCodePoint(symbol.codePointAt(0));
       assert(
         regExp.test(symbol),
-        `\`${ expression }\` should match U+${ hex } (\`${ symbol }\`)`
+        `\`${ expression }\` should match ${ formatted } (\`${ symbol }\`)`
       );
     }
   }
@@ -73,7 +73,7 @@ function testPropertyOfStrings(args) {
     for (const string of matchStrings) {
       assert(
         regExp.test(string),
-        `\`${ expression }\` should match ${ string } (U+${ printStringCodePoints(string) })`
+        `\`${ expression }\` should match ${ string } (${ printStringCodePoints(string) })`
       );
     }
   }
@@ -83,7 +83,7 @@ function testPropertyOfStrings(args) {
     for (const string of nonMatchStrings) {
       assert(
         !regExp.test(string),
-        `\`${ expression }\` should not match ${ string } (U+${ printStringCodePoints(string) })`
+        `\`${ expression }\` should not match ${ string } (${ printStringCodePoints(string) })`
       );
     }
   }

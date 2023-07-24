@@ -15,13 +15,7 @@ const result1 = Temporal.ZonedDateTime.compare({ year: 2020, month: 5, day: 2, t
 assert.sameValue(result1, 0, "leap second is a valid ISO string for TimeZone (first argument)");
 const result2 = Temporal.ZonedDateTime.compare(instance, { year: 2020, month: 5, day: 2, timeZone });
 assert.sameValue(result2, 0, "leap second is a valid ISO string for TimeZone (second argument)");
-const result3 = Temporal.ZonedDateTime.compare({ year: 2020, month: 5, day: 2, timeZone: { timeZone } }, instance);
-assert.sameValue(result3, 0, "leap second is a valid ISO string for TimeZone (nested property, first argument)");
-const result4 = Temporal.ZonedDateTime.compare(instance, { year: 2020, month: 5, day: 2, timeZone: { timeZone } });
-assert.sameValue(result4, 0, "leap second is a valid ISO string for TimeZone (nested property, second argument)");
 
 timeZone = "2021-08-19T17:30:45.123456789+23:59[+23:59:60]";
 assert.throws(RangeError, () => Temporal.ZonedDateTime.compare({ year: 2020, month: 5, day: 2, timeZone }, instance), "leap second in time zone name not valid (first argument)");
 assert.throws(RangeError, () => Temporal.ZonedDateTime.compare(instance, { year: 2020, month: 5, day: 2, timeZone }), "leap second in time zone name not valid (second argument)");
-assert.throws(RangeError, () => Temporal.ZonedDateTime.compare({ year: 2020, month: 5, day: 2, timeZone: { timeZone } }, instance), "leap second in time zone name not valid (nested property, first argument)");
-assert.throws(RangeError, () => Temporal.ZonedDateTime.compare(instance, { year: 2020, month: 5, day: 2, timeZone: { timeZone } }), "leap second in time zone name not valid (nested property, second argument)");

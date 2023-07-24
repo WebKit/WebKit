@@ -39,7 +39,8 @@ class AudioRtpReceiverTest : public ::testing::Test {
                                                     std::string(),
                                                     std::vector<std::string>(),
                                                     false)),
-        media_channel_(rtc::Thread::Current()) {
+        media_channel_(cricket::MediaChannel::Role::kReceive,
+                       rtc::Thread::Current()) {
     EXPECT_CALL(media_channel_, SetRawAudioSink(kSsrc, _));
     EXPECT_CALL(media_channel_, SetBaseMinimumPlayoutDelayMs(kSsrc, _));
   }
@@ -66,7 +67,7 @@ TEST_F(AudioRtpReceiverTest, SetOutputVolumeIsCalled) {
 
   receiver_->track();
   receiver_->track()->set_enabled(true);
-  receiver_->SetMediaChannel(&media_channel_);
+  receiver_->SetMediaChannel(media_channel_.AsVoiceReceiveChannel());
   EXPECT_CALL(media_channel_, SetDefaultRawAudioSink(_)).Times(0);
   receiver_->SetupMediaChannel(kSsrc);
 
@@ -86,7 +87,7 @@ TEST_F(AudioRtpReceiverTest, VolumesSetBeforeStartingAreRespected) {
   receiver_->OnSetVolume(kVolume);
 
   receiver_->track()->set_enabled(true);
-  receiver_->SetMediaChannel(&media_channel_);
+  receiver_->SetMediaChannel(media_channel_.AsVoiceReceiveChannel());
 
   // The previosly set initial volume should be propagated to the provided
   // media_channel_ as soon as SetupMediaChannel is called.
@@ -101,7 +102,8 @@ TEST_F(AudioRtpReceiverTest, VolumesSetBeforeStartingAreRespected) {
 TEST(AudioRtpReceiver, OnChangedNotificationsAfterConstruction) {
   webrtc::test::RunLoop loop;
   auto* thread = rtc::Thread::Current();  // Points to loop's thread.
-  cricket::MockVoiceMediaChannel media_channel(thread);
+  cricket::MockVoiceMediaChannel media_channel(
+      cricket::MediaChannel::Role::kReceive, thread);
   auto receiver = rtc::make_ref_counted<AudioRtpReceiver>(
       thread, std::string(), std::vector<std::string>(), true, &media_channel);
 

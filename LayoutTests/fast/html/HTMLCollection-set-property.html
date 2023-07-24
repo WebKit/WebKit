@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<input type="text" id="length" name="length">
+<input type="text" id="action" name="action">
+<input type="text" id="testInput" name="testInput">
+<script>
+description("Tests setting properties on HTMLCollection");
+
+collection = document.getElementsByTagName("input");
+
+shouldBe("collection.length", "3");
+shouldBe("collection.action", "document.getElementById('action')");
+shouldBe("collection[0]", "document.getElementById('length')");
+shouldBe("collection.testInput", "document.getElementById('testInput')");
+shouldBeUndefined("collection.foo");
+
+evalAndLog("collection.length = 'about:blank'");
+evalAndLog("collection[0] = 'bar'");
+shouldBe("collection.length", "3");
+evalAndLog("document.getElementById('length').remove()");
+shouldBe("collection.length", "2");
+
+evalAndLog("collection.action = 'about:blank'");
+shouldBe("collection.action", "document.getElementById('action')");
+evalAndLog("document.getElementById('action').remove()");
+shouldBeUndefined("collection.action");
+
+evalAndLog("collection.testInput = 'test'");
+shouldBe("collection.testInput", "document.getElementById('testInput')");
+evalAndLog("document.getElementById('testInput').remove()");
+shouldBeUndefined("collection.testInput");
+
+evalAndLog("collection.foo = 'test'");
+shouldBeEqualToString("collection.foo", "test");
+
+shouldBeUndefined("collection[0]", "bar");
+</script>
+</body>
+</html>

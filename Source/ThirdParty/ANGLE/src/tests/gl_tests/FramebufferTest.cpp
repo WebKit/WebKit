@@ -8,7 +8,7 @@
 //
 
 #include "common/mathutil.h"
-#include "platform/FeaturesD3D_autogen.h"
+#include "platform/autogen/FeaturesD3D_autogen.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/OSWindow.h"
@@ -909,7 +909,7 @@ TEST_P(FramebufferTest_ES3, ClearDeletedAttachment)
 {
     // An INVALID_FRAMEBUFFER_OPERATION error was seen in this test on Mac, not sure where it might
     // be originating from. http://anglebug.com/2834
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);

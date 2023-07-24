@@ -185,7 +185,7 @@ WKContextRef WKPageGetContext(WKPageRef pageRef)
 
 WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)
 {
-    return toAPI(&toImpl(pageRef)->pageGroup());
+    return nullptr;
 }
 
 WKPageConfigurationRef WKPageCopyPageConfiguration(WKPageRef pageRef)
@@ -3017,7 +3017,7 @@ void WKPageSetIgnoresViewportScaleLimits(WKPageRef pageRef, bool ignoresViewport
 
 ProcessID WKPageGetProcessIdentifier(WKPageRef page)
 {
-    return toImpl(page)->processIdentifier();
+    return toImpl(page)->processID();
 }
 
 ProcessID WKPageGetGPUProcessIdentifier(WKPageRef page)
@@ -3026,7 +3026,7 @@ ProcessID WKPageGetGPUProcessIdentifier(WKPageRef page)
     auto* gpuProcess = toImpl(page)->process().processPool().gpuProcess();
     if (!gpuProcess)
         return 0;
-    return gpuProcess->processIdentifier();
+    return gpuProcess->processID();
 #else
     return 0;
 #endif

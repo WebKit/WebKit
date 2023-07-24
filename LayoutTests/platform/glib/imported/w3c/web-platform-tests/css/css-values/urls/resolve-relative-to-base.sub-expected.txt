@@ -1,0 +1,4 @@
+
+PASS base-relative URL: relative-image-url
+PASS base-relative URL: relative-image-variable-url
+

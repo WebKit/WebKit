@@ -586,7 +586,7 @@ class Instruction
     def getImplicitOperandString
         isIntelSyntax ? "st(0), " : ""
     end
-    
+
     def handleX86OpWithNumOperands(opcode, kind, numOperands)
         if numOperands == 3
             if operands[0] == operands[2]

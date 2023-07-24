@@ -1,0 +1,27 @@
+
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=0 and tiltY=0 assert_equals: azimuth angle should be 0 expected (number) 0 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=0 and tiltY=90 assert_equals: azimuth angle should be 1.5707963267948966 expected (number) 1.5707963267948966 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=0 and tiltY=-90 assert_equals: azimuth angle should be 4.71238898038469 expected (number) 4.71238898038469 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=90 and tiltY=0 assert_equals: azimuth angle should be 0 expected (number) 0 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=90 and tiltY=90 assert_equals: azimuth angle should be 0 expected (number) 0 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=90 and tiltY=-90 assert_equals: azimuth angle should be 0 expected (number) 0 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=-90 and tiltY=0 assert_equals: azimuth angle should be 3.141592653589793 expected (number) 3.141592653589793 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=-90 and tiltY=90 assert_equals: azimuth angle should be 0 expected (number) 0 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=-90 and tiltY=-90 assert_equals: azimuth angle should be 0 expected (number) 0 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=0 and tiltY=45 assert_equals: azimuth angle should be 1.5707963267948966 expected (number) 1.5707963267948966 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=0 and tiltY=-45 assert_equals: azimuth angle should be 4.71238898038469 expected (number) 4.71238898038469 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=45 and tiltY=0 assert_equals: azimuth angle should be 0 expected (number) 0 but got (undefined) undefined
+FAIL tiltX,tiltY to azimuth/altitude when tiltX=-45 and tiltY=0 assert_equals: azimuth angle should be 3.141592653589793 expected (number) 3.141592653589793 but got (undefined) undefined
+FAIL tiltX/tiltY to azimuth/altitude when tiltX/tiltY are not populated assert_equals: azimuth angle should be 0 expected (number) 0 but got (undefined) undefined
+FAIL azimuth/altitude to tiltX/tiltY when azimuth=0 and altitude=0 assert_equals: tiltX angle should be 90 expected 90 but got 0
+FAIL azimuth/altitude to tiltX/tiltY when azimuth=0 and altitude=0.7853981633974483 assert_equals: tiltX angle should be 45 expected 45 but got 0
+PASS azimuth/altitude to tiltX/tiltY when azimuth=0 and altitude=1.5707963267948966
+FAIL azimuth/altitude to tiltX/tiltY when azimuth=1.5707963267948966 and altitude=0 assert_equals: tiltY angle should be 90 expected 90 but got 0
+FAIL azimuth/altitude to tiltX/tiltY when azimuth=1.5707963267948966 and altitude=0.7853981633974483 assert_equals: tiltY angle should be 45 expected 45 but got 0
+FAIL azimuth/altitude to tiltX/tiltY when azimuth=3.141592653589793 and altitude=0 assert_equals: tiltX angle should be -90 expected -90 but got 0
+FAIL azimuth/altitude to tiltX/tiltY when azimuth=3.141592653589793 and altitude=0.7853981633974483 assert_equals: tiltX angle should be -45 expected -45 but got 0
+FAIL azimuth/altitude to tiltX/tiltY when azimuth=4.71238898038469 and altitude=0 assert_equals: tiltY angle should be -90 expected -90 but got 0
+FAIL azimuth/altitude to tiltX/tiltY when azimuth=4.71238898038469 and altitude=0.7853981633974483 assert_equals: tiltY angle should be -45 expected -45 but got 0
+FAIL If only one of the values (tiltX, tiltY) or (azimuthAngle, altitudeAngle) is available the other one is set to the default value assert_equals: for (tiltX, tiltY) = (45, 0) azimuthAngle should be 0 expected (number) 0 but got (undefined) undefined
+FAIL If one of the values in both sets is provided, the other value in the set is initialized with the default value assert_equals: azimuthAngle should stay as initialized expected (number) 0.7853981633974483 but got (undefined) undefined
+

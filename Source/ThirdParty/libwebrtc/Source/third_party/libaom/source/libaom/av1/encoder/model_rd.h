@@ -35,13 +35,11 @@ extern "C" {
 #define MODELRD_TYPE_INTRA 1
 #define MODELRD_TYPE_MOTION_MODE_RD 1
 
-typedef void (*model_rd_for_sb_type)(const AV1_COMP *const cpi,
-                                     BLOCK_SIZE bsize, MACROBLOCK *x,
-                                     MACROBLOCKD *xd, int plane_from,
-                                     int plane_to, int *out_rate_sum,
-                                     int64_t *out_dist_sum, int *skip_txfm_sb,
-                                     int64_t *skip_sse_sb, int *plane_rate,
-                                     int64_t *plane_sse, int64_t *plane_dist);
+typedef void (*model_rd_for_sb_type)(
+    const AV1_COMP *const cpi, BLOCK_SIZE bsize, MACROBLOCK *x, MACROBLOCKD *xd,
+    int plane_from, int plane_to, int *out_rate_sum, int64_t *out_dist_sum,
+    uint8_t *skip_txfm_sb, int64_t *skip_sse_sb, int *plane_rate,
+    int64_t *plane_sse, int64_t *plane_dist);
 typedef void (*model_rd_from_sse_type)(const AV1_COMP *const cpi,
                                        const MACROBLOCK *const x,
                                        BLOCK_SIZE plane_bsize, int plane,
@@ -160,7 +158,7 @@ static AOM_INLINE void model_rd_with_curvfit(const AV1_COMP *const cpi,
 static AOM_INLINE void model_rd_for_sb(
     const AV1_COMP *const cpi, BLOCK_SIZE bsize, MACROBLOCK *x, MACROBLOCKD *xd,
     int plane_from, int plane_to, int *out_rate_sum, int64_t *out_dist_sum,
-    int *skip_txfm_sb, int64_t *skip_sse_sb, int *plane_rate,
+    uint8_t *skip_txfm_sb, int64_t *skip_sse_sb, int *plane_rate,
     int64_t *plane_sse, int64_t *plane_dist) {
   // Note our transform coeffs are 8 times an orthogonal transform.
   // Hence quantizer step is also 8 times. To get effective quantizer
@@ -212,7 +210,7 @@ static AOM_INLINE void model_rd_for_sb(
 static AOM_INLINE void model_rd_for_sb_with_curvfit(
     const AV1_COMP *const cpi, BLOCK_SIZE bsize, MACROBLOCK *x, MACROBLOCKD *xd,
     int plane_from, int plane_to, int *out_rate_sum, int64_t *out_dist_sum,
-    int *skip_txfm_sb, int64_t *skip_sse_sb, int *plane_rate,
+    uint8_t *skip_txfm_sb, int64_t *skip_sse_sb, int *plane_rate,
     int64_t *plane_sse, int64_t *plane_dist) {
   // Note our transform coeffs are 8 times an orthogonal transform.
   // Hence quantizer step is also 8 times. To get effective quantizer

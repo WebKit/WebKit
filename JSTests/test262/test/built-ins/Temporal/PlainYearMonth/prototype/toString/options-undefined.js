@@ -8,7 +8,27 @@ features: [Temporal]
 ---*/
 
 const calendar = {
-  toString() { return "custom"; }
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  day() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  id: "custom",
+  inLeapYear() {},
+  mergeFields() {},
+  month() {},
+  monthCode() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  year() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
 };
 const yearmonth1 = new Temporal.PlainYearMonth(2000, 5);
 const yearmonth2 = new Temporal.PlainYearMonth(2000, 5, calendar);

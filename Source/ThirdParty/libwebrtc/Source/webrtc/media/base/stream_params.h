@@ -303,8 +303,7 @@ inline bool RemoveStreamBySsrc(StreamParamsVec* streams, uint32_t ssrc) {
   return RemoveStream(
       streams, [&ssrc](const StreamParams& sp) { return sp.has_ssrc(ssrc); });
 }
-inline bool RemoveStreamByIds(StreamParamsVec* streams,
-                              const std::string& id) {
+inline bool RemoveStreamByIds(StreamParamsVec* streams, const std::string& id) {
   return RemoveStream(streams,
                       [&id](const StreamParams& sp) { return sp.id == id; });
 }

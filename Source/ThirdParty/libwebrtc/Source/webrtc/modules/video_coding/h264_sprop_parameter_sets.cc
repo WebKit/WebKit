@@ -33,7 +33,7 @@ bool H264SpropParameterSets::DecodeSprop(const std::string& sprop) {
   size_t separator_pos = sprop.find(',');
   RTC_LOG(LS_INFO) << "Parsing sprop \"" << sprop << "\"";
   if ((separator_pos <= 0) || (separator_pos >= sprop.length() - 1)) {
-    RTC_LOG(LS_WARNING) << "Invalid separator position " << separator_pos
+    RTC_LOG(LS_WARNING) << "Invalid seperator position " << separator_pos
                         << " *" << sprop << "*";
     return false;
   }

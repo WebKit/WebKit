@@ -40,7 +40,10 @@ class VideoRtpReceiverTest : public testing::Test {
         cricket::FakeVideoEngine* engine,
         const cricket::VideoOptions& options,
         TaskQueueBase* network_thread = rtc::Thread::Current())
-        : FakeVideoMediaChannel(engine, options, network_thread) {}
+        : FakeVideoMediaChannel(cricket::MediaChannel::Role::kBoth,
+                                engine,
+                                options,
+                                network_thread) {}
     MOCK_METHOD(void,
                 SetRecordableEncodedFrameCallback,
                 (uint32_t, std::function<void(const RecordableEncodedFrame&)>),
@@ -49,7 +52,11 @@ class VideoRtpReceiverTest : public testing::Test {
                 ClearRecordableEncodedFrameCallback,
                 (uint32_t),
                 (override));
-    MOCK_METHOD(void, GenerateKeyFrame, (uint32_t), (override));
+    MOCK_METHOD(void, RequestRecvKeyFrame, (uint32_t), (override));
+    MOCK_METHOD(void,
+                GenerateSendKeyFrame,
+                (uint32_t, const std::vector<std::string>&),
+                (override));
   };
 
   class MockVideoSink : public rtc::VideoSinkInterface<RecordableEncodedFrame> {
@@ -96,7 +103,7 @@ TEST_F(VideoRtpReceiverTest, SupportsEncodedOutput) {
 }
 
 TEST_F(VideoRtpReceiverTest, GeneratesKeyFrame) {
-  EXPECT_CALL(channel_, GenerateKeyFrame(0));
+  EXPECT_CALL(channel_, RequestRecvKeyFrame(0));
   Source()->GenerateKeyFrame();
 }
 
@@ -105,17 +112,17 @@ TEST_F(VideoRtpReceiverTest,
   // A channel switch without previous call to GenerateKeyFrame shouldn't
   // cause a call to happen on the new channel.
   MockVideoMediaChannel channel2(nullptr, cricket::VideoOptions());
-  EXPECT_CALL(channel_, GenerateKeyFrame).Times(0);
-  EXPECT_CALL(channel2, GenerateKeyFrame).Times(0);
+  EXPECT_CALL(channel_, RequestRecvKeyFrame).Times(0);
+  EXPECT_CALL(channel2, RequestRecvKeyFrame).Times(0);
   SetMediaChannel(&channel2);
   Mock::VerifyAndClearExpectations(&channel2);
 
   // Generate a key frame. When we switch channel next time, we will have to
   // re-generate it as we don't know if it was eventually received
-  EXPECT_CALL(channel2, GenerateKeyFrame).Times(1);
+  EXPECT_CALL(channel2, RequestRecvKeyFrame).Times(1);
   Source()->GenerateKeyFrame();
   MockVideoMediaChannel channel3(nullptr, cricket::VideoOptions());
-  EXPECT_CALL(channel3, GenerateKeyFrame);
+  EXPECT_CALL(channel3, RequestRecvKeyFrame);
   SetMediaChannel(&channel3);
 
   // Switching to a new channel should now not cause calls to GenerateKeyFrame.

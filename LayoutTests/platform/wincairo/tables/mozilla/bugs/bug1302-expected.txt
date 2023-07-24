@@ -4,7 +4,7 @@ layer at (0,0) size 785x972
   RenderBlock {HTML} at (0,0) size 785x972
     RenderBody {BODY} at (8,8) size 769x956
       RenderBlock {DIV} at (0,0) size 769x180
-        RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock {P} at (0,18) size 769x20
           RenderInline {B} at (0,0) size 327x19
             RenderText {#text} at (221,0) size 327x19

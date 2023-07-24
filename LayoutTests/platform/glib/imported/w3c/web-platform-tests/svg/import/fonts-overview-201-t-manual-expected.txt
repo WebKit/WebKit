@@ -26,11 +26,11 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (320,250) size 30x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 30x12
           chunk 1 text run 1 at (320.00,260.00) startOffset 0 endOffset 6 width 30.00: "10,000"
-      RenderSVGText {text} at (110,265) size 201x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 201x19
-          chunk 1 text run 1 at (110.00,280.00) startOffset 0 endOffset 27 width 201.00: "varying units-per-em values"
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.2 $"
+      RenderSVGText {text} at (110,265) size 197x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 197x18
+          chunk 1 text run 1 at (110.00,280.00) startOffset 0 endOffset 27 width 196.20: "varying units-per-em values"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.2 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

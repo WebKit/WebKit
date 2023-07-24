@@ -41,14 +41,14 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     ReleaseRenderingResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
 
 #if PLATFORM(COCOA)
-    PrepareBuffersForDisplay(Vector<WebKit::PrepareBackingStoreBuffersInputData> swapBuffersInput) -> (Vector<WebKit::PrepareBackingStoreBuffersOutputData> swapBuffersOutput) Synchronous NotStreamEncodable NotStreamEncodableReply
+    PrepareBuffersForDisplay(Vector<WebKit::PrepareBackingStoreBuffersInputData> swapBuffersInput) -> (Vector<WebKit::PrepareBackingStoreBuffersOutputData> swapBuffersOutput) Synchronous NotStreamEncodableReply
 #endif
 
     MarkSurfacesVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<WebCore::RenderingResourceIdentifier> renderingResourceIdentifiers)
     FinalizeRenderingUpdate(WebKit::RenderingUpdateID renderingUpdateID)
 
-    MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer, WebKit::RemoteSerializedImageBufferWriteReference destination)
-    MoveToImageBuffer(WebKit::RemoteSerializedImageBufferWriteReference source, WebCore::RenderingResourceIdentifier destinationImageBuffer)
+    MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer)
+    MoveToImageBuffer(WebCore::RenderingResourceIdentifier destinationImageBuffer)
 
     CreateRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::BarcodeDetectorOptions barcodeDetectorOptions) AllowedWhenWaitingForSyncReply
     ReleaseRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply

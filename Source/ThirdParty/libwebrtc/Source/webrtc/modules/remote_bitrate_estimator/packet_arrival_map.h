@@ -31,6 +31,10 @@ namespace webrtc {
 // packets out-of-order.
 class PacketArrivalTimeMap {
  public:
+  struct PacketArrivalTime {
+    Timestamp arrival_time;
+    int64_t sequence_number;
+  };
   // Impossible to request feedback older than what can be represented by 15
   // bits.
   static constexpr int kMaxNumberOfPackets = (1 << 15);
@@ -61,6 +65,21 @@ class PacketArrivalTimeMap {
     RTC_DCHECK_GE(sequence_number, begin_sequence_number());
     RTC_DCHECK_LT(sequence_number, end_sequence_number());
     return arrival_times_[Index(sequence_number)];
+  }
+
+  // Returns timestamp and sequence number of the received packet with sequence
+  // number equal or larger than `sequence_number`. `sequence_number` must be in
+  // range [begin_sequence_number, end_sequence_number).
+  PacketArrivalTime FindNextAtOrAfter(int64_t sequence_number) const {
+    RTC_DCHECK_GE(sequence_number, begin_sequence_number());
+    RTC_DCHECK_LT(sequence_number, end_sequence_number());
+    while (true) {
+      Timestamp t = arrival_times_[Index(sequence_number)];
+      if (t >= Timestamp::Zero()) {
+        return {.arrival_time = t, .sequence_number = sequence_number};
+      }
+      ++sequence_number;
+    }
   }
 
   // Clamps `sequence_number` between [begin_sequence_number,
@@ -94,8 +113,6 @@ class PacketArrivalTimeMap {
 
   void SetNotReceived(int64_t begin_sequence_number_inclusive,
                       int64_t end_sequence_number_exclusive);
-
-  void TrimLeadingNotReceivedEntries();
 
   // Adjust capacity to match new_size, may reduce capacity.
   // On return guarantees capacity >= new_size.

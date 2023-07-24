@@ -3266,6 +3266,11 @@ llintOpWithMetadata(op_iterator_open, OpIteratorOpen, macro (size, get, dispatch
     end
 
     metadata(t5, t0)
+    get(m_iterable, t0)
+    btqnz t0, notCellMask, .done
+    loadi JSCell::m_structureID[t0], t3
+    storei t3, OpIteratorOpen::Metadata::m_arrayProfile.m_lastSeenStructureID[t5]
+    .done:
     callHelper(op_iterator_open, _llint_slow_path_iterator_open_call, OpIteratorOpen, m_iteratorProfile, m_iterator, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, size, gotoGetByIdCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
 
 .getByIdStart:
@@ -3606,4 +3611,12 @@ op(fuzzer_return_early_from_loop_hint, macro ()
     loadp CodeBlock::m_globalObject[t0], t0
     loadp JSGlobalObject::m_globalThis[t0], t0
     doReturn()
+end)
+
+op(loop_osr_entry_gate, macro ()
+    if ARM64E
+        jmp r0, JSEntryPtrTag
+    else
+        crash() # Should never reach here.
+    end
 end)

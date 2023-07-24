@@ -56,6 +56,7 @@
 
 #include <openssl/bn.h>
 
+#include <assert.h>
 #include <limits.h>
 #include <string.h>
 
@@ -66,11 +67,15 @@
 #include "../delocate.h"
 
 
+// BN_MAX_WORDS is the maximum number of words allowed in a |BIGNUM|. It is
+// sized so byte and bit counts of a |BIGNUM| always fit in |int|, with room to
+// spare.
+#define BN_MAX_WORDS (INT_MAX / (4 * BN_BITS2))
+
 BIGNUM *BN_new(void) {
   BIGNUM *bn = OPENSSL_malloc(sizeof(BIGNUM));
 
   if (bn == NULL) {
-    OPENSSL_PUT_ERROR(BN, ERR_R_MALLOC_FAILURE);
     return NULL;
   }
 
@@ -79,6 +84,8 @@ BIGNUM *BN_new(void) {
 
   return bn;
 }
+
+BIGNUM *BN_secure_new(void) { return BN_new(); }
 
 void BN_init(BIGNUM *bn) {
   OPENSSL_memset(bn, 0, sizeof(BIGNUM));
@@ -289,8 +296,9 @@ void bn_set_static_words(BIGNUM *bn, const BN_ULONG *words, size_t num) {
   }
   bn->d = (BN_ULONG *)words;
 
-  bn->width = num;
-  bn->dmax = num;
+  assert(num <= BN_MAX_WORDS);
+  bn->width = (int)num;
+  bn->dmax = (int)num;
   bn->neg = 0;
   bn->flags |= BN_FLG_STATIC_DATA;
 }
@@ -343,7 +351,7 @@ int bn_wexpand(BIGNUM *bn, size_t words) {
     return 1;
   }
 
-  if (words > (INT_MAX / (4 * BN_BITS2))) {
+  if (words > BN_MAX_WORDS) {
     OPENSSL_PUT_ERROR(BN, BN_R_BIGNUM_TOO_LONG);
     return 0;
   }
@@ -355,7 +363,6 @@ int bn_wexpand(BIGNUM *bn, size_t words) {
 
   a = OPENSSL_malloc(sizeof(BN_ULONG) * words);
   if (a == NULL) {
-    OPENSSL_PUT_ERROR(BN, ERR_R_MALLOC_FAILURE);
     return 0;
   }
 
@@ -377,30 +384,13 @@ int bn_expand(BIGNUM *bn, size_t bits) {
 }
 
 int bn_resize_words(BIGNUM *bn, size_t words) {
-#if defined(OPENSSL_PPC64LE)
-  // This is a workaround for a miscompilation bug in Clang 7.0.1 on POWER.
-  // The unittests catch the miscompilation, if it occurs, and it manifests
-  // as a crash in |bn_fits_in_words|.
-  //
-  // The bug only triggers if building in FIPS mode and with -O3. Clang 8.0.1
-  // has the same bug but this workaround is not effective there---I've not
-  // been able to find a workaround for 8.0.1.
-  //
-  // At the time of writing (2019-08-08), Clang git does *not* have this bug
-  // and does not need this workaroud. The current git version should go on to
-  // be Clang 10 thus, once we can depend on that, this can be removed.
-  if (value_barrier_w((size_t)bn->width == words)) {
-    return 1;
-  }
-#endif
-
   if ((size_t)bn->width <= words) {
     if (!bn_wexpand(bn, words)) {
       return 0;
     }
     OPENSSL_memset(bn->d + bn->width, 0,
                    (words - bn->width) * sizeof(BN_ULONG));
-    bn->width = words;
+    bn->width = (int)words;
     return 1;
   }
 
@@ -409,15 +399,15 @@ int bn_resize_words(BIGNUM *bn, size_t words) {
     OPENSSL_PUT_ERROR(BN, BN_R_BIGNUM_TOO_LONG);
     return 0;
   }
-  bn->width = words;
+  bn->width = (int)words;
   return 1;
 }
 
 void bn_select_words(BN_ULONG *r, BN_ULONG mask, const BN_ULONG *a,
                      const BN_ULONG *b, size_t num) {
   for (size_t i = 0; i < num; i++) {
-    OPENSSL_STATIC_ASSERT(sizeof(BN_ULONG) <= sizeof(crypto_word_t),
-                          "crypto_word_t is too small");
+    static_assert(sizeof(BN_ULONG) <= sizeof(crypto_word_t),
+                  "crypto_word_t is too small");
     r[i] = constant_time_select_w(mask, a[i], b[i]);
   }
 }

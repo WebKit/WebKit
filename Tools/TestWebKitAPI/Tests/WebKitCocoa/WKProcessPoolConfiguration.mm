@@ -49,7 +49,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     [configuration setPresentingApplicationPID:1000];
     [configuration setProcessSwapsOnNavigation:YES];
     [configuration setAlwaysKeepAndReuseSwappedProcesses:YES];
-    [configuration setProcessSwapsOnWindowOpenWithOpener:YES];
     [configuration setPrewarmsProcessesAutomatically:YES];
     [configuration setPageCacheEnabled:YES];
 
@@ -69,7 +68,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     EXPECT_EQ([configuration presentingApplicationPID], [copy presentingApplicationPID]);
     EXPECT_EQ([configuration processSwapsOnNavigation], [copy processSwapsOnNavigation]);
     EXPECT_EQ([configuration alwaysKeepAndReuseSwappedProcesses], [copy alwaysKeepAndReuseSwappedProcesses]);
-    EXPECT_EQ([configuration processSwapsOnWindowOpenWithOpener], [copy processSwapsOnWindowOpenWithOpener]);
     EXPECT_EQ([configuration prewarmsProcessesAutomatically], [copy prewarmsProcessesAutomatically]);
     EXPECT_EQ([configuration pageCacheEnabled], [copy pageCacheEnabled]);
 }

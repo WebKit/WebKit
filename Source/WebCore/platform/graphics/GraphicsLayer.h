@@ -35,6 +35,7 @@
 #include "GraphicsLayerClient.h"
 #include "HTMLMediaElementIdentifier.h"
 #include "LayerHostingContextIdentifier.h"
+#include "MediaPlayerEnums.h"
 #include "Path.h"
 #include "PlatformLayer.h"
 #include "PlatformLayerIdentifier.h"
@@ -499,6 +500,10 @@ public:
     bool contentsRectClipsDescendants() const { return m_contentsRectClipsDescendants; }
     virtual void setContentsRectClipsDescendants(bool b) { m_contentsRectClipsDescendants = b; }
 
+    // Used to lay out video contents within a video layer.
+    MediaPlayerVideoGravity videoGravity() const;
+    WEBCORE_EXPORT virtual void setVideoGravity(MediaPlayerVideoGravity);
+
     Path shapeLayerPath() const;
     WEBCORE_EXPORT virtual void setShapeLayerPath(const Path&);
 
@@ -545,7 +550,7 @@ public:
     virtual void setContentsToPlatformLayerHost(LayerHostingContextIdentifier) { }
     virtual void setContentsToVideoElement(HTMLVideoElement&, ContentsLayerPurpose) { }
     virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);
-    WEBCORE_EXPORT virtual RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate();
+    WEBCORE_EXPORT virtual RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate* existing);
 #if ENABLE(MODEL_ELEMENT)
     enum class ModelInteraction : uint8_t { Enabled, Disabled };
     virtual void setContentsToModel(RefPtr<Model>&&, ModelInteraction) { }
@@ -816,6 +821,7 @@ protected:
 
     EventRegion m_eventRegion;
 #if USE(CA)
+    MediaPlayerVideoGravity m_videoGravity { MediaPlayerVideoGravity::ResizeAspect };
     WindRule m_shapeLayerWindRule { WindRule::NonZero };
     Path m_shapeLayerPath;
 #endif

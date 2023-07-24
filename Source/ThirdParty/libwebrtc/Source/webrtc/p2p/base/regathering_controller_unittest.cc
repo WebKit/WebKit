@@ -25,6 +25,7 @@
 #include "rtc_base/socket_address.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
+#include "test/scoped_key_value_config.h"
 
 namespace {
 
@@ -39,6 +40,7 @@ const rtc::SocketAddress kTurnUdpIntAddr("99.99.99.3",
 const cricket::RelayCredentials kRelayCredentials("test", "test");
 const char kIceUfrag[] = "UF00";
 const char kIcePwd[] = "TESTICEPWD00000000000000";
+constexpr uint64_t kTiebreakerDefault = 44444;
 
 }  // namespace
 
@@ -55,7 +57,9 @@ class RegatheringControllerTest : public ::testing::Test,
             std::make_unique<rtc::BasicPacketSocketFactory>(vss_.get())),
         allocator_(std::make_unique<cricket::FakePortAllocator>(
             rtc::Thread::Current(),
-            packet_socket_factory_.get())) {
+            packet_socket_factory_.get(),
+            &field_trials_)) {
+    allocator_->SetIceTiebreaker(kTiebreakerDefault);
     BasicRegatheringController::Config regathering_config;
     regathering_config.regather_on_failed_networks_interval = 0;
     regathering_controller_.reset(new BasicRegatheringController(
@@ -107,6 +111,7 @@ class RegatheringControllerTest : public ::testing::Test,
   }
 
  private:
+  webrtc::test::ScopedKeyValueConfig field_trials_;
   std::unique_ptr<rtc::VirtualSocketServer> vss_;
   rtc::AutoSocketServerThread thread_;
   std::unique_ptr<cricket::IceTransportInternal> ice_transport_;

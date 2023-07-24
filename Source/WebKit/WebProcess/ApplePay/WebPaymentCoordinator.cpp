@@ -82,7 +82,7 @@ bool WebPaymentCoordinator::canMakePayments()
     auto now = MonotonicTime::now();
     if (now - m_timestampOfLastCanMakePaymentsRequest > 1_min || !m_lastCanMakePaymentsResult) {
         auto sendResult = sendSync(Messages::WebPaymentCoordinatorProxy::CanMakePayments());
-        if (!sendResult)
+        if (!sendResult.succeeded())
             return false;
         auto [canMakePayments] = sendResult.takeReply();
 

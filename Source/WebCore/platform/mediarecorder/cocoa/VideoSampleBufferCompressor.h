@@ -68,6 +68,7 @@ private:
 
     RetainPtr<CMBufferQueueRef> m_outputBufferQueue;
     RetainPtr<VTCompressionSessionRef> m_vtSession;
+    CMBufferQueueTriggerToken m_triggerToken;
 
     bool m_isEncoding { false };
     float m_maxKeyFrameIntervalDuration { 2.0 };

@@ -62,22 +62,22 @@ WebProcessCache::WebProcessCache(WebProcessPool& processPool)
 bool WebProcessCache::canCacheProcess(WebProcessProxy& process) const
 {
     if (!capacity()) {
-        WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because the cache has no capacity", process.processIdentifier());
+        WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because the cache has no capacity", process.processID());
         return false;
     }
 
     if (process.registrableDomain().isEmpty()) {
-        WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because it does not have an associated registrable domain", process.processIdentifier());
+        WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because it does not have an associated registrable domain", process.processID());
         return false;
     }
 
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-        WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because we are under memory pressure", process.processIdentifier());
+        WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because we are under memory pressure", process.processID());
         return false;
     }
 
     if (!process.websiteDataStore()) {
-        WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because this session has been destroyed", process.processIdentifier());
+        WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because this session has been destroyed", process.processID());
         return false;
     }
 
@@ -99,14 +99,14 @@ bool WebProcessCache::addProcessIfPossible(Ref<WebProcessProxy>&& process)
     uint64_t requestIdentifier = generateAddRequestIdentifier();
     m_pendingAddRequests.add(requestIdentifier, makeUnique<CachedProcess>(process.copyRef()));
 
-    WEBPROCESSCACHE_RELEASE_LOG("addProcessIfPossible: Checking if process is responsive before caching it", process->processIdentifier());
+    WEBPROCESSCACHE_RELEASE_LOG("addProcessIfPossible: Checking if process is responsive before caching it", process->processID());
     process->isResponsive([this, processPool = WTFMove(protectedProcessPool), process, requestIdentifier](bool isResponsive) {
         auto cachedProcess = m_pendingAddRequests.take(requestIdentifier);
         if (!cachedProcess)
             return;
 
         if (!isResponsive) {
-            WEBPROCESSCACHE_RELEASE_LOG_ERROR("addProcessIfPossible(): Not caching process because it is not responsive", cachedProcess->process().processIdentifier());
+            WEBPROCESSCACHE_RELEASE_LOG_ERROR("addProcessIfPossible(): Not caching process because it is not responsive", cachedProcess->process().processID());
             return;
         }
         processPool->webProcessCache().addProcess(WTFMove(cachedProcess));
@@ -128,11 +128,11 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
     RELEASE_ASSERT(!registrableDomain.isEmpty());
 
     if (auto previousProcess = m_processesPerRegistrableDomain.take(registrableDomain))
-        WEBPROCESSCACHE_RELEASE_LOG("addProcess: Evicting process from WebProcess cache because a new process was added for the same domain", previousProcess->process().processIdentifier());
+        WEBPROCESSCACHE_RELEASE_LOG("addProcess: Evicting process from WebProcess cache because a new process was added for the same domain", previousProcess->process().processID());
 
     while (m_processesPerRegistrableDomain.size() >= capacity()) {
         auto it = m_processesPerRegistrableDomain.random();
-        WEBPROCESSCACHE_RELEASE_LOG("addProcess: Evicting process from WebProcess cache because capacity was reached", it->value->process().processIdentifier());
+        WEBPROCESSCACHE_RELEASE_LOG("addProcess: Evicting process from WebProcess cache because capacity was reached", it->value->process().processID());
         m_processesPerRegistrableDomain.remove(it);
     }
 
@@ -140,7 +140,7 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
     cachedProcess->startSuspensionTimer();
 #endif
 
-    WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added process to WebProcess cache (size=%u, capacity=%u)", cachedProcess->process().processIdentifier(), size() + 1, capacity());
+    WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added process to WebProcess cache (size=%u, capacity=%u)", cachedProcess->process().processID(), size() + 1, capacity());
     m_processesPerRegistrableDomain.add(registrableDomain, WTFMove(cachedProcess));
 
     return true;
@@ -160,7 +160,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
 
     auto process = it->value->takeProcess();
     m_processesPerRegistrableDomain.remove(it);
-    WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d)", process->processIdentifier(), size(), capacity(), process->wasTerminated());
+    WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d)", process->processID(), size(), capacity(), process->wasTerminated());
 
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
@@ -216,7 +216,7 @@ void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
     for (auto& pair : m_processesPerRegistrableDomain) {
         auto* dataStore = pair.value->process().websiteDataStore();
         if (!dataStore || dataStore->sessionID() == sessionID) {
-            WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting process because its session was destroyed", pair.value->process().processIdentifier());
+            WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting process because its session was destroyed", pair.value->process().processID());
             keysToRemove.append(pair.key);
         }
     }
@@ -227,7 +227,7 @@ void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
     for (auto& pair : m_pendingAddRequests) {
         auto* dataStore = pair.value->process().websiteDataStore();
         if (!dataStore || dataStore->sessionID() == sessionID) {
-            WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting process because its session was destroyed", pair.value->process().processIdentifier());
+            WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting process because its session was destroyed", pair.value->process().processID());
             pendingRequestsToRemove.append(pair.key);
         }
     }
@@ -247,7 +247,7 @@ void WebProcessCache::setApplicationIsActive(bool isActive)
 void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProcess shouldShutDownProcess)
 {
     RELEASE_ASSERT(!process.registrableDomain().isEmpty());
-    WEBPROCESSCACHE_RELEASE_LOG("removeProcess: Evicting process from WebProcess cache because it expired", process.processIdentifier());
+    WEBPROCESSCACHE_RELEASE_LOG("removeProcess: Evicting process from WebProcess cache because it expired", process.processID());
 
     std::unique_ptr<CachedProcess> cachedProcess;
     auto it = m_processesPerRegistrableDomain.find(process.registrableDomain());

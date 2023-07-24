@@ -39,18 +39,13 @@ public:
 
     void clean();
 
-    size_t elementSize() { return m_formData ? m_formData->elements().size() : 0; }
-
     const Vector<uint8_t>* getPostData();
-    bool shouldUseChunkTransfer();
     unsigned long long totalSize();
 
     std::optional<size_t> read(char*, size_t);
     unsigned long long totalReadSize() { return m_totalReadSize; }
 
 private:
-    void computeContentLength();
-
     std::optional<size_t> readFromFile(const FormDataElement::EncodedFileData&, char*, size_t);
     std::optional<size_t> readFromData(const Vector<uint8_t>&, char*, size_t);
 
@@ -58,7 +53,6 @@ private:
 
     std::unique_ptr<Vector<uint8_t>> m_postData;
     bool m_isContentLengthUpdated { false };
-    bool m_shouldUseChunkTransfer { false };
     unsigned long long m_totalSize { 0 };
     unsigned long long m_totalReadSize { 0 };
 

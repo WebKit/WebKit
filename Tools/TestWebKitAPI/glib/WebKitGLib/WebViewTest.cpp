@@ -273,6 +273,15 @@ void WebViewTest::assertFileIsCreated(const char *filename)
     g_assert_true(g_file_test(filename, G_FILE_TEST_EXISTS));
 }
 
+void WebViewTest::assertFileIsNotCreated(const char* filename)
+{
+    constexpr double intervalInSeconds = 0.25;
+    unsigned tries = 4;
+    while (!g_file_test(filename, G_FILE_TEST_EXISTS) && --tries)
+        wait(intervalInSeconds);
+    g_assert_false(g_file_test(filename, G_FILE_TEST_EXISTS));
+}
+
 void WebViewTest::assertJavaScriptBecomesTrue(const char* javascript)
 {
     unsigned triesCount = 4;

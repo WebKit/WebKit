@@ -4,7 +4,7 @@ layer at (0,0) size 800x104
   RenderBlock {HTML} at (0,0) size 800x104
     RenderBody {BODY} at (8,8) size 784x88
       RenderBR {BR} at (195,13) size 0x17
-      RenderTextControl {INPUT} at (2,46) size 191x40 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (2,46) size 191x40 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderFlexibleBox {DIV} at (3,3) size 185x34
           RenderBlock {DIV} at (0,8) size 119x18
       RenderText {#text} at (0,0) size 0x0
@@ -13,7 +13,7 @@ layer at (13,66) size 119x17
     RenderText {#text} at (0,0) size 18x17
       text run at (0,0) width 18: "10"
 layer at (10,10) size 191x40
-  RenderTextControl {INPUT} at (2,2) size 191x40 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+  RenderTextControl {INPUT} at (2,2) size 191x40 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
     RenderFlexibleBox {DIV} at (3,3) size 185x34
       RenderBlock {DIV} at (0,8) size 119x18
 layer at (13,22) size 119x17

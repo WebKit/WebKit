@@ -45,14 +45,16 @@ namespace WebCore {
 
 using namespace Inspector;
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebConsoleAgentAdditions.cpp>)
-#include <WebKitAdditions/WebConsoleAgentAdditions.cpp>
-#else
-static String networkConnectionIntegrityErrorMessage(const ResourceError&)
+static String blockedTrackerErrorMessage(const ResourceError& error)
 {
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (error.blockedKnownTracker())
+        return "Blocked connection to known tracker"_s;
+#else
+    UNUSED_PARAM(error);
+#endif
     return { };
 }
-#endif
 
 WebConsoleAgent::WebConsoleAgent(WebAgentContext& context)
     : InspectorConsoleAgent(context)
@@ -88,7 +90,7 @@ void WebConsoleAgent::didFailLoading(ResourceLoaderIdentifier requestIdentifier,
         return;
 
     auto level = MessageLevel::Error;
-    auto message = networkConnectionIntegrityErrorMessage(error);
+    auto message = blockedTrackerErrorMessage(error);
     if (message.isEmpty())
         message = makeString("Failed to load resource", error.localizedDescription().isEmpty() ? "" : ": ", error.localizedDescription());
     else

@@ -16,9 +16,6 @@
 //// General Vulkan expectations
 ////
 
-// No known implementation supports STORAGE_TEXEL_BUFFER support for RGB32 formats
-3573 VULKAN : KHR-GLES31.core.texture_buffer.texture_buffer_texture_buffer_range = SKIP
-
 // Failures on nvidia
 5579 VULKAN NVIDIA : KHR-GLES31.core.geometry_shader.adjacency.adjacency_indiced_triangle_strip = FAIL
 5579 VULKAN NVIDIA : KHR-GLES31.core.geometry_shader.adjacency.adjacency_non_indiced_triangle_strip = FAIL
@@ -66,19 +63,16 @@
 4128 VULKAN NVIDIA : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength-fs-*-matR* = SKIP
 
 // https://gitlab.khronos.org/Tracker/vk-gl-cts/-/issues/4292
-5978 : KHR-GLES31.core.texture_border_clamp.Texture2DDC16Linear = SKIP
-5978 : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
+5978 SWIFTSHADER : KHR-GLES31.core.texture_border_clamp.Texture2DDC16Linear = SKIP
+5978 SWIFTSHADER : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
+5978 VULKAN WIN NVIDIA : KHR-GLES31.core.texture_border_clamp.Texture2DDC16Linear = SKIP
+5978 VULKAN WIN NVIDIA : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
+5978 VULKAN PIXEL6 : KHR-GLES31.core.texture_border_clamp.Texture2DDC16Linear = SKIP
+5978 VULKAN PIXEL6 : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
 
 ////
 //// SwANGLE expectations
 ////
-
-////
-//// Android (i.e. Pixel*) Vulkan expectations
-////
-
-// Crashes on Android
-4107 VULKAN ANDROID : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength* = SKIP
 
 // Failing on Android with SwiftShader
 4300 SWIFTSHADER ANDROID : KHR-GLES31.core.shader_integer_mix.mix-bvec4 = FAIL
@@ -103,6 +97,10 @@
 
 // Test timeout due to it loops so many glTexStorageMultisample calls
 5806 VULKAN NVIDIA : KHR-GLES31.core.texture_storage_multisample.APIDependencies.fbo_with_renderbuffer_and_multisample_texture_attachments_with_different_number_of_samples = SKIP
+
+////
+//// Android (i.e. Pixel*) Vulkan expectations
+////
 
 // New test in VK-GL-CTS roll 2022-08-19
 7592 ANDROID VULKAN : KHR-GLES31.core.shader_atomic_counters.negative-large-offset = FAIL
@@ -258,8 +256,8 @@
 
 // Slow tests
 5755 SWIFTSHADER : KHR-GLES31.core.arrays_of_arrays.SizedDeclarationsPrimitive = TIMEOUT
-6295 : KHR-GLES31.core.arrays_of_arrays.ConstructorsAndUnsizedDeclConstructors1 = TIMEOUT
-6295 : KHR-GLES31.core.arrays_of_arrays.ConstructorsAndUnsizedDeclConstructorSizing1 = TIMEOUT
+6295 SWIFTSHADER : KHR-GLES31.core.arrays_of_arrays.ConstructorsAndUnsizedDeclConstructors1 = TIMEOUT
+6295 SWIFTSHADER : KHR-GLES31.core.arrays_of_arrays.ConstructorsAndUnsizedDeclConstructorSizing1 = TIMEOUT
 
 // ASAN Test bugs.
 6678 ASAN : KHR-GLES31.core.draw_indirect.negative-noVAO-arrays = SKIP
@@ -274,5 +272,19 @@
 6678 UBSAN : KHR-GLES31.core.shader_bitfield_operation.bitfield* = SKIP
 6729 UBSAN : KHR-GLES31.core.compute_shader.shared-max = SKIP
 
-// Failure since VK-GL-CTS roll (2023-02-28)
-8045 : KHR-GLES31.shaders.negative.non_precision_qualifiers_in_struct_members = SKIP
+// Failure since VK-GL-CTS roll (2023-05-03)
+8166 WIN SWIFTSHADER : KHR-GLES31.core.texture_buffer.texture_buffer_errors = FAIL
+
+// Samsung Galaxy S23
+8157 GALAXYS23 VULKAN : KHR-GLES31.core.arrays_of_arrays.InteractionFunctionCalls2 = SKIP
+8157 GALAXYS23 VULKAN : KHR-GLES31.core.blend_equation_advanced.* = SKIP
+8157 GALAXYS23 VULKAN : KHR-GLES31.core.framebuffer_no_attachments.render = SKIP
+8157 GALAXYS23 VULKAN : KHR-GLES31.core.geometry_shader.layered_rendering* = SKIP
+8157 GALAXYS23 VULKAN : KHR-GLES31.core.geometry_shader.limits.max_input_components = SKIP
+8157 GALAXYS23 VULKAN : KHR-GLES31.core.shader_bitfield_operation.* = SKIP
+8157 GALAXYS23 VULKAN : KHR-GLES31.core.texture_cube_map_array.color_depth_attachments = SKIP
+8157 GALAXYS23 VULKAN : KHR-GLES31.core.texture_storage_multisample.FunctionalTests.blitting_multisampled_depth_attachment = SKIP
+
+// Mali G710
+8212 MALIG710 VULKAN : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = FAIL
+8212 MALIG710 VULKAN : KHR-GLES31.core.texture_border_clamp.Texture2DDC16Linear = FAIL

@@ -122,7 +122,7 @@ public:
 
     // Only some element types can be disabled: https://html.spec.whatwg.org/multipage/scripting.html#concept-element-disabled
     bool canBeActuallyDisabled() const;
-    bool isActuallyDisabled() const;
+    virtual bool isActuallyDisabled() const;
 
 #if ENABLE(AUTOCAPITALIZE)
     WEBCORE_EXPORT virtual AutocapitalizeType autocapitalizeType() const;
@@ -152,7 +152,7 @@ public:
     ExceptionOr<void> showPopover(const HTMLFormControlElement* = nullptr);
     ExceptionOr<void> hidePopover();
     ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
-    ExceptionOr<void> togglePopover(std::optional<bool> force);
+    ExceptionOr<bool> togglePopover(std::optional<bool> force);
 
     PopoverState popoverState() const;
     const AtomString& popover() const;
@@ -191,6 +191,7 @@ protected:
     unsigned parseBorderWidthAttribute(const AtomString&) const;
 
     void childrenChanged(const ChildChange&) override;
+    void updateTextDirectionalityAfterTelephoneInputTypeChange();
     void updateEffectiveDirectionalityOfDirAuto();
 
     using EventHandlerNameMap = HashMap<AtomStringImpl*, AtomString>;

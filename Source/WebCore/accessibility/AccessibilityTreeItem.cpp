@@ -40,12 +40,22 @@ AccessibilityTreeItem::AccessibilityTreeItem(RenderObject* renderer)
     : AccessibilityRenderObject(renderer)
 {
 }
-    
+
+AccessibilityTreeItem::AccessibilityTreeItem(Node& node)
+    : AccessibilityRenderObject(node)
+{
+}
+
 AccessibilityTreeItem::~AccessibilityTreeItem() = default;
     
 Ref<AccessibilityTreeItem> AccessibilityTreeItem::create(RenderObject* renderer)
 {
     return adoptRef(*new AccessibilityTreeItem(renderer));
+}
+
+Ref<AccessibilityTreeItem> AccessibilityTreeItem::create(Node& node)
+{
+    return adoptRef(*new AccessibilityTreeItem(node));
 }
 
 bool AccessibilityTreeItem::supportsCheckedState() const
@@ -55,7 +65,6 @@ bool AccessibilityTreeItem::supportsCheckedState() const
 
 AccessibilityRole AccessibilityTreeItem::determineAccessibilityRole()
 {
-    
     // Walk the parent chain looking for a parent that is a tree. A treeitem is
     // only considered valid if it is in a tree.
     AccessibilityObject* parent = nullptr;

@@ -21,10 +21,22 @@
 #include "modules/desktop_capture/mouse_cursor.h"
 #include "modules/desktop_capture/mouse_cursor_monitor.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 namespace webrtc {
 
 namespace {
+
+// Global reference counter which is increased when a DesktopFrameWithCursor is
+// created and decreased when the same object is destructed. Only used for
+// debugging purposes to ensure that we never end up in state where
+// `g_ref_count` is larger than one since that could indicate a flickering
+// cursor (cursor-less version of the frame is not restored properly and it can
+// can lead to visible trails of old cursors).
+// See https://crbug.com/1421656#c99 for more details.
+int g_ref_count = 0;
+
+uint64_t g_num_flicker_warnings = 0;
 
 // Helper function that blends one image into another. Source image must be
 // pre-multiplied with the alpha channel. Destination is assumed to be opaque.
@@ -95,6 +107,7 @@ DesktopFrameWithCursor::DesktopFrameWithCursor(
                    frame->data(),
                    frame->shared_memory()),
       original_frame_(std::move(frame)) {
+  ++g_ref_count;
   MoveFrameInfoFrom(original_frame_.get());
 
   DesktopVector image_pos = position.subtract(cursor.hotspot());
@@ -137,6 +150,11 @@ DesktopFrameWithCursor::DesktopFrameWithCursor(
 }
 
 DesktopFrameWithCursor::~DesktopFrameWithCursor() {
+  if (--g_ref_count > 0) {
+    ++g_num_flicker_warnings;
+    RTC_LOG(LS_WARNING) << "Cursor might be flickering; number of warnings="
+                        << g_num_flicker_warnings;
+  }
   // Restore original content of the frame.
   if (restore_frame_) {
     DesktopRect target_rect = DesktopRect::MakeSize(restore_frame_->size());
@@ -177,6 +195,10 @@ void DesktopAndCursorComposer::Start(DesktopCapturer::Callback* callback) {
   desktop_capturer_->Start(this);
 }
 
+void DesktopAndCursorComposer::SetMaxFrameRate(uint32_t max_frame_rate) {
+  desktop_capturer_->SetMaxFrameRate(max_frame_rate);
+}
+
 void DesktopAndCursorComposer::SetSharedMemoryFactory(
     std::unique_ptr<SharedMemoryFactory> shared_memory_factory) {
   desktop_capturer_->SetSharedMemoryFactory(std::move(shared_memory_factory));
@@ -213,6 +235,10 @@ DesktopCaptureMetadata DesktopAndCursorComposer::GetMetadata() {
   return desktop_capturer_->GetMetadata();
 }
 #endif  // defined(WEBRTC_USE_GIO)
+
+void DesktopAndCursorComposer::OnFrameCaptureStart() {
+  callback_->OnFrameCaptureStart();
+}
 
 void DesktopAndCursorComposer::OnCaptureResult(
     DesktopCapturer::Result result,

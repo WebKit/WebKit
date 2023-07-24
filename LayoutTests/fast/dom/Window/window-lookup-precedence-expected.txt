@@ -373,8 +373,6 @@ PASS win['onresize'] is null
 PASS win['onresize'] is null
 PASS win['onscroll'] is null
 PASS win['onscroll'] is null
-PASS win['onsearch'] is null
-PASS win['onsearch'] is null
 PASS win['onselect'] is null
 PASS win['onselect'] is null
 PASS win['onsubmit'] is null

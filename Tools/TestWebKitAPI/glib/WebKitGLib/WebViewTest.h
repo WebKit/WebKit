@@ -54,6 +54,7 @@ public:
     void waitUntilTitleChanged();
     void waitUntilIsWebProcessResponsiveChanged();
     void assertFileIsCreated(const char*);
+    void assertFileIsNotCreated(const char*);
     void assertJavaScriptBecomesTrue(const char*);
     void resizeView(int width, int height);
     void hideView();

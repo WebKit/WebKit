@@ -165,6 +165,16 @@ class ScalabilityStructureL3T1 : public ScalabilityStructureFullSvc {
   FrameDependencyStructure DependencyStructure() const override;
 };
 
+// https://www.w3.org/TR/webrtc-svc/#L3T2*
+class ScalabilityStructureL3T2 : public ScalabilityStructureFullSvc {
+ public:
+  explicit ScalabilityStructureL3T2(ScalingFactor resolution_factor = {})
+      : ScalabilityStructureFullSvc(3, 2, resolution_factor) {}
+  ~ScalabilityStructureL3T2() override = default;
+
+  FrameDependencyStructure DependencyStructure() const override;
+};
+
 // https://www.w3.org/TR/webrtc-svc/#L3T3*
 class ScalabilityStructureL3T3 : public ScalabilityStructureFullSvc {
  public:

@@ -54,11 +54,11 @@ extern NSString * const kUserAgentChangedNotificationName;
 @property (nonatomic, readonly) BOOL appleColorFilterEnabled;
 @property (nonatomic, readonly) BOOL punchOutWhiteBackgroundsInDarkMode;
 @property (nonatomic, readonly) BOOL useSystemAppearance;
+@property (nonatomic, readonly) BOOL dataDetectorsEnabled;
 @property (nonatomic, readonly) BOOL useMockCaptureDevices;
 @property (nonatomic, readonly) BOOL loadsAllSiteIcons;
 @property (nonatomic, readonly) BOOL usesGameControllerFramework;
 @property (nonatomic, readonly) BOOL networkCacheSpeculativeRevalidationDisabled;
-@property (nonatomic, readonly) BOOL processSwapOnWindowOpenWithOpenerEnabled;
 
 @property (nonatomic, readonly) NSString *defaultURL;
 @property (nonatomic, readonly) NSString *customUserAgent;

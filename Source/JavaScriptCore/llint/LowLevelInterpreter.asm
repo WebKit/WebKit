@@ -101,8 +101,7 @@
 #  - a3, t2, t3, t4 and t5 are never return registers; t0, t1, a0, a1 and a2
 #  can be return registers.
 #
-#  - t4 and t5 are never argument registers, t3 can only be a3, t1 can only be
-#  a1; but t0 and t2 can be either a0 or a2.
+#  - t3 can only be a3, t1 can only be a1; but t0 and t2 can be either a0 or a2.
 #
 #  - There are callee-save registers named csr0, csr1, ... csrN.
 #  The last three csr registers are used used to store the PC base and
@@ -281,6 +280,7 @@ const VMTrapsAsyncEvents = constexpr VMTraps::AsyncEvents
 # - We use a pair of registers to represent the PC: one register for the
 #   base of the bytecodes, and one register for the index.
 # - The PC base (or PB for short) must be stored in a callee-save register.
+# - The metadata (PM / pointer to metadata) must be stored in a callee-save register.
 # - C calls are still given the Instruction* rather than the PC index.
 #   This requires an add before the call, and a sub after.
 if JSVALUE64
@@ -716,6 +716,8 @@ if X86_64 or ARM64 or ARM64E or ARMv7
         push t0, t1
         push t2, t3
         push t4, t5
+        push t6, t7
+        push ws0, ws1
         if ARM64 or ARM64E
             push csr0, csr1
             push csr2, csr3
@@ -738,6 +740,8 @@ if X86_64 or ARM64 or ARM64E or ARMv7
         elsif ARMv7
             pop csr1, csr0
         end
+        pop ws1, ws0
+        pop t7, t6
         pop t5, t4
         pop t3, t2
         pop t1, t0
@@ -2824,6 +2828,8 @@ _wasm_trampoline_wasm_tail_call_indirect_wide32:
 end # WEBASSEMBLY and not X86_64_WIN
 
 include? LowLevelInterpreterAdditions
+
+include InPlaceInterpreter
 
 global _llintPCRangeEnd
 _llintPCRangeEnd:

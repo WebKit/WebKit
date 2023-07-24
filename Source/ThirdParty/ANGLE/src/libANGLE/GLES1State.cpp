@@ -34,6 +34,13 @@ LightParameters::LightParameters(const LightParameters &other) = default;
 
 FogParameters::FogParameters() = default;
 
+AlphaTestParameters::AlphaTestParameters() = default;
+
+bool AlphaTestParameters::operator!=(const AlphaTestParameters &other) const
+{
+    return func != other.func || ref != other.ref;
+}
+
 TextureEnvironmentParameters::TextureEnvironmentParameters() = default;
 
 TextureEnvironmentParameters::TextureEnvironmentParameters(
@@ -75,8 +82,6 @@ GLES1State::GLES1State()
       mClientActiveTexture(0),
       mMatrixMode(MatrixType::Modelview),
       mShadeModel(ShadingModel::Smooth),
-      mAlphaTestFunc(AlphaTestFunc::AlwaysPass),
-      mAlphaTestRef(0.0f),
       mLogicOp(LogicalOperation::Copy),
       mLineSmoothHint(HintSetting::DontCare),
       mPointSmoothHint(HintSetting::DontCare),
@@ -159,8 +164,8 @@ void GLES1State::initialize(const Context *context, const State *state)
 
     mShadeModel = ShadingModel::Smooth;
 
-    mAlphaTestFunc = AlphaTestFunc::AlwaysPass;
-    mAlphaTestRef  = 0.0f;
+    mAlphaTestParameters.func = AlphaTestFunc::AlwaysPass;
+    mAlphaTestParameters.ref  = 0.0f;
 
     mLogicOp = LogicalOperation::Copy;
 
@@ -179,11 +184,11 @@ void GLES1State::initialize(const Context *context, const State *state)
     mDirtyBits.set();
 }
 
-void GLES1State::setAlphaFunc(AlphaTestFunc func, GLfloat ref)
+void GLES1State::setAlphaTestParameters(AlphaTestFunc func, GLfloat ref)
 {
     setDirty(DIRTY_GLES1_ALPHA_TEST);
-    mAlphaTestFunc = func;
-    mAlphaTestRef  = ref;
+    mAlphaTestParameters.func = func;
+    mAlphaTestParameters.ref  = ref;
 }
 
 void GLES1State::setClientTextureUnit(unsigned int unit)
@@ -532,6 +537,11 @@ PointParameters &GLES1State::pointParameters()
 const PointParameters &GLES1State::pointParameters() const
 {
     return mPointParameters;
+}
+
+const AlphaTestParameters &GLES1State::getAlphaTestParameters() const
+{
+    return mAlphaTestParameters;
 }
 
 AttributesMask GLES1State::getVertexArraysAttributeMask() const

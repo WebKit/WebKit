@@ -88,7 +88,7 @@ void SimulatedTimeControllerImpl::RunReadyRunners() {
   MutexLock lock(&lock_);
   RTC_DCHECK_EQ(rtc::CurrentThreadId(), thread_id_);
   Timestamp current_time = CurrentTime();
-  // Clearing |ready_runners_| in case this is a recursive call:
+  // Clearing `ready_runners_` in case this is a recursive call:
   // RunReadyRunners -> Run -> Event::Wait -> Yield ->RunReadyRunners
   ready_runners_.clear();
 
@@ -108,8 +108,8 @@ void SimulatedTimeControllerImpl::RunReadyRunners() {
       ready_runners_.pop_front();
       lock_.Unlock();
       // Note that the RunReady function might indirectly cause a call to
-      // Unregister() which will grab |lock_| again to remove items from
-      // |ready_runners_|.
+      // Unregister() which will grab `lock_` again to remove items from
+      // `ready_runners_`.
       runner->RunReady(current_time);
       lock_.Lock();
     }
@@ -206,9 +206,19 @@ void GlobalSimulatedTimeController::AdvanceTime(TimeDelta duration) {
     sim_clock_.AdvanceTimeMicroseconds(delta.us());
     global_clock_.AdvanceTime(delta);
   }
-  // After time has been simulated up until |target_time| we also need to run
-  // tasks meant to be executed at |target_time|.
+  // After time has been simulated up until `target_time` we also need to run
+  // tasks meant to be executed at `target_time`.
   impl_.RunReadyRunners();
+}
+
+void GlobalSimulatedTimeController::Register(
+    sim_time_impl::SimulatedSequenceRunner* runner) {
+  impl_.Register(runner);
+}
+
+void GlobalSimulatedTimeController::Unregister(
+    sim_time_impl::SimulatedSequenceRunner* runner) {
+  impl_.Unregister(runner);
 }
 
 }  // namespace webrtc

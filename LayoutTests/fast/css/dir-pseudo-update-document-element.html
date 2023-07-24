@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html dir="ltr">
+<head>
+<script>
+document.documentElement.setAttribute('dir', 'rtl');
+</script>
+<style>
+div {
+    width: 100px;
+    height: 100px;
+    float: left;
+}
+
+div:dir(rtl) {
+    background-color: green;
+}
+
+div:dir(ltr) {
+    background-color: red;
+}
+</style>
+</head>
+<body>
+<div></div>
+</body>
+</html>

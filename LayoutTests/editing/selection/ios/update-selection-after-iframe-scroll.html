@@ -44,12 +44,21 @@ async function waitForSelectionRectsToChange(fromRects)
     return rects;
 }
 
+doneLoadingSubframe = false;
+function didFinishLoadingSubframe() {
+    doneLoadingSubframe = true;
+}
+
 addEventListener('load', async function() {
     description('This test verifies that a selection in an iframe area is kept up to date after scrolling. To test manually, tap the frame and scroll the editable area down; the selection move to account for the new scroll position.');
+    await shouldBecomeEqual("doneLoadingSubframe", "true");
 
     const iframe = document.getElementById('scrollingiframe');
 
     await UIHelper.activateElementAndWaitForInputSession(iframe);
+
+    let subDocument = iframe.contentDocument;
+    subDocument.getSelection().selectAllChildren(subDocument.getElementById('select-target'));
     selectionRectsBefore = await waitForSelectionRectsToChange([]);
 
     await UIHelper.immediateScrollElementAtContentPointToOffset(100, 400, 0, 50);
@@ -91,14 +100,8 @@ addEventListener('load', async function() {
         <p>The quick brown fox jumped over the lazy dog.</p>
         <p>The quick brown fox jumped over the lazy dog.</p>
     </div>
-    <script>
-        addEventListener('click', event => {
-        getSelection().selectAllChildren(document.getElementById('select-target'));
-        event.preventDefault();
-    });
-    </script>
-        " id="scrollingiframe"></iframe>
+        " id="scrollingiframe" onload="didFinishLoadingSubframe()"></iframe>
 <div id="description"></div>
-
+<div id="console"></div>
 </body>
 </html>

@@ -50,6 +50,11 @@ PlatformDisplaySurfaceless::PlatformDisplaySurfaceless()
         m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr);
 
     PlatformDisplay::initializeEGLDisplay();
+
+#if ENABLE(WEBGL)
+    m_anglePlatform = EGL_PLATFORM_SURFACELESS_MESA;
+    m_angleNativeDisplay = EGL_DEFAULT_DISPLAY;
+#endif
 }
 
 PlatformDisplaySurfaceless::~PlatformDisplaySurfaceless()

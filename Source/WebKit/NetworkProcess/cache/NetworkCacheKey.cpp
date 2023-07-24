@@ -86,7 +86,7 @@ static void hashString(SHA1& sha1, const String& string)
     if (string.isNull())
         return;
 
-    if (string.is8Bit() && string.isAllASCII()) {
+    if (string.is8Bit() && string.containsOnlyASCII()) {
         const uint8_t nullByte = 0;
         sha1.addBytes(string.characters8(), string.length());
         sha1.addBytes(&nullByte, 1);

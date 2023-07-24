@@ -8,32 +8,33 @@
 
 import("../../../webrtc.gni")
 
-rtc_library("codec_timer") {
+rtc_library("decode_time_percentile_filter") {
   sources = [
-    "codec_timer.cc",
-    "codec_timer.h",
+    "decode_time_percentile_filter.cc",
+    "decode_time_percentile_filter.h",
   ]
   deps = [ "../../../rtc_base:rtc_numerics" ]
 }
 
-rtc_library("inter_frame_delay") {
+rtc_library("inter_frame_delay_variation_calculator") {
   sources = [
-    "inter_frame_delay.cc",
-    "inter_frame_delay.h",
+    "inter_frame_delay_variation_calculator.cc",
+    "inter_frame_delay_variation_calculator.h",
   ]
   deps = [
     "../..:module_api_public",
     "../../../api/units:frequency",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
+    "../../../rtc_base:rtc_numerics",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
-rtc_library("frame_delay_delta_kalman_filter") {
+rtc_library("frame_delay_variation_kalman_filter") {
   sources = [
-    "frame_delay_delta_kalman_filter.cc",
-    "frame_delay_delta_kalman_filter.h",
+    "frame_delay_variation_kalman_filter.cc",
+    "frame_delay_variation_kalman_filter.h",
   ]
   deps = [
     "../../../api/units:data_size",
@@ -51,18 +52,25 @@ rtc_library("jitter_estimator") {
     "jitter_estimator.h",
   ]
   deps = [
-    ":frame_delay_delta_kalman_filter",
+    ":frame_delay_variation_kalman_filter",
     ":rtt_filter",
     "../../../api:field_trials_view",
     "../../../api/units:data_size",
     "../../../api/units:frequency",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
-    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:rolling_accumulator",
+    "../../../rtc_base:rtc_numerics",
     "../../../rtc_base:safe_conversions",
+    "../../../rtc_base/experiments:field_trial_parser",
     "../../../system_wrappers",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
 }
 
 rtc_library("rtt_filter") {
@@ -77,13 +85,27 @@ rtc_library("rtt_filter") {
   ]
 }
 
+rtc_library("timestamp_extrapolator") {
+  sources = [
+    "timestamp_extrapolator.cc",
+    "timestamp_extrapolator.h",
+  ]
+  deps = [
+    "../../../api/units:timestamp",
+    "../../../modules:module_api_public",
+    "../../../rtc_base:rtc_numerics",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
 rtc_library("timing_module") {
   sources = [
     "timing.cc",
     "timing.h",
   ]
   deps = [
-    ":codec_timer",
+    ":decode_time_percentile_filter",
+    ":timestamp_extrapolator",
     "../../../api:field_trials_view",
     "../../../api/units:time_delta",
     "../../../api/video:video_frame",
@@ -93,7 +115,6 @@ rtc_library("timing_module") {
     "../../../rtc_base:rtc_numerics",
     "../../../rtc_base/experiments:field_trial_parser",
     "../../../rtc_base/synchronization:mutex",
-    "../../../rtc_base/time:timestamp_extrapolator",
     "../../../system_wrappers",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
@@ -102,25 +123,27 @@ rtc_library("timing_module") {
 rtc_library("timing_unittests") {
   testonly = true
   sources = [
-    "frame_delay_delta_kalman_filter_unittest.cc",
-    "inter_frame_delay_unittest.cc",
+    "frame_delay_variation_kalman_filter_unittest.cc",
+    "inter_frame_delay_variation_calculator_unittest.cc",
     "jitter_estimator_unittest.cc",
     "rtt_filter_unittest.cc",
+    "timestamp_extrapolator_unittest.cc",
     "timing_unittest.cc",
   ]
   deps = [
-    ":frame_delay_delta_kalman_filter",
-    ":inter_frame_delay",
+    ":frame_delay_variation_kalman_filter",
+    ":inter_frame_delay_variation_calculator",
     ":jitter_estimator",
     ":rtt_filter",
+    ":timestamp_extrapolator",
     ":timing_module",
     "../../../api:array_view",
+    "../../../api:field_trials",
     "../../../api/units:data_size",
     "../../../api/units:frequency",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../rtc_base:histogram_percentile_counter",
-    "../../../rtc_base:stringutils",
     "../../../rtc_base:timeutils",
     "../../../system_wrappers:system_wrappers",
     "../../../test:scoped_key_value_config",

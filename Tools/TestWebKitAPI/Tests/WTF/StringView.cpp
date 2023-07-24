@@ -44,7 +44,7 @@ StringView stringViewFromUTF8(String& ref, const char* characters)
 TEST(WTF, StringViewStartsWithEmptyVsNull)
 {
     StringView nullView;
-    StringView emptyView = StringView::empty();
+    StringView emptyView = emptyStringView();
     String stringWithCharacters("hello"_s);
     StringView viewWithCharacters(stringWithCharacters);
 
@@ -69,7 +69,7 @@ TEST(WTF, StringViewEmptyVsNull)
     else
         FAIL();
 
-    StringView emptyView = StringView::empty();
+    StringView emptyView = emptyStringView();
     EXPECT_FALSE(emptyView.isNull());
     EXPECT_TRUE(emptyView.isEmpty());
 
@@ -137,9 +137,9 @@ TEST(WTF, StringViewIterators)
     EXPECT_TRUE(compareLoopIterations(StringView().codeUnits(), { }));
     EXPECT_TRUE(compareLoopIterations(StringView().graphemeClusters(), { }));
 
-    EXPECT_TRUE(compareLoopIterations(StringView::empty().codePoints(), { }));
-    EXPECT_TRUE(compareLoopIterations(StringView::empty().codeUnits(), { }));
-    EXPECT_TRUE(compareLoopIterations(StringView::empty().graphemeClusters(), { }));
+    EXPECT_TRUE(compareLoopIterations(emptyStringView().codePoints(), { }));
+    EXPECT_TRUE(compareLoopIterations(emptyStringView().codeUnits(), { }));
+    EXPECT_TRUE(compareLoopIterations(emptyStringView().graphemeClusters(), { }));
 
     String helo("helo"_s);
     StringView heloView(helo);
@@ -892,7 +892,7 @@ TEST(WTF, StringViewEndsWithIgnoringASCIICaseWithLatin1Characters)
 TEST(WTF, StringView8Bit)
 {
     EXPECT_TRUE(StringView().is8Bit());
-    EXPECT_TRUE(StringView::empty().is8Bit());
+    EXPECT_TRUE(emptyStringView().is8Bit());
 
     LChar* lcharPtr = nullptr;
     UChar* ucharPtr = nullptr;
@@ -954,35 +954,35 @@ TEST(WTF, StringViewReverseFindBasic)
     EXPECT_EQ(reference.reverseFind('c', 4), notFound);
 }
 
-TEST(WTF, StringViewStripLeadingAndTrailingMatchedCharacters)
+TEST(WTF, StringViewTrim)
 {
     auto isA = [] (UChar c) { 
         return c == 'A';
     };
 
-    EXPECT_TRUE(stringViewFromLiteral("AAABBBAAA").stripLeadingAndTrailingMatchedCharacters(isA) == stringViewFromLiteral("BBB"));
-    EXPECT_TRUE(stringViewFromLiteral("AAABBBCCC").stripLeadingAndTrailingMatchedCharacters(isA) == stringViewFromLiteral("BBBCCC"));
-    EXPECT_TRUE(stringViewFromLiteral("CCCBBBAAA").stripLeadingAndTrailingMatchedCharacters(isA) == stringViewFromLiteral("CCCBBB"));
-    EXPECT_TRUE(stringViewFromLiteral("CCCBBBCCC").stripLeadingAndTrailingMatchedCharacters(isA) == stringViewFromLiteral("CCCBBBCCC"));
-    EXPECT_TRUE(stringViewFromLiteral("AAAAAACCC").stripLeadingAndTrailingMatchedCharacters(isA) == stringViewFromLiteral("CCC"));
-    EXPECT_TRUE(stringViewFromLiteral("BBBAAAAAA").stripLeadingAndTrailingMatchedCharacters(isA) == stringViewFromLiteral("BBB"));
-    EXPECT_TRUE(stringViewFromLiteral("CCCAAABBB").stripLeadingAndTrailingMatchedCharacters(isA) == stringViewFromLiteral("CCCAAABBB"));
-    EXPECT_TRUE(stringViewFromLiteral("AAAAAAAAA").stripLeadingAndTrailingMatchedCharacters(isA) == StringView::empty());
+    EXPECT_TRUE(stringViewFromLiteral("AAABBBAAA").trim(isA) == stringViewFromLiteral("BBB"));
+    EXPECT_TRUE(stringViewFromLiteral("AAABBBCCC").trim(isA) == stringViewFromLiteral("BBBCCC"));
+    EXPECT_TRUE(stringViewFromLiteral("CCCBBBAAA").trim(isA) == stringViewFromLiteral("CCCBBB"));
+    EXPECT_TRUE(stringViewFromLiteral("CCCBBBCCC").trim(isA) == stringViewFromLiteral("CCCBBBCCC"));
+    EXPECT_TRUE(stringViewFromLiteral("AAAAAACCC").trim(isA) == stringViewFromLiteral("CCC"));
+    EXPECT_TRUE(stringViewFromLiteral("BBBAAAAAA").trim(isA) == stringViewFromLiteral("BBB"));
+    EXPECT_TRUE(stringViewFromLiteral("CCCAAABBB").trim(isA) == stringViewFromLiteral("CCCAAABBB"));
+    EXPECT_TRUE(stringViewFromLiteral("AAAAAAAAA").trim(isA) == emptyStringView());
 
-    StringView emptyView = StringView::empty();
-    EXPECT_TRUE(emptyView.stripLeadingAndTrailingMatchedCharacters(isA) == emptyView);
+    StringView emptyView = emptyStringView();
+    EXPECT_TRUE(emptyView.trim(isA) == emptyView);
 
     StringView nullView;
-    EXPECT_TRUE(nullView.stripLeadingAndTrailingMatchedCharacters(isA) == nullView);
+    EXPECT_TRUE(nullView.trim(isA) == nullView);
 }
 
-TEST(WTF, StringViewIsAllASCII)
+TEST(WTF, StringViewContainsOnlyASCII)
 {
-    EXPECT_TRUE(StringView(String("Hello"_s)).isAllASCII());
-    EXPECT_TRUE(StringView(String("Cocoa"_s)).isAllASCII());
-    EXPECT_FALSE(StringView(String::fromLatin1("📱")).isAllASCII());
-    EXPECT_FALSE(StringView(String::fromLatin1("\u0080")).isAllASCII());
-    EXPECT_TRUE(StringView(String(bitwise_cast<const UChar*>(u"Hello"), 0)).isAllASCII());
+    EXPECT_TRUE(StringView(String("Hello"_s)).containsOnlyASCII());
+    EXPECT_TRUE(StringView(String("Cocoa"_s)).containsOnlyASCII());
+    EXPECT_FALSE(StringView(String::fromLatin1("📱")).containsOnlyASCII());
+    EXPECT_FALSE(StringView(String::fromLatin1("\u0080")).containsOnlyASCII());
+    EXPECT_TRUE(StringView(String(bitwise_cast<const UChar*>(u"Hello"), 0)).containsOnlyASCII());
 }
 
 TEST(WTF, StringViewUpconvert)

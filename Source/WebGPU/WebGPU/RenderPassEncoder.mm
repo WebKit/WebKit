@@ -138,7 +138,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<const Rende
     for (auto& bundle : bundles) {
         const auto& renderBundle = bundle.get();
         for (const auto& resource : renderBundle.resources())
-            [m_renderCommandEncoder useResource:resource.mtlResource usage:resource.usage stages:resource.renderStages];
+            [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
 
         id<MTLIndirectCommandBuffer> icb = renderBundle.indirectCommandBuffer();
         [m_renderCommandEncoder executeCommandsInBuffer:icb withRange:NSMakeRange(0, icb.size)];
@@ -202,7 +202,7 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
     UNUSED_PARAM(dynamicOffsets);
 
     for (const auto& resource : group.resources())
-        [m_renderCommandEncoder useResource:resource.mtlResource usage:resource.usage stages:resource.renderStages];
+        [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
 
     [m_renderCommandEncoder setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex)];
     [m_renderCommandEncoder setFragmentBuffer:group.fragmentArgumentBuffer() offset:0 atIndex:groupIndex];
@@ -275,6 +275,11 @@ void RenderPassEncoder::setLabel(String&& label)
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuRenderPassEncoderReference(WGPURenderPassEncoder renderPassEncoder)
+{
+    WebGPU::fromAPI(renderPassEncoder).ref();
+}
 
 void wgpuRenderPassEncoderRelease(WGPURenderPassEncoder renderPassEncoder)
 {

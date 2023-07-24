@@ -1,0 +1,6 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT auxclick using mouse is a PointerEvent Test timed out
+

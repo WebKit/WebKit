@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2011 Google Inc. All Rights Reserved.
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,15 +50,18 @@
 #include "PseudoElement.h"
 #include "RadioButtonGroups.h"
 #include "RenderView.h"
+#include "SVGElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include <wtf/RobinHoodHashMap.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
 struct SameSizeAsTreeScope {
-    void* pointers[11];
+    void* pointers[12];
 };
 
 static_assert(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), "treescope should stay small");
@@ -296,7 +301,7 @@ void TreeScope::removeLabel(const AtomStringImpl& forAttributeValue, HTMLLabelEl
     m_labelsByForAttribute->remove(forAttributeValue, element);
 }
 
-HTMLLabelElement* TreeScope::labelElementForId(const AtomString& forAttributeValue)
+const Vector<Element*>* TreeScope::labelElementsForId(const AtomString& forAttributeValue)
 {
     if (forAttributeValue.isEmpty())
         return nullptr;
@@ -312,7 +317,7 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomString& forAttributeVal
         }
     }
 
-    return m_labelsByForAttribute->getElementByLabelForAttribute(*forAttributeValue.impl(), *this);
+    return m_labelsByForAttribute->getElementsByLabelForAttribute(*forAttributeValue.impl(), *this);
 }
 
 static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, const LayoutPoint& clientPoint)
@@ -570,6 +575,166 @@ ExceptionOr<void> TreeScope::setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>
     if (!m_adoptedStyleSheets && sheets.isEmpty())
         return { };
     return ensureAdoptedStyleSheets().setSheets(WTFMove(sheets));
+}
+
+struct SVGResourcesMap {
+    WTF_MAKE_NONCOPYABLE(SVGResourcesMap); WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    SVGResourcesMap() = default;
+
+    MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResources;
+    MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResourcesForRemoval;
+    MemoryCompactRobinHoodHashMap<AtomString, RenderSVGResourceContainer*> resources;
+};
+
+SVGResourcesMap& TreeScope::svgResourcesMap() const
+{
+    if (!m_svgResourcesMap)
+        const_cast<TreeScope&>(*this).m_svgResourcesMap = makeUnique<SVGResourcesMap>();
+    return *m_svgResourcesMap;
+}
+
+void TreeScope::addSVGResource(const AtomString& id, RenderSVGResourceContainer& resource)
+{
+    if (id.isEmpty())
+        return;
+
+    // Replaces resource if already present, to handle potential id changes
+    svgResourcesMap().resources.set(id, &resource);
+}
+
+void TreeScope::removeSVGResource(const AtomString& id)
+{
+    if (id.isEmpty())
+        return;
+
+    svgResourcesMap().resources.remove(id);
+}
+
+RenderSVGResourceContainer* TreeScope::svgResourceById(const AtomString& id) const
+{
+    if (id.isEmpty())
+        return nullptr;
+
+    return svgResourcesMap().resources.get(id);
+}
+
+void TreeScope::addPendingSVGResource(const AtomString& id, SVGElement& element)
+{
+    if (id.isEmpty())
+        return;
+
+    auto result = svgResourcesMap().pendingResources.add(id, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> { });
+    result.iterator->value.add(element);
+
+    element.setHasPendingResources();
+}
+
+bool TreeScope::isIdOfPendingSVGResource(const AtomString& id) const
+{
+    if (id.isEmpty())
+        return false;
+
+    return svgResourcesMap().pendingResources.contains(id);
+}
+
+bool TreeScope::isElementWithPendingSVGResources(SVGElement& element) const
+{
+    // This algorithm takes time proportional to the number of pending resources and need not.
+    // If performance becomes an issue we can keep a counted set of elements and answer the question efficiently.
+    return WTF::anyOf(svgResourcesMap().pendingResources.values(), [&] (auto& elements) {
+        return elements.contains(element);
+    });
+}
+
+bool TreeScope::isPendingSVGResource(SVGElement& element, const AtomString& id) const
+{
+    if (id.isEmpty())
+        return false;
+
+    auto& pendingResources = svgResourcesMap().pendingResources;
+    auto it = pendingResources.find(id);
+    if (it == pendingResources.end())
+        return false;
+
+    return it->value.contains(element);
+}
+
+void TreeScope::clearHasPendingSVGResourcesIfPossible(SVGElement& element)
+{
+    if (!isElementWithPendingSVGResources(element))
+        element.clearHasPendingResources();
+}
+
+void TreeScope::removeElementFromPendingSVGResources(SVGElement& element)
+{
+    if (!svgResourcesMap().pendingResources.isEmpty() && element.hasPendingResources()) {
+        Vector<AtomString> toBeRemoved;
+        for (auto& resource : svgResourcesMap().pendingResources) {
+            auto& elements = resource.value;
+            elements.remove(element);
+            if (elements.isEmptyIgnoringNullReferences())
+                toBeRemoved.append(resource.key);
+        }
+
+        clearHasPendingSVGResourcesIfPossible(element);
+
+        // We use the removePendingResource function here because it deals with set lifetime correctly.
+        for (auto& resource : toBeRemoved)
+            removePendingSVGResource(resource);
+    }
+
+    if (!svgResourcesMap().pendingResourcesForRemoval.isEmpty()) {
+        Vector<AtomString> toBeRemoved;
+        for (auto& resource : svgResourcesMap().pendingResourcesForRemoval) {
+            auto& elements = resource.value;
+            elements.remove(element);
+            if (elements.isEmptyIgnoringNullReferences())
+                toBeRemoved.append(resource.key);
+        }
+
+        // We use m_pendingResourcesForRemoval here because it deals with set lifetime correctly.
+        for (auto& resource : toBeRemoved)
+            svgResourcesMap().pendingResourcesForRemoval.remove(resource);
+    }
+}
+
+WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> TreeScope::removePendingSVGResource(const AtomString& id)
+{
+    return svgResourcesMap().pendingResources.take(id);
+}
+
+void TreeScope::markPendingSVGResourcesForRemoval(const AtomString& id)
+{
+    if (id.isEmpty())
+        return;
+
+    ASSERT(!svgResourcesMap().pendingResourcesForRemoval.contains(id));
+
+    auto existing = svgResourcesMap().pendingResources.take(id);
+    if (!existing.isEmptyIgnoringNullReferences())
+        svgResourcesMap().pendingResourcesForRemoval.add(id, WTFMove(existing));
+}
+
+RefPtr<SVGElement> TreeScope::takeElementFromPendingSVGResourcesForRemovalMap(const AtomString& id)
+{
+    if (id.isEmpty())
+        return nullptr;
+
+    auto it = svgResourcesMap().pendingResourcesForRemoval.find(id);
+    if (it == svgResourcesMap().pendingResourcesForRemoval.end())
+        return nullptr;
+
+    auto& resourceSet = it->value;
+    RefPtr firstElement = resourceSet.begin().get();
+    if (!firstElement)
+        return nullptr;
+
+    resourceSet.remove(*firstElement);
+
+    if (resourceSet.isEmptyIgnoringNullReferences())
+        svgResourcesMap().pendingResourcesForRemoval.remove(id);
+
+    return firstElement;
 }
 
 } // namespace WebCore

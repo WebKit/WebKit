@@ -90,7 +90,7 @@ private:
     virtual void didMutate(MutationType) { }
 };
 
-class StyleRuleCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration {
+class StyleRuleCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration, public RefCounted<StyleRuleCSSStyleDeclaration> {
     WTF_MAKE_ISO_ALLOCATED(StyleRuleCSSStyleDeclaration);
 public:
     static Ref<StyleRuleCSSStyleDeclaration> create(MutableStyleProperties& propertySet, CSSRule& parentRule)
@@ -100,9 +100,9 @@ public:
     virtual ~StyleRuleCSSStyleDeclaration();
 
     void clearParentRule() { m_parentRule = nullptr; }
-    
-    void ref() final;
-    void deref() final;
+
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
     void reattach(MutableStyleProperties&);
 
@@ -117,7 +117,6 @@ private:
     void didMutate(MutationType) final;
     CSSParserContext cssParserContext() const final;
 
-    unsigned m_refCount;
     StyleRuleType m_parentRuleType;
     CSSRule* m_parentRule;
 };

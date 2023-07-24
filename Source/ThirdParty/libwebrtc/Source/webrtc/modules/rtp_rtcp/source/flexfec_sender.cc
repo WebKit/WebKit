@@ -16,6 +16,8 @@
 #include <utility>
 
 #include "absl/strings/string_view.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
@@ -42,7 +44,7 @@ constexpr size_t kFlexfecMaxHeaderSize = 32;
 const int kMsToRtpTimestamp = kVideoPayloadTypeFrequency / 1000;
 
 // How often to log the generated FEC packets to the text log.
-constexpr int64_t kPacketLogIntervalMs = 10000;
+constexpr TimeDelta kPacketLogInterval = TimeDelta::Seconds(10);
 
 RtpHeaderExtensionMap RegisterSupportedExtensions(
     const std::vector<RtpExtension>& rtp_header_extensions) {
@@ -79,7 +81,6 @@ FlexfecSender::FlexfecSender(
     Clock* clock)
     : clock_(clock),
       random_(clock_->TimeInMicroseconds()),
-      last_generated_packet_ms_(-1),
       payload_type_(payload_type),
       // Reset RTP state if this is not the first time we are operating.
       // Otherwise, randomize the initial timestamp offset and RTP sequence
@@ -168,17 +169,17 @@ std::vector<std::unique_ptr<RtpPacketToSend>> FlexfecSender::GetFecPackets() {
     ulpfec_generator_.ResetState();
   }
 
-  int64_t now_ms = clock_->TimeInMilliseconds();
+  Timestamp now = clock_->CurrentTime();
   if (!fec_packets_to_send.empty() &&
-      now_ms - last_generated_packet_ms_ > kPacketLogIntervalMs) {
+      now - last_generated_packet_ > kPacketLogInterval) {
     RTC_LOG(LS_VERBOSE) << "Generated " << fec_packets_to_send.size()
                         << " FlexFEC packets with payload type: "
                         << payload_type_ << " and SSRC: " << ssrc_ << ".";
-    last_generated_packet_ms_ = now_ms;
+    last_generated_packet_ = now;
   }
 
   MutexLock lock(&mutex_);
-  fec_bitrate_.Update(total_fec_data_bytes, now_ms);
+  fec_bitrate_.Update(total_fec_data_bytes, now.ms());
 
   return fec_packets_to_send;
 }

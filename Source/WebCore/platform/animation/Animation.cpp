@@ -35,7 +35,7 @@ Animation::Animation()
     , m_delay(initialDelay())
     , m_duration(initialDuration())
     , m_timingFunction(initialTimingFunction())
-    , m_direction(initialDirection())
+    , m_direction(static_cast<unsigned>(initialDirection()))
     , m_fillMode(static_cast<unsigned>(initialFillMode()))
     , m_playState(static_cast<unsigned>(initialPlayState()))
     , m_compositeOperation(static_cast<unsigned>(initialCompositeOperation()))
@@ -146,13 +146,13 @@ TextStream& operator<<(TextStream& ts, Animation::TransitionProperty transitionP
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, Animation::AnimationDirection direction)
+TextStream& operator<<(TextStream& ts, Animation::Direction direction)
 {
     switch (direction) {
-    case Animation::AnimationDirectionNormal: ts << "normal"; break;
-    case Animation::AnimationDirectionAlternate: ts << "alternate"; break;
-    case Animation::AnimationDirectionReverse: ts << "reverse"; break;
-    case Animation::AnimationDirectionAlternateReverse: ts << "alternate-reverse"; break;
+    case Animation::Direction::Normal: ts << "normal"; break;
+    case Animation::Direction::Alternate: ts << "alternate"; break;
+    case Animation::Direction::Reverse: ts << "reverse"; break;
+    case Animation::Direction::AlternateReverse: ts << "alternate-reverse"; break;
     }
     return ts;
 }

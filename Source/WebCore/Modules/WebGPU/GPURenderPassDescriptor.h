@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,19 +30,19 @@
 #include "GPURenderPassColorAttachment.h"
 #include "GPURenderPassDepthStencilAttachment.h"
 #include "GPURenderPassTimestampWrite.h"
+#include "WebGPURenderPassDescriptor.h"
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPURenderPassDescriptor.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
-    PAL::WebGPU::RenderPassDescriptor convertToBacking() const
+    WebGPU::RenderPassDescriptor convertToBacking() const
     {
         return {
             { label },
-            colorAttachments.map([] (auto& colorAttachment) -> std::optional<PAL::WebGPU::RenderPassColorAttachment> {
+            colorAttachments.map([](auto& colorAttachment) -> std::optional<WebGPU::RenderPassColorAttachment> {
                 if (colorAttachment)
                     return colorAttachment->convertToBacking();
                 return std::nullopt;

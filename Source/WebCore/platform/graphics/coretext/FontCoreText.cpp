@@ -35,6 +35,7 @@
 #include "LocaleCocoa.h"
 #include "Logging.h"
 #include "OpenTypeCG.h"
+#include "PathCG.h"
 #include "SharedBuffer.h"
 #include <CoreText/CoreText.h>
 #include <float.h>
@@ -219,6 +220,25 @@ void Font::platformInit()
         } else
             xHeight = verticalRightOrientationFont().fontMetrics().xHeight();
     }
+
+    if (CTFontGetSymbolicTraits(m_platformData.font()) & kCTFontTraitColorGlyphs) {
+#if HAVE(CTFONTCOPYCOLORGLYPHCOVERAGE)
+        // The reason this is guarded with both a preprocessor define and soft linking is that
+        // we want to get rid of the soft linking soon,
+        // once people have a chance to update to an SDK that includes it.
+        // At that point, only the preprocessor define will remain.
+        if (PAL::canLoad_CoreText_CTFontCopyColorGlyphCoverage()) {
+            if (auto cfBitVector = adoptCF(PAL::softLink_CoreText_CTFontCopyColorGlyphCoverage(m_platformData.font())))
+                m_emojiType = SomeEmojiGlyphs { BitVector(cfBitVector.get()) };
+            else
+                m_emojiType = NoEmojiGlyphs { };
+        } else
+#endif
+        {
+            m_emojiType = AllEmojiGlyphs { };
+        }
+    } else
+        m_emojiType = NoEmojiGlyphs { };
 
     m_fontMetrics.setUnitsPerEm(unitsPerEm);
     m_fontMetrics.setAscent(ascent);
@@ -731,15 +751,19 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 Path Font::platformPathForGlyph(Glyph glyph) const
 {
     auto result = adoptCF(CTFontCreatePathForGlyph(platformData().ctFont(), glyph, nullptr));
+    if (!result)
+        return { };
+
     auto syntheticBoldOffset = this->syntheticBoldOffset();
     if (syntheticBoldOffset) {
         auto newPath = adoptCF(CGPathCreateMutable());
         CGPathAddPath(newPath.get(), nullptr, result.get());
         auto translation = CGAffineTransformMakeTranslation(syntheticBoldOffset, 0);
         CGPathAddPath(newPath.get(), &translation, result.get());
-        return { WTFMove(newPath) };
+        return { PathCG::create(WTFMove(newPath)) };
     }
-    return { adoptCF(CGPathCreateMutableCopy(result.get())) };
+
+    return { PathCG::create(adoptCF(CGPathCreateMutableCopy(result.get()))) };
 }
 
 bool Font::platformSupportsCodePoint(UChar32 character, std::optional<UChar32> variation) const

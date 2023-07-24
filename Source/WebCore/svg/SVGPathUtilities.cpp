@@ -35,19 +35,19 @@
 #include "SVGPathSegListBuilder.h"
 #include "SVGPathSegListSource.h"
 #include "SVGPathStringBuilder.h"
-#include "SVGPathStringSource.h"
+#include "SVGPathStringViewSource.h"
 #include "SVGPathTraversalStateBuilder.h"
 
 namespace WebCore {
 
-Path buildPathFromString(const String& d)
+Path buildPathFromString(StringView d)
 {
     if (d.isEmpty())
         return { };
 
     Path path;
     SVGPathBuilder builder(path);
-    SVGPathStringSource source(d);
+    SVGPathStringViewSource source(d);
     SVGPathParser::parse(source, builder);
     return path;
 }
@@ -56,8 +56,8 @@ String buildStringFromPath(const Path& path)
 {
     StringBuilder builder;
 
-    if (!path.isNull() && !path.isEmpty()) {
-        path.apply([&builder] (const PathElement& element) {
+    if (!path.isEmpty()) {
+        path.applyElements([&builder] (const PathElement& element) {
             switch (element.type) {
             case PathElement::Type::MoveToPoint:
                 builder.append('M', element.points[0].x(), ' ', element.points[0].y());
@@ -122,13 +122,13 @@ bool buildStringFromByteStream(const SVGPathByteStream& stream, String& result, 
     return SVGPathParser::parseToString(source, result, parsingMode, checkForInitialMoveTo);
 }
 
-bool buildSVGPathByteStreamFromString(const String& d, SVGPathByteStream& result, PathParsingMode parsingMode)
+bool buildSVGPathByteStreamFromString(StringView d, SVGPathByteStream& result, PathParsingMode parsingMode)
 {
     result.clear();
     if (d.isEmpty())
         return true;
 
-    SVGPathStringSource source(d);
+    SVGPathStringViewSource source(d);
     return SVGPathParser::parseToByteStream(source, result, parsingMode);
 }
 

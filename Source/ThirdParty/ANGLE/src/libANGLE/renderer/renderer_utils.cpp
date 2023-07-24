@@ -65,6 +65,15 @@ bool FeatureNameMatch(const std::string &a, const std::string &b)
 }  // anonymous namespace
 
 // FeatureSetBase implementation
+void FeatureSetBase::reset()
+{
+    for (auto iter : members)
+    {
+        FeatureInfo *feature = iter.second;
+        feature->enabled     = false;
+    }
+}
+
 void FeatureSetBase::overrideFeatures(const std::vector<std::string> &featureNames, bool enabled)
 {
     for (const std::string &name : featureNames)

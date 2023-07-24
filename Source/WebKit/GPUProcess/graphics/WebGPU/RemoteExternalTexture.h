@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class ExternalTexture;
 }
 
@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemoteExternalTexture final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteExternalTexture> create(PAL::WebGPU::ExternalTexture& externalTexture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteExternalTexture> create(WebCore::WebGPU::ExternalTexture& externalTexture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteExternalTexture(externalTexture, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -61,21 +61,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteExternalTexture(PAL::WebGPU::ExternalTexture&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteExternalTexture(WebCore::WebGPU::ExternalTexture&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteExternalTexture(const RemoteExternalTexture&) = delete;
     RemoteExternalTexture(RemoteExternalTexture&&) = delete;
     RemoteExternalTexture& operator=(const RemoteExternalTexture&) = delete;
     RemoteExternalTexture& operator=(RemoteExternalTexture&&) = delete;
 
-    PAL::WebGPU::ExternalTexture& backing() { return m_backing; }
+    WebCore::WebGPU::ExternalTexture& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    Ref<PAL::WebGPU::ExternalTexture> m_backing;
+    Ref<WebCore::WebGPU::ExternalTexture> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

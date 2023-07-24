@@ -21,6 +21,7 @@ info: |
         v. Else fromPresent is false,
           1. Perform ? DeletePropertyOrThrow(O, to).
        vi. Decrease k by 1.
+features: [exponentiation]
 ---*/
 
 function StopUnshift() {}

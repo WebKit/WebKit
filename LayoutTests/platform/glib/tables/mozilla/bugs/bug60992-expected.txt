@@ -36,10 +36,10 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,18) size 96x17
                   text run at (0,18) width 96: "<hr width=30>"
 layer at (11,73) size 220x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (1,63) size 220x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (1,63) size 220x2 [color=#808080] [border: (1px inset #808080)]
 layer at (105,127) size 32x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (95,117) size 32x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (95,117) size 32x2 [color=#808080] [border: (1px inset #808080)]
 layer at (11,225) size 220x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (1,63) size 220x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (1,63) size 220x2 [color=#808080] [border: (1px inset #808080)]
 layer at (105,279) size 32x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (95,117) size 32x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (95,117) size 32x2 [color=#808080] [border: (1px inset #808080)]

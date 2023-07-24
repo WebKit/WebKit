@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -30,7 +31,7 @@ class CSSRule;
 class CSSStyleSheet;
 
 class CSSRuleList {
-    WTF_MAKE_NONCOPYABLE(CSSRuleList); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CSSRuleList);
 public:
     virtual ~CSSRuleList();
 
@@ -39,6 +40,7 @@ public:
 
     virtual unsigned length() const = 0;
     virtual CSSRule* item(unsigned index) const = 0;
+    bool isSupportedPropertyIndex(unsigned index) const { return item(index); }
     
     virtual CSSStyleSheet* styleSheet() const = 0;
     
@@ -46,31 +48,31 @@ protected:
     CSSRuleList();
 };
 
-class StaticCSSRuleList final : public CSSRuleList {
+class StaticCSSRuleList final : public CSSRuleList, public RefCounted<StaticCSSRuleList> {
 public:
     static Ref<StaticCSSRuleList> create() { return adoptRef(*new StaticCSSRuleList); }
 
-    void ref() final { ++m_refCount; }
-    void deref() final;
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
     Vector<RefPtr<CSSRule>>& rules() { return m_rules; }
     
     CSSStyleSheet* styleSheet() const final { return nullptr; }
 
+    ~StaticCSSRuleList();
 private:    
     StaticCSSRuleList();
-    ~StaticCSSRuleList();
 
     unsigned length() const final { return m_rules.size(); }
     CSSRule* item(unsigned index) const final { return index < m_rules.size() ? m_rules[index].get() : nullptr; }
 
     Vector<RefPtr<CSSRule>> m_rules;
-    unsigned m_refCount;
 };
 
 // The rule owns the live list.
 template <class Rule>
 class LiveCSSRuleList final : public CSSRuleList {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LiveCSSRuleList(Rule& rule)
         : m_rule(rule)

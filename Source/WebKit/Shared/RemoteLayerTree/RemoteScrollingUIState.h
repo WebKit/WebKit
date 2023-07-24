@@ -64,6 +64,7 @@ public:
     const HashSet<WebCore::ScrollingNodeID>& nodesWithActiveUserScrolls() const { return m_nodesWithActiveUserScrolls; }
     void addNodeWithActiveUserScroll(WebCore::ScrollingNodeID);
     void removeNodeWithActiveUserScroll(WebCore::ScrollingNodeID);
+    void clearNodesWithActiveUserScroll();
 
 private:
     OptionSet<RemoteScrollingUIStateChanges> m_changes;

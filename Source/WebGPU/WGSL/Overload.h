@@ -43,16 +43,18 @@ struct TypeVariable {
 
 struct AbstractVector;
 struct AbstractMatrix;
+struct AbstractTexture;
 using AbstractType = std::variant<
     AbstractVector,
     AbstractMatrix,
+    AbstractTexture,
     TypeVariable,
-    Type*
+    const Type*
 >;
 
 using AbstractScalarType = std::variant<
     TypeVariable,
-    Type*
+    const Type*
 >;
 
 struct AbstractVector {
@@ -66,6 +68,11 @@ struct AbstractMatrix {
     AbstractValue rows;
 };
 
+struct AbstractTexture {
+    AbstractScalarType element;
+    Types::Texture::Kind kind;
+};
+
 struct OverloadCandidate {
     Vector<TypeVariable, 1> typeVariables;
     Vector<NumericVariable, 2> numericVariables;
@@ -74,11 +81,11 @@ struct OverloadCandidate {
 };
 
 struct SelectedOverload {
-    FixedVector<Type*> parameters;
-    Type* result;
+    FixedVector<const Type*> parameters;
+    const Type* result;
 };
 
-std::optional<SelectedOverload> resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments);
+std::optional<SelectedOverload> resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments);
 
 } // namespace WGSL
 
@@ -89,4 +96,5 @@ void printInternal(PrintStream&, const WGSL::TypeVariable&);
 void printInternal(PrintStream&, const WGSL::AbstractType&);
 void printInternal(PrintStream&, const WGSL::AbstractScalarType&);
 void printInternal(PrintStream&, const WGSL::OverloadCandidate&);
+void printInternal(PrintStream&, WGSL::Types::Texture::Kind);
 } // namespace WTF

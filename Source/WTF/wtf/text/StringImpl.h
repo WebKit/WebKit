@@ -30,8 +30,6 @@
 #include <wtf/DebugHeap.h>
 #include <wtf/Expected.h>
 #include <wtf/MathExtras.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Nonmovable.h>
 #include <wtf/Packed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -44,10 +42,6 @@
 #include <wtf/text/UTF8ConversionError.h>
 #include <wtf/unicode/UTF8Conversion.h>
 #include <wtf/ForkExtras.h>
-
-#if CPU(ARM64)
-#include <arm_neon.h>
-#endif
 
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;
@@ -89,7 +83,7 @@ template<typename> struct HashAndCharactersTranslator;
 // Define STRING_STATS to 1 turn on runtime statistics of string sizes and memory usage.
 #define STRING_STATS 0
 
-template<bool isSpecialCharacter(UChar), typename CharacterType> bool isAllSpecialCharacters(const CharacterType*, size_t length);
+template<bool isSpecialCharacter(UChar), typename CharacterType> bool containsOnly(const CharacterType*, size_t length);
 
 #if STRING_STATS
 
@@ -150,13 +144,16 @@ struct StringStats {
 
 class STRING_IMPL_ALIGNMENT StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
-    WTF_MAKE_NONMOVABLE(StringImplShape);
 public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
 
 protected:
     StringImplShape(unsigned refCount, unsigned length, const LChar*, unsigned hashAndFlags);
     StringImplShape(unsigned refCount, unsigned length, const UChar*, unsigned hashAndFlags);
+
+    enum ConstructWithConstExprTag { ConstructWithConstExpr };
+    template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
+    template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
 
     unsigned m_refCount;
     unsigned m_length;
@@ -180,7 +177,6 @@ protected:
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
 class StringImpl : private StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImpl);
-    WTF_MAKE_NONMOVABLE(StringImpl);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StringImpl);
 
     friend class AtomStringImpl;
@@ -243,9 +239,6 @@ private:
     StringImpl(const UChar*, unsigned length, ConstructWithoutCopyingTag);
     StringImpl(const LChar*, unsigned length, ConstructWithoutCopyingTag);
 
-    enum ConstructEmptyTag { ConstructEmpty };
-    StringImpl(ConstructEmptyTag);
-
     // Used to create new strings that are a substring of an existing StringImpl (BufferSubstring).
     StringImpl(const LChar*, unsigned length, Ref<StringImpl>&&);
     StringImpl(const UChar*, unsigned length, Ref<StringImpl>&&);
@@ -282,38 +275,6 @@ public:
         ASSERT(charactersAreAllASCII(bitwise_cast<const LChar*>(characters), length));
         return createStaticStringImpl(bitwise_cast<const LChar*>(characters), length);
     }
-
-    // Used to construct static strings, which have an special refCount that can never hit zero.
-    // This means that the static string will never be destroyed, which is important because
-    // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
-    //
-    // In order to be thread safe, we also need to ensure that the rest of
-    // the fields are never mutated by threads. We have this guarantee because:
-    //
-    // 1. m_length is only set on construction and never mutated thereafter.
-    //
-    // 2. m_data8 and m_data16 are only set on construction and never mutated thereafter.
-    //    We also know that a StringImpl never changes from 8 bit to 16 bit because there
-    //    is no way to set/clear the s_hashFlag8BitBuffer flag other than at construction.
-    //
-    // 3. m_hashAndFlags will not be mutated by different threads because:
-    //
-    //    a. This constructor calls StringImpl::cost() early, so it will return early when called again.
-    //       This means static StringImpl costs are not counted. But since there should only
-    //       be a finite set of static StringImpls, their cost can be aggregated into a single
-    //       system cost if needed.
-    //    b. setIsAtom() is never called on a static StringImpl.
-    //       setIsAtom() asserts !isStatic().
-    //    c. setHash() is never called on a static StringImpl.
-    //       This constructor sets the hash on construction.
-    //       StringImpl::hash() only sets a new hash iff !hasHash().
-    //       Additionally, StringImpl::setHash() asserts hasHash() and !isStatic().
-    static Ref<StringImpl> createStaticStringImplWithoutCopying(const char* characters, unsigned length)
-    {
-        ASSERT(charactersAreAllASCII(bitwise_cast<const LChar*>(characters), length));
-        return createStaticStringImplWithoutCopying(bitwise_cast<const LChar*>(characters), length);
-    }
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImplWithoutCopying(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const UChar*, unsigned length);
 
@@ -403,23 +364,69 @@ public:
     void ref();
     void deref();
 
-    WTF_EXPORT_PRIVATE static LazyNeverDestroyed<Ref<StringImpl>> s_empty;
-    ALWAYS_INLINE static StringImpl* empty()
-    {
-        return &s_empty.get().get();
-    }
+    class StaticStringImpl : private StringImplShape {
+        WTF_MAKE_NONCOPYABLE(StaticStringImpl);
+    public:
+        // Used to construct static strings, which have an special refCount that can never hit zero.
+        // This means that the static string will never be destroyed, which is important because
+        // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
+        //
+        // In order to make StaticStringImpl thread safe, we also need to ensure that the rest of
+        // the fields are never mutated by threads. We have this guarantee because:
+        //
+        // 1. m_length is only set on construction and never mutated thereafter.
+        //
+        // 2. m_data8 and m_data16 are only set on construction and never mutated thereafter.
+        //    We also know that a StringImpl never changes from 8 bit to 16 bit because there
+        //    is no way to set/clear the s_hashFlag8BitBuffer flag other than at construction.
+        //
+        // 3. m_hashAndFlags will not be mutated by different threads because:
+        //
+        //    a. StaticStringImpl's constructor sets the s_hashFlagDidReportCost flag to ensure
+        //       that StringImpl::cost() returns early.
+        //       This means StaticStringImpl costs are not counted. But since there should only
+        //       be a finite set of StaticStringImpls, their cost can be aggregated into a single
+        //       system cost if needed.
+        //    b. setIsAtom() is never called on a StaticStringImpl.
+        //       setIsAtom() asserts !isStatic().
+        //    c. setHash() is never called on a StaticStringImpl.
+        //       StaticStringImpl's constructor sets the hash on construction.
+        //       StringImpl::hash() only sets a new hash iff !hasHash().
+        //       Additionally, StringImpl::setHash() asserts hasHash() and !isStatic().
 
-    ALWAYS_INLINE static void initializeEmptyString()
-    {
-        s_empty.construct(adoptRef(*new StringImpl(ConstructEmpty)));
-    }
+        template<unsigned characterCount> explicit constexpr StaticStringImpl(const char (&characters)[characterCount], StringKind = StringNormal);
+        template<unsigned characterCount> explicit constexpr StaticStringImpl(const char16_t (&characters)[characterCount], StringKind = StringNormal);
+        operator StringImpl&();
+    };
+
+    WTF_EXPORT_PRIVATE static StaticStringImpl s_emptyAtomString;
+    ALWAYS_INLINE static StringImpl* empty() { return reinterpret_cast<StringImpl*>(&s_emptyAtomString); }
 
 
-    // FIXME: Do these functions really belong in StringImpl?
-    template<typename CharacterType> static void copyCharacters(CharacterType* destination, const CharacterType* source, unsigned length);
-    static void copyCharacters(UChar* destination, const LChar* source, unsigned length);
-    static void copyCharacters(LChar* destination, const UChar* source, unsigned length);
     template<typename SourceCharacterType> static void iterCharacters(jsstring_iterator* iter, unsigned start, const SourceCharacterType* source, unsigned numCharacters);
+    template<typename CharacterType>
+    ALWAYS_INLINE static void copyCharacters(CharacterType* destination, const CharacterType* source, unsigned length)
+    {
+        return copyElements(destination, source, length);
+    }
+
+    ALWAYS_INLINE static void copyCharacters(UChar* destination, const LChar* source, unsigned length)
+    {
+        static_assert(sizeof(UChar) == sizeof(uint16_t));
+        static_assert(sizeof(LChar) == sizeof(uint8_t));
+        return copyElements(bitwise_cast<uint16_t*>(destination), bitwise_cast<const uint8_t*>(source), length);
+    }
+
+    ALWAYS_INLINE static void copyCharacters(LChar* destination, const UChar* source, unsigned length)
+    {
+        static_assert(sizeof(UChar) == sizeof(uint16_t));
+        static_assert(sizeof(LChar) == sizeof(uint8_t));
+#if ASSERT_ENABLED
+        for (unsigned i = 0; i < length; ++i)
+            ASSERT(isLatin1(source[i]));
+#endif
+        return copyElements(bitwise_cast<uint8_t*>(destination), bitwise_cast<const uint16_t*>(source), length);
+    }
 
     // Some string features, like reference counting and the atomicity flag, are not
     // thread-safe. We achieve thread safety by isolation, giving each thread
@@ -448,16 +455,14 @@ public:
 
     Ref<StringImpl> foldCase();
 
-    WTF_EXPORT_PRIVATE Ref<StringImpl> stripWhiteSpace();
-    WTF_EXPORT_PRIVATE Ref<StringImpl> simplifyWhiteSpace();
-    Ref<StringImpl> simplifyWhiteSpace(CodeUnitMatchFunction);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> simplifyWhiteSpace(CodeUnitMatchFunction);
 
-    Ref<StringImpl> stripLeadingAndTrailingCharacters(CodeUnitMatchFunction);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> trim(CodeUnitMatchFunction);
     template<typename Predicate> Ref<StringImpl> removeCharacters(const Predicate&);
 
-    bool isAllASCII() const;
-    bool isAllLatin1() const;
-    template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters() const;
+    bool containsOnlyASCII() const;
+    bool containsOnlyLatin1() const;
+    template<bool isSpecialCharacter(UChar)> bool containsOnly() const;
 
     size_t find(LChar character, unsigned start = 0);
     size_t find(char character, unsigned start = 0);
@@ -543,7 +548,7 @@ private:
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(const UChar*, unsigned length);
 
-    template<class CodeUnitPredicate> Ref<StringImpl> stripMatchedCharacters(CodeUnitPredicate);
+    template<class CodeUnitPredicate> Ref<StringImpl> trimMatchedCharacters(CodeUnitPredicate);
     template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> removeCharactersImpl(const CharacterType* characters, const Predicate&);
     template<typename CharacterType, class CodeUnitPredicate> Ref<StringImpl> simplifyMatchedCharactersToSpace(CodeUnitPredicate);
     template<typename CharacterType> static Ref<StringImpl> constructInternal(StringImpl&, unsigned);
@@ -565,6 +570,10 @@ public:
     void assertHashIsCorrect() const;
 };
 
+using StaticStringImpl = StringImpl::StaticStringImpl;
+
+static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl));
+
 template<typename CharacterType>
 struct HashTranslatorCharBuffer {
     const CharacterType* characters;
@@ -585,6 +594,17 @@ struct HashTranslatorCharBuffer {
     {
     }
 };
+
+#if ASSERT_ENABLED
+
+// StringImpls created from StaticStringImpl will ASSERT in the generic ValueCheck<T>::checkConsistency
+// as they are not allocated by fastMalloc. We don't currently have any way to detect that case
+// so we ignore the consistency check for all StringImpl*.
+template<> struct ValueCheck<StringImpl*> {
+    static void checkConsistency(const StringImpl*) { }
+};
+
+#endif // ASSERT_ENABLED
 
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const StringImpl*);
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*);
@@ -623,12 +643,14 @@ template<size_t inlineCapacity> bool equalIgnoringNullity(const Vector<UChar, in
 template<typename CharacterType1, typename CharacterType2> int codePointCompare(const CharacterType1*, unsigned length1, const CharacterType2*, unsigned length2);
 int codePointCompare(const StringImpl*, const StringImpl*);
 
-// FIXME: Should rename this to make clear it uses the Unicode definition of whitespace.
-// Most WebKit callers don't want that would use isUnicodeCompatibleASCIIWhitespace or isASCIIWhitespace instead.
-bool isSpaceOrNewline(UChar32);
-bool isNotSpaceOrNewline(UChar32);
-// FIXME: rdar://99002825 (Investigate if isSpaceOrNewline should be including 0xA0 non-breaking space in check.)
-bool isUnicodeWhitespace(UChar32);
+bool isUnicodeWhitespace(UChar);
+
+// Deprecated as this excludes U+0085 and U+00A0 which are part of Unicode's White_Space definition:
+// https://www.unicode.org/Public/UCD/latest/ucd/PropList.txt
+bool deprecatedIsSpaceOrNewline(UChar);
+
+// Inverse of deprecatedIsSpaceOrNewline for predicates
+bool deprecatedIsNotSpaceOrNewline(UChar);
 
 // StringHash is the default hash for StringImpl* and RefPtr<StringImpl>
 template<typename> struct DefaultHash;
@@ -638,7 +660,8 @@ template<> struct DefaultHash<PackedPtr<StringImpl>>;
 template<> struct DefaultHash<CompactPtr<StringImpl>>;
 
 #define MAKE_STATIC_STRING_IMPL(characters) ([] { \
-        return &StringImpl::createStaticStringImplWithoutCopying(characters ""_s, (characters ""_s).length()).get(); \
+        static StaticStringImpl impl(characters); \
+        return &impl; \
     }())
 
 template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<LChar>(StringImpl& string, unsigned length)
@@ -783,21 +806,22 @@ inline int codePointCompare(const StringImpl* string1, const StringImpl* string2
     return codePointCompare(string1->characters16(), string1->length(), string2->characters16(), string2->length());
 }
 
-inline bool isSpaceOrNewline(UChar32 character)
+// FIXME: For LChar, isUnicodeCompatibleASCIIWhitespace(character) || character == 0x0085 || character == noBreakSpace would be enough
+inline bool isUnicodeWhitespace(UChar character)
 {
-    // Use isUnicodeCompatibleASCIIWhitespace() for all Latin-1 characters. This will include newlines, which aren't included in Unicode DirWS.
+    return isASCII(character) ? isUnicodeCompatibleASCIIWhitespace(character) : u_isUWhiteSpace(character);
+}
+
+inline bool deprecatedIsSpaceOrNewline(UChar character)
+{
+    // Use isUnicodeCompatibleASCIIWhitespace() for all Latin-1 characters, which is incorrect as it
+    // excludes U+0085 and U+00A0.
     return isLatin1(character) ? isUnicodeCompatibleASCIIWhitespace(character) : u_charDirection(character) == U_WHITE_SPACE_NEUTRAL;
 }
 
-inline bool isNotSpaceOrNewline(UChar32 character)
+inline bool deprecatedIsNotSpaceOrNewline(UChar character)
 {
-    return !isSpaceOrNewline(character);
-}
-
-// FIXME: For LChar, isUnicodeCompatibleASCIIWhitespace(character) || character == noBreakSpace would be enough
-inline bool isUnicodeWhitespace(UChar32 character)
-{
-    return isASCII(character) ? isUnicodeCompatibleASCIIWhitespace(character) : u_isUWhiteSpace(character);
+    return !deprecatedIsSpaceOrNewline(character);
 }
 
 inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, const LChar* data8, unsigned hashAndFlags)
@@ -816,6 +840,22 @@ inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, cons
 {
 }
 
+template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
+    : m_refCount(refCount)
+    , m_length(length)
+    , m_data8Char(characters)
+    , m_hashAndFlags(hashAndFlags)
+{
+}
+
+template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
+    : m_refCount(refCount)
+    , m_length(length)
+    , m_data16Char(characters)
+    , m_hashAndFlags(hashAndFlags)
+{
+}
+
 inline Ref<StringImpl> StringImpl::isolatedCopy() const
 {
     if (!requiresCopy()) {
@@ -829,14 +869,14 @@ inline Ref<StringImpl> StringImpl::isolatedCopy() const
     return create(m_data16, m_length);
 }
 
-inline bool StringImpl::isAllASCII() const
+inline bool StringImpl::containsOnlyASCII() const
 {
     if (is8Bit())
         return charactersAreAllASCII(characters8(), length());
     return charactersAreAllASCII(characters16(), length());
 }
 
-inline bool StringImpl::isAllLatin1() const
+inline bool StringImpl::containsOnlyLatin1() const
 {
     if (is8Bit())
         return true;
@@ -847,7 +887,7 @@ inline bool StringImpl::isAllLatin1() const
     return isLatin1(mergedCharacterBits);
 }
 
-template<bool isSpecialCharacter(UChar), typename CharacterType> inline bool isAllSpecialCharacters(const CharacterType* characters, size_t length)
+template<bool isSpecialCharacter(UChar), typename CharacterType> inline bool containsOnly(const CharacterType* characters, size_t length)
 {
     for (size_t i = 0; i < length; ++i) {
         if (!isSpecialCharacter(characters[i]))
@@ -856,11 +896,11 @@ template<bool isSpecialCharacter(UChar), typename CharacterType> inline bool isA
     return true;
 }
 
-template<bool isSpecialCharacter(UChar)> inline bool StringImpl::isAllSpecialCharacters() const
+template<bool isSpecialCharacter(UChar)> inline bool StringImpl::containsOnly() const
 {
     if (is8Bit())
-        return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters8(), length());
-    return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters16(), length());
+        return WTF::containsOnly<isSpecialCharacter>(characters8(), length());
+    return WTF::containsOnly<isSpecialCharacter>(characters16(), length());
 }
 
 inline StringImpl::StringImpl(unsigned length, Force8Bit)
@@ -915,14 +955,6 @@ inline StringImpl::StringImpl(const LChar* characters, unsigned length, Construc
     ASSERT(m_length);
 
     STRING_STATS_ADD_8BIT_STRING(m_length);
-}
-
-inline StringImpl::StringImpl(ConstructEmptyTag)
-    : StringImplShape(s_refCountFlagIsStaticString, 0, bitwise_cast<const LChar*>(""), s_hashFlag8BitBuffer | StringAtom | s_hashFlagDidReportCost | (StringHasher::computeLiteralHashAndMaskTop8Bits("") << s_flagCount))
-{
-    ASSERT(m_data8);
-    ASSERT(!s_empty.isConstructed());
-    assertHashIsCorrect();
 }
 
 template<typename Malloc>
@@ -1043,10 +1075,12 @@ inline size_t StringImpl::cost() const
     if (bufferOwnership() == BufferSubstring)
         return substringBuffer()->cost();
 
+    // Note: we must not alter the m_hashAndFlags field in instances of StaticStringImpl.
+    // We ensure this by pre-setting the s_hashFlagDidReportCost bit in all instances of
+    // StaticStringImpl. As a result, StaticStringImpl instances will always return a cost of
+    // 0 here and avoid modifying m_hashAndFlags.
     if (m_hashAndFlags & s_hashFlagDidReportCost)
         return 0;
-
-    ASSERT(!isStatic());
 
     m_hashAndFlags |= s_hashFlagDidReportCost;
     size_t result = m_length;
@@ -1139,128 +1173,6 @@ inline void StringImpl::iterCharacters(jsstring_iterator* iter, unsigned start, 
     }
 }
 
-template<typename CharacterType> inline void StringImpl::copyCharacters(CharacterType* destination, const CharacterType* source, unsigned length)
-{
-    if (length == 1)
-        *destination = *source;
-    else if (length)
-        std::memcpy(destination, source, length * sizeof(CharacterType));
-}
-
-inline void StringImpl::copyCharacters(UChar* destination, const LChar* source, unsigned length)
-{
-#if CPU(ARM64)
-    // SIMD Upconvert.
-    const auto* end = destination + length;
-    constexpr uintptr_t memoryAccessSize = 64;
-
-    if (length >= memoryAccessSize) {
-        constexpr uintptr_t memoryAccessMask = memoryAccessSize - 1;
-        const auto* simdEnd = destination + (length & ~memoryAccessMask);
-        uint8x16_t zeros = vdupq_n_u8(0);
-        do {
-            uint8x16x4_t bytes = vld1q_u8_x4(bitwise_cast<const uint8_t*>(source));
-            source += memoryAccessSize;
-
-            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[0], zeros }));
-            destination += memoryAccessSize / 4;
-            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[1], zeros }));
-            destination += memoryAccessSize / 4;
-            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[2], zeros }));
-            destination += memoryAccessSize / 4;
-            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[3], zeros }));
-            destination += memoryAccessSize / 4;
-        } while (destination != simdEnd);
-    }
-
-    while (destination != end)
-        *destination++ = *source++;
-#else
-    for (unsigned i = 0; i < length; ++i)
-        destination[i] = source[i];
-#endif
-}
-
-inline void StringImpl::copyCharacters(LChar* destination, const UChar* source, unsigned length)
-{
-#if ASSERT_ENABLED
-    for (unsigned i = 0; i < length; ++i)
-        ASSERT(isLatin1(source[i]));
-#endif
-
-#if CPU(X86_SSE2)
-    const uintptr_t memoryAccessSize = 16; // Memory accesses on 16 byte (128 bit) alignment
-    const uintptr_t memoryAccessMask = memoryAccessSize - 1;
-
-    unsigned i = 0;
-    for (; i < length && !isAlignedTo<memoryAccessMask>(&source[i]); ++i)
-        destination[i] = source[i];
-
-    const uintptr_t sourceLoadSize = 32; // Process 32 bytes (16 UChars) each iteration
-    const unsigned ucharsPerLoop = sourceLoadSize / sizeof(UChar);
-    if (length > ucharsPerLoop) {
-        const unsigned endLength = length - ucharsPerLoop + 1;
-        for (; i < endLength; i += ucharsPerLoop) {
-            __m128i first8UChars = _mm_load_si128(reinterpret_cast<const __m128i*>(&source[i]));
-            __m128i second8UChars = _mm_load_si128(reinterpret_cast<const __m128i*>(&source[i+8]));
-            __m128i packedChars = _mm_packus_epi16(first8UChars, second8UChars);
-            _mm_storeu_si128(reinterpret_cast<__m128i*>(&destination[i]), packedChars);
-        }
-    }
-
-    for (; i < length; ++i)
-        destination[i] = source[i];
-#elif COMPILER(GCC_COMPATIBLE) && CPU(ARM64) && !defined(__ILP32__) && defined(NDEBUG)
-    const LChar* const end = destination + length;
-    const uintptr_t memoryAccessSize = 16;
-
-    if (length >= memoryAccessSize) {
-        const uintptr_t memoryAccessMask = memoryAccessSize - 1;
-
-        // Vector interleaved unpack, we only store the lower 8 bits.
-        const uintptr_t lengthLeft = end - destination;
-        const LChar* const simdEnd = destination + (lengthLeft & ~memoryAccessMask);
-        do {
-            asm("ld2   { v0.16B, v1.16B }, [%[SOURCE]], #32\n\t"
-                "st1   { v0.16B }, [%[DESTINATION]], #16\n\t"
-                : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
-                :
-                : "memory", "v0", "v1");
-        } while (destination != simdEnd);
-    }
-
-    while (destination != end)
-        *destination++ = static_cast<LChar>(*source++);
-#elif COMPILER(GCC_COMPATIBLE) && CPU(ARM_NEON) && !(CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)) && defined(NDEBUG)
-    const LChar* const end = destination + length;
-    const uintptr_t memoryAccessSize = 8;
-
-    if (length >= (2 * memoryAccessSize) - 1) {
-        // Prefix: align dst on 64 bits.
-        const uintptr_t memoryAccessMask = memoryAccessSize - 1;
-        while (!isAlignedTo<memoryAccessMask>(destination))
-            *destination++ = static_cast<LChar>(*source++);
-
-        // Vector interleaved unpack, we only store the lower 8 bits.
-        const uintptr_t lengthLeft = end - destination;
-        const LChar* const simdEnd = end - (lengthLeft % memoryAccessSize);
-        do {
-            asm("vld2.8   { d0-d1 }, [%[SOURCE]] !\n\t"
-                "vst1.8   { d0 }, [%[DESTINATION],:64] !\n\t"
-                : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
-                :
-                : "memory", "d0", "d1");
-        } while (destination != simdEnd);
-    }
-
-    while (destination != end)
-        *destination++ = static_cast<LChar>(*source++);
-#else
-    for (unsigned i = 0; i < length; ++i)
-        destination[i] = static_cast<LChar>(source[i]);
-#endif
-}
-
 inline UChar StringImpl::at(unsigned i) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);
@@ -1345,6 +1257,23 @@ inline StringImpl*& StringImpl::substringBuffer()
 inline void StringImpl::assertHashIsCorrect() const
 {
     ASSERT(existingHash() == StringHasher::computeHashAndMaskTop8Bits(characters8(), length()));
+}
+
+template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char (&characters)[characterCount], StringKind stringKind)
+    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
+        s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+{
+}
+
+template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char16_t (&characters)[characterCount], StringKind stringKind)
+    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
+        s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+{
+}
+
+inline StringImpl::StaticStringImpl::operator StringImpl&()
+{
+    return *reinterpret_cast<StringImpl*>(this);
 }
 
 inline bool equalIgnoringASCIICase(const StringImpl& a, const StringImpl& b)
@@ -1533,8 +1462,9 @@ inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8Conversio
 
 } // namespace WTF
 
+using WTF::StaticStringImpl;
 using WTF::StringImpl;
 using WTF::equal;
-using WTF::isNotSpaceOrNewline;
-using WTF::isSpaceOrNewline;
 using WTF::isUnicodeWhitespace;
+using WTF::deprecatedIsSpaceOrNewline;
+using WTF::deprecatedIsNotSpaceOrNewline;

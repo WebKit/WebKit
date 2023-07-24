@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebPage.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -35,8 +36,6 @@ class Icon;
 }
 
 namespace WebKit {
-
-class WebPage;
 
 class WebOpenPanelResultListener : public RefCounted<WebOpenPanelResultListener> {
 public:
@@ -53,7 +52,7 @@ public:
 private:
     WebOpenPanelResultListener(WebPage&, Ref<WebCore::FileChooser>&&);
 
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
     Ref<WebCore::FileChooser> m_fileChooser;
 };
 

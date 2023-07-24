@@ -23,6 +23,7 @@ cf5945085fe85456a1f74bf4cc7998b88b3f4b62 *invalid-oss-fuzz-10705.ivf
 758671858368ffd2a2c0727898de5661f7cf7d68 *invalid-oss-fuzz-10705.ivf.res
 88e29851122cca3f336824f7fa4d9f757f91110c *invalid-oss-fuzz-10723.ivf
 64f8a208dec7f1580fbe0371aa15e62bb1262715 *invalid-oss-fuzz-10723.ivf.res.2
+1af486cd2cc83ebeddc76ca7a1c512cc0ec568d5 *invalid-oss-fuzz-10723.ivf.res.3
 0784acc8931090ec24eba752d6c27e359e68fe7d *invalid-oss-fuzz-10779.ivf
 5d9474c0309b7ca09a182d888f73b37a8fe1362c *invalid-oss-fuzz-10779.ivf.res
 7d37be9357f89a100ced694aee1ca5a6fad35ba9 *invalid-oss-fuzz-11477.ivf
@@ -566,4 +567,7 @@ e71cd9a07f928c527c900daddd071ae60337426d *av1-1-b8-24-monochrome.ivf.md5
 e24aa6951afd7b2bb53eb1a73e25a19e7b189f82 *av1-1-b10-24-monochrome.ivf.md5
 df0c9481104aa8c81f9e3b61b6d147a331ad3e35 *firstpass_stats
 3eaf216d9fc8b4b9bb8c3956311f49a85974806c *bus_352x288_420_f20_b8.yuv
-5df0dde6ae53ee82cb89b9f84ada1f2efc8969d0 *tpl_stats
+c7f336958e7af6162c20ddc84d67c7dfa9826910 *av1-1-b8-16-intra_only-intrabc-extreme-dv.ivf
+36a4fcf07e645ed522cde5845dd9c6ab2b2d1502 *av1-1-b8-16-intra_only-intrabc-extreme-dv.ivf.md5
+9f935d391fdf4a6f7c320355d45770d2e7d6095c *desktopqvga2.320_240.yuv
+4d1ad6d3070268ccb000d7fc3ae0f5a9447bfe82 *test_input_w1h1.yuv

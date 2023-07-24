@@ -1,5 +1,5 @@
-<?% config.freshness.reviewed = '2021-04-14' %?>
-<?% config.freshness.owner = 'asapersson' %?>
+<!-- go/cmark -->
+<!--* freshness: {owner: 'asapersson' reviewed: '2021-04-14'} *-->
 
 # Video stats
 
@@ -148,8 +148,6 @@ Updated after a frame has been decoded, `VCMDecodedFrameCallback::Decoded`.
 *   `qp_sum` - sum of quantizer values of decoded frames [[rtcinboundrtpstreamstats-qpsum]].
 *   `content_type` - content type (UNSPECIFIED/SCREENSHARE).
 *   `interframe_delay_max_ms` - max inter-frame delay within a time window between decoded frames.
-*   `total_inter_frame_delay` - sum of inter-frame delay in seconds between decoded frames [[rtcinboundrtpstreamstats-totalinterframedelay]].
-*   `total_squared_inter_frame_delay` - sum of squared inter-frame delays in seconds between decoded frames [[rtcinboundrtpstreamstats-totalsquaredinterframedelay]].
 
 Updated before a frame is sent to the renderer, `VideoReceiveStream2::OnFrame`.
 *   `frames_rendered` - total number of rendered frames.
@@ -162,8 +160,8 @@ Updated before a frame is sent to the renderer, `VideoReceiveStream2::OnFrame`.
 *   `pause_count` - total number of detected pauses.
 *   `total_freezes_duration_ms` - total duration of freezes in ms.
 *   `total_pauses_duration_ms` - total duration of pauses in ms.
-*   `total_frames_duration_ms` - time in ms between the last rendered frame and the first rendered frame.
-*   `sum_squared_frame_durations` - sum of squared inter-frame delays in seconds between rendered frames.
+*   `total_inter_frame_delay` - sum of inter-frame delay in seconds between rendered frames [[rtcinboundrtpstreamstats-totalinterframedelay]].
+*   `total_squared_inter_frame_delay` - sum of squared inter-frame delays in seconds between rendered frames [[rtcinboundrtpstreamstats-totalsquaredinterframedelay]].
 
 `ReceiveStatisticsImpl::OnRtpPacket` is updated for received RTP packets. From `ReceiveStatistics`:
 *   `total_bitrate_bps` - incoming bitrate in bps.
@@ -197,7 +195,7 @@ Updated when a RTCP packet is sent, `RTCPSender::ComputeCompoundRTCPPacket`.
 
 [VideoReceiveStream]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/call/video_receive_stream.h
 [VideoReceiveStream::Stats]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/call/video_receive_stream.h?q=VideoReceiveStream::Stats
-[ReceiveStatisticsProxy]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/video/receive_statistics_proxy2.h
+[ReceiveStatisticsProxy]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/video/receive_statistics_proxy.h
 [rtcinboundrtpstreamstats-keyframesdecoded]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-keyframesdecoded
 [rtcinboundrtpstreamstats-jitterbufferdelay]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-jitterbufferdelay
 [rtcinboundrtpstreamstats-jitterbufferemittedcount]: https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-jitterbufferemittedcount

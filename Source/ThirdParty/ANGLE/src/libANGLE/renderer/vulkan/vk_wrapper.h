@@ -761,21 +761,18 @@ ANGLE_INLINE void CommandBuffer::blitImage(const Image &srcImage,
 
 ANGLE_INLINE VkResult CommandBuffer::begin(const VkCommandBufferBeginInfo &info)
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "CommandBuffer::begin");
     ASSERT(valid());
     return vkBeginCommandBuffer(mHandle, &info);
 }
 
 ANGLE_INLINE VkResult CommandBuffer::end()
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "CommandBuffer::end");
     ASSERT(valid());
     return vkEndCommandBuffer(mHandle);
 }
 
 ANGLE_INLINE VkResult CommandBuffer::reset()
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "CommandBuffer::reset");
     ASSERT(valid());
     return vkResetCommandBuffer(mHandle, 0);
 }
@@ -1491,7 +1488,6 @@ ANGLE_INLINE VkResult DeviceMemory::map(VkDevice device,
                                         VkMemoryMapFlags flags,
                                         uint8_t **mapPointer) const
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "DeviceMemory::map");
     ASSERT(valid());
     return vkMapMemory(device, mHandle, offset, size, flags, reinterpret_cast<void **>(mapPointer));
 }

@@ -87,7 +87,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
     , m_isGeneratedFromCache(false)
     , m_lineCount(node->lastLine() - node->firstLine())
     , m_hasCapturedVariables(false)
-    , m_unlinkedFunctionNameStart(node->functionNameStart() - parentSource.startOffset())
+    , m_unlinkedFunctionStart(node->functionStart())
     , m_isBuiltinFunction(kind == UnlinkedBuiltinFunction)
     , m_unlinkedBodyStartColumn(node->startColumn())
     , m_isBuiltinDefaultClassConstructor(isBuiltinDefaultClassConstructor)
@@ -99,9 +99,8 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
     , m_superBinding(static_cast<unsigned>(node->superBinding()))
     , m_parametersStartOffset(node->parametersStart())
     , m_isCached(false)
-    , m_typeProfilingStartOffset(node->functionKeywordStart())
+    , m_unlinkedFunctionEnd(node->startStartOffset() + node->source().length() - 1)
     , m_needsClassFieldInitializer(static_cast<unsigned>(needsClassFieldInitializer))
-    , m_typeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
     , m_parameterCount(node->parameterCount())
     , m_privateBrandRequirement(static_cast<unsigned>(privateBrandRequirement))
     , m_features(0)
@@ -288,12 +287,6 @@ UnlinkedFunctionExecutable::RareData& UnlinkedFunctionExecutable::ensureRareData
     ASSERT(!m_rareData);
     m_rareData = makeUnique<RareData>();
     return *m_rareData;
-}
-
-void UnlinkedFunctionExecutable::setInvalidTypeProfilingOffsets()
-{
-    m_typeProfilingStartOffset = INT32_MAX;
-    m_typeProfilingEndOffset = std::numeric_limits<unsigned>::max();
 }
 
 void UnlinkedFunctionExecutable::finalizeUnconditionally(VM& vm, CollectionScope)

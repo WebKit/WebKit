@@ -40,7 +40,6 @@
 #include "LocalFrameLoaderClient.h"
 #include "Page.h"
 #include "ProgressEvent.h"
-#include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"

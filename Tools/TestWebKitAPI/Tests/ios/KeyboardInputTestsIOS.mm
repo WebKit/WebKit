@@ -1017,6 +1017,38 @@ TEST(KeyboardInputTests, InputSessionWhenEvaluatingJavaScript)
     EXPECT_TRUE(didStartInputSession);
 }
 
+TEST(KeyboardInputTests, NoCrashWhenDiscardingMarkedText)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool:processPool.get()];
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView _setEditable:YES];
+
+    auto navigateAndSetMarkedText = [&](const String& urlString) {
+        auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:(NSString *)urlString]];
+        [webView loadSimulatedRequest:request responseHTMLString:@"<body>Hello world</body>"];
+        [navigationDelegate waitForDidFinishNavigation];
+        [webView selectAll:nil];
+        [[webView textInputContentView] setMarkedText:@"Hello" selectedRange:NSMakeRange(0, 5)];
+        [webView waitForNextPresentationUpdate];
+    };
+
+    navigateAndSetMarkedText("https://foo.com"_s);
+    navigateAndSetMarkedText("https://bar.com"_s);
+    navigateAndSetMarkedText("https://baz.com"_s);
+    navigateAndSetMarkedText("https://foo.com"_s);
+    [webView _close];
+
+    Util::runFor(100_ms);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)

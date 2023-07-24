@@ -22,7 +22,7 @@ layer at (0,0) size 800x516
         RenderText {#text} at (0,0) size 359x18
           text run at (0,0) width 359: "There should be a red, white and blue pattern above this"
 layer at (8,270) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {hr} at (0,262) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {hr} at (0,262) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (18,86) size 140x140 clip at (38,106) size 100x100
   RenderSVGRoot {svg} at (10,78) size 140x140 [border: (10px solid #FF0000)]
 layer at (38,106) size 100x100

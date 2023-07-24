@@ -31,8 +31,8 @@
     },
     'client.webrtc': {
       # Android
-      'Android32 (M Nexus5X)': 'android_release_bot_arm',
-      'Android32 (M Nexus5X)(dbg)': 'android_debug_static_bot_arm',
+      'Android32': 'android_release_bot_arm',
+      'Android32 (dbg)': 'android_debug_static_bot_arm',
       'Android32 (more configs)': {
         'bwe_test_logging': 'bwe_test_logging_android_arm',
         'dummy_audio_file_devices_no_protobuf':
@@ -42,10 +42,14 @@
       'Android32 Builder arm': 'android_pure_release_bot_arm',
       'Android32 Builder x86': 'android_release_bot_x86',
       'Android32 Builder x86 (dbg)': 'android_debug_static_bot_x86',
-      'Android64 (M Nexus5X)': 'android_release_bot_arm64',
-      'Android64 (M Nexus5X)(dbg)': 'android_debug_static_bot_arm64',
+      'Android64': 'android_release_bot_arm64',
+      'Android64 (dbg)': 'android_debug_static_bot_arm64',
       'Android64 Builder arm64': 'android_pure_release_bot_arm64',
       'Android64 Builder x64 (dbg)': 'android_debug_static_bot_x64',
+
+      # Fuchsia
+      'Fuchsia Builder': 'release_bot_x64_fuchsia',
+      'Fuchsia Release': 'release_bot_x64_fuchsia',
 
       # Linux
       # "More configs" bots will build all the following configs in sequence.
@@ -87,19 +91,17 @@
         'dummy_audio_file_devices_no_protobuf_x86',
         'rtti_no_sctp': 'rtti_no_sctp_no_unicode_win_x86',
       },
-      'Win32 Builder (Clang)': 'win_clang_pure_release_bot_x86',
       'Win32 Debug (Clang)': 'win_clang_debug_bot_x86',
       'Win32 Release (Clang)': 'win_clang_release_bot_x86',
       'Win64 ASan': 'win_asan_clang_release_bot_x64',
+      'Win64 Builder (Clang)': 'win_clang_pure_release_bot_x64',
       'Win64 Debug (Clang)': 'win_clang_debug_bot_x64',
       'Win64 Release (Clang)': 'win_clang_release_bot_x64',
 
       # iOS
+      'iOS Debug (simulator)': 'ios_debug_bot_x64',
       'iOS64 Debug': 'ios_debug_bot_arm64',
       'iOS64 Release': 'ios_release_bot_arm64',
-      'iOS64 Sim Debug (iOS 12)': 'ios_debug_bot_x64',
-      'iOS64 Sim Debug (iOS 13)': 'ios_debug_bot_x64',
-      'iOS64 Sim Debug (iOS 14)': 'ios_debug_bot_x64',
     },
     'client.webrtc.fyi': {
       # Android
@@ -120,15 +122,16 @@
       # build anything).
       # TODO(http://crbug.com/1029452): Nuke these and isolate on builder
       # instead?
-      'Perf Android32 (M AOSP Nexus6)': 'release_bot_x64',
-      'Perf Android32 (M Nexus5)': 'release_bot_x64',
-      'Perf Android64 (M Nexus5X)': 'release_bot_x64',
+      'Perf Android32 (O Pixel2)': 'release_bot_x64',
+      'Perf Android32 (R Pixel5)': 'release_bot_x64',
       'Perf Android64 (O Pixel2)': 'release_bot_x64',
+      'Perf Android64 (R Pixel5)': 'release_bot_x64',
+      'Perf Fuchsia': 'release_bot_x64_fuchsia',
       'Perf Linux Bionic': 'release_bot_x64',
       'Perf Linux Trusty': 'release_bot_x64',
       'Perf Mac 11': 'release_bot_x64',
       'Perf Mac M1 Arm64 12': 'release_bot_x64',
-      'Perf Win7': 'release_bot_x64',
+      'Perf Win 10': 'release_bot_x64',
     },
     'internal.client.webrtc': {
       'iOS64 Debug': 'ios_internal_debug_bot_arm64',
@@ -156,12 +159,13 @@
       'android_compile_x86_dbg': 'android_debug_static_bot_x86',
       'android_compile_x86_rel': 'android_release_bot_x86',
 
+      # Fuchsia
+      'fuchsia_rel': 'release_bot_x64_fuchsia',
+
       # iOS
       'ios_compile_arm64_dbg': 'ios_debug_bot_arm64',
       'ios_compile_arm64_rel': 'ios_release_bot_arm64',
-      'ios_sim_x64_dbg_ios12': 'ios_debug_bot_x64',
-      'ios_sim_x64_dbg_ios13': 'ios_debug_bot_x64',
-      'ios_sim_x64_dbg_ios14': 'ios_debug_bot_x64',
+      'ios_dbg_simulator': 'ios_debug_bot_x64',
 
       # Linux
       'linux_asan': 'asan_lsan_clang_release_bot_x64',
@@ -173,6 +177,7 @@
       'linux_compile_rel': 'pure_release_bot_x64',
       'linux_compile_x86_dbg': 'debug_bot_x86',
       'linux_compile_x86_rel': 'pure_release_bot_x86',
+      'linux_coverage': 'code_coverage_bot_x64',
       'linux_dbg': 'debug_bot_x64',
       'linux_libfuzzer_rel': 'libfuzzer_asan_release_bot_x64',
       'linux_more_configs': {
@@ -205,7 +210,6 @@
       'win_compile_x86_clang_dbg': 'win_clang_debug_bot_x86',
       'win_compile_x86_clang_rel': 'win_clang_release_bot_x86',
       'win_x64_clang_dbg': 'win_clang_debug_bot_x64',
-      'win_x64_clang_dbg_win10': 'win_clang_debug_bot_x64',
       'win_x64_clang_rel': 'win_clang_release_bot_x64',
       'win_x86_clang_dbg': 'win_clang_debug_bot_x86',
       'win_x86_clang_rel': 'win_clang_release_bot_x86',
@@ -241,9 +245,12 @@
     ['android', 'debug_static_bot', 'arm', 'bwe_test_logging'],
     'bwe_test_logging_x64': ['debug_bot', 'x64', 'bwe_test_logging'],
     'bwe_test_logging_x86': ['debug_bot', 'x86', 'bwe_test_logging'],
+    'code_coverage_bot_x64': [
+      'openh264', 'release_bot', 'x64', 'code_coverage',
+      'partial_code_coverage_instrumentation'
+    ],
     'codesearch_gen_linux_bot': ['openh264', 'debug_bot', 'minimal_symbols'],
-    # TODO(kjellander): Restore Goma for this when crbug.com/726706 is fixed.
-    'debug_bot_arm': ['openh264', 'debug', 'arm'],
+    'debug_bot_arm': ['openh264', 'debug_bot', 'arm'],
     'debug_bot_arm64': ['openh264', 'debug_bot', 'arm64'],
     'debug_bot_x64': ['openh264', 'debug_bot', 'x64'],
     'debug_bot_x86': ['openh264', 'debug_bot', 'x86'],
@@ -270,8 +277,9 @@
       'ios', 'release_bot', 'arm64', 'ios_code_signing_identity_description',
       'xctest'
     ],
-    'ios_release_bot_arm64':
-    ['ios', 'release_bot', 'arm64', 'no_ios_code_signing', 'xctest'],
+    'ios_release_bot_arm64': [
+      'ios', 'release_bot', 'arm64', 'no_ios_code_signing', 'xctest',
+    ],
     'libfuzzer_asan_release_bot_x64': [
       'libfuzzer', 'asan', 'optimize_for_fuzzing', 'openh264',
       'pure_release_bot', 'x64'
@@ -291,19 +299,21 @@
     'release_bot_arm': ['openh264', 'release_bot', 'arm'],
     'release_bot_arm64': ['openh264', 'release_bot', 'arm64'],
     'release_bot_x64': ['openh264', 'release_bot', 'x64'],
+    'release_bot_x64_fuchsia': ['openh264', 'release_bot', 'x64', 'fuchsia'],
     'release_bot_x86': ['openh264', 'release_bot', 'x86'],
-    'rtti_no_sctp_android_arm': [
-      'android', 'debug_static_bot', 'arm', 'rtti', 'no_sctp'
-    ],
+    'rtti_no_sctp_android_arm':
+    ['android', 'debug_static_bot', 'arm', 'rtti', 'no_sctp'],
     'rtti_no_sctp_no_unicode_win_x86':
     ['debug_bot', 'x86', 'rtti', 'no_sctp', 'win_undef_unicode'],
     'rtti_no_sctp_x64': ['debug_bot', 'x64', 'rtti', 'no_sctp'],
     'tsan_clang_release_bot_x64':
     ['tsan', 'clang', 'openh264', 'pure_release_bot', 'x64'],
-    'ubsan_clang_release_bot_x64':
-    ['ubsan', 'clang', 'openh264', 'pure_release_bot', 'x64'],
-    'ubsan_vptr_clang_release_bot_x64':
-    ['ubsan_vptr', 'clang', 'openh264', 'pure_release_bot', 'x64'],
+    'ubsan_clang_release_bot_x64': [
+      'ubsan', 'clang', 'openh264', 'pure_release_bot', 'x64'
+    ],
+    'ubsan_vptr_clang_release_bot_x64': [
+      'ubsan_vptr', 'clang', 'openh264', 'pure_release_bot', 'x64'
+    ],
     'win_asan_clang_release_bot_x64': [
       'asan',
       'clang',
@@ -311,7 +321,6 @@
       'openh264',
       'pure_release_bot',
       'x64',
-      'win_fastlink',
     ],
     'win_clang_debug_bot_x64': [
       'clang',
@@ -325,11 +334,11 @@
       'debug_bot',
       'x86',
     ],
-    'win_clang_pure_release_bot_x86': [
+    'win_clang_pure_release_bot_x64': [
       'clang',
       'openh264',
       'pure_release_bot',
-      'x86',
+      'x64',
     ],
     'win_clang_release_bot_x64': [
       'clang',
@@ -367,6 +376,9 @@
     'clang': {
       'gn_args': 'is_clang=true',
     },
+    'code_coverage': {
+      'gn_args': 'use_clang_coverage=true',
+    },
     'dcheck_always_on': {
       'gn_args': 'dcheck_always_on=true',
     },
@@ -377,19 +389,19 @@
       'gn_args': 'is_debug=true',
     },
     'debug_bot': {
-      'mixins': ['debug', 'goma'],
+      'mixins': ['debug', 'reclient'],
     },
     'debug_static_bot': {
-      'mixins': ['debug', 'minimal_symbols', 'goma'],
+      'mixins': ['debug', 'minimal_symbols', 'reclient'],
     },
     'dummy_audio_file_devices': {
       'gn_args': 'rtc_use_dummy_audio_file_devices=true',
     },
+    'fuchsia': {
+      'gn_args': 'target_os="fuchsia"'
+    },
     'full_symbols': {
       'gn_args': 'symbol_level=2',
-    },
-    'goma': {
-      'gn_args': 'use_goma=true',
     },
     'ios': {
       'gn_args': 'target_os="ios"',
@@ -407,7 +419,8 @@
       'gn_args': 'symbol_level=1',
     },
     'msan': {
-      'gn_args': 'is_msan=true msan_track_origins=2',
+      'gn_args': 'is_msan=true msan_track_origins=2'
+                 ' instrumented_libraries_release = "focal"',
     },
     'no_ios_code_signing': {
       'gn_args': 'ios_enable_code_signing=false',
@@ -424,11 +437,18 @@
     'optimize_for_fuzzing': {
       'gn_args': 'optimize_for_fuzzing=true',
     },
+    'partial_code_coverage_instrumentation': {
+      'gn_args':
+      'coverage_instrumentation_input_file="//.code-coverage/files_to_instrument.txt"'
+    },
     # The 'pure_release_bot' configuration is for release bots that are doing a
     # 100% release build without DCHECKs while 'release_bot' is a partial
     # release configs since `dcheck_always_on` is set to true.
     'pure_release_bot': {
-      'mixins': ['release', 'goma', 'dcheck_off'],
+      'mixins': ['release', 'reclient', 'dcheck_off'],
+    },
+    'reclient': {
+      'gn_args': 'use_remoteexec=true',
     },
     'release': {
       'gn_args': 'is_debug=false',
@@ -447,9 +467,6 @@
     },
     'ubsan_vptr': {
       'gn_args': 'is_ubsan_vptr=true is_ubsan_no_recover=true',
-    },
-    'win_fastlink': {
-      'gn_args': 'is_win_fastlink=true',
     },
     'win_undef_unicode': {
       'gn_args': 'rtc_win_undef_unicode=true',

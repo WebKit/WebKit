@@ -68,14 +68,14 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
     return result;
 }
 
-static bool shouldReverseAnimationValue(WebCore::Animation::AnimationDirection direction, int loopCount)
+static bool shouldReverseAnimationValue(WebCore::Animation::Direction direction, int loopCount)
 {
-    return (direction == WebCore::Animation::AnimationDirectionAlternate && loopCount & 1)
-        || (direction == WebCore::Animation::AnimationDirectionAlternateReverse && !(loopCount & 1))
-        || direction == WebCore::Animation::AnimationDirectionReverse;
+    return (direction == WebCore::Animation::Direction::Alternate && loopCount & 1)
+        || (direction == WebCore::Animation::Direction::AlternateReverse && !(loopCount & 1))
+        || direction == WebCore::Animation::Direction::Reverse;
 }
 
-static double normalizedAnimationValue(double runningTime, double duration, WebCore::Animation::AnimationDirection direction, double iterationCount)
+static double normalizedAnimationValue(double runningTime, double duration, WebCore::Animation::Direction direction, double iterationCount)
 {
     if (!duration)
         return 0;
@@ -89,11 +89,11 @@ static double normalizedAnimationValue(double runningTime, double duration, WebC
     return shouldReverseAnimationValue(direction, loopCount) ? 1 - normalized : normalized;
 }
 
-static double normalizedAnimationValueForFillsForwards(double iterationCount, WebCore::Animation::AnimationDirection direction)
+static double normalizedAnimationValueForFillsForwards(double iterationCount, WebCore::Animation::Direction direction)
 {
-    if (direction == WebCore::Animation::AnimationDirectionNormal)
+    if (direction == WebCore::Animation::Direction::Normal)
         return 1;
-    if (direction == WebCore::Animation::AnimationDirectionReverse)
+    if (direction == WebCore::Animation::Direction::Reverse)
         return 0;
     return shouldReverseAnimationValue(direction, iterationCount) ? 1 : 0;
 }

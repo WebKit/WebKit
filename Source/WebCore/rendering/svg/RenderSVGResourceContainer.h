@@ -78,23 +78,23 @@ private:
     bool m_isInvalidating { false };
 };
 
-inline RenderSVGResourceContainer* getRenderSVGResourceContainerById(Document& document, const AtomString& id)
+inline RenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeScope& treeScope, const AtomString& id)
 {
     if (id.isEmpty())
         return nullptr;
 
-    if (RenderSVGResourceContainer* renderResource = document.accessSVGExtensions().resourceById(id))
+    if (RenderSVGResourceContainer* renderResource = treeScope.svgResourceById(id))
         return renderResource;
 
     return nullptr;
 }
 
 template<typename Renderer>
-Renderer* getRenderSVGResourceById(Document& document, const AtomString& id)
+Renderer* getRenderSVGResourceById(TreeScope& treeScope, const AtomString& id)
 {
     // Using the RenderSVGResource type here avoids ambiguous casts for types that
     // descend from both RenderObject and RenderSVGResourceContainer.
-    RenderSVGResource* container = getRenderSVGResourceContainerById(document, id);
+    RenderSVGResource* container = getRenderSVGResourceContainerById(treeScope, id);
     if (is<Renderer>(container))
         return downcast<Renderer>(container);
 

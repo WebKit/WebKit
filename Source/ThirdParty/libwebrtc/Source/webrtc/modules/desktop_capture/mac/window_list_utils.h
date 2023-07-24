@@ -14,6 +14,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 
 #include <string>
+
 #include "api/function_view.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer.h"

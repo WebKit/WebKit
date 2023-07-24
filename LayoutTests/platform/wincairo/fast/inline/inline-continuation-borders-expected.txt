@@ -21,7 +21,7 @@ layer at (0,0) size 785x1294
               RenderText {#text} at (0,0) size 21x19
                 text run at (0,0) width 21: "ccc"
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,144) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,144) size 769x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock {DIV} at (0,162) size 769x128
           RenderBlock {P} at (0,0) size 769x20
             RenderText {#text} at (0,0) size 142x19
@@ -37,7 +37,7 @@ layer at (0,0) size 785x1294
           RenderBlock (anonymous) at (0,108) size 769x20
             RenderInline {SPAN} at (0,0) size 22x23 [bgcolor=#008000] [border: (2px solid #FF0000)]
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,306) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,306) size 769x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock {DIV} at (0,324) size 769x128
           RenderBlock {P} at (0,0) size 769x20
             RenderText {#text} at (0,0) size 154x19
@@ -53,7 +53,7 @@ layer at (0,0) size 785x1294
               RenderText {#text} at (0,0) size 21x19
                 text run at (0,0) width 21: "ccc"
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,468) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,468) size 769x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock {DIV} at (0,486) size 769x128
           RenderBlock {P} at (0,0) size 769x20
             RenderText {#text} at (0,0) size 211x19
@@ -67,7 +67,7 @@ layer at (0,0) size 785x1294
           RenderBlock (anonymous) at (0,108) size 769x20
             RenderInline {SPAN} at (0,0) size 22x23 [bgcolor=#008000] [border: (2px solid #FF0000)]
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,630) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,630) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {DIV} at (0,648) size 769x614
         RenderBlock {DIV} at (0,0) size 769x128
           RenderBlock {P} at (0,0) size 769x20
@@ -86,7 +86,7 @@ layer at (0,0) size 785x1294
               RenderText {#text} at (748,0) size 21x19
                 text run at (748,0) width 21: "ccc"
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,144) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,144) size 769x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock {DIV} at (0,162) size 769x128
           RenderBlock {P} at (0,0) size 769x20
             RenderText {#text} at (627,0) size 142x19
@@ -103,7 +103,7 @@ layer at (0,0) size 785x1294
           RenderBlock (anonymous) at (0,108) size 769x20
             RenderInline {SPAN} at (0,0) size 22x23 [bgcolor=#008000] [border: (2px solid #FF0000)]
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,306) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,306) size 769x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock {DIV} at (0,324) size 769x128
           RenderBlock {P} at (0,0) size 769x20
             RenderText {#text} at (615,0) size 154x19
@@ -120,7 +120,7 @@ layer at (0,0) size 785x1294
               RenderText {#text} at (748,0) size 21x19
                 text run at (748,0) width 21: "ccc"
             RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,468) size 769x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,468) size 769x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock {DIV} at (0,486) size 769x128
           RenderBlock {P} at (0,0) size 769x20
             RenderText {#text} at (558,0) size 211x19

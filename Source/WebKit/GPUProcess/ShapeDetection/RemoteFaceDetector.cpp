@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ArgumentCoders.h"
+#include "RemoteImageBuffer.h"
 #include "RemoteResourceCache.h"
 #include <WebCore/DetectedFaceInterface.h>
 #include <WebCore/FaceDetectorInterface.h>
@@ -46,7 +47,7 @@ RemoteFaceDetector::RemoteFaceDetector(Ref<WebCore::ShapeDetection::FaceDetector
 
 RemoteFaceDetector::~RemoteFaceDetector() = default;
 
-void RemoteFaceDetector::detect(RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&& completionHandler)
+void RemoteFaceDetector::detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&& completionHandler)
 {
     auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ renderingResourceIdentifier, m_webProcessIdentifier });
     if (!imageBuffer) {

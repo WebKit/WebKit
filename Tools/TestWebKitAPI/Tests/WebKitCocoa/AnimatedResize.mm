@@ -51,7 +51,7 @@ static bool didLayout;
 static bool didEndAnimatedResize;
 static bool didChangeSafeAreaShouldAffectObscuredInsets;
 
-@interface AnimatedResizeWebView : WKWebView <WKUIDelegate>
+@interface AnimatedResizeWebView : TestWKWebView <WKUIDelegate>
 
 @end
 

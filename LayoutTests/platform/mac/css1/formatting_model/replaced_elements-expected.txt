@@ -85,4 +85,4 @@ layer at (0,0) size 785x2339
                   text run at (0,18) width 144: "of the parent element: "
                   text run at (143,18) width 404: "the document body in the first half, and the table in the second."
 layer at (8,175) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,167) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,167) size 769x2 [color=#808080] [border: (1px inset #808080)]

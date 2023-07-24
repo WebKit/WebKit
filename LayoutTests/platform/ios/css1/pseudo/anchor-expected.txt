@@ -160,4 +160,4 @@ layer at (0,0) size 800x725
                   text run at (0,20) width 355: "declared for the A tag are applied to them under CSS1. "
                   text run at (354,20) width 330: "It also should NOT turn orange when clicked upon."
 layer at (8,141) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,133) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,133) size 784x2 [color=#808080] [border: (1px inset #808080)]

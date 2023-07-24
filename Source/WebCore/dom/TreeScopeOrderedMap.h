@@ -59,7 +59,7 @@ public:
     Element* getElementByName(const AtomStringImpl&, const TreeScope&) const;
     HTMLMapElement* getElementByMapName(const AtomStringImpl&, const TreeScope&) const;
     HTMLImageElement* getElementByUsemap(const AtomStringImpl&, const TreeScope&) const;
-    HTMLLabelElement* getElementByLabelForAttribute(const AtomStringImpl&, const TreeScope&) const;
+    const Vector<Element*>* getElementsByLabelForAttribute(const AtomStringImpl&, const TreeScope&) const;
     Element* getElementByWindowNamedItem(const AtomStringImpl&, const TreeScope&) const;
     Element* getElementByDocumentNamedItem(const AtomStringImpl&, const TreeScope&) const;
 
@@ -70,6 +70,8 @@ public:
 private:
     template <typename KeyMatchingFunction>
     Element* get(const AtomStringImpl&, const TreeScope&, const KeyMatchingFunction&) const;
+    template <typename KeyMatchingFunction>
+    Vector<Element*>* getAll(const AtomStringImpl&, const TreeScope&, const KeyMatchingFunction&) const;
 
     struct MapEntry {
         MapEntry() { }

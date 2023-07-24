@@ -27,7 +27,7 @@
 
 #if USE(AUDIO_SESSION) && PLATFORM(IOS_FAMILY)
 
-#include "AudioSession.h"
+#include "AudioSessionCocoa.h"
 
 OBJC_CLASS WebInterruptionObserverHelper;
 
@@ -37,7 +37,7 @@ class WorkQueue;
 
 namespace WebCore {
 
-class AudioSessionIOS final : public AudioSession {
+class AudioSessionIOS final : public AudioSessionCocoa {
 public:
     AudioSessionIOS();
     virtual ~AudioSessionIOS();

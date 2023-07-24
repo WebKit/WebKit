@@ -71,6 +71,12 @@ RefPtr<DOMPlugin> DOMPluginArray::namedItem(const AtomString& propertyName)
     return nullptr;
 }
 
+bool DOMPluginArray::isSupportedPropertyName(const AtomString& propertyName) const
+{
+    return m_publiclyVisiblePlugins.containsIf([&](auto& plugin) { return plugin->name() == propertyName; })
+        || m_additionalWebVisibilePlugins.containsIf([&](auto& plugin) { return plugin->name() == propertyName; });
+}
+
 Vector<AtomString> DOMPluginArray::supportedPropertyNames() const
 {
     return m_publiclyVisiblePlugins.map([](auto& plugin) {

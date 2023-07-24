@@ -20,6 +20,7 @@
 #include "rtc_base/socket_address.h"
 #include "test/logging/file_log_writer.h"
 #include "test/network/network_emulation.h"
+#include "test/scenario/video_stream.h"
 #include "test/testsupport/file_utils.h"
 
 ABSL_FLAG(bool, scenario_logs, false, "Save logs from scenario framework.");
@@ -65,7 +66,8 @@ Scenario::Scenario(
     std::unique_ptr<LogWriterFactoryInterface> log_writer_factory,
     bool real_time)
     : log_writer_factory_(std::move(log_writer_factory)),
-      network_manager_(real_time ? TimeMode::kRealTime : TimeMode::kSimulated),
+      network_manager_(real_time ? TimeMode::kRealTime : TimeMode::kSimulated,
+                       EmulatedNetworkStatsGatheringMode::kDefault),
       clock_(network_manager_.time_controller()->GetClock()),
       audio_decoder_factory_(CreateBuiltinAudioDecoderFactory()),
       audio_encoder_factory_(CreateBuiltinAudioEncoderFactory()),
@@ -78,7 +80,7 @@ Scenario::~Scenario() {
   if (start_time_.IsFinite())
     Stop();
   for (auto& call_client : clients_) {
-    call_client->transport_->Disconnect();
+    call_client->SendTask([&] { call_client->transport_->Disconnect(); });
     call_client->UnBind();
   }
 }
@@ -223,6 +225,9 @@ VideoStreamPair* Scenario::CreateVideoStream(
 VideoStreamPair* Scenario::CreateVideoStream(
     std::pair<CallClient*, CallClient*> clients,
     VideoStreamConfig config) {
+  std::vector<RtpExtension> extensions = GetVideoRtpExtensions(config);
+  clients.first->SetVideoReceiveRtpHeaderExtensions(extensions);
+  clients.second->SetVideoReceiveRtpHeaderExtensions(extensions);
   video_streams_.emplace_back(
       new VideoStreamPair(clients.first, clients.second, config));
   return video_streams_.back().get();
@@ -239,6 +244,9 @@ AudioStreamPair* Scenario::CreateAudioStream(
 AudioStreamPair* Scenario::CreateAudioStream(
     std::pair<CallClient*, CallClient*> clients,
     AudioStreamConfig config) {
+  std::vector<RtpExtension> extensions = GetAudioRtpExtensions(config);
+  clients.first->SetAudioReceiveRtpHeaderExtensions(extensions);
+  clients.second->SetAudioReceiveRtpHeaderExtensions(extensions);
   audio_streams_.emplace_back(
       new AudioStreamPair(clients.first, audio_encoder_factory_, clients.second,
                           audio_decoder_factory_, config));

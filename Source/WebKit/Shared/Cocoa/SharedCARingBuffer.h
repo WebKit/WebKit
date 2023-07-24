@@ -50,7 +50,7 @@ public:
         SharedMemory::Handle memory;
         size_t frameCount;
         void takeOwnershipOfMemory(MemoryLedger ledger) { memory.takeOwnershipOfMemory(ledger); }
-        template <typename Encoder> void encode(Encoder&) const;
+        template <typename Encoder> void encode(Encoder&) &&;
         template <typename Decoder> static std::optional<Handle> decode(Decoder&);
     };
     // FIXME: Remove this deprecated constructor.
@@ -75,9 +75,9 @@ protected:
 };
 
 template <typename Encoder>
-void ConsumerSharedCARingBuffer::Handle::encode(Encoder& encoder) const
+void ConsumerSharedCARingBuffer::Handle::encode(Encoder& encoder) &&
 {
-    encoder << memory << frameCount;
+    encoder << WTFMove(memory) << frameCount;
 }
 
 template <typename Decoder>

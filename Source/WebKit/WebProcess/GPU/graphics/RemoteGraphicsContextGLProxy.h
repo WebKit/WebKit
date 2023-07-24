@@ -45,6 +45,7 @@
 
 namespace WebKit {
 
+class RemoteGraphicsContextGLInitializationState;
 #if ENABLE(VIDEO)
 class RemoteVideoFrameObjectHeapProxy;
 #endif
@@ -70,6 +71,9 @@ public:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
 
     // WebCore::GraphicsContextGL overrides.
+    std::optional<WebCore::GraphicsContextGL::EGLImageAttachResult> createAndBindEGLImage(GCGLenum, WebCore::GraphicsContextGL::EGLImageSource) override;
+    GCEGLSync createEGLSync(ExternalEGLSyncEvent) override;
+    std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
     void reshape(int width, int height) final;
     void setContextVisibility(bool) final;
     bool isGLES2Compliant() const final;
@@ -90,9 +94,7 @@ public:
 #endif
 
     void simulateEventForTesting(SimulatedEventForTesting) final;
-    void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<uint8_t> data) final;
-    void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
-    void readnPixelsSharedMemory(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<uint8_t> data);
+    void readPixels(WebCore::IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength) final;
     void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) final;
     void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) final;
     void multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei> countsAndOffsets, GCGLenum type) final;
@@ -138,6 +140,7 @@ public:
     void depthFunc(GCGLenum func) final;
     void depthMask(GCGLboolean flag) final;
     void depthRange(GCGLclampf zNear, GCGLclampf zFar) final;
+    void destroyEGLImage(GCEGLImage handle) final;
     void detachShader(PlatformGLObject arg0, PlatformGLObject arg1) final;
     void disable(GCGLenum cap) final;
     void disableVertexAttribArray(GCGLuint index) final;
@@ -235,6 +238,7 @@ public:
     void bufferData(GCGLenum target, GCGLsizeiptr arg1, GCGLenum usage) final;
     void bufferData(GCGLenum target, std::span<const uint8_t> data, GCGLenum usage) final;
     void bufferSubData(GCGLenum target, GCGLintptr offset, std::span<const uint8_t> data) final;
+    void readPixelsBufferObject(WebCore::IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) final;
     void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) final;
     void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
     void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) final;
@@ -357,9 +361,15 @@ public:
     void drawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei instanceCount, GCGLint baseVertex, GCGLuint baseInstance) final;
     void provokingVertexANGLE(GCGLenum provokeMode) final;
     void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) final;
+    void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
+    void blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) final;
     void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, std::span<GCGLint> params) final;
     void setDrawingBufferColorSpace(const WebCore::DestinationColorSpace&) final;
-    RefPtr<WebCore::PixelBuffer> paintRenderingResultsToPixelBuffer() final;
+    RefPtr<WebCore::PixelBuffer> paintRenderingResultsToPixelBuffer(WebCore::GraphicsContextGL::FlipY) final;
+    bool destroyEGLSync(GCEGLSync) final;
+    void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t timeout) final;
+
+    bool enableRequiredWebXRExtensions() final;
     // End of list used by generate-gpup-webgl script.
 
     static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
@@ -376,7 +386,7 @@ protected:
 
     static inline Seconds defaultSendTimeout = 30_s;
     template<typename T>
-    WARN_UNUSED_RETURN bool send(T&& message)
+    WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
         return m_streamConnection->send(WTFMove(message), m_graphicsContextGLIdentifier, defaultSendTimeout);
     }
@@ -395,11 +405,13 @@ private:
 #endif
     void initializeIPC(IPC::StreamServerConnection::Handle&&, RemoteRenderingBackendProxy&);
     // Messages to be received.
-    void wasCreated(bool didSucceed, IPC::Semaphore&&, IPC::Semaphore&&, String&& availableExtensions, String&& requestedExtensions);
+    void wasCreated(IPC::Semaphore&&, IPC::Semaphore&&, std::optional<RemoteGraphicsContextGLInitializationState>&&);
     void wasLost();
     void wasChanged();
 
-    void initialize(const String& availableExtensions, const String& requestableExtensions);
+    void readPixelsSharedMemory(WebCore::IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data);
+
+    void initialize(const RemoteGraphicsContextGLInitializationState&);
     void waitUntilInitialized();
     void disconnectGpuProcessIfNeeded();
     void abandonGpuProcess();
@@ -418,6 +430,8 @@ private:
 #if ENABLE(VIDEO)
     Ref<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #endif
+    GCGLenum m_externalImageTarget { 0 };
+    GCGLenum m_externalImageBindingQuery { 0 };
 };
 
 // The GCGL types map to following WebKit IPC types. The list is used by generate-gpup-webgl script.
@@ -445,6 +459,8 @@ static_assert(sizeof(GCGLintptr) <= sizeof(uint64_t));
 static_assert(sizeof(GCGLsizeiptr) <= sizeof(uint64_t));
 static_assert(sizeof(GCGLvoidptr) <= sizeof(uint64_t));
 static_assert(sizeof(GCGLsync) <= sizeof(uint64_t) && sizeof(GCGLsync) == sizeof(intptr_t));
+static_assert(sizeof(GCEGLImage) <= sizeof(uint64_t) && sizeof(GCEGLImage) == sizeof(intptr_t));
+static_assert(sizeof(GCEGLSync) <= sizeof(uint64_t) && sizeof(GCEGLSync) == sizeof(intptr_t));
 // End of list used by generate-gpup-webgl script.
 
 } // namespace WebKit

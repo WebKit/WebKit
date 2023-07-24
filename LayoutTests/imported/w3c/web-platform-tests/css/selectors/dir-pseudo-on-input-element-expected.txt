@@ -1,7 +1,6 @@
 
-
 PASS input element whose type attribute is in the telephone state
-FAIL input element whose type attribute is in the telephone state in a RTL block assert_equals: expected "ltr" but got "rtl"
+PASS input element whose type attribute is in the telephone state in a RTL block
 PASS input element whose type attribute is in the text state
 PASS input element whose type attribute is in the search state
 PASS input element whose type attribute is in the url state

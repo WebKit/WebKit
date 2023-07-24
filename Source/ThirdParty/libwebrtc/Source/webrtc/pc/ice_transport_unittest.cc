@@ -20,6 +20,7 @@
 #include "p2p/base/fake_port_allocator.h"
 #include "rtc_base/internal/default_socket_server.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 
@@ -30,6 +31,8 @@ class IceTransportTest : public ::testing::Test {
         main_thread_(socket_server_.get()) {}
 
   rtc::SocketServer* socket_server() const { return socket_server_.get(); }
+
+  webrtc::test::ScopedKeyValueConfig field_trials_;
 
  private:
   std::unique_ptr<rtc::SocketServer> socket_server_;
@@ -50,7 +53,8 @@ TEST_F(IceTransportTest, CreateSelfDeletingTransport) {
   std::unique_ptr<cricket::FakePortAllocator> port_allocator(
       std::make_unique<cricket::FakePortAllocator>(
           nullptr,
-          std::make_unique<rtc::BasicPacketSocketFactory>(socket_server())));
+          std::make_unique<rtc::BasicPacketSocketFactory>(socket_server()),
+          &field_trials_));
   IceTransportInit init;
   init.set_port_allocator(port_allocator.get());
   auto ice_transport = CreateIceTransport(std::move(init));

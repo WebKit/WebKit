@@ -54,10 +54,10 @@ class FormattingContext {
 public:
     virtual ~FormattingContext();
 
-    virtual void layoutInFlowContent(const ConstraintsForInFlowContent&) = 0;
+    virtual void layoutInFlowContent(const ConstraintsForInFlowContent&) { };
     void layoutOutOfFlowContent(const ConstraintsForOutOfFlowContent&);
     virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() = 0;
-    virtual LayoutUnit usedContentHeight() const = 0;
+    virtual LayoutUnit usedContentHeight() const { return { }; }
 
     const ElementBox& root() const { return m_root; }
     LayoutState& layoutState() const;

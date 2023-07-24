@@ -84,10 +84,6 @@ public:
     GLint internalFormat() const { return m_internalFormat; }
 
     void copyFromExternalTexture(GLuint textureID);
-#if USE(ANGLE)
-    void setPendingContents(RefPtr<Image>&&);
-    void updatePendingContents(const IntRect& targetRect, const IntPoint& offset);
-#endif
 
     TextureMapperGL::Flags colorConvertFlags() const { return m_colorConvertFlags; }
 

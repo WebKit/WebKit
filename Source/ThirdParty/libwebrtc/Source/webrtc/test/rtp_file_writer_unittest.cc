@@ -29,13 +29,13 @@ class RtpFileWriterTest : public ::testing::Test {
         test::RtpFileWriter::Create(test::RtpFileWriter::kRtpDump, filename_));
   }
 
-  void WriteRtpPackets(int num_packets) {
+  void WriteRtpPackets(int num_packets, int time_ms_offset = 0) {
     ASSERT_TRUE(rtp_writer_.get() != NULL);
     test::RtpPacket packet;
     for (int i = 1; i <= num_packets; ++i) {
       packet.length = i;
       packet.original_length = i;
-      packet.time_ms = i;
+      packet.time_ms = i + time_ms_offset;
       memset(packet.data, i, packet.length);
       EXPECT_TRUE(rtp_writer_->WritePacket(&packet));
     }
@@ -55,7 +55,7 @@ class RtpFileWriterTest : public ::testing::Test {
       ++i;
       EXPECT_EQ(static_cast<size_t>(i), packet.length);
       EXPECT_EQ(static_cast<size_t>(i), packet.original_length);
-      EXPECT_EQ(static_cast<uint32_t>(i), packet.time_ms);
+      EXPECT_EQ(static_cast<uint32_t>(i - 1), packet.time_ms);
       for (int j = 0; j < i; ++j) {
         EXPECT_EQ(i, packet.data[j]);
       }
@@ -71,6 +71,13 @@ class RtpFileWriterTest : public ::testing::Test {
 TEST_F(RtpFileWriterTest, WriteToRtpDump) {
   Init("test_rtp_file_writer.rtp");
   WriteRtpPackets(10);
+  CloseOutputFile();
+  VerifyFileContents(10);
+}
+
+TEST_F(RtpFileWriterTest, WriteToRtpDumpWithOffset) {
+  Init("test_rtp_file_writer.rtp");
+  WriteRtpPackets(10, 100);
   CloseOutputFile();
   VerifyFileContents(10);
 }

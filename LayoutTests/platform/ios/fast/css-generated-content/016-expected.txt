@@ -38,4 +38,4 @@ layer at (0,0) size 800x250
             RenderText at (8,0) size 54x19
               text run at (8,0) width 54: "(href=4)"
 layer at (8,88) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,72) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,72) size 784x2 [color=#808080] [border: (1px inset #808080)]

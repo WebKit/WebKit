@@ -3,6 +3,9 @@
     <head>
         <title>Pointer Events properties tests</title>
         <meta name="viewport" content="width=device-width">
+        <meta name="variant" content="?mouse">
+        <meta name="variant" content="?touch">
+        <meta name="variant" content="?pen">
         <link rel="stylesheet" type="text/css" href="pointerevent_styles.css">
         <script src="/resources/testharness.js"></script>
         <script src="/resources/testharnessreport.js"></script>
@@ -12,22 +15,27 @@
         <!-- Additional helper script for common checks across event types -->
         <script type="text/javascript" src="pointerevent_support.js"></script>
         <script>
+            var inputSource = location.search.substring(1);
             var detected_pointertypes = {};
             var detected_eventTypes = {};
-            var eventList = ['pointerout', 'pointerover', 'pointerenter', 'pointermove', 'pointerdown', 'pointerup', 'pointerleave'];
+            var eventList = ['pointerout', 'pointerover', 'pointerenter', 'pointermove', 'pointerdown', 'gotpointercapture', 'pointerup', 'lostpointercapture', 'pointerleave'];
 
             function resetTestState() {
                 detected_eventTypes = {};
             }
             function run() {
-                var test_pointerEvent = setup_pointerevent_test("pointerevent attributes", ALL_POINTERS);
+                var test_pointerEvent = setup_pointerevent_test("pointerevent attributes", [inputSource]);
                 var target = document.getElementById("target0");
                 var actions_promise;
 
                 eventList.forEach(function(eventName) {
-                on_event(target, eventName, function (event) {
+                    on_event(target, eventName, function (event) {
                         detected_eventTypes[event.type] = true;
                         detected_pointertypes[event.pointerType] = true;
+
+                        if (event.type === "pointerdown") {
+                            target.setPointerCapture(event.pointerId);
+                        }
 
                         if (Object.keys(detected_eventTypes).length == eventList.length) {
                             // Make sure the test finishes after all the input actions are completed.
@@ -41,22 +49,22 @@
                     assert_unreached("click should not fire on disabled element");
                 });
 
-                // Inject touch inputs.
-                actions_promise = clickInTarget("mouse", target).then(function() {
-                    return new test_driver.Actions()
-                        .addPointer("mousePointer1", "mouse")
-                        .pointerMove(0, 0)
-                        .send();
-                }).then(function() {
-                    return pointerDragInTarget('touch', target, 'right');
-                }).then(function() {
-                    return clickInTarget("pen", target);
-                }).then(function() {
-                    return new test_driver.Actions()
-                        .addPointer("penPointer1", "pen")
-                        .pointerMove(0, 0)
-                        .send();
-                });
+                // Inject inputs.
+                switch (inputSource) {
+                    case "touch":
+                        actions_promise = pointerDragInTarget(inputSource, target, 'right');
+                        break;
+                    case "mouse":
+                    case "pen":
+                        actions_promise = clickInTarget(inputSource, target).then(function() {
+                            return new test_driver.Actions()
+                                .addPointer(inputSource + "Pointer1", inputSource)
+                                .pointerMove(0, 0, {origin: target})
+                                .pointerMove(0, 0)
+                                .send();
+                        });
+                        break;
+                }
             }
         </script>
         <style>

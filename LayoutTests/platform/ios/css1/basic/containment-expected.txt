@@ -208,4 +208,4 @@ layer at (0,0) size 800x1009
                 RenderText {#text} at (0,0) size 206x19
                   text run at (0,0) width 206: "This paragraph should be green."
 layer at (8,197) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,189) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,189) size 784x2 [color=#808080] [border: (1px inset #808080)]

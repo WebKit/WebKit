@@ -27,7 +27,8 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "PlatformVideoColorSpace.h"
+#include "VideoEncoderActiveConfiguration.h"
+#include "VideoEncoderScalabilityMode.h"
 #include "VideoFrame.h"
 #include <span>
 #include <wtf/CompletionHandler.h>
@@ -39,6 +40,8 @@ class VideoEncoder {
 public:
     virtual ~VideoEncoder() = default;
 
+    using ScalabilityMode = VideoEncoderScalabilityMode;
+
     struct Config {
         uint64_t width { 0 };
         uint64_t height { 0 };
@@ -46,21 +49,15 @@ public:
         uint64_t bitRate { 0 };
         double frameRate { 0 };
         bool isRealtime { true };
+        ScalabilityMode scalabilityMode { ScalabilityMode::L1T1 };
     };
-    struct ActiveConfiguration {
-        String codec;
-        std::optional<size_t> visibleWidth;
-        std::optional<size_t> visibleHeight;
-        std::optional<size_t> displayWidth;
-        std::optional<size_t> displayHeight;
-        std::optional<Vector<uint8_t>> description;
-        std::optional<PlatformVideoColorSpace> colorSpace;
-    };
+    using ActiveConfiguration = VideoEncoderActiveConfiguration;
     struct EncodedFrame {
         Vector<uint8_t> data;
         bool isKeyFrame { false };
         int64_t timestamp { 0 };
         std::optional<uint64_t> duration;
+        std::optional<unsigned> temporalIndex;
     };
     struct RawFrame {
         Ref<VideoFrame> frame;

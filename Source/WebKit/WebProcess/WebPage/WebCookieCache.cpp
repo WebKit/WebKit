@@ -37,8 +37,7 @@ using namespace WebCore;
 bool WebCookieCache::isSupported()
 {
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    // FIXME: This can eventually be removed, this is merely to ensure a smooth transition to the new API.
-    return inMemoryStorageSession().supportsCookieChangeListenerAPI();
+    return true;
 #else
     return false;
 #endif
@@ -50,7 +49,7 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
         auto host = url.host().toString();
         bool subscribeToCookieChangeNotifications = true;
         auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url, subscribeToCookieChangeNotifications), 0);
-        if (!sendResult)
+        if (!sendResult.succeeded())
             return { };
 
         auto& [cookies] = sendResult.reply();

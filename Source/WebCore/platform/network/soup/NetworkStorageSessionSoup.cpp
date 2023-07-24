@@ -33,15 +33,17 @@
 
 #include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
+#include "CookieStoreGetOptions.h"
 #include "GUniquePtrSoup.h"
 #include "HTTPCookieAcceptPolicy.h"
-#include "ResourceHandle.h"
 #include "SoupNetworkSession.h"
 #include "URLSoup.h"
 #include <libsoup/soup.h>
+#include <optional>
 #include <wtf/DateMath.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
 
 #if USE(LIBSECRET)
@@ -389,6 +391,12 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     soup_cookies_free(existingCookies);
 }
 
+bool NetworkStorageSession::setCookieFromDOM(const URL&, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, Cookie&&) const
+{
+    // FIXME: Implement for the Cookie Store API.
+    return false;
+}
+
 void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL& url, const URL& firstParty)
 {
     for (auto cookie : cookies) {
@@ -408,6 +416,26 @@ void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&
 void NetworkStorageSession::setCookie(const Cookie& cookie)
 {
     soup_cookie_jar_add_cookie(cookieStorage(), cookie.toSoupCookie());
+}
+
+void NetworkStorageSession::replaceCookies(const Vector<Cookie>& cookies)
+{
+    SoupCookieJar* jar = cookieStorage();
+
+    // Delete existing cookies and add the new ones. During the process, disable
+    // signals from the cookie jar so we don't get a ton of them.
+    guint signalId = g_signal_lookup("changed", soup_cookie_jar_get_type());
+    gulong handler = g_signal_handler_find(jar, G_SIGNAL_MATCH_ID, signalId, 0, nullptr, nullptr, nullptr);
+    g_signal_handler_block(jar, handler);
+
+    deleteAllCookies([] { });
+    for (const auto& cookie : cookies)
+        soup_cookie_jar_add_cookie(jar, cookie.toSoupCookie());
+
+    g_signal_handler_unblock(jar, handler);
+
+    // Emit one "changed" signal at the end.
+    g_signal_emit(jar, signalId, 0);
 }
 
 void NetworkStorageSession::deleteCookie(const Cookie& cookie, CompletionHandler<void()>&& completionHandler)
@@ -636,6 +664,12 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
 std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking relaxThirdPartyCookieBlocking) const
 {
     return cookiesForSession(*this, firstParty, url, sameSiteInfo, frameID, pageID, false, includeSecureCookies, applyTrackingPrevention, relaxThirdPartyCookieBlocking);
+}
+
+std::optional<Vector<Cookie>> NetworkStorageSession::cookiesForDOMAsVector(const URL&, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, CookieStoreGetOptions&&) const
+{
+    // FIXME: Implement for the Cookie Store API.
+    return std::nullopt;
 }
 
 std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking relaxThirdPartyCookieBlocking) const

@@ -61,8 +61,7 @@ public:
     void setContentsToLayer(GraphicsLayer& layer) final
     {
         Locker locker { m_source->m_lock };
-        if (!m_source->m_delegate)
-            m_source->m_delegate = layer.createAsyncContentsDisplayDelegate();
+        m_source->m_delegate = layer.createAsyncContentsDisplayDelegate(m_source->m_delegate.get());
     }
 
     RefPtr<ImageBufferPipe::Source> source() const final

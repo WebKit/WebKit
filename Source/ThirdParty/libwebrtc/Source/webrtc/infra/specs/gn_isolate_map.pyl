@@ -55,9 +55,17 @@
     "label": "//net/dcsctp:dcsctp_unittests",
     "type": "console_test_launcher",
   },
+  "default": {
+    "label": "//:default",
+    "type": "additional_compile_target",
+  },
   "android_instrumentation_test_apk": {
     "label": "//sdk/android:android_instrumentation_test_apk",
     "type": "console_test_launcher",
+  },
+  "fuchsia_perf_tests": {
+    "label": "//:fuchsia_perf_tests",
+    "type": "raw",
   },
   "low_bandwidth_audio_test": {
     "label": "//audio:low_bandwidth_audio_test",
@@ -76,9 +84,18 @@
     "label": "//modules:modules_unittests",
     "type": "windowed_test_launcher",
   },
+  "peer_connection_mediachannel_split_unittests": {
+    "label": "//pc:peer_connection_mediachannel_split_unittests",
+    "type": "console_test_launcher",
+  },
   "peerconnection_unittests": {
     "label": "//pc:peerconnection_unittests",
     "type": "console_test_launcher",
+  },
+  "shared_screencast_stream_test": {
+    "label": "//modules/desktop_capture:shared_screencast_stream_test",
+    "type": "console_test_launcher",
+    "use_pipewire": True,
   },
   "rtc_media_unittests": {
     "label": "//media:rtc_media_unittests",

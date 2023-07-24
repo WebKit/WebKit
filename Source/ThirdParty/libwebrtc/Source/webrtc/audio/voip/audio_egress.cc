@@ -22,7 +22,7 @@ AudioEgress::AudioEgress(RtpRtcpInterface* rtp_rtcp,
                          TaskQueueFactory* task_queue_factory)
     : rtp_rtcp_(rtp_rtcp),
       rtp_sender_audio_(clock, rtp_rtcp_->RtpSender()),
-      audio_coding_(AudioCodingModule::Create(AudioCodingModule::Config())),
+      audio_coding_(AudioCodingModule::Create()),
       encoder_queue_(task_queue_factory->CreateTaskQueue(
           "AudioEncoder",
           TaskQueueFactory::Priority::NORMAL)) {

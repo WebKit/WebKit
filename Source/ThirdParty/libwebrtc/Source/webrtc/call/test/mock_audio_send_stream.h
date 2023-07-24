@@ -25,7 +25,10 @@ class MockAudioSendStream : public AudioSendStream {
               GetConfig,
               (),
               (const, override));
-  MOCK_METHOD(void, Reconfigure, (const Config& config), (override));
+  MOCK_METHOD(void,
+              Reconfigure,
+              (const Config& config, SetParametersCallback callback),
+              (override));
   MOCK_METHOD(void, Start, (), (override));
   MOCK_METHOD(void, Stop, (), (override));
   // GMock doesn't like move-only types, such as std::unique_ptr.

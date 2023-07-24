@@ -18,13 +18,15 @@
 #include "absl/memory/memory.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/transport/field_trial_based_config.h"
+#include "api/units/timestamp.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/strings/json.h"
 #include "system_wrappers/include/clock.h"
 #include "test/call_config_utils.h"
 #include "test/encoder_settings.h"
 #include "test/fake_decoder.h"
 #include "test/rtp_file_reader.h"
-#include "test/rtp_header_parser.h"
 #include "test/run_loop.h"
 
 namespace webrtc {
@@ -60,6 +62,16 @@ void RtpReplayer::Replay(
     return;
   }
 
+  RtpHeaderExtensionMap extensions(/*extmap_allow_mixed=*/true);
+  // Skip i = 0 since it maps to kRtpExtensionNone.
+  for (int i = 1; i < kRtpExtensionNumberOfExtensions; i++) {
+    RTPExtensionType extension_type = static_cast<RTPExtensionType>(i);
+    // Extensions are registered with an ID, which you signal to the
+    // peer so they know what to expect. This code only cares about
+    // parsing so the value of the ID isn't relevant.
+    extensions.RegisterByType(i, extension_type);
+  }
+
   // Setup the video streams based on the configuration.
   webrtc::RtcEventLogNull event_log;
   std::unique_ptr<TaskQueueFactory> task_queue_factory =
@@ -76,7 +88,7 @@ void RtpReplayer::Replay(
     receive_stream->Start();
   }
 
-  ReplayPackets(&fake_clock, call.get(), rtp_reader.get());
+  ReplayPackets(&fake_clock, call.get(), rtp_reader.get(), extensions);
 
   for (const auto& receive_stream : stream_state->receive_streams) {
     call->DestroyVideoReceiveStream(receive_stream);
@@ -143,12 +155,12 @@ std::unique_ptr<test::RtpFileReader> RtpReplayer::CreateRtpReader(
   return rtp_reader;
 }
 
-void RtpReplayer::ReplayPackets(rtc::FakeClock* clock,
-                                Call* call,
-                                test::RtpFileReader* rtp_reader) {
+void RtpReplayer::ReplayPackets(
+    rtc::FakeClock* clock,
+    Call* call,
+    test::RtpFileReader* rtp_reader,
+    const RtpPacketReceived::ExtensionManager& extensions) {
   int64_t replay_start_ms = -1;
-  int num_packets = 0;
-  std::map<uint32_t, int> unknown_packets;
 
   while (true) {
     int64_t now_ms = rtc::TimeMillis();
@@ -169,48 +181,20 @@ void RtpReplayer::ReplayPackets(rtc::FakeClock* clock,
           std::min(deliver_in_ms, static_cast<int64_t>(100))));
     }
 
-    ++num_packets;
-    switch (call->Receiver()->DeliverPacket(
-        webrtc::MediaType::VIDEO,
-        rtc::CopyOnWriteBuffer(packet.data, packet.length),
-        /* packet_time_us */ -1)) {
-      case PacketReceiver::DELIVERY_OK:
-        break;
-      case PacketReceiver::DELIVERY_UNKNOWN_SSRC: {
-        RTPHeader header;
-        std::unique_ptr<RtpHeaderParser> parser(
-            RtpHeaderParser::CreateForTest());
-
-        parser->Parse(packet.data, packet.length, &header);
-        if (unknown_packets[header.ssrc] == 0) {
-          RTC_LOG(LS_ERROR) << "Unknown SSRC: " << header.ssrc;
-        }
-        ++unknown_packets[header.ssrc];
-        break;
-      }
-      case PacketReceiver::DELIVERY_PACKET_ERROR: {
-        RTC_LOG(LS_ERROR)
-            << "Packet error, corrupt packets or incorrect setup?";
-        RTPHeader header;
-        std::unique_ptr<RtpHeaderParser> parser(
-            RtpHeaderParser::CreateForTest());
-        parser->Parse(packet.data, packet.length, &header);
-        RTC_LOG(LS_ERROR) << "Packet packet_length=" << packet.length
-                          << " payload_type=" << header.payloadType
-                          << " sequence_number=" << header.sequenceNumber
-                          << " time_stamp=" << header.timestamp
-                          << " ssrc=" << header.ssrc;
-        break;
-      }
+    RtpPacketReceived received_packet(
+        &extensions, Timestamp::Micros(clock->TimeNanos() / 1000));
+    if (!received_packet.Parse(packet.data, packet.length)) {
+      RTC_LOG(LS_ERROR) << "Packet error, corrupt packets or incorrect setup?";
+      break;
     }
-  }
-  RTC_LOG(LS_INFO) << "num_packets: " << num_packets;
 
-  for (const auto& unknown_packet : unknown_packets) {
-    RTC_LOG(LS_ERROR) << "Packets for unknown ssrc " << unknown_packet.first
-                      << ":" << unknown_packet.second;
+    call->Receiver()->DeliverRtpPacket(
+        MediaType::VIDEO, std::move(received_packet),
+        [&](const RtpPacketReceived& parsed_packet) {
+          RTC_LOG(LS_ERROR) << "Unknown SSRC: " << parsed_packet.Ssrc();
+          return false;
+        });
   }
 }
-
 }  // namespace test
 }  // namespace webrtc

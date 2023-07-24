@@ -86,14 +86,16 @@ JIT::compileSetupFrame(const Op& bytecode)
     int registerOffset = -static_cast<int>(stackOffsetInRegistersForCall(bytecode, checkpoint));
 
 
-    if (Op::opcodeID == op_call && shouldEmitProfiling()) {
-        constexpr JSValueRegs tmpJSR = returnValueJSR;
-        constexpr GPRReg tmpGPR = tmpJSR.payloadGPR();
-        emitGetVirtualRegister(VirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0)), tmpJSR);
-        Jump done = branchIfNotCell(tmpJSR);
-        load32(Address(tmpJSR.payloadGPR(), JSCell::structureIDOffset()), tmpGPR);
-        store32ToMetadata(tmpGPR, bytecode, Op::Metadata::offsetOfArrayProfile() + ArrayProfile::offsetOfLastSeenStructureID());
-        done.link(this);
+    if constexpr (Op::opcodeID == op_call || Op::opcodeID == op_tail_call || Op::opcodeID == op_iterator_open) {
+        if (shouldEmitProfiling()) {
+            constexpr JSValueRegs tmpJSR = returnValueJSR;
+            constexpr GPRReg tmpGPR = tmpJSR.payloadGPR();
+            emitGetVirtualRegister(VirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0)), tmpJSR);
+            Jump done = branchIfNotCell(tmpJSR);
+            load32(Address(tmpJSR.payloadGPR(), JSCell::structureIDOffset()), tmpGPR);
+            store32ToMetadata(tmpGPR, bytecode, Op::Metadata::offsetOfArrayProfile() + ArrayProfile::offsetOfLastSeenStructureID());
+            done.link(this);
+        }
     }
 
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);

@@ -24,11 +24,9 @@
 #include <assert.h>
 #include <string.h>
 
-#include <openssl/cpu.h>
 #include <openssl/mem.h>
 #include <openssl/rand.h>
 #include <openssl/sha.h>
-#include <openssl/type_check.h>
 
 #include "internal.h"
 #include "../internal.h"
@@ -37,11 +35,13 @@
 // Various pre-computed constants.
 #include "./curve25519_tables.h"
 
-#if defined(BORINGSSL_CURVE25519_64BIT)
+#if defined(BORINGSSL_HAS_UINT128)
 #include "../../third_party/fiat/curve25519_64.h"
+#elif defined(OPENSSL_64_BIT)
+#include "../../third_party/fiat/curve25519_64_msvc.h"
 #else
 #include "../../third_party/fiat/curve25519_32.h"
-#endif  // BORINGSSL_CURVE25519_64BIT
+#endif
 
 
 // Low-level intrinsic operations
@@ -66,7 +66,7 @@ static uint64_t load_4(const uint8_t *in) {
 
 // Field operations.
 
-#if defined(BORINGSSL_CURVE25519_64BIT)
+#if defined(OPENSSL_64_BIT)
 
 typedef uint64_t fe_limb_t;
 #define FE_NUM_LIMBS 5
@@ -146,10 +146,10 @@ typedef uint32_t fe_limb_t;
     }                                                                    \
   } while (0)
 
-#endif  // BORINGSSL_CURVE25519_64BIT
+#endif  // OPENSSL_64_BIT
 
-OPENSSL_STATIC_ASSERT(sizeof(fe) == sizeof(fe_limb_t) * FE_NUM_LIMBS,
-                      "fe_limb_t[FE_NUM_LIMBS] is inconsistent with fe");
+static_assert(sizeof(fe) == sizeof(fe_limb_t) * FE_NUM_LIMBS,
+              "fe_limb_t[FE_NUM_LIMBS] is inconsistent with fe");
 
 static void fe_frombytes_strict(fe *h, const uint8_t s[32]) {
   // |fiat_25519_from_bytes| requires the top-most bit be clear.
@@ -312,8 +312,7 @@ static void fe_copy(fe *h, const fe *f) {
 }
 
 static void fe_copy_lt(fe_loose *h, const fe *f) {
-  OPENSSL_STATIC_ASSERT(sizeof(fe_loose) == sizeof(fe),
-                        "fe and fe_loose mismatch");
+  static_assert(sizeof(fe_loose) == sizeof(fe), "fe and fe_loose mismatch");
   OPENSSL_memmove(h, f, sizeof(fe));
 }
 #if !defined(OPENSSL_SMALL)
@@ -503,27 +502,21 @@ static void ge_p3_tobytes(uint8_t s[32], const ge_p3 *h) {
 int x25519_ge_frombytes_vartime(ge_p3 *h, const uint8_t s[32]) {
   fe u;
   fe_loose v;
-  fe v3;
+  fe w;
   fe vxx;
   fe_loose check;
 
   fe_frombytes(&h->Y, s);
   fe_1(&h->Z);
-  fe_sq_tt(&v3, &h->Y);
-  fe_mul_ttt(&vxx, &v3, &d);
-  fe_sub(&v, &v3, &h->Z);  // u = y^2-1
+  fe_sq_tt(&w, &h->Y);
+  fe_mul_ttt(&vxx, &w, &d);
+  fe_sub(&v, &w, &h->Z);  // u = y^2-1
   fe_carry(&u, &v);
   fe_add(&v, &vxx, &h->Z);  // v = dy^2+1
 
-  fe_sq_tl(&v3, &v);
-  fe_mul_ttl(&v3, &v3, &v);  // v3 = v^3
-  fe_sq_tt(&h->X, &v3);
-  fe_mul_ttl(&h->X, &h->X, &v);
-  fe_mul_ttt(&h->X, &h->X, &u);  // x = uv^7
-
-  fe_pow22523(&h->X, &h->X);  // x = (uv^7)^((q-5)/8)
-  fe_mul_ttt(&h->X, &h->X, &v3);
-  fe_mul_ttt(&h->X, &h->X, &u);  // x = uv^3(uv^7)^((q-5)/8)
+  fe_mul_ttl(&w, &u, &v);  // w = u*v
+  fe_pow22523(&h->X, &w);  // x = w^((q-5)/8)
+  fe_mul_ttt(&h->X, &h->X, &u);  // x = u*w^((q-5)/8)
 
   fe_sq_tt(&vxx, &h->X);
   fe_mul_ttl(&vxx, &vxx, &v);
@@ -820,7 +813,7 @@ static void table_select(ge_precomp *t, int pos, signed char b) {
 //
 // Preconditions:
 //   a[31] <= 127
-void x25519_ge_scalarmult_base(ge_p3 *h, const uint8_t *a) {
+void x25519_ge_scalarmult_base(ge_p3 *h, const uint8_t a[32]) {
   signed char e[64];
   signed char carry;
   ge_p1p1 r;
@@ -1939,11 +1932,8 @@ int ED25519_verify(const uint8_t *message, size_t message_len,
   OPENSSL_memcpy(pkcopy, public_key, 32);
   uint8_t rcopy[32];
   OPENSSL_memcpy(rcopy, signature, 32);
-  union {
-    uint64_t u64[4];
-    uint8_t u8[32];
-  } scopy;
-  OPENSSL_memcpy(&scopy.u8[0], signature + 32, 32);
+  uint8_t scopy[32];
+  OPENSSL_memcpy(scopy, signature + 32, 32);
 
   // https://tools.ietf.org/html/rfc8032#section-5.1.7 requires that s be in
   // the range [0, order) in order to prevent signature malleability.
@@ -1956,9 +1946,10 @@ int ED25519_verify(const uint8_t *message, size_t message_len,
     UINT64_C(0x1000000000000000),
   };
   for (size_t i = 3;; i--) {
-    if (scopy.u64[i] > kOrder[i]) {
+    uint64_t word = CRYPTO_load_u64_le(scopy + i * 8);
+    if (word > kOrder[i]) {
       return 0;
-    } else if (scopy.u64[i] < kOrder[i]) {
+    } else if (word < kOrder[i]) {
       break;
     } else if (i == 0) {
       return 0;
@@ -1976,7 +1967,7 @@ int ED25519_verify(const uint8_t *message, size_t message_len,
   x25519_sc_reduce(h);
 
   ge_p2 R;
-  ge_double_scalarmult_vartime(&R, h, &A, scopy.u8);
+  ge_double_scalarmult_vartime(&R, h, &A, scopy);
 
   uint8_t rcheck[32];
   x25519_ge_tobytes(rcheck, &R);

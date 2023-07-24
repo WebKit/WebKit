@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,10 @@
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
+#if USE(CF)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 namespace JSC {
 class CachedBitVector;
 }
@@ -62,6 +66,8 @@ class FixedBitVector;
 // juggle a lot of variable-length BitVectors and you're worried about wasting
 // space.
 
+// If you know the length of the vector at compile-time,
+// please consider using WTF::BitSet instead.
 class BitVector final {
     WTF_MAKE_FAST_ALLOCATED;
 public: 
@@ -82,6 +88,15 @@ public:
         (*this) = other;
     }
 
+#if USE(CF)
+    BitVector(CFBitVectorRef bitVector)
+        : BitVector(CFBitVectorGetCount(bitVector))
+    {
+        auto count = CFBitVectorGetCount(bitVector);
+        for (CFIndex i = 0; i < count; ++i)
+            quickSet(i, CFBitVectorGetBitAtIndex(bitVector, i));
+    }
+#endif
     
     ~BitVector()
     {

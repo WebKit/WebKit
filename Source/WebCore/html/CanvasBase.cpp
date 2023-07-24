@@ -61,10 +61,10 @@ const InterpolationQuality defaultInterpolationQuality = InterpolationQuality::D
 #endif
 
 static std::optional<size_t> maxCanvasAreaForTesting;
-static std::optional<size_t> maxActivePixelMemoryForTesting;
 
-CanvasBase::CanvasBase(IntSize size)
+CanvasBase::CanvasBase(IntSize size, const std::optional<NoiseInjectionHashSalt>& noiseHashSalt)
     : m_size(size)
+    , m_canvasNoiseHashSalt(noiseHashSalt)
 {
 }
 
@@ -73,6 +73,7 @@ CanvasBase::~CanvasBase()
     ASSERT(m_didNotifyObserversCanvasDestroyed);
     ASSERT(m_observers.isEmptyIgnoringNullReferences());
     ASSERT(!m_imageBuffer);
+    m_canvasNoiseHashSalt = std::nullopt;
 }
 
 GraphicsContext* CanvasBase::drawingContext() const
@@ -109,8 +110,8 @@ void CanvasBase::makeRenderingResultsAvailable()
 {
     if (auto* context = renderingContext()) {
         context->paintRenderingResultsToCanvas();
-        if (auto noiseInjectionHashSalt = scriptExecutionContext() ? scriptExecutionContext()->noiseInjectionHashSalt() : std::nullopt)
-            m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer(), *noiseInjectionHashSalt);
+        if (m_canvasNoiseHashSalt)
+            m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer(), *m_canvasNoiseHashSalt);
     }
 }
 
@@ -134,29 +135,6 @@ size_t CanvasBase::externalMemoryCost() const
     if (!m_imageBuffer)
         return 0;
     return m_imageBuffer->externalMemoryCost();
-}
-
-size_t CanvasBase::maxActivePixelMemory()
-{
-    if (maxActivePixelMemoryForTesting)
-        return *maxActivePixelMemoryForTesting;
-
-    static size_t maxPixelMemory;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(IOS_FAMILY)
-        maxPixelMemory = ramSize() / 4;
-#else
-        maxPixelMemory = std::max(ramSize() / 4, 2151 * MB);
-#endif
-    });
-
-    return maxPixelMemory;
-}
-
-void CanvasBase::setMaxPixelMemoryForTesting(std::optional<size_t> size)
-{
-    maxActivePixelMemoryForTesting = size;
 }
 
 static inline size_t maxCanvasArea()
@@ -193,6 +171,11 @@ void CanvasBase::removeObserver(CanvasObserver& observer)
 
     if (is<StyleCanvasImage>(observer))
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
+}
+
+bool CanvasBase::hasObserver(CanvasObserver& observer) const
+{
+    return m_observers.contains(observer);
 }
 
 void CanvasBase::notifyObserversCanvasChanged(const std::optional<FloatRect>& rect)
@@ -342,14 +325,6 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool usesDisplayListDrawing,
         return nullptr;
     }
 
-    // Make sure we don't use more pixel memory than the system can support.
-    auto checkedRequestedPixelMemory = (4 * checkedArea) + activePixelMemory();
-    if (checkedRequestedPixelMemory.hasOverflowed() || checkedRequestedPixelMemory > maxActivePixelMemory()) {
-        auto message = makeString("Total canvas memory use exceeds the maximum limit (", maxActivePixelMemory() / 1024 / 1024, " MB).");
-        scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
-        return nullptr;
-    }
-
     unsigned area = checkedArea.value();
     if (!area)
         return nullptr;
@@ -375,13 +350,13 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool usesDisplayListDrawing,
 bool CanvasBase::shouldInjectNoiseBeforeReadback() const
 {
     // Note, every early-return resulting from this check potentially leaks this state. This is a risk that we're accepting right now.
-    return scriptExecutionContext() && scriptExecutionContext()->noiseInjectionHashSalt();
+    return !!m_canvasNoiseHashSalt;
 }
 
 bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer) const
 {
-    if (auto noiseInjectionHashSalt = scriptExecutionContext() ? scriptExecutionContext()->noiseInjectionHashSalt() : std::nullopt)
-        return m_canvasNoiseInjection.postProcessPixelBufferResults(std::forward<Ref<PixelBuffer>>(pixelBuffer), *noiseInjectionHashSalt);
+    if (m_canvasNoiseHashSalt)
+        return m_canvasNoiseInjection.postProcessPixelBufferResults(std::forward<Ref<PixelBuffer>>(pixelBuffer), *m_canvasNoiseHashSalt);
     return false;
 }
 

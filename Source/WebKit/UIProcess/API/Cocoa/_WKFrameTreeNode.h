@@ -26,13 +26,11 @@
 #import <WebKit/WKFrameInfo.h>
 
 WK_CLASS_AVAILABLE(macos(11.0), ios(14.0))
-@interface _WKFrameTreeNode : WKFrameInfo
+@interface _WKFrameTreeNode : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-// FIXME: Move Safari to use _WKFrameTreeNode.info and make _WKFrameTreeNode no longer inherit from WKFrameInfo
-// so we don't have to implement all the selectors of WKFrameInfo twice.
 @property (nonatomic, readonly, copy) WKFrameInfo *info WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, readonly) NSArray<_WKFrameTreeNode *> *childFrames;
 

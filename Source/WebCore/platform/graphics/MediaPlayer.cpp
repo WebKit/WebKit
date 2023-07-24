@@ -632,6 +632,8 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
                 m_private->setVisibleInViewport(m_visibleInViewport);
             if (m_isGatheringVideoFrameMetadata)
                 m_private->startVideoFrameMetadataGathering();
+            if (m_processIdentity)
+                m_private->setResourceOwner(m_processIdentity);
             m_private->prepareForPlayback(m_privateBrowsing, m_preload, m_preservesPitch, m_shouldPrepareToRender);
         }
     }
@@ -918,7 +920,7 @@ bool MediaPlayer::isVideoFullscreenStandby() const
 
 FloatSize MediaPlayer::videoInlineSize() const
 {
-    return m_private->videoInlineSize();
+    return client().mediaPlayerVideoInlineSize();
 }
 
 void MediaPlayer::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
@@ -1106,6 +1108,12 @@ void MediaPlayer::setVisibleInViewport(bool visible)
     m_private->setVisibleInViewport(visible);
 }
 
+void MediaPlayer::setResourceOwner(const ProcessIdentity& processIdentity)
+{
+    m_processIdentity = processIdentity;
+    m_private->setResourceOwner(processIdentity);
+}
+
 MediaPlayer::Preload MediaPlayer::preload() const
 {
     return m_preload;
@@ -1272,6 +1280,11 @@ bool MediaPlayer::supportsAcceleratedRendering() const
 void MediaPlayer::setShouldMaintainAspectRatio(bool maintainAspectRatio)
 {
     m_private->setShouldMaintainAspectRatio(maintainAspectRatio);
+}
+
+void MediaPlayer::requestHostingContextID(LayerHostingContextIDCallback&& callback)
+{
+    return m_private->requestHostingContextID(WTFMove(callback));
 }
 
 LayerHostingContextID MediaPlayer::hostingContextID() const
@@ -1961,6 +1974,22 @@ String convertEnumerationToString(MediaPlayer::SupportsType enumerationValue)
     static_assert(static_cast<size_t>(MediaPlayer::SupportsType::MayBeSupported) == 2, "MediaPlayer::SupportsType::MayBeSupported is not 2 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
+}
+
+WTF::TextStream& operator<<(TextStream& ts, MediaPlayerEnums::VideoGravity gravity)
+{
+    switch (gravity) {
+    case MediaPlayerEnums::VideoGravity::Resize:
+        ts << "resize";
+        break;
+    case MediaPlayerEnums::VideoGravity::ResizeAspect:
+        ts << "resize-aspect";
+        break;
+    case MediaPlayerEnums::VideoGravity::ResizeAspectFill:
+        ts << "resize-aspect-fill";
+        break;
+    }
+    return ts;
 }
 
 String convertEnumerationToString(MediaPlayer::BufferingPolicy enumerationValue)

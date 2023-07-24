@@ -78,5 +78,5 @@ PASS calc(max(1em, 19px) - 10px) should be used-value-equivalent to 10px
 PASS calc(max(1em, 19px) * 2 should be used-value-equivalent to 40px
 PASS calc(max(1em, 19px) / 2 should be used-value-equivalent to 10px
 PASS calc(min(1em, 21px) + max(0.9em, 20px)) should be used-value-equivalent to 40px
-PASS calc(min(1em, 21px) - max(0.9em, 20px)) should be used-value-equivalent to 0px
+PASS calc(min(1em + 1px, 22px) - max(0.9em, 20px)) should be used-value-equivalent to 1px
 

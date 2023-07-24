@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.js
@@ -51,6 +52,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/h264.annexb
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/h264.mp4
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/h265.annexb
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/h265.mp4
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/idlharness.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/image-decoder-disconnect-readable-stream-crash.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/image-decoder-image-orientation-none.https.html

@@ -31,7 +31,10 @@
 #import <TextRecognition/CRRegion.h>
 #endif
 
+// FIXME: Remove this after rdar://109896407 is resolved
+IGNORE_WARNINGS_BEGIN("undef")
 #import <VisionKitCore/VKImageAnalysis_WebKit.h>
+IGNORE_WARNINGS_END
 #import <VisionKitCore/VisionKitCore.h>
 
 #else
@@ -71,6 +74,12 @@ typedef NS_OPTIONS(NSUInteger, VKAnalysisTypes) {
     VKAnalysisTypeImageSegmentation    = 1 << 5,
     VKAnalysisTypeNone = 0,
     VKAnalysisTypeAll = NSUIntegerMax,
+};
+
+typedef NS_ENUM(NSUInteger, VKImageAnalyzerRequestImageSource) {
+    VKImageAnalyzerRequestImageSourceDefault,
+    VKImageAnalyzerRequestImageSourceScreenshot,
+    VKImageAnalyzerRequestImageSourceVideoFrame,
 };
 
 #if PLATFORM(IOS_FAMILY)
@@ -260,6 +269,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface VKCImageAnalyzerRequest : NSObject <NSCopying, VKFeedbackAssetsProvider>
 @property (nonatomic, copy, nullable) NSURL *imageURL;
 @property (nonatomic, copy, nullable) NSURL *pageURL;
+@property (nonatomic) VKImageAnalyzerRequestImageSource imageSource;
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithCGImage:(CGImageRef)image orientation:(VKImageOrientation)orientation requestType:(VKAnalysisTypes)analysisType;
 @end
@@ -302,7 +312,7 @@ NS_ASSUME_NONNULL_END
 #endif
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #if __has_include(<VisionKitCore/VKCImageAnalysisInteraction.h>)
 #import <VisionKitCore/VKCImageAnalysisInteraction.h>
 #else
@@ -333,7 +343,7 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 

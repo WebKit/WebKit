@@ -64,4 +64,4 @@ layer at (0,0) size 785x601
                   text run at (0,0) width 549: "This paragraph should have a left margin of 25% the width of its parent element, which"
                   text run at (0,20) width 356: "should require some extra text in order to test effectively."
 layer at (8,137) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,129) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,129) size 769x2 [color=#808080] [border: (1px inset #808080)]

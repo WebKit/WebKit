@@ -7,31 +7,31 @@
 
   <metamodule id="webkitgtk-testing-dependencies">
     <dependencies>
+      <dep package="adwaita-icon-theme"/>
+      <dep package="atk"/>
       <dep package="avif"/>
       <dep package="cairo"/>
       <dep package="dicts"/>
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
-      <dep package="harfbuzz"/>
-      <dep package="libxml2"/>
       <dep package="gdk-pixbuf"/>
-      <dep package="gtk+"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
-      <dep package="adwaita-icon-theme"/>
+      <dep package="gtk+"/>
+      <dep package="harfbuzz"/>
       <dep package="icu"/>
-      <dep package="libsoup"/>
-      <dep package="atk"/>
-      <dep package="webkit-gstreamer-testing-dependencies"/>
-      <dep package="pango"/>
-      <dep package="llvm"/>
-      <dep package="shared-mime-info"/>
-      <dep package="libsecret"/>
-      <dep package="libgpg-error"/>
       <dep package="libgcrypt"/>
+      <dep package="libgpg-error"/>
+      <dep package="libjxl"/>
+      <dep package="libsecret"/>
+      <dep package="libxml2"/>
+      <dep package="llvm"/>
       <dep package="manette"/>
       <dep package="openjpeg"/>
+      <dep package="pango"/>
+      <dep package="shared-mime-info"/>
       <dep package="wpebackend-fdo"/>
+      <dep package="webkit-gstreamer-testing-dependencies"/>
       <if condition-set="linux">
           <dep package="xdg-dbus-proxy"/>
           <dep package="xserver"/>
@@ -43,6 +43,9 @@
       <if condition-set="macos">
           <dep package="gsettings-desktop-schemas"/>
       </if>
+      <if condition-unset="USE_SOUP2">
+        <dep package="libsoup3"/>
+      </if>
     </dependencies>
   </metamodule>
 
@@ -50,7 +53,7 @@
   <repository type="git" name="github.com"
       href="https://github.com"/>
   <repository type="tarball" name="github-tarball"
-      href="https://github.com/"/>
+      href="https://github.com"/>
   <repository type="tarball" name="sourceware.org-mirror"
       href="http://mirrors.kernel.org/sources.redhat.com/"/>
   <repository type="tarball" name="ftp.gnome.org"
@@ -220,9 +223,11 @@
 
   <meson id="glib"
          mesonargs="-Dlibmount=disabled -Dselinux=disabled">
-    <branch module="/sources/glib/2.70/glib-${version}.tar.xz" version="2.70.0"
+    <pkg-config>glib-2.0.pc</pkg-config>
+    <branch module="/sources/glib/2.72/glib-${version}.tar.xz"
+            version="2.72.4"
             repo="download.gnome.org"
-            hash="sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742">
+            hash="sha256:8848aba518ba2f4217d144307a1d6cb9afcc92b54e5c13ac1f8c4d4608e96f0e">
     </branch>
   </meson>
 
@@ -246,19 +251,21 @@
             hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
   </autotools>
 
-  <meson id="libsoup" mesonargs="-Dintrospection=disabled -Dgssapi=disabled -Dvapi=disabled">
-    <if condition-set="macos">
-      <mesonargs value="-Dtls_check=false"/>
-    </if>
-    <dependencies>
-      <dep package="glib-networking"/>
-      <dep package="libpsl"/>
-    </dependencies>
-    <branch module="/sources/libsoup/2.71/libsoup-${version}.tar.xz" version="2.71.0"
-            repo="download.gnome.org"
-            hash="sha256:88e24fad72d16e1cb692c8782688dbee4bf44151efb0d9ed25b14f3849d9896e">
-    </branch>
-  </meson>
+  <if condition-unset="USE_SOUP2">
+    <meson id="libsoup3" mesonargs="-Dgssapi=disabled -Dvapi=disabled -Dntlm=disabled -Dsysprof=disabled -Dautobahn=disabled -Dpkcs11_tests=disabled">
+      <pkg-config>libsoup-3.0.pc</pkg-config>
+      <dependencies>
+        <dep package="glib"/>
+        <dep package="glib-networking"/>
+        <dep package="libpsl"/>
+      </dependencies>
+      <branch module="/sources/libsoup/3.2/libsoup-${version}.tar.xz"
+              version="3.2.2"
+              repo="download.gnome.org"
+              hash="sha256:83673c685b910fb7d39f1f28eee5afbefb71c05798fc350ac3bf1b885e1efaa1">
+      </branch>
+    </meson>
+  </if>
 
   <autotools id="fontconfig"
              autogenargs="--enable-libxml2 --disable-docs"
@@ -484,23 +491,22 @@
   </cmake>
 
   <cmake id="libwpe">
-    <branch module="libwpe-1.8.0.tar.xz" version="1.8.0"
-            repo="wpewebkit"
-            hash="sha256:a6f00a7d091cbd4db57fe7ee3b4c12c6350921d654ed79812800a26c888481d2"/>
+    <branch repo="github-tarball"
+            module="WebPlatformForEmbedded/libwpe/releases/download/${version}/libwpe-${version}.tar.xz"
+            version="1.14.1"
+            hash="sha256:b1d0cdcf0f8dbb494e65b0f7913e357106da9a0d57f4fbb7b9d1238a6dbe9ade"/>
   </cmake>
 
-  <cmake id="wpebackend-fdo">
+  <meson id="wpebackend-fdo">
     <dependencies>
       <dep package="libwpe"/>
-      <dep package="glib"/>
-      <dep package="mesa"/>
     </dependencies>
-    <branch module="wpebackend-fdo-1.8.0.tar.xz" version="1.8.0"
-            repo="wpewebkit"
-            hash="sha256:9652a99c75fe1c6eab0585b6395f4e104b2427e4d1f42969f1f77df29920d253">
-    <patch file="wpebackend-fdo-cmake-buildfix-3.10.patch" strip="1"/>
+    <branch repo="github-tarball"
+            module="Igalia/WPEBackend-fdo/releases/download/${version}/wpebackend-fdo-${version}.tar.xz"
+            version="1.14.2"
+            hash="sha256:93c9766ae9864eeaeaee2b0a74f22cbca08df42c1a1bdb55b086f2528e380d38">
     </branch>
-  </cmake>
+  </meson>
 
   <!-- Dependencies listed below this point are not thought to affect test results, and are only
        included because they themselves depend on other dependencies built by jhbuild. -->
@@ -571,5 +577,35 @@
       <dep package="glib"/>
     </dependencies>
   </autotools>
+
+  <!-- libjxl required for JPEGXL support -->
+  <cmake id="libjxl"
+         cmakeargs="-DBUILD_TESTING=OFF
+                    -DPROVISION_DEPENDENCIES=ON
+                    -DJPEGXL_ENABLE_FUZZERS=OFF
+                    -DJPEGXL_ENABLE_DEVTOOLS=OFF
+                    -DJPEGXL_ENABLE_TOOLS=OFF
+                    -DJPEGXL_ENABLE_MANPAGES=OFF
+                    -DJPEGXL_ENABLE_BENCHMARK=OFF
+                    -DJPEGXL_ENABLE_EXAMPLES=OFF
+                    -DJPEGXL_ENABLE_JNI=OFF
+                    -DJPEGXL_ENABLE_VIEWERS=OFF
+                    -DJPEGXL_ENABLE_TCMALLOC=OFF
+                    -DJPEGXL_ENABLE_PLUGINS=OFF
+                    -DJPEGXL_ENABLE_COVERAGE=OFF
+                    -DJPEGXL_ENABLE_TRANSCODE_JPEG=OFF
+                    -DJPEGXL_ENABLE_SJPEG=OFF
+                    -DJPEGXL_STATIC=OFF
+                    -DJPEGXL_WARNINGS_AS_ERRORS=OFF
+                    -DJPEGXL_ENABLE_SKCMS=ON">
+    <pkg-config>libjxl.pc</pkg-config>
+    <branch module="libjxl/libjxl.git"
+            version="0.6.1"
+            tag="v0.6.1"
+            checkoutdir="libjxl-0.6.1"
+            repo="github.com">
+      <patch file="libjxl-add-cmake-flag-provision-dependencies.patch" strip="1"/>
+    </branch>
+  </cmake>
 
 </moduleset>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,11 @@
 #include "StreamServerConnection.h"
 #include "WebGPUComputePassDescriptor.h"
 #include "WebGPUObjectHeap.h"
-#include <pal/graphics/WebGPU/WebGPUCommandEncoder.h>
+#include <WebCore/WebGPUCommandEncoder.h>
 
 namespace WebKit {
 
-RemoteCommandEncoder::RemoteCommandEncoder(PAL::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteCommandEncoder::RemoteCommandEncoder(WebCore::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(commandEncoder)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
@@ -74,7 +74,7 @@ void RemoteCommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& d
 
 void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputePassDescriptor>& descriptor, WebGPUIdentifier identifier)
 {
-    std::optional<PAL::WebGPU::ComputePassDescriptor> convertedDescriptor;
+    std::optional<WebCore::WebGPU::ComputePassDescriptor> convertedDescriptor;
     if (descriptor) {
         auto resultDescriptor = m_objectHeap.convertFromBacking(*descriptor);
         ASSERT(resultDescriptor);
@@ -90,10 +90,10 @@ void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputeP
 
 void RemoteCommandEncoder::copyBufferToBuffer(
     WebGPUIdentifier source,
-    PAL::WebGPU::Size64 sourceOffset,
+    WebCore::WebGPU::Size64 sourceOffset,
     WebGPUIdentifier destination,
-    PAL::WebGPU::Size64 destinationOffset,
-    PAL::WebGPU::Size64 size)
+    WebCore::WebGPU::Size64 destinationOffset,
+    WebCore::WebGPU::Size64 size)
 {
     auto convertedSource = m_objectHeap.convertBufferFromBacking(source);
     ASSERT(convertedSource);
@@ -158,8 +158,8 @@ void RemoteCommandEncoder::copyTextureToTexture(
 
 void RemoteCommandEncoder::clearBuffer(
     WebGPUIdentifier buffer,
-    PAL::WebGPU::Size64 offset,
-    std::optional<PAL::WebGPU::Size64> size)
+    WebCore::WebGPU::Size64 offset,
+    std::optional<WebCore::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_objectHeap.convertBufferFromBacking(buffer);
     ASSERT(convertedBuffer);
@@ -184,7 +184,7 @@ void RemoteCommandEncoder::insertDebugMarker(String&& markerLabel)
     m_backing->insertDebugMarker(WTFMove(markerLabel));
 }
 
-void RemoteCommandEncoder::writeTimestamp(WebGPUIdentifier querySet, PAL::WebGPU::Size32 queryIndex)
+void RemoteCommandEncoder::writeTimestamp(WebGPUIdentifier querySet, WebCore::WebGPU::Size32 queryIndex)
 {
     auto convertedQuerySet = m_objectHeap.convertQuerySetFromBacking(querySet);
     ASSERT(convertedQuerySet);
@@ -196,10 +196,10 @@ void RemoteCommandEncoder::writeTimestamp(WebGPUIdentifier querySet, PAL::WebGPU
 
 void RemoteCommandEncoder::resolveQuerySet(
     WebGPUIdentifier querySet,
-    PAL::WebGPU::Size32 firstQuery,
-    PAL::WebGPU::Size32 queryCount,
+    WebCore::WebGPU::Size32 firstQuery,
+    WebCore::WebGPU::Size32 queryCount,
     WebGPUIdentifier destination,
-    PAL::WebGPU::Size64 destinationOffset)
+    WebCore::WebGPU::Size64 destinationOffset)
 {
     auto convertedQuerySet = m_objectHeap.convertQuerySetFromBacking(querySet);
     ASSERT(convertedQuerySet);

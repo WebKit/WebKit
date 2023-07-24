@@ -47,12 +47,11 @@ using namespace PAL;
 using namespace WebCore;
 
 UserMediaCaptureManager::UserMediaCaptureManager(WebProcess& process)
-    : m_process(process)
-    , m_audioFactory(*this)
+    : m_audioFactory(*this)
     , m_videoFactory(*this)
     , m_displayFactory(*this)
 {
-    m_process.addMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName(), *this);
+    process.addMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName(), *this);
 }
 
 UserMediaCaptureManager::~UserMediaCaptureManager()
@@ -60,7 +59,7 @@ UserMediaCaptureManager::~UserMediaCaptureManager()
     RealtimeMediaSourceCenter::singleton().unsetAudioCaptureFactory(m_audioFactory);
     RealtimeMediaSourceCenter::singleton().unsetDisplayCaptureFactory(m_displayFactory);
     RealtimeMediaSourceCenter::singleton().unsetVideoCaptureFactory(m_videoFactory);
-    m_process.removeMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName());
+    WebProcess::singleton().removeMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName());
     m_remoteCaptureSampleManager.stopListeningForIPC();
 }
 

@@ -171,6 +171,8 @@ ABSL_FLAG(bool, send_side_bwe, true, "Use send-side bandwidth estimation");
 
 ABSL_FLAG(bool, generic_descriptor, false, "Use the generic frame descriptor.");
 
+ABSL_FLAG(bool, dependency_descriptor, false, "Use the dependency descriptor.");
+
 ABSL_FLAG(bool, allow_reordering, false, "Allow packet reordering to occur");
 
 ABSL_FLAG(bool, use_ulpfec, false, "Use RED+ULPFEC forward error correction.");
@@ -378,6 +380,8 @@ void Loopback() {
   VideoQualityTest::Params params;
   params.call.send_side_bwe = absl::GetFlag(FLAGS_send_side_bwe);
   params.call.generic_descriptor = absl::GetFlag(FLAGS_generic_descriptor);
+  params.call.dependency_descriptor =
+      absl::GetFlag(FLAGS_dependency_descriptor);
   params.call.call_bitrate_config = call_bitrate_config;
 
   params.video[0].enabled = absl::GetFlag(FLAGS_video);

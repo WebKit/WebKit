@@ -164,12 +164,12 @@ struct HashAndUTF8CharactersTranslator {
         UChar* target;
         auto newString = StringImpl::createUninitialized(buffer.utf16Length, target);
 
-        bool isAllASCII;
+        bool containsOnlyASCII;
         const char* source = buffer.characters;
-        if (!convertUTF8ToUTF16(source, source + buffer.length, &target, target + buffer.utf16Length, &isAllASCII))
+        if (!convertUTF8ToUTF16(source, source + buffer.length, &target, target + buffer.utf16Length, &containsOnlyASCII))
             RELEASE_ASSERT_NOT_REACHED();
 
-        if (isAllASCII)
+        if (containsOnlyASCII)
             newString = StringImpl::create(buffer.characters, buffer.length);
 
         auto* pointer = &newString.leakRef();
@@ -372,6 +372,13 @@ static inline Ref<AtomStringImpl> addStatic(const StringImpl& base)
 {
     AtomStringTableLocker locker;
     return addStatic(locker, stringTable(), base);
+}
+
+RefPtr<AtomStringImpl> AtomStringImpl::add(const StaticStringImpl* string)
+{
+    auto s = reinterpret_cast<const StringImpl*>(string);
+    ASSERT(s->isStatic());
+    return addStatic(*s);
 }
 
 Ref<AtomStringImpl> AtomStringImpl::addSlowCase(StringImpl& string)

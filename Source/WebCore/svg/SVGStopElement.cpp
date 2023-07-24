@@ -52,14 +52,14 @@ Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Documen
 
 void SVGStopElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     if (name == SVGNames::offsetAttr) {
         if (newValue.endsWith('%'))
             m_offset->setBaseValInternal(newValue.string().left(newValue.length() - 1).toFloat() / 100.0f);
         else
             m_offset->setBaseValInternal(newValue.toFloat());
     }
+
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGStopElement::svgAttributeChanged(const QualifiedName& attrName)

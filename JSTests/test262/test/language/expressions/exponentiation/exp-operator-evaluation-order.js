@@ -16,6 +16,7 @@ info: |
     5. Let base be ? ToNumber(leftValue).
     6. Let exponent be ? ToNumber(rightValue).
     7. Return the result of Applying the ** operator with base and exponent as specified in 12.7.3.4.
+features: [exponentiation]
 ---*/
 
 var capture = [];

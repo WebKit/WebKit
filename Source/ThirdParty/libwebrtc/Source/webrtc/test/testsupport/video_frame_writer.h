@@ -14,21 +14,13 @@
 #include <memory>
 #include <string>
 
+#include "api/test/video/video_frame_writer.h"
 #include "api/video/video_frame.h"
 #include "rtc_base/buffer.h"
 #include "test/testsupport/frame_writer.h"
 
 namespace webrtc {
 namespace test {
-
-class VideoFrameWriter {
- public:
-  virtual ~VideoFrameWriter() = default;
-
-  virtual bool WriteFrame(const webrtc::VideoFrame& frame) = 0;
-
-  virtual void Close() = 0;
-};
 
 // Writes webrtc::VideoFrame to specified file with y4m frame writer
 class Y4mVideoFrameWriterImpl : public VideoFrameWriter {

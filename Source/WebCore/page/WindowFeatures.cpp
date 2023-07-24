@@ -120,7 +120,7 @@ OptionSet<DisabledAdaptations> parseDisabledAdaptations(StringView disabledAdapt
 {
     OptionSet<DisabledAdaptations> disabledAdaptations;
     for (auto name : disabledAdaptationsString.split(',')) {
-        auto trimmedName = name.stripWhiteSpace();
+        auto trimmedName = name.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
         if (equalIgnoringASCIICase(trimmedName, watchAdaptationName()))
             disabledAdaptations.add(DisabledAdaptations::Watch);
     }
@@ -258,12 +258,12 @@ static DialogFeaturesMap parseDialogFeaturesMap(StringView string)
         if (separatorPosition == notFound)
             separatorPosition = colonPosition;
 
-        auto key = featureString.left(separatorPosition).stripWhiteSpace().toString();
+        auto key = featureString.left(separatorPosition).trim(isUnicodeCompatibleASCIIWhitespace<UChar>).toString();
 
         // Null string for value indicates key without value.
         String value;
         if (separatorPosition != notFound) {
-            auto valueView = featureString.substring(separatorPosition + 1).stripWhiteSpace();
+            auto valueView = featureString.substring(separatorPosition + 1).trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
             value = valueView.left(valueView.find(' ')).toString();
         }
 

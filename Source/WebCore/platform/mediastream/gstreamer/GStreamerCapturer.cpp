@@ -38,7 +38,7 @@ GST_DEBUG_CATEGORY(webkit_capturer_debug);
 
 namespace WebCore {
 
-static void initializeDebugCategory()
+static void initializeCapturerDebugCategory()
 {
     ensureGStreamerInitialized();
 
@@ -48,28 +48,34 @@ static void initializeDebugCategory()
     });
 }
 
-GStreamerCapturer::GStreamerCapturer(GStreamerCaptureDevice device, GRefPtr<GstCaps> caps)
-    : m_device(device.device())
-    , m_caps(caps)
+GStreamerCapturer::GStreamerCapturer(GStreamerCaptureDevice&& device, GRefPtr<GstCaps>&& caps)
+    : m_caps(WTFMove(caps))
     , m_sourceFactory(nullptr)
     , m_deviceType(device.type())
 {
-    initializeDebugCategory();
+    initializeCapturerDebugCategory();
+    m_device.emplace(WTFMove(device));
 }
 
-GStreamerCapturer::GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps> caps, CaptureDevice::DeviceType deviceType)
-    : m_device(nullptr)
-    , m_caps(caps)
+GStreamerCapturer::GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>&& caps, CaptureDevice::DeviceType deviceType)
+    : m_caps(WTFMove(caps))
     , m_sourceFactory(sourceFactory)
     , m_deviceType(deviceType)
 {
-    initializeDebugCategory();
+    initializeCapturerDebugCategory();
 }
 
 GStreamerCapturer::~GStreamerCapturer()
 {
-    if (m_pipeline)
-        disconnectSimpleBusMessageCallback(pipeline());
+    auto* sink = this->sink();
+    if (sink)
+        g_signal_handlers_disconnect_by_data(sink, this);
+
+    if (!m_pipeline)
+        return;
+
+    disconnectSimpleBusMessageCallback(pipeline());
+    gst_element_set_state(pipeline(), GST_STATE_NULL);
 }
 
 GStreamerCapturer::Observer::~Observer()
@@ -124,7 +130,7 @@ GstElement* GStreamerCapturer::createSource()
     } else {
         ASSERT(m_device);
         auto sourceName = makeString(name(), hex(reinterpret_cast<uintptr_t>(this)));
-        m_src = gst_device_create_element(m_device.get(), sourceName.ascii().data());
+        m_src = gst_device_create_element(m_device->device(), sourceName.ascii().data());
         ASSERT(m_src);
         g_object_set(m_src.get(), "do-timestamp", TRUE, nullptr);
     }
@@ -154,7 +160,7 @@ GstCaps* GStreamerCapturer::caps()
     }
 
     ASSERT(m_device);
-    return gst_device_get_caps(m_device.get());
+    return gst_device_get_caps(m_device->device());
 }
 
 void GStreamerCapturer::setupPipeline()
@@ -175,8 +181,9 @@ void GStreamerCapturer::setupPipeline()
     g_object_set(m_sink.get(), "enable-last-sample", FALSE, nullptr);
     g_object_set(m_capsfilter.get(), "caps", m_caps.get(), nullptr);
 
-    gst_bin_add_many(GST_BIN(m_pipeline.get()), source.get(), converter.get(), m_capsfilter.get(), m_valve.get(), m_sink.get(), nullptr);
-    gst_element_link_many(source.get(), converter.get(), m_capsfilter.get(), m_valve.get(), m_sink.get(), nullptr);
+    auto* queue = gst_element_factory_make("queue", nullptr);
+    gst_bin_add_many(GST_BIN(m_pipeline.get()), source.get(), converter.get(), m_capsfilter.get(), m_valve.get(), queue, m_sink.get(), nullptr);
+    gst_element_link_many(source.get(), converter.get(), m_capsfilter.get(), m_valve.get(), queue, m_sink.get(), nullptr);
 
     connectSimpleBusMessageCallback(pipeline());
 }
@@ -190,19 +197,17 @@ GstElement* GStreamerCapturer::makeElement(const char* factoryName)
     return element;
 }
 
-void GStreamerCapturer::play()
+void GStreamerCapturer::start()
 {
     ASSERT(m_pipeline);
-
-    GST_INFO_OBJECT(pipeline(), "Going to PLAYING!");
-
+    GST_INFO_OBJECT(pipeline(), "Starting");
     gst_element_set_state(pipeline(), GST_STATE_PLAYING);
 }
 
 void GStreamerCapturer::stop()
 {
     ASSERT(m_pipeline);
-    GST_INFO_OBJECT(pipeline(), "Tearing down!");
+    GST_INFO_OBJECT(pipeline(), "Stopping");
     gst_element_set_state(pipeline(), GST_STATE_NULL);
 }
 
@@ -217,6 +222,15 @@ void GStreamerCapturer::setInterrupted(bool isInterrupted)
 {
     g_object_set(m_valve.get(), "drop", isInterrupted, nullptr);
 }
+
+void GStreamerCapturer::stopDevice()
+{
+    forEachObserver([](auto& observer) {
+        observer.captureEnded();
+    });
+}
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

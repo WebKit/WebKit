@@ -1503,7 +1503,10 @@ void av1_apply_selfguided_restoration_neon(const uint8_t *dat8, int width,
   {
     int16_t *src_ptr;
     uint8_t *dst_ptr;
+#if CONFIG_AV1_HIGHBITDEPTH
+    uint16_t *dst16 = CONVERT_TO_SHORTPTR(dst8);
     uint16_t *dst16_ptr;
+#endif
     int16x4_t d0, d4;
     int16x8_t r0, s0;
     uint16x8_t r4;
@@ -1515,14 +1518,14 @@ void av1_apply_selfguided_restoration_neon(const uint8_t *dat8, int width,
     const int32x4_t xq1_vec = vdupq_n_s32(xq[1]);
     const int16x8_t zero = vdupq_n_s16(0);
     const uint16x8_t max = vdupq_n_u16((1 << bit_depth) - 1);
-    uint16_t *dst16 = CONVERT_TO_SHORTPTR(dst8);
-    dst_ptr = dst8;
     src_ptr = (int16_t *)dgd16;
     do {
       w = width;
       count = 0;
       dst_ptr = dst8 + rc * dst_stride;
+#if CONFIG_AV1_HIGHBITDEPTH
       dst16_ptr = dst16 + rc * dst_stride;
+#endif
       do {
         s0 = vld1q_s16(src_ptr + count);
 
@@ -1565,19 +1568,20 @@ void av1_apply_selfguided_restoration_neon(const uint8_t *dat8, int width,
         if (highbd) {
           r4 = vminq_u16(r4, max);
           vst1q_u16(dst16_ptr, r4);
+          dst16_ptr += 8;
         } else {
           t0 = vqmovn_u16(r4);
           vst1_u8(dst_ptr, t0);
+          dst_ptr += 8;
         }
 #else
         (void)max;
         t0 = vqmovn_u16(r4);
         vst1_u8(dst_ptr, t0);
+        dst_ptr += 8;
 #endif
         w -= 8;
         count += 8;
-        dst_ptr += 8;
-        dst16_ptr += 8;
       } while (w > 0);
 
       src_ptr += dgd16_stride;

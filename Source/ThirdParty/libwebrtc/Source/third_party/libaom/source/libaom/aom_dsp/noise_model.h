@@ -293,13 +293,13 @@ struct aom_denoise_and_model_t;
  * parameter will be true when the input buffer was successfully denoised and
  * grain was modelled. Returns false on error.
  *
- * \param[in]      ctx          Struct allocated with
+ * \param[in]     ctx           Struct allocated with
  *                              aom_denoise_and_model_alloc that holds some
  *                              buffers for denoising and the current noise
  *                              estimate.
- * \param[in/out]   buf         The raw input buffer to be denoised.
+ * \param[in,out] buf           The raw input buffer to be denoised.
  * \param[out]    grain         Output film grain parameters
- * \param[out]    apply_denoise Whether or not to apply the denoising to the
+ * \param[in]     apply_denoise Whether or not to apply the denoising to the
  *                              frame that will be encoded
  */
 int aom_denoise_and_model_run(struct aom_denoise_and_model_t *ctx,

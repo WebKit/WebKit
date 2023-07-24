@@ -150,6 +150,8 @@ class OutputHLSL : public TIntermTraverser
     TString addArrayEqualityFunction(const TType &type);
     TString addArrayAssignmentFunction(const TType &type);
     TString addArrayConstructIntoFunction(const TType &type);
+    TString addFlatEvaluateFunction(const TType &type, const TType &parameterType);
+    TString addSampleEvaluateFunction(const TType &type);
 
     // Ensures if the type is a struct, the struct is defined
     void ensureStructDefined(const TType &type);
@@ -209,6 +211,11 @@ class OutputHLSL : public TIntermTraverser
     bool mUsesViewID;
     bool mUsesVertexID;
     bool mUsesFragDepth;
+    bool mUsesSampleID;
+    bool mUsesSamplePosition;
+    bool mUsesSampleMaskIn;
+    bool mUsesSampleMask;
+    bool mUsesNumSamples;
     bool mUsesNumWorkGroups;
     bool mUsesWorkGroupID;
     bool mUsesLocalInvocationID;
@@ -271,6 +278,19 @@ class OutputHLSL : public TIntermTraverser
     // parameter with the other N parameters of the function. This is used to work around that
     // arrays can't be return values in HLSL.
     std::vector<ArrayHelperFunction> mArrayConstructIntoFunctions;
+
+    struct FlatEvaluateFunction : public HelperFunction
+    {
+        TType type;
+        TType parameterType;
+    };
+    std::vector<FlatEvaluateFunction> mFlatEvaluateFunctions;
+
+    struct SampleEvaluateFunction : public HelperFunction
+    {
+        TType type;
+    };
+    std::vector<SampleEvaluateFunction> mSampleEvaluateFunctions;
 
     sh::WorkGroupSize mWorkGroupSize;
 

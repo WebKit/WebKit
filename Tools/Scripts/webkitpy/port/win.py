@@ -141,6 +141,13 @@ class WinPort(ApplePort):
 
     def setup_environ_for_server(self, server_name=None):
         env = super(WinPort, self).setup_environ_for_server(server_name)
+        if 'WEBKIT_TESTFONTS' not in env:
+            env['WEBKIT_TESTFONTS'] = self.path_from_webkit_base('Tools', 'WebKitTestRunner', 'fonts')
+        if 'WEBKIT_LIBRARIES' in env:
+            lib = self._filesystem.join(env['WEBKIT_LIBRARIES'], 'bin64')
+        else:
+            lib = self.path_from_webkit_base('WebKitLibraries', 'win', 'bin64')
+        env['PATH'] = lib + ';' + env['PATH']
         env['PYTHONUTF8'] = '1'
         env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
@@ -151,11 +158,14 @@ class WinPort(ApplePort):
             'SYSTEMROOT',
             'TEMP',
             'TMP',
-            'WEBKIT_LIBRARIES',
         ]
         for variable in variables_to_copy:
             self._copy_value_from_environ_if_set(env, variable)
         return env
+
+    def run_minibrowser(self, args):
+        miniBrowser = self._build_path('MiniBrowser.exe')
+        return self._executive.run_command([miniBrowser] + args, stdout=None, cwd=self.webkit_base(), return_stderr=False, decode_output=False, ignore_errors=True, env=self.setup_environ_for_server())
 
     def operating_system(self):
         return 'win'

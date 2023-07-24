@@ -591,6 +591,8 @@ GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia* media)
     return caps;
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif

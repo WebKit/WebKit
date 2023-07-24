@@ -125,22 +125,24 @@ extern Lock crashLock;
 
 #define PREFIX "O", Options::defaultB3OptLevel(), ": "
 
-#define RUN(test) do {                             \
-    if (!shouldRun(filter, #test))                 \
-        break;                                     \
-    tasks.append(                                  \
-        createSharedTask<void()>(                  \
-            [&] () {                               \
-                dataLog(PREFIX #test "...\n");     \
-                test;                              \
-                dataLog(PREFIX #test ": OK!\n");   \
-            }));                                   \
+#define RUN(test)                                           \
+    do {                                                    \
+        CString testStr = toCString(PREFIX #test);          \
+        if (!shouldRun(config, testStr.data()))             \
+            break;                                          \
+        tasks.append(                                       \
+            createSharedTask<void()>(                       \
+                [=]() {                                     \
+                    dataLog(toCString(testStr, "...\n"));   \
+                    test;                                   \
+                    dataLog(toCString(testStr, ": OK!\n")); \
+                }));                                        \
     } while (false);
 
 #define RUN_UNARY(test, values) \
     for (auto a : values) {                             \
         CString testStr = toCString(PREFIX #test, "(", a.name, ")"); \
-        if (!shouldRun(filter, testStr.data()))         \
+        if (!shouldRun(config, testStr.data()))         \
             continue;                                   \
         tasks.append(createSharedTask<void()>(          \
             [=] () {                                    \
@@ -151,7 +153,7 @@ extern Lock crashLock;
     }
 
 #define RUN_NOW(test) do {                      \
-        if (!shouldRun(filter, #test))          \
+        if (!shouldRun(config, #test))          \
             break;                              \
         dataLog(PREFIX #test "...\n");          \
         test;                                   \
@@ -162,7 +164,7 @@ extern Lock crashLock;
     for (auto a : valuesA) {                                \
         for (auto b : valuesB) {                            \
             CString testStr = toCString(PREFIX #test, "(", a.name, ", ", b.name, ")"); \
-            if (!shouldRun(filter, testStr.data()))         \
+            if (!shouldRun(config, testStr.data()))         \
                 continue;                                   \
             tasks.append(createSharedTask<void()>(          \
                 [=] () {                                    \
@@ -176,8 +178,8 @@ extern Lock crashLock;
     for (auto a : valuesA) {                                    \
         for (auto b : valuesB) {                                \
             for (auto c : valuesC) {                            \
-                CString testStr = toCString(#test, "(", a.name, ", ", b.name, ",", c.name, ")"); \
-                if (!shouldRun(filter, testStr.data()))         \
+                CString testStr = toCString(PREFIX #test, "(", a.name, ", ", b.name, ",", c.name, ")"); \
+                if (!shouldRun(config, testStr.data()))         \
                     continue;                                   \
                 tasks.append(createSharedTask<void()>(          \
                     [=] () {                                    \
@@ -442,7 +444,16 @@ inline float modelLoad<float, float>(float value) { return value; }
 template<>
 inline double modelLoad<double, double>(double value) { return value; }
 
-void run(const char* filter);
+struct TestConfig {
+    enum class Mode {
+        ListTests,
+        RunTests,
+    } mode { Mode::RunTests };
+    char* filter { nullptr };
+    unsigned workerThreadCount { 1 };
+};
+
+void run(const TestConfig* filter);
 void testBitAndSExt32(int32_t value, int64_t mask);
 void testUbfx32ShiftAnd();
 void testUbfx32AndShift();
@@ -790,7 +801,10 @@ void testOverrideFramePointer();
 void testStackSlot();
 void testLoadFromFramePointer();
 void testStoreLoadStackSlot(int value);
+void testStoreDouble(double input);
+void testStoreDoubleConstant(double input);
 void testStoreFloat(double input);
+void testStoreFloatConstant(double input);
 void testStoreDoubleConstantAsFloat(double input);
 void testSpillGP();
 void testSpillFP();
@@ -1173,17 +1187,17 @@ void testNegDouble(double);
 void testNegFloat(float);
 void testNegFloatWithUselessDoubleConversion(float);
 
-void addArgTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
-void addBitTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
-void addCallTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
-void addSExtTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
-void addSShrShTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
-void addShrTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
-void addAtomicTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
-void addLoadTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
-void addTupleTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
+void addArgTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
+void addBitTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
+void addCallTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
+void addSExtTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
+void addSShrShTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
+void addShrTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
+void addAtomicTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
+void addLoadTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
+void addTupleTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 
-bool shouldRun(const char* filter, const char* testName);
+bool shouldRun(const TestConfig*, const char* testName);
 
 void testLoadPreIndex32();
 void testLoadPreIndex64();
@@ -1204,6 +1218,11 @@ void testStoreAfterClobberExitsSideways();
 void testStoreAfterClobberDifferentWidth();
 void testStoreAfterClobberDifferentWidthSuccessor();
 void testStoreAfterClobberExitsSidewaysSuccessor();
+void testNarrowLoad();
+void testNarrowLoadClobber();
+void testNarrowLoadClobberNarrow();
+void testNarrowLoadNotClobber();
+void testNarrowLoadUpper();
 
 void testVectorOrConstants(v128_t, v128_t);
 void testVectorAndConstants(v128_t, v128_t);

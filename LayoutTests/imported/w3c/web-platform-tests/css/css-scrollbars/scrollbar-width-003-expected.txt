@@ -9,8 +9,8 @@ none
 
 PASS horizontal-tb, ltr, scrollbar-width auto
 PASS horizontal-tb, ltr, scrollbar-width thin
-FAIL horizontal-tb, ltr, scrollbar-width none assert_equals: ltr auto clientWidth expected 200 but got 185
+PASS horizontal-tb, ltr, scrollbar-width none
 PASS horizontal-tb, rtl, scrollbar-width auto
 PASS horizontal-tb, rtl, scrollbar-width thin
-FAIL horizontal-tb, rtl, scrollbar-width none assert_equals: rtl auto clientWidth expected 200 but got 185
+PASS horizontal-tb, rtl, scrollbar-width none
 

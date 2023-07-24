@@ -24,8 +24,8 @@
 
 
 static void x25519_free(EVP_PKEY *pkey) {
-  OPENSSL_free(pkey->pkey.ptr);
-  pkey->pkey.ptr = NULL;
+  OPENSSL_free(pkey->pkey);
+  pkey->pkey = NULL;
 }
 
 static int x25519_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) {
@@ -36,7 +36,6 @@ static int x25519_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) {
 
   X25519_KEY *key = OPENSSL_malloc(sizeof(X25519_KEY));
   if (key == NULL) {
-    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
     return 0;
   }
 
@@ -45,7 +44,7 @@ static int x25519_set_priv_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) {
   key->has_private = 1;
 
   x25519_free(pkey);
-  pkey->pkey.ptr = key;
+  pkey->pkey = key;
   return 1;
 }
 
@@ -57,7 +56,6 @@ static int x25519_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) {
 
   X25519_KEY *key = OPENSSL_malloc(sizeof(X25519_KEY));
   if (key == NULL) {
-    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
     return 0;
   }
 
@@ -65,13 +63,13 @@ static int x25519_set_pub_raw(EVP_PKEY *pkey, const uint8_t *in, size_t len) {
   key->has_private = 0;
 
   x25519_free(pkey);
-  pkey->pkey.ptr = key;
+  pkey->pkey = key;
   return 1;
 }
 
 static int x25519_get_priv_raw(const EVP_PKEY *pkey, uint8_t *out,
-                                size_t *out_len) {
-  const X25519_KEY *key = pkey->pkey.ptr;
+                               size_t *out_len) {
+  const X25519_KEY *key = pkey->pkey;
   if (!key->has_private) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);
     return 0;
@@ -94,7 +92,7 @@ static int x25519_get_priv_raw(const EVP_PKEY *pkey, uint8_t *out,
 
 static int x25519_get_pub_raw(const EVP_PKEY *pkey, uint8_t *out,
                                size_t *out_len) {
-  const X25519_KEY *key = pkey->pkey.ptr;
+  const X25519_KEY *key = pkey->pkey;
   if (out == NULL) {
     *out_len = 32;
     return 1;
@@ -110,6 +108,23 @@ static int x25519_get_pub_raw(const EVP_PKEY *pkey, uint8_t *out,
   return 1;
 }
 
+static int x25519_set1_tls_encodedpoint(EVP_PKEY *pkey, const uint8_t *in,
+                                        size_t len) {
+  return x25519_set_pub_raw(pkey, in, len);
+}
+
+static size_t x25519_get1_tls_encodedpoint(const EVP_PKEY *pkey,
+                                           uint8_t **out_ptr) {
+  const X25519_KEY *key = pkey->pkey;
+  if (key == NULL) {
+    OPENSSL_PUT_ERROR(EVP, EVP_R_NO_KEY_SET);
+    return 0;
+  }
+
+  *out_ptr = OPENSSL_memdup(key->pub, 32);
+  return *out_ptr == NULL ? 0 : 32;
+}
+
 static int x25519_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
   // See RFC 8410, section 4.
 
@@ -123,7 +138,7 @@ static int x25519_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
 }
 
 static int x25519_pub_encode(CBB *out, const EVP_PKEY *pkey) {
-  const X25519_KEY *key = pkey->pkey.ptr;
+  const X25519_KEY *key = pkey->pkey;
 
   // See RFC 8410, section 4.
   CBB spki, algorithm, oid, key_bitstring;
@@ -143,8 +158,8 @@ static int x25519_pub_encode(CBB *out, const EVP_PKEY *pkey) {
 }
 
 static int x25519_pub_cmp(const EVP_PKEY *a, const EVP_PKEY *b) {
-  const X25519_KEY *a_key = a->pkey.ptr;
-  const X25519_KEY *b_key = b->pkey.ptr;
+  const X25519_KEY *a_key = a->pkey;
+  const X25519_KEY *b_key = b->pkey;
   return OPENSSL_memcmp(a_key->pub, b_key->pub, 32) == 0;
 }
 
@@ -165,7 +180,7 @@ static int x25519_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
 }
 
 static int x25519_priv_encode(CBB *out, const EVP_PKEY *pkey) {
-  X25519_KEY *key = pkey->pkey.ptr;
+  const X25519_KEY *key = pkey->pkey;
   if (!key->has_private) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);
     return 0;
@@ -199,6 +214,7 @@ const EVP_PKEY_ASN1_METHOD x25519_asn1_meth = {
     EVP_PKEY_X25519,
     {0x2b, 0x65, 0x6e},
     3,
+    &x25519_pkey_meth,
     x25519_pub_decode,
     x25519_pub_encode,
     x25519_pub_cmp,
@@ -208,41 +224,13 @@ const EVP_PKEY_ASN1_METHOD x25519_asn1_meth = {
     x25519_set_pub_raw,
     x25519_get_priv_raw,
     x25519_get_pub_raw,
-    NULL /* pkey_opaque */,
+    x25519_set1_tls_encodedpoint,
+    x25519_get1_tls_encodedpoint,
+    /*pkey_opaque=*/NULL,
     x25519_size,
     x25519_bits,
-    NULL /* param_missing */,
-    NULL /* param_copy */,
-    NULL /* param_cmp */,
+    /*param_missing=*/NULL,
+    /*param_copy=*/NULL,
+    /*param_cmp=*/NULL,
     x25519_free,
 };
-
-int EVP_PKEY_set1_tls_encodedpoint(EVP_PKEY *pkey, const uint8_t *in,
-                                   size_t len) {
-  // TODO(davidben): In OpenSSL, this function also works for |EVP_PKEY_EC|
-  // keys. Add support if it ever comes up.
-  if (pkey->type != EVP_PKEY_X25519) {
-    OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE);
-    return 0;
-  }
-
-  return x25519_set_pub_raw(pkey, in, len);
-}
-
-size_t EVP_PKEY_get1_tls_encodedpoint(const EVP_PKEY *pkey, uint8_t **out_ptr) {
-  // TODO(davidben): In OpenSSL, this function also works for |EVP_PKEY_EC|
-  // keys. Add support if it ever comes up.
-  if (pkey->type != EVP_PKEY_X25519) {
-    OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE);
-    return 0;
-  }
-
-  const X25519_KEY *key = pkey->pkey.ptr;
-  if (key == NULL) {
-    OPENSSL_PUT_ERROR(EVP, EVP_R_NO_KEY_SET);
-    return 0;
-  }
-
-  *out_ptr = OPENSSL_memdup(key->pub, 32);
-  return *out_ptr == NULL ? 0 : 32;
-}

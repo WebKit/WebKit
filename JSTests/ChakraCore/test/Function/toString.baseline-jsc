@@ -5,7 +5,7 @@ function parseFloat() {
     [native code]
 }
 Test 'toString()' on anonymous function:
-function () {
+function() {
     //anonymous
     a = a + 1;
 }

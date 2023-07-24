@@ -51,6 +51,7 @@ public:
     virtual ~MediaSessionManageriOS();
 
     bool hasWirelessTargetsAvailable() override;
+    bool isMonitoringWirelessTargets() const override;
     static WEBCORE_EXPORT void providePresentingApplicationPID();
 
     using MediaSessionHelperClient::weakPtrFactory;
@@ -66,7 +67,7 @@ private:
     void resetRestrictions() final;
 #endif
 
-    void configureWireLessTargetMonitoring() final;
+    void configureWirelessTargetMonitoring() final;
     void providePresentingApplicationPIDIfNecessary() final;
     bool sessionWillBeginPlayback(PlatformMediaSession&) final;
     void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying) final;

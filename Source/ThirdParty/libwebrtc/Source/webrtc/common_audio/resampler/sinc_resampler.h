@@ -157,10 +157,10 @@ class SincResampler {
   // Data from the source is copied into this buffer for each processing pass.
   std::unique_ptr<float[], AlignedFreeDeleter> input_buffer_;
 
-// Stores the runtime selection of which Convolve function to use.
-// TODO(ajm): Move to using a global static which must only be initialized
-// once by the user. We're not doing this initially, because we don't have
-// e.g. a LazyInstance helper in webrtc.
+  // Stores the runtime selection of which Convolve function to use.
+  // TODO(ajm): Move to using a global static which must only be initialized
+  // once by the user. We're not doing this initially, because we don't have
+  // e.g. a LazyInstance helper in webrtc.
   typedef float (*ConvolveProc)(const float*,
                                 const float*,
                                 const float*,

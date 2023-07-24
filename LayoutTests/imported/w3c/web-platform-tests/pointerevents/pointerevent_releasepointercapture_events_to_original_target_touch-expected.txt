@@ -1,0 +1,12 @@
+Follow the test instructions with touch. If you don't have the device skip it.
+
+Pointer Event: releasePointerCapture() - subsequent events follow normal hitting testing mechanisms
+
+Test Description: Use your pointer and press down in the black box. Then move around in the box and release your pointer. After invoking the releasePointerCapture method on an element, subsequent events for the specified pointer must follow normal hit testing mechanisms for determining the event target.
+
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN touch got/lost pointercapture: subsequent events to target
+

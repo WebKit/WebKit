@@ -118,4 +118,4 @@ layer at (0,0) size 785x1077
                   text run at (532,20) width 205: "No styles have been applied to it"
                   text run at (0,40) width 375: "besides the negative right margin and the background color."
 layer at (8,153) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,145) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,145) size 769x2 [color=#808080] [border: (1px inset #808080)]

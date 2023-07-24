@@ -81,6 +81,8 @@ std::optional<Vector<uint8_t>> base64Decode(std::span<const uint8_t>, Base64Deco
 std::optional<Vector<uint8_t>> base64Decode(std::span<const char>, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
 std::optional<Vector<uint8_t>> base64Decode(const void*, unsigned, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
 
+WTF_EXPORT_PRIVATE String base64DecodeToString(StringView, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
+
 // All the same functions modified for base64url, as defined in RFC 4648.
 // This format uses '-' and '_' instead of '+' and '/' respectively.
 

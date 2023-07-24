@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,20) size 768x480
-      RenderSVGText {text} at (141,12) size 198x23 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 197x23
-          chunk 1 (middle anchor) text run 1 at (141.90,30.00) startOffset 0 endOffset 22 width 196.20: "Rendering thin strokes"
+    RenderSVGContainer {g} at (16,19) size 768x481
+      RenderSVGText {text} at (138,11) size 204x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 203x23
+          chunk 1 (middle anchor) text run 1 at (138.90,30.00) startOffset 0 endOffset 22 width 202.20: "Rendering thin strokes"
       RenderSVGPath {polyline} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000] [stroke width=0.00]}] [fill={[type=SOLID] [color=#000000]}] [points="30 50 30 300"]
       RenderSVGPath {polyline} at (83,83) size 1x417 [stroke={[type=SOLID] [color=#000000] [stroke width=0.10]}] [fill={[type=SOLID] [color=#000000]}] [points="50 50 50 300"]
       RenderSVGPath {polyline} at (116,83) size 1x417 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20]}] [fill={[type=SOLID] [color=#000000]}] [points="70 50 70 300"]
@@ -33,8 +33,8 @@ layer at (0,0) size 800x600
       RenderSVGPath {line} at (16,249) size 768x2 [stroke={[type=SOLID] [color=#00008B] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=150.00] [x2=470.00] [y2=150.00]
       RenderSVGPath {line} at (16,332) size 768x3 [stroke={[type=SOLID] [color=#00008B]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=200.00] [x2=470.00] [y2=200.00]
       RenderSVGPath {line} at (16,415) size 768x4 [stroke={[type=SOLID] [color=#00008B] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=250.00] [x2=470.00] [y2=250.00]
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.6 $"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.6 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -152,29 +152,29 @@ void AsyncResolver::Start(const SocketAddress& addr, int family) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   RTC_DCHECK(!destroy_called_);
   addr_ = addr;
-  auto thread_function =
-      [this, addr, family, caller_task_queue = webrtc::TaskQueueBase::Current(),
-       state = state_] {
-        std::vector<IPAddress> addresses;
-        int error = ResolveHostname(addr.hostname(), family, &addresses);
-        webrtc::MutexLock lock(&state->mutex);
-        if (state->status == State::Status::kLive) {
-          caller_task_queue->PostTask(
-              [this, error, addresses = std::move(addresses), state] {
-                bool live;
-                {
-                  // ResolveDone can lead to instance destruction, so make sure
-                  // we don't deadlock.
-                  webrtc::MutexLock lock(&state->mutex);
-                  live = state->status == State::Status::kLive;
-                }
-                if (live) {
-                  RTC_DCHECK_RUN_ON(&sequence_checker_);
-                  ResolveDone(std::move(addresses), error);
-                }
-              });
-        }
-      };
+  auto thread_function = [this, addr, family,
+                          caller_task_queue = webrtc::TaskQueueBase::Current(),
+                          state = state_] {
+    std::vector<IPAddress> addresses;
+    int error = ResolveHostname(addr.hostname(), family, &addresses);
+    webrtc::MutexLock lock(&state->mutex);
+    if (state->status == State::Status::kLive) {
+      caller_task_queue->PostTask(
+          [this, error, addresses = std::move(addresses), state] {
+            bool live;
+            {
+              // ResolveDone can lead to instance destruction, so make sure
+              // we don't deadlock.
+              webrtc::MutexLock lock(&state->mutex);
+              live = state->status == State::Status::kLive;
+            }
+            if (live) {
+              RTC_DCHECK_RUN_ON(&sequence_checker_);
+              ResolveDone(std::move(addresses), error);
+            }
+          });
+    }
+  };
 #if defined(WEBRTC_MAC) || defined(WEBRTC_IOS)
   PostTaskToGlobalQueue(
       std::make_unique<absl::AnyInvocable<void() &&>>(thread_function));

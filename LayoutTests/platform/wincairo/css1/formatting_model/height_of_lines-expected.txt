@@ -131,4 +131,4 @@ layer at (0,0) size 785x2345
                   text run at (483,425) width 241: "The last image in this paragraph has -10px"
                   text run at (0,466) width 713: "margins set on it, so that should pull the text in toward the image in the vertical direction, and also in the horizontal direction."
 layer at (8,345) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,337) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,337) size 769x2 [color=#808080] [border: (1px inset #808080)]

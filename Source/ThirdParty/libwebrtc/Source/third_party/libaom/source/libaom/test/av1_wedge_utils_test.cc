@@ -341,7 +341,7 @@ TEST_P(WedgeUtilsDeltaSquaresOptTest, RandomValues) {
 
   for (int iter = 0; iter < kIterations && !HasFatalFailure(); ++iter) {
     for (int i = 0; i < MAX_SB_SQUARE; ++i) {
-      a[i] = rng_.Rand16();
+      a[i] = rng_.Rand16Signed();
       b[i] = rng_(2 * INT16_MAX + 1) - INT16_MAX;
     }
 
@@ -373,6 +373,13 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(TestFuncsFDS(av1_wedge_compute_delta_squares_c,
                                    av1_wedge_compute_delta_squares_sse2)));
 #endif  // HAVE_SSE2
+
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(
+    NEON, WedgeUtilsSSEOptTest,
+    ::testing::Values(TestFuncsFSSE(av1_wedge_sse_from_residuals_c,
+                                    av1_wedge_sse_from_residuals_neon)));
+#endif  // HAVE_NEON
 
 #if HAVE_AVX2
 INSTANTIATE_TEST_SUITE_P(

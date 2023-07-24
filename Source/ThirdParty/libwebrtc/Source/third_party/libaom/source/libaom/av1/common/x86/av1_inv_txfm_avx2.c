@@ -1641,9 +1641,9 @@ static INLINE void lowbd_inv_txfm2d_add_no_identity_avx2(
   const int txfm_size_col = tx_size_wide[tx_size];
   const int txfm_size_row = tx_size_high[tx_size];
   const int buf_size_w_div16 = txfm_size_col >> 4;
-  const int buf_size_nonzero_w_div16 = (eobx + 16) >> 4;
+  const int buf_size_nonzero_w = ((eobx + 16) >> 4) << 4;
   const int buf_size_nonzero_h_div16 = (eoby + 16) >> 4;
-  const int input_stride = AOMMIN(32, txfm_size_col);
+  const int input_stride = AOMMIN(32, txfm_size_row);
   const int rect_type = get_rect_tx_log_ratio(txfm_size_col, txfm_size_row);
 
   const int fun_idx_x = lowbd_txfm_all_1d_zeros_idx[eobx];
@@ -1660,16 +1660,10 @@ static INLINE void lowbd_inv_txfm2d_add_no_identity_avx2(
   const __m256i scale0 = _mm256_set1_epi16(1 << (15 + shift[0]));
   for (int i = 0; i < buf_size_nonzero_h_div16; i++) {
     __m256i buf0[64];
-    const int32_t *input_row = input + (i << 4) * input_stride;
-    for (int j = 0; j < buf_size_nonzero_w_div16; ++j) {
-      __m256i *buf0_cur = buf0 + j * 16;
-      const int32_t *input_cur = input_row + j * 16;
-      load_buffer_32bit_to_16bit_w16_avx2(input_cur, input_stride, buf0_cur,
-                                          16);
-      transpose_16bit_16x16_avx2(buf0_cur, buf0_cur);
-    }
+    load_buffer_32bit_to_16bit_w16_avx2(input + 16 * i, input_stride, buf0,
+                                        buf_size_nonzero_w);
     if (rect_type == 1 || rect_type == -1) {
-      round_shift_avx2(buf0, buf0, input_stride);  // rect special code
+      round_shift_avx2(buf0, buf0, buf_size_nonzero_w);  // rect special code
     }
     row_txfm(buf0, buf0);
     for (int j = 0; j < txfm_size_col; ++j) {
@@ -1778,15 +1772,20 @@ static INLINE void lowbd_inv_txfm2d_add_idtx_avx2(const int32_t *input,
   const int txh_idx = get_txh_idx(tx_size);
   const int txfm_size_col = tx_size_wide[tx_size];
   const int txfm_size_row = tx_size_high[tx_size];
-  const int input_stride = AOMMIN(32, txfm_size_col);
+  const int col_max = AOMMIN(32, txfm_size_col);
   const int row_max = AOMMIN(32, txfm_size_row);
+  const int input_stride = row_max;
   const int rect_type = get_rect_tx_log_ratio(txfm_size_col, txfm_size_row);
   __m256i buf[32];
-  for (int i = 0; i < input_stride; i += 16) {
-    iidentity_row_16xn_avx2(buf, input + i, input_stride, shift[0], row_max,
-                            txw_idx, rect_type);
-    iidentity_col_16xn_avx2(output + i, stride, buf, shift[1], row_max,
-                            txh_idx);
+
+  for (int i = 0; i < (col_max >> 4); ++i) {
+    for (int j = 0; j < (row_max >> 4); j++) {
+      iidentity_row_16xn_avx2(buf, input + j * 16 + i * 16 * input_stride,
+                              row_max, shift[0], 16, txw_idx, rect_type);
+      transpose_16bit_16x16_avx2(buf, buf);
+      iidentity_col_16xn_avx2(output + i * 16 + j * 16 * stride, stride, buf,
+                              shift[1], 16, txh_idx);
+    }
   }
 }
 
@@ -1800,9 +1799,10 @@ static INLINE void lowbd_inv_txfm2d_add_h_identity_avx2(
   const int txh_idx = get_txh_idx(tx_size);
   const int txfm_size_col = tx_size_wide[tx_size];
   const int txfm_size_row = tx_size_high[tx_size];
-  const int txfm_size_col_notzero = AOMMIN(32, txfm_size_col);
-  const int input_stride = txfm_size_col_notzero;
+  const int txfm_size_row_notzero = AOMMIN(32, txfm_size_row);
+  const int input_stride = txfm_size_row_notzero;
   const int buf_size_w_div16 = (eobx + 16) >> 4;
+  const int buf_size_h_div16 = (eoby + 16) >> 4;
   const int rect_type = get_rect_tx_log_ratio(txfm_size_col, txfm_size_row);
 
   const int fun_idx_y = lowbd_txfm_all_1d_zeros_idx[eoby];
@@ -1815,8 +1815,13 @@ static INLINE void lowbd_inv_txfm2d_add_h_identity_avx2(
   get_flip_cfg(tx_type, &ud_flip, &lr_flip);
   for (int i = 0; i < buf_size_w_div16; i++) {
     __m256i buf0[64];
-    iidentity_row_16xn_avx2(buf0, input + (i << 4), input_stride, shift[0],
-                            eoby + 1, txw_idx, rect_type);
+    for (int j = 0; j < buf_size_h_div16; j++) {
+      __m256i *buf0_cur = buf0 + j * 16;
+      const int32_t *input_cur = input + i * 16 * input_stride + j * 16;
+      iidentity_row_16xn_avx2(buf0_cur, input_cur, input_stride, shift[0], 16,
+                              txw_idx, rect_type);
+      transpose_16bit_16x16_avx2(buf0_cur, buf0_cur);
+    }
     col_txfm(buf0, buf0);
     __m256i mshift = _mm256_set1_epi16(1 << (15 + shift[1]));
     int k = ud_flip ? (txfm_size_row - 1) : 0;
@@ -1841,7 +1846,8 @@ static INLINE void lowbd_inv_txfm2d_add_v_identity_avx2(
   const int txfm_size_row = tx_size_high[tx_size];
   const int buf_size_w_div16 = txfm_size_col >> 4;
   const int buf_size_h_div16 = (eoby + 16) >> 4;
-  const int input_stride = AOMMIN(32, txfm_size_col);
+  const int buf_size_nonzero_w = ((eobx + 8) >> 3) << 3;
+  const int input_stride = AOMMIN(32, txfm_size_row);
   const int rect_type = get_rect_tx_log_ratio(txfm_size_col, txfm_size_row);
 
   const int fun_idx_x = lowbd_txfm_all_1d_zeros_idx[eobx];
@@ -1854,15 +1860,10 @@ static INLINE void lowbd_inv_txfm2d_add_v_identity_avx2(
   get_flip_cfg(tx_type, &ud_flip, &lr_flip);
   for (int i = 0; i < buf_size_h_div16; i++) {
     __m256i buf0[64];
-    const int32_t *input_row = input + i * input_stride * 16;
-    for (int j = 0; j < AOMMIN(4, buf_size_w_div16); ++j) {
-      __m256i *buf0_cur = buf0 + j * 16;
-      load_buffer_32bit_to_16bit_w16_avx2(input_row + j * 16, input_stride,
-                                          buf0_cur, 16);
-      transpose_16bit_16x16_avx2(buf0_cur, buf0_cur);
-    }
+    load_buffer_32bit_to_16bit_w16_avx2(input + i * 16, input_stride, buf0,
+                                        buf_size_nonzero_w);
     if (rect_type == 1 || rect_type == -1) {
-      round_shift_avx2(buf0, buf0, input_stride);  // rect special code
+      round_shift_avx2(buf0, buf0, buf_size_nonzero_w);  // rect special code
     }
     row_txfm(buf0, buf0);
     round_shift_16bit_w16_avx2(buf0, txfm_size_col, shift[0]);
@@ -1883,6 +1884,285 @@ static INLINE void lowbd_inv_txfm2d_add_v_identity_avx2(
       iidentity_col_16xn_avx2(output + i * 16 * stride + j * 16, stride,
                               buf1 + j * 16, shift[1], 16, txh_idx);
     }
+  }
+}
+
+static const transform_1d_ssse3 lowbd_txfm_all_1d_zeros_8x8_arr[2][2] = {
+  { av1_idct8_low1_ssse3, av1_idct8_sse2 },
+  { av1_iadst8_low1_ssse3, av1_iadst8_sse2 }
+};
+
+static INLINE void load_buffer_avx2(const int32_t *in, int stride,
+                                    __m128i *out) {
+  const __m256i a = _mm256_load_si256((const __m256i *)in);
+  const __m256i b = _mm256_load_si256((const __m256i *)(in + stride * 1));
+  const __m256i c = _mm256_load_si256((const __m256i *)(in + stride * 2));
+  const __m256i d = _mm256_load_si256((const __m256i *)(in + stride * 3));
+  const __m256i e = _mm256_load_si256((const __m256i *)(in + stride * 4));
+  const __m256i f = _mm256_load_si256((const __m256i *)(in + stride * 5));
+  const __m256i g = _mm256_load_si256((const __m256i *)(in + stride * 6));
+  const __m256i h = _mm256_load_si256((const __m256i *)(in + stride * 7));
+
+  // a0 a1 a2 a3 b0 b1 b2 b3 a4 a5 a6 a7 b4 b5 b6 b7
+  const __m256i ab_16bit = _mm256_packs_epi32(a, b);
+  // c0 c1 c2 c3 d0 d1 d2 d3 c4 c5 c6 c7 d4 d5 d6 d7
+  const __m256i cd_16bit = _mm256_packs_epi32(c, d);
+  // e0 e1 e2 e3 f0 f1 f2 f3 e4 e5 e6 e7 f4 f5 f6 f7
+  const __m256i ef_16bit = _mm256_packs_epi32(e, f);
+  // g0 g1 g2 g3 h0 h1 h2 h3 g4 g5 g6 g7 h4 h5 h6 h7
+  const __m256i gh_16bit = _mm256_packs_epi32(g, h);
+
+  // a0 a1 a2 a3 a4 a5 a6 a7 b0 b1 b2 b3 b4 b5 b6 b7
+  const __m256i ab = _mm256_permute4x64_epi64(ab_16bit, 0xd8);
+  // c0 c1 c2 c3 c4 c5 c6 c7 d0 d1 d2 d3 d4 d5 d6 d7
+  const __m256i cd = _mm256_permute4x64_epi64(cd_16bit, 0xd8);
+  // e0 e1 e2 e3 e4 e5 e6 e7 f0 f1 f2 f3 f4 f5 f6 f7
+  const __m256i ef = _mm256_permute4x64_epi64(ef_16bit, 0xd8);
+  // g0 g1 g2 g3 g4 g5 g6 g7 h0 h1 h2 h3 h4 h5 h6 h7
+  const __m256i gh = _mm256_permute4x64_epi64(gh_16bit, 0xd8);
+
+  out[0] = _mm256_castsi256_si128(ab);
+  out[1] = _mm256_extractf128_si256(ab, 1);
+  out[2] = _mm256_castsi256_si128(cd);
+  out[3] = _mm256_extractf128_si256(cd, 1);
+  out[4] = _mm256_castsi256_si128(ef);
+  out[5] = _mm256_extractf128_si256(ef, 1);
+  out[6] = _mm256_castsi256_si128(gh);
+  out[7] = _mm256_extractf128_si256(gh, 1);
+}
+
+static INLINE void round_and_transpose_avx2(const __m128i *const in,
+                                            __m128i *const out, int bit,
+                                            int *lr_flip) {
+  __m256i buf_temp[4];
+  const __m256i scale = _mm256_set1_epi16(1 << (15 + bit));
+  int j = *lr_flip ? 7 : 0;
+  const int step = *lr_flip ? -1 : 1;
+
+  // 70 71 72 73 74 75 76 77 | 30 31 32 33 34 35 36 37
+  buf_temp[0] = _mm256_inserti128_si256(_mm256_castsi128_si256(in[j]),
+                                        in[j + 4 * step], 1);
+  j += step;
+  // 60 61 62 63 64 65 66 67 | 20 21 22 23 24 25 26 27
+  buf_temp[1] = _mm256_inserti128_si256(_mm256_castsi128_si256(in[j]),
+                                        in[j + 4 * step], 1);
+  j += step;
+  // 50 51 52 53 54 55 56 57 | 10 11 12 13 14 15 16 17
+  buf_temp[2] = _mm256_inserti128_si256(_mm256_castsi128_si256(in[j]),
+                                        in[j + 4 * step], 1);
+  j += step;
+  // 40 41 42 43 44 45 46 47 | 00 01 02 03 04 05 06 07
+  buf_temp[3] = _mm256_inserti128_si256(_mm256_castsi128_si256(in[j]),
+                                        in[j + 4 * step], 1);
+
+  // 70 71 72 73 74 75 76 77 | 30 31 32 33 34 35 36 37
+  buf_temp[0] = _mm256_mulhrs_epi16(buf_temp[0], scale);
+  // 60 61 62 63 64 65 66 67 | 20 21 22 23 24 25 26 27
+  buf_temp[1] = _mm256_mulhrs_epi16(buf_temp[1], scale);
+  // 50 51 52 53 54 55 56 57 | 10 11 12 13 14 15 16 17
+  buf_temp[2] = _mm256_mulhrs_epi16(buf_temp[2], scale);
+  // 40 41 42 43 44 45 46 47 | 00 01 02 03 04 05 06 07
+  buf_temp[3] = _mm256_mulhrs_epi16(buf_temp[3], scale);
+
+  // 70 60 71 61 72 62 73 63 | 30 20 31 21 32 22 33 23
+  const __m256i unpcklo0 = _mm256_unpacklo_epi16(buf_temp[0], buf_temp[1]);
+  // 74 64 75 65 76 66 77 67 | 34 24 35 25 36 26 37 27
+  const __m256i unpckhi0 = _mm256_unpackhi_epi16(buf_temp[0], buf_temp[1]);
+  // 50 40 51 41 52 42 53 43 | 10 00 11 01 12 02 13 03
+  const __m256i unpcklo1 = _mm256_unpacklo_epi16(buf_temp[2], buf_temp[3]);
+  // 54 44 55 45 56 46 57 47 | 14 04 15 05 16 06 17 07
+  const __m256i unpckhi1 = _mm256_unpackhi_epi16(buf_temp[2], buf_temp[3]);
+
+  // 70 60 50 40 71 61 51 41 | 30 20 10 00 31 21 11 01
+  const __m256i unpcklo00 = _mm256_unpacklo_epi32(unpcklo0, unpcklo1);
+  // 72 62 52 42 73 63 53 43 | 32 22 12 02 33 23 13 03
+  const __m256i unpckhi00 = _mm256_unpackhi_epi32(unpcklo0, unpcklo1);
+  // 74 64 54 44 75 65 55 45 | 34 24 14 04 35 25 15 05
+  const __m256i unpcklo01 = _mm256_unpacklo_epi32(unpckhi0, unpckhi1);
+  // 76 66 56 46 77 67 57 47 | 36 26 16 06 37 27 17 07
+  const __m256i unpckhi01 = _mm256_unpackhi_epi32(unpckhi0, unpckhi1);
+
+  // 70 60 50 40 30 20 10 00 | 71 61 51 41 31 21 11 01
+  const __m256i reg_00 = _mm256_permute4x64_epi64(unpcklo00, 0xd8);
+  // 72 62 52 42 32 22 12 02 | 73 63 53 43 33 23 13 03
+  const __m256i reg_01 = _mm256_permute4x64_epi64(unpckhi00, 0xd8);
+  // 74 64 54 44 34 24 14 04 | 75 65 55 45 35 25 15 05
+  const __m256i reg_10 = _mm256_permute4x64_epi64(unpcklo01, 0xd8);
+  // 76 66 56 46 36 26 16 06 | 77 67 57 47 37 27 17 07
+  const __m256i reg_11 = _mm256_permute4x64_epi64(unpckhi01, 0xd8);
+
+  // 70 60 50 40 30 20 10 00
+  out[0] = _mm256_castsi256_si128(reg_00);
+  // 71 61 51 41 31 21 11 01
+  out[1] = _mm256_extracti128_si256(reg_00, 1);
+  // 72 62 52 42 32 22 12 02
+  out[2] = _mm256_castsi256_si128(reg_01);
+  // 73 63 53 43 33 23 13 03
+  out[3] = _mm256_extracti128_si256(reg_01, 1);
+  // 74 64 54 44 34 24 14 04
+  out[4] = _mm256_castsi256_si128(reg_10);
+  // 75 65 55 45 35 25 15 05
+  out[5] = _mm256_extracti128_si256(reg_10, 1);
+  // 76 66 56 46 36 26 16 06
+  out[6] = _mm256_castsi256_si128(reg_11);
+  // 77 67 57 47 37 27 17 07
+  out[7] = _mm256_extracti128_si256(reg_11, 1);
+}
+
+static INLINE void round_shift_lowbd_write_buffer_avx2(__m128i *in, int bit,
+                                                       uint8_t *output,
+                                                       int stride, int flipud) {
+  __m256i in_256[4], v_256[4];
+  int j = flipud ? 7 : 0;
+  const int step = flipud ? -1 : 1;
+  const __m256i scale = _mm256_set1_epi16(1 << (15 + bit));
+  const __m256i zero = _mm256_setzero_si256();
+  // in[0], in[1]
+  in_256[0] =
+      _mm256_inserti128_si256(_mm256_castsi128_si256(in[j]), in[j + step], 1);
+  j += 2 * step;
+  // in[2], in[3]
+  in_256[1] =
+      _mm256_inserti128_si256(_mm256_castsi128_si256(in[j]), in[j + step], 1);
+  j += 2 * step;
+  // in[4], in[5]
+  in_256[2] =
+      _mm256_inserti128_si256(_mm256_castsi128_si256(in[j]), in[j + step], 1);
+  j += 2 * step;
+  // in[6], in[7]
+  in_256[3] =
+      _mm256_inserti128_si256(_mm256_castsi128_si256(in[j]), in[j + step], 1);
+
+  // i00 i01 i02 i03 i04 i05 i06 i07 i10 i11 i12 i13 i14 i15 i16 i17
+  in_256[0] = _mm256_mulhrs_epi16(in_256[0], scale);
+  // i20 i21 i22 i23 i24 i25 i26 i27 i30 i31 i32 i33 i34 i35 i36 i37
+  in_256[1] = _mm256_mulhrs_epi16(in_256[1], scale);
+  // i40 i41 i42 i43 i44 i45 i46 i47 i50 i51 i52 i53 i54 i55 i56 i57
+  in_256[2] = _mm256_mulhrs_epi16(in_256[2], scale);
+  // i60 i61 i62 i63 i64 i65 i66 i67 i70 i71 i72 i73 i74 i75 i76 i77
+  in_256[3] = _mm256_mulhrs_epi16(in_256[3], scale);
+
+  const __m128i v0 = _mm_loadl_epi64((__m128i const *)(output));
+  const __m128i v1 = _mm_loadl_epi64((__m128i const *)(output + stride));
+  const __m128i v2 = _mm_loadl_epi64((__m128i const *)(output + 2 * stride));
+  const __m128i v3 = _mm_loadl_epi64((__m128i const *)(output + 3 * stride));
+  const __m128i v4 = _mm_loadl_epi64((__m128i const *)(output + 4 * stride));
+  const __m128i v5 = _mm_loadl_epi64((__m128i const *)(output + 5 * stride));
+  const __m128i v6 = _mm_loadl_epi64((__m128i const *)(output + 6 * stride));
+  const __m128i v7 = _mm_loadl_epi64((__m128i const *)(output + 7 * stride));
+
+  v_256[0] = _mm256_inserti128_si256(_mm256_castsi128_si256(v0), v1, 1);
+  v_256[1] = _mm256_inserti128_si256(_mm256_castsi128_si256(v2), v3, 1);
+  v_256[2] = _mm256_inserti128_si256(_mm256_castsi128_si256(v4), v5, 1);
+  v_256[3] = _mm256_inserti128_si256(_mm256_castsi128_si256(v6), v7, 1);
+
+  const __m256i unpcklo0 = _mm256_unpacklo_epi8(v_256[0], zero);
+  const __m256i unpcklo1 = _mm256_unpacklo_epi8(v_256[1], zero);
+  const __m256i unpcklo2 = _mm256_unpacklo_epi8(v_256[2], zero);
+  const __m256i unpcklo3 = _mm256_unpacklo_epi8(v_256[3], zero);
+  // 00 01 10 11
+  const __m256i x0 = _mm256_adds_epi16(in_256[0], unpcklo0);
+  // 20 21 30 31
+  const __m256i x1 = _mm256_adds_epi16(in_256[1], unpcklo1);
+  // 40 41 50 51
+  const __m256i x2 = _mm256_adds_epi16(in_256[2], unpcklo2);
+  // 60 61 70 71
+  const __m256i x3 = _mm256_adds_epi16(in_256[3], unpcklo3);
+
+  // 00 01 20 21 10 11 30 31
+  const __m256i res_0123 = _mm256_packus_epi16(x0, x1);
+  // 40 41 60 61 50 51 70 71
+  const __m256i res_4567 = _mm256_packus_epi16(x2, x3);
+
+  // 00 01 20 21
+  const __m128i res_02 = _mm256_castsi256_si128(res_0123);
+  // 10 11 30 31
+  const __m128i res_13 = _mm256_extracti128_si256(res_0123, 1);
+  // 40 41 60 61
+  const __m128i res_46 = _mm256_castsi256_si128(res_4567);
+  // 50 51 70 71
+  const __m128i res_57 = _mm256_extracti128_si256(res_4567, 1);
+
+  // 00 01
+  _mm_storel_epi64((__m128i *)(output), res_02);
+  // 10 11
+  _mm_storel_epi64((__m128i *)(output + stride), res_13);
+  // 20 21
+  _mm_storel_epi64((__m128i *)(output + 2 * stride),
+                   _mm_unpackhi_epi64(res_02, res_02));
+  // 30 31
+  _mm_storel_epi64((__m128i *)(output + 3 * stride),
+                   _mm_unpackhi_epi64(res_13, res_13));
+  // 40 41
+  _mm_storel_epi64((__m128i *)(output + 4 * stride), res_46);
+  // 50 51
+  _mm_storel_epi64((__m128i *)(output + 5 * stride), res_57);
+  // 60 61
+  _mm_storel_epi64((__m128i *)(output + 6 * stride),
+                   _mm_unpackhi_epi64(res_46, res_46));
+  // 70 71
+  _mm_storel_epi64((__m128i *)(output + 7 * stride),
+                   _mm_unpackhi_epi64(res_57, res_57));
+}
+
+// AVX2 implementation has the advantage when combined multiple operations
+// together.
+static INLINE void lowbd_inv_txfm2d_8x8_no_identity_avx2(
+    const int32_t *input, uint8_t *output, int stride, TX_TYPE tx_type,
+    TX_SIZE tx_size, int eob) {
+  __m128i buf1[8];
+  const int input_stride = 8;
+  const int8_t *shift = av1_inv_txfm_shift_ls[tx_size];
+  assert(hitx_1d_tab[tx_type] < 2);
+  assert(vitx_1d_tab[tx_type] < 2);
+  const transform_1d_ssse3 row_txfm =
+      lowbd_txfm_all_1d_zeros_8x8_arr[hitx_1d_tab[tx_type]][eob != 1];
+  const transform_1d_ssse3 col_txfm =
+      lowbd_txfm_all_1d_zeros_8x8_arr[vitx_1d_tab[tx_type]][eob != 1];
+
+  assert(col_txfm != NULL);
+  assert(row_txfm != NULL);
+  int ud_flip, lr_flip;
+  get_flip_cfg(tx_type, &ud_flip, &lr_flip);
+
+  __m128i buf0[8];
+  __m128i *buf0_cur = buf0;
+  load_buffer_avx2(input, input_stride, buf0_cur);
+  row_txfm(buf0, buf0);
+
+  assert(shift[0] < 0);
+  __m128i *_buf1 = buf1;
+  round_and_transpose_avx2(buf0, _buf1, shift[0], &lr_flip);
+  assert(shift[1] < 0);
+  col_txfm(buf1, buf1);
+  round_shift_lowbd_write_buffer_avx2(buf1, shift[1], output, stride, ud_flip);
+}
+
+// AVX2 implementation of 8x8 inverse transform. Observed that coding AVX2 for
+// tx_type with identity in either of the direction has no advantage.
+static void lowbd_inv_txfm2d_add_8x8_avx2(const int32_t *input, uint8_t *output,
+                                          int stride, TX_TYPE tx_type,
+                                          TX_SIZE tx_size, int eob) {
+  switch (tx_type) {
+    case IDTX:
+      av1_lowbd_inv_txfm2d_add_idtx_ssse3(input, output, stride, tx_size);
+
+      break;
+    case V_DCT:
+    case V_ADST:
+    case V_FLIPADST:
+      av1_lowbd_inv_txfm2d_add_h_identity_ssse3(input, output, stride, tx_type,
+                                                tx_size, eob);
+      break;
+    case H_DCT:
+    case H_ADST:
+    case H_FLIPADST:
+      av1_lowbd_inv_txfm2d_add_v_identity_ssse3(input, output, stride, tx_type,
+                                                tx_size, eob);
+      break;
+    default:
+      lowbd_inv_txfm2d_8x8_no_identity_avx2(input, output, stride, tx_type,
+                                            tx_size, eob);
   }
 }
 
@@ -1931,7 +2211,6 @@ void av1_lowbd_inv_txfm2d_add_avx2(const int32_t *input, uint8_t *output,
                                    int eob) {
   switch (tx_size) {
     case TX_4X4:
-    case TX_8X8:
     case TX_4X8:
     case TX_8X4:
     case TX_8X16:
@@ -1942,6 +2221,10 @@ void av1_lowbd_inv_txfm2d_add_avx2(const int32_t *input, uint8_t *output,
     case TX_32X8:
       av1_lowbd_inv_txfm2d_add_ssse3(input, output, stride, tx_type, tx_size,
                                      eob);
+      break;
+    case TX_8X8:
+      lowbd_inv_txfm2d_add_8x8_avx2(input, output, stride, tx_type, tx_size,
+                                    eob);
       break;
     case TX_16X16:
     case TX_32X32:

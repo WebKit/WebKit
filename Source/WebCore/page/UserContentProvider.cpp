@@ -138,12 +138,12 @@ static ContentExtensions::ContentExtensionsBackend::RuleListFilter ruleListFilte
     return { };
 }
 
-static void sanitizeLookalikeCharactersIfNeeded(ContentRuleListResults& results, Page& page, const URL& url, const DocumentLoader& initiatingDocumentLoader)
+static void applyLinkDecorationFilteringIfNeeded(ContentRuleListResults& results, Page& page, const URL& url, const DocumentLoader& initiatingDocumentLoader)
 {
     if (RefPtr frame = initiatingDocumentLoader.frame(); !frame || !frame->isMainFrame())
         return;
 
-    if (auto adjustedURL = page.chrome().client().sanitizeLookalikeCharacters(url, LookalikeCharacterSanitizationTrigger::Navigation); adjustedURL != url)
+    if (auto adjustedURL = page.chrome().client().applyLinkDecorationFiltering(url, LinkDecorationFilteringTrigger::Navigation); adjustedURL != url)
         results.summary.redirectActions.append({ { ContentExtensions::RedirectAction::URLAction { adjustedURL.string() } }, adjustedURL });
 }
 
@@ -152,7 +152,7 @@ ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(Page&
     auto results = userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, redirectFrom, ruleListFilter(initiatingDocumentLoader));
 
     if (resourceType.contains(ContentExtensions::ResourceType::Document))
-        sanitizeLookalikeCharactersIfNeeded(results, page, url, initiatingDocumentLoader);
+        applyLinkDecorationFilteringIfNeeded(results, page, url, initiatingDocumentLoader);
 
     return results;
 }

@@ -14,6 +14,7 @@
     async function startTest() {
         findMediaElement();
         video.src = 'content/prog_index.m3u8';
+        waitFor(video, 'error').then(failTest);
         var event = await waitFor(video, 'webkitneedkey');
 
         let keys = await startLegacyEME({
@@ -28,8 +29,8 @@
         let initDataArray = this.concatInitDataIdAndCertificate(event.initData, contentId, certificate);
 
         let keySession = keys.createSession('application/vnd.apple.mpegurl', initDataArray);
-        waitFor(keySession, 'webkitkeyerror').then(() => {
-            consoleWrite('FAIL: update() failed');
+        waitFor(keySession, 'webkitkeyerror').then(event => {
+            consoleWrite(`FAIL: update() failed with code: ${ event.code }, systemCode: ${ event.systemCode }`);
             endTest();
         });
         event = await waitFor(keySession, 'webkitkeymessage');

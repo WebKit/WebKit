@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h>
+#include <WebCore/WebGPUImageCopyExternalImage.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ImageCopyExternalImage> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ImageCopyExternalImage& imageCopyExternalImage)
+std::optional<ImageCopyExternalImage> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ImageCopyExternalImage& imageCopyExternalImage)
 {
     std::optional<Origin2D> origin;
     if (imageCopyExternalImage.origin) {
@@ -46,9 +46,9 @@ std::optional<ImageCopyExternalImage> ConvertToBackingContext::convertToBacking(
     return { { WTFMove(origin), imageCopyExternalImage.flipY } };
 }
 
-std::optional<PAL::WebGPU::ImageCopyExternalImage> ConvertFromBackingContext::convertFromBacking(const ImageCopyExternalImage& imageCopyExternalImage)
+std::optional<WebCore::WebGPU::ImageCopyExternalImage> ConvertFromBackingContext::convertFromBacking(const ImageCopyExternalImage& imageCopyExternalImage)
 {
-    std::optional<PAL::WebGPU::Origin2D> origin;
+    std::optional<WebCore::WebGPU::Origin2D> origin;
     if (imageCopyExternalImage.origin) {
         origin = convertFromBacking(*imageCopyExternalImage.origin);
         if (!origin)

@@ -19,18 +19,18 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (310.00,200.00) startOffset 0 endOffset 1 width 990.00: "\x{3B2}"
       RenderSVGText {text} at (60,250) size 26x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 26x12
-          chunk 1 text run 1 at (60.00,260.00) startOffset 0 endOffset 5 width 25.52: "1,000"
+          chunk 1 text run 1 at (60.00,260.00) startOffset 0 endOffset 5 width 25.02: "1,000"
       RenderSVGText {text} at (190,250) size 12x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 12x12
-          chunk 1 text run 1 at (190.00,260.00) startOffset 0 endOffset 2 width 11.35: "10"
-      RenderSVGText {text} at (320,250) size 32x13 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 32x12
-          chunk 1 text run 1 at (320.00,260.00) startOffset 0 endOffset 6 width 31.20: "10,000"
-      RenderSVGText {text} at (110,265) size 199x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 199x19
-          chunk 1 text run 1 at (110.00,280.00) startOffset 0 endOffset 27 width 198.98: "varying units-per-em values"
-    RenderSVGContainer {g} at (16,517) size 381x62
-      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 229x37
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.2 $"
+          chunk 1 text run 1 at (190.00,260.00) startOffset 0 endOffset 2 width 11.12: "10"
+      RenderSVGText {text} at (320,250) size 31x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 31x12
+          chunk 1 text run 1 at (320.00,260.00) startOffset 0 endOffset 6 width 30.59: "10,000"
+      RenderSVGText {text} at (110,265) size 197x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 197x19
+          chunk 1 text run 1 at (110.00,280.00) startOffset 0 endOffset 27 width 196.52: "varying units-per-em values"
+    RenderSVGContainer {g} at (16,517) size 384x62
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.2 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

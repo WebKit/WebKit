@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,17 +27,17 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/WebGPUCompareFunction.h>
+#include <WebCore/WebGPUStencilOperation.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUCompareFunction.h>
-#include <pal/graphics/WebGPU/WebGPUStencilOperation.h>
 
 namespace WebKit::WebGPU {
 
 struct StencilFaceState {
-    PAL::WebGPU::CompareFunction compare { PAL::WebGPU::CompareFunction::Always };
-    PAL::WebGPU::StencilOperation failOp { PAL::WebGPU::StencilOperation::Keep };
-    PAL::WebGPU::StencilOperation depthFailOp { PAL::WebGPU::StencilOperation::Keep };
-    PAL::WebGPU::StencilOperation passOp { PAL::WebGPU::StencilOperation::Keep };
+    WebCore::WebGPU::CompareFunction compare { WebCore::WebGPU::CompareFunction::Always };
+    WebCore::WebGPU::StencilOperation failOp { WebCore::WebGPU::StencilOperation::Keep };
+    WebCore::WebGPU::StencilOperation depthFailOp { WebCore::WebGPU::StencilOperation::Keep };
+    WebCore::WebGPU::StencilOperation passOp { WebCore::WebGPU::StencilOperation::Keep };
 };
 
 } // namespace WebKit::WebGPU

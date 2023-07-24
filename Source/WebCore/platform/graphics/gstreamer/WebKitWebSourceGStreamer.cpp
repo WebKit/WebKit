@@ -25,7 +25,6 @@
 
 #include "GStreamerCommon.h"
 #include "HTTPHeaderNames.h"
-#include "MediaPlayer.h"
 #include "PlatformMediaResourceLoader.h"
 #include "PolicyChecker.h"
 #include "ResourceError.h"
@@ -131,10 +130,10 @@ struct WebKitWebSrcPrivate {
         bool doesHaveEOS; // Set both when we reach stopPosition and on errors (including on responseReceived).
         bool isDownloadSuspended { false }; // Set to true from the network handler when the high water level is reached.
 
-        // Obtained by means of GstContext queries before making the first HTTP request.
-        // We use it for getting access to WebKit networking objects: the PlatformMediaResourceLoader factory [createResourceLoader()]
-        // and the player HTTP referrer string.
-        WebCore::MediaPlayer* player;
+        // Obtained by means of GstContext queries before making the first HTTP request, unless it
+        // was explicitely set using webKitWebSrcSetResourceLoader() by the playbin source-setup
+        // signal handler in MediaPlayerPrivateGStreamer.
+        RefPtr<WebCore::PlatformMediaResourceLoader> loader;
 
         // MediaPlayer referrer cached value. The corresponding method has to be called from the
         // main thread, so the value needs to be cached before use in non-main thread.
@@ -156,7 +155,6 @@ struct WebKitWebSrcPrivate {
 
         bool isRequestPending { true };
 
-        RefPtr<PlatformMediaResourceLoader> loader;
         RefPtr<PlatformMediaResource> resource;
     };
     DataMutex<StreamingMembers> dataMutex;
@@ -376,10 +374,10 @@ static void webKitWebSrcSetContext(GstElement* element, GstContext* context)
     WebKitWebSrcPrivate* priv = src->priv;
 
     GST_DEBUG_OBJECT(src, "context type: %s", gst_context_get_context_type(context));
-    if (gst_context_has_context_type(context, WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME)) {
-        const GValue* value = gst_structure_get_value(gst_context_get_structure(context), "player");
+    if (gst_context_has_context_type(context, WEBKIT_WEB_SRC_RESOURCE_LOADER_CONTEXT_TYPE_NAME)) {
+        const GValue* value = gst_structure_get_value(gst_context_get_structure(context), "loader");
         DataMutexLocker members { priv->dataMutex };
-        members->player = reinterpret_cast<MediaPlayer*>(g_value_get_pointer(value));
+        members->loader = reinterpret_cast<WebCore::PlatformMediaResourceLoader*>(g_value_get_pointer(value));
     }
     GST_ELEMENT_CLASS(parent_class)->set_context(element, context);
 }
@@ -463,27 +461,27 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
     WebKitWebSrcPrivate* priv = src->priv;
     DataMutexLocker members { priv->dataMutex };
 
-    // We need members->player to make requests. There are two mechanisms for this.
+    // We need members->loader to make requests. There are two mechanisms for this.
     //
-    // 1) webKitWebSrcSetMediaPlayer() is called by MediaPlayerPrivateGStreamer by means of hooking playbin's
+    // 1) webKitWebSrcSetResourceLoader() is called by MediaPlayerPrivateGStreamer by means of hooking playbin's
     //    "source-setup" event. This doesn't work for additional WebKitWebSrc elements created by adaptivedemux.
     //
     // 2) A GstContext query made here.
-    if (!members->player) {
+    if (!members->loader) {
         members.runUnlocked([src, baseSrc]() {
-            GRefPtr<GstQuery> query = adoptGRef(gst_query_new_context(WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME));
+            GRefPtr<GstQuery> query = adoptGRef(gst_query_new_context(WEBKIT_WEB_SRC_RESOURCE_LOADER_CONTEXT_TYPE_NAME));
             if (gst_pad_peer_query(GST_BASE_SRC_PAD(baseSrc), query.get())) {
                 GstContext* context;
 
                 gst_query_parse_context(query.get(), &context);
                 gst_element_set_context(GST_ELEMENT_CAST(src), context);
             } else
-                gst_element_post_message(GST_ELEMENT_CAST(src), gst_message_new_need_context(GST_OBJECT_CAST(src), WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME));
+                gst_element_post_message(GST_ELEMENT_CAST(src), gst_message_new_need_context(GST_OBJECT_CAST(src), WEBKIT_WEB_SRC_RESOURCE_LOADER_CONTEXT_TYPE_NAME));
         });
         if (members->isFlushing)
             return GST_FLOW_FLUSHING;
     }
-    if (!members->player) {
+    if (!members->loader) {
         GST_ERROR_OBJECT(src, "Couldn't obtain WebKitWebSrcPlayerContext, which is necessary to make network requests");
         return GST_FLOW_ERROR;
     }
@@ -704,9 +702,6 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
             GST_DEBUG_OBJECT(protector.get(), "Skipping R%u, current request number is %u", requestNumber, members->requestNumber);
             return;
         }
-
-        if (!members->loader)
-            members->loader = members->player->createResourceLoader();
 
         PlatformMediaResourceLoader::LoadOptions loadOptions = 0;
         members->resource = members->loader->requestResource(ResourceRequest(request), loadOptions);
@@ -930,11 +925,16 @@ static void webKitWebSrcUriHandlerInit(gpointer gIface, gpointer)
     iface->set_uri = webKitWebSrcSetUri;
 }
 
-void webKitWebSrcSetMediaPlayer(WebKitWebSrc* src, WebCore::MediaPlayer* player, const String& referrer)
+void webKitWebSrcSetResourceLoader(WebKitWebSrc* src, const RefPtr<WebCore::PlatformMediaResourceLoader>& loader)
 {
-    ASSERT(player);
+    ASSERT(loader);
     DataMutexLocker members { src->priv->dataMutex };
-    members->player = player;
+    members->loader = loader;
+}
+
+void webKitWebSrcSetReferrer(WebKitWebSrc* src, const String& referrer)
+{
+    DataMutexLocker members { src->priv->dataMutex };
     members->referrer = referrer;
 }
 
@@ -1199,5 +1199,7 @@ bool webKitSrcIsCrossOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
     }
     return false;
 }
+
+#undef GST_CAT_DEFAULT
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

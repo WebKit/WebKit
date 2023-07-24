@@ -83,12 +83,12 @@ void WebInspectorClient::hideHighlight()
 
 void WebInspectorClient::showInspectorIndication()
 {
-    [m_inspectedWebView setShowingInspectorIndication:YES];
+    [m_inspectedWebView.get() setShowingInspectorIndication:YES];
 }
 
 void WebInspectorClient::hideInspectorIndication()
 {
-    [m_inspectedWebView setShowingInspectorIndication:NO];
+    [m_inspectedWebView.get() setShowingInspectorIndication:NO];
 }
 
 void WebInspectorClient::setShowPaintRects(bool)
@@ -104,7 +104,7 @@ void WebInspectorClient::showPaintRect(const FloatRect&)
 void WebInspectorClient::didSetSearchingForNode(bool enabled)
 {
     NSString *notificationName = enabled ? WebInspectorDidStartSearchingForNode : WebInspectorDidStopSearchingForNode;
-    RunLoop::main().dispatch([notificationName = retainPtr(notificationName), inspector = retainPtr([m_inspectedWebView inspector])] {
+    RunLoop::main().dispatch([notificationName = retainPtr(notificationName), inspector = retainPtr([m_inspectedWebView.get() inspector])] {
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationName.get() object:inspector.get()];
     });
 }

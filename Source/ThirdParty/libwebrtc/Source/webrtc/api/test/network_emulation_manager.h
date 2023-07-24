@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "api/array_view.h"
@@ -48,15 +49,18 @@ class EmulatedNetworkNode;
 // peer device to another network interface on another peer device.
 class EmulatedRoute;
 
+enum class EmulatedNetworkStatsGatheringMode {
+  // Gather main network stats counters. See more details on which particular
+  // metrics are collected in the `EmulatedNetworkStats` and
+  // `EmulatedNetworkNodeStats` documentation.
+  kDefault,
+  // kDefault + also gather per packet statistics. In this mode more memory
+  // will be used.
+  kDebug
+};
+
 struct EmulatedEndpointConfig {
   enum class IpAddressFamily { kIpv4, kIpv6 };
-  enum class StatsGatheringMode {
-    // Gather main network stats counters.
-    kDefault,
-    // kDefault + also gather per packet statistics. In this mode more memory
-    // will be used.
-    kDebug
-  };
 
   // If specified will be used to name endpoint for logging purposes.
   absl::optional<std::string> name = absl::nullopt;
@@ -69,7 +73,6 @@ struct EmulatedEndpointConfig {
   bool start_as_enabled = true;
   // Network type which will be used to represent endpoint to WebRTC.
   rtc::AdapterType type = rtc::AdapterType::ADAPTER_TYPE_UNKNOWN;
-  StatsGatheringMode stats_gathering_mode = StatsGatheringMode::kDefault;
   // Allow endpoint to send packets specifying source IP address different to
   // the current endpoint IP address. If false endpoint will crash if attempt
   // to send such packet will be done.
@@ -142,8 +145,7 @@ class EmulatedNetworkManagerInterface {
   // specified `stats_callback`. Callback will be executed on network emulation
   // internal task queue.
   virtual void GetStats(
-      std::function<void(std::unique_ptr<EmulatedNetworkStats>)> stats_callback)
-      const = 0;
+      std::function<void(EmulatedNetworkStats)> stats_callback) const = 0;
 };
 
 enum class TimeMode { kRealTime, kSimulated };
@@ -323,13 +325,19 @@ class NetworkEmulationManager {
   CreateEmulatedNetworkManagerInterface(
       const std::vector<EmulatedEndpoint*>& endpoints) = 0;
 
-  // Passes summarized network stats for specified `endpoints` into specified
+  // Passes combined network stats for all specified `endpoints` into specified
   // `stats_callback`. Callback will be executed on network emulation
   // internal task queue.
   virtual void GetStats(
       rtc::ArrayView<EmulatedEndpoint* const> endpoints,
-      std::function<void(std::unique_ptr<EmulatedNetworkStats>)>
-          stats_callback) = 0;
+      std::function<void(EmulatedNetworkStats)> stats_callback) = 0;
+
+  // Passes combined network stats for all specified `nodes` into specified
+  // `stats_callback`. Callback will be executed on network emulation
+  // internal task queue.
+  virtual void GetStats(
+      rtc::ArrayView<EmulatedNetworkNode* const> nodes,
+      std::function<void(EmulatedNetworkNodeStats)> stats_callback) = 0;
 
   // Create a EmulatedTURNServer.
   // The TURN server has 2 endpoints that need to be connected with routes,
@@ -337,6 +345,11 @@ class NetworkEmulationManager {
   // - GetPeerEndpoint() - the endpoint that is "connected to the internet".
   virtual EmulatedTURNServerInterface* CreateTURNServer(
       EmulatedTURNServerConfig config) = 0;
+
+  // Create a pair of EmulatedNetworkManagerInterfaces connected to each other.
+  std::pair<EmulatedNetworkManagerInterface*, EmulatedNetworkManagerInterface*>
+  CreateEndpointPairWithTwoWayRoutes(
+      const BuiltInNetworkBehaviorConfig& config);
 };
 
 }  // namespace webrtc

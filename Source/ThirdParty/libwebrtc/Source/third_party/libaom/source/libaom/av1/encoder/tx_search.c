@@ -1969,10 +1969,14 @@ static INLINE void predict_dc_only_block(
   uint64_t var_threshold = (uint64_t)(1.8 * qstep * qstep);
   if (is_cur_buf_hbd(xd))
     block_var = ROUND_POWER_OF_TWO(block_var, (xd->bd - 8) * 2);
-  // Early prediction of skip block if residual mean and variance are less
+
+  if (block_var >= var_threshold) return;
+  const unsigned int predict_dc_level = x->txfm_search_params.predict_dc_level;
+  assert(predict_dc_level != 0);
+
+  // Prediction of skip block if residual mean and variance are less
   // than qstep based threshold
-  if (((llabs(*per_px_mean) * dc_coeff_scale[tx_size]) < (dc_qstep << 12)) &&
-      (block_var < var_threshold)) {
+  if ((llabs(*per_px_mean) * dc_coeff_scale[tx_size]) < (dc_qstep << 12)) {
     // If the normalized mean of residual block is less than the dc qstep and
     // the  normalized block variance is less than ac qstep, then the block is
     // assumed to be a skip block and its rdcost is updated accordingly.
@@ -2003,9 +2007,9 @@ static INLINE void predict_dc_only_block(
         RDCOST(x->rdmult, best_rd_stats->rate, best_rd_stats->sse);
 
     x->plane[plane].txb_entropy_ctx[block] = 0;
-  } else if (block_var < var_threshold) {
+  } else if (predict_dc_level > 1) {
     // Predict DC only blocks based on residual variance.
-    // For chroma plane, this early prediction is disabled for intra blocks.
+    // For chroma plane, this prediction is disabled for intra blocks.
     if ((plane == 0) || (plane > 0 && is_inter_block(mbmi))) *dc_only_blk = 1;
   }
 }
@@ -2055,7 +2059,7 @@ static void search_tx_type(const AV1_COMP *cpi, MACROBLOCK *x, int plane,
   unsigned int block_mse_q8;
   int dc_only_blk = 0;
   const bool predict_dc_block =
-      txfm_params->predict_dc_level && txw != 64 && txh != 64;
+      txfm_params->predict_dc_level >= 1 && txw != 64 && txh != 64;
   int64_t per_px_mean = INT64_MAX;
   if (predict_dc_block) {
     predict_dc_only_block(x, plane, plane_bsize, tx_size, block, blk_row,
@@ -2805,10 +2809,10 @@ static void ml_predict_intra_tx_depth_prune(MACROBLOCK *x, int blk_row,
 
   int feature_idx = get_mean_dev_features(diff, diff_stride, bw, bh, features);
 
-  features[feature_idx++] = logf(1.0f + (float)x->source_variance);
+  features[feature_idx++] = log1pf((float)x->source_variance);
 
   const int dc_q = av1_dc_quant_QTX(x->qindex, 0, xd->bd) >> (xd->bd - 8);
-  const float log_dc_q_square = logf(1.0f + (float)(dc_q * dc_q) / 256.0f);
+  const float log_dc_q_square = log1pf((float)(dc_q * dc_q) / 256.0f);
   features[feature_idx++] = log_dc_q_square;
   assert(feature_idx == NUM_INTRA_TX_SPLIT_FEATURES);
   for (int i = 0; i < NUM_INTRA_TX_SPLIT_FEATURES; i++) {
@@ -2891,7 +2895,13 @@ static AOM_INLINE void choose_tx_size_type_from_rd(const AV1_COMP *const cpi,
 #endif
 
     RD_STATS this_rd_stats;
-    rd[depth] = av1_uniform_txfm_yrd(cpi, x, &this_rd_stats, ref_best_rd, bs,
+    // When the speed feature use_rd_based_breakout_for_intra_tx_search is
+    // enabled, use the known minimum best_rd for early termination.
+    const int64_t rd_thresh =
+        cpi->sf.tx_sf.use_rd_based_breakout_for_intra_tx_search
+            ? AOMMIN(ref_best_rd, best_rd)
+            : ref_best_rd;
+    rd[depth] = av1_uniform_txfm_yrd(cpi, x, &this_rd_stats, rd_thresh, bs,
                                      tx_size, FTXS_NONE, skip_trellis);
     if (rd[depth] < best_rd) {
       av1_copy_array(best_blk_skip, txfm_info->blk_skip, num_blks);
@@ -3469,7 +3479,7 @@ static AOM_INLINE int model_based_tx_search_prune(const AV1_COMP *cpi,
   assert(level >= 0 && level <= 2);
   int model_rate;
   int64_t model_dist;
-  int model_skip;
+  uint8_t model_skip;
   MACROBLOCKD *const xd = &x->e_mbd;
   model_rd_sb_fn[MODELRD_TYPE_TX_SEARCH_PRUNE](
       cpi, bsize, x, xd, 0, 0, &model_rate, &model_dist, &model_skip, NULL,

@@ -2696,14 +2696,11 @@ RegisterID* PostfixNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
 RegisterID* DeleteResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     Variable var = generator.variable(m_ident);
-    if (var.local()) {
-        generator.emitTDZCheckIfNecessary(var, var.local(), nullptr);
+    if (var.local())
         return generator.emitLoad(generator.finalDestination(dst), false);
-    }
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     RefPtr<RegisterID> base = generator.emitResolveScope(dst, var);
-    generator.emitTDZCheckIfNecessary(var, nullptr, base.get());
     return generator.emitDeleteById(generator.finalDestination(dst, base.get()), base.get(), m_ident);
 }
 
@@ -4870,7 +4867,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         }
 
         if (m_catchPattern) {
-            generator.emitPushCatchScope(m_lexicalVariables);
+            generator.emitPushCatchScope(m_lexicalVariables, m_catchPattern->isBindingNode() ? BytecodeGenerator::ScopeType::CatchScopeWithSimpleParameter : BytecodeGenerator::ScopeType::CatchScope);
             m_catchPattern->bindValue(generator, thrownValueRegister.get());
         }
 

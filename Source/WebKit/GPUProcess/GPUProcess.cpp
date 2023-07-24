@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #include "GPUProcessProxyMessages.h"
 #include "GPUProcessSessionParameters.h"
 #include "LogInitialization.h"
+#include "Logging.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyMessages.h"
@@ -117,6 +118,18 @@ void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     }
 
     didReceiveGPUProcessMessage(connection, decoder);
+}
+
+void GPUProcess::updateWebGPUEnabled(WebCore::ProcessIdentifier processIdentifier, bool webGPUEnabled)
+{
+    if (auto* connection = m_webProcessConnections.get(processIdentifier))
+        connection->updateWebGPUEnabled(webGPUEnabled);
+}
+
+void GPUProcess::updateDOMRenderingEnabled(WebCore::ProcessIdentifier processIdentifier, bool isDOMRenderingEnabled)
+{
+    if (auto* connection = m_webProcessConnections.get(processIdentifier))
+        connection->updateDOMRenderingEnabled(isDOMRenderingEnabled);
 }
 
 void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)
@@ -291,6 +304,10 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #if USE(OS_STATE)
     registerWithStateDumper("GPUProcess state"_s);
 #endif
+
+#if PLATFORM(COCOA)
+    platformInitializeGPUProcess(parameters);
+#endif
 }
 
 void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences)
@@ -381,6 +398,7 @@ GPUConnectionToWebProcess* GPUProcess::webProcessConnection(WebCore::ProcessIden
 
 void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& extensions)
 {
+    RELEASE_LOG(WebRTC, "GPUProcess::updateSandboxAccess: Adding %ld extensions", extensions.size());
     for (auto& extension : extensions)
         SandboxExtension::consumePermanently(extension);
 }
@@ -409,6 +427,8 @@ void GPUProcess::setOrientationForMediaCapture(IntDegrees orientation)
 
 void GPUProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID, CompletionHandler<void()>&& completionHandler)
 {
+    RELEASE_LOG(WebRTC, "GPUProcess::updateCaptureAccess: Entering (audio=%d, video=%d, display=%d)", allowAudioCapture, allowVideoCapture, allowDisplayCapture);
+
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     ensureAVCaptureServerConnection();
 #endif

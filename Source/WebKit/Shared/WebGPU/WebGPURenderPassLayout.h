@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,17 +28,17 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUTextureFormat.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
 #include <wtf/Vector.h>
 
 namespace WebKit::WebGPU {
 
 struct RenderPassLayout : public ObjectDescriptorBase {
-    Vector<std::optional<PAL::WebGPU::TextureFormat>> colorFormats;
-    std::optional<PAL::WebGPU::TextureFormat> depthStencilFormat;
-    PAL::WebGPU::Size32 sampleCount { 1 };
+    Vector<std::optional<WebCore::WebGPU::TextureFormat>> colorFormats;
+    std::optional<WebCore::WebGPU::TextureFormat> depthStencilFormat;
+    WebCore::WebGPU::Size32 sampleCount { 1 };
 };
 
 } // namespace WebKit::WebGPU

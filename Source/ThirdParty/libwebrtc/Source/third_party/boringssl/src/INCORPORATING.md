@@ -3,6 +3,22 @@
 **Note**: if your target project is not a Google project then first read the
 [main README](/README.md) about the purpose of BoringSSL.
 
+## Which branch to use
+
+BoringSSL usage typically follows a
+["live at head"](https://abseil.io/about/philosophy#we-recommend-that-you-choose-to-live-at-head)
+model. Projects pin to whatever the current latest of BoringSSL is at the time
+of update, and regularly update it to pick up new changes.
+
+While the BoringSSL repository may contain project-specific branches, e.g.
+`chromium-2214`, those are _not_ supported release branches and must not as
+such. In rare cases, BoringSSL will temporarily maintain a short-lived branch on
+behalf of a project. Most such branches are no longer updated, because the
+corresponding project no longer needs them, and we do not create new ones to
+replace the ones that are no longer updated. E.g., not every Chromium release
+branch has a corresponding BoringSSL `chromium-*` branch. Even while active, the
+branch may not contain all changes relevant to a general BoringSSL consumer.
+
 ## Bazel
 
 If you are using [Bazel](https://bazel.build) then you can incorporate

@@ -1738,6 +1738,7 @@ ___
 }
 
 $code.=<<___;
+.section .rodata
 .align	64
 .Land_mask:
 	.quad	0x1fffffff,0x1fffffff,0x1fffffff,0x1fffffff
@@ -1750,6 +1751,7 @@ $code.=<<___;
 	.long	2,2,2,2, 3,3,3,3
 	.long	4,4,4,4, 4,4,4,4
 .align	64
+.text
 ___
 
 if ($win64) {
@@ -1940,4 +1942,4 @@ rsaz_1024_gather5_avx2:
 ___
 }}}
 
-close STDOUT or die "error closing STDOUT";
+close STDOUT or die "error closing STDOUT: $!";

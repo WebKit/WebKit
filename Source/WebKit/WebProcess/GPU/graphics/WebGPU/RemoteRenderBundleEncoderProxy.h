@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,13 @@
 
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPURenderBundleEncoder.h>
+#include <WebCore/WebGPURenderBundleEncoder.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteRenderBundleEncoderProxy final : public PAL::WebGPU::RenderBundleEncoder {
+class RemoteRenderBundleEncoderProxy final : public WebCore::WebGPU::RenderBundleEncoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteRenderBundleEncoderProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -62,7 +62,7 @@ private:
     
     static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
-    WARN_UNUSED_RETURN bool send(T&& message)
+    WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
@@ -72,35 +72,35 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    void setPipeline(const PAL::WebGPU::RenderPipeline&) final;
+    void setPipeline(const WebCore::WebGPU::RenderPipeline&) final;
 
-    void setIndexBuffer(const PAL::WebGPU::Buffer&, PAL::WebGPU::IndexFormat, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64>) final;
-    void setVertexBuffer(PAL::WebGPU::Index32 slot, const PAL::WebGPU::Buffer&, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64>) final;
+    void setIndexBuffer(const WebCore::WebGPU::Buffer&, WebCore::WebGPU::IndexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64>) final;
+    void setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer&, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64>) final;
 
-    void draw(PAL::WebGPU::Size32 vertexCount, std::optional<PAL::WebGPU::Size32> instanceCount,
-        std::optional<PAL::WebGPU::Size32> firstVertex, std::optional<PAL::WebGPU::Size32> firstInstance) final;
-    void drawIndexed(PAL::WebGPU::Size32 indexCount, std::optional<PAL::WebGPU::Size32> instanceCount,
-        std::optional<PAL::WebGPU::Size32> firstIndex,
-        std::optional<PAL::WebGPU::SignedOffset32> baseVertex,
-        std::optional<PAL::WebGPU::Size32> firstInstance) final;
+    void draw(WebCore::WebGPU::Size32 vertexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
+        std::optional<WebCore::WebGPU::Size32> firstVertex, std::optional<WebCore::WebGPU::Size32> firstInstance) final;
+    void drawIndexed(WebCore::WebGPU::Size32 indexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
+        std::optional<WebCore::WebGPU::Size32> firstIndex,
+        std::optional<WebCore::WebGPU::SignedOffset32> baseVertex,
+        std::optional<WebCore::WebGPU::Size32> firstInstance) final;
 
-    void drawIndirect(const PAL::WebGPU::Buffer& indirectBuffer, PAL::WebGPU::Size64 indirectOffset) final;
-    void drawIndexedIndirect(const PAL::WebGPU::Buffer& indirectBuffer, PAL::WebGPU::Size64 indirectOffset) final;
+    void drawIndirect(const WebCore::WebGPU::Buffer& indirectBuffer, WebCore::WebGPU::Size64 indirectOffset) final;
+    void drawIndexedIndirect(const WebCore::WebGPU::Buffer& indirectBuffer, WebCore::WebGPU::Size64 indirectOffset) final;
 
-    void setBindGroup(PAL::WebGPU::Index32, const PAL::WebGPU::BindGroup&,
-        std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>>&& dynamicOffsets) final;
+    void setBindGroup(WebCore::WebGPU::Index32, const WebCore::WebGPU::BindGroup&,
+        std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>>&& dynamicOffsets) final;
 
-    void setBindGroup(PAL::WebGPU::Index32, const PAL::WebGPU::BindGroup&,
+    void setBindGroup(WebCore::WebGPU::Index32, const WebCore::WebGPU::BindGroup&,
         const uint32_t* dynamicOffsetsArrayBuffer,
         size_t dynamicOffsetsArrayBufferLength,
-        PAL::WebGPU::Size64 dynamicOffsetsDataStart,
-        PAL::WebGPU::Size32 dynamicOffsetsDataLength) final;
+        WebCore::WebGPU::Size64 dynamicOffsetsDataStart,
+        WebCore::WebGPU::Size32 dynamicOffsetsDataLength) final;
 
     void pushDebugGroup(String&& groupLabel) final;
     void popDebugGroup() final;
     void insertDebugMarker(String&& markerLabel) final;
 
-    Ref<PAL::WebGPU::RenderBundle> finish(const PAL::WebGPU::RenderBundleDescriptor&) final;
+    Ref<WebCore::WebGPU::RenderBundle> finish(const WebCore::WebGPU::RenderBundleDescriptor&) final;
 
     void setLabelInternal(const String&) final;
 

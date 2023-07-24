@@ -95,12 +95,12 @@ static int get_image_bps(aom_img_fmt_t fmt) {
   return 0;
 }
 
-void process_tile_list(const TILE_LIST_INFO *tiles, int num_tiles,
-                       aom_codec_pts_t tl_pts, unsigned char **frames,
-                       const size_t *frame_sizes, aom_codec_ctx_t *codec,
-                       unsigned char *tl_buf, AvxVideoWriter *writer,
-                       uint8_t output_frame_width_in_tiles_minus_1,
-                       uint8_t output_frame_height_in_tiles_minus_1) {
+static void process_tile_list(const TILE_LIST_INFO *tiles, int num_tiles,
+                              aom_codec_pts_t tl_pts, unsigned char **frames,
+                              const size_t *frame_sizes, aom_codec_ctx_t *codec,
+                              unsigned char *tl_buf, AvxVideoWriter *writer,
+                              uint8_t output_frame_width_in_tiles_minus_1,
+                              uint8_t output_frame_height_in_tiles_minus_1) {
   unsigned char *tl = tl_buf;
   struct aom_write_bit_buffer wb = { tl, 0 };
   unsigned char *saved_obu_size_loc = NULL;

@@ -81,7 +81,7 @@ static AVAudioSessionRouteSharingPolicy routeSharingPolicyLongFormAudio()
 }
 
 // FIXME Re-enable when https://bugs.webkit.org/show_bug.cgi?id=237125 is resovled 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(WebKitLegacy, DISABLED_AudioSessionCategoryIOS)
 #else
 TEST(WebKitLegacy, AudioSessionCategoryIOS)

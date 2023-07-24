@@ -8,7 +8,27 @@ features: [Temporal]
 ---*/
 
 const calendar = {
-  toString() { return "custom"; }
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  day() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  id: "custom",
+  inLeapYear() {},
+  mergeFields() {},
+  month() {},
+  monthCode() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  year() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
 };
 const datetime1 = new Temporal.ZonedDateTime(957270896_987_650_000n, "UTC");
 const datetime2 = new Temporal.ZonedDateTime(957270896_987_650_000n, "UTC", calendar);

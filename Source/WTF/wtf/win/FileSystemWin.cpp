@@ -58,19 +58,6 @@ static bool getFindData(String path, WIN32_FIND_DATAW& findData)
     return true;
 }
 
-static bool getFileSizeFromFindData(const WIN32_FIND_DATAW& findData, long long& size)
-{
-    ULARGE_INTEGER fileSize;
-    fileSize.HighPart = findData.nFileSizeHigh;
-    fileSize.LowPart = findData.nFileSizeLow;
-
-    if (fileSize.QuadPart > static_cast<ULONGLONG>(std::numeric_limits<long long>::max()))
-        return false;
-
-    size = fileSize.QuadPart;
-    return true;
-}
-
 static std::optional<uint64_t> getFileSizeFromByHandleFileInformationStructure(const BY_HANDLE_FILE_INFORMATION& fileInformation)
 {
     ULARGE_INTEGER fileSize;
@@ -93,16 +80,6 @@ static void fileCreationTimeFromFindData(const WIN32_FIND_DATAW& findData, time_
     time = fileTime.QuadPart / 10000000 - kSecondsFromFileTimeToTimet;
 }
 
-
-static void fileModificationTimeFromFindData(const WIN32_FIND_DATAW& findData, time_t& time)
-{
-    ULARGE_INTEGER fileTime;
-    fileTime.HighPart = findData.ftLastWriteTime.dwHighDateTime;
-    fileTime.LowPart = findData.ftLastWriteTime.dwLowDateTime;
-
-    // Information about converting time_t to FileTime is available at http://msdn.microsoft.com/en-us/library/ms724228%28v=vs.85%29.aspx
-    time = fileTime.QuadPart / 10000000 - kSecondsFromFileTimeToTimet;
-}
 
 std::optional<uint64_t> fileSize(PlatformFileHandle fileHandle)
 {
@@ -371,8 +348,6 @@ MappedFileData::~MappedFileData()
 {
     if (m_fileData)
         UnmapViewOfFile(m_fileData);
-    if (m_fileMapping)
-        CloseHandle(m_fileMapping);
 }
 
 bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openMode, MappedFileMode)
@@ -406,11 +381,11 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
         break;
     }
 
-    m_fileMapping = CreateFileMapping(handle, nullptr, pageProtection, 0, 0, nullptr);
+    m_fileMapping = Win32Handle::adopt(CreateFileMapping(handle, nullptr, pageProtection, 0, 0, nullptr));
     if (!m_fileMapping)
         return false;
 
-    m_fileData = MapViewOfFile(m_fileMapping, desiredAccess, 0, 0, *size);
+    m_fileData = MapViewOfFile(m_fileMapping.get(), desiredAccess, 0, 0, *size);
     if (!m_fileData)
         return false;
     m_fileSize = *size;

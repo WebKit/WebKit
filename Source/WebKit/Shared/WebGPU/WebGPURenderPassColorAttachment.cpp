@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPURenderPassColorAttachment.h>
+#include <WebCore/WebGPURenderPassColorAttachment.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderPassColorAttachment& renderPassColorAttachment)
+std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassColorAttachment& renderPassColorAttachment)
 {
     auto view = convertToBacking(renderPassColorAttachment.view);
     if (!view)
@@ -57,20 +57,20 @@ std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacki
     return { { view, resolveTarget, WTFMove(clearValue), renderPassColorAttachment.loadOp, renderPassColorAttachment.storeOp } };
 }
 
-std::optional<PAL::WebGPU::RenderPassColorAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassColorAttachment& renderPassColorAttachment)
+std::optional<WebCore::WebGPU::RenderPassColorAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassColorAttachment& renderPassColorAttachment)
 {
     auto* view = convertTextureViewFromBacking(renderPassColorAttachment.view);
     if (!view)
         return std::nullopt;
 
-    PAL::WebGPU::TextureView* resolveTarget = nullptr;
+    WebCore::WebGPU::TextureView* resolveTarget = nullptr;
     if (renderPassColorAttachment.resolveTarget) {
         resolveTarget = convertTextureViewFromBacking(renderPassColorAttachment.resolveTarget.value());
         if (!resolveTarget)
             return std::nullopt;
     }
 
-    std::optional<PAL::WebGPU::Color> clearValue;
+    std::optional<WebCore::WebGPU::Color> clearValue;
     if (renderPassColorAttachment.clearValue) {
         clearValue = convertFromBacking(*renderPassColorAttachment.clearValue);
         if (!clearValue)

@@ -35,7 +35,6 @@
 #if USE(CURL)
 
 #include "BlobRegistry.h"
-#include "CurlContext.h"
 #include "Logging.h"
 #include <wtf/MainThread.h>
 
@@ -81,29 +80,20 @@ const Vector<uint8_t>* CurlFormDataStream::getPostData()
     return m_postData.get();
 }
 
-bool CurlFormDataStream::shouldUseChunkTransfer()
-{
-    computeContentLength();
-
-    return m_shouldUseChunkTransfer;
-}
-
 unsigned long long CurlFormDataStream::totalSize()
 {
-    computeContentLength();
+    if (!m_formData)
+        return 0;
 
-    return m_totalSize;
-}
-
-void CurlFormDataStream::computeContentLength()
-{
-    if (!m_formData || m_isContentLengthUpdated)
-        return;
+    if (m_isContentLengthUpdated)
+        return m_totalSize;
 
     m_isContentLengthUpdated = true;
 
     for (const auto& element : m_formData->elements())
         m_totalSize += element.lengthInBytes();
+
+    return m_totalSize;
 }
 
 std::optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)

@@ -36,7 +36,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SetMediaSourceEnded(bool isEnded)
     SetReadyState(WebCore::MediaPlayer::ReadyState state)
     StartChangingType()
-    UpdateBufferedFromTrackBuffers(bool sourceIsEnded) -> (WebCore::PlatformTimeRanges buffered) Synchronous
+    ClientReadyStateChanged(bool sourceIsEnded)
     AddTrackBuffer(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier)
     ResetTrackBuffers()
     ClearTrackBuffers()

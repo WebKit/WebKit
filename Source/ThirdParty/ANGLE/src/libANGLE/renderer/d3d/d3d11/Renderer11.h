@@ -552,8 +552,10 @@ class Renderer11 : public RendererD3D
     HRESULT callD3D11On12CreateDevice(PFN_D3D12_CREATE_DEVICE createDevice12,
                                       PFN_D3D11ON12_CREATE_DEVICE createDevice11on12,
                                       bool debug);
+    egl::Error initializeDXGIAdapter();
     egl::Error initializeD3DDevice();
     egl::Error initializeDevice();
+    egl::Error initializeAdapterFromDevice();
     void releaseDeviceResources();
     void release();
 
@@ -570,7 +572,6 @@ class Renderer11 : public RendererD3D
 
     HMODULE mD3d11Module;
     HMODULE mD3d12Module;
-    HMODULE mDxgiModule;
     HMODULE mDCompModule;
     std::vector<D3D_FEATURE_LEVEL> mAvailableFeatureLevels;
     D3D_DRIVER_TYPE mRequestedDriverType;

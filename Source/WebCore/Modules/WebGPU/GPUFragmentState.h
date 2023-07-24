@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +27,14 @@
 
 #include "GPUColorTargetState.h"
 #include "GPUProgrammableStage.h"
+#include "WebGPUFragmentState.h"
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUFragmentState.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUFragmentState : public GPUProgrammableStage {
-    PAL::WebGPU::FragmentState convertToBacking() const
+    WebGPU::FragmentState convertToBacking() const
     {
         ASSERT(module);
         return {
@@ -43,7 +43,7 @@ struct GPUFragmentState : public GPUProgrammableStage {
                 entryPoint,
                 constants,
             },
-            targets.map([] (auto& target) -> std::optional<PAL::WebGPU::ColorTargetState> {
+            targets.map([](auto& target) -> std::optional<WebGPU::ColorTargetState> {
                 if (target)
                     return target->convertToBacking();
                 return std::nullopt;

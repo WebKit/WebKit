@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -136,9 +136,15 @@ static void fallbackFontsForRunWithIterator(HashSet<const Font*>& fallbackFonts,
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
             if (glyphData.glyph && glyphData.font && glyphData.font != &primaryFont) {
                 auto isNonSpacingMark = U_MASK(u_charType(character)) & U_GC_MN_MASK;
+
+                // https://drafts.csswg.org/css-text-3/#white-space-processing
+                // "Unsupported Default_ignorable characters must be ignored for text rendering."
+                auto isIgnored = isDefaultIgnorableCodePoint(character);
+
                 // If we include the synthetic bold expansion, then even zero-width glyphs will have their fonts added.
                 if (isNonSpacingMark || glyphData.font->widthForGlyph(glyphData.glyph, Font::SyntheticBoldInclusion::Exclude))
-                    fallbackFonts.add(glyphData.font);
+                    if (!isIgnored)
+                        fallbackFonts.add(glyphData.font);
             }
         };
         addFallbackFontForCharacterIfApplicable(currentCharacter);
@@ -306,64 +312,84 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
     return leftSide;
 }
 
-unsigned TextUtil::findNextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, unsigned startPosition, const RenderStyle& style)
+unsigned TextUtil::findNextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition, const RenderStyle& style)
 {
     auto keepAllWordsForCJK = style.wordBreak() == WordBreak::KeepAll;
     auto breakNBSP = style.autoWrap() && style.nbspMode() == NBSPMode::Space;
 
     if (keepAllWordsForCJK) {
         if (breakNBSP)
-            return nextBreakablePositionKeepingAllWords(lineBreakIterator, startPosition);
-        return nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIterator, startPosition);
+            return nextBreakablePositionKeepingAllWords(lineBreakIteratorFactory, startPosition);
+        return nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIteratorFactory, startPosition);
     }
 
-    if (lineBreakIterator.mode() == LineBreakIteratorMode::Default) {
+    if (lineBreakIteratorFactory.mode() == TextBreakIterator::LineMode::Behavior::Default) {
         if (breakNBSP)
-            return WebCore::nextBreakablePosition(lineBreakIterator, startPosition);
-        return nextBreakablePositionIgnoringNBSP(lineBreakIterator, startPosition);
+            return WebCore::nextBreakablePosition(lineBreakIteratorFactory, startPosition);
+        return nextBreakablePositionIgnoringNBSP(lineBreakIteratorFactory, startPosition);
     }
 
     if (breakNBSP)
-        return nextBreakablePositionWithoutShortcut(lineBreakIterator, startPosition);
-    return nextBreakablePositionIgnoringNBSPWithoutShortcut(lineBreakIterator, startPosition);
+        return nextBreakablePositionWithoutShortcut(lineBreakIteratorFactory, startPosition);
+    return nextBreakablePositionIgnoringNBSPWithoutShortcut(lineBreakIteratorFactory, startPosition);
 }
 
 bool TextUtil::shouldPreserveSpacesAndTabs(const Box& layoutBox)
 {
-    // https://www.w3.org/TR/css-text-3/#white-space-property
-    auto whitespace = layoutBox.style().whiteSpace();
-    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
+    // https://www.w3.org/TR/css-text-4/#white-space-collapsing
+    auto whitespaceCollapse = layoutBox.style().whiteSpaceCollapse();
+    return whitespaceCollapse == WhiteSpaceCollapse::Preserve || whitespaceCollapse == WhiteSpaceCollapse::BreakSpaces;
 }
 
 bool TextUtil::shouldPreserveNewline(const Box& layoutBox)
 {
-    auto whitespace = layoutBox.style().whiteSpace();
-    // https://www.w3.org/TR/css-text-3/#white-space-property
-    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces || whitespace == WhiteSpace::PreLine; 
+    // https://www.w3.org/TR/css-text-4/#white-space-collapsing
+    auto whitespaceCollapse = layoutBox.style().whiteSpaceCollapse();
+    return whitespaceCollapse == WhiteSpaceCollapse::Preserve || whitespaceCollapse == WhiteSpaceCollapse::PreserveBreaks || whitespaceCollapse == WhiteSpaceCollapse::BreakSpaces;
 }
 
 bool TextUtil::isWrappingAllowed(const RenderStyle& style)
 {
-    // Do not try to wrap overflown 'pre' and 'no-wrap' content to next line.
-    return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
+    // https://www.w3.org/TR/css-text-4/#text-wrap
+    return style.textWrap() != TextWrap::NoWrap;
 }
 
-LineBreakIteratorMode TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
+bool TextUtil::shouldTrailingWhitespaceHang(const RenderStyle& style)
+{
+    // https://www.w3.org/TR/css-text-4/#white-space-phase-2
+    return style.whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve && style.textWrap() != TextWrap::NoWrap;
+}
+
+TextBreakIterator::LineMode::Behavior TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
 {
     switch (lineBreak) {
     case LineBreak::Auto:
     case LineBreak::AfterWhiteSpace:
     case LineBreak::Anywhere:
-        return LineBreakIteratorMode::Default;
+        return TextBreakIterator::LineMode::Behavior::Default;
     case LineBreak::Loose:
-        return LineBreakIteratorMode::Loose;
+        return TextBreakIterator::LineMode::Behavior::Loose;
     case LineBreak::Normal:
-        return LineBreakIteratorMode::Normal;
+        return TextBreakIterator::LineMode::Behavior::Normal;
     case LineBreak::Strict:
-        return LineBreakIteratorMode::Strict;
+        return TextBreakIterator::LineMode::Behavior::Strict;
     }
     ASSERT_NOT_REACHED();
-    return LineBreakIteratorMode::Default;
+    return TextBreakIterator::LineMode::Behavior::Default;
+}
+
+TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(WordBreak wordBreak)
+{
+    switch (wordBreak) {
+    case WordBreak::Normal:
+    case WordBreak::BreakAll:
+    case WordBreak::KeepAll:
+    case WordBreak::BreakWord:
+        return TextBreakIterator::ContentAnalysis::Mechanical;
+    case WordBreak::Auto:
+        return TextBreakIterator::ContentAnalysis::Linguistic;
+    }
+    return TextBreakIterator::ContentAnalysis::Mechanical;
 }
 
 bool TextUtil::containsStrongDirectionalityText(StringView text)

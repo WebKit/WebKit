@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,21 +62,26 @@ void GPUProcess::initializeProcess(const AuxiliaryProcessInitializationParameter
 
 void GPUProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
 {
-#if !PLATFORM(MACCATALYST)
-    NSString *applicationName = [NSString stringWithFormat:WEB_UI_NSSTRING(@"%@ Graphics and Media", "visible name of the GPU process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-    _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
+#if PLATFORM(MAC)
+    m_uiProcessName = parameters.uiProcessName;
 #endif
 }
+
+#if PLATFORM(MAC)
+void GPUProcess::updateProcessName()
+{
+#if !PLATFORM(MACCATALYST)
+    NSString *applicationName = [NSString stringWithFormat:WEB_UI_NSSTRING(@"%@ Graphics and Media", "visible name of the GPU process. The argument is the application name."), (NSString *)m_uiProcessName];
+    auto result = _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
+    ASSERT_UNUSED(result, result == noErr);
+#endif
+}
+#endif
 
 void GPUProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
     // Need to overide the default, because service has a different bundle ID.
     NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
-
-#if defined(USE_VORBIS_AUDIOCOMPONENT_WORKAROUND)
-    // We need to initialize the Vorbis decoder before the sandbox gets setup; this is a one off action.
-    WebCore::registerVorbisDecoderIfNeeded();
-#endif
 
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebKit.GPUProcess" ofType:@"sb"]);
 

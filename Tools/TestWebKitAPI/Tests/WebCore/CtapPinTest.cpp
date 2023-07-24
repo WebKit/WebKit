@@ -127,7 +127,7 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
 
 // FIXME: When can we enable this for non-Cocoa platforms?
 // FIXME: Can we enable this for watchOS and tvOS?
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
     result = KeyAgreementResponse::parse(convertBytesToVector(TestData::kCtapClientPinInvalidKeyAgreementResponse, sizeof(TestData::kCtapClientPinInvalidKeyAgreementResponse))); // The point is not on the curve.
     EXPECT_FALSE(result);
 #endif

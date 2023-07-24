@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2021 Apple Inc. All rights reserved.
+* Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -28,59 +28,23 @@
 #if USE(JPEGXL)
 
 #include <algorithm>
+#include <memory>
+
+#if PLATFORM(COCOA)
+#import <pal/spi/cocoa/AppleJPEGXL/AppleJPEGXLSPI.h>
+#else
 #include <jxl/decode.h>
+#endif
 
-class JxlDecoderPtr {
+class JXLDecoderDeleter {
 public:
-    JxlDecoderPtr() = default;
-
-    JxlDecoderPtr(JxlDecoder* decoder)
-        : m_decoder(decoder)
+    void operator()(JxlDecoder* decoder)
     {
+        JxlDecoderDestroy(decoder);
     }
-
-    JxlDecoderPtr(const JxlDecoderPtr&) = delete;
-
-    JxlDecoderPtr(JxlDecoderPtr&& other)
-        : m_decoder(other.m_decoder)
-    {
-        other.m_decoder = nullptr;
-    }
-
-    JxlDecoderPtr& operator=(const JxlDecoderPtr&) = delete;
-
-    JxlDecoderPtr& operator=(JxlDecoderPtr&& other)
-    {
-        reset();
-        std::swap(m_decoder, other.m_decoder);
-        return *this;
-    }
-
-    ~JxlDecoderPtr()
-    {
-        reset();
-    }
-
-    void reset()
-    {
-        if (m_decoder)
-            JxlDecoderDestroy(m_decoder);
-        m_decoder = nullptr;
-    }
-
-    operator bool() const
-    {
-        return m_decoder;
-    }
-
-    JxlDecoder* get() const
-    {
-        return m_decoder;
-    }
-
-private:
-    JxlDecoder* m_decoder { nullptr };
 };
+
+using JxlDecoderPtr = std::unique_ptr<JxlDecoder, JXLDecoderDeleter>;
 
 static inline JxlDecoderPtr JxlDecoderMake(const JxlMemoryManager* memoryManager)
 {

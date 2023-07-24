@@ -564,6 +564,94 @@ static INLINE void transpose_16x8(unsigned char *in0, unsigned char *in1,
   _mm_storeu_si128((__m128i *)(out + 7 * out_p), _mm_unpackhi_epi64(x7, x15));
 }
 
+static INLINE void transpose_16x8_to_8x16(unsigned char *src, int in_p,
+                                          unsigned char *dst, int out_p) {
+  // a0 b0 c0 d0 e0 f0 g0 h0 A0 B0 C0 D0 E0 F0 G0 H0
+  // a1 b1 c1 d1 e1 f1 g1 h1 A1 B1 C1 D1 E1 F1 G1 H1
+  // a2 b2 c2 d2 e2 f2 g2 h2 A2 B2 C2 D2 E2 F2 G2 H2
+  // a3 b3 c3 d3 e3 f3 g3 h3 A3 B3 C3 D3 E3 F3 G3 H3
+  // a4 b4 c4 d4 e4 f4 g4 h4 A4 B4 C4 D4 E4 F4 G4 H4
+  // a5 b5 c5 d5 e5 f5 g5 h5 A5 B5 C5 D5 E5 F5 G5 H5
+  // a6 b6 c6 d6 e6 f6 g6 h6 A6 B6 C6 D6 E6 F6 G6 H6
+  // a7 b7 c7 d7 e7 f7 g7 h7 A7 B7 C7 D7 E7 F7 G7 H7
+  const __m128i x0 = _mm_loadu_si128((__m128i *)(src));
+  const __m128i x1 = _mm_loadu_si128((__m128i *)(src + (1 * in_p)));
+  const __m128i x2 = _mm_loadu_si128((__m128i *)(src + (2 * in_p)));
+  const __m128i x3 = _mm_loadu_si128((__m128i *)(src + (3 * in_p)));
+  const __m128i x4 = _mm_loadu_si128((__m128i *)(src + (4 * in_p)));
+  const __m128i x5 = _mm_loadu_si128((__m128i *)(src + (5 * in_p)));
+  const __m128i x6 = _mm_loadu_si128((__m128i *)(src + (6 * in_p)));
+  const __m128i x7 = _mm_loadu_si128((__m128i *)(src + (7 * in_p)));
+
+  // a0 a1 b0 b1 c0 c1 d0 d1 A0 A1 B0 B1 C0 C1 D0 D1
+  // e0 e1 f0 f1 g0 g1 h0 h1 E0 E1 F0 F1 G0 G1 H0 H1
+  // a2 a3 b2 b3 c2 c3 d2 d3 A2 A3 B2 B3 C2 C3 D2 D3
+  // e2 e3 f2 f3 g2 g3 h2 h3 E2 E3 F2 F3 G2 G3 H2 H3
+  // a4 a5 b4 b5 c4 c5 d4 d5 A4 A5 B4 B5 C4 C5 D4 D5
+  // e4 e5 f4 f5 g4 g5 h4 h5 E4 E5 F4 F5 G4 G5 H4 H5
+  // a6 a7 b6 b7 c6 c7 d6 d7 A6 A7 B6 B7 C6 C7 D6 D7
+  // e6 e7 f6 f7 g6 g7 h6 h7 E6 E7 F6 F7 G6 G7 H6 H7
+  const __m128i x_s10 = _mm_unpacklo_epi8(x0, x1);
+  const __m128i x_s11 = _mm_unpackhi_epi8(x0, x1);
+  const __m128i x_s12 = _mm_unpacklo_epi8(x2, x3);
+  const __m128i x_s13 = _mm_unpackhi_epi8(x2, x3);
+  const __m128i x_s14 = _mm_unpacklo_epi8(x4, x5);
+  const __m128i x_s15 = _mm_unpackhi_epi8(x4, x5);
+  const __m128i x_s16 = _mm_unpacklo_epi8(x6, x7);
+  const __m128i x_s17 = _mm_unpackhi_epi8(x6, x7);
+
+  // a0 a1 a2 a3 b0 b1 b2 b3 | A0 A1 A2 A3 B0 B1 B2 B3
+  // c0 c1 c2 c3 d0 d1 d2 d3 | C0 C1 C2 C3 D0 D1 D2 D3
+  // e0 e1 e2 e3 f0 f1 f2 f3 | E0 E1 E2 E3 F0 F1 F2 F3
+  // g0 g1 g2 g3 h0 h1 h2 h3 | G0 G1 G2 G3 H0 H1 H2 H3
+  // a4 a5 a6 a7 b4 b5 b6 b7 | A4 A5 A6 A7 B4 B5 B6 B7
+  // c4 c5 c6 c7 d4 d5 d6 d7 | C4 C5 C6 C7 D4 D5 D6 D7
+  // e4 e5 e6 e7 f4 f5 f6 f7 | E4 E5 E6 E7 F4 F5 F6 F7
+  // g4 g5 g6 g7 h4 h5 h6 h7 | G4 G5 G6 G7 H4 H5 H6 H7
+  const __m128i x_s20 = _mm_unpacklo_epi16(x_s10, x_s12);
+  const __m128i x_s21 = _mm_unpackhi_epi16(x_s10, x_s12);
+  const __m128i x_s22 = _mm_unpacklo_epi16(x_s11, x_s13);
+  const __m128i x_s23 = _mm_unpackhi_epi16(x_s11, x_s13);
+  const __m128i x_s24 = _mm_unpacklo_epi16(x_s14, x_s16);
+  const __m128i x_s25 = _mm_unpackhi_epi16(x_s14, x_s16);
+  const __m128i x_s26 = _mm_unpacklo_epi16(x_s15, x_s17);
+  const __m128i x_s27 = _mm_unpackhi_epi16(x_s15, x_s17);
+
+  // a0 a1 a2 a3 a4 a5 a6 a7 | A0 A1 A2 A3 A4 A5 A6 A7
+  // b0 b1 b2 b3 b4 b5 b6 b7 | B0 B1 B2 B3 B4 B5 B6 B7
+  // c0 c1 c2 c3 c4 c5 c6 c7 | C0 C1 C2 C3 C4 C5 C6 C7
+  // d0 d1 d2 d3 d4 d5 d6 d7 | D0 D1 D2 D3 D4 D5 D6 D7
+  // e0 e1 e2 e3 e4 e5 e6 e7 | E0 E1 E2 E3 E4 E5 E6 E7
+  // f0 f1 f2 f3 f4 f5 f6 f7 | F0 F1 F2 F3 F4 F5 F6 F7
+  // g0 g1 g2 g3 g4 g5 g6 g7 | G0 G1 G2 G3 G4 G5 G6 G7
+  // h0 h1 h2 h3 h4 h5 h6 h7 | H0 H1 H2 H3 H4 H5 H6 H7
+  const __m128i x_s30 = _mm_unpacklo_epi32(x_s20, x_s24);
+  const __m128i x_s31 = _mm_unpackhi_epi32(x_s20, x_s24);
+  const __m128i x_s32 = _mm_unpacklo_epi32(x_s21, x_s25);
+  const __m128i x_s33 = _mm_unpackhi_epi32(x_s21, x_s25);
+  const __m128i x_s34 = _mm_unpacklo_epi32(x_s22, x_s26);
+  const __m128i x_s35 = _mm_unpackhi_epi32(x_s22, x_s26);
+  const __m128i x_s36 = _mm_unpacklo_epi32(x_s23, x_s27);
+  const __m128i x_s37 = _mm_unpackhi_epi32(x_s23, x_s27);
+
+  mm_storelu(dst, x_s30);
+  mm_storehu(dst + (1 * out_p), x_s30);
+  mm_storelu(dst + (2 * out_p), x_s31);
+  mm_storehu(dst + (3 * out_p), x_s31);
+  mm_storelu(dst + (4 * out_p), x_s32);
+  mm_storehu(dst + (5 * out_p), x_s32);
+  mm_storelu(dst + (6 * out_p), x_s33);
+  mm_storehu(dst + (7 * out_p), x_s33);
+  mm_storelu(dst + (8 * out_p), x_s34);
+  mm_storehu(dst + (9 * out_p), x_s34);
+  mm_storelu(dst + (10 * out_p), x_s35);
+  mm_storehu(dst + (11 * out_p), x_s35);
+  mm_storelu(dst + (12 * out_p), x_s36);
+  mm_storehu(dst + (13 * out_p), x_s36);
+  mm_storelu(dst + (14 * out_p), x_s37);
+  mm_storehu(dst + (15 * out_p), x_s37);
+}
+
 static INLINE void transpose_8xn(unsigned char *src[], int in_p,
                                  unsigned char *dst[], int out_p,
                                  int num_8x8_to_transpose) {

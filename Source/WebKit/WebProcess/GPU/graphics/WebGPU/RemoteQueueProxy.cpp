@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ RemoteQueueProxy::~RemoteQueueProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteQueueProxy::submit(Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>>&& commandBuffers)
+void RemoteQueueProxy::submit(Vector<std::reference_wrapper<WebCore::WebGPU::CommandBuffer>>&& commandBuffers)
 {
     Vector<WebGPUIdentifier> convertedCommandBuffers;
     convertedCommandBuffers.reserveInitialCapacity(commandBuffers.size());
@@ -70,12 +70,12 @@ void RemoteQueueProxy::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 }
 
 void RemoteQueueProxy::writeBuffer(
-    const PAL::WebGPU::Buffer& buffer,
-    PAL::WebGPU::Size64 bufferOffset,
+    const WebCore::WebGPU::Buffer& buffer,
+    WebCore::WebGPU::Size64 bufferOffset,
     const void* source,
     size_t byteLength,
-    PAL::WebGPU::Size64 dataOffset,
-    std::optional<PAL::WebGPU::Size64> size)
+    WebCore::WebGPU::Size64 dataOffset,
+    std::optional<WebCore::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
     ASSERT(convertedBuffer);
@@ -87,11 +87,11 @@ void RemoteQueueProxy::writeBuffer(
 }
 
 void RemoteQueueProxy::writeTexture(
-    const PAL::WebGPU::ImageCopyTexture& destination,
+    const WebCore::WebGPU::ImageCopyTexture& destination,
     const void* source,
     size_t byteLength,
-    const PAL::WebGPU::ImageDataLayout& dataLayout,
-    const PAL::WebGPU::Extent3D& size)
+    const WebCore::WebGPU::ImageDataLayout& dataLayout,
+    const WebCore::WebGPU::Extent3D& size)
 {
     auto convertedDestination = m_convertToBackingContext->convertToBacking(destination);
     ASSERT(convertedDestination);
@@ -107,9 +107,9 @@ void RemoteQueueProxy::writeTexture(
 }
 
 void RemoteQueueProxy::copyExternalImageToTexture(
-    const PAL::WebGPU::ImageCopyExternalImage& source,
-    const PAL::WebGPU::ImageCopyTextureTagged& destination,
-    const PAL::WebGPU::Extent3D& copySize)
+    const WebCore::WebGPU::ImageCopyExternalImage& source,
+    const WebCore::WebGPU::ImageCopyTextureTagged& destination,
+    const WebCore::WebGPU::Extent3D& copySize)
 {
     auto convertedSource = m_convertToBackingContext->convertToBacking(source);
     ASSERT(convertedSource);

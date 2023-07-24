@@ -41,7 +41,17 @@ namespace WGSL {
 
 static constexpr bool shouldDumpInferredTypes = false;
 
-class TypeChecker : public AST::Visitor, public ContextProvider<Type*> {
+struct Binding {
+    enum Kind : uint8_t {
+        Value,
+        Type,
+    };
+
+    Kind kind;
+    const struct Type* type;
+};
+
+class TypeChecker : public AST::Visitor, public ContextProvider<Binding> {
 public:
     TypeChecker(ShaderModule&);
 
@@ -52,9 +62,19 @@ public:
     void visit(AST::Variable&) override;
     void visit(AST::Function&) override;
 
+    // Attributes
+    void visit(AST::AlignAttribute&) override;
+    void visit(AST::BindingAttribute&) override;
+    void visit(AST::GroupAttribute&) override;
+    void visit(AST::IdAttribute&) override;
+    void visit(AST::LocationAttribute&) override;
+    void visit(AST::SizeAttribute&) override;
+    void visit(AST::WorkgroupSizeAttribute&) override;
+
     // Statements
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::CompoundAssignmentStatement&) override;
+    void visit(AST::DecrementIncrementStatement&) override;
     void visit(AST::IfStatement&) override;
     void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
@@ -86,9 +106,16 @@ public:
     void visit(AST::ReferenceTypeName&) override;
 
 private:
+    enum class VariableKind : uint8_t {
+        Local,
+        Global,
+    };
+
     void visitFunctionBody(AST::Function&);
     void visitStructMembers(AST::Structure&);
-    void vectorFieldAccess(const Types::Vector&, AST::FieldAccessExpression&);
+    void visitVariable(AST::Variable&, VariableKind);
+    const Type* vectorFieldAccess(const Types::Vector&, AST::FieldAccessExpression&);
+    void visitAttributes(AST::Attribute::List&);
 
     template<typename... Arguments>
     void typeError(const SourceSpan&, Arguments&&...);
@@ -97,17 +124,19 @@ private:
     template<typename... Arguments>
     void typeError(InferBottom, const SourceSpan&, Arguments&&...);
 
-    Type* infer(AST::Expression&);
-    Type* resolve(AST::TypeName&);
-    void inferred(Type*);
-    bool unify(Type*, Type*) WARN_UNUSED_RETURN;
-    bool isBottom(Type*) const;
+    const Type* infer(AST::Expression&);
+    const Type* resolve(AST::TypeName&);
+    void inferred(const Type*);
+    bool unify(const Type*, const Type*) WARN_UNUSED_RETURN;
+    bool isBottom(const Type*) const;
+    void introduceType(const String&, const Type*);
+    void introduceValue(const String&, const Type*);
 
     template<typename CallArguments>
-    Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<Type*>& typeArguments);
+    const Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
 
     ShaderModule& m_shaderModule;
-    Type* m_inferredType { nullptr };
+    const Type* m_inferredType { nullptr };
 
     TypeStore& m_types;
     Vector<Error> m_errors;
@@ -119,13 +148,12 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     : m_shaderModule(shaderModule)
     , m_types(shaderModule.types())
 {
-    introduceVariable(AST::Identifier::make("void"_s), m_types.voidType());
-    introduceVariable(AST::Identifier::make("bool"_s), m_types.boolType());
-    introduceVariable(AST::Identifier::make("i32"_s), m_types.i32Type());
-    introduceVariable(AST::Identifier::make("u32"_s), m_types.u32Type());
-    introduceVariable(AST::Identifier::make("f32"_s), m_types.f32Type());
-    introduceVariable(AST::Identifier::make("sampler"_s), m_types.samplerType());
-    introduceVariable(AST::Identifier::make("texture_external"_s), m_types.textureExternalType());
+    introduceType("bool"_s, m_types.boolType());
+    introduceType("i32"_s, m_types.i32Type());
+    introduceType("u32"_s, m_types.u32Type());
+    introduceType("f32"_s, m_types.f32Type());
+    introduceType("sampler"_s, m_types.samplerType());
+    introduceType("texture_external"_s, m_types.textureExternalType());
 
     // This file contains the declarations generated from `TypeDeclarations.rb`
 #include "TypeDeclarations.h" // NOLINT
@@ -142,7 +170,7 @@ std::optional<FailedCheck> TypeChecker::check()
         visitStructMembers(structure);
 
     for (auto& variable : m_shaderModule.variables())
-        visit(variable);
+        visitVariable(variable, VariableKind::Global);
 
     for (auto& function : m_shaderModule.functions())
         visit(function);
@@ -167,31 +195,54 @@ std::optional<FailedCheck> TypeChecker::check()
 // Declarations
 void TypeChecker::visit(AST::Structure& structure)
 {
-    Type* structType = m_types.structType(structure);
-    introduceVariable(structure.name(), structType);
+    const Type* structType = m_types.structType(structure);
+    introduceType(structure.name(), structType);
 }
 
 void TypeChecker::visitStructMembers(AST::Structure& structure)
 {
-    auto* const* type = readVariable(structure.name());
-    ASSERT(type);
-    ASSERT(std::holds_alternative<Types::Struct>(**type));
+    auto* binding = readVariable(structure.name());
+    ASSERT(binding && binding->kind == Binding::Type);
+    auto* type = binding->type;
+    ASSERT(std::holds_alternative<Types::Struct>(*type));
 
-    auto& structType = std::get<Types::Struct>(**type);
+    // This is the only place we need to modify a type.
+    // Since struct fields can reference other structs declared later in the
+    // program, the creation of struct types is a 2-step process:
+    // - First, we create an empty struct type for all structs in the program,
+    //   and expose them in the global context
+    // - Then, in a second pass, we populate the structs' fields.
+    // This way, the type of all structs will be available at the time we populate
+    // struct fields, even the ones defiend later in the program.
+    auto& structType = std::get<Types::Struct>(*type);
+    auto& fields = const_cast<HashMap<String, const Type*>&>(structType.fields);
     for (auto& member : structure.members()) {
+        visitAttributes(member.attributes());
         auto* memberType = resolve(member.type());
-        auto result = structType.fields.add(member.name().id(), memberType);
+        auto result = fields.add(member.name().id(), memberType);
         ASSERT_UNUSED(result, result.isNewEntry);
     }
 }
 
 void TypeChecker::visit(AST::Variable& variable)
 {
-    Type* result = nullptr;
+    visitVariable(variable, VariableKind::Local);
+}
+
+void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKind)
+{
+    visitAttributes(variable.attributes());
+
+    const Type* result = nullptr;
     if (variable.maybeTypeName())
         result = resolve(*variable.maybeTypeName());
     if (variable.maybeInitializer()) {
         auto* initializerType = infer(*variable.maybeInitializer());
+        if (auto* reference = std::get_if<Types::Reference>(initializerType)) {
+            initializerType = reference->element;
+            variable.maybeInitializer()->m_inferredType = initializerType;
+        }
+
         if (!result)
             result = initializerType;
         else if (unify(result, initializerType))
@@ -199,16 +250,47 @@ void TypeChecker::visit(AST::Variable& variable)
         else
             typeError(InferBottom::No, variable.span(), "cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");
     }
-    introduceVariable(variable.name(), result);
+    if (variable.flavor() == AST::VariableFlavor::Var) {
+        AddressSpace addressSpace;
+        AccessMode accessMode;
+        if (auto* maybeQualifier = variable.maybeQualifier()) {
+            addressSpace = static_cast<AddressSpace>(maybeQualifier->storageClass());
+            accessMode = static_cast<AccessMode>(maybeQualifier->accessMode());
+        } else if (variableKind == VariableKind::Local) {
+            addressSpace = AddressSpace::Function;
+            accessMode = AccessMode::ReadWrite;
+        } else {
+            addressSpace = AddressSpace::Handle;
+            accessMode = AccessMode::Read;
+        }
+        result = m_types.referenceType(addressSpace, result, accessMode);
+        if (auto* maybeTypeName = variable.maybeTypeName()) {
+            auto& referenceType = m_shaderModule.astBuilder().construct<AST::ReferenceTypeName>(
+                maybeTypeName->span(),
+                *maybeTypeName
+            );
+            referenceType.m_resolvedType = result;
+            variable.m_referenceType = &referenceType;
+        }
+    }
+    introduceValue(variable.name(), result);
 }
 
 void TypeChecker::visit(AST::Function& function)
 {
-    // FIXME: allocate and build function type fromp parameters and return type
+    visitAttributes(function.attributes());
+
+    Vector<const Type*> parameters;
+    const Type* result;
+    parameters.reserveInitialCapacity(function.parameters().size());
+    for (auto& parameter : function.parameters())
+        parameters.append(resolve(parameter.typeName()));
     if (function.maybeReturnType())
-        resolve(*function.maybeReturnType());
-    Type* functionType = nullptr;
-    introduceVariable(function.name(), functionType);
+        result = resolve(*function.maybeReturnType());
+    else
+        result = m_types.voidType();
+    const Type* functionType = m_types.functionType(WTFMove(parameters), result);
+    introduceValue(function.name(), functionType);
 }
 
 void TypeChecker::visitFunctionBody(AST::Function& function)
@@ -217,10 +299,90 @@ void TypeChecker::visitFunctionBody(AST::Function& function)
 
     for (auto& parameter : function.parameters()) {
         auto* parameterType = resolve(parameter.typeName());
-        introduceVariable(parameter.name(), parameterType);
+        introduceValue(parameter.name(), parameterType);
     }
 
     AST::Visitor::visit(function.body());
+}
+
+// Attributes
+void TypeChecker::visit(AST::AlignAttribute& attribute)
+{
+    auto* type = infer(attribute.alignment());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@align must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::BindingAttribute& attribute)
+{
+    auto* type = infer(attribute.binding());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@binding must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::GroupAttribute& attribute)
+{
+    auto* type = infer(attribute.group());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@group must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::IdAttribute& attribute)
+{
+    auto* type = infer(attribute.value());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@id must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::LocationAttribute& attribute)
+{
+    auto* type = infer(attribute.location());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@location must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::SizeAttribute& attribute)
+{
+    auto* type = infer(attribute.size());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@size must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
+{
+    auto* xType = infer(attribute.x());
+    if (!satisfies(xType, Constraints::ConcreteInteger)) {
+        typeError(InferBottom::No, attribute.span(), "@workgroup_size x dimension must be an i32 or u32 value");
+        return;
+    }
+
+    const Type* yType = nullptr;
+    const Type* zType = nullptr;
+    if (auto* y = attribute.maybeY()) {
+        yType = infer(*y);
+        if (!satisfies(yType, Constraints::ConcreteInteger)) {
+            typeError(InferBottom::No, attribute.span(), "@workgroup_size y dimension must be an i32 or u32 value");
+            return;
+        }
+
+        if (auto* z = attribute.maybeZ()) {
+            zType = infer(*z);
+            if (!satisfies(zType, Constraints::ConcreteInteger)) {
+                typeError(InferBottom::No, attribute.span(), "@workgroup_size z dimension must be an i32 or u32 value");
+                return;
+            }
+        }
+
+    }
+
+    const auto& satisfies = [&](const Type* type) {
+        return unify(type, xType)
+            && (!yType || unify(type, yType))
+            && (!zType || unify(type, zType));
+    };
+
+    if (!satisfies(m_types.i32Type()) && !satisfies(m_types.u32Type()))
+        typeError(InferBottom::No, attribute.span(), "@workgroup_size arguments must be of the same type, either i32 or u32");
 }
 
 // Statements
@@ -228,8 +390,21 @@ void TypeChecker::visit(AST::AssignmentStatement& statement)
 {
     auto* lhs = infer(statement.lhs());
     auto* rhs = infer(statement.rhs());
-    if (!unify(lhs, rhs))
-        typeError(InferBottom::No, statement.span(), "cannot assign value of type '", *rhs, "' to '", *lhs, "'");
+
+    if (isBottom(lhs))
+        return;
+
+    auto* reference = std::get_if<Types::Reference>(lhs);
+    if (!reference) {
+        typeError(InferBottom::No, statement.span(), "cannot assign to a value of type '", *lhs, "'");
+        return;
+    }
+    if (reference->accessMode == AccessMode::Read) {
+        typeError(InferBottom::No, statement.span(), "cannot store into a read-only type '", *lhs, "'");
+        return;
+    }
+    if (!unify(reference->element, rhs))
+        typeError(InferBottom::No, statement.span(), "cannot assign value of type '", *rhs, "' to '", *reference->element, "'");
 }
 
 void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
@@ -238,6 +413,35 @@ void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
     // TypeChecker::visit(AST::Expression&)
     infer(statement.leftExpression());
     infer(statement.rightExpression());
+}
+
+void TypeChecker::visit(AST::DecrementIncrementStatement& statement)
+{
+    auto* expression = infer(statement.expression());
+    if (isBottom(expression))
+        return;
+
+    auto* reference = std::get_if<Types::Reference>(expression);
+    if (!reference) {
+        typeError(InferBottom::No, statement.span(), "cannot modify a value of type '", *expression, "'");
+        return;
+    }
+    if (reference->accessMode == AccessMode::Read) {
+        typeError(InferBottom::No, statement.span(), "cannot modify read-only type '", *expression, "'");
+        return;
+    }
+    if (!unify(m_types.i32Type(), reference->element) && !unify(m_types.u32Type(), reference->element)) {
+        const char* operation;
+        switch (statement.operation()) {
+        case AST::DecrementIncrementStatement::Operation::Increment:
+            operation = "increment";
+            break;
+        case AST::DecrementIncrementStatement::Operation::Decrement:
+            operation = "decrement";
+            break;
+        }
+        typeError(InferBottom::No, statement.span(), operation, " can only be applied to integers, found ", *reference->element);
+    }
 }
 
 void TypeChecker::visit(AST::IfStatement& statement)
@@ -282,7 +486,7 @@ void TypeChecker::visit(AST::ForStatement& statement)
     if (auto* test = statement.maybeTest()) {
         auto* testType = infer(*test);
         if (!unify(m_types.boolType(), testType))
-            typeError(test->span(), "for-loop condition must be bool, got ", *testType);
+            typeError(InferBottom::No, test->span(), "for-loop condition must be bool, got ", *testType);
     }
 
     if (auto* update = statement.maybeUpdate())
@@ -301,63 +505,83 @@ void TypeChecker::visit(AST::Expression&)
 
 void TypeChecker::visit(AST::FieldAccessExpression& access)
 {
-    auto* baseType = infer(access.base());
-    if (isBottom(baseType)) {
-        inferred(m_types.bottomType());
-        return;
-    }
+    const auto& accessImpl = [&](const Type* baseType) -> const Type* {
+        if (isBottom(baseType))
+            return m_types.bottomType();
 
-    if (std::holds_alternative<Types::Struct>(*baseType)) {
-        auto& structType = std::get<Types::Struct>(*baseType);
-        auto it = structType.fields.find(access.fieldName().id());
-        if (it == structType.fields.end()) {
-            typeError(access.span(), "struct '", *baseType, "' does not have a member called '", access.fieldName(), "'");
-            return;
+        if (std::holds_alternative<Types::Struct>(*baseType)) {
+            auto& structType = std::get<Types::Struct>(*baseType);
+            auto it = structType.fields.find(access.fieldName().id());
+            if (it == structType.fields.end()) {
+                typeError(access.span(), "struct '", *baseType, "' does not have a member called '", access.fieldName(), "'");
+                return nullptr;
+            }
+            return it->value;
         }
-        inferred(it->value);
+
+        if (std::holds_alternative<Types::Vector>(*baseType)) {
+            auto& vector = std::get<Types::Vector>(*baseType);
+            return vectorFieldAccess(vector, access);
+        }
+
+        typeError(access.span(), "invalid member access expression. Expected vector or struct, got '", *baseType, "'");
+        return nullptr;
+    };
+
+    auto* baseType = infer(access.base());
+    if (const auto* reference = std::get_if<Types::Reference>(baseType)) {
+        if (const Type* result = accessImpl(reference->element)) {
+            result = m_types.referenceType(reference->addressSpace, result, reference->accessMode);
+            inferred(result);
+        }
         return;
     }
 
-    if (std::holds_alternative<Types::Vector>(*baseType)) {
-        auto& vector = std::get<Types::Vector>(*baseType);
-        vectorFieldAccess(vector, access);
-        return;
-    }
-
-    typeError(access.span(), "invalid member access expression. Expected vector or struct, got '", *baseType, "'");
+    if (const Type* result = accessImpl(baseType))
+        inferred(result);
 }
 
 void TypeChecker::visit(AST::IndexAccessExpression& access)
 {
+    const auto& accessImpl = [&](const Type* base) -> const Type* {
+        if (isBottom(base))
+            return m_types.bottomType();
+
+        if (std::holds_alternative<Types::Array>(*base)) {
+            // FIXME: check bounds if index is constant
+            auto& array = std::get<Types::Array>(*base);
+            return array.element;
+        }
+
+        if (std::holds_alternative<Types::Vector>(*base)) {
+            // FIXME: check bounds if index is constant
+            auto& vector = std::get<Types::Vector>(*base);
+            return vector.element;
+        }
+
+        // FIXME: Implement matrix accesses
+        typeError(access.span(), "cannot index type '", *base, "'");
+        return nullptr;
+    };
+
     auto* base = infer(access.base());
     auto* index = infer(access.index());
-
-    if (isBottom(base)) {
-        inferred(m_types.bottomType());
-        return;
-    }
 
     if (!unify(m_types.i32Type(), index) && !unify(m_types.u32Type(), index) && !unify(m_types.abstractIntType(), index)) {
         typeError(access.span(), "index must be of type 'i32' or 'u32', found: '", *index, "'");
         return;
     }
 
-    if (std::holds_alternative<Types::Array>(*base)) {
-        // FIXME: check bounds if index is constant
-        auto& array = std::get<Types::Array>(*base);
-        inferred(array.element);
+    if (const auto* reference = std::get_if<Types::Reference>(base)) {
+        if (const Type* result = accessImpl(reference->element)) {
+            result = m_types.referenceType(reference->addressSpace, result, reference->accessMode);
+            inferred(result);
+        }
         return;
     }
 
-    if (std::holds_alternative<Types::Vector>(*base)) {
-        // FIXME: check bounds if index is constant
-        auto& vector = std::get<Types::Vector>(*base);
-        inferred(vector.element);
-        return;
-    }
-
-    // FIXME: Implement reference and matrix accesses
-    typeError(access.span(), "cannot index type '", *base, "'");
+    if (const Type* result = accessImpl(base))
+        inferred(result);
 }
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
@@ -367,13 +591,18 @@ void TypeChecker::visit(AST::BinaryExpression& binary)
 
 void TypeChecker::visit(AST::IdentifierExpression& identifier)
 {
-    auto* const* type = readVariable(identifier.identifier());
-    if (type) {
-        inferred(*type);
+    auto* binding = readVariable(identifier.identifier());
+    if (!binding) {
+        typeError(identifier.span(), "unresolved identifier '", identifier.identifier(), "'");
         return;
     }
 
-    typeError(identifier.span(), "unknown identifier: '", identifier.identifier(), "'");
+    if (binding->kind != Binding::Value) {
+        typeError(identifier.span(), "cannot use type '", identifier.identifier(), "' as value");
+        return;
+    }
+
+    inferred(binding->type);
 }
 
 void TypeChecker::visit(AST::CallExpression& call)
@@ -382,7 +611,7 @@ void TypeChecker::visit(AST::CallExpression& call)
     bool isNamedType = is<AST::NamedTypeName>(target);
     bool isParameterizedType = is<AST::ParameterizedTypeName>(target);
     if (isNamedType || isParameterizedType) {
-        Vector<Type*> typeArguments;
+        Vector<const Type*> typeArguments;
         String targetName = [&]() -> String {
             if (isNamedType)
                 return downcast<AST::NamedTypeName>(target).name();
@@ -390,43 +619,78 @@ void TypeChecker::visit(AST::CallExpression& call)
             typeArguments.append(resolve(parameterizedType.elementType()));
             return AST::ParameterizedTypeName::baseToString(parameterizedType.base());
         }();
+
+        auto* targetBinding = isNamedType ? readVariable(targetName) : nullptr;
+        if (targetBinding) {
+            target.m_resolvedType = targetBinding->type;
+            if (targetBinding->kind == Binding::Type) {
+                if (auto* structType = std::get_if<Types::Struct>(targetBinding->type)) {
+                    auto numberOfArguments = call.arguments().size();
+                    auto numberOfFields = structType->fields.size();
+                    if (numberOfArguments && numberOfArguments != numberOfFields) {
+                        const char* errorKind = numberOfArguments < numberOfFields ? "few" : "many";
+                        typeError(call.span(), "struct initializer has too ", errorKind, " inputs: expected ", String::number(numberOfFields), ", found ", String::number(numberOfArguments));
+                        return;
+                    }
+
+                    for (unsigned i = 0; i < numberOfArguments; ++i) {
+                        auto& argument = call.arguments()[i];
+                        auto& member = structType->structure.members()[i];
+                        auto* fieldType = structType->fields.get(member.name());
+                        auto* argumentType = infer(argument);
+                        if (!unify(fieldType, argumentType)) {
+                            typeError(argument.span(), "type in struct initializer does not match struct member type: expected '", *fieldType, "', found '", *argumentType, "'");
+                            return;
+                        }
+                        argument.m_inferredType = fieldType;
+                    }
+                    inferred(targetBinding->type);
+                    return;
+                }
+            }
+
+            if (targetBinding->kind == Binding::Value) {
+                if (auto* functionType = std::get_if<Types::Function>(targetBinding->type)) {
+                    auto numberOfArguments = call.arguments().size();
+                    auto numberOfParameters = functionType->parameters.size();
+                    if (numberOfArguments != numberOfParameters) {
+                        const char* errorKind = numberOfArguments < numberOfParameters ? "few" : "many";
+                        typeError(call.span(), "funtion call has too ", errorKind, " arguments: expected ", String::number(numberOfParameters), ", found ", String::number(numberOfArguments));
+                        return;
+                    }
+
+                    for (unsigned i = 0; i < numberOfArguments; ++i) {
+                        auto& argument = call.arguments()[i];
+                        auto* parameterType = functionType->parameters[i];
+                        auto* argumentType = infer(argument);
+                        if (!unify(parameterType, argumentType)) {
+                            typeError(argument.span(), "type in function call does not match parameter type: expected '", *parameterType, "', found '", *argumentType, "'");
+                            return;
+                        }
+                        argument.m_inferredType = parameterType;
+                    }
+                    inferred(functionType->result);
+                    return;
+                }
+            }
+        }
+
         auto* result = chooseOverload("initializer", call.span(), targetName, call.arguments(), typeArguments);
         if (result) {
             target.m_resolvedType = result;
             return;
         }
 
-        if (isNamedType) {
-            auto* targetType = resolve(target);
-            if (auto* structType = std::get_if<Types::Struct>(targetType)) {
-                auto numberOfArguments = call.arguments().size();
-                auto numberOfFields = structType->fields.size();
-                if (numberOfArguments != numberOfFields) {
-                    const char* errorKind = numberOfArguments < numberOfFields ? "few" : "many";
-                    typeError(call.span(), "struct initializer has too ", errorKind, " inputs: expected ", String::number(numberOfFields), ", found ", String::number(numberOfArguments));
-                    return;
-                }
-
-                for (unsigned i = 0; i < numberOfArguments; ++i) {
-                    auto& argument = call.arguments()[i];
-                    auto& member = structType->structure.members()[i];
-                    auto* fieldType = structType->fields.get(member.name());
-                    auto* argumentType = infer(argument);
-                    if (!unify(fieldType, argumentType)) {
-                        typeError(argument.span(), "type in struct initializer does not match struct member type: expected '", *fieldType, "', found '", *argumentType, "'");
-                        return;
-                    }
-                    argument.m_inferredType = fieldType;
-                }
-                inferred(targetType);
-                return;
-            }
-        }
+        if (targetBinding)
+            typeError(target.span(), "cannot call value of type '", *targetBinding->type, "'");
+        else
+            typeError(target.span(), "unresolved call target '", targetName, "'");
+        return;
     }
 
     if (is<AST::ArrayTypeName>(target)) {
         AST::ArrayTypeName& array = downcast<AST::ArrayTypeName>(target);
-        Type* elementType = nullptr;
+        const Type* elementType = nullptr;
         unsigned elementCount;
 
         if (array.maybeElementType()) {
@@ -440,7 +704,8 @@ void TypeChecker::visit(AST::CallExpression& call)
                 typeError(call.span(), "array count must be greater than 0");
                 return;
             }
-            if (call.arguments().size() != elementCount) {
+            unsigned numberOfArguments = call.arguments().size();
+            if (numberOfArguments && numberOfArguments != elementCount) {
                 const char* errorKind = call.arguments().size() < elementCount ? "few" : "many";
                 typeError(call.span(), "array constructor has too ", errorKind, " elements: expected ", String::number(elementCount), ", found ", String::number(call.arguments().size()));
                 return;
@@ -483,9 +748,7 @@ void TypeChecker::visit(AST::CallExpression& call)
         return;
     }
 
-    // FIXME: add support for user-defined function calls
-    auto* result = resolve(target);
-    inferred(result);
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void TypeChecker::visit(AST::UnaryExpression& unary)
@@ -557,13 +820,18 @@ void TypeChecker::visit(AST::ArrayTypeName& array)
 
 void TypeChecker::visit(AST::NamedTypeName& namedType)
 {
-    auto* const* type = readVariable(namedType.name());
-    if (type) {
-        inferred(*type);
+    auto* binding = readVariable(namedType.name());
+    if (!binding) {
+        typeError(namedType.span(), "unresolved type '", namedType.name(), "'");
         return;
     }
 
-    typeError(namedType.span(), "unknown type: '", namedType.name(), "'");
+    if (binding->kind != Binding::Type) {
+        typeError(namedType.span(), "cannot use value '", namedType.name(), "' as type");
+        return;
+    }
+
+    inferred(binding->type);
 }
 
 void TypeChecker::visit(AST::ParameterizedTypeName& type)
@@ -581,17 +849,49 @@ void TypeChecker::visit(AST::ReferenceTypeName&)
     ASSERT_NOT_REACHED();
 }
 
+void TypeChecker::visitAttributes(AST::Attribute::List& attributes)
+{
+    for (auto& attribute : attributes)
+        AST::Visitor::visit(attribute);
+}
+
 // Private helpers
-void TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAccessExpression& access)
+const Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAccessExpression& access)
 {
     const auto& fieldName = access.fieldName().id();
     auto length = fieldName.length();
+    auto vectorSize = vector.size;
 
+    bool isValid = true;
     const auto& isXYZW = [&](char c) {
-        return c == 'x' || c == 'y' || c == 'z' || c == 'w';
+        switch (c) {
+        case 'x':
+        case 'y':
+            return true;
+        case 'z':
+            isValid &= vectorSize >= 3;
+            return true;
+        case 'w':
+            isValid &= vectorSize == 4;
+            return true;
+        default:
+            return false;
+        }
     };
     const auto& isRGBA = [&](char c) {
-        return c == 'r' || c == 'g' || c == 'b' || c == 'a';
+        switch (c) {
+        case 'r':
+        case 'g':
+            return true;
+        case 'b':
+            isValid &= vectorSize >= 3;
+            return true;
+        case 'a':
+            isValid &= vectorSize == 4;
+            return true;
+        default:
+            return false;
+        }
     };
 
     bool hasXYZW = false;
@@ -604,20 +904,19 @@ void TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAcces
             hasRGBA = true;
         else {
             typeError(access.span(), "invalid vector swizzle character");
-            return;
+            return nullptr;
         }
     }
 
-    if (hasXYZW && hasRGBA) {
+    if (!isValid || (hasRGBA && hasXYZW)) {
         typeError(access.span(), "invalid vector swizzle member");
-        return;
+        return nullptr;
     }
 
     AST::ParameterizedTypeName::Base base;
     switch (length) {
     case 1:
-        inferred(vector.element);
-        return;
+        return vector.element;
     case 2:
         base = AST::ParameterizedTypeName::Base::Vec2;
         break;
@@ -629,20 +928,20 @@ void TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAcces
         break;
     default:
         typeError(access.span(), "invalid vector swizzle size");
-        return;
+        return nullptr;
     }
 
-    inferred(m_types.constructType(base, vector.element));
+    return m_types.constructType(base, vector.element);
 }
 
 template<typename CallArguments>
-Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span, const String& target, CallArguments&& callArguments, const Vector<Type*>& typeArguments)
+const Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
 {
     auto it = m_overloadedOperations.find(target);
     if (it == m_overloadedOperations.end())
         return nullptr;
 
-    Vector<Type*> valueArguments;
+    Vector<const Type*> valueArguments;
     valueArguments.reserveInitialCapacity(callArguments.size());
     for (unsigned i = 0; i < callArguments.size(); ++i) {
         auto* type = infer(callArguments[i]);
@@ -686,7 +985,7 @@ Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span, cons
     return m_types.bottomType();
 }
 
-Type* TypeChecker::infer(AST::Expression& expression)
+const Type* TypeChecker::infer(AST::Expression& expression)
 {
     ASSERT(!m_inferredType);
     AST::Visitor::visit(expression);
@@ -700,13 +999,13 @@ Type* TypeChecker::infer(AST::Expression& expression)
     }
 
     expression.m_inferredType = m_inferredType;
-    Type* inferredType = m_inferredType;
+    const Type* inferredType = m_inferredType;
     m_inferredType = nullptr;
 
     return inferredType;
 }
 
-Type* TypeChecker::resolve(AST::TypeName& type)
+const Type* TypeChecker::resolve(AST::TypeName& type)
 {
     ASSERT(!m_inferredType);
     AST::Visitor::visit(type);
@@ -720,20 +1019,20 @@ Type* TypeChecker::resolve(AST::TypeName& type)
     }
 
     type.m_resolvedType = m_inferredType;
-    Type* inferredType = m_inferredType;
+    const Type* inferredType = m_inferredType;
     m_inferredType = nullptr;
 
     return inferredType;
 }
 
-void TypeChecker::inferred(Type* type)
+void TypeChecker::inferred(const Type* type)
 {
     ASSERT(type);
     ASSERT(!m_inferredType);
     m_inferredType = type;
 }
 
-bool TypeChecker::unify(Type* lhs, Type* rhs)
+bool TypeChecker::unify(const Type* lhs, const Type* rhs)
 {
     if (shouldDumpInferredTypes)
         dataLogLn("[unify] '", *lhs, "' <", RawPointer(lhs), ">  and '", *rhs, "' <", RawPointer(rhs), ">");
@@ -749,9 +1048,19 @@ bool TypeChecker::unify(Type* lhs, Type* rhs)
     return !!conversionRank(rhs, lhs);
 }
 
-bool TypeChecker::isBottom(Type* type) const
+bool TypeChecker::isBottom(const Type* type) const
 {
     return type == m_types.bottomType();
+}
+
+void TypeChecker::introduceType(const String& name, const Type* type)
+{
+    introduceVariable(name, { Binding::Type, type });
+}
+
+void TypeChecker::introduceValue(const String& name, const Type* type)
+{
+    introduceVariable(name, { Binding::Value, type });
 }
 
 template<typename... Arguments>

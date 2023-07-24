@@ -22,6 +22,11 @@ set(MiniBrowser_LIBRARIES
 )
 set(MiniBrowser_FRAMEWORKS WebKit)
 
+if (USE_WPE_BACKEND_PLAYSTATION)
+    set(MiniBrowser_DEFINITIONS USE_WPE_BACKEND_PLAYSTATION)
+    list(APPEND MiniBrowser_LIBRARIES WebKit::WPEToolingBackends)
+endif ()
+
 WEBKIT_EXECUTABLE_DECLARE(MiniBrowser)
 WEBKIT_EXECUTABLE(MiniBrowser)
 

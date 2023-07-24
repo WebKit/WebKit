@@ -104,6 +104,12 @@ class BitstreamReader {
   // unspecified value.
   int ReadSignedExponentialGolomb();
 
+  // Reads a LEB128 encoded value. The value will be considered invalid if it
+  // can't fit into a uint64_t.
+  uint64_t ReadLeb128();
+
+  std::string ReadString(int num_bytes);
+
  private:
   void set_last_read_is_verified(bool value) const;
 

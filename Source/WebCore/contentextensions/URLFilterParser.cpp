@@ -371,7 +371,7 @@ URLFilterParser::~URLFilterParser() = default;
 
 URLFilterParser::ParseStatus URLFilterParser::addPattern(StringView pattern, bool patternIsCaseSensitive, uint64_t patternId)
 {
-    if (!pattern.isAllASCII())
+    if (!pattern.containsOnlyASCII())
         return NonASCII;
     if (pattern.isEmpty())
         return EmptyPattern;

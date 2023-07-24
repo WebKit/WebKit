@@ -95,6 +95,10 @@ def _ParseArgs():
                       action='store_true',
                       default=False,
                       help='Use goma to build.')
+  parser.add_argument('--use-remoteexec',
+                      action='store_true',
+                      default=False,
+                      help='Use RBE to build.')
   parser.add_argument(
       '--extra-gn-args',
       default=[],
@@ -149,7 +153,7 @@ def _ParseArchitecture(architectures):
 
 def BuildWebRTC(output_dir, target_environment, target_arch, flavor,
                 gn_target_name, ios_deployment_target, libvpx_build_vp9,
-                use_goma, extra_gn_args):
+                use_goma, use_remoteexec, extra_gn_args):
   gn_args = [
       'target_os="ios"',
       'ios_enable_code_signing=false',
@@ -176,6 +180,7 @@ def BuildWebRTC(output_dir, target_environment, target_arch, flavor,
 
   gn_args.append('use_lld=true')
   gn_args.append('use_goma=' + ('true' if use_goma else 'false'))
+  gn_args.append('use_remoteexec=' + ('true' if use_remoteexec else 'false'))
   gn_args.append('rtc_enable_objc_symbol_export=true')
 
   args_string = ' '.join(gn_args + extra_gn_args)
@@ -192,12 +197,12 @@ def BuildWebRTC(output_dir, target_environment, target_arch, flavor,
   logging.info('Building target: %s', gn_target_name)
 
   cmd = [
-      os.path.join(find_depot_tools.DEPOT_TOOLS_PATH, 'ninja'),
+      os.path.join(SRC_DIR, 'third_party', 'ninja', 'ninja'),
       '-C',
       output_dir,
       gn_target_name,
   ]
-  if use_goma:
+  if use_goma or use_remoteexec:
     cmd.extend(['-j', '200'])
   _RunCommand(cmd)
 
@@ -237,7 +242,7 @@ def main():
       lib_paths.append(lib_path)
       BuildWebRTC(lib_path, environment, arch, args.build_config,
                   gn_target_name, IOS_DEPLOYMENT_TARGET[environment],
-                  LIBVPX_BUILD_VP9, args.use_goma, gn_args)
+                  LIBVPX_BUILD_VP9, args.use_goma, args.use_remoteexec, gn_args)
     all_lib_paths.extend(lib_paths)
 
     # Combine the slices.

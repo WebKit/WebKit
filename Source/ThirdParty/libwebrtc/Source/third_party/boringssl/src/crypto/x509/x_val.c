@@ -1,4 +1,3 @@
-/* crypto/asn1/x_val.c */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -64,8 +63,8 @@
 
 
 ASN1_SEQUENCE(X509_VAL) = {
-        ASN1_SIMPLE(X509_VAL, notBefore, ASN1_TIME),
-        ASN1_SIMPLE(X509_VAL, notAfter, ASN1_TIME)
+    ASN1_SIMPLE(X509_VAL, notBefore, ASN1_TIME),
+    ASN1_SIMPLE(X509_VAL, notAfter, ASN1_TIME),
 } ASN1_SEQUENCE_END(X509_VAL)
 
-IMPLEMENT_ASN1_FUNCTIONS(X509_VAL)
+IMPLEMENT_ASN1_FUNCTIONS_const(X509_VAL)

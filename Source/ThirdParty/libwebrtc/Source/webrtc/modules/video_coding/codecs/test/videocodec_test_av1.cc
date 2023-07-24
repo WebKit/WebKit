@@ -18,7 +18,6 @@
 #include "media/engine/internal_decoder_factory.h"
 #include "media/engine/internal_encoder_factory.h"
 #include "media/engine/simulcast_encoder_adapter.h"
-#include "modules/video_coding/codecs/av1/libaom_av1_decoder.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 

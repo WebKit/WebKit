@@ -349,9 +349,10 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
         WASM_PARSER_FAIL_IF(!isValidOpType(op), "invalid opcode ", op);
 
         m_currentOpcode = static_cast<OpType>(op);
-
+#if ENABLE(WEBASSEMBLY_B3JIT)
         if (UNLIKELY(Options::dumpWasmOpcodeStatistics()))
             WasmOpcodeCounter::singleton().increment(m_currentOpcode);
+#endif
 
         if (verbose) {
             dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawHex(op), ", ", makeString(static_cast<OpType>(op)), " at offset: ", RawHex(m_offset));
@@ -690,6 +691,9 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
 
         return { };
     };
+
+    if (isRelaxedSIMDOperation(op))
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyRelaxedSIMD(), "relaxed simd instructions not supported");
 
     switch (op) {
     case SIMDLaneOperation::Const: {
@@ -1041,6 +1045,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::ExtendHigh:
     case SIMDLaneOperation::ExtendLow:
     case SIMDLaneOperation::TruncSat:
+    case SIMDLaneOperation::RelaxedTruncSat:
     case SIMDLaneOperation::Not:
     case SIMDLaneOperation::Demote:
     case SIMDLaneOperation::Promote:
@@ -1144,6 +1149,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::Pmin:
     case SIMDLaneOperation::Or:
     case SIMDLaneOperation::Swizzle:
+    case SIMDLaneOperation::RelaxedSwizzle:
     case SIMDLaneOperation::Xor:
     case SIMDLaneOperation::Narrow:
     case SIMDLaneOperation::AddSat:
@@ -1163,6 +1169,28 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
         if constexpr (Context::tierSupportsSIMD) {
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addSIMDV_VV(op, SIMDInfo { lane, signMode }, a, b, result));
+            m_expressionStack.constructAndAppend(Types::V128, result);
+            return { };
+        } else
+            return pushUnreachable(Types::V128);
+    }
+    case SIMDLaneOperation::RelaxedMAdd:
+    case SIMDLaneOperation::RelaxedNMAdd: {
+        if constexpr (!isReachable)
+            return { };
+        TypedExpression a;
+        TypedExpression b;
+        TypedExpression c;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(c, "vector argument");
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(b, "vector argument");
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(a, "vector argument");
+        WASM_VALIDATOR_FAIL_IF(a.type() != Types::V128, "type mismatch for argument 0");
+        WASM_VALIDATOR_FAIL_IF(b.type() != Types::V128, "type mismatch for argument 1");
+        WASM_VALIDATOR_FAIL_IF(c.type() != Types::V128, "type mismatch for argument 2");
+
+        if constexpr (Context::tierSupportsSIMD) {
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addSIMDRelaxedFMA(op, SIMDInfo { lane, signMode }, a, b, c, result));
             m_expressionStack.constructAndAppend(Types::V128, result);
             return { };
         } else
@@ -1871,6 +1899,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             uint32_t argc;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(argc), "can't get argument count for array.new_fixed");
 
+            WASM_VALIDATOR_FAIL_IF(argc > maxArrayNewFixedArgs, "array_new_fixed can take at most ", maxArrayNewFixedArgs, " operands. Got ", argc);
+
             // If more arguments are expected than the current stack size, that's an error
             WASM_VALIDATOR_FAIL_IF(argc > m_expressionStack.size(), "array_new_fixed: found ", m_expressionStack.size(), " operands on stack; expected ", argc, " operands");
 
@@ -2228,9 +2258,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!parseVarUInt32(extOp), "can't parse atomic extended opcode");
 
         ExtAtomicOpType op = static_cast<ExtAtomicOpType>(extOp);
-
+#if ENABLE(WEBASSEMBLY_B3JIT)
         if (UNLIKELY(Options::dumpWasmOpcodeStatistics()))
             WasmOpcodeCounter::singleton().increment(op);
+#endif
 
         switch (op) {
 #define CREATE_CASE(name, id, b3op, inc, memoryType) case ExtAtomicOpType::name: return atomicLoad(op, Types::memoryType);
@@ -3293,9 +3324,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(extOp), "can't parse extended GC opcode");
 
         ExtGCOpType op = static_cast<ExtGCOpType>(extOp);
-
+#if ENABLE(WEBASSEMBLY_B3JIT)
         if (UNLIKELY(Options::dumpWasmOpcodeStatistics()))
             WasmOpcodeCounter::singleton().increment(op);
+#endif
 
         switch (op) {
         case ExtGCOpType::I31New:

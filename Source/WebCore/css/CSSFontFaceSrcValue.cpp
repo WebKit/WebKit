@@ -104,6 +104,13 @@ std::unique_ptr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(Sc
             return nullptr;
     }
 
+    if (!m_technologies.isEmpty()) {
+        for (auto technology : m_technologies) {
+            if (!FontCustomPlatformData::supportsTechnology(technology))
+                return nullptr;
+        }
+    }
+
     auto request = context.fontLoadRequest(m_location.resolvedURL.string(), isFormatSVG, isInitiatingElementInUserAgentShadowTree, m_loadedFromOpaqueSource);
     if (auto* cachedRequest = dynamicDowncast<CachedFontLoadRequest>(request.get()))
         m_cachedFont = &cachedRequest->cachedFont();

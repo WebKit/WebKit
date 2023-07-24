@@ -51,7 +51,7 @@ void RemoteCommandListener::setCreationFunction(CreationFunction&& function)
 
 void RemoteCommandListener::resetCreationFunction()
 {
-    remoteCommandListenerCreationFunction() = [] (RemoteCommandListenerClient& client) {
+    remoteCommandListenerCreationFunction() = [] (RemoteCommandListenerClient& client) -> RefPtr<RemoteCommandListener> {
 #if PLATFORM(COCOA)
         return RemoteCommandListenerCocoa::create(client);
 #elif USE(GLIB) && ENABLE(MEDIA_SESSION)
@@ -63,7 +63,7 @@ void RemoteCommandListener::resetCreationFunction()
     };
 }
 
-std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteCommandListenerClient& client)
+RefPtr<RemoteCommandListener> RemoteCommandListener::create(RemoteCommandListenerClient& client)
 {
     if (!remoteCommandListenerCreationFunction())
         resetCreationFunction();

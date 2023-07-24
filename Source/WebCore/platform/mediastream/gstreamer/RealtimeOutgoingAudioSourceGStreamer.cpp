@@ -88,8 +88,6 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         m_encoder = makeGStreamerElement("alawenc", nullptr);
     else if (encoding == "pcmu"_s)
         m_encoder = makeGStreamerElement("mulawenc", nullptr);
-    else if (encoding == "isac"_s)
-        m_encoder = makeGStreamerElement("isacenc", nullptr);
     else {
         GST_ERROR_OBJECT(m_bin.get(), "Unsupported outgoing audio encoding: %s", encodingName);
         return false;
@@ -194,6 +192,8 @@ void RealtimeOutgoingAudioSourceGStreamer::linkOutgoingSource()
     gst_pad_link(srcPad.get(), sinkPad.get());
     g_object_set(m_inputSelector.get(), "active-pad", sinkPad.get(), nullptr);
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

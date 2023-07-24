@@ -11,24 +11,7 @@
 #ifndef MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_PORTAL_REQUEST_RESPONSE_H_
 #define MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_PORTAL_REQUEST_RESPONSE_H_
 
-namespace webrtc {
-namespace xdg_portal {
+// TODO(bugs.webrtc.org/14187): remove when all users are gone
+#include "modules/portal/portal_request_response.h"
 
-// Contains type of responses that can be observed when making a request to
-// a desktop portal interface.
-enum class RequestResponse {
-  // Unknown, the initialized status.
-  kUnknown,
-  // Success, the request is carried out.
-  kSuccess,
-  // The user cancelled the interaction.
-  kUserCancelled,
-  // The user interaction was ended in some other way.
-  kError,
-
-  kMaxValue = kError,
-};
-
-}  // namespace xdg_portal
-}  // namespace webrtc
 #endif  // MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_PORTAL_REQUEST_RESPONSE_H_

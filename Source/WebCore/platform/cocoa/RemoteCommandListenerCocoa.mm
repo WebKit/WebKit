@@ -58,9 +58,9 @@ static std::optional<MRMediaRemoteCommand> mediaRemoteCommandForPlatformCommand(
     return makeOptionalFromPointer(map.tryGet(command));
 }
 
-std::unique_ptr<RemoteCommandListenerCocoa> RemoteCommandListenerCocoa::create(RemoteCommandListenerClient& client)
+Ref<RemoteCommandListenerCocoa> RemoteCommandListenerCocoa::create(RemoteCommandListenerClient& client)
 {
-    return makeUnique<RemoteCommandListenerCocoa>(client);
+    return adoptRef(*new RemoteCommandListenerCocoa(client));
 }
 
 const RemoteCommandListener::RemoteCommandsSet& RemoteCommandListenerCocoa::defaultCommands()

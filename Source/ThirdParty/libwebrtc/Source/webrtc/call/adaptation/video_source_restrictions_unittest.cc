@@ -126,4 +126,21 @@ TEST(VideoSourceRestrictions,
   EXPECT_FALSE(DidRestrictionsDecrease(kHd, k15fps));
 }
 
+TEST(VideoSourceRestrictions, UpdateMin) {
+  VideoSourceRestrictions one(kHdPixels / 2, kHdPixels, 7.0);
+  VideoSourceRestrictions two(kHdPixels, kHdPixels / 3, 15.0);
+
+  one.UpdateMin(two);
+
+  EXPECT_EQ(one.max_pixels_per_frame(), kHdPixels / 2);
+  EXPECT_EQ(one.target_pixels_per_frame(), kHdPixels / 3);
+  EXPECT_EQ(one.max_frame_rate(), 7.0);
+
+  two.UpdateMin(one);
+
+  EXPECT_EQ(two.max_pixels_per_frame(), kHdPixels / 2);
+  EXPECT_EQ(two.target_pixels_per_frame(), kHdPixels / 3);
+  EXPECT_EQ(two.max_frame_rate(), 7.0);
+}
+
 }  // namespace webrtc

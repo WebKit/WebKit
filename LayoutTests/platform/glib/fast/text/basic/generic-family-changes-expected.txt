@@ -37,7 +37,7 @@ layer at (0,0) size 800x305
             RenderText {#text} at (0,0) size 100x17
               text run at (0,0) width 100: "Should be 16px"
       RenderBlock {P} at (0,259) size 784x22
-        RenderInline {TT} at (0,0) size 124x15
-          RenderInline {SPAN} at (0,0) size 124x21
-            RenderText {#text} at (0,0) size 124x21
-              text run at (0,0) width 124: "Should be 19px"
+        RenderInline {TT} at (0,0) size 125x15
+          RenderInline {SPAN} at (0,0) size 125x21
+            RenderText {#text} at (0,0) size 125x21
+              text run at (0,0) width 125: "Should be 19px"

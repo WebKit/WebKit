@@ -2147,6 +2147,9 @@
     "imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-fonts/discrete-no-interpolation.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display.html": [
         "slow"
     ],
@@ -2232,6 +2235,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/selectors/focus-visible-018-2.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/selectors/invalidation/media-loading-pseudo-classes-in-has.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/selectors/media/media-loading-state.html": [
@@ -4070,6 +4076,18 @@
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus.tentative.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-hide-hide.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-hide-hover.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-hide-show.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-hide-toggle.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute.html": [
         "slow"
     ],
@@ -4080,6 +4098,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/popovers/popover-target-action-hover.tentative.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_003.htm": [
@@ -4515,9 +4536,6 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/user-activation/activation-thru-contextmenu-event.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html": [
@@ -5210,13 +5228,25 @@
     "imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-twice.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerevent_movementxy.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_received_once.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_invalid_pointerid.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-auto-child-none_touch.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-pan-x-child-pan-x_touch.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-keyboard.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-right-css_touch.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-y-css_touch.html": [
@@ -5234,7 +5264,16 @@
     "imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/quirks/hashless-hex-color.html": [
+    "imported/w3c/web-platform-tests/quirks/hashless-hex-color/limited-quirks.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/quirks/hashless-hex-color/no-quirks.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/quirks/hashless-hex-color/quirks.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/quirks/unitless-length/no-quirks.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/requestidlecallback/callback-iframe.html": [
@@ -6156,6 +6195,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-output.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-with-navigation.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html": [

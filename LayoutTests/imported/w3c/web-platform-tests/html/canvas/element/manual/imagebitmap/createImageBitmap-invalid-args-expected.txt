@@ -34,10 +34,10 @@ PASS createImageBitmap with a vector HTMLImageElement source and a value of 0 in
 PASS createImageBitmap with a vector HTMLImageElement source and a value of 0 in resizeHeight
 PASS createImageBitmap with a vector HTMLImageElement source and a value between 0 and 1 in resizeWidth
 PASS createImageBitmap with a vector HTMLImageElement source and a value between 0 and 1 in resizeHeight
-FAIL createImageBitmap with a bitmap SVGImageElement source and sw set to 0 promise_rejects_js: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected instance of function "function RangeError() {
+FAIL createImageBitmap with a bitmap SVGImageElement source and sw set to 0 promise_rejects_js: function "function() { throw e }" threw object "TypeError: Type error" ("TypeError") expected instance of function "function RangeError() {
     [native code]
 }" ("RangeError")
-FAIL createImageBitmap with a bitmap SVGImageElement source and sh set to 0 promise_rejects_js: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected instance of function "function RangeError() {
+FAIL createImageBitmap with a bitmap SVGImageElement source and sh set to 0 promise_rejects_js: function "function() { throw e }" threw object "TypeError: Type error" ("TypeError") expected instance of function "function RangeError() {
     [native code]
 }" ("RangeError")
 FAIL createImageBitmap with a bitmap SVGImageElement source and oversized (unallocatable) crop region assert_throws_dom: function "() => { throw e }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
@@ -45,10 +45,10 @@ FAIL createImageBitmap with a bitmap SVGImageElement source and a value of 0 int
 FAIL createImageBitmap with a bitmap SVGImageElement source and a value of 0 in resizeHeight assert_throws_dom: function "() => { throw e }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
 FAIL createImageBitmap with a bitmap SVGImageElement source and a value between 0 and 1 in resizeWidth assert_throws_dom: function "() => { throw e }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
 FAIL createImageBitmap with a bitmap SVGImageElement source and a value between 0 and 1 in resizeHeight assert_throws_dom: function "() => { throw e }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL createImageBitmap with a vector SVGImageElement source and sw set to 0 promise_rejects_js: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected instance of function "function RangeError() {
+FAIL createImageBitmap with a vector SVGImageElement source and sw set to 0 promise_rejects_js: function "function() { throw e }" threw object "TypeError: Type error" ("TypeError") expected instance of function "function RangeError() {
     [native code]
 }" ("RangeError")
-FAIL createImageBitmap with a vector SVGImageElement source and sh set to 0 promise_rejects_js: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected instance of function "function RangeError() {
+FAIL createImageBitmap with a vector SVGImageElement source and sh set to 0 promise_rejects_js: function "function() { throw e }" threw object "TypeError: Type error" ("TypeError") expected instance of function "function RangeError() {
     [native code]
 }" ("RangeError")
 FAIL createImageBitmap with a vector SVGImageElement source and oversized (unallocatable) crop region assert_throws_dom: function "() => { throw e }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11

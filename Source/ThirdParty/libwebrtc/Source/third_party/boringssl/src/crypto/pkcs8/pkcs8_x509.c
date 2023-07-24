@@ -90,62 +90,16 @@ int pkcs12_iterations_acceptable(uint64_t iterations) {
   return 0 < iterations && iterations <= kIterationsLimit;
 }
 
-// Minor tweak to operation: zero private key data
-static int pkey_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
-                   void *exarg) {
-  // Since the structure must still be valid use ASN1_OP_FREE_PRE
-  if (operation == ASN1_OP_FREE_PRE) {
-    PKCS8_PRIV_KEY_INFO *key = (PKCS8_PRIV_KEY_INFO *)*pval;
-    if (key->pkey) {
-      OPENSSL_cleanse(key->pkey->data, key->pkey->length);
-    }
-  }
-  return 1;
-}
+ASN1_SEQUENCE(PKCS8_PRIV_KEY_INFO) = {
+    ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, version, ASN1_INTEGER),
+    ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, pkeyalg, X509_ALGOR),
+    ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, pkey, ASN1_OCTET_STRING),
+    ASN1_IMP_SET_OF_OPT(PKCS8_PRIV_KEY_INFO, attributes, X509_ATTRIBUTE, 0),
+} ASN1_SEQUENCE_END(PKCS8_PRIV_KEY_INFO)
 
-ASN1_SEQUENCE_cb(PKCS8_PRIV_KEY_INFO, pkey_cb) = {
-  ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, version, ASN1_INTEGER),
-  ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, pkeyalg, X509_ALGOR),
-  ASN1_SIMPLE(PKCS8_PRIV_KEY_INFO, pkey, ASN1_OCTET_STRING),
-  ASN1_IMP_SET_OF_OPT(PKCS8_PRIV_KEY_INFO, attributes, X509_ATTRIBUTE, 0)
-} ASN1_SEQUENCE_END_cb(PKCS8_PRIV_KEY_INFO, PKCS8_PRIV_KEY_INFO)
+IMPLEMENT_ASN1_FUNCTIONS_const(PKCS8_PRIV_KEY_INFO)
 
-IMPLEMENT_ASN1_FUNCTIONS(PKCS8_PRIV_KEY_INFO)
-
-int PKCS8_pkey_set0(PKCS8_PRIV_KEY_INFO *priv, ASN1_OBJECT *aobj, int version,
-                    int ptype, void *pval, uint8_t *penc, int penclen) {
-  if (version >= 0 &&
-      !ASN1_INTEGER_set(priv->version, version)) {
-    return 0;
-  }
-
-  if (!X509_ALGOR_set0(priv->pkeyalg, aobj, ptype, pval)) {
-    return 0;
-  }
-
-  if (penc != NULL) {
-    ASN1_STRING_set0(priv->pkey, penc, penclen);
-  }
-
-  return 1;
-}
-
-int PKCS8_pkey_get0(ASN1_OBJECT **ppkalg, const uint8_t **pk, int *ppklen,
-                    X509_ALGOR **pa, PKCS8_PRIV_KEY_INFO *p8) {
-  if (ppkalg) {
-    *ppkalg = p8->pkeyalg->algorithm;
-  }
-  if (pk) {
-    *pk = ASN1_STRING_data(p8->pkey);
-    *ppklen = ASN1_STRING_length(p8->pkey);
-  }
-  if (pa) {
-    *pa = p8->pkeyalg;
-  }
-  return 1;
-}
-
-EVP_PKEY *EVP_PKCS82PKEY(PKCS8_PRIV_KEY_INFO *p8) {
+EVP_PKEY *EVP_PKCS82PKEY(const PKCS8_PRIV_KEY_INFO *p8) {
   uint8_t *der = NULL;
   int der_len = i2d_PKCS8_PRIV_KEY_INFO(p8, &der);
   if (der_len < 0) {
@@ -166,7 +120,7 @@ EVP_PKEY *EVP_PKCS82PKEY(PKCS8_PRIV_KEY_INFO *p8) {
   return ret;
 }
 
-PKCS8_PRIV_KEY_INFO *EVP_PKEY2PKCS8(EVP_PKEY *pkey) {
+PKCS8_PRIV_KEY_INFO *EVP_PKEY2PKCS8(const EVP_PKEY *pkey) {
   CBB cbb;
   uint8_t *der = NULL;
   size_t der_len;
@@ -380,7 +334,6 @@ static int parse_bag_attributes(CBS *attrs, uint8_t **out_friendly_name,
       // Convert the friendly name to UTF-8.
       CBB cbb;
       if (!CBB_init(&cbb, CBS_len(&value))) {
-        OPENSSL_PUT_ERROR(PKCS8, ERR_R_MALLOC_FAILURE);
         goto err;
       }
       while (CBS_len(&value) != 0) {
@@ -393,7 +346,6 @@ static int parse_bag_attributes(CBS *attrs, uint8_t **out_friendly_name,
         }
       }
       if (!CBB_finish(&cbb, out_friendly_name, out_friendly_name_len)) {
-        OPENSSL_PUT_ERROR(PKCS8, ERR_R_MALLOC_FAILURE);
         CBB_cleanup(&cbb);
         goto err;
       }
@@ -828,7 +780,9 @@ PKCS12* d2i_PKCS12_bio(BIO *bio, PKCS12 **out_p12) {
   }
 
   for (;;) {
-    int n = BIO_read(bio, &buf->data[used], buf->length - used);
+    size_t max_read = buf->length - used;
+    int n = BIO_read(bio, &buf->data[used],
+                     max_read > INT_MAX ? INT_MAX : (int)max_read);
     if (n < 0) {
       if (used == 0) {
         goto out;
@@ -888,7 +842,6 @@ int i2d_PKCS12(const PKCS12 *p12, uint8_t **out) {
   if (*out == NULL) {
     *out = OPENSSL_malloc(p12->ber_len);
     if (*out == NULL) {
-      OPENSSL_PUT_ERROR(PKCS8, ERR_R_MALLOC_FAILURE);
       return -1;
     }
     OPENSSL_memcpy(*out, p12->ber_bytes, p12->ber_len);
@@ -927,7 +880,6 @@ int PKCS12_parse(const PKCS12 *p12, const char *password, EVP_PKEY **out_pkey,
   if (!ca_certs) {
     ca_certs = sk_X509_new_null();
     if (ca_certs == NULL) {
-      OPENSSL_PUT_ERROR(PKCS8, ERR_R_MALLOC_FAILURE);
       return 0;
     }
     ca_certs_alloced = 1;
@@ -993,8 +945,8 @@ int PKCS12_verify_mac(const PKCS12 *p12, const char *password,
 
 // add_bag_attributes adds the bagAttributes field of a SafeBag structure,
 // containing the specified friendlyName and localKeyId attributes.
-static int add_bag_attributes(CBB *bag, const char *name, const uint8_t *key_id,
-                              size_t key_id_len) {
+static int add_bag_attributes(CBB *bag, const char *name, size_t name_len,
+                              const uint8_t *key_id, size_t key_id_len) {
   if (name == NULL && key_id_len == 0) {
     return 1;  // Omit the OPTIONAL SET.
   }
@@ -1003,7 +955,7 @@ static int add_bag_attributes(CBB *bag, const char *name, const uint8_t *key_id,
   if (!CBB_add_asn1(bag, &attrs, CBS_ASN1_SET)) {
     return 0;
   }
-  if (name != NULL) {
+  if (name_len != 0) {
     // See https://tools.ietf.org/html/rfc2985, section 5.5.1.
     if (!CBB_add_asn1(&attrs, &attr, CBS_ASN1_SEQUENCE) ||
         !CBB_add_asn1(&attr, &oid, CBS_ASN1_OBJECT) ||
@@ -1014,7 +966,7 @@ static int add_bag_attributes(CBB *bag, const char *name, const uint8_t *key_id,
     }
     // Convert the friendly name to a BMPString.
     CBS name_cbs;
-    CBS_init(&name_cbs, (const uint8_t *)name, strlen(name));
+    CBS_init(&name_cbs, (const uint8_t *)name, name_len);
     while (CBS_len(&name_cbs) != 0) {
       uint32_t c;
       if (!cbs_get_utf8(&name_cbs, &c) ||
@@ -1059,10 +1011,24 @@ static int add_cert_bag(CBB *cbb, X509 *cert, const char *name,
   }
   uint8_t *buf;
   int len = i2d_X509(cert, NULL);
+
+  int int_name_len = 0;
+  const char *cert_name = (const char *)X509_alias_get0(cert, &int_name_len);
+  size_t name_len = int_name_len;
+  if (name) {
+    if (name_len != 0) {
+      OPENSSL_PUT_ERROR(PKCS8, PKCS8_R_AMBIGUOUS_FRIENDLY_NAME);
+      return 0;
+    }
+    name_len = strlen(name);
+  } else {
+    name = cert_name;
+  }
+
   if (len < 0 ||
       !CBB_add_space(&cert_value, &buf, (size_t)len) ||
       i2d_X509(cert, &buf) < 0 ||
-      !add_bag_attributes(&bag, name, key_id, key_id_len) ||
+      !add_bag_attributes(&bag, name, name_len, key_id, key_id_len) ||
       !CBB_flush(cbb)) {
     return 0;
   }
@@ -1161,7 +1127,7 @@ PKCS12 *PKCS12_create(const char *password, const char *name,
     cert_nid = NID_pbe_WithSHA1And40BitRC2_CBC;
   }
   if (iterations == 0) {
-    iterations = PKCS5_DEFAULT_ITERATIONS;
+    iterations = PKCS12_DEFAULT_ITER;
   }
   if (mac_iterations == 0) {
     mac_iterations = 1;
@@ -1180,7 +1146,7 @@ PKCS12 *PKCS12_create(const char *password, const char *name,
   }
 
   // PKCS#12 is a very confusing recursive data format, built out of another
-  // recursive data format. Section 5.1 of RFC7292 describes the encoding
+  // recursive data format. Section 5.1 of RFC 7292 describes the encoding
   // algorithm, but there is no clear overview. A quick summary:
   //
   // PKCS#7 defines a ContentInfo structure, which is a overgeneralized typed
@@ -1323,7 +1289,11 @@ PKCS12 *PKCS12_create(const char *password, const char *name,
         goto err;
       }
     }
-    if (!add_bag_attributes(&bag, name, key_id, key_id_len) ||
+    size_t name_len = 0;
+    if (name) {
+      name_len = strlen(name);
+    }
+    if (!add_bag_attributes(&bag, name, name_len, key_id, key_id_len) ||
         !CBB_flush(&content_infos)) {
       goto err;
     }

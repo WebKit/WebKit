@@ -39,12 +39,12 @@ static constexpr Seconds kWaitForAbsenceTimeout = 300_ms;
 struct MockTestMessageWithConnection {
     static constexpr bool isSync = false;
     static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
-    const auto& arguments() { return m_arguments; }
-    MockTestMessageWithConnection(const IPC::Connection::Handle& handle)
-        : m_arguments(handle)
+    auto&& arguments() { return WTFMove(m_arguments); }
+    MockTestMessageWithConnection(IPC::Connection::Handle&& handle)
+        : m_arguments(WTFMove(handle))
     {
     }
-    std::tuple<const IPC::Connection::Handle&> m_arguments;
+    std::tuple<IPC::Connection::Handle&&> m_arguments;
 };
 
 namespace {
@@ -72,7 +72,7 @@ TEST_F(SimpleConnectionTest, CreateClientConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
+    Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(identifiers->client) });
     connection->invalidate();
 }
 
@@ -81,7 +81,7 @@ TEST_F(SimpleConnectionTest, ConnectLocalConnection)
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
     Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
-    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
+    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(identifiers->client) });
     serverConnection->open(m_mockServerClient);
     clientConnection->open(m_mockClientClient);
     serverConnection->invalidate();
@@ -285,7 +285,7 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
         auto handle = decoder.decode<IPC::Connection::Handle>();
         if (!handle)
             return false;
-        Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { handle->leakSendRight() });
+        Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(*handle) });
         MockConnectionClient mockClientClient;
         clientConnection->open(mockClientClient);
         EXPECT_TRUE(mockClientClient.waitForDidClose(kDefaultWaitForTimeout)) << destinationID;
@@ -304,6 +304,30 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
     }
     while (done.size() < 800)
         RunLoop::current().cycle();
+}
+
+// DISABLED: currently cannot test that wait on unopened connection causes InvalidConnection,
+// since that will crash. The semantics are that isValid() == true for unopened connection,
+// which doesn't make much sense.
+TEST_P(ConnectionTestABBA, DISABLED_UnopenedWaitForAndDispatchImmediatelyIsInvalidConnection)
+{
+    IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(0, kWaitForAbsenceTimeout);
+    EXPECT_EQ(IPC::Error::InvalidConnection, error);
+}
+
+TEST_P(ConnectionTestABBA, InvalidatedWaitForAndDispatchImmediatelyIsInvalidConnection)
+{
+    ASSERT_TRUE(openA());
+    a()->invalidate();
+    IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(0, kWaitForAbsenceTimeout);
+    EXPECT_EQ(IPC::Error::InvalidConnection, error);
+}
+
+TEST_P(ConnectionTestABBA, UnsentWaitForAndDispatchImmediatelyIsTimeout)
+{
+    ASSERT_TRUE(openA());
+    IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(0, kWaitForAbsenceTimeout);
+    EXPECT_EQ(IPC::Error::Timeout, error);
 }
 
 template<typename C>
@@ -545,6 +569,43 @@ TEST_P(ConnectionRunLoopTest, InvalidSendWithAsyncReplyDispatchesCancelHandlerOn
         RunLoop::current().cycle();
     EXPECT_EQ(reply, 0u);
     semaphore.signal();
+    localReferenceBarrier();
+}
+
+TEST_P(ConnectionRunLoopTest, RunLoopWaitForAndDispatchImmediately)
+{
+    ASSERT_TRUE(openA());
+
+    for (uint64_t i = 0u; i < 55u; ++i)
+        a()->send(MockTestMessage1 { }, i);
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    runLoop->dispatch([&] {
+        ASSERT_TRUE(openB());
+        for (uint64_t i = 100u; i < 160u; ++i)
+            b()->send(MockTestMessage1 { }, i);
+
+        for (uint64_t i = 0u; i < 55u; ++i) {
+            IPC::Error error = b()->waitForAndDispatchImmediately<MockTestMessage1>(i, kDefaultWaitForTimeout);
+            ASSERT_EQ(IPC::Error::NoError, error);
+
+            auto message = bClient().waitForMessage(0_s);
+            EXPECT_EQ(message.messageName, MockTestMessage1::name());
+            EXPECT_EQ(message.destinationID, i);
+        }
+    });
+    for (uint64_t i = 100u; i < 160u; ++i) {
+        IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(i, kDefaultWaitForTimeout);
+        ASSERT_EQ(IPC::Error::NoError, error);
+
+        auto message = aClient().waitForMessage(0_s);
+        EXPECT_EQ(message.messageName, MockTestMessage1::name());
+        EXPECT_EQ(message.destinationID, i);
+    }
+    runLoop->dispatch([&] {
+        b()->invalidate();
+    });
+
     localReferenceBarrier();
 }
 

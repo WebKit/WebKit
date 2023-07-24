@@ -34,6 +34,22 @@ class ContextEGL : public ContextGL
   private:
     std::shared_ptr<RendererEGL> mRendererEGL;
     std::unique_ptr<ExternalContextState> mExtState;
+
+    // Used to restore the default FBO's ID on unmaking an external context
+    // current, as when making an external context current ANGLE sets the
+    // default FBO's ID to that bound in the external context.
+    GLuint mPrevDefaultFramebufferID = 0;
+
+    // onMakeCurrent() can be called when this context is already current, which
+    // introduces complexities for the case where this context is wrapping an
+    // external context. This variable is used to ensure that in this case we
+    // save state from the native context only when first transitioning this
+    // context to be current. It is true for the duration of time between an
+    // onMakeCurrent() call and an onUnMakeCurrent() call (note: there is no
+    // "nesting" of onUnMakeCurrent() calls, i.e., no matter how many
+    // onMakeCurrent() calls have occurred consecutively, an onUnMakeCurrent()
+    // call transitions this context away from being current).
+    bool mIsCurrent = false;
 };
 }  // namespace rx
 

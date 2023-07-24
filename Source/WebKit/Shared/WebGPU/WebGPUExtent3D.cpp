@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,20 +30,20 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUExtent3D.h>
+#include <WebCore/WebGPUExtent3D.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<Extent3DDict> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::Extent3DDict& extent3DDict)
+std::optional<Extent3DDict> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Extent3DDict& extent3DDict)
 {
     return { { extent3DDict.width, extent3DDict.height, extent3DDict.depthOrArrayLayers } };
 }
 
-std::optional<Extent3D> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::Extent3D& extent3D)
+std::optional<Extent3D> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Extent3D& extent3D)
 {
-    return WTF::switchOn(extent3D, [] (const Vector<PAL::WebGPU::IntegerCoordinate>& vector) -> std::optional<Extent3D> {
+    return WTF::switchOn(extent3D, [] (const Vector<WebCore::WebGPU::IntegerCoordinate>& vector) -> std::optional<Extent3D> {
         return { { vector } };
-    }, [this] (const PAL::WebGPU::Extent3DDict& extent3DDict) -> std::optional<Extent3D> {
+    }, [this] (const WebCore::WebGPU::Extent3DDict& extent3DDict) -> std::optional<Extent3D> {
         auto extent3D = convertToBacking(extent3DDict);
         if (!extent3D)
             return std::nullopt;
@@ -51,16 +51,16 @@ std::optional<Extent3D> ConvertToBackingContext::convertToBacking(const PAL::Web
     });
 }
 
-std::optional<PAL::WebGPU::Extent3DDict> ConvertFromBackingContext::convertFromBacking(const Extent3DDict& extent3DDict)
+std::optional<WebCore::WebGPU::Extent3DDict> ConvertFromBackingContext::convertFromBacking(const Extent3DDict& extent3DDict)
 {
     return { { extent3DDict.width, extent3DDict.height, extent3DDict.depthOrArrayLayers } };
 }
 
-std::optional<PAL::WebGPU::Extent3D> ConvertFromBackingContext::convertFromBacking(const Extent3D& extent3D)
+std::optional<WebCore::WebGPU::Extent3D> ConvertFromBackingContext::convertFromBacking(const Extent3D& extent3D)
 {
-    return WTF::switchOn(extent3D, [] (const Vector<PAL::WebGPU::IntegerCoordinate>& vector) -> std::optional<PAL::WebGPU::Extent3D> {
+    return WTF::switchOn(extent3D, [] (const Vector<WebCore::WebGPU::IntegerCoordinate>& vector) -> std::optional<WebCore::WebGPU::Extent3D> {
         return { { vector } };
-    }, [this] (const Extent3DDict& extent3DDict) -> std::optional<PAL::WebGPU::Extent3D> {
+    }, [this] (const Extent3DDict& extent3DDict) -> std::optional<WebCore::WebGPU::Extent3D> {
         auto extent3D = convertFromBacking(extent3DDict);
         if (!extent3D)
             return std::nullopt;

@@ -14,7 +14,7 @@
 
 #include <openssl/blake2.h>
 
-#include <openssl/type_check.h>
+#include <assert.h>
 
 #include "../internal.h"
 
@@ -42,28 +42,29 @@ static const uint8_t kSigma[10 * 16] = {
     // clang-format on
 };
 
-#define RIGHT_ROTATE(v, n) (((v) >> (n)) | ((v) << (64 - (n))))
-
 // https://tools.ietf.org/html/rfc7693#section-3.1
 static void blake2b_mix(uint64_t v[16], int a, int b, int c, int d, uint64_t x,
                         uint64_t y) {
   v[a] = v[a] + v[b] + x;
-  v[d] = RIGHT_ROTATE(v[d] ^ v[a], 32);
+  v[d] = CRYPTO_rotr_u64(v[d] ^ v[a], 32);
   v[c] = v[c] + v[d];
-  v[b] = RIGHT_ROTATE(v[b] ^ v[c], 24);
+  v[b] = CRYPTO_rotr_u64(v[b] ^ v[c], 24);
   v[a] = v[a] + v[b] + y;
-  v[d] = RIGHT_ROTATE(v[d] ^ v[a], 16);
+  v[d] = CRYPTO_rotr_u64(v[d] ^ v[a], 16);
   v[c] = v[c] + v[d];
-  v[b] = RIGHT_ROTATE(v[b] ^ v[c], 63);
+  v[b] = CRYPTO_rotr_u64(v[b] ^ v[c], 63);
 }
 
-static void blake2b_transform(
-    BLAKE2B_CTX *b2b,
-    const uint64_t block_words[BLAKE2B_CBLOCK / sizeof(uint64_t)],
-    size_t num_bytes, int is_final_block) {
+static uint64_t blake2b_load(const uint8_t block[BLAKE2B_CBLOCK], size_t i) {
+  return CRYPTO_load_u64_le(block + 8 * i);
+}
+
+static void blake2b_transform(BLAKE2B_CTX *b2b,
+                              const uint8_t block[BLAKE2B_CBLOCK],
+                              size_t num_bytes, int is_final_block) {
   // https://tools.ietf.org/html/rfc7693#section-3.2
   uint64_t v[16];
-  OPENSSL_STATIC_ASSERT(sizeof(v) == sizeof(b2b->h) + sizeof(kIV), "");
+  static_assert(sizeof(v) == sizeof(b2b->h) + sizeof(kIV), "");
   OPENSSL_memcpy(v, b2b->h, sizeof(b2b->h));
   OPENSSL_memcpy(&v[8], kIV, sizeof(kIV));
 
@@ -80,14 +81,22 @@ static void blake2b_transform(
 
   for (int round = 0; round < 12; round++) {
     const uint8_t *const s = &kSigma[16 * (round % 10)];
-    blake2b_mix(v, 0, 4, 8, 12, block_words[s[0]], block_words[s[1]]);
-    blake2b_mix(v, 1, 5, 9, 13, block_words[s[2]], block_words[s[3]]);
-    blake2b_mix(v, 2, 6, 10, 14, block_words[s[4]], block_words[s[5]]);
-    blake2b_mix(v, 3, 7, 11, 15, block_words[s[6]], block_words[s[7]]);
-    blake2b_mix(v, 0, 5, 10, 15, block_words[s[8]], block_words[s[9]]);
-    blake2b_mix(v, 1, 6, 11, 12, block_words[s[10]], block_words[s[11]]);
-    blake2b_mix(v, 2, 7, 8, 13, block_words[s[12]], block_words[s[13]]);
-    blake2b_mix(v, 3, 4, 9, 14, block_words[s[14]], block_words[s[15]]);
+    blake2b_mix(v, 0, 4, 8, 12, blake2b_load(block, s[0]),
+                blake2b_load(block, s[1]));
+    blake2b_mix(v, 1, 5, 9, 13, blake2b_load(block, s[2]),
+                blake2b_load(block, s[3]));
+    blake2b_mix(v, 2, 6, 10, 14, blake2b_load(block, s[4]),
+                blake2b_load(block, s[5]));
+    blake2b_mix(v, 3, 7, 11, 15, blake2b_load(block, s[6]),
+                blake2b_load(block, s[7]));
+    blake2b_mix(v, 0, 5, 10, 15, blake2b_load(block, s[8]),
+                blake2b_load(block, s[9]));
+    blake2b_mix(v, 1, 6, 11, 12, blake2b_load(block, s[10]),
+                blake2b_load(block, s[11]));
+    blake2b_mix(v, 2, 7, 8, 13, blake2b_load(block, s[12]),
+                blake2b_load(block, s[13]));
+    blake2b_mix(v, 3, 4, 9, 14, blake2b_load(block, s[14]),
+                blake2b_load(block, s[15]));
   }
 
   for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(b2b->h); i++) {
@@ -99,7 +108,7 @@ static void blake2b_transform(
 void BLAKE2B256_Init(BLAKE2B_CTX *b2b) {
   OPENSSL_memset(b2b, 0, sizeof(BLAKE2B_CTX));
 
-  OPENSSL_STATIC_ASSERT(sizeof(kIV) == sizeof(b2b->h), "");
+  static_assert(sizeof(kIV) == sizeof(b2b->h), "");
   OPENSSL_memcpy(&b2b->h, kIV, sizeof(kIV));
 
   // https://tools.ietf.org/html/rfc7693#section-2.5
@@ -107,13 +116,17 @@ void BLAKE2B256_Init(BLAKE2B_CTX *b2b) {
 }
 
 void BLAKE2B256_Update(BLAKE2B_CTX *b2b, const void *in_data, size_t len) {
-  const uint8_t *data = (const uint8_t *)in_data;
+  if (len == 0) {
+    // Work around a C language bug. See https://crbug.com/1019588.
+    return;
+  }
 
-  size_t todo = sizeof(b2b->block.bytes) - b2b->block_used;
+  const uint8_t *data = in_data;
+  size_t todo = sizeof(b2b->block) - b2b->block_used;
   if (todo > len) {
     todo = len;
   }
-  OPENSSL_memcpy(&b2b->block.bytes[b2b->block_used], data, todo);
+  OPENSSL_memcpy(&b2b->block[b2b->block_used], data, todo);
   b2b->block_used += todo;
   data += todo;
   len -= todo;
@@ -124,28 +137,26 @@ void BLAKE2B256_Update(BLAKE2B_CTX *b2b, const void *in_data, size_t len) {
 
   // More input remains therefore we must have filled |b2b->block|.
   assert(b2b->block_used == BLAKE2B_CBLOCK);
-  blake2b_transform(b2b, b2b->block.words, BLAKE2B_CBLOCK,
+  blake2b_transform(b2b, b2b->block, BLAKE2B_CBLOCK,
                     /*is_final_block=*/0);
   b2b->block_used = 0;
 
   while (len > BLAKE2B_CBLOCK) {
-    uint64_t block_words[BLAKE2B_CBLOCK / sizeof(uint64_t)];
-    OPENSSL_memcpy(block_words, data, sizeof(block_words));
-    blake2b_transform(b2b, block_words, BLAKE2B_CBLOCK, /*is_final_block=*/0);
+    blake2b_transform(b2b, data, BLAKE2B_CBLOCK, /*is_final_block=*/0);
     data += BLAKE2B_CBLOCK;
     len -= BLAKE2B_CBLOCK;
   }
 
-  OPENSSL_memcpy(b2b->block.bytes, data, len);
+  OPENSSL_memcpy(b2b->block, data, len);
   b2b->block_used = len;
 }
 
 void BLAKE2B256_Final(uint8_t out[BLAKE2B256_DIGEST_LENGTH], BLAKE2B_CTX *b2b) {
-  OPENSSL_memset(&b2b->block.bytes[b2b->block_used], 0,
-                 sizeof(b2b->block.bytes) - b2b->block_used);
-  blake2b_transform(b2b, b2b->block.words, b2b->block_used,
+  OPENSSL_memset(&b2b->block[b2b->block_used], 0,
+                 sizeof(b2b->block) - b2b->block_used);
+  blake2b_transform(b2b, b2b->block, b2b->block_used,
                     /*is_final_block=*/1);
-  OPENSSL_STATIC_ASSERT(BLAKE2B256_DIGEST_LENGTH <= sizeof(b2b->h), "");
+  static_assert(BLAKE2B256_DIGEST_LENGTH <= sizeof(b2b->h), "");
   memcpy(out, b2b->h, BLAKE2B256_DIGEST_LENGTH);
 }
 

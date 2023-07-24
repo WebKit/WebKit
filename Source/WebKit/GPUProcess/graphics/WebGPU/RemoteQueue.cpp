@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,11 @@
 #include "RemoteQueueMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <pal/graphics/WebGPU/WebGPUQueue.h>
+#include <WebCore/WebGPUQueue.h>
 
 namespace WebKit {
 
-RemoteQueue::RemoteQueue(PAL::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteQueue::RemoteQueue(WebCore::WebGPU::Queue& queue, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(queue)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
@@ -58,7 +58,7 @@ void RemoteQueue::stopListeningForIPC()
 
 void RemoteQueue::submit(Vector<WebGPUIdentifier>&& commandBuffers)
 {
-    Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>> convertedCommandBuffers;
+    Vector<std::reference_wrapper<WebCore::WebGPU::CommandBuffer>> convertedCommandBuffers;
     convertedCommandBuffers.reserveInitialCapacity(commandBuffers.size());
     for (WebGPUIdentifier identifier : commandBuffers) {
         auto convertedCommandBuffer = m_objectHeap.convertCommandBufferFromBacking(identifier);
@@ -79,7 +79,7 @@ void RemoteQueue::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 
 void RemoteQueue::writeBuffer(
     WebGPUIdentifier buffer,
-    PAL::WebGPU::Size64 bufferOffset,
+    WebCore::WebGPU::Size64 bufferOffset,
     Vector<uint8_t>&& data)
 {
     auto convertedBuffer = m_objectHeap.convertBufferFromBacking(buffer);

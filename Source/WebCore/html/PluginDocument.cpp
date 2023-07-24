@@ -25,6 +25,7 @@
 #include "config.h"
 #include "PluginDocument.h"
 
+#include "CSSValuePool.h"
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "HTMLBodyElement.h"
@@ -87,10 +88,17 @@ void PluginDocumentParser::createDocumentStructure()
     body->setAttributeWithoutSynchronization(marginwidthAttr, "0"_s);
     body->setAttributeWithoutSynchronization(marginheightAttr, "0"_s);
 #if PLATFORM(IOS_FAMILY)
-    body->setAttribute(styleAttr, "background-color: rgb(217,224,233); height: 100%; width: 100%; overflow:hidden; margin: 0"_s);
+    constexpr auto bodyBackgroundColor = SRGBA<uint8_t> { 217, 224, 233 };
 #else
-    body->setAttribute(styleAttr, "background-color: rgb(38,38,38); height: 100%; width: 100%; overflow:hidden; margin: 0"_s);
+    constexpr auto bodyBackgroundColor = SRGBA<uint8_t> { 38, 38, 38 };
 #endif
+
+    // If the plugin is a PDF, the background color is overriden in `PDFPlugin::PDFPlugin`.
+    body->setInlineStyleProperty(CSSPropertyBackgroundColor, CSSValuePool::singleton().createColorValue(bodyBackgroundColor));
+    body->setInlineStyleProperty(CSSPropertyHeight, 100, CSSUnitType::CSS_PERCENTAGE);
+    body->setInlineStyleProperty(CSSPropertyWidth, 100, CSSUnitType::CSS_PERCENTAGE);
+    body->setInlineStyleProperty(CSSPropertyOverflow, CSSValueHidden);
+    body->setInlineStyleProperty(CSSPropertyMargin, 0, CSSUnitType::CSS_PERCENTAGE);
 
     rootElement->appendChild(body);
         

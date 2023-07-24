@@ -3,7 +3,7 @@
 /*---
 esid: sec-exp-operator-runtime-semantics-evaluation
 description: BigInt exponentiation arithmetic
-features: [BigInt]
+features: [BigInt, exponentiation]
 ---*/
 assert.sameValue(
   0x123n ** 0x123n,

@@ -33,9 +33,9 @@
 #include "compiler/translator/tree_ops/vulkan/EmulateAdvancedBlendEquations.h"
 #include "compiler/translator/tree_ops/vulkan/EmulateDithering.h"
 #include "compiler/translator/tree_ops/vulkan/EmulateFragColorData.h"
+#include "compiler/translator/tree_ops/vulkan/EmulateFramebufferFetch.h"
 #include "compiler/translator/tree_ops/vulkan/EmulateYUVBuiltIns.h"
 #include "compiler/translator/tree_ops/vulkan/FlagSamplersWithTexelFetch.h"
-#include "compiler/translator/tree_ops/vulkan/ReplaceForShaderFramebufferFetch.h"
 #include "compiler/translator/tree_ops/vulkan/RewriteInterpolateAtOffset.h"
 #include "compiler/translator/tree_ops/vulkan/RewriteR32fImages.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
@@ -56,17 +56,9 @@ namespace sh
 
 namespace
 {
-constexpr ImmutableString kFlippedPointCoordName = ImmutableString("flippedPointCoord");
-constexpr ImmutableString kFlippedFragCoordName  = ImmutableString("flippedFragCoord");
-
-constexpr gl::ShaderMap<const char *> kDefaultUniformNames = {
-    {gl::ShaderType::Vertex, vk::kDefaultUniformsNameVS},
-    {gl::ShaderType::TessControl, vk::kDefaultUniformsNameTCS},
-    {gl::ShaderType::TessEvaluation, vk::kDefaultUniformsNameTES},
-    {gl::ShaderType::Geometry, vk::kDefaultUniformsNameGS},
-    {gl::ShaderType::Fragment, vk::kDefaultUniformsNameFS},
-    {gl::ShaderType::Compute, vk::kDefaultUniformsNameCS},
-};
+constexpr ImmutableString kFlippedPointCoordName    = ImmutableString("flippedPointCoord");
+constexpr ImmutableString kFlippedFragCoordName     = ImmutableString("flippedFragCoord");
+constexpr ImmutableString kDefaultUniformsBlockName = ImmutableString("defaultUniforms");
 
 bool IsDefaultUniform(const TType &type)
 {
@@ -120,7 +112,7 @@ class ReplaceDefaultUniformsTraverser : public TIntermTraverser
     const VariableReplacementMap &mVariableMap;
 };
 
-bool DeclareDefaultUniforms(TCompiler *compiler,
+bool DeclareDefaultUniforms(TranslatorVulkan *compiler,
                             TIntermBlock *root,
                             TSymbolTable *symbolTable,
                             gl::ShaderType shaderType)
@@ -160,7 +152,10 @@ bool DeclareDefaultUniforms(TCompiler *compiler,
     layoutQualifier.blockStorage     = EbsStd140;
     const TVariable *uniformBlock    = DeclareInterfaceBlock(
         root, symbolTable, uniformList, EvqUniform, layoutQualifier, TMemoryQualifier::Create(), 0,
-        ImmutableString(kDefaultUniformNames[shaderType]), ImmutableString(""));
+        kDefaultUniformsBlockName, ImmutableString(""));
+
+    compiler->assignSpirvId(uniformBlock->getType().getInterfaceBlock()->uniqueId(),
+                            vk::spirv::kIdDefaultUniformsBlock);
 
     // Create a map from the uniform variables to new variables that reference the fields of the
     // block.
@@ -319,7 +314,7 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
     return replacementResult;
 }
 
-[[nodiscard]] bool AddXfbEmulationSupport(TCompiler *compiler,
+[[nodiscard]] bool AddXfbEmulationSupport(TranslatorVulkan *compiler,
                                           TIntermBlock *root,
                                           TSymbolTable *symbolTable,
                                           const DriverUniform *driverUniforms)
@@ -375,9 +370,12 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
 
     // Declare the function
     TFunction *getOffsetsFunction =
-        new TFunction(symbolTable, ImmutableString(vk::kXfbEmulationGetOffsetsFunctionName),
-                      SymbolType::AngleInternal, ivec4Type, true);
+        new TFunction(symbolTable, ImmutableString("ANGLEGetXfbOffsets"), SymbolType::AngleInternal,
+                      ivec4Type, true);
     getOffsetsFunction->addParameter(stridesVar);
+
+    compiler->assignSpirvId(getOffsetsFunction->uniqueId(),
+                            vk::spirv::kIdXfbEmulationGetOffsetsFunction);
 
     TIntermFunctionDefinition *functionDef =
         CreateInternalFunctionDefinitionNode(*getOffsetsFunction, body);
@@ -398,9 +396,11 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
     body = new TIntermBlock;
 
     // Declare the function
-    TFunction *xfbCaptureFunction =
-        new TFunction(symbolTable, ImmutableString(vk::kXfbEmulationCaptureFunctionName),
-                      SymbolType::AngleInternal, voidType, false);
+    TFunction *xfbCaptureFunction = new TFunction(symbolTable, ImmutableString("ANGLECaptureXfb"),
+                                                  SymbolType::AngleInternal, voidType, false);
+
+    compiler->assignSpirvId(xfbCaptureFunction->uniqueId(),
+                            vk::spirv::kIdXfbEmulationCaptureFunction);
 
     // Insert the function declaration before main().
     root->insertChildNodes(mainIndex,
@@ -415,11 +415,8 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
     TIntermAggregate *captureXfbCall =
         TIntermAggregate::CreateFunctionCall(*xfbCaptureFunction, {});
 
-    TIntermBlock *captureXfbBlock = new TIntermBlock;
-    captureXfbBlock->appendStatement(captureXfbCall);
-
     // Run it at the end of the shader.
-    if (!RunAtTheEndOfShader(compiler, root, captureXfbBlock, symbolTable))
+    if (!RunAtTheEndOfShader(compiler, root, captureXfbCall, symbolTable))
     {
         return false;
     }
@@ -443,8 +440,8 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
         TType *xfbOutType     = new TType(EbtFloat, EbpHigh, EvqGlobal);
         xfbOutType->makeArray(0);
 
-        TField *field = new TField(xfbOutType, ImmutableString(vk::kXfbEmulationBufferFieldName),
-                                   TSourceLoc(), SymbolType::AngleInternal);
+        TField *field = new TField(xfbOutType, ImmutableString("xfbOut"), TSourceLoc(),
+                                   SymbolType::AngleInternal);
 
         fieldList->push_back(field);
 
@@ -452,25 +449,45 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
             kMaxXfbBuffers < 10,
             "ImmutableStringBuilder memory size below needs to accomodate the number of buffers");
 
-        ImmutableStringBuilder blockName(strlen(vk::kXfbEmulationBufferBlockName) + 2);
-        blockName << vk::kXfbEmulationBufferBlockName;
+        ImmutableStringBuilder blockName(strlen("ANGLEXfbBuffer") + 2);
+        blockName << "ANGLEXfbBuffer";
         blockName.appendDecimal(bufferIndex);
 
-        ImmutableStringBuilder varName(strlen(vk::kXfbEmulationBufferName) + 2);
-        varName << vk::kXfbEmulationBufferName;
+        ImmutableStringBuilder varName(strlen("ANGLEXfb") + 2);
+        varName << "ANGLEXfb";
         varName.appendDecimal(bufferIndex);
 
         TLayoutQualifier layoutQualifier = TLayoutQualifier::Create();
         layoutQualifier.blockStorage     = EbsStd430;
 
-        DeclareInterfaceBlock(root, symbolTable, fieldList, EvqBuffer, layoutQualifier,
-                              TMemoryQualifier::Create(), 0, blockName, varName);
+        const TVariable *xfbBuffer =
+            DeclareInterfaceBlock(root, symbolTable, fieldList, EvqBuffer, layoutQualifier,
+                                  TMemoryQualifier::Create(), 0, blockName, varName);
+
+        static_assert(vk::spirv::kIdXfbEmulationBufferBlockOne ==
+                      vk::spirv::kIdXfbEmulationBufferBlockZero + 1);
+        static_assert(vk::spirv::kIdXfbEmulationBufferBlockTwo ==
+                      vk::spirv::kIdXfbEmulationBufferBlockZero + 2);
+        static_assert(vk::spirv::kIdXfbEmulationBufferBlockThree ==
+                      vk::spirv::kIdXfbEmulationBufferBlockZero + 3);
+
+        static_assert(vk::spirv::kIdXfbEmulationBufferVarOne ==
+                      vk::spirv::kIdXfbEmulationBufferVarZero + 1);
+        static_assert(vk::spirv::kIdXfbEmulationBufferVarTwo ==
+                      vk::spirv::kIdXfbEmulationBufferVarZero + 2);
+        static_assert(vk::spirv::kIdXfbEmulationBufferVarThree ==
+                      vk::spirv::kIdXfbEmulationBufferVarZero + 3);
+
+        compiler->assignSpirvId(xfbBuffer->getType().getInterfaceBlock()->uniqueId(),
+                                vk::spirv::kIdXfbEmulationBufferBlockZero + bufferIndex);
+        compiler->assignSpirvId(xfbBuffer->uniqueId(),
+                                vk::spirv::kIdXfbEmulationBufferVarZero + bufferIndex);
     }
 
     return compiler->validateAST(root);
 }
 
-[[nodiscard]] bool AddXfbExtensionSupport(TCompiler *compiler,
+[[nodiscard]] bool AddXfbExtensionSupport(TranslatorVulkan *compiler,
                                           TIntermBlock *root,
                                           TSymbolTable *symbolTable,
                                           const DriverUniform *driverUniforms)
@@ -498,9 +515,10 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
             UNREACHABLE();
     }
 
-    TVariable *varyingVar =
-        new TVariable(symbolTable, ImmutableString(vk::kXfbExtensionPositionOutName), vec4Type,
-                      SymbolType::AngleInternal);
+    TVariable *varyingVar = new TVariable(symbolTable, ImmutableString("ANGLEXfbPosition"),
+                                          vec4Type, SymbolType::AngleInternal);
+
+    compiler->assignSpirvId(varyingVar->uniqueId(), vk::spirv::kIdXfbExtensionPosition);
 
     TIntermDeclaration *varyingDecl = new TIntermDeclaration();
     varyingDecl->appendDeclarator(new TIntermSymbol(varyingVar));
@@ -512,7 +530,7 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
     return compiler->validateAST(root);
 }
 
-[[nodiscard]] bool AddVertexTransformationSupport(TCompiler *compiler,
+[[nodiscard]] bool AddVertexTransformationSupport(TranslatorVulkan *compiler,
                                                   const ShCompileOptions &compileOptions,
                                                   TIntermBlock *root,
                                                   TSymbolTable *symbolTable,
@@ -591,9 +609,12 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
 
     // Declare the function
     TFunction *transformPositionFunction =
-        new TFunction(symbolTable, ImmutableString(vk::kTransformPositionFunctionName),
+        new TFunction(symbolTable, ImmutableString("ANGLETransformPosition"),
                       SymbolType::AngleInternal, vec4Type, true);
     transformPositionFunction->addParameter(positionVar);
+
+    compiler->assignSpirvId(transformPositionFunction->uniqueId(),
+                            vk::spirv::kIdTransformPositionFunction);
 
     TIntermFunctionDefinition *functionDef =
         CreateInternalFunctionDefinitionNode(*transformPositionFunction, body);
@@ -633,14 +654,100 @@ bool HasFramebufferFetch(const TExtensionBehavior &extBehavior,
 {
     return IsExtensionEnabled(extBehavior, TExtension::EXT_shader_framebuffer_fetch) ||
            IsExtensionEnabled(extBehavior, TExtension::EXT_shader_framebuffer_fetch_non_coherent) ||
+           IsExtensionEnabled(extBehavior, TExtension::ARM_shader_framebuffer_fetch) ||
            IsExtensionEnabled(extBehavior, TExtension::NV_shader_framebuffer_fetch) ||
            (compileOptions.pls.type == ShPixelLocalStorageType::FramebufferFetch &&
             IsExtensionEnabled(extBehavior, TExtension::ANGLE_shader_pixel_local_storage));
 }
+
+template <typename Variable>
+Variable *FindShaderVariable(std::vector<Variable> *vars, const ImmutableString &name)
+{
+    for (Variable &var : *vars)
+    {
+        if (name == var.name)
+        {
+            return &var;
+        }
+    }
+    UNREACHABLE();
+    return nullptr;
+}
+
+ShaderVariable *FindIOBlockShaderVariable(std::vector<ShaderVariable> *vars,
+                                          const ImmutableString &name)
+{
+    for (ShaderVariable &var : *vars)
+    {
+        if (name == var.structOrBlockName)
+        {
+            return &var;
+        }
+    }
+    UNREACHABLE();
+    return nullptr;
+}
+
+ShaderVariable *FindUniformFieldShaderVariable(std::vector<ShaderVariable> *vars,
+                                               const ImmutableString &name,
+                                               const char *prefix)
+{
+    for (ShaderVariable &var : *vars)
+    {
+        // The name of the sampler is derived from the uniform name + fields
+        // that reach the uniform, concatenated with '_' per RewriteStructSamplers.
+        std::string varName = prefix;
+        varName += '_';
+        varName += var.name;
+
+        if (name == varName)
+        {
+            return &var;
+        }
+
+        ShaderVariable *field = FindUniformFieldShaderVariable(&var.fields, name, varName.c_str());
+        if (field != nullptr)
+        {
+            return field;
+        }
+    }
+    return nullptr;
+}
+
+ShaderVariable *FindUniformShaderVariable(std::vector<ShaderVariable> *vars,
+                                          const ImmutableString &name)
+{
+    for (ShaderVariable &var : *vars)
+    {
+        if (name == var.name)
+        {
+            return &var;
+        }
+
+        // Note: samplers in structs are moved out.  Such samplers will be found in the fields of
+        // the struct uniform.
+        ShaderVariable *field = FindUniformFieldShaderVariable(&var.fields, name, var.name.c_str());
+        if (field != nullptr)
+        {
+            return field;
+        }
+    }
+    UNREACHABLE();
+    return nullptr;
+}
+
+void SetSpirvIdInFields(uint32_t id, std::vector<ShaderVariable> *fields)
+{
+    for (ShaderVariable &field : *fields)
+    {
+        field.id = id;
+        SetSpirvIdInFields(id, &field.fields);
+    }
+}
 }  // anonymous namespace
 
 TranslatorVulkan::TranslatorVulkan(sh::GLenum type, ShShaderSpec spec)
-    : TCompiler(type, spec, SH_SPIRV_VULKAN_OUTPUT)
+    : TCompiler(type, spec, SH_SPIRV_VULKAN_OUTPUT), mFirstUnusedSpirvId(0)
 {}
 
 bool TranslatorVulkan::translateImpl(TIntermBlock *root,
@@ -775,6 +882,10 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
         driverUniforms->addGraphicsDriverUniformsToShader(root, &getSymbolTable());
     }
 
+    assignSpirvId(
+        driverUniforms->getDriverUniformsVariable()->getType().getInterfaceBlock()->uniqueId(),
+        vk::spirv::kIdDriverUniformsBlock);
+
     if (r32fImageCount > 0)
     {
         if (!RewriteR32fImages(this, root, &getSymbolTable()))
@@ -787,10 +898,14 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
     {
         // ANGLEUniforms.acbBufferOffsets
         const TIntermTyped *acbBufferOffsets = driverUniforms->getAcbBufferOffsets();
-        if (!RewriteAtomicCounters(this, root, &getSymbolTable(), acbBufferOffsets))
+        const TVariable *atomicCounters      = nullptr;
+        if (!RewriteAtomicCounters(this, root, &getSymbolTable(), acbBufferOffsets,
+                                   &atomicCounters))
         {
             return false;
         }
+        assignSpirvId(atomicCounters->getType().getInterfaceBlock()->uniqueId(),
+                      vk::spirv::kIdAtomicCounterBlock);
     }
     else if (getShaderVersion() >= 310)
     {
@@ -972,42 +1087,19 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
                 }
             }
 
-            if (HasFramebufferFetch(getExtensionBehavior(), compileOptions))
-            {
-                if (getShaderVersion() == 100)
-                {
-                    if (!ReplaceLastFrag(this, root, &getSymbolTable(), &mUniforms,
-                                         FramebufferFetchReplaceTarget::LastFragData))
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (!ReplaceInOutVariables(this, root, &getSymbolTable(), &mUniforms))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            // Translating GL_ARM_shader_framebuffer_fetch deals with a separate variable
-            // than translating the GL_EXT_shader_framebuffer_fetch extension. So they need
-            // to be handled in separate passes despite their similarities.
-            if (IsExtensionEnabled(getExtensionBehavior(),
-                                   TExtension::ARM_shader_framebuffer_fetch))
-            {
-                if (!ReplaceLastFrag(this, root, &getSymbolTable(), &mUniforms,
-                                     FramebufferFetchReplaceTarget::LastFragColor))
-                {
-                    return false;
-                }
-            }
-
             // Emulate gl_FragColor and gl_FragData with normal output variables.
             if (!EmulateFragColorData(this, root, &getSymbolTable()))
             {
                 return false;
+            }
+
+            // Emulate framebuffer fetch if used.
+            if (HasFramebufferFetch(getExtensionBehavior(), compileOptions))
+            {
+                if (!EmulateFramebufferFetch(this, root, &mUniforms))
+                {
+                    return false;
+                }
             }
 
             // This should be operated after doing ReplaceLastFragData and ReplaceInOutVariables,
@@ -1130,6 +1222,31 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
     ASSERT(mValidateASTOptions.validateFunctionCall);
     ASSERT(mValidateASTOptions.validateNoRawFunctionCalls);
 
+    // Declare the implicitly defined gl_PerVertex I/O blocks if not already.  This will help SPIR-V
+    // generation treat them mostly like usual I/O blocks.
+    const TVariable *inputPerVertex  = nullptr;
+    const TVariable *outputPerVertex = nullptr;
+    if (!DeclarePerVertexBlocks(this, root, &getSymbolTable(), &inputPerVertex, &outputPerVertex))
+    {
+        return false;
+    }
+
+    if (inputPerVertex)
+    {
+        assignSpirvId(inputPerVertex->getType().getInterfaceBlock()->uniqueId(),
+                      vk::spirv::kIdInputPerVertexBlock);
+    }
+    if (outputPerVertex)
+    {
+        assignSpirvId(outputPerVertex->getType().getInterfaceBlock()->uniqueId(),
+                      vk::spirv::kIdOutputPerVertexBlock);
+        assignSpirvId(outputPerVertex->uniqueId(), vk::spirv::kIdOutputPerVertexVar);
+    }
+
+    // Now that all transformations are done, assign SPIR-V ids to whatever shader variable is still
+    // present in the shader in some form.  This should be the last thing done in this function.
+    assignSpirvIds(root);
+
     return true;
 }
 
@@ -1137,6 +1254,9 @@ bool TranslatorVulkan::translate(TIntermBlock *root,
                                  const ShCompileOptions &compileOptions,
                                  PerformanceDiagnostics *perfDiagnostics)
 {
+    mUniqueToSpirvIdMap.clear();
+    mFirstUnusedSpirvId = 0;
+
     SpecConst specConst(&getSymbolTable(), compileOptions, getShaderType());
 
     DriverUniform driverUniforms(DriverUniformMode::InterfaceBlock);
@@ -1151,19 +1271,139 @@ bool TranslatorVulkan::translate(TIntermBlock *root,
         return false;
     }
 
-    // Declare the implicitly defined gl_PerVertex I/O blocks if not already.  This will help SPIR-V
-    // generation treat them mostly like usual I/O blocks.
-    if (!DeclarePerVertexBlocks(this, root, &getSymbolTable()))
-    {
-        return false;
-    }
-
-    return OutputSPIRV(this, root, compileOptions);
+    return OutputSPIRV(this, root, compileOptions, mUniqueToSpirvIdMap, mFirstUnusedSpirvId);
 }
 
 bool TranslatorVulkan::shouldFlattenPragmaStdglInvariantAll()
 {
     // Not necessary.
     return false;
+}
+
+void TranslatorVulkan::assignSpirvId(TSymbolUniqueId uniqueId, uint32_t spirvId)
+{
+    ASSERT(mUniqueToSpirvIdMap.find(uniqueId.get()) == mUniqueToSpirvIdMap.end());
+    mUniqueToSpirvIdMap[uniqueId.get()] = spirvId;
+}
+
+void TranslatorVulkan::assignSpirvIds(TIntermBlock *root)
+{
+    // Match the declarations with collected variables and assign a new id to each, starting from
+    // the first unreserved id.  This makes sure that the reserved ids for internal variables and
+    // ids for shader variables form a minimal contiguous range.  The Vulkan backend takes advantage
+    // of this fact for optimal hashing.
+    mFirstUnusedSpirvId = vk::spirv::kIdFirstUnreserved;
+
+    for (TIntermNode *node : *root->getSequence())
+    {
+        TIntermDeclaration *decl = node->getAsDeclarationNode();
+        if (decl == nullptr)
+        {
+            continue;
+        }
+
+        TIntermSymbol *symbol = decl->getSequence()->front()->getAsSymbolNode();
+        if (symbol == nullptr)
+        {
+            continue;
+        }
+
+        const TType &type          = symbol->getType();
+        const TQualifier qualifier = type.getQualifier();
+
+        // Skip internal symbols, which already have a reserved id.
+        const TSymbolUniqueId uniqueId =
+            type.isInterfaceBlock() ? type.getInterfaceBlock()->uniqueId() : symbol->uniqueId();
+        if (mUniqueToSpirvIdMap.find(uniqueId.get()) != mUniqueToSpirvIdMap.end())
+        {
+            continue;
+        }
+
+        uint32_t *variableId                = nullptr;
+        std::vector<ShaderVariable> *fields = nullptr;
+        if (type.isInterfaceBlock())
+        {
+            if (IsVaryingIn(qualifier))
+            {
+                ShaderVariable *varying =
+                    FindIOBlockShaderVariable(&mInputVaryings, type.getInterfaceBlock()->name());
+                variableId = &varying->id;
+                fields     = &varying->fields;
+            }
+            else if (IsVaryingOut(qualifier))
+            {
+                ShaderVariable *varying =
+                    FindIOBlockShaderVariable(&mOutputVaryings, type.getInterfaceBlock()->name());
+                variableId = &varying->id;
+                fields     = &varying->fields;
+            }
+            else if (IsStorageBuffer(qualifier))
+            {
+                InterfaceBlock *block =
+                    FindShaderVariable(&mShaderStorageBlocks, type.getInterfaceBlock()->name());
+                variableId = &block->id;
+            }
+            else
+            {
+                InterfaceBlock *block =
+                    FindShaderVariable(&mUniformBlocks, type.getInterfaceBlock()->name());
+                variableId = &block->id;
+            }
+        }
+        else if (qualifier == EvqUniform)
+        {
+            ShaderVariable *uniform = FindUniformShaderVariable(&mUniforms, symbol->getName());
+            variableId              = &uniform->id;
+        }
+        else if (qualifier == EvqAttribute || qualifier == EvqVertexIn)
+        {
+            ShaderVariable *attribute = FindShaderVariable(&mAttributes, symbol->getName());
+            variableId                = &attribute->id;
+        }
+        else if (IsShaderIn(qualifier))
+        {
+            ShaderVariable *varying = FindShaderVariable(&mInputVaryings, symbol->getName());
+            variableId              = &varying->id;
+            fields                  = &varying->fields;
+        }
+        else if (qualifier == EvqFragmentOut)
+        {
+            // webgl_FragColor, webgl_FragData, webgl_SecondaryFragColor and webgl_SecondaryFragData
+            // are recorded with their original names (starting with gl_)
+            ImmutableString name(symbol->getName());
+            if (angle::BeginsWith(name.data(), "webgl_"))
+            {
+                name = ImmutableString(name.data() + 3, name.length() - 3);
+            }
+
+            ShaderVariable *output = FindShaderVariable(&mOutputVariables, name);
+            variableId             = &output->id;
+        }
+        else if (IsShaderOut(qualifier))
+        {
+            ShaderVariable *varying = FindShaderVariable(&mOutputVaryings, symbol->getName());
+            variableId              = &varying->id;
+            fields                  = &varying->fields;
+        }
+
+        if (variableId == nullptr)
+        {
+            continue;
+        }
+
+        ASSERT(variableId != nullptr);
+        assignSpirvId(uniqueId, mFirstUnusedSpirvId);
+        *variableId = mFirstUnusedSpirvId;
+
+        // Propagate the id to the first field of structs/blocks too.  The front-end gathers
+        // varyings as fields, and the transformer needs to infer the variable id (of struct type)
+        // just by looking at the fields.
+        if (fields != nullptr)
+        {
+            SetSpirvIdInFields(mFirstUnusedSpirvId, fields);
+        }
+
+        ++mFirstUnusedSpirvId;
+    }
 }
 }  // namespace sh

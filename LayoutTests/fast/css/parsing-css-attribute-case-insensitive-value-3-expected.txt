@@ -4,786 +4,786 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Invalid selectors.
-PASS document.querySelector("[foo i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo i]") threw exception SyntaxError: '[foo i]' is not a valid selector..
+PASS document.querySelector("[|foo i]") threw exception SyntaxError: '[|foo i]' is not a valid selector..
+PASS document.querySelector("[*|foo i]") threw exception SyntaxError: '[*|foo i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo i]") threw exception SyntaxError: '[WebKit|foo i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo I]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo I]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo I]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo I]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo I]") threw exception SyntaxError: '[foo I]' is not a valid selector..
+PASS document.querySelector("[|foo I]") threw exception SyntaxError: '[|foo I]' is not a valid selector..
+PASS document.querySelector("[*|foo I]") threw exception SyntaxError: '[*|foo I]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo I]") threw exception SyntaxError: '[WebKit|foo I]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=bar \"i\"]") threw exception SyntaxError: '[foo=bar "i"]' is not a valid selector..
+PASS document.querySelector("[|foo=bar \"i\"]") threw exception SyntaxError: '[|foo=bar "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo=bar \"i\"]") threw exception SyntaxError: '[*|foo=bar "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=bar \"i\"]") threw exception SyntaxError: '[WebKit|foo=bar "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=\"bar\" \"i\"]") threw exception SyntaxError: '[foo="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[|foo=\"bar\" \"i\"]") threw exception SyntaxError: '[|foo="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo=\"bar\" \"i\"]") threw exception SyntaxError: '[*|foo="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=\"bar\" \"i\"]") threw exception SyntaxError: '[WebKit|foo="bar" "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=bar \"i\"]") threw exception SyntaxError: '[foo~=bar "i"]' is not a valid selector..
+PASS document.querySelector("[|foo~=bar \"i\"]") threw exception SyntaxError: '[|foo~=bar "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo~=bar \"i\"]") threw exception SyntaxError: '[*|foo~=bar "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=bar \"i\"]") threw exception SyntaxError: '[WebKit|foo~=bar "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=\"bar\" \"i\"]") threw exception SyntaxError: '[foo~="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[|foo~=\"bar\" \"i\"]") threw exception SyntaxError: '[|foo~="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo~=\"bar\" \"i\"]") threw exception SyntaxError: '[*|foo~="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=\"bar\" \"i\"]") threw exception SyntaxError: '[WebKit|foo~="bar" "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=bar \"i\"]") threw exception SyntaxError: '[foo|=bar "i"]' is not a valid selector..
+PASS document.querySelector("[|foo|=bar \"i\"]") threw exception SyntaxError: '[|foo|=bar "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo|=bar \"i\"]") threw exception SyntaxError: '[*|foo|=bar "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=bar \"i\"]") threw exception SyntaxError: '[WebKit|foo|=bar "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=\"bar\" \"i\"]") threw exception SyntaxError: '[foo|="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[|foo|=\"bar\" \"i\"]") threw exception SyntaxError: '[|foo|="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo|=\"bar\" \"i\"]") threw exception SyntaxError: '[*|foo|="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=\"bar\" \"i\"]") threw exception SyntaxError: '[WebKit|foo|="bar" "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=bar \"i\"]") threw exception SyntaxError: '[foo^=bar "i"]' is not a valid selector..
+PASS document.querySelector("[|foo^=bar \"i\"]") threw exception SyntaxError: '[|foo^=bar "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo^=bar \"i\"]") threw exception SyntaxError: '[*|foo^=bar "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=bar \"i\"]") threw exception SyntaxError: '[WebKit|foo^=bar "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=\"bar\" \"i\"]") threw exception SyntaxError: '[foo^="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[|foo^=\"bar\" \"i\"]") threw exception SyntaxError: '[|foo^="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo^=\"bar\" \"i\"]") threw exception SyntaxError: '[*|foo^="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=\"bar\" \"i\"]") threw exception SyntaxError: '[WebKit|foo^="bar" "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=bar \"i\"]") threw exception SyntaxError: '[foo$=bar "i"]' is not a valid selector..
+PASS document.querySelector("[|foo$=bar \"i\"]") threw exception SyntaxError: '[|foo$=bar "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo$=bar \"i\"]") threw exception SyntaxError: '[*|foo$=bar "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=bar \"i\"]") threw exception SyntaxError: '[WebKit|foo$=bar "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=\"bar\" \"i\"]") threw exception SyntaxError: '[foo$="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[|foo$=\"bar\" \"i\"]") threw exception SyntaxError: '[|foo$="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo$=\"bar\" \"i\"]") threw exception SyntaxError: '[*|foo$="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=\"bar\" \"i\"]") threw exception SyntaxError: '[WebKit|foo$="bar" "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=bar \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=bar \"i\"]") threw exception SyntaxError: '[foo*=bar "i"]' is not a valid selector..
+PASS document.querySelector("[|foo*=bar \"i\"]") threw exception SyntaxError: '[|foo*=bar "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo*=bar \"i\"]") threw exception SyntaxError: '[*|foo*=bar "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=bar \"i\"]") threw exception SyntaxError: '[WebKit|foo*=bar "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=\"bar\" \"i\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=\"bar\" \"i\"]") threw exception SyntaxError: '[foo*="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[|foo*=\"bar\" \"i\"]") threw exception SyntaxError: '[|foo*="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[*|foo*=\"bar\" \"i\"]") threw exception SyntaxError: '[*|foo*="bar" "i"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=\"bar\" \"i\"]") threw exception SyntaxError: '[WebKit|foo*="bar" "i"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=bar invalid]") threw exception SyntaxError: '[foo=bar invalid]' is not a valid selector..
+PASS document.querySelector("[|foo=bar invalid]") threw exception SyntaxError: '[|foo=bar invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo=bar invalid]") threw exception SyntaxError: '[*|foo=bar invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=bar invalid]") threw exception SyntaxError: '[WebKit|foo=bar invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=\"bar\" invalid]") threw exception SyntaxError: '[foo="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[|foo=\"bar\" invalid]") threw exception SyntaxError: '[|foo="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo=\"bar\" invalid]") threw exception SyntaxError: '[*|foo="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=\"bar\" invalid]") threw exception SyntaxError: '[WebKit|foo="bar" invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=bar invalid]") threw exception SyntaxError: '[foo~=bar invalid]' is not a valid selector..
+PASS document.querySelector("[|foo~=bar invalid]") threw exception SyntaxError: '[|foo~=bar invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo~=bar invalid]") threw exception SyntaxError: '[*|foo~=bar invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=bar invalid]") threw exception SyntaxError: '[WebKit|foo~=bar invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=\"bar\" invalid]") threw exception SyntaxError: '[foo~="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[|foo~=\"bar\" invalid]") threw exception SyntaxError: '[|foo~="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo~=\"bar\" invalid]") threw exception SyntaxError: '[*|foo~="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=\"bar\" invalid]") threw exception SyntaxError: '[WebKit|foo~="bar" invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=bar invalid]") threw exception SyntaxError: '[foo|=bar invalid]' is not a valid selector..
+PASS document.querySelector("[|foo|=bar invalid]") threw exception SyntaxError: '[|foo|=bar invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo|=bar invalid]") threw exception SyntaxError: '[*|foo|=bar invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=bar invalid]") threw exception SyntaxError: '[WebKit|foo|=bar invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=\"bar\" invalid]") threw exception SyntaxError: '[foo|="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[|foo|=\"bar\" invalid]") threw exception SyntaxError: '[|foo|="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo|=\"bar\" invalid]") threw exception SyntaxError: '[*|foo|="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=\"bar\" invalid]") threw exception SyntaxError: '[WebKit|foo|="bar" invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=bar invalid]") threw exception SyntaxError: '[foo^=bar invalid]' is not a valid selector..
+PASS document.querySelector("[|foo^=bar invalid]") threw exception SyntaxError: '[|foo^=bar invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo^=bar invalid]") threw exception SyntaxError: '[*|foo^=bar invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=bar invalid]") threw exception SyntaxError: '[WebKit|foo^=bar invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=\"bar\" invalid]") threw exception SyntaxError: '[foo^="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[|foo^=\"bar\" invalid]") threw exception SyntaxError: '[|foo^="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo^=\"bar\" invalid]") threw exception SyntaxError: '[*|foo^="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=\"bar\" invalid]") threw exception SyntaxError: '[WebKit|foo^="bar" invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=bar invalid]") threw exception SyntaxError: '[foo$=bar invalid]' is not a valid selector..
+PASS document.querySelector("[|foo$=bar invalid]") threw exception SyntaxError: '[|foo$=bar invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo$=bar invalid]") threw exception SyntaxError: '[*|foo$=bar invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=bar invalid]") threw exception SyntaxError: '[WebKit|foo$=bar invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=\"bar\" invalid]") threw exception SyntaxError: '[foo$="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[|foo$=\"bar\" invalid]") threw exception SyntaxError: '[|foo$="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo$=\"bar\" invalid]") threw exception SyntaxError: '[*|foo$="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=\"bar\" invalid]") threw exception SyntaxError: '[WebKit|foo$="bar" invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=bar invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=bar invalid]") threw exception SyntaxError: '[foo*=bar invalid]' is not a valid selector..
+PASS document.querySelector("[|foo*=bar invalid]") threw exception SyntaxError: '[|foo*=bar invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo*=bar invalid]") threw exception SyntaxError: '[*|foo*=bar invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=bar invalid]") threw exception SyntaxError: '[WebKit|foo*=bar invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=\"bar\" invalid]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=\"bar\" invalid]") threw exception SyntaxError: '[foo*="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[|foo*=\"bar\" invalid]") threw exception SyntaxError: '[|foo*="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[*|foo*=\"bar\" invalid]") threw exception SyntaxError: '[*|foo*="bar" invalid]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=\"bar\" invalid]") threw exception SyntaxError: '[WebKit|foo*="bar" invalid]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=bar i i]") threw exception SyntaxError: '[foo=bar i i]' is not a valid selector..
+PASS document.querySelector("[|foo=bar i i]") threw exception SyntaxError: '[|foo=bar i i]' is not a valid selector..
+PASS document.querySelector("[*|foo=bar i i]") threw exception SyntaxError: '[*|foo=bar i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=bar i i]") threw exception SyntaxError: '[WebKit|foo=bar i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=\"bar\" i i]") threw exception SyntaxError: '[foo="bar" i i]' is not a valid selector..
+PASS document.querySelector("[|foo=\"bar\" i i]") threw exception SyntaxError: '[|foo="bar" i i]' is not a valid selector..
+PASS document.querySelector("[*|foo=\"bar\" i i]") threw exception SyntaxError: '[*|foo="bar" i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=\"bar\" i i]") threw exception SyntaxError: '[WebKit|foo="bar" i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=bar i i]") threw exception SyntaxError: '[foo~=bar i i]' is not a valid selector..
+PASS document.querySelector("[|foo~=bar i i]") threw exception SyntaxError: '[|foo~=bar i i]' is not a valid selector..
+PASS document.querySelector("[*|foo~=bar i i]") threw exception SyntaxError: '[*|foo~=bar i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=bar i i]") threw exception SyntaxError: '[WebKit|foo~=bar i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=\"bar\" i i]") threw exception SyntaxError: '[foo~="bar" i i]' is not a valid selector..
+PASS document.querySelector("[|foo~=\"bar\" i i]") threw exception SyntaxError: '[|foo~="bar" i i]' is not a valid selector..
+PASS document.querySelector("[*|foo~=\"bar\" i i]") threw exception SyntaxError: '[*|foo~="bar" i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=\"bar\" i i]") threw exception SyntaxError: '[WebKit|foo~="bar" i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=bar i i]") threw exception SyntaxError: '[foo|=bar i i]' is not a valid selector..
+PASS document.querySelector("[|foo|=bar i i]") threw exception SyntaxError: '[|foo|=bar i i]' is not a valid selector..
+PASS document.querySelector("[*|foo|=bar i i]") threw exception SyntaxError: '[*|foo|=bar i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=bar i i]") threw exception SyntaxError: '[WebKit|foo|=bar i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=\"bar\" i i]") threw exception SyntaxError: '[foo|="bar" i i]' is not a valid selector..
+PASS document.querySelector("[|foo|=\"bar\" i i]") threw exception SyntaxError: '[|foo|="bar" i i]' is not a valid selector..
+PASS document.querySelector("[*|foo|=\"bar\" i i]") threw exception SyntaxError: '[*|foo|="bar" i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=\"bar\" i i]") threw exception SyntaxError: '[WebKit|foo|="bar" i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=bar i i]") threw exception SyntaxError: '[foo^=bar i i]' is not a valid selector..
+PASS document.querySelector("[|foo^=bar i i]") threw exception SyntaxError: '[|foo^=bar i i]' is not a valid selector..
+PASS document.querySelector("[*|foo^=bar i i]") threw exception SyntaxError: '[*|foo^=bar i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=bar i i]") threw exception SyntaxError: '[WebKit|foo^=bar i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=\"bar\" i i]") threw exception SyntaxError: '[foo^="bar" i i]' is not a valid selector..
+PASS document.querySelector("[|foo^=\"bar\" i i]") threw exception SyntaxError: '[|foo^="bar" i i]' is not a valid selector..
+PASS document.querySelector("[*|foo^=\"bar\" i i]") threw exception SyntaxError: '[*|foo^="bar" i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=\"bar\" i i]") threw exception SyntaxError: '[WebKit|foo^="bar" i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=bar i i]") threw exception SyntaxError: '[foo$=bar i i]' is not a valid selector..
+PASS document.querySelector("[|foo$=bar i i]") threw exception SyntaxError: '[|foo$=bar i i]' is not a valid selector..
+PASS document.querySelector("[*|foo$=bar i i]") threw exception SyntaxError: '[*|foo$=bar i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=bar i i]") threw exception SyntaxError: '[WebKit|foo$=bar i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=\"bar\" i i]") threw exception SyntaxError: '[foo$="bar" i i]' is not a valid selector..
+PASS document.querySelector("[|foo$=\"bar\" i i]") threw exception SyntaxError: '[|foo$="bar" i i]' is not a valid selector..
+PASS document.querySelector("[*|foo$=\"bar\" i i]") threw exception SyntaxError: '[*|foo$="bar" i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=\"bar\" i i]") threw exception SyntaxError: '[WebKit|foo$="bar" i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=bar i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=bar i i]") threw exception SyntaxError: '[foo*=bar i i]' is not a valid selector..
+PASS document.querySelector("[|foo*=bar i i]") threw exception SyntaxError: '[|foo*=bar i i]' is not a valid selector..
+PASS document.querySelector("[*|foo*=bar i i]") threw exception SyntaxError: '[*|foo*=bar i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=bar i i]") threw exception SyntaxError: '[WebKit|foo*=bar i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=\"bar\" i i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=\"bar\" i i]") threw exception SyntaxError: '[foo*="bar" i i]' is not a valid selector..
+PASS document.querySelector("[|foo*=\"bar\" i i]") threw exception SyntaxError: '[|foo*="bar" i i]' is not a valid selector..
+PASS document.querySelector("[*|foo*=\"bar\" i i]") threw exception SyntaxError: '[*|foo*="bar" i i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=\"bar\" i i]") threw exception SyntaxError: '[WebKit|foo*="bar" i i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=bar i first-child]") threw exception SyntaxError: '[foo=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo=bar i first-child]") threw exception SyntaxError: '[|foo=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo=bar i first-child]") threw exception SyntaxError: '[*|foo=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=bar i first-child]") threw exception SyntaxError: '[WebKit|foo=bar i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=\"bar\" i first-child]") threw exception SyntaxError: '[foo="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo=\"bar\" i first-child]") threw exception SyntaxError: '[|foo="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo=\"bar\" i first-child]") threw exception SyntaxError: '[*|foo="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=\"bar\" i first-child]") threw exception SyntaxError: '[WebKit|foo="bar" i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=bar i first-child]") threw exception SyntaxError: '[foo~=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo~=bar i first-child]") threw exception SyntaxError: '[|foo~=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo~=bar i first-child]") threw exception SyntaxError: '[*|foo~=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=bar i first-child]") threw exception SyntaxError: '[WebKit|foo~=bar i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=\"bar\" i first-child]") threw exception SyntaxError: '[foo~="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo~=\"bar\" i first-child]") threw exception SyntaxError: '[|foo~="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo~=\"bar\" i first-child]") threw exception SyntaxError: '[*|foo~="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=\"bar\" i first-child]") threw exception SyntaxError: '[WebKit|foo~="bar" i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=bar i first-child]") threw exception SyntaxError: '[foo|=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo|=bar i first-child]") threw exception SyntaxError: '[|foo|=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo|=bar i first-child]") threw exception SyntaxError: '[*|foo|=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=bar i first-child]") threw exception SyntaxError: '[WebKit|foo|=bar i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=\"bar\" i first-child]") threw exception SyntaxError: '[foo|="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo|=\"bar\" i first-child]") threw exception SyntaxError: '[|foo|="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo|=\"bar\" i first-child]") threw exception SyntaxError: '[*|foo|="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=\"bar\" i first-child]") threw exception SyntaxError: '[WebKit|foo|="bar" i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=bar i first-child]") threw exception SyntaxError: '[foo^=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo^=bar i first-child]") threw exception SyntaxError: '[|foo^=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo^=bar i first-child]") threw exception SyntaxError: '[*|foo^=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=bar i first-child]") threw exception SyntaxError: '[WebKit|foo^=bar i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=\"bar\" i first-child]") threw exception SyntaxError: '[foo^="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo^=\"bar\" i first-child]") threw exception SyntaxError: '[|foo^="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo^=\"bar\" i first-child]") threw exception SyntaxError: '[*|foo^="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=\"bar\" i first-child]") threw exception SyntaxError: '[WebKit|foo^="bar" i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=bar i first-child]") threw exception SyntaxError: '[foo$=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo$=bar i first-child]") threw exception SyntaxError: '[|foo$=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo$=bar i first-child]") threw exception SyntaxError: '[*|foo$=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=bar i first-child]") threw exception SyntaxError: '[WebKit|foo$=bar i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=\"bar\" i first-child]") threw exception SyntaxError: '[foo$="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo$=\"bar\" i first-child]") threw exception SyntaxError: '[|foo$="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo$=\"bar\" i first-child]") threw exception SyntaxError: '[*|foo$="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=\"bar\" i first-child]") threw exception SyntaxError: '[WebKit|foo$="bar" i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=bar i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=bar i first-child]") threw exception SyntaxError: '[foo*=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo*=bar i first-child]") threw exception SyntaxError: '[|foo*=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo*=bar i first-child]") threw exception SyntaxError: '[*|foo*=bar i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=bar i first-child]") threw exception SyntaxError: '[WebKit|foo*=bar i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=\"bar\" i first-child]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=\"bar\" i first-child]") threw exception SyntaxError: '[foo*="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[|foo*=\"bar\" i first-child]") threw exception SyntaxError: '[|foo*="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[*|foo*=\"bar\" i first-child]") threw exception SyntaxError: '[*|foo*="bar" i first-child]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=\"bar\" i first-child]") threw exception SyntaxError: '[WebKit|foo*="bar" i first-child]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=bar i \"empty\"]") threw exception SyntaxError: '[foo=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo=bar i \"empty\"]") threw exception SyntaxError: '[|foo=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo=bar i \"empty\"]") threw exception SyntaxError: '[*|foo=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=bar i \"empty\"]") threw exception SyntaxError: '[WebKit|foo=bar i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=\"bar\" i \"empty\"]") threw exception SyntaxError: '[foo="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo=\"bar\" i \"empty\"]") threw exception SyntaxError: '[|foo="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo=\"bar\" i \"empty\"]") threw exception SyntaxError: '[*|foo="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=\"bar\" i \"empty\"]") threw exception SyntaxError: '[WebKit|foo="bar" i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=bar i \"empty\"]") threw exception SyntaxError: '[foo~=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo~=bar i \"empty\"]") threw exception SyntaxError: '[|foo~=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo~=bar i \"empty\"]") threw exception SyntaxError: '[*|foo~=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=bar i \"empty\"]") threw exception SyntaxError: '[WebKit|foo~=bar i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=\"bar\" i \"empty\"]") threw exception SyntaxError: '[foo~="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo~=\"bar\" i \"empty\"]") threw exception SyntaxError: '[|foo~="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo~=\"bar\" i \"empty\"]") threw exception SyntaxError: '[*|foo~="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=\"bar\" i \"empty\"]") threw exception SyntaxError: '[WebKit|foo~="bar" i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=bar i \"empty\"]") threw exception SyntaxError: '[foo|=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo|=bar i \"empty\"]") threw exception SyntaxError: '[|foo|=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo|=bar i \"empty\"]") threw exception SyntaxError: '[*|foo|=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=bar i \"empty\"]") threw exception SyntaxError: '[WebKit|foo|=bar i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=\"bar\" i \"empty\"]") threw exception SyntaxError: '[foo|="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo|=\"bar\" i \"empty\"]") threw exception SyntaxError: '[|foo|="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo|=\"bar\" i \"empty\"]") threw exception SyntaxError: '[*|foo|="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=\"bar\" i \"empty\"]") threw exception SyntaxError: '[WebKit|foo|="bar" i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=bar i \"empty\"]") threw exception SyntaxError: '[foo^=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo^=bar i \"empty\"]") threw exception SyntaxError: '[|foo^=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo^=bar i \"empty\"]") threw exception SyntaxError: '[*|foo^=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=bar i \"empty\"]") threw exception SyntaxError: '[WebKit|foo^=bar i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=\"bar\" i \"empty\"]") threw exception SyntaxError: '[foo^="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo^=\"bar\" i \"empty\"]") threw exception SyntaxError: '[|foo^="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo^=\"bar\" i \"empty\"]") threw exception SyntaxError: '[*|foo^="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=\"bar\" i \"empty\"]") threw exception SyntaxError: '[WebKit|foo^="bar" i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=bar i \"empty\"]") threw exception SyntaxError: '[foo$=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo$=bar i \"empty\"]") threw exception SyntaxError: '[|foo$=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo$=bar i \"empty\"]") threw exception SyntaxError: '[*|foo$=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=bar i \"empty\"]") threw exception SyntaxError: '[WebKit|foo$=bar i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=\"bar\" i \"empty\"]") threw exception SyntaxError: '[foo$="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo$=\"bar\" i \"empty\"]") threw exception SyntaxError: '[|foo$="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo$=\"bar\" i \"empty\"]") threw exception SyntaxError: '[*|foo$="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=\"bar\" i \"empty\"]") threw exception SyntaxError: '[WebKit|foo$="bar" i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=bar i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=bar i \"empty\"]") threw exception SyntaxError: '[foo*=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo*=bar i \"empty\"]") threw exception SyntaxError: '[|foo*=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo*=bar i \"empty\"]") threw exception SyntaxError: '[*|foo*=bar i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=bar i \"empty\"]") threw exception SyntaxError: '[WebKit|foo*=bar i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=\"bar\" i \"empty\"]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=\"bar\" i \"empty\"]") threw exception SyntaxError: '[foo*="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[|foo*=\"bar\" i \"empty\"]") threw exception SyntaxError: '[|foo*="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[*|foo*=\"bar\" i \"empty\"]") threw exception SyntaxError: '[*|foo*="bar" i "empty"]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=\"bar\" i \"empty\"]") threw exception SyntaxError: '[WebKit|foo*="bar" i "empty"]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=bar first-child i]") threw exception SyntaxError: '[foo=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo=bar first-child i]") threw exception SyntaxError: '[|foo=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo=bar first-child i]") threw exception SyntaxError: '[*|foo=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=bar first-child i]") threw exception SyntaxError: '[WebKit|foo=bar first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=\"bar\" first-child i]") threw exception SyntaxError: '[foo="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo=\"bar\" first-child i]") threw exception SyntaxError: '[|foo="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo=\"bar\" first-child i]") threw exception SyntaxError: '[*|foo="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=\"bar\" first-child i]") threw exception SyntaxError: '[WebKit|foo="bar" first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=bar first-child i]") threw exception SyntaxError: '[foo~=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo~=bar first-child i]") threw exception SyntaxError: '[|foo~=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo~=bar first-child i]") threw exception SyntaxError: '[*|foo~=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=bar first-child i]") threw exception SyntaxError: '[WebKit|foo~=bar first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=\"bar\" first-child i]") threw exception SyntaxError: '[foo~="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo~=\"bar\" first-child i]") threw exception SyntaxError: '[|foo~="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo~=\"bar\" first-child i]") threw exception SyntaxError: '[*|foo~="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=\"bar\" first-child i]") threw exception SyntaxError: '[WebKit|foo~="bar" first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=bar first-child i]") threw exception SyntaxError: '[foo|=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo|=bar first-child i]") threw exception SyntaxError: '[|foo|=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo|=bar first-child i]") threw exception SyntaxError: '[*|foo|=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=bar first-child i]") threw exception SyntaxError: '[WebKit|foo|=bar first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=\"bar\" first-child i]") threw exception SyntaxError: '[foo|="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo|=\"bar\" first-child i]") threw exception SyntaxError: '[|foo|="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo|=\"bar\" first-child i]") threw exception SyntaxError: '[*|foo|="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=\"bar\" first-child i]") threw exception SyntaxError: '[WebKit|foo|="bar" first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=bar first-child i]") threw exception SyntaxError: '[foo^=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo^=bar first-child i]") threw exception SyntaxError: '[|foo^=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo^=bar first-child i]") threw exception SyntaxError: '[*|foo^=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=bar first-child i]") threw exception SyntaxError: '[WebKit|foo^=bar first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=\"bar\" first-child i]") threw exception SyntaxError: '[foo^="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo^=\"bar\" first-child i]") threw exception SyntaxError: '[|foo^="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo^=\"bar\" first-child i]") threw exception SyntaxError: '[*|foo^="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=\"bar\" first-child i]") threw exception SyntaxError: '[WebKit|foo^="bar" first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=bar first-child i]") threw exception SyntaxError: '[foo$=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo$=bar first-child i]") threw exception SyntaxError: '[|foo$=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo$=bar first-child i]") threw exception SyntaxError: '[*|foo$=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=bar first-child i]") threw exception SyntaxError: '[WebKit|foo$=bar first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=\"bar\" first-child i]") threw exception SyntaxError: '[foo$="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo$=\"bar\" first-child i]") threw exception SyntaxError: '[|foo$="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo$=\"bar\" first-child i]") threw exception SyntaxError: '[*|foo$="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=\"bar\" first-child i]") threw exception SyntaxError: '[WebKit|foo$="bar" first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=bar first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=bar first-child i]") threw exception SyntaxError: '[foo*=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo*=bar first-child i]") threw exception SyntaxError: '[|foo*=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo*=bar first-child i]") threw exception SyntaxError: '[*|foo*=bar first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=bar first-child i]") threw exception SyntaxError: '[WebKit|foo*=bar first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=\"bar\" first-child i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=\"bar\" first-child i]") threw exception SyntaxError: '[foo*="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[|foo*=\"bar\" first-child i]") threw exception SyntaxError: '[|foo*="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[*|foo*=\"bar\" first-child i]") threw exception SyntaxError: '[*|foo*="bar" first-child i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=\"bar\" first-child i]") threw exception SyntaxError: '[WebKit|foo*="bar" first-child i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=bar \"empty\" i]") threw exception SyntaxError: '[foo=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo=bar \"empty\" i]") threw exception SyntaxError: '[|foo=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo=bar \"empty\" i]") threw exception SyntaxError: '[*|foo=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=bar \"empty\" i]") threw exception SyntaxError: '[WebKit|foo=bar "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=\"bar\" \"empty\" i]") threw exception SyntaxError: '[foo="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo=\"bar\" \"empty\" i]") threw exception SyntaxError: '[|foo="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo=\"bar\" \"empty\" i]") threw exception SyntaxError: '[*|foo="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=\"bar\" \"empty\" i]") threw exception SyntaxError: '[WebKit|foo="bar" "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=bar \"empty\" i]") threw exception SyntaxError: '[foo~=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo~=bar \"empty\" i]") threw exception SyntaxError: '[|foo~=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo~=bar \"empty\" i]") threw exception SyntaxError: '[*|foo~=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=bar \"empty\" i]") threw exception SyntaxError: '[WebKit|foo~=bar "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=\"bar\" \"empty\" i]") threw exception SyntaxError: '[foo~="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo~=\"bar\" \"empty\" i]") threw exception SyntaxError: '[|foo~="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo~=\"bar\" \"empty\" i]") threw exception SyntaxError: '[*|foo~="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=\"bar\" \"empty\" i]") threw exception SyntaxError: '[WebKit|foo~="bar" "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=bar \"empty\" i]") threw exception SyntaxError: '[foo|=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo|=bar \"empty\" i]") threw exception SyntaxError: '[|foo|=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo|=bar \"empty\" i]") threw exception SyntaxError: '[*|foo|=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=bar \"empty\" i]") threw exception SyntaxError: '[WebKit|foo|=bar "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=\"bar\" \"empty\" i]") threw exception SyntaxError: '[foo|="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo|=\"bar\" \"empty\" i]") threw exception SyntaxError: '[|foo|="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo|=\"bar\" \"empty\" i]") threw exception SyntaxError: '[*|foo|="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=\"bar\" \"empty\" i]") threw exception SyntaxError: '[WebKit|foo|="bar" "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=bar \"empty\" i]") threw exception SyntaxError: '[foo^=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo^=bar \"empty\" i]") threw exception SyntaxError: '[|foo^=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo^=bar \"empty\" i]") threw exception SyntaxError: '[*|foo^=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=bar \"empty\" i]") threw exception SyntaxError: '[WebKit|foo^=bar "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=\"bar\" \"empty\" i]") threw exception SyntaxError: '[foo^="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo^=\"bar\" \"empty\" i]") threw exception SyntaxError: '[|foo^="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo^=\"bar\" \"empty\" i]") threw exception SyntaxError: '[*|foo^="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=\"bar\" \"empty\" i]") threw exception SyntaxError: '[WebKit|foo^="bar" "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=bar \"empty\" i]") threw exception SyntaxError: '[foo$=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo$=bar \"empty\" i]") threw exception SyntaxError: '[|foo$=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo$=bar \"empty\" i]") threw exception SyntaxError: '[*|foo$=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=bar \"empty\" i]") threw exception SyntaxError: '[WebKit|foo$=bar "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=\"bar\" \"empty\" i]") threw exception SyntaxError: '[foo$="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo$=\"bar\" \"empty\" i]") threw exception SyntaxError: '[|foo$="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo$=\"bar\" \"empty\" i]") threw exception SyntaxError: '[*|foo$="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=\"bar\" \"empty\" i]") threw exception SyntaxError: '[WebKit|foo$="bar" "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=bar \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=bar \"empty\" i]") threw exception SyntaxError: '[foo*=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo*=bar \"empty\" i]") threw exception SyntaxError: '[|foo*=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo*=bar \"empty\" i]") threw exception SyntaxError: '[*|foo*=bar "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=bar \"empty\" i]") threw exception SyntaxError: '[WebKit|foo*=bar "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=\"bar\" \"empty\" i]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=\"bar\" \"empty\" i]") threw exception SyntaxError: '[foo*="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[|foo*=\"bar\" \"empty\" i]") threw exception SyntaxError: '[|foo*="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[*|foo*=\"bar\" \"empty\" i]") threw exception SyntaxError: '[*|foo*="bar" "empty" i]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=\"bar\" \"empty\" i]") threw exception SyntaxError: '[WebKit|foo*="bar" "empty" i]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=bar l]") threw exception SyntaxError: '[foo=bar l]' is not a valid selector..
+PASS document.querySelector("[|foo=bar l]") threw exception SyntaxError: '[|foo=bar l]' is not a valid selector..
+PASS document.querySelector("[*|foo=bar l]") threw exception SyntaxError: '[*|foo=bar l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=bar l]") threw exception SyntaxError: '[WebKit|foo=bar l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo=\"bar\" l]") threw exception SyntaxError: '[foo="bar" l]' is not a valid selector..
+PASS document.querySelector("[|foo=\"bar\" l]") threw exception SyntaxError: '[|foo="bar" l]' is not a valid selector..
+PASS document.querySelector("[*|foo=\"bar\" l]") threw exception SyntaxError: '[*|foo="bar" l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo=\"bar\" l]") threw exception SyntaxError: '[WebKit|foo="bar" l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=bar l]") threw exception SyntaxError: '[foo~=bar l]' is not a valid selector..
+PASS document.querySelector("[|foo~=bar l]") threw exception SyntaxError: '[|foo~=bar l]' is not a valid selector..
+PASS document.querySelector("[*|foo~=bar l]") threw exception SyntaxError: '[*|foo~=bar l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=bar l]") threw exception SyntaxError: '[WebKit|foo~=bar l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo~=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo~=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo~=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo~=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo~=\"bar\" l]") threw exception SyntaxError: '[foo~="bar" l]' is not a valid selector..
+PASS document.querySelector("[|foo~=\"bar\" l]") threw exception SyntaxError: '[|foo~="bar" l]' is not a valid selector..
+PASS document.querySelector("[*|foo~=\"bar\" l]") threw exception SyntaxError: '[*|foo~="bar" l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo~=\"bar\" l]") threw exception SyntaxError: '[WebKit|foo~="bar" l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=bar l]") threw exception SyntaxError: '[foo|=bar l]' is not a valid selector..
+PASS document.querySelector("[|foo|=bar l]") threw exception SyntaxError: '[|foo|=bar l]' is not a valid selector..
+PASS document.querySelector("[*|foo|=bar l]") threw exception SyntaxError: '[*|foo|=bar l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=bar l]") threw exception SyntaxError: '[WebKit|foo|=bar l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo|=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo|=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo|=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo|=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo|=\"bar\" l]") threw exception SyntaxError: '[foo|="bar" l]' is not a valid selector..
+PASS document.querySelector("[|foo|=\"bar\" l]") threw exception SyntaxError: '[|foo|="bar" l]' is not a valid selector..
+PASS document.querySelector("[*|foo|=\"bar\" l]") threw exception SyntaxError: '[*|foo|="bar" l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo|=\"bar\" l]") threw exception SyntaxError: '[WebKit|foo|="bar" l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=bar l]") threw exception SyntaxError: '[foo^=bar l]' is not a valid selector..
+PASS document.querySelector("[|foo^=bar l]") threw exception SyntaxError: '[|foo^=bar l]' is not a valid selector..
+PASS document.querySelector("[*|foo^=bar l]") threw exception SyntaxError: '[*|foo^=bar l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=bar l]") threw exception SyntaxError: '[WebKit|foo^=bar l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo^=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo^=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo^=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo^=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo^=\"bar\" l]") threw exception SyntaxError: '[foo^="bar" l]' is not a valid selector..
+PASS document.querySelector("[|foo^=\"bar\" l]") threw exception SyntaxError: '[|foo^="bar" l]' is not a valid selector..
+PASS document.querySelector("[*|foo^=\"bar\" l]") threw exception SyntaxError: '[*|foo^="bar" l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo^=\"bar\" l]") threw exception SyntaxError: '[WebKit|foo^="bar" l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=bar l]") threw exception SyntaxError: '[foo$=bar l]' is not a valid selector..
+PASS document.querySelector("[|foo$=bar l]") threw exception SyntaxError: '[|foo$=bar l]' is not a valid selector..
+PASS document.querySelector("[*|foo$=bar l]") threw exception SyntaxError: '[*|foo$=bar l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=bar l]") threw exception SyntaxError: '[WebKit|foo$=bar l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo$=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo$=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo$=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo$=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo$=\"bar\" l]") threw exception SyntaxError: '[foo$="bar" l]' is not a valid selector..
+PASS document.querySelector("[|foo$=\"bar\" l]") threw exception SyntaxError: '[|foo$="bar" l]' is not a valid selector..
+PASS document.querySelector("[*|foo$=\"bar\" l]") threw exception SyntaxError: '[*|foo$="bar" l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo$=\"bar\" l]") threw exception SyntaxError: '[WebKit|foo$="bar" l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=bar l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=bar l]") threw exception SyntaxError: '[foo*=bar l]' is not a valid selector..
+PASS document.querySelector("[|foo*=bar l]") threw exception SyntaxError: '[|foo*=bar l]' is not a valid selector..
+PASS document.querySelector("[*|foo*=bar l]") threw exception SyntaxError: '[*|foo*=bar l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=bar l]") threw exception SyntaxError: '[WebKit|foo*=bar l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
-PASS document.querySelector("[foo*=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[|foo*=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[*|foo*=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelector("[WebKit|foo*=\"bar\" l]") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelector("[foo*=\"bar\" l]") threw exception SyntaxError: '[foo*="bar" l]' is not a valid selector..
+PASS document.querySelector("[|foo*=\"bar\" l]") threw exception SyntaxError: '[|foo*="bar" l]' is not a valid selector..
+PASS document.querySelector("[*|foo*=\"bar\" l]") threw exception SyntaxError: '[*|foo*="bar" l]' is not a valid selector..
+PASS document.querySelector("[WebKit|foo*=\"bar\" l]") threw exception SyntaxError: '[WebKit|foo*="bar" l]' is not a valid selector..
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0
 PASS document.getElementById('style-container').sheet.cssRules.length is 0

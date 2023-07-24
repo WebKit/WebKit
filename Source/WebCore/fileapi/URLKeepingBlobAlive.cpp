@@ -27,19 +27,13 @@
 #include "URLKeepingBlobAlive.h"
 
 #include "ThreadableBlobRegistry.h"
+#include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
 
-URLKeepingBlobAlive::URLKeepingBlobAlive(const URL& url, const SecurityOriginData& topOrigin)
+URLKeepingBlobAlive::URLKeepingBlobAlive(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
     : m_url(url)
     , m_topOrigin(topOrigin)
-{
-    registerBlobURLHandleIfNecessary();
-}
-
-URLKeepingBlobAlive::URLKeepingBlobAlive(const URLKeepingBlobAlive& other)
-    : m_url(other.m_url)
-    , m_topOrigin(other.m_topOrigin)
 {
     registerBlobURLHandleIfNecessary();
 }
@@ -53,19 +47,7 @@ void URLKeepingBlobAlive::clear()
 {
     unregisterBlobURLHandleIfNecessary();
     m_url = { };
-    m_topOrigin = { };
-}
-
-URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(const URLKeepingBlobAlive& other)
-{
-    if (&other == this)
-        return *this;
-
-    unregisterBlobURLHandleIfNecessary();
-    m_url = other.m_url;
-    m_topOrigin = other.m_topOrigin;
-    registerBlobURLHandleIfNecessary();
-    return *this;
+    m_topOrigin = std::nullopt;
 }
 
 URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(URLKeepingBlobAlive&& other)
@@ -82,22 +64,18 @@ URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(URLKeepingBlobAlive&& other)
 void URLKeepingBlobAlive::registerBlobURLHandleIfNecessary()
 {
     if (m_url.protocolIsBlob())
-        ThreadableBlobRegistry::registerBlobURLHandle(m_url);
+        ThreadableBlobRegistry::registerBlobURLHandle(m_url, m_topOrigin);
 }
 
 void URLKeepingBlobAlive::unregisterBlobURLHandleIfNecessary()
 {
     if (m_url.protocolIsBlob())
-        ThreadableBlobRegistry::unregisterBlobURLHandle(m_url);
+        ThreadableBlobRegistry::unregisterBlobURLHandle(m_url, m_topOrigin);
 }
 
-URLKeepingBlobAlive URLKeepingBlobAlive::isolatedCopy() const &
+URLKeepingBlobAlive URLKeepingBlobAlive::isolatedCopy() const
 {
-    return { m_url.isolatedCopy(), m_topOrigin.isolatedCopy() };
+    return { m_url.isolatedCopy(), crossThreadCopy(m_topOrigin) };
 }
 
-URLKeepingBlobAlive URLKeepingBlobAlive::isolatedCopy() &&
-{
-    return { WTFMove(m_url).isolatedCopy(), WTFMove(m_topOrigin).isolatedCopy() };
-}
 } // namespace WebCore

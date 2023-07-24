@@ -325,7 +325,12 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case DataViewGetFloat:
     case ResolveRope:
     case GetWebAssemblyInstanceExports:
+    case NumberIsNaN:
+    case StringIndexOf:
         return true;
+
+    case GlobalIsNaN:
+        return node->child1().useKind() == DoubleRepUse;
 
     case GetButterfly:
         return state.forNode(node->child1()).isType(SpecObject);
@@ -525,6 +530,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case PutStack:
     case KillStack:
     case MovHint:
+    case ZombieHint:
     case Upsilon:
     case Phi:
     case Flush:
@@ -594,6 +600,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case NewAsyncGenerator:
     case NewArray:
     case NewArrayWithSize:
+    case NewArrayWithConstantSize:
     case NewArrayWithSpecies:
     case NewArrayBuffer:
     case NewArrayWithSpread:
@@ -717,6 +724,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case TryGetById:
     case StringLocaleCompare:
     case FunctionBind:
+    case DateSetTime:
         return false;
 
     case StringReplaceString:

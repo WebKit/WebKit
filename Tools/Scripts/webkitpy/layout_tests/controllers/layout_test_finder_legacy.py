@@ -125,7 +125,7 @@ class LayoutTestFinder(object):
             return False
         filename, _ = self._filesystem.splitext(test_file)
         crashtests_dirname = self._port.TEST_PATH_SEPARATOR + 'crashtests' + self._port.TEST_PATH_SEPARATOR
-        return filename.endswith('-crash') or crashtests_dirname in test_file
+        return filename.endswith('-crash') or filename.endswith('-crash.tentative') or crashtests_dirname in test_file
 
     def _expand_variants(self, files):
         expanded = []

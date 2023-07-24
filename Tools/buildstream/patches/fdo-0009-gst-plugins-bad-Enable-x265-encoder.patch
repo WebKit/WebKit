@@ -1,0 +1,405 @@
+From c9f142c2def9f9b33fc2f4573fe003e34935ceac Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sat, 15 Jul 2023 14:37:04 +0100
+Subject: [PATCH] gst-plugins-bad: Enable x265 encoder
+
+---
+ elements/components/gstreamer-plugins-bad.bst |  3 +
+ elements/components/x265-10bits.bst           | 38 +++++++++++
+ elements/components/x265-12bits.bst           | 39 ++++++++++++
+ elements/components/x265.bst                  | 46 ++++++++++++++
+ elements/include/x265-source.yml              | 17 +++++
+ files/x265.pc                                 | 11 ++++
+ patches/x265/x265-arm-cflags.patch            | 63 +++++++++++++++++++
+ patches/x265/x265-detect_cpu_armhfp.patch     | 15 +++++
+ patches/x265/x265-high-bit-depth-soname.patch | 31 +++++++++
+ patches/x265/x265-pic.patch                   | 11 ++++
+ patches/x265/x265-pkgconfig_path_fix.patch    | 11 ++++
+ 11 files changed, 285 insertions(+)
+ create mode 100644 elements/components/x265-10bits.bst
+ create mode 100644 elements/components/x265-12bits.bst
+ create mode 100644 elements/components/x265.bst
+ create mode 100644 elements/include/x265-source.yml
+ create mode 100644 files/x265.pc
+ create mode 100644 patches/x265/x265-arm-cflags.patch
+ create mode 100644 patches/x265/x265-detect_cpu_armhfp.patch
+ create mode 100644 patches/x265/x265-high-bit-depth-soname.patch
+ create mode 100644 patches/x265/x265-pic.patch
+ create mode 100644 patches/x265/x265-pkgconfig_path_fix.patch
+
+diff --git a/elements/components/gstreamer-plugins-bad.bst b/elements/components/gstreamer-plugins-bad.bst
+index d98ac6007..d050ad0f6 100644
+--- a/elements/components/gstreamer-plugins-bad.bst
++++ b/elements/components/gstreamer-plugins-bad.bst
+@@ -25,6 +25,7 @@ depends:
+ - components/webrtc-audio-processing-1.bst
+ - components/noopenh264.bst
+ - components/libsrtp2.bst
++- components/x265.bst
+ 
+ build-depends:
+ - public-stacks/buildsystem-meson.bst
+@@ -60,6 +61,8 @@ variables:
+     -Dwebp=enabled
+     -Dopenh264=enabled
+     -Dsrtp=enabled
++    -Dgpl=enabled
++    -Dx265=enabled
+ 
+ public:
+   bst:
+diff --git a/elements/components/x265-10bits.bst b/elements/components/x265-10bits.bst
+new file mode 100644
+index 000000000..4a83bcc9e
+--- /dev/null
++++ b/elements/components/x265-10bits.bst
+@@ -0,0 +1,43 @@
++kind: cmake
++
++build-depends:
++- public-stacks/buildsystem-cmake.bst
++- components/nasm.bst
++
++depends:
++- bootstrap-import.bst
++
++variables:
++  command-subdir: source
++  cmake-local: |
++    -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON \
++    -DCMAKE_SKIP_RPATH:BOOL=YES \
++    -DENABLE_PIC:BOOL=ON \
++    -DENABLE_SHARED=ON \
++    -DENABLE_TESTS:BOOL=OFF \
++    -DENABLE_HDR10_PLUS=YES \
++    -DCMAKE_ASM_NASM_FLAGS=-w-macro-params-legacy \
++    -DENABLE_CLI=OFF \
++    -DHIGH_BIT_DEPTH=ON
++
++config:
++  install-commands:
++    (>):
++    - |
++      mkdir -p "%{install-root}%{libdir}/"
++      mv "/buildstream-build/source/_builddir/libx265_main10.so" "%{install-root}%{libdir}"
++      mv "/buildstream-build/source/_builddir/libx265_main10.so.199" "%{install-root}%{libdir}"
++      rm -fr %{install-root}/%{includedir}
++      rm -f %{install-root}/usr/lib/libhdr10plus.*
++      rm -f %{install-root}/usr/lib/libx265.a
++      rm -f %{install-root}/usr/lib/debug/usr/lib/libhdr10plus.so.debug
++
++public:
++  bst:
++    split-rules:
++      devel:
++        (>):
++        - '%{libdir}/lib*.so.*'
++
++(@):
++- elements/include/x265-source.yml
+diff --git a/elements/components/x265-12bits.bst b/elements/components/x265-12bits.bst
+new file mode 100644
+index 000000000..1fe316a9f
+--- /dev/null
++++ b/elements/components/x265-12bits.bst
+@@ -0,0 +1,44 @@
++kind: cmake
++
++build-depends:
++- public-stacks/buildsystem-cmake.bst
++- components/nasm.bst
++
++depends:
++- bootstrap-import.bst
++
++variables:
++  command-subdir: source
++  cmake-local: |
++    -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON \
++    -DCMAKE_SKIP_RPATH:BOOL=YES \
++    -DENABLE_PIC:BOOL=ON \
++    -DENABLE_SHARED=ON \
++    -DENABLE_TESTS:BOOL=OFF \
++    -DENABLE_HDR10_PLUS=YES \
++    -DCMAKE_ASM_NASM_FLAGS=-w-macro-params-legacy \
++    -DENABLE_CLI=OFF \
++    -DHIGH_BIT_DEPTH=ON \
++    -DMAIN12=ON
++
++config:
++  install-commands:
++    (>):
++    - |
++      mkdir -p "%{install-root}%{libdir}/"
++      mv "/buildstream-build/source/_builddir/libx265_main12.so" "%{install-root}%{libdir}"
++      mv "/buildstream-build/source/_builddir/libx265_main12.so.199" "%{install-root}%{libdir}"
++      rm -fr %{install-root}/%{includedir}
++      rm -f %{install-root}/usr/lib/libhdr10plus.*
++      rm -f %{install-root}/usr/lib/libx265.a
++      rm -f %{install-root}/usr/lib/debug/usr/lib/libhdr10plus.so.debug
++
++public:
++  bst:
++    split-rules:
++      devel:
++        (>):
++        - '%{libdir}/lib*.so.*'
++
++(@):
++- elements/include/x265-source.yml
+diff --git a/elements/components/x265.bst b/elements/components/x265.bst
+new file mode 100644
+index 000000000..5c23843a7
+--- /dev/null
++++ b/elements/components/x265.bst
+@@ -0,0 +1,46 @@
++kind: cmake
++
++build-depends:
++- public-stacks/buildsystem-cmake.bst
++- components/nasm.bst
++
++depends:
++- bootstrap-import.bst
++
++variables:
++  command-subdir: source
++  cmake-local: |
++    -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON \
++    -DCMAKE_SKIP_RPATH:BOOL=YES \
++    -DENABLE_PIC:BOOL=ON \
++    -DENABLE_SHARED=ON \
++    -DENABLE_TESTS:BOOL=OFF \
++    -DENABLE_HDR10_PLUS=YES \
++    -DCMAKE_ASM_NASM_FLAGS=-w-macro-params-legacy
++
++config:
++  install-commands:
++    (>):
++    - |
++      mkdir -p "%{install-root}%{libdir}/"
++      mv "%{install-root}/usr/lib/libhdr10plus.so" "%{install-root}%{libdir}"
++      mv "/buildstream-build/source/_builddir/libx265.so" "%{install-root}%{libdir}"
++      mv "/buildstream-build/source/_builddir/libx265.so.199" "%{install-root}%{libdir}"
++      mkdir -p "%{install-root}%{libdir}/pkgconfig"
++      cp ../x265.pc "%{install-root}%{libdir}/pkgconfig/"
++
++public:
++  bst:
++    split-rules:
++      devel:
++        (>):
++        - '%{libdir}/lib*.so'
++        - '%{libdir}/pkgconfig'
++        - '%{libdir}/pkgconfig/*.pc'
++        - '%{includedir}'
++        - '%{includedir}/x265.h'
++        - '%{includedir}/x265_config.h'
++        - '%{includedir}/hdr10plus.h'
++
++(@):
++- elements/include/x265-source.yml
+diff --git a/elements/include/x265-source.yml b/elements/include/x265-source.yml
+new file mode 100644
+index 000000000..e75643a75
+--- /dev/null
++++ b/elements/include/x265-source.yml
+@@ -0,0 +1,17 @@
++sources:
++- kind: tar
++  url: https://bitbucket.org/multicoreware/x265_git/downloads/x265_3.5.tar.gz
++  ref: e70a3335cacacbba0b3a20ec6fecd6783932288ebc8163ad74bcc9606477cae8
++# https://github.com/rpmfusion/x265/
++- kind: patch
++  path: patches/x265/x265-pic.patch
++- kind: patch
++  path: patches/x265/x265-high-bit-depth-soname.patch
++- kind: patch
++  path: patches/x265/x265-detect_cpu_armhfp.patch
++- kind: patch
++  path: patches/x265/x265-arm-cflags.patch
++- kind: patch
++  path: patches/x265/x265-pkgconfig_path_fix.patch
++- kind: local
++  path: files/x265.pc
+diff --git a/files/x265.pc b/files/x265.pc
+new file mode 100644
+index 000000000..a5fb43463
+--- /dev/null
++++ b/files/x265.pc
+@@ -0,0 +1,11 @@
++prefix=/usr
++exec_prefix=${prefix}
++libdir=/usr/lib/x86_64-linux-gnu
++includedir=${prefix}/include
++
++Name: x265
++Description: H.265/HEVC video encoder
++Version: 3.5
++Libs: -L${libdir} -lx265
++Libs.private: -lstdc++ -lm -lgcc_s -lgcc -lgcc_s -lgcc -lrt -ldl -lnuma
++Cflags: -I${includedir}
+diff --git a/patches/x265/x265-arm-cflags.patch b/patches/x265/x265-arm-cflags.patch
+new file mode 100644
+index 000000000..8cd5c867d
+--- /dev/null
++++ b/patches/x265/x265-arm-cflags.patch
+@@ -0,0 +1,63 @@
++--- x265_3.4/source/CMakeLists.txt.cflags
+++++ x265_3.4/source/CMakeLists.txt
++@@ -238,28 +238,6 @@
++             endif()
++         endif()
++     endif()
++-    if(ARM AND CROSS_COMPILE_ARM)
++-        if(ARM64)
++-            set(ARM_ARGS -fPIC)
++-        else()
++-            set(ARM_ARGS -march=armv6 -mfloat-abi=soft -mfpu=vfp -marm -fPIC)
++-        endif()
++-        message(STATUS "cross compile arm")
++-    elseif(ARM)
++-        if(ARM64)
++-            set(ARM_ARGS -fPIC)
++-            add_definitions(-DHAVE_NEON)
++-        else()
++-            find_package(Neon)
++-            if(CPU_HAS_NEON)
++-                set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=neon -marm -fPIC)
++-                add_definitions(-DHAVE_NEON)
++-            else()
++-                set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=vfp -marm)
++-            endif()
++-        endif()
++-    endif()
++-    add_definitions(${ARM_ARGS})
++     if(FPROFILE_GENERATE)
++         if(INTEL_CXX)
++             add_definitions(-prof-gen -prof-dir="${CMAKE_CURRENT_BINARY_DIR}")
++@@ -546,7 +524,7 @@
++             add_custom_command(
++                 OUTPUT ${ASM}.${SUFFIX}
++                 COMMAND ${CMAKE_CXX_COMPILER}
++-                ARGS ${ARM_ARGS} -c ${ASM_SRC} -o ${ASM}.${SUFFIX}
+++                ARGS ${CFLAGS} -c ${ASM_SRC} -o ${ASM}.${SUFFIX}
++                 DEPENDS ${ASM_SRC})
++         endforeach()
++     elseif(X86)
++
++--- x265_3.4/source/dynamicHDR10/CMakeLists.txt.cflags
+++++ x265_3.4/source/dynamicHDR10/CMakeLists.txt
++@@ -42,18 +42,6 @@
++             endif()
++         endif()
++     endif()
++-    if(ARM AND CROSS_COMPILE_ARM)
++-        set(ARM_ARGS -march=armv6 -mfloat-abi=soft -mfpu=vfp -marm -fPIC)
++-    elseif(ARM)
++-        find_package(Neon)
++-        if(CPU_HAS_NEON)
++-            set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=neon -marm -fPIC)
++-            add_definitions(-DHAVE_NEON)
++-        else()
++-            set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=vfp -marm)
++-        endif()
++-    endif()
++-    add_definitions(${ARM_ARGS})
++     if(FPROFILE_GENERATE)
++         if(INTEL_CXX)
++             add_definitions(-prof-gen -prof-dir="${CMAKE_CURRENT_BINARY_DIR}")
++
+diff --git a/patches/x265/x265-detect_cpu_armhfp.patch b/patches/x265/x265-detect_cpu_armhfp.patch
+new file mode 100644
+index 000000000..797ad0412
+--- /dev/null
++++ b/patches/x265/x265-detect_cpu_armhfp.patch
+@@ -0,0 +1,15 @@
++--- x265_v2.6/source/test/testharness.h.orig	2017-12-30 22:27:49.827620181 +0000
+++++ x265_v2.6/source/test/testharness.h	2017-12-30 22:30:53.239500941 +0000
++@@ -70,9 +70,10 @@ protected:
++ #include <intrin.h>
++ #elif (!defined(__APPLE__) && (defined (__GNUC__) && (defined(__x86_64__) || defined(__i386__))))
++ #include <x86intrin.h>
++-#elif ( !defined(__APPLE__) && defined (__GNUC__) && defined(__ARM_NEON__))
++-#include <arm_neon.h>
++ #elif defined(__GNUC__) && (!defined(__clang__) || __clang_major__ < 4)
+++#if ( !defined(__APPLE__) && defined(__ARM_NEON__))
+++#include <arm_neon.h>
+++#endif
++ /* fallback for older GCC/MinGW */
++ static inline uint32_t __rdtsc(void)
++ {
+diff --git a/patches/x265/x265-high-bit-depth-soname.patch b/patches/x265/x265-high-bit-depth-soname.patch
+new file mode 100644
+index 000000000..5b1e5ed6b
+--- /dev/null
++++ b/patches/x265/x265-high-bit-depth-soname.patch
+@@ -0,0 +1,31 @@
++--- a/source/CMakeLists.txt
+++++ b/source/CMakeLists.txt
++@@ -611,7 +611,15 @@
++     if(MSVC)
++         set_target_properties(x265-shared PROPERTIES OUTPUT_NAME libx265)
++     else()
++-        set_target_properties(x265-shared PROPERTIES OUTPUT_NAME x265)
+++        if(HIGH_BIT_DEPTH)
+++            if(MAIN12)
+++                set_target_properties(x265-shared PROPERTIES OUTPUT_NAME x265_main12)
+++            else()
+++                set_target_properties(x265-shared PROPERTIES OUTPUT_NAME x265_main10)
+++            endif()
+++        else()
+++            set_target_properties(x265-shared PROPERTIES OUTPUT_NAME x265)
+++        endif(HIGH_BIT_DEPTH)
++     endif()
++     if(UNIX)
++         set_target_properties(x265-shared PROPERTIES VERSION ${X265_BUILD})
++--- a/source/encoder/api.cpp
+++++ b/source/encoder/api.cpp
++@@ -704,7 +704,7 @@
++ #define ext ".dylib"
++ #else
++ #include <dlfcn.h>
++-#define ext ".so"
+++#define ext ".so." xstr(X265_BUILD)
++ #endif
++ #if defined(__GNUC__) && __GNUC__ >= 8
++ #pragma GCC diagnostic ignored "-Wcast-function-type"
++
+diff --git a/patches/x265/x265-pic.patch b/patches/x265/x265-pic.patch
+new file mode 100644
+index 000000000..a047ad15a
+--- /dev/null
++++ b/patches/x265/x265-pic.patch
+@@ -0,0 +1,11 @@
++--- a/source/CMakeLists.txt
+++++ b/source/CMakeLists.txt
++@@ -212,7 +212,7 @@
++         add_definitions(-std=gnu++98)
++     endif()
++     if(ENABLE_PIC)
++-         add_definitions(-fPIC)
+++         add_definitions(-fPIC -DPIC)
++     endif(ENABLE_PIC)
++     if(NATIVE_BUILD)
++         if(INTEL_CXX)
+diff --git a/patches/x265/x265-pkgconfig_path_fix.patch b/patches/x265/x265-pkgconfig_path_fix.patch
+new file mode 100644
+index 000000000..5d958f3e7
+--- /dev/null
++++ b/patches/x265/x265-pkgconfig_path_fix.patch
+@@ -0,0 +1,11 @@
++--- a/source/x265.pc.in
+++++ b/source/x265.pc.in
++@@ -1,6 +1,6 @@
++ prefix=@CMAKE_INSTALL_PREFIX@
++ exec_prefix=${prefix}
++-libdir=${exec_prefix}/@LIB_INSTALL_DIR@
+++libdir=@LIB_INSTALL_DIR@
++ includedir=${prefix}/include
++ 
++ Name: @CMAKE_PROJECT_NAME@
++
+-- 
+2.41.0
+

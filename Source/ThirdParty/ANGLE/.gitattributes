@@ -14,6 +14,7 @@ infra/config/generated/*.cfg               eol=lf
 infra/config/generated/*.pyl               eol=lf
 src/compiler/preprocessor/preprocessor_*.* eol=lf
 src/compiler/translator/glslang_*.*        eol=lf
+src/tests/capture_tests/expected/*.*       eol=lf
 
 # Git conflict markers in the json file break the code generator.
 # Using a binary merge strategy forces conflicts without changing file contents.

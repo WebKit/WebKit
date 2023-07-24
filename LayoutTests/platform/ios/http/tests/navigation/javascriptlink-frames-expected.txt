@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (119,182) size 1x0
                 RenderBR {BR} at (0,191) size 0x36
                 RenderBR {BR} at (0,229) size 0x36
-              RenderBlock {HR} at (0,282) size 784x2 [border: (1px inset #000000)]
+              RenderBlock {HR} at (0,282) size 784x2 [color=#808080] [border: (1px inset #808080)]
               RenderBlock {FORM} at (0,300) size 784x452
                 RenderButton {INPUT} at (2,2) size 114x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                   RenderBlock (anonymous) at (12,3) size 90x14
@@ -62,7 +62,7 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 57: "Initial Value"
                 RenderBR {BR} at (242,294) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {HR} at (0,784) size 784x2 [border: (1px inset #000000)]
+              RenderBlock {HR} at (0,784) size 784x2 [color=#808080] [border: (1px inset #808080)]
               RenderBlock {P} at (0,818) size 784x38
                 RenderText {#text} at (0,1) size 63x36
                   text run at (0,1) width 63: "Now"

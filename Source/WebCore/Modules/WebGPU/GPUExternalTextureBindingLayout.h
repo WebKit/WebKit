@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include <pal/graphics/WebGPU/WebGPUExternalTextureBindingLayout.h>
+#include "WebGPUExternalTextureBindingLayout.h"
 
 namespace WebCore {
 
 struct GPUExternalTextureBindingLayout {
-    PAL::WebGPU::ExternalTextureBindingLayout convertToBacking() const
+    WebGPU::ExternalTextureBindingLayout convertToBacking() const
     {
         return { };
     }

@@ -14,10 +14,10 @@
                 image.onload = (() => {
                     if (window.internals && window.testRunner && forceAsyncImageDrawing) {
                         // Force async image decoding for this image.
-                        internals.setLargeImageAsyncDecodingEnabledForTesting(image, true);
+                        internals.setAsyncDecodingEnabledForTesting(image, true);
 
                         image.addEventListener("webkitImageFrameReady", function() {
-                            internals.setLargeImageAsyncDecodingEnabledForTesting(image, false);
+                            internals.setAsyncDecodingEnabledForTesting(image, false);
                             setTimeout(function() {
                                 // Force redraw to get the red image drawn.
                                 testRunner.display();

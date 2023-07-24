@@ -23,6 +23,8 @@
 
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderTheme.h"
 #include <wtf/IsoMallocInlines.h>
 

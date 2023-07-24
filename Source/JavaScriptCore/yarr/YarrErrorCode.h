@@ -52,7 +52,7 @@ enum class ErrorCode : uint8_t {
     CharacterClassUnmatched,
     CharacterClassRangeOutOfOrder,
     CharacterClassRangeInvalid,
-    ClassStringDIsjunctionUnmatched,
+    ClassStringDisjunctionUnmatched,
     EscapeUnterminated,
     InvalidUnicodeEscape,
     InvalidUnicodeCodePointEscape,

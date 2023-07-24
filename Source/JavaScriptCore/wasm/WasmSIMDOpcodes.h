@@ -109,6 +109,12 @@ enum class SIMDLaneOperation : uint8_t {
     Bitmask,
     Neg,
     MulSat,
+
+    // relaxed SIMD
+    RelaxedSwizzle,
+    RelaxedTruncSat,
+    RelaxedMAdd,
+    RelaxedNMAdd,
 };
 
 #define FOR_EACH_WASM_EXT_SIMD_REL_OP(macro) \
@@ -350,7 +356,16 @@ macro(I64x2ShrU,                  0xcd,  Shr,                 SIMDLane::i64x2,  
 macro(I64x2ExtmulLowI32x4S,       0xdc,  ExtmulLow,           SIMDLane::i64x2,  SIMDSignMode::Signed) \
 macro(I64x2ExtmulHighI32x4S,      0xdd,  ExtmulHigh,          SIMDLane::i64x2,  SIMDSignMode::Signed) \
 macro(I64x2ExtmulLowI32x4U,       0xde,  ExtmulLow,           SIMDLane::i64x2,  SIMDSignMode::Unsigned) \
-macro(I64x2ExtmulHighI32x4U,      0xdf,  ExtmulHigh,          SIMDLane::i64x2,  SIMDSignMode::Unsigned)
+macro(I64x2ExtmulHighI32x4U,      0xdf,  ExtmulHigh,          SIMDLane::i64x2,  SIMDSignMode::Unsigned) \
+macro(I8x16RelaxedSwizzle,        0x100, RelaxedSwizzle,      SIMDLane::i8x16,  SIMDSignMode::None) \
+macro(I32x4RelaxedTruncF32x4S,    0x101, RelaxedTruncSat,     SIMDLane::f32x4,  SIMDSignMode::Signed) \
+macro(I32x4RelaxedTruncF32x4U,    0x102, RelaxedTruncSat,     SIMDLane::f32x4,  SIMDSignMode::Unsigned) \
+macro(I32x4RelaxedTruncF64x2SZero, 0x103, RelaxedTruncSat,    SIMDLane::f64x2,  SIMDSignMode::Signed) \
+macro(I32x4RelaxedTruncF64x2UZero, 0x104, RelaxedTruncSat,    SIMDLane::f64x2,  SIMDSignMode::Unsigned) \
+macro(F32x4RelaxedMAdd,           0x105, RelaxedMAdd,         SIMDLane::f32x4,  SIMDSignMode::None) \
+macro(F32x4RelaxedNMAdd,          0x106, RelaxedNMAdd,        SIMDLane::f32x4,  SIMDSignMode::None) \
+macro(F64x2RelaxedMAdd,           0x107, RelaxedMAdd,         SIMDLane::f64x2,  SIMDSignMode::None) \
+macro(F64x2RelaxedNMAdd,          0x108, RelaxedNMAdd,        SIMDLane::f64x2,  SIMDSignMode::None)
 
 #define FOR_EACH_WASM_EXT_SIMD_OP(macro) \
 FOR_EACH_WASM_EXT_SIMD_REL_OP(macro) \
@@ -436,9 +451,28 @@ static void dumpSIMDLaneOperation(PrintStream& out, SIMDLaneOperation op)
     case SIMDLaneOperation::Bitmask: out.print("Bitmask"); break;
     case SIMDLaneOperation::Neg: out.print("Neg"); break;
     case SIMDLaneOperation::MulSat: out.print("MulSat"); break;
+    case SIMDLaneOperation::RelaxedSwizzle: out.print("RelaxedSwizzle"); break;
+    case SIMDLaneOperation::RelaxedTruncSat: out.print("RelaxedTruncSat"); break;
+    case SIMDLaneOperation::RelaxedMAdd: out.print("RelaxedMAdd"); break;
+    case SIMDLaneOperation::RelaxedNMAdd: out.print("RelaxedNMAdd"); break;
     }
 }
 MAKE_PRINT_ADAPTOR(SIMDLaneOperationDump, SIMDLaneOperation, dumpSIMDLaneOperation);
+
+// Relaxed SIMD
+
+inline bool isRelaxedSIMDOperation(SIMDLaneOperation op)
+{
+    switch (op) {
+    case SIMDLaneOperation::RelaxedSwizzle:
+    case SIMDLaneOperation::RelaxedTruncSat:
+    case SIMDLaneOperation::RelaxedMAdd:
+    case SIMDLaneOperation::RelaxedNMAdd:
+        return true;
+    default:
+        return false;
+    }
+}
 
 }
 #endif // ENABLE(WEBASSEMBLY)

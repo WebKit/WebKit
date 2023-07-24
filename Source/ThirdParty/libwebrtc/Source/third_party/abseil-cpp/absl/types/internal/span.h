@@ -32,9 +32,6 @@ template <typename T>
 class Span;
 
 namespace span_internal {
-// A constexpr min function
-constexpr size_t Min(size_t a, size_t b) noexcept { return a < b ? a : b; }
-
 // Wrappers for access to container data pointers.
 template <typename C>
 constexpr auto GetDataImpl(C& c, char) noexcept  // NOLINT(runtime/references)
@@ -91,7 +88,7 @@ using EnableIfMutable =
 template <template <typename> class SpanT, typename T>
 bool EqualImpl(SpanT<T> a, SpanT<T> b) {
   static_assert(std::is_const<T>::value, "");
-  return absl::equal(a.begin(), a.end(), b.begin(), b.end());
+  return std::equal(a.begin(), a.end(), b.begin(), b.end());
 }
 
 template <template <typename> class SpanT, typename T>
@@ -102,28 +99,9 @@ bool LessThanImpl(SpanT<T> a, SpanT<T> b) {
   return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
 }
 
-// The `IsConvertible` classes here are needed because of the
-// `std::is_convertible` bug in libcxx when compiled with GCC. This build
-// configuration is used by Android NDK toolchain. Reference link:
-// https://bugs.llvm.org/show_bug.cgi?id=27538.
-template <typename From, typename To>
-struct IsConvertibleHelper {
- private:
-  static std::true_type testval(To);
-  static std::false_type testval(...);
-
- public:
-  using type = decltype(testval(std::declval<From>()));
-};
-
-template <typename From, typename To>
-struct IsConvertible : IsConvertibleHelper<From, To>::type {};
-
-// TODO(zhangxy): replace `IsConvertible` with `std::is_convertible` once the
-// older version of libcxx is not supported.
 template <typename From, typename To>
 using EnableIfConvertibleTo =
-    typename std::enable_if<IsConvertible<From, To>::value>::type;
+    typename std::enable_if<std::is_convertible<From, To>::value>::type;
 
 // IsView is true for types where the return type of .data() is the same for
 // mutable and const instances. This isn't foolproof, but it's only used to
@@ -147,7 +125,7 @@ struct IsView<
 };
 
 // These enablers result in 'int' so they can be used as typenames or defaults
-// in template paramters lists.
+// in template parameters lists.
 template <typename T>
 using EnableIfIsView = std::enable_if_t<IsView<T>::value, int>;
 

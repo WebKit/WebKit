@@ -39,6 +39,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CommonAtomStrings.h"
+#include "CommonVM.h"
 #include "ConstantPropertyMap.h"
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
@@ -100,6 +101,7 @@
 #include "ModelPlayerProvider.h"
 #include "NavigationScheduler.h"
 #include "Navigator.h"
+#include "OpportunisticTaskScheduler.h"
 #include "PageColorSampler.h"
 #include "PageConfiguration.h"
 #include "PageConsoleClient.h"
@@ -172,6 +174,7 @@
 #include "WheelEventTestMonitor.h"
 #include "Widget.h"
 #include "WorkerOrWorkletScriptController.h"
+#include <JavaScriptCore/VM.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -366,6 +369,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if ENABLE(ATTACHMENT_ELEMENT)
     , m_attachmentElementClient(WTFMove(pageConfiguration.attachmentElementClient))
 #endif
+    , m_opportunisticTaskScheduler(OpportunisticTaskScheduler::create(*this))
     , m_contentSecurityPolicyModeForExtension(WTFMove(pageConfiguration.contentSecurityPolicyModeForExtension))
     , m_badgeClient(WTFMove(pageConfiguration.badgeClient))
 {
@@ -429,8 +433,6 @@ Page::~Page()
         --gNonUtilityPageCount;
         MemoryPressureHandler::setPageCount(gNonUtilityPageCount);
     }
-    
-    m_settings->pageDestroyed();
 
     m_inspectorController->inspectedPageDestroyed();
 
@@ -662,6 +664,11 @@ void Page::progressFinished(LocalFrame& frameWithCompletedProgress) const
         if (auto* axObjectCache = document->existingAXObjectCache())
             axObjectCache->loadingFinished();
     }
+}
+
+void Page::setMainFrame(Ref<Frame>&& frame)
+{
+    m_mainFrame = WTFMove(frame);
 }
 
 bool Page::openedByDOM() const
@@ -1394,11 +1401,6 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, std::optional<Fram
 
     m_displayID = displayID;
     m_displayNominalFramesPerSecond = nominalFramesPerSecond;
-    if (!m_displayNominalFramesPerSecond) {
-        // If the caller didn't give us a refresh rate, maybe the relevant DisplayRefreshMonitor can? This happens in WebKitLegacy
-        // because WebView doesn't have a convenient way to access the display refresh rate.
-        m_displayNominalFramesPerSecond = DisplayRefreshMonitorManager::sharedManager().nominalFramesPerSecondForDisplay(m_displayID, chrome().client().displayRefreshMonitorFactory());
-    }
 
     forEachDocument([&] (Document& document) {
         document.windowScreenDidChange(displayID);
@@ -1416,7 +1418,9 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, std::optional<Fram
     if (m_scrollingCoordinator)
         m_scrollingCoordinator->windowScreenDidChange(displayID, m_displayNominalFramesPerSecond);
 
-    renderingUpdateScheduler().windowScreenDidChange(displayID);
+    if (auto *scheduler = existingRenderingUpdateScheduler())
+        scheduler->windowScreenDidChange(displayID);
+    chrome().client().renderingUpdateFramesPerSecondChanged();
 
     setNeedsRecalcStyleInAllFrames();
 }
@@ -1478,6 +1482,13 @@ void Page::didCommitLoad()
     if (auto* geolocationController = GeolocationController::from(this))
         geolocationController->didNavigatePage();
 #endif
+
+    m_opportunisticTaskDeferralScopeForFirstPaint = m_opportunisticTaskScheduler->makeDeferralScope();
+}
+
+void Page::didFirstMeaningfulPaint()
+{
+    m_opportunisticTaskDeferralScopeForFirstPaint = nullptr;
 }
 
 void Page::didFinishLoad()
@@ -1699,7 +1710,7 @@ void Page::computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep> reque
 void Page::triggerRenderingUpdateForTesting()
 {
     LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " triggerRenderingUpdateForTesting()");
-    renderingUpdateScheduler().triggerRenderingUpdateForTesting();
+    chrome().client().triggerRenderingUpdate();
 }
 
 void Page::startTrackingRenderingUpdates()
@@ -1810,6 +1821,10 @@ void Page::updateRendering()
             if (!focusedElement->isFocusable())
                 document.setFocusedElement(nullptr);
         }
+    });
+
+    runProcessingStep(RenderingUpdateStep::UpdateContentRelevancy, [] (Document& document) {
+        document.updateRelevancyOfContentVisibilityElements();
     });
 
     runProcessingStep(RenderingUpdateStep::IntersectionObservations, [] (Document& document) {
@@ -1974,6 +1989,9 @@ void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags
 {
     for (auto& rootFrame : m_rootFrames)
         finalizeRenderingUpdateForRootFrame(rootFrame, flags);
+
+    ASSERT(m_renderingUpdateRemainingSteps.last().isEmpty());
+    renderingUpdateCompleted();
 }
 
 void Page::finalizeRenderingUpdateForRootFrame(LocalFrame& rootFrame, OptionSet<FinalizeRenderingUpdateFlags> flags)
@@ -2003,9 +2021,6 @@ void Page::finalizeRenderingUpdateForRootFrame(LocalFrame& rootFrame, OptionSet<
         scrollingCoordinator->didCompleteRenderingUpdate();
     }
 #endif
-
-    ASSERT(m_renderingUpdateRemainingSteps.last().isEmpty());
-    renderingUpdateCompleted();
 }
 
 void Page::renderingUpdateCompleted()
@@ -2018,6 +2033,9 @@ void Page::renderingUpdateCompleted()
         scheduleRenderingUpdateInternal();
         m_unfulfilledRequestedSteps = { };
     }
+
+    if (!isUtilityPage())
+        m_opportunisticTaskScheduler->reschedule(m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval());
 }
 
 void Page::willStartRenderingUpdateDisplay()
@@ -2165,7 +2183,9 @@ void Page::resumeScriptedAnimations()
 
 void Page::timelineControllerMaximumAnimationFrameRateDidChange(DocumentTimelinesController&)
 {
-    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
+    if (auto *scheduler = existingRenderingUpdateScheduler())
+        scheduler->adjustRenderingUpdateFrequency();
+    chrome().client().renderingUpdateFramesPerSecondChanged();
 }
 
 std::optional<FramesPerSecond> Page::preferredRenderingUpdateFramesPerSecond(OptionSet<PreferredRenderingUpdateOption> flags) const
@@ -2212,7 +2232,9 @@ void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
         return;
 
     m_throttlingReasons.set(ThrottlingReason::VisuallyIdle, isVisuallyIdle);
-    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
+    if (auto *scheduler = existingRenderingUpdateScheduler())
+        scheduler->adjustRenderingUpdateFrequency();
+    chrome().client().renderingUpdateFramesPerSecondChanged();
 }
 
 void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
@@ -2224,7 +2246,9 @@ void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
         return;
 
     m_throttlingReasons.set(ThrottlingReason::LowPowerMode, isLowPowerModeEnabled);
-    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
+    if (auto *scheduler = existingRenderingUpdateScheduler())
+        scheduler->adjustRenderingUpdateFrequency();
+    chrome().client().renderingUpdateFramesPerSecondChanged();
 
     updateDOMTimerAlignmentInterval();
 }
@@ -2250,8 +2274,9 @@ void Page::userStyleSheetLocationChanged()
     if (url.protocolIsData() && url.string().startsWith("data:text/css;charset=utf-8;base64,"_s)) {
         m_didLoadUserStyleSheet = true;
 
-        if (auto styleSheetAsUTF8 = base64Decode(PAL::decodeURLEscapeSequences(StringView(url.string()).substring(35)), Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace))
-            m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8->data(), styleSheetAsUTF8->size());
+        String styleSheetAsBase64 = base64DecodeToString(PAL::decodeURLEscapeSequences(StringView(url.string()).substring(35)), Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
+        if (!styleSheetAsBase64.isNull())
+            m_userStyleSheet = styleSheetAsBase64;
     }
 
     forEachDocument([] (Document& document) {
@@ -2684,8 +2709,9 @@ void Page::setActivityState(OptionSet<ActivityState> activityState)
         setIsInWindowInternal(activityState.contains(ActivityState::IsInWindow));
     if (changed & ActivityState::IsVisuallyIdle)
         setIsVisuallyIdleInternal(activityState.contains(ActivityState::IsVisuallyIdle));
+
+    WeakPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
     if (changed & ActivityState::WindowIsActive) {
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
         if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
             view->updateTiledBackingAdaptiveSizing();
     }
@@ -2699,6 +2725,11 @@ void Page::setActivityState(OptionSet<ActivityState> activityState)
     if (wasVisibleAndActive != isVisibleAndActive()) {
         PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
         stopKeyboardScrollAnimation();
+    }
+
+    if (auto* document = localMainFrame ? localMainFrame->document() : nullptr) {
+        if (auto* cache = document->existingAXObjectCache())
+            cache->onPageActivityStateChange(m_activityState);
     }
 
     if (m_performanceMonitor)
@@ -2918,7 +2949,7 @@ void Page::setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator* animat
     m_currentKeyboardScrollingAnimator = animator;
 }
 
-bool Page::isLoadingInHeadlessMode() const
+bool Page::fingerprintingProtectionsEnabled() const
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
@@ -2926,7 +2957,7 @@ bool Page::isLoadingInHeadlessMode() const
         return false;
 
     RefPtr loader = document->loader();
-    return loader && loader->isLoadingInHeadlessMode();
+    return loader && loader->fingerprintingProtectionsEnabled();
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -3758,6 +3789,11 @@ RenderingUpdateScheduler& Page::renderingUpdateScheduler()
     return *m_renderingUpdateScheduler;
 }
 
+RenderingUpdateScheduler* Page::existingRenderingUpdateScheduler()
+{
+    return m_renderingUpdateScheduler.get();
+}
+
 void Page::forEachDocumentFromMainFrame(const LocalFrame& mainFrame, const Function<void(Document&)>& functor)
 {
     Vector<Ref<Document>> documents;
@@ -3818,7 +3854,7 @@ bool Page::allowsLoadFromURL(const URL& url, MainFrameMainResource mainFrameMain
 
 bool Page::hasLocalDataForURL(const URL& url)
 {
-    if (url.isLocalFile())
+    if (url.protocolIsFile())
         return true;
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
@@ -3953,9 +3989,9 @@ void Page::abortApplePayAMSUISession(ApplePayAMSUIPaymentHandler& paymentHandler
 #endif // ENABLE(APPLE_PAY_AMS_UI)
 
 #if USE(SYSTEM_PREVIEW)
-void Page::handleSystemPreview(const URL& url, const SystemPreviewInfo& systemPreviewInfo)
+void Page::beginSystemPreview(const URL& url, const SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
-    chrome().client().handleSystemPreview(url, systemPreviewInfo);
+    chrome().client().beginSystemPreview(url, systemPreviewInfo, WTFMove(completionHandler));
 }
 #endif
 
@@ -4156,6 +4192,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::Fullscreen: ts << "Fullscreen"; break;
     case RenderingUpdateStep::AnimationFrameCallbacks: ts << "AnimationFrameCallbacks"; break;
     case RenderingUpdateStep::IntersectionObservations: ts << "IntersectionObservations"; break;
+    case RenderingUpdateStep::UpdateContentRelevancy: ts << "UpdateContentRelevancy"; break;
     case RenderingUpdateStep::ResizeObservations: ts << "ResizeObservations"; break;
     case RenderingUpdateStep::Images: ts << "Images"; break;
     case RenderingUpdateStep::WheelEventMonitorCallbacks: ts << "WheelEventMonitorCallbacks"; break;
@@ -4379,43 +4416,45 @@ ScreenOrientationManager* Page::screenOrientationManager() const
     return m_screenOrientationManager.get();
 }
 
-URL Page::sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitizationTrigger trigger) const
+URL Page::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger) const
 {
-    return chrome().client().sanitizeLookalikeCharacters(url, trigger);
+    return chrome().client().applyLinkDecorationFiltering(url, trigger);
 }
 
-String Page::sanitizeLookalikeCharacters(const String& urlString, LookalikeCharacterSanitizationTrigger trigger) const
+String Page::applyLinkDecorationFiltering(const String& urlString, LinkDecorationFilteringTrigger trigger) const
 {
     if (auto url = URL { urlString }; url.isValid()) {
-        if (auto sanitizedURL = sanitizeLookalikeCharacters(WTFMove(url), trigger); sanitizedURL != url)
+        if (auto sanitizedURL = applyLinkDecorationFiltering(WTFMove(url), trigger); sanitizedURL != url)
             return sanitizedURL.string();
     }
     return urlString;
 }
 
-URL Page::allowedLookalikeCharacters(const URL& url) const
+URL Page::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url) const
 {
-    return chrome().client().allowedLookalikeCharacters(url);
+    return chrome().client().allowedQueryParametersForAdvancedPrivacyProtections(url);
 }
 
 void Page::willBeginScrolling()
 {
-#if USE(APPKIT)
-    editorClient().setCaretDecorationVisibility(false);
-#endif
 }
 
 void Page::didFinishScrolling()
 {
-#if USE(APPKIT)
-    editorClient().setCaretDecorationVisibility(true);
-#endif
 }
 
 void Page::addRootFrame(LocalFrame& frame)
 {
     ASSERT(frame.isRootFrame());
+    ASSERT(!m_rootFrames.contains(frame));
     m_rootFrames.add(frame);
+}
+
+void Page::removeRootFrame(LocalFrame& frame)
+{
+    ASSERT(frame.isRootFrame());
+    ASSERT(m_rootFrames.contains(frame));
+    m_rootFrames.remove(frame);
 }
 
 void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::optional<FrameIdentifier> triggeringFrame) const
@@ -4438,6 +4477,11 @@ void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::opt
         localFrame->navigationScheduler().scheduleRefresh(*document);
         frame = frame->tree().traverseNextSkippingChildren();
     }
+}
+
+void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
+{
+    commonVM().performOpportunisticallyScheduledTasks(deadline);
 }
 
 } // namespace WebCore

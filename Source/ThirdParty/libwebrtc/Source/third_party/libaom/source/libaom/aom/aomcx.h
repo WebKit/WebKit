@@ -191,12 +191,12 @@ enum aome_enc_control_id {
 
   /* NOTE: enum 10 unused */
 
-  /*!\brief Codec control function to set encoder scaling mode,
-   * aom_scaling_mode_t* parameter.
+  /*!\brief Codec control function to set encoder scaling mode for the next
+   * frame to be coded, aom_scaling_mode_t* parameter.
    */
   AOME_SET_SCALEMODE = 11,
 
-  /*!\brief Codec control function to set encoder spatial layer id, unsigned int
+  /*!\brief Codec control function to set encoder spatial layer id, int
    * parameter.
    */
   AOME_SET_SPATIAL_LAYER_ID = 12,
@@ -432,7 +432,7 @@ enum aome_enc_control_id {
 
   /*!\brief Codec control function to enable error_resilient_mode, int parameter
    *
-   * AV1 has a bitstream feature to guarantee parseability of a frame
+   * AV1 has a bitstream feature to guarantee parsability of a frame
    * by turning on the error_resilient_decoding mode, even though the
    * reference buffers are unreliable or not received.
    *
@@ -616,18 +616,22 @@ enum aome_enc_control_id {
    * point (OP), int parameter
    * Possible values are in the form of "ABxy".
    *  - AB: OP index.
-   *  - xy: Target level index for the OP. Can be values 0~23 (corresponding to
-   *    level 2.0 ~ 7.3, note levels 2.2, 2.3, 3.2, 3.3, 4.2, 4.3, 7.0, 7.1, 7.2
-   *    & 7.3 are undefined) or 24 (keep level stats only for level monitoring)
-   *    or 31 (maximum level parameter, no level-based constraints).
+   *  - xy: Target level index for the OP. Possible values are:
+   *    + 0~27: corresponding to level 2.0 ~ 8.3. Note:
+   *      > Levels 2.2 (2), 2.3 (3), 3.2 (6), 3.3 (7), 4.2 (10) & 4.3 (11) are
+   *        undefined.
+   *      > Levels 7.x and 8.x (20~27) are in draft status, available under the
+   *        config flag CONFIG_CWG_C013.
+   *    + 31: maximum parameters level, no level-based constraints.
+   *    + 32: keep level stats only for level monitoring.
    *
    * E.g.:
    * - "0" means target level index 0 (2.0) for the 0th OP;
    * - "109" means target level index 9 (4.1) for the 1st OP;
    * - "1019" means target level index 19 (6.3) for the 10th OP.
    *
-   * If the target level is not specified for an OP, the maximum level parameter
-   * of 31 is used as default.
+   * If the target level is not specified for an OP, the maximum parameters
+   * level of 31 is used as default.
    */
   AV1E_SET_TARGET_SEQ_LEVEL_IDX = 54,
 
@@ -1271,7 +1275,7 @@ enum aome_enc_control_id {
    */
   AV1E_SET_SVC_LAYER_ID = 131,
 
-  /*!\brief Codec control function to set SVC paramaeters, aom_svc_params_t*
+  /*!\brief Codec control function to set SVC parameters, aom_svc_params_t*
    * parameter
    */
   AV1E_SET_SVC_PARAMS = 132,
@@ -1455,6 +1459,60 @@ enum aome_enc_control_id {
    */
   AV1E_GET_NUM_OPERATING_POINTS = 156,
 
+  /*!\brief Codec control function to skip the application of post-processing
+   * filters on reconstructed frame, unsigned int parameter
+   *
+   * - 0 = disable (default)
+   * - 1 = enable
+   *
+   * \attention For this value to be used aom_codec_enc_cfg_t::g_usage
+   *            must be set to AOM_USAGE_ALL_INTRA.
+   */
+  AV1E_SET_SKIP_POSTPROC_FILTERING = 157,
+
+  /*!\brief Codec control function to enable the superblock level
+   * qp sweep in AV1 to ensure that end-to-end test runs well,
+   * unsigned int parameter.
+   *
+   * - 0 = disable (default)
+   * - 1 = enable
+   *
+   * \note This is only used in sb_qp_sweep unit test.
+   */
+  AV1E_ENABLE_SB_QP_SWEEP = 158,
+
+  /*!\brief Codec control to set quantizer for the next frame, int parameter.
+   *
+   * - Valid range [0, 63]
+   *
+   * This will turn off cyclic refresh. Only applicable to 1-pass.
+   */
+  AV1E_SET_QUANTIZER_ONE_PASS = 159,
+
+  /*!\brief Codec control to enable the rate distribution guided delta
+   * quantization in all intra mode, unsigned int parameter
+   *
+   * - 0 = disable (default)
+   * - 1 = enable
+   *
+   * \attention This feature requires --deltaq-mode=3, also an input file
+   *            which contains rate distribution for each 16x16 block,
+   *            passed in by --rate-distribution-info=rate_distribution.txt.
+   */
+  AV1E_ENABLE_RATE_GUIDE_DELTAQ = 160,
+
+  /*!\brief Codec control to set the input file for rate distribution used
+   * in all intra mode, const char * parameter
+   * The input should be the name of a text file, which
+   * contains (rows x cols) float values separated by space.
+   * Each float value represent the number of bits for each 16x16 block.
+   * rows = (frame_height + 15) / 16
+   * cols = (frame_width + 15) / 16
+   *
+   * \attention This feature requires --enable-rate-guide-deltaq=1.
+   */
+  AV1E_SET_RATE_DISTRIBUTION_INFO = 161,
+
   // Any new encoder control IDs should be added above.
   // Maximum allowed encoder control ID is 229.
   // No encoder control ID should be added below.
@@ -1471,7 +1529,9 @@ typedef enum aom_scaling_mode_1d {
   AOME_THREEFOUR = 3,
   AOME_ONEFOUR = 4,
   AOME_ONEEIGHT = 5,
-  AOME_ONETWO = 6
+  AOME_ONETWO = 6,
+  AOME_TWOTHREE = 7,
+  AOME_ONETHREE = 8
 } AOM_SCALING_MODE;
 
 /*!\brief Max number of segments
@@ -1553,6 +1613,7 @@ typedef enum {
   AOM_TUNE_VMAF_MAX_GAIN = 6,
   AOM_TUNE_VMAF_NEG_MAX_GAIN = 7,
   AOM_TUNE_BUTTERAUGLI = 8,
+  AOM_TUNE_VMAF_SALIENCY_MAP = 9,
 } aom_tune_metric;
 
 /*!\brief Distortion metric to use for RD optimization.
@@ -1582,7 +1643,12 @@ typedef struct aom_svc_layer_id {
   int temporal_layer_id; /**< Temporal layer ID */
 } aom_svc_layer_id_t;
 
-/*!brief Parameter type for SVC */
+/*!brief Parameter type for SVC
+ *
+ * In the arrays of size AOM_MAX_LAYERS, the index for spatial layer `sl` and
+ * temporal layer `tl` is sl * number_temporal_layers + tl.
+ *
+ */
 typedef struct aom_svc_params {
   int number_spatial_layers;                 /**< Number of spatial layers */
   int number_temporal_layers;                /**< Number of temporal layers */
@@ -1590,7 +1656,7 @@ typedef struct aom_svc_params {
   int min_quantizers[AOM_MAX_LAYERS];        /**< Min Q for each layer */
   int scaling_factor_num[AOM_MAX_SS_LAYERS]; /**< Scaling factor-numerator */
   int scaling_factor_den[AOM_MAX_SS_LAYERS]; /**< Scaling factor-denominator */
-  /*! Target bitrate for each layer */
+  /*! Target bitrate for each layer, in kilobits per second */
   int layer_target_bitrate[AOM_MAX_LAYERS];
   /*! Frame rate factor for each temporal layer */
   int framerate_factor[AOM_MAX_TS_LAYERS];
@@ -1637,7 +1703,7 @@ AOM_CTRL_USE_TYPE(AOME_SET_ACTIVEMAP, aom_active_map_t *)
 AOM_CTRL_USE_TYPE(AOME_SET_SCALEMODE, aom_scaling_mode_t *)
 #define AOM_CTRL_AOME_SET_SCALEMODE
 
-AOM_CTRL_USE_TYPE(AOME_SET_SPATIAL_LAYER_ID, unsigned int)
+AOM_CTRL_USE_TYPE(AOME_SET_SPATIAL_LAYER_ID, int)
 #define AOM_CTRL_AOME_SET_SPATIAL_LAYER_ID
 
 AOM_CTRL_USE_TYPE(AOME_SET_CPUUSED, int)
@@ -2070,6 +2136,21 @@ AOM_CTRL_USE_TYPE(AV1E_GET_TARGET_SEQ_LEVEL_IDX, int *)
 
 AOM_CTRL_USE_TYPE(AV1E_GET_NUM_OPERATING_POINTS, int *)
 #define AOM_CTRL_AV1E_GET_NUM_OPERATING_POINTS
+
+AOM_CTRL_USE_TYPE(AV1E_SET_SKIP_POSTPROC_FILTERING, unsigned int)
+#define AOM_CTRL_AV1E_SET_SKIP_POSTPROC_FILTERING
+
+AOM_CTRL_USE_TYPE(AV1E_ENABLE_SB_QP_SWEEP, unsigned int)
+#define AOM_CTRL_AV1E_ENABLE_SB_QP_SWEEP
+
+AOM_CTRL_USE_TYPE(AV1E_SET_QUANTIZER_ONE_PASS, int)
+#define AOM_CTRL_AV1E_SET_QUANTIZER_ONE_PASS
+
+AOM_CTRL_USE_TYPE(AV1E_ENABLE_RATE_GUIDE_DELTAQ, unsigned int)
+#define AOM_CTRL_AV1E_ENABLE_RATE_GUIDE_DELTAQ
+
+AOM_CTRL_USE_TYPE(AV1E_SET_RATE_DISTRIBUTION_INFO, const char *)
+#define AOM_CTRL_AV1E_SET_RATE_DISTRIBUTION_INFO
 
 /*!\endcond */
 /*! @} - end defgroup aom_encoder */

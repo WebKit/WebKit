@@ -52,7 +52,7 @@ typedef struct {
 /*!\brief Add a mapping from [time_stamp, end_time) to the given grain
  * parameters
  *
- * \param[in/out] table      The grain table
+ * \param[in,out] table      The grain table
  * \param[in]     time_stamp The start time stamp
  * \param[in]     end_stamp  The end time_stamp
  * \param[in]     grain      The grain parameters

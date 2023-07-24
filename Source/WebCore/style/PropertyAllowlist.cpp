@@ -68,7 +68,7 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
     case CSSPropertyFontOpticalSizing:
     case CSSPropertyFontVariationSettings:
 #endif
-    case CSSPropertyWebkitHyphens:
+    case CSSPropertyHyphens:
     case CSSPropertyLetterSpacing:
     case CSSPropertyLineBreak:
     case CSSPropertyLineHeight:
@@ -83,10 +83,12 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
     case CSSPropertyTextEmphasisStyle:
     case CSSPropertyTextShadow:
     case CSSPropertyTextTransform:
+    case CSSPropertyTextWrap:
     case CSSPropertyUnicodeBidi:
     case CSSPropertyWordBreak:
     case CSSPropertyWordSpacing:
     case CSSPropertyWhiteSpace:
+    case CSSPropertyWhiteSpaceCollapse:
     case CSSPropertyAnimationDuration:
     case CSSPropertyAnimationTimingFunction:
     case CSSPropertyAnimationDelay:
@@ -139,8 +141,10 @@ bool isValidCueStyleProperty(CSSPropertyID id)
     case CSSPropertyOutlineWidth:
     case CSSPropertyVisibility:
     case CSSPropertyWhiteSpace:
+    case CSSPropertyWhiteSpaceCollapse:
     case CSSPropertyTextDecorationLine:
     case CSSPropertyTextShadow:
+    case CSSPropertyTextWrap:
     case CSSPropertyBorderStyle:
     case CSSPropertyPaintOrder:
     case CSSPropertyStrokeLinejoin:

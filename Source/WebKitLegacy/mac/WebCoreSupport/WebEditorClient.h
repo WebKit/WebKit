@@ -89,8 +89,6 @@ private:
     void uppercaseWord() final;
     void lowercaseWord() final;
     void capitalizeWord() final;
-
-    void setCaretDecorationVisibility(bool) final { };
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
@@ -115,7 +113,7 @@ private:
     void respondToChangedSelection(WebCore::LocalFrame*) final;
     void didEndUserTriggeredSelectionChanges() final { }
     void updateEditorStateAfterLayoutIfEditabilityChanged() final;
-    void discardedComposition(WebCore::LocalFrame*) final;
+    void discardedComposition(const WebCore::Document&) final;
     void canceledComposition() final;
     void didUpdateComposition() final { }
 

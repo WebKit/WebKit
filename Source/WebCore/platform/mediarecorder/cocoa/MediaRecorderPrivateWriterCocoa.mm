@@ -131,6 +131,8 @@ MediaRecorderPrivateWriter::MediaRecorderPrivateWriter(bool hasAudio, bool hasVi
 
 MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
 {
+    ASSERT(isMainThread());
+
     m_pendingAudioSampleQueue.clear();
     m_pendingVideoFrameQueue.clear();
     if (m_writer) {

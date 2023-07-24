@@ -350,7 +350,7 @@ bool Navigator::cookieEnabled() const
     return page->cookieJar().cookiesEnabled(*document);
 }
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(NAVIGATOR_STANDALONE)
 
 bool Navigator::standalone() const
 {

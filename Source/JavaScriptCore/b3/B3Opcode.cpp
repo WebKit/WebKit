@@ -537,6 +537,18 @@ void printInternal(PrintStream& out, Opcode opcode)
     case VectorShiftByVector:
         out.print("VectorShiftByVector");
         return;
+    case VectorRelaxedSwizzle:
+        out.print("VectorRelaxedSwizzle");
+        return;
+    case VectorRelaxedTruncSat:
+        out.print("VectorRelaxedTruncSat");
+        return;
+    case VectorRelaxedMAdd:
+        out.print("VectorRelaxedMAdd");
+        return;
+    case VectorRelaxedNMAdd:
+        out.print("VectorRelaxedNMAdd");
+        return;
     case Upsilon:
         out.print("Upsilon");
         return;

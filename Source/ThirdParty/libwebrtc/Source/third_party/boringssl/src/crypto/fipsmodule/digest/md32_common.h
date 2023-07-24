@@ -46,6 +46,9 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * ==================================================================== */
 
+#ifndef OPENSSL_HEADER_DIGEST_MD32_COMMON_H
+#define OPENSSL_HEADER_DIGEST_MD32_COMMON_H
+
 #include <openssl/base.h>
 
 #include <assert.h>
@@ -59,22 +62,15 @@ extern "C" {
 
 // This is a generic 32-bit "collector" for message digest algorithms. It
 // collects input character stream into chunks of 32-bit values and invokes the
-// block function that performs the actual hash calculations. To make use of
-// this mechanism, the following macros must be defined before including
-// md32_common.h.
+// block function that performs the actual hash calculations.
 //
-// One of |DATA_ORDER_IS_BIG_ENDIAN| or |DATA_ORDER_IS_LITTLE_ENDIAN| must be
-// defined to specify the byte order of the input stream.
-//
-// |HASH_CBLOCK| must be defined as the integer block size, in bytes.
-//
-// |HASH_CTX| must be defined as the name of the context structure, which must
-// have at least the following members:
+// To make use of this mechanism, the hash context should be defined with the
+// following parameters.
 //
 //     typedef struct <name>_state_st {
 //       uint32_t h[<chaining length> / sizeof(uint32_t)];
 //       uint32_t Nl, Nh;
-//       uint8_t data[HASH_CBLOCK];
+//       uint8_t data[<block size>];
 //       unsigned num;
 //       ...
 //     } <NAME>_CTX;
@@ -83,147 +79,117 @@ extern "C" {
 // any truncation (e.g. 64 for SHA-224 and SHA-256, 128 for SHA-384 and
 // SHA-512).
 //
-// |HASH_UPDATE| must be defined as the name of the "Update" function to
-// generate.
-//
-// |HASH_TRANSFORM| must be defined as the  the name of the "Transform"
-// function to generate.
-//
-// |HASH_FINAL| must be defined as the name of "Final" function to generate.
-//
-// |HASH_BLOCK_DATA_ORDER| must be defined as the name of the "Block" function.
-// That function must be implemented manually. It must be capable of operating
-// on *unaligned* input data in its original (data) byte order. It must have
-// this signature:
-//
-//     void HASH_BLOCK_DATA_ORDER(uint32_t *state, const uint8_t *data,
-//                                size_t num);
-//
-// It must update the hash state |state| with |num| blocks of data from |data|,
-// where each block is |HASH_CBLOCK| bytes; i.e. |data| points to a array of
-// |HASH_CBLOCK * num| bytes. |state| points to the |h| member of a |HASH_CTX|,
-// and so will have |<chaining length> / sizeof(uint32_t)| elements.
-//
-// |HASH_MAKE_STRING(c, s)| must be defined as a block statement that converts
-// the hash state |c->h| into the output byte order, storing the result in |s|.
+// |h| is the hash state and is updated by a function of type
+// |crypto_md32_block_func|. |data| is the partial unprocessed block and has
+// |num| bytes. |Nl| and |Nh| maintain the number of bits processed so far.
 
-#if !defined(DATA_ORDER_IS_BIG_ENDIAN) && !defined(DATA_ORDER_IS_LITTLE_ENDIAN)
-#error "DATA_ORDER must be defined!"
-#endif
+// A crypto_md32_block_func should incorporate |num_blocks| of input from |data|
+// into |state|. It is assumed the caller has sized |state| and |data| for the
+// hash function.
+typedef void (*crypto_md32_block_func)(uint32_t *state, const uint8_t *data,
+                                       size_t num_blocks);
 
-#ifndef HASH_CBLOCK
-#error "HASH_CBLOCK must be defined!"
-#endif
-#ifndef HASH_CTX
-#error "HASH_CTX must be defined!"
-#endif
-
-#ifndef HASH_UPDATE
-#error "HASH_UPDATE must be defined!"
-#endif
-#ifndef HASH_TRANSFORM
-#error "HASH_TRANSFORM must be defined!"
-#endif
-#ifndef HASH_FINAL
-#error "HASH_FINAL must be defined!"
-#endif
-
-#ifndef HASH_BLOCK_DATA_ORDER
-#error "HASH_BLOCK_DATA_ORDER must be defined!"
-#endif
-
-#ifndef HASH_MAKE_STRING
-#error "HASH_MAKE_STRING must be defined!"
-#endif
-
-int HASH_UPDATE(HASH_CTX *c, const void *data_, size_t len) {
-  const uint8_t *data = data_;
-
+// crypto_md32_update adds |len| bytes from |in| to the digest. |data| must be a
+// buffer of length |block_size| with the first |*num| bytes containing a
+// partial block. This function combines the partial block with |in| and
+// incorporates any complete blocks into the digest state |h|. It then updates
+// |data| and |*num| with the new partial block and updates |*Nh| and |*Nl| with
+// the data consumed.
+static inline void crypto_md32_update(crypto_md32_block_func block_func,
+                                      uint32_t *h, uint8_t *data,
+                                      size_t block_size, unsigned *num,
+                                      uint32_t *Nh, uint32_t *Nl,
+                                      const uint8_t *in, size_t len) {
   if (len == 0) {
-    return 1;
+    return;
   }
 
-  uint32_t l = c->Nl + (((uint32_t)len) << 3);
-  if (l < c->Nl) {
+  uint32_t l = *Nl + (((uint32_t)len) << 3);
+  if (l < *Nl) {
     // Handle carries.
-    c->Nh++;
+    (*Nh)++;
   }
-  c->Nh += (uint32_t)(len >> 29);
-  c->Nl = l;
+  *Nh += (uint32_t)(len >> 29);
+  *Nl = l;
 
-  size_t n = c->num;
+  size_t n = *num;
   if (n != 0) {
-    if (len >= HASH_CBLOCK || len + n >= HASH_CBLOCK) {
-      OPENSSL_memcpy(c->data + n, data, HASH_CBLOCK - n);
-      HASH_BLOCK_DATA_ORDER(c->h, c->data, 1);
-      n = HASH_CBLOCK - n;
-      data += n;
+    if (len >= block_size || len + n >= block_size) {
+      OPENSSL_memcpy(data + n, in, block_size - n);
+      block_func(h, data, 1);
+      n = block_size - n;
+      in += n;
       len -= n;
-      c->num = 0;
-      // Keep |c->data| zeroed when unused.
-      OPENSSL_memset(c->data, 0, HASH_CBLOCK);
+      *num = 0;
+      // Keep |data| zeroed when unused.
+      OPENSSL_memset(data, 0, block_size);
     } else {
-      OPENSSL_memcpy(c->data + n, data, len);
-      c->num += (unsigned)len;
-      return 1;
+      OPENSSL_memcpy(data + n, in, len);
+      *num += (unsigned)len;
+      return;
     }
   }
 
-  n = len / HASH_CBLOCK;
+  n = len / block_size;
   if (n > 0) {
-    HASH_BLOCK_DATA_ORDER(c->h, data, n);
-    n *= HASH_CBLOCK;
-    data += n;
+    block_func(h, in, n);
+    n *= block_size;
+    in += n;
     len -= n;
   }
 
   if (len != 0) {
-    c->num = (unsigned)len;
-    OPENSSL_memcpy(c->data, data, len);
+    *num = (unsigned)len;
+    OPENSSL_memcpy(data, in, len);
   }
-  return 1;
 }
 
-
-void HASH_TRANSFORM(HASH_CTX *c, const uint8_t data[HASH_CBLOCK]) {
-  HASH_BLOCK_DATA_ORDER(c->h, data, 1);
-}
-
-
-int HASH_FINAL(uint8_t out[HASH_DIGEST_LENGTH], HASH_CTX *c) {
-  // |c->data| always has room for at least one byte. A full block would have
+// crypto_md32_final incorporates the partial block and trailing length into the
+// digest state |h|. The trailing length is encoded in little-endian if
+// |is_big_endian| is zero and big-endian otherwise. |data| must be a buffer of
+// length |block_size| with the first |*num| bytes containing a partial block.
+// |Nh| and |Nl| contain the total number of bits processed. On return, this
+// function clears the partial block in |data| and
+// |*num|.
+//
+// This function does not serialize |h| into a final digest. This is the
+// responsibility of the caller.
+static inline void crypto_md32_final(crypto_md32_block_func block_func,
+                                     uint32_t *h, uint8_t *data,
+                                     size_t block_size, unsigned *num,
+                                     uint32_t Nh, uint32_t Nl,
+                                     int is_big_endian) {
+  // |data| always has room for at least one byte. A full block would have
   // been consumed.
-  size_t n = c->num;
-  assert(n < HASH_CBLOCK);
-  c->data[n] = 0x80;
+  size_t n = *num;
+  assert(n < block_size);
+  data[n] = 0x80;
   n++;
 
   // Fill the block with zeros if there isn't room for a 64-bit length.
-  if (n > (HASH_CBLOCK - 8)) {
-    OPENSSL_memset(c->data + n, 0, HASH_CBLOCK - n);
+  if (n > block_size - 8) {
+    OPENSSL_memset(data + n, 0, block_size - n);
     n = 0;
-    HASH_BLOCK_DATA_ORDER(c->h, c->data, 1);
+    block_func(h, data, 1);
   }
-  OPENSSL_memset(c->data + n, 0, HASH_CBLOCK - 8 - n);
+  OPENSSL_memset(data + n, 0, block_size - 8 - n);
 
   // Append a 64-bit length to the block and process it.
-  uint8_t *p = c->data + HASH_CBLOCK - 8;
-#if defined(DATA_ORDER_IS_BIG_ENDIAN)
-  CRYPTO_store_u32_be(p, c->Nh);
-  CRYPTO_store_u32_be(p + 4, c->Nl);
-#elif defined(DATA_ORDER_IS_LITTLE_ENDIAN)
-  CRYPTO_store_u32_le(p, c->Nl);
-  CRYPTO_store_u32_le(p + 4, c->Nh);
-#endif
-  HASH_BLOCK_DATA_ORDER(c->h, c->data, 1);
-  c->num = 0;
-  OPENSSL_memset(c->data, 0, HASH_CBLOCK);
-
-  HASH_MAKE_STRING(c, out);
-  return 1;
+  if (is_big_endian) {
+    CRYPTO_store_u32_be(data + block_size - 8, Nh);
+    CRYPTO_store_u32_be(data + block_size - 4, Nl);
+  } else {
+    CRYPTO_store_u32_le(data + block_size - 8, Nl);
+    CRYPTO_store_u32_le(data + block_size - 4, Nh);
+  }
+  block_func(h, data, 1);
+  *num = 0;
+  OPENSSL_memset(data, 0, block_size);
 }
 
 
 #if defined(__cplusplus)
 }  // extern C
 #endif
+
+#endif  // OPENSSL_HEADER_DIGEST_MD32_COMMON_H

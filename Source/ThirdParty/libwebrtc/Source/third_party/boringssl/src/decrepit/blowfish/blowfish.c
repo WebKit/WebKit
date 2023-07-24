@@ -61,6 +61,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include "../../crypto/fipsmodule/cipher/internal.h"
 #include "../../crypto/internal.h"
 #include "../macros.h"
 

@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
 <head>
+<script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
 </head>
 <body>
-
-<p id="description"></p>
 
 <div id="container" style="height: 100px; overflow: scroll">
   <button id="upper_target">Upper Target</button>
@@ -12,62 +12,52 @@
   <button id="lower_target">Lower Target</button>
 </div>
 
-<div id="console"></div>
-
 <script>
-description("Tests that scrolling to make an element visible successfully scrolls an arbitrary HTML element that has CSS overflow set to 'scroll'.");
+var output = "Tests that scrolling to make an element visible successfully scrolls an arbitrary HTML element that has CSS overflow set to 'scroll'.\n\n";
 
-function runTest() {
-    window.container = document.getElementById("container");
-    var upperTarget = document.getElementById("upper_target");
-    var lowerTarget = document.getElementById("lower_target");
+var upperTarget = document.getElementById("upper_target");
+var lowerTarget = document.getElementById("lower_target");
+window.container = document.getElementById("container");
+async function scrollToMakeVisibleAndCheck(axElement, domTarget) {
+    axElement.scrollToMakeVisible();
+    await waitFor(() => {
+        var top = domTarget.offsetTop - container.offsetTop;
+        window.minYOffset = top + domTarget.offsetHeight - container.offsetHeight;
+        window.maxYOffset = top;
+        return container.scrollTop >= minYOffset && container.scrollTop <= maxYOffset;
+    });
+
+    output += expect("container.scrollTop >= minYOffset", "true");
+    output += expect("container.scrollTop <= maxYOffset", "true");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
     var lowerTargetAccessibleObject;
     var upperTargetAccessibleObject;
-    if (window.accessibilityController) {
-        lowerTarget.focus();
-        lowerTargetAccessibleObject = accessibilityController.focusedElement;
-        upperTarget.focus();
-        upperTargetAccessibleObject = accessibilityController.focusedElement;
-    }
+    setTimeout(async function() {
+        lowerTargetAccessibleObject = await waitForFocus("lower_target");
+        upperTargetAccessibleObject = await waitForFocus("upper_target");
 
-    // Reset the initial scroll position (since calling focus() can scroll the page too).
-    container.scrollTop = 0;
-    shouldBeZero("container.scrollTop");
+        // Reset the initial scroll position (since calling focus() can scroll the page too).
+        container.scrollTop = 0;
+        output += expect("container.scrollTop", "0");
 
-    // Scroll to make lower target visible and check.
-    if (window.accessibilityController)
-        lowerTargetAccessibleObject.scrollToMakeVisible();
-    var top = lowerTarget.offsetTop - container.offsetTop;
-    window.minYOffset = top + lowerTarget.offsetHeight - container.offsetHeight;
-    window.maxYOffset = top;
-    shouldBeTrue("container.scrollTop >= minYOffset");
-    shouldBeTrue("container.scrollTop <= maxYOffset");
+        // Scroll to make lower target visible and check.
+        await scrollToMakeVisibleAndCheck(lowerTargetAccessibleObject, lowerTarget);
 
-    // Do it again. It shouldn't scroll.
-    if (window.accessibilityController)
-        lowerTargetAccessibleObject.scrollToMakeVisible();
-    var top = lowerTarget.offsetTop - container.offsetTop;
-    window.minYOffset = top + lowerTarget.offsetHeight - container.offsetHeight;
-    window.maxYOffset = top;
-    shouldBeTrue("container.scrollTop >= minYOffset");
-    shouldBeTrue("container.scrollTop <= maxYOffset");
+        // Do it again. It shouldn't scroll.
+        await scrollToMakeVisibleAndCheck(lowerTargetAccessibleObject, lowerTarget);
 
-    // Scroll to make upper target visible and check.
-    if (window.accessibilityController)
-        upperTargetAccessibleObject.scrollToMakeVisible();
-    top = upperTarget.offsetTop - container.offsetTop;
-    window.minYOffset = top + upperTarget.offsetHeight - container.offsetHeight;
-    window.maxYOffset = top;
-    shouldBe("container.scrollTop >= minYOffset", "true");
-    shouldBe("container.scrollTop <= maxYOffset", "true");
+        // Now do the upper target.
+        await scrollToMakeVisibleAndCheck(upperTargetAccessibleObject, upperTarget);
 
-    finishJSTest();
+        debug(output);
+        finishJSTest();
+    }, 0);
 }
-
-runTest();
-
 </script>
-
 </body>
 </html>
+

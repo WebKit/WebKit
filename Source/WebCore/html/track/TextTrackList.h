@@ -45,6 +45,7 @@ public:
     }
     virtual ~TextTrackList();
 
+    bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     unsigned length() const override;
     int getTrackIndex(TextTrack&);
     int getTrackIndexRelativeToRenderedTracks(TextTrack&);

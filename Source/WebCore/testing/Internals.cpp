@@ -651,11 +651,10 @@ void Internals::resetToConsistentState(Page& page)
     WebCore::MediaRecorder::setCustomPrivateRecorderCreator(nullptr);
 #endif
 
-    CanvasBase::setMaxPixelMemoryForTesting(std::nullopt);
     CanvasBase::setMaxCanvasAreaForTesting(std::nullopt);
     LocalDOMWindow::overrideTransientActivationDurationForTesting(std::nullopt);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     WebCore::setContentSizeCategory(kCTFontContentSizeCategoryL);
 #endif
 
@@ -1165,10 +1164,10 @@ unsigned Internals::remoteImagesCountForTesting() const
     return document->page()->chrome().client().remoteImagesCountForTesting();
 }
 
-void Internals::setLargeImageAsyncDecodingEnabledForTesting(HTMLImageElement& element, bool enabled)
+void Internals::setAsyncDecodingEnabledForTesting(HTMLImageElement& element, bool enabled)
 {
     if (auto* bitmapImage = bitmapImageFromImageElement(element))
-        bitmapImage->setLargeImageAsyncDecodingEnabledForTesting(enabled);
+        bitmapImage->setAsyncDecodingEnabledForTesting(enabled);
 }
     
 void Internals::setForceUpdateImageDataEnabledForTesting(HTMLImageElement& element, bool enabled)
@@ -2643,7 +2642,7 @@ void Internals::updateEditorUINowIfScheduled()
     }
 }
 
-bool Internals::hasSpellingMarker(int from, int length)
+bool Internals::hasMarkerFor(DocumentMarker::MarkerType type, int from, int length)
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
@@ -2651,29 +2650,32 @@ bool Internals::hasSpellingMarker(int from, int length)
 
     updateEditorUINowIfScheduled();
 
-    return document->editor().selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
+    return document->editor().selectionStartHasMarkerFor(type, from, length);
+}
+
+bool Internals::hasSpellingMarker(int from, int length)
+{
+    return hasMarkerFor(DocumentMarker::Spelling, from, length);
+}
+
+bool Internals::hasGrammarMarker(int from, int length)
+{
+    return hasMarkerFor(DocumentMarker::Grammar, from, length);
 }
 
 bool Internals::hasAutocorrectedMarker(int from, int length)
 {
-    Document* document = contextDocument();
-    if (!document || !document->frame())
-        return false;
-
-    updateEditorUINowIfScheduled();
-
-    return document->editor().selectionStartHasMarkerFor(DocumentMarker::Autocorrected, from, length);
+    return hasMarkerFor(DocumentMarker::Autocorrected, from, length);
 }
 
 bool Internals::hasDictationAlternativesMarker(int from, int length)
 {
-    auto* document = contextDocument();
-    if (!document || !document->frame())
-        return false;
+    return hasMarkerFor(DocumentMarker::DictationAlternatives, from, length);
+}
 
-    updateEditorUINowIfScheduled();
-
-    return document->frame()->editor().selectionStartHasMarkerFor(DocumentMarker::DictationAlternatives, from, length);
+bool Internals::hasCorrectionIndicatorMarker(int from, int length)
+{
+    return hasMarkerFor(DocumentMarker::CorrectionIndicator, from, length);
 }
 
 void Internals::setContinuousSpellCheckingEnabled(bool enabled)
@@ -2929,7 +2931,7 @@ String Internals::documentIdentifier(const Document& document) const
 
 bool Internals::isDocumentAlive(const String& documentIdentifier) const
 {
-    auto uuid = UUID::parseVersion4(documentIdentifier);
+    auto uuid = WTF::UUID::parseVersion4(documentIdentifier);
     ASSERT(uuid);
     return uuid ? Document::allDocumentsMap().contains({ *uuid, Process::identifier() }) : false;
 }
@@ -3017,15 +3019,6 @@ ExceptionOr<void> Internals::setInspectorIsUnderTest(bool isUnderTest)
 
     page->inspectorController().setIsUnderTest(isUnderTest);
     return { };
-}
-
-bool Internals::hasGrammarMarker(int from, int length)
-{
-    Document* document = contextDocument();
-    if (!document || !document->frame())
-        return false;
-
-    return document->editor().selectionStartHasMarkerFor(DocumentMarker::Grammar, from, length);
 }
 
 unsigned Internals::numberOfScrollableAreas()
@@ -4709,7 +4702,7 @@ ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandStrin
 
 void Internals::activeAudioRouteDidChange(bool shouldPause)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     MediaSessionHelper::sharedHelper().activeAudioRouteDidChange(shouldPause ? MediaSessionHelperClient::ShouldPause::Yes : MediaSessionHelperClient::ShouldPause::No);
 #else
     UNUSED_PARAM(shouldPause);
@@ -4746,6 +4739,19 @@ void Internals::endAudioSessionInterruption()
 #if USE(AUDIO_SESSION)
     AudioSession::sharedSession().endInterruptionForTesting();
 #endif
+}
+
+void Internals::suspendAllMediaBuffering()
+{
+    auto frame = this->frame();
+    if (!frame)
+        return;
+
+    auto page = frame->page();
+    if (!page)
+        return;
+
+    page->suspendAllMediaBuffering();
 }
 
 #endif // ENABLE(VIDEO)
@@ -4946,6 +4952,11 @@ void Internals::mockMediaPlaybackTargetPickerDismissPopup()
 }
 #endif
 
+bool Internals::isMonitoringWirelessRoutes() const
+{
+    return PlatformMediaSessionManager::sharedManager().isMonitoringWirelessTargets();
+}
+
 ExceptionOr<Ref<MockPageOverlay>> Internals::installMockPageOverlay(PageOverlayType type)
 {
     Document* document = contextDocument();
@@ -5099,7 +5110,7 @@ RefPtr<File> Internals::createFile(const String& path)
         return nullptr;
 
     URL url = document->completeURL(path);
-    if (!url.isLocalFile())
+    if (!url.protocolIsFile())
         return nullptr;
 
     return File::create(document, url.fileSystemPath());
@@ -5223,7 +5234,7 @@ ExceptionOr<String> Internals::pathStringWithShrinkWrappedRects(const Vector<dou
         rects.append(FloatRect(rectComponents[i], rectComponents[i + 1], rectComponents[i + 2], rectComponents[i + 3]));
 
     SVGPathStringBuilder builder;
-    PathUtilities::pathWithShrinkWrappedRects(rects, radius).apply([&builder](const PathElement& element) {
+    PathUtilities::pathWithShrinkWrappedRects(rects, radius).applyElements([&builder](const PathElement& element) {
         switch (element.type) {
         case PathElement::Type::MoveToPoint:
             builder.moveTo(element.points[0], false, AbsoluteCoordinates);
@@ -5671,15 +5682,6 @@ void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, W
     context.simulateEventForTesting(contextEvent);
 }
 
-bool Internals::hasLowAndHighPowerGPUs()
-{
-#if PLATFORM(MAC)
-    return WebCore::hasLowAndHighPowerGPUs();
-#else
-    return false;
-#endif
-}
-
 Internals::RequestedGPU Internals::requestedGPU(WebGLRenderingContext& context)
 {
     UNUSED_PARAM(context);
@@ -5698,20 +5700,6 @@ Internals::RequestedGPU Internals::requestedGPU(WebGLRenderingContext& context)
     }
 
     return RequestedGPU::Default;
-}
-
-bool Internals::requestedMetal(WebGLRenderingContext& context)
-{
-    UNUSED_PARAM(context);
-#if PLATFORM(COCOA)
-    if (auto optionalAttributes = context.getContextAttributes()) {
-        auto attributes = *optionalAttributes;
-
-        return attributes.useMetal;
-    }
-#endif
-
-    return false;
 }
 #endif
 
@@ -6530,11 +6518,6 @@ void Internals::setMockWebAuthenticationConfiguration(const MockWebAuthenticatio
 }
 #endif
 
-void Internals::setMaxCanvasPixelMemory(unsigned size)
-{
-    CanvasBase::setMaxPixelMemoryForTesting(size);
-}
-
 void Internals::setMaxCanvasArea(unsigned size)
 {
     CanvasBase::setMaxCanvasAreaForTesting(size);
@@ -6798,7 +6781,7 @@ unsigned Internals::mediaKeySessionInternalInstanceSessionObjectRefCount(const M
 
 void Internals::setContentSizeCategory(Internals::ContentSizeCategory category)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     CFStringRef ctCategory = nil;
     switch (category) {
     case Internals::ContentSizeCategory::L:
@@ -7038,13 +7021,6 @@ ExceptionOr<void> Internals::setDocumentAutoplayPolicy(Document& document, Inter
     return { };
 }
 
-#if ENABLE(WEBGL) && !PLATFORM(COCOA)
-bool Internals::platformSupportsMetal(bool)
-{
-    return false;
-}
-#endif
-
 void Internals::retainTextIteratorForDocumentContent()
 {
     auto* document = contextDocument();
@@ -7107,7 +7083,6 @@ void Internals::avoidIOSurfaceSizeCheckInWebProcess(HTMLCanvasElement& element)
         return;
     page->settings().setMaximumAccelerated2dCanvasSize(UINT_MAX);
     CanvasBase::setMaxCanvasAreaForTesting(UINT_MAX);
-    CanvasBase::setMaxPixelMemoryForTesting(UINT_MAX);
     element.setAvoidIOSurfaceSizeCheckInWebProcessForTesting();
 }
 

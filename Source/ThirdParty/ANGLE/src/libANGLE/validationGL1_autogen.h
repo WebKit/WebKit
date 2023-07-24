@@ -473,7 +473,7 @@ bool ValidatePixelZoom(const Context *context,
 bool ValidatePolygonMode(const Context *context,
                          angle::EntryPoint entryPoint,
                          GLenum face,
-                         GLenum mode);
+                         PolygonMode modePacked);
 bool ValidatePolygonStipple(const Context *context,
                             angle::EntryPoint entryPoint,
                             const GLubyte *mask);

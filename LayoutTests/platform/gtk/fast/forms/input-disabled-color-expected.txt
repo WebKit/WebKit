@@ -6,75 +6,75 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 509x17
         text run at (0,0) width 509: "This tests that the text color changes appropriately when the text field is disabled."
       RenderBR {BR} at (509,0) size 0x17
-      RenderTextControl {INPUT} at (0,18) size 191x24 [color=#575757] [bgcolor=#FFFFFF] [border: (2px inset #575757)]
+      RenderTextControl {INPUT} at (0,18) size 191x24 [color=#575757] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderText {#text} at (191,21) size 4x17
         text run at (191,21) width 4: " "
-      RenderTextControl {INPUT} at (195,18) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (195,18) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderBR {BR} at (387,21) size 0x17
-      RenderTextControl {INPUT} at (0,42) size 191x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #FF0000)]
+      RenderTextControl {INPUT} at (0,42) size 191x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderText {#text} at (191,45) size 4x17
         text run at (191,45) width 4: " "
-      RenderTextControl {INPUT} at (195,42) size 192x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #FF0000)]
+      RenderTextControl {INPUT} at (195,42) size 192x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderBR {BR} at (387,45) size 0x17
-      RenderTextControl {INPUT} at (0,66) size 191x24 [color=#575757] [bgcolor=#0000FF] [border: (2px inset #575757)]
+      RenderTextControl {INPUT} at (0,66) size 191x24 [color=#575757] [bgcolor=#0000FF] [border: (2px inset #808080)]
       RenderText {#text} at (191,69) size 4x17
         text run at (191,69) width 4: " "
-      RenderTextControl {INPUT} at (195,66) size 192x24 [bgcolor=#0000FF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (195,66) size 192x24 [bgcolor=#0000FF] [border: (2px inset #808080)]
       RenderBR {BR} at (387,69) size 0x17
-      RenderTextControl {INPUT} at (0,90) size 191x24 [color=#FF0000] [bgcolor=#0000FF] [border: (2px inset #FF0000)]
+      RenderTextControl {INPUT} at (0,90) size 191x24 [color=#FF0000] [bgcolor=#0000FF] [border: (2px inset #808080)]
       RenderText {#text} at (191,93) size 4x17
         text run at (191,93) width 4: " "
-      RenderTextControl {INPUT} at (195,90) size 192x24 [color=#FF0000] [bgcolor=#0000FF] [border: (2px inset #FF0000)]
+      RenderTextControl {INPUT} at (195,90) size 192x24 [color=#FF0000] [bgcolor=#0000FF] [border: (2px inset #808080)]
       RenderBR {BR} at (387,93) size 0x17
-      RenderTextControl {INPUT} at (0,114) size 191x24 [color=#575757] [bgcolor=#000000] [border: (2px inset #575757)]
+      RenderTextControl {INPUT} at (0,114) size 191x24 [color=#575757] [bgcolor=#000000] [border: (2px inset #808080)]
       RenderText {#text} at (191,117) size 4x17
         text run at (191,117) width 4: " "
-      RenderTextControl {INPUT} at (195,114) size 192x24 [bgcolor=#000000] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (195,114) size 192x24 [bgcolor=#000000] [border: (2px inset #808080)]
       RenderBR {BR} at (387,117) size 0x17
-      RenderTextControl {INPUT} at (0,138) size 191x24 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #FFFFFF)]
+      RenderTextControl {INPUT} at (0,138) size 191x24 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #808080)]
       RenderText {#text} at (191,141) size 4x17
         text run at (191,141) width 4: " "
-      RenderTextControl {INPUT} at (195,138) size 192x24 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #FFFFFF)]
+      RenderTextControl {INPUT} at (195,138) size 192x24 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #808080)]
       RenderBR {BR} at (387,141) size 0x17
-      RenderTextControl {INPUT} at (0,162) size 191x24 [color=#575757] [bgcolor=#808080] [border: (2px inset #575757)]
+      RenderTextControl {INPUT} at (0,162) size 191x24 [color=#575757] [bgcolor=#808080] [border: (2px inset #808080)]
       RenderText {#text} at (191,165) size 4x17
         text run at (191,165) width 4: " "
-      RenderTextControl {INPUT} at (195,162) size 192x24 [bgcolor=#808080] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (195,162) size 192x24 [bgcolor=#808080] [border: (2px inset #808080)]
       RenderBR {BR} at (387,165) size 0x17
-      RenderTextControl {INPUT} at (0,186) size 191x24 [color=#FFFFFF] [bgcolor=#A9A9A9] [border: (2px inset #FFFFFF)]
+      RenderTextControl {INPUT} at (0,186) size 191x24 [color=#FFFFFF] [bgcolor=#A9A9A9] [border: (2px inset #808080)]
       RenderText {#text} at (191,189) size 4x17
         text run at (191,189) width 4: " "
-      RenderTextControl {INPUT} at (195,186) size 192x24 [color=#FFFFFF] [bgcolor=#A9A9A9] [border: (2px inset #FFFFFF)]
+      RenderTextControl {INPUT} at (195,186) size 192x24 [color=#FFFFFF] [bgcolor=#A9A9A9] [border: (2px inset #808080)]
       RenderBR {BR} at (387,189) size 0x17
       RenderTextControl {INPUT} at (0,210) size 191x24 [color=#808080] [bgcolor=#000000] [border: (2px inset #808080)]
       RenderText {#text} at (191,213) size 4x17
         text run at (191,213) width 4: " "
       RenderTextControl {INPUT} at (195,210) size 192x24 [color=#808080] [bgcolor=#000000] [border: (2px inset #808080)]
       RenderBR {BR} at (387,213) size 0x17
-      RenderTextControl {INPUT} at (0,234) size 191x24 [color=#FF0000] [bgcolor=#808080] [border: (2px inset #FF0000)]
+      RenderTextControl {INPUT} at (0,234) size 191x24 [color=#FF0000] [bgcolor=#808080] [border: (2px inset #808080)]
       RenderText {#text} at (191,237) size 4x17
         text run at (191,237) width 4: " "
-      RenderTextControl {INPUT} at (195,234) size 192x24 [color=#FF0000] [bgcolor=#808080] [border: (2px inset #FF0000)]
+      RenderTextControl {INPUT} at (195,234) size 192x24 [color=#FF0000] [bgcolor=#808080] [border: (2px inset #808080)]
       RenderBR {BR} at (387,237) size 0x17
       RenderTextControl {INPUT} at (0,258) size 191x24 [color=#808080] [bgcolor=#FF0000] [border: (2px inset #808080)]
       RenderText {#text} at (191,261) size 4x17
         text run at (191,261) width 4: " "
       RenderTextControl {INPUT} at (195,258) size 192x24 [color=#808080] [bgcolor=#FF0000] [border: (2px inset #808080)]
       RenderBR {BR} at (387,261) size 0x17
-      RenderTextControl {INPUT} at (0,282) size 191x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #FF0000)]
+      RenderTextControl {INPUT} at (0,282) size 191x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderText {#text} at (191,285) size 4x17
         text run at (191,285) width 4: " "
-      RenderTextControl {INPUT} at (195,282) size 192x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #FF0000)]
+      RenderTextControl {INPUT} at (195,282) size 192x24 [color=#FF0000] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderBR {BR} at (387,285) size 0x17
-      RenderTextControl {INPUT} at (0,306) size 191x24 [color=#FF0000] [border: (2px inset #FF0000)]
+      RenderTextControl {INPUT} at (0,306) size 191x24 [color=#FF0000] [border: (2px inset #808080)]
       RenderText {#text} at (191,309) size 4x17
         text run at (191,309) width 4: " "
-      RenderTextControl {INPUT} at (195,306) size 192x24 [color=#FF0000] [border: (2px inset #FF0000)]
+      RenderTextControl {INPUT} at (195,306) size 192x24 [color=#FF0000] [border: (2px inset #808080)]
       RenderBR {BR} at (387,309) size 0x17
-      RenderTextControl {INPUT} at (0,330) size 191x24 [color=#ACACAC] [bgcolor=#F2F2F2] [border: (2px inset #ACACAC)]
+      RenderTextControl {INPUT} at (0,330) size 191x24 [color=#ACACAC] [bgcolor=#F2F2F2] [border: (2px inset #808080)]
       RenderText {#text} at (191,333) size 4x17
         text run at (191,333) width 4: " "
-      RenderTextControl {INPUT} at (195,330) size 192x24 [color=#ACACAC] [bgcolor=#F2F2F2] [border: (2px inset #ACACAC)]
+      RenderTextControl {INPUT} at (195,330) size 192x24 [color=#ACACAC] [bgcolor=#F2F2F2] [border: (2px inset #808080)]
       RenderBR {BR} at (387,333) size 0x17
 layer at (11,29) size 185x18 scrollWidth 462
   RenderBlock {DIV} at (3,3) size 185x18

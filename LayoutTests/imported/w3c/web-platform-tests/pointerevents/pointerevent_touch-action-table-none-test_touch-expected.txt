@@ -1,0 +1,23 @@
+Pointer Events touch-action attribute support
+
+Test Description: Try to scroll element DOWN then RIGHT starting your touch over the 1st Row.
+And try to scroll element DOWN then RIGHT starting your touch inside of the Cell 3, then tap complete button.
+
+Note: this test is for touch only
+
+The caption, first row element, and cell 3 have touch-action: none.
+Header 1	Cell 1	Cell 2
+Header 2	Cell 3	Cell 4
+Header 3	Cell 5	Cell 6
+
+
+touch-action: none
+
+The following pointer types were detected: (none).
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN touch-action attribute test on the cell
+NOTRUN touch-action attribute test on the row
+

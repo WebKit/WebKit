@@ -12,6 +12,8 @@
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 // CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+//go:build ignore
+
 package main
 
 import (
@@ -135,7 +137,7 @@ func checkKeys(t test, keys ...string) bool {
 		}
 	}
 
-	for k, _ := range t.Values {
+	for k := range t.Values {
 		var found bool
 		for _, k2 := range keys {
 			if k == k2 {

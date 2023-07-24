@@ -18,7 +18,7 @@ info: |
     b. If SameValueZero(searchElement, elementK) is true, return true.
     c. Increase k by 1.
   ...
-features: [Symbol]
+features: [Symbol, Array.prototype.includes]
 ---*/
 
 var symbol = Symbol("1");

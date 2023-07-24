@@ -102,7 +102,7 @@ void ValidatedFormListedElement::updateVisibleValidationMessage(Ref<HTMLElement>
         return;
     String message;
     if (element.renderer() && willValidate())
-        message = validationMessage().stripWhiteSpace();
+        message = validationMessage().trim(deprecatedIsSpaceOrNewline);
     if (!m_validationMessage)
         m_validationMessage = makeUnique<ValidationMessage>(validationAnchor);
     m_validationMessage->updateValidationMessage(validationAnchor, message);
@@ -212,8 +212,8 @@ void ValidatedFormListedElement::setDisabledInternal(bool disabled, bool disable
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (changingDisabledState) {
         emplace(styleInvalidation, asHTMLElement(), {
-            { CSSSelector::PseudoClassDisabled, newDisabledState },
-            { CSSSelector::PseudoClassEnabled, !newDisabledState },
+            { CSSSelector::PseudoClassType::Disabled, newDisabledState },
+            { CSSSelector::PseudoClassType::Enabled, !newDisabledState },
         });
     }
 
@@ -253,21 +253,23 @@ void ValidatedFormListedElement::updateValidity()
     if (newIsValid != m_isValid) {
         HTMLElement& element = asHTMLElement();
         Style::PseudoClassChangeInvalidation styleInvalidation(element, {
-            { CSSSelector::PseudoClassValid, newIsValid },
-            { CSSSelector::PseudoClassInvalid, !newIsValid },
-            { CSSSelector::PseudoClassUserValid, m_wasInteractedWithSinceLastFormSubmitEvent && newIsValid },
-            { CSSSelector::PseudoClassUserInvalid, m_wasInteractedWithSinceLastFormSubmitEvent && !newIsValid },
+            { CSSSelector::PseudoClassType::Valid, newIsValid },
+            { CSSSelector::PseudoClassType::Invalid, !newIsValid },
+            { CSSSelector::PseudoClassType::UserValid, m_wasInteractedWithSinceLastFormSubmitEvent && newIsValid },
+            { CSSSelector::PseudoClassType::UserInvalid, m_wasInteractedWithSinceLastFormSubmitEvent && !newIsValid },
         });
 
         m_isValid = newIsValid;
 
         if (willValidate) {
             if (!newIsValid) {
-                addInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
+                if (!belongsToFormThatIsBeingDestroyed())
+                    addInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
                 if (auto* form = this->form())
                     form->addInvalidFormControl(element);
             } else {
-                removeInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
+                if (!belongsToFormThatIsBeingDestroyed())
+                    removeInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
                 if (auto* form = this->form())
                     form->removeInvalidFormControlIfNeeded(element);
             }
@@ -311,7 +313,7 @@ void ValidatedFormListedElement::parseReadOnlyAttribute(const AtomString& value)
     bool newHasReadOnlyAttribute = !value.isNull();
     if (m_hasReadOnlyAttribute != newHasReadOnlyAttribute) {
         bool newMatchesReadWrite = supportsReadOnly() && !newHasReadOnlyAttribute;
-        Style::PseudoClassChangeInvalidation readWriteInvalidation(asHTMLElement(), { { CSSSelector::PseudoClassReadWrite, newMatchesReadWrite }, { CSSSelector::PseudoClassReadOnly, !newMatchesReadWrite } });
+        Style::PseudoClassChangeInvalidation readWriteInvalidation(asHTMLElement(), { { CSSSelector::PseudoClassType::ReadWrite, newMatchesReadWrite }, { CSSSelector::PseudoClassType::ReadOnly, !newMatchesReadWrite } });
         m_hasReadOnlyAttribute = newHasReadOnlyAttribute;
         readOnlyStateChanged();
     }
@@ -391,6 +393,13 @@ void ValidatedFormListedElement::didChangeForm()
         if (m_willValidateInitialized && m_willValidate && !isValidFormControlElement())
             form->addInvalidFormControl(asHTMLElement());
     }
+}
+
+void ValidatedFormListedElement::formWillBeDestroyed()
+{
+    m_belongsToFormThatIsBeingDestroyed = true;
+    FormListedElement::formWillBeDestroyed();
+    m_belongsToFormThatIsBeingDestroyed = false;
 }
 
 void ValidatedFormListedElement::disabledStateChanged()
@@ -495,8 +504,8 @@ void ValidatedFormListedElement::setInteractedWithSinceLastFormSubmitEvent(bool 
         return;
 
     Style::PseudoClassChangeInvalidation styleInvalidation(asHTMLElement(), {
-        { CSSSelector::PseudoClassUserValid, interactedWith && matchesValidPseudoClass() },
-        { CSSSelector::PseudoClassUserInvalid, interactedWith && matchesInvalidPseudoClass() },
+        { CSSSelector::PseudoClassType::UserValid, interactedWith && matchesValidPseudoClass() },
+        { CSSSelector::PseudoClassType::UserInvalid, interactedWith && matchesInvalidPseudoClass() },
     });
 
     m_wasInteractedWithSinceLastFormSubmitEvent = interactedWith;

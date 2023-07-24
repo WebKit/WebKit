@@ -344,7 +344,7 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
         ellipseRect.setX(m_contentRect.x() - (ellipseRect.width() - m_contentRect.width()) / 2);
         ellipseRect.setY(m_contentRect.y() - (ellipseRect.height() - m_contentRect.height()) / 2);
         Path path;
-        path.addEllipse(ellipseRect);
+        path.addEllipseInRect(ellipseRect);
         paintInfo.context().strokePath(path);
     }
 }

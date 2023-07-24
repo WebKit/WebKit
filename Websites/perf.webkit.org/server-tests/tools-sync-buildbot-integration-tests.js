@@ -9,6 +9,7 @@ const MockData = require('./resources/mock-data.js');
 const MockLogger = require('./resources/mock-logger.js').MockLogger;
 const MockRemoteAPI = require('../unit-tests/resources/mock-remote-api.js').MockRemoteAPI;
 const TestServer = require('./resources/test-server.js');
+const {TestParameter} = require("../public/v3/models/test-parameter");
 const TemporaryFile = require('./resources/temporary-file.js').TemporaryFile;
 const addWorkerForReport = require('./resources/common-operations.js').addWorkerForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
@@ -21,6 +22,7 @@ function configWithOneTesterTwoBuilders(testConfigurationsOverride = [{types: ['
         triggerableName: 'build-webkit',
         lookbackCount: 2,
         buildRequestArgument: 'build-request-id',
+        testParametersArgument: 'test-parameters',
         workerName: 'sync-worker',
         workerPassword: 'password',
         repositoryGroups: {
@@ -226,6 +228,26 @@ async function createTestGroupWithPatch(repetitionType = 'alternating')
     return TestGroup.findAllByTask(task.id())[0];
 }
 
+async function createTestGroupWithTestParameters(testParameters=null)
+{
+    const someTest = Test.findById(MockData.someTestId());
+    const webkit = Repository.findById(MockData.webkitRepositoryId());
+    const set1 = new CustomCommitSet;
+    set1.setRevisionForRepository(webkit, '191622');
+    const set2 = new CustomCommitSet;
+    set2.setRevisionForRepository(webkit, '192736');
+    if (!testParameters) {
+        const diagnoseParameter = TestParameter.findByName('diagnose');
+        const parameterSet = new CustomTestParameterSet;
+        parameterSet.set(diagnoseParameter, {value: true});
+        testParameters = [parameterSet, parameterSet];
+    }
+
+    const task = await TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, 'alternating', [set1, set2], testParameters);
+
+    return TestGroup.findAllByTask(task.id())[0];
+}
+
 function createTestGroupWihOwnedCommit()
 {
     const someTest = Test.findById(MockData.someTestId());
@@ -265,6 +287,54 @@ describe('sync-buildbot', function () {
     beforeEach(() => {
         MockRemoteAPI.reset('http://build.webkit.org');
         PrivilegedAPI.configure('test', 'password');
+    });
+
+    it('should be able to schedule a "paired-parallel" build request for building a patch on buildbot', async () => {
+        let syncPromise;
+        const triggerable = await createTriggerable(configWithOneTesterTwoBuilders([
+            { builders: ['builder-1'], types: ['some'], platforms: ['some platform'], supportedRepetitionTypes: ['alternating', 'paired-parallel'], testParameters: ['diagnose']}]));
+        const firstBuildNumber = 123;
+        const secondBuildNumber = 124;
+        let testGroup = await createTestGroupWithTestParameters();
+        assert.strictEqual(testGroup.buildRequests().length, 4);
+
+        syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+        await resolveSyncerToBuildBotRequests([
+            [
+                { method: 'GET', url: MockData.buildbotBuildersURL(), resolve: MockData.mockBuildbotBuilders() },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: MockData.finishedBuild({builderId: MockData.builderIDForName('some tester'), buildRequestId: 1, buildTag: firstBuildNumber}) },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+            ],
+            [
+                {
+                    method: 'POST', url: '/api/v2/forceschedulers/force-ab-tests', resolve: 'OK',
+                    data: {'id': '2', 'jsonrpc': '2.0', 'method': 'force', 'params': {'wk': '192736', 'build-request-id': '2', 'forcescheduler': 'force-ab-tests', 'test': 'some-test', 'test-parameters': JSON.stringify({diagnose: {value: true}})}}
+                },
+            ],
+            [
+                { method: 'GET', url: MockData.pendingBuildsUrl('some tester'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('some builder'), resolve: {} },
+                { method: 'GET', url: MockData.pendingBuildsUrl('other builder'), resolve: {} },
+            ],
+            [
+                { method: 'GET', url: MockData.recentBuildsUrl('some tester', 2), resolve: {
+                        builds: [
+                            MockData.runningBuildData({builderId: MockData.builderIDForName('some tester'), buildRequestId: 2, buildTag: secondBuildNumber}),
+                            MockData.finishedBuildData({builderId: MockData.builderIDForName('some tester'), buildRequestId: 1, buildTag: firstBuildNumber}),
+                        ]} },
+                { method: 'GET', url: MockData.recentBuildsUrl('some builder', 2), resolve: {} },
+                { method: 'GET', url: MockData.recentBuildsUrl('other builder', 2), resolve: {} },
+            ]
+        ]);
+        await syncPromise;
     });
 
     it('should not schedule on another builder if the build was scheduled on one builder before', () => {
@@ -720,7 +790,7 @@ describe('sync-buildbot', function () {
             resolutions.forEach((resolution, index) => {
                 assertAndResolveRequest(requests[resolutionIndexOffset + index], resolution.method, resolution.url, resolution.resolve);
                 if ('data' in resolution)
-                    assert.deepEqual(requests[resolutionIndexOffset + index].data, resolution.data)
+                    assert.deepEqual(requests[resolutionIndexOffset + index].data, resolution.data);
             });
             resolutionIndexOffset += resolutions.length;
             if (i != requestResolutionList.length - 1)

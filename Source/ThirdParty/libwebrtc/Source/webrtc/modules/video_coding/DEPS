@@ -7,6 +7,7 @@ include_rules = [
   "+rtc_tools",
   "+third_party/libyuv",
   "+rtc_base/system/rtc_export.h",
+  "+video/config",
 ]
 
 specific_include_rules = {
@@ -19,5 +20,6 @@ specific_include_rules = {
   ".*test.*\.cc": [
      "+media/base",
      "+media/engine",
+     "+video/config",
   ],
 }

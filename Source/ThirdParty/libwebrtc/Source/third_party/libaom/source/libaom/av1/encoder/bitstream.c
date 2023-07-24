@@ -219,7 +219,8 @@ static AOM_INLINE void write_selected_tx_size(const MACROBLOCKD *xd,
 }
 
 static int write_skip(const AV1_COMMON *cm, const MACROBLOCKD *xd,
-                      int segment_id, const MB_MODE_INFO *mi, aom_writer *w) {
+                      uint8_t segment_id, const MB_MODE_INFO *mi,
+                      aom_writer *w) {
   if (segfeature_active(&cm->seg, segment_id, SEG_LVL_SKIP)) {
     return 1;
   } else {
@@ -232,7 +233,7 @@ static int write_skip(const AV1_COMMON *cm, const MACROBLOCKD *xd,
 }
 
 static int write_skip_mode(const AV1_COMMON *cm, const MACROBLOCKD *xd,
-                           int segment_id, const MB_MODE_INFO *mi,
+                           uint8_t segment_id, const MB_MODE_INFO *mi,
                            aom_writer *w) {
   if (!cm->current_frame.skip_mode_info.skip_mode_flag) return 0;
   if (segfeature_active(&cm->seg, segment_id, SEG_LVL_SKIP)) {
@@ -257,7 +258,7 @@ static int write_skip_mode(const AV1_COMMON *cm, const MACROBLOCKD *xd,
 }
 
 static AOM_INLINE void write_is_inter(const AV1_COMMON *cm,
-                                      const MACROBLOCKD *xd, int segment_id,
+                                      const MACROBLOCKD *xd, uint8_t segment_id,
                                       aom_writer *w, const int is_inter) {
   if (!segfeature_active(&cm->seg, segment_id, SEG_LVL_REF_FRAME)) {
     if (segfeature_active(&cm->seg, segment_id, SEG_LVL_GLOBALMV)) {
@@ -414,18 +415,16 @@ static AOM_INLINE void pack_txb_tokens(
 
 static INLINE void set_spatial_segment_id(
     const CommonModeInfoParams *const mi_params, uint8_t *segment_ids,
-    BLOCK_SIZE bsize, int mi_row, int mi_col, int segment_id) {
+    BLOCK_SIZE bsize, int mi_row, int mi_col, uint8_t segment_id) {
   const int mi_offset = mi_row * mi_params->mi_cols + mi_col;
   const int bw = mi_size_wide[bsize];
   const int bh = mi_size_high[bsize];
   const int xmis = AOMMIN(mi_params->mi_cols - mi_col, bw);
   const int ymis = AOMMIN(mi_params->mi_rows - mi_row, bh);
 
-  for (int y = 0; y < ymis; ++y) {
-    for (int x = 0; x < xmis; ++x) {
-      segment_ids[mi_offset + y * mi_params->mi_cols + x] = segment_id;
-    }
-  }
+  const int mi_stride = mi_params->mi_cols;
+
+  set_segment_id(segment_ids, mi_offset, xmis, ymis, mi_stride, segment_id);
 }
 
 int av1_neg_interleave(int x, int ref, int max) {
@@ -462,8 +461,8 @@ static AOM_INLINE void write_segment_id(AV1_COMP *cpi, MACROBLOCKD *const xd,
 
   AV1_COMMON *const cm = &cpi->common;
   int cdf_num;
-  const int pred = av1_get_spatial_seg_pred(cm, xd, &cdf_num,
-                                            cpi->cyclic_refresh->skip_over4x4);
+  const uint8_t pred = av1_get_spatial_seg_pred(
+      cm, xd, &cdf_num, cpi->cyclic_refresh->skip_over4x4);
   const int mi_row = xd->mi_row;
   const int mi_col = xd->mi_col;
 
@@ -498,7 +497,7 @@ static AOM_INLINE void write_ref_frames(const AV1_COMMON *cm,
                                         const MACROBLOCKD *xd, aom_writer *w) {
   const MB_MODE_INFO *const mbmi = xd->mi[0];
   const int is_compound = has_second_ref(mbmi);
-  const int segment_id = mbmi->segment_id;
+  const uint8_t segment_id = mbmi->segment_id;
 
   // If segment level coding of this signal is disabled...
   // or the segment allows multiple reference frame options
@@ -1096,7 +1095,7 @@ static AOM_INLINE void pack_inter_mode_mvs(AV1_COMP *cpi, ThreadData *const td,
   const MB_MODE_INFO *const mbmi = xd->mi[0];
   const MB_MODE_INFO_EXT_FRAME *const mbmi_ext_frame = x->mbmi_ext_frame;
   const PREDICTION_MODE mode = mbmi->mode;
-  const int segment_id = mbmi->segment_id;
+  const uint8_t segment_id = mbmi->segment_id;
   const BLOCK_SIZE bsize = mbmi->bsize;
   const int allow_hp = cm->features.allow_high_precision_mv;
   const int is_inter = is_inter_block(mbmi);
@@ -1532,7 +1531,7 @@ static AOM_INLINE void write_modes_b(AV1_COMP *cpi, ThreadData *const td,
 
   const int is_inter_tx = is_inter_block(mbmi);
   const int skip_txfm = mbmi->skip_txfm;
-  const int segment_id = mbmi->segment_id;
+  const uint8_t segment_id = mbmi->segment_id;
   if (cm->features.tx_mode == TX_MODE_SELECT && block_signals_txsize(bsize) &&
       !(is_inter_tx && skip_txfm) && !xd->lossless[segment_id]) {
     if (is_inter_tx) {  // This implies skip flag is 0.
@@ -2681,6 +2680,12 @@ static AOM_INLINE void write_global_motion_params(
     struct aom_write_bit_buffer *wb, int allow_hp) {
   const TransformationType type = params->wmtype;
 
+  // As a workaround for an AV1 spec bug, we avoid choosing TRANSLATION
+  // type models. Check here that we don't accidentally pick one somehow.
+  // See comments in gm_get_motion_vector() for details on the bug we're
+  // working around here
+  assert(type != TRANSLATION);
+
   aom_wb_write_bit(wb, type != IDENTITY);
   if (type != IDENTITY) {
     aom_wb_write_bit(wb, type == ROTZOOM);
@@ -2764,9 +2769,33 @@ static AOM_INLINE void write_global_motion(AV1_COMP *cpi,
   }
 }
 
-static int check_frame_refs_short_signaling(AV1_COMMON *const cm) {
+static int check_frame_refs_short_signaling(AV1_COMMON *const cm,
+                                            bool enable_ref_short_signaling) {
+  // In rtc case when res < 360p and speed >= 9, we turn on
+  // frame_refs_short_signaling if it won't break the decoder.
+  if (enable_ref_short_signaling) {
+    const int gld_map_idx = get_ref_frame_map_idx(cm, GOLDEN_FRAME);
+    const int base =
+        1 << (cm->seq_params->order_hint_info.order_hint_bits_minus_1 + 1);
+
+    const int order_hint_group_cur =
+        cm->current_frame.display_order_hint / base;
+    const int order_hint_group_gld =
+        cm->ref_frame_map[gld_map_idx]->display_order_hint / base;
+    const int relative_dist = cm->current_frame.order_hint -
+                              cm->ref_frame_map[gld_map_idx]->order_hint;
+
+    // If current frame and GOLDEN frame are in the same order_hint group, and
+    // they are not far apart (i.e., > 64 frames), then return 1.
+    if (order_hint_group_cur == order_hint_group_gld && relative_dist >= 0 &&
+        relative_dist <= 64) {
+      return 1;
+    }
+    return 0;
+  }
+
   // Check whether all references are distinct frames.
-  const RefCntBuffer *seen_bufs[FRAME_BUFFERS] = { NULL };
+  const RefCntBuffer *seen_bufs[INTER_REFS_PER_FRAME] = { NULL };
   int num_refs = 0;
   for (int ref_frame = LAST_FRAME; ref_frame <= ALTREF_FRAME; ++ref_frame) {
     const RefCntBuffer *const buf = get_ref_frame_buf(cm, ref_frame);
@@ -2842,7 +2871,13 @@ static AOM_INLINE void write_uncompressed_header_obu(
   CurrentFrame *const current_frame = &cm->current_frame;
   FeatureFlags *const features = &cm->features;
 
-  current_frame->frame_refs_short_signaling = 0;
+  if (!cpi->sf.rt_sf.enable_ref_short_signaling ||
+      !seq_params->order_hint_info.enable_order_hint ||
+      seq_params->order_hint_info.enable_ref_frame_mvs) {
+    current_frame->frame_refs_short_signaling = 0;
+  } else {
+    current_frame->frame_refs_short_signaling = 1;
+  }
 
   if (seq_params->still_picture) {
     assert(cm->show_existing_frame == 0);
@@ -3008,12 +3043,20 @@ static AOM_INLINE void write_uncompressed_header_obu(
 #endif  // FRAME_REFS_SHORT_SIGNALING
 
       if (current_frame->frame_refs_short_signaling) {
-        // NOTE(zoeliu@google.com):
-        //   An example solution for encoder-side implementation on frame refs
-        //   short signaling, which is only turned on when the encoder side
-        //   decision on ref frames is identical to that at the decoder side.
+        //    In rtc case when cpi->sf.rt_sf.enable_ref_short_signaling is true,
+        //    we turn on frame_refs_short_signaling when the current frame and
+        //    golden frame are in the same order_hint group, and their relative
+        //    distance is <= 64 (in order to be decodable).
+
+        //    For other cases, an example solution for encoder-side
+        //    implementation on frame_refs_short_signaling is also provided in
+        //    this function, where frame_refs_short_signaling is only turned on
+        //    when the encoder side decision on ref frames is identical to that
+        //    at the decoder side.
+
         current_frame->frame_refs_short_signaling =
-            check_frame_refs_short_signaling(cm);
+            check_frame_refs_short_signaling(
+                cm, cpi->sf.rt_sf.enable_ref_short_signaling);
       }
 
       if (seq_params->order_hint_info.enable_order_hint)
@@ -3399,6 +3442,7 @@ uint32_t av1_write_sequence_header_obu(const SequenceHeader *seq_params,
         aom_wb_write_bit(
             &wb, seq_params->op_params[i].display_model_param_present_flag);
         if (seq_params->op_params[i].display_model_param_present_flag) {
+          assert(seq_params->op_params[i].initial_display_delay >= 1);
           assert(seq_params->op_params[i].initial_display_delay <= 10);
           aom_wb_write_literal(
               &wb, seq_params->op_params[i].initial_display_delay - 1, 4);
@@ -3602,7 +3646,7 @@ static void write_large_scale_tile_obu(
           }
         }
 
-        mem_put_le32(buf->data, tile_header);
+        mem_put_le32(buf->data, (MEM_VALUE_T)tile_header);
       }
 
       *total_size += tile_size;
@@ -4107,11 +4151,9 @@ int av1_pack_bitstream(AV1_COMP *const cpi, uint8_t *dst, size_t *size,
   // write sequence header obu at each key frame or intra_only frame,
   // preceded by 4-byte size
   if (cm->current_frame.frame_type == INTRA_ONLY_FRAME ||
-      (cm->current_frame.frame_type == KEY_FRAME &&
-       cpi->ppi->gf_group.refbuf_state[cpi->gf_frame_index] == REFBUF_RESET)) {
+      cm->current_frame.frame_type == KEY_FRAME) {
     obu_header_size = av1_write_obu_header(
         level_params, &cpi->frame_header_count, OBU_SEQUENCE_HEADER, 0, data);
-
     obu_payload_size =
         av1_write_sequence_header_obu(cm->seq_params, data + obu_header_size);
     const size_t length_field_size =

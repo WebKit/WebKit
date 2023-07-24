@@ -191,6 +191,14 @@ fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]
 
+# rdar://110799490 2x media/track/ tests are flaky crashes.
+media/track/track-user-stylesheet.html [ Pass Crash ]
+media/track/track-webvtt-snap-to-lines-inline-style.html [ Pass Crash ]
+
+# webkit.org/b/258184 [ macOS ] 2x media/track/ tests are flaky crashes. 
+[ Debug ] media/track/track-webvtt-no-snap-to-lines-overlap.html [ Pass Crash ]
+[ Debug ] media/track/track-webvtt-snap-to-lines-left-right.html [ Pass Crash ]
+
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 
@@ -430,9 +438,6 @@ plugins/form-value.html
 # WebKit1 OOP plug-ins: Exceptions aren't thrown on invoke failure.
 plugins/npruntime/invoke-failure.html
 
-# CSS image-resolution is not yet enabled.
-webkit.org/b/85262 fast/css/image-resolution
-
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation
 
@@ -457,7 +462,6 @@ webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFail
 # Failing ref tests
 webkit.org/b/85404 fast/loader/javascript-url-in-embed.html [ Failure Pass ]
 
-webkit.org/b/85408 svg/batik/text/longTextOnPath.svg [ Failure Pass ]
 webkit.org/b/85408 svg/batik/paints/gradientLimit.svg [ Failure Pass ]
 webkit.org/b/85408 svg/batik/text/textOnPath.svg [ Failure Pass ]
 webkit.org/b/85408 svg/batik/text/verticalTextOnPath.svg [ Failure Pass ]
@@ -705,7 +709,6 @@ webkit.org/b/85525 media/video-played-reset.html [ Pass Failure ]
 webkit.org/b/112659 media/video-playing-and-pause.html [ Failure Timeout ]
 webkit.org/b/114744 media/video-layer-crash.html [ Pass Timeout Failure ]
 webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Timeout ]
-webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
 webkit.org/b/121803 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
 webkit.org/b/122033 media/video-duration-known-after-eos.html [ Pass Timeout ]
 webkit.org/b/122042 media/media-controller-playback.html [ Pass Timeout ]
@@ -771,7 +774,6 @@ platform/mac/fast/loader/file-url-mimetypes.html [ Failure ]
 
 # rdar://92299030 ([ Ventura ] 2 imported/w3c/web-platform-tests/svg/* tests are constant text failures)
 imported/w3c/web-platform-tests/svg/path/distance/pathlength-path.svg [ Failure ]
-imported/w3c/web-platform-tests/svg/import/animate-elem-35-t-manual.svg [ Failure ]
 
 # This test rarely times out with color being (0, 0, 0, 0), so far only on macOS Ventura.
 http/tests/media/hls/hls-hdr-switch.html [ Pass Timeout ]
@@ -1156,6 +1158,7 @@ webkit.org/b/181594 media/encrypted-media/clearKey/clearKey-cenc-audio-playback-
 webkit.org/b/181594 media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse.html [ Skip ]
 webkit.org/b/189200 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Skip ]
 media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse-multikey.html [ Skip ]
+webkit.org/b/258070 media/encrypted-media/clearKey/clearKey-cenc-stop-playback-before-key.html [ Skip ]
 
 webkit.org/b/162507 http/tests/media/hls/hls-video-resize.html [ Pass Failure ]
 
@@ -1196,6 +1199,7 @@ webkit.org/b/158420 http/tests/navigation/redirect-to-fragment2.html [ Failure ]
 
 webkit.org/b/168390 fast/images/slower-animation-than-decoding-image.html [ Pass Failure ]
 
+webkit.org/b/258185 [ Debug ] http/tests/media/hls/track-in-band-ext-x-date-range-start-time.html [ Pass Crash ]
 
 # These tests are iOS-specific
 media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
@@ -1446,30 +1450,64 @@ webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling
 
 webkit.org/b/19650 accessibility/mac/press-not-work-for-disabled-menu-list.html [ Pass Failure ]
 
-# Skip iOS-specific Pointer Events WPT tests.
+# Skip iOS-specific Pointer Events WPT tests and some that are timing out.
+imported/w3c/web-platform-tests/pointerevents/capturing_boundary_event_handler_at_ua_shadowdom.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/coalesced_events_attributes_under_load.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-preventdefault.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouseevent_key_pressed.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch-action_two-finger_interaction.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_pointers.html?mouse [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_pointers.html?pen [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_rightbutton.html?mouse [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_rightbutton.html?pen [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_nohover_pointers.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_auxclick_is_a_pointerevent.html?mouse [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_auxclick_is_a_pointerevent.html?pen [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_capture_suppressing_mouse.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_change-touch-action-onpointerdown_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_click_is_a_pointerevent.html?mouse [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_click_is_a_pointerevent.html?pen [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_click_is_a_pointerevent.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_click_is_a_pointerevent_multiple_clicks.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_contextmenu_is_a_pointerevent.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_disabled_form_control.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_disabled_form_control.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_hit_test_scroll.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_hit_test_scroll_visible_descendant.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_iframe-touch-action-none_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_inactivate_pointer.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_movementxy.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerId_scope.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercancel_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture_in_frame.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture_in_frame.html?pen [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture_in_frame.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerleave_after_pointercancel_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_after_pointercancel_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_onpointercancel_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-auto-css_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_highest-parent-none_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_pen.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_touch-action_two-finger_interaction.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_nohover_pointers.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_boundary_events_in_capturing.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_coalesced_events_attributes.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_disabled_form_control.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture_in_frame.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_received_once.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_events_to_original_target.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_events_to_original_target.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_onpointercancel_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_releasepointercapture_pointerup_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_click.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_click.html?touch [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_drag.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_pointerup_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-auto-css_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-button-none-test_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-auto-child-none_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-none_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-pan-x-child-pan-x_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_child-pan-x-child-pan-y_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_highest-parent-none_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-inherit_parent-none_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-modified_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-none-css_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-none-on-body-when-style-propagates-to-viewport_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-down-css_touch.html [ Skip ]
@@ -1478,12 +1516,15 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-righ
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-up-css_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-css_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y-pan-y_touch.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-y-css_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-span-none-test_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-svg-none-test_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-table-none-test_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_click.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-adjustment_click_target.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerup_after_pointerdown_target_removed.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/predicted_events_attributes.html?touch [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/touch-action-with-swipe-dir-change.html?touch [ Skip ]
 
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
 
@@ -1556,6 +1597,10 @@ webkit.org/b/243407 accessibility/add-children-pseudo-element.html [ Pass Failur
 
 # Disabled temporarily since it is causing other tests to fail.
 accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
+
+# Requires (INLINE_PREDICTIONS)
+accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Skip ]
+accessibility/mac/text-input-session-notifications.html [ Skip ]
 
 webkit.org/b/202064 webaudio/silent-audio-interrupted-in-background.html [ Pass Crash ]
 
@@ -1949,9 +1994,9 @@ webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-dur
 
 webkit.org/b/222573 media/media-fullscreen-pause-inline.html [ Pass Failure ]
 
-# webkit.org/b/255294  2 http/tests/media/FairPlay tests are broken.
-http/tests/media/fairplay/legacy-fairplay-mse-v2.html [ Skip ]
-http/tests/media/fairplay/legacy-fairplay-mse-v3.html [ Skip ]
+# webkit.org/b/255294  2 http/tests/media/FairPlay tests are flakey.
+http/tests/media/fairplay/legacy-fairplay-mse-v2.html [ Pass Failure ]
+http/tests/media/fairplay/legacy-fairplay-mse-v3.html [ Pass Failure ]
 
 webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeout ]
 
@@ -2094,8 +2139,6 @@ webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-
 
 # webkit.org/b/228200 Setting multiple test expectations for Monterey on OpenSource:
 [ Monterey Debug arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Pass Failure Crash ]
-
-webkit.org/b/255235 [ Monterey Debug ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Failure ]
 
 webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html [ Pass ImageOnlyFailure ]
 
@@ -2659,13 +2702,11 @@ webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failu
 
 webkit.org/b/251051 [ Monterey+ Debug ] storage/indexeddb/modern/deleteindex-4-private.html [ Crash ]
 
+webkit.org/b/257832 imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-text-decoration.html [ ImageOnlyFailure ]
+
 webkit.org/b/245686 [ Ventura+ ] fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
 webkit.org/b/251099 [ Ventura+ ] fast/images/avif-image-document.html [ Pass Crash ]
-
-#webkit.org/b/251526 [ Ventura EWS ] 2x AVIF tests are constant failures on EWS only
-[ Ventura ] fast/images/avif-as-image.html [ Pass ImageOnlyFailure Crash ]
-[ Ventura ] fast/images/avif-heif-container-as-image.html [ Pass ImageOnlyFailure Crash ]
 
 # AVIF overlay images are only supported on macOS and iOS post Ventura.
 [ Ventura+ ] fast/images/image-overlay-mutiple-frames.html [ Pass ImageOnlyFailure ]
@@ -2688,11 +2729,9 @@ webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html 
 [ Monterey ] imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html [ Skip ]
 
 # webkit.org/b/255178 [ Ventura iOS arm64 ] 3X imported/w3c/web-platform-tests/css/css-color/parsing (layout-tests) are constant text failures
-[ Ventura ] imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html [ Failure ]
-[ Ventura ] imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-relative-color.html [ Failure ]
-[ Ventura ] imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]
-
-webkit.org/b/255184 [ Ventura ] transforms/3d/hit-testing/overlapping-layers-hit-test.html [ Failure ]
+[ Ventura x86_64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html [ Failure ]
+[ Ventura x86_64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-relative-color.html [ Failure ]
+[ Ventura x86_64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]
 
 # webkit.org/b/255427 [ Ventura ] 4/13 batch mark expectations and branch bugs
 [ Ventura ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
@@ -2707,8 +2746,6 @@ webkit.org/b/255184 [ Ventura ] transforms/3d/hit-testing/overlapping-layers-hit
 [ Ventura ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-009.html [ Pass ImageOnlyFailure ]
 [ Ventura ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-010.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/256091 [ Ventura+ ] webaudio/audiocontext-large-samplerate.html [ Pass Failure ]
-
 webkit.org/b/255788 [ Ventura+ Debug ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow.html [ Skip ]
 
 webkit.org/b/256108 media/video-audio-session-mode.html [ Failure ]
@@ -2717,3 +2754,16 @@ webkit.org/b/256108 media/video-audio-session-mode.html [ Failure ]
 [ x86_64 ] media/media-source/media-source-webm-configuration-change.html [ Pass Failure ]
 [ x86_64 ] media/media-source/media-source-webm-configuration-framerate.html [ Pass Failure ]
 [ x86_64 ] media/media-source/media-source-webm-configuration-vp9-header-color.html [ Pass Failure ]
+
+webkit.org/b/258181 [ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Slow ]
+
+# webkit.org/b/258328 Umbrella Bug: Batch mark expectations slowing down EWS
+[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-denormals.https.window.html [ Failure ]
+[ Debug ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Crash ]
+
+webkit.org/b/236128 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]
+
+webkit.org/b/252322 [ X86_64 ] media/media-source/media-source-video-renders.html [ ImageOnlyFailure ]
+
+# Requires Ventura or later
+[ BigSur Monterey ] media/media-source/media-source-paint-after-display-none.html [ Skip ]

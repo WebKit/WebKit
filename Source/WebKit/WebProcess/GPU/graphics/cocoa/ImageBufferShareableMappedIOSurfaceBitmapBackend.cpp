@@ -67,6 +67,12 @@ ImageBufferShareableMappedIOSurfaceBitmapBackend::ImageBufferShareableMappedIOSu
     applyBaseTransform(*m_context);
 }
 
+ImageBufferShareableMappedIOSurfaceBitmapBackend::~ImageBufferShareableMappedIOSurfaceBitmapBackend()
+{
+    releaseGraphicsContext();
+    IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
+}
+
 ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBitmapBackend::createBackendHandle(SharedMemory::Protection) const
 {
     return ImageBufferBackendHandle(m_surface->createSendRight());
@@ -74,15 +80,37 @@ ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBitmapBackend::creat
 
 GraphicsContext& ImageBufferShareableMappedIOSurfaceBitmapBackend::context()
 {
-    if (!m_context) {
+    if (m_context) {
+        CGContextRef cgContext = m_context->platformContext();
+        if (m_lock || !cgContext) {
+            // The existing context is a valid context and the IOSurface is locked, or alternatively
+            // the existing context is an invalid context, for some reason we ran into an error previously.
+            return *m_context;
+        }
+
+        // The IOSurface is unlocked for every flush to prepare for external access by the compositor.
+        // Re-lock on first context() request after the external access has ended and new update starts.
+        if (auto lock = m_surface->lock<IOSurface::AccessMode::ReadWrite>()) {
+            if (lock->surfaceBaseAddress() == CGBitmapContextGetData(cgContext)) {
+                m_lock = WTFMove(lock);
+                return *m_context;
+            }
+        }
+        m_context = nullptr;
+    } else {
         auto lockAndContext = m_surface->createBitmapPlatformContext();
         if (lockAndContext) {
             m_lock = WTFMove(lockAndContext->lock);
             m_context = makeUnique<GraphicsContextCG>(lockAndContext->context.get());
-        } else
-            m_context = makeUnique<GraphicsContextCG>(nullptr);
-        applyBaseTransform(*m_context);
+            applyBaseTransform(*m_context);
+            return *m_context;
+        }
     }
+    // For some reason we ran into an error. Construct an invalid context, with current API we must
+    // return an object.
+    RELEASE_LOG(RemoteLayerBuffers, "ImageBufferShareableMappedIOSurfaceBitmapBackend::context() - failed to create or update the context");
+    m_context = makeUnique<GraphicsContextCG>(nullptr);
+    applyBaseTransform(*m_context);
     return *m_context;
 }
 
@@ -169,6 +197,12 @@ void ImageBufferShareableMappedIOSurfaceBitmapBackend::getPixelBuffer(const IntR
 void ImageBufferShareableMappedIOSurfaceBitmapBackend::putPixelBuffer(const PixelBuffer&, const IntRect&, const IntPoint&, AlphaPremultiplication)
 {
     ASSERT_NOT_REACHED(); // Not applicable for LayerBacking.
+}
+
+void ImageBufferShareableMappedIOSurfaceBitmapBackend::flushContext()
+{
+    // Flush means external access by the compositor. Unlock the IOSurface so that the compositor sees the updates to the bitmap.
+    m_lock = std::nullopt;
 }
 
 } // namespace WebKit

@@ -127,7 +127,7 @@ TEST(WebKit, DISABLED_DataDetectionReferenceDate)
     expectLinkCount(webView.get(), @"yesterday at 6PM", 1);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 TEST(WebKit, AddAndRemoveDataDetectors)
 {
@@ -174,6 +174,6 @@ TEST(WebKit, DoNotCrashWhenDetectingDataAfterWebProcessTerminates)
     [webView synchronouslyRemoveDataDetectedLinks];
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 
 #endif

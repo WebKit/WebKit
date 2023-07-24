@@ -342,8 +342,6 @@ PASS: canGet('onresize') should be 'true' and is.
 PASS: canSet('onresize') should be 'true' and is.
 PASS: canGet('onscroll') should be 'true' and is.
 PASS: canSet('onscroll') should be 'true' and is.
-PASS: canGet('onsearch') should be 'true' and is.
-PASS: canSet('onsearch') should be 'true' and is.
 PASS: canGet('onselect') should be 'true' and is.
 PASS: canSet('onselect') should be 'true' and is.
 PASS: canGet('onsubmit') should be 'true' and is.

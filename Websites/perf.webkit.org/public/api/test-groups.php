@@ -32,6 +32,7 @@ function main($path) {
         if (!count($test_groups)) {
             exit_with_success(array('testGroups' => array(),
                 'buildRequests' => array(),
+                'testParameterSets' => array(),
                 'commitSets' => array(),
                 'commits' => array(),
                 'uploadedFiles' => array()));
@@ -43,6 +44,7 @@ function main($path) {
             exit_with_success(array('testGroups' => array(),
                 'buildRequests' => array(),
                 'commitSets' => array(),
+                'testParameterSets' => array(),
                 'commits' => array(),
                 'uploadedFiles' => array()));
         }
@@ -71,13 +73,15 @@ function main($path) {
     $build_requests = $build_requests_fetcher->results();
     foreach ($build_requests as $request) {
         $request_group = &$group_by_id[$request['testGroup']];
-        array_push($request_group['buildRequests'], $request['id']);
-        array_push($request_group['commitSets'], $request['commitSet']);
+        $request_group['buildRequests'][] = $request['id'];
+        $request_group['commitSets'][] = $request['commitSet'];
+        $request_group['testParameterSets'][] = $request['testParameterSet'];
     }
 
     exit_with_success(array('testGroups' => $test_groups,
         'buildRequests' => $build_requests,
         'commitSets' => $build_requests_fetcher->commit_sets(),
+        'testParameterSets' => $build_requests_fetcher->test_parameter_sets(),
         'commits' => $build_requests_fetcher->commits(),
         'uploadedFiles' => $build_requests_fetcher->uploaded_files()));
 }
@@ -97,6 +101,7 @@ function format_test_group($group_row) {
         'repetitionType' => $group_row['testgroup_repetition_type'],
         'buildRequests' => array(),
         'commitSets' => array(),
+        'testParameterSets' => array(),
     );
 }
 

@@ -100,7 +100,6 @@ class TestLand(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...'
             ],
         )
@@ -122,7 +121,6 @@ class TestLand(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
@@ -158,7 +156,6 @@ class TestLand(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
@@ -204,7 +201,6 @@ class TestLand(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
@@ -240,7 +236,6 @@ class TestLand(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
@@ -290,7 +285,6 @@ class TestLand(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
@@ -337,7 +331,6 @@ class TestLand(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
@@ -419,7 +412,6 @@ class TestLandGitHub(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
             ],
         )
@@ -442,7 +434,6 @@ class TestLandGitHub(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
             ],
         )
@@ -471,7 +462,6 @@ class TestLandGitHub(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 'Setting Ricky Reviewer as reviewer',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
@@ -507,7 +497,6 @@ class TestLandGitHub(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 'Detected merging automation, using that instead of local git tooling',
                 "Rebasing 'eng/example' on 'main'...",
@@ -561,7 +550,6 @@ class TestLandGitHub(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 'Detected merging automation, using that instead of local git tooling',
                 "Rebasing 'eng/example' on 'main'...",
@@ -649,7 +637,6 @@ class TestLandBitBucket(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
             ],
         )
@@ -674,7 +661,6 @@ class TestLandBitBucket(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
             ],
         )
@@ -704,7 +690,6 @@ class TestLandBitBucket(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 'Setting Ricky Reviewer as reviewer',
                 "Rebasing 'eng/example' from 'main' to 'main'...",

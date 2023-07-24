@@ -1,6 +1,0 @@
-2d.path.isPointInPath.basic
-Verify the winding rule in isPointInPath works for for rect path.
-Actual output:
-
-FAIL Verify the winding rule in isPointInPath works for for rect path. assert_equals: ctx.isPointInPath(0, 0, 'nonzero') === true (got false[boolean], expected true[boolean]) expected true but got false
-

@@ -18,6 +18,7 @@ features: [BigInt, Symbol, Temporal, arrow-function]
   );
 
   const badTimeZone = {
+    id: "Etc/Bad",
     getPossibleInstantsFor() { return []; },
     getOffsetNanosecondsFor: notCallable,
   };

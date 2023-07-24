@@ -72,15 +72,14 @@ TEST(SvcConfig, NumSpatialLayersLimitedWithScalabilityMode) {
   codec.height = 270;
   codec.SetScalabilityMode(ScalabilityMode::kL3T3_KEY);
 
-  // Scalability mode reset, configuration should be in accordance to L2T3_KEY.
+  // Scalability mode updated.
   std::vector<SpatialLayer> spatial_layers = GetVp9SvcConfig(codec);
   EXPECT_THAT(spatial_layers, ElementsAre(Field(&SpatialLayer::height, 135),
                                           Field(&SpatialLayer::height, 270)));
   EXPECT_THAT(spatial_layers,
               ElementsAre(Field(&SpatialLayer::numberOfTemporalLayers, 3),
                           Field(&SpatialLayer::numberOfTemporalLayers, 3)));
-  EXPECT_EQ(codec.VP9()->interLayerPred, InterLayerPredMode::kOnKeyPic);
-  EXPECT_EQ(codec.GetScalabilityMode(), absl::nullopt);
+  EXPECT_EQ(codec.GetScalabilityMode(), ScalabilityMode::kL2T3_KEY);
 }
 
 TEST(SvcConfig, NumSpatialLayersLimitedWithScalabilityModePortrait) {
@@ -90,15 +89,14 @@ TEST(SvcConfig, NumSpatialLayersLimitedWithScalabilityModePortrait) {
   codec.height = 480;
   codec.SetScalabilityMode(ScalabilityMode::kL3T1);
 
-  // Scalability mode reset, configuration should be in accordance to L2T1.
+  // Scalability mode updated.
   std::vector<SpatialLayer> spatial_layers = GetVp9SvcConfig(codec);
   EXPECT_THAT(spatial_layers, ElementsAre(Field(&SpatialLayer::width, 135),
                                           Field(&SpatialLayer::width, 270)));
   EXPECT_THAT(spatial_layers,
               ElementsAre(Field(&SpatialLayer::numberOfTemporalLayers, 1),
                           Field(&SpatialLayer::numberOfTemporalLayers, 1)));
-  EXPECT_EQ(codec.VP9()->interLayerPred, InterLayerPredMode::kOn);
-  EXPECT_EQ(codec.GetScalabilityMode(), absl::nullopt);
+  EXPECT_EQ(codec.GetScalabilityMode(), ScalabilityMode::kL2T1);
 }
 
 TEST(SvcConfig, NumSpatialLayersWithScalabilityModeResolutionRatio1_5) {
@@ -122,15 +120,14 @@ TEST(SvcConfig, NumSpatialLayersLimitedWithScalabilityModeResolutionRatio1_5) {
   codec.codecType = kVideoCodecVP9;
   codec.width = 320;
   codec.height = 180;
-  codec.SetScalabilityMode(ScalabilityMode::kL2T1h);  // 1.5:1
+  codec.SetScalabilityMode(ScalabilityMode::kL3T1h);  // 1.5:1
 
-  // Scalability mode reset, configuration should be in accordance to L1T1.
+  // Scalability mode updated.
   std::vector<SpatialLayer> spatial_layers = GetVp9SvcConfig(codec);
   EXPECT_THAT(spatial_layers, ElementsAre(Field(&SpatialLayer::width, 320)));
   EXPECT_THAT(spatial_layers,
               ElementsAre(Field(&SpatialLayer::numberOfTemporalLayers, 1)));
-  EXPECT_EQ(codec.VP9()->interLayerPred, InterLayerPredMode::kOn);
-  EXPECT_EQ(codec.GetScalabilityMode(), absl::nullopt);
+  EXPECT_EQ(codec.GetScalabilityMode(), ScalabilityMode::kL1T1);
 }
 
 TEST(SvcConfig, AlwaysSendsAtLeastOneLayer) {

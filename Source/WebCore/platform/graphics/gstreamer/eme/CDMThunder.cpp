@@ -697,6 +697,8 @@ CDMInstanceThunder* CDMInstanceSessionThunder::cdmInstanceThunder() const
     return static_cast<CDMInstanceThunder*>(proxy.get());
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)

@@ -191,10 +191,10 @@ using std::make_tuple;
 
 INSTANTIATE_TEST_SUITE_P(
     C, Trans4x4WHT,
-    ::testing::Values(make_tuple(&av1_highbd_fwht4x4_c, &iwht4x4_10_c, DCT_DCT,
+    ::testing::Values(make_tuple(&av1_fwht4x4_c, &iwht4x4_10_c, DCT_DCT,
                                  AOM_BITS_10, 16,
                                  static_cast<FdctFunc>(nullptr)),
-                      make_tuple(&av1_highbd_fwht4x4_c, &iwht4x4_12_c, DCT_DCT,
+                      make_tuple(&av1_fwht4x4_c, &iwht4x4_12_c, DCT_DCT,
                                  AOM_BITS_12, 16,
                                  static_cast<FdctFunc>(nullptr))));
 
@@ -202,10 +202,10 @@ INSTANTIATE_TEST_SUITE_P(
 
 INSTANTIATE_TEST_SUITE_P(
     SSE4_1, Trans4x4WHT,
-    ::testing::Values(make_tuple(&av1_highbd_fwht4x4_sse4_1, &iwht4x4_10_sse4_1,
+    ::testing::Values(make_tuple(&av1_fwht4x4_sse4_1, &iwht4x4_10_sse4_1,
                                  DCT_DCT, AOM_BITS_10, 16,
                                  static_cast<FdctFunc>(nullptr)),
-                      make_tuple(&av1_highbd_fwht4x4_sse4_1, &iwht4x4_12_sse4_1,
+                      make_tuple(&av1_fwht4x4_sse4_1, &iwht4x4_12_sse4_1,
                                  DCT_DCT, AOM_BITS_12, 16,
                                  static_cast<FdctFunc>(nullptr))));
 
@@ -215,12 +215,10 @@ INSTANTIATE_TEST_SUITE_P(
 
 INSTANTIATE_TEST_SUITE_P(
     NEON, Trans4x4WHT,
-    ::testing::Values(make_tuple(&av1_highbd_fwht4x4_neon, &iwht4x4_10_c,
-                                 DCT_DCT, AOM_BITS_10, 16,
-                                 &av1_highbd_fwht4x4_c),
-                      make_tuple(&av1_highbd_fwht4x4_neon, &iwht4x4_12_c,
-                                 DCT_DCT, AOM_BITS_12, 16,
-                                 &av1_highbd_fwht4x4_c)));
+    ::testing::Values(make_tuple(&av1_fwht4x4_neon, &iwht4x4_10_c, DCT_DCT,
+                                 AOM_BITS_10, 16, &av1_fwht4x4_c),
+                      make_tuple(&av1_fwht4x4_neon, &iwht4x4_12_c, DCT_DCT,
+                                 AOM_BITS_12, 16, &av1_fwht4x4_c)));
 
 #endif  // HAVE_NEON
 

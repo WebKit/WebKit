@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include "DOMHighResTimeStamp.h"
 #include <JavaScriptCore/JSCJSValue.h>
 
 namespace WebCore {
 
 struct PerformanceMarkOptions {
     JSC::JSValue detail;
-    std::optional<double> startTime;
+    std::optional<DOMHighResTimeStamp> startTime;
 };
 
 }

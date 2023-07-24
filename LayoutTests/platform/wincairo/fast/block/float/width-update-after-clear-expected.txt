@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {P} at (278,16) size 506x20
         RenderText {#text} at (0,0) size 506x19
           text run at (0,0) width 506: "The 'hr' below should span the width of the page, not just to the left edge of this text."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (floating) {P} at (267,78) size 517x20
         RenderText {#text} at (0,0) size 517x19
           text run at (0,0) width 517: "The table below should span the width of the page, not just to the left edge of this text."

@@ -62,13 +62,11 @@ angle::Result WindowSurfaceVkGGP::getCurrentWindowSize(vk::Context *context,
 egl::Error WindowSurfaceVkGGP::swapWithFrameToken(const gl::Context *context,
                                                   EGLFrameTokenANGLE frameToken)
 {
-    DisplayVk *displayVk = vk::GetImpl(context->getDisplay());
-
     VkPresentFrameTokenGGP frameTokenData = {};
     frameTokenData.sType                  = VK_STRUCTURE_TYPE_PRESENT_FRAME_TOKEN_GGP;
     frameTokenData.frameToken             = static_cast<GgpFrameToken>(frameToken);
 
     angle::Result result = swapImpl(context, nullptr, 0, &frameTokenData);
-    return angle::ToEGL(result, displayVk, EGL_BAD_SURFACE);
+    return angle::ToEGL(result, EGL_BAD_SURFACE);
 }
 }  // namespace rx

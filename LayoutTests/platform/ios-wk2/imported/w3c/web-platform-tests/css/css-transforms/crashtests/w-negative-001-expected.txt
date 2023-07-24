@@ -7,4 +7,4 @@ layer at (8,8) size 784x1459 backgroundClip at (0,0) size 800x892 clip at (0,0) 
     RenderBlock (anonymous) at (0,1433) size 784x26
       RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 784x1425 backgroundClip at (0,0) size 800x892 clip at (0,0) size 800x892 blendMode: darken
-  RenderBlock {HR} at (0,0) size 784x1425 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 784x1425 [color=#808080] [border: (1px inset #808080)]

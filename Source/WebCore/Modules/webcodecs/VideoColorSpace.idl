@@ -28,6 +28,8 @@
     Exposed=(Window,Worker),
 ]
 interface VideoColorSpace {
+  constructor(optional VideoColorSpaceInit init = {});
+
   readonly attribute VideoColorPrimaries? primaries;
   readonly attribute VideoTransferCharacteristics? transfer;
   readonly attribute VideoMatrixCoefficients? matrix;

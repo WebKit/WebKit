@@ -23,7 +23,7 @@ PASS "::slotted(*):where(:hover)" should be a valid selector
 PASS "::slotted(*):where(#id)" should be a valid selector
 PASS "::slotted(*)::before" should be a valid selector
 PASS "::slotted(*)::after" should be a valid selector
-FAIL "::slotted(*)::placeholder" should be a valid selector The string did not match the expected pattern.
+FAIL "::slotted(*)::placeholder" should be a valid selector '::slotted(*)::placeholder' is not a valid selector.
 PASS "::slotted(*)::marker" should be a valid selector
 PASS "::slotted(*)::first-line" should be an invalid selector
 PASS "::slotted(*)::first-letter" should be an invalid selector

@@ -126,7 +126,7 @@ public:
     void insertFormattingElement(AtomHTMLToken&&);
     void insertHTMLHeadElement(AtomHTMLToken&&);
     void insertHTMLBodyElement(AtomHTMLToken&&);
-    void insertHTMLFormElement(AtomHTMLToken&&, bool isDemoted = false);
+    void insertHTMLFormElement(AtomHTMLToken&&);
     void insertScriptElement(AtomHTMLToken&&);
     void insertTextNode(const String&);
     void insertForeignElement(AtomHTMLToken&&, const AtomString& namespaceURI);

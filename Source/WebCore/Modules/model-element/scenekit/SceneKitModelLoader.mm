@@ -72,7 +72,7 @@ namespace WebCore {
 
 static String mimeTypeUtilizingFileExtensionOverridingForLocalFiles(const Model& modelSource)
 {
-    if (modelSource.url().isLocalFile() && (modelSource.mimeType().isEmpty() || modelSource.mimeType() == WebCore::defaultMIMEType())) {
+    if (modelSource.url().protocolIsFile() && (modelSource.mimeType().isEmpty() || modelSource.mimeType() == WebCore::defaultMIMEType())) {
         // FIXME: Getting the file extension from a URL seems like it should be in shared code.
         auto lastPathComponent = modelSource.url().lastPathComponent();
         auto position = lastPathComponent.reverseFind('.');

@@ -1,23 +1,23 @@
-layer at (0,0) size 785x634
+layer at (0,0) size 785x644
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x634
-  RenderBlock {HTML} at (0,0) size 785x634
-    RenderBody {BODY} at (8,21) size 769x605
-      RenderBlock {P} at (0,0) size 769x32
-        RenderText {#text} at (0,5) size 162x21
-          text run at (0,5) width 162: "Simple text path"
-      RenderBlock (anonymous) at (0,53) size 769x233
-        RenderBlock {SPAN} at (0,0) size 32x224
-          RenderText {#text} at (5,0) size 21x224
-            text run at (5,0) width 224: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
+layer at (0,0) size 785x644
+  RenderBlock {HTML} at (0,0) size 785x644
+    RenderBody {BODY} at (8,21) size 769x615
+      RenderBlock {P} at (0,0) size 769x33
+        RenderText {#text} at (0,5) size 165x22
+          text run at (0,5) width 165: "Simple text path"
+      RenderBlock (anonymous) at (0,54) size 769x237
+        RenderBlock {SPAN} at (0,0) size 33x227
+          RenderText {#text} at (5,0) size 22x227
+            text run at (5,0) width 227: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,319) size 769x33
-        RenderText {#text} at (0,5) size 182x21
-          text run at (0,5) width 182: "Complex text path"
-      RenderBlock (anonymous) at (0,372) size 769x233
-        RenderBlock {SPAN} at (0,0) size 32x224
-          RenderText {#text} at (5,0) size 21x224
-            text run at (5,0) width 224: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
+      RenderBlock {P} at (0,324) size 769x34
+        RenderText {#text} at (0,5) size 185x22
+          text run at (0,5) width 185: "Complex text path"
+      RenderBlock (anonymous) at (0,378) size 769x237
+        RenderBlock {SPAN} at (0,0) size 33x227
+          RenderText {#text} at (5,0) size 22x227
+            text run at (5,0) width 227: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
         RenderText {#text} at (0,0) size 0x0
-layer at (8,317) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,295) size 769x3 [border: (1px inset #000000)]
+layer at (8,322) size 769x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,300) size 769x3 [color=#808080] [border: (1px inset #808080)]

@@ -179,6 +179,7 @@ void AccessibilityScrollView::clearChildren()
     AccessibilityObject::clearChildren();
     m_verticalScrollbar = nullptr;
     m_horizontalScrollbar = nullptr;
+    m_childrenDirty = false;
 }
 
 bool AccessibilityScrollView::computeAccessibilityIsIgnored() const

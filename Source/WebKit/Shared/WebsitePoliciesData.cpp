@@ -159,8 +159,8 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setModalContainerObservationPolicy(websitePolicies.modalContainerObservationPolicy);
     documentLoader.setColorSchemePreference(websitePolicies.colorSchemePreference);
     documentLoader.setAllowContentChangeObserverQuirk(websitePolicies.allowContentChangeObserverQuirk);
-    documentLoader.setNetworkConnectionIntegrityPolicy(websitePolicies.networkConnectionIntegrityPolicy);
-    documentLoader.setOriginatorNetworkConnectionIntegrityPolicy(websitePolicies.networkConnectionIntegrityPolicy);
+    documentLoader.setAdvancedPrivacyProtections(websitePolicies.advancedPrivacyProtections);
+    documentLoader.setOriginatorAdvancedPrivacyProtections(websitePolicies.advancedPrivacyProtections);
     documentLoader.setIdempotentModeAutosizingOnlyHonorsPercentages(websitePolicies.idempotentModeAutosizingOnlyHonorsPercentages);
 
     if (!documentLoader.frame())

@@ -45,6 +45,7 @@ const (
 	alertUnknownPSKIdentity           alert = 115
 	alertCertificateRequired          alert = 116
 	alertNoApplicationProtocol        alert = 120
+	alertECHRequired                  alert = 121
 )
 
 var alertText = map[alert]string{
@@ -78,6 +79,7 @@ var alertText = map[alert]string{
 	alertUnknownPSKIdentity:           "unknown PSK identity",
 	alertCertificateRequired:          "certificate required",
 	alertNoApplicationProtocol:        "no application protocol",
+	alertECHRequired:                  "ECH required",
 }
 
 func (e alert) String() string {

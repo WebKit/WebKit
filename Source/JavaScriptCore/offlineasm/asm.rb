@@ -226,7 +226,7 @@ class Assembler
         @lastlabel = ""
     end
 
-    def putsLabel(labelName, isGlobal)
+    def putsLabel(labelName, isGlobal, isAligned)
         raise unless @state == :asm
         @deferredNextLabelActions.each {
             | action |
@@ -239,7 +239,11 @@ class Assembler
         @internalComment = $enableLabelCountComments ? "Global Label #{@numGlobalLabels}" : nil
         if isGlobal
             if !$emitWinAsm
-                @outp.puts(formatDump("OFFLINE_ASM_GLOBAL_LABEL(#{labelName})", lastComment))
+                if isAligned
+                    @outp.puts(formatDump("OFFLINE_ASM_GLOBAL_LABEL(#{labelName})", lastComment))
+                else
+                    @outp.puts(formatDump("OFFLINE_ASM_UNALIGNED_GLOBAL_LABEL(#{labelName})", lastComment))
+                end
             else
                 putsProc(labelName, lastComment)
             end            

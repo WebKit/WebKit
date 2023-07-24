@@ -204,7 +204,9 @@ class SSLAdapterTestDummyServer : public sigslot::has_slots<> {
     int error;
 
     rtc::StreamResult r = ssl_stream_adapter_->Write(
-        message.data(), message.length(), &written, &error);
+        rtc::MakeArrayView(reinterpret_cast<const uint8_t*>(message.data()),
+                           message.size()),
+        written, error);
     if (r == rtc::SR_SUCCESS) {
       return written;
     } else {
@@ -236,18 +238,19 @@ class SSLAdapterTestDummyServer : public sigslot::has_slots<> {
 
   void OnSSLStreamAdapterEvent(rtc::StreamInterface* stream, int sig, int err) {
     if (sig & rtc::SE_READ) {
-      char buffer[4096] = "";
+      uint8_t buffer[4096] = "";
       size_t read;
       int error;
 
       // Read data received from the client and store it in our internal
       // buffer.
-      rtc::StreamResult r =
-          stream->Read(buffer, sizeof(buffer) - 1, &read, &error);
+      rtc::StreamResult r = stream->Read(buffer, read, error);
       if (r == rtc::SR_SUCCESS) {
         buffer[read] = '\0';
-        RTC_LOG(LS_INFO) << "Server received '" << buffer << "'";
-        data_ += buffer;
+        // Here we assume that the buffer is interpretable as string.
+        char* buffer_as_char = reinterpret_cast<char*>(buffer);
+        RTC_LOG(LS_INFO) << "Server received '" << buffer_as_char << "'";
+        data_ += buffer_as_char;
       }
     }
   }

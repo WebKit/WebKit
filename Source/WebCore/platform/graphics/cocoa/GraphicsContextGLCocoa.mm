@@ -247,6 +247,21 @@ IOSurface* GraphicsContextGLCocoa::displayBufferSurface()
     return displayBuffer().surface.get();
 }
 
+std::tuple<GCGLenum, GCGLenum> GraphicsContextGLCocoa::externalImageTextureBindingPoint()
+{
+    if (m_drawingBufferTextureTarget == -1)
+        EGL_GetConfigAttrib(platformDisplay(), platformConfig(), EGL_BIND_TO_TEXTURE_TARGET_ANGLE, &m_drawingBufferTextureTarget);
+
+    switch (m_drawingBufferTextureTarget) {
+    case EGL_TEXTURE_2D:
+        return std::make_tuple(TEXTURE_2D, TEXTURE_BINDING_2D);
+    case EGL_TEXTURE_RECTANGLE_ANGLE:
+        return std::make_tuple(TEXTURE_RECTANGLE_ARB, TEXTURE_BINDING_RECTANGLE_ARB);
+    }
+    ASSERT_WITH_MESSAGE(false, "Invalid enum returned from EGL_GetConfigAttrib");
+    return std::make_tuple(0, 0);
+}
+
 bool GraphicsContextGLCocoa::platformInitializeContext()
 {
     GraphicsContextGLAttributes attributes = contextAttributes();
@@ -391,12 +406,13 @@ bool GraphicsContextGLCocoa::platformInitialize()
         requiredExtensions.append("GL_EXT_texture_format_BGRA8888"_s);
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
-#if ENABLE(WEBXR) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    if (attributes.xrCompatible)
-        requiredExtensions.append("GL_OES_EGL_image"_s);
+#if ENABLE(WEBXR)
+    if (attributes.xrCompatible && !enableRequiredWebXRExtensions())
+        return false;
 #endif
     if (m_isForWebGL2)
         requiredExtensions.append("GL_ANGLE_framebuffer_multisample"_s);
+
     for (auto& extension : requiredExtensions) {
         if (!supportsExtension(extension)) {
             LOG(WebGL, "Missing required extension. %s", extension.characters());
@@ -612,8 +628,8 @@ bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
         buffer = { WTFMove(surface), pbuffer };
     }
 
-    GCGLenum textureTarget = drawingBufferTextureTarget();
-    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
+    ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     GL_BindTexture(textureTarget, m_texture);
     if (!EGL_BindTexImage(m_displayObj, buffer.pbuffer, EGL_BACK_BUFFER)) {
         EGL_DestroySurface(m_displayObj, buffer.pbuffer);
@@ -664,63 +680,110 @@ void GraphicsContextGLCocoa::destroyPbufferAndDetachIOSurface(void* handle)
     WebCore::destroyPbufferAndDetachIOSurface(m_displayObj, handle);
 }
 
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-GraphicsContextGLCocoa::IOSurfaceTextureAttachment GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface* surface)
+std::optional<GraphicsContextGL::EGLImageAttachResult> GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLImageSource source)
 {
+    EGLDeviceEXT eglDevice = EGL_NO_DEVICE_EXT;
+    if (!EGL_QueryDisplayAttribEXT(platformDisplay(), EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
+        return std::nullopt;
+
+    id<MTLDevice> mtlDevice = nil;
+    if (!EGL_QueryDeviceAttribEXT(eglDevice, EGL_METAL_DEVICE_ANGLE, reinterpret_cast<EGLAttrib*>(&mtlDevice)))
+        return std::nullopt;
+
+    RetainPtr<id<MTLTexture>> texture = WTF::switchOn(WTFMove(source),
+    [&](EGLImageSourceIOSurfaceHandle&& ioSurface) -> RetainPtr<id> {
+        auto surface = IOSurface::createFromSendRight(WTFMove(ioSurface.handle));
+        if (!surface)
+            return { };
+
+        auto size = surface->size();
+        MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm_sRGB width:size.width() height:size.height() mipmapped:NO];
+        [desc setUsage:MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget];
+
+        auto tex = adoptNS([mtlDevice newTextureWithDescriptor:desc iosurface:surface->surface() plane:0]);
+        return tex;
+    },
+    [&](EGLImageSourceMTLSharedTextureHandle&& sharedTexture) -> RetainPtr<id> {
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+        UNUSED_VARIABLE(sharedTexture);
+        ASSERT_NOT_REACHED();
+        return { };
+#else
+        auto handle = adoptNS([[MTLSharedTextureHandle alloc] initWithMachPort:sharedTexture.handle.sendRight()]);
+        if (!handle)
+            return { };
+
+        if (mtlDevice != [handle device]) {
+            LOG(WebGL, "MTLSharedTextureHandle does not have the same Metal device as platformDisplay.");
+            return { };
+        }
+
+        // Create a MTLTexture out of the MTLSharedTextureHandle.
+        RetainPtr<id> texture = adoptNS([mtlDevice newSharedTextureWithHandle:handle.get()]);
+        return texture;
+        // FIXME: Does the texture have the correct usage mode?
+#endif
+    });
+
+    if (!texture)
+        return std::nullopt;
+
+    // Create an EGLImage out of the MTLTexture
     constexpr EGLint emptyAttributes[] = { EGL_NONE };
-
-    // Create a MTLTexture out of the IOSurface.
-    // FIXME: We need to use the same device that ANGLE is using, which might not be the default.
-
-    RetainPtr<MTLSharedTextureHandle> handle = adoptNS([[MTLSharedTextureHandle alloc] initWithIOSurface:surface->surface() label:@"WebXR"]);
-    if (!handle) {
-        LOG(WebGL, "Unable to create a MTLSharedTextureHandle from the IOSurface in attachIOSurfaceToTexture.");
+    auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
+    if (!eglImage)
         return std::nullopt;
-    }
 
-    if (!handle.get().device) {
-        LOG(WebGL, "MTLSharedTextureHandle does not have a Metal device in attachIOSurfaceToTexture.");
-        return std::nullopt;
-    }
-
-    auto texture = adoptNS([handle.get().device newSharedTextureWithHandle:handle.get()]);
-    if (!texture) {
-        LOG(WebGL, "Unable to create a MTLSharedTexture from the texture handle in attachIOSurfaceToTexture.");
-        return std::nullopt;
-    }
+    // Tell the currently bound texture to use the EGLImage.
+    if (target == RENDERBUFFER)
+        GL_EGLImageTargetRenderbufferStorageOES(RENDERBUFFER, eglImage);
+    else
+        GL_EGLImageTargetTexture2DOES(target, eglImage);
 
     GCGLuint textureWidth = [texture width];
     GCGLuint textureHeight = [texture height];
 
-    // FIXME: Does the texture have the correct usage mode?
-
-    // Create an EGLImage out of the MTLTexture
-    auto display = platformDisplay();
-    auto eglImage = EGL_CreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
-    if (!eglImage) {
-        LOG(WebGL, "Unable to create an EGLImage from the Metal handle in attachIOSurfaceToTexture.");
-        return std::nullopt;
-    }
-
-    // Tell the currently bound texture to use the EGLImage.
-    GL_EGLImageTargetTexture2DOES(target, eglImage);
-
-    return std::make_tuple(eglImage, textureWidth, textureHeight);
+    return std::make_tuple(eglImage, IntSize(textureWidth, textureHeight));
 }
-
-void GraphicsContextGLCocoa::detachIOSurfaceFromSharedTexture(void* handle)
-{
-    auto display = platformDisplay();
-    EGL_DestroyImageKHR(display, handle);
-}
-#endif
 
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
 {
     return WebCore::newSharedEventWithMachPort(m_displayObj, sharedEventSendRight);
 }
 
-void* GraphicsContextGLCocoa::createSyncWithSharedEvent(id sharedEvent, uint64_t signalValue)
+GCEGLSync GraphicsContextGLCocoa::createEGLSync(ExternalEGLSyncEvent syncEvent)
+{
+    auto [syncEventHandle, signalValue] = syncEvent;
+    auto sharedEvent = newSharedEventWithMachPort(syncEventHandle.sendRight());
+    if (!sharedEvent) {
+        LOG(WebGL, "Unable to create a MTLSharedEvent from the syncEvent in createEGLSync.");
+        return nullptr;
+    }
+
+    return createEGLSync(sharedEvent.get(), signalValue);
+}
+
+bool GraphicsContextGLCocoa::enableRequiredWebXRExtensions()
+{
+#if ENABLE(WEBXR)
+    String requiredExtensions[] = {
+        "GL_ANGLE_framebuffer_multisample"_str,
+        "GL_ANGLE_framebuffer_blit"_str,
+        "GL_EXT_sRGB"_str,
+        "GL_OES_EGL_image"_str,
+        "GL_OES_rgb8_rgba8"_str
+    };
+
+    for (const auto& ext : requiredExtensions) {
+        if (!supportsExtension(ext))
+            return false;
+        ensureExtensionEnabled(ext);
+    }
+#endif
+    return true;
+}
+
+GCEGLSync GraphicsContextGLCocoa::createEGLSync(id sharedEvent, uint64_t signalValue)
 {
     COMPILE_ASSERT(sizeof(EGLAttrib) == sizeof(void*), "EGLAttrib not pointer-sized!");
     auto signalValueLo = static_cast<EGLAttrib>(signalValue);
@@ -735,19 +798,6 @@ void* GraphicsContextGLCocoa::createSyncWithSharedEvent(id sharedEvent, uint64_t
         EGL_NONE
     };
     return EGL_CreateSync(display, EGL_SYNC_METAL_SHARED_EVENT_ANGLE, syncAttributes);
-}
-
-bool GraphicsContextGLCocoa::destroySync(void* sync)
-{
-    auto display = platformDisplay();
-    return !!EGL_DestroySync(display, sync);
-}
-
-void GraphicsContextGLCocoa::clientWaitSyncWithFlush(void* sync, uint64_t timeout)
-{
-    auto display = platformDisplay();
-    auto ret = EGL_ClientWaitSync(display, sync, EGL_SYNC_FLUSH_COMMANDS_BIT, timeout);
-    ASSERT_UNUSED(ret, ret == EGL_CONDITION_SATISFIED);
 }
 
 void GraphicsContextGLCocoa::waitUntilWorkScheduled()
@@ -811,8 +861,8 @@ RefPtr<PixelBuffer> GraphicsContextGLCocoa::readCompositedResults()
     // out of an IOSurface in such a way that drawing the NativeImage would be guaranteed leave
     // the IOSurface be unrefenced after the draw call finishes.
     ScopedTexture texture;
-    GCGLenum textureTarget = drawingBufferTextureTarget();
-    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(drawingBufferTextureTarget()), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
+    ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     GL_BindTexture(textureTarget, texture);
     if (!EGL_BindTexImage(m_displayObj, buffer.pbuffer, EGL_BACK_BUFFER))
         return nullptr;
@@ -914,7 +964,7 @@ void GraphicsContextGLCocoa::withDrawingBufferAsNativeImage(Function<void(Native
         // that does the conversion.
         //
         // FIXME: Can the IOSurface be read into a buffer to avoid the read back via GL?
-        auto drawingPixelBuffer = paintRenderingResultsToPixelBuffer();
+        auto drawingPixelBuffer = paintRenderingResultsToPixelBuffer(FlipY::No);
         if (!drawingPixelBuffer)
             return;
 
@@ -978,13 +1028,13 @@ void GraphicsContextGLCocoa::insertFinishedSignalOrInvoke(Function<void()> signa
     [event notifyListener:m_finishedMetalSharedEventListener.get() atValue:signalValue block:^(id<MTLSharedEvent>, uint64_t) {
         blockSignal();
     }];
-    auto* sync = createSyncWithSharedEvent(event, signalValue);
+    auto* sync = createEGLSync(event, signalValue);
     if (UNLIKELY(!sync)) {
         event.signaledValue = signalValue;
         ASSERT_NOT_REACHED();
         return;
     }
-    destroySync(sync);
+    destroyEGLSync(sync);
 }
 
 }

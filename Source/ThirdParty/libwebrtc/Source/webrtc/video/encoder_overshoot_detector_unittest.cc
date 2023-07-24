@@ -10,23 +10,58 @@
 
 #include "video/encoder_overshoot_detector.h"
 
+#include <string>
+
 #include "api/units/data_rate.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/time_utils.h"
+#include "system_wrappers/include/metrics.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
-class EncoderOvershootDetectorTest : public ::testing::Test {
+namespace {
+
+using ::testing::TestWithParam;
+using ::testing::ValuesIn;
+
+static std::string CodecTypeToHistogramSuffix(VideoCodecType codec) {
+  switch (codec) {
+    case kVideoCodecVP8:
+      return "Vp8";
+    case kVideoCodecVP9:
+      return "Vp9";
+    case kVideoCodecAV1:
+      return "Av1";
+    case kVideoCodecH264:
+      return "H264";
+    case kVideoCodecGeneric:
+      return "Generic";
+    case kVideoCodecMultiplex:
+      return "Multiplex";
+  }
+}
+
+struct TestParams {
+  VideoCodecType codec_type;
+  bool is_screenshare;
+};
+
+}  // namespace
+
+class EncoderOvershootDetectorTest : public TestWithParam<TestParams> {
  public:
   static constexpr int kDefaultBitrateBps = 300000;
   static constexpr double kDefaultFrameRateFps = 15;
   EncoderOvershootDetectorTest()
-      : detector_(kWindowSizeMs),
+      : detector_(kWindowSizeMs,
+                  GetParam().codec_type,
+                  GetParam().is_screenshare),
         target_bitrate_(DataRate::BitsPerSec(kDefaultBitrateBps)),
         target_framerate_fps_(kDefaultFrameRateFps) {}
 
  protected:
+  void SetUp() override { metrics::Reset(); }
   void RunConstantUtilizationTest(double actual_utilization_factor,
                                   double expected_utilization_factor,
                                   double allowed_error,
@@ -70,7 +105,7 @@ class EncoderOvershootDetectorTest : public ::testing::Test {
   double target_framerate_fps_;
 };
 
-TEST_F(EncoderOvershootDetectorTest, NoUtilizationIfNoRate) {
+TEST_P(EncoderOvershootDetectorTest, NoUtilizationIfNoRate) {
   const int frame_size_bytes = 1000;
   const int64_t time_interval_ms = 33;
   detector_.SetTargetRate(target_bitrate_, target_framerate_fps_,
@@ -86,26 +121,26 @@ TEST_F(EncoderOvershootDetectorTest, NoUtilizationIfNoRate) {
       detector_.GetNetworkRateUtilizationFactor(rtc::TimeMillis()).has_value());
 }
 
-TEST_F(EncoderOvershootDetectorTest, OptimalSize) {
+TEST_P(EncoderOvershootDetectorTest, OptimalSize) {
   // Optimally behaved encoder.
   // Allow some error margin due to rounding errors, eg due to frame
   // interval not being an integer.
   RunConstantUtilizationTest(1.0, 1.0, 0.01, kWindowSizeMs);
 }
 
-TEST_F(EncoderOvershootDetectorTest, Undershoot) {
+TEST_P(EncoderOvershootDetectorTest, Undershoot) {
   // Undershoot, reported utilization factor should be capped to 1.0 so
   // that we don't incorrectly boost encoder bitrate during movement.
   RunConstantUtilizationTest(0.5, 1.0, 0.00, kWindowSizeMs);
 }
 
-TEST_F(EncoderOvershootDetectorTest, Overshoot) {
+TEST_P(EncoderOvershootDetectorTest, Overshoot) {
   // Overshoot by 20%.
   // Allow some error margin due to rounding errors.
   RunConstantUtilizationTest(1.2, 1.2, 0.01, kWindowSizeMs);
 }
 
-TEST_F(EncoderOvershootDetectorTest, ConstantOvershootVaryingRates) {
+TEST_P(EncoderOvershootDetectorTest, ConstantOvershootVaryingRates) {
   // Overshoot by 20%, but vary framerate and bitrate.
   // Allow some error margin due to rounding errors.
   RunConstantUtilizationTest(1.2, 1.2, 0.01, kWindowSizeMs);
@@ -115,7 +150,7 @@ TEST_F(EncoderOvershootDetectorTest, ConstantOvershootVaryingRates) {
   RunConstantUtilizationTest(1.2, 1.2, 0.01, kWindowSizeMs / 2);
 }
 
-TEST_F(EncoderOvershootDetectorTest, ConstantRateVaryingOvershoot) {
+TEST_P(EncoderOvershootDetectorTest, ConstantRateVaryingOvershoot) {
   // Overshoot by 10%, keep framerate and bitrate constant.
   // Allow some error margin due to rounding errors.
   RunConstantUtilizationTest(1.1, 1.1, 0.01, kWindowSizeMs);
@@ -127,7 +162,7 @@ TEST_F(EncoderOvershootDetectorTest, ConstantRateVaryingOvershoot) {
   RunConstantUtilizationTest(1.2, 1.2, 0.01, kWindowSizeMs / 2);
 }
 
-TEST_F(EncoderOvershootDetectorTest, PartialOvershoot) {
+TEST_P(EncoderOvershootDetectorTest, PartialOvershoot) {
   const int ideal_frame_size_bytes =
       (target_bitrate_.bps() / target_framerate_fps_) / 8;
   detector_.SetTargetRate(target_bitrate_, target_framerate_fps_,
@@ -163,4 +198,83 @@ TEST_F(EncoderOvershootDetectorTest, PartialOvershoot) {
       detector_.GetMediaRateUtilizationFactor(rtc::TimeMillis());
   EXPECT_NEAR(media_utilization_factor.value_or(-1), 1.00, 0.01);
 }
+
+TEST_P(EncoderOvershootDetectorTest, RecordsZeroErrorMetricWithNoOvershoot) {
+  DataSize ideal_frame_size =
+      target_bitrate_ / Frequency::Hertz(target_framerate_fps_);
+  detector_.SetTargetRate(target_bitrate_, target_framerate_fps_,
+                          rtc::TimeMillis());
+  detector_.OnEncodedFrame(ideal_frame_size.bytes(), rtc::TimeMillis());
+  detector_.Reset();
+
+  const VideoCodecType codec = GetParam().codec_type;
+  const bool is_screenshare = GetParam().is_screenshare;
+  const std::string rmse_histogram_prefix =
+      is_screenshare ? "WebRTC.Video.Screenshare.RMSEOfEncodingBitrateInKbps."
+                     : "WebRTC.Video.RMSEOfEncodingBitrateInKbps.";
+  const std::string overshoot_histogram_prefix =
+      is_screenshare ? "WebRTC.Video.Screenshare.EncodingBitrateOvershoot."
+                     : "WebRTC.Video.EncodingBitrateOvershoot.";
+  // RMSE and overshoot percent = 0, since we used ideal frame size.
+  EXPECT_METRIC_EQ(1, metrics::NumSamples(rmse_histogram_prefix +
+                                          CodecTypeToHistogramSuffix(codec)));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumEvents(
+             rmse_histogram_prefix + CodecTypeToHistogramSuffix(codec), 0));
+
+  EXPECT_METRIC_EQ(1, metrics::NumSamples(overshoot_histogram_prefix +
+                                          CodecTypeToHistogramSuffix(codec)));
+  EXPECT_METRIC_EQ(1, metrics::NumEvents(overshoot_histogram_prefix +
+                                             CodecTypeToHistogramSuffix(codec),
+                                         0));
+}
+
+TEST_P(EncoderOvershootDetectorTest,
+       RecordScreenshareZeroMetricWithNoOvershoot) {
+  DataSize ideal_frame_size =
+      target_bitrate_ / Frequency::Hertz(target_framerate_fps_);
+  // Use target frame size with 50% overshoot.
+  DataSize target_frame_size = ideal_frame_size * 3 / 2;
+  detector_.SetTargetRate(target_bitrate_, target_framerate_fps_,
+                          rtc::TimeMillis());
+  detector_.OnEncodedFrame(target_frame_size.bytes(), rtc::TimeMillis());
+  detector_.Reset();
+
+  const VideoCodecType codec = GetParam().codec_type;
+  const bool is_screenshare = GetParam().is_screenshare;
+  const std::string rmse_histogram_prefix =
+      is_screenshare ? "WebRTC.Video.Screenshare.RMSEOfEncodingBitrateInKbps."
+                     : "WebRTC.Video.RMSEOfEncodingBitrateInKbps.";
+  const std::string overshoot_histogram_prefix =
+      is_screenshare ? "WebRTC.Video.Screenshare.EncodingBitrateOvershoot."
+                     : "WebRTC.Video.EncodingBitrateOvershoot.";
+  // Use ideal_frame_size_kbits to represnt ideal_frame_size.bytes()*8/1000,
+  // then rmse_in_kbps = ideal_frame_size_kbits/2
+  // since we use target frame size with 50% overshoot.
+  int64_t rmse_in_kbps = ideal_frame_size.bytes() * 8 / 1000 / 2;
+  EXPECT_METRIC_EQ(1, metrics::NumSamples(rmse_histogram_prefix +
+                                          CodecTypeToHistogramSuffix(codec)));
+  EXPECT_METRIC_EQ(1, metrics::NumEvents(rmse_histogram_prefix +
+                                             CodecTypeToHistogramSuffix(codec),
+                                         rmse_in_kbps));
+  // overshoot percent = 50, since we used ideal_frame_size * 3 / 2;
+  EXPECT_METRIC_EQ(1, metrics::NumSamples(overshoot_histogram_prefix +
+                                          CodecTypeToHistogramSuffix(codec)));
+  EXPECT_METRIC_EQ(1, metrics::NumEvents(overshoot_histogram_prefix +
+                                             CodecTypeToHistogramSuffix(codec),
+                                         50));
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    PerCodecType,
+    EncoderOvershootDetectorTest,
+    ValuesIn<TestParams>({{VideoCodecType::kVideoCodecVP8, false},
+                          {VideoCodecType::kVideoCodecVP8, true},
+                          {VideoCodecType::kVideoCodecVP9, false},
+                          {VideoCodecType::kVideoCodecVP9, true},
+                          {VideoCodecType::kVideoCodecAV1, false},
+                          {VideoCodecType::kVideoCodecAV1, true},
+                          {VideoCodecType::kVideoCodecH264, false},
+                          {VideoCodecType::kVideoCodecH264, true}}));
+
 }  // namespace webrtc

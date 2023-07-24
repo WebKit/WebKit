@@ -409,6 +409,18 @@ public:
         m_assembler.popcnt_rr(src, dst);
     }
 
+    void countPopulation32(Address src, RegisterID dst, FPRegisterID)
+    {
+        ASSERT(supportsCountPopulation());
+        m_assembler.popcnt_mr(src.offset, src.base, dst);
+    }
+
+    void countPopulation32(RegisterID src, RegisterID dst, FPRegisterID)
+    {
+        ASSERT(supportsCountPopulation());
+        m_assembler.popcnt_rr(src, dst);
+    }
+
     void byteSwap32(RegisterID dst)
     {
         m_assembler.bswapl_r(dst);
@@ -2248,6 +2260,22 @@ public:
         return jumpAfterFloatingPointCompare(cond, left, right);
     }
 
+    Jump branchDoubleWithZero(DoubleCondition cond, FPRegisterID left)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNREACHABLE_FOR_PLATFORM();
+        return { };
+    }
+
+    Jump branchFloatWithZero(DoubleCondition cond, FPRegisterID left)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNREACHABLE_FOR_PLATFORM();
+        return { };
+    }
+
     void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
     {
         floatingPointCompare(cond, left, right, dest, [this] (FPRegisterID arg1, FPRegisterID arg2) {
@@ -2266,6 +2294,22 @@ public:
             else
                 m_assembler.ucomiss_rr(arg1, arg2);
         });
+    }
+
+    void compareDoubleWithZero(DoubleCondition cond, FPRegisterID left, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void compareFloatWithZero(DoubleCondition cond, FPRegisterID left, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     // Truncates 'src' to an integer, and places the resulting 'dest'.
@@ -2509,6 +2553,25 @@ public:
         moveConditionallyAfterFloatingPointCompare(cond, left, right, src, dest);
     }
 
+    void moveConditionallyDoubleWithZero(DoubleCondition cond, FPRegisterID left, RegisterID src, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void moveConditionallyDoubleWithZero(DoubleCondition cond, FPRegisterID left, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(thenCase);
+        UNUSED_PARAM(elseCase);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
     void moveConditionallyFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
     {
         if (cond & DoubleConditionBitInvert) {
@@ -2553,7 +2616,26 @@ public:
         }
         moveConditionallyAfterFloatingPointCompare(cond, left, right, src, dest);
     }
-    
+
+    void moveConditionallyFloatWithZero(DoubleCondition cond, FPRegisterID left, RegisterID src, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void moveConditionallyFloatWithZero(DoubleCondition cond, FPRegisterID left, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(thenCase);
+        UNUSED_PARAM(elseCase);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
     void swap(RegisterID reg1, RegisterID reg2)
     {
         if (reg1 != reg2)
@@ -2867,6 +2949,26 @@ public:
             moveDouble(thenCase, dest);
             falseCase.link(this);
         }
+    }
+
+    void moveDoubleConditionallyDoubleWithZero(DoubleCondition cond, FPRegisterID left, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(thenCase);
+        UNUSED_PARAM(elseCase);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void moveDoubleConditionallyFloatWithZero(DoubleCondition cond, FPRegisterID left, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(thenCase);
+        UNUSED_PARAM(elseCase);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     // Forwards / external control flow operations:

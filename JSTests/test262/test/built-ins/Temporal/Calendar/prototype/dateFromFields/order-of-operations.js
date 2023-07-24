@@ -42,5 +42,5 @@ const options = TemporalHelpers.propertyBagObserver(actual, {
 
 const result = instance.dateFromFields(fields, options);
 TemporalHelpers.assertPlainDate(result, 1, 1, "M01", 1, "date result");
-assert.sameValue(result.calendar, instance, "calendar result");
+assert.sameValue(result.getISOFields().calendar, "iso8601", "calendar slot should store a string");
 assert.compareArray(actual, expected, "order of operations");

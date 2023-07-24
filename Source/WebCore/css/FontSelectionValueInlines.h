@@ -103,4 +103,9 @@ inline std::optional<CSSValueID> fontStyleKeyword(std::optional<FontSelectionVal
     return std::nullopt;
 }
 
+inline FontSelectionValue normalizedFontItalicValue(float inputValue)
+{
+    return FontSelectionValue { std::clamp(inputValue, -90.0f, 90.0f) };
+}
+
 }

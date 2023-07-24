@@ -62,8 +62,8 @@ TYPED_TEST(StrongAliasTest, ValueAccessesUnderlyingValue) {
   // Const value getter.
   const FooAlias const_alias(GetExampleValue<TypeParam>(1));
   EXPECT_EQ(GetExampleValue<TypeParam>(1), const_alias.value());
-  static_assert(std::is_const<typename std::remove_reference<decltype(
-                    const_alias.value())>::type>::value,
+  static_assert(std::is_const<typename std::remove_reference<
+                    decltype(const_alias.value())>::type>::value,
                 "Reference returned by const value getter should be const.");
 }
 

@@ -36,6 +36,7 @@
 #include "ChromeClient.h"
 #include "ColorBlending.h"
 #include "ContainerNode.h"
+#include "ContentVisibilityDocumentState.h"
 #include "DebugPageOverlays.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
@@ -96,6 +97,7 @@
 #include "RenderStyleSetters.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
+#include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ResizeObserver.h"
@@ -137,10 +139,6 @@
 #if PLATFORM(IOS_FAMILY)
 #include "DocumentLoader.h"
 #include "LegacyTileCache.h"
-#endif
-
-#if PLATFORM(MAC)
-#include "LocalDefaultSystemAppearance.h"
 #endif
 
 #include "DisplayView.h"
@@ -486,6 +484,9 @@ void LocalFrameView::setFrameRect(const IntRect& newRect)
     if (m_frame->isMainFrame() && m_frame->page())
         m_frame->page()->pageOverlayController().didChangeViewSize();
 
+    if (auto* document = m_frame->document())
+        document->didChangeViewSize();
+
     viewportContentsChanged();
     setCurrentScrollType(oldScrollType);
 }
@@ -507,7 +508,7 @@ void LocalFrameView::updateCanHaveScrollbars()
         setCanHaveScrollbars(true);
 }
 
-RefPtr<Element> LocalFrameView::rootElementForCustomScrollbarPartStyle(PseudoId partPseudoId) const
+RefPtr<Element> LocalFrameView::rootElementForCustomScrollbarPartStyle() const
 {
     // FIXME: We need to update the scrollbar dynamically as documents change (or as doc elements and bodies get discovered that have custom styles).
     auto* document = m_frame->document();
@@ -516,12 +517,13 @@ RefPtr<Element> LocalFrameView::rootElementForCustomScrollbarPartStyle(PseudoId 
 
     // Try the <body> element first as a scrollbar source.
     auto* body = document->bodyOrFrameset();
-    if (body && body->renderer() && body->renderer()->style().hasPseudoStyle(partPseudoId))
+    // scrollbar-width on root element should override custom scrollbars declared on body element, so check that here..
+    if (body && body->renderer() && body->renderer()->style().usesLegacyScrollbarStyle() && scrollbarWidthStyle() == ScrollbarWidth::Auto)
         return body;
-    
+
     // If the <body> didn't have a custom style, then the root element might.
     auto* docElement = document->documentElement();
-    if (docElement && docElement->renderer() && docElement->renderer()->style().hasPseudoStyle(partPseudoId))
+    if (docElement && docElement->renderer() && docElement->renderer()->style().usesLegacyScrollbarStyle())
         return docElement;
 
     return nullptr;
@@ -529,17 +531,17 @@ RefPtr<Element> LocalFrameView::rootElementForCustomScrollbarPartStyle(PseudoId 
 
 Ref<Scrollbar> LocalFrameView::createScrollbar(ScrollbarOrientation orientation)
 {
-    if (auto element = rootElementForCustomScrollbarPartStyle(PseudoId::Scrollbar))
+    if (auto element = rootElementForCustomScrollbarPartStyle())
         return RenderScrollbar::createCustomScrollbar(*this, orientation, element.get());
     
     // If we have an owning iframe/frame element, then it can set the custom scrollbar also.
     // FIXME: Seems bad to do this for cross-origin frames.
     RenderWidget* frameRenderer = m_frame->ownerRenderer();
-    if (frameRenderer && frameRenderer->style().hasPseudoStyle(PseudoId::Scrollbar))
+    if (frameRenderer && frameRenderer->style().usesLegacyScrollbarStyle())
         return RenderScrollbar::createCustomScrollbar(*this, orientation, nullptr, m_frame.ptr());
 
     // Nobody set a custom style, so we just use a native scrollbar.
-    return ScrollView::createScrollbar(orientation);
+    return Scrollbar::createNativeScrollbar(*this, orientation, scrollbarWidthStyle());
 }
 
 void LocalFrameView::didRestoreFromBackForwardCache()
@@ -1529,20 +1531,20 @@ String LocalFrameView::debugDescription() const
 
 bool LocalFrameView::canShowNonOverlayScrollbars() const
 {
-    auto hasCustomScrollbarStyle = [&] {
-        auto element = rootElementForCustomScrollbarPartStyle(PseudoId::Scrollbar);
+    auto usesLegacyScrollbarStyle = [&] {
+        auto element = rootElementForCustomScrollbarPartStyle();
         if (!element || !is<RenderBox>(element->renderer()))
             return false;
 
-        return downcast<RenderBox>(*element->renderer()).style().hasPseudoStyle(PseudoId::Scrollbar);
+        return downcast<RenderBox>(*element->renderer()).style().usesLegacyScrollbarStyle();
     }();
 
-    return canHaveScrollbars() && (hasCustomScrollbarStyle || !ScrollbarTheme::theme().usesOverlayScrollbars());
+    return canHaveScrollbars() && (usesLegacyScrollbarStyle || !ScrollbarTheme::theme().usesOverlayScrollbars());
 }
 
 bool LocalFrameView::styleHidesScrollbarWithOrientation(ScrollbarOrientation orientation) const
 {
-    auto element = rootElementForCustomScrollbarPartStyle(PseudoId::Scrollbar);
+    auto element = rootElementForCustomScrollbarPartStyle();
     if (!element)
         return false;
     auto* renderer = element->renderer();
@@ -2406,6 +2408,9 @@ void LocalFrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
 
     cancelScheduledScrolls();
 
+    if (is<Element>(anchorNode))
+        m_frame->document()->contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(downcast<Element>(*anchorNode));
+
     // We need to update the layout before scrolling, otherwise we could
     // really mess things up if an anchor scroll comes at a bad moment.
     m_frame->document()->updateStyleIfNeeded();
@@ -2459,7 +2464,7 @@ void LocalFrameView::setScrollPosition(const ScrollPosition& scrollPosition, con
     auto snappedPosition = scrollPositionFromOffset(snappedOffset);
 
     if (options.animated == ScrollIsAnimated::Yes)
-        scrollToPositionWithAnimation(snappedPosition, currentScrollType(), options.clamping);
+        scrollToPositionWithAnimation(snappedPosition, options);
     else
         ScrollView::setScrollPosition(snappedPosition, options);
 
@@ -3080,12 +3085,12 @@ bool LocalFrameView::requestStopKeyboardScrollAnimation(bool immediate)
     return false;
 }
 
-bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping, ScrollIsAnimated animated)
+bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::requestScrollToPosition " << position << " animated  " << (animated == ScrollIsAnimated::Yes));
+    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::requestScrollToPosition " << position << " options  " << options);
 
 #if ENABLE(ASYNC_SCROLLING)
-    if (auto* tiledBacking = this->tiledBacking(); tiledBacking && animated == ScrollIsAnimated::No) {
+    if (auto* tiledBacking = this->tiledBacking(); tiledBacking && options.animated == ScrollIsAnimated::No) {
 #if PLATFORM(IOS_FAMILY)
         auto contentSize = exposedContentRect().size();
 #else
@@ -3097,12 +3102,10 @@ bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, Scr
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
     if (auto scrollingCoordinator = this->scrollingCoordinator())
-        return scrollingCoordinator->requestScrollToPosition(*this, position, scrollType, clamping, animated);
+        return scrollingCoordinator->requestScrollToPosition(*this, position, options);
 #else
     UNUSED_PARAM(position);
-    UNUSED_PARAM(scrollType);
-    UNUSED_PARAM(clamping);
-    UNUSED_PARAM(animated);
+    UNUSED_PARAM(options);
 #endif
 
     return false;
@@ -3459,6 +3462,9 @@ void LocalFrameView::setBaseBackgroundColor(const Color& backgroundColor)
     if (m_baseBackgroundColor == newBaseBackgroundColor)
         return;
 
+#if ENABLE(DARK_MODE_CSS)
+    m_styleColorOptions = styleColorOptions();
+#endif
     m_baseBackgroundColor = newBaseBackgroundColor;
 
     if (!isViewForDocumentInFrame())
@@ -3643,6 +3649,11 @@ bool LocalFrameView::safeToPropagateScrollToParent() const
 
 void LocalFrameView::scheduleScrollToAnchorAndTextFragment()
 {
+    RefPtr<ContainerNode> anchorNode = m_maintainScrollPositionAnchor;
+    if (!anchorNode)
+        return;
+    m_scheduledMaintainScrollPositionAnchor = anchorNode;
+
     if (m_scheduledToScrollToAnchor)
         return;
 
@@ -3654,7 +3665,12 @@ void LocalFrameView::scheduleScrollToAnchorAndTextFragment()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        protectedThis->scrollToAnchorAndTextFragmentNowIfNeeded();
+        if (!protectedThis->m_maintainScrollPositionAnchor) {
+            SetForScope scrollPositionAnchor(protectedThis->m_maintainScrollPositionAnchor, protectedThis->m_scheduledMaintainScrollPositionAnchor);
+            protectedThis->scrollToAnchorAndTextFragmentNowIfNeeded();
+        } else
+            protectedThis->scrollToAnchorAndTextFragmentNowIfNeeded();
+        protectedThis->m_scheduledMaintainScrollPositionAnchor = nullptr;
     });
 }
 
@@ -3896,6 +3912,7 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
 
     auto* document = m_frame->document();
     if (document->quirks().shouldSilenceWindowResizeEvents()) {
+        document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "Window resize events silenced due to: http://webkit.org/b/258597"_s);
         FRAMEVIEW_RELEASE_LOG(Events, "scheduleResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
         return;
     }
@@ -4250,17 +4267,17 @@ void LocalFrameView::scrollTo(const ScrollPosition& newPosition)
     didChangeScrollOffset();
 }
 
-void LocalFrameView::scrollToPositionWithAnimation(const ScrollPosition& position, ScrollType scrollType, ScrollClamping)
+void LocalFrameView::scrollToPositionWithAnimation(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
 {
     // FIXME: Why isn't all this in ScrollableArea?
     auto previousScrollType = currentScrollType();
-    setCurrentScrollType(scrollType);
+    setCurrentScrollType(options.type);
 
     if (scrollAnimationStatus() == ScrollAnimationStatus::Animating)
         scrollAnimator().cancelAnimations();
 
     if (position != scrollPosition())
-        ScrollableArea::scrollToPositionWithAnimation(position);
+        ScrollableArea::scrollToPositionWithAnimation(position, options);
 
     setCurrentScrollType(previousScrollType);
 }
@@ -4498,10 +4515,19 @@ void LocalFrameView::updateScrollCorner()
     RenderElement* renderer = nullptr;
     std::unique_ptr<RenderStyle> cornerStyle;
     IntRect cornerRect = scrollCornerRect();
-    
-    if (!cornerRect.isEmpty()) {
+    Document* doc = m_frame->document();
+
+    auto usesStandardScrollbarStyle = [](auto& doc) {
+        if (!doc || !doc->documentElement())
+            return false;
+        if (!doc->documentElement()->renderer())
+            return false;
+
+        return doc->documentElement()->renderer()->style().usesStandardScrollbarStyle();
+    };
+
+    if (!(usesStandardScrollbarStyle(doc) || cornerRect.isEmpty())) {
         // Try the <body> element first as a scroll corner source.
-        Document* doc = m_frame->document();
         Element* body = doc ? doc->bodyOrFrameset() : nullptr;
         if (body && body->renderer()) {
             renderer = body->renderer();
@@ -4550,11 +4576,6 @@ void LocalFrameView::paintScrollCorner(GraphicsContext& context, const IntRect& 
         m_scrollCorner->paintIntoRect(context, cornerRect.location(), cornerRect);
         return;
     }
-
-#if PLATFORM(MAC)
-    // Keep this in sync with ScrollAnimatorMac's effectiveAppearanceForScrollerImp:.
-    LocalDefaultSystemAppearance localAppearance(useDarkAppearanceForScrollbars());
-#endif
 
     ScrollView::paintScrollCorner(context, cornerRect);
 }
@@ -5806,13 +5827,22 @@ void LocalFrameView::setScrollingPerformanceTestingEnabled(bool scrollingPerform
         tiledBacking->setScrollingPerformanceTestingEnabled(scrollingPerformanceTestingEnabled);
 }
 
+void LocalFrameView::createScrollbarsController()
+{
+    auto* page = m_frame->page();
+    if (page) {
+        if (auto scrollbarController = page->chrome().client().createScrollbarsController(*page, *this)) {
+            setScrollbarsController(WTFMove(scrollbarController));
+            return;
+        }
+    }
+
+    ScrollView::createScrollbarsController();
+}
+
 void LocalFrameView::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
 {
-    Page* page = m_frame->page();
-    if (page) {
-        if (auto scrollbarController = page->chrome().client().createScrollbarsController(*page, *this))
-            setScrollbarsController(WTFMove(scrollbarController));
-    }
+    auto* page = m_frame->page();
 
     ScrollableArea::didAddScrollbar(scrollbar, orientation);
 
@@ -5829,6 +5859,12 @@ void LocalFrameView::willRemoveScrollbar(Scrollbar* scrollbar, ScrollbarOrientat
         cache->remove(scrollbar);
         cache->onScrollbarUpdate(this);
     }
+}
+
+void LocalFrameView::scrollbarFrameRectChanged(const Scrollbar& scrollbar) const
+{
+    if (auto* cache = axObjectCache())
+        cache->onScrollbarFrameRectChange(scrollbar);
 }
 
 void LocalFrameView::addPaintPendingMilestones(OptionSet<LayoutMilestone> milestones)
@@ -5885,12 +5921,6 @@ void LocalFrameView::firePaintRelatedMilestonesIfNeeded()
 
     OptionSet<LayoutMilestone> milestonesAchieved;
 
-    // Make sure the pending paint milestones have actually been requested before we send them.
-    if (m_milestonesPendingPaint & DidFirstFlushForHeaderLayer) {
-        if (page->requestedLayoutMilestones() & DidFirstFlushForHeaderLayer)
-            milestonesAchieved.add(DidFirstFlushForHeaderLayer);
-    }
-
     if (m_milestonesPendingPaint & DidFirstPaintAfterSuppressedIncrementalRendering) {
         if (page->requestedLayoutMilestones() & DidFirstPaintAfterSuppressedIncrementalRendering)
             milestonesAchieved.add(DidFirstPaintAfterSuppressedIncrementalRendering);
@@ -5899,6 +5929,11 @@ void LocalFrameView::firePaintRelatedMilestonesIfNeeded()
     if (m_milestonesPendingPaint & DidFirstMeaningfulPaint) {
         if (page->requestedLayoutMilestones() & DidFirstMeaningfulPaint)
             milestonesAchieved.add(DidFirstMeaningfulPaint);
+        if (m_frame->isMainFrame()) {
+            WTFEmitSignpost(m_frame->document(), "Page Load: First Meaningful Paint");
+            if (auto* page = m_frame->page())
+                page->didFirstMeaningfulPaint();
+        }
     }
 
     m_milestonesPendingPaint = { };
@@ -6278,6 +6313,24 @@ OverscrollBehavior LocalFrameView::verticalOverscrollBehavior()  const
     return OverscrollBehavior::Auto;
 }
 
+ScrollbarGutter LocalFrameView::scrollbarGutterStyle()  const
+{
+    auto* document = m_frame->document();
+    auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    if (scrollingObject)
+        return scrollingObject->style().scrollbarGutter();
+    return { };
+}
+
+ScrollbarWidth LocalFrameView::scrollbarWidthStyle()  const
+{
+    auto* document = m_frame->document();
+    auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    if (scrollingObject && renderView())
+        return scrollingObject->style().scrollbarWidth();
+    return ScrollbarWidth::Auto;
+}
+
 bool LocalFrameView::isVisibleToHitTesting() const
 {
     bool isVisibleToHitTest = true;
@@ -6328,6 +6381,14 @@ float LocalFrameView::deviceScaleFactor() const
     if (auto* page = m_frame->page())
         return page->deviceScaleFactor();
     return 1;
+}
+
+void LocalFrameView::writeRenderTreeAsText(TextStream& ts, OptionSet<RenderAsTextFlag> behavior)
+{
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame());
+    if (!localFrame)
+        return;
+    externalRepresentationForLocalFrame(ts, *localFrame, behavior);
 }
 
 } // namespace WebCore

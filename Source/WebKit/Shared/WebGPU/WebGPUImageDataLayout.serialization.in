@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,8 +22,8 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ImageDataLayout {
-    PAL::WebGPU::Size64 offset;
-    std::optional<PAL::WebGPU::Size32> bytesPerRow;
-    std::optional<PAL::WebGPU::Size32> rowsPerImage;
+    WebCore::WebGPU::Size64 offset;
+    std::optional<WebCore::WebGPU::Size32> bytesPerRow;
+    std::optional<WebCore::WebGPU::Size32> rowsPerImage;
 };
 #endif

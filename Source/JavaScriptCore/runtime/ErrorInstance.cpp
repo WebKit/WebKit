@@ -46,6 +46,15 @@ ErrorInstance::ErrorInstance(VM& vm, Structure* structure, ErrorType errorType)
 {
 }
 
+ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, String&& message, ErrorType errorType, unsigned line, unsigned column, String&& sourceURL, String&& stackString)
+{
+    VM& vm = globalObject->vm();
+    Structure* structure = globalObject->errorStructure(errorType);
+    ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm)) ErrorInstance(vm, structure, errorType);
+    instance->finishCreation(vm, WTFMove(message), line, column, WTFMove(sourceURL), WTFMove(stackString));
+    return instance;
+}
+
 ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* structure, JSValue message, JSValue options, SourceAppender appender, RuntimeType type, ErrorType errorType, bool useCurrentFrame)
 {
     VM& vm = globalObject->vm();
@@ -162,6 +171,19 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
 
     if (!cause.isEmpty())
         putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
+}
+
+void ErrorInstance::finishCreation(VM& vm, String&& message, unsigned line, unsigned column, String&& sourceURL, String&& stackString)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+    m_line = line;
+    m_column = column;
+    m_sourceURL = WTFMove(sourceURL);
+    m_stackString = WTFMove(stackString);
+    if (!message.isNull())
+        putDirect(vm, vm.propertyNames->message, jsString(vm, WTFMove(message)), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 // Based on ErrorPrototype's errorProtoFuncToString(), but is modified to

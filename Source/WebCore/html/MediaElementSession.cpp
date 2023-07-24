@@ -323,10 +323,6 @@ void MediaElementSession::clientDataBufferingTimerFired()
 
     updateClientDataBuffering();
 
-#if PLATFORM(IOS_FAMILY)
-    PlatformMediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
-#endif
-
     if (state() != Playing || !m_element.elementIsHidden())
         return;
 
@@ -341,6 +337,10 @@ void MediaElementSession::updateClientDataBuffering()
         m_clientDataBufferingTimer.stop();
 
     m_element.setBufferingPolicy(preferredBufferingPolicy());
+
+#if PLATFORM(IOS_FAMILY)
+    PlatformMediaSessionManager::sharedManager().configureWirelessTargetMonitoring();
+#endif
 }
 
 void MediaElementSession::addBehaviorRestriction(BehaviorRestrictions restrictions)
@@ -770,7 +770,7 @@ void MediaElementSession::setHasPlaybackTargetAvailabilityListeners(bool hasList
 
 #if PLATFORM(IOS_FAMILY)
     m_hasPlaybackTargetAvailabilityListeners = hasListeners;
-    PlatformMediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
+    PlatformMediaSessionManager::sharedManager().configureWirelessTargetMonitoring();
 #else
     UNUSED_PARAM(hasListeners);
     m_element.document().playbackTargetPickerClientStateDidChange(*this, m_element.mediaState());

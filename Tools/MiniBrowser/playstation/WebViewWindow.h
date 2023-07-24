@@ -31,6 +31,12 @@
 #include <memory>
 #include <toolkitten/Widget.h>
 
+#if defined(USE_WPE_BACKEND_PLAYSTATION) && USE_WPE_BACKEND_PLAYSTATION
+namespace WPEToolingBackends {
+class HeadlessViewBackend;
+}
+#endif
+
 class WebViewWindow final : public toolkitten::Widget {
 public:
     struct Client {
@@ -83,6 +89,10 @@ private:
     WKRetainPtr<WKViewRef> m_view;
     std::shared_ptr<WebContext> m_context;
     WKRetainPtr<WKPreferencesRef> m_preferences;
+
+#if defined(USE_WPE_BACKEND_PLAYSTATION) && USE_WPE_BACKEND_PLAYSTATION
+    std::unique_ptr<WPEToolingBackends::HeadlessViewBackend> m_window;
+#endif
 
     Client m_client;
 

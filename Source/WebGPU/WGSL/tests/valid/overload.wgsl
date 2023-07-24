@@ -146,101 +146,125 @@ fn testTextureSample() {
   }
 }
 
-fn testVec2() {
-  _ = vec2<f32>(0);
-  _ = vec2<f32>(0, 0);
-  _ = vec2<i32>(vec2<f32>(0));
-  _ = vec2(vec2(0, 0));
-  _ = vec2(0, 0);
-}
+fn testTextureLoad()
+{
+    // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture1d], T, U) => Vector[S, 4],
+    {
+        {
+            let t: texture_1d<f32>;
+            _ = textureLoad(t, 0, 0);
+            _ = textureLoad(t, 0i, 0u);
+            _ = textureLoad(t, 0u, 0i);
+        }
+        {
+            let t: texture_1d<i32>;
+            _ = textureLoad(t, 0, 0);
+            _ = textureLoad(t, 0i, 0u);
+            _ = textureLoad(t, 0u, 0i);
+        }
+        {
+            let t: texture_1d<u32>;
+            _ = textureLoad(t, 0, 0);
+            _ = textureLoad(t, 0i, 0u);
+            _ = textureLoad(t, 0u, 0i);
+        }
+    }
 
-fn testVec3() {
-  _ = vec3<f32>(0);
-  _ = vec3<f32>(0, 0, 0);
-  _ = vec3<i32>(vec3<f32>(0));
-  _ = vec3(vec3(0, 0, 0));
-  _ = vec3(0, 0, 0);
-  _ = vec3(vec2(0, 0), 0);
-  _ = vec3(0, vec2(0, 0));
-}
+    // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture2d], Vector[T, 2], U) => Vector[S, 4],
+    {
+        {
+            let t: texture_2d<f32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+        {
+            let t: texture_2d<i32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+        {
+            let t: texture_2d<u32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+    }
 
-fn testVec4() {
-  _ = vec4<f32>(0);
-  _ = vec4<f32>(0, 0, 0, 0);
-  _ = vec4<i32>(vec4<f32>(0));
-  _ = vec4(vec4(0, 0, 0, 0));
-  _ = vec4(0, 0, 0, 0);
-  _ = vec4(0, vec2(0, 0), 0);
-  _ = vec4(0, 0, vec2(0, 0));
-  _ = vec4(vec2(0, 0), 0, 0);
-  _ = vec4(vec2(0, 0), vec2(0, 0));
-  _ = vec4(vec3(0, 0, 0), 0);
-  _ = vec4(0, vec3(0, 0, 0));
-}
+    // [T < ConcreteInteger, V < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture2dArray], Vector[T, 2], V, U) => Vector[S, 4],
+    {
+        {
+            let t: texture_2d_array<f32>;
+            _ = textureLoad(t, vec2(0), 0, 0);
+            _ = textureLoad(t, vec2(0i), 0u, 0i);
+            _ = textureLoad(t, vec2(0u), 0i, 0u);
+        }
+        {
+            let t: texture_2d_array<i32>;
+            _ = textureLoad(t, vec2(0), 0, 0);
+            _ = textureLoad(t, vec2(0i), 0u, 0i);
+            _ = textureLoad(t, vec2(0u), 0i, 0u);
+        }
+        {
+            let t: texture_2d_array<u32>;
+            _ = textureLoad(t, vec2(0), 0, 0);
+            _ = textureLoad(t, vec2(0i), 0u, 0i);
+            _ = textureLoad(t, vec2(0u), 0i, 0u);
+        }
+    }
 
-fn testMatrixConstructor() {
-  {
-    _ = mat2x2<f32>(mat2x2(0.0, 0.0, 0.0, 0.0));
-    _ = mat2x2(mat2x2(0.0, 0.0, 0.0, 0.0));
-    _ = mat2x2(0.0, 0.0, 0.0, 0.0);
-    _ = mat2x2(vec2(0.0, 0.0), vec2(0.0, 0.0));
-  }
+    // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture3d], Vector[T, 3], U) => Vector[S, 4],
+    {
+        {
+            let t: texture_3d<f32>;
+            _ = textureLoad(t, vec3(0), 0);
+            _ = textureLoad(t, vec3(0i), 0u);
+            _ = textureLoad(t, vec3(0u), 0i);
+        }
+        {
+            let t: texture_3d<i32>;
+            _ = textureLoad(t, vec3(0), 0);
+            _ = textureLoad(t, vec3(0i), 0u);
+            _ = textureLoad(t, vec3(0u), 0i);
+        }
+        {
+            let t: texture_3d<u32>;
+            _ = textureLoad(t, vec3(0), 0);
+            _ = textureLoad(t, vec3(0i), 0u);
+            _ = textureLoad(t, vec3(0u), 0i);
+        }
+    }
 
-  {
-    _ = mat2x3<f32>(mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat2x3(mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    _ = mat2x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
-  }
+    // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d], Vector[T, 2], U) => Vector[S, 4],
+    {
+        {
+            let t: texture_multisampled_2d<f32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+        {
+            let t: texture_multisampled_2d<i32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+        {
+            let t: texture_multisampled_2d<u32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+    }
 
-  {
-    _ = mat2x4<f32>(mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat2x4(mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    _ = mat2x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
-  }
-
-  {
-    _ = mat3x2<f32>(mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat3x2(mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    _ = mat3x2(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
-  }
-
-  {
-    _ = mat3x3<f32>(mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat3x3(mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    _ = mat3x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
-  }
-
-  {
-    _ = mat3x4<f32>(mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat3x4(mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    _ = mat3x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
-  }
-
-  {
-    _ = mat4x2<f32>(mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat4x2(mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    _ = mat4x2(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
-  }
-
-  {
-    _ = mat4x3<f32>(mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat4x3(mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    _ = mat4x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
-  }
-
-  {
-    _ = mat4x4<f32>(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat4x4(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat4x4(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    _ = mat4x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
-  }
+    // [T < ConcreteInteger].(TextureExternal, Vector[T, 2]) => Vector[F32, 4],
+    {
+        let t: texture_external;
+        _ = textureLoad(t, vec2(0));
+        _ = textureLoad(t, vec2(0i));
+        _ = textureLoad(t, vec2(0u));
+    }
 }
 
 fn testUnaryMinus() {
@@ -447,6 +471,198 @@ fn testLogicalAnd()
     _ = vec4( true) & vec4( true);
 }
 
+// 16.1. Constructor Built-in Functions
+
+// 16.1.1. Zero Value Built-in Functions
+struct S { x: i32 };
+fn testZeroValueBuiltInFunctions()
+{
+    _ = bool();
+    _ = i32();
+    _ = u32();
+    _ = f32();
+
+    _ = vec2<f32>();
+    _ = vec3<f32>();
+    _ = vec4<f32>();
+
+    _ = mat2x2<f32>();
+    _ = mat2x3<f32>();
+    _ = mat2x4<f32>();
+    _ = mat3x2<f32>();
+    _ = mat3x3<f32>();
+    _ = mat3x4<f32>();
+    _ = mat4x2<f32>();
+    _ = mat4x3<f32>();
+    _ = mat4x4<f32>();
+    _ = S();
+    _ = array<f32, 1>();
+}
+
+// 16.1.2. Value Constructor Built-in Functions
+
+// 16.1.2.1.
+fn testArray()
+{
+    _ = array<f32, 1>(0);
+    _ = array<S, 2>(S(0), S(1));
+}
+
+// 16.1.2.2.
+fn testBool()
+{
+    _ = bool(true);
+    _ = bool(0);
+    _ = bool(0i);
+    _ = bool(0u);
+    _ = bool(0.0);
+    _ = bool(0f);
+}
+
+// 16.1.2.3. f16
+// FIXME: add support for f16
+
+// 16.1.2.4.
+fn testF32()
+{
+    _ = f32(true);
+    _ = f32(0);
+    _ = f32(0i);
+    _ = f32(0u);
+    _ = f32(0.0);
+    _ = f32(0f);
+}
+
+// 16.1.2.5.
+fn testI32()
+{
+    _ = i32(true);
+    _ = i32(0);
+    _ = i32(0i);
+    _ = i32(0u);
+    _ = i32(0.0);
+    _ = i32(0f);
+}
+
+// 16.1.2.6 - 14: matCxR
+fn testMatrix()
+{
+  {
+    _ = mat2x2<f32>(mat2x2(0.0, 0.0, 0.0, 0.0));
+    _ = mat2x2(mat2x2(0.0, 0.0, 0.0, 0.0));
+    _ = mat2x2(0.0, 0.0, 0.0, 0.0);
+    _ = mat2x2(vec2(0.0, 0.0), vec2(0.0, 0.0));
+  }
+
+  {
+    _ = mat2x3<f32>(mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat2x3(mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat2x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
+  }
+
+  {
+    _ = mat2x4<f32>(mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat2x4(mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat2x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    _ = mat3x2<f32>(mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x2(mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat3x2(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
+  }
+
+  {
+    _ = mat3x3<f32>(mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x3(mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat3x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
+  }
+
+  {
+    _ = mat3x4<f32>(mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x4(mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat3x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    _ = mat4x2<f32>(mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x2(mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat4x2(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
+  }
+
+  {
+    _ = mat4x3<f32>(mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x3(mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat4x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
+  }
+
+  {
+    _ = mat4x4<f32>(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x4(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x4(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
+  }
+}
+
+// 16.1.2.15.
+fn testStructures()
+{
+    _ = S(42);
+    _ = S(42i);
+}
+
+// 16.1.2.16.
+fn testU32()
+{
+    _ = u32(true);
+    _ = u32(0);
+    _ = u32(0i);
+    _ = u32(0u);
+    _ = u32(0.0);
+    _ = u32(0f);
+}
+
+// 16.1.2.17.
+fn testVec2() {
+  _ = vec2<f32>(0);
+  _ = vec2<f32>(0, 0);
+  _ = vec2<i32>(vec2<f32>(0));
+  _ = vec2(vec2(0, 0));
+  _ = vec2(0, 0);
+}
+
+// 16.1.2.18.
+fn testVec3() {
+  _ = vec3<f32>(0);
+  _ = vec3<f32>(0, 0, 0);
+  _ = vec3<i32>(vec3<f32>(0));
+  _ = vec3(vec3(0, 0, 0));
+  _ = vec3(0, 0, 0);
+  _ = vec3(vec2(0, 0), 0);
+  _ = vec3(0, vec2(0, 0));
+}
+
+// 16.1.2.19.
+fn testVec4() {
+  _ = vec4<f32>(0);
+  _ = vec4<f32>(0, 0, 0, 0);
+  _ = vec4<i32>(vec4<f32>(0));
+  _ = vec4(vec4(0, 0, 0, 0));
+  _ = vec4(0, 0, 0, 0);
+  _ = vec4(0, vec2(0, 0), 0);
+  _ = vec4(0, 0, vec2(0, 0));
+  _ = vec4(vec2(0, 0), 0, 0);
+  _ = vec4(vec2(0, 0), vec2(0, 0));
+  _ = vec4(vec3(0, 0, 0), 0);
+  _ = vec4(0, vec3(0, 0, 0));
+}
 
 // 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
 

@@ -14,17 +14,19 @@
 
 #include "config/aom_config.h"
 
-#include "aom/aom_integer.h"
-
 #if CONFIG_OS_SUPPORT
+
+#include <stddef.h>
+#include <stdint.h>
 
 #if defined(_WIN32)
 /*
  * Win32 specific includes
  */
-#ifndef WIN32_LEAN_AND_MEAN
+#undef NOMINMAX
+#define NOMINMAX
+#undef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
-#endif
 #include <windows.h>
 #else
 /*

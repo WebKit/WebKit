@@ -98,7 +98,7 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     setAllowCookies(other.m_requestData.m_allowCookies);
     setIsAppInitiated(other.isAppInitiated());
     setPrivacyProxyFailClosedForUnreachableNonMainHosts(other.privacyProxyFailClosedForUnreachableNonMainHosts());
-    setUseNetworkConnectionIntegrity(other.useNetworkConnectionIntegrity());
+    setUseAdvancedPrivacyProtections(other.useAdvancedPrivacyProtections());
 }
 
 bool ResourceRequestBase::isEmpty() const
@@ -154,7 +154,7 @@ void ResourceRequestBase::redirectAsGETIfNeeded(const ResourceRequestBase &redir
     }
 }
 
-ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& redirectResponse, bool shouldClearReferrerOnHTTPSToHTTPRedirect) const
+ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& redirectResponse, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ShouldSetHash shouldSetHash) const
 {
     ASSERT(redirectResponse.isRedirection());
     // This method is based on https://fetch.spec.whatwg.org/#http-redirect-fetch.
@@ -163,7 +163,12 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
     auto request = asResourceRequest();
     auto location = redirectResponse.httpHeaderField(HTTPHeaderName::Location);
 
-    request.setURL(location.isEmpty() ? URL { } : URL { redirectResponse.url(), location });
+    // https://fetch.spec.whatwg.org/#concept-response-location-url
+    auto url = location.isEmpty() ? URL { } : URL { redirectResponse.url(), location };
+    if (shouldSetHash == ShouldSetHash::Yes && url.fragmentIdentifier().isEmpty() && !redirectResponse.url().fragmentIdentifier().isEmpty())
+        url.setFragmentIdentifier(redirectResponse.url().fragmentIdentifier());
+
+    request.setURL(WTFMove(url));
 
     request.redirectAsGETIfNeeded(*this, redirectResponse);
 
@@ -646,14 +651,14 @@ void ResourceRequestBase::setPrivacyProxyFailClosedForUnreachableNonMainHosts(bo
     m_platformRequestUpdated = false;
 }
 
-void ResourceRequestBase::setUseNetworkConnectionIntegrity(bool useNetworkConnectionIntegrity)
+void ResourceRequestBase::setUseAdvancedPrivacyProtections(bool useAdvancedPrivacyProtections)
 {
     updateResourceRequest();
 
-    if (m_requestData.m_useNetworkConnectionIntegrity == useNetworkConnectionIntegrity)
+    if (m_requestData.m_useAdvancedPrivacyProtections == useAdvancedPrivacyProtections)
         return;
 
-    m_requestData.m_useNetworkConnectionIntegrity = useNetworkConnectionIntegrity;
+    m_requestData.m_useAdvancedPrivacyProtections = useAdvancedPrivacyProtections;
 
     m_platformRequestUpdated = false;
 }

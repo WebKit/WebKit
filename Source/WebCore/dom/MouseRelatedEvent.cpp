@@ -24,6 +24,7 @@
 #include "MouseRelatedEvent.h"
 
 #include "Document.h"
+#include "EventNames.h"
 #include "LayoutPoint.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
@@ -64,6 +65,14 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomString& eventType, const MouseRel
     init(false, IntPoint(0, 0));
 }
 
+static inline bool isMoveEventType(const AtomString& eventType)
+{
+    auto& eventNames = WebCore::eventNames();
+    return eventType == eventNames.mousemoveEvent
+        || eventType == eventNames.pointermoveEvent
+        || eventType == eventNames.touchmoveEvent;
+}
+
 void MouseRelatedEvent::init(bool isSimulated, const IntPoint& windowLocation)
 {
     if (!isSimulated) {
@@ -76,6 +85,11 @@ void MouseRelatedEvent::init(bool isSimulated, const IntPoint& windowLocation)
     }
 
     initCoordinates();
+
+    if (!isConstructedFromInitializer() && !isMoveEventType(type())) {
+        m_movementX = 0;
+        m_movementY = 0;
+    }
 }
 
 void MouseRelatedEvent::initCoordinates()

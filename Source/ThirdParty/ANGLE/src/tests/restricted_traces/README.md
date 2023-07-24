@@ -52,12 +52,14 @@ When that is working, add the following GN arg to your setup:
 ```
 build_angle_trace_perf_tests = true
 ```
-### (Optional) Reducing the trace count
+### Selecting which traces to build
 
-Since the traces are numerous, you can limit compilation to a subset with the following GN arg:
+Since the traces are numerous, you should limit compilation to a subset with the following GN arg:
 ```
-angle_restricted_traces = ["world_of_kings 5", "worms_zone_io 5"]
+angle_restricted_traces = ["among_us 5", "street_fighter_duel 1"]
 ```
+If you choose not to pick any traces and build them all, you must follow different steps for Android. Skip ahead to [Building and running all traces for Android](#building-and-running-all-traces-for-android)
+
 To build the trace tests:
 ```
 autoninja -C out/<config> angle_trace_tests
@@ -80,6 +82,23 @@ Common options used are:
 
 # Use the system's native GLES driver
 --use-gl=native
+```
+
+### Building and running all traces for Android
+Our trace library has gotten large enough that they no longer fit in a single APK.  To support building and running the entire library, we can compile the libraries by themselves, outside of the APK, and push them to locations accessible by the test harness.
+
+To do so, remove `angle_restricted_traces` from your GN args, then compile with:
+```
+autoninja -C out/<config> angle_trace_perf_tests
+```
+and run with (including recommended options):
+```
+out/<config>/angle_trace_tests --filter='*among_us*' --verbose --fixed-test-time-with-warmup 10
+```
+
+If more than one device is connected, the target device serial should be provided as well:
+```
+ANDROID_SERIAL=<device_serial> out/<config>/angle_trace_tests ...
 ```
 
 # Capturing and adding new Android traces
@@ -283,7 +302,7 @@ iterations. We cannot delete trace files once they are up on the CIPD.
 Doing additional rounds of content check can help us save CIPD resources.
 
 ```
-./sync_restricted_traces_to_cipd.py
+src/tests/restricted_traces/sync_restricted_traces_to_cipd.py
 ```
 
 ## Upload your CL
@@ -309,7 +328,7 @@ limitations with a Linux app window.
 This will save the original traces in a temporary folder if you need to revert to the prior trace format:
 
 ```
-py ./src/tests/restricted_traces/retrace_restricted_traces.py backup "*"
+src/tests/restricted_traces/retrace_restricted_traces.py backup "*"
 ```
 
 *Note: on Linux, remove the command `py` prefix to the Python scripts.*
@@ -317,7 +336,7 @@ py ./src/tests/restricted_traces/retrace_restricted_traces.py backup "*"
 This will save the traces to `./retrace-backups`. At any time you can revert the trace files by running:
 
 ```
-py ./src/tests/restricted_traces/retrace_restricted_traces.py restore "*"
+src/tests/restricted_traces/retrace_restricted_traces.py restore "*"
 ```
 
 ## Part 1: Sanity Check with T-Rex
@@ -331,7 +350,7 @@ configuration and checkout:
 ```
 export TRACE_GN_PATH=out/Debug
 export TRACE_NAME=trex_200
-py ./src/tests/restricted_traces/retrace_restricted_traces.py upgrade $TRACE_GN_PATH retrace-wip -f $TRACE_NAME --validation --limit 3
+src/tests/restricted_traces/retrace_restricted_traces.py upgrade $TRACE_GN_PATH retrace-wip -f $TRACE_NAME --validation --limit 3
 ```
 
 The `--validation` flag will turn on additional validation checks in the
@@ -345,7 +364,7 @@ The command below will update your copy of the trace, rebuild, the run the
 test suite with validation enabled:
 
 ```
-py ./src/tests/restricted_traces/retrace_restricted_traces.py validate $TRACE_GN_PATH retrace-wip $TRACE_NAME
+src/tests/restricted_traces/retrace_restricted_traces.py validate $TRACE_GN_PATH retrace-wip $TRACE_NAME
 ```
 
 If the trace failed validation, see the section below on diagnosing tracer
@@ -354,7 +373,7 @@ errors. Otherwise proceed with the steps below.
 ### Step 3/3: Restore the Canonical T-Rex Trace
 
 ```
-py ./src/tests/restricted_traces/retrace_restricted_traces.py restore $TRACE_NAME
+src/tests/restricted_traces/retrace_restricted_traces.py restore $TRACE_NAME
 ```
 
 ## Part 2: Do a limited trace upgrade with validation enabled
@@ -362,7 +381,7 @@ py ./src/tests/restricted_traces/retrace_restricted_traces.py restore $TRACE_NAM
 ### Step 1/3: Upgrade all traces with a limit of 3 frames
 
 ```
-py ./src/tests/restricted_traces/retrace_restricted_traces.py upgrade $TRACE_GN_PATH retrace-wip --validation --limit 3  --no-overwrite
+src/tests/restricted_traces/retrace_restricted_traces.py upgrade $TRACE_GN_PATH retrace-wip --validation --limit 3  --no-overwrite
 ```
 
 If this process gets interrupted, re-run the upgrade command. The
@@ -374,7 +393,7 @@ errors. Otherwise proceed with the steps below.
 ### Step 2/3: Validate all upgraded traces
 
 ```
-py ./src/tests/restricted_traces/retrace_restricted_traces.py validate $TRACE_GN_PATH retrace-wip "*"
+src/tests/restricted_traces/retrace_restricted_traces.py validate $TRACE_GN_PATH retrace-wip "*"
 ```
 
 If any traces failed validation, see the section below on diagnosing tracer
@@ -383,14 +402,14 @@ errors. Otherwise proceed with the steps below.
 ### Step 3/3: Restore all traces
 
 ```
-py ./src/tests/restricted_traces/retrace_restricted_traces.py restore "*"
+src/tests/restricted_traces/retrace_restricted_traces.py restore "*"
 ```
 
 ## Part 3: Do the full trace upgrade
 
 ```
 rm -rf retrace-wip
-py ./src/tests/restricted_traces/retrace_restricted_traces.py upgrade $TRACE_GN_PATH retrace-wip --no-overwrite
+src/tests/restricted_traces/retrace_restricted_traces.py upgrade $TRACE_GN_PATH retrace-wip --no-overwrite
 ```
 
 If this process gets interrupted, re-run the upgrade command. The
@@ -423,9 +442,9 @@ number beginning with 'x'. For example:
 Then run:
 
 ```
-py ./src/tests/restricted_traces/retrace_restricted_traces.py restore -o retrace-wip "*"
-py ./src/tests/restricted_traces/sync_restricted_traces_to_cipd.py
-py ./scripts/run_code_generation.py
+src/tests/restricted_traces/retrace_restricted_traces.py restore -o retrace-wip "*"
+src/tests/restricted_traces/sync_restricted_traces_to_cipd.py
+scripts/run_code_generation.py
 ```
 
 The restore command will copy the new traces from the `retrace-wip` directory
@@ -443,8 +462,8 @@ and incrementing the version of the traces (skipping versions if you prefer)
 and then run:
 
 ```
-py ./src/tests/restricted_traces/sync_restricted_traces_to_cipd.py
-py ./scripts/run_code_generation.py
+src/tests/restricted_traces/sync_restricted_traces_to_cipd.py
+scripts/run_code_generation.py
 ```
 
 Then create and upload a CL as normal. Congratulations, you've finished the
@@ -456,7 +475,7 @@ trace upgrade!
 extensions and GLES version. Run the command:
 
 ```
-py ./src/tests/restricted_traces/retrace_restricted_traces.py get_min_reqs $TRACE_GN_PATH [--traces "*"]
+src/tests/restricted_traces/retrace_restricted_traces.py get_min_reqs $TRACE_GN_PATH [--traces "*"]
 ```
 
 The script will run each listed trace multiple times so it can find the minimum
@@ -468,7 +487,7 @@ native vulkan drivers, use the `--no-swiftshader` argument before the script's
 command:
 
 ```
-py ./src/tests/restricted_traces/retrace_restricted_traces.py --no-swiftshader get_min_reqs $TRACE_GN_PATH [--traces "*"]
+src/tests/restricted_traces/retrace_restricted_traces.py --no-swiftshader get_min_reqs $TRACE_GN_PATH [--traces "*"]
 ```
 
 # Diagnosing and fixing tracer errors

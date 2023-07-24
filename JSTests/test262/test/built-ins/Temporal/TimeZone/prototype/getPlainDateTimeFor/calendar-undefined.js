@@ -17,7 +17,7 @@ Object.defineProperty(Temporal.Calendar, "from", {
 });
 
 const result1 = timeZone.getPlainDateTimeFor(instant);
-assert.sameValue(result1.calendar.toString(), "iso8601");
+assert.sameValue(result1.calendarId, "iso8601");
 
 const result2 = timeZone.getPlainDateTimeFor(instant, undefined);
-assert.sameValue(result2.calendar.toString(), "iso8601");
+assert.sameValue(result2.calendarId, "iso8601");

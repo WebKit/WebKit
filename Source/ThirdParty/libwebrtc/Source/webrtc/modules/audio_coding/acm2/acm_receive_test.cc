@@ -25,10 +25,10 @@ namespace webrtc {
 namespace test {
 
 namespace {
-AudioCodingModule::Config MakeAcmConfig(
-    Clock* clock,
+acm2::AcmReceiver::Config MakeAcmConfig(
+    Clock& clock,
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory) {
-  AudioCodingModule::Config config;
+  acm2::AcmReceiver::Config config;
   config.clock = clock;
   config.decoder_factory = std::move(decoder_factory);
   return config;
@@ -42,8 +42,8 @@ AcmReceiveTestOldApi::AcmReceiveTestOldApi(
     NumOutputChannels exptected_output_channels,
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory)
     : clock_(0),
-      acm_(webrtc::AudioCodingModule::Create(
-          MakeAcmConfig(&clock_, std::move(decoder_factory)))),
+      acm_receiver_(std::make_unique<acm2::AcmReceiver>(
+          MakeAcmConfig(clock_, std::move(decoder_factory)))),
       packet_source_(packet_source),
       audio_sink_(audio_sink),
       output_freq_hz_(output_freq_hz),
@@ -52,43 +52,43 @@ AcmReceiveTestOldApi::AcmReceiveTestOldApi(
 AcmReceiveTestOldApi::~AcmReceiveTestOldApi() = default;
 
 void AcmReceiveTestOldApi::RegisterDefaultCodecs() {
-  acm_->SetReceiveCodecs({{103, {"ISAC", 16000, 1}},
-                          {104, {"ISAC", 32000, 1}},
-                          {107, {"L16", 8000, 1}},
-                          {108, {"L16", 16000, 1}},
-                          {109, {"L16", 32000, 1}},
-                          {111, {"L16", 8000, 2}},
-                          {112, {"L16", 16000, 2}},
-                          {113, {"L16", 32000, 2}},
-                          {0, {"PCMU", 8000, 1}},
-                          {110, {"PCMU", 8000, 2}},
-                          {8, {"PCMA", 8000, 1}},
-                          {118, {"PCMA", 8000, 2}},
-                          {102, {"ILBC", 8000, 1}},
-                          {9, {"G722", 8000, 1}},
-                          {119, {"G722", 8000, 2}},
-                          {120, {"OPUS", 48000, 2, {{"stereo", "1"}}}},
-                          {13, {"CN", 8000, 1}},
-                          {98, {"CN", 16000, 1}},
-                          {99, {"CN", 32000, 1}}});
+  acm_receiver_->SetCodecs({{103, {"ISAC", 16000, 1}},
+                            {104, {"ISAC", 32000, 1}},
+                            {107, {"L16", 8000, 1}},
+                            {108, {"L16", 16000, 1}},
+                            {109, {"L16", 32000, 1}},
+                            {111, {"L16", 8000, 2}},
+                            {112, {"L16", 16000, 2}},
+                            {113, {"L16", 32000, 2}},
+                            {0, {"PCMU", 8000, 1}},
+                            {110, {"PCMU", 8000, 2}},
+                            {8, {"PCMA", 8000, 1}},
+                            {118, {"PCMA", 8000, 2}},
+                            {102, {"ILBC", 8000, 1}},
+                            {9, {"G722", 8000, 1}},
+                            {119, {"G722", 8000, 2}},
+                            {120, {"OPUS", 48000, 2, {{"stereo", "1"}}}},
+                            {13, {"CN", 8000, 1}},
+                            {98, {"CN", 16000, 1}},
+                            {99, {"CN", 32000, 1}}});
 }
 
 // Remaps payload types from ACM's default to those used in the resource file
 // neteq_universal_new.rtp.
 void AcmReceiveTestOldApi::RegisterNetEqTestCodecs() {
-  acm_->SetReceiveCodecs({{103, {"ISAC", 16000, 1}},
-                          {104, {"ISAC", 32000, 1}},
-                          {93, {"L16", 8000, 1}},
-                          {94, {"L16", 16000, 1}},
-                          {95, {"L16", 32000, 1}},
-                          {0, {"PCMU", 8000, 1}},
-                          {8, {"PCMA", 8000, 1}},
-                          {102, {"ILBC", 8000, 1}},
-                          {9, {"G722", 8000, 1}},
-                          {120, {"OPUS", 48000, 2}},
-                          {13, {"CN", 8000, 1}},
-                          {98, {"CN", 16000, 1}},
-                          {99, {"CN", 32000, 1}}});
+  acm_receiver_->SetCodecs({{103, {"ISAC", 16000, 1}},
+                            {104, {"ISAC", 32000, 1}},
+                            {93, {"L16", 8000, 1}},
+                            {94, {"L16", 16000, 1}},
+                            {95, {"L16", 32000, 1}},
+                            {0, {"PCMU", 8000, 1}},
+                            {8, {"PCMA", 8000, 1}},
+                            {102, {"ILBC", 8000, 1}},
+                            {9, {"G722", 8000, 1}},
+                            {120, {"OPUS", 48000, 2}},
+                            {13, {"CN", 8000, 1}},
+                            {98, {"CN", 16000, 1}},
+                            {99, {"CN", 32000, 1}}});
 }
 
 void AcmReceiveTestOldApi::Run() {
@@ -98,8 +98,8 @@ void AcmReceiveTestOldApi::Run() {
     while (clock_.TimeInMilliseconds() < packet->time_ms()) {
       AudioFrame output_frame;
       bool muted;
-      EXPECT_EQ(0,
-                acm_->PlayoutData10Ms(output_freq_hz_, &output_frame, &muted));
+      EXPECT_EQ(
+          0, acm_receiver_->GetAudio(output_freq_hz_, &output_frame, &muted));
       ASSERT_EQ(output_freq_hz_, output_frame.sample_rate_hz_);
       ASSERT_FALSE(muted);
       const size_t samples_per_block =
@@ -119,10 +119,10 @@ void AcmReceiveTestOldApi::Run() {
       AfterGetAudio();
     }
 
-    EXPECT_EQ(0, acm_->IncomingPacket(
-                     packet->payload(),
-                     static_cast<int32_t>(packet->payload_length_bytes()),
-                     packet->header()))
+    EXPECT_EQ(0, acm_receiver_->InsertPacket(
+                     packet->header(),
+                     rtc::ArrayView<const uint8_t>(
+                         packet->payload(), packet->payload_length_bytes())))
         << "Failure when inserting packet:" << std::endl
         << "  PT = " << static_cast<int>(packet->header().payloadType)
         << std::endl

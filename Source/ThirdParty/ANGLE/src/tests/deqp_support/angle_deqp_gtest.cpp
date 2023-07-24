@@ -60,12 +60,13 @@ constexpr char kSupportPath[] = "src/tests/deqp_support/";
 
 #define GLES_CTS_DIR(PATH) "external/openglcts/data/mustpass/gles/" PATH
 #define GL_CTS_DIR(PATH) "external/openglcts/data/mustpass/gl/" PATH
+#define EGL_CTS_DIR(PATH) "external/openglcts/data/mustpass/egl/" PATH
 
 const char *gCaseListFiles[] = {
     GLES_CTS_DIR("aosp_mustpass/main/gles2-master.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles3-master.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles31-master.txt"),
-    "/android/cts/main/egl-master.txt",
+    EGL_CTS_DIR("aosp_mustpass/main/egl-master.txt"),
     GLES_CTS_DIR("khronos_mustpass/main/gles2-khr-master.txt"),
     GLES_CTS_DIR("khronos_mustpass/main/gles3-khr-master.txt"),
     GLES_CTS_DIR("khronos_mustpass/main/gles31-khr-master.txt"),
@@ -140,8 +141,8 @@ constexpr bool kEnableRenderDocCapture = false;
 
 const APIInfo *gInitAPI = nullptr;
 dEQPOptions gOptions    = {
-       kDefaultPreRotation,      // preRotation
-       kEnableRenderDocCapture,  // enableRenderDocCapture
+    kDefaultPreRotation,      // preRotation
+    kEnableRenderDocCapture,  // enableRenderDocCapture
 };
 
 constexpr const char gdEQPEGLConfigNameString[] = "--deqp-gl-config-name=";

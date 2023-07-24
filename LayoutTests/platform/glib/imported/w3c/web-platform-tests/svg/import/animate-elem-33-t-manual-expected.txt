@@ -97,14 +97,14 @@ layer at (0,0) size 800x600
           RenderSVGEllipse {circle} at (671,246) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=75.00] [cy=0.00] [r=20.00]
           RenderSVGEllipse {circle} at (721,246) size 42x42 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=125.00] [cy=0.00] [r=20.00]
         RenderSVGEllipse {circle} at (670,245) size 44x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(75.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [fill={[type=SOLID] [color=#CC0066]}] [cx=0.00] [cy=0.00] [r=20.00]
-      RenderSVGText {text} at (5,209) size 404x32 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 404x32
-          chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 31 width 403.83: "Test of keyPoints and keyTimes."
+      RenderSVGText {text} at (5,209) size 400x32 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 400x32
+          chunk 1 text run 1 at (5.00,235.00) startOffset 0 endOffset 31 width 399.66: "Test of keyPoints and keyTimes."
       RenderSVGText {text} at (5,248) size 435x21 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 435x21
           chunk 1 text run 1 at (5.00,265.00) startOffset 0 endOffset 54 width 435.00: "Number indicates the circle's passing time in seconds."
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.6 $"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.6 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

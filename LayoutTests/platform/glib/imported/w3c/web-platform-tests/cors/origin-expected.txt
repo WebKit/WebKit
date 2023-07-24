@@ -129,17 +129,17 @@ PASS Disallow origin: http://web-platform.test:8800#
 PASS Disallow origin: http://web-platform.test:8800%23
 PASS Disallow origin: http://web-platform.test:8800:80
 PASS Disallow origin: http://web-platform.test:8800, *
-FAIL Disallow origin: http://web-platform.test:8800\0 assert_throws_dom: send function "function () { client.send() }" did not throw
+FAIL Disallow origin: http://web-platform.test:8800\0 assert_throws_dom: send function "function() { client.send() }" did not throw
 PASS Disallow origin: HTTP://WEB-PLATFORM.TEST:8800
 PASS Disallow origin: HTTP://web-platform.test:8800
 PASS Disallow origin: -
 PASS Disallow origin: **
 PASS Disallow origin: ,*
 PASS Disallow origin: *,
-FAIL Disallow origin: \0* assert_throws_dom: send function "function () { client.send() }" did not throw
+FAIL Disallow origin: \0* assert_throws_dom: send function "function() { client.send() }" did not throw
 PASS Disallow origin: *
 PASS Disallow origin: *
-FAIL Disallow origin: *\0 assert_throws_dom: send function "function () { client.send() }" did not throw
+FAIL Disallow origin: *\0 assert_throws_dom: send function "function() { client.send() }" did not throw
 PASS Disallow origin: *
 PASS Disallow origin: *
 PASS Disallow origin: '*'
@@ -150,7 +150,7 @@ PASS Disallow origin: *http://*
 PASS Disallow origin: *http://web-platform.test:8800
 PASS Disallow origin: * http://web-platform.test:8800
 PASS Disallow origin: *, http://web-platform.test:8800
-FAIL Disallow origin: \0http://web-platform.test:8800 assert_throws_dom: send function "function () { client.send() }" did not throw
+FAIL Disallow origin: \0http://web-platform.test:8800 assert_throws_dom: send function "function() { client.send() }" did not throw
 PASS Disallow origin: null http://web-platform.test:8800
 PASS Disallow origin: http://example.net
 PASS Disallow origin: null

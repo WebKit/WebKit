@@ -178,8 +178,6 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
     UNUSED_PARAM(request);
 #endif
 
-    proxy.page().activateMediaStreamCaptureInPage();
-
     return true;
 }
 

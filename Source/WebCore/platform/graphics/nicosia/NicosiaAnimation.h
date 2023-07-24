@@ -69,7 +69,7 @@ private:
     RefPtr<WebCore::TimingFunction> m_timingFunction;
     double m_iterationCount;
     double m_duration;
-    WebCore::Animation::AnimationDirection m_direction;
+    WebCore::Animation::Direction m_direction;
     bool m_fillsForwards;
     MonotonicTime m_startTime;
     Seconds m_pauseTime;

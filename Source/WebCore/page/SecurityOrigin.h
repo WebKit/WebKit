@@ -184,7 +184,7 @@ public:
     // could make the string return "null".
     WEBCORE_EXPORT String toRawString() const;
 
-    URL toURL() const;
+    WEBCORE_EXPORT URL toURL() const;
 
     // This method checks for equality between SecurityOrigins, not whether
     // one origin can access another. It is used for hash table keys.

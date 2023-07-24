@@ -39,12 +39,21 @@ class AudioSessionCocoa : public AudioSession {
 public:
     virtual ~AudioSessionCocoa();
 
+    bool isEligibleForSmartRouting() const { return m_isEligibleForSmartRouting; }
+
+    enum class ForceUpdate : bool { No, Yes };
+    void setEligibleForSmartRouting(bool, ForceUpdate = ForceUpdate::No);
+
 protected:
     AudioSessionCocoa();
 
+    void setEligibleForSmartRoutingInternal(bool);
+
     // AudioSession
     bool tryToSetActiveInternal(bool) final;
+    void setCategory(CategoryType, Mode, RouteSharingPolicy) override;
 
+    bool m_isEligibleForSmartRouting { false };
     Ref<WTF::WorkQueue> m_workQueue;
 };
 

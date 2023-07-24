@@ -4,8 +4,8 @@ layer at (0,0) size 800x391
   RenderBlock {html} at (0,0) size 800x391
     RenderBlock {parsererror} at (16,16) size 768x151 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
       RenderBlock {h3} at (18,20) size 732x23
-        RenderText {#text} at (0,0) size 324x21
-          text run at (0,0) width 324: "This page contains the following errors:"
+        RenderText {#text} at (0,0) size 309x21
+          text run at (0,0) width 309: "This page contains the following errors:"
       RenderBlock {div} at (18,61) size 732x29
         RenderText {#text} at (0,0) size 574x14
           text run at (0,0) width 574: "error on line 43 at column 8: Opening and ending tag mismatch: hr line 29 and body"
@@ -14,8 +14,8 @@ layer at (0,0) size 800x391
           RenderText at (0,14) size 147x14
             text run at (0,14) width 147: "and generated content"
       RenderBlock {h3} at (18,108) size 732x23
-        RenderText {#text} at (0,0) size 427x21
-          text run at (0,0) width 427: "Below is a rendering of the page up to the first error."
+        RenderText {#text} at (0,0) size 410x21
+          text run at (0,0) width 410: "Below is a rendering of the page up to the first error."
     RenderBody {body} at (8,182) size 784x201
       RenderBlock {div} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 82x17
@@ -24,7 +24,7 @@ layer at (0,0) size 800x391
           RenderText at (82,0) size 138x17
             text run at (82,0) width 138: "and generated content"
 layer at (8,209) size 784x174 clip at (9,210) size 782x172
-  RenderBlock {hr} at (0,26) size 784x174 [border: (1px inset #000000)]
+  RenderBlock {hr} at (0,26) size 784x174 [color=#808080] [border: (1px inset #808080)]
     RenderBlock {p} at (1,17) size 782x36
       RenderText {#text} at (0,0) size 52x17
         text run at (0,0) width 52: "Test for "

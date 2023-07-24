@@ -36,13 +36,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<PageBanner> PageBanner::create(CALayer *layer, int height, Client* client)
+Ref<PageBanner> PageBanner::create(CALayer *layer, int height, std::unique_ptr<Client>&& client)
 {
-    return adoptRef(*new PageBanner(layer, height, client));
+    return adoptRef(*new PageBanner(layer, height, WTFMove(client)));
 }
 
-PageBanner::PageBanner(CALayer *layer, int height, Client* client)
-    : m_client(client)
+PageBanner::PageBanner(CALayer *layer, int height, std::unique_ptr<Client>&& client)
+    : m_client(WTFMove(client))
     , m_layer(layer)
     , m_height(height)
 {
@@ -115,7 +115,7 @@ void PageBanner::showIfHidden()
 
     // This will re-create a parent layer in the WebCore layer tree, and we will re-add
     // m_layer as a child of it. 
-    addToPage(m_type, m_webPage);
+    addToPage(m_type, m_webPage.get());
 }
 
 void PageBanner::didChangeDeviceScaleFactor(float scaleFactor)

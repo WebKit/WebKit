@@ -220,6 +220,35 @@ Install cmake: http://www.cmake.org/
     make -j4
     make package
 
+## Building RISC-V target with cmake
+
+### Prerequisite: build risc-v clang toolchain and qemu
+
+If you don't have prebuilt clang and riscv64 qemu, run the script to download source and build them.
+
+    ./riscv_script/prepare_toolchain_qemu.sh
+
+After running script, clang & qemu are built in `build-toolchain-qemu/riscv-clang/` & `build-toolchain-qemu/riscv-qemu/`.
+
+### Cross-compile for RISC-V target
+    cmake -B out/Release/ -DUNIT_TEST=ON \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_TOOLCHAIN_FILE="./riscv_script/riscv-clang.cmake" \
+          -DTOOLCHAIN_PATH={TOOLCHAIN_PATH} \
+          -DUSE_RVV=ON .
+    cmake --build out/Release/
+
+
+### Run on QEMU
+
+#### Run libyuv_unittest on QEMU
+    cd out/Release/
+    USE_RVV=ON \
+    TOOLCHAIN_PATH={TOOLCHAIN_PATH} \
+    QEMU_PREFIX_PATH={QEMU_PREFIX_PATH} \
+    ../../riscv_script/run_qemu.sh libyuv_unittest
+
+
 ## Setup for Arm Cross compile
 
 See also https://www.ccoderun.ca/programming/2015-12-20_CrossCompiling/index.html

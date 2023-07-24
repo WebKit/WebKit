@@ -69,7 +69,7 @@ static void checkURLArgument(NSURL *url)
     if (!identifier)
         [NSException raise:NSInvalidArgumentException format:@"Identifier is nil"];
 
-    auto uuid = UUID::fromNSUUID(identifier);
+    auto uuid = WTF::UUID::fromNSUUID(identifier);
     if (!uuid || !uuid->isValid())
         [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", String([identifier UUIDString]).utf8().data()];
 
@@ -542,6 +542,24 @@ static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_WKUnifiedO
     }
 
     _configuration->setTotalQuotaRatio(ratio);
+}
+
+- (NSNumber *)standardVolumeCapacity
+{
+    auto capacity = _configuration->standardVolumeCapacity();
+    if (!capacity)
+        return nil;
+
+    return [NSNumber numberWithUnsignedLongLong:*capacity];
+}
+
+- (void)setStandardVolumeCapacity:(NSNumber *)standardVolumeCapacity
+{
+    std::optional<uint64_t> capacity;
+    if (standardVolumeCapacity)
+        capacity = [standardVolumeCapacity unsignedLongLongValue];
+
+    _configuration->setStandardVolumeCapacity(capacity);
 }
 
 - (NSNumber *)volumeCapacityOverride

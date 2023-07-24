@@ -28,13 +28,14 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/GraphicsContext.h>
+
 namespace WebKit {
-using namespace WebCore;
 
 RemoteImageBuffer::~RemoteImageBuffer()
 {
     // Volatile image buffers do not have contexts.
-    if (this->volatilityState() == VolatilityState::Volatile)
+    if (this->volatilityState() == WebCore::VolatilityState::Volatile)
         return;
     if (!m_backend)
         return;

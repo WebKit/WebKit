@@ -1,0 +1,3 @@
+
+PASS Launch a worker and terminate it before its service worker job is finished
+

@@ -40,10 +40,8 @@
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
-#elif USE(OPENGL_ES)
-#include <GLES2/gl2.h>
 #else
-#include <GL/gl.h>
+#include <GLES2/gl2.h>
 #endif
 
 namespace WebKit {
@@ -163,13 +161,6 @@ void ThreadedCompositor::resume()
         m_scene->setActive(true);
     });
     m_compositingRunLoop->resume();
-}
-
-void ThreadedCompositor::setScaleFactor(float scale)
-{
-    Locker locker { m_attributes.lock };
-    m_attributes.scaleFactor = scale;
-    m_compositingRunLoop->scheduleUpdate();
 }
 
 void ThreadedCompositor::setScrollPosition(const IntPoint& scrollPosition, float scale)

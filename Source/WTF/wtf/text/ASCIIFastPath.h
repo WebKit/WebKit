@@ -69,7 +69,7 @@ template<> struct NonASCIIMask<8, LChar> {
 
 
 template<typename CharacterType>
-inline bool isAllASCII(MachineWord word)
+inline bool containsOnlyASCII(MachineWord word)
 {
     return !(word & NonASCIIMask<sizeof(MachineWord), CharacterType>::value());
 }

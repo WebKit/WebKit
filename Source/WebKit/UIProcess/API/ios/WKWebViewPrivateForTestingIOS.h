@@ -74,6 +74,7 @@
 - (double)timePickerValueMinute;
 
 - (void)applyAutocorrection:(NSString *)newString toString:(NSString *)oldString withCompletionHandler:(void (^)(void))completionHandler;
+- (void)applyAutocorrection:(NSString *)newString toString:(NSString *)oldString isCandidate:(BOOL)isCandidate withCompletionHandler:(void (^)(void))completionHandler;
 
 - (NSDictionary *)_propertiesOfLayerWithID:(unsigned long long)layerID;
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location;

@@ -137,5 +137,16 @@ TEST(NamesCollectionTest, AddRemoveAddPreserveTheIndex) {
   EXPECT_THAT(collection.size(), Eq(static_cast<size_t>(1)));
 }
 
+TEST(NamesCollectionTest, GetKnownSizeReturnsForRemovedNames) {
+  NamesCollection collection(std::vector<std::string>{});
+
+  size_t alice_index = collection.AddIfAbsent("alice");
+  EXPECT_THAT(collection.GetKnownSize(), Eq(static_cast<size_t>(1)));
+
+  EXPECT_THAT(collection.RemoveIfPresent("alice"),
+              Eq(absl::optional<size_t>(alice_index)));
+  EXPECT_THAT(collection.GetKnownSize(), Eq(static_cast<size_t>(1)));
+}
+
 }  // namespace
 }  // namespace webrtc

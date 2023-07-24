@@ -1,47 +1,44 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
 <head>
+<script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
 </head>
 <body>
 
-<p id="description"></p>
-
 <div style="border: 1px solid #000; height: 5000px;">5000-pixel box</div>
 <button id="target" style="height: 5000px;">Target</button>
 
-<div id="console"></div>
-
 <script>
-description("Tests that scrolling to make a certain region within an element visible successfully scrolls the main window.");
+var output = "Tests that scrolling to make a certain region within an element visible successfully scrolls the main window.\n\n";
 
-function runTest() {
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
     var target = document.getElementById("target");
-
     var targetAccessibleObject;
-    if (window.accessibilityController) {
-        target.focus();
-        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
-        targetAccessibleObject = accessibilityController.focusedElement;
-    }
+    setTimeout(async function() {
+        targetAccessibleObject = await waitForFocus("target");
+        // Reset the initial scroll position (since calling focus() can scroll the page too).
+        window.scrollTo(0, 0);
+        output += expect("window.pageYOffset", "0");
 
-    // Reset the initial scroll position (since calling focus() can scroll the page too).
-    window.scrollTo(0, 0);
-    shouldBeZero("window.pageYOffset");
-
-    // Scroll to make the midpoint of the target visible and check.
-    if (window.accessibilityController)
+        // Scroll to make the midpoint of the target visible and check.
         targetAccessibleObject.scrollToMakeVisibleWithSubFocus(0, 2500, 100, 2600);
-    window.minYOffset = target.offsetTop + 2500 - window.innerHeight;
-    window.maxYOffset = target.offsetTop + 2500;
-    shouldBeTrue("window.pageYOffset >= minYOffset");
-    shouldBeTrue("window.pageYOffset <= maxYOffset");
+        await waitFor(() => {
+            window.minYOffset = target.offsetTop + 2500 - window.innerHeight;
+            window.maxYOffset = target.offsetTop + 2500;
+            return window.pageYOffset >= minYOffset && window.pageYOffset <= maxYOffset;
+        });
 
-    finishJSTest();
+        output += expect("window.pageYOffset >= minYOffset", "true");
+        output += expect("window.pageYOffset <= maxYOffset", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
 }
-
-runTest();
-
 </script>
-
 </body>
 </html>
+

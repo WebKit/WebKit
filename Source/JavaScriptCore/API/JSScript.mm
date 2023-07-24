@@ -73,7 +73,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
         return true;
 
     URL cachePathURL([cachePath absoluteURL]);
-    if (!cachePathURL.isLocalFile()) {
+    if (!cachePathURL.protocolIsFile()) {
         createError([NSString stringWithFormat:@"Cache path `%@` is not a local file", static_cast<NSURL *>(cachePathURL)], error);
         return false;
     }
@@ -129,7 +129,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
         return nil;
 
     URL filePathURL([filePath absoluteURL]);
-    if (!filePathURL.isLocalFile())
+    if (!filePathURL.protocolIsFile())
         return createError([NSString stringWithFormat:@"File path %@ is not a local file", static_cast<NSURL *>(filePathURL)], error);
 
     bool success = false;

@@ -260,6 +260,11 @@ bool ScrollerPairMac::useDarkAppearance() const
     return m_scrollingNode.useDarkAppearanceForScrollbars();
 }
 
+ScrollbarWidth ScrollerPairMac::scrollbarWidthStyle() const
+{
+    return m_scrollingNode.scrollbarWidthStyle();
+}
+
 ScrollerPairMac::Values ScrollerPairMac::valuesForOrientation(ScrollbarOrientation orientation)
 {
     float position;

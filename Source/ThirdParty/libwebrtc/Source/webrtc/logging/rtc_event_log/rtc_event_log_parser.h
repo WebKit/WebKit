@@ -40,6 +40,7 @@
 #include "logging/rtc_event_log/events/rtc_event_generic_packet_sent.h"
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
+#include "logging/rtc_event_log/events/rtc_event_neteq_set_minimum_delay.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_result_success.h"
@@ -451,6 +452,11 @@ class ParsedRtcEventLog {
     return audio_playout_events_;
   }
 
+  const std::map<uint32_t, std::vector<LoggedNetEqSetMinimumDelayEvent>>&
+  neteq_set_minimum_delay_events() const {
+    return neteq_set_minimum_delay_events_;
+  }
+
   const std::vector<LoggedAudioNetworkAdaptationEvent>&
   audio_network_adaptation_events() const {
     return audio_network_adaptation_events_;
@@ -763,6 +769,8 @@ class ParsedRtcEventLog {
   ParseStatus StoreIncomingRtcpPackets(
       const rtclog2::IncomingRtcpPackets& proto);
   ParseStatus StoreIncomingRtpPackets(const rtclog2::IncomingRtpPackets& proto);
+  ParseStatus StoreNetEqSetMinimumDelay(
+      const rtclog2::NetEqSetMinimumDelay& proto);
   ParseStatus StoreOutgoingRtcpPackets(
       const rtclog2::OutgoingRtcpPackets& proto);
   ParseStatus StoreOutgoingRtpPackets(const rtclog2::OutgoingRtpPackets& proto);
@@ -858,6 +866,8 @@ class ParsedRtcEventLog {
 
   std::map<uint32_t, std::vector<LoggedAudioPlayoutEvent>>
       audio_playout_events_;
+  std::map<uint32_t, std::vector<LoggedNetEqSetMinimumDelayEvent>>
+      neteq_set_minimum_delay_events_;
 
   std::vector<LoggedAudioNetworkAdaptationEvent>
       audio_network_adaptation_events_;

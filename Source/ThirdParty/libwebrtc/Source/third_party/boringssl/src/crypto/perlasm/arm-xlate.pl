@@ -151,6 +151,28 @@ sub expand_line {
     return $line;
 }
 
+my ($arch_defines, $target_defines);
+if ($flavour =~ /32/) {
+    $arch_defines = "defined(__ARMEL__)";
+} elsif ($flavour =~ /64/) {
+    $arch_defines = "defined(__AARCH64EL__)";
+} else {
+    die "unknown architecture: $flavour";
+}
+if ($flavour =~ /linux/) {
+    # Although the flavour is specified as "linux", it is really used by all
+    # ELF platforms.
+    $target_defines = "defined(__ELF__)";
+} elsif ($flavour =~ /ios/) {
+    # Although the flavour is specified as "ios", it is really used by all Apple
+    # platforms.
+    $target_defines = "defined(__APPLE__)";
+} elsif ($flavour =~ /win/) {
+    $target_defines = "defined(_WIN32)";
+} else {
+    die "unknown target: $flavour";
+}
+
 print <<___;
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
@@ -162,11 +184,8 @@ print <<___;
 #define OPENSSL_NO_ASM
 #endif
 
-#if !defined(OPENSSL_NO_ASM)
+#if !defined(OPENSSL_NO_ASM) && $arch_defines && $target_defines
 ___
-
-print "#if defined(__arm__)\n" if ($flavour eq "linux32");
-print "#if defined(__aarch64__)\n" if ($flavour eq "linux64" || $flavour eq "win64");
 
 print "#if defined(BORINGSSL_PREFIX)\n";
 print "#include <boringssl_prefix_symbols_asm.h>\n";
@@ -239,10 +258,12 @@ while(my $line=<>) {
     print "\n";
 }
 
-print "#endif\n" if ($flavour eq "linux32" || $flavour eq "linux64" || $flavour eq "win64");
-print "#endif  // !OPENSSL_NO_ASM\n";
+print <<___;
+#endif  // !OPENSSL_NO_ASM && $arch_defines && $target_defines
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",\%progbits
+#endif
+___
 
-# See https://www.airs.com/blog/archives/518.
-print ".section\t.note.GNU-stack,\"\",\%progbits\n" if ($flavour =~ /linux/);
-
-close STDOUT;
+close STDOUT or die "error closing STDOUT: $!";

@@ -156,7 +156,7 @@ void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase& canvas, co
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
 #if ENABLE(WEBGL)
-    if (m_canvas->renderingContext() && m_canvas->renderingContext()->needsPreparationForDisplay())
+    if (m_canvas->renderingContext() && m_canvas->renderingContext()->needsPreparationForDisplay() && m_canvas->hasObserver(m_canvas->document()))
         return;
 #endif
     scheduleCaptureCanvas();

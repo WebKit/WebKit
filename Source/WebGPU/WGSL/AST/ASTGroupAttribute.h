@@ -34,15 +34,15 @@ class GroupAttribute final : public Attribute {
     WGSL_AST_BUILDER_NODE(GroupAttribute);
 public:
     NodeKind kind() const override;
-    unsigned group() const { return m_value; }
+    Expression& group() const { return m_value; }
 
 private:
-    GroupAttribute(SourceSpan span, unsigned group)
+    GroupAttribute(SourceSpan span, Expression::Ref&& group)
         : Attribute(span)
         , m_value(group)
     { }
 
-    unsigned m_value;
+    Expression::Ref m_value;
 };
 
 } // namespace WGSL::AST

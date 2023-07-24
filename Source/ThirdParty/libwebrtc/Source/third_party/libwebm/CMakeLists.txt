@@ -25,7 +25,8 @@ option(ENABLE_IWYU "Enables include-what-you-use support." OFF)
 option(ENABLE_WERROR "Enable warnings as errors." OFF)
 option(ENABLE_WEBM_PARSER "Enables new parser API." OFF)
 
-if(WIN32)
+if(WIN32 OR CYGWIN OR MSYS)
+  # Allow use of rand_r() / fdopen() and other POSIX functions.
   require_cxx_flag_nomsvc("-std=gnu++11")
 else()
   require_cxx_flag_nomsvc("-std=c++11")

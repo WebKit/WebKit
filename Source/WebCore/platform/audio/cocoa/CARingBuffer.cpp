@@ -147,12 +147,9 @@ inline void ZeroABL(AudioBufferList* list, size_t destOffset, size_t nbytes)
 
 void CARingBuffer::setTimeBounds(TimeBounds bufferBounds)
 {
-    m_storeBounds = bufferBounds;
-
     auto& bounds = timeBoundsBuffer();
-    unsigned index = (bounds.index.load(std::memory_order_acquire) + 1) % boundsBufferSize;
-    bounds.buffer[index] = bufferBounds;
-    bounds.index.store(index, std::memory_order_release);
+    bounds.store(bufferBounds);
+    m_storeBounds = bufferBounds;
 }
 
 CARingBuffer::TimeBounds CARingBuffer::getStoreTimeBounds()
@@ -219,19 +216,10 @@ CARingBuffer::Error CARingBuffer::store(const AudioBufferList* list, size_t fram
 
 CARingBuffer::TimeBounds CARingBuffer::getFetchTimeBounds()
 {
-    auto& bounds = timeBoundsBuffer();
-    unsigned index = bounds.index.load(std::memory_order_acquire);
-    if (UNLIKELY(index >= boundsBufferSize)) {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-
-    auto fetchBounds = bounds.buffer[index];
-    if (fetchBounds.endFrame - fetchBounds.startFrame > m_frameCount) {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-    return fetchBounds;
+    auto bounds = timeBoundsBuffer().load();
+    bounds.startFrame = std::min(bounds.startFrame, std::numeric_limits<uint64_t>::max() - m_frameCount);
+    bounds.endFrame = std::clamp(bounds.endFrame, bounds.startFrame, bounds.startFrame + m_frameCount);
+    return bounds;
 }
 
 static CARingBuffer::TimeBounds clamp(CARingBuffer::TimeBounds value, CARingBuffer::TimeBounds limit)

@@ -80,7 +80,8 @@ void aom_highbd_quantize_b_sse2(const tran_low_t *coeff_ptr, intptr_t count,
         const int64_t tmp4 = ((tmp3 * quant_ptr[k != 0]) >> 16) + tmp3;
         const uint32_t abs_qcoeff =
             (uint32_t)((tmp4 * quant_shift_ptr[k != 0]) >> 16);
-        qcoeff_ptr[k] = (int)(abs_qcoeff ^ coeff_sign[j]) - coeff_sign[j];
+        qcoeff_ptr[k] =
+            (int)(abs_qcoeff ^ (uint32_t)coeff_sign[j]) - coeff_sign[j];
         dqcoeff_ptr[k] = qcoeff_ptr[k] * dequant_ptr[k != 0];
         if (abs_qcoeff) eob_i = iscan[k] > eob_i ? iscan[k] : eob_i;
       }
@@ -140,7 +141,7 @@ void aom_highbd_quantize_b_32x32_sse2(
     const int64_t tmp2 = ((tmp1 * quant_ptr[rc != 0]) >> 16) + tmp1;
     const uint32_t abs_qcoeff =
         (uint32_t)((tmp2 * quant_shift_ptr[rc != 0]) >> 15);
-    qcoeff_ptr[rc] = (int)(abs_qcoeff ^ coeff_sign) - coeff_sign;
+    qcoeff_ptr[rc] = (int)(abs_qcoeff ^ (uint32_t)coeff_sign) - coeff_sign;
     dqcoeff_ptr[rc] = qcoeff_ptr[rc] * dequant_ptr[rc != 0] / 2;
     if (abs_qcoeff) eob = iscan[idx_arr[i]] > eob ? iscan[idx_arr[i]] : eob;
   }
@@ -198,7 +199,7 @@ void aom_highbd_quantize_b_64x64_sse2(
     const int64_t tmp2 = ((tmp1 * quant_ptr[rc != 0]) >> 16) + tmp1;
     const uint32_t abs_qcoeff =
         (uint32_t)((tmp2 * quant_shift_ptr[rc != 0]) >> 14);
-    qcoeff_ptr[rc] = (int)(abs_qcoeff ^ coeff_sign) - coeff_sign;
+    qcoeff_ptr[rc] = (int)(abs_qcoeff ^ (uint32_t)coeff_sign) - coeff_sign;
     dqcoeff_ptr[rc] = qcoeff_ptr[rc] * dequant_ptr[rc != 0] / 4;
     if (abs_qcoeff) eob = iscan[idx_arr[i]] > eob ? iscan[idx_arr[i]] : eob;
   }

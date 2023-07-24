@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class QuerySet;
 }
 
@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemoteQuerySet final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteQuerySet> create(PAL::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteQuerySet> create(WebCore::WebGPU::QuerySet& querySet, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteQuerySet(querySet, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -61,14 +61,14 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteQuerySet(PAL::WebGPU::QuerySet&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteQuerySet(WebCore::WebGPU::QuerySet&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteQuerySet(const RemoteQuerySet&) = delete;
     RemoteQuerySet(RemoteQuerySet&&) = delete;
     RemoteQuerySet& operator=(const RemoteQuerySet&) = delete;
     RemoteQuerySet& operator=(RemoteQuerySet&&) = delete;
 
-    PAL::WebGPU::QuerySet& backing() { return m_backing; }
+    WebCore::WebGPU::QuerySet& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -77,7 +77,7 @@ private:
 
     void setLabel(String&&);
 
-    Ref<PAL::WebGPU::QuerySet> m_backing;
+    Ref<WebCore::WebGPU::QuerySet> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

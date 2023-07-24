@@ -14,7 +14,7 @@
 #include <memory>
 
 #include "absl/types/optional.h"
-#include "modules/audio_processing/agc/gain_map_internal.h"
+#include "modules/audio_processing/agc2/gain_map_internal.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
@@ -94,8 +94,8 @@ class FakeRecordingDeviceLinear final : public FakeRecordingDeviceWorker {
   }
 };
 
-float ComputeAgc1LinearFactor(const absl::optional<int>& undo_mic_level,
-                              int mic_level) {
+float ComputeAgcLinearFactor(const absl::optional<int>& undo_mic_level,
+                             int mic_level) {
   // If an undo level is specified, virtually restore the unmodified
   // microphone level; otherwise simulate the mic gain only.
   const int undo_level =
@@ -105,14 +105,14 @@ float ComputeAgc1LinearFactor(const absl::optional<int>& undo_mic_level,
 
 // Roughly dB-scale fake recording device. Valid levels are [0, 255]. The mic
 // applies a gain from kGainMap in agc/gain_map_internal.h.
-class FakeRecordingDeviceAgc1 final : public FakeRecordingDeviceWorker {
+class FakeRecordingDeviceAgc final : public FakeRecordingDeviceWorker {
  public:
-  explicit FakeRecordingDeviceAgc1(const int initial_mic_level)
+  explicit FakeRecordingDeviceAgc(const int initial_mic_level)
       : FakeRecordingDeviceWorker(initial_mic_level) {}
-  ~FakeRecordingDeviceAgc1() override = default;
+  ~FakeRecordingDeviceAgc() override = default;
   void ModifyBufferInt16(rtc::ArrayView<int16_t> buffer) override {
     const float scaling_factor =
-        ComputeAgc1LinearFactor(undo_mic_level_, mic_level_);
+        ComputeAgcLinearFactor(undo_mic_level_, mic_level_);
     const size_t number_of_samples = buffer.size();
     int16_t* data = buffer.data();
     for (size_t i = 0; i < number_of_samples; ++i) {
@@ -121,7 +121,7 @@ class FakeRecordingDeviceAgc1 final : public FakeRecordingDeviceWorker {
   }
   void ModifyBufferFloat(ChannelBuffer<float>* buffer) override {
     const float scaling_factor =
-        ComputeAgc1LinearFactor(undo_mic_level_, mic_level_);
+        ComputeAgcLinearFactor(undo_mic_level_, mic_level_);
     for (size_t c = 0; c < buffer->num_channels(); ++c) {
       for (size_t i = 0; i < buffer->num_frames(); ++i) {
         buffer->channels()[c][i] =
@@ -145,7 +145,7 @@ FakeRecordingDevice::FakeRecordingDevice(int initial_mic_level,
       worker_ = std::make_unique<FakeRecordingDeviceLinear>(initial_mic_level);
       break;
     case 2:
-      worker_ = std::make_unique<FakeRecordingDeviceAgc1>(initial_mic_level);
+      worker_ = std::make_unique<FakeRecordingDeviceAgc>(initial_mic_level);
       break;
     default:
       RTC_DCHECK_NOTREACHED();

@@ -220,32 +220,32 @@ void av1_update_eob_context(int eob, TX_SIZE tx_size, TX_CLASS tx_class,
 }
 
 static INLINE int get_nz_map_ctx(const uint8_t *const levels,
-                                 const int coeff_idx, const int bwl,
-                                 const int height, const int scan_idx,
+                                 const int coeff_idx, const int bhl,
+                                 const int width, const int scan_idx,
                                  const int is_eob, const TX_SIZE tx_size,
                                  const TX_CLASS tx_class) {
   if (is_eob) {
     if (scan_idx == 0) return 0;
-    if (scan_idx <= (height << bwl) / 8) return 1;
-    if (scan_idx <= (height << bwl) / 4) return 2;
+    if (scan_idx <= (width << bhl) / 8) return 1;
+    if (scan_idx <= (width << bhl) / 4) return 2;
     return 3;
   }
   const int stats =
-      get_nz_mag(levels + get_padded_idx(coeff_idx, bwl), bwl, tx_class);
-  return get_nz_map_ctx_from_stats(stats, coeff_idx, bwl, tx_size, tx_class);
+      get_nz_mag(levels + get_padded_idx(coeff_idx, bhl), bhl, tx_class);
+  return get_nz_map_ctx_from_stats(stats, coeff_idx, bhl, tx_size, tx_class);
 }
 
 void av1_txb_init_levels_c(const tran_low_t *const coeff, const int width,
                            const int height, uint8_t *const levels) {
-  const int stride = width + TX_PAD_HOR;
+  const int stride = height + TX_PAD_HOR;
   uint8_t *ls = levels;
 
-  memset(levels + stride * height, 0,
+  memset(levels + stride * width, 0,
          sizeof(*levels) * (TX_PAD_BOTTOM * stride + TX_PAD_END));
 
-  for (int i = 0; i < height; i++) {
-    for (int j = 0; j < width; j++) {
-      *ls++ = (uint8_t)clamp(abs(coeff[i * width + j]), 0, INT8_MAX);
+  for (int i = 0; i < width; i++) {
+    for (int j = 0; j < height; j++) {
+      *ls++ = (uint8_t)clamp(abs(coeff[i * height + j]), 0, INT8_MAX);
     }
     for (int j = 0; j < TX_PAD_HOR; j++) {
       *ls++ = 0;
@@ -257,11 +257,11 @@ void av1_get_nz_map_contexts_c(const uint8_t *const levels,
                                const int16_t *const scan, const uint16_t eob,
                                const TX_SIZE tx_size, const TX_CLASS tx_class,
                                int8_t *const coeff_contexts) {
-  const int bwl = get_txb_bwl(tx_size);
-  const int height = get_txb_high(tx_size);
+  const int bhl = get_txb_bhl(tx_size);
+  const int width = get_txb_wide(tx_size);
   for (int i = 0; i < eob; ++i) {
     const int pos = scan[i];
-    coeff_contexts[pos] = get_nz_map_ctx(levels, pos, bwl, height, i,
+    coeff_contexts[pos] = get_nz_map_ctx(levels, pos, bhl, width, i,
                                          i == eob - 1, tx_size, tx_class);
   }
 }
@@ -344,7 +344,7 @@ void av1_write_coeffs_txb(const AV1_COMMON *const cm, MACROBLOCK *const x,
   const int width = get_txb_wide(tx_size);
   const int height = get_txb_high(tx_size);
   uint8_t levels_buf[TX_PAD_2D];
-  uint8_t *const levels = set_levels(levels_buf, width);
+  uint8_t *const levels = set_levels(levels_buf, height);
   const tran_low_t *tcoeff_txb =
       cb_coef_buff->tcoeff[plane] + x->mbmi_ext_frame->cb_offset[plane_type];
   const tran_low_t *tcoeff = tcoeff_txb + BLOCK_OFFSET(block);
@@ -354,7 +354,7 @@ void av1_write_coeffs_txb(const AV1_COMMON *const cm, MACROBLOCK *const x,
   DECLARE_ALIGNED(16, int8_t, coeff_contexts[MAX_TX_SQUARE]);
   av1_get_nz_map_contexts(levels, scan, eob, tx_size, tx_class, coeff_contexts);
 
-  const int bwl = get_txb_bwl(tx_size);
+  const int bhl = get_txb_bhl(tx_size);
   for (int c = eob - 1; c >= 0; --c) {
     const int pos = scan[c];
     const int coeff_ctx = coeff_contexts[pos];
@@ -373,7 +373,7 @@ void av1_write_coeffs_txb(const AV1_COMMON *const cm, MACROBLOCK *const x,
     if (level > NUM_BASE_LEVELS) {
       // level is above 1.
       const int base_range = level - 1 - NUM_BASE_LEVELS;
-      const int br_ctx = get_br_ctx(levels, pos, bwl, tx_class);
+      const int br_ctx = get_br_ctx(levels, pos, bhl, tx_class);
       aom_cdf_prob *cdf =
           ec_ctx->coeff_br_cdf[AOMMIN(txs_ctx, TX_32X32)][plane_type][br_ctx];
       for (int idx = 0; idx < COEFF_BASE_RANGE; idx += BR_CDF_SIZE - 1) {
@@ -571,7 +571,7 @@ void av1_update_and_record_txb_context(int plane, int block, int blk_row,
     get_txb_ctx(plane_bsize, tx_size, plane,
                 pd->above_entropy_context + blk_col,
                 pd->left_entropy_context + blk_row, &txb_ctx);
-    const int bwl = get_txb_bwl(tx_size);
+    const int bhl = get_txb_bhl(tx_size);
     const int width = get_txb_wide(tx_size);
     const int height = get_txb_high(tx_size);
     const uint8_t allow_update_cdf = args->allow_update_cdf;
@@ -607,7 +607,7 @@ void av1_update_and_record_txb_context(int plane, int block, int blk_row,
     memcpy(tcoeff, qcoeff, sizeof(*tcoeff) * seg_eob);
 
     uint8_t levels_buf[TX_PAD_2D];
-    uint8_t *const levels = set_levels(levels_buf, width);
+    uint8_t *const levels = set_levels(levels_buf, height);
     av1_txb_init_levels(tcoeff, width, height, levels);
     update_tx_type_count(cpi, cm, xd, blk_row, blk_col, plane, tx_size,
                          td->counts, allow_update_cdf);
@@ -663,7 +663,7 @@ void av1_update_and_record_txb_context(int plane, int block, int blk_row,
       }
       if (level > NUM_BASE_LEVELS) {
         const int base_range = level - 1 - NUM_BASE_LEVELS;
-        const int br_ctx = get_br_ctx(levels, pos, bwl, tx_class);
+        const int br_ctx = get_br_ctx(levels, pos, bhl, tx_class);
         for (int idx = 0; idx < COEFF_BASE_RANGE; idx += BR_CDF_SIZE - 1) {
           const int k = AOMMIN(base_range - idx, BR_CDF_SIZE - 1);
           if (allow_update_cdf) {
@@ -735,7 +735,7 @@ void av1_record_txb_context(int plane, int block, int blk_row, int blk_col,
                 pd->left_entropy_context + blk_row, &txb_ctx);
 #if CONFIG_ENTROPY_STATS
     const TX_SIZE txsize_ctx = get_txsize_entropy_ctx(tx_size);
-    const int bwl = get_txb_bwl(tx_size);
+    const int bhl = get_txb_bhl(tx_size);
     const int width = get_txb_wide(tx_size);
     const int height = get_txb_high(tx_size);
     int cdf_idx = cm->coef_cdf_category;
@@ -764,7 +764,7 @@ void av1_record_txb_context(int plane, int block, int blk_row, int blk_col,
 
 #if CONFIG_ENTROPY_STATS
     uint8_t levels_buf[TX_PAD_2D];
-    uint8_t *const levels = set_levels(levels_buf, width);
+    uint8_t *const levels = set_levels(levels_buf, height);
     av1_txb_init_levels(tcoeff, width, height, levels);
     update_tx_type_count(cpi, cm, xd, blk_row, blk_col, plane, tx_size,
                          td->counts, 0 /*allow_update_cdf*/);
@@ -810,7 +810,7 @@ void av1_record_txb_context(int plane, int block, int blk_row, int blk_col,
       }
       if (level > NUM_BASE_LEVELS) {
         const int base_range = level - 1 - NUM_BASE_LEVELS;
-        const int br_ctx = get_br_ctx(levels, pos, bwl, tx_class);
+        const int br_ctx = get_br_ctx(levels, pos, bhl, tx_class);
         for (int idx = 0; idx < COEFF_BASE_RANGE; idx += BR_CDF_SIZE - 1) {
           const int k = AOMMIN(base_range - idx, BR_CDF_SIZE - 1);
           for (int lps = 0; lps < BR_CDF_SIZE - 1; lps++) {

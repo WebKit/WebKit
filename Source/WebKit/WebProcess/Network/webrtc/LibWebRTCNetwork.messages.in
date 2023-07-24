@@ -28,6 +28,7 @@ messages -> LibWebRTCNetwork NotRefCounted {
     SignalAddressReady(WebCore::LibWebRTCSocketIdentifier socketIdentifier, WebKit::RTCNetwork::SocketAddress address)
     SignalConnect(WebCore::LibWebRTCSocketIdentifier socketIdentifier)
     SignalClose(WebCore::LibWebRTCSocketIdentifier socketIdentifier, int error)
+    SignalUsedInterface(WebCore::LibWebRTCSocketIdentifier socketIdentifier, String interfaceName)
 }
 
 #endif // USE(LIBWEBRTC)

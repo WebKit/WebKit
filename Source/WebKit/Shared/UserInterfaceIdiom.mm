@@ -30,43 +30,67 @@
 
 #import "UIKitSPI.h"
 #import <WebCore/Device.h>
-#import <wtf/TriState.h>
 
 namespace WebKit {
 
-static TriState idiomIsSmallScreen = TriState::Indeterminate;
+static std::optional<UserInterfaceIdiom> s_currentUserInterfaceIdiom;
 
 bool currentUserInterfaceIdiomIsSmallScreen()
 {
-    if (idiomIsSmallScreen == TriState::Indeterminate)
+    if (!s_currentUserInterfaceIdiom)
         updateCurrentUserInterfaceIdiom();
-    return idiomIsSmallScreen == TriState::True;
+    return s_currentUserInterfaceIdiom == UserInterfaceIdiom::SmallScreen;
 }
 
-void setCurrentUserInterfaceIdiomIsSmallScreen(bool isSmallScreen)
+bool currentUserInterfaceIdiomIsReality()
 {
-    idiomIsSmallScreen = TriState(isSmallScreen);
+    if (!s_currentUserInterfaceIdiom)
+        updateCurrentUserInterfaceIdiom();
+    return s_currentUserInterfaceIdiom == UserInterfaceIdiom::Reality;
+}
+
+UserInterfaceIdiom currentUserInterfaceIdiom()
+{
+    if (!s_currentUserInterfaceIdiom)
+        updateCurrentUserInterfaceIdiom();
+    return s_currentUserInterfaceIdiom.value_or(UserInterfaceIdiom::Default);
+}
+
+void setCurrentUserInterfaceIdiom(UserInterfaceIdiom idiom)
+{
+    s_currentUserInterfaceIdiom = idiom;
 }
 
 bool updateCurrentUserInterfaceIdiom()
 {
-    bool wasSmallScreen = idiomIsSmallScreen == TriState::True;
+    UserInterfaceIdiom oldIdiom = s_currentUserInterfaceIdiom.value_or(UserInterfaceIdiom::Default);
 
     // If we are in a daemon, we cannot use UIDevice. Fall back to checking the hardware itself.
     // Since daemons don't ever run in an iPhone-app-on-iPad jail, this will be accurate in the daemon case,
     // but is not sufficient in the application case.
-    bool isSmallScreen;
-    if (![UIApplication sharedApplication])
-        isSmallScreen = WebCore::deviceClassIsSmallScreen();
-    else {
-        auto idiom = [[UIDevice currentDevice] userInterfaceIdiom];
-        isSmallScreen = idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch;
-    }
+    UserInterfaceIdiom newIdiom = [&] {
+        if (![UIApplication sharedApplication]) {
+            if (WebCore::deviceClassIsSmallScreen())
+                return UserInterfaceIdiom::SmallScreen;
+            if (WebCore::deviceClassIsReality())
+                return UserInterfaceIdiom::Reality;
+        } else {
+            auto idiom = [[UIDevice currentDevice] userInterfaceIdiom];
+            if (idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch)
+                return UserInterfaceIdiom::SmallScreen;
+#if PLATFORM(VISION)
+            if (idiom == UIUserInterfaceIdiomReality)
+                return UserInterfaceIdiom::Reality;
+#endif
+        }
 
-    if (wasSmallScreen == isSmallScreen)
+        return UserInterfaceIdiom::Default;
+    }();
+
+    if (oldIdiom == newIdiom)
         return false;
 
-    setCurrentUserInterfaceIdiomIsSmallScreen(isSmallScreen);
+    setCurrentUserInterfaceIdiom(newIdiom);
     return true;
 }
 

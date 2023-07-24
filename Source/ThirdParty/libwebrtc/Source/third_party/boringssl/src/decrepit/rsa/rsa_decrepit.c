@@ -61,7 +61,7 @@
 #include <openssl/bn.h>
 
 
-RSA *RSA_generate_key(int bits, unsigned long e_value, void *callback,
+RSA *RSA_generate_key(int bits, uint64_t e_value, void *callback,
                       void *cb_arg) {
   assert(callback == NULL);
   assert(cb_arg == NULL);
@@ -71,7 +71,7 @@ RSA *RSA_generate_key(int bits, unsigned long e_value, void *callback,
 
   if (rsa == NULL ||
       e == NULL ||
-      !BN_set_word(e, e_value) ||
+      !BN_set_u64(e, e_value) ||
       !RSA_generate_key_ex(rsa, bits, e, NULL)) {
     goto err;
   }

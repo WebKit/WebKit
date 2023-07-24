@@ -2018,7 +2018,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 }
 
 TEST_F(MediaSessionDescriptionFactoryTest,
-       AppendsStoppedExtensionIfKnownAndPresentInTheOffer) {
+       AllowsStoppedExtensionsToBeRemovedFromSubsequentOffer) {
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
@@ -2026,12 +2026,12 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   opts.media_description_options.back().header_extensions = {
       webrtc::RtpHeaderExtensionCapability("uri1", 1,
                                            RtpTransceiverDirection::kSendRecv),
-      webrtc::RtpHeaderExtensionCapability("uri2", 1,
+      webrtc::RtpHeaderExtensionCapability("uri2", 2,
                                            RtpTransceiverDirection::kSendRecv)};
   auto offer = f1_.CreateOffer(opts, nullptr);
 
-  // Now add "uri2" as stopped to the options verify that the offer contains
-  // uri2 since it's already present since before.
+  // Check that a subsequent offer after setting "uri2" to stopped no longer
+  // contains the extension.
   opts.media_description_options.back().header_extensions = {
       webrtc::RtpHeaderExtensionCapability("uri1", 1,
                                            RtpTransceiverDirection::kSendRecv),
@@ -2043,8 +2043,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
       ElementsAre(Property(
           &ContentInfo::media_description,
           Pointee(Property(&MediaContentDescription::rtp_header_extensions,
-                           ElementsAre(Field(&RtpExtension::uri, "uri1"),
-                                       Field(&RtpExtension::uri, "uri2")))))));
+                           ElementsAre(Field(&RtpExtension::uri, "uri1")))))));
 }
 
 TEST_F(MediaSessionDescriptionFactoryTest,

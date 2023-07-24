@@ -26,7 +26,9 @@ constexpr char kPayloadNameAv1[] = "AV1";
 // needed.
 constexpr char kPayloadNameAv1x[] = "AV1X";
 constexpr char kPayloadNameH264[] = "H264";
+#ifndef DISABLE_H265
 constexpr char kPayloadNameH265[] = "H265";
+#endif
 constexpr char kPayloadNameGeneric[] = "Generic";
 constexpr char kPayloadNameMultiplex[] = "Multiplex";
 }  // namespace

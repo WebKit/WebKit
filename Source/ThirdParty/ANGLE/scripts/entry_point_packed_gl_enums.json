@@ -1226,6 +1226,12 @@
     "glPointSizePointer": {
         "type": "VertexAttribType"
     },
+    "glPolygonMode": {
+        "mode": "PolygonMode"
+    },
+    "glPolygonModeNV": {
+        "mode": "PolygonMode"
+    },
     "glProgramBinary": {
         "program": "ShaderProgramID"
     },

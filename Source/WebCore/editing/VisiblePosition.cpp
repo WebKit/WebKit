@@ -710,7 +710,11 @@ void VisiblePosition::showTreeForThis() const
     m_deepPosition.showTreeForThis();
 }
 
-#endif
+String VisiblePositionRange::debugDescription() const
+{
+    return makeString("start: ", start.debugDescription(), ", end: ", end.debugDescription());
+}
+#endif // ENABLE(TREE_DEBUGGING)
 
 // FIXME: Maybe this should be deprecated too, like the underlying function?
 Element* enclosingBlockFlowElement(const VisiblePosition& visiblePosition)

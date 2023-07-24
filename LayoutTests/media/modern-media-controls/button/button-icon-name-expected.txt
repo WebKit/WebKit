@@ -8,7 +8,7 @@ There should be no iconName by default
 PASS button.iconName is ""
 
 Setting an iconName with invalid layout traits should throw
-PASS function () { button.iconName = Icons.Pause } threw exception No layout traits specified via layoutDelegate or overriden layouTraits() getter.
+PASS function() { button.iconName = Icons.Pause } threw exception No layout traits specified via layoutDelegate or overriden layouTraits() getter.
 PASS button.iconName is ""
 
 Setting macOS inline layout traits and setting play icon

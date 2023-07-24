@@ -150,7 +150,7 @@ layer at (31,190) size 141x14
 layer at (31,249) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
 layer at (8,286) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,278) size 784x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,278) size 784x3 [color=#808080] [border: (1px inset #808080)]
 layer at (630,369) size 139x14
   RenderBlock {DIV} at (6,3) size 141x15
 layer at (630,428) size 139x14
@@ -160,7 +160,7 @@ layer at (630,486) size 139x14
 layer at (630,545) size 139x14
   RenderBlock {DIV} at (6,3) size 141x15
 layer at (8,583) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,574) size 784x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,574) size 784x3 [color=#808080] [border: (1px inset #808080)]
 layer at (47,675) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
 layer at (47,763) size 141x14
@@ -170,7 +170,7 @@ layer at (47,851) size 141x14
 layer at (47,939) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
 layer at (8,989) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,980) size 784x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,980) size 784x3 [color=#808080] [border: (1px inset #808080)]
 layer at (614,1081) size 139x14
   RenderBlock {DIV} at (6,3) size 141x15
 layer at (614,1169) size 139x14

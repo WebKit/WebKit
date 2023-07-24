@@ -58,7 +58,6 @@
 #include <WebKit/WKNotificationPermissionRequest.h>
 #include <WebKit/WKNumber.h>
 #include <WebKit/WKOpenPanelResultListener.h>
-#include <WebKit/WKPageGroup.h>
 #include <WebKit/WKPageInjectedBundleClient.h>
 #include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKPluginInformation.h>
@@ -393,7 +392,7 @@ void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginR
     WKQueryPermissionResultCallbackCompleteWithPrompt(callback);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 static void lockScreenOrientationCallback(WKPageRef, WKScreenOrientationType orientation)
 {
     TestController::singleton().lockScreenOrientation(orientation);
@@ -630,8 +629,7 @@ void TestController::initialize(int argc, const char* argv[])
     WebCoreTestSupport::installMockGamepadProvider();
 #endif
 
-    m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(toWK("WebKitTestRunnerPageGroup").get()));
-
+    m_preferences = adoptWK(WKPreferencesCreate());
     m_eventSenderProxy = makeUnique<EventSenderProxy>(this);
 }
 
@@ -647,11 +645,8 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
         WKArrayAppendItem(overrideLanguages.get(), toWK(language).get());
     WKContextConfigurationSetOverrideLanguages(configuration.get(), overrideLanguages.get());
 
-    if (options.shouldEnableProcessSwapOnNavigation()) {
+    if (options.shouldEnableProcessSwapOnNavigation())
         WKContextConfigurationSetProcessSwapsOnNavigation(configuration.get(), true);
-        if (options.enableProcessSwapOnWindowOpen())
-            WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(configuration.get(), true);
-    }
 
     WKContextConfigurationSetShouldConfigureJSCForTesting(configuration.get(), true);
 
@@ -781,7 +776,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
 
     auto pageConfiguration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(pageConfiguration.get(), m_context.get());
-    WKPageConfigurationSetPageGroup(pageConfiguration.get(), m_pageGroup.get());
+    WKPageConfigurationSetPreferences(pageConfiguration.get(), m_preferences.get());
     
     if (options.useEphemeralSession()) {
         auto ephemeralDataStore = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
@@ -973,7 +968,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         decidePolicyForMediaKeySystemPermissionRequest,
         nullptr, // requestWebAuthenticationNoGesture
         queryPermission,
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
         lockScreenOrientationCallback,
         unlockScreenOrientationCallback
 #else
@@ -2340,7 +2335,7 @@ bool TestController::canAuthenticateAgainstProtectionSpace(WKPageRef page, WKPro
     auto scheme = WKProtectionSpaceGetAuthenticationScheme(protectionSpace);
     if (scheme == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
         auto host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)));
-        return host == "localhost" || host == "127.0.0.1" || m_localhostAliases.contains(host) || (m_allowAnyHTTPSCertificateForAllowedHosts && m_allowedHosts.contains(host));
+        return host == "localhost" || host == "127.0.0.1" || m_localhostAliases.find(host) != m_localhostAliases.end() || (m_allowAnyHTTPSCertificateForAllowedHosts && m_allowedHosts.find(host) != m_allowedHosts.end());
     }
     return scheme <= kWKProtectionSpaceAuthenticationSchemeHTTPDigest || scheme == kWKProtectionSpaceAuthenticationSchemeOAuth;
 }
@@ -3151,7 +3146,6 @@ UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebVi
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef)
 {
-    WKPageGroupSetPreferences(m_pageGroup.get(), adoptWK(WKPreferencesCreate()).get());
     return context;
 }
 

@@ -170,14 +170,13 @@ OpenSSL's ASN.1 stack uses `d2i` functions for parsing. They have the form:
 In addition to returning the result, OpenSSL places it in `*out` if `out` is
 not `NULL`. On input, if `*out` is not `NULL`, OpenSSL will usually (but not
 always) reuse that object rather than allocating a new one. In BoringSSL, these
-functions are compatibility wrappers over a newer ASN.1 stack. Even if `*out`
-is not `NULL`, these wrappers will always allocate a new object and free the
-previous one.
+functions will always allocate a new object and free the previous one.
 
 Ensure that callers do not rely on this object reuse behavior. It is
 recommended to avoid the `out` parameter completely and always pass in `NULL`.
-Note that less error-prone APIs are available for BoringSSL-specific code (see
-below).
+In most cases, even in OpenSSL, relying on object reuse is not safe because, on
+parse error, OpenSSL will free the reused object. Note that less error-prone
+APIs are available for BoringSSL-specific code (see below).
 
 ### Memory allocation
 

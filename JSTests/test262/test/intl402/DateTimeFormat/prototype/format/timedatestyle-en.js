@@ -4,7 +4,7 @@
 /*---
 esid: sec-date-time-style-pattern
 description: Checks basic handling of timeStyle and dateStyle.
-features: [Intl.DateTimeFormat-datetimestyle]
+features: [Intl.DateTimeFormat-datetimestyle, Array.prototype.includes]
 locale: [en-US]
 ---*/
 

@@ -118,7 +118,7 @@
 #endif
 
 // FIXME: Move this to PlatformHave.h.
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 #define HAVE_PDFKIT 1
 #endif
 

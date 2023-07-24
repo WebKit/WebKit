@@ -59,6 +59,7 @@ public:
             return nullptr;
         return add(string.releaseNonNull());
     }
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const StaticStringImpl*);
     ALWAYS_INLINE static Ref<AtomStringImpl> add(ASCIILiteral literal) { return addLiteral(literal.characters(), literal.length()); }
 
     // Not using the add() naming to encourage developers to call add(ASCIILiteral) when they have a string literal.
@@ -121,6 +122,22 @@ private:
 
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUpSlowCase(StringImpl&);
 };
+
+#if ASSERT_ENABLED
+
+// AtomStringImpls created from StaticStringImpl will ASSERT in the generic ValueCheck<T>::checkConsistency,
+// as they are not allocated by fastMalloc. We don't currently have any way to detect that case, so we don't
+// do any consistency check for AtomStringImpl*.
+
+template<> struct ValueCheck<AtomStringImpl*> {
+    static void checkConsistency(const AtomStringImpl*) { }
+};
+
+template<> struct ValueCheck<const AtomStringImpl*> {
+    static void checkConsistency(const AtomStringImpl*) { }
+};
+
+#endif // ASSERT_ENABLED
 
 }
 

@@ -1683,7 +1683,7 @@ void av1_predict_intra_block_facade(const AV1_COMMON *cm, MACROBLOCKD *xd,
 #endif
     CFL_CTX *const cfl = &xd->cfl;
     CFL_PRED_TYPE pred_plane = get_cfl_pred_type(plane);
-    if (cfl->dc_pred_is_cached[pred_plane] == 0) {
+    if (!cfl->dc_pred_is_cached[pred_plane]) {
       av1_predict_intra_block(xd, seq_params->sb_size,
                               seq_params->enable_intra_edge_filter, pd->width,
                               pd->height, tx_size, mode, angle_delta,
@@ -1691,7 +1691,7 @@ void av1_predict_intra_block_facade(const AV1_COMMON *cm, MACROBLOCKD *xd,
                               dst, dst_stride, blk_col, blk_row, plane);
       if (cfl->use_dc_pred_cache) {
         cfl_store_dc_pred(xd, dst, pred_plane, tx_size_wide[tx_size]);
-        cfl->dc_pred_is_cached[pred_plane] = 1;
+        cfl->dc_pred_is_cached[pred_plane] = true;
       }
     } else {
       cfl_load_dc_pred(xd, dst, dst_stride, tx_size, pred_plane);

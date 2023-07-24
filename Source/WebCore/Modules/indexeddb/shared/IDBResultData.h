@@ -40,7 +40,7 @@ namespace WebCore {
 
 class ThreadSafeDataBuffer;
 
-enum class IDBResultType {
+enum class IDBResultType : uint8_t {
     Error,
     OpenDatabaseSuccess,
     OpenDatabaseUpgradeNeeded,
@@ -136,30 +136,3 @@ private:
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::IDBResultType> {
-    using values = EnumValues<
-        WebCore::IDBResultType,
-        WebCore::IDBResultType::Error,
-        WebCore::IDBResultType::OpenDatabaseSuccess,
-        WebCore::IDBResultType::OpenDatabaseUpgradeNeeded,
-        WebCore::IDBResultType::DeleteDatabaseSuccess,
-        WebCore::IDBResultType::CreateObjectStoreSuccess,
-        WebCore::IDBResultType::DeleteObjectStoreSuccess,
-        WebCore::IDBResultType::ClearObjectStoreSuccess,
-        WebCore::IDBResultType::PutOrAddSuccess,
-        WebCore::IDBResultType::GetRecordSuccess,
-        WebCore::IDBResultType::GetAllRecordsSuccess,
-        WebCore::IDBResultType::GetCountSuccess,
-        WebCore::IDBResultType::DeleteRecordSuccess,
-        WebCore::IDBResultType::CreateIndexSuccess,
-        WebCore::IDBResultType::DeleteIndexSuccess,
-        WebCore::IDBResultType::OpenCursorSuccess,
-        WebCore::IDBResultType::IterateCursorSuccess,
-        WebCore::IDBResultType::RenameObjectStoreSuccess,
-        WebCore::IDBResultType::RenameIndexSuccess
-    >;
-};
-
-} // namespace WTF

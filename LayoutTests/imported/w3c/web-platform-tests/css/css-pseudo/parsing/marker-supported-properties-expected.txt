@@ -40,7 +40,7 @@ PASS Property transition-delay value '1s' in ::marker
 PASS Property transition-duration value '2s' in ::marker
 PASS Property transition-property value 'display' in ::marker
 PASS Property transition-timing-function value 'linear' in ::marker
-FAIL Property hyphens value 'none' in ::marker assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
+PASS Property hyphens value 'none' in ::marker
 PASS Property letter-spacing value '10px' in ::marker
 PASS Property line-break value 'anywhere' in ::marker
 PASS Property overflow-wrap value 'anywhere' in ::marker

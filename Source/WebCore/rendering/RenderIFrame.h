@@ -52,8 +52,6 @@ private:
 
     bool requiresLayer() const override;
 
-    RenderView* contentRootRenderer() const;
-
     bool isFullScreenIFrame() const;
 };
 

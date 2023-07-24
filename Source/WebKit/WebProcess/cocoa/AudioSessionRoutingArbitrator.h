@@ -52,8 +52,11 @@ public:
     void leaveRoutingAbritration() final;
 
 private:
-    WebProcess& m_process;
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    bool canLog() const final;
+
     WebCore::AudioSession::ChangedObserver m_observer;
+    const void* m_logIdentifier;
 };
 
 }

@@ -44,7 +44,7 @@ RemotePresentationContextProxy::RemotePresentationContextProxy(RemoteGPUProxy& p
 
 RemotePresentationContextProxy::~RemotePresentationContextProxy() = default;
 
-void RemotePresentationContextProxy::configure(const PAL::WebGPU::CanvasConfiguration& canvasConfiguration)
+void RemotePresentationContextProxy::configure(const WebCore::WebGPU::CanvasConfiguration& canvasConfiguration)
 {
     auto convertedConfiguration = m_convertToBackingContext->convertToBacking(canvasConfiguration);
     if (!convertedConfiguration) {
@@ -62,7 +62,7 @@ void RemotePresentationContextProxy::unconfigure()
     UNUSED_VARIABLE(sendResult);
 }
 
-RefPtr<PAL::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture()
+RefPtr<WebCore::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture()
 {
     if (!m_currentTexture) {
         auto identifier = WebGPUIdentifier::generate();

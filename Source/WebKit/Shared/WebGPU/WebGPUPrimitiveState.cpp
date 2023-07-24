@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUPrimitiveState.h>
+#include <WebCore/WebGPUPrimitiveState.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<PrimitiveState> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::PrimitiveState& primitiveState)
+std::optional<PrimitiveState> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::PrimitiveState& primitiveState)
 {
     return { { primitiveState.topology, primitiveState.stripIndexFormat, primitiveState.frontFace, primitiveState.cullMode, primitiveState.unclippedDepth } };
 }
 
-std::optional<PAL::WebGPU::PrimitiveState> ConvertFromBackingContext::convertFromBacking(const PrimitiveState& primitiveState)
+std::optional<WebCore::WebGPU::PrimitiveState> ConvertFromBackingContext::convertFromBacking(const PrimitiveState& primitiveState)
 {
     return { { primitiveState.topology, primitiveState.stripIndexFormat, primitiveState.frontFace, primitiveState.cullMode, primitiveState.unclippedDepth } };
 }

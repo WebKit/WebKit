@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,16 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/WebGPUBlendFactor.h>
+#include <WebCore/WebGPUBlendOperation.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUBlendFactor.h>
-#include <pal/graphics/WebGPU/WebGPUBlendOperation.h>
 
 namespace WebKit::WebGPU {
 
 struct BlendComponent {
-    PAL::WebGPU::BlendOperation operation { PAL::WebGPU::BlendOperation::Add };
-    PAL::WebGPU::BlendFactor srcFactor { PAL::WebGPU::BlendFactor::One };
-    PAL::WebGPU::BlendFactor dstFactor { PAL::WebGPU::BlendFactor::Zero };
+    WebCore::WebGPU::BlendOperation operation { WebCore::WebGPU::BlendOperation::Add };
+    WebCore::WebGPU::BlendFactor srcFactor { WebCore::WebGPU::BlendFactor::One };
+    WebCore::WebGPU::BlendFactor dstFactor { WebCore::WebGPU::BlendFactor::Zero };
 };
 
 } // namespace WebKit::WebGPU

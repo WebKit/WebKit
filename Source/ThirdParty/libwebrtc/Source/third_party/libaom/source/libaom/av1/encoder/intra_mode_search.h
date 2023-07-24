@@ -62,7 +62,7 @@ typedef struct IntraModeSearchState {
   int rate_uv_intra;          /*!< \brief Total rate to transmit uv_mode */
   int rate_uv_tokenonly;      /*!< \brief Rate transmit txfm tokens */
   int64_t dist_uvs;           /*!< \brief Distortion of the uv_mode's recon */
-  int skip_uvs;               /*!< \brief Whether the uv txfm is skippable */
+  uint8_t skip_uvs;           /*!< \brief Whether the uv txfm is skippable */
   UV_PREDICTION_MODE mode_uv; /*!< \brief The best uv mode */
   PALETTE_MODE_INFO pmi_uv;   /*!< \brief Color map if mode_uv is palette */
   int8_t uv_angle_delta;      /*!< \brief Angle delta if mode_uv directional */
@@ -196,8 +196,6 @@ int av1_search_palette_mode(IntraModeSearchState *intra_search_state,
  * \param[in]    this_rd_cost       Struct to keep track of palette mode's
  *                                  rd_stats.
  * \param[in]    best_rd            Best RD seen for this block so far.
- *
- * \return Returns nothing.
  */
 void av1_search_palette_mode_luma(const AV1_COMP *cpi, MACROBLOCK *x,
                                   BLOCK_SIZE bsize, unsigned int ref_frame_cost,
@@ -236,7 +234,7 @@ void av1_search_palette_mode_luma(const AV1_COMP *cpi, MACROBLOCK *x,
  */
 int64_t av1_rd_pick_intra_sby_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
                                    int *rate, int *rate_tokenonly,
-                                   int64_t *distortion, int *skippable,
+                                   int64_t *distortion, uint8_t *skippable,
                                    BLOCK_SIZE bsize, int64_t best_rd,
                                    PICK_MODE_CONTEXT *ctx);
 
@@ -271,7 +269,7 @@ int64_t av1_rd_pick_intra_sby_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
  */
 int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
                                     int *rate, int *rate_tokenonly,
-                                    int64_t *distortion, int *skippable,
+                                    int64_t *distortion, uint8_t *skippable,
                                     BLOCK_SIZE bsize, TX_SIZE max_tx_size);
 
 /*! \brief Return the number of colors in src. Used by palette mode.

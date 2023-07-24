@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .scroll {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            overflow: scroll;
+            border: 1px solid black;
+        }
+
+        .custom::-webkit-scrollbar {
+            width: 16px
+        }
+
+        .custom::-webkit-scrollbar-track {
+            background-color: silver;
+            border-radius: 8px;
+        }
+
+        .custom::-webkit-scrollbar-thumb {
+            background-color: blue;
+            border-radius: 8px;
+        }
+    </style>
+    <script>
+        window.onload = () => {
+            let testDiv = document.getElementById('test');
+            testDiv.classList.add('custom');
+        }
+    </script>
+</head>
+<body>
+    <div id="test" class="scroll">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>        
+    </div>
+    
+</body>
+</html>

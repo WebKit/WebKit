@@ -32,7 +32,9 @@
 #import "IOSurface.h"
 #import "LengthFunctions.h"
 #import "LocalCurrentGraphicsContext.h"
+#import "MediaPlayerEnumsCocoa.h"
 #import "Model.h"
+#import "PathCG.h"
 #import "PlatformCAAnimationCocoa.h"
 #import "PlatformCAFilters.h"
 #import "PlatformCALayerContentsDelayedReleaser.h"
@@ -693,6 +695,12 @@ bool PlatformCALayerCocoa::backingStoreAttached() const
     return m_backingStoreAttached;
 }
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+void PlatformCALayerCocoa::setCoverageRect(const FloatRect&)
+{
+}
+#endif
+
 bool PlatformCALayerCocoa::geometryFlipped() const
 {
     return [m_layer isGeometryFlipped];
@@ -957,6 +965,23 @@ void PlatformCALayerCocoa::setAntialiasesEdges(bool antialiases)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+MediaPlayerVideoGravity PlatformCALayerCocoa::videoGravity() const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if ([m_layer respondsToSelector:@selector(videoGravity)])
+        return convertAVLayerToMediaPlayerVideoGravity([(AVPlayerLayer *)m_layer videoGravity]);
+    END_BLOCK_OBJC_EXCEPTIONS
+    return MediaPlayerVideoGravity::ResizeAspect;
+}
+
+void PlatformCALayerCocoa::setVideoGravity(MediaPlayerVideoGravity gravity)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if ([m_layer respondsToSelector:@selector(setVideoGravity:)])
+        [(AVPlayerLayer *)m_layer setVideoGravity:convertMediaPlayerToAVLayerVideoGravity(gravity)];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
 FloatRoundedRect PlatformCALayerCocoa::shapeRoundedRect() const
 {
     ASSERT(m_layerType == LayerTypeShapeLayer);
@@ -1008,7 +1033,7 @@ Path PlatformCALayerCocoa::shapePath() const
     ASSERT(m_layerType == LayerTypeShapeLayer);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return { adoptCF(CGPathCreateMutableCopy([(CAShapeLayer *)m_layer path])) };
+    return { PathCG::create(adoptCF(CGPathCreateMutableCopy([(CAShapeLayer *)m_layer path]))) };
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

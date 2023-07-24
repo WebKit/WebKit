@@ -48,7 +48,7 @@ class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public WebCore::Curl
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol);
-    ~WebSocketTask();
+    virtual ~WebSocketTask();
 
     void sendString(const IPC::DataReference&, CompletionHandler<void()>&&);
     void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);

@@ -483,6 +483,7 @@ inline void CachedImage::clearImage()
 
 void CachedImage::updateBufferInternal(const FragmentedSharedBuffer& data)
 {
+    CachedResourceHandle protectedThis { *this };
     m_data = const_cast<FragmentedSharedBuffer*>(&data);
     setEncodedSize(m_data->size());
     createImage();

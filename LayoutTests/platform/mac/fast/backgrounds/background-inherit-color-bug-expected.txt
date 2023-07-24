@@ -71,10 +71,10 @@ layer at (0,0) size 785x1132
             text run at (4,4) width 484: "This header has a pink background"
             text run at (4,41) width 218: "and that's good."
 layer at (85,62) size 615x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (4,54) size 616x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (4,54) size 616x2 [color=#808080] [border: (1px inset #808080)]
 layer at (85,150) size 615x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (4,142) size 616x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (4,142) size 616x2 [color=#808080] [border: (1px inset #808080)]
 layer at (85,274) size 615x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (4,266) size 616x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (4,266) size 616x2 [color=#808080] [border: (1px inset #808080)]
 layer at (85,362) size 615x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (4,354) size 616x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (4,354) size 616x2 [color=#808080] [border: (1px inset #808080)]

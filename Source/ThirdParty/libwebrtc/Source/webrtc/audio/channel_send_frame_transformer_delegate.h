@@ -77,5 +77,9 @@ class ChannelSendFrameTransformerDelegate : public TransformedFrameCallback {
   rtc::scoped_refptr<FrameTransformerInterface> frame_transformer_;
   rtc::TaskQueue* encoder_queue_ RTC_GUARDED_BY(send_lock_);
 };
+
+std::unique_ptr<TransformableFrameInterface> CloneSenderAudioFrame(
+    TransformableAudioFrameInterface* original);
+
 }  // namespace webrtc
 #endif  // AUDIO_CHANNEL_SEND_FRAME_TRANSFORMER_DELEGATE_H_

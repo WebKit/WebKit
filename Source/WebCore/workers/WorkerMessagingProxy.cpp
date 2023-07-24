@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009-2022 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -190,8 +190,15 @@ void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& m
             if (!globalObject)
                 return;
 
+            auto& vm = globalObject->vm();
+            auto scope = DECLARE_CATCH_SCOPE(vm);
             UserGestureIndicator userGestureIndicator(userGestureForwarder ? userGestureForwarder->userGestureToForward() : nullptr);
             auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTFMove(ports));
+            if (UNLIKELY(scope.exception())) {
+                // Currently, we assume that the only way we can get here is if we have a termination.
+                RELEASE_ASSERT(vm.hasPendingTerminationException());
+                return;
+            }
             worker->dispatchEvent(event.event);
         });
     });
@@ -223,6 +230,9 @@ void WorkerMessagingProxy::postMessageToWorkerGlobalScope(MessageWithMessagePort
         if (!globalObject)
             return;
 
+        auto& vm = globalObject->vm();
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+
         // Setting m_userGestureForwarder here, before dispatching the MessageEvent, will allow all calls to
         // worker.postMessage() made during the handling of that MessageEvent to inherit the UserGestureToken
         // held by the forwarder; see postMessageToWorkerObject() above.
@@ -230,6 +240,11 @@ void WorkerMessagingProxy::postMessageToWorkerGlobalScope(MessageWithMessagePort
 
         auto ports = MessagePort::entanglePorts(scriptContext, WTFMove(message.transferredPorts));
         auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, std::nullopt, WTFMove(ports));
+        if (UNLIKELY(scope.exception())) {
+            // Currently, we assume that the only way we can get here is if we have a termination.
+            RELEASE_ASSERT(vm.hasPendingTerminationException());
+            return;
+        }
         context.dispatchEvent(event.event);
 
         // Because WorkerUserGestureForwarder is defined as DestructionThread::Main, releasing this Ref

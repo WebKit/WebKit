@@ -23,6 +23,7 @@
 #include "common/platform.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
+#include "common/tls.h"
 #include "common/utilities.h"
 #include "image_util/loadimage.h"
 #include "libANGLE/Buffer.h"
@@ -74,6 +75,37 @@ egl::ShareGroup *AllocateOrGetShareGroup(egl::Display *display, const gl::Contex
     {
         return new egl::ShareGroup(display->getImplementation());
     }
+}
+
+egl::ContextMutex *TryAllocateOrUseSharedContextMutex(egl::Display *display,
+                                                      egl::ContextMutex *sharedContextMutex)
+{
+    if (egl::kIsSharedContextMutexEnabled)
+    {
+        if (sharedContextMutex == nullptr)
+        {
+            ASSERT(display->getSharedContextMutexManager() != nullptr);
+            sharedContextMutex = display->getSharedContextMutexManager()->create();
+        }
+        sharedContextMutex->addRef();
+    }
+    else
+    {
+        ASSERT(sharedContextMutex == nullptr);
+    }
+    return sharedContextMutex;
+}
+
+egl::SingleContextMutex *TryAllocateSingleContextMutex(egl::ContextMutex *sharedContextMutex)
+{
+    egl::SingleContextMutex *singleContextMutex = nullptr;
+    if (!egl::kIsSharedContextMutexEnabled || sharedContextMutex == nullptr)
+    {
+        ASSERT(sharedContextMutex == nullptr);
+        singleContextMutex = new egl::SingleContextMutex();
+        singleContextMutex->addRef();
+    }
+    return singleContextMutex;
 }
 
 template <typename T>
@@ -420,37 +452,66 @@ bool CanSupportAEP(const gl::Version &version, const gl::Extensions &extensions)
 // TODO(angleproject:6479): Due to a bug in Apple's dyld loader, `thread_local` will cause
 // excessive memory use. Temporarily avoid it by using pthread's thread
 // local storage instead.
-static TLSIndex GetCurrentValidContextTLSIndex()
+static angle::TLSIndex GetCurrentValidContextTLSIndex()
 {
-    static TLSIndex CurrentValidContextIndex = TLS_INVALID_INDEX;
+    static angle::TLSIndex CurrentValidContextIndex = TLS_INVALID_INDEX;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
       ASSERT(CurrentValidContextIndex == TLS_INVALID_INDEX);
-      CurrentValidContextIndex = CreateTLSIndex(nullptr);
+      CurrentValidContextIndex = angle::CreateTLSIndex(nullptr);
     });
     return CurrentValidContextIndex;
 }
 Context *GetCurrentValidContextTLS()
 {
-    TLSIndex CurrentValidContextIndex = GetCurrentValidContextTLSIndex();
+    angle::TLSIndex CurrentValidContextIndex = GetCurrentValidContextTLSIndex();
     ASSERT(CurrentValidContextIndex != TLS_INVALID_INDEX);
-    return static_cast<Context *>(GetTLSValue(CurrentValidContextIndex));
+    return static_cast<Context *>(angle::GetTLSValue(CurrentValidContextIndex));
 }
 void SetCurrentValidContextTLS(Context *context)
 {
-    TLSIndex CurrentValidContextIndex = GetCurrentValidContextTLSIndex();
+    angle::TLSIndex CurrentValidContextIndex = GetCurrentValidContextTLSIndex();
     ASSERT(CurrentValidContextIndex != TLS_INVALID_INDEX);
-    SetTLSValue(CurrentValidContextIndex, context);
+    angle::SetTLSValue(CurrentValidContextIndex, context);
+}
+#elif defined(ANGLE_USE_STATIC_THREAD_LOCAL_VARIABLES)
+static thread_local Context *gCurrentValidContext = nullptr;
+Context *GetCurrentValidContextTLS()
+{
+    return gCurrentValidContext;
+}
+void SetCurrentValidContextTLS(Context *context)
+{
+    gCurrentValidContext = context;
 }
 #else
 thread_local Context *gCurrentValidContext = nullptr;
 #endif
+
+// Handle setting the current context in TLS on different platforms
+extern void SetCurrentValidContext(Context *context)
+{
+#if defined(ANGLE_USE_ANDROID_TLS_SLOT)
+    if (angle::gUseAndroidOpenGLTlsSlot)
+    {
+        ANGLE_ANDROID_GET_GL_TLS()[angle::kAndroidOpenGLTlsSlot] = static_cast<void *>(context);
+        return;
+    }
+#endif
+
+#if defined(ANGLE_PLATFORM_APPLE) || defined(ANGLE_USE_STATIC_THREAD_LOCAL_VARIABLES)
+    SetCurrentValidContextTLS(context);
+#else
+    gCurrentValidContext = context;
+#endif
+}
 
 Context::Context(egl::Display *display,
                  const egl::Config *config,
                  const Context *shareContext,
                  TextureManager *shareTextures,
                  SemaphoreManager *shareSemaphores,
+                 egl::ContextMutex *sharedContextMutex,
                  MemoryProgramCache *memoryProgramCache,
                  MemoryShaderCache *memoryShaderCache,
                  const EGLenum clientType,
@@ -461,6 +522,8 @@ Context::Context(egl::Display *display,
              AllocateOrGetShareGroup(display, shareContext),
              shareTextures,
              shareSemaphores,
+             TryAllocateOrUseSharedContextMutex(display, sharedContextMutex),
+             TryAllocateSingleContextMutex(sharedContextMutex),
              &mOverlay,
              clientType,
              GetClientVersion(display, attribs, clientType),
@@ -508,6 +571,8 @@ Context::Context(egl::Display *display,
       mSaveAndRestoreState(GetSaveAndRestoreState(attribs)),
       mIsDestroyed(false)
 {
+    ASSERT(mState.mSharedContextMutex != nullptr || mState.mSingleContextMutex != nullptr);
+
     for (angle::SubjectIndex uboIndex = kUniformBuffer0SubjectIndex;
          uboIndex < kUniformBufferMaxSubjectIndex; ++uboIndex)
     {
@@ -687,76 +752,76 @@ void Context::initializeDefaultResources()
     mAllDirtyBits.set();
     mAllExtendedDirtyBits.set();
 
-    mDrawDirtyObjects.set(State::DIRTY_OBJECT_ACTIVE_TEXTURES);
-    mDrawDirtyObjects.set(State::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
-    mDrawDirtyObjects.set(State::DIRTY_OBJECT_VERTEX_ARRAY);
-    mDrawDirtyObjects.set(State::DIRTY_OBJECT_TEXTURES);
-    mDrawDirtyObjects.set(State::DIRTY_OBJECT_PROGRAM);
-    mDrawDirtyObjects.set(State::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT);
-    mDrawDirtyObjects.set(State::DIRTY_OBJECT_SAMPLERS);
-    mDrawDirtyObjects.set(State::DIRTY_OBJECT_IMAGES);
+    mDrawDirtyObjects.set(state::DIRTY_OBJECT_ACTIVE_TEXTURES);
+    mDrawDirtyObjects.set(state::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
+    mDrawDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
+    mDrawDirtyObjects.set(state::DIRTY_OBJECT_TEXTURES);
+    mDrawDirtyObjects.set(state::DIRTY_OBJECT_PROGRAM);
+    mDrawDirtyObjects.set(state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT);
+    mDrawDirtyObjects.set(state::DIRTY_OBJECT_SAMPLERS);
+    mDrawDirtyObjects.set(state::DIRTY_OBJECT_IMAGES);
 
-    mTexImageDirtyBits.set(State::DIRTY_BIT_UNPACK_STATE);
-    mTexImageDirtyBits.set(State::DIRTY_BIT_UNPACK_BUFFER_BINDING);
+    mTexImageDirtyBits.set(state::DIRTY_BIT_UNPACK_STATE);
+    mTexImageDirtyBits.set(state::DIRTY_BIT_UNPACK_BUFFER_BINDING);
     // No dirty objects.
 
     // Readpixels uses the pack state and read FBO
-    mReadPixelsDirtyBits.set(State::DIRTY_BIT_PACK_STATE);
-    mReadPixelsDirtyBits.set(State::DIRTY_BIT_PACK_BUFFER_BINDING);
-    mReadPixelsDirtyBits.set(State::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
-    mReadPixelsDirtyObjects.set(State::DIRTY_OBJECT_READ_FRAMEBUFFER);
+    mReadPixelsDirtyBits.set(state::DIRTY_BIT_PACK_STATE);
+    mReadPixelsDirtyBits.set(state::DIRTY_BIT_PACK_BUFFER_BINDING);
+    mReadPixelsDirtyBits.set(state::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
+    mReadPixelsDirtyObjects.set(state::DIRTY_OBJECT_READ_FRAMEBUFFER);
 
-    mClearDirtyBits.set(State::DIRTY_BIT_RASTERIZER_DISCARD_ENABLED);
-    mClearDirtyBits.set(State::DIRTY_BIT_SCISSOR_TEST_ENABLED);
-    mClearDirtyBits.set(State::DIRTY_BIT_SCISSOR);
-    mClearDirtyBits.set(State::DIRTY_BIT_VIEWPORT);
-    mClearDirtyBits.set(State::DIRTY_BIT_CLEAR_COLOR);
-    mClearDirtyBits.set(State::DIRTY_BIT_CLEAR_DEPTH);
-    mClearDirtyBits.set(State::DIRTY_BIT_CLEAR_STENCIL);
-    mClearDirtyBits.set(State::DIRTY_BIT_COLOR_MASK);
-    mClearDirtyBits.set(State::DIRTY_BIT_DEPTH_MASK);
-    mClearDirtyBits.set(State::DIRTY_BIT_STENCIL_WRITEMASK_FRONT);
-    mClearDirtyBits.set(State::DIRTY_BIT_STENCIL_WRITEMASK_BACK);
-    mClearDirtyBits.set(State::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
-    mClearDirtyObjects.set(State::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
+    mClearDirtyBits.set(state::DIRTY_BIT_RASTERIZER_DISCARD_ENABLED);
+    mClearDirtyBits.set(state::DIRTY_BIT_SCISSOR_TEST_ENABLED);
+    mClearDirtyBits.set(state::DIRTY_BIT_SCISSOR);
+    mClearDirtyBits.set(state::DIRTY_BIT_VIEWPORT);
+    mClearDirtyBits.set(state::DIRTY_BIT_CLEAR_COLOR);
+    mClearDirtyBits.set(state::DIRTY_BIT_CLEAR_DEPTH);
+    mClearDirtyBits.set(state::DIRTY_BIT_CLEAR_STENCIL);
+    mClearDirtyBits.set(state::DIRTY_BIT_COLOR_MASK);
+    mClearDirtyBits.set(state::DIRTY_BIT_DEPTH_MASK);
+    mClearDirtyBits.set(state::DIRTY_BIT_STENCIL_WRITEMASK_FRONT);
+    mClearDirtyBits.set(state::DIRTY_BIT_STENCIL_WRITEMASK_BACK);
+    mClearDirtyBits.set(state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
+    mClearDirtyObjects.set(state::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
 
     // We sync the draw Framebuffer manually in prepareForClear to allow the clear calls to do
     // more custom handling for robust resource init.
 
-    mBlitDirtyBits.set(State::DIRTY_BIT_SCISSOR_TEST_ENABLED);
-    mBlitDirtyBits.set(State::DIRTY_BIT_SCISSOR);
-    mBlitDirtyBits.set(State::DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE);
-    mBlitDirtyBits.set(State::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
-    mBlitDirtyBits.set(State::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
-    mBlitDirtyObjects.set(State::DIRTY_OBJECT_READ_FRAMEBUFFER);
-    mBlitDirtyObjects.set(State::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
+    mBlitDirtyBits.set(state::DIRTY_BIT_SCISSOR_TEST_ENABLED);
+    mBlitDirtyBits.set(state::DIRTY_BIT_SCISSOR);
+    mBlitDirtyBits.set(state::DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE);
+    mBlitDirtyBits.set(state::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
+    mBlitDirtyBits.set(state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
+    mBlitDirtyObjects.set(state::DIRTY_OBJECT_READ_FRAMEBUFFER);
+    mBlitDirtyObjects.set(state::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
 
-    mComputeDirtyBits.set(State::DIRTY_BIT_SHADER_STORAGE_BUFFER_BINDING);
-    mComputeDirtyBits.set(State::DIRTY_BIT_UNIFORM_BUFFER_BINDINGS);
-    mComputeDirtyBits.set(State::DIRTY_BIT_ATOMIC_COUNTER_BUFFER_BINDING);
-    mComputeDirtyBits.set(State::DIRTY_BIT_PROGRAM_BINDING);
-    mComputeDirtyBits.set(State::DIRTY_BIT_PROGRAM_EXECUTABLE);
-    mComputeDirtyBits.set(State::DIRTY_BIT_TEXTURE_BINDINGS);
-    mComputeDirtyBits.set(State::DIRTY_BIT_SAMPLER_BINDINGS);
-    mComputeDirtyBits.set(State::DIRTY_BIT_IMAGE_BINDINGS);
-    mComputeDirtyBits.set(State::DIRTY_BIT_DISPATCH_INDIRECT_BUFFER_BINDING);
-    mComputeDirtyObjects.set(State::DIRTY_OBJECT_ACTIVE_TEXTURES);
-    mComputeDirtyObjects.set(State::DIRTY_OBJECT_TEXTURES);
-    mComputeDirtyObjects.set(State::DIRTY_OBJECT_PROGRAM);
-    mComputeDirtyObjects.set(State::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT);
-    mComputeDirtyObjects.set(State::DIRTY_OBJECT_IMAGES);
-    mComputeDirtyObjects.set(State::DIRTY_OBJECT_SAMPLERS);
+    mComputeDirtyBits.set(state::DIRTY_BIT_SHADER_STORAGE_BUFFER_BINDING);
+    mComputeDirtyBits.set(state::DIRTY_BIT_UNIFORM_BUFFER_BINDINGS);
+    mComputeDirtyBits.set(state::DIRTY_BIT_ATOMIC_COUNTER_BUFFER_BINDING);
+    mComputeDirtyBits.set(state::DIRTY_BIT_PROGRAM_BINDING);
+    mComputeDirtyBits.set(state::DIRTY_BIT_PROGRAM_EXECUTABLE);
+    mComputeDirtyBits.set(state::DIRTY_BIT_TEXTURE_BINDINGS);
+    mComputeDirtyBits.set(state::DIRTY_BIT_SAMPLER_BINDINGS);
+    mComputeDirtyBits.set(state::DIRTY_BIT_IMAGE_BINDINGS);
+    mComputeDirtyBits.set(state::DIRTY_BIT_DISPATCH_INDIRECT_BUFFER_BINDING);
+    mComputeDirtyObjects.set(state::DIRTY_OBJECT_ACTIVE_TEXTURES);
+    mComputeDirtyObjects.set(state::DIRTY_OBJECT_TEXTURES);
+    mComputeDirtyObjects.set(state::DIRTY_OBJECT_PROGRAM);
+    mComputeDirtyObjects.set(state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT);
+    mComputeDirtyObjects.set(state::DIRTY_OBJECT_IMAGES);
+    mComputeDirtyObjects.set(state::DIRTY_OBJECT_SAMPLERS);
 
-    mCopyImageDirtyBits.set(State::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
-    mCopyImageDirtyObjects.set(State::DIRTY_OBJECT_READ_FRAMEBUFFER);
+    mCopyImageDirtyBits.set(state::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
+    mCopyImageDirtyObjects.set(state::DIRTY_OBJECT_READ_FRAMEBUFFER);
 
-    mReadInvalidateDirtyBits.set(State::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
-    mDrawInvalidateDirtyBits.set(State::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
+    mReadInvalidateDirtyBits.set(state::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
+    mDrawInvalidateDirtyBits.set(state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
 
     // The implementation's internal load/store programs for EXT_shader_pixel_pixel_local_storage
     // only need the draw framebuffer to be synced. The remaining state is managed internally.
-    mPixelLocalStorageEXTEnableDisableDirtyBits.set(State::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
-    mPixelLocalStorageEXTEnableDisableDirtyObjects.set(State::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
+    mPixelLocalStorageEXTEnableDisableDirtyBits.set(state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
+    mPixelLocalStorageEXTEnableDisableDirtyObjects.set(state::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
 
     mOverlay.init();
 }
@@ -856,6 +921,15 @@ egl::Error Context::onDestroy(const egl::Display *display)
 
     // Backend requires implementation to be destroyed first to close down all the objects
     mState.mShareGroup->release(display);
+
+    if (mState.mSharedContextMutex != nullptr)
+    {
+        mState.mSharedContextMutex->release();
+    }
+    if (mState.mSingleContextMutex != nullptr)
+    {
+        mState.mSingleContextMutex->release();
+    }
 
     mOverlay.destroy(this);
 
@@ -1075,14 +1149,38 @@ void Context::deleteProgram(ShaderProgramID program)
     mState.mShaderProgramManager->deleteProgram(this, program);
 }
 
-void Context::deleteTexture(TextureID texture)
+void Context::deleteTexture(TextureID textureID)
 {
-    if (mState.mTextureManager->getTexture(texture))
+    // If a texture object is deleted while its image is bound to a pixel local storage plane on the
+    // currently bound draw framebuffer, and pixel local storage is active, then it is as if
+    // EndPixelLocalStorageANGLE() had been called with <n>=PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE
+    // and <storeops> of STORE_OP_STORE_ANGLE.
+    if (mState.getPixelLocalStorageActivePlanes() != 0)
     {
-        detachTexture(texture);
+        PixelLocalStorage *pls = mState.getDrawFramebuffer()->peekPixelLocalStorage();
+        // Even though there is a nonzero number of active PLS planes, peekPixelLocalStorage() may
+        // still return null if we are in the middle of deleting the active framebuffer.
+        if (pls != nullptr)
+        {
+            for (GLuint i = 0; i < mState.mCaps.maxPixelLocalStoragePlanes; ++i)
+            {
+                if (pls->getPlane(i).getTextureID() == textureID)
+                {
+                    endPixelLocalStorageWithStoreOpsStore();
+                    break;
+                }
+            }
+        }
     }
 
-    mState.mTextureManager->deleteObject(this, texture);
+    Texture *texture = mState.mTextureManager->getTexture(textureID);
+    if (texture != nullptr)
+    {
+        texture->onStateChange(angle::SubjectMessage::TextureIDDeleted);
+        detachTexture(textureID);
+    }
+
+    mState.mTextureManager->deleteObject(this, textureID);
 }
 
 void Context::deleteRenderbuffer(RenderbufferID renderbuffer)
@@ -2990,11 +3088,7 @@ void Context::setContextLost()
     mSkipValidation = false;
 
     // Make sure we update TLS.
-#if defined(ANGLE_PLATFORM_APPLE)
-    SetCurrentValidContextTLS(nullptr);
-#else
-    gCurrentValidContext = nullptr;
-#endif
+    SetCurrentValidContext(nullptr);
 }
 
 GLenum Context::getGraphicsResetStatus()
@@ -3791,6 +3885,12 @@ Extensions Context::generateSupportedExtensions() const
         supportedExtensions.colorBufferFloatRgbaCHROMIUM = false;
     }
 
+    if (getClientVersion() >= ES_3_0)
+    {
+        // Enable this extension for GLES3+.
+        supportedExtensions.renderabilityValidationANGLE = true;
+    }
+
     if (getFrontendFeatures().disableDrawBuffersIndexed.enabled)
     {
         supportedExtensions.drawBuffersIndexedEXT = false;
@@ -4206,6 +4306,10 @@ void Context::initCaps()
                   "supported on some native drivers";
         mState.mExtensions.framebufferBlitNV = false;
 
+        INFO() << "Disabling GL_EXT_texture_mirror_clamp_to_edge during capture, which is not "
+                  "supported on some native drivers";
+        mState.mExtensions.textureMirrorClampToEdgeEXT = false;
+
         // NVIDIA's Vulkan driver only supports 4 draw buffers
         constexpr GLint maxDrawBuffers = 4;
         INFO() << "Limiting draw buffer count to " << maxDrawBuffers;
@@ -4475,16 +4579,16 @@ void Context::updateCaps()
     // Reinitialize some dirty bits that depend on extensions.
     if (mState.isRobustResourceInitEnabled())
     {
-        mDrawDirtyObjects.set(State::DIRTY_OBJECT_DRAW_ATTACHMENTS);
-        mDrawDirtyObjects.set(State::DIRTY_OBJECT_TEXTURES_INIT);
-        mDrawDirtyObjects.set(State::DIRTY_OBJECT_IMAGES_INIT);
-        mBlitDirtyObjects.set(State::DIRTY_OBJECT_DRAW_ATTACHMENTS);
-        mBlitDirtyObjects.set(State::DIRTY_OBJECT_READ_ATTACHMENTS);
-        mComputeDirtyObjects.set(State::DIRTY_OBJECT_TEXTURES_INIT);
-        mComputeDirtyObjects.set(State::DIRTY_OBJECT_IMAGES_INIT);
-        mReadPixelsDirtyObjects.set(State::DIRTY_OBJECT_READ_ATTACHMENTS);
-        mCopyImageDirtyBits.set(State::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
-        mCopyImageDirtyObjects.set(State::DIRTY_OBJECT_READ_ATTACHMENTS);
+        mDrawDirtyObjects.set(state::DIRTY_OBJECT_DRAW_ATTACHMENTS);
+        mDrawDirtyObjects.set(state::DIRTY_OBJECT_TEXTURES_INIT);
+        mDrawDirtyObjects.set(state::DIRTY_OBJECT_IMAGES_INIT);
+        mBlitDirtyObjects.set(state::DIRTY_OBJECT_DRAW_ATTACHMENTS);
+        mBlitDirtyObjects.set(state::DIRTY_OBJECT_READ_ATTACHMENTS);
+        mComputeDirtyObjects.set(state::DIRTY_OBJECT_TEXTURES_INIT);
+        mComputeDirtyObjects.set(state::DIRTY_OBJECT_IMAGES_INIT);
+        mReadPixelsDirtyObjects.set(state::DIRTY_OBJECT_READ_ATTACHMENTS);
+        mCopyImageDirtyBits.set(state::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
+        mCopyImageDirtyObjects.set(state::DIRTY_OBJECT_READ_ATTACHMENTS);
     }
 
     // We need to validate buffer bounds if we are in a WebGL or robust access context and the
@@ -4561,18 +4665,18 @@ angle::Result Context::prepareForInvalidate(GLenum target)
         effectiveTarget = GL_DRAW_FRAMEBUFFER;
     }
     ANGLE_TRY(mState.syncDirtyObject(this, effectiveTarget));
-    const State::DirtyBits &dirtyBits                 = effectiveTarget == GL_READ_FRAMEBUFFER
+    const state::DirtyBits &dirtyBits                 = effectiveTarget == GL_READ_FRAMEBUFFER
                                                             ? mReadInvalidateDirtyBits
                                                             : mDrawInvalidateDirtyBits;
-    const State::ExtendedDirtyBits &extendedDirtyBits = effectiveTarget == GL_READ_FRAMEBUFFER
+    const state::ExtendedDirtyBits &extendedDirtyBits = effectiveTarget == GL_READ_FRAMEBUFFER
                                                             ? mReadInvalidateExtendedDirtyBits
                                                             : mDrawInvalidateExtendedDirtyBits;
     return syncDirtyBits(dirtyBits, extendedDirtyBits, Command::Invalidate);
 }
 
-angle::Result Context::syncState(const State::DirtyBits &bitMask,
-                                 const State::ExtendedDirtyBits &extendedBitMask,
-                                 const State::DirtyObjects &objectMask,
+angle::Result Context::syncState(const state::DirtyBits &bitMask,
+                                 const state::ExtendedDirtyBits &extendedBitMask,
+                                 const state::DirtyObjects &objectMask,
                                  Command command)
 {
     ANGLE_TRY(syncDirtyObjects(objectMask, command));
@@ -6091,6 +6195,17 @@ void Context::pixelStorei(GLenum pname, GLint param)
             UNREACHABLE();
             return;
     }
+}
+
+void Context::polygonMode(GLenum face, PolygonMode modePacked)
+{
+    ASSERT(face == GL_FRONT_AND_BACK);
+    mState.setPolygonMode(modePacked);
+}
+
+void Context::polygonModeNV(GLenum face, PolygonMode modePacked)
+{
+    polygonMode(face, modePacked);
 }
 
 void Context::polygonOffset(GLfloat factor, GLfloat units)
@@ -9371,6 +9486,15 @@ void Context::endPixelLocalStorage(GLsizei n, const GLenum storeops[])
     mState.setPixelLocalStorageActivePlanes(0);
 }
 
+void Context::endPixelLocalStorageWithStoreOpsStore()
+{
+    GLsizei n = mState.getPixelLocalStorageActivePlanes();
+    ASSERT(n >= 1);
+    angle::FixedVector<GLenum, IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES> storeops(
+        n, GL_STORE_OP_STORE_ANGLE);
+    endPixelLocalStorage(n, storeops.data());
+}
+
 void Context::pixelLocalStorageBarrier()
 {
     if (getExtensions().shaderPixelLocalStorageCoherentANGLE)
@@ -9462,7 +9586,7 @@ void Context::getFramebufferPixelLocalStorageParameterivRobust(GLint plane,
             {
                 *length = 1;
             }
-            *params = pls.getPlane(plane).getIntegeri(this, pname);
+            *params = pls.getPlane(plane).getIntegeri(pname);
             break;
         case GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE:
             if (length != nullptr)
@@ -9483,6 +9607,89 @@ void Context::getFramebufferPixelLocalStorageParameterivRobust(GLint plane,
             break;
         }
     }
+}
+
+bool Context::isSharedContextMutexActive() const
+{
+    if (!mState.mIsSharedContextMutexActive)
+    {
+        return false;
+    }
+    ASSERT(mState.mSharedContextMutex != nullptr);
+    ASSERT(getContextMutex() == mState.mSharedContextMutex);
+    return true;
+}
+
+bool Context::isContextMutexStateConsistent() const
+{
+    if (!mState.mIsSharedContextMutexActive)
+    {
+        ASSERT(mState.mSingleContextMutex != nullptr);
+        // "SharedContextMutex" may be nullptr. "ContextMutex" may be "SharedContextMutex".
+        return true;
+    }
+    ASSERT(mState.mSharedContextMutex != nullptr);
+    ASSERT(getContextMutex() == mState.mSharedContextMutex);
+
+    if (mState.mSingleContextMutex != nullptr &&
+        mState.mSingleContextMutex->isLocked(std::memory_order_acquire))
+    {
+        ERR() << "SingleContextMutex is locked while SharedContextMutex is active!";
+        return false;
+    }
+
+    return true;
+}
+
+egl::ScopedContextMutexLock Context::lockAndActivateSharedContextMutex()
+{
+    constexpr uint32_t kActivationDelayMicro = 100;
+
+    ASSERT(mState.mSharedContextMutex != nullptr);
+
+    // All state updates must be protected by "SharedContextMutex".
+    egl::ScopedContextMutexLock lock(mState.mSharedContextMutex, this);
+
+    if (!mState.mIsSharedContextMutexActive)
+    {
+        ASSERT(mState.mSingleContextMutex != nullptr);
+
+        // First, start using "SharedContextMutex".
+        mState.mContextMutex.store(mState.mSharedContextMutex);
+
+        // Second, sleep some time so that currently active Context thread start using new mutex.
+        // Logic assumes that there will be no new "SingleContextMutex" locks after this.
+        // In very rare cases when this happens, new Context may start executing commands using the
+        // "SharedContextMutex", while existing Context will continue execute a command (or few) in
+        // parallel, because it is still using the "SingleContextMutex". Commands from new and old
+        // Contexts may access same shared state and cause undefined behaviour. So for a problem to
+        // happened, not only mutex replacement should fail (from the the point of view of existing
+        // Context), but also current and new Contexts must execute commands (right after mutex
+        // replacement) that both access shared state in a way that may cause undefined behaviour.
+        std::this_thread::sleep_for(std::chrono::microseconds(kActivationDelayMicro));
+
+        // Next, wait while "SingleContextMutex" is locked (until unlocked).
+        // In real-world applications this condition will almost always be "false"
+        while (mState.mSingleContextMutex->isLocked(std::memory_order_acquire))
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
+        }
+
+        // Finally, activate "SharedContextMutex".
+        mState.mIsSharedContextMutexActive = true;
+    }
+
+    ASSERT(getContextMutex() == mState.mSharedContextMutex);
+
+    return lock;
+}
+
+void Context::mergeSharedContextMutexes(egl::ContextMutex *otherMutex)
+{
+    ASSERT(otherMutex != nullptr);
+    ASSERT(isSharedContextMutexActive());
+    egl::ContextMutexManager *mutexManager = mDisplay->getSharedContextMutexManager();
+    mutexManager->merge(mState.mSharedContextMutex, otherMutex);
 }
 
 void Context::eGLImageTargetTexStorage(GLenum target, egl::ImageID image, const GLint *attrib_list)
@@ -9800,7 +10007,7 @@ void Context::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMess
                 mState.onImageStateChange(this, index - kImage0SubjectIndex);
                 if (message == angle::SubjectMessage::ContentsChanged)
                 {
-                    mState.mDirtyBits.set(State::DirtyBitType::DIRTY_BIT_IMAGE_BINDINGS);
+                    mState.mDirtyBits.set(state::DirtyBitType::DIRTY_BIT_IMAGE_BINDINGS);
                 }
             }
             else if (index < kUniformBufferMaxSubjectIndex)
@@ -10279,7 +10486,8 @@ StateCache::StateCache()
     : mCachedHasAnyEnabledClientAttrib(false),
       mCachedNonInstancedVertexElementLimit(0),
       mCachedInstancedVertexElementLimit(0),
-      mCachedBasicDrawStatesError(kInvalidPointer),
+      mCachedBasicDrawStatesErrorString(kInvalidPointer),
+      mCachedBasicDrawStatesErrorCode(GL_NO_ERROR),
       mCachedBasicDrawElementsError(kInvalidPointer),
       mCachedProgramPipelineError(kInvalidPointer),
       mCachedTransformFeedbackActiveUnpaused(false),
@@ -10382,7 +10590,8 @@ void StateCache::updateVertexElementLimitsImpl(Context *context)
 
 void StateCache::updateBasicDrawStatesError()
 {
-    mCachedBasicDrawStatesError = kInvalidPointer;
+    mCachedBasicDrawStatesErrorString = kInvalidPointer;
+    mCachedBasicDrawStatesErrorCode   = GL_NO_ERROR;
 }
 
 void StateCache::updateProgramPipelineError()
@@ -10397,9 +10606,22 @@ void StateCache::updateBasicDrawElementsError()
 
 intptr_t StateCache::getBasicDrawStatesErrorImpl(const Context *context) const
 {
-    ASSERT(mCachedBasicDrawStatesError == kInvalidPointer);
-    mCachedBasicDrawStatesError = reinterpret_cast<intptr_t>(ValidateDrawStates(context));
-    return mCachedBasicDrawStatesError;
+    ASSERT(mCachedBasicDrawStatesErrorString == kInvalidPointer);
+    ASSERT(mCachedBasicDrawStatesErrorCode == GL_NO_ERROR);
+
+    // Only assign the error code after ValidateDrawStates has completed. ValidateDrawStates calls
+    // updateBasicDrawStatesError in some cases and resets the value mid-call.
+    GLenum errorCode = GL_NO_ERROR;
+    mCachedBasicDrawStatesErrorString =
+        reinterpret_cast<intptr_t>(ValidateDrawStates(context, &errorCode));
+    mCachedBasicDrawStatesErrorCode = errorCode;
+
+    // Ensure that if an error is set mCachedBasicDrawStatesErrorCode must be GL_NO_ERROR and if no
+    // error is set mCachedBasicDrawStatesErrorCode must be an error.
+    ASSERT((mCachedBasicDrawStatesErrorString == 0) ==
+           (mCachedBasicDrawStatesErrorCode == GL_NO_ERROR));
+
+    return mCachedBasicDrawStatesErrorString;
 }
 
 intptr_t StateCache::getProgramPipelineErrorImpl(const Context *context) const

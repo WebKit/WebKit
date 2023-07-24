@@ -17,6 +17,7 @@
 #include "av1/common/common.h"
 #include "av1/common/common_data.h"
 #include "aom_dsp/aom_filter.h"
+#include "aom_dsp/flow_estimation/flow_estimation.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -93,11 +94,9 @@ static AOM_INLINE void convert_fullmv_to_mv(int_mv *mv) {
 
 // Bits of precision used for the model
 #define WARPEDMODEL_PREC_BITS 16
-#define WARPEDMODEL_ROW3HOMO_PREC_BITS 16
 
 #define WARPEDMODEL_TRANS_CLAMP (128 << WARPEDMODEL_PREC_BITS)
 #define WARPEDMODEL_NONDIAGAFFINE_CLAMP (1 << (WARPEDMODEL_PREC_BITS - 3))
-#define WARPEDMODEL_ROW3HOMO_CLAMP (1 << (WARPEDMODEL_PREC_BITS - 2))
 
 // Bits of subpel precision for warped interpolation
 #define WARPEDPIXEL_PREC_BITS 6
@@ -107,39 +106,18 @@ static AOM_INLINE void convert_fullmv_to_mv(int_mv *mv) {
 
 #define WARPEDDIFF_PREC_BITS (WARPEDMODEL_PREC_BITS - WARPEDPIXEL_PREC_BITS)
 
-/* clang-format off */
-enum {
-  IDENTITY = 0,      // identity transformation, 0-parameter
-  TRANSLATION = 1,   // translational motion 2-parameter
-  ROTZOOM = 2,       // simplified affine with rotation + zoom only, 4-parameter
-  AFFINE = 3,        // affine, 6-parameter
-  TRANS_TYPES,
-} UENUM1BYTE(TransformationType);
-/* clang-format on */
-
-// Number of types used for global motion (must be >= 3 and <= TRANS_TYPES)
-// The following can be useful:
-// GLOBAL_TRANS_TYPES 3 - up to rotation-zoom
-// GLOBAL_TRANS_TYPES 4 - up to affine
-// GLOBAL_TRANS_TYPES 6 - up to hor/ver trapezoids
-// GLOBAL_TRANS_TYPES 7 - up to full homography
-#define GLOBAL_TRANS_TYPES 4
-
 typedef struct {
   int global_warp_allowed;
   int local_warp_allowed;
 } WarpTypesAllowed;
 
-// number of parameters used by each transformation in TransformationTypes
-static const int trans_model_params[TRANS_TYPES] = { 0, 2, 4, 6 };
-
 // The order of values in the wmmat matrix below is best described
-// by the homography:
+// by the affine transformation:
 //      [x'     (m2 m3 m0   [x
 //  z .  y'  =   m4 m5 m1 *  y
-//       1]      m6 m7 1)    1]
+//       1]       0  0 1)    1]
 typedef struct {
-  int32_t wmmat[6];
+  int32_t wmmat[MAX_PARAMDIM];
   int16_t alpha, beta, gamma, delta;
   TransformationType wmtype;
   int8_t invalid;
@@ -196,19 +174,11 @@ static const WarpedMotionParams default_warp_params = {
 #define GM_ALPHA_PREC_DIFF (WARPEDMODEL_PREC_BITS - GM_ALPHA_PREC_BITS)
 #define GM_ALPHA_DECODE_FACTOR (1 << GM_ALPHA_PREC_DIFF)
 
-#define GM_ROW3HOMO_PREC_BITS 16
-#define GM_ABS_ROW3HOMO_BITS 11
-#define GM_ROW3HOMO_PREC_DIFF \
-  (WARPEDMODEL_ROW3HOMO_PREC_BITS - GM_ROW3HOMO_PREC_BITS)
-#define GM_ROW3HOMO_DECODE_FACTOR (1 << GM_ROW3HOMO_PREC_DIFF)
-
 #define GM_TRANS_MAX (1 << GM_ABS_TRANS_BITS)
 #define GM_ALPHA_MAX (1 << GM_ABS_ALPHA_BITS)
-#define GM_ROW3HOMO_MAX (1 << GM_ABS_ROW3HOMO_BITS)
 
 #define GM_TRANS_MIN -GM_TRANS_MAX
 #define GM_ALPHA_MIN -GM_ALPHA_MAX
-#define GM_ROW3HOMO_MIN -GM_ROW3HOMO_MAX
 
 static INLINE int block_center_x(int mi_col, BLOCK_SIZE bs) {
   const int bw = block_size_wide[bs];
@@ -282,6 +252,17 @@ static INLINE int_mv gm_get_motion_vector(const WarpedMotionParams *gm,
     // After the right shifts, there are 3 fractional bits of precision. If
     // allow_hp is false, the bottom bit is always zero (so we don't need a
     // call to convert_to_trans_prec here)
+    //
+    // Note: There is an AV1 specification bug here:
+    //
+    // gm->wmmat[0] is supposed to be the horizontal translation, and so should
+    // go into res.as_mv.col, and gm->wmmat[1] is supposed to be the vertical
+    // translation and so should go into res.as_mv.row
+    //
+    // However, in the spec, these assignments are accidentally reversed, and so
+    // we must keep this incorrect logic to match the spec.
+    //
+    // See also: https://crbug.com/aomedia/3328
     res.as_mv.row = gm->wmmat[0] >> GM_TRANS_ONLY_PREC_DIFF;
     res.as_mv.col = gm->wmmat[1] >> GM_TRANS_ONLY_PREC_DIFF;
     assert(IMPLIES(1 & (res.as_mv.row | res.as_mv.col), allow_hp));

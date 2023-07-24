@@ -126,7 +126,7 @@ public:
     virtual bool requestStartKeyboardScrollAnimation(ScrollableArea&, const KeyboardScroll&) { return false; }
     virtual bool requestStopKeyboardScrollAnimation(ScrollableArea&, bool) { return false; }
 
-    virtual bool requestScrollToPosition(ScrollableArea&, const ScrollPosition&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped, ScrollIsAnimated = ScrollIsAnimated::No) { return false; }
+    virtual bool requestScrollToPosition(ScrollableArea&, const ScrollPosition&, const ScrollPositionChangeOptions&) { return false; }
     virtual void stopAnimatedScroll(ScrollableArea&) { }
 
     virtual WheelEventHandlingResult handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>) { return WheelEventHandlingResult::unhandled(WheelEventProcessingSteps::SynchronousScrolling); }
@@ -223,7 +223,7 @@ protected:
 
     virtual void willCommitTree() { }
 
-    Page* m_page; // FIXME: ideally this would be a reference but it gets nulled on async teardown.
+    WeakPtr<Page> m_page; // FIXME: ideally this would be a reference but it gets nulled on async teardown.
 
 private:
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const LocalFrameView&) const;

@@ -89,15 +89,15 @@ async function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
     return content['taskId'];
 }
 
-async function addTriggerableAndCreateTask(name, webkitRevisions)
+async function addTriggerableAndCreateTask(name, webkitRevisions, testParametersList=[[], []])
 {
     const report = {
         'workerName': 'anotherWorker',
         'workerPassword': 'anotherPassword',
         'triggerable': 'build-webkit',
         'configurations': [
-            {test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
-            {test: MockData.someTestId(), platform: MockData.otherPlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
+            {test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes: ['alternating', 'sequential'], testParameters: testParametersList[0]},
+            {test: MockData.someTestId(), platform: MockData.otherPlatformId(), supportedRepetitionTypes: ['alternating', 'sequential'], testParameters: testParametersList[1]},
         ],
         'repositoryGroups': [
             {name: 'os-only', acceptsRoot: true, repositories: [
@@ -166,6 +166,95 @@ describe('/privileged-api/add-build-requests', function() {
             const buildRequests = updatedGroups[0].requestsForCommitSet(commitSet);
             assert.strictEqual(buildRequests.length, 4);
         }
+    });
+
+    it('should be able to add build requests with the same test parameter sets to a test group', async () => {
+        await addTriggerableAndCreateTask('some task',  ["191622", "191623"], [[1, 2], [1, 2]]);
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const testParametersList = [{1: {value: true, file: null}, 2: {value: 'Xcode 14.3'}}, {2: {value: 'Xcode 14.3'}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                needsNotification: true, revisionSets, testParametersList, repetitionType: 'alternating', repetitionCount: 2});
+        const insertedGroupId = result['testGroupId'];
+
+        await PrivilegedAPI.sendRequest('update-test-group', {'group': insertedGroupId, mayNeedMoreRequests: true});
+
+        const [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
+        assert.strictEqual(analysisTask.name(), 'other task');
+
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'alternating')
+        assert.ok(group.needsNotification());
+        assert.ok(group.mayNeedMoreRequests());
+        let requests = group.buildRequests();
+        assert.strictEqual(requests.length, 6);
+
+        assert.strictEqual(requests[0].order(), -2);
+        assert.strictEqual(requests[1].order(), -1);
+        assert.strictEqual(requests[2].order(), 0);
+        assert.strictEqual(requests[3].order(), 1);
+        assert.strictEqual(requests[4].order(), 2);
+        assert.strictEqual(requests[5].order(), 3);
+
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+        assert(requests[0].commitSet().equals(requests[2].commitSet()));
+        assert(requests[0].commitSet().equals(requests[4].commitSet()));
+        assert(requests[1].commitSet().equals(requests[3].commitSet()));
+        assert(requests[1].commitSet().equals(requests[5].commitSet()));
+
+        const set0 = requests[0].commitSet();
+        const set1 = requests[1].commitSet();
+        assert.deepStrictEqual(set0.repositories(), [webkit]);
+        assert.deepStrictEqual(set0.customRoots(), []);
+        assert.deepStrictEqual(set1.repositories(), [webkit]);
+        assert.deepStrictEqual(set1.customRoots(), []);
+        assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+        assert.strictEqual(set1.revisionForRepository(webkit), '191623');
+
+        assert.strictEqual(group.requestedTestParameterSets().length, 2);
+        const parameterSet0 = requests[0].testParameterSet();
+        const parameterSet1 = requests[1].testParameterSet();
+        assert(parameterSet0 === requests[2].testParameterSet());
+        assert(parameterSet0 === requests[4].testParameterSet());
+        assert(parameterSet1 === requests[3].testParameterSet());
+        assert(parameterSet1 === requests[5].testParameterSet());
+
+        assert.strictEqual(parameterSet0.parameters.length, 2);
+        assert.strictEqual(parameterSet0.buildTypeParameters.length, 1);
+        assert.strictEqual(parameterSet0.testTypeParameters.length, 1);
+        assert.strictEqual(parameterSet0.valueForParameterName('diagnose'), true);
+        assert.strictEqual(parameterSet0.fileForParameterName('diagnose'), undefined);
+        assert.strictEqual(parameterSet0.valueForParameterName('Custom SDK'), 'Xcode 14.3');
+        assert.strictEqual(parameterSet0.fileForParameterName('Custom SDK'), undefined);
+
+        assert.strictEqual(parameterSet1.parameters.length, 1);
+        assert.strictEqual(parameterSet1.buildTypeParameters.length, 1);
+        assert.strictEqual(parameterSet1.testTypeParameters.length, 0);
+        assert.strictEqual(parameterSet1.valueForParameterName('Custom SDK'), 'Xcode 14.3');
+        assert.strictEqual(parameterSet1.fileForParameterName('Custom SDK'), undefined);
+
+        await PrivilegedAPI.sendRequest('add-build-requests', {group: insertedGroupId, addCount: 2});
+
+        const updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.strictEqual(updatedGroups.length, 1);
+        for (const commitSet of updatedGroups[0].requestedCommitSets())
+            assert.strictEqual(+updatedGroups[0].repetitionCountForCommitSet(commitSet), 4);
+        assert.strictEqual(+updatedGroups[0].initialRepetitionCount(), 2);
+        assert.strictEqual(group.mayNeedMoreRequests(), true);
+        for (const commitSet of updatedGroups[0].requestedCommitSets()) {
+            const buildRequests = updatedGroups[0].requestsForCommitSet(commitSet);
+            assert.strictEqual(buildRequests.length, 5);
+        }
+        requests = updatedGroups[0].buildRequests();
+        assert.strictEqual(updatedGroups[0].requestedTestParameterSets().length, 2);
+        assert(parameterSet0 === requests[6].testParameterSet());
+        assert(parameterSet0 === requests[8].testParameterSet());
+        assert(parameterSet1 === requests[7].testParameterSet());
+        assert(parameterSet1 === requests[9].testParameterSet());
     });
 
     it('should not be able to add build requests to a hidden test group', async () => {

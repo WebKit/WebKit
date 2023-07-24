@@ -196,8 +196,8 @@ EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocatio
 
 FunctionMetadataNode::FunctionMetadataNode(
     ParserArena&, const JSTokenLocation& startLocation, 
-    const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, 
-    int functionKeywordStart, int functionNameStart, int parametersStart, ImplementationVisibility implementationVisibility, LexicalScopeFeatures lexicalScopeFeatures,
+    const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, unsigned functionStart,
+    int functionNameStart, int parametersStart, ImplementationVisibility implementationVisibility, LexicalScopeFeatures lexicalScopeFeatures,
     ConstructorKind constructorKind, SuperBinding superBinding, unsigned parameterCount, SourceParseMode mode, bool isArrowFunctionBodyExpression)
         : Node(endLocation)
         , m_implementationVisibility(static_cast<unsigned>(implementationVisibility))
@@ -210,7 +210,7 @@ FunctionMetadataNode::FunctionMetadataNode(
         , m_parseMode(mode)
         , m_startColumn(startColumn)
         , m_endColumn(endColumn)
-        , m_functionKeywordStart(functionKeywordStart)
+        , m_functionStart(functionStart)
         , m_functionNameStart(functionNameStart)
         , m_parametersStart(parametersStart)
         , m_startStartOffset(startLocation.startOffset)
@@ -223,8 +223,8 @@ FunctionMetadataNode::FunctionMetadataNode(
 
 FunctionMetadataNode::FunctionMetadataNode(
     const JSTokenLocation& startLocation, 
-    const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, 
-    int functionKeywordStart, int functionNameStart, int parametersStart, ImplementationVisibility implementationVisibility, LexicalScopeFeatures lexicalScopeFeatures,
+    const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, unsigned functionStart,
+    int functionNameStart, int parametersStart, ImplementationVisibility implementationVisibility, LexicalScopeFeatures lexicalScopeFeatures,
     ConstructorKind constructorKind, SuperBinding superBinding, unsigned parameterCount, SourceParseMode mode, bool isArrowFunctionBodyExpression)
         : Node(endLocation)
         , m_implementationVisibility(static_cast<unsigned>(implementationVisibility))
@@ -237,7 +237,7 @@ FunctionMetadataNode::FunctionMetadataNode(
         , m_parseMode(mode)
         , m_startColumn(startColumn)
         , m_endColumn(endColumn)
-        , m_functionKeywordStart(functionKeywordStart)
+        , m_functionStart(functionStart)
         , m_functionNameStart(functionNameStart)
         , m_parametersStart(parametersStart)
         , m_startStartOffset(startLocation.startOffset)
@@ -274,7 +274,6 @@ bool FunctionMetadataNode::operator==(const FunctionMetadataNode& other) const
         && m_functionMode == other.m_functionMode
         && m_startColumn == other.m_startColumn
         && m_endColumn == other.m_endColumn
-        && m_functionKeywordStart == other.m_functionKeywordStart
         && m_functionNameStart == other.m_functionNameStart
         && m_parametersStart == other.m_parametersStart
         && m_source == other.m_source
@@ -298,7 +297,7 @@ void FunctionMetadataNode::dump(PrintStream& stream) const
     stream.println("m_functionMode ", static_cast<uint32_t>(m_functionMode));
     stream.println("m_startColumn ", m_startColumn);
     stream.println("m_endColumn ", m_endColumn);
-    stream.println("m_functionKeywordStart ", m_functionKeywordStart);
+    stream.println("m_functionStart ", m_functionStart);
     stream.println("m_functionNameStart ", m_functionNameStart);
     stream.println("m_parametersStart ", m_parametersStart);
     stream.println("m_classSource.isNull() ", m_classSource.isNull());

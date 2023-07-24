@@ -52,7 +52,9 @@ bool Pipeline::uses(const TVariable &var) const
                 case TQualifier::EvqFlatOut:
                 case TQualifier::EvqNoPerspectiveOut:
                 case TQualifier::EvqCentroidOut:
+                case TQualifier::EvqSampleOut:
                 case TQualifier::EvqNoPerspectiveCentroidOut:
+                case TQualifier::EvqNoPerspectiveSampleOut:
                     return true;
                 default:
                     return false;
@@ -67,7 +69,9 @@ bool Pipeline::uses(const TVariable &var) const
                 case TQualifier::EvqFlatIn:
                 case TQualifier::EvqNoPerspectiveIn:
                 case TQualifier::EvqCentroidIn:
+                case TQualifier::EvqSampleIn:
                 case TQualifier::EvqNoPerspectiveCentroidIn:
+                case TQualifier::EvqNoPerspectiveSampleIn:
                     return true;
                 default:
                     return false;

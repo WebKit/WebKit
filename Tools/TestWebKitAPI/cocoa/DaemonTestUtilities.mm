@@ -26,14 +26,14 @@
 #import "config.h"
 #import "DaemonTestUtilities.h"
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
 #import <mach-o/dyld.h>
 #import <wtf/Vector.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 @interface NSTask : NSObject
 - (instancetype)init;
 - (void)launch;
@@ -65,7 +65,7 @@ RetainPtr<NSURL> currentExecutableDirectory()
     return [currentExecutableLocation() URLByDeletingLastPathComponent];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 static RetainPtr<xpc_object_t> convertArrayToXPC(NSArray *array)
 {
     auto xpc = adoptNS(xpc_array_create(nullptr, 0));
@@ -109,7 +109,7 @@ static RetainPtr<xpc_object_t> convertDictionaryToXPC(NSDictionary<NSString *, i
 void registerPlistWithLaunchD(NSDictionary<NSString *, id> *plist, NSURL *tempDir)
 {
     NSError *error = nil;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     auto xpcPlist = convertDictionaryToXPC(plist);
     xpc_dictionary_set_string(xpcPlist.get(), "_ManagedBy", "TestWebKitAPI");
     xpc_dictionary_set_bool(xpcPlist.get(), "RootedSimulatorPath", true);
@@ -178,7 +178,7 @@ void killFirstInstanceOfDaemon(NSString *daemonExecutableName)
     [task waitUntilExit];
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 BOOL restartService(NSString *, NSString *daemonExecutableName)
 {
@@ -205,4 +205,4 @@ BOOL restartService(NSString *serviceName, NSString *)
 
 NS_ASSUME_NONNULL_END
 
-#endif // PLATFORM(MAC) || PLATFORM(IOS)
+#endif // PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)

@@ -26,28 +26,42 @@
 #include "DisplayCaptureManager.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerCaptureDevice.h"
+#include "GStreamerCapturer.h"
 #include "GStreamerVideoCapturer.h"
+#include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceFactory.h"
 
 namespace WebCore {
 
 using NodeAndFD = GStreamerVideoCapturer::NodeAndFD;
 
-class GStreamerCaptureDeviceManager : public CaptureDeviceManager {
+class GStreamerCaptureDeviceManager : public CaptureDeviceManager, public RealtimeMediaSourceCenter::Observer {
 public:
+    GStreamerCaptureDeviceManager();
     ~GStreamerCaptureDeviceManager();
     std::optional<GStreamerCaptureDevice> gstreamerDeviceWithUID(const String&);
 
     const Vector<CaptureDevice>& captureDevices() final;
     virtual CaptureDevice::DeviceType deviceType() = 0;
 
+    // RealtimeMediaSourceCenter::Observer interface.
+    void devicesChanged() final;
+    void deviceWillBeRemoved(const String& persistentId) final;
+
+    void registerCapturer(const RefPtr<GStreamerCapturer>&);
+    void unregisterCapturer(const GStreamerCapturer&);
+    void stopCapturing(const String& persistentId);
+
 private:
     void addDevice(GRefPtr<GstDevice>&&);
+    void removeDevice(GRefPtr<GstDevice>&&);
+    void stopMonitor();
     void refreshCaptureDevices();
 
     GRefPtr<GstDeviceMonitor> m_deviceMonitor;
     Vector<GStreamerCaptureDevice> m_gstreamerDevices;
     Vector<CaptureDevice> m_devices;
+    Vector<RefPtr<GStreamerCapturer>> m_capturers;
 };
 
 class GStreamerAudioCaptureDeviceManager final : public GStreamerCaptureDeviceManager {
@@ -55,18 +69,13 @@ class GStreamerAudioCaptureDeviceManager final : public GStreamerCaptureDeviceMa
 public:
     static GStreamerAudioCaptureDeviceManager& singleton();
     CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Microphone; }
-private:
-    GStreamerAudioCaptureDeviceManager() = default;
 };
 
 class GStreamerVideoCaptureDeviceManager final : public GStreamerCaptureDeviceManager {
     friend class NeverDestroyed<GStreamerVideoCaptureDeviceManager>;
 public:
     static GStreamerVideoCaptureDeviceManager& singleton();
-    static VideoCaptureFactory& videoFactory();
     CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Camera; }
-private:
-    GStreamerVideoCaptureDeviceManager() = default;
 };
 
 class GStreamerDisplayCaptureDeviceManager final : public DisplayCaptureManager {

@@ -9,7 +9,6 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  "calendar",
   "isoHour",
   "isoMicrosecond",
   "isoMillisecond",

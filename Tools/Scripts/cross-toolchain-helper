@@ -326,11 +326,11 @@ class YoctoCrossBuilder():
             if self._run_cmd('git init . && git add . && git commit -m "Initialize repository"') != 0:
                 _log.error('Error initializing git repository for repo tool')
                 return False
-            if self._run_cmd('./repo init -u {wdir} -m manifest.xml --depth 1'.format(wdir=self._workdir)) != 0:
+            if self._run_cmd('python3 ./repo init -u {wdir} -m manifest.xml --depth 1'.format(wdir=self._workdir)) != 0:
                 _log.error('Error initializing repo')
                 return False
             _log.info('Syncing repos... please wait')
-            if self._run_cmd('./repo sync -c') != 0:
+            if self._run_cmd('python3 ./repo sync -c') != 0:
                 _log.error('Error syncing repo')
                 return False
             # Apply patch if needed

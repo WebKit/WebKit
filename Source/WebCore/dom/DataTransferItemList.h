@@ -61,6 +61,7 @@ public:
     // DOM API
     unsigned length() const;
     RefPtr<DataTransferItem> item(unsigned index);
+    bool isSupportedPropertyIndex(unsigned index);
     ExceptionOr<RefPtr<DataTransferItem>> add(Document&, const String& data, const String& type);
     RefPtr<DataTransferItem> add(Ref<File>&&);
     ExceptionOr<void> remove(unsigned index);

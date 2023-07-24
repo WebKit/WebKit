@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'pointertype_log.innerHTML = pointertypes.length ?
+    pointertypes.join(",") : "(none)"')
+Deleting touch-action elem after pointerdown has no effect
+
+Try to scroll up/down starting at the green element. Expectation: the green element would vanish immediately and the content won't scroll.
+
+Note: this test is for touch-devices only
+
+Drag up or down from here
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Deleting touch-action elem after pointerdown Test timed out
+

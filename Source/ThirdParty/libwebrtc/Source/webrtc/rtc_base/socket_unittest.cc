@@ -14,6 +14,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 
 #include "absl/memory/memory.h"
@@ -23,9 +25,7 @@
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/location.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/message_handler.h"
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_server.h"
@@ -221,6 +221,15 @@ void SocketTest::TestSocketRecvTimestampIPv4() {
 void SocketTest::TestSocketRecvTimestampIPv6() {
   MAYBE_SKIP_IPV6;
   SocketRecvTimestamp(kIPv6Loopback);
+}
+
+void SocketTest::TestUdpSocketRecvTimestampUseRtcEpochIPv4() {
+  UdpSocketRecvTimestampUseRtcEpoch(kIPv4Loopback);
+}
+
+void SocketTest::TestUdpSocketRecvTimestampUseRtcEpochIPv6() {
+  MAYBE_SKIP_IPV6;
+  UdpSocketRecvTimestampUseRtcEpoch(kIPv6Loopback);
 }
 
 // For unbound sockets, GetLocalAddress / GetRemoteAddress return AF_UNSPEC
@@ -691,11 +700,6 @@ void SocketTest::DeleteInReadCallbackInternal(const IPAddress& loopback) {
   EXPECT_TRUE_WAIT(deleter.deleted(), kTimeout);
 }
 
-class Sleeper : public MessageHandlerAutoCleanup {
- public:
-  void OnMessage(Message* msg) override { Thread::Current()->SleepMs(500); }
-};
-
 void SocketTest::SocketServerWaitInternal(const IPAddress& loopback) {
   StreamSink sink;
   SocketAddress accept_addr;
@@ -736,9 +740,7 @@ void SocketTest::SocketServerWaitInternal(const IPAddress& loopback) {
   // Shouldn't signal when blocked in a thread Send, where process_io is false.
   std::unique_ptr<Thread> thread(Thread::CreateWithSocketServer());
   thread->Start();
-  Sleeper sleeper;
-  TypedMessageData<Socket*> data(client.get());
-  thread->Send(RTC_FROM_HERE, &sleeper, 0, &data);
+  thread->BlockingCall([] { Thread::SleepMs(500); });
   EXPECT_FALSE(sink.Check(accepted.get(), SSE_READ));
 
   // But should signal when process_io is true.
@@ -1079,25 +1081,31 @@ void SocketTest::GetSetOptionsInternal(const IPAddress& loopback) {
 }
 
 void SocketTest::SocketRecvTimestamp(const IPAddress& loopback) {
+  StreamSink sink;
   std::unique_ptr<Socket> socket(
       socket_factory_->CreateSocket(loopback.family(), SOCK_DGRAM));
   EXPECT_EQ(0, socket->Bind(SocketAddress(loopback, 0)));
   SocketAddress address = socket->GetLocalAddress();
+  sink.Monitor(socket.get());
 
   int64_t send_time_1 = TimeMicros();
   socket->SendTo("foo", 3, address);
+
   int64_t recv_timestamp_1;
+  // Wait until data is available.
+  EXPECT_TRUE_WAIT(sink.Check(socket.get(), SSE_READ), kTimeout);
   char buffer[3];
-  socket->RecvFrom(buffer, 3, nullptr, &recv_timestamp_1);
-  EXPECT_GT(recv_timestamp_1, -1);
+  ASSERT_GT(socket->RecvFrom(buffer, 3, nullptr, &recv_timestamp_1), 0);
 
   const int64_t kTimeBetweenPacketsMs = 100;
   Thread::SleepMs(kTimeBetweenPacketsMs);
 
   int64_t send_time_2 = TimeMicros();
   socket->SendTo("bar", 3, address);
+  // Wait until data is available.
+  EXPECT_TRUE_WAIT(sink.Check(socket.get(), SSE_READ), kTimeout);
   int64_t recv_timestamp_2;
-  socket->RecvFrom(buffer, 3, nullptr, &recv_timestamp_2);
+  ASSERT_GT(socket->RecvFrom(buffer, 3, nullptr, &recv_timestamp_2), 0);
 
   int64_t system_time_diff = send_time_2 - send_time_1;
   int64_t recv_timestamp_diff = recv_timestamp_2 - recv_timestamp_1;
@@ -1106,4 +1114,30 @@ void SocketTest::SocketRecvTimestamp(const IPAddress& loopback) {
   EXPECT_NEAR(system_time_diff, recv_timestamp_diff, 10000);
 }
 
+void SocketTest::UdpSocketRecvTimestampUseRtcEpoch(const IPAddress& loopback) {
+  SocketAddress empty = EmptySocketAddressWithFamily(loopback.family());
+  std::unique_ptr<Socket> socket(
+      socket_factory_->CreateSocket(loopback.family(), SOCK_DGRAM));
+  ASSERT_EQ(socket->Bind(SocketAddress(loopback, 0)), 0);
+  SocketAddress address = socket->GetLocalAddress();
+  socket = nullptr;
+
+  auto client1 = std::make_unique<TestClient>(
+      absl::WrapUnique(AsyncUDPSocket::Create(socket_factory_, address)));
+  auto client2 = std::make_unique<TestClient>(
+      absl::WrapUnique(AsyncUDPSocket::Create(socket_factory_, empty)));
+
+  SocketAddress addr2;
+  client2->SendTo("foo", 3, address);
+  std::unique_ptr<TestClient::Packet> packet_1 = client1->NextPacket(10000);
+  ASSERT_TRUE(packet_1 != nullptr);
+  EXPECT_NEAR(packet_1->packet_time_us, rtc::TimeMicros(), 1000'000);
+
+  Thread::SleepMs(100);
+  client2->SendTo("bar", 3, address);
+  std::unique_ptr<TestClient::Packet> packet_2 = client1->NextPacket(10000);
+  ASSERT_TRUE(packet_2 != nullptr);
+  EXPECT_GT(packet_2->packet_time_us, packet_1->packet_time_us);
+  EXPECT_NEAR(packet_2->packet_time_us, rtc::TimeMicros(), 1000'000);
+}
 }  // namespace rtc

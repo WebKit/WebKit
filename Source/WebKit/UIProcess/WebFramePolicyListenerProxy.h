@@ -42,15 +42,15 @@ class SafeBrowsingWarning;
 enum class ProcessSwapRequestedByClient : bool { No, Yes };
 enum class ShouldExpectSafeBrowsingResult : bool { No, Yes };
 enum class ShouldExpectAppBoundDomainResult : bool { No, Yes };
-enum class ShouldWaitForInitialLookalikeCharacterStrings : bool { No, Yes };
+enum class ShouldWaitForInitialLinkDecorationFilteringData : bool { No, Yes };
 
 class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
 
     using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&, std::optional<NavigatingToAppBoundDomain>)>;
-    static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLookalikeCharacterStrings shouldWaitForInitialLookalikeCharacterStrings)
+    static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expectSafeBrowsingResult, ShouldExpectAppBoundDomainResult expectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData shouldWaitForInitialLinkDecorationFilteringData)
     {
-        return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(reply), expectSafeBrowsingResult, expectAppBoundDomainResult, shouldWaitForInitialLookalikeCharacterStrings));
+        return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(reply), expectSafeBrowsingResult, expectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData));
     }
     ~WebFramePolicyListenerProxy();
 
@@ -61,15 +61,15 @@ public:
     void didReceiveSafeBrowsingResults(RefPtr<SafeBrowsingWarning>&&);
     void didReceiveAppBoundDomainResult(std::optional<NavigatingToAppBoundDomain>);
     void didReceiveManagedDomainResult(std::optional<NavigatingToAppBoundDomain>);
-    void didReceiveInitialLookalikeCharacterStrings();
+    void didReceiveInitialLinkDecorationFilteringData();
 
 private:
-    WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult, ShouldWaitForInitialLookalikeCharacterStrings);
+    WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData);
 
     std::optional<std::pair<RefPtr<API::WebsitePolicies>, ProcessSwapRequestedByClient>> m_policyResult;
     std::optional<RefPtr<SafeBrowsingWarning>> m_safeBrowsingWarning;
     std::optional<std::optional<NavigatingToAppBoundDomain>> m_isNavigatingToAppBoundDomain;
-    bool m_doneWaitingForLookalikeCharacterStrings { false };
+    bool m_doneWaitingForLinkDecorationFilteringData { false };
     Reply m_reply;
 };
 

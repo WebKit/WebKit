@@ -180,7 +180,7 @@ void MenuListButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& b
         { leftEdge + arrowWidth, centerY - spaceBetweenArrows / 2.0f },
         { leftEdge + arrowWidth / 2.0f, centerY - spaceBetweenArrows / 2.0f - arrowHeight }
     };
-    context.fillPath(Path::polygonPathFromPoints(arrow1));
+    context.fillPath(Path(arrow1));
 
     // Draw the bottom arrow
     Vector<FloatPoint> arrow2 = {
@@ -188,7 +188,7 @@ void MenuListButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& b
         { leftEdge + arrowWidth, centerY + spaceBetweenArrows / 2.0f },
         { leftEdge + arrowWidth / 2.0f, centerY + spaceBetweenArrows / 2.0f + arrowHeight }
     };
-    context.fillPath(Path::polygonPathFromPoints(arrow2));
+    context.fillPath(Path(arrow2));
 
     constexpr auto leftSeparatorColor = Color::black.colorWithAlphaByte(40);
     constexpr auto rightSeparatorColor = Color::white.colorWithAlphaByte(40);

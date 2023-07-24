@@ -110,7 +110,7 @@ static WebCore::CocoaColor *colorForItem(WarningItem item, ViewType *warning)
 
     auto colorNamed = [] (NSString *name) -> WebCore::CocoaColor * {
 #if HAVE(SAFE_BROWSING)
-        return [NSColor colorNamed:name bundle:[NSBundle bundleWithIdentifier:@"com.apple.WebKit"]];
+        return [NSColor colorNamed:name bundle:[NSBundle bundleForClass:NSClassFromString(@"WKWebView")]];
 #else
         ASSERT_NOT_REACHED();
         return nil;

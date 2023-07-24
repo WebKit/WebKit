@@ -11,7 +11,7 @@ info: |
   4. Let n be ? ToInteger(fromIndex). (If fromIndex is undefined, this step
   produces the value 0.)
   ...
-features: [Symbol]
+features: [Symbol, Array.prototype.includes]
 ---*/
 
 var fromIndex = Symbol("1");

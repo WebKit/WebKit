@@ -57,11 +57,11 @@ class EmulateFragColorDataTraverser : public TIntermTraverser
                 name = "webgl_FragData";
                 break;
             case EvqSecondaryFragColorEXT:
-                name  = "webgl_SecondaryFragColor";
+                name  = "webgl_SecondaryFragColorEXT";
                 index = 1;
                 break;
             case EvqSecondaryFragDataEXT:
-                name  = "webgl_SecondaryFragData";
+                name  = "webgl_SecondaryFragDataEXT";
                 index = 1;
                 break;
             default:

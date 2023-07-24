@@ -25,7 +25,7 @@ describe('/api/build-requests', function () {
             assert.deepStrictEqual(content['buildRequests'], []);
             assert.deepStrictEqual(content['commitSets'], []);
             assert.deepStrictEqual(content['commits'], []);
-            assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+            assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
         });
     });
 
@@ -33,7 +33,7 @@ describe('/api/build-requests', function () {
         return MockData.addTestGroupWithOwnedCommits(TestServer.database()).then(() => {
             return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
         }).then((content) => {
-            assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+            assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
 
             assert.strictEqual(content['commitSets'].length, 2);
             assert.strictEqual(parseInt(content['commitSets'][0].id), 403);
@@ -59,17 +59,17 @@ describe('/api/build-requests', function () {
             content['buildRequests'][1]['createdAt'] = 0;
             content['buildRequests'][2]['createdAt'] = 0;
             content['buildRequests'][3]['createdAt'] = 0;
-            assert.deepStrictEqual(content['buildRequests'][0], {id: '704', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '0', commitSet: '403', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
-            assert.deepStrictEqual(content['buildRequests'][1], {id: '705', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '1', commitSet: '404', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
-            assert.deepStrictEqual(content['buildRequests'][2], {id: '706', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '2', commitSet: '403', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
-            assert.deepStrictEqual(content['buildRequests'][3], {id: '707', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '3', commitSet: '404', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
+            assert.deepStrictEqual(content['buildRequests'][0], {id: '704', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '0', commitSet: '403', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0, testParameterSet: null});
+            assert.deepStrictEqual(content['buildRequests'][1], {id: '705', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '1', commitSet: '404', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0, testParameterSet: null});
+            assert.deepStrictEqual(content['buildRequests'][2], {id: '706', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '2', commitSet: '403', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0, testParameterSet: null});
+            assert.deepStrictEqual(content['buildRequests'][3], {id: '707', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '3', commitSet: '404', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0, testParameterSet: null});
        });
     });
 
     it('should return build requests associated with a given triggerable with appropriate commits with commit revision identifier and commitSets with owned components', async () => {
         await MockData.addTestGroupWithOwnedCommitsWithRevisionIdentifier(TestServer.database())
         const content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
-        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
         assert.strictEqual(content['commitSets'].length, 2);
         assert.strictEqual(parseInt(content['commitSets'][0].id), 403);
         assert.deepStrictEqual(content['commitSets'][0].revisionItems,
@@ -94,17 +94,17 @@ describe('/api/build-requests', function () {
         content['buildRequests'][1]['createdAt'] = 0;
         content['buildRequests'][2]['createdAt'] = 0;
         content['buildRequests'][3]['createdAt'] = 0;
-        assert.deepStrictEqual(content['buildRequests'][0], {id: '704', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '0', commitSet: '403', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
-        assert.deepStrictEqual(content['buildRequests'][1], {id: '705', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '1', commitSet: '404', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
-        assert.deepStrictEqual(content['buildRequests'][2], {id: '706', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '2', commitSet: '403', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
-        assert.deepStrictEqual(content['buildRequests'][3], {id: '707', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '3', commitSet: '404', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0});
+        assert.deepStrictEqual(content['buildRequests'][0], {id: '704', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '0', commitSet: '403', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0, testParameterSet: null});
+        assert.deepStrictEqual(content['buildRequests'][1], {id: '705', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '1', commitSet: '404', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0, testParameterSet: null});
+        assert.deepStrictEqual(content['buildRequests'][2], {id: '706', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '2', commitSet: '403', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0, testParameterSet: null});
+        assert.deepStrictEqual(content['buildRequests'][3], {id: '707', task: '1080', triggerable: '1000', repositoryGroup: '2001', test: '200', platform: '65', testGroup: '900', order: '3', commitSet: '404', status: 'pending', statusDescription: null, url: null, build: null, createdAt: 0, testParameterSet: null});
     });
 
     it('reuse roots from existing build requests if the commits sets are equal except the existence of roots', async () => {
         await MockData.addMockBuildRequestsWithRoots(TestServer.database());
         let content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
 
-        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
         assert.strictEqual(content['commitSets'].length, 4);
         assert.strictEqual(parseInt(content['commitSets'][0].id), 500);
         assert.strictEqual(parseInt(content['commitSets'][2].id), 600);
@@ -159,7 +159,7 @@ describe('/api/build-requests', function () {
     it('should reuse root built for owned commit if same completed build request exists', async () => {
         await MockData.addTwoMockTestGroupWithOwnedCommits(TestServer.database());
         let content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
-        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
         assert.strictEqual(content['commitSets'].length, 4);
         assert.strictEqual(parseInt(content['commitSets'][0].id), 403);
         assert.strictEqual(parseInt(content['commitSets'][2].id), 405);
@@ -193,7 +193,7 @@ describe('/api/build-requests', function () {
         });
 
         content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
-        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
         assert.strictEqual(content['commitSets'].length, 4);
         assert.strictEqual(parseInt(content['commitSets'][0].id), 403);
         assert.strictEqual(parseInt(content['commitSets'][2].id), 405);
@@ -229,7 +229,7 @@ describe('/api/build-requests', function () {
         ]);
         let content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
 
-        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
         assert.strictEqual(content['commitSets'].length, 4);
         assert.strictEqual(parseInt(content['commitSets'][0].id), 500);
         assert.strictEqual(parseInt(content['commitSets'][2].id), 600);
@@ -290,7 +290,7 @@ describe('/api/build-requests', function () {
         await TestServer.database().query("UPDATE uploaded_files SET file_deleted_at = now() at time zone 'utc' WHERE file_id=101");
         const content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
 
-        assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+        assert.deepEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
         assert.equal(content['commitSets'].length, 4);
         assert.equal(content['commitSets'][0].id, 500);
         assert.equal(content['commitSets'][2].id, 600);
@@ -333,7 +333,7 @@ describe('/api/build-requests', function () {
         await TestServer.database().query(`CREATE TRIGGER emulate_file_purge AFTER UPDATE OF commitset_root_file ON commit_set_items
             FOR EACH ROW EXECUTE PROCEDURE emulate_file_purge();`);
         const content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
-        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
         assert.strictEqual(content['commitSets'].length, 4);
         assert.strictEqual(parseInt(content['commitSets'][0].id), 500);
         assert.strictEqual(parseInt(content['commitSets'][2].id), 600);
@@ -443,7 +443,7 @@ describe('/api/build-requests', function () {
         await MockData.addMockBuildRequestsWithRoots(TestServer.database(), ['running', 'pending', 'pending', 'pending', 'pending', 'pending', 'pending', 'pending']);
         const content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
 
-        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
         assert.strictEqual(content['commitSets'].length, 4);
         assert.strictEqual(parseInt(content['commitSets'][0].id), 500);
         assert.strictEqual(parseInt(content['commitSets'][2].id), 600);
@@ -478,7 +478,7 @@ describe('/api/build-requests', function () {
         await MockData.addMockBuildRequestsWithRoots(TestServer.database());
         const content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
 
-        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
         assert.strictEqual(content['commitSets'].length, 4);
         assert.strictEqual(parseInt(content['commitSets'][0].id), 500);
         assert.strictEqual(parseInt(content['commitSets'][2].id), 600);
@@ -514,7 +514,7 @@ describe('/api/build-requests', function () {
         return MockData.addMockData(TestServer.database()).then(() => {
             return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
         }).then((content) => {
-            assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+            assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
 
             assert.strictEqual(content['commitSets'].length, 2);
             assert.strictEqual(parseInt(content['commitSets'][0].id), 401);
@@ -566,10 +566,93 @@ describe('/api/build-requests', function () {
         });
     });
 
+    it('should return build requests associated with a given triggerable with appropriate commits, commitSets and testParameterSets', async () => {
+        await MockData.addMockDataWithBuildAndTestTypeTestParameterSets(TestServer.database());
+        const content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
+
+        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
+
+        assert.strictEqual(content['commitSets'].length, 2);
+        assert.strictEqual(parseInt(content['commitSets'][0].id), 401);
+        assert.deepStrictEqual(content['commitSets'][0].revisionItems,
+            [{commit: '87832', commitOwner: null, patch: null, requiresBuild: false, rootFile: null}, {commit: '93116', commitOwner: null, patch: null, requiresBuild: false, rootFile: null}]);
+        assert.strictEqual(parseInt(content['commitSets'][1].id), 402);
+        assert.deepStrictEqual(content['commitSets'][1].revisionItems,
+            [{commit: '87832', commitOwner: null, patch: null, requiresBuild: false, rootFile: null}, {commit: '96336', commitOwner: null, patch: null, requiresBuild: false, rootFile: null}]);
+
+        assert.strictEqual(content['commits'].length, 3);
+        assert.strictEqual(parseInt(content['commits'][0].id), 87832);
+        assert.strictEqual(content['commits'][0].repository, '9');
+        assert.strictEqual(content['commits'][0].revision, '10.11 15A284');
+        assert.strictEqual(parseInt(content['commits'][1].id), 93116);
+        assert.strictEqual(content['commits'][1].repository, '11');
+        assert.strictEqual(content['commits'][1].revision, '191622');
+        assert.strictEqual(parseInt(content['commits'][2].id), 96336);
+        assert.strictEqual(content['commits'][2].repository, '11');
+        assert.strictEqual(content['commits'][2].revision, '192736');
+
+        assert.strictEqual(content['testParameterSets'].length, 2);
+        assert.strictEqual(parseInt(content['testParameterSets'][0].id), 1);
+        assert.deepStrictEqual(content['testParameterSets'][0].testParameterItems,
+            [{parameter: '1', value: true, file: null}]);
+        assert.strictEqual(parseInt(content['testParameterSets'][1].id), 2);
+        assert.deepStrictEqual(content['testParameterSets'][1].testParameterItems,
+            [{parameter: '2', value: 'Xcode 14.3', file: null}, {parameter: '3', value: null, file: '1001'}]);
+
+        assert.strictEqual(content['buildRequests'].length, 6);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][0].id), 698);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][0].order), -2);
+        assert.deepStrictEqual(content['buildRequests'][0].platform, '65');
+        assert.deepStrictEqual(parseInt(content['buildRequests'][0].commitSet), 401);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][0].testParameterSet), 1);
+        assert.deepStrictEqual(content['buildRequests'][0].status, 'pending');
+        assert.deepStrictEqual(content['buildRequests'][0].test, null);
+
+        assert.deepStrictEqual(parseInt(content['buildRequests'][1].id), 699);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][1].order), -1);
+        assert.deepStrictEqual(content['buildRequests'][1].platform, '65');
+        assert.deepStrictEqual(parseInt(content['buildRequests'][1].commitSet), 402);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][1].testParameterSet), 2);
+        assert.deepStrictEqual(content['buildRequests'][1].status, 'pending');
+        assert.deepStrictEqual(content['buildRequests'][1].test, null);
+
+        assert.deepStrictEqual(parseInt(content['buildRequests'][2].id), 700);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][2].order), 0);
+        assert.deepStrictEqual(content['buildRequests'][2].platform, '65');
+        assert.deepStrictEqual(parseInt(content['buildRequests'][2].commitSet), 401);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][2].testParameterSet), 1);
+        assert.deepStrictEqual(content['buildRequests'][2].status, 'pending');
+        assert.deepStrictEqual(content['buildRequests'][2].test, '200');
+
+        assert.deepStrictEqual(parseInt(content['buildRequests'][3].id), 701);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][3].order), 1);
+        assert.deepStrictEqual(content['buildRequests'][3].platform, '65');
+        assert.deepStrictEqual(parseInt(content['buildRequests'][3].commitSet), 402);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][3].testParameterSet), 2);
+        assert.deepStrictEqual(content['buildRequests'][3].status, 'pending');
+        assert.deepStrictEqual(content['buildRequests'][3].test, '200');
+
+        assert.deepStrictEqual(parseInt(content['buildRequests'][4].id), 702);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][4].order), 2);
+        assert.deepStrictEqual(content['buildRequests'][4].platform, '65');
+        assert.deepStrictEqual(parseInt(content['buildRequests'][4].commitSet), 401);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][4].testParameterSet), 1);
+        assert.deepStrictEqual(content['buildRequests'][4].status, 'pending');
+        assert.deepStrictEqual(content['buildRequests'][4].test, '200');
+
+        assert.deepStrictEqual(parseInt(content['buildRequests'][5].id), 703);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][5].order), 3);
+        assert.deepStrictEqual(content['buildRequests'][5].platform, '65');
+        assert.deepStrictEqual(parseInt(content['buildRequests'][5].commitSet), 402);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][5].testParameterSet), 2);
+        assert.deepStrictEqual(content['buildRequests'][5].status, 'pending');
+        assert.deepStrictEqual(content['buildRequests'][5].test, '200');
+    });
+
     it('should still return build requests associated with a given triggerable when test group has all build requests finished with "mayNeedMoreRequest" flag to be trues', async () => {
         await MockData.addMockData(TestServer.database(), ['completed', 'completed', 'completed', 'failed'], true, null, null, 'alternating', true);
         const content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
-        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
 
         assert.strictEqual(content['commitSets'].length, 2);
         assert.strictEqual(parseInt(content['commitSets'][0].id), 401);
@@ -626,7 +709,7 @@ describe('/api/build-requests', function () {
         return MockData.addMockData(TestServer.database()).then(() => {
             return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit?useLegacyIdResolution=true');
         }).then((content) => {
-            assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+            assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'testParameterSets', 'uploadedFiles']);
 
             assert.strictEqual(content['commitSets'].length, 2);
             assert.strictEqual(parseInt(content['commitSets'][0].id), 401);

@@ -829,13 +829,6 @@ stable
 pretty
 
 //
-// CSS_PROP__KHTML_MARGIN_COLLAPSE
-//
-// collapse
-// separate
-discard
-
-//
 // CSS_PROP_TEXT_*_COLOR
 //
 dot-dash
@@ -863,6 +856,18 @@ break-word
 // CSS_PROP_WHITE_SPACE
 //
 break-spaces
+
+//
+// CSS_PROP_WHITE_SPACE_COLLAPSE
+//
+// collapse
+preserve
+preserve-breaks
+// break-spaces
+
+// Unimplemented:
+// discard
+// preserve-spaces
 
 //
 // CSS_PROP__KHTML_NBSP_MODE
@@ -1233,6 +1238,11 @@ active
 // scroll
 paged
 
+// (scripting:) media feature.
+enabled
+initial-only
+// none
+
 // blend modes
 // normal
 multiply
@@ -1440,8 +1450,6 @@ infinity
 NaN
 
 from-image
-
-snap enable-if=ENABLE_CSS_IMAGE_RESOLUTION
 
 // overflow
 -webkit-paged-x
@@ -1705,3 +1713,8 @@ false
 space-all
 // text-autospace
 no-autospace
+
+// scrollbar-gutter
+// auto
+// stable
+both-edges

@@ -58,7 +58,6 @@ public:
 
     void networkProcessCrashed();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-    void setEnumeratingAllNetworkInterfacesEnabled(bool);
 
     bool didReceiveNetworkList() const { return m_didReceiveNetworkList; }
     const Vector<RTCNetwork>& networkList() const { return m_networkList; }
@@ -70,7 +69,6 @@ private:
 
     unsigned m_clientCount { 0 };
     WeakHashSet<Observer> m_observers;
-    bool m_enableEnumeratingAllNetworkInterfaces { false };
     bool m_didReceiveNetworkList { false };
     Vector<RTCNetwork> m_networkList;
     RTCNetwork::IPAddress m_ipv4;

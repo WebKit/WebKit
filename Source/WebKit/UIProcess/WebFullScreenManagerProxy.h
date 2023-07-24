@@ -75,7 +75,7 @@ public:
 
     bool isFullScreen();
     bool blocksReturnToFullscreenFromPictureInPicture() const;
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     bool isVideoElement() const;
 #endif
     void close();
@@ -119,7 +119,7 @@ private:
     WebFullScreenManagerProxyClient& m_client;
     FullscreenState m_fullscreenState { FullscreenState::NotInFullscreen };
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     bool m_isVideoElement { false };
 #endif
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;

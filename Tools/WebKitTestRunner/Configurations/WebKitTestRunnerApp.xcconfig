@@ -30,7 +30,7 @@ PRODUCT_BUNDLE_IDENTIFIER = org.webkit.$(PRODUCT_NAME:rfc1034identifier);
 
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
-OTHER_LDFLAGS = $(inherited) -lWebKitTestRunner -lWebCoreTestSupport -framework JavaScriptCore -framework CoreGraphics -framework QuartzCore -framework ImageIO -framework IOKit -framework UIKit -framework WebKit -framework Foundation -framework GraphicsServices;
+OTHER_LDFLAGS = $(inherited) -lWebKitTestRunner -lPAL -lWebCoreTestSupport -framework JavaScriptCore -framework CoreGraphics -framework QuartzCore -framework ImageIO -framework IOKit -framework UIKit -framework WebKit -framework Foundation -framework GraphicsServices;
 OTHER_LDFLAGS[sdk=watch*] = $(OTHER_LDFLAGS) -framework PepperUICore
 
 STRIP_STYLE = debugging;
@@ -41,7 +41,7 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = ios/* AppDelegate.m;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletv*] = ios/Launch.storyboard;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=watch*] = ios/Launch.storyboard;
 
-TARGETED_DEVICE_FAMILY = 1,2,4;
+TARGETED_DEVICE_FAMILY = 1,2,4,7;
 
 CODE_SIGN_ENTITLEMENTS[sdk=iphone*] = Configurations/WebKitTestRunnerApp-iOS.entitlements;
 CODE_SIGN_ENTITLEMENTS[sdk=appletv*] = Configurations/WebKitTestRunnerApp-watchOS.entitlements;

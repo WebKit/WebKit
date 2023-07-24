@@ -74,6 +74,7 @@
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
 #include <WebCore/Scrollbar.h>
+#include <cmath>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib-object.h>
@@ -1649,12 +1650,40 @@ static void webkitWebViewBaseLeave(WebKitWebViewBase* webViewBase, GdkCrossingMo
         return;
 #endif
 
-    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ -1, -1 }));
+    if (!priv->lastMotionEvent)
+        return;
+
+    // We need to synthesize a fake mouse event here to let WebCore know that the mouse has left the
+    // web view. Let's compute a point outside the web view that is close to the previous
+    // coordinates of the pointer before it left the web view. First we'll figure out which
+    // coordinate is closest to an edge of the web view, then we'll adjust the coordinate to be one
+    // pixel outside the view. This is not necessarily the closest point outside the web view, but
+    // it's simple to calculate and surely good enough.
+
+    int previousX = std::round(priv->lastMotionEvent->position.x());
+    int previousY = std::round(priv->lastMotionEvent->position.y());
+    int width = gtk_widget_get_width(GTK_WIDGET(webViewBase));
+    int height = gtk_widget_get_height(GTK_WIDGET(webViewBase));
+    int xDistanceFromRightEdge = width - previousX;
+    int yDistanceFromBottomEdge = height - previousY;
+
+    if (previousX <= xDistanceFromRightEdge && previousX <= previousY && previousX <= yDistanceFromBottomEdge)
+        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ -1, previousY }));
+    else if (xDistanceFromRightEdge <= previousX && xDistanceFromRightEdge <= previousY && xDistanceFromRightEdge <= yDistanceFromBottomEdge)
+        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ width, previousY }));
+    else if (previousY <= previousX && previousY <= xDistanceFromRightEdge && previousY <= yDistanceFromBottomEdge)
+        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ previousX, -1 }));
+    else {
+        ASSERT(yDistanceFromBottomEdge <= previousX);
+        ASSERT(yDistanceFromBottomEdge <= previousY);
+        ASSERT(yDistanceFromBottomEdge <= xDistanceFromRightEdge);
+        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ previousX, height }));
+    }
 }
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-static void appendTouchEvent(GtkWidget* webViewBase, Vector<WebPlatformTouchPoint>& touchPoints, GdkEvent* event, WebPlatformTouchPoint::TouchPointState state)
+static void appendTouchEvent(GtkWidget* webViewBase, Vector<WebPlatformTouchPoint>& touchPoints, GdkEvent* event, WebPlatformTouchPoint::State state)
 {
     gdouble x, y;
     gdk_event_get_coords(event, &x, &y);
@@ -1671,22 +1700,22 @@ static void appendTouchEvent(GtkWidget* webViewBase, Vector<WebPlatformTouchPoin
     touchPoints.uncheckedAppend(WebPlatformTouchPoint(identifier, state, IntPoint(xRoot, yRoot), IntPoint(x, y)));
 }
 
-static inline WebPlatformTouchPoint::TouchPointState touchPointStateForEvents(GdkEvent* current, GdkEvent* event)
+static inline WebPlatformTouchPoint::State touchPointStateForEvents(GdkEvent* current, GdkEvent* event)
 {
     if (gdk_event_get_event_sequence(current) != gdk_event_get_event_sequence(event))
-        return WebPlatformTouchPoint::TouchStationary;
+        return WebPlatformTouchPoint::State::Stationary;
 
     switch (gdk_event_get_event_type(event)) {
     case GDK_TOUCH_UPDATE:
-        return WebPlatformTouchPoint::TouchMoved;
+        return WebPlatformTouchPoint::State::Moved;
     case GDK_TOUCH_BEGIN:
-        return WebPlatformTouchPoint::TouchPressed;
+        return WebPlatformTouchPoint::State::Pressed;
     case GDK_TOUCH_END:
-        return WebPlatformTouchPoint::TouchReleased;
+        return WebPlatformTouchPoint::State::Released;
     case GDK_TOUCH_CANCEL:
-        return WebPlatformTouchPoint::TouchCancelled;
+        return WebPlatformTouchPoint::State::Cancelled;
     default:
-        return WebPlatformTouchPoint::TouchStationary;
+        return WebPlatformTouchPoint::State::Stationary;
     }
 }
 
@@ -1703,7 +1732,7 @@ static void webkitWebViewBaseGetTouchPointsForEvent(WebKitWebViewBase* webViewBa
 
     // Touch was already removed from the TouchEventsMap, add it here.
     if (touchEnd)
-        appendTouchEvent(widget, touchPoints, event, WebPlatformTouchPoint::TouchReleased);
+        appendTouchEvent(widget, touchPoints, event, WebPlatformTouchPoint::State::Released);
 }
 
 #if USE(GTK4)
@@ -2110,6 +2139,24 @@ static void webkitWebViewBaseTouchPress(WebKitWebViewBase* webViewBase, int nPre
     webViewBase->priv->isLongPressed = false;
 }
 
+static unsigned modifiersForSynthesizedEvent(GdkEvent* event)
+{
+    if (!event)
+        return 0;
+
+    GdkModifierType state;
+    if (!gdk_event_get_state(event, &state))
+        return 0;
+
+    unsigned modifiers = state;
+    // For synthesized events we assume GDK_LOCK_MASK is always CapsLock
+    // so we remove the flag if present and caps lock state is disabled.
+    if (modifiers & GDK_LOCK_MASK && !eventModifiersContainCapsLock(event))
+        modifiers &= ~GDK_LOCK_MASK;
+
+    return modifiers;
+}
+
 static void webkitWebViewBaseTouchRelease(WebKitWebViewBase* webViewBase, int nPress, double x, double y, GtkGesture* gesture)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -2128,7 +2175,7 @@ static void webkitWebViewBaseTouchRelease(WebKitWebViewBase* webViewBase, int nP
         buttons = GDK_BUTTON1_MASK;
     }
 
-    unsigned modifiers = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
+    unsigned modifiers = modifiersForSynthesizedEvent(gtk_event_controller_get_current_event(GTK_EVENT_CONTROLLER(gesture)));
     webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Motion, 0, 0, x, y, modifiers, nPress, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
     webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Press, button, 0, x, y, modifiers, nPress, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
     webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Release, button, buttons, x, y, modifiers, nPress, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
@@ -2158,7 +2205,7 @@ static void webkitWebViewBaseTouchDragUpdate(WebKitWebViewBase* webViewBase, dou
     auto* sequence = gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture));
     auto* event = gtk_gesture_get_last_event(gesture, sequence);
 
-    unsigned modifiers = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
+    unsigned modifiers = modifiersForSynthesizedEvent(gtk_event_controller_get_current_event(GTK_EVENT_CONTROLLER(gesture)));
     if (!priv->isBeingDragged) {
         if (!gtk_drag_check_threshold(GTK_WIDGET(webViewBase), 0, 0, static_cast<int>(offsetX), static_cast<int>(offsetY)))
             return;
@@ -2202,7 +2249,7 @@ static void webkitWebViewBaseTouchDragEnd(WebKitWebViewBase* webViewBase, gdoubl
     if (priv->isLongPressed) {
         double x, y;
         gtk_gesture_drag_get_start_point(GTK_GESTURE_DRAG(gesture), &x, &y);
-        unsigned modifiers = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
+        unsigned modifiers = modifiersForSynthesizedEvent(gtk_event_controller_get_current_event(GTK_EVENT_CONTROLLER(gesture)));
         webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Release, GDK_BUTTON_PRIMARY, GDK_BUTTON1_MASK, x + offsetX, y + offsetY, modifiers, 0, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
     }
 }
@@ -2451,7 +2498,14 @@ static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<API::PageConfiguration>&& configuration)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+
     WebProcessPool* processPool = configuration->processPool();
+    if (!processPool) {
+        auto processPoolConfiguration = API::ProcessPoolConfiguration::create();
+        processPool = &WebProcessPool::create(processPoolConfiguration).leakRef();
+        configuration->setProcessPool(processPool);
+    }
+
     priv->pageProxy = processPool->createWebPage(*priv->pageClient, WTFMove(configuration));
     priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
     priv->pageProxy->initializeWebPage();
@@ -3013,7 +3067,7 @@ static inline OptionSet<WebEventModifier> toWebKitModifiers(unsigned modifiers)
         webEventModifiers.add(WebEventModifier::AltKey);
     if (modifiers & GDK_META_MASK)
         webEventModifiers.add(WebEventModifier::MetaKey);
-    if (PlatformKeyboardEvent::modifiersContainCapsLock(modifiers))
+    if (modifiers & GDK_LOCK_MASK)
         webEventModifiers.add(WebEventModifier::CapsLockKey);
     return webEventModifiers;
 }

@@ -25,7 +25,7 @@ promise_test(async (test) => {
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
     assert_equals(data, "registered");
 
-    const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+    const localStream = await navigator.mediaDevices.getUserMedia({video: { frameRate: 5, width: 320, height: 240 } });
 
     const senderTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'video', side:'sender'});
     const receiverTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'video', side:'receiver'});

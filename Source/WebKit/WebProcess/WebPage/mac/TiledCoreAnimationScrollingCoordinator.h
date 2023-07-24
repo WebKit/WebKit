@@ -47,7 +47,7 @@ private:
     void pageDestroyed() final;
     void hasNodeWithAnimatedScrollChanged(bool) final;
     
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
 };
 
 } // namespace WebKit

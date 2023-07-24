@@ -136,6 +136,7 @@
 #include "TestWithStreamBatchedMessages.h" // NOLINT
 #include "TestWithStreamBufferMessages.h" // NOLINT
 #include "TestWithCVPixelBufferMessages.h" // NOLINT
+#include "TestWithStreamServerConnectionHandleMessages.h" // NOLINT
 
 namespace IPC {
 
@@ -322,6 +323,8 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
     case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
         return jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(globalObject, decoder);
 #endif
+    case MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection:
+        return jsValueForDecodedMessage<MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection>(globalObject, decoder);
     default:
         break;
     }
@@ -923,6 +926,10 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
     case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
         return Vector<ArgumentDescription> { };
 #endif
+    case MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection:
+        return Vector<ArgumentDescription> {
+            { "handle", "IPC::StreamServerConnection::Handle", nullptr, false },
+        };
     default:
         break;
     }

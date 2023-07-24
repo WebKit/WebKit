@@ -391,6 +391,8 @@ void JSCustomElementInterface::invokeFormStateRestoreCallback(Element& element, 
             args.append(jsString(vm, state));
         }, [&](RefPtr<File>) {
             ASSERT_NOT_REACHED();
+        }, [](std::nullptr_t) {
+            ASSERT_NOT_REACHED();
         });
 
         args.append(jsNontrivialString(vm, "restore"_s));

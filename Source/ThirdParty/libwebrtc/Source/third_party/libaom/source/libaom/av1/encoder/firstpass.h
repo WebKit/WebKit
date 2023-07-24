@@ -12,6 +12,8 @@
 #ifndef AOM_AV1_ENCODER_FIRSTPASS_H_
 #define AOM_AV1_ENCODER_FIRSTPASS_H_
 
+#include <stdbool.h>
+
 #include "av1/common/av1_common_int.h"
 #include "av1/common/enums.h"
 #include "av1/encoder/lookahead.h"
@@ -161,6 +163,14 @@ typedef struct FIRSTPASS_STATS {
    * Correlation coefficient with the previous frame
    */
   double cor_coeff;
+  /*!
+   * log of intra_error
+   */
+  double log_intra_error;
+  /*!
+   * log of coded_error
+   */
+  double log_coded_error;
 } FIRSTPASS_STATS;
 
 // We want to keep one past stats for key frame detection
@@ -355,6 +365,7 @@ typedef struct GF_GROUP {
   int max_layer_depth_allowed;
   // This is currently only populated for AOM_Q mode
   int q_val[MAX_STATIC_GF_GROUP_LENGTH];
+  int rdmult_val[MAX_STATIC_GF_GROUP_LENGTH];
   int bit_allocation[MAX_STATIC_GF_GROUP_LENGTH];
   // The frame coding type - inter/intra frame
   FRAME_TYPE frame_type[MAX_STATIC_GF_GROUP_LENGTH];
@@ -362,21 +373,33 @@ typedef struct GF_GROUP {
   REFBUF_STATE refbuf_state[MAX_STATIC_GF_GROUP_LENGTH];
   int arf_index;  // the index in the gf group of ARF, if no arf, then -1
   int size;       // The total length of a GOP
-  // Indicates the level of parallelism in frame parallel encodes.
-  // 0 : frame is independently encoded (not part of parallel encodes).
-  // 1 : frame is the first in encode order in a given parallel encode set.
-  // 2 : frame occurs later in encode order in a given parallel encode set.
-  int frame_parallel_level[MAX_STATIC_GF_GROUP_LENGTH];
-  // Indicates whether a frame should act as non-reference frame.
-  // 0 : frame is a reference frame.
-  // 1 : frame is a non-reference frame.
-  int is_frame_non_ref[MAX_STATIC_GF_GROUP_LENGTH];
 
   // The offset into lookahead_ctx for choosing
   // source of frame parallel encodes.
   int src_offset[MAX_STATIC_GF_GROUP_LENGTH];
   // Stores the display order hint of each frame in the current GF_GROUP.
   int display_idx[MAX_STATIC_GF_GROUP_LENGTH];
+
+  // The reference frame list maps the reference frame indexes to its
+  // buffer index in the decoded buffer. A value of -1 means the
+  // corresponding reference frame index doesn't point towards any
+  // previously decoded frame.
+  int8_t ref_frame_list[MAX_STATIC_GF_GROUP_LENGTH][REF_FRAMES];
+  // Update frame index
+  int update_ref_idx[MAX_STATIC_GF_GROUP_LENGTH];
+  // The map_idx of primary reference
+  int primary_ref_idx[MAX_STATIC_GF_GROUP_LENGTH];
+
+  // Indicates the level of parallelism in frame parallel encodes.
+  // 0 : frame is independently encoded (not part of parallel encodes).
+  // 1 : frame is the first in encode order in a given parallel encode set.
+  // 2 : frame occurs later in encode order in a given parallel encode set.
+  int frame_parallel_level[MAX_STATIC_GF_GROUP_LENGTH];
+  // Indicates whether a frame should act as non-reference frame.
+  bool is_frame_non_ref[MAX_STATIC_GF_GROUP_LENGTH];
+  // Indicates whether a frame is dropped.
+  bool is_frame_dropped[MAX_STATIC_GF_GROUP_LENGTH];
+
   // Stores the display order hint of the frames not to be
   // refreshed by the current frame.
   int skip_frame_refresh[MAX_STATIC_GF_GROUP_LENGTH][REF_FRAMES];
@@ -566,7 +589,7 @@ void av1_accumulate_stats(FIRSTPASS_STATS *section,
  * \param[in]    cpi            Top-level encoder structure
  * \param[in]    ts_duration    Duration of the frame / collection of frames
  *
- * \return Nothing is returned. Instead, the "TWO_PASS" structure inside "cpi"
+ * \remark Nothing is returned. Instead, the "TWO_PASS" structure inside "cpi"
  * is modified to store information computed in this function.
  */
 void av1_first_pass(struct AV1_COMP *cpi, const int64_t ts_duration);

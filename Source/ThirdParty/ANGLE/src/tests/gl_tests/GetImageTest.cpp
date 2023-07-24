@@ -7,8 +7,11 @@
 //   Tests for the ANGLE_get_image extension.
 //
 
+#include "image_util/storeimage.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
+
+#include "util/random_utils.h"
 
 using namespace angle;
 
@@ -39,6 +42,12 @@ class GetImageTestNoExtensions : public ANGLETest<>
 {
   public:
     GetImageTestNoExtensions() { setExtensionsEnabled(false); }
+};
+
+class GetImageTestES1 : public GetImageTest
+{
+  public:
+    GetImageTestES1() {}
 };
 
 class GetImageTestES3 : public GetImageTest
@@ -1093,12 +1102,127 @@ TEST_P(GetImageTest, CompressedTexImageMultiLevel)
     TestAllCompressedFormats(func);
 }
 
+struct PalettedFormat
+{
+    GLenum internalFormat;
+    uint32_t indexBits;
+    uint32_t redBlueBits;
+    uint32_t greenBits;
+    uint32_t alphaBits;
+};
+
+const PalettedFormat kPalettedFormats[] = {
+    {GL_PALETTE4_RGB8_OES, 4, 8, 8, 0},     {GL_PALETTE4_RGBA8_OES, 4, 8, 8, 8},
+    {GL_PALETTE4_R5_G6_B5_OES, 4, 5, 6, 0}, {GL_PALETTE4_RGBA4_OES, 4, 4, 4, 4},
+    {GL_PALETTE4_RGB5_A1_OES, 4, 5, 5, 1},  {GL_PALETTE8_RGB8_OES, 8, 8, 8, 0},
+    {GL_PALETTE8_RGBA8_OES, 8, 8, 8, 8},    {GL_PALETTE8_R5_G6_B5_OES, 8, 5, 6, 0},
+    {GL_PALETTE8_RGBA4_OES, 8, 4, 4, 4},    {GL_PALETTE8_RGB5_A1_OES, 8, 5, 5, 1},
+};
+
+// Tests that glGetTexImageANGLE captures paletted format images in
+// R8G8B8A8_UNORM and StoreRGBA8ToPalettedImpl compresses such images to the
+// same paletted image.
+TEST_P(GetImageTestES1, PalettedTexImage)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnable(GL_TEXTURE_2D);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    struct Vertex
+    {
+        GLfloat position[3];
+        GLfloat uv[2];
+    };
+
+    std::vector<Vertex> vertices = {
+        {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
+        {{-1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+        {{1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
+        {{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
+    };
+    glVertexPointer(3, GL_FLOAT, sizeof vertices[0], &vertices[0].position);
+    glTexCoordPointer(2, GL_FLOAT, sizeof vertices[0], &vertices[0].uv);
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // Locations in the framebuffer where we will take the samples to compare
+
+    const int width  = 16;
+    const int height = width;
+
+    for (PalettedFormat format : kPalettedFormats)
+    {
+        size_t paletteSizeInBytes =
+            (1 << format.indexBits) *
+            ((format.redBlueBits + format.greenBits + format.redBlueBits + format.alphaBits) / 8);
+        size_t imageSize = paletteSizeInBytes + width * height * format.indexBits / 8;
+        std::vector<uint8_t> testImage(imageSize);
+        FillVectorWithRandomUBytes(&testImage);
+
+        // Upload a random paletted image
+
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, format.internalFormat, width, height, 0,
+                               testImage.size(), testImage.data());
+        EXPECT_GL_NO_ERROR();
+
+        // Render a quad using this texture and capture the entire framebuffer contents
+
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
+        EXPECT_GL_NO_ERROR();
+
+        std::vector<GLColor> framebuffer(width * height);
+        glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer.data());
+
+        // Read it back as R8G8B8A8 UNORM
+
+        std::vector<uint8_t> readback(width * height * 4);
+        glGetTexImageANGLE(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, readback.data());
+        EXPECT_GL_NO_ERROR();
+
+        // Recompress. This should produce the same, up to permutation of used
+        // palette entries, image, as the one we uploaded. Upload it again.
+
+        std::vector<uint8_t> recompressedImage(imageSize);
+        angle::StoreRGBA8ToPalettedImpl(width, height, 1, format.indexBits, format.redBlueBits,
+                                        format.greenBits, format.alphaBits, readback.data(),
+                                        width * 4, width * height * 4, recompressedImage.data(),
+                                        width * format.indexBits / 8,
+                                        width * height * format.indexBits / 8);
+
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, format.internalFormat, width, height, 0,
+                               recompressedImage.size(), recompressedImage.data());
+        EXPECT_GL_NO_ERROR();
+
+        // Read the framebuffer again
+
+        std::vector<GLColor> framebuffer2(width * height);
+        glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, framebuffer2.data());
+
+        EXPECT_EQ(framebuffer, framebuffer2);
+    }
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GetImageTest);
 ANGLE_INSTANTIATE_TEST(GetImageTest,
                        ES2_VULKAN(),
                        ES3_VULKAN(),
                        ES2_VULKAN_SWIFTSHADER(),
                        ES3_VULKAN_SWIFTSHADER());
+
+ANGLE_INSTANTIATE_TEST_ES1(GetImageTestES1);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GetImageTestES3);
 ANGLE_INSTANTIATE_TEST(GetImageTestES3, ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER());

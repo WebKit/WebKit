@@ -517,7 +517,7 @@ static void webViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent
 static void testWebResourceGetDataError(Test* test, gconstpointer)
 {
     GRefPtr<GMainLoop> mainLoop = adoptGRef(g_main_loop_new(nullptr, FALSE));
-    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(Test::createWebView(test->m_webContext.get()));
+    auto webView = Test::adoptView((Test::createWebView(test->m_webContext.get())));
     webkit_web_view_load_html(webView.get(), "<html></html>", nullptr);
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(webViewLoadChanged), mainLoop.get());
     g_main_loop_run(mainLoop.get());
@@ -539,7 +539,7 @@ static void testWebResourceGetDataError(Test* test, gconstpointer)
 static void testWebResourceGetDataEmpty(Test* test, gconstpointer)
 {
     GRefPtr<GMainLoop> mainLoop = adoptGRef(g_main_loop_new(nullptr, FALSE));
-    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(Test::createWebView(test->m_webContext.get()));
+    auto webView = Test::adoptView(Test::createWebView(test->m_webContext.get()));
     webkit_web_view_load_html(webView.get(), "", nullptr);
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(webViewLoadChanged), mainLoop.get());
     g_main_loop_run(mainLoop.get());

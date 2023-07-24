@@ -43,24 +43,25 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
 #if defined(WEBRTC_WEBKIT_BUILD)
     , std::unique_ptr<TaskQueueFactory> task_queue_factory
 #endif
-    ) {
+  ) {
+  if (!field_trials) {
+    field_trials = std::make_unique<webrtc::FieldTrialBasedConfig>();
+  }
+
   PeerConnectionFactoryDependencies dependencies;
   dependencies.network_thread = network_thread;
   dependencies.worker_thread = worker_thread;
   dependencies.signaling_thread = signaling_thread;
 #if defined(WEBRTC_WEBKIT_BUILD)
-  dependencies.task_queue_factory = task_queue_factory ? std::move(task_queue_factory) : CreateDefaultTaskQueueFactory();
+  dependencies.task_queue_factory = task_queue_factory ? std::move(task_queue_factory) : CreateDefaultTaskQueueFactory(field_trials.get());
 #else
-  dependencies.task_queue_factory = CreateDefaultTaskQueueFactory();
+  dependencies.task_queue_factory =
+      CreateDefaultTaskQueueFactory(field_trials.get());
 #endif
   dependencies.call_factory = CreateCallFactory();
   dependencies.event_log_factory = std::make_unique<RtcEventLogFactory>(
       dependencies.task_queue_factory.get());
-  if (field_trials) {
-    dependencies.trials = std::move(field_trials);
-  } else {
-    dependencies.trials = std::make_unique<webrtc::FieldTrialBasedConfig>();
-  }
+  dependencies.trials = std::move(field_trials);
 
   if (network_thread) {
     // TODO(bugs.webrtc.org/13145): Add an rtc::SocketFactory* argument.

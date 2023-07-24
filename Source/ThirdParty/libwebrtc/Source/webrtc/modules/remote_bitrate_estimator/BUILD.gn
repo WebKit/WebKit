@@ -32,14 +32,6 @@ rtc_library("remote_bitrate_estimator") {
     "test/bwe_test_logging.h",
   ]
 
-  if (rtc_enable_bwe_test_logging) {
-    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
-
-    sources += [ "test/bwe_test_logging.cc" ]
-  } else {
-    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
-  }
-
   deps = [
     "../../api:field_trials_view",
     "../../api:network_state_predictor_api",
@@ -56,9 +48,6 @@ rtc_library("remote_bitrate_estimator") {
     "../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
-    "../../rtc_base:macromagic",
-    "../../rtc_base:platform_thread",
-    "../../rtc_base:race_checker",
     "../../rtc_base:rate_statistics",
     "../../rtc_base:rtc_numerics",
     "../../rtc_base:safe_minmax",
@@ -73,6 +62,14 @@ rtc_library("remote_bitrate_estimator") {
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
+
+  if (rtc_enable_bwe_test_logging) {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
+    sources += [ "test/bwe_test_logging.cc" ]
+    deps += [ "../../rtc_base:platform_thread" ]
+  } else {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
+  }
 }
 
 if (!build_with_chromium) {
@@ -123,22 +120,21 @@ if (rtc_include_tests) {
     deps = [
       ":remote_bitrate_estimator",
       "..:module_api_public",
-      "../../api/transport:field_trial_based_config",
       "../../api/transport:mock_network_control",
       "../../api/transport:network_control",
       "../../api/units:data_rate",
       "../../api/units:data_size",
       "../../api/units:time_delta",
       "../../api/units:timestamp",
-      "../../rtc_base",
       "../../rtc_base:checks",
       "../../rtc_base:random",
       "../../system_wrappers",
-      "../../test:field_trial",
+      "../../test:explicit_key_value_config",
       "../../test:fileutils",
       "../../test:test_support",
       "../pacing",
       "../rtp_rtcp:rtp_rtcp_format",
     ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
   }
 }

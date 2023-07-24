@@ -461,12 +461,6 @@ INTRA_PRED_TEST(SSSE3, TX_4X16, nullptr, nullptr, nullptr, nullptr, nullptr,
                 aom_smooth_h_predictor_4x16_ssse3)
 #endif  // HAVE_SSSE3
 
-#if HAVE_DSPR2
-INTRA_PRED_TEST(DSPR2, TX_4X4, aom_dc_predictor_4x4_dspr2, nullptr, nullptr,
-                nullptr, nullptr, aom_h_predictor_4x4_dspr2, nullptr, nullptr,
-                nullptr, nullptr)
-#endif  // HAVE_DSPR2
-
 #if HAVE_NEON
 INTRA_PRED_TEST(NEON, TX_4X4, aom_dc_predictor_4x4_neon,
                 aom_dc_left_predictor_4x4_neon, aom_dc_top_predictor_4x4_neon,
@@ -474,23 +468,20 @@ INTRA_PRED_TEST(NEON, TX_4X4, aom_dc_predictor_4x4_neon,
                 aom_h_predictor_4x4_neon, aom_paeth_predictor_4x4_neon,
                 aom_smooth_predictor_4x4_neon, aom_smooth_v_predictor_4x4_neon,
                 aom_smooth_h_predictor_4x4_neon)
-INTRA_PRED_TEST(NEON, TX_4X8, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_4x8_neon,
+INTRA_PRED_TEST(NEON, TX_4X8, aom_dc_predictor_4x8_neon,
+                aom_dc_left_predictor_4x8_neon, aom_dc_top_predictor_4x8_neon,
+                aom_dc_128_predictor_4x8_neon, aom_v_predictor_4x8_neon,
+                aom_h_predictor_4x8_neon, aom_paeth_predictor_4x8_neon,
                 aom_smooth_predictor_4x8_neon, aom_smooth_v_predictor_4x8_neon,
                 aom_smooth_h_predictor_4x8_neon)
-INTRA_PRED_TEST(NEON, TX_4X16, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_4x16_neon,
+INTRA_PRED_TEST(NEON, TX_4X16, aom_dc_predictor_4x16_neon,
+                aom_dc_left_predictor_4x16_neon, aom_dc_top_predictor_4x16_neon,
+                aom_dc_128_predictor_4x16_neon, aom_v_predictor_4x16_neon,
+                aom_h_predictor_4x16_neon, aom_paeth_predictor_4x16_neon,
                 aom_smooth_predictor_4x16_neon,
                 aom_smooth_v_predictor_4x16_neon,
                 aom_smooth_h_predictor_4x16_neon)
 #endif  // HAVE_NEON
-
-#if HAVE_MSA
-INTRA_PRED_TEST(MSA, TX_4X4, aom_dc_predictor_4x4_msa,
-                aom_dc_left_predictor_4x4_msa, aom_dc_top_predictor_4x4_msa,
-                aom_dc_128_predictor_4x4_msa, aom_v_predictor_4x4_msa,
-                aom_h_predictor_4x4_msa, nullptr, nullptr, nullptr, nullptr)
-#endif  // HAVE_MSA
 
 // -----------------------------------------------------------------------------
 // 8x8, 8x4, 8x16, 8x32
@@ -561,12 +552,6 @@ INTRA_PRED_TEST(SSSE3, TX_8X32, nullptr, nullptr, nullptr, nullptr, nullptr,
                 aom_smooth_h_predictor_8x32_ssse3)
 #endif  // HAVE_SSSE3
 
-#if HAVE_DSPR2
-INTRA_PRED_TEST(DSPR2, TX_8X8, aom_dc_predictor_8x8_dspr2, nullptr, nullptr,
-                nullptr, nullptr, aom_h_predictor_8x8_dspr2, nullptr, nullptr,
-                nullptr, nullptr)
-#endif  // HAVE_DSPR2
-
 #if HAVE_NEON
 INTRA_PRED_TEST(NEON, TX_8X8, aom_dc_predictor_8x8_neon,
                 aom_dc_left_predictor_8x8_neon, aom_dc_top_predictor_8x8_neon,
@@ -574,28 +559,27 @@ INTRA_PRED_TEST(NEON, TX_8X8, aom_dc_predictor_8x8_neon,
                 aom_h_predictor_8x8_neon, aom_paeth_predictor_8x8_neon,
                 aom_smooth_predictor_8x8_neon, aom_smooth_v_predictor_8x8_neon,
                 aom_smooth_h_predictor_8x8_neon)
-INTRA_PRED_TEST(NEON, TX_8X4, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_8x4_neon,
+INTRA_PRED_TEST(NEON, TX_8X4, aom_dc_predictor_8x4_neon,
+                aom_dc_left_predictor_8x4_neon, aom_dc_top_predictor_8x4_neon,
+                aom_dc_128_predictor_8x4_neon, aom_v_predictor_8x4_neon,
+                aom_h_predictor_8x4_neon, aom_paeth_predictor_8x4_neon,
                 aom_smooth_predictor_8x4_neon, aom_smooth_v_predictor_8x4_neon,
                 aom_smooth_h_predictor_8x4_neon)
-INTRA_PRED_TEST(NEON, TX_8X16, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_8x16_neon,
+INTRA_PRED_TEST(NEON, TX_8X16, aom_dc_predictor_8x16_neon,
+                aom_dc_left_predictor_8x16_neon, aom_dc_top_predictor_8x16_neon,
+                aom_dc_128_predictor_8x16_neon, aom_v_predictor_8x16_neon,
+                aom_h_predictor_8x16_neon, aom_paeth_predictor_8x16_neon,
                 aom_smooth_predictor_8x16_neon,
                 aom_smooth_v_predictor_8x16_neon,
                 aom_smooth_h_predictor_8x16_neon)
-INTRA_PRED_TEST(NEON, TX_8X32, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_8x32_neon,
+INTRA_PRED_TEST(NEON, TX_8X32, aom_dc_predictor_8x32_neon,
+                aom_dc_left_predictor_8x32_neon, aom_dc_top_predictor_8x32_neon,
+                aom_dc_128_predictor_8x32_neon, aom_v_predictor_8x32_neon,
+                aom_h_predictor_8x32_neon, aom_paeth_predictor_8x32_neon,
                 aom_smooth_predictor_8x32_neon,
                 aom_smooth_v_predictor_8x32_neon,
                 aom_smooth_h_predictor_8x32_neon)
 #endif  // HAVE_NEON
-
-#if HAVE_MSA
-INTRA_PRED_TEST(MSA, TX_8X8, aom_dc_predictor_8x8_msa,
-                aom_dc_left_predictor_8x8_msa, aom_dc_top_predictor_8x8_msa,
-                aom_dc_128_predictor_8x8_msa, aom_v_predictor_8x8_msa,
-                aom_h_predictor_8x8_msa, nullptr, nullptr, nullptr, nullptr)
-#endif  // HAVE_MSA
 
 // -----------------------------------------------------------------------------
 // 16x16, 16x8, 16x32, 16x4, 16x64
@@ -700,12 +684,6 @@ INTRA_PRED_TEST(AVX2, TX_16X64, nullptr, nullptr, nullptr, nullptr, nullptr,
                 nullptr)
 #endif  // HAVE_AVX2
 
-#if HAVE_DSPR2
-INTRA_PRED_TEST(DSPR2, TX_16X16, aom_dc_predictor_16x16_dspr2, nullptr, nullptr,
-                nullptr, nullptr, aom_h_predictor_16x16_dspr2, nullptr, nullptr,
-                nullptr, nullptr)
-#endif  // HAVE_DSPR2
-
 #if HAVE_NEON
 INTRA_PRED_TEST(NEON, TX_16X16, aom_dc_predictor_16x16_neon,
                 aom_dc_left_predictor_16x16_neon,
@@ -715,34 +693,37 @@ INTRA_PRED_TEST(NEON, TX_16X16, aom_dc_predictor_16x16_neon,
                 aom_smooth_predictor_16x16_neon,
                 aom_smooth_v_predictor_16x16_neon,
                 aom_smooth_h_predictor_16x16_neon)
-INTRA_PRED_TEST(NEON, TX_16X8, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_16x8_neon,
+INTRA_PRED_TEST(NEON, TX_16X8, aom_dc_predictor_16x8_neon,
+                aom_dc_left_predictor_16x8_neon, aom_dc_top_predictor_16x8_neon,
+                aom_dc_128_predictor_16x8_neon, aom_v_predictor_16x8_neon,
+                aom_h_predictor_16x8_neon, aom_paeth_predictor_16x8_neon,
                 aom_smooth_predictor_16x8_neon,
                 aom_smooth_v_predictor_16x8_neon,
                 aom_smooth_h_predictor_16x8_neon)
-INTRA_PRED_TEST(NEON, TX_16X32, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_16x32_neon,
+INTRA_PRED_TEST(NEON, TX_16X32, aom_dc_predictor_16x32_neon,
+                aom_dc_left_predictor_16x32_neon,
+                aom_dc_top_predictor_16x32_neon,
+                aom_dc_128_predictor_16x32_neon, aom_v_predictor_16x32_neon,
+                aom_h_predictor_16x32_neon, aom_paeth_predictor_16x32_neon,
                 aom_smooth_predictor_16x32_neon,
                 aom_smooth_v_predictor_16x32_neon,
                 aom_smooth_h_predictor_16x32_neon)
-INTRA_PRED_TEST(NEON, TX_16X4, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_16x4_neon,
+INTRA_PRED_TEST(NEON, TX_16X4, aom_dc_predictor_16x4_neon,
+                aom_dc_left_predictor_16x4_neon, aom_dc_top_predictor_16x4_neon,
+                aom_dc_128_predictor_16x4_neon, aom_v_predictor_16x4_neon,
+                aom_h_predictor_16x4_neon, aom_paeth_predictor_16x4_neon,
                 aom_smooth_predictor_16x4_neon,
                 aom_smooth_v_predictor_16x4_neon,
                 aom_smooth_h_predictor_16x4_neon)
-INTRA_PRED_TEST(NEON, TX_16X64, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_16x64_neon,
+INTRA_PRED_TEST(NEON, TX_16X64, aom_dc_predictor_16x64_neon,
+                aom_dc_left_predictor_16x64_neon,
+                aom_dc_top_predictor_16x64_neon,
+                aom_dc_128_predictor_16x64_neon, aom_v_predictor_16x64_neon,
+                aom_h_predictor_16x64_neon, aom_paeth_predictor_16x64_neon,
                 aom_smooth_predictor_16x64_neon,
                 aom_smooth_v_predictor_16x64_neon,
                 aom_smooth_h_predictor_16x64_neon)
 #endif  // HAVE_NEON
-
-#if HAVE_MSA
-INTRA_PRED_TEST(MSA, TX_16X16, aom_dc_predictor_16x16_msa,
-                aom_dc_left_predictor_16x16_msa, aom_dc_top_predictor_16x16_msa,
-                aom_dc_128_predictor_16x16_msa, aom_v_predictor_16x16_msa,
-                aom_h_predictor_16x16_msa, nullptr, nullptr, nullptr, nullptr)
-#endif  // HAVE_MSA
 
 // -----------------------------------------------------------------------------
 // 32x32, 32x16, 32x64, 32x8
@@ -847,29 +828,30 @@ INTRA_PRED_TEST(NEON, TX_32X32, aom_dc_predictor_32x32_neon,
                 aom_smooth_predictor_32x32_neon,
                 aom_smooth_v_predictor_32x32_neon,
                 aom_smooth_h_predictor_32x32_neon)
-INTRA_PRED_TEST(NEON, TX_32X16, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_32x16_neon,
+INTRA_PRED_TEST(NEON, TX_32X16, aom_dc_predictor_32x16_neon,
+                aom_dc_left_predictor_32x16_neon,
+                aom_dc_top_predictor_32x16_neon,
+                aom_dc_128_predictor_32x16_neon, aom_v_predictor_32x16_neon,
+                aom_h_predictor_32x16_neon, aom_paeth_predictor_32x16_neon,
                 aom_smooth_predictor_32x16_neon,
                 aom_smooth_v_predictor_32x16_neon,
                 aom_smooth_h_predictor_32x16_neon)
-INTRA_PRED_TEST(NEON, TX_32X64, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_32x64_neon,
+INTRA_PRED_TEST(NEON, TX_32X64, aom_dc_predictor_32x64_neon,
+                aom_dc_left_predictor_32x64_neon,
+                aom_dc_top_predictor_32x64_neon,
+                aom_dc_128_predictor_32x64_neon, aom_v_predictor_32x64_neon,
+                aom_h_predictor_32x64_neon, aom_paeth_predictor_32x64_neon,
                 aom_smooth_predictor_32x64_neon,
                 aom_smooth_v_predictor_32x64_neon,
                 aom_smooth_h_predictor_32x64_neon)
-INTRA_PRED_TEST(NEON, TX_32X8, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_32x8_neon,
+INTRA_PRED_TEST(NEON, TX_32X8, aom_dc_predictor_32x8_neon,
+                aom_dc_left_predictor_32x8_neon, aom_dc_top_predictor_32x8_neon,
+                aom_dc_128_predictor_32x8_neon, aom_v_predictor_32x8_neon,
+                aom_h_predictor_32x8_neon, aom_paeth_predictor_32x8_neon,
                 aom_smooth_predictor_32x8_neon,
                 aom_smooth_v_predictor_32x8_neon,
                 aom_smooth_h_predictor_32x8_neon)
 #endif  // HAVE_NEON
-
-#if HAVE_MSA
-INTRA_PRED_TEST(MSA, TX_32X32, aom_dc_predictor_32x32_msa,
-                aom_dc_left_predictor_32x32_msa, aom_dc_top_predictor_32x32_msa,
-                aom_dc_128_predictor_32x32_msa, aom_v_predictor_32x32_msa,
-                aom_h_predictor_32x32_msa, nullptr, nullptr, nullptr, nullptr)
-#endif  // HAVE_MSA
 
 // -----------------------------------------------------------------------------
 // 64x64, 64x32, 64x16
@@ -951,18 +933,27 @@ INTRA_PRED_TEST(AVX2, TX_64X16, aom_dc_predictor_64x16_avx2,
 #endif
 
 #if HAVE_NEON
-INTRA_PRED_TEST(NEON, TX_64X64, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_64x64_neon,
+INTRA_PRED_TEST(NEON, TX_64X64, aom_dc_predictor_64x64_neon,
+                aom_dc_left_predictor_64x64_neon,
+                aom_dc_top_predictor_64x64_neon,
+                aom_dc_128_predictor_64x64_neon, aom_v_predictor_64x64_neon,
+                aom_h_predictor_64x64_neon, aom_paeth_predictor_64x64_neon,
                 aom_smooth_predictor_64x64_neon,
                 aom_smooth_v_predictor_64x64_neon,
                 aom_smooth_h_predictor_64x64_neon)
-INTRA_PRED_TEST(NEON, TX_64X32, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_64x32_neon,
+INTRA_PRED_TEST(NEON, TX_64X32, aom_dc_predictor_64x32_neon,
+                aom_dc_left_predictor_64x32_neon,
+                aom_dc_top_predictor_64x32_neon,
+                aom_dc_128_predictor_64x32_neon, aom_v_predictor_64x32_neon,
+                aom_h_predictor_64x32_neon, aom_paeth_predictor_64x32_neon,
                 aom_smooth_predictor_64x32_neon,
                 aom_smooth_v_predictor_64x32_neon,
                 aom_smooth_h_predictor_64x32_neon)
-INTRA_PRED_TEST(NEON, TX_64X16, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, aom_paeth_predictor_64x16_neon,
+INTRA_PRED_TEST(NEON, TX_64X16, aom_dc_predictor_64x16_neon,
+                aom_dc_left_predictor_64x16_neon,
+                aom_dc_top_predictor_64x16_neon,
+                aom_dc_128_predictor_64x16_neon, aom_v_predictor_64x16_neon,
+                aom_h_predictor_64x16_neon, aom_paeth_predictor_64x16_neon,
                 aom_smooth_predictor_64x16_neon,
                 aom_smooth_v_predictor_64x16_neon,
                 aom_smooth_h_predictor_64x16_neon)

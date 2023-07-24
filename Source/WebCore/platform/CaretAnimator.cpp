@@ -47,12 +47,12 @@ void CaretAnimator::stop(CaretAnimatorStopReason)
     didEnd();
 }
 
-void CaretAnimator::serviceCaretAnimation(ReducedResolutionSeconds timestamp)
+void CaretAnimator::serviceCaretAnimation()
 {
     if (!isActive())
         return;
 
-    updateAnimationProperties(timestamp);
+    updateAnimationProperties();
 }
 
 void CaretAnimator::scheduleAnimation()
@@ -61,7 +61,7 @@ void CaretAnimator::scheduleAnimation()
         page->scheduleRenderingUpdate(RenderingUpdateStep::CaretAnimation);
 }
 
-void CaretAnimator::paint(const Node&, GraphicsContext& context, const FloatRect& caret, const Color& color, const LayoutPoint&) const
+void CaretAnimator::paint(GraphicsContext& context, const FloatRect& caret, const Color& color, const LayoutPoint&) const
 {
     context.fillRect(caret, color);
 }

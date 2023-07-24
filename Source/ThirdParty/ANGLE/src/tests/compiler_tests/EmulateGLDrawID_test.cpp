@@ -21,7 +21,6 @@ class EmulateGLDrawIDTest : public MatchOutputCodeTest
     EmulateGLDrawIDTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_GLSL_COMPATIBILITY_OUTPUT)
     {
         ShCompileOptions defaultCompileOptions = {};
-        defaultCompileOptions.variables        = true;
         setDefaultCompileOptions(defaultCompileOptions);
 
         getResources()->ANGLE_multi_draw = 1;
@@ -31,7 +30,6 @@ class EmulateGLDrawIDTest : public MatchOutputCodeTest
     void CheckCompileFailure(const std::string &shaderString, const char *expectedError = nullptr)
     {
         ShCompileOptions compileOptions = {};
-        compileOptions.variables        = true;
 
         std::string translatedCode;
         std::string infoLog;
@@ -69,7 +67,6 @@ TEST_F(EmulateGLDrawIDTest, CheckCompile)
 
     ShCompileOptions compileOptions = {};
     compileOptions.objectCode       = true;
-    compileOptions.variables        = true;
     compileOptions.emulateGLDrawID  = true;
 
     compile(shaderString, compileOptions);
@@ -98,7 +95,6 @@ TEST_F(EmulateGLDrawIDTest, EmulatesUniform)
 
     ShCompileOptions compileOptions = {};
     compileOptions.objectCode       = true;
-    compileOptions.variables        = true;
     compileOptions.emulateGLDrawID  = true;
     compile(shaderString, compileOptions);
 
@@ -174,7 +170,6 @@ TEST_F(EmulateGLDrawIDTest, AllowsUserDefinedANGLEDrawID)
 
     ShCompileOptions compileOptions = {};
     compileOptions.objectCode       = true;
-    compileOptions.variables        = true;
     compileOptions.emulateGLDrawID  = true;
     compile(shaderString, compileOptions);
 

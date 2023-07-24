@@ -119,7 +119,7 @@ static INLINE int get_br_cost_with_diff(tran_low_t level, const int *coeff_lps,
 
 static AOM_FORCE_INLINE int get_two_coeff_cost_simple(
     int ci, tran_low_t abs_qc, int coeff_ctx,
-    const LV_MAP_COEFF_COST *txb_costs, int bwl, TX_CLASS tx_class,
+    const LV_MAP_COEFF_COST *txb_costs, int bhl, TX_CLASS tx_class,
     const uint8_t *levels, int *cost_low) {
   // this simple version assumes the coeff's scan_idx is not DC (scan_idx != 0)
   // and not the last (scan_idx != eob - 1)
@@ -130,7 +130,7 @@ static AOM_FORCE_INLINE int get_two_coeff_cost_simple(
   if (abs_qc) {
     cost += av1_cost_literal(1);
     if (abs_qc > NUM_BASE_LEVELS) {
-      const int br_ctx = get_br_ctx(levels, ci, bwl, tx_class);
+      const int br_ctx = get_br_ctx(levels, ci, bhl, tx_class);
       int brcost_diff = 0;
       cost += get_br_cost_with_diff(abs_qc, txb_costs->lps_cost[br_ctx],
                                     &brcost_diff);
@@ -145,7 +145,7 @@ static AOM_FORCE_INLINE int get_two_coeff_cost_simple(
 static INLINE int get_coeff_cost_eob(int ci, tran_low_t abs_qc, int sign,
                                      int coeff_ctx, int dc_sign_ctx,
                                      const LV_MAP_COEFF_COST *txb_costs,
-                                     int bwl, TX_CLASS tx_class) {
+                                     int bhl, TX_CLASS tx_class) {
   int cost = 0;
   cost += txb_costs->base_eob_cost[coeff_ctx][AOMMIN(abs_qc, 3) - 1];
   if (abs_qc != 0) {
@@ -156,7 +156,7 @@ static INLINE int get_coeff_cost_eob(int ci, tran_low_t abs_qc, int sign,
     }
     if (abs_qc > NUM_BASE_LEVELS) {
       int br_ctx;
-      br_ctx = get_br_ctx_eob(ci, bwl, tx_class);
+      br_ctx = get_br_ctx_eob(ci, bhl, tx_class);
       cost += get_br_cost(abs_qc, txb_costs->lps_cost[br_ctx]);
     }
   }
@@ -167,7 +167,7 @@ static INLINE int get_coeff_cost_general(int is_last, int ci, tran_low_t abs_qc,
                                          int sign, int coeff_ctx,
                                          int dc_sign_ctx,
                                          const LV_MAP_COEFF_COST *txb_costs,
-                                         int bwl, TX_CLASS tx_class,
+                                         int bhl, TX_CLASS tx_class,
                                          const uint8_t *levels) {
   int cost = 0;
   if (is_last) {
@@ -184,9 +184,9 @@ static INLINE int get_coeff_cost_general(int is_last, int ci, tran_low_t abs_qc,
     if (abs_qc > NUM_BASE_LEVELS) {
       int br_ctx;
       if (is_last)
-        br_ctx = get_br_ctx_eob(ci, bwl, tx_class);
+        br_ctx = get_br_ctx_eob(ci, bhl, tx_class);
       else
-        br_ctx = get_br_ctx(levels, ci, bwl, tx_class);
+        br_ctx = get_br_ctx(levels, ci, bhl, tx_class);
       cost += get_br_cost(abs_qc, txb_costs->lps_cost[br_ctx]);
     }
   }

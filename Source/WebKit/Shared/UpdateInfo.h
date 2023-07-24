@@ -39,17 +39,7 @@ class Encoder;
 
 namespace WebKit {
 
-class UpdateInfo {
-    WTF_MAKE_NONCOPYABLE(UpdateInfo);
-
-public:
-    UpdateInfo() { }
-    UpdateInfo(UpdateInfo&&) = default;
-    UpdateInfo& operator=(UpdateInfo&&) = default;
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, UpdateInfo&);
-
+struct UpdateInfo {
     // The size of the web view.
     WebCore::IntSize viewSize;
     float deviceScaleFactor { 0 };

@@ -1,6 +1,0 @@
-
-FAIL Popovers should not initially focus child dialog elements. assert_equals: Nothing should have gotten focused. expected Element node <body><div id="popover1" popover="">
-  <dialog id="childd... but got Element node <button autofocus="">hello world</button>
-FAIL Popovers should not initially focus child popover elements. assert_equals: Nothing should have gotten focused. expected Element node <body><div id="popover1" popover="">
-  <dialog id="childd... but got Element node <button autofocus="">hello world</button>
-

@@ -16,7 +16,6 @@
 
 #include "absl/algorithm/container.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/location.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {

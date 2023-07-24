@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcessMessages.h"
 #include "Logging.h"
 #include "PlatformImageBufferShareableBackend.h"
+#include "RemoteImageBufferProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "WebPage.h"
 #include "WebWorkerClient.h"
@@ -91,7 +92,7 @@ public:
 
     void flush() final
     {
-        m_flushState->waitFor(RemoteDisplayListRecorderProxy::defaultSendTimeout);
+        m_flushState->waitFor(RemoteRenderingBackendProxy::defaultTimeout);
     }
 
 private:
@@ -145,34 +146,35 @@ void RemoteImageBufferProxy::backingStoreWillChange()
     prepareForBackingStoreChange();
 }
 
-void RemoteImageBufferProxy::didCreateImageBufferBackend(ImageBufferBackendHandle&& handle)
+void RemoteImageBufferProxy::didCreateBackend(ImageBufferBackendHandle&& handle)
 {
     ASSERT(!m_backend);
     if (renderingMode() == RenderingMode::Accelerated && std::holds_alternative<ShareableBitmap::Handle>(handle))
         m_backendInfo = ImageBuffer::populateBackendInfo<UnacceleratedImageBufferShareableBackend>(parameters());
-    
+
+    std::unique_ptr<ImageBufferBackend> backend;
     if (renderingMode() == RenderingMode::Unaccelerated)
-        m_backend = UnacceleratedImageBufferShareableBackend::create(parameters(), WTFMove(handle));
+        backend = UnacceleratedImageBufferShareableBackend::create(parameters(), WTFMove(handle));
     else if (canMapBackingStore())
-        m_backend = AcceleratedImageBufferShareableMappedBackend::create(parameters(), WTFMove(handle));
+        backend = AcceleratedImageBufferShareableMappedBackend::create(parameters(), WTFMove(handle));
     else
-        m_backend = AcceleratedImageBufferRemoteBackend::create(parameters(), WTFMove(handle));
+        backend = AcceleratedImageBufferRemoteBackend::create(parameters(), WTFMove(handle));
+
+    setBackend(WTFMove(backend));
 }
 
 ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
 {
-    if (!m_remoteRenderingBackendProxy)
-        return m_backend.get();
-
-    static constexpr unsigned maximumTimeoutOrFailureCount = 3;
-    unsigned numberOfTimeoutsOrFailures = 0;
-    while (!m_backend && numberOfTimeoutsOrFailures < maximumTimeoutOrFailureCount) {
-        if (m_remoteRenderingBackendProxy->waitForDidCreateImageBufferBackend() == RemoteRenderingBackendProxy::DidReceiveBackendCreationResult::TimeoutOrIPCFailure)
-            ++numberOfTimeoutsOrFailures;
-    }
-    if (numberOfTimeoutsOrFailures == maximumTimeoutOrFailureCount) {
-        LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " ensureBackendCreated: exceeded max number of timeouts");
-        RELEASE_LOG_FAULT(SharedDisplayLists, "Exceeded max number of timeouts waiting for image buffer backend creation in remote rendering backend %" PRIu64 ".", m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64());
+    if (!m_backend && m_remoteRenderingBackendProxy) {
+        auto error = streamConnection().waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
+        if (error != IPC::Error::NoError) {
+#if !RELEASE_LOG_DISABLED
+            auto& parameters = m_remoteRenderingBackendProxy->parameters();
+#endif
+            RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::ensureBackendCreated - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING,
+                parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::errorAsString(error));
+            return nullptr;
+        }
     }
     return m_backend.get();
 }
@@ -309,7 +311,7 @@ void RemoteImageBufferProxy::flushDrawingContext()
         return;
     }
     if (m_pendingFlush) {
-        bool success = m_pendingFlush->waitFor(RemoteDisplayListRecorderProxy::defaultSendTimeout);
+        bool success = m_pendingFlush->waitFor(RemoteRenderingBackendProxy::defaultTimeout);
         ASSERT_UNUSED(success, success); // Currently there is nothing to be done on a timeout.
         m_pendingFlush = nullptr;
     }
@@ -375,25 +377,27 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
     return ret;
 }
 
+IPC::StreamClientConnection& RemoteImageBufferProxy::streamConnection() const
+{
+    ASSERT(m_remoteRenderingBackendProxy);
+    return m_remoteRenderingBackendProxy->streamConnection();
+}
+
+
 RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, RemoteRenderingBackendProxy& backend)
-    : m_referenceTracker(RemoteSerializedImageBufferIdentifier::generate())
-    , m_parameters(parameters)
+    : m_parameters(parameters)
     , m_info(info)
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
     , m_connection(backend.connection())
 {
     backend.remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
-    backend.moveToSerializedBuffer(m_renderingResourceIdentifier, m_referenceTracker.write());
+    backend.moveToSerializedBuffer(m_renderingResourceIdentifier);
 }
 
 RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> buffer, RemoteRenderingBackendProxy& backend)
 {
     auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, buffer->m_renderingResourceIdentifier));
-
-    // Record an implicit read, since we always do a read+write (to get+remove) as a single
-    // operation.
-    buffer->m_referenceTracker.read();
-    backend.moveToImageBuffer(buffer->m_referenceTracker.write(), result->renderingResourceIdentifier());
+    backend.moveToImageBuffer(result->renderingResourceIdentifier());
     buffer->m_connection = nullptr;
     return result;
 }
@@ -401,7 +405,7 @@ RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::u
 RemoteSerializedImageBufferProxy::~RemoteSerializedImageBufferProxy()
 {
     if (m_connection)
-        m_connection->send(Messages::GPUConnectionToWebProcess::ReleaseSerializedImageBuffer(m_referenceTracker.write()), 0);
+        m_connection->send(Messages::GPUConnectionToWebProcess::ReleaseSerializedImageBuffer(m_renderingResourceIdentifier), 0);
 }
 
 } // namespace WebKit

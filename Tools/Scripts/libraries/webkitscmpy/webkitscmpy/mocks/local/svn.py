@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@ import os
 import re
 
 from datetime import datetime
-from mock import patch
 
 from webkitcorepy import mocks
 from webkitscmpy import local
@@ -170,6 +169,8 @@ class Svn(mocks.Subprocess):
         )
 
     def __enter__(self):
+        from mock import patch
+
         # TODO: Use shutil directly when Python 2.7 is removed
         from whichcraft import which
         self.patches.append(patch('whichcraft.which', lambda cmd: dict(svn=self.executable).get(cmd, which(cmd))))

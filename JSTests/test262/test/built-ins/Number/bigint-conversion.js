@@ -4,7 +4,7 @@
 /*---
 description: BigInt to Number conversion
 esid: pending
-features: [BigInt]
+features: [BigInt, exponentiation]
 ---*/
 
 assert.sameValue(Number(0n), 0);

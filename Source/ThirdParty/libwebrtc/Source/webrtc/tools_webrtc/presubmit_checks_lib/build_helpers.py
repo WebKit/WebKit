@@ -69,7 +69,7 @@ def RunGnCheck(root_dir=None):
 def RunNinjaCommand(args, root_dir=None):
   """Runs ninja quietly. Any failure (e.g. clang not found) is
      silently discarded, since this is unlikely an error in submitted CL."""
-  command = [os.path.join(find_depot_tools.DEPOT_TOOLS_PATH, 'ninja')] + args
+  command = [os.path.join(SRC_DIR, 'third_party', 'ninja', 'ninja')] + args
   p = subprocess.Popen(command,
                        cwd=root_dir,
                        stdout=subprocess.PIPE,

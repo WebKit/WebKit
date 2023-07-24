@@ -1270,11 +1270,12 @@ public:
         if (isX86())
             return B3::isRepresentableAs<int32_t>(value);
         if (isARM64()) {
-            if (isUInt12(value))
+            if (isUInt12(value) || isUInt12(toTwosComplement(value)))
                 return true;
-            if (value == INT64_MIN)
-                return isUInt12(INT64_MIN);
-            return isUInt12(-value);
+            int64_t shifted = value >> 12;
+            if ((shifted << 12) == value)
+                return isUInt12(shifted) || isUInt12(toTwosComplement(shifted));
+            return false;
         }
         if (isARM_THUMB2())
             return isValidARMThumb2Immediate(value);

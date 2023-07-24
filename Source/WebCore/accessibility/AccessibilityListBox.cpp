@@ -36,6 +36,7 @@
 #include "HitTestResult.h"
 #include "RenderListBox.h"
 #include "RenderObject.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -62,6 +63,9 @@ bool AccessibilityListBox::canSetSelectedChildren() const
 void AccessibilityListBox::addChildren()
 {
     m_childrenInitialized = true;
+    auto clearDirtySubtree = makeScopeExit([&] {
+        m_subtreeDirty = false;
+    });
 
     auto* selectElement = dynamicDowncast<HTMLSelectElement>(node());
     if (!selectElement)

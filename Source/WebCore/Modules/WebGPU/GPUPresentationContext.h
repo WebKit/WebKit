@@ -26,7 +26,7 @@
 #pragma once
 
 #include "GPUTexture.h"
-#include <pal/graphics/WebGPU/WebGPUPresentationContext.h>
+#include "WebGPUPresentationContext.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -42,7 +42,7 @@ class GPUTexture;
 
 class GPUPresentationContext : public RefCounted<GPUPresentationContext> {
 public:
-    static Ref<GPUPresentationContext> create(Ref<PAL::WebGPU::PresentationContext>&& backing)
+    static Ref<GPUPresentationContext> create(Ref<WebGPU::PresentationContext>&& backing)
     {
         return adoptRef(*new GPUPresentationContext(WTFMove(backing)));
     }
@@ -53,16 +53,16 @@ public:
     RefPtr<GPUTexture> getCurrentTexture();
     void present();
 
-    PAL::WebGPU::PresentationContext& backing() { return m_backing; }
-    const PAL::WebGPU::PresentationContext& backing() const { return m_backing; }
+    WebGPU::PresentationContext& backing() { return m_backing; }
+    const WebGPU::PresentationContext& backing() const { return m_backing; }
 
 private:
-    GPUPresentationContext(Ref<PAL::WebGPU::PresentationContext>&& backing)
+    GPUPresentationContext(Ref<WebGPU::PresentationContext>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
-    Ref<PAL::WebGPU::PresentationContext> m_backing;
+    Ref<WebGPU::PresentationContext> m_backing;
     RefPtr<GPUTexture> m_currentTexture;
 };
 

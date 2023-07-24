@@ -21,13 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import re
-import requests
-import six
 import sys
 
-from webkitcorepy import decorators
+from webkitcorepy import decorators, string_utils, CallByNeed
 from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
+
+requests = CallByNeed(lambda: __import__('requests'))
 
 
 class BitBucket(Scm):
@@ -564,7 +564,7 @@ class BitBucket(Scm):
         )
 
     def find(self, argument, include_log=True, include_identifier=True):
-        if not isinstance(argument, six.string_types):
+        if not isinstance(argument, string_utils.basestring):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
         if argument in self.DEFAULT_BRANCHES:

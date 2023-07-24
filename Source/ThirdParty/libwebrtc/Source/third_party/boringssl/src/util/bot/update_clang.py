@@ -28,7 +28,7 @@ except ImportError:
 # CLANG_REVISION and CLANG_SUB_REVISION determine the build of clang
 # to use. These should be synced with tools/clang/scripts/update.py in
 # Chromium.
-CLANG_REVISION = 'llvmorg-13-init-794-g83e2710e'
+CLANG_REVISION = 'llvmorg-17-init-10134-g3da83fba'
 CLANG_SUB_REVISION = 1
 
 PACKAGE_VERSION = '%s-%s' % (CLANG_REVISION, CLANG_SUB_REVISION)
@@ -94,7 +94,7 @@ def DownloadAndUnpack(url, output_dir):
     DownloadUrl(url, f)
     f.seek(0)
     EnsureDirExists(output_dir)
-    tarfile.open(mode='r:gz', fileobj=f).extractall(path=output_dir)
+    tarfile.open(mode='r:*', fileobj=f).extractall(path=output_dir)
 
 
 def ReadStampFile(path=STAMP_FILE):
@@ -133,7 +133,7 @@ def CopyFile(src, dst):
 
 
 def UpdateClang():
-  cds_file = "clang-%s.tgz" %  PACKAGE_VERSION
+  cds_file = "clang-%s.tar.xz" %  PACKAGE_VERSION
   if sys.platform == 'win32' or sys.platform == 'cygwin':
     cds_full_url = CDS_URL + '/Win/' + cds_file
   elif sys.platform.startswith('linux'):

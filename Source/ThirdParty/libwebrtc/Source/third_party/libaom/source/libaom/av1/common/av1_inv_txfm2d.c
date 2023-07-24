@@ -29,10 +29,10 @@ void av1_highbd_iwht4x4_16_add_c(const tran_low_t *input, uint8_t *dest8,
   uint16_t *dest = CONVERT_TO_SHORTPTR(dest8);
 
   for (i = 0; i < 4; i++) {
-    a1 = ip[0] >> UNIT_QUANT_SHIFT;
-    c1 = ip[1] >> UNIT_QUANT_SHIFT;
-    d1 = ip[2] >> UNIT_QUANT_SHIFT;
-    b1 = ip[3] >> UNIT_QUANT_SHIFT;
+    a1 = ip[4 * 0] >> UNIT_QUANT_SHIFT;
+    c1 = ip[4 * 1] >> UNIT_QUANT_SHIFT;
+    d1 = ip[4 * 2] >> UNIT_QUANT_SHIFT;
+    b1 = ip[4 * 3] >> UNIT_QUANT_SHIFT;
     a1 += c1;
     d1 -= b1;
     e1 = (a1 - d1) >> 1;
@@ -41,20 +41,20 @@ void av1_highbd_iwht4x4_16_add_c(const tran_low_t *input, uint8_t *dest8,
     a1 -= b1;
     d1 += c1;
 
-    op[0] = a1;
-    op[1] = b1;
-    op[2] = c1;
-    op[3] = d1;
-    ip += 4;
-    op += 4;
+    op[4 * 0] = a1;
+    op[4 * 1] = b1;
+    op[4 * 2] = c1;
+    op[4 * 3] = d1;
+    ip++;
+    op++;
   }
 
   ip = output;
   for (i = 0; i < 4; i++) {
-    a1 = ip[4 * 0];
-    c1 = ip[4 * 1];
-    d1 = ip[4 * 2];
-    b1 = ip[4 * 3];
+    a1 = ip[0];
+    c1 = ip[1];
+    d1 = ip[2];
+    b1 = ip[3];
     a1 += c1;
     d1 -= b1;
     e1 = (a1 - d1) >> 1;
@@ -73,7 +73,7 @@ void av1_highbd_iwht4x4_16_add_c(const tran_low_t *input, uint8_t *dest8,
     dest[stride * 2] = highbd_clip_pixel_add(dest[stride * 2], c1, bd);
     dest[stride * 3] = highbd_clip_pixel_add(dest[stride * 3], d1, bd);
 
-    ip++;
+    ip += 4;
     dest++;
   }
 }
@@ -88,7 +88,7 @@ void av1_highbd_iwht4x4_1_add_c(const tran_low_t *in, uint8_t *dest8,
   uint16_t *dest = CONVERT_TO_SHORTPTR(dest8);
   (void)bd;
 
-  a1 = ip[0] >> UNIT_QUANT_SHIFT;
+  a1 = ip[0 * 4] >> UNIT_QUANT_SHIFT;
   e1 = a1 >> 1;
   a1 -= e1;
   op[0] = a1;
@@ -271,19 +271,19 @@ static INLINE void inv_txfm2d_add_c(const int32_t *input, uint16_t *output,
   for (r = 0; r < txfm_size_row; ++r) {
     if (abs(rect_type) == 1) {
       for (c = 0; c < txfm_size_col; ++c) {
-        temp_in[c] = round_shift((int64_t)input[c] * NewInvSqrt2, NewSqrt2Bits);
+        temp_in[c] = round_shift(
+            (int64_t)input[c * txfm_size_row + r] * NewInvSqrt2, NewSqrt2Bits);
       }
       clamp_buf(temp_in, txfm_size_col, bd + 8);
       txfm_func_row(temp_in, buf_ptr, cos_bit_row, stage_range_row);
     } else {
       for (c = 0; c < txfm_size_col; ++c) {
-        temp_in[c] = input[c];
+        temp_in[c] = input[c * txfm_size_row + r];
       }
       clamp_buf(temp_in, txfm_size_col, bd + 8);
       txfm_func_row(temp_in, buf_ptr, cos_bit_row, stage_range_row);
     }
     av1_round_shift_array(buf_ptr, txfm_size_col, -shift[0]);
-    input += txfm_size_col;
     buf_ptr += txfm_size_col;
   }
 
@@ -393,9 +393,9 @@ void av1_inv_txfm2d_add_64x64_c(const int32_t *input, uint16_t *output,
   // - Copying over these values in top-left 32x32 locations.
   // - Setting the rest of the locations to 0.
   int32_t mod_input[64 * 64];
-  for (int row = 0; row < 32; ++row) {
-    memcpy(mod_input + row * 64, input + row * 32, 32 * sizeof(*mod_input));
-    memset(mod_input + row * 64 + 32, 0, 32 * sizeof(*mod_input));
+  for (int col = 0; col < 32; ++col) {
+    memcpy(mod_input + col * 64, input + col * 32, 32 * sizeof(*mod_input));
+    memset(mod_input + col * 64 + 32, 0, 32 * sizeof(*mod_input));
   }
   memset(mod_input + 32 * 64, 0, 32 * 64 * sizeof(*mod_input));
   DECLARE_ALIGNED(32, int, txfm_buf[64 * 64 + 64 + 64]);
@@ -408,11 +408,9 @@ void av1_inv_txfm2d_add_64x32_c(const int32_t *input, uint16_t *output,
   // Remap 32x32 input into a modified 64x32 by:
   // - Copying over these values in top-left 32x32 locations.
   // - Setting the rest of the locations to 0.
-  int32_t mod_input[64 * 32];
-  for (int row = 0; row < 32; ++row) {
-    memcpy(mod_input + row * 64, input + row * 32, 32 * sizeof(*mod_input));
-    memset(mod_input + row * 64 + 32, 0, 32 * sizeof(*mod_input));
-  }
+  int32_t mod_input[32 * 64];
+  memcpy(mod_input, input, 32 * 32 * sizeof(*mod_input));
+  memset(mod_input + 32 * 32, 0, 32 * 32 * sizeof(*mod_input));
   DECLARE_ALIGNED(32, int, txfm_buf[64 * 32 + 64 + 64]);
   inv_txfm2d_add_facade(mod_input, output, stride, txfm_buf, tx_type, TX_64X32,
                         bd);
@@ -423,9 +421,11 @@ void av1_inv_txfm2d_add_32x64_c(const int32_t *input, uint16_t *output,
   // Remap 32x32 input into a modified 32x64 input by:
   // - Copying over these values in top-left 32x32 locations.
   // - Setting the rest of the locations to 0.
-  int32_t mod_input[32 * 64];
-  memcpy(mod_input, input, 32 * 32 * sizeof(*mod_input));
-  memset(mod_input + 32 * 32, 0, 32 * 32 * sizeof(*mod_input));
+  int32_t mod_input[64 * 32];
+  for (int col = 0; col < 32; ++col) {
+    memcpy(mod_input + col * 64, input + col * 32, 32 * sizeof(*mod_input));
+    memset(mod_input + col * 64 + 32, 0, 32 * sizeof(*mod_input));
+  }
   DECLARE_ALIGNED(32, int, txfm_buf[64 * 32 + 64 + 64]);
   inv_txfm2d_add_facade(mod_input, output, stride, txfm_buf, tx_type, TX_32X64,
                         bd);
@@ -436,9 +436,11 @@ void av1_inv_txfm2d_add_16x64_c(const int32_t *input, uint16_t *output,
   // Remap 16x32 input into a modified 16x64 input by:
   // - Copying over these values in top-left 16x32 locations.
   // - Setting the rest of the locations to 0.
-  int32_t mod_input[16 * 64];
-  memcpy(mod_input, input, 16 * 32 * sizeof(*mod_input));
-  memset(mod_input + 16 * 32, 0, 16 * 32 * sizeof(*mod_input));
+  int32_t mod_input[64 * 16];
+  for (int col = 0; col < 16; ++col) {
+    memcpy(mod_input + col * 64, input + col * 32, 32 * sizeof(*mod_input));
+    memset(mod_input + col * 64 + 32, 0, 32 * sizeof(*mod_input));
+  }
   DECLARE_ALIGNED(32, int, txfm_buf[16 * 64 + 64 + 64]);
   inv_txfm2d_add_facade(mod_input, output, stride, txfm_buf, tx_type, TX_16X64,
                         bd);
@@ -449,11 +451,9 @@ void av1_inv_txfm2d_add_64x16_c(const int32_t *input, uint16_t *output,
   // Remap 32x16 input into a modified 64x16 by:
   // - Copying over these values in top-left 32x16 locations.
   // - Setting the rest of the locations to 0.
-  int32_t mod_input[64 * 16];
-  for (int row = 0; row < 16; ++row) {
-    memcpy(mod_input + row * 64, input + row * 32, 32 * sizeof(*mod_input));
-    memset(mod_input + row * 64 + 32, 0, 32 * sizeof(*mod_input));
-  }
+  int32_t mod_input[16 * 64];
+  memcpy(mod_input, input, 16 * 32 * sizeof(*mod_input));
+  memset(mod_input + 16 * 32, 0, 16 * 32 * sizeof(*mod_input));
   DECLARE_ALIGNED(32, int, txfm_buf[16 * 64 + 64 + 64]);
   inv_txfm2d_add_facade(mod_input, output, stride, txfm_buf, tx_type, TX_64X16,
                         bd);

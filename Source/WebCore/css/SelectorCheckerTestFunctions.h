@@ -96,7 +96,7 @@ ALWAYS_INLINE bool matchesDisabledPseudoClass(const Element& element)
 // https://html.spec.whatwg.org/multipage/scripting.html#selector-enabled
 ALWAYS_INLINE bool matchesEnabledPseudoClass(const Element& element)
 {
-    return is<HTMLElement>(element) && downcast<HTMLElement>(element).canBeActuallyDisabled() && !element.isDisabledFormControl();
+    return is<HTMLElement>(element) && downcast<HTMLElement>(element).canBeActuallyDisabled() && !downcast<HTMLElement>(element).isActuallyDisabled();
 }
 
 // https://dom.spec.whatwg.org/#concept-element-defined
@@ -523,7 +523,7 @@ ALWAYS_INLINE bool isFrameFocused(const Element& element)
 
 ALWAYS_INLINE bool matchesLegacyDirectFocusPseudoClass(const Element& element)
 {
-    if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocus))
+    if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassType::Focus))
         return true;
 
     return element.focused() && isFrameFocused(element);
@@ -537,7 +537,7 @@ ALWAYS_INLINE bool doesShadowTreeContainFocusedElement(const Element& element)
 
 ALWAYS_INLINE bool matchesFocusPseudoClass(const Element& element)
 {
-    if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocus))
+    if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassType::Focus))
         return true;
 
     return (element.focused() || doesShadowTreeContainFocusedElement(element)) && isFrameFocused(element);
@@ -548,7 +548,7 @@ ALWAYS_INLINE bool matchesFocusVisiblePseudoClass(const Element& element)
     if (!element.document().settings().focusVisibleEnabled())
         return matchesLegacyDirectFocusPseudoClass(element);
 
-    if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocusVisible))
+    if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassType::FocusVisible))
         return true;
 
     return element.hasFocusVisible() && isFrameFocused(element);
@@ -556,10 +556,15 @@ ALWAYS_INLINE bool matchesFocusVisiblePseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesFocusWithinPseudoClass(const Element& element)
 {
-    if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassFocusWithin))
+    if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassType::FocusWithin))
         return true;
 
     return element.hasFocusWithin() && isFrameFocused(element);
+}
+
+ALWAYS_INLINE bool matchesHtmlDocumentPseudoClass(const Element& element)
+{
+    return element.document().isHTMLDocument();
 }
 
 ALWAYS_INLINE bool matchesModalPseudoClass(const Element& element)
@@ -575,10 +580,7 @@ ALWAYS_INLINE bool matchesModalPseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesPopoverOpenPseudoClass(const Element& element)
 {
-    if (auto* popoverData = element.popoverData())
-        return popoverData->visibilityState() == PopoverVisibilityState::Showing;
-
-    return false;
+    return element.isPopoverShowing();
 }
 
 ALWAYS_INLINE bool matchesUserInvalidPseudoClass(const Element& element)

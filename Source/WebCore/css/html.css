@@ -102,6 +102,7 @@ hr {
     display: block;
     overflow: hidden;
     unicode-bidi: isolate;
+    color: gray;
     margin-block-start: 0.5em;
     margin-block-end: 0.5em;
     margin-inline-start: auto;
@@ -299,6 +300,11 @@ caption {
     text-align: -webkit-center;
 }
 
+/* for table elements with form inside following rules should apply */
+:is(table, thead, tbody, tfoot, tr) > form:-internal-html-document {
+    display: none !important;
+}
+
 /* lists */
 
 ul, menu, dir {
@@ -435,7 +441,7 @@ input {
     font: 11px system-ui;
     padding: 0.2em 0.5em 0.3em 0.5em;
 #else
-    border: 2px inset;
+    border: 2px inset gray;
     padding: 1px;
 #endif
     -webkit-rtl-ordering: logical;
@@ -496,10 +502,15 @@ input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], 
     overflow: hidden;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border: 1px solid -webkit-control-background;
-    background-color: -apple-system-opaque-secondary-fill;
     font-family: system-ui;
-    color: -apple-system-blue;
     padding: 0.2em 0.5em;
+#if defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION
+    background-color: rgba(0, 0, 0, 0.04);
+    color: CanvasText;
+#else
+    background-color: -apple-system-opaque-secondary-fill;
+    color: -apple-system-blue;
+#endif /*defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION */
 #else
     outline: none;
     font-variant-numeric: tabular-nums;
@@ -738,10 +749,6 @@ input::-webkit-list-button {
 }
 #endif
 
-select {
-    border-radius: 5px;
-}
-
 textarea {
     appearance: auto;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
@@ -860,9 +867,13 @@ input:is([type="button"], [type="submit"], [type="reset"]), input[type="file"]::
     padding: 0 1.0em;
     border: 1px solid -webkit-control-background;
     font: 11px system-ui;
-    background-color: -apple-system-opaque-secondary-fill;
     color: -apple-system-blue;
-#endif
+#if defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION
+    background-color: rgba(0, 0, 0, 0.05);
+#else
+    background-color: -apple-system-opaque-secondary-fill;
+#endif /* defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION */
+#endif /* (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY) */
     box-sizing: border-box;
 }
 
@@ -1072,8 +1083,13 @@ select {
     font: 11px system-ui;
     border: 1px solid -webkit-control-background;
     border-radius: initial;
-    background-color: -apple-system-opaque-secondary-fill;
+#if defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION
+    background-color: rgba(0, 0, 0, 0.04);
 #else
+    background-color: -apple-system-opaque-secondary-fill;
+#endif /* defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION */
+#else
+    border-radius: 5px;
     border: 1px solid;
 #if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: CanvasText;
@@ -1081,7 +1097,7 @@ select {
 #else
     color: black;
     background-color: white;
-#endif
+#endif /* defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT */
 #endif
     align-items: center;
     white-space: pre;
@@ -1111,6 +1127,7 @@ optgroup {
 
 option {
     font-weight: normal;
+    white-space: nowrap;
 }
 
 output {
@@ -1372,6 +1389,8 @@ bdi, output {
     unicode-bidi: isolate;
 }
 
+input[type=tel i]:dir(ltr) { direction: ltr; }
+
 bdo {
     unicode-bidi: bidi-override;
 }
@@ -1399,11 +1418,18 @@ applet, embed, object, img {
     border-width: 0px;
 }
 
-/* noscript is handled internally, as it depends on settings. */
+/* noscript support */
 
-/* Default support for "Smart Invert" where all content color except media is inverted. */ 
+@media (scripting) {
+    noscript {
+        display: none !important;
+    }
+}
+
+/* Default support for "Smart Invert" where all content color except media is inverted. */
+/* https://drafts.csswg.org/mediaqueries-5/#inverted */
 @media (inverted-colors) {
-    img, picture, video { filter: invert(100%); } /* Images and videos double-inverted. */
+    img:not(picture>img), picture, video { filter: invert(100%); } /* Images and videos double-inverted. */
 }
 
 /* https://drafts.csswg.org/css-text-decor-4/#text-decoration-skipping */

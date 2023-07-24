@@ -31,9 +31,6 @@ struct WebKit::WebProcessCreationParameters {
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     Vector<WebKit::SandboxExtension::Handle> enableRemoteWebInspectorExtensionHandles;
 #endif
-#if ENABLE(MEDIA_STREAM)
-    WebKit::SandboxExtension::Handle audioCaptureExtensionHandle;
-#endif
 
     Vector<String> urlSchemesRegisteredAsEmptyDocument;
     Vector<String> urlSchemesRegisteredAsSecure;
@@ -138,7 +135,7 @@ struct WebKit::WebProcessCreationParameters {
 
     std::optional<WebKit::WebProcessDataStoreParameters> websiteDataStoreParameters;
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     Vector<WebKit::SandboxExtension::Handle> compilerServiceExtensionHandles;
 #endif
 
@@ -163,7 +160,7 @@ struct WebKit::WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    bool currentUserInterfaceIdiomIsSmallScreen;
+    WebKit::UserInterfaceIdiom currentUserInterfaceIdiom;
     bool supportsPictureInPicture;
     WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
     WebCore::Color focusRingColor;
@@ -176,7 +173,7 @@ struct WebKit::WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(GTK)
-    bool useDMABufSurfaceForCompositing;
+    OptionSet<WebKit::DMABufRendererBufferMode> dmaBufRendererBufferMode;
     bool useSystemAppearanceForScrollbars;
     WebKit::GtkSettingsState gtkSettings;
 #endif

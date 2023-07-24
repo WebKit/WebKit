@@ -122,7 +122,7 @@ int SQLiteStatement::bindText(int index, StringView text)
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
 
     // Fast path when the input text is all ASCII.
-    if (text.is8Bit() && text.isAllASCII())
+    if (text.is8Bit() && text.containsOnlyASCII())
         return sqlite3_bind_text(m_statement, index, text.length() ? reinterpret_cast<const char*>(text.characters8()) : "", text.length(), SQLITE_TRANSIENT);
 
     auto utf8Text = text.utf8();

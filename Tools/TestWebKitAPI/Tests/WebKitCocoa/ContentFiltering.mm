@@ -29,6 +29,7 @@
 
 #import "DeprecatedGlobalValues.h"
 #import "ContentFiltering.h"
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestProtocol.h"
 #import "TestWKWebView.h"
@@ -472,5 +473,82 @@ TEST(ContentFiltering, LazilyLoadPlatformFrameworks)
 #endif
     }
 }
+
+TEST(ContentFiltering, URLAfterServerRedirectBlocked)
+{
+    auto mainForFetchTestBytes = "<html>"
+    "<body>"
+    "<script>"
+    "function log(msg)"
+    "{"
+    "    window.webkit.messageHandlers.sw.postMessage(msg);"
+    "}"
+    ""
+    "try {"
+    ""
+    "function addFrame()"
+    "{"
+    "    frame = document.createElement('iframe');"
+    "    frame.src = \"/test.html\";"
+    "    frame.onload = function() { window.webkit.messageHandlers.sw.postMessage(frame.contentDocument.body.innerHTML); }"
+    "    document.body.appendChild(frame);"
+    "}"
+    ""
+    "navigator.serviceWorker.register('/sw.js').then(function(reg) {"
+    "    if (reg.active) {"
+    "        addFrame();"
+    "        return;"
+    "    }"
+    "    worker = reg.installing;"
+    "    worker.addEventListener('statechange', function() {"
+    "        if (worker.state == 'activated')"
+    "            addFrame();"
+    "    });"
+    "}).catch(function(error) {"
+    "    log(\"Registration failed with: \" + error);"
+    "});"
+    "} catch(e) {"
+    "    log(\"Exception: \" + e);"
+    "}"
+    "</script>"
+    "</body>"
+    "</html>"_s;
+
+    auto serviceWorkerJS = "<script>"
+    "self.addEventListener(\"fetch\", (event) => {"
+    "});"
+    "</script>"_s;
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    @autoreleasepool {
+        [TestProtocol registerWithScheme:@"https"];
+
+        TestWebKitAPI::HTTPServer server({
+            { "/"_s, { mainForFetchTestBytes } },
+            { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerJS } },
+        });
+
+        auto configuration = configurationWithContentFilterSettings(Decision::Block, DecisionPoint::AfterAddData);
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+        auto navigationDelegate = adoptNS([[LoadAlternateNavigationDelegate alloc] init]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+        [webView loadRequest:server.request()];
+
+        // LoadAlternateNavigationDelegate checks expectations here
+        TestWebKitAPI::Util::run(&isDone);
+
+        [TestProtocol unregister];
+    }
+}
+
+
 
 #endif // ENABLE(CONTENT_FILTERING)

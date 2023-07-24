@@ -420,6 +420,12 @@ LayoutUnit RenderFragmentedFlow::pageRemainingLogicalHeightForOffset(LayoutUnit 
         // If IncludePageBoundary is set, the line exactly on the top edge of a
         // fragment will act as being part of the previous fragment.
         remainingHeight = intMod(remainingHeight, pageLogicalHeight);
+    } else if (!remainingHeight) {
+        // When pageBoundaryRule is IncludePageBoundary, we shouldn't just return 0 if there's no
+        // space left, because in that case we're at a column boundary, in which case we should
+        // return the amount of space remaining in the *next* column. Note that the page height
+        // itself may be 0, though.
+        remainingHeight = pageLogicalHeight;
     }
     return remainingHeight;
 }

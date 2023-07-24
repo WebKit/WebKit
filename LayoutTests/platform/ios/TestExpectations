@@ -53,6 +53,7 @@ fast/media/ios [ Pass ]
 
 fast/forms/textarea/ios [ Pass ]
 fast/text-autosizing/ios [ Pass ]
+fast/text/data-detectors/ios [ Pass ]
 fast/zooming/ios [ Pass ]
 http/tests/preload/viewport [ Pass ]
 http/tests/gzip-content-encoding [ Pass ]
@@ -62,6 +63,7 @@ imported/w3c/web-platform-tests/speech-api/ [ Pass ]
 http/tests/media/fairplay [ Pass ]
 media/track/track-description-cue.html [ Pass ]
 media/track/track-extended-descriptions.html [ Pass ]
+media/wireless-route-monitoring.html [ Pass ]
 
 # mac-only IPC test
 ipc/webpageproxy-correctionpanel-no-crash.html [ Skip ]
@@ -226,8 +228,6 @@ imported/w3c/web-platform-tests/touch-events [ Skip ]
 platform/ios/ios/fast/forms/range-input-container-touches.html [ Skip ]
 platform/ios/ios/fast/forms/range-input-readonly-and-disabled.html [ Skip ]
 platform/ios/ios/fast/forms/range-input-touches.html [ Skip ]
-platform/ios/ios/fast/text/data-detectors/phone-disabled.html [ Skip ]
-platform/ios/ios/fast/text/data-detectors/phone.html [ Skip ]
 platform/ios/ios/touch [ Skip ]
 media/modern-media-controls/css/pointer-events-none.html [ Skip ]
 
@@ -358,6 +358,7 @@ fast/events/standalone-image-drag-to-editable.html [ Skip ]
 fast/files/local-file-drag-security.html [ Skip ]
 fast/forms/file/file-input-reset-validation.html [ Skip ]
 fast/forms/file/file-input-empty-validation.html [ Skip ]
+fast/forms/placeholder-content-clipping-padding-box.html [ ImageOnlyFailure ]
 fast/history/page-cache-createObjectURL.html [ Skip ]
 http/tests/local/drag-over-remote-content.html [ Skip ]
 http/tests/local/fileapi/send-dragged-file.html [ Skip ]
@@ -682,6 +683,7 @@ fast/forms/search-rtl.html [ Skip ]
 fast/forms/search-transformed.html [ Skip ]
 fast/forms/search-zoomed.html [ Skip ]
 fast/forms/select-empty-list.html [ Skip ]
+fast/forms/select/listbox-focusable-items.html [ Skip ]
 fast/forms/select-listbox-focus-displaynone.html [ Skip ]
 fast/forms/select-listbox-multiple-no-focusring.html [ Skip ]
 fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html [ Skip ]
@@ -967,7 +969,6 @@ fast/events/onchange-select-popup.html [ Skip ]
 fast/events/onchange-setvalue.html [ Skip ]
 fast/events/onchange-text-form-field.html [ Skip ]
 fast/events/onchange-textfield.html [ Skip ]
-fast/events/onsearch-enter.html [ Skip ]
 fast/events/popup-when-select-change.html [ Skip ]
 fast/events/recorded-keydown-event.html [ Skip ]
 fast/events/related-target-focusevent.html [ Skip ]
@@ -995,7 +996,6 @@ fast/forms/implicit-submission.html [ Skip ]
 fast/forms/input-first-letter-edit.html [ Skip ]
 fast/forms/input-image-submit.html [ Skip ]
 fast/forms/input-maxlength-inserting-in-middle.html [ Skip ]
-fast/forms/input-search-press-escape-key.html [ Skip ]
 fast/forms/listbox-non-contiguous-keyboard-selection.html [ Skip ]
 fast/forms/listbox-onchange.html [ Skip ]
 fast/forms/listbox-typeahead-cyrillic.html [ Skip ]
@@ -1011,7 +1011,6 @@ fast/forms/radio/radio-group-keyboard-change-event.html [ Skip ]
 fast/forms/range/range-keyboard-oninput-event.html [ Skip ]
 fast/forms/range/range-type-change-onchange.html
 fast/forms/restore-selection-after-layout.html [ Skip ]
-fast/forms/search-event-delay.html [ Skip ]
 fast/forms/select-accesskey.html [ Skip ]
 fast/dom/accesskey-focus-element.html [ Skip ]
 fast/forms/select-cache-desynchronization.html [ Skip ]
@@ -1036,6 +1035,7 @@ fast/forms/validation-message-maxLength.html [ Skip ]
 fast/forms/ValidityState-valueMissing-002.html [ Skip ]
 fast/frames/focus-controller-crash-change-event.html
 fast/html/details-keyboard-show-hide.html [ Skip ]
+fast/html/transient-activation.html [ Skip ]
 fast/shadow-dom/activate-over-slotted-content.html [ Skip ]
 fast/shadow-dom/clear-active-state-in-shadow.html [ Skip ]
 fast/shadow-dom/focus-across-details-element.html [ Skip ]
@@ -1080,6 +1080,7 @@ imported/w3c/web-platform-tests/shadow-dom/accesskey.tentative.html [ Skip ]
 
 # Tests that use EventSender's mouseMoveTo, mouseUp and mouseDown
 css3/viewport-percentage-lengths/vh-resize.html [ Skip ]
+editing/caret/caret-type-for-user-select-none.html [ Skip ]
 editing/pasteboard/can-read-in-dragstart-event.html [ Skip ]
 editing/pasteboard/cleanup-on-move.html [ Skip ]
 editing/pasteboard/copy-crash.html [ Skip ]
@@ -1169,6 +1170,8 @@ fast/css/caret-color-fallback-to-color.html [ Skip ]
 fast/css/caret-color-inherit.html [ Skip ]
 fast/css/caret-color-span-inside-editable-parent.html [ Skip ]
 fast/css/caret-color.html [ Skip ]
+fast/css/caret-color-with-initial-color-property.html [ Skip ]
+fast/css/caret-color-with-inherited-color-property.html [ Skip ]
 fast/history/visited-link-caret-color.html [ Skip ]
 css3/color-filters/color-filter-caret-color.html [ Skip ]
 
@@ -1311,7 +1314,6 @@ webkit.org/b/178487 compositing/video/video-clip-change-src.html [ ImageOnlyFail
 webkit.org/b/178588 css3/zoom-coords.xhtml [ Failure ]
 webkit.org/b/178588 fast/css/active-display-none.html [ Failure ]
 webkit.org/b/178588 fast/css/image-orientation/image-orientation.html [ Failure ]
-webkit.org/b/178588 fast/css/image-resolution/image-resolution.html [ Failure ]
 webkit.org/b/178588 fast/css/line-height-determined-by-primary-font.html [ Failure ]
 webkit.org/b/178588 fast/css/unknown-pseudo-element-matching.html [ Failure ]
 webkit.org/b/178588 css3/background/background-repeat-round-padding.html [ ImageOnlyFailure ]
@@ -1683,6 +1685,7 @@ fast/forms/textarea-input-event.html [ Failure ]
 fast/forms/textarea-live-pseudo-selectors.html [ Failure ]
 fast/forms/textarea-metrics.html [ Failure ]
 fast/forms/textfield-overflow-by-value-update.html [ Failure ]
+fast/forms/single-text-line-content-clipping.html [ ImageOnlyFailure ]
 fast/frames/calculate-fixed.html [ Failure ]
 fast/frames/calculate-order.html [ Failure ]
 fast/frames/calculate-percentage.html [ Failure ]
@@ -2166,7 +2169,7 @@ accessibility/table-exposure-updates-dynamically.html [ Pass ]
 accessibility/accessibility-node-reparent.html [ Pass ]
 accessibility/aria-checked-mixed-value.html [ Pass ]
 accessibility/aria-describedby-on-input.html [ Pass ]
-accessibility/aria-hidden-display-contents-element.html [ Pass ]
+accessibility/display-contents/aria-hidden.html [ Pass ]
 accessibility/aria-multiline.html [ Pass ]
 accessibility/aria-readonly-updates-after-dynamic-change.html [ Pass ]
 accessibility/aria-required-updates-after-dynamic-change.html [ Pass ]
@@ -2178,9 +2181,10 @@ accessibility/button-inside-label-ax-text.html [ Pass ]
 accessibility/changing-aria-hidden-with-display-none-parent.html [ Pass ]
 accessibility/checkbox-mixed-value.html [ Pass ]
 accessibility/dialog-slotted-content.html [ Pass ]
-accessibility/display-contents-dynamically-added-children.html [ Pass ]
-accessibility/display-contents-element-roles.html [ Pass ]
-accessibility/display-contents-object-ordering.html [ Pass ]
+accessibility/display-contents/dynamically-added-children.html [ Pass ]
+accessibility/display-contents/element-roles.html [ Pass ]
+accessibility/display-contents/object-ordering.html [ Pass ]
+accessibility/display-contents/table.html [ Pass ]
 accessibility/dynamically-ignored-canvas.html [ Pass ]
 accessibility/element-haspopup.html [ Pass ]
 accessibility/empty-text-under-element-cached.html [ Pass ]
@@ -2200,8 +2204,12 @@ accessibility/placeholder.html [ Pass ]
 accessibility/progress-indeterminate-value.html [ Pass ]
 accessibility/slider-with-lost-renderer.html [ Pass ]
 accessibility/spinbutton-increment-decrement.html [ Pass ]
-accessibility/text-under-display-contents-element.html [ Pass ]
+accessibility/display-contents/text-under-element.html [ Pass ]
 accessibility/text-updates-after-dynamic-change.html [ Pass ]
+accessibility/table-display-block.html [ Pass ]
+accessibility/table-display-flex.html [ Pass ]
+accessibility/table-display-grid.html [ Pass ]
+accessibility/table-display-inline-block.html [ Pass ]
 accessibility/url-test.html [ Pass ]
 accessibility/video-element-url-attribute.html [ Pass ]
 accessibility/visible-character-range-basic.html [ Pass ]
@@ -2220,7 +2228,7 @@ webkit.org/b/150366 accessibility/aria-table-attributes.html [ Pass ]
 
 accessibility/aria-modal-with-text-crash.html [ Pass ]
 accessibility/aria-labelledby-targeting-slot.html [ Pass ]
-accessibility/display-contents-search-traversal.html [ Pass ]
+accessibility/display-contents/search-traversal.html [ Pass ]
 accessibility/search-traversal-after-role-change.html [ Pass ]
 accessibility/table-search-traversal.html [ Pass ]
 accessibility/dynamically-changing-iframe-remains-accessible.html [ Pass ]
@@ -2630,8 +2638,6 @@ webkit.org/b/172610 media/ios/autoplay-only-in-main-document.html [ Skip ]
 webkit.org/b/172672 fast/events/before-unload-returnValue.html [ Skip ]
 
 webkit.org/b/168239 [ Release ] fast/css/target-fragment-match.html [ Pass Failure ]
-
-webkit.org/b/173611 media/video-buffered.html [ Pass Failure ]
 
 webkit.org/b/171617 perf/object-keys.html [ Pass Failure ]
 
@@ -3553,8 +3559,6 @@ imported/w3c/web-platform-tests/css/css-contain/contain-size-select-001.html [ P
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-075.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-076.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-content/quotes-006.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-content/quotes-007.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-content/quotes-012.html [ Pass ]
@@ -3600,7 +3604,6 @@ webkit.org/b/237694 [ Debug ] webgl/1.0.3/conformance/uniforms/uniform-samplers-
 
 # image-set failing only on iOS
 webkit.org/b/253095 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-type-rendering-2.html [ ImageOnlyFailure ]
-webkit.org/b/253095 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-type-first-match-rendering.html [ ImageOnlyFailure ]
 
 [ Release ] editing/spelling/toggle-spellchecking.html [ Failure Pass ]
 pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
@@ -3686,6 +3689,8 @@ webkit.org/b/241253 fast/text/bulgarian-system-language-shaping.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/device-pixel-adjustment.html
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/history-restore-anchors.html
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/infinite-scroll-event.tentative.html
+
+webkit.org/b/258184 [ Debug ] media/track/track-webvtt-no-snap-to-lines-overlap.html [ Pass Crash ]
 
 # Accessibility bold only exists on iOS.
 fast/text/accessibility-bold-system-font [ Pass ]
@@ -3937,6 +3942,7 @@ imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearan
 # <select> are always menulists on iOS, regardless of multiple/size attributes, these tests assume the listbox appearance that desktop platforms have.
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-scrolling.optional.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-size-scrolling-and-sizing.optional.html [ Failure ]
+fast/forms/select/multiselect-in-listbox-mouse-release-outside.html [ Skip ]
 
 # To investigate: might need to relax the tests, or adapt native thumb appearance.
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-vertical-ltr-painting.html [ ImageOnlyFailure ]
@@ -3951,8 +3957,6 @@ webkit.org/b/244208 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 webkit.org/b/244501 [ Debug ] webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Pass Timeout ]
 
 webkit.org/b/244619 editing/selection/ios/tap-to-set-selection-in-editable-web-view.html [ Pass Timeout ]
-
-webkit.org/b/248062 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Pass Failure ]
 
 webkit.org/b/248065 imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Skip ]
 
@@ -4310,7 +4314,7 @@ webkit.org/b/251889 imported/w3c/web-platform-tests/content-security-policy/repo
 
 webkit.org/b/251875 fast/dynamic/create-renderer-for-whitespace-only-text.html [ Pass Failure ]
 
-webkit.org/b/252504 http/tests/site-isolation [ Skip ]
+webkit.org/b/257832 imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-text-decoration.html [ ImageOnlyFailure ]
 
 http/wpt/service-workers/basic-fetch-with-contentfilter-allow-after-adding-data.html [ Pass ]
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Pass ]
@@ -4349,9 +4353,24 @@ imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-relative-co
 imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html [ Failure ]
-transforms/3d/hit-testing/overlapping-layers-hit-test.html [ Failure ]
 webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Failure ]
 
 webkit.org/b/256189 [ Debug ] ipc/wait-for-video-output-will-change.html [ Crash ]
 
 webkit.org/256217 [ Debug ] imported/w3c/web-platform-tests/background-fetch/port-blocking.https.window.html [ Pass Crash ]
+webkit.org/b/258328 [ Debug ] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Pass Failure ]
+
+webkit.org/b/258532 svg/zoom/page/text-with-non-scaling-stroke.html [ Pass ImageOnlyFailure ]
+webkit.org/b/258532 fast/forms/input-placeholder-text-indent.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
+
+# webkit.org/b/259157REGRESSION(264419@Main): [ iOS ] 264419@Main introduced multiple flaky ImageOnlyFailures (259157)
+imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-mixed.html [ Pass ImageOnlyFailure ]
+fast/block/transparent-outline-with-and-without-border-radius.html [ Pass ImageOnlyFailure ]
+fast/forms/basic-textareas-quirks-simple-lines.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-mixed.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
+
+webkit.org/b/259379 http/wpt/webcodecs/videoFrame-video-element.html [ Pass Failure ]

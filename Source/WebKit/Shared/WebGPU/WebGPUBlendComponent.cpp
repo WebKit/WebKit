@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUBlendComponent.h>
+#include <WebCore/WebGPUBlendComponent.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<BlendComponent> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::BlendComponent& blendComponent)
+std::optional<BlendComponent> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BlendComponent& blendComponent)
 {
     return { { blendComponent.operation, blendComponent.srcFactor, blendComponent.dstFactor } };
 }
 
-std::optional<PAL::WebGPU::BlendComponent> ConvertFromBackingContext::convertFromBacking(const BlendComponent& blendComponent)
+std::optional<WebCore::WebGPU::BlendComponent> ConvertFromBackingContext::convertFromBacking(const BlendComponent& blendComponent)
 {
     return { { blendComponent.operation, blendComponent.srcFactor, blendComponent.dstFactor } };
 }

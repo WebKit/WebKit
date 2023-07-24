@@ -983,6 +983,11 @@ bool AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned le
     return true;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::textInputMarkedRange() const
+{
+    return WTR::createJSString();
+}
+
 void AccessibilityUIElement::increment()
 {
     [m_element accessibilityIncrement];

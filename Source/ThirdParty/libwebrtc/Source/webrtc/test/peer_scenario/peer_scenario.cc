@@ -55,7 +55,7 @@ PeerScenario::PeerScenario(
     std::unique_ptr<LogWriterFactoryInterface> log_writer_manager,
     TimeMode mode)
     : log_writer_manager_(std::move(log_writer_manager)),
-      net_(mode),
+      net_(mode, EmulatedNetworkStatsGatheringMode::kDefault),
       signaling_thread_(net_.time_controller()->GetMainThread()) {}
 
 PeerScenarioClient* PeerScenario::CreateClient(

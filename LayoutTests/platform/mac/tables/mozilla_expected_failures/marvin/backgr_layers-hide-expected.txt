@@ -7,11 +7,11 @@ layer at (0,0) size 785x1237
         RenderText {#text} at (0,0) size 515x30
           text run at (0,0) width 515: "CSS2 Table Backgrounds Test Suite"
       RenderBlock {H2} at (0,47) size 769x24
-        RenderText {#text} at (0,0) size 301x23
-          text run at (0,0) width 301: "Part C: Background Layers"
+        RenderText {#text} at (0,0) size 293x23
+          text run at (0,0) width 293: "Part C: Background Layers"
       RenderBlock {H3} at (0,86) size 769x18
-        RenderText {#text} at (0,0) size 154x17
-          text run at (0,0) width 154: "empty-cells: hide"
+        RenderText {#text} at (0,0) size 156x17
+          text run at (0,0) width 156: "empty-cells: hide"
       RenderBlock {P} at (0,118) size 769x31
         RenderText {#text} at (0,0) size 383x15
           text run at (0,0) width 383: "Both tables should look identical to the ones in "
@@ -48,8 +48,8 @@ layer at (0,0) size 785x1237
           RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,264) size 618x467 [color=#FFFFFF] [bgcolor=#0000FF] [border: (1px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 618x22
-          RenderText {#text} at (165,0) size 288x22
-            text run at (165,0) width 288: "With 'border-collapse: separate'"
+          RenderText {#text} at (163,0) size 292x22
+            text run at (163,0) width 292: "With 'border-collapse: separate'"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -105,8 +105,8 @@ layer at (0,0) size 785x1237
                 text run at (2,2) width 43: "TD L"
       RenderTable {TABLE} at (0,730) size 578x433 [color=#FFFFFF] [bgcolor=#0000FF] [border: (6px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 578x22
-          RenderText {#text} at (146,0) size 286x22
-            text run at (146,0) width 286: "With 'border-collapse: collapse'"
+          RenderText {#text} at (144,0) size 290x22
+            text run at (144,0) width 290: "With 'border-collapse: collapse'"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0

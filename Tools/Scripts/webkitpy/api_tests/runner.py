@@ -45,12 +45,13 @@ def run_shard(name, *tests):
     return _Worker.instance.run(name, *tests)
 
 
-def report_result(worker, test, status, output):
-    if status == Runner.STATUS_PASSED and (not output or Runner.instance.port.get_option('quiet')):
+def report_result(worker, test, status, output, elapsed=None):
+    if elapsed < Runner.ELAPSED_THRESHOLD and status == Runner.STATUS_PASSED and (not output or Runner.instance.port.get_option('quiet')):
         Runner.instance.printer.write_update('{} {} {}'.format(worker, test, Runner.NAME_FOR_STATUS[status]))
     else:
-        Runner.instance.printer.writeln('{} {} {}'.format(worker, test, Runner.NAME_FOR_STATUS[status]))
-    Runner.instance.results[test] = status, output
+        elapsed_log = ' (took {} seconds)'.format(round(elapsed, 1)) if elapsed > Runner.ELAPSED_THRESHOLD else ''
+        Runner.instance.printer.writeln('{} {} {}{}'.format(worker, test, Runner.NAME_FOR_STATUS[status], elapsed_log))
+    Runner.instance.results[test] = status, output, elapsed
 
 
 def teardown_shard():
@@ -64,6 +65,8 @@ class Runner(object):
     STATUS_TIMEOUT = 3
     STATUS_DISABLED = 4
     STATUS_RUNNING = 5
+
+    ELAPSED_THRESHOLD = 3
 
     NAME_FOR_STATUS = [
         'Passed',
@@ -199,12 +202,12 @@ class _Worker(object):
         stderr_buffer = ''
 
         try:
-            deadline = time.time() + self._timeout
+            started = time.time()
             if status != Runner.STATUS_DISABLED:
                 server_process.start()
 
             while status == Runner.STATUS_RUNNING:
-                stdout_line, stderr_line = server_process.read_either_stdout_or_stderr_line(deadline)
+                stdout_line, stderr_line = server_process.read_either_stdout_or_stderr_line(started + self._timeout)
                 if not stderr_line and not stdout_line:
                     break
 
@@ -244,6 +247,7 @@ class _Worker(object):
             '{}.{}'.format(binary_name, test),
             status,
             self._filter_noisy_output(output_buffer),
+            elapsed=time.time() - started,
         ))
 
     def run(self, name, *tests):
@@ -260,14 +264,14 @@ class _Worker(object):
                 ]), env=self._port.environment_for_api_tests())
 
             try:
-                deadline = time.time() + self._timeout
+                started = time.time()
                 last_test = None
                 last_status = None
                 stdout_buffer = ''
 
                 server_process.start()
                 while remaining_tests:
-                    stdout = string_utils.decode(server_process.read_stdout_line(deadline), target_type=str)
+                    stdout = string_utils.decode(server_process.read_stdout_line(started + self._timeout), target_type=str)
 
                     # If we've triggered a timeout, we don't know which test caused it. Break out and run singly.
                     if stdout is None and server_process.timed_out:
@@ -295,8 +299,9 @@ class _Worker(object):
                             report_result, None, TaskPool.Process.name,
                             '{}.{}'.format(binary_name, last_test),
                             last_status, stdout_buffer,
+                            elapsed=time.time() - started,
                         ))
-                        deadline = time.time() + self._timeout
+                        started = time.time()
                         stdout_buffer = ''
 
                     if '**PASS**' == stdout_split[0]:
@@ -318,6 +323,7 @@ class _Worker(object):
                         '{}.{}'.format(binary_name, last_test),
                         last_status,
                         self._filter_noisy_output(stdout_buffer + stderr_buffer),
+                        elapsed=time.time() - started,
                     ))
 
                 if server_process.timed_out:

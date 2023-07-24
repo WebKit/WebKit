@@ -70,7 +70,7 @@ public:
     bool containsConstructor(const JSC::JSObject*) const;
 
     JSC::JSValue get(const AtomString&);
-    JSC::JSValue getName(JSC::JSGlobalObject&, JSC::JSValue);
+    String getName(JSC::JSValue);
     void upgrade(Node& root);
 
     MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>>& promiseMap() { return m_promiseMap; }

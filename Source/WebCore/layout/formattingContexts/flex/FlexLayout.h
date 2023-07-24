@@ -28,111 +28,74 @@
 #include "FlexFormattingConstraints.h"
 #include "FlexFormattingState.h"
 #include "FlexRect.h"
+#include "LogicalFlexItem.h"
 #include <wtf/Range.h>
 
 namespace WebCore {
 namespace Layout {
 
+class FlexFormattingContext;
+struct FlexBaseAndHypotheticalMainSize;
+struct PositionAndMargins;
+
 // This class implements the layout logic for flex formatting contexts.
 // https://www.w3.org/TR/css-flexbox-1/
 class FlexLayout {
 public:
-    FlexLayout(const ElementBox& flexBox);
+    FlexLayout(const FlexFormattingContext&);
 
-    struct LogicalFlexItem {
-    public:
-        struct LogicalTypes {
-            LengthType width { LengthType::Auto };
-            LengthType height { LengthType::Auto };
-
-            LengthType leftMargin { LengthType::Auto };
-            LengthType rightMargin { LengthType::Auto };
-            LengthType topMargin { LengthType::Auto };
-            LengthType bottomMargin { LengthType::Auto };
-        };
-        LogicalFlexItem(LayoutSize marginBoxSize, LogicalTypes, IntrinsicWidthConstraints, const ElementBox&);
-        LogicalFlexItem() = default;
-
-        LayoutUnit flexBasis() const { return m_marginBoxSize.width(); }
-
-        LayoutUnit width() const { return std::min(maximumSize(), std::max(minimumSize(), m_marginBoxSize.width())); }
-        LayoutUnit height() const { return m_marginBoxSize.height(); }
-
-        bool isHeightAuto() const { return m_logicalTypes.height == LengthType::Auto; }
-
-        bool hasAutoMarginLeft() const { return m_logicalTypes.leftMargin == LengthType::Auto; }
-        bool hasAutoMarginRight() const { return m_logicalTypes.rightMargin == LengthType::Auto; }
-        bool hasAutoMarginTop() const { return m_logicalTypes.topMargin == LengthType::Auto; }
-        bool hasAutoMarginBottom() const { return m_logicalTypes.bottomMargin == LengthType::Auto; }
-
-        LayoutUnit minimumSize() const { return m_intrinsicWidthConstraints.minimum; }
-        LayoutUnit maximumSize() const { return m_intrinsicWidthConstraints.maximum; }
-
-        const RenderStyle& style() const { return m_layoutBox->style(); }
-        const ElementBox& layoutBox() const { return *m_layoutBox; }
-
-    private:
-        LayoutSize m_marginBoxSize;
-        LogicalTypes m_logicalTypes { };
-        IntrinsicWidthConstraints m_intrinsicWidthConstraints { };
-        CheckedPtr<const ElementBox> m_layoutBox;        
-    };
     using LogicalFlexItems = Vector<LogicalFlexItem>;
     struct LogicalConstraints {
-        std::optional<LayoutUnit> verticalSpace;
-        struct HorizontalSpace {
-            std::optional<LayoutUnit> available; // This is how much space there is for flexing in main axis direction.
-            std::optional<LayoutUnit> minimum; // This is how much space is at least available for flexing in main axis direction.
-        };
-        HorizontalSpace horizontalSpace;
-    };
-    struct FlexItemRect {
-        FlexRect& operator()() { return marginRect; }
+        struct AxisGeometry {
+            std::optional<LayoutUnit> definiteSize;
+            std::optional<LayoutUnit> minimumSize;
+            std::optional<LayoutUnit> maximumSize;
 
-        FlexRect marginRect;
-        struct AutoMargin {
-            std::optional<LayoutUnit> left;
-            std::optional<LayoutUnit> right;
-            std::optional<LayoutUnit> top;
-            std::optional<LayoutUnit> bottom;
+            std::optional<LayoutUnit> minimumContentSize;
+            std::optional<LayoutUnit> maximumContentSize;
+            LayoutUnit availableSize; // space available to the flex container minus margin, border, and padding.
         };
-        AutoMargin autoMargin;
+        AxisGeometry mainAxis;
+        AxisGeometry crossAxis;
     };
-    using LogicalFlexItemRects = Vector<FlexItemRect>;
+    using LogicalFlexItemRects = FixedVector<FlexRect>;
     LogicalFlexItemRects layout(const LogicalConstraints&, const LogicalFlexItems&);
 
 private:
-    using LineRange = WTF::Range<size_t>;
-    void computeLogicalWidthForFlexItems(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
-    void computeLogicalWidthForStretchingFlexItems(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
-    void computeLogicalWidthForShrinkingFlexItems(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
-    void computeLogicalHeightForFlexItems(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
-    void alignFlexItems(const LogicalFlexItems&, const LineRange&, VerticalConstraints, LogicalFlexItemRects&);
-    void justifyFlexItems(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
-    void distributeMarginAutoInMainAxis(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
-    void distributeMarginAutoInCrossAxis(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
+    using FlexBaseAndHypotheticalMainSizeList = Vector<FlexBaseAndHypotheticalMainSize>;
+    using LineRanges = Vector<WTF::Range<size_t>>;
+    using SizeList = FixedVector<LayoutUnit>;
+    using PositionAndMarginsList = FixedVector<PositionAndMargins>;
+    using LinesCrossSizeList = Vector<LayoutUnit>;
+    using LinesCrossPositionList = Vector<LayoutUnit>;
 
-    using WrappingPositions = Vector<size_t>;
-    WrappingPositions computeWrappingPositions(const LogicalFlexItems&, LayoutUnit availableSpace) const;
-    LayoutUnit computeAvailableLogicalHorizontalSpace(const LogicalFlexItems&, const LogicalConstraints&) const;
+    void computeAvailableMainAndCrossSpace(const LogicalConstraints&);
+    FlexBaseAndHypotheticalMainSizeList flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalConstraints::AxisGeometry& mainAxis, const LogicalFlexItems&) const;
+    LayoutUnit flexContainerMainSize(const LogicalConstraints::AxisGeometry& mainAxis) const;
+    LineRanges computeFlexLines(const LogicalFlexItems&, LayoutUnit flexContainerMainSize, const FlexBaseAndHypotheticalMainSizeList&) const;
+    SizeList computeMainSizeForFlexItems(const LogicalFlexItems&, const LineRanges&, LayoutUnit flexContainerMainSize, const FlexBaseAndHypotheticalMainSizeList&) const;
+    SizeList hypotheticalCrossSizeForFlexItems(const LogicalFlexItems&, const SizeList& flexItemsMainSizeList) const;
+    LinesCrossSizeList crossSizeForFlexLines(const LineRanges&, const LogicalConstraints::AxisGeometry& crossAxis, const LogicalFlexItems&, const SizeList& flexItemsHypotheticalCrossSizeList) const;
+    void stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, size_t numberOfLines, const LogicalConstraints::AxisGeometry& crossAxis) const;
+    bool collapseNonVisibleFlexItems();
+    SizeList computeCrossSizeForFlexItems(const LogicalFlexItems&, const LineRanges&, const LinesCrossSizeList& flexLinesCrossSizeList, const SizeList& flexItemsHypotheticalCrossSizeList) const;
+    PositionAndMarginsList handleMainAxisAlignment(LayoutUnit availableMainSpace, const LineRanges&, const LogicalFlexItems&, const SizeList& flexItemsMainSizeList) const;
+    PositionAndMarginsList handleCrossAxisAlignmentForFlexItems(const LogicalFlexItems&, const LineRanges&, const SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList) const;
+    LinesCrossPositionList handleCrossAxisAlignmentForFlexLines(const LogicalConstraints::AxisGeometry& crossAxis, const LineRanges&, LinesCrossSizeList& flexLinesCrossSizeList) const;
 
-    using LineHeightList = Vector<LayoutUnit>;
-    LineHeightList computeAvailableLogicalVerticalSpace(const LogicalFlexItems&, const WrappingPositions&, const LogicalConstraints&) const;
+    LayoutUnit maxContentForFlexItem(const LogicalFlexItem&) const;
 
-    const ElementBox& flexBox() const { return m_flexBox; }
-    const RenderStyle& flexBoxStyle() const { return flexBox().style(); }
+    bool isSingleLineFlexContainer() const { return flexContainer().style().flexWrap() == FlexWrap::NoWrap; }
+    const ElementBox& flexContainer() const;
+    const FlexFormattingContext& flexFormattingContext() const;
+    const RenderStyle& flexContainerStyle() const { return flexContainer().style(); }
 
-    const ElementBox& m_flexBox;
+private:
+    const FlexFormattingContext& m_flexFormattingContext;
+
+    LayoutUnit m_availableMainSpace;
+    LayoutUnit m_availableCrossSpace;
 };
 
-inline FlexLayout::LogicalFlexItem::LogicalFlexItem(LayoutSize marginBoxSize, LogicalTypes logicalTypes, IntrinsicWidthConstraints intrinsicWidthConstraints, const ElementBox& layoutBox)
-    : m_marginBoxSize(marginBoxSize)
-    , m_logicalTypes(logicalTypes)
-    , m_intrinsicWidthConstraints(intrinsicWidthConstraints)
-    , m_layoutBox(layoutBox)
-{
-}
-
 }
 }
-

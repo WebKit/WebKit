@@ -22,6 +22,7 @@
 #include "api/test/network_emulation_manager.h"
 #include "api/test/time_controller.h"
 #include "pc/test/frame_generator_capturer_video_track_source.h"
+#include "test/create_frame_generator_capturer.h"
 #include "test/logging/log_writer.h"
 
 namespace webrtc {
@@ -83,7 +84,7 @@ class PeerScenarioClient {
     struct Video {
       bool use_fake_codecs = false;
     } video;
-    // The created endpoints can be accessed using the map key as |index| in
+    // The created endpoints can be accessed using the map key as `index` in
     // PeerScenarioClient::endpoint(index).
     std::map<int, EmulatedEndpointConfig> endpoints = {
         {0, EmulatedEndpointConfig()}};
@@ -138,7 +139,7 @@ class PeerScenarioClient {
 
   CallbackHandlers* handlers() { return &handlers_; }
 
-  // The |munge_offer| function can be used to munge the SDP, i.e. modify a
+  // The `munge_offer` function can be used to munge the SDP, i.e. modify a
   // local description afer creating it but before setting it. Note that this is
   // legacy behavior. It's added here only to be able to have test coverage for
   // scenarios even if they are not spec compliant.

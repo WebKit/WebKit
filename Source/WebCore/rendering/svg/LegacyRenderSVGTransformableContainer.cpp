@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2009 Google, Inc.
+ * Copyright (C) 2009-2016 Google, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -58,7 +58,7 @@ bool LegacyRenderSVGTransformableContainer::calculateLocalTransform()
     }
 
     if (useElement) {
-        SVGLengthContext lengthContext(useElement);
+        SVGLengthContext lengthContext(&element);
         FloatSize translation(useElement->x().value(lengthContext), useElement->y().value(lengthContext));
         if (translation != m_lastTranslation)
             m_needsTransformUpdate = true;

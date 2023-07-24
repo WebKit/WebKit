@@ -127,13 +127,31 @@ static AOM_FORCE_INLINE int32_t xx_mask_and_hadd(__m256i vsum, int i) {
   return _mm_extract_epi32(v128a, 0);
 }
 
+// AVX2 implementation of approx_exp()
+static AOM_INLINE __m256 approx_exp_avx2(__m256 y) {
+#define A ((1 << 23) / 0.69314718056f)  // (1 << 23) / ln(2)
+#define B \
+  127  // Offset for the exponent according to IEEE floating point standard.
+#define C 60801  // Magic number controls the accuracy of approximation
+  const __m256 multiplier = _mm256_set1_ps(A);
+  const __m256i offset = _mm256_set1_epi32(B * (1 << 23) - C);
+
+  y = _mm256_mul_ps(y, multiplier);
+  y = _mm256_castsi256_ps(_mm256_add_epi32(_mm256_cvttps_epi32(y), offset));
+  return y;
+#undef A
+#undef B
+#undef C
+}
+
 static void apply_temporal_filter(
     const uint8_t *frame1, const unsigned int stride, const uint8_t *frame2,
     const unsigned int stride2, const int block_width, const int block_height,
     const int *subblock_mses, unsigned int *accumulator, uint16_t *count,
     uint16_t *frame_sse, uint32_t *luma_sse_sum,
     const double inv_num_ref_pixels, const double decay_factor,
-    const double inv_factor, const double weight_factor, double *d_factor) {
+    const double inv_factor, const double weight_factor, double *d_factor,
+    int tf_wgt_calc_lvl) {
   assert(((block_width == 16) || (block_width == 32)) &&
          ((block_height == 16) || (block_height == 32)));
 
@@ -192,25 +210,140 @@ static void apply_temporal_filter(
     }
   }
 
-  for (int i = 0, k = 0; i < block_height; i++) {
-    for (int j = 0; j < block_width; j++, k++) {
-      const int pixel_value = frame2[i * stride2 + j];
-      uint32_t diff_sse = acc_5x5_sse[i][j] + luma_sse_sum[i * BW + j];
+  double subblock_mses_scaled[4];
+  double d_factor_decayed[4];
+  for (int idx = 0; idx < 4; idx++) {
+    subblock_mses_scaled[idx] = subblock_mses[idx] * inv_factor;
+    d_factor_decayed[idx] = d_factor[idx] * decay_factor;
+  }
+  if (tf_wgt_calc_lvl == 0) {
+    for (int i = 0, k = 0; i < block_height; i++) {
+      const int y_blk_raster_offset = (i >= block_height / 2) * 2;
+      for (int j = 0; j < block_width; j++, k++) {
+        const int pixel_value = frame2[i * stride2 + j];
+        uint32_t diff_sse = acc_5x5_sse[i][j] + luma_sse_sum[i * BW + j];
 
-      const double window_error = diff_sse * inv_num_ref_pixels;
-      const int subblock_idx =
-          (i >= block_height / 2) * 2 + (j >= block_width / 2);
-      const double block_error = (double)subblock_mses[subblock_idx];
-      const double combined_error =
-          weight_factor * window_error + block_error * inv_factor;
+        const double window_error = diff_sse * inv_num_ref_pixels;
+        const int subblock_idx = y_blk_raster_offset + (j >= block_width / 2);
+        const double combined_error =
+            weight_factor * window_error + subblock_mses_scaled[subblock_idx];
 
-      double scaled_error =
-          combined_error * d_factor[subblock_idx] * decay_factor;
-      scaled_error = AOMMIN(scaled_error, 7);
-      const int weight = (int)(exp(-scaled_error) * TF_WEIGHT_SCALE);
+        double scaled_error = combined_error * d_factor_decayed[subblock_idx];
+        scaled_error = AOMMIN(scaled_error, 7);
+        const int weight = (int)(exp(-scaled_error) * TF_WEIGHT_SCALE);
 
-      count[k] += weight;
-      accumulator[k] += weight * pixel_value;
+        count[k] += weight;
+        accumulator[k] += weight * pixel_value;
+      }
+    }
+  } else {
+    __m256d subblock_mses_reg[4];
+    __m256d d_factor_mul_n_decay_qr_invs[4];
+    const __m256 zero = _mm256_set1_ps(0.0f);
+    const __m256 point_five = _mm256_set1_ps(0.5f);
+    const __m256 seven = _mm256_set1_ps(7.0f);
+    const __m256d inv_num_ref_pixel_256bit = _mm256_set1_pd(inv_num_ref_pixels);
+    const __m256d weight_factor_256bit = _mm256_set1_pd(weight_factor);
+    const __m256 tf_weight_scale = _mm256_set1_ps((float)TF_WEIGHT_SCALE);
+    // Maintain registers to hold mse and d_factor at subblock level.
+    subblock_mses_reg[0] = _mm256_set1_pd(subblock_mses_scaled[0]);
+    subblock_mses_reg[1] = _mm256_set1_pd(subblock_mses_scaled[1]);
+    subblock_mses_reg[2] = _mm256_set1_pd(subblock_mses_scaled[2]);
+    subblock_mses_reg[3] = _mm256_set1_pd(subblock_mses_scaled[3]);
+    d_factor_mul_n_decay_qr_invs[0] = _mm256_set1_pd(d_factor_decayed[0]);
+    d_factor_mul_n_decay_qr_invs[1] = _mm256_set1_pd(d_factor_decayed[1]);
+    d_factor_mul_n_decay_qr_invs[2] = _mm256_set1_pd(d_factor_decayed[2]);
+    d_factor_mul_n_decay_qr_invs[3] = _mm256_set1_pd(d_factor_decayed[3]);
+
+    for (int i = 0; i < block_height; i++) {
+      const int y_blk_raster_offset = (i >= block_height / 2) * 2;
+      uint32_t *luma_sse_sum_temp = luma_sse_sum + i * BW;
+      for (int j = 0; j < block_width; j += 8) {
+        const __m256i acc_sse =
+            _mm256_lddqu_si256((__m256i *)(acc_5x5_sse[i] + j));
+        const __m256i luma_sse =
+            _mm256_lddqu_si256((__m256i *)((luma_sse_sum_temp + j)));
+
+        // uint32_t diff_sse = acc_5x5_sse[i][j] + luma_sse_sum[i * BW + j];
+        const __m256i diff_sse = _mm256_add_epi32(acc_sse, luma_sse);
+
+        const __m256d diff_sse_pd_1 =
+            _mm256_cvtepi32_pd(_mm256_castsi256_si128(diff_sse));
+        const __m256d diff_sse_pd_2 =
+            _mm256_cvtepi32_pd(_mm256_extracti128_si256(diff_sse, 1));
+
+        // const double window_error = diff_sse * inv_num_ref_pixels;
+        const __m256d window_error_1 =
+            _mm256_mul_pd(diff_sse_pd_1, inv_num_ref_pixel_256bit);
+        const __m256d window_error_2 =
+            _mm256_mul_pd(diff_sse_pd_2, inv_num_ref_pixel_256bit);
+
+        // const int subblock_idx = y_blk_raster_offset + (j >= block_width /
+        // 2);
+        const int subblock_idx = y_blk_raster_offset + (j >= block_width / 2);
+        const __m256d blk_error = subblock_mses_reg[subblock_idx];
+
+        // const double combined_error =
+        // weight_factor *window_error + subblock_mses_scaled[subblock_idx];
+        const __m256d combined_error_1 = _mm256_add_pd(
+            _mm256_mul_pd(window_error_1, weight_factor_256bit), blk_error);
+
+        const __m256d combined_error_2 = _mm256_add_pd(
+            _mm256_mul_pd(window_error_2, weight_factor_256bit), blk_error);
+
+        // d_factor_decayed[subblock_idx]
+        const __m256d d_fact_mul_n_decay =
+            d_factor_mul_n_decay_qr_invs[subblock_idx];
+
+        // double scaled_error = combined_error *
+        // d_factor_decayed[subblock_idx];
+        const __m256d scaled_error_1 =
+            _mm256_mul_pd(combined_error_1, d_fact_mul_n_decay);
+        const __m256d scaled_error_2 =
+            _mm256_mul_pd(combined_error_2, d_fact_mul_n_decay);
+
+        const __m128 scaled_error_ps_1 = _mm256_cvtpd_ps(scaled_error_1);
+        const __m128 scaled_error_ps_2 = _mm256_cvtpd_ps(scaled_error_2);
+
+        const __m256 scaled_error_ps = _mm256_insertf128_ps(
+            _mm256_castps128_ps256(scaled_error_ps_1), scaled_error_ps_2, 0x1);
+
+        // scaled_error = AOMMIN(scaled_error, 7);
+        const __m256 scaled_diff_ps = _mm256_min_ps(scaled_error_ps, seven);
+        const __m256 minus_scaled_diff_ps = _mm256_sub_ps(zero, scaled_diff_ps);
+        // const int weight =
+        //(int)(approx_exp((float)-scaled_error) * TF_WEIGHT_SCALE + 0.5f);
+        const __m256 exp_result = approx_exp_avx2(minus_scaled_diff_ps);
+        const __m256 scale_weight_exp_result =
+            _mm256_mul_ps(exp_result, tf_weight_scale);
+        const __m256 round_result =
+            _mm256_add_ps(scale_weight_exp_result, point_five);
+        __m256i weights_in_32bit = _mm256_cvttps_epi32(round_result);
+
+        __m128i weights_in_16bit =
+            _mm_packus_epi32(_mm256_castsi256_si128(weights_in_32bit),
+                             _mm256_extractf128_si256(weights_in_32bit, 0x1));
+
+        // count[k] += weight;
+        // accumulator[k] += weight * pixel_value;
+        const int stride_idx = i * stride2 + j;
+        const __m128i count_array =
+            _mm_loadu_si128((__m128i *)(count + stride_idx));
+        _mm_storeu_si128((__m128i *)(count + stride_idx),
+                         _mm_add_epi16(count_array, weights_in_16bit));
+
+        const __m256i accumulator_array =
+            _mm256_loadu_si256((__m256i *)(accumulator + stride_idx));
+        const __m128i pred_values =
+            _mm_loadl_epi64((__m128i *)(frame2 + stride_idx));
+
+        const __m256i pred_values_u32 = _mm256_cvtepu8_epi32(pred_values);
+        const __m256i mull_frame2_weight_u32 =
+            _mm256_mullo_epi32(pred_values_u32, weights_in_32bit);
+        _mm256_storeu_si256(
+            (__m256i *)(accumulator + stride_idx),
+            _mm256_add_epi32(accumulator_array, mull_frame2_weight_u32));
+      }
     }
   }
 }
@@ -220,7 +353,8 @@ void av1_apply_temporal_filter_avx2(
     const BLOCK_SIZE block_size, const int mb_row, const int mb_col,
     const int num_planes, const double *noise_levels, const MV *subblock_mvs,
     const int *subblock_mses, const int q_factor, const int filter_strength,
-    const uint8_t *pred, uint32_t *accum, uint16_t *count) {
+    int tf_wgt_calc_lvl, const uint8_t *pred, uint32_t *accum,
+    uint16_t *count) {
   const int is_high_bitdepth = frame_to_filter->flags & YV12_FLAG_HIGHBITDEPTH;
   assert(block_size == BLOCK_32X32 && "Only support 32x32 block with avx2!");
   assert(TF_WINDOW_LENGTH == 5 && "Only support window length 5 with avx2!");
@@ -308,7 +442,7 @@ void av1_apply_temporal_filter_avx2(
                           plane_w, plane_h, subblock_mses, accum + plane_offset,
                           count + plane_offset, frame_sse, luma_sse_sum,
                           inv_num_ref_pixels, decay_factor, inv_factor,
-                          weight_factor, d_factor);
+                          weight_factor, d_factor, tf_wgt_calc_lvl);
     plane_offset += plane_h * plane_w;
   }
 }

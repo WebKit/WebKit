@@ -94,6 +94,16 @@ inline T flipBytes(T value)
         u.word = flipBytes(u.word);
         return u.original;
     }
+    if (sizeof(value) == 16) {
+        union {
+            T original;
+            uint64_t words[2];
+        } u, v;
+        v.original = value;
+        u.words[0] = flipBytes(v.words[1]);
+        u.words[1] = flipBytes(v.words[0]);
+        return u.original;
+    }
     RELEASE_ASSERT_NOT_REACHED();
     return T();
 }

@@ -8,4 +8,6 @@ PASS Values of CSSImportRule attributes
 PASS CSSImportRule : MediaList mediaText attribute should be updated due to [PutForwards]
 PASS CSSStyleDeclaration cssText attribute should be updated due to [PutForwards]
 PASS StyleSheet : MediaList mediaText attribute should be updated due to [PutForwards]
+FAIL Existence and writability of CSSImportRule supportsText attribute assert_idl_attribute: property "supportsText" not found in prototype chain
+FAIL Value of CSSImportRule supportsText attribute assert_equals: expected (string) "(display: flex) or (display: block)" but got (undefined) undefined
 

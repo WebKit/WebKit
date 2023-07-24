@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
+#include "WebGPUBufferUsage.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUBufferUsage.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -48,29 +48,29 @@ public:
     static constexpr GPUFlagsConstant QUERY_RESOLVE = 0x0200;
 };
 
-inline PAL::WebGPU::BufferUsageFlags convertBufferUsageFlagsToBacking(GPUBufferUsageFlags bufferUsageFlags)
+inline WebGPU::BufferUsageFlags convertBufferUsageFlagsToBacking(GPUBufferUsageFlags bufferUsageFlags)
 {
-    PAL::WebGPU::BufferUsageFlags result;
+    WebGPU::BufferUsageFlags result;
     if (bufferUsageFlags & GPUBufferUsage::MAP_READ)
-        result.add(PAL::WebGPU::BufferUsage::MapRead);
+        result.add(WebGPU::BufferUsage::MapRead);
     if (bufferUsageFlags & GPUBufferUsage::MAP_WRITE)
-        result.add(PAL::WebGPU::BufferUsage::MapWrite);
+        result.add(WebGPU::BufferUsage::MapWrite);
     if (bufferUsageFlags & GPUBufferUsage::COPY_SRC)
-        result.add(PAL::WebGPU::BufferUsage::CopySource);
+        result.add(WebGPU::BufferUsage::CopySource);
     if (bufferUsageFlags & GPUBufferUsage::COPY_DST)
-        result.add(PAL::WebGPU::BufferUsage::CopyDestination);
+        result.add(WebGPU::BufferUsage::CopyDestination);
     if (bufferUsageFlags & GPUBufferUsage::INDEX)
-        result.add(PAL::WebGPU::BufferUsage::Index);
+        result.add(WebGPU::BufferUsage::Index);
     if (bufferUsageFlags & GPUBufferUsage::VERTEX)
-        result.add(PAL::WebGPU::BufferUsage::Vertex);
+        result.add(WebGPU::BufferUsage::Vertex);
     if (bufferUsageFlags & GPUBufferUsage::UNIFORM)
-        result.add(PAL::WebGPU::BufferUsage::Uniform);
+        result.add(WebGPU::BufferUsage::Uniform);
     if (bufferUsageFlags & GPUBufferUsage::STORAGE)
-        result.add(PAL::WebGPU::BufferUsage::Storage);
+        result.add(WebGPU::BufferUsage::Storage);
     if (bufferUsageFlags & GPUBufferUsage::INDIRECT)
-        result.add(PAL::WebGPU::BufferUsage::Indirect);
+        result.add(WebGPU::BufferUsage::Indirect);
     if (bufferUsageFlags & GPUBufferUsage::QUERY_RESOLVE)
-        result.add(PAL::WebGPU::BufferUsage::QueryResolve);
+        result.add(WebGPU::BufferUsage::QueryResolve);
     return result;
 }
 

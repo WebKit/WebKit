@@ -26,29 +26,13 @@
 #include "config.h"
 #include "ProvisionalFrameProxy.h"
 
-#include "APIWebsitePolicies.h"
-#include "DrawingAreaProxy.h"
-#include "FrameInfoData.h"
-#include "HandleMessage.h"
-#include "LoadParameters.h"
-#include "LoadedWebArchive.h"
-#include "LocalFrameCreationParameters.h"
-#include "MessageSenderInlines.h"
-#include "NetworkProcessMessages.h"
-#include "SubframePageProxy.h"
+#include "VisitedLinkStore.h"
 #include "WebFrameProxy.h"
-#include "WebPageMessages.h"
 #include "WebPageProxy.h"
-#include "WebPageProxyMessages.h"
-#include "WebProcessMessages.h"
-#include "WebProcessProxy.h"
-
-#include <WebCore/FrameIdentifier.h>
-#include <WebCore/ShouldTreatAsContinuingLoad.h>
 
 namespace WebKit {
 
-ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProcessProxy>&& process, const WebCore::ResourceRequest& request)
+ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProcessProxy>&& process)
     : m_frame(frame)
     , m_process(WTFMove(process))
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
@@ -58,29 +42,10 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
 {
     m_process->markProcessAsRecentlyUsed();
     m_process->addProvisionalFrameProxy(*this);
-
-    ASSERT(frame.page());
-
-    LoadParameters loadParameters;
-    loadParameters.request = request;
-    loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
-    loadParameters.frameIdentifier = frame.frameID();
-    // FIXME: Add more parameters as appropriate.
-
-    LocalFrameCreationParameters localFrameCreationParameters {
-        m_layerHostingContextIdentifier
-    };
-
-    // FIXME: This gives too much cookie access. This should be removed after putting the entire frame tree in all web processes.
-    auto giveAllCookieAccess = LoadedWebArchive::Yes;
-    frame.page()->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), WebCore::RegistrableDomain(request.url()), giveAllCookieAccess), [process = m_process, loadParameters = WTFMove(loadParameters), localFrameCreationParameters = WTFMove(localFrameCreationParameters), pageID = m_pageID] () mutable {
-        process->send(Messages::WebPage::TransitionFrameToLocalAndLoadRequest(localFrameCreationParameters, loadParameters), pageID);
-    });
 }
 
 ProvisionalFrameProxy::~ProvisionalFrameProxy()
 {
-    m_process->removeVisitedLinkStoreUser(m_visitedLinkStore.get(), m_webPageID);
     m_process->removeProvisionalFrameProxy(*this);
 }
 

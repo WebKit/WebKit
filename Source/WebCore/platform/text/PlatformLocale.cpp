@@ -297,7 +297,7 @@ unsigned Locale::matchedDecimalSymbolIndex(const String& input, unsigned& positi
 String Locale::convertFromLocalizedNumber(const String& localized)
 {
     initializeLocaleData();
-    String input = localized.stripWhiteSpace();
+    auto input = localized.trim(deprecatedIsSpaceOrNewline);
     if (!m_hasLocaleData || input.isEmpty())
         return input;
 

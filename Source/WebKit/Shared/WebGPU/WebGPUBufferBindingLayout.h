@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,16 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/WebGPUBufferBindingType.h>
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUBufferBindingType.h>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 
 namespace WebKit::WebGPU {
 
 struct BufferBindingLayout {
-    PAL::WebGPU::BufferBindingType type { PAL::WebGPU::BufferBindingType::Uniform };
+    WebCore::WebGPU::BufferBindingType type { WebCore::WebGPU::BufferBindingType::Uniform };
     bool hasDynamicOffset { false };
-    PAL::WebGPU::Size64 minBindingSize { 0 };
+    WebCore::WebGPU::Size64 minBindingSize { 0 };
 };
 
 } // namespace WebKit::WebGPU

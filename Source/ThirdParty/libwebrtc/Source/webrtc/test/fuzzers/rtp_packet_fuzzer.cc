@@ -9,6 +9,7 @@
  */
 
 #include <bitset>
+#include <vector>
 
 #include "absl/types/optional.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
@@ -19,7 +20,7 @@
 
 namespace webrtc {
 // We decide which header extensions to register by reading four bytes
-// from the beginning of |data| and interpreting it as a bitmask over
+// from the beginning of `data` and interpreting it as a bitmask over
 // the RTPExtensionType enum. This assert ensures four bytes are enough.
 static_assert(kRtpExtensionNumberOfExtensions <= 32,
               "Insufficient bits read to configure all header extensions. Add "
@@ -76,6 +77,11 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         uint8_t audio_level;
         packet.GetExtension<AudioLevel>(&voice_activity, &audio_level);
         break;
+      case kRtpExtensionCsrcAudioLevel: {
+        std::vector<uint8_t> audio_levels;
+        packet.GetExtension<CsrcAudioLevel>(&audio_levels);
+        break;
+      }
       case kRtpExtensionAbsoluteSendTime:
         uint32_t sendtime;
         packet.GetExtension<AbsoluteSendTime>(&sendtime);
@@ -109,10 +115,11 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         VideoContentType content_type;
         packet.GetExtension<VideoContentTypeExtension>(&content_type);
         break;
-      case kRtpExtensionVideoTiming:
+      case kRtpExtensionVideoTiming: {
         VideoSendTiming timing;
         packet.GetExtension<VideoTimingExtension>(&timing);
         break;
+      }
       case kRtpExtensionRtpStreamId: {
         std::string rsid;
         packet.GetExtension<RtpStreamId>(&rsid);
@@ -128,7 +135,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         packet.GetExtension<RtpMid>(&mid);
         break;
       }
-      case kRtpExtensionGenericFrameDescriptor00: {
+      case kRtpExtensionGenericFrameDescriptor: {
         RtpGenericFrameDescriptor descriptor;
         packet.GetExtension<RtpGenericFrameDescriptorExtension00>(&descriptor);
         break;
@@ -153,7 +160,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         packet.GetExtension<VideoFrameTrackingIdExtension>(&tracking_id);
         break;
       }
-      case kRtpExtensionGenericFrameDescriptor02:
+      case kRtpExtensionDependencyDescriptor:
         // This extension requires state to read and so complicated that
         // deserves own fuzzer.
         break;

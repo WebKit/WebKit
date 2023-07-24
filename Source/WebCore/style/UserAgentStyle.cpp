@@ -102,9 +102,6 @@ StyleSheetContents* UserAgentStyle::colorInputStyleSheet;
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 StyleSheetContents* UserAgentStyle::legacyFormControlsIOSStyleSheet;
 #endif
-#if ENABLE(ALTERNATE_FORM_CONTROL_DESIGN)
-StyleSheetContents* UserAgentStyle::alternateFormControlDesignStyleSheet;
-#endif
 
 static const MQ::MediaQueryEvaluator& screenEval()
 {
@@ -144,9 +141,9 @@ void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
     // Build a stylesheet consisting of non-trivial media queries seen in default style.
     // Rulesets for these can't be global and need to be built in document context.
     for (auto& rule : sheet.childRules()) {
-        if (!is<StyleRuleMedia>(*rule))
+        if (!is<StyleRuleMedia>(rule))
             continue;
-        auto& mediaRule = downcast<StyleRuleMedia>(*rule);
+        auto& mediaRule = downcast<StyleRuleMedia>(rule);
         auto& mediaQuery = mediaRule.mediaQueries();
         if (screenEval().evaluate(mediaQuery))
             continue;
@@ -269,13 +266,6 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
     if (!legacyFormControlsIOSStyleSheet && !element.document().settings().iOSFormControlRefreshEnabled()) {
         legacyFormControlsIOSStyleSheet = parseUASheet(StringImpl::createWithoutCopying(legacyFormControlsIOSUserAgentStyleSheet, sizeof(legacyFormControlsIOSUserAgentStyleSheet)));
         addToDefaultStyle(*legacyFormControlsIOSStyleSheet);
-    }
-#endif
-
-#if ENABLE(ALTERNATE_FORM_CONTROL_DESIGN)
-    if (!alternateFormControlDesignStyleSheet && element.document().settings().alternateFormControlDesignEnabled()) {
-        alternateFormControlDesignStyleSheet = parseUASheet(StringImpl::createWithoutCopying(alternateFormControlDesignUserAgentStyleSheet, sizeof(alternateFormControlDesignUserAgentStyleSheet)));
-        addToDefaultStyle(*alternateFormControlDesignStyleSheet);
     }
 #endif
 

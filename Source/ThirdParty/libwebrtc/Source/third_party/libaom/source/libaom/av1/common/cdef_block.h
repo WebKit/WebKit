@@ -51,9 +51,18 @@ void copy_cdef_16bit_to_16bit(uint16_t *dst, int dstride, uint16_t *src,
                               cdef_list *dlist, int cdef_count, int bsize);
 
 void av1_cdef_filter_fb(uint8_t *dst8, uint16_t *dst16, int dstride,
-                        uint16_t *in, int xdec, int ydec,
+                        const uint16_t *in, int xdec, int ydec,
                         int dir[CDEF_NBLOCKS][CDEF_NBLOCKS], int *dirinit,
                         int var[CDEF_NBLOCKS][CDEF_NBLOCKS], int pli,
                         cdef_list *dlist, int cdef_count, int level,
                         int sec_strength, int damping, int coeff_shift);
+
+static INLINE void fill_rect(uint16_t *dst, int dstride, int v, int h,
+                             uint16_t x) {
+  for (int i = 0; i < v; i++) {
+    for (int j = 0; j < h; j++) {
+      dst[i * dstride + j] = x;
+    }
+  }
+}
 #endif  // AOM_AV1_COMMON_CDEF_BLOCK_H_

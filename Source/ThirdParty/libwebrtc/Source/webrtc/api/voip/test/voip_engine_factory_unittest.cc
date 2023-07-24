@@ -8,10 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/voip/voip_engine_factory.h"
+
 #include <utility>
 
 #include "api/task_queue/default_task_queue_factory.h"
-#include "api/voip/voip_engine_factory.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
 #include "test/gtest.h"

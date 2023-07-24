@@ -14,6 +14,7 @@ info: |
   ...
   e. Perform ? Set(O, "length", newLen, true).
   ...
+features: [exponentiation]
 ---*/
 
 var arrayLike = {};

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -44,6 +44,7 @@
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "ScaleTransformOperation.h"
+#include "ScrollbarGutter.h"
 #include "ShadowData.h"
 #include "StyleBuilderConverter.h"
 #include "StyleImage.h"
@@ -187,7 +188,8 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_inheritedFlags.cursorVisibility = static_cast<unsigned>(initialCursorVisibility());
 #endif
     m_inheritedFlags.direction = static_cast<unsigned>(initialDirection());
-    m_inheritedFlags.whiteSpace = static_cast<unsigned>(initialWhiteSpace());
+    m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(initialWhiteSpaceCollapse());
+    m_inheritedFlags.textWrap = static_cast<unsigned>(initialTextWrap());
     m_inheritedFlags.borderCollapse = static_cast<unsigned>(initialBorderCollapse());
     m_inheritedFlags.rtlOrdering = static_cast<unsigned>(initialRTLOrdering());
     m_inheritedFlags.boxDirection = static_cast<unsigned>(initialBoxDirection());
@@ -487,6 +489,11 @@ bool RenderStyle::inheritedEqual(const RenderStyle& other) const
         && m_inheritedData == other.m_inheritedData
         && (m_svgStyle.ptr() == other.m_svgStyle.ptr() || m_svgStyle->inheritedEqual(other.m_svgStyle))
         && m_rareInheritedData == other.m_rareInheritedData;
+}
+
+bool RenderStyle::inheritedCustomPropertiesEqual(const RenderStyle& other) const
+{
+    return m_rareInheritedData->customProperties == other.m_rareInheritedData->customProperties;
 }
 
 bool RenderStyle::fastPathInheritedEqual(const RenderStyle& other) const
@@ -861,6 +868,12 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.marginTrim != second.marginTrim)
         return true;
 
+    if (first.scrollbarGutter != second.scrollbarGutter)
+        return true;
+
+    if (first.scrollbarWidth != second.scrollbarWidth)
+        return true;
+
     return false;
 }
 
@@ -896,19 +909,15 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.lineBoxContain != second.lineBoxContain
         || first.lineGrid != second.lineGrid
         || first.imageOrientation != second.imageOrientation
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-        || first.imageResolutionSource != second.imageResolutionSource
-        || first.imageResolutionSnap != second.imageResolutionSnap
-        || first.imageResolution != second.imageResolution
-#endif
         || first.lineSnap != second.lineSnap
         || first.lineAlign != second.lineAlign
         || first.hangingPunctuation != second.hangingPunctuation
+        || first.effectiveSkippedContent != second.effectiveSkippedContent
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         || first.useTouchOverflowScrolling != second.useTouchOverflowScrolling
 #endif
         || first.listStyleType != second.listStyleType
-        || first.listStyleImage != second.listStyleImage) // FIXME: needs arePointingToEqualData()?
+        || first.listStyleImage != second.listStyleImage)
         return true;
 
     if (first.textStrokeWidth != second.textStrokeWidth)
@@ -1048,7 +1057,8 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
     if (m_inheritedFlags.textAlign != other.m_inheritedFlags.textAlign
         || m_inheritedFlags.textTransform != other.m_inheritedFlags.textTransform
         || m_inheritedFlags.direction != other.m_inheritedFlags.direction
-        || m_inheritedFlags.whiteSpace != other.m_inheritedFlags.whiteSpace
+        || m_inheritedFlags.whiteSpaceCollapse != other.m_inheritedFlags.whiteSpaceCollapse
+        || m_inheritedFlags.textWrap != other.m_inheritedFlags.textWrap
         || m_nonInheritedFlags.clear != other.m_nonInheritedFlags.clear
         || m_nonInheritedFlags.unicodeBidi != other.m_nonInheritedFlags.unicodeBidi)
         return true;
@@ -1692,7 +1702,7 @@ void RenderStyle::applyMotionPathTransform(TransformationMatrix& transform, cons
         anchor = floatPointForLengthPoint(offsetAnchor(), boundingBox.size()) + boundingBox.location();
     
     // Shift element to the point on path specified by offset-path and offset-distance.
-    auto path = offsetPath()->getPath(boundingBox, anchor, offsetRotate());
+    auto path = offsetPath()->getPath(boundingBox);
     if (!path)
         return;
     auto traversalState = getTraversalStateAtDistance(*path, offsetDistance());
@@ -2028,11 +2038,6 @@ float RenderStyle::computedFontSize() const
     return fontDescription().computedSize();
 }
 
-unsigned RenderStyle::computedFontPixelSize() const
-{
-    return fontDescription().computedPixelSize();
-}
-
 const Length& RenderStyle::wordSpacing() const
 {
     return m_rareInheritedData->wordSpacing;
@@ -2102,9 +2107,33 @@ int RenderStyle::computeLineHeight(const Length& lineHeightLength) const
         return metricsOfPrimaryFont().lineSpacing();
 
     if (lineHeightLength.isPercentOrCalculated())
-        return minimumValueForLength(lineHeightLength, computedFontPixelSize());
+        return minimumValueForLength(lineHeightLength, computedFontSize());
 
     return clampTo<int>(lineHeightLength.value());
+}
+
+// FIXME: Remove this after all old calls to whiteSpace() are replaced with appropriate
+// calls to whiteSpaceCollapse() and textWrap().
+WhiteSpace RenderStyle::whiteSpace() const
+{
+    auto whiteSpaceCollapse = static_cast<WhiteSpaceCollapse>(m_inheritedFlags.whiteSpaceCollapse);
+    auto textWrap = static_cast<TextWrap>(m_inheritedFlags.textWrap);
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::BreakSpaces && textWrap == TextWrap::Wrap)
+        return WhiteSpace::BreakSpaces;
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrap == TextWrap::Wrap)
+        return WhiteSpace::Normal;
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrap == TextWrap::NoWrap)
+        return WhiteSpace::NoWrap;
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::NoWrap)
+        return WhiteSpace::Pre;
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrap == TextWrap::Wrap)
+        return WhiteSpace::PreLine;
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::Wrap)
+        return WhiteSpace::PreWrap;
+
+    // Reachable for combinations that can't be represented with the white-space syntax.
+    // Do nothing for now since this is a temporary function.
+    return WhiteSpace::Normal;
 }
 
 void RenderStyle::setWordSpacing(Length&& value)
@@ -2371,24 +2400,6 @@ Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool 
 
             return colorResolvingCurrentColor(CSSPropertyWebkitTextFillColor, visitedLink);
         }
-
-        auto borderStyle = [&] {
-            switch (colorProperty) {
-            case CSSPropertyBorderLeftColor:
-                return borderLeftStyle();
-            case CSSPropertyBorderRightColor:
-                return borderRightStyle();
-            case CSSPropertyBorderTopColor:
-                return borderTopStyle();
-            case CSSPropertyBorderBottomColor:
-                return borderBottomStyle();
-            default:
-                return BorderStyle::None;
-            }
-        }();
-
-        if (!visitedLink && (borderStyle == BorderStyle::Inset || borderStyle == BorderStyle::Outset || borderStyle == BorderStyle::Ridge || borderStyle == BorderStyle::Groove))
-            return { SRGBA<uint8_t> { 238, 238, 238 } };
 
         return visitedLink ? visitedLinkColor() : color();
     }
@@ -2872,6 +2883,11 @@ ScrollSnapStop RenderStyle::initialScrollSnapStop()
     return ScrollSnapStop::Normal;
 }
 
+ScrollbarGutter RenderStyle::initialScrollbarGutter()
+{
+    return { };
+}
+
 ScrollbarWidth RenderStyle::initialScrollbarWidth()
 {
     return ScrollbarWidth::Auto;
@@ -2892,6 +2908,11 @@ ScrollSnapStop RenderStyle::scrollSnapStop() const
     return m_nonInheritedData->rareData->scrollSnapStop;
 }
 
+const ScrollbarGutter RenderStyle::scrollbarGutter() const
+{
+    return m_nonInheritedData->rareData->scrollbarGutter;
+}
+
 ScrollbarWidth RenderStyle::scrollbarWidth() const
 {
     return m_nonInheritedData->rareData->scrollbarWidth;
@@ -2910,6 +2931,11 @@ void RenderStyle::setScrollSnapAlign(const ScrollSnapAlign& alignment)
 void RenderStyle::setScrollSnapStop(const ScrollSnapStop stop)
 {
     SET_NESTED_VAR(m_nonInheritedData, rareData, scrollSnapStop, stop);
+}
+
+void RenderStyle::setScrollbarGutter(const ScrollbarGutter gutter)
+{
+    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollbarGutter, gutter);
 }
 
 void RenderStyle::setScrollbarWidth(const ScrollbarWidth width)

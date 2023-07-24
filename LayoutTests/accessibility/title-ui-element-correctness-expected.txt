@@ -1,22 +1,25 @@
 This tests that titleUIElement works correctly even when things change dynamically.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: axElement('control1').titleUIElement().isEqual(axElement('label1')) === true
+PASS: axElement('control2').titleUIElement().isEqual(axElement('label2')) === true
+PASS: hasTitleUIElement(axElement('control3')) === false
+document.getElementById('label3').setAttribute('for', 'control3');
+PASS: axElement('control3').titleUIElement().isEqual(axElement('label3')) === true
+label4Element = createLabelWithIdAndForAttribute('label4', 'control4');
+PASS: hasTitleUIElement(axElement('control4')) === false
+document.getElementById('container').appendChild(label4Element);
+PASS: hasTitleUIElement(axElement('control4')) === true
+PASS: axElement('control4').titleUIElement().isEqual(axElement('label4')) === true
+label4Element.parentElement.removeChild(label4Element);
+PASS: hasTitleUIElement(axElement('control4')) === false
+PASS: hasTitleUIElement(axElement('control5')) === false
+reparentNodeIntoContainer(document.getElementById('control5'), document.getElementById('label5'));
+PASS: axElement('control5').titleUIElement() != null === true
+PASS: axElement('control5').titleUIElement().isEqual(axElement('label5')) === true
+PASS: hasTitleUIElement(axElement('control6')) === false
+document.getElementById('label6c').remove()
+PASS: axElement('control6').titleUIElement().isEqual(axElement('label6b')) === true
 
-
-PASS axElement('control1').titleUIElement().isEqual(axElement('label1')) is true
-PASS axElement('control2').titleUIElement().isEqual(axElement('label2')) is true
-PASS hasTitleUIElement(axElement('control3')) is false
-PASS document.getElementById('label3').setAttribute('for', 'control3'); axElement('control3').titleUIElement().isEqual(axElement('label3')) is true
-PASS var label4Element = createLabelWithIdAndForAttribute('label4', 'control4'); hasTitleUIElement(axElement('control4')) is false
-PASS document.getElementById('container').appendChild(label4Element); hasTitleUIElement(axElement('control4')) is true
-PASS axElement('control4').titleUIElement().isEqual(axElement('label4')) is true
-PASS label4Element.parentElement.removeChild(label4Element); hasTitleUIElement(axElement('control4')) is false
-PASS hasTitleUIElement(axElement('control5')) is false
-PASS reparentNodeIntoContainer(document.getElementById('control5'), document.getElementById('label5')); axElement('control5').titleUIElement() != null is true
-PASS axElement('control5').titleUIElement().isEqual(axElement('label5')) is true
-PASS axElement('control6').titleUIElement().isEqual(axElement('label6b')) is true
-PASS newLabel6Element = createLabelWithIdAndForAttribute('label6a', 'control6'); document.body.insertBefore(newLabel6Element, document.body.firstChild); axElement('control6').titleUIElement().isEqual(axElement('label6a')) is true
-PASS document.body.removeChild(newLabel6Element); axElement('control6').titleUIElement().isEqual(axElement('label6b')) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

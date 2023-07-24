@@ -39,12 +39,31 @@ absl_cc_library(
     kernel_timeout_internal
   HDRS
     "internal/kernel_timeout.h"
+  SRCS
+    "internal/kernel_timeout.cc"
   COPTS
     ${ABSL_DEFAULT_COPTS}
   DEPS
+    absl::base
+    absl::config
     absl::core_headers
     absl::raw_logging_internal
     absl::time
+)
+
+absl_cc_test(
+  NAME
+    kernel_timeout_internal_test
+  SRCS
+    "internal/kernel_timeout_test.cc"
+  COPTS
+    ${ABSL_TEST_COPTS}
+  DEPS
+    absl::kernel_timeout_internal
+    absl::config
+    absl::random_random
+    absl::time
+    GTest::gmock_main
 )
 
 absl_cc_library(
@@ -55,16 +74,27 @@ absl_cc_library(
     "blocking_counter.h"
     "internal/create_thread_identity.h"
     "internal/futex.h"
+    "internal/futex_waiter.h"
     "internal/per_thread_sem.h"
+    "internal/pthread_waiter.h"
+    "internal/sem_waiter.h"
+    "internal/stdcpp_waiter.h"
     "internal/waiter.h"
+    "internal/waiter_base.h"
+    "internal/win32_waiter.h"
     "mutex.h"
     "notification.h"
   SRCS
     "barrier.cc"
     "blocking_counter.cc"
     "internal/create_thread_identity.cc"
+    "internal/futex_waiter.cc"
     "internal/per_thread_sem.cc"
-    "internal/waiter.cc"
+    "internal/pthread_waiter.cc"
+    "internal/sem_waiter.cc"
+    "internal/stdcpp_waiter.cc"
+    "internal/waiter_base.cc"
+    "internal/win32_waiter.cc"
     "notification.cc"
     "mutex.cc"
   COPTS
@@ -136,8 +166,9 @@ absl_cc_library(
   COPTS
     ${ABSL_DEFAULT_COPTS}
   DEPS
-    absl::synchronization
+    absl::any_invocable
     absl::core_headers
+    absl::synchronization
   TESTONLY
 )
 
@@ -157,6 +188,20 @@ absl_cc_test(
     absl::memory
     absl::raw_logging_internal
     absl::time
+    GTest::gmock_main
+)
+
+absl_cc_test(
+  NAME
+    mutex_method_pointer_test
+  SRCS
+    "mutex_method_pointer_test.cc"
+  COPTS
+    ${ABSL_TEST_COPTS}
+  DEPS
+    absl::base
+    absl::config
+    absl::synchronization
     GTest::gmock_main
 )
 
@@ -202,6 +247,23 @@ absl_cc_test(
     absl::per_thread_sem_test_common
     absl::synchronization
     absl::strings
+    absl::time
+    GTest::gmock_main
+)
+
+absl_cc_test(
+  NAME
+    waiter_test
+  SRCS
+    "internal/waiter_test.cc"
+  COPTS
+    ${ABSL_TEST_COPTS}
+  DEPS
+    absl::config
+    absl::kernel_timeout_internal
+    absl::random_random
+    absl::synchronization
+    absl::thread_pool
     absl::time
     GTest::gmock_main
 )

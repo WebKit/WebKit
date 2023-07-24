@@ -77,6 +77,7 @@ VkResult AllocateAndBindMemoryForImage(VmaAllocator allocator,
                                        VkImage *pImage,
                                        VkMemoryPropertyFlags requiredFlags,
                                        VkMemoryPropertyFlags preferredFlags,
+                                       bool allocateDedicatedMemory,
                                        VmaAllocation *pAllocationOut,
                                        uint32_t *pMemoryTypeIndexOut,
                                        VkDeviceSize *sizeOut);
@@ -87,6 +88,13 @@ VkResult FindMemoryTypeIndexForBufferInfo(VmaAllocator allocator,
                                           VkMemoryPropertyFlags preferredFlags,
                                           bool persistentlyMappedBuffers,
                                           uint32_t *pMemoryTypeIndexOut);
+
+VkResult FindMemoryTypeIndexForImageInfo(VmaAllocator allocator,
+                                         const VkImageCreateInfo *pImageCreateInfo,
+                                         VkMemoryPropertyFlags requiredFlags,
+                                         VkMemoryPropertyFlags preferredFlags,
+                                         bool allocateDedicatedMemory,
+                                         uint32_t *pMemoryTypeIndexOut);
 
 void GetMemoryTypeProperties(VmaAllocator allocator,
                              uint32_t memoryTypeIndex,

@@ -15,6 +15,13 @@
 
     async function startTest() {
         let video = document.querySelector('video');
+        waitFor(video, 'error').then(failTest);
+
+        let keys = await startLegacyEME({
+            video: video,
+            protocolVersion: 2,
+            mimeType: 'video/mp4'
+        });
 
         let mediaSource = new MediaSource;
         video.srcObject = mediaSource;
@@ -28,16 +35,10 @@
         let updateEndPromise = fetchAndAppend(sourceBuffer, 'content/elementary-stream-video-header-keyid-1.m4v', true);
         event = await waitFor(video, 'webkitneedkey');
 
-        let keys = await startLegacyEME({
-            video: video,
-            protocolVersion: 2,
-            mimeType: 'video/mp4'
-        });
-
         let initDataArray = stringToUInt8Array('skd://twelve');
         let keySession = keys.createSession('video/mp4', initDataArray);
-        waitFor(keySession, 'webkitkeyerror').then(() => {
-            consoleWrite('FAIL: update() failed');
+        waitFor(keySession, 'webkitkeyerror').then(event => {
+            consoleWrite(`FAIL: update() failed with code: ${ event.code }, systemCode: ${ event.systemCode }`);
             endTest();
         });
         event = await waitFor(keySession, 'webkitkeymessage');

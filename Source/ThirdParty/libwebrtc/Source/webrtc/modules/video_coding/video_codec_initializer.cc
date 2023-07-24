@@ -18,7 +18,6 @@
 #include "absl/types/optional.h"
 #include "api/scoped_refptr.h"
 #include "api/units/data_rate.h"
-#include "api/video/video_bitrate_allocation.h"
 #include "api/video_codecs/video_encoder.h"
 #include "modules/video_coding/codecs/av1/av1_svc_config.h"
 #include "modules/video_coding/codecs/vp8/vp8_scalability.h"
@@ -140,8 +139,9 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
 
     // TODO(bugs.webrtc.org/11607): Since scalability mode is a top-level
     // setting on VideoCodec, setting it makes sense only if it is the same for
-    // all simulcast streams.
-    if (streams[0].scalability_mode != streams[i].scalability_mode) {
+    // all active simulcast streams.
+    if (streams[i].active &&
+        streams[0].scalability_mode != streams[i].scalability_mode) {
       scalability_mode.reset();
       // For VP8, top-level scalability mode doesn't matter, since configuration
       // is based on the per-simulcast stream configuration of temporal layers.
@@ -211,8 +211,11 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
       break;
     }
     case kVideoCodecVP9: {
-      // Force the first stream to always be active.
-      video_codec.simulcastStream[0].active = codec_active;
+      // When the SvcRateAllocator is used, "active" is controlled by
+      // `SpatialLayer::active` instead.
+      if (video_codec.numberOfSimulcastStreams <= 1) {
+        video_codec.simulcastStream[0].active = codec_active;
+      }
 
       if (!config.encoder_specific_settings) {
         *video_codec.VP9() = VideoEncoder::GetDefaultVp9Settings();
@@ -238,6 +241,13 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
         spatial_layers = GetVp9SvcConfig(video_codec);
         if (spatial_layers.empty())
           break;
+        // Use codec bitrate limits if spatial layering is not requested.
+        if (video_codec.numberOfSimulcastStreams <= 1 &&
+            ScalabilityModeToNumSpatialLayers(*scalability_mode) == 1) {
+          spatial_layers.back().minBitrate = video_codec.minBitrate;
+          spatial_layers.back().targetBitrate = video_codec.maxBitrate;
+          spatial_layers.back().maxBitrate = video_codec.maxBitrate;
+        }
       } else {
         size_t first_active_layer = 0;
         for (size_t spatial_idx = 0;
@@ -284,8 +294,15 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
       // This difference must be propagated to the stream configuration.
       video_codec.width = spatial_layers.back().width;
       video_codec.height = spatial_layers.back().height;
-      video_codec.simulcastStream[0].width = spatial_layers.back().width;
-      video_codec.simulcastStream[0].height = spatial_layers.back().height;
+      // Only propagate if we're not doing simulcast. Simulcast is assumed not
+      // to have multiple spatial layers, if we wanted to support simulcast+SVC
+      // combos we would need to calculate unique spatial layers per simulcast
+      // layer, but VideoCodec is not capable of expressing per-simulcastStream
+      // spatialLayers.
+      if (video_codec.numberOfSimulcastStreams == 1) {
+        video_codec.simulcastStream[0].width = spatial_layers.back().width;
+        video_codec.simulcastStream[0].height = spatial_layers.back().height;
+      }
 
       // Update layering settings.
       video_codec.VP9()->numberOfSpatialLayers =

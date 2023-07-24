@@ -102,4 +102,4 @@ layer at (0,0) size 800x600
                   text run at (625,20) width 112: " line in which the"
                   text run at (0,40) width 122: "inline box appears."
 layer at (8,99) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,91) size 784x2 [color=#808080] [border: (1px inset #808080)]

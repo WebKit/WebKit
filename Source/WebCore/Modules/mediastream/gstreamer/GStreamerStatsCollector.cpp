@@ -70,24 +70,29 @@ static inline void fillRTCCodecStats(RTCStatsReport::CodecStats& stats, const Gs
         stats.payloadType = value;
     if (gst_structure_get_uint(structure, "clock-rate", &value))
         stats.clockRate = value;
+    if (gst_structure_get_uint(structure, "channels", &value))
+        stats.channels = value;
+
+    if (const char* sdpFmtpLine = gst_structure_get_string(structure, "sdp-fmtp-line"))
+        stats.sdpFmtpLine = String::fromLatin1(sdpFmtpLine);
+
+    if (const char* mimeType = gst_structure_get_string(structure, "mime-type"))
+        stats.mimeType = String::fromLatin1(mimeType);
 
     // FIXME:
-    // stats.mimeType =
-    // stats.channels =
-    // stats.sdpFmtpLine =
     // stats.implementation =
 }
 
-static inline void fillRemoteInboundRTPStreamStats(RTCStatsReport::RemoteInboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
+static inline void fillReceivedRTPStreamStats(RTCStatsReport::ReceivedRtpStreamStats& stats, const GstStructure* structure)
 {
-    UNUSED_PARAM(additionalStats);
-    unsigned value;
-    if (gst_structure_get_uint(structure, "ssrc", &value))
-        stats.ssrc = value;
+    fillRTCRTPStreamStats(stats, structure);
 
-    double jitter;
-    if (gst_structure_get_double(structure, "jitter", &jitter))
-        stats.jitter = jitter;
+    GstStructure* rtpSourceStats;
+    gst_structure_get(structure, "gst-rtpsource-stats", GST_TYPE_STRUCTURE, &rtpSourceStats, nullptr);
+
+    uint64_t packetsReceived;
+    if (gst_structure_get_uint64(rtpSourceStats, "packets-received", &packetsReceived))
+        stats.packetsReceived = packetsReceived;
 
 #if GST_CHECK_VERSION(1, 22, 0)
     int64_t packetsLost;
@@ -98,6 +103,32 @@ static inline void fillRemoteInboundRTPStreamStats(RTCStatsReport::RemoteInbound
     if (gst_structure_get_uint(structure, "packets-lost", &packetsLost))
         stats.packetsLost = packetsLost;
 #endif
+
+    uint64_t value;
+    if (gst_structure_get_uint64(structure, "packets-repaired", &value))
+        stats.packetsRepaired = value;
+
+    double jitter;
+    if (gst_structure_get_double(structure, "jitter", &jitter))
+        stats.jitter = jitter;
+
+    // FIXME:
+    // stats.burstLossCount
+    // stats.burstDiscardCount
+    // stats.burstLossRate
+    // stats.burstDiscardRate
+    // stats.gapLossRate
+    // stats.gapDiscardRate
+    // stats.framesDropped
+    // stats.partialFramesLost
+    // stats.fullFramesLost
+}
+
+static inline void fillRemoteInboundRTPStreamStats(RTCStatsReport::RemoteInboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
+{
+    fillReceivedRTPStreamStats(stats, structure);
+
+    UNUSED_PARAM(additionalStats);
 
     double roundTripTime;
     if (gst_structure_get_double(structure, "round-trip-time", &roundTripTime))
@@ -106,35 +137,22 @@ static inline void fillRemoteInboundRTPStreamStats(RTCStatsReport::RemoteInbound
     if (const char* localId = gst_structure_get_string(structure, "local-id"))
         stats.localId = String::fromLatin1(localId);
 
-    // FIXME: Fill remaining fields.
+    double fractionLost;
+    if (gst_structure_get_double(structure, "fraction-lost", &fractionLost))
+        stats.fractionLost = fractionLost;
+
+    // FIXME:
+    // stats.reportsReceived
+    // stats.roundTripTimeMeasurements
 }
 
 static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
 {
-    fillRTCRTPStreamStats(stats, structure);
+    fillReceivedRTPStreamStats(stats, structure);
 
     uint64_t value;
-    if (gst_structure_get_uint64(structure, "packets-received", &value))
-        stats.packetsReceived = value;
     if (gst_structure_get_uint64(structure, "bytes-received", &value))
         stats.bytesReceived = value;
-
-#if GST_CHECK_VERSION(1, 22, 0)
-    int64_t packetsLost;
-    if (gst_structure_get_int64(structure, "packets-lost", &packetsLost))
-        stats.packetsLost = packetsLost;
-#else
-    unsigned packetsLost;
-    if (gst_structure_get_uint(structure, "packets-lost", &packetsLost))
-        stats.packetsLost = packetsLost;
-#endif
-
-    double jitter;
-    if (gst_structure_get_double(structure, "jitter", &jitter))
-        stats.jitter = jitter;
-
-    if (gst_structure_get_uint64(structure, "packets-repaired", &value))
-        stats.packetsRepaired = value;
 
     if (gst_structure_get_uint64(structure, "packets-discarded", &value))
         stats.packetsDiscarded = value;
@@ -282,6 +300,10 @@ static inline void fillRTCCandidateStats(RTCStatsReport::IceCandidateStats& stat
     unsigned port;
     if (gst_structure_get_uint(structure, "port", &port))
         stats.port = port;
+
+    unsigned priority;
+    if (gst_structure_get_uint(structure, "priority", &priority))
+        stats.priority = priority;
 
     auto candidateType = String::fromLatin1(gst_structure_get_string(structure, "candidate-type"));
     stats.candidateType = iceCandidateType(candidateType);
@@ -472,6 +494,8 @@ void GStreamerStatsCollector::getStats(CollectorCallback&& callback, GstPad* pad
     }, holder, reinterpret_cast<GDestroyNotify>(destroyCallbackHolder)));
 }
 
-}; // namespace WebCore
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
 
 #endif // ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)

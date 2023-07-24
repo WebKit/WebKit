@@ -408,6 +408,16 @@ static bool deltaShouldCancelSwipe(FloatSize delta)
     return std::abs(delta.height()) >= std::abs(delta.width()) * minimumScrollEventRatioForSwipe;
 }
 
+const char* ViewGestureController::PendingSwipeTracker::stateToString(State state)
+{
+    switch (state) {
+    case State::None: return "None";
+    case State::WaitingForWebCore: return "WaitingForWebCore";
+    case State::InsufficientMagnitude: return "InsufficientMagnitude";
+    }
+    return "";
+}
+
 ViewGestureController::PendingSwipeTracker::PendingSwipeTracker(WebPageProxy& webPageProxy, ViewGestureController& viewGestureController)
     : m_viewGestureController(viewGestureController)
     , m_webPageProxy(webPageProxy)
@@ -441,7 +451,7 @@ bool ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe(Platf
 
 bool ViewGestureController::PendingSwipeTracker::handleEvent(PlatformScrollEvent event)
 {
-    LOG(ViewGestures, "PendingSwipeTracker::handleEvent - state %d", (int)m_state);
+    LOG_WITH_STREAM(ViewGestures, stream << "PendingSwipeTracker::handleEvent - state " << stateToString(m_state));
 
     if (scrollEventCanEndSwipe(event)) {
         reset("gesture ended");
@@ -449,14 +459,15 @@ bool ViewGestureController::PendingSwipeTracker::handleEvent(PlatformScrollEvent
     }
 
     if (m_state == State::None) {
-        LOG(ViewGestures, "PendingSwipeTracker::handleEvent - scroll can become swipe %d shouldIgnorePinnedState %d, page will handle scrolls %d", scrollEventCanBecomeSwipe(event, m_direction), m_shouldIgnorePinnedState, m_webPageProxy.willHandleHorizontalScrollEvents());
+        LOG_WITH_STREAM(ViewGestures, stream << "PendingSwipeTracker::handleEvent - scroll can become swipe " << scrollEventCanBecomeSwipe(event, m_direction)
+            << ", shouldIgnorePinnedState " << m_shouldIgnorePinnedState << ", page will handle scrolls " << m_webPageProxy.willHandleHorizontalScrollEvents());
 
         if (!scrollEventCanBecomeSwipe(event, m_direction))
             return false;
 
         if (!m_shouldIgnorePinnedState && m_webPageProxy.willHandleHorizontalScrollEvents()) {
             m_state = State::WaitingForWebCore;
-            LOG(ViewGestures, "Swipe Start Hysteresis - waiting for WebCore to handle event");
+            LOG(ViewGestures, "PendingSwipeTracker::handleEvent - waiting for WebCore to handle event");
         }
     }
 
@@ -468,7 +479,7 @@ bool ViewGestureController::PendingSwipeTracker::handleEvent(PlatformScrollEvent
 
 void ViewGestureController::PendingSwipeTracker::eventWasNotHandledByWebCore(PlatformScrollEvent event)
 {
-    LOG(ViewGestures, "Swipe Start Hysteresis - WebCore didn't handle event, state %d", (int)m_state);
+    LOG_WITH_STREAM(ViewGestures, stream << "PendingSwipeTracker::eventWasNotHandledByWebCore - WebCore didn't handle event, state " << stateToString(m_state));
 
     if (m_state != State::WaitingForWebCore)
         return;
@@ -492,7 +503,7 @@ bool ViewGestureController::PendingSwipeTracker::tryToStartSwipe(PlatformScrollE
         return false;
 
     m_cumulativeDelta += scrollEventGetScrollingDeltas(event);
-    LOG(ViewGestures, "Swipe Start Hysteresis - consumed event, cumulative delta (%0.2f, %0.2f)", m_cumulativeDelta.width(), m_cumulativeDelta.height());
+    LOG_WITH_STREAM(ViewGestures, stream << "PendingSwipeTracker::tryToStartSwipe - consumed event, cumulative delta " << m_cumulativeDelta);
 
     if (deltaShouldCancelSwipe(m_cumulativeDelta)) {
         reset("cumulative delta became too vertical");
@@ -507,10 +518,10 @@ bool ViewGestureController::PendingSwipeTracker::tryToStartSwipe(PlatformScrollE
     return true;
 }
 
-void ViewGestureController::PendingSwipeTracker::reset(const char* resetReasonForLogging)
+void ViewGestureController::PendingSwipeTracker::reset(const char* resetReason)
 {
     if (m_state != State::None)
-        LOG(ViewGestures, "Swipe Start Hysteresis - reset; %s", resetReasonForLogging);
+        LOG_WITH_STREAM(ViewGestures, stream << "PendingSwipeTracker::reset - " << resetReason);
 
     m_state = State::None;
     m_cumulativeDelta = FloatSize();

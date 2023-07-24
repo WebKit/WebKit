@@ -98,6 +98,28 @@ static INLINE int16_t accumulate_eob256(__m256i eob256) {
   return _mm_extract_epi16(eob, 1);
 }
 
+static AOM_FORCE_INLINE void quantize_lp_16_first(
+    const int16_t *coeff_ptr, const int16_t *iscan_ptr, int16_t *qcoeff_ptr,
+    int16_t *dqcoeff_ptr, __m256i *round256, __m256i *quant256,
+    __m256i *dequant256, __m256i *eob) {
+  const __m256i coeff = _mm256_loadu_si256((const __m256i *)coeff_ptr);
+  const __m256i abs_coeff = _mm256_abs_epi16(coeff);
+  const __m256i tmp_rnd = _mm256_adds_epi16(abs_coeff, *round256);
+  const __m256i abs_qcoeff = _mm256_mulhi_epi16(tmp_rnd, *quant256);
+  const __m256i qcoeff = _mm256_sign_epi16(abs_qcoeff, coeff);
+  const __m256i dqcoeff = _mm256_mullo_epi16(qcoeff, *dequant256);
+  const __m256i nz_mask =
+      _mm256_cmpgt_epi16(abs_qcoeff, _mm256_setzero_si256());
+
+  _mm256_storeu_si256((__m256i *)qcoeff_ptr, qcoeff);
+  _mm256_storeu_si256((__m256i *)dqcoeff_ptr, dqcoeff);
+
+  const __m256i iscan = _mm256_loadu_si256((const __m256i *)iscan_ptr);
+  const __m256i iscan_plus1 = _mm256_sub_epi16(iscan, nz_mask);
+  const __m256i nz_iscan = _mm256_and_si256(iscan_plus1, nz_mask);
+  *eob = _mm256_max_epi16(*eob, nz_iscan);
+}
+
 static AOM_FORCE_INLINE void quantize_lp_16(
     const int16_t *coeff_ptr, intptr_t n_coeffs, const int16_t *iscan_ptr,
     int16_t *qcoeff_ptr, int16_t *dqcoeff_ptr, __m256i *round256,
@@ -143,29 +165,21 @@ void av1_quantize_lp_avx2(const int16_t *coeff_ptr, intptr_t n_coeffs,
   quant256 = _mm256_permute4x64_epi64(quant256, 0x54);
   dequant256 = _mm256_permute4x64_epi64(dequant256, 0x54);
 
-  coeff_ptr += n_coeffs;
-  iscan += n_coeffs;
-  qcoeff_ptr += n_coeffs;
-  dqcoeff_ptr += n_coeffs;
-  n_coeffs = -n_coeffs;
-
   // Process DC and the first 15 AC coeffs.
-  quantize_lp_16(coeff_ptr, n_coeffs, iscan, qcoeff_ptr, dqcoeff_ptr, &round256,
-                 &quant256, &dequant256, &eob256);
+  quantize_lp_16_first(coeff_ptr, iscan, qcoeff_ptr, dqcoeff_ptr, &round256,
+                       &quant256, &dequant256, &eob256);
 
-  // Overwrite the DC constants with AC constants
-  dequant256 = _mm256_permute2x128_si256(dequant256, dequant256, 0x31);
-  quant256 = _mm256_permute2x128_si256(quant256, quant256, 0x31);
-  round256 = _mm256_permute2x128_si256(round256, round256, 0x31);
+  if (n_coeffs > 16) {
+    // Overwrite the DC constants with AC constants
+    dequant256 = _mm256_permute2x128_si256(dequant256, dequant256, 0x31);
+    quant256 = _mm256_permute2x128_si256(quant256, quant256, 0x31);
+    round256 = _mm256_permute2x128_si256(round256, round256, 0x31);
 
-  n_coeffs += 8 * 2;
-
-  // AC only loop.
-  while (n_coeffs < 0) {
-    quantize_lp_16(coeff_ptr, n_coeffs, iscan, qcoeff_ptr, dqcoeff_ptr,
-                   &round256, &quant256, &dequant256, &eob256);
-
-    n_coeffs += 8 * 2;
+    // AC only loop.
+    for (int idx = 16; idx < n_coeffs; idx += 16) {
+      quantize_lp_16(coeff_ptr, idx, iscan, qcoeff_ptr, dqcoeff_ptr, &round256,
+                     &quant256, &dequant256, &eob256);
+    }
   }
 
   *eob_ptr = accumulate_eob256(eob256);

@@ -1,0 +1,8 @@
+Blocked access to external URL https://google.com/
+Blocked access to external URL https://google.com/
+
+FAIL Allow top with user activation + user activation assert_equals: The navigation should succeed. expected true but got false
+PASS allow-top-navigation-by-user-activation set but no sticky activation
+PASS A cross-origin frame with frame sandbox flags can navigate top
+FAIL A cross-origin frame with delivered sandbox flags can not navigate top assert_equals: The navigation should fail. expected false but got true
+

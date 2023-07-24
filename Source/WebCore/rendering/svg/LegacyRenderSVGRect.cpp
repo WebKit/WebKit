@@ -38,7 +38,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGRect);
 
 LegacyRenderSVGRect::LegacyRenderSVGRect(SVGRectElement& element, RenderStyle&& style)
     : LegacyRenderSVGShape(element, WTFMove(style))
-    , m_usePathFallback(false)
 {
 }
 
@@ -57,7 +56,6 @@ void LegacyRenderSVGRect::updateShapeFromElement()
     m_innerStrokeRect = FloatRect();
     m_outerStrokeRect = FloatRect();
     clearPath();
-    m_usePathFallback = false;
 
     SVGLengthContext lengthContext(&rectElement());
     FloatSize boundingBoxSize(lengthContext.valueForLength(style().width(), SVGLengthMode::Width), lengthContext.valueForLength(style().height(), SVGLengthMode::Height));
@@ -69,7 +67,6 @@ void LegacyRenderSVGRect::updateShapeFromElement()
     if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0 || hasNonScalingStroke()) {
         // Fall back to LegacyRenderSVGShape
         LegacyRenderSVGShape::updateShapeFromElement();
-        m_usePathFallback = true;
         return;
     }
 
@@ -99,7 +96,7 @@ void LegacyRenderSVGRect::updateShapeFromElement()
 
 void LegacyRenderSVGRect::fillShape(GraphicsContext& context) const
 {
-    if (m_usePathFallback) {
+    if (hasPath()) {
         LegacyRenderSVGShape::fillShape(context);
         return;
     }
@@ -125,7 +122,7 @@ void LegacyRenderSVGRect::strokeShape(GraphicsContext& context) const
     if (!style().hasVisibleStroke())
         return;
 
-    if (m_usePathFallback) {
+    if (hasPath()) {
         LegacyRenderSVGShape::strokeShape(context);
         return;
     }
@@ -135,20 +132,20 @@ void LegacyRenderSVGRect::strokeShape(GraphicsContext& context) const
 
 bool LegacyRenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
-    // The optimized contains code below does not support non-smooth strokes so we need
-    // to fall back to LegacyRenderSVGShape::shapeDependentStrokeContains in these cases.
-    if (m_usePathFallback || !hasSmoothStroke()) {
-        if (!hasPath())
-            LegacyRenderSVGShape::updateShapeFromElement();
+    // The optimized code below does not support non-smooth strokes so we need to
+    // fall back to LegacyRenderSVGShape::shapeDependentStrokeContains in these cases.
+    if (!hasSmoothStroke() && !hasPath())
+        LegacyRenderSVGShape::updateShapeFromElement();
+
+    if (hasPath())
         return LegacyRenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);
-    }
 
     return m_outerStrokeRect.contains(point, FloatRect::InsideOrOnStroke) && !m_innerStrokeRect.contains(point, FloatRect::InsideButNotOnStroke);
 }
 
 bool LegacyRenderSVGRect::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
-    if (m_usePathFallback)
+    if (hasPath())
         return LegacyRenderSVGShape::shapeDependentFillContains(point, fillRule);
     return m_fillBoundingBox.contains(point.x(), point.y());
 }

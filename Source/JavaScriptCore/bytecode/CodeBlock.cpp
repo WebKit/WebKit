@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -140,18 +140,11 @@ CString CodeBlock::sourceCodeForTools() const
 {
     if (codeType() != FunctionCode)
         return ownerExecutable()->source().toUTF8();
-    
-    SourceProvider* provider = source().provider();
+
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(ownerExecutable());
-    UnlinkedFunctionExecutable* unlinked = executable->unlinkedExecutable();
-    unsigned unlinkedStartOffset = unlinked->startOffset();
-    unsigned linkedStartOffset = executable->source().startOffset();
-    int delta = linkedStartOffset - unlinkedStartOffset;
-    unsigned rangeStart = delta + unlinked->unlinkedFunctionNameStart();
-    unsigned rangeEnd = delta + unlinked->startOffset() + unlinked->sourceLength();
-    return toCString(
-        "function ",
-        provider->source().substring(rangeStart, rangeEnd - rangeStart).utf8());
+    return executable->source().provider()->getRange(
+        executable->functionStart(),
+        executable->parametersStartOffset() + executable->source().length()).utf8();
 }
 
 CString CodeBlock::sourceCodeOnOneLine() const
@@ -215,7 +208,7 @@ void CodeBlock::dumpSource(PrintStream& out)
         FunctionExecutable* functionExecutable = reinterpret_cast<FunctionExecutable*>(executable);
         StringView source = functionExecutable->source().provider()->getRange(
             functionExecutable->parametersStartOffset(),
-            functionExecutable->typeProfilingEndOffset(vm()) + 1); // Type profiling end offset is the character before the '}'.
+            functionExecutable->functionEnd() + 1); // Type profiling end offset is the character before the '}'.
         
         out.print("function ", inferredName(), source);
         return;
@@ -374,7 +367,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes() || m_unlinkedCode->wasCompiledWithControlFlowProfilerOpcodes())
-        vm.functionHasExecutedCache()->removeUnexecutedRange(ownerExecutable->sourceID(), ownerExecutable->typeProfilingStartOffset(vm), ownerExecutable->typeProfilingEndOffset(vm));
+        vm.functionHasExecutedCache()->removeUnexecutedRange(ownerExecutable->sourceID(), ownerExecutable->typeProfilingStartOffset(), ownerExecutable->typeProfilingEndOffset());
 
     ScriptExecutable* topLevelExecutable = ownerExecutable->topLevelExecutable();
     // We wait to initialize template objects until the end of finishCreation beecause it can
@@ -398,7 +391,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
         if (shouldUpdateFunctionHasExecutedCache)
-            vm.functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
+            vm.functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->unlinkedFunctionStart(), unlinkedExecutable->unlinkedFunctionEnd());
         m_functionDecls[i].set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), std::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
     }
 
@@ -406,7 +399,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     for (size_t count = unlinkedCodeBlock->numberOfFunctionExprs(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
         if (shouldUpdateFunctionHasExecutedCache)
-            vm.functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
+            vm.functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->unlinkedFunctionStart(), unlinkedExecutable->unlinkedFunctionEnd());
         m_functionExprs[i].set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), std::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
     }
 
@@ -695,7 +688,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                     // the user's program, give the type profiler some range to identify these return statements.
                     // Currently, the text offset that is used as identification is "f" in the function keyword
                     // and is stored on TypeLocation's m_divotForFunctionOffsetIfReturnStatement member variable.
-                    divotStart = divotEnd = ownerExecutable->typeProfilingStartOffset(vm);
+                    divotStart = divotEnd = ownerExecutable->typeProfilingStartOffset();
                     shouldAnalyze = true;
                 }
                 break;
@@ -708,7 +701,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             bool isNewLocation = locationPair.second;
 
             if (bytecode.m_flag == ProfileTypeBytecodeFunctionReturnStatement)
-                location->m_divotForFunctionOffsetIfReturnStatement = ownerExecutable->typeProfilingStartOffset(vm);
+                location->m_divotForFunctionOffsetIfReturnStatement = ownerExecutable->typeProfilingStartOffset();
 
             if (shouldAnalyze && isNewLocation)
                 vm.typeProfiler()->insertNewLocation(location);
@@ -1007,6 +1000,7 @@ void CodeBlock::setAlternative(VM& vm, CodeBlock* alternative)
 {
     RELEASE_ASSERT(alternative);
     RELEASE_ASSERT(alternative->jitCode());
+    ASSERT(JITCode::isBaselineCode(alternative->jitType()) || alternative->jitType() == JITType::None);
     m_alternative.set(vm, this, alternative);
 }
 
@@ -1908,7 +1902,7 @@ CodeBlock* CodeBlock::baselineAlternative()
 {
 #if ENABLE(JIT)
     CodeBlock* result = this;
-    while (result->alternative())
+    if (result->alternative())
         result = result->alternative();
     RELEASE_ASSERT(result);
     RELEASE_ASSERT(JITCode::isBaselineCode(result->jitType()) || result->jitType() == JITType::None);
@@ -2745,12 +2739,16 @@ bool CodeBlock::shouldReoptimizeFromLoopNow()
 ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, BytecodeIndex bytecodeIndex)
 {
     auto instruction = instructions().at(bytecodeIndex);
+
+    if (instruction->opcodeID() == op_iterator_next)
+        return &instruction->as<OpIteratorNext>().metadata(this).m_iterableProfile;
+
     switch (instruction->opcodeID()) {
 #define CASE(Op) \
     case Op::opcodeID: \
         return &instruction->as<Op>().metadata(this).m_arrayProfile;
 
-    FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(CASE)
+    FOR_EACH_OPCODE_WITH_SIMPLE_ARRAY_PROFILE(CASE)
 
 #undef CASE
 
@@ -2924,7 +2922,7 @@ void CodeBlock::updateAllArrayProfilePredictions(const ConcurrentJSLocker& locke
 #define VISIT(__op) \
     m_metadata->forEach<__op>([&] (auto& metadata) { process(metadata.m_arrayProfile); });
 
-    FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(VISIT)
+    FOR_EACH_OPCODE_WITH_SIMPLE_ARRAY_PROFILE(VISIT)
 
 #undef VISIT
 
@@ -3408,8 +3406,8 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler()
         // inside the CodeBlock's instruction stream.
         auto insertFunctionGaps = [basicBlockLocation, basicBlockStartOffset, basicBlockEndOffset] (const WriteBarrier<FunctionExecutable>& functionExecutable) {
             const UnlinkedFunctionExecutable* executable = functionExecutable->unlinkedExecutable();
-            int functionStart = executable->typeProfilingStartOffset();
-            int functionEnd = executable->typeProfilingEndOffset();
+            int functionStart = executable->unlinkedFunctionStart();
+            int functionEnd = executable->unlinkedFunctionEnd();
             if (functionStart >= basicBlockStartOffset && functionEnd <= basicBlockEndOffset)
                 basicBlockLocation->insertGap(functionStart, functionEnd);
         };

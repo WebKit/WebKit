@@ -40,16 +40,18 @@ type drbgTestGroup struct {
 	AdditionalDataBits    uint64 `json:"additionalInputLen"`
 	RetBits               uint64 `json:"returnedBitsLen"`
 	Tests                 []struct {
-		ID                 uint64 `json:"tcId"`
-		EntropyHex         string `json:"entropyInput"`
-		NonceHex           string `json:"nonce"`
-		PersonalizationHex string `json:"persoString"`
-		Other              []struct {
-			AdditionalDataHex string `json:"additionalInput"`
-			EntropyHex        string `json:"entropyInput"`
-			Use               string `json:"intendedUse"`
-		} `json:"otherInput"`
+		ID                 uint64           `json:"tcId"`
+		EntropyHex         string           `json:"entropyInput"`
+		NonceHex           string           `json:"nonce"`
+		PersonalizationHex string           `json:"persoString"`
+		Other              []drbgOtherInput `json:"otherInput"`
 	} `json:"tests"`
+}
+
+type drbgOtherInput struct {
+	Use               string `json:"intendedUse"`
+	AdditionalDataHex string `json:"additionalInput"`
+	EntropyHex        string `json:"entropyInput"`
 }
 
 type drbgTestGroupResponse struct {
@@ -71,7 +73,7 @@ type drbg struct {
 	modes map[string]bool // the supported underlying primitives for the DRBG
 }
 
-func (d *drbg) Process(vectorSet []byte, m Transactable) (interface{}, error) {
+func (d *drbg) Process(vectorSet []byte, m Transactable) (any, error) {
 	var parsed drbgTestVectorSet
 	if err := json.Unmarshal(vectorSet, &parsed); err != nil {
 		return nil, err
@@ -88,14 +90,6 @@ func (d *drbg) Process(vectorSet []byte, m Transactable) (interface{}, error) {
 
 		if _, ok := d.modes[group.Mode]; !ok {
 			return nil, fmt.Errorf("test group %d specifies mode %q, which is not supported for the %s algorithm", group.ID, group.Mode, d.algo)
-		}
-
-		if group.PredictionResistance {
-			return nil, fmt.Errorf("Test group %d specifies prediction-resistance mode, which is not supported", group.ID)
-		}
-
-		if group.Reseed {
-			return nil, fmt.Errorf("Test group %d requests re-seeding, which is not supported", group.ID)
 		}
 
 		if group.RetBits%8 != 0 {
@@ -118,45 +112,112 @@ func (d *drbg) Process(vectorSet []byte, m Transactable) (interface{}, error) {
 				return nil, fmt.Errorf("failed to extract personalization hex from test case %d/%d: %s", group.ID, test.ID, err)
 			}
 
-			const numAdditionalInputs = 2
-			if len(test.Other) != numAdditionalInputs {
-				return nil, fmt.Errorf("test case %d/%d provides %d additional inputs, but subprocess only expects %d", group.ID, test.ID, len(test.Other), numAdditionalInputs)
-			}
-
-			var additionalInputs [numAdditionalInputs][]byte
-			for i, other := range test.Other {
-				if other.Use != "generate" {
-					return nil, fmt.Errorf("other %d from test case %d/%d has use %q, but expected 'generate'", i, group.ID, test.ID, other.Use)
-				}
-				additionalInputs[i], err = extractField(other.AdditionalDataHex, group.AdditionalDataBits)
-				if err != nil {
-					return nil, fmt.Errorf("failed to extract additional input %d from test case %d/%d: %s", i, group.ID, test.ID, err)
-				}
-			}
-
 			outLen := group.RetBits / 8
 			var outLenBytes [4]byte
 			binary.LittleEndian.PutUint32(outLenBytes[:], uint32(outLen))
-			result, err := m.Transact(d.algo+"/"+group.Mode, 1, outLenBytes[:], ent, perso, additionalInputs[0], additionalInputs[1], nonce)
-			if err != nil {
-				return nil, fmt.Errorf("DRBG operation failed: %s", err)
+
+			var cmd string
+			var args [][]byte
+			if group.PredictionResistance {
+				var a1, a2, a3, a4 []byte
+				if err := extractOtherInputs(test.Other, []drbgOtherInputExpectations{
+					{"generate", group.AdditionalDataBits, &a1, group.EntropyBits, &a2},
+					{"generate", group.AdditionalDataBits, &a3, group.EntropyBits, &a4}}); err != nil {
+					return nil, fmt.Errorf("failed to parse other inputs from test case %d/%d: %s", group.ID, test.ID, err)
+				}
+				cmd = d.algo + "-pr/" + group.Mode
+				args = [][]byte{outLenBytes[:], ent, perso, a1, a2, a3, a4, nonce}
+			} else if group.Reseed {
+				var a1, a2, a3, a4 []byte
+				if err := extractOtherInputs(test.Other, []drbgOtherInputExpectations{
+					{"reSeed", group.AdditionalDataBits, &a1, group.EntropyBits, &a2},
+					{"generate", group.AdditionalDataBits, &a3, 0, nil},
+					{"generate", group.AdditionalDataBits, &a4, 0, nil}}); err != nil {
+					return nil, fmt.Errorf("failed to parse other inputs from test case %d/%d: %s", group.ID, test.ID, err)
+				}
+				cmd = d.algo + "-reseed/" + group.Mode
+				args = [][]byte{outLenBytes[:], ent, perso, a1, a2, a3, a4, nonce}
+			} else {
+				var a1, a2 []byte
+				if err := extractOtherInputs(test.Other, []drbgOtherInputExpectations{
+					{"generate", group.AdditionalDataBits, &a1, 0, nil},
+					{"generate", group.AdditionalDataBits, &a2, 0, nil}}); err != nil {
+					return nil, fmt.Errorf("failed to parse other inputs from test case %d/%d: %s", group.ID, test.ID, err)
+				}
+				cmd = d.algo + "/" + group.Mode
+				args = [][]byte{outLenBytes[:], ent, perso, a1, a2, nonce}
 			}
 
-			if l := uint64(len(result[0])); l != outLen {
-				return nil, fmt.Errorf("wrong length DRBG result: %d bytes but wanted %d", l, outLen)
-			}
+			m.TransactAsync(cmd, 1, args, func(result [][]byte) error {
+				if l := uint64(len(result[0])); l != outLen {
+					return fmt.Errorf("wrong length DRBG result: %d bytes but wanted %d", l, outLen)
+				}
 
-			// https://pages.nist.gov/ACVP/draft-vassilev-acvp-drbg.html#name-responses
-			response.Tests = append(response.Tests, drbgTestResponse{
-				ID:     test.ID,
-				OutHex: hex.EncodeToString(result[0]),
+				// https://pages.nist.gov/ACVP/draft-vassilev-acvp-drbg.html#name-responses
+				response.Tests = append(response.Tests, drbgTestResponse{
+					ID:     test.ID,
+					OutHex: hex.EncodeToString(result[0]),
+				})
+				return nil
 			})
 		}
 
-		ret = append(ret, response)
+		m.Barrier(func() {
+			ret = append(ret, response)
+		})
+	}
+
+	if err := m.Flush(); err != nil {
+		return nil, err
 	}
 
 	return ret, nil
+}
+
+type drbgOtherInputExpectations struct {
+	use                   string
+	additionalInputBitLen uint64
+	additionalInputOut    *[]byte
+	entropyBitLen         uint64
+	entropyOut            *[]byte
+}
+
+func extractOtherInputs(inputs []drbgOtherInput, expected []drbgOtherInputExpectations) (err error) {
+	if len(inputs) != len(expected) {
+		return fmt.Errorf("found %d other inputs but %d were expected", len(inputs), len(expected))
+	}
+
+	for i := range inputs {
+		input, expect := &inputs[i], &expected[i]
+
+		if input.Use != expect.use {
+			return fmt.Errorf("other input #%d has type %q but expected %q", i, input.Use, expect.use)
+		}
+
+		if expect.additionalInputBitLen == 0 {
+			if len(input.AdditionalDataHex) != 0 {
+				return fmt.Errorf("other input #%d has unexpected additional input", i)
+			}
+		} else {
+			*expect.additionalInputOut, err = extractField(input.AdditionalDataHex, expect.additionalInputBitLen)
+			if err != nil {
+				return err
+			}
+		}
+
+		if expect.entropyBitLen == 0 {
+			if len(input.EntropyHex) != 0 {
+				return fmt.Errorf("other input #%d has unexpected entropy value", i)
+			}
+		} else {
+			*expect.entropyOut, err = extractField(input.EntropyHex, expect.entropyBitLen)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
 // validate the length and hex of a JSON field in test vectors

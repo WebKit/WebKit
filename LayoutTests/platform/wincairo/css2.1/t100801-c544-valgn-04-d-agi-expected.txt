@@ -19,8 +19,8 @@ layer at (0,0) size 800x259
         RenderText {#text} at (78,8) size 16x16
           text run at (78,8) width 16: " "
         RenderInline {SPAN} at (0,0) size 115x39
-          RenderText {#text} at (93,8) size 115x39
-            text run at (93,8) width 115: "xxx"
+          RenderText {#text} at (93,7) size 115x39
+            text run at (93,7) width 115: "xxx"
         RenderText {#text} at (207,8) size 16x16
           text run at (207,8) width 16: " "
         RenderImage {IMG} at (222,8) size 11x11

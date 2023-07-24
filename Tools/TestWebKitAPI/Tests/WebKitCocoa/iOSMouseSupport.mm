@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
 
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
@@ -796,4 +796,4 @@ TEST(iOSMouseSupport, MouseAlwaysConnected)
 
 #endif // PLATFORM(MACCATALYST)
 
-#endif // PLATFORM(IOS) || PLATFORM(MACCATALYST)
+#endif // PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)

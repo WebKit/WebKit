@@ -134,7 +134,7 @@ TEST(PacketBuffer, InsertPacket) {
   EXPECT_FALSE(buffer.Empty());
   EXPECT_EQ(1u, buffer.NumPacketsInBuffer());
   const Packet* next_packet = buffer.PeekNextPacket();
-  EXPECT_EQ(packet, *next_packet);  // Compare contents.
+  EXPECT_EQ(packet, *next_packet);       // Compare contents.
   EXPECT_CALL(decoder_database, Die());  // Called when object is deleted.
 
   // Do not explicitly flush buffer or delete packet to test that it is deleted
@@ -871,7 +871,7 @@ TEST(PacketBuffer, GetSpanSamples) {
   constexpr int kPayloadSizeBytes = 1;  // Does not matter to this test;
   constexpr uint32_t kStartTimeStamp = 0xFFFFFFFE;  // Close to wrap around.
   constexpr int kSampleRateHz = 48000;
-  constexpr bool KCountDtxWaitingTime = false;
+  constexpr bool kCountWaitingTime = false;
   TickTimer tick_timer;
   PacketBuffer buffer(3, &tick_timer);
   PacketGenerator gen(0, kStartTimeStamp, 0, kFrameSizeSamples);
@@ -903,7 +903,7 @@ TEST(PacketBuffer, GetSpanSamples) {
   // input.
   EXPECT_EQ(kLastDecodedSizeSamples,
             buffer.GetSpanSamples(kLastDecodedSizeSamples, kSampleRateHz,
-                                  KCountDtxWaitingTime));
+                                  kCountWaitingTime));
 
   EXPECT_EQ(PacketBuffer::kOK,
             buffer.InsertPacket(/*packet=*/std::move(packet_2),
@@ -914,13 +914,46 @@ TEST(PacketBuffer, GetSpanSamples) {
                                 /*decoder_database=*/decoder_database));
 
   EXPECT_EQ(kFrameSizeSamples * 2,
-            buffer.GetSpanSamples(0, kSampleRateHz, KCountDtxWaitingTime));
+            buffer.GetSpanSamples(0, kSampleRateHz, kCountWaitingTime));
 
   // packet_2 has access to duration, and ignores last decoded duration as
   // input.
   EXPECT_EQ(kFrameSizeSamples * 2,
             buffer.GetSpanSamples(kLastDecodedSizeSamples, kSampleRateHz,
-                                  KCountDtxWaitingTime));
+                                  kCountWaitingTime));
+}
+
+TEST(PacketBuffer, GetSpanSamplesCountWaitingTime) {
+  constexpr size_t kFrameSizeSamples = 10;
+  constexpr int kPayloadSizeBytes = 1;  // Does not matter to this test;
+  constexpr uint32_t kStartTimeStamp = 0xFFFFFFFE;  // Close to wrap around.
+  constexpr int kSampleRateHz = 48000;
+  constexpr bool kCountWaitingTime = true;
+  constexpr size_t kLastDecodedSizeSamples = 0;
+  TickTimer tick_timer;
+  PacketBuffer buffer(3, &tick_timer);
+  PacketGenerator gen(0, kStartTimeStamp, 0, kFrameSizeSamples);
+  StrictMock<MockStatisticsCalculator> mock_stats;
+  MockDecoderDatabase decoder_database;
+
+  Packet packet = gen.NextPacket(kPayloadSizeBytes, nullptr);
+
+  EXPECT_EQ(PacketBuffer::kOK,
+            buffer.InsertPacket(/*packet=*/std::move(packet),
+                                /*stats=*/&mock_stats,
+                                /*last_decoded_length=*/kFrameSizeSamples,
+                                /*sample_rate=*/kSampleRateHz,
+                                /*target_level_ms=*/60,
+                                /*decoder_database=*/decoder_database));
+
+  EXPECT_EQ(0u, buffer.GetSpanSamples(kLastDecodedSizeSamples, kSampleRateHz,
+                                      kCountWaitingTime));
+
+  tick_timer.Increment();
+  EXPECT_EQ(480u, buffer.GetSpanSamples(0, kSampleRateHz, kCountWaitingTime));
+
+  tick_timer.Increment();
+  EXPECT_EQ(960u, buffer.GetSpanSamples(0, kSampleRateHz, kCountWaitingTime));
 }
 
 namespace {

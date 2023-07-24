@@ -81,7 +81,7 @@ public:
     virtual PageOverlayID pageOverlayID() const { return m_pageOverlayID; }
 
     void setPage(Page*);
-    Page* page() const { return m_page; }
+    WEBCORE_EXPORT Page* page() const;
     WEBCORE_EXPORT void setNeedsDisplay(const IntRect& dirtyRect);
     WEBCORE_EXPORT void setNeedsDisplay();
 
@@ -130,7 +130,7 @@ private:
     void fadeAnimationTimerFired();
 
     Client& m_client;
-    Page* m_page { nullptr };
+    WeakPtr<Page> m_page;
 
     Timer m_fadeAnimationTimer;
     WallTime m_fadeAnimationStartTime;

@@ -30,13 +30,14 @@
 #include "ProcessThrottlerClient.h"
 #include <optional>
 #include <wtf/CompletionHandler.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-#define PROCESSTHROTTLER_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d] ProcessThrottler::" msg, this, m_processIdentifier, ##__VA_ARGS__)
+#define PROCESSTHROTTLER_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d] ProcessThrottler::" msg, this, m_processID, ##__VA_ARGS__)
 #define PROCESSTHROTTLER_RELEASE_LOG_WITH_PID(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d] ProcessThrottler::" msg, this, ##__VA_ARGS__)
 
 namespace WebKit {
@@ -85,10 +86,21 @@ bool ProcessThrottler::addActivity(Activity& activity)
 void ProcessThrottler::removeActivity(Activity& activity)
 {
     ASSERT(isMainRunLoop());
+    if (!m_allowsActivities) {
+        ASSERT(m_foregroundActivities.isEmpty());
+        ASSERT(m_backgroundActivities.isEmpty());
+        return;
+    }
+
+    bool wasRemoved;
     if (activity.isForeground())
-        m_foregroundActivities.remove(&activity);
+        wasRemoved = m_foregroundActivities.remove(&activity);
     else
-        m_backgroundActivities.remove(&activity);
+        wasRemoved = m_backgroundActivities.remove(&activity);
+    ASSERT(wasRemoved);
+    if (!wasRemoved)
+        return;
+
     updateThrottleStateIfNeeded();
 }
 
@@ -172,19 +184,19 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
     if (m_assertion && m_assertion->isValid() && m_assertion->type() == newType)
         return;
 
-    PROCESSTHROTTLER_RELEASE_LOG("setThrottleState: Updating process assertion type to %u (foregroundActivities=%u, backgroundActivities=%u)", newType, m_foregroundActivities.size(), m_backgroundActivities.size());
+    PROCESSTHROTTLER_RELEASE_LOG("setThrottleState: Updating process assertion type to %u (foregroundActivities=%u, backgroundActivities=%u)", WTF::enumToUnderlyingType(newType), m_foregroundActivities.size(), m_backgroundActivities.size());
 
     // Keep the previous assertion active until the new assertion is taken asynchronously.
     auto previousAssertion = std::exchange(m_assertion, nullptr);
     if (m_shouldTakeUIBackgroundAssertion) {
-        auto assertion = ProcessAndUIAssertion::create(m_processIdentifier, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
+        auto assertion = ProcessAndUIAssertion::create(m_processID, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
         assertion->setUIAssertionExpirationHandler([weakThis = WeakPtr { *this }] {
             if (weakThis)
                 weakThis->uiAssertionWillExpireImminently();
         });
         m_assertion = WTFMove(assertion);
     } else
-        m_assertion = ProcessAssertion::create(m_processIdentifier, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
+        m_assertion = ProcessAssertion::create(m_processID, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
 
     m_assertion->setInvalidationHandler([weakThis = WeakPtr { *this }] {
         if (weakThis)
@@ -204,7 +216,7 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
 
 void ProcessThrottler::updateThrottleStateIfNeeded()
 {
-    if (!m_processIdentifier)
+    if (!m_processID)
         return;
 
     if (shouldBeRunnable()) {
@@ -235,18 +247,18 @@ void ProcessThrottler::didConnectToProcess(ProcessID pid)
     PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("didConnectToProcess:", pid);
     RELEASE_ASSERT(!m_assertion);
 
-    m_processIdentifier = pid;
+    m_processID = pid;
     updateThrottleStateNow();
     RELEASE_ASSERT(m_assertion || (m_state == ProcessThrottleState::Suspended && !m_shouldTakeNearSuspendedAssertion));
 }
 
 void ProcessThrottler::didDisconnectFromProcess()
 {
-    PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("didDisconnectFromProcess:", m_processIdentifier);
+    PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("didDisconnectFromProcess:", m_processID);
 
     m_dropNearSuspendedAssertionTimer.stop();
     clearPendingRequestToSuspend();
-    m_processIdentifier = 0;
+    m_processID = 0;
     m_assertion = nullptr;
 }
     
@@ -293,7 +305,7 @@ void ProcessThrottler::sendPrepareToSuspendIPC(IsSuspensionImminent isSuspension
         PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: Not sending PrepareToSuspend(isSuspensionImminent=%d) IPC because there is already one in flight (%" PRIu64 ")", isSuspensionImminent == IsSuspensionImminent::Yes, *m_pendingRequestToSuspendID);
     } else {
         m_pendingRequestToSuspendID = generatePrepareToSuspendRequestID();
-        double remainingRunTime = ProcessAssertion::remainingRunTimeInSeconds(m_processIdentifier);
+        double remainingRunTime = ProcessAssertion::remainingRunTimeInSeconds(m_processID);
         PROCESSTHROTTLER_RELEASE_LOG("sendPrepareToSuspendIPC: Sending PrepareToSuspend(%" PRIu64 ", isSuspensionImminent=%d) IPC, remainingRunTime=%fs", *m_pendingRequestToSuspendID, isSuspensionImminent == IsSuspensionImminent::Yes, remainingRunTime);
         m_process.sendPrepareToSuspend(isSuspensionImminent, remainingRunTime, [this, weakThis = WeakPtr { *this }, requestToSuspendID = *m_pendingRequestToSuspendID]() mutable {
             if (weakThis && m_pendingRequestToSuspendID && *m_pendingRequestToSuspendID == requestToSuspendID)
@@ -340,23 +352,29 @@ void ProcessThrottler::setAllowsActivities(bool allow)
         return;
 
     PROCESSTHROTTLER_RELEASE_LOG("setAllowsActivities %d", allow);
-    m_allowsActivities = allow;
 
-    if (!allow)
+    if (!allow) {
+        // Invalidate the activities before setting m_allowsActivities to false, so that the activities
+        // are able to remove themselves from the map.
         invalidateAllActivities();
+    }
+
+    ASSERT(m_foregroundActivities.isEmpty());
+    ASSERT(m_backgroundActivities.isEmpty());
+    m_allowsActivities = allow;
 }
 
 void ProcessThrottler::setShouldTakeNearSuspendedAssertion(bool shouldTakeNearSuspendedAssertion)
 {
     m_shouldTakeNearSuspendedAssertion = shouldTakeNearSuspendedAssertion;
     if (shouldTakeNearSuspendedAssertion) {
-        if (!m_assertion && m_processIdentifier) {
-            PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("setShouldTakeNearSuspendedAssertion: Taking near-suspended assertion", m_processIdentifier);
+        if (!m_assertion && m_processID) {
+            PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("setShouldTakeNearSuspendedAssertion: Taking near-suspended assertion", m_processID);
             setThrottleState(ProcessThrottleState::Suspended);
         }
     } else {
         if (isHoldingNearSuspendedAssertion()) {
-            PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("setShouldTakeNearSuspendedAssertion: Releasing near-suspended assertion", m_processIdentifier);
+            PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("setShouldTakeNearSuspendedAssertion: Releasing near-suspended assertion", m_processID);
             m_dropNearSuspendedAssertionTimer.stop();
             clearAssertion();
         }
@@ -399,6 +417,8 @@ void ProcessThrottler::clearAssertion()
         PROCESSTHROTTLER_RELEASE_LOG("clearAssertion: Releasing near-suspended assertion");
         m_prepareToDropLastAssertionTimeoutTimer.stop();
         m_assertionToClearAfterPrepareToDropLastAssertion = nullptr;
+        if (!m_assertion)
+            m_process.didDropLastAssertion();
     });
 }
 

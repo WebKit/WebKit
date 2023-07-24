@@ -10,7 +10,6 @@
 
 #include "modules/audio_device/linux/audio_device_alsa_linux.h"
 
-
 #include "modules/audio_device/audio_device_config.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/system/arch.h"
@@ -1053,8 +1052,8 @@ int32_t AudioDeviceLinuxALSA::StartRecording() {
 }
 
 int32_t AudioDeviceLinuxALSA::StopRecording() {
-    MutexLock lock(&mutex_);
-    return StopRecordingLocked();
+  MutexLock lock(&mutex_);
+  return StopRecordingLocked();
 }
 
 int32_t AudioDeviceLinuxALSA::StopRecordingLocked() {
@@ -1157,8 +1156,8 @@ int32_t AudioDeviceLinuxALSA::StartPlayout() {
 }
 
 int32_t AudioDeviceLinuxALSA::StopPlayout() {
-    MutexLock lock(&mutex_);
-    return StopPlayoutLocked();
+  MutexLock lock(&mutex_);
+  return StopPlayoutLocked();
 }
 
 int32_t AudioDeviceLinuxALSA::StopPlayoutLocked() {

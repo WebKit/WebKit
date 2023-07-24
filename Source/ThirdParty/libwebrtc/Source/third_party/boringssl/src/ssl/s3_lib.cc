@@ -175,12 +175,11 @@ SSL3_STATE::SSL3_STATE()
       send_connection_binding(false),
       channel_id_valid(false),
       key_update_pending(false),
-      wpend_pending(false),
       early_data_accepted(false),
-      token_binding_negotiated(false),
       alert_dispatch(false),
       renegotiate_pending(false),
-      used_hello_retry_request(false) {}
+      used_hello_retry_request(false),
+      was_key_usage_invalid(false) {}
 
 SSL3_STATE::~SSL3_STATE() {}
 

@@ -9,9 +9,29 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  // GetTemporalCalendarWithISODefault
+  // GetTemporalCalendarSlotValueWithISODefault
   "get fields.calendar",
-  "has fields.calendar.calendar",
+  "has fields.calendar.dateAdd",
+  "has fields.calendar.dateFromFields",
+  "has fields.calendar.dateUntil",
+  "has fields.calendar.day",
+  "has fields.calendar.dayOfWeek",
+  "has fields.calendar.dayOfYear",
+  "has fields.calendar.daysInMonth",
+  "has fields.calendar.daysInWeek",
+  "has fields.calendar.daysInYear",
+  "has fields.calendar.fields",
+  "has fields.calendar.id",
+  "has fields.calendar.inLeapYear",
+  "has fields.calendar.mergeFields",
+  "has fields.calendar.month",
+  "has fields.calendar.monthCode",
+  "has fields.calendar.monthDayFromFields",
+  "has fields.calendar.monthsInYear",
+  "has fields.calendar.weekOfYear",
+  "has fields.calendar.year",
+  "has fields.calendar.yearMonthFromFields",
+  "has fields.calendar.yearOfWeek",
   // CalendarFields
   "get fields.calendar.fields",
   "call fields.calendar.fields",

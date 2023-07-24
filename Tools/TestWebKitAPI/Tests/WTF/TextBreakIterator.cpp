@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,10 @@
 
 #include <wtf/text/TextBreakIterator.h>
 
+#if USE(CF)
+#include <wtf/text/cf/TextBreakIteratorCF.h>
+#endif
+
 namespace TestWebKitAPI {
 
 static String makeUTF16(std::vector<UChar> input)
@@ -34,7 +38,7 @@ static String makeUTF16(std::vector<UChar> input)
     return { input.data(), static_cast<unsigned>(input.size()) };
 }
 
-TEST(WTF, TextBreakIteratorNumGraphemeClusters)
+TEST(WTF_TextBreakIterator, NumGraphemeClusters)
 {
     EXPECT_EQ(0U, numGraphemeClusters(StringView { }));
     EXPECT_EQ(0U, numGraphemeClusters(StringView { ""_s }));
@@ -65,7 +69,7 @@ TEST(WTF, TextBreakIteratorNumGraphemeClusters)
     EXPECT_EQ(3U, numGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' })));
 }
 
-TEST(WTF, TextBreakIteratorNumCodeUnitsInGraphemeClusters)
+TEST(WTF_TextBreakIterator, NumCodeUnitsInGraphemeClusters)
 {
     EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(StringView { }, 0));
     EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(StringView { }, 1));
@@ -142,5 +146,407 @@ TEST(WTF, TextBreakIteratorNumCodeUnitsInGraphemeClusters)
     EXPECT_EQ(4U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 4));
     EXPECT_EQ(4U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 5));
 }
+
+TEST(WTF_TextBreakIterator, Behaviors)
+{
+    {
+        auto string = u"ぁぁ"_str;
+        auto locale = AtomString("ja"_str);
+        CachedTextBreakIterator strictIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
+        EXPECT_EQ(strictIterator.following(0), 2);
+        CachedTextBreakIterator looseIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
+        EXPECT_EQ(looseIterator.following(0), 1);
+    }
+    {
+        auto string = u"中〜"_str;
+        auto locale = AtomString("zh-Hans"_str);
+        CachedTextBreakIterator strictIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
+        EXPECT_EQ(strictIterator.following(0), 2);
+        CachedTextBreakIterator looseIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
+        EXPECT_EQ(looseIterator.following(0), 1);
+    }
+}
+
+TEST(WTF_TextBreakIterator, CachedLineBreakIteratorFactoryPriorContext)
+{
+    CachedLineBreakIteratorFactory::PriorContext priorContext;
+    EXPECT_EQ(0U, priorContext.length());
+    priorContext.set({ 'a', 'b' });
+    EXPECT_EQ(2U, priorContext.length());
+    CachedLineBreakIteratorFactory::PriorContext priorContext2;
+    EXPECT_FALSE(priorContext == priorContext2);
+    priorContext2.set({ 'a', 'b' });
+    EXPECT_TRUE(priorContext == priorContext2);
+    EXPECT_EQ('a', priorContext.characters()[0]);
+    priorContext.set({ '\0', 'b' });
+    EXPECT_EQ('b', priorContext.characters()[0]);
+    priorContext.reset();
+    EXPECT_EQ(0U, priorContext.length());
+}
+
+TEST(WTF_TextBreakIterator, ICULine)
+{
+    auto context = u"th"_str;
+    auto string = u"is is some text"_str;
+    ASSERT(!context.is8Bit());
+    WTF::TextBreakIteratorICU iterator(string, context.characters16(), context.length(), WTF::TextBreakIteratorICU::LineMode { WTF::TextBreakIteratorICU::LineMode::Behavior::Default }, AtomString("en_US"_str));
+
+    {
+        unsigned wordBoundaries[] = { 3, 6, 11, 15 };
+        unsigned index = 0;
+        for (unsigned i = 0; i < string.length(); ++i) {
+            auto result = iterator.following(i);
+            if (i == wordBoundaries[index]) {
+                EXPECT_TRUE(iterator.isBoundary(i));
+                ++index;
+            } else
+                EXPECT_FALSE(iterator.isBoundary(i));
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.following(string.length()).has_value());
+        EXPECT_FALSE(iterator.following(string.length() + 1).has_value());
+    }
+    {
+        unsigned wordBoundaries[] = { 11, 6, 3, 0 };
+        unsigned index = 0;
+        for (unsigned i = string.length(); i > 0; --i) {
+            auto result = iterator.preceding(i);
+            if (i == wordBoundaries[index])
+                ++index;
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.preceding(0).has_value());
+        auto result = iterator.preceding(string.length() + 1);
+        ASSERT_TRUE(result.has_value());
+        EXPECT_EQ(*result, string.length());
+    }
+    {
+        auto context = u"di"_str;
+        auto string = u"ctionary order"_str;
+        ASSERT(!context.is8Bit());
+        iterator.setText(string, context.characters16(), context.length());
+        auto result = iterator.following(1);
+        ASSERT_TRUE(result.has_value());
+        EXPECT_EQ(*result, 9U);
+    }
+    {
+        auto context = u"a "_str;
+        auto string = u"word"_str;
+        ASSERT(!context.is8Bit());
+        iterator.setText(string, context.characters16(), context.length());
+        ASSERT_TRUE(iterator.isBoundary(0));
+    }
+    {
+        auto string = u"word"_str;
+        iterator.setText(string, nullptr, 0);
+        ASSERT_TRUE(iterator.isBoundary(0));
+    }
+}
+
+TEST(WTF_TextBreakIterator, ICUCharacter)
+{
+    auto context = u"==>"_str;
+    auto string = u" कि <=="_str;
+    WTF::TextBreakIteratorICU iterator(string, context.characters16(), context.length(), WTF::TextBreakIteratorICU::CharacterMode { }, AtomString("hi_IN"_str));
+
+    {
+        unsigned wordBoundaries[] = { 1, 3, 4, 5, 6, 7 };
+        unsigned index = 0;
+        for (unsigned i = 0; i < string.length(); ++i) {
+            auto result = iterator.following(i);
+            if (i == wordBoundaries[index])
+                ++index;
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.following(string.length()).has_value());
+        EXPECT_FALSE(iterator.following(string.length() + 1).has_value());
+
+        EXPECT_TRUE(iterator.isBoundary(0));
+        EXPECT_TRUE(iterator.isBoundary(1));
+        EXPECT_FALSE(iterator.isBoundary(2));
+        EXPECT_TRUE(iterator.isBoundary(3));
+        EXPECT_TRUE(iterator.isBoundary(4));
+        EXPECT_TRUE(iterator.isBoundary(5));
+        EXPECT_TRUE(iterator.isBoundary(6));
+        EXPECT_TRUE(iterator.isBoundary(7));
+    }
+}
+
+TEST(WTF_TextBreakIterator, Line)
+{
+    auto context = u"th"_str;
+    auto string = u"is is some text"_str;
+    ASSERT(!context.is8Bit());
+    WTF::CachedTextBreakIterator iterator(string, context.characters16(), context.length(), WTF::TextBreakIterator::LineMode { WTF::TextBreakIterator::LineMode::Behavior::Default }, AtomString("en_US"_str));
+
+    {
+        unsigned wordBoundaries[] = { 3, 6, 11, 15 };
+        unsigned index = 0;
+        for (unsigned i = 0; i < string.length(); ++i) {
+            auto result = iterator.following(i);
+            if (i == wordBoundaries[index]) {
+                EXPECT_TRUE(iterator.isBoundary(i));
+                ++index;
+            } else
+                EXPECT_FALSE(iterator.isBoundary(i));
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.following(string.length()).has_value());
+        EXPECT_FALSE(iterator.following(string.length() + 1).has_value());
+    }
+    {
+        unsigned wordBoundaries[] = { 11, 6, 3, 0 };
+        unsigned index = 0;
+        for (unsigned i = string.length(); i > 0; --i) {
+            auto result = iterator.preceding(i);
+            if (i == wordBoundaries[index])
+                ++index;
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.preceding(0).has_value());
+        auto result = iterator.preceding(string.length() + 1);
+        ASSERT_TRUE(result.has_value());
+        EXPECT_EQ(*result, string.length());
+    }
+}
+
+#if USE(CF)
+
+TEST(WTF_TextBreakIterator, CFWord)
+{
+    auto context = u"th"_str;
+    auto string = u"is is some text"_str;
+    WTF::TextBreakIteratorCF iterator(string, context, WTF::TextBreakIteratorCF::Mode::Word, AtomString("en_US"_str));
+
+    {
+        unsigned wordBoundaries[] = { 2, 5, 10, 15 };
+        unsigned index = 0;
+        bool shouldBeBoundary = false;
+        for (unsigned i = 0; i < string.length(); ++i) {
+            auto result = iterator.following(i);
+            if (i == wordBoundaries[index]) {
+                EXPECT_FALSE(result.has_value());
+                EXPECT_TRUE(iterator.isBoundary(i));
+                ++index;
+                shouldBeBoundary = true;
+                continue;
+            }
+            EXPECT_EQ(iterator.isBoundary(i), shouldBeBoundary);
+            shouldBeBoundary = false;
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.following(string.length()).has_value());
+        EXPECT_FALSE(iterator.following(string.length() + 1).has_value());
+    }
+    {
+        unsigned wordBoundaries[] = { 11, 6, 3, 0 };
+        unsigned index = 0;
+        for (unsigned i = string.length(); i > 0; --i) {
+            auto result = iterator.preceding(i);
+            if (i == wordBoundaries[index]) {
+                EXPECT_FALSE(result.has_value());
+                ++index;
+                continue;
+            }
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.preceding(0).has_value());
+        auto result = iterator.preceding(string.length() + 1);
+        ASSERT_TRUE(result.has_value());
+        EXPECT_EQ(*result, string.length());
+    }
+    {
+        auto context = u"di"_str;
+        auto string = u"ctionary order"_str;
+        iterator.setText(string, context.characters16(), context.length());
+        auto result = iterator.following(1);
+        ASSERT_TRUE(result.has_value());
+        EXPECT_EQ(*result, 8U);
+    }
+}
+
+TEST(WTF_TextBreakIterator, CFSentence)
+{
+    auto context = u"Th"_str;
+    auto string = u"is is some text. And some more text."_str;
+    WTF::TextBreakIteratorCF iterator(string, context, WTF::TextBreakIteratorCF::Mode::Sentence, AtomString("en_US"_str));
+    auto result = iterator.following(1);
+    ASSERT_TRUE(result.has_value());
+    EXPECT_EQ(*result, 17U);
+}
+
+TEST(WTF_TextBreakIterator, CFLine)
+{
+    auto context = u"th"_str;
+    auto string = u"is is some text"_str;
+    WTF::TextBreakIteratorCF iterator(string, context, WTF::TextBreakIteratorCF::Mode::LineBreak, AtomString("en_US"_str));
+
+    {
+        unsigned wordBoundaries[] = { 3, 6, 11, 15 };
+        unsigned index = 0;
+        for (unsigned i = 0; i < string.length(); ++i) {
+            auto result = iterator.following(i);
+            if (i == wordBoundaries[index]) {
+                EXPECT_TRUE(iterator.isBoundary(i));
+                ++index;
+            } else
+                EXPECT_FALSE(iterator.isBoundary(i));
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.following(string.length()).has_value());
+        EXPECT_FALSE(iterator.following(string.length() + 1).has_value());
+    }
+    {
+        unsigned wordBoundaries[] = { 11, 6, 3, 0 };
+        unsigned index = 0;
+        for (unsigned i = string.length(); i > 0; --i) {
+            auto result = iterator.preceding(i);
+            if (i == wordBoundaries[index])
+                ++index;
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.preceding(0).has_value());
+        auto result = iterator.preceding(string.length() + 1);
+        ASSERT_TRUE(result.has_value());
+        EXPECT_EQ(*result, string.length());
+    }
+    {
+        auto context = u"di"_str;
+        auto string = u"ctionary order"_str;
+        iterator.setText(string, context.characters16(), context.length());
+        auto result = iterator.following(1);
+        ASSERT_TRUE(result.has_value());
+        EXPECT_EQ(*result, 9U);
+    }
+    {
+        auto context = u"a "_str;
+        auto string = u"word"_str;
+        iterator.setText(string, context.characters16(), context.length());
+        ASSERT_TRUE(iterator.isBoundary(0));
+    }
+    {
+        auto string = u"word"_str;
+        iterator.setText(string, nullptr, 0);
+        ASSERT_TRUE(iterator.isBoundary(0));
+    }
+}
+
+TEST(WTF_TextBreakIterator, CFWordBoundary)
+{
+    auto context = u"th"_str;
+    auto string = u"is is some text"_str;
+    WTF::TextBreakIteratorCF iterator(string, context, WTF::TextBreakIteratorCF::Mode::WordBoundary, AtomString("en_US"_str));
+
+    {
+        unsigned wordBoundaries[] = { 2, 3, 5, 6, 10, 11, 15 };
+        unsigned index = 0;
+        for (unsigned i = 0; i < string.length(); ++i) {
+            auto result = iterator.following(i);
+            if (i == wordBoundaries[index]) {
+                EXPECT_TRUE(iterator.isBoundary(i));
+                ++index;
+            } else
+                EXPECT_FALSE(iterator.isBoundary(i));
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.following(string.length()).has_value());
+        EXPECT_FALSE(iterator.following(string.length() + 1).has_value());
+    }
+    {
+        unsigned wordBoundaries[] = { 11, 10, 6, 5, 3, 2, 0 };
+        unsigned index = 0;
+        for (unsigned i = string.length(); i > 0; --i) {
+            auto result = iterator.preceding(i);
+            if (i == wordBoundaries[index])
+                ++index;
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.preceding(0).has_value());
+        auto result = iterator.preceding(string.length() + 1);
+        ASSERT_TRUE(result.has_value());
+        EXPECT_EQ(*result, string.length());
+    }
+    {
+        auto context = u"di"_str;
+        auto string = u"ctionary order"_str;
+        iterator.setText(string, context.characters16(), context.length());
+        auto result = iterator.following(1);
+        ASSERT_TRUE(result.has_value());
+        EXPECT_EQ(*result, 8U);
+    }
+}
+
+TEST(WTF_TextBreakIterator, CFComposedCharacter)
+{
+    auto context = u"==>"_str;
+    auto string = u" कि <=="_str;
+    WTF::TextBreakIteratorCF iterator(string, context, WTF::TextBreakIteratorCF::Mode::ComposedCharacter, AtomString("hi_IN"_str));
+
+    {
+        unsigned wordBoundaries[] = { 1, 3, 4, 5, 6, 7 };
+        unsigned index = 0;
+        for (unsigned i = 0; i < string.length(); ++i) {
+            auto result = iterator.following(i);
+            if (i == wordBoundaries[index])
+                ++index;
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.following(string.length()).has_value());
+        EXPECT_FALSE(iterator.following(string.length() + 1).has_value());
+
+        EXPECT_TRUE(iterator.isBoundary(0));
+        EXPECT_TRUE(iterator.isBoundary(1));
+        EXPECT_FALSE(iterator.isBoundary(2));
+        EXPECT_TRUE(iterator.isBoundary(3));
+        EXPECT_TRUE(iterator.isBoundary(4));
+        EXPECT_TRUE(iterator.isBoundary(5));
+        EXPECT_TRUE(iterator.isBoundary(6));
+        EXPECT_TRUE(iterator.isBoundary(7));
+    }
+}
+
+TEST(WTF_TextBreakIterator, CFBackwardDeletion)
+{
+    auto context = u"==>"_str;
+    auto string = u" कि <=="_str;
+    WTF::TextBreakIteratorCF iterator(string, context, WTF::TextBreakIteratorCF::Mode::BackwardDeletion, AtomString("hi_IN"_str));
+
+    {
+        unsigned wordBoundaries[] = { 1, 2, 3, 4, 5, 6, 7 };
+        unsigned index = 0;
+        for (unsigned i = 0; i < string.length(); ++i) {
+            auto result = iterator.following(i);
+            if (i == wordBoundaries[index])
+                ++index;
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.following(string.length()).has_value());
+        EXPECT_FALSE(iterator.following(string.length() + 1).has_value());
+
+        EXPECT_TRUE(iterator.isBoundary(0));
+        EXPECT_TRUE(iterator.isBoundary(1));
+        EXPECT_TRUE(iterator.isBoundary(2));
+        EXPECT_TRUE(iterator.isBoundary(3));
+        EXPECT_TRUE(iterator.isBoundary(4));
+        EXPECT_TRUE(iterator.isBoundary(5));
+        EXPECT_TRUE(iterator.isBoundary(6));
+        EXPECT_TRUE(iterator.isBoundary(7));
+    }
+}
+
+#endif // USE(CF)
 
 } // namespace TestWebKitAPI

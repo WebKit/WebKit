@@ -55,3 +55,14 @@ ExternalTexture::~ExternalTexture() = default;
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
+void wgpuExternalTextureReference(WGPUExternalTexture externalTexture)
+{
+    WebGPU::fromAPI(externalTexture).ref();
+}
+
+void wgpuExternalTextureRelease(WGPUExternalTexture externalTexture)
+{
+    WebGPU::fromAPI(externalTexture).deref();
+}

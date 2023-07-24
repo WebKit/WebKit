@@ -57,17 +57,14 @@ WebExtensionContext::WebExtensionContext()
 
 WebExtensionContextParameters WebExtensionContext::parameters() const
 {
-    WebExtensionContextParameters parameters;
-
-    parameters.identifier = identifier();
-
-    parameters.baseURL = baseURL();
-    parameters.uniqueIdentifier = uniqueIdentifier();
-    parameters.manifest = extension().manifest();
-    parameters.manifestVersion = extension().manifestVersion();
-    parameters.testingMode = inTestingMode();
-
-    return parameters;
+    return WebExtensionContextParameters {
+        identifier(),
+        baseURL(),
+        uniqueIdentifier(),
+        extension().serializeManifest(),
+        extension().manifestVersion(),
+        inTestingMode()
+    };
 }
 
 WeakHashSet<WebProcessProxy> WebExtensionContext::processes(WebExtensionEventListenerType type) const

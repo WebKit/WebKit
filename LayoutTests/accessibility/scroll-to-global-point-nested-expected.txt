@@ -1,8 +1,16 @@
-Tests that scrolling an element to a specific point can successfully scroll multiple nested scrolling views'.
+Tests that scrolling an element to a specific point can successfully scroll multiple nested scrolling views
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: window.pageYOffset === 0
+PASS: outerContainer.scrollTop === 0
+PASS: innerContainer.scrollTop === 0
+PASS: target.getBoundingClientRect().top >= 15000 === true
+PASS: target.getBoundingClientRect().top === 0
+PASS: target.getBoundingClientRect().top === 300
+PASS: target.getBoundingClientRect().top === 3000
 
+PASS successfullyParsed is true
 
+TEST COMPLETE
 5000-pixel box
 5000-pixel box
 5000-pixel box
@@ -10,14 +18,3 @@ Target
 5000-pixel box
 5000-pixel box
 5000-pixel box
-PASS window.pageYOffset is 0
-PASS outerContainer.scrollTop is 0
-PASS innerContainer.scrollTop is 0
-PASS target.getBoundingClientRect().top is >= 15000
-PASS target.getBoundingClientRect().top is 0
-PASS target.getBoundingClientRect().top is 300
-PASS target.getBoundingClientRect().top is 3000
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

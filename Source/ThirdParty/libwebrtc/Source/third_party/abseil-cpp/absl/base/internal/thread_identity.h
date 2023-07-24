@@ -134,6 +134,10 @@ struct PerThreadSynch {
 
 // The instances of this class are allocated in NewThreadIdentity() with an
 // alignment of PerThreadSynch::kAlignment.
+//
+// NOTE: The layout of fields in this structure is critical, please do not
+//       add, remove, or modify the field placements without fully auditing the
+//       layout.
 struct ThreadIdentity {
   // Must be the first member.  The Mutex implementation requires that
   // the PerThreadSynch object associated with each thread is
@@ -143,7 +147,7 @@ struct ThreadIdentity {
 
   // Private: Reserved for absl::synchronization_internal::Waiter.
   struct WaiterState {
-    alignas(void*) char data[128];
+    alignas(void*) char data[256];
   } waiter_state;
 
   // Used by PerThreadSem::{Get,Set}ThreadBlockedCounter().
@@ -166,7 +170,10 @@ struct ThreadIdentity {
 //
 // Does not malloc(*), and is async-signal safe.
 // [*] Technically pthread_setspecific() does malloc on first use; however this
-// is handled internally within tcmalloc's initialization already.
+// is handled internally within tcmalloc's initialization already. Note that
+// darwin does *not* use tcmalloc, so this can catch you if using MallocHooks
+// on Apple platforms. Whatever function is calling your MallocHooks will need
+// to watch for recursion on Apple platforms.
 //
 // New ThreadIdentity objects can be constructed and associated with a thread
 // by calling GetOrCreateCurrentThreadIdentity() in per-thread-sem.h.

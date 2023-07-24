@@ -94,6 +94,10 @@ public:
     WEBCORE_EXPORT virtual void setScrollbarVisibilityState(ScrollbarOrientation, bool) { }
 
     WEBCORE_EXPORT virtual bool shouldDrawIntoScrollbarLayer(Scrollbar&) const { return true; }
+    WEBCORE_EXPORT virtual bool shouldRegisterScrollbars() const { return true; }
+
+    WEBCORE_EXPORT virtual void setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation, int) { }
+    WEBCORE_EXPORT virtual int minimumThumbLength(WebCore::ScrollbarOrientation) { return 0; }
 
 private:
     ScrollableArea& m_scrollableArea;

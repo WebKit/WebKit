@@ -35,11 +35,11 @@
 #include "WebLocalFrameLoaderClient.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/JSBase.h>
+#include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/LocalFrameLoaderClient.h>
-#include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -111,7 +111,7 @@ public:
     FormSubmitListenerIdentifier setUpWillSubmitFormListener(CompletionHandler<void()>&&);
     void continueWillSubmitForm(FormSubmitListenerIdentifier);
 
-    void didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentifier, WebCore::ProcessIdentifier);
+    void didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>, WebCore::ProcessIdentifier);
     void didFinishLoadInAnotherProcess();
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { });
@@ -224,11 +224,14 @@ public:
 
     Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; }
 
-    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy() const;
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections() const;
+    OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections() const;
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 
     void setLayerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_layerHostingContextIdentifier = identifier; }
+
+    inline WebCore::DocumentLoader* policySourceDocumentLoader() const;
 
     WeakPtr<WebCore::Frame> m_coreFrame;
     WeakPtr<WebPage> m_page;

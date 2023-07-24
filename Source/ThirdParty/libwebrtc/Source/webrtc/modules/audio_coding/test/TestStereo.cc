@@ -35,8 +35,8 @@ TestPackStereo::TestPackStereo()
 
 TestPackStereo::~TestPackStereo() {}
 
-void TestPackStereo::RegisterReceiverACM(AudioCodingModule* acm) {
-  receiver_acm_ = acm;
+void TestPackStereo::RegisterReceiverACM(acm2::AcmReceiver* acm_receiver) {
+  receiver_acm_ = acm_receiver;
   return;
 }
 
@@ -60,8 +60,8 @@ int32_t TestPackStereo::SendData(const AudioFrameType frame_type,
   }
 
   if (lost_packet_ == false) {
-    status =
-        receiver_acm_->IncomingPacket(payload_data, payload_size, rtp_header);
+    status = receiver_acm_->InsertPacket(
+        rtp_header, rtc::ArrayView<const uint8_t>(payload_data, payload_size));
 
     if (frame_type != AudioFrameType::kAudioFrameCN) {
       payload_size_ = static_cast<int>(payload_size);
@@ -97,10 +97,9 @@ void TestPackStereo::set_lost_packet(bool lost) {
 }
 
 TestStereo::TestStereo()
-    : acm_a_(AudioCodingModule::Create(
-          AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory()))),
-      acm_b_(AudioCodingModule::Create(
-          AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory()))),
+    : acm_a_(AudioCodingModule::Create()),
+      acm_b_(std::make_unique<acm2::AcmReceiver>(
+          acm2::AcmReceiver::Config(CreateBuiltinAudioDecoderFactory()))),
       channel_a2b_(NULL),
       test_cntr_(0),
       pack_size_samp_(0),
@@ -134,28 +133,27 @@ void TestStereo::Perform() {
 
   // Create and initialize two ACMs, one for each side of a one-to-one call.
   ASSERT_TRUE((acm_a_.get() != NULL) && (acm_b_.get() != NULL));
-  EXPECT_EQ(0, acm_a_->InitializeReceiver());
-  EXPECT_EQ(0, acm_b_->InitializeReceiver());
+  acm_b_->FlushBuffers();
 
-  acm_b_->SetReceiveCodecs({{103, {"ISAC", 16000, 1}},
-                            {104, {"ISAC", 32000, 1}},
-                            {107, {"L16", 8000, 1}},
-                            {108, {"L16", 16000, 1}},
-                            {109, {"L16", 32000, 1}},
-                            {111, {"L16", 8000, 2}},
-                            {112, {"L16", 16000, 2}},
-                            {113, {"L16", 32000, 2}},
-                            {0, {"PCMU", 8000, 1}},
-                            {110, {"PCMU", 8000, 2}},
-                            {8, {"PCMA", 8000, 1}},
-                            {118, {"PCMA", 8000, 2}},
-                            {102, {"ILBC", 8000, 1}},
-                            {9, {"G722", 8000, 1}},
-                            {119, {"G722", 8000, 2}},
-                            {120, {"OPUS", 48000, 2, {{"stereo", "1"}}}},
-                            {13, {"CN", 8000, 1}},
-                            {98, {"CN", 16000, 1}},
-                            {99, {"CN", 32000, 1}}});
+  acm_b_->SetCodecs({{103, {"ISAC", 16000, 1}},
+                     {104, {"ISAC", 32000, 1}},
+                     {107, {"L16", 8000, 1}},
+                     {108, {"L16", 16000, 1}},
+                     {109, {"L16", 32000, 1}},
+                     {111, {"L16", 8000, 2}},
+                     {112, {"L16", 16000, 2}},
+                     {113, {"L16", 32000, 2}},
+                     {0, {"PCMU", 8000, 1}},
+                     {110, {"PCMU", 8000, 2}},
+                     {8, {"PCMA", 8000, 1}},
+                     {118, {"PCMA", 8000, 2}},
+                     {102, {"ILBC", 8000, 1}},
+                     {9, {"G722", 8000, 1}},
+                     {119, {"G722", 8000, 2}},
+                     {120, {"OPUS", 48000, 2, {{"stereo", "1"}}}},
+                     {13, {"CN", 8000, 1}},
+                     {98, {"CN", 16000, 1}},
+                     {99, {"CN", 32000, 1}}});
 
   // Create and connect the channel.
   channel_a2b_ = new TestPackStereo;
@@ -389,7 +387,7 @@ void TestStereo::Perform() {
   OpenOutFile(test_cntr_);
   // Encode and decode in mono.
   RegisterSendCodec('A', codec_opus, 48000, 32000, 960, codec_channels);
-  acm_b_->SetReceiveCodecs({{120, {"OPUS", 48000, 2}}});
+  acm_b_->SetCodecs({{120, {"OPUS", 48000, 2}}});
   Run(channel_a2b_, audio_channels, codec_channels);
 
   // Encode in stereo, decode in mono.
@@ -408,13 +406,13 @@ void TestStereo::Perform() {
   // Decode in stereo.
   test_cntr_++;
   OpenOutFile(test_cntr_);
-  acm_b_->SetReceiveCodecs({{120, {"OPUS", 48000, 2, {{"stereo", "1"}}}}});
+  acm_b_->SetCodecs({{120, {"OPUS", 48000, 2, {{"stereo", "1"}}}}});
   Run(channel_a2b_, audio_channels, 2);
   out_file_.Close();
   // Decode in mono.
   test_cntr_++;
   OpenOutFile(test_cntr_);
-  acm_b_->SetReceiveCodecs({{120, {"OPUS", 48000, 2}}});
+  acm_b_->SetCodecs({{120, {"OPUS", 48000, 2}}});
   Run(channel_a2b_, audio_channels, codec_channels);
   out_file_.Close();
 #endif
@@ -455,7 +453,9 @@ void TestStereo::RegisterSendCodec(char side,
       break;
     }
     case 'B': {
-      my_acm = acm_b_.get();
+      // We no longer use this case. Refactor code to avoid the switch.
+      ASSERT_TRUE(false);
+      // my_acm = acm_b_.get();
       break;
     }
     default:
@@ -559,7 +559,7 @@ void TestStereo::Run(TestPackStereo* channel,
 
     // Run receive side of ACM
     bool muted;
-    EXPECT_EQ(0, acm_b_->PlayoutData10Ms(out_freq_hz_b, &audio_frame, &muted));
+    EXPECT_EQ(0, acm_b_->GetAudio(out_freq_hz_b, &audio_frame, &muted));
     ASSERT_FALSE(muted);
 
     // Write output speech to file

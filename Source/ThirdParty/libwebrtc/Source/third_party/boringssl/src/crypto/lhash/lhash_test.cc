@@ -25,7 +25,11 @@
 #include <utility>
 #include <vector>
 
+#include <openssl/mem.h>
+
 #include <gtest/gtest.h>
+
+#include "internal.h"
 
 
 DEFINE_LHASH_OF(char)
@@ -58,7 +62,7 @@ static const char *Lookup(
 
 TEST(LHashTest, Basic) {
   std::unique_ptr<LHASH_OF(char), FreeLHASH_OF_char> lh(
-      lh_char_new(lh_strhash, strcmp));
+      lh_char_new(OPENSSL_strhash, strcmp));
   ASSERT_TRUE(lh);
 
   // lh is expected to store a canonical instance of each string. dummy_lh
@@ -90,15 +94,6 @@ TEST(LHashTest, Basic) {
                         &actual);
       std::sort(actual.begin(), actual.end());
       EXPECT_EQ(expected, actual);
-
-      // Also test |lh_*_doall|.
-      actual.clear();
-      static ValueList *global_actual_list;
-      global_actual_list = &actual;
-      lh_char_doall(lh.get(),
-                    [](char *ptr) { global_actual_list->push_back(ptr); });
-      std::sort(actual.begin(), actual.end());
-      EXPECT_EQ(expected, actual);
     }
 
     enum Action {
@@ -116,7 +111,7 @@ TEST(LHashTest, Basic) {
 
         // Do the same lookup with |lh_char_retrieve_key|.
         value = lh_char_retrieve_key(
-            lh.get(), &key, lh_strhash(key.get()),
+            lh.get(), &key, OPENSSL_strhash(key.get()),
             [](const void *key_ptr, const char *data) -> int {
               const char *key_data =
                   reinterpret_cast<const std::unique_ptr<char[]> *>(key_ptr)

@@ -381,7 +381,6 @@ func (h *finishedHash) appendContextHashes(b []byte) []byte {
 	return b
 }
 
-// The following are labels for traffic secret derivation in TLS 1.3.
 var (
 	externalPSKBinderLabel        = []byte("ext binder")
 	resumptionPSKBinderLabel      = []byte("res binder")
@@ -396,21 +395,25 @@ var (
 	resumptionLabel               = []byte("res master")
 
 	resumptionPSKLabel = []byte("resumption")
+
+	echAcceptConfirmationLabel    = []byte("ech accept confirmation")
+	echAcceptConfirmationHRRLabel = []byte("hrr ech accept confirmation")
 )
 
 // deriveSecret implements TLS 1.3's Derive-Secret function, as defined in
-// section 7.1 of draft ietf-tls-tls13-16.
+// section 7.1 of RFC8446.
 func (h *finishedHash) deriveSecret(label []byte) []byte {
 	return hkdfExpandLabel(h.suite.hash(), h.secret, label, h.appendContextHashes(nil), h.hash.Size())
 }
 
-// deriveSecretPeek is the same as deriveSecret, but it enables the caller to
-// tentatively append messages to the transcript. The |extraMessages| parameter
-// contains the bytes of these tentative messages.
-func (h *finishedHash) deriveSecretPeek(label []byte, extraMessages []byte) []byte {
-	hashPeek := copyHash(h.hash, h.suite.hash())
-	hashPeek.Write(extraMessages)
-	return hkdfExpandLabel(h.suite.hash(), h.secret, label, hashPeek.Sum(nil), h.hash.Size())
+// echConfirmation computes the ECH accept confirmation signal, as defined in
+// sections 7.2 and 7.2.1 of draft-ietf-tls-esni-13. The transcript hash is
+// computed by concatenating |h| with |extraMessages|.
+func (h *finishedHash) echAcceptConfirmation(clientRandom, label, extraMessages []byte) []byte {
+	secret := hkdf.Extract(h.suite.hash().New, clientRandom, h.zeroSecret())
+	hashCopy := copyHash(h.hash, h.suite.hash())
+	hashCopy.Write(extraMessages)
+	return hkdfExpandLabel(h.suite.hash(), secret, label, hashCopy.Sum(nil), echAcceptConfirmationLength)
 }
 
 // The following are context strings for CertificateVerify in TLS 1.3.
@@ -448,7 +451,7 @@ var (
 
 // deriveTrafficAEAD derives traffic keys and constructs an AEAD given a traffic
 // secret.
-func deriveTrafficAEAD(version uint16, suite *cipherSuite, secret []byte, side trafficDirection) interface{} {
+func deriveTrafficAEAD(version uint16, suite *cipherSuite, secret []byte, side trafficDirection) any {
 	key := hkdfExpandLabel(suite.hash(), secret, keyTLS13, nil, suite.keyLen)
 	iv := hkdfExpandLabel(suite.hash(), secret, ivTLS13, nil, suite.ivLen(version))
 

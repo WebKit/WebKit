@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2008, 2013, 2016 Apple Inc.
+ * Copyright (C) 2007-2023 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,7 +46,7 @@ FontCustomPlatformData::~FontCustomPlatformData() = default;
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontCreationContext&)
 {
-    int size = fontDescription.computedPixelSize();
+    auto size = fontDescription.computedSize();
 
     LOGFONT logFont;
     memset(&logFont, 0, sizeof(LOGFONT));

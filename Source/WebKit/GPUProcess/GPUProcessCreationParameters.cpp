@@ -46,6 +46,7 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << useMockCaptureDevices;
 #if PLATFORM(MAC)
     encoder << microphoneSandboxExtensionHandle;
+    encoder << launchServicesExtensionHandle;
 #endif
 #endif
 #if HAVE(AVCONTENTKEYSPECIFIER)
@@ -87,6 +88,8 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
         return false;
 #if PLATFORM(MAC)
     if (!decoder.decode(result.microphoneSandboxExtensionHandle))
+        return false;
+    if (!decoder.decode(result.launchServicesExtensionHandle))
         return false;
 #endif
 #endif

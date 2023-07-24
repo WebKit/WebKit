@@ -27,7 +27,7 @@ debug("");
 debug("* Named properties should not mask own properties on HTMLCollection");
 evalAndLog("htmlCollection.foo = 'foo'");
 shouldBe("htmlCollection.namedItem('foo')", "document.getElementById('fooP')")
-shouldBeEqualToString("htmlCollection.foo", "foo");
+shouldBe("htmlCollection.foo", "document.getElementById('fooP')");
 
 debug("");
 debug("* Named properties should not mask indexed properties");
@@ -37,9 +37,10 @@ shouldBe("htmlCollection.namedItem('0')", "document.getElementById('0P')");
 shouldBe("htmlCollection['0']", "testDiv.firstElementChild");
 
 debug("");
-debug("* Own properties on HTMLCollection should mask properties on prototype");
+debug("* Own properties on HTMLCollection should not mask properties on prototype");
+oldToString = htmlCollection.toString;
 evalAndLog("htmlCollection.toString = 'InstanceToString'");
-shouldBeEqualToString("htmlCollection.toString", "InstanceToString");
+shouldBe("htmlCollection.toString", "oldToString");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

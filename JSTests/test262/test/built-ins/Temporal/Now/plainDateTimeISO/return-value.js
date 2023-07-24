@@ -6,6 +6,8 @@ description: Return value describes the start of a day
 features: [BigInt, Temporal]
 ---*/
 const timeZone = {
+  id: 'Etc/Test',
+  getPossibleInstantsFor() { return []; },
   getOffsetNanosecondsFor(instant) {
     return -Number(instant.epochNanoseconds % 86400000000000n);
   }

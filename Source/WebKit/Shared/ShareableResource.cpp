@@ -37,9 +37,9 @@ using namespace WebCore;
 
 ShareableResourceHandle::ShareableResourceHandle() = default;
 
-void ShareableResourceHandle::encode(IPC::Encoder& encoder) const
+void ShareableResourceHandle::encode(IPC::Encoder& encoder) &&
 {
-    encoder << m_handle;
+    encoder << WTFMove(m_handle);
     encoder << m_offset;
     encoder << m_size;
 }

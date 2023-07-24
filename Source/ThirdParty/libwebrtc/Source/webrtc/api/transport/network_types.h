@@ -233,6 +233,12 @@ struct NetworkControlUpdate {
   NetworkControlUpdate();
   NetworkControlUpdate(const NetworkControlUpdate&);
   ~NetworkControlUpdate();
+
+  bool has_updates() const {
+    return congestion_window.has_value() || pacer_config.has_value() ||
+           !probe_cluster_configs.empty() || target_rate.has_value();
+  }
+
   absl::optional<DataSize> congestion_window;
   absl::optional<PacerConfig> pacer_config;
   std::vector<ProbeClusterConfig> probe_cluster_configs;

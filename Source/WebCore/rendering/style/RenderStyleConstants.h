@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -536,7 +536,8 @@ enum class WordBreak : uint8_t {
     Normal,
     BreakAll,
     KeepAll,
-    BreakWord
+    BreakWord,
+    Auto
 };
 
 enum class OverflowWrap : uint8_t {
@@ -593,6 +594,13 @@ enum class WhiteSpace : uint8_t {
     PreWrap,
     PreLine,
     NoWrap,
+    BreakSpaces
+};
+
+enum class WhiteSpaceCollapse : uint8_t {
+    Collapse,
+    Preserve,
+    PreserveBreaks,
     BreakSpaces
 };
 
@@ -1092,12 +1100,6 @@ enum class ScrollSnapStop : bool {
     Always,
 };
 
-enum class ScrollbarWidth : uint8_t {
-    Auto,
-    Thin,
-    None
-};
-
 // These are all minimized combinations of paint-order.
 enum class PaintOrder : uint8_t {
     Normal,
@@ -1151,7 +1153,8 @@ enum class ContainerType : uint8_t {
 enum class ContainIntrinsicSizeType : uint8_t {
     None,
     Length,
-    AutoAndLength
+    AutoAndLength,
+    AutoAndNone,
 };
 
 enum class ContentVisibility : uint8_t {
@@ -1249,7 +1252,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxis);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxisAlignType);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStop);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStrictness);
-WTF::TextStream& operator<<(WTF::TextStream&, ScrollbarWidth);
 WTF::TextStream& operator<<(WTF::TextStream&, SpeakAs);
 WTF::TextStream& operator<<(WTF::TextStream&, StyleDifference);
 WTF::TextStream& operator<<(WTF::TextStream&, TableLayoutType);
@@ -1281,6 +1283,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, UserSelect);
 WTF::TextStream& operator<<(WTF::TextStream&, VerticalAlign);
 WTF::TextStream& operator<<(WTF::TextStream&, Visibility);
 WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpace);
+WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpaceCollapse);
 WTF::TextStream& operator<<(WTF::TextStream&, WordBreak);
 WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, ContainIntrinsicSizeType);

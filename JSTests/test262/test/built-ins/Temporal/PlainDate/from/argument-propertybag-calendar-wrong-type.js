@@ -18,27 +18,19 @@ const rangeErrorTests = [
 ];
 
 for (const [calendar, description] of rangeErrorTests) {
-  let arg = { year: 2019, monthCode: "M11", day: 1, calendar };
+  const arg = { year: 2019, monthCode: "M11", day: 1, calendar };
   assert.throws(RangeError, () => Temporal.PlainDate.from(arg), `${description} does not convert to a valid ISO string`);
-
-  arg = { year: 2019, monthCode: "M11", day: 1, calendar: { calendar } };
-  assert.throws(RangeError, () => Temporal.PlainDate.from(arg), `${description} does not convert to a valid ISO string (nested property)`);
 }
 
 const typeErrorTests = [
   [Symbol(), "symbol"],
-  [{}, "plain object"],  // TypeError due to missing dateFromFields()
-  [Temporal.Calendar, "Temporal.Calendar, object"],  // ditto
+  [{}, "plain object that doesn't implement the protocol"],
+  [new Temporal.TimeZone("UTC"), "time zone instance"],
+  [Temporal.Calendar, "Temporal.Calendar, object"],
   [Temporal.Calendar.prototype, "Temporal.Calendar.prototype, object"],  // fails brand check in dateFromFields()
 ];
 
 for (const [calendar, description] of typeErrorTests) {
-  let arg = { year: 2019, monthCode: "M11", day: 1, calendar };
+  const arg = { year: 2019, monthCode: "M11", day: 1, calendar };
   assert.throws(TypeError, () => Temporal.PlainDate.from(arg), `${description} is not a valid property bag and does not convert to a string`);
-
-  arg = { year: 2019, monthCode: "M11", day: 1, calendar: { calendar } };
-  assert.throws(TypeError, () => Temporal.PlainDate.from(arg), `${description} is not a valid property bag and does not convert to a string (nested property)`);
 }
-
-const arg = { year: 2019, monthCode: "M11", day: 1, calendar: { calendar: undefined } };
-assert.throws(RangeError, () => Temporal.PlainDate.from(arg), `nested undefined calendar property is always a RangeError`);

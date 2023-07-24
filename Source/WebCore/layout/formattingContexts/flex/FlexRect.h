@@ -33,9 +33,9 @@ namespace Layout {
 class FlexRect {
 public:
     FlexRect() = default;
-    FlexRect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit height);
-    FlexRect(const LayoutRect&);
-    
+    FlexRect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit height, const Edges& margin);
+    FlexRect(const LayoutRect&, const Edges& margin);
+
     LayoutUnit top() const;
     LayoutUnit left() const;
     LayoutPoint topLeft() const;
@@ -47,6 +47,11 @@ public:
     LayoutUnit height() const;
     LayoutSize size() const;
 
+    LayoutUnit marginTop() const { return m_margin.vertical.top; }
+    LayoutUnit marginBottom() const { return m_margin.vertical.bottom; }
+    LayoutUnit marginLeft() const { return m_margin.horizontal.left; }
+    LayoutUnit marginRight() const { return m_margin.horizontal.right; }
+
     void setTop(LayoutUnit);
     void setBottom(LayoutUnit);
     void setLeft(LayoutUnit);
@@ -54,6 +59,11 @@ public:
     void setTopLeft(const LayoutPoint&);
     void setWidth(LayoutUnit);
     void setHeight(LayoutUnit);
+
+    void setMarginTop(LayoutUnit marginTop) { m_margin.vertical.top = marginTop; }
+    void setMarginBottom(LayoutUnit marginBottom) { m_margin.vertical.bottom = marginBottom; }
+    void setMarginLeft(LayoutUnit marginLeft) { m_margin.horizontal.left = marginLeft; }
+    void setMarginRight(LayoutUnit marginRight) { m_margin.horizontal.right = marginRight; }
 
     void moveHorizontally(LayoutUnit);
     void moveVertically(LayoutUnit);
@@ -83,10 +93,12 @@ private:
     bool m_hasValidHeight { false };
 #endif // ASSERT_ENABLED
     LayoutRect m_rect;
+    Edges m_margin;
 };
 
-inline FlexRect::FlexRect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit height)
+inline FlexRect::FlexRect(LayoutUnit top, LayoutUnit left, LayoutUnit width, LayoutUnit height, const Edges& margin)
     : m_rect(left, top, width, height)
+    , m_margin(margin)
 {
 #if ASSERT_ENABLED
     m_hasValidTop = true;
@@ -96,8 +108,8 @@ inline FlexRect::FlexRect(LayoutUnit top, LayoutUnit left, LayoutUnit width, Lay
 #endif
 }
 
-inline FlexRect::FlexRect(const LayoutRect& rect)
-    : FlexRect(rect.y(), rect.x(), rect.width(), rect.height())
+inline FlexRect::FlexRect(const LayoutRect& rect, const Edges& margin)
+    : FlexRect(rect.y(), rect.x(), rect.width(), rect.height(), margin)
 {
 }
 

@@ -10,7 +10,7 @@ features: [Temporal]
 const arg = 19761118;
 
 const result = new Temporal.PlainDateTime(2000, 5, 2, 15, 23, 30, 987, 654, 321, arg);
-assert.sameValue(result.calendar.id, "iso8601", "19761118 is a valid ISO string for Calendar");
+assert.sameValue(result.calendarId, "iso8601", "19761118 is a valid ISO string for Calendar");
 
 const numbers = [
   1,

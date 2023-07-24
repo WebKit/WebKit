@@ -34,7 +34,6 @@ class AtomicCounterTest : public ShaderCompileTreeTest
 // and the values of offset are properly assigned to counter variables.
 TEST_F(AtomicCounterTest, BasicAtomicCounterDeclaration)
 {
-    mCompileOptions.variables = true;
     const std::string &source =
         "#version 310 es\n"
         "layout(binding = 2, offset = 4) uniform atomic_uint a;\n"

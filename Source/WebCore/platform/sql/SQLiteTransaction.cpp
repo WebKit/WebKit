@@ -27,10 +27,7 @@
 #include "SQLiteTransaction.h"
 
 #include "SQLiteDatabase.h"
-
-#if PLATFORM(IOS_FAMILY)
 #include "SQLiteDatabaseTracker.h"
-#endif
 
 namespace WebCore {
 
@@ -58,18 +55,14 @@ void SQLiteTransaction::begin()
         // any statements. If that happens, this transaction will fail.
         // http://www.sqlite.org/lang_transaction.html
         // http://www.sqlite.org/lockingv3.html#locking
-#if PLATFORM(IOS_FAMILY)
         SQLiteDatabaseTracker::incrementTransactionInProgressCount();
-#endif
         if (m_readOnly)
             m_inProgress = m_db.executeCommand("BEGIN"_s);
         else
             m_inProgress = m_db.executeCommand("BEGIN IMMEDIATE"_s);
         m_db.m_transactionInProgress = m_inProgress;
-#if PLATFORM(IOS_FAMILY)
         if (!m_inProgress)
             SQLiteDatabaseTracker::decrementTransactionInProgressCount();
-#endif
     }
 }
 
@@ -79,10 +72,8 @@ void SQLiteTransaction::commit()
         ASSERT(m_db.m_transactionInProgress);
         m_inProgress = !m_db.executeCommand("COMMIT"_s);
         m_db.m_transactionInProgress = m_inProgress;
-#if PLATFORM(IOS_FAMILY)
         if (!m_inProgress)
             SQLiteDatabaseTracker::decrementTransactionInProgressCount();
-#endif
     }
 }
 
@@ -97,9 +88,7 @@ void SQLiteTransaction::rollback()
         m_db.executeCommand("ROLLBACK"_s);
         m_inProgress = false;
         m_db.m_transactionInProgress = false;
-#if PLATFORM(IOS_FAMILY)
         SQLiteDatabaseTracker::decrementTransactionInProgressCount();
-#endif
     }
 }
 
@@ -108,9 +97,7 @@ void SQLiteTransaction::stop()
     if (m_inProgress) {
         m_inProgress = false;
         m_db.m_transactionInProgress = false;
-#if PLATFORM(IOS_FAMILY)
         SQLiteDatabaseTracker::decrementTransactionInProgressCount();
-#endif
     }
 }
 

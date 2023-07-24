@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,22 +31,23 @@ namespace WTF {
 // Buffer sized to hold ASCII locale ID strings up to 32 characters long.
 using LocaleIDBuffer = std::array<char, 33>;
 
-static std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
+TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, Mode mode, ContentAnalysis contentAnalysis, const AtomString& locale)
 {
-    switch (mode) {
-    case TextBreakIterator::Mode::Line:
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Line, locale.string().utf8().data());
-    case TextBreakIterator::Mode::Caret:
-        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
-    case TextBreakIterator::Mode::Delete:
-        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::BackwardDeletion, locale);
-    case TextBreakIterator::Mode::Character:
-        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
-    }
+    return switchOn(mode, [string, priorContext, priorContextLength, contentAnalysis, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
+        if (contentAnalysis == ContentAnalysis::Linguistic && lineMode.behavior == LineMode::Behavior::Default)
+            return TextBreakIteratorCF(string, { priorContext, priorContextLength }, TextBreakIteratorCF::Mode::LineBreak, locale);
+        return TextBreakIteratorICU(string, priorContext, priorContextLength, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
+    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::CaretMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorCF(string, { priorContext, priorContextLength }, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
+    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::DeleteMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorCF(string, { priorContext, priorContextLength }, TextBreakIteratorCF::Mode::BackwardDeletion, locale);
+    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::CharacterMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorCF(string, { priorContext, priorContextLength }, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
+    });
 }
 
-TextBreakIterator::TextBreakIterator(StringView string, Mode mode, const AtomString& locale)
-    : m_backing(mapModeToBackingIterator(string, mode, locale))
+TextBreakIterator::TextBreakIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, Mode mode, ContentAnalysis contentAnalysis, const AtomString& locale)
+    : m_backing(mapModeToBackingIterator(string, priorContext, priorContextLength, mode, contentAnalysis, locale))
     , m_mode(mode)
     , m_locale(locale)
 {

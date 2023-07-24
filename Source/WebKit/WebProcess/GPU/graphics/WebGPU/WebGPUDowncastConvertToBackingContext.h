@@ -41,31 +41,31 @@ public:
 
     virtual ~DowncastConvertToBackingContext() = default;
 
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::Adapter&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::BindGroup&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::BindGroupLayout&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::Buffer&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::CommandBuffer&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::CommandEncoder&) final;
-    const RemoteCompositorIntegrationProxy& convertToRawBacking(const PAL::WebGPU::CompositorIntegration&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::CompositorIntegration&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::ComputePassEncoder&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::ComputePipeline&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::Device&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::ExternalTexture&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::GPU&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::PipelineLayout&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::PresentationContext&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::QuerySet&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::Queue&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::RenderBundleEncoder&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::RenderBundle&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::RenderPassEncoder&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::RenderPipeline&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::Sampler&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::ShaderModule&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::Texture&) final;
-    WebGPUIdentifier convertToBacking(const PAL::WebGPU::TextureView&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Adapter&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::BindGroup&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::BindGroupLayout&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Buffer&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CommandBuffer&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CommandEncoder&) final;
+    const RemoteCompositorIntegrationProxy& convertToRawBacking(const WebCore::WebGPU::CompositorIntegration&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CompositorIntegration&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ComputePassEncoder&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ComputePipeline&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Device&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ExternalTexture&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::GPU&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::PipelineLayout&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::PresentationContext&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::QuerySet&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Queue&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::RenderBundleEncoder&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::RenderBundle&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::RenderPassEncoder&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::RenderPipeline&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Sampler&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ShaderModule&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Texture&) final;
+    WebGPUIdentifier convertToBacking(const WebCore::WebGPU::TextureView&) final;
 
 private:
     DowncastConvertToBackingContext() = default;

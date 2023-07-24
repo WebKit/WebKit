@@ -9,4 +9,3 @@ features: [Temporal]
 
 const t = Temporal.Now.plainTimeISO();
 assert(t instanceof Temporal.PlainTime);
-assert.sameValue(t.calendar.id, "iso8601");

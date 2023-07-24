@@ -88,7 +88,7 @@ public:
     const String& tag() const { return m_tag; }
     const URL& icon() const { return m_icon; }
     JSC::JSValue dataForBindings(JSC::JSGlobalObject&);
-    bool silent() const { return m_silent == std::nullopt ? false : *m_silent; }
+    std::optional<bool> silent() const { return m_silent; }
 
     TextDirection direction() const { return m_direction == Direction::Rtl ? TextDirection::RTL : TextDirection::LTR; }
 
@@ -113,15 +113,15 @@ public:
     void markAsShown();
     void showSoon();
 
-    UUID identifier() const { return m_identifier; }
+    WTF::UUID identifier() const { return m_identifier; }
 
     bool isPersistent() const { return !m_serviceWorkerRegistrationURL.isNull(); }
 
-    WEBCORE_EXPORT static void ensureOnNotificationThread(ScriptExecutionContextIdentifier, UUID notificationIdentifier, Function<void(Notification*)>&&);
+    WEBCORE_EXPORT static void ensureOnNotificationThread(ScriptExecutionContextIdentifier, WTF::UUID notificationIdentifier, Function<void(Notification*)>&&);
     WEBCORE_EXPORT static void ensureOnNotificationThread(const NotificationData&, Function<void(Notification*)>&&);
 
 private:
-    Notification(ScriptExecutionContext&, UUID, String&& title, Options&&, Ref<SerializedScriptValue>&&);
+    Notification(ScriptExecutionContext&, WTF::UUID, String&& title, Options&&, Ref<SerializedScriptValue>&&);
 
     NotificationClient* clientFromContext();
     EventTargetInterface eventTargetInterface() const final { return NotificationEventTargetInterfaceType; }
@@ -139,7 +139,7 @@ private:
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;
 
-    UUID m_identifier;
+    WTF::UUID m_identifier;
 
     String m_title;
     Direction m_direction;

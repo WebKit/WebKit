@@ -9,6 +9,12 @@ var result = {
     result: undefined
 };
 
+// This does not invoke customValue setter since it is value.
 testObject.customValue = result;
 
-shouldBe(result.result, target);
+shouldBe(result.result, undefined);
+
+// This invokes customAccessor setter since it is an accessor.
+testObject.customAccessor = result;
+
+shouldBe(result.result, testObject);

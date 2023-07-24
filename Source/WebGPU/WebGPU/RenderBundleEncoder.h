@@ -96,7 +96,7 @@ private:
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
     Vector<WTF::Function<void(void)>> m_recordedCommands;
-    Vector<BindableResource> m_resources;
+    Vector<BindableResources> m_resources;
     const Ref<Device> m_device;
 };
 

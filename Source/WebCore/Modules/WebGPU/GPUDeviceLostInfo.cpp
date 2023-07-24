@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +31,9 @@ namespace WebCore {
 GPUDeviceLostReason GPUDeviceLostInfo::reason() const
 {
     switch (m_backing->reason()) {
-    case PAL::WebGPU::DeviceLostReason::Unknown:
+    case WebGPU::DeviceLostReason::Unknown:
         return GPUDeviceLostReason::Unknown;
-    case PAL::WebGPU::DeviceLostReason::Destroyed:
+    case WebGPU::DeviceLostReason::Destroyed:
         return GPUDeviceLostReason::Destroyed;
     }
     RELEASE_ASSERT_NOT_REACHED();

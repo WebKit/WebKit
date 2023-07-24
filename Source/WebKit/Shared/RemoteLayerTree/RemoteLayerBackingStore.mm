@@ -89,6 +89,23 @@ private:
 
 }
 
+void BufferAndBackendInfo::encode(IPC::Encoder& encoder) const
+{
+    encoder << resourceIdentifier;
+    encoder << backendGeneration;
+}
+
+bool BufferAndBackendInfo::decode(IPC::Decoder& decoder, BufferAndBackendInfo& bufferInfo)
+{
+    if (!decoder.decode(bufferInfo.resourceIdentifier))
+        return false;
+
+    if (!decoder.decode(bufferInfo.backendGeneration))
+        return false;
+
+    return true;
+}
+
 RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
     : m_layer(layer)
     , m_lastDisplayTime(-MonotonicTime::infinity())
@@ -146,14 +163,6 @@ void RemoteLayerBackingStore::clearBackingStore()
 #endif
 }
 
-void RemoteLayerBackingStore::Buffer::encode(IPC::Encoder& encoder) const
-{
-    if (imageBuffer)
-        encoder << std::optional(imageBuffer->renderingResourceIdentifier());
-    else
-        encoder << std::optional<RenderingResourceIdentifier>();
-}
-
 #if !LOG_DISABLED
 static bool hasValue(const ImageBufferBackendHandle& backendHandle)
 {
@@ -207,16 +216,27 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 
     encoder << WTFMove(handle);
 
-    encoder << m_frontBuffer;
-    encoder << m_backBuffer;
-    encoder << m_secondaryBackBuffer;
+    auto encodeBuffer = [&](const Buffer& buffer) {
+        if (buffer.imageBuffer) {
+            encoder << std::optional<BufferAndBackendInfo>(*buffer.imageBuffer);
+            return;
+        }
+
+        encoder << std::optional<BufferAndBackendInfo>();
+    };
+
+    encodeBuffer(m_frontBuffer);
+    encodeBuffer(m_backBuffer);
+    encodeBuffer(m_secondaryBackBuffer);
+
+    encoder << m_previouslyPaintedRect;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     std::optional<ImageBufferBackendHandle> displayListHandle;
     if (m_displayListBuffer)
         displayListHandle = handleFromBuffer(*m_displayListBuffer);
 
-    encoder << displayListHandle;
+    encoder << WTFMove(displayListHandle);
 #endif
 }
 
@@ -231,13 +251,16 @@ bool RemoteLayerBackingStoreProperties::decode(IPC::Decoder& decoder, RemoteLaye
     if (!decoder.decode(result.m_bufferHandle))
         return false;
 
-    if (!decoder.decode(result.m_frontBufferIdentifier))
+    if (!decoder.decode(result.m_frontBufferInfo))
         return false;
 
-    if (!decoder.decode(result.m_backBufferIdentifier))
+    if (!decoder.decode(result.m_backBufferInfo))
         return false;
 
-    if (!decoder.decode(result.m_secondaryBackBufferIdentifier))
+    if (!decoder.decode(result.m_secondaryBackBufferInfo))
+        return false;
+
+    if (!decoder.decode(result.m_paintedRect))
         return false;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
@@ -246,6 +269,25 @@ bool RemoteLayerBackingStoreProperties::decode(IPC::Decoder& decoder, RemoteLaye
 #endif
 
     return true;
+}
+
+void RemoteLayerBackingStoreProperties::dump(TextStream& ts) const
+{
+    auto dumpBuffer = [&](const char* name, const std::optional<BufferAndBackendInfo>& bufferInfo) {
+        ts.startGroup();
+        ts << name << " ";
+        if (bufferInfo)
+            ts << bufferInfo->resourceIdentifier << " backend generation " << bufferInfo->backendGeneration;
+        else
+            ts << "none";
+        ts.endGroup();
+    };
+    dumpBuffer("front buffer", m_frontBufferInfo);
+    dumpBuffer("back buffer", m_backBufferInfo);
+    dumpBuffer("secondaryBack buffer", m_secondaryBackBufferInfo);
+
+    ts.dumpProperty("is opaque", isOpaque());
+    ts.dumpProperty("has buffer handle", !!bufferHandle());
 }
 
 bool RemoteLayerBackingStore::layerWillBeDisplayed()
@@ -697,7 +739,7 @@ RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendH
 
 void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier, bool replayCGDisplayListsIntoBackingStore)
 {
-    if (asyncContentsIdentifier && m_frontBufferIdentifier && *asyncContentsIdentifier >= *m_frontBufferIdentifier)
+    if (asyncContentsIdentifier && m_frontBufferInfo && *asyncContentsIdentifier >= m_frontBufferInfo->resourceIdentifier)
         return;
 
     layer.contentsOpaque = m_isOpaque;
@@ -736,35 +778,54 @@ void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer,
 #endif
 
     layer.contents = contents.get();
+    if ([CALayer instancesRespondToSelector:@selector(contentsDirtyRect)]) {
+        if (m_paintedRect) {
+            FloatRect painted = *m_paintedRect;
+            painted.scale(layer.contentsScale);
+
+            // Most of the time layer.contentsDirtyRect should be the null rect, since CA clears this on every commit,
+            // but in some scenarios we don't get a CA commit for every remote layer tree transaction.
+            auto existingDirtyRect = layer.contentsDirtyRect;
+            if (CGRectIsNull(existingDirtyRect))
+                layer.contentsDirtyRect = painted;
+            else
+                layer.contentsDirtyRect = CGRectUnion(existingDirtyRect, painted);
+        }
+    }
 }
 
 void RemoteLayerBackingStoreProperties::updateCachedBuffers(RemoteLayerTreeNode& node, LayerContentsType contentsType)
 {
+    ASSERT(!m_contentsBuffer);
+
     Vector<RemoteLayerTreeNode::CachedContentsBuffer> cachedBuffers = node.takeCachedContentsBuffers();
 
-    if (contentsType != LayerContentsType::CachedIOSurface || !m_frontBufferIdentifier || !m_bufferHandle || !std::holds_alternative<MachSendRight>(*m_bufferHandle))
+    if (contentsType != LayerContentsType::CachedIOSurface || !m_frontBufferInfo || !m_bufferHandle || !std::holds_alternative<MachSendRight>(*m_bufferHandle))
         return;
 
     cachedBuffers.removeAllMatching([&](const RemoteLayerTreeNode::CachedContentsBuffer& current) {
-        if (m_frontBufferIdentifier && m_frontBufferIdentifier == current.m_renderingResourceIdentifier)
+        if (m_frontBufferInfo && *m_frontBufferInfo == current.imageBufferInfo)
             return false;
-        if (m_backBufferIdentifier && m_backBufferIdentifier == current.m_renderingResourceIdentifier)
+
+        if (m_backBufferInfo && *m_backBufferInfo== current.imageBufferInfo)
             return false;
-        if (m_secondaryBackBufferIdentifier && m_secondaryBackBufferIdentifier == current.m_renderingResourceIdentifier)
+
+        if (m_secondaryBackBufferInfo && *m_secondaryBackBufferInfo == current.imageBufferInfo)
             return false;
+
         return true;
     });
 
     for (auto& current : cachedBuffers) {
-        if (*m_frontBufferIdentifier == current.m_renderingResourceIdentifier) {
-            m_contentsBuffer = current.m_buffer;
+        if (m_frontBufferInfo->resourceIdentifier == current.imageBufferInfo.resourceIdentifier) {
+            m_contentsBuffer = current.buffer;
             break;
         }
     }
 
     if (!m_contentsBuffer) {
         m_contentsBuffer = layerContentsBufferFromBackendHandle(WTFMove(*m_bufferHandle), LayerContentsType::CachedIOSurface);
-        cachedBuffers.append({ *m_frontBufferIdentifier, m_contentsBuffer });
+        cachedBuffers.append({ *m_frontBufferInfo, m_contentsBuffer });
     }
 
     node.setCachedContentsBuffers(WTFMove(cachedBuffers));
@@ -854,13 +915,7 @@ TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStore& backingSto
 
 TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStoreProperties& properties)
 {
-    ts.dumpProperty("front buffer", properties.frontBufferIdentifier());
-    ts.dumpProperty("back buffer", properties.backBufferIdentifier());
-    ts.dumpProperty("secondaryBack buffer", properties.secondaryBackBufferIdentifier());
-
-    ts.dumpProperty("is opaque", properties.isOpaque());
-    ts.dumpProperty("has buffer handle", !!properties.bufferHandle());
-
+    properties.dump(ts);
     return ts;
 }
 

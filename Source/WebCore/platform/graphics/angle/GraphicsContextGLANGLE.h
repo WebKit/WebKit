@@ -43,9 +43,11 @@ public:
 
     GCGLDisplay platformDisplay() const;
     GCGLConfig platformConfig() const;
+
     GCGLenum drawingBufferTextureTarget();
-    static GCGLenum drawingBufferTextureTargetQueryForDrawingTarget(GCGLenum drawingTarget);
+    std::tuple<GCGLenum, GCGLenum> drawingBufferTextureBindingPoint();
     static GCGLint EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget);
+
     enum class ReleaseThreadResourceBehavior {
         // Releases current context after GraphicsContextGLANGLE calls done in the thread.
         ReleaseCurrentContext,
@@ -143,8 +145,8 @@ public:
     void linkProgram(PlatformGLObject) final;
     void pixelStorei(GCGLenum pname, GCGLint param) final;
     void polygonOffset(GCGLfloat factor, GCGLfloat units) final;
-    void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<uint8_t> data) final;
-    void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
+    void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength) final;
+    void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) final;
     void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
     void sampleCoverage(GCGLclampf value, GCGLboolean invert) final;
     void scissor(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) final;
@@ -289,6 +291,11 @@ public:
     String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) final;
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
     void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) final;
+    std::optional<EGLImageAttachResult> createAndBindEGLImage(GCGLenum, EGLImageSource) override;
+    void destroyEGLImage(GCEGLImage) final;
+    GCEGLSync createEGLSync(ExternalEGLSyncEvent) override;
+    bool destroyEGLSync(GCEGLSync) final;
+    void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t) final;
     void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) final;
     void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) final;
     void multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei> countsAndOffsets, GCGLenum type) final;
@@ -321,6 +328,8 @@ public:
     void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei, const GCGLint, const GCGLuint> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, GCGLenum type) final;
     void provokingVertexANGLE(GCGLenum provokeMode) final;
     void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) final;
+    void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
+    void blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) final;
 
     PlatformGLObject createBuffer() final;
     PlatformGLObject createFramebuffer() final;
@@ -336,7 +345,7 @@ public:
     void deleteTexture(PlatformGLObject) final;
     void simulateEventForTesting(SimulatedEventForTesting) override;
     void paintRenderingResultsToCanvas(ImageBuffer&) override;
-    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() override;
+    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer(FlipY) override;
     void paintCompositedResultsToCanvas(ImageBuffer&) override;
 
     RefPtr<PixelBuffer> readRenderingResultsForPainting();
@@ -344,8 +353,9 @@ public:
     virtual void withDrawingBufferAsNativeImage(Function<void(NativeImage&)>);
     virtual void withDisplayBufferAsNativeImage(Function<void(NativeImage&)>);
 
-    // Returns true on success.
-    bool readnPixelsWithStatus(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<uint8_t> data);
+    // Reads pixels from positive pixel coordinates with tight packing.
+    // Returns columns, rows of executed read on success.
+    std::optional<IntSize> readPixelsWithStatus(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data);
 
     void addError(GCGLErrorCode);
 protected:
@@ -372,7 +382,7 @@ protected:
     void validateDepthStencil(ASCIILiteral packedDepthStencilExtension);
     void validateAttributes();
 
-    bool readnPixelsImpl(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, uint8_t* data, bool readingToPixelBufferObject);
+    std::optional<IntSize> readPixelsImpl(IntRect, GCGLenum format, GCGLenum type, GCGLsizei bufSize, uint8_t* data, bool readingToPixelBufferObject);
 
     // Did the most recent drawing operation leave the GPU in an acceptable state?
     void checkGPUStatus();
@@ -396,6 +406,7 @@ protected:
 
     // Only for non-WebGL 2.0 contexts.
     GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
+    void setPackParameters(GCGLint alignment, GCGLint rowLength);
 
     HashSet<String> m_availableExtensions;
     HashSet<String> m_requestableExtensions;
@@ -424,6 +435,11 @@ protected:
     GCGLDisplay m_displayObj { nullptr };
     GCGLContext m_contextObj { nullptr };
     GCGLConfig m_configObj { nullptr };
+#if USE(TEXTURE_MAPPER)
+    GCEGLSuface m_surfaceObj { nullptr };
+#endif
+    GCGLint m_packAlignment { 4 };
+    GCGLint m_packRowLength { 0 };
 };
 
 

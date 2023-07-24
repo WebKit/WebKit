@@ -13,7 +13,6 @@
 #include "api/video/video_layers_allocation.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/buffer.h"
-
 #include "test/gmock.h"
 
 namespace webrtc {

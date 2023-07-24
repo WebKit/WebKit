@@ -29,6 +29,7 @@
 #import "Test.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKContentWorld.h>
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -320,5 +321,41 @@ TEST(AsyncFunction, PromiseDetachedFrame)
     EXPECT_EQ([webView _webProcessIdentifier], pid);
 }
 
+TEST(AsyncFunction, TransientActivation)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:NO]);
+
+    [webView synchronouslyLoadHTMLString:@"Hello"];
+
+    __block bool done = false;
+    [webView _evaluateJavaScriptWithoutUserGesture:@"window.internals.hasTransientActivation()" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSNumber class]]);
+        EXPECT_TRUE([result isEqualToNumber:@0]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView callAsyncJavaScript:@"return window.internals.hasTransientActivation()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSNumber class]]);
+        EXPECT_TRUE([result isEqualToNumber:@1]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView _evaluateJavaScriptWithoutUserGesture:@"window.internals.hasTransientActivation()" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result isKindOfClass:[NSNumber class]]);
+        EXPECT_TRUE([result isEqualToNumber:@0]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
 }
+
+} // namespace TestWebKitAPI
 

@@ -25,6 +25,7 @@ info: |
       ii. Decrease k by 1.
   ...
 includes: [compareArray.js]
+features: [exponentiation]
 ---*/
 
 var arrayLike = {

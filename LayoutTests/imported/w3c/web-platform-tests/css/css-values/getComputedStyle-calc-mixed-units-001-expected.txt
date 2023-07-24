@@ -1,0 +1,5 @@
+
+FAIL testing background-size: calc(67% - 54% + 4em) assert_equals: expected "calc(13% + 64px)" but got "calc(13% + 64px) auto"
+PASS testing background-position: calc(100% - 100% + 20em)
+PASS testing height: calc(60% - 50% + 3em)
+

@@ -104,25 +104,25 @@ void swap(RefPointer<T> &left, RefPointer<T> &right)
 }
 
 template <typename T>
-bool operator==(const RefPointer<T> &ptr, nullptr_t) noexcept
+bool operator==(const RefPointer<T> &ptr, std::nullptr_t) noexcept
 {
     return ptr.get() == nullptr;
 }
 
 template <typename T>
-bool operator==(nullptr_t, const RefPointer<T> &ptr) noexcept
+bool operator==(std::nullptr_t, const RefPointer<T> &ptr) noexcept
 {
     return ptr.get() == nullptr;
 }
 
 template <typename T>
-bool operator!=(const RefPointer<T> &ptr, nullptr_t) noexcept
+bool operator!=(const RefPointer<T> &ptr, std::nullptr_t) noexcept
 {
     return ptr.get() != nullptr;
 }
 
 template <typename T>
-bool operator!=(nullptr_t, const RefPointer<T> &ptr) noexcept
+bool operator!=(std::nullptr_t, const RefPointer<T> &ptr) noexcept
 {
     return ptr.get() != nullptr;
 }

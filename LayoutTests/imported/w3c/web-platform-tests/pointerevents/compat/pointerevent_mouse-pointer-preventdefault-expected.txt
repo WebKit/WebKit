@@ -1,0 +1,12 @@
+Verifies the effect of pointer event prevent-default on following pointer & mouse events.
+
+
+PASS Verifies the effect of pointer event prevent-default on none
+PASS Verifies the effect of pointer event prevent-default on pointerdown
+PASS Verifies the effect of pointer event prevent-default on pointerup
+PASS Verifies the effect of pointer event prevent-default on pointerenter
+PASS Verifies the effect of pointer event prevent-default on pointerleave
+PASS Verifies the effect of pointer event prevent-default on pointerover
+PASS Verifies the effect of pointer event prevent-default on pointerout
+PASS Verifies the effect of pointer event prevent-default on pointermove
+

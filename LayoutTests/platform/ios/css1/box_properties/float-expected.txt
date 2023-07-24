@@ -54,8 +54,8 @@ layer at (0,0) size 800x600
                   text run at (617,0) width 129: "In this case, it is the"
                   text run at (0,20) width 269: "image which has been floated to the right."
 layer at (8,99) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,91) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,201) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,193) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,193) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (25,392) size 762x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (4,88) size 762x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (4,88) size 762x2 [color=#808080] [border: (1px inset #808080)]

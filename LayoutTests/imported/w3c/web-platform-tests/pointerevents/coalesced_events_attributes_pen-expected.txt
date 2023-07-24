@@ -1,0 +1,6 @@
+
+FAIL Coalesced list in boundary events assert_equals: pointerover.getCoalescedEvents is a function expected "function" but got "undefined"
+FAIL Coalesced list in pointer-capture events assert_equals: gotpointercapture.getCoalescedEvents is a function expected "function" but got "undefined"
+FAIL Coalesced list in pointerdown/move/up events assert_equals: pointerdown.getCoalescedEvents is a function expected "function" but got "undefined"
+PASS Coalesced list in pointercancel event
+

@@ -17,4 +17,5 @@ PASS getComputedStyle when originating element is display:none
 PASS getComputedStyle on ::before when ancestor element is display:none
 PASS getComputedStyle on ::before when container is display:none
 PASS getComputedStyle when in display:none with layout dirty outer element
+PASS getComputedStyle when display:none inner container has forced style
 

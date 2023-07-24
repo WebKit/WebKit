@@ -37,6 +37,10 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
+namespace WTF {
+class Logger;
+}
+
 namespace WebCore {
 
 enum class RouteSharingPolicy : uint8_t {
@@ -157,6 +161,13 @@ protected:
     virtual bool tryToSetActiveInternal(bool);
     void activeStateChanged();
 
+    Logger& logger();
+    const char* logClassName() const { return "AudioSession"; }
+    WTFLogChannel& logChannel() const;
+    const void* logIdentifier() const { return nullptr; }
+
+    mutable RefPtr<Logger> m_logger;
+
     WeakHashSet<InterruptionObserver> m_interruptionObservers;
 
     WeakPtr<AudioSessionRoutingArbitrationClient> m_routingArbitrationClient;
@@ -180,6 +191,9 @@ public:
 
     virtual void beginRoutingArbitrationWithCategory(AudioSession::CategoryType, ArbitrationCallback&&) = 0;
     virtual void leaveRoutingAbritration() = 0;
+
+    virtual const void* logIdentifier() const = 0;
+    virtual bool canLog() const = 0;
 
     using WeakValueType = AudioSessionRoutingArbitrationClient;
 };
@@ -228,6 +242,7 @@ struct LogArgument<WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitra
         return convertEnumerationToString(error);
     }
 };
+
 template <>
 struct LogArgument<WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged> {
     static String toString(const WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged changed)

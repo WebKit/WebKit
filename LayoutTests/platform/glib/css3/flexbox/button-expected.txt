@@ -28,9 +28,9 @@ layer at (0,0) size 800x246
         RenderBR {BR} at (31,18) size 0x17
         RenderBR {BR} at (31,60) size 0x17
 layer at (8,52) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,44) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,134) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,126) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,126) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,172) size 31x24 clip at (10,174) size 12x5
   RenderButton {BUTTON} at (0,28) size 31x24 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
 layer at (8,196) size 31x42 clip at (10,198) size 12x23

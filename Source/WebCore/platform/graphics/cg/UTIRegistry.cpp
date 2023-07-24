@@ -64,6 +64,16 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
             "public.avif"_s,
             "public.avis"_s,
 #endif
+#if HAVE(JPEGXL)
+            "public.jxl"_s,
+            "public.jpegxl"_s,
+            "public.jpeg-xl"_s,
+#endif
+#if HAVE(HEIC)
+            "public.heic"_s,
+            "public.heics"_s,
+            "public.heif"_s,
+#endif
         };
 
         auto systemSupportedCFImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());

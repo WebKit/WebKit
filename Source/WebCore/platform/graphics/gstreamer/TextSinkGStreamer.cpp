@@ -139,4 +139,6 @@ GstElement* webkitTextSinkNew(WeakPtr<MediaPlayerPrivateGStreamer>&& player)
     return element;
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

@@ -177,7 +177,7 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
     WeakHashSet<WebCore::HTMLMediaElement, WebCore::WeakPtrImplWithEventTargetData> m_mediaElements;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;

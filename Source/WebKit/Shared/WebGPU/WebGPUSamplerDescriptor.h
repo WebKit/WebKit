@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,24 +28,24 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/WebGPUAddressMode.h>
+#include <WebCore/WebGPUCompareFunction.h>
+#include <WebCore/WebGPUFilterMode.h>
 #include <cstdint>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUAddressMode.h>
-#include <pal/graphics/WebGPU/WebGPUCompareFunction.h>
-#include <pal/graphics/WebGPU/WebGPUFilterMode.h>
 
 namespace WebKit::WebGPU {
 
 struct SamplerDescriptor : public ObjectDescriptorBase {
-    PAL::WebGPU::AddressMode addressModeU { PAL::WebGPU::AddressMode::ClampToEdge };
-    PAL::WebGPU::AddressMode addressModeV { PAL::WebGPU::AddressMode::ClampToEdge };
-    PAL::WebGPU::AddressMode addressModeW { PAL::WebGPU::AddressMode::ClampToEdge };
-    PAL::WebGPU::FilterMode magFilter { PAL::WebGPU::FilterMode::Nearest };
-    PAL::WebGPU::FilterMode minFilter { PAL::WebGPU::FilterMode::Nearest };
-    PAL::WebGPU::MipmapFilterMode mipmapFilter { PAL::WebGPU::MipmapFilterMode::Nearest };
+    WebCore::WebGPU::AddressMode addressModeU { WebCore::WebGPU::AddressMode::ClampToEdge };
+    WebCore::WebGPU::AddressMode addressModeV { WebCore::WebGPU::AddressMode::ClampToEdge };
+    WebCore::WebGPU::AddressMode addressModeW { WebCore::WebGPU::AddressMode::ClampToEdge };
+    WebCore::WebGPU::FilterMode magFilter { WebCore::WebGPU::FilterMode::Nearest };
+    WebCore::WebGPU::FilterMode minFilter { WebCore::WebGPU::FilterMode::Nearest };
+    WebCore::WebGPU::MipmapFilterMode mipmapFilter { WebCore::WebGPU::MipmapFilterMode::Nearest };
     float lodMinClamp { 0 };
     float lodMaxClamp { 32 };
-    std::optional<PAL::WebGPU::CompareFunction> compare;
+    std::optional<WebCore::WebGPU::CompareFunction> compare;
     uint16_t maxAnisotropy { 1 };
 };
 

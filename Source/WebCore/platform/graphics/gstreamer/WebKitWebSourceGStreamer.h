@@ -20,6 +20,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "PlatformMediaResourceLoader.h"
 #include <gst/base/gstpushsrc.h>
 #include <gst/gst.h>
 #include <wtf/Forward.h>
@@ -38,7 +39,7 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_SRC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), WEBKIT_TYPE_WEB_SRC))
 #define WEBKIT_WEB_SRC_CAST(obj)       ((WebKitWebSrc*)(obj))
 
-#define WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME  "webkit.media-player"
+#define WEBKIT_WEB_SRC_RESOURCE_LOADER_CONTEXT_TYPE_NAME  "webkit.resource-loader"
 
 struct WebKitWebSrcPrivate;
 
@@ -53,7 +54,8 @@ struct WebKitWebSrcClass {
 };
 
 GType webkit_web_src_get_type(void);
-void webKitWebSrcSetMediaPlayer(WebKitWebSrc*, WebCore::MediaPlayer*, const String&);
+void webKitWebSrcSetResourceLoader(WebKitWebSrc*, const RefPtr<WebCore::PlatformMediaResourceLoader>&);
+void webKitWebSrcSetReferrer(WebKitWebSrc*, const String&);
 bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc*);
 bool webKitSrcIsCrossOrigin(WebKitWebSrc*, const WebCore::SecurityOrigin&);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,7 @@
  */
 
 #import "PageLoadState.h"
+#import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
 
@@ -44,52 +45,52 @@ public:
 private:
     void willChangeIsLoading() override
     {
-        [m_object willChangeValueForKey:@"loading"];
+        [m_object.get() willChangeValueForKey:@"loading"];
     }
 
     void didChangeIsLoading() override
     {
-        [m_object didChangeValueForKey:@"loading"];
+        [m_object.get() didChangeValueForKey:@"loading"];
     }
 
     void willChangeTitle() override
     {
-        [m_object willChangeValueForKey:@"title"];
+        [m_object.get() willChangeValueForKey:@"title"];
     }
 
     void didChangeTitle() override
     {
-        [m_object didChangeValueForKey:@"title"];
+        [m_object.get() didChangeValueForKey:@"title"];
     }
 
     void willChangeActiveURL() override
     {
-        [m_object willChangeValueForKey:m_activeURLKey.get()];
+        [m_object.get() willChangeValueForKey:m_activeURLKey.get()];
     }
 
     void didChangeActiveURL() override
     {
-        [m_object didChangeValueForKey:m_activeURLKey.get()];
+        [m_object.get() didChangeValueForKey:m_activeURLKey.get()];
     }
 
     void willChangeHasOnlySecureContent() override
     {
-        [m_object willChangeValueForKey:@"hasOnlySecureContent"];
+        [m_object.get() willChangeValueForKey:@"hasOnlySecureContent"];
     }
 
     void didChangeHasOnlySecureContent() override
     {
-        [m_object didChangeValueForKey:@"hasOnlySecureContent"];
+        [m_object.get() didChangeValueForKey:@"hasOnlySecureContent"];
     }
 
     void willChangeEstimatedProgress() override
     {
-        [m_object willChangeValueForKey:@"estimatedProgress"];
+        [m_object.get() willChangeValueForKey:@"estimatedProgress"];
     }
 
     void didChangeEstimatedProgress() override
     {
-        [m_object didChangeValueForKey:@"estimatedProgress"];
+        [m_object.get() didChangeValueForKey:@"estimatedProgress"];
     }
 
     void willChangeCanGoBack() override { }
@@ -104,15 +105,15 @@ private:
 
     void willChangeWebProcessIsResponsive() override
     {
-        [m_object willChangeValueForKey:@"_webProcessIsResponsive"];
+        [m_object.get() willChangeValueForKey:@"_webProcessIsResponsive"];
     }
 
     void didChangeWebProcessIsResponsive() override
     {
-        [m_object didChangeValueForKey:@"_webProcessIsResponsive"];
+        [m_object.get() didChangeValueForKey:@"_webProcessIsResponsive"];
     }
 
-    id m_object;
+    WeakObjCPtr<id> m_object;
     RetainPtr<NSString> m_activeURLKey;
 };
 

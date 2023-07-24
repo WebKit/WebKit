@@ -145,6 +145,20 @@ PASS quotes: ""“" "”" "‘" "’"" onto ""‘" "’" "“" "”""
 PASS resize (type: discrete) has testAccumulation function
 PASS resize: "horizontal" onto "both"
 PASS resize: "both" onto "horizontal"
+PASS scrollbar-color (type: colorPair) has testAccumulation function
+PASS scrollbar-color supports animating as color pair of rgb() with overflowed  from and to values
+PASS scrollbar-color supports animating as color pair of #RGB
+PASS scrollbar-color supports animating as color pair of hsl()
+PASS scrollbar-color supports animating as color pair of #RGBa
+PASS scrollbar-color supports animating as color pair of rgba()
+PASS scrollbar-color supports animating as color pair of hsla()
+PASS scrollbar-gutter (type: discrete) has testAccumulation function
+PASS scrollbar-gutter: "stable" onto "auto"
+PASS scrollbar-gutter: "auto" onto "stable"
+PASS scrollbar-gutter: "stable both-edges" onto "auto"
+PASS scrollbar-gutter: "auto" onto "stable both-edges"
+PASS scrollbar-gutter: "stable both-edges" onto "stable"
+PASS scrollbar-gutter: "stable" onto "stable both-edges"
 PASS scrollbar-width (type: discrete) has testAccumulation function
 PASS scrollbar-width: "thin" onto "auto"
 PASS scrollbar-width: "auto" onto "thin"
@@ -293,6 +307,9 @@ PASS visibility: onto "hidden"
 PASS white-space (type: discrete) has testAccumulation function
 PASS white-space: "nowrap" onto "pre"
 PASS white-space: "pre" onto "nowrap"
+PASS white-space-collapse (type: discrete) has testAccumulation function
+PASS white-space-collapse: "preserve" onto "collapse"
+PASS white-space-collapse: "collapse" onto "preserve"
 PASS word-break (type: discrete) has testAccumulation function
 PASS word-break: "break-all" onto "keep-all"
 PASS word-break: "keep-all" onto "break-all"

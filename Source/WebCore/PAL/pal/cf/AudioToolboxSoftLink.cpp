@@ -38,6 +38,7 @@ SOFT_LINK_FRAMEWORK_FOR_SOURCE(PAL, AudioToolbox)
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, AudioToolboxCore, PAL_EXPORT)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AudioToolbox, AudioConverterGetPropertyInfo, OSStatus, (AudioConverterRef inAudioConverter, AudioConverterPropertyID inPropertyID, UInt32* outSize, Boolean* outWritable), (inAudioConverter, inPropertyID, outSize, outWritable))
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AudioToolbox, AudioFormatGetPropertyInfo, OSStatus, (AudioFormatPropertyID inPropertyID, UInt32 inSpecifierSize, const void* inSpecifier, UInt32* ioPropertyDataSize), (inPropertyID, inSpecifierSize, inSpecifier, ioPropertyDataSize))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AudioToolbox, AudioFormatGetProperty, OSStatus, (AudioFormatPropertyID inPropertyID, UInt32 inSpecifierSize, const void* inSpecifier, UInt32* ioPropertyDataSize, void* outPropertyData), (inPropertyID, inSpecifierSize, inSpecifier, ioPropertyDataSize, outPropertyData))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AudioToolbox, AudioConverterNew, OSStatus, (const AudioStreamBasicDescription* inSourceFormat, const AudioStreamBasicDescription* inDestinationFormat, AudioConverterRef* outAudioConverter), (inSourceFormat, inDestinationFormat, outAudioConverter))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AudioToolbox, AudioConverterDispose, OSStatus, (AudioConverterRef inAudioConverter), (inAudioConverter))

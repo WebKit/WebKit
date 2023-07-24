@@ -12,6 +12,7 @@
 
 #include <tuple>
 
+#include "api/video_codecs/av1_profile.h"
 #include "api/video_codecs/h264_profile_level_id.h"
 #include "api/video_codecs/vp9_profile.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
@@ -232,6 +233,52 @@ TEST(CodecTest, TestVideoCodecMatchesWithDifferentPacketization) {
 
   EXPECT_TRUE(c0.Matches(c1));
   EXPECT_TRUE(c1.Matches(c0));
+}
+
+// AV1 codecs compare profile information.
+TEST(CodecTest, TestAV1CodecMatches) {
+  const char kProfile0[] = "0";
+  const char kProfile1[] = "1";
+  const char kProfile2[] = "2";
+
+  VideoCodec c_no_profile(95, cricket::kAv1CodecName);
+  VideoCodec c_profile0(95, cricket::kAv1CodecName);
+  c_profile0.params[webrtc::kAV1FmtpProfile] = kProfile0;
+  VideoCodec c_profile1(95, cricket::kAv1CodecName);
+  c_profile1.params[webrtc::kAV1FmtpProfile] = kProfile1;
+  VideoCodec c_profile2(95, cricket::kAv1CodecName);
+  c_profile2.params[webrtc::kAV1FmtpProfile] = kProfile2;
+
+  // An AV1 entry with no profile specified should be treated as profile-0.
+  EXPECT_TRUE(c_profile0.Matches(c_no_profile));
+
+  {
+    // Two AV1 entries without a profile specified are treated as duplicates.
+    VideoCodec c_no_profile_eq(95, cricket::kAv1CodecName);
+    EXPECT_TRUE(c_no_profile.Matches(c_no_profile_eq));
+  }
+
+  {
+    // Two AV1 entries with profile 0 specified are treated as duplicates.
+    VideoCodec c_profile0_eq(95, cricket::kAv1CodecName);
+    c_profile0_eq.params[webrtc::kAV1FmtpProfile] = kProfile0;
+    EXPECT_TRUE(c_profile0.Matches(c_profile0_eq));
+  }
+
+  {
+    // Two AV1 entries with profile 1 specified are treated as duplicates.
+    VideoCodec c_profile1_eq(95, cricket::kAv1CodecName);
+    c_profile1_eq.params[webrtc::kAV1FmtpProfile] = kProfile1;
+    EXPECT_TRUE(c_profile1.Matches(c_profile1_eq));
+  }
+
+  // AV1 entries with different profiles (0 and 1) are seen as distinct.
+  EXPECT_FALSE(c_profile0.Matches(c_profile1));
+  EXPECT_FALSE(c_no_profile.Matches(c_profile1));
+
+  // AV1 entries with different profiles (0 and 2) are seen as distinct.
+  EXPECT_FALSE(c_profile0.Matches(c_profile2));
+  EXPECT_FALSE(c_no_profile.Matches(c_profile2));
 }
 
 // VP9 codecs compare profile information.

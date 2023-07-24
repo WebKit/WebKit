@@ -27,10 +27,10 @@
 
 #include "WebHitTestResultData.h"
 #include "WebMouseEvent.h"
+#include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/SecurityOriginData.h>
 
@@ -51,7 +51,7 @@ struct NavigationActionData {
     WebMouseEventButton mouseButton { WebMouseEventButton::NoButton };
     WebMouseEventSyntheticClickType syntheticClickType { WebMouseEventSyntheticClickType::NoTap };
     uint64_t userGestureTokenIdentifier { 0 };
-    std::optional<UUID> userGestureAuthorizationToken;
+    std::optional<WTF::UUID> userGestureAuthorizationToken;
     bool canHandleRequest { false };
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     WTF::String downloadAttribute;
@@ -69,7 +69,8 @@ struct NavigationActionData {
     WTF::String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags { 0 };
     std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
-    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+    OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     std::optional<WebKit::WebHitTestResultData> webHitTestResultData;
 #endif

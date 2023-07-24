@@ -26,21 +26,29 @@
 #include "config.h"
 #include "AcceleratedSurfaceDMABuf.h"
 
-#if USE(GBM)
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "ShareableBitmap.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/DMABufFormat.h>
-#include <WebCore/GBMDevice.h>
 #include <WebCore/PlatformDisplay.h>
 #include <array>
 #include <epoxy/egl.h>
-#include <gbm.h>
 #include <wtf/SafeStrerror.h>
 
+#if USE(GBM)
+#include <WebCore/GBMDevice.h>
+#include <gbm.h>
+#endif
+
 namespace WebKit {
+
+static uint64_t generateID()
+{
+    static uint64_t identifier = 0;
+    return ++identifier;
+}
 
 std::unique_ptr<AcceleratedSurfaceDMABuf> AcceleratedSurfaceDMABuf::create(WebPage& webPage, Client& client)
 {
@@ -49,7 +57,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf> AcceleratedSurfaceDMABuf::create(WebPa
 
 AcceleratedSurfaceDMABuf::AcceleratedSurfaceDMABuf(WebPage& webPage, Client& client)
     : AcceleratedSurface(webPage, client)
-    , m_isSoftwareRast(WebCore::PlatformDisplay::sharedDisplayForCompositing().type() == WebCore::PlatformDisplay::Type::Surfaceless)
+    , m_id(generateID())
 {
 }
 
@@ -57,41 +65,63 @@ AcceleratedSurfaceDMABuf::~AcceleratedSurfaceDMABuf()
 {
 }
 
-AcceleratedSurfaceDMABuf::RenderTarget::RenderTarget(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
-    : m_pageID(pageID)
+AcceleratedSurfaceDMABuf::RenderTarget::RenderTarget(const WebCore::IntSize& size)
 {
-    std::array<unsigned, 3> renderbuffers;
-    glGenRenderbuffers(3, renderbuffers.data());
-    m_backColorBuffer = renderbuffers[0];
-    m_frontColorBuffer = renderbuffers[1];
-    m_depthStencilBuffer = renderbuffers[2];
+    glGenRenderbuffers(1, &m_depthStencilBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, size.width(), size.height());
 }
 
 AcceleratedSurfaceDMABuf::RenderTarget::~RenderTarget()
 {
-    if (m_backColorBuffer)
-        glDeleteRenderbuffers(1, &m_backColorBuffer);
-    if (m_frontColorBuffer)
-        glDeleteRenderbuffers(1, &m_frontColorBuffer);
     if (m_depthStencilBuffer)
         glDeleteRenderbuffers(1, &m_depthStencilBuffer);
 }
 
 void AcceleratedSurfaceDMABuf::RenderTarget::willRenderFrame() const
 {
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_backColorBuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
 }
 
-void AcceleratedSurfaceDMABuf::RenderTarget::swap()
+AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::RenderTargetColorBuffer(const WebCore::IntSize& size)
+    : RenderTarget(size)
+{
+    std::array<unsigned, 3> renderbuffers;
+    glGenRenderbuffers(3, renderbuffers.data());
+    m_backColorBuffer = renderbuffers[0];
+    m_frontColorBuffer = renderbuffers[1];
+    m_displayColorBuffer = renderbuffers[2];
+}
+
+AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::~RenderTargetColorBuffer()
+{
+    if (m_backColorBuffer)
+        glDeleteRenderbuffers(1, &m_backColorBuffer);
+    if (m_frontColorBuffer)
+        glDeleteRenderbuffers(1, &m_frontColorBuffer);
+    if (m_displayColorBuffer)
+        glDeleteRenderbuffers(1, &m_displayColorBuffer);
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::willRenderFrame() const
+{
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_backColorBuffer);
+    RenderTarget::willRenderFrame();
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::didRenderFrame()
 {
     std::swap(m_backColorBuffer, m_frontColorBuffer);
 }
 
-std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetEGLImage::create(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
+void AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::didDisplayFrame()
+{
+    std::swap(m_frontColorBuffer, m_displayColorBuffer);
+}
+
+#if USE(GBM)
+std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetEGLImage::create(uint64_t surfaceID, const WebCore::IntSize& size)
 {
     struct {
         uint32_t format;
@@ -144,22 +174,26 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
 
     auto backImage = createImage();
     auto frontImage = createImage();
-    if (!backImage.second || !frontImage.second) {
-        WTFLogAlways("Failed to create EGL images for DMABufs with file descriptors %d and %d", backImage.first.value(), frontImage.first.value());
+    auto displayImage = createImage();
+    if (!backImage.second || !frontImage.second || !displayImage.second) {
+        WTFLogAlways("Failed to create EGL images for DMABufs with file descriptors %d, %d and %d", backImage.first.value(), frontImage.first.value(), displayImage.first.value());
         if (backImage.second)
             display.destroyEGLImage(backImage.second);
         if (frontImage.second)
             display.destroyEGLImage(frontImage.second);
+        if (displayImage.second)
+            display.destroyEGLImage(displayImage.second);
         return nullptr;
     }
 
-    return makeUnique<RenderTargetEGLImage>(pageID, size, backImage.second, frontImage.second, WTFMove(backImage.first), WTFMove(frontImage.first), metadata.format, metadata.offset, metadata.stride, metadata.modifier);
+    return makeUnique<RenderTargetEGLImage>(surfaceID, size, backImage.second, WTFMove(backImage.first), frontImage.second, WTFMove(frontImage.first), displayImage.second, WTFMove(displayImage.first), metadata.format, metadata.offset, metadata.stride, metadata.modifier);
 }
 
-AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, EGLImage backImage, EGLImage frontImage, UnixFileDescriptor&& backFD, UnixFileDescriptor&& frontFD, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
-    : RenderTarget(pageID, size)
+AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceID, const WebCore::IntSize& size, EGLImage backImage, UnixFileDescriptor&& backFD, EGLImage frontImage, UnixFileDescriptor&& frontFD, EGLImage displayImage, UnixFileDescriptor&& displayFD, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
+    : RenderTargetColorBuffer(size)
     , m_backImage(backImage)
     , m_frontImage(frontImage)
+    , m_displayImage(displayImage)
 {
     glBindRenderbuffer(GL_RENDERBUFFER, m_backColorBuffer);
     glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_backImage);
@@ -167,8 +201,11 @@ AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(WebCore::Pa
     glBindRenderbuffer(GL_RENDERBUFFER, m_frontColorBuffer);
     glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_frontImage);
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backFD), WTFMove(frontFD),
-        size, format, offset, stride, modifier), pageID);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_displayColorBuffer);
+    glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_displayImage);
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backFD), WTFMove(frontFD), WTFMove(displayFD),
+        size, format, offset, stride, modifier), surfaceID);
 }
 
 AcceleratedSurfaceDMABuf::RenderTargetEGLImage::~RenderTargetEGLImage()
@@ -178,15 +215,24 @@ AcceleratedSurfaceDMABuf::RenderTargetEGLImage::~RenderTargetEGLImage()
         display.destroyEGLImage(m_backImage);
     if (m_frontImage)
         display.destroyEGLImage(m_frontImage);
+    if (m_displayImage)
+        display.destroyEGLImage(m_displayImage);
 }
 
-void AcceleratedSurfaceDMABuf::RenderTargetEGLImage::swap()
+void AcceleratedSurfaceDMABuf::RenderTargetEGLImage::didRenderFrame()
 {
     std::swap(m_backImage, m_frontImage);
-    RenderTarget::swap();
+    RenderTargetColorBuffer::didRenderFrame();
 }
 
-std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetSHMImage::create(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
+void AcceleratedSurfaceDMABuf::RenderTargetEGLImage::didDisplayFrame()
+{
+    std::swap(m_frontImage, m_displayImage);
+    RenderTargetColorBuffer::didDisplayFrame();
+}
+#endif
+
+std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetSHMImage::create(uint64_t surfaceID, const WebCore::IntSize& size)
 {
     auto backBuffer = ShareableBitmap::create({ size });
     if (!backBuffer) {
@@ -196,6 +242,12 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
 
     auto frontBuffer = ShareableBitmap::create({ size });
     if (!frontBuffer) {
+        WTFLogAlways("Failed to allocate shared memory buffer of size %dx%d", size.width(), size.height());
+        return nullptr;
+    }
+
+    auto displayBuffer = ShareableBitmap::create({ size });
+    if (!displayBuffer) {
         WTFLogAlways("Failed to allocate shared memory buffer of size %dx%d", size.width(), size.height());
         return nullptr;
     }
@@ -212,13 +264,20 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
         return nullptr;
     }
 
-    return makeUnique<RenderTargetSHMImage>(pageID, size, Ref { *backBuffer }, WTFMove(*backBufferHandle), Ref { *frontBuffer }, WTFMove(*frontBufferHandle));
+    auto displayBufferHandle = displayBuffer->createReadOnlyHandle();
+    if (!displayBufferHandle) {
+        WTFLogAlways("Failed to create handle for shared memory buffer");
+        return nullptr;
+    }
+
+    return makeUnique<RenderTargetSHMImage>(surfaceID, size, Ref { *backBuffer }, WTFMove(*backBufferHandle), Ref { *frontBuffer }, WTFMove(*frontBufferHandle), Ref { *displayBuffer }, WTFMove(*displayBufferHandle));
 }
 
-AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, Ref<ShareableBitmap>&& backBitmap, ShareableBitmap::Handle&& backBitmapHandle, Ref<ShareableBitmap>&& frontBitmap, ShareableBitmap::Handle&& frontBitmapHandle)
-    : RenderTarget(pageID, size)
+AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(uint64_t surfaceID, const WebCore::IntSize& size, Ref<ShareableBitmap>&& backBitmap, ShareableBitmap::Handle&& backBitmapHandle, Ref<ShareableBitmap>&& frontBitmap, ShareableBitmap::Handle&& frontBitmapHandle, Ref<ShareableBitmap>&& displayBitmap, ShareableBitmap::Handle&& displayBitmapHandle)
+    : RenderTargetColorBuffer(size)
     , m_backBitmap(WTFMove(backBitmap))
     , m_frontBitmap(WTFMove(frontBitmap))
+    , m_displayBitmap(WTFMove(displayBitmap))
 {
     glBindRenderbuffer(GL_RENDERBUFFER, m_backColorBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width(), size.height());
@@ -226,32 +285,141 @@ AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(WebCore::Pa
     glBindRenderbuffer(GL_RENDERBUFFER, m_frontColorBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width(), size.height());
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::ConfigureSHM(WTFMove(backBitmapHandle), WTFMove(frontBitmapHandle)), m_pageID);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_displayColorBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width(), size.height());
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::ConfigureSHM(WTFMove(backBitmapHandle), WTFMove(frontBitmapHandle), WTFMove(displayBitmapHandle)), surfaceID);
 }
 
-void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didRenderFrame() const
+void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didRenderFrame()
 {
-    glReadPixels(0, 0, m_backBitmap->size().width(), m_backBitmap->size().height(), GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, m_backBitmap->data());
-}
-
-void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::swap()
-{
+    glReadPixels(0, 0, m_backBitmap->size().width(), m_backBitmap->size().height(), GL_BGRA, GL_UNSIGNED_BYTE, m_backBitmap->data());
     std::swap(m_backBitmap, m_frontBitmap);
-    RenderTarget::swap();
+    RenderTargetColorBuffer::didRenderFrame();
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didDisplayFrame()
+{
+    std::swap(m_frontBitmap, m_displayBitmap);
+    RenderTargetColorBuffer::didDisplayFrame();
+}
+
+std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetTexture::create(uint64_t surfaceID, const WebCore::IntSize& size)
+{
+    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
+    std::array<unsigned, 3> textures;
+    glGenTextures(3, textures.data());
+
+    struct {
+        uint32_t format;
+        uint32_t offset;
+        uint32_t stride;
+        uint64_t modifier;
+    } metadata;
+
+    auto exportTexture = [&](unsigned texture) -> UnixFileDescriptor {
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.width(), size.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+        auto image = display.createEGLImage(eglGetCurrentContext(), EGL_GL_TEXTURE_2D, (EGLClientBuffer)(uint64_t)texture, { });
+        if (!image) {
+            WTFLogAlways("Failed to create EGL image for texture");
+            return { };
+        }
+
+        int fourcc;
+        uint64_t modifier;
+        if (!eglExportDMABUFImageQueryMESA(display.eglDisplay(), image, &fourcc, nullptr, &modifier)) {
+            WTFLogAlways("eglExportDMABUFImageQueryMESA failed");
+            display.destroyEGLImage(image);
+            return { };
+        }
+
+        int fd, stride, offset;
+        if (!eglExportDMABUFImageMESA(display.eglDisplay(), image, &fd, &stride, &offset)) {
+            WTFLogAlways("eglExportDMABUFImageMESA failed");
+            display.destroyEGLImage(image);
+            return { };
+        }
+
+        display.destroyEGLImage(image);
+
+        metadata.format = fourcc;
+        metadata.offset = offset;
+        metadata.stride = stride;
+        metadata.modifier = modifier;
+        return UnixFileDescriptor(fd, UnixFileDescriptor::Adopt);
+    };
+
+    auto backFD = exportTexture(textures[0]);
+    auto frontFD = exportTexture(textures[1]);
+    auto displayFD = exportTexture(textures[2]);
+    if (!backFD || !frontFD || !displayFD) {
+        glDeleteTextures(3, textures.data());
+        return nullptr;
+    }
+
+    return makeUnique<RenderTargetTexture>(surfaceID, size, WTFMove(backFD), textures[0], WTFMove(frontFD), textures[1], WTFMove(displayFD), textures[2], metadata.format, metadata.offset, metadata.stride, metadata.modifier);
+}
+
+AcceleratedSurfaceDMABuf::RenderTargetTexture::RenderTargetTexture(uint64_t surfaceID, const WebCore::IntSize& size, UnixFileDescriptor&& backFD, unsigned backTexture, UnixFileDescriptor&& frontFD, unsigned frontTexture, UnixFileDescriptor&& displayFD, unsigned displayTexture, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
+    : RenderTarget(size)
+    , m_backTexture(backTexture)
+    , m_frontTexture(frontTexture)
+    , m_displayTexture(displayTexture)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backFD), WTFMove(frontFD), WTFMove(displayFD),
+        size, format, offset, stride, modifier), surfaceID);
+}
+
+AcceleratedSurfaceDMABuf::RenderTargetTexture::~RenderTargetTexture()
+{
+    if (m_backTexture)
+        glDeleteTextures(1, &m_backTexture);
+    if (m_frontTexture)
+        glDeleteTextures(1, &m_frontTexture);
+    if (m_displayTexture)
+        glDeleteTextures(1, &m_displayTexture);
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetTexture::willRenderFrame() const
+{
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_backTexture, 0);
+    RenderTarget::willRenderFrame();
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetTexture::didRenderFrame()
+{
+    std::swap(m_backTexture, m_frontTexture);
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetTexture::didDisplayFrame()
+{
+    std::swap(m_frontTexture, m_displayTexture);
+}
+
+void AcceleratedSurfaceDMABuf::didCreateCompositingRunLoop(RunLoop& runLoop)
+{
+    WebProcess::singleton().parentProcessConnection()->addMessageReceiver(runLoop, *this, Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_id);
+}
+
+void AcceleratedSurfaceDMABuf::willDestroyCompositingRunLoop()
+{
+    WebProcess::singleton().parentProcessConnection()->removeMessageReceiver(Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_id);
 }
 
 void AcceleratedSurfaceDMABuf::didCreateGLContext()
 {
-    WebProcess::singleton().parentProcessConnection()->addMessageReceiver(RunLoop::current(), *this, Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_webPage.identifier().toUInt64());
-
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 }
 
 void AcceleratedSurfaceDMABuf::willDestroyGLContext()
 {
-    WebProcess::singleton().parentProcessConnection()->removeMessageReceiver(Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_webPage.identifier().toUInt64());
-
     m_target = nullptr;
 
     if (m_fbo) {
@@ -262,7 +430,7 @@ void AcceleratedSurfaceDMABuf::willDestroyGLContext()
 
 uint64_t AcceleratedSurfaceDMABuf::surfaceID() const
 {
-    return m_webPage.identifier().toUInt64();
+    return m_id;
 }
 
 void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
@@ -270,7 +438,23 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
     m_target = nullptr;
     if (size.isEmpty())
         return;
-    m_target = m_isSoftwareRast ? RenderTargetSHMImage::create(m_webPage.identifier(), size) : RenderTargetEGLImage::create(m_webPage.identifier(), size);
+
+    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
+    switch (display.type()) {
+    case WebCore::PlatformDisplay::Type::Surfaceless:
+        if (display.eglExtensions().MESA_image_dma_buf_export && WebProcess::singleton().dmaBufRendererBufferMode().contains(DMABufRendererBufferMode::Hardware))
+            m_target = RenderTargetTexture::create(m_id, size);
+        else
+            m_target = RenderTargetSHMImage::create(m_id, size);
+        break;
+#if USE(GBM)
+    case WebCore::PlatformDisplay::Type::GBM:
+        m_target = RenderTargetEGLImage::create(m_id, size);
+        break;
+#endif
+    default:
+        break;
+    }
 }
 
 void AcceleratedSurfaceDMABuf::willRenderFrame()
@@ -292,16 +476,14 @@ void AcceleratedSurfaceDMABuf::didRenderFrame()
     glFlush();
 
     m_target->didRenderFrame();
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(), m_webPage.identifier());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(), m_id);
 }
 
 void AcceleratedSurfaceDMABuf::frameDone()
 {
     if (m_target)
-        m_target->swap();
+        m_target->didDisplayFrame();
     m_client.frameComplete();
 }
 
 } // namespace WebKit
-
-#endif // USE(GBM)

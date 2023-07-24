@@ -1,11 +1,19 @@
-This tests that aria-expanded changes will send notifications.
+This tests that expanded notifications will be sent when the appropriate changes occur.
 Initial expanded status: false
 Received notification: AXExpandedChanged
 Expanded status: true
 Received notification: AXExpandedChanged
 Expanded status: false
+PASS: accessibilityController.accessibleElementById('show-popover-btn').isExpanded === false
+PASS: accessibilityController.accessibleElementById('hide-popover-btn').isExpanded === false
+Received notification: AXExpandedChanged
+Expanded status: true
+PASS: accessibilityController.accessibleElementById('hide-popover-btn').isExpanded === true
+Received notification: AXExpandedChanged
+Expanded status: false
+PASS: accessibilityController.accessibleElementById('show-popover-btn').isExpanded === false
 
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+Show popover Hide popover

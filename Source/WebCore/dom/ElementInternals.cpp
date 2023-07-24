@@ -61,7 +61,7 @@ ExceptionOr<RefPtr<HTMLFormElement>> ElementInternals::form() const
     return Exception { NotSupportedError };
 }
 
-ExceptionOr<void> ElementInternals::setFormValue(std::optional<CustomElementFormValue>&& value, std::optional<CustomElementFormValue>&& state)
+ExceptionOr<void> ElementInternals::setFormValue(CustomElementFormValue&& value, std::optional<CustomElementFormValue>&& state)
 {
     if (RefPtr element = elementAsFormAssociatedCustom()) {
         element->setFormValue(WTFMove(value), WTFMove(state));

@@ -40,6 +40,8 @@
 
 - (instancetype)initWithImageAnalysisGestureDelegate:(UIView <WKImageAnalysisGestureRecognizerDelegate> *)delegate;
 
+@property (nonatomic, readonly) UIScrollView *lastTouchedScrollView;
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(IMAGE_ANALYSIS)

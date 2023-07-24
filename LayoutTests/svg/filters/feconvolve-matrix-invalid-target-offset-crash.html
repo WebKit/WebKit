@@ -1,0 +1,18 @@
+<script>
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    matrixID.targetY.baseVal = 7;
+    pID.innerHTML = 'PASS if no crash';
+}
+</script>
+<body onload=test()>
+<video src="x">
+</video>
+<svg filter="url(#filterID)" stroke-linecap="butt">
+<filter id="filterID" font-rendering="optimizeLegibility">
+<feConvolveMatrix id="matrixID" kernelMatrix="3 0 0 0 0 0 0 0 -3"/>
+</filter>
+</svg>
+<p id="pID"></p>
+</body>

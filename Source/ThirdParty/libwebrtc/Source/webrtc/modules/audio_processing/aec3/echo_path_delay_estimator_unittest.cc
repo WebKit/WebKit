@@ -70,7 +70,6 @@ TEST(EchoPathDelayEstimator, DelayEstimation) {
   constexpr size_t kNumCaptureChannels = 1;
   constexpr int kSampleRateHz = 48000;
   constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
-
   Random random_generator(42U);
   Block render(kNumBands, kNumRenderChannels);
   Block capture(/*num_bands=*/1, kNumCaptureChannels);

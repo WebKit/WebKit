@@ -40,7 +40,6 @@ struct MangledName {
     enum Kind : uint8_t {
         Type,
         Local,
-        Global,
         Parameter,
         Function,
         Field,
@@ -56,7 +55,6 @@ struct MangledName {
         static const ASCIILiteral prefixes[] = {
             "type"_s,
             "local"_s,
-            "global"_s,
             "parameter"_s,
             "function"_s,
             "field"_s,
@@ -105,15 +103,15 @@ private:
 
 void NameManglerVisitor::run()
 {
-    for (const auto& entrypoint : m_callGraph.entrypoints()) {
-        String originalName = entrypoint.function.name();
-        introduceVariable(entrypoint.function.name(), MangledName::Function);
+    auto& module = m_callGraph.ast();
+    for (auto& function : module.functions()) {
+        String originalName = function.name();
+        introduceVariable(function.name(), MangledName::Function);
         auto it = m_result.entryPoints.find(originalName);
-        RELEASE_ASSERT(it != m_result.entryPoints.end());
-        it->value.mangledName = entrypoint.function.name();
+        if (it != m_result.entryPoints.end())
+            it->value.mangledName = function.name();
     }
 
-    auto& module = m_callGraph.ast();
     for (auto& structure : module.structures())
         visit(structure);
 
@@ -138,7 +136,11 @@ void NameManglerVisitor::visitFunctionBody(AST::Function& function)
         introduceVariable(parameter.name(), MangledName::Parameter);
     }
 
+    // It's important that we call the base visitor here directly, otherwise
+    // our overwritten visitor will introduce a new ContextScope for the compound
+    // statement, which would allow shadowing the function's parameters
     AST::Visitor::visit(function.body());
+
     if (function.maybeReturnType())
         AST::Visitor::visit(*function.maybeReturnType());
 }
@@ -179,8 +181,6 @@ void NameManglerVisitor::visit(AST::Variable& variable)
             break;
         }
     }
-
-    visitVariableDeclaration(variable, MangledName::Global);
 
     const String& mangledName = variable.name();
 

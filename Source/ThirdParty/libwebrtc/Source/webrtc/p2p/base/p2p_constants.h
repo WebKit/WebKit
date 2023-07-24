@@ -40,7 +40,7 @@ extern const size_t ICE_PWD_MAX_LENGTH;
 
 RTC_EXPORT extern const int ICE_CANDIDATE_COMPONENT_RTP;
 RTC_EXPORT extern const int ICE_CANDIDATE_COMPONENT_RTCP;
-extern const int ICE_CANDIDATE_COMPONENT_DEFAULT;
+RTC_EXPORT extern const int ICE_CANDIDATE_COMPONENT_DEFAULT;
 
 // RFC 4145, SDP setup attribute values.
 extern const char CONNECTIONROLE_ACTIVE_STR[];

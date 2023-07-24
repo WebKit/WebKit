@@ -172,65 +172,6 @@ void FloatRect::scale(float sx, float sy)
     m_size.setHeight(height() * sy);
 }
 
-void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1)
-{
-    float left = std::min(p0.x(), p1.x());
-    float top = std::min(p0.y(), p1.y());
-    float right = std::max(p0.x(), p1.x());
-    float bottom = std::max(p0.y(), p1.y());
-
-    setLocationAndSizeFromEdges(left, top, right, bottom);
-}
-
-namespace {
-// Helpers for 3- and 4-way max and min.
-
-template <typename T>
-T min3(const T& v1, const T& v2, const T& v3)
-{
-    return std::min(std::min(v1, v2), v3);
-}
-
-template <typename T>
-T max3(const T& v1, const T& v2, const T& v3)
-{
-    return std::max(std::max(v1, v2), v3);
-}
-
-template <typename T>
-T min4(const T& v1, const T& v2, const T& v3, const T& v4)
-{
-    return std::min(std::min(v1, v2), std::min(v3, v4));
-}
-
-template <typename T>
-T max4(const T& v1, const T& v2, const T& v3, const T& v4)
-{
-    return std::max(std::max(v1, v2), std::max(v3, v4));
-}
-
-} // anonymous namespace
-
-void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2)
-{
-    float left = min3(p0.x(), p1.x(), p2.x());
-    float top = min3(p0.y(), p1.y(), p2.y());
-    float right = max3(p0.x(), p1.x(), p2.x());
-    float bottom = max3(p0.y(), p1.y(), p2.y());
-
-    setLocationAndSizeFromEdges(left, top, right, bottom);
-}
-
-void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& p3)
-{
-    float left = min4(p0.x(), p1.x(), p2.x(), p3.x());
-    float top = min4(p0.y(), p1.y(), p2.y(), p3.y());
-    float right = max4(p0.x(), p1.x(), p2.x(), p3.x());
-    float bottom = max4(p0.y(), p1.y(), p2.y(), p3.y());
-
-    setLocationAndSizeFromEdges(left, top, right, bottom);
-}
-
 FloatRect normalizeRect(const FloatRect& rect)
 {
     return FloatRect(std::min(rect.x(), rect.maxX()),
@@ -279,6 +220,21 @@ TextStream& operator<<(TextStream& ts, const FloatRect &r)
     }
 
     return ts << r.location() << " " << r.size();
+}
+
+Ref<JSON::Object> FloatRect::toJSONObject() const
+{
+    auto object = JSON::Object::create();
+
+    object->setObject("location"_s, m_location.toJSONObject());
+    object->setObject("size"_s, m_size.toJSONObject());
+
+    return object;
+}
+
+String FloatRect::toJSONString() const
+{
+    return toJSONObject()->toJSONString();
 }
 
 }

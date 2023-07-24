@@ -40,12 +40,15 @@ public:
     uint64_t navigationID() const { return m_navigationID; }
     void setNavigationID(uint64_t);
 
+    enum class CanIncludeCurrentDocumentLoader : bool { No, Yes };
+    static WebDocumentLoader* loaderForWebsitePolicies(const WebCore::LocalFrame&, CanIncludeCurrentDocumentLoader = CanIncludeCurrentDocumentLoader::Yes);
+
 private:
     WebDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
     void detachFromFrame() override;
 
-    uint64_t m_navigationID;
+    uint64_t m_navigationID { 0 };
 };
 
 } // namespace WebKit

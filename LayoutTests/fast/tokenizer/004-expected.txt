@@ -108,8 +108,6 @@ JavaScript1.2 executed
 JavaScript1.3 executed
 JavaScript1.4 executed
 JavaScript1.5 executed
-JavaScript1.6 executed
-JavaScript1.7 executed
 These scripts should not execute
 
 one space
@@ -136,6 +134,8 @@ javascript_
 javascript_1.0
 javascript 1.0 x
 JavaScript1
+JavaScript1.6
+JavaScript1.7
 JavaScript1.8
 JavaScript1.9
 JavaScript1.4.1

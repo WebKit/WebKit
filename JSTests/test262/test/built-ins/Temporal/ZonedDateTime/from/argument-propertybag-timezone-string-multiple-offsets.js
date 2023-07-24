@@ -9,7 +9,5 @@ features: [Temporal]
 
 const timeZone = "2021-08-19T17:30:45.123456789+01:46[+01:45:30.987654321]";
 
-const result1 = Temporal.ZonedDateTime.from({ year: 2000, month: 5, day: 2, timeZone });
-assert.sameValue(result1.timeZone.id, "+01:45:30.987654321", "Time zone string determined from bracket name");
-const result2 = Temporal.ZonedDateTime.from({ year: 2000, month: 5, day: 2, timeZone: { timeZone } });
-assert.sameValue(result2.timeZone.id, "+01:45:30.987654321", "Time zone string determined from bracket name");
+const result = Temporal.ZonedDateTime.from({ year: 2000, month: 5, day: 2, timeZone });
+assert.sameValue(result.timeZoneId, "+01:45:30.987654321", "Time zone string determined from bracket name");

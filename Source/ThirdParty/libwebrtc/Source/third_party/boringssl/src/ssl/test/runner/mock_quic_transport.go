@@ -31,6 +31,20 @@ const (
 	encryptionApplication encryptionLevel = 3
 )
 
+func (e encryptionLevel) String() string {
+	switch e {
+	case encryptionInitial:
+		return "initial"
+	case encryptionEarlyData:
+		return "early data"
+	case encryptionHandshake:
+		return "handshake"
+	case encryptionApplication:
+		return "application"
+	}
+	return fmt.Sprintf("unknown level (%d)", e)
+}
+
 // mockQUICTransport provides a record layer for sending/receiving messages
 // when testing TLS over QUIC. It is only intended for testing, as it runs over
 // an in-order reliable transport, looks nothing like the QUIC wire image, and
@@ -40,16 +54,16 @@ const (
 // Messages from TLS that are sent over a mockQUICTransport are a series of
 // records in the following format:
 //
-//   enum {
-//       initial(0), early_data(1), handshake(2), application(3), (255)
-//   } EncryptionLevel;
+//	enum {
+//	    initial(0), early_data(1), handshake(2), application(3), (255)
+//	} EncryptionLevel;
 //
-//   struct {
-//       ContentType record_type;
-//       EncryptionLevel level;
-//       CipherSuite cipher_suite;
-//       opaque encrypted_record<0..2^32-1>;
-//   } MockQUICRecord;
+//	struct {
+//	    ContentType record_type;
+//	    EncryptionLevel level;
+//	    CipherSuite cipher_suite;
+//	    opaque encrypted_record<0..2^32-1>;
+//	} MockQUICRecord;
 //
 // The "encrypted" record is the concatenation of the encryption key and
 // plaintext. It and the cipher suite exist only to check both sides agree on
@@ -74,18 +88,18 @@ func (m *mockQUICTransport) read() (recordType, []byte, error) {
 			return 0, nil, err
 		}
 		typ := recordType(header[0])
-		level := header[1]
+		level := encryptionLevel(header[1])
 		cipherSuite := binary.BigEndian.Uint16(header[2:4])
 		length := binary.BigEndian.Uint32(header[4:])
 		value := make([]byte, length)
 		if _, err := io.ReadFull(m.Conn, value); err != nil {
 			return 0, nil, fmt.Errorf("error reading record")
 		}
-		if level != byte(m.readLevel) {
-			if m.skipEarlyData && level == byte(encryptionEarlyData) {
+		if level != m.readLevel {
+			if m.skipEarlyData && level == encryptionEarlyData {
 				continue
 			}
-			return 0, nil, fmt.Errorf("received level %d does not match expected %d", level, m.readLevel)
+			return 0, nil, fmt.Errorf("received record at %s encryption level, but expected %s", level, m.readLevel)
 		}
 		if cipherSuite != m.readCipherSuite {
 			return 0, nil, fmt.Errorf("received cipher suite %d does not match expected %d", cipherSuite, m.readCipherSuite)

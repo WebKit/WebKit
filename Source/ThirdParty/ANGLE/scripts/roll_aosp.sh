@@ -156,6 +156,7 @@ unsupported_third_party_deps=(
    "third_party/llvm-build"
    "third_party/android_build_tools"
    "third_party/android_sdk"
+   "third_party/android_toolchain"
    "third_party/zlib"  # Replaced by Android's zlib
 )
 for unsupported_third_party_dep in "${unsupported_third_party_deps[@]}"; do

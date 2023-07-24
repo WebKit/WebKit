@@ -33,6 +33,9 @@
 #import "PlaybackSessionManagerProxyMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/NullPlaybackSessionInterface.h>
+#import <WebCore/PlaybackSessionInterfaceAVKit.h>
+#import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <wtf/LoggerHelper.h>
 
 namespace WebKit {

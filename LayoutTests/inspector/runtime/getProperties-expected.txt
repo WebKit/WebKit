@@ -76,7 +76,7 @@ Properties:
     "name"       =>  "bound " (string)  [configurable | isOwn]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
-    "targetFunction"  =>  "function (a, b, c){}" (function)  []
+    "targetFunction"  =>  "function(a, b, c){}" (function)  []
     "boundThis"       =>  null (object null)  []
 
 -- Running test case: Runtime.getProperties.BoundFunctionWithArguments
@@ -87,7 +87,7 @@ Properties:
     "name"       =>  "bound " (string)  [configurable | isOwn]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
-    "targetFunction"  =>  "function (a, b, c){}" (function)  []
+    "targetFunction"  =>  "function(a, b, c){}" (function)  []
     "boundThis"       =>  null (object null)  []
     "boundArgs"       =>  "Array" (object array)  []
 
@@ -99,7 +99,7 @@ Properties:
     "name"       =>  "bound " (string)  [configurable | isOwn]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
-    "targetFunction"  =>  "function (){}" (function)  []
+    "targetFunction"  =>  "function(){}" (function)  []
     "boundThis"       =>  null (object null)  []
 
 -- Running test case: Runtime.getProperties.BoundFunctionNoParametersWithArguments
@@ -110,7 +110,7 @@ Properties:
     "name"       =>  "bound " (string)  [configurable | isOwn]
     "__proto__"  =>  "function () {\n    [native code]\n}" (function)  [writable | configurable | isOwn]
 Internal Properties:
-    "targetFunction"  =>  "function (){}" (function)  []
+    "targetFunction"  =>  "function(){}" (function)  []
     "boundThis"       =>  null (object null)  []
     "boundArgs"       =>  "Array" (object array)  []
 
@@ -131,14 +131,14 @@ Properties:
     "#childClassPrivateProperty"    =>  "childClassPrivatePropertyValue" (string)  [writable | enumerable | configurable | isOwn | isPrivate]
     "length"                        =>  0 (number)  [configurable | isOwn]
     "prototype"                     =>  "PrivateMembersTestClassChild" (object)  [isOwn]
-    "childClassPublicMethod"        =>  "function childClassPublicMethod() { }" (function)  [writable | configurable | isOwn]
-    "childClassPublicGetter"        =>  get "function () { }" (function)  [configurable | isOwn]
+    "childClassPublicMethod"        =>  "childClassPublicMethod() { }" (function)  [writable | configurable | isOwn]
+    "childClassPublicGetter"        =>  get "get childClassPublicGetter() { }" (function)  [configurable | isOwn]
     "childClassPublicGetter"        =>  set undefined (undefined)  [configurable | isOwn]
     "childClassPublicSetter"        =>  get undefined (undefined)  [configurable | isOwn]
-    "childClassPublicSetter"        =>  set "function (x) { }" (function)  [configurable | isOwn]
-    "childClassPublicGetterSetter"  =>  get "function () { }" (function)  [configurable | isOwn]
-    "childClassPublicGetterSetter"  =>  set "function (x) { }" (function)  [configurable | isOwn]
-    "toString"                      =>  "function toString() { return \"<redacted>\"; }" (function)  [writable | configurable | isOwn]
+    "childClassPublicSetter"        =>  set "set childClassPublicSetter(x) { }" (function)  [configurable | isOwn]
+    "childClassPublicGetterSetter"  =>  get "get childClassPublicGetterSetter() { }" (function)  [configurable | isOwn]
+    "childClassPublicGetterSetter"  =>  set "set childClassPublicGetterSetter(x) { }" (function)  [configurable | isOwn]
+    "toString"                      =>  "toString() { return \"<redacted>\"; }" (function)  [writable | configurable | isOwn]
     "childClassPublicProperty"      =>  "childClassPublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
     "name"                          =>  "PrivateMembersTestClassChild" (string)  [configurable | isOwn]
     "__proto__"                     =>  "<redacted>" (function class)  [writable | configurable | isOwn]
@@ -148,13 +148,13 @@ Evaluating expression...
 Getting own properties...
 Properties:
     "constructor"                      =>  "<redacted>" (function class)  [writable | configurable | isOwn]
-    "childInstancePublicMethod"        =>  "function childInstancePublicMethod() { }" (function)  [writable | configurable | isOwn]
-    "childInstancePublicGetter"        =>  get "function () { }" (function)  [configurable | isOwn]
+    "childInstancePublicMethod"        =>  "childInstancePublicMethod() { }" (function)  [writable | configurable | isOwn]
+    "childInstancePublicGetter"        =>  get "get childInstancePublicGetter() { }" (function)  [configurable | isOwn]
     "childInstancePublicGetter"        =>  set undefined (undefined)  [configurable | isOwn]
     "childInstancePublicSetter"        =>  get undefined (undefined)  [configurable | isOwn]
-    "childInstancePublicSetter"        =>  set "function (x) { }" (function)  [configurable | isOwn]
-    "childInstancePublicGetterSetter"  =>  get "function () { }" (function)  [configurable | isOwn]
-    "childInstancePublicGetterSetter"  =>  set "function (x) { }" (function)  [configurable | isOwn]
+    "childInstancePublicSetter"        =>  set "set childInstancePublicSetter(x) { }" (function)  [configurable | isOwn]
+    "childInstancePublicGetterSetter"  =>  get "get childInstancePublicGetterSetter() { }" (function)  [configurable | isOwn]
+    "childInstancePublicGetterSetter"  =>  set "set childInstancePublicGetterSetter(x) { }" (function)  [configurable | isOwn]
     "__proto__"                        =>  "PrivateMembersTestClassParent" (object)  [writable | configurable | isOwn]
 
 -- Running test case: Runtime.getProperties.Promise.Resolved
@@ -163,7 +163,7 @@ Getting own properties...
 Properties:
     "__proto__"  =>  "Promise" (object)  [writable | configurable | isOwn]
 Internal Properties:
-    "status"  =>  "resolved" (string)  []
+    "status"  =>  "fulfilled" (string)  []
     "result"  =>  123 (number)  []
 
 -- Running test case: Runtime.getProperties.Promise.Rejected

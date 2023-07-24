@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,44 +30,54 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h>
+#include <WebCore/WebGPUPipelineLayoutDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::PipelineLayoutDescriptor& pipelineLayoutDescriptor)
+std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::PipelineLayoutDescriptor& pipelineLayoutDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(pipelineLayoutDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(pipelineLayoutDescriptor));
     if (!base)
         return std::nullopt;
 
+    std::optional<Vector<WebGPUIdentifier>> optionalBindGroupLayouts = std::nullopt;
     Vector<WebGPUIdentifier> bindGroupLayouts;
-    bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts.size());
-    for (auto backingBindGroupLayout : pipelineLayoutDescriptor.bindGroupLayouts) {
-        auto entry = convertToBacking(backingBindGroupLayout);
-        if (!entry)
-            return std::nullopt;
-        bindGroupLayouts.uncheckedAppend(entry);
+    if (pipelineLayoutDescriptor.bindGroupLayouts) {
+        bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
+        for (auto backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts) {
+            auto entry = convertToBacking(backingBindGroupLayout);
+            if (!entry)
+                return std::nullopt;
+            bindGroupLayouts.uncheckedAppend(entry);
+        }
+
+        optionalBindGroupLayouts = bindGroupLayouts;
     }
 
-    return { { WTFMove(*base), WTFMove(bindGroupLayouts) } };
+    return { { WTFMove(*base), WTFMove(optionalBindGroupLayouts) } };
 }
 
-std::optional<PAL::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingContext::convertFromBacking(const PipelineLayoutDescriptor& pipelineLayoutDescriptor)
+std::optional<WebCore::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingContext::convertFromBacking(const PipelineLayoutDescriptor& pipelineLayoutDescriptor)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(pipelineLayoutDescriptor));
     if (!base)
         return std::nullopt;
 
-    Vector<std::reference_wrapper<PAL::WebGPU::BindGroupLayout>> bindGroupLayouts;
-    bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts.size());
-    for (const auto& backingBindGroupLayout : pipelineLayoutDescriptor.bindGroupLayouts) {
-        auto* entry = convertBindGroupLayoutFromBacking(backingBindGroupLayout);
-        if (!entry)
-            return std::nullopt;
-        bindGroupLayouts.uncheckedAppend(*entry);
+    std::optional<Vector<std::reference_wrapper<WebCore::WebGPU::BindGroupLayout>>> optionalBindGroupLayouts = std::nullopt;
+    Vector<std::reference_wrapper<WebCore::WebGPU::BindGroupLayout>> bindGroupLayouts;
+    if (pipelineLayoutDescriptor.bindGroupLayouts) {
+        bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
+        for (const auto& backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts) {
+            auto* entry = convertBindGroupLayoutFromBacking(backingBindGroupLayout);
+            if (!entry)
+                return std::nullopt;
+            bindGroupLayouts.uncheckedAppend(*entry);
+        }
+
+        optionalBindGroupLayouts = bindGroupLayouts;
     }
 
-    return { { WTFMove(*base), WTFMove(bindGroupLayouts) } };
+    return { { WTFMove(*base), WTFMove(optionalBindGroupLayouts) } };
 }
 
 } // namespace WebKit

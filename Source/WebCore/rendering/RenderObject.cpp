@@ -224,7 +224,7 @@ bool RenderObject::isBlockContainer() const
         || display == DisplayType::TableCaption) && !isRenderReplaced();
 }
 
-void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowState state, const RenderElement* fragmentedFlowRoot, SkipDescendentFragmentedFlow skipDescendentFragmentedFlow)
+void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowState state, SkipDescendentFragmentedFlow skipDescendentFragmentedFlow)
 {
     setFragmentedFlowState(state);
 
@@ -235,7 +235,7 @@ void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowStat
         // If the child is a fragmentation context it already updated the descendants flag accordingly.
         if (child.isRenderFragmentedFlow() && skipDescendentFragmentedFlow == SkipDescendentFragmentedFlow::Yes)
             continue;
-        if (fragmentedFlowRoot && child.isOutOfFlowPositioned()) {
+        if (child.isOutOfFlowPositioned()) {
             // Fragmented status propagation stops at out-of-flow boundary.
             auto isInsideMulticolumnFlow = [&] {
                 auto* containingBlock = child.containingBlock();
@@ -243,14 +243,13 @@ void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowStat
                     ASSERT_NOT_REACHED();
                     return false;
                 }
-                // It's ok to only check the first level containing block (as opposed to the containing block chain) as setFragmentedFlowStateIncludingDescendants is top to down.
-                return containingBlock->isDescendantOf(fragmentedFlowRoot);
+                return containingBlock->fragmentedFlowState() == InsideInFragmentedFlow;
             };
             if (!isInsideMulticolumnFlow())
                 continue;
         }
         ASSERT(skipDescendentFragmentedFlow == SkipDescendentFragmentedFlow::No || state != child.fragmentedFlowState());
-        child.setFragmentedFlowStateIncludingDescendants(state, fragmentedFlowRoot, skipDescendentFragmentedFlow);
+        child.setFragmentedFlowStateIncludingDescendants(state, skipDescendentFragmentedFlow);
     }
 }
 
@@ -292,8 +291,7 @@ void RenderObject::initializeFragmentedFlowStateOnInsertion()
     if (fragmentedFlowState() == computedState)
         return;
 
-    auto* enclosingFragmentedFlow = locateEnclosingFragmentedFlow();
-    setFragmentedFlowStateIncludingDescendants(computedState, enclosingFragmentedFlow ? enclosingFragmentedFlow->parent() : nullptr, SkipDescendentFragmentedFlow::No);
+    setFragmentedFlowStateIncludingDescendants(computedState, SkipDescendentFragmentedFlow::No);
 }
 
 void RenderObject::resetFragmentedFlowStateOnRemoval()
@@ -310,8 +308,7 @@ void RenderObject::resetFragmentedFlowStateOnRemoval()
     if (isRenderFragmentedFlow())
         return;
 
-    auto* enclosingFragmentedFlow = this->enclosingFragmentedFlow();
-    setFragmentedFlowStateIncludingDescendants(NotInsideFragmentedFlow, enclosingFragmentedFlow ? enclosingFragmentedFlow->parent() : nullptr);
+    setFragmentedFlowStateIncludingDescendants(NotInsideFragmentedFlow);
 }
 
 void RenderObject::setParent(RenderElement* parent)
@@ -918,7 +915,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     // Issue repaint on the renderer with outline: auto.
     for (const auto* renderer = this; renderer; renderer = renderer->parent()) {
         const auto* originalRenderer = renderer;
-        if (is<RenderMultiColumnSet>(renderer->previousSibling())) {
+        if (is<RenderMultiColumnSet>(renderer->previousSibling()) && !renderer->isLegend()) {
             auto previousMultiColumnSet = downcast<RenderMultiColumnSet>(renderer->previousSibling());
             auto enclosingMultiColumnFlow = previousMultiColumnSet->multiColumnFlow();
             auto& previousMultiColumnSetBox = downcast<RenderBox>(*renderer);
@@ -2558,30 +2555,8 @@ static bool coalesceSelectionGeometryWithAdjacentQuadsIfPossible(SelectionGeomet
         return true;
 
     auto areCloseEnoughToCoalesce = [](const FloatPoint& first, const FloatPoint& second) {
-        constexpr float maxDistanceBetweenBoundaryPoints = 2;
+        constexpr float maxDistanceBetweenBoundaryPoints = 8;
         return (first - second).diagonalLengthSquared() <= maxDistanceBetweenBoundaryPoints * maxDistanceBetweenBoundaryPoints;
-    };
-
-    auto leadingAndTrailingEdgesOverlap = [](const FloatQuad& first, const FloatQuad& second) {
-        bool intersects = false;
-
-        for (const auto& p : { first.p1(), first.p2(), first.p3(), first.p4() }) {
-            if (second.containsPoint(p))
-                intersects = true;
-        }
-
-        for (const auto& p : { second.p1(), second.p2(), second.p3(), second.p4() }) {
-            if (first.containsPoint(p))
-                intersects = true;
-        }
-
-        if (!intersects)
-            return false;
-
-        auto isTrailingSideOverlapping = (first.p1() - first.p2()).diagonalLength() + (second.p1() - second.p2()).diagonalLength() > (first.p1() - second.p2()).diagonalLength();
-        auto isLeadingSideOverlapping = (first.p3() - first.p4()).diagonalLength() + (second.p3() - second.p4()).diagonalLength() > (first.p3() - second.p4()).diagonalLength();
-
-        return isTrailingSideOverlapping && isLeadingSideOverlapping;
     };
 
     auto currentQuad = current.quad();
@@ -2589,7 +2564,7 @@ static bool coalesceSelectionGeometryWithAdjacentQuadsIfPossible(SelectionGeomet
     if (std::abs(rotatedBoundingRectWithMinimumAngleOfRotation(currentQuad).angleInRadians - rotatedBoundingRectWithMinimumAngleOfRotation(nextQuad).angleInRadians) > radiansPerDegreeFloat)
         return false;
 
-    if ((!areCloseEnoughToCoalesce(currentQuad.p2(), nextQuad.p1()) || !areCloseEnoughToCoalesce(currentQuad.p3(), nextQuad.p4())) && !leadingAndTrailingEdgesOverlap(currentQuad, nextQuad) && !leadingAndTrailingEdgesOverlap(nextQuad, currentQuad))
+    if (!areCloseEnoughToCoalesce(currentQuad.p2(), nextQuad.p1()) || !areCloseEnoughToCoalesce(currentQuad.p3(), nextQuad.p4()))
         return false;
 
     currentQuad.setP2(nextQuad.p2());
@@ -2698,12 +2673,7 @@ String RenderObject::debugDescription() const
 
 bool RenderObject::isSkippedContent() const
 {
-    return parent() && parent()->style().effectiveSkipsContent();
-}
-
-bool RenderObject::shouldSkipContent() const
-{
-    return style().contentVisibility() == ContentVisibility::Hidden;
+    return parent() && parent()->style().effectiveSkippedContent();
 }
 
 TextStream& operator<<(TextStream& ts, const RenderObject& renderer)

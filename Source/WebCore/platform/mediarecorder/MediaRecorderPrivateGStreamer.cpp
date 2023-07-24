@@ -363,6 +363,8 @@ void MediaRecorderPrivateGStreamer::notifyEOS()
     m_eosCondition.notifyAll();
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER_TRANSCODER)

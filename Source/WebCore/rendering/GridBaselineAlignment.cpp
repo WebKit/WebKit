@@ -31,6 +31,7 @@
 #include "config.h"
 #include "GridBaselineAlignment.h"
 
+#include "BaselineAlignmentInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderStyleConstants.h"
 
@@ -112,10 +113,10 @@ const BaselineGroup& GridBaselineAlignment::baselineGroupForChild(ItemPosition p
 {
     ASSERT(isBaselinePosition(preference));
     bool isRowAxisContext = baselineAxis == GridColumnAxis;
-    auto& contextsMap = isRowAxisContext ? m_rowAxisAlignmentContext : m_colAxisAlignmentContext;
-    auto* context = contextsMap.get(sharedContext);
-    ASSERT(context);
-    return context->sharedGroup(child, preference);
+    auto& baselineAlignmentStateMap = isRowAxisContext ? m_rowAxisBaselineAlignmentStates : m_colAxisBaselineAlignmentStates;
+    auto* baselineAlignmentState = baselineAlignmentStateMap.get(sharedContext);
+    ASSERT(baselineAlignmentState);
+    return baselineAlignmentState->sharedGroup(child, preference);
 }
 
 void GridBaselineAlignment::updateBaselineAlignmentContext(ItemPosition preference, unsigned sharedContext, const RenderBox& child, GridAxis baselineAxis)
@@ -129,12 +130,12 @@ void GridBaselineAlignment::updateBaselineAlignmentContext(ItemPosition preferen
     // Looking up for a shared alignment context perpendicular to the
     // baseline axis.
     bool isRowAxisContext = baselineAxis == GridColumnAxis;
-    auto& contextsMap = isRowAxisContext ? m_rowAxisAlignmentContext : m_colAxisAlignmentContext;
+    auto& baselineAlignmentStateMap = isRowAxisContext ? m_rowAxisBaselineAlignmentStates : m_colAxisBaselineAlignmentStates;
     // Looking for a compatible baseline-sharing group.
-    if (auto* contextSearch = contextsMap.get(sharedContext))
-        contextSearch->updateSharedGroup(child, preference, ascent);
+    if (auto* baselineAlignmentStateSearch = baselineAlignmentStateMap.get(sharedContext))
+        baselineAlignmentStateSearch->updateSharedGroup(child, preference, ascent);
     else
-        contextsMap.add(sharedContext, makeUnique<BaselineContext>(child, preference, ascent));
+        baselineAlignmentStateMap.add(sharedContext, makeUnique<BaselineAlignmentState>(child, preference, ascent));
 }
 
 LayoutUnit GridBaselineAlignment::baselineOffsetForChild(ItemPosition preference, unsigned sharedContext, const RenderBox& child, GridAxis baselineAxis) const
@@ -149,9 +150,9 @@ LayoutUnit GridBaselineAlignment::baselineOffsetForChild(ItemPosition preference
 void GridBaselineAlignment::clear(GridAxis baselineAxis)
 {
     if (baselineAxis == GridColumnAxis)
-        m_rowAxisAlignmentContext.clear();
+        m_rowAxisBaselineAlignmentStates.clear();
     else
-        m_colAxisAlignmentContext.clear();
+        m_colAxisBaselineAlignmentStates.clear();
 }
 
 } // namespace WebCore

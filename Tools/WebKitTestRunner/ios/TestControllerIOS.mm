@@ -328,6 +328,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         [webView setAllowedMenuActions:nil];
         webView._dragInteractionPolicy = dragInteractionPolicy(options);
         webView.focusStartsInputSessionPolicy = focusStartsInputSessionPolicy(options);
+        webView.suppressInputAccessoryView = options.suppressInputAccessoryView();
 
 #if HAVE(UIFINDINTERACTION)
         webView.findInteractionEnabled = options.findInteractionEnabled();
@@ -515,7 +516,7 @@ UIPasteboardConsistencyEnforcer *TestController::pasteboardConsistencyEnforcer()
     return m_pasteboardConsistencyEnforcer.get();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 void TestController::lockScreenOrientation(WKScreenOrientationType orientation)
 {
     TestRunnerWKWebView *webView = mainWebView()->platformView();

@@ -86,6 +86,7 @@ var testData = [
     {
         tag: "hy-arevmda",
         canonical: "hyw",
+        maximized: "hyw-Armn-AM",
     },
 ];
 

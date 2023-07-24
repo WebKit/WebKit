@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUFilterMode.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUFilterMode.h>
 
 namespace WebCore {
 
@@ -35,13 +35,13 @@ enum class GPUFilterMode : uint8_t {
     Linear,
 };
 
-inline PAL::WebGPU::FilterMode convertToBacking(GPUFilterMode filterMode)
+inline WebGPU::FilterMode convertToBacking(GPUFilterMode filterMode)
 {
     switch (filterMode) {
     case GPUFilterMode::Nearest:
-        return PAL::WebGPU::FilterMode::Nearest;
+        return WebGPU::FilterMode::Nearest;
     case GPUFilterMode::Linear:
-        return PAL::WebGPU::FilterMode::Linear;
+        return WebGPU::FilterMode::Linear;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

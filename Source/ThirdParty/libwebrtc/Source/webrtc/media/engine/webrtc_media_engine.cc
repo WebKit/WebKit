@@ -10,13 +10,19 @@
 
 #include "media/engine/webrtc_media_engine.h"
 
+#include <algorithm>
 #include <map>
 #include <memory>
+#include <string>
 #include <utility>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
+#include "api/transport/field_trial_based_config.h"
+#include "media/base/media_constants.h"
 #include "media/engine/webrtc_voice_engine.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 
 #ifdef HAVE_WEBRTC_VIDEO
 #include "media/engine/webrtc_video_engine.h"

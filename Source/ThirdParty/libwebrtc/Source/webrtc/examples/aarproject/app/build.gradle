@@ -8,7 +8,7 @@ android {
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -48,6 +48,6 @@ dependencies {
     implementation fileTree(dir: '../../androidapp/third_party/autobanh/lib', include: ['autobanh.jar'])
     implementation 'androidx.annotation:annotation:1.2.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.androidx.test:runner:1.0.1'
+    androidTestImplementation 'com.androidx.test.espresso:espresso-core:3.0.1'
 }

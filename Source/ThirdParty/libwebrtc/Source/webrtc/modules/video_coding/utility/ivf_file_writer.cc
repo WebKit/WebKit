@@ -160,15 +160,6 @@ bool IvfFileWriter::WriteFrame(const EncodedImage& encoded_image,
     return false;
   RTC_DCHECK_EQ(codec_type_, codec_type);
 
-  if ((encoded_image._encodedWidth > 0 || encoded_image._encodedHeight > 0) &&
-      (encoded_image._encodedHeight != height_ ||
-       encoded_image._encodedWidth != width_)) {
-    RTC_LOG(LS_WARNING)
-        << "Incoming frame has resolution different from previous: (" << width_
-        << "x" << height_ << ") -> (" << encoded_image._encodedWidth << "x"
-        << encoded_image._encodedHeight << ")";
-  }
-
   int64_t timestamp = using_capture_timestamps_
                           ? encoded_image.capture_time_ms_
                           : wrap_handler_.Unwrap(encoded_image.Timestamp());

@@ -99,7 +99,7 @@ namespace TestWebKitAPI {
 
 
 // FIXME: Re-enable this test once webkit.org/b/208451 is resolved.
-#if !PLATFORM(IOS)
+#if !(PLATFORM(IOS) || PLATFORM(VISION))
 TEST(WKWebsiteDataStore, RemoveAndFetchData)
 {
     readyToContinue = false;
@@ -115,7 +115,7 @@ TEST(WKWebsiteDataStore, RemoveAndFetchData)
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 }
-#endif // !PLATFORM(IOS)
+#endif // !(PLATFORM(IOS) || PLATFORM(VISION))
 
 TEST(WKWebsiteDataStore, RemoveEphemeralData)
 {
@@ -1049,6 +1049,90 @@ TEST(WKWebsiteDataStoreConfiguration, QuotaRatioDefaultValue)
     EXPECT_EQ([[websiteDataStoreConfiguration.get() totalQuotaRatio] doubleValue], 0.8);
 }
 
+TEST(WKWebsiteDataStoreConfiguration, StandardVolumeCapacity)
+{
+    auto uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    readyToContinue = false;
+    [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
+    // Origin quota is 7 MB; standard reported origin quota is 1 MB.
+    [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithInteger:14 * MB]];
+    [websiteDataStoreConfiguration.get() setStandardVolumeCapacity:[NSNumber numberWithInteger:2 * MB]];
+    [websiteDataStoreConfiguration.get() setOriginQuotaRatio:[NSNumber numberWithDouble:0.5]];
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    auto handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSString *htmlString = @"<script> \
+        var db = null; \
+        var number = 0; \
+        function checkQuota() { \
+            navigator.storage.estimate().then((estimate) => { \
+                window.webkit.messageHandlers.testHandler.postMessage(estimate.quota.toString()); \
+            }); \
+        } \
+        function storeMB(n) { \
+        try { \
+            const size = Math.ceil(n * 1024 * 1024); \
+            const item = new Array(size).join('x'); \
+            const os = db.transaction('os', 'readwrite').objectStore('os'); \
+            var putRequest = os.put(item, ++number); \
+            putRequest.onsuccess = checkQuota; \
+            putRequest.onerror = function(event) { window.webkit.messageHandlers.testHandler.postMessage('Error'); }; \
+        } catch(e) { \
+            window.webkit.messageHandlers.testHandler.postMessage(e.toString()); \
+        } \
+        } \
+        var request = indexedDB.open('testReportedQuota'); \
+        request.onupgradeneeded = function(event) { \
+            db = event.target.result; \
+            db.createObjectStore('os'); \
+        }; \
+        request.onsuccess = function() { window.webkit.messageHandlers.testHandler.postMessage('Opened'); }; \
+        request.onerror = function(event) { window.webkit.messageHandlers.testHandler.postMessage(event.target.error.name); }; \
+    </script>";
+    receivedScriptMessage = false;
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"Opened", [lastScriptMessage body]);
+
+    // Usage is 0.
+    receivedScriptMessage = false;
+    [webView evaluateJavaScript:@"checkQuota()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ([[NSNumber numberWithInteger:1 * MB] stringValue], [lastScriptMessage body]);
+
+    // Increase usage to a little over 0.8 MB - reported quota is doubled.
+    receivedScriptMessage = false;
+    [webView evaluateJavaScript:@"storeMB(0.8)" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ([[NSNumber numberWithInteger:2 * MB] stringValue], [lastScriptMessage body]);
+
+    // Increase usage to over 1.8 MB - reported quota is doubled.
+    receivedScriptMessage = false;
+    [webView evaluateJavaScript:@"storeMB(1)" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ([[NSNumber numberWithInteger:4 * MB] stringValue], [lastScriptMessage body]);
+
+    // Increase usage to over 2.8 MB - reported quota is actual quota.
+    receivedScriptMessage = false;
+    [webView evaluateJavaScript:@"storeMB(1)" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ([[NSNumber numberWithInteger:7 * MB] stringValue], [lastScriptMessage body]);
+
+    // Increase usage to over 3.8 MB - reported quota is actual quota.
+    receivedScriptMessage = false;
+    [webView evaluateJavaScript:@"storeMB(1)" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ([[NSNumber numberWithInteger:7 * MB] stringValue], [lastScriptMessage body]);
+}
+
 TEST(WKWebsiteDataStorePrivate, CompletionHandlerForRemovalFromNetworkProcess)
 {
     __block bool done = false;
@@ -1100,5 +1184,24 @@ TEST(WKWebsiteDataStorePrivate, CompletionHandlerForRemovalFromNetworkProcess)
     EXPECT_EQ(completionHandlerNumber, 2u);
 }
 
+#if PLATFORM(MAC)
+
+TEST(WKWebsiteDataStore, DoNotLogNetworkConnectionsInEphemeralSessions)
+{
+    HTTPServer server { { }, HTTPServer::Protocol::Http };
+    server.addResponse("/index.html"_s, { "<html><body>Hello world</body></html>"_s });
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:WKWebsiteDataStore.nonPersistentDataStore];
+
+    auto urlToLoad = [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%u/index.html", server.port()]];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:urlToLoad]];
+
+    EXPECT_EQ(server.totalConnections(), 1U);
+    EXPECT_EQ([webView collectLogsForNewConnections].count, 0U);
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI

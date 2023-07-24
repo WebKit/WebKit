@@ -58,6 +58,9 @@ public:
     unsigned endOffset() const final { return SimpleRange::endOffset(); }
     bool collapsed() const final { return SimpleRange::collapsed(); }
 
+    // https://dom.spec.whatwg.org/#staticrange-valid
+    bool computeValidity() const;
+
     void visitNodesConcurrently(JSC::AbstractSlotVisitor&) const;
 
 private:

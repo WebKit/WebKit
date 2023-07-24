@@ -1,0 +1,52 @@
+Tests that AttributedStrings are retrieved properly from line ranges within a contenteditable with children.
+
+All text in the contenteditable: "AXFont - {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}, AXFont - {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}, AXFont - {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}, AXFont - {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}, First line.
+Some text click me more text.
+Another line."
+First line: "AXFont - {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}, First line."
+Second line: "AXFont - {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}, AXFont - {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}, AXFont - {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}, Some text click me more text."
+third line: "AXFont - {
+    AXFontFamily = Times;
+    AXFontItalic = 1;
+    AXFontName = "Times-Italic";
+    AXFontSize = 16;
+}, Another line."
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First line.
+Some text click me more text.
+Another line.

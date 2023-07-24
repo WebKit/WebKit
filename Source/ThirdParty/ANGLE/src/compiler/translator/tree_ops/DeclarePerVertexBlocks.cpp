@@ -489,7 +489,11 @@ void AddPerVertexDecl(TIntermBlock *root, const TVariable *variable)
 }
 }  // anonymous namespace
 
-bool DeclarePerVertexBlocks(TCompiler *compiler, TIntermBlock *root, TSymbolTable *symbolTable)
+bool DeclarePerVertexBlocks(TCompiler *compiler,
+                            TIntermBlock *root,
+                            TSymbolTable *symbolTable,
+                            const TVariable **inputPerVertexOut,
+                            const TVariable **outputPerVertexOut)
 {
     if (compiler->getShaderType() == GL_COMPUTE_SHADER ||
         compiler->getShaderType() == GL_FRAGMENT_SHADER)
@@ -528,6 +532,15 @@ bool DeclarePerVertexBlocks(TCompiler *compiler, TIntermBlock *root, TSymbolTabl
 
     AddPerVertexDecl(root, traverser.getRedeclaredPerVertexOutVar());
     AddPerVertexDecl(root, traverser.getRedeclaredPerVertexInVar());
+
+    if (inputPerVertexOut)
+    {
+        *inputPerVertexOut = traverser.getRedeclaredPerVertexInVar();
+    }
+    if (outputPerVertexOut)
+    {
+        *outputPerVertexOut = traverser.getRedeclaredPerVertexOutVar();
+    }
 
     return compiler->validateAST(root);
 }

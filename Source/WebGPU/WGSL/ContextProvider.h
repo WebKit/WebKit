@@ -53,16 +53,16 @@ protected:
 
     ContextProvider();
 
-    const ContextValue& introduceVariable(const AST::Identifier&, const ContextValue&);
-    const ContextValue* readVariable(const AST::Identifier&) const;
+    const ContextValue& introduceVariable(const String&, const ContextValue&);
+    const ContextValue* readVariable(const String&) const;
 
 private:
     class Context {
     public:
         Context(const Context *const parent);
 
-        const ContextValue* lookup(const AST::Identifier&) const;
-        const ContextValue& add(const AST::Identifier&, const ContextValue&);
+        const ContextValue* lookup(const String&) const;
+        const ContextValue& add(const String&, const ContextValue&);
 
     private:
         const Context* m_parent { nullptr };

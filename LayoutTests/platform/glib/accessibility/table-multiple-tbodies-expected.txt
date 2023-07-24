@@ -37,7 +37,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
-AXRole: AXCell
+AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition:  { 409.000, 9.00000 }
@@ -47,14 +47,14 @@ AXDescription:
 AXValue: b
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td
+AXPlatformAttributes: computed-role:columnheader, tag:td
 ------------
 
 AXRole: AXColumnHeader
@@ -375,7 +375,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:columnheader, tag:th
 ------------
-AXRole: AXCell
+AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition:  { 409.000, 9.00000 }
@@ -385,14 +385,14 @@ AXDescription:
 AXValue: b
 AXFocusable: 0
 AXFocused: 0
-AXSelectable: 1
+AXSelectable: 0
 AXSelected: 0
 AXMultiSelectable: 0
 AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:cell, tag:td
+AXPlatformAttributes: computed-role:columnheader, tag:td
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow

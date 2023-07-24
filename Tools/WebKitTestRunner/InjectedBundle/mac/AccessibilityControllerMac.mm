@@ -48,6 +48,21 @@
 
 namespace WTR {
 
+RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
+{
+    auto page = InjectedBundle::singleton().page()->page();
+    if (!WKAccessibilityRootObject(page))
+        return nullptr;
+
+    RetainPtr<PlatformUIElement> focus;
+    executeOnAXThreadAndWait([&focus] () {
+        focus = static_cast<PlatformUIElement>(WKAccessibilityFocusedUIElement());
+    });
+    if (focus)
+        return AccessibilityUIElement::create(focus.get());
+    return nullptr;
+}
+
 bool AccessibilityController::addNotificationListener(JSValueRef functionCallback)
 {
     if (!functionCallback)

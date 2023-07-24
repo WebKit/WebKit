@@ -38,9 +38,12 @@ public:
     ~DOMMimeTypeArray();
 
     unsigned length() const;
+    bool isSupportedPropertyIndex(unsigned index) const { return index < m_types.size(); }
     RefPtr<DOMMimeType> item(unsigned index);
     RefPtr<DOMMimeType> namedItem(const AtomString& propertyName);
     Vector<AtomString> supportedPropertyNames() const;
+
+    bool isSupportedPropertyName(const AtomString&) const;
 
     Navigator* navigator() { return m_navigator.get(); }
 

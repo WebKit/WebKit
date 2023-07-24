@@ -178,6 +178,7 @@ void compressionOutputCallback(void* encoder,
   int framesLeft;
   std::vector<uint8_t> _nv12ScaleBuffer;
   bool _useAnnexB;
+  bool _isLowLatencyEnabled;
   bool _needsToSendDescription;
   RTCVideoEncoderDescriptionCallback _descriptionCallback;
 }
@@ -194,8 +195,10 @@ void compressionOutputCallback(void* encoder,
     _codecInfo = codecInfo;
     _bitrateAdjuster.reset(new webrtc::BitrateAdjuster(.5, .95));
     _useAnnexB = true;
+    _isLowLatencyEnabled = true;
     RTC_CHECK([codecInfo.name isEqualToString:@"H265"]);
   }
+
   return self;
 }
 
@@ -223,6 +226,11 @@ void compressionOutputCallback(void* encoder,
 {
     _useAnnexB = useAnnexB;
     _needsToSendDescription = !useAnnexB;
+}
+
+- (void)setLowLatency:(bool)enabled
+{
+    _isLowLatencyEnabled = enabled;
 }
 
 - (void)setDescriptionCallback:(RTCVideoEncoderDescriptionCallback)callback
@@ -409,7 +417,8 @@ void compressionOutputCallback(void* encoder,
   CFDictionarySetValue(encoder_specs, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kCFBooleanTrue);
 #endif
 #if HAVE_VTB_REQUIREDLOWLATENCY
-  CFDictionarySetValue(encoder_specs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
+  if (_isLowLatencyEnabled)
+    CFDictionarySetValue(encoder_specs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
 #endif
   OSStatus status = VTCompressionSessionCreate(
       nullptr,  // use default allocator
@@ -460,7 +469,7 @@ void compressionOutputCallback(void* encoder,
 - (void)configureCompressionSession {
   RTC_DCHECK(_compressionSession);
   SetVTSessionProperty(_compressionSession, nullptr, kVTCompressionPropertyKey_RealTime,
-                       false);
+                       _isLowLatencyEnabled);
   // SetVTSessionProperty(_compressionSession,
   // kVTCompressionPropertyKey_ProfileLevel, _profile);
   SetVTSessionProperty(_compressionSession, nullptr,

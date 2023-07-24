@@ -32,8 +32,8 @@ declare_args() {
   # Enable shared ring buffer command buffer allocator
   angle_enable_vulkan_shared_ring_buffer_cmd_alloc = false
 
-  # Enable using CRC for pipeline cache data (for debug mode)
-  angle_enable_crc_for_pipeline_cache = false
+  # Enable using CRC for pipeline cache data
+  angle_enable_crc_for_pipeline_cache = true
 }
 
 angle_source_set("angle_vk_mem_alloc_wrapper") {
@@ -79,8 +79,6 @@ config("angle_vulkan_backend_config") {
     defines += [ "ANGLE_ENABLE_MEMORY_ALLOC_LOGGING=1" ]
   }
 
-  # Ensures that CRC is used only in debug mode.
-  assert(is_debug || !angle_enable_crc_for_pipeline_cache)
   if (angle_enable_crc_for_pipeline_cache) {
     defines += [ "ANGLE_ENABLE_CRC_FOR_PIPELINE_CACHE" ]
   }

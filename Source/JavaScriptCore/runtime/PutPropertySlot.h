@@ -39,7 +39,7 @@ using CustomAccessorValueFunc = FunctionPtr<CustomAccessorPtrTag, bool(JSGlobalO
 class PutPropertySlot {
 public:
     enum Type : uint8_t { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomValue, CustomAccessor };
-    enum Context : uint8_t { UnknownContext, PutById, PutByIdEval, ReflectSet };
+    enum Context : uint8_t { UnknownContext, PutById, PutByIdEval };
 
     PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext, bool isInitialization = false)
         : m_base(nullptr)

@@ -26,12 +26,12 @@
 #include "common/platform.h"
 
 #if ANGLE_ENABLE_GLSL && ANGLE_ENABLE_APPLE_WORKAROUNDS
-#include "compiler/translator/tree_ops/apple/AddAndTrueToLoopCondition.cpp"
-#include "compiler/translator/tree_ops/apple/RewriteDoWhile.cpp"
-#include "compiler/translator/tree_ops/apple/RewriteRowMajorMatrices.cpp"
-#include "compiler/translator/tree_ops/apple/RewriteUnaryMinusOperatorFloat.cpp"
-#include "compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp"
+#    include "compiler/translator/tree_ops/apple/AddAndTrueToLoopCondition.cpp"
+#    include "compiler/translator/tree_ops/apple/RewriteDoWhile.cpp"
+#    include "compiler/translator/tree_ops/apple/RewriteRowMajorMatrices.cpp"
+#    include "compiler/translator/tree_ops/apple/RewriteUnaryMinusOperatorFloat.cpp"
+#    include "compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp"
 #endif
 #if ANGLE_ENABLE_GLSL
-#include "compiler/translator/tree_ops/gl/RegenerateStructNames.cpp"
+#    include "compiler/translator/tree_ops/gl/RegenerateStructNames.cpp"
 #endif

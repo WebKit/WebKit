@@ -46,6 +46,7 @@
 #include "PathUtilities.h"
 #include "PlatformMouseEvent.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -111,12 +112,12 @@ static bool shouldAllowAccessibilityRoleAsPointerCursorReplacement(const Element
     }
 }
 
-static bool elementMatchesHoverRules(Element& element)
+bool elementMatchesHoverRules(Element& element)
 {
     bool foundHoverRules = false;
     bool initialValue = element.isUserActionElement() && element.document().userActionElements().isHovered(element);
 
-    for (auto key : Style::makePseudoClassInvalidationKeys(CSSSelector::PseudoClassHover, element)) {
+    for (auto key : Style::makePseudoClassInvalidationKeys(CSSSelector::PseudoClassType::Hover, element)) {
         auto& ruleSets = element.styleResolver().ruleSets();
         auto* invalidationRuleSets = ruleSets.pseudoClassInvalidationRuleSets(key);
         if (!invalidationRuleSets)
@@ -147,6 +148,9 @@ static bool shouldAllowNonPointerCursorForElement(const Element& element)
         return true;
 #endif
 
+    if (is<HTMLTextFormControlElement>(element))
+        return !element.focused();
+
     if (is<HTMLFormControlElement>(element))
         return true;
 
@@ -155,6 +159,32 @@ static bool shouldAllowNonPointerCursorForElement(const Element& element)
 
     if (shouldAllowAccessibilityRoleAsPointerCursorReplacement(element))
         return true;
+
+    return false;
+}
+
+static bool isOverlay(const RenderElement& renderer)
+{
+    if (renderer.style().specifiedZIndex() > 0)
+        return true;
+
+    if (renderer.isFixedPositioned())
+        return true;
+
+    if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
+        auto refContentBox = renderBox->absoluteContentBox();
+        auto lastRenderer = renderBox;
+        for (auto& ancestor : ancestorsOfType<RenderBox>(renderer)) {
+            // We don't want to occlude any previous siblings.
+            if (ancestor.firstChildBox() != lastRenderer)
+                return false;
+            lastRenderer = &ancestor;
+            if (ancestor.absoluteContentBox() != refContentBox)
+                return false;
+            if (ancestor.isFixedPositioned())
+                return true;
+        }
+    }
 
     return false;
 }
@@ -237,14 +267,13 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (!hasPointer) {
         // The hover check can be expensive (it may end up doing selector matching), so we only run it on some elements.
         bool hasVisibleBoxDecorations = renderer.hasVisibleBoxDecorations();
-        bool nonScrollable = !renderer.hasPotentiallyScrollableOverflow();
+        bool nonScrollable = !is<RenderBox>(renderer) || (!downcast<RenderBox>(renderer).hasScrollableOverflowX() && !downcast<RenderBox>(renderer).hasScrollableOverflowY());
         if (hasVisibleBoxDecorations && nonScrollable)
             detectedHoverRules = elementMatchesHoverRules(*matchedElement);
     }
 
     if (!hasListener || !(hasPointer || detectedHoverRules) || isTooBigForInteraction) {
-        bool isOverlay = renderer.style().specifiedZIndex() > 0 || renderer.isFixedPositioned();
-        if (isOverlay && isOriginalMatch) {
+        if (isOriginalMatch && isOverlay(renderer)) {
             return { {
                 InteractionRegion::Type::Occlusion,
                 elementIdentifier,
@@ -258,7 +287,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     bool isInlineNonBlock = renderer.isInline() && !renderer.isReplacedOrInlineBlock();
 
     // The parent will get its own InteractionRegion.
-    if (!isOriginalMatch && !isInlineNonBlock)
+    if (!isOriginalMatch && !isInlineNonBlock && !renderer.style().isDisplayTableOrTablePart())
         return std::nullopt;
 
     float borderRadius = 0;

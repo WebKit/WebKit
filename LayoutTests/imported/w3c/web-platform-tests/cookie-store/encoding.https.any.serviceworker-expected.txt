@@ -1,0 +1,4 @@
+
+FAIL BOM not stripped from name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL BOM not stripped from value promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+

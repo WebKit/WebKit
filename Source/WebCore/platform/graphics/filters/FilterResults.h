@@ -49,6 +49,9 @@ public:
     void clearEffectResult(FilterEffect&);
 
 private:
+    size_t memoryCost() const;
+    bool canCacheResult(const FilterImage&) const;
+
     HashMap<Ref<FilterEffect>, Ref<FilterImage>> m_results;
 
     // The value is a list of FilterEffects, whose FilterImages depend on the key FilterImage.

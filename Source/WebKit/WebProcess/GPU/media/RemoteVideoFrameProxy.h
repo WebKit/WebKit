@@ -69,7 +69,7 @@ public:
         template<typename Decoder> static std::optional<Properties> decode(Decoder&);
     };
 
-    static Properties properties(WebKit::RemoteVideoFrameReference&&, const WebCore::VideoFrame&);
+    static Properties properties(WebKit::RemoteVideoFrameReference, const WebCore::VideoFrame&);
 
     static Ref<RemoteVideoFrameProxy> create(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, Properties&&);
 
@@ -90,6 +90,7 @@ public:
     bool isRemoteProxy() const final { return true; }
 #if PLATFORM(COCOA)
     CVPixelBufferRef pixelBuffer() const final;
+    VideoFrame::ResourceIdentifier resourceIdentifier() const final;
 #endif
 
 private:

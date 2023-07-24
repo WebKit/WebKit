@@ -9,6 +9,7 @@ info: |
   ...
   2. Let len be ? ToLength(? Get(O, "length")).
   ...
+features: [exponentiation]
 ---*/
 
 function StopReverse() {}

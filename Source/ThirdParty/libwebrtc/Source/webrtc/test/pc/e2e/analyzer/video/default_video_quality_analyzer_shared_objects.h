@@ -11,8 +11,10 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_SHARED_OBJECTS_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_SHARED_OBJECTS_H_
 
+#include <cstdint>
 #include <map>
 #include <memory>
+#include <ostream>
 #include <set>
 #include <string>
 #include <utility>
@@ -20,14 +22,15 @@
 
 #include "absl/types/optional.h"
 #include "api/numerics/samples_stats_counter.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
 
 // WebRTC will request a key frame after 3 seconds if no frames were received.
-// We assume max frame rate ~60 fps, so 270 frames will cover max freeze without
-// key frame request.
-constexpr size_t kDefaultMaxFramesInFlightPerStream = 270;
+// Uses 3x time to account for possible freezes which we still want to account.
+constexpr TimeDelta kDefaultMaxFramesStorageDuration = TimeDelta::Seconds(9);
 
 class SamplesRateCounter {
  public:
@@ -62,6 +65,9 @@ struct FrameCounters {
   // Count of frames that were dropped in any point between capturing and
   // rendering.
   int64_t dropped = 0;
+  // Count of frames for which decoder returned error when they were sent for
+  // decoding.
+  int64_t failed_to_decode = 0;
 };
 
 // Contains information about the codec that was used for encoding or decoding
@@ -77,7 +83,14 @@ struct StreamCodecInfo {
   Timestamp switched_on_at = Timestamp::PlusInfinity();
   // Timestamp when this codec was used last time.
   Timestamp switched_from_at = Timestamp::PlusInfinity();
+
+  std::string ToString() const;
 };
+
+std::ostream& operator<<(std::ostream& os, const StreamCodecInfo& state);
+rtc::StringBuilder& operator<<(rtc::StringBuilder& sb,
+                               const StreamCodecInfo& state);
+bool operator==(const StreamCodecInfo& a, const StreamCodecInfo& b);
 
 // Represents phases where video frame can be dropped and such drop will be
 // detected by analyzer.
@@ -85,10 +98,15 @@ enum class FrameDropPhase : int {
   kBeforeEncoder,
   kByEncoder,
   kTransport,
+  kByDecoder,
   kAfterDecoder,
   // kLastValue must be the last value in this enumeration.
   kLastValue
 };
+
+std::string ToString(FrameDropPhase phase);
+std::ostream& operator<<(std::ostream& os, FrameDropPhase phase);
+rtc::StringBuilder& operator<<(rtc::StringBuilder& sb, FrameDropPhase phase);
 
 struct StreamStats {
   explicit StreamStats(Timestamp stream_started_time);
@@ -108,6 +126,10 @@ struct StreamStats {
   SamplesStatsCounter total_delay_incl_transport_ms;
   // Time between frames out from renderer.
   SamplesStatsCounter time_between_rendered_frames_ms;
+  SamplesStatsCounter time_between_captured_frames_ms;
+  // Time between frames out from encoder.
+  SamplesStatsCounter time_between_encoded_frames_ms;
+  SamplesRateCounter capture_frame_rate;
   SamplesRateCounter encode_frame_rate;
   SamplesStatsCounter encode_time_ms;
   SamplesStatsCounter decode_time_ms;
@@ -124,8 +146,11 @@ struct StreamStats {
   SamplesStatsCounter freeze_time_ms;
   // Mean time between one freeze end and next freeze start.
   SamplesStatsCounter time_between_freezes_ms;
-  SamplesStatsCounter resolution_of_rendered_frame;
+  SamplesStatsCounter resolution_of_decoded_frame;
   SamplesStatsCounter target_encode_bitrate;
+  // Sender side qp values per spatial layer. In case when spatial layer is not
+  // set for `webrtc::EncodedImage`, 0 is used as default.
+  std::map<int, SamplesStatsCounter> spatial_layers_qp;
 
   int64_t total_encoded_images_payload = 0;
   // Counters on which phase how many frames were dropped.
@@ -143,6 +168,8 @@ struct StreamStats {
   std::vector<StreamCodecInfo> encoders;
   // Vectors of decoders used for this stream by receiving client.
   std::vector<StreamCodecInfo> decoders;
+
+  double harmonic_framerate_fps = 0;
 };
 
 struct AnalyzerStats {
@@ -164,6 +191,16 @@ struct AnalyzerStats {
   // Count of frames in flight in analyzer measured when new comparison is added
   // and after analyzer was stopped.
   SamplesStatsCounter frames_in_flight_left_count;
+
+  // Next metrics are collected and reported iff
+  // `DefaultVideoQualityAnalyzerOptions::report_infra_metrics` is true.
+  SamplesStatsCounter on_frame_captured_processing_time_ms;
+  SamplesStatsCounter on_frame_pre_encode_processing_time_ms;
+  SamplesStatsCounter on_frame_encoded_processing_time_ms;
+  SamplesStatsCounter on_frame_pre_decode_processing_time_ms;
+  SamplesStatsCounter on_frame_decoded_processing_time_ms;
+  SamplesStatsCounter on_frame_rendered_processing_time_ms;
+  SamplesStatsCounter on_decoder_error_processing_time_ms;
 };
 
 struct StatsKey {
@@ -227,6 +264,9 @@ struct DefaultVideoQualityAnalyzerOptions {
   // Tells DefaultVideoQualityAnalyzer if detailed frame stats should be
   // reported.
   bool report_detailed_frame_stats = false;
+  // Tells DefaultVideoQualityAnalyzer if infra metrics related to the
+  // performance and stability of the analyzer itself should be reported.
+  bool report_infra_metrics = false;
   // If true DefaultVideoQualityAnalyzer will try to adjust frames before
   // computing PSNR and SSIM for them. In some cases picture may be shifted by
   // a few pixels after the encode/decode step. Those difference is invisible
@@ -235,11 +275,9 @@ struct DefaultVideoQualityAnalyzerOptions {
   // significantly slows down the comparison, so turn it on only when it is
   // needed.
   bool adjust_cropping_before_comparing_frames = false;
-  // Amount of frames that are queued in the DefaultVideoQualityAnalyzer from
-  // the point they were captured to the point they were rendered on all
-  // receivers per stream.
-  size_t max_frames_in_flight_per_stream_count =
-      kDefaultMaxFramesInFlightPerStream;
+  // Amount of time for which DefaultVideoQualityAnalyzer will store frames
+  // which were captured but not yet rendered on all receivers per stream.
+  TimeDelta max_frames_storage_duration = kDefaultMaxFramesStorageDuration;
   // If true, the analyzer will expect peers to receive their own video streams.
   bool enable_receive_own_stream = false;
 };

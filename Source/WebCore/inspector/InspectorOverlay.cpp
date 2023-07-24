@@ -76,6 +76,7 @@
 #include "TextDirection.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -87,12 +88,6 @@ static constexpr float rulerStepIncrement = 50;
 static constexpr float rulerStepLength = 8;
 static constexpr float rulerSubStepIncrement = 5;
 static constexpr float rulerSubStepLength = 5;
-
-static constexpr UChar bullet = 0x2022;
-static constexpr UChar ellipsis = 0x2026;
-static constexpr UChar multiplicationSign = 0x00D7;
-static constexpr UChar thinSpace = 0x2009;
-static constexpr UChar emSpace = 0x2003;
 
 enum class Flip : bool { No, Yes };
 
@@ -108,7 +103,7 @@ static bool isInNodeList(const Node& node, const NodeList& list)
 static void truncateWithEllipsis(String& string, size_t length)
 {
     if (string.length() > length)
-        string = makeString(StringView(string).left(length), ellipsis);
+        string = makeString(StringView(string).left(length), horizontalEllipsis);
 }
 
 static FloatPoint localPointToRootPoint(const LocalFrameView* view, const FloatPoint& point)
@@ -342,7 +337,7 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
 
     const auto mapPoints = [&] (const Path& path) {
         Path newPath;
-        path.apply([&] (const PathElement& pathElement) {
+        path.applyElements([&] (const PathElement& pathElement) {
             const auto localToRoot = [&] (size_t index) {
                 const FloatPoint& point = pathElement.points[index];
                 return localPointToRootPoint(containingView, renderer->localToAbsolute(shapeOutsideInfo->shapeToRendererPoint(point)));

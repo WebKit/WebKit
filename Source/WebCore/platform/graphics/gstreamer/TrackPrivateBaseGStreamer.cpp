@@ -287,6 +287,8 @@ void TrackPrivateBaseGStreamer::streamChanged()
     });
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

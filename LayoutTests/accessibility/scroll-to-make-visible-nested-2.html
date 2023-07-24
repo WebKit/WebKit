@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
 <head>
+<script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
 </head>
 <body>
-
-<p id="description"></p>
 
 <div id="container" style="width: 100px; overflow: scroll">
   <div style="border: 1px solid #000; width: 1000px; height: 5000px;">5000-pixel box</div>
@@ -14,60 +14,54 @@
   <div style="border: 1px solid #000; width: 1000px; height: 5000px;">5000-pixel box</div>
 </div>
 
-<div id="console"></div>
-
 <script>
-description("Tests that scrolling to make an element visible works when the inner scroll container doesn't need to be scrolled, but the other one does.");
+var output = "Tests that scrolling to make an element visible works when the inner scroll container doesn't need to be scrolled, but the other one does.\n\n";
 
-function runTest() {
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
     window.container = document.getElementById("container");
     window.target1 = document.getElementById("target1");
     window.target2 = document.getElementById("target2");
     window.target3 = document.getElementById("target3");
 
-    var target1AccessibleObject;
-    var target2AccessibleObject;
-    var target3AccessibleObject;
-    if (window.accessibilityController) {
-        target1.focus();
-        target1AccessibleObject = accessibilityController.focusedElement;
-        target2.focus();
-        target2AccessibleObject = accessibilityController.focusedElement;
-        target3.focus();
-        target3AccessibleObject = accessibilityController.focusedElement;
-    }
+    var target1AccessibleObject, target2AccessibleObject, target3AccessibleObject;
+    setTimeout(async function() {
+        target1AccessibleObject = await waitForFocus("target1");
+        target2AccessibleObject = await waitForFocus("target2");
+        target3AccessibleObject = await waitForFocus("target3");;
 
-    // Reset the initial scroll positions (since calling focus() can scroll the page too).
-    window.scrollTo(0, 0);
-    container.scrollTop = 0;
-    shouldBeZero("window.pageYOffset");
-    shouldBeZero("container.scrollTop");
-    shouldBeGreaterThanOrEqual("target1.getBoundingClientRect().top", "5000");
+        // Reset the initial scroll positions (since calling focus() can scroll the page too).
+        window.scrollTo(0, 0);
+        container.scrollTop = 0;
+        output += expect("window.pageYOffset", "0");
+        output += expect("container.scrollTop", "0");
+        output += expect("target1.getBoundingClientRect().top >= 5000", "true");
 
-    // Scroll to make the middle target visible.
-    if (window.accessibilityController)
+        // Scroll to make the middle target visible.
         target2AccessibleObject.scrollToMakeVisible();
 
-    // Instead of testing the exact scroll offsets of the two containers, just test that
-    // the new absolute position of the target is on-screen.
-    shouldBeGreaterThanOrEqual("window.innerHeight", "target2.getBoundingClientRect().bottom");
+        // Instead of testing the exact scroll offsets of the two containers, just test that
+        // the new absolute position of the target is on-screen.
+        output += await expectAsync("window.innerHeight >= target2.getBoundingClientRect().bottom", "true");
 
-    // Make sure that calling scrollToMakeVisible on target1 and target3 don't result in any
-    // scrolling, because they should already be within the viewport.
-    window.target2top = target2.getBoundingClientRect().top;
-    if (window.accessibilityController)
+        // Make sure that calling scrollToMakeVisible on target1 and target3 don't result in any
+        // scrolling, because they should already be within the viewport.
+        window.target2top = target2.getBoundingClientRect().top;
         target1AccessibleObject.scrollToMakeVisible();
-    shouldBe("target2top", "target2.getBoundingClientRect().top");
-    if (window.accessibilityController)
+        // Sleep a bit to allow the bug to happen (if our implementation is wrong).
+        await sleep(60);
+        output += expect("target2top", "target2.getBoundingClientRect().top");
+
         target3AccessibleObject.scrollToMakeVisible();
-    shouldBe("target2top", "target2.getBoundingClientRect().top");
+        await sleep(60);
+        output += expect("target2top", "target2.getBoundingClientRect().top");
 
-    finishJSTest();
+        debug(output);
+        finishJSTest();
+    }, 0);
 }
-
-runTest();
-
 </script>
-
 </body>
 </html>
+

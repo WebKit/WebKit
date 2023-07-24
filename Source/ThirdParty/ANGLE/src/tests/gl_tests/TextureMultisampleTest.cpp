@@ -1124,11 +1124,6 @@ TEST_P(TextureSampleShadingTest, Basic)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_sample_shading"));
 
-    // http://anglebug.com/5410
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
-    // http://anglebug.com/5412
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsVulkan());
-
     constexpr GLsizei kSize        = 1;
     constexpr GLsizei kSampleCount = 4;
 
@@ -1223,6 +1218,136 @@ void main()
     }
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+}
+
+// Test that sample shading actually produces different interpolations per sample when |sample| is
+// missing from the shader.  Both varyings and I/O blocks are tested.  When |centroid| is specified,
+// |sample| shouldn't be added.
+TEST_P(TextureSampleShadingTest, NoSampleQualifier)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_sample_shading"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_sample_variables"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_shader_multisample_interpolation"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_io_blocks"));
+
+    constexpr GLsizei kSize        = 1;
+    constexpr GLsizei kSampleCount = 4;
+
+    // Create a multisampled texture and framebuffer.
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    GLTexture msaaTexture;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTexture);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, kSampleCount, GL_RGBA8, kSize, kSize,
+                              false);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+                           msaaTexture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Enable sample shading and draw
+    glEnable(GL_SAMPLE_SHADING_OES);
+    glMinSampleShadingOES(1.0f);
+
+    constexpr char kVS[] = R"(#version 310 es
+#extension GL_OES_shader_multisample_interpolation : require
+#extension GL_EXT_shader_io_blocks : require
+
+in mediump vec2 position;
+out mediump vec2 gradient;
+centroid out mediump vec2 constant;
+out Block
+{
+    centroid mediump vec2 constant2;
+    mediump vec2 gradient2;
+    sample mediump vec2 gradient3;
+};
+
+out Inactive
+{
+    mediump vec2 gradient4;
+};
+
+void main()
+{
+    gradient = position;
+    gradient2 = position;
+    gradient3 = position;
+    constant = position;
+    constant2 = position;
+    gl_Position = vec4(position, 0, 1);
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_OES_shader_multisample_interpolation : require
+#extension GL_OES_sample_variables : require
+#extension GL_EXT_shader_io_blocks : require
+
+in highp vec2 gradient;
+centroid in highp vec2 constant;
+in Block
+{
+    centroid mediump vec2 constant2;
+    mediump vec2 gradient2;
+    sample mediump vec2 gradient3;
+};
+
+in Inactive2
+{
+    mediump vec2 gradient4;
+};
+
+out mediump vec4 color;
+
+void main()
+{
+    bool left = gl_SampleID == 0 || gl_SampleID == 2;
+    bool top = gl_SampleID == 0 || gl_SampleID == 1;
+
+    color = vec4(0);
+
+    if (left)
+        color.r = gradient.x < -0.1 && gradient2.x < -0.1 && gradient3.x < -0.1 ? 1. : 0.;
+    else
+        color.r = gradient.x > 0.1 && gradient2.x > 0.1 && gradient3.x > 0.1 ? 1. : 0.;
+
+    if (top)
+        color.g = gradient.y < -0.1 && gradient2.y < -0.1 && gradient3.y < -0.1 ? 1. : 0.;
+    else
+        color.g = gradient.y > 0.1 && gradient2.y > 0.1 && gradient3.y > 0.1 ? 1. : 0.;
+
+    // centroid doesn't exactly behave consistently between implementations.  In particular, it does
+    // _not_ necessarily evaluage the varying at the pixel center.  As a result, there isn't much
+    // that can be verified here.  We'd rely on SPIR-V validation to make sure Sample is not added
+    // to ids that already have Centroid specified (in the Vulkan backend)
+    color.b = abs(constant.x) < 1. && abs(constant.y) < 1. ? 1. : 0.;
+    color.a = abs(constant2.x) < 1. && abs(constant2.y) < 1. ? 1. : 0.;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glViewport(0, 0, kSize, kSize);
+    drawQuad(program, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Resolve the framebuffer
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+
+    // Ensure the test passed on every sample location
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+    ASSERT_GL_NO_ERROR();
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureMultisampleTest);

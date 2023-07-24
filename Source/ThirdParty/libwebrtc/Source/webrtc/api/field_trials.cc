@@ -90,7 +90,7 @@ FieldTrials::~FieldTrials() {
   }
 }
 
-std::string FieldTrials::Lookup(absl::string_view key) const {
+std::string FieldTrials::GetValue(absl::string_view key) const {
   auto it = key_value_map_.find(std::string(key));
   if (it != key_value_map_.end())
     return it->second;

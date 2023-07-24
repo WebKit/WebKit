@@ -128,6 +128,7 @@ class FormData;
 class HTMLElement;
 class HTMLMediaElement;
 class HistoryItem;
+class OpportunisticTaskScheduler;
 class ImageAnalysisQueue;
 class ImageOverlayController;
 class InspectorClient;
@@ -242,9 +243,10 @@ enum class RenderingUpdateStep : uint32_t {
     AccessibilityRegionUpdate       = 1 << 20,
 #endif
     RestoreScrollPositionAndViewState = 1 << 21,
+    UpdateContentRelevancy          = 1 << 22,
 };
 
-enum class LookalikeCharacterSanitizationTrigger : uint8_t {
+enum class LinkDecorationFilteringTrigger : uint8_t {
     Unspecified,
     Navigation,
     Copy,
@@ -270,6 +272,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
 #endif
     RenderingUpdateStep::PrepareCanvasesForDisplay,
     RenderingUpdateStep::CaretAnimation,
+    RenderingUpdateStep::UpdateContentRelevancy,
 };
 
 constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<RenderingUpdateStep> {
@@ -315,6 +318,8 @@ public:
     WEBCORE_EXPORT PluginData& pluginData();
     void clearPluginData();
 
+    OpportunisticTaskScheduler& opportunisticTaskScheduler() const { return m_opportunisticTaskScheduler.get(); }
+
     WEBCORE_EXPORT void setCanStartMedia(bool);
     bool canStartMedia() const { return m_canStartMedia; }
 
@@ -322,6 +327,7 @@ public:
 
     Frame& mainFrame() { return m_mainFrame.get(); }
     const Frame& mainFrame() const { return m_mainFrame.get(); }
+    WEBCORE_EXPORT void setMainFrame(Ref<Frame>&&);
 
     bool openedByDOM() const;
     WEBCORE_EXPORT void setOpenedByDOM();
@@ -352,7 +358,7 @@ public:
     void setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator*);
     KeyboardScrollingAnimator* currentKeyboardScrollingAnimator() const { return m_currentKeyboardScrollingAnimator.get(); }
 
-    bool isLoadingInHeadlessMode() const;
+    bool fingerprintingProtectionsEnabled() const;
 
 #if ENABLE(REMOTE_INSPECTOR)
     WEBCORE_EXPORT bool inspectable() const;
@@ -479,6 +485,7 @@ public:
     void didStartProvisionalLoad();
     void didCommitLoad();
     void didFinishLoad();
+    void didFirstMeaningfulPaint();
 
     bool delegatesScaling() const { return m_delegatesScaling; }
     WEBCORE_EXPORT void setDelegatesScaling(bool);
@@ -510,8 +517,8 @@ public:
         IncludeAnimationsFrameRate  = 1 << 1
     };
     static constexpr OptionSet<PreferredRenderingUpdateOption> allPreferredRenderingUpdateOptions = { PreferredRenderingUpdateOption::IncludeThrottlingReasons, PreferredRenderingUpdateOption::IncludeAnimationsFrameRate };
-    std::optional<FramesPerSecond> preferredRenderingUpdateFramesPerSecond(OptionSet<PreferredRenderingUpdateOption> = allPreferredRenderingUpdateOptions) const;
-    Seconds preferredRenderingUpdateInterval() const;
+    WEBCORE_EXPORT std::optional<FramesPerSecond> preferredRenderingUpdateFramesPerSecond(OptionSet<PreferredRenderingUpdateOption> = allPreferredRenderingUpdateOptions) const;
+    WEBCORE_EXPORT Seconds preferredRenderingUpdateInterval() const;
 
     float topContentInset() const { return m_topContentInset; }
     WEBCORE_EXPORT void setTopContentInset(float);
@@ -614,7 +621,7 @@ public:
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    void handleSystemPreview(const URL&, const SystemPreviewInfo&);
+    void beginSystemPreview(const URL&, const SystemPreviewInfo&, CompletionHandler<void()>&&);
 #endif
 
 #if ENABLE(WEB_AUTHN)
@@ -999,9 +1006,9 @@ public:
 
     bool httpsUpgradeEnabled() const { return m_httpsUpgradeEnabled; }
 
-    URL sanitizeLookalikeCharacters(const URL&, LookalikeCharacterSanitizationTrigger) const;
-    String sanitizeLookalikeCharacters(const String&, LookalikeCharacterSanitizationTrigger) const;
-    URL allowedLookalikeCharacters(const URL&) const;
+    URL applyLinkDecorationFiltering(const URL&, LinkDecorationFilteringTrigger) const;
+    String applyLinkDecorationFiltering(const String&, LinkDecorationFilteringTrigger) const;
+    URL allowedQueryParametersForAdvancedPrivacyProtections(const URL&) const;
 
     LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }
     void setLoadSchedulingMode(LoadSchedulingMode);
@@ -1031,11 +1038,6 @@ public:
     void setAccessibilityRootObject(AccessibilityRootAtspi* rootObject) { m_accessibilityRootObject = rootObject; }
 #endif
 
-#if PLATFORM(COCOA)
-    void setIsAwaitingLayerTreeTransactionFlush(bool isAwaiting) { m_isAwaitingLayerTreeTransactionFlush = isAwaiting; }
-    bool isAwaitingLayerTreeTransactionFlush() const { return m_isAwaitingLayerTreeTransactionFlush; }
-#endif
-
     void timelineControllerMaximumAnimationFrameRateDidChange(DocumentTimelinesController&);
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }
@@ -1053,6 +1055,9 @@ public:
 
     const WeakHashSet<LocalFrame>& rootFrames() const { return m_rootFrames; }
     WEBCORE_EXPORT void addRootFrame(LocalFrame&);
+    WEBCORE_EXPORT void removeRootFrame(LocalFrame&);
+
+    void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
 
 private:
     struct Navigation {
@@ -1098,6 +1103,7 @@ private:
     void prioritizeVisibleResources();
 
     RenderingUpdateScheduler& renderingUpdateScheduler();
+    RenderingUpdateScheduler* existingRenderingUpdateScheduler();
 
     WheelEventTestMonitor& ensureWheelEventTestMonitor();
 
@@ -1318,10 +1324,6 @@ private:
     bool m_isEditableRegionEnabled { false };
 #endif
 
-#if PLATFORM(COCOA)
-    bool m_isAwaitingLayerTreeTransactionFlush { false };
-#endif
-
     Vector<OptionSet<RenderingUpdateStep>, 2> m_renderingUpdateRemainingSteps;
     OptionSet<RenderingUpdateStep> m_unfulfilledRequestedSteps;
     
@@ -1411,6 +1413,9 @@ private:
 #if ENABLE(ATTACHMENT_ELEMENT)
     std::unique_ptr<AttachmentElementClient> m_attachmentElementClient;
 #endif
+
+    std::unique_ptr<OpportunisticTaskDeferralScope> m_opportunisticTaskDeferralScopeForFirstPaint;
+    Ref<OpportunisticTaskScheduler> m_opportunisticTaskScheduler;
 
 #if ENABLE(IMAGE_ANALYSIS)
     using CachedTextRecognitionResult = std::pair<TextRecognitionResult, IntRect>;

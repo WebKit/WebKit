@@ -226,7 +226,6 @@ static bool Check(const CheckModeArguments &args, const EVP_MD *md,
   unsigned bad_lines = 0;
   unsigned parsed_lines = 0;
   unsigned error_lines = 0;
-  unsigned bad_hash_lines = 0;
   unsigned line_no = 0;
   bool ok = true;
   bool draining_overlong_line = false;
@@ -297,7 +296,6 @@ static bool Check(const CheckModeArguments &args, const EVP_MD *md,
     }
 
     if (calculated_hex_digest != std::string(line, hex_size)) {
-      bad_hash_lines++;
       if (!args.status) {
         printf("%s: FAILED\n", target_filename.c_str());
       }

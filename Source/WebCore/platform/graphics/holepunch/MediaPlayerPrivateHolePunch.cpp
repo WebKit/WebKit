@@ -170,23 +170,27 @@ void MediaPlayerPrivateHolePunch::registerMediaEngine(MediaEngineRegistrar regis
 void MediaPlayerPrivateHolePunch::notifyReadyState()
 {
     // Notify the ready state so the GraphicsLayer gets created.
-    m_player->readyStateChanged();
+    if (auto player = m_player.get())
+        player->readyStateChanged();
 }
 
 void MediaPlayerPrivateHolePunch::setNetworkState(MediaPlayer::NetworkState networkState)
 {
     m_networkState = networkState;
-    m_player->networkStateChanged();
+    if (auto player = m_player.get())
+        player->networkStateChanged();
 }
 
 void MediaPlayerPrivateHolePunch::load(const String&)
 {
-    if (!m_player)
+    auto player = m_player.get();
+    if (!player)
         return;
 
-    auto mimeType = m_player->contentMIMEType();
+    auto mimeType = player->contentMIMEType();
     if (mimeType.isEmpty() || !mimeTypeCache().contains(mimeType))
         setNetworkState(MediaPlayer::NetworkState::FormatError);
 }
-}
+
+} // namespace WebCore
 #endif // USE(EXTERNAL_HOLEPUNCH)

@@ -86,7 +86,7 @@ layer at (0,0) size 785x654
               text run at (64,1) width 29 RTL: "\x{202E}IHG"
         RenderText {#text} at (107,83) size 5x17
           text run at (107,83) width 5: " "
-        RenderBlock {DIV} at (115,52) size 35x82 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (115,53) size 35x80 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 27x18
             RenderTableSection {TBODY} at (0,0) size 27x18
               RenderTableRow {TR} at (0,0) size 27x18
@@ -102,13 +102,13 @@ layer at (0,0) size 785x654
           RenderBlock {P} at (4,22) size 27x18
             RenderText {#text} at (0,0) size 27x17
               text run at (0,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
-          RenderBlock {P} at (4,40) size 27x19
-            RenderText {#text} at (0,1) size 27x17
-              text run at (0,1) width 27 RTL: "\x{202A}\x{5D0}\x{5D1}\x{5D2}"
-              text run at (27,1) width 0: "\x{202C}"
-          RenderBlock {P} at (4,59) size 27x19
-            RenderText {#text} at (0,1) size 27x17
-              text run at (0,1) width 27: "\x{202D}\x{5D2}\x{5D1}\x{5D0}\x{202C}"
+          RenderBlock {P} at (4,40) size 27x18
+            RenderText {#text} at (0,0) size 27x17
+              text run at (0,0) width 27 RTL: "\x{202A}\x{5D0}\x{5D1}\x{5D2}"
+              text run at (27,0) width 0: "\x{202C}"
+          RenderBlock {P} at (4,58) size 27x18
+            RenderText {#text} at (0,0) size 27x17
+              text run at (0,0) width 27: "\x{202D}\x{5D2}\x{5D1}\x{5D0}\x{202C}"
         RenderText {#text} at (153,83) size 5x17
           text run at (153,83) width 5: " "
         RenderBlock {DIV} at (161,60) size 101x65 [border: (1px solid #008000)]
@@ -556,4 +556,4 @@ layer at (0,0) size 785x654
         RenderText {#text} at (0,1) size 383x17
           text run at (0,1) width 383: "Modified and used with the author\x{2019}s permission."
 layer at (8,531) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,509) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,509) size 769x3 [color=#808080] [border: (1px inset #808080)]

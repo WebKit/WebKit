@@ -31,12 +31,8 @@ const expected = [
   "call this.timeZone.getOffsetNanosecondsFor",
   "get this.timeZone.getOffsetNanosecondsFor",
   "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone[Symbol.toPrimitive]",
-  "get this.timeZone.toString",
-  "call this.timeZone.toString",
-  "get this.calendar[Symbol.toPrimitive]",
-  "get this.calendar.toString",
-  "call this.calendar.toString",
+  "get this.timeZone.id",
+  "get this.calendar.id",
 ];
 const actual = [];
 
@@ -81,12 +77,8 @@ const expectedForFractionalSecondDigits = [
   "call this.timeZone.getOffsetNanosecondsFor",
   "get this.timeZone.getOffsetNanosecondsFor",
   "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone[Symbol.toPrimitive]",
-  "get this.timeZone.toString",
-  "call this.timeZone.toString",
-  "get this.calendar[Symbol.toPrimitive]",
-  "get this.calendar.toString",
-  "call this.calendar.toString",
+  "get this.timeZone.id",
+  "get this.calendar.id",
 ];
 
 instance.toString(

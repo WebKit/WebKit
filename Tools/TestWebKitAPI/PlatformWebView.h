@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformWebView_h
-#define PlatformWebView_h
+#pragma once
 
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -73,11 +72,8 @@ class PlatformWebView {
     WTF_MAKE_NONCOPYABLE(PlatformWebView);
 public:
     explicit PlatformWebView(WKPageConfigurationRef);
-    explicit PlatformWebView(WKContextRef, WKPageGroupRef = 0);
+    explicit PlatformWebView(WKContextRef);
     explicit PlatformWebView(WKPageRef relatedPage);
-#if PLATFORM(MAC)
-    explicit PlatformWebView(WKContextRef, WKPageGroupRef, Class wkViewSubclass);
-#endif
     ~PlatformWebView();
 
     WKPageRef page() const;
@@ -89,16 +85,12 @@ public:
     void simulateAltKeyPress();
     void simulateRightClick(unsigned x, unsigned y);
     void simulateMouseMove(unsigned x, unsigned y, WKEventModifiers = 0);
-#if PLATFORM(MAC) || PLATFORM(PLAYSTATION)
+#if PLATFORM(MAC) || PLATFORM(PLAYSTATION) || PLATFORM(WPE)
     void simulateButtonClick(WKEventMouseButton, unsigned x, unsigned y, WKEventModifiers);
 #endif
 
 private:
-#if PLATFORM(MAC)
-    void initialize(WKPageConfigurationRef, Class wkViewSubclass);
-#else
     void initialize(WKPageConfigurationRef);
-#endif
 #if PLATFORM(WIN)
     static void registerWindowClass();
     static LRESULT CALLBACK wndProc(HWND, UINT message, WPARAM, LPARAM);
@@ -109,5 +101,3 @@ private:
 };
 
 } // namespace TestWebKitAPI
-
-#endif // PlatformWebView_h

@@ -147,6 +147,7 @@ public:
     JSRetainPtr<JSStringRef> valueDescription();
     int insertionPointLineNumber();
     JSRetainPtr<JSStringRef> selectedTextRange();
+    JSRetainPtr<JSStringRef> textInputMarkedRange() const;
     bool isAtomicLiveRegion() const;
     bool isBusy() const;
     bool isEnabled();
@@ -299,6 +300,7 @@ public:
     bool setSelectedTextMarkerRange(AccessibilityTextMarkerRange*);
     bool replaceTextInRange(JSStringRef, int position, int length);
     bool insertText(JSStringRef);
+    AccessibilityTextMarkerRange textInputMarkedTextMarkerRange() const;
 
     JSRetainPtr<JSStringRef> stringForTextMarkerRange(AccessibilityTextMarkerRange*);
     JSRetainPtr<JSStringRef> attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*);

@@ -537,7 +537,7 @@ void TraceInterpreter::replayFrame(uint32_t frameIndex)
 
 void TraceInterpreter::parseTraceUncompressed()
 {
-    for (const std::string &file : gTraceFiles)
+    for (const std::string &file : gTraceInfo.traceFiles)
     {
         if (!ShouldParseFile(file))
         {

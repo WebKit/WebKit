@@ -1437,6 +1437,11 @@ bool AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned le
     return true;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::textInputMarkedRange() const
+{
+    return nullptr;
+}
+
 void AccessibilityUIElement::increment()
 {
     if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Value))
@@ -1530,7 +1535,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
         return JSStringCreateWithUTF8CString("AXURL: (null)");
 
     auto stringURL = axURL.string();
-    if (axURL.isLocalFile()) {
+    if (axURL.protocolIsFile()) {
         // Do not expose absolute paths.
         auto index = stringURL.find("LayoutTests"_s);
         if (index != notFound)

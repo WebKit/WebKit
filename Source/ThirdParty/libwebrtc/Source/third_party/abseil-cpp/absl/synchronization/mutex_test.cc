@@ -295,8 +295,9 @@ static void TestTime(TestContext *cxt, int c, bool use_cv) {
                      "TestTime failed");
     }
     elapsed = absl::Now() - start;
-    ABSL_RAW_CHECK(absl::Seconds(0.9) <= elapsed &&
-                   elapsed <= absl::Seconds(2.0), "TestTime failed");
+    ABSL_RAW_CHECK(
+        absl::Seconds(0.9) <= elapsed && elapsed <= absl::Seconds(2.0),
+        "TestTime failed");
     ABSL_RAW_CHECK(cxt->g0 == cxt->threads, "TestTime failed");
 
   } else if (c == 1) {
@@ -343,7 +344,7 @@ static void TestMuTime(TestContext *cxt, int c) { TestTime(cxt, c, false); }
 static void TestCVTime(TestContext *cxt, int c) { TestTime(cxt, c, true); }
 
 static void EndTest(int *c0, int *c1, absl::Mutex *mu, absl::CondVar *cv,
-                    const std::function<void(int)>& cb) {
+                    const std::function<void(int)> &cb) {
   mu->Lock();
   int c = (*c0)++;
   mu->Unlock();
@@ -366,9 +367,9 @@ static int RunTestCommon(TestContext *cxt, void (*test)(TestContext *cxt, int),
   cxt->threads = threads;
   absl::synchronization_internal::ThreadPool tp(threads);
   for (int i = 0; i != threads; i++) {
-    tp.Schedule(std::bind(&EndTest, &c0, &c1, &mu2, &cv2,
-                          std::function<void(int)>(
-                              std::bind(test, cxt, std::placeholders::_1))));
+    tp.Schedule(std::bind(
+        &EndTest, &c0, &c1, &mu2, &cv2,
+        std::function<void(int)>(std::bind(test, cxt, std::placeholders::_1))));
   }
   mu2.Lock();
   while (c1 != threads) {
@@ -682,14 +683,14 @@ struct LockWhenTestStruct {
   bool waiting = false;
 };
 
-static bool LockWhenTestIsCond(LockWhenTestStruct* s) {
+static bool LockWhenTestIsCond(LockWhenTestStruct *s) {
   s->mu2.Lock();
   s->waiting = true;
   s->mu2.Unlock();
   return s->cond;
 }
 
-static void LockWhenTestWaitForIsCond(LockWhenTestStruct* s) {
+static void LockWhenTestWaitForIsCond(LockWhenTestStruct *s) {
   s->mu1.LockWhen(absl::Condition(&LockWhenTestIsCond, s));
   s->mu1.Unlock();
 }
@@ -869,6 +870,111 @@ TEST(Mutex, LockedMutexDestructionBug) ABSL_NO_THREAD_SAFETY_ANALYSIS {
       }
     }
   }
+}
+
+// Some functions taking pointers to non-const.
+bool Equals42(int *p) { return *p == 42; }
+bool Equals43(int *p) { return *p == 43; }
+
+// Some functions taking pointers to const.
+bool ConstEquals42(const int *p) { return *p == 42; }
+bool ConstEquals43(const int *p) { return *p == 43; }
+
+// Some function templates taking pointers. Note it's possible for `T` to be
+// deduced as non-const or const, which creates the potential for ambiguity,
+// but which the implementation is careful to avoid.
+template <typename T>
+bool TemplateEquals42(T *p) {
+  return *p == 42;
+}
+template <typename T>
+bool TemplateEquals43(T *p) {
+  return *p == 43;
+}
+
+TEST(Mutex, FunctionPointerCondition) {
+  // Some arguments.
+  int x = 42;
+  const int const_x = 42;
+
+  // Parameter non-const, argument non-const.
+  EXPECT_TRUE(absl::Condition(Equals42, &x).Eval());
+  EXPECT_FALSE(absl::Condition(Equals43, &x).Eval());
+
+  // Parameter const, argument non-const.
+  EXPECT_TRUE(absl::Condition(ConstEquals42, &x).Eval());
+  EXPECT_FALSE(absl::Condition(ConstEquals43, &x).Eval());
+
+  // Parameter const, argument const.
+  EXPECT_TRUE(absl::Condition(ConstEquals42, &const_x).Eval());
+  EXPECT_FALSE(absl::Condition(ConstEquals43, &const_x).Eval());
+
+  // Parameter type deduced, argument non-const.
+  EXPECT_TRUE(absl::Condition(TemplateEquals42, &x).Eval());
+  EXPECT_FALSE(absl::Condition(TemplateEquals43, &x).Eval());
+
+  // Parameter type deduced, argument const.
+  EXPECT_TRUE(absl::Condition(TemplateEquals42, &const_x).Eval());
+  EXPECT_FALSE(absl::Condition(TemplateEquals43, &const_x).Eval());
+
+  // Parameter non-const, argument const is not well-formed.
+  EXPECT_FALSE((std::is_constructible<absl::Condition, decltype(Equals42),
+                                      decltype(&const_x)>::value));
+  // Validate use of is_constructible by contrasting to a well-formed case.
+  EXPECT_TRUE((std::is_constructible<absl::Condition, decltype(ConstEquals42),
+                                     decltype(&const_x)>::value));
+}
+
+// Example base and derived class for use in predicates and test below. Not a
+// particularly realistic example, but it suffices for testing purposes.
+struct Base {
+  explicit Base(int v) : value(v) {}
+  int value;
+};
+struct Derived : Base {
+  explicit Derived(int v) : Base(v) {}
+};
+
+// Some functions taking pointer to non-const `Base`.
+bool BaseEquals42(Base *p) { return p->value == 42; }
+bool BaseEquals43(Base *p) { return p->value == 43; }
+
+// Some functions taking pointer to const `Base`.
+bool ConstBaseEquals42(const Base *p) { return p->value == 42; }
+bool ConstBaseEquals43(const Base *p) { return p->value == 43; }
+
+TEST(Mutex, FunctionPointerConditionWithDerivedToBaseConversion) {
+  // Some arguments.
+  Derived derived(42);
+  const Derived const_derived(42);
+
+  // Parameter non-const base, argument derived non-const.
+  EXPECT_TRUE(absl::Condition(BaseEquals42, &derived).Eval());
+  EXPECT_FALSE(absl::Condition(BaseEquals43, &derived).Eval());
+
+  // Parameter const base, argument derived non-const.
+  EXPECT_TRUE(absl::Condition(ConstBaseEquals42, &derived).Eval());
+  EXPECT_FALSE(absl::Condition(ConstBaseEquals43, &derived).Eval());
+
+  // Parameter const base, argument derived const.
+  EXPECT_TRUE(absl::Condition(ConstBaseEquals42, &const_derived).Eval());
+  EXPECT_FALSE(absl::Condition(ConstBaseEquals43, &const_derived).Eval());
+
+  // Parameter const base, argument derived const.
+  EXPECT_TRUE(absl::Condition(ConstBaseEquals42, &const_derived).Eval());
+  EXPECT_FALSE(absl::Condition(ConstBaseEquals43, &const_derived).Eval());
+
+  // Parameter derived, argument base is not well-formed.
+  bool (*derived_pred)(const Derived *) = [](const Derived *) { return true; };
+  EXPECT_FALSE((std::is_constructible<absl::Condition, decltype(derived_pred),
+                                      Base *>::value));
+  EXPECT_FALSE((std::is_constructible<absl::Condition, decltype(derived_pred),
+                                      const Base *>::value));
+  // Validate use of is_constructible by contrasting to well-formed cases.
+  EXPECT_TRUE((std::is_constructible<absl::Condition, decltype(derived_pred),
+                                     Derived *>::value));
+  EXPECT_TRUE((std::is_constructible<absl::Condition, decltype(derived_pred),
+                                     const Derived *>::value));
 }
 
 struct True {
@@ -1126,6 +1232,25 @@ TEST(Mutex, DeadlockDetectorBazelWarning) {
                // report here
   mu0.Unlock();
   mu1.Unlock();
+
+  absl::SetMutexDeadlockDetectionMode(absl::OnDeadlockCycle::kAbort);
+}
+
+TEST(Mutex, DeadlockDetectorLongCycle) {
+  absl::SetMutexDeadlockDetectionMode(absl::OnDeadlockCycle::kReport);
+
+  // This test generates a warning if it passes, and crashes otherwise.
+  // Cause bazel to ignore the warning.
+  ScopedDisableBazelTestWarnings disable_bazel_test_warnings;
+
+  // Check that we survive a deadlock with a lock cycle.
+  std::vector<absl::Mutex> mutex(100);
+  for (size_t i = 0; i != mutex.size(); i++) {
+    mutex[i].Lock();
+    mutex[(i + 1) % mutex.size()].Lock();
+    mutex[i].Unlock();
+    mutex[(i + 1) % mutex.size()].Unlock();
+  }
 
   absl::SetMutexDeadlockDetectionMode(absl::OnDeadlockCycle::kAbort);
 }
@@ -1694,8 +1819,7 @@ TEST(Mutex, Timed) {
 TEST(Mutex, CVTime) {
   int threads = 10;  // Use a fixed thread count of 10
   int iterations = 1;
-  EXPECT_EQ(RunTest(&TestCVTime, threads, iterations, 1),
-            threads * iterations);
+  EXPECT_EQ(RunTest(&TestCVTime, threads, iterations, 1), threads * iterations);
 }
 
 TEST(Mutex, MuTime) {

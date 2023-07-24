@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -555,7 +556,7 @@ IntRect AccessibilityObjectAtspi::boundsForRange(unsigned utf16Offset, unsigned 
     if (!m_coreObject)
         return { };
 
-    auto extents = m_coreObject->doAXBoundsForRange(PlainTextRange(utf16Offset, length));
+    auto extents = m_coreObject->doAXBoundsForRange(CharacterRange(utf16Offset, length));
 
     auto* frameView = m_coreObject->documentFrameView();
     if (!frameView)
@@ -703,7 +704,7 @@ void AccessibilityObjectAtspi::setSelectedRange(unsigned utf16Offset, unsigned l
     if (!m_coreObject)
         return;
 
-    auto range = m_coreObject->visiblePositionRangeForRange(PlainTextRange(utf16Offset, length));
+    auto range = m_coreObject->visiblePositionRangeForRange(CharacterRange(utf16Offset, length));
     m_coreObject->setSelectedVisiblePositionRange(range);
 }
 
@@ -783,7 +784,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
         }
 
         addAttributeIfNeeded("family-name"_s, style.fontCascade().firstFamily());
-        addAttributeIfNeeded("size"_s, makeString(std::round(style.computedFontPixelSize() * 72 / WebCore::screenDPI()), "pt"));
+        addAttributeIfNeeded("size"_s, makeString(std::round(style.computedFontSize() * 72 / WebCore::screenDPI()), "pt"));
         addAttributeIfNeeded("weight"_s, makeString(static_cast<float>(style.fontCascade().weight())));
         addAttributeIfNeeded("style"_s, style.fontCascade().italic() ? "italic"_s : "normal"_s);
         addAttributeIfNeeded("strikethrough"_s, style.textDecorationLine() & TextDecorationLine::LineThrough ? "true"_s : "false"_s);
@@ -959,7 +960,7 @@ bool AccessibilityObjectAtspi::scrollToMakeVisible(int startOffset, int endOffse
     if (!m_coreObject->renderer())
         return true;
 
-    IntRect rect = m_coreObject->doAXBoundsForRange(PlainTextRange(utf16StartOffset, utf16EndOffset - utf16StartOffset));
+    IntRect rect = m_coreObject->doAXBoundsForRange(CharacterRange(utf16StartOffset, utf16EndOffset - utf16StartOffset));
 
     if (m_coreObject->isScrollView()) {
         if (auto* parent = m_coreObject->parentObject())
@@ -1023,7 +1024,7 @@ bool AccessibilityObjectAtspi::scrollToPoint(int startOffset, int endOffset, Ats
             point = frameView->contentsToWindow(frameView->screenToContents(point));
     }
 
-    IntRect rect = m_coreObject->doAXBoundsForRange(PlainTextRange(utf16StartOffset, utf16EndOffset - utf16StartOffset));
+    IntRect rect = m_coreObject->doAXBoundsForRange(CharacterRange(utf16StartOffset, utf16EndOffset - utf16StartOffset));
     point.move(-rect.x(), -rect.y());
     m_coreObject->scrollToGlobalPoint(WTFMove(point));
     return true;

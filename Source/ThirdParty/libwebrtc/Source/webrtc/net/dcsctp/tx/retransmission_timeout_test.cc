@@ -37,6 +37,11 @@ TEST(RetransmissionTimeoutTest, HasValidInitialRto) {
   EXPECT_EQ(rto_.rto(), kInitialRto);
 }
 
+TEST(RetransmissionTimeoutTest, HasValidInitialSrtt) {
+  RetransmissionTimeout rto_(MakeOptions());
+  EXPECT_EQ(rto_.srtt(), kInitialRto);
+}
+
 TEST(RetransmissionTimeoutTest, NegativeValuesDoNotAffectRTO) {
   RetransmissionTimeout rto_(MakeOptions());
   // Initial negative value

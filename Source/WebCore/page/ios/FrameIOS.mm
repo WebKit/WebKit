@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,7 +124,7 @@ NSArray *LocalFrame::wordsInCurrentParagraph() const
         VisiblePosition previous = end.previous();
         UChar c(previous.characterAfter());
         // FIXME: Should use something from ICU or ASCIICType that is not subject to POSIX current language rather than iswpunct.
-        if (!iswpunct(c) && !isSpaceOrNewline(c) && c != noBreakSpace)
+        if (!iswpunct(c) && !deprecatedIsSpaceOrNewline(c) && c != noBreakSpace)
             end = startOfWord(end);
     }
     VisiblePosition start(startOfParagraph(end));
@@ -139,10 +139,10 @@ NSArray *LocalFrame::wordsInCurrentParagraph() const
     while (!it.atEnd()) {
         StringView text = it.text();
         int length = text.length();
-        if (length > 1 || !isSpaceOrNewline(text[0])) {
+        if (length > 1 || !deprecatedIsSpaceOrNewline(text[0])) {
             int startOfWordBoundary = 0;
             for (int i = 1; i < length; i++) {
-                if (isSpaceOrNewline(text[i]) || text[i] == noBreakSpace) {
+                if (deprecatedIsSpaceOrNewline(text[i]) || text[i] == noBreakSpace) {
                     int wordLength = i - startOfWordBoundary;
                     if (wordLength > 0) {
                         RetainPtr<NSString> chunk = text.substring(startOfWordBoundary, wordLength).createNSString();
@@ -162,7 +162,7 @@ NSArray *LocalFrame::wordsInCurrentParagraph() const
     if ([words count] > 0 && isEndOfParagraph(position) && !isStartOfParagraph(position)) {
         VisiblePosition previous = position.previous();
         UChar c(previous.characterAfter());
-        if (!isSpaceOrNewline(c) && c != noBreakSpace)
+        if (!deprecatedIsSpaceOrNewline(c) && c != noBreakSpace)
             [words removeLastObject];
     }
 
@@ -210,7 +210,7 @@ CGRect LocalFrame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fo
 #if CHECK_FONT_SIZE
             for (RenderObject* textRenderer = hitRenderer; textRenderer; textRenderer = textRenderer->traverseNext(hitRenderer)) {
                 if (textRenderer->isText()) {
-                    *fontSize = textRenderer->font(true).pixelSize();
+                    *fontSize = textRenderer->font(true).size();
                     break;
                 }
             }

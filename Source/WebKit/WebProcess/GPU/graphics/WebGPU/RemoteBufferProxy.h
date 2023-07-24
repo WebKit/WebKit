@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +29,14 @@
 
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUBuffer.h>
+#include <WebCore/WebGPUBuffer.h>
 #include <wtf/Deque.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteBufferProxy final : public PAL::WebGPU::Buffer {
+class RemoteBufferProxy final : public WebCore::WebGPU::Buffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -63,7 +63,7 @@ private:
     
     static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
-    WARN_UNUSED_RETURN bool send(T&& message)
+    WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
@@ -78,8 +78,8 @@ private:
         return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing(), defaultSendTimeout);
     }
 
-    void mapAsync(PAL::WebGPU::MapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> sizeForMap, CompletionHandler<void(bool)>&&) final;
-    MappedRange getMappedRange(PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64>) final;
+    void mapAsync(WebCore::WebGPU::MapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> sizeForMap, CompletionHandler<void(bool)>&&) final;
+    MappedRange getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64>) final;
     void unmap() final;
 
     void destroy() final;
@@ -92,7 +92,7 @@ private:
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteDeviceProxy> m_parent;
     std::optional<Vector<uint8_t>> m_data;
-    PAL::WebGPU::MapModeFlags m_mapModeFlags;
+    WebCore::WebGPU::MapModeFlags m_mapModeFlags;
 };
 
 } // namespace WebKit::WebGPU

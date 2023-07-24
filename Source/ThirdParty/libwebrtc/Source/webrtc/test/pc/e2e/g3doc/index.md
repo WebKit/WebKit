@@ -1,4 +1,5 @@
-<?% config.freshness.reviewed = '2021-04-12' %?>
+<!-- go/cmark -->
+<!--* freshness: {owner: 'titovartem' reviewed: '2021-04-12'} *-->
 
 # PeerConnection Level Framework
 

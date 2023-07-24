@@ -184,7 +184,6 @@ enum ssl_verify_result_t DummyVerifyCallback(SSL* ssl, uint8_t* out_alert) {
 // The server is deallocated. This client will have a peer certificate available
 // and is thus suitable for testing VerifyPeerCertMatchesHost.
 SSL* CreateSSLWithPeerCertificate(const unsigned char* cert, size_t cert_len) {
-
   const unsigned char* key_ptr = kFakeSSLPrivateKey;
   EVP_PKEY* key = d2i_PrivateKey(
       EVP_PKEY_EC, nullptr, &key_ptr,

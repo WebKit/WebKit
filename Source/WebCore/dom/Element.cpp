@@ -39,6 +39,7 @@
 #include "ComposedTreeIterator.h"
 #include "ComputedStylePropertyMapReadOnly.h"
 #include "ContainerNodeAlgorithms.h"
+#include "ContentVisibilityDocumentState.h"
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
 #include "DOMRect.h"
@@ -440,7 +441,7 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
 #else
         UNUSED_PARAM(platformEvent);
 #endif
-        if (platformEvent.syntheticClickType() != NoTap)
+        if (platformEvent.syntheticClickType() != SyntheticClickType::NoTap)
             return ShouldIgnoreMouseEvent::No;
 
         if (auto pointerEvent = pointerCaptureController.pointerEventForMouseEvent(mouseEvent, platformEvent.pointerId(), platformEvent.pointerType())) {
@@ -768,8 +769,13 @@ Vector<String> Element::getAttributeNames() const
 
 bool Element::hasFocusableStyle() const
 {
-    if (renderer() && renderer()->isSkippedContent())
-        return false;
+    if (renderer() && renderer()->isSkippedContent()) {
+        auto* candidate = this;
+        while ((candidate = candidate->parentElementInComposedTree())) {
+            if (candidate->renderer() && candidate->renderStyle()->contentVisibility() == ContentVisibility::Hidden)
+                return false;
+        }
+    }
 
     auto isFocusableStyle = [](const RenderStyle* style) {
         return style && style->display() != DisplayType::None && style->display() != DisplayType::Contents
@@ -857,7 +863,7 @@ void Element::setActive(bool value, Style::InvalidationScope invalidationScope)
     if (value == active())
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassActive, value, invalidationScope);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Active, value, invalidationScope);
         document().userActionElements().setActive(*this, value);
     }
 
@@ -878,7 +884,7 @@ void Element::setFocus(bool value, FocusVisibility visibility)
     if (value == focused())
         return;
     
-    Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, { { CSSSelector::PseudoClassFocus, value }, { CSSSelector::PseudoClassFocusVisible, value } });
+    Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, { { CSSSelector::PseudoClassType::Focus, value }, { CSSSelector::PseudoClassType::FocusVisible, value } });
     document().userActionElements().setFocused(*this, value);
 
     // Shadow host with a slot that contain focused element is not considered focused.
@@ -914,7 +920,7 @@ void Element::setHasFocusWithin(bool value)
     if (hasFocusWithin() == value)
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassFocusWithin, value);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::FocusWithin, value);
         document().userActionElements().setHasFocusWithin(*this, value);
     }
 }
@@ -933,7 +939,7 @@ void Element::setHovered(bool value, Style::InvalidationScope invalidationScope,
     if (value == hovered())
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassHover, value, invalidationScope);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Hover, value, invalidationScope);
         document().userActionElements().setHovered(*this, value);
     }
 
@@ -946,7 +952,7 @@ void Element::setBeingDragged(bool value)
     if (value == isBeingDragged())
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassDrag, value);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Drag, value);
     document().userActionElements().setBeingDragged(*this, value);
 }
 
@@ -1066,6 +1072,8 @@ static std::optional<std::pair<RenderElement*, LayoutRect>> listBoxElementScroll
 
 void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOptions>>&& arg)
 {
+    document().contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+
     document().updateLayoutIgnorePendingStylesheets();
 
     RenderElement* renderer = nullptr;
@@ -1131,6 +1139,8 @@ void Element::scrollIntoView(bool alignToTop)
 
 void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
 {
+    document().contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+
     document().updateLayoutIgnorePendingStylesheets();
 
     if (!renderer())
@@ -1162,9 +1172,10 @@ void Element::scrollIntoViewIfNotVisible(bool centerIfNotVisible)
 void Element::scrollBy(const ScrollToOptions& options)
 {
     ScrollToOptions scrollToOptions = normalizeNonFiniteCoordinatesOrFallBackTo(options, 0, 0);
+    FloatSize originalDelta(scrollToOptions.left.value(), scrollToOptions.top.value());
     scrollToOptions.left.value() += scrollLeft();
     scrollToOptions.top.value() += scrollTop();
-    scrollTo(scrollToOptions, ScrollClamping::Clamped, ScrollSnapPointSelectionMethod::Directional);
+    scrollTo(scrollToOptions, ScrollClamping::Clamped, ScrollSnapPointSelectionMethod::Directional, originalDelta);
 }
 
 void Element::scrollBy(double x, double y)
@@ -1172,7 +1183,7 @@ void Element::scrollBy(double x, double y)
     scrollBy(ScrollToOptions(x, y));
 }
 
-void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, ScrollSnapPointSelectionMethod snapPointSelectionMethod)
+void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, ScrollSnapPointSelectionMethod snapPointSelectionMethod, std::optional<FloatSize> originalScrollDelta)
 {
     LOG_WITH_STREAM(Scrolling, stream << "Element " << *this << " scrollTo " << options.left << ", " << options.top);
 
@@ -1196,7 +1207,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
         if (!window)
             return;
 
-        window->scrollTo(options, clamping, snapPointSelectionMethod);
+        window->scrollTo(options, clamping, snapPointSelectionMethod, originalScrollDelta);
         return;
     }
 
@@ -1216,7 +1227,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
     );
 
     auto animated = useSmoothScrolling(scrollToOptions.behavior.value_or(ScrollBehavior::Auto), this) ? ScrollIsAnimated::Yes : ScrollIsAnimated::No;
-    auto scrollPositionChangeOptions = ScrollPositionChangeOptions::createProgrammaticWithOptions(clamping, animated, snapPointSelectionMethod);
+    auto scrollPositionChangeOptions = ScrollPositionChangeOptions::createProgrammaticWithOptions(clamping, animated, snapPointSelectionMethod, originalScrollDelta);
     renderer->setScrollPosition(scrollPosition, scrollPositionChangeOptions);
 }
 
@@ -2140,7 +2151,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
 
 void Element::updateEffectiveLangStateAndPropagateToDescendants()
 {
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Lang, Style::PseudoClassChangeInvalidation::AnyValue);
     updateEffectiveLangState();
 
     for (auto it = descendantsOfType<Element>(*this).begin(); it;) {
@@ -2149,7 +2160,7 @@ void Element::updateEffectiveLangStateAndPropagateToDescendants()
             it.traverseNextSkippingChildren();
             continue;
         }
-        Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
+        Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClassType::Lang, Style::PseudoClassChangeInvalidation::AnyValue);
         element.updateEffectiveLangStateFromParent();
         it.traverseNext();
     }
@@ -2310,7 +2321,7 @@ URL Element::absoluteLinkURL() const
     if (linkAttribute.isEmpty())
         return URL();
 
-    return document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkAttribute));
+    return document().completeURL(linkAttribute);
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -2466,7 +2477,7 @@ bool Element::isEventHandlerAttribute(const Attribute& attribute) const
 
 bool Element::attributeContainsJavaScriptURL(const Attribute& attribute) const
 {
-    return isURLAttribute(attribute) && WTF::protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(attribute.value()));
+    return isURLAttribute(attribute) && WTF::protocolIsJavaScript(attribute.value());
 }
 
 void Element::stripScriptingAttributes(Vector<Attribute>& attributeVector) const
@@ -2649,7 +2660,7 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
             if (newScope)
                 newScope->addElementById(*idValue.impl(), *this);
             if (newDocument)
-                updateIdForDocument(*newDocument, nullAtom(), idValue, AlwaysUpdateHTMLDocumentNamedItemMaps);
+                updateIdForDocument(*newDocument, nullAtom(), idValue, HTMLDocumentNamedItemMapsUpdatingCondition::Always);
         }
 
         if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
@@ -2736,7 +2747,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
             if (oldScope)
                 oldScope->removeElementById(*idValue.impl(), *this);
             if (oldHTMLDocument)
-                updateIdForDocument(*oldHTMLDocument, idValue, nullAtom(), AlwaysUpdateHTMLDocumentNamedItemMaps);
+                updateIdForDocument(*oldHTMLDocument, idValue, nullAtom(), HTMLDocumentNamedItemMapsUpdatingCondition::Always);
         }
 
         if (auto& nameValue = getNameAttribute(); !nameValue.isEmpty()) {
@@ -2961,6 +2972,11 @@ ShadowRoot& Element::createUserAgentShadowRoot()
 
 inline void Node::setCustomElementState(CustomElementState state)
 {
+    RELEASE_ASSERT(is<Element>(this));
+    Style::PseudoClassChangeInvalidation styleInvalidation(downcast<Element>(*this),
+        CSSSelector::PseudoClassType::Defined,
+        state == CustomElementState::Custom || state == CustomElementState::Uncustomized
+    );
     auto bitfields = rareDataBitfields();
     bitfields.customElementState = static_cast<uint16_t>(state);
     setRareDataBitfields(bitfields);
@@ -2972,7 +2988,6 @@ void Element::setIsDefinedCustomElement(JSCustomElementInterface& elementInterfa
     auto& data = ensureElementRareData();
     if (!data.customElementReactionQueue())
         data.setCustomElementReactionQueue(makeUnique<CustomElementReactionQueue>(elementInterface));
-    invalidateStyleForSubtree();
     InspectorInstrumentation::didChangeCustomElementState(*this);
 }
 
@@ -3516,6 +3531,8 @@ void Element::focus(const FocusOptions& options)
         return;
     }
 
+    document->contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+
     RefPtr<Element> newTarget = this;
 
     // If we don't have renderer yet, isFocusable will compute it without style update.
@@ -3677,7 +3694,7 @@ bool Element::dispatchMouseForceWillBegin()
     if (!frame)
         return false;
 
-    PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::Type::NoType, 1, { }, WallTime::now(), ForceAtClick, NoTap };
+    PlatformMouseEvent platformMouseEvent { frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::Type::NoType, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap };
     auto mouseForceWillBeginEvent = MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().windowProxy(), platformMouseEvent, 0, nullptr);
     mouseForceWillBeginEvent->setTarget(Ref { *this });
     dispatchEvent(mouseForceWillBeginEvent);
@@ -3722,11 +3739,11 @@ String Element::outerHTML() const
 ExceptionOr<void> Element::setOuterHTML(const String& html)
 {
     // The specification allows setting outerHTML on an Element whose parent is a DocumentFragment and Gecko supports this.
-    // However, as of June 2021, Blink matches our behavior and throws a NoModificationAllowedError for non-Element parents.
+    // https://w3c.github.io/DOM-Parsing/#dom-element-outerhtml
     RefPtr parent = parentElement();
     if (UNLIKELY(!parent)) {
         if (!parentNode())
-            return Exception { NoModificationAllowedError, "Cannot set outerHTML on element because it doesn't have a parent"_s };
+            return { };
         return Exception { NoModificationAllowedError, "Cannot set outerHTML on element because its parent is not an Element"_s };
     }
 
@@ -3856,6 +3873,8 @@ void Element::addToTopLayer()
     document().addTopLayerElement(*this);
     setNodeFlag(NodeFlag::IsInTopLayer);
 
+    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::IsInTopLayer);
+
     // Invalidate inert state
     invalidateStyleInternal();
     if (document().documentElement())
@@ -3887,6 +3906,8 @@ void Element::removeFromTopLayer()
 
     document().removeTopLayerElement(*this);
     clearNodeFlag(NodeFlag::IsInTopLayer);
+
+    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::IsInTopLayer);
 
     // Invalidate inert state
     invalidateStyleInternal();
@@ -4318,7 +4339,7 @@ URL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
             ASSERT(isURLAttribute(*attribute));
     }
 #endif
-    String value = stripLeadingAndTrailingHTMLSpaces(getAttribute(name));
+    auto value = getAttribute(name).string().trim(isASCIIWhitespace);
     if (value.isEmpty())
         return URL();
     return document().completeURL(value);
@@ -4370,7 +4391,7 @@ void Element::requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&& p
 
 void Element::setFullscreenFlag(bool flag)
 {
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, { { CSSSelector::PseudoClassFullscreen, flag }, { CSSSelector::PseudoClassModal, flag } });
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, { { CSSSelector::PseudoClassType::Fullscreen, flag }, { CSSSelector::PseudoClassType::Modal, flag } });
     if (flag)
         setNodeFlag(NodeFlag::IsFullscreen);
     else
@@ -4720,7 +4741,7 @@ inline void Element::updateId(const AtomString& oldId, const AtomString& newId, 
         return;
     if (!is<HTMLDocument>(document()))
         return;
-    updateIdForDocument(downcast<HTMLDocument>(document()), oldId, newId, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute);
+    updateIdForDocument(downcast<HTMLDocument>(document()), oldId, newId, HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute);
 }
 
 void Element::updateIdForTreeScope(TreeScope& scope, const AtomString& oldId, const AtomString& newId, NotifyObservers notifyObservers)
@@ -4743,7 +4764,7 @@ void Element::updateIdForDocument(HTMLDocument& document, const AtomString& oldI
         return;
 
     if (WindowNameCollection::elementMatchesIfIdAttributeMatch(*this)) {
-        const AtomString& name = condition == UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute && WindowNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
+        const AtomString& name = condition == HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute && WindowNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
         if (!oldId.isEmpty() && oldId != name)
             document.removeWindowNamedItem(*oldId.impl(), *this);
         if (!newId.isEmpty() && newId != name)
@@ -4751,7 +4772,7 @@ void Element::updateIdForDocument(HTMLDocument& document, const AtomString& oldI
     }
 
     if (DocumentNameCollection::elementMatchesIfIdAttributeMatch(*this)) {
-        const AtomString& name = condition == UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute && DocumentNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
+        const AtomString& name = condition == HTMLDocumentNamedItemMapsUpdatingCondition::UpdateOnlyIfDiffersFromNameAttribute && DocumentNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom();
         if (!oldId.isEmpty() && oldId != name)
             document.removeDocumentNamedItem(*oldId.impl(), *this);
         if (!newId.isEmpty() && newId != name)
@@ -5044,7 +5065,7 @@ String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs re
     if (resolveURLs == ResolveURLs::No)
         return urlString;
 
-    const auto& maskedURLStringForBindings = document().maskedURLForBindings().string();
+    static MainThreadNeverDestroyed<const AtomString> maskedURLStringForBindings(document().maskedURLStringForBindings());
     URL completeURL = base.isNull() ? document().completeURL(urlString) : URL(base, urlString);
 
     switch (resolveURLs) {
@@ -5053,15 +5074,15 @@ String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs re
 
     case ResolveURLs::YesExcludingURLsForPrivacy: {
         if (document().shouldMaskURLForBindings(completeURL))
-            return maskedURLStringForBindings;
-        if (!document().url().isLocalFile())
+            return maskedURLStringForBindings.get();
+        if (!document().url().protocolIsFile())
             return completeURL.string();
         break;
     }
 
     case ResolveURLs::NoExcludingURLsForPrivacy:
         if (document().shouldMaskURLForBindings(completeURL))
-            return maskedURLStringForBindings;
+            return maskedURLStringForBindings.get();
         break;
 
     case ResolveURLs::No:
@@ -5352,6 +5373,35 @@ bool Element::hasDuplicateAttribute() const
 void Element::setHasDuplicateAttribute(bool hasDuplicateAttribute)
 {
     setEventTargetFlag(EventTargetFlag::HasDuplicateAttribute, hasDuplicateAttribute);
+}
+
+bool Element::isPopoverShowing() const
+{
+    return popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing;
+}
+
+// https://drafts.csswg.org/css-contain/#relevant-to-the-user
+bool Element::isRelevantToUser() const
+{
+    return hasRareData() && elementRareData()->contentRelevancyStatus();
+}
+
+OptionSet<ContentRelevancyStatus> Element::contentRelevancyStatus() const
+{
+    if (!hasRareData())
+        return { };
+    return elementRareData()->contentRelevancyStatus();
+}
+
+void Element::setContentRelevancyStatus(OptionSet<ContentRelevancyStatus> contentRelvancyStatus)
+{
+    ensureElementRareData().setContentRelevancyStatus(contentRelvancyStatus);
+}
+
+void Element::contentVisibilityViewportChange(bool)
+{
+    ASSERT(renderStyle() && renderStyle()->contentVisibility() == ContentVisibility::Auto);
+    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::OnScreen);
 }
 
 } // namespace WebCore

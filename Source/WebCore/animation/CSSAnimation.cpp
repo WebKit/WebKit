@@ -84,16 +84,16 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
 
     if (!m_overriddenProperties.contains(Property::Direction)) {
         switch (animation.direction()) {
-        case Animation::AnimationDirectionNormal:
+        case Animation::Direction::Normal:
             animationEffect->setDirection(PlaybackDirection::Normal);
             break;
-        case Animation::AnimationDirectionAlternate:
+        case Animation::Direction::Alternate:
             animationEffect->setDirection(PlaybackDirection::Alternate);
             break;
-        case Animation::AnimationDirectionReverse:
+        case Animation::Direction::Reverse:
             animationEffect->setDirection(PlaybackDirection::Reverse);
             break;
-        case Animation::AnimationDirectionAlternateReverse:
+        case Animation::Direction::AlternateReverse:
             animationEffect->setDirection(PlaybackDirection::AlternateReverse);
             break;
         }

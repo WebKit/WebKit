@@ -1,0 +1,7 @@
+
+PASS e.style['hyphenate-character'] = "auto" should set the property value
+PASS e.style['hyphenate-character'] = "\"=\"" should set the property value
+PASS e.style['hyphenate-character'] = "\"/-/\"" should set the property value
+PASS e.style['hyphenate-character'] = "\"\\1400\"" should set the property value
+PASS e.style['hyphenate-character'] = "\"\"" should set the property value
+

@@ -7,7 +7,7 @@ description: >
   Automatically ported from SortCallbackShrinks test
   in V8's mjsunit test typedarray-resizablearraybuffer.js
 includes: [compareArray.js]
-features: [resizable-arraybuffer]
+features: [resizable-arraybuffer, Array.prototype.includes]
 flags: [onlyStrict]
 ---*/
 

@@ -12,10 +12,6 @@ const instance = new Temporal.TimeZone("UTC");
 
 const calendar = "IsO8601";
 
-let arg = { year: 1976, monthCode: "M11", day: 18, calendar };
-const result1 = instance.getPossibleInstantsFor(arg);
-assert.compareArray(result1.map(i => i.epochNanoseconds), [217_123_200_000_000_000n], "Calendar is case-insensitive");
-
-arg = { year: 1976, monthCode: "M11", day: 18, calendar: { calendar } };
-const result2 = instance.getPossibleInstantsFor(arg);
-assert.compareArray(result2.map(i => i.epochNanoseconds), [217_123_200_000_000_000n], "Calendar is case-insensitive (nested property)");
+const arg = { year: 1976, monthCode: "M11", day: 18, calendar };
+const result = instance.getPossibleInstantsFor(arg);
+assert.compareArray(result.map(i => i.epochNanoseconds), [217_123_200_000_000_000n], "Calendar is case-insensitive");

@@ -1,7 +1,7 @@
-# WebRTC supported plaftorms and compilers
+<!-- go/cmark -->
+<!--* freshness: {owner: 'mbonadei' reviewed: '2021-06-25'} *-->
 
-<?% config.freshness.owner = 'mbonadei' %?>
-<?% config.freshness.reviewed = '2021-06-25' %?>
+# WebRTC supported plaftorms and compilers
 
 ## Operating systems and CPUs
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUTextureDimension.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUTextureDimension.h>
 
 namespace WebCore {
 
@@ -36,15 +36,15 @@ enum class GPUTextureDimension : uint8_t {
     _3d,
 };
 
-inline PAL::WebGPU::TextureDimension convertToBacking(GPUTextureDimension textureDimension)
+inline WebGPU::TextureDimension convertToBacking(GPUTextureDimension textureDimension)
 {
     switch (textureDimension) {
     case GPUTextureDimension::_1d:
-        return PAL::WebGPU::TextureDimension::_1d;
+        return WebGPU::TextureDimension::_1d;
     case GPUTextureDimension::_2d:
-        return PAL::WebGPU::TextureDimension::_2d;
+        return WebGPU::TextureDimension::_2d;
     case GPUTextureDimension::_3d:
-        return PAL::WebGPU::TextureDimension::_3d;
+        return WebGPU::TextureDimension::_3d;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

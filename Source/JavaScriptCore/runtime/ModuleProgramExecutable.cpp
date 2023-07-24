@@ -38,7 +38,7 @@ ModuleProgramExecutable::ModuleProgramExecutable(JSGlobalObject* globalObject, c
     ASSERT(source.provider()->sourceType() == SourceProviderSourceType::Module);
     VM& vm = globalObject->vm();
     if (vm.typeProfiler() || vm.controlFlowProfiler())
-        vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), typeProfilingStartOffset(vm), typeProfilingEndOffset(vm));
+        vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), typeProfilingStartOffset(), typeProfilingEndOffset());
 }
 
 

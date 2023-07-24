@@ -69,7 +69,10 @@ const absl::string_view kPathDelimiter = "/";
 const absl::string_view kAndroidChromiumTestsRoot =
     "/sdcard/chromium_tests_root/";
 #endif
-
+#if defined(WEBRTC_FUCHSIA)
+const absl::string_view kFuchsiaTestRoot = "/pkg/";
+const absl::string_view kFuchsiaTempWritableDir = "/tmp/";
+#endif
 #if !defined(WEBRTC_IOS)
 const absl::string_view kResourcesDirName = "resources";
 #endif
@@ -91,6 +94,11 @@ absl::optional<std::string> ProjectRootPath() {
   // the test is bundled (which our tests are not), in which case it's 5 levels.
   return DirName(DirName(exe_dir)) + std::string(kPathDelimiter);
 #elif defined(WEBRTC_POSIX)
+// Fuchsia uses POSIX defines as well but does not have full POSIX
+// functionality.
+#if defined(WEBRTC_FUCHSIA)
+  return std::string(kFuchsiaTestRoot);
+#else
   char buf[PATH_MAX];
   ssize_t count = ::readlink("/proc/self/exe", buf, arraysize(buf));
   if (count <= 0) {
@@ -100,6 +108,7 @@ absl::optional<std::string> ProjectRootPath() {
   // On POSIX, tests execute in out/Whatever, so src is two levels up.
   std::string exe_dir = DirName(absl::string_view(buf, count));
   return DirName(DirName(exe_dir)) + std::string(kPathDelimiter);
+#endif
 #elif defined(WEBRTC_WIN)
   wchar_t buf[MAX_PATH];
   buf[0] = 0;
@@ -117,6 +126,8 @@ std::string OutputPath() {
   return IOSOutputPath();
 #elif defined(WEBRTC_ANDROID)
   return std::string(kAndroidChromiumTestsRoot);
+#elif defined(WEBRTC_FUCHSIA)
+  return std::string(kFuchsiaTempWritableDir);
 #else
   absl::optional<std::string> path_opt = ProjectRootPath();
   RTC_DCHECK(path_opt);

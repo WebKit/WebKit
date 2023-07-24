@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ArgumentCoders.h"
+#include "RemoteImageBuffer.h"
 #include "RemoteResourceCache.h"
 #include <WebCore/DetectedTextInterface.h>
 #include <WebCore/TextDetectorInterface.h>
@@ -46,7 +47,7 @@ RemoteTextDetector::RemoteTextDetector(Ref<WebCore::ShapeDetection::TextDetector
 
 RemoteTextDetector::~RemoteTextDetector() = default;
 
-void RemoteTextDetector::detect(RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedText>&&)>&& completionHandler)
+void RemoteTextDetector::detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedText>&&)>&& completionHandler)
 {
     auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ renderingResourceIdentifier, m_webProcessIdentifier });
     if (!imageBuffer) {

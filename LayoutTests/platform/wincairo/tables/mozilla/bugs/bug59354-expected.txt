@@ -52,7 +52,7 @@ layer at (0,0) size 800x600
                                                   RenderText {#text} at (5,5) size 106x19
                                                     text run at (5,5) width 106: "Email Address :"
                                               RenderTableCell {TD} at (118,1) size 164x36 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                                                RenderTextControl {INPUT} at (7,7) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                                                RenderTextControl {INPUT} at (7,7) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                                                 RenderText {#text} at (0,0) size 0x0
 layer at (215,105) size 146x16 scrollWidth 216
   RenderBlock {DIV} at (2,3) size 146x16

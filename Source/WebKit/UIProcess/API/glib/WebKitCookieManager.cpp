@@ -5,7 +5,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2,1 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -517,3 +517,106 @@ void webkit_cookie_manager_delete_all_cookies(WebKitCookieManager* manager)
     webkit_website_data_manager_clear(manager->priv->dataManager, WEBKIT_WEBSITE_DATA_COOKIES, 0, nullptr, nullptr, nullptr);
 }
 #endif
+
+/**
+ * webkit_cookie_manager_replace_cookies:
+ * @cookie_manager: a #WebKitCookieManager
+ * @cookies: (element-type SoupCookie) (transfer none): a #GList of #SoupCookie to be added
+ * @cancellable: (nullable): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): (closure user_data): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: the data to pass to callback function
+ *
+ * Asynchronously replace all cookies in @cookie_manager with the given list of @cookies.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_cookie_manager_replace_cookies_finish() to get the result of the operation.
+ *
+ * Since: 2.42
+ */
+void webkit_cookie_manager_replace_cookies(WebKitCookieManager* manager, GList* cookies, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
+    g_return_if_fail(cookies);
+
+    Vector<WebCore::Cookie> webCookies;
+    for (GList* it = cookies; it; it = g_list_next(it))
+        webCookies.append(WebCore::Cookie(reinterpret_cast<SoupCookie*>(it->data)));
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
+    manager->priv->cookieStore().replaceCookies(WTFMove(webCookies), [task = WTFMove(task)]() {
+        g_task_return_boolean(task.get(), TRUE);
+    });
+}
+
+/**
+ * webkit_cookie_manager_replace_cookies_finish:
+ * @cookie_manager: a #WebKitCookieManager
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_cookie_manager_replace_cookies().
+ *
+ * Returns: %TRUE if the cookies were added or %FALSE in case of error.
+ *
+ * Since: 2.42
+ */
+gboolean webkit_cookie_manager_replace_cookies_finish(WebKitCookieManager* manager, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager), FALSE);
+    g_return_val_if_fail(g_task_is_valid(result, manager), FALSE);
+
+    return g_task_propagate_boolean(G_TASK(result), error);
+}
+
+/**
+ * webkit_cookie_manager_get_all_cookies:
+ * @cookie_manager: a #WebKitCookieManager
+ * @cancellable: (nullable): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): (closure user_data): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: the data to pass to callback function
+ *
+ * Asynchronously get a list of #SoupCookie from @cookie_manager.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_cookie_manager_get_all_cookies_finish() to get the result of the operation.
+ *
+ * Since: 2.42
+ */
+void webkit_cookie_manager_get_all_cookies(WebKitCookieManager* manager, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
+    manager->priv->cookieStore().getAllCookies([task = WTFMove(task)](const Vector<WebCore::Cookie>& cookies) {
+        GList* cookiesList = nullptr;
+        for (auto& cookie : cookies)
+            cookiesList = g_list_prepend(cookiesList, cookie.toSoupCookie());
+
+        g_task_return_pointer(task.get(), g_list_reverse(cookiesList), [](gpointer data) {
+            g_list_free_full(static_cast<GList*>(data), reinterpret_cast<GDestroyNotify>(soup_cookie_free));
+        });
+    });
+}
+
+/**
+ * webkit_cookie_manager_get_all_cookies_finish:
+ * @cookie_manager: a #WebKitCookieManager
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_cookie_manager_get_all_cookies().
+ *
+ * The return value is a #GSList of #SoupCookie instances which should be released
+ * with g_list_free_full() and soup_cookie_free().
+ *
+ * Returns: (element-type SoupCookie) (transfer full): A #GList of #SoupCookie instances.
+ *
+ * Since: 2.42
+ */
+GList* webkit_cookie_manager_get_all_cookies_finish(WebKitCookieManager* manager, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, manager), nullptr);
+
+    return static_cast<GList*>(g_task_propagate_pointer(G_TASK(result), error));
+}

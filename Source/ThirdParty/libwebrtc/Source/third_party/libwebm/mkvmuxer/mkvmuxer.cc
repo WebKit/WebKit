@@ -2622,7 +2622,8 @@ bool Cluster::Finalize(bool set_last_frame_duration, uint64_t duration) {
 
 uint64_t Cluster::Size() const {
   const uint64_t element_size =
-      EbmlMasterElementSize(libwebm::kMkvCluster, 0xFFFFFFFFFFFFFFFFULL) +
+      EbmlMasterElementSize(static_cast<uint64_t>(libwebm::kMkvCluster),
+                            uint64_t{0xFFFFFFFFFFFFFFFFU}) +
       payload_size_;
   return element_size;
 }
@@ -3084,6 +3085,7 @@ Segment::Segment()
       accurate_cluster_duration_(false),
       fixed_size_cluster_timecode_(false),
       estimate_file_duration_(false),
+      ebml_header_size_(0),
       payload_pos_(0),
       size_position_(0),
       doc_type_version_(kDefaultDocTypeVersion),
@@ -4105,12 +4107,16 @@ int Segment::WriteFramesAll() {
     // places where |doc_type_version_| needs to be updated.
     if (frame->discard_padding() != 0)
       doc_type_version_ = 4;
-    if (!cluster->AddFrame(frame))
-      return -1;
+    if (!cluster->AddFrame(frame)) {
+      delete frame;
+      continue;
+    }
 
     if (new_cuepoint_ && cues_track_ == frame->track_number()) {
-      if (!AddCuePoint(frame->timestamp(), cues_track_))
-        return -1;
+      if (!AddCuePoint(frame->timestamp(), cues_track_)) {
+        delete frame;
+        continue;
+      }
     }
 
     if (frame->timestamp() > last_timestamp_) {
@@ -4153,12 +4159,16 @@ bool Segment::WriteFramesLessThan(uint64_t timestamp) {
       const Frame* const frame_prev = frames_[i - 1];
       if (frame_prev->discard_padding() != 0)
         doc_type_version_ = 4;
-      if (!cluster->AddFrame(frame_prev))
-        return false;
+      if (!cluster->AddFrame(frame_prev)) {
+        delete frame_prev;
+        continue;
+      }
 
       if (new_cuepoint_ && cues_track_ == frame_prev->track_number()) {
-        if (!AddCuePoint(frame_prev->timestamp(), cues_track_))
-          return false;
+        if (!AddCuePoint(frame_prev->timestamp(), cues_track_)) {
+          delete frame_prev;
+          continue;
+        }
       }
 
       ++shift_left;

@@ -51,15 +51,15 @@ private:
     {
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
 
         WebKitDOMElement* div = webkit_dom_document_get_element_by_id(document, "rect");
         g_assert_true(WEBKIT_DOM_IS_HTML_ELEMENT(div));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(div));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(div));
 
         GRefPtr<WebKitDOMClientRect> clientRect = adoptGRef(webkit_dom_element_get_bounding_client_rect(div));
         g_assert_true(WEBKIT_DOM_IS_CLIENT_RECT(clientRect.get()));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(clientRect.get()));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(clientRect.get()));
         checkClientRectPosition(clientRect.get());
 
         return true;
@@ -69,21 +69,21 @@ private:
     {
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
 
         WebKitDOMElement* div = webkit_dom_document_get_element_by_id(document, "rect");
         g_assert_true(WEBKIT_DOM_IS_HTML_ELEMENT(div));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(div));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(div));
 
         GRefPtr<WebKitDOMClientRectList> clientRectList = adoptGRef(webkit_dom_element_get_client_rects(div));
         g_assert_true(WEBKIT_DOM_IS_CLIENT_RECT_LIST(clientRectList.get()));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(clientRectList.get()));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(clientRectList.get()));
 
         g_assert_cmpuint(webkit_dom_client_rect_list_get_length(clientRectList.get()), ==, 1);
 
         GRefPtr<WebKitDOMClientRect> clientRect = adoptGRef(webkit_dom_client_rect_list_item(clientRectList.get(), 0));
         g_assert_true(WEBKIT_DOM_IS_CLIENT_RECT(clientRect.get()));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(clientRect.get()));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(clientRect.get()));
         checkClientRectPosition(clientRect.get());
 
         // Getting the clientRect twice should return the same pointer.

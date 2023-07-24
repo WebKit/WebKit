@@ -97,11 +97,11 @@ void HighlightData::setRenderRange(const RenderRange& renderRange)
 
 bool HighlightData::setRenderRange(const HighlightRangeData& rangeData)
 {
-    if (!rangeData.startPosition || !rangeData.endPosition)
+    if (rangeData.startPosition().isNull() || rangeData.endPosition().isNull())
         return false;
     
-    auto startPosition = rangeData.startPosition.value();
-    auto endPosition = rangeData.endPosition.value();
+    auto startPosition = rangeData.startPosition();
+    auto endPosition = rangeData.endPosition();
     
     if (!startPosition.containerNode() || !endPosition.containerNode())
         return false;

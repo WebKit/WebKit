@@ -58,11 +58,11 @@ promise_test(async function() {
 }, "Clicking on backdrop doesn't select text");
 
 promise_test(async function() {
-  dialog.style.webkitUserSelect = "none";
+  dialog.style.userSelect = "none";
 
   await selectSomeText();
   assert_equals(getSelection().toString(), "");
 
-  dialog.style.webkitUserSelect = "";
+  dialog.style.userSelect = "";
 }, "'user-select: none' prevents text from being selected");
 </script>

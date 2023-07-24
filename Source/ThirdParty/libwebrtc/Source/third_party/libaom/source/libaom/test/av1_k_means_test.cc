@@ -28,12 +28,14 @@
 #include "third_party/googletest/src/googletest/include/gtest/gtest.h"
 
 namespace AV1Kmeans {
-typedef void (*av1_calc_indices_dim1_func)(const int *data,
-                                           const int *centroids,
-                                           uint8_t *indices, int n, int k);
-typedef void (*av1_calc_indices_dim2_func)(const int *data,
-                                           const int *centroids,
-                                           uint8_t *indices, int n, int k);
+typedef void (*av1_calc_indices_dim1_func)(const int16_t *data,
+                                           const int16_t *centroids,
+                                           uint8_t *indices,
+                                           int64_t *total_dist, int n, int k);
+typedef void (*av1_calc_indices_dim2_func)(const int16_t *data,
+                                           const int16_t *centroids,
+                                           uint8_t *indices,
+                                           int64_t *total_dist, int n, int k);
 
 typedef std::tuple<av1_calc_indices_dim1_func, BLOCK_SIZE>
     av1_calc_indices_dim1Param;
@@ -66,8 +68,8 @@ class AV1KmeansTest1
   }
 
   libaom_test::ACMRandom rnd_;
-  int data_[4096];
-  int centroids_[8];
+  int16_t data_[4096];
+  int16_t centroids_[8];
   uint8_t indices1_[4096];
   uint8_t indices2_[4096];
 };
@@ -92,9 +94,11 @@ void AV1KmeansTest1::RunCheckOutput(av1_calc_indices_dim1_func test_impl,
   const int w = block_size_wide[bsize];
   const int h = block_size_high[bsize];
   const int n = w * h;
-  av1_calc_indices_dim1_c(data_, centroids_, indices1_, n, k);
-  test_impl(data_, centroids_, indices2_, n, k);
+  int64_t total_dist_dim1, total_dist_impl;
+  av1_calc_indices_dim1_c(data_, centroids_, indices1_, &total_dist_dim1, n, k);
+  test_impl(data_, centroids_, indices2_, &total_dist_impl, n, k);
 
+  ASSERT_EQ(total_dist_dim1, total_dist_impl);
   ASSERT_EQ(CheckResult(n), true)
       << " block " << bsize << " index " << n << " Centroids " << k;
 }
@@ -113,7 +117,7 @@ void AV1KmeansTest1::RunSpeedTest(av1_calc_indices_dim1_func test_impl,
     aom_usec_timer_start(&timer);
     av1_calc_indices_dim1_func func = funcs[i];
     for (int j = 0; j < num_loops; ++j) {
-      func(data_, centroids_, indices1_, n, k);
+      func(data_, centroids_, indices1_, /*total_dist=*/nullptr, n, k);
     }
     aom_usec_timer_mark(&timer);
     double time = static_cast<double>(aom_usec_timer_elapsed(&timer));
@@ -174,8 +178,8 @@ class AV1KmeansTest2
   }
 
   libaom_test::ACMRandom rnd_;
-  int data_[4096 * 2];
-  int centroids_[8 * 2];
+  int16_t data_[4096 * 2];
+  int16_t centroids_[8 * 2];
   uint8_t indices1_[4096];
   uint8_t indices2_[4096];
 };
@@ -200,9 +204,11 @@ void AV1KmeansTest2::RunCheckOutput(av1_calc_indices_dim2_func test_impl,
   const int w = block_size_wide[bsize];
   const int h = block_size_high[bsize];
   const int n = w * h;
-  av1_calc_indices_dim2_c(data_, centroids_, indices1_, n, k);
-  test_impl(data_, centroids_, indices2_, n, k);
+  int64_t total_dist_dim2, total_dist_impl;
+  av1_calc_indices_dim2_c(data_, centroids_, indices1_, &total_dist_dim2, n, k);
+  test_impl(data_, centroids_, indices2_, &total_dist_impl, n, k);
 
+  ASSERT_EQ(total_dist_dim2, total_dist_impl);
   ASSERT_EQ(CheckResult(n), true)
       << " block " << bsize << " index " << n << " Centroids " << k;
 }
@@ -221,7 +227,7 @@ void AV1KmeansTest2::RunSpeedTest(av1_calc_indices_dim2_func test_impl,
     aom_usec_timer_start(&timer);
     av1_calc_indices_dim2_func func = funcs[i];
     for (int j = 0; j < num_loops; ++j) {
-      func(data_, centroids_, indices1_, n, k);
+      func(data_, centroids_, indices1_, /*total_dist=*/nullptr, n, k);
     }
     aom_usec_timer_mark(&timer);
     double time = static_cast<double>(aom_usec_timer_elapsed(&timer));
@@ -253,12 +259,23 @@ TEST_P(AV1KmeansTest2, DISABLED_Speed) {
   RunSpeedTest(GET_PARAM(0), GET_PARAM(1), 8);
 }
 
-#if HAVE_AVX2 || HAVE_SSE2
+#if HAVE_SSE2 || HAVE_AVX2 || HAVE_NEON
 const BLOCK_SIZE kValidBlockSize[] = { BLOCK_8X8,   BLOCK_8X16,  BLOCK_8X32,
                                        BLOCK_16X8,  BLOCK_16X16, BLOCK_16X32,
                                        BLOCK_32X8,  BLOCK_32X16, BLOCK_32X32,
                                        BLOCK_32X64, BLOCK_64X32, BLOCK_64X64,
                                        BLOCK_16X64, BLOCK_64X16 };
+#endif
+
+#if HAVE_SSE2
+INSTANTIATE_TEST_SUITE_P(
+    SSE2, AV1KmeansTest1,
+    ::testing::Combine(::testing::Values(&av1_calc_indices_dim1_sse2),
+                       ::testing::ValuesIn(kValidBlockSize)));
+INSTANTIATE_TEST_SUITE_P(
+    SSE2, AV1KmeansTest2,
+    ::testing::Combine(::testing::Values(&av1_calc_indices_dim2_sse2),
+                       ::testing::ValuesIn(kValidBlockSize)));
 #endif
 
 #if HAVE_AVX2
@@ -272,18 +289,15 @@ INSTANTIATE_TEST_SUITE_P(
                        ::testing::ValuesIn(kValidBlockSize)));
 #endif
 
-#if HAVE_SSE2
-
+#if HAVE_NEON
 INSTANTIATE_TEST_SUITE_P(
-    SSE2, AV1KmeansTest1,
-    ::testing::Combine(::testing::Values(&av1_calc_indices_dim1_sse2),
+    NEON, AV1KmeansTest1,
+    ::testing::Combine(::testing::Values(&av1_calc_indices_dim1_neon),
                        ::testing::ValuesIn(kValidBlockSize)));
-// TODO(any): Disable av1_calc_indices_dim2 sse2 SIMD and its unit test due to
-// c/SIMD mismatch. Re-enable it after mismatch is fixed.
-// INSTANTIATE_TEST_SUITE_P(
-//    SSE2, AV1KmeansTest2,
-//    ::testing::Combine(::testing::Values(&av1_calc_indices_dim2_sse2),
-//                       ::testing::ValuesIn(kValidBlockSize)));
+INSTANTIATE_TEST_SUITE_P(
+    NEON, AV1KmeansTest2,
+    ::testing::Combine(::testing::Values(&av1_calc_indices_dim2_neon),
+                       ::testing::ValuesIn(kValidBlockSize)));
 #endif
 
 }  // namespace AV1Kmeans

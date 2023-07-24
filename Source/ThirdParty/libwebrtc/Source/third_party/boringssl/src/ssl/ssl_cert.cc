@@ -142,9 +142,9 @@ CERT::~CERT() {
   x509_method->cert_free(this);
 }
 
-static CRYPTO_BUFFER *buffer_up_ref(CRYPTO_BUFFER *buffer) {
-  CRYPTO_BUFFER_up_ref(buffer);
-  return buffer;
+static CRYPTO_BUFFER *buffer_up_ref(const CRYPTO_BUFFER *buffer) {
+  CRYPTO_BUFFER_up_ref(const_cast<CRYPTO_BUFFER *>(buffer));
+  return const_cast<CRYPTO_BUFFER *>(buffer);
 }
 
 UniquePtr<CERT> ssl_cert_dup(CERT *cert) {
@@ -237,14 +237,14 @@ static enum leaf_cert_and_privkey_result_t check_leaf_cert_and_privkey(
     return leaf_cert_and_privkey_error;
   }
 
-  if (!ssl_is_key_type_supported(pubkey->type)) {
+  if (!ssl_is_key_type_supported(EVP_PKEY_id(pubkey.get()))) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_UNKNOWN_CERTIFICATE_TYPE);
     return leaf_cert_and_privkey_error;
   }
 
   // An ECC certificate may be usable for ECDH or ECDSA. We only support ECDSA
   // certificates, so sanity-check the key usage extension.
-  if (pubkey->type == EVP_PKEY_EC &&
+  if (EVP_PKEY_id(pubkey.get()) == EVP_PKEY_EC &&
       !ssl_cert_check_key_usage(&cert_cbs, key_usage_digital_signature)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_UNKNOWN_CERTIFICATE_TYPE);
     return leaf_cert_and_privkey_error;
@@ -365,7 +365,6 @@ bool ssl_parse_cert_chain(uint8_t *out_alert,
   UniquePtr<STACK_OF(CRYPTO_BUFFER)> chain(sk_CRYPTO_BUFFER_new_null());
   if (!chain) {
     *out_alert = SSL_AD_INTERNAL_ERROR;
-    OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
     return false;
   }
 
@@ -397,7 +396,6 @@ bool ssl_parse_cert_chain(uint8_t *out_alert,
     if (!buf ||
         !PushToStack(chain.get(), std::move(buf))) {
       *out_alert = SSL_AD_INTERNAL_ERROR;
-      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return false;
     }
   }
@@ -623,7 +621,6 @@ UniquePtr<STACK_OF(CRYPTO_BUFFER)> ssl_parse_client_CA_list(SSL *ssl,
   UniquePtr<STACK_OF(CRYPTO_BUFFER)> ret(sk_CRYPTO_BUFFER_new_null());
   if (!ret) {
     *out_alert = SSL_AD_INTERNAL_ERROR;
-    OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
     return nullptr;
   }
 
@@ -647,7 +644,6 @@ UniquePtr<STACK_OF(CRYPTO_BUFFER)> ssl_parse_client_CA_list(SSL *ssl,
     if (!buffer ||
         !PushToStack(ret.get(), std::move(buffer))) {
       *out_alert = SSL_AD_INTERNAL_ERROR;
-      OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
       return nullptr;
     }
   }

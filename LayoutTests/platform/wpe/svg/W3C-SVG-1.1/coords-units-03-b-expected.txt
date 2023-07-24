@@ -24,9 +24,9 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 58x15
             chunk 1 text run 1 at (230.00,40.00) startOffset 0 endOffset 11 width 57.60: "Pixels (px)"
         RenderSVGRect {rect} at (33,166) size 334x3 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=40.00] [width=200.00] [height=1.00]
-        RenderSVGText {text} at (20,46) size 176x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 176x15
-            chunk 1 text run 1 at (20.00,58.00) startOffset 0 endOffset 31 width 175.80: "20 em = 200 px (font-size=10px)"
+        RenderSVGText {text} at (20,46) size 177x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 177x15
+            chunk 1 text run 1 at (20.00,58.00) startOffset 0 endOffset 31 width 177.00: "20 em = 200 px (font-size=10px)"
         RenderSVGText {text} at (230,48) size 136x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 136x15
             chunk 1 text run 1 at (230.00,60.00) startOffset 0 endOffset 26 width 135.60: "Relative to font size (em)"
@@ -40,12 +40,12 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (230.00,80.00) startOffset 0 endOffset 30 width 154.80: "Relative to font x-height (ex)"
         RenderSVGContainer {g} at (33,233) size 307x2
           RenderSVGRect {rect} at (33,233) size 307x2 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=80.00] [width=200.00] [height=1.00]
-        RenderSVGText {text} at (20,86) size 92x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 92x15
-            chunk 1 text run 1 at (20.00,98.00) startOffset 0 endOffset 15 width 91.80: "41.67% = 200 px"
-        RenderSVGText {text} at (230,88) size 81x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 81x15
-            chunk 1 text run 1 at (230.00,100.00) startOffset 0 endOffset 14 width 81.00: "Percentage (%)"
+        RenderSVGText {text} at (20,86) size 93x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 93x15
+            chunk 1 text run 1 at (20.00,98.00) startOffset 0 endOffset 15 width 93.00: "41.67% = 200 px"
+        RenderSVGText {text} at (230,88) size 82x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 82x15
+            chunk 1 text run 1 at (230.00,100.00) startOffset 0 endOffset 14 width 81.60: "Percentage (%)"
         RenderSVGRect {rect} at (33,266) size 334x3 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=100.00] [width=200.02] [height=1.00]
         RenderSVGText {text} at (20,106) size 21x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 21x15
@@ -54,35 +54,35 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 57x15
             chunk 1 text run 1 at (230.00,120.00) startOffset 0 endOffset 11 width 57.00: "Inches (in)"
         RenderSVGRect {rect} at (33,300) size 161x2 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=120.00] [width=96.00] [height=1.00]
-        RenderSVGText {text} at (20,126) size 78x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 78x15
-            chunk 1 text run 1 at (20.00,138.00) startOffset 0 endOffset 14 width 78.00: "2.54 cm = 1 in"
+        RenderSVGText {text} at (20,126) size 79x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 79x15
+            chunk 1 text run 1 at (20.00,138.00) startOffset 0 endOffset 14 width 78.60: "2.54 cm = 1 in"
         RenderSVGText {text} at (230,128) size 93x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 93x15
             chunk 1 text run 1 at (230.00,140.00) startOffset 0 endOffset 16 width 92.40: "Centimeters (cm)"
         RenderSVGRect {rect} at (33,333) size 161x2 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=140.00] [width=96.00] [height=1.00]
         RenderSVGText {text} at (20,146) size 83x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 83x15
-            chunk 1 text run 1 at (20.00,158.00) startOffset 0 endOffset 14 width 82.20: "25.4 mm = 1 in"
+            chunk 1 text run 1 at (20.00,158.00) startOffset 0 endOffset 14 width 82.80: "25.4 mm = 1 in"
         RenderSVGText {text} at (230,148) size 95x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 95x15
             chunk 1 text run 1 at (230.00,160.00) startOffset 0 endOffset 16 width 94.20: "Millimeters (mm)"
         RenderSVGRect {rect} at (33,366) size 161x3 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=160.00] [width=96.00] [height=1.00]
         RenderSVGText {text} at (20,166) size 59x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 59x15
-            chunk 1 text run 1 at (20.00,178.00) startOffset 0 endOffset 11 width 58.20: "72pt = 1 in"
+            chunk 1 text run 1 at (20.00,178.00) startOffset 0 endOffset 11 width 58.80: "72pt = 1 in"
         RenderSVGText {text} at (230,168) size 56x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 56x15
             chunk 1 text run 1 at (230.00,180.00) startOffset 0 endOffset 11 width 55.20: "Points (pt)"
         RenderSVGRect {rect} at (33,400) size 161x2 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=180.00] [width=96.00] [height=1.00]
-        RenderSVGText {text} at (20,186) size 54x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 54x15
-            chunk 1 text run 1 at (20.00,198.00) startOffset 0 endOffset 10 width 54.00: "6pc = 1 in"
+        RenderSVGText {text} at (20,186) size 55x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 55x15
+            chunk 1 text run 1 at (20.00,198.00) startOffset 0 endOffset 10 width 54.60: "6pc = 1 in"
         RenderSVGText {text} at (230,188) size 53x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 53x15
             chunk 1 text run 1 at (230.00,200.00) startOffset 0 endOffset 10 width 52.80: "Picas (pc)"
         RenderSVGRect {rect} at (33,433) size 161x2 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=200.00] [width=96.00] [height=1.00]
-    RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 269x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.4 $"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.40: "$Revision: 1.4 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

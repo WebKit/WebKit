@@ -37,6 +37,7 @@
 #include "rtc_base/random.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc {
 
@@ -93,9 +94,8 @@ class RTCPSender final {
     size_t media_bytes_sent;
     uint32_t send_bitrate;
 
-    uint32_t last_rr_ntp_secs;
-    uint32_t last_rr_ntp_frac;
     uint32_t remote_sr;
+    NtpTime last_rr;
 
     std::vector<rtcp::ReceiveTimeInfo> last_xr_rtis;
 

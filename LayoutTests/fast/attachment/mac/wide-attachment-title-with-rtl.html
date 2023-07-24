@@ -1,8 +1,12 @@
 <!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true ] -->
-<html>
+<html class="reftest-wait">
 <body>
 <attachment title="&#x202E;etalosi.ext"></attachment>
 <attachment title="iso&#x202E;etal.ext"></attachment>
 <attachment title="long-title-should-wrap-&#x202E;cba.ext"></attachment>
+<script src="../resources/attachment-test-utils.js"></script>
+<script>
+takeActualScreenshotWhenAttachmentsSettled();
+</script>
 </body>
 </html>

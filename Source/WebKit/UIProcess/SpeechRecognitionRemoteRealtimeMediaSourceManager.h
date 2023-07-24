@@ -71,7 +71,7 @@ private:
     uint64_t messageSenderDestinationID() const final;
 
     Ref<IPC::Connection> m_connection;
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, WeakPtr<SpeechRecognitionRemoteRealtimeMediaSource>> m_sources;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, ThreadSafeWeakPtr<SpeechRecognitionRemoteRealtimeMediaSource>> m_sources;
     HashSet<WebCore::RealtimeMediaSourceIdentifier> m_sourcesNeedingSandboxExtension;
 };
 

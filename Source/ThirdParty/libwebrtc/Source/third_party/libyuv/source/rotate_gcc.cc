@@ -365,6 +365,136 @@ void TransposeUVWx8_SSE2(const uint8_t* src,
         "xmm7", "xmm8", "xmm9");
 }
 #endif  // defined(HAS_TRANSPOSEUVWX8_SSE2)
+
+#if defined(HAS_TRANSPOSE4X4_32_SSE2)
+// 4 values, little endian view
+// a b c d
+// e f g h
+// i j k l
+// m n o p
+
+// transpose 2x2
+// a e b f   from row 0, 1
+// i m j n   from row 2, 3
+// c g d h   from row 0, 1
+// k o l p   from row 2, 3
+
+// transpose 4x4
+// a e i m   from row 0, 1
+// b f j n   from row 0, 1
+// c g k o   from row 2, 3
+// d h l p   from row 2, 3
+
+// Transpose 32 bit values (ARGB)
+void Transpose4x4_32_SSE2(const uint8_t* src,
+                          int src_stride,
+                          uint8_t* dst,
+                          int dst_stride,
+                          int width) {
+  asm volatile(
+      // Main loop transpose 4x4.  Read a column, write a row.
+      "1:                                        \n"
+      "movdqu      (%0),%%xmm0                   \n"  // a b c d
+      "movdqu      (%0,%3),%%xmm1                \n"  // e f g h
+      "lea         (%0,%3,2),%0                  \n"  // src += stride * 2
+      "movdqu      (%0),%%xmm2                   \n"  // i j k l
+      "movdqu      (%0,%3),%%xmm3                \n"  // m n o p
+      "lea         (%0,%3,2),%0                  \n"  // src += stride * 2
+
+      // Transpose 2x2
+      "movdqa      %%xmm0,%%xmm4                 \n"
+      "movdqa      %%xmm2,%%xmm5                 \n"
+      "movdqa      %%xmm0,%%xmm6                 \n"
+      "movdqa      %%xmm2,%%xmm7                 \n"
+      "punpckldq   %%xmm1,%%xmm4                 \n"  // a e b f   from row 0, 1
+      "punpckldq   %%xmm3,%%xmm5                 \n"  // i m j n   from row 2, 3
+      "punpckhdq   %%xmm1,%%xmm6                 \n"  // c g d h   from row 0, 1
+      "punpckhdq   %%xmm3,%%xmm7                 \n"  // k o l p   from row 2, 3
+
+      // Transpose 4x4
+      "movdqa      %%xmm4,%%xmm0                 \n"
+      "movdqa      %%xmm4,%%xmm1                 \n"
+      "movdqa      %%xmm6,%%xmm2                 \n"
+      "movdqa      %%xmm6,%%xmm3                 \n"
+      "punpcklqdq  %%xmm5,%%xmm0                 \n"  // a e i m   from row 0, 1
+      "punpckhqdq  %%xmm5,%%xmm1                 \n"  // b f j n   from row 0, 1
+      "punpcklqdq  %%xmm7,%%xmm2                 \n"  // c g k o   from row 2, 3
+      "punpckhqdq  %%xmm7,%%xmm3                 \n"  // d h l p   from row 2, 3
+
+      "movdqu      %%xmm0,(%1)                   \n"
+      "lea         16(%1,%4),%1                  \n"  // dst += stride + 16
+      "movdqu      %%xmm1,-16(%1)                \n"
+      "movdqu      %%xmm2,-16(%1,%4)             \n"
+      "movdqu      %%xmm3,-16(%1,%4,2)           \n"
+      "sub         %4,%1                         \n"
+      "sub         $0x4,%2                       \n"
+      "jg          1b                            \n"
+      : "+r"(src),                     // %0
+        "+r"(dst),                     // %1
+        "+rm"(width)                   // %2
+      : "r"((ptrdiff_t)(src_stride)),  // %3
+        "r"((ptrdiff_t)(dst_stride))   // %4
+      : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
+        "xmm7");
+}
+#endif  // defined(HAS_TRANSPOSE4X4_32_SSE2)
+
+#if defined(HAS_TRANSPOSE4X4_32_AVX2)
+
+// Transpose 32 bit values (ARGB)
+void Transpose4x4_32_AVX2(const uint8_t* src,
+                          int src_stride,
+                          uint8_t* dst,
+                          int dst_stride,
+                          int width) {
+  asm volatile(
+      // Main loop transpose 2 blocks of 4x4.  Read a column, write a row.
+      "1:                                        \n"
+      "vmovdqu     (%0),%%xmm0                   \n"  // a b c d
+      "vmovdqu     (%0,%3),%%xmm1                \n"  // e f g h
+      "lea         (%0,%3,2),%0                  \n"  // src += stride * 2
+      "vmovdqu     (%0),%%xmm2                   \n"  // i j k l
+      "vmovdqu     (%0,%3),%%xmm3                \n"  // m n o p
+      "lea         (%0,%3,2),%0                  \n"  // src += stride * 2
+
+      "vinserti128 $1,(%0),%%ymm0,%%ymm0         \n"  // a b c d
+      "vinserti128 $1,(%0,%3),%%ymm1,%%ymm1      \n"  // e f g h
+      "lea         (%0,%3,2),%0                  \n"  // src += stride * 2
+      "vinserti128 $1,(%0),%%ymm2,%%ymm2         \n"  // i j k l
+      "vinserti128 $1,(%0,%3),%%ymm3,%%ymm3      \n"  // m n o p
+      "lea         (%0,%3,2),%0                  \n"  // src += stride * 2
+
+      // Transpose 2x2
+      "vpunpckldq  %%ymm1,%%ymm0,%%ymm4          \n"  // a e b f   from row 0, 1
+      "vpunpckldq  %%ymm3,%%ymm2,%%ymm5          \n"  // i m j n   from row 2, 3
+      "vpunpckhdq  %%ymm1,%%ymm0,%%ymm6          \n"  // c g d h   from row 0, 1
+      "vpunpckhdq  %%ymm3,%%ymm2,%%ymm7          \n"  // k o l p   from row 2, 3
+
+      // Transpose 4x4
+      "vpunpcklqdq %%ymm5,%%ymm4,%%ymm0          \n"  // a e i m   from row 0, 1
+      "vpunpckhqdq %%ymm5,%%ymm4,%%ymm1          \n"  // b f j n   from row 0, 1
+      "vpunpcklqdq %%ymm7,%%ymm6,%%ymm2          \n"  // c g k o   from row 2, 3
+      "vpunpckhqdq %%ymm7,%%ymm6,%%ymm3          \n"  // d h l p   from row 2, 3
+
+      "vmovdqu     %%ymm0,(%1)                   \n"
+      "lea         32(%1,%4),%1                  \n"  // dst += stride + 32
+      "vmovdqu     %%ymm1,-32(%1)                \n"
+      "vmovdqu     %%ymm2,-32(%1,%4)             \n"
+      "vmovdqu     %%ymm3,-32(%1,%4,2)           \n"
+      "sub         %4,%1                         \n"
+      "sub         $0x8,%2                       \n"
+      "jg          1b                            \n"
+      "vzeroupper                                \n"
+      : "+r"(src),                     // %0
+        "+r"(dst),                     // %1
+        "+rm"(width)                   // %2
+      : "r"((ptrdiff_t)(src_stride)),  // %3
+        "r"((ptrdiff_t)(dst_stride))   // %4
+      : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
+        "xmm7");
+}
+#endif  // defined(HAS_TRANSPOSE4X4_32_AVX2)
+
 #endif  // defined(__x86_64__) || defined(__i386__)
 
 #ifdef __cplusplus

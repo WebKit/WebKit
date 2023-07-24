@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Andreas Kling (kling@webkit.org)
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -171,6 +171,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSLineBoxContainValue>(*this));
     case LinearGradientClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSLinearGradientValue>(*this));
+    case LinearTimingFunctionClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSLinearTimingFunctionValue>(*this));
     case NamedImageClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSNamedImageValue>(*this));
     case PrefixedLinearGradientClass:

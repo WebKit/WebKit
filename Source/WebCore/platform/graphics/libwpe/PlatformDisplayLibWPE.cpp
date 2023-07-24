@@ -108,6 +108,13 @@ bool PlatformDisplayLibWPE::initialize(int hostFd)
     }
 
     PlatformDisplay::initializeEGLDisplay();
+
+#if ENABLE(WEBGL)
+    if (m_eglDisplay != EGL_NO_DISPLAY) {
+        m_anglePlatform = eglPlatform;
+        m_angleNativeDisplay = eglNativeDisplay;
+    }
+#endif
     return m_eglDisplay != EGL_NO_DISPLAY;
 }
 

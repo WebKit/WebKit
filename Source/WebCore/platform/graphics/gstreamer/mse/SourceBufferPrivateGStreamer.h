@@ -95,6 +95,7 @@ public:
 #endif
 
     size_t platformMaximumBufferSize() const override;
+    size_t platformEvictionThreshold() const final;
 
 private:
     SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer*, const ContentType&, MediaPlayerPrivateGStreamerMSE&);

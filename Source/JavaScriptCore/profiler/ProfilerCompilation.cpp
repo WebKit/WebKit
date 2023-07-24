@@ -29,6 +29,7 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "ProfilerDatabase.h"
+#include "ProfilerDumper.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace Profiler {
@@ -110,76 +111,50 @@ void Compilation::dump(PrintStream& out) const
     out.print("Comp", m_uid);
 }
 
-JSValue Compilation::toJS(JSGlobalObject* globalObject) const
+Ref<JSON::Value> Compilation::toJSON(Dumper& dumper) const
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* result = constructEmptyObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-    result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
-    result->putDirect(vm, vm.propertyNames->compilationKind, jsString(vm, String::fromUTF8(toCString(m_kind))));
-    
-    JSArray* profiledBytecodes = constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, { });
-    for (unsigned i = 0; i < m_profiledBytecodes.size(); ++i) {
-        auto value = m_profiledBytecodes[i].toJS(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        profiledBytecodes->putDirectIndex(globalObject, i, value);
-        RETURN_IF_EXCEPTION(scope, { });
+    auto result = JSON::Object::create();
+    result->setDouble(dumper.keys().m_bytecodesID, m_bytecodes->id());
+    result->setString(dumper.keys().m_compilationKind, String::fromUTF8(toCString(m_kind)));
+
+    auto profiledBytecodes = JSON::Array::create();
+    for (const auto& bytecode : m_profiledBytecodes)
+        profiledBytecodes->pushValue(bytecode.toJSON(dumper));
+    result->setValue(dumper.keys().m_profiledBytecodes, WTFMove(profiledBytecodes));
+
+    auto descriptions = JSON::Array::create();
+    for (const auto& description : m_descriptions)
+        descriptions->pushValue(description.toJSON(dumper));
+    result->setValue(dumper.keys().m_descriptions, WTFMove(descriptions));
+
+    auto counters = JSON::Array::create();
+    for (const auto& [key, value] : m_counters) {
+        auto counterEntry = JSON::Object::create();
+        counterEntry->setValue(dumper.keys().m_origin, key.toJSON(dumper));
+        counterEntry->setDouble(dumper.keys().m_executionCount, value->count());
+        counters->pushValue(WTFMove(counterEntry));
     }
-    result->putDirect(vm, vm.propertyNames->profiledBytecodes, profiledBytecodes);
-    
-    JSArray* descriptions = constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, { });
-    for (unsigned i = 0; i < m_descriptions.size(); ++i) {
-        auto value = m_descriptions[i].toJS(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        descriptions->putDirectIndex(globalObject, i, value);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    result->putDirect(vm, vm.propertyNames->descriptions, descriptions);
-    
-    JSArray* counters = constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, { });
-    for (auto it = m_counters.begin(), end = m_counters.end(); it != end; ++it) {
-        JSObject* counterEntry = constructEmptyObject(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        auto value = it->key.toJS(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        counterEntry->putDirect(vm, vm.propertyNames->origin, value);
-        counterEntry->putDirect(vm, vm.propertyNames->executionCount, jsNumber(it->value->count()));
-        counters->push(globalObject, counterEntry);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    result->putDirect(vm, vm.propertyNames->counters, counters);
-    
-    JSArray* exitSites = constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, { });
-    for (unsigned i = 0; i < m_osrExitSites.size(); ++i) {
-        auto value = m_osrExitSites[i].toJS(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        exitSites->putDirectIndex(globalObject, i, value);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    result->putDirect(vm, vm.propertyNames->osrExitSites, exitSites);
-    
-    JSArray* exits = constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, { });
-    for (unsigned i = 0; i < m_osrExits.size(); ++i) {
-        exits->putDirectIndex(globalObject, i, m_osrExits[i].toJS(globalObject));
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    result->putDirect(vm, vm.propertyNames->osrExits, exits);
-    
-    result->putDirect(vm, vm.propertyNames->numInlinedGetByIds, jsNumber(m_numInlinedGetByIds));
-    result->putDirect(vm, vm.propertyNames->numInlinedPutByIds, jsNumber(m_numInlinedPutByIds));
-    result->putDirect(vm, vm.propertyNames->numInlinedCalls, jsNumber(m_numInlinedCalls));
-    result->putDirect(vm, vm.propertyNames->jettisonReason, jsString(vm, String::fromUTF8(toCString(m_jettisonReason))));
+    result->setValue(dumper.keys().m_counters, WTFMove(counters));
+
+    auto exitSites = JSON::Array::create();
+    for (const auto& osrExitSite : m_osrExitSites)
+        exitSites->pushValue(osrExitSite.toJSON(dumper));
+    result->setValue(dumper.keys().m_osrExitSites, WTFMove(exitSites));
+
+    auto exits = JSON::Array::create();
+    for (unsigned i = 0; i < m_osrExits.size(); ++i)
+        exits->pushValue(m_osrExits[i].toJSON(dumper));
+    result->setValue(dumper.keys().m_osrExits, WTFMove(exits));
+
+    result->setDouble(dumper.keys().m_numInlinedGetByIds, m_numInlinedGetByIds);
+    result->setDouble(dumper.keys().m_numInlinedPutByIds, m_numInlinedPutByIds);
+    result->setDouble(dumper.keys().m_numInlinedCalls, m_numInlinedCalls);
+    result->setString(dumper.keys().m_jettisonReason, String::fromUTF8(toCString(m_jettisonReason)));
     if (!m_additionalJettisonReason.isNull())
-        result->putDirect(vm, vm.propertyNames->additionalJettisonReason, jsString(vm, String::fromUTF8(m_additionalJettisonReason)));
-    
-    result->putDirect(vm, vm.propertyNames->uid, m_uid.toJS(globalObject));
-    
+        result->setString(dumper.keys().m_additionalJettisonReason, String::fromUTF8(m_additionalJettisonReason));
+
+    result->setValue(dumper.keys().m_uid, m_uid.toJSON(dumper));
+
     return result;
 }
 

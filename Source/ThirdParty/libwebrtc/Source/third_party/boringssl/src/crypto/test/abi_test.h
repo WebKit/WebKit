@@ -179,78 +179,7 @@ struct alignas(16) Reg128 {
   CALLER_STATE_REGISTER(uint64_t, x28)                               \
   CALLER_STATE_REGISTER(uint64_t, x29)
 
-#elif defined(OPENSSL_PPC64LE)
-
-// CRReg only compares the CR2-CR4 bits of a CR register.
-struct CRReg {
-  uint32_t masked() const { return value & 0x00fff000; }
-  bool operator==(CRReg r) const { return masked() == r.masked(); }
-  bool operator!=(CRReg r) const { return masked() != r.masked(); }
-  uint32_t value;
-};
-
-// References:
-// ELFv2: http://openpowerfoundation.org/wp-content/uploads/resources/leabi/leabi-20170510.pdf
-//
-// Note vector and floating-point registers on POWER have two different names.
-// Originally, there were 32 floating-point registers and 32 vector registers,
-// labelled f0-f31 and v0-v31 respectively. Later, VSX (Vector Scalar Extension)
-// unified them into 64 registers vs0-vs63. f0-f31 map to the lower halves of
-// vs0-vs31. v0-v31 map to vs32-vs63. The ABI was defined in terms of pre-VSX
-// names, so we use those names here. In particular, f14-f31 are
-// callee-saved, but the upper halves of vs14-vs31 are not.
-#define LOOP_CALLER_STATE_REGISTERS()  \
-  CALLER_STATE_REGISTER(Reg128, v20)   \
-  CALLER_STATE_REGISTER(Reg128, v21)   \
-  CALLER_STATE_REGISTER(Reg128, v22)   \
-  CALLER_STATE_REGISTER(Reg128, v23)   \
-  CALLER_STATE_REGISTER(Reg128, v24)   \
-  CALLER_STATE_REGISTER(Reg128, v25)   \
-  CALLER_STATE_REGISTER(Reg128, v26)   \
-  CALLER_STATE_REGISTER(Reg128, v27)   \
-  CALLER_STATE_REGISTER(Reg128, v28)   \
-  CALLER_STATE_REGISTER(Reg128, v29)   \
-  CALLER_STATE_REGISTER(Reg128, v30)   \
-  CALLER_STATE_REGISTER(Reg128, v31)   \
-  CALLER_STATE_REGISTER(uint64_t, r14) \
-  CALLER_STATE_REGISTER(uint64_t, r15) \
-  CALLER_STATE_REGISTER(uint64_t, r16) \
-  CALLER_STATE_REGISTER(uint64_t, r17) \
-  CALLER_STATE_REGISTER(uint64_t, r18) \
-  CALLER_STATE_REGISTER(uint64_t, r19) \
-  CALLER_STATE_REGISTER(uint64_t, r20) \
-  CALLER_STATE_REGISTER(uint64_t, r21) \
-  CALLER_STATE_REGISTER(uint64_t, r22) \
-  CALLER_STATE_REGISTER(uint64_t, r23) \
-  CALLER_STATE_REGISTER(uint64_t, r24) \
-  CALLER_STATE_REGISTER(uint64_t, r25) \
-  CALLER_STATE_REGISTER(uint64_t, r26) \
-  CALLER_STATE_REGISTER(uint64_t, r27) \
-  CALLER_STATE_REGISTER(uint64_t, r28) \
-  CALLER_STATE_REGISTER(uint64_t, r29) \
-  CALLER_STATE_REGISTER(uint64_t, r30) \
-  CALLER_STATE_REGISTER(uint64_t, r31) \
-  CALLER_STATE_REGISTER(uint64_t, f14) \
-  CALLER_STATE_REGISTER(uint64_t, f15) \
-  CALLER_STATE_REGISTER(uint64_t, f16) \
-  CALLER_STATE_REGISTER(uint64_t, f17) \
-  CALLER_STATE_REGISTER(uint64_t, f18) \
-  CALLER_STATE_REGISTER(uint64_t, f19) \
-  CALLER_STATE_REGISTER(uint64_t, f20) \
-  CALLER_STATE_REGISTER(uint64_t, f21) \
-  CALLER_STATE_REGISTER(uint64_t, f22) \
-  CALLER_STATE_REGISTER(uint64_t, f23) \
-  CALLER_STATE_REGISTER(uint64_t, f24) \
-  CALLER_STATE_REGISTER(uint64_t, f25) \
-  CALLER_STATE_REGISTER(uint64_t, f26) \
-  CALLER_STATE_REGISTER(uint64_t, f27) \
-  CALLER_STATE_REGISTER(uint64_t, f28) \
-  CALLER_STATE_REGISTER(uint64_t, f29) \
-  CALLER_STATE_REGISTER(uint64_t, f30) \
-  CALLER_STATE_REGISTER(uint64_t, f31) \
-  CALLER_STATE_REGISTER(CRReg, cr)
-
-#endif  // X86_64 || X86 || ARM || AARCH64 || PPC64LE
+#endif  // X86_64 || X86 || ARM || AARCH64
 
 // Enable ABI testing if all of the following are true.
 //
@@ -301,12 +230,6 @@ inline crypto_word_t ToWord(T t) {
   // We never pass parameters smaller than int, so require word-sized parameters
   // on 32-bit architectures for simplicity.
   static_assert(sizeof(T) == 4, "parameter types must be word-sized");
-  return (crypto_word_t)t;
-#elif defined(OPENSSL_PPC64LE)
-  // ELFv2, section 2.2.2.3 says the parameter save area sign- or zero-extends
-  // parameters passed in memory. Section 2.2.3 is unclear on how to handle
-  // register parameters, but section 2.2.2.3 additionally says that the memory
-  // copy of a parameter is identical to the register one.
   return (crypto_word_t)t;
 #elif defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)
   // AAPCS64, section 5.4.2, clauses C.7 and C.14 says any remaining bits in
@@ -362,9 +285,9 @@ inline crypto_word_t ToWord(T t) {
 template <typename R, typename... Args>
 inline crypto_word_t CheckImpl(Result *out, bool unwind, R (*func)(Args...),
                                typename DeductionGuard<Args>::Type... args) {
-  // We only support up to 8 arguments, so all arguments on aarch64 and ppc64le
-  // are passed in registers. This is simpler and avoids the iOS discrepancy
-  // around packing small arguments on the stack. (See the iOS64 reference.)
+  // We only support up to 8 arguments, so all arguments on aarch64 are passed
+  // in registers. This is simpler and avoids the iOS discrepancy around packing
+  // small arguments on the stack. (See the iOS64 reference.)
   static_assert(sizeof...(args) <= 8,
                 "too many arguments for abi_test_trampoline");
 
@@ -380,9 +303,9 @@ inline crypto_word_t CheckImpl(Result *out, bool unwind, R (*func)(Args...),
 // CheckImpl implementation. It must be specialized for void returns because we
 // call |func| directly.
 template <typename R, typename... Args>
-inline typename std::enable_if<!std::is_void<R>::value, crypto_word_t>::type
-CheckImpl(Result *out, bool /* unwind */, R (*func)(Args...),
-          typename DeductionGuard<Args>::Type... args) {
+inline std::enable_if_t<!std::is_void<R>::value, crypto_word_t> CheckImpl(
+    Result *out, bool /* unwind */, R (*func)(Args...),
+    typename DeductionGuard<Args>::Type... args) {
   *out = Result();
   return func(args...);
 }

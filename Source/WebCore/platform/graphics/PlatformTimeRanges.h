@@ -57,6 +57,8 @@ public:
     void invert();
     void intersectWith(const PlatformTimeRanges&);
     void unionWith(const PlatformTimeRanges&);
+    PlatformTimeRanges& operator+=(const PlatformTimeRanges&);
+    PlatformTimeRanges& operator-=(const PlatformTimeRanges&);
 
     unsigned length() const { return m_ranges.size(); }
 
@@ -79,6 +81,11 @@ public:
     struct Range {
         MediaTime start;
         MediaTime end;
+
+        inline bool isEmpty() const
+        {
+            return start == end;
+        }
 
         inline bool isPointInRange(const MediaTime& point) const
         {
@@ -119,6 +126,7 @@ private:
     friend struct IPC::ArgumentCoder<PlatformTimeRanges, void>;
 
     PlatformTimeRanges(Vector<Range>&&);
+    PlatformTimeRanges& operator-=(const Range&);
 
     Vector<Range> m_ranges;
 };

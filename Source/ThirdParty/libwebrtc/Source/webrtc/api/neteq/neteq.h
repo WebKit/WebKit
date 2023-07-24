@@ -76,6 +76,7 @@ struct NetEqLifetimeStatistics {
   uint64_t packets_discarded = 0;
   // Below stats are not part of the spec.
   uint64_t delayed_packet_outage_samples = 0;
+  uint64_t delayed_packet_outage_events = 0;
   // This is sum of relative packet arrival delays of received packets so far.
   // Since end-to-end delay of a packet is difficult to measure and is not
   // necessarily useful for measuring jitter buffer performance, we report a
@@ -128,7 +129,7 @@ class NetEq {
 
     std::string ToString() const;
 
-    int sample_rate_hz = 16000;  // Initial value. Will change with input data.
+    int sample_rate_hz = 48000;  // Initial value. Will change with input data.
     bool enable_post_decode_vad = false;
     size_t max_packets_in_buffer = 200;
     int max_delay_ms = 0;

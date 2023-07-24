@@ -62,9 +62,6 @@ AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float 
 
 void SVGMarkerElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGFitToViewBox::parseAttribute(name, newValue);
-    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     SVGParsingError parseError = NoError;
     switch (name.nodeName()) {
     case AttributeNames::markerUnitsAttr: {
@@ -95,6 +92,9 @@ void SVGMarkerElement::attributeChanged(const QualifiedName& name, const AtomStr
         break;
     }
     reportAttributeParsingError(parseError, name, newValue);
+
+    SVGFitToViewBox::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)

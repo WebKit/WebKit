@@ -57,6 +57,10 @@ OBJC_CLASS _WKWebExtensionMatchPattern;
 #include "_WKWebExtensionPermission.h"
 #endif
 
+namespace API {
+class Data;
+}
+
 namespace WebKit {
 
 class WebExtension : public API::ObjectImpl<API::Object::Type::WebExtension>, public CanMakeWeakPtr<WebExtension> {
@@ -138,6 +142,7 @@ public:
 
     bool manifestParsedSuccessfully();
     NSDictionary *manifest();
+    Ref<API::Data> serializeManifest();
 
     double manifestVersion();
     bool supportsManifestVersion(double version) { return manifestVersion() >= version; }

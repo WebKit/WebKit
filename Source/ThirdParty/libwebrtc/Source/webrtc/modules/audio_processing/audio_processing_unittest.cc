@@ -357,7 +357,7 @@ void ExpectStreamFieldsEq(const audioproc::Stream& actual,
   EXPECT_EQ(actual.output_data(), expected.output_data());
   EXPECT_EQ(actual.delay(), expected.delay());
   EXPECT_EQ(actual.drift(), expected.drift());
-  EXPECT_EQ(actual.level(), expected.level());
+  EXPECT_EQ(actual.applied_input_volume(), expected.applied_input_volume());
   EXPECT_EQ(actual.keypress(), expected.keypress());
 }
 
@@ -955,8 +955,8 @@ TEST_F(ApmTest, PreAmplifier) {
   EXPECT_EQ(config.pre_amplifier.fixed_gain_factor, 1.5f);
 }
 
-// This test a simple test that ensures that the emulated analog mic gain
-// functionality runs without crashing.
+// Ensures that the emulated analog mic gain functionality runs without
+// crashing.
 TEST_F(ApmTest, AnalogMicGainEmulation) {
   // Fill the audio frame with a sawtooth pattern.
   rtc::ArrayView<int16_t> frame_data = GetMutableFrameData(&frame_);
@@ -1518,7 +1518,7 @@ void ApmTest::ProcessDebugDump(absl::string_view in_filename,
       // ProcessStream could have changed this for the output frame.
       frame_.num_channels = apm_->num_input_channels();
 
-      apm_->set_stream_analog_level(msg.level());
+      apm_->set_stream_analog_level(msg.applied_input_volume());
       EXPECT_NOERR(apm_->set_stream_delay_ms(msg.delay()));
       if (msg.has_keypress()) {
         apm_->set_stream_key_pressed(msg.keypress());
@@ -3062,10 +3062,6 @@ TEST(AudioProcessing, GainController2ConfigEqual) {
   b_adaptive.enabled = a_adaptive.enabled;
   EXPECT_EQ(a, b);
 
-  Toggle(a_adaptive.dry_run);
-  b_adaptive.dry_run = a_adaptive.dry_run;
-  EXPECT_EQ(a, b);
-
   a_adaptive.headroom_db += 1.0f;
   b_adaptive.headroom_db = a_adaptive.headroom_db;
   EXPECT_EQ(a, b);
@@ -3076,15 +3072,6 @@ TEST(AudioProcessing, GainController2ConfigEqual) {
 
   a_adaptive.initial_gain_db += 1.0f;
   b_adaptive.initial_gain_db = a_adaptive.initial_gain_db;
-  EXPECT_EQ(a, b);
-
-  a_adaptive.vad_reset_period_ms++;
-  b_adaptive.vad_reset_period_ms = a_adaptive.vad_reset_period_ms;
-  EXPECT_EQ(a, b);
-
-  a_adaptive.adjacent_speech_frames_threshold++;
-  b_adaptive.adjacent_speech_frames_threshold =
-      a_adaptive.adjacent_speech_frames_threshold;
   EXPECT_EQ(a, b);
 
   a_adaptive.max_gain_change_db_per_second += 1.0f;
@@ -3119,10 +3106,6 @@ TEST(AudioProcessing, GainController2ConfigNotEqual) {
   EXPECT_NE(a, b);
   a_adaptive = b_adaptive;
 
-  Toggle(a_adaptive.dry_run);
-  EXPECT_NE(a, b);
-  a_adaptive = b_adaptive;
-
   a_adaptive.headroom_db += 1.0f;
   EXPECT_NE(a, b);
   a_adaptive = b_adaptive;
@@ -3135,14 +3118,6 @@ TEST(AudioProcessing, GainController2ConfigNotEqual) {
   EXPECT_NE(a, b);
   a_adaptive = b_adaptive;
 
-  a_adaptive.vad_reset_period_ms++;
-  EXPECT_NE(a, b);
-  a_adaptive = b_adaptive;
-
-  a_adaptive.adjacent_speech_frames_threshold++;
-  EXPECT_NE(a, b);
-  a_adaptive = b_adaptive;
-
   a_adaptive.max_gain_change_db_per_second += 1.0f;
   EXPECT_NE(a, b);
   a_adaptive = b_adaptive;
@@ -3150,6 +3125,317 @@ TEST(AudioProcessing, GainController2ConfigNotEqual) {
   a_adaptive.max_output_noise_level_dbfs += 1.0f;
   EXPECT_NE(a, b);
   a_adaptive = b_adaptive;
+}
+
+struct ApmFormatHandlingTestParams {
+  enum class ExpectedOutput {
+    kErrorAndUnmodified,
+    kErrorAndSilence,
+    kErrorAndCopyOfFirstChannel,
+    kErrorAndExactCopy,
+    kNoError
+  };
+
+  StreamConfig input_config;
+  StreamConfig output_config;
+  ExpectedOutput expected_output;
+};
+
+class ApmFormatHandlingTest
+    : public ::testing::TestWithParam<
+          std::tuple<StreamDirection, ApmFormatHandlingTestParams>> {
+ public:
+  ApmFormatHandlingTest()
+      : stream_direction_(std::get<0>(GetParam())),
+        test_params_(std::get<1>(GetParam())) {}
+
+ protected:
+  ::testing::Message ProduceDebugMessage() {
+    return ::testing::Message()
+           << "input sample_rate_hz="
+           << test_params_.input_config.sample_rate_hz()
+           << " num_channels=" << test_params_.input_config.num_channels()
+           << ", output sample_rate_hz="
+           << test_params_.output_config.sample_rate_hz()
+           << " num_channels=" << test_params_.output_config.num_channels()
+           << ", stream_direction=" << stream_direction_ << ", expected_output="
+           << static_cast<int>(test_params_.expected_output);
+  }
+
+  StreamDirection stream_direction_;
+  ApmFormatHandlingTestParams test_params_;
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    FormatValidation,
+    ApmFormatHandlingTest,
+    testing::Combine(
+        ::testing::Values(kForward, kReverse),
+        ::testing::Values(
+            // Test cases with values on the boundary of legal ranges.
+            ApmFormatHandlingTestParams{
+                StreamConfig(16000, 1), StreamConfig(8000, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::kNoError},
+            ApmFormatHandlingTestParams{
+                StreamConfig(8000, 1), StreamConfig(16000, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::kNoError},
+            ApmFormatHandlingTestParams{
+                StreamConfig(384000, 1), StreamConfig(16000, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::kNoError},
+            ApmFormatHandlingTestParams{
+                StreamConfig(16000, 1), StreamConfig(384000, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::kNoError},
+            ApmFormatHandlingTestParams{
+                StreamConfig(16000, 2), StreamConfig(16000, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::kNoError},
+            ApmFormatHandlingTestParams{
+                StreamConfig(16000, 3), StreamConfig(16000, 3),
+                ApmFormatHandlingTestParams::ExpectedOutput::kNoError},
+
+            // Supported but incompatible formats.
+            ApmFormatHandlingTestParams{
+                StreamConfig(16000, 3), StreamConfig(16000, 2),
+                ApmFormatHandlingTestParams::ExpectedOutput::
+                    kErrorAndCopyOfFirstChannel},
+            ApmFormatHandlingTestParams{
+                StreamConfig(16000, 3), StreamConfig(16000, 4),
+                ApmFormatHandlingTestParams::ExpectedOutput::
+                    kErrorAndCopyOfFirstChannel},
+
+            // Unsupported format and input / output mismatch.
+            ApmFormatHandlingTestParams{
+                StreamConfig(7900, 1), StreamConfig(16000, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::kErrorAndSilence},
+            ApmFormatHandlingTestParams{
+                StreamConfig(16000, 1), StreamConfig(7900, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::kErrorAndSilence},
+            ApmFormatHandlingTestParams{
+                StreamConfig(390000, 1), StreamConfig(16000, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::kErrorAndSilence},
+            ApmFormatHandlingTestParams{
+                StreamConfig(16000, 1), StreamConfig(390000, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::kErrorAndSilence},
+            ApmFormatHandlingTestParams{
+                StreamConfig(-16000, 1), StreamConfig(16000, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::kErrorAndSilence},
+
+            // Unsupported format but input / output formats match.
+            ApmFormatHandlingTestParams{StreamConfig(7900, 1),
+                                        StreamConfig(7900, 1),
+                                        ApmFormatHandlingTestParams::
+                                            ExpectedOutput::kErrorAndExactCopy},
+            ApmFormatHandlingTestParams{StreamConfig(390000, 1),
+                                        StreamConfig(390000, 1),
+                                        ApmFormatHandlingTestParams::
+                                            ExpectedOutput::kErrorAndExactCopy},
+
+            // Unsupported but identical sample rate, channel mismatch.
+            ApmFormatHandlingTestParams{
+                StreamConfig(7900, 1), StreamConfig(7900, 2),
+                ApmFormatHandlingTestParams::ExpectedOutput::
+                    kErrorAndCopyOfFirstChannel},
+            ApmFormatHandlingTestParams{
+                StreamConfig(7900, 2), StreamConfig(7900, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::
+                    kErrorAndCopyOfFirstChannel},
+
+            // Test cases with meaningless output format.
+            ApmFormatHandlingTestParams{
+                StreamConfig(16000, 1), StreamConfig(-16000, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::
+                    kErrorAndUnmodified},
+            ApmFormatHandlingTestParams{
+                StreamConfig(-16000, 1), StreamConfig(-16000, 1),
+                ApmFormatHandlingTestParams::ExpectedOutput::
+                    kErrorAndUnmodified})));
+
+TEST_P(ApmFormatHandlingTest, IntApi) {
+  SCOPED_TRACE(ProduceDebugMessage());
+
+  // Set up input and output data.
+  const size_t num_input_samples =
+      test_params_.input_config.num_channels() *
+      std::abs(test_params_.input_config.sample_rate_hz() / 100);
+  const size_t num_output_samples =
+      test_params_.output_config.num_channels() *
+      std::abs(test_params_.output_config.sample_rate_hz() / 100);
+  std::vector<int16_t> input_block(num_input_samples);
+  for (int i = 0; i < static_cast<int>(input_block.size()); ++i) {
+    input_block[i] = i;
+  }
+  std::vector<int16_t> output_block(num_output_samples);
+  constexpr int kUnlikelyOffset = 37;
+  for (int i = 0; i < static_cast<int>(output_block.size()); ++i) {
+    output_block[i] = i - kUnlikelyOffset;
+  }
+
+  // Call APM.
+  rtc::scoped_refptr<AudioProcessing> ap =
+      AudioProcessingBuilderForTesting().Create();
+  int error;
+  if (stream_direction_ == kForward) {
+    error = ap->ProcessStream(input_block.data(), test_params_.input_config,
+                              test_params_.output_config, output_block.data());
+  } else {
+    error = ap->ProcessReverseStream(
+        input_block.data(), test_params_.input_config,
+        test_params_.output_config, output_block.data());
+  }
+
+  // Check output.
+  switch (test_params_.expected_output) {
+    case ApmFormatHandlingTestParams::ExpectedOutput::kNoError:
+      EXPECT_EQ(error, AudioProcessing::kNoError);
+      break;
+    case ApmFormatHandlingTestParams::ExpectedOutput::kErrorAndUnmodified:
+      EXPECT_NE(error, AudioProcessing::kNoError);
+      for (int i = 0; i < static_cast<int>(output_block.size()); ++i) {
+        EXPECT_EQ(output_block[i], i - kUnlikelyOffset);
+      }
+      break;
+    case ApmFormatHandlingTestParams::ExpectedOutput::kErrorAndSilence:
+      EXPECT_NE(error, AudioProcessing::kNoError);
+      for (int i = 0; i < static_cast<int>(output_block.size()); ++i) {
+        EXPECT_EQ(output_block[i], 0);
+      }
+      break;
+    case ApmFormatHandlingTestParams::ExpectedOutput::
+        kErrorAndCopyOfFirstChannel:
+      EXPECT_NE(error, AudioProcessing::kNoError);
+      for (size_t ch = 0; ch < test_params_.output_config.num_channels();
+           ++ch) {
+        for (size_t i = 0; i < test_params_.output_config.num_frames(); ++i) {
+          EXPECT_EQ(
+              output_block[ch + i * test_params_.output_config.num_channels()],
+              static_cast<int16_t>(i *
+                                   test_params_.input_config.num_channels()));
+        }
+      }
+      break;
+    case ApmFormatHandlingTestParams::ExpectedOutput::kErrorAndExactCopy:
+      EXPECT_NE(error, AudioProcessing::kNoError);
+      for (int i = 0; i < static_cast<int>(output_block.size()); ++i) {
+        EXPECT_EQ(output_block[i], i);
+      }
+      break;
+  }
+}
+
+TEST_P(ApmFormatHandlingTest, FloatApi) {
+  SCOPED_TRACE(ProduceDebugMessage());
+
+  // Set up input and output data.
+  const size_t input_samples_per_channel =
+      std::abs(test_params_.input_config.sample_rate_hz()) / 100;
+  const size_t output_samples_per_channel =
+      std::abs(test_params_.output_config.sample_rate_hz()) / 100;
+  const size_t input_num_channels = test_params_.input_config.num_channels();
+  const size_t output_num_channels = test_params_.output_config.num_channels();
+  ChannelBuffer<float> input_block(input_samples_per_channel,
+                                   input_num_channels);
+  ChannelBuffer<float> output_block(output_samples_per_channel,
+                                    output_num_channels);
+  for (size_t ch = 0; ch < input_num_channels; ++ch) {
+    for (size_t i = 0; i < input_samples_per_channel; ++i) {
+      input_block.channels()[ch][i] = ch + i * input_num_channels;
+    }
+  }
+  constexpr int kUnlikelyOffset = 37;
+  for (size_t ch = 0; ch < output_num_channels; ++ch) {
+    for (size_t i = 0; i < output_samples_per_channel; ++i) {
+      output_block.channels()[ch][i] =
+          ch + i * output_num_channels - kUnlikelyOffset;
+    }
+  }
+
+  // Call APM.
+  rtc::scoped_refptr<AudioProcessing> ap =
+      AudioProcessingBuilderForTesting().Create();
+  int error;
+  if (stream_direction_ == kForward) {
+    error =
+        ap->ProcessStream(input_block.channels(), test_params_.input_config,
+                          test_params_.output_config, output_block.channels());
+  } else {
+    error = ap->ProcessReverseStream(
+        input_block.channels(), test_params_.input_config,
+        test_params_.output_config, output_block.channels());
+  }
+
+  // Check output.
+  switch (test_params_.expected_output) {
+    case ApmFormatHandlingTestParams::ExpectedOutput::kNoError:
+      EXPECT_EQ(error, AudioProcessing::kNoError);
+      break;
+    case ApmFormatHandlingTestParams::ExpectedOutput::kErrorAndUnmodified:
+      EXPECT_NE(error, AudioProcessing::kNoError);
+      for (size_t ch = 0; ch < output_num_channels; ++ch) {
+        for (size_t i = 0; i < output_samples_per_channel; ++i) {
+          EXPECT_EQ(output_block.channels()[ch][i],
+                    ch + i * output_num_channels - kUnlikelyOffset);
+        }
+      }
+      break;
+    case ApmFormatHandlingTestParams::ExpectedOutput::kErrorAndSilence:
+      EXPECT_NE(error, AudioProcessing::kNoError);
+      for (size_t ch = 0; ch < output_num_channels; ++ch) {
+        for (size_t i = 0; i < output_samples_per_channel; ++i) {
+          EXPECT_EQ(output_block.channels()[ch][i], 0);
+        }
+      }
+      break;
+    case ApmFormatHandlingTestParams::ExpectedOutput::
+        kErrorAndCopyOfFirstChannel:
+      EXPECT_NE(error, AudioProcessing::kNoError);
+      for (size_t ch = 0; ch < output_num_channels; ++ch) {
+        for (size_t i = 0; i < output_samples_per_channel; ++i) {
+          EXPECT_EQ(output_block.channels()[ch][i],
+                    input_block.channels()[0][i]);
+        }
+      }
+      break;
+    case ApmFormatHandlingTestParams::ExpectedOutput::kErrorAndExactCopy:
+      EXPECT_NE(error, AudioProcessing::kNoError);
+      for (size_t ch = 0; ch < output_num_channels; ++ch) {
+        for (size_t i = 0; i < output_samples_per_channel; ++i) {
+          EXPECT_EQ(output_block.channels()[ch][i],
+                    input_block.channels()[ch][i]);
+        }
+      }
+      break;
+  }
+}
+
+TEST(ApmAnalyzeReverseStreamFormatTest, AnalyzeReverseStream) {
+  for (auto&& [input_config, expect_error] :
+       {std::tuple(StreamConfig(16000, 2), /*expect_error=*/false),
+        std::tuple(StreamConfig(8000, 1), /*expect_error=*/false),
+        std::tuple(StreamConfig(384000, 1), /*expect_error=*/false),
+        std::tuple(StreamConfig(7900, 1), /*expect_error=*/true),
+        std::tuple(StreamConfig(390000, 1), /*expect_error=*/true),
+        std::tuple(StreamConfig(16000, 0), /*expect_error=*/true),
+        std::tuple(StreamConfig(-16000, 0), /*expect_error=*/true)}) {
+    SCOPED_TRACE(::testing::Message()
+                 << "sample_rate_hz=" << input_config.sample_rate_hz()
+                 << " num_channels=" << input_config.num_channels());
+
+    // Set up input data.
+    ChannelBuffer<float> input_block(
+        std::abs(input_config.sample_rate_hz()) / 100,
+        input_config.num_channels());
+
+    // Call APM.
+    rtc::scoped_refptr<AudioProcessing> ap =
+        AudioProcessingBuilderForTesting().Create();
+    int error = ap->AnalyzeReverseStream(input_block.channels(), input_config);
+
+    // Check output.
+    if (expect_error) {
+      EXPECT_NE(error, AudioProcessing::kNoError);
+    } else {
+      EXPECT_EQ(error, AudioProcessing::kNoError);
+    }
+  }
 }
 
 }  // namespace webrtc

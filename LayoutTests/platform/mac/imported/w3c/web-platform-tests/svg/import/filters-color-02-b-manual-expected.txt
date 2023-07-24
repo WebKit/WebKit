@@ -29,15 +29,15 @@ layer at (0,0) size 800x600
           [filter="Reference"] RenderSVGResourceFilter {filter} at (20,40) size 440x40
         RenderSVGRect {rect} at (33,233) size 734x67 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=140.00] [width=440.00] [height=40.00]
           [filter="Default"] RenderSVGResourceFilter {filter} at (20,140) size 440x40
-      RenderSVGContainer {g} at (66,133) size 188x208
-        RenderSVGText {text} at (40,80) size 113x25 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 113x25
-            chunk 1 text run 1 at (40.00,100.00) startOffset 0 endOffset 9 width 112.04: "Reference"
-        RenderSVGText {text} at (40,180) size 82x25 contains 1 chunk(s)
+      RenderSVGContainer {g} at (66,133) size 190x208
+        RenderSVGText {text} at (40,79) size 114x26 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 114x25
+            chunk 1 text run 1 at (40.00,100.00) startOffset 0 endOffset 9 width 113.17: "Reference"
+        RenderSVGText {text} at (40,179) size 82x26 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 82x25
-            chunk 1 text run 1 at (40.00,200.00) startOffset 0 endOffset 7 width 81.07: "Default"
-    RenderSVGContainer {g} at (16,517) size 381x62
-      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 229x37
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.7 $"
+            chunk 1 text run 1 at (40.00,200.00) startOffset 0 endOffset 7 width 81.88: "Default"
+    RenderSVGContainer {g} at (16,517) size 384x62
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

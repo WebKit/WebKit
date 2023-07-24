@@ -31,11 +31,7 @@ class CallByNeed(object):
         if name in dir(type(self)) or name in {'_callback', '_value'}:
             return object.__getattribute__(self, name)
         typ = object.__getattribute__(self, 'type')
-        if not typ:
-            raise AttributeError(
-                "'{}' object has no attribute '{},' and doesn't define a target type".format(type(self).__name__, name),
-            )
-        if name in dir(typ):
+        if typ is None or name in dir(typ):
             return object.__getattribute__(self, 'value').__getattribute__(name)
         raise AttributeError("'{}' object has no attribute '{}'".format(typ.__name__, name))
 
@@ -46,7 +42,9 @@ class CallByNeed(object):
             self._callback = None
         return self._value
 
-    def __call__(self):
+    def __call__(self, *args, **kwargs):
+        if callable(self.value):
+            return self.value(*args, **kwargs)
         return self.value
 
     def __repr__(self):

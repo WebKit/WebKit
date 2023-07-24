@@ -662,11 +662,9 @@ void CSSCalcOperationNode::combineChildren()
             m_children.clear();
             m_children.append(WTFMove(newChild));
         }
-        if (isSignNode() || (isHypotNode() && canCombineAllChildren())) {
-            auto combinedUnitType = m_children[0]->primitiveType();
-            if (calcOperator() == CalcOperator::Sign)
-                combinedUnitType = CSSUnitType::CSS_NUMBER;
+        if ((isAbsOrSignNode() || isHypotNode()) && canCombineAllChildren()) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType());
+            auto combinedUnitType = isSignNode() ? CSSUnitType::CSS_NUMBER : m_children[0]->primitiveType();
             auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, combinedUnitType));
             m_children.clear();
             m_children.append(WTFMove(newChild));
@@ -893,7 +891,7 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
             calcOperationNode.hoistChildrenWithOperator(CalcOperator::Multiply);
         }
         
-        if (calcOperationNode.isMinOrMaxNode() || calcOperationNode.isHypotNode() || calcOperationNode.isCalcProductNode() || calcOperationNode.isCalcSumNode() || (calcOperationNode.shouldPreserveFunction() && depth))
+        if (calcOperationNode.isNonCalcFunction() || calcOperationNode.isCalcProductNode() || calcOperationNode.isCalcSumNode())
             calcOperationNode.combineChildren();
 
         // If only one child remains, return the child (except at the root).
@@ -906,9 +904,10 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
             if (depth)
                 return true;
             
-            if (parent.shouldNotPreserveFunction() && is<CSSCalcPrimitiveValueNode>(parent.children()[0])) {
+            if (parent.isNonCalcFunction() && (parent.isIdentity() || is<CSSCalcPrimitiveValueNode>(parent.children()[0]))) {
                 parent.makeTopLevelCalc();
-                return false;
+                if (is<CSSCalcPrimitiveValueNode>(parent.children()[0]))
+                    return false;
             }
 
             // At the root, preserve the root function by only merging nodes with the same function.
@@ -1037,9 +1036,7 @@ double CSSCalcOperationNode::doubleValue(CSSUnitType unitType) const
             childType = CSSUnitType::CSS_RAD;
         if (isInverseTrigNode())
             childType = CSSUnitType::CSS_NUMBER;
-        if (isAtan2Node())
-            childType = child->primitiveType();
-        if (isSignNode())
+        if (isAtan2Node() || isAbsOrSignNode())
             childType = child->primitiveType();
         return child->doubleValue(childType);
     }));
@@ -1272,220 +1269,11 @@ bool CSSCalcOperationNode::equals(const CSSCalcExpressionNode& exp) const
     return true;
 }
 
-static std::pair<double, double> getNearestMultiples(double a, double b)
+double CSSCalcOperationNode::evaluateOperator(CalcOperator calcOperator, const Vector<double>& children)
 {
-    double lowerB = std::floor(a / std::abs(b))*std::abs(b);
-    double upperB = lowerB + std::abs(b);
-    return std::make_pair(lowerB, upperB);
+    return evaluateCalcExpression(calcOperator, children, [](double child) {
+        return child;
+    });
 }
-
-double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<double>& children)
-{
-    switch (op) {
-    case CalcOperator::Add: {
-        double sum = 0;
-        for (auto& child : children)
-            sum += child;
-        return sum;
-    }
-    case CalcOperator::Subtract:
-        ASSERT(children.size() == 2);
-        return children[0] - children[1];
-    case CalcOperator::Multiply: {
-        double product = 1;
-        for (auto& child : children)
-            product *= child;
-        return product;
-    }
-    case CalcOperator::Divide:
-        ASSERT(children.size() == 1 || children.size() == 2);
-        if (children.size() == 1)
-            return std::numeric_limits<double>::quiet_NaN();
-        return children[0] / children[1];
-    case CalcOperator::Min: {
-        if (children.isEmpty())
-            return std::numeric_limits<double>::quiet_NaN();
-        double minimum = children[0];
-        for (auto child : children) {
-            if (std::isnan(child))
-                return child;
-            minimum = std::min(minimum, child);
-        }
-        return minimum;
-    }
-    case CalcOperator::Max: {
-        if (children.isEmpty())
-            return std::numeric_limits<double>::quiet_NaN();
-        double maximum = children[0];
-        for (auto child : children) {
-            if (std::isnan(child))
-                return child;
-            maximum = std::max(maximum, child);
-        }
-        return maximum;
-    }
-    case CalcOperator::Clamp: {
-        if (children.size() != 3)
-            return std::numeric_limits<double>::quiet_NaN();
-        double min = children[0];
-        double value = children[1];
-        double max = children[2];
-        if (std::isnan(min) || std::isnan(value) || std::isnan(max))
-            return std::numeric_limits<double>::quiet_NaN();
-        return std::max(min, std::min(value, max));
-    }
-    case CalcOperator::Pow:
-        if (children.size() != 2)
-            return std::numeric_limits<double>::quiet_NaN();
-        return std::pow(children[0], children[1]);
-    case CalcOperator::Sqrt: {
-        if (children.size() != 1)
-            return std::numeric_limits<double>::quiet_NaN();
-        return std::sqrt(children[0]);
-    }
-    case CalcOperator::Hypot: {
-        if (children.isEmpty())
-            return std::numeric_limits<double>::quiet_NaN();
-        if (children.size() == 1)
-            return std::abs(children[0]);
-        double sum = 0;
-        for (auto child : children) {
-            if (std::isnan(child))
-                return child;
-            sum += (child * child);
-        }
-        return std::sqrt(sum);
-    }
-    case CalcOperator::Sin: {
-        if (children.size() != 1)
-            return std::numeric_limits<double>::quiet_NaN();
-        return std::sin(children[0]);
-    }
-    case CalcOperator::Cos: {
-        if (children.size() != 1)
-            return std::numeric_limits<double>::quiet_NaN();
-        return std::cos(children[0]);
-    }
-    case CalcOperator::Tan: {
-        if (children.size() != 1)
-            return std::numeric_limits<double>::quiet_NaN();
-        return std::tan(children[0]);
-    }
-    case CalcOperator::Log: {
-        if (children.size() != 1 && children.size() != 2)
-            return std::numeric_limits<double>::quiet_NaN();
-        if (children.size() == 1)
-            return std::log(children[0]);
-        return std::log(children[0]) / std::log(children[1]);
-    }
-    case CalcOperator::Exp: {
-        if (children.size() != 1)
-            return std::numeric_limits<double>::quiet_NaN();
-        return std::exp(children[0]);
-    }
-    case CalcOperator::Asin: {
-        if (children.size() != 1)
-            return std::numeric_limits<double>::quiet_NaN();
-        return rad2deg(std::asin(children[0]));
-    }
-    case CalcOperator::Acos: {
-        if (children.size() != 1)
-            return std::numeric_limits<double>::quiet_NaN();
-        return rad2deg(std::acos(children[0]));
-    }
-    case CalcOperator::Atan: {
-        if (children.size() != 1)
-            return std::numeric_limits<double>::quiet_NaN();
-        return rad2deg(std::atan(children[0]));
-    }
-    case CalcOperator::Atan2: {
-        if (children.size() != 2)
-            return std::numeric_limits<double>::quiet_NaN();
-        return rad2deg(atan2(children[0], children[1]));
-    }
-    case CalcOperator::Abs: {
-        if (children.size() != 1)
-            return std::numeric_limits<double>::quiet_NaN();
-        return std::abs(children[0]);
-    }
-    case CalcOperator::Sign: {
-        if (children.size() != 1)
-            return std::numeric_limits<double>::quiet_NaN();
-        if (children[0] > 0)
-            return 1;
-        if (children[0] < 0)
-            return -1;
-        return children[0];
-    }
-    case CalcOperator::Mod: {
-        if (children.size() != 2)
-            return std::numeric_limits<double>::quiet_NaN();
-        float left = children[0];
-        float right = children[1];
-        if (!right)
-            return std::numeric_limits<double>::quiet_NaN();
-        if ((left < 0) == (right < 0))
-            return std::fmod(left, right);
-        return std::remainder(left, right);
-    }
-    case CalcOperator::Rem: {
-        if (children.size() != 2)
-            return std::numeric_limits<double>::quiet_NaN();
-        float left = children[0];
-        float right = children[1];
-        if (!right)
-            return std::numeric_limits<double>::quiet_NaN();
-        return std::fmod(left, right);
-    }
-    case CalcOperator::Round:
-        return std::numeric_limits<double>::quiet_NaN();
-    case CalcOperator::Up: {
-        if (children.size() != 2)
-            return std::numeric_limits<double>::quiet_NaN();
-        if (!isinf(children[0]) && std::isinf(children[1])) {
-            if (!children[0])
-                return children[0];
-            return signbit(children[0]) ? -0.0 : std::numeric_limits<double>::infinity();
-        }
-        auto ret = getNearestMultiples(children[0], children[1]);
-        return ret.second;
-    }
-    case CalcOperator::Down: {
-        if (children.size() != 2)
-            return std::numeric_limits<double>::quiet_NaN();
-        if (!isinf(children[0]) && isinf(children[1])) {
-            if (!children[0])
-                return children[0];
-            return signbit(children[0]) ? -std::numeric_limits<double>::infinity() : +0.0;
-        }
-        auto ret = getNearestMultiples(children[0], children[1]);
-        return ret.first;
-    }
-    case CalcOperator::Nearest: {
-        if (children.size() != 2)
-            return std::numeric_limits<double>::quiet_NaN();
-        if (!isinf(children[0]) && isinf(children[1]))
-            return signbit(children[0]) ? -0.0 : +0.0;
-        auto ret = getNearestMultiples(children[0], children[1]);
-        auto upperB = ret.second;
-        auto lowerB = ret.first;
-        return std::abs(upperB - children[0]) <= std::abs(children[1]) / 2 ? upperB : lowerB;
-    }
-    case CalcOperator::ToZero: {
-        if (children.size() != 2)
-            return std::numeric_limits<double>::quiet_NaN();
-        if (!isinf(children[0]) && isinf(children[1]))
-            return signbit(children[0]) ? -0.0 : +0.0;
-        auto ret = getNearestMultiples(children[0], children[1]);
-        auto upperB = ret.second;
-        auto lowerB = ret.first;
-        return std::abs(upperB) < std::abs(lowerB) ? upperB : lowerB;
-    }
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-
 
 }

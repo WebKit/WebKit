@@ -9,14 +9,16 @@
  */
 #include "test/direct_transport.h"
 
-#include "absl/memory/memory.h"
+#include "api/media_types.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "call/call.h"
 #include "call/fake_network_pipe.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/rtp_util.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/time_utils.h"
-#include "test/rtp_header_parser.h"
 
 namespace webrtc {
 namespace test {
@@ -26,7 +28,7 @@ Demuxer::Demuxer(const std::map<uint8_t, MediaType>& payload_type_map)
 
 MediaType Demuxer::GetMediaType(const uint8_t* packet_data,
                                 const size_t packet_length) const {
-  if (!RtpHeaderParser::IsRtcp(packet_data, packet_length)) {
+  if (IsRtpPacket(rtc::MakeArrayView(packet_data, packet_length))) {
     RTC_CHECK_GE(packet_length, 2);
     const uint8_t payload_type = packet_data[1] & 0x7f;
     std::map<uint8_t, MediaType>::const_iterator it =
@@ -42,11 +44,15 @@ DirectTransport::DirectTransport(
     TaskQueueBase* task_queue,
     std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
     Call* send_call,
-    const std::map<uint8_t, MediaType>& payload_type_map)
+    const std::map<uint8_t, MediaType>& payload_type_map,
+    rtc::ArrayView<const RtpExtension> audio_extensions,
+    rtc::ArrayView<const RtpExtension> video_extensions)
     : send_call_(send_call),
       task_queue_(task_queue),
       demuxer_(payload_type_map),
-      fake_network_(std::move(pipe)) {
+      fake_network_(std::move(pipe)),
+      audio_extensions_(audio_extensions),
+      video_extensions_(video_extensions) {
   Start();
 }
 
@@ -69,23 +75,40 @@ bool DirectTransport::SendRtp(const uint8_t* data,
     sent_packet.info.packet_type = rtc::PacketType::kData;
     send_call_->OnSentPacket(sent_packet);
   }
-  SendPacket(data, length);
+
+  const RtpHeaderExtensionMap* extensions = nullptr;
+  MediaType media_type = demuxer_.GetMediaType(data, length);
+  switch (demuxer_.GetMediaType(data, length)) {
+    case webrtc::MediaType::AUDIO:
+      extensions = &audio_extensions_;
+      break;
+    case webrtc::MediaType::VIDEO:
+      extensions = &video_extensions_;
+      break;
+    default:
+      RTC_CHECK_NOTREACHED();
+  }
+  RtpPacketReceived packet(extensions, Timestamp::Micros(rtc::TimeMicros()));
+  if (media_type == MediaType::VIDEO) {
+    packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
+  }
+  RTC_CHECK(packet.Parse(rtc::CopyOnWriteBuffer(data, length)));
+  fake_network_->DeliverRtpPacket(
+      media_type, std::move(packet),
+      [](const RtpPacketReceived& packet) { return false; });
+
+  MutexLock lock(&process_lock_);
+  if (!next_process_task_.Running())
+    ProcessPackets();
   return true;
 }
 
 bool DirectTransport::SendRtcp(const uint8_t* data, size_t length) {
-  SendPacket(data, length);
-  return true;
-}
-
-void DirectTransport::SendPacket(const uint8_t* data, size_t length) {
-  MediaType media_type = demuxer_.GetMediaType(data, length);
-  int64_t send_time_us = rtc::TimeMicros();
-  fake_network_->DeliverPacket(media_type, rtc::CopyOnWriteBuffer(data, length),
-                               send_time_us);
+  fake_network_->DeliverRtcpPacket(rtc::CopyOnWriteBuffer(data, length));
   MutexLock lock(&process_lock_);
   if (!next_process_task_.Running())
     ProcessPackets();
+  return true;
 }
 
 int DirectTransport::GetAverageDelayMs() {

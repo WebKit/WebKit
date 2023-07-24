@@ -65,6 +65,11 @@ promise_test((test) => {
                 firstConnection.addTrack(track4, newStream);
                 firstConnection.addTrack(track5, newStream);
                 firstConnection.addTrack(track6, newStream);
+
+                // Restrict each transceiver to one codec (H.264) to prevent payload types from overflowing in SDP offer.
+                const codecs = RTCRtpSender.getCapabilities("video").codecs;
+                const h264Codec = codecs.filter(codec => { return codec.mimeType === "video/H264"; })[0];
+                firstConnection.getTransceivers().forEach((transceiver) => { transceiver.setCodecPreferences([h264Codec]); });
             }, (secondConnection) => {
                 secondConnection.ontrack = (trackEvent) => {
                     resolve(trackEvent.streams[0]);

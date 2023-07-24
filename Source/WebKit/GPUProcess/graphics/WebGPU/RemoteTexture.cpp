@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,13 +33,13 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include "WebGPUTextureViewDescriptor.h"
-#include <pal/graphics/WebGPU/WebGPUTexture.h>
-#include <pal/graphics/WebGPU/WebGPUTextureView.h>
-#include <pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h>
+#include <WebCore/WebGPUTexture.h>
+#include <WebCore/WebGPUTextureView.h>
+#include <WebCore/WebGPUTextureViewDescriptor.h>
 
 namespace WebKit {
 
-RemoteTexture::RemoteTexture(PAL::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteTexture::RemoteTexture(WebCore::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(texture)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
@@ -57,7 +57,7 @@ void RemoteTexture::stopListeningForIPC()
 
 void RemoteTexture::createView(const std::optional<WebGPU::TextureViewDescriptor>& descriptor, WebGPUIdentifier identifier)
 {
-    std::optional<PAL::WebGPU::TextureViewDescriptor> convertedDescriptor;
+    std::optional<WebCore::WebGPU::TextureViewDescriptor> convertedDescriptor;
     if (descriptor) {
         auto resultDescriptor = m_objectHeap.convertFromBacking(*descriptor);
         ASSERT(resultDescriptor);

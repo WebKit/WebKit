@@ -93,8 +93,11 @@ bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect& filterEffect
         return effect.setType(type());
     case AttributeNames::stitchTilesAttr:
         return effect.setStitchTiles(stitchTiles());
-    case AttributeNames::baseFrequencyAttr:
-        return effect.setBaseFrequencyX(baseFrequencyX()) || effect.setBaseFrequencyY(baseFrequencyY());
+    case AttributeNames::baseFrequencyAttr: {
+        bool baseFrequencyXChanged = effect.setBaseFrequencyX(baseFrequencyX());
+        bool baseFrequencyYChanged = effect.setBaseFrequencyY(baseFrequencyY());
+        return baseFrequencyXChanged || baseFrequencyYChanged;
+    }
     case AttributeNames::seedAttr:
         return effect.setSeed(seed());
     case AttributeNames::numOctavesAttr:

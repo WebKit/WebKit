@@ -54,8 +54,6 @@ SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagNam
 
 void SVGTextPositioningElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGTextContentElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::xAttr:
         m_x->baseVal()->parse(newValue);
@@ -75,6 +73,8 @@ void SVGTextPositioningElement::attributeChanged(const QualifiedName& name, cons
     default:
         break;
     }
+
+    SVGTextContentElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGTextPositioningElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)

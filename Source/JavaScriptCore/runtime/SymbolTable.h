@@ -726,6 +726,7 @@ public:
         GlobalLexicalScope,
         LexicalScope,
         CatchScope,
+        CatchScopeWithSimpleParameter,
         FunctionNameScope
     };
     void setScopeType(ScopeType type) { m_scopeType = type; }

@@ -326,7 +326,7 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
                 if (WTF::isAlignedToMachineWord(source)) {
                     while (source < alignedEnd) {
                         auto chunk = *reinterpret_cast_ptr<const WTF::MachineWord*>(source);
-                        if (!WTF::isAllASCII<LChar>(chunk))
+                        if (!WTF::containsOnlyASCII<LChar>(chunk))
                             break;
                         copyASCIIMachineWord(destination, source);
                         source += sizeof(WTF::MachineWord);
@@ -406,7 +406,7 @@ upConvertTo16Bit:
                 if (WTF::isAlignedToMachineWord(source)) {
                     while (source < alignedEnd) {
                         auto chunk = *reinterpret_cast_ptr<const WTF::MachineWord*>(source);
-                        if (!WTF::isAllASCII<LChar>(chunk))
+                        if (!WTF::containsOnlyASCII<LChar>(chunk))
                             break;
                         copyASCIIMachineWord(destination16, source);
                         source += sizeof(WTF::MachineWord);

@@ -2,7 +2,9 @@
 FAIL Normalize spaces assert_equals: expected "style(--foo: bar)" but got "style( --foo:bar)"
 FAIL Empty declaration value - spaces assert_equals: expected "style(--foo: )" but got "STyle(--foo: )"
 FAIL Empty declaration value assert_equals: expected "style(--foo: )" but got "STyle(--foo:)"
-PASS Missing declaration value
+FAIL No declaration value assert_equals: expected "style(--foo)" but got "STyle(--foo)"
 FAIL Unknown CSS property after 'or' assert_equals: expected "style((--FOO: BAR) or ( prop: val ))" but got "style( ( --FOO: BAR) OR ( prop: val ) )"
 PASS Not a style function with space before '('
+FAIL Spaces preserved in custom property value assert_equals: expected "style(--foo: bar   baz)" but got "style(--foo: bar baz)"
+FAIL Original string number in custom property value assert_equals: expected "style(--foo: 2.100)" but got "style(--foo:2.1 )"
 

@@ -798,7 +798,7 @@ String mapHostNames(const String& string, URLDecodeFunction decodeFunction)
 {
     // Generally, we want to optimize for the case where there is one host name that does not need mapping.
     
-    if (decodeFunction && string.isAllASCII())
+    if (decodeFunction && string.containsOnlyASCII())
         return string;
     
     // Make a list of ranges that actually need mapping.

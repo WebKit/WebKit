@@ -41,7 +41,22 @@ absl_cc_library(
     absl::debugging_internal
     absl::config
     absl::core_headers
+    absl::dynamic_annotations
+    absl::raw_logging_internal
   PUBLIC
+)
+
+absl_cc_test(
+  NAME
+    stacktrace_test
+  SRCS
+    "stacktrace_test.cc"
+  COPTS
+    ${ABSL_TEST_COPTS}
+  DEPS
+    absl::stacktrace
+    absl::core_headers
+    GTest::gmock_main
 )
 
 absl_cc_library(
@@ -61,7 +76,7 @@ absl_cc_library(
     ${ABSL_DEFAULT_COPTS}
   LINKOPTS
     ${ABSL_DEFAULT_LINKOPTS}
-    $<$<BOOL:${MINGW}>:"dbghelp">
+    $<$<BOOL:${MINGW}>:-ldbghelp>
   DEPS
     absl::debugging_internal
     absl::demangle_internal

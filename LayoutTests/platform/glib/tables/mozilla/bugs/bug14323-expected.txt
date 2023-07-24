@@ -41,4 +41,4 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (326,42) size 100x30 [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 100x30
 layer at (8,8) size 152x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 152x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 152x2 [color=#808080] [border: (1px inset #808080)]

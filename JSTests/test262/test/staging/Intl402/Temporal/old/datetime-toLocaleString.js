@@ -49,34 +49,3 @@ assert.sameValue(
   `${dstStart.toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}`,
   `3/8/2020, 3:30:00${usDayPeriodSpace}AM`
 );
-
-// works when the object's calendar is the same as the locale's calendar
-var dt = Temporal.PlainDateTime.from({
-  era: "showa",
-  eraYear: 51,
-  month: 11,
-  day: 18,
-  hour: 15,
-  minute: 23,
-  second: 30,
-  calendar: "japanese"
-});
-var result = dt.toLocaleString("en-US-u-ca-japanese");
-assert(result === `11/18/51, 3:23:30${usDayPeriodSpace}PM` || result === `11/18/51 S, 3:23:30${usDayPeriodSpace}PM`);
-
-// adopts the locale's calendar when the object's calendar is ISO
-var dt = Temporal.PlainDateTime.from("1976-11-18T15:23:30");
-var result = dt.toLocaleString("en-US-u-ca-japanese");
-assert(result === `11/18/51, 3:23:30${usDayPeriodSpace}PM` || result === `11/18/51 S, 3:23:30${usDayPeriodSpace}PM`);
-
-// throws when the calendars are different and not ISO
-var dt = Temporal.PlainDateTime.from({
-  year: 1976,
-  month: 11,
-  day: 18,
-  hour: 15,
-  minute: 23,
-  second: 30,
-  calendar: "gregory"
-});
-assert.throws(RangeError, () => dt.toLocaleString("en-US-u-ca-japanese"));

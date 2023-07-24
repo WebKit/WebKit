@@ -861,6 +861,7 @@ public:
 
     void convertToNewArrayBuffer(FrozenValue* immutableButterfly);
     void convertToNewArrayWithSize();
+    void convertToNewArrayWithConstantSize(Graph&, uint32_t);
 
     void convertToNewBoundFunction(FrozenValue*);
 
@@ -1037,6 +1038,7 @@ public:
     {
         switch (op()) {
         case MovHint:
+        case ZombieHint:
             return true;
         default:
             return false;
@@ -1079,6 +1081,7 @@ public:
         switch (op()) {
         case ExtractOSREntryLocal:
         case MovHint:
+        case ZombieHint:
         case KillStack:
             return true;
         default:
@@ -1312,12 +1315,29 @@ public:
             return m_opInfo2.as<unsigned>();
         return newArrayBufferData().vectorLengthHint;
     }
-    
+
+    unsigned hasNewArraySize()
+    {
+        switch (op()) {
+        case NewArrayWithConstantSize:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    unsigned newArraySize()
+    {
+        ASSERT(hasNewArraySize());
+        return m_opInfo2.as<unsigned>();
+    }
+
     bool hasIndexingType()
     {
         switch (op()) {
         case NewArray:
         case NewArrayWithSize:
+        case NewArrayWithConstantSize:
         case NewArrayBuffer:
         case PhantomNewArrayBuffer:
         case NewArrayWithSpecies:
@@ -2793,14 +2813,26 @@ public:
         return isInt32SpeculationForArithmetic(prediction());
     }
     
-    bool shouldSpeculateInt32OrBooleanForArithmetic()
+    bool shouldSpeculateInt32OrBooleanForArithmetic(bool mayHaveDoubleResult = true)
     {
-        return isInt32OrBooleanSpeculationForArithmetic(prediction());
+        if (isInt32OrBooleanSpeculationForArithmetic(prediction()))
+            return true;
+        if (!mayHaveDoubleResult && isInt32OrBooleanSpeculationForArithmetic(prediction() & ~SpecDoubleNaN))
+            return true;
+        return false;
     }
     
-    bool shouldSpeculateInt32OrBooleanExpectingDefined()
+    bool shouldSpeculateInt32OrBooleanExpectingDefined(bool mayHaveDoubleResult)
     {
-        return isInt32OrBooleanSpeculationExpectingDefined(prediction());
+        if (isInt32OrBooleanSpeculationExpectingDefined(prediction()))
+            return true;
+
+        // We found that NaN can be used as an error value (as the same to Other), and it can pollute the graph with Double.
+        // But NaN compuation always produces NaN. So if we do not observe DoubleResult, then likely this site never sees
+        // NaN. We relax Int32 speculation condition based on this behavior.
+        if (!mayHaveDoubleResult && isInt32OrBooleanSpeculationExpectingDefined(prediction() & ~SpecDoubleNaN))
+            return true;
+        return false;
     }
     
     bool shouldSpeculateInt52()
@@ -3107,12 +3139,6 @@ public:
     {
         return op1->shouldSpeculateInt32OrBooleanForArithmetic()
             && op2->shouldSpeculateInt32OrBooleanForArithmetic();
-    }
-    
-    static bool shouldSpeculateInt32OrBooleanExpectingDefined(Node* op1, Node* op2)
-    {
-        return op1->shouldSpeculateInt32OrBooleanExpectingDefined()
-            && op2->shouldSpeculateInt32OrBooleanExpectingDefined();
     }
     
     static bool shouldSpeculateInt52(Node* op1, Node* op2)
@@ -3499,21 +3525,25 @@ public:
         out.printf(", @%u", child3()->index());
     }
 
-    NodeOrigin origin;
+    NO_UNIQUE_ADDRESS NodeOrigin origin;
 
+private:
+    NO_UNIQUE_ADDRESS NodeType m_op;
+
+    NO_UNIQUE_ADDRESS unsigned m_index { std::numeric_limits<unsigned>::max() };
+
+public:
     // References to up to 3 children, or links to a variable length set of children.
     AdjacencyList children;
 
 private:
     friend class B3::SparseCollection<Node>;
 
-    unsigned m_index { std::numeric_limits<unsigned>::max() };
-    unsigned m_op : 10; // real type is NodeType
-    unsigned m_flags : 21;
     // The virtual register number (spill location) associated with this node. For tuples this is the offset into the graph's out of line tuple buffers.
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).
     unsigned m_refCount;
+    NodeFlags m_flags { 0 };
     // The prediction ascribed to this node after propagation.
     SpeculatedType m_prediction { SpecNone };
     // Immediate values, accesses type-checked via accessors above.

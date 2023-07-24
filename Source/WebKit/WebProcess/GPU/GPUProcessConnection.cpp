@@ -118,13 +118,14 @@ RefPtr<GPUProcessConnection> GPUProcessConnection::create(IPC::Connection& paren
     if (!connectionIdentifiers)
         return nullptr;
 
-    parentConnection.send(Messages::WebProcessProxy::CreateGPUProcessConnection(connectionIdentifiers->client, getGPUProcessConnectionParameters()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    parentConnection.send(Messages::WebProcessProxy::CreateGPUProcessConnection(WTFMove(connectionIdentifiers->client), getGPUProcessConnectionParameters()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 
     auto instance = adoptRef(*new GPUProcessConnection(WTFMove(connectionIdentifiers->server)));
 #if ENABLE(IPC_TESTING_API)
     if (parentConnection.ignoreInvalidMessageForTesting())
         instance->connection().setIgnoreInvalidMessageForTesting();
 #endif
+    RELEASE_LOG(Process, "GPUProcessConnection::create - %p", instance.ptr());
     return instance;
 }
 
@@ -166,6 +167,7 @@ void GPUProcessConnection::invalidate()
 
 void GPUProcessConnection::didClose(IPC::Connection&)
 {
+    RELEASE_LOG_ERROR(Process, "%p - GPUProcessConnection::didClose", this);
     auto protector = Ref { *this };
     WebProcess::singleton().gpuProcessConnectionClosed(*this);
 
@@ -174,9 +176,10 @@ void GPUProcessConnection::didClose(IPC::Connection&)
         arbitrator->leaveRoutingAbritration();
 #endif
 
-    auto clients = m_clients;
-    for (auto& client : clients)
+    m_clients.forEach([this] (auto& client) {
         client.gpuProcessConnectionDidClose(*this);
+    });
+    m_clients.clear();
 }
 
 void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)
@@ -291,10 +294,12 @@ bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC:
 void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>&& info)
 {
     if (!info) {
+        RELEASE_LOG_ERROR(Process, "%p - GPUProcessConnection::didInitialize - failed", this);
         invalidate();
         return;
     }
     m_hasInitialized = true;
+    RELEASE_LOG(Process, "%p - GPUProcessConnection::didInitialize", this);
 
 #if ENABLE(VP9) && USE(LIBWEBRTC) && PLATFORM(COCOA)
     WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(info->hasVP9HardwareDecoder);
@@ -305,8 +310,9 @@ void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>
 bool GPUProcessConnection::waitForDidInitialize()
 {
     if (!m_hasInitialized) {
-        bool result = m_connection->waitForAndDispatchImmediately<Messages::GPUProcessConnection::DidInitialize>(0, defaultTimeout);
-        if (!result) {
+        auto result = m_connection->waitForAndDispatchImmediately<Messages::GPUProcessConnection::DidInitialize>(0, defaultTimeout);
+        if (result != IPC::Error::NoError) {
+            RELEASE_LOG_ERROR(Process, "%p - GPUProcessConnection::waitForDidInitialize - failed, error:%" PUBLIC_LOG_STRING, this, IPC::errorAsString(result));
             invalidate();
             return false;
         }

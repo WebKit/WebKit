@@ -174,7 +174,7 @@ Path HTMLAreaElement::getRegion(const LayoutSize& size) const
             if (m_coords.size() >= 3) {
                 double radius = m_coords[2];
                 if (radius > 0)
-                    path.addEllipse(FloatRect(m_coords[0] - radius, m_coords[1] - radius, 2 * radius, 2 * radius));
+                    path.addEllipseInRect(FloatRect(m_coords[0] - radius, m_coords[1] - radius, 2 * radius, 2 * radius));
             }
             break;
         case Rect:

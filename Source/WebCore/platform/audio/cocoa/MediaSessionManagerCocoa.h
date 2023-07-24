@@ -38,6 +38,8 @@ namespace WebCore {
 
 struct NowPlayingInfo;
 
+enum class MediaPlayerPitchCorrectionAlgorithm : uint8_t;
+
 class MediaSessionManagerCocoa
     : public PlatformMediaSessionManager
     , private NowPlayingManager::Client
@@ -75,6 +77,8 @@ public:
     static WEBCORE_EXPORT void setSampleBufferContentKeySessionSupportEnabled(bool);
     static WEBCORE_EXPORT bool sampleBufferContentKeySessionSupportEnabled();
 #endif
+
+    static String audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayerPitchCorrectionAlgorithm, bool preservesPitch, double rate);
 
 protected:
     void scheduleSessionStatusUpdate() final;

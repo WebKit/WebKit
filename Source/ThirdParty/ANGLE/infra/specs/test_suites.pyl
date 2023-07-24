@@ -12,6 +12,14 @@
 
 {
   'basic_suites': {
+    'angle_capture_isolated_scripts': {
+      'angle_capture_tests': {
+        'args': [
+          '--log=debug',
+        ],
+      },
+    },
+
     'angle_deqp_egl_d3d11_gtests': {
       'angle_deqp_egl_d3d11_tests': {
         'args': [
@@ -618,7 +626,7 @@
           '--render-test-output-dir=${ISOLATED_OUTDIR}',
         ],
         'android_swarming': {
-          'shards': 4,
+          'shards': 8,
         },
         'args': [
           '--gtest_filter=*Vulkan*:-*Vulkan_SwiftShader*',
@@ -697,7 +705,6 @@
           '--log=debug',
           '--samples-per-test=6',
           '--show-test-stdout',
-          '--split-shard-samples',
         ],
         'merge': {
           'script': '//scripts/process_angle_perf_results.py',
@@ -772,18 +779,6 @@
       }
     },
 
-    'angle_trace_interpreter_isolated_scripts': {
-      'angle_trace_interpreter_tests': {
-        'args': [
-          '--log=debug',
-          'interpret',
-          'among_us:catalyst_black:cut_the_rope:dota_underlords:fishdom:genshin_impact:harry_potter_hogwarts_mystery:manhattan_10:trex_200',
-          '-L=2',
-          '--show-test-stdout',
-        ],
-      },
-    },
-
     'angle_trace_perf_native_isolated_scripts': {
       'angle_trace_perf_native_tests': {
         'android_args': {
@@ -792,7 +787,7 @@
         'args': [
           '--log=debug',
           '--show-test-stdout',
-          '--split-shard-samples',
+          '--samples-per-test=6',
           '--use-gl=native',
           '--trace-tests',
         ],
@@ -843,7 +838,7 @@
         'args': [
           '--log=debug',
           '--show-test-stdout',
-          '--split-shard-samples',
+          '--samples-per-test=6',
           '--use-angle=vulkan',
           '--trace-tests',
         ],
@@ -908,13 +903,11 @@
       },
     },
 
-    'swangle_deqp_egl_slow_flaky_tests': {
+    'swangle_deqp_egl_slow_tests': {
       'angle_deqp_egl_tests': {
         'args': [
           '--use-angle=swiftshader',
           '--batch-timeout=600',
-          # Mitigate flaky crashes in TSAN. http://crbug.com/1275223
-          '--flaky-retries=2',
         ],
         'use_isolated_scripts_api': True,
       },
@@ -1186,10 +1179,10 @@
     ],
 
     'common_isolated_scripts': [
+      'angle_capture_isolated_scripts',
       'angle_perf_smoke_isolated_scripts',
       'angle_restricted_trace_gold_isolated_scripts',
       'angle_restricted_trace_gold_interpreted_isolated_scripts',
-      'angle_trace_interpreter_isolated_scripts',
       'angle_trace_perf_native_smoke_isolated_scripts',
       'angle_trace_perf_vulkan_smoke_isolated_scripts',
     ],
@@ -1244,10 +1237,11 @@
       'angle_unit_gtests',
     ],
 
-    'mac_nvidia_gtests': [
-      'angle_end2end_with_retry_gtests',
-      'angle_unit_gtests',
-    ],
+    # Temporarily disabled for upgrade crbug.com/1456549
+    # 'mac_nvidia_gtests': [
+    #   'angle_end2end_with_retry_gtests',
+    #   'angle_unit_gtests',
+    # ],
 
     'swangle_gtests': [
       'swangle_deqp_egl_tests',
@@ -1274,7 +1268,7 @@
     ],
 
     'swangle_slow_flaky_gtests': [
-      'swangle_deqp_egl_slow_flaky_tests',
+      'swangle_deqp_egl_slow_tests',
       'swangle_deqp_gles2_slow_tests',
       'swangle_deqp_gles3_slow_tests',
       'swangle_deqp_khr_gles2_tests',

@@ -101,11 +101,23 @@ typedef void (*glDeleteTextures_func)(GLsizei n, const GLuint* textures);
 typedef void (*glGenTextures_func)(GLsizei n, GLuint* textures);
 typedef GLenum (*glGetError_func)(void);
 typedef const GLubyte* (*glGetString_func)(GLenum name);
-typedef void (*glGetTexImage_func)(GLenum target,
-                                   GLint level,
-                                   GLenum format,
-                                   GLenum type,
-                                   void* pixels);
+typedef void (*glReadPixels_func)(GLint x,
+                                  GLint y,
+                                  GLsizei width,
+                                  GLsizei height,
+                                  GLenum format,
+                                  GLenum type,
+                                  void* data);
+typedef void (*glGenFramebuffers_func)(GLsizei n, GLuint* ids);
+typedef void (*glDeleteFramebuffers_func)(GLsizei n,
+                                          const GLuint* framebuffers);
+typedef void (*glBindFramebuffer_func)(GLenum target, GLuint framebuffer);
+typedef void (*glFramebufferTexture2D_func)(GLenum target,
+                                            GLenum attachment,
+                                            GLenum textarget,
+                                            GLuint texture,
+                                            GLint level);
+typedef GLenum (*glCheckFramebufferStatus_func)(GLenum target);
 typedef void (*glTexParameteri_func)(GLenum target, GLenum pname, GLint param);
 typedef void* (*glXGetProcAddressARB_func)(const char*);
 
@@ -118,7 +130,12 @@ glDeleteTextures_func GlDeleteTextures = nullptr;
 glGenTextures_func GlGenTextures = nullptr;
 glGetError_func GlGetError = nullptr;
 glGetString_func GlGetString = nullptr;
-glGetTexImage_func GlGetTexImage = nullptr;
+glReadPixels_func GlReadPixels = nullptr;
+glGenFramebuffers_func GlGenFramebuffers = nullptr;
+glDeleteFramebuffers_func GlDeleteFramebuffers = nullptr;
+glBindFramebuffer_func GlBindFramebuffer = nullptr;
+glFramebufferTexture2D_func GlFramebufferTexture2D = nullptr;
+glCheckFramebufferStatus_func GlCheckFramebufferStatus = nullptr;
 glTexParameteri_func GlTexParameteri = nullptr;
 glXGetProcAddressARB_func GlXGetProcAddressARB = nullptr;
 
@@ -279,12 +296,26 @@ static bool LoadGL() {
         (glDeleteTextures_func)GlXGetProcAddressARB("glDeleteTextures");
     GlGenTextures = (glGenTextures_func)GlXGetProcAddressARB("glGenTextures");
     GlGetError = (glGetError_func)GlXGetProcAddressARB("glGetError");
-    GlGetTexImage = (glGetTexImage_func)GlXGetProcAddressARB("glGetTexImage");
+    GlReadPixels = (glReadPixels_func)GlXGetProcAddressARB("glReadPixels");
+    GlGenFramebuffers =
+        (glGenFramebuffers_func)GlXGetProcAddressARB("glGenFramebuffers");
+    GlDeleteFramebuffers =
+        (glDeleteFramebuffers_func)GlXGetProcAddressARB("glDeleteFramebuffers");
+    GlBindFramebuffer =
+        (glBindFramebuffer_func)GlXGetProcAddressARB("glBindFramebuffer");
+    GlFramebufferTexture2D = (glFramebufferTexture2D_func)GlXGetProcAddressARB(
+        "glFramebufferTexture2D");
+    GlCheckFramebufferStatus =
+        (glCheckFramebufferStatus_func)GlXGetProcAddressARB(
+            "glCheckFramebufferStatus");
+
     GlTexParameteri =
         (glTexParameteri_func)GlXGetProcAddressARB("glTexParameteri");
 
     return GlBindTexture && GlDeleteTextures && GlGenTextures && GlGetError &&
-           GlGetTexImage && GlTexParameteri;
+           GlReadPixels && GlGenFramebuffers && GlDeleteFramebuffers &&
+           GlBindFramebuffer && GlFramebufferTexture2D &&
+           GlCheckFramebufferStatus && GlTexParameteri;
   }
 
   return false;
@@ -435,6 +466,14 @@ EglDmaBuf::~EglDmaBuf() {
     EglTerminate(egl_.display);
   }
 
+  if (fbo_) {
+    GlDeleteFramebuffers(1, &fbo_);
+  }
+
+  if (texture_) {
+    GlDeleteTextures(1, &texture_);
+  }
+
   // BUG: crbug.com/1290566
   // Closing libEGL.so.1 when using NVidia drivers causes a crash
   // when EglGetPlatformDisplayEXT() is used, at least this one is enough
@@ -466,20 +505,20 @@ bool EglDmaBuf::GetClientExtensions(EGLDisplay dpy, EGLint name) {
 }
 
 RTC_NO_SANITIZE("cfi-icall")
-std::unique_ptr<uint8_t[]> EglDmaBuf::ImageFromDmaBuf(
-    const DesktopSize& size,
-    uint32_t format,
-    const std::vector<PlaneData>& plane_datas,
-    uint64_t modifier) {
-  std::unique_ptr<uint8_t[]> src;
-
+bool EglDmaBuf::ImageFromDmaBuf(const DesktopSize& size,
+                                uint32_t format,
+                                const std::vector<PlaneData>& plane_datas,
+                                uint64_t modifier,
+                                const DesktopVector& offset,
+                                const DesktopSize& buffer_size,
+                                uint8_t* data) {
   if (!egl_initialized_) {
-    return src;
+    return false;
   }
 
   if (plane_datas.size() <= 0) {
     RTC_LOG(LS_ERROR) << "Failed to process buffer: invalid number of planes";
-    return src;
+    return false;
   }
 
   EGLint attribs[47];
@@ -568,20 +607,32 @@ std::unique_ptr<uint8_t[]> EglDmaBuf::ImageFromDmaBuf(
   if (image == EGL_NO_IMAGE) {
     RTC_LOG(LS_ERROR) << "Failed to record frame: Error creating EGLImage - "
                       << FormatEGLError(EglGetError());
-    return src;
+    return false;
   }
 
   // create GL 2D texture for framebuffer
-  GLuint texture;
-  GlGenTextures(1, &texture);
-  GlTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  GlTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  GlTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  GlTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  GlBindTexture(GL_TEXTURE_2D, texture);
+  if (!texture_) {
+    GlGenTextures(1, &texture_);
+    GlTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    GlTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    GlTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GlTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  }
+  GlBindTexture(GL_TEXTURE_2D, texture_);
   GlEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
 
-  src = std::make_unique<uint8_t[]>(plane_datas[0].stride * size.height());
+  if (!fbo_) {
+    GlGenFramebuffers(1, &fbo_);
+  }
+
+  GlBindFramebuffer(GL_FRAMEBUFFER, fbo_);
+  GlFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                         texture_, 0);
+  if (GlCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    RTC_LOG(LS_ERROR) << "Failed to bind DMA buf framebuffer";
+    EglDestroyImageKHR(egl_.display, image);
+    return false;
+  }
 
   GLenum gl_format = GL_BGRA;
   switch (format) {
@@ -598,17 +649,18 @@ std::unique_ptr<uint8_t[]> EglDmaBuf::ImageFromDmaBuf(
       gl_format = GL_BGRA;
       break;
   }
-  GlGetTexImage(GL_TEXTURE_2D, 0, gl_format, GL_UNSIGNED_BYTE, src.get());
 
-  if (GlGetError()) {
+  GlReadPixels(offset.x(), offset.y(), buffer_size.width(),
+               buffer_size.height(), gl_format, GL_UNSIGNED_BYTE, data);
+
+  const GLenum error = GlGetError();
+  if (error) {
     RTC_LOG(LS_ERROR) << "Failed to get image from DMA buffer.";
-    return src;
   }
 
-  GlDeleteTextures(1, &texture);
   EglDestroyImageKHR(egl_.display, image);
 
-  return src;
+  return !error;
 }
 
 RTC_NO_SANITIZE("cfi-icall")

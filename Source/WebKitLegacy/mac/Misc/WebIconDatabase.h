@@ -39,11 +39,11 @@
 #endif
 
 extern NSString *WebIconDatabaseDidAddIconNotification;
+extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
 
 extern NSString *WebIconNotificationUserInfoURLKey;
 
 extern NSString *WebIconDatabaseDirectoryDefaultsKey;
-extern NSString *WebIconDatabaseEnabledDefaultsKey;
 
 extern NSSize WebIconSmallSize;  // 16 x 16
 extern NSSize WebIconMediumSize; // 32 x 32

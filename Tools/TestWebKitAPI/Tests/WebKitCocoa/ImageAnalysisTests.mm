@@ -334,7 +334,7 @@ static RetainPtr<CGImageRef> iconImage()
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
 
-static void simulateCalloutBarAppearance(TestWKWebView *webView)
+static void simulateEditMenuAppearance(TestWKWebView *webView)
 {
     __block bool done = false;
     [webView.textInputContentView requestPreferredArrowDirectionForEditMenuWithCompletionHandler:^(UIEditMenuArrowDirection) {
@@ -357,7 +357,7 @@ static BOOL simulateEditContextMenuAppearance(TestWKWebView *webView, CGPoint lo
 
 static void invokeRemoveBackgroundAction(TestWKWebView *webView)
 {
-    simulateCalloutBarAppearance(webView);
+    simulateEditMenuAppearance(webView);
 
     auto menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
     [webView buildMenuWithBuilder:menuBuilder.get()];
@@ -397,7 +397,7 @@ TEST(ImageAnalysisTests, MenuControllerItems)
     [webView objectByEvaluatingJavaScript:@"let image = document.images[0]; nodeIndex = [...image.parentNode.childNodes].indexOf(image);"
         "getSelection().setBaseAndExtent(image.parentNode, nodeIndex, image.parentNode, nodeIndex + 1);"];
     [webView waitForNextPresentationUpdate];
-    simulateCalloutBarAppearance(webView.get());
+    simulateEditMenuAppearance(webView.get());
 
     auto menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
     [webView buildMenuWithBuilder:menuBuilder.get()];
@@ -405,7 +405,7 @@ TEST(ImageAnalysisTests, MenuControllerItems)
 
     [webView selectAll:nil];
     [webView waitForNextPresentationUpdate];
-    simulateCalloutBarAppearance(webView.get());
+    simulateEditMenuAppearance(webView.get());
 
     [menuBuilder reset];
     [webView buildMenuWithBuilder:menuBuilder.get()];
@@ -413,7 +413,7 @@ TEST(ImageAnalysisTests, MenuControllerItems)
 
     [webView objectByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(document.body, 0, image.parentNode, nodeIndex + 1);"];
     [webView waitForNextPresentationUpdate];
-    simulateCalloutBarAppearance(webView.get());
+    simulateEditMenuAppearance(webView.get());
 
     [menuBuilder reset];
     [webView buildMenuWithBuilder:menuBuilder.get()];
@@ -477,7 +477,7 @@ TEST(ImageAnalysisTests, AllowRemoveBackgroundOnce)
     [webView objectByEvaluatingJavaScript:@"let image = document.images[0]; nodeIndex = [...image.parentNode.childNodes].indexOf(image);"
         "getSelection().setBaseAndExtent(image.parentNode, nodeIndex, image.parentNode, nodeIndex + 1)"];
     [webView waitForNextPresentationUpdate];
-    simulateCalloutBarAppearance(webView.get());
+    simulateEditMenuAppearance(webView.get());
 
     auto menuBuilder = adoptNS([TestUIMenuBuilder new]);
     [webView buildMenuWithBuilder:menuBuilder.get()];

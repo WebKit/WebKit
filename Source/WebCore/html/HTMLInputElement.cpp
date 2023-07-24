@@ -532,14 +532,18 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
 
     m_inputType->destroyShadowSubtree();
     m_inputType->detachFromElement();
+    auto oldType = m_inputType->type();
 
     bool previouslySelectable = m_inputType->supportsSelectionAPI();
 
     m_inputType = WTFMove(newType);
     m_inputType->createShadowSubtreeIfNeeded();
 
+    if (oldType == InputType::Type::Telephone || m_inputType->type() == InputType::Type::Telephone)
+        updateTextDirectionalityAfterTelephoneInputTypeChange();
+
     if (UNLIKELY(didSupportReadOnly != willSupportReadOnly && hasAttributeWithoutSynchronization(readonlyAttr))) {
-        emplace(readWriteInvalidation, *this, { { CSSSelector::PseudoClassReadWrite, !willSupportReadOnly }, { CSSSelector::PseudoClassReadOnly, willSupportReadOnly } });
+        emplace(readWriteInvalidation, *this, { { CSSSelector::PseudoClassType::ReadWrite, !willSupportReadOnly }, { CSSSelector::PseudoClassType::ReadOnly, willSupportReadOnly } });
         readOnlyStateChanged();
     }
 
@@ -1003,7 +1007,7 @@ void HTMLInputElement::setChecked(bool isChecked)
 
     m_inputType->willUpdateCheckedness(isChecked);
 
-    Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassChecked, isChecked);
+    Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassType::Checked, isChecked);
 
     m_isChecked = isChecked;
 
@@ -1027,7 +1031,7 @@ void HTMLInputElement::setIndeterminate(bool newValue)
     if (indeterminate() == newValue)
         return;
 
-    Style::PseudoClassChangeInvalidation indeterminateInvalidation(*this, CSSSelector::PseudoClassIndeterminate, newValue);
+    Style::PseudoClassChangeInvalidation indeterminateInvalidation(*this, CSSSelector::PseudoClassType::Indeterminate, newValue);
     m_isIndeterminate = newValue;
 
     if (auto* renderer = this->renderer(); renderer && renderer->style().hasEffectiveAppearance())
@@ -1103,6 +1107,9 @@ ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEvent
     m_inputType->setValue(WTFMove(sanitizedValue), valueChanged, eventBehavior, selection);
     if (selfOrPrecedingNodesAffectDirAuto())
         updateEffectiveDirectionalityOfDirAuto();
+
+    if (valueChanged && eventBehavior == DispatchNoEvent)
+        setTextAsOfLastFormControlChangeEvent(sanitizedValue);
 
     bool wasModifiedProgrammatically = eventBehavior == DispatchNoEvent;
     if (wasModifiedProgrammatically) {
@@ -1263,7 +1270,8 @@ void HTMLInputElement::defaultEventHandler(Event& event)
     if (m_inputType->shouldSubmitImplicitly(event)) {
         if (isSearchField()) {
             addSearchResult();
-            onSearch();
+            if (document().settings().searchInputIncrementalAttributeAndSearchEventEnabled())
+                onSearch();
         }
         // Form submission finishes editing, just as loss of focus does.
         // If there was a change, send the event now.
@@ -1372,7 +1380,7 @@ static Vector<String> parseAcceptAttribute(StringView acceptString, bool (*predi
         return types;
 
     for (auto splitType : acceptString.split(',')) {
-        auto trimmedType = splitType.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
+        auto trimmedType = splitType.trim(isASCIIWhitespace<UChar>);
         if (trimmedType.isEmpty())
             continue;
         if (!predicate(trimmedType))
@@ -1427,7 +1435,7 @@ void HTMLInputElement::setAutoFilled(bool autoFilled)
     if (autoFilled == m_isAutoFilled)
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassAutofill, autoFilled);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Autofill, autoFilled);
     m_isAutoFilled = autoFilled;
 }
 
@@ -1436,7 +1444,7 @@ void HTMLInputElement::setAutoFilledAndViewable(bool autoFilledAndViewable)
     if (autoFilledAndViewable == m_isAutoFilledAndViewable)
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassAutofillStrongPasswordViewable, autoFilledAndViewable);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::AutofillStrongPasswordViewable, autoFilledAndViewable);
     m_isAutoFilledAndViewable = autoFilledAndViewable;
 }
 
@@ -1445,7 +1453,7 @@ void HTMLInputElement::setAutoFilledAndObscured(bool autoFilledAndObscured)
     if (autoFilledAndObscured == m_isAutoFilledAndObscured)
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassAutofillAndObscured, autoFilledAndObscured);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::AutofillAndObscured, autoFilledAndObscured);
     m_isAutoFilledAndObscured = autoFilledAndObscured;
 
     if (auto* cache = document().existingAXObjectCache())
@@ -2207,7 +2215,8 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
     textBlockStyle.inheritFrom(style);
     adjustInnerTextStyle(style, textBlockStyle);
 
-    textBlockStyle.setWhiteSpace(WhiteSpace::Pre);
+    textBlockStyle.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
+    textBlockStyle.setTextWrap(TextWrap::NoWrap);
     textBlockStyle.setOverflowWrap(OverflowWrap::Normal);
     textBlockStyle.setOverflowX(Overflow::Hidden);
     textBlockStyle.setOverflowY(Overflow::Hidden);
@@ -2226,8 +2235,13 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
             textBlockStyle.setUsedZIndex(0);
     }
 
-    // Do not allow line-height to be smaller than our default.
-    if (textBlockStyle.metricsOfPrimaryFont().lineSpacing() > style.computedLineHeight())
+    auto shouldUseInitialLineHeight = [&] {
+        // Do not allow line-height to be smaller than our default.
+        if (textBlockStyle.metricsOfPrimaryFont().lineSpacing() > style.computedLineHeight())
+            return true;
+        return isText() && !style.logicalHeight().isAuto();
+    };
+    if (shouldUseInitialLineHeight())
         textBlockStyle.setLineHeight(RenderStyle::initialLineHeight());
 
     return textBlockStyle;

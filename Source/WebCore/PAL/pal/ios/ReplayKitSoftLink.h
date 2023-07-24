@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 #import <ReplayKit/ReplayKit.h>
 #import <wtf/SoftLinking.h>

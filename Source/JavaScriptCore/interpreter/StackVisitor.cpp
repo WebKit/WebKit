@@ -191,21 +191,18 @@ void StackVisitor::readInlinableWasmFrame(CallFrame* callFrame)
     m_frame.m_codeBlock = nullptr;
     m_frame.m_wasmDistanceFromDeepestInlineFrame = 0;
 
-    const auto& callee = *m_frame.m_callee.asWasmCallee();
-    auto csi = callFrame->callSiteIndex().bits();
-
     RELEASE_ASSERT(m_frame.m_callee.isWasm());
-    if (m_frame.m_callee.isWasm())
-        m_frame.m_wasmFunctionIndexOrName = m_frame.m_callee.asWasmCallee()->indexOrName();
+    const auto& callee = *m_frame.m_callee.asWasmCallee();
+    m_frame.m_wasmFunctionIndexOrName = callee.indexOrName();
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
     bool canInline = isAnyOMG(callee.compilationMode());
     if (!canInline)
         return;
 
     const auto& omgCallee = *static_cast<const Wasm::OptimizingJITCallee*>(&callee);
     bool isInlined = false;
-    auto origin = omgCallee.getOrigin(csi, depth, isInlined);
-
+    auto origin = omgCallee.getOrigin(callFrame->callSiteIndex().bits(), depth, isInlined);
     if (!isInlined)
         return;
 
@@ -214,6 +211,9 @@ void StackVisitor::readInlinableWasmFrame(CallFrame* callFrame)
     m_frame.m_callerFrame = callFrame;
     m_frame.m_wasmDistanceFromDeepestInlineFrame = depth + 1;
     m_frame.m_wasmFunctionIndexOrName = origin;
+#else
+    UNUSED_VARIABLE(depth);
+#endif
 #else
     UNUSED_PARAM(callFrame);
 #endif

@@ -90,7 +90,7 @@ bool LocaleIDBuilder::initialize(const String& tag)
 {
     if (!isStructurallyValidLanguageTag(tag))
         return false;
-    ASSERT(tag.isAllASCII());
+    ASSERT(tag.containsOnlyASCII());
     m_buffer = localeIDBufferForLanguageTagWithNullTerminator(tag.ascii());
     return m_buffer.size();
 }
@@ -152,7 +152,7 @@ void LocaleIDBuilder::overrideLanguageScriptRegion(StringView language, StringVi
         else
             hasAppended = true;
 
-        ASSERT(subtag.isAllASCII());
+        ASSERT(subtag.containsOnlyASCII());
         if (subtag.is8Bit())
             buffer.append(subtag.characters8(), subtag.length());
         else
@@ -162,7 +162,7 @@ void LocaleIDBuilder::overrideLanguageScriptRegion(StringView language, StringVi
     if (endOfLanguageScriptRegionVariant != length) {
         auto rest = localeIDView.right(length - endOfLanguageScriptRegionVariant);
 
-        ASSERT(rest.isAllASCII());
+        ASSERT(rest.containsOnlyASCII());
         if (rest.is8Bit())
             buffer.append(rest.characters8(), rest.length());
         else
@@ -177,7 +177,7 @@ void LocaleIDBuilder::setKeywordValue(ASCIILiteral key, StringView value)
 {
     ASSERT(m_buffer.size());
 
-    ASSERT(value.isAllASCII());
+    ASSERT(value.containsOnlyASCII());
     Vector<char, 32> rawValue(value.length() + 1);
     value.getCharacters(reinterpret_cast<LChar*>(rawValue.data()));
     rawValue[value.length()] = '\0';

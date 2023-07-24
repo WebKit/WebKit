@@ -29,7 +29,7 @@
 #include "ObjectPrototypeInlines.h"
 #include "PropertySlot.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -78,7 +78,7 @@ ObjectPrototype* ObjectPrototype::create(VM& vm, JSGlobalObject* globalObject, S
     return prototype;
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 bool isPokerBros()
 {
     auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());

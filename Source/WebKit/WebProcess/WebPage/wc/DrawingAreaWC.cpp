@@ -39,6 +39,7 @@
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageInlines.h"
+#include "WebPreferencesKeys.h"
 #include "WebProcess.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/LocalFrame.h>
@@ -53,11 +54,8 @@ DrawingAreaWC::DrawingAreaWC(WebPage& webPage, const WebPageCreationParameters& 
     , m_remoteWCLayerTreeHostProxy(makeUnique<RemoteWCLayerTreeHostProxy>(webPage, parameters.usesOffscreenRendering))
     , m_layerFactory(*this)
     , m_updateRenderingTimer(*this, &DrawingAreaWC::updateRendering)
-    , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), this->m_rootLayerClient))
     , m_commitQueue(WorkQueue::create("DrawingAreaWC CommitQueue"_s))
 {
-    m_rootLayer->setName(MAKE_STATIC_STRING_IMPL("drawing area root"));
-    m_rootLayer->setSize(m_webPage.size());
 }
 
 DrawingAreaWC::~DrawingAreaWC()
@@ -73,40 +71,61 @@ GraphicsLayerFactory* DrawingAreaWC::graphicsLayerFactory()
 
 void DrawingAreaWC::updateRootLayers()
 {
-    Vector<Ref<GraphicsLayer>> children;
-    if (m_contentLayer) {
-        children.append(*m_contentLayer);
-        if (m_viewOverlayRootLayer)
-            children.append(*m_viewOverlayRootLayer);
+    for (auto& rootLayer : m_rootLayers) {
+        Vector<Ref<GraphicsLayer>> children;
+        if (rootLayer.contentLayer) {
+            children.append(*rootLayer.contentLayer);
+            if (rootLayer.viewOverlayRootLayer)
+                children.append(*rootLayer.viewOverlayRootLayer);
+        }
+        rootLayer.layer->setChildren(WTFMove(children));
     }
-    m_rootLayer->setChildren(WTFMove(children));
     triggerRenderingUpdate();
 }
 
-void DrawingAreaWC::setRootCompositingLayer(WebCore::Frame&, GraphicsLayer* rootLayer)
+void DrawingAreaWC::setRootCompositingLayer(WebCore::Frame& frame, GraphicsLayer* rootGraphicsLayer)
 {
-    m_contentLayer = rootLayer;
-    if (rootLayer)
+    for (auto& rootLayer : m_rootLayers) {
+        if (rootLayer.frameID == frame.frameID())
+            rootLayer.contentLayer = rootGraphicsLayer;
+    }
+    if (rootGraphicsLayer)
         send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, { }));
     updateRootLayers();
 }
 
-void DrawingAreaWC::attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, GraphicsLayer* layer)
+void DrawingAreaWC::addRootFrame(WebCore::FrameIdentifier frameID)
 {
-    m_viewOverlayRootLayer = layer;
-    updateRootLayers();
+    auto layer = GraphicsLayer::create(graphicsLayerFactory(), this->m_rootLayerClient);
+    // FIXME: This has an unnecessary string allocation. Adding a StringTypeAdapter for FrameIdentifier or ProcessQualified would remove that.
+    layer->setName(makeString("drawing area root "_s, frameID.toString()));
+    m_rootLayers.append(RootLayerInfo {
+        WTFMove(layer),
+        nullptr,
+        nullptr,
+        frameID
+    });
 }
 
-void DrawingAreaWC::updatePreferences(const WebPreferencesStore&)
+void DrawingAreaWC::attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier frameID, GraphicsLayer* layer)
+{
+    if (auto* layerInfo = rootLayerInfoWithFrameIdentifier(frameID)) {
+        layerInfo->viewOverlayRootLayer = layer;
+        updateRootLayers();
+    }
+}
+
+void DrawingAreaWC::updatePreferences(const WebPreferencesStore& store)
 {
     Settings& settings = m_webPage.corePage()->settings();
     settings.setAcceleratedCompositingForFixedPositionEnabled(settings.acceleratedCompositingEnabled());
+    settings.setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::siteIsolationEnabledKey()));
 }
 
 bool DrawingAreaWC::shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView& frameView) const
 {
     auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frameView.frame());
-    return localFrame && localFrame->isMainFrame();
+    return localFrame && localFrame->isRootFrame();
 }
 
 void DrawingAreaWC::setLayerTreeStateIsFrozen(bool isFrozen)
@@ -124,7 +143,6 @@ void DrawingAreaWC::updateGeometryWC(uint64_t backingStoreStateID, IntSize viewS
 {
     m_backingStoreStateID = backingStoreStateID;
     m_webPage.setSize(viewSize);
-    m_rootLayer->setSize(m_webPage.size());
 }
 
 void DrawingAreaWC::setNeedsDisplay()
@@ -193,7 +211,7 @@ void DrawingAreaWC::triggerRenderingUpdate()
     m_updateRenderingTimer.startOneShot(0_s);
 }
 
-static void flushLayerImageBuffers(WCUpateInfo& info)
+static void flushLayerImageBuffers(WCUpdateInfo& info)
 {
     for (auto& layerInfo : info.changedLayers) {
         if (layerInfo.changes & WCLayerChange::Background) {
@@ -209,7 +227,10 @@ static void flushLayerImageBuffers(WCUpateInfo& info)
 
 bool DrawingAreaWC::isCompositingMode()
 {
-    return m_contentLayer;
+    auto& mainWebFrame = m_webPage.mainWebFrame();
+    if (!mainWebFrame.isRootFrame())
+        return true;
+    return rootLayerInfoWithFrameIdentifier(mainWebFrame.frameID())->contentLayer;
 }
 
 void DrawingAreaWC::updateRendering()
@@ -244,32 +265,50 @@ void DrawingAreaWC::updateRendering()
 
 void DrawingAreaWC::sendUpdateAC()
 {
-    m_rootLayer->flushCompositingStateForThisLayerOnly();
+    bool didProcessMainFrame = false;
+    for (auto it = m_rootLayers.begin(); it != m_rootLayers.end(); it++) {
+        auto& rootLayer = *it;
+        auto frame = WebProcess::singleton().webFrame(rootLayer.frameID);
+        ASSERT(frame);
+        m_updateInfo.remoteContextHostedIdentifier = frame->layerHostingContextIdentifier();
+        m_updateInfo.rootLayer = rootLayer.layer->primaryLayerID();
 
-    // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
-    if (m_viewOverlayRootLayer) {
-        FloatRect visibleRect({ }, m_webPage.size());
-        m_viewOverlayRootLayer->flushCompositingState(visibleRect);
-    }
+        bool isLastFrame = (it + 1) == m_rootLayers.end();
+        bool isMainFrame = frame->isMainFrame();
+        didProcessMainFrame = didProcessMainFrame || isMainFrame;
+        bool willCallDisplayDidRefresh = isMainFrame || (!didProcessMainFrame && isLastFrame);
+        IntSize size;
+        if (isMainFrame)
+            size = m_webPage.size();
+        else
+            size = frame->size();
+        rootLayer.layer->setSize(size);
+        rootLayer.layer->flushCompositingStateForThisLayerOnly();
 
-    m_updateInfo.rootLayer = m_rootLayer->primaryLayerID();
+        // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
+        FloatRect visibleRect({ }, size);
+        if (rootLayer.viewOverlayRootLayer)
+            rootLayer.viewOverlayRootLayer->flushCompositingState(visibleRect);
 
-    m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = std::exchange(m_updateInfo, { })]() mutable {
-        flushLayerImageBuffers(updateInfo);
-        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), stateID, updateInfo = WTFMove(updateInfo)]() mutable {
-            if (!weakThis)
-                return;
-            m_remoteWCLayerTreeHostProxy->update(WTFMove(updateInfo), [this, weakThis = WTFMove(weakThis), stateID](std::optional<UpdateInfo> updateInfo) {
+        m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = std::exchange(m_updateInfo, { }), willCallDisplayDidRefresh]() mutable {
+            flushLayerImageBuffers(updateInfo);
+            RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), stateID, updateInfo = WTFMove(updateInfo), willCallDisplayDidRefresh]() mutable {
                 if (!weakThis)
                     return;
-                if (updateInfo && stateID == m_backingStoreStateID) {
-                    send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, WTFMove(*updateInfo)));
-                    return;
-                }
-                displayDidRefresh();
+                m_remoteWCLayerTreeHostProxy->update(WTFMove(updateInfo), [this, weakThis = WTFMove(weakThis), stateID, willCallDisplayDidRefresh](std::optional<UpdateInfo> updateInfo) {
+                    if (!weakThis)
+                        return;
+                    if (updateInfo && stateID == m_backingStoreStateID) {
+                        ASSERT(willCallDisplayDidRefresh);
+                        send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, WTFMove(*updateInfo)));
+                        return;
+                    }
+                    if (willCallDisplayDidRefresh)
+                        displayDidRefresh();
+                });
             });
         });
-    });
+    }
 }
 
 static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect, 1>& rects)
@@ -363,7 +402,7 @@ void DrawingAreaWC::graphicsLayerRemoved(GraphicsLayerWC& layer)
     m_updateInfo.removedLayers.append(layer.primaryLayerID());
 }
 
-void DrawingAreaWC::commitLayerUpateInfo(WCLayerUpateInfo&& info)
+void DrawingAreaWC::commitLayerUpdateInfo(WCLayerUpdateInfo&& info)
 {
     m_updateInfo.changedLayers.append(WTFMove(info));
 }
@@ -390,6 +429,18 @@ void DrawingAreaWC::displayDidRefresh()
         m_hasDeferredRenderingUpdate = false;
         triggerRenderingUpdate();
     }
+}
+
+DrawingAreaWC::RootLayerInfo* DrawingAreaWC::rootLayerInfoWithFrameIdentifier(WebCore::FrameIdentifier frameID)
+{
+    auto index = m_rootLayers.findIf([&] (const auto& layer) {
+        return layer.frameID == frameID;
+    });
+    if (index == WTF::notFound) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    return &m_rootLayers[index];
 }
 
 } // namespace WebKit

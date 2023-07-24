@@ -36,9 +36,8 @@ FakeDecoder::FakeDecoder(TaskQueueFactory* task_queue_factory)
       task_queue_factory_(task_queue_factory),
       decode_delay_ms_(0) {}
 
-int32_t FakeDecoder::InitDecode(const VideoCodec* config,
-                                int32_t number_of_cores) {
-  return WEBRTC_VIDEO_CODEC_OK;
+bool FakeDecoder::Configure(const Settings& settings) {
+  return true;
 }
 
 int32_t FakeDecoder::Decode(const EncodedImage& input,
@@ -96,7 +95,7 @@ const char* FakeDecoder::kImplementationName = "fake_decoder";
 VideoDecoder::DecoderInfo FakeDecoder::GetDecoderInfo() const {
   DecoderInfo info;
   info.implementation_name = kImplementationName;
-  info.is_hardware_accelerated = false;
+  info.is_hardware_accelerated = true;
   return info;
 }
 const char* FakeDecoder::ImplementationName() const {

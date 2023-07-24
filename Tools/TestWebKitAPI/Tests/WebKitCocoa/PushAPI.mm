@@ -248,6 +248,20 @@ TEST(PushAPI, firePushEvent)
 }
 @end
 
+TEST(PushAPI, notificationPermissionsDelegateInvalidResponse)
+{
+    auto configuration = createConfigurationWithNotificationsEnabled();
+    RetainPtr<FirePushEventDataStoreDelegate> delegate = adoptNS([FirePushEventDataStoreDelegate new]);
+    delegate.get().permissions = @{
+        @":" : @YES
+    };
+    [configuration websiteDataStore]._delegate = delegate.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:NO]);
+
+    // If the WebView completes the page load successfully, the test passes.
+    [webView synchronouslyLoadHTMLString:@"Hello"];
+}
+
 TEST(PushAPI, firePushEventDataStoreDelegate)
 {
     TestWebKitAPI::HTTPServer server({
@@ -399,7 +413,7 @@ TEST(PushAPI, testSilentFlag)
     EXPECT_TRUE(pushMessageSuccessful);
     EXPECT_TRUE([delegate.get().displayedNotifications.lastObject.title isEqualToString:@"nothing"]);
     EXPECT_EQ(delegate.get().displayedNotifications.lastObject.alert, _WKNotificationAlertDefault);
-    EXPECT_TRUE([delegate.get().displayedNotifications.lastObject.userInfo[@"WebNotificationSilentKey"] isEqual:[NSNull null]]);
+    EXPECT_TRUE(delegate.get().displayedNotifications.lastObject.userInfo[@"WebNotificationSilentKey"] == nil);
 
     done = false;
     pushMessageProcessed = false;
@@ -450,7 +464,7 @@ TEST(PushAPI, testSilentFlag)
     pushMessageProcessed = false;
     [webView callAsyncJavaScript:@(getPersistentNotificationsScript) arguments:@{ @"theMessage" : @"getAllNotifications" } inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(error);
-        EXPECT_TRUE([result isEqualToString:@"nothing false nothingTag true true somethingTag false false somethingTag "]);
+        EXPECT_TRUE([result isEqualToString:@"nothing null nothingTag true true somethingTag false false somethingTag "]);
         pushMessageProcessed = true;
     }];
     TestWebKitAPI::Util::run(&pushMessageProcessed);
@@ -460,7 +474,7 @@ TEST(PushAPI, testSilentFlag)
     // but the results should be the same as not specifying a tag at all like in the previous test.
     [webView callAsyncJavaScript:@(getPersistentNotificationsScript) arguments:@{ @"theMessage" : @"" } inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(error);
-        EXPECT_TRUE([result isEqualToString:@"nothing false nothingTag true true somethingTag false false somethingTag "]);
+        EXPECT_TRUE([result isEqualToString:@"nothing null nothingTag true true somethingTag false false somethingTag "]);
         pushMessageProcessed = true;
     }];
     TestWebKitAPI::Util::run(&pushMessageProcessed);
@@ -468,7 +482,7 @@ TEST(PushAPI, testSilentFlag)
     pushMessageProcessed = false;
     [webView callAsyncJavaScript:@(getPersistentNotificationsScript) arguments:@{ @"theMessage" : @"nothingTag" } inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(error);
-        EXPECT_TRUE([result isEqualToString:@"nothing false nothingTag "]);
+        EXPECT_TRUE([result isEqualToString:@"nothing null nothingTag "]);
         pushMessageProcessed = true;
     }];
     TestWebKitAPI::Util::run(&pushMessageProcessed);
@@ -506,15 +520,11 @@ self.addEventListener("push", (event) => {
 
 static void terminateNetworkProcessWhileRegistrationIsStored(WKWebViewConfiguration *configuration)
 {
-    auto path = configuration.websiteDataStore._configuration._serviceWorkerRegistrationDirectory.path;
-    NSURL* directory = [NSURL fileURLWithPath:path isDirectory:YES];
-    auto filename = makeString("ServiceWorkerRegistrations-"_s, WebCore::SWRegistrationDatabase::schemaVersion, ".sqlite3");
-    NSURL *swDBPath = [directory URLByAppendingPathComponent:filename];
-    unsigned timeout = 0;
-    while (![[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path] && ++timeout < 100)
-        TestWebKitAPI::Util::runFor(0.1_s);
-    // Let's close the SQL database.
-    [configuration.websiteDataStore _sendNetworkProcessWillSuspendImminently];
+    done = false;
+    [configuration.websiteDataStore _storeServiceWorkerRegistrations:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
     [configuration.websiteDataStore _terminateNetworkProcess];
 }
 
@@ -612,11 +622,8 @@ TEST(PushAPI, firePushEventWithNoPagesFail)
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
-#if PLATFORM(IOS)
-TEST(PushAPI, DISABLED_firePushEventWithNoPagesTimeout)
-#else
+
 TEST(PushAPI, firePushEventWithNoPagesTimeout)
-#endif
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { mainBytes } },
@@ -642,19 +649,23 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
 
     expectedMessage = "Ready"_s;
 
+    fprintf(stderr, "totot1\n");
     @autoreleasepool {
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
         [webView loadRequest:server.request()];
         TestWebKitAPI::Util::run(&done);
     }
 
+    fprintf(stderr, "totot2\n");
     terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
 
     // Push event for service worker without any related page, should timeout so fail.
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Timeless Potatoes";
+    fprintf(stderr, "totot3\n");
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        fprintf(stderr, "totot3.1\n");
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
     }];
@@ -662,6 +673,7 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     TestWebKitAPI::Util::run(&pushMessageProcessed);
+    fprintf(stderr, "totot4\n");
     EXPECT_FALSE(pushMessageSuccessful);
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
 

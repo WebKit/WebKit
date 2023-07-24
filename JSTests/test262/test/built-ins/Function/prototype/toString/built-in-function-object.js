@@ -17,7 +17,7 @@ info: |
     set
 
 includes: [nativeFunctionMatcher.js, wellKnownIntrinsicObjects.js]
-features: [arrow-function, Reflect]
+features: [arrow-function, Reflect, Array.prototype.includes]
 ---*/
 
 const visited = [];

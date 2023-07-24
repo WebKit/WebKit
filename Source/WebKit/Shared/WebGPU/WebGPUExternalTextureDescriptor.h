@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,17 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "SharedVideoFrame.h"
 #include "WebGPUObjectDescriptorBase.h"
-#include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/WebGPUExternalTextureDescriptor.h>
+#include <WebCore/WebGPUPredefinedColorSpace.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h>
 
 namespace WebKit::WebGPU {
 
 struct ExternalTextureDescriptor : public ObjectDescriptorBase {
-    WebCore::MediaPlayerIdentifier mediaIdentifier { 0 };
-    PAL::WebGPU::PredefinedColorSpace colorSpace { PAL::WebGPU::PredefinedColorSpace::SRGB };
+    WebCore::WebGPU::VideoSourceIdentifier mediaIdentifier;
+    WebCore::WebGPU::PredefinedColorSpace colorSpace { WebCore::WebGPU::PredefinedColorSpace::SRGB };
 };
 
 } // namespace WebKit::WebGPU

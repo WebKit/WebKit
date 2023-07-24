@@ -123,11 +123,12 @@ class EventLogger final {
   // https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview
   void Log() {
     RTC_DCHECK(output_file_);
-    static const int kLoggingIntervalMs = 100;
+    static constexpr webrtc::TimeDelta kLoggingInterval =
+        webrtc::TimeDelta::Millis(100);
     fprintf(output_file_, "{ \"traceEvents\": [\n");
     bool has_logged_event = false;
     while (true) {
-      bool shutting_down = shutdown_event_.Wait(kLoggingIntervalMs);
+      bool shutting_down = shutdown_event_.Wait(kLoggingInterval);
       std::vector<TraceEvent> events;
       {
         webrtc::MutexLock lock(&mutex_);

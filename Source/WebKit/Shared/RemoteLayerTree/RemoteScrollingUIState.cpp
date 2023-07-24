@@ -96,4 +96,13 @@ void RemoteScrollingUIState::removeNodeWithActiveUserScroll(WebCore::ScrollingNo
         m_changes.add(Changes::UserScrollNodes);
 }
 
+void RemoteScrollingUIState::clearNodesWithActiveUserScroll()
+{
+    if (m_nodesWithActiveUserScrolls.isEmpty())
+        return;
+
+    m_nodesWithActiveUserScrolls.clear();
+    m_changes.add(Changes::UserScrollNodes);
+}
+
 } // namespace WebKit

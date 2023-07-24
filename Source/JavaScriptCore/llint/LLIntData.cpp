@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "JSCConfig.h"
 #include "LLIntCLoop.h"
 #include "LLIntPCRanges.h"
+#include "LLIntSlowPaths.h"
 #include "LLIntThunks.h"
 #include "Opcode.h"
 #include "WriteBarrier.h"
@@ -69,6 +70,31 @@ extern "C" void vmEntryToCSSJITAfter(void);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToCSSJITAfter);
 #endif
 
+#if !ENABLE(C_LOOP)
+static void neuterOpcodeMaps()
+{
+#if CPU(ARM64E)
+#define SET_CRASH_TARGET(entry) do { \
+        void* crashTarget = bitwise_cast<void*>(llint_check_vm_entry_permission); \
+        uint64_t address = bitwise_cast<uint64_t>(&entry); \
+        uint64_t newTag = (bitwise_cast<uint64_t>(BytecodePtrTag) << 48) | address; \
+        void* signedTarget = ptrauth_auth_and_resign(crashTarget, ptrauth_key_function_pointer, 0, ptrauth_key_process_dependent_code, newTag); \
+        entry = bitwise_cast<Opcode>(signedTarget); \
+    } while (false)
+#else
+#define SET_CRASH_TARGET(entry) do { \
+        entry = bitwise_cast<Opcode>(llint_check_vm_entry_permission); \
+    } while (false)
+#endif
+    for (unsigned i = 0; i < numOpcodeIDs + numWasmOpcodeIDs; ++i) {
+        SET_CRASH_TARGET(g_opcodeMap[i]);
+        SET_CRASH_TARGET(g_opcodeMapWide16[i]);
+        SET_CRASH_TARGET(g_opcodeMapWide32[i]);
+    }
+#undef SET_CRASH_TARGET
+}
+#endif
+
 void initialize()
 {
 #if ENABLE(C_LOOP)
@@ -76,11 +102,15 @@ void initialize()
 
 #else // !ENABLE(C_LOOP)
 
-    llint_entry(&g_opcodeMap, &g_opcodeMapWide16, &g_opcodeMapWide32);
-
+    if (UNLIKELY(g_jscConfig.vmEntryDisallowed))
+        neuterOpcodeMaps();
+    else {
+        llint_entry(&g_opcodeMap, &g_opcodeMapWide16, &g_opcodeMapWide32);
+    
 #if ENABLE(WEBASSEMBLY)
-    wasm_entry(&g_opcodeMap[numOpcodeIDs], &g_opcodeMapWide16[numOpcodeIDs], &g_opcodeMapWide32[numOpcodeIDs]);
+        wasm_entry(&g_opcodeMap[numOpcodeIDs], &g_opcodeMapWide16[numOpcodeIDs], &g_opcodeMapWide32[numOpcodeIDs]);
 #endif // ENABLE(WEBASSEMBLY)
+    }
 
     static_assert(llint_throw_from_slow_path_trampoline < UINT8_MAX);
     static_assert(wasm_throw_from_slow_path_trampoline < UINT8_MAX);
@@ -205,6 +235,10 @@ void initialize()
         g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::loopOSREntry)] = loopOSREntryGateThunk().code().taggedPtr();
         g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::entryOSREntry)] = entryOSREntryGateThunk().code().taggedPtr();
         g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::wasmOSREntry)] = wasmOSREntryGateThunk().code().taggedPtr();
+    } else {
+        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::loopOSREntry)] = LLInt::getCodeRef<NativeToJITGatePtrTag>(loop_osr_entry_gate).code().taggedPtr();
+        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::entryOSREntry)] = nullptr;
+        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::wasmOSREntry)] = nullptr;
     }
 
 #define INITIALIZE_TAG_AND_UNTAG_THUNKS(name) \

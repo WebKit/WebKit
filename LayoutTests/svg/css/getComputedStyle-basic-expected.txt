@@ -208,6 +208,8 @@ rect: style.getPropertyValue(hanging-punctuation) : none
 rect: style.getPropertyCSSValue(hanging-punctuation) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(height) : 100px
 rect: style.getPropertyCSSValue(height) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(hyphenate-character) : auto
+rect: style.getPropertyCSSValue(hyphenate-character) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(image-rendering) : auto
 rect: style.getPropertyCSSValue(image-rendering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(justify-content) : normal
@@ -400,8 +402,6 @@ rect: style.getPropertyValue(vertical-align) : baseline
 rect: style.getPropertyCSSValue(vertical-align) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(visibility) : visible
 rect: style.getPropertyCSSValue(visibility) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(white-space) : normal
-rect: style.getPropertyCSSValue(white-space) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(widows) : auto
 rect: style.getPropertyCSSValue(widows) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(width) : 100px
@@ -452,16 +452,12 @@ rect: style.getPropertyValue(-webkit-column-axis) : auto
 rect: style.getPropertyCSSValue(-webkit-column-axis) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-hyphenate-character) : auto
-rect: style.getPropertyCSSValue(-webkit-hyphenate-character) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
 rect: style.getPropertyCSSValue(-webkit-hyphenate-limit-after) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-limit-before) : auto
 rect: style.getPropertyCSSValue(-webkit-hyphenate-limit-before) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-hyphenate-limit-lines) : no-limit
 rect: style.getPropertyCSSValue(-webkit-hyphenate-limit-lines) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-hyphens) : manual
-rect: style.getPropertyCSSValue(-webkit-hyphens) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-align) : none
 rect: style.getPropertyCSSValue(-webkit-line-align) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-box-contain) : block inline replaced
@@ -716,6 +712,8 @@ g: style.getPropertyValue(hanging-punctuation) : none
 g: style.getPropertyCSSValue(hanging-punctuation) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(height) : auto
 g: style.getPropertyCSSValue(height) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(hyphenate-character) : auto
+g: style.getPropertyCSSValue(hyphenate-character) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(image-rendering) : auto
 g: style.getPropertyCSSValue(image-rendering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(justify-content) : normal
@@ -908,8 +906,6 @@ g: style.getPropertyValue(vertical-align) : baseline
 g: style.getPropertyCSSValue(vertical-align) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(visibility) : visible
 g: style.getPropertyCSSValue(visibility) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(white-space) : normal
-g: style.getPropertyCSSValue(white-space) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(widows) : auto
 g: style.getPropertyCSSValue(widows) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(width) : auto
@@ -960,16 +956,12 @@ g: style.getPropertyValue(-webkit-column-axis) : auto
 g: style.getPropertyCSSValue(-webkit-column-axis) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-hyphenate-character) : auto
-g: style.getPropertyCSSValue(-webkit-hyphenate-character) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-limit-after) : auto
 g: style.getPropertyCSSValue(-webkit-hyphenate-limit-after) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-limit-before) : auto
 g: style.getPropertyCSSValue(-webkit-hyphenate-limit-before) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-hyphenate-limit-lines) : no-limit
 g: style.getPropertyCSSValue(-webkit-hyphenate-limit-lines) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-hyphens) : manual
-g: style.getPropertyCSSValue(-webkit-hyphens) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-align) : none
 g: style.getPropertyCSSValue(-webkit-line-align) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-box-contain) : block inline replaced

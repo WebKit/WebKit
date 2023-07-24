@@ -648,15 +648,8 @@ private:
         m_parsingBuffer.advance();
 
         if (LIKELY(m_parsingBuffer.lengthRemaining() >= 2)) {
-            // FIXME: It is unnecessarily inefficient to use a SegmentedString here. Ideally, we'd
-            // be able to parse HTMLEntities straight from a StringView.
-            StringView inputString(m_parsingBuffer.position(), m_parsingBuffer.lengthRemaining());
-            SegmentedString inputSegmented { inputString };
-            inputSegmented.append(String { &kEndOfFileMarker, 1 }); // Matches what the full parser does in markEndOfFile().
-            bool notEnoughCharacters = false;
-            if (consumeHTMLEntity(inputSegmented, out, notEnoughCharacters)) {
-                // Advance m_parsingBuffer by the amount of characters consumed by consumeHTMLEntity().
-                m_parsingBuffer.advanceBy(inputString.length() - (inputSegmented.length() - 1));
+            if (auto entity = consumeHTMLEntity(m_parsingBuffer); !entity.failed()) {
+                out.append(entity.span());
                 return;
             }
         }

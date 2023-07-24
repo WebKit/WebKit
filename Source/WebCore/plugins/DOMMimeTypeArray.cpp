@@ -63,6 +63,11 @@ RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomString& propertyName)
     return nullptr;
 }
 
+bool DOMMimeTypeArray::isSupportedPropertyName(const AtomString& propertyName) const
+{
+    return m_types.containsIf([&](auto& type) { return type->type() == propertyName; });
+}
+
 Vector<AtomString> DOMMimeTypeArray::supportedPropertyNames() const
 {
     return m_types.map([](auto& type) -> AtomString {

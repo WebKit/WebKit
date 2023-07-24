@@ -378,7 +378,7 @@ static Vector<std::pair<String, String>> collectVaryingRequestHeadersInternal(co
 
     Vector<std::pair<String, String>> headers;
     for (auto varyHeaderName : StringView(varyValue).split(',')) {
-        auto headerName = varyHeaderName.stripWhiteSpace();
+        auto headerName = varyHeaderName.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
         headers.append(std::pair { headerName.toString(), headerValueForVaryFunction(headerName) });
     }
     return headers;

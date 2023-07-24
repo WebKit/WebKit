@@ -21,7 +21,7 @@ shouldNotThrow("fontface = new FontFace('WebFont', 'url(\\\'asdf\\\')', {feature
 shouldBeEqualToString("fontface.featureSettings", "normal");
 shouldThrow("fontface.featureSettings = ''");
 
-shouldThrow("fontface.family = ''");
+shouldNotThrow("fontface.family = ''");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

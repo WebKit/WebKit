@@ -205,8 +205,6 @@ void BlockProcessorImpl::BufferRender(const Block& block) {
                         static_cast<int>(BlockProcessorApiCall::kRender));
   data_dumper_->DumpWav("aec3_processblock_render_input",
                         block.View(/*band=*/0, /*channel=*/0), 16000, 1);
-  data_dumper_->DumpWav("aec3_processblock_render_input2",
-                        block.View(/*band=*/0, /*channel=*/0), 16000, 1);
 
   render_event_ = render_buffer_->Insert(block);
 

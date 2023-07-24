@@ -48,38 +48,49 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
     height: calc(100% - var(--inline-controls-bar-height) - var(--inline-controls-inside-margin));
 }
 
-video::cue {
+/* https://w3c.github.io/webvtt/#applying-css-properties
+   7.4. Applying CSS properties to WebVTT Node Objects */
+
+::cue {
     background-color: rgba(0, 0, 0, 0.8);
+    overflow: visible;
 }
 
-video::-webkit-media-text-track-display {
+::-webkit-media-text-track-display {
     position: absolute;
-    overflow: hidden;
+    unicode-bidi: plaintext;
+    overflow: visible;
+    writing-mode: writing-mode;
+    overflow-wrap: break-word;
+    white-space: pre-line;
+}
+
+::-webkit-media-text-track-display {
     white-space: pre-wrap;
     box-sizing: border-box;
     font: 22px sans-serif; /* Keep in sync with `DEFAULTCAPTIONFONTSIZE`. */
 }
 
-video::-webkit-media-text-track-display-backdrop {
+::-webkit-media-text-track-display-backdrop {
     display: inline-block;
 }
 
-video::cue(:future) {
+::cue(:future) {
     color: gray;
 }
 
-video::-webkit-media-text-track-container b {
+[pseudo="-webkit-media-text-track-display"] b {
     font-weight: bold;
 }
 
-video::-webkit-media-text-track-container u {
+[pseudo="-webkit-media-text-track-display"] u {
     text-decoration: underline;
 }
 
-video::-webkit-media-text-track-container i {
+[pseudo="-webkit-media-text-track-display"] i {
     font-style: italic;
 }
 
-video::-webkit-media-text-track-container .hidden {
+[pseudo="-webkit-media-text-track-display"] .hidden {
     display: none;
 }

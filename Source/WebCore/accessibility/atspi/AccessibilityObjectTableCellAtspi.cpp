@@ -64,7 +64,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
             return g_variant_new_int32(atspiObject->rowSpan());
         if (!g_strcmp0(propertyName, "Table")) {
             auto* axObject = atspiObject->m_coreObject;
-            if (!axObject || !axObject->isTableCell())
+            if (!axObject || !axObject->isExposedTableCell())
                 return AccessibilityAtspi::singleton().nullReference();
 
             AccessibilityObjectAtspi* wrapper = atspiObject.ptr();

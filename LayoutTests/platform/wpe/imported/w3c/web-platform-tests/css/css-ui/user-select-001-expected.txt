@@ -1,4 +1,0 @@
-Let's select this word
-
-FAIL Select the text 'word' assert_equals: The text 'word' should be selectable. expected "word" but got ""
-

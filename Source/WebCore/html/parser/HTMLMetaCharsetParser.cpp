@@ -117,7 +117,7 @@ PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(std::span<co
     }
 
     if (mode == Charset || (mode == Pragma && gotPragma))
-        return charset.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
+        return charset.trim(isASCIIWhitespace<UChar>);
 
     return PAL::TextEncoding();
 }

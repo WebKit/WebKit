@@ -121,12 +121,12 @@ public:
     static Ref<WebsiteDataStore> defaultDataStore();
     static bool defaultDataStoreExists();
     static void deleteDefaultDataStoreForTesting();
-    static RefPtr<WebsiteDataStore> existingDataStoreForIdentifier(const UUID&);
+    static RefPtr<WebsiteDataStore> existingDataStoreForIdentifier(const WTF::UUID&);
     
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
 #if PLATFORM(COCOA)
-    static Ref<WebsiteDataStore> dataStoreForIdentifier(const UUID&);
+    static Ref<WebsiteDataStore> dataStoreForIdentifier(const WTF::UUID&);
 #endif
 
     WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
@@ -359,9 +359,9 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    static void fetchAllDataStoreIdentifiers(CompletionHandler<void(Vector<UUID>&&)>&&);
-    static void removeDataStoreWithIdentifier(const UUID& identifier, CompletionHandler<void(const String&)>&&);
-    static String defaultWebsiteDataStoreDirectory(const UUID& identifier);
+    static void fetchAllDataStoreIdentifiers(CompletionHandler<void(Vector<WTF::UUID>&&)>&&);
+    static void removeDataStoreWithIdentifier(const WTF::UUID& identifier, CompletionHandler<void(const String&)>&&);
+    static String defaultWebsiteDataStoreDirectory(const WTF::UUID& identifier);
     static String defaultCookieStorageFile(const String& baseDataDirectory = nullString());
     static String defaultSearchFieldHistoryDirectory(const String& baseDataDirectory = nullString());
 #endif
@@ -385,6 +385,15 @@ public:
     static String defaultJavaScriptConfigurationDirectory(const String& baseDataDirectory = nullString());
 
     static constexpr uint64_t defaultPerOriginQuota() { return 1000 * MB; }
+    static constexpr uint64_t defaultStandardVolumeCapacity() {
+#if PLATFORM(MAC)
+        return 128 * GB;
+#elif PLATFORM(IOS) || PLATFORM(VISION)
+        return 64 * GB;
+#else
+        return 16 * GB;
+#endif
+    }
     static std::optional<double> defaultOriginQuotaRatio();
     static std::optional<double> defaultTotalQuotaRatio();
     static UnifiedOriginStorageLevel defaultUnifiedOriginStorageLevel();
@@ -423,9 +432,9 @@ public:
     void countNonDefaultSessionSets(CompletionHandler<void(size_t)>&&);
 
     void showServiceWorkerNotification(IPC::Connection&, const WebCore::NotificationData&);
-    void cancelServiceWorkerNotification(const UUID& notificationID);
-    void clearServiceWorkerNotification(const UUID& notificationID);
-    void didDestroyServiceWorkerNotification(const UUID& notificationID);
+    void cancelServiceWorkerNotification(const WTF::UUID& notificationID);
+    void clearServiceWorkerNotification(const WTF::UUID& notificationID);
+    void didDestroyServiceWorkerNotification(const WTF::UUID& notificationID);
 
     bool hasClientGetDisplayedNotifications() const;
     void getNotifications(const URL& registrationalURL, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
@@ -453,7 +462,7 @@ public:
 
 #if HAVE(NW_PROXY_CONFIG)
     void clearProxyConfigData();
-    void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, UUID>>&&);
+    void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&&);
 #endif
     void setCompletionHandlerForRemovalFromNetworkProcess(CompletionHandler<void(String&&)>&&);
     

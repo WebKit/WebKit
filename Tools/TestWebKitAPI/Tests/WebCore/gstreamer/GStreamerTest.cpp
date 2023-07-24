@@ -60,6 +60,10 @@ TEST_F(GStreamerTest, gstStructureJSONSerializing)
     gst_structure_set(structure.get(), "inner", GST_TYPE_STRUCTURE, innerStructure.get(), nullptr);
     jsonString = gstStructureToJSONString(structure.get());
     ASSERT_EQ(jsonString, "{\"int-val\":5,\"str-val\":\"foo\",\"bool-val\":1,\"inner\":{\"boo\":0,\"double-val\":2.42}}"_s);
+
+    GUniquePtr<GstStructure> structureWithList(gst_structure_new_from_string("foo, words=(string){ hello, world }"));
+    jsonString = gstStructureToJSONString(structureWithList.get());
+    ASSERT_EQ(jsonString, "{\"words\":[\"hello\",\"world\"]}"_s);
 }
 
 } // namespace TestWebKitAPI

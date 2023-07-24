@@ -81,7 +81,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
 
         // WebURLsWithTitlesPboardType.
-        auto paths = adoptNS([[NSArray alloc] initWithObjects:@[ @[ cocoaURL.absoluteString ] ], @[ urlData->title.stripWhiteSpace() ], nil]);
+        // FIXME: This could use StringView (the one that creates NSString) to save an allocation
+        auto paths = adoptNS([[NSArray alloc] initWithObjects:@[ @[ cocoaURL.absoluteString ] ], @[ urlData->title.trim(deprecatedIsSpaceOrNewline) ], nil]);
         [pasteboardItem setPropertyList:paths.get() forType:toUTI(@"WebURLsWithTitlesPboardType").get()];
 
         // NSURLPboardType.

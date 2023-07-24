@@ -918,7 +918,7 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     auto specifier = moduleNameValue->value(globalObject);
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
-    if (!referrer.isLocalFile())
+    if (!referrer.protocolIsFile())
         RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '"_s, referrer.string(), "', while trying to resolve module '"_s, specifier, "'."_s))));
 
     auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
@@ -957,7 +957,7 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSMod
             return { };
         }
 
-        if (!directoryURL.isLocalFile()) {
+        if (!directoryURL.protocolIsFile()) {
             throwException(globalObject, scope, createError(globalObject, makeString("Could not resolve the referrer's path: "_s, directoryURL.string())));
             return { };
         }
@@ -967,7 +967,7 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSMod
             throwException(globalObject, scope, createError(globalObject, makeString("Resolved module url is not valid: "_s, resolvedURL.string())));
             return { };
         }
-        ASSERT(resolvedURL.isLocalFile());
+        ASSERT(resolvedURL.protocolIsFile());
 
         return Identifier::fromString(vm, resolvedURL.string());
     };
@@ -983,7 +983,7 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSMod
 
     // If the referrer exists, we assume that the referrer is the correct file url.
     URL url = URL({ }, referrer.impl());
-    ASSERT(url.isLocalFile());
+    ASSERT(url.protocolIsFile());
     return resolvePath(url);
 }
 
@@ -1269,7 +1269,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     URL moduleURL({ }, moduleKey);
-    ASSERT(moduleURL.isLocalFile());
+    ASSERT(moduleURL.protocolIsFile());
     // Strip the URI from our key so Errors print canonical system paths.
     moduleKey = moduleURL.fileSystemPath();
 
@@ -1402,19 +1402,17 @@ JSC_DEFINE_HOST_FUNCTION(functionAtob, (JSGlobalObject* globalObject, CallFrame*
     if (jsValue.isUndefined())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for atob."_s)));
 
-    auto* string = jsValue.toString(globalObject);
+    String encodedString = jsValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-
-    String encodedString = string->value(globalObject);
 
     if (encodedString.isNull())
         return JSValue::encode(jsEmptyString(vm));
 
-    auto decodedData = base64Decode(encodedString, Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
-    if (!decodedData)
+    auto decodedString = base64DecodeToString(encodedString, Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
+    if (decodedString.isNull())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for atob."_s)));
 
-    return JSValue::encode(jsString(vm, String(decodedData->data(), decodedData->size())));
+    return JSValue::encode(jsString(vm, decodedString));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1425,15 +1423,13 @@ JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame*
     if (!callFrame->argumentCount())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Missing input for btoa."_s)));
 
-    auto* string = callFrame->argument(0).toString(globalObject);
+    String stringToEncode = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-
-    String stringToEncode = string->value(globalObject);
 
     if (stringToEncode.isNull())
         return JSValue::encode(jsEmptyString(vm));
 
-    if (!stringToEncode.isAllLatin1())
+    if (!stringToEncode.containsOnlyLatin1())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for btoa."_s)));
 
     String encodedString = base64EncodeToStringReturnNullIfOverflow(stringToEncode.latin1());
@@ -1725,7 +1721,7 @@ static URL computeFilePath(VM& vm, JSGlobalObject* globalObject, CallFrame* call
     URL path;
     if (callerRelative) {
         path = URL(callFrame->callerSourceOrigin(vm).url(), fileName);
-        if (!path.isLocalFile()) {
+        if (!path.protocolIsFile()) {
             throwException(globalObject, scope, createURIError(globalObject, makeString("caller relative URL path is not a local file: "_s, path.string())));
             return URL();
         }
@@ -2599,7 +2595,7 @@ JSC_DEFINE_HOST_FUNCTION(functionQuit, (JSGlobalObject* globalObject, CallFrame*
 
     jscExit(EXIT_SUCCESS);
 
-#if COMPILER(MSVC)
+#if COMPILER(MSVC) && !COMPILER(CLANG)
     // Without this, Visual Studio will complain that this method does not return a value.
     return JSValue::encode(jsUndefined());
 #endif
@@ -3080,7 +3076,9 @@ JSC_DEFINE_HOST_FUNCTION(functionDropAllLocks, (JSGlobalObject* globalObject, Ca
 #define EXCEPT(x)
 #endif
 
+#if OS(UNIX)
 static BinarySemaphore waitToExit;
+#endif
 
 int jscmain(int argc, char** argv);
 
@@ -4077,10 +4075,3 @@ int jscmain(int argc, char** argv)
 
     return result;
 }
-
-#if OS(WINDOWS)
-extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[])
-{
-    return main(argc, const_cast<char**>(argv));
-}
-#endif

@@ -61,7 +61,7 @@ void WKNotificationManagerProviderDidClickNotification_b(WKNotificationManagerRe
     if (span.size() != 16)
         return;
 
-    toImpl(managerRef)->providerDidClickNotification(UUID { std::span<const uint8_t, 16> { span.data(), 16 } });
+    toImpl(managerRef)->providerDidClickNotification(WTF::UUID { std::span<const uint8_t, 16> { span.data(), 16 } });
 }
 
 void WKNotificationManagerProviderDidCloseNotifications(WKNotificationManagerRef managerRef, WKArrayRef notificationIDs)

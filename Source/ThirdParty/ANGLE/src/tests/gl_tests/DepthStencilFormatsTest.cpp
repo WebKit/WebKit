@@ -8,7 +8,7 @@
 #include "test_utils/gl_raii.h"
 
 #include "common/mathutil.h"
-#include "platform/FeaturesD3D_autogen.h"
+#include "platform/autogen/FeaturesD3D_autogen.h"
 
 using namespace angle;
 
@@ -448,7 +448,7 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UShort)
 TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UInt)
 {
     // http://anglebug.com/5269
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     GLuint fakeData[10]    = {0};
     ReadbackTestParam type = {
@@ -460,7 +460,7 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UInt)
 TEST_P(DepthStencilFormatsTest, DepthStencilReadback_Float)
 {
     // http://anglebug.com/5269
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     GLuint fakeData[10]    = {0};
     ReadbackTestParam type = {GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_FLOAT, fakeData, 32, 0};
@@ -902,7 +902,7 @@ TEST_P(DepthStencilFormatsTestES3, DrawWithDepth16)
 // is a random value.
 TEST_P(DepthStencilFormatsTestES3, DrawWithLargeViewport)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && (IsOSX() || IsWindows()));
+    ANGLE_SKIP_TEST_IF(IsIntel() && (IsMac() || IsWindows()));
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
 
@@ -1434,6 +1434,109 @@ TEST_P(TinyDepthStencilWorkaroundTest, DepthTexturesStick)
         EXPECT_PIXEL_COLOR_NEAR(0, 0, depthColor, 1);
         ASSERT_GL_NO_ERROR();
     }
+}
+
+// Initialize a depth texture by writing to it in a fragment shader then attempt to read it from a
+// compute shader. Regression test for D3D11 not unbinding the depth texture and the sampler binding
+// failing.
+TEST_P(DepthStencilFormatsTestES31, ReadDepthStencilInComputeShader)
+{
+    constexpr char kTestVertexShader[] = R"(#version 310 es
+
+void main() {
+  gl_PointSize = 1.0;
+  vec2 pos[6] = vec2[6](vec2(-1.0f), vec2(1.0f, -1.0f), vec2(-1.0f, 1.0f), vec2(-1.0f, 1.0f), vec2(1.0f, -1.0f), vec2(1.0f));
+  gl_Position = vec4(pos[uint(gl_VertexID)], 0.5f, 1.0f);
+  return;
+}
+)";
+
+    constexpr char kTestFragmentShader[] = R"(#version 310 es
+precision highp float;
+
+void main()
+{
+  gl_FragDepth = 0.51f;
+  return;
+}
+)";
+
+    constexpr char kTestComputeShader[] = R"(#version 310 es
+
+layout(binding = 0, std430) buffer dst_buf_block_ssbo {
+  float inner[];
+} dst_buf;
+
+uniform highp sampler2D tex;
+void blit_depth_to_buffer(uvec3 id) {
+  uvec2 coord = (id.xy);
+  uint dstOffset = (id.x + (id.y * 1u));
+  dst_buf.inner[dstOffset] = texelFetch(tex, ivec2(coord), 0).x;
+}
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+void main() {
+  blit_depth_to_buffer(gl_GlobalInvocationID);
+}
+)";
+
+    GLfloat depthValue          = 0.51f;
+    GLfloat depthErrorTolerance = 0.001f;
+
+    GLTexture depthTexture;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, depthTexture);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32F, 1, 1);
+
+    // Clear depth texture to depthValue
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // 2. Draw and write to gl_FragDepth
+    ANGLE_GL_PROGRAM(graphicsProgram, kTestVertexShader, kTestFragmentShader);
+    glUseProgram(graphicsProgram);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawBuffers(0, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    glClearDepthf(0.8);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glDisable(GL_CULL_FACE);
+    glDepthMask(true);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    ANGLE_GL_COMPUTE_PROGRAM(computeProgram, kTestComputeShader);
+    glUseProgram(computeProgram);
+
+    GLint uTextureLocation = glGetUniformLocation(computeProgram, "tex");
+    ASSERT_NE(-1, uTextureLocation);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, depthTexture);
+    glUniform1i(uTextureLocation, 0);
+
+    GLBuffer ssbo;
+    std::array<GLfloat, 16> initialData{0};
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, 16, initialData.data(), GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+    glDispatchCompute(1, 1, 1);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    const GLfloat *ptr = reinterpret_cast<const GLfloat *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 16, GL_MAP_READ_BIT));
+    EXPECT_NEAR(depthValue, ptr[0], depthErrorTolerance);
+    EXPECT_GL_NO_ERROR();
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TinyDepthStencilWorkaroundTest);

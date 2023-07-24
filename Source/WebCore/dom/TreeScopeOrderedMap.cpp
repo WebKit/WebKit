@@ -145,6 +145,31 @@ inline Element* TreeScopeOrderedMap::get(const AtomStringImpl& key, const TreeSc
     return nullptr;
 }
 
+template <typename KeyMatchingFunction>
+inline Vector<Element*>* TreeScopeOrderedMap::getAll(const AtomStringImpl& key, const TreeScope& scope, const KeyMatchingFunction& keyMatches) const
+{
+    m_map.checkConsistency();
+
+    auto mapIterator = m_map.find(&key);
+    if (mapIterator == m_map.end())
+        return nullptr;
+
+    auto& entry = mapIterator->value;
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
+
+    if (entry.orderedList.isEmpty()) {
+        entry.orderedList.reserveCapacity(entry.count);
+        auto elementDescendants = descendantsOfType<Element>(scope.rootNode());
+        for (auto it = entry.element ? elementDescendants.beginAt(*entry.element) : elementDescendants.begin(); it; ++it) {
+            if (keyMatches(key, *it))
+                entry.orderedList.append(&*it);
+        }
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(entry.orderedList.size() == entry.count);
+    }
+
+    return &entry.orderedList;
+}
+
 Element* TreeScopeOrderedMap::getElementById(const AtomStringImpl& key, const TreeScope& scope) const
 {
     return get(key, scope, [] (const AtomStringImpl& key, const Element& element) {
@@ -174,11 +199,11 @@ HTMLImageElement* TreeScopeOrderedMap::getElementByUsemap(const AtomStringImpl& 
     }));
 }
 
-HTMLLabelElement* TreeScopeOrderedMap::getElementByLabelForAttribute(const AtomStringImpl& key, const TreeScope& scope) const
+const Vector<Element*>* TreeScopeOrderedMap::getElementsByLabelForAttribute(const AtomStringImpl& key, const TreeScope& scope) const
 {
-    return downcast<HTMLLabelElement>(get(key, scope, [] (const AtomStringImpl& key, const Element& element) {
+    return getAll(key, scope, [] (const AtomStringImpl& key, const Element& element) {
         return is<HTMLLabelElement>(element) && element.attributeWithoutSynchronization(forAttr).impl() == &key;
-    }));
+    });
 }
 
 Element* TreeScopeOrderedMap::getElementByWindowNamedItem(const AtomStringImpl& key, const TreeScope& scope) const
@@ -197,26 +222,9 @@ Element* TreeScopeOrderedMap::getElementByDocumentNamedItem(const AtomStringImpl
 
 const Vector<Element*>* TreeScopeOrderedMap::getAllElementsById(const AtomStringImpl& key, const TreeScope& scope) const
 {
-    m_map.checkConsistency();
-
-    auto mapIterator = m_map.find(&key);
-    if (mapIterator == m_map.end())
-        return nullptr;
-
-    auto& entry = mapIterator->value;
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
-
-    if (entry.orderedList.isEmpty()) {
-        entry.orderedList.reserveCapacity(entry.count);
-        auto elementDescendants = descendantsOfType<Element>(scope.rootNode());
-        for (auto it = entry.element ? elementDescendants.beginAt(*entry.element) : elementDescendants.begin(); it; ++it) {
-            if (it->getIdAttribute().impl() == &key)
-                entry.orderedList.append(&*it);
-        }
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(entry.orderedList.size() == entry.count);
-    }
-
-    return &entry.orderedList;
+    return getAll(key, scope, [] (const AtomStringImpl& key, const Element& element) {
+        return element.getIdAttribute().impl() == &key;
+    });
 }
 
 const Vector<AtomString> TreeScopeOrderedMap::keys() const

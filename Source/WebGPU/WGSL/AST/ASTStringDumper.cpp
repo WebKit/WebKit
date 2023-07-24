@@ -96,7 +96,9 @@ void StringDumper::visit(Directive& directive)
 // Attribute
 void StringDumper::visit(BindingAttribute& binding)
 {
-    m_out.print("@binding(", binding.binding(), ")");
+    m_out.print("@binding(");
+    visit(binding.binding());
+    m_out.print(")");
 }
 
 void StringDumper::visit(BuiltinAttribute& builtin)
@@ -106,12 +108,16 @@ void StringDumper::visit(BuiltinAttribute& builtin)
 
 void StringDumper::visit(GroupAttribute& group)
 {
-    m_out.print("@group(", group.group(), ")");
+    m_out.print("@group(");
+    visit(group.group());
+    m_out.print(")");
 }
 
 void StringDumper::visit(LocationAttribute& location)
 {
-    m_out.print("@location(", location.location(), ")");
+    m_out.print("@location(");
+    visit(location.location());
+    m_out.print(")");
 }
 
 void StringDumper::visit(StageAttribute& stage)
@@ -325,6 +331,14 @@ void StringDumper::visit(CompoundStatement& block)
     }
     m_out.print("}\n");
 }
+
+void StringDumper::visit(DecrementIncrementStatement& statement)
+{
+    m_out.print(m_indent);
+    visit(statement.expression());
+    m_out.print(statement.operation(), ";");
+}
+
 
 void StringDumper::visit(IfStatement& statement)
 {

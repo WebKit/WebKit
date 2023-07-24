@@ -43,7 +43,7 @@ Ref<Scrollbar> RenderScrollbar::createCustomScrollbar(ScrollableArea& scrollable
 }
 
 RenderScrollbar::RenderScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, Element* ownerElement, LocalFrame* owningFrame)
-    : Scrollbar(scrollableArea, orientation, ScrollbarControlSize::Regular, RenderScrollbarTheme::renderScrollbarTheme(), true)
+    : Scrollbar(scrollableArea, orientation, ScrollbarWidth::Auto, RenderScrollbarTheme::renderScrollbarTheme(), true)
     , m_ownerElement(ownerElement)
     , m_owningFrame(owningFrame)
 {

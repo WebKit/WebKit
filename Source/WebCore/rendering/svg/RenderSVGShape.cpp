@@ -222,7 +222,7 @@ void RenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& origin
     }
 }
 
-void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& originalContext)
+void RenderSVGShape::strokeShapeInternal(const RenderStyle& style, GraphicsContext& originalContext)
 {
     GraphicsContext* context = &originalContext;
     Color fallbackColor;
@@ -238,9 +238,9 @@ void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& orig
     }
 }
 
-void RenderSVGShape::strokeShape(GraphicsContext& context)
+void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& context)
 {
-    if (!style().hasVisibleStroke())
+    if (!style.hasVisibleStroke())
         return;
 
     GraphicsContextStateSaver stateSaver(context, false);
@@ -249,7 +249,7 @@ void RenderSVGShape::strokeShape(GraphicsContext& context)
         if (!setupNonScalingStrokeContext(nonScalingTransform, stateSaver))
             return;
     }
-    strokeShape(style(), context);
+    strokeShapeInternal(style, context);
 }
 
 void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
@@ -260,7 +260,7 @@ void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
             fillShape(style(), childPaintInfo.context());
             break;
         case PaintType::Stroke:
-            strokeShape(childPaintInfo.context());
+            strokeShape(style(), childPaintInfo.context());
             break;
         case PaintType::Markers:
             if (!m_markerPositions.isEmpty())
@@ -510,7 +510,7 @@ void RenderSVGShape::processMarkerPositions()
     ASSERT(m_path);
 
     SVGMarkerData markerData(m_markerPositions, SVGResourcesCache::cachedResourcesForRenderer(*this)->markerReverseStart());
-    m_path->apply([&markerData](const PathElement& pathElement) {
+    m_path->applyElements([&markerData](const PathElement& pathElement) {
         SVGMarkerData::updateFromPathElement(markerData, pathElement);
     });
     markerData.pathIsDone();

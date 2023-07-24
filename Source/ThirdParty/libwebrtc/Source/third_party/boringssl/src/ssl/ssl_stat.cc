@@ -224,6 +224,9 @@ const char *SSL_alert_desc_string_long(int value) {
     case TLS1_AD_NO_APPLICATION_PROTOCOL:
       return "no application protocol";
 
+    case TLS1_AD_ECH_REQUIRED:
+      return "ECH required";
+
     default:
       return "unknown";
   }

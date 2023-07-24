@@ -32,12 +32,7 @@ AcmSendTestOldApi::AcmSendTestOldApi(InputAudioFile* audio_source,
                                      int source_rate_hz,
                                      int test_duration_ms)
     : clock_(0),
-      acm_(webrtc::AudioCodingModule::Create([this] {
-        AudioCodingModule::Config config;
-        config.clock = &clock_;
-        config.decoder_factory = CreateBuiltinAudioDecoderFactory();
-        return config;
-      }())),
+      acm_(webrtc::AudioCodingModule::Create()),
       audio_source_(audio_source),
       source_rate_hz_(source_rate_hz),
       input_block_size_samples_(

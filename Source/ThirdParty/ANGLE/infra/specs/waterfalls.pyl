@@ -96,6 +96,42 @@
         'test_suites': {
         },
       },
+      'linux-exp-swiftshader': {
+        'os_type': 'linux',
+        'mixins': [
+          'gpu-swarming-pool',
+          'no_gpu',
+          'linux-jammy',
+          'timeout_15m',
+          'x86-64',
+        ],
+        'test_suites': {
+        },
+      },
+      'linux-exp-swiftshader-asan': {
+        'os_type': 'linux',
+        'mixins': [
+          'gpu-swarming-pool',
+          'no_gpu',
+          'linux-jammy',
+          'timeout_15m',
+          'x86-64',
+        ],
+        'test_suites': {
+        },
+      },
+      'linux-exp-swiftshader-tsan': {
+        'os_type': 'linux',
+        'mixins': [
+          'gpu-swarming-pool',
+          'no_gpu',
+          'linux-jammy',
+          'timeout_15m',
+          'x86-64',
+        ],
+        'test_suites': {
+        },
+      },
       'linux-intel': {
         'os_type': 'linux',
         'mixins': [
@@ -141,7 +177,7 @@
         'mixins': [
           'gpu-swarming-pool',
           'no_gpu',
-          'linux-bionic',
+          'linux-jammy',
           'timeout_15m',
           'x86-64',
         ],
@@ -155,7 +191,7 @@
         'mixins': [
           'gpu-swarming-pool',
           'no_gpu',
-          'linux-bionic',
+          'linux-jammy',
           'timeout_15m',
           'x86-64',
         ],
@@ -168,7 +204,7 @@
         'mixins': [
           'gpu-swarming-pool',
           'no_gpu',
-          'linux-bionic',
+          'linux-jammy',
           'timeout_15m',
           'x86-64',
         ],
@@ -217,7 +253,8 @@
         ],
         'test_suites': {
           # Fewer tests enabled on this config because of limited capacity.
-          'gtest_tests': 'mac_nvidia_gtests',
+          # Temporarily disabled for upgrade crbug.com/1456549
+          # 'gtest_tests': 'mac_nvidia_gtests',
         },
       },
       'win10-x64-exp-intel': {

@@ -26,15 +26,13 @@
 #include "CaptureDevice.h"
 #include "GStreamerCommon.h"
 
-#include <gst/gst.h>
-
 namespace WebCore {
 
 class GStreamerCaptureDevice : public CaptureDevice {
 public:
     GStreamerCaptureDevice(GRefPtr<GstDevice>&& device, const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString())
         : CaptureDevice(persistentId, type, label, groupId)
-        , m_device(device)
+        , m_device(WTFMove(device))
     {
     }
 

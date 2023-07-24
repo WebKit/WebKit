@@ -79,7 +79,7 @@ bool Semaphore::waitFor(Timeout timeout)
 
 void Semaphore::encode(Encoder& encoder) const
 {
-    encoder << m_semaphoreHandle;
+    encoder << Win32Handle { m_semaphoreHandle };
 }
 
 std::optional<Semaphore> Semaphore::decode(Decoder& decoder)

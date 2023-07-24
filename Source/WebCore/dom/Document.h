@@ -99,6 +99,7 @@ class CanvasRenderingContext2D;
 class CharacterData;
 class Comment;
 class ConstantPropertyMap;
+class ContentVisibilityDocumentState;
 class DOMImplementation;
 class DOMSelection;
 class LocalDOMWindow;
@@ -148,6 +149,7 @@ class HTMLMapElement;
 class HTMLMediaElement;
 class HTMLMetaElement;
 class HTMLVideoElement;
+class HighlightRangeData;
 class HighlightRegister;
 class HitTestLocation;
 class HitTestRequest;
@@ -248,7 +250,6 @@ struct ApplicationManifest;
 struct BoundaryPoint;
 struct ClientOrigin;
 struct FocusOptions;
-struct HighlightRangeData;
 struct IntersectionObserverData;
 struct SecurityPolicyViolationEventInit;
 
@@ -266,6 +267,7 @@ enum class CollectionType : uint8_t;
 enum CSSPropertyID : uint16_t;
 
 enum class CompositeOperator : uint8_t;
+enum class ContentRelevancyStatus : uint8_t;
 enum class DOMAudioSessionType : uint8_t;
 enum class DisabledAdaptations : uint8_t;
 enum class FireEvents : bool;
@@ -629,6 +631,7 @@ public:
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior editingBehavior() const;
 
+    Quirks& quirks() { return m_quirks; }
     const Quirks& quirks() const { return m_quirks; }
 
     float deviceScaleFactor() const;
@@ -766,6 +769,7 @@ public:
 
     inline bool shouldMaskURLForBindings(const URL&) const;
     inline const URL& maskedURLForBindingsIfNeeded(const URL&) const;
+    static StaticStringImpl& maskedURLStringForBindings();
     static const URL& maskedURLForBindings();
 
     WEBCORE_EXPORT String userAgent(const URL&) const final;
@@ -894,11 +898,7 @@ public:
 
     void attachNodeIterator(NodeIterator&);
     void detachNodeIterator(NodeIterator&);
-    void moveNodeIteratorsToNewDocument(Node& node, Document& newDocument)
-    {
-        if (!m_nodeIterators.isEmpty())
-            moveNodeIteratorsToNewDocumentSlowCase(node, newDocument);
-    }
+    void moveNodeIteratorsToNewDocument(Node&, Document&);
 
     void attachRange(Range&);
     void detachRange(Range&);
@@ -1633,10 +1633,12 @@ public:
     const ListHashSet<Ref<Element>>& topLayerElements() const { return m_topLayerElements; }
     bool hasTopLayerElement() const { return !m_topLayerElements.isEmpty(); }
 
+    const ListHashSet<Ref<HTMLElement>>& autoPopoverList() const { return m_autoPopoverList; }
+
     HTMLDialogElement* activeModalDialog() const;
     HTMLElement* topmostAutoPopover() const;
 
-    void hideAllPopoversUntil(Element*, FocusPreviousElement, FireEvents);
+    void hideAllPopoversUntil(HTMLElement*, FocusPreviousElement, FireEvents);
     void handlePopoverLightDismiss(const PointerEvent&, Node&);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -1726,6 +1728,8 @@ public:
 
     LazyLoadImageObserver& lazyLoadImageObserver();
 
+    ContentVisibilityDocumentState& contentVisibilityDocumentState();
+
     void setHasVisuallyNonEmptyCustomContent() { m_hasVisuallyNonEmptyCustomContent = true; }
     bool hasVisuallyNonEmptyCustomContent() const { return m_hasVisuallyNonEmptyCustomContent; }
     void enqueuePaintTimingEntryIfNeeded();
@@ -1774,6 +1778,11 @@ public:
     void setAudioSessionType(DOMAudioSessionType type) { m_audioSessionType = type; }
     DOMAudioSessionType audioSessionType() const { return m_audioSessionType; }
 #endif
+
+    virtual void didChangeViewSize() { }
+
+    void updateRelevancyOfContentVisibilityElements();
+    void scheduleContentRelevancyUpdate(ContentRelevancyStatus);
 
 protected:
     enum class ConstructionFlag : uint8_t {
@@ -1842,8 +1851,6 @@ private:
     void invalidateAccessKeyCacheSlowCase();
     void buildAccessKeyCache();
 
-    void moveNodeIteratorsToNewDocumentSlowCase(Node&, Document&);
-
     void intersectionObserversInitialUpdateTimerFired();
 
     void loadEventDelayTimerFired();
@@ -1910,6 +1917,8 @@ private:
     RefPtr<ResizeObserver> ensureResizeObserverForContainIntrinsicSize();
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 
+    bool isObservingContentVisibilityTargets() const;
+
     const Ref<const Settings> m_settings;
 
     UniqueRef<Quirks> m_quirks;
@@ -1930,7 +1939,7 @@ private:
     URL m_cookieURL; // The URL to use for cookie access.
     URL m_firstPartyForCookies; // The policy URL for third-party cookie blocking.
     URL m_siteForCookies; // The policy URL for Same-Site cookies.
-    URL m_adjustedURL; // The URL to return for bindings after a cross-site navigation when the "network connection integrity" setting is enabled.
+    URL m_adjustedURL; // The URL to return for bindings after a cross-site navigation when advanced privacy protections are enabled.
 
     // Document.documentURI:
     // Although URL-like, Document.documentURI can actually be set to any
@@ -1961,7 +1970,7 @@ private:
 
     mutable String m_uniqueIdentifier;
 
-    HashSet<NodeIterator*> m_nodeIterators;
+    WeakHashSet<NodeIterator> m_nodeIterators;
     WeakHashSet<Range> m_ranges;
 
     std::unique_ptr<Style::Scope> m_styleScope;
@@ -1995,6 +2004,8 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_cssTarget;
 
     std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;
+
+    std::unique_ptr<ContentVisibilityDocumentState> m_contentVisibilityDocumentState;
 
 #if !LOG_DISABLED
     MonotonicTime m_documentCreationTime;
@@ -2210,10 +2221,11 @@ private:
     Ref<UndoManager> m_undoManager;
     UniqueRef<Editor> m_editor;
     UniqueRef<FrameSelection> m_selection;
-        
+
     String m_fragmentDirective;
 
     ListHashSet<Ref<Element>> m_topLayerElements;
+    ListHashSet<Ref<HTMLElement>> m_autoPopoverList;
 
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_popoverPointerDownTarget;
 
@@ -2286,6 +2298,8 @@ private:
 #if ENABLE(DOM_AUDIO_SESSION)
     DOMAudioSessionType m_audioSessionType { };
 #endif
+
+    OptionSet<ContentRelevancyStatus> m_contentRelevancyStatusUpdate;
 
     StandaloneStatus m_xmlStandalone { StandaloneStatus::Unspecified };
     bool m_hasXMLDeclaration { false };

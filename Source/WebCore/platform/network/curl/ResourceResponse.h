@@ -28,13 +28,11 @@
 
 #include "ResourceResponseBase.h"
 
-typedef struct _CFURLResponse* CFURLResponseRef;
-
 namespace WebCore {
 
 class CurlResponse;
 
-class WEBCORE_EXPORT ResourceResponse : public ResourceResponseBase {
+class ResourceResponse : public ResourceResponseBase {
 public:
     ResourceResponse()
         : ResourceResponseBase()
@@ -46,33 +44,25 @@ public:
     {
     }
 
-    ResourceResponse(CurlResponse&);
-    
     ResourceResponse(ResourceResponseBase&& base)
         : ResourceResponseBase(WTFMove(base))
     {
     }
 
-    void appendHTTPHeaderField(const String&);
+    WEBCORE_EXPORT ResourceResponse(CurlResponse&);
 
-    bool shouldRedirect();
-    bool isMovedPermanently() const;
-    bool isFound() const;
-    bool isSeeOther() const;
-    bool isNotModified() const;
-    bool isUnauthorized() const;
-    bool isProxyAuthenticationRequired() const;
-
-    // Needed for compatibility.
-    CFURLResponseRef cfURLResponse() const { return 0; }
+    bool isMovedPermanently() const { return httpStatusCode() == 301; };
+    bool isFound() const { return httpStatusCode() == 302; }
+    bool isSeeOther() const { return httpStatusCode() == 303; }
+    bool isUnauthorized() const { return httpStatusCode() == 401; }
+    bool isProxyAuthenticationRequired() const { return httpStatusCode() == 407; }
 
 private:
     friend class ResourceResponseBase;
 
-    static bool isAppendableHeader(const String &key);
     String platformSuggestedFilename() const;
 
-    void setStatusLine(StringView);
+    void appendHTTPHeaderField(const String&);
 };
 
 } // namespace WebCore

@@ -33,6 +33,7 @@
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

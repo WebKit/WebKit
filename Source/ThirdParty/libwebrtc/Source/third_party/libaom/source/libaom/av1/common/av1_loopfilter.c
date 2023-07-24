@@ -1350,13 +1350,11 @@ void av1_filter_block_plane_vert(const AV1_COMMON *const cm,
   }
 }
 
-void av1_filter_block_plane_vert_opt(const AV1_COMMON *const cm,
-                                     const MACROBLOCKD *const xd,
-                                     const MACROBLOCKD_PLANE *const plane_ptr,
-                                     const uint32_t mi_row,
-                                     const uint32_t mi_col,
-                                     AV1_DEBLOCKING_PARAMETERS *params_buf,
-                                     TX_SIZE *tx_buf) {
+void av1_filter_block_plane_vert_opt(
+    const AV1_COMMON *const cm, const MACROBLOCKD *const xd,
+    const MACROBLOCKD_PLANE *const plane_ptr, const uint32_t mi_row,
+    const uint32_t mi_col, AV1_DEBLOCKING_PARAMETERS *params_buf,
+    TX_SIZE *tx_buf, int num_mis_in_lpf_unit_height_log2) {
   uint8_t *const dst_ptr = plane_ptr->dst.buf;
   const int dst_stride = plane_ptr->dst.stride;
   // Ensure that mi_cols/mi_rows are calculated based on frame dimension aligned
@@ -1365,7 +1363,14 @@ void av1_filter_block_plane_vert_opt(const AV1_COMMON *const cm,
       CEIL_POWER_OF_TWO(plane_ptr->dst.width, MI_SIZE_LOG2);
   const int plane_mi_rows =
       CEIL_POWER_OF_TWO(plane_ptr->dst.height, MI_SIZE_LOG2);
-  const int y_range = AOMMIN((int)(plane_mi_rows - mi_row), MAX_MIB_SIZE);
+  // Whenever 'pipeline_lpf_mt_with_enc' is enabled, height of the unit to
+  // filter (i.e., y_range) is calculated based on the size of the superblock
+  // used.
+  const int y_range = AOMMIN((int)(plane_mi_rows - mi_row),
+                             (1 << num_mis_in_lpf_unit_height_log2));
+  // Width of the unit to filter (i.e., x_range) should always be calculated
+  // based on maximum superblock size as this function is called for mi_col = 0,
+  // MAX_MIB_SIZE, 2 * MAX_MIB_SIZE etc.
   const int x_range = AOMMIN((int)(plane_mi_cols - mi_col), MAX_MIB_SIZE);
   const ptrdiff_t mode_step = 1;
   for (int y = 0; y < y_range; y++) {
@@ -1417,7 +1422,8 @@ void av1_filter_block_plane_vert_opt_chroma(
     const AV1_COMMON *const cm, const MACROBLOCKD *const xd,
     const MACROBLOCKD_PLANE *const plane_ptr, const uint32_t mi_row,
     const uint32_t mi_col, AV1_DEBLOCKING_PARAMETERS *params_buf,
-    TX_SIZE *tx_buf, int plane, bool joint_filter_chroma) {
+    TX_SIZE *tx_buf, int plane, bool joint_filter_chroma,
+    int num_mis_in_lpf_unit_height_log2) {
   const uint32_t scale_horz = plane_ptr->subsampling_x;
   const uint32_t scale_vert = plane_ptr->subsampling_y;
   const int dst_stride = plane_ptr->dst.stride;
@@ -1429,8 +1435,9 @@ void av1_filter_block_plane_vert_opt_chroma(
       ((plane_ptr->dst.height << scale_vert) + MI_SIZE - 1) >> MI_SIZE_LOG2;
   const int plane_mi_rows = ROUND_POWER_OF_TWO(mi_rows, scale_vert);
   const int plane_mi_cols = ROUND_POWER_OF_TWO(mi_cols, scale_horz);
-  const int y_range = AOMMIN((int)(plane_mi_rows - (mi_row >> scale_vert)),
-                             (MAX_MIB_SIZE >> scale_vert));
+  const int y_range =
+      AOMMIN((int)(plane_mi_rows - (mi_row >> scale_vert)),
+             ((1 << num_mis_in_lpf_unit_height_log2) >> scale_vert));
   const int x_range = AOMMIN((int)(plane_mi_cols - (mi_col >> scale_horz)),
                              (MAX_MIB_SIZE >> scale_horz));
   const ptrdiff_t mode_step = (ptrdiff_t)1 << scale_horz;
@@ -1943,13 +1950,11 @@ void av1_filter_block_plane_horz(const AV1_COMMON *const cm,
   }
 }
 
-void av1_filter_block_plane_horz_opt(const AV1_COMMON *const cm,
-                                     const MACROBLOCKD *const xd,
-                                     const MACROBLOCKD_PLANE *const plane_ptr,
-                                     const uint32_t mi_row,
-                                     const uint32_t mi_col,
-                                     AV1_DEBLOCKING_PARAMETERS *params_buf,
-                                     TX_SIZE *tx_buf) {
+void av1_filter_block_plane_horz_opt(
+    const AV1_COMMON *const cm, const MACROBLOCKD *const xd,
+    const MACROBLOCKD_PLANE *const plane_ptr, const uint32_t mi_row,
+    const uint32_t mi_col, AV1_DEBLOCKING_PARAMETERS *params_buf,
+    TX_SIZE *tx_buf, int num_mis_in_lpf_unit_height_log2) {
   uint8_t *const dst_ptr = plane_ptr->dst.buf;
   const int dst_stride = plane_ptr->dst.stride;
   // Ensure that mi_cols/mi_rows are calculated based on frame dimension aligned
@@ -1958,7 +1963,8 @@ void av1_filter_block_plane_horz_opt(const AV1_COMMON *const cm,
       CEIL_POWER_OF_TWO(plane_ptr->dst.width, MI_SIZE_LOG2);
   const int plane_mi_rows =
       CEIL_POWER_OF_TWO(plane_ptr->dst.height, MI_SIZE_LOG2);
-  const int y_range = AOMMIN((int)(plane_mi_rows - mi_row), MAX_MIB_SIZE);
+  const int y_range = AOMMIN((int)(plane_mi_rows - mi_row),
+                             (1 << num_mis_in_lpf_unit_height_log2));
   const int x_range = AOMMIN((int)(plane_mi_cols - mi_col), MAX_MIB_SIZE);
 
   const ptrdiff_t mode_step = cm->mi_params.mi_stride;
@@ -2011,7 +2017,8 @@ void av1_filter_block_plane_horz_opt_chroma(
     const AV1_COMMON *const cm, const MACROBLOCKD *const xd,
     const MACROBLOCKD_PLANE *const plane_ptr, const uint32_t mi_row,
     const uint32_t mi_col, AV1_DEBLOCKING_PARAMETERS *params_buf,
-    TX_SIZE *tx_buf, int plane, bool joint_filter_chroma) {
+    TX_SIZE *tx_buf, int plane, bool joint_filter_chroma,
+    int num_mis_in_lpf_unit_height_log2) {
   const uint32_t scale_horz = plane_ptr->subsampling_x;
   const uint32_t scale_vert = plane_ptr->subsampling_y;
   const int dst_stride = plane_ptr->dst.stride;
@@ -2023,8 +2030,9 @@ void av1_filter_block_plane_horz_opt_chroma(
       ((plane_ptr->dst.height << scale_vert) + MI_SIZE - 1) >> MI_SIZE_LOG2;
   const int plane_mi_rows = ROUND_POWER_OF_TWO(mi_rows, scale_vert);
   const int plane_mi_cols = ROUND_POWER_OF_TWO(mi_cols, scale_horz);
-  const int y_range = AOMMIN((int)(plane_mi_rows - (mi_row >> scale_vert)),
-                             (MAX_MIB_SIZE >> scale_vert));
+  const int y_range =
+      AOMMIN((int)(plane_mi_rows - (mi_row >> scale_vert)),
+             ((1 << num_mis_in_lpf_unit_height_log2) >> scale_vert));
   const int x_range = AOMMIN((int)(plane_mi_cols - (mi_col >> scale_horz)),
                              (MAX_MIB_SIZE >> scale_horz));
   const ptrdiff_t mode_step = cm->mi_params.mi_stride << scale_vert;

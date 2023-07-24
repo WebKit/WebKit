@@ -10,9 +10,6 @@ features: [Temporal]
 
 const expected = [
   // ToTemporalTime
-  "get other.calendar",
-  "get other.calendar.toString",
-  "call other.calendar.toString",
   "get other.hour",
   "get other.hour.valueOf",
   "call other.hour.valueOf",

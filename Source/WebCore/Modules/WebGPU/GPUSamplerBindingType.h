@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUSamplerBindingType.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUSamplerBindingType.h>
 
 namespace WebCore {
 
@@ -36,15 +36,15 @@ enum class GPUSamplerBindingType : uint8_t {
     Comparison,
 };
 
-inline PAL::WebGPU::SamplerBindingType convertToBacking(GPUSamplerBindingType samplerBindingType)
+inline WebGPU::SamplerBindingType convertToBacking(GPUSamplerBindingType samplerBindingType)
 {
     switch (samplerBindingType) {
     case GPUSamplerBindingType::Filtering:
-        return PAL::WebGPU::SamplerBindingType::Filtering;
+        return WebGPU::SamplerBindingType::Filtering;
     case GPUSamplerBindingType::NonFiltering:
-        return PAL::WebGPU::SamplerBindingType::NonFiltering;
+        return WebGPU::SamplerBindingType::NonFiltering;
     case GPUSamplerBindingType::Comparison:
-        return PAL::WebGPU::SamplerBindingType::Comparison;
+        return WebGPU::SamplerBindingType::Comparison;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -77,6 +77,10 @@ int32_t ConfigurableFrameSizeEncoder::Release() {
 void ConfigurableFrameSizeEncoder::SetRates(
     const RateControlParameters& parameters) {}
 
+VideoEncoder::EncoderInfo ConfigurableFrameSizeEncoder::GetEncoderInfo() const {
+  return EncoderInfo();
+}
+
 int32_t ConfigurableFrameSizeEncoder::SetFrameSize(size_t size) {
   current_frame_size_ = size;
   return WEBRTC_VIDEO_CODEC_OK;

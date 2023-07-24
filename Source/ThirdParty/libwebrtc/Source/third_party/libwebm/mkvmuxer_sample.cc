@@ -66,7 +66,7 @@ void Usage() {
   printf("                                   1: Equirectangular\n");
   printf("                                   2: Cube map\n");
   printf("                                   3: Mesh\n");
-  printf("  -projection_file <string>      Override projection private data");
+  printf("  -projection_file <string>      Override projection private data\n");
   printf("                                 with contents of this file\n");
   printf("  -projection_pose_yaw <float>   Projection pose yaw\n");
   printf("  -projection_pose_pitch <float> Projection pose pitch\n");

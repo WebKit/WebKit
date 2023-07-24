@@ -91,7 +91,7 @@ public:
 
     bool isUserScrollInProgressForNode(ScrollingNodeID);
     void setUserScrollInProgressForNode(ScrollingNodeID, bool);
-    void clearNodesWithUserScrollInProgress();
+    WEBCORE_EXPORT virtual void clearNodesWithUserScrollInProgress();
 
     bool isScrollSnapInProgressForNode(ScrollingNodeID);
     void setNodeScrollSnapInProgress(ScrollingNodeID, bool);
@@ -248,7 +248,8 @@ public:
     WEBCORE_EXPORT Seconds frameDuration();
     WEBCORE_EXPORT Seconds maxAllowableRenderingUpdateDurationForSynchronization();
     WEBCORE_EXPORT virtual void scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID, ScrollbarOrientation, bool) { };
-    
+    WEBCORE_EXPORT virtual void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, ScrollbarOrientation, int) { };
+
 protected:
     WEBCORE_EXPORT WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
 

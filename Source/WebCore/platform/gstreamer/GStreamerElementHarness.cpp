@@ -633,6 +633,8 @@ void GStreamerElementHarness::dumpGraph(const char* filenamePrefix)
 #endif
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER)

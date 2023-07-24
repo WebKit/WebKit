@@ -2,8 +2,8 @@
 PASS setLocalDescription() with valid answer should succeed
 PASS setLocalDescription() with type answer and null sdp should use lastAnswer generated from createAnswer
 FAIL setLocalDescription() with answer not created by own createAnswer() should reject with InvalidModificationError assert_equals: expected "InvalidModificationError" but got "OperationError"
-FAIL Calling setLocalDescription(answer) from stable state should reject with InvalidModificationError promise_rejects_dom: function "function () { throw e }" threw object "InvalidStateError: Failed to set local answer sdp: no pending remote description." that is not a DOMException InvalidModificationError: property "code" is equal to 11, expected 13
-FAIL Calling setLocalDescription(answer) from have-local-offer state should reject with InvalidModificationError promise_rejects_dom: function "function () { throw e }" threw object "InvalidStateError: Failed to set local answer sdp: no pending remote description." that is not a DOMException InvalidModificationError: property "code" is equal to 11, expected 13
+FAIL Calling setLocalDescription(answer) from stable state should reject with InvalidModificationError promise_rejects_dom: function "function() { throw e }" threw object "InvalidStateError: Failed to set local answer sdp: no pending remote description." that is not a DOMException InvalidModificationError: property "code" is equal to 11, expected 13
+FAIL Calling setLocalDescription(answer) from have-local-offer state should reject with InvalidModificationError promise_rejects_dom: function "function() { throw e }" threw object "InvalidStateError: Failed to set local answer sdp: no pending remote description." that is not a DOMException InvalidModificationError: property "code" is equal to 11, expected 13
 PASS Setting previously generated answer after a call to createOffer should work
 PASS setLocalDescription(answer) should update internal state with a queued task, in the right order
 

@@ -133,10 +133,16 @@ const DecodeParam kAV1InvalidFileTests[] = {
   { 4, "invalid-oss-fuzz-9463.ivf", "invalid-oss-fuzz-9463.ivf.res.2" },
   { 1, "invalid-oss-fuzz-9720.ivf", nullptr },
   { 1, "invalid-oss-fuzz-10389.ivf", "invalid-oss-fuzz-10389.ivf.res.4" },
+#if !CHROMIUM && !CONFIG_SIZE_LIMIT ||                  \
+    (CONFIG_SIZE_LIMIT && DECODE_WIDTH_LIMIT >= 5120 && \
+     DECODE_HEIGHT_LIMIT >= 180)
   { 1, "invalid-oss-fuzz-11523.ivf", "invalid-oss-fuzz-11523.ivf.res.2" },
+#endif
   { 4, "invalid-oss-fuzz-15363.ivf", nullptr },
   { 1, "invalid-oss-fuzz-16437.ivf", "invalid-oss-fuzz-16437.ivf.res.2" },
+#if CONFIG_MAX_DECODE_PROFILE >= 1
   { 1, "invalid-oss-fuzz-24706.ivf", nullptr },
+#endif
 #if CONFIG_AV1_HIGHBITDEPTH
   // These test vectors contain 10-bit or 12-bit video.
   { 1, "invalid-oss-fuzz-9288.ivf", nullptr },
@@ -146,7 +152,11 @@ const DecodeParam kAV1InvalidFileTests[] = {
   { 1, "invalid-oss-fuzz-10227.ivf", nullptr },
   { 4, "invalid-oss-fuzz-10555.ivf", nullptr },
   { 1, "invalid-oss-fuzz-10705.ivf", nullptr },
+#if CONFIG_CWG_C013
+  { 1, "invalid-oss-fuzz-10723.ivf", "invalid-oss-fuzz-10723.ivf.res.3" },
+#else
   { 1, "invalid-oss-fuzz-10723.ivf", "invalid-oss-fuzz-10723.ivf.res.2" },
+#endif
   { 1, "invalid-oss-fuzz-10779.ivf", nullptr },
   { 1, "invalid-oss-fuzz-11477.ivf", nullptr },
   { 1, "invalid-oss-fuzz-11479.ivf", "invalid-oss-fuzz-11479.ivf.res.2" },

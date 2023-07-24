@@ -204,7 +204,7 @@ Position nextCandidate(const Position& position)
     return { };
 }
 
-Position nextVisuallyDistinctCandidate(const Position& position)
+Position nextVisuallyDistinctCandidate(const Position& position, SkipDisplayContents skipDisplayContents)
 {
     // FIXME: Use PositionIterator instead.
     Position nextPosition = position;
@@ -214,8 +214,13 @@ Position nextVisuallyDistinctCandidate(const Position& position)
         if (nextPosition.isCandidate() && nextPosition.downstream() != downstreamStart)
             return nextPosition;
         if (auto* node = nextPosition.containerNode()) {
-            if (!node->renderer())
+            if (!node->renderer()) {
+                if (skipDisplayContents == SkipDisplayContents::No) {
+                    if (auto* element = dynamicDowncast<Element>(node); element && element->hasDisplayContents())
+                        continue;
+                }
                 nextPosition = lastPositionInOrAfterNode(node);
+            }
         }
     }
     return { };
@@ -614,29 +619,6 @@ Node* enclosingListChild(Node *node)
     return nullptr;
 }
 
-static HTMLElement* embeddedSublist(Node* listItem)
-{
-    // Check the DOM so that we'll find collapsed sublists without renderers.
-    for (Node* n = listItem->firstChild(); n; n = n->nextSibling()) {
-        if (isListHTMLElement(n))
-            return downcast<HTMLElement>(n);
-    }
-    return nullptr;
-}
-
-static Node* appendedSublist(Node* listItem)
-{
-    // Check the DOM so that we'll find collapsed sublists without renderers.
-    for (Node* n = listItem->nextSibling(); n; n = n->nextSibling()) {
-        if (isListHTMLElement(n))
-            return downcast<HTMLElement>(n);
-        if (isListItem(listItem))
-            return nullptr;
-    }
-    
-    return nullptr;
-}
-
 // FIXME: This function should not need to call isStartOfParagraph/isEndOfParagraph.
 Node* enclosingEmptyListItem(const VisiblePosition& position)
 {
@@ -649,9 +631,6 @@ Node* enclosingEmptyListItem(const VisiblePosition& position)
     VisiblePosition lastInListChild(lastPositionInOrAfterNode(listChildNode));
 
     if (firstInListChild != position || lastInListChild != position)
-        return nullptr;
-
-    if (embeddedSublist(listChildNode) || appendedSublist(listChildNode))
         return nullptr;
 
     return listChildNode;

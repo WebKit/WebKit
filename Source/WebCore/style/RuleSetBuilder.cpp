@@ -47,11 +47,12 @@
 namespace WebCore {
 namespace Style {
 
-RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MQ::MediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit)
+RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MQ::MediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit, ShouldResolveNesting shouldResolveNesting)
     : m_ruleSet(&ruleSet)
     , m_mediaQueryCollector({ evaluator })
     , m_resolver(resolver)
     , m_shrinkToFit(shrinkToFit)
+    , m_shouldResolveNesting(shouldResolveNesting)
 {
 }
 
@@ -94,7 +95,7 @@ void RuleSetBuilder::addRulesFromSheet(const StyleSheetContents& sheet, const MQ
     m_mediaQueryCollector.pop(sheetQuery);
 }
 
-void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
+void RuleSetBuilder::addChildRules(const Vector<Ref<StyleRuleBase>>& rules)
 {
     for (auto& rule : rules) {
         if (requiresStaticMediaQueryEvaluation)
@@ -103,26 +104,26 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
     }
 }
 
-void RuleSetBuilder::addChildRule(RefPtr<StyleRuleBase> rule)
+void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
 {
     switch (rule->type()) {
     case StyleRuleType::StyleWithNesting:
         if (m_ruleSet)
-            addStyleRule(downcast<StyleRuleWithNesting>(*rule));
+            addStyleRule(downcast<StyleRuleWithNesting>(rule));
         return;
 
     case StyleRuleType::Style:
         if (m_ruleSet)
-            addStyleRule(downcast<StyleRule>(*rule));
+            addStyleRule(downcast<StyleRule>(rule));
         return;
 
     case StyleRuleType::Page:
         if (m_ruleSet)
-            m_ruleSet->addPageRule(downcast<StyleRulePage>(*rule));
+            m_ruleSet->addPageRule(downcast<StyleRulePage>(rule));
         return;
 
     case StyleRuleType::Media: {
-        auto& mediaRule = downcast<StyleRuleMedia>(*rule);
+        auto& mediaRule = downcast<StyleRuleMedia>(rule);
         if (m_mediaQueryCollector.pushAndEvaluate(mediaRule.mediaQueries()))
             addChildRules(mediaRule.childRules());
         m_mediaQueryCollector.pop(mediaRule.mediaQueries());
@@ -130,7 +131,7 @@ void RuleSetBuilder::addChildRule(RefPtr<StyleRuleBase> rule)
     }
 
     case StyleRuleType::Container: {
-        auto& containerRule = downcast<StyleRuleContainer>(*rule);
+        auto& containerRule = downcast<StyleRuleContainer>(rule);
         auto previousContainerQueryIdentifier = m_currentContainerQueryIdentifier;
         if (m_ruleSet) {
             m_ruleSet->m_containerQueries.append({ containerRule, previousContainerQueryIdentifier });
@@ -146,7 +147,7 @@ void RuleSetBuilder::addChildRule(RefPtr<StyleRuleBase> rule)
     case StyleRuleType::LayerStatement: {
         disallowDynamicMediaQueryEvaluationIfNeeded();
 
-        auto& layerRule = downcast<StyleRuleLayer>(*rule);
+        auto& layerRule = downcast<StyleRuleLayer>(rule);
         if (layerRule.isStatement()) {
             // Statement syntax just registers the layers.
             registerLayers(layerRule.nameList());
@@ -166,12 +167,12 @@ void RuleSetBuilder::addChildRule(RefPtr<StyleRuleBase> rule)
     case StyleRuleType::Property:
         disallowDynamicMediaQueryEvaluationIfNeeded();
         if (m_resolver)
-            m_collectedResolverMutatingRules.append({ *rule, m_currentCascadeLayerIdentifier });
+            m_collectedResolverMutatingRules.append({ rule, m_currentCascadeLayerIdentifier });
         return;
 
     case StyleRuleType::Supports:
-        if (downcast<StyleRuleSupports>(*rule).conditionIsSupported())
-            addChildRules(downcast<StyleRuleSupports>(*rule).childRules());
+        if (downcast<StyleRuleSupports>(rule).conditionIsSupported())
+            addChildRules(downcast<StyleRuleSupports>(rule).childRules());
         return;
 
     case StyleRuleType::Import:
@@ -245,7 +246,8 @@ void RuleSetBuilder::addStyleRuleWithSelectorList(const CSSSelectorList& selecto
 
 void RuleSetBuilder::addStyleRule(StyleRuleWithNesting& rule)
 {
-    resolveSelectorListWithNesting(rule);
+    if (m_shouldResolveNesting == ShouldResolveNesting::Yes)
+        resolveSelectorListWithNesting(rule);
 
     auto& selectorList = rule.selectorList();
     addStyleRuleWithSelectorList(selectorList, rule);
@@ -253,7 +255,7 @@ void RuleSetBuilder::addStyleRule(StyleRuleWithNesting& rule)
     // Process nested rules
     m_styleRuleStack.append(&selectorList);
     for (auto& nestedRule : rule.nestedRules())
-        addChildRule(nestedRule.ptr());
+        addChildRule(nestedRule);
     m_styleRuleStack.removeLast();
 }
 

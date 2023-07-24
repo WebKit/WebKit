@@ -63,7 +63,7 @@ Will be converted into:
       --test_artifacts_dir=SOME_OUTPUT_DIR/test_artifacts \
       --some_flag=some_value \
       --another_flag \
-      --isolated_script_test_perf_output=SOME_OTHER_DIR \
+      --isolated-script-test-perf-output=SOME_OTHER_DIR \
       --foo=bar \
       --baz
 
@@ -155,32 +155,12 @@ def ParseArgs(argv=None):
   # know what will be the swarming output dir.
   parser.add_argument('--store-test-artifacts', action='store_true')
 
-  # No-sandbox is a Chromium-specific flag, ignore it.
-  # TODO(bugs.webrtc.org/8115): Remove workaround when fixed.
-  parser.add_argument('--no-sandbox',
-                      action='store_true',
-                      help=argparse.SUPPRESS)
-
   parser.add_argument('executable')
   parser.add_argument('executable_args', nargs='*')
 
   options, unrecognized_args = parser.parse_known_args(argv)
 
-  webrtc_flags_to_change = {
-      '--isolated-script-test-perf-output':
-      '--isolated_script_test_perf_output',
-      '--isolated-script-test-output': '--isolated_script_test_output',
-  }
-  args_to_pass = []
-  for arg in unrecognized_args:
-    if any(arg.startswith(k) for k in list(webrtc_flags_to_change.keys())):
-      arg_split = arg.split('=')
-      args_to_pass.append(webrtc_flags_to_change[arg_split[0]] + '=' +
-                          arg_split[1])
-    else:
-      args_to_pass.append(arg)
-
-  executable_args = options.executable_args + args_to_pass
+  executable_args = options.executable_args + unrecognized_args
 
   if options.store_test_artifacts:
     assert options.output_dir, (

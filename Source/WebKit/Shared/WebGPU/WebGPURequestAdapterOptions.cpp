@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPURequestAdapterOptions.h>
+#include <WebCore/WebGPURequestAdapterOptions.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<RequestAdapterOptions> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RequestAdapterOptions& requestAdapterOptions)
+std::optional<RequestAdapterOptions> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RequestAdapterOptions& requestAdapterOptions)
 {
     return { { requestAdapterOptions.powerPreference, requestAdapterOptions.forceFallbackAdapter } };
 }
 
-std::optional<PAL::WebGPU::RequestAdapterOptions> ConvertFromBackingContext::convertFromBacking(const RequestAdapterOptions& requestAdapterOptions)
+std::optional<WebCore::WebGPU::RequestAdapterOptions> ConvertFromBackingContext::convertFromBacking(const RequestAdapterOptions& requestAdapterOptions)
 {
     return { { requestAdapterOptions.powerPreference, requestAdapterOptions.forceFallbackAdapter } };
 }

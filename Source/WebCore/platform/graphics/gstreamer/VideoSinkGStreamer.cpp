@@ -321,4 +321,6 @@ GstElement* webkitVideoSinkNew()
     return GST_ELEMENT(g_object_new(WEBKIT_TYPE_VIDEO_SINK, nullptr));
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

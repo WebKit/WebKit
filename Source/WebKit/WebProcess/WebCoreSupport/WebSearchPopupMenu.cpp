@@ -69,7 +69,7 @@ void WebSearchPopupMenu::loadRecentSearches(const AtomString& name, Vector<Recen
         return;
 
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::LoadRecentSearches(name), page->identifier());
-    if (sendResult)
+    if (sendResult.succeeded())
         std::tie(resultItems) = sendResult.takeReply();
 }
 

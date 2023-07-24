@@ -1,20 +1,26 @@
 This tests that disabled sliders can't be incremented or decremented.
 
+Test case 0:
 PASS: slider.intValue === 50
 PASS: slider.intValue === 50
 PASS: slider.intValue === 50
+Test case 1:
 PASS: slider.intValue === 50
 PASS: slider.intValue === 50
 PASS: slider.intValue === 50
+Test case 2:
 PASS: slider.intValue === 50
 PASS: slider.intValue === 50
 PASS: slider.intValue === 50
+Test case 3:
 PASS: slider.intValue === 50
 PASS: slider.intValue === 55
 PASS: slider.intValue === 45
+Test case 4:
 PASS: slider.intValue === 50
 PASS: slider.intValue === 55
 PASS: slider.intValue === 45
+Test case 5:
 PASS: slider.intValue === 50
 PASS: slider.intValue === 55
 PASS: slider.intValue === 45

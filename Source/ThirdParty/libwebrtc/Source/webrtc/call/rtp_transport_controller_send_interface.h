@@ -93,7 +93,6 @@ struct RtpSenderFrameEncryptionConfig {
 class RtpTransportControllerSendInterface {
  public:
   virtual ~RtpTransportControllerSendInterface() {}
-  virtual rtc::TaskQueue* GetWorkerQueue() = 0;
   virtual PacketRouter* packet_router() = 0;
 
   virtual RtpVideoSenderInterface* CreateRtpVideoSender(

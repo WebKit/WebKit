@@ -47,7 +47,7 @@ public:
     bool isNull() const { return m_handle.isNull(); }
     unsigned size() const { return m_size; }
 
-    void encode(IPC::Encoder&) const;
+    void encode(IPC::Encoder&) &&;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, ShareableResourceHandle&);
 
     RefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() &&;

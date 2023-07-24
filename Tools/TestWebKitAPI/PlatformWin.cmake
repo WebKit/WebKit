@@ -1,7 +1,5 @@
 set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
-set(wrapper_DEFINITIONS USE_CONSOLE_ENTRY_POINT)
-
 set(test_main_SOURCES
     win/main.cpp
 )
@@ -10,12 +8,6 @@ set(test_main_SOURCES
 list(APPEND TestWTF_SOURCES
     ${test_main_SOURCES}
 )
-
-WEBKIT_WRAP_EXECUTABLE(TestWTF
-    SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
-    LIBRARIES shlwapi
-)
-target_compile_definitions(TestWTF PRIVATE ${wrapper_DEFINITIONS})
 
 # TestWebCore
 list(APPEND TestWebCore_SOURCES
@@ -46,10 +38,6 @@ list(APPEND TestWebCore_LIBRARIES
     dxguid
 )
 
-WEBKIT_WRAP_EXECUTABLE(TestWebCore
-    SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
-    LIBRARIES shlwapi
-)
 target_compile_definitions(TestWebCore PRIVATE ${wrapper_DEFINITIONS})
 
 # TestWebKitLegacy
@@ -70,12 +58,6 @@ if (ENABLE_WEBKIT_LEGACY)
     list(APPEND TestWebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
         ${TESTWEBKITAPI_DIR}/win
     )
-
-    WEBKIT_WRAP_EXECUTABLE(TestWebKitLegacy
-        SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
-        LIBRARIES shlwapi
-    )
-    target_compile_definitions(TestWebKitLegacy PRIVATE ${wrapper_DEFINITIONS})
 endif ()
 
 # TestWebKit
@@ -89,15 +71,7 @@ if (ENABLE_WEBKIT)
 
         Tests/WebKit/CookieStorageFile.cpp
 
-        Tests/WebKit/curl/Certificates.cpp
-
         win/PlatformUtilitiesWin.cpp
         win/PlatformWebViewWin.cpp
     )
-
-    WEBKIT_WRAP_EXECUTABLE(TestWebKit
-        SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
-        LIBRARIES shlwapi
-    )
-    target_compile_definitions(TestWebKit PRIVATE ${wrapper_DEFINITIONS})
 endif ()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,9 @@
 using JSC::DataView;
 
 namespace WebCore {
+
+ISOOriginalFormatBox::ISOOriginalFormatBox() = default;
+ISOOriginalFormatBox::~ISOOriginalFormatBox() = default;
 
 bool ISOOriginalFormatBox::parse(DataView& view, unsigned& offset)
 {

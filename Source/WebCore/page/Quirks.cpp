@@ -700,7 +700,7 @@ bool Quirks::needsFullscreenDisplayNoneQuirk() const
 // FIXME: weChat <rdar://problem/74377902>
 bool Quirks::needsWeChatScrollingQuirk() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoWeChatScrollingQuirk) && IOSApplication::isWechat();
 #else
     return false;
@@ -718,9 +718,29 @@ bool Quirks::shouldOmitHTMLDocumentSupportedPropertyNames()
 #endif
 }
 
+// rdar://110097836
+bool Quirks::shouldSilenceResizeObservers() const
+{
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    if (!needsQuirks())
+        return false;
+
+    // ResizeObservers are silenced on YouTube during the 'homing out' snapshout sequence to
+    // resolve rdar://109837319. This is due to a bug on the site that is causing unexpected
+    // content layout and can be removed when it is addressed.
+    auto* page = m_document->page();
+    if (!page || !page->isTakingSnapshotsForApplicationSuspension())
+        return false;
+
+    return RegistrableDomain(m_document->topDocument().url()) == "youtube.com"_s;
+#else
+    return false;
+#endif
+}
+
 bool Quirks::shouldSilenceWindowResizeEvents() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if (!needsQuirks())
         return false;
 
@@ -733,7 +753,8 @@ bool Quirks::shouldSilenceWindowResizeEvents() const
 
     auto host = m_document->topDocument().url().host();
     return equalLettersIgnoringASCIICase(host, "nytimes.com"_s) || host.endsWithIgnoringASCIICase(".nytimes.com"_s)
-        || equalLettersIgnoringASCIICase(host, "twitter.com"_s) || host.endsWithIgnoringASCIICase(".twitter.com"_s);
+        || equalLettersIgnoringASCIICase(host, "twitter.com"_s) || host.endsWithIgnoringASCIICase(".twitter.com"_s)
+        || equalLettersIgnoringASCIICase(host, "zillow.com"_s) || host.endsWithIgnoringASCIICase(".zillow.com"_s);
 #else
     return false;
 #endif
@@ -741,7 +762,7 @@ bool Quirks::shouldSilenceWindowResizeEvents() const
 
 bool Quirks::shouldSilenceMediaQueryListChangeEvents() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if (!needsQuirks())
         return false;
 
@@ -786,6 +807,24 @@ bool Quirks::shouldIgnoreAriaForFastPathContentObservationCheck() const
 
     auto host = m_document->url().host();
     return equalLettersIgnoringASCIICase(host, "www.ralphlauren.com"_s);
+#endif
+    return false;
+}
+
+static bool isWikipediaDomain(const URL& url)
+{
+    static NeverDestroyed wikipediaDomain = RegistrableDomain { URL { "https://wikipedia.org"_s } };
+    return wikipediaDomain->matches(url);
+}
+
+// wikipedia.org https://webkit.org/b/247636
+bool Quirks::shouldIgnoreViewportArgumentsToAvoidExcessiveZoom() const
+{
+    if (!needsQuirks())
+        return false;
+
+#if ENABLE(META_VIEWPORT)
+    return isWikipediaDomain(m_document->url());
 #endif
     return false;
 }
@@ -999,7 +1038,7 @@ bool Quirks::shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() co
 
     // FIXME: We should consider replacing this with a heuristic to determine whether
     // or not the edges of the page mostly lack content after shrinking to fit.
-    return m_document->url().host().endsWithIgnoringASCIICase(".wikipedia.org"_s);
+    return isWikipediaDomain(m_document->url());
 }
 
 // shutterstock.com rdar://58843932
@@ -1404,6 +1443,25 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
 #endif
 }
 
+bool Quirks::shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk() const
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    // This quirk delay the "webkitstartfullscreen" and "fullscreenchange" event when a video exits picture-in-picture
+    // to fullscreen.
+    if (!needsQuirks())
+        return false;
+
+    if (!m_shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk) {
+        auto domain = RegistrableDomain(m_document->topDocument().url());
+        m_shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk = domain == "bbc.com"_s;
+    }
+
+    return *m_shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk;
+#else
+    return false;
+#endif
+}
+
 // teams.live.com rdar://88678598
 // teams.microsoft.com rdar://90434296
 bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin)
@@ -1411,7 +1469,7 @@ bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView 
     return protocol == "msteams"_s && (requesterOrigin.host() == "teams.live.com"_s || requesterOrigin.host() == "teams.microsoft.com"_s);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 bool Quirks::allowLayeredFullscreenVideos() const
 {
     if (!needsQuirks())
@@ -1533,6 +1591,19 @@ bool Quirks::shouldDisableFetchMetadata() const
     return equalLettersIgnoringASCIICase(host, "victoriassecret.com"_s) || host.endsWithIgnoringASCIICase(".victoriassecret.com"_s);
 }
 
+// Push state file path restrictions break Mimeo Photo Plugin (rdar://112445672).
+bool Quirks::shouldDisablePushStateFilePathRestrictions() const
+{
+    if (!needsQuirks())
+        return false;
+
+#if PLATFORM(MAC)
+    return MacApplication::isMimeoPhotoProject();
+#else
+    return false;
+#endif
+}
+
 #if PLATFORM(COCOA)
 bool Quirks::shouldAdvertiseSupportForHLSSubtitleTypes() const
 {
@@ -1556,6 +1627,12 @@ bool Quirks::shouldDisablePopoverAttributeQuirk() const
 
     auto host = m_document->topDocument().url().host();
     return equalLettersIgnoringASCIICase(host, "apple-console.lrn.com"_s);
+}
+
+// ungap/@custom-elements polyfill (rdar://problem/111008826).
+bool Quirks::needsConfigurableIndexedPropertiesQuirk() const
+{
+    return needsQuirks() && m_needsConfigurableIndexedPropertiesQuirk;
 }
 
 }

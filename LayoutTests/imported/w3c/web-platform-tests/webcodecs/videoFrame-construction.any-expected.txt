@@ -1,15 +1,13 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Test we can construct a VideoFrame.
-FAIL Test closed VideoFrame. assert_equals: timestamp expected 10 but got 0
+PASS Test closed VideoFrame.
 PASS Test we can construct a VideoFrame with a negative timestamp.
 PASS Test that timestamp is required when constructing VideoFrame from ImageBitmap
 PASS Test that timestamp is required when constructing VideoFrame from OffscreenCanvas
 PASS Test that timestamp is NOT required when constructing VideoFrame from another VideoFrame
 PASS Test we can construct an odd-sized VideoFrame.
 PASS Test constructing w/ unusable image argument throws: HAVE_NOTHING <video>.
-TIMEOUT Test we can construct a VideoFrame from a <video>. Test timed out
+PASS Test we can construct a VideoFrame from a <video>.
 PASS Test constructing w/ unusable image argument throws: emtpy Canvas.
 PASS Test constructing w/ unusable image argument throws: closed ImageBitmap.
 PASS Test constructing w/ unusable image argument throws: closed VideoFrame.
@@ -23,14 +21,14 @@ PASS Test invalid buffer constructed VideoFrames
 PASS Test Uint8Array(ArrayBuffer) constructed I420 VideoFrame
 PASS Test ArrayBuffer constructed I420 VideoFrame
 PASS Test planar constructed I420 VideoFrame with colorSpace
-FAIL Test planar constructed I420 VideoFrame with null colorSpace values Type error
-FAIL Test buffer constructed I420+Alpha VideoFrame VideoPixelFormat is not supported
+PASS Test planar can construct I420 VideoFrame with null colorSpace values
+PASS Test buffer constructed I420+Alpha VideoFrame
 PASS Test buffer constructed NV12 VideoFrame
 PASS Test buffer constructed RGB VideoFrames
 PASS Test VideoFrame constructed VideoFrame
 PASS Test we can construct a VideoFrame from an offscreen canvas.
 PASS Test I420 VideoFrame with odd visible size
-FAIL Test I420A VideoFrame and alpha={keep,discard} VideoPixelFormat is not supported
+PASS Test I420A VideoFrame and alpha={keep,discard}
 PASS Test RGBA, BGRA VideoFrames with alpha={keep,discard}
 PASS Test a VideoFrame constructed from canvas can drop the alpha channel.
 

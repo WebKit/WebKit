@@ -12,6 +12,7 @@
 #define P2P_BASE_TRANSPORT_DESCRIPTION_FACTORY_H_
 
 #include <memory>
+#include <utility>
 
 #include "api/field_trials_view.h"
 #include "p2p/base/ice_credentials_iterator.h"
@@ -51,9 +52,8 @@ class TransportDescriptionFactory {
   // Specifies the transport security policy to use.
   void set_secure(SecurePolicy s) { secure_ = s; }
   // Specifies the certificate to use (only used when secure != SEC_DISABLED).
-  void set_certificate(
-      const rtc::scoped_refptr<rtc::RTCCertificate>& certificate) {
-    certificate_ = certificate;
+  void set_certificate(rtc::scoped_refptr<rtc::RTCCertificate> certificate) {
+    certificate_ = std::move(certificate);
   }
 
   // Creates a transport description suitable for use in an offer.

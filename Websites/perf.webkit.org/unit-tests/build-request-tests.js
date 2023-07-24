@@ -33,6 +33,7 @@ function sampleBuildRequestData()
             "revisionItems": [{"commit": "87832"}, {"commit": "96336"}],
             "customRoots": [],
         }],
+        'testParameterSets': [],
         "commits": [{
             "id": "87832",
             "repository": "9",
@@ -138,6 +139,7 @@ function oneTestGroup()
             "revisionItems": [{"commit": "87832"}, {"commit": "96336"}],
             "customRoots": [],
         }],
+        'testParameterSets': [],
         "commits": [{
             "id": "87832",
             "repository": "9",
@@ -378,6 +380,7 @@ function threeTestGroups(secondTestGroupOverrides, thirdTestGroupOverrides)
             "revisionItems": [{"commit": "87832"}, {"commit": "96336"}],
             "customRoots": [],
         }],
+        'testParameterSets': [],
         "commits": [{
             "id": "87832",
             "repository": "9",

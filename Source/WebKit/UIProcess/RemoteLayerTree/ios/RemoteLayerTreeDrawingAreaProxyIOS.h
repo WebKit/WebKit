@@ -35,7 +35,7 @@ namespace WebKit {
 
 class RemoteLayerTreeDrawingAreaProxyIOS final : public RemoteLayerTreeDrawingAreaProxy {
 public:
-    RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy&, WebProcessProxy&);
+    RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy&);
     virtual ~RemoteLayerTreeDrawingAreaProxyIOS();
 
 private:
@@ -46,6 +46,8 @@ private:
     void setPreferredFramesPerSecond(WebCore::FramesPerSecond) override;
     void scheduleDisplayRefreshCallbacks() override;
     void pauseDisplayRefreshCallbacks() override;
+
+    std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() override;
 
     WKDisplayLinkHandler *displayLinkHandler();
 

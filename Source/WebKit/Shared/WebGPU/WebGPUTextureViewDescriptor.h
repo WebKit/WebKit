@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,22 +28,22 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUTextureAspect.h>
+#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUTextureViewDimension.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUTextureAspect.h>
-#include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
-#include <pal/graphics/WebGPU/WebGPUTextureViewDimension.h>
 
 namespace WebKit::WebGPU {
 
 struct TextureViewDescriptor : public ObjectDescriptorBase {
-    std::optional<PAL::WebGPU::TextureFormat> format;
-    std::optional<PAL::WebGPU::TextureViewDimension> dimension;
-    PAL::WebGPU::TextureAspect aspect { PAL::WebGPU::TextureAspect::All };
-    PAL::WebGPU::IntegerCoordinate baseMipLevel { 0 };
-    std::optional<PAL::WebGPU::IntegerCoordinate> mipLevelCount;
-    PAL::WebGPU::IntegerCoordinate baseArrayLayer { 0 };
-    std::optional<PAL::WebGPU::IntegerCoordinate> arrayLayerCount;
+    std::optional<WebCore::WebGPU::TextureFormat> format;
+    std::optional<WebCore::WebGPU::TextureViewDimension> dimension;
+    WebCore::WebGPU::TextureAspect aspect { WebCore::WebGPU::TextureAspect::All };
+    WebCore::WebGPU::IntegerCoordinate baseMipLevel { 0 };
+    std::optional<WebCore::WebGPU::IntegerCoordinate> mipLevelCount;
+    WebCore::WebGPU::IntegerCoordinate baseArrayLayer { 0 };
+    std::optional<WebCore::WebGPU::IntegerCoordinate> arrayLayerCount;
 };
 
 } // namespace WebKit::WebGPU

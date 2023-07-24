@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,13 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUImageCopyBuffer.h>
+#include <WebCore/WebGPUImageCopyBuffer.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ImageCopyBuffer> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ImageCopyBuffer& imageCopyBuffer)
+std::optional<ImageCopyBuffer> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ImageCopyBuffer& imageCopyBuffer)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ImageDataLayout&>(imageCopyBuffer));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ImageDataLayout&>(imageCopyBuffer));
     if (!base)
         return std::nullopt;
 
@@ -47,7 +47,7 @@ std::optional<ImageCopyBuffer> ConvertToBackingContext::convertToBacking(const P
     return { { WTFMove(*base), buffer } };
 }
 
-std::optional<PAL::WebGPU::ImageCopyBuffer> ConvertFromBackingContext::convertFromBacking(const ImageCopyBuffer& imageCopyBuffer)
+std::optional<WebCore::WebGPU::ImageCopyBuffer> ConvertFromBackingContext::convertFromBacking(const ImageCopyBuffer& imageCopyBuffer)
 {
     auto base = convertFromBacking(static_cast<const ImageDataLayout&>(imageCopyBuffer));
     if (!base)

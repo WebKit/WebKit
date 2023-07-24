@@ -332,8 +332,13 @@ def _skipped_or_glmark2(test, test_status):
 
 
 def _run_tests(tests, args, extra_flags, env):
-    result_suffix = '_shard%d' % (args.shard_index if args.shard_index != None else None)
-    results = Results(result_suffix)
+    if args.split_shard_samples and args.shard_index is not None:
+        test_suffix = Results('_shard%d' % args.shard_index)
+    else:
+        test_suffix = ''
+
+    results = Results(test_suffix)
+
     histograms = histogram_set.HistogramSet()
     metrics = []
     total_errors = 0

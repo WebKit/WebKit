@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class BindGroupLayout;
 }
 
@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemoteBindGroupLayout final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteBindGroupLayout> create(PAL::WebGPU::BindGroupLayout& bindGroupLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteBindGroupLayout> create(WebCore::WebGPU::BindGroupLayout& bindGroupLayout, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteBindGroupLayout(bindGroupLayout, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -61,21 +61,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteBindGroupLayout(PAL::WebGPU::BindGroupLayout&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteBindGroupLayout(WebCore::WebGPU::BindGroupLayout&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteBindGroupLayout(const RemoteBindGroupLayout&) = delete;
     RemoteBindGroupLayout(RemoteBindGroupLayout&&) = delete;
     RemoteBindGroupLayout& operator=(const RemoteBindGroupLayout&) = delete;
     RemoteBindGroupLayout& operator=(RemoteBindGroupLayout&&) = delete;
 
-    PAL::WebGPU::BindGroupLayout& backing() { return m_backing; }
+    WebCore::WebGPU::BindGroupLayout& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    Ref<PAL::WebGPU::BindGroupLayout> m_backing;
+    Ref<WebCore::WebGPU::BindGroupLayout> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

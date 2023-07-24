@@ -27,6 +27,157 @@
 #include "av1/encoder/rdopt.h"
 #include "av1/encoder/tokenize.h"
 
+static AOM_INLINE int av1_fast_palette_color_index_context_on_edge(
+    const uint8_t *color_map, int stride, int r, int c, int *color_idx) {
+  const bool has_left = (c - 1 >= 0);
+  const bool has_above = (r - 1 >= 0);
+  assert(r > 0 || c > 0);
+  assert(has_above ^ has_left);
+  assert(color_idx);
+  (void)has_left;
+
+  const uint8_t color_neighbor = has_above
+                                     ? color_map[(r - 1) * stride + (c - 0)]
+                                     : color_map[(r - 0) * stride + (c - 1)];
+  // If the neighbor color has higher index than current color index, then we
+  // move up by 1.
+  const uint8_t current_color = *color_idx = color_map[r * stride + c];
+  if (color_neighbor > current_color) {
+    (*color_idx)++;
+  } else if (color_neighbor == current_color) {
+    *color_idx = 0;
+  }
+
+  // Get hash value of context.
+  // The non-diagonal neighbors get a weight of 2.
+  const uint8_t color_score = 2;
+  const uint8_t hash_multiplier = 1;
+  const uint8_t color_index_ctx_hash = color_score * hash_multiplier;
+
+  // Lookup context from hash.
+  const int color_index_ctx =
+      av1_palette_color_index_context_lookup[color_index_ctx_hash];
+  assert(color_index_ctx == 0);
+  (void)color_index_ctx;
+  return 0;
+}
+
+#define SWAP(i, j)                           \
+  do {                                       \
+    const uint8_t tmp_score = score_rank[i]; \
+    const uint8_t tmp_color = color_rank[i]; \
+    score_rank[i] = score_rank[j];           \
+    color_rank[i] = color_rank[j];           \
+    score_rank[j] = tmp_score;               \
+    color_rank[j] = tmp_color;               \
+  } while (0)
+#define INVALID_COLOR_IDX (UINT8_MAX)
+
+// A faster version of av1_get_palette_color_index_context used by the encoder
+// exploiting the fact that the encoder does not need to maintain a color order.
+static AOM_INLINE int av1_fast_palette_color_index_context(
+    const uint8_t *color_map, int stride, int r, int c, int *color_idx) {
+  assert(r > 0 || c > 0);
+
+  const bool has_above = (r - 1 >= 0);
+  const bool has_left = (c - 1 >= 0);
+  assert(has_above || has_left);
+  if (has_above ^ has_left) {
+    return av1_fast_palette_color_index_context_on_edge(color_map, stride, r, c,
+                                                        color_idx);
+  }
+
+  // This goes in the order of left, top, and top-left. This has the advantage
+  // that unless anything here are not distinct or invalid, this will already
+  // be in sorted order. Furthermore, if either of the first two is
+  // invalid, we know the last one is also invalid.
+  uint8_t color_neighbors[NUM_PALETTE_NEIGHBORS];
+  color_neighbors[0] = color_map[(r - 0) * stride + (c - 1)];
+  color_neighbors[1] = color_map[(r - 1) * stride + (c - 0)];
+  color_neighbors[2] = color_map[(r - 1) * stride + (c - 1)];
+
+  // Aggregate duplicated values.
+  // Since our array is so small, using a couple if statements is faster
+  uint8_t scores[NUM_PALETTE_NEIGHBORS] = { 2, 2, 1 };
+  uint8_t num_invalid_colors = 0;
+  if (color_neighbors[0] == color_neighbors[1]) {
+    scores[0] += scores[1];
+    color_neighbors[1] = INVALID_COLOR_IDX;
+    num_invalid_colors += 1;
+
+    if (color_neighbors[0] == color_neighbors[2]) {
+      scores[0] += scores[2];
+      num_invalid_colors += 1;
+    }
+  } else if (color_neighbors[0] == color_neighbors[2]) {
+    scores[0] += scores[2];
+    num_invalid_colors += 1;
+  } else if (color_neighbors[1] == color_neighbors[2]) {
+    scores[1] += scores[2];
+    num_invalid_colors += 1;
+  }
+
+  const uint8_t num_valid_colors = NUM_PALETTE_NEIGHBORS - num_invalid_colors;
+
+  uint8_t *color_rank = color_neighbors;
+  uint8_t *score_rank = scores;
+
+  // Sort everything
+  if (num_valid_colors > 1) {
+    if (color_neighbors[1] == INVALID_COLOR_IDX) {
+      scores[1] = scores[2];
+      color_neighbors[1] = color_neighbors[2];
+    }
+
+    // We need to swap the first two elements if they have the same score but
+    // the color indices are not in the right order
+    if (score_rank[0] < score_rank[1] ||
+        (score_rank[0] == score_rank[1] && color_rank[0] > color_rank[1])) {
+      SWAP(0, 1);
+    }
+    if (num_valid_colors > 2) {
+      if (score_rank[0] < score_rank[2]) {
+        SWAP(0, 2);
+      }
+      if (score_rank[1] < score_rank[2]) {
+        SWAP(1, 2);
+      }
+    }
+  }
+
+  // If any of the neighbor colors has higher index than current color index,
+  // then we move up by 1 unless the current color is the same as one of the
+  // neighbors.
+  const uint8_t current_color = *color_idx = color_map[r * stride + c];
+  for (int idx = 0; idx < num_valid_colors; idx++) {
+    if (color_rank[idx] > current_color) {
+      (*color_idx)++;
+    } else if (color_rank[idx] == current_color) {
+      *color_idx = idx;
+      break;
+    }
+  }
+
+  // Get hash value of context.
+  uint8_t color_index_ctx_hash = 0;
+  static const uint8_t hash_multipliers[NUM_PALETTE_NEIGHBORS] = { 1, 2, 2 };
+  for (int idx = 0; idx < num_valid_colors; ++idx) {
+    color_index_ctx_hash += score_rank[idx] * hash_multipliers[idx];
+  }
+  assert(color_index_ctx_hash > 0);
+  assert(color_index_ctx_hash <= MAX_COLOR_CONTEXT_HASH);
+
+  // Lookup context from hash.
+  const int color_index_ctx = 9 - color_index_ctx_hash;
+  assert(color_index_ctx ==
+         av1_palette_color_index_context_lookup[color_index_ctx_hash]);
+  assert(color_index_ctx >= 0);
+  assert(color_index_ctx < PALETTE_COLOR_INDEX_CONTEXTS);
+  return color_index_ctx;
+}
+#undef INVALID_COLOR_IDX
+#undef SWAP
+
 static int cost_and_tokenize_map(Av1ColorMapParam *param, TokenExtra **t,
                                  int plane, int calc_rate, int allow_update_cdf,
                                  FRAME_COUNTS *counts) {

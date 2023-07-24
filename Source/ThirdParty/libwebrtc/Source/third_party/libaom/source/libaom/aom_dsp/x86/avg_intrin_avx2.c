@@ -505,50 +505,356 @@ int aom_satd_lp_avx2(const int16_t *coeff, int length) {
   }
 }
 
-static INLINE __m256i calc_avg_8x8_dual_avx2(const uint8_t *s, int p) {
-  const __m256i s0 =
-      _mm256_cvtepu8_epi16(_mm_loadu_si128((const __m128i *)(s)));
-  const __m256i s1 =
-      _mm256_cvtepu8_epi16(_mm_loadu_si128((const __m128i *)(s + p)));
-  const __m256i s2 =
-      _mm256_cvtepu8_epi16(_mm_loadu_si128((const __m128i *)(s + 2 * p)));
-  const __m256i s3 =
-      _mm256_cvtepu8_epi16(_mm_loadu_si128((const __m128i *)(s + 3 * p)));
-  const __m256i sum0 =
-      _mm256_add_epi16(_mm256_add_epi16(s0, s1), _mm256_add_epi16(s2, s3));
-  const __m256i s4 =
-      _mm256_cvtepu8_epi16(_mm_loadu_si128((const __m128i *)(s + 4 * p)));
-  const __m256i s5 =
-      _mm256_cvtepu8_epi16(_mm_loadu_si128((const __m128i *)(s + 5 * p)));
-  const __m256i s6 =
-      _mm256_cvtepu8_epi16(_mm_loadu_si128((const __m128i *)(s + 6 * p)));
-  const __m256i s7 =
-      _mm256_cvtepu8_epi16(_mm_loadu_si128((const __m128i *)(s + 7 * p)));
-  const __m256i sum1 =
-      _mm256_add_epi16(_mm256_add_epi16(s4, s5), _mm256_add_epi16(s6, s7));
-
-  // The result of two 8x8 sub-blocks in 16x16 block.
-  return _mm256_add_epi16(sum0, sum1);
+static INLINE __m256i xx_loadu2_mi128(const void *hi, const void *lo) {
+  __m256i a = _mm256_castsi128_si256(_mm_loadu_si128((const __m128i *)(lo)));
+  a = _mm256_inserti128_si256(a, _mm_loadu_si128((const __m128i *)(hi)), 1);
+  return a;
 }
 
 void aom_avg_8x8_quad_avx2(const uint8_t *s, int p, int x16_idx, int y16_idx,
                            int *avg) {
-  // Process 1st and 2nd 8x8 sub-blocks in a 16x16 block.
-  const uint8_t *s_tmp = s + y16_idx * p + x16_idx;
-  __m256i result_0 = calc_avg_8x8_dual_avx2(s_tmp, p);
+  const uint8_t *s_y0 = s + y16_idx * p + x16_idx;
+  const uint8_t *s_y1 = s_y0 + 8 * p;
+  __m256i sum0, sum1, s0, s1, s2, s3, u0;
+  u0 = _mm256_setzero_si256();
+  s0 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1, s_y0), u0);
+  s1 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + p, s_y0 + p), u0);
+  s2 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 2 * p, s_y0 + 2 * p), u0);
+  s3 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 3 * p, s_y0 + 3 * p), u0);
+  sum0 = _mm256_add_epi16(s0, s1);
+  sum1 = _mm256_add_epi16(s2, s3);
+  s0 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 4 * p, s_y0 + 4 * p), u0);
+  s1 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 5 * p, s_y0 + 5 * p), u0);
+  s2 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 6 * p, s_y0 + 6 * p), u0);
+  s3 = _mm256_sad_epu8(xx_loadu2_mi128(s_y1 + 7 * p, s_y0 + 7 * p), u0);
+  sum0 = _mm256_add_epi16(sum0, _mm256_add_epi16(s0, s1));
+  sum1 = _mm256_add_epi16(sum1, _mm256_add_epi16(s2, s3));
+  sum0 = _mm256_add_epi16(sum0, sum1);
 
-  // Process 3rd and 4th 8x8 sub-blocks in a 16x16 block.
-  s_tmp = s + ((y16_idx + 8) * p) + x16_idx;
-  __m256i result_1 = calc_avg_8x8_dual_avx2(s_tmp, p);
+  // (avg + 32) >> 6
+  __m256i rounding = _mm256_set1_epi32(32);
+  sum0 = _mm256_add_epi32(sum0, rounding);
+  sum0 = _mm256_srli_epi32(sum0, 6);
+  __m128i lo = _mm256_castsi256_si128(sum0);
+  __m128i hi = _mm256_extracti128_si256(sum0, 1);
+  avg[0] = _mm_cvtsi128_si32(lo);
+  avg[1] = _mm_extract_epi32(lo, 2);
+  avg[2] = _mm_cvtsi128_si32(hi);
+  avg[3] = _mm_extract_epi32(hi, 2);
+}
 
-  const __m256i constant_32 = _mm256_set1_epi16(32);
-  result_0 = _mm256_hadd_epi16(result_0, result_1);
-  result_1 = _mm256_adds_epu16(result_0, _mm256_srli_si256(result_0, 4));
-  result_0 = _mm256_adds_epu16(result_1, _mm256_srli_si256(result_1, 2));
-  result_0 = _mm256_adds_epu16(result_0, constant_32);
-  result_0 = _mm256_srli_epi16(result_0, 6);
-  avg[0] = _mm_extract_epi16(_mm256_castsi256_si128(result_0), 0);
-  avg[1] = _mm_extract_epi16(_mm256_extracti128_si256(result_0, 1), 0);
-  avg[2] = _mm_extract_epi16(_mm256_castsi256_si128(result_0), 4);
-  avg[3] = _mm_extract_epi16(_mm256_extracti128_si256(result_0, 1), 4);
+void aom_int_pro_row_avx2(int16_t *hbuf, const uint8_t *ref,
+                          const int ref_stride, const int width,
+                          const int height, int norm_factor) {
+  // SIMD implementation assumes width and height to be multiple of 16 and 2
+  // respectively. For any odd width or height, SIMD support needs to be added.
+  assert(width % 16 == 0 && height % 2 == 0);
+
+  if (width % 32 == 0) {
+    const __m256i zero = _mm256_setzero_si256();
+    for (int wd = 0; wd < width; wd += 32) {
+      const uint8_t *ref_tmp = ref + wd;
+      int16_t *hbuf_tmp = hbuf + wd;
+      __m256i s0 = zero;
+      __m256i s1 = zero;
+      int idx = 0;
+      do {
+        __m256i src_line = _mm256_loadu_si256((const __m256i *)ref_tmp);
+        __m256i t0 = _mm256_unpacklo_epi8(src_line, zero);
+        __m256i t1 = _mm256_unpackhi_epi8(src_line, zero);
+        s0 = _mm256_add_epi16(s0, t0);
+        s1 = _mm256_add_epi16(s1, t1);
+        ref_tmp += ref_stride;
+
+        src_line = _mm256_loadu_si256((const __m256i *)ref_tmp);
+        t0 = _mm256_unpacklo_epi8(src_line, zero);
+        t1 = _mm256_unpackhi_epi8(src_line, zero);
+        s0 = _mm256_add_epi16(s0, t0);
+        s1 = _mm256_add_epi16(s1, t1);
+        ref_tmp += ref_stride;
+        idx += 2;
+      } while (idx < height);
+      s0 = _mm256_srai_epi16(s0, norm_factor);
+      s1 = _mm256_srai_epi16(s1, norm_factor);
+      _mm_storeu_si128((__m128i *)(hbuf_tmp), _mm256_castsi256_si128(s0));
+      _mm_storeu_si128((__m128i *)(hbuf_tmp + 8), _mm256_castsi256_si128(s1));
+      _mm_storeu_si128((__m128i *)(hbuf_tmp + 16),
+                       _mm256_extractf128_si256(s0, 1));
+      _mm_storeu_si128((__m128i *)(hbuf_tmp + 24),
+                       _mm256_extractf128_si256(s1, 1));
+    }
+  } else if (width % 16 == 0) {
+    aom_int_pro_row_sse2(hbuf, ref, ref_stride, width, height, norm_factor);
+  }
+}
+
+static INLINE void load_from_src_buf(const uint8_t *ref1, __m256i *src,
+                                     const int stride) {
+  src[0] = _mm256_loadu_si256((const __m256i *)ref1);
+  src[1] = _mm256_loadu_si256((const __m256i *)(ref1 + stride));
+  src[2] = _mm256_loadu_si256((const __m256i *)(ref1 + (2 * stride)));
+  src[3] = _mm256_loadu_si256((const __m256i *)(ref1 + (3 * stride)));
+}
+
+#define CALC_TOT_SAD_AND_STORE                                                \
+  /* r00 r10 x x r01 r11 x x | r02 r12 x x r03 r13 x x */                     \
+  const __m256i r01 = _mm256_add_epi16(_mm256_slli_si256(r1, 2), r0);         \
+  /* r00 r10 r20 x r01 r11 r21 x | r02 r12 r22 x r03 r13 r23 x */             \
+  const __m256i r012 = _mm256_add_epi16(_mm256_slli_si256(r2, 4), r01);       \
+  /* r00 r10 r20 r30 r01 r11 r21 r31 | r02 r12 r22 r32 r03 r13 r23 r33 */     \
+  const __m256i result0 = _mm256_add_epi16(_mm256_slli_si256(r3, 6), r012);   \
+                                                                              \
+  const __m128i results0 = _mm_add_epi16(                                     \
+      _mm256_castsi256_si128(result0), _mm256_extractf128_si256(result0, 1)); \
+  const __m128i results1 =                                                    \
+      _mm_add_epi16(results0, _mm_srli_si128(results0, 8));                   \
+  _mm_storel_epi64((__m128i *)vbuf, _mm_srli_epi16(results1, norm_factor));
+
+static INLINE void aom_int_pro_col_16wd_avx2(int16_t *vbuf, const uint8_t *ref,
+                                             const int ref_stride,
+                                             const int height,
+                                             int norm_factor) {
+  const __m256i zero = _mm256_setzero_si256();
+  int ht = 0;
+  // Post sad operation, the data is present in lower 16-bit of each 64-bit lane
+  // and higher 16-bits are Zero. Here, we are processing 8 rows at a time to
+  // utilize the higher 16-bits efficiently.
+  do {
+    __m256i src_00 =
+        _mm256_castsi128_si256(_mm_loadu_si128((const __m128i *)(ref)));
+    src_00 = _mm256_inserti128_si256(
+        src_00, _mm_loadu_si128((const __m128i *)(ref + ref_stride * 4)), 1);
+    __m256i src_01 = _mm256_castsi128_si256(
+        _mm_loadu_si128((const __m128i *)(ref + ref_stride * 1)));
+    src_01 = _mm256_inserti128_si256(
+        src_01, _mm_loadu_si128((const __m128i *)(ref + ref_stride * 5)), 1);
+    __m256i src_10 = _mm256_castsi128_si256(
+        _mm_loadu_si128((const __m128i *)(ref + ref_stride * 2)));
+    src_10 = _mm256_inserti128_si256(
+        src_10, _mm_loadu_si128((const __m128i *)(ref + ref_stride * 6)), 1);
+    __m256i src_11 = _mm256_castsi128_si256(
+        _mm_loadu_si128((const __m128i *)(ref + ref_stride * 3)));
+    src_11 = _mm256_inserti128_si256(
+        src_11, _mm_loadu_si128((const __m128i *)(ref + ref_stride * 7)), 1);
+
+    // s00 x x x s01 x x x | s40 x x x s41 x x x
+    const __m256i s0 = _mm256_sad_epu8(src_00, zero);
+    // s10 x x x s11 x x x | s50 x x x s51 x x x
+    const __m256i s1 = _mm256_sad_epu8(src_01, zero);
+    // s20 x x x s21 x x x | s60 x x x s61 x x x
+    const __m256i s2 = _mm256_sad_epu8(src_10, zero);
+    // s30 x x x s31 x x x | s70 x x x s71 x x x
+    const __m256i s3 = _mm256_sad_epu8(src_11, zero);
+
+    // s00 s10 x x x x x x | s40 s50 x x x x x x
+    const __m256i s0_lo = _mm256_unpacklo_epi16(s0, s1);
+    // s01 s11 x x x x x x | s41 s51 x x x x x x
+    const __m256i s0_hi = _mm256_unpackhi_epi16(s0, s1);
+    // s20 s30 x x x x x x | s60 s70 x x x x x x
+    const __m256i s1_lo = _mm256_unpacklo_epi16(s2, s3);
+    // s21 s31 x x x x x x | s61 s71 x x x x x x
+    const __m256i s1_hi = _mm256_unpackhi_epi16(s2, s3);
+
+    // s0 s1 x x x x x x | s4 s5 x x x x x x
+    const __m256i s0_add = _mm256_add_epi16(s0_lo, s0_hi);
+    // s2 s3 x x x x x x | s6 s7 x x x x x x
+    const __m256i s1_add = _mm256_add_epi16(s1_lo, s1_hi);
+
+    // s1 s1 s2 s3 s4 s5 s6 s7
+    const __m128i results = _mm256_castsi256_si128(
+        _mm256_permute4x64_epi64(_mm256_unpacklo_epi32(s0_add, s1_add), 0x08));
+    _mm_storeu_si128((__m128i *)vbuf, _mm_srli_epi16(results, norm_factor));
+    vbuf += 8;
+    ref += (ref_stride << 3);
+    ht += 8;
+  } while (ht < height);
+}
+
+void aom_int_pro_col_avx2(int16_t *vbuf, const uint8_t *ref,
+                          const int ref_stride, const int width,
+                          const int height, int norm_factor) {
+  assert(width % 16 == 0);
+  if (width == 128) {
+    const __m256i zero = _mm256_setzero_si256();
+    for (int ht = 0; ht < height; ht += 4) {
+      __m256i src[16];
+      // Load source data.
+      load_from_src_buf(ref, &src[0], ref_stride);
+      load_from_src_buf(ref + 32, &src[4], ref_stride);
+      load_from_src_buf(ref + 64, &src[8], ref_stride);
+      load_from_src_buf(ref + 96, &src[12], ref_stride);
+
+      // Row0 output: r00 x x x r01 x x x | r02 x x x r03 x x x
+      const __m256i s0 = _mm256_add_epi16(_mm256_sad_epu8(src[0], zero),
+                                          _mm256_sad_epu8(src[4], zero));
+      const __m256i s1 = _mm256_add_epi16(_mm256_sad_epu8(src[8], zero),
+                                          _mm256_sad_epu8(src[12], zero));
+      const __m256i r0 = _mm256_add_epi16(s0, s1);
+      // Row1 output: r10 x x x r11 x x x | r12 x x x r13 x x x
+      const __m256i s2 = _mm256_add_epi16(_mm256_sad_epu8(src[1], zero),
+                                          _mm256_sad_epu8(src[5], zero));
+      const __m256i s3 = _mm256_add_epi16(_mm256_sad_epu8(src[9], zero),
+                                          _mm256_sad_epu8(src[13], zero));
+      const __m256i r1 = _mm256_add_epi16(s2, s3);
+      // Row2 output: r20 x x x r21 x x x | r22 x x x r23 x x x
+      const __m256i s4 = _mm256_add_epi16(_mm256_sad_epu8(src[2], zero),
+                                          _mm256_sad_epu8(src[6], zero));
+      const __m256i s5 = _mm256_add_epi16(_mm256_sad_epu8(src[10], zero),
+                                          _mm256_sad_epu8(src[14], zero));
+      const __m256i r2 = _mm256_add_epi16(s4, s5);
+      // Row3 output: r30 x x x r31 x x x | r32 x x x r33 x x x
+      const __m256i s6 = _mm256_add_epi16(_mm256_sad_epu8(src[3], zero),
+                                          _mm256_sad_epu8(src[7], zero));
+      const __m256i s7 = _mm256_add_epi16(_mm256_sad_epu8(src[11], zero),
+                                          _mm256_sad_epu8(src[15], zero));
+      const __m256i r3 = _mm256_add_epi16(s6, s7);
+
+      CALC_TOT_SAD_AND_STORE
+      vbuf += 4;
+      ref += ref_stride << 2;
+    }
+  } else if (width == 64) {
+    const __m256i zero = _mm256_setzero_si256();
+    for (int ht = 0; ht < height; ht += 4) {
+      __m256i src[8];
+      // Load source data.
+      load_from_src_buf(ref, &src[0], ref_stride);
+      load_from_src_buf(ref + 32, &src[4], ref_stride);
+
+      // Row0 output: r00 x x x r01 x x x | r02 x x x r03 x x x
+      const __m256i s0 = _mm256_sad_epu8(src[0], zero);
+      const __m256i s1 = _mm256_sad_epu8(src[4], zero);
+      const __m256i r0 = _mm256_add_epi16(s0, s1);
+      // Row1 output: r10 x x x r11 x x x | r12 x x x r13 x x x
+      const __m256i s2 = _mm256_sad_epu8(src[1], zero);
+      const __m256i s3 = _mm256_sad_epu8(src[5], zero);
+      const __m256i r1 = _mm256_add_epi16(s2, s3);
+      // Row2 output: r20 x x x r21 x x x | r22 x x x r23 x x x
+      const __m256i s4 = _mm256_sad_epu8(src[2], zero);
+      const __m256i s5 = _mm256_sad_epu8(src[6], zero);
+      const __m256i r2 = _mm256_add_epi16(s4, s5);
+      // Row3 output: r30 x x x r31 x x x | r32 x x x r33 x x x
+      const __m256i s6 = _mm256_sad_epu8(src[3], zero);
+      const __m256i s7 = _mm256_sad_epu8(src[7], zero);
+      const __m256i r3 = _mm256_add_epi16(s6, s7);
+
+      CALC_TOT_SAD_AND_STORE
+      vbuf += 4;
+      ref += ref_stride << 2;
+    }
+  } else if (width == 32) {
+    assert(height % 2 == 0);
+    const __m256i zero = _mm256_setzero_si256();
+    for (int ht = 0; ht < height; ht += 4) {
+      __m256i src[4];
+      // Load source data.
+      load_from_src_buf(ref, &src[0], ref_stride);
+
+      // s00 x x x s01 x x x s02 x x x s03 x x x
+      const __m256i r0 = _mm256_sad_epu8(src[0], zero);
+      // s10 x x x s11 x x x s12 x x x s13 x x x
+      const __m256i r1 = _mm256_sad_epu8(src[1], zero);
+      // s20 x x x s21 x x x s22 x x x s23 x x x
+      const __m256i r2 = _mm256_sad_epu8(src[2], zero);
+      // s30 x x x s31 x x x s32 x x x s33 x x x
+      const __m256i r3 = _mm256_sad_epu8(src[3], zero);
+
+      CALC_TOT_SAD_AND_STORE
+      vbuf += 4;
+      ref += ref_stride << 2;
+    }
+  } else if (width == 16) {
+    aom_int_pro_col_16wd_avx2(vbuf, ref, ref_stride, height, norm_factor);
+  }
+}
+
+static inline void calc_vector_mean_sse_64wd(const int16_t *ref,
+                                             const int16_t *src, __m256i *mean,
+                                             __m256i *sse) {
+  const __m256i src_line0 = _mm256_loadu_si256((const __m256i *)src);
+  const __m256i src_line1 = _mm256_loadu_si256((const __m256i *)(src + 16));
+  const __m256i src_line2 = _mm256_loadu_si256((const __m256i *)(src + 32));
+  const __m256i src_line3 = _mm256_loadu_si256((const __m256i *)(src + 48));
+  const __m256i ref_line0 = _mm256_loadu_si256((const __m256i *)ref);
+  const __m256i ref_line1 = _mm256_loadu_si256((const __m256i *)(ref + 16));
+  const __m256i ref_line2 = _mm256_loadu_si256((const __m256i *)(ref + 32));
+  const __m256i ref_line3 = _mm256_loadu_si256((const __m256i *)(ref + 48));
+
+  const __m256i diff0 = _mm256_sub_epi16(ref_line0, src_line0);
+  const __m256i diff1 = _mm256_sub_epi16(ref_line1, src_line1);
+  const __m256i diff2 = _mm256_sub_epi16(ref_line2, src_line2);
+  const __m256i diff3 = _mm256_sub_epi16(ref_line3, src_line3);
+  const __m256i diff_sqr0 = _mm256_madd_epi16(diff0, diff0);
+  const __m256i diff_sqr1 = _mm256_madd_epi16(diff1, diff1);
+  const __m256i diff_sqr2 = _mm256_madd_epi16(diff2, diff2);
+  const __m256i diff_sqr3 = _mm256_madd_epi16(diff3, diff3);
+
+  *mean = _mm256_add_epi16(*mean, _mm256_add_epi16(diff0, diff1));
+  *mean = _mm256_add_epi16(*mean, diff2);
+  *mean = _mm256_add_epi16(*mean, diff3);
+  *sse = _mm256_add_epi32(*sse, _mm256_add_epi32(diff_sqr0, diff_sqr1));
+  *sse = _mm256_add_epi32(*sse, diff_sqr2);
+  *sse = _mm256_add_epi32(*sse, diff_sqr3);
+}
+
+#define CALC_VAR_FROM_MEAN_SSE(mean, sse)                                    \
+  {                                                                          \
+    mean = _mm256_madd_epi16(mean, _mm256_set1_epi16(1));                    \
+    mean = _mm256_hadd_epi32(mean, sse);                                     \
+    mean = _mm256_add_epi32(mean, _mm256_bsrli_epi128(mean, 4));             \
+    const __m128i result = _mm_add_epi32(_mm256_castsi256_si128(mean),       \
+                                         _mm256_extractf128_si256(mean, 1)); \
+    /*(mean * mean): dynamic range 31 bits.*/                                \
+    const int mean_int = _mm_extract_epi32(result, 0);                       \
+    const int sse_int = _mm_extract_epi32(result, 2);                        \
+    const unsigned int mean_abs = abs(mean_int);                             \
+    var = sse_int - ((mean_abs * mean_abs) >> (bwl + 2));                    \
+  }
+
+// ref: [0 - 510]
+// src: [0 - 510]
+// bwl: {2, 3, 4, 5}
+int aom_vector_var_avx2(const int16_t *ref, const int16_t *src, int bwl) {
+  const int width = 4 << bwl;
+  assert(width % 16 == 0 && width <= 128);
+  int var = 0;
+
+  // Instead of having a loop over width 16, considered loop unrolling to avoid
+  // some addition operations.
+  if (width == 128) {
+    __m256i mean = _mm256_setzero_si256();
+    __m256i sse = _mm256_setzero_si256();
+
+    calc_vector_mean_sse_64wd(src, ref, &mean, &sse);
+    calc_vector_mean_sse_64wd(src + 64, ref + 64, &mean, &sse);
+    CALC_VAR_FROM_MEAN_SSE(mean, sse)
+  } else if (width == 64) {
+    __m256i mean = _mm256_setzero_si256();
+    __m256i sse = _mm256_setzero_si256();
+
+    calc_vector_mean_sse_64wd(src, ref, &mean, &sse);
+    CALC_VAR_FROM_MEAN_SSE(mean, sse)
+  } else if (width == 32) {
+    const __m256i src_line0 = _mm256_loadu_si256((const __m256i *)src);
+    const __m256i ref_line0 = _mm256_loadu_si256((const __m256i *)ref);
+    const __m256i src_line1 = _mm256_loadu_si256((const __m256i *)(src + 16));
+    const __m256i ref_line1 = _mm256_loadu_si256((const __m256i *)(ref + 16));
+
+    const __m256i diff0 = _mm256_sub_epi16(ref_line0, src_line0);
+    const __m256i diff1 = _mm256_sub_epi16(ref_line1, src_line1);
+    const __m256i diff_sqr0 = _mm256_madd_epi16(diff0, diff0);
+    const __m256i diff_sqr1 = _mm256_madd_epi16(diff1, diff1);
+    const __m256i sse = _mm256_add_epi32(diff_sqr0, diff_sqr1);
+    __m256i mean = _mm256_add_epi16(diff0, diff1);
+
+    CALC_VAR_FROM_MEAN_SSE(mean, sse)
+  } else if (width == 16) {
+    const __m256i src_line = _mm256_loadu_si256((const __m256i *)src);
+    const __m256i ref_line = _mm256_loadu_si256((const __m256i *)ref);
+    __m256i mean = _mm256_sub_epi16(ref_line, src_line);
+    const __m256i sse = _mm256_madd_epi16(mean, mean);
+
+    CALC_VAR_FROM_MEAN_SSE(mean, sse)
+  }
+  return var;
 }

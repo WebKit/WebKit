@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,12 @@
 #pragma once
 
 #include "GPUBlendComponent.h"
-#include <pal/graphics/WebGPU/WebGPUBlendState.h>
+#include "WebGPUBlendState.h"
 
 namespace WebCore {
 
 struct GPUBlendState {
-    PAL::WebGPU::BlendState convertToBacking() const
+    WebGPU::BlendState convertToBacking() const
     {
         return {
             color.convertToBacking(),

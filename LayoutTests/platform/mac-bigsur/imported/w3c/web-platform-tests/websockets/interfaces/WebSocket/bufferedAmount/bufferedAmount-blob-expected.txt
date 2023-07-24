@@ -1,3 +1,0 @@
-
-FAIL WebSockets: bufferedAmount for blob assert_equals: expected 10 but got 0
-

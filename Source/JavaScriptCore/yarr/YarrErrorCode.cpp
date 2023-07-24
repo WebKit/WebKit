@@ -51,7 +51,7 @@ ASCIILiteral errorMessage(ErrorCode error)
         REGEXP_ERROR_PREFIX "missing terminating ] for character class"_s,            // CharacterClassUnmatched
         REGEXP_ERROR_PREFIX "range out of order in character class"_s,                // CharacterClassRangeOutOfOrder
         REGEXP_ERROR_PREFIX "invalid range in character class for Unicode pattern"_s, // CharacterClassRangeInvalid
-        REGEXP_ERROR_PREFIX "missing terminating } for class string disjunction"_s,   // ClassStringDIsjunctionUnmatched
+        REGEXP_ERROR_PREFIX "missing terminating } for class string disjunction"_s,   // ClassStringDisjunctionUnmatched
         REGEXP_ERROR_PREFIX "\\ at end of pattern"_s,                                 // EscapeUnterminated
         REGEXP_ERROR_PREFIX "invalid Unicode \\u escape"_s,                           // InvalidUnicodeEscape
         REGEXP_ERROR_PREFIX "invalid Unicode code point \\u{} escape"_s,              // InvalidUnicodeCodePointEscape
@@ -93,7 +93,7 @@ JSObject* errorToThrow(JSGlobalObject* globalObject, ErrorCode error)
     case ErrorCode::CharacterClassUnmatched:
     case ErrorCode::CharacterClassRangeOutOfOrder:
     case ErrorCode::CharacterClassRangeInvalid:
-    case ErrorCode::ClassStringDIsjunctionUnmatched:
+    case ErrorCode::ClassStringDisjunctionUnmatched:
     case ErrorCode::EscapeUnterminated:
     case ErrorCode::InvalidUnicodeEscape:
     case ErrorCode::InvalidUnicodeCodePointEscape:

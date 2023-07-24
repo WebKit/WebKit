@@ -30,7 +30,7 @@
 
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebKit, AuthenticationServicesCore);
 
-SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCWebKitSPISupport);
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, AuthenticationServicesCore, ASCWebKitSPISupport);
 
 #if HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)
 

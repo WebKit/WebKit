@@ -162,6 +162,8 @@ PASS grid-template-columns
 PASS grid-template-rows
 PASS hanging-punctuation
 PASS height
+PASS hyphenate-character
+PASS hyphens
 PASS image-orientation
 PASS image-rendering
 PASS inline-size
@@ -280,6 +282,8 @@ PASS scroll-padding-top
 PASS scroll-snap-align
 PASS scroll-snap-stop
 PASS scroll-snap-type
+PASS scrollbar-color
+PASS scrollbar-gutter
 PASS scrollbar-width
 PASS shape-image-threshold
 PASS shape-margin
@@ -341,7 +345,7 @@ PASS unicode-bidi
 PASS vector-effect
 PASS vertical-align
 PASS visibility
-PASS white-space
+PASS white-space-collapse
 PASS widows
 PASS width
 PASS will-change
@@ -371,11 +375,9 @@ PASS -webkit-box-shadow
 PASS -webkit-column-axis
 PASS -webkit-column-progression
 PASS -webkit-font-smoothing
-PASS -webkit-hyphenate-character
 PASS -webkit-hyphenate-limit-after
 PASS -webkit-hyphenate-limit-before
 PASS -webkit-hyphenate-limit-lines
-PASS -webkit-hyphens
 PASS -webkit-initial-letter
 PASS -webkit-line-align
 PASS -webkit-line-box-contain

@@ -31,7 +31,7 @@
 #include "Path.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBox.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "SimpleRange.h"
 #include "WindRule.h"
 #include <wtf/text/TextStream.h>
@@ -121,10 +121,11 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
         
         if (m_interactionRects.contains(bounds))
             return;
-        m_interactionRects.add(bounds);
 
         if (shouldConsolidateInteractionRegion(bounds, renderer))
             return;
+
+        m_interactionRects.add(bounds);
 
         auto regionIterator = m_discoveredRegionsByElement.find(interactionRegion->elementIdentifier);
         if (regionIterator != m_discoveredRegionsByElement.end()) {
@@ -175,39 +176,66 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
 
 bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, RenderObject& renderer)
 {
-    if (renderer.hasVisibleBoxDecorations())
-        return false;
-
     for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
         if (!ancestor.element())
             continue;
 
-        auto elementIdentifier = ancestor.element()->identifier();
-        auto regionIterator = m_discoveredRegionsByElement.find(elementIdentifier);
-        if (regionIterator != m_discoveredRegionsByElement.end()) {
-            auto parentBounds = regionIterator->value.bounds();
-            if (!parentBounds.contains(bounds))
+        auto ancestorElementIdentifier = ancestor.element()->identifier();
+        auto regionIterator = m_discoveredRegionsByElement.find(ancestorElementIdentifier);
+
+        // The ancestor has no known InteractionRegion, we can skip it.
+        if (regionIterator == m_discoveredRegionsByElement.end()) {
+            // If it has a border / background, stop the search.
+            if (ancestor.hasVisibleBoxDecorations())
                 return false;
+            continue;
+        }
 
-            float marginLeft = bounds.x() - parentBounds.x();
-            float marginRight = parentBounds.maxX() - bounds.maxX();
-            float marginTop = bounds.y() - parentBounds.y();
-            float marginBottom = parentBounds.maxY() - bounds.maxY();
+        auto ancestorBounds = regionIterator->value.bounds();
 
-            constexpr auto maxMargin = 50;
+        // The ancestor's InteractionRegion does not contain ours, we don't consolidate and stop the search.
+        if (!ancestorBounds.contains(bounds))
+            return false;
 
-            if (marginLeft > maxMargin
-                || marginRight > maxMargin
-                || marginTop > maxMargin
-                || marginBottom > maxMargin)
-                return false;
+        constexpr auto maxMargin = 50;
+        float marginLeft = bounds.x() - ancestorBounds.x();
+        float marginRight = ancestorBounds.maxX() - bounds.maxX();
+        float marginTop = bounds.y() - ancestorBounds.y();
+        float marginBottom = ancestorBounds.maxY() - bounds.maxY();
+        bool majorOverlap = marginLeft <= maxMargin
+            && marginRight <= maxMargin
+            && marginTop <= maxMargin
+            && marginBottom <= maxMargin;
 
+        constexpr auto offCenterThreshold = 2;
+        bool centered = std::abs(bounds.center().x() - ancestorBounds.center().x()) < offCenterThreshold
+            || std::abs(bounds.center().y() - ancestorBounds.center().y()) < offCenterThreshold;
+
+        bool hasNoVisualBorders = !renderer.hasVisibleBoxDecorations();
+
+        bool canConsolidate = hasNoVisualBorders
+            && (majorOverlap || (centered && elementMatchesHoverRules(*ancestor.element())));
+
+        // We're consolidating the region based on this ancestor, it shouldn't be removed or candidate for removal.
+        if (canConsolidate) {
+            m_containerRemovalCandidates.remove(ancestorElementIdentifier);
+            m_containersToRemove.remove(ancestorElementIdentifier);
             return true;
         }
 
-        // If we find a border / background, stop the search.
-        if (ancestor.hasVisibleBoxDecorations())
-            return false;
+        // We can't consolidate this region but it might be a container we can remove later.
+        if (hasNoVisualBorders && is<RenderElement>(renderer)) {
+            auto& renderElement = downcast<RenderElement>(renderer);
+            m_containerRemovalCandidates.add(renderElement.element()->identifier());
+        }
+
+        // We found a region nested inside a container candidate for removal, flag it for removal.
+        if (m_containerRemovalCandidates.contains(ancestorElementIdentifier)) {
+            m_containerRemovalCandidates.remove(ancestorElementIdentifier);
+            m_containersToRemove.add(ancestorElementIdentifier);
+        }
+
+        return false;
     }
 
     return false;
@@ -272,6 +300,10 @@ void EventRegionContext::shrinkWrapInteractionRegions()
 
 void EventRegionContext::copyInteractionRegionsToEventRegion()
 {
+    m_interactionRegions.removeAllMatching([&] (auto& region) {
+        return m_containersToRemove.contains(region.elementIdentifier);
+    });
+
     shrinkWrapInteractionRegions();
     m_eventRegion.appendInteractionRegions(m_interactionRegions);
 }
@@ -538,6 +570,11 @@ bool EventRegion::containsEditableElementsInRect(const IntRect& rect) const
 void EventRegion::appendInteractionRegions(const Vector<InteractionRegion>& interactionRegions)
 {
     m_interactionRegions.appendVector(interactionRegions);
+}
+
+void EventRegion::clearInteractionRegions()
+{
+    m_interactionRegions.clear();
 }
 
 #endif

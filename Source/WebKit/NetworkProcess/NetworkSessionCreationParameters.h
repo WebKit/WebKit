@@ -58,7 +58,7 @@ struct NetworkSessionCreationParameters {
     static std::optional<NetworkSessionCreationParameters> decode(IPC::Decoder&);
     
     PAL::SessionID sessionID { PAL::SessionID::defaultSessionID() };
-    Markable<UUID> dataStoreIdentifier;
+    Markable<WTF::UUID> dataStoreIdentifier;
     String boundInterfaceIdentifier;
     AllowsCellularAccess allowsCellularAccess { AllowsCellularAccess::Yes };
 #if PLATFORM(COCOA)
@@ -121,6 +121,7 @@ struct NetworkSessionCreationParameters {
     uint64_t perOriginStorageQuota;
     std::optional<double> originQuotaRatio;
     std::optional<double> totalQuotaRatio;
+    std::optional<uint64_t> standardVolumeCapacity;
     std::optional<uint64_t> volumeCapacityOverride;
     String localStorageDirectory;
     SandboxExtension::Handle localStorageDirectoryExtensionHandle;

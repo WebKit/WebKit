@@ -206,22 +206,19 @@ void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, Float
     m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
 }
 
-void TiledCoreAnimationDrawingAreaProxy::dispatchAfterEnsuringDrawing(CompletionHandler<void()>&& callback)
-{
-    if (!m_webPageProxy.hasRunningProcess()) {
-        callback();
-        return;
-    }
-
-    m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), WTFMove(callback), m_identifier.toUInt64());
-}
-
 void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection& connection, Vector<IPC::AsyncReplyID>&& callbackIDs)
 {
     for (auto& callbackID : callbackIDs) {
         if (auto callback = connection.takeAsyncReplyHandler(callbackID))
             callback(nullptr);
     }
+}
+
+std::optional<WebCore::FramesPerSecond> TiledCoreAnimationDrawingAreaProxy::displayNominalFramesPerSecond()
+{
+    if (!m_webPageProxy.displayID())
+        return std::nullopt;
+    return m_webPageProxy.process().nominalFramesPerSecondForDisplay(*m_webPageProxy.displayID());
 }
 
 } // namespace WebKit

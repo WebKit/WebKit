@@ -34,6 +34,7 @@ namespace JSC { namespace Profiler {
 
 class Bytecodes;
 class Compilation;
+class Dumper;
 
 class Event {
 public:
@@ -62,7 +63,7 @@ public:
     const CString& detail() const { return m_detail; }
     
     void dump(PrintStream&) const;
-    JSValue toJS(JSGlobalObject*) const;
+    Ref<JSON::Value> toJSON(Dumper&) const;
     
 private:
     WallTime m_time { };

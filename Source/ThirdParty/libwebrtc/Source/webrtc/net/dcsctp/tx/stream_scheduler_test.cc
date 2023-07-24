@@ -92,14 +92,14 @@ class TestStream {
 
 // A scheduler without active streams doesn't produce data.
 TEST(StreamSchedulerTest, HasNoActiveStreams) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
 
   EXPECT_EQ(scheduler.Produce(TimeMs(0), kMtu), absl::nullopt);
 }
 
 // Stream properties can be set and retrieved
 TEST(StreamSchedulerTest, CanSetAndGetStreamProperties) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
 
   StrictMock<MockStreamProducer> producer;
   auto stream =
@@ -114,7 +114,7 @@ TEST(StreamSchedulerTest, CanSetAndGetStreamProperties) {
 
 // A scheduler with a single stream produced packets from it.
 TEST(StreamSchedulerTest, CanProduceFromSingleStream) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
 
   StrictMock<MockStreamProducer> producer;
   EXPECT_CALL(producer, Produce).WillOnce(CreateChunk(StreamID(1), MID(0)));
@@ -131,7 +131,7 @@ TEST(StreamSchedulerTest, CanProduceFromSingleStream) {
 
 // Switches between two streams after every packet.
 TEST(StreamSchedulerTest, WillRoundRobinBetweenStreams) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
 
   StrictMock<MockStreamProducer> producer1;
   EXPECT_CALL(producer1, Produce)
@@ -173,7 +173,7 @@ TEST(StreamSchedulerTest, WillRoundRobinBetweenStreams) {
 // Switches between two streams after every packet, but keeps producing from the
 // same stream when a packet contains of multiple fragments.
 TEST(StreamSchedulerTest, WillRoundRobinOnlyWhenFinishedProducingChunk) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
 
   StrictMock<MockStreamProducer> producer1;
   EXPECT_CALL(producer1, Produce)
@@ -235,7 +235,7 @@ TEST(StreamSchedulerTest, WillRoundRobinOnlyWhenFinishedProducingChunk) {
 
 // Deactivates a stream before it has finished producing all packets.
 TEST(StreamSchedulerTest, StreamsCanBeMadeInactive) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
 
   StrictMock<MockStreamProducer> producer1;
   EXPECT_CALL(producer1, Produce)
@@ -259,7 +259,7 @@ TEST(StreamSchedulerTest, StreamsCanBeMadeInactive) {
 
 // Resumes a paused stream - makes a stream active after inactivating it.
 TEST(StreamSchedulerTest, SingleStreamCanBeResumed) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
 
   StrictMock<MockStreamProducer> producer1;
   // Callbacks are setup so that they hint that there is a MID(2) coming...
@@ -289,7 +289,7 @@ TEST(StreamSchedulerTest, SingleStreamCanBeResumed) {
 
 // Iterates between streams, where one is suddenly paused and later resumed.
 TEST(StreamSchedulerTest, WillRoundRobinWithPausedStream) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
 
   StrictMock<MockStreamProducer> producer1;
   EXPECT_CALL(producer1, Produce)
@@ -333,7 +333,7 @@ TEST(StreamSchedulerTest, WillRoundRobinWithPausedStream) {
 
 // Verifies that packet counts are evenly distributed in round robin scheduling.
 TEST(StreamSchedulerTest, WillDistributeRoundRobinPacketsEvenlyTwoStreams) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
   TestStream stream1(scheduler, StreamID(1), StreamPriority(1));
   TestStream stream2(scheduler, StreamID(2), StreamPriority(1));
 
@@ -346,7 +346,7 @@ TEST(StreamSchedulerTest, WillDistributeRoundRobinPacketsEvenlyTwoStreams) {
 // where a stream is suddenly made inactive, two are added, and then the paused
 // stream is resumed.
 TEST(StreamSchedulerTest, WillDistributeEvenlyWithPausedAndAddedStreams) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
   TestStream stream1(scheduler, StreamID(1), StreamPriority(1));
   TestStream stream2(scheduler, StreamID(2), StreamPriority(1));
 
@@ -376,7 +376,7 @@ TEST(StreamSchedulerTest, WillDistributeEvenlyWithPausedAndAddedStreams) {
 
 // Degrades to fair queuing with streams having identical priority.
 TEST(StreamSchedulerTest, WillDoFairQueuingWithSamePriority) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
   scheduler.EnableMessageInterleaving(true);
 
   constexpr size_t kSmallPacket = 30;
@@ -427,7 +427,7 @@ TEST(StreamSchedulerTest, WillDoFairQueuingWithSamePriority) {
 
 // Will do weighted fair queuing with three streams having different priority.
 TEST(StreamSchedulerTest, WillDoWeightedFairQueuingSameSizeDifferentPriority) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
   scheduler.EnableMessageInterleaving(true);
 
   StrictMock<MockStreamProducer> callback1;
@@ -499,7 +499,7 @@ TEST(StreamSchedulerTest, WillDoWeightedFairQueuingSameSizeDifferentPriority) {
 // Will do weighted fair queuing with three streams having different priority
 // and sending different payload sizes.
 TEST(StreamSchedulerTest, WillDoWeightedFairQueuingDifferentSizeAndPriority) {
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
   scheduler.EnableMessageInterleaving(true);
 
   constexpr size_t kSmallPacket = 20;
@@ -584,7 +584,7 @@ TEST(StreamSchedulerTest, WillDistributeWFQPacketsInTwoStreamsByPriority) {
   // A simple test with two streams of different priority, but sending packets
   // of identical size. Verifies that the ratio of sent packets represent their
   // priority.
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
   scheduler.EnableMessageInterleaving(true);
 
   TestStream stream1(scheduler, StreamID(1), StreamPriority(100), kPayloadSize);
@@ -598,7 +598,7 @@ TEST(StreamSchedulerTest, WillDistributeWFQPacketsInTwoStreamsByPriority) {
 TEST(StreamSchedulerTest, WillDistributeWFQPacketsInFourStreamsByPriority) {
   // Same as `WillDistributeWFQPacketsInTwoStreamsByPriority` but with more
   // streams.
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
   scheduler.EnableMessageInterleaving(true);
 
   TestStream stream1(scheduler, StreamID(1), StreamPriority(100), kPayloadSize);
@@ -624,7 +624,7 @@ TEST(StreamSchedulerTest, WillDistributeFromTwoStreamsFairly) {
   // as stream2, but with WFQ and a 4x priority increase, stream2 should 4x as
   // many payload bytes on the wire. That translates to stream2 getting 8x as
   // many packets on the wire as they are half as large.
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
   // Enable WFQ scheduler.
   scheduler.EnableMessageInterleaving(true);
 
@@ -641,7 +641,7 @@ TEST(StreamSchedulerTest, WillDistributeFromTwoStreamsFairly) {
 TEST(StreamSchedulerTest, WillDistributeFromFourStreamsFairly) {
   // Same as `WillDistributeWeightedFairFromTwoStreamsFairly` but more
   // complicated.
-  StreamScheduler scheduler(kMtu);
+  StreamScheduler scheduler("", kMtu);
   // Enable WFQ scheduler.
   scheduler.EnableMessageInterleaving(true);
 
@@ -671,8 +671,8 @@ TEST(StreamSchedulerTest, WillDistributeFromFourStreamsFairly) {
 // small for both streams. See `LargeMessageWithLargeMtu` for the same test, but
 // with a larger MTU.
 TEST(StreamSchedulerTest, SendLargeMessageWithSmallMtu) {
-  StreamScheduler scheduler(100 + SctpPacket::kHeaderSize +
-                            IDataChunk::kHeaderSize);
+  StreamScheduler scheduler(
+      "", 100 + SctpPacket::kHeaderSize + IDataChunk::kHeaderSize);
   scheduler.EnableMessageInterleaving(true);
 
   StrictMock<MockStreamProducer> producer1;
@@ -708,8 +708,8 @@ TEST(StreamSchedulerTest, SendLargeMessageWithSmallMtu) {
 // Sending large messages with large MTU will not fragment messages and will
 // send the message first from the stream that has the smallest message.
 TEST(StreamSchedulerTest, SendLargeMessageWithLargeMtu) {
-  StreamScheduler scheduler(200 + SctpPacket::kHeaderSize +
-                            IDataChunk::kHeaderSize);
+  StreamScheduler scheduler(
+      "", 200 + SctpPacket::kHeaderSize + IDataChunk::kHeaderSize);
   scheduler.EnableMessageInterleaving(true);
 
   StrictMock<MockStreamProducer> producer1;

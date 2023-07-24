@@ -143,11 +143,6 @@ void RemoteScrollingCoordinatorProxy::continueWheelEventHandling(const WebWheelE
     webPageProxy().continueWheelEventHandling(wheelEvent, result, willStartSwipe);
 }
 
-void RemoteScrollingCoordinatorProxy::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
-{
-    m_scrollingTree->handleMouseEvent(event);
-}
-
 TrackingType RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint(WebCore::EventTrackingRegions::EventType eventType, IntPoint p) const
 {
     return m_scrollingTree->eventTrackingTypeForPoint(eventType, p);
@@ -437,6 +432,11 @@ bool RemoteScrollingCoordinatorProxy::scrollingPerformanceTestingEnabled() const
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID nodeID, ScrollbarOrientation orientation, bool isVisible)
 {
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarVisibilityDidChange(nodeID, orientation, isVisible));
+}
+
+void RemoteScrollingCoordinatorProxy::scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID nodeID, ScrollbarOrientation orientation, int minimumThumbLength)
+{
+    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarMinimumThumbLengthDidChange(nodeID, orientation, minimumThumbLength));
 }
 
 } // namespace WebKit

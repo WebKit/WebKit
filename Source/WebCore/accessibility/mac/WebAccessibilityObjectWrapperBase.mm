@@ -310,12 +310,12 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
         m_isolatedObjectInitialized = true;
 
     if (!_identifier.isValid())
-        _identifier = m_isolatedObject->objectID();
+        _identifier = m_isolatedObject.get()->objectID();
 }
 
 - (BOOL)hasIsolatedObject
 {
-    return !!m_isolatedObject;
+    return !!m_isolatedObject.get();
 }
 #endif
 
@@ -377,11 +377,11 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 - (WebCore::AXCoreObject*)axBackingObject
 {
     if (isMainThread())
-        return m_axObject;
+        return m_axObject.get();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     ASSERT(AXObjectCache::isIsolatedTreeEnabled());
-    return m_isolatedObject;
+    return m_isolatedObject.get().get();
 #else
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -489,7 +489,7 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
 {
     auto convertedPath = adoptCF(CGPathCreateMutable());
     PathConversionInfo conversion = { self, convertedPath.get() };
-    path.apply([&conversion](const PathElement& pathElement) {
+    path.applyElements([&conversion](const PathElement& pathElement) {
         convertPathToScreenSpaceFunction(conversion, pathElement);
     });
     return convertedPath.autorelease();

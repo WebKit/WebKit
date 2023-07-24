@@ -133,7 +133,8 @@ bool RewriteAtomicFunctionExpressionsTraverser::IsAtomicFunctionInsideExpression
 
     auto *parentAsBinary = parentNode->getAsBinaryNode();
     // Assignments are handled in OutputHLSL
-    return !parentAsBinary || parentAsBinary->getOp() != EOpAssign;
+    return !parentAsBinary || (parentAsBinary->getOp() != EOpAssign ||
+                               IsInShaderStorageBlock(parentAsBinary->getLeft()));
 }
 
 bool RewriteAtomicFunctionExpressionsTraverser::visitAggregate(Visit visit, TIntermAggregate *node)

@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
 layer at (8,64) size 400x200 clip at (9,65) size 398x198
   RenderTextControl {TEXTAREA} at (0,20) size 400x200 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
     RenderBlock {DIV} at (7,3) size 386x34
-      RenderText {#text} at (0,0) size 379x34
-        text run at (0,0) width 374: "Demo text here that wraps a bit and should demonstrate"
-        text run at (373,0) width 6: " "
-        text run at (0,17) width 179: "the goodness of line-height"
+      RenderText {#text} at (0,0) size 385x34
+        text run at (0,0) width 384: "Demo text here that wraps a bit and should demonstrate"
+        text run at (383,0) width 2: " "
+        text run at (0,17) width 184: "the goodness of line-height"

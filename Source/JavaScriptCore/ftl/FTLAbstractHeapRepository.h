@@ -36,6 +36,7 @@
 #include "JSMap.h"
 #include "JSSet.h"
 #include "JSWeakMap.h"
+#include "NumericStrings.h"
 #include "Symbol.h"
 
 namespace JSC { namespace FTL {
@@ -203,6 +204,7 @@ namespace JSC { namespace FTL {
     macro(structureTable, 0, sizeof(Structure*)) \
     macro(variables, 0, sizeof(Register)) \
     macro(HasOwnPropertyCache, 0, sizeof(HasOwnPropertyCache::Entry)) \
+    macro(SmallIntCache, 0, sizeof(NumericStrings::StringWithJSString)) \
     
 #define FOR_EACH_NUMBERED_ABSTRACT_HEAP(macro) \
     macro(properties)

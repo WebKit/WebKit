@@ -126,7 +126,7 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
         if (auto imageHandle = m_controlledImage->createHandle(SharedMemory::Protection::ReadOnly))
             handle = WTFMove(*imageHandle);
     }
-    encoder << handle;
+    encoder << WTFMove(handle);
     encoder << m_controlledSelectionData;
     encoder << m_selectedTelephoneNumbers;
     encoder << m_selectionIsEditable;
@@ -142,14 +142,14 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
         if (auto imageHandle = m_potentialQRCodeNodeSnapshotImage->createHandle(SharedMemory::Protection::ReadOnly))
             potentialQRCodeNodeSnapshotImageHandle = WTFMove(*imageHandle);
     }
-    encoder << potentialQRCodeNodeSnapshotImageHandle;
+    encoder << WTFMove(potentialQRCodeNodeSnapshotImageHandle);
 
     ShareableBitmap::Handle potentialQRCodeViewportSnapshotImageHandle;
     if (m_potentialQRCodeViewportSnapshotImage) {
         if (auto imageHandle = m_potentialQRCodeViewportSnapshotImage->createHandle(SharedMemory::Protection::ReadOnly))
             potentialQRCodeViewportSnapshotImageHandle = WTFMove(*imageHandle);
     }
-    encoder << potentialQRCodeViewportSnapshotImageHandle;
+    encoder << WTFMove(potentialQRCodeViewportSnapshotImageHandle);
 #endif
 }
 

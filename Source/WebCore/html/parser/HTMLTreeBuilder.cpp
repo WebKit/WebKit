@@ -85,16 +85,6 @@ static inline TextPosition uninitializedPositionValue1()
     return TextPosition(OrdinalNumber::fromOneBasedInt(-1), OrdinalNumber());
 }
 
-static inline bool isAllWhitespace(const String& string)
-{
-    return string.isAllSpecialCharacters<isASCIIWhitespace>();
-}
-
-static inline bool isAllWhitespaceOrReplacementCharacters(const String& string)
-{
-    return string.isAllSpecialCharacters<isASCIIWhitespaceOrReplacementCharacter>();
-}
-
 #if ASSERT_ENABLED
 static bool isTableBodyContextTag(TagName tagName)
 {
@@ -1095,7 +1085,7 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomHTMLToken&& token)
         parseError(token);
         if (m_tree.form() && !isParsingTemplateContents())
             return;
-        m_tree.insertHTMLFormElement(WTFMove(token), true);
+        m_tree.insertHTMLFormElement(WTFMove(token));
         m_tree.openElements().pop();
         return;
     case TagName::template_:
@@ -2696,7 +2686,7 @@ void HTMLTreeBuilder::processCharacterBufferForInBody(ExternalCharacterTokenBuff
 #else
     m_tree.insertTextNode(characters);
 #endif
-    if (m_framesetOk && !isAllWhitespaceOrReplacementCharacters(characters))
+    if (m_framesetOk && !characters.containsOnly<isASCIIWhitespaceOrReplacementCharacter>())
         m_framesetOk = false;
 }
 
@@ -2830,7 +2820,7 @@ void HTMLTreeBuilder::defaultForInTableText()
 {
     String characters = m_pendingTableCharacters.toString();
     m_pendingTableCharacters.clear();
-    if (!isAllWhitespace(characters)) {
+    if (!characters.containsOnly<isASCIIWhitespace>()) {
         // FIXME: parse error
         HTMLConstructionSite::RedirectToFosterParentGuard redirecter(m_tree);
         m_tree.reconstructTheActiveFormattingElements();
@@ -3092,7 +3082,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
     case HTMLToken::Type::Character: {
         String characters = token.characters();
         m_tree.insertTextNode(characters);
-        if (m_framesetOk && !isAllWhitespaceOrReplacementCharacters(characters))
+        if (m_framesetOk && !characters.containsOnly<isASCIIWhitespaceOrReplacementCharacter>())
             m_framesetOk = false;
         break;
     }

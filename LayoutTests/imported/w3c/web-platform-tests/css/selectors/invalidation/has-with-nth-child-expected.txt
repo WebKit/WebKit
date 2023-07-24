@@ -1,0 +1,11 @@
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+
+PASS Initially red
+PASS :nth-child() no longer matching after removal
+PASS :nth-last-child() no longer matching after removal
+FAIL :nth-child() in non-subject no longer matching after removal assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL :nth-last-child() in non-subject no longer matching after removal assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

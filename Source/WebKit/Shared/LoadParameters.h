@@ -31,9 +31,9 @@
 #include "SandboxExtension.h"
 #include "UserData.h"
 #include "WebsitePoliciesData.h"
+#include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <WebCore/SubstituteData.h>
@@ -95,14 +95,14 @@ struct LoadParameters {
     std::optional<double> dataDetectionReferenceDate;
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     Vector<SandboxExtension::Handle> networkExtensionSandboxExtensionHandles;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     std::optional<SandboxExtension::Handle> contentFilterExtensionHandle;
     std::optional<SandboxExtension::Handle> frontboardServiceExtensionHandle;
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 #endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 #endif
 
-    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
 };
 
 } // namespace WebKit

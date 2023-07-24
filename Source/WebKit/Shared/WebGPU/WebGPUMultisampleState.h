@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +27,14 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 
 namespace WebKit::WebGPU {
 
 struct MultisampleState {
-    PAL::WebGPU::Size32 count { 1 };
-    PAL::WebGPU::SampleMask mask { 0xFFFFFFFF };
+    WebCore::WebGPU::Size32 count { 1 };
+    WebCore::WebGPU::SampleMask mask { 0xFFFFFFFF };
     bool alphaToCoverageEnabled { false };
 };
 

@@ -28,16 +28,16 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ObjectIdentifierReferenceTracker.h"
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-enum RemoteSerializedImageBufferIdentifierType { };
-using RemoteSerializedImageBufferIdentifier = AtomicObjectIdentifier<RemoteSerializedImageBufferIdentifierType>;
-using RemoteSerializedImageBufferReadReference = ObjectIdentifierReadReference<RemoteSerializedImageBufferIdentifier>;
-using RemoteSerializedImageBufferWriteReference = ObjectIdentifierWriteReference<RemoteSerializedImageBufferIdentifier>;
-using RemoteSerializedImageBufferReference = ObjectIdentifierReference<RemoteSerializedImageBufferIdentifier>;
-using RemoteSerializedImageBufferReferenceTracker = ObjectIdentifierReferenceTracker<RemoteSerializedImageBufferIdentifier>;
+using RemoteSerializedImageBufferIdentifier = WebCore::RenderingResourceIdentifier;
+using RemoteSerializedImageBufferReadReference = IPC::ObjectIdentifierReadReference<RemoteSerializedImageBufferIdentifier>;
+using RemoteSerializedImageBufferWriteReference = IPC::ObjectIdentifierWriteReference<RemoteSerializedImageBufferIdentifier>;
+using RemoteSerializedImageBufferReference = IPC::ObjectIdentifierReference<RemoteSerializedImageBufferIdentifier>;
+using RemoteSerializedImageBufferReferenceTracker = IPC::ObjectIdentifierReferenceTracker<RemoteSerializedImageBufferIdentifier>;
 
 
 

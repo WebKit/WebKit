@@ -142,7 +142,7 @@ void AuxiliaryProcessProxy::connect()
 
 void AuxiliaryProcessProxy::terminate()
 {
-    RELEASE_LOG(Process, "AuxiliaryProcessProxy::terminate: PID=%d", processIdentifier());
+    RELEASE_LOG(Process, "AuxiliaryProcessProxy::terminate: PID=%d", processID());
 
 #if PLATFORM(COCOA)
     if (m_connection && m_connection->kill())
@@ -191,7 +191,7 @@ bool AuxiliaryProcessProxy::wasTerminated() const
         break;
     }
 
-    auto pid = processIdentifier();
+    auto pid = processID();
     if (!pid)
         return true;
 
@@ -231,10 +231,10 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
 
     case State::Running:
         if (asyncReplyHandler) {
-            if (connection()->sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(*asyncReplyHandler), sendOptions))
+            if (connection()->sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(*asyncReplyHandler), sendOptions) == IPC::Error::NoError)
                 return true;
         } else {
-            if (connection()->sendMessage(WTFMove(encoder), sendOptions))
+            if (connection()->sendMessage(WTFMove(encoder), sendOptions) == IPC::Error::NoError)
                 return true;
         }
         break;
@@ -332,7 +332,8 @@ void AuxiliaryProcessProxy::wakeUpTemporarilyForIPC()
 {
     // If we keep trying to send IPC to a suspended process, the outgoing message queue may grow large and result
     // in increased memory usage. To avoid this, we wake up the process for a bit so we can drain the messages.
-    m_timedActivityForIPC = throttler().backgroundActivity("IPC sending due to large outgoing queue"_s);
+    if (!ProcessThrottler::isValidBackgroundActivity(m_timedActivityForIPC.activity()))
+        m_timedActivityForIPC = throttler().backgroundActivity("IPC sending due to large outgoing queue"_s);
 }
 #endif
 
@@ -390,7 +391,7 @@ void AuxiliaryProcessProxy::connectionWillOpen(IPC::Connection&)
 
 void AuxiliaryProcessProxy::logInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
-    RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from the %" PUBLIC_LOG_STRING " process.", description(messageName), processName().characters());
+    RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from the %" PUBLIC_LOG_STRING " process with PID %d", description(messageName), processName().characters(), processID());
 }
 
 bool AuxiliaryProcessProxy::platformIsBeingDebugged() const
@@ -401,7 +402,7 @@ bool AuxiliaryProcessProxy::platformIsBeingDebugged() const
         return false;
 
     struct kinfo_proc info;
-    int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processIdentifier() };
+    int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processID() };
     size_t size = sizeof(info);
     if (sysctl(mib, std::size(mib), &info, &size, nullptr, 0) == -1)
         return false;
@@ -445,7 +446,7 @@ bool AuxiliaryProcessProxy::mayBecomeUnresponsive()
 
 void AuxiliaryProcessProxy::didBecomeUnresponsive()
 {
-    RELEASE_LOG_ERROR(Process, "AuxiliaryProcessProxy::didBecomeUnresponsive: %" PUBLIC_LOG_STRING " process with PID %d became unresponsive", processName().characters(), processIdentifier());
+    RELEASE_LOG_ERROR(Process, "AuxiliaryProcessProxy::didBecomeUnresponsive: %" PUBLIC_LOG_STRING " process with PID %d became unresponsive", processName().characters(), processID());
 }
 
 void AuxiliaryProcessProxy::checkForResponsiveness(CompletionHandler<void()>&& responsivenessHandler, UseLazyStop useLazyStop)

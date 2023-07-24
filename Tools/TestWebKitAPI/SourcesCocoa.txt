@@ -310,6 +310,7 @@ Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm
 Tests/WebKitCocoa/WKWebViewFindString.mm
 Tests/WebKitCocoa/WKWebViewFirstResponderTests.mm
 Tests/WebKitCocoa/WKWebViewGetContents.mm
+Tests/WebKitCocoa/WKWebViewInspection.mm
 Tests/WebKitCocoa/WKWebViewLoadAPIs.mm
 Tests/WebKitCocoa/WKWebViewPrintFormatter.mm
 Tests/WebKitCocoa/WKWebViewResize.mm

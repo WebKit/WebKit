@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #if CPU(ARM64E) && ENABLE(JIT)
 
-#include <wtf/Bitmap.h>
+#include <wtf/BitSet.h>
 
 namespace JSC {
 
@@ -95,7 +95,7 @@ public:
         Page* next { nullptr };
     private:
         Entry* entries() { return bitwise_cast<Entry*>(this + 1); }
-        Bitmap<numEntriesPerPage> isInUseMap;
+        WTF::BitSet<numEntriesPerPage> isInUseMap;
     };
 
     static_assert(sizeof(Page) % alignof(Entry) == 0);

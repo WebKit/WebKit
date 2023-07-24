@@ -25,6 +25,7 @@
 #pragma once
 
 #include "AccessibilityObjectInterface.h"
+#include "ActivityState.h"
 #include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -52,10 +53,14 @@ using AXTreeWeakPtr = std::variant<WeakPtr<AXObjectCache>
 #endif
 >;
 
+AXTreePtr axTreeForID(AXID);
+WEBCORE_EXPORT AXTreePtr findAXTree(Function<bool(AXTreePtr)>&&);
+
 template<typename T>
 class AXTreeStore {
     WTF_MAKE_NONCOPYABLE(AXTreeStore);
     WTF_MAKE_FAST_ALLOCATED;
+    friend WEBCORE_EXPORT AXTreePtr findAXTree(Function<bool(AXTreePtr)>&&);
 public:
     AXID treeID() const { return m_id; }
     static WeakPtr<AXObjectCache> axObjectCacheForID(AXID);

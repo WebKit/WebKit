@@ -40,7 +40,7 @@ rtc::scoped_refptr<MappableNativeBuffer> GetMappableNativeBufferFromVideoFrame(
 // modules.
 class MappableNativeBuffer : public VideoFrameBuffer {
  public:
-  // If |allow_i420_conversion| is false, calling ToI420() on a non-I420 buffer
+  // If `allow_i420_conversion` is false, calling ToI420() on a non-I420 buffer
   // will DCHECK-crash. Used to ensure zero-copy in tests.
   MappableNativeBuffer(VideoFrameBuffer::Type mappable_type,
                        int width,

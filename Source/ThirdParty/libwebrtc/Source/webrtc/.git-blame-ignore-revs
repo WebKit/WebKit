@@ -22,3 +22,13 @@ b6760f9e4442410f2bcb6090b3b89bf709e2fce2
 665174fdbb4e0540eccb27cf7412348f1b65534c
 # Format almost all C++ in WebRTC. Again. Mostly #include reordering.
 a4d873786f10eedd72de25ad0d94ad7c53c1f68a
+# Format /modules
+c018bae80743596694db91478b879815f19dfb74
+# Format /sdk
+6f86f6af008176e631140e6a80e0a0bca9550143
+# Format /rtc_base
+802e8e5fdbac5af0e264d7fbe32b16643ad718ae
+# Format ^(api|call|common_audio|examples|media|net|p2p|pc)/
+bceec84aeedcb9f5992d30dae0b477fb5e227fee
+# Format the rest
+7220ee97aafaa33a914f578e0f04184a94d17974

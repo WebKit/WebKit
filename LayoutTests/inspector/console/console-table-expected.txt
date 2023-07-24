@@ -162,7 +162,7 @@ STEP: console.table({f: function(){}, x: 10})
             "_type": "function",
             "_valuePreview": {
               "_type": "function",
-              "_description": "function (){}",
+              "_description": "function(){}",
               "_lossless": true,
               "_overflow": false,
               "_properties": null,

@@ -16,22 +16,18 @@ const rangeErrorTests = [
   [1, "number that doesn't convert to a valid ISO string"],
   [19761118, "number that would convert to a valid ISO string in other contexts"],
   [1n, "bigint"],
-  [new Temporal.Calendar("iso8601"), "calendar instance"],
 ];
 
 for (const [timeZone, description] of rangeErrorTests) {
   assert.throws(RangeError, () => Temporal.Now.zonedDateTimeISO(timeZone), `${description} does not convert to a valid ISO string`);
-  assert.throws(RangeError, () => Temporal.Now.zonedDateTimeISO({ timeZone }), `${description} does not convert to a valid ISO string (nested property)`);
 }
 
 const typeErrorTests = [
   [Symbol(), "symbol"],
+  [{}, "object not implementing time zone protocol"],
+  [new Temporal.Calendar("iso8601"), "calendar instance"],
 ];
 
 for (const [timeZone, description] of typeErrorTests) {
   assert.throws(TypeError, () => Temporal.Now.zonedDateTimeISO(timeZone), `${description} is not a valid object and does not convert to a string`);
-  assert.throws(TypeError, () => Temporal.Now.zonedDateTimeISO({ timeZone }), `${description} is not a valid object and does not convert to a string (nested property)`);
 }
-
-const timeZone = undefined;
-assert.throws(RangeError, () => Temporal.Now.zonedDateTimeISO({ timeZone }), `undefined is always a RangeError as nested property`);

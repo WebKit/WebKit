@@ -48,24 +48,23 @@ class TextStream;
 
 namespace WebKit {
 
-enum TypingAttributes {
-    AttributeNone = 0,
-    AttributeBold = 1,
-    AttributeItalics = 2,
-    AttributeUnderline = 4,
-    AttributeStrikeThrough = 8
+enum class TypingAttribute : uint8_t {
+    Bold          = 1 << 0,
+    Italics       = 1 << 1,
+    Underline     = 1 << 2,
+    StrikeThrough = 1 << 3,
 };
 
-enum TextAlignment {
-    NoAlignment = 0,
-    LeftAlignment = 1,
-    RightAlignment = 2,
-    CenterAlignment = 3,
-    JustifiedAlignment = 4,
+enum class TextAlignment : uint8_t {
+    Natural,
+    Left,
+    Right,
+    Center,
+    Justified,
 };
 
-enum ListType {
-    NoList = 0,
+enum class ListType : uint8_t {
+    None,
     OrderedList,
     UnorderedList
 };
@@ -88,12 +87,12 @@ struct EditorState {
 #endif
 
     struct PostLayoutData {
-        uint32_t typingAttributes { AttributeNone };
+        OptionSet<TypingAttribute> typingAttributes;
 #if PLATFORM(COCOA)
         uint64_t selectedTextLength { 0 };
-        uint32_t textAlignment { NoAlignment };
+        TextAlignment textAlignment { TextAlignment::Natural };
         WebCore::Color textColor { WebCore::Color::black }; // FIXME: Maybe this should be on VisualData?
-        uint32_t enclosingListType { NoList };
+        ListType enclosingListType { ListType::None };
         WebCore::WritingDirection baseWritingDirection { WebCore::WritingDirection::Natural };
         bool editableRootIsTransparentOrFullyClipped { false };
 #endif
@@ -115,8 +114,9 @@ struct EditorState {
         bool atStartOfSentence { false };
         bool selectionStartIsAtParagraphBoundary { false };
         bool selectionEndIsAtParagraphBoundary { false };
+        bool hasGrammarDocumentMarkers { false };
         std::optional<WebCore::ElementContext> selectedEditableImage;
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 #if PLATFORM(MAC)
         WebCore::IntRect selectionBoundingRect; // FIXME: Maybe this should be on VisualData?
         uint64_t candidateRequestStartPosition { 0 };

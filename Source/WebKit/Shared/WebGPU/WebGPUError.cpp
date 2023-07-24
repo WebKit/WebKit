@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,18 +30,18 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUError.h>
+#include <WebCore/WebGPUError.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<Error> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::Error& error)
+std::optional<Error> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Error& error)
 {
-    return WTF::switchOn(error, [this] (const Ref<PAL::WebGPU::OutOfMemoryError>& outOfMemoryError) -> std::optional<Error> {
+    return WTF::switchOn(error, [this] (const Ref<WebCore::WebGPU::OutOfMemoryError>& outOfMemoryError) -> std::optional<Error> {
         auto result = convertToBacking(outOfMemoryError.get());
         if (!result)
             return std::nullopt;
         return { { *result } };
-    }, [this] (const Ref<PAL::WebGPU::ValidationError>& validationError) -> std::optional<Error> {
+    }, [this] (const Ref<WebCore::WebGPU::ValidationError>& validationError) -> std::optional<Error> {
         auto result = convertToBacking(validationError.get());
         if (!result)
             return std::nullopt;
@@ -49,14 +49,14 @@ std::optional<Error> ConvertToBackingContext::convertToBacking(const PAL::WebGPU
     });
 }
 
-std::optional<PAL::WebGPU::Error> ConvertFromBackingContext::convertFromBacking(const Error& error)
+std::optional<WebCore::WebGPU::Error> ConvertFromBackingContext::convertFromBacking(const Error& error)
 {
-    return WTF::switchOn(error, [this] (const OutOfMemoryError& outOfMemoryError) -> std::optional<PAL::WebGPU::Error> {
+    return WTF::switchOn(error, [this] (const OutOfMemoryError& outOfMemoryError) -> std::optional<WebCore::WebGPU::Error> {
         auto result = convertFromBacking(outOfMemoryError);
         if (!result)
             return std::nullopt;
         return { result.releaseNonNull() };
-    }, [this] (const ValidationError& validationError) -> std::optional<PAL::WebGPU::Error> {
+    }, [this] (const ValidationError& validationError) -> std::optional<WebCore::WebGPU::Error> {
         auto result = convertFromBacking(validationError);
         if (!result)
             return std::nullopt;

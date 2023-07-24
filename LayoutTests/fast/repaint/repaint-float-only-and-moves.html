@@ -1,0 +1,51 @@
+<style>
+.container {
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.child {
+  float: left;
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+
+#expand_this {
+  height: 50px;
+  background-color: blue;
+}
+</style>
+<div class=container>
+  <div id=expand_this class=child></div>
+  <div class=child></div>
+</div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  expand_this.style.width = "200px";
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

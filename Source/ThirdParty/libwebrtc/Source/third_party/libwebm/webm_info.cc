@@ -761,8 +761,15 @@ void PrintVP9Info(const uint8_t* data, int size, FILE* o, int64_t time_ns,
             version, altref_frame, error_resilient_mode, row_tiles,
             column_tiles, frame_parallel_mode);
 
-    if (key && size > 4) {
-      fprintf(o, " cs:%d", parser->color_space());
+    if (key) {
+      if (size > 4) {
+        fprintf(o, " cs:%d", parser->color_space());
+      }
+      if (parser->display_width() != parser->width() ||
+          parser->display_height() != parser->height()) {
+        fprintf(o, " dw:%d dh:%d", parser->display_width(),
+                parser->display_height());
+      }
     }
 
     if (count > 0) {

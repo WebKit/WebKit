@@ -32,4 +32,5 @@ struct WebKit::FrameInfoData {
     String frameName
     std::optional<WebCore::FrameIdentifier> frameID
     std::optional<WebCore::FrameIdentifier> parentFrameID
+    WTF::ProcessID processID;
 }

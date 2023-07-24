@@ -36,6 +36,8 @@
 #include "LocalFrameView.h"
 #include "MouseEvent.h"
 #include "PaintInfo.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderFrame.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
@@ -55,7 +57,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFrameSet);
 RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& style)
     : RenderBox(frameSet, WTFMove(style), 0)
     , m_isResizing(false)
-    , m_isChildResizing(false)
 {
     setInline(false);
 }
@@ -588,19 +589,7 @@ bool RenderFrameSet::userResize(MouseEvent& event)
 void RenderFrameSet::setIsResizing(bool isResizing)
 {
     m_isResizing = isResizing;
-    for (auto& ancestor : ancestorsOfType<RenderFrameSet>(*this))
-        ancestor.m_isChildResizing = isResizing;
     frame().eventHandler().setResizingFrameSet(isResizing ? &frameSetElement() : nullptr);
-}
-
-bool RenderFrameSet::isResizingRow() const
-{
-    return m_isResizing && m_rows.m_splitBeingResized != noSplit;
-}
-
-bool RenderFrameSet::isResizingColumn() const
-{
-    return m_isResizing && m_cols.m_splitBeingResized != noSplit;
 }
 
 bool RenderFrameSet::canResizeRow(const IntPoint& p) const

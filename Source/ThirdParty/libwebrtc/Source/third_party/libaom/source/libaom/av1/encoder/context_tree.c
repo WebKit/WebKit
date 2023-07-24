@@ -12,6 +12,7 @@
 #include "av1/encoder/context_tree.h"
 #include "av1/encoder/encoder.h"
 #include "av1/encoder/rd.h"
+#include <assert.h>
 
 void av1_copy_tree_context(PICK_MODE_CONTEXT *dst_ctx,
                            PICK_MODE_CONTEXT *src_ctx) {
@@ -150,36 +151,11 @@ void av1_free_pmc(PICK_MODE_CONTEXT *ctx, int num_planes) {
 }
 
 PC_TREE *av1_alloc_pc_tree_node(BLOCK_SIZE bsize) {
-  PC_TREE *pc_tree = NULL;
-  struct aom_internal_error_info error;
-
-  AOM_CHECK_MEM_ERROR(&error, pc_tree, aom_calloc(1, sizeof(*pc_tree)));
+  PC_TREE *pc_tree = aom_calloc(1, sizeof(*pc_tree));
+  if (pc_tree == NULL) return NULL;
 
   pc_tree->partitioning = PARTITION_NONE;
   pc_tree->block_size = bsize;
-  pc_tree->index = 0;
-
-  pc_tree->none = NULL;
-  for (int i = 0; i < 2; ++i) {
-    pc_tree->horizontal[i] = NULL;
-    pc_tree->vertical[i] = NULL;
-  }
-
-#if !CONFIG_REALTIME_ONLY
-  for (int i = 0; i < 3; ++i) {
-    pc_tree->horizontala[i] = NULL;
-    pc_tree->horizontalb[i] = NULL;
-    pc_tree->verticala[i] = NULL;
-    pc_tree->verticalb[i] = NULL;
-  }
-  for (int i = 0; i < 4; ++i) {
-    pc_tree->horizontal4[i] = NULL;
-    pc_tree->vertical4[i] = NULL;
-  }
-#endif
-  for (int i = 0; i < 4; ++i) {
-    pc_tree->split[i] = NULL;
-  }
 
   return pc_tree;
 }
@@ -191,8 +167,44 @@ PC_TREE *av1_alloc_pc_tree_node(BLOCK_SIZE bsize) {
   } while (0)
 
 void av1_free_pc_tree_recursive(PC_TREE *pc_tree, int num_planes, int keep_best,
-                                int keep_none) {
+                                int keep_none,
+                                PARTITION_SEARCH_TYPE partition_search_type) {
   if (pc_tree == NULL) return;
+
+  // Avoid freeing of extended partitions as they are not supported when
+  // partition_search_type is VAR_BASED_PARTITION.
+  if (partition_search_type == VAR_BASED_PARTITION && !keep_best &&
+      !keep_none) {
+    FREE_PMC_NODE(pc_tree->none);
+
+    for (int i = 0; i < 2; ++i) {
+      FREE_PMC_NODE(pc_tree->horizontal[i]);
+      FREE_PMC_NODE(pc_tree->vertical[i]);
+    }
+
+#if !defined(NDEBUG) && !CONFIG_REALTIME_ONLY
+    for (int i = 0; i < 3; ++i) {
+      assert(pc_tree->horizontala[i] == NULL);
+      assert(pc_tree->horizontalb[i] == NULL);
+      assert(pc_tree->verticala[i] == NULL);
+      assert(pc_tree->verticalb[i] == NULL);
+    }
+    for (int i = 0; i < 4; ++i) {
+      assert(pc_tree->horizontal4[i] == NULL);
+      assert(pc_tree->vertical4[i] == NULL);
+    }
+#endif
+
+    for (int i = 0; i < 4; ++i) {
+      if (pc_tree->split[i] != NULL) {
+        av1_free_pc_tree_recursive(pc_tree->split[i], num_planes, 0, 0,
+                                   partition_search_type);
+        pc_tree->split[i] = NULL;
+      }
+    }
+    aom_free(pc_tree);
+    return;
+  }
 
   const PARTITION_TYPE partition = pc_tree->partitioning;
 
@@ -226,7 +238,8 @@ void av1_free_pc_tree_recursive(PC_TREE *pc_tree, int num_planes, int keep_best,
   if (!keep_best || (partition != PARTITION_SPLIT)) {
     for (int i = 0; i < 4; ++i) {
       if (pc_tree->split[i] != NULL) {
-        av1_free_pc_tree_recursive(pc_tree->split[i], num_planes, 0, 0);
+        av1_free_pc_tree_recursive(pc_tree->split[i], num_planes, 0, 0,
+                                   partition_search_type);
         pc_tree->split[i] = NULL;
       }
     }

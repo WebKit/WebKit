@@ -1,0 +1,17 @@
+
+
+PASS svg:svg display inline
+PASS svg:g display inline
+PASS svg:svg display block
+PASS svg:g display block
+PASS svg:svg display inline-block
+PASS svg:g display inline-block
+PASS svg:svg display inline-table
+PASS svg:g display inline-table
+PASS svg:svg display table
+PASS svg:g display table
+PASS svg:svg display table-cell
+PASS svg:g display table-cell
+PASS svg:svg display contents computes to none
+FAIL svg:g display contents computes to contents assert_equals: expected "contents" but got "none"
+

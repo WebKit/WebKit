@@ -21,7 +21,7 @@ static uint64_t aom_sum_squares_2d_i16_nxn_avx2(const int16_t *src, int stride,
                                                 int width, int height) {
   uint64_t result;
   __m256i v_acc_q = _mm256_setzero_si256();
-  const __m256i v_zext_mask_q = yy_set1_64_from_32i(0xffffffff);
+  const __m256i v_zext_mask_q = yy_set1_64_from_32i(~0);
   for (int col = 0; col < height; col += 4) {
     __m256i v_acc_d = _mm256_setzero_si256();
     for (int row = 0; row < width; row += 16) {

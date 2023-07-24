@@ -18,22 +18,12 @@
 
 #include "rtc_base/string_encode.h"
 
-struct pw_thread_loop;
 struct spa_pod;
 struct spa_pod_builder;
 struct spa_rectangle;
+struct spa_fraction;
 
 namespace webrtc {
-
-// Locks pw_thread_loop in the current scope
-class PipeWireThreadLoopLock {
- public:
-  explicit PipeWireThreadLoopLock(pw_thread_loop* loop);
-  ~PipeWireThreadLoopLock();
-
- private:
-  pw_thread_loop* const loop_;
-};
 
 struct PipeWireVersion {
   static PipeWireVersion Parse(const absl::string_view& version);
@@ -55,7 +45,8 @@ struct PipeWireVersion {
 spa_pod* BuildFormat(spa_pod_builder* builder,
                      uint32_t format,
                      const std::vector<uint64_t>& modifiers,
-                     const struct spa_rectangle* resolution);
+                     const struct spa_rectangle* resolution,
+                     const struct spa_fraction* frame_rate);
 
 }  // namespace webrtc
 

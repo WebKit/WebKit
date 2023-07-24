@@ -15,8 +15,8 @@
 // Forward declare HMONITOR in a windows.h compatible way so that we can avoid
 // including windows.h.
 #define WEBRTC_DECLARE_HANDLE(name) \
-struct name##__;                  \
-typedef struct name##__* name
+  struct name##__;                  \
+  typedef struct name##__* name
 WEBRTC_DECLARE_HANDLE(HMONITOR);
 #undef WEBRTC_DECLARE_HANDLE
 #endif
@@ -53,6 +53,10 @@ bool IsMonitorValid(HMONITOR monitor);
 // Returns the rect of the monitor identified by `monitor`, relative to the
 // primary display's top-left. On failure, returns an empty rect.
 DesktopRect GetMonitorRect(HMONITOR monitor);
+
+// Returns the DPI for the specified monitor. On failure, returns the system DPI
+// or the Windows default DPI (96x96) if the system DPI can't be retrieved.
+DesktopVector GetDpiForMonitor(HMONITOR monitor);
 
 // Returns true if `screen` is a valid screen. The screen device key is
 // returned through `device_key` if the screen is valid. The device key can be

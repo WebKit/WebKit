@@ -21,6 +21,7 @@ class BuildRequest extends DataModelObject {
         this._order = +object.order;
         console.assert(object.commitSet instanceof CommitSet);
         this._commitSet = object.commitSet;
+        this._testParameterSet = object.testParameterSet;
         this._status = object.status;
         this._statusUrl = object.url;
         this._buildId = object.build;
@@ -33,6 +34,7 @@ class BuildRequest extends DataModelObject {
     {
         console.assert(+this._order <= +object.order);
         console.assert(this._commitSet == object.commitSet);
+        console.assert(this._testParameterSet == object.testParameterSet);
 
         const testGroup = object.testGroup;
         console.assert(!this._testGroup || this._testGroup == testGroup);
@@ -59,6 +61,7 @@ class BuildRequest extends DataModelObject {
     isTest() { return this._order >= 0; }
     order() { return +this._order; }
     commitSet() { return this._commitSet; }
+    testParameterSet() { return this._testParameterSet; }
 
     status() { return this._status; }
     hasFinished() { return this._status == 'failed' || this._status == 'completed' || this._status == 'canceled'; }
@@ -113,6 +116,8 @@ class BuildRequest extends DataModelObject {
                 if (!buildRequest.commitSet().equalsIgnoringRoot(this.commitSet()))
                     continue;
                 if (!buildRequest.commitSet().areAllRootsAvailable(earliestRootCreatingTimeForReuse))
+                    continue;
+                if (!TestParameterSet.hasSameBuildParameters(this.testParameterSet(), buildRequest.testParameterSet()))
                     continue;
                 if (buildRequest.hasCompleted())
                     return buildRequest;
@@ -188,7 +193,7 @@ class BuildRequest extends DataModelObject {
         for (let uploadedFile of data['uploadedFiles'])
             UploadedFile.ensureSingleton(uploadedFile.id, uploadedFile);
 
-        const commitSets = data['commitSets'].map((rawData) => {
+        data['commitSets'].map((rawData) => {
             for (const item of rawData.revisionItems) {
                 item.commit = CommitLog.findById(item.commit);
                 item.patch = item.patch ? UploadedFile.findById(item.patch) : null;
@@ -199,6 +204,14 @@ class BuildRequest extends DataModelObject {
             return CommitSet.ensureSingleton(rawData.id, rawData);
         });
 
+        data['testParameterSets'].map((rawData) => {
+            for (const item of rawData.testParameterItems) {
+                item.parameter = TestParameter.findById(item.parameter);
+                item.file = item.file ? UploadedFile.findById(item.file) : null;
+            }
+            return TestParameterSet.ensureSingleton(rawData.id, rawData);
+        })
+
         return data['buildRequests'].map(function (rawData) {
             rawData.triggerable = Triggerable.findById(rawData.triggerable);
             rawData.repositoryGroup = TriggerableRepositoryGroup.findById(rawData.repositoryGroup);
@@ -207,6 +220,7 @@ class BuildRequest extends DataModelObject {
             rawData.testGroupId = rawData.testGroup;
             rawData.testGroup = TestGroup.findById(rawData.testGroup);
             rawData.commitSet = CommitSet.findById(rawData.commitSet);
+            rawData.testParameterSet = rawData.testParameterSet ? TestParameterSet.findById(rawData.testParameterSet) : null;
             return BuildRequest.ensureSingleton(rawData.id, rawData);
         });
     }

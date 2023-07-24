@@ -43,7 +43,7 @@ int av1_get_max_filter_level(const AV1_COMP *cpi);
  * \arg \c LPF_PICK_MINIMAL_LPF: Pick 0 to disable LPF if LPF was enabled last
  * frame
  *
- * \return Nothing is returned. Instead, filter levels below are stored in the
+ * \remark Nothing is returned. Instead, filter levels below are stored in the
  * "loopfilter" structure inside "cpi":
  * \arg \c filter_level[0]: the vertical filter level for Y plane
  * \arg \c filter_level[1]: the horizontal filter level for Y plane

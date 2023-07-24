@@ -24,5 +24,5 @@ TemporalHelpers.checkToTemporalCalendarFastPath((temporalObject, calendar) => {
   const datetime = new Temporal.PlainDateTime(2000, 5, 3, 13, 3, 27, 123, 456, 789);
   // the PlainDate's calendar will override the PlainDateTime's ISO calendar
   const result = datetime.withPlainDate({ year: 2001, month: 6, day: 4, calendar: temporalObject });
-  assert.sameValue(result.calendar, calendar, "Temporal object coerced to calendar");
+  assert.sameValue(result.getCalendar(), calendar, "Temporal object coerced to calendar");
 });

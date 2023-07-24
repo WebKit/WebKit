@@ -20,10 +20,21 @@ set(CMAKE_CXX_FLAGS_INIT "-m32")
 set(CMAKE_EXE_LINKER_FLAGS_INIT "-m32")
 
 if("${CROSS}" STREQUAL "")
+
+  # Default the cross compiler prefix to one used by Debian and other package
+  # management systems.
   set(CROSS i686-w64-mingw32-)
 endif()
 
-set(CMAKE_C_COMPILER ${CROSS}gcc)
-set(CMAKE_CXX_COMPILER ${CROSS}g++)
-set(CMAKE_AR ${CROSS}ar CACHE FILEPATH Archiver)
-set(CMAKE_RANLIB ${CROSS}ranlib CACHE FILEPATH Indexer)
+if(NOT CMAKE_C_COMPILER)
+  set(CMAKE_C_COMPILER ${CROSS}gcc)
+endif()
+if(NOT CMAKE_CXX_COMPILER)
+  set(CMAKE_CXX_COMPILER ${CROSS}g++)
+endif()
+if(NOT CMAKE_AR)
+  set(CMAKE_AR ${CROSS}ar CACHE FILEPATH Archiver)
+endif()
+if(NOT CMAKE_RANLIB)
+  set(CMAKE_RANLIB ${CROSS}ranlib CACHE FILEPATH Indexer)
+endif()

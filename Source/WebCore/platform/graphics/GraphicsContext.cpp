@@ -111,15 +111,6 @@ void GraphicsContext::drawRaisedEllipse(const FloatRect& rect, const Color& elli
     restore();
 }
 
-bool GraphicsContext::getShadow(FloatSize& offset, float& blur, Color& color) const
-{
-    offset = dropShadow().offset;
-    blur = dropShadow().blurRadius;
-    color = dropShadow().color;
-
-    return hasShadow();
-}
-
 void GraphicsContext::beginTransparencyLayer(float)
 {
     ++m_transparencyLayerCount;
@@ -505,14 +496,14 @@ void GraphicsContext::drawPath(const Path& path)
 void GraphicsContext::fillEllipseAsPath(const FloatRect& ellipse)
 {
     Path path;
-    path.addEllipse(ellipse);
+    path.addEllipseInRect(ellipse);
     fillPath(path);
 }
 
 void GraphicsContext::strokeEllipseAsPath(const FloatRect& ellipse)
 {
     Path path;
-    path.addEllipse(ellipse);
+    path.addEllipseInRect(ellipse);
     strokePath(path);
 }
 

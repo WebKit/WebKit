@@ -33,6 +33,7 @@
 #include "SandboxInitializationParameters.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LogInitialization.h>
+#include <WebCore/RegistrableDomain.h>
 #include <pal/SessionID.h>
 #include <wtf/LogInitialization.h>
 #include <wtf/SetForScope.h>
@@ -249,5 +250,17 @@ void AuxiliaryProcess::didReceiveMemoryPressureEvent(bool isCritical)
 #endif
 
 #endif // !PLATFORM(COCOA)
+
+bool AuxiliaryProcess::allowsFirstPartyForCookies(const WebCore::RegistrableDomain& firstPartyDomain, HashSet<WebCore::RegistrableDomain>& allowedFirstPartiesForCookies)
+{
+    if (!std::remove_reference_t<decltype(allowedFirstPartiesForCookies)>::isValidValue(firstPartyDomain)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    auto result = allowedFirstPartiesForCookies.contains(firstPartyDomain);
+    ASSERT(result);
+    return result;
+}
 
 } // namespace WebKit

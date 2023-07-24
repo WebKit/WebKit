@@ -52,13 +52,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 253x17
           text run at (0,0) width 253: "\x{201C}Dolor\x{201D} should not break into two lines."
 layer at (8,60) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,158) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,150) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,150) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,256) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,248) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,248) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,354) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,346) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,346) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,406) size 41x20
   RenderBlock (positioned) {DIV} at (8,406) size 41x20
     RenderBlock {DIV} at (0,0) size 41x20 [border: (1px solid #00FFFF)]

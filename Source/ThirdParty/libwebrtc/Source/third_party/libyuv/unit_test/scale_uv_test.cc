@@ -39,55 +39,35 @@ static int UVTestFilter(int src_width,
     return 0;
   }
 
-  int i, j;
-  const int b = 0;  // 128 to test for padding/stride.
-  int64_t src_uv_plane_size =
-      (Abs(src_width) + b * 2) * (Abs(src_height) + b * 2) * 2LL;
-  int src_stride_uv = (b * 2 + Abs(src_width)) * 2;
+  int i;
+  int64_t src_uv_plane_size = Abs(src_width) * Abs(src_height) * 2LL;
+  int src_stride_uv = Abs(src_width) * 2;
+  int64_t dst_uv_plane_size = dst_width * dst_height * 2LL;
+  int dst_stride_uv = dst_width * 2;
 
   align_buffer_page_end(src_uv, src_uv_plane_size);
-  if (!src_uv) {
+  align_buffer_page_end(dst_uv_c, dst_uv_plane_size);
+  align_buffer_page_end(dst_uv_opt, dst_uv_plane_size);
+
+  if (!src_uv || !dst_uv_c || !dst_uv_opt) {
     printf("Skipped.  Alloc failed " FILELINESTR(__FILE__, __LINE__) "\n");
     return 0;
   }
   MemRandomize(src_uv, src_uv_plane_size);
-
-  int64_t dst_uv_plane_size = (dst_width + b * 2) * (dst_height + b * 2) * 2LL;
-  int dst_stride_uv = (b * 2 + dst_width) * 2;
-
-  align_buffer_page_end(dst_uv_c, dst_uv_plane_size);
-  align_buffer_page_end(dst_uv_opt, dst_uv_plane_size);
-  if (!dst_uv_c || !dst_uv_opt) {
-    printf("Skipped.  Alloc failed " FILELINESTR(__FILE__, __LINE__) "\n");
-    return 0;
-  }
   memset(dst_uv_c, 2, dst_uv_plane_size);
-  memset(dst_uv_opt, 3, dst_uv_plane_size);
-
-  // Warm up both versions for consistent benchmarks.
-  MaskCpuFlags(disable_cpu_flags);  // Disable all CPU optimization.
-  UVScale(src_uv + (src_stride_uv * b) + b * 2, src_stride_uv, src_width,
-          src_height, dst_uv_c + (dst_stride_uv * b) + b * 2, dst_stride_uv,
-          dst_width, dst_height, f);
-  MaskCpuFlags(benchmark_cpu_info);  // Enable all CPU optimization.
-  UVScale(src_uv + (src_stride_uv * b) + b * 2, src_stride_uv, src_width,
-          src_height, dst_uv_opt + (dst_stride_uv * b) + b * 2, dst_stride_uv,
-          dst_width, dst_height, f);
+  memset(dst_uv_opt, 123, dst_uv_plane_size);
 
   MaskCpuFlags(disable_cpu_flags);  // Disable all CPU optimization.
   double c_time = get_time();
-  UVScale(src_uv + (src_stride_uv * b) + b * 2, src_stride_uv, src_width,
-          src_height, dst_uv_c + (dst_stride_uv * b) + b * 2, dst_stride_uv,
+  UVScale(src_uv, src_stride_uv, src_width, src_height, dst_uv_c, dst_stride_uv,
           dst_width, dst_height, f);
-
   c_time = (get_time() - c_time);
 
   MaskCpuFlags(benchmark_cpu_info);  // Enable all CPU optimization.
   double opt_time = get_time();
   for (i = 0; i < benchmark_iterations; ++i) {
-    UVScale(src_uv + (src_stride_uv * b) + b * 2, src_stride_uv, src_width,
-            src_height, dst_uv_opt + (dst_stride_uv * b) + b * 2, dst_stride_uv,
-            dst_width, dst_height, f);
+    UVScale(src_uv, src_stride_uv, src_width, src_height, dst_uv_opt,
+            dst_stride_uv, dst_width, dst_height, f);
   }
   opt_time = (get_time() - opt_time) / benchmark_iterations;
 
@@ -95,18 +75,11 @@ static int UVTestFilter(int src_width,
   printf("filter %d - %8d us C - %8d us OPT\n", f,
          static_cast<int>(c_time * 1e6), static_cast<int>(opt_time * 1e6));
 
-  // C version may be a little off from the optimized. Order of
-  //  operations may introduce rounding somewhere. So do a difference
-  //  of the buffers and look to see that the max difference isn't
-  //  over 2.
   int max_diff = 0;
-  for (i = b; i < (dst_height + b); ++i) {
-    for (j = b * 2; j < (dst_width + b) * 2; ++j) {
-      int abs_diff = Abs(dst_uv_c[(i * dst_stride_uv) + j] -
-                         dst_uv_opt[(i * dst_stride_uv) + j]);
-      if (abs_diff > max_diff) {
-        max_diff = abs_diff;
-      }
+  for (i = 0; i < dst_uv_plane_size; ++i) {
+    int abs_diff = Abs(dst_uv_c[i] - dst_uv_opt[i]);
+    if (abs_diff > max_diff) {
+      max_diff = abs_diff;
     }
   }
 
@@ -121,28 +94,26 @@ static int UVTestFilter(int src_width,
 #define DX(x, nom, denom) static_cast<int>((Abs(x) / nom) * nom)
 #define SX(x, nom, denom) static_cast<int>((x / nom) * denom)
 
-#define TEST_FACTOR1(name, filter, nom, denom, max_diff)                     \
+#define TEST_FACTOR1(name, filter, nom, denom)                               \
   TEST_F(LibYUVScaleTest, UVScaleDownBy##name##_##filter) {                  \
     int diff = UVTestFilter(                                                 \
         SX(benchmark_width_, nom, denom), SX(benchmark_height_, nom, denom), \
         DX(benchmark_width_, nom, denom), DX(benchmark_height_, nom, denom), \
         kFilter##filter, benchmark_iterations_, disable_cpu_flags_,          \
         benchmark_cpu_info_);                                                \
-    EXPECT_LE(diff, max_diff);                                               \
+    EXPECT_EQ(0, diff);                                                      \
   }
 
 #if defined(ENABLE_FULL_TESTS)
-// Test a scale factor with all 4 filters.  Expect unfiltered to be exact, but
-// filtering is different fixed point implementations for SSSE3, Neon and C.
-#define TEST_FACTOR(name, nom, denom)         \
-  TEST_FACTOR1(name, None, nom, denom, 0)     \
-  TEST_FACTOR1(name, Linear, nom, denom, 3)   \
-  TEST_FACTOR1(name, Bilinear, nom, denom, 3) \
-  TEST_FACTOR1(name, Box, nom, denom, 3)
+// Test a scale factor with all 4 filters.  Expect exact for SIMD vs C.
+#define TEST_FACTOR(name, nom, denom)      \
+  TEST_FACTOR1(name, None, nom, denom)     \
+  TEST_FACTOR1(name, Linear, nom, denom)   \
+  TEST_FACTOR1(name, Bilinear, nom, denom) \
+  TEST_FACTOR1(name, Box, nom, denom)
 #else
 // Test a scale factor with Bilinear.
-#define TEST_FACTOR(name, nom, denom) \
-  TEST_FACTOR1(name, Bilinear, nom, denom, 3)
+#define TEST_FACTOR(name, nom, denom) TEST_FACTOR1(name, Bilinear, nom, denom)
 #endif
 
 TEST_FACTOR(2, 1, 2)

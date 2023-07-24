@@ -121,12 +121,28 @@
 #include <valgrind/memcheck.h>
 #endif
 
+#if defined(BORINGSSL_FIPS_BREAK_TESTS)
+#include <stdlib.h>
+#endif
+
 #if !defined(__cplusplus)
-#if defined(_MSC_VER)
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#include <stdalign.h>
+#elif defined(_MSC_VER) && !defined(__clang__)
 #define alignas(x) __declspec(align(x))
 #define alignof __alignof
 #else
-#include <stdalign.h>
+// With the exception of MSVC, we require C11 to build the library. C11 is a
+// prerequisite for improved refcounting performance. All our supported C
+// compilers have long implemented C11 and made it default. The most likely
+// cause of pre-C11 modes is stale -std=c99 or -std=gnu99 flags in build
+// configuration. Such flags can be removed.
+//
+// TODO(davidben): In MSVC 2019 16.8 or higher (_MSC_VER >= 1928),
+// |__STDC_VERSION__| will be 201112 when passed /std:c11 and unset otherwise.
+// C11 alignas and alignof are only implemented in C11 mode. Can we mandate C11
+// mode for those versions?
+#error "BoringSSL must be built in C11 mode or higher."
 #endif
 #endif
 
@@ -150,7 +166,7 @@ extern "C" {
 
 
 #if defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || defined(OPENSSL_ARM) || \
-    defined(OPENSSL_AARCH64) || defined(OPENSSL_PPC64LE)
+    defined(OPENSSL_AARCH64)
 // OPENSSL_cpuid_setup initializes the platform-specific feature cache.
 void OPENSSL_cpuid_setup(void);
 #endif
@@ -209,6 +225,19 @@ typedef __uint128_t uint128_t;
 #define OPENSSL_SSE2
 #endif
 
+#if defined(BORINGSSL_MALLOC_FAILURE_TESTING)
+// OPENSSL_reset_malloc_counter_for_testing, when malloc testing is enabled,
+// resets the internal malloc counter, to simulate further malloc failures. This
+// should be called in between independent tests, at a point where failure from
+// a previous test will not impact subsequent ones.
+OPENSSL_EXPORT void OPENSSL_reset_malloc_counter_for_testing(void);
+#else
+OPENSSL_INLINE void OPENSSL_reset_malloc_counter_for_testing(void) {}
+#endif
+
+
+// Pointer utility functions.
+
 // buffers_alias returns one if |a| and |b| alias and zero otherwise.
 static inline int buffers_alias(const uint8_t *a, size_t a_len,
                                 const uint8_t *b, size_t b_len) {
@@ -219,6 +248,23 @@ static inline int buffers_alias(const uint8_t *a, size_t a_len,
   uintptr_t a_u = (uintptr_t)a;
   uintptr_t b_u = (uintptr_t)b;
   return a_u + a_len > b_u && b_u + b_len > a_u;
+}
+
+// align_pointer returns |ptr|, advanced to |alignment|. |alignment| must be a
+// power of two, and |ptr| must have at least |alignment - 1| bytes of scratch
+// space.
+static inline void *align_pointer(void *ptr, size_t alignment) {
+  // |alignment| must be a power of two.
+  assert(alignment != 0 && (alignment & (alignment - 1)) == 0);
+  // Instead of aligning |ptr| as a |uintptr_t| and casting back, compute the
+  // offset and advance in pointer space. C guarantees that casting from pointer
+  // to |uintptr_t| and back gives the same pointer, but general
+  // integer-to-pointer conversions are implementation-defined. GCC does define
+  // it in the useful way, but this makes fewer assumptions.
+  uintptr_t offset = (0u - (uintptr_t)ptr) & (alignment - 1);
+  ptr = (char *)ptr + offset;
+  assert(((uintptr_t)ptr & (alignment - 1)) == 0);
+  return ptr;
 }
 
 
@@ -266,7 +312,7 @@ typedef uint32_t crypto_word_t;
 // always has the same output for a given input. This allows it to eliminate
 // dead code, move computations across loops, and vectorize.
 static inline crypto_word_t value_barrier_w(crypto_word_t a) {
-#if !defined(OPENSSL_NO_ASM) && (defined(__GNUC__) || defined(__clang__))
+#if defined(__GNUC__) || defined(__clang__)
   __asm__("" : "+r"(a) : /* no inputs */);
 #endif
   return a;
@@ -274,7 +320,7 @@ static inline crypto_word_t value_barrier_w(crypto_word_t a) {
 
 // value_barrier_u32 behaves like |value_barrier_w| but takes a |uint32_t|.
 static inline uint32_t value_barrier_u32(uint32_t a) {
-#if !defined(OPENSSL_NO_ASM) && (defined(__GNUC__) || defined(__clang__))
+#if defined(__GNUC__) || defined(__clang__)
   __asm__("" : "+r"(a) : /* no inputs */);
 #endif
   return a;
@@ -282,7 +328,7 @@ static inline uint32_t value_barrier_u32(uint32_t a) {
 
 // value_barrier_u64 behaves like |value_barrier_w| but takes a |uint64_t|.
 static inline uint64_t value_barrier_u64(uint64_t a) {
-#if !defined(OPENSSL_NO_ASM) && (defined(__GNUC__) || defined(__clang__))
+#if defined(__GNUC__) || defined(__clang__)
   __asm__("" : "+r"(a) : /* no inputs */);
 #endif
   return a;
@@ -429,19 +475,43 @@ static inline int constant_time_select_int(crypto_word_t mask, int a, int b) {
 // of memory as secret. Secret data is tracked as it flows to registers and
 // other parts of a memory. If secret data is used as a condition for a branch,
 // or as a memory index, it will trigger warnings in valgrind.
-#define CONSTTIME_SECRET(x, y) VALGRIND_MAKE_MEM_UNDEFINED(x, y)
+#define CONSTTIME_SECRET(ptr, len) VALGRIND_MAKE_MEM_UNDEFINED(ptr, len)
 
 // CONSTTIME_DECLASSIFY takes a pointer and a number of bytes and marks that
 // region of memory as public. Public data is not subject to constant-time
 // rules.
-#define CONSTTIME_DECLASSIFY(x, y) VALGRIND_MAKE_MEM_DEFINED(x, y)
+#define CONSTTIME_DECLASSIFY(ptr, len) VALGRIND_MAKE_MEM_DEFINED(ptr, len)
 
 #else
 
-#define CONSTTIME_SECRET(x, y)
-#define CONSTTIME_DECLASSIFY(x, y)
+#define CONSTTIME_SECRET(ptr, len)
+#define CONSTTIME_DECLASSIFY(ptr, len)
 
 #endif  // BORINGSSL_CONSTANT_TIME_VALIDATION
+
+static inline crypto_word_t constant_time_declassify_w(crypto_word_t v) {
+  // Return |v| through a value barrier to be safe. Valgrind-based constant-time
+  // validation is partly to check the compiler has not undone any constant-time
+  // work. Any place |BORINGSSL_CONSTANT_TIME_VALIDATION| influences
+  // optimizations, this validation is inaccurate.
+  //
+  // However, by sending pointers through valgrind, we likely inhibit escape
+  // analysis. On local variables, particularly booleans, we likely
+  // significantly impact optimizations.
+  //
+  // Thus, to be safe, stick a value barrier, in hopes of comparably inhibiting
+  // compiler analysis.
+  CONSTTIME_DECLASSIFY(&v, sizeof(v));
+  return value_barrier_w(v);
+}
+
+static inline int constant_time_declassify_int(int v) {
+  static_assert(sizeof(uint32_t) == sizeof(int),
+                "int is not the same size as uint32_t");
+  // See comment above.
+  CONSTTIME_DECLASSIFY(&v, sizeof(v));
+  return value_barrier_u32(v);
+}
 
 
 // Thread-safe initialisation.
@@ -472,8 +542,9 @@ OPENSSL_EXPORT void CRYPTO_once(CRYPTO_once_t *once, void (*init)(void));
 // Reference counting.
 
 // Automatically enable C11 atomics if implemented.
-#if !defined(OPENSSL_C11_ATOMIC) && !defined(__STDC_NO_ATOMICS__) && \
-    defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#if !defined(OPENSSL_C11_ATOMIC) && defined(OPENSSL_THREADS) &&   \
+    !defined(__STDC_NO_ATOMICS__) && defined(__STDC_VERSION__) && \
+    __STDC_VERSION__ >= 201112L
 #define OPENSSL_C11_ATOMIC
 #endif
 
@@ -615,6 +686,7 @@ typedef enum {
   OPENSSL_THREAD_LOCAL_ERR = 0,
   OPENSSL_THREAD_LOCAL_RAND,
   OPENSSL_THREAD_LOCAL_FIPS_COUNTERS,
+  OPENSSL_THREAD_LOCAL_FIPS_SERVICE_INDICATOR_STATE,
   OPENSSL_THREAD_LOCAL_TEST,
   NUM_OPENSSL_THREAD_LOCALS,
 } thread_local_data_t;
@@ -847,6 +919,16 @@ static inline void CRYPTO_store_u32_be(void *out, uint32_t v) {
   OPENSSL_memcpy(out, &v, sizeof(v));
 }
 
+static inline uint64_t CRYPTO_load_u64_le(const void *in) {
+  uint64_t v;
+  OPENSSL_memcpy(&v, in, sizeof(v));
+  return v;
+}
+
+static inline void CRYPTO_store_u64_le(void *out, uint64_t v) {
+  OPENSSL_memcpy(out, &v, sizeof(v));
+}
+
 static inline uint64_t CRYPTO_load_u64_be(const void *ptr) {
   uint64_t ret;
   OPENSSL_memcpy(&ret, ptr, sizeof(ret));
@@ -868,29 +950,362 @@ static inline void CRYPTO_store_word_le(void *out, crypto_word_t v) {
   OPENSSL_memcpy(out, &v, sizeof(v));
 }
 
+static inline crypto_word_t CRYPTO_load_word_be(const void *in) {
+  crypto_word_t v;
+  OPENSSL_memcpy(&v, in, sizeof(v));
+#if defined(OPENSSL_64_BIT)
+  static_assert(sizeof(v) == 8, "crypto_word_t has unexpected size");
+  return CRYPTO_bswap8(v);
+#else
+  static_assert(sizeof(v) == 4, "crypto_word_t has unexpected size");
+  return CRYPTO_bswap4(v);
+#endif
+}
+
+
+// Bit rotation functions.
+//
+// Note these functions use |(-shift) & 31|, etc., because shifting by the bit
+// width is undefined. Both Clang and GCC recognize this pattern as a rotation,
+// but MSVC does not. Instead, we call MSVC's built-in functions.
+
+static inline uint32_t CRYPTO_rotl_u32(uint32_t value, int shift) {
+#if defined(_MSC_VER)
+  return _rotl(value, shift);
+#else
+  return (value << shift) | (value >> ((-shift) & 31));
+#endif
+}
+
+static inline uint32_t CRYPTO_rotr_u32(uint32_t value, int shift) {
+#if defined(_MSC_VER)
+  return _rotr(value, shift);
+#else
+  return (value >> shift) | (value << ((-shift) & 31));
+#endif
+}
+
+static inline uint64_t CRYPTO_rotl_u64(uint64_t value, int shift) {
+#if defined(_MSC_VER)
+  return _rotl64(value, shift);
+#else
+  return (value << shift) | (value >> ((-shift) & 63));
+#endif
+}
+
+static inline uint64_t CRYPTO_rotr_u64(uint64_t value, int shift) {
+#if defined(_MSC_VER)
+  return _rotr64(value, shift);
+#else
+  return (value >> shift) | (value << ((-shift) & 63));
+#endif
+}
+
 
 // FIPS functions.
 
 #if defined(BORINGSSL_FIPS)
+
 // BORINGSSL_FIPS_abort is called when a FIPS power-on or continuous test
 // fails. It prevents any further cryptographic operations by the current
 // process.
 void BORINGSSL_FIPS_abort(void) __attribute__((noreturn));
-#endif
 
-// boringssl_fips_self_test runs the FIPS KAT-based self tests. It returns one
-// on success and zero on error. The argument is the integrity hash of the FIPS
-// module and may be used to check and write flag files to suppress duplicate
-// self-tests. If |module_hash_len| is zero then no flag file will be checked
-// nor written and tests will always be run.
-int boringssl_fips_self_test(const uint8_t *module_hash,
-                             size_t module_hash_len);
+// boringssl_self_test_startup runs all startup self tests and returns one on
+// success or zero on error. Startup self tests do not include lazy tests.
+// Call |BORINGSSL_self_test| to run every self test.
+int boringssl_self_test_startup(void);
+
+// boringssl_ensure_rsa_self_test checks whether the RSA self-test has been run
+// in this address space. If not, it runs it and crashes the address space if
+// unsuccessful.
+void boringssl_ensure_rsa_self_test(void);
+
+// boringssl_ensure_ecc_self_test checks whether the ECDSA and ECDH self-test
+// has been run in this address space. If not, it runs it and crashes the
+// address space if unsuccessful.
+void boringssl_ensure_ecc_self_test(void);
+
+// boringssl_ensure_ffdh_self_test checks whether the FFDH self-test has been
+// run in this address space. If not, it runs it and crashes the address space
+// if unsuccessful.
+void boringssl_ensure_ffdh_self_test(void);
+
+#else
+
+// Outside of FIPS mode, the lazy tests are no-ops.
+
+OPENSSL_INLINE void boringssl_ensure_rsa_self_test(void) {}
+OPENSSL_INLINE void boringssl_ensure_ecc_self_test(void) {}
+OPENSSL_INLINE void boringssl_ensure_ffdh_self_test(void) {}
+
+#endif  // FIPS
+
+// boringssl_self_test_sha256 performs a SHA-256 KAT.
+int boringssl_self_test_sha256(void);
+
+// boringssl_self_test_sha512 performs a SHA-512 KAT.
+int boringssl_self_test_sha512(void);
+
+// boringssl_self_test_hmac_sha256 performs an HMAC-SHA-256 KAT.
+int boringssl_self_test_hmac_sha256(void);
 
 #if defined(BORINGSSL_FIPS_COUNTERS)
 void boringssl_fips_inc_counter(enum fips_counter_t counter);
 #else
 OPENSSL_INLINE void boringssl_fips_inc_counter(enum fips_counter_t counter) {}
 #endif
+
+#if defined(BORINGSSL_FIPS_BREAK_TESTS)
+OPENSSL_INLINE int boringssl_fips_break_test(const char *test) {
+  const char *const value = getenv("BORINGSSL_FIPS_BREAK_TEST");
+  return value != NULL && strcmp(value, test) == 0;
+}
+#else
+OPENSSL_INLINE int boringssl_fips_break_test(const char *test) {
+  return 0;
+}
+#endif  // BORINGSSL_FIPS_BREAK_TESTS
+
+
+// Runtime CPU feature support
+
+#if defined(OPENSSL_X86) || defined(OPENSSL_X86_64)
+// OPENSSL_ia32cap_P contains the Intel CPUID bits when running on an x86 or
+// x86-64 system.
+//
+//   Index 0:
+//     EDX for CPUID where EAX = 1
+//     Bit 20 is always zero
+//     Bit 28 is adjusted to reflect whether the data cache is shared between
+//       multiple logical cores
+//     Bit 30 is used to indicate an Intel CPU
+//   Index 1:
+//     ECX for CPUID where EAX = 1
+//     Bit 11 is used to indicate AMD XOP support, not SDBG
+//   Index 2:
+//     EBX for CPUID where EAX = 7
+//   Index 3:
+//     ECX for CPUID where EAX = 7
+//
+// Note: the CPUID bits are pre-adjusted for the OSXSAVE bit and the YMM and XMM
+// bits in XCR0, so it is not necessary to check those.
+extern uint32_t OPENSSL_ia32cap_P[4];
+
+#if defined(BORINGSSL_FIPS) && !defined(BORINGSSL_SHARED_LIBRARY)
+// The FIPS module, as a static library, requires an out-of-line version of
+// |OPENSSL_ia32cap_get| so accesses can be rewritten by delocate. Mark the
+// function const so multiple accesses can be optimized together.
+const uint32_t *OPENSSL_ia32cap_get(void) __attribute__((const));
+#else
+OPENSSL_INLINE const uint32_t *OPENSSL_ia32cap_get(void) {
+  return OPENSSL_ia32cap_P;
+}
+#endif
+
+// See Intel manual, volume 2A, table 3-11.
+
+OPENSSL_INLINE int CRYPTO_is_FXSR_capable(void) {
+#if defined(__FXSR__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_get()[0] & (1 << 24)) != 0;
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_intel_cpu(void) {
+  // The reserved bit 30 is used to indicate an Intel CPU.
+  return (OPENSSL_ia32cap_get()[0] & (1 << 30)) != 0;
+}
+
+// See Intel manual, volume 2A, table 3-10.
+
+OPENSSL_INLINE int CRYPTO_is_PCLMUL_capable(void) {
+#if defined(__PCLMUL__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_get()[1] & (1 << 1)) != 0;
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_SSSE3_capable(void) {
+#if defined(__SSSE3__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_get()[1] & (1 << 9)) != 0;
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_SSE4_1_capable(void) {
+#if defined(__SSE4_1__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_P[1] & (1 << 19)) != 0;
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_MOVBE_capable(void) {
+#if defined(__MOVBE__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_get()[1] & (1 << 22)) != 0;
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_AESNI_capable(void) {
+#if defined(__AES__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_get()[1] & (1 << 25)) != 0;
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_AVX_capable(void) {
+#if defined(__AVX__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_get()[1] & (1 << 28)) != 0;
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_RDRAND_capable(void) {
+  // The GCC/Clang feature name and preprocessor symbol for RDRAND are "rdrnd"
+  // and |__RDRND__|, respectively.
+#if defined(__RDRND__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_get()[1] & (1u << 30)) != 0;
+#endif
+}
+
+// See Intel manual, volume 2A, table 3-8.
+
+OPENSSL_INLINE int CRYPTO_is_BMI1_capable(void) {
+#if defined(__BMI1__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_get()[2] & (1 << 3)) != 0;
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_AVX2_capable(void) {
+#if defined(__AVX2__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_get()[2] & (1 << 5)) != 0;
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_BMI2_capable(void) {
+#if defined(__BMI2__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_get()[2] & (1 << 8)) != 0;
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_ADX_capable(void) {
+#if defined(__ADX__)
+  return 1;
+#else
+  return (OPENSSL_ia32cap_get()[2] & (1 << 19)) != 0;
+#endif
+}
+
+#endif  // OPENSSL_X86 || OPENSSL_X86_64
+
+#if defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)
+
+#if defined(OPENSSL_APPLE) && defined(OPENSSL_ARM)
+// We do not detect any features at runtime for Apple's 32-bit ARM platforms. On
+// 64-bit ARM, we detect some post-ARMv8.0 features.
+#define OPENSSL_STATIC_ARMCAP
+#endif
+
+// Normalize some older feature flags to their modern ACLE values.
+// https://developer.arm.com/architectures/system-architectures/software-standards/acle
+#if defined(__ARM_NEON__) && !defined(__ARM_NEON)
+#define __ARM_NEON 1
+#endif
+#if defined(__ARM_FEATURE_CRYPTO)
+#if !defined(__ARM_FEATURE_AES)
+#define __ARM_FEATURE_AES 1
+#endif
+#if !defined(__ARM_FEATURE_SHA2)
+#define __ARM_FEATURE_SHA2 1
+#endif
+#endif
+
+#if !defined(OPENSSL_STATIC_ARMCAP)
+// CRYPTO_is_NEON_capable_at_runtime returns true if the current CPU has a NEON
+// unit. Note that |OPENSSL_armcap_P| also exists and contains the same
+// information in a form that's easier for assembly to use.
+OPENSSL_EXPORT int CRYPTO_is_NEON_capable_at_runtime(void);
+
+// CRYPTO_is_ARMv8_AES_capable_at_runtime returns true if the current CPU
+// supports the ARMv8 AES instruction.
+int CRYPTO_is_ARMv8_AES_capable_at_runtime(void);
+
+// CRYPTO_is_ARMv8_PMULL_capable_at_runtime returns true if the current CPU
+// supports the ARMv8 PMULL instruction.
+int CRYPTO_is_ARMv8_PMULL_capable_at_runtime(void);
+#endif  // !OPENSSL_STATIC_ARMCAP
+
+// CRYPTO_is_NEON_capable returns true if the current CPU has a NEON unit. If
+// this is known statically, it is a constant inline function.
+OPENSSL_INLINE int CRYPTO_is_NEON_capable(void) {
+#if defined(OPENSSL_STATIC_ARMCAP_NEON) || defined(__ARM_NEON)
+  return 1;
+#elif defined(OPENSSL_STATIC_ARMCAP)
+  return 0;
+#else
+  return CRYPTO_is_NEON_capable_at_runtime();
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_ARMv8_AES_capable(void) {
+#if defined(OPENSSL_STATIC_ARMCAP_AES) || defined(__ARM_FEATURE_AES)
+  return 1;
+#elif defined(OPENSSL_STATIC_ARMCAP)
+  return 0;
+#else
+  return CRYPTO_is_ARMv8_AES_capable_at_runtime();
+#endif
+}
+
+OPENSSL_INLINE int CRYPTO_is_ARMv8_PMULL_capable(void) {
+#if defined(OPENSSL_STATIC_ARMCAP_PMULL) || defined(__ARM_FEATURE_AES)
+  return 1;
+#elif defined(OPENSSL_STATIC_ARMCAP)
+  return 0;
+#else
+  return CRYPTO_is_ARMv8_PMULL_capable_at_runtime();
+#endif
+}
+
+#endif  // OPENSSL_ARM || OPENSSL_AARCH64
+
+#if defined(BORINGSSL_DISPATCH_TEST)
+// Runtime CPU dispatch testing support
+
+// BORINGSSL_function_hit is an array of flags. The following functions will
+// set these flags if BORINGSSL_DISPATCH_TEST is defined.
+//   0: aes_hw_ctr32_encrypt_blocks
+//   1: aes_hw_encrypt
+//   2: aesni_gcm_encrypt
+//   3: aes_hw_set_encrypt_key
+//   4: vpaes_encrypt
+//   5: vpaes_set_encrypt_key
+extern uint8_t BORINGSSL_function_hit[7];
+#endif  // BORINGSSL_DISPATCH_TEST
+
+// OPENSSL_vasprintf_internal is just like |vasprintf(3)|. If |system_malloc| is
+// 0, memory will be allocated with |OPENSSL_malloc| and must be freed with
+// |OPENSSL_free|. Otherwise the system |malloc| function is used and the memory
+// must be freed with the system |free| function.
+OPENSSL_EXPORT int OPENSSL_vasprintf_internal(char **str, const char *format,
+                                              va_list args, int system_malloc)
+    OPENSSL_PRINTF_FORMAT_FUNC(2, 0);
 
 #if defined(__cplusplus)
 }  // extern C

@@ -1351,6 +1351,58 @@ std::ostream &operator<<(std::ostream &os, PointParameter value)
 }
 
 template <>
+PolygonMode FromGLenum<PolygonMode>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_POINT_NV:
+            return PolygonMode::Point;
+        case GL_LINE_NV:
+            return PolygonMode::Line;
+        case GL_FILL_NV:
+            return PolygonMode::Fill;
+        default:
+            return PolygonMode::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(PolygonMode from)
+{
+    switch (from)
+    {
+        case PolygonMode::Point:
+            return GL_POINT_NV;
+        case PolygonMode::Line:
+            return GL_LINE_NV;
+        case PolygonMode::Fill:
+            return GL_FILL_NV;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, PolygonMode value)
+{
+    switch (value)
+    {
+        case PolygonMode::Point:
+            os << "GL_POINT_NV";
+            break;
+        case PolygonMode::Line:
+            os << "GL_LINE_NV";
+            break;
+        case PolygonMode::Fill:
+            os << "GL_FILL_NV";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 ProvokingVertexConvention FromGLenum<ProvokingVertexConvention>(GLenum from)
 {
     switch (from)

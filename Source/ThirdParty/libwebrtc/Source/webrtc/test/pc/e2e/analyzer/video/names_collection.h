@@ -44,6 +44,9 @@ class NamesCollection {
   // Returns amount of currently presented names in the collection.
   size_t size() const { return size_; }
 
+  // Returns amount of all names known to this collection.
+  size_t GetKnownSize() const { return names_.size(); }
+
   // Returns index of the `name` which was known to the collection. Crashes
   // if `name` was never registered in the collection.
   size_t index(absl::string_view name) const { return index_.at(name); }

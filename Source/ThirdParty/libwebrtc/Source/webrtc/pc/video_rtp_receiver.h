@@ -92,7 +92,7 @@ class VideoRtpReceiver : public RtpReceiverInternal {
   void Stop() override;
   void SetupMediaChannel(uint32_t ssrc) override;
   void SetupUnsignaledMediaChannel() override;
-  uint32_t ssrc() const override;
+  absl::optional<uint32_t> ssrc() const override;
   void NotifyFirstPacketReceived() override;
   void set_stream_ids(std::vector<std::string> stream_ids) override;
   void set_transport(
@@ -105,7 +105,8 @@ class VideoRtpReceiver : public RtpReceiverInternal {
   void SetJitterBufferMinimumDelay(
       absl::optional<double> delay_seconds) override;
 
-  void SetMediaChannel(cricket::MediaChannel* media_channel) override;
+  void SetMediaChannel(
+      cricket::MediaReceiveChannelInterface* media_channel) override;
 
   int AttachmentId() const override { return attachment_id_; }
 
@@ -114,7 +115,7 @@ class VideoRtpReceiver : public RtpReceiverInternal {
   // Combines SetMediaChannel, SetupMediaChannel and
   // SetupUnsignaledMediaChannel.
   void SetupMediaChannel(absl::optional<uint32_t> ssrc,
-                         cricket::MediaChannel* media_channel);
+                         cricket::MediaReceiveChannelInterface* media_channel);
 
  private:
   void RestartMediaChannel(absl::optional<uint32_t> ssrc)
@@ -124,7 +125,7 @@ class VideoRtpReceiver : public RtpReceiverInternal {
       RTC_RUN_ON(worker_thread_);
   void SetSink(rtc::VideoSinkInterface<VideoFrame>* sink)
       RTC_RUN_ON(worker_thread_);
-  void SetMediaChannel_w(cricket::MediaChannel* media_channel)
+  void SetMediaChannel_w(cricket::MediaReceiveChannelInterface* media_channel)
       RTC_RUN_ON(worker_thread_);
 
   // VideoRtpTrackSource::Callback
@@ -151,9 +152,9 @@ class VideoRtpReceiver : public RtpReceiverInternal {
   rtc::Thread* const worker_thread_;
 
   const std::string id_;
-  cricket::VideoMediaChannel* media_channel_ RTC_GUARDED_BY(worker_thread_) =
-      nullptr;
-  absl::optional<uint32_t> ssrc_ RTC_GUARDED_BY(worker_thread_);
+  cricket::VideoMediaReceiveChannelInterface* media_channel_
+      RTC_GUARDED_BY(worker_thread_) = nullptr;
+  absl::optional<uint32_t> signaled_ssrc_ RTC_GUARDED_BY(worker_thread_);
   // `source_` is held here to be able to change the state of the source when
   // the VideoRtpReceiver is stopped.
   const rtc::scoped_refptr<VideoRtpTrackSource> source_;

@@ -32,10 +32,6 @@
 #include "av1/encoder/picklpf.h"
 #include "av1/encoder/pickrst.h"
 
-// When set to RESTORE_WIENER or RESTORE_SGRPROJ only those are allowed.
-// When set to RESTORE_TYPES we allow switchable.
-static const RestorationType force_restore_type = RESTORE_TYPES;
-
 // Number of Wiener iterations
 #define NUM_WIENER_ITERS 5
 
@@ -148,7 +144,12 @@ typedef struct {
   // tile in the frame.
   SgrprojInfo sgrproj;
   WienerInfo wiener;
-  AV1PixelRect tile_rect;
+  PixelRect tile_rect;
+
+  // Buffers used to hold dgd-avg and src-avg data respectively during SIMD
+  // call of Wiener filter.
+  int16_t *dgd_avg;
+  int16_t *src_avg;
 } RestSearchCtxt;
 
 static AOM_INLINE void rsc_on_tile(void *priv) {
@@ -191,7 +192,7 @@ static AOM_INLINE void init_rsc(const YV12_BUFFER_CONFIG *src,
 
 static int64_t try_restoration_unit(const RestSearchCtxt *rsc,
                                     const RestorationTileLimits *limits,
-                                    const AV1PixelRect *tile_rect,
+                                    const PixelRect *tile_rect,
                                     const RestorationUnitInfo *rui) {
   const AV1_COMMON *const cm = rsc->cm;
   const int plane = rsc->plane;
@@ -873,9 +874,8 @@ static int count_sgrproj_bits(SgrprojInfo *sgrproj_info,
 }
 
 static AOM_INLINE void search_sgrproj(const RestorationTileLimits *limits,
-                                      const AV1PixelRect *tile,
-                                      int rest_unit_idx, void *priv,
-                                      int32_t *tmpbuf,
+                                      const PixelRect *tile, int rest_unit_idx,
+                                      void *priv, int32_t *tmpbuf,
                                       RestorationLineBuffers *rlbs) {
   (void)rlbs;
   RestSearchCtxt *rsc = (RestSearchCtxt *)priv;
@@ -939,10 +939,11 @@ static AOM_INLINE void search_sgrproj(const RestorationTileLimits *limits,
   if (cost_sgr < cost_none) rsc->sgrproj = rusi->sgrproj;
 }
 
-void acc_stat_one_line(const uint8_t *dgd, const uint8_t *src, int dgd_stride,
-                       int h_start, int h_end, uint8_t avg,
-                       const int wiener_halfwin, const int wiener_win2,
-                       int32_t *M_int32, int32_t *H_int32, int count) {
+static void acc_stat_one_line(const uint8_t *dgd, const uint8_t *src,
+                              int dgd_stride, int h_start, int h_end,
+                              uint8_t avg, const int wiener_halfwin,
+                              const int wiener_win2, int32_t *M_int32,
+                              int32_t *H_int32, int count) {
   int j, k, l;
   int16_t Y[WIENER_WIN2];
 
@@ -970,9 +971,12 @@ void acc_stat_one_line(const uint8_t *dgd, const uint8_t *src, int dgd_stride,
 }
 
 void av1_compute_stats_c(int wiener_win, const uint8_t *dgd, const uint8_t *src,
-                         int h_start, int h_end, int v_start, int v_end,
-                         int dgd_stride, int src_stride, int64_t *M, int64_t *H,
+                         int16_t *dgd_avg, int16_t *src_avg, int h_start,
+                         int h_end, int v_start, int v_end, int dgd_stride,
+                         int src_stride, int64_t *M, int64_t *H,
                          int use_downsampled_wiener_stats) {
+  (void)dgd_avg;
+  (void)src_avg;
   int i, k, l;
   const int wiener_win2 = wiener_win * wiener_win;
   const int wiener_halfwin = (wiener_win >> 1);
@@ -1097,15 +1101,41 @@ static int linsolve_wiener(int n, int64_t *A, int stride, int64_t *b,
         b[i - 1] = c;
       }
     }
+
+    // b/278065963: The multiplies
+    //   c / 256 * A[k * stride + j] / cd * 256
+    // and
+    //   c / 256 * b[k] / cd * 256
+    // within Gaussian elimination can cause a signed integer overflow. Rework
+    // the multiplies so that larger scaling is used without significantly
+    // impacting the overall precision.
+    //
+    // Precision guidance:
+    //   scale_threshold: Pick as high as possible.
+    // For max_abs_akj >= scale_threshold scenario:
+    //   scaler_A: Pick as low as possible. Needed for A[(i + 1) * stride + j].
+    //   scaler_c: Pick as low as possible while maintaining scaler_c >=
+    //     (1 << 7). Needed for A[(i + 1) * stride + j] and b[i + 1].
+    int64_t max_abs_akj = 0;
+    for (int j = 0; j < n; j++) {
+      const int64_t abs_akj = llabs(A[k * stride + j]);
+      if (abs_akj > max_abs_akj) max_abs_akj = abs_akj;
+    }
+    const int scale_threshold = 1 << 22;
+    const int scaler_A = max_abs_akj < scale_threshold ? 1 : (1 << 4);
+    const int scaler_c = max_abs_akj < scale_threshold ? 1 : (1 << 7);
+    const int scaler = scaler_c * scaler_A;
+
     // Forward elimination (convert A to row-echelon form)
     for (int i = k; i < n - 1; i++) {
       if (A[k * stride + k] == 0) return 0;
-      const int64_t c = A[(i + 1) * stride + k];
+      const int64_t c = A[(i + 1) * stride + k] / scaler_c;
       const int64_t cd = A[k * stride + k];
       for (int j = 0; j < n; j++) {
-        A[(i + 1) * stride + j] -= c / 256 * A[k * stride + j] / cd * 256;
+        A[(i + 1) * stride + j] -=
+            A[k * stride + j] / scaler_A * c / cd * scaler;
       }
-      b[i + 1] -= c * b[k] / cd;
+      b[i + 1] -= c * b[k] / cd * scaler_c;
     }
   }
   // Back-substitution
@@ -1138,16 +1168,28 @@ static AOM_INLINE void update_a_sep_sym(int wiener_win, int64_t **Mc,
       A[jj] += Mc[i][j] * b[i] / WIENER_TAP_SCALE_FACTOR;
     }
   }
+
+  // b/274668506: This is the dual branch for the issue in b/272139363. The fix
+  // is similar. See comments in update_b_sep_sym() below.
+  int32_t max_b_l = 0;
+  for (int l = 0; l < wiener_win; ++l) {
+    const int32_t abs_b_l = abs(b[l]);
+    if (abs_b_l > max_b_l) max_b_l = abs_b_l;
+  }
+  const int scale_threshold = 128 * WIENER_TAP_SCALE_FACTOR;
+  const int scaler = max_b_l < scale_threshold ? 1 : 4;
+
   for (i = 0; i < wiener_win; i++) {
     for (j = 0; j < wiener_win; j++) {
       int k, l;
       for (k = 0; k < wiener_win; ++k) {
+        const int kk = wrap_index(k, wiener_win);
         for (l = 0; l < wiener_win; ++l) {
-          const int kk = wrap_index(k, wiener_win);
           const int ll = wrap_index(l, wiener_win);
           B[ll * wiener_halfwin1 + kk] +=
               Hc[j * wiener_win + i][k * wiener_win2 + l] * b[i] /
-              WIENER_TAP_SCALE_FACTOR * b[j] / WIENER_TAP_SCALE_FACTOR;
+              (scaler * WIENER_TAP_SCALE_FACTOR) * b[j] /
+              (WIENER_TAP_SCALE_FACTOR / scaler);
         }
       }
     }
@@ -1198,16 +1240,43 @@ static AOM_INLINE void update_b_sep_sym(int wiener_win, int64_t **Mc,
     }
   }
 
+  // b/272139363: The computation,
+  //   Hc[i * wiener_win + j][k * wiener_win2 + l] * a[k] /
+  //          WIENER_TAP_SCALE_FACTOR * a[l] / WIENER_TAP_SCALE_FACTOR;
+  // may generate a signed-integer-overflow. Conditionally scale the terms to
+  // avoid a potential overflow.
+  //
+  // Hc contains accumulated correlation statistics and it is desired to leave
+  // as much room as possible for Hc. It was experimentally observed that the
+  // primary issue manifests itself with the second, a[l], multiply. For
+  // max_a_l < WIENER_TAP_SCALE_FACTOR the first multiply with a[k] should not
+  // increase dynamic range and the second multiply should hence be safe.
+  // Thereafter a safe scale_threshold depends on the actual operational range
+  // of Hc. The largest scale_threshold is expected to depend on bit-depth
+  // (av1_compute_stats_highbd_c() scales highbd to 8-bit) and maximum
+  // restoration-unit size (256), leading up to 32-bit positive numbers in Hc.
+  // Noting that the caller, wiener_decompose_sep_sym(), initializes a[...]
+  // to a range smaller than 16 bits, the scale_threshold is set as below for
+  // convenience.
+  int32_t max_a_l = 0;
+  for (int l = 0; l < wiener_win; ++l) {
+    const int32_t abs_a_l = abs(a[l]);
+    if (abs_a_l > max_a_l) max_a_l = abs_a_l;
+  }
+  const int scale_threshold = 128 * WIENER_TAP_SCALE_FACTOR;
+  const int scaler = max_a_l < scale_threshold ? 1 : 4;
+
   for (i = 0; i < wiener_win; i++) {
+    const int ii = wrap_index(i, wiener_win);
     for (j = 0; j < wiener_win; j++) {
-      const int ii = wrap_index(i, wiener_win);
       const int jj = wrap_index(j, wiener_win);
       int k, l;
       for (k = 0; k < wiener_win; ++k) {
         for (l = 0; l < wiener_win; ++l) {
           B[jj * wiener_halfwin1 + ii] +=
               Hc[i * wiener_win + j][k * wiener_win2 + l] * a[k] /
-              WIENER_TAP_SCALE_FACTOR * a[l] / WIENER_TAP_SCALE_FACTOR;
+              (scaler * WIENER_TAP_SCALE_FACTOR) * a[l] /
+              (WIENER_TAP_SCALE_FACTOR / scaler);
         }
       }
     }
@@ -1386,15 +1455,17 @@ static int count_wiener_bits(int wiener_win, WienerInfo *wiener_info,
   return bits;
 }
 
-#define USE_WIENER_REFINEMENT_SEARCH 1
 static int64_t finer_tile_search_wiener(const RestSearchCtxt *rsc,
                                         const RestorationTileLimits *limits,
-                                        const AV1PixelRect *tile,
+                                        const PixelRect *tile,
                                         RestorationUnitInfo *rui,
                                         int wiener_win) {
   const int plane_off = (WIENER_WIN - wiener_win) >> 1;
   int64_t err = try_restoration_unit(rsc, limits, tile, rui);
-#if USE_WIENER_REFINEMENT_SEARCH
+
+  if (rsc->lpf_sf->disable_wiener_coeff_refine_search) return err;
+
+  // Refinement search around the wiener filter coefficients.
   int64_t err2;
   int tap_min[] = { WIENER_FILT_TAP0_MINV, WIENER_FILT_TAP1_MINV,
                     WIENER_FILT_TAP2_MINV };
@@ -1490,12 +1561,11 @@ static int64_t finer_tile_search_wiener(const RestSearchCtxt *rsc,
     }
   }
   // printf("err post = %"PRId64"\n", err);
-#endif  // USE_WIENER_REFINEMENT_SEARCH
   return err;
 }
 
 static AOM_INLINE void search_wiener(const RestorationTileLimits *limits,
-                                     const AV1PixelRect *tile_rect,
+                                     const PixelRect *tile_rect,
                                      int rest_unit_idx, void *priv,
                                      int32_t *tmpbuf,
                                      RestorationLineBuffers *rlbs) {
@@ -1550,21 +1620,24 @@ static AOM_INLINE void search_wiener(const RestorationTileLimits *limits,
   const AV1_COMMON *const cm = rsc->cm;
   if (cm->seq_params->use_highbitdepth) {
     // TODO(any) : Add support for use_downsampled_wiener_stats SF in HBD
-    // functions
+    // functions. Optimize intrinsics of HBD design similar to LBD (i.e.,
+    // pre-calculate d and s buffers and avoid most of the C operations).
     av1_compute_stats_highbd(reduced_wiener_win, rsc->dgd_buffer,
                              rsc->src_buffer, limits->h_start, limits->h_end,
                              limits->v_start, limits->v_end, rsc->dgd_stride,
                              rsc->src_stride, M, H, cm->seq_params->bit_depth);
   } else {
     av1_compute_stats(reduced_wiener_win, rsc->dgd_buffer, rsc->src_buffer,
-                      limits->h_start, limits->h_end, limits->v_start,
-                      limits->v_end, rsc->dgd_stride, rsc->src_stride, M, H,
+                      rsc->dgd_avg, rsc->src_avg, limits->h_start,
+                      limits->h_end, limits->v_start, limits->v_end,
+                      rsc->dgd_stride, rsc->src_stride, M, H,
                       rsc->lpf_sf->use_downsampled_wiener_stats);
   }
 #else
   av1_compute_stats(reduced_wiener_win, rsc->dgd_buffer, rsc->src_buffer,
-                    limits->h_start, limits->h_end, limits->v_start,
-                    limits->v_end, rsc->dgd_stride, rsc->src_stride, M, H,
+                    rsc->dgd_avg, rsc->src_avg, limits->h_start, limits->h_end,
+                    limits->v_start, limits->v_end, rsc->dgd_stride,
+                    rsc->src_stride, M, H,
                     rsc->lpf_sf->use_downsampled_wiener_stats);
 #endif
 
@@ -1630,7 +1703,7 @@ static AOM_INLINE void search_wiener(const RestorationTileLimits *limits,
 }
 
 static AOM_INLINE void search_norestore(const RestorationTileLimits *limits,
-                                        const AV1PixelRect *tile_rect,
+                                        const PixelRect *tile_rect,
                                         int rest_unit_idx, void *priv,
                                         int32_t *tmpbuf,
                                         RestorationLineBuffers *rlbs) {
@@ -1649,7 +1722,7 @@ static AOM_INLINE void search_norestore(const RestorationTileLimits *limits,
 }
 
 static AOM_INLINE void search_switchable(const RestorationTileLimits *limits,
-                                         const AV1PixelRect *tile_rect,
+                                         const PixelRect *tile_rect,
                                          int rest_unit_idx, void *priv,
                                          int32_t *tmpbuf,
                                          RestorationLineBuffers *rlbs) {
@@ -1742,6 +1815,24 @@ static int rest_tiles_in_plane(const AV1_COMMON *cm, int plane) {
   return rsi->units_per_tile;
 }
 
+static INLINE void av1_derive_flags_for_lr_processing(
+    const LOOP_FILTER_SPEED_FEATURES *lpf_sf, bool *disable_lr_filter) {
+  const bool is_wiener_disabled = lpf_sf->disable_wiener_filter;
+  const bool is_sgr_disabled = lpf_sf->disable_sgr_filter;
+
+  // Enable None Loop restoration filter if either of Wiener or Self-guided is
+  // enabled.
+  disable_lr_filter[RESTORE_NONE] = (is_wiener_disabled && is_sgr_disabled);
+
+  disable_lr_filter[RESTORE_WIENER] = is_wiener_disabled;
+  disable_lr_filter[RESTORE_SGRPROJ] = is_sgr_disabled;
+
+  // Enable Swicthable Loop restoration filter if both of the Wiener and
+  // Self-guided are enabled.
+  disable_lr_filter[RESTORE_SWITCHABLE] =
+      (is_wiener_disabled || is_sgr_disabled);
+}
+
 void av1_pick_filter_restoration(const YV12_BUFFER_CONFIG *src, AV1_COMP *cpi) {
   AV1_COMMON *const cm = &cpi->common;
   MACROBLOCK *const x = &cpi->td.mb;
@@ -1781,11 +1872,50 @@ void av1_pick_filter_restoration(const YV12_BUFFER_CONFIG *src, AV1_COMP *cpi) {
                        "Failed to allocate trial restored frame buffer");
 
   RestSearchCtxt rsc;
+
+  // The buffers 'src_avg' and 'dgd_avg' are used to compute H and M buffers.
+  // These buffers are required for AVX2 SIMD purpose only. Hence, allocated the
+  // same if AVX2 variant of SIMD for av1_compute_stats() is enabled. The buffer
+  // size required is calculated based on maximum width and height of the LRU
+  // (i.e., from foreach_rest_unit_in_tile() 1.5 times the
+  // RESTORATION_UNITSIZE_MAX) allowed for Wiener filtering. The width and
+  // height aligned to multiple of 16 is considered for intrinsic purpose.
+  rsc.dgd_avg = NULL;
+  rsc.src_avg = NULL;
+#if HAVE_AVX2
+  // The buffers allocated below are used during Wiener filter processing of low
+  // bitdepth path. Hence, allocate the same when Wiener filter is enabled in
+  // low bitdepth path.
+  if (!cpi->sf.lpf_sf.disable_wiener_filter &&
+      !cm->seq_params->use_highbitdepth) {
+    const int buf_size = sizeof(*rsc.dgd_avg) * 6 * RESTORATION_UNITSIZE_MAX *
+                         RESTORATION_UNITSIZE_MAX;
+    CHECK_MEM_ERROR(cm, rsc.dgd_avg, (int16_t *)aom_memalign(32, buf_size));
+
+    // When LRU width isn't multiple of 16, the 256 bits load instruction used
+    // in AVX2 intrinsic can read data beyond valid LRU. Hence, in order to
+    // silence Valgrind warning this buffer is initialized with zero. Overhead
+    // due to this initialization is negligible since it is done at frame level.
+    memset(rsc.dgd_avg, 0, buf_size);
+    rsc.src_avg =
+        rsc.dgd_avg + 3 * RESTORATION_UNITSIZE_MAX * RESTORATION_UNITSIZE_MAX;
+    // Asserts the starting address of src_avg is always 32-bytes aligned.
+    assert(!((intptr_t)rsc.src_avg % 32));
+  }
+#endif
+
   const int plane_start = AOM_PLANE_Y;
   const int plane_end = num_planes > 1 ? AOM_PLANE_V : AOM_PLANE_Y;
+
+  // Derive the flags to enable/disable Loop restoration filters based on the
+  // speed features 'disable_wiener_filter' and 'disable_sgr_filter'.
+  bool disable_lr_filter[RESTORE_TYPES] = { false };
+  const LOOP_FILTER_SPEED_FEATURES *lpf_sf = &cpi->sf.lpf_sf;
+  av1_derive_flags_for_lr_processing(lpf_sf, disable_lr_filter);
+
   for (int plane = plane_start; plane <= plane_end; ++plane) {
-    init_rsc(src, &cpi->common, x, &cpi->sf.lpf_sf, plane, rusi,
-             &cpi->trial_frame_rst, &rsc);
+    init_rsc(src, &cpi->common, x, lpf_sf, plane, rusi, &cpi->trial_frame_rst,
+             &rsc);
 
     const int plane_ntiles = ntiles[plane > 0];
     const RestorationType num_rtypes =
@@ -1795,16 +1925,16 @@ void av1_pick_filter_restoration(const YV12_BUFFER_CONFIG *src, AV1_COMP *cpi) {
     RestorationType best_rtype = RESTORE_NONE;
 
     const int highbd = rsc.cm->seq_params->use_highbitdepth;
-    if ((plane && !cpi->sf.lpf_sf.disable_loop_restoration_chroma) ||
-        (!plane && !cpi->sf.lpf_sf.disable_loop_restoration_luma)) {
+    if ((plane && !lpf_sf->disable_loop_restoration_chroma) ||
+        (!plane && !lpf_sf->disable_loop_restoration_luma)) {
       av1_extend_frame(rsc.dgd_buffer, rsc.plane_width, rsc.plane_height,
                        rsc.dgd_stride, RESTORATION_BORDER, RESTORATION_BORDER,
                        highbd);
 
       for (RestorationType r = 0; r < num_rtypes; ++r) {
-        if ((force_restore_type != RESTORE_TYPES) && (r != RESTORE_NONE) &&
-            (r != force_restore_type))
-          continue;
+        // Disable Loop restoration filter based on the flags set using speed
+        // feature 'disable_wiener_filter' and 'disable_sgr_filter'.
+        if (disable_lr_filter[r]) continue;
 
         double cost = search_rest_type(&rsc, r);
 
@@ -1816,15 +1946,17 @@ void av1_pick_filter_restoration(const YV12_BUFFER_CONFIG *src, AV1_COMP *cpi) {
     }
 
     cm->rst_info[plane].frame_restoration_type = best_rtype;
-    if (force_restore_type != RESTORE_TYPES)
-      assert(best_rtype == force_restore_type || best_rtype == RESTORE_NONE);
-
     if (best_rtype != RESTORE_NONE) {
       for (int u = 0; u < plane_ntiles; ++u) {
         copy_unit_info(best_rtype, &rusi[u], &cm->rst_info[plane].unit_info[u]);
       }
     }
   }
-
+#if HAVE_AVX2
+  if (!cpi->sf.lpf_sf.disable_wiener_filter &&
+      !cm->seq_params->use_highbitdepth) {
+    aom_free(rsc.dgd_avg);
+  }
+#endif
   aom_free(rusi);
 }

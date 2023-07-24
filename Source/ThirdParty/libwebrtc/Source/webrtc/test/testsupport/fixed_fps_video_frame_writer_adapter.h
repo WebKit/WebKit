@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "absl/types/optional.h"
+#include "api/test/video/video_frame_writer.h"
 #include "api/video/video_sink_interface.h"
 #include "system_wrappers/include/clock.h"
 #include "test/testsupport/video_frame_writer.h"

@@ -50,7 +50,7 @@ public:
 
     SVGPathByteStream() { }
 
-    SVGPathByteStream(const String& string)
+    SVGPathByteStream(StringView string)
     {
         buildSVGPathByteStreamFromString(string, *this, UnalteredParsing);
     }

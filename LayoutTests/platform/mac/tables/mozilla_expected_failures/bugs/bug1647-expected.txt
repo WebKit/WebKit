@@ -36,10 +36,10 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (0,0) size 446x173
               RenderBR {BR} at (446,159) size 0x18
 layer at (160,16) size 3x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,8) size 3x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,8) size 3x2 [color=#808080] [border: (1px inset #808080)]
 layer at (163,16) size 91x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,8) size 91x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,8) size 91x2 [color=#808080] [border: (1px inset #808080)]
 layer at (163,52) size 91x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,44) size 91x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,44) size 91x2 [color=#808080] [border: (1px inset #808080)]
 layer at (163,88) size 91x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,80) size 91x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,80) size 91x2 [color=#808080] [border: (1px inset #808080)]

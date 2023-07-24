@@ -76,7 +76,6 @@ static int pkcs12_encode_password(const char *in, size_t in_len, uint8_t **out,
                                   size_t *out_len) {
   CBB cbb;
   if (!CBB_init(&cbb, in_len * 2)) {
-    OPENSSL_PUT_ERROR(PKCS8, ERR_R_MALLOC_FAILURE);
     return 0;
   }
 
@@ -162,7 +161,6 @@ int pkcs12_key_gen(const char *pass, size_t pass_len, const uint8_t *salt,
 
   I = OPENSSL_malloc(I_len);
   if (I_len != 0 && I == NULL) {
-    OPENSSL_PUT_ERROR(PKCS8, ERR_R_MALLOC_FAILURE);
     goto err;
   }
 
@@ -390,7 +388,6 @@ int pkcs8_pbe_decrypt(uint8_t **out, size_t *out_len, CBS *algorithm,
 
   buf = OPENSSL_malloc(in_len);
   if (buf == NULL) {
-    OPENSSL_PUT_ERROR(PKCS8, ERR_R_MALLOC_FAILURE);
     goto err;
   }
 
@@ -469,7 +466,7 @@ int PKCS8_marshal_encrypted_private_key(CBB *out, int pbe_nid,
   }
 
   if (iterations <= 0) {
-    iterations = PKCS5_DEFAULT_ITERATIONS;
+    iterations = PKCS12_DEFAULT_ITER;
   }
 
   // Serialize the input key.

@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {FORM} at (0,0) size 784x195
-        RenderBlock {HR} at (0,0) size 602x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 602x2 [color=#808080] [border: (1px inset #808080)]
         RenderTable {TABLE} at (0,10) size 600x185
           RenderTableSection {TBODY} at (0,0) size 600x185
             RenderTableRow {TR} at (0,2) size 600x44
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (4,2) size 59x16
                     RenderText at (0,0) size 59x16
                       text run at (0,0) width 59: "Netscape"
-                RenderTextControl {INPUT} at (266,3) size 220x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (266,3) size 220x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                 RenderText {#text} at (488,3) size 5x21
                   text run at (488,4) width 5: " "
                 RenderButton {INPUT} at (494,3) size 59x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]

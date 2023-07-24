@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/threads/Signals.h>
 
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=259108 Support signal handlers on Windows
 #if OS(UNIX)
 
 #if HAVE(MACH_EXCEPTIONS)

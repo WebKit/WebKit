@@ -28,21 +28,21 @@ extern void aom_scale_rtcd();
 
 #if ARCH_X86 || ARCH_X86_64
 static void append_negative_gtest_filter(const char *str) {
-  std::string filter = ::testing::FLAGS_gtest_filter;
+  std::string flag_value = GTEST_FLAG_GET(filter);
   // Negative patterns begin with one '-' followed by a ':' separated list.
-  if (filter.find('-') == std::string::npos) filter += '-';
+  if (flag_value.find('-') == std::string::npos) flag_value += '-';
   // OPT.* matches TEST() functions
   // OPT/* matches TEST_P() functions
   // OPT_* matches tests which have been manually sharded.
   // We do not match OPT* because of SSE/SSE2 collisions.
   const char *search_terminators = "./_";
   for (size_t pos = 0; pos < strlen(search_terminators); ++pos) {
-    filter += ":";
-    filter += str;
-    filter += search_terminators[pos];
-    filter += "*";
+    flag_value += ":";
+    flag_value += str;
+    flag_value += search_terminators[pos];
+    flag_value += "*";
   }
-  ::testing::FLAGS_gtest_filter = filter;
+  GTEST_FLAG_SET(filter, flag_value);
 }
 #endif  // ARCH_X86 || ARCH_X86_64
 

@@ -109,6 +109,9 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().valuesPrivateName(), objectConstructorValues, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->hasOwn, objectConstructorHasOwn, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().hasOwnPrivateName(), objectConstructorHasOwn, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+
+    if (Options::useArrayGroupMethod())
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().groupByPublicName(), objectConstructorGroupByCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 // ES 19.1.1.1 Object([value])
@@ -1043,6 +1046,12 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto kind = inferCachedPropertyNamesKind(propertyNameMode, dontEnumPropertiesMode);
+
+    if (object->inherits<ProxyObject>()) {
+        ProxyObject* proxy = jsCast<ProxyObject*>(object);
+        if (proxy->forwardsGetOwnPropertyNamesToTarget(dontEnumPropertiesMode))
+            object = proxy->target();
+    }
 
     // We attempt to look up own property keys cache in Object.keys / Object.getOwnPropertyNames cases.
     if (LIKELY(!globalObject->isHavingABadTime())) {

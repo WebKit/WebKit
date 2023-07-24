@@ -1,3 +1,4 @@
 
 FAIL Video autoupgraded assert_unreached: Video should load successfully from http://localhost:9443/mixed-content/tentative/resources/test.ogv Reached unreachable code
+FAIL Video of other host autoupgraded assert_unreached: Video of other host should load successfully from http://127.0.0.1:9443/mixed-content/tentative/resources/test.ogv Reached unreachable code
 

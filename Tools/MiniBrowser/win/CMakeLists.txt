@@ -35,10 +35,6 @@ target_link_libraries(MiniBrowserInjectedBundle WebKit::WebKit)
 target_include_directories(MiniBrowserInjectedBundle PRIVATE ${CMAKE_BINARY_DIR})
 
 WEBKIT_EXECUTABLE_DECLARE(MiniBrowser)
-WEBKIT_WRAP_EXECUTABLE(MiniBrowser
-    SOURCES ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp MiniBrowser.rc
-    LIBRARIES shlwapi
-)
 WEBKIT_EXECUTABLE(MiniBrowser)
 
 set_target_properties(MiniBrowser PROPERTIES WIN32_EXECUTABLE ON)

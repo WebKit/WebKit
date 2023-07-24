@@ -69,19 +69,11 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
 
     mExecutable.mOriginalShaderInfo.clear();
 
-    gl::ShaderType frontShaderType = gl::ShaderType::InvalidEnum;
-    UniformBindingIndexMap uniformBindingIndexMap;
+    SpvAssignLocations(options, glExecutable, varyingPacking, linkedTransformFeedbackStage,
+                       &spvProgramInterfaceInfo, &mExecutable.mVariableInfoMap);
+
     for (const gl::ShaderType shaderType : glExecutable.getLinkedShaderStages())
     {
-        const bool isTransformFeedbackStage =
-            shaderType == linkedTransformFeedbackStage &&
-            !glExecutable.getLinkedTransformFeedbackVaryings().empty();
-
-        SpvAssignLocations(options, glExecutable, varyingPacking, shaderType, frontShaderType,
-                           isTransformFeedbackStage, &spvProgramInterfaceInfo,
-                           &uniformBindingIndexMap, &mExecutable.mVariableInfoMap);
-        frontShaderType = shaderType;
-
         const gl::Program *program               = mState.getShaderProgram(shaderType);
         ProgramVk *programVk                     = vk::GetImpl(program);
         ProgramExecutableVk &programExecutableVk = programVk->getExecutable();
@@ -104,6 +96,15 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
 
     return mExecutable.warmUpPipelineCache(contextVk, mState.getExecutable());
 }  // namespace rx
+
+angle::Result ProgramPipelineVk::syncState(const gl::Context *context,
+                                           const gl::Program::DirtyBits &dirtyBits)
+{
+    ASSERT(dirtyBits.any());
+    // Push dirty bits to executable so that they can be used later.
+    mExecutable.mDirtyBits |= dirtyBits;
+    return angle::Result::Continue;
+}
 
 void ProgramPipelineVk::onProgramUniformUpdate(gl::ShaderType shaderType)
 {

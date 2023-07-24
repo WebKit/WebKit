@@ -213,13 +213,18 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
     if (!newRule)
         return Exception { SyntaxError };
     // We only accepts style rule or group rule (@media,...) inside style rules.
-    if (!newRule->isStyleRuleWithNesting() && !newRule->isGroupRule())
+    if (!newRule->isStyleRule() && !newRule->isGroupRule())
         return Exception { HierarchyRequestError };
 
-    if (m_styleRule->isStyleRule()) {
-        // Call the parent rule (or parent stylesheet if top-level) to transform the current StyleRule to StyleRuleWithNesting.
-        auto parent = parentRule();
-        auto styleRuleWithNesting = parent ? parent->prepareChildStyleRuleForNesting(m_styleRule) : styleSheet->prepareChildStyleRuleForNesting(WTFMove(m_styleRule.get()));
+    if (!m_styleRule->isStyleRuleWithNesting()) {
+        // Call the parent rule (or parent stylesheet if top-level or nothing if it's an orphaned rule) to transform the current StyleRule to StyleRuleWithNesting.
+        RefPtr<StyleRuleWithNesting> styleRuleWithNesting;
+        if (auto parent = parentRule())
+            styleRuleWithNesting = parent->prepareChildStyleRuleForNesting(m_styleRule);
+        else if (auto parent = parentStyleSheet())
+            styleRuleWithNesting = parent->prepareChildStyleRuleForNesting(WTFMove(m_styleRule.get()));
+        else
+            styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(m_styleRule.get()));
         ASSERT(styleRuleWithNesting);
         m_styleRule = *styleRuleWithNesting;
     }

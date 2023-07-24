@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
 layer at (12,52) size 150x22
-  RenderTextControl {INPUT} at (12,52) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+  RenderTextControl {INPUT} at (12,52) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
 layer at (14,55) size 146x16
   RenderBlock {DIV} at (2,3) size 146x16
     RenderText {#text} at (0,0) size 143x16

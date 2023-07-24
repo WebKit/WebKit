@@ -741,7 +741,7 @@ void fillRectWithRoundedHole(GraphicsContextCairo& platformContext, const FloatR
     cairo_t* cr = platformContext.cr();
 
     cairo_save(cr);
-    setPathOnCairoContext(platformContext.cr(), path.cairoPath());
+    setPathOnCairoContext(platformContext.cr(), path.platformPath());
     fillCurrentCairoPath(platformContext, fillSource);
     cairo_restore(cr);
 }
@@ -750,7 +750,7 @@ void fillPath(GraphicsContextCairo& platformContext, const Path& path, const Fil
 {
     cairo_t* cr = platformContext.cr();
 
-    setPathOnCairoContext(cr, path.cairoPath());
+    setPathOnCairoContext(cr, path.platformPath());
     drawPathShadow(platformContext, fillSource, { }, shadowState, Fill);
     fillCurrentCairoPath(platformContext, fillSource);
 }
@@ -773,7 +773,7 @@ void strokePath(GraphicsContextCairo& platformContext, const Path& path, const S
 {
     cairo_t* cr = platformContext.cr();
 
-    setPathOnCairoContext(cr, path.cairoPath());
+    setPathOnCairoContext(cr, path.platformPath());
     drawPathShadow(platformContext, { }, strokeSource, shadowState, Stroke);
     prepareForStroking(cr, strokeSource, PreserveAlpha);
     cairo_stroke(cr);
@@ -1238,8 +1238,8 @@ void clipPath(GraphicsContextCairo& platformContext, const Path& path, WindRule 
 {
     cairo_t* cr = platformContext.cr();
 
-    if (!path.isNull())
-        setPathOnCairoContext(cr, path.cairoPath());
+    if (!path.isEmpty())
+        setPathOnCairoContext(cr, path.platformPath());
 
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, clipRule == WindRule::EvenOdd ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);

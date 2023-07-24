@@ -238,19 +238,6 @@ TEST(NackTrackerTest, EstimateTimestampAndTimeToPlay) {
       EXPECT_EQ((index + 2) * kPacketSizeMs, it->second.time_to_play_ms);
       ++it;
     }
-
-    // Pretend 10 ms is passed, and we had pulled audio from NetEq, it still
-    // reports the same sequence number as decoded, time-to-play should be
-    // updated by 10 ms.
-    nack.UpdateLastDecodedPacket(first_seq_num, first_timestamp);
-    nack_list = nack.GetNackList();
-    it = nack_list.begin();
-    while (it != nack_list.end()) {
-      seq_num = it->first - seq_num_offset;
-      int index = seq_num - kLostPackets[0];
-      EXPECT_EQ((index + 2) * kPacketSizeMs - 10, it->second.time_to_play_ms);
-      ++it;
-    }
   }
 }
 

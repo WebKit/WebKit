@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUBlendState.h>
+#include <WebCore/WebGPUBlendState.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<BlendState> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::BlendState& blendState)
+std::optional<BlendState> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BlendState& blendState)
 {
     auto color = convertToBacking(blendState.color);
     if (!color)
@@ -47,7 +47,7 @@ std::optional<BlendState> ConvertToBackingContext::convertToBacking(const PAL::W
     return { { WTFMove(*color), WTFMove(*alpha) } };
 }
 
-std::optional<PAL::WebGPU::BlendState> ConvertFromBackingContext::convertFromBacking(const BlendState& blendState)
+std::optional<WebCore::WebGPU::BlendState> ConvertFromBackingContext::convertFromBacking(const BlendState& blendState)
 {
     auto color = convertFromBacking(blendState.color);
     if (!color)

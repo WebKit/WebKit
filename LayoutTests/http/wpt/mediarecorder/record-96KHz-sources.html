@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test passing capture device IDs to getUserMedia</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+
+    function deviceFromLabel(devices, label)
+    {
+        for (let device of devices) {
+            if (device.label === label)
+                return device;
+        }
+    }
+
+    promise_test(async (test) => {
+        let stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:false })
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        assert_true(devices.length > 2, "after getting permission, more than 1 camera and 1 microphone are exposed");
+        devices.forEach((device) => {
+            assert_not_equals(device.deviceId.length == 0 , "device.deviceId is empty before permission to capture");
+        });
+        stream.getAudioTracks()[0].stop();
+
+        const mic96KHz = deviceFromLabel(devices, "Mock audio device 3");
+        stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId:mic96KHz.deviceId, sampleRate:96000 } })
+
+        assert_equals(stream.getAudioTracks()[0].getSettings().deviceId, mic96KHz.deviceId);
+        assert_equals(stream.getAudioTracks()[0].getSettings().sampleRate, 96000);
+
+        const recorder = new MediaRecorder(stream);
+
+        let counter = 0;
+        const promise = new Promise((resolve, reject) => recorder.ondataavailable = (e) => {
+            if (e.data.size > 0) {
+                resolve();
+                return;
+            }
+            if (++counter > 10)
+                reject("too many blobs without data");
+        });
+
+        recorder.start();
+        setInterval(() => recorder.requestData(), 500);
+        return promise;
+    }, "Ensure audio compressor fallbacks if sample rate is very high");
+    </script>
+</head>
+<body>
+</body>
+</html>

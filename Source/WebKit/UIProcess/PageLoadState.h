@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,14 @@
 
 #include <WebCore/CertificateInfo.h>
 #include <wtf/URL.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class WebPageProxy;
 
-class PageLoadStateObserverBase {
+class PageLoadStateObserverBase : public CanMakeWeakPtr<PageLoadStateObserverBase> {
 public:
     virtual ~PageLoadStateObserverBase() = default;
 
@@ -203,7 +204,7 @@ private:
 
     void callObserverCallback(void (Observer::*)());
 
-    Vector<Observer*> m_observers;
+    WeakHashSet<Observer> m_observers;
 
     struct Data {
         State state { State::Finished };

@@ -100,7 +100,7 @@ bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc:
         if (!m_rtcSocketFactory) {
             RegistrableDomain domain { document.url() };
             bool isFirstParty = domain == RegistrableDomain(document.firstPartyForCookies());
-            m_rtcSocketFactory = client.createSocketFactory(document.userAgent(document.url()), isFirstParty, WTFMove(domain));
+            m_rtcSocketFactory = client.createSocketFactory(document.userAgent(document.url()), document.identifier(), isFirstParty, WTFMove(domain));
             if (!m_peerConnectionBackend.shouldFilterICECandidates() && m_rtcSocketFactory)
                 m_rtcSocketFactory->disableRelay();
         }
@@ -202,7 +202,7 @@ bool LibWebRTCMediaEndpoint::addTrack(LibWebRTCRtpSenderBackend& sender, MediaSt
     }
     case RealtimeMediaSource::Type::Video: {
         auto videoSource = RealtimeOutgoingVideoSource::create(track.privateTrack());
-        rtcTrack = m_peerConnectionFactory->CreateVideoTrack(track.id().utf8().data(), videoSource.ptr());
+        rtcTrack = m_peerConnectionFactory->CreateVideoTrack(rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> (videoSource.ptr()), track.id().utf8().data());
         source = WTFMove(videoSource);
         break;
     }
@@ -273,8 +273,8 @@ void LibWebRTCMediaEndpoint::gatherDecoderImplementationName(Function<void(Strin
         ASSERT(isMainThread());
         if (rtcReport) {
             for (const auto& rtcStats : *rtcReport) {
-                if (rtcStats.type() == webrtc::RTCInboundRTPStreamStats::kType) {
-                    auto& inboundRTPStats = static_cast<const webrtc::RTCInboundRTPStreamStats&>(rtcStats);
+                if (rtcStats.type() == webrtc::RTCInboundRtpStreamStats::kType) {
+                    auto& inboundRTPStats = static_cast<const webrtc::RTCInboundRtpStreamStats&>(rtcStats);
                     if (inboundRTPStats.decoder_implementation.is_defined()) {
                         callback(fromStdString(*inboundRTPStats.decoder_implementation));
                         return;
@@ -373,7 +373,7 @@ std::pair<LibWebRTCRtpSenderBackend::Source, rtc::scoped_refptr<webrtc::MediaStr
     }
     case RealtimeMediaSource::Type::Video: {
         auto videoSource = RealtimeOutgoingVideoSource::create(track.privateTrack());
-        rtcTrack = m_peerConnectionFactory->CreateVideoTrack(track.id().utf8().data(), videoSource.ptr());
+        rtcTrack = m_peerConnectionFactory->CreateVideoTrack(rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> (videoSource.ptr()), track.id().utf8().data());
         source = WTFMove(videoSource);
         break;
     }
@@ -786,7 +786,7 @@ private:
 void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
 {
 #if !RELEASE_LOG_DISABLED
-    int64_t timestamp = report->timestamp_us();
+    int64_t timestamp = report->timestamp().us_or(0);
     if (!m_statsFirstDeliveredTimestamp)
         m_statsFirstDeliveredTimestamp = timestamp;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,9 @@
 
 #include "WebGPUBufferBinding.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <cstdint>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 
 namespace WebKit::WebGPU {
 
@@ -43,7 +43,7 @@ enum class BindingResourceType : uint8_t {
 };
 
 struct BindGroupEntry {
-    PAL::WebGPU::Index32 binding { 0 };
+    WebCore::WebGPU::Index32 binding { 0 };
     BufferBinding bufferBinding;
     WebGPUIdentifier identifier;
     BindingResourceType type { BindingResourceType::Sampler };

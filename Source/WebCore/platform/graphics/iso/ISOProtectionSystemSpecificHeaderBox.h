@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Metrological Group B.V.
  * Copyright (C) 2018 Igalia S.L
  *
@@ -34,6 +34,10 @@ namespace WebCore {
 class WEBCORE_EXPORT ISOProtectionSystemSpecificHeaderBox : public ISOFullBox {
 public:
     using KeyID = Vector<uint8_t>;
+
+    ISOProtectionSystemSpecificHeaderBox();
+    ~ISOProtectionSystemSpecificHeaderBox();
+
     static FourCC boxTypeName() { return "pssh"; }
 
     static std::optional<Vector<uint8_t>> peekSystemID(JSC::DataView&, unsigned offset);
@@ -42,9 +46,9 @@ public:
     Vector<KeyID> keyIDs() const { return m_keyIDs; }
     Vector<uint8_t> data() const { return m_data; }
 
-protected:
     bool parse(JSC::DataView&, unsigned& offset) override;
 
+protected:
     Vector<uint8_t> m_systemID;
     Vector<KeyID> m_keyIDs;
     Vector<uint8_t> m_data;

@@ -651,7 +651,7 @@ static void testObjectiveCAPIMain()
     }
 
 // FIXME: These tests fail on tvOS and watchOS
-#if PLATFORM(IOS) || PLATFORM(MAC)
+#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(VISION)
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];

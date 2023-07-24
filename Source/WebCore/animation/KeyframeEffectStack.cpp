@@ -71,7 +71,12 @@ bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
 void KeyframeEffectStack::removeEffect(KeyframeEffect& effect)
 {
     auto removedEffect = m_effects.removeFirst(&effect);
-    if (removedEffect && !m_effects.isEmpty() && !effect.canBeAccelerated())
+    if (!removedEffect || m_effects.isEmpty())
+        return;
+
+    if (effect.canBeAccelerated())
+        effect.wasRemovedFromStack();
+    else
         startAcceleratedAnimationsIfPossible();
 }
 
@@ -272,8 +277,16 @@ void KeyframeEffectStack::cascadeDidOverrideProperties(const HashSet<AnimatableP
 
 void KeyframeEffectStack::applyPendingAcceleratedActions() const
 {
-    for (auto& effect : m_effects)
-        effect->applyPendingAcceleratedActionsOrUpdateTimingProperties();
+    bool hasActiveAcceleratedEffect = m_effects.containsIf([](const auto& effect) {
+        return effect->canBeAccelerated() && effect->animation()->playState() == WebAnimation::PlayState::Running;
+    });
+
+    for (auto& effect : m_effects) {
+        if (hasActiveAcceleratedEffect)
+            effect->applyPendingAcceleratedActionsOrUpdateTimingProperties();
+        else
+            effect->applyPendingAcceleratedActions();
+    }
 }
 
 } // namespace WebCore

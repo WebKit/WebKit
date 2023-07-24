@@ -63,7 +63,7 @@ void RenderSVGResourceContainer::willBeDestroyed()
     SVGResourcesCache::resourceDestroyed(*this);
 
     if (m_registered) {
-        svgExtensionsFromElement(element()).removeResource(m_id);
+        treeScopeForSVGReferences().removeSVGResource(m_id);
         m_registered = false;
     }
 
@@ -86,7 +86,7 @@ void RenderSVGResourceContainer::idChanged()
     removeAllClientsFromCache();
 
     // Remove old id, that is guaranteed to be present in cache.
-    svgExtensionsFromElement(element()).removeResource(m_id);
+    treeScopeForSVGReferences().removeSVGResource(m_id);
     m_id = element().getIdAttribute();
 
     registerResource();
@@ -195,21 +195,20 @@ void RenderSVGResourceContainer::removeClientRenderLayer(RenderLayer* client)
 
 void RenderSVGResourceContainer::registerResource()
 {
-    SVGDocumentExtensions& extensions = svgExtensionsFromElement(element());
-    if (!extensions.isIdOfPendingResource(m_id)) {
-        extensions.addResource(m_id, *this);
+    auto& treeScope = this->treeScopeForSVGReferences();
+    if (!treeScope.isIdOfPendingSVGResource(m_id)) {
+        treeScope.addSVGResource(m_id, *this);
         return;
     }
 
-    auto elements = copyToVectorOf<Ref<SVGElement>>(extensions.removePendingResource(m_id));
+    auto elements = copyToVectorOf<Ref<SVGElement>>(treeScope.removePendingSVGResource(m_id));
 
-    // Cache us with the new id.
-    extensions.addResource(m_id, *this);
+    treeScope.addSVGResource(m_id, *this);
 
     // Update cached resources of pending clients.
     for (auto& client : elements) {
         ASSERT(client->hasPendingResources());
-        extensions.clearHasPendingResourcesIfPossible(client);
+        treeScope.clearHasPendingSVGResourcesIfPossible(client);
         auto* renderer = client->renderer();
         if (!renderer)
             continue;

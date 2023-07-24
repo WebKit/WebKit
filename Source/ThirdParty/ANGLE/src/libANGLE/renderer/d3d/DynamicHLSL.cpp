@@ -319,7 +319,8 @@ std::string DynamicHLSL::generatePixelShaderForOutputSignature(
     const std::string &sourceShader,
     const std::vector<PixelShaderOutputVariable> &outputVariables,
     FragDepthUsage fragDepthUsage,
-    const std::vector<GLenum> &outputLayout,
+    bool usesSampleMask,
+    const std::pair<bool, const std::vector<GLenum>> &outputLayoutKey,
     const std::vector<ShaderStorageBlock> &shaderStorageBlocks,
     size_t baseUAVRegister) const
 {
@@ -340,6 +341,9 @@ std::string DynamicHLSL::generatePixelShaderForOutputSignature(
                 return "SV_Depth";
         }
     }();
+
+    const bool multisampling                = outputLayoutKey.first;
+    const std::vector<GLenum> &outputLayout = outputLayoutKey.second;
 
     std::ostringstream declarationStream;
     std::ostringstream copyStream;
@@ -394,6 +398,13 @@ std::string DynamicHLSL::generatePixelShaderForOutputSignature(
         copyStream << "    output.gl_Depth = gl_Depth; \n";
     }
 
+    // Do not write to SV_Coverage when rendering to single-sampled targets
+    if (multisampling && usesSampleMask)
+    {
+        declarationStream << "    uint sampleMask : SV_Coverage;\n";
+        copyStream << "    output.sampleMask = gl_SampleMask[0];\n";
+    }
+
     declarationStream << "};\n"
                          "\n"
                          "PS_OUTPUT generateOutput()\n"
@@ -404,6 +415,11 @@ std::string DynamicHLSL::generatePixelShaderForOutputSignature(
                          "}\n";
 
     std::string pixelHLSL(sourceShader);
+
+    if (multisampling)
+    {
+        pixelHLSL.insert(0, "#define ANGLE_MULTISAMPLING\n");
+    }
 
     bool success =
         angle::ReplaceSubstring(&pixelHLSL, PIXEL_OUTPUT_STUB_STRING, declarationStream.str());
@@ -997,6 +1013,19 @@ void DynamicHLSL::generateShaderLinkHLSL(const gl::Context *context,
         }
     }
 
+    bool declareSampleID = false;
+    if (fragmentShader && fragmentShader->usesSampleID())
+    {
+        declareSampleID = true;
+        pixelPrologue << "    gl_SampleID = sampleID;\n";
+    }
+
+    if (fragmentShader && fragmentShader->usesSamplePosition())
+    {
+        declareSampleID = true;
+        pixelPrologue << "    gl_SamplePosition = GetRenderTargetSamplePosition(sampleID) + 0.5;\n";
+    }
+
     if (fragmentShader && fragmentShader->getClipDistanceArraySize())
     {
         ASSERT(vertexBuiltins.glClipDistance.indexOrSize > 0 &&
@@ -1073,6 +1102,7 @@ void DynamicHLSL::generateShaderLinkHLSL(const gl::Context *context,
         }
     }
 
+    bool usesSampleInterpolation = false;
     for (GLuint registerIndex = 0u; registerIndex < registerInfos.size(); ++registerIndex)
     {
         const PackedVaryingRegister &registerInfo = registerInfos[registerIndex];
@@ -1092,6 +1122,13 @@ void DynamicHLSL::generateShaderLinkHLSL(const gl::Context *context,
         if (!varying.active)
         {
             continue;
+        }
+
+        if (packedVarying.interpolation == sh::InterpolationType::INTERPOLATION_SAMPLE ||
+            packedVarying.interpolation ==
+                sh::InterpolationType::INTERPOLATION_NOPERSPECTIVE_SAMPLE)
+        {
+            usesSampleInterpolation = true;
         }
 
         pixelPrologue << "    ";
@@ -1135,30 +1172,40 @@ void DynamicHLSL::generateShaderLinkHLSL(const gl::Context *context,
         pixelPrologue << ";\n";
     }
 
+    if (fragmentShader && fragmentShader->usesSampleMaskIn())
+    {
+        // When per-sample shading is active due to the use of a fragment input qualified
+        // by sample or due to the use of the gl_SampleID or gl_SamplePosition variables,
+        // only the bit for the current sample is set in gl_SampleMaskIn.
+        declareSampleID = declareSampleID || usesSampleInterpolation;
+        pixelPrologue << "    gl_SampleMaskIn[0] = "
+                      << (declareSampleID ? "1 << sampleID" : "sampleMaskIn") << ";\n";
+    }
+
     if (fragmentShaderGL)
     {
         std::string pixelSource = fragmentShaderGL->getTranslatedSource(context);
 
+        std::ostringstream pixelMainParametersStream;
+        pixelMainParametersStream << "PS_INPUT input";
+
         if (fragmentShader->usesFrontFacing())
         {
-            if (shaderModel >= 4)
-            {
-                angle::ReplaceSubstring(&pixelSource,
-                                        std::string(PIXEL_MAIN_PARAMETERS_STUB_STRING),
-                                        "PS_INPUT input, bool isFrontFace : SV_IsFrontFace");
-            }
-            else
-            {
-                angle::ReplaceSubstring(&pixelSource,
-                                        std::string(PIXEL_MAIN_PARAMETERS_STUB_STRING),
-                                        "PS_INPUT input, float vFace : VFACE");
-            }
+            pixelMainParametersStream << (shaderModel >= 4 ? ", bool isFrontFace : SV_IsFrontFace"
+                                                           : ", float vFace : VFACE");
         }
-        else
+
+        if (declareSampleID)
         {
-            angle::ReplaceSubstring(&pixelSource, std::string(PIXEL_MAIN_PARAMETERS_STUB_STRING),
-                                    "PS_INPUT input");
+            pixelMainParametersStream << ", uint sampleID : SV_SampleIndex";
         }
+        else if (fragmentShader->usesSampleMaskIn())
+        {
+            pixelMainParametersStream << ", uint sampleMaskIn : SV_Coverage";
+        }
+
+        angle::ReplaceSubstring(&pixelSource, std::string(PIXEL_MAIN_PARAMETERS_STUB_STRING),
+                                pixelMainParametersStream.str());
 
         angle::ReplaceSubstring(&pixelSource, std::string(MAIN_PROLOGUE_STUB_STRING),
                                 pixelPrologue.str());

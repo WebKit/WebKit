@@ -38,5 +38,5 @@ the last packet (containing the extension) is sent to the network. Last two,
 reserved timstamps, are not set by the sender but are reserved in packet for any
 in-network RTP stream processor to modify.
 
-Notes: Extension shoud be present only in the last packet of video frames. If
+Notes: Extension should be present only in the last packet of video frames. If
 attached to other packets it should be ignored.

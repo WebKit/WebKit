@@ -244,9 +244,9 @@ webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::PeerConnectionInterface>> MockLibW
     return createConnection(m_testCase, *dependencies.observer);
 }
 
-rtc::scoped_refptr<webrtc::VideoTrackInterface> MockLibWebRTCPeerConnectionFactory::CreateVideoTrack(const std::string& id, webrtc::VideoTrackSourceInterface* source)
+rtc::scoped_refptr<webrtc::VideoTrackInterface> MockLibWebRTCPeerConnectionFactory::CreateVideoTrack(rtc::scoped_refptr<webrtc::VideoTrackSourceInterface> source, absl::string_view id)
 {
-    return rtc::make_ref_counted<MockLibWebRTCVideoTrack>(id, source);
+    return rtc::make_ref_counted<MockLibWebRTCVideoTrack>(std::string { id.data(), id.length() }, source.get());
 }
 
 rtc::scoped_refptr<webrtc::AudioTrackInterface> MockLibWebRTCPeerConnectionFactory::CreateAudioTrack(const std::string& id, webrtc::AudioSourceInterface* source)

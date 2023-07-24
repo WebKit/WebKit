@@ -41,10 +41,12 @@ public:
     static Ref<StyleSheetList> create(ShadowRoot& shadowRoot) { return adoptRef(*new StyleSheetList(shadowRoot)); }
     WEBCORE_EXPORT ~StyleSheetList();
 
+    bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     WEBCORE_EXPORT unsigned length() const;
     WEBCORE_EXPORT StyleSheet* item(unsigned index);
 
     CSSStyleSheet* namedItem(const AtomString&) const;
+    bool isSupportedPropertyName(const AtomString&) const;
     Vector<AtomString> supportedPropertyNames();
 
     Node* ownerNode() const;

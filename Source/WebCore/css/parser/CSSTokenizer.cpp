@@ -804,7 +804,7 @@ UChar32 CSSTokenizer::consumeEscape()
         };
         consumeSingleWhitespaceIfNext();
         auto codePoint = parseInteger<uint32_t>(hexChars, 16).value();
-        if (!codePoint || U_IS_SURROGATE(codePoint) || codePoint > 0x10FFFF)
+        if (!codePoint || U_IS_SURROGATE(codePoint) || codePoint > UCHAR_MAX_VALUE)
             return replacementCharacter;
         return codePoint;
     }

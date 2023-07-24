@@ -23,7 +23,7 @@ namespace sh
 using Resources = ShBuiltInResources;
 using TableBase = TSymbolTableBase;
 
-const int TSymbolTable::kLastBuiltInId = 5615;
+const int TSymbolTable::kLastBuiltInId = 5623;
 
 namespace BuiltInName
 {
@@ -263,6 +263,7 @@ constexpr const ImmutableString imageStore("imageStore");
 constexpr const ImmutableString imageStoreExt("imageStore");
 constexpr const ImmutableString imulExtended("imulExtended");
 constexpr const ImmutableString intBitsToFloat("intBitsToFloat");
+constexpr const ImmutableString interpolateAtCenter("interpolateAtCenter");
 constexpr const ImmutableString interpolateAtCentroid("interpolateAtCentroid");
 constexpr const ImmutableString interpolateAtCentroidExt("interpolateAtCentroid");
 constexpr const ImmutableString interpolateAtOffset("interpolateAtOffset");
@@ -21784,6 +21785,42 @@ constexpr const TFunction samplePosition_00E(
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpSamplePosition,
     false);
+constexpr const TFunction interpolateAtCenter_00B(
+    BuiltInId::interpolateAtCenter_Float1,
+    BuiltInName::interpolateAtCenter,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p00B00B00B,
+    1,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
+    EOpInterpolateAtCenter,
+    false);
+constexpr const TFunction interpolateAtCenter_10B(
+    BuiltInId::interpolateAtCenter_Float2,
+    BuiltInName::interpolateAtCenter,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p10B00B00B,
+    1,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpInterpolateAtCenter,
+    false);
+constexpr const TFunction interpolateAtCenter_20B(
+    BuiltInId::interpolateAtCenter_Float3,
+    BuiltInName::interpolateAtCenter,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p20B00B00B,
+    1,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
+    EOpInterpolateAtCenter,
+    false);
+constexpr const TFunction interpolateAtCenter_30B(
+    BuiltInId::interpolateAtCenter_Float4,
+    BuiltInName::interpolateAtCenter,
+    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
+    BuiltInParameters::p30B00B00B,
+    1,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
+    EOpInterpolateAtCenter,
+    false);
 constexpr const TFunction saturate_00B(BuiltInId::saturate_Float1,
                                        BuiltInName::saturate,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -24784,8 +24821,16 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&subpassLoad_01m00D),
     Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&subpassLoad_01n00D),
     Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&subpassLoad_01o00D),
-    Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&numSamples_),
-    Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&samplePosition_00E),
+    Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::FRAGMENT, 0>(&numSamples_),
+    Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::FRAGMENT, 0>(&samplePosition_00E),
+    Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::FRAGMENT, 0>(
+        &interpolateAtCenter_00B),
+    Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::FRAGMENT, 0>(
+        &interpolateAtCenter_10B),
+    Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::FRAGMENT, 0>(
+        &interpolateAtCenter_20B),
+    Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::FRAGMENT, 0>(
+        &interpolateAtCenter_30B),
     Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&saturate_00B),
     Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&saturate_10B),
     Rule::Get<Spec::ESSL, kESSLInternalBackendBuiltIns, Shader::ALL, 0>(&saturate_20B),
@@ -26689,6 +26734,10 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "subpassLoad(01o00D",
                                          "numSamples(",
                                          "samplePosition(00E",
+                                         "interpolateAtCenter(00B",
+                                         "interpolateAtCenter(10B",
+                                         "interpolateAtCenter(20B",
+                                         "interpolateAtCenter(30B",
                                          "saturate(00B",
                                          "saturate(10B",
                                          "saturate(20B",
@@ -28343,129 +28392,133 @@ constexpr uint16_t kMangledOffsets[] = {
     2245,  // subpassLoad_01o00D
     2246,  // numSamples_
     2247,  // samplePosition_00E
-    2248,  // saturate_00B
-    2249,  // saturate_10B
-    2250,  // saturate_20B
-    2251,  // saturate_30B
-    2252,  // gl_DepthRangeParameters
-    2253,  // gl_DepthRange
-    2254,  // gl_NumSamples
-    2256,  // gl_MaxVertexAttribs
-    2257,  // gl_MaxVertexUniformVectors
-    2258,  // gl_MaxVertexTextureImageUnits
-    2259,  // gl_MaxCombinedTextureImageUnits
-    2260,  // gl_MaxTextureImageUnits
-    2261,  // gl_MaxFragmentUniformVectors
-    2262,  // gl_MaxVaryingVectors
-    2263,  // gl_MaxDrawBuffers
-    2264,  // gl_MaxDualSourceDrawBuffersEXT
-    2265,  // gl_MaxVertexOutputVectors
-    2266,  // gl_MaxFragmentInputVectors
-    2267,  // gl_MinProgramTexelOffset
-    2268,  // gl_MaxProgramTexelOffset
-    2269,  // gl_MaxImageUnits
-    2270,  // gl_MaxVertexImageUniforms
-    2271,  // gl_MaxFragmentImageUniforms
-    2272,  // gl_MaxComputeImageUniforms
-    2273,  // gl_MaxCombinedImageUniforms
-    2274,  // gl_MaxCombinedShaderOutputResources
-    2275,  // gl_MaxComputeWorkGroupCount
-    2276,  // gl_MaxComputeWorkGroupSize
-    2277,  // gl_MaxComputeUniformComponents
-    2278,  // gl_MaxComputeTextureImageUnits
-    2279,  // gl_MaxComputeAtomicCounters
-    2280,  // gl_MaxComputeAtomicCounterBuffers
-    2281,  // gl_MaxVertexAtomicCounters
-    2282,  // gl_MaxFragmentAtomicCounters
-    2283,  // gl_MaxCombinedAtomicCounters
-    2284,  // gl_MaxAtomicCounterBindings
-    2285,  // gl_MaxVertexAtomicCounterBuffers
-    2286,  // gl_MaxFragmentAtomicCounterBuffers
-    2287,  // gl_MaxCombinedAtomicCounterBuffers
-    2288,  // gl_MaxAtomicCounterBufferSize
-    2289,  // gl_MaxGeometryInputComponents
-    2292,  // gl_MaxGeometryOutputComponents
-    2295,  // gl_MaxGeometryImageUniforms
-    2298,  // gl_MaxGeometryTextureImageUnits
-    2301,  // gl_MaxGeometryOutputVertices
-    2304,  // gl_MaxGeometryTotalOutputComponents
-    2307,  // gl_MaxGeometryUniformComponents
-    2310,  // gl_MaxGeometryAtomicCounters
-    2313,  // gl_MaxGeometryAtomicCounterBuffers
-    2316,  // gl_MaxTessControlInputComponents
-    2318,  // gl_MaxTessControlOutputComponents
-    2320,  // gl_MaxTessControlTextureImageUnits
-    2322,  // gl_MaxTessControlUniformComponents
-    2324,  // gl_MaxTessControlTotalOutputComponents
-    2326,  // gl_MaxTessControlImageUniforms
-    2328,  // gl_MaxTessControlAtomicCounters
-    2330,  // gl_MaxTessControlAtomicCounterBuffers
-    2332,  // gl_MaxTessPatchComponents
-    2334,  // gl_MaxPatchVertices
-    2336,  // gl_MaxTessGenLevel
-    2338,  // gl_MaxTessEvaluationInputComponents
-    2340,  // gl_MaxTessEvaluationOutputComponents
-    2342,  // gl_MaxTessEvaluationTextureImageUnits
-    2344,  // gl_MaxTessEvaluationUniformComponents
-    2346,  // gl_MaxTessEvaluationImageUniforms
-    2348,  // gl_MaxTessEvaluationAtomicCounters
-    2350,  // gl_MaxTessEvaluationAtomicCounterBuffers
-    2352,  // gl_MaxSamples
-    2354,  // gl_MaxClipDistances
-    2357,  // gl_MaxCullDistances
-    2359,  // gl_MaxCombinedClipAndCullDistances
-    2361,  // gl_FragCoord
-    2363,  // gl_FrontFacing
-    2364,  // gl_PointCoord
-    2365,  // gl_FragColor
-    2366,  // gl_FragData
-    2367,  // gl_FragDepth
-    2368,  // gl_HelperInvocation
-    2369,  // gl_SecondaryFragColorEXT
-    2370,  // gl_SecondaryFragDataEXT
-    2371,  // gl_FragDepthEXT
-    2372,  // gl_LastFragData
-    2375,  // gl_LastFragColor
-    2376,  // gl_LastFragColorARM
-    2377,  // gl_PrimitiveID
-    2387,  // gl_Layer
-    2393,  // gl_SampleID
-    2395,  // gl_SamplePosition
-    2397,  // gl_SampleMaskIn
-    2399,  // gl_SampleMask
-    2401,  // gl_Position
-    2409,  // gl_PointSize
-    2411,  // gl_InstanceID
-    2412,  // Empty
-    2412,  // gl_VertexID
-    2413,  // Empty
-    2413,  // Empty
-    2413,  // gl_DrawID
-    2414,  // gl_BaseVertex
-    2415,  // gl_BaseInstance
-    2416,  // angle_BaseVertex
-    2417,  // angle_BaseInstance
-    2418,  // gl_ClipDistance
-    2421,  // gl_NumWorkGroups
-    2422,  // gl_WorkGroupSize
-    2423,  // gl_WorkGroupID
-    2424,  // gl_LocalInvocationID
-    2425,  // gl_GlobalInvocationID
-    2426,  // gl_LocalInvocationIndex
-    2427,  // gl_PrimitiveIDIn
-    2430,  // gl_InvocationID
-    2435,  // gl_PerVertex
-    2442,  // gl_in
-    2449,  // gl_PatchVerticesIn
-    2453,  // gl_TessLevelOuter
-    2457,  // gl_TessLevelInner
-    2461,  // gl_out
-    2465,  // gl_BoundingBox
-    2467,  // gl_BoundingBoxEXT
-    2469,  // gl_BoundingBoxOES
-    2471,  // gl_TessCoord
-    2472,  // gl_ViewID_OVR
-    2473,  // gl_CullDistance
+    2248,  // interpolateAtCenter_00B
+    2249,  // interpolateAtCenter_10B
+    2250,  // interpolateAtCenter_20B
+    2251,  // interpolateAtCenter_30B
+    2252,  // saturate_00B
+    2253,  // saturate_10B
+    2254,  // saturate_20B
+    2255,  // saturate_30B
+    2256,  // gl_DepthRangeParameters
+    2257,  // gl_DepthRange
+    2258,  // gl_NumSamples
+    2260,  // gl_MaxVertexAttribs
+    2261,  // gl_MaxVertexUniformVectors
+    2262,  // gl_MaxVertexTextureImageUnits
+    2263,  // gl_MaxCombinedTextureImageUnits
+    2264,  // gl_MaxTextureImageUnits
+    2265,  // gl_MaxFragmentUniformVectors
+    2266,  // gl_MaxVaryingVectors
+    2267,  // gl_MaxDrawBuffers
+    2268,  // gl_MaxDualSourceDrawBuffersEXT
+    2269,  // gl_MaxVertexOutputVectors
+    2270,  // gl_MaxFragmentInputVectors
+    2271,  // gl_MinProgramTexelOffset
+    2272,  // gl_MaxProgramTexelOffset
+    2273,  // gl_MaxImageUnits
+    2274,  // gl_MaxVertexImageUniforms
+    2275,  // gl_MaxFragmentImageUniforms
+    2276,  // gl_MaxComputeImageUniforms
+    2277,  // gl_MaxCombinedImageUniforms
+    2278,  // gl_MaxCombinedShaderOutputResources
+    2279,  // gl_MaxComputeWorkGroupCount
+    2280,  // gl_MaxComputeWorkGroupSize
+    2281,  // gl_MaxComputeUniformComponents
+    2282,  // gl_MaxComputeTextureImageUnits
+    2283,  // gl_MaxComputeAtomicCounters
+    2284,  // gl_MaxComputeAtomicCounterBuffers
+    2285,  // gl_MaxVertexAtomicCounters
+    2286,  // gl_MaxFragmentAtomicCounters
+    2287,  // gl_MaxCombinedAtomicCounters
+    2288,  // gl_MaxAtomicCounterBindings
+    2289,  // gl_MaxVertexAtomicCounterBuffers
+    2290,  // gl_MaxFragmentAtomicCounterBuffers
+    2291,  // gl_MaxCombinedAtomicCounterBuffers
+    2292,  // gl_MaxAtomicCounterBufferSize
+    2293,  // gl_MaxGeometryInputComponents
+    2296,  // gl_MaxGeometryOutputComponents
+    2299,  // gl_MaxGeometryImageUniforms
+    2302,  // gl_MaxGeometryTextureImageUnits
+    2305,  // gl_MaxGeometryOutputVertices
+    2308,  // gl_MaxGeometryTotalOutputComponents
+    2311,  // gl_MaxGeometryUniformComponents
+    2314,  // gl_MaxGeometryAtomicCounters
+    2317,  // gl_MaxGeometryAtomicCounterBuffers
+    2320,  // gl_MaxTessControlInputComponents
+    2322,  // gl_MaxTessControlOutputComponents
+    2324,  // gl_MaxTessControlTextureImageUnits
+    2326,  // gl_MaxTessControlUniformComponents
+    2328,  // gl_MaxTessControlTotalOutputComponents
+    2330,  // gl_MaxTessControlImageUniforms
+    2332,  // gl_MaxTessControlAtomicCounters
+    2334,  // gl_MaxTessControlAtomicCounterBuffers
+    2336,  // gl_MaxTessPatchComponents
+    2338,  // gl_MaxPatchVertices
+    2340,  // gl_MaxTessGenLevel
+    2342,  // gl_MaxTessEvaluationInputComponents
+    2344,  // gl_MaxTessEvaluationOutputComponents
+    2346,  // gl_MaxTessEvaluationTextureImageUnits
+    2348,  // gl_MaxTessEvaluationUniformComponents
+    2350,  // gl_MaxTessEvaluationImageUniforms
+    2352,  // gl_MaxTessEvaluationAtomicCounters
+    2354,  // gl_MaxTessEvaluationAtomicCounterBuffers
+    2356,  // gl_MaxSamples
+    2358,  // gl_MaxClipDistances
+    2361,  // gl_MaxCullDistances
+    2363,  // gl_MaxCombinedClipAndCullDistances
+    2365,  // gl_FragCoord
+    2367,  // gl_FrontFacing
+    2368,  // gl_PointCoord
+    2369,  // gl_FragColor
+    2370,  // gl_FragData
+    2371,  // gl_FragDepth
+    2372,  // gl_HelperInvocation
+    2373,  // gl_SecondaryFragColorEXT
+    2374,  // gl_SecondaryFragDataEXT
+    2375,  // gl_FragDepthEXT
+    2376,  // gl_LastFragData
+    2379,  // gl_LastFragColor
+    2380,  // gl_LastFragColorARM
+    2381,  // gl_PrimitiveID
+    2391,  // gl_Layer
+    2397,  // gl_SampleID
+    2399,  // gl_SamplePosition
+    2401,  // gl_SampleMaskIn
+    2403,  // gl_SampleMask
+    2405,  // gl_Position
+    2413,  // gl_PointSize
+    2415,  // gl_InstanceID
+    2416,  // Empty
+    2416,  // gl_VertexID
+    2417,  // Empty
+    2417,  // Empty
+    2417,  // gl_DrawID
+    2418,  // gl_BaseVertex
+    2419,  // gl_BaseInstance
+    2420,  // angle_BaseVertex
+    2421,  // angle_BaseInstance
+    2422,  // gl_ClipDistance
+    2425,  // gl_NumWorkGroups
+    2426,  // gl_WorkGroupSize
+    2427,  // gl_WorkGroupID
+    2428,  // gl_LocalInvocationID
+    2429,  // gl_GlobalInvocationID
+    2430,  // gl_LocalInvocationIndex
+    2431,  // gl_PrimitiveIDIn
+    2434,  // gl_InvocationID
+    2439,  // gl_PerVertex
+    2446,  // gl_in
+    2453,  // gl_PatchVerticesIn
+    2457,  // gl_TessLevelOuter
+    2461,  // gl_TessLevelInner
+    2465,  // gl_out
+    2469,  // gl_BoundingBox
+    2471,  // gl_BoundingBoxEXT
+    2473,  // gl_BoundingBoxOES
+    2475,  // gl_TessCoord
+    2476,  // gl_ViewID_OVR
+    2477,  // gl_CullDistance
 };
 
 using Ext = TExtension;
@@ -28766,9 +28819,11 @@ constexpr UnmangledEntry unmangled[] = {
     {"subpassLoad", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED,
      kESSLInternalBackendBuiltIns, 460, Shader::ALL},
     {"numSamples", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED,
-     kESSLInternalBackendBuiltIns, -1, Shader::ALL},
+     kESSLInternalBackendBuiltIns, -1, Shader::FRAGMENT},
     {"samplePosition", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED,
-     kESSLInternalBackendBuiltIns, -1, Shader::ALL},
+     kESSLInternalBackendBuiltIns, -1, Shader::FRAGMENT},
+    {"interpolateAtCenter", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED,
+     kESSLInternalBackendBuiltIns, -1, Shader::FRAGMENT},
     {"saturate", std::array<TExtension, 1>{{Ext::UNDEFINED}}, Ext::UNDEFINED,
      kESSLInternalBackendBuiltIns, -1, Shader::ALL}};
 
@@ -30121,7 +30176,7 @@ namespace
 {
 uint16_t GetNextRuleIndex(uint32_t nameHash)
 {
-    if (nameHash == 1651 - 1)
+    if (nameHash == 1655 - 1)
         return ArraySize(BuiltInArray::kRules);
     return BuiltInArray::kMangledOffsets[nameHash + 1];
 }
@@ -30133,7 +30188,7 @@ const TSymbol *TSymbolTable::findBuiltIn(const ImmutableString &name, int shader
         return nullptr;
 
     uint32_t nameHash = name.mangledNameHash();
-    if (nameHash >= 1651)
+    if (nameHash >= 1655)
         return nullptr;
 
     const char *actualName = BuiltInArray::kMangledNames[nameHash];
@@ -30155,7 +30210,7 @@ bool TSymbolTable::isUnmangledBuiltInName(const ImmutableString &name,
         return false;
 
     uint32_t nameHash = name.unmangledNameHash();
-    if (nameHash >= 177)
+    if (nameHash >= 178)
         return false;
 
     return BuiltInArray::unmangled[nameHash].matches(name, mShaderSpec, shaderVersion, mShaderType,

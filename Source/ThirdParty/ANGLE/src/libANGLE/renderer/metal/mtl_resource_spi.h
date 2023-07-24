@@ -56,8 +56,8 @@ inline void setOwnerWithIdentity(id<MTLResource> resource, task_id_token_t ident
     }
     return;
 }
-}
-}
+}  // namespace mtl
+}  // namespace rx
 #endif
 
 #endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */

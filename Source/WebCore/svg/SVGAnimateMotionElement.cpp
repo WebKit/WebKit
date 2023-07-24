@@ -2,6 +2,7 @@
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -100,12 +101,12 @@ bool SVGAnimateMotionElement::hasValidAttributeName() const
 
 void SVGAnimateMotionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGAnimationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     if (name == SVGNames::pathAttr) {
         m_path = buildPathFromString(newValue);
         updateAnimationPath();
     }
+
+    SVGAnimationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
     
 SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
@@ -194,15 +195,7 @@ void SVGAnimateMotionElement::buildTransformForProgress(AffineTransform* transfo
         return;
 
     FloatPoint position = traversalState.current();
-    float angle = traversalState.normalAngle();
-
     transform->translate(position);
-    RotateMode rotateMode = this->rotateMode();
-    if (rotateMode != RotateAuto && rotateMode != RotateAutoReverse)
-        return;
-    if (rotateMode == RotateAutoReverse)
-        angle += 180;
-    transform->rotate(angle);
 }
 
 void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned repeatCount)
@@ -240,6 +233,17 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
         for (unsigned i = 0; i < repeatCount; ++i)
             buildTransformForProgress(transform, 1);
     }
+    float positionOnPath = m_animationPath.length() * percentage;
+    auto traversalState(m_animationPath.traversalStateAtLength(positionOnPath));
+
+    // The 'angle' below is in 'degrees'.
+    float angle = traversalState.normalAngle();
+    RotateMode rotateMode = this->rotateMode();
+    if (rotateMode != RotateAuto && rotateMode != RotateAutoReverse)
+        return;
+    if (rotateMode == RotateAutoReverse)
+        angle += 180;
+    transform->rotate(angle);
 }
 
 void SVGAnimateMotionElement::applyResultsToTarget()

@@ -59,8 +59,8 @@ layer at (0,0) size 785x2810
         RenderText {#text} at (234,0) size 361x17
           text run at (234,0) width 361: ", which may or may not be the same size as unstyled text."
       RenderBlock {P} at (0,436) size 769x23
-        RenderText {#text} at (0,0) size 377x21
-          text run at (0,0) width 377: "This sentence should be larger than unstyled text."
+        RenderText {#text} at (0,0) size 387x21
+          text run at (0,0) width 387: "This sentence should be larger than unstyled text."
       RenderBlock {P} at (0,477) size 769x17
         RenderText {#text} at (0,0) size 276x15
           text run at (0,0) width 276: "This sentence should be smaller than unstyled text."
@@ -119,11 +119,11 @@ layer at (0,0) size 785x2810
           text run at (0,1) width 695: "This sentence should be half an inch"
           text run at (0,56) width 72: "tall."
       RenderBlock {P} at (0,1012) size 769x45
-        RenderText {#text} at (0,1) size 676x42
-          text run at (0,1) width 676: "This sentence should be one centimeter tall."
+        RenderText {#text} at (0,1) size 668x42
+          text run at (0,1) width 668: "This sentence should be one centimeter tall."
       RenderBlock {P} at (0,1094) size 769x45
-        RenderText {#text} at (0,1) size 682x42
-          text run at (0,1) width 682: "This sentence should be ten millimeters tall."
+        RenderText {#text} at (0,1) size 673x42
+          text run at (0,1) width 673: "This sentence should be ten millimeters tall."
       RenderBlock {P} at (0,1176) size 769x28
         RenderText {#text} at (0,0) size 430x26
           text run at (0,0) width 430: "This sentence should be eighteen points tall."
@@ -169,8 +169,8 @@ layer at (0,0) size 785x2810
                 RenderText {#text} at (234,0) size 361x17
                   text run at (234,0) width 361: ", which may or may not be the same size as unstyled text."
               RenderBlock {P} at (4,75) size 747x23
-                RenderText {#text} at (0,0) size 377x21
-                  text run at (0,0) width 377: "This sentence should be larger than unstyled text."
+                RenderText {#text} at (0,0) size 387x21
+                  text run at (0,0) width 387: "This sentence should be larger than unstyled text."
               RenderBlock {P} at (4,116) size 747x17
                 RenderText {#text} at (0,0) size 276x15
                   text run at (0,0) width 276: "This sentence should be smaller than unstyled text."
@@ -229,11 +229,11 @@ layer at (0,0) size 785x2810
                   text run at (0,1) width 695: "This sentence should be half an inch"
                   text run at (0,56) width 72: "tall."
               RenderBlock {P} at (4,651) size 747x45
-                RenderText {#text} at (0,1) size 676x42
-                  text run at (0,1) width 676: "This sentence should be one centimeter tall."
+                RenderText {#text} at (0,1) size 668x42
+                  text run at (0,1) width 668: "This sentence should be one centimeter tall."
               RenderBlock {P} at (4,733) size 747x45
-                RenderText {#text} at (0,1) size 682x42
-                  text run at (0,1) width 682: "This sentence should be ten millimeters tall."
+                RenderText {#text} at (0,1) size 673x42
+                  text run at (0,1) width 673: "This sentence should be ten millimeters tall."
               RenderBlock {P} at (4,815) size 747x28
                 RenderText {#text} at (0,0) size 430x26
                   text run at (0,0) width 430: "This sentence should be eighteen points tall."
@@ -256,4 +256,4 @@ layer at (0,0) size 785x2810
                 RenderText {#text} at (0,0) size 673x17
                   text run at (0,0) width 673: "This sentence should be normal size, since no negative values are allowed and therefore should be ignored."
 layer at (8,355) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,347) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,347) size 769x2 [color=#808080] [border: (1px inset #808080)]

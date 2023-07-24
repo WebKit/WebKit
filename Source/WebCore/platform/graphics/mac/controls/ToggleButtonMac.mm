@@ -95,28 +95,25 @@ IntOutsets ToggleButtonMac::cellOutsets(NSControlSize controlSize, const Control
     return (m_owningPart.type() == StyleAppearance::Checkbox ? checkboxOutsets : radioOutsets)[controlSize];
 }
 
+FloatRect ToggleButtonMac::rectForBounds(const FloatRect& bounds, const ControlStyle& style) const
+{
+    auto controlSize = [m_buttonCell controlSize];
+
+    FloatSize size = cellSize(controlSize, style);
+    size.scale(style.zoomFactor);
+
+    auto outsets = cellOutsets(controlSize, style);
+
+    return inflatedRect(bounds, size, outsets, style);
+}
+
 void ToggleButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
     GraphicsContextStateSaver stateSaver(context);
 
-    auto controlSize = [m_buttonCell controlSize];
-
-    auto zoomedSize = cellSize(controlSize, style);
-    zoomedSize.scale(style.zoomFactor);
-
-    auto outsets = cellOutsets(controlSize, style);
-    auto zoomedOutsets = FloatBoxExtent {
-        outsets.top() * style.zoomFactor,
-        outsets.right() * style.zoomFactor,
-        outsets.bottom() * style.zoomFactor,
-        outsets.left() * style.zoomFactor
-    };
-
-    auto logicalRect = borderRect.rect();
-    logicalRect.setSize(zoomedSize);
-    logicalRect.expand(zoomedOutsets);
+    auto logicalRect = rectForBounds(borderRect.rect(), style);
 
     if (style.zoomFactor != 1) {
         logicalRect.scale(1 / style.zoomFactor);

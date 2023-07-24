@@ -51,10 +51,6 @@ WebGLVertexArrayObject::~WebGLVertexArrayObject()
 WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase& context, Type type)
     : WebGLVertexArrayObjectBase(context, type)
 {
-#if USE(OPENGL_ES)
-    if (m_type != Type::User)
-        return;
-#endif
     setObject(this->context()->graphicsContextGL()->createVertexArray());
 }
 

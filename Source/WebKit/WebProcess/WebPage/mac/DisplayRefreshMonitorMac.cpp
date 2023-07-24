@@ -79,7 +79,9 @@ bool DisplayRefreshMonitorMac::startNotificationMechanism()
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID(), maxClientPreferredFramesPerSecond().value_or(FullSpeedFramesPerSecond)), 0);
     if (!m_runLoopObserver) {
         // The RunLoopObserver repeats.
-        m_runLoopObserver = makeUnique<RunLoopObserver>(kCFRunLoopEntry, [this]() {
+        // FIXME: Double check whether the value of `DisplayRefreshMonitor` (1) is the appropriate runloop order here,
+        // and also whether we should be specifying `RunLoopObserver::Activity::Entry` when scheduling the observer below.
+        m_runLoopObserver = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::DisplayRefreshMonitor, [this] {
             m_firstCallbackInCurrentRunloop = true;
         });
     }

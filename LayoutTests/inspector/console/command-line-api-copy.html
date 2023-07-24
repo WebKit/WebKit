@@ -51,7 +51,7 @@ function test()
         { name: "Null",                    expression: "null", expected: "null" },
         { name: "Regex",                   expression: "/regex/i", expected: "/regex/i" },
         { name: "Symbol",                  expression: "Symbol('test')", expected: "Symbol(test)" },
-        { name: "Function",                expression: "function    foo( a, b ) {return 1}", expected: "function foo( a, b ) {return 1}" },
+        { name: "Function",                expression: "function    foo( a, b ) {return 1}", expected: "function    foo( a, b ) {return 1}" },
         { name: "Array",                   expression: "[1,2,3]", expected: stringify([1,2,3]) },
         { name: "Object",                  expression: "{x:1, y:2}", expected: stringify({x:1, y:2}) },
         { name: "Object.Cyclic",           expression: "window.cyclicObject", expected: "[object Object]" },

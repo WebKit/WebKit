@@ -10,7 +10,7 @@ Unless otherwise noted, build tools must at most five years old, matching
 [Abseil guidelines](https://abseil.io/about/compatibility). If in doubt, use the
 most recent stable version of each tool.
 
-  * [CMake](https://cmake.org/download/) 3.5 or later is required.
+  * [CMake](https://cmake.org/download/) 3.10 or later is required.
 
   * A recent version of Perl is required. On Windows,
     [Active State Perl](http://www.activestate.com/activeperl/) has been
@@ -30,10 +30,11 @@ most recent stable version of each tool.
     by CMake, it may be configured explicitly by setting
     `CMAKE_ASM_NASM_COMPILER`.
 
-  * C and C++ compilers with C++11 support are required. On Windows, MSVC 14
-    (Visual Studio 2015) or later with Platform SDK 8.1 or later are supported.
-    Recent versions of GCC (4.8+) and Clang should work on non-Windows
-    platforms, and maybe on Windows too.
+  * C and C++ compilers with C++14 support are required. If using a C compiler
+    other than MSVC, C11 support is also requried. On Windows, MSVC from
+    Visual Studio 2019 or later with Windows 10 SDK 2104 or later are supported,
+    but using the latest versions is recommended. Recent versions of GCC (6.1+)
+    and Clang should work on non-Windows platforms, and maybe on Windows too.
 
   * The most recent stable version of [Go](https://golang.org/dl/) is required.
     Note Go is exempt from the five year support window. If not found by CMake,
@@ -47,17 +48,13 @@ most recent stable version of each tool.
 
 Using Ninja (note the 'N' is capitalized in the cmake invocation):
 
-    mkdir build
-    cd build
-    cmake -GNinja ..
-    ninja
+    cmake -GNinja -B build
+    ninja -C build
 
 Using Make (does not work on Windows):
 
-    mkdir build
-    cd build
-    cmake ..
-    make
+    cmake -B build
+    make -C build
 
 You usually don't need to run `cmake` again after changing `CMakeLists.txt`
 files because the build scripts will detect changes to them and rebuild
@@ -68,10 +65,9 @@ debugging—optimisation isn't enabled. Pass `-DCMAKE_BUILD_TYPE=Release` to
 `cmake` to configure a release build.
 
 If you want to cross-compile then there is an example toolchain file for 32-bit
-Intel in `util/`. Wipe out the build directory, recreate it and run `cmake` like
-this:
+Intel in `util/`. Wipe out the build directory, run `cmake` like this:
 
-    cmake -DCMAKE_TOOLCHAIN_FILE=../util/32-bit-toolchain.cmake -GNinja ..
+    cmake -B build -DCMAKE_TOOLCHAIN_FILE=../util/32-bit-toolchain.cmake -GNinja
 
 If you want to build as a shared library, pass `-DBUILD_SHARED_LIBS=1`. On
 Windows, where functions need to be tagged with `dllimport` when coming from a
@@ -92,12 +88,12 @@ versions of the NDK include a CMake toolchain file which works with CMake 3.6.0
 or later. This has been tested with version r16b of the NDK.
 
 Unpack the Android NDK somewhere and export `ANDROID_NDK` to point to the
-directory. Then make a build directory as above and run CMake like this:
+directory. Then run CMake like this:
 
     cmake -DANDROID_ABI=armeabi-v7a \
+          -DANDROID_PLATFORM=android-19 \
           -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK}/build/cmake/android.toolchain.cmake \
-          -DANDROID_NATIVE_API_LEVEL=16 \
-          -GNinja ..
+          -GNinja -B build
 
 Once you've run that, Ninja should produce Android-compatible binaries.  You
 can replace `armeabi-v7a` in the above with `arm64-v8a` and use API level 21 or
@@ -139,7 +135,7 @@ In order to build with prefixed symbols, the `BORINGSSL_PREFIX` CMake variable
 should specify the prefix to add to all symbols, and the
 `BORINGSSL_PREFIX_SYMBOLS` CMake variable should specify the path to a file
 which contains a list of symbols which should be prefixed (one per line;
-comments are supported with `#`). In other words, `cmake ..
+comments are supported with `#`). In other words, `cmake -B build
 -DBORINGSSL_PREFIX=MY_CUSTOM_PREFIX
 -DBORINGSSL_PREFIX_SYMBOLS=/path/to/symbols.txt` will configure the build to add
 the prefix `MY_CUSTOM_PREFIX` to all of the symbols listed in
@@ -161,22 +157,19 @@ BoringSSL maintainers if making use of it.
     don't have steps for assembling the assembly language source files, so they
     currently cannot be used to build BoringSSL.
 
-## Embedded ARM
+## ARM CPU Capabilities
 
-ARM, unlike Intel, does not have an instruction that allows applications to
-discover the capabilities of the processor. Instead, the capability information
-has to be provided by the operating system somehow.
+ARM, unlike Intel, does not have a userspace instruction that allows
+applications to discover the capabilities of the processor. Instead, the
+capability information has to be provided by a combination of compile-time
+information and the operating system.
 
-By default, on Linux-based systems, BoringSSL will try to use `getauxval` and
-`/proc` to discover the capabilities. But some environments don't support that
-sort of thing and, for them, it's possible to configure the CPU capabilities at
-compile time.
-
-On iOS or builds which define `OPENSSL_STATIC_ARMCAP`, features will be
-determined based on the `__ARM_NEON__` and `__ARM_FEATURE_CRYPTO` preprocessor
-symbols reported by the compiler. These values are usually controlled by the
-`-march` flag. You can also define any of the following to enable the
-corresponding ARM feature.
+BoringSSL determines capabilities at compile-time based on `__ARM_NEON`,
+`__ARM_FEATURE_AES`, and other preprocessor symbols defined in
+[Arm C Language Extensions (ACLE)](https://developer.arm.com/architectures/system-architectures/software-standards/acle).
+These values are usually controlled by the `-march` flag. You can also define
+any of the following to enable the corresponding ARM feature, but using the ACLE
+symbols via `-march` is recommended.
 
   * `OPENSSL_STATIC_ARMCAP_NEON`
   * `OPENSSL_STATIC_ARMCAP_AES`
@@ -184,8 +177,16 @@ corresponding ARM feature.
   * `OPENSSL_STATIC_ARMCAP_SHA256`
   * `OPENSSL_STATIC_ARMCAP_PMULL`
 
-Note that if a feature is enabled in this way, but not actually supported at
-run-time, BoringSSL will likely crash.
+The resulting binary will assume all such features are always present. This can
+reduce code size, by allowing the compiler to omit fallbacks. However, if the
+feature is not actually supported at runtime, BoringSSL will likely crash.
+
+BoringSSL will additionally query the operating system at runtime for additional
+features, e.g. with `getauxval` on Linux. This allows a single binary to use
+newer instructions when present, but still function on CPUs without them. But
+some environments don't support runtime queries. If building for those, define
+`OPENSSL_STATIC_ARMCAP` to limit BoringSSL to compile-time capabilities. If not
+defined, the target operating system must be known to BoringSSL.
 
 ## Binary Size
 

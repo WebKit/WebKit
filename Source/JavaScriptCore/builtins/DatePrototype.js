@@ -82,7 +82,7 @@ function toLocaleString(/* locales, options */)
     // http://www.ecma-international.org/ecma-402/2.0/#sec-Date.prototype.toLocaleString
 
     var value = @thisTimeValue.@call(this);
-    if (@isNaN(value))
+    if (value !== value)
         return "Invalid Date";
 
     var options = @toDateTimeOptionsAnyAll(@argument(1));
@@ -142,7 +142,7 @@ function toLocaleDateString(/* locales, options */)
     // http://www.ecma-international.org/ecma-402/2.0/#sec-Date.prototype.toLocaleDateString
 
     var value = @thisTimeValue.@call(this);
-    if (@isNaN(value))
+    if (value !== value)
         return "Invalid Date";
 
     var options = @toDateTimeOptionsDateDate(@argument(1));
@@ -203,7 +203,7 @@ function toLocaleTimeString(/* locales, options */)
     // http://www.ecma-international.org/ecma-402/2.0/#sec-Date.prototype.toLocaleTimeString
 
     var value = @thisTimeValue.@call(this);
-    if (@isNaN(value))
+    if (value !== value)
         return "Invalid Date";
 
     var options = @toDateTimeOptionsTimeTime(@argument(1));

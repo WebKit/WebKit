@@ -20,7 +20,7 @@ namespace webrtc {
 
 namespace {
 class DummyCallback : public RecoveredPacketReceiver {
-  void OnRecoveredPacket(const uint8_t* packet, size_t length) override {}
+  void OnRecoveredPacket(const RtpPacketReceived& packet) override {}
 };
 }  // namespace
 
@@ -36,8 +36,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   uint16_t media_seq_num = ByteReader<uint16_t>::ReadLittleEndian(data + 10);
 
   DummyCallback callback;
-  UlpfecReceiver receiver(ulpfec_ssrc, 0, &callback, {},
-                          Clock::GetRealTimeClock());
+  UlpfecReceiver receiver(ulpfec_ssrc, 0, &callback, Clock::GetRealTimeClock());
 
   test::FuzzDataHelper fuzz_data(rtc::MakeArrayView(data, size));
   while (fuzz_data.CanReadBytes(kMinDataNeeded)) {

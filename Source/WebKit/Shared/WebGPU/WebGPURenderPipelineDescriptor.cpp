@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,13 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPURenderPipelineDescriptor.h>
+#include <WebCore/WebGPURenderPipelineDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderPipelineDescriptor& renderPipelineDescriptor)
+std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPipelineDescriptor& renderPipelineDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::PipelineDescriptorBase&>(renderPipelineDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::PipelineDescriptorBase&>(renderPipelineDescriptor));
     if (!base)
         return std::nullopt;
 
@@ -77,7 +77,7 @@ std::optional<RenderPipelineDescriptor> ConvertToBackingContext::convertToBackin
     return { { WTFMove(*base), WTFMove(*vertex), WTFMove(primitive), WTFMove(depthStencil), WTFMove(multisample), WTFMove(fragment) } };
 }
 
-std::optional<PAL::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPipelineDescriptor& renderPipelineDescriptor)
+std::optional<WebCore::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPipelineDescriptor& renderPipelineDescriptor)
 {
     auto base = convertFromBacking(static_cast<const PipelineDescriptorBase&>(renderPipelineDescriptor));
     if (!base)
@@ -87,28 +87,28 @@ std::optional<PAL::WebGPU::RenderPipelineDescriptor> ConvertFromBackingContext::
     if (!vertex)
         return std::nullopt;
 
-    std::optional<PAL::WebGPU::PrimitiveState> primitive;
+    std::optional<WebCore::WebGPU::PrimitiveState> primitive;
     if (renderPipelineDescriptor.primitive) {
         primitive = convertFromBacking(*renderPipelineDescriptor.primitive);
         if (!primitive)
             return std::nullopt;
     }
 
-    std::optional<PAL::WebGPU::DepthStencilState> depthStencil;
+    std::optional<WebCore::WebGPU::DepthStencilState> depthStencil;
     if (renderPipelineDescriptor.depthStencil) {
         depthStencil = convertFromBacking(*renderPipelineDescriptor.depthStencil);
         if (!depthStencil)
             return std::nullopt;
     }
 
-    std::optional<PAL::WebGPU::MultisampleState> multisample;
+    std::optional<WebCore::WebGPU::MultisampleState> multisample;
     if (renderPipelineDescriptor.multisample) {
         multisample = convertFromBacking(*renderPipelineDescriptor.multisample);
         if (!multisample)
             return std::nullopt;
     }
 
-    auto fragment = ([&] () -> std::optional<PAL::WebGPU::FragmentState> {
+    auto fragment = ([&] () -> std::optional<WebCore::WebGPU::FragmentState> {
         if (renderPipelineDescriptor.fragment)
             return convertFromBacking(*renderPipelineDescriptor.fragment);
         return std::nullopt;

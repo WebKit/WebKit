@@ -245,14 +245,6 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     }
     if (diff == StyleDifference::Layout && oldStyle && oldStyle->imageOrientation() != style().imageOrientation())
         return repaintOrMarkForLayout(ImageSizeChangeNone);
-
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    if (diff == StyleDifference::Layout && oldStyle
-        && (oldStyle->imageResolution() != style().imageResolution()
-            || oldStyle->imageResolutionSnap() != style().imageResolutionSnap()
-            || oldStyle->imageResolutionSource() != style().imageResolutionSource()))
-        repaintOrMarkForLayout(ImageSizeChangeNone);
-#endif
 }
 
 bool RenderImage::shouldCollapseToEmpty() const
@@ -339,23 +331,14 @@ void RenderImage::updateInnerContentRect()
     if (!containerSize.isEmpty()) {
         URL imageSourceURL;
         if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element()))
-            imageSourceURL = document().completeURL(imageElement->imageSourceURL());
+            imageSourceURL = imageElement->currentURL();
         imageResource().setContainerContext(containerSize, imageSourceURL);
     }
 }
 
 void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, const IntRect* rect)
 {
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    double scale = style().imageResolution();
-    if (style().imageResolutionSnap() == ImageResolutionSnap::Pixels)
-        scale = roundForImpreciseConversion<int>(scale);
-    if (scale <= 0)
-        scale = 1;
-    LayoutSize newIntrinsicSize = imageResource().intrinsicSize(style().effectiveZoom() / scale);
-#else
     LayoutSize newIntrinsicSize = imageResource().intrinsicSize(style().effectiveZoom());
-#endif
     LayoutSize oldIntrinsicSize = intrinsicSize();
 
     updateIntrinsicSizeIfNeeded(newIntrinsicSize);
@@ -586,10 +569,10 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                         visualLeft += adjustedPaintOffset.x();
 
                         auto rotationRect = LayoutRect { visualLeft, adjustedPaintOffset.y(), textWidth, contentLogicalHeight };
-                        context.concatCTM(rotation(rotationRect, Clockwise));
+                        context.concatCTM(rotation(rotationRect, RotationDirection::Clockwise));
                         auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade.metricsOfPrimaryFont().ascent() };
                         context.drawBidiText(fontCascade, textRun, textOrigin);
-                        context.concatCTM(rotation(rotationRect, Counterclockwise));
+                        context.concatCTM(rotation(rotationRect, RotationDirection::Counterclockwise));
                     }
                 }
             }
@@ -732,6 +715,9 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     if (imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw && imageElement->document().settings().systemPreviewEnabled())
         theme().paintSystemPreviewBadge(*img, paintInfo, rect);
 #endif
+
+    if (element() && !paintInfo.context().paintingDisabled())
+        element()->setHasEverPaintedImages(true);
 
     return drawResult;
 }

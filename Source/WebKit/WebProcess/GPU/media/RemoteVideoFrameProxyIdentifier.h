@@ -32,10 +32,10 @@
 
 namespace WebKit {
 
-using RemoteVideoFrameReadReference = ObjectIdentifierReadReference<WebCore::RemoteVideoFrameIdentifier>;
-using RemoteVideoFrameWriteReference = ObjectIdentifierWriteReference<WebCore::RemoteVideoFrameIdentifier>;
-using RemoteVideoFrameReference = ObjectIdentifierReference<WebCore::RemoteVideoFrameIdentifier>;
-using RemoteVideoFrameReferenceTracker = ObjectIdentifierReferenceTracker<WebCore::RemoteVideoFrameIdentifier>;
+using RemoteVideoFrameReadReference = IPC::ObjectIdentifierReadReference<WebCore::RemoteVideoFrameIdentifier>;
+using RemoteVideoFrameWriteReference = IPC::ObjectIdentifierWriteReference<WebCore::RemoteVideoFrameIdentifier>;
+using RemoteVideoFrameReference = IPC::ObjectIdentifierReference<WebCore::RemoteVideoFrameIdentifier>;
+using RemoteVideoFrameReferenceTracker = IPC::ObjectIdentifierReferenceTracker<WebCore::RemoteVideoFrameIdentifier>;
 
 } // namespace WebKit
 

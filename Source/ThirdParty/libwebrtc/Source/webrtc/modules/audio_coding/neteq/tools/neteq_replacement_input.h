@@ -30,8 +30,10 @@ class NetEqReplacementInput : public NetEqInput {
 
   absl::optional<int64_t> NextPacketTime() const override;
   absl::optional<int64_t> NextOutputEventTime() const override;
+  absl::optional<SetMinimumDelayInfo> NextSetMinimumDelayInfo() const override;
   std::unique_ptr<PacketData> PopPacket() override;
   void AdvanceOutputEvent() override;
+  void AdvanceSetMinimumDelay() override;
   bool ended() const override;
   absl::optional<RTPHeader> NextHeader() const override;
 

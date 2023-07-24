@@ -189,14 +189,20 @@ extern "C" {
 #define BN_CAN_USE_INLINE_ASM
 #endif
 
-// |BN_mod_exp_mont_consttime| is based on the assumption that the L1 data
-// cache line width of the target processor is at least the following value.
-#define MOD_EXP_CTIME_MIN_CACHE_LINE_WIDTH 64
+// MOD_EXP_CTIME_ALIGN is the alignment needed for |BN_mod_exp_mont_consttime|'s
+// tables.
+//
+// TODO(davidben): Historically, this alignment came from cache line
+// assumptions, which we've since removed. Is 64-byte alignment still necessary
+// or ideal? The true alignment requirement seems to now be 32 bytes, coming
+// from RSAZ's use of VMOVDQA to a YMM register. Non-x86_64 has even fewer
+// requirements.
+#define MOD_EXP_CTIME_ALIGN 64
 
-// The number of |BN_ULONG|s needed for the |BN_mod_exp_mont_consttime| stack-
-// allocated storage buffer. The buffer is just the right size for the RSAZ
-// and is about ~1KB larger than what's necessary (4480 bytes) for 1024-bit
-// inputs.
+// MOD_EXP_CTIME_STORAGE_LEN is the number of |BN_ULONG|s needed for the
+// |BN_mod_exp_mont_consttime| stack-allocated storage buffer. The buffer is
+// just the right size for the RSAZ and is about ~1KB larger than what's
+// necessary (4480 bytes) for 1024-bit inputs.
 #define MOD_EXP_CTIME_STORAGE_LEN \
   (((320u * 3u) + (32u * 9u * 16u)) / sizeof(BN_ULONG))
 
@@ -211,8 +217,8 @@ extern "C" {
 #define Hw(t) ((BN_ULONG)((t) >> BN_BITS2))
 #endif
 
-// bn_minimal_width returns the minimal value of |bn->top| which fits the
-// value of |bn|.
+// bn_minimal_width returns the minimal number of words needed to represent
+// |bn|.
 int bn_minimal_width(const BIGNUM *bn);
 
 // bn_set_minimal_width sets |bn->width| to |bn_minimal_width(bn)|. If |bn| is
@@ -228,7 +234,7 @@ int bn_wexpand(BIGNUM *bn, size_t words);
 // than a number of words.
 int bn_expand(BIGNUM *bn, size_t bits);
 
-// bn_resize_words adjusts |bn->top| to be |words|. It returns one on success
+// bn_resize_words adjusts |bn->width| to be |words|. It returns one on success
 // and zero on allocation error or if |bn|'s value is too large.
 OPENSSL_EXPORT int bn_resize_words(BIGNUM *bn, size_t words);
 
@@ -256,6 +262,12 @@ int bn_fits_in_words(const BIGNUM *bn, size_t num);
 // bn_copy_words copies the value of |bn| to |out| and returns one if the value
 // is representable in |num| words. Otherwise, it returns zero.
 int bn_copy_words(BN_ULONG *out, size_t num, const BIGNUM *bn);
+
+// bn_assert_fits_in_bytes asserts that |bn| fits in |num| bytes. This is a
+// no-op in release builds, but triggers an assert in debug builds, and
+// declassifies all bytes which are therefore known to be zero in constant-time
+// validation.
+void bn_assert_fits_in_bytes(const BIGNUM *bn, size_t num);
 
 // bn_mul_add_words multiples |ap| by |w|, adds the result to |rp|, and places
 // the result in |rp|. |ap| and |rp| must both be |num| words long. It returns
@@ -344,6 +356,12 @@ int bn_rand_range_words(BN_ULONG *out, BN_ULONG min_inclusive,
 int bn_rand_secret_range(BIGNUM *r, int *out_is_uniform, BN_ULONG min_inclusive,
                          const BIGNUM *max_exclusive);
 
+// BN_MONTGOMERY_MAX_WORDS is the maximum numer of words allowed in a |BIGNUM|
+// used with Montgomery reduction. Ideally this limit would be applied to all
+// |BIGNUM|s, in |bn_wexpand|, but the exactfloat library needs to create 8 MiB
+// values for other operations.
+#define BN_MONTGOMERY_MAX_WORDS (8 * 1024 / sizeof(BN_ULONG))
+
 #if !defined(OPENSSL_NO_ASM) &&                         \
     (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || \
      defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64))
@@ -353,11 +371,16 @@ int bn_rand_secret_range(BIGNUM *r, int *out_is_uniform, BN_ULONG min_inclusive,
 // corresponding field in |BN_MONT_CTX|. It returns one if |bn_mul_mont| handles
 // inputs of this size and zero otherwise.
 //
+// If at least one of |ap| or |bp| is fully reduced, |rp| will be fully reduced.
+// If neither is fully-reduced, the output may not be either.
+//
+// This function allocates |num| words on the stack, so |num| should be at most
+// |BN_MONTGOMERY_MAX_WORDS|.
+//
 // TODO(davidben): The x86_64 implementation expects a 32-bit input and masks
 // off upper bits. The aarch64 implementation expects a 64-bit input and does
 // not. |size_t| is the safer option but not strictly correct for x86_64. But
-// this function implicitly already has a bound on the size of |num| because it
-// internally creates |num|-sized stack allocation.
+// the |BN_MONTGOMERY_MAX_WORDS| bound makes this moot.
 //
 // See also discussion in |ToWord| in abi_test.h for notes on smaller-than-word
 // inputs.
@@ -371,36 +394,39 @@ int bn_mul_mont(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
 // bn_mul_mont_gather5 multiples loads index |power| of |table|, multiplies it
 // by |ap| modulo |np|, and stores the result in |rp|. The values are |num|
 // words long and represented in Montgomery form. |n0| is a pointer to the
-// corresponding field in |BN_MONT_CTX|.
+// corresponding field in |BN_MONT_CTX|. |table| must be aligned to at least
+// 16 bytes. |power| must be less than 32 and is treated as secret.
+//
+// WARNING: This function implements Almost Montgomery Multiplication from
+// https://eprint.iacr.org/2011/239. The inputs do not need to be fully reduced.
+// However, even if they are fully reduced, the output may not be.
 void bn_mul_mont_gather5(BN_ULONG *rp, const BN_ULONG *ap,
                          const BN_ULONG *table, const BN_ULONG *np,
                          const BN_ULONG *n0, int num, int power);
 
 // bn_scatter5 stores |inp| to index |power| of |table|. |inp| and each entry of
-// |table| are |num| words long. |power| must be less than 32. |table| must be
-// 32*|num| words long.
+// |table| are |num| words long. |power| must be less than 32 and is treated as
+// public. |table| must be 32*|num| words long. |table| must be aligned to at
+// least 16 bytes.
 void bn_scatter5(const BN_ULONG *inp, size_t num, BN_ULONG *table,
                  size_t power);
 
 // bn_gather5 loads index |power| of |table| and stores it in |out|. |out| and
-// each entry of |table| are |num| words long. |power| must be less than 32.
-void bn_gather5(BN_ULONG *out, size_t num, BN_ULONG *table, size_t power);
+// each entry of |table| are |num| words long. |power| must be less than 32 and
+// is treated as secret. |table| must be aligned to at least 16 bytes.
+void bn_gather5(BN_ULONG *out, size_t num, const BN_ULONG *table, size_t power);
 
 // bn_power5 squares |ap| five times and multiplies it by the value stored at
 // index |power| of |table|, modulo |np|. It stores the result in |rp|. The
 // values are |num| words long and represented in Montgomery form. |n0| is a
 // pointer to the corresponding field in |BN_MONT_CTX|. |num| must be divisible
-// by 8.
+// by 8. |power| must be less than 32 and is treated as secret.
+//
+// WARNING: This function implements Almost Montgomery Multiplication from
+// https://eprint.iacr.org/2011/239. The inputs do not need to be fully reduced.
+// However, even if they are fully reduced, the output may not be.
 void bn_power5(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *table,
                const BN_ULONG *np, const BN_ULONG *n0, int num, int power);
-
-// bn_from_montgomery converts |ap| from Montgomery form modulo |np| and writes
-// the result in |rp|, each of which is |num| words long. It returns one on
-// success and zero if it cannot handle inputs of length |num|. |n0| is a
-// pointer to the corresponding field in |BN_MONT_CTX|.
-int bn_from_montgomery(BN_ULONG *rp, const BN_ULONG *ap,
-                       const BN_ULONG *not_used, const BN_ULONG *np,
-                       const BN_ULONG *n0, int num);
 #endif  // !OPENSSL_NO_ASM && OPENSSL_X86_64
 
 uint64_t bn_mont_n0(const BIGNUM *n);
@@ -436,7 +462,7 @@ int bn_jacobi(const BIGNUM *a, const BIGNUM *b, BN_CTX *ctx);
 
 // bn_is_bit_set_words returns one if bit |bit| is set in |a| and zero
 // otherwise.
-int bn_is_bit_set_words(const BN_ULONG *a, size_t num, unsigned bit);
+int bn_is_bit_set_words(const BN_ULONG *a, size_t num, size_t bit);
 
 // bn_one_to_montgomery sets |r| to one in Montgomery form. It returns one on
 // success and zero on error. This function treats the bit width of the modulus
@@ -552,12 +578,15 @@ int bn_sqr_consttime(BIGNUM *r, const BIGNUM *a, BN_CTX *ctx);
 // bn_div_consttime behaves like |BN_div|, but it rejects negative inputs and
 // treats both inputs, including their magnitudes, as secret. It is, as a
 // result, much slower than |BN_div| and should only be used for rare operations
-// where Montgomery reduction is not available.
+// where Montgomery reduction is not available. |divisor_min_bits| is a
+// public lower bound for |BN_num_bits(divisor)|. When |divisor|'s bit width is
+// public, this can speed up the operation.
 //
 // Note that |quotient->width| will be set pessimally to |numerator->width|.
 OPENSSL_EXPORT int bn_div_consttime(BIGNUM *quotient, BIGNUM *remainder,
                                     const BIGNUM *numerator,
-                                    const BIGNUM *divisor, BN_CTX *ctx);
+                                    const BIGNUM *divisor,
+                                    unsigned divisor_min_bits, BN_CTX *ctx);
 
 // bn_is_relatively_prime checks whether GCD(|x|, |y|) is one. On success, it
 // returns one and sets |*out_relatively_prime| to one if the GCD was one and
@@ -629,6 +658,15 @@ int bn_mod_inverse_prime(BIGNUM *out, const BIGNUM *a, const BIGNUM *p,
 int bn_mod_inverse_secret_prime(BIGNUM *out, const BIGNUM *a, const BIGNUM *p,
                                 BN_CTX *ctx, const BN_MONT_CTX *mont_p);
 
+// BN_MONT_CTX_set_locked takes |lock| and checks whether |*pmont| is NULL. If
+// so, it creates a new |BN_MONT_CTX| and sets the modulus for it to |mod|. It
+// then stores it as |*pmont|. It returns one on success and zero on error. Note
+// this function assumes |mod| is public.
+//
+// If |*pmont| is already non-NULL then it does nothing and returns one.
+int BN_MONT_CTX_set_locked(BN_MONT_CTX **pmont, CRYPTO_MUTEX *lock,
+                           const BIGNUM *mod, BN_CTX *bn_ctx);
+
 
 // Low-level operations for small numbers.
 //
@@ -684,9 +722,10 @@ void bn_mod_mul_montgomery_small(BN_ULONG *r, const BN_ULONG *a,
 // bn_mod_exp_mont_small sets |r| to |a|^|p| mod |mont->N|. It returns one on
 // success and zero on programmer or internal error. Both inputs and outputs are
 // in the Montgomery domain. |r| and |a| are |num| words long, which must be
-// |mont->N.width| and at most |BN_SMALL_MAX_WORDS|. |a| must be fully-reduced.
-// This function runs in time independent of |a|, but |p| and |mont->N| are
-// public values. |a| must be fully-reduced and may alias with |r|.
+// |mont->N.width| and at most |BN_SMALL_MAX_WORDS|. |num_p|, measured in bits,
+// must fit in |size_t|. |a| must be fully-reduced. This function runs in time
+// independent of |a|, but |p| and |mont->N| are public values. |a| must be
+// fully-reduced and may alias with |r|.
 //
 // Note this function differs from |BN_mod_exp_mont| which uses Montgomery
 // reduction but takes input and output outside the Montgomery domain. Combine
@@ -703,6 +742,25 @@ void bn_mod_exp_mont_small(BN_ULONG *r, const BN_ULONG *a, size_t num,
 // independent of |a|, but |mont->N| is a public value.
 void bn_mod_inverse0_prime_mont_small(BN_ULONG *r, const BN_ULONG *a,
                                       size_t num, const BN_MONT_CTX *mont);
+
+
+// Word-based byte conversion functions.
+
+// bn_big_endian_to_words interprets |in_len| bytes from |in| as a big-endian,
+// unsigned integer and writes the result to |out_len| words in |out|. |out_len|
+// must be large enough to represent any |in_len|-byte value. That is, |out_len|
+// must be at least |BN_BYTES * in_len|.
+void bn_big_endian_to_words(BN_ULONG *out, size_t out_len, const uint8_t *in,
+                            size_t in_len);
+
+// bn_words_to_big_endian represents |in_len| words from |in| as a big-endian,
+// unsigned integer in |out_len| bytes. It writes the result to |out|. |out_len|
+// must be large enough to represent |in| without truncation.
+//
+// Note |out_len| may be less than |BN_BYTES * in_len| if |in| is known to have
+// leading zeros.
+void bn_words_to_big_endian(uint8_t *out, size_t out_len, const BN_ULONG *in,
+                            size_t in_len);
 
 
 #if defined(__cplusplus)

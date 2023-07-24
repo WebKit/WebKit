@@ -358,7 +358,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 - (pid_t)_prewarmedProcessIdentifier
 {
-    return _processPool->prewarmedProcessIdentifier();
+    return _processPool->prewarmedProcessID();
 }
 
 
@@ -376,7 +376,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 {
 #if ENABLE(GPU_PROCESS)
     auto* gpuProcess = _processPool->gpuProcess();
-    return gpuProcess ? gpuProcess->processIdentifier() : 0;
+    return gpuProcess ? gpuProcess->processID() : 0;
 #else
     return 0;
 #endif
@@ -390,7 +390,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 - (BOOL)_requestWebProcessTermination:(pid_t)pid
 {
     for (auto& process : _processPool->processes()) {
-        if (process->processIdentifier() == pid)
+        if (process->processID() == pid)
             process->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
         return YES;
     }
@@ -400,7 +400,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 - (BOOL)_isWebProcessSuspended:(pid_t)pid
 {
     for (auto& process : _processPool->processes()) {
-        if (process->processIdentifier() == pid)
+        if (process->processID() == pid)
             return process->throttler().isSuspended();
     }
     return NO;

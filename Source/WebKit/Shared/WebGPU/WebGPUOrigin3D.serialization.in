@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@ headers: "StreamConnectionEncoder.h"
 #if ENABLE(GPU_PROCESS)
 header: "WebGPUOrigin3D.h"
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebKit::WebGPU::Origin3DDict {
-    PAL::WebGPU::IntegerCoordinate x
-    PAL::WebGPU::IntegerCoordinate y
-    PAL::WebGPU::IntegerCoordinate z
+    WebCore::WebGPU::IntegerCoordinate x
+    WebCore::WebGPU::IntegerCoordinate y
+    WebCore::WebGPU::IntegerCoordinate z
 }
 #endif

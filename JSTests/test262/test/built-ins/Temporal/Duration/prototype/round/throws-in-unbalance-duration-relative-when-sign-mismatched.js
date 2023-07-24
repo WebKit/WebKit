@@ -22,7 +22,7 @@ var cal = new class extends Temporal.Calendar {
 }("iso8601");
 
 var relativeTo = new Temporal.PlainDateTime(1970, 1, 1, 0, 0, 0, 0, 0, 0, cal);
-assert.sameValue(relativeTo.calendar, cal);
+assert.sameValue(relativeTo.getCalendar(), cal);
 
 var options = {
   smallestUnit: "days",

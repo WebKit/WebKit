@@ -75,14 +75,14 @@ private:
     String charsetAttributeValue() const final;
     String typeAttributeValue() const final;
     String languageAttributeValue() const final;
-    String forAttributeValue() const final;
-    String eventAttributeValue() const final;
     bool hasAsyncAttribute() const final;
     bool hasDeferAttribute() const final;
     bool hasNoModuleAttribute() const final;
     bool hasSourceAttribute() const final;
 
     void dispatchLoadEvent() final;
+
+    bool isScriptPreventedByAttributes() const final;
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
 };

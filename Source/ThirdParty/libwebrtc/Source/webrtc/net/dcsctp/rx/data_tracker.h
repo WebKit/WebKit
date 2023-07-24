@@ -55,7 +55,7 @@ class DataTracker {
   DataTracker(absl::string_view log_prefix,
               Timer* delayed_ack_timer,
               TSN peer_initial_tsn)
-      : log_prefix_(std::string(log_prefix) + "dtrack: "),
+      : log_prefix_(log_prefix),
         seen_packet_(false),
         delayed_ack_timer_(*delayed_ack_timer),
         last_cumulative_acked_tsn_(
@@ -172,7 +172,7 @@ class DataTracker {
   void UpdateAckState(AckState new_state, absl::string_view reason);
   static absl::string_view ToString(AckState ack_state);
 
-  const std::string log_prefix_;
+  const absl::string_view log_prefix_;
   // If a packet has ever been seen.
   bool seen_packet_;
   Timer& delayed_ack_timer_;

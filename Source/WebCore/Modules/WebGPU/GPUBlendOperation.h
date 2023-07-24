@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUBlendOperation.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUBlendOperation.h>
 
 namespace WebCore {
 
@@ -38,19 +38,19 @@ enum class GPUBlendOperation : uint8_t {
     Max,
 };
 
-inline PAL::WebGPU::BlendOperation convertToBacking(GPUBlendOperation blendOperation)
+inline WebGPU::BlendOperation convertToBacking(GPUBlendOperation blendOperation)
 {
     switch (blendOperation) {
     case GPUBlendOperation::Add:
-        return PAL::WebGPU::BlendOperation::Add;
+        return WebGPU::BlendOperation::Add;
     case GPUBlendOperation::Subtract:
-        return PAL::WebGPU::BlendOperation::Subtract;
+        return WebGPU::BlendOperation::Subtract;
     case GPUBlendOperation::ReverseSubtract:
-        return PAL::WebGPU::BlendOperation::ReverseSubtract;
+        return WebGPU::BlendOperation::ReverseSubtract;
     case GPUBlendOperation::Min:
-        return PAL::WebGPU::BlendOperation::Min;
+        return WebGPU::BlendOperation::Min;
     case GPUBlendOperation::Max:
-        return PAL::WebGPU::BlendOperation::Max;
+        return WebGPU::BlendOperation::Max;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

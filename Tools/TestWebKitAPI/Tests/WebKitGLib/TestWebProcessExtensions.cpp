@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2,1 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -707,7 +707,7 @@ static void testWebProcessExtensionUserMessages(UserMessageTest* test, gconstpoi
     g_assert_error(messageError, WEBKIT_USER_MESSAGE_ERROR, WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE);
 
     // Message that is never replied.
-    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(Test::createWebView(test->m_webContext.get()));
+    auto webView = Test::adoptView(Test::createWebView(test->m_webContext.get()));
     webkit_web_view_send_message_to_page(webView.get(), webkit_user_message_new("Test.Infinite", nullptr), nullptr,
         [](GObject* object, GAsyncResult* result, gpointer userData) {
             auto* test = static_cast<UserMessageTest*>(userData);
@@ -735,7 +735,7 @@ static void testWebProcessExtensionUserMessages(UserMessageTest* test, gconstpoi
     g_assert_cmpstr(webkit_user_message_get_name(message), ==, "Test.AsyncPong");
 
     // Create a new page and wait for page created message.
-    webView = WEBKIT_WEB_VIEW(Test::createWebView(test->m_webContext.get()));
+    webView = Test::adoptView(Test::createWebView(test->m_webContext.get()));
     webkit_web_view_load_html(webView.get(), "<html><body></body></html>", nullptr);
     message = test->waitUntilContextMessageReceived("PageCreated");
     g_assert_true(WEBKIT_IS_USER_MESSAGE(message));

@@ -270,6 +270,7 @@ private:
             // what gets read on OSR exit.
             switch (node->op()) {
             case MovHint:
+            case ZombieHint:
             case KillStack:
                 if (argumentsInvolveStackSlot(candidate, node->unlinkedOperand())) {
                     if (verbose)

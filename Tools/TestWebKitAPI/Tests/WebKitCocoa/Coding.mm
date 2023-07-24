@@ -137,7 +137,7 @@ TEST(Coding, WKWebView)
 
 #if PLATFORM(IOS_FAMILY)
     [a setAllowsLinkPreview:YES];
-#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
     [a setFindInteractionEnabled:YES];
 #endif
 #else
@@ -157,7 +157,7 @@ TEST(Coding, WKWebView)
     EXPECT_EQ([a magnification], [b magnification]);
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
     EXPECT_EQ([a isFindInteractionEnabled], [b isFindInteractionEnabled]);
 #endif
 }

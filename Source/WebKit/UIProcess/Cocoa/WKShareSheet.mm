@@ -50,10 +50,6 @@
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #endif
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
-#include <WebKitAdditions/WKShareSheetAdditions.h>
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 
 SOFT_LINK_FRAMEWORK(LinkPresentation)
@@ -332,12 +328,12 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
             [self dismiss];
     }];
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
-    if (shareSheetUsesModalPresentationForWebView(webView)) {
+#if PLATFORM(VISION)
+    if (webView.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomReality) {
         [_shareSheetViewController setAllowsCustomPresentationStyle:YES];
         [_shareSheetViewController setModalPresentationStyle:UIModalPresentationFormSheet];
     } else
-#endif // HAVE(UIKIT_WEBKIT_INTERNALS)
+#endif // PLATFORM(VISION)
     {
         UIPopoverPresentationController *popoverController = [_shareSheetViewController popoverPresentationController];
         if (rect) {

@@ -16,9 +16,11 @@
 
 namespace webrtc {
 
-bool FrameHasBadRenderTiming(Timestamp render_time,
-                             Timestamp now,
-                             TimeDelta target_video_delay) {
+namespace {
+constexpr TimeDelta kMaxVideoDelay = TimeDelta::Millis(10000);
+}
+
+bool FrameHasBadRenderTiming(Timestamp render_time, Timestamp now) {
   // Zero render time means render immediately.
   if (render_time.IsZero()) {
     return false;
@@ -26,19 +28,23 @@ bool FrameHasBadRenderTiming(Timestamp render_time,
   if (render_time < Timestamp::Zero()) {
     return true;
   }
-  constexpr TimeDelta kMaxVideoDelay = TimeDelta::Millis(10000);
-  TimeDelta frame_delay = (render_time - now).Abs();
-  if (frame_delay > kMaxVideoDelay) {
-    RTC_LOG(LS_WARNING)
-        << "A frame about to be decoded is out of the configured "
-           "delay bounds ("
-        << frame_delay.ms() << " > " << kMaxVideoDelay.ms()
-        << "). Resetting the video jitter buffer.";
+  TimeDelta frame_delay = render_time - now;
+  if (frame_delay.Abs() > kMaxVideoDelay) {
+    RTC_LOG(LS_WARNING) << "Frame has bad render timing because it is out of "
+                           "the delay bounds (frame_delay_ms="
+                        << frame_delay.ms()
+                        << ", kMaxVideoDelay_ms=" << kMaxVideoDelay.ms() << ")";
     return true;
   }
+  return false;
+}
+
+bool TargetVideoDelayIsTooLarge(TimeDelta target_video_delay) {
   if (target_video_delay > kMaxVideoDelay) {
-    RTC_LOG(LS_WARNING) << "The video target delay has grown larger than "
-                        << kMaxVideoDelay.ms() << " ms.";
+    RTC_LOG(LS_WARNING)
+        << "Target video delay is too large. (target_video_delay_ms="
+        << target_video_delay.ms()
+        << ", kMaxVideoDelay_ms=" << kMaxVideoDelay.ms() << ")";
     return true;
   }
   return false;

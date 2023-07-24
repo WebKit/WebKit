@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (28,56) size 750x369 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+    RenderSVGContainer {g} at (28,55) size 750x370 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
       RenderSVGResourceLinearGradient {linearGradient} [id="Gradient"] [gradientUnits=userSpaceOnUse] [start=(10,10)] [end=(440,10)]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (30,253) size 390x34 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 390x34
         chunk 1 text run 1 at (30.00,280.00) startOffset 0 endOffset 33 width 389.40: "Linear gradient on stroke of text"
-    RenderSVGText {text} at (10,295) size 330x56 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 330x56
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 330.00: "$Revision: 1.7 $"
+    RenderSVGText {text} at (10,295) size 331x56 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 331x56
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 330.60: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,4 +1,0 @@
-Button 1  Button 2
-
-PASS Popover should not be keyboard focusable
-

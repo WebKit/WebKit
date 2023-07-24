@@ -66,6 +66,8 @@
 
 #include "../../internal.h"
 #include "../bn/internal.h"
+#include "../service_indicator/internal.h"
+#include "internal.h"
 
 
 #define OPENSSL_DH_MAX_MODULUS_BITS 10000
@@ -73,7 +75,6 @@
 DH *DH_new(void) {
   DH *dh = OPENSSL_malloc(sizeof(DH));
   if (dh == NULL) {
-    OPENSSL_PUT_ERROR(DH, ERR_R_MALLOC_FAILURE);
     return NULL;
   }
 
@@ -99,15 +100,14 @@ void DH_free(DH *dh) {
   BN_clear_free(dh->p);
   BN_clear_free(dh->g);
   BN_clear_free(dh->q);
-  BN_clear_free(dh->j);
-  OPENSSL_free(dh->seed);
-  BN_clear_free(dh->counter);
   BN_clear_free(dh->pub_key);
   BN_clear_free(dh->priv_key);
   CRYPTO_MUTEX_cleanup(&dh->method_mont_p_lock);
 
   OPENSSL_free(dh);
 }
+
+unsigned DH_bits(const DH *dh) { return BN_num_bits(dh->p); }
 
 const BIGNUM *DH_get0_pub_key(const DH *dh) { return dh->pub_key; }
 
@@ -177,6 +177,9 @@ int DH_set0_pqg(DH *dh, BIGNUM *p, BIGNUM *q, BIGNUM *g) {
     dh->g = g;
   }
 
+  // Invalidate the cached Montgomery parameters.
+  BN_MONT_CTX_free(dh->method_mont_p);
+  dh->method_mont_p = NULL;
   return 1;
 }
 
@@ -186,6 +189,8 @@ int DH_set_length(DH *dh, unsigned priv_length) {
 }
 
 int DH_generate_key(DH *dh) {
+  boringssl_ensure_ffdh_self_test();
+
   int ok = 0;
   int generate_new_key = 0;
   BN_CTX *ctx = NULL;
@@ -322,7 +327,8 @@ static int dh_compute_key(DH *dh, BIGNUM *out_shared_key,
   return ret;
 }
 
-int DH_compute_key_padded(unsigned char *out, const BIGNUM *peers_key, DH *dh) {
+int dh_compute_key_padded_no_self_test(unsigned char *out,
+                                       const BIGNUM *peers_key, DH *dh) {
   BN_CTX *ctx = BN_CTX_new();
   if (ctx == NULL) {
     return -1;
@@ -343,7 +349,15 @@ int DH_compute_key_padded(unsigned char *out, const BIGNUM *peers_key, DH *dh) {
   return ret;
 }
 
+int DH_compute_key_padded(unsigned char *out, const BIGNUM *peers_key, DH *dh) {
+  boringssl_ensure_ffdh_self_test();
+
+  return dh_compute_key_padded_no_self_test(out, peers_key, dh);
+}
+
 int DH_compute_key(unsigned char *out, const BIGNUM *peers_key, DH *dh) {
+  boringssl_ensure_ffdh_self_test();
+
   BN_CTX *ctx = BN_CTX_new();
   if (ctx == NULL) {
     return -1;
@@ -353,7 +367,8 @@ int DH_compute_key(unsigned char *out, const BIGNUM *peers_key, DH *dh) {
   int ret = -1;
   BIGNUM *shared_key = BN_CTX_get(ctx);
   if (shared_key && dh_compute_key(dh, shared_key, peers_key, ctx)) {
-    ret = BN_bn2bin(shared_key, out);
+    // A |BIGNUM|'s byte count fits in |int|.
+    ret = (int)BN_bn2bin(shared_key, out);
   }
 
   BN_CTX_end(ctx);
@@ -370,6 +385,8 @@ int DH_compute_key_hashed(DH *dh, uint8_t *out, size_t *out_len,
   if (digest_len > max_out_len) {
     return 0;
   }
+
+  FIPS_service_indicator_lock_state();
 
   int ret = 0;
   const size_t dh_len = DH_size(dh);
@@ -392,6 +409,7 @@ int DH_compute_key_hashed(DH *dh, uint8_t *out, size_t *out_len,
   ret = 1;
 
  err:
+  FIPS_service_indicator_unlock_state();
   OPENSSL_free(shared_bytes);
   return ret;
 }

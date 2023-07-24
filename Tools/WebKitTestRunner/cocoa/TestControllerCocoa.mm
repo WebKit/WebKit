@@ -27,6 +27,7 @@
 #import "TestController.h"
 
 #import "CrashReporterInfo.h"
+#import "LayoutTestSpellChecker.h"
 #import "Options.h"
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
@@ -55,10 +56,28 @@
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/_WKApplicationManifest.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
+#import <wtf/RunLoop.h>
 #import <wtf/UniqueRef.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
+
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+static VKImageAnalysisRequestID gCurrentImageAnalysisRequestID = 0;
+
+VKImageAnalysisRequestID swizzledProcessImageAnalysisRequest(id, SEL, VKCImageAnalyzerRequest *, void (^progressHandler)(double), void (^completionHandler)(VKCImageAnalysis *, NSError *))
+{
+    RunLoop::main().dispatchAfter(25_ms, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:404 userInfo:nil]);
+    });
+    return ++gCurrentImageAnalysisRequestID;
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 namespace WTR {
 
@@ -122,16 +141,31 @@ void TestController::cocoaPlatformInitialize(const Options& options)
 
     if (options.webKitLogChannels.length())
         [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithUTF8String:options.webKitLogChannels.c_str()] forKey:@"WebKit2Logging"];
+
+    if (options.lockdownModeEnabled)
+        [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+#if ENABLE(IMAGE_ANALYSIS)
+    m_imageAnalysisRequestSwizzler = makeUnique<InstanceMethodSwizzler>(
+        PAL::getVKCImageAnalyzerClass(),
+        @selector(processRequest:progressHandler:completionHandler:),
+        reinterpret_cast<IMP>(swizzledProcessImageAnalysisRequest)
+    );
+#endif
 }
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+uint64_t TestController::currentImageAnalysisRequestID()
+{
+    return static_cast<uint64_t>(gCurrentImageAnalysisRequestID);
+}
+
+#endif
 
 WKContextRef TestController::platformContext()
 {
     return (__bridge WKContextRef)[globalWebViewConfiguration() processPool];
-}
-
-WKPreferencesRef TestController::platformPreferences()
-{
-    return (__bridge WKPreferencesRef)[globalWebViewConfiguration() preferences];
 }
 
 TestFeatures TestController::platformSpecificFeatureOverridesDefaultsForTest(const TestCommand&) const
@@ -140,8 +174,6 @@ TestFeatures TestController::platformSpecificFeatureOverridesDefaultsForTest(con
 
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnNavigation"])
         features.boolTestRunnerFeatures.insert({ "enableProcessSwapOnNavigation", true });
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnWindowOpen"])
-        features.boolTestRunnerFeatures.insert({ "enableProcessSwapOnWindowOpen", true });
 
     return features;
 }
@@ -250,6 +282,7 @@ void TestController::finishCreatingPlatformWebView(PlatformWebView* view, const 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
     initializeWebViewConfiguration(libraryPathForTesting(), injectedBundlePath(), context, contextConfiguration);
+    m_preferences = (__bridge WKPreferencesRef)[globalWebViewConfiguration() preferences];
     return (__bridge WKContextRef)[globalWebViewConfiguration() processPool];
 }
 
@@ -331,6 +364,8 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         [platformView _resetNavigationGestureStateForTesting];
         [platformView.configuration.preferences setTextInteractionEnabled:options.textInteractionEnabled()];
     }
+
+    [LayoutTestSpellChecker uninstallAndReset];
 
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String::fromLatin1(options.additionalSupportedImageTypes().c_str()));
 }
@@ -565,7 +600,10 @@ static WKContentMode contentMode(const TestOptions& options)
 void TestController::configureWebpagePreferences(WKWebViewConfiguration *configuration, const TestOptions& options)
 {
     auto webpagePreferences = adoptNS([[WKWebpagePreferences alloc] init]);
-    [webpagePreferences _setNetworkConnectionIntegrityEnabled:options.networkConnectionIntegrityEnabled()];
+    if (options.advancedPrivacyProtectionsEnabled())
+        [webpagePreferences _setNetworkConnectionIntegrityPolicy:_WKWebsiteNetworkConnectionIntegrityPolicyEnabled];
+    else
+        [webpagePreferences _setNetworkConnectionIntegrityPolicy:_WKWebsiteNetworkConnectionIntegrityPolicyNone];
 #if PLATFORM(IOS_FAMILY)
     [webpagePreferences setPreferredContentMode:contentMode(options)];
 #endif

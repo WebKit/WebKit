@@ -189,9 +189,9 @@ void StringBuilder::shrinkToFit()
     }
 }
 
-bool StringBuilder::isAllASCII() const
+bool StringBuilder::containsOnlyASCII() const
 {
-    return StringView { *this }.isAllASCII();
+    return StringView { *this }.containsOnlyASCII();
 }
 
 } // namespace WTF

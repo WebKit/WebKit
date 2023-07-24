@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,13 @@
 
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUCommandEncoder.h>
+#include <WebCore/WebGPUCommandEncoder.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteCommandEncoderProxy final : public PAL::WebGPU::CommandEncoder {
+class RemoteCommandEncoderProxy final : public WebCore::WebGPU::CommandEncoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteCommandEncoderProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -62,7 +62,7 @@ private:
     
     static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
-    WARN_UNUSED_RETURN bool send(T&& message)
+    WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
@@ -72,50 +72,50 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    Ref<PAL::WebGPU::RenderPassEncoder> beginRenderPass(const PAL::WebGPU::RenderPassDescriptor&) final;
-    Ref<PAL::WebGPU::ComputePassEncoder> beginComputePass(const std::optional<PAL::WebGPU::ComputePassDescriptor>&) final;
+    Ref<WebCore::WebGPU::RenderPassEncoder> beginRenderPass(const WebCore::WebGPU::RenderPassDescriptor&) final;
+    Ref<WebCore::WebGPU::ComputePassEncoder> beginComputePass(const std::optional<WebCore::WebGPU::ComputePassDescriptor>&) final;
 
     void copyBufferToBuffer(
-        const PAL::WebGPU::Buffer& source,
-        PAL::WebGPU::Size64 sourceOffset,
-        const PAL::WebGPU::Buffer& destination,
-        PAL::WebGPU::Size64 destinationOffset,
-        PAL::WebGPU::Size64) final;
+        const WebCore::WebGPU::Buffer& source,
+        WebCore::WebGPU::Size64 sourceOffset,
+        const WebCore::WebGPU::Buffer& destination,
+        WebCore::WebGPU::Size64 destinationOffset,
+        WebCore::WebGPU::Size64) final;
 
     void copyBufferToTexture(
-        const PAL::WebGPU::ImageCopyBuffer& source,
-        const PAL::WebGPU::ImageCopyTexture& destination,
-        const PAL::WebGPU::Extent3D& copySize) final;
+        const WebCore::WebGPU::ImageCopyBuffer& source,
+        const WebCore::WebGPU::ImageCopyTexture& destination,
+        const WebCore::WebGPU::Extent3D& copySize) final;
 
     void copyTextureToBuffer(
-        const PAL::WebGPU::ImageCopyTexture& source,
-        const PAL::WebGPU::ImageCopyBuffer& destination,
-        const PAL::WebGPU::Extent3D& copySize) final;
+        const WebCore::WebGPU::ImageCopyTexture& source,
+        const WebCore::WebGPU::ImageCopyBuffer& destination,
+        const WebCore::WebGPU::Extent3D& copySize) final;
 
     void copyTextureToTexture(
-        const PAL::WebGPU::ImageCopyTexture& source,
-        const PAL::WebGPU::ImageCopyTexture& destination,
-        const PAL::WebGPU::Extent3D& copySize) final;
+        const WebCore::WebGPU::ImageCopyTexture& source,
+        const WebCore::WebGPU::ImageCopyTexture& destination,
+        const WebCore::WebGPU::Extent3D& copySize) final;
 
     void clearBuffer(
-        const PAL::WebGPU::Buffer&,
-        PAL::WebGPU::Size64 offset = 0,
-        std::optional<PAL::WebGPU::Size64> = std::nullopt) final;
+        const WebCore::WebGPU::Buffer&,
+        WebCore::WebGPU::Size64 offset = 0,
+        std::optional<WebCore::WebGPU::Size64> = std::nullopt) final;
 
     void pushDebugGroup(String&& groupLabel) final;
     void popDebugGroup() final;
     void insertDebugMarker(String&& markerLabel) final;
 
-    void writeTimestamp(const PAL::WebGPU::QuerySet&, PAL::WebGPU::Size32 queryIndex) final;
+    void writeTimestamp(const WebCore::WebGPU::QuerySet&, WebCore::WebGPU::Size32 queryIndex) final;
 
     void resolveQuerySet(
-        const PAL::WebGPU::QuerySet&,
-        PAL::WebGPU::Size32 firstQuery,
-        PAL::WebGPU::Size32 queryCount,
-        const PAL::WebGPU::Buffer& destination,
-        PAL::WebGPU::Size64 destinationOffset) final;
+        const WebCore::WebGPU::QuerySet&,
+        WebCore::WebGPU::Size32 firstQuery,
+        WebCore::WebGPU::Size32 queryCount,
+        const WebCore::WebGPU::Buffer& destination,
+        WebCore::WebGPU::Size64 destinationOffset) final;
 
-    Ref<PAL::WebGPU::CommandBuffer> finish(const PAL::WebGPU::CommandBufferDescriptor&) final;
+    Ref<WebCore::WebGPU::CommandBuffer> finish(const WebCore::WebGPU::CommandBufferDescriptor&) final;
 
     void setLabelInternal(const String&) final;
 

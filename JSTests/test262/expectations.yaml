@@ -197,8 +197,6 @@ test/annexB/language/eval-code/direct/global-switch-dflt-eval-global-skip-early-
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-switch-dflt-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/direct/var-env-lower-lex-catch-non-strict.js:
-  default: "SyntaxError: Can't create duplicate variable in eval: 'err'"
 test/annexB/language/eval-code/indirect/global-block-decl-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-block-decl-eval-global-skip-early-err-for-in.js:
@@ -636,6 +634,24 @@ test/built-ins/ArrayBuffer/prototype/detached/this-is-sharedarraybuffer-resizabl
 test/built-ins/ArrayBuffer/prototype/detached/this-is-sharedarraybuffer.js:
   default: "TypeError: undefined is not an object (evaluating 'detached.get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'detached.get')"
+test/built-ins/ArrayBuffer/prototype/transfer/descriptor.js:
+  default: 'Test262Error: obj should have an own property transfer'
+  strict mode: 'Test262Error: obj should have an own property transfer'
+test/built-ins/ArrayBuffer/prototype/transfer/extensible.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/built-ins/ArrayBuffer/prototype/transfer/from-fixed-to-larger-no-resizable.js:
+  default: "TypeError: source.transfer is not a function. (In 'source.transfer(5)', 'source.transfer' is undefined)"
+  strict mode: "TypeError: source.transfer is not a function. (In 'source.transfer(5)', 'source.transfer' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transfer/from-fixed-to-same-no-resizable.js:
+  default: "TypeError: source.transfer is not a function. (In 'source.transfer()', 'source.transfer' is undefined)"
+  strict mode: "TypeError: source.transfer is not a function. (In 'source.transfer()', 'source.transfer' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transfer/from-fixed-to-smaller-no-resizable.js:
+  default: "TypeError: source.transfer is not a function. (In 'source.transfer(3)', 'source.transfer' is undefined)"
+  strict mode: "TypeError: source.transfer is not a function. (In 'source.transfer(3)', 'source.transfer' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transfer/from-fixed-to-zero-no-resizable.js:
+  default: "TypeError: source.transfer is not a function. (In 'source.transfer(0)', 'source.transfer' is undefined)"
+  strict mode: "TypeError: source.transfer is not a function. (In 'source.transfer(0)', 'source.transfer' is undefined)"
 test/built-ins/ArrayBuffer/prototype/transfer/from-resizable-to-larger.js:
   default: 'Test262Error: dest.resizable Expected SameValue(«false», «true») to be true'
   strict mode: 'Test262Error: dest.resizable Expected SameValue(«false», «true») to be true'
@@ -648,6 +664,96 @@ test/built-ins/ArrayBuffer/prototype/transfer/from-resizable-to-smaller.js:
 test/built-ins/ArrayBuffer/prototype/transfer/from-resizable-to-zero.js:
   default: 'Test262Error: dest.resizable Expected SameValue(«false», «true») to be true'
   strict mode: 'Test262Error: dest.resizable Expected SameValue(«false», «true») to be true'
+test/built-ins/ArrayBuffer/prototype/transfer/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/ArrayBuffer/prototype/transfer/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/ArrayBuffer/prototype/transfer/new-length-excessive.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/built-ins/ArrayBuffer/prototype/transfer/new-length-non-number.js:
+  default: 'Test262Error: Expected SameValue(«0», «2») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «2») to be true'
+test/built-ins/ArrayBuffer/prototype/transfer/nonconstructor.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.prototype.hasOwnProperty.call(ArrayBuffer.prototype.transfer, 'prototype')')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.prototype.hasOwnProperty.call(ArrayBuffer.prototype.transfer, 'prototype')')"
+test/built-ins/ArrayBuffer/prototype/transfer/this-is-detached.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/built-ins/ArrayBuffer/prototype/transfer/this-is-not-arraybuffer-object.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/built-ins/ArrayBuffer/prototype/transfer/this-is-not-object.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/descriptor.js:
+  default: 'Test262Error: obj should have an own property transferToFixedLength'
+  strict mode: 'Test262Error: obj should have an own property transferToFixedLength'
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/extensible.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-fixed-to-larger-no-resizable.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(5)', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(5)', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-fixed-to-larger.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(5)', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(5)', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-fixed-to-same-no-resizable.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength()', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength()', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-fixed-to-same.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength()', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength()', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-fixed-to-smaller-no-resizable.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(3)', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(3)', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-fixed-to-smaller.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(3)', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(3)', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-fixed-to-zero-no-resizable.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(0)', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(0)', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-fixed-to-zero.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(0)', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(0)', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-resizable-to-larger.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(5)', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(5)', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-resizable-to-same.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength()', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength()', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-resizable-to-smaller.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(3)', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(3)', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/from-resizable-to-zero.js:
+  default: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(0)', 'source.transferToFixedLength' is undefined)"
+  strict mode: "TypeError: source.transferToFixedLength is not a function. (In 'source.transferToFixedLength(0)', 'source.transferToFixedLength' is undefined)"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/new-length-excessive.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/new-length-non-number.js:
+  default: 'Test262Error: Expected SameValue(«0», «2») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«0», «2») to be true'
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/nonconstructor.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.prototype.hasOwnProperty.call(ArrayBuffer.prototype.transferToFixedLength, 'prototype')')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.prototype.hasOwnProperty.call(ArrayBuffer.prototype.transferToFixedLength, 'prototype')')"
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/this-is-detached.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/this-is-not-arraybuffer-object.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/built-ins/ArrayBuffer/prototype/transferToFixedLength/this-is-not-object.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
 test/built-ins/AsyncGeneratorPrototype/return/return-suspendedStart-broken-promise.js:
   default: 'Error: broken promise'
   strict mode: 'Error: broken promise'
@@ -672,147 +778,18 @@ test/built-ins/Function/prototype/toString/Function.js:
 test/built-ins/Function/prototype/toString/GeneratorFunction.js:
   default: "SyntaxError: Unexpected keyword 'yield'. Expected a ')' or a ',' after a parameter declaration."
   strict mode: "SyntaxError: Unexpected keyword 'yield'. Expected a ')' or a ',' after a parameter declaration."
-test/built-ins/Function/prototype/toString/async-arrow-function.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }" (async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }" (async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ })'
-test/built-ins/Function/prototype/toString/async-function-declaration.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }" (async function /* a */ f /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }" (async function /* a */ f /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })'
-test/built-ins/Function/prototype/toString/async-function-expression.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function F( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }" (async function /* a */ F /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function F( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }" (async function /* a */ F /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })'
-test/built-ins/Function/prototype/toString/async-generator-declaration.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }" (async /* a */ function /* b */ * /* c */ f /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }" (async /* a */ function /* b */ * /* c */ f /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })'
-test/built-ins/Function/prototype/toString/async-generator-expression.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function* F( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }" (async /* a */ function /* b */ * /* c */ F /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function* F( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ }" (async /* a */ function /* b */ * /* c */ F /* d */ ( /* e */ x /* f */ , /* g */ y /* h */ ) /* i */ { /* j */ ; /* k */ ; /* l */ })'
-test/built-ins/Function/prototype/toString/async-generator-method-class-expression-static.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* d */ ) /* e */ { /* f */ }" (async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* d */ ) /* e */ { /* f */ }" (async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })'
-test/built-ins/Function/prototype/toString/async-generator-method-class-expression.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* d */ ) /* e */ { /* f */ }" (async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* d */ ) /* e */ { /* f */ }" (async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })'
-test/built-ins/Function/prototype/toString/async-generator-method-class-statement-static.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* d */ ) /* e */ { /* f */ }" (async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* d */ ) /* e */ { /* f */ }" (async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })'
-test/built-ins/Function/prototype/toString/async-generator-method-class-statement.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* d */ ) /* e */ { /* f */ }" (async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* d */ ) /* e */ { /* f */ }" (async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })'
-test/built-ins/Function/prototype/toString/async-generator-method-object.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* d */ ) /* e */ { /* f */ }" (async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function* f( /* d */ ) /* e */ { /* f */ }" (async /* a */ * /* b */ f /* c */ ( /* d */ ) /* e */ { /* f */ })'
-test/built-ins/Function/prototype/toString/async-method-class-expression-static.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/async-method-class-expression.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/async-method-class-statement-static.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/async-method-class-statement.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/async-method-object.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
 test/built-ins/Function/prototype/toString/built-in-function-object.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
-test/built-ins/Function/prototype/toString/function-declaration-non-simple-parameter-list.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* c */ a /* d */ = /* e */ 0 /* f */ , /* g */ { /* h */ b /* i */ = /* j */ 0 /* k */ } /* l */ ) /* m */ { /* n */ }" (function /* a */ f /* b */ ( /* c */ a /* d */ = /* e */ 0 /* f */ , /* g */ { /* h */ b /* i */ = /* j */ 0 /* k */ } /* l */ ) /* m */ { /* n */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* c */ a /* d */ = /* e */ 0 /* f */ , /* g */ { /* h */ b /* i */ = /* j */ 0 /* k */ } /* l */ ) /* m */ { /* n */ }" (function /* a */ f /* b */ ( /* c */ a /* d */ = /* e */ 0 /* f */ , /* g */ { /* h */ b /* i */ = /* j */ 0 /* k */ } /* l */ ) /* m */ { /* n */ })'
-test/built-ins/Function/prototype/toString/function-declaration.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }" (function /* a */ f /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }" (function /* a */ f /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })'
-test/built-ins/Function/prototype/toString/function-expression.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function F( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }" (function /* a */ F /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function F( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ }" (function /* a */ F /* b */ ( /* c */ x /* d */ , /* e */ y /* f */ ) /* g */ { /* h */ ; /* i */ ; /* j */ })'
-test/built-ins/Function/prototype/toString/generator-function-declaration.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function* g( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }" (function /* a */ * /* b */ g /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function* g( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }" (function /* a */ * /* b */ g /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })'
-test/built-ins/Function/prototype/toString/generator-function-expression.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function* F( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }" (function /* a */ * /* b */ F /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function* F( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ }" (function /* a */ * /* b */ F /* c */ ( /* d */ x /* e */ , /* f */ y /* g */ ) /* h */ { /* i */ ; /* j */ ; /* k */ })'
-test/built-ins/Function/prototype/toString/generator-method.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function* f( /* c */ ) /* d */ { /* e */ }" (* /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function* f( /* c */ ) /* d */ { /* e */ }" (* /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-test/built-ins/Function/prototype/toString/getter-class-expression-static.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ ) /* d */ { /* e */ }" (get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ ) /* d */ { /* e */ }" (get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-test/built-ins/Function/prototype/toString/getter-class-expression.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ ) /* d */ { /* e */ }" (get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ ) /* d */ { /* e */ }" (get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-test/built-ins/Function/prototype/toString/getter-class-statement-static.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ ) /* d */ { /* e */ }" (get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ ) /* d */ { /* e */ }" (get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-test/built-ins/Function/prototype/toString/getter-class-statement.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ ) /* d */ { /* e */ }" (get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ ) /* d */ { /* e */ }" (get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-test/built-ins/Function/prototype/toString/getter-object.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ ) /* d */ { /* e */ }" (get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ ) /* d */ { /* e */ }" (get /* a */ f /* b */ ( /* c */ ) /* d */ { /* e */ })'
-test/built-ins/Function/prototype/toString/line-terminator-normalisation-CR-LF.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: \"function f(\\r\\n// c\\r\\nx\\r\\n// d\\r\\n,\\r\\n// e\\r\\ny\\r\\n// f\\r\\n)\\r\\n// g\\r\\n{\\r\\n// h\\r\\n;\\r\\n// i\\r\\n;\\r\\n// j\\r\\n}\" (function\r"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: \"function f(\\r\\n// c\\r\\nx\\r\\n// d\\r\\n,\\r\\n// e\\r\\ny\\r\\n// f\\r\\n)\\r\\n// g\\r\\n{\\r\\n// h\\r\\n;\\r\\n// i\\r\\n;\\r\\n// j\\r\\n}\" (function\r"
-test/built-ins/Function/prototype/toString/line-terminator-normalisation-CR.js:
-  default: "Test262Error: Conforms to NativeFunction Syntax: \"function f(\\r// c\\rx\\r// d\\r,\\r// e\\ry\\r// f\\r)\\r// g\\r{\\r// h\\r;\\r// i\\r;\\r// j\\r}\" (function\r// a\rf\r// b\r(\r// c\rx\r// d\r,\r// e\ry\r// f\r)\r// g\r{\r// h\r;\r// i\r;\r// j\r})"
-  strict mode: "Test262Error: Conforms to NativeFunction Syntax: \"function f(\\r// c\\rx\\r// d\\r,\\r// e\\ry\\r// f\\r)\\r// g\\r{\\r// h\\r;\\r// i\\r;\\r// j\\r}\" (function\r// a\rf\r// b\r(\r// c\rx\r// d\r,\r// e\ry\r// f\r)\r// g\r{\r// h\r;\r// i\r;\r// j\r})"
-test/built-ins/Function/prototype/toString/line-terminator-normalisation-LF.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function f(\n// c\nx\n// d\n,\n// e\ny\n// f\n)\n// g\n{\n// h\n;\n// i\n;\n// j\n}" (function'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function f(\n// c\nx\n// d\n,\n// e\ny\n// f\n)\n// g\n{\n// h\n;\n// i\n;\n// j\n}" (function'
-test/built-ins/Function/prototype/toString/method-class-expression-static.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/method-class-expression.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/method-class-statement-static.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/method-class-statement.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/method-computed-property-name.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* d */ ) /* e */ { /* f */ }" ([ /* a */ "f" /* b */ ] /* c */ ( /* d */ ) /* e */ { /* f */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* d */ ) /* e */ { /* f */ }" ([ /* a */ "f" /* b */ ] /* c */ ( /* d */ ) /* e */ { /* f */ })'
-test/built-ins/Function/prototype/toString/method-object.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* b */ ) /* c */ { /* d */ }" (f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/private-method-class-expression.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/private-method-class-statement.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/private-static-method-class-expression.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/private-static-method-class-statement.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function #f( /* b */ ) /* c */ { /* d */ }" (#f /* a */ ( /* b */ ) /* c */ { /* d */ })'
-test/built-ins/Function/prototype/toString/setter-class-expression-static.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
-test/built-ins/Function/prototype/toString/setter-class-expression.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
-test/built-ins/Function/prototype/toString/setter-class-statement-static.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
-test/built-ins/Function/prototype/toString/setter-class-statement.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
-test/built-ins/Function/prototype/toString/setter-object.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function ( /* c */ a /* d */ ) /* e */ { /* f */ }" (set /* a */ f /* b */ ( /* c */ a /* d */ ) /* e */ { /* f */ })'
-test/built-ins/Function/prototype/toString/unicode.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }" (function \u0061(\u{62}, \u0063) { \u0062 = \u{00063}; return b; })'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }" (function \u0061(\u{62}, \u0063) { \u0062 = \u{00063}; return b; })'
+test/built-ins/Map/groupBy/callback-arg.js:
+  default: 'Test262Error: only two arguments are passed Expected SameValue(«3», «2») to be true'
+  strict mode: 'Test262Error: only two arguments are passed Expected SameValue(«3», «2») to be true'
 test/built-ins/Object/entries/order-after-define-property-with-function.js:
   default: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
+test/built-ins/Object/groupBy/callback-arg.js:
+  default: 'Test262Error: only two arguments are passed Expected SameValue(«3», «2») to be true'
+  strict mode: 'Test262Error: only two arguments are passed Expected SameValue(«3», «2») to be true'
 test/built-ins/Object/keys/order-after-define-property-with-function.js:
   default: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
@@ -885,21 +862,42 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-string.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/Duration/prototype/add/precision-exact-mathematical-values.js:
   default: 'Test262Error: duration1.add(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
   strict mode: 'Test262Error: duration1.add(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
+test/built-ins/Temporal/Duration/prototype/add/relativeto-propertybag-calendar-string.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/round/largestunit-correct-rebalancing.js:
+  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+  strict mode: "ReferenceError: Can't find variable: unit"
 test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-round-duration.js:
   default: 'Test262Error:  hours result Expected SameValue(«100000», «100001») to be true'
   strict mode: 'Test262Error:  hours result Expected SameValue(«100000», «100001») to be true'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-calendar-string.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
 test/built-ins/Temporal/Duration/prototype/round/roundingincrement-non-integer.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
 test/built-ins/Temporal/Duration/prototype/round/roundingincrement-out-of-range.js:
   default: 'Test262Error: Expected a RangeError but got a Error'
   strict mode: 'Test262Error: Expected a RangeError but got a Error'
+test/built-ins/Temporal/Duration/prototype/round/zero-day-length-1.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, \"iso8601\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, \"iso8601\")')"
+test/built-ins/Temporal/Duration/prototype/round/zero-day-length-2.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, cal)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, cal)')"
 test/built-ins/Temporal/Duration/prototype/subtract/precision-exact-mathematical-values.js:
   default: 'Test262Error: duration1.subtract(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
   strict mode: 'Test262Error: duration1.subtract(duration2) nanoseconds result Expected SameValue(«24», «0») to be true'
+test/built-ins/Temporal/Duration/prototype/subtract/relativeto-propertybag-calendar-string.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/toString/fractionalseconddigits-non-integer.js:
   default: 'Test262Error: fractionalSecondDigits -0.6 floors to -1 and is out of range Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: fractionalSecondDigits -0.6 floors to -1 and is out of range Expected a RangeError to be thrown but no exception was thrown at all'
@@ -915,12 +913,30 @@ test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-va
 test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-2.js:
   default: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
   strict mode: 'Test262Error: Expected SameValue(«4001», «4000.9999999999995») to be true'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar-string.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/zero-day-length-1.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, \"iso8601\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, \"iso8601\")')"
+test/built-ins/Temporal/Duration/prototype/total/zero-day-length-2.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, cal)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz, cal)')"
 test/built-ins/Temporal/Instant/compare/argument-string-date-with-utc-offset.js:
   default: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
   strict mode: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
 test/built-ins/Temporal/Instant/from/argument-string-date-with-utc-offset.js:
   default: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
   strict mode: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
+test/built-ins/Temporal/Instant/prototype/epochMicroseconds/basic.js:
+  default: 'Test262Error: epochMicroseconds pre epoch Expected SameValue(«-217175010876543», «-217175010876544») to be true'
+  strict mode: 'Test262Error: epochMicroseconds pre epoch Expected SameValue(«-217175010876543», «-217175010876544») to be true'
+test/built-ins/Temporal/Instant/prototype/epochMilliseconds/basic.js:
+  default: 'Test262Error: epochMilliseconds pre epoch Expected SameValue(«-217175010876», «-217175010877») to be true'
+  strict mode: 'Test262Error: epochMilliseconds pre epoch Expected SameValue(«-217175010876», «-217175010877») to be true'
+test/built-ins/Temporal/Instant/prototype/epochSeconds/basic.js:
+  default: 'Test262Error: epochSeconds pre epoch Expected SameValue(«-217175010», «-217175011») to be true'
+  strict mode: 'Test262Error: epochSeconds pre epoch Expected SameValue(«-217175010», «-217175011») to be true'
 test/built-ins/Temporal/Instant/prototype/equals/argument-string-date-with-utc-offset.js:
   default: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
   strict mode: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
@@ -967,8 +983,8 @@ test/built-ins/Temporal/Instant/prototype/toString/order-of-operations.js:
   default: 'Error: FIXME: Temporal.Instant.toString({timeZone}) not implemented yet'
   strict mode: 'Error: FIXME: Temporal.Instant.toString({timeZone}) not implemented yet'
 test/built-ins/Temporal/Instant/prototype/toString/timezone-wrong-type.js:
-  default: 'Test262Error: calendar instance does not convert to a valid ISO string Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: calendar instance does not convert to a valid ISO string Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'Test262Error: object not implementing time zone protocol is not a valid object and does not convert to a string Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: object not implementing time zone protocol is not a valid object and does not convert to a string Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Instant/prototype/until/argument-string-date-with-utc-offset.js:
   default: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
   strict mode: "RangeError: '1970-01-01T00Z[!UTC]' is not a valid Temporal.Instant string"
@@ -1002,15 +1018,45 @@ test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfTrunc.js:
 test/built-ins/Temporal/Instant/prototype/until/roundingmode-trunc.js:
   default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
   strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
+test/built-ins/Temporal/Now/timeZoneId/extensible.js:
+  default: 'Test262Error: Object.isExtensible(Temporal.Now.timeZoneId) must return true'
+  strict mode: 'Test262Error: Object.isExtensible(Temporal.Now.timeZoneId) must return true'
+test/built-ins/Temporal/Now/timeZoneId/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/Temporal/Now/timeZoneId/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Temporal.Now.timeZoneId.name')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.Now.timeZoneId.name')"
+test/built-ins/Temporal/Now/timeZoneId/not-a-constructor.js:
+  default: 'Test262Error: isConstructor invoked with a non-function value'
+  strict mode: 'Test262Error: isConstructor invoked with a non-function value'
+test/built-ins/Temporal/Now/timeZoneId/prop-desc.js:
+  default: 'Test262Error: typeof is function Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: typeof is function Expected SameValue(«undefined», «function») to be true'
+test/built-ins/Temporal/Now/timeZoneId/return-value.js:
+  default: "TypeError: Temporal.Now.timeZoneId is not a function. (In 'Temporal.Now.timeZoneId()', 'Temporal.Now.timeZoneId' is undefined)"
+  strict mode: "TypeError: Temporal.Now.timeZoneId is not a function. (In 'Temporal.Now.timeZoneId()', 'Temporal.Now.timeZoneId' is undefined)"
 test/built-ins/Temporal/PlainDate/argument-convert.js:
   default: 'Test262Error: year undefined Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: year undefined Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/calendar-case-insensitive.js:
+  default: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «iso8601») to be true'
+  strict mode: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «iso8601») to be true'
+test/built-ins/Temporal/PlainDate/calendar-string.js:
+  default: 'Test262Error: Calendar created from string "iso8601" Expected SameValue(«iso8601», «iso8601») to be true'
+  strict mode: 'Test262Error: Calendar created from string "iso8601" Expected SameValue(«iso8601», «iso8601») to be true'
+test/built-ins/Temporal/PlainDate/calendar-undefined.js:
+  default: 'Test262Error: calendar slot should store string Expected SameValue(«iso8601», «iso8601») to be true'
+  strict mode: 'Test262Error: calendar slot should store string Expected SameValue(«iso8601», «iso8601») to be true'
 test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-case-insensitive.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
 test/built-ins/Temporal/PlainDate/compare/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid date string'
   strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-string.js:
+  default: 'Test262Error: calendar slot stores a string Expected SameValue(«iso8601», «iso8601») to be true'
+  strict mode: 'Test262Error: calendar slot stores a string Expected SameValue(«iso8601», «iso8601») to be true'
 test/built-ins/Temporal/PlainDate/from/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid date string'
   strict mode: 'RangeError: invalid date string'
@@ -1020,9 +1066,66 @@ test/built-ins/Temporal/PlainDate/from/order-of-operations.js:
 test/built-ins/Temporal/PlainDate/prototype/add/order-of-operations.js:
   default: 'Test262Error: Expected [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get this.calendar.dateAdd, call this.calendar.dateAdd, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get this.calendar.dateAdd, call this.calendar.dateAdd, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
+test/built-ins/Temporal/PlainDate/prototype/calendarId/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"calendarId\").get')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"calendarId\").get')"
+test/built-ins/Temporal/PlainDate/prototype/calendarId/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
+test/built-ins/Temporal/PlainDate/prototype/day/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDate/prototype/dayOfWeek/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDate/prototype/dayOfYear/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDate/prototype/daysInMonth/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDate/prototype/daysInWeek/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDate/prototype/daysInYear/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/PlainDate/prototype/equals/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid date string'
   strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDate/prototype/getCalendar/branding.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/built-ins/Temporal/PlainDate/prototype/getCalendar/builtin.js:
+  default: 'Test262Error: Built-in objects must be extensible. Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Built-in objects must be extensible. Expected SameValue(«false», «true») to be true'
+test/built-ins/Temporal/PlainDate/prototype/getCalendar/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/Temporal/PlainDate/prototype/getCalendar/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/Temporal/PlainDate/prototype/getCalendar/not-a-constructor.js:
+  default: 'Test262Error: isConstructor invoked with a non-function value'
+  strict mode: 'Test262Error: isConstructor invoked with a non-function value'
+test/built-ins/Temporal/PlainDate/prototype/getCalendar/prop-desc.js:
+  default: 'Test262Error: `typeof PlainDate.prototype.getCalendar` is `function` Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: `typeof PlainDate.prototype.getCalendar` is `function` Expected SameValue(«undefined», «function») to be true'
+test/built-ins/Temporal/PlainDate/prototype/getISOFields/field-names.js:
+  default: 'Test262Error: calendar result Expected SameValue(«iso8601», «iso8601») to be true'
+  strict mode: 'Test262Error: calendar result Expected SameValue(«iso8601», «iso8601») to be true'
+test/built-ins/Temporal/PlainDate/prototype/inLeapYear/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDate/prototype/month/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDate/prototype/monthCode/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDate/prototype/monthsInYear/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/PlainDate/prototype/since/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid date string'
   strict mode: 'RangeError: invalid date string'
@@ -1036,23 +1139,32 @@ test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-date
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
 test/built-ins/Temporal/PlainDate/prototype/toString/order-of-operations.js:
-  default: 'Test262Error: Expected [] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get this.calendar[Symbol.toPrimitive], get this.calendar.toString, call this.calendar.toString] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get this.calendar[Symbol.toPrimitive], get this.calendar.toString, call this.calendar.toString] to have the same contents. order of operations'
+  default: 'Test262Error: Expected [] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get this.calendar.id] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get this.calendar.id] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDate/prototype/until/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid date string'
   strict mode: 'RangeError: invalid date string'
 test/built-ins/Temporal/PlainDate/prototype/until/roundingincrement-out-of-range.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/prototype/weekOfYear/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/PlainDate/prototype/with/order-of-operations.js:
   default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.calendar, get fields.timeZone, get this.calendar.fields, call this.calendar.fields, get this.calendar.day, call this.calendar.day, get this.calendar.month, call this.calendar.month, get this.calendar.monthCode, call this.calendar.monthCode, get this.calendar.year, call this.calendar.year, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get this.calendar.mergeFields, call this.calendar.mergeFields, get this.calendar.dateFromFields, call this.calendar.dateFromFields, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.calendar, get fields.timeZone, get this.calendar.fields, call this.calendar.fields, get this.calendar.day, call this.calendar.day, get this.calendar.month, call this.calendar.month, get this.calendar.monthCode, call this.calendar.monthCode, get this.calendar.year, call this.calendar.year, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get this.calendar.mergeFields, call this.calendar.mergeFields, get this.calendar.dateFromFields, call this.calendar.dateFromFields, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
+test/built-ins/Temporal/PlainDate/prototype/year/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/basic.js:
   default: 'Test262Error: 1975-12-29 should be in yearOfWeek 1976 Expected SameValue(«undefined», «1976») to be true'
   strict mode: 'Test262Error: 1975-12-29 should be in yearOfWeek 1976 Expected SameValue(«undefined», «1976») to be true'
 test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/branding.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"yearOfWeek\").get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"yearOfWeek\").get')"
+test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/custom.js:
   default: 'Test262Error: result Expected SameValue(«undefined», «7») to be true'
   strict mode: 'Test262Error: result Expected SameValue(«undefined», «7») to be true'
@@ -1062,12 +1174,24 @@ test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/prop-desc.js:
 test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/validate-calendar-value.js:
   default: 'Test262Error: undefined undefined not converted to integer Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: undefined undefined not converted to integer Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/calendar-case-insensitive.js:
+  default: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «iso8601») to be true'
+  strict mode: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «iso8601») to be true'
+test/built-ins/Temporal/PlainDateTime/calendar-string.js:
+  default: 'Test262Error: Calendar created from string "iso8601" Expected SameValue(«iso8601», «iso8601») to be true'
+  strict mode: 'Test262Error: Calendar created from string "iso8601" Expected SameValue(«iso8601», «iso8601») to be true'
+test/built-ins/Temporal/PlainDateTime/calendar-undefined.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «iso8601») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «iso8601») to be true'
 test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-case-insensitive.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
 test/built-ins/Temporal/PlainDateTime/compare/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid date string'
   strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-string.js:
+  default: 'Test262Error: calendar slot stores a string Expected SameValue(«iso8601», «iso8601») to be true'
+  strict mode: 'Test262Error: calendar slot stores a string Expected SameValue(«iso8601», «iso8601») to be true'
 test/built-ins/Temporal/PlainDateTime/from/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid date string'
   strict mode: 'RangeError: invalid date string'
@@ -1077,9 +1201,66 @@ test/built-ins/Temporal/PlainDateTime/from/order-of-operations.js:
 test/built-ins/Temporal/PlainDateTime/prototype/add/order-of-operations.js:
   default: 'Test262Error: Expected [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get this.calendar.dateAdd, call this.calendar.dateAdd, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get this.calendar.dateAdd, call this.calendar.dateAdd, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
+test/built-ins/Temporal/PlainDateTime/prototype/calendarId/branding.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"calendarId\").get')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"calendarId\").get')"
+test/built-ins/Temporal/PlainDateTime/prototype/calendarId/prop-desc.js:
+  default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
+test/built-ins/Temporal/PlainDateTime/prototype/day/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDateTime/prototype/dayOfWeek/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDateTime/prototype/dayOfYear/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDateTime/prototype/daysInMonth/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDateTime/prototype/daysInWeek/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDateTime/prototype/daysInYear/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid date string'
   strict mode: 'RangeError: invalid date string'
+test/built-ins/Temporal/PlainDateTime/prototype/getCalendar/branding.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/built-ins/Temporal/PlainDateTime/prototype/getCalendar/builtin.js:
+  default: 'Test262Error: Built-in objects must be extensible. Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Built-in objects must be extensible. Expected SameValue(«false», «true») to be true'
+test/built-ins/Temporal/PlainDateTime/prototype/getCalendar/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/Temporal/PlainDateTime/prototype/getCalendar/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/Temporal/PlainDateTime/prototype/getCalendar/not-a-constructor.js:
+  default: 'Test262Error: isConstructor invoked with a non-function value'
+  strict mode: 'Test262Error: isConstructor invoked with a non-function value'
+test/built-ins/Temporal/PlainDateTime/prototype/getCalendar/prop-desc.js:
+  default: 'Test262Error: `typeof PlainDateTime.prototype.getCalendar` is `function` Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: `typeof PlainDateTime.prototype.getCalendar` is `function` Expected SameValue(«undefined», «function») to be true'
+test/built-ins/Temporal/PlainDateTime/prototype/getISOFields/field-names.js:
+  default: 'Test262Error: calendar result Expected SameValue(«iso8601», «iso8601») to be true'
+  strict mode: 'Test262Error: calendar result Expected SameValue(«iso8601», «iso8601») to be true'
+test/built-ins/Temporal/PlainDateTime/prototype/inLeapYear/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDateTime/prototype/month/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDateTime/prototype/monthCode/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
+test/built-ins/Temporal/PlainDateTime/prototype/monthsInYear/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/PlainDateTime/prototype/subtract/order-of-operations.js:
   default: 'Test262Error: Expected [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get this.calendar.dateAdd, call this.calendar.dateAdd, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.days, get fields.days.valueOf, call fields.days.valueOf, get fields.hours, get fields.hours.valueOf, call fields.hours.valueOf, get fields.microseconds, get fields.microseconds.valueOf, call fields.microseconds.valueOf, get fields.milliseconds, get fields.milliseconds.valueOf, call fields.milliseconds.valueOf, get fields.minutes, get fields.minutes.valueOf, call fields.minutes.valueOf, get fields.months, get fields.months.valueOf, call fields.months.valueOf, get fields.nanoseconds, get fields.nanoseconds.valueOf, call fields.nanoseconds.valueOf, get fields.seconds, get fields.seconds.valueOf, call fields.seconds.valueOf, get fields.weeks, get fields.weeks.valueOf, call fields.weeks.valueOf, get fields.years, get fields.years.valueOf, call fields.years.valueOf, get this.calendar.dateAdd, call this.calendar.dateAdd, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
@@ -1087,11 +1268,14 @@ test/built-ins/Temporal/PlainDateTime/prototype/toString/fractionalseconddigits-
   default: 'Test262Error: fractionalSecondDigits -0.6 floors to -1 and is out of range Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: fractionalSecondDigits -0.6 floors to -1 and is out of range Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/prototype/toString/order-of-operations.js:
-  default: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get this.calendar[Symbol.toPrimitive], get this.calendar.toString, call this.calendar.toString] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get this.calendar[Symbol.toPrimitive], get this.calendar.toString, call this.calendar.toString] to have the same contents. order of operations'
+  default: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get this.calendar.id] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get this.calendar.id] to have the same contents. order of operations'
+test/built-ins/Temporal/PlainDateTime/prototype/weekOfYear/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/PlainDateTime/prototype/with/order-of-operations.js:
-  default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get this.calendar.fields, call this.calendar.fields, get this.calendar.day, call this.calendar.day, get this.calendar.month, call this.calendar.month, get this.calendar.monthCode, call this.calendar.monthCode, get this.calendar.year, call this.calendar.year, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get this.calendar.mergeFields, call this.calendar.mergeFields, get options.overflow, get options.overflow.toString, call options.overflow.toString, get this.calendar.dateFromFields, call this.calendar.dateFromFields, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get this.calendar.fields, call this.calendar.fields, get this.calendar.day, call this.calendar.day, get this.calendar.month, call this.calendar.month, get this.calendar.monthCode, call this.calendar.monthCode, get this.calendar.year, call this.calendar.year, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get this.calendar.mergeFields, call this.calendar.mergeFields, get options.overflow, get options.overflow.toString, call options.overflow.toString, get this.calendar.dateFromFields, call this.calendar.dateFromFields, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
+  default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get this.calendar.fields, call this.calendar.fields, get this.calendar.day, call this.calendar.day, get this.hour, get this.microsecond, get this.millisecond, get this.minute, get this.calendar.month, call this.calendar.month, get this.calendar.monthCode, call this.calendar.monthCode, get this.nanosecond, get this.second, get this.calendar.year, call this.calendar.year, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get this.calendar.mergeFields, call this.calendar.mergeFields, get options.overflow, get options.overflow.toString, call options.overflow.toString, get this.calendar.dateFromFields, call this.calendar.dateFromFields, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get this.calendar.fields, call this.calendar.fields, get this.calendar.day, call this.calendar.day, get this.hour, get this.microsecond, get this.millisecond, get this.minute, get this.calendar.month, call this.calendar.month, get this.calendar.monthCode, call this.calendar.monthCode, get this.nanosecond, get this.second, get this.calendar.year, call this.calendar.year, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get this.calendar.mergeFields, call this.calendar.mergeFields, get options.overflow, get options.overflow.toString, call options.overflow.toString, get this.calendar.dateFromFields, call this.calendar.dateFromFields, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDateTime/prototype/with/overflow-wrong-type.js:
   default: 'Test262Error: Expected [get overflow.toString, call overflow.toString] and [get overflow.toString, call overflow.toString, get overflow.toString, call overflow.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get overflow.toString, call overflow.toString] and [get overflow.toString, call overflow.toString, get overflow.toString, call overflow.toString] to have the same contents. order of operations'
@@ -1101,12 +1285,18 @@ test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-string-da
 test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainDateTime/prototype/year/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/basic.js:
   default: 'Test262Error: check yearOfWeek information Expected SameValue(«undefined», «1976») to be true'
   strict mode: 'Test262Error: check yearOfWeek information Expected SameValue(«undefined», «1976») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/branding.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"yearOfWeek\").get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"yearOfWeek\").get')"
+test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/builtin-calendar-no-observable-calls.js:
+  default: 'TypeError: Property description must be an object.'
+  strict mode: 'TypeError: Property description must be an object.'
 test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/custom.js:
   default: 'Test262Error: result Expected SameValue(«undefined», «7») to be true'
   strict mode: 'Test262Error: result Expected SameValue(«undefined», «7») to be true'
@@ -1122,6 +1312,9 @@ test/built-ins/Temporal/PlainTime/compare/argument-string-date-with-utc-offset.j
 test/built-ins/Temporal/PlainTime/from/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/from/order-of-operations.js:
+  default: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-values-1.js:
   default: 'Test262Error:  microsecond result Expected SameValue(«992», «993») to be true'
   strict mode: 'Test262Error:  microsecond result Expected SameValue(«992», «993») to be true'
@@ -1134,12 +1327,15 @@ test/built-ins/Temporal/PlainTime/prototype/add/precision-exact-mathematical-val
 test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
+test/built-ins/Temporal/PlainTime/prototype/getISOFields/field-traversal-order.js:
+  default: 'Test262Error: Expected [calendar, isoHour, isoMicrosecond, isoMillisecond, isoMinute, isoNanosecond, isoSecond] and [isoHour, isoMicrosecond, isoMillisecond, isoMinute, isoNanosecond, isoSecond] to have the same contents. '
+  strict mode: 'Test262Error: Expected [calendar, isoHour, isoMicrosecond, isoMillisecond, isoMinute, isoNanosecond, isoSecond] and [isoHour, isoMicrosecond, isoMillisecond, isoMinute, isoNanosecond, isoSecond] to have the same contents. '
 test/built-ins/Temporal/PlainTime/prototype/since/argument-string-date-with-utc-offset.js:
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
 test/built-ins/Temporal/PlainTime/prototype/since/order-of-operations.js:
-  default: 'Test262Error: Expected [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, ownKeys options, getOwnPropertyDescriptor options.roundingIncrement, get options.roundingIncrement, getOwnPropertyDescriptor options.roundingMode, get options.roundingMode, getOwnPropertyDescriptor options.largestUnit, get options.largestUnit, getOwnPropertyDescriptor options.smallestUnit, get options.smallestUnit, getOwnPropertyDescriptor options.additional, get options.additional, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, ownKeys options, getOwnPropertyDescriptor options.roundingIncrement, get options.roundingIncrement, getOwnPropertyDescriptor options.roundingMode, get options.roundingMode, getOwnPropertyDescriptor options.largestUnit, get options.largestUnit, getOwnPropertyDescriptor options.smallestUnit, get options.smallestUnit, getOwnPropertyDescriptor options.additional, get options.additional, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
+  default: 'Test262Error: Expected [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, ownKeys options, getOwnPropertyDescriptor options.roundingIncrement, get options.roundingIncrement, getOwnPropertyDescriptor options.roundingMode, get options.roundingMode, getOwnPropertyDescriptor options.largestUnit, get options.largestUnit, getOwnPropertyDescriptor options.smallestUnit, get options.smallestUnit, getOwnPropertyDescriptor options.additional, get options.additional, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, ownKeys options, getOwnPropertyDescriptor options.roundingIncrement, get options.roundingIncrement, getOwnPropertyDescriptor options.roundingMode, get options.roundingMode, getOwnPropertyDescriptor options.largestUnit, get options.largestUnit, getOwnPropertyDescriptor options.smallestUnit, get options.smallestUnit, getOwnPropertyDescriptor options.additional, get options.additional, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainTime/prototype/subtract/precision-exact-mathematical-values-1.js:
   default: 'Test262Error:  microsecond result Expected SameValue(«992», «993») to be true'
   strict mode: 'Test262Error:  microsecond result Expected SameValue(«992», «993») to be true'
@@ -1162,14 +1358,20 @@ test/built-ins/Temporal/PlainTime/prototype/until/argument-string-date-with-utc-
   default: 'RangeError: invalid time string'
   strict mode: 'RangeError: invalid time string'
 test/built-ins/Temporal/PlainTime/prototype/until/order-of-operations.js:
-  default: 'Test262Error: Expected [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, ownKeys options, getOwnPropertyDescriptor options.roundingIncrement, get options.roundingIncrement, getOwnPropertyDescriptor options.roundingMode, get options.roundingMode, getOwnPropertyDescriptor options.largestUnit, get options.largestUnit, getOwnPropertyDescriptor options.smallestUnit, get options.smallestUnit, getOwnPropertyDescriptor options.additional, get options.additional, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, ownKeys options, getOwnPropertyDescriptor options.roundingIncrement, get options.roundingIncrement, getOwnPropertyDescriptor options.roundingMode, get options.roundingMode, getOwnPropertyDescriptor options.largestUnit, get options.largestUnit, getOwnPropertyDescriptor options.smallestUnit, get options.smallestUnit, getOwnPropertyDescriptor options.additional, get options.additional, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
+  default: 'Test262Error: Expected [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, ownKeys options, getOwnPropertyDescriptor options.roundingIncrement, get options.roundingIncrement, getOwnPropertyDescriptor options.roundingMode, get options.roundingMode, getOwnPropertyDescriptor options.largestUnit, get options.largestUnit, getOwnPropertyDescriptor options.smallestUnit, get options.smallestUnit, getOwnPropertyDescriptor options.additional, get options.additional, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get other.calendar, get other.calendar.toString, call other.calendar.toString, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, ownKeys options, getOwnPropertyDescriptor options.roundingIncrement, get options.roundingIncrement, getOwnPropertyDescriptor options.roundingMode, get options.roundingMode, getOwnPropertyDescriptor options.largestUnit, get options.largestUnit, getOwnPropertyDescriptor options.smallestUnit, get options.smallestUnit, getOwnPropertyDescriptor options.additional, get options.additional, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainTime/prototype/with/order-of-operations.js:
   default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: ZonedDateTime'
   strict mode: 'Test262Error: ZonedDateTime'
+test/built-ins/TypedArray/prototype/set/BigInt/number-tobigint.js:
+  default: 'Test262Error: abrupt completion from Number: 1 Expected a TypeError to be thrown but no exception was thrown at all (Testing with BigInt64Array.)'
+  strict mode: 'Test262Error: abrupt completion from Number: 1 Expected a TypeError to be thrown but no exception was thrown at all (Testing with BigInt64Array.)'
+test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/number-tobigint.js:
+  default: 'Test262Error: abrupt completion from Number: 1 Expected a TypeError to be thrown but no exception was thrown at all (Testing with BigInt64Array.)'
+  strict mode: 'Test262Error: abrupt completion from Number: 1 Expected a TypeError to be thrown but no exception was thrown at all (Testing with BigInt64Array.)'
 test/harness/asyncHelpers-asyncTest-without-async-flag.js:
   default: "Test262Error: Without 'async' flag, $DONE should not be defined"
   strict mode: "Test262Error: Without 'async' flag, $DONE should not be defined"
@@ -1179,6 +1381,18 @@ test/harness/temporalHelpers-cross-date-line-time-zone.js:
 test/harness/temporalHelpers-one-shift-time-zone.js:
   default: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
   strict mode: "TypeError: realTz.getOffsetNanosecondsFor is not a function. (In 'realTz.getOffsetNanosecondsFor(shiftInstant)', 'realTz.getOffsetNanosecondsFor' is undefined)"
+test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-supported.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
@@ -1425,14 +1639,6 @@ test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-f
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/eval-code/direct/arrow-fn-a-following-parameter-is-named-arguments-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/arrow-fn-a-following-parameter-is-named-arguments-arrow-func-declare-arguments-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/arrow-fn-a-preceding-parameter-is-named-arguments-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/arrow-fn-a-preceding-parameter-is-named-arguments-arrow-func-declare-arguments-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/eval-code/direct/arrow-fn-body-cntns-arguments-func-decl-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/eval-code/direct/arrow-fn-body-cntns-arguments-func-decl-arrow-func-declare-arguments-assign.js:
@@ -1449,270 +1655,6 @@ test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-p
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-present-arrow-func-declare-arguments-assign.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
-test/language/eval-code/direct/async-gen-func-decl-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/eval-code/direct/non-definable-function-with-function.js:
   default: 'Test262Error: Expected SameValue(«[object Object]», «undefined») to be true'
 test/language/eval-code/direct/non-definable-function-with-variable.js:
@@ -1723,10 +1665,6 @@ test/language/eval-code/direct/non-definable-global-generator.js:
   default: 'Test262Error: Expected true but got false'
 test/language/eval-code/direct/var-env-func-init-global-update-configurable.js:
   default: 'Test262Error: Expected obj[f] to have enumerable:true.'
-test/language/eval-code/direct/var-env-global-lex-non-strict.js:
-  default: "TypeError: Can't create duplicate global variable in eval: 'x'"
-test/language/eval-code/direct/var-env-lower-lex-non-strict.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/eval-code/indirect/non-definable-function-with-function.js:
   default: 'Test262Error: declaration preceding Expected SameValue(«[object Object]», «undefined») to be true'
   strict mode: 'Test262Error: declaration preceding Expected SameValue(«[object Object]», «undefined») to be true'
@@ -1742,13 +1680,6 @@ test/language/eval-code/indirect/non-definable-global-generator.js:
 test/language/eval-code/indirect/var-env-func-init-global-update-configurable.js:
   default: 'Test262Error: Expected obj[f] to have enumerable:true.'
   strict mode: 'Test262Error: Expected obj[f] to have enumerable:true.'
-test/language/eval-code/indirect/var-env-global-lex-non-strict.js:
-  default: 'Test262Error: Expected SameValue(«function TypeError() {'
-  strict mode: 'Test262Error: Expected SameValue(«function TypeError() {'
-test/language/expressions/arrow-function/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/arrow-function/scope-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/arrow-function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/assignment/S11.13.1_A7_T3.js:
@@ -1835,13 +1766,9 @@ test/language/expressions/assignmenttargettype/parenthesized-callexpression-argu
   default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/async-generator/early-errors-expression-yield-as-function-binding-identifier.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/expressions/async-generator/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/async-generator/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
-test/language/expressions/async-generator/named-eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/call/eval-realm-indirect.js:
   default: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
 test/language/expressions/call/eval-spread-empty-leading.js:
@@ -1919,19 +1846,11 @@ test/language/expressions/dynamic-import/catch/nested-async-gen-return-await-eva
 test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yield.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
-test/language/expressions/function/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/function/scope-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/expressions/generators/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/generators/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
-test/language/expressions/generators/scope-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/generators/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/instanceof/prototype-getter-with-primitive.js:
@@ -1946,24 +1865,10 @@ test/language/expressions/logical-assignment/lgcl-or-assignment-operator-non-sim
 test/language/expressions/new/non-ctor-err-realm.js:
   default: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'
-test/language/expressions/object/method-definition/async-gen-meth-eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/object/method-definition/gen-meth-eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/object/method-definition/meth-eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/object/scope-gen-meth-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/scope-gen-meth-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/expressions/object/scope-getter-body-lex-distinc.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/object/scope-meth-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/scope-meth-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/expressions/object/scope-setter-body-lex-distinc.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/postfix-decrement/S11.3.2_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
@@ -1999,18 +1904,6 @@ test/language/global-code/script-decl-var-err.js:
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: Expected uncaught exception with name 'ReferenceError' but none was thrown
-test/language/identifiers/part-unicode-15.0.0-class-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '#_\\u0CF3'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '#_\\u0CF3'"
-test/language/identifiers/part-unicode-15.0.0-class.js:
-  default: "SyntaxError: Invalid character '\\u0cf3'"
-  strict mode: "SyntaxError: Invalid character '\\u0cf3'"
-test/language/identifiers/part-unicode-15.0.0-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '_\\u0CF3'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '_\\u0CF3'"
-test/language/identifiers/part-unicode-15.0.0.js:
-  default: "SyntaxError: Invalid character '\\u0cf3'"
-  strict mode: "SyntaxError: Invalid character '\\u0cf3'"
 test/language/identifiers/start-unicode-10.0.0-class.js:
   default: "SyntaxError: Invalid character: '#'"
   strict mode: "SyntaxError: Invalid character: '#'"
@@ -2026,18 +1919,9 @@ test/language/identifiers/start-unicode-13.0.0-class.js:
 test/language/identifiers/start-unicode-14.0.0-class.js:
   default: "SyntaxError: Invalid character: '#'"
   strict mode: "SyntaxError: Invalid character: '#'"
-test/language/identifiers/start-unicode-15.0.0-class-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '#\\u{1123F}'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '#\\u{1123F}'"
 test/language/identifiers/start-unicode-15.0.0-class.js:
   default: "SyntaxError: Invalid character: '#'"
   strict mode: "SyntaxError: Invalid character: '#'"
-test/language/identifiers/start-unicode-15.0.0-escaped.js:
-  default: "SyntaxError: Invalid unicode escape in identifier: '\\u{1123F}'"
-  strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u{1123F}'"
-test/language/identifiers/start-unicode-15.0.0.js:
-  default: "SyntaxError: Invalid character '\\ud804'"
-  strict mode: "SyntaxError: Invalid character '\\ud804'"
 test/language/identifiers/start-unicode-5.2.0-class.js:
   default: "SyntaxError: Invalid character: '#'"
   strict mode: "SyntaxError: Invalid character: '#'"
@@ -2073,8 +1957,6 @@ test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-gen.js:
   module: 'Test262: This statement should not be evaluated.'
-test/language/statements/async-generator/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/async-generator/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
@@ -2234,19 +2116,11 @@ test/language/statements/for/head-lhs-let.js:
 test/language/statements/for/scope-body-lex-open.js:
   default: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
   strict mode: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
-test/language/statements/function/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/statements/function/scope-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/statements/generators/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/generators/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
-test/language/statements/generators/scope-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/generators/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/statements/labeled/decl-async-function.js:

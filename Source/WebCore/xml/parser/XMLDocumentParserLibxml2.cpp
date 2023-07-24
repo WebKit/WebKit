@@ -42,7 +42,6 @@
 #include "FrameLoader.h"
 #include "HTMLEntityParser.h"
 #include "HTMLHtmlElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLTemplateElement.h"
 #include "HTTPParsers.h"
 #include "InlineClassicScript.h"
@@ -466,7 +465,7 @@ static void* openFunc(const char* uri)
     Document* document = cachedResourceLoader.document();
     // Same logic as HTMLBaseElement::href(). Keep them in sync.
     auto* encoding = (document && document->decoder()) ? document->decoder()->encodingForURLParsing() : nullptr;
-    URL url(document ? document->fallbackBaseURL() : URL(), stripLeadingAndTrailingHTMLSpaces(String::fromLatin1(uri)), encoding);
+    URL url(document ? document->fallbackBaseURL() : URL(), String::fromLatin1(uri), encoding);
 
     if (!shouldAllowExternalLoad(url))
         return &globalDescriptor;
@@ -907,7 +906,7 @@ void XMLDocumentParser::endElementNs()
     m_requestingScript = true;
 
     auto& scriptElement = downcastScriptElement(element);
-    if (scriptElement.prepareScript(m_scriptStartPosition, ScriptElement::AllowLegacyTypeInTypeAttribute)) {
+    if (scriptElement.prepareScript(m_scriptStartPosition)) {
         // FIXME: Script execution should be shared between
         // the libxml2 and Qt XMLDocumentParser implementations.
 
@@ -1188,10 +1187,12 @@ static xmlEntityPtr sharedXHTMLEntity()
     return &entity;
 }
 
-static size_t convertUTF16EntityToUTF8(const UChar* utf16Entity, size_t numberOfCodeUnits, char* target, size_t targetSize)
+static size_t convertUTF16EntityToUTF8(std::span<const UChar> utf16Entity, char* target, size_t targetSize)
 {
     const char* originalTarget = target;
-    auto conversionResult = WTF::Unicode::convertUTF16ToUTF8(&utf16Entity, utf16Entity + numberOfCodeUnits, &target, target + targetSize);
+    auto start = utf16Entity.data();
+    auto end = start + utf16Entity.size();
+    auto conversionResult = WTF::Unicode::convertUTF16ToUTF8(&start, end, &target, target + targetSize);
     if (conversionResult != WTF::Unicode::ConversionResult::Success)
         return 0;
 
@@ -1203,23 +1204,24 @@ static size_t convertUTF16EntityToUTF8(const UChar* utf16Entity, size_t numberOf
 
 static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
 {
-    UChar utf16DecodedEntity[4];
-    size_t numberOfCodeUnits = decodeNamedEntityToUCharArray(reinterpret_cast<const char*>(name), utf16DecodedEntity);
-    if (!numberOfCodeUnits)
-        return 0;
+    auto decodedEntity = decodeNamedHTMLEntityForXMLParser(reinterpret_cast<const char*>(name));
+    if (decodedEntity.failed())
+        return nullptr;
+
+    auto utf16DecodedEntity = decodedEntity.span();
 
     constexpr size_t kSharedXhtmlEntityResultLength = std::size(sharedXHTMLEntityResult);
     size_t entityLengthInUTF8;
     // Unlike HTML parser, XML parser parses the content of named
     // entities. So we need to escape '&' and '<'.
-    if (numberOfCodeUnits == 1 && utf16DecodedEntity[0] == '&') {
+    if (utf16DecodedEntity.size() == 1 && utf16DecodedEntity[0] == '&') {
         sharedXHTMLEntityResult[0] = '&';
         sharedXHTMLEntityResult[1] = '#';
         sharedXHTMLEntityResult[2] = '3';
         sharedXHTMLEntityResult[3] = '8';
         sharedXHTMLEntityResult[4] = ';';
         entityLengthInUTF8 = 5;
-    } else if (numberOfCodeUnits == 1 && utf16DecodedEntity[0] == '<') {
+    } else if (utf16DecodedEntity.size() == 1 && utf16DecodedEntity[0] == '<') {
         sharedXHTMLEntityResult[0] = '&';
         sharedXHTMLEntityResult[1] = '#';
         sharedXHTMLEntityResult[2] = 'x';
@@ -1227,7 +1229,7 @@ static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
         sharedXHTMLEntityResult[4] = 'C';
         sharedXHTMLEntityResult[5] = ';';
         entityLengthInUTF8 = 6;
-    } else if (numberOfCodeUnits == 2 && utf16DecodedEntity[0] == '<' && utf16DecodedEntity[1] == 0x20D2) {
+    } else if (utf16DecodedEntity.size() == 2 && utf16DecodedEntity[0] == '<' && utf16DecodedEntity[1] == 0x20D2) {
         sharedXHTMLEntityResult[0] = '&';
         sharedXHTMLEntityResult[1] = '#';
         sharedXHTMLEntityResult[2] = '6';
@@ -1238,8 +1240,8 @@ static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
         sharedXHTMLEntityResult[7] = 0x92;
         entityLengthInUTF8 = 8;
     } else {
-        ASSERT(numberOfCodeUnits <= 4);
-        entityLengthInUTF8 = convertUTF16EntityToUTF8(utf16DecodedEntity, numberOfCodeUnits,
+        ASSERT(utf16DecodedEntity.size() <= 4);
+        entityLengthInUTF8 = convertUTF16EntityToUTF8(utf16DecodedEntity,
             reinterpret_cast<char*>(sharedXHTMLEntityResult), kSharedXhtmlEntityResultLength);
         if (!entityLengthInUTF8)
             return 0;

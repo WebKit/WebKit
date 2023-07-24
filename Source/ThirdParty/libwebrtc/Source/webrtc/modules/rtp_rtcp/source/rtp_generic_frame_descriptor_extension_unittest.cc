@@ -21,8 +21,6 @@ using ::testing::IsEmpty;
 
 constexpr uint8_t kDeprecatedFlags = 0x30;
 
-// TODO(danilchap): Add fuzzer to test for various invalid inputs.
-
 TEST(RtpGenericFrameDescriptorExtensionTest,
      ParseFirstPacketOfIndependenSubFrame) {
   const int kTemporalLayer = 5;

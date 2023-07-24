@@ -18,6 +18,10 @@ specific_include_rules = {
     "+rtc_base/memory/aligned_malloc.h",
   ],
 
+  "i410_buffer\.h": [
+    "+rtc_base/memory/aligned_malloc.h",
+  ],
+
   "i420_buffer\.h": [
     "+rtc_base/memory/aligned_malloc.h",
   ],
@@ -43,6 +47,12 @@ specific_include_rules = {
 
   "video_frame_buffer\.h": [
     "+rtc_base/ref_count.h",
+  ],
+
+  "video_frame_metadata\.h": [
+    "+modules/video_coding/codecs/h264/include/h264_globals.h",
+    "+modules/video_coding/codecs/vp8/include/vp8_globals.h",
+    "+modules/video_coding/codecs/vp9/include/vp9_globals.h",
   ],
 
   "video_stream_decoder_create.cc": [

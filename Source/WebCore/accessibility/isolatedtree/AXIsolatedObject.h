@@ -137,12 +137,11 @@ private:
     
     // Table support.
     AXIsolatedObject* exposedTableAncestor(bool includeSelf = false) const final { return Accessibility::exposedTableAncestor(*this, includeSelf); }
-    int tableLevel() const override { return intAttributeValue(AXPropertyName::TableLevel); }
     bool supportsSelectedRows() const override { return boolAttributeValue(AXPropertyName::SupportsSelectedRows); }
-    AccessibilityChildrenVector columns() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Columns)); }
-    AccessibilityChildrenVector rows() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Rows)); }
-    unsigned columnCount() override { return unsignedAttributeValue(AXPropertyName::ColumnCount); }
-    unsigned rowCount() override { return unsignedAttributeValue(AXPropertyName::RowCount); }
+    AccessibilityChildrenVector columns() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Columns)); }
+    AccessibilityChildrenVector rows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Rows)); }
+    unsigned columnCount() final { return static_cast<unsigned>(columns().size()); }
+    unsigned rowCount() final { return static_cast<unsigned>(rows().size()); }
     AccessibilityChildrenVector cells() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Cells)); }
     AXCoreObject* cellForColumnAndRow(unsigned, unsigned) override;
     AccessibilityChildrenVector columnHeaders() override;
@@ -153,7 +152,8 @@ private:
     int axRowCount() const override { return intAttributeValue(AXPropertyName::AXRowCount); }
 
     // Table cell support.
-    bool isTableCell() const override { return boolAttributeValue(AXPropertyName::IsTableCell); }
+    bool isTableCell() const final;
+    bool isExposedTableCell() const final { return boolAttributeValue(AXPropertyName::IsExposedTableCell); }
     // Returns the start location and row span of the cell.
     std::pair<unsigned, unsigned> rowIndexRange() const override { return pairAttributeValue<unsigned>(AXPropertyName::RowIndexRange); }
     // Returns the start location and column span of the cell.
@@ -341,16 +341,16 @@ private:
     bool preventKeyboardDOMEventDispatch() const override { return boolAttributeValue(AXPropertyName::PreventKeyboardDOMEventDispatch); }
 #endif
 
-    // PlainTextRange support.
-    PlainTextRange selectedTextRange() const override;
+    // CharacterRange support.
+    CharacterRange selectedTextRange() const override;
     int insertionPointLineNumber() const override;
-    PlainTextRange doAXRangeForLine(unsigned) const override;
-    String doAXStringForRange(const PlainTextRange&) const override;
-    PlainTextRange doAXRangeForPosition(const IntPoint&) const override;
-    PlainTextRange doAXRangeForIndex(unsigned) const override;
-    PlainTextRange doAXStyleRangeForIndex(unsigned) const override;
-    IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const override;
-    IntRect doAXBoundsForRange(const PlainTextRange&) const override;
+    CharacterRange doAXRangeForLine(unsigned) const override;
+    String doAXStringForRange(const CharacterRange&) const override;
+    CharacterRange characterRangeForPoint(const IntPoint&) const override;
+    CharacterRange doAXRangeForIndex(unsigned) const override;
+    CharacterRange doAXStyleRangeForIndex(unsigned) const override;
+    IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const override;
+    IntRect doAXBoundsForRange(const CharacterRange&) const override;
     unsigned doAXLineForIndex(unsigned) override;
 
     VisibleSelection selection() const override;
@@ -372,9 +372,9 @@ private:
     VisiblePositionRange sentenceForPosition(const VisiblePosition&) const override;
     VisiblePositionRange paragraphForPosition(const VisiblePosition&) const override;
     VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const override;
-    VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const override;
+    VisiblePositionRange visiblePositionRangeForRange(const CharacterRange&) const override;
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override;
-    std::optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
+    std::optional<SimpleRange> rangeForCharacterRange(const CharacterRange&) const override;
 #if PLATFORM(COCOA)
     AXTextMarkerRange textMarkerRangeForNSRange(const NSRange&) const override;
 #endif
@@ -403,7 +403,7 @@ private:
     void setSelectedRows(AccessibilityChildrenVector&&) override;
     void setFocused(bool) override;
     void setSelectedText(const String&) override;
-    void setSelectedTextRange(PlainTextRange&&) override;
+    void setSelectedTextRange(CharacterRange&&) override;
     bool setValue(const String&) override;
     void setValueIgnoringResult(const String&) final;
 #if PLATFORM(MAC)
@@ -422,8 +422,8 @@ private:
     void performDismissActionIgnoringResult() final;
     void scrollToMakeVisible() const override;
     void scrollToMakeVisibleWithSubFocus(IntRect&&) const override;
-    void scrollToGlobalPoint(IntPoint&&) const final;
-    bool replaceTextInRange(const String&, const PlainTextRange&) override;
+    void scrollToGlobalPoint(IntPoint&&) const override;
+    bool replaceTextInRange(const String&, const CharacterRange&) override;
     bool insertText(const String&) override;
     bool press() override;
 
@@ -456,6 +456,7 @@ private:
     bool hasSameStyle(const AXCoreObject&) const override;
     bool hasUnderline() const override { return boolAttributeValue(AXPropertyName::HasUnderline); }
     bool hasHighlighting() const override { return boolAttributeValue(AXPropertyName::HasHighlighting); }
+    AXTextMarkerRange textInputMarkedTextMarkerRange() const final;
     Element* element() const override;
     Node* node() const override;
     RenderObject* renderer() const override;

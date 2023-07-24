@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012, 2014 Patrick Gansterer <paroga@paroga.com>
+ * Copyright (C) 2012 the V8 project authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,49 +38,25 @@ namespace WTF {
 
 GregorianDateTime::GregorianDateTime(double ms, LocalTimeOffset localTime)
 {
-    if (ms >= 0
-#if OS(WINDOWS) && CPU(X86)
-            // The VS Compiler for 32-bit builds generates a floating point error when attempting to cast
-            // from an infinity to a 64-bit integer. We leave this routine with the floating point error
-            // left in a register, causing undefined behavior in later floating point operations.
-            //
-            // To avoid this issue, we check for infinity here, and return false in that case.
-            && !std::isinf(ms)
-#endif
-        ) {
-        int64_t integer = static_cast<int64_t>(ms);
-        if (static_cast<double>(integer) == ms && integer <= maxECMAScriptTime) {
-            // Positive integer fast path.
-            WTF::TimeClippedPositiveMilliseconds timeClipped(integer);
-            const int year = msToYear(ms);
-            setSecond(msToSeconds(timeClipped));
-            setMinute(msToMinutes(timeClipped));
-            setHour(msToHours(timeClipped));
-            setWeekDay(msToWeekDay(timeClipped));
-            int yearDay = dayInYear(timeClipped, year);
-            bool leapYear = isLeapYear(year);
-            setYearDay(yearDay);
-            setMonthDay(dayInMonthFromDayInYear(yearDay, leapYear));
-            setMonth(monthFromDayInYear(yearDay, leapYear));
-            setYear(year);
-            setIsDST(localTime.isDST);
-            setUTCOffsetInMinute(localTime.offset / WTF::msPerMinute);
-            return;
-        }
+    if (std::isfinite(ms)) {
+        WTF::Int64Milliseconds timeClipped(static_cast<int64_t>(ms));
+        int32_t days = msToDays(timeClipped);
+        int32_t timeInDayMS = timeInDay(timeClipped, days);
+        auto [year, month, day] = yearMonthDayFromDays(days);
+        int32_t hour = timeInDayMS / (60 * 60 * 1000);
+        int32_t minute = (timeInDayMS / (60 * 1000)) % 60;
+        int32_t second = (timeInDayMS / 1000) % 60;
+        setSecond(second);
+        setMinute(minute);
+        setHour(hour);
+        setWeekDay(WTF::weekDay(days));
+        setYearDay(dayInYear(year, month, day));
+        setMonthDay(day);
+        setMonth(month);
+        setYear(year);
     }
-    const int year = msToYear(ms);
-    setSecond(msToSeconds(ms));
-    setMinute(msToMinutes(ms));
-    setHour(msToHours(ms));
-    setWeekDay(msToWeekDay(ms));
-    int yearDay = dayInYear(ms, year);
-    bool leapYear = isLeapYear(year);
-    setYearDay(yearDay);
-    setMonthDay(dayInMonthFromDayInYear(yearDay, leapYear));
-    setMonth(monthFromDayInYear(yearDay, leapYear));
-    setYear(year);
     setIsDST(localTime.isDST);
-    setUTCOffsetInMinute(localTime.offset / WTF::msPerMinute);
+    setUTCOffsetInMinute(localTime.offset / WTF::Int64Milliseconds::msPerMinute);
 }
 
 void GregorianDateTime::setToCurrentLocalTime()

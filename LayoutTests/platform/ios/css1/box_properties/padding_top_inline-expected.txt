@@ -98,4 +98,4 @@ layer at (0,0) size 800x600
                   text run at (546,20) width 209: "Padding on inline elements does"
                   text run at (0,40) width 608: "not affect line-height calculations, so all lines in this element should have the same line-height."
 layer at (8,99) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,91) size 784x2 [color=#808080] [border: (1px inset #808080)]

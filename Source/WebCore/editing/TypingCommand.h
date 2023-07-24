@@ -31,7 +31,7 @@ namespace WebCore {
 
 class TypingCommand final : public TextInsertionBaseCommand {
 public:
-    enum ETypingCommand { 
+    enum class Type : uint8_t {
         DeleteSelection,
         DeleteKey, 
         ForwardDeleteKey, 
@@ -41,13 +41,13 @@ public:
         InsertParagraphSeparatorInQuotedContent
     };
 
-    enum TextCompositionType {
-        TextCompositionNone,
-        TextCompositionPending,
-        TextCompositionFinal,
+    enum class TextCompositionType : uint8_t {
+        None,
+        Pending,
+        Final,
     };
 
-    enum Option {
+    enum class Option : uint8_t {
         SelectInsertedText = 1 << 0,
         AddsToKillRing = 1 << 1,
         RetainAutocorrectionIndicator = 1 << 2,
@@ -55,15 +55,14 @@ public:
         SmartDelete = 1 << 4,
         IsAutocompletion = 1 << 5,
     };
-    typedef unsigned Options;
 
-    static void deleteSelection(Document&, Options = 0, TextCompositionType = TextCompositionNone);
-    static void deleteKeyPressed(Document&, Options = 0, TextGranularity = TextGranularity::CharacterGranularity);
-    static void forwardDeleteKeyPressed(Document&, Options = 0, TextGranularity = TextGranularity::CharacterGranularity);
-    static void insertText(Document&, const String&, Options, TextCompositionType = TextCompositionNone);
-    static void insertText(Document&, const String&, const VisibleSelection&, Options, TextCompositionType = TextCompositionNone);
-    static void insertLineBreak(Document&, Options);
-    static void insertParagraphSeparator(Document&, Options);
+    static void deleteSelection(Document&, OptionSet<Option> = { }, TextCompositionType = TextCompositionType::None);
+    static void deleteKeyPressed(Document&, OptionSet<Option> = { }, TextGranularity = TextGranularity::CharacterGranularity);
+    static void forwardDeleteKeyPressed(Document&, OptionSet<Option> = { }, TextGranularity = TextGranularity::CharacterGranularity);
+    static void insertText(Document&, const String&, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
+    static void insertText(Document&, const String&, const VisibleSelection&, OptionSet<Option>, TextCompositionType = TextCompositionType::None);
+    static void insertLineBreak(Document&, OptionSet<Option>);
+    static void insertParagraphSeparator(Document&, OptionSet<Option>);
     static void insertParagraphSeparatorInQuotedContent(Document&);
     static void closeTyping(Document&);
 #if PLATFORM(IOS_FAMILY)
@@ -86,17 +85,17 @@ public:
 #endif
 
 private:
-    static Ref<TypingCommand> create(Document& document, ETypingCommand command, const String& text = emptyString(), Options options = 0, TextGranularity granularity = TextGranularity::CharacterGranularity, TextCompositionType compositionType = TextCompositionNone)
+    static Ref<TypingCommand> create(Document& document, Type command, const String& text = emptyString(), OptionSet<Option> options = { }, TextGranularity granularity = TextGranularity::CharacterGranularity, TextCompositionType compositionType = TextCompositionType::None)
     {
         return adoptRef(*new TypingCommand(document, command, text, options, granularity, compositionType));
     }
 
-    static Ref<TypingCommand> create(Document& document, ETypingCommand command, const String& text, Options options, TextCompositionType compositionType)
+    static Ref<TypingCommand> create(Document& document, Type command, const String& text, OptionSet<Option> options, TextCompositionType compositionType)
     {
         return adoptRef(*new TypingCommand(document, command, text, options, TextGranularity::CharacterGranularity, compositionType));
     }
 
-    TypingCommand(Document&, ETypingCommand, const String& text, Options, TextGranularity, TextCompositionType);
+    TypingCommand(Document&, Type, const String& text, OptionSet<Option>, TextGranularity, TextCompositionType);
 
     bool smartDelete() const { return m_smartDelete; }
     void setSmartDelete(bool smartDelete) { m_smartDelete = smartDelete; }
@@ -125,10 +124,10 @@ private:
 
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Document&);
 
-    void updatePreservesTypingStyle(ETypingCommand);
-    bool willAddTypingToOpenCommand(ETypingCommand, TextGranularity, const String& = emptyString(), const std::optional<SimpleRange>& = { });
-    void markMisspellingsAfterTyping(ETypingCommand);
-    void typingAddedToOpenCommand(ETypingCommand);
+    void updatePreservesTypingStyle(Type);
+    bool willAddTypingToOpenCommand(Type, TextGranularity, const String& = emptyString(), const std::optional<SimpleRange>& = { });
+    void markMisspellingsAfterTyping(Type);
+    void typingAddedToOpenCommand(Type);
     bool makeEditableRootEmpty();
 
     void postTextStateChangeNotificationForDeletion(const VisibleSelection&);
@@ -142,7 +141,7 @@ private:
 
     bool shouldDeferWillApplyCommandUntilAddingTypingCommand() const;
 
-    ETypingCommand m_commandType;
+    Type m_commandType;
     EditAction m_currentTypingEditAction;
     String m_textToInsert;
     String m_currentTextToInsert;

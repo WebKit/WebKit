@@ -27,12 +27,17 @@ DROP TABLE IF EXISTS triggerable_configurations CASCADE;
 DROP TABLE IF EXISTS triggerable_configuration_repetition_types CASCADE;
 DROP TABLE IF EXISTS triggerable_repository_groups CASCADE;
 DROP TABLE IF EXISTS triggerable_repositories CASCADE;
+DROP TYPE IF EXISTS test_parameter_types CASCADE;
+DROP TABLE IF EXISTS test_parameters CASCADE;
+DROP TABLE IF EXISTS triggerable_configuration_test_parameters CASCADE;
 DROP TABLE IF EXISTS uploaded_files CASCADE;
 DROP TABLE IF EXISTS bugs CASCADE;
 DROP TABLE IF EXISTS analysis_test_groups CASCADE;
 DROP TYPE IF EXISTS analysis_test_group_repetition_type CASCADE;
 DROP TABLE IF EXISTS commit_sets CASCADE;
 DROP TABLE IF EXISTS commit_set_items CASCADE;
+DROP TABLE IF EXISTS test_parameter_sets CASCADE;
+DROP TABLE IF EXISTS test_parameter_set_items CASCADE;
 DROP TABLE IF EXISTS build_requests CASCADE;
 DROP TYPE IF EXISTS build_request_status_type CASCADE;
 
@@ -280,6 +285,25 @@ CREATE TABLE triggerable_configuration_repetition_types (
     configrepetition_type analysis_test_group_repetition_type NOT NULL,
     PRIMARY KEY (configrepetition_config, configrepetition_type));
 
+CREATE TYPE test_parameter_types as ENUM ('build', 'test');
+
+CREATE TABLE test_parameters (
+    testparam_id serial PRIMARY KEY,
+    testparam_name varchar (256),
+    testparam_disabled boolean DEFAULT FALSE,
+    testparam_type test_parameter_types NOT NULL,
+    testparam_has_value boolean NOT NULL,
+    testparam_has_file boolean NOT NULL,
+    testparam_description text,
+    CONSTRAINT testparam_name_must_be_unique UNIQUE (testparam_name),
+    CONSTRAINT key_either_has_value_or_file CHECK (testparam_has_value IS TRUE or testparam_has_file IS TRUE));
+
+
+CREATE TABLE triggerable_configuration_test_parameters (
+    trigconfigtestparam_config integer NOT NULL REFERENCES triggerable_configurations ON DELETE CASCADE,
+    trigconfigtestparam_parameter integer NOT NULL REFERENCES test_parameters,
+    CONSTRAINT test_parameter_must_be_unique_for_triggerable_configurations UNIQUE (trigconfigtestparam_parameter, trigconfigtestparam_config));
+
 CREATE TABLE uploaded_files (
     file_id serial PRIMARY KEY,
     file_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
@@ -323,6 +347,18 @@ CREATE TABLE commit_set_items (
     CONSTRAINT commitset_item_with_patch_must_requires_build CHECK (commitset_patch_file IS NULL OR commitset_requires_build = TRUE),
     CONSTRAINT commitset_item_with_owned_commit_must_requires_build CHECK (commitset_commit_owner IS NULL OR commitset_requires_build = TRUE));
 
+CREATE TABLE test_parameter_sets (
+    testparamset_id serial PRIMARY KEY
+);
+
+CREATE TABLE test_parameter_set_items (
+    testparamset_set integer NOT NULL REFERENCES test_parameter_sets ON DELETE CASCADE,
+    testparamset_parameter integer NOT NULL REFERENCES test_parameters,
+    testparamset_value jsonb DEFAULT NULL,
+    testparamset_file integer DEFAULT NULL REFERENCES uploaded_files,
+    CONSTRAINT test_parameter_must_have_value_or_file CHECK (testparamset_value IS NOT NULL OR testparamset_file IS NOT NULL)
+);
+
 CREATE TYPE build_request_status_type as ENUM ('pending', 'scheduled', 'running', 'failed', 'completed', 'canceled');
 CREATE TABLE build_requests (
     request_id serial PRIMARY KEY,
@@ -333,6 +369,7 @@ CREATE TABLE build_requests (
     request_group integer REFERENCES analysis_test_groups NOT NULL,
     request_order integer NOT NULL,
     request_commit_set integer REFERENCES commit_sets NOT NULL,
+    request_test_parameter_set integer REFERENCES test_parameter_sets DEFAULT NULL,
     request_status build_request_status_type NOT NULL DEFAULT 'pending',
     request_url varchar(1024),
     request_build integer REFERENCES builds,

@@ -108,7 +108,7 @@ class FramebufferVk : public FramebufferImpl
     gl::Rectangle getRenderArea(ContextVk *contextVk) const;
 
     const gl::DrawBufferMask &getEmulatedAlphaAttachmentMask() const;
-    RenderTargetVk *getColorDrawRenderTarget(size_t colorIndex) const;
+    RenderTargetVk *getColorDrawRenderTarget(size_t colorIndexGL) const;
     RenderTargetVk *getColorReadRenderTarget() const;
 
     angle::Result startNewRenderPass(ContextVk *contextVk,

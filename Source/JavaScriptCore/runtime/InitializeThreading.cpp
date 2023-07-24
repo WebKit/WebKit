@@ -30,8 +30,8 @@
 #include "InitializeThreading.h"
 
 #include "AssemblyComments.h"
-#include "BuiltinNames.h"
 #include "ExecutableAllocator.h"
+#include "InPlaceInterpreter.h"
 #include "JITOperationList.h"
 #include "JSCConfig.h"
 #include "JSCPtrTag.h"
@@ -92,8 +92,6 @@ void initialize()
             StructureAlignedMemoryAllocator::initializeStructureAddressSpace();
         }
         Options::finalize();
-        SmallString::initializeJSStaticStrings();
-        Symbols::initializeStaticSymbols();
 
 #if !USE(SYSTEM_MALLOC)
 #if BUSE(LIBPAS)
@@ -105,6 +103,8 @@ void initialize()
         JITOperationList::populatePointersInJavaScriptCore();
 
         AssemblyCommentRegistry::initialize();
+        if (UNLIKELY(Options::useWasmIPInt()))
+            IPInt::initialize();
         LLInt::initialize();
         DisallowGC::initialize();
 

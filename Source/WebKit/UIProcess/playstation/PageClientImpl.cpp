@@ -48,7 +48,7 @@ PageClientImpl::PageClientImpl(PlayStationWebView& view)
 }
 
 // PageClient's pure virtual functions
-std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy&)
+std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
 #if USE(GRAPHICS_LAYER_WC)
     return makeUnique<DrawingAreaProxyWC>(*m_view.page());
@@ -349,7 +349,7 @@ void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, cons
 #if USE(WPE_RENDERER)
 UnixFileDescriptor PageClientImpl::hostFileDescriptor()
 {
-    return UnixFileDescriptor { 1, UnixFileDescriptor::Adopt };
+    return UnixFileDescriptor { wpe_view_backend_get_renderer_host_fd(m_view.backend()), UnixFileDescriptor::Adopt };
 }
 #endif
 

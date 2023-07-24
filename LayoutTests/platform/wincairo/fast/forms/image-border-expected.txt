@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,35) size 52x19
           text run at (0,35) width 52: "border:0"
         RenderImage {IMG} at (52,0) size 338x50
-      RenderBlock {HR} at (0,119) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,119) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,129) size 784x57
         RenderText {#text} at (0,37) size 52x19
           text run at (0,37) width 52: "border:1"

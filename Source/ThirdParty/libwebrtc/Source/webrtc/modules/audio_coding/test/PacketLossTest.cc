@@ -27,7 +27,7 @@ ReceiverWithPacketLoss::ReceiverWithPacketLoss()
       lost_packet_counter_(0),
       burst_lost_counter_(burst_length_) {}
 
-void ReceiverWithPacketLoss::Setup(AudioCodingModule* acm,
+void ReceiverWithPacketLoss::Setup(acm2::AcmReceiver* acm_receiver,
                                    RTPStream* rtpStream,
                                    absl::string_view out_file_name,
                                    int channels,
@@ -39,7 +39,7 @@ void ReceiverWithPacketLoss::Setup(AudioCodingModule* acm,
   burst_lost_counter_ = burst_length_;  // To prevent first packet gets lost.
   rtc::StringBuilder ss;
   ss << out_file_name << "_" << loss_rate_ << "_" << burst_length_ << "_";
-  Receiver::Setup(acm, rtpStream, ss.str(), channels, file_num);
+  Receiver::Setup(acm_receiver, rtpStream, ss.str(), channels, file_num);
 }
 
 bool ReceiverWithPacketLoss::IncomingPacket() {
@@ -58,7 +58,9 @@ bool ReceiverWithPacketLoss::IncomingPacket() {
     }
 
     if (!PacketLost()) {
-      _acm->IncomingPacket(_incomingPayload, _realPayloadSizeBytes, _rtpHeader);
+      _acm_receiver->InsertPacket(
+          _rtpHeader, rtc::ArrayView<const uint8_t>(_incomingPayload,
+                                                    _realPayloadSizeBytes));
     }
     packet_counter_++;
     _realPayloadSizeBytes = _rtpStream->Read(&_rtpHeader, _incomingPayload,
@@ -135,8 +137,7 @@ void PacketLossTest::Perform() {
   return;
 #else
   RTPFile rtpFile;
-  std::unique_ptr<AudioCodingModule> acm(AudioCodingModule::Create(
-      AudioCodingModule::Config(CreateBuiltinAudioDecoderFactory())));
+  std::unique_ptr<AudioCodingModule> acm(AudioCodingModule::Create());
   SdpAudioFormat send_format = SdpAudioFormat("opus", 48000, 2);
   if (channels_ == 2) {
     send_format.parameters = {{"stereo", "1"}};
@@ -155,8 +156,11 @@ void PacketLossTest::Perform() {
 
   rtpFile.Open(fileName.c_str(), "rb");
   rtpFile.ReadHeader();
+  std::unique_ptr<acm2::AcmReceiver> acm_receiver(
+      std::make_unique<acm2::AcmReceiver>(
+          acm2::AcmReceiver::Config(CreateBuiltinAudioDecoderFactory())));
   ReceiverWithPacketLoss receiver;
-  receiver.Setup(acm.get(), &rtpFile, "packetLoss_out", channels_, 15,
+  receiver.Setup(acm_receiver.get(), &rtpFile, "packetLoss_out", channels_, 15,
                  actual_loss_rate_, burst_length_);
   receiver.Run();
   receiver.Teardown();

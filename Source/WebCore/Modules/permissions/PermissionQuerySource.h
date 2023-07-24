@@ -37,17 +37,3 @@ enum class PermissionQuerySource : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PermissionQuerySource> {
-    using values = EnumValues<
-        WebCore::PermissionQuerySource,
-        WebCore::PermissionQuerySource::Window,
-        WebCore::PermissionQuerySource::DedicatedWorker,
-        WebCore::PermissionQuerySource::SharedWorker,
-        WebCore::PermissionQuerySource::ServiceWorker
-    >;
-};
-
-} // namespace WTF

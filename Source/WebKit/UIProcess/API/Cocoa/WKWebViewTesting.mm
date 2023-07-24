@@ -29,6 +29,7 @@
 #import "AudioSessionRoutingArbitratorProxy.h"
 #import "GPUProcessProxy.h"
 #import "MediaSessionCoordinatorProxyPrivate.h"
+#import "NetworkProcessProxy.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
@@ -40,6 +41,7 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "WebViewImpl.h"
+#import "WebsiteDataStore.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKInspectorInternal.h"
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -211,6 +213,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         return @"";
 
     return coordinator->scrollingTreeAsText();
+}
+
+- (pid_t)_networkProcessIdentifier
+{
+    auto* networkProcess = _page->websiteDataStore().networkProcessIfExists();
+    RELEASE_ASSERT(networkProcess);
+    return networkProcess->processID();
 }
 
 - (void)_setScrollingUpdatesDisabledForTesting:(BOOL)disabled

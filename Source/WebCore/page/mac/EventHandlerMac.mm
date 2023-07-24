@@ -420,7 +420,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
         if (!is<RenderWidget>(renderer))
             return false;
         Widget* widget = downcast<RenderWidget>(*renderer).widget();
-        if (!widget || !widget->isFrameView())
+        if (!widget || !widget->isLocalFrameView())
             return false;
         if (!passWidgetMouseDownEventToWidget(downcast<RenderWidget>(renderer)))
             return false;
@@ -969,7 +969,7 @@ void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& 
 bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent& wheelEvent, const Widget& widget, const WeakPtr<ScrollableArea>& scrollableArea)
 {
     // WebKit1: Prevent multiple copies of the scrollWheel event from being sent to the NSScrollView widget.
-    if (frameHasPlatformWidget(m_frame) && widget.isFrameView())
+    if (frameHasPlatformWidget(m_frame) && widget.isLocalFrameView())
         return true;
 
     if (!m_frame.page())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #pragma once
 
 #include "GPUCompilationMessage.h"
-#include <pal/graphics/WebGPU/WebGPUCompilationInfo.h>
+#include "WebGPUCompilationInfo.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -34,23 +34,23 @@ namespace WebCore {
 
 class GPUCompilationInfo : public RefCounted<GPUCompilationInfo> {
 public:
-    static Ref<GPUCompilationInfo> create(Ref<PAL::WebGPU::CompilationInfo>&& backing)
+    static Ref<GPUCompilationInfo> create(Ref<WebGPU::CompilationInfo>&& backing)
     {
         return adoptRef(*new GPUCompilationInfo(WTFMove(backing)));
     }
 
     Vector<Ref<GPUCompilationMessage>> messages() const;
 
-    PAL::WebGPU::CompilationInfo& backing() { return m_backing; }
-    const PAL::WebGPU::CompilationInfo& backing() const { return m_backing; }
+    WebGPU::CompilationInfo& backing() { return m_backing; }
+    const WebGPU::CompilationInfo& backing() const { return m_backing; }
 
 private:
-    GPUCompilationInfo(Ref<PAL::WebGPU::CompilationInfo>&& backing)
+    GPUCompilationInfo(Ref<WebGPU::CompilationInfo>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
-    Ref<PAL::WebGPU::CompilationInfo> m_backing;
+    Ref<WebGPU::CompilationInfo> m_backing;
 };
 
 }

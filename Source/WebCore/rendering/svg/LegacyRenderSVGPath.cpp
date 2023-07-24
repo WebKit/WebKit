@@ -84,25 +84,12 @@ void LegacyRenderSVGPath::strokeShape(GraphicsContext& context) const
     if (!style().hasVisibleStroke())
         return;
 
-    LegacyRenderSVGShape::strokeShape(context);
-
-    if (m_zeroLengthLinecapLocations.isEmpty())
+    // This happens only if the layout was never been called for this element.
+    if (!hasPath())
         return;
 
-    Path* usePath;
-    AffineTransform nonScalingTransform;
-
-    if (hasNonScalingStroke())
-        nonScalingTransform = nonScalingStrokeTransform();
-
-    GraphicsContextStateSaver stateSaver(context, true);
-    useStrokeStyleToFill(context);
-    for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
-        usePath = zeroLengthLinecapPath(m_zeroLengthLinecapLocations[i]);
-        if (hasNonScalingStroke())
-            usePath = nonScalingStrokePath(usePath, nonScalingTransform);
-        context.fillPath(*usePath);
-    }
+    LegacyRenderSVGShape::strokeShape(context);
+    strokeZeroLengthSubpaths(context);
 }
 
 bool LegacyRenderSVGPath::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
@@ -141,7 +128,7 @@ Path* LegacyRenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPositi
     if (style().capStyle() == LineCap::Square)
         tempPath.get().addRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
     else
-        tempPath.get().addEllipse(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
+        tempPath.get().addEllipseInRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
 
     return &tempPath.get();
 }
@@ -159,10 +146,29 @@ void LegacyRenderSVGPath::updateZeroLengthSubpaths()
         return;
 
     SVGSubpathData subpathData(m_zeroLengthLinecapLocations);
-    path().apply([&subpathData](const PathElement& pathElement) {
+    path().applyElements([&subpathData](const PathElement& pathElement) {
         SVGSubpathData::updateFromPathElement(subpathData, pathElement);
     });
     subpathData.pathIsDone();
+}
+
+void LegacyRenderSVGPath::strokeZeroLengthSubpaths(GraphicsContext& context) const
+{
+    if (m_zeroLengthLinecapLocations.isEmpty())
+        return;
+
+    AffineTransform nonScalingTransform;
+    if (hasNonScalingStroke())
+        nonScalingTransform = nonScalingStrokeTransform();
+
+    GraphicsContextStateSaver stateSaver(context, true);
+    useStrokeStyleToFill(context);
+    for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
+        auto usePath = zeroLengthLinecapPath(m_zeroLengthLinecapLocations[i]);
+        if (hasNonScalingStroke())
+            usePath = nonScalingStrokePath(usePath, nonScalingTransform);
+        context.fillPath(*usePath);
+    }
 }
 
 bool LegacyRenderSVGPath::isRenderingDisabled() const

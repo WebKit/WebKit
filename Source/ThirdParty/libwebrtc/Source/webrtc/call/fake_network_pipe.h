@@ -21,8 +21,8 @@
 
 #include "api/call/transport.h"
 #include "api/test/simulated_network.h"
-#include "call/call.h"
 #include "call/simulated_packet_receiver.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -42,6 +42,11 @@ class NetworkPacket {
                 MediaType media_type,
                 absl::optional<int64_t> packet_time_us,
                 Transport* transport);
+
+  NetworkPacket(RtpPacketReceived packet,
+                MediaType media_type,
+                int64_t send_time,
+                int64_t arrival_time);
 
   // Disallow copy constructor and copy assignment (no deep copies of `data_`).
   NetworkPacket(const NetworkPacket&) = delete;
@@ -65,6 +70,12 @@ class NetworkPacket {
   bool is_rtcp() const { return is_rtcp_; }
   MediaType media_type() const { return media_type_; }
   absl::optional<int64_t> packet_time_us() const { return packet_time_us_; }
+  RtpPacketReceived* packet_received() {
+    return packet_received_ ? &packet_received_.value() : nullptr;
+  }
+  absl::optional<RtpPacketReceived> packet_received() const {
+    return packet_received_;
+  }
   Transport* transport() const { return transport_; }
 
  private:
@@ -83,6 +94,7 @@ class NetworkPacket {
   // network pipe.
   MediaType media_type_;
   absl::optional<int64_t> packet_time_us_;
+  absl::optional<RtpPacketReceived> packet_received_;
   Transport* transport_;
 };
 
@@ -142,16 +154,13 @@ class FakeNetworkPipe : public SimulatedPacketReceiverInterface {
 
   // Implements the PacketReceiver interface. When/if packets are delivered,
   // they will be passed directly to the receiver instance given in
-  // SetReceiver(), without passing through a Demuxer. The receive time
-  // will be increased by the amount of time the packet spent in the
-  // fake network pipe.
-  PacketReceiver::DeliveryStatus DeliverPacket(MediaType media_type,
-                                               rtc::CopyOnWriteBuffer packet,
-                                               int64_t packet_time_us) override;
-
-  // TODO(bugs.webrtc.org/9584): Needed to inherit the alternative signature for
-  // this method.
-  using PacketReceiver::DeliverPacket;
+  // SetReceiver(). The receive time will be increased by the amount of time the
+  // packet spent in the fake network pipe.
+  void DeliverRtpPacket(
+      MediaType media_type,
+      RtpPacketReceived packet,
+      OnUndemuxablePacketHandler undemuxable_packet_handler) override;
+  void DeliverRtcpPacket(rtc::CopyOnWriteBuffer packet) override;
 
   // Processes the network queues and trigger PacketReceiver::IncomingPacket for
   // packets ready to be delivered.

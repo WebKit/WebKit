@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -943,17 +943,6 @@ TextStream& operator<<(TextStream& ts, ScrollSnapStop stop)
     }
     return ts;
 }
-
-TextStream& operator<<(TextStream& ts, ScrollbarWidth width)
-{
-    switch (width) {
-    case ScrollbarWidth::Auto: ts << "auto"; break;
-    case ScrollbarWidth::Thin: ts << "thin"; break;
-    case ScrollbarWidth::None: ts << "none"; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, SpeakAs speakAs)
 {
     switch (speakAs) {
@@ -1319,6 +1308,17 @@ TextStream& operator<<(TextStream& ts, WhiteSpace whiteSpace)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, WhiteSpaceCollapse whiteSpaceCollapse)
+{
+    switch (whiteSpaceCollapse) {
+    case WhiteSpaceCollapse::Collapse: ts << "collapse"; break;
+    case WhiteSpaceCollapse::Preserve: ts << "preserve"; break;
+    case WhiteSpaceCollapse::PreserveBreaks: ts << "preserve-breaks"; break;
+    case WhiteSpaceCollapse::BreakSpaces: ts << "break-spaces"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, WordBreak wordBreak)
 {
     switch (wordBreak) {
@@ -1326,6 +1326,7 @@ TextStream& operator<<(TextStream& ts, WordBreak wordBreak)
     case WordBreak::BreakAll: ts << "break-all"; break;
     case WordBreak::KeepAll: ts << "keep-all"; break;
     case WordBreak::BreakWord: ts << "break-word"; break;
+    case WordBreak::Auto: ts << "auto"; break;
     }
     return ts;
 }
@@ -1350,6 +1351,9 @@ TextStream& operator<<(TextStream& ts, ContainIntrinsicSizeType containIntrinsic
         break;
     case ContainIntrinsicSizeType::AutoAndLength:
         ts << "autoandlength";
+        break;
+    case ContainIntrinsicSizeType::AutoAndNone:
+        ts << "autoandnone";
         break;
     }
     return ts;

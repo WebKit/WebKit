@@ -12,6 +12,7 @@
 #define MODULES_DESKTOP_CAPTURE_WIN_FULL_SCREEN_WIN_APPLICATION_HANDLER_H_
 
 #include <memory>
+
 #include "modules/desktop_capture/full_screen_application_handler.h"
 
 namespace webrtc {

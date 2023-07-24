@@ -61,7 +61,6 @@ public:
     virtual ~RemoteCDMFactory();
 
     static const char* supplementName();
-    WebProcess& process() const { return m_process; }
 
     GPUProcessConnection& gpuProcessConnection();
 
@@ -80,7 +79,6 @@ private:
 
     HashMap<RemoteCDMInstanceSessionIdentifier, WeakPtr<RemoteCDMInstanceSession>> m_sessions;
     HashMap<RemoteCDMIdentifier, std::unique_ptr<RemoteCDM>> m_cdms;
-    WebProcess& m_process;
 };
 
 }

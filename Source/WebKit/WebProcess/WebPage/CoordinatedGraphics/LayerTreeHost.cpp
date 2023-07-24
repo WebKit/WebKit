@@ -81,6 +81,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
 
     m_compositor = ThreadedCompositor::create(*this, *this, m_displayID, scaledSize, scaleFactor, paintFlags);
     m_layerTreeContext.contextID = m_surface->surfaceID();
+    m_surface->didCreateCompositingRunLoop(m_compositor->compositingRunLoop());
 
     didChangeViewport();
 }
@@ -89,6 +90,7 @@ LayerTreeHost::~LayerTreeHost()
 {
     cancelPendingLayerFlush();
 
+    m_surface->willDestroyCompositingRunLoop();
     m_coordinator.invalidate();
     m_compositor->invalidate();
     m_surface = nullptr;
@@ -367,7 +369,10 @@ void LayerTreeHost::deviceOrPageScaleFactorChanged()
 
     m_coordinator.deviceOrPageScaleFactorChanged();
     m_webPage.corePage()->pageOverlayController().didChangeDeviceScaleFactor();
-    m_compositor->setScaleFactor(m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
+    IntSize scaledSize(m_webPage.size());
+    scaledSize.scale(m_webPage.deviceScaleFactor());
+    m_compositor->setViewportSize(scaledSize, m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
+    didChangeViewport();
 }
 
 RefPtr<DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonitor(PlatformDisplayID displayID)

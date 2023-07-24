@@ -17,6 +17,7 @@ rtc_library("task_queue") {
   sources = [ "task_queue_base.cc" ]
 
   deps = [
+    "..:location",
     "../../rtc_base:checks",
     "../../rtc_base:macromagic",
     "../../rtc_base/system:rtc_export",
@@ -43,9 +44,10 @@ rtc_library("task_queue_test") {
     visibility = []
     visibility = webrtc_default_visibility
     visibility += [
-      # This is the only Chromium target that can depend on this. The reason
-      # behind this is the fact that this is a 'testonly' target and as such
+      # This is the only Chromium targets that can depend on this. The reason
+      # behind this is the fact that these are 'testonly' targets and as such
       # it cannot be part of the WebRTC component.
+      "//components/webrtc:unit_tests",
       "//third_party/blink/renderer/platform:blink_platform_unittests_sources",
     ]
 
@@ -61,7 +63,10 @@ rtc_library("task_queue_test") {
     ]
   } else {
     deps = [
+      ":default_task_queue_factory",
       ":task_queue",
+      "../../api:field_trials_view",
+      "../../api:make_ref_counted",
       "../../api/units:time_delta",
       "../../rtc_base:refcount",
       "../../rtc_base:rtc_event",
@@ -81,11 +86,26 @@ rtc_library("default_task_queue_factory") {
     poisonous = [ "default_task_queue" ]
   }
   sources = [ "default_task_queue_factory.h" ]
-  deps = [ ":task_queue" ]
+  deps = [
+    ":task_queue",
+    "../../api:field_trials_view",
+    "../../rtc_base/memory:always_valid_pointer",
+  ]
 
   if (rtc_enable_libevent) {
-    sources += [ "default_task_queue_factory_libevent.cc" ]
-    deps += [ "../../rtc_base:rtc_task_queue_libevent" ]
+    if (is_android) {
+      sources +=
+          [ "default_task_queue_factory_stdlib_or_libevent_experiment.cc" ]
+      deps += [
+        "../../api/transport:field_trial_based_config",
+        "../../rtc_base:logging",
+        "../../rtc_base:rtc_task_queue_libevent",
+        "../../rtc_base:rtc_task_queue_stdlib",
+      ]
+    } else {
+      sources += [ "default_task_queue_factory_libevent.cc" ]
+      deps += [ "../../rtc_base:rtc_task_queue_libevent" ]
+    }
   } else if (is_mac || is_ios) {
     sources += [ "default_task_queue_factory_gcd.cc" ]
     deps += [ "../../rtc_base:rtc_task_queue_gcd" ]

@@ -55,6 +55,11 @@ static const int kCpuHasLOONGARCH = 0x2000000;
 static const int kCpuHasLSX = 0x4000000;
 static const int kCpuHasLASX = 0x8000000;
 
+// These flags are only valid on RISCV processors.
+static const int kCpuHasRISCV = 0x10000000;
+static const int kCpuHasRVV = 0x20000000;
+static const int kCpuHasRVVZVFH = 0x40000000;
+
 // Optional init function. TestCpuFlag does an auto-init.
 // Returns cpu_info flags.
 LIBYUV_API
@@ -78,6 +83,8 @@ LIBYUV_API
 int ArmCpuCaps(const char* cpuinfo_name);
 LIBYUV_API
 int MipsCpuCaps(const char* cpuinfo_name);
+LIBYUV_API
+int RiscvCpuCaps(const char* cpuinfo_name);
 
 // For testing, allow CPU flags to be disabled.
 // ie MaskCpuFlags(~kCpuHasSSSE3) to disable SSSE3.

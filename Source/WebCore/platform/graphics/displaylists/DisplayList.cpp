@@ -215,8 +215,12 @@ void DisplayList::append(ItemHandle item)
         return append<ClearShadow>(item.get<ClearShadow>());
     case ItemType::Clip:
         return append<Clip>(item.get<Clip>());
+    case ItemType::ClipRoundedRect:
+        return append<ClipRoundedRect>(item.get<ClipRoundedRect>());
     case ItemType::ClipOut:
         return append<ClipOut>(item.get<ClipOut>());
+    case ItemType::ClipOutRoundedRect:
+        return append<ClipOutRoundedRect>(item.get<ClipOutRoundedRect>());
     case ItemType::ClipToImageBuffer:
         return append<ClipToImageBuffer>(item.get<ClipToImageBuffer>());
     case ItemType::ClipOutToPath:
@@ -277,6 +281,8 @@ void DisplayList::append(ItemHandle item)
     case ItemType::FillBezierCurve:
         return append<FillBezierCurve>(item.get<FillBezierCurve>());
 #endif
+    case ItemType::FillPathSegment:
+        return append<FillPathSegment>(item.get<FillPathSegment>());
     case ItemType::FillPath:
         return append<FillPath>(item.get<FillPath>());
     case ItemType::FillEllipse:
@@ -297,6 +303,8 @@ void DisplayList::append(ItemHandle item)
     case ItemType::StrokeBezierCurve:
         return append<StrokeBezierCurve>(item.get<StrokeBezierCurve>());
 #endif
+    case ItemType::StrokePathSegment:
+        return append<StrokePathSegment>(item.get<StrokePathSegment>());
     case ItemType::StrokePath:
         return append<StrokePath>(item.get<StrokePath>());
     case ItemType::StrokeEllipse:

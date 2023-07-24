@@ -511,7 +511,7 @@ class MipmapTestES31 : public BaseMipmapTest
 TEST_P(MipmapTestES3, GenerateMipmapPartialLevels)
 {
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     const std::vector<GLColor> kRedData(64, GLColor::red);
     const std::vector<GLColor> kGreenData(16, GLColor::green);
@@ -1696,7 +1696,7 @@ TEST_P(MipmapTestES3, GenerateMipmapBaseLevel)
     ANGLE_SKIP_TEST_IF(IsAMD() && IsDesktopOpenGL());
 
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     glBindTexture(GL_TEXTURE_2D, mTexture);
 
@@ -1751,7 +1751,7 @@ TEST_P(MipmapTestES3, GenerateMipmapPreservesOutOfRangeMips)
     ANGLE_SKIP_TEST_IF(IsOpenGLES() && IsNVIDIAShield());
 
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     constexpr GLint kTextureSize = 16;
     const std::vector<GLColor> kLevel0Data(kTextureSize * kTextureSize, GLColor::red);
@@ -1819,7 +1819,7 @@ TEST_P(MipmapTestES3, GenerateMipmapCubeBaseLevel)
     ANGLE_SKIP_TEST_IF(IsAMD() && IsDesktopOpenGL());
 
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     ASSERT_EQ(getWindowWidth(), getWindowHeight());
 
@@ -1873,7 +1873,7 @@ TEST_P(MipmapTestES3, GenerateMipmapCubeBaseLevel)
 TEST_P(MipmapTestES3, GenerateMipmapMaxLevel)
 {
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     glBindTexture(GL_TEXTURE_2D, mTexture);
 
@@ -1978,10 +1978,10 @@ TEST_P(MipmapTestES3, BaseLevelTextureBug)
     // Regression in 10.12.4 needing workaround -- crbug.com/705865.
     // Seems to be passing on AMD GPUs. Definitely not NVIDIA.
     // Probably not Intel.
-    ANGLE_SKIP_TEST_IF(IsOSX() && (IsNVIDIA() || IsIntel()));
+    ANGLE_SKIP_TEST_IF(IsMac() && (IsNVIDIA() || IsIntel()));
 
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     // TODO(anglebug.com/5491)
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());

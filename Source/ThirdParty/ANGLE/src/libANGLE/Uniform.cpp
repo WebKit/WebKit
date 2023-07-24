@@ -11,32 +11,35 @@
 namespace gl
 {
 
-ActiveVariable::ActiveVariable() {}
+ActiveVariable::ActiveVariable()
+{
+    std::fill(mIds.begin(), mIds.end(), 0);
+}
 
 ActiveVariable::~ActiveVariable() {}
 
 ActiveVariable::ActiveVariable(const ActiveVariable &rhs)            = default;
 ActiveVariable &ActiveVariable::operator=(const ActiveVariable &rhs) = default;
 
-void ActiveVariable::setActive(ShaderType shaderType, bool used)
+void ActiveVariable::setActive(ShaderType shaderType, bool used, uint32_t id)
 {
     ASSERT(shaderType != ShaderType::InvalidEnum);
     mActiveUseBits.set(shaderType, used);
+    mIds[shaderType] = id;
 }
 
 void ActiveVariable::unionReferencesWith(const ActiveVariable &other)
 {
     mActiveUseBits |= other.mActiveUseBits;
-}
-
-ShaderType ActiveVariable::getFirstShaderTypeWhereActive() const
-{
-    return static_cast<ShaderType>(ScanForward(mActiveUseBits.bits()));
-}
-
-GLuint ActiveVariable::activeShaderCount() const
-{
-    return static_cast<GLuint>(mActiveUseBits.count());
+    for (const ShaderType shaderType : AllShaderTypes())
+    {
+        ASSERT(mIds[shaderType] == 0 || other.mIds[shaderType] == 0 ||
+               mIds[shaderType] == other.mIds[shaderType]);
+        if (mIds[shaderType] == 0)
+        {
+            mIds[shaderType] = other.mIds[shaderType];
+        }
+    }
 }
 
 LinkedUniform::LinkedUniform()

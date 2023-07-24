@@ -32,7 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class PresentationContext;
 }
 
@@ -50,7 +50,7 @@ struct CanvasConfiguration;
 class RemotePresentationContext final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemotePresentationContext> create(PAL::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemotePresentationContext> create(WebCore::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemotePresentationContext(presentationContext, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -62,14 +62,14 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemotePresentationContext(PAL::WebGPU::PresentationContext&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemotePresentationContext(WebCore::WebGPU::PresentationContext&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemotePresentationContext(const RemotePresentationContext&) = delete;
     RemotePresentationContext(RemotePresentationContext&&) = delete;
     RemotePresentationContext& operator=(const RemotePresentationContext&) = delete;
     RemotePresentationContext& operator=(RemotePresentationContext&&) = delete;
 
-    PAL::WebGPU::PresentationContext& backing() { return m_backing; }
+    WebCore::WebGPU::PresentationContext& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -78,7 +78,7 @@ private:
 
     void getCurrentTexture(WebGPUIdentifier);
 
-    Ref<PAL::WebGPU::PresentationContext> m_backing;
+    Ref<WebCore::WebGPU::PresentationContext> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

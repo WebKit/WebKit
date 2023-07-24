@@ -145,14 +145,10 @@ Ref<BrowserWindow> WebKitBrowserWindow::create(BrowserWindowClient& client, HWND
     WKPreferencesSetMediaCapabilitiesEnabled(preferences.get(), false);
     WKPreferencesSetDeveloperExtrasEnabled(preferences.get(), true);
 
-    auto pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(createWKString("WinMiniBrowser").get()));
-    WKPageGroupSetPreferences(pageGroup.get(), preferences.get());
-
     auto pageConf = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetWebsiteDataStore(pageConf.get(), websiteDataStore.get());
     WKPageConfigurationSetContext(pageConf.get(), context.get());
     WKPageConfigurationSetPreferences(pageConf.get(), preferences.get());
-    WKPageConfigurationSetPageGroup(pageConf.get(), pageGroup.get());
 
     return adoptRef(*new WebKitBrowserWindow(client, pageConf.get(), mainWnd));
 }
@@ -226,8 +222,8 @@ HRESULT WebKitBrowserWindow::init()
 void WebKitBrowserWindow::resetFeatureMenu(FeatureType featureType, HMENU menu, bool resetsSettingsToDefaults)
 {
     auto page = WKViewGetPage(m_view.get());
-    auto pgroup = WKPageGetPageGroup(page);
-    auto pref = WKPageGroupGetPreferences(pgroup);
+    auto configuration = adoptWK(WKPageCopyPageConfiguration(page));
+    auto pref = WKPageConfigurationGetPreferences(configuration.get());
     switch (featureType) {
     case FeatureType::Experimental: {
         auto features = adoptWK(WKPreferencesCopyExperimentalFeatures(pref));
@@ -311,8 +307,8 @@ void WebKitBrowserWindow::navigateToHistory(UINT menuID)
 void WebKitBrowserWindow::setPreference(UINT menuID, bool enable)
 {
     auto page = WKViewGetPage(m_view.get());
-    auto pgroup = WKPageGetPageGroup(page);
-    auto pref = WKPageGroupGetPreferences(pgroup);
+    auto configuration = adoptWK(WKPageCopyPageConfiguration(page));
+    auto pref = WKPageConfigurationGetPreferences(configuration.get());
     if (IDM_EXPERIMENTAL_FEATURES_BEGIN <= menuID && menuID <= IDM_EXPERIMENTAL_FEATURES_END) {
         int index = menuID - IDM_EXPERIMENTAL_FEATURES_BEGIN;
         WKPreferencesSetExperimentalFeatureForKey(pref, enable, m_experimentalFeatureKeys[index].get());

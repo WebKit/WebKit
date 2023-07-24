@@ -86,36 +86,3 @@ void SharedMemoryHandle::setOwnershipOfMemory(const ProcessIdentity&, MemoryLedg
 #endif
 
 } // namespace WebKit
-
-namespace IPC {
-
-void ArgumentCoder<WebKit::SharedMemoryHandle>::encode(Encoder& encoder, const WebKit::SharedMemoryHandle& handle)
-{
-    encoder << WTFMove(handle.m_handle);
-    encoder << handle.m_size;
-}
-
-void ArgumentCoder<WebKit::SharedMemoryHandle>::encode(Encoder& encoder, WebKit::SharedMemoryHandle&& handle)
-{
-    encoder << WTFMove(handle.m_handle);
-    encoder << handle.m_size;
-}
-
-std::optional<WebKit::SharedMemoryHandle> ArgumentCoder<WebKit::SharedMemoryHandle>::decode(Decoder& decoder)
-{
-    auto handle = decoder.decode<WebKit::SharedMemoryHandle::Type>();
-    if (!handle)
-        return std::nullopt;
-
-    auto size = decoder.decode<size_t>();
-    if (!size)
-        return std::nullopt;
-
-    WebKit::SharedMemoryHandle value;
-    value.m_handle = WTFMove(*handle);
-    value.m_size = *size;
-
-    return { WTFMove(value) };
-}
-
-} // namespace IPC

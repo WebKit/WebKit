@@ -19,6 +19,8 @@
 #include "test/call_test.h"
 #include "test/field_trial.h"
 #include "test/frame_generator_capturer.h"
+#include "test/video_test_constants.h"
+#include "video/config/encoder_stream_factory.h"
 
 namespace webrtc {
 namespace {
@@ -122,12 +124,18 @@ class ScalingObserver : public test::SendTest {
       VideoSendStream::Config* send_config,
       std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
       VideoEncoderConfig* encoder_config) override {
+    VideoEncoder::EncoderInfo encoder_info;
     send_config->encoder_settings.encoder_factory = &encoder_factory_;
     send_config->rtp.payload_name = payload_name_;
-    send_config->rtp.payload_type = test::CallTest::kVideoSendPayloadType;
+    send_config->rtp.payload_type =
+        test::VideoTestConstants::kVideoSendPayloadType;
     encoder_config->video_format.name = payload_name_;
     const VideoCodecType codec_type = PayloadStringToCodecType(payload_name_);
     encoder_config->codec_type = codec_type;
+    encoder_config->video_stream_factory =
+        rtc::make_ref_counted<cricket::EncoderStreamFactory>(
+            payload_name_, /*max_qp=*/0, /*is_screenshare=*/false,
+            /*conference_mode=*/false, encoder_info);
     encoder_config->max_bitrate_bps =
         std::max(start_bps_, encoder_config->max_bitrate_bps);
     if (payload_name_ == "VP9") {
@@ -147,6 +155,15 @@ class ScalingObserver : public test::SendTest {
     encoder_config->frame_drop_enabled = true;
     SetEncoderSpecific(encoder_config, codec_type, automatic_resize_,
                        test_params_.size());
+  }
+
+  Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    // The tests are expected to send at the configured start bitrate. Do not
+    // send any packets to avoid receiving REMB and possibly go down in target
+    // bitrate. A low bitrate estimate could result in downgrading due to other
+    // reasons than low/high QP-value (e.g. high frame drop percent) or not
+    // upgrading due to bitrate constraint.
+    return DROP_PACKET;
   }
 
   void PerformTest() override { EXPECT_EQ(expect_scaling_, Wait()); }
@@ -469,6 +486,15 @@ TEST_F(QualityScalingTest, AdaptsDownForLowStartBitrate_Vp9) {
   DownscalingObserver test("VP9", {{.active = true}}, kLowStartBps,
                            /*automatic_resize=*/true,
                            /*expect_downscale=*/true);
+  RunBaseTest(&test);
+}
+
+TEST_F(QualityScalingTest, NoAdaptDownForHighStartBitrate_Vp9) {
+  DownscalingObserver test(
+      "VP9", {{.active = false}, {.active = false}, {.active = true}},
+      kHighStartBps,
+      /*automatic_resize=*/true,
+      /*expect_downscale=*/false);
   RunBaseTest(&test);
 }
 

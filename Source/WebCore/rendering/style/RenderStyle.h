@@ -40,6 +40,7 @@ class Color;
 class ContentData;
 class CounterContent;
 class CursorList;
+class Element;
 class FillLayer;
 class FilterOperations;
 class FloatPoint;
@@ -222,6 +223,7 @@ enum class UserSelect : uint8_t;
 enum class VerticalAlign : uint8_t;
 enum class Visibility : uint8_t;
 enum class WhiteSpace : uint8_t;
+enum class WhiteSpaceCollapse : uint8_t;
 enum class WordBreak : uint8_t;
 enum class WritingMode : uint8_t;
 
@@ -242,6 +244,8 @@ struct NamedGridLinesMap;
 struct OrderedNamedGridLinesMap;
 struct ScrollSnapAlign;
 struct ScrollSnapType;
+struct ScrollbarGutter;
+struct ScrollbarColor;
 
 struct TabSize;
 struct TextAutospace;
@@ -511,7 +515,6 @@ public:
     WEBCORE_EXPORT const FontCascadeDescription& fontDescription() const;
     float specifiedFontSize() const;
     float computedFontSize() const;
-    unsigned computedFontPixelSize() const;
     std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
 
     inline FontVariationSettings fontVariationSettings() const;
@@ -562,7 +565,7 @@ public:
     WEBCORE_EXPORT int computedLineHeight() const;
     int computeLineHeight(const Length&) const;
 
-    WhiteSpace whiteSpace() const { return static_cast<WhiteSpace>(m_inheritedFlags.whiteSpace); }
+    WhiteSpace whiteSpace() const;
     static constexpr bool autoWrap(WhiteSpace);
     inline bool autoWrap() const;
     static constexpr bool preserveNewline(WhiteSpace);
@@ -572,6 +575,9 @@ public:
     inline bool isCollapsibleWhiteSpace(UChar) const;
     inline bool breakOnlyAfterWhiteSpace() const;
     inline bool breakWords() const;
+
+    WhiteSpaceCollapse whiteSpaceCollapse() const { return static_cast<WhiteSpaceCollapse>(m_inheritedFlags.whiteSpaceCollapse); }
+    TextWrap textWrap() const { return static_cast<TextWrap>(m_inheritedFlags.textWrap); }
 
     inline FillRepeatXY backgroundRepeat() const;
     inline FillAttachment backgroundAttachment() const;
@@ -609,7 +615,6 @@ public:
     StyleImage* listStyleImage() const;
     ListStylePosition listStylePosition() const { return static_cast<ListStylePosition>(m_inheritedFlags.listStylePosition); }
     inline bool isFixedTableLayout() const;
-
     inline const Length& marginTop() const;
     inline const Length& marginBottom() const;
     inline const Length& marginLeft() const;
@@ -690,12 +695,16 @@ public:
 
     inline ContentVisibility contentVisibility() const;
 
-    inline bool effectiveSkipsContent() const;
+    inline bool effectiveSkippedContent() const;
 
     inline ContainIntrinsicSizeType containIntrinsicWidthType() const;
     inline ContainIntrinsicSizeType containIntrinsicHeightType() const;
     inline ContainIntrinsicSizeType containIntrinsicLogicalWidthType() const;
     inline ContainIntrinsicSizeType containIntrinsicLogicalHeightType() const;
+    inline bool containIntrinsicWidthHasAuto() const;
+    inline bool containIntrinsicHeightHasAuto() const;
+    inline bool containIntrinsicLogicalWidthHasAuto() const;
+    inline bool containIntrinsicLogicalHeightHasAuto() const;
     inline std::optional<Length> containIntrinsicWidth() const;
     inline std::optional<Length> containIntrinsicHeight() const;
     inline bool hasAutoLengthContainIntrinsicSize() const;
@@ -792,7 +801,6 @@ public:
     WEBCORE_EXPORT UserSelect effectiveUserSelect() const;
     inline UserSelect userSelect() const;
     inline TextOverflow textOverflow() const;
-    inline TextWrap textWrap() const;
     inline WordBreak wordBreak() const;
     inline OverflowWrap overflowWrap() const;
     inline NBSPMode nbspMode() const;
@@ -963,7 +971,11 @@ public:
     const ScrollSnapAlign& scrollSnapAlign() const;
     ScrollSnapStop scrollSnapStop() const;
 
-    ScrollbarWidth scrollbarWidth() const;
+    inline std::optional<ScrollbarColor> scrollbarColor() const;
+    inline const StyleColor& scrollbarThumbColor() const;
+    inline const StyleColor& scrollbarTrackColor() const;
+    WEBCORE_EXPORT const ScrollbarGutter scrollbarGutter() const;
+    WEBCORE_EXPORT ScrollbarWidth scrollbarWidth() const;
 
 #if ENABLE(TOUCH_EVENTS)
     inline StyleColor tapHighlightColor() const;
@@ -998,12 +1010,6 @@ public:
     inline ImageOrientation imageOrientation() const;
     inline ImageRendering imageRendering() const;
 
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    inline ImageResolutionSource imageResolutionSource() const;
-    inline ImageResolutionSnap imageResolutionSnap() const;
-    inline float imageResolution() const;
-#endif
-    
     inline OptionSet<SpeakAs> speakAs() const;
 
     inline FilterOperations& mutableFilter();
@@ -1037,6 +1043,9 @@ public:
     inline bool hasIsolation() const;
 
     bool shouldPlaceVerticalScrollbarOnLeft() const;
+
+    inline bool usesStandardScrollbarStyle() const;
+    inline bool usesLegacyScrollbarStyle() const;
 
 #if ENABLE(APPLE_PAY)
     inline ApplePayButtonStyle applePayButtonStyle() const;
@@ -1212,13 +1221,8 @@ public:
     inline void setImageOrientation(ImageOrientation);
     inline void setImageRendering(ImageRendering);
 
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    inline void setImageResolutionSource(ImageResolutionSource);
-    inline void setImageResolutionSnap(ImageResolutionSnap);
-    inline void setImageResolution(float);
-#endif
-
-    void setWhiteSpace(WhiteSpace v) { m_inheritedFlags.whiteSpace = static_cast<unsigned>(v); }
+    void setWhiteSpaceCollapse(WhiteSpaceCollapse v) { m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(v); }
+    void setTextWrap(TextWrap v) { m_inheritedFlags.textWrap = static_cast<unsigned>(v); }
 
     void setWordSpacing(Length&&);
 
@@ -1266,7 +1270,7 @@ public:
 
     inline void setContentVisibility(ContentVisibility);
 
-    inline void setEffectiveSkipsContent(bool);
+    inline void setEffectiveSkippedContent(bool);
 
     inline void setListStyleType(ListStyleType);
     void setListStyleImage(RefPtr<StyleImage>&&);
@@ -1391,7 +1395,6 @@ public:
     inline void setUserDrag(UserDrag);
     inline void setUserSelect(UserSelect);
     inline void setTextOverflow(TextOverflow);
-    inline void setTextWrap(TextWrap);
     inline void setWordBreak(WordBreak);
     inline void setOverflowWrap(OverflowWrap);
     inline void setNBSPMode(NBSPMode);
@@ -1509,6 +1512,10 @@ public:
     void setScrollSnapAlign(const ScrollSnapAlign&);
     void setScrollSnapStop(ScrollSnapStop);
 
+    inline void setScrollbarColor(const std::optional<ScrollbarColor>&);
+    inline void setScrollbarThumbColor(const StyleColor&);
+    inline void setScrollbarTrackColor(const StyleColor&);
+    void setScrollbarGutter(ScrollbarGutter);
     void setScrollbarWidth(ScrollbarWidth);
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1586,6 +1593,8 @@ public:
     inline SVGPaintType fillPaintType() const;
     inline StyleColor fillPaintColor() const;
     inline void setFillPaintColor(const StyleColor&);
+    inline void setHasExplicitlySetColor(bool);
+    inline bool hasExplicitlySetColor() const;
     inline float fillOpacity() const;
     inline void setFillOpacity(float);
 
@@ -1675,6 +1684,7 @@ public:
     const AtomString& hyphenString() const;
 
     bool inheritedEqual(const RenderStyle&) const;
+    bool inheritedCustomPropertiesEqual(const RenderStyle&) const;
     bool fastPathInheritedEqual(const RenderStyle&) const;
     bool nonFastPathInheritedEqual(const RenderStyle&) const;
 
@@ -1773,6 +1783,7 @@ public:
     static constexpr OptionSet<TextTransform> initialTextTransform();
     static constexpr Visibility initialVisibility();
     static constexpr WhiteSpace initialWhiteSpace();
+    static constexpr WhiteSpaceCollapse initialWhiteSpaceCollapse();
     static float initialHorizontalBorderSpacing() { return 0; }
     static float initialVerticalBorderSpacing() { return 0; }
     static constexpr CursorType initialCursor();
@@ -1941,6 +1952,8 @@ public:
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
 
+    static inline std::optional<ScrollbarColor> initialScrollbarColor();
+    static ScrollbarGutter initialScrollbarGutter();
     static ScrollbarWidth initialScrollbarWidth();
 
 #if ENABLE(APPLE_PAY)
@@ -2167,8 +2180,9 @@ private:
         unsigned cursorVisibility : 1; // CursorVisibility
 #endif
         unsigned direction : 1; // TextDirection
-        unsigned whiteSpace : 3; // WhiteSpace
-        // 38 bits
+        unsigned whiteSpaceCollapse : 3; // WhiteSpaceCollapse
+        unsigned textWrap : 3; // TextWrap
+        // 33 bits
         unsigned borderCollapse : 1; // BorderCollapse
         unsigned boxDirection : 1; // BoxDirection
 
@@ -2178,16 +2192,18 @@ private:
         unsigned pointerEvents : 4; // PointerEvents
         unsigned insideLink : 2; // InsideLink
         unsigned insideDefaultButton : 1;
-        // 49 bits
+        // 44 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
         unsigned writingMode : 2; // WritingMode
-        // 51 bits
+        // 46 bits
 
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // 56 bits
+        // 51 bits
+        unsigned hasExplicitlySetColor : 1;
+        // 52 bits
     };
 
     // This constructor is used to implement the replace operation.
@@ -2249,5 +2265,7 @@ constexpr BorderStyle collapsedBorderStyle(BorderStyle);
 inline bool pseudoElementRendererIsNeeded(const RenderStyle*);
 inline bool generatesBox(const RenderStyle&);
 inline bool isNonVisibleOverflow(Overflow);
+
+inline bool isSkippedContentRoot(const RenderStyle&, const Element*);
 
 } // namespace WebCore

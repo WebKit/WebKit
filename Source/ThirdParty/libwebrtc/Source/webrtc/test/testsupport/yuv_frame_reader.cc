@@ -14,6 +14,7 @@
 
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "rtc_base/logging.h"
 #include "test/frame_utils.h"
 #include "test/testsupport/file_utils.h"
@@ -21,164 +22,140 @@
 
 namespace webrtc {
 namespace test {
-size_t FrameSizeBytes(int width, int height) {
-  int half_width = (width + 1) / 2;
-  size_t size_y = static_cast<size_t>(width) * height;
-  size_t size_uv = static_cast<size_t>(half_width) * ((height + 1) / 2);
-  return size_y + 2 * size_uv;
+namespace {
+using RepeatMode = YuvFrameReaderImpl::RepeatMode;
+
+int WrapFrameNum(int frame_num, int num_frames, RepeatMode mode) {
+  RTC_CHECK_GE(frame_num, 0) << "frame_num cannot be negative";
+  RTC_CHECK_GT(num_frames, 0) << "num_frames must be greater than 0";
+  if (mode == RepeatMode::kSingle) {
+    return frame_num;
+  }
+  if (mode == RepeatMode::kRepeat) {
+    return frame_num % num_frames;
+  }
+
+  RTC_CHECK_EQ(RepeatMode::kPingPong, mode);
+  int cycle_len = 2 * (num_frames - 1);
+  int wrapped_num = frame_num % cycle_len;
+  if (wrapped_num >= num_frames) {
+    return cycle_len - wrapped_num;
+  }
+  return wrapped_num;
 }
 
-YuvFrameReaderImpl::DropperUtil::DropperUtil(int source_fps, int target_fps)
-    : frame_size_buckets_(
-          std::max(1.0, static_cast<double>(source_fps) / target_fps)),
-      bucket_level_(0.0) {}
-
-YuvFrameReaderImpl::DropperUtil::DropDecision
-YuvFrameReaderImpl::DropperUtil::UpdateLevel() {
-  DropDecision decision;
-  if (bucket_level_ <= 0.0) {
-    decision = DropDecision::kKeepFrame;
-    bucket_level_ += frame_size_buckets_;
-  } else {
-    decision = DropDecision::kDropframe;
-  }
-  bucket_level_ -= 1.0;
-  return decision;
-}
-
-YuvFrameReaderImpl::YuvFrameReaderImpl(std::string input_filename,
-                                       int width,
-                                       int height)
-    : YuvFrameReaderImpl(input_filename,
-                         width,
-                         height,
-                         width,
-                         height,
-                         RepeatMode::kSingle,
-                         30,
-                         30) {}
-YuvFrameReaderImpl::YuvFrameReaderImpl(std::string input_filename,
-                                       int input_width,
-                                       int input_height,
-                                       int desired_width,
-                                       int desired_height,
-                                       RepeatMode repeat_mode,
-                                       absl::optional<int> clip_fps,
-                                       int target_fps)
-    : input_filename_(input_filename),
-      frame_length_in_bytes_(input_width * input_height +
-                             2 * ((input_width + 1) / 2) *
-                                 ((input_height + 1) / 2)),
-      input_width_(input_width),
-      input_height_(input_height),
-      desired_width_(desired_width),
-      desired_height_(desired_height),
-      frame_size_bytes_(FrameSizeBytes(input_width, input_height)),
-      repeat_mode_(repeat_mode),
-      number_of_frames_(-1),
-      current_frame_index_(-1),
-      dropper_(clip_fps.has_value() ? new DropperUtil(*clip_fps, target_fps)
-                                    : nullptr),
-      input_file_(nullptr) {}
-
-YuvFrameReaderImpl::~YuvFrameReaderImpl() {
-  Close();
-}
-
-bool YuvFrameReaderImpl::Init() {
-  if (input_width_ <= 0 || input_height_ <= 0) {
-    RTC_LOG(LS_ERROR) << "Frame width and height must be positive. Was: "
-                      << input_width_ << "x" << input_height_;
-    return false;
-  }
-  input_file_ = fopen(input_filename_.c_str(), "rb");
-  if (input_file_ == nullptr) {
-    RTC_LOG(LS_ERROR) << "Couldn't open input file: "
-                      << input_filename_.c_str();
-    return false;
-  }
-  // Calculate total number of frames.
-  size_t source_file_size = GetFileSize(input_filename_);
-  if (source_file_size <= 0u) {
-    RTC_LOG(LS_ERROR) << "Input file " << input_filename_.c_str()
-                      << " is empty.";
-    return false;
-  }
-  number_of_frames_ =
-      static_cast<int>(source_file_size / frame_length_in_bytes_);
-
-  if (number_of_frames_ == 0) {
-    RTC_LOG(LS_ERROR) << "Input file " << input_filename_.c_str()
-                      << " is too small.";
-  }
-
-  current_frame_index_ = 0;
-  return true;
-}
-
-rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::ReadFrame() {
-  if (input_file_ == nullptr) {
-    RTC_LOG(LS_ERROR) << "YuvFrameReaderImpl is not initialized.";
-    return nullptr;
-  }
-
-  rtc::scoped_refptr<I420Buffer> buffer;
-
-  do {
-    if (current_frame_index_ >= number_of_frames_) {
-      switch (repeat_mode_) {
-        case RepeatMode::kSingle:
-          return nullptr;
-        case RepeatMode::kRepeat:
-          fseek(input_file_, 0, SEEK_SET);
-          current_frame_index_ = 0;
-          break;
-        case RepeatMode::kPingPong:
-          if (current_frame_index_ == number_of_frames_ * 2) {
-            fseek(input_file_, 0, SEEK_SET);
-            current_frame_index_ = 0;
-          } else {
-            int reverse_frame_index = current_frame_index_ - number_of_frames_;
-            int seek_frame_pos = (number_of_frames_ - reverse_frame_index - 1);
-            fseek(input_file_, seek_frame_pos * frame_size_bytes_, SEEK_SET);
-          }
-          break;
-      }
-    }
-    ++current_frame_index_;
-
-    buffer = ReadI420Buffer(input_width_, input_height_, input_file_);
-    if (!buffer && ferror(input_file_)) {
-      RTC_LOG(LS_ERROR) << "Couldn't read frame from file: "
-                        << input_filename_.c_str();
-    }
-  } while (dropper_ &&
-           dropper_->UpdateLevel() == DropperUtil::DropDecision::kDropframe);
-
-  if (input_width_ == desired_width_ && input_height_ == desired_height_) {
+rtc::scoped_refptr<I420Buffer> Scale(rtc::scoped_refptr<I420Buffer> buffer,
+                                     Resolution resolution) {
+  if (buffer->width() == resolution.width &&
+      buffer->height() == resolution.height) {
     return buffer;
   }
+  rtc::scoped_refptr<I420Buffer> scaled(
+      I420Buffer::Create(resolution.width, resolution.height));
+  scaled->ScaleFrom(*buffer.get());
+  return scaled;
+}
+}  // namespace
 
-  rtc::scoped_refptr<I420Buffer> rescaled_buffer(
-      I420Buffer::Create(desired_width_, desired_height_));
-  rescaled_buffer->ScaleFrom(*buffer.get());
-
-  return rescaled_buffer;
+int YuvFrameReaderImpl::RateScaler::Skip(Ratio framerate_scale) {
+  ticks_ = ticks_.value_or(framerate_scale.num);
+  int skip = 0;
+  while (ticks_ <= 0) {
+    *ticks_ += framerate_scale.num;
+    ++skip;
+  }
+  *ticks_ -= framerate_scale.den;
+  return skip;
 }
 
-void YuvFrameReaderImpl::Close() {
-  if (input_file_ != nullptr) {
-    fclose(input_file_);
-    input_file_ = nullptr;
+YuvFrameReaderImpl::YuvFrameReaderImpl(std::string filepath,
+                                       Resolution resolution,
+                                       RepeatMode repeat_mode)
+    : filepath_(filepath),
+      resolution_(resolution),
+      repeat_mode_(repeat_mode),
+      num_frames_(0),
+      frame_num_(0),
+      frame_size_bytes_(0),
+      header_size_bytes_(0),
+      file_(nullptr) {}
+
+YuvFrameReaderImpl::~YuvFrameReaderImpl() {
+  if (file_ != nullptr) {
+    fclose(file_);
+    file_ = nullptr;
   }
 }
 
-size_t YuvFrameReaderImpl::FrameLength() {
-  return frame_length_in_bytes_;
+void YuvFrameReaderImpl::Init() {
+  RTC_CHECK_GT(resolution_.width, 0) << "Width must be positive";
+  RTC_CHECK_GT(resolution_.height, 0) << "Height must be positive";
+  frame_size_bytes_ =
+      CalcBufferSize(VideoType::kI420, resolution_.width, resolution_.height);
+
+  file_ = fopen(filepath_.c_str(), "rb");
+  RTC_CHECK(file_ != NULL) << "Cannot open " << filepath_;
+
+  size_t file_size_bytes = GetFileSize(filepath_);
+  RTC_CHECK_GT(file_size_bytes, 0u) << "File " << filepath_ << " is empty";
+
+  num_frames_ = static_cast<int>(file_size_bytes / frame_size_bytes_);
+  RTC_CHECK_GT(num_frames_, 0u) << "File " << filepath_ << " is too small";
 }
 
-int YuvFrameReaderImpl::NumberOfFrames() {
-  return number_of_frames_;
+rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::PullFrame() {
+  return PullFrame(/*frame_num=*/nullptr);
+}
+
+rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::PullFrame(int* frame_num) {
+  return PullFrame(frame_num, resolution_, /*framerate_scale=*/kNoScale);
+}
+
+rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::PullFrame(
+    int* frame_num,
+    Resolution resolution,
+    Ratio framerate_scale) {
+  frame_num_ += framerate_scaler_.Skip(framerate_scale);
+  auto buffer = ReadFrame(frame_num_, resolution);
+  if (frame_num != nullptr) {
+    *frame_num = frame_num_;
+  }
+  return buffer;
+}
+
+rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::ReadFrame(int frame_num) {
+  return ReadFrame(frame_num, resolution_);
+}
+
+rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::ReadFrame(
+    int frame_num,
+    Resolution resolution) {
+  int wrapped_num = WrapFrameNum(frame_num, num_frames_, repeat_mode_);
+  if (wrapped_num >= num_frames_) {
+    RTC_CHECK_EQ(RepeatMode::kSingle, repeat_mode_);
+    return nullptr;
+  }
+  fseek(file_, header_size_bytes_ + wrapped_num * frame_size_bytes_, SEEK_SET);
+  auto buffer = ReadI420Buffer(resolution_.width, resolution_.height, file_);
+  RTC_CHECK(buffer != nullptr);
+
+  return Scale(buffer, resolution);
+}
+
+std::unique_ptr<FrameReader> CreateYuvFrameReader(std::string filepath,
+                                                  Resolution resolution) {
+  return CreateYuvFrameReader(filepath, resolution,
+                              YuvFrameReaderImpl::RepeatMode::kSingle);
+}
+
+std::unique_ptr<FrameReader> CreateYuvFrameReader(
+    std::string filepath,
+    Resolution resolution,
+    YuvFrameReaderImpl::RepeatMode repeat_mode) {
+  YuvFrameReaderImpl* frame_reader =
+      new YuvFrameReaderImpl(filepath, resolution, repeat_mode);
+  frame_reader->Init();
+  return std::unique_ptr<FrameReader>(frame_reader);
 }
 
 }  // namespace test

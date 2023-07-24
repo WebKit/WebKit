@@ -23,7 +23,7 @@ info: |
     Intl.Collator objects.
 includes: [testIntl.js]
 locale: [en, ar, de, es, ko, ln, si, sv, zh]
-features: [Intl-enumeration]
+features: [Intl-enumeration, Array.prototype.includes]
 ---*/
 
 const collations = Intl.supportedValuesOf("collation");

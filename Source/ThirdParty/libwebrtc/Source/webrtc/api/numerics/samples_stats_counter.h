@@ -11,6 +11,8 @@
 #ifndef API_NUMERICS_SAMPLES_STATS_COUNTER_H_
 #define API_NUMERICS_SAMPLES_STATS_COUNTER_H_
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include "api/array_view.h"
@@ -27,9 +29,12 @@ class SamplesStatsCounter {
   struct StatsSample {
     double value;
     Timestamp time;
+    // Sample's specific metadata.
+    std::map<std::string, std::string> metadata;
   };
 
   SamplesStatsCounter();
+  explicit SamplesStatsCounter(size_t expected_samples_count);
   ~SamplesStatsCounter();
   SamplesStatsCounter(const SamplesStatsCounter&);
   SamplesStatsCounter& operator=(const SamplesStatsCounter&);
@@ -59,6 +64,12 @@ class SamplesStatsCounter {
   double GetMax() const {
     RTC_DCHECK(!IsEmpty());
     return *stats_.GetMax();
+  }
+  // Returns sum in O(1) time. This function may not be called if there are
+  // no samples.
+  double GetSum() const {
+    RTC_DCHECK(!IsEmpty());
+    return *stats_.GetSum();
   }
   // Returns average in O(1) time. This function may not be called if there are
   // no samples.

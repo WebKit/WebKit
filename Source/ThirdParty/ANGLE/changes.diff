@@ -307,14 +307,14 @@ index 0000000000000000000000000000000000000000..8b96dc01357fa9a2bdc54e5ddb3bbfd4
 +#endif
 diff --git a/src/common/ANGLEShaderProgramVersion.h b/src/common/ANGLEShaderProgramVersion.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..06407afeb0dd3c254b797ecee28b2a2a91edd4b2
+index 0000000000000000000000000000000000000000..1f43ebd21c99481abda24a141a89c472b3faafd0
 --- /dev/null
 +++ b/src/common/ANGLEShaderProgramVersion.h
 @@ -0,0 +1,2 @@
-+#define ANGLE_PROGRAM_VERSION "a069fe5b0e6792a4ee1b2f07b537c3d7"
++#define ANGLE_PROGRAM_VERSION "fcbd6f5c2e75312e4bd4001f421d223b"
 +#define ANGLE_PROGRAM_VERSION_HASH_SIZE 16
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
-index 7a0a706519887e596a18e2dbd3489051c78c7ba0..f11469503fd488b856e448c8ed8385d01cc522f1 100644
+index 34826b47554d0d89e8b9619d46828177b2c1b873..2e03a110de26a7cb888d8e9a5997deaf3745c12c 100644
 --- a/src/common/utilities.cpp
 +++ b/src/common/utilities.cpp
 @@ -6,6 +6,12 @@
@@ -401,7 +401,7 @@ index cf1d101e072dde3449f44e8da33226f7be1735f3..641d4319b2c9914a7c3738124a0407f6
  {
  
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 19ce708bea32d0ff14670c7af369061c48258b3b..b68b61ee6df8fa58536a5296284709bb7b4dbffb 100644
+index 12e40f45e02b091c76f4b22c555be19935f3efda..371c9854abc9fffb3d4422fc27545dfad74cc035 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -414,24 +414,29 @@ index 19ce708bea32d0ff14670c7af369061c48258b3b..b68b61ee6df8fa58536a5296284709bb
  #include "libANGLE/State.h"
  
  #include <string.h>
-diff --git a/src/libANGLE/renderer/driver_utils.h b/src/libANGLE/renderer/driver_utils.h
-index 744a5b14dbae742db62b06ca4d28314d0f7affdf..f560fa7a45e42b79bd2cfb2d607a7a9ae9276835 100644
---- a/src/libANGLE/renderer/driver_utils.h
-+++ b/src/libANGLE/renderer/driver_utils.h
-@@ -249,7 +249,7 @@ inline bool IsFuchsia()
- #endif
+diff --git a/src/libANGLE/formatutils.cpp b/src/libANGLE/formatutils.cpp
+index f2845dc9f9a81fe072fc4ae790c6bb3dfac5b5d8..e2b5cd91e8ce813c10d42aaf6540422b6cdc984b 100644
+--- a/src/libANGLE/formatutils.cpp
++++ b/src/libANGLE/formatutils.cpp
+@@ -609,6 +609,13 @@ static GLenum EquivalentBlitInternalFormat(GLenum internalformat)
+         return GL_RGB8;
+     }
+ 
++    // Treat ANGLE's BGRA8_SRGB as SRGB8_ALPHA8 since it's just a swizzled version
++    // with the same components.
++    if (internalformat == GL_BGRA8_SRGB_ANGLEX)
++    {
++        return GL_SRGB8_ALPHA8_EXT;
++    }
++
+     return internalformat;
  }
  
--inline bool IsIOS()
-+inline bool IsAppleEmbedded()
- {
- #if ANGLE_PLATFORM_IOS_FAMILY
-     return true;
 diff --git a/src/libANGLE/renderer/gl/renderergl_utils.cpp b/src/libANGLE/renderer/gl/renderergl_utils.cpp
-index 14ceccc3f308105cdedd1f091c32eb64a34d39c0..bf016d3b2d30976f3bf61b60b743444229cf67b6 100644
+index fa85c5bf4dc6b6cd87ee4cf49b45a44447538a5a..bac4c1b8b9a53f770998f84ef123a5f37cf6e42a 100644
 --- a/src/libANGLE/renderer/gl/renderergl_utils.cpp
 +++ b/src/libANGLE/renderer/gl/renderergl_utils.cpp
-@@ -2287,7 +2287,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
+@@ -2313,7 +2313,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
      // crbug.com/1202928
      ANGLE_FEATURE_CONDITION(features, disableWorkerContexts,
                              (IsWindows() && (isIntel || isAMD)) || (IsLinux() && isNvidia) ||
@@ -441,10 +446,10 @@ index 14ceccc3f308105cdedd1f091c32eb64a34d39c0..bf016d3b2d30976f3bf61b60b7434442
      bool limitMaxTextureSize = isIntel && IsLinux() && GetLinuxOSVersion() < OSVersion(5, 0, 0);
      ANGLE_FEATURE_CONDITION(features, limitWebglMaxTextureSizeTo4096,
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/metal/BufferMtl.mm
-index e261e90255c6de20704e79b01a6575fc120e6f84..dc5a3613d1532a9c6e3162c9fdce996378927a9e 100644
+index 746823ce009702c2e49d1397a4159570838ebc9e..7976bcadedd832cabfda3f37b69ca4577e50bdf4 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/BufferMtl.mm
-@@ -372,7 +372,7 @@ ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context,
+@@ -390,7 +390,7 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
          {
              if (buffer.offset.second <= offset.second &&
                  (offset.second - buffer.offset.second) % buffer.uniformBufferBlockSize == 0)
@@ -454,10 +459,10 @@ index e261e90255c6de20704e79b01a6575fc120e6f84..dc5a3613d1532a9c6e3162c9fdce9963
      }
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 0b5efd4a1a68d2168dead6f5b9fe740b628d8cc2..886c25104c770afd8f2d35fbd3e42f25cd03686c 100644
+index 97d935b275c0a0aaac841e5a413d38b9080b9ec0..800c93fe38d0ecf0c1732313ff143a8915158ec4 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
-@@ -2462,8 +2462,21 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
+@@ -2464,8 +2464,21 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
              return angle::Result::Continue;
          }
          // Setup with flushed state should either produce a working encoder or fail with an error
@@ -482,10 +487,10 @@ index 0b5efd4a1a68d2168dead6f5b9fe740b628d8cc2..886c25104c770afd8f2d35fbd3e42f25
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 95b596dfa874c001ff974d83da67fd6c9370e178..3c84b77ef9cb33564e6033a9b3e4035f4ca185bb 100644
+index d29e97237fad421a73f0d9a573e5618751a28b3c..58a0bbbe9cb92654fa50c6d859ff0ac2b299c994 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1381,8 +1381,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
+@@ -1401,8 +1401,7 @@ bool IsMetalDisplayAvailable()
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -496,10 +501,10 @@ index 95b596dfa874c001ff974d83da67fd6c9370e178..3c84b77ef9cb33564e6033a9b3e4035f
      {
          return [mMetalDevice supports32BitFloatFiltering];
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.mm b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-index 4fbf873140d0911f9c903b2dc9749891c9556f1a..1560806d94b304ecce8b0d6a69eedbdb81b4450f 100644
+index f7eaf3362c8fd382ea047a68372c9b6d9213a2f8..1545a357059d17d49bf3210eef6a25c419de840f 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-@@ -1659,8 +1659,10 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
+@@ -1660,8 +1660,10 @@ void RoundValueAndAdjustCorrespondingValue(float a,
  
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
@@ -512,23 +517,136 @@ index 4fbf873140d0911f9c903b2dc9749891c9556f1a..1560806d94b304ecce8b0d6a69eedbdb
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
 diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index a323c1aa1519902ca8a951ff6378752b6d1ef898..7d9a3a7ec7bcfca994a5a8fc027bd63ce0b980a7 100644
+index 04fc45023497f3fdbf061b24197e40fae35f8c17..db63bd65d01aaddc48252fda8bd765988d7ddc20 100644
 --- a/src/libANGLE/renderer/metal/ProgramMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
-@@ -1540,7 +1540,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
+@@ -54,8 +54,25 @@
+     std::vector<T> &mArray;
+ };
+ 
++inline void memcpy_guarded(void *dst, const void *src, const void *maxSrcPtr, size_t size)
++{
++    size_t bytesAvailable = maxSrcPtr > src ? (const uint8_t *)maxSrcPtr - (const uint8_t *)src : 0;
++    size_t bytesToCopy    = std::min(size, bytesAvailable);
++    size_t bytesToZero    = size - bytesToCopy;
++
++    if (bytesToCopy)
++        memcpy(dst, src, bytesToCopy);
++    if (bytesToZero)
++        memset((uint8_t *)dst + bytesToCopy, 0, bytesToZero);
++}
++
+ // Copy matrix one column at a time
+-inline void copy_matrix(void *dst, const void *src, size_t srcStride, size_t dstStride, GLenum type)
++inline void copy_matrix(void *dst,
++                        const void *src,
++                        const void *maxSrcPtr,
++                        size_t srcStride,
++                        size_t dstStride,
++                        GLenum type)
+ {
+     size_t elemSize      = mtl::GetMetalSizeForGLType(gl::VariableComponentType(type));
+     const size_t dstRows = gl::VariableRowCount(type);
+@@ -64,14 +81,15 @@ inline void copy_matrix(void *dst, const void *src, size_t srcStride, size_t dst
+     for (size_t col = 0; col < dstCols; col++)
+     {
+         size_t srcOffset = col * srcStride;
+-        memcpy(((uint8_t *)dst) + dstStride * col, (const uint8_t *)src + srcOffset,
+-               elemSize * dstRows);
++        memcpy_guarded(((uint8_t *)dst) + dstStride * col, (const uint8_t *)src + srcOffset,
++                       maxSrcPtr, elemSize * dstRows);
+     }
+ }
+ 
+ // Copy matrix one element at a time to transpose.
+ inline void copy_matrix_row_major(void *dst,
+                                   const void *src,
++                                  const void *maxSrcPtr,
+                                   size_t srcStride,
+                                   size_t dstStride,
+                                   GLenum type)
+@@ -85,8 +103,8 @@ inline void copy_matrix_row_major(void *dst,
+         for (size_t row = 0; row < dstRows; row++)
+         {
+             size_t srcOffset = row * srcStride + col * elemSize;
+-            memcpy((uint8_t *)dst + dstStride * col + row * elemSize,
+-                   (const uint8_t *)src + srcOffset, elemSize);
++            memcpy_guarded((uint8_t *)dst + dstStride * col + row * elemSize,
++                           (const uint8_t *)src + srcOffset, maxSrcPtr, elemSize);
+         }
+     }
+ }
+@@ -105,6 +123,7 @@ bool compareBlockInfo(const sh::BlockMemberInfo &a, const sh::BlockMemberInfo &b
+                                        size_t *bufferOffsetOut)
+ {
+     uint8_t *dst             = nullptr;
++    const uint8_t *maxSrcPtr = sourceData + sizeToCopy;
+     dynamicBuffer->releaseInFlightBuffers(contextMtl);
+ 
+     // When converting a UBO buffer, we convert all of the data
+@@ -149,12 +168,12 @@ bool compareBlockInfo(const sh::BlockMemberInfo &a, const sh::BlockMemberInfo &b
+                     // Transpose matricies into column major order, if they're row major encoded.
+                     if (stdIterator->isRowMajorMatrix)
+                     {
+-                        copy_matrix_row_major(dstMat, srcMat, stdIterator->matrixStride,
++                        copy_matrix_row_major(dstMat, srcMat, maxSrcPtr, stdIterator->matrixStride,
+                                               mtlIterator->matrixStride, mtlIterator->type);
+                     }
+                     else
+                     {
+-                        copy_matrix(dstMat, srcMat, stdIterator->matrixStride,
++                        copy_matrix(dstMat, srcMat, maxSrcPtr, stdIterator->matrixStride,
+                                     mtlIterator->matrixStride, mtlIterator->type);
+                     }
+                 }
+@@ -166,24 +185,25 @@ bool compareBlockInfo(const sh::BlockMemberInfo &a, const sh::BlockMemberInfo &b
+                     for (int boolCol = 0; boolCol < gl::VariableComponentCount(mtlIterator->type);
+                          boolCol++)
+                     {
+-                        const uint8_t *srcOffset =
++                        const uint8_t *srcBool =
+                             (sourceData + stdIterator->offset + stdArrayOffset +
+                              blockConversionInfo.stdSize() * i +
+                              gl::VariableComponentSize(GL_BOOL) * boolCol);
+-                        unsigned int srcValue = *((unsigned int *)(srcOffset));
+-                        bool boolVal          = bool(srcValue);
+-                        memcpy(dst + mtlIterator->offset + mtlArrayOffset +
+-                                   blockConversionInfo.metalSize() * i + sizeof(bool) * boolCol,
+-                               &boolVal, sizeof(bool));
++                        unsigned int srcValue =
++                            srcBool < maxSrcPtr ? *((unsigned int *)(srcBool)) : 0;
++                        uint8_t *dstBool = dst + mtlIterator->offset + mtlArrayOffset +
++                                           blockConversionInfo.metalSize() * i +
++                                           sizeof(bool) * boolCol;
++                        *dstBool = (srcValue != 0);
+                     }
+                 }
+                 else
+                 {
+-                    memcpy(dst + mtlIterator->offset + mtlArrayOffset +
++                    memcpy_guarded(dst + mtlIterator->offset + mtlArrayOffset +
+                                        blockConversionInfo.metalSize() * i,
+                                    sourceData + stdIterator->offset + stdArrayOffset +
+                                        blockConversionInfo.stdSize() * i,
+-                           mtl::GetMetalSizeForGLType(mtlIterator->type));
++                                   maxSrcPtr, mtl::GetMetalSizeForGLType(mtlIterator->type));
+                 }
+             }
+             ++stdIterator;
+@@ -1555,7 +1575,7 @@ void operator()() override
                                      bool uniformBuffersDirty)
  {
      ContextMtl *context = mtl::GetImpl(glContext);
 -    if (pipelineDescChanged)
 +    if (pipelineDescChanged || !cmdEncoder->hasPipelineState())
      {
-         // Render pipeline state needs to be changed
-         id<MTLRenderPipelineState> pipelineState =
+         id<MTLFunction> vertexShader = nil;
+         ANGLE_TRY(
 diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.mm b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-index 30f2faac716e9ac4e1a2005cccdaff61faa06233..f66c831fc00fe645206fb0b9b5341abd2927867a 100644
+index 1d30b25345df8e39a4b20056b6906fc548a288e3..abf54a88cfb9ac862fa297a977f79bd32d521629 100644
 --- a/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 +++ b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-@@ -1092,16 +1092,21 @@ angle::Result VertexArrayMtl::convertVertexBufferGPU(const gl::Context *glContex
+@@ -1111,16 +1111,21 @@ inline void SetDefaultVertexBufferLayout(mtl::VertexBufferLayoutDesc *layout)
      ANGLE_TRY(conversion->data.allocate(contextMtl, numVertices * targetStride, nullptr, &newBuffer,
                                          &newBufferOffset));
  
@@ -554,22 +672,22 @@ index 30f2faac716e9ac4e1a2005cccdaff61faa06233..f66c831fc00fe645206fb0b9b5341abd
      params.srcDefaultAlphaData = convertedFormat.defaultAlpha;
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.h b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-index 828d62123b29d3a9f61a4f760f7a2a6e3e0406f5..0ee583621fedff68e532d144903a9ca3328958b4 100644
+index 5f516c7c5bd4ee8844ca88905638135208cea8e6..f3ec345c613cba73cce819da7aad08baae113cdd 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.h
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-@@ -536,6 +536,7 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -539,6 +539,7 @@ class RenderCommandEncoder final : public CommandEncoder
  
      const RenderPassDesc &renderPassDesc() const { return mRenderPassDesc; }
      bool hasDrawCalls() const { return mHasDrawCalls; }
 +    bool hasPipelineState() const { return mPipelineStateSet; }
  
-   private:
-     // Override CommandEncoder
+     uint64_t getSerial() const { return mSerial; }
+ 
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index 3247043cb4ca7c52ee9f79f3a7dd27cac8cbb2cd..5afc2f3c3c7f7df5bc2b9ec9ddc41baf99e4432a 100644
+index d6505275894b1d3ce1b94df7d28e7894eb5ece93..75acac983a981df604c19528e3f838b0799163a3 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-@@ -372,24 +372,38 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
+@@ -372,6 +372,16 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
      [encoder setVisibilityResultMode:mode offset:offset];
  }
  
@@ -586,32 +704,8 @@ index 3247043cb4ca7c52ee9f79f3a7dd27cac8cbb2cd..5afc2f3c3c7f7df5bc2b9ec9ddc41baf
  inline void UseResourceCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCommandStream *stream)
  {
      id<MTLResource> resource = stream->fetch<id<MTLResource>>();
-     MTLResourceUsage usage   = stream->fetch<MTLResourceUsage>();
-     mtl::RenderStages stages = stream->fetch<mtl::RenderStages>();
-     ANGLE_UNUSED_VARIABLE(stages);
--#if defined(__IPHONE_13_0) || defined(__MAC_10_15)
-+#if ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED
-+    [encoder useResource:resource usage:usage stages:stages];
-+#else
-+#   if ANGLE_MTL_USE_RESOURCE_USAGE_STAGES_AVAILABLE
-     if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13.0))
-     {
-         [encoder useResource:resource usage:usage stages:stages];
-     }
-     else
--#endif
-+#   endif
-     {
-         ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
-         [encoder useResource:resource usage:usage];
-         ANGLE_APPLE_ALLOW_DEPRECATED_END
-     }
-+#endif
-     [resource ANGLE_MTL_RELEASE];
- }
- 
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..026f89274298dbb041083b5cfea53e3df443164a 100644
+index 9147aa67605d151b8b8f8a40e6bad9889e544171..17e595b6bd6c14efe60cda49cc160af73ce7bd75 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 @@ -712,7 +712,8 @@ void DispatchCompute(ContextMtl *contextMtl,
@@ -624,7 +718,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..026f89274298dbb041083b5cfea53e3d
      MTLSize threadsPerThreadgroup = MTLSizeMake(w, 1, 1);
  
      if (contextMtl->getDisplay()->getFeatures().hasNonUniformDispatch.enabled)
-@@ -2540,45 +2541,13 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
+@@ -2540,45 +2541,13 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
                                              bool sRGBMipmap,
                                              NativeTexLevelArray *mipmapOutputViews)
  {
@@ -670,7 +764,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..026f89274298dbb041083b5cfea53e3d
      ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
      ASSERT(cmdEncoder);
  
-@@ -2615,8 +2584,29 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
+@@ -2615,8 +2584,29 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
              UNREACHABLE();
      }
  
@@ -776,7 +870,7 @@ index 3eaa9a64e79af26faa786102ece3f0bdea84d090..2ecf7b40bd5a2edc3fd9d69841e266b6
 +
 +#endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */
 diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/renderer/metal/mtl_state_cache.mm
-index ee5937e7415daa63126373d09a8f4124257d383f..d1df5110ef55a7d8eb83345d7e079f0dd7d1facb 100644
+index 6392740b2628a8b9c80a3e4413a958d9bc095d57..85e058a8257565e675bb0a5d356c4a16814b5f26 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
 +++ b/src/libANGLE/renderer/metal/mtl_state_cache.mm
 @@ -21,9 +21,16 @@
@@ -796,9 +890,9 @@ index ee5937e7415daa63126373d09a8f4124257d383f..d1df5110ef55a7d8eb83345d7e079f0d
  namespace rx
  {
  namespace mtl
-@@ -1067,23 +1074,10 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
+@@ -1016,23 +1023,10 @@ static bool ValidateRenderPipelineState(const MTLRenderPipelineDescriptor *descr
  
-         auto objCDesc = CreateMTLRenderPipelineDescriptor(vertShader, fragShader, desc);
+         auto objCDesc = desc.createMetalDesc(mVertexShader, mFragmentShader);
  
 -        // Validate Render Pipeline State:
 -        if (DeviceHasMaximumRenderTargetSize(metalDevice))
@@ -822,10 +916,10 @@ index ee5937e7415daa63126373d09a8f4124257d383f..d1df5110ef55a7d8eb83345d7e079f0d
          if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
          {
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 2d2ee6c966ad1722706fa77079c1aba68768058a..4101d204cb48181579dcafbd708f554fd81c7fad 100644
+index 5dd606d625abaeb53202e71a7bbd2d4eab50280e..6a6bc39a87a288a408ddebed43dacf0fa99e87c9 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1466,6 +1466,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1492,6 +1492,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -850,7 +944,7 @@ index 2d2ee6c966ad1722706fa77079c1aba68768058a..4101d204cb48181579dcafbd708f554f
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1480,10 +1498,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1506,10 +1524,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -863,7 +957,7 @@ index 2d2ee6c966ad1722706fa77079c1aba68768058a..4101d204cb48181579dcafbd708f554f
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1506,7 +1524,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1532,7 +1550,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].
@@ -872,3 +966,189 @@ index 2d2ee6c966ad1722706fa77079c1aba68768058a..4101d204cb48181579dcafbd708f554f
      UNREACHABLE();
      return false;
  #    else
+diff --git a/Source/ThirdParty/ANGLE/src/compiler/translator/ValidateTypeSizeLimitations.cpp b/Source/ThirdParty/ANGLE/src/compiler/translator/ValidateTypeSizeLimitations.cpp
+index 2a033ad9d942..a6bf9d0db544 100644
+--- a/Source/ThirdParty/ANGLE/src/compiler/translator/ValidateTypeSizeLimitations.cpp
++++ b/Source/ThirdParty/ANGLE/src/compiler/translator/ValidateTypeSizeLimitations.cpp
+@@ -7,6 +7,7 @@
+ #include "compiler/translator/ValidateTypeSizeLimitations.h"
+ 
+ #include "angle_gl.h"
++#include "common/mathutil.h"
+ #include "compiler/translator/Diagnostics.h"
+ #include "compiler/translator/Symbol.h"
+ #include "compiler/translator/SymbolTable.h"
+@@ -113,7 +114,8 @@ class ValidateTypeSizeLimitationsTraverser : public TIntermTraverser
+ 
+     void validateTotalPrivateVariableSize()
+     {
+-        if (mTotalPrivateVariablesSize > kMaxPrivateVariableSizeInBytes)
++        if (mTotalPrivateVariablesSize.ValueOrDefault(std::numeric_limits<size_t>::max()) >
++            kMaxPrivateVariableSizeInBytes)
+         {
+             mDiagnostics->error(
+                 TSourceLoc{},
+@@ -231,7 +233,7 @@ class ValidateTypeSizeLimitationsTraverser : public TIntermTraverser
+     TDiagnostics *mDiagnostics;
+     std::vector<int> mLoopSymbolIds;
+ 
+-    size_t mTotalPrivateVariablesSize;
++    angle::base::CheckedNumeric<size_t> mTotalPrivateVariablesSize;
+ };
+ 
+ }  // namespace
+diff --git a/Source/ThirdParty/ANGLE/src/tests/gl_tests/WebGLCompatibilityTest.cpp b/Source/ThirdParty/ANGLE/src/tests/gl_tests/WebGLCompatibilityTest.cpp
+index 5b2d7dac7915..5389f54ae05a 100644
+--- a/Source/ThirdParty/ANGLE/src/tests/gl_tests/WebGLCompatibilityTest.cpp
++++ b/Source/ThirdParty/ANGLE/src/tests/gl_tests/WebGLCompatibilityTest.cpp
+@@ -5426,7 +5426,7 @@ float g()
+ float h()
+ {
+     vec4 value;
+-    float value2
++    float value2;
+     return value.x + value2;
+ }
+ 
+@@ -5438,6 +5438,131 @@ void main()
+         gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+ })";
+ 
++    constexpr char kTooLargeGlobalMemoryOverflow[] =
++        R"(precision mediump float;
++
++// 16 MB / 16 bytes per vec4 = 1048576
++// Create 256 arrays so each is small, but the total overflows a 32-bit number
++vec4 array[1048576], array2[1048576], array3[1048576], array4[1048576], array5[1048576];
++vec4 array6[1048576], array7[1048576], array8[1048576], array9[1048576], array10[1048576];
++vec4 array11[1048576], array12[1048576], array13[1048576], array14[1048576], array15[1048576];
++vec4 array16[1048576], array17[1048576], array18[1048576], array19[1048576], array20[1048576];
++vec4 array21[1048576], array22[1048576], array23[1048576], array24[1048576], array25[1048576];
++vec4 array26[1048576], array27[1048576], array28[1048576], array29[1048576], array30[1048576];
++vec4 array31[1048576], array32[1048576], array33[1048576], array34[1048576], array35[1048576];
++vec4 array36[1048576], array37[1048576], array38[1048576], array39[1048576], array40[1048576];
++vec4 array41[1048576], array42[1048576], array43[1048576], array44[1048576], array45[1048576];
++vec4 array46[1048576], array47[1048576], array48[1048576], array49[1048576], array50[1048576];
++vec4 array51[1048576], array52[1048576], array53[1048576], array54[1048576], array55[1048576];
++vec4 array56[1048576], array57[1048576], array58[1048576], array59[1048576], array60[1048576];
++vec4 array61[1048576], array62[1048576], array63[1048576], array64[1048576], array65[1048576];
++vec4 array66[1048576], array67[1048576], array68[1048576], array69[1048576], array70[1048576];
++vec4 array71[1048576], array72[1048576], array73[1048576], array74[1048576], array75[1048576];
++vec4 array76[1048576], array77[1048576], array78[1048576], array79[1048576], array80[1048576];
++vec4 array81[1048576], array82[1048576], array83[1048576], array84[1048576], array85[1048576];
++vec4 array86[1048576], array87[1048576], array88[1048576], array89[1048576], array90[1048576];
++vec4 array91[1048576], array92[1048576], array93[1048576], array94[1048576], array95[1048576];
++vec4 array96[1048576], array97[1048576], array98[1048576], array99[1048576], array100[1048576];
++vec4 array101[1048576], array102[1048576], array103[1048576], array104[1048576], array105[1048576];
++vec4 array106[1048576], array107[1048576], array108[1048576], array109[1048576], array110[1048576];
++vec4 array111[1048576], array112[1048576], array113[1048576], array114[1048576], array115[1048576];
++vec4 array116[1048576], array117[1048576], array118[1048576], array119[1048576], array120[1048576];
++vec4 array121[1048576], array122[1048576], array123[1048576], array124[1048576], array125[1048576];
++vec4 array126[1048576], array127[1048576], array128[1048576], array129[1048576], array130[1048576];
++vec4 array131[1048576], array132[1048576], array133[1048576], array134[1048576], array135[1048576];
++vec4 array136[1048576], array137[1048576], array138[1048576], array139[1048576], array140[1048576];
++vec4 array141[1048576], array142[1048576], array143[1048576], array144[1048576], array145[1048576];
++vec4 array146[1048576], array147[1048576], array148[1048576], array149[1048576], array150[1048576];
++vec4 array151[1048576], array152[1048576], array153[1048576], array154[1048576], array155[1048576];
++vec4 array156[1048576], array157[1048576], array158[1048576], array159[1048576], array160[1048576];
++vec4 array161[1048576], array162[1048576], array163[1048576], array164[1048576], array165[1048576];
++vec4 array166[1048576], array167[1048576], array168[1048576], array169[1048576], array170[1048576];
++vec4 array171[1048576], array172[1048576], array173[1048576], array174[1048576], array175[1048576];
++vec4 array176[1048576], array177[1048576], array178[1048576], array179[1048576], array180[1048576];
++vec4 array181[1048576], array182[1048576], array183[1048576], array184[1048576], array185[1048576];
++vec4 array186[1048576], array187[1048576], array188[1048576], array189[1048576], array190[1048576];
++vec4 array191[1048576], array192[1048576], array193[1048576], array194[1048576], array195[1048576];
++vec4 array196[1048576], array197[1048576], array198[1048576], array199[1048576], array200[1048576];
++vec4 array201[1048576], array202[1048576], array203[1048576], array204[1048576], array205[1048576];
++vec4 array206[1048576], array207[1048576], array208[1048576], array209[1048576], array210[1048576];
++vec4 array211[1048576], array212[1048576], array213[1048576], array214[1048576], array215[1048576];
++vec4 array216[1048576], array217[1048576], array218[1048576], array219[1048576], array220[1048576];
++vec4 array221[1048576], array222[1048576], array223[1048576], array224[1048576], array225[1048576];
++vec4 array226[1048576], array227[1048576], array228[1048576], array229[1048576], array230[1048576];
++vec4 array231[1048576], array232[1048576], array233[1048576], array234[1048576], array235[1048576];
++vec4 array236[1048576], array237[1048576], array238[1048576], array239[1048576], array240[1048576];
++vec4 array241[1048576], array242[1048576], array243[1048576], array244[1048576], array245[1048576];
++vec4 array246[1048576], array247[1048576], array248[1048576], array249[1048576], array250[1048576];
++vec4 array251[1048576], array252[1048576], array253[1048576], array254[1048576], array255[1048576];
++vec4 array256[1048576];
++
++void main()
++{
++    float f = array[0].x; f += array2[0].x; f += array3[0].x; f += array4[0].x; f += array5[0].x;
++    f += array6[0].x; f += array7[0].x; f += array8[0].x; f += array9[0].x; f += array10[0].x;
++    f += array11[0].x; f += array12[0].x; f += array13[0].x; f += array14[0].x; f += array15[0].x;
++    f += array16[0].x; f += array17[0].x; f += array18[0].x; f += array19[0].x; f += array20[0].x;
++    f += array21[0].x; f += array22[0].x; f += array23[0].x; f += array24[0].x; f += array25[0].x;
++    f += array26[0].x; f += array27[0].x; f += array28[0].x; f += array29[0].x; f += array30[0].x;
++    f += array31[0].x; f += array32[0].x; f += array33[0].x; f += array34[0].x; f += array35[0].x;
++    f += array36[0].x; f += array37[0].x; f += array38[0].x; f += array39[0].x; f += array40[0].x;
++    f += array41[0].x; f += array42[0].x; f += array43[0].x; f += array44[0].x; f += array45[0].x;
++    f += array46[0].x; f += array47[0].x; f += array48[0].x; f += array49[0].x; f += array50[0].x;
++    f += array51[0].x; f += array52[0].x; f += array53[0].x; f += array54[0].x; f += array55[0].x;
++    f += array56[0].x; f += array57[0].x; f += array58[0].x; f += array59[0].x; f += array60[0].x;
++    f += array61[0].x; f += array62[0].x; f += array63[0].x; f += array64[0].x; f += array65[0].x;
++    f += array66[0].x; f += array67[0].x; f += array68[0].x; f += array69[0].x; f += array70[0].x;
++    f += array71[0].x; f += array72[0].x; f += array73[0].x; f += array74[0].x; f += array75[0].x;
++    f += array76[0].x; f += array77[0].x; f += array78[0].x; f += array79[0].x; f += array80[0].x;
++    f += array81[0].x; f += array82[0].x; f += array83[0].x; f += array84[0].x; f += array85[0].x;
++    f += array86[0].x; f += array87[0].x; f += array88[0].x; f += array89[0].x; f += array90[0].x;
++    f += array91[0].x; f += array92[0].x; f += array93[0].x; f += array94[0].x; f += array95[0].x;
++    f += array96[0].x; f += array97[0].x; f += array98[0].x; f += array99[0].x; f += array100[0].x;
++    f += array101[0].x; f += array102[0].x; f += array103[0].x; f += array104[0].x;
++    f += array105[0].x; f += array106[0].x; f += array107[0].x; f += array108[0].x;
++    f += array109[0].x; f += array110[0].x; f += array111[0].x; f += array112[0].x;
++    f += array113[0].x; f += array114[0].x; f += array115[0].x; f += array116[0].x;
++    f += array117[0].x; f += array118[0].x; f += array119[0].x; f += array120[0].x;
++    f += array121[0].x; f += array122[0].x; f += array123[0].x; f += array124[0].x;
++    f += array125[0].x; f += array126[0].x; f += array127[0].x; f += array128[0].x;
++    f += array129[0].x; f += array130[0].x; f += array131[0].x; f += array132[0].x;
++    f += array133[0].x; f += array134[0].x; f += array135[0].x; f += array136[0].x;
++    f += array137[0].x; f += array138[0].x; f += array139[0].x; f += array140[0].x;
++    f += array141[0].x; f += array142[0].x; f += array143[0].x; f += array144[0].x;
++    f += array145[0].x; f += array146[0].x; f += array147[0].x; f += array148[0].x;
++    f += array149[0].x; f += array150[0].x; f += array151[0].x; f += array152[0].x;
++    f += array153[0].x; f += array154[0].x; f += array155[0].x; f += array156[0].x;
++    f += array157[0].x; f += array158[0].x; f += array159[0].x; f += array160[0].x;
++    f += array161[0].x; f += array162[0].x; f += array163[0].x; f += array164[0].x;
++    f += array165[0].x; f += array166[0].x; f += array167[0].x; f += array168[0].x;
++    f += array169[0].x; f += array170[0].x; f += array171[0].x; f += array172[0].x;
++    f += array173[0].x; f += array174[0].x; f += array175[0].x; f += array176[0].x;
++    f += array177[0].x; f += array178[0].x; f += array179[0].x; f += array180[0].x;
++    f += array181[0].x; f += array182[0].x; f += array183[0].x; f += array184[0].x;
++    f += array185[0].x; f += array186[0].x; f += array187[0].x; f += array188[0].x;
++    f += array189[0].x; f += array190[0].x; f += array191[0].x; f += array192[0].x;
++    f += array193[0].x; f += array194[0].x; f += array195[0].x; f += array196[0].x;
++    f += array197[0].x; f += array198[0].x; f += array199[0].x; f += array200[0].x;
++    f += array201[0].x; f += array202[0].x; f += array203[0].x; f += array204[0].x;
++    f += array205[0].x; f += array206[0].x; f += array207[0].x; f += array208[0].x;
++    f += array209[0].x; f += array210[0].x; f += array211[0].x; f += array212[0].x;
++    f += array213[0].x; f += array214[0].x; f += array215[0].x; f += array216[0].x;
++    f += array217[0].x; f += array218[0].x; f += array219[0].x; f += array220[0].x;
++    f += array221[0].x; f += array222[0].x; f += array223[0].x; f += array224[0].x;
++    f += array225[0].x; f += array226[0].x; f += array227[0].x; f += array228[0].x;
++    f += array229[0].x; f += array230[0].x; f += array231[0].x; f += array232[0].x;
++    f += array233[0].x; f += array234[0].x; f += array235[0].x; f += array236[0].x;
++    f += array237[0].x; f += array238[0].x; f += array239[0].x; f += array240[0].x;
++    f += array241[0].x; f += array242[0].x; f += array243[0].x; f += array244[0].x;
++    f += array245[0].x; f += array246[0].x; f += array247[0].x; f += array248[0].x;
++    f += array249[0].x; f += array250[0].x; f += array251[0].x; f += array252[0].x;
++    f += array253[0].x; f += array254[0].x; f += array255[0].x; f += array256[0].x;
++    if (f == 2.0)
++        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
++    else
++        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
++})";
++
+     GLuint program = CompileProgram(essl1_shaders::vs::Simple(), kTooLargeGlobalMemory1);
+     EXPECT_EQ(0u, program);
+ 
+@@ -5449,6 +5574,9 @@ void main()
+ 
+     program = CompileProgram(essl1_shaders::vs::Simple(), kTooLargeGlobalAndLocalMemory2);
+     EXPECT_EQ(0u, program);
++
++    program = CompileProgram(essl1_shaders::vs::Simple(), kTooLargeGlobalMemoryOverflow);
++    EXPECT_EQ(0u, program);
+ }
+ 
+ // Linking should fail when corresponding vertex/fragment uniform blocks have different precision

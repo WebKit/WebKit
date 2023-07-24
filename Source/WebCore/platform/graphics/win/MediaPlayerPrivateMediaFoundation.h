@@ -118,7 +118,7 @@ protected:
 private:
 
     WeakPtr<MediaPlayerPrivateMediaFoundation> m_weakThis;
-    MediaPlayer* m_player;
+    ThreadSafeWeakPtr<MediaPlayer> m_player;
     IntSize m_size;
     bool m_visible;
     bool m_loadingProgress;

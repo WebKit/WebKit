@@ -920,4 +920,4 @@ $k_dsbo=0x2c0;		# decryption sbox final output
 
 &asm_finish();
 
-close STDOUT or die "error closing STDOUT";
+close STDOUT or die "error closing STDOUT: $!";

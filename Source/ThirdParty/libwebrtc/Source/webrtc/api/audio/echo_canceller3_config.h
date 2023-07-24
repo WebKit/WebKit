@@ -59,7 +59,7 @@ struct RTC_EXPORT EchoCanceller3Config {
     };
     AlignmentMixing render_alignment_mixing = {false, true, 10000.f, true};
     AlignmentMixing capture_alignment_mixing = {false, true, 10000.f, false};
-    bool detect_pre_echo = false;
+    bool detect_pre_echo = true;
   } delay;
 
   struct Filter {

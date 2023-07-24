@@ -68,6 +68,9 @@ typedef long FileOffset; /* NOLINT */
 #define IVF_FILE_HDR_SZ 32
 
 #define RAW_FRAME_HDR_SZ sizeof(uint32_t)
+#define OBU_DETECTION_SZ 34  // See common/obudec.c
+
+#define DETECT_BUF_SZ 34  // Max of the above header sizes
 
 #define AV1_FOURCC 0x31305641
 
@@ -83,7 +86,7 @@ enum VideoFileType {
 #define LST_FOURCC 0x4354534c
 
 struct FileTypeDetectionBuffer {
-  char buf[4];
+  char buf[DETECT_BUF_SZ];
   size_t buf_read;
   size_t position;
 };
@@ -154,7 +157,7 @@ AOM_NO_RETURN void usage_exit(void);
 // The AOM library can support different encoders / decoders. These
 // functions provide different ways to lookup / iterate through them.
 // The return result may be NULL to indicate no codec was found.
-int get_aom_encoder_count();
+int get_aom_encoder_count(void);
 aom_codec_iface_t *get_aom_encoder_by_index(int i);
 aom_codec_iface_t *get_aom_encoder_by_short_name(const char *name);
 // If the interface is unknown, returns NULL.
@@ -162,13 +165,15 @@ const char *get_short_name_by_aom_encoder(aom_codec_iface_t *encoder);
 // If the interface is unknown, returns 0.
 uint32_t get_fourcc_by_aom_encoder(aom_codec_iface_t *iface);
 
-int get_aom_decoder_count();
+int get_aom_decoder_count(void);
 aom_codec_iface_t *get_aom_decoder_by_index(int i);
 aom_codec_iface_t *get_aom_decoder_by_short_name(const char *name);
 aom_codec_iface_t *get_aom_decoder_by_fourcc(uint32_t fourcc);
 const char *get_short_name_by_aom_decoder(aom_codec_iface_t *decoder);
 // If the interface is unknown, returns 0.
 uint32_t get_fourcc_by_aom_decoder(aom_codec_iface_t *iface);
+
+const char *image_format_to_string(aom_img_fmt_t fmt);
 
 int read_yuv_frame(struct AvxInputContext *input_ctx, aom_image_t *yuv_frame);
 
@@ -187,6 +192,14 @@ void aom_img_truncate_16_to_8(aom_image_t *dst, const aom_image_t *src);
 
 // Output in NV12 format.
 void aom_img_write_nv12(const aom_image_t *img, FILE *file);
+
+size_t read_from_input(struct AvxInputContext *input_ctx, size_t n,
+                       unsigned char *buf);
+size_t input_to_detect_buf(struct AvxInputContext *input_ctx, size_t n);
+size_t buffer_input(struct AvxInputContext *input_ctx, size_t n,
+                    unsigned char *buf, bool buffered);
+void rewind_detect(struct AvxInputContext *input_ctx);
+bool input_eof(struct AvxInputContext *input_ctx);
 
 #ifdef __cplusplus
 } /* extern "C" */

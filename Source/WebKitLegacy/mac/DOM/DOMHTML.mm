@@ -37,7 +37,6 @@
 #import <WebCore/HTMLCollectionInlines.h>
 #import <WebCore/HTMLDocument.h>
 #import <WebCore/HTMLInputElement.h>
-#import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/HTMLSelectElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/LocalFrameView.h>
@@ -179,7 +178,7 @@
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
-    NSURL *baseURL = core(self)->completeURL(WebCore::stripLeadingAndTrailingHTMLSpaces(baseURLString));
+    NSURL *baseURL = core(self)->completeURL(baseURLString);
     return [self createDocumentFragmentWithMarkupString:markupString baseURL:baseURL];
 }
 

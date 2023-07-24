@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <g id="g" style="font: 16px sans-serif; text-rendering: geometricPrecision" transform="translate(0, 100) scale(2)">
+    <text x="50" y="50" fill="red" stroke="blue" stroke-width="3" vector-effect="non-scaling-stroke">hello there</text>
+  </g>
+</svg>

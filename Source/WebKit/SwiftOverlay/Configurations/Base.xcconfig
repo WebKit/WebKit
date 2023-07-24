@@ -46,3 +46,4 @@ SDKROOT = macosx.internal;
 SDKROOT[sdk=iphoneos*] = iphoneos.internal;
 SDKROOT[sdk=appletv*] = appletvos.internal;
 SDKROOT[sdk=watchos*] = watchos.internal;
+ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);

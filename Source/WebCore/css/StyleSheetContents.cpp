@@ -145,7 +145,7 @@ void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
     if (is<StyleRuleLayer>(rule) && m_importRules.isEmpty() && m_childRules.isEmpty() && m_namespaceRules.isEmpty()) {
         auto& layerRule = downcast<StyleRuleLayer>(rule.get());
         if (layerRule.isStatement()) {
-            m_layerRulesBeforeImportRules.append(&layerRule);
+            m_layerRulesBeforeImportRules.append(layerRule);
             return;
         }
     }
@@ -153,7 +153,7 @@ void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
     if (is<StyleRuleImport>(rule)) {
         // Parser enforces that @import rules come before anything else except @charset.
         ASSERT(m_childRules.isEmpty());
-        m_importRules.append(downcast<StyleRuleImport>(rule.ptr()));
+        m_importRules.append(downcast<StyleRuleImport>(rule));
         m_importRules.last()->setParentStyleSheet(this);
         m_importRules.last()->requestStyleSheet();
         return;
@@ -165,13 +165,22 @@ void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
         ASSERT(m_childRules.isEmpty());
         auto& namespaceRule = downcast<StyleRuleNamespace>(rule.get());
         parserAddNamespace(namespaceRule.prefix(), namespaceRule.uri());
-        m_namespaceRules.append(&namespaceRule);
+        m_namespaceRules.append(namespaceRule);
         return;
     }
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
-    // If we're adding a rule with a huge number of selectors, split it up into multiple rules
-    if (is<StyleRule>(rule) && downcast<StyleRule>(rule.get()).selectorList().componentCount() > Style::RuleData::maximumSelectorComponentCount) {
+    auto ruleHasTooManySelectors = [&] {
+        return downcast<StyleRule>(rule.get()).selectorList().componentCount() > Style::RuleData::maximumSelectorComponentCount;
+    };
+
+    if (is<StyleRuleWithNesting>(rule) && ruleHasTooManySelectors()) {
+        // We don't support nested rules with too many selectors
+        return;
+    }
+
+    if (is<StyleRule>(rule) && ruleHasTooManySelectors()) {
+        // If we're adding a rule with a huge number of selectors, split it up into multiple rules
         m_childRules.appendVector(downcast<StyleRule>(rule.get()).splitIntoMultipleRulesWithMaximumSelectorComponentCount(Style::RuleData::maximumSelectorComponentCount));
         return;
     }
@@ -185,21 +194,21 @@ StyleRuleBase* StyleSheetContents::ruleAt(unsigned index) const
     
     unsigned childVectorIndex = index;
     if (childVectorIndex < m_layerRulesBeforeImportRules.size())
-        return m_layerRulesBeforeImportRules[childVectorIndex].get();
+        return m_layerRulesBeforeImportRules[childVectorIndex].ptr();
 
     childVectorIndex -= m_layerRulesBeforeImportRules.size();
 
     if (childVectorIndex < m_importRules.size())
-        return m_importRules[childVectorIndex].get();
+        return m_importRules[childVectorIndex].ptr();
 
     childVectorIndex -= m_importRules.size();
     
     if (childVectorIndex < m_namespaceRules.size())
-        return m_namespaceRules[childVectorIndex].get();
+        return m_namespaceRules[childVectorIndex].ptr();
     
     childVectorIndex -= m_namespaceRules.size();
     
-    return m_childRules[childVectorIndex].get();
+    return m_childRules[childVectorIndex].ptr();
 }
 
 unsigned StyleSheetContents::ruleCount() const
@@ -263,7 +272,7 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
             return false;
         auto& layerRule = downcast<StyleRuleLayer>(rule.get());
         if (layerRule.isStatement()) {
-            m_layerRulesBeforeImportRules.insert(childVectorIndex, &layerRule);
+            m_layerRulesBeforeImportRules.insert(childVectorIndex, layerRule);
             return true;
         }
         if (childVectorIndex < m_layerRulesBeforeImportRules.size())
@@ -275,7 +284,7 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
         // Inserting non-import rule before @import is not allowed.
         if (!is<StyleRuleImport>(rule))
             return false;
-        m_importRules.insert(childVectorIndex, downcast<StyleRuleImport>(rule.ptr()));
+        m_importRules.insert(childVectorIndex, downcast<StyleRuleImport>(rule));
         m_importRules[childVectorIndex]->setParentStyleSheet(this);
         m_importRules[childVectorIndex]->requestStyleSheet();
         // FIXME: Stylesheet doesn't actually change meaningfully before the imported sheets are loaded.
@@ -297,7 +306,7 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
             return false;
         
         StyleRuleNamespace& namespaceRule = downcast<StyleRuleNamespace>(rule.get());
-        m_namespaceRules.insert(index, downcast<StyleRuleNamespace>(rule.ptr()));
+        m_namespaceRules.insert(index, downcast<StyleRuleNamespace>(rule));
         
         // For now to be compatible with IE and Firefox if a namespace rule with the same
         // prefix is added, it overwrites previous ones.
@@ -470,14 +479,18 @@ Document* StyleSheetContents::singleOwnerDocument() const
     return ownerNode ? &ownerNode->document() : nullptr;
 }
 
-static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, const Function<bool(const StyleRuleBase&)>& handler)
+static bool traverseRulesInVector(const Vector<Ref<StyleRuleBase>>& rules, const Function<bool(const StyleRuleBase&)>& handler)
 {
     for (auto& rule : rules) {
-        if (handler(*rule))
+        if (handler(rule))
             return true;
+        if (auto styleRuleWithNesting = dynamicDowncast<StyleRuleWithNesting>(rule.ptr())) {
+            if (traverseRulesInVector(styleRuleWithNesting->nestedRules(), handler))
+                return true;
+        }
         if (!rule->isGroupRule())
             continue;
-        if (traverseRulesInVector(downcast<StyleRuleGroup>(*rule).childRules(), handler))
+        if (traverseRulesInVector(downcast<StyleRuleGroup>(rule).childRules(), handler))
             return true;
     }
     return false;
@@ -486,7 +499,7 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
 bool StyleSheetContents::traverseRules(const Function<bool(const StyleRuleBase&)>& handler) const
 {
     for (auto& importRule : m_importRules) {
-        if (handler(*importRule))
+        if (handler(importRule))
             return true;
         auto* importedStyleSheet = importRule->styleSheet();
         if (importedStyleSheet && importedStyleSheet->traverseRules(handler))

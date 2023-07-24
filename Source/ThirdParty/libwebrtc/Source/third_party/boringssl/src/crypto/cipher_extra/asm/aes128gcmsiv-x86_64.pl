@@ -32,7 +32,7 @@ open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 *STDOUT=*OUT;
 
 $code.=<<___;
-.data
+.section .rodata
 
 .align 16
 one:
@@ -2253,4 +2253,4 @@ aes256gcmsiv_kdf();
 
 print $code;
 
-close STDOUT or die "error closing STDOUT";
+close STDOUT or die "error closing STDOUT: $!";

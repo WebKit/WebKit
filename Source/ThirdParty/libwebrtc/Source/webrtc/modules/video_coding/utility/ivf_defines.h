@@ -16,6 +16,8 @@
 #ifndef MODULES_VIDEO_CODING_UTILITY_IVF_DEFINES_H_
 #define MODULES_VIDEO_CODING_UTILITY_IVF_DEFINES_H_
 
+#include <stddef.h>
+
 namespace webrtc {
 constexpr size_t kIvfHeaderSize = 32;
 }  // namespace webrtc

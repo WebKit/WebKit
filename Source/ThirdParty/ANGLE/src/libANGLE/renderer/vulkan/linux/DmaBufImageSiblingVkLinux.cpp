@@ -103,10 +103,10 @@ void GetModifiers(const egl::AttributeMap &attribs,
     }
 }
 
-angle::Result GetFormatModifierProperties(DisplayVk *displayVk,
-                                          VkFormat vkFormat,
-                                          uint64_t drmModifier,
-                                          VkDrmFormatModifierPropertiesEXT *modifierPropertiesOut)
+bool GetFormatModifierProperties(DisplayVk *displayVk,
+                                 VkFormat vkFormat,
+                                 uint64_t drmModifier,
+                                 VkDrmFormatModifierPropertiesEXT *modifierPropertiesOut)
 {
     RendererVk *renderer = displayVk->getRenderer();
 
@@ -142,12 +142,14 @@ angle::Result GetFormatModifierProperties(DisplayVk *displayVk,
     }
 
     // Return the properties if found.
-    ANGLE_VK_CHECK(displayVk, propertiesIndex < formatModifierPropertiesList.drmFormatModifierCount,
-                   VK_ERROR_FORMAT_NOT_SUPPORTED);
+    if (propertiesIndex >= formatModifierPropertiesList.drmFormatModifierCount)
+    {
+        return false;
+    }
 
     *modifierPropertiesOut =
         formatModifierPropertiesList.pDrmFormatModifierProperties[propertiesIndex];
-    return angle::Result::Continue;
+    return true;
 }
 
 VkImageUsageFlags GetUsageFlags(RendererVk *renderer,
@@ -156,7 +158,7 @@ VkImageUsageFlags GetUsageFlags(RendererVk *renderer,
                                 bool *texturableOut,
                                 bool *renderableOut)
 {
-    const bool isDepthStencilFormat = format.depthBits > 0 || format.stencilBits > 0;
+    const bool isDepthStencilFormat = format.hasDepthOrStencilBits();
 
     // Check what format features are exposed for this modifier.
     constexpr uint32_t kTextureableRequiredBits =
@@ -344,7 +346,7 @@ DmaBufImageSiblingVkLinux::~DmaBufImageSiblingVkLinux() {}
 egl::Error DmaBufImageSiblingVkLinux::initialize(const egl::Display *display)
 {
     DisplayVk *displayVk = vk::GetImpl(display);
-    return angle::ToEGL(initImpl(displayVk), displayVk, EGL_BAD_PARAMETER);
+    return angle::ToEGL(initImpl(displayVk), EGL_BAD_PARAMETER);
 }
 
 VkImageUsageFlags FindSupportedUsageFlagsForFormat(
@@ -419,8 +421,12 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
 
     // First, check the possible features for the format and determine usage and create flags.
     VkDrmFormatModifierPropertiesEXT modifierProperties = {};
-    ANGLE_TRY(
-        GetFormatModifierProperties(displayVk, vulkanFormat, plane0Modifier, &modifierProperties));
+    if (!GetFormatModifierProperties(displayVk, vulkanFormat, plane0Modifier, &modifierProperties))
+    {
+        // Format is incompatible
+        *initResultOut = InitResult::Failed;
+        return angle::Result::Continue;
+    }
 
     VkImageUsageFlags usageFlags =
         GetUsageFlags(renderer, format, modifierProperties, &mTextureable, &mRenderable);

@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "WebRTCProvider.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -106,10 +107,8 @@ public:
     WEBCORE_EXPORT void disableEnumeratingAllNetworkInterfaces();
     WEBCORE_EXPORT void enableEnumeratingAllNetworkInterfaces();
     bool isEnumeratingAllNetworkInterfacesEnabled() const;
-
-    bool m_enableEnumeratingAllNetworkInterfaces { false };
-    // FIXME: Remove m_useNetworkThreadWithSocketServer member variable and make it a global.
-    bool m_useNetworkThreadWithSocketServer { true };
+    WEBCORE_EXPORT void enableEnumeratingVisibleNetworkInterfaces();
+    bool isEnumeratingVisibleNetworkInterfacesEnabled() const { return m_enableEnumeratingVisibleNetworkInterfaces; }
 
     class SuspendableSocketFactory : public rtc::PacketSocketFactory {
     public:
@@ -118,7 +117,7 @@ public:
         virtual void resume() { };
         virtual void disableRelay() { };
     };
-    virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, bool /* isFirstParty */, RegistrableDomain&&);
+    virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&);
 
 protected:
     LibWebRTCProvider();
@@ -135,6 +134,8 @@ protected:
 
     RefPtr<LibWebRTCAudioModule> m_audioModule;
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_factory;
+    // FIXME: Remove m_useNetworkThreadWithSocketServer member variable and make it a global.
+    bool m_useNetworkThreadWithSocketServer { true };
 
 private:
     void initializeAudioDecodingCapabilities() final;
@@ -150,6 +151,8 @@ private:
     bool m_supportsVP9VTB { false };
     bool m_useDTLS10 { false };
     bool m_disableNonLocalhostConnections { false };
+    bool m_enableEnumeratingAllNetworkInterfaces { false };
+    bool m_enableEnumeratingVisibleNetworkInterfaces { false };
 };
 
 inline void LibWebRTCProvider::willCreatePeerConnectionFactory()

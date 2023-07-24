@@ -19,7 +19,7 @@ assert.sameValue(zdt.toInstant().epochSeconds, Math.floor(Date.UTC(1976, 10, 18,
 assert.sameValue(zdt.toInstant().epochMilliseconds, Date.UTC(1976, 10, 18, 15, 23, 30, 123), "epochMilliseconds");
 
 // Temporal.ZonedDateTime for (1976, 11, 18, 15, 23, 30, 123, 456, 789)"
-  var zdt = new Temporal.ZonedDateTime(epochNanos, new Temporal.TimeZone("UTC"));
+  var zdt = new Temporal.ZonedDateTime(epochNanos, "UTC");
 // can be constructed
 assert(zdt instanceof Temporal.ZonedDateTime);
 assert.sameValue(typeof zdt, "object");
@@ -66,11 +66,20 @@ var fakeGregorian = {
   daysInYear(date) { return date.withCalendar("iso8601").daysInYear; },
   monthsInYear(date) { return date.withCalendar("iso8601").monthsInYear; },
   inLeapYear(date) { return date.withCalendar("iso8601").inLeapYear; },
-  toString() { return "gregory"; },
+  id: "gregory",
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  fields() {},
+  mergeFields() {},
+  monthDayFromFields() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
 };
 var fakeVienna = {
   getOffsetNanosecondsFor() { return 3600_000_000_000; },
-  toString() { return "Europe/Vienna"; },
+  getPossibleInstantsFor(datetime) { return [datetime.toZonedDateTime("+01:00").toInstant()]; },
+  id: "Europe/Vienna",
 }
 var zdt = new Temporal.ZonedDateTime(epochNanos, fakeVienna, fakeGregorian);
 assert(zdt instanceof Temporal.ZonedDateTime);

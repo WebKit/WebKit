@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@
 #include "ContentExtensionActions.h"
 #include "ContentExtensionRule.h"
 #include "ContentRuleListResults.h"
+#include "CookieStore.h"
 #include "CrossOriginOpenerPolicy.h"
 #include "Crypto.h"
 #include "CustomElementRegistry.h"
@@ -133,6 +134,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -933,11 +935,20 @@ void LocalDOMWindow::processPostMessage(JSC::JSGlobalObject& lexicalGlobalObject
         if (!globalObject)
             return;
 
+        auto& vm = globalObject->vm();
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+
         UserGestureIndicator userGestureIndicator(userGestureToForward);
         InspectorInstrumentation::willDispatchPostMessage(frame, postMessageIdentifier);
 
         auto ports = MessagePort::entanglePorts(*document(), WTFMove(message.transferredPorts));
         auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), sourceOrigin, { }, incumbentWindowProxy ? std::make_optional(MessageEventSource(WTFMove(incumbentWindowProxy))) : std::nullopt, WTFMove(ports));
+        if (UNLIKELY(scope.exception())) {
+            // Currently, we assume that the only way we can get here is if we have a termination.
+            RELEASE_ASSERT(vm.hasPendingTerminationException());
+            return;
+        }
+
         dispatchEvent(event.event);
 
         InspectorInstrumentation::didDispatchPostMessage(frame, postMessageIdentifier);
@@ -1140,6 +1151,7 @@ void LocalDOMWindow::stop()
     if (!frame)
         return;
 
+    SetForScope isStopping { m_isStopping, true };
     // We must check whether the load is complete asynchronously, because we might still be parsing
     // the document until the callstack unwinds.
     frame->loader().stopForUserCancel(true);
@@ -1270,7 +1282,7 @@ int LocalDOMWindow::outerHeight() const
     if (!page)
         return 0;
 
-    if (page->isLoadingInHeadlessMode())
+    if (page->fingerprintingProtectionsEnabled())
         return innerHeight();
 
 #if PLATFORM(IOS_FAMILY)
@@ -1298,7 +1310,7 @@ int LocalDOMWindow::outerWidth() const
     if (!page)
         return 0;
 
-    if (page->isLoadingInHeadlessMode())
+    if (page->fingerprintingProtectionsEnabled())
         return innerWidth();
 
 #if PLATFORM(IOS_FAMILY)
@@ -1363,7 +1375,7 @@ int LocalDOMWindow::screenX() const
         return 0;
 
     Page* page = frame->page();
-    if (!page || page->isLoadingInHeadlessMode())
+    if (!page || page->fingerprintingProtectionsEnabled())
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().x());
@@ -1376,7 +1388,7 @@ int LocalDOMWindow::screenY() const
         return 0;
 
     Page* page = frame->page();
-    if (!page || page->isLoadingInHeadlessMode())
+    if (!page || page->fingerprintingProtectionsEnabled())
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().y());
@@ -1462,7 +1474,7 @@ AtomString LocalDOMWindow::name() const
     if (!frame)
         return nullAtom();
 
-    return frame->tree().name();
+    return frame->tree().specifiedName();
 }
 
 void LocalDOMWindow::setName(const AtomString& string)
@@ -1471,7 +1483,7 @@ void LocalDOMWindow::setName(const AtomString& string)
     if (!frame)
         return;
 
-    frame->tree().setName(string);
+    frame->tree().setSpecifiedName(string);
 }
 
 void LocalDOMWindow::setStatus(const String& string)
@@ -1599,12 +1611,17 @@ bool LocalDOMWindow::consumeTransientActivation()
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;
-        auto* window = localFrame->window();
-        if (!window || window->lastActivationTimestamp() != MonotonicTime::infinity())
-            window->setLastActivationTimestamp(-MonotonicTime::infinity());
+        if (auto* window = localFrame->window())
+            window->consumeLastActivationIfNecessary();
     }
 
     return true;
+}
+
+void LocalDOMWindow::consumeLastActivationIfNecessary()
+{
+    if (!std::isinf(m_lastActivationTimestamp))
+        m_lastActivationTimestamp = -MonotonicTime::infinity();
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#activation-notification
@@ -1757,9 +1774,10 @@ void LocalDOMWindow::scrollBy(const ScrollToOptions& options) const
         return;
 
     ScrollToOptions scrollToOptions = normalizeNonFiniteCoordinatesOrFallBackTo(options, 0, 0);
+    FloatSize originalDelta(scrollToOptions.left.value(), scrollToOptions.top.value());
     scrollToOptions.left.value() += view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().x());
     scrollToOptions.top.value() += view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().y());
-    scrollTo(scrollToOptions, ScrollClamping::Clamped, ScrollSnapPointSelectionMethod::Directional);
+    scrollTo(scrollToOptions, ScrollClamping::Clamped, ScrollSnapPointSelectionMethod::Directional, originalDelta);
 }
 
 void LocalDOMWindow::scrollTo(double x, double y, ScrollClamping clamping) const
@@ -1767,7 +1785,7 @@ void LocalDOMWindow::scrollTo(double x, double y, ScrollClamping clamping) const
     scrollTo(ScrollToOptions(x, y), clamping);
 }
 
-void LocalDOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, ScrollSnapPointSelectionMethod snapPointSelectionMethod) const
+void LocalDOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, ScrollSnapPointSelectionMethod snapPointSelectionMethod, std::optional<FloatSize> originalScrollDelta) const
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
@@ -1795,7 +1813,7 @@ void LocalDOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping cla
     // FIXME: Should we use document()->scrollingElement()?
     // See https://bugs.webkit.org/show_bug.cgi?id=205059
     auto animated = useSmoothScrolling(scrollToOptions.behavior.value_or(ScrollBehavior::Auto), document()->documentElement()) ? ScrollIsAnimated::Yes : ScrollIsAnimated::No;
-    auto scrollPositionChangeOptions = ScrollPositionChangeOptions::createProgrammaticWithOptions(clamping, animated, snapPointSelectionMethod);
+    auto scrollPositionChangeOptions = ScrollPositionChangeOptions::createProgrammaticWithOptions(clamping, animated, snapPointSelectionMethod, originalScrollDelta);
     view->setContentsScrollPosition(layoutPos, scrollPositionChangeOptions);
 }
 
@@ -2339,7 +2357,14 @@ void LocalDOMWindow::dispatchLoadEvent()
             navigationTiming->documentLoadTiming().setLoadEventStart(now);
     }
 
+    bool isMainFrame = frame() && frame()->isMainFrame();
+    if (isMainFrame)
+        WTFBeginSignpost(document(), "Page Load: Load Event");
+
     dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No), document());
+
+    if (isMainFrame)
+        WTFEndSignpost(document(), "Page Load: Load Event");
 
     if (shouldMarkLoadEventTimes) {
         auto now = MonotonicTime::now();
@@ -2791,6 +2816,13 @@ void LocalDOMWindow::eventListenersDidChange()
 WebCoreOpaqueRoot root(LocalDOMWindow* window)
 {
     return WebCoreOpaqueRoot { window };
+}
+
+CookieStore& LocalDOMWindow::cookieStore()
+{
+    if (!m_cookieStore)
+        m_cookieStore = CookieStore::create(document());
+    return *m_cookieStore;
 }
 
 } // namespace WebCore

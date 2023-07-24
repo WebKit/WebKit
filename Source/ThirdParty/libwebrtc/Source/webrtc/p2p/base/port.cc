@@ -37,7 +37,13 @@
 #include "rtc_base/third_party/base64/base64.h"
 #include "rtc_base/trace_event.h"
 
+namespace cricket {
 namespace {
+
+using ::webrtc::RTCError;
+using ::webrtc::RTCErrorType;
+using ::webrtc::TaskQueueBase;
+using ::webrtc::TimeDelta;
 
 rtc::PacketInfoProtocolType ConvertProtocolTypeToPacketInfoProtocolType(
     cricket::ProtocolType type) {
@@ -60,11 +66,6 @@ rtc::PacketInfoProtocolType ConvertProtocolTypeToPacketInfoProtocolType(
 const int kPortTimeoutDelay = cricket::STUN_TOTAL_TIMEOUT + 5000;
 
 }  // namespace
-
-namespace cricket {
-
-using webrtc::RTCError;
-using webrtc::RTCErrorType;
 
 // TODO(ronghuawu): Use "local", "srflx", "prflx" and "relay". But this requires
 // the signaling part be updated correspondingly as well.
@@ -107,7 +108,7 @@ std::string Port::ComputeFoundation(absl::string_view type,
   return rtc::ToString(rtc::ComputeCrc32(sb.Release()));
 }
 
-Port::Port(rtc::Thread* thread,
+Port::Port(TaskQueueBase* thread,
            absl::string_view type,
            rtc::PacketSocketFactory* factory,
            const rtc::Network* network,
@@ -136,7 +137,7 @@ Port::Port(rtc::Thread* thread,
   Construct();
 }
 
-Port::Port(rtc::Thread* thread,
+Port::Port(TaskQueueBase* thread,
            absl::string_view type,
            rtc::PacketSocketFactory* factory,
            const rtc::Network* network,
@@ -179,8 +180,7 @@ void Port::Construct() {
   network_->SignalTypeChanged.connect(this, &Port::OnNetworkTypeChanged);
   network_cost_ = network_->GetCost(field_trials());
 
-  thread_->PostDelayed(RTC_FROM_HERE, timeout_delay_, this,
-                       MSG_DESTROY_IF_DEAD);
+  PostDestroyIfDead(/*delayed=*/true);
   RTC_LOG(LS_INFO) << ToString() << ": Port created with network cost "
                    << network_cost_;
 }
@@ -209,6 +209,7 @@ void Port::SetIceRole(IceRole role) {
 void Port::SetIceTiebreaker(uint64_t tiebreaker) {
   tiebreaker_ = tiebreaker;
 }
+
 uint64_t Port::IceTiebreaker() const {
   return tiebreaker_;
 }
@@ -824,19 +825,33 @@ void Port::KeepAliveUntilPruned() {
 
 void Port::Prune() {
   state_ = State::PRUNED;
-  thread_->Post(RTC_FROM_HERE, this, MSG_DESTROY_IF_DEAD);
+  PostDestroyIfDead(/*delayed=*/false);
 }
 
 // Call to stop any currently pending operations from running.
 void Port::CancelPendingTasks() {
   TRACE_EVENT0("webrtc", "Port::CancelPendingTasks");
   RTC_DCHECK_RUN_ON(thread_);
-  thread_->Clear(this);
+  weak_factory_.InvalidateWeakPtrs();
 }
 
-void Port::OnMessage(rtc::Message* pmsg) {
+void Port::PostDestroyIfDead(bool delayed) {
+  rtc::WeakPtr<Port> weak_ptr = NewWeakPtr();
+  auto task = [weak_ptr = std::move(weak_ptr)] {
+    if (weak_ptr) {
+      weak_ptr->DestroyIfDead();
+    }
+  };
+  if (delayed) {
+    thread_->PostDelayedTask(std::move(task),
+                             TimeDelta::Millis(timeout_delay_));
+  } else {
+    thread_->PostTask(std::move(task));
+  }
+}
+
+void Port::DestroyIfDead() {
   RTC_DCHECK_RUN_ON(thread_);
-  RTC_DCHECK(pmsg->message_id == MSG_DESTROY_IF_DEAD);
   bool dead =
       (state_ == State::INIT || state_ == State::PRUNED) &&
       connections_.empty() &&
@@ -910,8 +925,7 @@ bool Port::OnConnectionDestroyed(Connection* conn) {
   // not cause the Port to be destroyed.
   if (connections_.empty()) {
     last_time_all_connections_removed_ = rtc::TimeMillis();
-    thread_->PostDelayed(RTC_FROM_HERE, timeout_delay_, this,
-                         MSG_DESTROY_IF_DEAD);
+    PostDestroyIfDead(/*delayed=*/true);
   }
 
   return true;

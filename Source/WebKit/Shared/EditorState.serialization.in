@@ -20,6 +20,26 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+enum class WebKit::ListType : uint8_t {
+    None,
+    OrderedList,
+    UnorderedList
+}
+
+enum class WebKit::TextAlignment : uint8_t {
+    Natural,
+    Left,
+    Right,
+    Center,
+    Justified,
+}
+
+[OptionSet] enum class WebKit::TypingAttribute : uint8_t {
+    Bold,
+    Italics,
+    Underline,
+    StrikeThrough
+}
 
 struct WebKit::EditorState {
     WebKit::EditorStateIdentifier identifier;
@@ -42,12 +62,12 @@ struct WebKit::EditorState {
 };
 
 [Nested] struct WebKit::EditorState::PostLayoutData {
-    uint32_t typingAttributes;
+    OptionSet<WebKit::TypingAttribute> typingAttributes;
 #if PLATFORM(COCOA)
     uint64_t selectedTextLength;
-    uint32_t textAlignment;
+    WebKit::TextAlignment textAlignment;
     WebCore::Color textColor;
-    uint32_t enclosingListType;
+    WebKit::ListType enclosingListType;
     WebCore::WritingDirection baseWritingDirection;
     bool editableRootIsTransparentOrFullyClipped;
 #endif
@@ -71,6 +91,7 @@ struct WebKit::EditorState {
     bool atStartOfSentence;
     bool selectionStartIsAtParagraphBoundary;
     bool selectionEndIsAtParagraphBoundary;
+    bool hasGrammarDocumentMarkers;
     std::optional<WebCore::ElementContext> selectedEditableImage;
 #endif
 #if PLATFORM(MAC)

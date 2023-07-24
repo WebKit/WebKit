@@ -15,6 +15,7 @@ info: |
     LeftHandSideExpression `--`
     `++` UnaryExpression
     `--` UnaryExpression
+features: [exponentiation]
 ---*/
 
 var base = 4;

@@ -28,11 +28,13 @@
 #if ENABLE(WEB_CODECS)
 
 #include "WebCodecsVideoDecoderConfig.h"
+#include "WebCodecsSvcOutputMetadata.h"
 
 namespace WebCore {
 
 struct WebCodecsEncodedVideoChunkMetadata {
     std::optional<WebCodecsVideoDecoderConfig> decoderConfig;
+    std::optional<WebCodecsSvcOutputMetadata> svc;
 };
 
 }

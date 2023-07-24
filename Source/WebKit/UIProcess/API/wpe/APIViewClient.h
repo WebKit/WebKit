@@ -53,6 +53,11 @@ public:
     virtual void didChangePageID(WKWPE::View&) { }
     virtual void didReceiveUserMessage(WKWPE::View&, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&& completionHandler) { completionHandler(WebKit::UserMessage()); }
     virtual WebKit::WebKitWebResourceLoadManager* webResourceLoadManager() { return nullptr; }
+
+#if ENABLE(FULLSCREEN_API)
+    virtual void enterFullScreen(WKWPE::View&) { };
+    virtual void exitFullScreen(WKWPE::View&) { };
+#endif
 };
 
 } // namespace API

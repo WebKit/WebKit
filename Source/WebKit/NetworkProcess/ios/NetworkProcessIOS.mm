@@ -30,7 +30,6 @@
 
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
-#import "ProcessAssertion.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
 #import <UIKit/UIKit.h>
@@ -95,21 +94,6 @@ void NetworkProcess::clearServiceWorkerEntitlementOverride(CompletionHandler<voi
 }
 
 #endif // !PLATFORM(MACCATALYST)
-
-void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
-{
-    if (!isHoldingLockedFiles) {
-        m_holdingLockedFileAssertion = nullptr;
-        return;
-    }
-
-    if (m_holdingLockedFileAssertion && m_holdingLockedFileAssertion->isValid())
-        return;
-
-    // We synchronously take a process assertion when beginning a SQLite transaction so that we don't get suspended
-    // while holding a locked file. We would get killed if suspended while holding locked files.
-    m_holdingLockedFileAssertion = ProcessAssertion::create(getCurrentProcessID(), "Network Process is holding locked files"_s, ProcessAssertionType::FinishTaskInterruptable, ProcessAssertion::Mode::Sync);
-}
 
 } // namespace WebKit
 

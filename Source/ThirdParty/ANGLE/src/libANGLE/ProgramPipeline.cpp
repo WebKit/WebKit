@@ -687,6 +687,37 @@ void ProgramPipeline::validate(const gl::Context *context)
     }
 }
 
+angle::Result ProgramPipeline::syncState(const Context *context)
+{
+    Program::DirtyBits dirtyBits;
+    for (const ShaderType shaderType : mState.mExecutable->getLinkedShaderStages())
+    {
+        Program *shaderProgram = mState.mPrograms[shaderType];
+        if (shaderProgram)
+        {
+            dirtyBits |= shaderProgram->mDirtyBits;
+        }
+    }
+    if (dirtyBits.any())
+    {
+        ANGLE_TRY(mProgramPipelineImpl->syncState(context, dirtyBits));
+    }
+
+    return angle::Result::Continue;
+}
+
+void ProgramPipeline::onUniformBufferStateChange(size_t uniformBufferIndex)
+{
+    for (const ShaderType shaderType : mState.mExecutable->getLinkedShaderStages())
+    {
+        Program *shaderProgram = mState.mPrograms[shaderType];
+        if (shaderProgram)
+        {
+            shaderProgram->onUniformBufferStateChange(uniformBufferIndex);
+        }
+    }
+}
+
 void ProgramPipeline::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message)
 {
     switch (message)

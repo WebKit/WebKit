@@ -8,11 +8,15 @@ RUN(sourceBuffer.appendBuffer(loader.initSegment()))
 EVENT(update)
 Append a media segment.
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+onbufferedchange called.
+EXPECTED (bufferedChangeEvent.__proto__ == '[object BufferedChangeEvent]') OK
 EVENT(bufferedchange)
 EVENT(update)
 EXPECTED (sourceBuffer.buffered.length == '1') OK
 Clean sourcebuffer of all content.
 RUN(sourceBuffer.remove(0, sourceBuffer.buffered.end(0)))
+onbufferedchange called.
+EXPECTED (bufferedChangeEvent.__proto__ == '[object BufferedChangeEvent]') OK
 EVENT(bufferedchange)
 EVENT(update)
 EXPECTED (sourceBuffer.buffered.length == '0') OK

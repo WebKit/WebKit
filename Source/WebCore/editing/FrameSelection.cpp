@@ -31,6 +31,7 @@
 #include "CharacterData.h"
 #include "ColorBlending.h"
 #include "DeleteSelectionCommand.h"
+#include "DictationCaretAnimator.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -59,6 +60,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "MutableStyleProperties.h"
+#include "OpacityCaretAnimator.h"
 #include "Page.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Range.h"
@@ -160,15 +162,26 @@ static inline bool isPageActive(Document* document)
     return document && document->page() && document->page()->focusController().isActive();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/FrameSelectionAdditions.cpp>
-#else
-
-static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection, CaretAnimatorType = CaretAnimatorType::Default)
+static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection, std::optional<CaretAnimatorType> optionalCaretType = std::nullopt)
 {
+#if PLATFORM(MAC) && HAVE(REDESIGNED_TEXT_CURSOR)
+    if (redesignedTextCursorEnabled()) {
+        std::optional<LayoutRect> existingExpansionRect = std::nullopt;
+        if (optionalCaretType)
+            existingExpansionRect = frameSelection->caretAnimator().caretRepaintRectForLocalRect(LayoutRect());
+
+        switch (optionalCaretType.value_or(CaretAnimatorType::Default)) {
+        case CaretAnimatorType::Default:
+            return makeUniqueRef<OpacityCaretAnimator>(*frameSelection, existingExpansionRect);
+        case CaretAnimatorType::Dictation:
+            return makeUniqueRef<DictationCaretAnimator>(*frameSelection);
+        }
+    }
+#else
+    UNUSED_PARAM(optionalCaretType);
+#endif
     return makeUniqueRef<SimpleCaretAnimator>(*frameSelection);
 }
-#endif // USE(APPLE_INTERNAL_SDK)
 
 FrameSelection::FrameSelection(Document* document)
     : m_document(document)
@@ -1879,10 +1892,10 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged, CaretAnim
     }
 }
 
-void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect)
+void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& paintOffset)
 {
     if (m_selection.isCaret() && m_selection.start().deprecatedNode())
-        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, clipRect, m_caretAnimator.ptr());
+        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, m_caretAnimator.ptr());
 }
 
 Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* node)
@@ -1890,9 +1903,22 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
     // On iOS, we want to fall back to the tintColor, and only override if CSS has explicitly specified a custom color.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     UNUSED_PARAM(node);
-    if (elementStyle.hasAutoCaretColor())
+    if (elementStyle.hasAutoCaretColor() && !elementStyle.hasExplicitlySetColor())
         return { };
     return elementStyle.colorResolvingCurrentColor(elementStyle.caretColor());
+#elif HAVE(REDESIGNED_TEXT_CURSOR)
+    if (elementStyle.hasAutoCaretColor() && !elementStyle.hasExplicitlySetColor()) {
+#if PLATFORM(MAC)
+        auto cssColorValue = CSSValueAppleSystemControlAccent;
+#else
+        auto cssColorValue = CSSValueAppleSystemBlue;
+#endif
+        auto styleColorOptions = node->document().styleColorOptions(&elementStyle);
+        auto systemAccentColor = RenderTheme::singleton().systemColor(cssColorValue, styleColorOptions | StyleColorOptions::UseSystemAppearance);
+        return elementStyle.colorByApplyingColorFilter(systemAccentColor);
+    }
+
+    return elementStyle.colorByApplyingColorFilter(elementStyle.colorResolvingCurrentColor(elementStyle.caretColor()));
 #else
     RefPtr parentElement = node ? node->parentElement() : nullptr;
     auto* parentStyle = parentElement && parentElement->renderer() ? &parentElement->renderer()->style() : nullptr;
@@ -1908,18 +1934,17 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
 #endif
 }
 
-void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect, CaretAnimator* caretAnimator) const
+void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, CaretAnimator* caretAnimator) const
 {
 #if ENABLE(TEXT_CARET)
     auto caretPresentationProperties = caretAnimator ? caretAnimator->presentationProperties() : CaretAnimator::PresentationProperties();
     if (m_caretVisibility == CaretVisibility::Hidden || caretPresentationProperties.blinkState == CaretAnimator::PresentationProperties::BlinkState::Off)
         return;
 
-    auto drawingRect = localCaretRectWithoutUpdate();
+    auto caret = localCaretRectWithoutUpdate();
     if (auto* renderer = rendererForCaretPainting(&node))
-        renderer->flipForWritingMode(drawingRect);
-    drawingRect.moveBy(paintOffset);
-    auto caret = intersection(drawingRect, clipRect);
+        renderer->flipForWritingMode(caret);
+    caret.moveBy(paintOffset);
     if (caret.isEmpty())
         return;
 
@@ -1930,14 +1955,13 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
 
     auto pixelSnappedCaretRect = snapRectToDevicePixels(caret, node.document().deviceScaleFactor());
     if (caretAnimator)
-        caretAnimator->paint(node, context, pixelSnappedCaretRect, caretColor, paintOffset);
+        caretAnimator->paint(context, pixelSnappedCaretRect, caretColor, paintOffset);
     else
         context.fillRect(pixelSnappedCaretRect, caretColor);
 #else
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);
     UNUSED_PARAM(paintOffset);
-    UNUSED_PARAM(clipRect);
     UNUSED_PARAM(caretAnimator);
 #endif
 }
@@ -1969,6 +1993,11 @@ void FrameSelection::caretAnimatorInvalidated(CaretAnimatorType caretType)
 Document* FrameSelection::document()
 {
     return m_document.get();
+}
+
+Node* FrameSelection::caretNode()
+{
+    return selection().visibleStart().deepEquivalent().deprecatedNode();
 }
 
 bool FrameSelection::contains(const LayoutPoint& point) const
@@ -2176,9 +2205,9 @@ static Vector<Style::PseudoClassChangeInvalidation> invalidateFocusedElementAndS
 {
     Vector<Style::PseudoClassChangeInvalidation> invalidations;
     for (RefPtr element = focusedElement; element; element = element->shadowHost()) {
-        invalidations.append({ *element, { { CSSSelector::PseudoClassFocus, activeAndFocused }, { CSSSelector::PseudoClassFocusVisible, activeAndFocused } } });
+        invalidations.append({ *element, { { CSSSelector::PseudoClassType::Focus, activeAndFocused }, { CSSSelector::PseudoClassType::FocusVisible, activeAndFocused } } });
         for (auto& lineage : lineageOfType<Element>(*element))
-            invalidations.append({ lineage, CSSSelector::PseudoClassFocusWithin, activeAndFocused });
+            invalidations.append({ lineage, CSSSelector::PseudoClassType::FocusWithin, activeAndFocused });
     }
     return invalidations;
 }
@@ -2187,8 +2216,10 @@ void FrameSelection::pageActivationChanged()
 {
     bool isActive = isPageActive(m_document.get());
     RefPtr focusedElement = m_document->focusedElement();
-    auto invalidations = invalidateFocusedElementAndShadowIncludingAncestors(focusedElement.get(), m_focused && isActive);
-    m_isActive = isActive;
+    {
+        auto invalidations = invalidateFocusedElementAndShadowIncludingAncestors(focusedElement.get(), m_focused && isActive);
+        m_isActive = isActive;
+    }
 
     focusedOrActiveStateChanged();
 }
@@ -2200,9 +2231,11 @@ void FrameSelection::setFocused(bool isFocused)
 
     bool isActive = isPageActive(m_document.get());
     RefPtr focusedElement = m_document->focusedElement();
-    auto invalidations = invalidateFocusedElementAndShadowIncludingAncestors(focusedElement.get(), isFocused && isActive);
-    m_focused = isFocused;
-    m_isActive = isActive;
+    {
+        auto invalidations = invalidateFocusedElementAndShadowIncludingAncestors(focusedElement.get(), isFocused && isActive);
+        m_focused = isFocused;
+        m_isActive = isActive;
+    }
 
     focusedOrActiveStateChanged();
 }
@@ -2246,7 +2279,7 @@ void FrameSelection::updateAppearance()
     // already blinking in the right location.
     if (shouldBlink && !caretAnimator().isActive()) {
         if (m_document && m_document->domWindow())
-            caretAnimator().start(m_document->domWindow()->nowTimestamp());
+            caretAnimator().start();
 
         caretAnimator().setVisible(true);
     }
@@ -2326,7 +2359,7 @@ static bool isFrameElement(const Node* n)
     if (!is<RenderWidget>(renderer))
         return false;
     Widget* widget = downcast<RenderWidget>(*renderer).widget();
-    return widget && widget->isFrameView();
+    return widget && widget->isLocalFrameView();
 }
 
 void FrameSelection::setFocusedElementIfNeeded()
@@ -2362,16 +2395,15 @@ void FrameSelection::setFocusedElementIfNeeded()
         CheckedRef(m_document->page()->focusController())->setFocusedElement(nullptr, *m_document->frame());
 }
 
-void DragCaretController::paintDragCaret(LocalFrame* frame, GraphicsContext& p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
+void DragCaretController::paintDragCaret(LocalFrame* frame, GraphicsContext& p, const LayoutPoint& paintOffset) const
 {
 #if ENABLE(TEXT_CARET)
     if (m_position.deepEquivalent().deprecatedNode() && m_position.deepEquivalent().deprecatedNode()->document().frame() == frame)
-        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, clipRect);
+        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, nullptr);
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(p);
     UNUSED_PARAM(paintOffset);
-    UNUSED_PARAM(clipRect);
 #endif
 }
 
@@ -2681,7 +2713,7 @@ bool FrameSelection::selectionAtWordStart() const
         if (isStartOfParagraph(position))
             return previousCount != 1;
         if (UChar c = position.characterAfter())
-            return isSpaceOrNewline(c) || c == noBreakSpace || (u_ispunct(c) && c != ',' && c != '-' && c != '\'');
+            return deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || (u_ispunct(c) && c != ',' && c != '-' && c != '\'');
     }
     return true;
 }
@@ -2714,7 +2746,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
 
     if (isEndOfParagraph(endVisiblePosBeforeExpansion)) {
         UChar c(endVisiblePosBeforeExpansion.characterBefore());
-        if (isSpaceOrNewline(c) || c == noBreakSpace) {
+        if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace) {
             // End of paragraph with space.
             return VisibleSelection();
         }
@@ -2757,7 +2789,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
             return VisibleSelection();
         }
         UChar c(previous.characterAfter());
-        if (isSpaceOrNewline(c) || c == noBreakSpace) {
+        if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace) {
             // Space at end of line
             return VisibleSelection();
         }
@@ -2772,7 +2804,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
             return VisibleSelection();
         }
         UChar c(previous.characterAfter());
-        if (isSpaceOrNewline(c) || c == noBreakSpace) {
+        if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace) {
             // Space at end of line
             return VisibleSelection();
         }
@@ -2792,7 +2824,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
     while (endVisiblePos != startVisiblePos) {
         VisiblePosition previous(endVisiblePos.previous());
         UChar c(previous.characterAfter());
-        if (!isSpaceOrNewline(c) && c != noBreakSpace)
+        if (!deprecatedIsSpaceOrNewline(c) && c != noBreakSpace)
             break;
         endVisiblePos = previous;
     }
@@ -2824,7 +2856,7 @@ bool FrameSelection::selectionAtSentenceStart() const
         if (isStartOfParagraph(position))
             return previousCount != 1 && (previousCount != 2 || !sawSpace);
         if (auto c = position.characterAfter()) {
-            if (isSpaceOrNewline(c) || c == noBreakSpace)
+            if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace)
                 sawSpace = true;
             else
                 return c == '.' || c == '!' || c == '?';

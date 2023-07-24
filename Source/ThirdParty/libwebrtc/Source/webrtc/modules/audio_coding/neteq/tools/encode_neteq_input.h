@@ -41,9 +41,15 @@ class EncodeNetEqInput : public NetEqInput {
 
   absl::optional<int64_t> NextOutputEventTime() const override;
 
+  absl::optional<SetMinimumDelayInfo> NextSetMinimumDelayInfo() const override {
+    return absl::nullopt;
+  }
+
   std::unique_ptr<PacketData> PopPacket() override;
 
   void AdvanceOutputEvent() override;
+
+  void AdvanceSetMinimumDelay() override {}
 
   bool ended() const override;
 

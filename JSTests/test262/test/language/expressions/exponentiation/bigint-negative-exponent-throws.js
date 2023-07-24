@@ -13,7 +13,7 @@ info: |
 
   1. If exponent < 0, throw a RangeError exception.
   ...
-features: [BigInt]
+features: [BigInt, exponentiation]
 ---*/
 assert.throws(RangeError, function() {
   1n ** -1n;

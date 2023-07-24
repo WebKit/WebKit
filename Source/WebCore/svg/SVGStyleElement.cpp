@@ -94,8 +94,6 @@ String SVGStyleElement::title() const
 
 void SVGStyleElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::titleAttr:
         if (sheet() && !isInShadowTree())
@@ -110,6 +108,8 @@ void SVGStyleElement::attributeChanged(const QualifiedName& name, const AtomStri
     default:
         break;
     }
+
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGStyleElement::finishParsingChildren()

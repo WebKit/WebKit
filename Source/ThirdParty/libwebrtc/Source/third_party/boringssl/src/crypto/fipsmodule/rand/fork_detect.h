@@ -38,9 +38,10 @@ extern "C" {
 // should only be used as a hardening measure.
 OPENSSL_EXPORT uint64_t CRYPTO_get_fork_generation(void);
 
-// CRYPTO_fork_detect_ignore_madv_wipeonfork_for_testing is an internal detail
+// CRYPTO_fork_detect_force_madv_wipeonfork_for_testing is an internal detail
 // used for testing purposes.
-OPENSSL_EXPORT void CRYPTO_fork_detect_ignore_madv_wipeonfork_for_testing(void);
+OPENSSL_EXPORT void CRYPTO_fork_detect_force_madv_wipeonfork_for_testing(
+    int on);
 
 #if defined(__cplusplus)
 }  // extern C

@@ -99,6 +99,16 @@ public:
     {
     }
 
+    constexpr TransformationMatrix(double tx, double ty)
+        : m_matrix {
+            { 1, 0, 0, 0 },
+            { 0, 1, 0, 0 },
+            { 0, 0, 1, 0 },
+            { tx, ty, 0, 1 },
+        }
+    {
+    }
+
     constexpr TransformationMatrix(
         double m11, double m12, double m13, double m14,
         double m21, double m22, double m23, double m24,

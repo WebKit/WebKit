@@ -27,6 +27,7 @@
 #include "RenderFragmentContainerSet.h"
 
 #include "RenderBoxFragmentInfo.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderFragmentedFlow.h"
 #include <wtf/IsoMallocInlines.h>
 

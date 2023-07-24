@@ -65,6 +65,7 @@ public:
         virtual ~Observer();
 
         virtual void devicesChanged() = 0;
+        virtual void deviceWillBeRemoved(const String& persistentId) = 0;
     };
 
     ~RealtimeMediaSourceCenter();
@@ -79,7 +80,7 @@ public:
     void createMediaStream(Ref<const Logger>&&, NewMediaStreamHandler&&, MediaDeviceHashSalts&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest&);
 
     WEBCORE_EXPORT void getMediaStreamDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&&);
-    WEBCORE_EXPORT RealtimeMediaSourceCapabilities getCapabilities(const CaptureDevice&);
+    WEBCORE_EXPORT std::optional<RealtimeMediaSourceCapabilities> getCapabilities(const CaptureDevice&);
 
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
 
@@ -101,6 +102,7 @@ public:
     WEBCORE_EXPORT void removeDevicesChangedObserver(Observer&);
 
     void captureDevicesChanged();
+    void captureDeviceWillBeRemoved(const String& persistentId);
 
     WEBCORE_EXPORT static bool shouldInterruptAudioOnPageVisibilityChange();
 

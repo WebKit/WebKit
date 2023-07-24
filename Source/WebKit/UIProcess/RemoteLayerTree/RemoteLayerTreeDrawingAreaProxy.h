@@ -42,7 +42,7 @@ class RemoteScrollingCoordinatorTransaction;
 
 class RemoteLayerTreeDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    RemoteLayerTreeDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
+    RemoteLayerTreeDrawingAreaProxy(WebPageProxy&);
     virtual ~RemoteLayerTreeDrawingAreaProxy();
 
     virtual bool isRemoteLayerTreeDrawingAreaProxyMac() const { return false; }
@@ -88,13 +88,8 @@ private:
     void minimumSizeForAutoLayoutDidChange() final;
     void sizeToContentAutoSizeMaximumSizeDidChange() final;
     void didUpdateGeometry();
-    void attachToProvisionalFrameProcess(WebProcessProxy&) final;
-    void startReceivingRemoteLayerTreeDrawingAreaProxyMessages(WebProcessProxy&);
+    std::span<IPC::ReceiverName> messageReceiverNames() const final;
 
-    // For now, all callbacks are called before committing changes, because that's what the only client requires.
-    // Once we have other callbacks, it may make sense to have a before-commit/after-commit option.
-    void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&) final;
-    
     virtual void scheduleDisplayRefreshCallbacks() { }
     virtual void pauseDisplayRefreshCallbacks() { }
 
@@ -118,6 +113,7 @@ private:
     // Message handlers
     virtual void setPreferredFramesPerSecond(WebCore::FramesPerSecond) { }
     void willCommitLayerTree(TransactionID);
+    void commitLayerTreeNotTriggered();
     void commitLayerTree(IPC::Connection&, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>&);
     void commitLayerTreeTransaction(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     virtual void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) { }
@@ -128,8 +124,13 @@ private:
 
     std::unique_ptr<RemoteLayerTreeHost> m_remoteLayerTreeHost;
     bool m_isWaitingForDidUpdateGeometry { false };
-    enum DidUpdateMessageState { DoesNotNeedDidUpdate, NeedsDidUpdate, MissedCommit };
-    DidUpdateMessageState m_didUpdateMessageState { DoesNotNeedDidUpdate };
+
+    // displayDidRefresh is sent to the WebProcess, and it responds
+    // with a commitLayerTree message (ideally before the next
+    // displayDidRefresh, otherwise we mark it as missed and send
+    // it when commitLayerTree does arrive).
+    enum CommitLayerTreeMessageState { CommitLayerTreePending, NeedsDisplayDidRefresh, MissedCommit, Idle };
+    CommitLayerTreeMessageState m_commitLayerTreeMessageState { Idle };
 
     WebCore::IntSize m_lastSentSize;
     WebCore::IntSize m_lastSentMinimumSizeForAutoLayout;
@@ -148,8 +149,6 @@ private:
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
     
     unsigned m_countOfTransactionsWithNonEmptyLayerChanges { 0 };
-
-    Vector<Ref<WebProcessProxy>> m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver;
 };
 
 } // namespace WebKit

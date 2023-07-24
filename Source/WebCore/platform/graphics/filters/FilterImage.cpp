@@ -87,6 +87,27 @@ FloatPoint FilterImage::mappedAbsolutePoint(const FloatPoint& point) const
     return FloatPoint(point - m_absoluteImageRect.location());
 }
 
+size_t FilterImage::memoryCost() const
+{
+    CheckedSize memoryCost;
+
+    if (m_imageBuffer)
+        memoryCost += m_imageBuffer->memoryCost();
+
+    if (m_unpremultipliedPixelBuffer)
+        memoryCost += m_unpremultipliedPixelBuffer->sizeInBytes();
+
+    if (m_premultipliedPixelBuffer)
+        memoryCost += m_premultipliedPixelBuffer->sizeInBytes();
+
+#if USE(CORE_IMAGE)
+    if (m_ciImage)
+        memoryCost += memoryCostOfCIImage();
+#endif
+
+    return memoryCost;
+}
+
 ImageBuffer* FilterImage::imageBuffer()
 {
 #if USE(CORE_IMAGE)

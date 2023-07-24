@@ -607,7 +607,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
         auto* maskImage = style.maskImage();
         if (is<StyleCachedImage>(maskImage)) {
             auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(downcast<StyleCachedImage>(*maskImage).reresolvedURL(renderer.document()).string(), renderer.document());
-            if (auto* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(renderer.document(), resourceID)) {
+            if (auto* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(renderer.treeScopeForSVGReferences(), resourceID)) {
                 ts << indent << " ";
                 writeNameAndQuotedValue(ts, "masker", resourceID);
                 ts << " ";
@@ -619,7 +619,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
     if (style.clipPath() && is<ReferencePathOperation>(style.clipPath())) {
         auto resourceClipPath = downcast<ReferencePathOperation>(style.clipPath());
         AtomString id = resourceClipPath->fragment();
-        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(renderer.document(), id)) {
+        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(renderer.treeScopeForSVGReferences(), id)) {
             ts << indent << " ";
             writeNameAndQuotedValue(ts, "clipPath", resourceClipPath->fragment());
             ts << " ";
@@ -634,7 +634,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
             if (filterOperation.type() == FilterOperation::Type::Reference) {
                 const auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
                 AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation.url(), renderer.document());
-                if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(renderer.document(), id)) {
+                if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(renderer.treeScopeForSVGReferences(), id)) {
                     ts << indent << " ";
                     writeNameAndQuotedValue(ts, "filter", id);
                     ts << " ";

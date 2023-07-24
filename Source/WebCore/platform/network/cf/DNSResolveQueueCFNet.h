@@ -31,13 +31,19 @@ namespace WebCore {
 
 class DNSResolveQueueCFNet final : public DNSResolveQueue {
 public:
-    DNSResolveQueueCFNet() = default;
+    DNSResolveQueueCFNet();
+    ~DNSResolveQueueCFNet();
     void resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&&) final;
     void stopResolve(uint64_t identifier) final;
 
+    class CompletionHandlerWrapper;
 private:
     void updateIsUsingProxy() final;
     void platformResolve(const String&) final;
+
+    void performDNSLookup(const String&, Ref<CompletionHandlerWrapper>&&);
+
+    HashMap<uint64_t, Ref<CompletionHandlerWrapper>> m_pendingRequests;
 };
 
 using DNSResolveQueuePlatform = DNSResolveQueueCFNet;

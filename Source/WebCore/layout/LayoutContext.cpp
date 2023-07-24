@@ -38,6 +38,7 @@
 #include "LayoutPhase.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderStyleConstants.h"
+#include "RenderStyleSetters.h"
 #include "RenderView.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingState.h"

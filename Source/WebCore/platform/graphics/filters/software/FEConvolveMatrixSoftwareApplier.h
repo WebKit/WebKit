@@ -40,7 +40,7 @@ class FEConvolveMatrixSoftwareApplier final : public FilterEffectConcreteApplier
     using Base = FilterEffectConcreteApplier<FEConvolveMatrix>;
 
 public:
-    using Base::Base;
+    FEConvolveMatrixSoftwareApplier(const FEConvolveMatrix& effect);
 
 private:
     bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const final;

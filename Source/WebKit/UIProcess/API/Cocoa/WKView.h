@@ -35,7 +35,6 @@
 #endif
 
 @class WKBrowsingContextController;
-@class WKBrowsingContextGroup;
 @class WKProcessGroup;
 @class WKViewData;
 
@@ -49,9 +48,6 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebView", macos(10.10, 10.14.4), ios(8.0
     WKViewData *_data;
     WK_UNUSED_INSTANCE_VARIABLE unsigned _unused;
 }
-
-- (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
-- (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

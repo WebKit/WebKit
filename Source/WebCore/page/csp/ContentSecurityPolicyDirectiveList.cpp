@@ -132,7 +132,7 @@ static inline bool checkMediaType(ContentSecurityPolicyMediaListDirective* direc
 {
     if (!directive)
         return true;
-    if (typeAttribute.isEmpty() || typeAttribute.stripWhiteSpace() != type)
+    if (typeAttribute.isEmpty() || StringView(typeAttribute).trim(deprecatedIsSpaceOrNewline) != type)
         return false;
     return directive->allows(type);
 }
@@ -401,6 +401,7 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
+// FIXME: typeAttribute should be a StringView throughout
 const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForPluginType(const String& type, const String& typeAttribute) const
 {
     if (checkMediaType(m_pluginTypes.get(), type, typeAttribute))
@@ -448,7 +449,7 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecu
     // A meta tag delievered CSP could contain invalid HTTP header values depending on how it was formatted in the document.
     // We want to store the CSP as a valid HTTP header for e.g. blob URL inheritance.
     if (policyFrom == ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta) {
-        m_header = stripLeadingAndTrailingHTTPSpaces(policy).removeCharacters([](auto c) {
+        m_header = policy.trim(isJSONOrHTTPWhitespace<UChar>).removeCharacters([](auto c) {
             return c == 0x00 || c == '\r' || c == '\n';
         });
     } else

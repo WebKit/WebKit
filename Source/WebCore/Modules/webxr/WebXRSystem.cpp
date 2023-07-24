@@ -251,6 +251,8 @@ struct WebXRSystem::ResolvedRequestedFeatures {
     FeatureList consentRequired;
     FeatureList consentOptional;
     FeatureList requested;
+    FeatureList requiredFeaturesRequested;
+    FeatureList optionalFeaturesRequested;
 };
 
 static bool featureRequiresExplicitConsent(PlatformXR::SessionFeature feature)
@@ -292,18 +294,19 @@ std::optional<WebXRSystem::ResolvedRequestedFeatures> WebXRSystem::resolveReques
 {
     // 1. Let consentRequired be an empty list of DOMString.
     // 2. Let consentOptional be an empty list of DOMString.
+    // 3. Let granted be an empty list of DOMString.
     ResolvedRequestedFeatures resolvedFeatures;
 
-    // 3. Let device be the result of obtaining the current device for mode, requiredFeatures, and optionalFeatures.
-    // 4. Let granted be a list of DOMString initialized to device's list of enabled features for mode.
-    // 5. If device is null or device's list of supported modes does not contain mode, run the following steps:
-    //  5.1 Return the tuple (consentRequired, consentOptional, granted)
+    // 4. Let device be the result of obtaining the current device for mode, requiredFeatures, and optionalFeatures.
+    // 5. Let previouslyEnabled be device’s set of granted features for mode.
+    // 6. If device is null or device’s list of supported modes does not contain mode, run the following steps:
+    //  6.1 Return the tuple (consentRequired, consentOptional, granted)
     if (!device || !device->supports(mode))
         return resolvedFeatures;
 
-    resolvedFeatures.granted = device->enabledFeatures(mode);
+    FeatureList previouslyEnabled = device->enabledFeatures(mode);
 
-    // 6. Add every feature descriptor in the default features table associated
+    // 7. Add every feature descriptor in the default features table associated
     //    with mode to the indicated feature list if it is not already present.
     // https://immersive-web.github.io/webxr/#default-features
     auto requiredFeaturesWithDefaultFeatures = init.requiredFeatures;
@@ -311,12 +314,12 @@ std::optional<WebXRSystem::ResolvedRequestedFeatures> WebXRSystem::resolveReques
     if (mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr)
         requiredFeaturesWithDefaultFeatures.append(JSC::jsStringWithCache(globalObject.vm(), PlatformXR::sessionFeatureDescriptor(PlatformXR::SessionFeature::ReferenceSpaceTypeLocal)));
 
-    // 7. For each feature in requiredFeatures|optionalFeatures perform the following steps:
-    // 8. For each feature in optionalFeatures perform the following steps:
+    // 8. For each feature in requiredFeatures|optionalFeatures perform the following steps:
+    // 9. For each feature in optionalFeatures perform the following steps:
     // We're merging both loops in a single lambda. The only difference is that a failure on any required features
     // implies cancelling the whole process while failures in optional features are just skipped.
     enum class ParsingMode { Strict, Loose };
-    auto parseFeatures = [this, &device, &globalObject, mode, &resolvedFeatures] (const JSFeatureList& sessionFeatures, ParsingMode parsingMode) -> bool {
+    auto parseFeatures = [this, &device, &globalObject, mode, &resolvedFeatures, &previouslyEnabled] (const JSFeatureList& sessionFeatures, ParsingMode parsingMode) -> bool {
         bool returnOnFailure = parsingMode == ParsingMode::Strict;
         for (const auto& sessionFeature : sessionFeatures) {
             // 1. If the feature is null, continue to the next entry.
@@ -349,8 +352,9 @@ std::optional<WebXRSystem::ResolvedRequestedFeatures> WebXRSystem::resolveReques
             if (!isFeatureSupported(feature.value(), mode, *device))
                 RETURN_FALSE_OR_CONTINUE(returnOnFailure);
 
-            // 6. If the functionality described by feature requires explicit consent, append it to (consentRequired|consentOptional).
-            if (featureRequiresExplicitConsent(feature.value())) {
+            // 6. If the functionality described by feature requires explicit consent and feature is not
+            // in previouslyEnabled, append it to (consentRequired|consentOptional).
+            if (featureRequiresExplicitConsent(feature.value()) && !previouslyEnabled.contains(feature.value())) {
                 if (parsingMode == ParsingMode::Strict)
                     resolvedFeatures.consentRequired.append(feature.value());
                 else
@@ -363,6 +367,11 @@ std::optional<WebXRSystem::ResolvedRequestedFeatures> WebXRSystem::resolveReques
             // https://immersive-web.github.io/webxr/#requested-features
             // The combined list of feature descriptors given by the requiredFeatures and optionalFeatures are collectively considered the requested features for an XRSession.
             resolvedFeatures.requested.append(feature.value());
+
+            if (parsingMode == ParsingMode::Strict)
+                resolvedFeatures.requiredFeaturesRequested.append(feature.value());
+            else
+                resolvedFeatures.optionalFeaturesRequested.append(feature.value());
         }
         return true;
     };
@@ -415,7 +424,7 @@ void WebXRSystem::resolveFeaturePermissions(XRSessionMode mode, const XRSessionI
     }
 
     // FIXME: Replace with Permissions API implementation.
-    document->page()->chrome().client().requestPermissionOnXRSessionFeatures(document->securityOrigin().data(), mode, resolvedFeatures->granted, resolvedFeatures->consentRequired, resolvedFeatures->consentOptional, [device, mode, consentRequired = WTFMove(resolvedFeatures->consentRequired), completionHandler = WTFMove(completionHandler)](std::optional<PlatformXR::Device::FeatureList>&& userGranted) mutable {
+    document->page()->chrome().client().requestPermissionOnXRSessionFeatures(document->securityOrigin().data(), mode, resolvedFeatures->granted, resolvedFeatures->consentRequired, resolvedFeatures->consentOptional, resolvedFeatures->requiredFeaturesRequested, resolvedFeatures->optionalFeaturesRequested, [device, mode, consentRequired = WTFMove(resolvedFeatures->consentRequired), completionHandler = WTFMove(completionHandler)](std::optional<PlatformXR::Device::FeatureList>&& userGranted) mutable {
         if (!userGranted) {
             completionHandler(std::nullopt);
             return;

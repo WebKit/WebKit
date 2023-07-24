@@ -57,6 +57,7 @@ namespace WebCore {
 class BarProp;
 class CSSRuleList;
 class CSSStyleDeclaration;
+class CookieStore;
 class Crypto;
 class CustomElementRegistry;
 class DOMApplicationCache;
@@ -172,6 +173,7 @@ public:
 
     WEBCORE_EXPORT static void overrideTransientActivationDurationForTesting(std::optional<Seconds>&&);
     void setLastActivationTimestamp(MonotonicTime lastActivationTimestamp) { m_lastActivationTimestamp = lastActivationTimestamp; }
+    void consumeLastActivationIfNecessary();
     MonotonicTime lastActivationTimestamp() const { return m_lastActivationTimestamp; }
     void notifyActivated(MonotonicTime);
     WEBCORE_EXPORT bool hasTransientActivation() const;
@@ -192,6 +194,7 @@ public:
     void close(Document&);
     void print();
     void stop();
+    bool isStopping() const { return m_isStopping; }
 
     WEBCORE_EXPORT ExceptionOr<RefPtr<WindowProxy>> open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& urlString, const AtomString& frameName, const String& windowFeaturesString);
 
@@ -275,7 +278,7 @@ public:
 
     void scrollBy(const ScrollToOptions&) const;
     void scrollBy(double x, double y) const;
-    void scrollTo(const ScrollToOptions&, ScrollClamping = ScrollClamping::Clamped, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest) const;
+    void scrollTo(const ScrollToOptions&, ScrollClamping = ScrollClamping::Clamped, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest, std::optional<FloatSize> originalScrollDelta = std::nullopt) const;
     void scrollTo(double x, double y, ScrollClamping = ScrollClamping::Clamped) const;
 
     void moveBy(float x, float y) const;
@@ -406,6 +409,8 @@ public:
     Page* page() const;
     WEBCORE_EXPORT static void forEachWindowInterestedInStorageEvents(const Function<void(LocalDOMWindow&)>&);
 
+    CookieStore& cookieStore();
+
 private:
     explicit LocalDOMWindow(Document&);
 
@@ -489,9 +494,12 @@ private:
 
     bool m_wasWrappedWithoutInitializedSecurityOrigin { false };
     bool m_mayReuseForNavigation { true };
+    bool m_isStopping { false };
 #if ENABLE(USER_MESSAGE_HANDLERS)
     mutable RefPtr<WebKitNamespace> m_webkitNamespace;
 #endif
+
+    RefPtr<CookieStore> m_cookieStore;
 };
 
 inline String LocalDOMWindow::status() const

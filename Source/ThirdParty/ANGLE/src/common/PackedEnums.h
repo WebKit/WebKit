@@ -858,6 +858,14 @@ operator==(const T &lhs, const T &rhs)
 {
     return lhs.value == rhs.value;
 }
+
+template <typename T>
+typename std::enable_if<IsResourceIDType<T>::value && !std::is_same<T, gl::ContextID>::value,
+                        bool>::type
+operator<(const T &lhs, const T &rhs)
+{
+    return lhs.value < rhs.value;
+}
 }  // namespace egl
 
 #undef ANGLE_DEFINE_ID_TYPE

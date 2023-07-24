@@ -837,11 +837,18 @@ struct ImageSetTypeCSSPrimitiveValueKnownTokenTypeFunctionConsumer {
     static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
     {
         ASSERT(range.peek().type() == FunctionToken);
-        if (range.peek().functionId() != CSSValueType || range.peek(1).type() != StringToken)
+        if (range.peek().functionId() != CSSValueType)
             return nullptr;
 
-        auto typeArg = consumeFunction(range);
-        return consumeString(typeArg);
+        auto rangeCopy = range;
+        auto typeArg = consumeFunction(rangeCopy);
+        auto result = consumeString(typeArg);
+
+        if (!result || !typeArg.atEnd())
+            return nullptr;
+
+        range = rangeCopy;
+        return result;
     }
 };
 
@@ -5895,6 +5902,84 @@ static RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
     return CSSStepsTimingFunctionValue::create(*stepsValue, stepPosition);
 }
 
+static RefPtr<CSSValue> consumeLinear(CSSParserTokenRange& range)
+{
+    ASSERT(range.peek().functionId() == CSSValueLinear);
+    auto rangeCopy = range;
+    auto args = consumeFunction(rangeCopy);
+
+    struct Step {
+        double output;
+        std::optional<double> input { std::nullopt };
+    };
+    Vector<Step> steps;
+    auto largestInput = -std::numeric_limits<double>::infinity();
+    bool lastPointIsExtraPoint = false;
+    while (true) {
+        auto output = consumeNumberRaw(args);
+        if (!output)
+            break;
+
+        steps.append({ output->value });
+        lastPointIsExtraPoint = false;
+
+        args.consumeWhitespace();
+        if (auto input = consumePercentRaw(args)) {
+            largestInput = std::max(input->value / 100.0, largestInput);
+            steps.last().input = largestInput;
+
+            args.consumeWhitespace();
+            if (auto extraPoint = consumePercentRaw(args)) {
+                largestInput = std::max(extraPoint->value / 100.0, largestInput);
+                steps.append({ steps.last().output, largestInput });
+                lastPointIsExtraPoint = true;
+            }
+        } else if (steps.size() == 1) {
+            largestInput = 0.0;
+            steps.last().input = largestInput;
+        }
+
+        if (!consumeCommaIncludingWhitespace(args))
+            break;
+    }
+
+    if (!args.atEnd() || steps.size() < 2 || (steps.size() == 2 && lastPointIsExtraPoint))
+        return nullptr;
+
+    if (!lastPointIsExtraPoint && !steps.last().input)
+        steps.last().input = std::max(1.0, largestInput);
+
+    Vector<LinearTimingFunction::Point> points;
+    points.reserveInitialCapacity(steps.size());
+
+    std::optional<size_t> missingInputRunStart;
+    for (size_t i = 0; i <= steps.size(); ++i) {
+        if (i < steps.size() && !steps[i].input) {
+            if (!missingInputRunStart)
+                missingInputRunStart = i;
+            continue;
+        }
+
+        if (missingInputRunStart) {
+            double inputLow = missingInputRunStart > 0 ? *steps[*missingInputRunStart - 1].input : 0.0;
+            double inputHigh = i < steps.size() ? *steps[i].input : std::max(1.0, largestInput);
+            double inputAverage = (inputLow + inputHigh) / (i - *missingInputRunStart + 1);
+            for (size_t j = *missingInputRunStart; j < i; ++j)
+                points.uncheckedAppend({ steps[j].output, inputAverage * (j - *missingInputRunStart + 1) });
+
+            missingInputRunStart = std::nullopt;
+        }
+
+        if (i < steps.size() && steps[i].input)
+            points.uncheckedAppend({ steps[i].output, *steps[i].input });
+    }
+    ASSERT(!missingInputRunStart);
+    ASSERT(points.size() == steps.size());
+
+    range = rangeCopy;
+    return CSSLinearTimingFunctionValue::create(WTFMove(points));
+}
+
 static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().functionId() == CSSValueCubicBezier);
@@ -5989,13 +6074,23 @@ RefPtr<CSSValue> consumeTimingFunction(CSSParserTokenRange& range, const CSSPars
         break;
     }
 
-    CSSValueID function = range.peek().functionId();
-    if (function == CSSValueCubicBezier)
+    switch (range.peek().functionId()) {
+    case CSSValueLinear:
+        return consumeLinear(range);
+
+    case CSSValueCubicBezier:
         return consumeCubicBezier(range);
-    if (function == CSSValueSteps)
+
+    case CSSValueSteps:
         return consumeSteps(range);
-    if (context.springTimingFunctionEnabled && function == CSSValueSpring)
-        return consumeSpringFunction(range);
+
+    case CSSValueSpring:
+        return context.springTimingFunctionEnabled ? consumeSpringFunction(range) : nullptr;
+
+    default:
+        break;
+    }
+
     return nullptr;
 }
 
@@ -6662,6 +6757,39 @@ RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(firstValue.releaseNonNull());
 }
 
+RefPtr<CSSValue> consumeScrollbarColor(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    if (auto ident = consumeIdent<CSSValueAuto>(range))
+        return ident;
+
+    if (auto thumbColor = consumeColor(range, context)) {
+        if (auto trackColor = consumeColor(range, context))
+            return CSSValuePair::createNoncoalescing(thumbColor.releaseNonNull(), trackColor.releaseNonNull());
+    }
+
+    return nullptr;
+}
+
+RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange& range)
+{
+    if (auto ident = consumeIdent<CSSValueAuto>(range))
+        return CSSPrimitiveValue::create(CSSValueAuto);
+
+    if (auto first = consumeIdent<CSSValueStable>(range)) {
+        if (auto second = consumeIdent<CSSValueBothEdges>(range))
+            return CSSValuePair::create(first.releaseNonNull(), second.releaseNonNull());
+        return first;
+    }
+
+    if (auto first = consumeIdent<CSSValueBothEdges>(range)) {
+        if (auto second = consumeIdent<CSSValueStable>(range))
+            return CSSValuePair::create(second.releaseNonNull(), first.releaseNonNull());
+        return nullptr;
+    }
+
+    return nullptr;
+}
+
 RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueLeading)
@@ -6773,7 +6901,7 @@ static RefPtr<CSSPathValue> consumeBasicShapePath(CSSParserTokenRange& args)
         return nullptr;
 
     SVGPathByteStream byteStream;
-    if (!buildSVGPathByteStreamFromString(args.consumeIncludingWhitespace().value().toString(), byteStream, UnalteredParsing))
+    if (!buildSVGPathByteStreamFromString(args.consumeIncludingWhitespace().value(), byteStream, UnalteredParsing))
         return nullptr;
 
     return CSSPathValue::create(WTFMove(byteStream), rule);
@@ -6901,8 +7029,9 @@ static RefPtr<CSSValue> consumeBasicShapeOrBox(CSSParserTokenRange& range, const
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-// Parses the ray() definition as defined in https://drafts.fxtf.org/motion-1/#funcdef-offset-path-ray
-// ray( [ <angle> && <size> && contain? ] )
+// Parses the ray() definition as defined in https://drafts.fxtf.org/motion-1/#ray-function
+// ray( <angle> && <ray-size>? && contain? && [at <position>]? )
+// FIXME: Implement `at <position>`.
 static RefPtr<CSSRayValue> consumeRayShape(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueRay)
@@ -6911,23 +7040,23 @@ static RefPtr<CSSRayValue> consumeRayShape(CSSParserTokenRange& range, const CSS
     CSSParserTokenRange args = consumeFunction(range);
 
     RefPtr<CSSPrimitiveValue> angle;
-    RefPtr<CSSPrimitiveValue> size;
+    std::optional<CSSValueID> size;
     bool isContaining = false;
     while (!args.atEnd()) {
         if (!angle && (angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid)))
             continue;
-        if (!size && (size = consumeIdent<CSSValueClosestSide, CSSValueClosestCorner, CSSValueFarthestSide, CSSValueFarthestCorner, CSSValueSides>(args)))
+        if (!size && (size = consumeIdentRaw<CSSValueClosestSide, CSSValueClosestCorner, CSSValueFarthestSide, CSSValueFarthestCorner, CSSValueSides>(args)))
             continue;
-        if (!isContaining && (isContaining = consumeIdent<CSSValueContain>(args)))
+        if (!isContaining && (isContaining = consumeIdentRaw<CSSValueContain>(args).has_value()))
             continue;
         return nullptr;
     }
 
-    // <angle> and <size> must be present.
-    if (!angle || !size)
+    // <angle> must be present.
+    if (!angle)
         return nullptr;
 
-    return CSSRayValue::create(angle.releaseNonNull(), size.releaseNonNull(), isContaining);
+    return CSSRayValue::create(angle.releaseNonNull(), size.value_or(CSSValueClosestSide), isContaining);
 }
 
 // Consumes shapes accepted by clip-path and offset-path.
@@ -7559,7 +7688,7 @@ static Vector<String> parseGridTemplateAreasColumnNames(StringView gridRowNames)
 
 bool parseGridTemplateAreasRow(StringView gridRowNames, NamedGridAreaMap& gridAreaMap, const size_t rowCount, size_t& columnCount)
 {
-    if (gridRowNames.isAllSpecialCharacters<isCSSSpace>())
+    if (gridRowNames.containsOnly<isCSSSpace>())
         return false;
 
     auto columnNames = parseGridTemplateAreasColumnNames(gridRowNames);
@@ -8054,29 +8183,23 @@ RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range)
 RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange& range)
 {
     RefPtr<CSSPrimitiveValue> autoValue;
-    if (range.peek().type() == IdentToken) {
-        switch (range.peek().id()) {
-        case CSSValueNone:
-            return consumeIdent<CSSValueNone>(range);
-        case CSSValueAuto:
-            autoValue = consumeIdent<CSSValueAuto>(range);
-            break;
-        default:
+    if ((autoValue = consumeIdent<CSSValueAuto>(range))) {
+        if (range.atEnd())
             return nullptr;
-        }
     }
 
-    if (range.atEnd())
-        return nullptr;
+    if (auto noneValue = consumeIdent<CSSValueNone>(range)) {
+        if (autoValue)
+            return CSSValuePair::create(autoValue.releaseNonNull(), noneValue.releaseNonNull());
+        return noneValue;
+    }
 
-    auto lengthValue = consumeLength(range, HTMLStandardMode, ValueRange::NonNegative);
-    if (!lengthValue)
-        return nullptr;
-
-    if (!autoValue)
+    if (auto lengthValue = consumeLength(range, HTMLStandardMode, ValueRange::NonNegative)) {
+        if (autoValue)
+            return CSSValuePair::create(autoValue.releaseNonNull(), lengthValue.releaseNonNull());
         return lengthValue;
-
-    return CSSValueList::createSpaceSeparated(autoValue.releaseNonNull(), lengthValue.releaseNonNull());
+    }
+    return nullptr;
 }
 
 RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
@@ -8204,12 +8327,29 @@ Vector<FontTechnology> consumeFontTech(CSSParserTokenRange& range, bool singleVa
         if (arg.type() != IdentToken)
             return { };
         auto technology = fromCSSValueID<FontTechnology>(arg.id());
-        if (technology != FontTechnology::Invalid && FontCustomPlatformData::supportsTechnology(technology))
-            technologies.append(technology);
+        if (technology == FontTechnology::Invalid)
+            return { };
+        technologies.append(technology);
     } while (consumeCommaIncludingWhitespace(args) && !singleValue);
     if (!args.atEnd())
         return { };
     return technologies;
+}
+
+static bool isFontFormatKeywordValid(CSSValueID id)
+{
+    switch (id) {
+    case CSSValueCollection:
+    case CSSValueEmbeddedOpentype:
+    case CSSValueOpentype:
+    case CSSValueSvg:
+    case CSSValueTruetype:
+    case CSSValueWoff:
+    case CSSValueWoff2:
+        return true;
+    default:
+        return false;
+    }
 }
 
 String consumeFontFormat(CSSParserTokenRange& range, bool rejectStringValues)
@@ -8220,12 +8360,11 @@ String consumeFontFormat(CSSParserTokenRange& range, bool rejectStringValues)
     auto& arg = args.consumeIncludingWhitespace();
     if (!args.atEnd())
         return nullString();
-    if (arg.type() != IdentToken && (rejectStringValues || arg.type() != StringToken))
-        return nullString();
-    auto format = arg.value().toString();
-    if (arg.type() == IdentToken && !FontCustomPlatformData::supportsFormat(format))
-        return nullString();
-    return format;
+    if (arg.type() == IdentToken && isFontFormatKeywordValid(arg.id()))
+        return arg.value().toString();
+    if (arg.type() == StringToken && !rejectStringValues)
+        return arg.value().toString();
+    return nullString();
 }
 
 // MARK: @font-palette-values

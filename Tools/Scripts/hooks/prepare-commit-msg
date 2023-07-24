@@ -9,6 +9,9 @@ LOCATION = r'{{ location }}'
 SPACING = 8
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
 CHERRY_PICKING_RE = re.compile(r'^# You are currently cherry-picking commit (?P<hash>[a-f0-9A-F]+)\.$')
+CHERRY_PICK_COMMIT_RE = re.compile(r'^(?P<a>\S+)( \((?P<b>\S+)\))?$')
+REFNAME_RE = re.compile(r'^refs/remotes/(?P<remote>[^/ ]+)/(?P<branch>\S+)$')
+HASH_RE = re.compile(r'^[a-f0-9A-F]+$')
 IDENTIFIER_RE = re.compile(r'(\d+\.)?\d+@\S+')
 PREFER_RADAR = {{ prefer_radar }}
 
@@ -205,11 +208,40 @@ def cherry_pick(content):
             elif from_last_line:
                 cherry_picked = '{} ({})'.format(from_last_line.group(0), cherry_picked)
 
+    production_hash = None
+    match = CHERRY_PICK_COMMIT_RE.match(cherry_picked)
+    for candidate in ([match.group('a'), match.group('b')] if match else []):
+        if not candidate:
+            continue
+        if HASH_RE.match(candidate):
+            production_hash = candidate
+
+    if production_hash:
+        try:
+            subprocess.check_output(
+                ['git', 'merge-base', '--is-ancestor', production_hash, DEFAULT_BRANCH],
+                **ENCODING_KWARGS
+            )
+        except subprocess.CalledProcessError:
+            remotes = set()
+            for line in subprocess.check_output(
+                ['git', 'branch', '--contains', production_hash, '-a', '--format', '%(refname)'],
+                **ENCODING_KWARGS
+            ).splitlines():
+                match = REFNAME_RE.match(line.strip())
+                if not match:
+                    continue
+                remote = match.group('remote')
+                if remote in SOURCE_REMOTES:
+                    remotes.add(match.group('remote'))
+            if not remotes:
+                production_hash = None
+
     is_trunk_bound = DEFAULT_BRANCH in source_branches()
     in_suffix = False
     cherry_pick_metadata = '{}. {}'.format(cherry_picked or '???', bug or '<bug>')
     result = []
-    if not is_trunk_bound:
+    if not is_trunk_bound and production_hash:
         result += ['Cherry-pick {}'.format(cherry_pick_metadata), '']
     for line in content.splitlines():
         line = line.rstrip()
@@ -218,11 +250,11 @@ def cherry_pick(content):
             continue
         if line[0] == '#' and not in_suffix:
             in_suffix = True
-            if is_trunk_bound:
+            if is_trunk_bound and production_hash:
                 while len(result) and not result[-1] or (result[-1].split(':', 1)[0] in TRAILERS_TO_STRIP):
                     del result[-1]
                 result += ['', 'Originally-landed-as: {}'.format(cherry_pick_metadata)]
-        if line[0] != '#' and not is_trunk_bound:
+        if line[0] != '#' and not is_trunk_bound and production_hash:
             result.append(4*' ' + line)
         else:
             result.append(line)

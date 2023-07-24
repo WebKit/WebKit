@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,18 +22,18 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::DepthStencilState {
-    PAL::WebGPU::TextureFormat format;
+    WebCore::WebGPU::TextureFormat format;
 
     bool depthWriteEnabled;
-    PAL::WebGPU::CompareFunction depthCompare;
+    WebCore::WebGPU::CompareFunction depthCompare;
 
     WebKit::WebGPU::StencilFaceState stencilFront;
     WebKit::WebGPU::StencilFaceState stencilBack;
 
-    std::optional<PAL::WebGPU::StencilValue> stencilReadMask;
-    std::optional<PAL::WebGPU::StencilValue> stencilWriteMask;
+    std::optional<WebCore::WebGPU::StencilValue> stencilReadMask;
+    std::optional<WebCore::WebGPU::StencilValue> stencilWriteMask;
 
-    PAL::WebGPU::DepthBias depthBias;
+    WebCore::WebGPU::DepthBias depthBias;
     float depthBiasSlopeScale;
     float depthBiasClamp;
 };

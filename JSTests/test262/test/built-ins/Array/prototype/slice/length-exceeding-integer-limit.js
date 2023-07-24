@@ -16,6 +16,7 @@ info: |
      else let final be min(relativeEnd, len).
   ...
 includes: [compareArray.js]
+features: [exponentiation]
 ---*/
 
 var arrayLike = {

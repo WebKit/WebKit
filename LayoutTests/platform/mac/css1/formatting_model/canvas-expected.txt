@@ -39,4 +39,4 @@ layer at (0,0) size 800x600
                   text run at (433,18) width 281: "If the BODY content is significantly shorter"
                   text run at (0,36) width 559: "than the browser's window height, then the bottom border may be larger than 25 pixels."
 layer at (25,102) size 750x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,77) size 750x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,77) size 750x2 [color=#808080] [border: (1px inset #808080)]

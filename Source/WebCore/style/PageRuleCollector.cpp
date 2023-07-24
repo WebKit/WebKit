@@ -87,17 +87,17 @@ void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isF
 
     m_result.authorDeclarations.reserveCapacity(m_result.authorDeclarations.size() + matchedPageRules.size());
     for (auto* pageRule : matchedPageRules)
-        m_result.authorDeclarations.uncheckedAppend({ &pageRule->properties() });
+        m_result.authorDeclarations.uncheckedAppend({ pageRule->properties() });
 }
 
 static bool checkPageSelectorComponents(const CSSSelector* selector, bool isLeftPage, bool isFirstPage, const String& pageName)
 {
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
-        if (component->match() == CSSSelector::Tag) {
+        if (component->match() == CSSSelector::Match::Tag) {
             const AtomString& localName = component->tagQName().localName();
             if (localName != starAtom() && localName != pageName)
                 return false;
-        } else if (component->match() == CSSSelector::PagePseudoClass) {
+        } else if (component->match() == CSSSelector::Match::PagePseudoClass) {
             CSSSelector::PagePseudoClassType pseudoType = component->pagePseudoClassType();
             if ((pseudoType == CSSSelector::PagePseudoClassLeft && !isLeftPage)
                 || (pseudoType == CSSSelector::PagePseudoClassRight && isLeftPage)

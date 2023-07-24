@@ -46,7 +46,7 @@ enum ProcessingUserGestureState {
     NotProcessingUserGesture
 };
 
-enum class UserGestureType { EscapeKey, Other };
+enum class UserGestureType { EscapeKey, ActivationTriggering, Other };
 
 class UserGestureToken : public RefCounted<UserGestureToken>, public CanMakeWeakPtr<UserGestureToken> {
 public:
@@ -54,7 +54,7 @@ public:
     static const Seconds& maximumIntervalForUserGestureForwardingForFetch();
     WEBCORE_EXPORT static void setMaximumIntervalForUserGestureForwardingForFetchForTesting(Seconds);
 
-    static Ref<UserGestureToken> create(ProcessingUserGestureState state, UserGestureType gestureType, Document* document = nullptr, std::optional<UUID> authorizationToken = std::nullopt)
+    static Ref<UserGestureToken> create(ProcessingUserGestureState state, UserGestureType gestureType, Document* document = nullptr, std::optional<WTF::UUID> authorizationToken = std::nullopt)
     {
         return adoptRef(*new UserGestureToken(state, gestureType, document, authorizationToken));
     }
@@ -104,12 +104,14 @@ public:
 
     MonotonicTime startTime() const { return m_startTime; }
 
-    std::optional<UUID> authorizationToken() const { return m_authorizationToken; }
+    std::optional<WTF::UUID> authorizationToken() const { return m_authorizationToken; }
 
     bool isValidForDocument(const Document&) const;
 
+    void forEachImpactedDocument(Function<void(Document&)>&&);
+
 private:
-    UserGestureToken(ProcessingUserGestureState, UserGestureType, Document*, std::optional<UUID> authorizationToken);
+    UserGestureToken(ProcessingUserGestureState, UserGestureType, Document*, std::optional<WTF::UUID> authorizationToken);
 
     ProcessingUserGestureState m_state = NotProcessingUserGesture;
     Vector<Function<void(UserGestureToken&)>> m_destructionObservers;
@@ -119,7 +121,7 @@ private:
     GestureScope m_scope { GestureScope::All };
     MonotonicTime m_startTime { MonotonicTime::now() };
     IsPropagatedFromFetch m_isPropagatedFromFetch { IsPropagatedFromFetch::No };
-    std::optional<UUID> m_authorizationToken;
+    std::optional<WTF::UUID> m_authorizationToken;
 };
 
 class UserGestureIndicator {
@@ -133,11 +135,11 @@ public:
 
     // If a document is provided, its last known user gesture timestamp is updated.
     enum class ProcessInteractionStyle { Immediate, Delayed };
-    WEBCORE_EXPORT explicit UserGestureIndicator(std::optional<ProcessingUserGestureState>, Document* = nullptr, UserGestureType = UserGestureType::Other, ProcessInteractionStyle = ProcessInteractionStyle::Immediate, std::optional<UUID> authorizationToken = std::nullopt);
+    WEBCORE_EXPORT explicit UserGestureIndicator(std::optional<ProcessingUserGestureState>, Document* = nullptr, UserGestureType = UserGestureType::ActivationTriggering, ProcessInteractionStyle = ProcessInteractionStyle::Immediate, std::optional<WTF::UUID> authorizationToken = std::nullopt);
     WEBCORE_EXPORT explicit UserGestureIndicator(RefPtr<UserGestureToken>, UserGestureToken::GestureScope = UserGestureToken::GestureScope::All, UserGestureToken::IsPropagatedFromFetch = UserGestureToken::IsPropagatedFromFetch::No);
     WEBCORE_EXPORT ~UserGestureIndicator();
 
-    WEBCORE_EXPORT std::optional<UUID> authorizationToken() const;
+    WEBCORE_EXPORT std::optional<WTF::UUID> authorizationToken() const;
 
 private:
     RefPtr<UserGestureToken> m_previousToken;

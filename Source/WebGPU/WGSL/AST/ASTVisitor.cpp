@@ -105,12 +105,14 @@ void Visitor::visit(Attribute& attribute)
     }
 }
 
-void Visitor::visit(AST::AlignAttribute&)
+void Visitor::visit(AST::AlignAttribute& attribute)
 {
+    visit(attribute.alignment());
 }
 
-void Visitor::visit(AST::BindingAttribute&)
+void Visitor::visit(AST::BindingAttribute& attribute)
 {
+    visit(attribute.binding());
 }
 
 void Visitor::visit(AST::ConstAttribute&)
@@ -121,12 +123,14 @@ void Visitor::visit(AST::BuiltinAttribute&)
 {
 }
 
-void Visitor::visit(GroupAttribute&)
+void Visitor::visit(GroupAttribute& attribute)
 {
+    visit(attribute.group());
 }
 
-void Visitor::visit(AST::IdAttribute&)
+void Visitor::visit(AST::IdAttribute& attribute)
 {
+    visit(attribute.value());
 }
 
 void Visitor::visit(AST::InterpolateAttribute&)
@@ -137,12 +141,14 @@ void Visitor::visit(AST::InvariantAttribute&)
 {
 }
 
-void Visitor::visit(AST::LocationAttribute&)
+void Visitor::visit(AST::LocationAttribute& attribute)
 {
+    visit(attribute.location());
 }
 
-void Visitor::visit(AST::SizeAttribute&)
+void Visitor::visit(AST::SizeAttribute& attribute)
 {
+    visit(attribute.size());
 }
 
 void Visitor::visit(AST::StageAttribute&)

@@ -4105,7 +4105,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addI32Popcnt(ExpressionType ar
 {
     result = self().g32();
 
-#if CPU(X86_64) || CPU(ARM64)
+#if CPU(X86_64)
     if (MacroAssembler::supportsCountPopulation()) {
         auto* patchpoint = addPatchpoint(B3::Int32);
         patchpoint->effects = B3::Effects::none();
@@ -4126,7 +4126,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addI64Popcnt(ExpressionType ar
 {
     result = self().g64();
 
-#if CPU(X86_64) || CPU(ARM64)
+#if CPU(X86_64)
     if (MacroAssembler::supportsCountPopulation()) {
         auto* patchpoint = addPatchpoint(B3::Int64);
         patchpoint->effects = B3::Effects::none();

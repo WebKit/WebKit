@@ -415,7 +415,8 @@ static bool transitionMatchesProperty(const Animation& transition, AnimatablePro
                 if (resolvedPropertyId == propertyIdToMatch)
                     return true;
                 for (auto longhand : shorthandForProperty(resolvedPropertyId)) {
-                    if (longhand == propertyIdToMatch)
+                    auto resolvedLonghand = CSSProperty::resolveDirectionAwareProperty(longhand, style.direction(), style.writingMode());
+                    if (resolvedLonghand == propertyIdToMatch)
                         return true;
                 }
                 return false;

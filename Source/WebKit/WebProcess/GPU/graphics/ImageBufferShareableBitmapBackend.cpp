@@ -154,4 +154,11 @@ void ImageBufferShareableBitmapBackend::putPixelBuffer(const PixelBuffer& pixelB
     ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, m_bitmap->data());
 }
 
+String ImageBufferShareableBitmapBackend::debugDescription() const
+{
+    TextStream stream;
+    stream << "ImageBufferShareableBitmapBackend " << this;
+    return stream.release();
+}
+
 } // namespace WebKit

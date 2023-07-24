@@ -31,7 +31,10 @@
 extern "C" {
 #endif
 
+struct wpe_view_backend;
+
 WK_EXPORT WKViewRef WKViewCreate(WKPageConfigurationRef configuration);
+WK_EXPORT WKViewRef WKViewCreateWPE(struct wpe_view_backend*, WKPageConfigurationRef);
 
 WK_EXPORT void WKViewSetViewClient(WKViewRef, const WKViewClientBase*);
 

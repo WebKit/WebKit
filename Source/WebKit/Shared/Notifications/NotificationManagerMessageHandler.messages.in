@@ -23,8 +23,8 @@
 messages -> NotificationManagerMessageHandler NotRefCounted {
     RequestSystemNotificationPermission(String originIdentifier) -> (bool allowed)
     ShowNotification(struct WebCore::NotificationData notificationData, RefPtr<WebCore::NotificationResources> notificationResources) -> ()
-    CancelNotification(UUID notificationID)
-    ClearNotifications(Vector<UUID> notificationIDs)
-    DidDestroyNotification(UUID notificationID)
+    CancelNotification(WTF::UUID notificationID)
+    ClearNotifications(Vector<WTF::UUID> notificationIDs)
+    DidDestroyNotification(WTF::UUID notificationID)
     PageWasNotifiedOfNotificationPermission();
 }

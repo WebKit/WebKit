@@ -99,6 +99,10 @@ public:
     void setBackingStoreAttached(bool) override;
     bool backingStoreAttached() const override;
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    void setCoverageRect(const FloatRect&) override;
+#endif
+
     bool geometryFlipped() const override;
     WEBCORE_EXPORT void setGeometryFlipped(bool) override;
 
@@ -155,6 +159,9 @@ public:
     void setCornerRadius(float) override;
 
     void setAntialiasesEdges(bool) override;
+
+    MediaPlayerVideoGravity videoGravity() const override;
+    void setVideoGravity(MediaPlayerVideoGravity) override;
 
     FloatRoundedRect shapeRoundedRect() const override;
     void setShapeRoundedRect(const FloatRoundedRect&) override;

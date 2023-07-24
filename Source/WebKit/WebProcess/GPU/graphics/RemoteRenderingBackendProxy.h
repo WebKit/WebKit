@@ -70,24 +70,27 @@ class RemoteSerializedImageBufferProxy;
 class RemoteImageBufferProxyFlushState;
 
 class RemoteRenderingBackendProxy
-    : public IPC::Connection::Client {
+    : public IPC::Connection::Client, SerialFunctionDispatcher {
 public:
     static std::unique_ptr<RemoteRenderingBackendProxy> create(WebPage&);
     static std::unique_ptr<RemoteRenderingBackendProxy> create(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
     ~RemoteRenderingBackendProxy();
 
+    const RemoteRenderingBackendCreationParameters& parameters() const { return m_parameters; }
+
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 
     void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);
-    void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier, RemoteSerializedImageBufferWriteReference&&);
-    void moveToImageBuffer(RemoteSerializedImageBufferWriteReference&&, WebCore::RenderingResourceIdentifier);
+    void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier);
+    void moveToImageBuffer(WebCore::RenderingResourceIdentifier);
 
     void createRemoteImageBuffer(WebCore::ImageBuffer&);
     bool isCached(const WebCore::ImageBuffer&) const;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     // Messages to be sent.
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, bool avoidBackendSizeCheck = false);
@@ -118,12 +121,12 @@ public:
         bool hasEmptyDirtyRegion { false };
     };
     
+#if PLATFORM(COCOA)
     struct SwapBuffersResult {
         BufferSet buffers;
         SwapBuffersDisplayRequirement displayRequirement;
     };
 
-#if PLATFORM(COCOA)
     Vector<SwapBuffersResult> prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>&);
 #endif
 
@@ -132,12 +135,6 @@ public:
 
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }
     unsigned delayedRenderingUpdateCount() const { return m_renderingUpdateID - m_didRenderingUpdateID; }
-
-    enum class DidReceiveBackendCreationResult : bool {
-        ReceivedAnyResponse,
-        TimeoutOrIPCFailure
-    };
-    DidReceiveBackendCreationResult waitForDidCreateImageBufferBackend();
 
     RenderingBackendIdentifier renderingBackendIdentifier() const;
 
@@ -158,27 +155,21 @@ public:
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
 
+    static constexpr Seconds defaultTimeout = 15_s;
 private:
     explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
-    template<typename T>
-    void send(T&& message)
-    {
-        streamConnection().send(WTFMove(message), renderingBackendIdentifier(), Seconds::infinity());
-
-    }
-
-    template<typename T>
-    auto sendSync(T&& message, IPC::Timeout timeout = Seconds::infinity())
-    {
-        return streamConnection().sendSync(WTFMove(message), renderingBackendIdentifier(), timeout);
-    }
+    template<typename T> auto send(T&& message);
+    template<typename T> auto sendSync(T&& message);
 
     // Connection::Client
     void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
     void disconnectGPUProcess();
     void ensureGPUProcessConnection();
+
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     // Returns std::nullopt if no update is needed or allocation failed.
     // Returns handle if that should be sent to the receiver process.
@@ -190,6 +181,11 @@ private:
     void didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID);
     void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayerAsVolatile);
 
+    // SerialFunctionDispatcher
+    void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
+#if ASSERT_ENABLED
+    void assertIsCurrent() const final { m_dispatcher.assertIsCurrent(); }
+#endif
     RefPtr<IPC::Connection> m_connection;
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
     RemoteRenderingBackendCreationParameters m_parameters;

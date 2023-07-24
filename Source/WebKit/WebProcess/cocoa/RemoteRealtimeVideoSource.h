@@ -55,6 +55,10 @@ private:
     Ref<RealtimeMediaSource> clone() final;
     void endProducingData() final;
     bool setShouldApplyRotation(bool) final;
+    double observedFrameRate() const final { return m_observedFrameRate; }
+
+    Deque<double> m_observedFrameTimeStamps;
+    double m_observedFrameRate { 0 };
 };
 
 } // namespace WebKit

@@ -313,7 +313,7 @@ private:
     WeakPtr<WebExtensionController> m_extensionController;
 
     URL m_baseURL;
-    String m_uniqueIdentifier = UUID::createVersion4().toString();
+    String m_uniqueIdentifier = WTF::UUID::createVersion4().toString();
     bool m_customUniqueIdentifier { false };
 
     bool m_inspectable { false };

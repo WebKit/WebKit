@@ -472,6 +472,7 @@ enum TOperator : uint16_t
     // Group MetalFragmentSample
     EOpNumSamples,
     EOpSamplePosition,
+    EOpInterpolateAtCenter,
 
     // Group MetalCommon
     EOpSaturate,

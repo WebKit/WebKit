@@ -42,6 +42,16 @@ bool deviceClassIsSmallScreen()
     return deviceClass == MGDeviceClassiPhone || deviceClass == MGDeviceClassiPod || deviceClass == MGDeviceClassWatch;
 }
 
+bool deviceClassIsReality()
+{
+#if PLATFORM(VISION)
+    static auto deviceClass = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
+    return deviceClass == MGDeviceClassRealityDevice;
+#else
+    return false;
+#endif
+}
+
 String deviceName()
 {
 #if ENABLE(MOBILE_GESTALT_DEVICE_NAME)
@@ -52,6 +62,8 @@ String deviceName()
     });
     return deviceName.get().get();
 #else
+    if (!deviceClassIsSmallScreen())
+        return "iPad"_s;
     return "iPhone"_s;
 #endif
 }

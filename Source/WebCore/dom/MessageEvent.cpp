@@ -113,7 +113,7 @@ void MessageEvent::initMessageEvent(const AtomString& type, bool canBubble, bool
     initEvent(type, canBubble, cancelable);
 
     {
-        Locker { m_concurrentDataAccessLock };
+        Locker locker { m_concurrentDataAccessLock };
         m_data = JSValueTag { };
     }
     // FIXME: This code is wrong: we should emit a write-barrier. Otherwise, GC can collect it.
@@ -134,7 +134,7 @@ EventInterface MessageEvent::eventInterface() const
 
 size_t MessageEvent::memoryCost() const
 {
-    Locker { m_concurrentDataAccessLock };
+    Locker locker { m_concurrentDataAccessLock };
     return WTF::switchOn(m_data, [] (JSValueTag) -> size_t {
         return 0;
     }, [] (const Ref<SerializedScriptValue>& data) -> size_t {

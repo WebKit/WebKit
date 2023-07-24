@@ -882,7 +882,7 @@ JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }
 
-JSObjectRef UIScriptControllerIOS::selectionCaretViewRect() const
+JSObjectRef UIScriptControllerIOS::selectionCaretViewRect(id<UICoordinateSpace> coordinateSpace) const
 {
     UIView *contentView = platformContentView();
     UIView *caretView = nil;
@@ -894,9 +894,21 @@ JSObjectRef UIScriptControllerIOS::selectionCaretViewRect() const
     caretView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
 #endif
 
-    auto rectInContentViewCoordinates = CGRectIntersection([caretView convertRect:caretView.bounds toView:contentView], contentView.bounds);
-    clipSelectionViewRectToContentView(rectInContentViewCoordinates, contentView);
-    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(rectInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+    auto contentRect = CGRectIntersection([caretView convertRect:caretView.bounds toView:contentView], contentView.bounds);
+    clipSelectionViewRectToContentView(contentRect, contentView);
+    if (coordinateSpace != contentView)
+        contentRect = [coordinateSpace convertRect:contentRect fromCoordinateSpace:contentView];
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(contentRect) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+}
+
+JSObjectRef UIScriptControllerIOS::selectionCaretViewRect() const
+{
+    return selectionCaretViewRect(platformContentView());
+}
+
+JSObjectRef UIScriptControllerIOS::selectionCaretViewRectInGlobalCoordinates() const
+{
+    return selectionCaretViewRect(webView());
 }
 
 JSObjectRef UIScriptControllerIOS::selectionRangeViewRects() const
@@ -1158,20 +1170,6 @@ WebCore::FloatRect UIScriptControllerIOS::rectForMenuAction(CFStringRef action) 
 {
     UIView *viewForAction = nil;
 
-    if (UIView *calloutBar = UICalloutBar.activeCalloutBar; calloutBar.window) {
-        for (UIButton *button in findAllViewsInHierarchyOfType(calloutBar, UIButton.class)) {
-            NSString *buttonTitle = [button titleForState:UIControlStateNormal];
-            if (!buttonTitle.length)
-                continue;
-
-            if (![buttonTitle isEqualToString:(__bridge NSString *)action])
-                continue;
-
-            viewForAction = button;
-            break;
-        }
-    }
-
     auto searchForLabel = [&](UIWindow *window) -> UILabel * {
         for (UILabel *label in findAllViewsInHierarchyOfType(window, UILabel.class)) {
             if ([label.text isEqualToString:(__bridge NSString *)action])
@@ -1192,11 +1190,7 @@ WebCore::FloatRect UIScriptControllerIOS::rectForMenuAction(CFStringRef action) 
 
 JSObjectRef UIScriptControllerIOS::menuRect() const
 {
-    UIView *containerView = nil;
-    if (auto *calloutBar = UICalloutBar.activeCalloutBar; calloutBar.window)
-        containerView = calloutBar;
-    else
-        containerView = findAllViewsInHierarchyOfType(webView().textEffectsWindow, internalClassNamed(@"_UIEditMenuListView")).firstObject;
+    auto containerView = findAllViewsInHierarchyOfType(webView().textEffectsWindow, internalClassNamed(@"_UIEditMenuListView")).firstObject;
     return containerView ? toObject([containerView convertRect:containerView.bounds toView:platformContentView()]) : nullptr;
 }
 

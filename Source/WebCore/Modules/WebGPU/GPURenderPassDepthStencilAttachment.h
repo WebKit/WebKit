@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +29,14 @@
 #include "GPULoadOp.h"
 #include "GPUStoreOp.h"
 #include "GPUTextureView.h"
-#include <pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h>
+#include "WebGPURenderPassDepthStencilAttachment.h"
 #include <variant>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 struct GPURenderPassDepthStencilAttachment {
-    PAL::WebGPU::RenderPassDepthStencilAttachment convertToBacking() const
+    WebGPU::RenderPassDepthStencilAttachment convertToBacking() const
     {
         ASSERT(view);
         return {

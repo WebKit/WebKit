@@ -72,7 +72,7 @@ usage() if $showHelp;
 
 setConfiguration();
 
-my @privateFrameworks = qw(WebCore WebKitLegacy WebKit2);
+my @privateFrameworks = qw(WebCore WebGPU WebKitLegacy);
 my @publicFrameworks = qw(JavaScriptCore WebKit);
 my $privateInstallPath = "/System/Library/PrivateFrameworks";
 my $publicInstallPath = "/System/Library/Frameworks";

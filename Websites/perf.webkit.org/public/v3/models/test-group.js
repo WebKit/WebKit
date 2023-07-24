@@ -19,7 +19,6 @@ class TestGroup extends LabeledObject {
         });
         this._repositories = null;
         this._computeRequestedCommitSetsLazily = new LazilyEvaluatedFunction(TestGroup._computeRequestedCommitSets);
-        this._requestedCommitSets = null;
         this._commitSetToLabel = new Map;
         console.assert(!object.platform || object.platform instanceof Platform);
         this._platform = object.platform;
@@ -54,7 +53,6 @@ class TestGroup extends LabeledObject {
     addBuildRequest(request)
     {
         this._buildRequests.push(request);
-        this._requestedCommitSets = null;
         this._commitSetToLabel.clear();
     }
 
@@ -158,6 +156,16 @@ class TestGroup extends LabeledObject {
     requestsForCommitSet(commitSet)
     {
         return this._orderedBuildRequests().filter((request) => request.commitSet() == commitSet);
+    }
+
+    testParameterSetForCommitSet(commitSet)
+    {
+        return this.requestsForCommitSet(commitSet)?.[0]?.testParameterSet();
+    }
+
+    requestedTestParameterSets()
+    {
+        return this.requestedCommitSets().map(commitSet => this.testParameterSetForCommitSet(commitSet));
     }
 
     labelForCommitSet(commitSet)
@@ -299,35 +307,38 @@ class TestGroup extends LabeledObject {
         });
     }
 
-    static async createWithTask(taskName, platform, test, groupName, repetitionCount, repetitionType, commitSets, notifyOnCompletion)
+    static async createWithTask(taskName, platform, test, groupName, repetitionCount, repetitionType, commitSets, testParameterSets, notifyOnCompletion)
     {
         console.assert(commitSets.length == 2);
         const revisionSets = CommitSet.revisionSetsFromCommitSets(commitSets);
+        const testParametersList = testParameterSets?.map(set => set?.asPayload());
         const data = await PrivilegedAPI.sendRequest('create-test-group', {
             taskName, name: groupName, platform: platform.id(), test: test.id(), repetitionCount, revisionSets,
-            repetitionType, needsNotification: !!notifyOnCompletion});
+            testParametersList, repetitionType, needsNotification: !!notifyOnCompletion});
         const task = await AnalysisTask.fetchById(data['taskId'], /* ignoreCache */ true);
         await this.fetchForTask(task.id());
         return task;
     }
 
-    static async createWithCustomConfiguration(task, platform, test, groupName, repetitionCount, repetitionType, commitSets, notifyOnCompletion)
+    static async createWithCustomConfiguration(task, platform, test, groupName, repetitionCount, repetitionType, commitSets, testParameterSets, notifyOnCompletion)
     {
         console.assert(commitSets.length == 2);
         const revisionSets = CommitSet.revisionSetsFromCommitSets(commitSets);
+        const testParametersList = testParameterSets?.map(set => set?.asPayload());
         const data = await PrivilegedAPI.sendRequest('create-test-group', {
             task: task.id(), name: groupName, platform: platform.id(), test: test.id(), repetitionCount, repetitionType,
-            revisionSets, needsNotification: !!notifyOnCompletion});
+            revisionSets, testParametersList, needsNotification: !!notifyOnCompletion});
         await this.fetchById(data['testGroupId'], /* ignoreCache */ true);
         return this.findAllByTask(data['taskId']);
     }
 
-    static async createAndRefetchTestGroups(task, name, repetitionCount, repetitionType, commitSets, notifyOnCompletion)
+    static async createAndRefetchTestGroups(task, name, repetitionCount, repetitionType, commitSets, testParameterSets, notifyOnCompletion)
     {
         console.assert(commitSets.length == 2);
         const revisionSets = CommitSet.revisionSetsFromCommitSets(commitSets);
+        const testParametersList = testParameterSets?.map(set => set?.asPayload());
         const data = await PrivilegedAPI.sendRequest('create-test-group', {
-            task: task.id(), name, repetitionCount, repetitionType, revisionSets,
+            task: task.id(), name, repetitionCount, repetitionType, revisionSets, testParametersList,
             needsNotification: !!notifyOnCompletion
         });
         await this.fetchById(data['testGroupId'], /* ignoreCache */ true);

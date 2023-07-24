@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPURenderPassDepthStencilAttachment.h>
+#include <WebCore/WebGPURenderPassDepthStencilAttachment.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<RenderPassDepthStencilAttachment> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
+std::optional<RenderPassDepthStencilAttachment> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
 {
     auto view = convertToBacking(renderPassDepthStencilAttachment.view);
     if (!view)
@@ -43,7 +43,7 @@ std::optional<RenderPassDepthStencilAttachment> ConvertToBackingContext::convert
     return { { view, renderPassDepthStencilAttachment.depthClearValue, renderPassDepthStencilAttachment.depthLoadOp, renderPassDepthStencilAttachment.depthStoreOp, renderPassDepthStencilAttachment.depthReadOnly, renderPassDepthStencilAttachment.stencilClearValue, renderPassDepthStencilAttachment.stencilLoadOp, renderPassDepthStencilAttachment.stencilStoreOp, renderPassDepthStencilAttachment.stencilReadOnly } };
 }
 
-std::optional<PAL::WebGPU::RenderPassDepthStencilAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
+std::optional<WebCore::WebGPU::RenderPassDepthStencilAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
 {
     auto* view = convertTextureViewFromBacking(renderPassDepthStencilAttachment.view);
     if (!view)

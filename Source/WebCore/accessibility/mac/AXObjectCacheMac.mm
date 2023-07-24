@@ -127,6 +127,14 @@
 #define kAXDraggingDestinationDragNotAcceptedNotification CFSTR("AXDraggingDestinationDragNotAccepted")
 #endif
 
+#ifndef NSAccessibilityTextInputMarkingSessionBeganNotification
+#define NSAccessibilityTextInputMarkingSessionBeganNotification @"AXTextInputMarkingSessionBegan"
+#endif
+
+#ifndef NSAccessibilityTextInputMarkingSessionEndedNotification
+#define NSAccessibilityTextInputMarkingSessionEndedNotification @"AXTextInputMarkingSessionEnded"
+#endif
+
 // Very large strings can negatively impact the performance of notifications, so this length is chosen to try to fit an average paragraph or line of text, but not allow strings to be large enough to hurt performance.
 static const NSUInteger AXValueChangeTruncationLength = 1000;
 
@@ -431,6 +439,12 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
     case AXDraggingExitedDropZone:
         macNotification = (id)kAXDraggingDestinationDragNotAcceptedNotification;
         break;
+    case AXTextCompositionBegan:
+        macNotification = NSAccessibilityTextInputMarkingSessionBeganNotification;
+        break;
+    case AXTextCompositionEnded:
+        macNotification = NSAccessibilityTextInputMarkingSessionEndedNotification;
+        break;
     default:
         return;
     }
@@ -655,26 +669,23 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
 }
 
-bool AXObjectCache::shouldSpellCheck()
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+static bool isTestAXClientType(AXClientType client)
 {
-    // The only AT that we know can handle deferred spellchecking is VoiceOver.
-    auto client = _AXGetClientForCurrentRequestUntrusted();
-    return client != kAXClientTypeVoiceOver && UNLIKELY(!forceDeferredSpellChecking());
+    return client == kAXClientTypeWebKitTesting || client == kAXClientTypeXCTest;
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+bool AXObjectCache::isTestClient()
+{
+    return UNLIKELY(isTestAXClientType(_AXGetClientForCurrentRequestUntrusted()));
+}
+
 bool AXObjectCache::clientSupportsIsolatedTree()
 {
     auto client = _AXGetClientForCurrentRequestUntrusted();
     return client == kAXClientTypeVoiceOver
         || UNLIKELY(client == kAXClientTypeWebKitTesting
         || client == kAXClientTypeXCTest);
-}
-
-bool AXObjectCache::isTestClient()
-{
-    auto client = _AXGetClientForCurrentRequestUntrusted();
-    return UNLIKELY(client == kAXClientTypeWebKitTesting || client == kAXClientTypeXCTest);
 }
 
 bool AXObjectCache::isIsolatedTreeEnabled()
@@ -710,7 +721,26 @@ bool AXObjectCache::usedOnAXThread()
     return _AXSIsolatedTreeModeFunctionIsAvailable()
         && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread;
 }
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+
+bool AXObjectCache::shouldSpellCheck()
+{
+    if (UNLIKELY(forceDeferredSpellChecking()))
+        return false;
+
+    auto client = _AXGetClientForCurrentRequestUntrusted();
+    // The only AT that we know can handle deferred spellchecking is VoiceOver.
+    if (client == kAXClientTypeVoiceOver)
+        return false;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (UNLIKELY(isTestAXClientType(client)))
+        return true;
+    // ITM is currently only ever enabled for VoiceOver, so if it's enabled we can defer spell-checking.
+    return !isIsolatedTreeEnabled();
+#else
+    return true;
 #endif
+}
 
 // TextMarker and TextMarkerRange funcstions.
 // FIXME: TextMarker and TextMarkerRange should become classes wrapping the system objects.

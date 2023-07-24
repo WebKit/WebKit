@@ -36,7 +36,6 @@
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "MessageSenderInlines.h"
-#import "NetworkConnectionIntegrityHelpers.h"
 #import "PageClient.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "QuickLookThumbnailLoader.h"
@@ -54,6 +53,7 @@
 #import "WebPageMessages.h"
 #import "WebPageProxyInternals.h"
 #import "WebPasteboardProxy.h"
+#import "WebPrivacyHelpers.h"
 #import "WebProcessMessages.h"
 #import "WebProcessProxy.h"
 #import "WebScreenOrientationManagerProxy.h"
@@ -98,7 +98,7 @@ SOFT_LINK_CLASS_OPTIONAL(Synapse, SYNotesActivationObserver)
 #import <WebCore/RenderThemeMac.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
@@ -120,7 +120,7 @@ SOFT_LINK_CLASS_OPTIONAL(AppleMediaServicesUI, AMSUIEngagementTask)
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process().connection(), completion)
 
-#define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageID().toUInt64(), m_process->processIdentifier(), ##__VA_ARGS__)
+#define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageID().toUInt64(), m_process->processID(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -244,7 +244,7 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     loadParameters.networkExtensionSandboxExtensionHandles = createNetworkExtensionsSandboxExtensions(process);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     auto auditToken = process.auditToken();
     if (!process.hasManagedSessionSandboxAccess() && [getWebFilterEvaluatorClass() isManagedSession]) {
         if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
@@ -255,7 +255,7 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 
         process.markHasManagedSessionSandboxAccess();
     }
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 #endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 }
 
@@ -665,7 +665,7 @@ bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const Stri
     auto handle = convertedImage->createHandle();
     if (!handle)
         return false;
-    send(Messages::WebPage::UpdateAttachmentIcon(identifier, *handle, iconSize));
+    send(Messages::WebPage::UpdateAttachmentIcon(identifier, WTFMove(*handle), iconSize));
     return true;
 }
 
@@ -978,6 +978,11 @@ bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
     if (preferences().useGPUProcessForDOMRenderingEnabled())
         return true;
 
+#if ENABLE(REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT)
+    if (m_configuration->lockdownModeEnabled())
+        return true;
+#endif
+
     HashSet<RefPtr<const WebPageProxy>> visitedPages;
     visitedPages.add(this);
     for (auto* page = m_configuration->relatedPage(); page && !visitedPages.contains(page); page = page->configuration().relatedPage()) {
@@ -987,6 +992,24 @@ bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
     }
 
     return false;
+}
+
+bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
+{
+    // The client may request that we do client navigations at foreground priority, even if the
+    // view is not visible, as long as the application is foreground.
+    if (!configuration().clientNavigationsRunAtForegroundPriority())
+        return false;
+
+    // This setting only applies to background views. There is no need to force foreground
+    // priority for foreground views since they get foreground priority by virtue of being
+    // visible.
+    if (isViewVisible())
+        return false;
+
+    bool canTakeForegroundAssertions = pageClient().canTakeForegroundAssertions();
+    WEBPAGEPROXY_RELEASE_LOG(Process, "WebPageProxy::shouldForceForegroundPriorityForClientNavigation() returns %d based on PageClient::canTakeForegroundAssertions()", canTakeForegroundAssertions);
+    return canTakeForegroundAssertions;
 }
 
 } // namespace WebKit

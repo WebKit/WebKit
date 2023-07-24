@@ -47,18 +47,18 @@ struct TrackPrivateRemoteConfiguration;
 
 class RemoteMediaPlayerManager
     : public WebProcessSupplement
-    , public GPUProcessConnection::Client {
+    , public GPUProcessConnection::Client
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteMediaPlayerManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RemoteMediaPlayerManager(WebProcess&);
     ~RemoteMediaPlayerManager();
 
     static const char* supplementName();
-    WebProcess& parentProcess() const { return m_process; }
 
     void setUseGPUProcess(bool);
 
-    GPUProcessConnection& gpuProcessConnection() const;
+    GPUProcessConnection& gpuProcessConnection();
 
     void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -67,6 +67,10 @@ public:
     WebCore::MediaPlayerIdentifier findRemotePlayerId(const WebCore::MediaPlayerPrivateInterface*);
 
     RemoteMediaPlayerMIMETypeCache& typeCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier);
+
+    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteMediaPlayerManager>::ref(); }
+    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteMediaPlayerManager>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteMediaPlayerManager>::controlBlock(); }
 
 private:
     std::unique_ptr<WebCore::MediaPlayerPrivateInterface> createRemoteMediaPlayer(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
@@ -86,8 +90,7 @@ private:
     void clearMediaCacheForOrigins(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&, const HashSet<WebCore::SecurityOriginData>&);
 
     HashMap<WebCore::MediaPlayerIdentifier, WeakPtr<MediaPlayerPrivateRemote>> m_players;
-    WebProcess& m_process;
-    mutable GPUProcessConnection* m_gpuProcessConnection { nullptr };
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 
 } // namespace WebKit

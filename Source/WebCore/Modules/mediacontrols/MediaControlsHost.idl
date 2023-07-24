@@ -29,7 +29,7 @@ enum DeviceType {
     "tvout"
 };
 
-enum SourceType {
+[Conditional=MODERN_MEDIA_CONTROLS] enum SourceType {
     "file",
     "hls",
     "media-source",
@@ -73,7 +73,7 @@ enum SourceType {
 
     DOMString generateUUID();
 
-    readonly attribute SourceType? sourceType;
+    [Conditional=MODERN_MEDIA_CONTROLS] readonly attribute SourceType? sourceType;
 
     [Conditional=MODERN_MEDIA_CONTROLS] readonly attribute DOMString shadowRootCSSText;
     [Conditional=MODERN_MEDIA_CONTROLS] DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);

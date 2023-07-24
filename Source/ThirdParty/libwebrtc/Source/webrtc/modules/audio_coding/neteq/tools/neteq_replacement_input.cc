@@ -40,6 +40,11 @@ absl::optional<int64_t> NetEqReplacementInput::NextOutputEventTime() const {
   return source_->NextOutputEventTime();
 }
 
+absl::optional<NetEqInput::SetMinimumDelayInfo>
+NetEqReplacementInput::NextSetMinimumDelayInfo() const {
+  return source_->NextSetMinimumDelayInfo();
+}
+
 std::unique_ptr<NetEqInput::PacketData> NetEqReplacementInput::PopPacket() {
   std::unique_ptr<PacketData> to_return = std::move(packet_);
   while (true) {
@@ -57,6 +62,10 @@ std::unique_ptr<NetEqInput::PacketData> NetEqReplacementInput::PopPacket() {
 
 void NetEqReplacementInput::AdvanceOutputEvent() {
   source_->AdvanceOutputEvent();
+}
+
+void NetEqReplacementInput::AdvanceSetMinimumDelay() {
+  source_->AdvanceSetMinimumDelay();
 }
 
 bool NetEqReplacementInput::ended() const {
@@ -96,8 +105,9 @@ void NetEqReplacementInput::ReplacePacket() {
   uint32_t input_frame_size_timestamps = last_frame_size_timestamps_;
   const uint32_t timestamp_diff =
       next_hdr->timestamp - packet_->header.timestamp;
+  const bool opus_dtx = packet_->payload.size() <= 2;
   if (next_hdr->sequenceNumber == packet_->header.sequenceNumber + 1 &&
-      timestamp_diff <= 120 * 48) {
+      timestamp_diff <= 120 * 48 && !opus_dtx) {
     // Packets are in order and the timestamp diff is less than 5760 samples.
     // Accept the timestamp diff as a valid frame size.
     input_frame_size_timestamps = timestamp_diff;

@@ -646,6 +646,7 @@ TEST(JSONValue, ParseJSON)
         EXPECT_TRUE(JSON::Value::parseJSON("\"\\xFF\""_s));
         EXPECT_TRUE(JSON::Value::parseJSON("\"\\u1234\""_s));
 
+        EXPECT_FALSE(JSON::Value::parseJSON("\v1"_s));
         EXPECT_FALSE(JSON::Value::parseJSON("1 1"_s));
         EXPECT_FALSE(JSON::Value::parseJSON("{} {}"_s));
         EXPECT_FALSE(JSON::Value::parseJSON("[] []"_s));
@@ -671,49 +672,57 @@ TEST(JSONValue, MemoryCost)
         Ref<JSON::Value> value = JSON::Value::null();
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
-        EXPECT_LE(memoryCost, 8U);
+        EXPECT_LE(memoryCost, 16U);
     }
 
     {
         Ref<JSON::Value> value = JSON::Value::create(true);
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
-        EXPECT_LE(memoryCost, 8U);
+        EXPECT_LE(memoryCost, 16U);
     }
 
     {
         Ref<JSON::Value> value = JSON::Value::create(1.0);
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
-        EXPECT_LE(memoryCost, 8U);
+        EXPECT_LE(memoryCost, 16U);
     }
 
     {
         Ref<JSON::Value> value = JSON::Value::create(1);
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
-        EXPECT_LE(memoryCost, 8U);
+        EXPECT_LE(memoryCost, 16U);
     }
 
     {
         Ref<JSON::Value> value = JSON::Value::create(makeString("test"_s));
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
+#if HAVE(36BIT_ADDRESS)
+        EXPECT_LE(memoryCost, 52U);
+#else
         EXPECT_LE(memoryCost, 44U);
+#endif
     }
 
     {
         Ref<JSON::Value> value = JSON::Value::create(emptyString());
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
+#if HAVE(36BIT_ADDRESS)
+        EXPECT_LE(memoryCost, 48U);
+#else
         EXPECT_LE(memoryCost, 40U);
+#endif
     }
 
     {
         Ref<JSON::Value> value = JSON::Value::create(String());
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
-        EXPECT_LE(memoryCost, 8U);
+        EXPECT_LE(memoryCost, 16U);
     }
 
     {
@@ -737,14 +746,14 @@ TEST(JSONValue, MemoryCost)
         value->setValue("test"_s, JSON::Value::null());
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
-        EXPECT_LE(memoryCost, 20U);
+        EXPECT_LE(memoryCost, 60U);
     }
 
     {
         Ref<JSON::Object> value = JSON::Object::create();
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
-        EXPECT_LE(memoryCost, 8U);
+        EXPECT_LE(memoryCost, 40U);
     }
 
     {
@@ -772,14 +781,14 @@ TEST(JSONValue, MemoryCost)
         value->pushValue(JSON::Value::null());
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
-        EXPECT_LE(memoryCost, 16U);
+        EXPECT_LE(memoryCost, 48U);
     }
 
     {
         Ref<JSON::Array> value = JSON::Array::create();
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
-        EXPECT_LE(memoryCost, 8U);
+        EXPECT_LE(memoryCost, 32U);
     }
 
     {

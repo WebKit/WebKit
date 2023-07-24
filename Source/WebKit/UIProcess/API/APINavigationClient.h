@@ -90,11 +90,11 @@ public:
     virtual void didFinishDocumentLoad(WebKit::WebPageProxy&, Navigation*, Object*) { }
     virtual void didFinishNavigation(WebKit::WebPageProxy&, Navigation*, Object*) { }
     virtual void didFinishLoadForFrame(WebKit::WebPageProxy&, WebCore::ResourceRequest&&, WebKit::FrameInfoData&&) { }
-    virtual void didFailLoadDueToNetworkConnectionIntegrity(WebKit::WebPageProxy&, const WTF::URL&) { }
+    virtual void didBlockLoadToKnownTracker(WebKit::WebPageProxy&, const WTF::URL&) { }
     virtual void didFailNavigationWithError(WebKit::WebPageProxy&, const WebKit::FrameInfoData&, Navigation*, const WebCore::ResourceError&, Object*) { }
     virtual void didFailLoadWithErrorForFrame(WebKit::WebPageProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceError&, WebKit::FrameInfoData&&) { }
     virtual void didSameDocumentNavigation(WebKit::WebPageProxy&, Navigation*, WebKit::SameDocumentNavigationType, Object*) { }
-    virtual void didChangeLookalikeCharacters(WebKit::WebPageProxy&, const WTF::URL&, const WTF::URL&) { }
+    virtual void didApplyLinkDecorationFiltering(WebKit::WebPageProxy&, const WTF::URL&, const WTF::URL&) { }
 
     virtual void didDisplayInsecureContent(WebKit::WebPageProxy&, API::Object*) { }
     virtual void didRunInsecureContent(WebKit::WebPageProxy&, API::Object*) { }

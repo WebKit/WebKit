@@ -51,6 +51,7 @@ public:
     virtual ExceptionOr<void> setCssText(const String&) = 0;
     virtual unsigned length() const = 0;
     virtual String item(unsigned index) const = 0;
+    bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     virtual RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) = 0;
     virtual String getPropertyValue(const String& propertyName) = 0;
     virtual String getPropertyPriority(const String& propertyName) = 0;

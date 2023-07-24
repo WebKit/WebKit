@@ -73,7 +73,7 @@
 #include "LibWebRTCCodecs.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #import <WebCore/ParentalControlsContentFilter.h>
 #endif
 
@@ -112,14 +112,14 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     consumeNetworkExtensionSandboxExtensions(parameters.networkExtensionSandboxExtensionHandles);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if (parameters.contentFilterExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
     ParentalControlsContentFilter::setHasConsumedSandboxExtension(parameters.contentFilterExtensionHandle.has_value());
 
     if (parameters.frontboardServiceExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.frontboardServiceExtensionHandle);
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 #endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 }
 
@@ -197,7 +197,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     Editor& editor = frame.editor();
     editor.setIsGettingDictionaryPopupInfo(true);
 
-    if (plainText(range).find(isNotSpaceOrNewline) == notFound) {
+    if (plainText(range).find(deprecatedIsNotSpaceOrNewline) == notFound) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return { };
     }
@@ -495,37 +495,37 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
     if (result.isContentEditable) {
         if (auto editingStyle = EditingStyle::styleAtSelectionStart(selection)) {
             if (editingStyle->hasStyle(CSSPropertyFontWeight, "bold"_s))
-                postLayoutData.typingAttributes |= AttributeBold;
+                postLayoutData.typingAttributes.add(TypingAttribute::Bold);
 
             if (editingStyle->hasStyle(CSSPropertyFontStyle, "italic"_s) || editingStyle->hasStyle(CSSPropertyFontStyle, "oblique"_s))
-                postLayoutData.typingAttributes |= AttributeItalics;
+                postLayoutData.typingAttributes.add(TypingAttribute::Italics);
 
             if (editingStyle->hasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s))
-                postLayoutData.typingAttributes |= AttributeUnderline;
+                postLayoutData.typingAttributes.add(TypingAttribute::Underline);
 
             if (auto* styleProperties = editingStyle->style()) {
                 bool isLeftToRight = styleProperties->propertyAsValueID(CSSPropertyDirection) == CSSValueLtr;
                 switch (styleProperties->propertyAsValueID(CSSPropertyTextAlign).value_or(CSSValueInvalid)) {
                 case CSSValueRight:
                 case CSSValueWebkitRight:
-                    postLayoutData.textAlignment = RightAlignment;
+                    postLayoutData.textAlignment = TextAlignment::Right;
                     break;
                 case CSSValueLeft:
                 case CSSValueWebkitLeft:
-                    postLayoutData.textAlignment = LeftAlignment;
+                    postLayoutData.textAlignment = TextAlignment::Left;
                     break;
                 case CSSValueCenter:
                 case CSSValueWebkitCenter:
-                    postLayoutData.textAlignment = CenterAlignment;
+                    postLayoutData.textAlignment = TextAlignment::Center;
                     break;
                 case CSSValueJustify:
-                    postLayoutData.textAlignment = JustifiedAlignment;
+                    postLayoutData.textAlignment = TextAlignment::Justified;
                     break;
                 case CSSValueStart:
-                    postLayoutData.textAlignment = isLeftToRight ? LeftAlignment : RightAlignment;
+                    postLayoutData.textAlignment = isLeftToRight ? TextAlignment::Left : TextAlignment::Right;
                     break;
                 case CSSValueEnd:
-                    postLayoutData.textAlignment = isLeftToRight ? RightAlignment : LeftAlignment;
+                    postLayoutData.textAlignment = isLeftToRight ? TextAlignment::Right : TextAlignment::Left;
                     break;
                 default:
                     break;
@@ -537,9 +537,9 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
 
         if (auto* enclosingListElement = enclosingList(selection.start().containerNode())) {
             if (is<HTMLUListElement>(*enclosingListElement))
-                postLayoutData.enclosingListType = UnorderedList;
+                postLayoutData.enclosingListType = ListType::UnorderedList;
             else if (is<HTMLOListElement>(*enclosingListElement))
-                postLayoutData.enclosingListType = OrderedList;
+                postLayoutData.enclosingListType = ListType::OrderedList;
             else
                 ASSERT_NOT_REACHED();
         }
@@ -705,19 +705,89 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
     completionHandler(true);
 }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPageCocoaAdditions.mm>)
-#include <WebKitAdditions/WebPageCocoaAdditions.mm>
-#else
-URL WebPage::sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitizationTrigger)
+URL WebPage::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger)
 {
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (m_linkDecorationFilteringData.isEmpty() && m_domainScopedLinkDecorationFilteringData.isEmpty()) {
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to filter tracking query parameters (missing data)");
+        return url;
+    }
+
+    RefPtr mainFrame = m_mainFrame->coreLocalFrame();
+    if (!mainFrame)
+        return url;
+
+    auto isLinkDecorationFilteringEnabled = [&](const DocumentLoader* loader) {
+        if (!loader)
+            return false;
+        auto effectivePolicies = trigger == LinkDecorationFilteringTrigger::Navigation ? loader->originatorAdvancedPrivacyProtections() : loader->advancedPrivacyProtections();
+        return effectivePolicies.contains(AdvancedPrivacyProtections::LinkDecorationFiltering);
+    };
+
+    bool shouldApplyLinkDecorationFiltering = [&] {
+        if (isLinkDecorationFilteringEnabled(mainFrame->loader().documentLoader()))
+            return true;
+
+        if (isLinkDecorationFilteringEnabled(mainFrame->loader().provisionalDocumentLoader()))
+            return true;
+
+        return isLinkDecorationFilteringEnabled(mainFrame->loader().policyDocumentLoader());
+    }();
+
+    if (!shouldApplyLinkDecorationFiltering)
+        return url;
+
+    if (!url.hasQuery())
+        return url;
+
+    auto sanitizedURL = url;
+
+    auto domainScopedQueryParameters = m_domainScopedLinkDecorationFilteringData.get(RegistrableDomain { sanitizedURL });
+    auto removedParameters = WTF::removeQueryParameters(sanitizedURL, [&](auto& parameter) {
+        return m_linkDecorationFilteringData.contains(parameter) || domainScopedQueryParameters.contains(parameter);
+    });
+
+    if (!removedParameters.isEmpty() && trigger != LinkDecorationFilteringTrigger::Unspecified) {
+        if (trigger == LinkDecorationFilteringTrigger::Navigation)
+            send(Messages::WebPageProxy::DidApplyLinkDecorationFiltering(url, sanitizedURL));
+        auto removedParametersString = makeStringByJoining(removedParameters, ", "_s);
+        WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "Blocked known tracking query parameters: %s", removedParametersString.utf8().data());
+    }
+
+    return sanitizedURL;
+#else
     return url;
+#endif
 }
 
-URL WebPage::allowedLookalikeCharacters(const URL& url)
+URL WebPage::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url)
 {
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (m_allowedQueryParametersForAdvancedPrivacyProtections.isEmpty()) {
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to allow query parameters (missing data)");
+        return url;
+    }
+
+    if (!url.hasQuery() && !url.hasFragmentIdentifier())
+        return url;
+
+    auto sanitizedURL = url;
+
+    auto allowedParameters = m_allowedQueryParametersForAdvancedPrivacyProtections.get(RegistrableDomain { sanitizedURL });
+
+    if (!allowedParameters.contains("#"_s))
+        sanitizedURL.removeFragmentIdentifier();
+
+    WTF::removeQueryParameters(sanitizedURL, [&](auto& parameter) {
+        return !allowedParameters.contains(parameter);
+    });
+
+    return sanitizedURL;
+#else
     return url;
-}
 #endif
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

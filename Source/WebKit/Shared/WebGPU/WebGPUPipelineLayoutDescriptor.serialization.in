@@ -22,6 +22,6 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::PipelineLayoutDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
-    Vector<WebKit::WebGPUIdentifier> bindGroupLayouts;
+    std::optional<Vector<WebKit::WebGPUIdentifier>> bindGroupLayouts;
 };
 #endif

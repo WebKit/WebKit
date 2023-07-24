@@ -26,4 +26,4 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 43x18
                 text run at (1,1) width 43: "Lorem"
 layer at (8,60) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]

@@ -49,6 +49,8 @@ class ConfigurableFrameSizeEncoder : public VideoEncoder {
 
   void SetRates(const RateControlParameters& parameters) override;
 
+  EncoderInfo GetEncoderInfo() const override;
+
   int32_t SetFrameSize(size_t size);
 
   void SetCodecType(VideoCodecType codec_type_);

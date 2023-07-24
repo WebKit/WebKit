@@ -335,9 +335,10 @@ void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, Mes
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
 
-    Page::forEachPage([&] (Page& page) {
-        if (auto* webPage = WebPage::fromCorePage(page))
-            webPage->mainWebFrame().addConsoleMessage(source, level, message);
+    Page::forEachPage([&] (auto& page) {
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame()))
+            if (auto* document = localMainFrame->document())
+                document->addConsoleMessage(source, level, message);
     });
 }
 
@@ -347,5 +348,10 @@ void NetworkProcessConnection::connectToRTCDataChannelRemoteSource(WebCore::RTCD
     callback(RTCDataChannelRemoteManager::sharedManager().connectToRemoteSource(localIdentifier, remoteIdentifier));
 }
 #endif
+
+void NetworkProcessConnection::addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&& firstPartyForCookies)
+{
+    WebProcess::singleton().addAllowedFirstPartyForCookies(WTFMove(firstPartyForCookies));
+}
 
 } // namespace WebKit

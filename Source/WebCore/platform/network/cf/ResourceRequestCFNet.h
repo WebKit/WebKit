@@ -118,7 +118,7 @@ inline CFURLRequestPriority toPlatformRequestPriority(ResourceLoadPriority prior
 
 inline RetainPtr<CFStringRef> httpHeaderValueUsingSuitableEncoding(HTTPHeaderMap::const_iterator::KeyValue header)
 {
-    if (header.keyAsHTTPHeaderName && *header.keyAsHTTPHeaderName == HTTPHeaderName::LastEventID && !header.value.isAllASCII()) {
+    if (header.keyAsHTTPHeaderName && *header.keyAsHTTPHeaderName == HTTPHeaderName::LastEventID && !header.value.containsOnlyASCII()) {
         auto utf8Value = header.value.utf8();
         // Constructing a string with the UTF-8 bytes but claiming that it’s Latin-1 is the way to get CFNetwork to put those UTF-8 bytes on the wire.
         return adoptCF(CFStringCreateWithBytes(nullptr, utf8Value.dataAsUInt8Ptr(), utf8Value.length(), kCFStringEncodingISOLatin1, false));

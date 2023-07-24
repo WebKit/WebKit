@@ -169,8 +169,9 @@ void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& c
     clone.setBackgroundColor(backgroundColor());
     clone.setContentsScale(contentsScale());
     clone.setCornerRadius(cornerRadius());
+    clone.setVideoGravity(videoGravity());
 
-    if (!m_properties.shapePath.isNull())
+    if (!m_properties.shapePath.isEmpty())
         clone.setShapePath(m_properties.shapePath);
 
     if (m_properties.shapeRoundedRect)
@@ -648,6 +649,14 @@ bool PlatformCALayerRemote::backingStoreAttached() const
     return m_properties.backingStoreAttached;
 }
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+void PlatformCALayerRemote::setCoverageRect(const FloatRect& value)
+{
+    m_properties.coverageRect = value;
+    m_properties.notePropertiesChanged(LayerChange::CoverageRectChanged);
+}
+#endif
+
 void PlatformCALayerRemote::setGeometryFlipped(bool value)
 {
     m_properties.geometryFlipped = value;
@@ -876,6 +885,20 @@ void PlatformCALayerRemote::setAntialiasesEdges(bool antialiases)
 
     m_properties.antialiasesEdges = antialiases;
     m_properties.notePropertiesChanged(LayerChange::AntialiasesEdgesChanged);
+}
+
+MediaPlayerVideoGravity PlatformCALayerRemote::videoGravity() const
+{
+    return m_properties.videoGravity;
+}
+
+void PlatformCALayerRemote::setVideoGravity(MediaPlayerVideoGravity gravity)
+{
+    if (m_properties.videoGravity == gravity)
+        return;
+
+    m_properties.videoGravity = gravity;
+    m_properties.notePropertiesChanged(LayerChange::VideoGravityChanged);
 }
 
 FloatRoundedRect PlatformCALayerRemote::shapeRoundedRect() const

@@ -256,6 +256,12 @@
         "SpotDirection": "GL_SPOT_DIRECTION",
         "SpotExponent": "GL_SPOT_EXPONENT"
     },
+    "PolygonMode":
+    {
+        "Point" : "GL_POINT_NV",
+        "Line" : "GL_LINE_NV",
+        "Fill" : "GL_FILL_NV"
+    },
     "PointParameter":
     {
         "PointSizeMin" : "GL_POINT_SIZE_MIN",

@@ -15,7 +15,6 @@
 
 #include "absl/strings/string_view.h"
 #include "api/rtc_event_log/rtc_event.h"
-#include "api/transport/field_trial_based_config.h"
 #include "api/video/video_codec_constants.h"
 #include "api/video/video_timing.h"
 #include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
@@ -36,11 +35,10 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/rate_limiter.h"
 #include "rtc_base/strings/string_builder.h"
-#include "test/field_trial.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
-#include "test/scoped_key_value_config.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {
@@ -102,6 +100,7 @@ class MockRtpPacketPacer : public RtpPacketSender {
               EnqueuePackets,
               (std::vector<std::unique_ptr<RtpPacketToSend>>),
               (override));
+  MOCK_METHOD(void, RemovePacketsForSsrc, (uint32_t), (override));
 };
 
 }  // namespace
@@ -171,7 +170,7 @@ class RtpSenderTest : public ::testing::Test {
   std::unique_ptr<RtpPacketHistory> packet_history_;
   std::unique_ptr<RTPSender> rtp_sender_;
 
-  const test::ScopedKeyValueConfig field_trials_;
+  const test::ExplicitKeyValueConfig field_trials_{""};
 
   std::unique_ptr<RtpPacketToSend> BuildRtpPacket(int payload_type,
                                                   bool marker_bit,
@@ -920,6 +919,39 @@ TEST_F(RtpSenderTest, CountMidOnlyUntilAcked) {
   EXPECT_EQ(rtp_sender_->ExpectedPerPacketOverhead(), 12u);
 }
 
+TEST_F(RtpSenderTest, CountMidRidRridUntilAcked) {
+  RtpRtcpInterface::Configuration config = GetDefaultConfig();
+  CreateSender(config);
+
+  // Base RTP overhead is 12B and we use RTX which has an additional 2 bytes
+  // overhead.
+  EXPECT_EQ(rtp_sender_->ExpectedPerPacketOverhead(), 14u);
+
+  rtp_sender_->RegisterRtpHeaderExtension(RtpMid::Uri(), kMidExtensionId);
+
+  // Counted only if set.
+  EXPECT_EQ(rtp_sender_->ExpectedPerPacketOverhead(), 14u);
+  rtp_sender_->SetMid("foo");
+  EXPECT_EQ(rtp_sender_->ExpectedPerPacketOverhead(), 38u);
+
+  rtp_sender_->RegisterRtpHeaderExtension(RtpStreamId::Uri(), kRidExtensionId);
+  EXPECT_EQ(rtp_sender_->ExpectedPerPacketOverhead(), 54u);
+
+  // mid/rrid may be shared with mid/rid when both are active.
+  rtp_sender_->RegisterRtpHeaderExtension(RepairedRtpStreamId::Uri(),
+                                          kRepairedRidExtensionId);
+  EXPECT_EQ(rtp_sender_->ExpectedPerPacketOverhead(), 54u);
+
+  // Ack received, mid/rid no longer sent but we still need space for
+  // mid/rrid which can no longer be shared with mid/rid.
+  rtp_sender_->OnReceivedAckOnSsrc(0);
+  EXPECT_EQ(rtp_sender_->ExpectedPerPacketOverhead(), 54u);
+
+  // Ack received for RTX, no need to send RRID anymore.
+  rtp_sender_->OnReceivedAckOnRtxSsrc(0);
+  EXPECT_EQ(rtp_sender_->ExpectedPerPacketOverhead(), 14u);
+}
+
 TEST_F(RtpSenderTest, DontCountVolatileExtensionsIntoOverhead) {
   RtpRtcpInterface::Configuration config = GetDefaultConfig();
   config.rtx_send_ssrc = {};
@@ -1314,7 +1346,8 @@ TEST_F(RtpSenderTest, MarksPacketsWithKeyframeStatus) {
     EXPECT_TRUE(rtp_sender_video.SendVideo(
         kPayloadType, kCodecType,
         capture_time_ms * kCaptureTimeMsToRtpTimestamp, capture_time_ms,
-        kPayloadData, video_header, kDefaultExpectedRetransmissionTimeMs));
+        kPayloadData, sizeof(kPayloadData), video_header,
+        kDefaultExpectedRetransmissionTimeMs, {}));
 
     time_controller_.AdvanceTime(TimeDelta::Millis(33));
   }
@@ -1330,7 +1363,8 @@ TEST_F(RtpSenderTest, MarksPacketsWithKeyframeStatus) {
     EXPECT_TRUE(rtp_sender_video.SendVideo(
         kPayloadType, kCodecType,
         capture_time_ms * kCaptureTimeMsToRtpTimestamp, capture_time_ms,
-        kPayloadData, video_header, kDefaultExpectedRetransmissionTimeMs));
+        kPayloadData, sizeof(kPayloadData), video_header,
+        kDefaultExpectedRetransmissionTimeMs, {}));
 
     time_controller_.AdvanceTime(TimeDelta::Millis(33));
   }

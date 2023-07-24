@@ -25,7 +25,7 @@ class FrameForwarder : public rtc::VideoSourceInterface<VideoFrame> {
  public:
   FrameForwarder();
   ~FrameForwarder() override;
-  // Forwards |video_frame| to the registered |sink_|.
+  // Forwards `video_frame` to the registered `sink_`.
   virtual void IncomingCapturedFrame(const VideoFrame& video_frame)
       RTC_LOCKS_EXCLUDED(mutex_);
   rtc::VideoSinkWants sink_wants() const RTC_LOCKS_EXCLUDED(mutex_);

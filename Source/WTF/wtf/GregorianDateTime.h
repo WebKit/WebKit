@@ -37,6 +37,19 @@ class GregorianDateTime final {
 public:
     GregorianDateTime() = default;
     WTF_EXPORT_PRIVATE explicit GregorianDateTime(double ms, LocalTimeOffset);
+    explicit GregorianDateTime(int year, int month, int yearDay, int monthDay, int weekDay, int hour, int minute, int second, int utcOffsetInMinute, bool isDST)
+        : m_year(year)
+        , m_month(month)
+        , m_yearDay(yearDay)
+        , m_monthDay(monthDay)
+        , m_weekDay(weekDay)
+        , m_hour(hour)
+        , m_minute(minute)
+        , m_second(second)
+        , m_utcOffsetInMinute(utcOffsetInMinute)
+        , m_isDST(isDST)
+    {
+    }
 
     inline int year() const { return m_year; }
     inline int month() const { return m_month; }

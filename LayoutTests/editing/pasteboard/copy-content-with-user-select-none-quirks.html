@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="confluence-request-time" content="1689029750234">
+</head>
+<body>
+<div id="source">hello <span style="-webkit-user-select: none; user-select: none;"><i>world </i><b style="-webkit-user-select: initial;
+user-select: initial;">WebKit <span style="-webkit-user-select: none; user-select: none;"><q>rocks </q></span></b><font color="green" style="-webkit-user-select: none;
+user-select: none;"><s>because </s></font></span><span inert><em>foo </em></span></span>bar</div>
+<div id="destination" contenteditable></div>
+<pre id="output"></pre>
+</body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description(`This tests copying excludes content with user-select: none.<br>
+To manually test, copy "hello world foo bar" below then paste.`);
+
+jsTestIsAsync = true;
+getSelection().setBaseAndExtent(source, 0, source, source.childNodes.length);
+
+source.addEventListener("copy", () => {
+    shouldBeTrue('getSelection().toString().includes("hello")');
+    shouldBeTrue('getSelection().toString().includes("world")');
+    shouldBeTrue('getSelection().toString().includes("WebKit")');
+    shouldBeTrue('getSelection().toString().includes("rocks")');
+    shouldBeTrue('getSelection().toString().includes("because")');
+    shouldBeTrue('getSelection().toString().includes("foo")');
+    shouldBeTrue('getSelection().toString().includes("bar")');
+});
+
+destination.addEventListener("paste", () => {
+    shouldBeTrue('event.clipboardData.getData("text/plain").includes("hello")');
+    shouldBeTrue('event.clipboardData.getData("text/plain").includes("world")');
+    shouldBeTrue('event.clipboardData.getData("text/plain").includes("WebKit")');
+    shouldBeTrue('event.clipboardData.getData("text/plain").includes("rocks")');
+    shouldBeTrue('event.clipboardData.getData("text/plain").includes("because")');
+    shouldBeTrue('event.clipboardData.getData("text/plain").includes("foo")');
+    shouldBeTrue('event.clipboardData.getData("text/plain").includes("bar")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("hello")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("world")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("<i")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("</i>")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("WebKit")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("<b ")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("</b>")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("rocks")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("<q>")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("</q>")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("because")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("<s>")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("</s>")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("<em>")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("</em>")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("foo")');
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("bar")');
+    finishJSTest();
+});
+
+if (window.testRunner) {
+    testRunner.execCommand("Copy");
+    destination.focus();
+    testRunner.execCommand("Paste");
+} else {
+    source.addEventListener("copy", () => {
+        setTimeout(() => destination.focus(), 0);
+    });
+}
+
+</script>
+</html>

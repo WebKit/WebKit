@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (7,7) size 786x586
       RenderBlock {P} at (0,0) size 786x34
-        RenderText {#text} at (0,0) size 302x16
-          text run at (0,0) width 302: "Tests that these functions account for full page zoom."
-        RenderBR {BR} at (302,0) size 0x16
-        RenderText {#text} at (0,17) size 176x16
-          text run at (0,17) width 176: "There should be no red visible."
+        RenderText {#text} at (0,0) size 306x16
+          text run at (0,0) width 306: "Tests that these functions account for full page zoom."
+        RenderBR {BR} at (306,0) size 0x16
+        RenderText {#text} at (0,17) size 178x16
+          text run at (0,17) width 178: "There should be no red visible."
       RenderTable {TABLE} at (0,48) size 786x23
         RenderTableSection {TBODY} at (0,0) size 786x23
           RenderTableRow {TR} at (0,1) size 786x20
             RenderTableCell {TD} at (1,1) size 183x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 146x17
-                text run at (0,0) width 146: "getClientBoundingRect():"
+              RenderText {#text} at (0,0) size 149x17
+                text run at (0,0) width 149: "getClientBoundingRect():"
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (185,1) size 599x20 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 96x17
-                text run at (0,0) width 96: "getClientRects():"
+              RenderText {#text} at (0,0) size 99x17
+                text run at (0,0) width 99: "getClientRects():"
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0

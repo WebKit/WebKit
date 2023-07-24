@@ -20,7 +20,7 @@ info: |
   12. Perform ? Set(A, "length", actualDeleteCount, true).
   ...
 includes: [compareArray.js, proxyTrapsHelper.js]
-features: [Symbol.species]
+features: [Symbol.species, exponentiation]
 ---*/
 
 function StopSplice() {}

@@ -1,0 +1,39 @@
+<style>
+.container {
+  width: 120px;
+}
+
+.float {
+  float: left;
+  width: 80px;
+  height: 50px;
+  background-color: green;
+}
+
+.right {
+  float: right;
+  width: 40px;
+  height: 100px;
+}
+
+.inline-block {
+  display: inline-block;
+  height: 120px;
+  width: 80px;
+  background-color: blue;
+}
+
+.sibling_with_intrusive_floats {
+  height: 80px;
+}
+</style>
+<div class=container>
+  <div class=sibling_with_intrusive_floats>
+    <div class=inline-block></div>
+    <div class=float></div>
+    <div class="float right"></div>
+  </div>
+  <div style="width: 80px;">
+    <div class=inline-block></div>
+  </div>
+</div>

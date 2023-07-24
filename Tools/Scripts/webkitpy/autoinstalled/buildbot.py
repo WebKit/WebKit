@@ -21,8 +21,9 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
+import webkitscmpy
 
-from webkitscmpy import AutoInstall, Package, Version
+from webkitcorepy import AutoInstall, Package, Version
 from webkitpy.autoinstalled import twisted
 
 AutoInstall.install(Package('attrs', Version(21, 4, 0)))
@@ -34,6 +35,8 @@ AutoInstall.install(Package('pbr', Version(5, 9, 0)))
 AutoInstall.install(Package('PyJWT', Version(1, 7, 1), pypi_name='PyJWT', aliases=['jwt']))
 AutoInstall.install(Package('pyyaml', Version(5, 3, 1), pypi_name='PyYAML'))
 AutoInstall.install(Package('Tempita', Version(0, 4, 0)))
+
+AutoInstall.install('markupsafe')
 
 if sys.version_info >= (3, 0):
     AutoInstall.install(Package('autobahn', Version(20, 7, 1)))

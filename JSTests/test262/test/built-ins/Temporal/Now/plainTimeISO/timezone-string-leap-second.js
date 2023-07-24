@@ -9,12 +9,10 @@ features: [Temporal]
 
 let timeZone = "2016-12-31T23:59:60+00:00[UTC]";
 
-// A string with a leap second is a valid ISO string, so the following two
-// operations should not throw
+// A string with a leap second is a valid ISO string, so the following
+// operation should not throw
 
 Temporal.Now.plainTimeISO(timeZone);
-Temporal.Now.plainTimeISO({ timeZone });
 
 timeZone = "2021-08-19T17:30:45.123456789+23:59[+23:59:60]";
 assert.throws(RangeError, () => Temporal.Now.plainTimeISO(timeZone), "leap second in time zone name not valid");
-assert.throws(RangeError, () => Temporal.Now.plainTimeISO({ timeZone }), "leap second in time zone name not valid (nested property)");

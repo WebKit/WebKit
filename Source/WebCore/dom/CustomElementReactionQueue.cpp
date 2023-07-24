@@ -42,84 +42,67 @@
 
 namespace WebCore {
 
-class CustomElementReactionQueueItem {
-    using AdoptedPayload = std::tuple<Ref<Document>, Ref<Document>>;
-    using AttributeChangedPayload = std::tuple<QualifiedName, AtomString, AtomString>;
-    using FormAssociatedPayload = RefPtr<HTMLFormElement>;
-    using FormDisabledPayload = bool;
-    using FormStateRestorePayload = CustomElementFormValue;
-    using Payload = std::optional<std::variant<AdoptedPayload, AttributeChangedPayload, FormAssociatedPayload, FormDisabledPayload, FormStateRestorePayload>>;
+inline CustomElementReactionQueueItem::AdoptedPayload::~AdoptedPayload() = default;
+inline CustomElementReactionQueueItem::FormAssociatedPayload::~FormAssociatedPayload() = default;
 
-public:
-    enum class Type : uint8_t {
-        ElementUpgrade,
-        Connected,
-        Disconnected,
-        Adopted,
-        AttributeChanged,
-        FormAssociated,
-        FormReset,
-        FormDisabled,
-        FormStateRestore,
-    };
+inline CustomElementReactionQueueItem::CustomElementReactionQueueItem() = default;
+inline CustomElementReactionQueueItem::CustomElementReactionQueueItem(CustomElementReactionQueueItem&&) = default;
 
-    CustomElementReactionQueueItem(Type type, Payload payload = std::nullopt)
-        : m_type(type)
-        , m_payload(payload)
-    { }
+inline CustomElementReactionQueueItem::CustomElementReactionQueueItem(Type type, Payload payload)
+    : m_type(type)
+    , m_payload(payload)
+{ }
 
-    Type type() const { return m_type; }
+inline CustomElementReactionQueueItem::~CustomElementReactionQueueItem() = default;
 
-    void invoke(Element& element, JSCustomElementInterface& elementInterface)
-    {
-        switch (m_type) {
-        case Type::ElementUpgrade:
-            ASSERT(!m_payload.has_value());
-            elementInterface.upgradeElement(element);
-            break;
-        case Type::Connected:
-            ASSERT(!m_payload.has_value());
-            elementInterface.invokeConnectedCallback(element);
-            break;
-        case Type::Disconnected:
-            ASSERT(!m_payload.has_value());
-            elementInterface.invokeDisconnectedCallback(element);
-            break;
-        case Type::Adopted: {
-            ASSERT(m_payload.has_value() && std::holds_alternative<AdoptedPayload>(m_payload.value()));
-            auto& payload = std::get<AdoptedPayload>(m_payload.value());
-            elementInterface.invokeAdoptedCallback(element, std::get<0>(payload), std::get<1>(payload));
-            break;
-        }
-        case Type::AttributeChanged: {
-            ASSERT(m_payload.has_value() && std::holds_alternative<AttributeChangedPayload>(m_payload.value()));
-            auto& payload = std::get<AttributeChangedPayload>(m_payload.value());
-            elementInterface.invokeAttributeChangedCallback(element, std::get<0>(payload), std::get<1>(payload), std::get<2>(payload));
-            break;
-        }
-        case Type::FormAssociated:
-            ASSERT(m_payload.has_value() && std::holds_alternative<FormAssociatedPayload>(m_payload.value()));
-            elementInterface.invokeFormAssociatedCallback(element, std::get<FormAssociatedPayload>(m_payload.value()).get());
-            break;
-        case Type::FormReset:
-            ASSERT(!m_payload.has_value());
-            elementInterface.invokeFormResetCallback(element);
-            break;
-        case Type::FormDisabled:
-            ASSERT(m_payload.has_value() && std::holds_alternative<FormDisabledPayload>(m_payload.value()));
-            elementInterface.invokeFormDisabledCallback(element, std::get<FormDisabledPayload>(m_payload.value()));
-            break;
-        case Type::FormStateRestore:
-            ASSERT(m_payload.has_value() && std::holds_alternative<FormStateRestorePayload>(m_payload.value()));
-            elementInterface.invokeFormStateRestoreCallback(element, std::get<FormStateRestorePayload>(m_payload.value()));
-            break;
-        }
+inline void CustomElementReactionQueueItem::invoke(Element& element, JSCustomElementInterface& elementInterface)
+{
+    switch (m_type) {
+    case Type::Invalid:
+        ASSERT_NOT_REACHED();
+        break;
+    case Type::ElementUpgrade:
+        ASSERT(!m_payload.has_value());
+        elementInterface.upgradeElement(element);
+        break;
+    case Type::Connected:
+        ASSERT(!m_payload.has_value());
+        elementInterface.invokeConnectedCallback(element);
+        break;
+    case Type::Disconnected:
+        ASSERT(!m_payload.has_value());
+        elementInterface.invokeDisconnectedCallback(element);
+        break;
+    case Type::Adopted: {
+        ASSERT(m_payload.has_value() && std::holds_alternative<AdoptedPayload>(m_payload.value()));
+        auto& payload = std::get<AdoptedPayload>(m_payload.value());
+        elementInterface.invokeAdoptedCallback(element, payload.oldDocument, payload.newDocument);
+        break;
     }
-
-private:
-    Type m_type;
-    Payload m_payload;
-};
+    case Type::AttributeChanged: {
+        ASSERT(m_payload.has_value() && std::holds_alternative<AttributeChangedPayload>(m_payload.value()));
+        auto& payload = std::get<AttributeChangedPayload>(m_payload.value());
+        elementInterface.invokeAttributeChangedCallback(element, std::get<0>(payload), std::get<1>(payload), std::get<2>(payload));
+        break;
+    }
+    case Type::FormAssociated:
+        ASSERT(m_payload.has_value() && std::holds_alternative<FormAssociatedPayload>(m_payload.value()));
+        elementInterface.invokeFormAssociatedCallback(element, std::get<FormAssociatedPayload>(m_payload.value()).form.get());
+        break;
+    case Type::FormReset:
+        ASSERT(!m_payload.has_value());
+        elementInterface.invokeFormResetCallback(element);
+        break;
+    case Type::FormDisabled:
+        ASSERT(m_payload.has_value() && std::holds_alternative<FormDisabledPayload>(m_payload.value()));
+        elementInterface.invokeFormDisabledCallback(element, std::get<FormDisabledPayload>(m_payload.value()));
+        break;
+    case Type::FormStateRestore:
+        ASSERT(m_payload.has_value() && std::holds_alternative<FormStateRestorePayload>(m_payload.value()));
+        elementInterface.invokeFormStateRestoreCallback(element, std::get<FormStateRestorePayload>(m_payload.value()));
+        break;
+    }
+}
 
 CustomElementReactionQueue::CustomElementReactionQueue(JSCustomElementInterface& elementInterface)
     : m_interface(elementInterface)
@@ -210,7 +193,7 @@ void CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(Element& element
     auto& queue = *element.reactionQueue();
     if (!queue.m_interface->hasAdoptedCallback())
         return;
-    queue.m_items.append({ Item::Type::Adopted, std::make_tuple(Ref { oldDocument }, Ref { newDocument }) });
+    queue.m_items.append({ Item::Type::Adopted, Item::AdoptedPayload { Ref { oldDocument }, Ref { newDocument } } });
     enqueueElementOnAppropriateElementQueue(element);
 }
 
@@ -236,7 +219,7 @@ void CustomElementReactionQueue::enqueueFormAssociatedCallbackIfNeeded(Element& 
     if (!queue.m_interface->hasFormAssociatedCallback())
         return;
     ASSERT(queue.isFormAssociated());
-    queue.m_items.append({ Item::Type::FormAssociated, associatedForm });
+    queue.m_items.append({ Item::Type::FormAssociated, Item::FormAssociatedPayload { associatedForm } });
     enqueueElementOnAppropriateElementQueue(element);
 }
 
@@ -330,11 +313,14 @@ void CustomElementReactionQueue::setElementInternalsAttached()
 void CustomElementReactionQueue::invokeAll(Element& element)
 {
     while (!m_items.isEmpty()) {
-        Vector<Item> items = WTFMove(m_items);
+        auto items = std::exchange(m_items, { });
         for (auto& item : items)
             item.invoke(element, m_interface.get());
     }
 }
+
+CustomElementQueue::CustomElementQueue() = default;
+CustomElementQueue::~CustomElementQueue() = default;
 
 inline void CustomElementQueue::add(Element& element)
 {
@@ -386,7 +372,7 @@ inline void CustomElementQueue::processQueue(JSC::JSGlobalObject* state)
     }
 }
 
-Vector<GCReachableRef<Element>> CustomElementQueue::takeElements()
+Vector<GCReachableRef<Element>, 4> CustomElementQueue::takeElements()
 {
     RELEASE_ASSERT(!m_invoking);
     return std::exchange(m_elements, { });
@@ -427,11 +413,11 @@ void CustomElementReactionStack::processQueue(JSC::JSGlobalObject* state)
     m_queue = nullptr;
 }
 
-Vector<GCReachableRef<Element>> CustomElementReactionStack::takeElements()
+Vector<GCReachableRef<Element>, 4> CustomElementReactionStack::takeElements()
 {
     if (!m_queue)
         return { };
-    Vector<GCReachableRef<Element>> elements = m_queue->takeElements();
+    auto elements = m_queue->takeElements();
     delete m_queue;
     m_queue = nullptr;
     return elements;

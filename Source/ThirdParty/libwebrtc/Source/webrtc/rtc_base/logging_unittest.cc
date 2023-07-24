@@ -144,6 +144,52 @@ TEST(LogTest, SingleStream) {
   EXPECT_EQ(sev, LogMessage::GetLogToStream(nullptr));
 }
 
+TEST(LogTest, LogIfLogIfConditionIsTrue) {
+  std::string str;
+  LogSinkImpl stream(&str);
+  LogMessage::AddLogToStream(&stream, LS_INFO);
+
+  RTC_LOG_IF(LS_INFO, true) << "Hello";
+  EXPECT_NE(std::string::npos, str.find("Hello"));
+
+  LogMessage::RemoveLogToStream(&stream);
+}
+
+TEST(LogTest, LogIfDontLogIfConditionIsFalse) {
+  std::string str;
+  LogSinkImpl stream(&str);
+  LogMessage::AddLogToStream(&stream, LS_INFO);
+
+  RTC_LOG_IF(LS_INFO, false) << "Hello";
+  EXPECT_EQ(std::string::npos, str.find("Hello"));
+
+  LogMessage::RemoveLogToStream(&stream);
+}
+
+TEST(LogTest, LogIfFLogIfConditionIsTrue) {
+  std::string str;
+  LogSinkImpl stream(&str);
+  LogMessage::AddLogToStream(&stream, LS_INFO);
+
+  RTC_LOG_IF_F(LS_INFO, true) << "Hello";
+  EXPECT_NE(std::string::npos, str.find(__FUNCTION__));
+  EXPECT_NE(std::string::npos, str.find("Hello"));
+
+  LogMessage::RemoveLogToStream(&stream);
+}
+
+TEST(LogTest, LogIfFDontLogIfConditionIsFalse) {
+  std::string str;
+  LogSinkImpl stream(&str);
+  LogMessage::AddLogToStream(&stream, LS_INFO);
+
+  RTC_LOG_IF_F(LS_INFO, false) << "Not";
+  EXPECT_EQ(std::string::npos, str.find(__FUNCTION__));
+  EXPECT_EQ(std::string::npos, str.find("Not"));
+
+  LogMessage::RemoveLogToStream(&stream);
+}
+
 // Test using multiple log streams. The INFO stream should get the INFO message,
 // the VERBOSE stream should get the INFO and the VERBOSE.
 // We should restore the correct global state at the end.

@@ -61,8 +61,8 @@ public:
     void seekCompleted();
 
 #if !RELEASE_LOG_DISABLED
-    const void* mediaPlayerLogIdentifier() { return m_player->mediaPlayerLogIdentifier(); }
-    const Logger& mediaPlayerLogger() { return m_player->mediaPlayerLogger(); }
+    const void* mediaPlayerLogIdentifier() { return m_player.get()->mediaPlayerLogIdentifier(); }
+    const Logger& mediaPlayerLogger() { return m_player.get()->mediaPlayerLogger(); }
 #endif
 
 private:
@@ -92,7 +92,7 @@ private:
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() override;
     DestinationColorSpace colorSpace() override;
 
-    MediaPlayer* m_player;
+    ThreadSafeWeakPtr<MediaPlayer> m_player;
     RefPtr<MockMediaSourcePrivate> m_mediaSourcePrivate;
 
     MediaTime m_currentTime;

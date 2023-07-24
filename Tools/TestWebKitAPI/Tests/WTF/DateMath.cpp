@@ -133,8 +133,22 @@ TEST(WTF_DateMath, dayInMonthFromDayInYear)
     EXPECT_EQ(32, dayInMonthFromDayInYear(366, true));
 }
 
+static bool isPacificTimeZone()
+{
+#if PLATFORM(WIN)
+    TIME_ZONE_INFORMATION info;
+    GetTimeZoneInformation(&info);
+    return info.Bias == 8 * 60 && !info.StandardBias && info.DaylightBias == -60;
+#else
+    return true;
+#endif
+}
+
 TEST(WTF_DateMath, calculateLocalTimeOffset)
 {
+    if (!isPacificTimeZone())
+        GTEST_SKIP() << "Not in Pacific Time Zone";
+
     // DST Start: April 30, 1967 (02:00 am)
     LocalTimeOffset dstStart1967 = calculateLocalTimeOffset(-84301200000, WTF::LocalTime);
     EXPECT_TRUE(dstStart1967.isDST);

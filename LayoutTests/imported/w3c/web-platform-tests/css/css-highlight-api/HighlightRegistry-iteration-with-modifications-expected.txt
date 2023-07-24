@@ -1,0 +1,8 @@
+
+FAIL HighlightRegistry iteration is not modified when a new Highlight is added after starting the iteration assert_true: The iteration ends although we added a new Highlight after starting the iteration expected true got false
+FAIL HighlightRegistry iteration is not modified when a new Highlight is added after starting the iteration with one Highlight in the HighlightRegistry assert_true: The iteration ends after going through all the Highlights that were in the HighlightRegistry when the iteration started although there was a Highlight addition after starting the iteration expected true got false
+FAIL HighlightRegistry iteration is not modified when the Highlight that was pointed to by the iterator was deleted after starting the iteration assert_false: The iteration doesn't end although the Highlight that was pointed to by the iterator was deleted expected false got true
+FAIL HighlightRegistry iteration is not modified when the Highlight that was immediately after the one pointed to by the iterator was deleted after starting the iteration assert_false: The iteration doesn't end when you call .next twice since the beginning of the iteration although the second Highlight was deleted expected false got true
+PASS HighlightRegistry iteration is not modified when a Highlight that was already visited is deleted and there are still Highlights to visit
+FAIL HighlightRegistry iteration is not modified when the Highlight that was pointed to by the iterator was deleted using .clear() after starting the iteration assert_false: The iteration doesn't end although the Highlight that was pointed to by the iterator was deleted using .clear() expected false got true
+

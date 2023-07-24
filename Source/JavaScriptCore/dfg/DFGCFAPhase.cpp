@@ -55,7 +55,7 @@ public:
     {
         ASSERT(m_graph.m_form == ThreadedCPS || m_graph.m_form == SSA);
         ASSERT(m_graph.m_unificationState == GloballyUnified);
-        ASSERT(m_graph.m_refCountState == EverythingIsLive || Options::validateAbstractInterpreterState() && m_graph.m_refCountState == ExactRefCount);
+        ASSERT(m_graph.m_refCountState == EverythingIsLive || (Options::validateAbstractInterpreterState() && m_graph.m_refCountState == ExactRefCount));
         
         m_count = 0;
 

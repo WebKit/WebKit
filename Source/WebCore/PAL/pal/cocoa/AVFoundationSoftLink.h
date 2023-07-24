@@ -48,6 +48,7 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAssetWriterInput)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVContentKeyReportGroup)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVContentKeyResponse)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVContentKeySession)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVDelegatingPlaybackCoordinator)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVMediaSelectionGroup)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVMediaSelectionOption)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVMetadataItem)
@@ -69,10 +70,6 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSpeechSynthesizer)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSpeechUtterance)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVStreamDataParser)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVURLAsset)
-
-#if HAVE(AV_DELEGATING_PLAYBACK_COORDINATOR)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, AVDelegatingPlaybackCoordinator)
-#endif
 
 #if HAVE(AVAUDIOSESSION)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioSession)
@@ -371,5 +368,8 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioPCMBuffer)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAssetExportPresetHighestQuality, NSString *)
 #define AVAssetExportPresetHighestQuality PAL::get_AVFoundation_AVAssetExportPresetHighestQuality()
+
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVURLAssetExtendedMIMETypePlayabilityTreatSupportedPlaylistMIMETypesAsISOBMFFMediaDataContainersKey, NSString *)
+#define AVURLAssetExtendedMIMETypePlayabilityTreatSupportedPlaylistMIMETypesAsISOBMFFMediaDataContainersKey PAL::get_AVFoundation_AVURLAssetExtendedMIMETypePlayabilityTreatSupportedPlaylistMIMETypesAsISOBMFFMediaDataContainersKey()
 
 #endif // USE(AVFOUNDATION)

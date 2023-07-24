@@ -28,7 +28,7 @@ static INLINE void obmc_variance_w4(const uint8_t *pre, const int pre_stride,
   assert(IS_POWER_OF_TWO(h));
 
   do {
-    const __m128i v_p_b = _mm_cvtsi32_si128(*(const uint32_t *)(pre + n));
+    const __m128i v_p_b = _mm_cvtsi32_si128(*(const int *)(pre + n));
     const __m128i v_m_d = _mm_load_si128((const __m128i *)(mask + n));
     const __m128i v_w_d = _mm_load_si128((const __m128i *)(wsrc + n));
 

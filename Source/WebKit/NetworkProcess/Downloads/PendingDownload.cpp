@@ -37,8 +37,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, WebCore::BlobRegistryImpl* blobRegistry, const String& suggestedName)
-    : m_networkLoad(makeUnique<NetworkLoad>(*this, blobRegistry, WTFMove(parameters), networkSession))
+PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName)
+    : m_networkLoad(makeUnique<NetworkLoad>(*this, WTFMove(parameters), networkSession))
     , m_parentProcessConnection(parentProcessConnection)
 {
     m_networkLoad->start();

@@ -892,6 +892,58 @@ static const GB18030EncodeIndex& gb18030EncodeIndex()
     return *table;
 }
 
+// https://unicode-org.atlassian.net/browse/ICU-22357
+// The 2-byte values are handled correctly by values from gb18030()
+// but these need to be exceptions from gb18030Ranges().
+static std::optional<uint32_t> gb180302022Encode(UChar32 codePoint)
+{
+    switch (codePoint) {
+    case 0xE81E: return 0x82359037;
+    case 0xE826: return 0x82359038;
+    case 0xE82B: return 0x82359039;
+    case 0xE82C: return 0x82359130;
+    case 0xE832: return 0x82359131;
+    case 0xE843: return 0x82359132;
+    case 0xE854: return 0x82359133;
+    case 0xE864: return 0x82359134;
+    case 0xE78D: return 0x84318236;
+    case 0xE78F: return 0x84318237;
+    case 0xE78E: return 0x84318238;
+    case 0xE790: return 0x84318239;
+    case 0xE791: return 0x84318330;
+    case 0xE792: return 0x84318331;
+    case 0xE793: return 0x84318332;
+    case 0xE794: return 0x84318333;
+    case 0xE795: return 0x84318334;
+    case 0xE796: return 0x84318335;
+    }
+    return std::nullopt;
+}
+static std::optional<UChar32> gb180302022Decode(uint8_t first, uint8_t second, uint8_t third, uint8_t fourth)
+{
+    switch (static_cast<uint32_t>(first) << 24 | static_cast<uint32_t>(second) << 16 | static_cast<uint32_t>(third) << 8 | fourth) {
+    case 0x82359037: return 0xE81E;
+    case 0x82359038: return 0xE826;
+    case 0x82359039: return 0xE82B;
+    case 0x82359130: return 0xE82C;
+    case 0x82359131: return 0xE832;
+    case 0x82359132: return 0xE843;
+    case 0x82359133: return 0xE854;
+    case 0x82359134: return 0xE864;
+    case 0x84318236: return 0xE78D;
+    case 0x84318237: return 0xE78F;
+    case 0x84318238: return 0xE78E;
+    case 0x84318239: return 0xE790;
+    case 0x84318330: return 0xE791;
+    case 0x84318331: return 0xE792;
+    case 0x84318332: return 0xE793;
+    case 0x84318333: return 0xE794;
+    case 0x84318334: return 0xE795;
+    case 0x84318335: return 0xE796;
+    }
+    return std::nullopt;
+}
+
 // https://encoding.spec.whatwg.org/#gb18030-decoder
 String TextCodecCJK::gb18030Decode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
@@ -917,6 +969,10 @@ String TextCodecCJK::gb18030Decode(const uint8_t* bytes, size_t length, bool flu
             uint8_t first = std::exchange(m_gb18030First, 0x00);
             uint8_t second = std::exchange(m_gb18030Second, 0x00);
             uint8_t third = std::exchange(m_gb18030Third, 0x00);
+            if (auto codePoint = gb180302022Decode(first, second, third, byte)) {
+                result.appendCharacter(*codePoint);
+                return SawError::No;
+            }
             if (auto codePoint = gb18030RangesCodePoint(((first - 0x81) * 10 * 126 * 10) + ((second - 0x30) * 10 * 126) + ((third - 0x81) * 10) + byte - 0x30)) {
                 result.appendCharacter(*codePoint);
                 return SawError::No;
@@ -999,8 +1055,16 @@ static Vector<uint8_t> gbEncodeShared(StringView string, Function<void(UChar32, 
             unencodableHandler(codePoint, result);
             continue;
         }
-        if (isGBK == IsGBK::Yes && codePoint == 0x20AC) {
-            result.append(0x80);
+        if (isGBK == IsGBK::Yes) {
+            if (codePoint == 0x20AC) {
+                result.append(0x80);
+                continue;
+            }
+        } else if (auto encoded = gb180302022Encode(codePoint)) {
+            result.append(*encoded >> 24);
+            result.append(*encoded >> 16);
+            result.append(*encoded >> 8);
+            result.append(*encoded);
             continue;
         }
         auto pointerRange = findInSortedPairs(gb18030EncodeIndex(), codePoint);

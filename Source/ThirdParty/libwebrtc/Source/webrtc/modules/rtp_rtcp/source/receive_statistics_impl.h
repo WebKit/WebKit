@@ -18,10 +18,10 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "rtc_base/containers/flat_map.h"
+#include "rtc_base/numerics/sequence_number_unwrapper.h"
 #include "rtc_base/rate_statistics.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
@@ -65,6 +65,7 @@ class StreamStatisticianImpl : public StreamStatisticianImplInterface {
   bool IsRetransmitOfOldPacket(const RtpPacketReceived& packet,
                                int64_t now_ms) const;
   void UpdateJitter(const RtpPacketReceived& packet, int64_t receive_time_ms);
+  void ReviseFrequencyAndJitter(int payload_type_frequency);
   // Updates StreamStatistician for out of order packets.
   // Returns true if packet considered to be out of order.
   bool UpdateOutOfOrder(const RtpPacketReceived& packet,
@@ -95,7 +96,7 @@ class StreamStatisticianImpl : public StreamStatisticianImplInterface {
 
   int64_t last_receive_time_ms_;
   uint32_t last_received_timestamp_;
-  SequenceNumberUnwrapper seq_unwrapper_;
+  RtpSequenceNumberUnwrapper seq_unwrapper_;
   int64_t received_seq_first_;
   int64_t received_seq_max_;
   // Assume that the other side restarted when there are two sequential packets
@@ -108,6 +109,9 @@ class StreamStatisticianImpl : public StreamStatisticianImplInterface {
   // Counter values when we sent the last report.
   int32_t last_report_cumulative_loss_;
   int64_t last_report_seq_max_;
+
+  // The sample frequency of the last received packet.
+  int last_payload_type_frequency_;
 };
 
 // Thread-safe implementation of StreamStatisticianImplInterface.

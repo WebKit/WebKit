@@ -496,7 +496,7 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
             return;
 
         m_httpHeaderFields.commonHeaders().removeAllMatching([&corsSafeHeaderSet](auto& header) {
-            return !isSafeCrossOriginResponseHeader(header.key) && !corsSafeHeaderSet.contains<ASCIICaseInsensitiveStringViewHashTranslator>(httpHeaderNameString(header.key));
+            return !isSafeCrossOriginResponseHeader(header.key) && !corsSafeHeaderSet.contains<HashTranslatorASCIILiteralCaseInsensitive>(httpHeaderNameString(header.key));
         });
         m_httpHeaderFields.uncommonHeaders().removeAllMatching([&corsSafeHeaderSet](auto& header) { return !corsSafeHeaderSet.contains(header.key); });
         break;
@@ -814,7 +814,7 @@ bool ResourceResponseBase::isAttachment() const
     lazyInit(AllFields);
 
     auto value = m_httpHeaderFields.get(HTTPHeaderName::ContentDisposition);
-    return equalLettersIgnoringASCIICase(StringView(value).left(value.find(';')).stripWhiteSpace(), "attachment"_s);
+    return equalLettersIgnoringASCIICase(StringView(value).left(value.find(';')).trim(isUnicodeCompatibleASCIIWhitespace<UChar>), "attachment"_s);
 }
 
 bool ResourceResponseBase::isAttachmentWithFilename() const
@@ -826,7 +826,7 @@ bool ResourceResponseBase::isAttachmentWithFilename() const
         return false;
 
     StringView contentDispositionView { contentDisposition };
-    if (!equalLettersIgnoringASCIICase(contentDispositionView.left(contentDispositionView.find(';')).stripWhiteSpace(), "attachment"_s))
+    if (!equalLettersIgnoringASCIICase(contentDispositionView.left(contentDispositionView.find(';')).trim(isUnicodeCompatibleASCIIWhitespace<UChar>), "attachment"_s))
         return false;
 
     return !filenameFromHTTPContentDisposition(contentDispositionView).isNull();
@@ -870,7 +870,7 @@ bool ResourceResponseBase::equalForWebKitLegacyChallengeComparison(const Resourc
 bool ResourceResponseBase::containsInvalidHTTPHeaders() const
 {
     for (auto& header : httpHeaderFields()) {
-        if (!isValidHTTPHeaderValue(stripLeadingAndTrailingHTTPSpaces(header.value)))
+        if (!isValidHTTPHeaderValue(header.value.trim(isJSONOrHTTPWhitespace<UChar>)))
             return true;
     }
     return false;

@@ -731,7 +731,7 @@ TPrecision TIntermAggregate::derivePrecision() const
     // same is true for dFd*, interpolateAt* and subpassLoad operations.
     if (BuiltInGroup::IsTexture(mOp) || BuiltInGroup::IsImageLoad(mOp) ||
         BuiltInGroup::IsDerivativesFS(mOp) || BuiltInGroup::IsInterpolationFS(mOp) ||
-        mOp == EOpSubpassLoad)
+        mOp == EOpSubpassLoad || mOp == EOpInterpolateAtCenter)
     {
         return mArguments[0]->getAsTyped()->getPrecision();
     }

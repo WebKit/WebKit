@@ -157,7 +157,7 @@ class GitHub(object):
     @defer.inlineCallbacks
     def email_for_owners(cls, owners):
         if not owners:
-            return defer.returnValue((None, 'No owners defined, so email cannot be extracted'))
+            return defer.returnValue((None, ['No owners defined, so email cannot be extracted']))
         contributors, errors = yield Contributors.load()
         return defer.returnValue((contributors.get(owners[0].lower(), {}).get('email'), errors))
 
@@ -658,7 +658,6 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
         if owners:
             email, errors = yield GitHub.email_for_owners(owners)
             for error in errors:
-                print(error)
                 yield self._addToLog('stdio', error)
             if email:
                 display_name = '{} ({})'.format(email, owners[0])
@@ -1060,7 +1059,7 @@ class CommitPatch(steps.ShellSequence, CompositeStepMixin, ShellMixin):
 import sys
 
 lines = [l for l in sys.stdin]
-for s in re.split(r' (Need the bug URL \(OOPS!\).)|(\S+:\/\/\S+)', lines[0].rstrip()):
+for s in re.split(r' (Need the bug URL \\(OOPS!\\).)|(\\S+:\\/\\/\\S+)', lines[0].rstrip()):
     if s and s != ' ':
         print(s)
 for l in lines[1:]:
@@ -1834,7 +1833,6 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             change_string = 'Hash {}'.format(sha)
             change_author, errors = yield GitHub.email_for_owners(self.getProperty('owners', []))
             for error in errors:
-                print(error)
                 yield self._addToLog('stdio', error)
 
             if not change_author:
@@ -1937,7 +1935,6 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
     def run(self):
         self.contributors, errors = yield Contributors.load(use_network=True)
         for error in errors:
-            print(error)
             yield self._addToLog('stdio', error)
 
         if not self.contributors:
@@ -2905,7 +2902,6 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
                 change_string = 'Hash {}'.format(sha)
                 change_author, errors = yield GitHub.email_for_owners(self.getProperty('owners', []))
                 for error in errors:
-                    print(error)
                     yield self._addToLog('stdio', error)
 
             if not change_author:
@@ -3885,7 +3881,6 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
                 change_string = 'Hash {}'.format(sha)
                 change_author, errors = yield GitHub.email_for_owners(self.getProperty('owners', []))
                 for error in errors:
-                    print(error)
                     yield self._addToLog('stdio', error)
 
             if not change_author:
@@ -5705,7 +5700,6 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
 
         self.contributors, errors = yield Contributors.load(use_network=True)
         for error in errors:
-            print(error)
             self._addToLog('stdio', error)
 
         reviewers, log_text = self.extract_reviewers(self.log_observer.getStdout())
@@ -5770,7 +5764,6 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         self.commands = []
         self.contributors, errors = yield Contributors.load(use_network=True)
         for error in errors:
-            print(error)
             yield self._addToLog('stdio', error)
 
         base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)

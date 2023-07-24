@@ -239,6 +239,7 @@ private:
     void notifyActiveSourceBuffersChanged() override;
 
     void setPresentationSize(const IntSize&) final;
+    void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&) final;
 
     void updateDisplayLayerAndDecompressionSession();
 
@@ -278,12 +279,10 @@ private:
 
     bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
 
-#if HAVE(AVSAMPLEBUFFERRENDERSYNCHRONIZER_RATEATHOSTTIME)
     bool supportsPlayAtHostTime() const final { return true; }
     bool supportsPauseAtHostTime() const final { return true; }
     bool playAtHostTime(const MonotonicTime&) final;
     bool pauseAtHostTime(const MonotonicTime&) final;
-#endif
 
     void startVideoFrameMetadataGathering() final;
     void stopVideoFrameMetadataGathering() final;
@@ -314,7 +313,7 @@ private:
     };
     std::unique_ptr<PendingSeek> m_pendingSeek;
 
-    MediaPlayer* m_player;
+    ThreadSafeWeakPtr<MediaPlayer> m_player;
     WeakPtrFactory<MediaPlayerPrivateMediaSourceAVFObjC> m_sizeChangeObserverWeakPtrFactory;
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;

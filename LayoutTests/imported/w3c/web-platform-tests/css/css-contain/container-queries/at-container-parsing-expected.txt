@@ -55,6 +55,7 @@ PASS size(width)
 PASS (asdf)
 PASS (resolution > 100dpi)
 PASS (resolution: 150dpi)
+PASS (resolution: calc(2x))
 PASS (color)
 PASS (min-color: 1)
 PASS (color-index >= 1)
@@ -106,14 +107,4 @@ PASS Container name: not
 PASS Container name: And
 PASS Container name: oR
 PASS Container name: nOt
-FAIL style(--my-prop: foo) assert_equals: expected "true" but got ""
-FAIL style(--my-prop: foo - bar ()) assert_equals: expected "true" but got ""
-FAIL style(not ((--foo: calc(10px + 2em)) and ((--foo: url(x))))) assert_equals: expected "true" but got ""
-FAIL style((--foo: bar) or (--bar: 10px)) assert_equals: expected "true" but got ""
-FAIL style(--my-prop:) assert_equals: expected "true" but got ""
-FAIL style(--my-prop: ) assert_equals: expected "true" but got ""
-FAIL style(--foo: bar !important) assert_equals: expected "true" but got ""
-PASS style(--foo: bar;)
-PASS style(--foo)
-PASS style(style(--foo: bar))
 

@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2,1 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -83,7 +83,9 @@ enum {
     PROP_SERVICE_WORKER_REGISTRATIONS_DIRECTORY,
     PROP_DOM_CACHE_DIRECTORY,
 #endif
-    PROP_IS_EPHEMERAL
+    PROP_IS_EPHEMERAL,
+    PROP_ORIGIN_STORAGE_RATIO,
+    PROP_TOTAL_STORAGE_RATIO
 };
 
 struct _WebKitWebsiteDataManagerPrivate {
@@ -111,6 +113,9 @@ struct _WebKitWebsiteDataManagerPrivate {
     GUniquePtr<char> swRegistrationsDirectory;
     GUniquePtr<char> domCacheDirectory;
 #endif
+
+    gdouble originStorageRatio;
+    gdouble totalStorageRatio;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitWebsiteDataManager, webkit_website_data_manager, G_TYPE_OBJECT, GObject)
@@ -212,6 +217,12 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
     case PROP_IS_EPHEMERAL:
         if (g_value_get_boolean(value))
             manager->priv->websiteDataStore = WebKit::WebsiteDataStore::createNonPersistent();
+        break;
+    case PROP_ORIGIN_STORAGE_RATIO:
+        manager->priv->originStorageRatio = g_value_get_double(value);
+        break;
+    case PROP_TOTAL_STORAGE_RATIO:
+        manager->priv->totalStorageRatio = g_value_get_double(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
@@ -479,6 +490,42 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
             nullptr, nullptr,
             FALSE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitWebsiteDataManager:origin-storage-ratio:
+     *
+     * The percentage of volume space that can be used for data storage for every domain.
+     * If the maximum storage is reached the storage request will fail with a QuotaExceededError exception.
+     * A value of 0.0 means that data storage is not allowed. A value of -1.0, which is the default,
+     * means WebKit will use the default quota (1 GiB).
+     *
+     * Since: 2.42
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_ORIGIN_STORAGE_RATIO,
+        g_param_spec_double("origin-storage-ratio",
+            nullptr, nullptr,
+            -1.0, 1.0, -1.0,
+            static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitWebsiteDataManager:total-storage-ratio:
+     *
+     * The percentage of volume space that can be used for data storage for all domains.
+     * If the maximum storage is reached the eviction will happen.
+     * A value of 0.0 means that data storage is not allowed. A value of -1.0, which is the default,
+     * means there's no limit for the total storage.
+     *
+     * Since: 2.42
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_TOTAL_STORAGE_RATIO,
+        g_param_spec_double("total-storage-ratio",
+            nullptr, nullptr,
+            -1.0, 1.0, -1.0,
+            static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY)));
 }
 
 WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager* manager)
@@ -506,6 +553,12 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
         if (priv->domCacheDirectory)
             configuration->setCacheStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->domCacheDirectory.get()));
 #endif
+        if (priv->originStorageRatio >= 0.0)
+            configuration->setOriginQuotaRatio(priv->originStorageRatio);
+
+        if (priv->totalStorageRatio >= 0.0)
+            configuration->setTotalQuotaRatio(priv->totalStorageRatio);
+
         priv->websiteDataStore = WebKit::WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::generatePersistentSessionID());
 #if !ENABLE(2022_GLIB_API)
         priv->websiteDataStore->setIgnoreTLSErrors(priv->tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_IGNORE);

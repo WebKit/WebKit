@@ -30,6 +30,7 @@
 
 #include "RenderBoxInlines.h"
 #include "RenderMathMLBlock.h"
+#include "RenderTableInlines.h"
 #include "StyleInheritedData.h"
 
 namespace WebCore {

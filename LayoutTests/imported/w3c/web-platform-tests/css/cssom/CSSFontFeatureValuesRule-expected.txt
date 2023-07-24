@@ -1,0 +1,10 @@
+
+FAIL CSSFontFeatureValuesRule is correctly parsed and accessible via CSSOM. undefined is not an object (evaluating 'rule.annotation.size')
+FAIL CSSFontFeatureValuesRule family is settable and readable. assert_equals: expected "test_changed_family" but got "test_family"
+FAIL CSSFontFeatureValuesMap entries are settable to single values. undefined is not an object (evaluating 'rule.styleset.get')
+FAIL CSSFontFeatureValuesMap entries are settable to sequences of numbers. undefined is not an object (evaluating 'document.styleSheets[0].cssRules[0].styleset.get')
+FAIL New rules can be added. undefined is not an object (evaluating 'document.styleSheets[0].cssRules[1].annotation.size')
+FAIL Deleting single entries is possible. undefined is not an object (evaluating 'document.styleSheets[0].cssRules[1].annotation.size')
+FAIL Clearing all entries is possible. undefined is not an object (evaluating 'document.styleSheets[0].cssRules[1].annotation.size')
+FAIL Multiple rules for the same family are kept separate in CSSOM. undefined is not an object (evaluating 'document.styleSheets[0].cssRules[0].annotation.size')
+

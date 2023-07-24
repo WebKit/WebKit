@@ -62,7 +62,7 @@ private:
 
     void close() override;
 
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
     mutable std::optional<WebBackForwardListCounts> m_cachedBackForwardListCounts;
 };
 

@@ -30,12 +30,12 @@ class SignalingRoute {
 
   void StartIceSignaling();
 
-  // The |modify_offer| callback is used to modify an offer after the local
+  // The `modify_offer` callback is used to modify an offer after the local
   // description has been set. This is legal (but odd) behavior.
-  // The |munge_offer| callback is used to modify an offer between its creation
+  // The `munge_offer` callback is used to modify an offer between its creation
   // and set local description. This behavior is forbidden according to the spec
   // but available here in order to allow test coverage on corner cases.
-  // The |exchange_finished| callback is called with the answer produced after
+  // The `exchange_finished` callback is called with the answer produced after
   // SDP negotations has completed.
   // TODO(srte): Handle lossy links.
   void NegotiateSdp(

@@ -149,8 +149,7 @@ VideoSendStream::VideoSendStream(
     const std::map<uint32_t, RtpPayloadState>& suspended_payload_states,
     std::unique_ptr<FecController> fec_controller,
     const FieldTrialsView& field_trials)
-    : rtp_transport_queue_(transport->GetWorkerQueue()->Get()),
-      transport_(transport),
+    : transport_(transport),
       stats_proxy_(clock, config, encoder_config.content_type, field_trials),
       config_(std::move(config)),
       content_type_(encoder_config.content_type),
@@ -186,7 +185,6 @@ VideoSendStream::VideoSendStream(
                                           config_.frame_transformer)),
       send_stream_(clock,
                    &stats_proxy_,
-                   rtp_transport_queue_,
                    transport,
                    bitrate_allocator,
                    video_stream_encoder_.get(),
@@ -210,8 +208,12 @@ VideoSendStream::~VideoSendStream() {
   transport_->DestroyRtpVideoSender(rtp_video_sender_);
 }
 
-void VideoSendStream::UpdateActiveSimulcastLayers(
-    const std::vector<bool> active_layers) {
+void VideoSendStream::Start() {
+  const std::vector<bool> active_layers(config_.rtp.ssrcs.size(), true);
+  StartPerRtpStream(active_layers);
+}
+
+void VideoSendStream::StartPerRtpStream(const std::vector<bool> active_layers) {
   RTC_DCHECK_RUN_ON(&thread_checker_);
 
   // Keep our `running_` flag expected state in sync with active layers since
@@ -233,36 +235,9 @@ void VideoSendStream::UpdateActiveSimulcastLayers(
     }
   }
   active_layers_string << "}";
-  RTC_LOG(LS_INFO) << "UpdateActiveSimulcastLayers: "
-                   << active_layers_string.str();
-
-  rtp_transport_queue_->PostTask(
-      SafeTask(transport_queue_safety_, [this, active_layers] {
-        send_stream_.UpdateActiveSimulcastLayers(active_layers);
-      }));
-
+  RTC_LOG(LS_INFO) << "StartPerRtpStream: " << active_layers_string.str();
+  send_stream_.StartPerRtpStream(active_layers);
   running_ = running;
-}
-
-void VideoSendStream::Start() {
-  RTC_DCHECK_RUN_ON(&thread_checker_);
-  RTC_DLOG(LS_INFO) << "VideoSendStream::Start";
-  if (running_)
-    return;
-
-  running_ = true;
-
-  rtp_transport_queue_->PostTask([this] {
-    transport_queue_safety_->SetAlive();
-    send_stream_.Start();
-    thread_sync_event_.Set();
-  });
-
-  // It is expected that after VideoSendStream::Start has been called, incoming
-  // frames are not dropped in VideoStreamEncoder. To ensure this, Start has to
-  // be synchronized.
-  // TODO(tommi): ^^^ Validate if this still holds.
-  thread_sync_event_.Wait(rtc::Event::kForever);
 }
 
 void VideoSendStream::Stop() {
@@ -271,13 +246,7 @@ void VideoSendStream::Stop() {
     return;
   RTC_DLOG(LS_INFO) << "VideoSendStream::Stop";
   running_ = false;
-  rtp_transport_queue_->PostTask(SafeTask(transport_queue_safety_, [this] {
-    // As the stream can get re-used and implicitly restarted via changing
-    // the state of the active layers, we do not mark the
-    // `transport_queue_safety_` flag with `SetNotAlive()` here. That's only
-    // done when we stop permanently via `StopPermanentlyAndGetRtpStates()`.
-    send_stream_.Stop();
-  }));
+  send_stream_.Stop();
 }
 
 bool VideoSendStream::started() {
@@ -305,17 +274,21 @@ void VideoSendStream::SetSource(
 }
 
 void VideoSendStream::ReconfigureVideoEncoder(VideoEncoderConfig config) {
+  ReconfigureVideoEncoder(std::move(config), nullptr);
+}
+
+void VideoSendStream::ReconfigureVideoEncoder(VideoEncoderConfig config,
+                                              SetParametersCallback callback) {
   RTC_DCHECK_RUN_ON(&thread_checker_);
   RTC_DCHECK_EQ(content_type_, config.content_type);
   video_stream_encoder_->ConfigureEncoder(
       std::move(config),
-      config_.rtp.max_packet_size - CalculateMaxHeaderSize(config_.rtp));
+      config_.rtp.max_packet_size - CalculateMaxHeaderSize(config_.rtp),
+      std::move(callback));
 }
 
 VideoSendStream::Stats VideoSendStream::GetStats() {
-  // TODO(perkj, solenberg): Some test cases in EndToEndTest call GetStats from
-  // a network thread. See comment in Call::GetStats().
-  // RTC_DCHECK_RUN_ON(&thread_checker_);
+  RTC_DCHECK_RUN_ON(&thread_checker_);
   return stats_proxy_.GetStats();
 }
 
@@ -333,29 +306,37 @@ void VideoSendStream::StopPermanentlyAndGetRtpStates(
   // Always run these cleanup steps regardless of whether running_ was set
   // or not. This will unregister callbacks before destruction.
   // See `VideoSendStreamImpl::StopVideoSendStream` for more.
-  rtp_transport_queue_->PostTask([this, rtp_state_map, payload_state_map]() {
-    transport_queue_safety_->SetNotAlive();
-    send_stream_.Stop();
-    *rtp_state_map = send_stream_.GetRtpStates();
-    *payload_state_map = send_stream_.GetRtpPayloadStates();
-    thread_sync_event_.Set();
-  });
-  thread_sync_event_.Wait(rtc::Event::kForever);
+  send_stream_.Stop();
+  *rtp_state_map = send_stream_.GetRtpStates();
+  *payload_state_map = send_stream_.GetRtpPayloadStates();
 }
 
 void VideoSendStream::DeliverRtcp(const uint8_t* packet, size_t length) {
-  // Called on a network thread.
+  RTC_DCHECK_RUN_ON(&thread_checker_);
   send_stream_.DeliverRtcp(packet, length);
 }
 
-#if defined(WEBRTC_WEBKIT_BUILD)
-void VideoSendStream::GenerateKeyFrame()
-{
+void VideoSendStream::GenerateKeyFrame(const std::vector<std::string>& rids) {
   RTC_DCHECK_RUN_ON(&thread_checker_);
-  if (video_stream_encoder_)
-      video_stream_encoder_->SendKeyFrame();
+  // Map rids to layers. If rids is empty, generate a keyframe for all layers.
+  std::vector<VideoFrameType> next_frames(config_.rtp.ssrcs.size(),
+                                          VideoFrameType::kVideoFrameKey);
+  if (!config_.rtp.rids.empty() && !rids.empty()) {
+    std::fill(next_frames.begin(), next_frames.end(),
+              VideoFrameType::kVideoFrameDelta);
+    for (const auto& rid : rids) {
+      for (size_t i = 0; i < config_.rtp.rids.size(); i++) {
+        if (config_.rtp.rids[i] == rid) {
+          next_frames[i] = VideoFrameType::kVideoFrameKey;
+          break;
+        }
+      }
+    }
+  }
+  if (video_stream_encoder_) {
+    video_stream_encoder_->SendKeyFrame(next_frames);
+  }
 }
-#endif
 
 }  // namespace internal
 }  // namespace webrtc

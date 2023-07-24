@@ -69,7 +69,7 @@ private:
     Vector<MemberOrParameter> m_builtins;
     Vector<MemberOrParameter> m_parameters;
     AST::Statement::List m_materializations;
-    Type* m_structType;
+    const Type* m_structType;
     String m_structTypeName;
     String m_structParameterName;
     Reflection::EntryPointInformation m_information;
@@ -156,11 +156,31 @@ void EntryPointRewriter::checkReturnType()
     if (m_stage != AST::StageAttribute::Stage::Vertex)
         return;
 
-    // FIXME: we might have to duplicate this struct if it has other uses
     if (auto* maybeReturnType = m_function.maybeReturnType()) {
-        if (auto* structType = std::get_if<Types::Struct>(maybeReturnType->resolvedType())) {
+        if (!is<AST::NamedTypeName>(*maybeReturnType))
+            return;
+
+        auto& namedTypeName = downcast<AST::NamedTypeName>(*maybeReturnType);
+        if (auto* structType = std::get_if<Types::Struct>(namedTypeName.resolvedType())) {
             ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
-            m_shaderModule.replace(&structType->structure.role(), AST::StructureRole::VertexOutput);
+
+            String returnStructName = makeString("__", structType->structure.name(), "_VertexOutput");
+            auto& returnStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
+                SourceSpan::empty(),
+                AST::Identifier::make(returnStructName),
+                AST::StructureMember::List(structType->structure.members()),
+                AST::Attribute::List { },
+                AST::StructureRole::VertexOutput
+
+            );
+            m_shaderModule.append(m_shaderModule.structures(), returnStruct);
+
+            auto& returnType = m_shaderModule.astBuilder().construct<AST::NamedTypeName>(
+                SourceSpan::empty(),
+                AST::Identifier::make(returnStructName)
+            );
+            returnType.m_resolvedType = m_shaderModule.types().structType(returnStruct);
+            m_shaderModule.replace(namedTypeName, returnType);
         }
     }
 }

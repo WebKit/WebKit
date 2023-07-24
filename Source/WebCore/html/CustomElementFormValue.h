@@ -31,6 +31,6 @@
 
 namespace WebCore {
 
-using CustomElementFormValue = std::variant<RefPtr<File>, String, RefPtr<DOMFormData>>;
+using CustomElementFormValue = std::variant<std::nullptr_t, RefPtr<File>, String, RefPtr<DOMFormData>>;
 
 } // namespace WebCore

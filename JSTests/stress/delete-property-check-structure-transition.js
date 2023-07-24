@@ -108,21 +108,24 @@ function testCanMaterializeDeletes(i) {
 
 noInline(testCanMaterializeDeletes)
 
+function opaque(value) { return value; }
+noInline(opaque);
+
 function testCanFlatten(i) {
     let foo = {}
     for (let j=0; j<500; ++j) {
         const oldId = sid(foo)
 
-        foo["x" + 1000*j + i] = j
+        foo[opaque("x" + 1000*j + i)] = j
         if (j > 0)
-            delete foo["x" + 1000*(j - 1) + i]
+            delete foo[opaque("x" + 1000*(j - 1) + i)]
 
         if (j > 100)
             assert_eq(sid(foo), oldId)
     }
 
     for (let j=0; j<500; ++j) {
-        const val = foo["x" + 1000*j + i]
+        const val = foo[opaque("x" + 1000*j + i)]
         if (j == 499)
             assert_eq(val, j)
         else
@@ -132,7 +135,7 @@ function testCanFlatten(i) {
     $vm.flattenDictionaryObject(foo)
 
     for (let j=0; j<500; ++j) {
-        const val = foo["x" + 1000*j + i]
+        const val = foo[opaque("x" + 1000*j + i)]
         if (j == 499)
             assert_eq(val, j)
         else

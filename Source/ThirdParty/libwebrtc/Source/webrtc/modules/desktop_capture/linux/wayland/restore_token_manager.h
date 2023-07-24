@@ -29,9 +29,14 @@ class RestoreTokenManager {
   void AddToken(DesktopCapturer::SourceId id, const std::string& token);
   std::string TakeToken(DesktopCapturer::SourceId id);
 
+  // Returns a source ID which does not have any token associated with it yet.
+  DesktopCapturer::SourceId GetUnusedId();
+
  private:
   RestoreTokenManager() = default;
   ~RestoreTokenManager() = default;
+
+  DesktopCapturer::SourceId last_source_id_ = 0;
 
   std::unordered_map<DesktopCapturer::SourceId, std::string> restore_tokens_;
 };

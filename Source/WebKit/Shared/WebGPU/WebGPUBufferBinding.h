@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,16 +28,16 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 #include <wtf/Ref.h>
 
 namespace WebKit::WebGPU {
 
 struct BufferBinding {
     WebGPUIdentifier buffer;
-    PAL::WebGPU::Size64 offset { 0 };
-    std::optional<PAL::WebGPU::Size64> size { std::nullopt };
+    WebCore::WebGPU::Size64 offset { 0 };
+    std::optional<WebCore::WebGPU::Size64> size { std::nullopt };
 };
 
 } // namespace WebKit::WebGPU

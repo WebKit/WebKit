@@ -101,8 +101,10 @@ RefPtr<ServiceWorkerThreadProxy> SWContextManager::serviceWorkerThreadProxyFromB
 void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
-    if (!serviceWorker)
+    if (!serviceWorker) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::fireInstallEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         return;
+    }
 
     serviceWorker->fireInstallEvent();
 }
@@ -110,8 +112,10 @@ void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)
 void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
-    if (!serviceWorker)
+    if (!serviceWorker) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::fireActivateEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         return;
+    }
 
     serviceWorker->fireActivateEvent();
 }
@@ -120,6 +124,7 @@ void SWContextManager::firePushEvent(ServiceWorkerIdentifier identifier, std::op
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::firePushEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         callback(false);
         return;
     }
@@ -130,8 +135,10 @@ void SWContextManager::firePushEvent(ServiceWorkerIdentifier identifier, std::op
 void SWContextManager::firePushSubscriptionChangeEvent(ServiceWorkerIdentifier identifier, std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData)
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
-    if (!serviceWorker)
+    if (!serviceWorker) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::firePushSubscriptionChangeEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         return;
+    }
 
     serviceWorker->firePushSubscriptionChangeEvent(WTFMove(newSubscriptionData), WTFMove(oldSubscriptionData));
 }
@@ -140,6 +147,7 @@ void SWContextManager::fireNotificationEvent(ServiceWorkerIdentifier identifier,
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::fireNotificationEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         callback(false);
         return;
     }
@@ -151,6 +159,7 @@ void SWContextManager::fireBackgroundFetchEvent(ServiceWorkerIdentifier identifi
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::fireBackgroundFetchEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         callback(false);
         return;
     }
@@ -162,6 +171,7 @@ void SWContextManager::fireBackgroundFetchClickEvent(ServiceWorkerIdentifier ide
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::fireBackgroundFetchClickEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         callback(false);
         return;
     }
@@ -171,7 +181,7 @@ void SWContextManager::fireBackgroundFetchClickEvent(ServiceWorkerIdentifier ide
 
 void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Seconds timeout, Function<void()>&& completionHandler)
 {
-    RELEASE_LOG(ServiceWorker, "SWContextManager::terminateWorker");
+    RELEASE_LOG(ServiceWorker, "SWContextManager::terminateWorker %" PRIu64, identifier.toUInt64());
 
     RefPtr<ServiceWorkerThreadProxy> serviceWorker;
     {

@@ -44,8 +44,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         this._discontinuities = null;
         this._firstRecordOfTypeAfterDiscontinuity = new Set;
 
-        this._exportDataRecords = null;
         this._exportDataMarkers = null;
+        this._exportDataRecords = null;
         this._exportDataMemoryPressureEvents = null;
         this._exportDataSampleStackTraces = null;
         this._exportDataSampleDurations = null;
@@ -243,8 +243,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         this._discontinuities = [];
         this._firstRecordOfTypeAfterDiscontinuity.clear();
 
-        this._exportDataRecords = [];
         this._exportDataMarkers = [];
+        this._exportDataRecords = [];
         this._exportDataMemoryPressureEvents = [];
         this._exportDataSampleStackTraces = [];
         this._exportDataSampleDurations = [];
@@ -458,6 +458,10 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
         return true;
     }
+
+    // Testing
+
+    get markersForTesting() { return this._exportDataMarkers; }
 
     // Private
 

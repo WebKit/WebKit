@@ -715,6 +715,14 @@ class Parser
                 name = @tokens[@idx].string
                 @idx += 1
                 Label.setAsGlobal(codeOrigin, name)
+            elsif @tokens[@idx] == "unalignedglobal"
+                codeOrigin = @tokens[@idx].codeOrigin
+                @idx += 1
+                skipNewLine
+                parseError unless isLabel(@tokens[@idx])
+                name = @tokens[@idx].string
+                @idx += 1
+                Label.setAsUnalignedGlobal(codeOrigin, name)
             elsif isInstruction @tokens[@idx]
                 codeOrigin = @tokens[@idx].codeOrigin
                 name = @tokens[@idx].string

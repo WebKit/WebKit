@@ -36,11 +36,14 @@ public:
     static Ref<RemoteFrameView> create(RemoteFrame& frame) { return adoptRef(*new RemoteFrameView(frame)); }
 
     Type viewType() const final { return Type::Remote; }
+    void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) override;
+    const RemoteFrame& frame() const { return m_frame.get(); }
+    RemoteFrame& frame() { return m_frame.get(); }
+
 private:
     WEBCORE_EXPORT RemoteFrameView(RemoteFrame&);
 
     bool isRemoteFrameView() const final { return true; }
-
     void invalidateRect(const IntRect&) final;
     bool isActive() const final;
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;

@@ -14,7 +14,7 @@ info: |
   Unicode Locale Identifier, section 3.2, sorted in descending preference of
   those in common use for string comparison in locale. The values "standard"
   and "search" must be excluded from list.
-features: [Intl.Locale,Intl.Locale-info]
+features: [Intl.Locale, Intl.Locale-info, Array.prototype.includes]
 ---*/
 
 const output = new Intl.Locale('en').collations;

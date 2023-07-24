@@ -57,12 +57,12 @@ public:
 
     LayoutState& layoutState() const { return m_layoutState; }
 
-    // FIXME: We need to find a way to limit access to mutatable geometry.
+    // FIXME: We need to find a way to limit access to mutable geometry.
     BoxGeometry& boxGeometry(const Box& layoutBox);
     // Since we layout the out-of-flow boxes at the end of the formatting context layout, it's okay to store them in the formatting state -as opposed to the containing block level.
     using OutOfFlowBoxList = Vector<CheckedRef<const Box>>;
     void addOutOfFlowBox(const Box& outOfFlowBox) { m_outOfFlowBoxes.append(outOfFlowBox); }
-    void removeOutOfFlowBox(const Box&);
+    void setOutOfFlowBoxes(OutOfFlowBoxList&& outOfFlowBoxes) { m_outOfFlowBoxes = WTFMove(outOfFlowBoxes); }
     const OutOfFlowBoxList& outOfFlowBoxes() const { return m_outOfFlowBoxes; }
 
 protected:

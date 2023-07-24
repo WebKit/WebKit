@@ -205,13 +205,14 @@ $code.=<<___;
 .align	16
 gcm_init_clmul:
 .cfi_startproc
+.seh_startproc
 .L_init_clmul:
 ___
 $code.=<<___ if ($win64);
-.LSEH_begin_gcm_init_clmul:
-	# I can't trust assembler to use specific encoding:-(
-	.byte	0x48,0x83,0xec,0x18		#sub	$0x18,%rsp
-	.byte	0x0f,0x29,0x34,0x24		#movaps	%xmm6,(%rsp)
+	sub	\$0x18,%rsp
+.seh_allocstack	0x18
+	movaps	%xmm6,(%rsp)
+.seh_savexmm128	%xmm6, 0
 ___
 $code.=<<___;
 	movdqu		($Xip),$Hkey
@@ -270,11 +271,11 @@ ___
 $code.=<<___ if ($win64);
 	movaps	(%rsp),%xmm6
 	lea	0x18(%rsp),%rsp
-.LSEH_end_gcm_init_clmul:
 ___
 $code.=<<___;
 	ret
 .cfi_endproc
+.seh_endproc
 .size	gcm_init_clmul,.-gcm_init_clmul
 ___
 }
@@ -338,23 +339,33 @@ $code.=<<___;
 .align	32
 gcm_ghash_clmul:
 .cfi_startproc
+.seh_startproc
 .L_ghash_clmul:
 ___
 $code.=<<___ if ($win64);
 	lea	-0x88(%rsp),%rax
-.LSEH_begin_gcm_ghash_clmul:
-	# I can't trust assembler to use specific encoding:-(
-	.byte	0x48,0x8d,0x60,0xe0		#lea	-0x20(%rax),%rsp
-	.byte	0x0f,0x29,0x70,0xe0		#movaps	%xmm6,-0x20(%rax)
-	.byte	0x0f,0x29,0x78,0xf0		#movaps	%xmm7,-0x10(%rax)
-	.byte	0x44,0x0f,0x29,0x00		#movaps	%xmm8,0(%rax)
-	.byte	0x44,0x0f,0x29,0x48,0x10	#movaps	%xmm9,0x10(%rax)
-	.byte	0x44,0x0f,0x29,0x50,0x20	#movaps	%xmm10,0x20(%rax)
-	.byte	0x44,0x0f,0x29,0x58,0x30	#movaps	%xmm11,0x30(%rax)
-	.byte	0x44,0x0f,0x29,0x60,0x40	#movaps	%xmm12,0x40(%rax)
-	.byte	0x44,0x0f,0x29,0x68,0x50	#movaps	%xmm13,0x50(%rax)
-	.byte	0x44,0x0f,0x29,0x70,0x60	#movaps	%xmm14,0x60(%rax)
-	.byte	0x44,0x0f,0x29,0x78,0x70	#movaps	%xmm15,0x70(%rax)
+	lea	-0x20(%rax),%rsp
+.seh_allocstack	0x20+0x88
+	movaps	%xmm6,-0x20(%rax)
+.seh_savexmm128	%xmm6, 0x20-0x20
+	movaps	%xmm7,-0x10(%rax)
+.seh_savexmm128	%xmm7, 0x20-0x10
+	movaps	%xmm8,0(%rax)
+.seh_savexmm128	%xmm8, 0x20+0
+	movaps	%xmm9,0x10(%rax)
+.seh_savexmm128	%xmm9, 0x20+0x10
+	movaps	%xmm10,0x20(%rax)
+.seh_savexmm128	%xmm10, 0x20+0x20
+	movaps	%xmm11,0x30(%rax)
+.seh_savexmm128	%xmm11, 0x20+0x30
+	movaps	%xmm12,0x40(%rax)
+.seh_savexmm128	%xmm12, 0x20+0x40
+	movaps	%xmm13,0x50(%rax)
+.seh_savexmm128	%xmm13, 0x20+0x50
+	movaps	%xmm14,0x60(%rax)
+.seh_savexmm128	%xmm14, 0x20+0x60
+	movaps	%xmm15,0x70(%rax)
+.seh_savexmm128	%xmm15, 0x20+0x70
 ___
 $code.=<<___;
 	movdqa		.Lbswap_mask(%rip),$T3
@@ -682,11 +693,11 @@ $code.=<<___ if ($win64);
 	movaps	0x80(%rsp),%xmm14
 	movaps	0x90(%rsp),%xmm15
 	lea	0xa8(%rsp),%rsp
-.LSEH_end_gcm_ghash_clmul:
 ___
 $code.=<<___;
 	ret
 .cfi_endproc
+.seh_endproc
 .size	gcm_ghash_clmul,.-gcm_ghash_clmul
 ___
 }
@@ -703,10 +714,11 @@ my ($Htbl,$Xip)=@_4args;
 my $HK="%xmm6";
 
 $code.=<<___ if ($win64);
-.LSEH_begin_gcm_init_avx:
-	# I can't trust assembler to use specific encoding:-(
-	.byte	0x48,0x83,0xec,0x18		#sub	$0x18,%rsp
-	.byte	0x0f,0x29,0x34,0x24		#movaps	%xmm6,(%rsp)
+.seh_startproc
+	sub	\$0x18,%rsp
+.seh_allocstack	0x18
+	movaps	%xmm6,(%rsp)
+.seh_savexmm128	%xmm6, 0
 ___
 $code.=<<___;
 	vzeroupper
@@ -821,10 +833,10 @@ ___
 $code.=<<___ if ($win64);
 	movaps	(%rsp),%xmm6
 	lea	0x18(%rsp),%rsp
-.LSEH_end_gcm_init_avx:
 ___
 $code.=<<___;
 	ret
+.seh_endproc
 .cfi_endproc
 .size	gcm_init_avx,.-gcm_init_avx
 ___
@@ -861,20 +873,30 @@ my ($Xlo,$Xhi,$Xmi,
     $Xi,$Xo,$Tred,$bswap,$Ii,$Ij) = map("%xmm$_",(0..15));
 
 $code.=<<___ if ($win64);
+.seh_startproc
 	lea	-0x88(%rsp),%rax
-.LSEH_begin_gcm_ghash_avx:
-	# I can't trust assembler to use specific encoding:-(
-	.byte	0x48,0x8d,0x60,0xe0		#lea	-0x20(%rax),%rsp
-	.byte	0x0f,0x29,0x70,0xe0		#movaps	%xmm6,-0x20(%rax)
-	.byte	0x0f,0x29,0x78,0xf0		#movaps	%xmm7,-0x10(%rax)
-	.byte	0x44,0x0f,0x29,0x00		#movaps	%xmm8,0(%rax)
-	.byte	0x44,0x0f,0x29,0x48,0x10	#movaps	%xmm9,0x10(%rax)
-	.byte	0x44,0x0f,0x29,0x50,0x20	#movaps	%xmm10,0x20(%rax)
-	.byte	0x44,0x0f,0x29,0x58,0x30	#movaps	%xmm11,0x30(%rax)
-	.byte	0x44,0x0f,0x29,0x60,0x40	#movaps	%xmm12,0x40(%rax)
-	.byte	0x44,0x0f,0x29,0x68,0x50	#movaps	%xmm13,0x50(%rax)
-	.byte	0x44,0x0f,0x29,0x70,0x60	#movaps	%xmm14,0x60(%rax)
-	.byte	0x44,0x0f,0x29,0x78,0x70	#movaps	%xmm15,0x70(%rax)
+	lea	-0x20(%rax),%rsp
+.seh_allocstack	0x20+0x88
+	movaps	%xmm6,-0x20(%rax)
+.seh_savexmm128	%xmm6, 0x20-0x20
+	movaps	%xmm7,-0x10(%rax)
+.seh_savexmm128	%xmm7, 0x20-0x10
+	movaps	%xmm8,0(%rax)
+.seh_savexmm128	%xmm8, 0x20+0
+	movaps	%xmm9,0x10(%rax)
+.seh_savexmm128	%xmm9, 0x20+0x10
+	movaps	%xmm10,0x20(%rax)
+.seh_savexmm128	%xmm10, 0x20+0x20
+	movaps	%xmm11,0x30(%rax)
+.seh_savexmm128	%xmm11, 0x20+0x30
+	movaps	%xmm12,0x40(%rax)
+.seh_savexmm128	%xmm12, 0x20+0x40
+	movaps	%xmm13,0x50(%rax)
+.seh_savexmm128	%xmm13, 0x20+0x50
+	movaps	%xmm14,0x60(%rax)
+.seh_savexmm128	%xmm14, 0x20+0x60
+	movaps	%xmm15,0x70(%rax)
+.seh_savexmm128	%xmm15, 0x20+0x70
 ___
 $code.=<<___;
 	vzeroupper
@@ -1260,11 +1282,11 @@ $code.=<<___ if ($win64);
 	movaps	0x80(%rsp),%xmm14
 	movaps	0x90(%rsp),%xmm15
 	lea	0xa8(%rsp),%rsp
-.LSEH_end_gcm_ghash_avx:
 ___
 $code.=<<___;
 	ret
 .cfi_endproc
+.seh_endproc
 .size	gcm_ghash_avx,.-gcm_ghash_avx
 ___
 } else {
@@ -1275,6 +1297,7 @@ ___
 }
 
 $code.=<<___;
+.section .rodata
 .align	64
 .Lbswap_mask:
 	.byte	15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
@@ -1286,54 +1309,11 @@ $code.=<<___;
 
 .asciz	"GHASH for x86_64, CRYPTOGAMS by <appro\@openssl.org>"
 .align	64
+.text
 ___
-
-if ($win64) {
-$code.=<<___;
-.section	.pdata
-.align	4
-	.rva	.LSEH_begin_gcm_init_clmul
-	.rva	.LSEH_end_gcm_init_clmul
-	.rva	.LSEH_info_gcm_init_clmul
-
-	.rva	.LSEH_begin_gcm_ghash_clmul
-	.rva	.LSEH_end_gcm_ghash_clmul
-	.rva	.LSEH_info_gcm_ghash_clmul
-___
-$code.=<<___	if ($avx);
-	.rva	.LSEH_begin_gcm_init_avx
-	.rva	.LSEH_end_gcm_init_avx
-	.rva	.LSEH_info_gcm_init_clmul
-
-	.rva	.LSEH_begin_gcm_ghash_avx
-	.rva	.LSEH_end_gcm_ghash_avx
-	.rva	.LSEH_info_gcm_ghash_clmul
-___
-$code.=<<___;
-.section	.xdata
-.align	8
-.LSEH_info_gcm_init_clmul:
-	.byte	0x01,0x08,0x03,0x00
-	.byte	0x08,0x68,0x00,0x00	#movaps	0x00(rsp),xmm6
-	.byte	0x04,0x22,0x00,0x00	#sub	rsp,0x18
-.LSEH_info_gcm_ghash_clmul:
-	.byte	0x01,0x33,0x16,0x00
-	.byte	0x33,0xf8,0x09,0x00	#movaps 0x90(rsp),xmm15
-	.byte	0x2e,0xe8,0x08,0x00	#movaps 0x80(rsp),xmm14
-	.byte	0x29,0xd8,0x07,0x00	#movaps 0x70(rsp),xmm13
-	.byte	0x24,0xc8,0x06,0x00	#movaps 0x60(rsp),xmm12
-	.byte	0x1f,0xb8,0x05,0x00	#movaps 0x50(rsp),xmm11
-	.byte	0x1a,0xa8,0x04,0x00	#movaps 0x40(rsp),xmm10
-	.byte	0x15,0x98,0x03,0x00	#movaps 0x30(rsp),xmm9
-	.byte	0x10,0x88,0x02,0x00	#movaps 0x20(rsp),xmm8
-	.byte	0x0c,0x78,0x01,0x00	#movaps 0x10(rsp),xmm7
-	.byte	0x08,0x68,0x00,0x00	#movaps 0x00(rsp),xmm6
-	.byte	0x04,0x01,0x15,0x00	#sub	rsp,0xa8
-___
-}
 
 $code =~ s/\`([^\`]*)\`/eval($1)/gem;
 
 print $code;
 
-close STDOUT or die "error closing STDOUT";
+close STDOUT or die "error closing STDOUT: $!";

@@ -19,28 +19,24 @@
 #include <assert.h>
 #include <string.h>
 
-#include <openssl/cpu.h>
-
 #include "../internal.h"
 #include "internal.h"
 
-
-#define U8TO32_LITTLE(p)                              \
-  (((uint32_t)((p)[0])) | ((uint32_t)((p)[1]) << 8) | \
-   ((uint32_t)((p)[2]) << 16) | ((uint32_t)((p)[3]) << 24))
 
 // sigma contains the ChaCha constants, which happen to be an ASCII string.
 static const uint8_t sigma[16] = { 'e', 'x', 'p', 'a', 'n', 'd', ' ', '3',
                                    '2', '-', 'b', 'y', 't', 'e', ' ', 'k' };
 
-#define ROTATE(v, n) (((v) << (n)) | ((v) >> (32 - (n))))
-
 // QUARTERROUND updates a, b, c, d with a ChaCha "quarter" round.
-#define QUARTERROUND(a, b, c, d)                \
-  x[a] += x[b]; x[d] = ROTATE(x[d] ^ x[a], 16); \
-  x[c] += x[d]; x[b] = ROTATE(x[b] ^ x[c], 12); \
-  x[a] += x[b]; x[d] = ROTATE(x[d] ^ x[a],  8); \
-  x[c] += x[d]; x[b] = ROTATE(x[b] ^ x[c],  7);
+#define QUARTERROUND(a, b, c, d)           \
+  x[a] += x[b];                            \
+  x[d] = CRYPTO_rotl_u32(x[d] ^ x[a], 16); \
+  x[c] += x[d];                            \
+  x[b] = CRYPTO_rotl_u32(x[b] ^ x[c], 12); \
+  x[a] += x[b];                            \
+  x[d] = CRYPTO_rotl_u32(x[d] ^ x[a], 8);  \
+  x[c] += x[d];                            \
+  x[b] = CRYPTO_rotl_u32(x[b] ^ x[c], 7);
 
 void CRYPTO_hchacha20(uint8_t out[32], const uint8_t key[32],
                       const uint8_t nonce[16]) {
@@ -71,24 +67,25 @@ void CRYPTO_chacha_20(uint8_t *out, const uint8_t *in, size_t in_len,
                       uint32_t counter) {
   assert(!buffers_alias(out, in_len, in, in_len) || in == out);
 
-  uint32_t counter_nonce[4];  counter_nonce[0] = counter;
-  counter_nonce[1] = U8TO32_LITTLE(nonce + 0);
-  counter_nonce[2] = U8TO32_LITTLE(nonce + 4);
-  counter_nonce[3] = U8TO32_LITTLE(nonce + 8);
+  uint32_t counter_nonce[4];
+  counter_nonce[0] = counter;
+  counter_nonce[1] = CRYPTO_load_u32_le(nonce + 0);
+  counter_nonce[2] = CRYPTO_load_u32_le(nonce + 4);
+  counter_nonce[3] = CRYPTO_load_u32_le(nonce + 8);
 
   const uint32_t *key_ptr = (const uint32_t *)key;
 #if !defined(OPENSSL_X86) && !defined(OPENSSL_X86_64)
   // The assembly expects the key to be four-byte aligned.
   uint32_t key_u32[8];
   if ((((uintptr_t)key) & 3) != 0) {
-    key_u32[0] = U8TO32_LITTLE(key + 0);
-    key_u32[1] = U8TO32_LITTLE(key + 4);
-    key_u32[2] = U8TO32_LITTLE(key + 8);
-    key_u32[3] = U8TO32_LITTLE(key + 12);
-    key_u32[4] = U8TO32_LITTLE(key + 16);
-    key_u32[5] = U8TO32_LITTLE(key + 20);
-    key_u32[6] = U8TO32_LITTLE(key + 24);
-    key_u32[7] = U8TO32_LITTLE(key + 28);
+    key_u32[0] = CRYPTO_load_u32_le(key + 0);
+    key_u32[1] = CRYPTO_load_u32_le(key + 4);
+    key_u32[2] = CRYPTO_load_u32_le(key + 8);
+    key_u32[3] = CRYPTO_load_u32_le(key + 12);
+    key_u32[4] = CRYPTO_load_u32_le(key + 16);
+    key_u32[5] = CRYPTO_load_u32_le(key + 20);
+    key_u32[6] = CRYPTO_load_u32_le(key + 24);
+    key_u32[7] = CRYPTO_load_u32_le(key + 28);
 
     key_ptr = key_u32;
   }
@@ -98,14 +95,6 @@ void CRYPTO_chacha_20(uint8_t *out, const uint8_t *in, size_t in_len,
 }
 
 #else
-
-#define U32TO8_LITTLE(p, v)    \
-  {                            \
-    (p)[0] = (v >> 0) & 0xff;  \
-    (p)[1] = (v >> 8) & 0xff;  \
-    (p)[2] = (v >> 16) & 0xff; \
-    (p)[3] = (v >> 24) & 0xff; \
-  }
 
 // chacha_core performs 20 rounds of ChaCha on the input words in
 // |input| and writes the 64 output bytes to |output|.
@@ -129,7 +118,7 @@ static void chacha_core(uint8_t output[64], const uint32_t input[16]) {
     x[i] += input[i];
   }
   for (i = 0; i < 16; ++i) {
-    U32TO8_LITTLE(output + 4 * i, x[i]);
+    CRYPTO_store_u32_le(output + 4 * i, x[i]);
   }
 }
 
@@ -142,25 +131,25 @@ void CRYPTO_chacha_20(uint8_t *out, const uint8_t *in, size_t in_len,
   uint8_t buf[64];
   size_t todo, i;
 
-  input[0] = U8TO32_LITTLE(sigma + 0);
-  input[1] = U8TO32_LITTLE(sigma + 4);
-  input[2] = U8TO32_LITTLE(sigma + 8);
-  input[3] = U8TO32_LITTLE(sigma + 12);
+  input[0] = CRYPTO_load_u32_le(sigma + 0);
+  input[1] = CRYPTO_load_u32_le(sigma + 4);
+  input[2] = CRYPTO_load_u32_le(sigma + 8);
+  input[3] = CRYPTO_load_u32_le(sigma + 12);
 
-  input[4] = U8TO32_LITTLE(key + 0);
-  input[5] = U8TO32_LITTLE(key + 4);
-  input[6] = U8TO32_LITTLE(key + 8);
-  input[7] = U8TO32_LITTLE(key + 12);
+  input[4] = CRYPTO_load_u32_le(key + 0);
+  input[5] = CRYPTO_load_u32_le(key + 4);
+  input[6] = CRYPTO_load_u32_le(key + 8);
+  input[7] = CRYPTO_load_u32_le(key + 12);
 
-  input[8] = U8TO32_LITTLE(key + 16);
-  input[9] = U8TO32_LITTLE(key + 20);
-  input[10] = U8TO32_LITTLE(key + 24);
-  input[11] = U8TO32_LITTLE(key + 28);
+  input[8] = CRYPTO_load_u32_le(key + 16);
+  input[9] = CRYPTO_load_u32_le(key + 20);
+  input[10] = CRYPTO_load_u32_le(key + 24);
+  input[11] = CRYPTO_load_u32_le(key + 28);
 
   input[12] = counter;
-  input[13] = U8TO32_LITTLE(nonce + 0);
-  input[14] = U8TO32_LITTLE(nonce + 4);
-  input[15] = U8TO32_LITTLE(nonce + 8);
+  input[13] = CRYPTO_load_u32_le(nonce + 0);
+  input[14] = CRYPTO_load_u32_le(nonce + 4);
+  input[15] = CRYPTO_load_u32_le(nonce + 8);
 
   while (in_len > 0) {
     todo = sizeof(buf);

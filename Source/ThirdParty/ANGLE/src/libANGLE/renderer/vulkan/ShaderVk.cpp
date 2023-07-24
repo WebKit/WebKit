@@ -43,6 +43,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         }
     }
 
+    if (contextVk->getFeatures().retainSPIRVDebugInfo.enabled)
+    {
+        options->outputDebugInfo = true;
+    }
+
     // robustBufferAccess on Vulkan doesn't support bound check on shader local variables
     // but the GL_EXT_robustness does support.
     // Enable the flag clampIndirectArrayBounds to ensure out of bounds local variable writes in
@@ -83,6 +88,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         options->useSpecializationConstant = true;
     }
 
+    if (contextVk->getFeatures().clampFragDepth.enabled)
+    {
+        options->clampFragDepth = true;
+    }
+
     if (!contextVk->getFeatures().supportsDepthClipControl.enabled)
     {
         options->addVulkanDepthCorrection = true;
@@ -103,9 +113,9 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         options->roundOutputAfterDithering = true;
     }
 
-    if (contextVk->getFeatures().appendAliasedMemoryDecorationsToSsbo.enabled)
+    if (contextVk->getFeatures().appendAliasedMemoryDecorations.enabled)
     {
-        options->aliasedSSBOUnlessRestrict = true;
+        options->aliasedUnlessRestrict = true;
     }
 
     if (contextVk->getFeatures().explicitlyCastMediumpFloatTo16Bit.enabled)

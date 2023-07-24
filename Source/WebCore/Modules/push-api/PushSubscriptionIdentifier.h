@@ -39,7 +39,7 @@ using PushSubscriptionIdentifier = ObjectIdentifier<PushSubscriptionIdentifierTy
 struct PushSubscriptionSetIdentifier {
     String bundleIdentifier;
     String pushPartition;
-    Markable<UUID> dataStoreIdentifier;
+    Markable<WTF::UUID> dataStoreIdentifier;
 
     bool operator==(const PushSubscriptionSetIdentifier&) const;
     void add(Hasher&, const PushSubscriptionSetIdentifier&);
@@ -108,7 +108,7 @@ template<> struct HashTraits<WebCore::PushSubscriptionSetIdentifier> : GenericHa
     static const bool emptyValueIsZero = false;
     static WebCore::PushSubscriptionSetIdentifier emptyValue() { return { emptyString(), emptyString(), std::nullopt }; }
 
-    static void constructDeletedValue(WebCore::PushSubscriptionSetIdentifier& slot) { new (NotNull, &slot) WebCore::PushSubscriptionSetIdentifier { emptyString(), emptyString(), UUID { HashTableDeletedValue } }; }
+    static void constructDeletedValue(WebCore::PushSubscriptionSetIdentifier& slot) { new (NotNull, &slot) WebCore::PushSubscriptionSetIdentifier { emptyString(), emptyString(), WTF::UUID { HashTableDeletedValue } }; }
     static bool isDeletedValue(const WebCore::PushSubscriptionSetIdentifier& value) { return value.isHashTableDeletedValue(); }
 };
 

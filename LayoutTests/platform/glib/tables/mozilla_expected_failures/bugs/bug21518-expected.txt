@@ -4,8 +4,8 @@ layer at (0,0) size 800x440
   RenderBlock {HTML} at (0,0) size 800x440
     RenderBody {BODY} at (8,8) size 784x424
       RenderBlock {H3} at (0,20) size 784x23
-        RenderText {#text} at (0,0) size 61x21
-          text run at (0,0) width 61: "Table 1"
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Table 1"
       RenderBlock {PRE} at (0,61) size 784x61
         RenderText {#text} at (0,0) size 224x60
           text run at (0,0) width 224: "<TABLE width=\"500\" border=1>"
@@ -52,8 +52,8 @@ layer at (0,0) size 800x440
               RenderText {#text} at (2,2) size 35x17
                 text run at (2,2) width 35: "Cell I"
       RenderBlock {H3} at (0,239) size 784x23
-        RenderText {#text} at (0,0) size 61x21
-          text run at (0,0) width 61: "Table 2"
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Table 2"
       RenderBlock {PRE} at (0,279) size 784x46
         RenderText {#text} at (0,0) size 224x45
           text run at (0,0) width 224: "<TABLE width=\"500\" border=1>"
@@ -97,8 +97,8 @@ layer at (0,0) size 800x440
               RenderText {#text} at (2,2) size 35x17
                 text run at (2,2) width 35: "Cell I"
 layer at (8,8) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,226) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,218) size 784x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,218) size 784x3 [color=#808080] [border: (1px inset #808080)]
 layer at (8,430) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,421) size 784x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,421) size 784x3 [color=#808080] [border: (1px inset #808080)]

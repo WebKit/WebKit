@@ -117,7 +117,8 @@ static int closesocket(int sock) {
 // split_host_and_port sets |*out_host| and |*out_port| to the host and port
 // parsed from |name|. It returns one on success or zero on error. Even when
 // successful, |*out_port| may be NULL on return if no port was specified.
-static int split_host_and_port(char **out_host, char **out_port, const char *name) {
+static int split_host_and_port(char **out_host, char **out_port,
+                               const char *name) {
   const char *host, *port = NULL;
   size_t host_len = 0;
 
@@ -320,7 +321,7 @@ static int conn_new(BIO *bio) {
   bio->init = 0;
   bio->num = -1;
   bio->flags = 0;
-  bio->ptr = (char *)BIO_CONNECT_new();
+  bio->ptr = BIO_CONNECT_new();
   return bio->ptr != NULL;
 }
 
@@ -340,10 +341,6 @@ static void conn_close_socket(BIO *bio) {
 }
 
 static int conn_free(BIO *bio) {
-  if (bio == NULL) {
-    return 0;
-  }
-
   if (bio->shutdown) {
     conn_close_socket(bio);
   }
@@ -366,7 +363,7 @@ static int conn_read(BIO *bio, char *out, int out_len) {
   }
 
   bio_clear_socket_error();
-  ret = recv(bio->num, out, out_len, 0);
+  ret = (int)recv(bio->num, out, out_len, 0);
   BIO_clear_retry_flags(bio);
   if (ret <= 0) {
     if (bio_fd_should_retry(ret)) {
@@ -390,7 +387,7 @@ static int conn_write(BIO *bio, const char *in, int in_len) {
   }
 
   bio_clear_socket_error();
-  ret = send(bio->num, in, in_len, 0);
+  ret = (int)send(bio->num, in, in_len, 0);
   BIO_clear_retry_flags(bio);
   if (ret <= 0) {
     if (bio_fd_should_retry(ret)) {
@@ -470,8 +467,7 @@ static long conn_ctrl(BIO *bio, int cmd, long num, void *ptr) {
     case BIO_CTRL_FLUSH:
       break;
     case BIO_CTRL_GET_CALLBACK: {
-      int (**fptr)(const BIO *bio, int state, int xret);
-      fptr = (int (**)(const BIO *bio, int state, int xret))ptr;
+      int (**fptr)(const BIO *bio, int state, int xret) = ptr;
       *fptr = data->info_callback;
     } break;
     default:
@@ -489,7 +485,13 @@ static long conn_callback_ctrl(BIO *bio, int cmd, bio_info_cb fp) {
 
   switch (cmd) {
     case BIO_CTRL_SET_CALLBACK:
+      // This is the actual type signature of |fp|. The caller is expected to
+      // cast it to |bio_info_cb| due to the |BIO_callback_ctrl| calling
+      // convention.
+      OPENSSL_MSVC_PRAGMA(warning(push))
+      OPENSSL_MSVC_PRAGMA(warning(disable : 4191))
       data->info_callback = (int (*)(const struct bio_st *, int, int))fp;
+      OPENSSL_MSVC_PRAGMA(warning(pop))
       break;
     default:
       ret = 0;
@@ -521,11 +523,11 @@ static const BIO_METHOD methods_connectp = {
 const BIO_METHOD *BIO_s_connect(void) { return &methods_connectp; }
 
 int BIO_set_conn_hostname(BIO *bio, const char *name) {
-  return BIO_ctrl(bio, BIO_C_SET_CONNECT, 0, (void*) name);
+  return (int)BIO_ctrl(bio, BIO_C_SET_CONNECT, 0, (void*) name);
 }
 
 int BIO_set_conn_port(BIO *bio, const char *port_str) {
-  return BIO_ctrl(bio, BIO_C_SET_CONNECT, 1, (void*) port_str);
+  return (int)BIO_ctrl(bio, BIO_C_SET_CONNECT, 1, (void*) port_str);
 }
 
 int BIO_set_conn_int_port(BIO *bio, const int *port) {
@@ -535,11 +537,11 @@ int BIO_set_conn_int_port(BIO *bio, const int *port) {
 }
 
 int BIO_set_nbio(BIO *bio, int on) {
-  return BIO_ctrl(bio, BIO_C_SET_NBIO, on, NULL);
+  return (int)BIO_ctrl(bio, BIO_C_SET_NBIO, on, NULL);
 }
 
 int BIO_do_connect(BIO *bio) {
-  return BIO_ctrl(bio, BIO_C_DO_STATE_MACHINE, 0, NULL);
+  return (int)BIO_ctrl(bio, BIO_C_DO_STATE_MACHINE, 0, NULL);
 }
 
 #endif  // OPENSSL_TRUSTY

@@ -35,7 +35,7 @@ namespace WGSL::AST {
 // larger node than the one current in the tree. E.g. replacing an identifier
 // with a structure access.
 class IdentityExpression final : public Expression {
-    friend ShaderModule;
+    WGSL_AST_BUILDER_NODE(IdentityExpression);
 public:
     NodeKind kind() const override;
     Expression& expression() { return m_expression.get(); }

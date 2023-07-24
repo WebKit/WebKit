@@ -7,6 +7,7 @@
 * Optimized for SSSE3/AVX2 on x86/x64.
 * Optimized for Neon on Arm.
 * Optimized for MSA on Mips.
+* Optimized for RVV on RISC-V.
 
 ### Development
 

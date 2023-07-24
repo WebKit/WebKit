@@ -1279,7 +1279,7 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedB
     String fullPath;
     
     do {
-        path = makeString(UUID::createVersion4(), fileExtension);
+        path = makeString(WTF::UUID::createVersion4(), fileExtension);
         if (path.isEmpty())
             return false;
         

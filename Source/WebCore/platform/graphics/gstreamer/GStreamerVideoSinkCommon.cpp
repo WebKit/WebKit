@@ -104,4 +104,6 @@ void webKitVideoSinkSetMediaPlayerPrivate(GstElement* appSink, MediaPlayerPrivat
     }, player, nullptr);
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // ENABLE(VIDEO)

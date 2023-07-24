@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <set>
@@ -23,6 +24,7 @@
 #include "absl/functional/bind_front.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
+#include "api/media_types.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
@@ -33,6 +35,7 @@
 #include "call/adaptation/broadcast_resource_listener.h"
 #include "call/bitrate_allocator.h"
 #include "call/flexfec_receive_stream_impl.h"
+#include "call/packet_receiver.h"
 #include "call/receive_time_calculator.h"
 #include "call/rtp_stream_receiver_controller.h"
 #include "call/rtp_transport_controller_send.h"
@@ -48,11 +51,11 @@
 #include "modules/rtp_rtcp/include/flexfec_receiver.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_util.h"
 #include "modules/video_coding/fec_controller_default.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/location.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/no_unique_address.h"
@@ -72,23 +75,6 @@
 namespace webrtc {
 
 namespace {
-bool SendPeriodicFeedback(const std::vector<RtpExtension>& extensions) {
-  for (const auto& extension : extensions) {
-    if (extension.uri == RtpExtension::kTransportSequenceNumberV2Uri)
-      return false;
-  }
-  return true;
-}
-
-bool HasTransportSequenceNumber(const RtpHeaderExtensionMap& map) {
-  return map.IsRegistered(kRtpExtensionTransportSequenceNumber) ||
-         map.IsRegistered(kRtpExtensionTransportSequenceNumber02);
-}
-
-bool UseSendSideBwe(const ReceiveStreamInterface* stream) {
-  return stream->transport_cc() &&
-         HasTransportSequenceNumber(stream->GetRtpExtensionMap());
-}
 
 const int* FindKeyByValue(const std::map<int, int>& m, int v) {
   for (const auto& kv : m) {
@@ -105,7 +91,6 @@ std::unique_ptr<rtclog::StreamConfig> CreateRtcLogStreamConfig(
   rtclog_config->local_ssrc = config.rtp.local_ssrc;
   rtclog_config->rtx_ssrc = config.rtp.rtx_ssrc;
   rtclog_config->rtcp_mode = config.rtp.rtcp_mode;
-  rtclog_config->rtp_extensions = config.rtp.extensions;
 
   for (const auto& d : config.decoders) {
     const int* search =
@@ -138,7 +123,6 @@ std::unique_ptr<rtclog::StreamConfig> CreateRtcLogStreamConfig(
   auto rtclog_config = std::make_unique<rtclog::StreamConfig>();
   rtclog_config->remote_ssrc = config.rtp.remote_ssrc;
   rtclog_config->local_ssrc = config.rtp.local_ssrc;
-  rtclog_config->rtp_extensions = config.rtp.extensions;
   return rtclog_config;
 }
 
@@ -196,7 +180,6 @@ class ResourceVideoSendStreamForwarder {
 
 class Call final : public webrtc::Call,
                    public PacketReceiver,
-                   public RecoveredPacketReceiver,
                    public TargetTransferRateObserver,
                    public BitrateAllocator::LimitObserver {
  public:
@@ -251,13 +234,12 @@ class Call final : public webrtc::Call,
   TaskQueueBase* network_thread() const override;
   TaskQueueBase* worker_thread() const override;
 
-  // Implements PacketReceiver.
-  DeliveryStatus DeliverPacket(MediaType media_type,
-                               rtc::CopyOnWriteBuffer packet,
-                               int64_t packet_time_us) override;
+  void DeliverRtcpPacket(rtc::CopyOnWriteBuffer packet) override;
 
-  // Implements RecoveredPacketReceiver.
-  void OnRecoveredPacket(const uint8_t* packet, size_t length) override;
+  void DeliverRtpPacket(
+      MediaType media_type,
+      RtpPacketReceived packet,
+      OnUndemuxablePacketHandler undemuxable_packet_handler) override;
 
   void SignalChannelNetworkState(MediaType media, NetworkState state) override;
 
@@ -345,21 +327,15 @@ class Call final : public webrtc::Call,
 
   void DeliverRtcp(MediaType media_type, rtc::CopyOnWriteBuffer packet)
       RTC_RUN_ON(network_thread_);
-  DeliveryStatus DeliverRtp(MediaType media_type,
-                            rtc::CopyOnWriteBuffer packet,
-                            int64_t packet_time_us) RTC_RUN_ON(worker_thread_);
 
   AudioReceiveStreamImpl* FindAudioStreamForSyncGroup(
       absl::string_view sync_group) RTC_RUN_ON(worker_thread_);
   void ConfigureSync(absl::string_view sync_group) RTC_RUN_ON(worker_thread_);
 
   void NotifyBweOfReceivedPacket(const RtpPacketReceived& packet,
-                                 MediaType media_type,
-                                 bool use_send_side_bwe)
+                                 MediaType media_type)
       RTC_RUN_ON(worker_thread_);
 
-  bool IdentifyReceivedPacket(RtpPacketReceived& packet,
-                              bool* use_send_side_bwe = nullptr);
   bool RegisterReceiveStream(uint32_t ssrc, ReceiveStreamInterface* stream);
   bool UnregisterReceiveStream(uint32_t ssrc);
 
@@ -1026,9 +1002,6 @@ webrtc::VideoReceiveStreamInterface* Call::CreateVideoReceiveStream(
   TRACE_EVENT0("webrtc", "Call::CreateVideoReceiveStream");
   RTC_DCHECK_RUN_ON(worker_thread_);
 
-  receive_side_cc_.SetSendPeriodicFeedback(
-      SendPeriodicFeedback(configuration.rtp.extensions));
-
   EnsureStarted();
 
   event_log_->Log(std::make_unique<RtcEventVideoReceiveStreamConfig>(
@@ -1038,6 +1011,8 @@ webrtc::VideoReceiveStreamInterface* Call::CreateVideoReceiveStream(
   // and `video_receiver_controller_` out of VideoReceiveStream2 construction
   // and set it up asynchronously on the network thread (the registration and
   // `video_receiver_controller_` need to live on the network thread).
+  // TODO(crbug.com/1381982): Re-enable decode synchronizer once the Chromium
+  // API has adapted to the new Metronome interface.
   VideoReceiveStream2* receive_stream = new VideoReceiveStream2(
       task_queue_factory_, this, num_cpu_cores_,
       transport_send_->packet_router(), std::move(configuration),
@@ -1102,7 +1077,8 @@ FlexfecReceiveStream* Call::CreateFlexfecReceiveStream(
   // OnRtpPacket until the constructor is finished and the object is
   // in a valid state, since OnRtpPacket runs on the same thread.
   FlexfecReceiveStreamImpl* receive_stream = new FlexfecReceiveStreamImpl(
-      clock_, std::move(config), this, call_stats_->AsRtcpRttStats());
+      clock_, std::move(config), &video_receiver_controller_,
+      call_stats_->AsRtcpRttStats());
 
   // TODO(bugs.webrtc.org/11993): Set this up asynchronously on the network
   // thread.
@@ -1389,195 +1365,104 @@ void Call::ConfigureSync(absl::string_view sync_group) {
   }
 }
 
-void Call::DeliverRtcp(MediaType media_type, rtc::CopyOnWriteBuffer packet) {
-  RTC_DCHECK_RUN_ON(network_thread_);
+void Call::DeliverRtcpPacket(rtc::CopyOnWriteBuffer packet) {
+  RTC_DCHECK_RUN_ON(worker_thread_);
+  RTC_DCHECK(IsRtcpPacket(packet));
   TRACE_EVENT0("webrtc", "Call::DeliverRtcp");
 
-  // TODO(bugs.webrtc.org/11993): This DCHECK is here just to maintain the
-  // invariant that currently the only call path to this function is via
-  // `PeerConnection::InitializeRtcpCallback()`. DeliverRtp on the other hand
-  // gets called via the channel classes and
-  // WebRtc[Audio|Video]Channel's `OnPacketReceived`. We'll remove the
-  // PeerConnection involvement as well as
-  // `JsepTransportController::OnRtcpPacketReceived_n` and `rtcp_handler`
-  // and make sure that the flow of packets is consistent from the
-  // `RtpTransport` class, via the *Channel and *Engine classes and into Call.
-  // This way we'll also know more about the context of the packet.
-  RTC_DCHECK_EQ(media_type, MediaType::ANY);
-
-  // TODO(bugs.webrtc.org/11993): This should execute directly on the network
-  // thread.
-  worker_thread_->PostTask(
-      SafeTask(task_safety_.flag(), [this, packet = std::move(packet)]() {
-        RTC_DCHECK_RUN_ON(worker_thread_);
-
-        receive_stats_.AddReceivedRtcpBytes(static_cast<int>(packet.size()));
-        bool rtcp_delivered = false;
-        for (VideoReceiveStream2* stream : video_receive_streams_) {
-          if (stream->DeliverRtcp(packet.cdata(), packet.size()))
-            rtcp_delivered = true;
-        }
-
-        for (AudioReceiveStreamImpl* stream : audio_receive_streams_) {
-          stream->DeliverRtcp(packet.cdata(), packet.size());
-          rtcp_delivered = true;
-        }
-
-        for (VideoSendStream* stream : video_send_streams_) {
-          stream->DeliverRtcp(packet.cdata(), packet.size());
-          rtcp_delivered = true;
-        }
-
-        for (auto& kv : audio_send_ssrcs_) {
-          kv.second->DeliverRtcp(packet.cdata(), packet.size());
-          rtcp_delivered = true;
-        }
-
-        if (rtcp_delivered) {
-          event_log_->Log(std::make_unique<RtcEventRtcpPacketIncoming>(
-              rtc::MakeArrayView(packet.cdata(), packet.size())));
-        }
-      }));
-}
-
-PacketReceiver::DeliveryStatus Call::DeliverRtp(MediaType media_type,
-                                                rtc::CopyOnWriteBuffer packet,
-                                                int64_t packet_time_us) {
-  TRACE_EVENT0("webrtc", "Call::DeliverRtp");
-  RTC_DCHECK_NE(media_type, MediaType::ANY);
-
-  RtpPacketReceived parsed_packet;
-  if (!parsed_packet.Parse(std::move(packet)))
-    return DELIVERY_PACKET_ERROR;
-
-  if (packet_time_us != -1) {
-    if (receive_time_calculator_) {
-      // Repair packet_time_us for clock resets by comparing a new read of
-      // the same clock (TimeUTCMicros) to a monotonic clock reading.
-      packet_time_us = receive_time_calculator_->ReconcileReceiveTimes(
-          packet_time_us, rtc::TimeUTCMicros(), clock_->TimeInMicroseconds());
-    }
-    parsed_packet.set_arrival_time(Timestamp::Micros(packet_time_us));
-  } else {
-    parsed_packet.set_arrival_time(clock_->CurrentTime());
+  receive_stats_.AddReceivedRtcpBytes(static_cast<int>(packet.size()));
+  bool rtcp_delivered = false;
+  for (VideoReceiveStream2* stream : video_receive_streams_) {
+    if (stream->DeliverRtcp(packet.cdata(), packet.size()))
+      rtcp_delivered = true;
   }
 
-  // We might get RTP keep-alive packets in accordance with RFC6263 section 4.6.
-  // These are empty (zero length payload) RTP packets with an unsignaled
-  // payload type.
-  const bool is_keep_alive_packet = parsed_packet.payload_size() == 0;
+  for (AudioReceiveStreamImpl* stream : audio_receive_streams_) {
+    stream->DeliverRtcp(packet.cdata(), packet.size());
+    rtcp_delivered = true;
+  }
 
-  RTC_DCHECK(media_type == MediaType::AUDIO || media_type == MediaType::VIDEO ||
-             is_keep_alive_packet);
+  for (VideoSendStream* stream : video_send_streams_) {
+    stream->DeliverRtcp(packet.cdata(), packet.size());
+    rtcp_delivered = true;
+  }
 
-  bool use_send_side_bwe = false;
-  if (!IdentifyReceivedPacket(parsed_packet, &use_send_side_bwe))
-    return DELIVERY_UNKNOWN_SSRC;
+  for (auto& kv : audio_send_ssrcs_) {
+    kv.second->DeliverRtcp(packet.cdata(), packet.size());
+    rtcp_delivered = true;
+  }
 
-  NotifyBweOfReceivedPacket(parsed_packet, media_type, use_send_side_bwe);
+  if (rtcp_delivered) {
+    event_log_->Log(std::make_unique<RtcEventRtcpPacketIncoming>(packet));
+  }
+}
+
+void Call::DeliverRtpPacket(
+    MediaType media_type,
+    RtpPacketReceived packet,
+    OnUndemuxablePacketHandler undemuxable_packet_handler) {
+  RTC_DCHECK_RUN_ON(worker_thread_);
+  RTC_DCHECK(packet.arrival_time().IsFinite());
+
+  if (receive_time_calculator_) {
+    int64_t packet_time_us = packet.arrival_time().us();
+    // Repair packet_time_us for clock resets by comparing a new read of
+    // the same clock (TimeUTCMicros) to a monotonic clock reading.
+    packet_time_us = receive_time_calculator_->ReconcileReceiveTimes(
+        packet_time_us, rtc::TimeUTCMicros(), clock_->TimeInMicroseconds());
+    packet.set_arrival_time(Timestamp::Micros(packet_time_us));
+  }
+
+  NotifyBweOfReceivedPacket(packet, media_type);
+
+  event_log_->Log(std::make_unique<RtcEventRtpPacketIncoming>(packet));
+  if (media_type != MediaType::AUDIO && media_type != MediaType::VIDEO) {
+    return;
+  }
+
+  RtpStreamReceiverController& receiver_controller =
+      media_type == MediaType::AUDIO ? audio_receiver_controller_
+                                     : video_receiver_controller_;
+
+  if (!receiver_controller.OnRtpPacket(packet)) {
+    // Demuxing failed.  Allow the caller to create a
+    // receive stream in order to handle unsignalled SSRCs and try again.
+    // Note that we dont want to call NotifyBweOfReceivedPacket twice per
+    // packet.
+    if (!undemuxable_packet_handler(packet)) {
+      return;
+    }
+    if (!receiver_controller.OnRtpPacket(packet)) {
+      RTC_LOG(LS_INFO) << "Failed to demux packet " << packet.Ssrc();
+      return;
+    }
+  }
 
   // RateCounters expect input parameter as int, save it as int,
   // instead of converting each time it is passed to RateCounter::Add below.
-  int length = static_cast<int>(parsed_packet.size());
+  int length = static_cast<int>(packet.size());
   if (media_type == MediaType::AUDIO) {
-    if (audio_receiver_controller_.OnRtpPacket(parsed_packet)) {
-      receive_stats_.AddReceivedAudioBytes(length,
-                                           parsed_packet.arrival_time());
-      event_log_->Log(
-          std::make_unique<RtcEventRtpPacketIncoming>(parsed_packet));
-      return DELIVERY_OK;
-    }
-  } else if (media_type == MediaType::VIDEO) {
-    parsed_packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
-    if (video_receiver_controller_.OnRtpPacket(parsed_packet)) {
-      receive_stats_.AddReceivedVideoBytes(length,
-                                           parsed_packet.arrival_time());
-      event_log_->Log(
-          std::make_unique<RtcEventRtpPacketIncoming>(parsed_packet));
-      return DELIVERY_OK;
-    }
+    receive_stats_.AddReceivedAudioBytes(length, packet.arrival_time());
   }
-  return DELIVERY_UNKNOWN_SSRC;
-}
-
-PacketReceiver::DeliveryStatus Call::DeliverPacket(
-    MediaType media_type,
-    rtc::CopyOnWriteBuffer packet,
-    int64_t packet_time_us) {
-  if (IsRtcpPacket(packet)) {
-    RTC_DCHECK_RUN_ON(network_thread_);
-    DeliverRtcp(media_type, std::move(packet));
-    return DELIVERY_OK;
+  if (media_type == MediaType::VIDEO) {
+    receive_stats_.AddReceivedVideoBytes(length, packet.arrival_time());
   }
-
-  RTC_DCHECK_RUN_ON(worker_thread_);
-  return DeliverRtp(media_type, std::move(packet), packet_time_us);
-}
-
-void Call::OnRecoveredPacket(const uint8_t* packet, size_t length) {
-  // TODO(bugs.webrtc.org/11993): Expect to be called on the network thread.
-  // This method is called synchronously via `OnRtpPacket()` (see DeliverRtp)
-  // on the same thread.
-  RTC_DCHECK_RUN_ON(worker_thread_);
-  RtpPacketReceived parsed_packet;
-  if (!parsed_packet.Parse(packet, length))
-    return;
-
-  parsed_packet.set_recovered(true);
-
-  if (!IdentifyReceivedPacket(parsed_packet))
-    return;
-
-  // TODO(brandtr): Update here when we support protecting audio packets too.
-  parsed_packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
-  video_receiver_controller_.OnRtpPacket(parsed_packet);
 }
 
 void Call::NotifyBweOfReceivedPacket(const RtpPacketReceived& packet,
-                                     MediaType media_type,
-                                     bool use_send_side_bwe) {
+                                     MediaType media_type) {
   RTC_DCHECK_RUN_ON(worker_thread_);
-  RTPHeader header;
-  packet.GetHeader(&header);
 
   ReceivedPacket packet_msg;
   packet_msg.size = DataSize::Bytes(packet.payload_size());
   packet_msg.receive_time = packet.arrival_time();
-  if (header.extension.hasAbsoluteSendTime) {
-    packet_msg.send_time = header.extension.GetAbsoluteSendTimestamp();
+  uint32_t time_24;
+  if (packet.GetExtension<AbsoluteSendTime>(&time_24)) {
+    packet_msg.send_time = AbsoluteSendTime::ToTimestamp(time_24);
   }
   transport_send_->OnReceivedPacket(packet_msg);
 
-  if (!use_send_side_bwe && header.extension.hasTransportSequenceNumber) {
-    // Inconsistent configuration of send side BWE. Do nothing.
-    return;
-  }
-  // For audio, we only support send side BWE.
-  if (media_type == MediaType::VIDEO ||
-      (use_send_side_bwe && header.extension.hasTransportSequenceNumber)) {
-    receive_side_cc_.OnReceivedPacket(
-        packet.arrival_time().ms(),
-        packet.payload_size() + packet.padding_size(), header);
-  }
-}
-
-bool Call::IdentifyReceivedPacket(RtpPacketReceived& packet,
-                                  bool* use_send_side_bwe /*= nullptr*/) {
-  RTC_DCHECK_RUN_ON(&receive_11993_checker_);
-  auto it = receive_rtp_config_.find(packet.Ssrc());
-  if (it == receive_rtp_config_.end()) {
-    RTC_DLOG(LS_WARNING) << "receive_rtp_config_ lookup failed for ssrc "
-                         << packet.Ssrc();
-    return false;
-  }
-
-  packet.IdentifyExtensions(it->second->GetRtpExtensionMap());
-
-  if (use_send_side_bwe) {
-    *use_send_side_bwe = UseSendSideBwe(it->second);
-  }
-
-  return true;
+  receive_side_cc_.OnReceivedPacket(packet, media_type);
 }
 
 bool Call::RegisterReceiveStream(uint32_t ssrc,

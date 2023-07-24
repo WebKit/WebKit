@@ -79,7 +79,7 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platform
 {
     static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>> platformPathsWithAssumedReadAccess(std::initializer_list<String> {
         [NSBundle bundleWithIdentifier:@"com.apple.WebCore"].resourcePath.stringByStandardizingPath,
-        [NSBundle bundleWithIdentifier:@"com.apple.WebKit"].resourcePath.stringByStandardizingPath
+        [NSBundle bundleForClass:NSClassFromString(@"WKWebView")].resourcePath.stringByStandardizingPath
     });
 
     return platformPathsWithAssumedReadAccess;
@@ -244,7 +244,7 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     if (!_AXSApplicationAccessibilityEnabled())
         return;
 #endif
-    if (!processIdentifier())
+    if (!processID())
         return;
     if (!canSendMessage())
         return;
@@ -302,7 +302,7 @@ bool WebProcessProxy::messageSourceIsValidWebContentProcess()
     }
 
 #if USE(APPLE_INTERNAL_SDK)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     // FIXME(rdar://80908833): On iOS, we can only perform the below checks for platform binaries until rdar://80908833 is fixed.
     if (!currentProcessIsPlatformBinary())
         return true;

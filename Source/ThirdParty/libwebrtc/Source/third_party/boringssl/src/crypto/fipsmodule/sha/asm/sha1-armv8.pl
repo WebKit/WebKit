@@ -40,7 +40,7 @@ $0 =~ m/(.*[\/\\])[^\/\\]+$/; $dir=$1;
 ( $xlate="${dir}../../../perlasm/arm-xlate.pl" and -f $xlate) or
 die "can't locate arm-xlate.pl";
 
-open OUT,"| \"$^X\" $xlate $flavour $output";
+open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 *STDOUT=*OUT;
 
 ($ctx,$inp,$num)=("x0","x1","x2");
@@ -61,7 +61,7 @@ $code.=<<___ if ($i<14 && !($i&1));
 	ldr	@Xx[$i+2],[$inp,#`($i+2)*4-64`]
 ___
 $code.=<<___ if ($i<14 && ($i&1));
-#ifdef	__ARMEB__
+#ifdef	__AARCH64EB__
 	ror	@Xx[$i+1],@Xx[$i+1],#32
 #else
 	rev32	@Xx[$i+1],@Xx[$i+1]
@@ -209,7 +209,7 @@ sha1_block_data_order:
 	movz	$K,#0x7999
 	sub	$num,$num,#1
 	movk	$K,#0x5a82,lsl#16
-#ifdef	__ARMEB__
+#ifdef	__AARCH64EB__
 	ror	$Xx[0],@Xx[0],#32
 #else
 	rev32	@Xx[0],@Xx[0]
@@ -359,4 +359,4 @@ foreach(split("\n",$code)) {
 	print $_,"\n";
 }
 
-close STDOUT or die "error closing STDOUT";
+close STDOUT or die "error closing STDOUT: $!";

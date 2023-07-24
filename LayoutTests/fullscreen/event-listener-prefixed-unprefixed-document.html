@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<style>
+    #test {
+        background-color: green;
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<div id="test"></div>
+<script>
+document.addEventListener("webkitfullscreenchange", () => {
+    test.style.backgroundColor = "red";
+});
+document.addEventListener("fullscreenchange", () => {
+    if (document.fullscreenElement)
+        document.exitFullscreen();
+    else
+        document.documentElement.classList.remove("reftest-wait");
+});
+if (window.internals) {
+    internals.withUserGesture(() => {
+        test.requestFullscreen();
+    });
+}
+</script>
+</html>

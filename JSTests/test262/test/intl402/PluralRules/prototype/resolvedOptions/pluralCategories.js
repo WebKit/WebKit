@@ -7,6 +7,7 @@ description: >
     Tests that Intl.PluralRules.prototype.resolvedOptions creates a new array
     for the pluralCategories property on every call.
 includes: [propertyHelper.js, compareArray.js]
+features: [Array.prototype.includes]
 ---*/
 
 const allowedValues = ["zero", "one", "two", "few", "many", "other"];
