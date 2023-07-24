@@ -69,6 +69,14 @@ public:
         return m_signaled;
     }
 
+    std::optional<IPC::Semaphore> tryTakeSemaphore()
+    {
+        if (!m_signaled)
+            return std::nullopt;
+        Locker locker { m_lock };
+        return WTFMove(m_semaphore);
+    }
+
 private:
     RemoteImageBufferProxyFlushFence(IPC::Semaphore semaphore)
         : m_semaphore(WTFMove(semaphore))
@@ -76,8 +84,8 @@ private:
         tracePoint(FlushRemoteImageBufferStart, reinterpret_cast<uintptr_t>(this));
     }
     Lock m_lock;
-    bool m_signaled WTF_GUARDED_BY_LOCK(m_lock) { false };
-    IPC::Semaphore m_semaphore;
+    std::atomic<bool> m_signaled { false };
+    IPC::Semaphore WTF_GUARDED_BY_LOCK(m_lock) m_semaphore;
 };
 
 namespace {
@@ -324,9 +332,13 @@ bool RemoteImageBufferProxy::flushDrawingContextAsync()
         return m_pendingFlush;
 
     LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContextAsync");
-    IPC::Semaphore flushSemaphore;
-    m_remoteDisplayList.flushContext(flushSemaphore);
-    m_pendingFlush = RemoteImageBufferProxyFlushFence::create(WTFMove(flushSemaphore));
+    std::optional<IPC::Semaphore> flushSemaphore;
+    if (m_pendingFlush)
+        flushSemaphore = m_pendingFlush->tryTakeSemaphore();
+    if (!flushSemaphore)
+        flushSemaphore.emplace();
+    m_remoteDisplayList.flushContext(*flushSemaphore);
+    m_pendingFlush = RemoteImageBufferProxyFlushFence::create(WTFMove(*flushSemaphore));
     m_needsFlush = false;
     return true;
 }
