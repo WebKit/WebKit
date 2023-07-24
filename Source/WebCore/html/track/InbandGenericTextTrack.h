@@ -66,6 +66,8 @@ private:
 
     void updateCueFromCueData(TextTrackCueGeneric&, InbandGenericCue&);
 
+    RefPtr<TextTrackCue> cueToExtend(TextTrackCue&);
+
     WebVTTParser& parser();
     void parseWebVTTCueData(ISOWebVTTCue&&) final;
     void parseWebVTTFileHeader(String&&) final;
