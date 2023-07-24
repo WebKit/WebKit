@@ -898,6 +898,15 @@ bool VideoFullscreenInterfaceAVKit::exitFullscreen(const FloatRect& finalRect)
     return true;
 }
 
+void VideoFullscreenInterfaceAVKit::exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
+{
+    ASSERT_UNUSED(mode, mode == HTMLMediaElementEnums::VideoFullscreenModeNone);
+    m_watchdogTimer.stop();
+    m_targetMode = HTMLMediaElementEnums::VideoFullscreenModeNone;
+    m_currentMode = HTMLMediaElementEnums::VideoFullscreenModeNone;
+    cleanupFullscreen();
+}
+
 void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::cleanupFullscreen(%p)", this);

@@ -746,7 +746,12 @@ void VideoFullscreenManagerProxy::willRemoveLayerForID(PlaybackSessionContextIde
 void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
     auto& [model, interface] = ensureModelAndInterface(contextId);
-    addClientForContext(contextId);
+
+    // Do not add another refcount for this contextId if the interface is already in
+    // a fullscreen mode, lest the refcounts get out of sync, as removeClientForContext
+    // is only called once both PiP and video fullscreen are fully exited.
+    if (interface->mode() == HTMLMediaElementEnums::VideoFullscreenModeNone)
+        addClientForContext(contextId);
 
     if (m_mockVideoPresentationModeEnabled) {
         if (!videoDimensions.isEmpty())
@@ -868,15 +873,7 @@ void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(PlaybackS
         return;
     }
 
-#if PLATFORM(MAC)
     ensureInterface(contextId).exitFullscreenWithoutAnimationToMode(targetMode);
-#else
-    auto& [model, interface] = ensureModelAndInterface(contextId);
-    interface->invalidate();
-    [model->layerHostView() removeFromSuperview];
-    model->setLayerHostView(nullptr);
-    removeClientForContext(contextId);
-#endif
 
     hasVideoInPictureInPictureDidChange(targetMode & MediaPlayerEnums::VideoFullscreenModePictureInPicture);
 }

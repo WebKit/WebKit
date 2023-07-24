@@ -52,6 +52,7 @@ public:
     void setupFullscreen(UIView&, const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) { }
     void enterFullscreen() { }
     bool exitFullscreen(const FloatRect& finalRect) { return false; }
+    void exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode) { }
     void cleanupFullscreen() { }
     void invalidate() { }
     void requestHideAndExitFullscreen() { }
