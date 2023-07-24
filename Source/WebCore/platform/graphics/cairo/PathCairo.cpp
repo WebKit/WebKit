@@ -341,7 +341,7 @@ void PathCairo::applySegments(const PathSegmentApplier& applier) const
             break;
 
         case PathElement::Type::CloseSubpath:
-            applier({ std::monostate() });
+            applier({ PathCloseSubpath { } });
             break;
         }
     });

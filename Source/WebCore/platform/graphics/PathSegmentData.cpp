@@ -687,4 +687,35 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataArc& data)
     return ts;
 }
 
+FloatPoint PathCloseSubpath::calculateEndPoint(const FloatPoint&, FloatPoint& lastMoveToPoint) const
+{
+    return lastMoveToPoint;
+}
+
+void PathCloseSubpath::extendFastBoundingRect(const FloatPoint&, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const
+{
+    boundingRect.extend(lastMoveToPoint);
+}
+
+void PathCloseSubpath::extendBoundingRect(const FloatPoint&, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const
+{
+    boundingRect.extend(lastMoveToPoint);
+}
+
+void PathCloseSubpath::addToImpl(PathImpl& impl) const
+{
+    impl.closeSubpath();
+}
+
+void PathCloseSubpath::applyElements(const PathElementApplier& applier) const
+{
+    applier({ PathElement::Type::CloseSubpath, { } });
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const PathCloseSubpath&)
+{
+    ts << "close subpath";
+    return ts;
+}
+
 } // namespace WebCore

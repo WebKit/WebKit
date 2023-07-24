@@ -179,7 +179,7 @@ void PathStream::addRoundedRect(const FloatRoundedRect& roundedRect, PathRounded
 
 void PathStream::closeSubpath()
 {
-    segments().append(std::monostate());
+    segments().append(PathCloseSubpath { });
 }
 
 const Vector<PathSegment>& PathStream::segments() const
