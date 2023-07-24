@@ -101,7 +101,6 @@ void CommandLine::parseArguments(int argc, char** argv)
         printUsageStatement(false);
 }
 
-#if !ENABLE(LIBFUZZER)
 static int runWGSL(const CommandLine& options)
 {
     WGSL::Configuration configuration;
@@ -144,25 +143,3 @@ int main(int argc, char** argv)
     CommandLine commandLine(argc, argv);
     return runWGSL(commandLine);
 }
-
-#else
-
-extern "C" {
-int LLVMFuzzerTestOneInput(const uint8_t *data, size_t);
-} // extern "C"
-
-int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
-{
-    WTF::initializeMainThread();
-
-    WGSL::Configuration configuration;
-    auto source = String::fromUTF8WithLatin1Fallback(data, size);
-    auto checkResult = WGSL::staticCheck(source, std::nullopt, configuration);
-    if (auto* successfulCheck = std::get_if<WGSL::SuccessfulCheck>(&checkResult)) {
-        auto& shaderModule = successfulCheck->ast;
-        WGSL::prepare(shaderModule, "main"_str, std::nullopt);
-    }
-
-    return 0;
-}
-#endif
