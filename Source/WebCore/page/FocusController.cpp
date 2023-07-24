@@ -104,6 +104,45 @@ static inline bool isFocusScopeOwner(const Element& element)
     return false;
 }
 
+static void clearSelectionIfNeeded(LocalFrame* oldFocusedFrame, LocalFrame* newFocusedFrame, Node* newFocusedNode)
+{
+    if (!oldFocusedFrame)
+        return;
+
+    if (newFocusedFrame && oldFocusedFrame->document() != newFocusedFrame->document())
+        return;
+
+    const auto& selection = oldFocusedFrame->selection().selection();
+    if (selection.isNone())
+        return;
+
+    bool caretBrowsing = oldFocusedFrame->settings().caretBrowsingEnabled();
+    if (caretBrowsing)
+        return;
+
+    if (newFocusedNode) {
+        Node* selectionStartNode = selection.start().deprecatedNode();
+        if (newFocusedNode->contains(selectionStartNode) || selectionStartNode->shadowHost() == newFocusedNode)
+            return;
+    }
+
+    if (RefPtr mousePressNode = newFocusedFrame ? newFocusedFrame->eventHandler().mousePressNode() : nullptr) {
+        if (!mousePressNode->canStartSelection()) {
+            // Don't clear the selection for contentEditable elements, but do clear it for input and textarea. See bug 38696.
+            auto* root = selection.rootEditableElement();
+            if (!root)
+                return;
+            auto* host = root->shadowHost();
+            // FIXME: Seems likely we can just do the check on "host" here instead of "rootOrHost".
+            auto* rootOrHost = host ? host : root;
+            if (!is<HTMLInputElement>(*rootOrHost) && !is<HTMLTextAreaElement>(*rootOrHost))
+                return;
+        }
+    }
+
+    oldFocusedFrame->selection().clear();
+}
+
 class FocusNavigationScope {
 public:
     Element* owner() const;
@@ -532,13 +571,15 @@ bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* even
 
 bool FocusController::relinquishFocusToChrome(FocusDirection direction)
 {
-    RefPtr<Document> document = focusedOrMainFrame().document();
+    Ref frame = focusedOrMainFrame();
+    RefPtr document = frame->document();
     if (!document)
         return false;
 
     if (!m_page.chrome().canTakeFocus(direction) || m_page.isControlledByAutomation())
         return false;
 
+    clearSelectionIfNeeded(frame.ptr(), nullptr, nullptr);
     document->setFocusedElement(nullptr);
     setFocusedFrame(nullptr);
     m_page.chrome().takeFocus(direction);
@@ -856,45 +897,6 @@ static bool relinquishesEditingFocus(Element& element)
         return false;
 
     return frame->editor().shouldEndEditing(makeRangeSelectingNodeContents(*root));
-}
-
-static void clearSelectionIfNeeded(LocalFrame* oldFocusedFrame, LocalFrame* newFocusedFrame, Node* newFocusedNode)
-{
-    if (!oldFocusedFrame || !newFocusedFrame)
-        return;
-        
-    if (oldFocusedFrame->document() != newFocusedFrame->document())
-        return;
-
-    const VisibleSelection& selection = oldFocusedFrame->selection().selection();
-    if (selection.isNone())
-        return;
-
-    bool caretBrowsing = oldFocusedFrame->settings().caretBrowsingEnabled();
-    if (caretBrowsing)
-        return;
-
-    if (newFocusedNode) {
-        Node* selectionStartNode = selection.start().deprecatedNode();
-        if (newFocusedNode->contains(selectionStartNode) || selectionStartNode->shadowHost() == newFocusedNode)
-            return;
-    }
-
-    if (Node* mousePressNode = newFocusedFrame->eventHandler().mousePressNode()) {
-        if (!mousePressNode->canStartSelection()) {
-            // Don't clear the selection for contentEditable elements, but do clear it for input and textarea. See bug 38696.
-            auto* root = selection.rootEditableElement();
-            if (!root)
-                return;
-            auto* host = root->shadowHost();
-            // FIXME: Seems likely we can just do the check on "host" here instead of "rootOrHost".
-            auto* rootOrHost = host ? host : root;
-            if (!is<HTMLInputElement>(*rootOrHost) && !is<HTMLTextAreaElement>(*rootOrHost))
-                return;
-        }
-    }
-
-    oldFocusedFrame->selection().clear();
 }
 
 static bool shouldClearSelectionWhenChangingFocusedElement(const Page& page, RefPtr<Element> oldFocusedElement, RefPtr<Element> newFocusedElement)
