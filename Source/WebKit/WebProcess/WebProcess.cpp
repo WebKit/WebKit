@@ -447,7 +447,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             if (m_pagesInWindows.isEmpty() && critical == Critical::No)
                 critical = Critical::Yes;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
             // If this is a process we keep around for performance, kill it on memory pressure instead of trying to free up its memory.
             if (!m_isSuspending && (m_processType == ProcessType::CachedWebContent || m_processType == ProcessType::PrewarmedWebContent || areAllPagesSuspended())) {
                 if (m_processType == ProcessType::CachedWebContent)
@@ -1607,14 +1607,6 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estim
     suspendAllMediaBuffering();
     if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
         platformMediaSessionManager->processWillSuspend();
-#endif
-
-#if !PLATFORM(MAC)
-    if (!m_suppressMemoryPressureHandler) {
-        MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
-        for (auto& page : m_pageMap.values())
-            page->releaseMemory(Critical::Yes);
-    }
 #endif
 
     freezeAllLayerTrees();

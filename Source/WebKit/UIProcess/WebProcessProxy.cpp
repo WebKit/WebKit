@@ -1378,6 +1378,15 @@ void WebProcessProxy::renderTreeAsText(WebCore::FrameIdentifier frameIdentifier,
 
 bool WebProcessProxy::canBeAddedToWebProcessCache() const
 {
+#if PLATFORM(IOS_FAMILY)
+    // Don't add the Web process to the cache if there are still assertions being held, preventing it from suspending.
+    // This is a fix for a regression in page load speed we see on http://www.youtube.com when adding it to the cache.
+    if (throttler().shouldBeRunnable()) {
+        WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is runnable");
+        return false;
+    }
+#endif
+
     if (isRunningServiceWorkers()) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is running workers");
         return false;
@@ -1743,13 +1752,10 @@ void WebProcessProxy::prepareToDropLastAssertion(CompletionHandler<void()>&& com
         // Cached WebProcess will anyway shutdown on memory pressure.
         return completionHandler();
     }
-    // On macOS, we don't slim down the process in the PrepareToSuspend IPC, we delay clearing the
+#endif
+    // We don't slim down the process in the PrepareToSuspend IPC, we delay clearing the
     // caches until we release the suspended assertion.
     sendWithAsyncReply(Messages::WebProcess::ReleaseMemory(), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
-#else
-    // On iOS, we already slim down the process via the PrepareToSuspend IPC.
-    completionHandler();
-#endif
 }
 
 String WebProcessProxy::environmentIdentifier() const
