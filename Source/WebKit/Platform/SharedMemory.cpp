@@ -83,6 +83,18 @@ void SharedMemoryHandle::takeOwnershipOfMemory(MemoryLedger) const
 void SharedMemoryHandle::setOwnershipOfMemory(const ProcessIdentity&, MemoryLedger) const
 {
 }
+
+static std::optional<SharedMemoryHandle> SharedMemoryHandle::createCopy(std::span<const uint8_t> data, SharedMemoryProtection protection)
+{
+    auto memory = SharedMemory::allocate(data.size());
+    if (!memory)
+        return std::nullopt;
+    auto handle = memory->createHandle(protection);
+    if (!handle)
+        return std::nullopt;
+    std::copy(data.begin(), data.end(), memory.data());
+    return handle;
+}
 #endif
 
 } // namespace WebKit

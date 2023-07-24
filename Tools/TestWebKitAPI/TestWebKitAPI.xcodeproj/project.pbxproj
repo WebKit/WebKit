@@ -582,6 +582,7 @@
 		7B397C0628BE0EAD00239202 /* ConnectionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B397C0528BE0EAD00239202 /* ConnectionTests.cpp */; };
 		7B397C0828BE394B00239202 /* UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */; };
 		7B52E86C2A2A1A2200A3251F /* ThreadSafeObjectHeapTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B52E8642A2A1A2200A3251F /* ThreadSafeObjectHeapTests.cpp */; };
+		7B578DE32A373DBE0046D46E /* SharedMemoryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B578DDA2A373DB10046D46E /* SharedMemoryTests.cpp */; };
 		7B636FC229700F0700F3670F /* StreamConnectionWorkQueueTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B636FC129700F0700F3670F /* StreamConnectionWorkQueueTests.cpp */; };
 		7B6FF89728C22D9400CA76B0 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 2B648DBA28C1C1F700791F2B /* WebKit.framework */; };
 		7B7392E928F849EC007297FC /* MessageSenderTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B7392E128F849EC007297FC /* MessageSenderTests.cpp */; };
@@ -2798,6 +2799,7 @@
 		7B2950DA2972AFDD008CC225 /* StreamConnectionEncoderTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamConnectionEncoderTests.cpp; sourceTree = "<group>"; };
 		7B397C0528BE0EAD00239202 /* ConnectionTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionTests.cpp; sourceTree = "<group>"; };
 		7B52E8642A2A1A2200A3251F /* ThreadSafeObjectHeapTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadSafeObjectHeapTests.cpp; sourceTree = "<group>"; };
+		7B578DDA2A373DB10046D46E /* SharedMemoryTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedMemoryTests.cpp; path = Tests/IPC/SharedMemoryTests.cpp; sourceTree = SOURCE_ROOT; };
 		7B636FC129700F0700F3670F /* StreamConnectionWorkQueueTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamConnectionWorkQueueTests.cpp; sourceTree = "<group>"; };
 		7B7392E128F849EC007297FC /* MessageSenderTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageSenderTests.cpp; sourceTree = "<group>"; };
 		7B7392EA28F849F3007297FC /* IPCTestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPCTestUtilities.h; sourceTree = "<group>"; };
@@ -4512,6 +4514,7 @@
 				7B7392EB28F84BD2007297FC /* IPCTestUtilities.cpp */,
 				7B7392EA28F849F3007297FC /* IPCTestUtilities.h */,
 				7B7392E128F849EC007297FC /* MessageSenderTests.cpp */,
+				7B578DDA2A373DB10046D46E /* SharedMemoryTests.cpp */,
 				7B9FC58328A26792007570E7 /* StreamConnectionBufferTests.cpp */,
 				7B2950DA2972AFDD008CC225 /* StreamConnectionEncoderTests.cpp */,
 				7BAA4A8F28CA14AE004CE938 /* StreamConnectionTests.cpp */,
@@ -6106,6 +6109,7 @@
 				7B9FC39F28A26137007570E7 /* mainIOS.mm in Sources */,
 				7B9FC3A028A26137007570E7 /* mainMac.mm in Sources */,
 				7B7392E928F849EC007297FC /* MessageSenderTests.cpp in Sources */,
+				7B578DE32A373DBE0046D46E /* SharedMemoryTests.cpp in Sources */,
 				7B9FC58428A26792007570E7 /* StreamConnectionBufferTests.cpp in Sources */,
 				7B2950E22972AFDE008CC225 /* StreamConnectionEncoderTests.cpp in Sources */,
 				7BAA4A9028CA14AE004CE938 /* StreamConnectionTests.cpp in Sources */,
