@@ -143,3 +143,30 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     [NotSerialized] HashSet<Ref<PlatformCALayerRemote>> changedLayers;
     HashMap<WebCore::PlatformLayerIdentifier, UniqueRef<WebKit::LayerProperties>> changedLayerProperties;
 }
+
+[Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData {
+};
+
+[Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData {
+    WebKit::PlaybackSessionContextIdentifier playerIdentifier;
+    WebCore::FloatSize initialSize;
+    WebCore::FloatSize naturalSize;
+};
+
+[Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData {
+    uint32_t hostingContextID;
+    float hostingDeviceScaleFactor;
+    bool preservesFlip;
+};
+
+[Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties {
+    WebCore::PlatformLayerIdentifier layerID;
+    WebCore::PlatformCALayer::LayerType type;
+    std::optional<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData> videoElementData;
+#if ENABLE(MODEL_ELEMENT)
+    std::variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, Ref<WebCore::Model>, WebCore::LayerHostingContextIdentifier> additionalData;
+#endif
+#if !ENABLE(MODEL_ELEMENT)
+    std::variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, WebCore::LayerHostingContextIdentifier> additionalData;
+#endif
+};

@@ -124,10 +124,13 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
     PlatformLayerIdentifier layerID = layer.layerID();
 
     RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
-    creationProperties.playerIdentifier = videoElement.identifier();
-    creationProperties.initialSize = videoElement.videoInlineSize();
-    creationProperties.naturalSize = videoElement.naturalSize();
     layer.populateCreationProperties(creationProperties, *this, type);
+    ASSERT(!creationProperties.videoElementData);
+    creationProperties.videoElementData = RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData {
+        videoElement.identifier(),
+        videoElement.videoInlineSize(),
+        videoElement.naturalSize()
+    };
 
     m_webPage.videoFullscreenManager().setupRemoteLayerHosting(videoElement);
     m_videoLayers.add(layerID, videoElement.identifier());

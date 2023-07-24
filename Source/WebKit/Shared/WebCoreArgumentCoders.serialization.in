@@ -5698,3 +5698,9 @@ struct WebCore::CookieStoreGetOptions {
     String name;
     String url;
 };
+
+[RefCounted] class WebCore::Model {
+    Ref<WebCore::SharedBuffer> data()
+    String mimeType()
+    URL url()
+}

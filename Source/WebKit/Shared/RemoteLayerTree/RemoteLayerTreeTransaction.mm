@@ -43,86 +43,6 @@ namespace WebKit {
 RemoteLayerTreeTransaction::RemoteLayerTreeTransaction(RemoteLayerTreeTransaction&&) = default;
 RemoteLayerTreeTransaction& RemoteLayerTreeTransaction::operator=(RemoteLayerTreeTransaction&&) = default;
 
-RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties()
-    : type(WebCore::PlatformCALayer::LayerTypeLayer)
-    , playerIdentifier(std::nullopt)
-    , naturalSize(std::nullopt)
-    , hostingContextID(0)
-    , hostingDeviceScaleFactor(1)
-    , preservesFlip(false)
-{
-}
-
-void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::Encoder& encoder) const
-{
-    encoder << layerID;
-    encoder << type;
-    
-    // PlatformCALayerRemoteCustom
-    encoder << playerIdentifier;
-    encoder << naturalSize;
-    encoder << initialSize;
-    encoder << hostingContextID;
-    encoder << hostingDeviceScaleFactor;
-    encoder << preservesFlip;
-
-    // PlatformCALayerRemoteHost
-    encoder << hostIdentifier;
-
-#if ENABLE(MODEL_ELEMENT)
-    // PlatformCALayerRemoteModelHosting
-    encoder << !!model;
-    if (model)
-        encoder << *model;
-#endif
-}
-
-auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& decoder) -> std::optional<LayerCreationProperties>
-{
-    LayerCreationProperties result;
-    if (!decoder.decode(result.layerID))
-        return std::nullopt;
-
-    if (!decoder.decode(result.type))
-        return std::nullopt;
-    
-    // PlatformCALayerRemoteCustom
-    if (!decoder.decode(result.playerIdentifier))
-        return std::nullopt;
-    if (!decoder.decode(result.naturalSize))
-        return std::nullopt;
-    if (!decoder.decode(result.initialSize))
-        return std::nullopt;
-
-    if (!decoder.decode(result.hostingContextID))
-        return std::nullopt;
-
-    if (!decoder.decode(result.hostingDeviceScaleFactor))
-        return std::nullopt;
-    
-    if (!decoder.decode(result.preservesFlip))
-        return std::nullopt;
-
-    // PlatformCALayerRemoteHost
-    if (!decoder.decode(result.hostIdentifier))
-        return std::nullopt;
-
-#if ENABLE(MODEL_ELEMENT)
-    // PlatformCALayerRemoteModelHosting
-    bool hasModel;
-    if (!decoder.decode(hasModel))
-        return std::nullopt;
-    if (hasModel) {
-        auto model = WebCore::Model::decode(decoder);
-        if (!model)
-            return std::nullopt;
-        result.model = model;
-    }
-#endif
-
-    return WTFMove(result);
-}
-
 LayerProperties::LayerProperties() = default;
 
 LayerProperties::LayerProperties(LayerProperties&&) = default;
@@ -803,14 +723,15 @@ String RemoteLayerTreeTransaction::description() const
             ts << createdLayer.type <<" " << createdLayer.layerID;
             switch (createdLayer.type) {
             case WebCore::PlatformCALayer::LayerTypeAVPlayerLayer:
-                ts << " (context-id " << createdLayer.hostingContextID << ")";
+                ts << " (context-id " << createdLayer.hostingContextID() << ")";
                 break;
             case WebCore::PlatformCALayer::LayerTypeCustom:
-                ts << " (context-id " << createdLayer.hostingContextID << ")";
+                ts << " (context-id " << createdLayer.hostingContextID() << ")";
                 break;
 #if ENABLE(MODEL_ELEMENT)
             case WebCore::PlatformCALayer::LayerTypeModelLayer:
-                ts << " (model " << *createdLayer.model << ")";
+                if (auto* model = std::get_if<Ref<WebCore::Model>>(&createdLayer.additionalData))
+                    ts << " (model " << model->get() << ")";
                 break;
 #endif
             default:
@@ -874,6 +795,34 @@ ChangedLayers& ChangedLayers::operator=(ChangedLayers&&) = default;
 
 ChangedLayers::ChangedLayers(LayerPropertiesMap&& changedLayerProperties)
     : changedLayerProperties(WTFMove(changedLayerProperties)) { }
+
+std::optional<WebCore::LayerHostingContextIdentifier> RemoteLayerTreeTransaction::LayerCreationProperties::hostIdentifier() const
+{
+    if (auto* identifier = std::get_if<WebCore::LayerHostingContextIdentifier>(&additionalData))
+        return *identifier;
+    return std::nullopt;
+}
+
+uint32_t RemoteLayerTreeTransaction::LayerCreationProperties::hostingContextID() const
+{
+    if (auto* customData = std::get_if<CustomData>(&additionalData))
+        return customData->hostingContextID;
+    return 0;
+}
+
+bool RemoteLayerTreeTransaction::LayerCreationProperties::preservesFlip() const
+{
+    if (auto* customData = std::get_if<CustomData>(&additionalData))
+        return customData->preservesFlip;
+    return false;
+}
+
+float RemoteLayerTreeTransaction::LayerCreationProperties::hostingDeviceScaleFactor() const
+{
+    if (auto* customData = std::get_if<CustomData>(&additionalData))
+        return customData->hostingDeviceScaleFactor;
+    return 1;
+}
 
 } // namespace WebKit
 

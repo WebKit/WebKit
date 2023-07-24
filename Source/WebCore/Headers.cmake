@@ -1929,6 +1929,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MediaSourcePrivate.h
     platform/graphics/MediaSourcePrivateClient.h
     platform/graphics/MediaUsageInfo.h
+    platform/graphics/Model.h
     platform/graphics/NativeImage.h
     platform/graphics/NullGraphicsContext.h
     platform/graphics/Path.h

@@ -82,28 +82,34 @@ class RemoteLayerTreeTransaction {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct LayerCreationProperties {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        LayerCreationProperties();
-
-        void encode(IPC::Encoder&) const;
-        static std::optional<LayerCreationProperties> decode(IPC::Decoder&);
+        struct NoAdditionalData { };
+        struct CustomData {
+            uint32_t hostingContextID { 0 };
+            float hostingDeviceScaleFactor { 1 };
+            bool preservesFlip { false };
+        };
+        struct VideoElementData {
+            PlaybackSessionContextIdentifier playerIdentifier;
+            WebCore::FloatSize initialSize;
+            WebCore::FloatSize naturalSize;
+        };
 
         WebCore::PlatformLayerIdentifier layerID;
-        WebCore::PlatformCALayer::LayerType type;
-        std::optional<PlaybackSessionContextIdentifier> playerIdentifier;
-        std::optional<WebCore::FloatSize> initialSize;
-        std::optional<WebCore::FloatSize> naturalSize;
-
-        uint32_t hostingContextID;
-        float hostingDeviceScaleFactor;
-        bool preservesFlip;
-
-        // FIXME: This could be a variant<CustomData, HostData, ModelData, NoData>.
-        Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier;
-
+        WebCore::PlatformCALayer::LayerType type { WebCore::PlatformCALayer::LayerTypeLayer };
+        std::optional<VideoElementData> videoElementData;
+        std::variant<
+            NoAdditionalData, // PlatformCALayerRemote and PlatformCALayerRemoteTiledBacking
+            CustomData, // PlatformCALayerRemoteCustom
 #if ENABLE(MODEL_ELEMENT)
-        RefPtr<WebCore::Model> model;
+            Ref<WebCore::Model>, // PlatformCALayerRemoteModelHosting
 #endif
+            WebCore::LayerHostingContextIdentifier // PlatformCALayerRemoteHost
+        > additionalData;
+
+        std::optional<WebCore::LayerHostingContextIdentifier> hostIdentifier() const;
+        uint32_t hostingContextID() const;
+        bool preservesFlip() const;
+        float hostingDeviceScaleFactor() const;
     };
 
     explicit RemoteLayerTreeTransaction();
