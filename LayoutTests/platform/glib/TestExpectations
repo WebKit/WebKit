@@ -544,7 +544,7 @@ webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Tim
 
 webkit.org/b/98363 [ Release ] accessibility/canvas-fallback-content-2.html [ Failure ]
 webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
-webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Failure ]
+webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Timeout ]
 webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/98382 accessibility/visible-elements.html [ Timeout ]
 
@@ -2290,7 +2290,7 @@ media/media-captions.html [ WontFix Failure ]
 
 # No support for MPEG-4 caption support
 webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Failure Crash ]
-media/track/track-in-band-chapters.html [ Failure ]
+media/track/track-in-band-chapters.html [ Timeout Failure ]
 
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
@@ -2616,7 +2616,7 @@ webkit.org/b/139489 http/tests/css/link-css-disabled-value-with-slow-loading-she
 webkit.org/b/143469 fast/borders/border-image-fill-no-border.html [ ImageOnlyFailure ]
 webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
-webkit.org/b/148935 accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
+webkit.org/b/148935 accessibility/scroll-to-make-visible-with-subfocus.html [ Timeout ]
 webkit.org/b/151267 imported/blink/fast/canvas/canvas-clip-stack-persistence.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/gradients/large-horizontal-gradient.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/gradients/large-vertical-gradient.html [ ImageOnlyFailure ]
@@ -2759,7 +2759,7 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word
 
 webkit.org/b/184295 http/wpt/loading/redirect-headers.html [ Skip ]
 webkit.org/b/184504 imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html [ Failure ]
-webkit.org/b/185548 accessibility/scroll-to-make-visible-iframe-offscreen.html [ Failure ]
+webkit.org/b/185548 accessibility/scroll-to-make-visible-iframe-offscreen.html [ Timeout ]
 
 # Font collections.
 webkit.org/b/186086 fast/text/font-collection.html [ ImageOnlyFailure ]
@@ -2947,7 +2947,7 @@ webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnl
 
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html [ Failure ]
 webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Failure ]
-webkit.org/b/214349 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Crash Failure Pass ]
+webkit.org/b/214349 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Crash Failure Timeout Pass ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure ]
 
 webkit.org/b/223965 http/tests/contentextensions/block-cookies-in-csp-report.py [ Crash ]
@@ -3156,7 +3156,7 @@ webkit.org/b/232386 fast/repaint/text-selection-rect-in-overflow.html [ Failure 
 webkit.org/b/232386 fast/selectors/empty-namespace-with-element-selector.html [ Failure ]
 webkit.org/b/232386 fast/table/Rowspan-value-more-than-number-of-rows-present.html [ Failure ]
 webkit.org/b/232386 fast/text/crash-font-family-parsed.html [ Failure ]
-webkit.org/b/232386 fast/text/large-synthetic-bold-with-scale-transform.html [ ImageOnlyFailure ]
+webkit.org/b/232386 fast/text/large-synthetic-bold-with-scale-transform.html [ Timeout ImageOnlyFailure ]
 webkit.org/b/232386 fast/text/text-shadow-no-default-color.html [ Failure ]
 webkit.org/b/232386 fast/text/text-underline-first-line-decoration.html [ ImageOnlyFailure ]
 webkit.org/b/232386 fast/text/text-underline-style.html [ ImageOnlyFailure ]
