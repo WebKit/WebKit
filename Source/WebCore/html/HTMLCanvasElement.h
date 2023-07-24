@@ -28,6 +28,7 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "CSSParserContext.h"
 #include "CanvasBase.h"
 #include "Document.h"
 #include "FloatRect.h"
@@ -144,6 +145,7 @@ public:
 
     using HTMLElement::ref;
     using HTMLElement::deref;
+    CSSParserContext& cssParserContext();
 
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
@@ -189,6 +191,7 @@ private:
 
     std::unique_ptr<CanvasRenderingContext> m_context;
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
+    std::unique_ptr<CSSParserContext> m_cssParserContext;
 
     std::optional<bool> m_usesDisplayListDrawing;
     
@@ -202,6 +205,13 @@ private:
 #endif
     bool m_isSnapshotting { false };
 };
+
+inline CSSParserContext& HTMLCanvasElement::cssParserContext()
+{
+    if (!m_cssParserContext)
+        m_cssParserContext = WTF::makeUnique<CSSParserContext>(document());
+    return *m_cssParserContext;
+}
 
 WebCoreOpaqueRoot root(HTMLCanvasElement*);
 
