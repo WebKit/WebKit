@@ -3,6 +3,7 @@
 let assert = require('assert');
 
 require('./v3-models.js');
+const {TestParameter} = require("../../public/v3/models/test-parameter");
 
 class BuildbotBuildEntry {
     constructor(syncer, rawData)
@@ -69,6 +70,7 @@ class BuildbotSyncer {
         this._workerPropertyName = commonConfigurations.workerArgument;
         this._platformPropertyName = commonConfigurations.platformArgument;
         this._buildRequestPropertyName = commonConfigurations.buildRequestArgument;
+        this._testParametersPropertyName = commonConfigurations.testParametersArgument;
         this._builderSupportedRepetitionTypes = object.supportedRepetitionTypes;
         this._builderName = object.builder;
         this._builderID = object.builderID;
@@ -83,26 +85,28 @@ class BuildbotSyncer {
     // Buildbot result codes: https://docs.buildbot.net/latest/developer/results.html
     lastCompletedBuildSuccessful() { return !this._lastCompletedBuild || !this._lastCompletedBuild.result() }
 
-    addTestConfiguration(test, platform, supportedRepetitionTypes, propertiesTemplate)
+    addTestConfiguration(test, platform, supportedRepetitionTypes, testParameters, propertiesTemplate)
     {
         assert(test instanceof Test);
         assert(platform instanceof Platform);
+        assert(Array.isArray(testParameters));
         assert(Array.isArray(supportedRepetitionTypes));
         assert(supportedRepetitionTypes.every(repetitionType => TriggerableConfiguration.isValidRepetitionType(repetitionType)));
         assert(this._type == null || this._type == 'tester');
         this._type = 'tester';
-        this._configurations.push({test, platform, supportedRepetitionTypes, propertiesTemplate});
+        this._configurations.push({test, platform, supportedRepetitionTypes, testParameters, propertiesTemplate});
     }
     testConfigurations() { return this._type == 'tester' ? this._configurations : []; }
 
-    addBuildConfiguration(platform, supportedRepetitionTypes, propertiesTemplate)
+    addBuildConfiguration(platform, supportedRepetitionTypes, testParameters, propertiesTemplate)
     {
         assert(platform instanceof Platform);
         assert(this._type == null || this._type == 'builder');
+        assert(Array.isArray(testParameters));
         assert(Array.isArray(supportedRepetitionTypes));
         assert(supportedRepetitionTypes.every(repetitionType => TriggerableConfiguration.isValidRepetitionType(repetitionType)));
         this._type = 'builder';
-        this._configurations.push({test: null, platform, supportedRepetitionTypes, propertiesTemplate});
+        this._configurations.push({test: null, platform, supportedRepetitionTypes, testParameters, propertiesTemplate});
     }
     buildConfigurations() { return this._type == 'builder' ? this._configurations : []; }
 
@@ -115,9 +119,9 @@ class BuildbotSyncer {
         const requestRepetitionType = request.testGroup().repetitionType();
         if (!this._builderSupportedRepetitionTypes.includes(requestRepetitionType))
             return false;
-
         return this._configurations.some((config) => config.platform == request.platform() && config.test == request.test()
-            && config.supportedRepetitionTypes.includes(requestRepetitionType));
+            && config.supportedRepetitionTypes.includes(requestRepetitionType)
+            && (request.testParameterSet()?.parameters || []).every(parameter => config.testParameters.includes(parameter)));
     }
 
     scheduleRequest(newRequest, requestsInGroup, workerName)
@@ -340,7 +344,18 @@ class BuildbotSyncer {
             properties[propertyName] = value;
         }
         properties[this._buildRequestPropertyName] = buildRequest.id();
-
+        const testParameterSet = buildRequest.testParameterSet();
+        if (testParameterSet && this._testParametersPropertyName) {
+            const value = {};
+            for (const parameter of testParameterSet.parameters) {
+                value[parameter.name()] = {};
+                if (parameter.hasValue)
+                    value[parameter.name()]['value'] = testParameterSet.valueForParameter(parameter)
+                if (parameter.hasFile)
+                    value[parameter.name()]['file'] = testParameterSet.fileForParameter(parameter).url();
+            }
+            properties[this._testParametersPropertyName] = JSON.stringify(value);
+        }
         return properties;
     }
 
@@ -380,6 +395,7 @@ class BuildbotSyncer {
             workerArgument: config.workerArgument,
             buildRequestArgument: config.buildRequestArgument,
             platformArgument: config.platformArgument,
+            testParametersArgument: config.testParametersArgument,
         };
 
         const syncerByBuilder = new Map;
@@ -403,8 +419,11 @@ class BuildbotSyncer {
                 const testPath = typeConfig.test;
                 const test = Test.findByPath(testPath);
                 assert(test, `"${testPath.join('", "')}" is not a valid test path in the test configuration ${configurationIndex}`);
-
-                ensureBuildbotSyncer(entry.builderConfig).addTestConfiguration(test, entry.platform, entry.supportedRepetitionTypes, typeConfig.properties);
+                if (typeConfig.testParameters) {
+                    entry.testParameters = [...entry.testParameters,
+                        ...typeConfig.testParameters.filter(parameter => !entry.testParameters.includes(parameter))];
+                }
+                ensureBuildbotSyncer(entry.builderConfig).addTestConfiguration(test, entry.platform, entry.supportedRepetitionTypes, entry.testParameters, typeConfig.properties);
             }
         });
 
@@ -414,7 +433,7 @@ class BuildbotSyncer {
             this._resolveBuildersWithPlatforms('test', buildConfigurations, builders, builderNameToIDMap).forEach((entry, configurationIndex) => {
                 const syncer = ensureBuildbotSyncer(entry.builderConfig);
                 assert(!syncer.isTester(), `The build configuration ${configurationIndex} uses a tester: ${syncer.builderName()}`);
-                syncer.addBuildConfiguration(entry.platform, entry.supportedRepetitionTypes, entry.builderConfig.properties);
+                syncer.addBuildConfiguration(entry.platform, entry.supportedRepetitionTypes, entry.testParameters, entry.builderConfig.properties);
             });
         }
 
@@ -432,6 +451,14 @@ class BuildbotSyncer {
             assert(Array.isArray(entry['supportedRepetitionTypes']), `The ${configurationType} configuration ${configurationIndex} does not specify "supportedRepetitionTypes" as an array`);
             assert(entry['supportedRepetitionTypes'].every(TriggerableConfiguration.isValidRepetitionType.bind(TriggerableConfiguration)),
                 `The ${configurationType} configuration ${configurationIndex} specifies invalid repetitionType in "supportedRepetitionTypes": ${entry['supportedRepetitionTypes']}`);
+
+            if (entry.hasOwnProperty('testParameters')) {
+                assert(Array.isArray(entry['testParameters']),
+                    `The ${configurationType} configuration ${configurationIndex} should either not specify "testParameters" or specify "testParameters" as an array`);
+                assert(entry['testParameters'].every(parameterName => TestParameter.findByName(parameterName)), `Invalid parameter name found among: ${entry['testParameters']}`)
+            }
+            const testParameters = (entry['testParameters'] || []).map(TestParameter.findByName.bind(TestParameter));
+
             for (const builderKey of entry['builders']) {
                 const matchingBuilder = builders[builderKey];
                 assert(matchingBuilder, `"${builderKey}" is not a valid builder in the configuration`);
@@ -445,7 +472,8 @@ class BuildbotSyncer {
                 for (const platformName of entry['platforms']) {
                     const platform = Platform.findByName(platformName);
                     assert(platform, `${platformName} is not a valid platform name`);
-                    resolvedConfigurations.push({types: entry.types, builderConfig, platform, supportedRepetitionTypes: entry['supportedRepetitionTypes']});
+                    resolvedConfigurations.push({types: entry.types, builderConfig, platform,
+                        testParameters, supportedRepetitionTypes: entry['supportedRepetitionTypes']});
                 }
             }
         }
@@ -625,6 +653,12 @@ class BuildbotSyncer {
             case 'builderID':
                 assert(value, 'builderID should not be undefined.');
                 config[name] = value;
+                break;
+            case 'testParameters':
+                assert(value instanceof Array, `${name} should be an array`);
+                const newValues = value.map(TestParameter.findByName.bind(TestParameter));
+                const existingValues = config[name] || newValues;
+                config[name] = [...existingValues, ...newValues.filter(entry => !existingValues.includes(entry))];
                 break;
             default:
                 assert(false, `Unrecognized parameter "${name}"`);

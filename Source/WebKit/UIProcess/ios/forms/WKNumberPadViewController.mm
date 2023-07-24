@@ -161,7 +161,9 @@ static CGFloat inputLabelFontSize()
         [_inputText appendString:@"+"];
         break;
     case WKNumberPadKeyAccept:
-        [self.delegate quickboard:self textEntered:adoptNS([[NSAttributedString alloc] initWithString:_inputText.get()]).get()];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [self.delegate quickboard:static_cast<id<PUICQuickboardController>>(self) textEntered:adoptNS([[NSAttributedString alloc] initWithString:_inputText.get()]).get()];
+        ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     case WKNumberPadKey0:
         [_inputText appendString:@"0"];
@@ -204,7 +206,9 @@ static CGFloat inputLabelFontSize()
 - (void)_cancelInput
 {
     _shouldDismissWithFadeAnimation = YES;
-    [self.delegate quickboardInputCancelled:self];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [self.delegate quickboardInputCancelled:static_cast<id<PUICQuickboardController>>(self)];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)_deleteLastInputCharacter

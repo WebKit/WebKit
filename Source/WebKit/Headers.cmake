@@ -19,7 +19,6 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     Shared/API/c/WKMutableDictionary.h
     Shared/API/c/WKNumber.h
     Shared/API/c/WKPageLoadTypes.h
-    Shared/API/c/WKPageLoadTypesPrivate.h
     Shared/API/c/WKPageVisibilityTypes.h
     Shared/API/c/WKPluginInformation.h
     Shared/API/c/WKSecurityOriginRef.h

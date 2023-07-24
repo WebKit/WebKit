@@ -966,4 +966,102 @@ describe('/privileged-api/create-analysis-task with node privileged api', functi
             })
         });
     });
+
+    it('should create an analysis task with test group with test parameters specified', async () => {
+        const webkitId = 1;
+        const platformId = 1;
+        const test1Id = 2;
+        const triggerableId = 1234;
+
+        const db = TestServer.database();
+        await db.insert('tests', {id: 1, name: 'Suite'});
+        await db.insert('tests', {id: test1Id, name: 'test1', parent: 1});
+        await db.insert('repositories', {id: webkitId, name: 'WebKit'});
+        await db.insert('platforms', {id: platformId, name: 'some platform'});
+        await db.insert('build_triggerables', {id: 1234, name: 'test-triggerable'});
+        await db.insert('triggerable_repository_groups', {id: 2345, name: 'webkit-only', triggerable: triggerableId});
+        await db.insert('triggerable_repositories', {repository: webkitId, group: 2345});
+        await db.insert('triggerable_configurations', {id: 1, test: test1Id, platform: platformId, triggerable: triggerableId});
+        await db.insert('triggerable_configuration_repetition_types', {config: 1, type: 'alternating'});
+        await db.insert('test_parameters', {id: 1, name: 'diagnose', disabled: false, type: 'test', has_value: true, has_file: false, description: 'Run test in diagnostic mode.'});
+        await db.insert('test_parameters', {id: 2, name: 'Custom SDK', disabled: false, type: 'build', has_value: true, has_file: false, description: 'Use custom SDK to build.'});
+        await db.insert('triggerable_configuration_test_parameters', {config: 1, parameter: 1});
+        await db.insert('triggerable_configuration_test_parameters', {config: 1, parameter: 2});
+        await addBuilderForReport(reportWithRevision[0]);
+
+        await TestServer.remoteAPI().postJSON('/api/report/', reportWithRevision);
+        await TestServer.remoteAPI().postJSON('/api/report/', anotherReportWithRevision);
+        await Manifest.fetch();
+
+        let test1 = Test.findById(test1Id);
+        let somePlatform = Platform.findById(platformId);
+        const configRow = await db.selectFirstRow('test_configurations', {metric: test1.metrics()[0].id(), platform: somePlatform.id()});
+        const testRuns = await db.selectRows('test_runs', {config: configRow['id']});
+        assert.strictEqual(testRuns.length, 2);
+
+        const oneRevisionSet = {[webkitId]: {revision: '191622'}};
+        const anotherRevisionSet = {[webkitId]: {revision: '191623'}};
+        const testParametersList = [{1: {value: true}}, {}]
+
+        const content = await PrivilegedAPI.sendRequest('create-analysis-task', {name: 'confirm', repetitionCount: 1,
+            testGroupName: 'Confirm', revisionSets: [oneRevisionSet, anotherRevisionSet], testParametersList,
+            startRun: testRuns[0]['id'], endRun: testRuns[1]['id']});
+
+        const task = await AnalysisTask.fetchById(content['taskId']);
+        assert.strictEqual(task.name(), 'confirm');
+        assert(!task.hasResults());
+        assert(task.hasPendingRequests());
+        assert.deepStrictEqual(task.bugs(), []);
+        assert.deepStrictEqual(task.causes(), []);
+        assert.deepStrictEqual(task.fixes(), []);
+        assert.strictEqual(task.changeType(), null);
+        assert.strictEqual(task.platform().label(), 'some platform');
+        assert.strictEqual(task.metric().test().label(), 'test1');
+
+        const testGroups = await TestGroup.fetchForTask(task.id());
+        assert.strictEqual(testGroups.length, 1);
+        const testGroup = testGroups[0];
+        assert.strictEqual(testGroup.name(), 'Confirm');
+        assert.ok(!testGroup.needsNotification());
+        const buildRequests = testGroup.buildRequests();
+        assert.strictEqual(buildRequests.length, 2);
+
+        assert.strictEqual(parseInt(buildRequests[0].triggerable().id()), triggerableId);
+        assert.strictEqual(parseInt(buildRequests[0].triggerable().id()), triggerableId);
+
+        assert.strictEqual(buildRequests[0].testGroup(), testGroup);
+        assert.strictEqual(buildRequests[1].testGroup(), testGroup);
+
+        assert.strictEqual(buildRequests[0].platform(), task.platform());
+        assert.strictEqual(buildRequests[1].platform(), task.platform());
+
+        assert.strictEqual(buildRequests[0].analysisTaskId(), task.id());
+        assert.strictEqual(buildRequests[1].analysisTaskId(), task.id());
+
+        assert.strictEqual(buildRequests[0].test(), test1);
+        assert.strictEqual(buildRequests[1].test(), test1);
+
+        assert.ok(!buildRequests[0].isBuild());
+        assert.ok(!buildRequests[1].isBuild());
+        assert.ok(buildRequests[0].isTest());
+        assert.ok(buildRequests[1].isTest());
+
+        const firstCommitSet = buildRequests[0].commitSet();
+        const secondCommitSet = buildRequests[1].commitSet();
+        const webkitRepository = Repository.findById(webkitId);
+        assert.strictEqual(firstCommitSet.commitForRepository(webkitRepository).revision(), '191622');
+        assert.strictEqual(secondCommitSet.commitForRepository(webkitRepository).revision(), '191623');
+
+        assert.strictEqual(testGroup.requestedTestParameterSets().length, 2);
+        const parameterSet0 = buildRequests[0].testParameterSet();
+        const parameterSet1 = buildRequests[1].testParameterSet();
+
+        assert.strictEqual(parameterSet0.parameters.length, 1);
+        assert.strictEqual(parameterSet0.buildTypeParameters.length, 0);
+        assert.strictEqual(parameterSet0.testTypeParameters.length, 1);
+        assert.strictEqual(parameterSet0.valueForParameterName('diagnose'), true);
+        assert.strictEqual(parameterSet0.fileForParameterName('diagnose'), undefined);
+
+        assert.strictEqual(parameterSet1, null);
+    });
 });

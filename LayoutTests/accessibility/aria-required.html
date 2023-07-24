@@ -14,10 +14,8 @@
   <input type="text" required aria-required="true" id="textfield_required_ariarequired" data-expectedrequired="true">
   <input type="text" aria-required="false" id="textfield_ariarequiredfalse" data-expectedrequired="false">
   <!-- these last ones conflict with implicit value of @required, so host language attr should win -->
-  <input type="text" aria-required="textfield_required_ariarequiredfalse" required id="textfield5" data-expectedrequired="true">
-  <!-- BLOCKED by http://webkit.org/b/119988
-  <input type="text" aria-required="true" id="textfield_requiredfalse_ariarequiredtrue" data-expectedrequired="false">
-  -->
+  <input type="text" aria-required="false" required id="textfield_required_ariarequiredfalse" data-expectedrequired="true">
+  <input type="text" aria-required="true" id="textfield_requiredfalse_ariarequiredtrue" data-expectedrequired="true">
 
 
   <!-- checkboxes -->
@@ -26,7 +24,7 @@
   <input type="checkbox" required aria-required="true" id="checkbox_required_ariarequired" data-expectedrequired="true">
   <input type="checkbox" aria-required="false" id="checkbox_ariarequiredfalse" data-expectedrequired="false">
   <!-- these last ones conflict with implicit value of @required, so ARIA should win -->
-  <input type="checkbox" aria-required="false" required id="checkbox_required_ariarequiredfalse" data-expectedrequired="false">
+  <input type="checkbox" aria-required="false" required id="checkbox_required_ariarequiredfalse" data-expectedrequired="true">
   <input type="checkbox" aria-required="true" id="checkbox_requiredfalse_ariarequiredtrue" data-expectedrequired="true">
 
 
@@ -36,7 +34,7 @@
   <select required aria-required="true" id="select_required_ariarequired" data-expectedrequired="true"><option>test</option></select>
   <select aria-required="false" id="select_ariarequiredfalse" data-expectedrequired="false"><option>test</option></select>
   <!-- these last ones conflict with implicit value of @required, so ARIA should win -->
-  <select aria-required="false" required id="select_required_ariarequiredfalse" data-expectedrequired="false"><option>test</option></select>
+  <select aria-required="false" required id="select_required_ariarequiredfalse" data-expectedrequired="true"><option>test</option></select>
   <select aria-required="true" id="select_requiredfalse_ariarequiredtrue" data-expectedrequired="true"><option>test</option></select>
 
   
@@ -46,7 +44,7 @@
   <textarea required aria-required="true" id="textarea_required_ariarequired" data-expectedrequired="true"></textarea>
   <textarea aria-required="false" id="textarea_ariarequiredfalse" data-expectedrequired="false"></textarea>
   <!-- these last ones conflict with implicit value of @required, so ARIA should win -->
-  <textarea aria-required="false" required id="textarea_required_ariarequiredfalse" data-expectedrequired="false"></textarea>
+  <textarea aria-required="false" required id="textarea_required_ariarequiredfalse" data-expectedrequired="true"></textarea>
   <textarea aria-required="true" id="textarea_requiredfalse_ariarequiredtrue" data-expectedrequired="true"></textarea>
   
 

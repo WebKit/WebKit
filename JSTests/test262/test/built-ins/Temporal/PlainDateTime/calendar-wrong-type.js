@@ -23,6 +23,9 @@ for (const [arg, description] of rangeErrorTests) {
 
 const typeErrorTests = [
   [Symbol(), "symbol"],
+  [{}, "plain object that doesn't implement the protocol"],
+  [new Temporal.TimeZone("UTC"), "time zone instance"],
+  [Temporal.Calendar, "Temporal.Calendar, object"],
 ];
 
 for (const [arg, description] of typeErrorTests) {

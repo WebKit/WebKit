@@ -25,8 +25,10 @@
 
 #import "config.h"
 
+#import "ClassMethodSwizzler.h"
 #import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
@@ -43,6 +45,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKHitTestResult.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -50,8 +53,7 @@
 #import <Carbon/Carbon.h>
 #endif
 
-#if PLATFORM(IOS)
-#import "ClassMethodSwizzler.h"
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #import "UIKitSPI.h"
 #endif
 
@@ -395,7 +397,7 @@ TEST(WebKit, InjectedBundleNodeHandleIsSelectElement)
     TestWebKitAPI::Util::run(&done);
 }
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000) || PLATFORM(VISION)
 
 static int presentViewControllerCallCount = 0;
 
@@ -550,7 +552,7 @@ TEST(WebKit, LockdownModeAskAgainFirstUseMessage)
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitLockdownModeAlertShownKey];
 }
 
-#endif // PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
+#endif // (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000) || PLATFORM(VISION)
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -977,6 +979,56 @@ TEST(WebKit, MouseMoveOverElement)
     [webView synchronouslyLoadHTMLString:@"<a href='http://example.com/path' title='link title'>link label</a>"];
     [webView mouseMoveToPoint:NSMakePoint(20, 600 - 20) withFlags:NSEventModifierFlagShift];
     TestWebKitAPI::Util::run(&done);
+}
+
+static BlockPtr<NSEvent*(NSEvent*)> gEventMonitorHandler;
+
+@interface TestEventMonitor : NSObject
+
++ (id)addLocalMonitorForEventsMatchingMask:(NSEventMask)mask handler:(NSEvent* (^)(NSEvent *event))block;
+
+@end
+
+@implementation TestEventMonitor
+
++ (id)addLocalMonitorForEventsMatchingMask:(NSEventMask)mask handler:(NSEvent* (^)(NSEvent *event))block
+{
+    gEventMonitorHandler = makeBlockPtr(block);
+    return nil;
+}
+
+@end
+
+TEST(WebKit, MouseMoveOverElementWithClosedWebView)
+{
+    auto linkLocation = NSMakePoint(200, 150);
+
+    ClassMethodSwizzler localMonitorSwizzler(NSEvent.class, @selector(addLocalMonitorForEventsMatchingMask:handler:), [TestEventMonitor methodForSelector:@selector(addLocalMonitorForEventsMatchingMask:handler:)]);
+
+    // We swizzle `NSWindow.mouseLocationOutsideOfEventStream` because manually calling the handler intercepted
+    // from the swizzled `+[NSEvent addLocalMonitorForEventsMatchingMask:handler:]` with a fake event means we
+    // skip over the bookkeeping required for this SPI to provide the correct mouse location.
+    InstanceMethodSwizzler mouseLocationSwizzler(NSWindow.class, @selector(mouseLocationOutsideOfEventStream), imp_implementationWithBlock(^{
+        return linkLocation;
+    }));
+
+    @autoreleasepool {
+        WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"FrameHandleSerialization"];
+        auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 300) configuration:configuration]);
+        [webView removeFromSuperview];
+        [webView addToTestWindow];
+        auto uiDelegate = adoptNS([[MouseMoveOverElementDelegate alloc] init]);
+        [webView setUIDelegate:uiDelegate.get()];
+        [webView synchronouslyLoadHTMLString:@"<a id='link' href='http://example.com/path' style='font-size: 300px;' title='link title'>link label</a>"];
+        [webView mouseMoveToPoint:linkLocation withFlags:NSEventModifierFlagShift];
+        [webView waitForNextPresentationUpdate];
+        // This test just verifies that attempting to asynchronously dispatch a mouseDidMoveOverElement
+        // update when the WKWebView and its page client have been destructed does not trigger a crash.
+        gEventMonitorHandler([NSEvent mouseEventWithType:NSEventTypeMouseMoved location:linkLocation modifierFlags:0 timestamp:0 windowNumber:[[webView hostWindow] windowNumber] context:nil eventNumber:0 clickCount:0 pressure:0]);
+        [webView removeFromSuperview];
+    }
+
+    TestWebKitAPI::Util::runFor(10_ms);
 }
 
 static bool readyForClick;

@@ -57,11 +57,7 @@ promise_test(async (test) => {
 
     const frame = await promise;
     assert_equals(frame.contentWindow.value, "my-custom-header");
-
-    // We should have only one GET fetch to url: the service worker preload
-    const response = await fetch(url + "&count=True");
-    assert_equals(await response.text(), "1");
-}, "Service worker load uses preload through calling fetch on the fetch event request");
+}, "Service worker load does not use preload when using an updated fetch request");
 </script>
 </body>
 </html>

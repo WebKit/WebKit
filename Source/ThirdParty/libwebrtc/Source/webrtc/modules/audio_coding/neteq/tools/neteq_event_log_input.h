@@ -11,40 +11,17 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_EVENT_LOG_INPUT_H_
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_EVENT_LOG_INPUT_H_
 
-#include <map>
-#include <memory>
-#include <string>
-
 #include "absl/strings/string_view.h"
-#include "modules/audio_coding/neteq/tools/neteq_packet_source_input.h"
-#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "absl/types/optional.h"
+#include "logging/rtc_event_log/rtc_event_log_parser.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
 
 namespace webrtc {
 namespace test {
 
-class RtcEventLogSource;
-
-// Implementation of NetEqPacketSourceInput to be used with an
-// RtcEventLogSource.
-class NetEqEventLogInput final : public NetEqPacketSourceInput {
- public:
-  static NetEqEventLogInput* CreateFromFile(
-      absl::string_view file_name,
-      absl::optional<uint32_t> ssrc_filter);
-  static NetEqEventLogInput* CreateFromString(
-      absl::string_view file_contents,
-      absl::optional<uint32_t> ssrc_filter);
-
-  absl::optional<int64_t> NextOutputEventTime() const override;
-  void AdvanceOutputEvent() override;
-
- protected:
-  PacketSource* source() override;
-
- private:
-  NetEqEventLogInput(std::unique_ptr<RtcEventLogSource> source);
-  std::unique_ptr<RtcEventLogSource> source_;
-};
+std::unique_ptr<NetEqInput> CreateNetEqEventLogInput(
+    const ParsedRtcEventLog& parsed_log,
+    absl::optional<uint32_t> ssrc);
 
 }  // namespace test
 }  // namespace webrtc

@@ -26,6 +26,16 @@ GOMA_BACKEND_RBE_NO_ATS_PROD = {
     "enable_ats": False,
 }
 
+RECLIENT_CI = {
+    "instance": "rbe-webrtc-trusted",
+    "metrics_project": "chromium-reclient-metrics",
+}
+
+RECLIENT_CQ = {
+    "instance": "rbe-webrtc-untrusted",
+    "metrics_project": "chromium-reclient-metrics",
+}
+
 # Use LUCI Scheduler BBv2 names and add Scheduler realms configs.
 lucicfg.enable_experiment("crbug.com/1182002")
 
@@ -69,6 +79,10 @@ luci.project(
         acl.entry(acl.BUILDBUCKET_OWNER, groups = ["project-libyuv-admins"]),
     ],
     bindings = [
+        luci.binding(
+            roles = "role/swarming.taskTriggerer", # for LED tasks.
+            groups = "project-libyuv-admins",
+        ),
         luci.binding(
             roles = "role/configs.validator",
             users = "libyuv-try-builder@chops-service-accounts.iam.gserviceaccount.com",
@@ -255,6 +269,7 @@ def libyuv_try_builder(name, dimensions, properties, recipe_name = "libyuv/libyu
 def ci_builder(name, os, category, short_name = None):
     dimensions = get_os_dimensions(os)
     properties = get_os_properties(os)
+    properties["$build/reclient"] = RECLIENT_CI
 
     dimensions["pool"] = "luci.flex.ci"
     properties["builder_group"] = "client.libyuv"
@@ -266,6 +281,7 @@ def ci_builder(name, os, category, short_name = None):
 def try_builder(name, os, experiment_percentage = None):
     dimensions = get_os_dimensions(os)
     properties = get_os_properties(os, try_builder = True)
+    properties["$build/reclient"] = RECLIENT_CQ
 
     dimensions["pool"] = "luci.flex.try"
     properties["builder_group"] = "tryserver.libyuv"

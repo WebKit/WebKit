@@ -234,8 +234,7 @@ private:
             switch (m_node->op()) {
             case PutByValDirect:
             case PutByVal:
-            case PutByValAlias:
-            case PutByValMegamorphic: {
+            case PutByValAlias: {
                 switch (m_node->arrayMode().modeForPut().type()) {
                 case Array::Generic:
                 case Array::BigInt64Array:
@@ -333,10 +332,10 @@ private:
                 break;
             }
 
-            case EnumeratorPutByVal: {
+            case EnumeratorPutByVal:
+            case PutByValMegamorphic: {
                 Edge child1 = m_graph.varArgChild(m_node, 0);
-                Edge child3 = m_graph.varArgChild(m_node, 2);
-                considerBarrier(child1, child3);
+                considerBarrier(child1);
                 break;
             }
                 
@@ -381,6 +380,7 @@ private:
             case NewAsyncGenerator:
             case NewArray:
             case NewArrayWithSize:
+            case NewArrayWithConstantSize:
             case NewArrayBuffer:
             case NewInternalFieldObject:
             case NewTypedArray:

@@ -33,13 +33,17 @@ LinkedUniform *FindUniform(std::vector<LinkedUniform> &list, const std::string &
 }
 
 template <typename VarT>
-void SetActive(std::vector<VarT> *list, const std::string &name, ShaderType shaderType, bool active)
+void SetActive(std::vector<VarT> *list,
+               const std::string &name,
+               ShaderType shaderType,
+               bool active,
+               uint32_t id)
 {
     for (auto &variable : *list)
     {
         if (variable.name == name)
         {
-            variable.setActive(shaderType, active);
+            variable.setActive(shaderType, active, id);
             return;
         }
     }
@@ -236,14 +240,14 @@ class UniformBlockEncodingVisitor : public sh::VariableNameVisitor
 
         if (mBlockIndex == -1)
         {
-            SetActive(mUniformsOut, nameWithArrayIndex, mShaderType, variable.active);
+            SetActive(mUniformsOut, nameWithArrayIndex, mShaderType, variable.active, variable.id);
             return;
         }
 
         LinkedUniform newUniform(variable.type, variable.precision, nameWithArrayIndex,
                                  variable.arraySizes, -1, -1, -1, mBlockIndex, variableInfo);
         newUniform.mappedName = mappedNameWithArrayIndex;
-        newUniform.setActive(mShaderType, variable.active);
+        newUniform.setActive(mShaderType, variable.active, variable.id);
 
         // Since block uniforms have no location, we don't need to store them in the uniform
         // locations list.
@@ -300,14 +304,15 @@ class ShaderStorageBlockVisitor : public sh::BlockEncoderVisitor
 
         if (mBlockIndex == -1)
         {
-            SetActive(mBufferVariablesOut, nameWithArrayIndex, mShaderType, variable.active);
+            SetActive(mBufferVariablesOut, nameWithArrayIndex, mShaderType, variable.active,
+                      variable.id);
             return;
         }
 
         BufferVariable newBufferVariable(variable.type, variable.precision, nameWithArrayIndex,
                                          variable.arraySizes, mBlockIndex, variableInfo);
         newBufferVariable.mappedName = mappedNameWithArrayIndex;
-        newBufferVariable.setActive(mShaderType, variable.active);
+        newBufferVariable.setActive(mShaderType, variable.active, variable.id);
 
         newBufferVariable.topLevelArraySize = mTopLevelArraySize;
 
@@ -435,7 +440,7 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
             if (mMarkActive)
             {
                 existingUniform->active = true;
-                existingUniform->setActive(mShaderType, true);
+                existingUniform->setActive(mShaderType, true, variable.id);
             }
             if (mMarkStaticUse)
             {
@@ -452,6 +457,7 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
             linkedUniform.staticUse           = mMarkStaticUse;
             linkedUniform.outerArraySizes     = arraySizes;
             linkedUniform.texelFetchStaticUse = variable.texelFetchStaticUse;
+            linkedUniform.id                  = variable.id;
             linkedUniform.imageUnitFormat     = variable.imageUnitFormat;
             linkedUniform.isFragmentInOut     = variable.isFragmentInOut;
             if (variable.hasParentArrayIndex())
@@ -474,7 +480,7 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
 
             if (mMarkActive)
             {
-                linkedUniform.setActive(mShaderType, true);
+                linkedUniform.setActive(mShaderType, true, variable.id);
             }
             else
             {
@@ -1353,7 +1359,7 @@ void InterfaceBlockLinker::linkBlocks(const GetBlockSizeFunc &getBlockSize,
             {
                 if (block.name == priorBlock.name)
                 {
-                    priorBlock.setActive(shaderType, true);
+                    priorBlock.setActive(shaderType, true, block.id);
 
                     std::unique_ptr<sh::ShaderVariableVisitor> visitor(
                         getVisitor(getMemberInfo, block.fieldPrefix(), block.fieldMappedPrefix(),
@@ -1420,7 +1426,7 @@ void InterfaceBlockLinker::defineInterfaceBlock(const GetBlockSizeFunc &getBlock
                              interfaceBlock.isArray(), interfaceBlock.isReadOnly, arrayElement,
                              firstFieldArraySize, blockBinding);
         block.memberIndexes = blockIndexes;
-        block.setActive(shaderType, interfaceBlock.active);
+        block.setActive(shaderType, interfaceBlock.active, interfaceBlock.id);
 
         // Since all block elements in an array share the same active interface blocks, they
         // will all be active once any block member is used. So, since interfaceBlock.name[0]

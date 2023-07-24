@@ -94,7 +94,7 @@ String GStreamerRtpTransceiverBackend::mid()
 {
     GUniqueOutPtr<char> mid;
     g_object_get(m_rtcTransceiver.get(), "mid", &mid.outPtr(), nullptr);
-    return String::fromLatin1(mid.get());
+    return String::fromUTF8(mid.get());
 }
 
 void GStreamerRtpTransceiverBackend::stop()
@@ -152,6 +152,8 @@ ExceptionOr<void> GStreamerRtpTransceiverBackend::setCodecPreferences(const Vect
     g_object_set(m_rtcTransceiver.get(), "codec-preferences", gstCodecs.get(), nullptr);
     return { };
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

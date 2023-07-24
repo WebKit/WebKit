@@ -41,7 +41,7 @@ class RemoteMediaSessionHelper final
     , public IPC::MessageReceiver
     , public GPUProcessConnection::Client {
 public:
-    RemoteMediaSessionHelper(WebProcess&);
+    RemoteMediaSessionHelper();
     virtual ~RemoteMediaSessionHelper() = default;
 
     IPC::Connection& ensureConnection();
@@ -51,6 +51,10 @@ public:
     using ShouldPause = WebCore::MediaSessionHelperClient::ShouldPause;
     using SupportsAirPlayVideo = WebCore::MediaSessionHelperClient::SupportsAirPlayVideo;
     using SuspendedUnderLock = WebCore::MediaSessionHelperClient::SuspendedUnderLock;
+
+    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCore::MediaSessionHelper>::ref(); }
+    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCore::MediaSessionHelper>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCore::MediaSessionHelper>::controlBlock(); }
 
 private:
     // IPC::MessageReceiver
@@ -62,13 +66,12 @@ private:
     // MediaSessionHelper
     void startMonitoringWirelessRoutesInternal() final;
     void stopMonitoringWirelessRoutesInternal() final;
-    void providePresentingApplicationPID(int) final;
+    void providePresentingApplicationPID(int, ShouldOverride) final;
 
     // Messages
     void activeVideoRouteDidChange(SupportsAirPlayVideo, WebCore::MediaPlaybackTargetContext&&);
 
-    WebProcess& m_process;
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 
 }

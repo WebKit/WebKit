@@ -12,6 +12,7 @@ info: |
   4. If argCount > 0, then
     a. If len+argCount > 2^53-1, throw a TypeError exception.
     b. ...
+features: [exponentiation]
 ---*/
 
 var arrayLike = {};

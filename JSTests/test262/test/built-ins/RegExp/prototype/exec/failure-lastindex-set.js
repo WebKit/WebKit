@@ -23,6 +23,7 @@ info: |
         i. If _global_ is *true* or _sticky_ is *true*, then
           1. Perform ? Set(_R_, *"lastIndex"*, *+0*<sub>𝔽</sub>, *true*).
         ii. Return *null*.
+features: [exponentiation]
 ---*/
 
 var R_g = /./g, R_y = /./y, R_gy = /./gy;

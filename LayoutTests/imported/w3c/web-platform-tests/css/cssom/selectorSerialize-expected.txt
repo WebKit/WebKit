@@ -11,10 +11,15 @@ PASS single pseudo (simple) selector "nth-last-child" which accepts arguments in
 PASS single pseudo (simple) selector "nth-of-child" which accepts arguments in the sequence of simple selectors that is not a universal selector
 PASS single pseudo (simple) selector ":nth-last-of-type" which accepts arguments in the sequence of simple selectors that is not a universal selector
 PASS single pseudo (simple) selector ":not" which accepts arguments in the sequence of simple selectors that is not a universal selector
-FAIL escaped character in attribute name assert_equals: expected "[ns\\:foo]" but got "[ns:foo]"
-FAIL escaped character as code point in attribute name assert_equals: expected "[\\30 zonk]" but got "[0zonk]"
-FAIL escaped character (@) in attribute name assert_equals: expected "[\\@]" but got "[@]"
-FAIL escaped character in attribute name with any namespace assert_equals: expected "[*|ns\\:foo]" but got "[*|ns:foo]"
-FAIL escaped character in attribute prefix assert_equals: expected "[ns\\:odd|foo]" but got "[ns:odd|foo]"
-FAIL escaped character in both attribute prefix and name assert_equals: expected "[ns\\:odd|odd\\:name]" but got "[ns:odd|odd:name]"
+PASS escaped character in attribute name
+PASS escaped character as code point in attribute name
+PASS escaped character (@) in attribute name
+PASS escaped character in attribute name with any namespace
+PASS escaped character in attribute prefix
+PASS escaped character in both attribute prefix and name
+PASS escaped character (\) in element name
+PASS escaped character (\) in element name with any namespace without default
+PASS escaped character (\) in element name with any namespace with default
+PASS escaped character (\) in element name with no namespace
+PASS escaped character (*) in element prefix
 

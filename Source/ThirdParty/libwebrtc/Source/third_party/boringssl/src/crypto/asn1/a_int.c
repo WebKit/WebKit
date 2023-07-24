@@ -56,365 +56,410 @@
 
 #include <openssl/asn1.h>
 
-#include <string.h>
+#include <assert.h>
 #include <limits.h>
+#include <string.h>
 
+#include <openssl/bytestring.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
 #include "../internal.h"
 
 
-ASN1_INTEGER *ASN1_INTEGER_dup(const ASN1_INTEGER *x)
-{
-    return ASN1_STRING_dup(x);
+ASN1_INTEGER *ASN1_INTEGER_dup(const ASN1_INTEGER *x) {
+  return ASN1_STRING_dup(x);
 }
 
-int ASN1_INTEGER_cmp(const ASN1_INTEGER *x, const ASN1_INTEGER *y)
-{
-    int neg, ret;
-    /* Compare signs */
-    neg = x->type & V_ASN1_NEG;
-    if (neg != (y->type & V_ASN1_NEG)) {
-        if (neg)
-            return -1;
-        else
-            return 1;
-    }
+int ASN1_INTEGER_cmp(const ASN1_INTEGER *x, const ASN1_INTEGER *y) {
+  // Compare signs.
+  int neg = x->type & V_ASN1_NEG;
+  if (neg != (y->type & V_ASN1_NEG)) {
+    return neg ? -1 : 1;
+  }
 
-    ret = ASN1_STRING_cmp(x, y);
-
-    if (neg)
-        return -ret;
-    else
-        return ret;
-}
-
-/*
- * This converts an ASN1 INTEGER into its content encoding.
- * The internal representation is an ASN1_STRING whose data is a big endian
- * representation of the value, ignoring the sign. The sign is determined by
- * the type: V_ASN1_INTEGER for positive and V_ASN1_NEG_INTEGER for negative.
- *
- * Positive integers are no problem: they are almost the same as the DER
- * encoding, except if the first byte is >= 0x80 we need to add a zero pad.
- *
- * Negative integers are a bit trickier...
- * The DER representation of negative integers is in 2s complement form.
- * The internal form is converted by complementing each octet and finally
- * adding one to the result. This can be done less messily with a little trick.
- * If the internal form has trailing zeroes then they will become FF by the
- * complement and 0 by the add one (due to carry) so just copy as many trailing
- * zeros to the destination as there are in the source. The carry will add one
- * to the last none zero octet: so complement this octet and add one and finally
- * complement any left over until you get to the start of the string.
- *
- * Padding is a little trickier too. If the first bytes is > 0x80 then we pad
- * with 0xff. However if the first byte is 0x80 and one of the following bytes
- * is non-zero we pad with 0xff. The reason for this distinction is that 0x80
- * followed by optional zeros isn't padded.
- */
-
-int i2c_ASN1_INTEGER(const ASN1_INTEGER *a, unsigned char **pp)
-{
-    int pad = 0, ret, i, neg;
-    unsigned char *p, *n, pb = 0;
-
-    if (a == NULL)
-        return (0);
-    neg = a->type & V_ASN1_NEG;
-    if (a->length == 0)
-        ret = 1;
-    else {
-        ret = a->length;
-        i = a->data[0];
-        if (ret == 1 && i == 0)
-            neg = 0;
-        if (!neg && (i > 127)) {
-            pad = 1;
-            pb = 0;
-        } else if (neg) {
-            if (i > 128) {
-                pad = 1;
-                pb = 0xFF;
-            } else if (i == 128) {
-                /*
-                 * Special case: if any other bytes non zero we pad:
-                 * otherwise we don't.
-                 */
-                for (i = 1; i < a->length; i++)
-                    if (a->data[i]) {
-                        pad = 1;
-                        pb = 0xFF;
-                        break;
-                    }
-            }
-        }
-        ret += pad;
-    }
-    if (pp == NULL)
-        return (ret);
-    p = *pp;
-
-    if (pad)
-        *(p++) = pb;
-    if (a->length == 0)
-        *(p++) = 0;
-    else if (!neg)
-        OPENSSL_memcpy(p, a->data, (unsigned int)a->length);
-    else {
-        /* Begin at the end of the encoding */
-        n = a->data + a->length - 1;
-        p += a->length - 1;
-        i = a->length;
-        /* Copy zeros to destination as long as source is zero */
-        while (!*n && i > 1) {
-            *(p--) = 0;
-            n--;
-            i--;
-        }
-        /* Complement and increment next octet */
-        *(p--) = ((*(n--)) ^ 0xff) + 1;
-        i--;
-        /* Complement any octets left */
-        for (; i > 0; i--)
-            *(p--) = *(n--) ^ 0xff;
-    }
-
-    *pp += ret;
-    return (ret);
-}
-
-/* Convert just ASN1 INTEGER content octets to ASN1_INTEGER structure */
-
-ASN1_INTEGER *c2i_ASN1_INTEGER(ASN1_INTEGER **a, const unsigned char **pp,
-                               long len)
-{
-    ASN1_INTEGER *ret = NULL;
-    const unsigned char *p, *pend;
-    unsigned char *to, *s;
-    int i;
-
-    /*
-     * This function can handle lengths up to INT_MAX - 1, but the rest of the
-     * legacy ASN.1 code mixes integer types, so avoid exposing it to
-     * ASN1_INTEGERS with larger lengths.
-     */
-    if (len < 0 || len > INT_MAX / 2) {
-        OPENSSL_PUT_ERROR(ASN1, ASN1_R_TOO_LONG);
-        return NULL;
-    }
-
-    if ((a == NULL) || ((*a) == NULL)) {
-        if ((ret = ASN1_INTEGER_new()) == NULL)
-            return (NULL);
-        ret->type = V_ASN1_INTEGER;
-    } else
-        ret = (*a);
-
-    p = *pp;
-    pend = p + len;
-
-    /*
-     * We must OPENSSL_malloc stuff, even for 0 bytes otherwise it signifies
-     * a missing NULL parameter.
-     */
-    s = (unsigned char *)OPENSSL_malloc((int)len + 1);
-    if (s == NULL) {
-        i = ERR_R_MALLOC_FAILURE;
-        goto err;
-    }
-    to = s;
-    if (!len) {
-        /*
-         * Strictly speaking this is an illegal INTEGER but we tolerate it.
-         */
-        ret->type = V_ASN1_INTEGER;
-    } else if (*p & 0x80) {     /* a negative number */
-        ret->type = V_ASN1_NEG_INTEGER;
-        if ((*p == 0xff) && (len != 1)) {
-            p++;
-            len--;
-        }
-        i = len;
-        p += i - 1;
-        to += i - 1;
-        while ((!*p) && i) {
-            *(to--) = 0;
-            i--;
-            p--;
-        }
-        /*
-         * Special case: if all zeros then the number will be of the form FF
-         * followed by n zero bytes: this corresponds to 1 followed by n zero
-         * bytes. We've already written n zeros so we just append an extra
-         * one and set the first byte to a 1. This is treated separately
-         * because it is the only case where the number of bytes is larger
-         * than len.
-         */
-        if (!i) {
-            *s = 1;
-            s[len] = 0;
-            len++;
-        } else {
-            *(to--) = (*(p--) ^ 0xff) + 1;
-            i--;
-            for (; i > 0; i--)
-                *(to--) = *(p--) ^ 0xff;
-        }
+  int ret = ASN1_STRING_cmp(x, y);
+  if (neg) {
+    // This could be |-ret|, but |ASN1_STRING_cmp| is not forbidden from
+    // returning |INT_MIN|.
+    if (ret < 0) {
+      return 1;
+    } else if (ret > 0) {
+      return -1;
     } else {
-        ret->type = V_ASN1_INTEGER;
-        if ((*p == 0) && (len != 1)) {
-            p++;
-            len--;
-        }
-        OPENSSL_memcpy(s, p, (int)len);
+      return 0;
     }
+  }
 
-    if (ret->data != NULL)
-        OPENSSL_free(ret->data);
-    ret->data = s;
-    ret->length = (int)len;
-    if (a != NULL)
-        (*a) = ret;
-    *pp = pend;
-    return (ret);
- err:
-    OPENSSL_PUT_ERROR(ASN1, i);
-    if ((ret != NULL) && ((a == NULL) || (*a != ret)))
-        ASN1_INTEGER_free(ret);
-    return (NULL);
+  return ret;
 }
 
-int ASN1_INTEGER_set(ASN1_INTEGER *a, long v)
-{
-    if (v >= 0) {
-        return ASN1_INTEGER_set_uint64(a, (uint64_t) v);
-    }
-
-    if (!ASN1_INTEGER_set_uint64(a, 0 - (uint64_t) v)) {
-        return 0;
-    }
-
-    a->type = V_ASN1_NEG_INTEGER;
-    return 1;
+// negate_twos_complement negates |len| bytes from |buf| in-place, interpreted
+// as a signed, big-endian two's complement value.
+static void negate_twos_complement(uint8_t *buf, size_t len) {
+  uint8_t borrow = 0;
+  for (size_t i = len - 1; i < len; i--) {
+    uint8_t t = buf[i];
+    buf[i] = 0u - borrow - t;
+    borrow |= t != 0;
+  }
 }
 
-int ASN1_INTEGER_set_uint64(ASN1_INTEGER *out, uint64_t v)
-{
-    uint8_t *const newdata = OPENSSL_malloc(sizeof(uint64_t));
-    if (newdata == NULL) {
-        OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
-        return 0;
+static int is_all_zeros(const uint8_t *in, size_t len) {
+  for (size_t i = 0; i < len; i++) {
+    if (in[i] != 0) {
+      return 0;
     }
-
-    OPENSSL_free(out->data);
-    out->data = newdata;
-    v = CRYPTO_bswap8(v);
-    memcpy(out->data, &v, sizeof(v));
-
-    out->type = V_ASN1_INTEGER;
-
-    size_t leading_zeros;
-    for (leading_zeros = 0; leading_zeros < sizeof(uint64_t) - 1;
-         leading_zeros++) {
-        if (out->data[leading_zeros] != 0) {
-            break;
-        }
-    }
-
-    out->length = sizeof(uint64_t) - leading_zeros;
-    OPENSSL_memmove(out->data, out->data + leading_zeros, out->length);
-
-    return 1;
+  }
+  return 1;
 }
 
-long ASN1_INTEGER_get(const ASN1_INTEGER *a)
-{
-    int neg = 0, i;
+int i2c_ASN1_INTEGER(const ASN1_INTEGER *in, unsigned char **outp) {
+  if (in == NULL) {
+    return 0;
+  }
 
-    if (a == NULL)
-        return (0L);
-    i = a->type;
-    if (i == V_ASN1_NEG_INTEGER)
-        neg = 1;
-    else if (i != V_ASN1_INTEGER)
-        return -1;
+  // |ASN1_INTEGER|s should be represented minimally, but it is possible to
+  // construct invalid ones. Skip leading zeros so this does not produce an
+  // invalid encoding or break invariants.
+  CBS cbs;
+  CBS_init(&cbs, in->data, in->length);
+  while (CBS_len(&cbs) > 0 && CBS_data(&cbs)[0] == 0) {
+    CBS_skip(&cbs, 1);
+  }
 
-    OPENSSL_STATIC_ASSERT(sizeof(uint64_t) >= sizeof(long),
-                          "long larger than uint64_t");
+  int is_negative = (in->type & V_ASN1_NEG) != 0;
+  size_t pad;
+  CBS copy = cbs;
+  uint8_t msb;
+  if (!CBS_get_u8(&copy, &msb)) {
+    // Zero is represented as a single byte.
+    is_negative = 0;
+    pad = 1;
+  } else if (is_negative) {
+    // 0x80...01 through 0xff...ff have a two's complement of 0x7f...ff
+    // through 0x00...01 and need an extra byte to be negative.
+    // 0x01...00 through 0x80...00 have a two's complement of 0xfe...ff
+    // through 0x80...00 and can be negated as-is.
+    pad = msb > 0x80 ||
+          (msb == 0x80 && !is_all_zeros(CBS_data(&copy), CBS_len(&copy)));
+  } else {
+    // If the high bit is set, the signed representation needs an extra
+    // byte to be positive.
+    pad = (msb & 0x80) != 0;
+  }
 
-    if (a->length > (int)sizeof(uint64_t)) {
-        /* hmm... a bit ugly, return all ones */
-        return -1;
-    }
+  if (CBS_len(&cbs) > INT_MAX - pad) {
+    OPENSSL_PUT_ERROR(ASN1, ERR_R_OVERFLOW);
+    return 0;
+  }
+  int len = (int)(pad + CBS_len(&cbs));
+  assert(len > 0);
+  if (outp == NULL) {
+    return len;
+  }
 
-    uint64_t r64 = 0;
-    if (a->data != NULL) {
-      for (i = 0; i < a->length; i++) {
-          r64 <<= 8;
-          r64 |= (unsigned char)a->data[i];
-      }
-
-      if (r64 > LONG_MAX) {
-          return -1;
-      }
-    }
-
-    long r = (long) r64;
-    if (neg)
-        r = -r;
-
-    return r;
+  if (pad) {
+    (*outp)[0] = 0;
+  }
+  OPENSSL_memcpy(*outp + pad, CBS_data(&cbs), CBS_len(&cbs));
+  if (is_negative) {
+    negate_twos_complement(*outp, len);
+    assert((*outp)[0] >= 0x80);
+  } else {
+    assert((*outp)[0] < 0x80);
+  }
+  *outp += len;
+  return len;
 }
 
-ASN1_INTEGER *BN_to_ASN1_INTEGER(const BIGNUM *bn, ASN1_INTEGER *ai)
-{
-    ASN1_INTEGER *ret;
-    int len, j;
+ASN1_INTEGER *c2i_ASN1_INTEGER(ASN1_INTEGER **out, const unsigned char **inp,
+                               long len) {
+  // This function can handle lengths up to INT_MAX - 1, but the rest of the
+  // legacy ASN.1 code mixes integer types, so avoid exposing it to
+  // ASN1_INTEGERS with larger lengths.
+  if (len < 0 || len > INT_MAX / 2) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_TOO_LONG);
+    return NULL;
+  }
 
-    if (ai == NULL)
-        ret = ASN1_INTEGER_new();
-    else
-        ret = ai;
+  CBS cbs;
+  CBS_init(&cbs, *inp, (size_t)len);
+  int is_negative;
+  if (!CBS_is_valid_asn1_integer(&cbs, &is_negative)) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_INTEGER);
+    return NULL;
+  }
+
+  ASN1_INTEGER *ret = NULL;
+  if (out == NULL || *out == NULL) {
+    ret = ASN1_INTEGER_new();
     if (ret == NULL) {
-        OPENSSL_PUT_ERROR(ASN1, ASN1_R_NESTED_ASN1_ERROR);
-        goto err;
+      return NULL;
     }
-    if (BN_is_negative(bn) && !BN_is_zero(bn))
-        ret->type = V_ASN1_NEG_INTEGER;
-    else
-        ret->type = V_ASN1_INTEGER;
-    j = BN_num_bits(bn);
-    len = ((j == 0) ? 0 : ((j / 8) + 1));
-    if (ret->length < len + 4) {
-        unsigned char *new_data = OPENSSL_realloc(ret->data, len + 4);
-        if (!new_data) {
-            OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
-            goto err;
-        }
-        ret->data = new_data;
+  } else {
+    ret = *out;
+  }
+
+  // Convert to |ASN1_INTEGER|'s sign-and-magnitude representation. First,
+  // determine the size needed for a minimal result.
+  if (is_negative) {
+    // 0xff00...01 through 0xff7f..ff have a two's complement of 0x00ff...ff
+    // through 0x000100...001 and need one leading zero removed. 0x8000...00
+    // through 0xff00...00 have a two's complement of 0x8000...00 through
+    // 0x0100...00 and will be minimally-encoded as-is.
+    if (CBS_len(&cbs) > 0 && CBS_data(&cbs)[0] == 0xff &&
+        !is_all_zeros(CBS_data(&cbs) + 1, CBS_len(&cbs) - 1)) {
+      CBS_skip(&cbs, 1);
     }
-    ret->length = BN_bn2bin(bn, ret->data);
-    /* Correct zero case */
-    if (!ret->length) {
-        ret->data[0] = 0;
-        ret->length = 1;
+  } else {
+    // Remove the leading zero byte, if any.
+    if (CBS_len(&cbs) > 0 && CBS_data(&cbs)[0] == 0x00) {
+      CBS_skip(&cbs, 1);
     }
-    return (ret);
- err:
-    if (ret != ai)
-        ASN1_INTEGER_free(ret);
-    return (NULL);
+  }
+
+  if (!ASN1_STRING_set(ret, CBS_data(&cbs), CBS_len(&cbs))) {
+    goto err;
+  }
+
+  if (is_negative) {
+    ret->type = V_ASN1_NEG_INTEGER;
+    negate_twos_complement(ret->data, ret->length);
+  } else {
+    ret->type = V_ASN1_INTEGER;
+  }
+
+  // The value should be minimally-encoded.
+  assert(ret->length == 0 || ret->data[0] != 0);
+  // Zero is not negative.
+  assert(!is_negative || ret->length > 0);
+
+  *inp += len;
+  if (out != NULL) {
+    *out = ret;
+  }
+  return ret;
+
+err:
+  if (ret != NULL && (out == NULL || *out != ret)) {
+    ASN1_INTEGER_free(ret);
+  }
+  return NULL;
 }
 
-BIGNUM *ASN1_INTEGER_to_BN(const ASN1_INTEGER *ai, BIGNUM *bn)
-{
-    BIGNUM *ret;
+int ASN1_INTEGER_set_int64(ASN1_INTEGER *a, int64_t v) {
+  if (v >= 0) {
+    return ASN1_INTEGER_set_uint64(a, (uint64_t)v);
+  }
 
-    if ((ret = BN_bin2bn(ai->data, ai->length, bn)) == NULL)
-        OPENSSL_PUT_ERROR(ASN1, ASN1_R_BN_LIB);
-    else if (ai->type == V_ASN1_NEG_INTEGER)
-        BN_set_negative(ret, 1);
-    return (ret);
+  if (!ASN1_INTEGER_set_uint64(a, 0 - (uint64_t)v)) {
+    return 0;
+  }
+
+  a->type = V_ASN1_NEG_INTEGER;
+  return 1;
+}
+
+int ASN1_ENUMERATED_set_int64(ASN1_ENUMERATED *a, int64_t v) {
+  if (v >= 0) {
+    return ASN1_ENUMERATED_set_uint64(a, (uint64_t)v);
+  }
+
+  if (!ASN1_ENUMERATED_set_uint64(a, 0 - (uint64_t)v)) {
+    return 0;
+  }
+
+  a->type = V_ASN1_NEG_ENUMERATED;
+  return 1;
+}
+
+int ASN1_INTEGER_set(ASN1_INTEGER *a, long v) {
+  static_assert(sizeof(long) <= sizeof(int64_t), "long fits in int64_t");
+  return ASN1_INTEGER_set_int64(a, v);
+}
+
+int ASN1_ENUMERATED_set(ASN1_ENUMERATED *a, long v) {
+  static_assert(sizeof(long) <= sizeof(int64_t), "long fits in int64_t");
+  return ASN1_ENUMERATED_set_int64(a, v);
+}
+
+static int asn1_string_set_uint64(ASN1_STRING *out, uint64_t v, int type) {
+  uint8_t buf[sizeof(uint64_t)];
+  CRYPTO_store_u64_be(buf, v);
+  size_t leading_zeros;
+  for (leading_zeros = 0; leading_zeros < sizeof(buf); leading_zeros++) {
+    if (buf[leading_zeros] != 0) {
+      break;
+    }
+  }
+
+  if (!ASN1_STRING_set(out, buf + leading_zeros, sizeof(buf) - leading_zeros)) {
+    return 0;
+  }
+  out->type = type;
+  return 1;
+}
+
+int ASN1_INTEGER_set_uint64(ASN1_INTEGER *out, uint64_t v) {
+  return asn1_string_set_uint64(out, v, V_ASN1_INTEGER);
+}
+
+int ASN1_ENUMERATED_set_uint64(ASN1_ENUMERATED *out, uint64_t v) {
+  return asn1_string_set_uint64(out, v, V_ASN1_ENUMERATED);
+}
+
+static int asn1_string_get_abs_uint64(uint64_t *out, const ASN1_STRING *a,
+                                      int type) {
+  if ((a->type & ~V_ASN1_NEG) != type) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_WRONG_INTEGER_TYPE);
+    return 0;
+  }
+  uint8_t buf[sizeof(uint64_t)] = {0};
+  if (a->length > (int)sizeof(buf)) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_INTEGER);
+    return 0;
+  }
+  OPENSSL_memcpy(buf + sizeof(buf) - a->length, a->data, a->length);
+  *out = CRYPTO_load_u64_be(buf);
+  return 1;
+}
+
+static int asn1_string_get_uint64(uint64_t *out, const ASN1_STRING *a,
+                                  int type) {
+  if (!asn1_string_get_abs_uint64(out, a, type)) {
+    return 0;
+  }
+  if (a->type & V_ASN1_NEG) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_INTEGER);
+    return 0;
+  }
+  return 1;
+}
+
+int ASN1_INTEGER_get_uint64(uint64_t *out, const ASN1_INTEGER *a) {
+  return asn1_string_get_uint64(out, a, V_ASN1_INTEGER);
+}
+
+int ASN1_ENUMERATED_get_uint64(uint64_t *out, const ASN1_ENUMERATED *a) {
+  return asn1_string_get_uint64(out, a, V_ASN1_ENUMERATED);
+}
+
+static int asn1_string_get_int64(int64_t *out, const ASN1_STRING *a, int type) {
+  uint64_t v;
+  if (!asn1_string_get_abs_uint64(&v, a, type)) {
+    return 0;
+  }
+  int64_t i64;
+  int fits_in_i64;
+  // Check |v != 0| to handle manually-constructed negative zeros.
+  if ((a->type & V_ASN1_NEG) && v != 0) {
+    i64 = (int64_t)(0u - v);
+    fits_in_i64 = i64 < 0;
+  } else {
+    i64 = (int64_t)v;
+    fits_in_i64 = i64 >= 0;
+  }
+  if (!fits_in_i64) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_INTEGER);
+    return 0;
+  }
+  *out = i64;
+  return 1;
+}
+
+int ASN1_INTEGER_get_int64(int64_t *out, const ASN1_INTEGER *a) {
+  return asn1_string_get_int64(out, a, V_ASN1_INTEGER);
+}
+
+int ASN1_ENUMERATED_get_int64(int64_t *out, const ASN1_ENUMERATED *a) {
+  return asn1_string_get_int64(out, a, V_ASN1_ENUMERATED);
+}
+
+static long asn1_string_get_long(const ASN1_STRING *a, int type) {
+  if (a == NULL) {
+    return 0;
+  }
+
+  int64_t v;
+  if (!asn1_string_get_int64(&v, a, type) ||  //
+      v < LONG_MIN || v > LONG_MAX) {
+    // This function's return value does not distinguish overflow from -1.
+    ERR_clear_error();
+    return -1;
+  }
+
+  return (long)v;
+}
+
+long ASN1_INTEGER_get(const ASN1_INTEGER *a) {
+  return asn1_string_get_long(a, V_ASN1_INTEGER);
+}
+
+long ASN1_ENUMERATED_get(const ASN1_ENUMERATED *a) {
+  return asn1_string_get_long(a, V_ASN1_ENUMERATED);
+}
+
+static ASN1_STRING *bn_to_asn1_string(const BIGNUM *bn, ASN1_STRING *ai,
+                                      int type) {
+  ASN1_INTEGER *ret;
+  if (ai == NULL) {
+    ret = ASN1_STRING_type_new(type);
+  } else {
+    ret = ai;
+  }
+  if (ret == NULL) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_NESTED_ASN1_ERROR);
+    goto err;
+  }
+
+  if (BN_is_negative(bn) && !BN_is_zero(bn)) {
+    ret->type = type | V_ASN1_NEG;
+  } else {
+    ret->type = type;
+  }
+
+  int len = BN_num_bytes(bn);
+  if (!ASN1_STRING_set(ret, NULL, len) ||
+      !BN_bn2bin_padded(ret->data, len, bn)) {
+    goto err;
+  }
+  return ret;
+
+err:
+  if (ret != ai) {
+    ASN1_STRING_free(ret);
+  }
+  return NULL;
+}
+
+ASN1_INTEGER *BN_to_ASN1_INTEGER(const BIGNUM *bn, ASN1_INTEGER *ai) {
+  return bn_to_asn1_string(bn, ai, V_ASN1_INTEGER);
+}
+
+ASN1_ENUMERATED *BN_to_ASN1_ENUMERATED(const BIGNUM *bn, ASN1_ENUMERATED *ai) {
+  return bn_to_asn1_string(bn, ai, V_ASN1_ENUMERATED);
+}
+
+static BIGNUM *asn1_string_to_bn(const ASN1_STRING *ai, BIGNUM *bn, int type) {
+  if ((ai->type & ~V_ASN1_NEG) != type) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_WRONG_INTEGER_TYPE);
+    return NULL;
+  }
+
+  BIGNUM *ret;
+  if ((ret = BN_bin2bn(ai->data, ai->length, bn)) == NULL) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_BN_LIB);
+  } else if (ai->type & V_ASN1_NEG) {
+    BN_set_negative(ret, 1);
+  }
+  return ret;
+}
+
+BIGNUM *ASN1_INTEGER_to_BN(const ASN1_INTEGER *ai, BIGNUM *bn) {
+  return asn1_string_to_bn(ai, bn, V_ASN1_INTEGER);
+}
+
+BIGNUM *ASN1_ENUMERATED_to_BN(const ASN1_ENUMERATED *ai, BIGNUM *bn) {
+  return asn1_string_to_bn(ai, bn, V_ASN1_ENUMERATED);
 }

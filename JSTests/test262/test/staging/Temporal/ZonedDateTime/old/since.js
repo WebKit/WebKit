@@ -87,7 +87,29 @@ assert.notSameValue(monthsDifference.months, 0);
 
 // no two different calendars
 var zdt1 = new Temporal.ZonedDateTime(0n, "UTC");
-var fakeJapanese = { toString() { return "japanese"; }};
+var fakeJapanese = {
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  day() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  id: "japanese",
+  inLeapYear() {},
+  mergeFields() {},
+  month() {},
+  monthCode() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  year() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
+};
 var zdt2 = new Temporal.ZonedDateTime(0n, "UTC", fakeJapanese);
 assert.throws(RangeError, () => zdt1.since(zdt2));
 

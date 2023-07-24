@@ -58,7 +58,7 @@
 
 #include <openssl/des.h>
 
-#include "../../crypto/fipsmodule/des/internal.h"
+#include "../../crypto/des/internal.h"
 #include "../../crypto/internal.h"
 
 

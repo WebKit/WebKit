@@ -42,7 +42,7 @@ static const float gSampleBitRate = 44100;
 GST_DEBUG_CATEGORY(webkit_audio_provider_debug);
 #define GST_CAT_DEFAULT webkit_audio_provider_debug
 
-static void initializeDebugCategory()
+static void initializeAudioSourceProviderDebugCategory()
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -86,7 +86,7 @@ static void copyGStreamerBuffersToAudioChannel(GstAdapter* adapter, AudioBus* bu
 AudioSourceProviderGStreamer::AudioSourceProviderGStreamer()
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
 {
-    initializeDebugCategory();
+    initializeAudioSourceProviderDebugCategory();
 }
 
 #if ENABLE(MEDIA_STREAM)
@@ -94,7 +94,7 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
     : m_captureSource(source)
     , m_notifier(MainThreadNotifier<MainThreadNotification>::create())
 {
-    initializeDebugCategory();
+    initializeAudioSourceProviderDebugCategory();
     registerWebKitGStreamerElements();
     const char* pipelineNamePrefix = "";
 #if USE(GSTREAMER_WEBRTC)
@@ -482,6 +482,8 @@ void AudioSourceProviderGStreamer::clearAdapters()
     for (auto& adapter : m_adapters.values())
         gst_adapter_clear(adapter.get());
 }
+
+#undef GST_CAT_DEFAULT
 
 } // WebCore
 

@@ -587,7 +587,7 @@ bool WebContentReader::readHTML(const String& string)
     if (DeprecatedGlobalSettings::customPasteboardDataEnabled() && shouldSanitize()) {
         markup = sanitizeMarkup(stringOmittingMicrosoftPrefix, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [](auto& url) {
-                return url.isLocalFile();
+                return url.protocolIsFile();
             });
         } });
     } else
@@ -606,7 +606,7 @@ bool WebContentMarkupReader::readHTML(const String& string)
     if (shouldSanitize()) {
         markup = sanitizeMarkup(rawHTML, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [](auto& url) {
-                return url.isLocalFile();
+                return url.protocolIsFile();
             });
         } });
     } else
@@ -675,7 +675,7 @@ bool WebContentReader::readPlainText(const String& text)
 
     String precomposedString = [text precomposedStringWithCanonicalMapping];
     if (auto* page = frame.page())
-        precomposedString = page->sanitizeLookalikeCharacters(precomposedString, LookalikeCharacterSanitizationTrigger::Paste);
+        precomposedString = page->applyLinkDecorationFiltering(precomposedString, LinkDecorationFilteringTrigger::Paste);
 
     addFragment(createFragmentFromText(context, precomposedString));
 
@@ -830,7 +830,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
 
     auto sanitizedURLString = [&] {
         if (auto* page = frame.page())
-            return page->sanitizeLookalikeCharacters(url, LookalikeCharacterSanitizationTrigger::Paste);
+            return page->applyLinkDecorationFiltering(url, LinkDecorationFilteringTrigger::Paste);
         return url;
     }().string();
 

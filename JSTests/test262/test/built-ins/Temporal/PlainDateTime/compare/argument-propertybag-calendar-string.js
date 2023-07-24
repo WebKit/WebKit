@@ -4,8 +4,18 @@
 /*---
 esid: sec-temporal.plaindatetime.compare
 description: A calendar ID is valid input for Calendar
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
+
+const dateFromFieldsOriginal = Object.getOwnPropertyDescriptor(Temporal.Calendar.prototype, "dateFromFields");
+Object.defineProperty(Temporal.Calendar.prototype, "dateFromFields", {
+  configurable: true,
+  enumerable: false,
+  get() {
+    TemporalHelpers.assertUnreachable("dateFromFields should not be looked up");
+  },
+});
 
 const calendar = "iso8601";
 
@@ -16,3 +26,5 @@ assert.sameValue(result1, 0, `Calendar created from string "${arg}" (first argum
 
 const result2 = Temporal.PlainDateTime.compare(new Temporal.PlainDateTime(1976, 11, 18), arg);
 assert.sameValue(result2, 0, `Calendar created from string "${arg}" (second argument)`);
+
+Object.defineProperty(Temporal.Calendar.prototype, "dateFromFields", dateFromFieldsOriginal);

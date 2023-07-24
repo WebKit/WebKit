@@ -109,7 +109,7 @@ private:
     PluginView* mainFramePlugIn();
 #endif
 
-    WebPage* m_webPage;
+    WeakPtr<WebPage> m_webPage;
     WebCore::PageOverlay* m_findPageOverlay { nullptr };
 
     // Whether the UI process is showing the find indicator. Note that this can be true even if

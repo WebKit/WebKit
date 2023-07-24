@@ -146,7 +146,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
 
     // https://tc39.es/proposal-intl-displaynames/#sec-canonicalcodefordisplaynames
     auto canonicalizeCodeForDisplayNames = [](Type type, String&& code) -> CString {
-        ASSERT(code.isAllASCII());
+        ASSERT(code.containsOnlyASCII());
         switch (type) {
         case Type::Language: {
             return canonicalizeUnicodeLocaleID(code.ascii()).ascii();
@@ -231,7 +231,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
             throwRangeError(globalObject, scope, "argument is not a well-formed currency code"_s);
             return { };
         }
-        ASSERT(code.isAllASCII());
+        ASSERT(code.containsOnlyASCII());
 
         UCurrNameStyle style = UCURR_LONG_NAME;
         switch (m_style) {

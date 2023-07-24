@@ -194,7 +194,7 @@ public:
     PlatformLayer* platformLayer() const;
     bool isVideoLayerInline();
     void setPreparedToReturnVideoLayerToInline(bool);
-    void waitForPreparedForInlineThen(Function<void()>&& completionHandler = [] { });
+    void waitForPreparedForInlineThen(Function<void()>&& completionHandler);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer();
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler = [] { });
@@ -640,8 +640,11 @@ public:
 
     bool hasSource() const { return hasCurrentSrc() || srcObject(); }
 
+    WEBCORE_EXPORT void requestHostingContextID(Function<void(LayerHostingContextID)>&&);
     WEBCORE_EXPORT LayerHostingContextID layerHostingContextID();
     WEBCORE_EXPORT WebCore::FloatSize naturalSize();
+
+    FloatSize mediaPlayerVideoInlineSize() const override { return videoInlineSize(); }
     WEBCORE_EXPORT WebCore::FloatSize videoInlineSize() const;
     void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
     void updateMediaState();
@@ -1317,6 +1320,8 @@ private:
     bool m_userPrefersTextDescriptions { false };
     bool m_userPrefersExtendedDescriptions { false };
     bool m_changingSynthesisState { false };
+
+    FloatSize m_videoInlineSize { };
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<Logger> m_logger;

@@ -89,18 +89,24 @@ TextureView* PresentationContext::getCurrentTextureView()
 
 #pragma mark WGPU Stubs
 
+void wgpuSurfaceReference(WGPUSurface surface)
+{
+    WebGPU::fromAPI(surface).ref();
+}
+
 void wgpuSurfaceRelease(WGPUSurface surface)
 {
     WebGPU::fromAPI(surface).deref();
 }
 
+void wgpuSwapChainReference(WGPUSwapChain swapChain)
+{
+    WebGPU::fromAPI(swapChain).ref();
+}
+
 void wgpuSwapChainRelease(WGPUSwapChain swapChain)
 {
-    auto& presentationContext = WebGPU::fromAPI(swapChain);
-
-    presentationContext.unconfigure(); // It doesn't make sense to have multiple swap chains targetting a single surface.
-
-    presentationContext.deref();
+    WebGPU::fromAPI(swapChain).deref();
 }
 
 WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter adapter)

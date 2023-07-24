@@ -49,6 +49,20 @@ cc_library(
         ":debugging_internal",
         "//absl/base:config",
         "//absl/base:core_headers",
+        "//absl/base:dynamic_annotations",
+        "//absl/base:raw_logging_internal",
+    ],
+)
+
+cc_test(
+    name = "stacktrace_test",
+    srcs = ["stacktrace_test.cc"],
+    copts = ABSL_TEST_COPTS,
+    linkopts = ABSL_DEFAULT_LINKOPTS,
+    deps = [
+        ":stacktrace",
+        "//absl/base:core_headers",
+        "@com_google_googletest//:gtest_main",
     ],
 )
 
@@ -70,6 +84,10 @@ cc_library(
     linkopts = ABSL_DEFAULT_LINKOPTS + select({
         "//absl:msvc_compiler": ["-DEFAULTLIB:dbghelp.lib"],
         "//absl:clang-cl_compiler": ["-DEFAULTLIB:dbghelp.lib"],
+        "//absl:mingw_compiler": [
+            "-DEFAULTLIB:dbghelp.lib",
+            "-ldbghelp",
+        ],
         "//conditions:default": [],
     }),
     deps = [

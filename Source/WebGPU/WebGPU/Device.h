@@ -44,6 +44,10 @@
 struct WGPUDeviceImpl {
 };
 
+namespace WGSL {
+struct PipelineLayout;
+}
+
 namespace WebGPU {
 
 class BindGroup;
@@ -84,6 +88,8 @@ public:
     Ref<PipelineLayout> createPipelineLayout(const WGPUPipelineLayoutDescriptor&);
     Ref<QuerySet> createQuerySet(const WGPUQuerySetDescriptor&);
     Ref<RenderBundleEncoder> createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor&);
+    Ref<PipelineLayout> extracted(const Vector<Vector<WGPUBindGroupLayoutEntry>> &bindGroupEntries);
+
     Ref<RenderPipeline> createRenderPipeline(const WGPURenderPipelineDescriptor&);
     void createRenderPipelineAsync(const WGPURenderPipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback);
     Ref<Sampler> createSampler(const WGPUSamplerDescriptor&);
@@ -97,7 +103,6 @@ public:
     bool hasFeature(WGPUFeatureName);
     bool popErrorScope(CompletionHandler<void(WGPUErrorType, String&&)>&& callback);
     void pushErrorScope(WGPUErrorFilter);
-    void setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&&);
     void setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&&);
     void setLabel(String&&);
 
@@ -111,6 +116,7 @@ public:
 
     void generateAValidationError(String&& message);
     void generateAnOutOfMemoryError(String&& message);
+    void generateAnInternalError(String&& message);
 
     Instance& instance() const { return m_adapter->instance(); }
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
@@ -132,6 +138,8 @@ private:
     bool validateRenderPipeline(const WGPURenderPipelineDescriptor&);
 
     void makeInvalid() { m_device = nil; }
+    void addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>&, const std::optional<WGSL::PipelineLayout>&);
+    Ref<PipelineLayout> generatePipelineLayout(const Vector<Vector<WGPUBindGroupLayoutEntry>> &bindGroupEntries);
 
     void loseTheDevice(WGPUDeviceLostReason);
     void captureFrameIfNeeded() const;

@@ -1,0 +1,285 @@
+     Text
+Span
+Text  Span                                           Text
+
+PASS Trusted click on <input>, observed from <input>
+PASS Trusted click on <input>, observed from <body>
+PASS Dispatch new MouseEvent() on <input>, observed from <input>
+PASS Dispatch new MouseEvent() on <input>, observed from <body>
+PASS Dispatch new PointerEvent() on <input>, observed from <input>
+PASS Dispatch new PointerEvent() on <input>, observed from <body>
+PASS click() on <input>, observed from <input>
+PASS click() on <input>, observed from <body>
+PASS Trusted click on <select disabled=""></select>, observed from <select>
+PASS Trusted click on <select disabled=""></select>, observed from <body>
+PASS Dispatch new MouseEvent() on <select disabled=""></select>, observed from <select>
+PASS Dispatch new MouseEvent() on <select disabled=""></select>, observed from <body>
+PASS Dispatch new PointerEvent() on <select disabled=""></select>, observed from <select>
+PASS Dispatch new PointerEvent() on <select disabled=""></select>, observed from <body>
+PASS click() on <select disabled=""></select>, observed from <select>
+PASS click() on <select disabled=""></select>, observed from <body>
+PASS Trusted click on <select disabled="">
+    <!-- <option> can't be clicked as it doesn't have its own painting area -->
+    <option>foo</option>
+  </select>, observed from <select>
+PASS Trusted click on <select disabled="">
+    <!-- <option> can't be clicked as it doesn't have its own painting area -->
+    <option>foo</option>
+  </select>, observed from <body>
+PASS Dispatch new MouseEvent() on <select disabled="">
+    <!-- <option> can't be clicked as it doesn't have its own painting area -->
+    <option>foo</option>
+  </select>, observed from <select>
+PASS Dispatch new MouseEvent() on <select disabled="">
+    <!-- <option> can't be clicked as it doesn't have its own painting area -->
+    <option>foo</option>
+  </select>, observed from <body>
+PASS Dispatch new PointerEvent() on <select disabled="">
+    <!-- <option> can't be clicked as it doesn't have its own painting area -->
+    <option>foo</option>
+  </select>, observed from <select>
+PASS Dispatch new PointerEvent() on <select disabled="">
+    <!-- <option> can't be clicked as it doesn't have its own painting area -->
+    <option>foo</option>
+  </select>, observed from <body>
+PASS click() on <select disabled="">
+    <!-- <option> can't be clicked as it doesn't have its own painting area -->
+    <option>foo</option>
+  </select>, observed from <select>
+PASS click() on <select disabled="">
+    <!-- <option> can't be clicked as it doesn't have its own painting area -->
+    <option>foo</option>
+  </select>, observed from <body>
+FAIL Trusted click on <fieldset disabled="">Text</fieldset>, observed from <fieldset> assert_array_equals: Observed events lengths differ, expected array ["pointermove", "mousemove", "pointerdown", "pointerup"] length 4, got ["pointermove", "mousemove", "pointerdown", "mousedown", "pointerup", "mouseup", "click"] length 7
+FAIL Trusted click on <fieldset disabled="">Text</fieldset>, observed from <body> assert_array_equals: Observed events lengths differ, expected array ["pointermove", "mousemove", "pointerdown", "pointerup"] length 4, got ["pointermove", "mousemove", "pointerdown", "mousedown", "pointerup", "mouseup", "click"] length 7
+PASS Dispatch new MouseEvent() on <fieldset disabled="">Text</fieldset>, observed from <fieldset>
+PASS Dispatch new MouseEvent() on <fieldset disabled="">Text</fieldset>, observed from <body>
+PASS Dispatch new PointerEvent() on <fieldset disabled="">Text</fieldset>, observed from <fieldset>
+PASS Dispatch new PointerEvent() on <fieldset disabled="">Text</fieldset>, observed from <body>
+FAIL click() on <fieldset disabled="">Text</fieldset>, observed from <fieldset> assert_array_equals: Observed events lengths differ, expected array [] length 0, got ["click"] length 1
+FAIL click() on <fieldset disabled="">Text</fieldset>, observed from <body> assert_array_equals: Observed events lengths differ, expected array [] length 0, got ["click"] length 1
+FAIL Trusted click on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <span> assert_array_equals: mousedown.composedPath lengths differ, expected array ["HTMLSpanElement"] length 1, got ["HTMLSpanElement", "HTMLFieldSetElement", "HTMLDivElement", "HTMLBodyElement", "HTMLHtmlElement", "HTMLDocument", "Window"] length 7
+FAIL Trusted click on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <fieldset> assert_array_equals: Observed events lengths differ, expected array ["pointermove", "mousemove", "pointerdown", "pointerup"] length 4, got ["pointermove", "mousemove", "pointerdown", "mousedown", "pointerup", "mouseup", "click"] length 7
+FAIL Trusted click on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <body> assert_array_equals: Observed events lengths differ, expected array ["pointermove", "mousemove", "pointerdown", "pointerup"] length 4, got ["pointermove", "mousemove", "pointerdown", "mousedown", "pointerup", "mouseup", "click"] length 7
+PASS Dispatch new MouseEvent() on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <span>
+PASS Dispatch new MouseEvent() on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <fieldset>
+PASS Dispatch new MouseEvent() on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <body>
+PASS Dispatch new PointerEvent() on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <span>
+PASS Dispatch new PointerEvent() on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <fieldset>
+PASS Dispatch new PointerEvent() on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <body>
+PASS click() on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <span>
+PASS click() on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <fieldset>
+PASS click() on <fieldset disabled=""><span class="target">Span</span></fieldset>, observed from <body>
+PASS Trusted click on <button disabled="">Text</button>, observed from <button>
+PASS Trusted click on <button disabled="">Text</button>, observed from <body>
+PASS Dispatch new MouseEvent() on <button disabled="">Text</button>, observed from <button>
+PASS Dispatch new MouseEvent() on <button disabled="">Text</button>, observed from <body>
+PASS Dispatch new PointerEvent() on <button disabled="">Text</button>, observed from <button>
+PASS Dispatch new PointerEvent() on <button disabled="">Text</button>, observed from <body>
+PASS click() on <button disabled="">Text</button>, observed from <button>
+PASS click() on <button disabled="">Text</button>, observed from <body>
+PASS Trusted click on <button disabled=""><span class="target">Span</span></button>, observed from <span>
+PASS Trusted click on <button disabled=""><span class="target">Span</span></button>, observed from <button>
+PASS Trusted click on <button disabled=""><span class="target">Span</span></button>, observed from <body>
+PASS Dispatch new MouseEvent() on <button disabled=""><span class="target">Span</span></button>, observed from <span>
+PASS Dispatch new MouseEvent() on <button disabled=""><span class="target">Span</span></button>, observed from <button>
+PASS Dispatch new MouseEvent() on <button disabled=""><span class="target">Span</span></button>, observed from <body>
+PASS Dispatch new PointerEvent() on <button disabled=""><span class="target">Span</span></button>, observed from <span>
+PASS Dispatch new PointerEvent() on <button disabled=""><span class="target">Span</span></button>, observed from <button>
+PASS Dispatch new PointerEvent() on <button disabled=""><span class="target">Span</span></button>, observed from <body>
+PASS click() on <button disabled=""><span class="target">Span</span></button>, observed from <span>
+PASS click() on <button disabled=""><span class="target">Span</span></button>, observed from <button>
+PASS click() on <button disabled=""><span class="target">Span</span></button>, observed from <body>
+FAIL Trusted click on <textarea disabled=""></textarea>, observed from <textarea> assert_array_equals: Observed events lengths differ, expected array ["pointermove", "mousemove", "pointerdown", "pointerup"] length 4, got [] length 0
+FAIL Trusted click on <textarea disabled=""></textarea>, observed from <body> assert_array_equals: Observed events lengths differ, expected array ["pointermove", "mousemove", "pointerdown", "pointerup"] length 4, got ["pointermove", "mousemove", "pointerdown", "mousedown", "pointerup", "mouseup", "click"] length 7
+PASS Dispatch new MouseEvent() on <textarea disabled=""></textarea>, observed from <textarea>
+PASS Dispatch new MouseEvent() on <textarea disabled=""></textarea>, observed from <body>
+PASS Dispatch new PointerEvent() on <textarea disabled=""></textarea>, observed from <textarea>
+PASS Dispatch new PointerEvent() on <textarea disabled=""></textarea>, observed from <body>
+PASS click() on <textarea disabled=""></textarea>, observed from <textarea>
+PASS click() on <textarea disabled=""></textarea>, observed from <body>
+PASS Trusted click on <input disabled="" type="button">, observed from <input>
+PASS Trusted click on <input disabled="" type="button">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="button">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="button">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="button">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="button">, observed from <body>
+PASS click() on <input disabled="" type="button">, observed from <input>
+PASS click() on <input disabled="" type="button">, observed from <body>
+PASS Trusted click on <input disabled="" type="checkbox">, observed from <input>
+PASS Trusted click on <input disabled="" type="checkbox">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="checkbox">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="checkbox">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="checkbox">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="checkbox">, observed from <body>
+PASS click() on <input disabled="" type="checkbox">, observed from <input>
+PASS click() on <input disabled="" type="checkbox">, observed from <body>
+FAIL Trusted click on <input disabled="" type="color" value="#000000">, observed from <input> assert_array_equals: Observed events lengths differ, expected array ["pointermove", "mousemove", "pointerdown", "pointerup"] length 4, got [] length 0
+FAIL Trusted click on <input disabled="" type="color" value="#000000">, observed from <body> assert_array_equals: Observed events lengths differ, expected array ["pointermove", "mousemove", "pointerdown", "pointerup"] length 4, got ["pointermove", "mousemove", "pointerdown", "mousedown", "pointerup", "mouseup", "click"] length 7
+PASS Dispatch new MouseEvent() on <input disabled="" type="color" value="#000000">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="color" value="#000000">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="color" value="#000000">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="color" value="#000000">, observed from <body>
+PASS click() on <input disabled="" type="color" value="#000000">, observed from <input>
+PASS click() on <input disabled="" type="color" value="#000000">, observed from <body>
+FAIL Trusted click on <input disabled="" type="date">, observed from <input> assert_array_equals: Observed events lengths differ, expected array ["pointermove", "mousemove", "pointerdown", "pointerup"] length 4, got [] length 0
+FAIL Trusted click on <input disabled="" type="date">, observed from <body> assert_array_equals: Observed events lengths differ, expected array ["pointermove", "mousemove", "pointerdown", "pointerup"] length 4, got ["pointermove", "mousemove", "pointerdown", "mousedown", "pointerup", "mouseup", "click"] length 7
+PASS Dispatch new MouseEvent() on <input disabled="" type="date">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="date">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="date">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="date">, observed from <body>
+PASS click() on <input disabled="" type="date">, observed from <input>
+PASS click() on <input disabled="" type="date">, observed from <body>
+PASS Trusted click on <input disabled="" type="datetime-local">, observed from <input>
+PASS Trusted click on <input disabled="" type="datetime-local">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="datetime-local">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="datetime-local">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="datetime-local">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="datetime-local">, observed from <body>
+PASS click() on <input disabled="" type="datetime-local">, observed from <input>
+PASS click() on <input disabled="" type="datetime-local">, observed from <body>
+PASS Trusted click on <input disabled="" type="email">, observed from <input>
+PASS Trusted click on <input disabled="" type="email">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="email">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="email">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="email">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="email">, observed from <body>
+PASS click() on <input disabled="" type="email">, observed from <input>
+PASS click() on <input disabled="" type="email">, observed from <body>
+PASS Trusted click on <input disabled="" type="file">, observed from <input>
+PASS Trusted click on <input disabled="" type="file">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="file">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="file">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="file">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="file">, observed from <body>
+PASS click() on <input disabled="" type="file">, observed from <input>
+PASS click() on <input disabled="" type="file">, observed from <body>
+PASS Trusted click on <input disabled="" type="image">, observed from <input>
+PASS Trusted click on <input disabled="" type="image">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="image">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="image">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="image">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="image">, observed from <body>
+PASS click() on <input disabled="" type="image">, observed from <input>
+PASS click() on <input disabled="" type="image">, observed from <body>
+PASS Trusted click on <input disabled="" type="month">, observed from <input>
+PASS Trusted click on <input disabled="" type="month">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="month">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="month">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="month">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="month">, observed from <body>
+PASS click() on <input disabled="" type="month">, observed from <input>
+PASS click() on <input disabled="" type="month">, observed from <body>
+PASS Trusted click on <input disabled="" type="number">, observed from <input>
+PASS Trusted click on <input disabled="" type="number">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="number">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="number">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="number">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="number">, observed from <body>
+PASS click() on <input disabled="" type="number">, observed from <input>
+PASS click() on <input disabled="" type="number">, observed from <body>
+PASS Trusted click on <input disabled="" type="password">, observed from <input>
+PASS Trusted click on <input disabled="" type="password">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="password">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="password">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="password">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="password">, observed from <body>
+PASS click() on <input disabled="" type="password">, observed from <input>
+PASS click() on <input disabled="" type="password">, observed from <body>
+PASS Trusted click on <input disabled="" type="radio">, observed from <input>
+PASS Trusted click on <input disabled="" type="radio">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="radio">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="radio">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="radio">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="radio">, observed from <body>
+PASS click() on <input disabled="" type="radio">, observed from <input>
+PASS click() on <input disabled="" type="radio">, observed from <body>
+PASS Trusted click on <input disabled="" type="range" value="0">, observed from <input>
+PASS Trusted click on <input disabled="" type="range" value="0">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="range" value="0">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="range" value="0">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="range" value="0">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="range" value="0">, observed from <body>
+PASS click() on <input disabled="" type="range" value="0">, observed from <input>
+PASS click() on <input disabled="" type="range" value="0">, observed from <body>
+PASS Trusted click on <input disabled="" type="range" value="50">, observed from <input>
+PASS Trusted click on <input disabled="" type="range" value="50">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="range" value="50">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="range" value="50">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="range" value="50">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="range" value="50">, observed from <body>
+PASS click() on <input disabled="" type="range" value="50">, observed from <input>
+PASS click() on <input disabled="" type="range" value="50">, observed from <body>
+PASS Trusted click on <input disabled="" type="reset">, observed from <input>
+PASS Trusted click on <input disabled="" type="reset">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="reset">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="reset">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="reset">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="reset">, observed from <body>
+PASS click() on <input disabled="" type="reset">, observed from <input>
+PASS click() on <input disabled="" type="reset">, observed from <body>
+PASS Trusted click on <input disabled="" type="search">, observed from <input>
+PASS Trusted click on <input disabled="" type="search">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="search">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="search">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="search">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="search">, observed from <body>
+PASS click() on <input disabled="" type="search">, observed from <input>
+PASS click() on <input disabled="" type="search">, observed from <body>
+PASS Trusted click on <input disabled="" type="submit">, observed from <input>
+PASS Trusted click on <input disabled="" type="submit">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="submit">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="submit">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="submit">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="submit">, observed from <body>
+PASS click() on <input disabled="" type="submit">, observed from <input>
+PASS click() on <input disabled="" type="submit">, observed from <body>
+PASS Trusted click on <input disabled="" type="tel">, observed from <input>
+PASS Trusted click on <input disabled="" type="tel">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="tel">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="tel">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="tel">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="tel">, observed from <body>
+PASS click() on <input disabled="" type="tel">, observed from <input>
+PASS click() on <input disabled="" type="tel">, observed from <body>
+PASS Trusted click on <input disabled="" type="text">, observed from <input>
+PASS Trusted click on <input disabled="" type="text">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="text">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="text">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="text">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="text">, observed from <body>
+PASS click() on <input disabled="" type="text">, observed from <input>
+PASS click() on <input disabled="" type="text">, observed from <body>
+PASS Trusted click on <input disabled="" type="time">, observed from <input>
+PASS Trusted click on <input disabled="" type="time">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="time">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="time">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="time">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="time">, observed from <body>
+PASS click() on <input disabled="" type="time">, observed from <input>
+PASS click() on <input disabled="" type="time">, observed from <body>
+PASS Trusted click on <input disabled="" type="url">, observed from <input>
+PASS Trusted click on <input disabled="" type="url">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="url">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="url">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="url">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="url">, observed from <body>
+PASS click() on <input disabled="" type="url">, observed from <input>
+PASS click() on <input disabled="" type="url">, observed from <body>
+PASS Trusted click on <input disabled="" type="week">, observed from <input>
+PASS Trusted click on <input disabled="" type="week">, observed from <body>
+PASS Dispatch new MouseEvent() on <input disabled="" type="week">, observed from <input>
+PASS Dispatch new MouseEvent() on <input disabled="" type="week">, observed from <body>
+PASS Dispatch new PointerEvent() on <input disabled="" type="week">, observed from <input>
+PASS Dispatch new PointerEvent() on <input disabled="" type="week">, observed from <body>
+PASS click() on <input disabled="" type="week">, observed from <input>
+PASS click() on <input disabled="" type="week">, observed from <body>
+PASS Trusted click on <my-control disabled="">Text</my-control>, observed from <my-control>
+PASS Trusted click on <my-control disabled="">Text</my-control>, observed from <body>
+PASS Dispatch new MouseEvent() on <my-control disabled="">Text</my-control>, observed from <my-control>
+PASS Dispatch new MouseEvent() on <my-control disabled="">Text</my-control>, observed from <body>
+PASS Dispatch new PointerEvent() on <my-control disabled="">Text</my-control>, observed from <my-control>
+PASS Dispatch new PointerEvent() on <my-control disabled="">Text</my-control>, observed from <body>
+PASS click() on <my-control disabled="">Text</my-control>, observed from <my-control>
+PASS click() on <my-control disabled="">Text</my-control>, observed from <body>
+

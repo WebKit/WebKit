@@ -131,8 +131,40 @@ err:
   return ret;
 }
 
-int pkcs7_bundle(CBB *out, int (*cb)(CBB *out, const void *arg),
-                 const void *arg) {
+static int pkcs7_bundle_raw_certificates_cb(CBB *out, const void *arg) {
+  const STACK_OF(CRYPTO_BUFFER) *certs = arg;
+  CBB certificates;
+
+  // See https://tools.ietf.org/html/rfc2315#section-9.1
+  if (!CBB_add_asn1(out, &certificates,
+                    CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0)) {
+    return 0;
+  }
+
+  for (size_t i = 0; i < sk_CRYPTO_BUFFER_num(certs); i++) {
+    CRYPTO_BUFFER *cert = sk_CRYPTO_BUFFER_value(certs, i);
+    if (!CBB_add_bytes(&certificates, CRYPTO_BUFFER_data(cert),
+                       CRYPTO_BUFFER_len(cert))) {
+      return 0;
+    }
+  }
+
+  // |certificates| is a implicitly-tagged SET OF.
+  return CBB_flush_asn1_set_of(&certificates) && CBB_flush(out);
+}
+
+int PKCS7_bundle_raw_certificates(CBB *out,
+                                  const STACK_OF(CRYPTO_BUFFER) *certs) {
+  return pkcs7_add_signed_data(out, /*digest_algos_cb=*/NULL,
+                               pkcs7_bundle_raw_certificates_cb,
+                               /*signer_infos_cb=*/NULL, certs);
+}
+
+int pkcs7_add_signed_data(CBB *out,
+                          int (*digest_algos_cb)(CBB *out, const void *arg),
+                          int (*cert_crl_cb)(CBB *out, const void *arg),
+                          int (*signer_infos_cb)(CBB *out, const void *arg),
+                          const void *arg) {
   CBB outer_seq, oid, wrapped_seq, seq, version_bytes, digest_algos_set,
       content_info, signer_infos;
 
@@ -147,11 +179,13 @@ int pkcs7_bundle(CBB *out, int (*cb)(CBB *out, const void *arg),
       !CBB_add_asn1(&seq, &version_bytes, CBS_ASN1_INTEGER) ||
       !CBB_add_u8(&version_bytes, 1) ||
       !CBB_add_asn1(&seq, &digest_algos_set, CBS_ASN1_SET) ||
+      (digest_algos_cb != NULL && !digest_algos_cb(&digest_algos_set, arg)) ||
       !CBB_add_asn1(&seq, &content_info, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1(&content_info, &oid, CBS_ASN1_OBJECT) ||
       !CBB_add_bytes(&oid, kPKCS7Data, sizeof(kPKCS7Data)) ||
-      !cb(&seq, arg) ||
-      !CBB_add_asn1(&seq, &signer_infos, CBS_ASN1_SET)) {
+      (cert_crl_cb != NULL && !cert_crl_cb(&seq, arg)) ||
+      !CBB_add_asn1(&seq, &signer_infos, CBS_ASN1_SET) ||
+      (signer_infos_cb != NULL && !signer_infos_cb(&signer_infos, arg))) {
     return 0;
   }
 

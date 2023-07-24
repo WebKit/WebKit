@@ -19,6 +19,10 @@
 #include "absl/flags/parse.h"
 #include "absl/strings/match.h"
 #include "api/scoped_refptr.h"
+#include "api/test/metrics/chrome_perf_dashboard_metrics_exporter.h"
+#include "api/test/metrics/global_metrics_logger_and_exporter.h"
+#include "api/test/metrics/metrics_exporter.h"
+#include "api/test/metrics/stdout_metrics_exporter.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_tools/frame_analyzer/video_color_aligner.h"
 #include "rtc_tools/frame_analyzer/video_geometry_aligner.h"
@@ -26,7 +30,6 @@
 #include "rtc_tools/frame_analyzer/video_temporal_aligner.h"
 #include "rtc_tools/video_file_reader.h"
 #include "rtc_tools/video_file_writer.h"
-#include "test/testsupport/perf_test.h"
 
 ABSL_FLAG(int32_t, width, -1, "The width of the reference and test files");
 ABSL_FLAG(int32_t, height, -1, "The height of the reference and test files");
@@ -159,14 +162,21 @@ int main(int argc, char* argv[]) {
   results.decode_errors_ref = 0;
   results.decode_errors_test = 0;
 
-  webrtc::test::PrintAnalysisResults(absl::GetFlag(FLAGS_label), &results);
+  webrtc::test::PrintAnalysisResults(absl::GetFlag(FLAGS_label), results,
+                                     *webrtc::test::GetGlobalMetricsLogger());
 
+  std::vector<std::unique_ptr<webrtc::test::MetricsExporter>> exporters;
+  exporters.push_back(std::make_unique<webrtc::test::StdoutMetricsExporter>());
   std::string chartjson_result_file =
       absl::GetFlag(FLAGS_chartjson_result_file);
   if (!chartjson_result_file.empty()) {
-    if (!webrtc::test::WritePerfResults(chartjson_result_file)) {
-      return 1;
-    }
+    exporters.push_back(
+        std::make_unique<webrtc::test::ChromePerfDashboardMetricsExporter>(
+            chartjson_result_file));
+  }
+  if (!webrtc::test::ExportPerfMetric(*webrtc::test::GetGlobalMetricsLogger(),
+                                      std::move(exporters))) {
+    return 1;
   }
   std::string aligned_output_file = absl::GetFlag(FLAGS_aligned_output_file);
   if (!aligned_output_file.empty()) {

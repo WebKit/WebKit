@@ -18,6 +18,8 @@
 
 #include <openssl/mem.h>
 
+#include <assert.h>
+
 #include "internal.h"
 #include "../../internal.h"
 
@@ -38,8 +40,8 @@ void RSAZ_1024_mod_exp_avx2(BN_ULONG result_norm[16],
                             const BN_ULONG m_norm[16], const BN_ULONG RR[16],
                             BN_ULONG k0,
                             BN_ULONG storage[MOD_EXP_CTIME_STORAGE_LEN]) {
-  OPENSSL_STATIC_ASSERT(MOD_EXP_CTIME_MIN_CACHE_LINE_WIDTH % 64 == 0,
-                        "MOD_EXP_CTIME_MIN_CACHE_LINE_WIDTH is too small");
+  static_assert(MOD_EXP_CTIME_ALIGN % 64 == 0,
+                "MOD_EXP_CTIME_ALIGN is too small");
   assert((uintptr_t)storage % 64 == 0);
 
   BN_ULONG *a_inv, *m, *result, *table_s = storage + 40 * 3, *R2 = table_s;
@@ -66,23 +68,14 @@ void RSAZ_1024_mod_exp_avx2(BN_ULONG result_norm[16],
   // R2 = 2^3052 * 2^80 / 2^1044 = 2^2088 = (2^1044)^2
 
   // table[0] = 1
-  rsaz_1024_mul_avx2(result, R2, one, m, k0);
   // table[1] = a_inv^1
+  rsaz_1024_mul_avx2(result, R2, one, m, k0);
   rsaz_1024_mul_avx2(a_inv, a_inv, R2, m, k0);
-
   rsaz_1024_scatter5_avx2(table_s, result, 0);
   rsaz_1024_scatter5_avx2(table_s, a_inv, 1);
-
   // table[2] = a_inv^2
   rsaz_1024_sqr_avx2(result, a_inv, m, k0, 1);
   rsaz_1024_scatter5_avx2(table_s, result, 2);
-#if 0
-  // This is almost 2x smaller and less than 1% slower.
-  for (int index = 3; index < 32; index++) {
-    rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-    rsaz_1024_scatter5_avx2(table_s, result, index);
-  }
-#else
   // table[4] = a_inv^4
   rsaz_1024_sqr_avx2(result, result, m, k0, 1);
   rsaz_1024_scatter5_avx2(table_s, result, 4);
@@ -92,109 +85,25 @@ void RSAZ_1024_mod_exp_avx2(BN_ULONG result_norm[16],
   // table[16] = a_inv^16
   rsaz_1024_sqr_avx2(result, result, m, k0, 1);
   rsaz_1024_scatter5_avx2(table_s, result, 16);
-  // table[17] = a_inv^17
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 17);
+  for (int i = 3; i < 32; i += 2) {
+    // table[i] = table[i-1] * a_inv = a_inv^i
+    rsaz_1024_gather5_avx2(result, table_s, i - 1);
+    rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
+    rsaz_1024_scatter5_avx2(table_s, result, i);
+    for (int j = 2 * i; j < 32; j *= 2) {
+      // table[j] = table[j/2]^2 = a_inv^j
+      rsaz_1024_sqr_avx2(result, result, m, k0, 1);
+      rsaz_1024_scatter5_avx2(table_s, result, j);
+    }
+  }
 
-  // table[3]
-  rsaz_1024_gather5_avx2(result, table_s, 2);
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 3);
-  // table[6]
-  rsaz_1024_sqr_avx2(result, result, m, k0, 1);
-  rsaz_1024_scatter5_avx2(table_s, result, 6);
-  // table[12]
-  rsaz_1024_sqr_avx2(result, result, m, k0, 1);
-  rsaz_1024_scatter5_avx2(table_s, result, 12);
-  // table[24]
-  rsaz_1024_sqr_avx2(result, result, m, k0, 1);
-  rsaz_1024_scatter5_avx2(table_s, result, 24);
-  // table[25]
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 25);
-
-  // table[5]
-  rsaz_1024_gather5_avx2(result, table_s, 4);
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 5);
-  // table[10]
-  rsaz_1024_sqr_avx2(result, result, m, k0, 1);
-  rsaz_1024_scatter5_avx2(table_s, result, 10);
-  // table[20]
-  rsaz_1024_sqr_avx2(result, result, m, k0, 1);
-  rsaz_1024_scatter5_avx2(table_s, result, 20);
-  // table[21]
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 21);
-
-  // table[7]
-  rsaz_1024_gather5_avx2(result, table_s, 6);
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 7);
-  // table[14]
-  rsaz_1024_sqr_avx2(result, result, m, k0, 1);
-  rsaz_1024_scatter5_avx2(table_s, result, 14);
-  // table[28]
-  rsaz_1024_sqr_avx2(result, result, m, k0, 1);
-  rsaz_1024_scatter5_avx2(table_s, result, 28);
-  // table[29]
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 29);
-
-  // table[9]
-  rsaz_1024_gather5_avx2(result, table_s, 8);
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 9);
-  // table[18]
-  rsaz_1024_sqr_avx2(result, result, m, k0, 1);
-  rsaz_1024_scatter5_avx2(table_s, result, 18);
-  // table[19]
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 19);
-
-  // table[11]
-  rsaz_1024_gather5_avx2(result, table_s, 10);
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 11);
-  // table[22]
-  rsaz_1024_sqr_avx2(result, result, m, k0, 1);
-  rsaz_1024_scatter5_avx2(table_s, result, 22);
-  // table[23]
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 23);
-
-  // table[13]
-  rsaz_1024_gather5_avx2(result, table_s, 12);
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 13);
-  // table[26]
-  rsaz_1024_sqr_avx2(result, result, m, k0, 1);
-  rsaz_1024_scatter5_avx2(table_s, result, 26);
-  // table[27]
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 27);
-
-  // table[15]
-  rsaz_1024_gather5_avx2(result, table_s, 14);
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 15);
-  // table[30]
-  rsaz_1024_sqr_avx2(result, result, m, k0, 1);
-  rsaz_1024_scatter5_avx2(table_s, result, 30);
-  // table[31]
-  rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
-  rsaz_1024_scatter5_avx2(table_s, result, 31);
-#endif
-
+  // Load the first window.
   const uint8_t *p_str = (const uint8_t *)exponent;
-
-  // load first window
   int wvalue = p_str[127] >> 3;
   rsaz_1024_gather5_avx2(result, table_s, wvalue);
 
   int index = 1014;
   while (index > -1) {  // Loop for the remaining 127 windows.
-
     rsaz_1024_sqr_avx2(result, result, m, k0, 5);
 
     uint16_t wvalue_16;
@@ -219,6 +128,8 @@ void RSAZ_1024_mod_exp_avx2(BN_ULONG result_norm[16],
   rsaz_1024_mul_avx2(result, result, one, m, k0);
 
   rsaz_1024_red2norm_avx2(result_norm, result);
+  BN_ULONG scratch[16];
+  bn_reduce_once_in_place(result_norm, /*carry=*/0, m_norm, scratch, 16);
 
   OPENSSL_cleanse(storage, MOD_EXP_CTIME_STORAGE_LEN * sizeof(BN_ULONG));
 }

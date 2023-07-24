@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,20 +27,20 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/WebGPUCullMode.h>
+#include <WebCore/WebGPUFrontFace.h>
+#include <WebCore/WebGPUIndexFormat.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUPrimitiveTopology.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUCullMode.h>
-#include <pal/graphics/WebGPU/WebGPUFrontFace.h>
-#include <pal/graphics/WebGPU/WebGPUIndexFormat.h>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUPrimitiveTopology.h>
 
 namespace WebKit::WebGPU {
 
 struct PrimitiveState {
-    PAL::WebGPU::PrimitiveTopology topology { PAL::WebGPU::PrimitiveTopology::TriangleList };
-    std::optional<PAL::WebGPU::IndexFormat> stripIndexFormat;
-    PAL::WebGPU::FrontFace frontFace { PAL::WebGPU::FrontFace::CCW };
-    PAL::WebGPU::CullMode cullMode { PAL::WebGPU::CullMode::None };
+    WebCore::WebGPU::PrimitiveTopology topology { WebCore::WebGPU::PrimitiveTopology::TriangleList };
+    std::optional<WebCore::WebGPU::IndexFormat> stripIndexFormat;
+    WebCore::WebGPU::FrontFace frontFace { WebCore::WebGPU::FrontFace::CCW };
+    WebCore::WebGPU::CullMode cullMode { WebCore::WebGPU::CullMode::None };
 
     // Requires "depth-clip-control" feature.
     bool unclippedDepth;

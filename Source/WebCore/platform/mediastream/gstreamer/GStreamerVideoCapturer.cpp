@@ -25,12 +25,15 @@
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 #include "GStreamerVideoCapturer.h"
 
+#include "VideoFrameGStreamer.h"
+#include <gst/app/gstappsink.h>
+
 GST_DEBUG_CATEGORY(webkit_video_capturer_debug);
 #define GST_CAT_DEFAULT webkit_video_capturer_debug
 
 namespace WebCore {
 
-static void initializeDebugCategory()
+static void initializeVideoCapturerDebugCategory()
 {
     ensureGStreamerInitialized();
 
@@ -40,16 +43,30 @@ static void initializeDebugCategory()
     });
 }
 
-GStreamerVideoCapturer::GStreamerVideoCapturer(GStreamerCaptureDevice device)
-    : GStreamerCapturer(device, adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
+GStreamerVideoCapturer::GStreamerVideoCapturer(GStreamerCaptureDevice&& device)
+    : GStreamerCapturer(WTFMove(device), adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
 {
-    initializeDebugCategory();
+    initializeVideoCapturerDebugCategory();
 }
 
 GStreamerVideoCapturer::GStreamerVideoCapturer(const char* sourceFactory, CaptureDevice::DeviceType deviceType)
     : GStreamerCapturer(sourceFactory, adoptGRef(gst_caps_new_empty_simple("video/x-raw")), deviceType)
 {
-    initializeDebugCategory();
+    initializeVideoCapturerDebugCategory();
+}
+
+void GStreamerVideoCapturer::setSinkVideoFrameCallback(SinkVideoFrameCallback&& callback)
+{
+    if (m_sinkVideoFrameCallback.first)
+        g_signal_handler_disconnect(sink(), m_sinkVideoFrameCallback.first);
+
+    m_sinkVideoFrameCallback.second = WTFMove(callback);
+    m_sinkVideoFrameCallback.first = g_signal_connect_swapped(sink(), "new-sample", G_CALLBACK(+[](GStreamerVideoCapturer* capturer, GstElement* sink) -> GstFlowReturn {
+        auto gstSample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
+        auto presentationTime = fromGstClockTime(GST_BUFFER_PTS(gst_sample_get_buffer(gstSample.get())));
+        capturer->m_sinkVideoFrameCallback.second(VideoFrameGStreamer::create(WTFMove(gstSample), WebCore::FloatSize(), presentationTime));
+        return GST_FLOW_OK;
+    }), this);
 }
 
 GstElement* GStreamerVideoCapturer::createSource()
@@ -67,6 +84,11 @@ GstElement* GStreamerVideoCapturer::createSource()
 
 GstElement* GStreamerVideoCapturer::createConverter()
 {
+    if (isCapturingDisplay()) {
+        gst_caps_set_features(m_caps.get(), 0, gst_caps_features_new("memory:DMABuf", nullptr));
+        return makeGStreamerElement("identity", nullptr);
+    }
+
     auto* bin = gst_bin_new(nullptr);
     auto* videoscale = makeGStreamerElement("videoscale", "videoscale");
     auto* videoconvert = makeGStreamerElement("videoconvert", nullptr);
@@ -77,28 +99,24 @@ GstElement* GStreamerVideoCapturer::createConverter()
 
     gst_bin_add_many(GST_BIN_CAST(bin), videoscale, videoconvert, videorate, nullptr);
 
-    GstElement* head = videoscale;
-    if (!isCapturingDisplay()) {
-        m_videoSrcMIMETypeFilter = gst_element_factory_make("capsfilter", "mimetype-filter");
-        head = m_videoSrcMIMETypeFilter.get();
+    m_videoSrcMIMETypeFilter = gst_element_factory_make("capsfilter", "mimetype-filter");
 
-        auto caps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
-        g_object_set(m_videoSrcMIMETypeFilter.get(), "caps", caps.get(), nullptr);
+    auto caps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
+    g_object_set(m_videoSrcMIMETypeFilter.get(), "caps", caps.get(), nullptr);
 
-        auto* decodebin = makeGStreamerElement("decodebin3", nullptr);
-        gst_bin_add_many(GST_BIN_CAST(bin), m_videoSrcMIMETypeFilter.get(), decodebin, nullptr);
-        gst_element_link(m_videoSrcMIMETypeFilter.get(), decodebin);
+    auto* decodebin = makeGStreamerElement("decodebin3", nullptr);
+    gst_bin_add_many(GST_BIN_CAST(bin), m_videoSrcMIMETypeFilter.get(), decodebin, nullptr);
+    gst_element_link(m_videoSrcMIMETypeFilter.get(), decodebin);
 
-        auto sinkPad = adoptGRef(gst_element_get_static_pad(videoscale, "sink"));
-        g_signal_connect_swapped(decodebin, "pad-added", G_CALLBACK(+[](GstPad* sinkPad, GstPad* srcPad) {
-            RELEASE_ASSERT(!gst_pad_is_linked(sinkPad));
-            gst_pad_link(srcPad, sinkPad);
-        }), sinkPad.get());
-    }
+    auto sinkPad = adoptGRef(gst_element_get_static_pad(videoscale, "sink"));
+    g_signal_connect_swapped(decodebin, "pad-added", G_CALLBACK(+[](GstPad* sinkPad, GstPad* srcPad) {
+        RELEASE_ASSERT(!gst_pad_is_linked(sinkPad));
+        gst_pad_link(srcPad, sinkPad);
+    }), sinkPad.get());
 
     gst_element_link_many(videoscale, videoconvert, videorate, nullptr);
 
-    auto sinkPad = adoptGRef(gst_element_get_static_pad(head, "sink"));
+    sinkPad = adoptGRef(gst_element_get_static_pad(m_videoSrcMIMETypeFilter.get(), "sink"));
     gst_element_add_pad(bin, gst_ghost_pad_new("sink", sinkPad.get()));
 
     auto srcPad = adoptGRef(gst_element_get_static_pad(videorate, "src"));
@@ -109,7 +127,7 @@ GstElement* GStreamerVideoCapturer::createConverter()
 
 GstVideoInfo GStreamerVideoCapturer::getBestFormat()
 {
-    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_fixate(gst_device_get_caps(m_device.get())));
+    auto caps = adoptGRef(gst_caps_fixate(gst_device_get_caps(m_device->device())));
     GstVideoInfo info;
     gst_video_info_from_caps(&info, caps.get());
 
@@ -300,7 +318,7 @@ void GStreamerVideoCapturer::reconfigure()
     GST_DEBUG_OBJECT(m_pipeline.get(), "Searching best video capture device mime type for resolution %dx%d@%.3f",
         selector.stopCondition.width, selector.stopCondition.height, selector.stopCondition.frameRate);
 
-    auto deviceCaps = adoptGRef(gst_device_get_caps(m_device.get()));
+    auto deviceCaps = adoptGRef(gst_device_get_caps(m_device->device()));
     gst_caps_foreach(deviceCaps.get(),
         reinterpret_cast<GstCapsForeachFunc>(+[](GstCapsFeatures*, GstStructure* structure, MimeTypeSelector* selector) -> gboolean {
             auto width = getMaxIntValueFromStructure(structure, "width");
@@ -358,6 +376,8 @@ void GStreamerVideoCapturer::reconfigure()
     GST_INFO_OBJECT(m_pipeline.get(), "Setting video capture device caps to %" GST_PTR_FORMAT, caps.get());
     g_object_set(m_videoSrcMIMETypeFilter.get(), "caps", caps.get(), nullptr);
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

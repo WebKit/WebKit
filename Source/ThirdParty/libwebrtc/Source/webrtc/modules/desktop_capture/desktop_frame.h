@@ -142,6 +142,13 @@ class RTC_EXPORT DesktopFrame {
     icc_profile_ = icc_profile;
   }
 
+  // Sets all pixel values in the data buffer to zero.
+  void SetFrameDataToBlack();
+
+  // Returns true if all pixel values in the data buffer are zero or false
+  // otherwise. Also returns false if the frame is empty.
+  bool FrameDataIsBlack() const;
+
  protected:
   DesktopFrame(DesktopSize size,
                int stride,

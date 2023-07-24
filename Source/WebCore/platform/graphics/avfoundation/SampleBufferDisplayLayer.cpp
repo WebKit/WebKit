@@ -37,7 +37,7 @@ void SampleBufferDisplayLayer::setCreator(LayerCreator creator)
     m_layerCreator = creator;
 }
 
-std::unique_ptr<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(Client& client)
+RefPtr<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(Client& client)
 {
     if (m_layerCreator)
         return m_layerCreator(client);

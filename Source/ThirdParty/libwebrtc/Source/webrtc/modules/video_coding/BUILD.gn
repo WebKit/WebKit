@@ -145,7 +145,10 @@ rtc_library("h264_packet_buffer") {
     "../rtp_rtcp:rtp_rtcp_format",
     "../rtp_rtcp:rtp_video_header",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
 }
 
 rtc_library("frame_helpers") {
@@ -160,42 +163,6 @@ rtc_library("frame_helpers") {
   absl_deps = [ "//third_party/abseil-cpp/absl/container:inlined_vector" ]
 }
 
-rtc_library("frame_buffer2") {
-  sources = [
-    "frame_buffer2.cc",
-    "frame_buffer2.h",
-  ]
-  deps = [
-    ":frame_helpers",
-    ":video_codec_interface",
-    ":video_coding_utility",
-    "../../api:field_trials_view",
-    "../../api:sequence_checker",
-    "../../api/task_queue",
-    "../../api/units:data_size",
-    "../../api/units:time_delta",
-    "../../api/video:encoded_frame",
-    "../../api/video:encoded_image",
-    "../../api/video:video_rtp_headers",
-    "../../rtc_base:checks",
-    "../../rtc_base:event_tracer",
-    "../../rtc_base:logging",
-    "../../rtc_base:macromagic",
-    "../../rtc_base:rtc_event",
-    "../../rtc_base:rtc_numerics",
-    "../../rtc_base/experiments:field_trial_parser",
-    "../../rtc_base/experiments:rtt_mult_experiment",
-    "../../rtc_base/synchronization:mutex",
-    "../../rtc_base/system:no_unique_address",
-    "../../rtc_base/task_utils:repeating_task",
-    "../../system_wrappers",
-    "timing:inter_frame_delay",
-    "timing:jitter_estimator",
-    "timing:timing_module",
-  ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/container:inlined_vector" ]
-}
-
 rtc_library("video_coding") {
   visibility = [ "*" ]
   sources = [
@@ -204,8 +171,6 @@ rtc_library("video_coding") {
     "fec_controller_default.cc",
     "fec_controller_default.h",
     "fec_rate_table.h",
-    "frame_object.cc",
-    "frame_object.h",
     "generic_decoder.cc",
     "generic_decoder.h",
     "h264_sprop_parameter_sets.cc",
@@ -272,7 +237,6 @@ rtc_library("video_coding") {
     "../../api/video:video_rtp_headers",
     "../../api/video_codecs:video_codecs_api",
     "../../common_video",
-    "../../rtc_base",
     "../../rtc_base:checks",
     "../../rtc_base:copy_on_write_buffer",
     "../../rtc_base:event_tracer",
@@ -292,16 +256,16 @@ rtc_library("video_coding") {
     "../../rtc_base/system:no_unique_address",
     "../../rtc_base/task_utils:repeating_task",
     "../../rtc_base/third_party/base64",
-    "../../rtc_base/time:timestamp_extrapolator",
     "../../system_wrappers",
     "../../system_wrappers:field_trial",
     "../../system_wrappers:metrics",
+    "../../video/config:encoder_config",
     "../rtp_rtcp",
     "../rtp_rtcp:rtp_rtcp_format",
     "../rtp_rtcp:rtp_video_header",
     "codecs/av1:av1_svc_config",
     "svc:scalability_mode_util",
-    "timing:inter_frame_delay",
+    "timing:inter_frame_delay_variation_calculator",
     "timing:jitter_estimator",
     "timing:rtt_filter",
     "timing:timing_module",
@@ -328,33 +292,22 @@ rtc_library("video_codec_interface") {
     ":codec_globals_headers",
     "../../api/video:video_frame",
     "../../api/video:video_rtp_headers",
+    "../../api/video_codecs:scalability_mode",
     "../../api/video_codecs:video_codecs_api",
     "../../common_video",
     "../../common_video/generic_frame_descriptor",
     "../../rtc_base/system:rtc_export",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
 }
 
 rtc_library("video_coding_legacy") {
   visibility = [ ":video_coding_unittests" ]
   sources = [
-    "decoding_state.cc",
-    "decoding_state.h",
-    "event_wrapper.cc",
-    "event_wrapper.h",
-    "frame_buffer.cc",
-    "frame_buffer.h",
     "include/video_coding.h",
-    "jitter_buffer.cc",
-    "jitter_buffer.h",
-    "jitter_buffer_common.h",
-    "packet.cc",
-    "packet.h",
-    "receiver.cc",
-    "receiver.h",
-    "session_info.cc",
-    "session_info.h",
     "video_coding_impl.cc",
     "video_coding_impl.h",
     "video_receiver.cc",
@@ -381,7 +334,6 @@ rtc_library("video_coding_legacy") {
     "../../modules/rtp_rtcp:rtp_video_header",
     "../../rtc_base:checks",
     "../../rtc_base:event_tracer",
-    "../../rtc_base:location",
     "../../rtc_base:logging",
     "../../rtc_base:macromagic",
     "../../rtc_base:one_time_event",
@@ -392,7 +344,15 @@ rtc_library("video_coding_legacy") {
     "../../system_wrappers",
     "../rtp_rtcp:rtp_rtcp_format",
     "../rtp_rtcp:rtp_video_header",
-    "timing:inter_frame_delay",
+    "deprecated:deprecated_decoding_state",
+    "deprecated:deprecated_event_wrapper",
+    "deprecated:deprecated_frame_buffer",
+    "deprecated:deprecated_jitter_buffer",
+    "deprecated:deprecated_jitter_buffer_common",
+    "deprecated:deprecated_packet",
+    "deprecated:deprecated_receiver",
+    "deprecated:deprecated_session_info",
+    "timing:inter_frame_delay_variation_calculator",
     "timing:jitter_estimator",
     "timing:timing_module",
   ]
@@ -439,6 +399,7 @@ rtc_library("video_coding_utility") {
     "utility/simulcast_rate_allocator.h",
     "utility/simulcast_utility.cc",
     "utility/simulcast_utility.h",
+    "utility/vp8_constants.h",
     "utility/vp8_header_parser.cc",
     "utility/vp8_header_parser.h",
     "utility/vp9_constants.h",
@@ -510,14 +471,17 @@ rtc_library("webrtc_h264") {
   deps = [
     ":video_codec_interface",
     ":video_coding_utility",
+    "../../api/transport/rtp:dependency_descriptor",
+    "../../api/video:video_codec_constants",
     "../../api/video:video_frame",
     "../../api/video:video_frame_i010",
     "../../api/video:video_rtp_headers",
     "../../api/video_codecs:scalability_mode",
     "../../api/video_codecs:video_codecs_api",
     "../../common_video",
+    "../../media:codec",
+    "../../media:media_constants",
     "../../media:rtc_media_base",
-    "../../rtc_base",
     "../../rtc_base:checks",
     "../../rtc_base:event_tracer",
     "../../rtc_base:logging",
@@ -525,6 +489,8 @@ rtc_library("webrtc_h264") {
     "../../rtc_base/system:rtc_export",
     "../../system_wrappers:field_trial",
     "../../system_wrappers:metrics",
+    "svc:scalability_structures",
+    "svc:scalable_video_controller",
     "//third_party/libyuv",
   ]
   absl_deps = [
@@ -567,7 +533,6 @@ rtc_library("webrtc_multiplex") {
     "../../api/video_codecs:video_codecs_api",
     "../../common_video",
     "../../media:rtc_media_base",
-    "../../rtc_base",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
     "../../rtc_base/synchronization:mutex",
@@ -622,6 +587,7 @@ rtc_library("webrtc_vp8") {
     "../../api/video:encoded_image",
     "../../api/video:video_frame",
     "../../api/video:video_rtp_headers",
+    "../../api/video_codecs:scalability_mode",
     "../../api/video_codecs:video_codecs_api",
     "../../api/video_codecs:vp8_temporal_layers_factory",
     "../../common_video",
@@ -743,8 +709,8 @@ rtc_library("webrtc_vp9") {
     "../../api/video_codecs:scalability_mode",
     "../../api/video_codecs:video_codecs_api",
     "../../common_video",
+    "../../media:codec",
     "../../media:rtc_media_base",
-    "../../rtc_base",
     "../../rtc_base:buffer",
     "../../rtc_base:checks",
     "../../rtc_base:event_tracer",
@@ -769,6 +735,7 @@ rtc_library("webrtc_vp9") {
     "//third_party/abseil-cpp/absl/container:inlined_vector",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings:strings",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
   if (rtc_build_libvpx) {
     deps += [ rtc_libvpx_dir ]
@@ -882,13 +849,20 @@ if (rtc_include_tests) {
       "../../api:frame_generator_api",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
+      "../../api:video_codec_stats_api",
+      "../../api:video_codec_tester_api",
       "../../api:videocodec_test_fixture_api",
+      "../../api/numerics:numerics",
       "../../api/task_queue",
+      "../../api/task_queue:default_task_queue_factory",
+      "../../api/test/metrics:global_metrics_logger_and_exporter",
       "../../api/video:builtin_video_bitrate_allocator_factory",
       "../../api/video:encoded_image",
+      "../../api/video:resolution",
       "../../api/video:video_bitrate_allocation",
       "../../api/video:video_bitrate_allocator",
       "../../api/video:video_bitrate_allocator_factory",
+      "../../api/video:video_codec_constants",
       "../../api/video:video_frame",
       "../../api/video:video_rtp_headers",
       "../../api/video_codecs:video_codecs_api",
@@ -897,6 +871,7 @@ if (rtc_include_tests) {
       "../../rtc_base:checks",
       "../../rtc_base:macromagic",
       "../../rtc_base:rtc_event",
+      "../../rtc_base:task_queue_for_test",
       "../../rtc_base:timeutils",
       "../../rtc_base/synchronization:mutex",
       "../../rtc_base/system:no_unique_address",
@@ -957,6 +932,8 @@ if (rtc_include_tests) {
       ":webrtc_vp9_helpers",
       "../../api:array_view",
       "../../api:videocodec_test_fixture_api",
+      "../../api/test/metrics:global_metrics_logger_and_exporter",
+      "../../api/test/metrics:metric",
       "../../api/test/video:function_video_factory",
       "../../api/transport:field_trial_based_config",
       "../../api/video:video_bitrate_allocation",
@@ -973,6 +950,7 @@ if (rtc_include_tests) {
       "../../api/video_codecs:video_encoder_factory_template_open_h264_adapter",
       "../../call:video_stream_api",
       "../../common_video",
+      "../../media:media_constants",
       "../../media:rtc_audio_video",
       "../../media:rtc_media_base",
       "../../rtc_base:checks",
@@ -983,10 +961,11 @@ if (rtc_include_tests) {
       "../../rtc_base:timeutils",
       "../../system_wrappers",
       "../../test:fileutils",
-      "../../test:perf_test",
       "../../test:test_support",
       "../../test:video_test_common",
       "../../test:video_test_support",
+      "../../video/config:encoder_config",
+      "../../video/config:streams_config",
     ]
     absl_deps = [
       "//third_party/abseil-cpp/absl/strings:strings",
@@ -1001,14 +980,103 @@ if (rtc_include_tests) {
       "codecs/test/videocodec_test_stats_impl.h",
     ]
     deps = [
-      "../../api:videocodec_test_fixture_api",
+      "../../api:videocodec_test_stats_api",
       "../../api/numerics",
+      "../../api/test/metrics:global_metrics_logger_and_exporter",
+      "../../api/test/metrics:metric",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_numerics",
       "../../rtc_base:stringutils",
       "../../test:test_common",
       "../rtp_rtcp:rtp_rtcp_format",
     ]
+  }
+
+  rtc_library("video_codec_tester") {
+    testonly = true
+    sources = [
+      "codecs/test/video_codec_analyzer.cc",
+      "codecs/test/video_codec_analyzer.h",
+      "codecs/test/video_codec_stats_impl.cc",
+      "codecs/test/video_codec_stats_impl.h",
+      "codecs/test/video_codec_tester_impl.cc",
+      "codecs/test/video_codec_tester_impl.h",
+    ]
+
+    deps = [
+      ":video_coding_utility",
+      "../../api:sequence_checker",
+      "../../api:video_codec_stats_api",
+      "../../api:video_codec_tester_api",
+      "../../api/numerics:numerics",
+      "../../api/task_queue:default_task_queue_factory",
+      "../../api/test/metrics:metrics_logger",
+      "../../api/units:data_rate",
+      "../../api/units:frequency",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../api/video:encoded_image",
+      "../../api/video:resolution",
+      "../../api/video:video_codec_constants",
+      "../../api/video:video_frame",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_event",
+      "../../rtc_base:task_queue_for_test",
+      "../../rtc_base:timeutils",
+      "../../rtc_base/system:no_unique_address",
+      "../../system_wrappers",
+      "../../test:video_test_support",
+      "//third_party/libyuv",
+    ]
+
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  }
+
+  rtc_test("video_codec_perf_tests") {
+    testonly = true
+
+    sources = [ "codecs/test/video_codec_test.cc" ]
+
+    deps = [
+      ":video_codec_interface",
+      ":video_codec_tester",
+      "../../api:create_video_codec_tester_api",
+      "../../api:video_codec_tester_api",
+      "../../api:videocodec_test_stats_api",
+      "../../api/test/metrics:global_metrics_logger_and_exporter",
+      "../../api/units:data_rate",
+      "../../api/units:frequency",
+      "../../api/video:encoded_image",
+      "../../api/video:resolution",
+      "../../api/video:video_frame",
+      "../../api/video_codecs:scalability_mode",
+      "../../api/video_codecs:video_codecs_api",
+      "../../media:rtc_internal_video_codecs",
+      "../../rtc_base:logging",
+      "../../test:fileutils",
+      "../../test:test_main",
+      "../../test:test_support",
+      "../../test:video_test_support",
+      "../rtp_rtcp:rtp_rtcp_format",
+      "svc:scalability_mode_util",
+      "//third_party/libyuv",
+    ]
+
+    if (is_android) {
+      use_default_launcher = false
+      deps += [
+        ":android_codec_factory_helper",
+        "../../sdk/android:hwcodecs_java",
+        "//modules/audio_device:audio_device_java",
+        "//sdk/android:native_test_jni_onload",
+        "//testing/android/native_test:native_test_support",
+      ]
+      shard_timeout = 900
+    }
+
+    absl_deps = [ "//third_party/abseil-cpp/absl/functional:any_invocable" ]
+
+    data = [ "../../resources/FourPeople_1280x720_30.yuv" ]
   }
 
   rtc_library("video_coding_modules_tests") {
@@ -1053,6 +1121,8 @@ if (rtc_include_tests) {
       "../../api:mock_video_encoder",
       "../../api:scoped_refptr",
       "../../api:videocodec_test_fixture_api",
+      "../../api:videocodec_test_stats_api",
+      "../../api/test/metrics:global_metrics_logger_and_exporter",
       "../../api/test/video:function_video_factory",
       "../../api/video:encoded_image",
       "../../api/video:video_frame",
@@ -1061,10 +1131,11 @@ if (rtc_include_tests) {
       "../../api/video_codecs:video_codecs_api",
       "../../common_video",
       "../../common_video/test:utilities",
+      "../../media:codec",
+      "../../media:media_constants",
       "../../media:rtc_internal_video_codecs",
       "../../media:rtc_media_base",
       "../../media:rtc_simulcast_encoder_adapter",
-      "../../rtc_base",
       "../../rtc_base:refcount",
       "../../rtc_base:stringutils",
       "../../rtc_base:timeutils",
@@ -1075,7 +1146,7 @@ if (rtc_include_tests) {
       "../../test:video_test_common",
       "../rtp_rtcp:rtp_rtcp_format",
       "codecs/av1:dav1d_decoder",
-      "codecs/av1:libaom_av1_decoder",
+      "svc:scalability_mode_util",
       "//third_party/libyuv",
     ]
     absl_deps = [
@@ -1088,7 +1159,10 @@ if (rtc_include_tests) {
     if (is_android) {
       sources += [ "codecs/test/videocodec_test_mediacodec.cc" ]
 
-      deps += [ ":android_codec_factory_helper" ]
+      deps += [
+        ":android_codec_factory_helper",
+        "../../rtc_base:stringutils",
+      ]
     }
 
     if (is_ios || is_mac) {
@@ -1111,6 +1185,9 @@ if (rtc_include_tests) {
 
     sources = [
       "chain_diff_calculator_unittest.cc",
+      "codecs/test/video_codec_analyzer_unittest.cc",
+      "codecs/test/video_codec_stats_impl_unittest.cc",
+      "codecs/test/video_codec_tester_impl_unittest.cc",
       "codecs/test/videocodec_test_fixture_config_unittest.cc",
       "codecs/test/videocodec_test_stats_impl_unittest.cc",
       "codecs/test/videoprocessor_unittest.cc",
@@ -1118,26 +1195,21 @@ if (rtc_include_tests) {
       "codecs/vp8/libvpx_vp8_simulcast_test.cc",
       "codecs/vp8/screenshare_layers_unittest.cc",
       "codecs/vp9/svc_config_unittest.cc",
-      "decoding_state_unittest.cc",
+      "decoder_database_unittest.cc",
       "fec_controller_unittest.cc",
-      "frame_buffer2_unittest.cc",
       "frame_dependencies_calculator_unittest.cc",
+      "frame_helpers_unittest.cc",
       "generic_decoder_unittest.cc",
       "h264_packet_buffer_unittest.cc",
       "h264_sprop_parameter_sets_unittest.cc",
       "h264_sps_pps_tracker_unittest.cc",
       "histogram_unittest.cc",
-      "jitter_buffer_unittest.cc",
       "loss_notification_controller_unittest.cc",
       "nack_requester_unittest.cc",
       "packet_buffer_unittest.cc",
-      "receiver_unittest.cc",
       "rtp_frame_reference_finder_unittest.cc",
       "rtp_vp8_ref_finder_unittest.cc",
       "rtp_vp9_ref_finder_unittest.cc",
-      "session_info_unittest.cc",
-      "test/stream_generator.cc",
-      "test/stream_generator.h",
       "utility/bandwidth_quality_scaler_unittest.cc",
       "utility/decoded_frames_history_unittest.cc",
       "utility/frame_dropper_unittest.cc",
@@ -1149,6 +1221,7 @@ if (rtc_include_tests) {
       "utility/simulcast_rate_allocator_unittest.cc",
       "utility/vp9_uncompressed_header_parser_unittest.cc",
       "video_codec_initializer_unittest.cc",
+      "video_receiver2_unittest.cc",
       "video_receiver_unittest.cc",
     ]
     if (rtc_use_h264) {
@@ -1162,13 +1235,14 @@ if (rtc_include_tests) {
       ":chain_diff_calculator",
       ":codec_globals_headers",
       ":encoded_frame",
-      ":frame_buffer2",
       ":frame_dependencies_calculator",
+      ":frame_helpers",
       ":h264_packet_buffer",
       ":nack_requester",
       ":packet_buffer",
       ":simulcast_test_fixture_impl",
       ":video_codec_interface",
+      ":video_codec_tester",
       ":video_codecs_test_framework",
       ":video_coding",
       ":video_coding_legacy",
@@ -1190,6 +1264,7 @@ if (rtc_include_tests) {
       "../../api:rtp_packet_info",
       "../../api:scoped_refptr",
       "../../api:simulcast_test_fixture_api",
+      "../../api:video_codec_tester_api",
       "../../api:videocodec_test_fixture_api",
       "../../api/task_queue",
       "../../api/task_queue:default_task_queue_factory",
@@ -1200,6 +1275,7 @@ if (rtc_include_tests) {
       "../../api/units:timestamp",
       "../../api/video:builtin_video_bitrate_allocator_factory",
       "../../api/video:encoded_frame",
+      "../../api/video:encoded_image",
       "../../api/video:render_resolution",
       "../../api/video:video_adaptation",
       "../../api/video:video_bitrate_allocation",
@@ -1213,11 +1289,11 @@ if (rtc_include_tests) {
       "../../common_video",
       "../../common_video/generic_frame_descriptor",
       "../../common_video/test:utilities",
+      "../../media:media_constants",
       "../../media:rtc_media_base",
-      "../../rtc_base",
       "../../rtc_base:checks",
+      "../../rtc_base:gunit_helpers",
       "../../rtc_base:histogram_percentile_counter",
-      "../../rtc_base:location",
       "../../rtc_base:platform_thread",
       "../../rtc_base:random",
       "../../rtc_base:refcount",
@@ -1243,9 +1319,16 @@ if (rtc_include_tests) {
       "../../test:video_test_common",
       "../../test:video_test_support",
       "../../test/time_controller:time_controller",
+      "../../third_party/libyuv:libyuv",
+      "../rtp_rtcp",
       "../rtp_rtcp:rtp_rtcp_format",
       "../rtp_rtcp:rtp_video_header",
       "codecs/av1:video_coding_codecs_av1_tests",
+      "deprecated:deprecated_frame_buffer",
+      "deprecated:deprecated_jitter_buffer_common",
+      "deprecated:deprecated_packet",
+      "deprecated:deprecated_session_info",
+      "deprecated:deprecated_stream_generator",
       "svc:scalability_structure_tests",
       "svc:svc_rate_allocator_tests",
       "timing:jitter_estimator",

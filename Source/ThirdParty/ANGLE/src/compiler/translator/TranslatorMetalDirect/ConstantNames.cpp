@@ -16,9 +16,10 @@ namespace sh
 namespace mtl
 {
 /** extern */
-const char kSampleMaskEnabledConstName[]        = "ANGLESampleMaskEnabled";
+const char kMultisampledRenderingConstName[]    = "ANGLEMultisampledRendering";
 const char kRasterizerDiscardEnabledConstName[] = "ANGLERasterizerDisabled";
 const char kDepthWriteEnabledConstName[]        = "ANGLEDepthWriteEnabled";
+const char kEmulateAlphaToCoverageConstName[]   = "ANGLEEmulateAlphaToCoverage";
 }  // namespace mtl
 
 }  // namespace sh

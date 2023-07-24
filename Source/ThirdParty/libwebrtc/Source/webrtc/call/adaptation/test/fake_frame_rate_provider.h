@@ -14,8 +14,8 @@
 #include <string>
 #include <vector>
 
-#include "api/video/video_stream_encoder_observer.h"
 #include "test/gmock.h"
+#include "video/video_stream_encoder_observer.h"
 
 namespace webrtc {
 
@@ -29,7 +29,7 @@ class MockVideoStreamEncoderObserver : public VideoStreamEncoderObserver {
               (override));
   MOCK_METHOD(void,
               OnEncoderImplementationChanged,
-              (const std::string&),
+              (EncoderImplementation),
               (override));
   MOCK_METHOD(void, OnFrameDropped, (DropReason), (override));
   MOCK_METHOD(void,

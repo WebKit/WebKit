@@ -30,13 +30,20 @@ namespace WebCore {
 
 class GStreamerAudioCapturer final : public GStreamerCapturer {
 public:
-    GStreamerAudioCapturer(GStreamerCaptureDevice);
+    GStreamerAudioCapturer(GStreamerCaptureDevice&&);
     GStreamerAudioCapturer();
+    ~GStreamerAudioCapturer() = default;
 
     GstElement* createConverter() final;
     const char* name() final { return "Audio"; }
 
     bool setSampleRate(int);
+
+    using SinkAudioDataCallback = Function<void(GRefPtr<GstSample>&&, MediaTime&&)>;
+    void setSinkAudioCallback(SinkAudioDataCallback&&);
+
+private:
+    std::pair<unsigned long, SinkAudioDataCallback> m_sinkAudioDataCallback;
 };
 
 } // namespace WebCore

@@ -1029,6 +1029,8 @@ private:
         CodeBlock* codeBlock = m_inlineStackTop->m_profiledBlock;
         ConcurrentJSLocker locker(codeBlock->m_lock);
         ArrayProfile* profile = codeBlock->getArrayProfile(locker, codeBlock->bytecodeIndex(m_currentInstruction));
+        if (!profile)
+            return { };
         return getArrayMode(locker, *profile, action);
     }
 
@@ -1975,7 +1977,11 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
             m_currentIndex = osrExitIndex;
             m_exitOK = true;
             processSetLocalQueue();
-            addJumpTo(continuationBlock);
+            if (m_currentBlock->terminal()) {
+                ASSERT(continuationBlock->isEmpty());
+                m_currentBlock->didLink();
+            } else
+                addJumpTo(continuationBlock);
         }
     };
 
@@ -2873,16 +2879,34 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             return CallOptimizationResult::Inlined;
         }
 
+        case StringPrototypeIndexOfIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Uncountable) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+            Node* thisValue = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* search = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            Node* result = nullptr;
+            if (argumentCountIncludingThis == 2)
+                result = addToGraph(StringIndexOf, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), thisValue, search);
+            else {
+                Node* index = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
+                result = addToGraph(StringIndexOf, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), thisValue, search, index);
+            }
+
+            setResult(result);
+            return CallOptimizationResult::Inlined;
+        }
+
         case CharAtIntrinsic: {
             if (argumentCountIncludingThis < 2)
                 return CallOptimizationResult::DidNothing;
 
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return CallOptimizationResult::DidNothing;
-
-            // FIXME: String#charAt returns empty string when index is out-of-bounds, and this does not break the AI's claim.
-            // Only FTL supports out-of-bounds version now. We should support out-of-bounds version even in DFG.
-            // https://bugs.webkit.org/show_bug.cgi?id=201678
 
             insertChecks();
             VirtualRegister thisOperand = virtualRegisterForArgumentIncludingThis(0, registerOffset);
@@ -2927,6 +2951,26 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             Node* charCode = addToGraph(StringFromCharCode, get(indexOperand));
 
             setResult(charCode);
+
+            return CallOptimizationResult::Inlined;
+        }
+
+        case GlobalIsNaNIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+            setResult(addToGraph(GlobalIsNaN, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
+
+            return CallOptimizationResult::Inlined;
+        }
+
+        case NumberIsNaNIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+            setResult(addToGraph(NumberIsNaN, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
 
             return CallOptimizationResult::Inlined;
         }
@@ -3563,6 +3607,22 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             insertChecks();
             Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             setResult(addToGraph(DateGetTime, OpInfo(intrinsic), OpInfo(), base));
+            return CallOptimizationResult::Inlined;
+        }
+
+        case DatePrototypeSetTimeIntrinsic: {
+            if (!is64Bit())
+                return CallOptimizationResult::DidNothing;
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return CallOptimizationResult::DidNothing;
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+            if (!MacroAssembler::supportsFloatingPointRounding())
+                return CallOptimizationResult::DidNothing;
+            insertChecks();
+            Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* time = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            setResult(addToGraph(DateSetTime, OpInfo(), OpInfo(), base, time));
             return CallOptimizationResult::Inlined;
         }
 
@@ -8496,9 +8556,19 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     set(bytecode.m_dst, weakJSConstant(value));
                     break;
                 }
-                SpeculatedType prediction = getPrediction();
-                set(bytecode.m_dst,
-                    addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), scopeNode));
+
+                SpeculatedType prediction = SpecNone;
+                if (bytecode.m_getPutInfo.resolveType() == ResolvedClosureVar) {
+                    // ResolvedClosureVar is not used normally. It is very special internal ResolveType, mainly used for generators and private fields.
+                    // In these variables, it can happen that we use JSEmpty as a result of op_get_from_scope (which becomes a TDZ error in normal ClosureVar).
+                    // And this JSEmpty is still legit. The problem is that ValueProfile never tells about JSEmpty since it sees no value is stored when JSEmpty
+                    // is stored. We workaround this very special internal use case by explicitly setting SpecEmpty when ValueProfile tells this is SpecNone.
+                    prediction = getPredictionWithoutOSRExit();
+                    if (prediction == SpecNone)
+                        prediction = SpecEmpty;
+                } else
+                    prediction = getPrediction();
+                set(bytecode.m_dst, addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), scopeNode));
                 break;
             }
             case UnresolvedProperty:

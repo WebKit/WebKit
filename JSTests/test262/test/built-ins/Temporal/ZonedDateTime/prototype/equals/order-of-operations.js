@@ -10,7 +10,27 @@ features: [Temporal]
 
 const expected = [
   "get other.calendar",
-  "has other.calendar.calendar",
+  "has other.calendar.dateAdd",
+  "has other.calendar.dateFromFields",
+  "has other.calendar.dateUntil",
+  "has other.calendar.day",
+  "has other.calendar.dayOfWeek",
+  "has other.calendar.dayOfYear",
+  "has other.calendar.daysInMonth",
+  "has other.calendar.daysInWeek",
+  "has other.calendar.daysInYear",
+  "has other.calendar.fields",
+  "has other.calendar.id",
+  "has other.calendar.inLeapYear",
+  "has other.calendar.mergeFields",
+  "has other.calendar.month",
+  "has other.calendar.monthCode",
+  "has other.calendar.monthDayFromFields",
+  "has other.calendar.monthsInYear",
+  "has other.calendar.weekOfYear",
+  "has other.calendar.year",
+  "has other.calendar.yearMonthFromFields",
+  "has other.calendar.yearOfWeek",
   "get other.calendar.fields",
   "call other.calendar.fields",
   // PrepareTemporalFields
@@ -48,7 +68,9 @@ const expected = [
   "get other.year",
   "get other.year.valueOf",
   "call other.year.valueOf",
-  "has other.timeZone.timeZone",
+  "has other.timeZone.getOffsetNanosecondsFor",
+  "has other.timeZone.getPossibleInstantsFor",
+  "has other.timeZone.id",
   // InterpretTemporalDateTimeFields
   "get other.calendar.dateFromFields",
   "call other.calendar.dateFromFields",
@@ -58,19 +80,11 @@ const expected = [
   "get other.timeZone.getOffsetNanosecondsFor",
   "call other.timeZone.getOffsetNanosecondsFor",
   // TimeZoneEquals
-  "get this.timeZone[Symbol.toPrimitive]",
-  "get this.timeZone.toString",
-  "call this.timeZone.toString",
-  "get other.timeZone[Symbol.toPrimitive]",
-  "get other.timeZone.toString",
-  "call other.timeZone.toString",
+  "get this.timeZone.id",
+  "get other.timeZone.id",
   // CalendarEquals
-  "get this.calendar[Symbol.toPrimitive]",
-  "get this.calendar.toString",
-  "call this.calendar.toString",
-  "get other.calendar[Symbol.toPrimitive]",
-  "get other.calendar.toString",
-  "call other.calendar.toString",
+  "get this.calendar.id",
+  "get other.calendar.id",
 ];
 const actual = [];
 

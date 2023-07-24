@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,7 +51,7 @@ public:
         return false;
     }
 
-    void setText(StringView)
+    void setText(StringView, const UChar*, unsigned)
     {
         ASSERT_NOT_REACHED();
     }

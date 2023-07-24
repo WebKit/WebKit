@@ -56,7 +56,7 @@ class AcceleratedEffect;
 struct AcceleratedEffectValues;
 #endif
 
-
+enum class MediaPlayerVideoGravity : uint8_t;
 
 class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer, WTF::DestructionThread::Main> {
     friend class PlatformCALayerCocoa;
@@ -213,6 +213,10 @@ public:
     virtual void setBackingStoreAttached(bool) = 0;
     virtual bool backingStoreAttached() const = 0;
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    virtual void setCoverageRect(const FloatRect&) = 0;
+#endif
+
     virtual void setMinificationFilter(FilterType) = 0;
     virtual void setMagnificationFilter(FilterType) = 0;
 
@@ -245,7 +249,10 @@ public:
     virtual void setCornerRadius(float) = 0;
 
     virtual void setAntialiasesEdges(bool) = 0;
-    
+
+    virtual MediaPlayerVideoGravity videoGravity() const = 0;
+    virtual void setVideoGravity(MediaPlayerVideoGravity) = 0;
+
     // Only used by LayerTypeShapeLayer.
     virtual FloatRoundedRect shapeRoundedRect() const = 0;
     virtual void setShapeRoundedRect(const FloatRoundedRect&) = 0;
@@ -313,7 +320,7 @@ public:
     static CGRect frameForLayer(const PlatformLayer*);
 
     void moveToLayerPool();
-    
+
     virtual void dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>);
 
 protected:

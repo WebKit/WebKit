@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "AdvancedPrivacyProtections.h"
 #include "FrameLoaderTypes.h"
-#include "NetworkConnectionIntegrity.h"
 #include "ReferrerPolicy.h"
 #include "ResourceRequest.h"
 #include "ShouldTreatAsContinuingLoad.h"
@@ -106,8 +106,8 @@ public:
     void setIsRequestFromClientOrUserInput() { m_isRequestFromClientOrUserInput = true; }
     bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
 
-    void setNetworkConnectionIntegrityPolicy(OptionSet<NetworkConnectionIntegrity> policy) { m_networkConnectionIntegrityPolicy = policy; }
-    OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy() const { return m_networkConnectionIntegrityPolicy; }
+    void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> policy) { m_advancedPrivacyProtections = policy; }
+    OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
 
 private:
     Ref<Document> m_requester;
@@ -130,7 +130,7 @@ private:
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
     bool m_isRequestFromClientOrUserInput { false };
     bool m_isInitialFrameSrcLoad { false };
-    OptionSet<NetworkConnectionIntegrity> m_networkConnectionIntegrityPolicy;
+    OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
 };
 
 } // namespace WebCore

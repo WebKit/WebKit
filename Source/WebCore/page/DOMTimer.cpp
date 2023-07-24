@@ -30,6 +30,7 @@
 #include "HTMLPlugInElement.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "OpportunisticTaskScheduler.h"
 #include "Page.h"
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
@@ -171,7 +172,7 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutio
     if (oneShot)
         startOneShot(m_currentTimerInterval);
     else
-        startRepeating(m_currentTimerInterval);
+        startRepeating(m_originalInterval, m_currentTimerInterval);
 }
 
 DOMTimer::~DOMTimer() = default;
@@ -188,6 +189,7 @@ int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecu
 {
     Ref<DOMTimer> timer = adoptRef(*new DOMTimer(context, WTFMove(action), timeout, oneShot));
     timer->suspendIfNeeded();
+    timer->makeOpportunisticTaskDeferralScopeIfPossible(context);
 
     // Keep asking for the next id until we're given one that we don't already have.
     do {
@@ -233,7 +235,9 @@ void DOMTimer::removeById(ScriptExecutionContext& context, int timeoutId)
         nestedTimers->remove(timeoutId);
 
     InspectorInstrumentation::didRemoveTimer(context, timeoutId);
-    context.removeTimeout(timeoutId);
+
+    if (auto timer = context.takeTimeout(timeoutId))
+        timer->clearOpportunisticTaskDeferralScopeIfPossible();
 }
 
 inline bool DOMTimer::isDOMTimersThrottlingEnabled(const Document& document) const
@@ -328,10 +332,12 @@ void DOMTimer::fired()
         InspectorInstrumentation::didFireTimer(context, m_timeoutId, m_oneShot);
 
         updateThrottlingStateIfNecessary(fireState);
+
+        clearOpportunisticTaskDeferralScopeIfPossible();
         return;
     }
 
-    context.removeTimeout(m_timeoutId);
+    context.takeTimeout(m_timeoutId);
 
     // Keep track nested timer installs.
     NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context);
@@ -354,6 +360,8 @@ void DOMTimer::fired()
         }
         nestedTimers->stopTracking();
     }
+
+    clearOpportunisticTaskDeferralScopeIfPossible();
 }
 
 void DOMTimer::didStop()
@@ -362,6 +370,7 @@ void DOMTimer::didStop()
     // because they can form circular references back to the ScriptExecutionContext
     // which will cause a memory leak.
     m_action = nullptr;
+    clearOpportunisticTaskDeferralScopeIfPossible();
 }
 
 void DOMTimer::updateTimerIntervalIfNecessary()
@@ -414,6 +423,30 @@ std::optional<MonotonicTime> DOMTimer::alignedFireTime(MonotonicTime fireTime) c
     Seconds randomizedOffset = alignmentInterval * randomizedProportion;
     MonotonicTime adjustedFireTime = fireTime - randomizedOffset;
     return adjustedFireTime - (adjustedFireTime % alignmentInterval) + alignmentInterval + randomizedOffset;
+}
+
+void DOMTimer::makeOpportunisticTaskDeferralScopeIfPossible(ScriptExecutionContext& context)
+{
+    if (!m_oneShot || m_currentTimerInterval <= 1_ms) {
+        // FIXME: This should eventually account for repeating timers and one-shot timers that were
+        // previously scheduled, and are about to fire.
+        return;
+    }
+
+    RefPtr document = dynamicDowncast<Document>(context);
+    if (!document)
+        return;
+
+    auto* page = document->page();
+    if (!page)
+        return;
+
+    m_opportunisticTaskDeferralScope = page->opportunisticTaskScheduler().makeDeferralScope();
+}
+
+void DOMTimer::clearOpportunisticTaskDeferralScopeIfPossible()
+{
+    m_opportunisticTaskDeferralScope = nullptr;
 }
 
 const char* DOMTimer::activeDOMObjectName() const

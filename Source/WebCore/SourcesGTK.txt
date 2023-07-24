@@ -68,6 +68,8 @@ platform/generic/ScrollbarsControllerGeneric.cpp
 
 platform/graphics/PlatformDisplay.cpp @no-unify
 
+platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify
+
 platform/graphics/cairo/BackingStoreBackendCairoX11.cpp @no-unify
 
 platform/graphics/egl/GLContext.cpp @no-unify
@@ -77,10 +79,7 @@ platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 
 platform/graphics/gbm/GBMBufferSwapchain.cpp
 platform/graphics/gbm/GBMDevice.cpp
-platform/graphics/gbm/GraphicsContextGLANGLELinux.cpp
-platform/graphics/gbm/GraphicsContextGLFallback.cpp
-platform/graphics/gbm/GraphicsContextGLGBM.cpp
-platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp @no-unify
+platform/graphics/gbm/GraphicsContextGLGBM.cpp @no-unify
 platform/graphics/gbm/PlatformDisplayGBM.cpp @no-unify
 
 platform/graphics/gtk/ColorGtk.cpp
@@ -88,8 +87,6 @@ platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp
 platform/graphics/gtk/GdkCairoUtilities.cpp
 platform/graphics/gtk/ImageGtk.cpp
 platform/graphics/gtk/SystemFontDatabaseGTK.cpp
-
-platform/graphics/gstreamer/ImageGStreamerCairo.cpp
 
 platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 

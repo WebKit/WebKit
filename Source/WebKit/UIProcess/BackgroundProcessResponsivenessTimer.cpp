@@ -102,6 +102,11 @@ void BackgroundProcessResponsivenessTimer::timeoutTimerFired()
 
     scheduleNextResponsivenessCheck();
 
+    // This shouldn't happen but still check to be 100% sure we don't report
+    // suspended processes as unresponsive.
+    if (m_webProcessProxy.throttler().isSuspended())
+        return;
+
     if (!m_isResponsive)
         return;
 
@@ -123,10 +128,10 @@ void BackgroundProcessResponsivenessTimer::setResponsive(bool isResponsive)
     client().didChangeIsResponsive();
 
     if (m_isResponsive) {
-        RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that background WebProcess with pid %d has become responsive again", m_webProcessProxy.processIdentifier());
+        RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that background WebProcess with pid %d has become responsive again", m_webProcessProxy.processID());
         client().didBecomeResponsive();
     } else {
-        RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that background WebProcess with pid %d has become unresponsive", m_webProcessProxy.processIdentifier());
+        RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that background WebProcess with pid %d has become unresponsive", m_webProcessProxy.processID());
         client().didBecomeUnresponsive();
     }
 }
@@ -136,11 +141,13 @@ bool BackgroundProcessResponsivenessTimer::shouldBeActive() const
 #if !PLATFORM(IOS_FAMILY)
     if (m_webProcessProxy.visiblePageCount())
         return false;
+    if (m_webProcessProxy.throttler().isSuspended())
+        return false;
     if (m_webProcessProxy.isStandaloneServiceWorkerProcess())
         return true;
     return m_webProcessProxy.pageCount();
 #else
-    // Disable background process responsiveness checking on iOS since such processes usually get suspended.
+    // Disable background process responsiveness checking when using RunningBoard since such processes usually get suspended.
     return false;
 #endif
 }

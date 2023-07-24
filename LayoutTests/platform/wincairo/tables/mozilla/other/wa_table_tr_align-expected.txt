@@ -20,7 +20,7 @@ layer at (0,0) size 785x1384
             RenderText {#text} at (0,0) size 215x26
               text run at (0,0) width 215: "Table: <TR> ALIGN"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,179) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,179) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,189) size 769x81
         RenderText {#text} at (0,0) size 262x19
           text run at (0,0) width 262: "This acceptance test case tests the optional "
@@ -129,7 +129,7 @@ layer at (0,0) size 785x1384
           RenderListMarker at (-21,0) size 16x19: "6"
           RenderText {#text} at (0,0) size 125x19
             text run at (0,0) width 125: "Verify reload works."
-      RenderBlock {HR} at (0,563) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,563) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,581) size 769x66
         RenderTable {TABLE} at (0,0) size 769x65 [bgcolor=#F08080] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 767x63
@@ -175,7 +175,7 @@ layer at (0,0) size 785x1384
               RenderTableCell {TD} at (230,28) size 113x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 66x19
                   text run at (2,2) width 66: "row data 3"
-      RenderBlock {HR} at (0,754) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,754) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,772) size 769x66
         RenderTable {TABLE} at (0,0) size 769x65 [bgcolor=#F08080] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 767x63
@@ -310,7 +310,7 @@ layer at (0,0) size 785x1384
                 RenderText {#text} at (44,2) size 67x19
                   text run at (44,2) width 67: "row data 3"
       RenderBlock {P} at (0,1293) size 769x0
-      RenderBlock {HR} at (0,1293) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,1293) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,1303) size 769x21
         RenderImage {IMG} at (0,2) size 13x13
         RenderText {#text} at (13,0) size 120x19

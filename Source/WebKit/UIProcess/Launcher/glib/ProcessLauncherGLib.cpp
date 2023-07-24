@@ -133,13 +133,13 @@ void ProcessLauncher::launchProcess()
         argv[i++] = webkitSocket.get();
         argv[i++] = nullptr;
 
-        m_processIdentifier = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv, socketPair.client);
-        if (m_processIdentifier <= -1)
+        m_processID = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv, socketPair.client);
+        if (m_processID <= -1)
             g_error("Unable to spawn a new child process");
 
         // We've finished launching the process, message back to the main run loop.
         RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = socketPair.server] {
-            didFinishLaunchingProcess(m_processIdentifier, IPC::Connection::Identifier { serverSocket });
+            didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { serverSocket });
         });
 
         return;
@@ -236,12 +236,12 @@ void ProcessLauncher::launchProcess()
     if (!processIdStr)
         g_error("Spawned process died immediately. This should not happen.");
 
-    m_processIdentifier = g_ascii_strtoll(processIdStr, nullptr, 0);
-    RELEASE_ASSERT(m_processIdentifier);
+    m_processID = g_ascii_strtoll(processIdStr, nullptr, 0);
+    RELEASE_ASSERT(m_processID);
 
     // We've finished launching the process, message back to the main run loop.
     RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = socketPair.server] {
-        didFinishLaunchingProcess(m_processIdentifier, IPC::Connection::Identifier { serverSocket });
+        didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { serverSocket });
     });
 }
 
@@ -252,19 +252,19 @@ void ProcessLauncher::terminateProcess()
         return;
     }
 
-    if (!m_processIdentifier)
+    if (!m_processID)
         return;
 
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
     if (ProcessProviderLibWPE::singleton().isEnabled())
-        ProcessProviderLibWPE::singleton().kill(m_processIdentifier);
+        ProcessProviderLibWPE::singleton().kill(m_processID);
     else
-        kill(m_processIdentifier, SIGKILL);
+        kill(m_processID, SIGKILL);
 #else
-    kill(m_processIdentifier, SIGKILL);
+    kill(m_processID, SIGKILL);
 #endif
 
-    m_processIdentifier = 0;
+    m_processID = 0;
 }
 
 void ProcessLauncher::platformInvalidate()

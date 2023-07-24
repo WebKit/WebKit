@@ -28,6 +28,7 @@
 #include "DNS.h"
 
 #include "DNSResolveQueue.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 
 #if OS(UNIX)
@@ -49,7 +50,7 @@ void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandle
 {
     ASSERT(isMainThread());
     if (hostname.isEmpty())
-        return;
+        return completionHandler(makeUnexpected(DNSError::CannotResolve));
 
     WebCore::DNSResolveQueue::singleton().resolve(hostname, identifier, WTFMove(completionHandler));
 }
@@ -57,6 +58,22 @@ void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandle
 void stopResolveDNS(uint64_t identifier)
 {
     WebCore::DNSResolveQueue::singleton().stopResolve(identifier);
+}
+
+bool IPAddress::containsOnlyZeros() const
+{
+    return std::visit(WTF::makeVisitor([] (const WTF::HashTableEmptyValueType&) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }, [] (const in_addr& address) {
+        return !address.s_addr;
+    }, [] (const in6_addr& address) {
+        for (uint8_t byte : address.s6_addr) {
+            if (byte)
+                return false;
+        }
+        return true;
+    }), m_address);
 }
 
 std::optional<IPAddress> IPAddress::fromString(const String& string)

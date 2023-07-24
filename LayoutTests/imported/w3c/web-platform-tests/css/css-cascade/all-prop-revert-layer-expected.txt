@@ -156,6 +156,8 @@ PASS grid-template-columns
 PASS grid-template-rows
 PASS hanging-punctuation
 PASS height
+PASS hyphenate-character
+PASS hyphens
 PASS image-orientation
 PASS image-rendering
 PASS inline-size
@@ -273,6 +275,8 @@ PASS scroll-padding-top
 PASS scroll-snap-align
 PASS scroll-snap-stop
 PASS scroll-snap-type
+PASS scrollbar-color
+PASS scrollbar-gutter
 PASS scrollbar-width
 PASS shape-image-threshold
 PASS shape-margin
@@ -313,6 +317,7 @@ PASS text-shadow
 PASS text-transform
 PASS text-underline-offset
 PASS text-underline-position
+PASS text-wrap
 PASS top
 PASS touch-action
 PASS transform
@@ -328,7 +333,7 @@ PASS unicode-bidi
 PASS vector-effect
 PASS vertical-align
 PASS visibility
-PASS white-space
+PASS white-space-collapse
 PASS widows
 PASS width
 PASS will-change

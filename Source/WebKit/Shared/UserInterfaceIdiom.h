@@ -29,8 +29,18 @@
 
 namespace WebKit {
 
+enum class UserInterfaceIdiom : uint8_t {
+    Default,
+    SmallScreen,
+    Reality
+};
+
 bool currentUserInterfaceIdiomIsSmallScreen();
-void setCurrentUserInterfaceIdiomIsSmallScreen(bool);
+bool currentUserInterfaceIdiomIsReality();
+
+UserInterfaceIdiom currentUserInterfaceIdiom();
+void setCurrentUserInterfaceIdiom(UserInterfaceIdiom);
+
 bool updateCurrentUserInterfaceIdiom();
 
 }

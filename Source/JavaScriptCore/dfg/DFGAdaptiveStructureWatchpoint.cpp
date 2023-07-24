@@ -78,10 +78,11 @@ void AdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail& detail)
             "Firing watchpoint ", RawPointer(this), " (", m_key, ") on ", *m_codeBlock, "\n");
     }
 
-    auto lazyDetail = createLazyFireDetail("Adaptation of ", m_key, " failed: ", detail);
-
-    m_codeBlock->jettison(
-        Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &lazyDetail);
+    auto lambda = scopedLambda<void(PrintStream&)>([&](PrintStream& out) {
+        out.print("Adaptation of ", m_key, " failed: ", detail);
+    });
+    LazyFireDetail lazyDetail(lambda);
+    m_codeBlock->jettison(Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &lazyDetail);
 }
 
 } } // namespace JSC::DFG

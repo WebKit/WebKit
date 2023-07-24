@@ -10,6 +10,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <IOKit/IOKitLib.h>
+#import <Metal/Metal.h>
 
 #include "common/gl/cgl/FunctionsCGL.h"
 
@@ -241,11 +242,24 @@ void ForceGPUSwitchIndex(SystemInfo *info)
 
 }  // anonymous namespace
 
-// Code from WebKit to get the active GPU's ID given a Core Graphics display ID.
+// Modified code from WebKit to get the active GPU's ID given a Core Graphics display ID.
 // https://trac.webkit.org/browser/webkit/trunk/Source/WebCore/platform/mac/PlatformScreenMac.mm
 // Used with permission.
 uint64_t GetGpuIDFromDisplayID(uint32_t displayID)
 {
+    // First attempt to use query the registryID from a Metal device before falling back to CGL.
+    // This avoids loading the OpenGL framework when possible.
+    if (@available(macOS 10.13, *))
+    {
+        id<MTLDevice> device = CGDirectDisplayCopyCurrentMetalDevice(displayID);
+        if (device)
+        {
+            uint64_t registryId = [device registryID];
+            [device release];
+            return registryId;
+        }
+    }
+
     return GetGpuIDFromOpenGLDisplayMask(CGDisplayIDToOpenGLDisplayMask(displayID));
 }
 

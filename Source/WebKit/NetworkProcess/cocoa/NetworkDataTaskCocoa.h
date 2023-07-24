@@ -28,6 +28,7 @@
 #include "NetworkActivityTracker.h"
 #include "NetworkDataTask.h"
 #include "NetworkLoadParameters.h"
+#include "NetworkTaskCocoa.h"
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/RetainPtr.h>
@@ -39,7 +40,7 @@ OBJC_CLASS NSMutableURLRequest;
 namespace WebCore {
 class RegistrableDomain;
 class SharedBuffer;
-enum class NetworkConnectionIntegrity : uint16_t;
+enum class AdvancedPrivacyProtections : uint16_t;
 }
 
 namespace WebKit {
@@ -48,7 +49,7 @@ class Download;
 class NetworkSessionCocoa;
 struct SessionWrapper;
 
-class NetworkDataTaskCocoa final : public NetworkDataTask {
+class NetworkDataTaskCocoa final : public NetworkDataTask, public NetworkTaskCocoa {
 public:
     static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
     {
@@ -79,9 +80,8 @@ public:
 
     WebCore::NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }
 
-    WebCore::FrameIdentifier frameID() const { return m_frameID; };
-    WebCore::PageIdentifier pageID() const { return m_pageID; };
-    WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
+    std::optional<WebCore::FrameIdentifier> frameID() const final { return m_frameID; };
+    std::optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; };
 
     String description() const override;
 
@@ -100,15 +100,11 @@ private:
     void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>&, bool shouldContentSniff, WebCore::ContentEncodingSniffingPolicy);
 
 #if ENABLE(TRACKING_PREVENTION)
-    static NSHTTPCookieStorage *statelessCookieStorage();
     void updateFirstPartyInfoForSession(const URL&);
-    bool shouldApplyCookiePolicyForThirdPartyCloaking() const;
-    void applyCookiePolicyForThirdPartyCloaking(const WebCore::ResourceRequest&);
-    void blockCookies();
-    void unblockCookies();
-    bool needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const;
 #endif
-    bool isAlwaysOnLoggingAllowed() const;
+
+    NSURLSessionTask* task() const final;
+    WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const final { return m_storedCredentialsPolicy; }
 
     WeakPtr<SessionWrapper> m_sessionWrapper;
     RefPtr<SandboxExtension> m_sandboxExtension;
@@ -118,20 +114,13 @@ private:
     WebCore::PageIdentifier m_pageID;
     WebPageProxyIdentifier m_webPageProxyID;
 
-#if ENABLE(TRACKING_PREVENTION)
-    bool m_hasBeenSetToUseStatelessCookieStorage { false };
-    Seconds m_ageCapForCNAMECloakedCookies { 24_h * 7 };
-#endif
-
     bool m_isForMainResourceNavigationForAnyFrame { false };
-    bool m_isAlwaysOnLoggingAllowed { false };
-    WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
     RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
 };
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);
 void setPCMDataCarriedOnRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *);
 
-void enableNetworkConnectionIntegrity(NSMutableURLRequest *, OptionSet<WebCore::NetworkConnectionIntegrity>);
+void enableAdvancedPrivacyProtections(NSMutableURLRequest *, OptionSet<WebCore::AdvancedPrivacyProtections>);
 
 } // namespace WebKit

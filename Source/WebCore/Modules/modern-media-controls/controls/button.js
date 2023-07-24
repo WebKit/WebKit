@@ -224,13 +224,13 @@ class Button extends LayoutItem
             height /= window.devicePixelRatio;
         }
 
-        if (this.image.width === width && this.image.height === height)
-            return;
-
         if (this.circular) {
             width = Math.max(width, height);
             height = width;
         }
+
+        if (this.image.width === width && this.image.height === height)
+            return;
 
         this.image.width = width;
         this.image.height = height;

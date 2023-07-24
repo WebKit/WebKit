@@ -64,27 +64,18 @@ private:
     const char* m_string;
 };
 
-template<typename... Types>
 class LazyFireDetail final : public FireDetail {
 public:
-    LazyFireDetail(const Types&... args)
+    LazyFireDetail(ScopedLambda<void(PrintStream&)>& lambda)
+        : m_lambda(lambda)
     {
-        m_lambda = scopedLambda<void(PrintStream&)>([&] (PrintStream& out) {
-            out.print(args...);
-        });
     }
 
     void dump(PrintStream& out) const final { m_lambda(out); }
 
 private:
-    ScopedLambda<void(PrintStream&)> m_lambda;
+    ScopedLambda<void(PrintStream&)>& m_lambda;
 };
-
-template<typename... Types>
-LazyFireDetail<Types...> createLazyFireDetail(const Types&... types)
-{
-    return LazyFireDetail<Types...>(types...);
-}
 
 class WatchpointSet;
 

@@ -580,7 +580,7 @@ PASS [["forecolor","#0000FF"],["inserthorizontalrule",""]] "foo[]bar" queryComma
 PASS [["forecolor","#0000FF"],["inserthorizontalrule",""]] "foo[]bar" queryCommandValue("forecolor") before
 PASS [["forecolor","#0000FF"],["inserthorizontalrule",""]] "foo[]bar" queryCommandIndeterm("forecolor") after
 PASS [["forecolor","#0000FF"],["inserthorizontalrule",""]] "foo[]bar" queryCommandState("forecolor") after
-FAIL [["forecolor","#0000FF"],["inserthorizontalrule",""]] "foo[]bar" queryCommandValue("forecolor") after assert_equals: Wrong result returned (after color normalization) expected "rgb(0, 0, 255)" but got "rgb(0, 0, 0)"
+FAIL [["forecolor","#0000FF"],["inserthorizontalrule",""]] "foo[]bar" queryCommandValue("forecolor") after assert_equals: Wrong result returned (after color normalization) expected "rgb(0, 0, 255)" but got "rgb(128, 128, 128)"
 PASS [["forecolor","#0000FF"],["inserthorizontalrule",""]] "foo[]bar" queryCommandIndeterm("inserthorizontalrule") before
 PASS [["forecolor","#0000FF"],["inserthorizontalrule",""]] "foo[]bar" queryCommandState("inserthorizontalrule") before
 PASS [["forecolor","#0000FF"],["inserthorizontalrule",""]] "foo[]bar" queryCommandValue("inserthorizontalrule") before

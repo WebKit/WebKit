@@ -113,14 +113,14 @@ Vector<String> IntlNumberFormat::localeData(const String& locale, RelevantExtens
 static inline unsigned computeCurrencySortKey(const String& currency)
 {
     ASSERT(currency.length() == 3);
-    ASSERT(currency.isAllSpecialCharacters<isASCIIUpper>());
+    ASSERT(currency.containsOnly<isASCIIUpper>());
     return (currency[0] << 16) + (currency[1] << 8) + currency[2];
 }
 
 static inline unsigned computeCurrencySortKey(const char* currency)
 {
     ASSERT(strlen(currency) == 3);
-    ASSERT(isAllSpecialCharacters<isASCIIUpper>(currency, 3));
+    ASSERT(containsOnly<isASCIIUpper>(currency, 3));
     return (currency[0] << 16) + (currency[1] << 8) + currency[2];
 }
 

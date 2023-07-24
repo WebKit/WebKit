@@ -13,6 +13,7 @@ info: |
     b. If SameValueZero(searchElement, elementK) is true, return true.
     c. Increase k by 1.
   ...
+features: [Array.prototype.includes]
 ---*/
 
 var sample = [42, 0, 1, NaN];

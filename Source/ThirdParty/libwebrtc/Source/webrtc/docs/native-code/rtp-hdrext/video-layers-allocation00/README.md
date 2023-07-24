@@ -2,7 +2,7 @@
 
 The goal of this extension is for a video sender to provide information about
 the target bitrate, resolution and frame rate of each scalability layer in order
-to aid a middle box to decide which layer to relay.
+to aid a selective forwarding middlebox to decide which layer to relay.
 
 **Name:** "Video layers allocation version 0"
 
@@ -18,7 +18,7 @@ layers and a middle box can choose a layer to relay for each receiver.
 
 This extension support temporal layers, multiple spatial layers sent on a single
 rtp stream (SVC), or independent spatial layers sent on multiple rtp streams
-(Simulcast).
+(simulcast).
 
 ## RTP header extension format
 
@@ -32,9 +32,8 @@ rtp stream (SVC), or independent spatial layers sent on multiple rtp streams
 //   up to 2 bytes           |---------------|
 //   when sl_bm == 0         |sl2_bm |sl3_bm |
 //                           +-+-+-+-+-+-+-+-+
-//   Number of temporal      |#tl|#tl|#tl|#tl|
-// layers per spatial layer  :---------------:
-//    up to 4 bytes          |      ...      |
+// Number of temporal layers |#tl|#tl|#tl|#tl|
+// per spatial layer         |   |   |   |   |
 //                           +-+-+-+-+-+-+-+-+
 //  Target bitrate in kpbs   |               |
 //   per temporal layer      :      ...      :
@@ -56,23 +55,24 @@ rtp stream (SVC), or independent spatial layers sent on multiple rtp streams
 
 RID: RTP stream index this allocation is sent on, numbered from 0. 2 bits.
 
-NS: Number of RTP streams - 1. 2 bits, thus allowing up-to 4 RTP streams.
+NS: Number of RTP streams minus one. 2 bits, thus allowing up-to 4 RTP streams.
 
 sl_bm: BitMask of the active Spatial Layers when same for all RTP streams or 0
-otherwise. 4 bits thus allows up to 4 spatial layers per RTP streams.
+otherwise. 4 bits, thus allows up to 4 spatial layers per RTP streams.
 
 slX_bm: BitMask of the active Spatial Layers for RTP stream with index=X.
-byte-aligned. When NS < 2, takes one byte, otherwise uses two bytes.
+When NS < 2, takes one byte, otherwise uses two bytes. Zero-padded to byte
+alignment.
 
 \#tl: 2-bit value of number of temporal layers-1, thus allowing up-to 4 temporal
-layer per spatial layer. One per spatial layer per RTP stream. values are stored
-in (RTP stream id, spatial id) ascending order. zero-padded to byte alignment.
+layers. Values are stored in ascending order of spatial id. Zero-padded to byte
+alignment.
 
-Target bitrate in kbps. Values are stored using leb128 encoding. one value per
-temporal layer. values are stored in (RTP stream id, spatial id, temporal id)
+Target bitrate in kbps. Values are stored using leb128 encoding [1]. One value per
+temporal layer. Values are stored in (RTP stream id, spatial id, temporal id)
 ascending order. All bitrates are total required bitrate to receive the
 corresponding layer, i.e. in simulcast mode they include only corresponding
-spatial layer, in full-svc all lower spatial layers are included. All lower
+spatial layers, in full-svc all lower spatial layers are included. All lower
 temporal layers are also included.
 
 Resolution and framerate. Optional. Presence is inferred from the rtp header
@@ -82,3 +82,5 @@ id, spatial id) ascending order.
 
 An empty layer allocation (i.e nothing sent on ssrc) is encoded as
 special case with a single 0 byte.
+
+[1] https://aomediacodec.github.io/av1-spec/#leb128

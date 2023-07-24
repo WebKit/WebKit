@@ -80,6 +80,11 @@ void JSPromiseConstructor::finishCreation(VM& vm, JSPromisePrototype* promisePro
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, promisePrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, speciesSymbol, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+
+    JSGlobalObject* globalObject = this->globalObject();
+
+    if (Options::usePromiseWithResolversMethod())
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().withResolversPublicName(), promiseConstructorWithResolversCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 void JSPromiseConstructor::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObject)

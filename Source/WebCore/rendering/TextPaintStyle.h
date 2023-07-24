@@ -48,6 +48,8 @@ struct TextPaintStyle {
     Color strokeColor;
     Color emphasisMarkColor;
     float strokeWidth { 0 };
+    // This is not set for -webkit-text-fill-color.
+    bool hasExplicitlySetFillColor { false };
 #if HAVE(OS_DARK_MODE_SUPPORT)
     bool useDarkAppearance { false };
 #endif

@@ -36,8 +36,6 @@
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
 #import "WebProcessPool.h"
-#import <WebCore/PluginBlocklist.h>
-#import <WebCore/WebGLBlocklist.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -111,24 +109,6 @@ WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey()
 WKStringRef WKPlugInInfoIsSandboxedKey()
 {
     return WKPluginInformationHasSandboxProfileKey();
-}
-
-bool WKContextShouldBlockWebGL()
-{
-#if PLATFORM(MAC)
-    return WebCore::WebGLBlocklist::shouldBlockWebGL();
-#else
-    return false;
-#endif
-}
-
-bool WKContextShouldSuggestBlockWebGL()
-{
-#if PLATFORM(MAC)
-    return WebCore::WebGLBlocklist::shouldSuggestBlockingWebGL();
-#else
-    return false;
-#endif
 }
 
 bool WKContextHandlesSafeBrowsing()

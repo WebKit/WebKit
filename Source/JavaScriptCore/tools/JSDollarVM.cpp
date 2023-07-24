@@ -2850,7 +2850,7 @@ JSC_DEFINE_HOST_FUNCTION(functionIsHavingABadTime, (JSGlobalObject* globalObject
 // options are not frozen. For the jsc shell, the --disableOptionsFreezingForTesting
 // argument needs to be passed in on the command line.
 
-#if ENABLE(ASSEMBLER)
+#if ENABLE(ASSEMBLER) && OS(DARWIN) && CPU(X86_64)
 static void callWithStackSizeProbeFunction(Probe::State* state)
 {
     JSGlobalObject* globalObject = bitwise_cast<JSGlobalObject*>(state->arg);
@@ -2867,7 +2867,7 @@ static void callWithStackSizeProbeFunction(Probe::State* state)
     MarkedArgumentBuffer args;
     call(globalObject, function, callData, jsUndefined(), args);
 }
-#endif // ENABLE(ASSEMBLER)
+#endif // ENABLE(ASSEMBLER) && OS(DARWIN) && CPU(X86_64)
 
 JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASAN, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -2898,7 +2898,6 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
     if (!arg1.isNumber())
         return throwVMError(globalObject, throwScope, "arg1 should be a number"_s);
 
-    JSFunction* function = jsCast<JSFunction*>(arg0);
     size_t desiredStackSize = arg1.asNumber();
 
     const StackBounds& bounds = Thread::current().stack();
@@ -2926,6 +2925,8 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
     helper.updateVMStackLimits();
 
 #if OS(DARWIN) && CPU(X86_64)
+    JSFunction* function = jsCast<JSFunction*>(arg0);
+
     __asm__ volatile (
         "subq %[sizeDiff], %%rsp" "\n"
         "pushq %%rax" "\n"
@@ -2942,11 +2943,6 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
         , [sizeDiff] "rm" (sizeDiff)
         : "memory"
     );
-#else
-    UNUSED_PARAM(function);
-#if !COMPILER(MSVC)
-    UNUSED_PARAM(callWithStackSizeProbeFunction);
-#endif
 #endif // OS(DARWIN) && CPU(X86_64)
 
     Options::maxPerThreadStackUsage() = originalMaxPerThreadStackUsage;
@@ -3412,7 +3408,7 @@ JSC_DEFINE_HOST_FUNCTION(functionReturnTypeFor, (JSGlobalObject* globalObject, C
     RELEASE_ASSERT(functionValue.isCallable());
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
 
-    unsigned offset = executable->typeProfilingStartOffset(vm);
+    unsigned offset = executable->functionStart();
     String jsonString = vm.typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorFunctionReturn, offset, executable->sourceID(), vm);
     return JSValue::encode(JSONParse(globalObject, jsonString));
 }
@@ -3422,8 +3418,8 @@ JSC_DEFINE_HOST_FUNCTION(functionFlattenDictionaryObject, (JSGlobalObject* globa
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
     JSValue value = callFrame->argument(0);
-    RELEASE_ASSERT(value.isObject() && value.getObject()->structure()->isDictionary());
-    value.getObject()->flattenDictionaryObject(vm);
+    if (value.isObject() && value.getObject()->structure()->isDictionary())
+        value.getObject()->flattenDictionaryObject(vm);
     return encodedJSUndefined();
 }
 
@@ -3799,7 +3795,7 @@ JSC_DEFINE_HOST_FUNCTION(functionAsanEnabled, (JSGlobalObject*, CallFrame*))
 JSC_DEFINE_HOST_FUNCTION(functionIsMemoryLimited, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
-#if PLATFORM(IOS) || PLATFORM(APPLETV) || PLATFORM(WATCHOS)
+#if PLATFORM(IOS) || PLATFORM(APPLETV) || PLATFORM(WATCHOS) || PLATFORM(VISION)
     return JSValue::encode(jsBoolean(true));
 #else
     return JSValue::encode(jsBoolean(false));

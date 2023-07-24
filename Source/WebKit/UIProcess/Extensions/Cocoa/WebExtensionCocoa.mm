@@ -32,6 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "APIData.h"
 #import "CocoaHelpers.h"
 #import "FoundationSPI.h"
 #import "_WKWebExtensionInternal.h"
@@ -192,6 +193,11 @@ NSDictionary *WebExtension::manifest()
     // since that will need delegated to the app.
 
     return m_manifest.get();
+}
+
+Ref<API::Data> WebExtension::serializeManifest()
+{
+    return API::Data::createWithoutCopying([NSJSONSerialization dataWithJSONObject:manifest() options:0 error:nullptr]);
 }
 
 double WebExtension::manifestVersion()
@@ -798,7 +804,7 @@ NSString *WebExtension::pathForBestImageInIconsDictionary(NSDictionary *iconsDic
     if (NSString *resultPath = iconsDictionary[idealSizeString])
         return resultPath;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     // Check if the ideal 3x retina size exists. This will usually be called on 2x iOS devices when a 3x image might exist.
     // Since the ideal size is likly already 2x, multiply by 1.5x to get the 3x pixel size.
     idealSizeString = @(idealPixelSize * 1.5).stringValue;
@@ -836,7 +842,7 @@ CocoaImage *WebExtension::bestImageInIconsDictionary(NSDictionary *iconsDictiona
         return nil;
 
     NSUInteger standardPixelSize = idealPointSize;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     standardPixelSize *= UIScreen.mainScreen.scale;
 #endif
 
@@ -1020,7 +1026,7 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
     if (!m_backgroundContentIsPersistent && hasRequestedPermission(_WKWebExtensionPermissionWebRequest))
         recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Non-persistent background content cannot listen to `webRequest` events.", "WKWebExtensionErrorInvalidBackgroundPersistence description for webRequest events")));
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if (m_backgroundContentIsPersistent)
         recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.", "WKWebExtensionErrorInvalidBackgroundPersistence description for iOS")));
 #endif

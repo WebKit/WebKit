@@ -25,7 +25,7 @@ TEST_F(NackTest, ShouldNackInLossyNetwork) {
     const int64_t kLossPercent = 30;
     const int kNackHistoryMs = 1000;
 
-    BuiltInNetworkBehaviorConfig GetNetworkPipeConfig() const override {
+    BuiltInNetworkBehaviorConfig GetSendTransportConfig() const override {
       BuiltInNetworkBehaviorConfig pipe_config;
       pipe_config.queue_delay_ms = kRttMs / 2;
       pipe_config.loss_percent = kLossPercent;
@@ -48,7 +48,7 @@ TEST_F(NackTest, ShouldNackInLossyNetwork) {
       EXPECT_GT(recv_stats.nacks_sent, 0U);
       AudioSendStream::Stats send_stats = send_stream()->GetStats();
       EXPECT_GT(send_stats.retransmitted_packets_sent, 0U);
-      EXPECT_GT(send_stats.nacks_rcvd, 0U);
+      EXPECT_GT(send_stats.nacks_received, 0U);
     }
   } test;
 

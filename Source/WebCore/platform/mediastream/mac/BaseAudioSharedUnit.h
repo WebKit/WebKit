@@ -121,6 +121,7 @@ private:
 
     // RealtimeMediaSourceCenter::Observer
     void devicesChanged() final;
+    void deviceWillBeRemoved(const String&) final { }
 
     bool m_enableEchoCancellation { true };
     double m_volume { 1 };

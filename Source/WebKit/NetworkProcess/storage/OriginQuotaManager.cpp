@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+static constexpr double defaultReportedQuotaIncreaseFactor = 2.0;
+
 Ref<OriginQuotaManager> OriginQuotaManager::create(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifySpaceGrantedFunction&& notifySpaceGrantedFunction)
 {
     return adoptRef(*new OriginQuotaManager(quota, standardReportedQuota, WTFMove(getUsageFunction), WTFMove(increaseQuotaFunction), WTFMove(notifySpaceGrantedFunction)));
@@ -156,10 +158,15 @@ void OriginQuotaManager::resetQuotaForTesting()
     m_quotaCountdown = 0;
 }
 
-uint64_t OriginQuotaManager::reportedQuota() const
+uint64_t OriginQuotaManager::reportedQuota()
 {
-    if (m_usage && *m_usage > m_standardReportedQuota)
+    if (!m_standardReportedQuota)
         return m_quota;
+
+    // Standard reported quota is at least double existing usage.
+    auto expectedUsage = usage() * defaultReportedQuotaIncreaseFactor;
+    while (expectedUsage > m_standardReportedQuota && m_standardReportedQuota < m_quota)
+        m_standardReportedQuota *= defaultReportedQuotaIncreaseFactor;
 
     return std::min(m_quota, m_standardReportedQuota);
 }

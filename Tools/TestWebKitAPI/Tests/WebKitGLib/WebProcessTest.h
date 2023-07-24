@@ -18,7 +18,7 @@
  */
 
 #include <functional>
-#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -33,13 +33,46 @@
 #include <wpe/webkit-web-extension.h>
 #endif
 
+class Watcher {
+public:
+    ~Watcher()
+    {
+        checkLeaks();
+    }
+
+    void assertObjectIsDeletedWhenTestFinishes(GObject* object)
+    {
+        m_watchedObjects.add(object);
+        g_object_weak_ref(object, [](gpointer data, GObject* whereTheObjectWas) {
+            Watcher* watcher = static_cast<Watcher*>(data);
+            watcher->m_watchedObjects.remove(whereTheObjectWas);
+        }, this);
+    }
+
+    void checkLeaks()
+    {
+        if (m_watchedObjects.isEmpty())
+            return;
+
+        g_print("Leaked objects in WebProcess:");
+        for (const auto object : m_watchedObjects)
+            g_print(" %s(%p)", g_type_name_from_instance(reinterpret_cast<GTypeInstance*>(object)), object);
+        g_print("\n");
+
+        g_assert_true(m_watchedObjects.isEmpty());
+    }
+
+private:
+    HashSet<GObject*> m_watchedObjects;
+};
+
+static Watcher s_watcher;
+
 class WebProcessTest {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~WebProcessTest() { }
     virtual bool runTest(const char* testName, WebKitWebPage*) = 0;
-
-    static void assertObjectIsDeletedWhenTestFinishes(GObject*);
 
     static void add(const String& testName, std::function<std::unique_ptr<WebProcessTest> ()>);
     static std::unique_ptr<WebProcessTest> create(const String& testName);

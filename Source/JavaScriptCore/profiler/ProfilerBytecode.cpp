@@ -29,16 +29,16 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "Opcode.h"
+#include "ProfilerDumper.h"
 
 namespace JSC { namespace Profiler {
 
-JSValue Bytecode::toJS(JSGlobalObject* globalObject) const
+Ref<JSON::Value> Bytecode::toJSON(Dumper& dumper) const
 {
-    VM& vm = globalObject->vm();
-    JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, vm.propertyNames->bytecodeIndex, jsNumber(m_bytecodeIndex));
-    result->putDirect(vm, vm.propertyNames->opcode, jsString(vm, String::fromUTF8(opcodeNames[m_opcodeID])));
-    result->putDirect(vm, vm.propertyNames->description, jsString(vm, String::fromUTF8(m_description)));
+    auto result = JSON::Object::create();
+    result->setDouble(dumper.keys().m_bytecodeIndex, m_bytecodeIndex);
+    result->setString(dumper.keys().m_opcode, String::fromUTF8(opcodeNames[m_opcodeID]));
+    result->setString(dumper.keys().m_description, String::fromUTF8(m_description));
     return result;
 }
 

@@ -53,7 +53,21 @@ struct ComponentTransferFunction {
 
 enum class ComponentTransferChannel : uint8_t { Red, Green, Blue, Alpha };
 
-using ComponentTransferFunctions = EnumeratedArray<ComponentTransferChannel, ComponentTransferFunction, ComponentTransferChannel::Alpha>;
+} // namespace WebCore
+
+namespace WTF {
+template<> struct EnumTraits<WebCore::ComponentTransferChannel> {
+    using values = EnumValues<WebCore::ComponentTransferChannel,
+        WebCore::ComponentTransferChannel::Red,
+        WebCore::ComponentTransferChannel::Green,
+        WebCore::ComponentTransferChannel::Blue,
+        WebCore::ComponentTransferChannel::Alpha>;
+};
+}
+
+namespace WebCore {
+
+using ComponentTransferFunctions = EnumeratedArray<ComponentTransferChannel, ComponentTransferFunction>;
 
 class FEComponentTransfer : public FilterEffect {
 public:

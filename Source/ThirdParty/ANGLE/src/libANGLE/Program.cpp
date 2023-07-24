@@ -33,8 +33,8 @@
 #include "libANGLE/queryconversions.h"
 #include "libANGLE/renderer/GLImplFactory.h"
 #include "libANGLE/renderer/ProgramImpl.h"
-#include "platform/FrontendFeatures_autogen.h"
 #include "platform/PlatformMethods.h"
+#include "platform/autogen/FrontendFeatures_autogen.h"
 
 namespace gl
 {
@@ -404,15 +404,31 @@ void UpdateInterfaceVariable(std::vector<sh::ShaderVariable> *block, const sh::S
     }
 }
 
-void WriteShaderVariableBuffer(BinaryOutputStream *stream, const ShaderVariableBuffer &var)
+void WriteActiveVariable(BinaryOutputStream *stream, const ActiveVariable &var)
 {
-    stream->writeInt(var.binding);
-    stream->writeInt(var.dataSize);
-
     for (ShaderType shaderType : AllShaderTypes())
     {
         stream->writeBool(var.isActive(shaderType));
+        stream->writeInt(var.isActive(shaderType) ? var.getIds()[shaderType] : 0);
     }
+}
+
+void LoadActiveVariable(BinaryInputStream *stream, ActiveVariable *var)
+{
+    for (ShaderType shaderType : AllShaderTypes())
+    {
+        const bool isActive = stream->readBool();
+        const uint32_t id   = stream->readInt<uint32_t>();
+        var->setActive(shaderType, isActive, id);
+    }
+}
+
+void WriteShaderVariableBuffer(BinaryOutputStream *stream, const ShaderVariableBuffer &var)
+{
+    WriteActiveVariable(stream, var);
+
+    stream->writeInt(var.binding);
+    stream->writeInt(var.dataSize);
 
     stream->writeInt(var.memberIndexes.size());
     for (unsigned int memberCounterIndex : var.memberIndexes)
@@ -423,13 +439,10 @@ void WriteShaderVariableBuffer(BinaryOutputStream *stream, const ShaderVariableB
 
 void LoadShaderVariableBuffer(BinaryInputStream *stream, ShaderVariableBuffer *var)
 {
+    LoadActiveVariable(stream, var);
+
     var->binding  = stream->readInt<int>();
     var->dataSize = stream->readInt<unsigned int>();
-
-    for (ShaderType shaderType : AllShaderTypes())
-    {
-        var->setActive(shaderType, stream->readBool());
-    }
 
     size_t numMembers = stream->readInt<size_t>();
     for (size_t blockMemberIndex = 0; blockMemberIndex < numMembers; blockMemberIndex++)
@@ -441,29 +454,21 @@ void LoadShaderVariableBuffer(BinaryInputStream *stream, ShaderVariableBuffer *v
 void WriteBufferVariable(BinaryOutputStream *stream, const BufferVariable &var)
 {
     WriteShaderVar(stream, var);
+    WriteActiveVariable(stream, var);
 
     stream->writeInt(var.bufferIndex);
     WriteBlockMemberInfo(stream, var.blockInfo);
     stream->writeInt(var.topLevelArraySize);
-
-    for (ShaderType shaderType : AllShaderTypes())
-    {
-        stream->writeBool(var.isActive(shaderType));
-    }
 }
 
 void LoadBufferVariable(BinaryInputStream *stream, BufferVariable *var)
 {
     LoadShaderVar(stream, var);
+    LoadActiveVariable(stream, var);
 
     var->bufferIndex = stream->readInt<int>();
     LoadBlockMemberInfo(stream, &var->blockInfo);
     var->topLevelArraySize = stream->readInt<int>();
-
-    for (ShaderType shaderType : AllShaderTypes())
-    {
-        var->setActive(shaderType, stream->readBool());
-    }
 }
 
 void WriteInterfaceBlock(BinaryOutputStream *stream, const InterfaceBlock &block)
@@ -1309,14 +1314,6 @@ void Program::resolveLinkImpl(const Context *context)
         return;
     }
 
-    if (linkingState->linkingFromBinary)
-    {
-        // All internal Program state is already loaded from the binary.
-        return;
-    }
-
-    initInterfaceBlockBindings();
-
     // According to GLES 3.0/3.1 spec for LinkProgram and UseProgram,
     // Only successfully linked program can replace the executables.
     ASSERT(mLinked);
@@ -1328,6 +1325,12 @@ void Program::resolveLinkImpl(const Context *context)
 
     // Must be called after markUnusedUniformLocations.
     postResolveLink(context);
+
+    if (linkingState->linkingFromBinary)
+    {
+        // All internal Program state is already loaded from the binary.
+        return;
+    }
 
     // Save to the program cache.
     std::lock_guard<std::mutex> cacheLock(context->getProgramCacheMutex());
@@ -2634,9 +2637,27 @@ const InterfaceBlock &Program::getShaderStorageBlockByIndex(GLuint index) const
 void Program::bindUniformBlock(UniformBlockIndex uniformBlockIndex, GLuint uniformBlockBinding)
 {
     ASSERT(!mLinkingState);
+
+    if (mState.mExecutable->mActiveUniformBlockBindings[uniformBlockIndex.value])
+    {
+        GLuint previousBinding =
+            mState.mExecutable->mUniformBlocks[uniformBlockIndex.value].binding;
+        if (previousBinding >= mUniformBlockBindingMasks.size())
+        {
+            mUniformBlockBindingMasks.resize(previousBinding + 1, UniformBlockBindingMask());
+        }
+        mUniformBlockBindingMasks[previousBinding].reset(uniformBlockIndex.value);
+    }
+
     mState.mExecutable->mUniformBlocks[uniformBlockIndex.value].binding = uniformBlockBinding;
+    if (uniformBlockBinding >= mUniformBlockBindingMasks.size())
+    {
+        mUniformBlockBindingMasks.resize(uniformBlockBinding + 1, UniformBlockBindingMask());
+    }
+    mUniformBlockBindingMasks[uniformBlockBinding].set(uniformBlockIndex.value);
     mState.mExecutable->mActiveUniformBlockBindings.set(uniformBlockIndex.value,
                                                         uniformBlockBinding != 0);
+
     mDirtyBits.set(DIRTY_BIT_UNIFORM_BLOCK_BINDING_0 + uniformBlockIndex.value);
 }
 
@@ -3671,7 +3692,6 @@ angle::Result Program::deserialize(const Context *context,
         mState.mExecutable->updateTransformFeedbackStrides();
     }
 
-    postResolveLink(context);
     mState.mExecutable->updateCanDrawWith();
 
     if (context->getShareGroup()->getFrameCaptureShared()->enabled())
@@ -3696,6 +3716,8 @@ angle::Result Program::deserialize(const Context *context,
 
 void Program::postResolveLink(const gl::Context *context)
 {
+    initInterfaceBlockBindings();
+
     mState.updateActiveSamplers();
     mState.mExecutable->mActiveImageShaderBits.fill({});
     mState.mExecutable->updateActiveImages(getExecutable());

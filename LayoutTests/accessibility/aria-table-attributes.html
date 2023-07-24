@@ -20,7 +20,7 @@
       <span role="gridcell" aria-colindex="2" aria-rowindex="8">Fred</span>
       <span role="gridcell" aria-colindex="3" aria-rowindex="8">Jackson</span>
       <span id="cell2" role="gridcell" aria-colindex="4" aria-rowindex="8" aria-rowspan="2">Acme, Inc.</span>
-      <span id="cell3" role="gridcell" aria-colindex="5" aria-rowindex="8" aria-rowspan="0">123 Broad St.</span>
+      <span id="cell3" role="gridcell" aria-colindex="5" aria-rowindex="8" aria-rowspan="3">123 Broad St.</span>
     </div>
     <div role="row" aria-rowindex="9">
       <span role="gridcell" aria-colindex="2">Sara</span>
@@ -49,7 +49,7 @@
 <div id="grid3" role="grid">
   <div role="row">
     <span role="gridcell">Cell</span>
-    <span id="cell6" role="gridcell" aria-rowspan="0">Span Cell</span>
+    <span id="cell6" role="gridcell" aria-rowspan="2">Span Cell</span>
   </div>
   <div role="row">
     <span role="gridcell">Cell</span>
@@ -93,10 +93,10 @@
         // aria-colindex from parent row
         testOutput += expect("cell4.numberAttributeValue('AXARIAColumnIndex')", "3");
 
-        // aria-colspan and aria-rowspan, including aria-rowspan="0"
+        // aria-colspan and aria-rowspan
         testOutput += expect("cell2.rowIndexRange()", "'{1, 2}'");
         testOutput += expect("cell5.columnIndexRange()", "'{2, 3}'");
-        testOutput += expect("cell3.rowIndexRange()", "'{1, 2}'");
+        testOutput += expect("cell3.rowIndexRange()", "'{1, 3}'");
 
         testOutput += expect("cell6.rowIndexRange()", "'{0, 2}'");
         // use rowspan for native table

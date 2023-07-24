@@ -77,7 +77,7 @@ void WKWebsiteDataStoreTerminateNetworkProcess(WKWebsiteDataStoreRef dataStore)
 
 WKProcessID WKWebsiteDataStoreGetNetworkProcessIdentifier(WKWebsiteDataStoreRef dataStore)
 {
-    return WebKit::toImpl(dataStore)->networkProcess().processIdentifier();
+    return WebKit::toImpl(dataStore)->networkProcess().processID();
 }
 
 void WKWebsiteDataStoreRemoveITPDataForDomain(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreRemoveITPDataForDomainFunction callback)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h>
+#include <WebCore/WebGPUComputePassTimestampWrites.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ComputePassTimestampWrite> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ComputePassTimestampWrite& computePassTimestampWrite)
+std::optional<ComputePassTimestampWrite> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ComputePassTimestampWrite& computePassTimestampWrite)
 {
     auto querySet = convertToBacking(computePassTimestampWrite.querySet);
     if (!querySet)
@@ -43,7 +43,7 @@ std::optional<ComputePassTimestampWrite> ConvertToBackingContext::convertToBacki
     return { { querySet, computePassTimestampWrite.queryIndex, computePassTimestampWrite.location } };
 }
 
-std::optional<ComputePassTimestampWrites> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ComputePassTimestampWrites& computePassTimestampWrites)
+std::optional<ComputePassTimestampWrites> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ComputePassTimestampWrites& computePassTimestampWrites)
 {
     Vector<ComputePassTimestampWrite> timestampWrites;
     timestampWrites.reserveInitialCapacity(computePassTimestampWrites.size());
@@ -56,7 +56,7 @@ std::optional<ComputePassTimestampWrites> ConvertToBackingContext::convertToBack
     return timestampWrites;
 }
 
-std::optional<PAL::WebGPU::ComputePassTimestampWrite> ConvertFromBackingContext::convertFromBacking(const ComputePassTimestampWrite& computePassTimestampWrite)
+std::optional<WebCore::WebGPU::ComputePassTimestampWrite> ConvertFromBackingContext::convertFromBacking(const ComputePassTimestampWrite& computePassTimestampWrite)
 {
     auto* querySet = convertQuerySetFromBacking(computePassTimestampWrite.querySet);
     if (!querySet)
@@ -65,9 +65,9 @@ std::optional<PAL::WebGPU::ComputePassTimestampWrite> ConvertFromBackingContext:
     return { { *querySet, computePassTimestampWrite.queryIndex, computePassTimestampWrite.location } };
 }
 
-std::optional<PAL::WebGPU::ComputePassTimestampWrites> ConvertFromBackingContext::convertFromBacking(const ComputePassTimestampWrites& computePassTimestampWrites)
+std::optional<WebCore::WebGPU::ComputePassTimestampWrites> ConvertFromBackingContext::convertFromBacking(const ComputePassTimestampWrites& computePassTimestampWrites)
 {
-    Vector<PAL::WebGPU::ComputePassTimestampWrite> timestampWrites;
+    Vector<WebCore::WebGPU::ComputePassTimestampWrite> timestampWrites;
     timestampWrites.reserveInitialCapacity(computePassTimestampWrites.size());
     for (const auto& backingTimestampWrite : computePassTimestampWrites) {
         auto timestampWrite = convertFromBacking(backingTimestampWrite);

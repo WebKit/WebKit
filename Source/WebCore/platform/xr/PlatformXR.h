@@ -121,7 +121,7 @@ inline SessionFeature sessionFeatureFromReferenceSpaceType(ReferenceSpaceType re
 
 inline std::optional<SessionFeature> parseSessionFeatureDescriptor(StringView string)
 {
-    auto feature = string.stripWhiteSpace().convertToASCIILowercase();
+    auto feature = string.trim(isUnicodeCompatibleASCIIWhitespace<UChar>).convertToASCIILowercase();
 
     if (feature == "viewer"_s)
         return SessionFeature::ReferenceSpaceTypeViewer;
@@ -293,12 +293,14 @@ public:
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
             std::unique_ptr<WebCore::IOSurface> surface;
             bool isShared { false };
+#elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+            std::tuple<MachSendRight, bool> colorTexture = { { }, false };
+            std::tuple<MachSendRight, bool> depthStencilBuffer = { { }, false };
 #else
             PlatformGLObject opaqueTexture { 0 };
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-            MachSendRight completionPort { };
-            uint64_t renderingFrameIndex { 0 };
+            std::tuple<MachSendRight, uint64_t> completionSyncEvent;
 #endif
 
             template<class Encoder> void encode(Encoder&) const;
@@ -582,12 +584,14 @@ void Device::FrameData::LayerData::encode(Encoder& encoder) const
     MachSendRight surfaceSendRight = surface ? surface->createSendRight() : MachSendRight();
     encoder << surfaceSendRight;
     encoder << isShared;
+#elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+    encoder << colorTexture;
+    encoder << depthStencilBuffer;
 #else
     encoder << opaqueTexture;
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    encoder << completionPort;
-    encoder << renderingFrameIndex;
+    encoder << completionSyncEvent;
 #endif
 }
 
@@ -602,14 +606,17 @@ std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode
     layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight));
     if (!decoder.decode(layerData.isShared))
         return std::nullopt;
+#elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+    if (!decoder.decode(layerData.colorTexture))
+        return std::nullopt;
+    if (!decoder.decode(layerData.depthStencilBuffer))
+        return std::nullopt;
 #else
     if (!decoder.decode(layerData.opaqueTexture))
         return std::nullopt;
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    if (!decoder.decode(layerData.completionPort))
-        return std::nullopt;
-    if (!decoder.decode(layerData.renderingFrameIndex))
+    if (!decoder.decode(layerData.completionSyncEvent))
         return std::nullopt;
 #endif
     return layerData;

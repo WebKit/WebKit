@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal.plainyearmonth.prototype.equals
 description: equals() takes the calendar into account
-includes: [compareArray.js]
+includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
@@ -14,9 +14,12 @@ class CustomCalendar extends Temporal.Calendar {
     super("iso8601");
     this._id = id;
   }
-  toString() {
+  get id() {
     actual.push(this._id);
     return this._id;
+  }
+  toString() {
+    TemporalHelpers.assertUnreachable("should not call toString");
   }
 }
 

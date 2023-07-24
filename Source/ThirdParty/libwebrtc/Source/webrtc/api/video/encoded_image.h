@@ -89,6 +89,26 @@ class RTC_EXPORT EncodedImage {
 
   int64_t NtpTimeMs() const { return ntp_time_ms_; }
 
+  // Every simulcast layer (= encoding) has its own encoder and RTP stream.
+  // There can be no dependencies between different simulcast layers.
+  absl::optional<int> SimulcastIndex() const { return simulcast_index_; }
+  void SetSimulcastIndex(absl::optional<int> simulcast_index) {
+    RTC_DCHECK_GE(simulcast_index.value_or(0), 0);
+    RTC_DCHECK_LT(simulcast_index.value_or(0), kMaxSimulcastStreams);
+    simulcast_index_ = simulcast_index;
+  }
+
+  const absl::optional<webrtc::Timestamp>& CaptureTimeIdentifier() const {
+    return capture_time_identifier_;
+  }
+  void SetCaptureTimeIdentifier(
+      const absl::optional<webrtc::Timestamp>& capture_time_identifier) {
+    capture_time_identifier_ = capture_time_identifier;
+  }
+
+  // Encoded images can have dependencies between spatial and/or temporal
+  // layers, depending on the scalability mode used by the encoder. See diagrams
+  // at https://w3c.github.io/webrtc-svc/#dependencydiagrams*.
   absl::optional<int> SpatialIndex() const { return spatial_index_; }
   void SetSpatialIndex(absl::optional<int> spatial_index) {
     RTC_DCHECK_GE(spatial_index.value_or(0), 0);
@@ -204,6 +224,8 @@ class RTC_EXPORT EncodedImage {
   rtc::scoped_refptr<EncodedImageBufferInterface> encoded_data_;
   size_t size_ = 0;  // Size of encoded frame data.
   uint32_t timestamp_rtp_ = 0;
+  absl::optional<int> simulcast_index_;
+  absl::optional<webrtc::Timestamp> capture_time_identifier_;
   absl::optional<int> spatial_index_;
   absl::optional<int> temporal_index_;
   std::map<int, size_t> spatial_layer_frame_size_bytes_;

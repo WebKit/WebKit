@@ -59,7 +59,9 @@ static bool canShareDisplayListWithItem(DisplayList::ItemType itemType)
     case ItemType::SetMiterLimit:
     case ItemType::ClearShadow:
     case ItemType::Clip:
+    case ItemType::ClipRoundedRect:
     case ItemType::ClipOut:
+    case ItemType::ClipOutRoundedRect:
     case ItemType::ClipToImageBuffer:
     case ItemType::ClipOutToPath:
     case ItemType::ClipPath:
@@ -89,6 +91,7 @@ static bool canShareDisplayListWithItem(DisplayList::ItemType itemType)
     case ItemType::FillQuadCurve:
     case ItemType::FillBezierCurve:
 #endif
+    case ItemType::FillPathSegment:
     case ItemType::FillPath:
     case ItemType::FillEllipse:
 #if ENABLE(VIDEO)
@@ -101,6 +104,7 @@ static bool canShareDisplayListWithItem(DisplayList::ItemType itemType)
     case ItemType::StrokeQuadCurve:
     case ItemType::StrokeBezierCurve:
 #endif
+    case ItemType::StrokePathSegment:
     case ItemType::StrokePath:
     case ItemType::StrokeEllipse:
     case ItemType::ClearRect:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
 #include "GPUIntegralTypes.h"
 #include "GPURenderPassDescriptor.h"
 #include "GPURenderPassEncoder.h"
+#include "WebGPUCommandEncoder.h"
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUCommandEncoder.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -48,7 +48,7 @@ class GPUQuerySet;
 
 class GPUCommandEncoder : public RefCounted<GPUCommandEncoder> {
 public:
-    static Ref<GPUCommandEncoder> create(Ref<PAL::WebGPU::CommandEncoder>&& backing)
+    static Ref<GPUCommandEncoder> create(Ref<WebGPU::CommandEncoder>&& backing)
     {
         return adoptRef(*new GPUCommandEncoder(WTFMove(backing)));
     }
@@ -101,16 +101,16 @@ public:
 
     Ref<GPUCommandBuffer> finish(const std::optional<GPUCommandBufferDescriptor>&);
 
-    PAL::WebGPU::CommandEncoder& backing() { return m_backing; }
-    const PAL::WebGPU::CommandEncoder& backing() const { return m_backing; }
+    WebGPU::CommandEncoder& backing() { return m_backing; }
+    const WebGPU::CommandEncoder& backing() const { return m_backing; }
 
 private:
-    GPUCommandEncoder(Ref<PAL::WebGPU::CommandEncoder>&& backing)
+    GPUCommandEncoder(Ref<WebGPU::CommandEncoder>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
-    Ref<PAL::WebGPU::CommandEncoder> m_backing;
+    Ref<WebGPU::CommandEncoder> m_backing;
 };
 
 }

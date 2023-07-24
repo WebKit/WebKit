@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <pal/graphics/WebGPU/WebGPUBindGroupLayout.h>
+#include "WebGPUBindGroupLayout.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -34,7 +34,7 @@ namespace WebCore {
 
 class GPUBindGroupLayout : public RefCounted<GPUBindGroupLayout> {
 public:
-    static Ref<GPUBindGroupLayout> create(Ref<PAL::WebGPU::BindGroupLayout>&& backing)
+    static Ref<GPUBindGroupLayout> create(Ref<WebGPU::BindGroupLayout>&& backing)
     {
         return adoptRef(*new GPUBindGroupLayout(WTFMove(backing)));
     }
@@ -42,16 +42,16 @@ public:
     String label() const;
     void setLabel(String&&);
 
-    PAL::WebGPU::BindGroupLayout& backing() { return m_backing; }
-    const PAL::WebGPU::BindGroupLayout& backing() const { return m_backing; }
+    WebGPU::BindGroupLayout& backing() { return m_backing; }
+    const WebGPU::BindGroupLayout& backing() const { return m_backing; }
 
 private:
-    GPUBindGroupLayout(Ref<PAL::WebGPU::BindGroupLayout>&& backing)
+    GPUBindGroupLayout(Ref<WebGPU::BindGroupLayout>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
-    Ref<PAL::WebGPU::BindGroupLayout> m_backing;
+    Ref<WebGPU::BindGroupLayout> m_backing;
 };
 
 }

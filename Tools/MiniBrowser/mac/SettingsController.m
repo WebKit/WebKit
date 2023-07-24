@@ -66,6 +66,7 @@ static NSString * const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"Anima
 static NSString * const AppleColorFilterEnabledPreferenceKey = @"AppleColorFilterEnabled";
 static NSString * const PunchOutWhiteBackgroundsInDarkModePreferenceKey = @"PunchOutWhiteBackgroundsInDarkMode";
 static NSString * const UseSystemAppearancePreferenceKey = @"UseSystemAppearance";
+static NSString * const DataDetectorsEnabledPreferenceKey = @"DataDetectorsEnabled";
 static NSString * const UseMockCaptureDevicesPreferenceKey = @"UseMockCaptureDevices";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
@@ -73,7 +74,6 @@ static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2Us
 
 static NSString * const PerWindowWebProcessesDisabledKey = @"PerWindowWebProcessesDisabled";
 static NSString * const NetworkCacheSpeculativeRevalidationDisabledKey = @"NetworkCacheSpeculativeRevalidationDisabled";
-static NSString * const ProcessSwapOnWindowOpenWithOpenerKey = @"ProcessSwapOnWindowOpenWithOpener";
 
 typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NonFastScrollableRegionOverlayTag = 100,
@@ -182,6 +182,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Enable color-filter", @selector(toggleAppleColorFilterEnabled:));
     addItem(@"Punch Out White Backgrounds in Dark Mode", @selector(togglePunchOutWhiteBackgroundsInDarkMode:));
     addItem(@"Use System Appearance", @selector(toggleUseSystemAppearance:));
+    addItem(@"Enable Data Detectors", @selector(toggleDataDetectorsEnabled:));
     addItem(@"Use Mock Capture Devices", @selector(toggleUseMockCaptureDevices:));
 
     addSeparator();
@@ -194,7 +195,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Load All Site Icons Per-Page", @selector(toggleLoadsAllSiteIcons:));
     addItem(@"Use GameController.framework on macOS (Restart required)", @selector(toggleUsesGameControllerFramework:));
     addItem(@"Disable network cache speculative revalidation", @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:));
-    addItem(@"Enable Process Swap on window.open() with an opener", @selector(toggleProcessSwapOnWindowOpenWithOpener:));
     indent = NO;
 
     NSMenu *debugOverlaysMenu = addSubmenu(@"Debug Overlays");
@@ -365,6 +365,8 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self punchOutWhiteBackgroundsInDarkMode] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseSystemAppearance:))
         [menuItem setState:[self useSystemAppearance] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleDataDetectorsEnabled:))
+        [menuItem setState:[self dataDetectorsEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseMockCaptureDevices:))
         [menuItem setState:[self useMockCaptureDevices] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleReserveSpaceForBanners:))
@@ -379,8 +381,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self usesGameControllerFramework] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:))
         [menuItem setState:[self networkCacheSpeculativeRevalidationDisabled] ? NSControlStateValueOn : NSControlStateValueOff];
-    else if (action == @selector(toggleProcessSwapOnWindowOpenWithOpener:))
-        [menuItem setState:[self processSwapOnWindowOpenWithOpenerEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseUISideCompositing:))
         [menuItem setState:[self useUISideCompositing] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(togglePerWindowWebProcessesDisabled:))
@@ -593,16 +593,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     [self _toggleBooleanDefault:NetworkCacheSpeculativeRevalidationDisabledKey];
 }
 
-- (BOOL)processSwapOnWindowOpenWithOpenerEnabled
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:ProcessSwapOnWindowOpenWithOpenerKey];
-}
-
-- (void)toggleProcessSwapOnWindowOpenWithOpener:(id)sender
-{
-    [self _toggleBooleanDefault:ProcessSwapOnWindowOpenWithOpenerKey];
-}
-
 - (BOOL)isSpaceReservedForBanners
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:ReserveSpaceForBannersPreferenceKey];
@@ -686,6 +676,16 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (BOOL)useSystemAppearance
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UseSystemAppearancePreferenceKey];
+}
+
+- (void)toggleDataDetectorsEnabled:(id)sender
+{
+    [self _toggleBooleanDefault:DataDetectorsEnabledPreferenceKey];
+}
+
+- (BOOL)dataDetectorsEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:DataDetectorsEnabledPreferenceKey];
 }
 
 - (void)toggleUseMockCaptureDevices:(id)sender

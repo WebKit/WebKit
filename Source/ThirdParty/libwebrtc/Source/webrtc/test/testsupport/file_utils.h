@@ -73,7 +73,7 @@ std::string WorkingDir();
 
 // Reads the content of a directory and, in case of success, returns a vector
 // of strings with one element for each found file or directory. Each element is
-// a path created by prepending |dir| to the file/directory name. "." and ".."
+// a path created by prepending `dir` to the file/directory name. "." and ".."
 // are never added in the returned vector.
 absl::optional<std::vector<std::string>> ReadDirectory(absl::string_view path);
 

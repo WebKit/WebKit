@@ -11,6 +11,7 @@ list(APPEND WebKit_SOURCES
 
     GPUProcess/graphics/wc/RemoteWCLayerTreeHost.cpp
     GPUProcess/graphics/wc/WCContentBufferManager.cpp
+    GPUProcess/graphics/wc/WCRemoteFrameHostLayerManager.cpp
     GPUProcess/graphics/wc/WCScene.cpp
     GPUProcess/graphics/wc/WCSceneContext.cpp
 
@@ -169,6 +170,10 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
 
 list(APPEND WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/wc/RemoteWCLayerTreeHost
+)
+
+list(APPEND WebKit_SERIALIZATION_IN_FILES
+    WebProcess/WebPage/wc/WCUpdateInfo.serialization.in
 )
 
 list(APPEND WebKit_PRIVATE_LIBRARIES

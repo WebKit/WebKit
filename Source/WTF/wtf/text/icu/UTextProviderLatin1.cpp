@@ -272,14 +272,14 @@ static inline UTextProviderContext textLatin1ContextAwareGetCurrentContext(const
 static void textLatin1ContextAwareMoveInPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(text->chunkContents == text->pExtra);
+    ASSERT(forward ? nativeIndex >= text->b : nativeIndex > text->b);
+    ASSERT(nativeIndex <= nativeLength);
     if (forward) {
-        ASSERT(nativeIndex >= text->b && nativeIndex < nativeLength);
         text->chunkNativeStart = nativeIndex;
         text->chunkNativeLimit = nativeIndex + text->extraSize / sizeof(UChar);
         if (text->chunkNativeLimit > nativeLength)
             text->chunkNativeLimit = nativeLength;
     } else {
-        ASSERT(nativeIndex > text->b && nativeIndex <= nativeLength);
         text->chunkNativeLimit = nativeIndex;
         text->chunkNativeStart = nativeIndex - text->extraSize / sizeof(UChar);
         if (text->chunkNativeStart < text->b)
@@ -304,9 +304,8 @@ static void textLatin1ContextAwareSwitchToPrimaryContext(UText* text, int64_t na
 static void textLatin1ContextAwareMoveInPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(text->chunkContents == text->q);
-    ASSERT(forward ? nativeIndex < text->b : nativeIndex <= text->b);
-    ASSERT_UNUSED(nativeLength, forward ? nativeIndex < nativeLength : nativeIndex <= nativeLength);
-    ASSERT_UNUSED(forward, forward ? nativeIndex < nativeLength : nativeIndex <= nativeLength);
+    ASSERT_UNUSED(forward, forward ? nativeIndex < text->b : nativeIndex <= text->b);
+    ASSERT_UNUSED(nativeLength, nativeIndex <= nativeLength);
     text->chunkNativeStart = 0;
     text->chunkNativeLimit = text->b;
     text->chunkLength = text->b;

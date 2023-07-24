@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -242,7 +242,7 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
     ASSERT(destination.format.pixelFormat == PixelFormat::RGBA8 || destination.format.pixelFormat == PixelFormat::BGRA8);
 
 #if USE(ACCELERATE) && USE(CG)
-    if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat) {
+    if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat && source.format.colorSpace == destination.format.colorSpace) {
         // FIXME: Can thes both just use per-row memcpy?
         if (source.format.alphaFormat == AlphaPremultiplication::Premultiplied)
             convertImagePixelsUnaccelerated<convertSinglePixelPremultipliedToPremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
@@ -288,6 +288,19 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
         }
     }
 #endif
+}
+
+void copyRows(unsigned sourceBytesPerRow, const uint8_t* source, unsigned destinationBytesPerRow, uint8_t* destination, unsigned rows, unsigned copyBytesPerRow)
+{
+    if (sourceBytesPerRow == destinationBytesPerRow && copyBytesPerRow == sourceBytesPerRow)
+        std::copy(source, source + copyBytesPerRow * rows, destination);
+    else {
+        for (unsigned row = 0; row < rows; ++row) {
+            std::copy(source, source + copyBytesPerRow, destination);
+            source += sourceBytesPerRow;
+            destination += destinationBytesPerRow;
+        }
+    }
 }
 
 }

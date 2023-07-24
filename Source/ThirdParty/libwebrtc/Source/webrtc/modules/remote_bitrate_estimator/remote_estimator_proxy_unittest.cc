@@ -10,10 +10,11 @@
 
 #include "modules/remote_bitrate_estimator/remote_estimator_proxy.h"
 
+#include <cstdint>
 #include <memory>
 #include <utility>
 
-#include "api/transport/field_trial_based_config.h"
+#include "absl/types/optional.h"
 #include "api/transport/network_types.h"
 #include "api/transport/test/mock_network_control.h"
 #include "api/units/data_size.h"
@@ -21,6 +22,7 @@
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -35,7 +37,6 @@ using ::testing::MockFunction;
 using ::testing::Return;
 using ::testing::SizeIs;
 
-constexpr DataSize kDefaultPacketSize = DataSize::Bytes(100);
 constexpr uint32_t kMediaSsrc = 456;
 constexpr uint16_t kBaseSeq = 10;
 constexpr Timestamp kBaseTime = Timestamp::Millis(123);
@@ -79,20 +80,35 @@ class RemoteEstimatorProxyTest : public ::testing::Test {
  public:
   RemoteEstimatorProxyTest()
       : clock_(0),
-        proxy_(feedback_sender_.AsStdFunction(),
-               &field_trial_config_,
-               &network_state_estimator_) {}
+        proxy_(feedback_sender_.AsStdFunction(), &network_state_estimator_) {}
 
  protected:
-  void IncomingPacket(
+  void IncomingPacket(uint16_t seq,
+                      Timestamp arrival_time,
+                      absl::optional<uint32_t> abs_send_time = absl::nullopt) {
+    RtpHeaderExtensionMap map;
+    map.Register<TransportSequenceNumber>(1);
+    map.Register<AbsoluteSendTime>(2);
+    RtpPacketReceived packet(&map, arrival_time);
+    packet.SetSsrc(kMediaSsrc);
+    packet.SetExtension<TransportSequenceNumber>(seq);
+    if (abs_send_time) {
+      packet.SetExtension<AbsoluteSendTime>(*abs_send_time);
+    }
+    proxy_.IncomingPacket(packet);
+  }
+
+  void IncomingPacketV2(
       uint16_t seq,
       Timestamp arrival_time,
       absl::optional<FeedbackRequest> feedback_request = absl::nullopt) {
-    proxy_.IncomingPacket({.arrival_time = arrival_time,
-                           .size = DataSize::Bytes(100),
-                           .ssrc = kMediaSsrc,
-                           .transport_sequence_number = seq,
-                           .feedback_request = feedback_request});
+    RtpHeaderExtensionMap map;
+    map.Register<TransportSequenceNumberV2>(1);
+    RtpPacketReceived packet(&map, arrival_time);
+    packet.SetSsrc(kMediaSsrc);
+    packet.SetExtension<webrtc::TransportSequenceNumberV2>(seq,
+                                                           feedback_request);
+    proxy_.IncomingPacket(packet);
   }
 
   void Process() {
@@ -100,7 +116,6 @@ class RemoteEstimatorProxyTest : public ::testing::Test {
     proxy_.Process(clock_.CurrentTime());
   }
 
-  FieldTrialBasedConfig field_trial_config_;
   SimulatedClock clock_;
   MockFunction<void(std::vector<std::unique_ptr<rtcp::RtcpPacket>>)>
       feedback_sender_;
@@ -282,7 +297,6 @@ TEST_F(RemoteEstimatorProxyTest, HandlesMalformedSequenceNumbers) {
             rtcp::TransportFeedback* feedback_packet =
                 static_cast<rtcp::TransportFeedback*>(
                     feedback_packets[0].get());
-            EXPECT_EQ(kBaseSeq + 20000 + 9, feedback_packet->GetBaseSequence());
             EXPECT_EQ(kMediaSsrc, feedback_packet->media_ssrc());
             EXPECT_THAT(SequenceNumbers(*feedback_packet),
                         ElementsAre(kBaseSeq + 20009, kBaseSeq + 40009));
@@ -458,22 +472,20 @@ TEST_F(RemoteEstimatorProxyTest, TwccReportsUse5PercentOfAvailableBandwidth) {
 //////////////////////////////////////////////////////////////////////////////
 typedef RemoteEstimatorProxyTest RemoteEstimatorProxyOnRequestTest;
 TEST_F(RemoteEstimatorProxyOnRequestTest, DisablesPeriodicProcess) {
-  proxy_.SetSendPeriodicFeedback(false);
+  IncomingPacketV2(kBaseSeq, kBaseTime);
   EXPECT_EQ(proxy_.Process(clock_.CurrentTime()), TimeDelta::PlusInfinity());
 }
 
 TEST_F(RemoteEstimatorProxyOnRequestTest, ProcessDoesNotSendFeedback) {
-  proxy_.SetSendPeriodicFeedback(false);
-  IncomingPacket(kBaseSeq, kBaseTime);
+  IncomingPacketV2(kBaseSeq, kBaseTime);
   EXPECT_CALL(feedback_sender_, Call).Times(0);
   Process();
 }
 
 TEST_F(RemoteEstimatorProxyOnRequestTest, RequestSinglePacketFeedback) {
-  proxy_.SetSendPeriodicFeedback(false);
-  IncomingPacket(kBaseSeq, kBaseTime);
-  IncomingPacket(kBaseSeq + 1, kBaseTime + kMaxSmallDelta);
-  IncomingPacket(kBaseSeq + 2, kBaseTime + 2 * kMaxSmallDelta);
+  IncomingPacketV2(kBaseSeq, kBaseTime);
+  IncomingPacketV2(kBaseSeq + 1, kBaseTime + kMaxSmallDelta);
+  IncomingPacketV2(kBaseSeq + 2, kBaseTime + 2 * kMaxSmallDelta);
 
   EXPECT_CALL(feedback_sender_, Call)
       .WillOnce(Invoke(
@@ -492,15 +504,14 @@ TEST_F(RemoteEstimatorProxyOnRequestTest, RequestSinglePacketFeedback) {
 
   constexpr FeedbackRequest kSinglePacketFeedbackRequest = {
       /*include_timestamps=*/true, /*sequence_count=*/1};
-  IncomingPacket(kBaseSeq + 3, kBaseTime + 3 * kMaxSmallDelta,
-                 kSinglePacketFeedbackRequest);
+  IncomingPacketV2(kBaseSeq + 3, kBaseTime + 3 * kMaxSmallDelta,
+                   kSinglePacketFeedbackRequest);
 }
 
 TEST_F(RemoteEstimatorProxyOnRequestTest, RequestLastFivePacketFeedback) {
-  proxy_.SetSendPeriodicFeedback(false);
   int i = 0;
   for (; i < 10; ++i) {
-    IncomingPacket(kBaseSeq + i, kBaseTime + i * kMaxSmallDelta);
+    IncomingPacketV2(kBaseSeq + i, kBaseTime + i * kMaxSmallDelta);
   }
 
   EXPECT_CALL(feedback_sender_, Call)
@@ -525,17 +536,16 @@ TEST_F(RemoteEstimatorProxyOnRequestTest, RequestLastFivePacketFeedback) {
 
   constexpr FeedbackRequest kFivePacketsFeedbackRequest = {
       /*include_timestamps=*/true, /*sequence_count=*/5};
-  IncomingPacket(kBaseSeq + i, kBaseTime + i * kMaxSmallDelta,
-                 kFivePacketsFeedbackRequest);
+  IncomingPacketV2(kBaseSeq + i, kBaseTime + i * kMaxSmallDelta,
+                   kFivePacketsFeedbackRequest);
 }
 
 TEST_F(RemoteEstimatorProxyOnRequestTest,
        RequestLastFivePacketFeedbackMissingPackets) {
-  proxy_.SetSendPeriodicFeedback(false);
   int i = 0;
   for (; i < 10; ++i) {
     if (i != 7 && i != 9)
-      IncomingPacket(kBaseSeq + i, kBaseTime + i * kMaxSmallDelta);
+      IncomingPacketV2(kBaseSeq + i, kBaseTime + i * kMaxSmallDelta);
   }
 
   EXPECT_CALL(feedback_sender_, Call)
@@ -557,8 +567,8 @@ TEST_F(RemoteEstimatorProxyOnRequestTest,
 
   constexpr FeedbackRequest kFivePacketsFeedbackRequest = {
       /*include_timestamps=*/true, /*sequence_count=*/5};
-  IncomingPacket(kBaseSeq + i, kBaseTime + i * kMaxSmallDelta,
-                 kFivePacketsFeedbackRequest);
+  IncomingPacketV2(kBaseSeq + i, kBaseTime + i * kMaxSmallDelta,
+                   kFivePacketsFeedbackRequest);
 }
 
 TEST_F(RemoteEstimatorProxyTest, ReportsIncomingPacketToNetworkStateEstimator) {
@@ -569,16 +579,11 @@ TEST_F(RemoteEstimatorProxyTest, ReportsIncomingPacketToNetworkStateEstimator) {
   EXPECT_CALL(network_state_estimator_, OnReceivedPacket(_))
       .WillOnce(Invoke([&](const PacketResult& packet) {
         EXPECT_EQ(packet.receive_time, kBaseTime);
-        EXPECT_EQ(packet.sent_packet.size,
-                  kDefaultPacketSize + kPacketOverhead);
+        EXPECT_GT(packet.sent_packet.size, kPacketOverhead);
         first_send_timestamp = packet.sent_packet.send_time;
       }));
   // Incoming packet with abs sendtime but without transport sequence number.
-  proxy_.IncomingPacket(
-      {.arrival_time = kBaseTime,
-       .size = kDefaultPacketSize,
-       .ssrc = kMediaSsrc,
-       .absolute_send_time_24bits = AbsoluteSendTime::To24Bits(kBaseTime)});
+  IncomingPacket(kBaseSeq, kBaseTime, AbsoluteSendTime::To24Bits(kBaseTime));
 
   // Expect packet with older abs send time to be treated as sent at the same
   // time as the previous packet due to reordering.
@@ -588,12 +593,9 @@ TEST_F(RemoteEstimatorProxyTest, ReportsIncomingPacketToNetworkStateEstimator) {
         EXPECT_EQ(packet.sent_packet.send_time, first_send_timestamp);
       }));
 
-  proxy_.IncomingPacket(
-      {.arrival_time = kBaseTime,
-       .size = kDefaultPacketSize,
-       .ssrc = kMediaSsrc,
-       .absolute_send_time_24bits =
-           AbsoluteSendTime::To24Bits(kBaseTime - TimeDelta::Millis(12))});
+  IncomingPacket(kBaseSeq + 1, kBaseTime,
+                 /*abs_send_time=*/
+                 AbsoluteSendTime::To24Bits(kBaseTime - TimeDelta::Millis(12)));
 }
 
 TEST_F(RemoteEstimatorProxyTest, IncomingPacketHandlesWrapInAbsSendTime) {
@@ -611,11 +613,7 @@ TEST_F(RemoteEstimatorProxyTest, IncomingPacketHandlesWrapInAbsSendTime) {
         EXPECT_EQ(packet.receive_time, kBaseTime);
         first_send_timestamp = packet.sent_packet.send_time;
       }));
-  proxy_.IncomingPacket({.arrival_time = kBaseTime,
-                         .size = kDefaultPacketSize,
-                         .ssrc = kMediaSsrc,
-                         .absolute_send_time_24bits = kFirstAbsSendTime,
-                         .transport_sequence_number = kBaseSeq});
+  IncomingPacket(kBaseSeq, kBaseTime, kFirstAbsSendTime);
 
   EXPECT_CALL(network_state_estimator_, OnReceivedPacket(_))
       .WillOnce(Invoke([first_send_timestamp,
@@ -624,21 +622,14 @@ TEST_F(RemoteEstimatorProxyTest, IncomingPacketHandlesWrapInAbsSendTime) {
         EXPECT_EQ(packet.sent_packet.send_time.ms(),
                   (first_send_timestamp + kExpectedAbsSendTimeDelta).ms());
       }));
-  proxy_.IncomingPacket({.arrival_time = kBaseTime + TimeDelta::Millis(123),
-                         .size = kDefaultPacketSize,
-                         .ssrc = kMediaSsrc,
-                         .absolute_send_time_24bits = kSecondAbsSendTime,
-                         .transport_sequence_number = kBaseSeq + 1});
+  IncomingPacket(kBaseSeq + 1, kBaseTime + TimeDelta::Millis(123),
+                 kSecondAbsSendTime);
 }
 
 TEST_F(RemoteEstimatorProxyTest, SendTransportFeedbackAndNetworkStateUpdate) {
-  proxy_.IncomingPacket(
-      {.arrival_time = kBaseTime,
-       .size = kDefaultPacketSize,
-       .ssrc = kMediaSsrc,
-       .absolute_send_time_24bits =
-           AbsoluteSendTime::To24Bits(kBaseTime - TimeDelta::Millis(1)),
-       .transport_sequence_number = kBaseSeq});
+  IncomingPacket(kBaseSeq, kBaseTime,
+                 AbsoluteSendTime::To24Bits(kBaseTime - TimeDelta::Millis(1)));
+
   EXPECT_CALL(network_state_estimator_, GetCurrentEstimate())
       .WillOnce(Return(NetworkStateEstimate()));
   EXPECT_CALL(feedback_sender_, Call(SizeIs(2)));

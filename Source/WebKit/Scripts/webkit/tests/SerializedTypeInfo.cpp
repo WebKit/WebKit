@@ -29,22 +29,26 @@
 #if ENABLE(TEST_FEATURE)
 #include "CommonHeader.h"
 #endif
+#include "CustomEncoded.h"
 #if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
 #endif
 #include "HeaderWithoutCondition"
+#include "PlatformClass.h"
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
 #endif
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
-#include <Namespace/EmptyConstructorNullable.h>
 #include <Namespace/EmptyConstructorStruct.h>
+#include <Namespace/EmptyConstructorWithIf.h>
 #include <Namespace/ReturnRefClass.h>
 #include <WebCore/FloatBoxExtent.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
+#include <WebCore/MoveOnlyBaseClass.h>
+#include <WebCore/MoveOnlyDerivedClass.h>
 #include <WebCore/TimingFunction.h>
 #include <wtf/CreateUsingClass.h>
 #include <wtf/Seconds.h>
@@ -70,9 +74,6 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         } },
         { "Namespace::OtherClass"_s, {
             {
-                "bool"_s,
-                "isNull"_s
-            }, {
                 "int"_s,
                 "a"_s
             }, {
@@ -104,11 +105,8 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "m_double"_s
             }
         } },
-        { "Namespace::EmptyConstructorNullable"_s, {
+        { "Namespace::EmptyConstructorWithIf"_s, {
             {
-                "bool"_s,
-                "m_isNull"_s
-            }, {
                 "MemberType"_s,
                 "m_type"_s
             }, {
@@ -192,6 +190,30 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             }
         } },
         { "Namespace::AnotherCommonClass"_s, {
+            {
+                "int"_s,
+                "value"_s
+            }
+        } },
+        { "WebCore::MoveOnlyBaseClass"_s, {
+            { "std::variant<WebCore::MoveOnlyDerivedClass>"_s, "subclasses"_s }
+        } },
+        { "WebCore::MoveOnlyDerivedClass"_s, {
+            {
+                "std::optional<int>"_s,
+                "firstMember"_s
+            }, {
+                "int"_s,
+                "secondMember"_s
+            }
+        } },
+        { "WebKit::PlatformClass"_s, {
+            {
+                "int"_s,
+                "value"_s
+            }
+        } },
+        { "WebKit::CustomEncoded"_s, {
             {
                 "int"_s,
                 "value"_s

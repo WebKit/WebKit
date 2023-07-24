@@ -30,14 +30,14 @@ namespace WTF {
 
 template<>
 struct DefaultRefDerefTraits<FcPattern> {
-    static void refIfNotNull(FcPattern* ptr);
-    static void derefIfNotNull(FcPattern* ptr);
+    static FcPattern* refIfNotNull(FcPattern*);
+    static void derefIfNotNull(FcPattern*);
 };
 
 template<>
 struct DefaultRefDerefTraits<FcConfig> {
-    static void refIfNotNull(FcConfig* ptr);
-    static void derefIfNotNull(FcConfig* ptr);
+    static FcConfig* refIfNotNull(FcConfig*);
+    static void derefIfNotNull(FcConfig*);
 };
 
 } // namespace WTF

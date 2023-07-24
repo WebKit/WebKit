@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 433x18
           text run at (0,0) width 433: "The overflow auto section below should span the width of the page."
 layer at (8,58) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,50) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,50) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,232) size 784x36
   RenderBlock {DIV} at (0,224) size 784x36
     RenderText {#text} at (0,0) size 778x36

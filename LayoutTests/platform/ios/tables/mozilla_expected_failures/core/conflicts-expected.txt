@@ -309,4 +309,4 @@ layer at (0,0) size 800x1418
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "auto"
 layer at (8,94) size 402x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,86) size 402x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,86) size 402x2 [color=#808080] [border: (1px inset #808080)]

@@ -14,30 +14,68 @@
 #include <memory>
 #include <utility>
 
+#include "api/sequence_checker.h"
+#include "api/test/video/test_video_track_source.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_source_interface.h"
-#include "pc/video_track_source.h"
 #include "test/test_video_capturer.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
 
-class TestVideoCapturerVideoTrackSource : public VideoTrackSource {
+class TestVideoCapturerVideoTrackSource : public test::TestVideoTrackSource {
  public:
   TestVideoCapturerVideoTrackSource(
       std::unique_ptr<test::TestVideoCapturer> video_capturer,
       bool is_screencast)
-      : VideoTrackSource(/*remote=*/false),
+      : TestVideoTrackSource(/*remote=*/false),
         video_capturer_(std::move(video_capturer)),
-        is_screencast_(is_screencast) {}
+        is_screencast_(is_screencast) {
+    sequence_checker_.Detach();
+  }
+
+  TestVideoCapturerVideoTrackSource(const TestVideoCapturerVideoTrackSource&) =
+      delete;
+  TestVideoCapturerVideoTrackSource& operator=(
+      const TestVideoCapturerVideoTrackSource&) = delete;
+  TestVideoCapturerVideoTrackSource(TestVideoCapturerVideoTrackSource&&) =
+      delete;
+  TestVideoCapturerVideoTrackSource& operator=(
+      TestVideoCapturerVideoTrackSource&&) = delete;
 
   ~TestVideoCapturerVideoTrackSource() = default;
 
-  void Start() { SetState(kLive); }
+  void Start() override { SetState(kLive); }
 
-  void Stop() { SetState(kMuted); }
+  void Stop() override { SetState(kMuted); }
 
-  bool is_screencast() const override { return is_screencast_; }
+  int GetFrameWidth() const override {
+    return video_capturer_->GetFrameWidth();
+  }
+
+  int GetFrameHeight() const override {
+    return video_capturer_->GetFrameHeight();
+  }
+
+  bool is_screencast() const override {
+    RTC_DCHECK_RUN_ON(&sequence_checker_);
+    return is_screencast_;
+  }
+
+  void SetEnableAdaptation(bool enable_adaptation) {
+    video_capturer_->SetEnableAdaptation(enable_adaptation);
+  }
+
+  void OnOutputFormatRequest(int width,
+                             int height,
+                             const absl::optional<int>& max_fps) override {
+    video_capturer_->OnOutputFormatRequest(width, height, max_fps);
+  }
+
+  void SetScreencast(bool is_screencast) override {
+    RTC_DCHECK_RUN_ON(&sequence_checker_);
+    is_screencast_ = is_screencast;
+  }
 
  protected:
   rtc::VideoSourceInterface<VideoFrame>* source() override {
@@ -45,8 +83,9 @@ class TestVideoCapturerVideoTrackSource : public VideoTrackSource {
   }
 
  private:
-  std::unique_ptr<test::TestVideoCapturer> video_capturer_;
-  const bool is_screencast_;
+  const std::unique_ptr<test::TestVideoCapturer> video_capturer_;
+  SequenceChecker sequence_checker_;
+  bool is_screencast_ RTC_GUARDED_BY(sequence_checker_);
 };
 
 }  // namespace webrtc_pc_e2e

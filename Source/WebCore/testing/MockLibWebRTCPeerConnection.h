@@ -208,6 +208,15 @@ private:
         return m_dtmfSender;
     }
 
+    rtc::scoped_refptr<webrtc::DtlsTransportInterface> dtls_transport() const final { return { }; }
+    void SetStreams(const std::vector<std::string>&) final { }
+    std::vector<webrtc::RtpEncodingParameters> init_send_encodings() const final { return { }; }
+    void SetFrameEncryptor(rtc::scoped_refptr<webrtc::FrameEncryptorInterface>) final { }
+    rtc::scoped_refptr<webrtc::FrameEncryptorInterface> GetFrameEncryptor() const final { return { }; }
+
+    void SetEncoderToPacketizerFrameTransformer(rtc::scoped_refptr<webrtc::FrameTransformerInterface>) final { }
+    void SetEncoderSelector(std::unique_ptr<webrtc::VideoEncoderFactory::EncoderSelectorInterface>) final { }
+
 private:
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> m_track;
     mutable rtc::scoped_refptr<webrtc::DtmfSenderInterface> m_dtmfSender;
@@ -254,9 +263,9 @@ private:
     bool stopping() const final { return true; }
     webrtc::RTCError SetCodecPreferences(rtc::ArrayView<webrtc::RtpCodecCapability>) final { return { }; };
     std::vector<webrtc::RtpCodecCapability> codec_preferences() const final { return { }; }
-    std::vector<webrtc::RtpHeaderExtensionCapability> HeaderExtensionsToOffer() const final { return { }; }
-    std::vector<webrtc::RtpHeaderExtensionCapability> HeaderExtensionsNegotiated() const final { return { }; }
-    webrtc::RTCError SetOfferedRtpHeaderExtensions(rtc::ArrayView<const webrtc::RtpHeaderExtensionCapability>) final { return { }; }
+    std::vector<webrtc::RtpHeaderExtensionCapability> GetHeaderExtensionsToNegotiate() const final { return { }; }
+    std::vector<webrtc::RtpHeaderExtensionCapability> GetNegotiatedHeaderExtensions() const final { return { }; }
+    webrtc::RTCError SetHeaderExtensionsToNegotiate(rtc::ArrayView<const webrtc::RtpHeaderExtensionCapability> ) final { return { }; }
 
 private:
     rtc::scoped_refptr<webrtc::RtpSenderInterface> m_sender;
@@ -320,6 +329,8 @@ protected:
     void CreateAnswer(webrtc::CreateSessionDescriptionObserver*, const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions&) final;
     webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::DataChannelInterface>> CreateDataChannelOrError(const std::string&, const webrtc::DataChannelInit*) final;
     webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::RtpSenderInterface>> AddTrack(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>, const std::vector<std::string>& streams) final;
+    webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::RtpSenderInterface>> AddTrack(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track, const std::vector<std::string>& streams, const std::vector<webrtc::RtpEncodingParameters>&) final { return AddTrack(track, streams); }
+
     webrtc::RTCError RemoveTrackOrError(rtc::scoped_refptr<webrtc::RtpSenderInterface>) final;
 
     webrtc::RTCError SetBitrate(const webrtc::BitrateSettings&) final { return { }; }
@@ -358,7 +369,7 @@ private:
     void SetOptions(const Options&) final { }
     rtc::scoped_refptr<webrtc::AudioSourceInterface> CreateAudioSource(const cricket::AudioOptions&) final { return nullptr; }
 
-    rtc::scoped_refptr<webrtc::VideoTrackInterface> CreateVideoTrack(const std::string&, webrtc::VideoTrackSourceInterface*) final;
+    rtc::scoped_refptr<webrtc::VideoTrackInterface> CreateVideoTrack(rtc::scoped_refptr<webrtc::VideoTrackSourceInterface>, absl::string_view) final;
     rtc::scoped_refptr<webrtc::AudioTrackInterface> CreateAudioTrack(const std::string&, webrtc::AudioSourceInterface*) final;
 
     void StopAecDump() final { }

@@ -26,7 +26,6 @@
 #include "Document.h"
 #include "ElementInlines.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "TextResourceDecoder.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -89,7 +88,7 @@ String HTMLBaseElement::href() const
 
     // Same logic as openFunc() in XMLDocumentParserLibxml2.cpp. Keep them in sync.
     auto* encoding = document().decoder() ? document().decoder()->encodingForURLParsing() : nullptr;
-    URL urlRecord(document().fallbackBaseURL(), stripLeadingAndTrailingHTMLSpaces(url), encoding);
+    URL urlRecord(document().fallbackBaseURL(), url, encoding);
     if (!urlRecord.isValid())
         return url;
 

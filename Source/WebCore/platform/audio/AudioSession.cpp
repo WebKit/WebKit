@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include "NotImplemented.h"
+#include <wtf/LoggerHelper.h>
 #include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(MAC)
@@ -101,6 +102,8 @@ bool AudioSession::tryToSetActive(bool active)
     if (!tryToSetActiveInternal(active))
         return false;
 
+    ALWAYS_LOG(LOGIDENTIFIER, "is active = ", m_active, ", previousIsActive = ", previousIsActive);
+
     bool hasActiveChanged = previousIsActive != isActive();
     m_active = active;
     if (m_isInterrupted && m_active) {
@@ -129,6 +132,7 @@ void AudioSession::removeInterruptionObserver(InterruptionObserver& observer)
 
 void AudioSession::beginInterruption()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (m_isInterrupted) {
         RELEASE_LOG_ERROR(WebRTC, "AudioSession::beginInterruption but session is already interrupted!");
         return;
@@ -140,6 +144,7 @@ void AudioSession::beginInterruption()
 
 void AudioSession::endInterruption(MayResume mayResume)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (!m_isInterrupted) {
         RELEASE_LOG_ERROR(WebRTC, "AudioSession::endInterruption but session is already uninterrupted!");
         return;
@@ -165,6 +170,8 @@ void AudioSession::setCategoryOverride(CategoryType category)
 {
     if (m_categoryOverride == category)
         return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     m_categoryOverride = category;
     if (category != CategoryType::None)
@@ -257,6 +264,19 @@ void AudioSession::removeConfigurationChangeObserver(ConfigurationChangeObserver
 void AudioSession::setIsPlayingToBluetoothOverride(std::optional<bool>)
 {
     notImplemented();
+}
+
+Logger& AudioSession::logger()
+{
+    if (!m_logger)
+        m_logger = Logger::create(this);
+
+    return *m_logger;
+}
+
+WTFLogChannel& AudioSession::logChannel() const
+{
+    return LogMedia;
 }
 
 String convertEnumerationToString(RouteSharingPolicy enumerationValue)

@@ -44,14 +44,24 @@ AccessibilityTree::AccessibilityTree(RenderObject* renderer)
     : AccessibilityRenderObject(renderer)
 {
 }
-    
+
+AccessibilityTree::AccessibilityTree(Node& node)
+    : AccessibilityRenderObject(node)
+{
+}
+
 AccessibilityTree::~AccessibilityTree() = default;
     
 Ref<AccessibilityTree> AccessibilityTree::create(RenderObject* renderer)
 {
     return adoptRef(*new AccessibilityTree(renderer));
 }
-    
+
+Ref<AccessibilityTree> AccessibilityTree::create(Node& node)
+{
+    return adoptRef(*new AccessibilityTree(node));
+}
+
 bool AccessibilityTree::computeAccessibilityIsIgnored() const
 {
     return accessibilityIsIgnoredByDefault();

@@ -35,12 +35,12 @@ class SVGPathSegList;
 String buildStringFromPath(const Path&);
 
 // String/SVGPathByteStream -> Path
-Path buildPathFromString(const String&);
+Path buildPathFromString(StringView);
 Path buildPathFromByteStream(const SVGPathByteStream&);
 
 // SVGPathSegList/String -> SVGPathByteStream
 bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList&, SVGPathByteStream& result, PathParsingMode, bool checkForInitialMoveTo = true);
-bool buildSVGPathByteStreamFromString(const String&, SVGPathByteStream&, PathParsingMode);
+bool buildSVGPathByteStreamFromString(StringView, SVGPathByteStream&, PathParsingMode);
 
 // SVGPathByteStream -> String
 bool buildStringFromByteStream(const SVGPathByteStream&, String&, PathParsingMode, bool checkForInitialMoveTo = true);

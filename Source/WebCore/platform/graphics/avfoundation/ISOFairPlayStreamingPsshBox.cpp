@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,6 +66,8 @@ bool ISOFairPlayStreamingKeyRequestInfoBox::parse(JSC::DataView& view, unsigned&
     localOffset += m_keyID.capacity();
 
     m_keyID.resize(m_keyID.capacity());
+    if (keyID->byteLength() < m_keyID.capacity())
+        return false;
     memcpy(m_keyID.data(), keyID->data(), m_keyID.capacity());
 
     offset = localOffset;
@@ -96,6 +98,8 @@ bool ISOFairPlayStreamingKeyAssetIdBox::parse(JSC::DataView& view, unsigned& off
     localOffset += dataSize;
 
     m_data.resize(dataSize);
+    if (parsedData->byteLength() < dataSize)
+        return false;
     memcpy(m_data.data(), parsedData->data(), dataSize);
     offset = localOffset;
     return true;
@@ -125,6 +129,8 @@ bool ISOFairPlayStreamingKeyContextBox::parse(JSC::DataView& view, unsigned& off
     localOffset += dataSize;
 
     m_data.resize(dataSize);
+    if (parsedData->byteLength() < dataSize)
+        return false;
     memcpy(m_data.data(), parsedData->data(), dataSize);
     offset = localOffset;
     return true;
@@ -250,17 +256,31 @@ bool ISOFairPlayStreamingPsshBox::parse(JSC::DataView& view, unsigned& offset)
 
 ISOFairPlayStreamingInfoBox::ISOFairPlayStreamingInfoBox() = default;
 ISOFairPlayStreamingInfoBox::ISOFairPlayStreamingInfoBox(const ISOFairPlayStreamingInfoBox&) = default;
+ISOFairPlayStreamingInfoBox::~ISOFairPlayStreamingInfoBox() = default;
+
+ISOFairPlayStreamingKeyRequestInfoBox::ISOFairPlayStreamingKeyRequestInfoBox() = default;
+ISOFairPlayStreamingKeyRequestInfoBox::~ISOFairPlayStreamingKeyRequestInfoBox() = default;
+
+ISOFairPlayStreamingKeyAssetIdBox::ISOFairPlayStreamingKeyAssetIdBox() = default;
 ISOFairPlayStreamingKeyAssetIdBox::ISOFairPlayStreamingKeyAssetIdBox(const ISOFairPlayStreamingKeyAssetIdBox&) = default;
 ISOFairPlayStreamingKeyAssetIdBox::~ISOFairPlayStreamingKeyAssetIdBox() = default;
+
+ISOFairPlayStreamingKeyContextBox::ISOFairPlayStreamingKeyContextBox() = default;
 ISOFairPlayStreamingKeyContextBox::ISOFairPlayStreamingKeyContextBox(const ISOFairPlayStreamingKeyContextBox&) = default;
 ISOFairPlayStreamingKeyContextBox::~ISOFairPlayStreamingKeyContextBox() = default;
+
+ISOFairPlayStreamingKeyVersionListBox::ISOFairPlayStreamingKeyVersionListBox() = default;
 ISOFairPlayStreamingKeyVersionListBox::ISOFairPlayStreamingKeyVersionListBox(const ISOFairPlayStreamingKeyVersionListBox&) = default;
 ISOFairPlayStreamingKeyVersionListBox::~ISOFairPlayStreamingKeyVersionListBox() = default;
+
+ISOFairPlayStreamingKeyRequestBox::ISOFairPlayStreamingKeyRequestBox() = default;
 ISOFairPlayStreamingKeyRequestBox::ISOFairPlayStreamingKeyRequestBox(const ISOFairPlayStreamingKeyRequestBox&) = default;
 ISOFairPlayStreamingKeyRequestBox::~ISOFairPlayStreamingKeyRequestBox() = default;
+
 ISOFairPlayStreamingInitDataBox::ISOFairPlayStreamingInitDataBox() = default;
 ISOFairPlayStreamingInitDataBox::~ISOFairPlayStreamingInitDataBox() = default;
+
 ISOFairPlayStreamingPsshBox::ISOFairPlayStreamingPsshBox() = default;
 ISOFairPlayStreamingPsshBox::~ISOFairPlayStreamingPsshBox() = default;
 
-}
+} // namespace WebCore

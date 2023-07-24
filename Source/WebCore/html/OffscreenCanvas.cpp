@@ -137,7 +137,7 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
 
 OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& scriptExecutionContext, unsigned width, unsigned height)
     : ActiveDOMObject(&scriptExecutionContext)
-    , CanvasBase(IntSize(width, height))
+    , CanvasBase(IntSize(width, height), scriptExecutionContext.noiseInjectionHashSalt())
     , m_placeholderData(PlaceholderData::create())
 {
 }

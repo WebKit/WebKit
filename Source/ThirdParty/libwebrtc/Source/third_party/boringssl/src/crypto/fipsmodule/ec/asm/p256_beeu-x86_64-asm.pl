@@ -400,4 +400,4 @@ beeu_mod_inverse_vartime:
 ___
 
 print $code;
-close STDOUT or die "error closing STDOUT";
+close STDOUT or die "error closing STDOUT: $!";

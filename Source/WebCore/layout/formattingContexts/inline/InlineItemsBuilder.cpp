@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,12 +63,12 @@ static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(StringVi
     return nextNonWhiteSpacePosition == startPosition ? std::nullopt : std::make_optional(WhitespaceContent { nextNonWhiteSpacePosition - startPosition, hasWordSeparatorCharacter });
 }
 
-static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBreakIterator& lineBreakIterator, const RenderStyle& style)
+static unsigned moveToNextBreakablePosition(unsigned startPosition, CachedLineBreakIteratorFactory& lineBreakIteratorFactory, const RenderStyle& style)
 {
-    auto textLength = lineBreakIterator.stringView().length();
+    auto textLength = lineBreakIteratorFactory.stringView().length();
     auto startPositionForNextBreakablePosition = startPosition;
     while (startPositionForNextBreakablePosition < textLength) {
-        auto nextBreakablePosition = TextUtil::findNextBreakablePosition(lineBreakIterator, startPositionForNextBreakablePosition, style);
+        auto nextBreakablePosition = TextUtil::findNextBreakablePosition(lineBreakIteratorFactory, startPositionForNextBreakablePosition, style);
         // Oftentimes the next breakable position comes back as the start position (most notably hyphens).
         if (nextBreakablePosition != startPosition)
             return nextBreakablePosition - startPosition;
@@ -86,7 +86,10 @@ InlineItemsBuilder::InlineItemsBuilder(const ElementBox& formattingContextRoot, 
 void InlineItemsBuilder::build(InlineItemPosition startPosition)
 {
     InlineItems inlineItems;
-    collectInlineItems(inlineItems, startPosition);
+    FormattingState::OutOfFlowBoxList outOfFlowBoxes;
+
+    collectInlineItems(inlineItems, outOfFlowBoxes, startPosition);
+
     if (!root().style().isLeftToRightDirection() || contentRequiresVisualReordering()) {
         // FIXME: Add support for partial, yet paragraph level bidi content handling.
         breakAndComputeBidiLevels(inlineItems);
@@ -106,6 +109,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         m_formattingState.appendInlineItems(WTFMove(inlineItems));
     };
     adjustInlineFormattingStateWithNewInlineItems();
+    m_formattingState.setOutOfFlowBoxes(WTFMove(outOfFlowBoxes));
 
 #if ASSERT_ENABLED
     // Check if we've got matching inline box start/end pairs and unique inline level items (non-text, non-inline box items).
@@ -127,7 +131,8 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
 #endif
 }
 
-using LayoutQueue = Vector<const Box*>;
+using LayoutQueue = Vector<CheckedRef<const Box>>;
+
 static bool traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& root, const Box& firstDamagedLayoutBox)
 {
     if (&root == &firstDamagedLayoutBox)
@@ -136,14 +141,14 @@ static bool traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& root, cons
     auto shouldSkipSubtree = root.establishesFormattingContext();
     if (!shouldSkipSubtree && is<ElementBox>(root) && downcast<ElementBox>(root).hasChild()) {
         auto& firstChild = *downcast<ElementBox>(root).firstChild();
-        layoutQueue.append(&firstChild);
+        layoutQueue.append(firstChild);
         if (traverseUntilDamaged(layoutQueue, firstChild, firstDamagedLayoutBox))
             return true;
         layoutQueue.takeLast();
     }
     if (auto* nextSibling = root.nextSibling()) {
         layoutQueue.takeLast();
-        layoutQueue.append(nextSibling);
+        layoutQueue.append(*nextSibling);
         if (traverseUntilDamaged(layoutQueue, *nextSibling, firstDamagedLayoutBox))
             return true;
     }
@@ -152,8 +157,14 @@ static bool traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& root, cons
 
 static LayoutQueue initializeLayoutQueue(const ElementBox& formattingContextRoot, InlineItemPosition startPosition, const InlineItems& currentInlineItems)
 {
+    if (!formattingContextRoot.firstChild()) {
+        // There should always be at least one inflow child in this inline formatting context.
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
     if (!startPosition)
-        return { formattingContextRoot.firstChild() };
+        return { *formattingContextRoot.firstChild() };
     // For partial layout we need to build the layout queue up to the point where the new content is in order
     // to be able to produce non-content type of trailing inline items.
     // e.g <div><span<span>text</span></span> produces
@@ -164,29 +175,23 @@ static LayoutQueue initializeLayoutQueue(const ElementBox& formattingContextRoot
     // where we start processing the content at the new layout box and continue with whatever we have on the stack (layout queue).
     if (startPosition.index >= currentInlineItems.size()) {
         ASSERT_NOT_REACHED();
-        return { formattingContextRoot.firstChild() };
-    }
-
-    if (!formattingContextRoot.firstChild()) {
-        // There should always be at least one inflow child in this inline formatting context.
-        ASSERT_NOT_REACHED();
-        return { };
+        return { *formattingContextRoot.firstChild() };
     }
 
     auto& firstDamagedLayoutBox = currentInlineItems[startPosition.index].layoutBox();
     auto& firstChild = *formattingContextRoot.firstChild();
     LayoutQueue layoutQueue;
-    layoutQueue.append(&firstChild);
+    layoutQueue.append(firstChild);
     traverseUntilDamaged(layoutQueue, firstChild, firstDamagedLayoutBox);
 
     if (layoutQueue.isEmpty()) {
         ASSERT_NOT_REACHED();
-        layoutQueue.append(formattingContextRoot.firstChild());
+        layoutQueue.append(*formattingContextRoot.firstChild());
     }
     return layoutQueue;
 }
 
-void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItemPosition startPosition)
+void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, FormattingState::OutOfFlowBoxList& outOfFlowBoxes, InlineItemPosition startPosition)
 {
     // Traverse the tree and create inline items out of inline boxes and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
@@ -213,8 +218,8 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
 
     while (!layoutQueue.isEmpty()) {
         while (true) {
-            auto& layoutBox = *layoutQueue.last();
-            auto isInlineBoxWithInlineContent = layoutBox.isInlineBox() && !layoutBox.isInlineTextBox() && !layoutBox.isLineBreakBox() && !layoutBox.isOutOfFlowPositioned();
+            auto layoutBox = layoutQueue.last();
+            auto isInlineBoxWithInlineContent = layoutBox->isInlineBox() && !layoutBox->isInlineTextBox() && !layoutBox->isLineBreakBox() && !layoutBox->isOutOfFlowPositioned();
             if (!isInlineBoxWithInlineContent)
                 break;
             // This is the start of an inline box (e.g. <span>).
@@ -222,29 +227,29 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
             auto& inlineBox = downcast<ElementBox>(layoutBox);
             if (!inlineBox.hasChild())
                 break;
-            layoutQueue.append(inlineBox.firstChild());
+            layoutQueue.append(*inlineBox.firstChild());
         }
 
         while (!layoutQueue.isEmpty()) {
-            auto& layoutBox = *layoutQueue.takeLast();
-            if (layoutBox.isInlineTextBox()) {
+            auto layoutBox = layoutQueue.takeLast();
+            if (layoutBox->isInlineTextBox()) {
                 auto& inlineTextBox = downcast<InlineTextBox>(layoutBox);
                 handleTextContent(inlineTextBox, inlineItems, partialContentOffset(inlineTextBox));
-            } else if (layoutBox.isAtomicInlineLevelBox() || layoutBox.isLineBreakBox())
+            } else if (layoutBox->isAtomicInlineLevelBox() || layoutBox->isLineBreakBox())
                 handleInlineLevelBox(layoutBox, inlineItems);
-            else if (layoutBox.isInlineBox())
+            else if (layoutBox->isInlineBox())
                 handleInlineBoxEnd(layoutBox, inlineItems);
-            else if (layoutBox.isFloatingPositioned())
+            else if (layoutBox->isFloatingPositioned())
                 inlineItems.append({ layoutBox, InlineItem::Type::Float });
-            else if (layoutBox.isOutOfFlowPositioned()) {
+            else if (layoutBox->isOutOfFlowPositioned()) {
                 // Let's not construct InlineItems for out-of-flow content as they don't participate in the inline layout.
                 // However to be able to static positioning them, we need to compute their approximate positions.
-                m_formattingState.addOutOfFlowBox(layoutBox);
+                outOfFlowBoxes.append(layoutBox);
             } else
                 ASSERT_NOT_REACHED();
 
-            if (auto* nextSibling = layoutBox.nextSibling()) {
-                layoutQueue.append(nextSibling);
+            if (auto* nextSibling = layoutBox->nextSibling()) {
+                layoutQueue.append(*nextSibling);
                 break;
             }
         }
@@ -633,7 +638,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     auto& style = inlineTextBox.style();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
-    auto lineBreakIterator = LazyLineBreakIterator { text, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
+    auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { text, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()), TextUtil::contentAnalysis(style.wordBreak()) };
     auto currentPosition = partialContentOffset.value_or(0lu);
     ASSERT(currentPosition <= contentLength);
 
@@ -656,7 +661,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
                 return false;
 
             ASSERT(whitespaceContent->length);
-            if (style.whiteSpace() == WhiteSpace::BreakSpaces) {
+            if (style.whiteSpaceCollapse() == WhiteSpaceCollapse::BreakSpaces) {
                 // https://www.w3.org/TR/css-text-3/#white-space-phase-1
                 // For break-spaces, a soft wrap opportunity exists after every space and every tab.
                 // FIXME: if this turns out to be a perf hit with too many individual whitespace inline items, we should transition this logic to line breaking.
@@ -698,11 +703,11 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             if (style.hyphens() == Hyphens::None) {
                 // Let's merge candidate InlineTextItems separated by soft hyphen when the style says so.
                 do {
-                    endPosition += moveToNextBreakablePosition(endPosition, lineBreakIterator, style);
+                    endPosition += moveToNextBreakablePosition(endPosition, lineBreakIteratorFactory, style);
                     ASSERT(startPosition < endPosition);
                 } while (endPosition < contentLength && text[endPosition - 1] == softHyphen);
             } else {
-                endPosition += moveToNextBreakablePosition(startPosition, lineBreakIterator, style);
+                endPosition += moveToNextBreakablePosition(startPosition, lineBreakIteratorFactory, style);
                 ASSERT(startPosition < endPosition);
                 hasTrailingSoftHyphen = text[endPosition - 1] == softHyphen;
             }

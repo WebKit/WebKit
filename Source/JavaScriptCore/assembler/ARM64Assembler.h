@@ -1712,6 +1712,16 @@ public:
         insn(0b01101110001000001111110000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
     }
 
+    ALWAYS_INLINE void vectorFmla(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000001100110000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFmls(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110101000001100110000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
     static uint32_t encodeLaneAndIndexToHLM(SIMDLane lane, uint32_t laneIndex)
     {
         switch (elementByteSize(lane)) {
@@ -2164,6 +2174,13 @@ public:
     ALWAYS_INLINE void movi(RegisterID rd, LogicalImmediate imm)
     {
         orr<datasize>(rd, ARM64Registers::zr, imm);
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void movi(FPRegisterID rd, uint8_t imm)
+    {
+        CHECK_DATASIZE_SIMD();
+        insn(simdMoveImmediate(datasize == 128, true, 0b1110, imm, rd));
     }
 
     template<int datasize>
@@ -4491,6 +4508,11 @@ protected:
         bool sz = sizeForFloatingPointSIMDOp(lane);
         int insn = 0b01001110001000001110010000000000 | (U << 29) | (E << 23) | (sz << 22) | (rm << 16) | (ac << 11) | (rn << 5) | rd;
         return insn;
+    }
+
+    ALWAYS_INLINE static int simdMoveImmediate(bool Q, bool op, uint8_t cmode, uint8_t imm, FPRegisterID rd)
+    {
+        return 0b0'0'0'0111100000'000'0000'01'00000'00000 | (Q << 30) | (op << 29) | (static_cast<unsigned>(imm >> 5) << 16) | (static_cast<unsigned>(cmode) << 12) | (static_cast<unsigned>(imm & 0b11111) << 5) | rd;
     }
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow> m_jumpsToLink;

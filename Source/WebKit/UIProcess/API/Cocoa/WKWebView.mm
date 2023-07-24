@@ -89,6 +89,7 @@
 #import "WKWebViewMac.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
+#import "WebBackForwardCache.h"
 #import "WebBackForwardList.h"
 #import "WebFrameProxy.h"
 #import "WebFullScreenManagerProxy.h"
@@ -476,16 +477,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
         pageConfiguration->setWeakWebExtensionController(&controller._webExtensionController);
 #endif
 
-#if PLATFORM(MAC)
-    if (auto pageGroup = WebKit::toImpl([_configuration _pageGroup]))
-        pageConfiguration->setPageGroup(pageGroup);
-    else
-#endif
-    {
-        NSString *groupIdentifier = [_configuration _groupIdentifier];
-        if (groupIdentifier.length)
-            pageConfiguration->setPageGroup(WebKit::WebPageGroup::create(groupIdentifier).ptr());
-    }
+    NSString *groupIdentifier = [_configuration _groupIdentifier];
+    if (groupIdentifier.length)
+        pageConfiguration->setPageGroup(WebKit::WebPageGroup::create(groupIdentifier).ptr());
 
     pageConfiguration->setAdditionalSupportedImageTypes(makeVector<String>([_configuration _additionalSupportedImageTypes]));
 
@@ -597,7 +591,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setVideoFullscreenRequiresElementFullscreen(WebKit::defaultVideoFullscreenRequiresElementFullscreen());
 #endif
 
-    pageConfiguration->preferences()->setMarkedTextInputEnabled(!![_configuration _markedTextInputEnabled]);
+#if HAVE(INLINE_PREDICTIONS)
+    pageConfiguration->preferences()->setInlinePredictionsEnabled(!![_configuration allowsInlinePredictions]);
+#endif
 }
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
@@ -627,7 +623,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     self.magnification = [coder decodeDoubleForKey:@"magnification"];
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
     self.findInteractionEnabled = [coder decodeBoolForKey:@"findInteractionEnabled"];
 #endif
 
@@ -649,7 +645,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     [coder encodeDouble:self.magnification forKey:@"magnification"];
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
     [coder encodeBool:self.isFindInteractionEnabled forKey:@"findInteractionEnabled"];
 #endif
 }
@@ -1823,9 +1819,9 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
     auto& postLayoutData = *state.postLayoutData;
     return @{
         @"post-layout-data" : @YES,
-        @"bold": postLayoutData.typingAttributes & WebKit::AttributeBold ? @YES : @NO,
-        @"italic": postLayoutData.typingAttributes & WebKit::AttributeItalics ? @YES : @NO,
-        @"underline": postLayoutData.typingAttributes & WebKit::AttributeUnderline ? @YES : @NO,
+        @"bold": postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Bold) ? @YES : @NO,
+        @"italic": postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Italics) ? @YES : @NO,
+        @"underline": postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Underline) ? @YES : @NO,
         @"text-alignment": @(nsTextAlignment(static_cast<WebKit::TextAlignment>(postLayoutData.textAlignment))),
         @"text-color": (NSString *)serializationForCSS(postLayoutData.textColor)
     };
@@ -1834,15 +1830,15 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 static NSTextAlignment nsTextAlignment(WebKit::TextAlignment alignment)
 {
     switch (alignment) {
-    case WebKit::NoAlignment:
+    case WebKit::TextAlignment::Natural:
         return NSTextAlignmentNatural;
-    case WebKit::LeftAlignment:
+    case WebKit::TextAlignment::Left:
         return NSTextAlignmentLeft;
-    case WebKit::RightAlignment:
+    case WebKit::TextAlignment::Right:
         return NSTextAlignmentRight;
-    case WebKit::CenterAlignment:
+    case WebKit::TextAlignment::Center:
         return NSTextAlignmentCenter;
-    case WebKit::JustifiedAlignment:
+    case WebKit::TextAlignment::Justified:
         return NSTextAlignmentJustified;
     }
     ASSERT_NOT_REACHED();
@@ -2889,7 +2885,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     if (![self _isValid])
         return 0;
 
-    return _page->processIdentifier();
+    return _page->processID();
 }
 
 - (pid_t)_provisionalWebProcessIdentifier
@@ -2901,7 +2897,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     if (!provisionalPage)
         return 0;
 
-    return provisionalPage->process().processIdentifier();
+    return provisionalPage->process().processID();
 }
 
 - (pid_t)_gpuProcessIdentifier
@@ -2909,7 +2905,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     if (![self _isValid])
         return 0;
 
-    return _page->gpuProcessIdentifier();
+    return _page->gpuProcessID();
 }
 
 - (BOOL)_webProcessIsResponsive
@@ -3083,6 +3079,12 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 {
     THROW_IF_SUSPENDED;
     _page->launchInitialProcessIfNecessary();
+}
+
+- (void)_clearBackForwardCache
+{
+    THROW_IF_SUSPENDED;
+    _page->process().processPool().backForwardCache().removeEntriesForPage(*_page);
 }
 
 + (BOOL)_handlesSafeBrowsing

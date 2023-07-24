@@ -26,7 +26,7 @@ namespace acvp {
 
 // kMaxArgs is the maximum number of arguments (including the function name)
 // that an ACVP request can contain.
-constexpr size_t kMaxArgs = 8;
+constexpr size_t kMaxArgs = 9;
 // kMaxNameLength is the maximum length of a function name in an ACVP request.
 constexpr size_t kMaxNameLength = 30;
 
@@ -48,6 +48,13 @@ Span<const Span<const uint8_t>> ParseArgsFromFd(int fd, RequestBuffer *buffer);
 
 // WriteReplyToFd writes a reply to the given file descriptor.
 bool WriteReplyToFd(int fd, const std::vector<Span<const uint8_t>> &spans);
+
+// WriteReplyToBuffer writes a reply to an internal buffer that may be flushed
+// with |FlushBuffer|.
+bool WriteReplyToBuffer(const std::vector<Span<const uint8_t>> &spans);
+
+// FlushBuffer writes the buffer that |WriteReplyToBuffer| fills, to |fd|.
+bool FlushBuffer(int fd);
 
 // ReplyCallback is the type of a callback that writes a reply to an ACVP
 // request.

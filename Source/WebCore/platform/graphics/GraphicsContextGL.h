@@ -42,13 +42,16 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/MachSendRight.h>
+#endif
+
 #if OS(WINDOWS)
 // Defined in winerror.h
 #ifdef NO_ERROR
 #undef NO_ERROR
 #endif
 #endif
-
 
 template<typename... Types>
 struct GCGLSpanTuple;
@@ -86,6 +89,7 @@ protected:
 
 #define DECLARE_GCGL_OWNED(ClassName) \
 struct GCGLOwned##ClassName : public GCGLOwned { \
+    void adopt(GraphicsContextGL& gl, PlatformGLObject object); \
     void ensure(GraphicsContextGL& gl); \
     void release(GraphicsContextGL& gl); \
 }
@@ -1338,8 +1342,8 @@ public:
     virtual void bufferData(GCGLenum target, std::span<const uint8_t> data, GCGLenum usage) = 0;
     virtual void bufferSubData(GCGLenum target, GCGLintptr offset, std::span<const uint8_t> data) = 0;
 
-    virtual void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<uint8_t> data) = 0;
-    virtual void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
+    virtual void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength) = 0;
+    virtual void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) = 0;
 
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type,  std::span<const uint8_t> pixels) = 0;
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
@@ -1469,6 +1473,35 @@ public:
 
     virtual void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) = 0;
 
+    // ========== EGL related entry points.
+
+#if PLATFORM(COCOA)
+    struct EGLImageSourceIOSurfaceHandle {
+        MachSendRight handle;
+    };
+    struct EGLImageSourceMTLSharedTextureHandle {
+        MachSendRight handle;
+    };
+    using EGLImageSource = std::variant<
+        EGLImageSourceIOSurfaceHandle,
+        EGLImageSourceMTLSharedTextureHandle
+        >;
+#else
+    using EGLImageSource = int;
+#endif
+    using EGLImageAttachResult = std::tuple<GCEGLImage, IntSize>;
+    virtual std::optional<EGLImageAttachResult> createAndBindEGLImage(GCGLenum, EGLImageSource) = 0;
+    virtual void destroyEGLImage(GCEGLImage) = 0;
+
+#if PLATFORM(COCOA)
+    using ExternalEGLSyncEvent = std::tuple<MachSendRight, uint64_t>;
+#else
+    using ExternalEGLSyncEvent = int;
+#endif
+    virtual GCEGLSync createEGLSync(ExternalEGLSyncEvent) = 0;
+    virtual bool destroyEGLSync(GCEGLSync) = 0;
+    virtual void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t) = 0;
+
     // ========== Extension related entry points.
 
     // GL_ANGLE_multi_draw
@@ -1486,6 +1519,8 @@ public:
     // Checks to see whether the given extension is actually enabled (see ensureExtensionEnabled).
     // Has no other side-effects.
     virtual bool isExtensionEnabled(const String&) = 0;
+
+    virtual bool enableRequiredWebXRExtensions() { return true; }
 
     // GL_ANGLE_translated_shader_source
     virtual String getTranslatedShaderSourceANGLE(PlatformGLObject) = 0;
@@ -1526,6 +1561,11 @@ public:
     // GL_EXT_polygon_offset_clamp
     virtual void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) = 0;
 
+    // ========== Internal use for WebXR on WebGL1 contexts.
+    virtual void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
+    virtual void blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) = 0;
+
+
     // ========== Other functions.
     GCGLfloat getFloat(GCGLenum pname);
     GCGLboolean getBoolean(GCGLenum pname);
@@ -1536,6 +1576,8 @@ public:
 
     GraphicsContextGLAttributes contextAttributes() const { return m_attrs; }
     void setContextAttributes(const GraphicsContextGLAttributes& attrs) { m_attrs = attrs; }
+
+    virtual std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint();
 
     virtual void reshape(int width, int height) = 0;
 
@@ -1561,7 +1603,7 @@ public:
     // display buffer abstractions that the caller should hold separate to
     // the context.
     virtual void paintRenderingResultsToCanvas(ImageBuffer&) = 0;
-    virtual RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() = 0;
+    virtual RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer(FlipY) = 0;
     virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     virtual RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() = 0;
@@ -1587,7 +1629,7 @@ public:
 
     IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }
 
-    struct PixelStoreParams final {
+    struct PixelStoreParameters final {
         GCGLint alignment { 4 };
         GCGLint rowLength { 0 };
         GCGLint imageHeight { 0 };
@@ -1596,17 +1638,20 @@ public:
         GCGLint skipImages { 0 };
     };
 
-    // Computes the components per pixel and bytes per component
-    // for the given format and type combination. Returns false if
-    // either was an invalid enum.
-    static bool computeFormatAndTypeParameters(GCGLenum format, GCGLenum type, unsigned* componentsPerPixel, unsigned* bytesPerComponent);
+    // Computes the bytes per image element for a format and type.
+    // Returns zero if format or type is an invalid enum.
+    WEBCORE_EXPORT static unsigned computeBytesPerGroup(GCGLenum format, GCGLenum type);
 
-    // Computes the image size in bytes. If paddingInBytes is not null, padding
-    // is also calculated in return. Returns NO_ERROR if succeed, otherwise
-    // return the suggested GL error indicating the cause of the failure:
-    //   INVALID_VALUE if width/height is negative or overflow happens.
-    //   INVALID_ENUM if format/type is illegal.
-    static GCGLenum computeImageSizeInBytes(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height, GCGLsizei depth, const PixelStoreParams&, unsigned* imageSizeInBytes, unsigned* paddingInBytes, unsigned* skipSizeInBytes);
+
+    struct PixelRectangleSizes {
+        unsigned initialSkipBytes { 0 };
+        unsigned imageBytes { 0 }; // Size for the tightly packed image, does not include initial skip, alignment, row length skip.
+        unsigned alignedRowBytes { 0 }; // Row bytes including alignment, image, row length skips (rows 0..height-2)
+        unsigned lastRowBytes { 0 }; // Row bytes of the last row, i.e. of the tightly packed image (last row, height - 1).
+    };
+    // Returns nullopt if width/height is negative or overflow happens or if format and type are invalid.
+    // Also validates total bytes (imageBytes + initialSkipBytes)
+    static std::optional<PixelRectangleSizes> computeImageSize(GCGLenum format, GCGLenum type, IntSize, GCGLsizei depth, const PixelStoreParameters&);
 
     // Extracts the contents of the given PixelBuffer into the passed Vector,
     // packing the pixel data according to the given format and type,
@@ -1619,7 +1664,7 @@ public:
     // If the data is not tightly packed according to the passed
     // unpackParams, the output data will be tightly packed.
     // Returns true if successful, false if any error occurred.
-    static bool extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParams& unpackParams, bool flipY, bool premultiplyAlpha, std::span<const uint8_t> pixels, Vector<uint8_t>& data);
+    static bool extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParameters& unpackParams, bool flipY, bool premultiplyAlpha, std::span<const uint8_t> pixels, Vector<uint8_t>& data);
 
     // Packs the contents of the given Image which is passed in |pixels| into the passed Vector
     // according to the given format and type, and obeying the flipY and AlphaOp flags.
@@ -1655,6 +1700,12 @@ inline GCGLOwned::~GCGLOwned()
 }
 
 #define IMPLEMENT_GCGL_OWNED(ClassName) \
+inline void GCGLOwned##ClassName::adopt(GraphicsContextGL& gl, PlatformGLObject object) \
+{ \
+    if (m_object) \
+        gl.delete##ClassName(m_object); \
+    m_object = object; \
+} \
 inline void GCGLOwned##ClassName::ensure(GraphicsContextGL& gl) \
 { \
     if (!m_object) \
@@ -1663,9 +1714,7 @@ inline void GCGLOwned##ClassName::ensure(GraphicsContextGL& gl) \
 \
 inline void GCGLOwned##ClassName::release(GraphicsContextGL& gl) \
 { \
-    if (m_object) \
-        gl.delete##ClassName(m_object); \
-    m_object = 0; \
+    adopt(gl, 0); \
 }
 
 IMPLEMENT_GCGL_OWNED(Framebuffer)

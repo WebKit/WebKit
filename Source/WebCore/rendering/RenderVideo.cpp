@@ -175,6 +175,11 @@ void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     updateIntrinsicSize();
 }
 
+static bool areAspectRatiosEssentiallyEqual(const LayoutSize& intrinsicSize, const LayoutSize& contentSize, float deviceScaleFactor)
+{
+    return WTF::areEssentiallyEqual(intrinsicSize.aspectRatio(), contentSize.aspectRatio(), deviceScaleFactor / std::min<LayoutUnit>(contentSize.width(), contentSize.height()));
+}
+
 IntRect RenderVideo::videoBox() const
 {
     auto mediaPlayer = videoElement().player();
@@ -185,6 +190,9 @@ IntRect RenderVideo::videoBox() const
 
     if (videoElement().shouldDisplayPosterImage())
         intrinsicSize = m_cachedImageSize;
+
+    if (videoElement().isFullscreen() && areAspectRatiosEssentiallyEqual(intrinsicSize, contentSize(), page().deviceScaleFactor()))
+        return snappedIntRect({ contentBoxLocation(), contentSize().fitToAspectRatio(intrinsicSize, AspectRatioFitGrow) });
 
     return snappedIntRect(replacedContentRect(intrinsicSize));
 }
@@ -267,7 +275,14 @@ void RenderVideo::layout()
     RenderMedia::layout();
     updatePlayer();
 }
-    
+
+void RenderVideo::styleDidChange(StyleDifference difference, const RenderStyle* oldStyle)
+{
+    RenderMedia::styleDidChange(difference, oldStyle);
+    if (!oldStyle || style().objectFit() != oldStyle->objectFit())
+        setNeedsLayout();
+}
+
 HTMLVideoElement& RenderVideo::videoElement() const
 {
     return downcast<HTMLVideoElement>(RenderMedia::mediaElement());
@@ -295,7 +310,8 @@ void RenderVideo::updatePlayer()
     if (videoElement().inActiveDocument())
         contentChanged(VideoChanged);
 
-    videoElement().updateMediaPlayer(videoBox().size(), style().objectFit() != ObjectFit::Fill);
+    bool fitToFillInFullscreen = videoElement().isFullscreen() && areAspectRatiosEssentiallyEqual(intrinsicSize(), contentSize(), page().deviceScaleFactor());
+    videoElement().updateMediaPlayer(videoBox().size(), style().objectFit() != ObjectFit::Fill && !fitToFillInFullscreen);
 }
 
 LayoutUnit RenderVideo::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const

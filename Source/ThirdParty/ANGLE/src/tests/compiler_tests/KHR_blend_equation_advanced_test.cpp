@@ -166,7 +166,6 @@ class KHRBlendEquationAdvancedTest : public sh::ShaderExtensionTest
                                        testing::get<2>(GetParam())};
 
         ShCompileOptions compileFlags = {};
-        compileFlags.variables        = true;
         compileFlags.objectCode       = true;
         if (emulate == Emulation::Enabled)
         {

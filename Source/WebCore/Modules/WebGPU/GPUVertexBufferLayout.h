@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,18 +28,18 @@
 #include "GPUIntegralTypes.h"
 #include "GPUVertexAttribute.h"
 #include "GPUVertexStepMode.h"
-#include <pal/graphics/WebGPU/WebGPUVertexBufferLayout.h>
+#include "WebGPUVertexBufferLayout.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUVertexBufferLayout {
-    PAL::WebGPU::VertexBufferLayout convertToBacking() const
+    WebGPU::VertexBufferLayout convertToBacking() const
     {
         return {
             arrayStride,
             WebCore::convertToBacking(stepMode),
-            attributes.map([] (auto& attribute) {
+            attributes.map([](auto& attribute) {
                 return attribute.convertToBacking();
             }),
         };

@@ -29,6 +29,8 @@
 #import "AccessibilityLabel.h"
 #import "AccessibilityList.h"
 #import "ColorCocoa.h"
+#import "CompositionHighlight.h"
+#import "CompositionUnderline.h"
 #import "Editor.h"
 #import "ElementAncestorIteratorInlines.h"
 #import "FrameSelection.h"
@@ -48,6 +50,8 @@
 #import "PlatformScreen.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import "Widget.h"
+
+#import <pal/spi/mac/NSSpellCheckerSPI.h>
 
 namespace WebCore {
 
@@ -115,7 +119,7 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
     // LocalFrameView attachments are now handled by AccessibilityScrollView,
     // so if this is the attachment, it should be ignored.
     Widget* widget = nullptr;
-    if (isAttachment() && (widget = widgetForAttachmentView()) && widget->isFrameView())
+    if (isAttachment() && (widget = widgetForAttachmentView()) && widget->isLocalFrameView())
         return true;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -516,8 +520,7 @@ static void attributedStringSetColor(NSMutableAttributedString *attrString, NSSt
     if (color) {
         // Use the CGColor instead of the passed NSColor because that's what the AX system framework expects. Using the NSColor causes that the AX client gets nil instead of a valid NSAttributedString.
         [attrString addAttribute:attribute value:(__bridge id)color.CGColor range:range];
-    } else
-        [attrString removeAttribute:attribute range:range];
+    }
 }
 
 static void attributedStringSetStyle(NSMutableAttributedString *attrString, RenderObject* renderer, const NSRange& range)
@@ -540,26 +543,13 @@ static void attributedStringSetStyle(NSMutableAttributedString *attrString, Rend
         attributedStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, @(-1), range);
     else if (alignment == VerticalAlign::Super)
         attributedStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, @(1), range);
-    else
-        [attrString removeAttribute:NSAccessibilitySuperscriptTextAttribute range:range];
 
     // Set shadow.
     if (style.textShadow())
         attributedStringSetNumber(attrString, NSAccessibilityShadowTextAttribute, @YES, range);
-    else
-        [attrString removeAttribute:NSAccessibilityShadowTextAttribute range:range];
 
     // Set underline and strikethrough.
     auto decor = style.textDecorationsInEffect();
-    if (!(decor & TextDecorationLine::Underline)) {
-        [attrString removeAttribute:NSAccessibilityUnderlineTextAttribute range:range];
-        [attrString removeAttribute:NSAccessibilityUnderlineColorTextAttribute range:range];
-    }
-    if (!(decor & TextDecorationLine::LineThrough)) {
-        [attrString removeAttribute:NSAccessibilityStrikethroughTextAttribute range:range];
-        [attrString removeAttribute:NSAccessibilityStrikethroughColorTextAttribute range:range];
-    }
-
     if (decor & TextDecorationLine::Underline || decor & TextDecorationLine::LineThrough) {
         // FIXME: Should the underline style be reported here?
         auto decorationStyles = TextDecorationPainter::stylesForRenderer(*renderer, decor);
@@ -608,8 +598,6 @@ static void attributedStringSetHeadingLevel(NSMutableAttributedString *attrStrin
             return;
         }
     }
-
-    [attrString removeAttribute:@"AXHeadingLevel" range:range];
 }
 
 static void attributedStringSetBlockquoteLevel(NSMutableAttributedString *attrString, RenderObject* renderer, const NSRange& range)
@@ -624,8 +612,6 @@ static void attributedStringSetBlockquoteLevel(NSMutableAttributedString *attrSt
     unsigned level = object->blockquoteLevel();
     if (level)
         [attrString addAttribute:NSAccessibilityBlockQuoteLevelAttribute value:@(level) range:range];
-    else
-        [attrString removeAttribute:NSAccessibilityBlockQuoteLevelAttribute range:range];
 }
 
 static void attributedStringSetExpandedText(NSMutableAttributedString *attrString, RenderObject* renderer, const NSRange& range)
@@ -636,27 +622,16 @@ static void attributedStringSetExpandedText(NSMutableAttributedString *attrStrin
     RefPtr object = renderer->document().axObjectCache()->getOrCreate(renderer);
     if (object->supportsExpandedTextValue())
         [attrString addAttribute:NSAccessibilityExpandedTextValueAttribute value:object->expandedTextValue() range:range];
-    else
-        [attrString removeAttribute:NSAccessibilityExpandedTextValueAttribute range:range];
 }
 
 static void attributedStringSetElement(NSMutableAttributedString *attrString, NSString *attribute, AccessibilityObject* object, const NSRange& range)
 {
-    if (!attributedStringContainsRange(attrString, range))
+    if (!attributedStringContainsRange(attrString, range) || !is<AccessibilityRenderObject>(object))
         return;
-
-    if (!is<AccessibilityRenderObject>(object)) {
-        [attrString removeAttribute:attribute range:range];
-        return;
-    }
 
     // Make a serializable AX object.
     auto* renderer = downcast<AccessibilityRenderObject>(*object).renderer();
     if (!renderer)
-        return;
-
-    auto* cache = renderer->document().axObjectCache();
-    if (!cache)
         return;
 
     id wrapper = object->wrapper();
@@ -667,6 +642,33 @@ static void attributedStringSetElement(NSMutableAttributedString *attrString, NS
 
     if (auto axElement = adoptCF(NSAccessibilityCreateAXUIElementRef(wrapper)))
         [attrString addAttribute:attribute value:(__bridge id)axElement.get() range:range];
+}
+
+static void attributedStringSetCompositionAttributes(NSMutableAttributedString *attrString, Node& node, const SimpleRange& textSimpleRange)
+{
+#if HAVE(INLINE_PREDICTIONS)
+    auto& editor = node.document().editor();
+    if (&node != editor.compositionNode())
+        return;
+
+    auto scope = makeRangeSelectingNodeContents(node);
+    auto textRange = characterRange(scope, textSimpleRange);
+
+    auto& annotations = editor.customCompositionAnnotations();
+    if (auto it = annotations.find(NSTextCompletionAttributeName); it != annotations.end()) {
+        for (auto& annotationRange : it->value) {
+            auto intersectionRange = NSIntersectionRange(textRange, annotationRange);
+            if (intersectionRange.length) {
+                auto completionRange = NSMakeRange(intersectionRange.location - textRange.location, intersectionRange.length);
+                attributedStringSetNumber(attrString, NSAccessibilityTextCompletionAttribute, @YES, completionRange);
+            }
+        }
+    }
+#else
+    UNUSED_PARAM(attrString);
+    UNUSED_PARAM(node);
+    UNUSED_PARAM(textSimpleRange);
+#endif
 }
 
 static bool shouldHaveAnySpellCheckAttribute(Node& node)
@@ -719,7 +721,7 @@ void attributedStringSetSpelling(NSMutableAttributedString *attrString, Node& no
     }
 }
 
-RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text, AXCoreObject::SpellCheck spellCheck)
+RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text, const SimpleRange& textRange, AXCoreObject::SpellCheck spellCheck)
 {
     if (!node || !text.length())
         return nil;
@@ -738,6 +740,7 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text
     attributedStringSetBlockquoteLevel(result.get(), renderer.get(), range);
     attributedStringSetExpandedText(result.get(), renderer.get(), range);
     attributedStringSetElement(result.get(), NSAccessibilityLinkTextAttribute, AccessibilityObject::anchorElementForNode(node), range);
+    attributedStringSetCompositionAttributes(result.get(), *node, textRange);
     // Do spelling last because it tends to break up the range.
     if (spellCheck == AXCoreObject::SpellCheck::Yes) {
         if (AXObjectCache::shouldSpellCheck())

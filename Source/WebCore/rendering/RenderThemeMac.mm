@@ -373,21 +373,10 @@ Color RenderThemeMac::platformDefaultButtonTextColor(OptionSet<StyleColorOptions
     return colorFromCocoaColor([NSColor alternateSelectedControlTextColor]);
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/RenderThemeMacAdditions.mm>
-#else
-#if HAVE(NSSPELLCHECKER_CORRECTION_INDICATOR_UNDERLINE_COLOR)
-static inline bool usePlatformColorForAutocorrectionReplacementMarker()
-{
-    return false;
-}
-#endif
-#endif
-
 Color RenderThemeMac::platformAutocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(NSSPELLCHECKER_CORRECTION_INDICATOR_UNDERLINE_COLOR)
-    if (usePlatformColorForAutocorrectionReplacementMarker() && [NSSpellChecker respondsToSelector:@selector(correctionIndicatorUnderlineColor)]) {
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    if ([NSSpellChecker respondsToSelector:@selector(correctionIndicatorUnderlineColor)]) {
         LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
         return colorFromCocoaColor([NSSpellChecker correctionIndicatorUnderlineColor]);
     }
@@ -873,7 +862,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
 
 NSControlSize RenderThemeMac::controlSizeForFont(const RenderStyle& style) const
 {
-    int fontSize = style.computedFontPixelSize();
+    auto fontSize = style.computedFontSize();
     if (fontSize >= 21 && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
     if (fontSize >= 16)
@@ -955,7 +944,7 @@ void RenderThemeMac::setFontFromControlSize(RenderStyle& style, NSControlSize co
 
 NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style) const
 {
-    int fontSize = style.computedFontPixelSize();
+    auto fontSize = style.computedFontSize();
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeLarge] && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeRegular])
@@ -1093,7 +1082,8 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
     style.setHeight(Length(LengthType::Auto));
 
     // White-space is locked to pre
-    style.setWhiteSpace(WhiteSpace::Pre);
+    style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
+    style.setTextWrap(TextWrap::NoWrap);
 
     // Set the button's vertical size.
     setSizeFromFont(style, menuListButtonSizes());
@@ -1117,7 +1107,7 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style, cons
     }
 
     if (style.effectiveAppearance() == StyleAppearance::MenulistButton) {
-        float arrowWidth = baseArrowWidth * (style.computedFontPixelSize() / baseFontSize);
+        float arrowWidth = baseArrowWidth * (style.computedFontSize() / baseFontSize);
         float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.effectiveZoom());
         float leftPadding = styledPopupPaddingLeft * style.effectiveZoom();
         if (style.direction() == TextDirection::RTL)
@@ -1151,7 +1141,7 @@ PopupMenuStyle::PopupMenuSize RenderThemeMac::popupMenuSize(const RenderStyle& s
 
 void RenderThemeMac::adjustMenuListButtonStyle(RenderStyle& style, const Element*) const
 {
-    float fontScale = style.computedFontPixelSize() / baseFontSize;
+    float fontScale = style.computedFontSize() / baseFontSize;
 
     style.resetPadding();
     style.setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
@@ -1597,6 +1587,10 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
         return false;
 
     const RenderAttachment& attachment = downcast<RenderAttachment>(renderer);
+
+    if (attachment.paintWideLayoutAttachmentOnly(paintInfo, paintRect.location()))
+        return true;
+
     HTMLAttachmentElement& element = attachment.attachmentElement();
 
     auto layoutStyle = AttachmentLayoutStyle::NonSelected;
@@ -1620,23 +1614,20 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
     bool usePlaceholder = validProgress && !progress;
 
-    if (!element.isImageOnly())
-        paintAttachmentIconBackground(attachment, context, layout);
+    paintAttachmentIconBackground(attachment, context, layout);
 
     if (usePlaceholder)
         paintAttachmentIconPlaceholder(attachment, context, layout);
     else
         paintAttachmentIcon(attachment, context, layout);
 
-    if (!element.isImageOnly()) {
-        paintAttachmentTitleBackground(attachment, context, layout);
-        paintAttachmentText(context, &layout);
-    }
+    paintAttachmentTitleBackground(attachment, context, layout);
+    paintAttachmentText(context, &layout);
 
     if (validProgress && progress)
         paintAttachmentProgress(attachment, context, layout, progress);
 
-    if (usePlaceholder && !element.isImageOnly())
+    if (usePlaceholder)
         paintAttachmentPlaceholderBorder(attachment, context, layout);
 
     return true;

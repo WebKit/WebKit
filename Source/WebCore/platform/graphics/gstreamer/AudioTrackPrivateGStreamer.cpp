@@ -83,9 +83,13 @@ void AudioTrackPrivateGStreamer::capsChanged(const String& streamId, const GRefP
     ASSERT(isMainThread());
     updateConfigurationFromCaps(caps);
 
+    if (!m_player)
+        return;
+
     auto codec = m_player->codecForStreamId(streamId);
     if (codec.isEmpty())
         return;
+
     GST_DEBUG_OBJECT(objectForLogging(), "Setting codec to %s", codec.ascii().data());
     auto configuration = this->configuration();
     configuration.codec = WTFMove(codec);
@@ -168,6 +172,8 @@ void AudioTrackPrivateGStreamer::setEnabled(bool enabled)
     if (m_player)
         m_player->updateEnabledAudioTrack();
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

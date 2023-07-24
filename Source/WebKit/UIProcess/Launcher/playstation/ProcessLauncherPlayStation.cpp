@@ -106,19 +106,19 @@ void ProcessLauncher::launchProcess()
 
 void ProcessLauncher::terminateProcess()
 {
-    if (!m_processIdentifier)
+    if (!m_processID)
         return;
 
 #if USE(WPE_BACKEND_PLAYSTATION)
-    ProcessProviderLibWPE::singleton().kill(m_processIdentifier);
+    ProcessProviderLibWPE::singleton().kill(m_processID);
 #else
-    PlayStation::terminateProcess(m_processIdentifier);
+    PlayStation::terminateProcess(m_processID);
 #endif
 }
 
 void ProcessLauncher::platformInvalidate()
 {
-    m_processIdentifier = 0;
+    m_processID = 0;
 }
 
 } // namespace WebKit

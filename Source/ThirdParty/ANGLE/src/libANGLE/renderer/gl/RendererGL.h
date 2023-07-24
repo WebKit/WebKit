@@ -16,7 +16,7 @@
 #include "libANGLE/Error.h"
 #include "libANGLE/Version.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
-#include "platform/FeaturesGL_autogen.h"
+#include "platform/autogen/FeaturesGL_autogen.h"
 
 namespace angle
 {

@@ -1,0 +1,8 @@
+Pointer Events boundary events in capturing
+
+Test Description: Test complete
+
+Do not hover over or touch this element.
+
+PASS Boundary events around pointer capture and release
+

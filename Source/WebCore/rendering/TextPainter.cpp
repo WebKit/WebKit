@@ -74,7 +74,7 @@ ShadowApplier::ShadowApplier(const RenderStyle& style, GraphicsContext& context,
     }
 
     if (!m_avoidDrawingShadow)
-        context.setShadow(shadowOffset, shadowRadius.value(), shadowColor);
+        context.setDropShadow({ shadowOffset, shadowRadius.value(), shadowColor, ShadowRadiusMode::Default });
 }
 
 inline bool ShadowApplier::isLastShadowIteration()
@@ -110,7 +110,7 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
     ASSERT(startOffset < endOffset);
 
     if (m_context.detectingContentfulPaint()) {
-        if (!textRun.text().isAllSpecialCharacters<isASCIIWhitespace>())
+        if (!textRun.text().containsOnly<isASCIIWhitespace>())
             m_context.setContentfulPaintDetected();
         return;
     }
@@ -201,14 +201,14 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
     const TextRun& emphasisMarkTextRun = m_combinedText ? objectReplacementCharacterTextRun.get() : textRun;
     FloatPoint emphasisMarkTextOrigin = m_combinedText ? FloatPoint(boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + m_font.metricsOfPrimaryFont().ascent()) : textOrigin;
     if (m_combinedText)
-        m_context.concatCTM(rotation(boxRect, Clockwise));
+        m_context.concatCTM(rotation(boxRect, RotationDirection::Clockwise));
 
     // FIXME: Truncate right-to-left text correctly.
     paintTextWithShadows(shadow, shadowColorFilter, m_combinedText ? m_combinedText->originalFont() : m_font, emphasisMarkTextRun, boxRect, emphasisMarkTextOrigin, startOffset, endOffset,
         m_emphasisMark, m_emphasisMarkOffset, paintStyle.strokeWidth > 0);
 
     if (m_combinedText)
-        m_context.concatCTM(rotation(boxRect, Counterclockwise));
+        m_context.concatCTM(rotation(boxRect, RotationDirection::Counterclockwise));
 }
 
 void TextPainter::paintRange(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end)

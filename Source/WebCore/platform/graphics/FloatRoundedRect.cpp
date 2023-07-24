@@ -63,12 +63,16 @@ bool FloatRoundedRect::Radii::isZero() const
     return m_topLeft.isZero() && m_topRight.isZero() && m_bottomLeft.isZero() && m_bottomRight.isZero();
 }
 
-bool FloatRoundedRect::Radii::isUniformCornerRadius() const
+bool FloatRoundedRect::Radii::hasEvenCorners() const
 {
-    return WTF::areEssentiallyEqual(m_topLeft.width(), m_topLeft.height())
-        && areEssentiallyEqual(m_topLeft, m_topRight)
+    return areEssentiallyEqual(m_topLeft, m_topRight)
         && areEssentiallyEqual(m_topLeft, m_bottomLeft)
         && areEssentiallyEqual(m_topLeft, m_bottomRight);
+}
+
+bool FloatRoundedRect::Radii::isUniformCornerRadius() const
+{
+    return WTF::areEssentiallyEqual(m_topLeft.width(), m_topLeft.height()) && hasEvenCorners();
 }
 
 void FloatRoundedRect::Radii::scale(float factor)

@@ -10,6 +10,7 @@ info: |
   ...
   2. Let len be ? ToLength(? Get(O, "length")).
   ...
+features: [Array.prototype.includes]
 ---*/
 
 var obj1 = {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUComputePassTimestampLocation.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUComputePassTimestampLocation.h>
 
 namespace WebCore {
 
@@ -35,13 +35,13 @@ enum class GPUComputePassTimestampLocation : uint8_t {
     End,
 };
 
-inline PAL::WebGPU::ComputePassTimestampLocation convertToBacking(GPUComputePassTimestampLocation computePassTimestampLocation)
+inline WebGPU::ComputePassTimestampLocation convertToBacking(GPUComputePassTimestampLocation computePassTimestampLocation)
 {
     switch (computePassTimestampLocation) {
     case GPUComputePassTimestampLocation::Beginning:
-        return PAL::WebGPU::ComputePassTimestampLocation::Beginning;
+        return WebGPU::ComputePassTimestampLocation::Beginning;
     case GPUComputePassTimestampLocation::End:
-        return PAL::WebGPU::ComputePassTimestampLocation::End;
+        return WebGPU::ComputePassTimestampLocation::End;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

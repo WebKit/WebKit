@@ -14,7 +14,6 @@
 #include <stdint.h>
 
 #include "api/video/encoded_image.h"
-#include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 
@@ -26,8 +25,7 @@ class FakeVp8Decoder : public VideoDecoder {
   FakeVp8Decoder();
   ~FakeVp8Decoder() override {}
 
-  int32_t InitDecode(const VideoCodec* config,
-                     int32_t number_of_cores) override;
+  bool Configure(const Settings& settings) override;
 
   int32_t Decode(const EncodedImage& input,
                  bool missing_frames,

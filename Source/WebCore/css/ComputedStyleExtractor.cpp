@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Zack Rusin <zack@kde.org>
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2011 Sencha, Inc. All rights reserved.
@@ -572,6 +572,30 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
         return zoomAdjustedPixelValue(getOffsetUsedStyleOutOfFlowPositioned(*containingBlock, box, propertyID), style);
 
     return CSSPrimitiveValue::create(CSSValueAuto);
+}
+
+RefPtr<CSSValue> ComputedStyleExtractor::whiteSpaceShorthandValue(const RenderStyle& style)
+{
+    auto whiteSpaceCollapse = style.whiteSpaceCollapse();
+    auto textWrap = style.textWrap();
+
+    // Convert to backwards-compatible keywords if possible.
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrap == TextWrap::Wrap)
+        return CSSPrimitiveValue::create(CSSValueNormal);
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::NoWrap)
+        return CSSPrimitiveValue::create(CSSValuePre);
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::Wrap)
+        return CSSPrimitiveValue::create(CSSValuePreWrap);
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrap == TextWrap::Wrap)
+        return CSSPrimitiveValue::create(CSSValuePreLine);
+
+    // Omit default longhand values.
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse)
+        return createConvertingToCSSValueID(textWrap);
+    if (textWrap == TextWrap::Wrap)
+        return createConvertingToCSSValueID(whiteSpaceCollapse);
+
+    return CSSValuePair::create(createConvertingToCSSValueID(whiteSpaceCollapse), createConvertingToCSSValueID(textWrap));
 }
 
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle& style, const StyleColor& color)
@@ -1214,6 +1238,13 @@ static Ref<CSSValueList> valueForScrollSnapAlignment(const ScrollSnapAlign& alig
         createConvertingToCSSValueID(alignment.inlineAlign));
 }
 
+static Ref<CSSValue> valueForScrollbarGutter(const ScrollbarGutter& gutter)
+{
+    if (!gutter.bothEdges)
+        return CSSPrimitiveValue::create(gutter.isAuto ? CSSValueAuto : CSSValueStable);
+    return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueStable), CSSPrimitiveValue::create(CSSValueBothEdges));
+}
+
 static Ref<CSSValueList> valueForTextBoxEdge(const TextBoxEdge& textBoxEdge)
 {
     return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(textBoxEdge.over),
@@ -1447,16 +1478,16 @@ static Ref<CSSPrimitiveValue> valueForAnimationIterationCount(double iterationCo
     return CSSPrimitiveValue::create(iterationCount);
 }
 
-static Ref<CSSPrimitiveValue> valueForAnimationDirection(Animation::AnimationDirection direction)
+static Ref<CSSPrimitiveValue> valueForAnimationDirection(Animation::Direction direction)
 {
     switch (direction) {
-    case Animation::AnimationDirectionNormal:
+    case Animation::Direction::Normal:
         return CSSPrimitiveValue::create(CSSValueNormal);
-    case Animation::AnimationDirectionAlternate:
+    case Animation::Direction::Alternate:
         return CSSPrimitiveValue::create(CSSValueAlternate);
-    case Animation::AnimationDirectionReverse:
+    case Animation::Direction::Reverse:
         return CSSPrimitiveValue::create(CSSValueReverse);
-    case Animation::AnimationDirectionAlternateReverse:
+    case Animation::Direction::AlternateReverse:
         return CSSPrimitiveValue::create(CSSValueAlternateReverse);
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -1543,8 +1574,12 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
         auto& function = downcast<SpringTimingFunction>(timingFunction);
         return CSSSpringTimingFunctionValue::create(function.mass(), function.stiffness(), function.damping(), function.initialVelocity());
     }
-    case TimingFunction::Type::LinearFunction:
-        return CSSPrimitiveValue::create(CSSValueLinear);
+    case TimingFunction::Type::LinearFunction: {
+        auto& function = downcast<LinearTimingFunction>(timingFunction);
+        if (function.points().isEmpty())
+            return CSSPrimitiveValue::create(CSSValueLinear);
+        return CSSLinearTimingFunctionValue::create(function.points());
+    }
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -1696,9 +1731,8 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
         auto& ray = downcast<RayPathOperation>(*operation);
 
         auto angle = CSSPrimitiveValue::create(ray.angle(), CSSUnitType::CSS_DEG);
-        auto size = CSSPrimitiveValue::create(valueIDForRaySize(ray.size()));
 
-        return CSSRayValue::create(WTFMove(angle), WTFMove(size), ray.isContaining());
+        return CSSRayValue::create(WTFMove(angle), valueIDForRaySize(ray.size()), ray.isContaining());
     }
     }
 
@@ -1714,8 +1748,10 @@ static Ref<CSSValue> valueForContainIntrinsicSize(const RenderStyle& style, cons
     case ContainIntrinsicSizeType::Length:
         return zoomAdjustedPixelValueForLength(containIntrinsicLength.value(), style);
     case ContainIntrinsicSizeType::AutoAndLength:
-        return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueAuto),
+        return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto),
             zoomAdjustedPixelValueForLength(containIntrinsicLength.value(), style));
+    case ContainIntrinsicSizeType::AutoAndNone:
+        return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto), CSSPrimitiveValue::create(CSSValueNone));
     }
     RELEASE_ASSERT_NOT_REACHED();
     return CSSPrimitiveValue::create(CSSValueNone);
@@ -2853,7 +2889,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (!styledElement)
         return nullptr;
 
-    if (!isExposed(propertyID, m_element->document().settings())) {
+    // FIXME: For now, we always allow access to white-space longhands.
+    // We should remove this hack once white-space longhands are no longer under a feature flag.
+    bool isWhiteSpaceLonghand = (propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrap);
+    if (!isWhiteSpaceLonghand && !isExposed(propertyID, m_element->document().settings())) {
         // Exit quickly, and avoid us ever having to update layout in this case.
         return nullptr;
     }
@@ -2908,7 +2947,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     auto& cssValuePool = CSSValuePool::singleton();
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.direction(), style.writingMode());
 
-    ASSERT(isExposed(propertyID, m_element->document().settings()));
+    // FIXME: For now, we always allow access to white-space longhands.
+    // We should remove this hack once white-space longhands are no longer under a feature flag.
+    ASSERT((propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrap) || isExposed(propertyID, m_element->document().settings()));
 
     switch (propertyID) {
     case CSSPropertyInvalid:
@@ -3372,9 +3413,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 return zoomAdjustedPixelValue(sizingBox(*renderer).height(), style);
         }
         return zoomAdjustedPixelValueForLength(style.height(), style);
-    case CSSPropertyWebkitHyphens:
+    case CSSPropertyHyphens:
         return createConvertingToCSSValueID(style.hyphens());
-    case CSSPropertyWebkitHyphenateCharacter:
+    case CSSPropertyHyphenateCharacter:
         if (style.hyphenationString().isNull())
             return CSSPrimitiveValue::create(CSSValueAuto);
         return CSSPrimitiveValue::create(style.hyphenationString());
@@ -3396,10 +3437,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return CSSPrimitiveValue::create(CSSValueNone);
     case CSSPropertyImageRendering:
         return createConvertingToCSSValueID(style.imageRendering());
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    case CSSPropertyImageResolution:
-        return CSSPrimitiveValue::create(style.imageResolution(), CSSUnitType::CSS_DPPX);
-#endif
     case CSSPropertyInputSecurity:
         return createConvertingToCSSValueID(style.inputSecurity());
     case CSSPropertyLeft:
@@ -3714,7 +3751,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyVisibility:
         return createConvertingToCSSValueID(style.visibility());
     case CSSPropertyWhiteSpace:
-        return createConvertingToCSSValueID(style.whiteSpace());
+        return whiteSpaceShorthandValue(style);
+    case CSSPropertyWhiteSpaceCollapse:
+        return createConvertingToCSSValueID(style.whiteSpaceCollapse());
     case CSSPropertyWidows:
         if (style.hasAutoWidows())
             return CSSPrimitiveValue::create(CSSValueAuto);
@@ -4182,6 +4221,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return createConvertingToCSSValueID(style.scrollSnapStop());
     case CSSPropertyScrollSnapType:
         return valueForScrollSnapType(style.scrollSnapType());
+    case CSSPropertyScrollbarColor:
+        if (!style.scrollbarColor())
+            return CSSPrimitiveValue::create(CSSValueAuto);
+        return CSSValuePair::createNoncoalescing(currentColorOrValidColor(style, style.scrollbarColor().value().thumbColor), currentColorOrValidColor(style, style.scrollbarColor().value().trackColor));
+    case CSSPropertyScrollbarGutter:
+        return valueForScrollbarGutter(style.scrollbarGutter());
     case CSSPropertyScrollbarWidth:
         return createConvertingToCSSValueID(style.scrollbarWidth());
     case CSSPropertyOverflowAnchor:

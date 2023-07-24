@@ -34,6 +34,7 @@ navigator.setAppBadge() is OK
 navigator.setLoggedIn() is OK
 navigator.setLoggedOut() is OK
 navigator.share() is OK
+navigator.standalone is OK
 navigator.storage is OK
 navigator.userActivation is OK
 navigator.userAgent is OK
@@ -75,6 +76,7 @@ navigator.setAppBadge() is OK
 navigator.setLoggedIn() is OK
 navigator.setLoggedOut() is OK
 navigator.share() is OK
+navigator.standalone is OK
 navigator.storage is OK
 navigator.userActivation is OK
 navigator.userAgent is OK

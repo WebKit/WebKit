@@ -305,13 +305,12 @@ void aom_highbd_dist_wtd_comp_avg_upsampled_pred_sse2(
   assert(!(width * height & 7));
   n = width * height >> 3;
 
-  const uint16_t wt0 = (uint16_t)jcp_param->fwd_offset;
-  const uint16_t wt1 = (uint16_t)jcp_param->bck_offset;
-  const __m128i w0 = _mm_set_epi16(wt0, wt0, wt0, wt0, wt0, wt0, wt0, wt0);
-  const __m128i w1 = _mm_set_epi16(wt1, wt1, wt1, wt1, wt1, wt1, wt1, wt1);
-  const uint16_t round = ((1 << DIST_PRECISION_BITS) >> 1);
-  const __m128i r =
-      _mm_set_epi16(round, round, round, round, round, round, round, round);
+  const int16_t wt0 = (int16_t)jcp_param->fwd_offset;
+  const int16_t wt1 = (int16_t)jcp_param->bck_offset;
+  const __m128i w0 = _mm_set1_epi16(wt0);
+  const __m128i w1 = _mm_set1_epi16(wt1);
+  const int16_t round = (int16_t)((1 << DIST_PRECISION_BITS) >> 1);
+  const __m128i r = _mm_set1_epi16(round);
 
   uint16_t *comp_pred16 = CONVERT_TO_SHORTPTR(comp_pred8);
   for (i = 0; i < n; i++) {

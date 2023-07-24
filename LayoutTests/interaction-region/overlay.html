@@ -13,11 +13,54 @@
         pointer-events: none;
         background-color: red;
     }
+    .fixed-container {
+        position: fixed;
+        width: 200px;
+        height: 200px;
+        left: 0;
+        bottom: 0;
+        pointer-events: none;
+    }
+    .fixed-container.no-occlusion {
+        left: unset;
+        right: 0;
+    }
+    #fixed {
+        position: fixed;
+        right: 0;
+        top: 0;
+    }
+    .paints {
+        position: absolute;
+        top: 0;
+        width: 200px;
+        height: 200px;
+        background: blue;
+        pointer-events: auto;
+    }
+    .child {
+        width: 50px;
+        height: 50px;
+        background: red;
+    }
 </style>
 <body>
 <div class="overlay"></div>
 <div class="overlay" id="not-occlusion"></div>
 <div class="overlay" onclick="click()"></div>
+<div class="fixed-container">
+    <div class="paints">
+        <div class="child"></div>
+        <div class="child"></div>
+    </div>
+</div>
+<div class="fixed-container no-occlusion">
+    <div class="child"></div>
+    <div class="paints">
+        <div class="child"></div>
+    </div>
+</div>
+<div id="fixed" class="paints"></div>
 
 <pre id="results"></pre>
 <script>

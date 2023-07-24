@@ -63,14 +63,16 @@ void Type::dump(PrintStream& out) const
         [&](const Struct& structure) {
             out.print(structure.structure.name());
         },
-        [&](const Function&) {
-            // FIXME: implement this
-            ASSERT_NOT_REACHED();
-        },
-        [&](const Bottom&) {
-            // Bottom is an implementation detail and should never leak, but we
-            // keep the ability to print it in debug to help when dumping types
-            out.print("⊥");
+        [&](const Function& function) {
+            out.print("(");
+            bool first = true;
+            for (auto* parameter : function.parameters) {
+                if (!first)
+                    out.print(", ");
+                first = false;
+                out.print(*parameter);
+            }
+            out.print(") -> ", *function.result);
         },
         [&](const Texture& texture) {
             switch (texture.kind) {
@@ -109,6 +111,14 @@ void Type::dump(PrintStream& out) const
                 break;
             }
             out.print("<", *texture.element, ">");
+        },
+        [&](const Reference& reference) {
+            out.print("ref<", reference.addressSpace, ", ", *reference.element, ", ", reference.accessMode, ">");
+        },
+        [&](const Bottom&) {
+            // Bottom is an implementation detail and should never leak, but we
+            // keep the ability to print it in debug to help when dumping types
+            out.print("⊥");
         });
 }
 
@@ -119,14 +129,24 @@ constexpr unsigned primitivePair(Types::Primitive::Kind first, Types::Primitive:
 }
 
 // https://www.w3.org/TR/WGSL/#conversion-rank
-ConversionRank conversionRank(Type* from, Type* to)
+ConversionRank conversionRank(const Type* from, const Type* to)
 {
     using namespace WGSL::Types;
 
     if (from == to)
         return { 0 };
 
-    // FIXME: refs should also return 0
+    if (auto* fromReference = std::get_if<Reference>(from)) {
+        if (fromReference->accessMode == AccessMode::Write)
+            return std::nullopt;
+        return conversionRank(fromReference->element, to);
+    }
+
+    if (auto* toReference = std::get_if<Reference>(to)) {
+        if (toReference->accessMode == AccessMode::Write)
+            return std::nullopt;
+        return conversionRank(from, toReference->element);
+    }
 
     if (auto* fromPrimitive = std::get_if<Primitive>(from)) {
         auto* toPrimitive = std::get_if<Primitive>(to);
@@ -239,10 +259,13 @@ unsigned Type::size() const
         [&](const Function&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Bottom&) -> unsigned {
+        [&](const Texture&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Texture&) -> unsigned {
+        [&](const Reference&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Bottom&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         });
 }
@@ -289,12 +312,74 @@ unsigned Type::alignment() const
         [&](const Function&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Bottom&) -> unsigned {
+        [&](const Texture&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Texture&) -> unsigned {
+        [&](const Reference&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Bottom&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         });
 }
 
+bool isPrimitive(const Type* type, Primitive::Kind kind)
+{
+    auto* primitive = std::get_if<Primitive>(type);
+    if (!primitive)
+        return false;
+    return primitive->kind == kind;
+}
+
+bool isPrimitiveReference(const Type* type, Primitive::Kind kind)
+{
+    auto* reference = std::get_if<Reference>(type);
+    if (!reference)
+        return false;
+    return isPrimitive(reference->element, kind);
+}
+
 } // namespace WGSL
+
+namespace WTF {
+
+void printInternal(PrintStream& out, WGSL::AddressSpace addressSpace)
+{
+    switch (addressSpace) {
+    case WGSL::AddressSpace::Function:
+        out.print("function");
+        return;
+    case WGSL::AddressSpace::Private:
+        out.print("private");
+        return;
+    case WGSL::AddressSpace::Workgroup:
+        out.print("workgroup");
+        return;
+    case WGSL::AddressSpace::Uniform:
+        out.print("uniform");
+        return;
+    case WGSL::AddressSpace::Storage:
+        out.print("storage");
+        return;
+    case WGSL::AddressSpace::Handle:
+        out.print("handle");
+        return;
+    }
+}
+
+void printInternal(PrintStream& out, WGSL::AccessMode accessMode)
+{
+    switch (accessMode) {
+    case WGSL::AccessMode::Read:
+        out.print("read");
+        return;
+    case WGSL::AccessMode::Write:
+        out.print("write");
+        return;
+    case WGSL::AccessMode::ReadWrite:
+        out.print("read_write");
+        return;
+    }
+}
+
+} // namespace WTF

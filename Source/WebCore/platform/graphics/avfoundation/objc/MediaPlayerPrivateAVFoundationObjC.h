@@ -433,7 +433,6 @@ private:
     RetainPtr<id> m_currentTimeObserver;
 
     mutable RetainPtr<NSArray> m_cachedSeekableRanges;
-    mutable RetainPtr<NSArray> m_cachedLoadedRanges;
     RetainPtr<NSArray> m_cachedTracks;
     RetainPtr<NSArray> m_currentMetaData;
     FloatSize m_cachedPresentationSize;
@@ -488,7 +487,7 @@ private:
     std::unique_ptr<Observer<void()>> m_currentImageChangedObserver;
     std::unique_ptr<Observer<void()>> m_waitForVideoOutputMediaDataWillChangeObserver;
     ProcessIdentity m_resourceOwner;
-    mutable PlatformTimeRanges m_buffered;
+    PlatformTimeRanges m_buffered;
 };
 
 }

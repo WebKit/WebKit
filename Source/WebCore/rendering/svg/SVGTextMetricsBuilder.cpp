@@ -137,7 +137,7 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText& text, Measu
     }
 
     initializeMeasurementWithTextRenderer(text);
-    bool preserveWhiteSpace = text.style().whiteSpace() == WhiteSpace::Pre;
+    bool preserveWhiteSpace = text.style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
     int surrogatePairCharacters = 0;
 
     while (advance()) {

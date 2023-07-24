@@ -88,6 +88,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioConverterDispose, OSStatus
 #define AudioConverterDispose softLink_AudioToolbox_AudioConverterDispose
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioConverterSetProperty, OSStatus, (AudioConverterRef inAudioConverter, AudioConverterPropertyID inPropertyID, UInt32 inPropertyDataSize, const void* inPropertyData), (inAudioConverter, inPropertyID, inPropertyDataSize, inPropertyData))
 #define AudioConverterSetProperty softLink_AudioToolbox_AudioConverterSetProperty
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioFormatGetPropertyInfo, OSStatus, (AudioFormatPropertyID inPropertyID, UInt32 inSpecifierSize, const void* inSpecifier, UInt32* ioPropertyDataSize), (inPropertyID, inSpecifierSize, inSpecifier, ioPropertyDataSize))
+#define AudioFormatGetPropertyInfo softLink_AudioToolbox_AudioFormatGetPropertyInfo
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioFormatGetProperty, OSStatus, (AudioFormatPropertyID inPropertyID, UInt32 inSpecifierSize, const void* inSpecifier, UInt32* ioPropertyDataSize, void* outPropertyData), (inPropertyID, inSpecifierSize, inSpecifier, ioPropertyDataSize, outPropertyData))
 #define AudioFormatGetProperty softLink_AudioToolbox_AudioFormatGetProperty
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioConverterConvertComplexBuffer, OSStatus, (AudioConverterRef inAudioConverter, UInt32 inNumberPCMFrames, const AudioBufferList* inInputData, AudioBufferList* outOutputData), (inAudioConverter, inNumberPCMFrames, inInputData, outOutputData))

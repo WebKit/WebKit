@@ -95,6 +95,10 @@ String toString(TokenType type)
         return "f32"_s;
     case TokenType::KeywordBool:
         return "bool"_s;
+    case TokenType::KeywordBreak:
+        return "break"_s;
+    case TokenType::KeywordContinue:
+        return "continue"_s;
     case TokenType::LiteralTrue:
         return "true"_s;
     case TokenType::LiteralFalse:

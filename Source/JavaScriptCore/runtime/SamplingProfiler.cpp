@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -354,7 +354,10 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
 
         Locker machineThreadsLocker { m_vm.heap.machineThreads().getLock() };
         Locker codeBlockSetLocker { m_vm.heap.codeBlockSet().getLock() };
-        Locker executableAllocatorLocker { ExecutableAllocator::singleton().getLock() };
+        std::optional<LockHolder> executableAllocatorLocker;
+        if (Options::useJIT())
+            executableAllocatorLocker.emplace(ExecutableAllocator::singleton().getLock());
+
         std::optional<LockHolder> wasmCalleesLocker;
 #if ENABLE(WEBASSEMBLY)
         if (Wasm::isSupported())
@@ -389,7 +392,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
             bool shouldAppendTopFrameAsCCode = false;
             // FIXME: Lets have a way of detecting when we're parsing code.
             // https://bugs.webkit.org/show_bug.cgi?id=152761
-            if (ExecutableAllocator::singleton().isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
+            if (Options::useJIT() && ExecutableAllocator::singleton().isValidExecutableMemory(*executableAllocatorLocker, machinePC)) {
                 regExp = m_vm.m_executingRegExp;
                 if (regExp)
                     callFrame = m_vm.topCallFrame; // We need to do this or else we'd fail our backtrace validation b/c this isn't a JS frame.

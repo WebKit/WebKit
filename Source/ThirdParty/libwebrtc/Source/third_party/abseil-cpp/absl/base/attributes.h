@@ -211,11 +211,20 @@
 // out of bounds or does other scary things with memory.
 // NOTE: GCC supports AddressSanitizer(asan) since 4.8.
 // https://gcc.gnu.org/gcc-4.8/changes.html
-#if ABSL_HAVE_ATTRIBUTE(no_sanitize_address)
+#if defined(ABSL_HAVE_ADDRESS_SANITIZER) && \
+    ABSL_HAVE_ATTRIBUTE(no_sanitize_address)
 #define ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS __attribute__((no_sanitize_address))
-#elif defined(_MSC_VER) && _MSC_VER >= 1928
+#elif defined(ABSL_HAVE_ADDRESS_SANITIZER) && defined(_MSC_VER) && \
+    _MSC_VER >= 1928
 // https://docs.microsoft.com/en-us/cpp/cpp/no-sanitize-address
 #define ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS __declspec(no_sanitize_address)
+#elif defined(ABSL_HAVE_HWADDRESS_SANITIZER) && ABSL_HAVE_ATTRIBUTE(no_sanitize)
+// HWAddressSanitizer is a sanitizer similar to AddressSanitizer, which uses CPU
+// features to detect similar bugs with less CPU and memory overhead.
+// NOTE: GCC supports HWAddressSanitizer(hwasan) since 11.
+// https://gcc.gnu.org/gcc-11/changes.html
+#define ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS \
+  __attribute__((no_sanitize("hwaddress")))
 #else
 #define ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS
 #endif
@@ -322,8 +331,8 @@
 // This functionality is supported by GNU linker.
 #ifndef ABSL_ATTRIBUTE_SECTION_VARIABLE
 #ifdef _AIX
-// __attribute__((section(#name))) on AIX is achived by using the `.csect` psudo
-// op which includes an additional integer as part of its syntax indcating
+// __attribute__((section(#name))) on AIX is achieved by using the `.csect`
+// psudo op which includes an additional integer as part of its syntax indcating
 // alignment. If data fall under different alignments then you might get a
 // compilation error indicating a `Section type conflict`.
 #define ABSL_ATTRIBUTE_SECTION_VARIABLE(name)
@@ -716,26 +725,9 @@
 #define ABSL_CONST_INIT
 #endif
 
-// ABSL_ATTRIBUTE_PURE_FUNCTION
-//
-// ABSL_ATTRIBUTE_PURE_FUNCTION is used to annotate declarations of "pure"
-// functions. A function is pure if its return value is only a function of its
-// arguments. The pure attribute prohibits a function from modifying the state
-// of the program that is observable by means other than inspecting the
-// function's return value. Declaring such functions with the pure attribute
-// allows the compiler to avoid emitting some calls in repeated invocations of
-// the function with the same argument values.
-//
-// Example:
-//
-//  ABSL_ATTRIBUTE_PURE_FUNCTION int64_t ToInt64Milliseconds(Duration d);
-#if ABSL_HAVE_CPP_ATTRIBUTE(gnu::pure)
-#define ABSL_ATTRIBUTE_PURE_FUNCTION [[gnu::pure]]
-#elif ABSL_HAVE_ATTRIBUTE(pure)
-#define ABSL_ATTRIBUTE_PURE_FUNCTION __attribute__((pure))
-#else
+// These annotations are not available yet due to fear of breaking code.
 #define ABSL_ATTRIBUTE_PURE_FUNCTION
-#endif
+#define ABSL_ATTRIBUTE_CONST_FUNCTION
 
 // ABSL_ATTRIBUTE_LIFETIME_BOUND indicates that a resource owned by a function
 // parameter or implicit object parameter is retained by the return value of the
@@ -794,6 +786,28 @@
 #define ABSL_HAVE_ATTRIBUTE_TRIVIAL_ABI 1
 #else
 #define ABSL_ATTRIBUTE_TRIVIAL_ABI
+#endif
+
+// ABSL_ATTRIBUTE_NO_UNIQUE_ADDRESS
+//
+// Indicates a data member can be optimized to occupy no space (if it is empty)
+// and/or its tail padding can be used for other members.
+//
+// For code that is assured to only build with C++20 or later, prefer using
+// the standard attribute `[[no_unique_address]]` directly instead of this
+// macro.
+//
+// https://devblogs.microsoft.com/cppblog/msvc-cpp20-and-the-std-cpp20-switch/#c20-no_unique_address
+// Current versions of MSVC have disabled `[[no_unique_address]]` since it
+// breaks ABI compatibility, but offers `[[msvc::no_unique_address]]` for
+// situations when it can be assured that it is desired. Since Abseil does not
+// claim ABI compatibility in mixed builds, we can offer it unconditionally.
+#if defined(_MSC_VER) && _MSC_VER >= 1929
+#define ABSL_ATTRIBUTE_NO_UNIQUE_ADDRESS [[msvc::no_unique_address]]
+#elif ABSL_HAVE_CPP_ATTRIBUTE(no_unique_address)
+#define ABSL_ATTRIBUTE_NO_UNIQUE_ADDRESS [[no_unique_address]]
+#else
+#define ABSL_ATTRIBUTE_NO_UNIQUE_ADDRESS
 #endif
 
 #endif  // ABSL_BASE_ATTRIBUTES_H_

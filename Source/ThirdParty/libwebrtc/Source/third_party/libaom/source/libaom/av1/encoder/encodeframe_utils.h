@@ -297,15 +297,29 @@ static AOM_INLINE void update_filter_type_cdf(const MACROBLOCKD *xd,
   }
 }
 
-static AOM_INLINE int set_segment_rdmult(const AV1_COMP *const cpi,
-                                         MACROBLOCK *const x,
-                                         int8_t segment_id) {
+static AOM_INLINE int set_rdmult(const AV1_COMP *const cpi,
+                                 const MACROBLOCK *const x, int segment_id) {
   const AV1_COMMON *const cm = &cpi->common;
-  av1_init_plane_quantizers(cpi, x, segment_id, 0);
-  const int segment_qindex =
-      av1_get_qindex(&cm->seg, segment_id, cm->quant_params.base_qindex);
-  return av1_compute_rd_mult(cpi,
-                             segment_qindex + cm->quant_params.y_dc_delta_q);
+  const GF_GROUP *const gf_group = &cpi->ppi->gf_group;
+  const CommonQuantParams *quant_params = &cm->quant_params;
+  const aom_bit_depth_t bit_depth = cm->seq_params->bit_depth;
+  const FRAME_UPDATE_TYPE update_type =
+      cpi->ppi->gf_group.update_type[cpi->gf_frame_index];
+  const FRAME_TYPE frame_type = cm->current_frame.frame_type;
+  const int boost_index = AOMMIN(15, (cpi->ppi->p_rc.gfu_boost / 100));
+  const int layer_depth = AOMMIN(gf_group->layer_depth[cpi->gf_frame_index], 6);
+
+  int qindex;
+  if (segment_id >= 0) {
+    qindex = av1_get_qindex(&cm->seg, segment_id, cm->quant_params.base_qindex);
+  } else {
+    qindex = quant_params->base_qindex + x->rdmult_delta_qindex +
+             quant_params->y_dc_delta_q;
+  }
+
+  return av1_compute_rd_mult(
+      qindex, bit_depth, update_type, layer_depth, boost_index, frame_type,
+      cpi->oxcf.q_cfg.use_fixed_qp_offsets, is_stat_consumption_stage(cpi));
 }
 
 static AOM_INLINE int do_split_check(BLOCK_SIZE bsize) {
@@ -354,6 +368,13 @@ void av1_set_ssim_rdmult(const AV1_COMP *const cpi, int *errorperbit,
                          const BLOCK_SIZE bsize, const int mi_row,
                          const int mi_col, int *const rdmult);
 
+#if CONFIG_SALIENCY_MAP
+void av1_set_saliency_map_vmaf_rdmult(const AV1_COMP *const cpi,
+                                      int *errorperbit, const BLOCK_SIZE bsize,
+                                      const int mi_row, const int mi_col,
+                                      int *const rdmult);
+#endif
+
 void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
                       const PICK_MODE_CONTEXT *const ctx, int mi_row,
                       int mi_col, BLOCK_SIZE bsize, RUN_TYPE dry_run);
@@ -391,8 +412,8 @@ void av1_update_picked_ref_frames_mask(MACROBLOCK *const x, int ref_type,
 void av1_avg_cdf_symbols(FRAME_CONTEXT *ctx_left, FRAME_CONTEXT *ctx_tr,
                          int wt_left, int wt_tr);
 
-void av1_source_content_sb(AV1_COMP *cpi, MACROBLOCK *x, int mi_row,
-                           int mi_col);
+void av1_source_content_sb(AV1_COMP *cpi, MACROBLOCK *x, TileDataEnc *tile_data,
+                           int mi_row, int mi_col);
 
 void av1_reset_mbmi(CommonModeInfoParams *const mi_params, BLOCK_SIZE sb_size,
                     int mi_row, int mi_col);

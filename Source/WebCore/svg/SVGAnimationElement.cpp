@@ -32,7 +32,6 @@
 #include "CSSPropertyParser.h"
 #include "Document.h"
 #include "FloatConversion.h"
-#include "HTMLParserIdioms.h"
 #include "NodeName.h"
 #include "RenderObject.h"
 #include "SVGAnimateColorElement.h"
@@ -65,7 +64,7 @@ static Vector<float> parseKeyTimes(StringView value, bool verifyOrder)
     Vector<float> result;
 
     for (auto keyTime : keyTimes) {
-        keyTime = keyTime.stripWhiteSpace();
+        keyTime = keyTime.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
 
         bool ok;
         float time = keyTime.toFloat(ok);
@@ -152,11 +151,11 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
 bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attribute) const
 {
     if (attribute.name() == SVGNames::fromAttr || attribute.name() == SVGNames::toAttr)
-        return WTF::protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(attribute.value()));
+        return WTF::protocolIsJavaScript(attribute.value());
 
     if (attribute.name() == SVGNames::valuesAttr) {
         for (auto innerValue : StringView(attribute.value()).split(';')) {
-            if (WTF::protocolIsJavaScript(innerValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>)))
+            if (WTF::protocolIsJavaScript(innerValue))
                 return true;
         }
         return false;
@@ -166,9 +165,6 @@ bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attrib
 
 void SVGAnimationElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGTests::parseAttribute(name, newValue);
-    SVGSMILElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::valuesAttr:
         // Per the SMIL specification, leading and trailing white space,
@@ -176,7 +172,7 @@ void SVGAnimationElement::attributeChanged(const QualifiedName& name, const Atom
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
         m_values.clear();
         newValue.string().split(';', [this](StringView innerValue) {
-            m_values.append(innerValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toString());
+            m_values.append(innerValue.trim(isASCIIWhitespace<UChar>).toString());
         });
         updateAnimationMode();
         break;
@@ -210,6 +206,9 @@ void SVGAnimationElement::attributeChanged(const QualifiedName& name, const Atom
     default:
         break;
     }
+
+    SVGTests::parseAttribute(name, newValue);
+    SVGSMILElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGAnimationElement::svgAttributeChanged(const QualifiedName& attrName)

@@ -97,6 +97,7 @@ static void moveWidgetToParentSoon(Widget& child, LocalFrameView* parent)
 RenderWidget::RenderWidget(HTMLFrameOwnerElement& element, RenderStyle&& style)
     : RenderReplaced(element, WTFMove(style))
 {
+    relaxAdoptionRequirement();
     setInline(false);
 }
 
@@ -120,10 +121,7 @@ void RenderWidget::willBeDestroyed()
     RenderReplaced::willBeDestroyed();
 }
 
-RenderWidget::~RenderWidget()
-{
-    ASSERT(!m_refCount);
-}
+RenderWidget::~RenderWidget() = default;
 
 // Widgets are always placed on integer boundaries, so rounding the size is actually
 // the desired behavior. This function is here because it's otherwise seldom what we
@@ -169,7 +167,7 @@ bool RenderWidget::updateWidgetGeometry()
 
     LayoutRect contentBox = contentBoxRect();
     LayoutRect absoluteContentBox(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
-    if (m_widget->isFrameView()) {
+    if (m_widget->isLocalFrameView()) {
         contentBox.setLocation(absoluteContentBox.location());
         return setWidgetGeometry(contentBox);
     }
@@ -333,7 +331,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         BackgroundPainter::clipRoundedInnerRect(paintInfo.context(), borderRect, roundedInnerRect);
     }
 
-    if (m_widget && !shouldSkipContent())
+    if (m_widget && !isSkippedContentRoot())
         paintContents(paintInfo, paintOffset);
 
     if (style().hasBorderRadius())

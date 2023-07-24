@@ -44,7 +44,7 @@ private:
     void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&) override;
 
     void handleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges) override;
-    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
+    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool wasHandled) override;
 
     bool scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) override;
     bool scrollingTreeNodeRequestsKeyboardScroll(WebCore::ScrollingNodeID, const WebCore::RequestedKeyboardScrollData&) override;
@@ -52,6 +52,7 @@ private:
 
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
+    void clearNodesWithUserScrollInProgress() override;
 
     void scrollingTreeNodeDidBeginScrollSnapping(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScrollSnapping(WebCore::ScrollingNodeID) override;
@@ -60,6 +61,7 @@ private:
     void establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&) override;
 
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
+    void windowScreenWillChange() override;
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) override;
 
     void willCommitLayerAndScrollingTrees() override;

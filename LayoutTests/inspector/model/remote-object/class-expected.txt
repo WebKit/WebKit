@@ -19,7 +19,7 @@ EXPRESSION: Person.prototype.methodName
 {
   "_type": "function",
   "_objectId": "<filtered>",
-  "_description": "function methodName(p1, p2){}"
+  "_description": "methodName(p1, p2){}"
 }
 
 -----------------------------------------------------

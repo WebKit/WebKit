@@ -752,6 +752,9 @@ class Program final : public LabeledObject, public angle::Subject
 
         DIRTY_BIT_COUNT = DIRTY_BIT_UNIFORM_BLOCK_BINDING_MAX,
     };
+    static_assert(DIRTY_BIT_UNIFORM_BLOCK_BINDING_0 == 0,
+                  "UniformBlockBindingMask must match DirtyBits because UniformBlockBindingMask is "
+                  "used directly to set dirty bits.");
 
     using DirtyBits = angle::BitSet<DIRTY_BIT_COUNT>;
 
@@ -776,9 +779,19 @@ class Program final : public LabeledObject, public angle::Subject
     const ProgramExecutable &getExecutable() const { return mState.getExecutable(); }
     ProgramExecutable &getExecutable() { return mState.getExecutable(); }
 
-  private:
-    struct LinkingState;
+    void onUniformBufferStateChange(size_t uniformBufferIndex)
+    {
+        if (uniformBufferIndex >= mUniformBlockBindingMasks.size())
+        {
+            mUniformBlockBindingMasks.resize(uniformBufferIndex + 1, UniformBlockBindingMask());
+        }
+        mDirtyBits |= mUniformBlockBindingMasks[uniformBufferIndex];
+    }
 
+  private:
+    friend class ProgramPipeline;
+
+    struct LinkingState;
     ~Program() override;
 
     // Loads program state according to the specified binary blob.
@@ -885,6 +898,16 @@ class Program final : public LabeledObject, public angle::Subject
     const ShaderProgramID mHandle;
 
     DirtyBits mDirtyBits;
+
+    // To simplify dirty bits handling, instead of tracking dirtiness of both uniform block index
+    // and uniform binding index, we only track which uniform block index is dirty. And then when
+    // buffer index is dirty, we look at which uniform blocks are bound to this buffer binding index
+    // and set all of these uniform blocks dirty. This variable tracks all the uniform blocks bound
+    // to the given binding index in the form of bitmask so that we can quickly convert them to the
+    // dirty bits.
+    static constexpr size_t kFastUniformBlockBindingLimit = 8;
+    angle::FastVector<UniformBlockBindingMask, kFastUniformBlockBindingLimit>
+        mUniformBlockBindingMasks;
 
     std::mutex mHistogramMutex;
 };

@@ -56,10 +56,6 @@
 #import "CodeSigning.h"
 #endif
 
-#if __has_include(<WebKitAdditions/InternalBuildAdditions.h>)
-#include <WebKitAdditions/InternalBuildAdditions.h>
-#endif
-
 namespace WebKit {
 
 static const char* webContentServiceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
@@ -127,7 +123,7 @@ void ProcessLauncher::launchProcess()
     }
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    xpc_dictionary_set_string(initializationMessage.get(), "WebKitBundleVersion", [[NSBundle bundleWithIdentifier:@"com.apple.WebKit"].infoDictionary[(__bridge NSString *)kCFBundleVersionKey] UTF8String]);
+    xpc_dictionary_set_string(initializationMessage.get(), "WebKitBundleVersion", [[NSBundle bundleForClass:NSClassFromString(@"WKWebView")].infoDictionary[(__bridge NSString *)kCFBundleVersionKey] UTF8String]);
 #endif
     xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
 
@@ -189,14 +185,10 @@ void ProcessLauncher::launchProcess()
 
     if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
         bool disableLogging = true;
-#if __has_include(<WebKitAdditions/InternalBuildAdditions.h>)
-        if (isInternalBuild())
-            disableLogging = false;
-#endif
         xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-logging", disableLogging);
     }
 
-    bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:FileSystem::systemDirectoryPath()];
+    bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleForClass:NSClassFromString(@"WKWebView")] bundlePath] stringByDeletingLastPathComponent] hasPrefix:FileSystem::systemDirectoryPath()];
     if (isWebKitDevelopmentBuild) {
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stdout", STDOUT_FILENO);
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stderr", STDERR_FILENO);
@@ -320,11 +312,11 @@ void ProcessLauncher::terminateProcess()
         return;
     }
 
-    if (!m_processIdentifier)
+    if (!m_processID)
         return;
 
-    kill(m_processIdentifier, SIGKILL);
-    m_processIdentifier = 0;
+    kill(m_processID, SIGKILL);
+    m_processID = 0;
 }
 
 void ProcessLauncher::platformInvalidate()

@@ -1,0 +1,99 @@
+# Copyright (c) 2022 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("streams_config") {
+  sources = [
+    "encoder_stream_factory.cc",
+    "encoder_stream_factory.h",
+    "simulcast.cc",
+    "simulcast.h",
+  ]
+
+  deps = [
+    ":encoder_config",
+    "../../api:field_trials_view",
+    "../../api/transport:field_trial_based_config",
+    "../../api/units:data_rate",
+    "../../api/video:video_codec_constants",
+    "../../api/video_codecs:video_codecs_api",
+    "../../call/adaptation:resource_adaptation",
+    "../../media:media_constants",
+    "../../media:rtc_media_base",
+    "../../modules/video_coding:video_coding_utility",
+    "../../modules/video_coding:webrtc_vp9_helpers",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../rtc_base/experiments:min_video_bitrate_experiment",
+    "../../rtc_base/experiments:normalize_simulcast_size_experiment",
+    "../../rtc_base/experiments:rate_control_settings",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("encoder_config") {
+  sources = [
+    "video_encoder_config.cc",
+    "video_encoder_config.h",
+  ]
+
+  deps = [
+    "../../api:scoped_refptr",
+    "../../api/video:resolution",
+    "../../api/video_codecs:scalability_mode",
+    "../../api/video_codecs:video_codecs_api",
+    "../../rtc_base:checks",
+    "../../rtc_base:refcount",
+    "../../rtc_base:stringutils",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("video_config_tests") {
+    testonly = true
+
+    defines = []
+    sources = [
+      "encoder_stream_factory_unittest.cc",
+      "simulcast_unittest.cc",
+    ]
+    deps = [
+      ":streams_config",
+      "../../api/transport:field_trial_based_config",
+      "../../call/adaptation:resource_adaptation",
+      "../../media:media_constants",
+      "../../test:field_trial",
+      "../../test:test_support",
+    ]
+    absl_deps = [
+      "//third_party/abseil-cpp/absl/algorithm:container",
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
+      "//third_party/abseil-cpp/absl/functional:bind_front",
+      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/types:optional",
+      "//third_party/abseil-cpp/absl/types:variant",
+    ]
+    if (!build_with_mozilla) {
+      deps += [ "../../media:rtc_media_base" ]
+    }
+  }
+}

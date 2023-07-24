@@ -30,17 +30,18 @@
 #include "AccessibilityARIAGrid.h"
 
 #include "AXObjectCache.h"
-#include "AccessibilityARIAGridRow.h"
-#include "AccessibilityTableCell.h"
-#include "AccessibilityTableColumn.h"
-#include "AccessibilityTableHeaderContainer.h"
-#include "RenderObject.h"
-#include "RenderTableSection.h"
 
 namespace WebCore {
 
+class RenderObject;
+
 AccessibilityARIAGrid::AccessibilityARIAGrid(RenderObject* renderer)
     : AccessibilityTable(renderer)
+{
+}
+
+AccessibilityARIAGrid::AccessibilityARIAGrid(Node& node)
+    : AccessibilityTable(node)
 {
 }
 
@@ -51,25 +52,9 @@ Ref<AccessibilityARIAGrid> AccessibilityARIAGrid::create(RenderObject* renderer)
     return adoptRef(*new AccessibilityARIAGrid(renderer));
 }
 
-bool AccessibilityARIAGrid::addTableCellChild(AXCoreObject* child, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
+Ref<AccessibilityARIAGrid> AccessibilityARIAGrid::create(Node& node)
 {
-    if (!child || (!is<AccessibilityTableRow>(*child) && !child->isARIATreeGridRow()))
-        return false;
-
-    auto& row = downcast<AccessibilityTableRow>(*child);
-    if (appendedRows.contains(&row))
-        return false;
-
-    // store the maximum number of columns
-    unsigned rowCellCount = row.children().size();
-    if (rowCellCount > columnCount)
-        columnCount = rowCellCount;
-
-    row.setRowIndex((int)m_rows.size());
-    m_rows.append(&row);
-    addChild(&row);
-    appendedRows.add(&row);
-    return true;
+    return adoptRef(*new AccessibilityARIAGrid(node));
 }
 
 bool AccessibilityARIAGrid::isMultiSelectable() const
@@ -78,65 +63,4 @@ bool AccessibilityARIAGrid::isMultiSelectable() const
     return !equalLettersIgnoringASCIICase(ariaMultiSelectable, "false"_s);
 }
 
-void AccessibilityARIAGrid::addRowDescendant(AXCoreObject* rowChild, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
-{
-    if (!rowChild)
-        return;
-
-    if (!rowChild->isTableRow() || !rowChild->node()) {
-        // Although a "grid" should have rows as its direct descendants, if this is not a table row,
-        // or this row is anonymous, dive deeper into the descendants to try to find a valid row.
-        for (const auto& child : rowChild->children())
-            addRowDescendant(child.get(), appendedRows, columnCount);
-    } else
-        addTableCellChild(rowChild, appendedRows, columnCount);
-}
-
-void AccessibilityARIAGrid::addChildren()
-{
-    ASSERT(!m_childrenInitialized); 
-    
-    if (!isExposable()) {
-        AccessibilityRenderObject::addChildren();
-        return;
-    }
-    
-    m_childrenInitialized = true;
-    auto* document = this->document();
-    auto* axCache = document ? document->axObjectCache() : nullptr;
-
-    // Add the children rows but be mindful in case there are footer sections in this table.
-    HashSet<AccessibilityObject*> appendedRows;
-    unsigned columnCount = 0;
-    AccessibilityChildrenVector footerSections;
-    for (RefPtr<AccessibilityObject> child = firstChild(); child; child = child->nextSibling()) {
-        bool footerSection = false;
-        if (RenderObject* childRenderer = child->renderer()) {
-            if (is<RenderTableSection>(*childRenderer)) {
-                RenderTableSection& childSection = downcast<RenderTableSection>(*childRenderer);
-                if (&childSection == childSection.table()->footer()) {
-                    footerSections.append(child);
-                    footerSection = true;
-                }
-            }
-        }
-        if (!footerSection)
-            addRowDescendant(child.get(), appendedRows, columnCount);
-    }
-    
-    for (const auto& footerSection : footerSections)
-        addRowDescendant(footerSection.get(), appendedRows, columnCount);
-    
-    // make the columns based on the number of columns in the first body
-    for (unsigned i = 0; i < columnCount; ++i) {
-        auto& column = downcast<AccessibilityTableColumn>(*axCache->create(AccessibilityRole::Column));
-        column.setColumnIndex(i);
-        column.setParent(this);
-        m_columns.append(&column);
-        addChild(&column, DescendIfIgnored::No);
-    }
-
-    addChild(headerContainer(), DescendIfIgnored::No);
-}
-    
 } // namespace WebCore

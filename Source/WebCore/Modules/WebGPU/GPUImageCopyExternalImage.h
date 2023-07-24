@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,8 @@
 #include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
 #include "OffscreenCanvas.h"
+#include "WebGPUImageCopyExternalImage.h"
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h>
 #include <variant>
 #include <wtf/RefPtr.h>
 
@@ -43,7 +43,7 @@ struct GPUImageCopyExternalImage {
     using SourceType = std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>>;
 #endif
 
-    PAL::WebGPU::ImageCopyExternalImage convertToBacking() const
+    WebGPU::ImageCopyExternalImage convertToBacking() const
     {
         return {
             // FIXME: Handle the canvas element.

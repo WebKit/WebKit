@@ -104,5 +104,5 @@ function closed()
     if (!@isReadableStreamBYOBReader(this))
         return @Promise.@reject(@makeGetterTypeError("ReadableStreamBYOBReader", "closed"));
 
-    return @getByIdDirectPrivate(this, "closedPromiseCapability").@promise;
+    return @getByIdDirectPrivate(this, "closedPromiseCapability").promise;
 }

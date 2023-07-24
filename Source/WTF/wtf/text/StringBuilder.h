@@ -102,7 +102,7 @@ public:
     WTF_EXPORT_PRIVATE bool shouldShrinkToFit() const;
     WTF_EXPORT_PRIVATE void shrinkToFit();
 
-    WTF_EXPORT_PRIVATE bool isAllASCII() const;
+    WTF_EXPORT_PRIVATE bool containsOnlyASCII() const;
 
 private:
     static unsigned expandedCapacity(unsigned capacity, unsigned requiredCapacity);

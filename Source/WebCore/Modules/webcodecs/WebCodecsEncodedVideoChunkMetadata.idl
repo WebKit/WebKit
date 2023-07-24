@@ -28,6 +28,6 @@
     JSGenerateToJSObject,
 ] dictionary WebCodecsEncodedVideoChunkMetadata {
       WebCodecsVideoDecoderConfig decoderConfig;
-      // FIXME: Add svc and alphaSideData
+      WebCodecsSvcOutputMetadata svc;
+      // FIXME: Add alphaSideData
 };
-

@@ -10,14 +10,13 @@
 // SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 // WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 package ar
 
 import (
 	"bytes"
 	"flag"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -52,7 +51,7 @@ var arTests = []arTest{
 		"linux",
 		"libsample.a",
 		map[string]string{
-			"foo.c.o": "foo.c.o",
+			"foo.c.o":  "foo.c.o",
 			"bar.cc.o": "bar.cc.o",
 		},
 		false,
@@ -61,7 +60,7 @@ var arTests = []arTest{
 		"mac",
 		"libsample.a",
 		map[string]string{
-			"foo.c.o": "foo.c.o",
+			"foo.c.o":  "foo.c.o",
 			"bar.cc.o": "bar.cc.o",
 		},
 		true,
@@ -70,7 +69,7 @@ var arTests = []arTest{
 		"windows",
 		"sample.lib",
 		map[string]string{
-			"CMakeFiles\\sample.dir\\foo.c.obj": "foo.c.obj",
+			"CMakeFiles\\sample.dir\\foo.c.obj":  "foo.c.obj",
 			"CMakeFiles\\sample.dir\\bar.cc.obj": "bar.cc.obj",
 		},
 		false,
@@ -92,7 +91,7 @@ func TestAR(t *testing.T) {
 			}
 
 			for file, contentsPath := range test.out {
-				expected, err := ioutil.ReadFile(test.Path(contentsPath))
+				expected, err := os.ReadFile(test.Path(contentsPath))
 				if err != nil {
 					t.Fatalf("error reading %s: %s", contentsPath, err)
 				}

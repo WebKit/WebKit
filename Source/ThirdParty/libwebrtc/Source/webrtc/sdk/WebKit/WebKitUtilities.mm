@@ -129,6 +129,49 @@ CVPixelBufferRef pixelBufferFromI420Buffer(const uint8_t* buffer, size_t length,
     return pixelBuffer;
 }
 
+CVPixelBufferRef pixelBufferFromI420ABuffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420ABufferLayout layout)
+{
+    CVPixelBufferRef pixelBuffer = nullptr;
+
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar, nullptr, &pixelBuffer);
+    if (status != noErr || !pixelBuffer)
+        return nullptr;
+
+    if (CVPixelBufferLockBaseAddress(pixelBuffer, 0) != kCVReturnSuccess)
+        return nullptr;
+
+    bool result = copyI420BufferToPixelBuffer(pixelBuffer, buffer, length, width, height, layout);
+
+    if (result) {
+        // Copy alpha information.
+        uint8_t* destinationA = reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 2));
+        int destinationStrideA = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 2);
+
+        auto* sourceA = buffer + layout.offsetA;
+        int sourceStrideA = layout.strideA;
+
+        auto* bufferEnd = buffer + length;
+        for (size_t cptr = 0; cptr < height; ++cptr) {
+            if (sourceA + width > bufferEnd) {
+                result = false;
+                break;
+            }
+            std::memcpy(destinationA, sourceA, width);
+            sourceA += sourceStrideA;
+            destinationA += destinationStrideA;
+        }
+    }
+
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+
+    if (!result) {
+        CFRelease(pixelBuffer);
+        return nullptr;
+    }
+    return pixelBuffer;
+}
+
+
 static bool CopyVideoFrameToPixelBuffer(const webrtc::I420BufferInterface* frame, CVPixelBufferRef pixel_buffer) {
     RTC_DCHECK(pixel_buffer);
     RTC_DCHECK(CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);

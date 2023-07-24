@@ -69,8 +69,8 @@ public:
 
     WebCore::PageIdentifier pageIdentifier() const final { return m_pageID; }
 
-    void ref() const final { IPC::WorkQueueMessageReceiver::ref(); }
-    void deref() const final { IPC::WorkQueueMessageReceiver ::deref(); }
+    void ref() const final { return IPC::WorkQueueMessageReceiver::ref(); }
+    void deref() const final { return IPC::WorkQueueMessageReceiver::deref(); }
 
 private:
     WebSWContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, RemoteWorkerInitializationData&&);

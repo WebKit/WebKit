@@ -24,8 +24,8 @@
 #include "api/transport/network_control.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder_factory.h"
-#include "api/video_codecs/video_encoder_config.h"
 #include "api/video_codecs/video_encoder_factory.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 
@@ -37,6 +37,7 @@ class VideoQualityTestFixtureInterface {
     struct CallConfig {
       bool send_side_bwe = false;
       bool generic_descriptor = false;
+      bool dependency_descriptor = false;
       BitrateConstraints call_bitrate_config;
       int num_thumbnails = 0;
       // Indicates if secondary_(video|ss|screenshare) structures are used.

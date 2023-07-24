@@ -83,33 +83,18 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
     textFormControlElement().updatePlaceholderVisibility();
 }
 
-int RenderTextControl::textBlockLogicalHeight() const
-{
-    return logicalHeight() - borderAndPaddingLogicalHeight();
-}
-
-int RenderTextControl::textBlockLogicalWidth() const
-{
-    auto innerText = innerTextElement();
-    ASSERT(innerText);
-
-    LayoutUnit unitWidth = logicalWidth() - borderAndPaddingLogicalWidth();
-    if (innerText->renderer())
-        unitWidth -= innerText->renderBox()->paddingStart() + innerText->renderBox()->paddingEnd();
-
-    return unitWidth;
-}
-
 int RenderTextControl::scrollbarThickness() const
 {
     // FIXME: We should get the size of the scrollbar from the RenderTheme instead.
-    return ScrollbarTheme::theme().scrollbarThickness();
+    return ScrollbarTheme::theme().scrollbarThickness(this->style().scrollbarWidth());
 }
 
 RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
     auto innerText = innerTextElement();
-    ASSERT(innerText);
+    if (!innerText)
+        return RenderBox::computeLogicalHeight(LayoutUnit(), LayoutUnit());
+
     if (RenderBox* innerTextBox = innerText->renderBox()) {
         LayoutUnit nonContentHeight = innerTextBox->verticalBorderAndPaddingExtent() + innerTextBox->verticalMarginExtent();
         logicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight);
@@ -177,7 +162,7 @@ void RenderTextControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
     }
     // Use average character width. Matches IE.
     maxLogicalWidth = preferredContentLogicalWidth(const_cast<RenderTextControl*>(this)->getAverageCharWidth());
-    if (RenderBox* innerTextRenderBox = innerTextElement()->renderBox())
+    if (RenderBox* innerTextRenderBox = innerTextElement() ? innerTextElement()->renderBox() : nullptr)
         maxLogicalWidth += innerTextRenderBox->paddingStart() + innerTextRenderBox->paddingEnd();
     if (!style().logicalWidth().isPercentOrCalculated())
         minLogicalWidth = maxLogicalWidth;

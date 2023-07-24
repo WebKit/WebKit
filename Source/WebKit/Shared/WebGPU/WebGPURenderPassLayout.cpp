@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,20 +30,20 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPURenderPassLayout.h>
+#include <WebCore/WebGPURenderPassLayout.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<RenderPassLayout> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderPassLayout& renderPassLayout)
+std::optional<RenderPassLayout> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassLayout& renderPassLayout)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(renderPassLayout));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(renderPassLayout));
     if (!base)
         return std::nullopt;
 
     return { { WTFMove(*base), renderPassLayout.colorFormats, renderPassLayout.depthStencilFormat, renderPassLayout.sampleCount } };
 }
 
-std::optional<PAL::WebGPU::RenderPassLayout> ConvertFromBackingContext::convertFromBacking(const RenderPassLayout& renderPassLayout)
+std::optional<WebCore::WebGPU::RenderPassLayout> ConvertFromBackingContext::convertFromBacking(const RenderPassLayout& renderPassLayout)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(renderPassLayout));
     if (!base)

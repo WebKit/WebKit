@@ -29,7 +29,6 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   vp8_config.rtp.local_ssrc = 7731;
   vp8_config.rtp.remote_ssrc = 1337;
   vp8_config.rtp.rtx_ssrc = 100;
-  vp8_config.rtp.transport_cc = true;
   vp8_config.rtp.nack.rtp_history_ms = 1000;
   vp8_config.rtp.lntf.enabled = true;
 

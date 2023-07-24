@@ -142,6 +142,11 @@ std::optional<std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLColl
     return std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<Element> { &element } };
 }
 
+bool HTMLDocument::isSupportedPropertyName(const AtomString& name) const
+{
+    return !name.isNull() && hasDocumentNamedItem(*name.impl());
+}
+
 Vector<AtomString> HTMLDocument::supportedPropertyNames() const
 {
     if (Quirks::shouldOmitHTMLDocumentSupportedPropertyNames())

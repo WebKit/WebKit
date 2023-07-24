@@ -139,6 +139,13 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime
     m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), WTFMove(completionHandler), m_identifier);
 }
 
+void RemoteSourceBufferProxy::sourceBufferPrivateTrackBuffersChanged(const Vector<WebCore::PlatformTimeRanges>& trackBuffers)
+{
+    if (!m_connectionToWebProcess)
+        return;
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateTrackBuffersChanged(trackBuffers), m_identifier);
+}
+
 void RemoteSourceBufferProxy::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& buffered, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_connectionToWebProcess) {
@@ -245,11 +252,9 @@ void RemoteSourceBufferProxy::startChangingType()
     m_sourceBufferPrivate->startChangingType();
 }
 
-void RemoteSourceBufferProxy::updateBufferedFromTrackBuffers(bool sourceIsEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&)>&& completionHandler)
+void RemoteSourceBufferProxy::clientReadyStateChanged(bool sourceIsEnded)
 {
-    m_sourceBufferPrivate->updateBufferedFromTrackBuffers(sourceIsEnded);
-    auto buffered = m_sourceBufferPrivate->buffered();
-    completionHandler(WTFMove(buffered));
+    m_sourceBufferPrivate->clientReadyStateChanged(sourceIsEnded);
 }
 
 void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)

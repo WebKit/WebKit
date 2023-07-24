@@ -21,7 +21,7 @@ int64_t av1_calc_frame_error_sse2(const uint8_t *const ref, int ref_stride,
   int64_t sum_error = 0;
   int i, j;
   __m128i row_error, col_error;
-  __m128i zero = _mm_set1_epi16(0);
+  __m128i zero = _mm_setzero_si128();
   __m128i dup_255 = _mm_set1_epi16(255);
   col_error = zero;
   for (i = 0; i < (p_height); i++) {

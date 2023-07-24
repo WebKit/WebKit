@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 bool isPokerBros();
 #endif
 
@@ -40,7 +40,7 @@ inline std::tuple<ASCIILiteral, JSString*> inferBuiltinTag(JSGlobalObject* globa
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     static bool needsOldBuiltinTag = isPokerBros();
     if (UNLIKELY(needsOldBuiltinTag))
         return std::tuple { object->className(), nullptr };

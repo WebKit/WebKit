@@ -64,7 +64,8 @@ public:
 
 class DisplayCaptureSourceCocoa final
     : public RealtimeMediaSource
-    , public CapturerObserver {
+    , public CapturerObserver
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DisplayCaptureSourceCocoa, WTF::DestructionThread::MainRunLoop> {
 public:
     using DisplayFrameType = std::variant<RefPtr<NativeImage>, RetainPtr<IOSurfaceRef>, RetainPtr<CMSampleBufferRef>>;
 
@@ -119,9 +120,13 @@ public:
 
     Seconds elapsedTime();
 
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DisplayCaptureSourceCocoa, WTF::DestructionThread::MainRunLoop>::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DisplayCaptureSourceCocoa, WTF::DestructionThread::MainRunLoop>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DisplayCaptureSourceCocoa, WTF::DestructionThread::MainRunLoop>::controlBlock(); }
+    virtual ~DisplayCaptureSourceCocoa();
+
 private:
     DisplayCaptureSourceCocoa(UniqueRef<Capturer>&&, const CaptureDevice&, MediaDeviceHashSalts&&, PageIdentifier);
-    virtual ~DisplayCaptureSourceCocoa();
 
     // RealtimeMediaSource
     void startProducingData() final;

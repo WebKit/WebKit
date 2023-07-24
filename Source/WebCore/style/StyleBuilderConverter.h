@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2023 ChangSeok Oh <changseok@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,6 +63,8 @@
 #include "SVGPathElement.h"
 #include "SVGRenderStyle.h"
 #include "SVGURIReference.h"
+#include "ScrollbarColor.h"
+#include "ScrollbarGutter.h"
 #include "Settings.h"
 #include "StyleBuilderState.h"
 #include "StyleFontSizeFunctions.h"
@@ -73,6 +75,7 @@
 #include "TextSpacing.h"
 #include "TouchAction.h"
 #include "TransformFunctions.h"
+#include "WillChangeData.h"
 
 namespace WebCore {
 namespace Style {
@@ -132,6 +135,8 @@ public:
     static ScrollSnapType convertScrollSnapType(BuilderState&, const CSSValue&);
     static ScrollSnapAlign convertScrollSnapAlign(BuilderState&, const CSSValue&);
     static ScrollSnapStop convertScrollSnapStop(BuilderState&, const CSSValue&);
+    static std::optional<ScrollbarColor> convertScrollbarColor(BuilderState&, const CSSValue&);
+    static ScrollbarGutter convertScrollbarGutter(BuilderState&, const CSSValue&);
     static GridTrackSize convertGridTrackSize(BuilderState&, const CSSValue&);
     static Vector<GridTrackSize> convertGridTrackSizeList(BuilderState&, const CSSValue&);
     static std::optional<GridPosition> convertGridPosition(BuilderState&, const CSSValue&);
@@ -192,6 +197,8 @@ public:
     static GapLength convertGapLength(BuilderState&, const CSSValue&);
 
     static OffsetRotation convertOffsetRotate(BuilderState&, const CSSValue&);
+
+    static OptionSet<Containment> convertContain(BuilderState&, const CSSValue&);
     static Vector<AtomString> convertContainerName(BuilderState&, const CSSValue&);
 
     static OptionSet<MarginTrimType> convertMarginTrim(BuilderState&, const CSSValue&);
@@ -200,6 +207,7 @@ public:
     static TextAutospace convertTextAutospace(BuilderState&, const CSSValue&);
 
     static std::optional<Length> convertBlockStepSize(BuilderState&, const CSSValue&);
+    static RefPtr<WillChangeData> convertWillChange(BuilderState&, const CSSValue&);
     
 private:
     friend class BuilderCustom;
@@ -706,7 +714,12 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
             auto cssURLValue = primitiveValue.stringValue();
             auto fragment = SVGURIReference::fragmentIdentifierFromIRIString(cssURLValue, builderState.document());
             // FIXME: It doesn't work with external SVG references (see https://bugs.webkit.org/show_bug.cgi?id=126133)
-            auto target = SVGURIReference::targetElementFromIRIString(cssURLValue, builderState.document());
+            const TreeScope* treeScope = nullptr;
+            if (builderState.element())
+                treeScope = &builderState.element()->treeScopeForSVGReferences();
+            else
+                treeScope = &builderState.document();
+            auto target = SVGURIReference::targetElementFromIRIString(cssURLValue, *treeScope);
             return ReferencePathOperation::create(cssURLValue, fragment, dynamicDowncast<SVGElement>(target.element.get()));
         }
         ASSERT(primitiveValue.valueID() == CSSValueNone);
@@ -717,7 +730,7 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
         auto& rayValue = downcast<CSSRayValue>(value);
 
         RayPathOperation::Size size = RayPathOperation::Size::ClosestCorner;
-        switch (rayValue.size()->valueID()) {
+        switch (rayValue.size()) {
         case CSSValueClosestCorner:
             size = RayPathOperation::Size::ClosestCorner;
             break;
@@ -1000,9 +1013,9 @@ inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& buil
     if (is<CSSValueList>(value)) {
         for (auto& currentValue : downcast<CSSValueList>(value))
             processSingleValue(currentValue);
-    } else {
+    } else
         processSingleValue(value);
-    }
+
     
     if (shape)
         return ShapeValue::create(shape.releaseNonNull(), referenceBox);
@@ -1046,6 +1059,39 @@ inline ScrollSnapAlign BuilderConverter::convertScrollSnapAlign(BuilderState&, c
 inline ScrollSnapStop BuilderConverter::convertScrollSnapStop(BuilderState&, const CSSValue& value)
 {
     return fromCSSValue<ScrollSnapStop>(value);
+}
+
+inline std::optional<ScrollbarColor> BuilderConverter::convertScrollbarColor(BuilderState& builderState, const CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(value.valueID() == CSSValueAuto);
+        return std::nullopt;
+    }
+
+    auto& pair = downcast<CSSValuePair>(value);
+
+    return ScrollbarColor {
+        builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(pair.first())),
+        builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(pair.second()))
+    };
+}
+
+inline ScrollbarGutter BuilderConverter::convertScrollbarGutter(BuilderState&, const CSSValue& value)
+{
+    ScrollbarGutter gutter;
+    if (is<CSSPrimitiveValue>(value)) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+        if (primitiveValue.valueID() == CSSValueStable)
+            gutter.isAuto = false;
+        return gutter;
+    }
+
+    ASSERT(value.isPair());
+
+    gutter.isAuto = false;
+    gutter.bothEdges = true;
+
+    return gutter;
 }
 
 inline GridLength BuilderConverter::createGridTrackBreadth(const CSSPrimitiveValue& primitiveValue, BuilderState& builderState)
@@ -1485,7 +1531,7 @@ inline FontSelectionValue BuilderConverter::convertFontStretchFromValue(const CS
 
 inline FontSelectionValue BuilderConverter::convertFontStyleAngle(const CSSValue& value)
 {
-    return FontSelectionValue { std::clamp(downcast<CSSPrimitiveValue>(value).value<float>(CSSUnitType::CSS_DEG), -90.0f, 90.0f) };
+    return normalizedFontItalicValue(downcast<CSSPrimitiveValue>(value).value<float>(CSSUnitType::CSS_DEG));
 }
 
 // The input value needs to parsed and valid, this function returns std::nullopt if the input was "normal".
@@ -1919,6 +1965,77 @@ inline std::optional<Length> BuilderConverter::convertBlockStepSize(BuilderState
     if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
         return { };
     return convertLength(builderState, value);
+}
+
+inline OptionSet<Containment> BuilderConverter::convertContain(BuilderState&, const CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        if (value.valueID() == CSSValueNone)
+            return RenderStyle::initialContainment();
+        if (value.valueID() == CSSValueStrict)
+            return RenderStyle::strictContainment();
+        return RenderStyle::contentContainment();
+    }
+
+    OptionSet<Containment> containment;
+    for (auto& item : downcast<CSSValueList>(value)) {
+        auto& value = downcast<CSSPrimitiveValue>(item);
+        switch (value.valueID()) {
+        case CSSValueSize:
+            containment.add(Containment::Size);
+            break;
+        case CSSValueInlineSize:
+            containment.add(Containment::InlineSize);
+            break;
+        case CSSValueLayout:
+            containment.add(Containment::Layout);
+            break;
+        case CSSValuePaint:
+            containment.add(Containment::Paint);
+            break;
+        case CSSValueStyle:
+            containment.add(Containment::Style);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        };
+    }
+    return containment;
+}
+
+inline RefPtr<WillChangeData> BuilderConverter::convertWillChange(BuilderState& builderState, const CSSValue& value)
+{
+    if (value.valueID() == CSSValueAuto)
+        return nullptr;
+
+    auto willChange = WillChangeData::create();
+    auto processSingleValue = [&](const CSSValue& item) {
+        if (!is<CSSPrimitiveValue>(item))
+            return;
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(item);
+        switch (primitiveValue.valueID()) {
+        case CSSValueScrollPosition:
+            willChange->addFeature(WillChangeData::Feature::ScrollPosition);
+            break;
+        case CSSValueContents:
+            willChange->addFeature(WillChangeData::Feature::Contents);
+            break;
+        default:
+            if (primitiveValue.isPropertyID()) {
+                if (!isExposed(primitiveValue.propertyID(), &builderState.document().settings()))
+                    break;
+                willChange->addFeature(WillChangeData::Feature::Property, primitiveValue.propertyID());
+            }
+            break;
+        }
+    };
+    if (is<CSSValueList>(value)) {
+        for (auto& item : downcast<CSSValueList>(value))
+            processSingleValue(item);
+    } else
+        processSingleValue(value);
+    return willChange;
 }
 
 } // namespace Style

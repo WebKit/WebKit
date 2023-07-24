@@ -23,5 +23,5 @@ features: [Temporal]
 TemporalHelpers.checkToTemporalCalendarFastPath((temporalObject, calendar) => {
   const time = new Temporal.PlainTime(13, 3);
   const result = time.toPlainDateTime({ year: 2000, month: 5, day: 3, calendar: temporalObject });
-  assert.sameValue(result.calendar, calendar, "Temporal object coerced to calendar");
+  assert.sameValue(result.getCalendar(), calendar, "Temporal object coerced to calendar");
 });

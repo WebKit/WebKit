@@ -186,7 +186,6 @@ CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:80
 CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
-CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 This test checks cross-frame access security (rdar://problem/5251309).
 
 
@@ -391,7 +390,6 @@ PASS: canGet('targetWindow.onmousewheel') should be 'false' and is.
 PASS: canGet('targetWindow.onreset') should be 'false' and is.
 PASS: canGet('targetWindow.onresize') should be 'false' and is.
 PASS: canGet('targetWindow.onscroll') should be 'false' and is.
-PASS: canGet('targetWindow.onsearch') should be 'false' and is.
 PASS: canGet('targetWindow.onselect') should be 'false' and is.
 PASS: canGet('targetWindow.onsubmit') should be 'false' and is.
 PASS: canGet('targetWindow.onunload') should be 'false' and is.

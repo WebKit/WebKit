@@ -12,7 +12,7 @@
 
 #include "ANGLEPerfTest.h"
 #include "common/vector_utils.h"
-#include "platform/FeaturesD3D_autogen.h"
+#include "platform/autogen/FeaturesD3D_autogen.h"
 #include "test_utils/MultiviewTest.h"
 #include "test_utils/gl_raii.h"
 #include "util/shader_utils.h"
@@ -342,11 +342,11 @@ void MultiviewCPUBoundBenchmark::initializeBenchmark()
     const float quadWidth  = 2.f / viewWidth;
     const float quadHeight = 2.f / viewHeight;
     Vector4 vertices[6]    = {Vector4(.0f, .0f, .0f, 1.f),
-                           Vector4(quadWidth, .0f, .0f, 1.f),
-                           Vector4(quadWidth, quadHeight, 0.f, 1.f),
-                           Vector4(.0f, .0f, 0.f, 1.f),
-                           Vector4(quadWidth, quadHeight, .0f, 1.f),
-                           Vector4(.0f, quadHeight, .0f, 1.f)};
+                              Vector4(quadWidth, .0f, .0f, 1.f),
+                              Vector4(quadWidth, quadHeight, 0.f, 1.f),
+                              Vector4(.0f, .0f, 0.f, 1.f),
+                              Vector4(quadWidth, quadHeight, .0f, 1.f),
+                              Vector4(.0f, quadHeight, .0f, 1.f)};
 
     glBindVertexArray(mVAO);
 

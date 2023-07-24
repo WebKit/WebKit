@@ -1,4 +1,4 @@
-# Copyright 2020 The Chromium Authors. All rights reserved.
+# Copyright 2020 The Chromium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -25,6 +25,7 @@ template("absl_source_set") {
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
       "//build/config/compiler:no_chromium_code",
+      "//build/config/compiler:prevent_unsafe_narrowing",
       "//third_party/abseil-cpp:absl_default_cflags_cc",
       "//third_party/abseil-cpp:absl_define_config",
     ]
@@ -57,6 +58,9 @@ template("absl_source_set") {
           # for absl types is enabled.
           "//third_party/googletest/*",
 
+          # Centipede, a fuzz test runner
+          "//third_party/centipede/*",
+
           # WebRTC binary to run PSNR and SSIM video quality analysis. It
           # statically links absl and it is used by "browser_tests" when
           # is_component_build=false but it cannot depend on the absl
@@ -77,5 +81,30 @@ template("absl_source_set") {
         visibility = [ "*" ]
       }
     }
+  }
+}
+
+template("absl_test") {
+  source_set(target_name) {
+    forward_variables_from(invoker, "*")
+    testonly = true
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      "//third_party/abseil-cpp:absl_default_cflags_cc",
+      "//third_party/abseil-cpp:absl_define_config",
+      "//third_party/abseil-cpp:absl_test_config",
+    ]
+
+    if (!defined(public_configs)) {
+      public_configs = []
+    }
+    public_configs += [ "//third_party/abseil-cpp:absl_include_config" ]
+
+    visibility = [ "//third_party/abseil-cpp/:*" ]
+    deps += [
+      "//third_party/googletest:gmock",
+      "//third_party/googletest:gtest",
+    ]
   }
 }

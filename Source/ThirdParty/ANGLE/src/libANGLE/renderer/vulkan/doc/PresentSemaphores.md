@@ -12,7 +12,6 @@ The following shorthand notations are used throughout this document:
 - P: Present
 - SN: Semaphore N
 - IN: Swapchain image N
-- FN: Fence N
 
 ---
 
@@ -24,7 +23,7 @@ following:
 
     CPU: ANI  ... QS   ... QP
          S:S1     W:S1     W:S2
-         S:F1     S:S2
+                  S:S2
     GPU:          <------------ R ----------->
      PE:                                      <-------- P ------>
 
@@ -40,35 +39,40 @@ be inferred by a future operation.
 
 ## Determining When a QP Semaphore is Waited On
 
-The ANI call takes a fence, that is signaled once the image is acquired.  When that happens, it can
-be inferred that the previous presentation of the image is done, which in turn implies that its
+The ANI call takes a semaphore, that is signaled once the image is acquired.  When that happens, it
+can be inferred that the previous presentation of the image is done, which in turn implies that its
 associated wait semaphore is no longer in use.
 
 Assuming both ANI calls below return the same index:
 
     CPU: ANI  ... QS   ... QP         ANI  ... QS   ... QP
          S:S1     W:S1     W:S2       S:S3     W:S3     W:S4
-         S:F1     S:S2                S:F2     S:S4
+                  S:S2                         S:S4
     GPU:          <------ R ------>            <------ R ------>
      PE:                           <-- P -->                    <-- P -->
 
 The following holds:
 
-    F2 is signaled
+    S3 is signaled
     => The PE has handed the image to the application
     => The PE is no longer presenting the image (the first P operation is finished)
     => The PE is done waiting on S2
 
 At this point, we can destroy or recycle S2.  To implement this, a history of present operations is
 maintained, which includes the wait semaphore used with that presentation.  Associated with each
-present operation, is a fence that is used to determine when that semaphore can be destroyed.
+present operation, is a QueueSerial that is used to determine when that semaphore can be destroyed.
+This QueueSerial has execution dependency on the ANI semaphore (QS W:S3 in the above diagram).
 
-Since the fence is not actually known at present time (QP), the present operation is kept in history
-without an associated fence.  Once ANI returns the same index, the fence given to ANI is associated
-with the previous QP of that index.
+Since the QueueSerial is not actually known at present time (QP), the present operation is kept in
+history without an associated QueueSerial.  Once same index is presented again, the QueueSerial of
+QS before QP is associated with the previous QP of that index.
 
-After each present call, the present history is inspected.  Any present operation whose fence is
-signaled is cleaned up.
+At each present call, the present history is inspected.  Any present operation whose QueueSerial is
+finished is cleaned up.
+
+ANI fence cannot always be used instead of QueueSerial with dependency on ANI semaphore.  This is
+because with Shared Present mode, the fence and semaphore are expected to be already signaled on the
+second and later ANI calls.
 
 ## Swapchain recreation
 
@@ -94,4 +98,4 @@ old swapchains and not free them until it stops.
 
 With the VK_EXT_swapchain_maintenance1, all the above is unnecessary.  Each QP operation can have an
 associated fence, which can be used to know when the semaphore associated with it can be recycled.
-The old swapchains can be destroyed at the same time as before.
+The old swapchains are destroyed when QP fences are signaled.

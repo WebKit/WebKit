@@ -32,8 +32,7 @@
     [CEReactions=Needed, Custom] undefined define(DOMString name, Function constructor);
     any get([AtomString] DOMString name);
 
-    // FIXME: This should return (DOMString or undefined). See webkit.org/b/232734.
-    [CallWith=CurrentGlobalObject] any getName(any constructor);
+    DOMString? getName(any constructor);
 
     [Custom, ReturnsOwnPromise] Promise<undefined> whenDefined(DOMString name);
     [CEReactions=Needed] undefined upgrade(Node root);

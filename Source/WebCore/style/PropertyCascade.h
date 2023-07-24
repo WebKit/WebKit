@@ -39,9 +39,16 @@ namespace Style {
 class PropertyCascade {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum IncludedProperties { All, InheritedOnly, AfterAnimation, AfterTransition };
+    enum class PropertyType : uint8_t {
+        NonInherited = 1 << 0,
+        Inherited = 1 << 1,
+        VariableReference = 1 << 2,
+        AfterAnimation = 1 << 3,
+        AfterTransition = 1 << 4
+    };
+    static constexpr OptionSet<PropertyType> allProperties() { return { PropertyType::NonInherited,  PropertyType::Inherited }; }
 
-    PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties, const HashSet<AnimatableProperty>* = nullptr);
+    PropertyCascade(const MatchResult&, CascadeLevel, OptionSet<PropertyType> includedProperties, const HashSet<AnimatableProperty>* = nullptr);
     PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<ScopeOrdinal> rollbackScope = { }, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
 
     ~PropertyCascade();
@@ -83,13 +90,14 @@ private:
     void setDeferred(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
     static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
 
+    bool hasProperty(CSSPropertyID, const CSSValue&);
 
     unsigned deferredPropertyIndex(CSSPropertyID) const;
     void setDeferredPropertyIndex(CSSPropertyID, unsigned);
     void sortDeferredPropertyIDs();
 
     const MatchResult& m_matchResult;
-    const IncludedProperties m_includedProperties;
+    const OptionSet<PropertyType> m_includedProperties;
     const CascadeLevel m_maximumCascadeLevel;
     const std::optional<ScopeOrdinal> m_rollbackScope;
     const std::optional<CascadeLayerPriority> m_maximumCascadeLayerPriorityForRollback;

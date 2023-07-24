@@ -163,10 +163,11 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
         return m_frameImages.get(index);
 
     auto createFrameImage = [&] {
-        if (!m_gpuProcessConnection)
+        auto gpuProcessConnection = m_gpuProcessConnection.get();
+        if (!gpuProcessConnection)
             return;
 
-        auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), 0);
+        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), 0);
         auto [imageHandle] = sendResult.takeReplyOr(std::nullopt);
         if (!imageHandle)
             return;
@@ -187,21 +188,23 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
 
 void RemoteImageDecoderAVF::setExpectedContentSize(long long expectedContentSize)
 {
-    if (!m_gpuProcessConnection)
+    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    if (!gpuProcessConnection)
         return;
 
-    m_gpuProcessConnection->connection().send(Messages::RemoteImageDecoderAVFProxy::SetExpectedContentSize(m_identifier, expectedContentSize), 0);
+    gpuProcessConnection->connection().send(Messages::RemoteImageDecoderAVFProxy::SetExpectedContentSize(m_identifier, expectedContentSize), 0);
 }
 
 // If allDataReceived is true, the caller expects encodedDataStatus() to be >= EncodedDataStatus::SizeAvailable
 // after this function returns (in the same run loop).
 void RemoteImageDecoderAVF::setData(const FragmentedSharedBuffer& data, bool allDataReceived)
 {
-    if (!m_gpuProcessConnection)
+    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    if (!gpuProcessConnection)
         return;
 
-    auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::SetData(m_identifier, IPC::SharedBufferReference(data), allDataReceived), 0);
-    if (!sendResult)
+    auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::SetData(m_identifier, IPC::SharedBufferReference(data), allDataReceived), 0);
+    if (!sendResult.succeeded())
         return;
     auto [frameCount, size, hasTrack, frameInfos] = sendResult.takeReply();
 
@@ -220,8 +223,8 @@ void RemoteImageDecoderAVF::clearFrameBufferCache(size_t index)
     for (size_t i = 0; i < std::min(index + 1, m_frameCount); ++i)
         m_frameImages.remove(i);
 
-    if (m_gpuProcessConnection)
-        m_gpuProcessConnection->connection().send(Messages::RemoteImageDecoderAVFProxy::ClearFrameBufferCache(m_identifier, index), 0);
+    if (auto gpuProcessConnection = m_gpuProcessConnection.get())
+        gpuProcessConnection->connection().send(Messages::RemoteImageDecoderAVFProxy::ClearFrameBufferCache(m_identifier, index), 0);
 }
 
 void RemoteImageDecoderAVF::encodedDataStatusChanged(size_t frameCount, const WebCore::IntSize& size, bool hasTrack)

@@ -12,6 +12,8 @@
 #ifndef AOM_AV1_COMMON_PRED_COMMON_H_
 #define AOM_AV1_COMMON_PRED_COMMON_H_
 
+#include <stdint.h>
+
 #include "av1/common/av1_common_int.h"
 #include "av1/common/blockd.h"
 #include "av1/common/mvref_common.h"
@@ -21,34 +23,36 @@
 extern "C" {
 #endif
 
-static INLINE int get_segment_id(const CommonModeInfoParams *const mi_params,
-                                 const uint8_t *segment_ids, BLOCK_SIZE bsize,
-                                 int mi_row, int mi_col) {
+static INLINE uint8_t get_segment_id(
+    const CommonModeInfoParams *const mi_params, const uint8_t *segment_ids,
+    BLOCK_SIZE bsize, int mi_row, int mi_col) {
   const int mi_offset = mi_row * mi_params->mi_cols + mi_col;
   const int bw = mi_size_wide[bsize];
   const int bh = mi_size_high[bsize];
   const int xmis = AOMMIN(mi_params->mi_cols - mi_col, bw);
   const int ymis = AOMMIN(mi_params->mi_rows - mi_row, bh);
-  int segment_id = MAX_SEGMENTS;
+  const int seg_stride = mi_params->mi_cols;
+  uint8_t segment_id = MAX_SEGMENTS;
 
   for (int y = 0; y < ymis; ++y) {
     for (int x = 0; x < xmis; ++x) {
-      segment_id = AOMMIN(segment_id,
-                          segment_ids[mi_offset + y * mi_params->mi_cols + x]);
+      segment_id =
+          AOMMIN(segment_id, segment_ids[mi_offset + y * seg_stride + x]);
     }
   }
 
-  assert(segment_id >= 0 && segment_id < MAX_SEGMENTS);
+  assert(segment_id < MAX_SEGMENTS);
   return segment_id;
 }
 
-static INLINE int av1_get_spatial_seg_pred(const AV1_COMMON *const cm,
-                                           const MACROBLOCKD *const xd,
-                                           int *cdf_index, int skip_over4x4) {
+static INLINE uint8_t av1_get_spatial_seg_pred(const AV1_COMMON *const cm,
+                                               const MACROBLOCKD *const xd,
+                                               int *cdf_index,
+                                               int skip_over4x4) {
   const int step_size = skip_over4x4 ? 2 : 1;
-  int prev_ul = -1;  // top left segment_id
-  int prev_l = -1;   // left segment_id
-  int prev_u = -1;   // top segment_id
+  uint8_t prev_ul = UINT8_MAX;  // top left segment_id
+  uint8_t prev_l = UINT8_MAX;   // left segment_id
+  uint8_t prev_u = UINT8_MAX;   // top segment_id
   const int mi_row = xd->mi_row;
   const int mi_col = xd->mi_col;
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
@@ -65,13 +69,11 @@ static INLINE int av1_get_spatial_seg_pred(const AV1_COMMON *const cm,
     prev_l = get_segment_id(mi_params, seg_map, BLOCK_4X4, mi_row - 0,
                             mi_col - step_size);
   }
-  // This property follows from the fact that get_segment_id() returns a
-  // nonnegative value. This allows us to test for all edge cases with a simple
-  // prev_ul < 0 check.
-  assert(IMPLIES(prev_ul >= 0, prev_u >= 0 && prev_l >= 0));
+  assert(IMPLIES(prev_ul != UINT8_MAX,
+                 prev_u != UINT8_MAX && prev_l != UINT8_MAX));
 
   // Pick CDF index based on number of matching/out-of-bounds segment IDs.
-  if (prev_ul < 0) /* Edge cases */
+  if (prev_ul == UINT8_MAX) /* Edge cases */
     *cdf_index = 0;
   else if ((prev_ul == prev_u) && (prev_ul == prev_l))
     *cdf_index = 2;
@@ -81,14 +83,14 @@ static INLINE int av1_get_spatial_seg_pred(const AV1_COMMON *const cm,
     *cdf_index = 0;
 
   // If 2 or more are identical returns that as predictor, otherwise prev_l.
-  if (prev_u == -1)  // edge case
-    return prev_l == -1 ? 0 : prev_l;
-  if (prev_l == -1)  // edge case
+  if (prev_u == UINT8_MAX)  // edge case
+    return prev_l == UINT8_MAX ? 0 : prev_l;
+  if (prev_l == UINT8_MAX)  // edge case
     return prev_u;
   return (prev_ul == prev_u) ? prev_u : prev_l;
 }
 
-static INLINE int av1_get_pred_context_seg_id(const MACROBLOCKD *xd) {
+static INLINE uint8_t av1_get_pred_context_seg_id(const MACROBLOCKD *xd) {
   const MB_MODE_INFO *const above_mi = xd->above_mbmi;
   const MB_MODE_INFO *const left_mi = xd->left_mbmi;
   const int above_sip = (above_mi != NULL) ? above_mi->seg_id_predicted : 0;

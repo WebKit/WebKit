@@ -26,8 +26,8 @@ class EncoderBitrateAdjuster {
   static constexpr int64_t kWindowSizeMs = 3000;
   // Minimum number of frames since last layout change required to trust the
   // overshoot statistics. Otherwise falls back to default utilization.
-  // By layout change, we mean any spatial/temporal layer being either enabled
-  // or disabled.
+  // By layout change, we mean any simulcast/spatial/temporal layer being either
+  // enabled or disabled.
   static constexpr size_t kMinFramesSinceLayoutChange = 30;
   // Default utilization, before reliable metrics are available, is set to 20%
   // overshoot. This is conservative so that badly misbehaving encoders don't
@@ -47,7 +47,11 @@ class EncoderBitrateAdjuster {
   void OnEncoderInfo(const VideoEncoder::EncoderInfo& encoder_info);
 
   // Updates the overuse detectors according to the encoded image size.
-  void OnEncodedFrame(DataSize size, int spatial_index, int temporal_index);
+  // `stream_index` is the spatial or simulcast index.
+  // TODO(https://crbug.com/webrtc/14891): If we want to support a mix of
+  // simulcast and SVC we'll also need to consider the case where we have both
+  // simulcast and spatial indices.
+  void OnEncodedFrame(DataSize size, int stream_index, int temporal_index);
 
   void Reset();
 
@@ -55,19 +59,26 @@ class EncoderBitrateAdjuster {
   const bool utilize_bandwidth_headroom_;
 
   VideoEncoder::RateControlParameters current_rate_control_parameters_;
-  // FPS allocation of temporal layers, per spatial layer. Represented as a Q8
-  // fraction; 0 = 0%, 255 = 100%. See VideoEncoder::EncoderInfo.fps_allocation.
+  // FPS allocation of temporal layers, per simulcast/spatial layer. Represented
+  // as a Q8 fraction; 0 = 0%, 255 = 100%. See
+  // VideoEncoder::EncoderInfo.fps_allocation.
   absl::InlinedVector<uint8_t, kMaxTemporalStreams>
       current_fps_allocation_[kMaxSpatialLayers];
 
-  // Frames since layout was changed, mean that any spatial or temporal layer
-  // was either disabled or enabled.
+  // Frames since layout was changed, mean that any simulcast, spatial or
+  // temporal layer was either disabled or enabled.
   size_t frames_since_layout_change_;
   std::unique_ptr<EncoderOvershootDetector>
       overshoot_detectors_[kMaxSpatialLayers][kMaxTemporalStreams];
 
   // Minimum bitrates allowed, per spatial layer.
   uint32_t min_bitrates_bps_[kMaxSpatialLayers];
+
+  // Codec type used for encoding.
+  VideoCodecType codec_;
+
+  // Codec mode: { kRealtimeVideo, kScreensharing }.
+  VideoCodecMode codec_mode_;
 };
 
 }  // namespace webrtc

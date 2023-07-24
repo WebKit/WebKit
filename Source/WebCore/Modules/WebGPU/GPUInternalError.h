@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <pal/graphics/WebGPU/WebGPUInternalError.h>
+#include "WebGPUInternalError.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -39,15 +39,15 @@ public:
         return adoptRef(*new GPUInternalError(WTFMove(message)));
     }
 
-    static Ref<GPUInternalError> create(Ref<PAL::WebGPU::InternalError>&& backing)
+    static Ref<GPUInternalError> create(Ref<WebGPU::InternalError>&& backing)
     {
         return adoptRef(*new GPUInternalError(WTFMove(backing)));
     }
 
     const String& message() const;
 
-    PAL::WebGPU::InternalError* backing() { return m_backing.get(); }
-    const PAL::WebGPU::InternalError* backing() const { return m_backing.get(); }
+    WebGPU::InternalError* backing() { return m_backing.get(); }
+    const WebGPU::InternalError* backing() const { return m_backing.get(); }
 
 private:
     GPUInternalError(String&& message)
@@ -55,13 +55,13 @@ private:
     {
     }
 
-    GPUInternalError(Ref<PAL::WebGPU::InternalError>&& backing)
+    GPUInternalError(Ref<WebGPU::InternalError>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
     String m_message;
-    RefPtr<PAL::WebGPU::InternalError> m_backing;
+    RefPtr<WebGPU::InternalError> m_backing;
 };
 
 }

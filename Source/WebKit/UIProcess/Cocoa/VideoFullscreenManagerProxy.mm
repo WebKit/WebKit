@@ -39,7 +39,10 @@
 #import "WebProcessProxy.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/MediaPlayerEnums.h>
+#import <WebCore/NullVideoFullscreenInterface.h>
 #import <WebCore/TimeRanges.h>
+#import <WebCore/VideoFullscreenInterfaceAVKit.h>
+#import <WebCore/VideoFullscreenInterfaceMac.h>
 #import <WebCore/WebAVPlayerLayer.h>
 #import <WebCore/WebAVPlayerLayerView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -50,6 +53,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "UIKitSPI.h"
+#import <UIKit/UIView.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 
@@ -57,7 +61,11 @@
 @property (nonatomic, assign) uint32_t contextID;
 @end
 
-@implementation WKLayerHostView
+@implementation WKLayerHostView {
+#if PLATFORM(IOS_FAMILY)
+    WeakObjCPtr<UIWindow> _window;
+#endif
+}
 
 #if PLATFORM(IOS_FAMILY)
 + (Class)layerClass {
@@ -85,6 +93,20 @@
 - (BOOL)clipsToBounds {
     return NO;
 }
+
+#if PLATFORM(IOS_FAMILY)
+- (void)willMoveToWindow:(UIWindow *)newWindow {
+    _window = newWindow;
+    [super willMoveToWindow:newWindow];
+}
+
+- (UIWindow *)window {
+    if (!_window)
+        return nil;
+    return [super window];
+}
+#endif
+
 @end
 
 #if PLATFORM(IOS_FAMILY)
@@ -120,7 +142,7 @@
     [_avPlayerViewController view].autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 }
 
-#if !HAVE(UIKIT_WEBKIT_INTERNALS)
+#if !PLATFORM(VISION)
 - (BOOL)prefersStatusBarHidden
 {
     return YES;
@@ -173,9 +195,7 @@ VideoFullscreenModelContext::VideoFullscreenModelContext(VideoFullscreenManagerP
 {
 }
 
-VideoFullscreenModelContext::~VideoFullscreenModelContext()
-{
-}
+VideoFullscreenModelContext::~VideoFullscreenModelContext() = default;
 
 void VideoFullscreenModelContext::addClient(VideoFullscreenModelClient& client)
 {
@@ -220,7 +240,7 @@ void VideoFullscreenModelContext::requestFullscreenMode(HTMLMediaElementEnums::V
 
 void VideoFullscreenModelContext::setVideoLayerFrame(WebCore::FloatRect frame)
 {
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, frame.size());
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, frame);
     if (m_manager)
         m_manager->setVideoLayerFrame(m_contextId, frame);
 }
@@ -381,6 +401,11 @@ const void* VideoFullscreenModelContext::logIdentifier() const
     return m_playbackSessionModel->logIdentifier();
 }
 
+const void* VideoFullscreenModelContext::nextChildIdentifier() const
+{
+    return LoggerHelper::childLogIdentifier(m_playbackSessionModel->logIdentifier(), ++m_childIdentifierSeed);
+}
+
 const Logger* VideoFullscreenModelContext::loggerPtr() const
 {
     return m_playbackSessionModel->loggerPtr();
@@ -430,6 +455,7 @@ void VideoFullscreenManagerProxy::invalidate()
         interface->invalidate();
         [model->layerHostView() removeFromSuperview];
         model->setLayerHostView(nullptr);
+        [model->playerLayer() setFullscreenModel:nil];
     }
 }
 
@@ -492,13 +518,12 @@ void VideoFullscreenManagerProxy::requestRouteSharingPolicyAndContextUID(Playbac
 VideoFullscreenManagerProxy::ModelInterfaceTuple VideoFullscreenManagerProxy::createModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
     auto& playbackSessionModel = m_playbackSessionManagerProxy->ensureModel(contextId);
-    Ref<VideoFullscreenModelContext> model = VideoFullscreenModelContext::create(*this, playbackSessionModel, contextId);
+    auto model = VideoFullscreenModelContext::create(*this, playbackSessionModel, contextId);
     auto& playbackSessionInterface = m_playbackSessionManagerProxy->ensureInterface(contextId);
     Ref<PlatformVideoFullscreenInterface> interface = PlatformVideoFullscreenInterface::create(playbackSessionInterface);
     m_playbackSessionManagerProxy->addClientForContext(contextId);
 
-    interface->setVideoFullscreenModel(&model.get());
-    interface->setVideoFullscreenChangeObserver(&model.get());
+    interface->setVideoFullscreenModel(model.ptr());
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
@@ -552,7 +577,9 @@ void VideoFullscreenManagerProxy::removeClientForContext(PlaybackSessionContextI
     clientCount--;
 
     if (clientCount <= 0) {
-        ensureInterface(contextId).setVideoFullscreenModel(nullptr);
+        auto& interface = ensureInterface(contextId);
+        interface.setVideoFullscreenModel(nullptr);
+        interface.invalidate();
         m_playbackSessionManagerProxy->removeClientForContext(contextId);
         m_clientCounts.remove(contextId);
         m_contextMap.remove(contextId);
@@ -640,6 +667,7 @@ PlatformLayerContainer VideoFullscreenManagerProxy::createLayerWithID(PlaybackSe
             [playerLayer addSublayer:[view layer]];
 
         model->setPlayerLayer(playerLayer.get());
+
         [playerLayer setFrame:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
         [playerLayer setNeedsLayout];
         [playerLayer layoutIfNeeded];
@@ -662,8 +690,9 @@ RetainPtr<WKLayerHostView> VideoFullscreenManagerProxy::createLayerHostViewWithI
 
         [view layer].masksToBounds = NO;
         [view layer].name = @"WKLayerHostView layer";
+        [view layer].frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
     }
-    [view layer].frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
+
     [view setContextID:videoLayerID];
 
     interface->setupCaptionsLayer([view layer], initialSize);
@@ -683,7 +712,7 @@ RetainPtr<WebAVPlayerLayerView> VideoFullscreenManagerProxy::createViewWithID(Pl
         ALWAYS_LOG(LOGIDENTIFIER, model->logIdentifier(), ", Creating AVPlayerLayerView");
         auto playerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
 
-        auto *playerLayer = (WebAVPlayerLayer *)[playerView layer];
+        RetainPtr playerLayer { (WebAVPlayerLayer *)[playerView layer] };
 
         [playerLayer setVideoDimensions:nativeSize];
         [playerLayer setFullscreenModel:model.get()];
@@ -695,8 +724,8 @@ RetainPtr<WebAVPlayerLayerView> VideoFullscreenManagerProxy::createViewWithID(Pl
         if (![[view layer] superlayer])
             [playerLayer addSublayer:[view layer]];
 
-        model->setPlayerLayer(playerLayer);
-        model->setPlayerView(WTFMove(playerView));
+        model->setPlayerLayer(WTFMove(playerLayer));
+        model->setPlayerView(playerView.get());
 
         [playerView setFrame:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
         [playerView setNeedsLayout];
@@ -714,7 +743,7 @@ void VideoFullscreenManagerProxy::willRemoveLayerForID(PlaybackSessionContextIde
 
 #pragma mark Messages from VideoFullscreenManager
 
-void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatRect& initialRect, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
+void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
     auto& [model, interface] = ensureModelAndInterface(contextId);
     addClientForContext(contextId);
@@ -730,17 +759,17 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextId
         return;
     }
 
-    RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialRect.size(), hostingDeviceScaleFactor);
+    RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
 
 #if PLATFORM(IOS_FAMILY)
     auto* rootNode = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootNode();
     UIView *parentView = rootNode ? rootNode->uiView() : nil;
-    interface->setupFullscreen(*model->layerHostView(), initialRect, videoDimensions, parentView, videoFullscreenMode, allowsPictureInPicture, standby, blocksReturnToFullscreenFromPictureInPicture);
+    interface->setupFullscreen(*model->layerHostView(), screenRect, videoDimensions, parentView, videoFullscreenMode, allowsPictureInPicture, standby, blocksReturnToFullscreenFromPictureInPicture);
 #else
     UNUSED_PARAM(videoDimensions);
     UNUSED_PARAM(blocksReturnToFullscreenFromPictureInPicture);
     IntRect initialWindowRect;
-    m_page->rootViewToWindow(enclosingIntRect(initialRect), initialWindowRect);
+    m_page->rootViewToWindow(enclosingIntRect(screenRect), initialWindowRect);
     interface->setupFullscreen(*model->layerHostView(), initialWindowRect, m_page->platformWindow(), videoFullscreenMode, allowsPictureInPicture);
 #endif
 }
@@ -995,8 +1024,7 @@ void VideoFullscreenManagerProxy::returnVideoView(PlaybackSessionContextIdentifi
     auto *playerView = model.playerView();
     auto *videoView = model.layerHostView();
     if (playerView && videoView) {
-        auto *playerLayer = (WebAVPlayerLayer *)[model.playerView() layer];
-        [playerLayer addSublayer:[videoView layer]];
+        [playerView addSubview:videoView];
         [playerView setNeedsLayout];
         [playerView layoutIfNeeded];
     }

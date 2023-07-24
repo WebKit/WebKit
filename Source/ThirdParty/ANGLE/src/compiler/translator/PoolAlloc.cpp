@@ -9,13 +9,13 @@
 #include "common/debug.h"
 #include "common/tls.h"
 
-TLSIndex PoolIndex = TLS_INVALID_INDEX;
+angle::TLSIndex PoolIndex = TLS_INVALID_INDEX;
 
 bool InitializePoolIndex()
 {
     ASSERT(PoolIndex == TLS_INVALID_INDEX);
 
-    PoolIndex = CreateTLSIndex(nullptr);
+    PoolIndex = angle::CreateTLSIndex(nullptr);
     return PoolIndex != TLS_INVALID_INDEX;
 }
 
@@ -23,18 +23,18 @@ void FreePoolIndex()
 {
     ASSERT(PoolIndex != TLS_INVALID_INDEX);
 
-    DestroyTLSIndex(PoolIndex);
+    angle::DestroyTLSIndex(PoolIndex);
     PoolIndex = TLS_INVALID_INDEX;
 }
 
 angle::PoolAllocator *GetGlobalPoolAllocator()
 {
     ASSERT(PoolIndex != TLS_INVALID_INDEX);
-    return static_cast<angle::PoolAllocator *>(GetTLSValue(PoolIndex));
+    return static_cast<angle::PoolAllocator *>(angle::GetTLSValue(PoolIndex));
 }
 
 void SetGlobalPoolAllocator(angle::PoolAllocator *poolAllocator)
 {
     ASSERT(PoolIndex != TLS_INVALID_INDEX);
-    SetTLSValue(PoolIndex, poolAllocator);
+    angle::SetTLSValue(PoolIndex, poolAllocator);
 }

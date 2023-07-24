@@ -32,19 +32,12 @@
 
 #include "NicosiaContentLayerTextureMapperImpl.h"
 
-typedef void *EGLConfig;
-typedef void *EGLContext;
-typedef void *EGLDisplay;
-typedef void *EGLSurface;
-
 namespace WebCore {
-class IntSize;
 class GraphicsContextGLANGLE;
-class GraphicsContextGLFallback;
-#if USE(GBM)
+class GraphicsContextGLTextureMapperANGLE;
+#if USE(ANGLE_GBM)
 class GraphicsContextGLGBM;
 #endif
-class PlatformDisplay;
 }
 
 namespace Nicosia {
@@ -52,22 +45,17 @@ namespace Nicosia {
 class GCGLANGLELayer final : public ContentLayerTextureMapperImpl::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GCGLANGLELayer(WebCore::GraphicsContextGLFallback&);
-#if USE(GBM)
+    GCGLANGLELayer(WebCore::GraphicsContextGLTextureMapperANGLE&);
+#if USE(ANGLE_GBM)
     GCGLANGLELayer(WebCore::GraphicsContextGLGBM&);
 #endif
+
     virtual ~GCGLANGLELayer();
 
     ContentLayer& contentLayer() const { return m_contentLayer; }
     void swapBuffersIfNeeded() final;
 
 private:
-    enum class ContextType {
-        Fallback,
-        Gbm,
-    };
-    ContextType m_contextType;
-
     WebCore::GraphicsContextGLANGLE& m_context;
     Ref<ContentLayer> m_contentLayer;
 };

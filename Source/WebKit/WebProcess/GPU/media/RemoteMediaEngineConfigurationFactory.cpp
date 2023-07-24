@@ -40,8 +40,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-RemoteMediaEngineConfigurationFactory::RemoteMediaEngineConfigurationFactory(WebProcess& process)
-    : m_process(process)
+RemoteMediaEngineConfigurationFactory::RemoteMediaEngineConfigurationFactory(WebProcess&)
 {
 }
 
@@ -83,7 +82,7 @@ const char* RemoteMediaEngineConfigurationFactory::supplementName()
 
 GPUProcessConnection& RemoteMediaEngineConfigurationFactory::gpuProcessConnection()
 {
-    return m_process.ensureGPUProcessConnection();
+    return WebProcess::singleton().ensureGPUProcessConnection();
 }
 
 void RemoteMediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingConfiguration&& configuration, MediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback)

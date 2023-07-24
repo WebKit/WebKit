@@ -596,7 +596,7 @@ gl::FramebufferStatus FramebufferMtl::checkStatus(const gl::Context *context) co
 
 gl::FramebufferStatus FramebufferMtl::checkPackedDepthStencilAttachment() const
 {
-    if (ANGLE_APPLE_AVAILABLE_XCI(10.14, 13.0, 12.0))
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.14, 13.1, 12.0))
     {
         // If depth/stencil attachment has depth & stencil bits, then depth & stencil must not have
         // separate attachment. i.e. They must be the same texture or one of them has no
@@ -1628,6 +1628,7 @@ angle::Result FramebufferMtl::readPixelsImpl(const gl::Context *context,
 
         return result;
     }
+
     if (texture->isBeingUsedByGPU(contextMtl))
     {
         contextMtl->flushCommandBuffer(mtl::WaitUntilFinished);
@@ -1659,8 +1660,11 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
 
     ContextMtl *contextMtl = mtl::GetImpl(context);
 
-    if constexpr (sizeof(packPixelsParams.offset) > sizeof(uint32_t)) {
-        ANGLE_MTL_CHECK(contextMtl, static_cast<std::make_unsigned_t<decltype(packPixelsParams.offset)>>(packPixelsParams.offset) <= std::numeric_limits<uint32_t>::max(),
+    if constexpr (sizeof(packPixelsParams.offset) > sizeof(uint32_t))
+    {
+        ANGLE_MTL_CHECK(contextMtl,
+                        static_cast<std::make_unsigned_t<decltype(packPixelsParams.offset)>>(
+                            packPixelsParams.offset) <= std::numeric_limits<uint32_t>::max(),
                         GL_INVALID_OPERATION);
     }
     uint32_t offset = static_cast<uint32_t>(packPixelsParams.offset);

@@ -22,9 +22,9 @@ extern "C" {
 #endif
 
 
-// dsa_check_parameters checks that |dsa|'s group is within DoS bounds. It
-// returns one on success and zero on error.
-int dsa_check_parameters(const DSA *dsa);
+// dsa_check_key performs cheap self-checks on |dsa|, and ensures it is within
+// DoS bounds. It returns one on success and zero on error.
+int dsa_check_key(const DSA *dsa);
 
 
 #if defined(__cplusplus)

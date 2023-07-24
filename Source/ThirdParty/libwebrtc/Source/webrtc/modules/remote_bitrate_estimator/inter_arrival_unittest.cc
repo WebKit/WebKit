@@ -33,12 +33,11 @@ const double kAstToMs = 1000.0 / static_cast<double>(1 << kInterArrivalShift);
 class InterArrivalTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
-    inter_arrival_.reset(
-        new InterArrival(kTimestampGroupLengthUs / 1000, 1.0, true));
+    inter_arrival_.reset(new InterArrival(kTimestampGroupLengthUs / 1000, 1.0));
     inter_arrival_rtp_.reset(new InterArrival(
-        MakeRtpTimestamp(kTimestampGroupLengthUs), kRtpTimestampToMs, true));
-    inter_arrival_ast_.reset(new InterArrival(
-        MakeAbsSendTime(kTimestampGroupLengthUs), kAstToMs, true));
+        MakeRtpTimestamp(kTimestampGroupLengthUs), kRtpTimestampToMs));
+    inter_arrival_ast_.reset(
+        new InterArrival(MakeAbsSendTime(kTimestampGroupLengthUs), kAstToMs));
   }
 
   // Test that neither inter_arrival instance complete the timestamp group from

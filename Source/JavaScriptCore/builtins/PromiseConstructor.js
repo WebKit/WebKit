@@ -49,7 +49,7 @@ function promiseAllSlow(iterable)
 
             --remainingElementsCount;
             if (remainingElementsCount === 0)
-                return promiseCapability.@resolve.@call(@undefined, values);
+                return promiseCapability.resolve.@call(@undefined, values);
 
             return @undefined;
         };
@@ -65,18 +65,18 @@ function promiseAllSlow(iterable)
             var nextPromise = promiseResolve.@call(this, value);
             var resolveElement = newResolveElement(index);
             ++remainingElementsCount;
-            nextPromise.then(resolveElement, promiseCapability.@reject);
+            nextPromise.then(resolveElement, promiseCapability.reject);
             ++index;
         }
 
         --remainingElementsCount;
         if (remainingElementsCount === 0)
-            promiseCapability.@resolve.@call(@undefined, values);
+            promiseCapability.resolve.@call(@undefined, values);
     } catch (error) {
-        promiseCapability.@reject.@call(@undefined, error);
+        promiseCapability.reject.@call(@undefined, error);
     }
 
-    return promiseCapability.@promise;
+    return promiseCapability.promise;
 }
 
 @linkTimeConstant
@@ -212,7 +212,7 @@ function allSettled(iterable)
 
                 --remainingElementsCount;
                 if (remainingElementsCount === 0)
-                    return promiseCapability.@resolve.@call(@undefined, values);
+                    return promiseCapability.resolve.@call(@undefined, values);
 
                 return @undefined;
             },
@@ -231,7 +231,7 @@ function allSettled(iterable)
 
                 --remainingElementsCount;
                 if (remainingElementsCount === 0)
-                    return promiseCapability.@resolve.@call(@undefined, values);
+                    return promiseCapability.resolve.@call(@undefined, values);
 
                 return @undefined;
             }
@@ -254,12 +254,12 @@ function allSettled(iterable)
 
         --remainingElementsCount;
         if (remainingElementsCount === 0)
-            promiseCapability.@resolve.@call(@undefined, values);
+            promiseCapability.resolve.@call(@undefined, values);
     } catch (error) {
-        promiseCapability.@reject.@call(@undefined, error);
+        promiseCapability.reject.@call(@undefined, error);
     }
 
-    return promiseCapability.@promise;
+    return promiseCapability.promise;
 }
 
 function any(iterable)
@@ -287,7 +287,7 @@ function any(iterable)
 
             --remainingElementsCount;
             if (remainingElementsCount === 0)
-                return promiseCapability.@reject.@call(@undefined, new @AggregateError(errors));
+                return promiseCapability.reject.@call(@undefined, new @AggregateError(errors));
 
             return @undefined;
         };
@@ -303,7 +303,7 @@ function any(iterable)
             var nextPromise = promiseResolve.@call(this, value);
             var rejectElement = newRejectElement(index);
             ++remainingElementsCount;
-            nextPromise.then(promiseCapability.@resolve, rejectElement);
+            nextPromise.then(promiseCapability.resolve, rejectElement);
             ++index;
         }
 
@@ -311,10 +311,10 @@ function any(iterable)
         if (remainingElementsCount === 0)
             throw new @AggregateError(errors);
     } catch (error) {
-        promiseCapability.@reject.@call(@undefined, error);
+        promiseCapability.reject.@call(@undefined, error);
     }
 
-    return promiseCapability.@promise;
+    return promiseCapability.promise;
 }
 
 function race(iterable)
@@ -333,13 +333,13 @@ function race(iterable)
 
         for (var value of iterable) {
             var nextPromise = promiseResolve.@call(this, value);
-            nextPromise.then(promiseCapability.@resolve, promiseCapability.@reject);
+            nextPromise.then(promiseCapability.resolve, promiseCapability.reject);
         }
     } catch (error) {
-        promiseCapability.@reject.@call(@undefined, error);
+        promiseCapability.reject.@call(@undefined, error);
     }
 
-    return promiseCapability.@promise;
+    return promiseCapability.promise;
 }
 
 function reject(reason)
@@ -366,6 +366,13 @@ function resolve(value)
         @throwTypeError("|this| is not an object");
 
     return @promiseResolve(this, value);
+}
+
+function withResolvers()
+{
+    "use strict";
+
+    return @newPromiseCapability(this);
 }
 
 @nakedConstructor

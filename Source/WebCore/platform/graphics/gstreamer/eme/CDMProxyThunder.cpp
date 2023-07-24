@@ -100,6 +100,8 @@ bool CDMProxyThunder::decrypt(CDMProxyThunder::DecryptionContext& input)
     return true;
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)

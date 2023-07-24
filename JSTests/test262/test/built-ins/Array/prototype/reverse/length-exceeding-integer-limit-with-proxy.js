@@ -6,6 +6,7 @@ esid: sec-array.prototype.reverse
 description: >
   Ensure correct MOP operations are called when length exceeds 2^53-1.
 includes: [compareArray.js, proxyTrapsHelper.js]
+features: [exponentiation]
 ---*/
 
 function StopReverse() {}

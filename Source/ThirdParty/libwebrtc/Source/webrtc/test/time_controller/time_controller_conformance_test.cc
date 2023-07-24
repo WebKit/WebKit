@@ -14,7 +14,6 @@
 #include "api/test/time_controller.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/event.h"
-#include "rtc_base/location.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
@@ -91,6 +90,9 @@ TEST_P(SimulatedRealTimeControllerConformanceTest, ThreadPostOrderTest) {
   thread->PostTask([&]() { execution_order.Executed(2); });
   time_controller->AdvanceTime(TimeDelta::Millis(100));
   EXPECT_THAT(execution_order.order(), ElementsAreArray({1, 2}));
+  // Destroy `thread` before `execution_order` to be sure `execution_order`
+  // is not accessed on the posted task after it is destroyed.
+  thread = nullptr;
 }
 
 TEST_P(SimulatedRealTimeControllerConformanceTest, ThreadPostDelayedOrderTest) {
@@ -104,6 +106,9 @@ TEST_P(SimulatedRealTimeControllerConformanceTest, ThreadPostDelayedOrderTest) {
   thread->PostTask([&]() { execution_order.Executed(1); });
   time_controller->AdvanceTime(TimeDelta::Millis(600));
   EXPECT_THAT(execution_order.order(), ElementsAreArray({1, 2}));
+  // Destroy `thread` before `execution_order` to be sure `execution_order`
+  // is not accessed on the posted task after it is destroyed.
+  thread = nullptr;
 }
 
 TEST_P(SimulatedRealTimeControllerConformanceTest, ThreadPostInvokeOrderTest) {
@@ -115,9 +120,12 @@ TEST_P(SimulatedRealTimeControllerConformanceTest, ThreadPostInvokeOrderTest) {
   // posted/invoked.
   ExecutionOrderKeeper execution_order;
   thread->PostTask([&]() { execution_order.Executed(1); });
-  thread->Invoke<void>(RTC_FROM_HERE, [&]() { execution_order.Executed(2); });
+  thread->BlockingCall([&]() { execution_order.Executed(2); });
   time_controller->AdvanceTime(TimeDelta::Millis(100));
   EXPECT_THAT(execution_order.order(), ElementsAreArray({1, 2}));
+  // Destroy `thread` before `execution_order` to be sure `execution_order`
+  // is not accessed on the posted task after it is destroyed.
+  thread = nullptr;
 }
 
 TEST_P(SimulatedRealTimeControllerConformanceTest,
@@ -131,10 +139,13 @@ TEST_P(SimulatedRealTimeControllerConformanceTest,
   ExecutionOrderKeeper execution_order;
   thread->PostTask([&]() {
     thread->PostTask([&]() { execution_order.Executed(2); });
-    thread->Invoke<void>(RTC_FROM_HERE, [&]() { execution_order.Executed(1); });
+    thread->BlockingCall([&]() { execution_order.Executed(1); });
   });
   time_controller->AdvanceTime(TimeDelta::Millis(100));
   EXPECT_THAT(execution_order.order(), ElementsAreArray({1, 2}));
+  // Destroy `thread` before `execution_order` to be sure `execution_order`
+  // is not accessed on the posted task after it is destroyed.
+  thread = nullptr;
 }
 
 TEST_P(SimulatedRealTimeControllerConformanceTest,
@@ -153,10 +164,12 @@ TEST_P(SimulatedRealTimeControllerConformanceTest,
     execution_order.Executed(2);
     event.Set();
   });
-  EXPECT_TRUE(event.Wait(/*give_up_after_ms=*/100,
-                         /*warn_after_ms=*/10'000));
+  EXPECT_TRUE(event.Wait(/*give_up_after=*/TimeDelta::Millis(100)));
   time_controller->AdvanceTime(TimeDelta::Millis(100));
   EXPECT_THAT(execution_order.order(), ElementsAreArray({1, 2}));
+  // Destroy `task_queue` before `execution_order` to be sure `execution_order`
+  // is not accessed on the posted task after it is destroyed.
+  task_queue = nullptr;
 }
 
 INSTANTIATE_TEST_SUITE_P(ConformanceTest,

@@ -161,7 +161,10 @@ void WindowCapturerWinGdi::CaptureFrame() {
 
   CaptureResults results = CaptureFrame(/*capture_owned_windows*/ true);
   if (!results.frame) {
-    callback_->OnCaptureResult(Result::ERROR_TEMPORARY, nullptr);
+    // Don't return success if we have no frame.
+    results.result = results.result == Result::SUCCESS ? Result::ERROR_TEMPORARY
+                                                       : results.result;
+    callback_->OnCaptureResult(results.result, nullptr);
     return;
   }
 

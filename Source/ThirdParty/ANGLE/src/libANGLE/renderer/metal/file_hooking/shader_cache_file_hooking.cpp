@@ -32,8 +32,16 @@ int HookedOpen(const char *path, int flags, mode_t mode)
     }
 
 #if !defined(NDEBUG)
-    std::cerr << "open(\"" << path << "\", \"" << flags << "\") is skipped" << std::endl;
+    static int messageRepeatCount = 5;
+    if (messageRepeatCount > 0)
+    {
+        messageRepeatCount--;
+        std::cerr << "open(\"" << path << "\", \"" << flags
+                  << "\") is skipped. This message will repeat " << messageRepeatCount
+                  << " more times." << std::endl;
+    }
 #endif
+
     if (flags & O_CREAT)
     {
         errno = EACCES;
@@ -54,8 +62,16 @@ FILE *HookedFopen(const char *filename, const char *mode)
     }
 
 #if !defined(NDEBUG)
-    std::cerr << "fopen(\"" << filename << "\", \"" << mode << "\") is skipped" << std::endl;
+    static int messageRepeatCount = 5;
+    if (messageRepeatCount > 0)
+    {
+        messageRepeatCount--;
+        std::cerr << "fopen(\"" << filename << "\", \"" << mode
+                  << "\") is skipped. This message will repeat " << messageRepeatCount
+                  << " more times." << std::endl;
+    }
 #endif
+
     if (strstr(mode, "r"))
     {
         // Treat as if the cache doesn't exist

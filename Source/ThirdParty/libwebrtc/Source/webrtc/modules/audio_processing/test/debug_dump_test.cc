@@ -352,8 +352,6 @@ TEST_F(DebugDumpTest, VerifyCombinedExperimentalStringInclusive) {
   apm_config.echo_canceller.enabled = true;
   apm_config.gain_controller1.analog_gain_controller.enabled = true;
   apm_config.gain_controller1.analog_gain_controller.startup_min_volume = 0;
-  // Arbitrarily set clipping gain to 17, which will never be the default.
-  apm_config.gain_controller1.analog_gain_controller.clipped_level_min = 17;
   DebugDumpGenerator generator(apm_config);
   generator.StartRecording();
   generator.Process(100);
@@ -370,8 +368,6 @@ TEST_F(DebugDumpTest, VerifyCombinedExperimentalStringInclusive) {
       const audioproc::Config* msg = &event->config();
       ASSERT_TRUE(msg->has_experiments_description());
       EXPECT_PRED_FORMAT2(::testing::IsSubstring, "EchoController",
-                          msg->experiments_description().c_str());
-      EXPECT_PRED_FORMAT2(::testing::IsSubstring, "AgcClippingLevelExperiment",
                           msg->experiments_description().c_str());
     }
   }
@@ -421,33 +417,6 @@ TEST_F(DebugDumpTest, VerifyAec3ExperimentalString) {
       const audioproc::Config* msg = &event->config();
       ASSERT_TRUE(msg->has_experiments_description());
       EXPECT_PRED_FORMAT2(::testing::IsSubstring, "EchoController",
-                          msg->experiments_description().c_str());
-    }
-  }
-}
-
-TEST_F(DebugDumpTest, VerifyAgcClippingLevelExperimentalString) {
-  AudioProcessing::Config apm_config;
-  apm_config.gain_controller1.analog_gain_controller.enabled = true;
-  apm_config.gain_controller1.analog_gain_controller.startup_min_volume = 0;
-  // Arbitrarily set clipping gain to 17, which will never be the default.
-  apm_config.gain_controller1.analog_gain_controller.clipped_level_min = 17;
-  DebugDumpGenerator generator(apm_config);
-  generator.StartRecording();
-  generator.Process(100);
-  generator.StopRecording();
-
-  DebugDumpReplayer debug_dump_replayer_;
-
-  ASSERT_TRUE(debug_dump_replayer_.SetDumpFile(generator.dump_file_name()));
-
-  while (const absl::optional<audioproc::Event> event =
-             debug_dump_replayer_.GetNextEvent()) {
-    debug_dump_replayer_.RunNextEvent();
-    if (event->type() == audioproc::Event::CONFIG) {
-      const audioproc::Config* msg = &event->config();
-      ASSERT_TRUE(msg->has_experiments_description());
-      EXPECT_PRED_FORMAT2(::testing::IsSubstring, "AgcClippingLevelExperiment",
                           msg->experiments_description().c_str());
     }
   }

@@ -27,7 +27,7 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 
-#include "WCUpateInfo.h"
+#include "WCUpdateInfo.h"
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #include <wtf/DoublyLinkedList.h>
 
@@ -43,7 +43,7 @@ public:
     struct Observer {
         virtual void graphicsLayerAdded(GraphicsLayerWC&) = 0;
         virtual void graphicsLayerRemoved(GraphicsLayerWC&) = 0;
-        virtual void commitLayerUpateInfo(WCLayerUpateInfo&&) = 0;
+        virtual void commitLayerUpdateInfo(WCLayerUpdateInfo&&) = 0;
         virtual RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize) = 0;
     };
 
@@ -85,6 +85,7 @@ public:
     void setBackfaceVisibility(bool) override;
     void setContentsToSolidColor(const WebCore::Color&) override;
     void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
+    void setContentsToPlatformLayerHost(WebCore::LayerHostingContextIdentifier) override;
     void setContentsDisplayDelegate(RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
     bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }
     bool usesContentsLayer() const override;
@@ -126,6 +127,7 @@ private:
     Observer* m_observer;
     std::unique_ptr<WCTiledBacking> m_tiledBacking;
     PlatformLayer* m_platformLayer { nullptr };
+    Markable<WebCore::LayerHostingContextIdentifier> m_hostIdentifier;
     WebCore::Color m_solidColor;
     WebCore::Color m_debugBorderColor;
     OptionSet<WCLayerChange> m_uncommittedChanges;

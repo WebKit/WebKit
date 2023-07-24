@@ -22,7 +22,7 @@ info: |
     identifiers listed in every row of Table 1, except the header row.
 includes: [testIntl.js]
 locale: [en]
-features: [Intl-enumeration]
+features: [Intl-enumeration, Array.prototype.includes]
 ---*/
 
 const units = Intl.supportedValuesOf("unit");

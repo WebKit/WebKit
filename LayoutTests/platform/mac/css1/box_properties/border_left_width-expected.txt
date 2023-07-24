@@ -103,4 +103,4 @@ layer at (0,0) size 785x859
                 RenderText {#text} at (614,0) size 56x18
                   text run at (614,0) width 56: " was set."
 layer at (8,145) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,137) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,137) size 769x2 [color=#808080] [border: (1px inset #808080)]

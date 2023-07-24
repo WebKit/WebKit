@@ -35,19 +35,19 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (10,316) size 450x68 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,4) size 7x17
           text run at (1,4) width 7: "a"
-        RenderTextControl {INPUT} at (8,1) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (8,1) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (200,4) size 27x17
           text run at (200,4) width 27: "text "
-        RenderTextControl {INPUT} at (227,1) size 191x24 [color=#575757] [bgcolor=#FFFFFF] [border: (2px inset #575757)]
+        RenderTextControl {INPUT} at (227,1) size 191x24 [color=#575757] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (418,4) size 19x17
           text run at (418,4) width 12: "b "
           text run at (430,4) width 7: "a"
-        RenderTextControl {INPUT} at (1,25) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (1,25) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
           RenderFlexibleBox {DIV} at (3,3) size 186x18
             RenderBlock {DIV} at (0,0) size 186x18
         RenderText {#text} at (193,28) size 64x17
           text run at (193,28) width 64: "password "
-        RenderTextControl {INPUT} at (257,25) size 191x24 [color=#575757] [bgcolor=#FFFFFF] [border: (2px inset #575757)]
+        RenderTextControl {INPUT} at (257,25) size 191x24 [color=#575757] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
           RenderFlexibleBox {DIV} at (3,3) size 185x18
             RenderBlock {DIV} at (0,0) size 185x18
         RenderText {#text} at (1,49) size 8x17

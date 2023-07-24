@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x461
   RenderBlock {HTML} at (0,0) size 800x461
     RenderBody {BODY} at (8,8) size 784x445
-      RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,0) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H3} at (0,20) size 784x24
         RenderText {#text} at (0,0) size 62x22
           text run at (0,0) width 62: "Table 1"
@@ -48,7 +48,7 @@ layer at (0,0) size 800x461
             RenderTableCell {TD} at (332,54) size 165x24 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 33x19
                 text run at (2,2) width 33: "Cell I"
-      RenderBlock {HR} at (0,229) size 784x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,229) size 784x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H3} at (0,250) size 784x24
         RenderText {#text} at (0,0) size 62x22
           text run at (0,0) width 62: "Table 2"
@@ -91,4 +91,4 @@ layer at (0,0) size 800x461
             RenderTableCell {TD} at (332,54) size 165x24 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 33x19
                 text run at (2,2) width 33: "Cell I"
-      RenderBlock {HR} at (0,442) size 784x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,442) size 784x3 [color=#808080] [border: (1px inset #808080)]

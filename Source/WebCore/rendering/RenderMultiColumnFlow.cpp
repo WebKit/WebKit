@@ -28,10 +28,13 @@
 #include "RenderMultiColumnFlow.h"
 
 #include "HitTestResult.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderIterator.h"
 #include "RenderLayoutState.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
+#include "RenderStyleInlines.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "TransformState.h"

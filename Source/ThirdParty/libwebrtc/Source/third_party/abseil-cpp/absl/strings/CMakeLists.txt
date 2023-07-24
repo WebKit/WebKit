@@ -21,7 +21,9 @@ absl_cc_library(
     "ascii.h"
     "charconv.h"
     "escaping.h"
+    "internal/damerau_levenshtein_distance.h"
     "internal/string_constant.h"
+    "internal/has_absl_stringify.h"
     "match.h"
     "numbers.h"
     "str_cat.h"
@@ -39,8 +41,11 @@ absl_cc_library(
     "internal/charconv_bigint.h"
     "internal/charconv_parse.cc"
     "internal/charconv_parse.h"
+    "internal/damerau_levenshtein_distance.cc"
     "internal/memutil.cc"
     "internal/memutil.h"
+    "internal/stringify_sink.h"
+    "internal/stringify_sink.cc"
     "internal/stl_type_traits.h"
     "internal/str_join_internal.h"
     "internal/str_split_internal.h"
@@ -129,6 +134,19 @@ absl_cc_test(
   DEPS
     absl::strings
     absl::core_headers
+    GTest::gmock_main
+)
+
+absl_cc_test(
+  NAME
+    damerau_levenshtein_distance_test
+  SRCS
+    "internal/damerau_levenshtein_distance_test.cc"
+  COPTS
+    ${ABSL_TEST_COPTS}
+  DEPS
+    absl::strings
+    absl::base
     GTest::gmock_main
 )
 
@@ -281,6 +299,7 @@ absl_cc_test(
     ${ABSL_TEST_COPTS}
   DEPS
     absl::strings
+    absl::str_format
     absl::core_headers
     GTest::gmock_main
 )
@@ -394,6 +413,7 @@ absl_cc_library(
     "internal/str_format/arg.h"
     "internal/str_format/bind.h"
     "internal/str_format/checker.h"
+    "internal/str_format/constexpr_parser.h"
     "internal/str_format/extension.h"
     "internal/str_format/float_conversion.h"
     "internal/str_format/output.h"
@@ -584,7 +604,9 @@ absl_cc_library(
     absl::base_internal
     absl::compressed_tuple
     absl::config
+    absl::container_memory
     absl::core_headers
+    absl::crc_cord_state
     absl::endian
     absl::inlined_vector
     absl::layout
@@ -723,6 +745,7 @@ absl_cc_library(
     absl::raw_logging_internal
     absl::stacktrace
     absl::synchronization
+    absl::time
 )
 
 absl_cc_test(
@@ -763,6 +786,7 @@ absl_cc_test(
     absl::cordz_statistics
     absl::cordz_update_scope
     absl::cordz_update_tracker
+    absl::crc_cord_state
     absl::thread_pool
     GTest::gmock_main
 )
@@ -862,6 +886,7 @@ absl_cc_library(
     absl::cordz_update_scope
     absl::cordz_update_tracker
     absl::core_headers
+    absl::crc_cord_state
     absl::endian
     absl::fixed_array
     absl::function_ref
@@ -903,6 +928,7 @@ absl_cc_library(
     absl::cord_internal
     absl::strings
   TESTONLY
+  PUBLIC
 )
 
 # Internal-only target, do not depend on directly.
@@ -1033,6 +1059,7 @@ absl_cc_test(
     absl::config
     absl::cord_internal
     absl::cord_rep_test_util
+    absl::crc_cord_state
     GTest::gmock_main
 )
 

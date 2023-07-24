@@ -1,0 +1,9 @@
+Hello
+ (repaint rects
+  (rect 9 12 48 30)
+  (rect 9 12 4 30)
+  (rect 53 12 4 30)
+  (rect 9 12 48 4)
+  (rect 9 38 48 4)
+)
+

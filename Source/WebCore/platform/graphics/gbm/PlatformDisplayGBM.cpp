@@ -51,6 +51,11 @@ PlatformDisplayGBM::PlatformDisplayGBM(struct gbm_device* device)
         m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, device, nullptr);
 
     PlatformDisplay::initializeEGLDisplay();
+
+#if ENABLE(WEBGL)
+    m_anglePlatform = EGL_PLATFORM_GBM_KHR;
+    m_angleNativeDisplay = device;
+#endif
 }
 
 PlatformDisplayGBM::~PlatformDisplayGBM()

@@ -11,6 +11,8 @@ class BuildRequestsFetcher {
         $this->commits_by_id = array();
         $this->commits = array();
         $this->commit_sets_by_id = array();
+        $this->test_parameter_sets = array();
+        $this->test_parameter_sets_by_id = array();
         $this->uploaded_files = array();
         $this->uploaded_files_by_id = array();
     }
@@ -75,8 +77,10 @@ class BuildRequestsFetcher {
             $test_id = $row['request_test'];
             $platform_id = $row['request_platform'];
             $commit_set_id = $row['request_commit_set'];
+            $test_parameter_set_id = $row['request_test_parameter_set'];
 
             $this->fetch_commits_for_set_if_needed($commit_set_id, $resolve_ids);
+            $this->fetch_test_parameters_for_set_if_needed($test_parameter_set_id);
 
             array_push($requests, array(
                 'id' => $row['request_id'],
@@ -88,6 +92,7 @@ class BuildRequestsFetcher {
                 'testGroup' => $row['request_group'],
                 'order' => $row['request_order'],
                 'commitSet' => $commit_set_id,
+                'testParameterSet' => $test_parameter_set_id,
                 'status' => $row['request_status'],
                 'url' => $row['request_url'],
                 'build' => $row['request_build'],
@@ -99,6 +104,7 @@ class BuildRequestsFetcher {
     }
 
     function commit_sets() { return $this->commit_sets; }
+    function test_parameter_sets() { return $this->test_parameter_sets; }
     function commits() { return $this->commits; }
     function uploaded_files() { return $this->uploaded_files; }
 
@@ -179,6 +185,33 @@ class BuildRequestsFetcher {
         }
 
         array_push($this->commit_sets, array('id' => $commit_set_id, 'revisionItems' => $revision_items, 'customRoots' => $custom_roots));
+    }
+
+    private function fetch_test_parameters_for_set_if_needed($test_parameter_set_id)
+    {
+        if (is_null($test_parameter_set_id))
+            return;
+        if (array_key_exists($test_parameter_set_id, $this->test_parameter_sets_by_id))
+            return;
+        $test_parameter_set_items = $this->db->select_rows('test_parameter_set_items', 'testparamset',
+            array('set' => $test_parameter_set_id));
+
+        $test_parameter_items = array();
+        foreach ($test_parameter_set_items as &$row) {
+            $test_parameter_id = $row['testparamset_parameter'];
+            $test_parameter_value = json_decode($row['testparamset_value'], true);
+            $test_parameter_file_id = $row['testparamset_file'];
+            if ($test_parameter_file_id)
+                $this->add_uploaded_file($test_parameter_file_id);
+
+            $test_parameter_items[] = array(
+                'parameter' => $test_parameter_id,
+                'value' => $test_parameter_value,
+                'file' => $test_parameter_file_id,
+            );
+        }
+        $this->test_parameter_sets[] = array('id' => $test_parameter_set_id, 'testParameterItems' => $test_parameter_items);
+        $this->test_parameter_sets_by_id[$test_parameter_set_id] = TRUE;
     }
 
     private function add_uploaded_file($root_file_id)

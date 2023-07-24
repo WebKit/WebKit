@@ -32,14 +32,6 @@ from datetime import datetime
 from webkitcorepy import arguments, run, string_utils
 from webkitscmpy import Commit, local, CommitClassifier
 
-fuzz = None
-
-if sys.version_info > (3, 6):
-    try:
-        from rapidfuzz import fuzz
-    except ModuleNotFoundError:
-        pass
-
 
 class Pickable(Command):
     class Filters(object):
@@ -47,7 +39,12 @@ class Pickable(Command):
 
         @classmethod
         def fuzzy(cls, string, ratio=None):
-            if not fuzz:
+            if sys.version_info <= (3, 6):
+                return re.compile(string)
+
+            try:
+                from rapidfuzz import fuzz
+            except ModuleNotFoundError:
                 return re.compile(string)
 
             ratio = cls.DEFAULT_FUZZ_RATIO if not ratio else ratio
@@ -165,7 +162,8 @@ class Pickable(Command):
                 continue
             filtered_in.add(str(commit))
 
-        for ref in list(filtered_in):
+        already_picked = set()
+        for ref in sorted(filtered_in):
             commit = all_commits[ref]
             relationships = Trace.relationships(commit, repository)
             if not relationships:
@@ -173,9 +171,27 @@ class Pickable(Command):
             for rel in relationships:
                 if rel.type in Relationship.IDENTITY:
                     if rel.commit in commits_story:
+                        already_picked.add(ref)
                         filtered_in.remove(ref)
                     break
-                if rel.type in Relationship.PAIRED + Relationship.UNDO and str(rel.commit) not in filtered_in:
+
+                # This commit is a revert of something from our base branch
+                if rel.type in Relationship.UNDO and rel.commit in commits_story:
+                    filtered_in.remove(ref)
+                    break
+
+                # This commit is a follow-up fix
+                if rel.type in Relationship.PAIRED + Relationship.UNDO:
+                    # This commit is associated with something that's also pickable, so this change is definately pickable
+                    if str(rel.commit) in filtered_in:
+                        continue
+                    # This commit is associated with something that we can't have filtered out, so this change is definately pickable
+                    if str(rel.commit) not in commits:
+                        continue
+                    # The commit we're associated with was excluded because it exists on the target branch, so this change is definately pickable
+                    if str(rel.commit) in already_picked:
+                        continue
+
                     filtered_in.remove(ref)
                     break
 

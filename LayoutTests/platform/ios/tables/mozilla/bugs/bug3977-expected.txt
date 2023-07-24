@@ -134,8 +134,8 @@ layer at (0,0) size 800x965
                 RenderText {#text} at (0,0) size 70x19
                   text run at (0,0) width 70: "etc., etc. ..."
 layer at (8,281) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,273) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,273) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,532) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,524) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,524) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,775) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,767) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,767) size 784x2 [color=#808080] [border: (1px inset #808080)]

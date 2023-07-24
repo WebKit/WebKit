@@ -115,10 +115,6 @@
 #include "../../internal.h"
 
 
-// The quick sieve algorithm approach to weeding out primes is Philip
-// Zimmermann's, as implemented in PGP.  I have had a read of his comments and
-// implemented my own version.
-
 // kPrimes contains the first 1024 primes.
 static const uint16_t kPrimes[] = {
     2,    3,    5,    7,    11,   13,   17,   19,   23,   29,   31,   37,
@@ -363,6 +359,17 @@ static int probable_prime_dh(BIGNUM *rnd, int bits, const BIGNUM *add,
 static int probable_prime_dh_safe(BIGNUM *rnd, int bits, const BIGNUM *add,
                                   const BIGNUM *rem, BN_CTX *ctx);
 
+BN_GENCB *BN_GENCB_new(void) {
+  BN_GENCB *callback = OPENSSL_malloc(sizeof(BN_GENCB));
+  if (callback == NULL) {
+    return NULL;
+  }
+  OPENSSL_memset(callback, 0, sizeof(BN_GENCB));
+  return callback;
+}
+
+void BN_GENCB_free(BN_GENCB *callback) { OPENSSL_free(callback); }
+
 void BN_GENCB_set(BN_GENCB *callback,
                   int (*f)(int event, int n, struct bn_gencb_st *),
                   void *arg) {
@@ -377,6 +384,8 @@ int BN_GENCB_call(BN_GENCB *callback, int event, int n) {
 
   return callback->callback(event, n, callback);
 }
+
+void *BN_GENCB_get_arg(const BN_GENCB *callback) { return callback->arg; }
 
 int BN_generate_prime_ex(BIGNUM *ret, int bits, int safe, const BIGNUM *add,
                          const BIGNUM *rem, BN_GENCB *cb) {

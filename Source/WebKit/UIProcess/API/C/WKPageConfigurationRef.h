@@ -27,6 +27,7 @@
 #define WKPageConfigurationRef_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,8 +40,8 @@ WK_EXPORT WKPageConfigurationRef WKPageConfigurationCreate(void);
 WK_EXPORT WKContextRef WKPageConfigurationGetContext(WKPageConfigurationRef configuration);
 WK_EXPORT void WKPageConfigurationSetContext(WKPageConfigurationRef configuration, WKContextRef context);
 
-WK_EXPORT WKPageGroupRef WKPageConfigurationGetPageGroup(WKPageConfigurationRef configuration);
-WK_EXPORT void WKPageConfigurationSetPageGroup(WKPageConfigurationRef configuration, WKPageGroupRef pageGroup);
+WK_EXPORT WKPageGroupRef WKPageConfigurationGetPageGroup(WKPageConfigurationRef configuration) WK_C_API_DEPRECATED;
+WK_EXPORT void WKPageConfigurationSetPageGroup(WKPageConfigurationRef configuration, WKPageGroupRef pageGroup) WK_C_API_DEPRECATED;
 
 WK_EXPORT WKUserContentControllerRef WKPageConfigurationGetUserContentController(WKPageConfigurationRef configuration);
 WK_EXPORT void WKPageConfigurationSetUserContentController(WKPageConfigurationRef configuration, WKUserContentControllerRef userContentController);

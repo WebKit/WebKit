@@ -51,6 +51,11 @@ RefPtr<Attr> NamedNodeMap::getNamedItem(const AtomString& name) const
     return m_element.getAttributeNode(name);
 }
 
+bool NamedNodeMap::isSupportedPropertyName(const AtomString& name) const
+{
+    return m_element.hasAttribute(name);
+}
+
 RefPtr<Attr> NamedNodeMap::getNamedItemNS(const AtomString& namespaceURI, const AtomString& localName) const
 {
     return m_element.getAttributeNodeNS(namespaceURI, localName);

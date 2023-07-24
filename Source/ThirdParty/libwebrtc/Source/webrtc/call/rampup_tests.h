@@ -20,13 +20,13 @@
 #include "absl/strings/string_view.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/test/metrics/metric.h"
 #include "api/test/simulated_network.h"
 #include "call/call.h"
 #include "call/simulated_network.h"
 #include "rtc_base/event.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "test/call_test.h"
-#include "test/testsupport/perf_test.h"
 
 namespace webrtc {
 
@@ -44,7 +44,6 @@ class RampUpTester : public test::EndToEndTest {
                size_t num_flexfec_streams,
                unsigned int start_bitrate_bps,
                int64_t min_run_time_ms,
-               absl::string_view extension_type,
                bool rtx,
                bool red,
                bool report_perf_stats,
@@ -68,8 +67,8 @@ class RampUpTester : public test::EndToEndTest {
 
   void ReportResult(absl::string_view measurement,
                     size_t value,
-                    absl::string_view units,
-                    test::ImproveDirection improve_direction) const;
+                    test::Unit unit,
+                    test::ImprovementDirection improvement_direction) const;
   void TriggerTestDone();
 
   Clock* const clock_;
@@ -83,7 +82,7 @@ class RampUpTester : public test::EndToEndTest {
   Call* sender_call_;
   VideoSendStream* send_stream_;
   test::PacketTransport* send_transport_;
-  SimulatedNetwork* send_simulated_network_;
+  SimulatedNetworkInterface* send_simulated_network_;
 
  private:
   typedef std::map<uint32_t, uint32_t> SsrcMap;
@@ -93,9 +92,7 @@ class RampUpTester : public test::EndToEndTest {
   void OnVideoStreamsCreated(VideoSendStream* send_stream,
                              const std::vector<VideoReceiveStreamInterface*>&
                                  receive_streams) override;
-  std::unique_ptr<test::PacketTransport> CreateSendTransport(
-      TaskQueueBase* task_queue,
-      Call* sender_call) override;
+  BuiltInNetworkBehaviorConfig GetSendTransportConfig() const override;
   void ModifyVideoConfigs(
       VideoSendStream::Config* send_config,
       std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
@@ -106,6 +103,10 @@ class RampUpTester : public test::EndToEndTest {
   void ModifyFlexfecConfigs(
       std::vector<FlexfecReceiveStream::Config>* receive_configs) override;
   void OnCallsCreated(Call* sender_call, Call* receiver_call) override;
+  void OnTransportCreated(test::PacketTransport* to_receiver,
+                          SimulatedNetworkInterface* sender_network,
+                          test::PacketTransport* to_sender,
+                          SimulatedNetworkInterface* receiver_network) override;
 
   const int start_bitrate_bps_;
   const int64_t min_run_time_ms_;
@@ -113,7 +114,6 @@ class RampUpTester : public test::EndToEndTest {
   int64_t test_start_ms_;
   int64_t ramp_up_finished_ms_;
 
-  const std::string extension_type_;
   std::vector<uint32_t> video_ssrcs_;
   std::vector<uint32_t> video_rtx_ssrcs_;
   std::vector<uint32_t> audio_ssrcs_;
@@ -129,7 +129,6 @@ class RampUpDownUpTester : public RampUpTester {
                      size_t num_audio_streams,
                      size_t num_flexfec_streams,
                      unsigned int start_bitrate_bps,
-                     absl::string_view extension_type,
                      bool rtx,
                      bool red,
                      const std::vector<int>& loss_rates,
@@ -166,5 +165,6 @@ class RampUpDownUpTester : public RampUpTester {
   int sent_bytes_;
   std::vector<int> loss_rates_;
 };
+
 }  // namespace webrtc
 #endif  // CALL_RAMPUP_TESTS_H_

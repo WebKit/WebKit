@@ -137,7 +137,8 @@ function duplicate_build_request_with_new_order($db, $build_request, $order_over
         'test' => $build_request['request_test'],
         'group' => $build_request['request_group'],
         'order' => $order_overwrite,
-        'commit_set' => $build_request['request_commit_set']));
+        'commit_set' => $build_request['request_commit_set'],
+        'test_parameter_set' => $build_request['request_test_parameter_set']));
 }
 
 main();

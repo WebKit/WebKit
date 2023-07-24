@@ -336,11 +336,11 @@ EVP_PKEY *d2i_AutoPrivateKey(EVP_PKEY **out, const uint8_t **inp, long len) {
 int i2d_PublicKey(const EVP_PKEY *key, uint8_t **outp) {
   switch (key->type) {
     case EVP_PKEY_RSA:
-      return i2d_RSAPublicKey(key->pkey.rsa, outp);
+      return i2d_RSAPublicKey(EVP_PKEY_get0_RSA(key), outp);
     case EVP_PKEY_DSA:
-      return i2d_DSAPublicKey(key->pkey.dsa, outp);
+      return i2d_DSAPublicKey(EVP_PKEY_get0_DSA(key), outp);
     case EVP_PKEY_EC:
-      return i2o_ECPublicKey(key->pkey.ec, outp);
+      return i2o_ECPublicKey(EVP_PKEY_get0_EC_KEY(key), outp);
     default:
       OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE);
       return -1;
@@ -369,8 +369,8 @@ EVP_PKEY *d2i_PublicKey(int type, EVP_PKEY **out, const uint8_t **inp,
     // Unlike OpenSSL, we do not support EC keys with this API. The raw EC
     // public key serialization requires knowing the group. In OpenSSL, calling
     // this function with |EVP_PKEY_EC| and setting |out| to NULL does not work.
-    // It requires |*out| to include a partially-initiazed |EVP_PKEY| to extract
-    // the group.
+    // It requires |*out| to include a partially-initialized |EVP_PKEY| to
+    // extract the group.
     default:
       OPENSSL_PUT_ERROR(EVP, EVP_R_UNSUPPORTED_PUBLIC_KEY_TYPE);
       goto err;

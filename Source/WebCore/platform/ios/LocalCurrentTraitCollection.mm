@@ -29,23 +29,20 @@
 
 #import <pal/ios/UIKitSoftLink.h>
 
-#if HAVE(OS_DARK_MODE_SUPPORT)
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/LocalCurrentTraitCollectionAdditions.mm>)
-#import <WebKitAdditions/LocalCurrentTraitCollectionAdditions.mm>
-#else
 namespace WebCore {
 
+#if HAVE(OS_DARK_MODE_SUPPORT)
 static UITraitCollection *adjustedTraitCollection(UITraitCollection *traitCollection)
 {
+#if PLATFORM(VISION)
+    // Use the iPad idiom instead of the Reality idiom, since some system colors are transparent
+    // in the Reality idiom, and are not web-compatible.
+    if (traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomReality)
+        return [PAL::getUITraitCollectionClass() traitCollectionWithTraitsFromCollections:@[ traitCollection, [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceIdiom:UIUserInterfaceIdiomPad] ]];
+#endif
     return traitCollection;
 }
-
-}
 #endif
-#endif // HAVE(OS_DARK_MODE_SUPPORT)
-
-
-namespace WebCore {
 
 LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {

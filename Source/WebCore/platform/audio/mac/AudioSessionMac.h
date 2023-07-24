@@ -81,6 +81,9 @@ private:
     void addConfigurationChangeObserver(ConfigurationChangeObserver&) final;
     void removeConfigurationChangeObserver(ConfigurationChangeObserver&) final;
 
+    WTFLogChannel& logChannel() const;
+    const void* logIdentifier() const;
+
     std::optional<bool> m_lastMutedState;
     mutable WeakHashSet<ConfigurationChangeObserver> m_configurationChangeObservers;
     AudioSession::CategoryType m_category { AudioSession::CategoryType::None };

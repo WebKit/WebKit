@@ -12,7 +12,6 @@
 #define LIBANGLE_DISPLAY_H_
 
 #include <mutex>
-#include <set>
 #include <vector>
 
 #include "common/WorkerThread.h"
@@ -29,7 +28,7 @@
 #include "libANGLE/Observer.h"
 #include "libANGLE/Version.h"
 #include "platform/Feature.h"
-#include "platform/FrontendFeatures_autogen.h"
+#include "platform/autogen/FrontendFeatures_autogen.h"
 
 namespace angle
 {
@@ -59,8 +58,8 @@ class Surface;
 class Sync;
 class Thread;
 
-using ContextSet = angle::HashSet<gl::Context *>;
-using SurfaceSet = angle::HashSet<Surface *>;
+using ContextMap = angle::HashMap<GLuint, gl::Context *>;
+using SurfaceMap = angle::HashMap<GLuint, Surface *>;
 using ThreadSet  = angle::HashSet<Thread *>;
 
 struct DisplayState final : private angle::NonCopyable
@@ -69,8 +68,8 @@ struct DisplayState final : private angle::NonCopyable
     ~DisplayState();
 
     EGLLabelKHR label;
-    ContextSet contextSet;
-    SurfaceSet surfaceSet;
+    ContextMap contextMap;
+    SurfaceMap surfaceMap;
     std::vector<std::string> featureOverridesEnabled;
     std::vector<std::string> featureOverridesDisabled;
     bool featuresAllDisabled;
@@ -94,7 +93,7 @@ class ShareGroup final : angle::NonCopyable
 
     void finishAllContexts();
 
-    const ContextSet &getContexts() const { return mContexts; }
+    const ContextMap &getContexts() const { return mContexts; }
     void addSharedContext(gl::Context *context);
     void removeSharedContext(gl::Context *context);
 
@@ -112,11 +111,15 @@ class ShareGroup final : angle::NonCopyable
     std::unique_ptr<angle::FrameCaptureShared> mFrameCaptureShared;
 
     // The list of contexts within the share group
-    ContextSet mContexts;
+    ContextMap mContexts;
 };
 
 // Constant coded here as a reasonable limit.
 constexpr EGLAttrib kProgramCacheSizeAbsoluteMax = 0x4000000;
+
+using ImageMap  = angle::HashMap<GLuint, Image *>;
+using StreamSet = angle::HashSet<Stream *>;
+using SyncMap   = angle::HashMap<GLuint, Sync *>;
 
 class Display final : public LabeledObject,
                       public angle::ObserverInterface,
@@ -154,6 +157,11 @@ class Display final : public LabeledObject,
     // Helpers to maintain active thread set to assist with freeing invalid EGL objects.
     void addActiveThread(Thread *thread);
     void threadCleanup(Thread *thread);
+
+    ContextMutexManager *getSharedContextMutexManager() const
+    {
+        return mSharedContextMutexManager.get();
+    }
 
     static Display *GetDisplayFromDevice(Device *device, const AttributeMap &attribMap);
     static Display *GetDisplayFromNativeDisplay(EGLenum platform,
@@ -349,6 +357,19 @@ class Display final : public LabeledObject,
     egl::Image *getImage(egl::ImageID imageID);
     egl::Sync *getSync(egl::SyncID syncID);
 
+    const SyncMap &getSyncsForCapture() const { return mSyncMap; }
+
+    // Initialize thread-local variables used by the Display and its backing implementations.  This
+    // includes:
+    //
+    // - The unlocked tail call to be run at the end of the entry point.
+    // - Scratch space for an egl::Error used by the backends (this is not used by all backends, and
+    //   access *must* be restricted to backends that use it).
+    //
+    static void InitTLS();
+    static angle::UnlockedTailCall *GetCurrentThreadUnlockedTailCall();
+    static Error *GetCurrentThreadErrorScratchSpace();
+
   private:
     Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDevice);
 
@@ -357,7 +378,7 @@ class Display final : public LabeledObject,
 
     Error restoreLostDevice();
     Error releaseContext(gl::Context *context, Thread *thread);
-    Error releaseContextImpl(gl::Context *context, ContextSet *contexts);
+    Error releaseContextImpl(gl::Context *context, ContextMap *contexts);
 
     void initDisplayExtensions();
     void initVendorString();
@@ -379,25 +400,20 @@ class Display final : public LabeledObject,
 
     ConfigSet mConfigSet;
 
-    typedef angle::HashSet<Image *> ImageSet;
-    ImageSet mImageSet;
-
-    typedef angle::HashSet<Stream *> StreamSet;
+    ImageMap mImageMap;
     StreamSet mStreamSet;
+    SyncMap mSyncMap;
 
-    typedef angle::HashSet<Sync *> SyncSet;
-    SyncSet mSyncSet;
-
-    void destroyImageImpl(Image *image, ImageSet *images);
+    void destroyImageImpl(Image *image, ImageMap *images);
     void destroyStreamImpl(Stream *stream, StreamSet *streams);
-    Error destroySurfaceImpl(Surface *surface, SurfaceSet *surfaces);
-    void destroySyncImpl(Sync *sync, SyncSet *syncs);
+    Error destroySurfaceImpl(Surface *surface, SurfaceMap *surfaces);
+    void destroySyncImpl(Sync *sync, SyncMap *syncs);
 
-    ContextSet mInvalidContextSet;
-    ImageSet mInvalidImageSet;
+    ContextMap mInvalidContextMap;
+    ImageMap mInvalidImageMap;
     StreamSet mInvalidStreamSet;
-    SurfaceSet mInvalidSurfaceSet;
-    SyncSet mInvalidSyncSet;
+    SurfaceMap mInvalidSurfaceMap;
+    SyncMap mInvalidSyncMap;
 
     bool mInitialized;
     bool mDeviceLost;
@@ -416,8 +432,13 @@ class Display final : public LabeledObject,
     EGLenum mPlatform;
     angle::LoggingAnnotator mAnnotator;
 
+    std::unique_ptr<ContextMutexManager> mSharedContextMutexManager;
+
+    // mManagersMutex protects mTextureManager and mSemaphoreManager
+    ContextMutex *mManagersMutex;
     gl::TextureManager *mTextureManager;
     gl::SemaphoreManager *mSemaphoreManager;
+
     BlobCache mBlobCache;
     gl::MemoryProgramCache mMemoryProgramCache;
     gl::MemoryShaderCache mMemoryShaderCache;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUProgrammableStage.h>
+#include <WebCore/WebGPUProgrammableStage.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ProgrammableStage> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ProgrammableStage& programmableStage)
+std::optional<ProgrammableStage> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ProgrammableStage& programmableStage)
 {
     auto module = convertToBacking(programmableStage.module);
     if (!module)
@@ -43,7 +43,7 @@ std::optional<ProgrammableStage> ConvertToBackingContext::convertToBacking(const
     return { { module, programmableStage.entryPoint, programmableStage.constants } };
 }
 
-std::optional<PAL::WebGPU::ProgrammableStage> ConvertFromBackingContext::convertFromBacking(const ProgrammableStage& programmableStage)
+std::optional<WebCore::WebGPU::ProgrammableStage> ConvertFromBackingContext::convertFromBacking(const ProgrammableStage& programmableStage)
 {
     auto* module = convertShaderModuleFromBacking(programmableStage.module);
     if (!module)

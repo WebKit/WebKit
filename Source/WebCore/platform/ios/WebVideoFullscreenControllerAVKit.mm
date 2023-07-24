@@ -36,7 +36,6 @@
 #import "PlaybackSessionModelMediaElement.h"
 #import "RenderVideo.h"
 #import "TimeRanges.h"
-#import "VideoFullscreenChangeObserver.h"
 #import "VideoFullscreenInterfaceAVKit.h"
 #import "VideoFullscreenModelVideoElement.h"
 #import "WebCoreThreadRun.h"
@@ -98,12 +97,10 @@ class VideoFullscreenControllerContext;
 @end
 
 class VideoFullscreenControllerContext final
-    : private VideoFullscreenModel
+    : public VideoFullscreenModel
     , private VideoFullscreenModelClient
-    , private VideoFullscreenChangeObserver
     , private PlaybackSessionModel
-    , private PlaybackSessionModelClient
-    , public ThreadSafeRefCounted<VideoFullscreenControllerContext> {
+    , private PlaybackSessionModelClient {
 
 public:
     static Ref<VideoFullscreenControllerContext> create()
@@ -121,19 +118,6 @@ public:
 
 private:
     VideoFullscreenControllerContext() { }
-
-    // VideoFullscreenChangeObserver
-    void requestUpdateInlineRect() final;
-    void requestVideoContentLayer() final;
-    void returnVideoContentLayer() final;
-    void returnVideoView() final { }
-    void didSetupFullscreen() final;
-    void failedToEnterFullscreen() final { }
-    void didEnterFullscreen(const FloatSize&) final { }
-    void willExitFullscreen() final;
-    void didExitFullscreen() final;
-    void didCleanupFullscreen() final;
-    void fullscreenMayReturnToInline() final;
 
     // VideoFullscreenModelClient
     void hasVideoChanged(bool) override;
@@ -216,6 +200,16 @@ private:
     void willExitPictureInPicture() final;
     void didExitPictureInPicture() final;
 
+    void requestUpdateInlineRect() final;
+    void requestVideoContentLayer() final;
+    void returnVideoContentLayer() final;
+    void returnVideoView() final { }
+    void didSetupFullscreen() final;
+    void willExitFullscreen() final;
+    void didExitFullscreen() final;
+    void didCleanupFullscreen() final;
+    void fullscreenMayReturnToInline() final;
+
     HashSet<PlaybackSessionModelClient*> m_playbackClients;
     HashSet<VideoFullscreenModelClient*> m_fullscreenClients;
     RefPtr<VideoFullscreenInterfaceAVKit> m_interface;
@@ -231,8 +225,6 @@ VideoFullscreenControllerContext::~VideoFullscreenControllerContext()
     auto notifyClientsModelWasDestroyed = [this] {
         while (!m_playbackClients.isEmpty())
             (*m_playbackClients.begin())->modelDestroyed();
-        while (!m_fullscreenClients.isEmpty())
-            (*m_fullscreenClients.begin())->modelDestroyed();
     };
     if (isUIThread()) {
         WebThreadLock();
@@ -243,7 +235,7 @@ VideoFullscreenControllerContext::~VideoFullscreenControllerContext()
         WorkQueue::main().dispatchSync(WTFMove(notifyClientsModelWasDestroyed));
 }
 
-#pragma mark VideoFullscreenChangeObserver
+#pragma mark VideoFullscreenModel
 
 void VideoFullscreenControllerContext::requestUpdateInlineRect()
 {
@@ -351,7 +343,6 @@ void VideoFullscreenControllerContext::didCleanupFullscreen()
 {
     ASSERT(isUIThread());
     m_interface->setVideoFullscreenModel(nullptr);
-    m_interface->setVideoFullscreenChangeObserver(nullptr);
     m_interface = nullptr;
     m_videoFullscreenView = nil;
 
@@ -1019,7 +1010,6 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
 
         Ref<PlaybackSessionInterfaceAVKit> sessionInterface = PlaybackSessionInterfaceAVKit::create(*this);
         m_interface = VideoFullscreenInterfaceAVKit::create(sessionInterface.get());
-        m_interface->setVideoFullscreenChangeObserver(this);
         m_interface->setVideoFullscreenModel(this);
 
         m_videoFullscreenView = adoptNS([PAL::allocUIViewInstance() init]);

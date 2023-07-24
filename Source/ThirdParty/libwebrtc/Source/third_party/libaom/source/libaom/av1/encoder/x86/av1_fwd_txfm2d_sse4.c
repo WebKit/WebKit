@@ -29,6 +29,16 @@ static INLINE void int16_array_with_stride_to_int32_array_without_stride(
   }
 }
 
+static INLINE void store_output_32bit_w8(int32_t *const out,
+                                         const __m128i *const in1,
+                                         const __m128i *const in2,
+                                         const int stride, const int out_size) {
+  for (int i = 0; i < out_size; ++i) {
+    _mm_store_si128((__m128i *)(out + stride * i), in1[i]);
+    _mm_store_si128((__m128i *)(out + stride * i + 4), in2[i]);
+  }
+}
+
 typedef void (*TxfmFuncSSE2)(__m128i *input, __m128i *output,
                              const int8_t cos_bit, const int8_t *stage_range);
 
@@ -104,8 +114,7 @@ static INLINE void fwd_txfm2d_sse4_1(const int16_t *input, int32_t *output,
   av1_round_shift_array_32_sse4_1(buf_128, out_128, txfm2d_size_128, -shift[1]);
   transpose_32(txfm_size, out_128, buf_128);
   txfm_func_row(buf_128, out_128, cos_bit_row, stage_range_row);
-  av1_round_shift_array_32_sse4_1(out_128, buf_128, txfm2d_size_128, -shift[2]);
-  transpose_32(txfm_size, buf_128, out_128);
+  av1_round_shift_array_32_sse4_1(out_128, out_128, txfm2d_size_128, -shift[2]);
 }
 
 static INLINE void fwd_txfm2d_64x64_sse4_1(const int16_t *input,
@@ -140,8 +149,7 @@ static INLINE void fwd_txfm2d_64x64_sse4_1(const int16_t *input,
   }
 
   txfm2d_size_128 = (col_num >> 1) * (txfm_size >> 1);
-  av1_round_shift_array_32_sse4_1(out_128, buf_128, txfm2d_size_128, -shift[2]);
-  transpose_8nx8n(buf_128, out_128, 32, 32);
+  av1_round_shift_array_32_sse4_1(out_128, out_128, txfm2d_size_128, -shift[2]);
 }
 
 void av1_fwd_txfm2d_32x32_sse4_1(const int16_t *input, int32_t *output,
@@ -160,29 +168,6 @@ void av1_fwd_txfm2d_64x64_sse4_1(const int16_t *input, int32_t *output,
   av1_get_fwd_txfm_cfg(tx_type, TX_64X64, &cfg);
   (void)bd;
   fwd_txfm2d_64x64_sse4_1(input, output, stride, &cfg, txfm_buf);
-}
-
-static INLINE void transpose_32_4x4x2(int stride, const __m128i *inputA,
-                                      const __m128i *inputB, __m128i *output) {
-  __m128i temp0 = _mm_unpacklo_epi32(inputA[0], inputA[2]);
-  __m128i temp1 = _mm_unpackhi_epi32(inputA[0], inputA[2]);
-  __m128i temp2 = _mm_unpacklo_epi32(inputA[1], inputA[3]);
-  __m128i temp3 = _mm_unpackhi_epi32(inputA[1], inputA[3]);
-
-  output[0 * stride] = _mm_unpacklo_epi32(temp0, temp2);
-  output[1 * stride] = _mm_unpackhi_epi32(temp0, temp2);
-  output[2 * stride] = _mm_unpacklo_epi32(temp1, temp3);
-  output[3 * stride] = _mm_unpackhi_epi32(temp1, temp3);
-
-  temp0 = _mm_unpacklo_epi32(inputB[0], inputB[2]);
-  temp1 = _mm_unpackhi_epi32(inputB[0], inputB[2]);
-  temp2 = _mm_unpacklo_epi32(inputB[1], inputB[3]);
-  temp3 = _mm_unpackhi_epi32(inputB[1], inputB[3]);
-
-  output[4 * stride] = _mm_unpacklo_epi32(temp0, temp2);
-  output[5 * stride] = _mm_unpackhi_epi32(temp0, temp2);
-  output[6 * stride] = _mm_unpacklo_epi32(temp1, temp3);
-  output[7 * stride] = _mm_unpackhi_epi32(temp1, temp3);
 }
 
 static void lowbd_fwd_txfm2d_64x64_sse4_1(const int16_t *input, int32_t *output,
@@ -225,11 +210,7 @@ static void lowbd_fwd_txfm2d_64x64_sse4_1(const int16_t *input, int32_t *output,
     av1_round_shift_array_32_sse4_1(bufA, bufA, 32, -shift[2]);
     av1_round_shift_array_32_sse4_1(bufB, bufB, 32, -shift[2]);
 
-    int32_t *output8 = output + 8 * 32 * i;
-    for (int j = 0; j < width_div8; ++j) {
-      __m128i *out = (__m128i *)(output8 + 4 * j);
-      transpose_32_4x4x2(8, bufA + 4 * j, bufB + 4 * j, out);
-    }
+    store_output_32bit_w8(output + i * 8, bufA, bufB, 32, 32);
   }
 }
 
@@ -272,11 +253,7 @@ static void lowbd_fwd_txfm2d_64x32_sse4_1(const int16_t *input, int32_t *output,
     av1_round_shift_rect_array_32_sse4_1(bufA, bufA, 32, -shift[2], NewSqrt2);
     av1_round_shift_rect_array_32_sse4_1(bufB, bufB, 32, -shift[2], NewSqrt2);
 
-    int32_t *output8 = output + 8 * 32 * i;
-    for (int j = 0; j < width_div8; ++j) {
-      __m128i *out = (__m128i *)(output8 + 4 * j);
-      transpose_32_4x4x2(8, bufA + 4 * j, bufB + 4 * j, out);
-    }
+    store_output_32bit_w8(output + i * 8, bufA, bufB, 32, 32);
   }
 }
 
@@ -321,11 +298,7 @@ static void lowbd_fwd_txfm2d_32x64_sse4_1(const int16_t *input, int32_t *output,
     av1_round_shift_rect_array_32_sse4_1(bufA, bufA, 32, -shift[2], NewSqrt2);
     av1_round_shift_rect_array_32_sse4_1(bufB, bufB, 32, -shift[2], NewSqrt2);
 
-    int32_t *output8 = output + 8 * 32 * i;
-    for (int j = 0; j < (32 / 4); ++j) {
-      __m128i *out = (__m128i *)(output8 + 4 * j);
-      transpose_32_4x4x2(8, bufA + 4 * j, bufB + 4 * j, out);
-    }
+    store_output_32bit_w8(output + i * 8, bufA, bufB, 32, 32);
   }
 }
 

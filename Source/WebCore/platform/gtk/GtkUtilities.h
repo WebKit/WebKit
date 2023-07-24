@@ -59,4 +59,6 @@ void monitorWorkArea(GdkMonitor*, GdkRectangle*);
 
 bool shouldUseOverlayScrollbars();
 
+WEBCORE_EXPORT bool eventModifiersContainCapsLock(GdkEvent*);
+
 } // namespace WebCore

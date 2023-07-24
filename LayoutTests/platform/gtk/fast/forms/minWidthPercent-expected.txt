@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 122x30
             RenderTableRow {TR} at (0,2) size 122x26
               RenderTableCell {TD} at (2,2) size 118x26 [r=0 c=0 rs=1 cs=1]
-                RenderTextControl {INPUT} at (1,1) size 116x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (1,1) size 116x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                 RenderText {#text} at (0,0) size 0x0
 layer at (14,14) size 110x18 scrollWidth 150
   RenderBlock {DIV} at (3,3) size 110x18

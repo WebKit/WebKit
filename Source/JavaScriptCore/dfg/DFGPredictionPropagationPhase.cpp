@@ -994,6 +994,11 @@ private:
             break;
         }
 
+        case DateSetTime: {
+            setPrediction(SpecFullNumber);
+            break;
+        }
+
         case WeakMapGet:
         case ResolveScopeForHoistingFuncDeclInEval: {
             setPrediction(SpecBytecodeTop);
@@ -1065,6 +1070,11 @@ private:
             break;
         }
 
+        case StringIndexOf: {
+            setPrediction(SpecInt32Only);
+            break;
+        }
+
         case StringLocaleCompare: {
             setPrediction(SpecInt32Only);
             break;
@@ -1130,6 +1140,8 @@ private:
         case IsNumber:
         case IsBigInt:
         case NumberIsInteger:
+        case GlobalIsNaN:
+        case NumberIsNaN:
         case IsObject:
         case IsCallable:
         case IsConstructor:
@@ -1202,6 +1214,7 @@ private:
         case NewArrayWithSpread:
         case NewArray:
         case NewArrayWithSize:
+        case NewArrayWithConstantSize:
         case CreateRest:
         case NewArrayBuffer:
         case ObjectKeys:
@@ -1533,6 +1546,7 @@ private:
         case NotifyWrite:
         case ConstantStoragePointer:
         case MovHint:
+        case ZombieHint:
         case ExitOK:
         case VarargsLength:
         case LoadVarargs:

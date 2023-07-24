@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (50,316) size 42x43 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=200.00] [width=25.00] [height=25.00]
         RenderSVGRect {rect} at (50,366) size 42x43 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=230.00] [width=25.00] [height=25.00]
         RenderSVGRect {rect} at (50,416) size 42x43 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=260.00] [width=25.00] [height=25.00]
-      RenderSVGContainer {g} at (116,74) size 548x376 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-15.00)}]
+      RenderSVGContainer {g} at (116,73) size 548x377 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-15.00)}]
         RenderSVGText {text} at (0,59) size 211x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 211x16
             chunk 1 text run 1 at (0.00,72.00) startOffset 0 endOffset 36 width 210.60: "Called before a lone interval starts"
@@ -31,12 +31,12 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (0,119) size 150x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 150x16
             chunk 1 text run 1 at (0.00,132.00) startOffset 0 endOffset 25 width 150.00: "Called during an interval"
-        RenderSVGText {text} at (0,149) size 279x16 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 279x16
-            chunk 1 text run 1 at (0.00,162.00) startOffset 0 endOffset 48 width 279.00: "Called after a lone interval ends, fill=\"remove\""
+        RenderSVGText {text} at (0,149) size 280x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 280x16
+            chunk 1 text run 1 at (0.00,162.00) startOffset 0 endOffset 48 width 279.60: "Called after a lone interval ends, fill=\"remove\""
         RenderSVGText {text} at (0,179) size 272x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 272x16
-            chunk 1 text run 1 at (0.00,192.00) startOffset 0 endOffset 48 width 271.20: "Called after a lone interval ends, fill=\"freeze\""
+            chunk 1 text run 1 at (0.00,192.00) startOffset 0 endOffset 48 width 271.80: "Called after a lone interval ends, fill=\"freeze\""
         RenderSVGText {text} at (0,209) size 201x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 201x16
             chunk 1 text run 1 at (0.00,222.00) startOffset 0 endOffset 33 width 201.00: "Called with multiple begin values"
@@ -46,8 +46,8 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (0,269) size 207x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 207x16
             chunk 1 text run 1 at (0.00,282.00) startOffset 0 endOffset 32 width 206.40: "Called with syncbase begin value"
-    RenderSVGContainer {g} at (16,518) size 405x60
-      RenderSVGText {text} at (10,311) size 243x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 243x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 242.44: "$Revision: 1.11 $"
+    RenderSVGContainer {g} at (16,518) size 414x60
+      RenderSVGText {text} at (10,311) size 248x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 248x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 247.82: "$Revision: 1.11 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -476,7 +476,7 @@ void InteractionRegionOverlay::drawSettings(GraphicsContext& context)
 
     {
         GraphicsContextStateSaver stateSaver(context);
-        context.setShadow({ }, 5, Color(Color::black).colorWithAlpha(0.5));
+        context.setDropShadow({ { }, 5, Color(Color::black).colorWithAlpha(0.5), ShadowRadiusMode::Default });
         context.fillRoundedRect(FloatRoundedRect { rect, FloatRoundedRect::Radii { 6 } }, Color(Color::white).colorWithAlpha(0.85));
     }
 

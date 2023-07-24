@@ -1316,7 +1316,7 @@ void ReplaceSelectionCommand::doApply()
 
     RefPtr blockStart { enclosingBlock(insertionPos.deprecatedNode()) };
     bool isInsertingIntoList = (isListHTMLElement(refNode.get()) || (isLegacyAppleStyleSpan(refNode.get()) && isListHTMLElement(refNode->firstChild())))
-    && blockStart && blockStart->renderer()->isListItem();
+    && blockStart && blockStart->renderer()->isListItem() && blockStart->parentNode()->hasEditableStyle();
     if (isInsertingIntoList)
         refNode = insertAsListItems(downcast<HTMLElement>(*refNode), blockStart.get(), insertionPos, insertedNodes);
     else if (isEditablePosition(insertionPos)) {

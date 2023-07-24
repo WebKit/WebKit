@@ -43,7 +43,7 @@ void AXIsolatedObject::initializePlatformProperties(const Ref<const Accessibilit
     if (object->hasAttributedText()) {
         std::optional<SimpleRange> range;
         if (isTextControl())
-            range = rangeForPlainTextRange({ 0, object->text().length() });
+            range = rangeForCharacterRange({ 0, object->text().length() });
         else
             range = object->simpleRange();
         if (range) {
@@ -177,14 +177,26 @@ RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRan
     if (!markerRange)
         return nil;
 
-    // At the moment we are only handling ranges that are contained in a single object, and for which we cached the AttributeString.
+    // At the moment we are only handling ranges that are confined to a single object, and for which we cached the AttributeString.
     // FIXME: Extend to cases where the range expands multiple objects.
 
+    bool isConfined = markerRange.isConfinedTo(markerRange.start().objectID());
+    if (isConfined && markerRange.start().objectID() != objectID()) {
+        // markerRange is confined to an object different from this. That is the case when clients use the webarea to request AttributedStrings for a range obtained from an inner descendant.
+        // Delegate to the inner object in this case.
+        if (RefPtr object = markerRange.start().object())
+            return object->attributedStringForTextMarkerRange(WTFMove(markerRange), spellCheck);
+    }
+
     auto attributedText = propertyValue<RetainPtr<NSAttributedString>>(AXPropertyName::AttributedText);
-    if (!attributedText) {
+    if (!isConfined || !attributedText) {
         return Accessibility::retrieveValueFromMainThread<RetainPtr<NSAttributedString>>([markerRange = WTFMove(markerRange), &spellCheck, this] () mutable -> RetainPtr<NSAttributedString> {
-            if (RefPtr axObject = associatedAXObject())
+            if (RefPtr axObject = associatedAXObject()) {
+                // Ensure that the TextMarkers have valid Node references, in case the range was created on the AX thread.
+                markerRange.start().setNodeIfNeeded();
+                markerRange.end().setNodeIfNeeded();
                 return axObject->attributedStringForTextMarkerRange(WTFMove(markerRange), spellCheck);
+            }
             return { };
         });
     }

@@ -59,6 +59,18 @@ struct VariationDefaults {
     float defaultValue;
     float minimumValue;
     float maximumValue;
+
+    bool contains(float value) const
+    {
+        ASSERT(minimumValue <= maximumValue);
+        return value >= minimumValue && value <= maximumValue;
+    }
+
+    float clamp(float value) const
+    {
+        ASSERT(minimumValue <= maximumValue);
+        return std::clamp(value, minimumValue, maximumValue);
+    }
 };
 
 typedef HashMap<FontTag, VariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> VariationDefaultsMap;

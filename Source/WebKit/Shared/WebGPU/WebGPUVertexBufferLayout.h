@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,16 +28,16 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUVertexAttribute.h"
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUVertexStepMode.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUVertexStepMode.h>
 #include <wtf/Vector.h>
 
 namespace WebKit::WebGPU {
 
 struct VertexBufferLayout {
-    PAL::WebGPU::Size64 arrayStride { 0 };
-    PAL::WebGPU::VertexStepMode stepMode { PAL::WebGPU::VertexStepMode::Vertex };
+    WebCore::WebGPU::Size64 arrayStride { 0 };
+    WebCore::WebGPU::VertexStepMode stepMode { WebCore::WebGPU::VertexStepMode::Vertex };
     Vector<VertexAttribute> attributes;
 };
 

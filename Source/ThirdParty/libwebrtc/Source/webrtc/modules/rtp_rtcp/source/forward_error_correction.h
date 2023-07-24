@@ -18,8 +18,11 @@
 #include <memory>
 #include <vector>
 
+#include "absl/container/inlined_vector.h"
 #include "api/scoped_refptr.h"
+#include "api/units/timestamp.h"
 #include "modules/include/module_fec_types.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -83,6 +86,7 @@ class ForwardErrorCorrection {
     bool is_fec;  // Set to true if this is an FEC packet and false
                   // otherwise.
     bool is_recovered;
+    RtpHeaderExtensionMap extensions;
     rtc::scoped_refptr<Packet> pkt;  // Pointer to the packet storage.
   };
 
@@ -115,11 +119,23 @@ class ForwardErrorCorrection {
 
   using ProtectedPacketList = std::list<std::unique_ptr<ProtectedPacket>>;
 
+  struct ProtectedStream {
+    uint32_t ssrc = 0;
+    uint16_t seq_num_base = 0;
+    size_t packet_mask_offset = 0;  // Relative start of FEC header.
+    size_t packet_mask_size = 0;
+  };
+
   // Used for internal storage of received FEC packets in a list.
   //
   // TODO(holmer): Refactor into a proper class.
   class ReceivedFecPacket : public SortablePacket {
    public:
+    // SSRC count is limited by 4 bits of CSRC count in RTP header (max 15).
+    // Since most of the time number of SSRCs will be low (probably 1 most of
+    // the time) setting this value to 4 for optimization.
+    static constexpr size_t kInlinedSsrcsVectorSize = 4;
+
     ReceivedFecPacket();
     ~ReceivedFecPacket();
 
@@ -129,10 +145,8 @@ class ForwardErrorCorrection {
     uint32_t ssrc;
     // FEC header fields.
     size_t fec_header_size;
-    uint32_t protected_ssrc;
-    uint16_t seq_num_base;
-    size_t packet_mask_offset;  // Relative start of FEC header.
-    size_t packet_mask_size;
+    absl::InlinedVector<ProtectedStream, kInlinedSsrcsVectorSize>
+        protected_streams;
     size_t protection_length;
     // Raw data.
     rtc::scoped_refptr<ForwardErrorCorrection::Packet> pkt;

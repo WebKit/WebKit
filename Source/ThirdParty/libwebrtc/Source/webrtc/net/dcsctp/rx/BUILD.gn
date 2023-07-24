@@ -48,7 +48,6 @@ rtc_library("interleaved_reassembly_streams") {
   deps = [
     ":reassembly_streams",
     "../../../api:array_view",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../common:sequence_numbers",

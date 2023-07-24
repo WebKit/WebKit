@@ -26,18 +26,3 @@ assert.sameValue(monthday.toLocaleString("en-US", { hour: "numeric" }), "11/18")
 assert.sameValue(monthday.toLocaleString("en-US", { minute: "numeric" }), "11/18");
 assert.sameValue(monthday.toLocaleString("en-US", { second: "numeric" }), "11/18");
 assert.sameValue(monthday.toLocaleString("en-US", { weekday: "long" }), "11/18");
-
-// works when the object's calendar is the same as the locale's calendar
-var md = Temporal.PlainMonthDay.from({
-  monthCode: "M11",
-  day: 18,
-  calendar: "japanese"
-});
-assert.sameValue(`${ md.toLocaleString("en-US-u-ca-japanese") }`, "11/18");
-
-// throws when the calendar is not equal to the locale calendar
-var mdISO = Temporal.PlainMonthDay.from({
-  month: 11,
-  day: 18
-});
-assert.throws(RangeError, () => mdISO.toLocaleString("en-US-u-ca-japanese"));

@@ -127,7 +127,7 @@ void WebNotificationManagerProxy::showImpl(WebPageProxy* webPage, Ref<WebNotific
     m_provider->show(webPage, notification.get(), WTFMove(notificationResources));
 }
 
-void WebNotificationManagerProxy::cancel(WebPageProxy* page, const UUID& pageNotificationID)
+void WebNotificationManagerProxy::cancel(WebPageProxy* page, const WTF::UUID& pageNotificationID)
 {
     if (auto webNotification = m_notifications.get(pageNotificationID)) {
         m_provider->cancel(*webNotification);
@@ -135,7 +135,7 @@ void WebNotificationManagerProxy::cancel(WebPageProxy* page, const UUID& pageNot
     }
 }
     
-void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy*, const UUID& pageNotificationID)
+void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy*, const WTF::UUID& pageNotificationID)
 {
     if (auto webNotification = m_notifications.take(pageNotificationID)) {
         m_globalNotificationMap.remove(webNotification->notificationID());
@@ -149,7 +149,7 @@ void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage)
     clearNotifications(webPage, { });
 }
 
-void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, const Vector<UUID>& pageNotificationIDs)
+void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, const Vector<WTF::UUID>& pageNotificationIDs)
 {
     Vector<uint64_t> globalNotificationIDs;
     globalNotificationIDs.reserveInitialCapacity(m_globalNotificationMap.size());
@@ -228,7 +228,7 @@ void WebNotificationManagerProxy::providerDidClickNotification(uint64_t globalNo
     dispatchDidClickNotification(m_notifications.get(it->value));
 }
 
-void WebNotificationManagerProxy::providerDidClickNotification(const UUID& coreNotificationID)
+void WebNotificationManagerProxy::providerDidClickNotification(const WTF::UUID& coreNotificationID)
 {
     dispatchDidClickNotification(m_notifications.get(coreNotificationID));
 }
@@ -242,7 +242,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
         // The passed array might have uint64_t identifiers or UUID data identifiers.
         // Handle both.
 
-        std::optional<UUID> coreNotificationID;
+        std::optional<WTF::UUID> coreNotificationID;
         auto* intValue = globalNotificationIDs->at<API::UInt64>(i);
         if (intValue) {
             auto it = m_globalNotificationMap.find(intValue->value());
@@ -259,7 +259,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
             if (span.size() != 16)
                 continue;
 
-            coreNotificationID = UUID { std::span<const uint8_t, 16> { span.data(), 16 } };
+            coreNotificationID = WTF::UUID { std::span<const uint8_t, 16> { span.data(), 16 } };
         }
 
         ASSERT(coreNotificationID);
@@ -285,7 +285,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
     for (auto& notification : closedNotifications) {
         if (auto connection = notification->sourceConnection()) {
             LOG(Notifications, "Provider did close notification (%s)", notification->coreNotificationID().toString().utf8().data());
-            Vector<UUID> notificationIDs = { notification->coreNotificationID() };
+            Vector<WTF::UUID> notificationIDs = { notification->coreNotificationID() };
             connection->send(Messages::WebNotificationManager::DidCloseNotifications(notificationIDs), 0);
         }
     }

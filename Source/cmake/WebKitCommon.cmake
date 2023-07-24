@@ -202,6 +202,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
 
     # To prevent multiple inclusion, most modules should be included once here.
     include(CheckCCompilerFlag)
+    include(CheckCSourceCompiles)
     include(CheckCXXCompilerFlag)
     include(CheckCXXSourceCompiles)
     include(CheckFunctionExists)

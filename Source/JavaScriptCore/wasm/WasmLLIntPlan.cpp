@@ -152,7 +152,7 @@ void LLIntPlan::didCompleteCompilation()
                 linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::wasmFunctionEntryThunk().code()));
         }
 
-        m_entryThunks = FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "Wasm LLInt entry thunks");
+        m_entryThunks = FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, "Wasm LLInt entry thunks");
         m_callees = m_calleesVector.data();
         if (!m_moduleInformation->clobberingTailCalls().isEmpty())
             computeTransitiveTailCalls();
@@ -179,7 +179,7 @@ void LLIntPlan::didCompleteCompilation()
             }
 
             function->entrypoint.compilation = makeUnique<Compilation>(
-                FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "JS->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
+                FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, "JS->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
                 nullptr);
 
             callee->setEntrypoint(WTFMove(function->entrypoint));

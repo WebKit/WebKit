@@ -41,13 +41,13 @@ SOFT_LINK_CLASS_OPTIONAL(WebContentAnalysis, WebFilterEvaluator);
 
 namespace WebCore {
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 ParentalControlsContentFilter::SandboxExtensionState ParentalControlsContentFilter::m_sandboxExtensionState = SandboxExtensionState::NotSet;
 #endif
 
 bool ParentalControlsContentFilter::enabled()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     bool enabled = false;
     switch (m_sandboxExtensionState) {
     case SandboxExtensionState::Consumed:
@@ -147,7 +147,7 @@ void ParentalControlsContentFilter::updateFilterState()
 #endif
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 void ParentalControlsContentFilter::setHasConsumedSandboxExtension(bool hasConsumedSandboxExtension)
 {
     if (m_sandboxExtensionState == SandboxExtensionState::Consumed)

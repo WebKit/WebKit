@@ -32,7 +32,7 @@
 #include "tcuTexture.hpp"
 #include "util/OSPixmap.h"
 #include "util/OSWindow.h"
-#include "util/angle_features_autogen.h"
+#include "util/autogen/angle_features_autogen.h"
 
 // clang-format off
 #if (DE_OS == DE_OS_WIN32)

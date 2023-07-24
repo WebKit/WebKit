@@ -1,17 +1,14 @@
-This is a popover
-
-autofocus button  second autofocus button
 
 FAIL Popover focus test: default behavior - popover is not focused assert_false: expected false got true
 FAIL Popover button click focus test: default behavior - popover is not focused assert_false: popover should start out hidden expected false got true
 PASS Popover corner cases test: default behavior - popover is not focused
-FAIL Popover focus test: autofocus popover assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <div popover="" data-test="autofocus popover" autofocus="...
+FAIL Popover focus test: autofocus popover assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <div popover="auto" data-test="autofocus popover" autofoc...
 FAIL Popover button click focus test: autofocus popover assert_false: popover should start out hidden expected false got true
 FAIL Popover corner cases test: autofocus popover assert_false: popover should start out hidden expected false got true
-FAIL Popover focus test: autofocus empty popover assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <div popover="" data-test="autofocus empty popover" autof...
+FAIL Popover focus test: autofocus empty popover assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <div popover="auto" data-test="autofocus empty popover" a...
 FAIL Popover button click focus test: autofocus empty popover assert_false: popover should start out hidden expected false got true
 FAIL Popover corner cases test: autofocus empty popover assert_false: popover should start out hidden expected false got true
-FAIL Popover focus test: autofocus popover with button assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <div popover="" data-test="autofocus popover with button"...
+FAIL Popover focus test: autofocus popover with button assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <div popover="auto" data-test="autofocus popover with but...
 FAIL Popover button click focus test: autofocus popover with button assert_false: popover should start out hidden expected false got true
 FAIL Popover corner cases test: autofocus popover with button assert_false: popover should start out hidden expected false got true
 FAIL Popover focus test: autofocus child assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <button autofocus="" class="should-be-focused" tabindex="...
@@ -23,7 +20,13 @@ FAIL Popover corner cases test: autofocus on tabindex=0 element assert_false: po
 FAIL Popover focus test: autofocus multiple children assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <button autofocus="" class="should-be-focused" tabindex="...
 FAIL Popover button click focus test: autofocus multiple children assert_false: popover should start out hidden expected false got true
 FAIL Popover corner cases test: autofocus multiple children assert_false: popover should start out hidden expected false got true
-FAIL Popover focus test: autofocus popover and multiple autofocus children assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <div popover="" autofocus="" tabindex="-1" data-test="aut...
+FAIL Popover focus test: autofocus popover and multiple autofocus children assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <div popover="auto" autofocus="" tabindex="-1" data-test=...
 FAIL Popover button click focus test: autofocus popover and multiple autofocus children assert_false: popover should start out hidden expected false got true
 FAIL Popover corner cases test: autofocus popover and multiple autofocus children assert_false: popover should start out hidden expected false got true
+FAIL Popover focus test: Opening dialogs as popovers should use dialog initial focus algorithm. assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <button class="should-be-focused">button</button>
+FAIL Popover button click focus test: Opening dialogs as popovers should use dialog initial focus algorithm. assert_false: popover should start out hidden expected false got true
+FAIL Popover corner cases test: Opening dialogs as popovers should use dialog initial focus algorithm. assert_false: popover should start out hidden expected false got true
+FAIL Popover focus test: Opening dialogs as popovers which have autofocus should focus the dialog. assert_equals: expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <button class="should-be-focused">button</button>
+FAIL Popover button click focus test: Opening dialogs as popovers which have autofocus should focus the dialog. assert_equals: expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <button class="should-be-focused">button</button>
+PASS Popover corner cases test: Opening dialogs as popovers which have autofocus should focus the dialog.
 

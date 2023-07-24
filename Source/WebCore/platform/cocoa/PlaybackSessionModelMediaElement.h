@@ -54,7 +54,6 @@ public:
 
     WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) final;
     void updateForEventName(const AtomString&);
-    bool operator==(const EventListener& rhs) const final { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
 
     WEBCORE_EXPORT void addClient(PlaybackSessionModelClient&);
     WEBCORE_EXPORT void removeClient(PlaybackSessionModelClient&);

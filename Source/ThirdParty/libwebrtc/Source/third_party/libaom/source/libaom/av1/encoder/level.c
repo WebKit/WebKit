@@ -209,10 +209,121 @@ static const AV1LevelSpec av1_level_defs[SEQ_LEVELS] = {
     .high_cr = 4.0,
     .max_tiles = 128,
     .max_tile_cols = 16 },
+#if CONFIG_CWG_C013
+  { .level = SEQ_LEVEL_7_0,
+    .max_picture_size = 142606336,
+    .max_h_size = 32768,
+    .max_v_size = 17408,
+    .max_display_rate = 4278190080L,
+    .max_decode_rate = 4706009088L,
+    .max_header_rate = 300,
+    .main_mbps = 160.0,
+    .high_mbps = 800.0,
+    .main_cr = 8.0,
+    .high_cr = 4.0,
+    .max_tiles = 256,
+    .max_tile_cols = 32 },
+  { .level = SEQ_LEVEL_7_1,
+    .max_picture_size = 142606336,
+    .max_h_size = 32768,
+    .max_v_size = 17408,
+    .max_display_rate = 8556380160L,
+    .max_decode_rate = 8758886400L,
+    .max_header_rate = 300,
+    .main_mbps = 200.0,
+    .high_mbps = 960.0,
+    .main_cr = 8.0,
+    .high_cr = 4.0,
+    .max_tiles = 256,
+    .max_tile_cols = 32 },
+  { .level = SEQ_LEVEL_7_2,
+    .max_picture_size = 142606336,
+    .max_h_size = 32768,
+    .max_v_size = 17408,
+    .max_display_rate = 17112760320L,
+    .max_decode_rate = 17517772800L,
+    .max_header_rate = 300,
+    .main_mbps = 320.0,
+    .high_mbps = 1600.0,
+    .main_cr = 8.0,
+    .high_cr = 4.0,
+    .max_tiles = 256,
+    .max_tile_cols = 32 },
+  { .level = SEQ_LEVEL_7_3,
+    .max_picture_size = 142606336,
+    .max_h_size = 32768,
+    .max_v_size = 17408,
+    .max_display_rate = 17112760320L,
+    .max_decode_rate = 18824036352L,
+    .max_header_rate = 300,
+    .main_mbps = 320.0,
+    .high_mbps = 1600.0,
+    .main_cr = 8.0,
+    .high_cr = 4.0,
+    .max_tiles = 256,
+    .max_tile_cols = 32 },
+  { .level = SEQ_LEVEL_8_0,
+    .max_picture_size = 530841600,
+    .max_h_size = 65536,
+    .max_v_size = 34816,
+    .max_display_rate = 17112760320L,
+    .max_decode_rate = 18824036352L,
+    .max_header_rate = 300,
+    .main_mbps = 320.0,
+    .high_mbps = 1600.0,
+    .main_cr = 8.0,
+    .high_cr = 4.0,
+    .max_tiles = 512,
+    .max_tile_cols = 64 },
+  { .level = SEQ_LEVEL_8_1,
+    .max_picture_size = 530841600,
+    .max_h_size = 65536,
+    .max_v_size = 34816,
+    .max_display_rate = 34225520640L,
+    .max_decode_rate = 34910031052L,
+    .max_header_rate = 300,
+    .main_mbps = 400.0,
+    .high_mbps = 1920.0,
+    .main_cr = 8.0,
+    .high_cr = 4.0,
+    .max_tiles = 512,
+    .max_tile_cols = 64 },
+  { .level = SEQ_LEVEL_8_2,
+    .max_picture_size = 530841600,
+    .max_h_size = 65536,
+    .max_v_size = 34816,
+    .max_display_rate = 68451041280L,
+    .max_decode_rate = 69820062105L,
+    .max_header_rate = 300,
+    .main_mbps = 640.0,
+    .high_mbps = 3200.0,
+    .main_cr = 8.0,
+    .high_cr = 4.0,
+    .max_tiles = 512,
+    .max_tile_cols = 64 },
+  { .level = SEQ_LEVEL_8_3,
+    .max_picture_size = 530841600,
+    .max_h_size = 65536,
+    .max_v_size = 34816,
+    .max_display_rate = 68451041280L,
+    .max_decode_rate = 75296145408L,
+    .max_header_rate = 300,
+    .main_mbps = 640.0,
+    .high_mbps = 3200.0,
+    .main_cr = 8.0,
+    .high_cr = 4.0,
+    .max_tiles = 512,
+    .max_tile_cols = 64 },
+#else   // !CONFIG_CWG_C013
   UNDEFINED_LEVEL,
   UNDEFINED_LEVEL,
   UNDEFINED_LEVEL,
   UNDEFINED_LEVEL,
+  UNDEFINED_LEVEL,
+  UNDEFINED_LEVEL,
+  UNDEFINED_LEVEL,
+  UNDEFINED_LEVEL,
+#endif  // CONFIG_CWG_C013
 };
 
 typedef enum {
@@ -411,9 +522,10 @@ static double get_presentation_time(const DECODER_MODEL *const decoder_model,
 }
 
 #define MAX_TIME 1e16
-double time_next_buffer_is_free(int num_decoded_frame, int decoder_buffer_delay,
-                                const FRAME_BUFFER *frame_buffer_pool,
-                                double current_time) {
+static double time_next_buffer_is_free(int num_decoded_frame,
+                                       int decoder_buffer_delay,
+                                       const FRAME_BUFFER *frame_buffer_pool,
+                                       double current_time) {
   if (num_decoded_frame == 0) {
     return (double)decoder_buffer_delay / 90000.0;
   }
@@ -846,7 +958,6 @@ static void get_temporal_parallel_params(int scalability_mode_idc,
   }
 }
 
-#define MAX_TILE_SIZE (4096 * 2304)
 #define MIN_CROPPED_TILE_WIDTH 8
 #define MIN_CROPPED_TILE_HEIGHT 8
 #define MIN_FRAME_WIDTH 16
@@ -917,7 +1028,14 @@ static TARGET_LEVEL_FAIL_ID check_level_constraints(
       break;
     }
 
-    if (level_stats->max_tile_size > MAX_TILE_SIZE) {
+#if CONFIG_CWG_C013
+    const int max_tile_size = (level >= SEQ_LEVEL_7_0 && level <= SEQ_LEVEL_8_3)
+                                  ? MAX_TILE_AREA_LEVEL_7_AND_ABOVE
+                                  : MAX_TILE_AREA;
+#else
+    const int max_tile_size = MAX_TILE_AREA;
+#endif
+    if (level_stats->max_tile_size > max_tile_size) {
       fail_id = TILE_TOO_LARGE;
       break;
     }
@@ -1126,7 +1244,8 @@ static void scan_past_frames(const FrameWindowBuffer *const buffer,
       AOMMAX(level_spec->max_decode_rate, decoded_samples);
   level_spec->max_tile_rate = AOMMAX(level_spec->max_tile_rate, tiles);
   level_stats->max_bitrate =
-      AOMMAX(level_stats->max_bitrate, (int)encoded_size_in_bytes * 8);
+      AOMMAX(level_stats->max_bitrate,
+             (int)AOMMIN(encoded_size_in_bytes * 8, (size_t)INT_MAX));
 }
 
 void av1_update_level_info(AV1_COMP *cpi, size_t size, int64_t ts_start,

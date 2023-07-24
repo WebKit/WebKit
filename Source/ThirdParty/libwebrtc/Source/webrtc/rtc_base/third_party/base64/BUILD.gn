@@ -9,7 +9,6 @@
 import("../../../webrtc.gni")
 
 rtc_library("base64") {
-  visibility = [ "*" ]
   sources = [
     "base64.cc",
     "base64.h",

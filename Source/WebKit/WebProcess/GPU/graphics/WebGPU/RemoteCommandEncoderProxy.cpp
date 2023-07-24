@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ RemoteCommandEncoderProxy::~RemoteCommandEncoderProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-Ref<PAL::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginRenderPass(const PAL::WebGPU::RenderPassDescriptor& descriptor)
+Ref<WebCore::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginRenderPass(const WebCore::WebGPU::RenderPassDescriptor& descriptor)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor) {
@@ -64,7 +64,7 @@ Ref<PAL::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginRenderPass(c
     return RemoteRenderPassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
-Ref<PAL::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComputePass(const std::optional<PAL::WebGPU::ComputePassDescriptor>& descriptor)
+Ref<WebCore::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComputePass(const std::optional<WebCore::WebGPU::ComputePassDescriptor>& descriptor)
 {
     std::optional<WebKit::WebGPU::ComputePassDescriptor> convertedDescriptor;
     if (descriptor) {
@@ -83,11 +83,11 @@ Ref<PAL::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComputePass
 }
 
 void RemoteCommandEncoderProxy::copyBufferToBuffer(
-    const PAL::WebGPU::Buffer& source,
-    PAL::WebGPU::Size64 sourceOffset,
-    const PAL::WebGPU::Buffer& destination,
-    PAL::WebGPU::Size64 destinationOffset,
-    PAL::WebGPU::Size64 size)
+    const WebCore::WebGPU::Buffer& source,
+    WebCore::WebGPU::Size64 sourceOffset,
+    const WebCore::WebGPU::Buffer& destination,
+    WebCore::WebGPU::Size64 destinationOffset,
+    WebCore::WebGPU::Size64 size)
 {
     auto convertedSource = m_convertToBackingContext->convertToBacking(source);
     ASSERT(convertedSource);
@@ -101,9 +101,9 @@ void RemoteCommandEncoderProxy::copyBufferToBuffer(
 }
 
 void RemoteCommandEncoderProxy::copyBufferToTexture(
-    const PAL::WebGPU::ImageCopyBuffer& source,
-    const PAL::WebGPU::ImageCopyTexture& destination,
-    const PAL::WebGPU::Extent3D& copySize)
+    const WebCore::WebGPU::ImageCopyBuffer& source,
+    const WebCore::WebGPU::ImageCopyTexture& destination,
+    const WebCore::WebGPU::Extent3D& copySize)
 {
     auto convertedSource = m_convertToBackingContext->convertToBacking(source);
     ASSERT(convertedSource);
@@ -119,9 +119,9 @@ void RemoteCommandEncoderProxy::copyBufferToTexture(
 }
 
 void RemoteCommandEncoderProxy::copyTextureToBuffer(
-    const PAL::WebGPU::ImageCopyTexture& source,
-    const PAL::WebGPU::ImageCopyBuffer& destination,
-    const PAL::WebGPU::Extent3D& copySize)
+    const WebCore::WebGPU::ImageCopyTexture& source,
+    const WebCore::WebGPU::ImageCopyBuffer& destination,
+    const WebCore::WebGPU::Extent3D& copySize)
 {
     auto convertedSource = m_convertToBackingContext->convertToBacking(source);
     ASSERT(convertedSource);
@@ -137,9 +137,9 @@ void RemoteCommandEncoderProxy::copyTextureToBuffer(
 }
 
 void RemoteCommandEncoderProxy::copyTextureToTexture(
-    const PAL::WebGPU::ImageCopyTexture& source,
-    const PAL::WebGPU::ImageCopyTexture& destination,
-    const PAL::WebGPU::Extent3D& copySize)
+    const WebCore::WebGPU::ImageCopyTexture& source,
+    const WebCore::WebGPU::ImageCopyTexture& destination,
+    const WebCore::WebGPU::Extent3D& copySize)
 {
     auto convertedSource = m_convertToBackingContext->convertToBacking(source);
     ASSERT(convertedSource);
@@ -155,9 +155,9 @@ void RemoteCommandEncoderProxy::copyTextureToTexture(
 }
 
 void RemoteCommandEncoderProxy::clearBuffer(
-    const PAL::WebGPU::Buffer& buffer,
-    PAL::WebGPU::Size64 offset,
-    std::optional<PAL::WebGPU::Size64> size)
+    const WebCore::WebGPU::Buffer& buffer,
+    WebCore::WebGPU::Size64 offset,
+    std::optional<WebCore::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
     ASSERT(convertedBuffer);
@@ -186,7 +186,7 @@ void RemoteCommandEncoderProxy::insertDebugMarker(String&& markerLabel)
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteCommandEncoderProxy::writeTimestamp(const PAL::WebGPU::QuerySet& querySet, PAL::WebGPU::Size32 queryIndex)
+void RemoteCommandEncoderProxy::writeTimestamp(const WebCore::WebGPU::QuerySet& querySet, WebCore::WebGPU::Size32 queryIndex)
 {
     auto convertedQuerySet = m_convertToBackingContext->convertToBacking(querySet);
     ASSERT(convertedQuerySet);
@@ -198,11 +198,11 @@ void RemoteCommandEncoderProxy::writeTimestamp(const PAL::WebGPU::QuerySet& quer
 }
 
 void RemoteCommandEncoderProxy::resolveQuerySet(
-    const PAL::WebGPU::QuerySet& querySet,
-    PAL::WebGPU::Size32 firstQuery,
-    PAL::WebGPU::Size32 queryCount,
-    const PAL::WebGPU::Buffer& destination,
-    PAL::WebGPU::Size64 destinationOffset)
+    const WebCore::WebGPU::QuerySet& querySet,
+    WebCore::WebGPU::Size32 firstQuery,
+    WebCore::WebGPU::Size32 queryCount,
+    const WebCore::WebGPU::Buffer& destination,
+    WebCore::WebGPU::Size64 destinationOffset)
 {
     auto convertedQuerySet = m_convertToBackingContext->convertToBacking(querySet);
     ASSERT(convertedQuerySet);
@@ -215,7 +215,7 @@ void RemoteCommandEncoderProxy::resolveQuerySet(
     UNUSED_VARIABLE(sendResult);
 }
 
-Ref<PAL::WebGPU::CommandBuffer> RemoteCommandEncoderProxy::finish(const PAL::WebGPU::CommandBufferDescriptor& descriptor)
+Ref<WebCore::WebGPU::CommandBuffer> RemoteCommandEncoderProxy::finish(const WebCore::WebGPU::CommandBufferDescriptor& descriptor)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor) {

@@ -12,11 +12,13 @@
 #define TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_STREAM_STATE_H_
 
 #include <limits>
-#include <map>
 #include <set>
+#include <unordered_map>
 
 #include "absl/types/optional.h"
 #include "api/units/timestamp.h"
+#include "system_wrappers/include/clock.h"
+#include "test/pc/e2e/analyzer/video/dvqa/pausable_state.h"
 #include "test/pc/e2e/analyzer/video/multi_reader_queue.h"
 
 namespace webrtc {
@@ -37,7 +39,8 @@ class StreamState {
  public:
   StreamState(size_t sender,
               std::set<size_t> receivers,
-              Timestamp stream_started_time);
+              Timestamp stream_started_time,
+              Clock* clock);
 
   size_t sender() const { return sender_; }
   Timestamp stream_started_time() const { return stream_started_time_; }
@@ -59,10 +62,27 @@ class StreamState {
   // DefaultVideoQualityAnalyzer still may request it for stats processing.
   void RemovePeer(size_t peer);
 
+  // Returns a pointer to the PausableState of this stream for specified peer.
+  // The pointer is owned by StreamState and guranteed to be not null.
+  PausableState* GetPausableState(size_t peer);
+
   size_t GetAliveFramesCount() const {
     return frame_ids_.size(kAliveFramesQueueIndex);
   }
-  uint16_t MarkNextAliveFrameAsDead();
+
+  void SetLastCapturedFrameTime(Timestamp time) {
+    last_captured_frame_time_ = time;
+  }
+  absl::optional<Timestamp> last_captured_frame_time() const {
+    return last_captured_frame_time_;
+  }
+
+  void SetLastEncodedFrameTime(Timestamp time) {
+    last_encoded_frame_time_ = time;
+  }
+  absl::optional<Timestamp> last_encoded_frame_time() const {
+    return last_encoded_frame_time_;
+  }
 
   void SetLastRenderedFrameTime(size_t peer, Timestamp time);
   absl::optional<Timestamp> last_rendered_frame_time(size_t peer) const;
@@ -78,6 +98,7 @@ class StreamState {
   // Index of the owner. Owner's queue in `frame_ids_` will keep alive frames.
   const size_t sender_;
   const Timestamp stream_started_time_;
+  Clock* const clock_;
   std::set<size_t> receivers_;
   // To correctly determine dropped frames we have to know sequence of frames
   // in each stream so we will keep a list of frame ids inside the stream.
@@ -92,7 +113,11 @@ class StreamState {
   // frame_id2 and consider those frames as dropped and then compare received
   // frame with the one from `FrameInFlight` with id frame_id3.
   MultiReaderQueue<uint16_t> frame_ids_;
-  std::map<size_t, Timestamp> last_rendered_frame_time_;
+  absl::optional<Timestamp> last_captured_frame_time_ = absl::nullopt;
+  absl::optional<Timestamp> last_encoded_frame_time_ = absl::nullopt;
+  std::unordered_map<size_t, Timestamp> last_rendered_frame_time_;
+  // Mapping from peer's index to pausable state for this receiver.
+  std::unordered_map<size_t, PausableState> pausable_state_;
 };
 
 }  // namespace webrtc

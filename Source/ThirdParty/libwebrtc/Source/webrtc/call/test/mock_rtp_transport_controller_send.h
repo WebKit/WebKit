@@ -50,7 +50,6 @@ class MockRtpTransportControllerSend
               DestroyRtpVideoSender,
               (RtpVideoSenderInterface*),
               (override));
-  MOCK_METHOD(rtc::TaskQueue*, GetWorkerQueue, (), (override));
   MOCK_METHOD(PacketRouter*, packet_router, (), (override));
   MOCK_METHOD(NetworkStateEstimateObserver*,
               network_state_estimate_observer,

@@ -18,9 +18,9 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,62) size 784x230
         RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,60) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (58,120) size 163x130
   RenderIFrame {IFRAME} at (50,50) size 163x130 [border: (2px solid #0000FF)]
     layer at (0,0) size 159x126

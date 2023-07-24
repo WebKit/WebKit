@@ -11,11 +11,13 @@
 #ifndef PC_TEST_FAKE_RTC_CERTIFICATE_GENERATOR_H_
 #define PC_TEST_FAKE_RTC_CERTIFICATE_GENERATOR_H_
 
-#include <memory>
 #include <string>
 #include <utility>
 
+#include "absl/types/optional.h"
 #include "api/peer_connection_interface.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/rtc_certificate_generator.h"
 
@@ -117,13 +119,8 @@ static const rtc::RTCCertificatePEM kEcdsaPems[] = {
         "-----END CERTIFICATE-----\n")};
 
 class FakeRTCCertificateGenerator
-    : public rtc::RTCCertificateGeneratorInterface,
-      public rtc::MessageHandlerAutoCleanup {
+    : public rtc::RTCCertificateGeneratorInterface {
  public:
-  typedef rtc::TypedMessageData<
-      rtc::scoped_refptr<rtc::RTCCertificateGeneratorCallback> >
-      MessageData;
-
   FakeRTCCertificateGenerator() : should_fail_(false), should_wait_(false) {}
 
   void set_should_fail(bool should_fail) { should_fail_ = should_fail; }
@@ -138,30 +135,26 @@ class FakeRTCCertificateGenerator
   int generated_certificates() { return generated_certificates_; }
   int generated_failures() { return generated_failures_; }
 
-  void GenerateCertificateAsync(
-      const rtc::KeyParams& key_params,
-      const absl::optional<uint64_t>& expires_ms,
-      const rtc::scoped_refptr<rtc::RTCCertificateGeneratorCallback>& callback)
-      override {
+  void GenerateCertificateAsync(const rtc::KeyParams& key_params,
+                                const absl::optional<uint64_t>& expires_ms,
+                                Callback callback) override {
     // The certificates are created from constant PEM strings and use its coded
     // expiration time, we do not support modifying it.
     RTC_DCHECK(!expires_ms);
-    MessageData* msg = new MessageData(
-        rtc::scoped_refptr<rtc::RTCCertificateGeneratorCallback>(callback));
-    uint32_t msg_id;
+
     // Only supports RSA-1024-0x10001 and ECDSA-P256.
-    if (should_fail_) {
-      msg_id = MSG_FAILURE;
-    } else if (key_params.type() == rtc::KT_RSA) {
+    if (key_params.type() == rtc::KT_RSA) {
       RTC_DCHECK_EQ(key_params.rsa_params().mod_size, 1024);
       RTC_DCHECK_EQ(key_params.rsa_params().pub_exp, 0x10001);
-      msg_id = MSG_SUCCESS_RSA;
     } else {
       RTC_DCHECK_EQ(key_params.type(), rtc::KT_ECDSA);
       RTC_DCHECK_EQ(key_params.ec_curve(), rtc::EC_NIST_P256);
-      msg_id = MSG_SUCCESS_ECDSA;
     }
-    rtc::Thread::Current()->Post(RTC_FROM_HERE, this, msg_id, msg);
+    rtc::KeyType key_type = key_params.type();
+    webrtc::TaskQueueBase::Current()->PostTask(
+        [this, key_type, callback = std::move(callback)]() mutable {
+          GenerateCertificate(key_type, std::move(callback));
+        });
   }
 
   static rtc::scoped_refptr<rtc::RTCCertificate> GenerateCertificate() {
@@ -177,12 +170,6 @@ class FakeRTCCertificateGenerator
   }
 
  private:
-  enum {
-    MSG_SUCCESS_RSA,
-    MSG_SUCCESS_ECDSA,
-    MSG_FAILURE,
-  };
-
   const rtc::RTCCertificatePEM& get_pem(const rtc::KeyType& key_type) const {
     switch (key_type) {
       case rtc::KT_RSA:
@@ -201,37 +188,28 @@ class FakeRTCCertificateGenerator
     return get_pem(key_type).certificate();
   }
 
-  // rtc::MessageHandler implementation.
-  void OnMessage(rtc::Message* msg) override {
+  void GenerateCertificate(rtc::KeyType key_type, Callback callback) {
     // If the certificate generation should be stalled, re-post this same
     // message to the queue with a small delay so as to wait in a loop until
     // set_should_wait(false) is called.
     if (should_wait_) {
-      rtc::Thread::Current()->PostDelayed(RTC_FROM_HERE, 1, this,
-                                          msg->message_id, msg->pdata);
+      webrtc::TaskQueueBase::Current()->PostDelayedTask(
+          [this, key_type, callback = std::move(callback)]() mutable {
+            GenerateCertificate(key_type, std::move(callback));
+          },
+          webrtc::TimeDelta::Millis(1));
       return;
     }
-    MessageData* message_data = static_cast<MessageData*>(msg->pdata);
-    rtc::scoped_refptr<rtc::RTCCertificateGeneratorCallback> callback =
-        message_data->data();
-    rtc::scoped_refptr<rtc::RTCCertificate> certificate;
-    switch (msg->message_id) {
-      case MSG_SUCCESS_RSA:
-      case MSG_SUCCESS_ECDSA: {
-        rtc::KeyType key_type =
-            msg->message_id == MSG_SUCCESS_RSA ? rtc::KT_RSA : rtc::KT_ECDSA;
-        certificate = rtc::RTCCertificate::FromPEM(get_pem(key_type));
-        RTC_DCHECK(certificate);
-        ++generated_certificates_;
-        callback->OnSuccess(certificate);
-        break;
-      }
-      case MSG_FAILURE:
-        ++generated_failures_;
-        callback->OnFailure();
-        break;
+    if (should_fail_) {
+      ++generated_failures_;
+      std::move(callback)(nullptr);
+    } else {
+      rtc::scoped_refptr<rtc::RTCCertificate> certificate =
+          rtc::RTCCertificate::FromPEM(get_pem(key_type));
+      RTC_DCHECK(certificate);
+      ++generated_certificates_;
+      std::move(callback)(std::move(certificate));
     }
-    delete message_data;
   }
 
   bool should_fail_;

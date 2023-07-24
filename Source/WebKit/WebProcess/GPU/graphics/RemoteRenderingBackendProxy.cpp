@@ -34,6 +34,7 @@
 #include "PlatformImageBufferShareableBackend.h"
 #include "RemoteDisplayListRecorderProxy.h"
 #include "RemoteImageBufferProxy.h"
+#include "RemoteImageBufferProxyMessages.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "SwapBuffersDisplayRequirement.h"
@@ -87,13 +88,36 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         if (!streamConnection)
             CRASH();
         m_streamConnection = WTFMove(streamConnection);
-        m_streamConnection->open(*this, m_dispatcher);
+        // RemoteRenderingBackendProxy behaves as the dispatcher for the connection to obtain isolated state for its
+        // connection. This prevents waits on RemoteRenderingBackendProxy to process messages from other connections.
+        m_streamConnection->open(*this, *this);
 
         callOnMainRunLoopAndWait([this, serverHandle = WTFMove(serverHandle)]() mutable {
             m_connection = &WebProcess::singleton().ensureGPUProcessConnection().connection();
             m_connection->send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, WTFMove(serverHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         });
     }
+}
+template<typename T>
+auto RemoteRenderingBackendProxy::send(T&& message)
+{
+    auto result = streamConnection().send(WTFMove(message), renderingBackendIdentifier(), defaultTimeout);
+    if (UNLIKELY(result != IPC::Error::NoError)) {
+        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result));
+    }
+    return result;
+}
+
+template<typename T>
+auto RemoteRenderingBackendProxy::sendSync(T&& message)
+{
+    auto result = streamConnection().sendSync(WTFMove(message), renderingBackendIdentifier(), defaultTimeout);
+    if (UNLIKELY(!result.succeeded())) {
+        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result.error));
+    }
+    return result;
 }
 
 void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
@@ -114,13 +138,6 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_didRenderingUpdateID = { };
     m_streamConnection->invalidate();
     m_streamConnection = nullptr;
-}
-
-RemoteRenderingBackendProxy::DidReceiveBackendCreationResult RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend()
-{
-    if (!streamConnection().waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives))
-        return DidReceiveBackendCreationResult::TimeoutOrIPCFailure;
-    return DidReceiveBackendCreationResult::ReceivedAnyResponse;
 }
 
 void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
@@ -153,27 +170,27 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
     return nullptr;
 }
 
-void RemoteRenderingBackendProxy::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier, RemoteSerializedImageBufferWriteReference&& reference)
+void RemoteRenderingBackendProxy::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier)
 {
-    send(Messages::RemoteRenderingBackend::MoveToSerializedBuffer(identifier, reference));
+    send(Messages::RemoteRenderingBackend::MoveToSerializedBuffer(identifier));
 }
 
-void RemoteRenderingBackendProxy::moveToImageBuffer(RemoteSerializedImageBufferWriteReference&& reference, WebCore::RenderingResourceIdentifier identifier)
+void RemoteRenderingBackendProxy::moveToImageBuffer(WebCore::RenderingResourceIdentifier identifier)
 {
-    send(Messages::RemoteRenderingBackend::MoveToImageBuffer(reference, identifier));
+    send(Messages::RemoteRenderingBackend::MoveToImageBuffer(identifier));
 }
 
 bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBufferFormat& destinationFormat, const IntRect& srcRect, std::span<uint8_t> result)
 {
     if (auto handle = updateSharedMemoryForGetPixelBuffer(result.size())) {
         auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetPixelBufferForImageBufferWithNewMemory(imageBuffer, WTFMove(*handle), destinationFormat, srcRect));
-        if (!sendResult)
+        if (!sendResult.succeeded())
             return false;
     } else {
         if (!m_getPixelBufferSharedMemory)
             return false;
         auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetPixelBufferForImageBuffer(imageBuffer, destinationFormat, srcRect));
-        if (!sendResult)
+        if (!sendResult.succeeded())
             return false;
     }
     memcpy(result.data(), m_getPixelBufferSharedMemory->data(), result.size());
@@ -343,8 +360,10 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
 
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
     auto sendResult = sendSync(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(inputData));
-    if (!sendResult) {
+    if (!sendResult.succeeded()) {
         // GPU Process crashed. Set the output data to all null buffers, requiring a full display.
+        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::prepareBuffersForDisplay - prepareBuffersForDisplay returned error: %" PUBLIC_LOG_STRING,
+            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::errorAsString(sendResult.error));
         outputData.resize(inputData.size());
         for (auto& perLayerOutputData : outputData)
             perLayerOutputData.displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
@@ -362,7 +381,7 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
         auto* buffer = m_remoteResourceCacheProxy.cachedImageBuffer(*identifier);
         if (!buffer)
             return nullptr;
-            
+
         if (handle) {
             if (auto* backend = buffer->ensureBackendCreated()) {
                 auto* sharing = backend->toBackendSharing();
@@ -370,7 +389,7 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
                     downcast<ImageBufferBackendHandleSharing>(*sharing).setBackendHandle(WTFMove(*handle));
             }
         }
-        
+
         if (isFrontBuffer) {
             // We know the GPU Process always sets the new front buffer to be non-volatile.
             buffer->setVolatilityState(VolatilityState::NonVolatile);
@@ -435,12 +454,21 @@ void RemoteRenderingBackendProxy::didPaintLayers()
     m_remoteResourceCacheProxy.didPaintLayers();
 }
 
-void RemoteRenderingBackendProxy::didCreateImageBufferBackend(ImageBufferBackendHandle&& handle, RenderingResourceIdentifier renderingResourceIdentifier)
+bool RemoteRenderingBackendProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier);
-    if (!imageBuffer)
-        return;
-    imageBuffer->didCreateImageBufferBackend(WTFMove(handle));
+    if (decoder.messageReceiverName() == Messages::RemoteImageBufferProxy::messageReceiverName()) {
+        auto* imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(RenderingResourceIdentifier { decoder.destinationID() });
+        if (imageBuffer)
+            imageBuffer->didReceiveMessage(connection, decoder);
+        // Messages to already removed instances are ok.
+        return true;
+    }
+    return false;
+}
+
+bool RemoteRenderingBackendProxy::dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)
+{
+    return false;
 }
 
 void RemoteRenderingBackendProxy::didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID)
@@ -464,7 +492,7 @@ IPC::StreamClientConnection& RemoteRenderingBackendProxy::streamConnection()
 {
     ensureGPUProcessConnection();
     if (UNLIKELY(!m_streamConnection->hasSemaphores()))
-        m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier(), 3_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+        m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier(), defaultTimeout);
     return *m_streamConnection;
 }
 

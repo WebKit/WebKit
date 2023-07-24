@@ -146,6 +146,7 @@ CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction& timingFunct
     }
     
     ASSERT(timingFunction.type() == TimingFunction::Type::LinearFunction);
+    ASSERT(LinearTimingFunction::identity() == timingFunction);
     return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
 }
 

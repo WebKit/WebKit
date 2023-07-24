@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -42,8 +42,8 @@ inputFlnm = ARGV.shift
 settingsFlnm = ARGV.shift
 outputFlnm = ARGV.shift
 
-validBackends = canonicalizeBackendNames(ARGV.shift.split(/[,\s]+/))
-includeOnlyBackends(validBackends)
+inputBackends = canonicalizeBackendNames(ARGV.shift.split(/[,\s]+/))
+includeOnlyBackends(inputBackends)
 
 variants = ARGV.shift.split(/[,\s]+/)
 
@@ -73,7 +73,7 @@ def emitMagicNumber
 end
 
 configurationHash = Digest::SHA1.hexdigest(configurationList.join(' '))
-inputHash = "// OffsetExtractor input hash: #{parseHash(inputFlnm, $options)} #{configurationHash} #{selfHash}"
+inputHash = "// OffsetExtractor input hash: #{parseHash(inputFlnm, $options)} #{configurationHash} #{selfHash} #{validBackends.join(' ')}"
 
 if FileTest.exist?(outputFlnm) and (not $options[:depfile] or FileTest.exist?($options[:depfile]))
     File.open(outputFlnm, "r") {

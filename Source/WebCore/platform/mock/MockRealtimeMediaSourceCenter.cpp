@@ -49,6 +49,7 @@
 #endif
 
 #if USE(GSTREAMER)
+#include "MockDisplayCaptureSourceGStreamer.h"
 #include "MockRealtimeVideoSourceGStreamer.h"
 #endif
 
@@ -57,14 +58,15 @@ namespace WebCore {
 static inline Vector<MockMediaDevice> defaultDevices()
 {
     return Vector<MockMediaDevice> {
-        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 1"_s, false, MockMicrophoneProperties { 44100 } },
-        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 2"_s, false,  MockMicrophoneProperties { 48000 } },
+        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 1"_s, { }, MockMicrophoneProperties { 44100 } },
+        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 2"_s, { },  MockMicrophoneProperties { 48000 } },
+        MockMediaDevice { "239c24b1-3b15-11e3-8224-0800200c9a66"_s, "Mock audio device 3"_s, { },  MockMicrophoneProperties { 96000 } },
 
-        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 1"_s, false,  MockSpeakerProperties { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, 44100 } },
-        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 2"_s, false,  MockSpeakerProperties { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, 48000 } },
-        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 3"_s, false,  MockSpeakerProperties { String { }, 48000 } },
+        MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 1"_s, { },  MockSpeakerProperties { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, 44100 } },
+        MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 2"_s, { },  MockSpeakerProperties { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, 48000 } },
+        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 3"_s, { },  MockSpeakerProperties { String { }, 48000 } },
 
-        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 1"_s, false,
+        MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 1"_s, { },
             MockCameraProperties {
                 30,
                 VideoFacingMode::User, {
@@ -76,7 +78,7 @@ static inline Vector<MockMediaDevice> defaultDevices()
                 Color::black,
             } },
 
-        MockMediaDevice { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 2"_s, false,
+        MockMediaDevice { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 2"_s, { },
             MockCameraProperties {
                 15,
                 VideoFacingMode::Environment, {
@@ -92,11 +94,11 @@ static inline Vector<MockMediaDevice> defaultDevices()
                 Color::darkGray,
             } },
 
-        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, false, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 1920, 1080 } } },
-        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, false, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::yellow, { 3840, 2160 } } },
+        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, { }, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 1920, 1080 } } },
+        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, { }, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::yellow, { 3840, 2160 } } },
 
-        MockMediaDevice { "WINDOW-1"_s, "Mock window device 1"_s, false, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 241, 181 }, { 640, 480 } } },
-        MockMediaDevice { "WINDOW-2"_s, "Mock window device 2"_s, false, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 208, 181 }, { 1280, 600 } } },
+        MockMediaDevice { "WINDOW-1"_s, "Mock window device 1"_s, { }, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 241, 181 }, { 640, 480 } } },
+        MockMediaDevice { "WINDOW-2"_s, "Mock window device 2"_s, { }, MockDisplayProperties { CaptureDevice::DeviceType::Window, SRGBA<uint8_t> { 255, 208, 181 }, { 1280, 600 } } },
     };
 }
 
@@ -107,6 +109,11 @@ public:
         ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, device.persistentId()))
             return { "Unable to find mock camera device with given persistentID"_s };
+
+        auto mock = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(device.persistentId());
+        ASSERT(mock);
+        if (mock->flags.contains(MockMediaDevice::Flag::Invalid))
+            return { "Invalid mock camera device"_s };
 
         return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalts), constraints, pageIdentifier);
     }
@@ -214,9 +221,14 @@ class MockRealtimeAudioSourceFactory final : public AudioCaptureFactory {
 public:
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
     {
-        ASSERT(device.type() == CaptureDevice::DeviceType::Microphone);
-        if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, device.persistentId()))
-            return { "Unable to find mock microphone device with given persistentID"_s };
+        ASSERT(device.type() == CaptureDevice::DeviceType::Microphone || device.type() == CaptureDevice::DeviceType::Speaker);
+        if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()))
+            return { "Unable to find mock microphone or speaker device with given persistentID"_s };
+
+        auto mock = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(device.persistentId());
+        ASSERT(mock);
+        if (mock->flags.contains(MockMediaDevice::Flag::Invalid))
+            return { "Invalid mock microphone or speaker device"_s };
 
         return MockRealtimeAudioSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalts), constraints, pageIdentifier);
     }
@@ -342,6 +354,13 @@ void MockRealtimeMediaSourceCenter::setDevices(Vector<MockMediaDevice>&& newMock
     displayDevices().clear();
 
     auto& mockDevices = devices();
+    for (auto& device : mockDevices) {
+        auto& persistentId = device.persistentId;
+        if (!newMockDevices.containsIf([&persistentId](auto& newDevice) -> bool {
+            return newDevice.persistentId == persistentId;
+        }))
+            RealtimeMediaSourceCenter::singleton().captureDeviceWillBeRemoved(persistentId);
+    }
     mockDevices = WTFMove(newMockDevices);
 
     auto& map = deviceMap();
@@ -379,6 +398,7 @@ void MockRealtimeMediaSourceCenter::removeDevice(const String& persistentId)
     if (iterator == map.end())
         return;
 
+    RealtimeMediaSourceCenter::singleton().captureDeviceWillBeRemoved(persistentId);
     devices().removeFirstMatching([&persistentId](const auto& device) {
         return device.persistentId == persistentId;
     });
@@ -401,7 +421,10 @@ void MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(const String& persisten
         return;
 
     MockMediaDevice device = iterator->value;
-    device.isEphemeral = isEphemeral;
+    if (isEphemeral)
+        device.flags.add(MockMediaDevice::Flag::Ephemeral);
+    else
+        device.flags.remove(MockMediaDevice::Flag::Ephemeral);
 
     removeDevice(persistentId);
     addDevice(device);
@@ -476,7 +499,7 @@ Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::displayDevices()
         Vector<CaptureDevice> displayDevices;
         for (const auto& device : devices()) {
             if (device.isDisplay())
-                displayDevices.append(device.captureDevice());
+                displayDevices.append(toCaptureDevice(device));
         }
         return displayDevices;
     }();

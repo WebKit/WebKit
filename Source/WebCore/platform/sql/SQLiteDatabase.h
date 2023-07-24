@@ -30,6 +30,7 @@
 #include <sqlite3.h>
 #include <wtf/Expected.h>
 #include <wtf/Lock.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Threading.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -58,8 +59,12 @@ public:
 
     static constexpr ASCIILiteral inMemoryPath() { return ":memory:"_s; }
 
-    enum class OpenMode { ReadOnly, ReadWrite, ReadWriteCreate };
-    WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate);
+    enum class OpenMode : uint8_t { ReadOnly, ReadWrite, ReadWriteCreate };
+    enum class OpenOptions : uint8_t {
+        CanSuspendWhileLocked = 1 << 0,
+    };
+
+    WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate, OptionSet<OpenOptions> = { });
     bool isOpen() const { return m_db; }
     WEBCORE_EXPORT void close();
 

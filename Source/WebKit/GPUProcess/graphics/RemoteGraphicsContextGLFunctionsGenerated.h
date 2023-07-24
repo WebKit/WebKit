@@ -224,6 +224,11 @@
         assertIsCurrent(workQueue());
         m_context->depthRange(zNear, zFar);
     }
+    void destroyEGLImage(uint64_t handle)
+    {
+        assertIsCurrent(workQueue());
+        m_context->destroyEGLImage(reinterpret_cast<GCEGLImage>(static_cast<intptr_t>(handle)));
+    }
     void detachShader(uint32_t arg0, uint32_t arg1)
     {
         assertIsCurrent(workQueue());
@@ -777,6 +782,11 @@
     {
         assertIsCurrent(workQueue());
         m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), std::span(reinterpret_cast<const uint8_t*>(data.data()), data.size()));
+    }
+    void readPixelsBufferObject(WebCore::IntRect&& arg0, uint32_t format, uint32_t type, uint64_t offset, int32_t alignment, int32_t rowLength)
+    {
+        assertIsCurrent(workQueue());
+        m_context->readPixelsBufferObject(arg0, format, type, static_cast<GCGLintptr>(offset), alignment, rowLength);
     }
     void texImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& pixels)
     {
@@ -1450,6 +1460,16 @@
         assertIsCurrent(workQueue());
         m_context->polygonOffsetClampEXT(factor, units, clamp);
     }
+    void renderbufferStorageMultisampleANGLE(uint32_t target, int32_t samples, uint32_t internalformat, int32_t width, int32_t height)
+    {
+        assertIsCurrent(workQueue());
+        m_context->renderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
+    }
+    void blitFramebufferANGLE(int32_t srcX0, int32_t srcY0, int32_t srcX1, int32_t srcY1, int32_t dstX0, int32_t dstY0, int32_t dstX1, int32_t dstY1, uint32_t mask, uint32_t filter)
+    {
+        assertIsCurrent(workQueue());
+        m_context->blitFramebufferANGLE(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    }
     void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize, CompletionHandler<void(IPC::ArrayReference<int32_t>)>&& completionHandler)
     {
         Vector<GCGLint, 4> params(paramsSize, 0);
@@ -1462,11 +1482,30 @@
         assertIsCurrent(workQueue());
         m_context->setDrawingBufferColorSpace(arg0);
     }
-    void paintRenderingResultsToPixelBuffer(CompletionHandler<void(RefPtr<WebCore::PixelBuffer>&&)>&& completionHandler)
+    void paintRenderingResultsToPixelBuffer(WebCore::GraphicsContextGL::FlipY&& arg0, CompletionHandler<void(RefPtr<WebCore::PixelBuffer>&&)>&& completionHandler)
     {
         RefPtr<WebCore::PixelBuffer> returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->paintRenderingResultsToPixelBuffer();
+        returnValue = m_context->paintRenderingResultsToPixelBuffer(arg0);
         completionHandler(WTFMove(returnValue));
+    }
+    void destroyEGLSync(uint64_t arg0, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        bool returnValue = { };
+        assertIsCurrent(workQueue());
+        returnValue = m_context->destroyEGLSync(reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(arg0)));
+        completionHandler(returnValue);
+    }
+    void clientWaitEGLSyncWithFlush(uint64_t arg0, uint64_t timeout)
+    {
+        assertIsCurrent(workQueue());
+        m_context->clientWaitEGLSyncWithFlush(reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(arg0)), timeout);
+    }
+    void enableRequiredWebXRExtensions(CompletionHandler<void(bool)>&& completionHandler)
+    {
+        bool returnValue = { };
+        assertIsCurrent(workQueue());
+        returnValue = m_context->enableRequiredWebXRExtensions();
+        completionHandler(returnValue);
     }
 

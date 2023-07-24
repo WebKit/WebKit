@@ -46,7 +46,6 @@ rtc_library("audio_channel") {
     "../../modules/rtp_rtcp",
     "../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../rtc_base:criticalsection",
-    "../../rtc_base:location",
     "../../rtc_base:logging",
     "../../rtc_base:refcount",
   ]
@@ -71,6 +70,7 @@ rtc_library("audio_ingress") {
     "../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../rtc_base:criticalsection",
     "../../rtc_base:logging",
+    "../../rtc_base:rtc_numerics",
     "../../rtc_base:safe_minmax",
     "../../rtc_base:timeutils",
     "../../rtc_base/synchronization:mutex",

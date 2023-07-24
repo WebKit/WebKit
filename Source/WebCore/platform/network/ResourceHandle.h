@@ -178,8 +178,6 @@ private:
 
     void platformSetDefersLoading(bool);
 
-    void platformContinueSynchronousDidReceiveResponse();
-
     void scheduleFailure(FailureType);
 
     bool start();

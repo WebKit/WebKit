@@ -12,7 +12,7 @@ for (const input of TemporalHelpers.ISO.plainYearMonthStringsValid()) {
   const plainYearMonth = Temporal.PlainYearMonth.from(input);
   TemporalHelpers.assertPlainYearMonth(plainYearMonth, 1976, 11, "M11");
   const fields = plainYearMonth.getISOFields();
-  assert.sameValue(fields.calendar.id, "iso8601");
+  assert.sameValue(fields.calendar, "iso8601", "calendar slot should store a string");
   assert.sameValue(fields.isoDay, 1, "isoDay");
   assert.sameValue(fields.isoMonth, 11, "isoMonth");
   assert.sameValue(fields.isoYear, 1976, "isoYear");
@@ -22,7 +22,7 @@ for (const input of TemporalHelpers.ISO.plainYearMonthStringsValidNegativeYear()
   const plainYearMonth = Temporal.PlainYearMonth.from(input);
   TemporalHelpers.assertPlainYearMonth(plainYearMonth, -9999, 11, "M11");
   const fields = plainYearMonth.getISOFields();
-  assert.sameValue(fields.calendar.id, "iso8601");
+  assert.sameValue(fields.calendar, "iso8601", "calendar slot should store a string");
   assert.sameValue(fields.isoDay, 1, "isoDay");
   assert.sameValue(fields.isoMonth, 11, "isoMonth");
   assert.sameValue(fields.isoYear, -9999, "isoYear");

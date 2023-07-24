@@ -148,24 +148,24 @@ layer at (0,0) size 785x1150
           RenderText {#text} at (0,0) size 81x17
             text run at (0,0) width 81: "Should be -1"
 layer at (8,94) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,86) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,86) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,190) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,182) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,286) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,278) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,278) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,382) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,374) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,374) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,478) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,470) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,470) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,574) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,566) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,566) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,670) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,662) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,662) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,852) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,844) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,844) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,948) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,940) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,940) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,1044) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,1036) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,1036) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,1140) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,1132) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,1132) size 769x2 [color=#808080] [border: (1px inset #808080)]

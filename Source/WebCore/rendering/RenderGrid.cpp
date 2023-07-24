@@ -925,8 +925,14 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
     unsigned autoRepeatRows = computeAutoRepeatTracksCount(ForRows, availableLogicalHeightForPercentageComputation());
     autoRepeatRows = clampAutoRepeatTracks(ForRows, autoRepeatRows);
     autoRepeatColumns = clampAutoRepeatTracks(ForColumns, autoRepeatColumns);
-
-    if (autoRepeatColumns != currentGrid().autoRepeatTracks(ForColumns) 
+    
+    if (isSubgridInParentDirection(ForColumns) || isSubgridInParentDirection(ForRows)) {
+        auto* parent = dynamicDowncast<RenderGrid>(this->parent());
+        if (parent && parent->currentGrid().needsItemsPlacement())
+            currentGrid().setNeedsItemsPlacement(true);
+    }
+    
+    if (autoRepeatColumns != currentGrid().autoRepeatTracks(ForColumns)
         || autoRepeatRows != currentGrid().autoRepeatTracks(ForRows)
         || isMasonry()) {
         currentGrid().setNeedsItemsPlacement(true);
@@ -1754,7 +1760,7 @@ LayoutUnit RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode di
 
 std::optional<LayoutUnit> RenderGrid::firstLineBaseline() const
 {
-    if (isWritingModeRoot() || !currentGrid().hasGridItems() || shouldApplyLayoutContainment())
+    if ((isWritingModeRoot() && !isFlexItem()) || !currentGrid().hasGridItems() || shouldApplyLayoutContainment())
         return std::nullopt;
 
     // Finding the first grid item in grid order.

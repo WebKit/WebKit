@@ -33,13 +33,13 @@ void av1_build_compound_diffwtd_mask_sse4_1(uint8_t *mask,
   int i = 0;
   if (4 == w) {
     do {
-      const __m128i s0A = _mm_cvtsi32_si128(*(uint32_t *)src0);
-      const __m128i s0B = _mm_cvtsi32_si128(*(uint32_t *)(src0 + stride0));
+      const __m128i s0A = _mm_cvtsi32_si128(*(int *)src0);
+      const __m128i s0B = _mm_cvtsi32_si128(*(int *)(src0 + stride0));
       const __m128i s0AB = _mm_unpacklo_epi32(s0A, s0B);
       const __m128i s0 = _mm_cvtepu8_epi16(s0AB);
 
-      const __m128i s1A = _mm_cvtsi32_si128(*(uint32_t *)src1);
-      const __m128i s1B = _mm_cvtsi32_si128(*(uint32_t *)(src1 + stride1));
+      const __m128i s1A = _mm_cvtsi32_si128(*(int *)src1);
+      const __m128i s1B = _mm_cvtsi32_si128(*(int *)(src1 + stride1));
       const __m128i s1AB = _mm_unpacklo_epi32(s1A, s1B);
       const __m128i s1 = _mm_cvtepu8_epi16(s1AB);
 

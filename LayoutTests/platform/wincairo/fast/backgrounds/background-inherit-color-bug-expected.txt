@@ -8,13 +8,13 @@ layer at (0,0) size 785x1162
           RenderText {#text} at (0,0) size 580x36
             text run at (0,0) width 580: "Affected Browsers: Safari 2.0, Windows Internet Explorer 6"
             text run at (0,18) width 30: "SP2"
-        RenderBlock {HR} at (4,72) size 616x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (4,72) size 616x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock {P} at (4,90) size 616x54
           RenderText {#text} at (0,0) size 610x54
             text run at (0,0) width 610: "Bug Description: On the Affected Browsers, if a rule sets the"
             text run at (0,18) width 540: "'background-color' of an element, this color cannot be"
             text run at (0,36) width 480: "overridden by 'background:inherit' declarations."
-        RenderBlock {HR} at (4,160) size 616x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (4,160) size 616x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock {P} at (4,178) size 616x90
           RenderText {#text} at (0,0) size 600x54
             text run at (0,0) width 600: "Example: With the following code, the background color of H1"
@@ -28,13 +28,13 @@ layer at (0,0) size 785x1162
           RenderText {#text} at (0,72) size 290x18
             text run at (0,72) width 50: "  H1 "
             text run at (50,72) width 240: "{ background: inherit; }"
-        RenderBlock {HR} at (4,284) size 616x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (4,284) size 616x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock {P} at (4,302) size 616x54
           RenderText {#text} at (0,0) size 610x54
             text run at (0,0) width 610: "Work-around: The 'background-color' can only be overridden by"
             text run at (0,18) width 600: "another 'background-color' declaration, or by a 'background'"
             text run at (0,36) width 380: "declaration that does specify a color."
-        RenderBlock {HR} at (4,372) size 616x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (4,372) size 616x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock (anonymous) at (4,382) size 616x20
           RenderText {#text} at (0,0) size 376x19
             text run at (0,0) width 376: "This is in contradiction with the CSS2 specification which says:"

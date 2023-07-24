@@ -18,9 +18,4 @@ invalidStrings.forEach((timeZone) => {
     () => instance.toZonedDateTime({ plainDate: new Temporal.PlainDate(2000, 5, 2), timeZone }),
     "reject minus zero as extended year"
   );
-  assert.throws(
-    RangeError,
-    () => instance.toZonedDateTime({ plainDate: new Temporal.PlainDate(2000, 5, 2), timeZone: { timeZone } }),
-    "reject minus zero as extended year (nested property)"
-  );
 });

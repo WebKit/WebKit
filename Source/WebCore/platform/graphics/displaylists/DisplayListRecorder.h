@@ -30,7 +30,6 @@
 #include "DrawGlyphsRecorder.h"
 #include "GraphicsContext.h"
 #include "Image.h" // For Image::TileRule.
-#include "InlinePathData.h"
 #include "TextFlags.h"
 #include <wtf/Noncopyable.h>
 
@@ -87,7 +86,9 @@ protected:
     virtual void recordClearShadow() = 0;
     virtual void recordResetClip() = 0;
     virtual void recordClip(const FloatRect&) = 0;
+    virtual void recordClipRoundedRect(const FloatRoundedRect&) = 0;
     virtual void recordClipOut(const FloatRect&) = 0;
+    virtual void recordClipOutRoundedRect(const FloatRoundedRect&) = 0;
     virtual void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) = 0;
     virtual void recordClipOutToPath(const Path&) = 0;
     virtual void recordClipPath(const Path&, WindRule) = 0;
@@ -115,11 +116,12 @@ protected:
     virtual void recordFillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode) = 0;
     virtual void recordFillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) = 0;
 #if ENABLE(INLINE_PATH_DATA)
-    virtual void recordFillLine(const LineData&) = 0;
-    virtual void recordFillArc(const ArcData&) = 0;
-    virtual void recordFillQuadCurve(const QuadCurveData&) = 0;
-    virtual void recordFillBezierCurve(const BezierCurveData&) = 0;
+    virtual void recordFillLine(const PathDataLine&) = 0;
+    virtual void recordFillArc(const PathArc&) = 0;
+    virtual void recordFillQuadCurve(const PathDataQuadCurve&) = 0;
+    virtual void recordFillBezierCurve(const PathDataBezierCurve&) = 0;
 #endif
+    virtual void recordFillPathSegment(const PathSegment&) = 0;
     virtual void recordFillPath(const Path&) = 0;
     virtual void recordFillEllipse(const FloatRect&) = 0;
 #if ENABLE(VIDEO)
@@ -128,12 +130,13 @@ protected:
 #endif
     virtual void recordStrokeRect(const FloatRect&, float) = 0;
 #if ENABLE(INLINE_PATH_DATA)
-    virtual void recordStrokeLine(const LineData&) = 0;
-    virtual void recordStrokeLineWithColorAndThickness(SRGBA<uint8_t>, float, const LineData&) = 0;
-    virtual void recordStrokeArc(const ArcData&) = 0;
-    virtual void recordStrokeQuadCurve(const QuadCurveData&) = 0;
-    virtual void recordStrokeBezierCurve(const BezierCurveData&) = 0;
+    virtual void recordStrokeLine(const PathDataLine&) = 0;
+    virtual void recordStrokeLineWithColorAndThickness(const PathDataLine&, SRGBA<uint8_t>, float thickness) = 0;
+    virtual void recordStrokeArc(const PathArc&) = 0;
+    virtual void recordStrokeQuadCurve(const PathDataQuadCurve&) = 0;
+    virtual void recordStrokeBezierCurve(const PathDataBezierCurve&) = 0;
 #endif
+    virtual void recordStrokePathSegment(const PathSegment&) = 0;
     virtual void recordStrokePath(const Path&) = 0;
     virtual void recordStrokeEllipse(const FloatRect&) = 0;
     virtual void recordClearRect(const FloatRect&) = 0;
@@ -268,10 +271,15 @@ private:
     WEBCORE_EXPORT void endTransparencyLayer() final;
 
     WEBCORE_EXPORT void resetClip() final;
+
     WEBCORE_EXPORT void clip(const FloatRect&) final;
+    WEBCORE_EXPORT void clipRoundedRect(const FloatRoundedRect&) final;
+    WEBCORE_EXPORT void clipPath(const Path&, WindRule) final;
+
     WEBCORE_EXPORT void clipOut(const FloatRect&) final;
     WEBCORE_EXPORT void clipOut(const Path&) final;
-    WEBCORE_EXPORT void clipPath(const Path&, WindRule) final;
+    WEBCORE_EXPORT void clipOutRoundedRect(const FloatRoundedRect&) final;
+
     WEBCORE_EXPORT IntRect clipBounds() const final;
     WEBCORE_EXPORT void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
 

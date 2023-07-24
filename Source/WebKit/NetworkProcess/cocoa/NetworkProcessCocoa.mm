@@ -50,6 +50,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#import <pal/spi/cocoa/NEFilterSourceSPI.h>
+#endif
+
 namespace WebKit {
 
 static void initializeNetworkSettings()
@@ -74,11 +78,13 @@ static void initializeNetworkSettings()
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
+    m_isParentProcessFullWebBrowserOrRunningTest = parameters.isParentProcessFullWebBrowserOrRunningTest;
+
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
     IPC::setStrictSecureDecodingForAllObjCEnabled(parameters.strictSecureDecodingForAllObjCEnabled);
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
-    
+
     initializeNetworkSettings();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -98,6 +104,13 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     // Disable NSURLCache.
     auto urlCache(adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]));
     [NSURLCache setSharedURLCache:urlCache.get()];
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    auto auditToken = parentProcessConnection()->getAuditToken();
+    ASSERT(auditToken);
+    if (auditToken && [NEFilterSource respondsToSelector:@selector(setDelegation:)])
+        [NEFilterSource setDelegation:&auditToken.value()];
+#endif
 }
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
@@ -235,7 +248,7 @@ void NetworkProcess::clearProxyConfigData(PAL::SessionID sessionID)
     session->clearProxyConfigData();
 }
 
-void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pair<Vector<uint8_t>, UUID>>&& proxyConfigurations)
+void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&& proxyConfigurations)
 {
     auto* session = networkSession(sessionID);
     if (!session)

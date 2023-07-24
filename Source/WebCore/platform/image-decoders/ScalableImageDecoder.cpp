@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc.  All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
@@ -53,6 +53,12 @@
 
 #include <algorithm>
 #include <cmath>
+
+#if PLATFORM(COCOA) && USE(JPEGXL)
+#include <wtf/darwin/WeakLinking.h>
+
+WTF_WEAK_LINK_FORCE_IMPORT(JxlSignatureCheck);
+#endif
 
 namespace WebCore {
 
@@ -147,6 +153,10 @@ static bool matchesWebPSignature(char* contents)
 #if USE(JPEGXL)
 static bool matchesJPEGXLSignature(const uint8_t* contents, size_t length)
 {
+#if PLATFORM(COCOA)
+    if (!&JxlSignatureCheck)
+        return false;
+#endif
     JxlSignature signature = JxlSignatureCheck(contents, length);
     return signature != JXL_SIG_NOT_ENOUGH_BYTES && signature != JXL_SIG_INVALID;
 }

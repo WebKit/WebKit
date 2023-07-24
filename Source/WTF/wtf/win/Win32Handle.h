@@ -36,18 +36,16 @@ public:
     WTF_EXPORT_PRIVATE static Win32Handle adopt(HANDLE);
 
     Win32Handle() = default;
-    WTF_EXPORT_PRIVATE Win32Handle(const Win32Handle&);
+    WTF_EXPORT_PRIVATE explicit Win32Handle(const Win32Handle&);
     WTF_EXPORT_PRIVATE Win32Handle(Win32Handle&&);
     WTF_EXPORT_PRIVATE ~Win32Handle();
 
-    WTF_EXPORT_PRIVATE Win32Handle& operator=(const Win32Handle&);
     WTF_EXPORT_PRIVATE Win32Handle& operator=(Win32Handle&&);
 
     explicit operator bool() const { return m_handle != INVALID_HANDLE_VALUE; }
 
     HANDLE get() const { return m_handle; }
 
-    WTF_EXPORT_PRIVATE Win32Handle copy() const;
     WTF_EXPORT_PRIVATE HANDLE leak() WARN_UNUSED_RETURN;
 
 private:

@@ -69,7 +69,7 @@ static inline OptionSet<WebEventModifier> modifiersForEvent(const GdkEvent* even
         modifiers.add(WebEventModifier::AltKey);
     if (state & GDK_META_MASK)
         modifiers.add(WebEventModifier::MetaKey);
-    if (PlatformKeyboardEvent::modifiersContainCapsLock(state))
+    if (state & GDK_LOCK_MASK && eventModifiersContainCapsLock(const_cast<GdkEvent*>(event)))
         modifiers.add(WebEventModifier::CapsLockKey);
 
     GdkEventType type = gdk_event_get_event_type(const_cast<GdkEvent*>(event));
@@ -297,5 +297,10 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector
     return WebTouchEvent({ type, modifiersForEvent(event), wallTimeForEvent(event) }, WTFMove(touchPoints));
 }
 #endif
+
+WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase, bool hasPreciseDeltas)
+{
+    return WebWheelEvent({ WebEventType::Wheel, modifiersForEvent(event), wallTimeForEvent(event) }, position, globalPosition, delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, phase, momentumPhase, hasPreciseDeltas);
+}
 
 } // namespace WebKit

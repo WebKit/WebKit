@@ -32,11 +32,6 @@
 @class NSURLAuthenticationChallenge;
 
 @interface WebPanelAuthenticationHandler : NSObject
-{
-    NSMapTable *windowToPanel;
-    NSMapTable *challengeToWindow;
-    NSMapTable *windowToChallengeQueue;
-}
 
 + (id)sharedHandler;
 - (void)startAuthentication:(NSURLAuthenticationChallenge *)challenge window:(NSWindow *)w;

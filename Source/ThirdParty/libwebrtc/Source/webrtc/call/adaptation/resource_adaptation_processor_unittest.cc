@@ -31,7 +31,7 @@ namespace {
 
 const int kDefaultFrameRate = 30;
 const int kDefaultFrameSize = 1280 * 720;
-const int kDefaultTimeoutMs = 5000;
+constexpr TimeDelta kDefaultTimeout = TimeDelta::Seconds(5);
 
 class VideoSourceRestrictionsListenerForTesting
     : public VideoSourceRestrictionsListener {
@@ -434,7 +434,7 @@ TEST_F(ResourceAdaptationProcessorTest,
       [&]() { resource_->SetUsageState(ResourceUsageState::kOveruse); });
 
   EXPECT_EQ_WAIT(1u, restrictions_listener_.restrictions_updated_count(),
-                 kDefaultTimeoutMs);
+                 kDefaultTimeout.ms());
 }
 
 TEST_F(ResourceAdaptationProcessorTest,
@@ -452,7 +452,7 @@ TEST_F(ResourceAdaptationProcessorTest,
     resource_event.Set();
   });
 
-  EXPECT_TRUE(resource_event.Wait(kDefaultTimeoutMs));
+  EXPECT_TRUE(resource_event.Wait(kDefaultTimeout));
   // Now destroy the processor while handling the overuse is in flight.
   DestroyProcessor();
 
@@ -474,7 +474,7 @@ TEST_F(ResourceAdaptationProcessorTest,
     resource_->SetUsageState(ResourceUsageState::kOveruse);
     overuse_event.Set();
   });
-  EXPECT_TRUE(overuse_event.Wait(kDefaultTimeoutMs));
+  EXPECT_TRUE(overuse_event.Wait(kDefaultTimeout));
   // Once we know the overuse task is queued, remove `resource_` so that
   // `processor_` is not listening to it.
   processor_->RemoveResource(resource_);

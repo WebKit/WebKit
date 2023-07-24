@@ -59,6 +59,7 @@ struct WebKitEncodedFrameInfo {
     uint32_t width { 0 };
     uint32_t height { 0 };
     int64_t timeStamp { 0 };
+    std::optional<uint64_t> duration;
     int64_t ntpTimeMS { 0 };
     int64_t captureTimeMS { 0 };
     VideoFrameType frameType { VideoFrameType::kVideoFrameDelta };
@@ -78,7 +79,7 @@ using LocalEncoderDescriptionCallback = void (^)(const uint8_t* buffer, size_t s
 void* createLocalEncoder(const webrtc::SdpVideoFormat&, bool useAnnexB, LocalEncoderCallback, LocalEncoderDescriptionCallback);
 void releaseLocalEncoder(LocalEncoder);
 void initializeLocalEncoder(LocalEncoder, uint16_t width, uint16_t height, unsigned int startBitrate, unsigned int maxBitrate, unsigned int minBitrate, uint32_t maxFramerate);
-void encodeLocalEncoderFrame(LocalEncoder, CVPixelBufferRef, int64_t timeStampNs, uint32_t timeStamp, webrtc::VideoRotation, bool isKeyframeRequired);
+void encodeLocalEncoderFrame(LocalEncoder, CVPixelBufferRef, int64_t timeStampNs, int64_t timeStamp, std::optional<uint64_t> duration, webrtc::VideoRotation, bool isKeyframeRequired);
 void setLocalEncoderRates(LocalEncoder, uint32_t bitRate, uint32_t frameRate);
 void setLocalEncoderLowLatency(LocalEncoder, bool isLowLatencyEnabled);
 void encoderVideoTaskComplete(void*, webrtc::VideoCodecType, const uint8_t* buffer, size_t length, const WebKitEncodedFrameInfo&);
@@ -92,6 +93,8 @@ bool WebKitEncodedFrameInfo::decode(Decoder& decoder, WebKitEncodedFrameInfo& in
     if (!decoder.decode(info.height))
         return false;
     if (!decoder.decode(info.timeStamp))
+        return false;
+    if (!decoder.decode(info.duration))
         return false;
     if (!decoder.decode(info.ntpTimeMS))
         return false;
@@ -136,6 +139,7 @@ void WebKitEncodedFrameInfo::encode(Encoder& encoder) const
     encoder << width;
     encoder << height;
     encoder << timeStamp;
+    encoder << duration;
     encoder << ntpTimeMS;
     encoder << captureTimeMS;
     encoder << frameType;

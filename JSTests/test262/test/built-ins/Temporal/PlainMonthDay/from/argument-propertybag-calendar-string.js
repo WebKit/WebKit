@@ -13,3 +13,4 @@ const calendar = "iso8601";
 const arg = { monthCode: "M11", day: 18, calendar };
 const result = Temporal.PlainMonthDay.from(arg);
 TemporalHelpers.assertPlainMonthDay(result, "M11", 18, `Calendar created from string "${calendar}"`);
+assert.sameValue(result.getISOFields().calendar, "iso8601", "calendar slot stores a string");

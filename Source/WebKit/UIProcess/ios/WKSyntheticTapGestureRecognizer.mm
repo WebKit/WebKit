@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "UIKitUtilities.h"
 #import <UIKit/UIGestureRecognizerSubclass.h>
 #import <wtf/RetainPtr.h>
 
@@ -81,21 +82,17 @@
 {
     [super touchesBegan:touches withEvent:event];
 
-    for (UITouch *touch in touches) {
-        if ([touch.view isKindOfClass:UIScrollView.class]) {
-            _lastTouchedScrollView = (UIScrollView *)touch.view;
-            break;
-        }
-    }
+    if (auto scrollView = WebKit::scrollViewForTouches(touches))
+        _lastTouchedScrollView = scrollView;
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [super touchesEnded:touches withEvent:event];
-    if (!_supportingWebTouchEventsGestureRecognizer)
+    if (!_supportingTouchEventsGestureRecognizer)
         return;
 
-    NSMapTable<NSNumber *, UITouch *> *activeTouches = [_supportingWebTouchEventsGestureRecognizer activeTouchesByIdentifier];
+    NSMapTable<NSNumber *, UITouch *> *activeTouches = [_supportingTouchEventsGestureRecognizer activeTouchesByIdentifier];
     for (NSNumber *touchIdentifier in activeTouches) {
         UITouch *touch = [activeTouches objectForKey:touchIdentifier];
         if ([touch.gestureRecognizers containsObject:self]) {

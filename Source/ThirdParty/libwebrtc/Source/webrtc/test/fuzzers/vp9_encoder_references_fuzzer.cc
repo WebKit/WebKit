@@ -32,6 +32,8 @@ namespace {
 
 using test::FuzzDataHelper;
 
+constexpr int kBitrateEnabledBps = 100'000;
+
 class FrameValidator : public EncodedImageCallback {
  public:
   ~FrameValidator() override = default;
@@ -47,48 +49,51 @@ class FrameValidator : public EncodedImageCallback {
     LayerFrame& layer_frame = frames_[frame_id % kMaxFrameHistorySize];
     layer_frame.picture_id = picture_id_;
     layer_frame.spatial_id = encoded_image.SpatialIndex().value_or(0);
-    layer_frame.info = *codec_specific_info;
     layer_frame.frame_id = frame_id;
-    CheckVp9References(layer_frame);
+    layer_frame.temporal_id =
+        codec_specific_info->codecSpecific.VP9.temporal_idx;
+    if (layer_frame.temporal_id == kNoTemporalIdx) {
+      layer_frame.temporal_id = 0;
+    }
+    layer_frame.vp9_non_ref_for_inter_layer_pred =
+        codec_specific_info->codecSpecific.VP9.non_ref_for_inter_layer_pred;
+    CheckVp9References(layer_frame, codec_specific_info->codecSpecific.VP9);
 
-    if (layer_frame.info.generic_frame_info.has_value()) {
-      layer_frame.frame_dependencies =
+    if (codec_specific_info->generic_frame_info.has_value()) {
+      absl::InlinedVector<int64_t, 5> frame_dependencies =
           dependencies_calculator_.FromBuffersUsage(
-              frame_id, layer_frame.info.generic_frame_info->encoder_buffers);
+              frame_id,
+              codec_specific_info->generic_frame_info->encoder_buffers);
 
-      CheckGenericReferences(layer_frame);
-      CheckGenericAndCodecSpecificReferencesAreConsistent(layer_frame);
-    } else {
-      layer_frame.frame_dependencies = {};
+      CheckGenericReferences(frame_dependencies,
+                             *codec_specific_info->generic_frame_info);
+      CheckGenericAndCodecSpecificReferencesAreConsistent(
+          frame_dependencies, *codec_specific_info, layer_frame);
     }
 
     return Result(Result::OK);
   }
 
  private:
-  // With 4 spatial layers and patterns up to 8 pictures, it should be enought
-  // to keep 32 last frames to validate dependencies.
+  // With 4 spatial layers and patterns up to 8 pictures, it should be enough to
+  // keep the last 32 frames to validate dependencies.
   static constexpr size_t kMaxFrameHistorySize = 32;
   struct LayerFrame {
-    const CodecSpecificInfoVP9& vp9() const { return info.codecSpecific.VP9; }
-    int temporal_id() const {
-      return vp9().temporal_idx == kNoTemporalIdx ? 0 : vp9().temporal_idx;
-    }
-
     int64_t frame_id;
     int64_t picture_id;
     int spatial_id;
-    absl::InlinedVector<int64_t, 5> frame_dependencies;
-    CodecSpecificInfo info;
+    int temporal_id;
+    bool vp9_non_ref_for_inter_layer_pred;
   };
 
-  void CheckVp9References(const LayerFrame& layer_frame) {
+  void CheckVp9References(const LayerFrame& layer_frame,
+                          const CodecSpecificInfoVP9& vp9_info) {
     if (layer_frame.frame_id == 0) {
-      RTC_CHECK(!layer_frame.vp9().inter_layer_predicted);
+      RTC_CHECK(!vp9_info.inter_layer_predicted);
     } else {
       const LayerFrame& previous_frame = Frame(layer_frame.frame_id - 1);
-      if (layer_frame.vp9().inter_layer_predicted) {
-        RTC_CHECK(!previous_frame.vp9().non_ref_for_inter_layer_pred);
+      if (vp9_info.inter_layer_predicted) {
+        RTC_CHECK(!previous_frame.vp9_non_ref_for_inter_layer_pred);
         RTC_CHECK_EQ(layer_frame.picture_id, previous_frame.picture_id);
       }
       if (previous_frame.picture_id == layer_frame.picture_id) {
@@ -96,51 +101,51 @@ class FrameValidator : public EncodedImageCallback {
         // The check below would fail for temporal shift structures. Remove it
         // or move it to !flexible_mode section when vp9 encoder starts
         // supporting such structures.
-        RTC_CHECK_EQ(layer_frame.vp9().temporal_idx,
-                     previous_frame.vp9().temporal_idx);
+        RTC_CHECK_EQ(layer_frame.temporal_id, previous_frame.temporal_id);
       }
     }
-    if (!layer_frame.vp9().flexible_mode) {
-      if (layer_frame.vp9().gof.num_frames_in_gof > 0) {
-        gof_.CopyGofInfoVP9(layer_frame.vp9().gof);
+    if (!vp9_info.flexible_mode) {
+      if (vp9_info.gof.num_frames_in_gof > 0) {
+        gof_.CopyGofInfoVP9(vp9_info.gof);
       }
-      RTC_CHECK_EQ(gof_.temporal_idx[layer_frame.vp9().gof_idx],
-                   layer_frame.temporal_id());
+      RTC_CHECK_EQ(gof_.temporal_idx[vp9_info.gof_idx],
+                   layer_frame.temporal_id);
     }
   }
 
-  void CheckGenericReferences(const LayerFrame& layer_frame) const {
-    const GenericFrameInfo& generic_info = *layer_frame.info.generic_frame_info;
-    for (int64_t dependency_frame_id : layer_frame.frame_dependencies) {
+  void CheckGenericReferences(rtc::ArrayView<const int64_t> frame_dependencies,
+                              const GenericFrameInfo& generic_info) const {
+    for (int64_t dependency_frame_id : frame_dependencies) {
       RTC_CHECK_GE(dependency_frame_id, 0);
       const LayerFrame& dependency = Frame(dependency_frame_id);
-      RTC_CHECK(dependency.info.generic_frame_info.has_value());
-      RTC_CHECK_GE(generic_info.spatial_id,
-                   dependency.info.generic_frame_info->spatial_id);
-      RTC_CHECK_GE(generic_info.temporal_id,
-                   dependency.info.generic_frame_info->temporal_id);
+      RTC_CHECK_GE(generic_info.spatial_id, dependency.spatial_id);
+      RTC_CHECK_GE(generic_info.temporal_id, dependency.temporal_id);
     }
   }
 
   void CheckGenericAndCodecSpecificReferencesAreConsistent(
+      rtc::ArrayView<const int64_t> frame_dependencies,
+      const CodecSpecificInfo& info,
       const LayerFrame& layer_frame) const {
-    const GenericFrameInfo& generic_info = *layer_frame.info.generic_frame_info;
+    const CodecSpecificInfoVP9& vp9_info = info.codecSpecific.VP9;
+    const GenericFrameInfo& generic_info = *info.generic_frame_info;
+
     RTC_CHECK_EQ(generic_info.spatial_id, layer_frame.spatial_id);
-    RTC_CHECK_EQ(generic_info.temporal_id, layer_frame.temporal_id());
-    auto picture_id_diffs = rtc::MakeArrayView(layer_frame.vp9().p_diff,
-                                               layer_frame.vp9().num_ref_pics);
-    RTC_CHECK_EQ(layer_frame.frame_dependencies.size(),
-                 picture_id_diffs.size() +
-                     (layer_frame.vp9().inter_layer_predicted ? 1 : 0));
-    for (int64_t dependency_frame_id : layer_frame.frame_dependencies) {
+    RTC_CHECK_EQ(generic_info.temporal_id, layer_frame.temporal_id);
+    auto picture_id_diffs =
+        rtc::MakeArrayView(vp9_info.p_diff, vp9_info.num_ref_pics);
+    RTC_CHECK_EQ(
+        frame_dependencies.size(),
+        picture_id_diffs.size() + (vp9_info.inter_layer_predicted ? 1 : 0));
+    for (int64_t dependency_frame_id : frame_dependencies) {
       RTC_CHECK_GE(dependency_frame_id, 0);
       const LayerFrame& dependency = Frame(dependency_frame_id);
       if (dependency.spatial_id != layer_frame.spatial_id) {
-        RTC_CHECK(layer_frame.vp9().inter_layer_predicted);
+        RTC_CHECK(vp9_info.inter_layer_predicted);
         RTC_CHECK_EQ(layer_frame.picture_id, dependency.picture_id);
         RTC_CHECK_GT(layer_frame.spatial_id, dependency.spatial_id);
       } else {
-        RTC_CHECK(layer_frame.vp9().inter_pic_predicted);
+        RTC_CHECK(vp9_info.inter_pic_predicted);
         RTC_CHECK_EQ(layer_frame.spatial_id, dependency.spatial_id);
         RTC_CHECK(absl::c_linear_search(
             picture_id_diffs, layer_frame.picture_id - dependency.picture_id));
@@ -181,8 +186,6 @@ class FieldTrials : public FieldTrialsView {
     // Ignore following field trials.
     if (key == "WebRTC-CongestionWindow" ||
         key == "WebRTC-UseBaseHeavyVP8TL3RateAllocation" ||
-        key == "WebRTC-SimulcastUpswitchHysteresisPercent" ||
-        key == "WebRTC-SimulcastScreenshareUpswitchHysteresisPercent" ||
         key == "WebRTC-VideoRateControl" ||
         key == "WebRTC-VP9-PerformanceFlags" ||
         key == "WebRTC-VP9VariableFramerateScreenshare" ||
@@ -214,6 +217,9 @@ VideoCodec CodecSettings(FuzzDataHelper& rng) {
       SpatialLayer& spatial_layer = codec_settings.spatialLayers[sid];
       codec_settings.width = 320 << sid;
       codec_settings.height = 180 << sid;
+      spatial_layer.width = codec_settings.width;
+      spatial_layer.height = codec_settings.height;
+      spatial_layer.targetBitrate = kBitrateEnabledBps * num_temporal_layers;
       spatial_layer.maxFramerate = codec_settings.maxFramerate;
       spatial_layer.numberOfTemporalLayers = num_temporal_layers;
     }
@@ -234,6 +240,46 @@ VideoEncoder::Settings EncoderSettings() {
   return VideoEncoder::Settings(VideoEncoder::Capabilities(false),
                                 /*number_of_cores=*/1,
                                 /*max_payload_size=*/0);
+}
+
+bool IsSupported(int num_spatial_layers,
+                 int num_temporal_layers,
+                 const VideoBitrateAllocation& allocation) {
+  // VP9 encoder doesn't support certain configurations.
+  // BitrateAllocator shouldn't produce them.
+  if (allocation.get_sum_bps() == 0) {
+    // Ignore allocation that turns off all the layers.
+    // In such a case it is up to upper layer code not to call Encode.
+    return false;
+  }
+
+  for (int tid = 0; tid < num_temporal_layers; ++tid) {
+    int min_enabled_spatial_id = -1;
+    int max_enabled_spatial_id = -1;
+    int num_enabled_spatial_layers = 0;
+    for (int sid = 0; sid < num_spatial_layers; ++sid) {
+      if (allocation.GetBitrate(sid, tid) > 0) {
+        if (min_enabled_spatial_id == -1) {
+          min_enabled_spatial_id = sid;
+        }
+        max_enabled_spatial_id = sid;
+        ++num_enabled_spatial_layers;
+      }
+    }
+    if (num_enabled_spatial_layers == 0) {
+      // Each temporal layer should be enabled because skipping a full frame is
+      // not supported in non-flexible mode.
+      return false;
+    }
+    if (max_enabled_spatial_id - min_enabled_spatial_id + 1 !=
+        num_enabled_spatial_layers) {
+      // To avoid odd spatial dependencies, there should be no gaps in active
+      // spatial layers.
+      return false;
+    }
+  }
+
+  return true;
 }
 
 struct LibvpxState {
@@ -498,7 +544,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     parameters.framerate_fps = 30.0;
     for (int sid = 0; sid < codec.VP9()->numberOfSpatialLayers; ++sid) {
       for (int tid = 0; tid < codec.VP9()->numberOfTemporalLayers; ++tid) {
-        parameters.bitrate.SetBitrate(sid, tid, 100'000);
+        parameters.bitrate.SetBitrate(sid, tid, kBitrateEnabledBps);
       }
     }
     encoder.SetRates(parameters);
@@ -523,6 +569,10 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         encoder.Encode(fake_image, &frame_types);
         uint8_t encode_spatial_layers = (action >> 4);
         for (size_t sid = 0; sid < state.config.ss_number_layers; ++sid) {
+          if (state.config.ss_target_bitrate[sid] == 0) {
+            // Don't encode disabled spatial layers.
+            continue;
+          }
           bool drop = true;
           switch (state.frame_drop.framedrop_mode) {
             case FULL_SUPERFRAME_DROP:
@@ -546,7 +596,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         }
       } break;
       case kSetRates: {
-        // bitmask of the action: (S3)(S1)(S0)01,
+        // bitmask of the action: (S2)(S1)(S0)01,
         // where Sx is number of temporal layers to enable for spatial layer x
         // In pariculat Sx = 0 indicates spatial layer x should be disabled.
         LibvpxVp9Encoder::RateControlParameters parameters;
@@ -554,12 +604,12 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         for (int sid = 0; sid < codec.VP9()->numberOfSpatialLayers; ++sid) {
           int temporal_layers = (action >> ((1 + sid) * 2)) & 0b11;
           for (int tid = 0; tid < temporal_layers; ++tid) {
-            parameters.bitrate.SetBitrate(sid, tid, 100'000);
+            parameters.bitrate.SetBitrate(sid, tid, kBitrateEnabledBps);
           }
         }
-        // Ignore allocation that turns off all the layers. in such case
-        // it is up to upper-layer code not to call Encode.
-        if (parameters.bitrate.get_sum_bps() > 0) {
+        if (IsSupported(codec.VP9()->numberOfSpatialLayers,
+                        codec.VP9()->numberOfTemporalLayers,
+                        parameters.bitrate)) {
           encoder.SetRates(parameters);
         }
       } break;

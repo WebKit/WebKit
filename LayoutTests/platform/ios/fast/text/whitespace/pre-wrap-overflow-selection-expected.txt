@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
           text run at (4,60) width 32: "box."
           text run at (35,60) width 1: " "
 layer at (8,100) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,92) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,115) size 108x78 clip at (12,119) size 100x70
   RenderBlock {PRE} at (0,107) size 108x78 [border: (4px solid #A52A2A)]
     RenderText {#text} at (4,4) size 125x70
@@ -42,6 +42,6 @@ layer at (8,115) size 108x78 clip at (12,119) size 100x70
       text run at (4,60) width 32: "box."
       text run at (35,60) width 1: " "
 layer at (8,206) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,198) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,198) size 784x2 [color=#808080] [border: (1px inset #808080)]
 selection start: position 7 of child 0 {#text} of child 7 {PRE} of body
 selection end:   position 15 of child 0 {#text} of child 11 {PRE} of body

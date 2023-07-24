@@ -30,6 +30,30 @@
 
 namespace WebCore {
 
+class CSSLinearTimingFunctionValue final : public CSSValue {
+public:
+    static Ref<CSSLinearTimingFunctionValue> create(const Vector<LinearTimingFunction::Point>& points)
+    {
+        return adoptRef(*new CSSLinearTimingFunctionValue(points));
+    }
+
+    const Vector<LinearTimingFunction::Point>& points() const { return m_points; }
+
+    String customCSSText() const;
+
+    bool equals(const CSSLinearTimingFunctionValue&) const;
+
+private:
+    CSSLinearTimingFunctionValue(const Vector<LinearTimingFunction::Point>& points)
+        : CSSValue(LinearTimingFunctionClass)
+        , m_points(points)
+    {
+        ASSERT(m_points.isEmpty() || m_points.size() >= 2);
+    }
+
+    Vector<LinearTimingFunction::Point> m_points;
+};
+
 class CSSCubicBezierTimingFunctionValue final : public CSSValue {
 public:
     static Ref<CSSCubicBezierTimingFunctionValue> create(double x1, double y1, double x2, double y2)
@@ -122,6 +146,7 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSLinearTimingFunctionValue, isLinearTimingFunctionValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSCubicBezierTimingFunctionValue, isCubicBezierTimingFunctionValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSStepsTimingFunctionValue, isStepsTimingFunctionValue())
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSSpringTimingFunctionValue, isSpringTimingFunctionValue())

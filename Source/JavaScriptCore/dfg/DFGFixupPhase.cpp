@@ -81,9 +81,10 @@ private:
         if (optimizeForX86() || optimizeForARM64() || optimizeForARMv7IDIVSupported()) {
             fixIntOrBooleanEdge(leftChild);
             fixIntOrBooleanEdge(rightChild);
-            // FIXME: We should attempt to remove checks.
-            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
-                node->setArithMode(Arith::CheckOverflow);
+            // We need to be careful about skipping overflow check because div / mod can generate non integer values
+            // from (Int32, Int32) inputs. For now, we always check non-zero divisor.
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()) && bytecodeCanIgnoreNaNAndInfinity(node->arithNodeFlags()) && bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                node->setArithMode(Arith::Unchecked);
             else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setArithMode(Arith::CheckOverflow);
             else
@@ -1009,6 +1010,9 @@ private:
             if (node->child1()->shouldSpeculateInt32()) {
                 fixEdge<Int32Use>(node->child1());
                 node->clearFlags(NodeMustGenerate);
+            } else if (node->child1()->shouldSpeculateNumber()) {
+                fixIntConvertingEdge(node->child1());
+                node->clearFlags(NodeMustGenerate);
             } else
                 fixEdge<UntypedUse>(node->child1());
             break;
@@ -1021,6 +1025,14 @@ private:
             blessArrayOperation(node->child1(), node->child2(), node->child1()); // Rewrite child1 with ResolveRope.
             fixEdge<KnownStringUse>(node->child1());
             fixEdge<Int32Use>(node->child2());
+            break;
+        }
+
+        case StringIndexOf: {
+            fixEdge<StringUse>(node->child1());
+            fixEdge<StringUse>(node->child2());
+            if (node->child3())
+                fixEdge<Int32Use>(node->child3());
             break;
         }
 
@@ -1278,7 +1290,7 @@ private:
                 break;
             case Array::ForceExit:
             case Array::Generic:
-                if (child1->shouldSpeculateCell()) {
+                if (child1->shouldSpeculateCell() || (child1->shouldSpeculateCellOrOther() && !m_graph.hasExitSite(node->origin.semantic, BadType))) {
                     if (child2->shouldSpeculateString()) {
                         fixEdge<CellUse>(child1);
                         fixEdge<StringUse>(child2);
@@ -1804,6 +1816,11 @@ private:
             break;
         }
 
+        case NewArrayWithConstantSize: {
+            watchHavingABadTime(node);
+            break;
+        }
+
         case NewArrayWithSpecies: {
             ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child2()->prediction(), ArrayMode::unusedIndexSpeculatedType);
             node->setArrayMode(arrayMode);
@@ -2194,7 +2211,8 @@ private:
         }
 
         case InByVal: {
-            if (node->child1()->shouldSpeculateObject()
+            if ((node->child1()->shouldSpeculateObject()
+                || (node->child1()->shouldSpeculateObjectOrOther() && !m_graph.hasExitSite(node->origin.semantic, BadType)))
                 && node->child2()->shouldSpeculateInt32()) {
                 convertToHasIndexedProperty(node);
                 break;
@@ -2904,6 +2922,33 @@ private:
             }
             break;
 
+        case GlobalIsNaN: {
+            if (node->child1()->shouldSpeculateInt32()) {
+                insertCheck<Int32Use>(node->child1().node());
+                m_graph.convertToConstant(node, jsBoolean(false));
+                break;
+            }
+            if (node->child1()->shouldSpeculateNumber()) {
+                fixEdge<DoubleRepUse>(node->child1());
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+            break;
+        }
+
+        case NumberIsNaN: {
+            if (node->child1()->shouldSpeculateInt32()) {
+                insertCheck<Int32Use>(node->child1().node());
+                m_graph.convertToConstant(node, jsBoolean(false));
+                break;
+            }
+            if (node->child1()->shouldSpeculateNumber()) {
+                fixEdge<DoubleRepUse>(node->child1());
+                break;
+            }
+            break;
+        }
+
         case SetCallee:
             fixEdge<CellUse>(node->child1());
             break;
@@ -2911,6 +2956,11 @@ private:
         case DateGetInt32OrNaN:
         case DateGetTime:
             fixEdge<DateObjectUse>(node->child1());
+            break;
+
+        case DateSetTime:
+            fixEdge<DateObjectUse>(node->child1());
+            fixEdge<DoubleRepUse>(node->child2());
             break;
 
         case DataViewGetInt:
@@ -3055,6 +3105,7 @@ private:
         case LoopHint:
         case MovHint:
         case InitializeEntrypointArguments:
+        case ZombieHint:
         case ExitOK:
         case BottomValue:
         case TypeOf:
@@ -3116,8 +3167,8 @@ private:
     template<UseKind useKind>
     void attemptToForceStringArrayModeByToStringConversion(ArrayMode& arrayMode, Node* node)
     {
-        ASSERT(arrayMode == ArrayMode(Array::Generic, Array::Read) || arrayMode == ArrayMode(Array::Generic, Array::OriginalNonArray, Array::Read));
-        
+        ASSERT(arrayMode.type() == Array::Generic && arrayMode.action() == Array::Read);
+
         if (!m_graph.canOptimizeStringObjectAccess(node->origin.semantic))
             return;
         
@@ -3673,21 +3724,34 @@ private:
 
     bool attemptToMakeFastStringAdd(Node* node)
     {
+        bool atLeastOneString = false;
         bool goodToGo = true;
         m_graph.doToChildren(
             node,
             [&] (Edge& edge) {
-                if (edge->shouldSpeculateString())
+                if (edge->shouldSpeculateString()) {
+                    atLeastOneString = true;
+                    return;
+                }
+                if (edge->shouldSpeculateInt32())
                     return;
                 if (m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
-                    if (edge->shouldSpeculateStringObject())
+                    if (edge->shouldSpeculateStringObject()) {
+                        atLeastOneString = true;
                         return;
-                    if (edge->shouldSpeculateStringOrStringObject())
+                    }
+                    if (edge->shouldSpeculateStringOrStringObject()) {
+                        atLeastOneString = true;
                         return;
+                    }
                 }
+                if (edge->op() == ToPrimitive)
+                    return;
                 goodToGo = false;
             });
         if (!goodToGo)
+            return false;
+        if (!atLeastOneString)
             return false;
 
         m_graph.doToChildren(
@@ -3695,6 +3759,14 @@ private:
             [&] (Edge& edge) {
                 if (edge->shouldSpeculateString()) {
                     convertStringAddUse<StringUse>(node, edge);
+                    return;
+                }
+                if (edge->shouldSpeculateInt32()) {
+                    convertStringAddUse<Int32Use>(node, edge);
+                    return;
+                }
+                if (edge->op() == ToPrimitive) {
+                    convertStringAddUse<KnownPrimitiveUse>(node, edge);
                     return;
                 }
                 if (!Options::useConcurrentJIT())

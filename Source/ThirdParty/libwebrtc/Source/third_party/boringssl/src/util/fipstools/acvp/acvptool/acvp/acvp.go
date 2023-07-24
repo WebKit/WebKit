@@ -23,7 +23,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
@@ -32,6 +31,8 @@ import (
 	"strings"
 	"time"
 )
+
+const loginEndpoint = "acvp/v1/login"
 
 // Server represents an ACVP server.
 type Server struct {
@@ -89,7 +90,7 @@ func NewServer(prefix string, logFile string, derCertificates [][]byte, privateK
 				return conn, err
 			},
 		},
-		Timeout: 30 * time.Second,
+		Timeout: 120 * time.Second,
 	}
 
 	return &Server{client: client, prefix: prefix, totpFunc: totp, PrefixTokens: make(map[string]string)}
@@ -166,12 +167,12 @@ func parseReplyToBytes(in io.Reader) ([]byte, error) {
 		return nil, err
 	}
 
-	buf, err := ioutil.ReadAll(decoder.Buffered())
+	buf, err := io.ReadAll(decoder.Buffered())
 	if err != nil {
 		return nil, err
 	}
 
-	rest, err := ioutil.ReadAll(in)
+	rest, err := io.ReadAll(in)
 	if err != nil {
 		return nil, err
 	}
@@ -194,7 +195,7 @@ func parseReplyToBytes(in io.Reader) ([]byte, error) {
 // parseReply parses the contents of an ACVP reply (after removing the header
 // element) into out. See the documentation of the encoding/json package for
 // details of the parsing.
-func parseReply(out interface{}, in io.Reader) error {
+func parseReply(out any, in io.Reader) error {
 	if out == nil {
 		// No reply expected.
 		return nil
@@ -239,7 +240,7 @@ func expired(tokenStr string) bool {
 	if json.Unmarshal(jsonBytes, &token) != nil {
 		return false
 	}
-	return token.Expiry > 0 && token.Expiry < uint64(time.Now().Unix())
+	return token.Expiry > 0 && token.Expiry < uint64(time.Now().Add(-10*time.Second).Unix())
 }
 
 func (server *Server) getToken(endPoint string) (string, error) {
@@ -255,7 +256,7 @@ func (server *Server) getToken(endPoint string) (string, error) {
 		var reply struct {
 			AccessToken string `json:"accessToken"`
 		}
-		if err := server.postMessage(&reply, "acvp/v1/login", map[string]string{
+		if err := server.postMessage(&reply, loginEndpoint, map[string]string{
 			"password":    server.totpFunc(),
 			"accessToken": token,
 		}); err != nil {
@@ -278,7 +279,7 @@ func (server *Server) Login() error {
 		SizeLimit             int64  `json:"sizeConstraint"`
 	}
 
-	if err := server.postMessage(&reply, "acvp/v1/login", map[string]string{"password": server.totpFunc()}); err != nil {
+	if err := server.postMessage(&reply, loginEndpoint, map[string]string{"password": server.totpFunc()}); err != nil {
 		return err
 	}
 
@@ -372,13 +373,13 @@ func (server *Server) newRequestWithToken(method, endpoint string, body io.Reade
 	if err != nil {
 		return nil, err
 	}
-	if len(token) != 0 {
+	if len(token) != 0 && endpoint != loginEndpoint {
 		req.Header.Add("Authorization", "Bearer "+token)
 	}
 	return req, nil
 }
 
-func (server *Server) Get(out interface{}, endPoint string) error {
+func (server *Server) Get(out any, endPoint string) error {
 	req, err := server.newRequestWithToken("GET", endPoint, nil)
 	if err != nil {
 		return err
@@ -416,7 +417,7 @@ func (server *Server) GetBytes(endPoint string) ([]byte, error) {
 	return parseReplyToBytes(resp.Body)
 }
 
-func (server *Server) write(method string, reply interface{}, endPoint string, contents []byte) error {
+func (server *Server) write(method string, reply any, endPoint string, contents []byte) error {
 	var buf bytes.Buffer
 	buf.WriteString(requestPrefix)
 	buf.Write(contents)
@@ -441,7 +442,7 @@ func (server *Server) write(method string, reply interface{}, endPoint string, c
 	return parseReply(reply, resp.Body)
 }
 
-func (server *Server) postMessage(reply interface{}, endPoint string, request interface{}) error {
+func (server *Server) postMessage(reply any, endPoint string, request any) error {
 	contents, err := json.Marshal(request)
 	if err != nil {
 		return err
@@ -449,11 +450,11 @@ func (server *Server) postMessage(reply interface{}, endPoint string, request in
 	return server.write("POST", reply, endPoint, contents)
 }
 
-func (server *Server) Post(out interface{}, endPoint string, contents []byte) error {
+func (server *Server) Post(out any, endPoint string, contents []byte) error {
 	return server.write("POST", out, endPoint, contents)
 }
 
-func (server *Server) Put(out interface{}, endPoint string, contents []byte) error {
+func (server *Server) Put(out any, endPoint string, contents []byte) error {
 	return server.write("PUT", out, endPoint, contents)
 }
 
@@ -480,7 +481,7 @@ var (
 
 // GetPaged returns an array of records of some type using one or more requests to the server. See
 // https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html#paging_response
-func (server *Server) GetPaged(out interface{}, endPoint string, condition Query) error {
+func (server *Server) GetPaged(out any, endPoint string, condition Query) error {
 	output := reflect.ValueOf(out)
 	if output.Kind() != reflect.Ptr {
 		panic(fmt.Sprintf("GetPaged output parameter of non-pointer type %T", out))
@@ -617,22 +618,22 @@ type OperationalEnvironment struct {
 	Dependencies   []Dependency `json:"dependencies,omitempty"`
 }
 
-type Dependency map[string]interface{}
+type Dependency map[string]any
 
-type Algorithm map[string]interface{}
+type Algorithm map[string]any
 
 type TestSession struct {
-	URL           string                   `json:"url,omitempty"`
-	ACVPVersion   string                   `json:"acvpVersion,omitempty"`
-	Created       string                   `json:"createdOn,omitempty"`
-	Expires       string                   `json:"expiresOn,omitempty"`
-	VectorSetURLs []string                 `json:"vectorSetUrls,omitempty"`
-	AccessToken   string                   `json:"accessToken,omitempty"`
-	Algorithms    []map[string]interface{} `json:"algorithms,omitempty"`
-	EncryptAtRest bool                     `json:"encryptAtRest,omitempty"`
-	IsSample      bool                     `json:"isSample,omitempty"`
-	Publishable   bool                     `json:"publishable,omitempty"`
-	Passed        bool                     `json:"passed,omitempty"`
+	URL           string           `json:"url,omitempty"`
+	ACVPVersion   string           `json:"acvpVersion,omitempty"`
+	Created       string           `json:"createdOn,omitempty"`
+	Expires       string           `json:"expiresOn,omitempty"`
+	VectorSetURLs []string         `json:"vectorSetUrls,omitempty"`
+	AccessToken   string           `json:"accessToken,omitempty"`
+	Algorithms    []map[string]any `json:"algorithms,omitempty"`
+	EncryptAtRest bool             `json:"encryptAtRest,omitempty"`
+	IsSample      bool             `json:"isSample,omitempty"`
+	Publishable   bool             `json:"publishable,omitempty"`
+	Passed        bool             `json:"passed,omitempty"`
 }
 
 type Vectors struct {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Google Inc. All rights reserved.
  * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,7 +56,6 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "TextSizeAdjustment.h"
-#include "WillChangeData.h"
 
 namespace WebCore {
 namespace Style {
@@ -89,7 +88,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BoxShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CaretColor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Clip);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(Contain);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(Color);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicHeight);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Content);
@@ -107,9 +106,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateAreas);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateColumns);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateRows);
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(ImageResolution);
-#endif
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LetterSpacing);
 #if ENABLE(TEXT_AUTOSIZING)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LineHeight);
@@ -136,8 +132,6 @@ public:
     static void applyInheritWebkitMaskImage(BuilderState&) { }
 
     // Custom handling of inherit + value setting only.
-    static void applyInheritDisplay(BuilderState&);
-    static void applyValueDisplay(BuilderState&, CSSValue&);
     static void applyInheritVerticalAlign(BuilderState&);
     static void applyValueVerticalAlign(BuilderState&, CSSValue&);
     static void applyInheritBaselineShift(BuilderState&);
@@ -153,7 +147,6 @@ public:
     static void applyValueWebkitTextZoom(BuilderState&, CSSValue&);
     static void applyValueWritingMode(BuilderState&, CSSValue&);
     static void applyValueAlt(BuilderState&, CSSValue&);
-    static void applyValueWillChange(BuilderState&, CSSValue&);
     static void applyValueFontSizeAdjust(BuilderState&, CSSValue&);
 
 #if ENABLE(DARK_MODE_CSS)
@@ -167,8 +160,6 @@ public:
     static void applyInheritCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const AtomString& name);
     static void applyValueCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const CSSCustomPropertyValue&);
 
-    static void applyValueColor(BuilderState&, CSSValue&);
-
 private:
     static void resetEffectiveZoom(BuilderState&);
 
@@ -178,7 +169,6 @@ private:
 
     template <CSSPropertyID id>
     static void applyTextOrBoxShadowValue(BuilderState&, CSSValue&);
-    static bool isValidDisplayValue(BuilderState&, DisplayType);
 
     enum CounterBehavior {Increment = 0, Reset};
     template <CounterBehavior counterBehavior>
@@ -335,43 +325,6 @@ inline void BuilderCustom::applyValueVerticalAlign(BuilderState& builderState, C
     else
         builderState.style().setVerticalAlignLength(primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData()));
 }
-
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-
-inline void BuilderCustom::applyInheritImageResolution(BuilderState& builderState)
-{
-    builderState.style().setImageResolutionSource(builderState.parentStyle().imageResolutionSource());
-    builderState.style().setImageResolutionSnap(builderState.parentStyle().imageResolutionSnap());
-    builderState.style().setImageResolution(builderState.parentStyle().imageResolution());
-}
-
-inline void BuilderCustom::applyInitialImageResolution(BuilderState& builderState)
-{
-    builderState.style().setImageResolutionSource(RenderStyle::initialImageResolutionSource());
-    builderState.style().setImageResolutionSnap(RenderStyle::initialImageResolutionSnap());
-    builderState.style().setImageResolution(RenderStyle::initialImageResolution());
-}
-
-inline void BuilderCustom::applyValueImageResolution(BuilderState& builderState, CSSValue& value)
-{
-    ImageResolutionSource source = RenderStyle::initialImageResolutionSource();
-    ImageResolutionSnap snap = RenderStyle::initialImageResolutionSnap();
-    double resolution = RenderStyle::initialImageResolution();
-    for (auto& item : downcast<CSSValueList>(value)) {
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
-        if (primitiveValue.valueID() == CSSValueFromImage)
-            source = ImageResolutionSource::FromImage;
-        else if (primitiveValue.valueID() == CSSValueSnap)
-            snap = ImageResolutionSnap::Pixels;
-        else
-            resolution = primitiveValue.doubleValue(CSSUnitType::CSS_DPPX);
-    }
-    builderState.style().setImageResolutionSource(source);
-    builderState.style().setImageResolutionSnap(snap);
-    builderState.style().setImageResolution(resolution);
-}
-
-#endif // ENABLE(CSS_IMAGE_RESOLUTION)
 
 inline void BuilderCustom::applyInheritSize(BuilderState&)
 {
@@ -1037,7 +990,7 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
                 isGenericFamily = true;
                 family = CSSPropertyParserHelpers::genericFontFamily(contentValue.valueID());
             }
-            if (family.isEmpty())
+            if (family.isNull())
                 continue;
             if (families.isEmpty())
                 fontDescription.setIsSpecifiedFont(!isGenericFamily);
@@ -1129,13 +1082,6 @@ inline void BuilderCustom::applyValueBorderTopRightRadius(BuilderState& builderS
     builderState.style().setHasExplicitlySetBorderTopRightRadius(true);
 }
 
-inline bool BuilderCustom::isValidDisplayValue(BuilderState& builderState, DisplayType display)
-{
-    if (is<SVGElement>(builderState.element()) && builderState.style().styleType() == PseudoId::None)
-        return display == DisplayType::Inline || display == DisplayType::Block || display == DisplayType::None;
-    return true;
-}
-
 inline void BuilderCustom::applyInitialFontVariationSettings(BuilderState& builderState)
 {
     builderState.style().setFontVariationSettings({ });
@@ -1144,20 +1090,6 @@ inline void BuilderCustom::applyInitialFontVariationSettings(BuilderState& build
 inline void BuilderCustom::applyInheritFontVariationSettings(BuilderState& builderState)
 {
     builderState.style().setFontVariationSettings(builderState.parentStyle().fontVariationSettings());
-}
-
-inline void BuilderCustom::applyInheritDisplay(BuilderState& builderState)
-{
-    DisplayType display = builderState.parentStyle().display();
-    if (isValidDisplayValue(builderState, display))
-        builderState.style().setDisplay(display);
-}
-
-inline void BuilderCustom::applyValueDisplay(BuilderState& builderState, CSSValue& value)
-{
-    auto display = fromCSSValue<DisplayType>(value);
-    if (isValidDisplayValue(builderState, display))
-        builderState.style().setDisplay(display);
 }
 
 inline void BuilderCustom::applyInheritBaselineShift(BuilderState& builderState)
@@ -1241,56 +1173,6 @@ inline void BuilderCustom::applyValueAspectRatio(BuilderState& builderState, CSS
     else
         builderState.style().setAspectRatioType(AspectRatioType::Ratio);
     builderState.style().setAspectRatio(width, height);
-}
-
-inline void BuilderCustom::applyInitialContain(BuilderState& builderState)
-{
-    builderState.style().setContain(RenderStyle::initialContainment());
-}
-
-inline void BuilderCustom::applyInheritContain(BuilderState& builderState)
-{
-    builderState.style().setContain(forwardInheritedValue(builderState.parentStyle().contain()));
-}
-
-inline void BuilderCustom::applyValueContain(BuilderState& builderState, CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        if (value.valueID() == CSSValueNone)
-            return builderState.style().setContain(RenderStyle::initialContainment());
-        if (value.valueID() == CSSValueStrict)
-            return builderState.style().setContain(RenderStyle::strictContainment());
-        return builderState.style().setContain(RenderStyle::contentContainment());
-    }
-
-    if (!is<CSSValueList>(value))
-        return;
-
-    OptionSet<Containment> containment;
-    auto& list = downcast<CSSValueList>(value);
-    for (auto& item : list) {
-        auto& value = downcast<CSSPrimitiveValue>(item);
-        switch (value.valueID()) {
-        case CSSValueSize:
-            containment.add(Containment::Size);
-            break;
-        case CSSValueInlineSize:
-            containment.add(Containment::InlineSize);
-            break;
-        case CSSValueLayout:
-            containment.add(Containment::Layout);
-            break;
-        case CSSValuePaint:
-            containment.add(Containment::Paint);
-            break;
-        case CSSValueStyle:
-            containment.add(Containment::Style);
-            break;
-        default:
-            break;
-        };
-    }
-    return builderState.style().setContain(containment);
 }
 
 inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderState, CSSValue& value)
@@ -2026,43 +1908,6 @@ void BuilderCustom::applyValueAlt(BuilderState& builderState, CSSValue& value)
         builderState.style().setContentAltText(emptyAtom());
 }
 
-inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSValue& value)
-{
-    if (value.valueID() == CSSValueAuto) {
-        builderState.style().setWillChange(nullptr);
-        return;
-    }
-
-    auto willChange = WillChangeData::create();
-    auto processSingleValue = [&](const CSSValue& item) {
-        if (!is<CSSPrimitiveValue>(item))
-            return;
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(item);
-        switch (primitiveValue.valueID()) {
-        case CSSValueScrollPosition:
-            willChange->addFeature(WillChangeData::Feature::ScrollPosition);
-            break;
-        case CSSValueContents:
-            willChange->addFeature(WillChangeData::Feature::Contents);
-            break;
-        default:
-            if (primitiveValue.isPropertyID()) {
-                if (!isExposed(primitiveValue.propertyID(), &builderState.document().settings()))
-                    break;
-                willChange->addFeature(WillChangeData::Feature::Property, primitiveValue.propertyID());
-            }
-            break;
-        }
-    };
-    if (is<CSSValueList>(value)) {
-        for (auto& item : downcast<CSSValueList>(value))
-            processSingleValue(item);
-    } else
-        processSingleValue(value);
-
-    builderState.style().setWillChange(WTFMove(willChange));
-}
-
 inline void BuilderCustom::applyValueStrokeWidth(BuilderState& builderState, CSSValue& value)
 {
     builderState.style().setStrokeWidth(BuilderConverter::convertLengthAllowingNumber(builderState, value));
@@ -2096,7 +1941,31 @@ inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue&
         auto color = builderState.colorFromPrimitiveValue(primitiveValue, ForVisitedLink::Yes);
         builderState.style().setVisitedLinkColor(resolveColor(color));
     }
+
     builderState.style().setDisallowsFastPathInheritance();
+    builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin());
+}
+
+inline void BuilderCustom::applyInitialColor(BuilderState& builderState)
+{
+    if (builderState.applyPropertyToRegularStyle())
+        builderState.style().setColor(RenderStyle::initialColor());
+    if (builderState.applyPropertyToVisitedLinkStyle())
+        builderState.style().setVisitedLinkColor(RenderStyle::initialColor());
+
+    builderState.style().setDisallowsFastPathInheritance();
+    builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin());
+}
+
+inline void BuilderCustom::applyInheritColor(BuilderState& builderState)
+{
+    if (builderState.applyPropertyToRegularStyle())
+        builderState.style().setColor(builderState.parentStyle().color());
+    if (builderState.applyPropertyToVisitedLinkStyle())
+        builderState.style().setVisitedLinkColor(builderState.parentStyle().color());
+
+    builderState.style().setDisallowsFastPathInheritance();
+    builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin());
 }
 
 inline void BuilderCustom::applyInitialCustomProperty(BuilderState& builderState, const CSSRegisteredCustomProperty* registered, const AtomString& name)
@@ -2135,8 +2004,10 @@ inline void BuilderCustom::applyInitialContainIntrinsicWidth(BuilderState& build
     builderState.style().setContainIntrinsicWidth(RenderStyle::initialContainIntrinsicWidth());
 }
 
-inline void BuilderCustom::applyInheritContainIntrinsicWidth(BuilderState&)
+inline void BuilderCustom::applyInheritContainIntrinsicWidth(BuilderState& builderState)
 {
+    builderState.style().setContainIntrinsicWidthType(builderState.parentStyle().containIntrinsicWidthType());
+    builderState.style().setContainIntrinsicWidth(builderState.parentStyle().containIntrinsicWidth());
 }
 
 inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builderState, CSSValue& value)
@@ -2157,16 +2028,19 @@ inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builder
         return;
     }
 
-    if (!is<CSSValueList>(value))
+    if (!is<CSSValuePair>(value))
         return;
 
-    auto& list = downcast<CSSValueList>(value);
-    ASSERT(list.length() == 2);
-    ASSERT(downcast<CSSPrimitiveValue>(list.item(0))->valueID() == CSSValueAuto);
-    ASSERT(downcast<CSSPrimitiveValue>(list.item(1))->isLength());
-    style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndLength);
-    auto lengthValue = downcast<CSSPrimitiveValue>(list.item(1))->computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-    style.setContainIntrinsicWidth(lengthValue);
+    auto& pair = downcast<CSSValuePair>(value);
+    ASSERT(downcast<CSSPrimitiveValue>(pair.first()).valueID() == CSSValueAuto);
+    if (downcast<CSSPrimitiveValue>(pair.second()).valueID() == CSSValueNone)
+        style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndNone);
+    else {
+        ASSERT(downcast<CSSPrimitiveValue>(pair.second()).isLength());
+        style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndLength);
+        auto lengthValue = downcast<CSSPrimitiveValue>(pair.second()).computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        style.setContainIntrinsicWidth(lengthValue);
+    }
 }
 
 inline void BuilderCustom::applyInitialContainIntrinsicHeight(BuilderState& builderState)
@@ -2175,8 +2049,10 @@ inline void BuilderCustom::applyInitialContainIntrinsicHeight(BuilderState& buil
     builderState.style().setContainIntrinsicHeight(RenderStyle::initialContainIntrinsicHeight());
 }
 
-inline void BuilderCustom::applyInheritContainIntrinsicHeight(BuilderState&)
+inline void BuilderCustom::applyInheritContainIntrinsicHeight(BuilderState& builderState)
 {
+    builderState.style().setContainIntrinsicHeightType(builderState.parentStyle().containIntrinsicHeightType());
+    builderState.style().setContainIntrinsicHeight(builderState.parentStyle().containIntrinsicHeight());
 }
 
 inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builderState, CSSValue& value)
@@ -2197,16 +2073,19 @@ inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builde
         return;
     }
 
-    if (!is<CSSValueList>(value))
+    if (!is<CSSValuePair>(value))
         return;
 
-    auto& list = downcast<CSSValueList>(value);
-    ASSERT(list.length() == 2);
-    ASSERT(downcast<CSSPrimitiveValue>(list.item(0))->valueID() == CSSValueAuto);
-    ASSERT(downcast<CSSPrimitiveValue>(list.item(1))->isLength());
-    style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndLength);
-    auto lengthValue = downcast<CSSPrimitiveValue>(list.item(1))->computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-    style.setContainIntrinsicHeight(lengthValue);
+    auto& pair = downcast<CSSValuePair>(value);
+    ASSERT(downcast<CSSPrimitiveValue>(pair.first()).valueID() == CSSValueAuto);
+    if (downcast<CSSPrimitiveValue>(pair.second()).valueID() == CSSValueNone)
+        style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndNone);
+    else {
+        ASSERT(downcast<CSSPrimitiveValue>(pair.second()).isLength());
+        style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndLength);
+        auto lengthValue = downcast<CSSPrimitiveValue>(pair.second()).computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        style.setContainIntrinsicHeight(lengthValue);
+    }
 }
 
 }

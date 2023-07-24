@@ -66,7 +66,10 @@ public:
     JSWebAssemblyInstance* owner() const { return m_owner; }
     static ptrdiff_t offsetOfOwner() { return OBJECT_OFFSETOF(Instance, m_owner); }
     static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(Instance, m_vm); }
+    static ptrdiff_t offsetOfSoftStackLimit() { return OBJECT_OFFSETOF(Instance, m_softStackLimit); }
     static ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(Instance, m_globalObject); }
+
+    void updateSoftStackLimit(void* softStackLimit) { m_softStackLimit = softStackLimit; }
 
     size_t extraMemoryAllocated() const;
 
@@ -246,6 +249,7 @@ private:
         return roundUpToMultipleOf<sizeof(Global::Value)>(offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * numTables) + sizeof(Global::Value) * numGlobals;
     }
     VM* m_vm;
+    void* m_softStackLimit { nullptr };
     JSWebAssemblyInstance* m_owner { nullptr };
     JSGlobalObject* m_globalObject; // This is kept by JSWebAssemblyInstance*.
     CagedPtr<Gigacage::Primitive, void, tagCagedPtr> m_cachedMemory;

@@ -60,7 +60,7 @@ ABSL_FLAG(std::string,
 ABSL_FLAG(std::string,
           level_file,
           "level.int32",
-          "The name of the level file.");
+          "The name of the applied input volume file.");
 ABSL_FLAG(std::string,
           keypress_file,
           "keypress.bool",
@@ -468,10 +468,10 @@ int do_main(int argc, char* argv[]) {
           }
         }
 
-        if (msg.has_level()) {
+        if (msg.has_applied_input_volume()) {
           static FILE* level_file =
               OpenFile(absl::GetFlag(FLAGS_level_file), "wb");
-          int32_t level = msg.level();
+          int32_t level = msg.applied_input_volume();
           if (absl::GetFlag(FLAGS_text)) {
             fprintf(level_file, "%d\n", level);
           } else {

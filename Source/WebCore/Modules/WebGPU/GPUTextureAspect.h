@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUTextureAspect.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUTextureAspect.h>
 
 namespace WebCore {
 
@@ -36,15 +36,15 @@ enum class GPUTextureAspect : uint8_t {
     DepthOnly,
 };
 
-inline PAL::WebGPU::TextureAspect convertToBacking(GPUTextureAspect textureAspect)
+inline WebGPU::TextureAspect convertToBacking(GPUTextureAspect textureAspect)
 {
     switch (textureAspect) {
     case GPUTextureAspect::All:
-        return PAL::WebGPU::TextureAspect::All;
+        return WebGPU::TextureAspect::All;
     case GPUTextureAspect::StencilOnly:
-        return PAL::WebGPU::TextureAspect::StencilOnly;
+        return WebGPU::TextureAspect::StencilOnly;
     case GPUTextureAspect::DepthOnly:
-        return PAL::WebGPU::TextureAspect::DepthOnly;
+        return WebGPU::TextureAspect::DepthOnly;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

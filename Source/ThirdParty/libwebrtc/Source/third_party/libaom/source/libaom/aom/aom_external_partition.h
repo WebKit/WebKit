@@ -246,7 +246,7 @@ typedef struct aom_partition_features {
   int block_size;                 ///< As "BLOCK_SIZE" in av1/common/enums.h
   /*!
    * Valid partition types. A bitmask is used.  "1" represents the
-   * corresponding type is vaild. The bitmask follows the enum order for
+   * corresponding type is valid. The bitmask follows the enum order for
    * PARTITION_TYPE in "enums.h" to represent one partition type at a bit.
    * For example, 0x01 stands for only PARTITION_NONE is valid,
    * 0x09 (00...001001) stands for PARTITION_NONE and PARTITION_SPLIT are valid.
@@ -313,10 +313,10 @@ typedef struct aom_partition_decision {
   int do_rectangular_split;        ///< Try rectangular split partition
   int do_square_split;             ///< Try square split partition
   int prune_rect_part[2];          ///< Prune rectangular partition
-  int horza_partition_allowed;     ///< Allow HORZ_A partitioin
-  int horzb_partition_allowed;     ///< Allow HORZ_B partitioin
-  int verta_partition_allowed;     ///< Allow VERT_A partitioin
-  int vertb_partition_allowed;     ///< Allow VERT_B partitioin
+  int horza_partition_allowed;     ///< Allow HORZ_A partition
+  int horzb_partition_allowed;     ///< Allow HORZ_B partition
+  int verta_partition_allowed;     ///< Allow VERT_A partition
+  int vertb_partition_allowed;     ///< Allow VERT_B partition
   int partition_horz4_allowed;     ///< Allow HORZ4 partition
   int partition_vert4_allowed;     ///< Allow VERT4 partition
 } aom_partition_decision_t;
@@ -326,7 +326,7 @@ typedef struct aom_partition_decision {
  * The encoding stats collected by encoding the superblock with the
  * given partition types.
  * The encoder sends the stats to the external model for training
- * or inference though "func()" defined in ....
+ * or inference through "func()" defined in ....
  */
 typedef struct aom_partition_stats {
   int rate;        ///< Rate cost of the block

@@ -61,7 +61,7 @@ TEST(WebKit, AudioBufferSize)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     configuration.get().allowsInlineMediaPlayback = YES;
     configuration.get()._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
 #endif

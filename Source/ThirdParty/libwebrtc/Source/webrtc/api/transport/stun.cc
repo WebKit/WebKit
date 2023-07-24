@@ -24,6 +24,7 @@
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/message_digest.h"
+#include "system_wrappers/include/metrics.h"
 
 using rtc::ByteBufferReader;
 using rtc::ByteBufferWriter;
@@ -238,6 +239,8 @@ const StunUInt16ListAttribute* StunMessage::GetUnknownAttributes() const {
 
 StunMessage::IntegrityStatus StunMessage::ValidateMessageIntegrity(
     const std::string& password) {
+  RTC_DCHECK(integrity_ == IntegrityStatus::kNotSet)
+      << "Usage error: Verification should only be done once";
   password_ = password;
   if (GetByteString(STUN_ATTR_MESSAGE_INTEGRITY)) {
     if (ValidateMessageIntegrityOfType(
@@ -258,9 +261,101 @@ StunMessage::IntegrityStatus StunMessage::ValidateMessageIntegrity(
   } else {
     integrity_ = IntegrityStatus::kNoIntegrity;
   }
+  // Log the result of integrity checking. See crbug.com/1177125 for background.
+  // Convert args to integer for the benefit of the macros.
+  int bucket_count = static_cast<int>(IntegrityStatus::kMaxValue) + 1;
+  int integrity = static_cast<int>(integrity_);
+  if (IsStunRequestType(type_)) {
+    RTC_HISTOGRAM_ENUMERATION("WebRTC.Stun.Integrity.Request", integrity,
+                              bucket_count);
+  } else if (IsStunSuccessResponseType(type_)) {
+    RTC_HISTOGRAM_ENUMERATION("WebRTC.Stun.Integrity.Response", integrity,
+                              bucket_count);
+  } else if (IsStunIndicationType(type_)) {
+    RTC_HISTOGRAM_ENUMERATION("WebRTC.Stun.Integrity.Indication", integrity,
+                              bucket_count);
+  } else {
+    RTC_DCHECK(IsStunErrorResponseType(type_));
+    auto* error_attribute = GetErrorCode();
+    if (!error_attribute) {
+      RTC_HISTOGRAM_ENUMERATION(
+          "WebRTC.Stun.Integrity.ErrorResponse.NoErrorAttribute", integrity,
+          bucket_count);
+    } else {
+      switch (error_attribute->code()) {
+        case STUN_ERROR_TRY_ALTERNATE:
+          RTC_HISTOGRAM_ENUMERATION(
+              "WebRTC.Stun.Integrity.ErrorResponse.TryAlternate", integrity,
+              bucket_count);
+          break;
+        case STUN_ERROR_BAD_REQUEST:
+          RTC_HISTOGRAM_ENUMERATION(
+              "WebRTC.Stun.Integrity.ErrorResponse.BadRequest", integrity,
+              bucket_count);
+          break;
+        case STUN_ERROR_UNAUTHORIZED:
+          RTC_HISTOGRAM_ENUMERATION(
+              "WebRTC.Stun.Integrity.ErrorResponse.Unauthorized", integrity,
+              bucket_count);
+          break;
+        case STUN_ERROR_UNKNOWN_ATTRIBUTE:
+          RTC_HISTOGRAM_ENUMERATION(
+              "WebRTC.Stun.Integrity.ErrorResponse.UnknownAttribute", integrity,
+              bucket_count);
+          break;
+        case STUN_ERROR_STALE_NONCE:
+          RTC_HISTOGRAM_ENUMERATION(
+              "WebRTC.Stun.Integrity.ErrorResponse.StaleNonce", integrity,
+              bucket_count);
+          break;
+        case STUN_ERROR_SERVER_ERROR:
+          RTC_HISTOGRAM_ENUMERATION(
+              "WebRTC.Stun.Integrity.ErrorResponse.ServerError", integrity,
+              bucket_count);
+          break;
+        case STUN_ERROR_GLOBAL_FAILURE:
+          RTC_HISTOGRAM_ENUMERATION(
+              "WebRTC.Stun.Integrity.ErrorResponse.GlobalFailure", integrity,
+              bucket_count);
+          break;
+        default:
+          RTC_HISTOGRAM_ENUMERATION(
+              "WebRTC.Stun.Integrity.ErrorResponse.ErrorOther", integrity,
+              bucket_count);
+          break;
+      }
+    }
+  }
   return integrity_;
 }
 
+StunMessage::IntegrityStatus StunMessage::RevalidateMessageIntegrity(
+    const std::string& password) {
+  RTC_LOG(LS_INFO) << "Message revalidation, old status was "
+                   << static_cast<int>(integrity_);
+  integrity_ = IntegrityStatus::kNotSet;
+  return ValidateMessageIntegrity(password);
+}
+
+bool StunMessage::ValidateMessageIntegrityForTesting(
+    const char* data,
+    size_t size,
+    const std::string& password) {
+  return ValidateMessageIntegrityOfType(STUN_ATTR_MESSAGE_INTEGRITY,
+                                        kStunMessageIntegritySize, data, size,
+                                        password);
+}
+
+bool StunMessage::ValidateMessageIntegrity32ForTesting(
+    const char* data,
+    size_t size,
+    const std::string& password) {
+  return ValidateMessageIntegrityOfType(STUN_ATTR_GOOG_MESSAGE_INTEGRITY_32,
+                                        kStunMessageIntegrity32Size, data, size,
+                                        password);
+}
+
+// Deprecated
 bool StunMessage::ValidateMessageIntegrity(const char* data,
                                            size_t size,
                                            const std::string& password) {
@@ -269,6 +364,7 @@ bool StunMessage::ValidateMessageIntegrity(const char* data,
                                         password);
 }
 
+// Deprecated
 bool StunMessage::ValidateMessageIntegrity32(const char* data,
                                              size_t size,
                                              const std::string& password) {

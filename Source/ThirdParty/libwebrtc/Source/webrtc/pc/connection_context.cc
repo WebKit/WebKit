@@ -167,13 +167,13 @@ ConnectionContext::ConnectionContext(
   if (media_engine_) {
     // TODO(tommi): Change VoiceEngine to do ctor time initialization so that
     // this isn't necessary.
-    worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] { media_engine_->Init(); });
+    worker_thread_->BlockingCall([&] { media_engine_->Init(); });
   }
 }
 
 ConnectionContext::~ConnectionContext() {
   RTC_DCHECK_RUN_ON(signaling_thread_);
-  worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+  worker_thread_->BlockingCall([&] {
     RTC_DCHECK_RUN_ON(worker_thread());
     // While `media_engine_` is const throughout the ConnectionContext's
     // lifetime, it requires destruction to happen on the worker thread. Instead

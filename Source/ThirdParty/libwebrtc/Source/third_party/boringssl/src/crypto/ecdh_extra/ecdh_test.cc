@@ -274,6 +274,7 @@ TEST(ECDHTest, GroupMismatch) {
       }
 
       bssl::UniquePtr<EC_KEY> key(EC_KEY_new());
+      ASSERT_TRUE(key);
       ASSERT_TRUE(EC_KEY_set_group(key.get(), a.get()));
       ASSERT_TRUE(EC_KEY_generate_key(key.get()));
 

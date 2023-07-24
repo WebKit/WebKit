@@ -76,6 +76,8 @@ class RenderObject;
 class RevalidateStyleAttributeTask;
 class ShadowRoot;
 
+enum class PlatformEventModifier : uint8_t;
+
 struct Styleable;
 
 class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler {
@@ -211,7 +213,7 @@ public:
 
     RefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();
-    void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
+    void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>);
     void inspect(Node*);
     void focusNode();
 

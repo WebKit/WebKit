@@ -75,4 +75,4 @@ layer at (0,0) size 800x600
                   text run at (0,40) width 703: "correctly ignored the incorrect selector, but has suppressed other styles which are valid, and therefore must be"
                   text run at (0,60) width 215: "considered to have failed the test."
 layer at (8,113) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,105) size 784x2 [color=#808080] [border: (1px inset #808080)]

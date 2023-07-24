@@ -24,7 +24,7 @@
 #include "FeatureDefines.xcconfig"
 #include "../../../Configurations/Version.xcconfig"
 
-FRAMEWORK_SEARCH_PATHS = "$(SDK_DIR)$(UMBRELLA_FRAMEWORKS_DIR)" $(WK_PRIVATE_FRAMEWORK_STUBS_DIR);
+FRAMEWORK_SEARCH_PATHS = "$(SDK_DIR)$(UMBRELLA_FRAMEWORKS_DIR)";
 
 SYSTEM_FRAMEWORK_SEARCH_PATHS = $(inherited) $(SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SDK_DIR)$(SYSTEM_LIBRARY_DIR)/Frameworks;
 

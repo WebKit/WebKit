@@ -56,9 +56,13 @@ if (is_android) {
 
     deps = [
       ":generated_jni",
+      "../../rtc_base:async_packet_socket",
+      "../../rtc_base:async_udp_socket",
       "../../rtc_base:logging",
+      "../../rtc_base:network",
       "../../rtc_base:socket_address",
       "../../rtc_base:socket_server",
+      "../../rtc_base:ssl",
       "../../rtc_base:threading",
       "//api:transport_api",
       "//api/audio_codecs:audio_codecs_api",
@@ -67,7 +71,6 @@ if (is_android) {
       "//api/task_queue:default_task_queue_factory",
       "//api/voip:voip_api",
       "//api/voip:voip_engine_factory",
-      "//rtc_base",
       "//rtc_base/third_party/sigslot:sigslot",
       "//sdk/android:native_api_audio_device_module",
       "//sdk/android:native_api_base",

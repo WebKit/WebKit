@@ -1,8 +1,8 @@
 
 PASS Sanity check @supports color
 PASS @supports quirky color
-FAIL CSS.supports() quirky color assert_false: expected false got true
+PASS CSS.supports() quirky color
 PASS Sanity check @supports length
 PASS @supports quirky length
-FAIL CSS.supports() quirky length assert_false: expected false got true
+PASS CSS.supports() quirky length
 

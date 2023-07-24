@@ -242,7 +242,7 @@ messages -> NetworkProcess LegacyReceiver {
 
 #if HAVE(NW_PROXY_CONFIG)
     ClearProxyConfigData(PAL::SessionID sessionID)
-    SetProxyConfigData(PAL::SessionID sessionID, Vector<std::pair<Vector<uint8_t>, UUID>> proxyConfigurations)
+    SetProxyConfigData(PAL::SessionID sessionID, Vector<std::pair<Vector<uint8_t>, WTF::UUID>> proxyConfigurations)
 #endif
 
 }

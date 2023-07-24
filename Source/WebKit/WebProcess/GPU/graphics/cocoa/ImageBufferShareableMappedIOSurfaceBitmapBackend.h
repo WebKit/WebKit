@@ -47,6 +47,7 @@ public:
     static size_t calculateMemoryCost(const Parameters& parameters) { return WebCore::ImageBufferIOSurfaceBackend::calculateMemoryCost(parameters); }
 
     ImageBufferShareableMappedIOSurfaceBitmapBackend(const Parameters&, std::unique_ptr<WebCore::IOSurface>, WebCore::IOSurface::LockAndContext&&, WebCore::IOSurfacePool*);
+    ~ImageBufferShareableMappedIOSurfaceBitmapBackend();
 
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
     static constexpr bool isOriginAtBottomLeftCorner = true;
@@ -74,9 +75,10 @@ private:
     void transferToNewContext(const WebCore::ImageBufferCreationContext&) final;
     void getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication) final;
+    void flushContext() final;
 
     std::unique_ptr<WebCore::IOSurface> m_surface;
-    std::optional<WebCore::IOSurface::Locker> m_lock;
+    std::optional<WebCore::IOSurface::Locker<WebCore::IOSurface::AccessMode::ReadWrite>> m_lock;
     WebCore::VolatilityState m_volatilityState { WebCore::VolatilityState::NonVolatile };
     RefPtr<WebCore::IOSurfacePool> m_ioSurfacePool;
 };

@@ -57,6 +57,26 @@ inline RegisterSetBuilder Inst::extraEarlyClobberedRegs()
 }
 
 template<typename Thing, typename Functor>
+inline void Inst::forEachUse(Inst* prevInst, Inst* nextInst, const Functor& functor)
+{
+    if (prevInst) {
+        prevInst->forEach<Thing>(
+            [&] (Thing& thing, Arg::Role role, Bank argBank, Width argWidth) {
+                if (Arg::isLateUse(role))
+                    functor(thing, role, argBank, argWidth);
+            });
+    }
+
+    if (nextInst) {
+        nextInst->forEach<Thing>(
+            [&] (Thing& thing, Arg::Role role, Bank argBank, Width argWidth) {
+                if (Arg::isEarlyUse(role))
+                    functor(thing, role, argBank, argWidth);
+            });
+    }
+}
+
+template<typename Thing, typename Functor>
 inline void Inst::forEachDef(Inst* prevInst, Inst* nextInst, const Functor& functor)
 {
     if (prevInst) {

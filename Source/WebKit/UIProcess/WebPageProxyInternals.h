@@ -35,8 +35,10 @@
 #include "ScrollingAccelerationCurve.h"
 #include "VisibleWebPageCounter.h"
 #include "WebColorPicker.h"
+#include "WebFrameProxy.h"
 #include "WebNotificationManagerMessageHandler.h"
 #include "WebPageProxy.h"
+#include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebPopupMenuProxy.h"
 #include "WebURLSchemeHandlerIdentifier.h"
 #include "WindowKind.h"
@@ -214,8 +216,12 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     WindowKind windowKind { WindowKind::Unparented };
     PageAllowedToRunInTheBackgroundCounter::Token pageAllowedToRunInTheBackgroundToken;
 
-    HashMap<WebCore::RegistrableDomain, UniqueRef<SubframePageProxy>> domainToSubframePageProxyMap;
-    HashMap<WebCore::FrameIdentifier, WebCore::RegistrableDomain> frameIdentifierToDomainMap;
+    HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> domainToRemotePageProxyMap;
+    RefPtr<RemotePageProxy> remotePageProxyInOpenerProcess;
+    HashSet<Ref<RemotePageProxy>> openedRemotePageProxies;
+    WebPageProxyMessageReceiverRegistration messageReceiverRegistration;
+
+    WeakHashSet<WebPageProxy> m_openedPages;
 
 #if ENABLE(APPLE_PAY)
     std::unique_ptr<WebPaymentCoordinatorProxy> paymentCoordinator;
@@ -368,7 +374,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
     bool alwaysOnLoggingAllowed() const final { return page.sessionID().isAlwaysOnLoggingAllowed(); }
-    PlatformView* platformView() const final;
+    RetainPtr<PlatformView> platformView() const final;
 #endif
 };
 

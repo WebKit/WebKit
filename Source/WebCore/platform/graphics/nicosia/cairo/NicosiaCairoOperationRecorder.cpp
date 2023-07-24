@@ -406,7 +406,7 @@ void CairoOperationRecorder::fillEllipse(const FloatRect& rect)
         void execute(PaintingOperationReplay& replayer) override
         {
             Path path;
-            path.addEllipse(arg<0>());
+            path.addEllipseInRect(arg<0>());
             Cairo::fillPath(contextForReplay(replayer), path, arg<1>(), arg<2>());
         }
 
@@ -471,7 +471,7 @@ void CairoOperationRecorder::strokeEllipse(const FloatRect& rect)
         void execute(PaintingOperationReplay& replayer) override
         {
             Path path;
-            path.addEllipse(arg<0>());
+            path.addEllipseInRect(arg<0>());
             Cairo::strokePath(contextForReplay(replayer), path, arg<1>(), arg<2>());
         }
 

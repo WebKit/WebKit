@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,18 +30,18 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUValidationError.h>
+#include <WebCore/WebGPUValidationError.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ValidationError> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ValidationError& validationError)
+std::optional<ValidationError> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ValidationError& validationError)
 {
     return { { validationError.message() } };
 }
 
-RefPtr<PAL::WebGPU::ValidationError> ConvertFromBackingContext::convertFromBacking(const ValidationError& validationError)
+RefPtr<WebCore::WebGPU::ValidationError> ConvertFromBackingContext::convertFromBacking(const ValidationError& validationError)
 {
-    return { PAL::WebGPU::ValidationError::create(validationError.message) };
+    return { WebCore::WebGPU::ValidationError::create(validationError.message) };
 }
 
 } // namespace WebKit

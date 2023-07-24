@@ -1568,6 +1568,45 @@ void ScaleRowUp2_16_NEON(const uint16_t* src_ptr,
   );
 }
 
+void ScaleUVRowDown2_NEON(const uint8_t* src_ptr,
+                          ptrdiff_t src_stride,
+                          uint8_t* dst,
+                          int dst_width) {
+  (void)src_stride;
+  asm volatile(
+      "1:                                        \n"
+      "ld2         {v0.8h,v1.8h}, [%0], #32      \n"  // load 16 UV
+      "subs        %w2, %w2, #8                  \n"  // 8 processed per loop.
+      "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
+      "st1         {v1.8h}, [%1], #16            \n"  // store 8 UV
+      "b.gt        1b                            \n"
+      : "+r"(src_ptr),   // %0
+        "+r"(dst),       // %1
+        "+r"(dst_width)  // %2
+      :
+      : "memory", "cc", "v0", "v1");
+}
+
+void ScaleUVRowDown2Linear_NEON(const uint8_t* src_ptr,
+                                ptrdiff_t src_stride,
+                                uint8_t* dst,
+                                int dst_width) {
+  (void)src_stride;
+  asm volatile(
+      "1:                                        \n"
+      "ld2         {v0.8h,v1.8h}, [%0], #32      \n"  // load 16 UV
+      "subs        %w2, %w2, #8                  \n"  // 8 processed per loop.
+      "urhadd      v0.16b, v0.16b, v1.16b        \n"  // rounding half add
+      "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
+      "st1         {v0.8h}, [%1], #16            \n"  // store 8 UV
+      "b.gt        1b                            \n"
+      : "+r"(src_ptr),   // %0
+        "+r"(dst),       // %1
+        "+r"(dst_width)  // %2
+      :
+      : "memory", "cc", "v0", "v1");
+}
+
 void ScaleUVRowDown2Box_NEON(const uint8_t* src_ptr,
                              ptrdiff_t src_stride,
                              uint8_t* dst,

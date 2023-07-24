@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_HAVE_C_SPI && PLATFORM(IOS)
+#if WK_HAVE_C_SPI && (PLATFORM(IOS) || PLATFORM(VISION))
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -48,4 +48,4 @@ TEST(WebKit, IOKitOpenSandboxAccessForDeviceWithAGXCompilerService)
 
 }
 
-#endif // WK_HAVE_C_SPI
+#endif // WK_HAVE_C_SPI && PLATFORM(IOS) || PLATFORM(VISION)

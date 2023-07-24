@@ -684,64 +684,64 @@ layer at (0,0) size 785x6798
                   text run at (5,205) width 442: "floating elements appearing before text which precedes it in the source"
                   text run at (5,225) width 66: "document."
 layer at (8,201) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,193) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,193) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (32,283) size 579x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (24,275) size 579x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (24,275) size 579x2 [color=#808080] [border: (1px inset #808080)]
 layer at (372,427) size 41x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (364,419) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (364,419) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (32,531) size 579x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (24,523) size 579x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (24,523) size 579x2 [color=#808080] [border: (1px inset #808080)]
 layer at (372,815) size 41x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (364,807) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (364,807) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (32,1059) size 579x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (24,1051) size 579x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (24,1051) size 579x2 [color=#808080] [border: (1px inset #808080)]
 layer at (372,1477) size 41x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (364,1469) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (364,1469) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (32,1757) size 579x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (24,1749) size 579x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (24,1749) size 579x2 [color=#808080] [border: (1px inset #808080)]
 layer at (372,1921) size 41x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (364,1913) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (364,1913) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (32,2025) size 579x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (24,2017) size 579x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (24,2017) size 579x2 [color=#808080] [border: (1px inset #808080)]
 layer at (372,2209) size 41x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (364,2201) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (364,2201) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (32,2333) size 579x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (24,2325) size 579x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (24,2325) size 579x2 [color=#808080] [border: (1px inset #808080)]
 layer at (372,2657) size 41x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (364,2649) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (364,2649) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (32,2821) size 579x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (24,2813) size 579x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (24,2813) size 579x2 [color=#808080] [border: (1px inset #808080)]
 layer at (372,3185) size 41x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (364,3177) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (364,3177) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (32,3469) size 579x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (24,3461) size 579x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (24,3461) size 579x2 [color=#808080] [border: (1px inset #808080)]
 layer at (49,3612) size 562x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (28,88) size 563x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (28,88) size 563x2 [color=#808080] [border: (1px inset #808080)]
 layer at (379,3756) size 39x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (357,232) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (357,232) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (49,3860) size 562x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (28,336) size 563x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (28,336) size 563x2 [color=#808080] [border: (1px inset #808080)]
 layer at (379,4144) size 39x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (357,620) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (357,620) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (49,4388) size 562x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (28,864) size 563x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (28,864) size 563x2 [color=#808080] [border: (1px inset #808080)]
 layer at (379,4806) size 39x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (357,1282) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (357,1282) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (49,5086) size 562x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (28,1562) size 563x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (28,1562) size 563x2 [color=#808080] [border: (1px inset #808080)]
 layer at (379,5250) size 39x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (357,1726) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (357,1726) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (49,5354) size 562x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (28,1830) size 563x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (28,1830) size 563x2 [color=#808080] [border: (1px inset #808080)]
 layer at (379,5538) size 39x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (357,2014) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (357,2014) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (49,5662) size 562x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (28,2138) size 563x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (28,2138) size 563x2 [color=#808080] [border: (1px inset #808080)]
 layer at (379,5947) size 39x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (357,2423) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (357,2423) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (49,6111) size 562x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (28,2587) size 563x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (28,2587) size 563x2 [color=#808080] [border: (1px inset #808080)]
 layer at (379,6475) size 39x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (357,2951) size 41x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (357,2951) size 41x2 [color=#808080] [border: (1px inset #808080)]
 layer at (49,6759) size 562x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (28,3235) size 563x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (28,3235) size 563x2 [color=#808080] [border: (1px inset #808080)]

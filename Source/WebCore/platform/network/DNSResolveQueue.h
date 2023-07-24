@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DNSResolveQueue_h
-#define DNSResolveQueue_h
+#pragma once
 
 #include "DNS.h"
 #include "Timer.h"
@@ -71,5 +70,3 @@ private:
 };
 
 }
-
-#endif // DNSResolveQueue_h

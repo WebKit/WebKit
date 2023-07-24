@@ -39,4 +39,20 @@ void HTTPCookieStore::setCookiePersistentStorage(const WTF::String& storagePath,
         networkProcess->send(Messages::WebCookieManager::SetCookiePersistentStorage(m_sessionID, storagePath, storageType), 0);
 }
 
+void HTTPCookieStore::replaceCookies(Vector<WebCore::Cookie>&& cookies, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkProcess = networkProcessIfExists())
+        networkProcess->sendWithAsyncReply(Messages::WebCookieManager::ReplaceCookies(m_sessionID, cookies), WTFMove(completionHandler));
+    else
+        completionHandler();
+}
+
+void HTTPCookieStore::getAllCookies(CompletionHandler<void(const Vector<WebCore::Cookie>&)>&& completionHandler)
+{
+    if (auto* networkProcess = networkProcessIfExists())
+        networkProcess->sendWithAsyncReply(Messages::WebCookieManager::GetAllCookies(m_sessionID), WTFMove(completionHandler));
+    else
+        completionHandler({ });
+}
+
 } // namespace API

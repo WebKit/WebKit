@@ -153,9 +153,10 @@ void SVGTextContentElement::collectPresentationalHintsForAttribute(const Qualifi
 {
     if (name.matches(XMLNames::spaceAttr)) {
         if (value == "preserve"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpaceCollapse, CSSValuePreserve);
         else
-            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValueNowrap);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpaceCollapse, CSSValueCollapse);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrap, CSSValueNowrap);
         return;
     }
 

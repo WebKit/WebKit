@@ -93,4 +93,4 @@ layer at (0,0) size 800x600
                   text run at (257,18) width 490: "Margins on inline elements does not affect line-height calculations, so all lines"
                   text run at (0,36) width 305: "in this element should have the same line-height."
 layer at (8,85) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,77) size 784x2 [color=#808080] [border: (1px inset #808080)]

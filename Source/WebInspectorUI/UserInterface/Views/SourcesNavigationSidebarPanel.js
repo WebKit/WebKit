@@ -1252,7 +1252,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         // Target main resource.
         if (WI.sharedApp.debuggableType !== WI.DebuggableType.JavaScript && WI.sharedApp.debuggableType !== WI.DebuggableType.ITML) {
-            if (script.target !== WI.pageTarget) {
+            if (script.target.type === WI.TargetType.Worker) {
                 if (script.isMainResource()) {
                     this._addWorkerTargetWithMainResource(script.target);
                     this._addBreakpointsForSourceCode(script);
@@ -1309,7 +1309,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _addWorkerTargetWithMainResource(target)
     {
-        console.assert(target.type === WI.TargetType.Worker || target.type === WI.TargetType.ServiceWorker);
+        console.assert(target.type === WI.TargetType.Worker);
 
         if (this._workerTargetTreeElementMap.has(target))
             return;
@@ -2383,7 +2383,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
 
         for (let target of WI.targets) {
-            if (target !== WI.pageTarget) {
+            if (target.type === WI.TargetType.Worker) {
                 this._addWorkerTargetWithMainResource(target);
                 this._addBreakpointsForSourceCode(target.mainResource);
                 this._addIssuesForSourceCode(target.mainResource);

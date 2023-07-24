@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (104,17) size 592x471
-      RenderSVGText {text} at (117,10) size 246x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 245x19
-          chunk 1 (middle anchor) text run 1 at (117.60,25.00) startOffset 0 endOffset 33 width 244.80: "<animate> on <path>'s d attribute"
+      RenderSVGText {text} at (120,10) size 240x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 239x18
+          chunk 1 (middle anchor) text run 1 at (120.60,25.00) startOffset 0 endOffset 33 width 238.80: "<animate> on <path>'s d attribute"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (0,0) size 75x75
           RenderSVGEllipse {circle} at (0,0) size 69x69 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=2.00]}] [cx=0.00] [cy=0.00] [r=40.00]
@@ -74,8 +74,8 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (-27,79) size 54x14 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 53x14
               chunk 1 (middle anchor) text run 1 at (-26.10,90.00) startOffset 0 endOffset 8 width 52.20: "segments"
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.7 $"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

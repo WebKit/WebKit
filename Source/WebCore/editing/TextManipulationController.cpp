@@ -197,7 +197,7 @@ public:
         return content;
     }
 
-    bool atEnd() const { return !m_text && m_iterator.atEnd() && m_node == m_pastEndNode; }
+    bool atEnd() const { return !m_text && m_node == m_pastEndNode; }
 
 private:
     bool shouldAdvanceIteratorPastCurrentNode() const
@@ -287,11 +287,6 @@ static bool canPerformTextManipulationByReplacingEntireTextContent(const Element
     return element.hasTagName(HTMLNames::titleTag) || element.hasTagName(HTMLNames::optionTag);
 }
 
-static bool areEqualIgnoringLeadingAndTrailingWhitespaces(const String& content, const String& originalContent)
-{
-    return content.stripWhiteSpace() == originalContent.stripWhiteSpace();
-}
-
 static std::optional<TextManipulationTokenInfo> tokenInfo(Node* node)
 {
     if (!node)
@@ -341,8 +336,8 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
                 return true;
         }
 
-        // Treat a or li with white-space: nowrap as its own paragraph so that wrapping whitespace between them will be preserved.
-        if (renderer->style().whiteSpace() == WhiteSpace::NoWrap)
+        // Treat a or li with text-wrap: nowrap as its own paragraph so that wrapping whitespace between them will be preserved.
+        if (renderer->style().textWrap() == TextWrap::NoWrap)
             return true;
     }
 
@@ -842,7 +837,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
                 return ManipulationFailure::Type::ContentChanged;
 
             auto& currentToken = item.tokens[currentTokenIndex++];
-            bool isContentUnchanged = areEqualIgnoringLeadingAndTrailingWhitespaces(currentToken.content, token.content);
+            bool isContentUnchanged = StringView(currentToken.content).trim(deprecatedIsSpaceOrNewline) == StringView(token.content).trim(deprecatedIsSpaceOrNewline);
             if (!content.isReplacedContent && !isContentUnchanged)
                 return ManipulationFailure::Type::ContentChanged;
 

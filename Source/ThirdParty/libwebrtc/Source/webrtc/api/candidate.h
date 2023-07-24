@@ -25,6 +25,10 @@
 
 namespace cricket {
 
+// TURN servers are limited to 32 in accordance with
+// https://w3c.github.io/webrtc-pc/#dom-rtcconfiguration-iceservers
+static constexpr size_t kMaxTurnServers = 32;
+
 // Candidate for ICE based connection discovery.
 // TODO(phoglund): remove things in here that are not needed in the public API.
 

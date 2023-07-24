@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,18 +30,18 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUSupportedFeatures.h>
+#include <WebCore/WebGPUSupportedFeatures.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<SupportedFeatures> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::SupportedFeatures& supportedFeatures)
+std::optional<SupportedFeatures> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::SupportedFeatures& supportedFeatures)
 {
     return { { supportedFeatures.features() } };
 }
 
-RefPtr<PAL::WebGPU::SupportedFeatures> ConvertFromBackingContext::convertFromBacking(const SupportedFeatures& supportedFeatures)
+RefPtr<WebCore::WebGPU::SupportedFeatures> ConvertFromBackingContext::convertFromBacking(const SupportedFeatures& supportedFeatures)
 {
-    return { PAL::WebGPU::SupportedFeatures::create(supportedFeatures.features) };
+    return { WebCore::WebGPU::SupportedFeatures::create(supportedFeatures.features) };
 }
 
 } // namespace WebKit

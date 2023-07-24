@@ -271,16 +271,6 @@
     return _processPoolConfiguration->alwaysKeepAndReuseSwappedProcesses();
 }
 
-- (void)setProcessSwapsOnWindowOpenWithOpener:(BOOL)swaps
-{
-    _processPoolConfiguration->setProcessSwapsOnWindowOpenWithOpener(swaps);
-}
-
-- (BOOL)processSwapsOnWindowOpenWithOpener
-{
-    return _processPoolConfiguration->processSwapsOnWindowOpenWithOpener();
-}
-
 - (void)setProcessSwapsOnNavigationWithinSameNonHTTPFamilyProtocol:(BOOL)swaps
 {
     _processPoolConfiguration->setProcessSwapsOnNavigationWithinSameNonHTTPFamilyProtocol(swaps);

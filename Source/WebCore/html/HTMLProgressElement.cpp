@@ -129,7 +129,7 @@ void HTMLProgressElement::updateDeterminateState()
     bool newIsDeterminate = hasAttributeWithoutSynchronization(valueAttr);
     if (m_isDeterminate == newIsDeterminate)
         return;
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassIndeterminate, !newIsDeterminate);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Indeterminate, !newIsDeterminate);
     m_isDeterminate = newIsDeterminate;
 }
 

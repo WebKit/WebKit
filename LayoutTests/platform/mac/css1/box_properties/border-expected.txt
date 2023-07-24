@@ -186,4 +186,4 @@ layer at (0,0) size 785x1432
                 RenderText {#text} at (0,0) size 180x18
                   text run at (0,0) width 180: "This is an unstyled element."
 layer at (8,190) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,182) size 769x2 [color=#808080] [border: (1px inset #808080)]

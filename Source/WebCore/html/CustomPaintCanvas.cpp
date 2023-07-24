@@ -31,6 +31,7 @@
 #include "CanvasRenderingContext.h"
 #include "ImageBitmap.h"
 #include "PaintRenderingContext2D.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ Ref<CustomPaintCanvas> CustomPaintCanvas::create(ScriptExecutionContext& context
 }
 
 CustomPaintCanvas::CustomPaintCanvas(ScriptExecutionContext& context, unsigned width, unsigned height)
-    : CanvasBase(IntSize(width, height))
+    : CanvasBase(IntSize(width, height), context.noiseInjectionHashSalt())
     , ContextDestructionObserver(&context)
 {
 }

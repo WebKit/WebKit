@@ -6,7 +6,7 @@ esid: sec-arraybuffer-length
 description: >
   Automatically ported from IncludesParameterConversionResizes test
   in V8's mjsunit test typedarray-resizablearraybuffer.js
-features: [resizable-arraybuffer]
+features: [resizable-arraybuffer, Array.prototype.includes]
 flags: [onlyStrict]
 ---*/
 

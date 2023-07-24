@@ -23,4 +23,10 @@ PASS Popover corner cases test: autofocus multiple children
 PASS Popover focus test: autofocus popover and multiple autofocus children
 PASS Popover button click focus test: autofocus popover and multiple autofocus children
 PASS Popover corner cases test: autofocus popover and multiple autofocus children
+FAIL Popover focus test: Opening dialogs as popovers should use dialog initial focus algorithm. assert_equals: Opening dialogs as popovers should use dialog initial focus algorithm. directly focus with popover.focus() expected Element node <dialog popover="auto" data-test="Opening dialogs as popo... but got Element node <button class="should-be-focused">button</button>
+FAIL Popover button click focus test: Opening dialogs as popovers should use dialog initial focus algorithm. assert_false: popover should start out hidden expected false got true
+FAIL Popover corner cases test: Opening dialogs as popovers should use dialog initial focus algorithm. assert_false: popover should start out hidden expected false got true
+FAIL Popover focus test: Opening dialogs as popovers which have autofocus should focus the dialog. assert_equals: expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <button class="should-be-focused">button</button>
+FAIL Popover button click focus test: Opening dialogs as popovers which have autofocus should focus the dialog. assert_equals: expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <button class="should-be-focused">button</button>
+PASS Popover corner cases test: Opening dialogs as popovers which have autofocus should focus the dialog.
 

@@ -1,0 +1,10 @@
+
+FAIL setSinkId() with a valid device identifier should succeeded. assert_equals: expected (string) "" but got (undefined) undefined
+FAIL setSinkId() with the same sink ID should resolve immediately. promise_test: Unhandled rejection with value: object "TypeError: audioContext.setSinkId is not a function. (In 'audioContext.setSinkId(firstDeviceId)', 'audioContext.setSinkId' is undefined)"
+FAIL setSinkId() with the same AudioSinkOptions.type value should resolve immediately. promise_test: Unhandled rejection with value: object "TypeError: audioContext.setSinkId is not a function. (In 'audioContext.setSinkId({type: 'none'})', 'audioContext.setSinkId' is undefined)"
+FAIL setSinkId() should fail with TypeError on an invalid AudioSinkOptions.type value. audioContext.setSinkId is not a function. (In 'audioContext.setSinkId({type: 'something_else'})', 'audioContext.setSinkId' is undefined)
+FAIL setSinkId() should fail with NotFoundError on an invalid device identifier. audioContext.setSinkId is not a function. (In 'audioContext.setSinkId('some_random_device_id')', 'audioContext.setSinkId' is undefined)
+FAIL setSinkId() should fail with InvalidStateError when calling from astopped AudioContext promise_test: Unhandled rejection with value: object "TypeError: audioContext.setSinkId is not a function. (In 'audioContext.setSinkId('some_random_device_id')', 'audioContext.setSinkId' is undefined)"
+FAIL setSinkId() should fail with InvalidStateError when calling from adetached document promise_test: Unhandled rejection with value: object "TypeError: iframeAudioContext.setSinkId is not a function. (In 'iframeAudioContext.setSinkId('some_random_device_id')', 'iframeAudioContext.setSinkId' is undefined)"
+FAIL pending setSinkId() should be rejected with InvalidStateError whenAudioContext is closed promise_test: Unhandled rejection with value: object "TypeError: audioContext.setSinkId is not a function. (In 'audioContext.setSinkId('some_random_device_id')', 'audioContext.setSinkId' is undefined)"
+

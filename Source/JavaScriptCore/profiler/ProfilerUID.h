@@ -26,9 +26,13 @@
 #pragma once
 
 #include "JSCJSValue.h"
+#include <wtf/JSONValues.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC { namespace Profiler {
+
+class Database;
+class Dumper;
 
 class UID {
 public:
@@ -77,7 +81,7 @@ public:
     }
     
     void dump(PrintStream&) const;
-    JSValue toJS(JSGlobalObject*) const;
+    Ref<JSON::Value> toJSON(Dumper&) const;
     
 private:
     uint64_t m_uid;

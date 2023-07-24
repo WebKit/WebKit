@@ -22,7 +22,6 @@ class EmulateGLBaseVertexBaseInstanceTest : public MatchOutputCodeTest
         : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_GLSL_COMPATIBILITY_OUTPUT)
     {
         ShCompileOptions defaultCompileOptions = {};
-        defaultCompileOptions.variables        = true;
         setDefaultCompileOptions(defaultCompileOptions);
 
         getResources()->ANGLE_base_vertex_base_instance_shader_builtin = 1;
@@ -38,7 +37,6 @@ class EmulateGLBaseVertexBaseInstanceTest : public MatchOutputCodeTest
         {
             options = *compileOptions;
         }
-        options.variables = true;
 
         std::string translatedCode;
         std::string infoLog;
@@ -78,7 +76,6 @@ TEST_F(EmulateGLBaseVertexBaseInstanceTest, CheckCompile)
 
     ShCompileOptions compileOptions                = {};
     compileOptions.objectCode                      = true;
-    compileOptions.variables                       = true;
     compileOptions.emulateGLBaseVertexBaseInstance = true;
 
     compile(shaderString, compileOptions);
@@ -123,7 +120,6 @@ TEST_F(EmulateGLBaseVertexBaseInstanceTest, EmulatesUniform)
 
     ShCompileOptions compileOptions                = {};
     compileOptions.objectCode                      = true;
-    compileOptions.variables                       = true;
     compileOptions.emulateGLBaseVertexBaseInstance = true;
 
     compile(shaderString, compileOptions);
@@ -247,7 +243,6 @@ TEST_F(EmulateGLBaseVertexBaseInstanceTest, AllowsUserDefinedANGLEDrawID)
 
     ShCompileOptions compileOptions                = {};
     compileOptions.objectCode                      = true;
-    compileOptions.variables                       = true;
     compileOptions.emulateGLBaseVertexBaseInstance = true;
 
     compile(shaderString, compileOptions);

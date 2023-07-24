@@ -17,7 +17,7 @@ tests.forEach(([arg, description]) => {
   const result = Temporal.ZonedDateTime.from(arg);
 
   assert.sameValue(
-    result.timeZone.toString(),
+    result.timeZoneId,
     "UTC",
     `variant time separators (${description})`
   );

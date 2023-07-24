@@ -274,7 +274,9 @@ TEST_P(ProgramBinaryTest, ZeroSizedUnlinkedBinary)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ProgramBinaryTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
+    ProgramBinaryTest,
+    ES3_VULKAN().disable(Feature::EnablePipelineCacheDataCompression));
 
 class ProgramBinaryES3Test : public ProgramBinaryTest
 {
@@ -859,7 +861,7 @@ TEST_P(ProgramBinaryTest, SRGBDecodeWithSamplerAndTexelFetchTest)
     // http://anglebug.com/4991
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsWindows());
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && (IsNVIDIA() || IsARM64()) && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && (IsNVIDIA() || IsARM64()) && IsMac());
     ANGLE_SKIP_TEST_IF(IsOpenGLES() && IsNexus5X());
 
     constexpr char kVS[] =

@@ -5,7 +5,7 @@ layer at (0,0) size 785x2136
     RenderBody {BODY} at (8,8) size 769x2121
       RenderBlock (anonymous) at (0,0) size 769x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {HR} at (0,28) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,28) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H3} at (0,48) size 769x24
         RenderText {#text} at (0,0) size 87x22
           text run at (0,0) width 87: "border-top"
@@ -95,7 +95,7 @@ layer at (0,0) size 785x2136
                         text run at (1,11) width 145: "Nested single-cell table!"
       RenderBlock (anonymous) at (0,435) size 769x21
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {HR} at (0,463) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,463) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H3} at (0,484) size 769x24
         RenderText {#text} at (0,0) size 100x22
           text run at (0,0) width 100: "border-right"
@@ -185,7 +185,7 @@ layer at (0,0) size 785x2136
                         text run at (1,1) width 145: "Nested single-cell table!"
       RenderBlock (anonymous) at (0,813) size 769x21
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {HR} at (0,841) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,841) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H3} at (0,862) size 769x24
         RenderText {#text} at (0,0) size 118x22
           text run at (0,0) width 118: "border-bottom"
@@ -275,7 +275,7 @@ layer at (0,0) size 785x2136
                         text run at (1,1) width 145: "Nested single-cell table!"
       RenderBlock (anonymous) at (0,1249) size 769x21
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {HR} at (0,1277) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,1277) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H3} at (0,1298) size 769x24
         RenderText {#text} at (0,0) size 87x22
           text run at (0,0) width 87: "border-left"
@@ -365,7 +365,7 @@ layer at (0,0) size 785x2136
                         text run at (11,1) width 145: "Nested single-cell table!"
       RenderBlock (anonymous) at (0,1627) size 769x21
         RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {HR} at (0,1655) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,1655) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H3} at (0,1676) size 769x24
         RenderText {#text} at (0,0) size 55x22
           text run at (0,0) width 55: "border"

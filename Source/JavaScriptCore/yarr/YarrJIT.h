@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2019 the V8 project authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@
 #include "Yarr.h"
 #include "YarrPattern.h"
 #include <wtf/Atomics.h>
-#include <wtf/Bitmap.h>
+#include <wtf/BitSet.h>
 #include <wtf/FixedVector.h>
 #include <wtf/StackCheck.h>
 #include <wtf/UniqueRef.h>
@@ -122,7 +122,7 @@ class BoyerMooreBitmap {
 public:
     static constexpr unsigned mapSize = 128;
     static constexpr unsigned mapMask = 128 - 1;
-    using Map = Bitmap<mapSize>;
+    using Map = WTF::BitSet<mapSize>;
 
     BoyerMooreBitmap() = default;
 

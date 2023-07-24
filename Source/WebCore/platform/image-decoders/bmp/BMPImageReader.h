@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, 2009, Google Inc. All rights reserved.
+ * Copyright (c) 2008-2015 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -325,7 +325,6 @@ private:
     int m_bitShiftsLeft[4];
 
     // The color palette, for paletted formats.
-    size_t m_tableSizeInBytes;
     Vector<RGBTriple> m_colorTable;
 
     // The coordinate to which we've decoded the image.

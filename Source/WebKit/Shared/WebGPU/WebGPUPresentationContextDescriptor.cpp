@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUPresentationContextDescriptor.h>
+#include <WebCore/WebGPUPresentationContextDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<PresentationContextDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::PresentationContextDescriptor& presentationContextDescriptor)
+std::optional<PresentationContextDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::PresentationContextDescriptor& presentationContextDescriptor)
 {
     auto identifier = convertToBacking(presentationContextDescriptor.compositorIntegration);
     if (!identifier)
@@ -43,7 +43,7 @@ std::optional<PresentationContextDescriptor> ConvertToBackingContext::convertToB
     return { { identifier } };
 }
 
-std::optional<PAL::WebGPU::PresentationContextDescriptor> ConvertFromBackingContext::convertFromBacking(const PresentationContextDescriptor& presentationContextDescriptor)
+std::optional<WebCore::WebGPU::PresentationContextDescriptor> ConvertFromBackingContext::convertFromBacking(const PresentationContextDescriptor& presentationContextDescriptor)
 {
     auto* compositorIntegration = convertCompositorIntegrationFromBacking(presentationContextDescriptor.compositorIntegration);
     if (!compositorIntegration)

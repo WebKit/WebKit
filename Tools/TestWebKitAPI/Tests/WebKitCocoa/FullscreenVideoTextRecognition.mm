@@ -237,7 +237,7 @@ static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnal
 namespace TestWebKitAPI {
 
 // FIXME: Re-enable this test for iOS once webkit.org/b/248094 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(FullscreenVideoTextRecognition, DISABLED_TogglePlaybackInElementFullscreen)
 #else
 TEST(FullscreenVideoTextRecognition, TogglePlaybackInElementFullscreen)
@@ -255,7 +255,7 @@ TEST(FullscreenVideoTextRecognition, TogglePlaybackInElementFullscreen)
 }
 
 // FIXME: re-enable for iOS when rdar://107476837 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(FullscreenVideoTextRecognition, DISABLED_AddVideoAfterEnteringFullscreen)
 #else
 TEST(FullscreenVideoTextRecognition, AddVideoAfterEnteringFullscreen)
@@ -275,7 +275,7 @@ TEST(FullscreenVideoTextRecognition, AddVideoAfterEnteringFullscreen)
 
 // FIXME: Re-enable this test for iOS once webkit.org/b/248094 is resolved
 // FIXME: Re-enable this test once webkit.org/b/248093 is resolved.
-#if PLATFORM(IOS) || !defined(NDEBUG)
+#if PLATFORM(IOS) || PLATFORM(VISION) || !defined(NDEBUG)
 TEST(FullscreenVideoTextRecognition, DISABLED_DoNotAnalyzeVideoAfterExitingFullscreen)
 #else
 TEST(FullscreenVideoTextRecognition, DoNotAnalyzeVideoAfterExitingFullscreen)

@@ -15,7 +15,7 @@ layer at (0,0) size 785x1142
       RenderBlock {SPAN} at (0,105) size 769x20
         RenderText {#text} at (0,0) size 282x19
           text run at (0,0) width 282: "This text should be immediately under the float."
-      RenderBlock {HR} at (0,133) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,133) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {SPAN} at (0,143) size 769x20
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 79x59
@@ -28,7 +28,7 @@ layer at (0,0) size 785x1142
       RenderBlock {SPAN} at (0,258) size 769x20
         RenderText {#text} at (0,0) size 242x19
           text run at (0,0) width 242: "This text should be 10px under the float."
-      RenderBlock {HR} at (0,286) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,286) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {SPAN} at (0,296) size 769x20
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 79x59
@@ -41,7 +41,7 @@ layer at (0,0) size 785x1142
       RenderBlock {SPAN} at (0,366) size 769x20
         RenderText {#text} at (100,0) size 253x19
           text run at (100,0) width 253: "This text should be to the right of the float."
-      RenderBlock {HR} at (100,394) size 669x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (100,394) size 669x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {SPAN} at (0,404) size 769x20
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 79x59
@@ -54,7 +54,7 @@ layer at (0,0) size 785x1142
       RenderBlock {SPAN} at (0,509) size 769x20
         RenderText {#text} at (0,0) size 282x19
           text run at (0,0) width 282: "This text should be immediately under the float."
-      RenderBlock {HR} at (0,537) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,537) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {SPAN} at (0,547) size 769x20
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 79x59
@@ -67,7 +67,7 @@ layer at (0,0) size 785x1142
       RenderBlock {SPAN} at (0,657) size 769x20
         RenderText {#text} at (0,0) size 242x19
           text run at (0,0) width 242: "This text should be 10px under the float."
-      RenderBlock {HR} at (0,685) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,685) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {SPAN} at (0,695) size 769x20
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 79x59
@@ -80,7 +80,7 @@ layer at (0,0) size 785x1142
       RenderBlock {SPAN} at (0,825) size 769x20
         RenderText {#text} at (0,0) size 242x19
           text run at (0,0) width 242: "This text should be 20px under the float."
-      RenderBlock {HR} at (0,853) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,853) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {SPAN} at (0,863) size 769x125 [border: (10px dotted #000000)]
         RenderBlock {SPAN} at (10,10) size 749x20
           RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
@@ -91,7 +91,7 @@ layer at (0,0) size 785x1142
           RenderText {#text} at (100,0) size 271x19
             text run at (100,0) width 271: "This paragraph has a bottom margin of 50px."
         RenderBlock {SPAN} at (10,110) size 749x0
-      RenderBlock {HR} at (0,996) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,996) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {SPAN} at (0,1006) size 769x120 [border: (10px dotted #000000)]
         RenderBlock {SPAN} at (10,10) size 749x20
           RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]

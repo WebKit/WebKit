@@ -171,12 +171,17 @@ void InspectorFrontendClientLocal::resetState()
     m_settings->deleteProperty(inspectorAttachedHeightSetting);
 }
 
+Page* InspectorFrontendClientLocal::frontendPage()
+{
+    return m_frontendPage.get();
+}
+
 void InspectorFrontendClientLocal::windowObjectCleared()
 {
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
     
-    m_frontendHost = InspectorFrontendHost::create(this, m_frontendPage);
+    m_frontendHost = InspectorFrontendHost::create(this, frontendPage());
     m_frontendHost->addSelfToGlobalObjectInWorld(debuggerWorld());
 }
 

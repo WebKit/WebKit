@@ -40,15 +40,20 @@ public:
 
     NodeKind kind() const override;
     Expression& expression() { return m_expression; }
+    Operation operation() const { return m_operation; }
 
 private:
-    DecrementIncrementStatement(SourceSpan span, Expression::Ref&& expression)
+    DecrementIncrementStatement(SourceSpan span, Expression::Ref&& expression, Operation operation)
         : Statement(span)
         , m_expression(WTFMove(expression))
+        , m_operation(operation)
     { }
 
     Expression::Ref m_expression;
+    Operation m_operation;
 };
+
+void printInternal(PrintStream&, DecrementIncrementStatement::Operation);
 
 } // namespace WGSL::AST
 

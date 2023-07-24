@@ -92,8 +92,7 @@ TEST(WebKit, ContextMenuDownloadHTMLDownloadAttribute)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
 
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("MyGroup").get()));
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(context.get());
 
     WKPageNavigationClientV3 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
@@ -143,8 +142,7 @@ TEST(WebKit, ContextMenuDownloadHTMLDownloadAttributeWithSlashes)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
 
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("MyGroup").get()));
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(context.get());
 
     WKPageNavigationClientV3 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));

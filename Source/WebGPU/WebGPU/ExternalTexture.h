@@ -48,14 +48,14 @@ public:
 
     ~ExternalTexture();
 
-    CVPixelBufferRef pixelBuffer() const { return m_pixelBuffer; }
+    CVPixelBufferRef pixelBuffer() const { return m_pixelBuffer.get(); }
     WGPUColorSpace colorSpace() const { return m_colorSpace; }
 
 private:
     ExternalTexture(CVPixelBufferRef, WGPUColorSpace, Device&);
     ExternalTexture(Device&);
 
-    CVPixelBufferRef m_pixelBuffer;
+    RetainPtr<CVPixelBufferRef> m_pixelBuffer;
     WGPUColorSpace m_colorSpace;
     const Ref<Device> m_device;
 };

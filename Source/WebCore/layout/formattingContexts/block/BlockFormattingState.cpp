@@ -35,7 +35,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingState);
 
 BlockFormattingState::BlockFormattingState(LayoutState& layoutState, const ElementBox& blockFormattingContextRoot)
     : FormattingState(Type::Block, layoutState)
-    , m_floatingState(layoutState, blockFormattingContextRoot)
+    , m_floatingState(blockFormattingContextRoot)
 {
 }
 

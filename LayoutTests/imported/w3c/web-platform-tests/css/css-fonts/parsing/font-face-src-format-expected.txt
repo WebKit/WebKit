@@ -11,7 +11,7 @@ PASS Check that src: url("foo.ttf") format("truetype") is valid
 PASS Check that src: url("foo.ttf") format("woff") is valid
 PASS Check that src: url("foo.ttf") format("woff2") is valid
 PASS Check that src: url("foo.ttf") format("opentype", "truetype") is invalid
-FAIL Check that src: url("foo.ttf") format(collection) is valid assert_equals: expected true but got false
+PASS Check that src: url("foo.ttf") format(collection) is valid
 PASS Check that src: url("foo.ttf") format(opentype) is valid
 PASS Check that src: url("foo.ttf") format(truetype) is valid
 PASS Check that src: url("foo.ttf") format(woff) is valid

@@ -307,10 +307,14 @@ const struct wl_pointer_listener WindowViewBackend::s_pointerListener = {
             window.m_seatData.axis_discrete.vertical = -discrete;
             break;
         }
-    },
+    }
 #ifdef WL_POINTER_AXIS_VALUE120_SINCE_VERSION
     // axis_value120
-    [](void*, struct wl_pointer*, uint32_t, int32_t) { }
+    , [](void*, struct wl_pointer*, uint32_t, int32_t) { }
+#endif
+#ifdef WL_POINTER_AXIS_RELATIVE_DIRECTION_SINCE_VERSION
+    // axis_relative_direction
+    , [](void*, struct wl_pointer*, uint32_t, uint32_t) { }
 #endif
 };
 

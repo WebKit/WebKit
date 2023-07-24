@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSContainerRule.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSCounterStyleRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSFontFaceRule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSFontFeatureValuesRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSGroupingRule-cssRules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSGroupingRule-insertRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSKeyframeRule.html
@@ -183,3 +184,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/ttwf-cssom-doc-ext-load-tree-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/ttwf-cssom-document-extension.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/variable-names.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/xml-stylesheet-pi-in-doctype.xhtml

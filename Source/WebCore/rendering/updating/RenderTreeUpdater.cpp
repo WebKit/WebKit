@@ -163,7 +163,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
             auto& text = downcast<Text>(node);
             auto* textUpdate = m_styleUpdate->textUpdate(text);
             bool didCreateParent = parent().update && parent().update->change == Style::Change::Renderer;
-            bool mayNeedUpdateWhitespaceOnlyRenderer = renderingParent().didCreateOrDestroyChildRenderer && text.data().isAllSpecialCharacters<isASCIIWhitespace>();
+            bool mayNeedUpdateWhitespaceOnlyRenderer = renderingParent().didCreateOrDestroyChildRenderer && text.data().containsOnly<isASCIIWhitespace>();
             if (didCreateParent || textUpdate || mayNeedUpdateWhitespaceOnlyRenderer)
                 updateTextRenderer(text, textUpdate);
 
@@ -195,7 +195,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         auto mayHaveRenderedDescendants = [&]() {
             if (element.renderer())
-                return !(element.isInTopLayer() && element.renderer()->style().effectiveSkipsContent());
+                return !(element.isInTopLayer() && element.renderer()->style().effectiveSkippedContent());
             return element.hasDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent());
         }();
 
@@ -324,7 +324,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     auto elementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*elementUpdate.style);
 
     bool shouldTearDownRenderers = [&]() {
-        if (element.isInTopLayer() && elementUpdate.change == Style::Change::Inherited && elementUpdate.style->effectiveSkipsContent())
+        if (element.isInTopLayer() && elementUpdate.change == Style::Change::Inherited && elementUpdate.style->effectiveSkippedContent())
             return true;
         return elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents());
     }();
@@ -349,22 +349,22 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         element.clearDisplayContentsStyle();
 
     if (!hasDisplayContents) {
-        if (elementUpdateStyle.containIntrinsicLogicalWidthType() != ContainIntrinsicSizeType::AutoAndLength)
+        if (!elementUpdateStyle.containIntrinsicLogicalWidthHasAuto())
             element.clearLastRememberedLogicalWidth();
-        if (elementUpdateStyle.containIntrinsicLogicalHeightType() != ContainIntrinsicSizeType::AutoAndLength)
+        if (!elementUpdateStyle.containIntrinsicLogicalHeightHasAuto())
             element.clearLastRememberedLogicalHeight();
     }
     auto scopeExit = makeScopeExit([&] {
         if (!hasDisplayContents) {
             auto* box = element.renderBox();
-            if (box && box->style().hasAutoLengthContainIntrinsicSize() && !box->shouldSkipContent())
+            if (box && box->style().hasAutoLengthContainIntrinsicSize() && !box->isSkippedContentRoot())
                 m_document.observeForContainIntrinsicSize(element);
             else
                 m_document.unobserveForContainIntrinsicSize(element);
         }
     });
 
-    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().effectiveSkipsContent());
+    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().effectiveSkippedContent());
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();
@@ -441,7 +441,7 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
         return true;
     if (!textNode.length())
         return false;
-    if (!textNode.data().isAllSpecialCharacters<isASCIIWhitespace>())
+    if (!textNode.data().containsOnly<isASCIIWhitespace>())
         return true;
     if (is<RenderText>(renderingParent.previousChildRenderer))
         return true;

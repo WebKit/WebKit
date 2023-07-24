@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -97,7 +97,6 @@ op :tail_call_varargs,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     },
     tmps: {
@@ -119,7 +118,6 @@ op :call_varargs,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     },
     tmps: {
@@ -147,7 +145,6 @@ op :iterator_next,
         doneProfile: ValueProfile,
         valueModeMetadata: GetByIdModeMetadata,
         valueProfile: ValueProfile,
-        arrayProfile: ArrayProfile,
         iterableProfile: ArrayProfile,
         iterationMetadata: IterationModeMetadata,
     },
@@ -171,7 +168,6 @@ op :construct_varargs,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     },
     tmps: {
@@ -253,7 +249,6 @@ op :construct,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -322,7 +317,6 @@ op :call_direct_eval,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -337,7 +331,6 @@ op :tail_call_forward_arguments,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -1479,6 +1472,7 @@ op :checkpoint_osr_exit_from_inlined_call_trampoline
 op :checkpoint_osr_exit_trampoline
 op :normal_osr_exit_trampoline
 op :fuzzer_return_early_from_loop_hint
+op :loop_osr_entry_gate
 op :llint_get_host_call_return_value
 op :llint_handle_uncaught_exception
 op :op_call_return_location

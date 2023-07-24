@@ -109,5 +109,5 @@ layer at (0,0) size 800x600
           RenderText {#text} at (2,2) size 98x19
             text run at (2,2) width 98: "( this is a test. )"
 layer at (8,80) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,72) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,72) size 784x2 [color=#808080] [border: (1px inset #808080)]
 caret: position 18 of child 0 {#text} of child 1 {DIV} of child 7 {DIV} of body

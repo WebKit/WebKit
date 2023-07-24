@@ -95,6 +95,8 @@ int main(int argc, char *argv[])
     ShBuiltInResources resources;
     GenerateResources(&resources);
 
+    bool printActiveVariables = false;
+
     argc--;
     argv++;
     for (; (argc >= 1) && (failCode == ESuccess); argc--, argv++)
@@ -110,7 +112,7 @@ int main(int argc, char *argv[])
                     compileOptions.objectCode = true;
                     break;
                 case 'u':
-                    compileOptions.variables = true;
+                    printActiveVariables = true;
                     break;
                 case 's':
                     if (argv[0][2] == '=')
@@ -195,7 +197,6 @@ int main(int argc, char *argv[])
                             case 'v':
                                 output = SH_SPIRV_VULKAN_OUTPUT;
                                 compileOptions.initializeUninitializedLocals = true;
-                                compileOptions.variables                     = true;
                                 break;
                             case 'h':
                                 if (argv[0][4] == '1' && argv[0][5] == '1')
@@ -380,7 +381,7 @@ int main(int argc, char *argv[])
                     LogMsg("END", "COMPILER", numCompiles, "OBJ CODE");
                     printf("\n\n");
                 }
-                if (compiled && compileOptions.variables)
+                if (compiled && printActiveVariables)
                 {
                     LogMsg("BEGIN", "COMPILER", numCompiles, "VARIABLES");
                     PrintActiveVariables(compiler);

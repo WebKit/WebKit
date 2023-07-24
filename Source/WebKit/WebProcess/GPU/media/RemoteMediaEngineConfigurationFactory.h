@@ -55,7 +55,6 @@ public:
     void registerFactory();
 
     static const char* supplementName();
-    WebProcess& process() const { return m_process; }
 
     GPUProcessConnection& gpuProcessConnection();
 
@@ -64,8 +63,6 @@ public:
 private:
     void createDecodingConfiguration(WebCore::MediaDecodingConfiguration&&, WebCore::MediaEngineConfigurationFactory::DecodingConfigurationCallback&&);
     void createEncodingConfiguration(WebCore::MediaEncodingConfiguration&&, WebCore::MediaEngineConfigurationFactory::EncodingConfigurationCallback&&);
-
-    WebProcess& m_process;
 };
 
 }

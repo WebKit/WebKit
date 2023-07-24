@@ -1,0 +1,8 @@
+--- !tapi-tbd
+tbd-version:     4
+targets:         [ x86_64-macos, arm64-macos, arm64e-macos ]
+install-name:    '/System/Library/PrivateFrameworks/AppleJPEGXL.framework/Versions/A/AppleJPEGXL'
+exports:
+  - targets:         [ x86_64-macos, arm64-macos, arm64e-macos ]
+    symbols:         [ _JxlDecoderCreate, _JxlDecoderSubscribeEvents, _JxlDecoderRewind, _JxlDecoderSkipFrames, _JxlDecoderSetInput, _JxlDecoderReleaseInput, _JxlDecoderProcessInput, _JxlDecoderGetBasicInfo, _JxlDecoderGetFrameHeader, _JxlDecoderSetImageOutCallback, _JxlDecoderDestroy, _JxlSignatureCheck, _JxlDecoderGetColorAsICCProfile, _JxlDecoderGetICCProfileSize ]
+...

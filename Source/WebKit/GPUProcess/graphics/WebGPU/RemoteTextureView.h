@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class TextureView;
 }
 
@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemoteTextureView final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteTextureView> create(PAL::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteTextureView> create(WebCore::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteTextureView(textureView, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -61,21 +61,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteTextureView(PAL::WebGPU::TextureView&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteTextureView(WebCore::WebGPU::TextureView&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteTextureView(const RemoteTextureView&) = delete;
     RemoteTextureView(RemoteTextureView&&) = delete;
     RemoteTextureView& operator=(const RemoteTextureView&) = delete;
     RemoteTextureView& operator=(RemoteTextureView&&) = delete;
 
-    PAL::WebGPU::TextureView& backing() { return m_backing; }
+    WebCore::WebGPU::TextureView& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    Ref<PAL::WebGPU::TextureView> m_backing;
+    Ref<WebCore::WebGPU::TextureView> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

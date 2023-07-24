@@ -1,0 +1,84 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<head>
+</head>
+<body>
+Test passes if it does not crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.IPC) {
+    function randomID()
+    {
+        return Math.floor(Math.random() * 10000) + 1;
+    }
+
+    let mediaRecorderID = randomID();
+
+    IPC.sendMessage(
+        'GPU',
+        IPC.webPageProxyID,
+        IPC.messages.RemoteMediaRecorderManager_CreateRecorder.name,
+        [
+            {type: 'uint64_t', value: mediaRecorderID},
+            {type: 'uint8_t', value: 1},
+            {type: 'uint8_t', value: 1},
+            {type: 'String', value: 'video/webm'},
+            {type: 'bool', value: 0},
+            {type: 'bool', value: 0},
+            {type: 'bool', value: 0},
+            {type: 'uint64_t', value: 1},
+        ]);
+
+    let sharedMemory = IPC.createSharedMemory(0x1000);
+
+    IPC.sendMessage(
+        'GPU',
+        mediaRecorderID,
+        IPC.messages.RemoteMediaRecorder_SetSharedVideoFrameMemory.name,
+        [
+            {type: 'SharedMemory', value: sharedMemory, dataSize: 0x1000, protection: 'ReadWrite'},
+        ]);
+
+    let ab = new ArrayBuffer(0x1000);
+    let bu = new Uint32Array(ab);
+
+    bu[0] = 0x34323066; // m_bufferType = '420f';
+    bu[1] = 100; // m_width
+    bu[2] = 0x1000; // m_height
+    bu[3] = 0x80000000; // m_bytesPerRow
+    bu[4] = 0; // m_widthPlaneB
+    bu[5] = 0; // m_heightPlaneB
+    bu[6] = 0; // m_bytesPerRowPlaneB
+
+    sharedMemory.writeBytes(new Int8Array(ab));
+
+    IPC.sendMessage(
+        'GPU',
+        mediaRecorderID,
+        IPC.messages.RemoteMediaRecorder_VideoFrameAvailable.name,
+        [
+            {type: 'uint64_t', value: 0},
+            {type: 'uint32_t', value: 0},
+            {type: 'uint8_t', value: 0},
+
+            {type: 'bool', value: 0},
+            {type: 'uint32_t', value: 0},
+
+            {type: 'uint64_t', value: 0},
+            {type: 'uint64_t', value: 0},
+            {type: 'uint64_t', value: 0},
+            {type: 'uint64_t', value: 0},
+        ]);
+
+    IPC.sendMessage(
+        'GPU',
+        IPC.webPageProxyID,
+        IPC.messages.RemoteMediaRecorderManager_ReleaseRecorder.name,
+        [
+            {type: 'uint64_t', value: mediaRecorderID},
+        ]);
+}
+</script>
+</body>
+</html>

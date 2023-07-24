@@ -3260,6 +3260,10 @@ op(fuzzer_return_early_from_loop_hint, macro ()
     doReturn()
 end)
 
+op(loop_osr_entry_gate, macro ()
+    crash() # Should never reach here.
+end)
+
 
 llintOpWithMetadata(op_check_private_brand, OpCheckPrivateBrand, macro (size, get, dispatch, metadata, return)
     metadata(t5, t2)

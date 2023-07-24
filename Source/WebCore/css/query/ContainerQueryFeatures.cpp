@@ -35,7 +35,7 @@ namespace WebCore::CQ::Features {
 using namespace MQ;
 
 struct SizeFeatureSchema : public FeatureSchema {
-    SizeFeatureSchema(const AtomString& name, Type type, ValueType valueType, Vector<CSSValueID>&& valueIdentifiers = { })
+    SizeFeatureSchema(const AtomString& name, Type type, ValueType valueType, FixedVector<CSSValueID>&& valueIdentifiers = { })
         : FeatureSchema(name, type, valueType, WTFMove(valueIdentifiers))
     { }
 

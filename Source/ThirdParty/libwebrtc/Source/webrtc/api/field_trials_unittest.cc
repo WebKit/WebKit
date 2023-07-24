@@ -11,9 +11,13 @@
 #include "api/field_trials.h"
 
 #include <memory>
+#include <utility>
 
+#include "absl/strings/string_view.h"
 #include "api/transport/field_trial_based_config.h"
+#include "rtc_base/containers/flat_set.h"
 #include "system_wrappers/include/field_trial.h"
+#include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -25,49 +29,50 @@ namespace webrtc {
 namespace {
 
 using ::testing::NotNull;
-using ::webrtc::field_trial::InitFieldTrialsFromString;
+using ::webrtc::field_trial::FieldTrialsAllowedInScopeForTesting;
+using ::webrtc::test::ScopedFieldTrials;
 
-class FieldTrialsTest : public testing::Test {
- protected:
-  FieldTrialsTest() {
-    // Make sure global state is consistent between test runs.
-    InitFieldTrialsFromString(nullptr);
-  }
-};
-
-TEST_F(FieldTrialsTest, EmptyStringHasNoEffect) {
+TEST(FieldTrialsTest, EmptyStringHasNoEffect) {
+  FieldTrialsAllowedInScopeForTesting k({"MyCoolTrial"});
   FieldTrials f("");
+  f.RegisterKeysForTesting({"MyCoolTrial"});
+
   EXPECT_FALSE(f.IsEnabled("MyCoolTrial"));
   EXPECT_FALSE(f.IsDisabled("MyCoolTrial"));
 }
 
-TEST_F(FieldTrialsTest, EnabledDisabledMustBeFirstInValue) {
+TEST(FieldTrialsTest, EnabledDisabledMustBeFirstInValue) {
   FieldTrials f(
       "MyCoolTrial/EnabledFoo/"
       "MyUncoolTrial/DisabledBar/"
       "AnotherTrial/BazEnabled/");
+  f.RegisterKeysForTesting({"MyCoolTrial", "MyUncoolTrial", "AnotherTrial"});
+
   EXPECT_TRUE(f.IsEnabled("MyCoolTrial"));
   EXPECT_TRUE(f.IsDisabled("MyUncoolTrial"));
   EXPECT_FALSE(f.IsEnabled("AnotherTrial"));
 }
 
-TEST_F(FieldTrialsTest, FieldTrialsDoesNotReadGlobalString) {
-  static constexpr char s[] = "MyCoolTrial/Enabled/MyUncoolTrial/Disabled/";
-  InitFieldTrialsFromString(s);
+TEST(FieldTrialsTest, FieldTrialsDoesNotReadGlobalString) {
+  FieldTrialsAllowedInScopeForTesting k({"MyCoolTrial", "MyUncoolTrial"});
+  ScopedFieldTrials g("MyCoolTrial/Enabled/MyUncoolTrial/Disabled/");
   FieldTrials f("");
+  f.RegisterKeysForTesting({"MyCoolTrial", "MyUncoolTrial"});
+
   EXPECT_FALSE(f.IsEnabled("MyCoolTrial"));
   EXPECT_FALSE(f.IsDisabled("MyUncoolTrial"));
 }
 
-TEST_F(FieldTrialsTest, FieldTrialsWritesGlobalString) {
+TEST(FieldTrialsTest, FieldTrialsWritesGlobalString) {
+  FieldTrialsAllowedInScopeForTesting k({"MyCoolTrial", "MyUncoolTrial"});
   FieldTrials f("MyCoolTrial/Enabled/MyUncoolTrial/Disabled/");
   EXPECT_TRUE(webrtc::field_trial::IsEnabled("MyCoolTrial"));
   EXPECT_TRUE(webrtc::field_trial::IsDisabled("MyUncoolTrial"));
 }
 
-TEST_F(FieldTrialsTest, FieldTrialsRestoresGlobalStringAfterDestruction) {
+TEST(FieldTrialsTest, FieldTrialsRestoresGlobalStringAfterDestruction) {
   static constexpr char s[] = "SomeString/Enabled/";
-  InitFieldTrialsFromString(s);
+  ScopedFieldTrials g(s);
   {
     FieldTrials f("SomeOtherString/Enabled/");
     EXPECT_STREQ(webrtc::field_trial::GetFieldTrialString(),
@@ -77,33 +82,38 @@ TEST_F(FieldTrialsTest, FieldTrialsRestoresGlobalStringAfterDestruction) {
 }
 
 #if GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-TEST_F(FieldTrialsTest, FieldTrialsDoesNotSupportSimultaneousInstances) {
+TEST(FieldTrialsTest, FieldTrialsDoesNotSupportSimultaneousInstances) {
   FieldTrials f("SomeString/Enabled/");
   RTC_EXPECT_DEATH(FieldTrials("SomeOtherString/Enabled/").Lookup("Whatever"),
                    "Only one instance");
 }
 #endif  // GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
-TEST_F(FieldTrialsTest, FieldTrialsSupportsSeparateInstances) {
+TEST(FieldTrialsTest, FieldTrialsSupportsSeparateInstances) {
   { FieldTrials f("SomeString/Enabled/"); }
   { FieldTrials f("SomeOtherString/Enabled/"); }
 }
 
-TEST_F(FieldTrialsTest, NonGlobalFieldTrialsInstanceDoesNotModifyGlobalString) {
+TEST(FieldTrialsTest, NonGlobalFieldTrialsInstanceDoesNotModifyGlobalString) {
+  FieldTrialsAllowedInScopeForTesting k({"SomeString"});
   std::unique_ptr<FieldTrials> f =
       FieldTrials::CreateNoGlobal("SomeString/Enabled/");
   ASSERT_THAT(f, NotNull());
+  f->RegisterKeysForTesting({"SomeString"});
+
   EXPECT_TRUE(f->IsEnabled("SomeString"));
   EXPECT_FALSE(webrtc::field_trial::IsEnabled("SomeString"));
 }
 
-TEST_F(FieldTrialsTest, NonGlobalFieldTrialsSupportSimultaneousInstances) {
+TEST(FieldTrialsTest, NonGlobalFieldTrialsSupportSimultaneousInstances) {
   std::unique_ptr<FieldTrials> f1 =
       FieldTrials::CreateNoGlobal("SomeString/Enabled/");
   std::unique_ptr<FieldTrials> f2 =
       FieldTrials::CreateNoGlobal("SomeOtherString/Enabled/");
   ASSERT_THAT(f1, NotNull());
   ASSERT_THAT(f2, NotNull());
+  f1->RegisterKeysForTesting({"SomeString", "SomeOtherString"});
+  f2->RegisterKeysForTesting({"SomeString", "SomeOtherString"});
 
   EXPECT_TRUE(f1->IsEnabled("SomeString"));
   EXPECT_FALSE(f1->IsEnabled("SomeOtherString"));
@@ -112,11 +122,14 @@ TEST_F(FieldTrialsTest, NonGlobalFieldTrialsSupportSimultaneousInstances) {
   EXPECT_TRUE(f2->IsEnabled("SomeOtherString"));
 }
 
-TEST_F(FieldTrialsTest, GlobalAndNonGlobalFieldTrialsAreDisjoint) {
+TEST(FieldTrialsTest, GlobalAndNonGlobalFieldTrialsAreDisjoint) {
+  FieldTrialsAllowedInScopeForTesting k({"SomeString", "SomeOtherString"});
   FieldTrials f1("SomeString/Enabled/");
   std::unique_ptr<FieldTrials> f2 =
       FieldTrials::CreateNoGlobal("SomeOtherString/Enabled/");
   ASSERT_THAT(f2, NotNull());
+  f1.RegisterKeysForTesting({"SomeString", "SomeOtherString"});
+  f2->RegisterKeysForTesting({"SomeString", "SomeOtherString"});
 
   EXPECT_TRUE(f1.IsEnabled("SomeString"));
   EXPECT_FALSE(f1.IsEnabled("SomeOtherString"));
@@ -125,10 +138,12 @@ TEST_F(FieldTrialsTest, GlobalAndNonGlobalFieldTrialsAreDisjoint) {
   EXPECT_TRUE(f2->IsEnabled("SomeOtherString"));
 }
 
-TEST_F(FieldTrialsTest, FieldTrialBasedConfigReadsGlobalString) {
-  static constexpr char s[] = "MyCoolTrial/Enabled/MyUncoolTrial/Disabled/";
-  InitFieldTrialsFromString(s);
+TEST(FieldTrialsTest, FieldTrialBasedConfigReadsGlobalString) {
+  FieldTrialsAllowedInScopeForTesting k({"MyCoolTrial", "MyUncoolTrial"});
+  ScopedFieldTrials g("MyCoolTrial/Enabled/MyUncoolTrial/Disabled/");
   FieldTrialBasedConfig f;
+  f.RegisterKeysForTesting({"MyCoolTrial", "MyUncoolTrial"});
+
   EXPECT_TRUE(f.IsEnabled("MyCoolTrial"));
   EXPECT_TRUE(f.IsDisabled("MyUncoolTrial"));
 }

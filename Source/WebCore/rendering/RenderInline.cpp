@@ -38,7 +38,9 @@
 #include "LegacyInlineFlowBoxInlines.h"
 #include "LegacyInlineTextBox.h"
 #include "RenderBlock.h"
+#include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
@@ -998,7 +1000,7 @@ bool isEmptyInline(const RenderInline& renderer)
         if (current.isFloatingOrOutOfFlowPositioned())
             continue;
         if (is<RenderText>(current)) {
-            if (!downcast<RenderText>(current).isAllCollapsibleWhitespace())
+            if (!downcast<RenderText>(current).containsOnlyCollapsibleWhitespace())
                 return false;
             continue;
         }

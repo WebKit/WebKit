@@ -28,13 +28,17 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "RemoteInspectorServer.h"
+#endif
 
 uint16_t JSRemoteInspectorServerStart(const char* address, uint16_t port)
 {
+#if ENABLE(REMOTE_INSPECTOR)
     auto& server = Inspector::RemoteInspectorServer::singleton();
     if (!server.start(address, port))
         return 0;
 
     return server.getPort().value_or(0);
-}
+#else
+    return 0;
 #endif // ENABLE(REMOTE_INSPECTOR)
+}

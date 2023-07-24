@@ -29,6 +29,7 @@
 #include "MessageSender.h"
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
+#include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/RefCounted.h>
@@ -40,6 +41,7 @@ class RegistrableDomain;
 
 namespace WebKit {
 
+class RemotePageProxy;
 class WebBackForwardCache;
 class WebPageProxy;
 class WebProcessPool;
@@ -63,6 +65,7 @@ public:
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebProcessProxy& process() const { return m_process.get(); }
     WebFrameProxy& mainFrame() { return m_mainFrame.get(); }
+    HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> takeRemotePageMap();
 
     WebBackForwardCache& backForwardCache() const;
 
@@ -91,6 +94,7 @@ private:
     void suspensionTimedOut();
 
     void close();
+    void didDestroyNavigation(uint64_t navigationID);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -106,6 +110,7 @@ private:
     WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
     Ref<WebFrameProxy> m_mainFrame;
+    WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     bool m_isClosed { false };
     ShouldDelayClosingUntilFirstLayerFlush m_shouldDelayClosingUntilFirstLayerFlush { ShouldDelayClosingUntilFirstLayerFlush::No };
     bool m_shouldCloseWhenEnteringAcceleratedCompositingMode { false };
@@ -122,6 +127,7 @@ private:
     LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
 #endif
 #endif
+    HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> m_remotePageMap;
 };
 
 } // namespace WebKit

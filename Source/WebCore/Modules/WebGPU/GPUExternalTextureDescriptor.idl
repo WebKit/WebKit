@@ -30,7 +30,11 @@
 ]
 dictionary GPUExternalTextureDescriptor : GPUObjectDescriptorBase {
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
+#if defined(ENABLE_WEB_CODECS) && ENABLE_WEB_CODECS
+    required (HTMLVideoElement or WebCodecsVideoFrame) source;
+#else
     required HTMLVideoElement source;
+#endif
 #endif
     GPUPredefinedColorSpace colorSpace = "srgb";
 };

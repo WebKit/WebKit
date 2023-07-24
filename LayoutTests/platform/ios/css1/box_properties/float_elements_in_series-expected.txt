@@ -157,4 +157,4 @@ layer at (0,0) size 800x706
                       RenderTableCell {TD} at (600,10) size 20x1 [bgcolor=#000000] [r=0 c=14 rs=1 cs=1]
                         RenderImage {IMG} at (0,0) size 20x1
 layer at (8,236) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,228) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,228) size 784x2 [color=#808080] [border: (1px inset #808080)]

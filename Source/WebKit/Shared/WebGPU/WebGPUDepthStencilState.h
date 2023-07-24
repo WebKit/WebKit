@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,26 +28,26 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUStencilFaceState.h"
+#include <WebCore/WebGPUCompareFunction.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUTextureFormat.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUCompareFunction.h>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
 
 namespace WebKit::WebGPU {
 
 struct DepthStencilState {
-    PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
+    WebCore::WebGPU::TextureFormat format { WebCore::WebGPU::TextureFormat::R8unorm };
 
     bool depthWriteEnabled { false };
-    PAL::WebGPU::CompareFunction depthCompare { PAL::WebGPU::CompareFunction::Always };
+    WebCore::WebGPU::CompareFunction depthCompare { WebCore::WebGPU::CompareFunction::Always };
 
     StencilFaceState stencilFront;
     StencilFaceState stencilBack;
 
-    std::optional<PAL::WebGPU::StencilValue> stencilReadMask;
-    std::optional<PAL::WebGPU::StencilValue> stencilWriteMask;
+    std::optional<WebCore::WebGPU::StencilValue> stencilReadMask;
+    std::optional<WebCore::WebGPU::StencilValue> stencilWriteMask;
 
-    PAL::WebGPU::DepthBias depthBias { 0 };
+    WebCore::WebGPU::DepthBias depthBias { 0 };
     float depthBiasSlopeScale { 0 };
     float depthBiasClamp { 0 };
 };

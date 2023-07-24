@@ -309,6 +309,12 @@ TEST_P(AudioMultiVectorTest, CopyChannel) {
   }
 }
 
+TEST_P(AudioMultiVectorTest, PushBackEmptyArray) {
+  AudioMultiVector vec(num_channels_);
+  vec.PushBackInterleaved({});
+  EXPECT_TRUE(vec.Empty());
+}
+
 INSTANTIATE_TEST_SUITE_P(TestNumChannels,
                          AudioMultiVectorTest,
                          ::testing::Values(static_cast<size_t>(1),

@@ -14,6 +14,6 @@ RUN(video.muted = false)
 RUN(video.play())
 EVENT(playing)
 EXPECTED (internals.categoryAtMostRecentPlayback(video) == 'MediaPlayback') OK
-EXPECTED (internals.modeAtMostRecentPlayback(video) == 'MoviePlayback') OK
+EXPECTED (internals.modeAtMostRecentPlayback(video) == 'Default') OK
 END OF TEST
 

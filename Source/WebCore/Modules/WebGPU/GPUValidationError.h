@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <pal/graphics/WebGPU/WebGPUValidationError.h>
+#include "WebGPUValidationError.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -39,15 +39,15 @@ public:
         return adoptRef(*new GPUValidationError(WTFMove(message)));
     }
 
-    static Ref<GPUValidationError> create(Ref<PAL::WebGPU::ValidationError>&& backing)
+    static Ref<GPUValidationError> create(Ref<WebGPU::ValidationError>&& backing)
     {
         return adoptRef(*new GPUValidationError(WTFMove(backing)));
     }
 
     const String& message() const;
 
-    PAL::WebGPU::ValidationError* backing() { return m_backing.get(); }
-    const PAL::WebGPU::ValidationError* backing() const { return m_backing.get(); }
+    WebGPU::ValidationError* backing() { return m_backing.get(); }
+    const WebGPU::ValidationError* backing() const { return m_backing.get(); }
 
 private:
     GPUValidationError(String&& message)
@@ -55,13 +55,13 @@ private:
     {
     }
 
-    GPUValidationError(Ref<PAL::WebGPU::ValidationError>&& backing)
+    GPUValidationError(Ref<WebGPU::ValidationError>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
     String m_message;
-    RefPtr<PAL::WebGPU::ValidationError> m_backing;
+    RefPtr<WebGPU::ValidationError> m_backing;
 };
 
 }

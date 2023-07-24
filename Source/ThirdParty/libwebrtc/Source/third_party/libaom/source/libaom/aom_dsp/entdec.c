@@ -205,14 +205,14 @@ int od_ec_decode_cdf_q15(od_ec_dec *dec, const uint16_t *icdf, int nsyms) {
   assert(dif >> (OD_EC_WINDOW_SIZE - 16) < r);
   assert(icdf[nsyms - 1] == OD_ICDF(CDF_PROB_TOP));
   assert(32768U <= r);
-  assert(7 - EC_PROB_SHIFT - CDF_SHIFT >= 0);
+  assert(7 - EC_PROB_SHIFT >= 0);
   c = (unsigned)(dif >> (OD_EC_WINDOW_SIZE - 16));
   v = r;
   ret = -1;
   do {
     u = v;
     v = ((r >> 8) * (uint32_t)(icdf[++ret] >> EC_PROB_SHIFT) >>
-         (7 - EC_PROB_SHIFT - CDF_SHIFT));
+         (7 - EC_PROB_SHIFT));
     v += EC_MIN_PROB * (N - ret);
   } while (c < v);
   assert(v < u);

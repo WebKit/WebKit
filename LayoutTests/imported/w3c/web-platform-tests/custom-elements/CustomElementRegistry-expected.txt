@@ -36,10 +36,10 @@ PASS CustomElementRegistry interface must have get as a method
 PASS customElements.get must return undefined when the registry does not contain an entry with the given name
 PASS customElements.get must return undefined when the registry does not contain an entry with the given name even if the name was not a valid custom element name
 PASS customElements.get return the constructor of the entry with the given name when there is a matching entry.
-PASS customElements.getName must return undefined when called with undefined
-PASS customElements.getName must return undefined when called with null
-PASS customElements.getName must return undefined when called with a string
-PASS customElements.getName must return undefined when the registry does not contain an entry with the given constructor
+PASS customElements.getName must return null when the registry does not contain an entry with the given constructor
+PASS customElements.getName must return null when called with undefined
+PASS customElements.getName must return null when called with null
+PASS customElements.getName must return null when called with a string
 PASS customElements.getName returns the name of the entry with the given constructor when there is a matching entry.
 PASS customElements.whenDefined must return a promise for a valid custom element name
 PASS customElements.whenDefined must return the same promise each time invoked for a valid custom element name which has not been defined

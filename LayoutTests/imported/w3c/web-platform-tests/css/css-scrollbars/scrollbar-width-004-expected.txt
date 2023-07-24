@@ -9,8 +9,8 @@ none
 
 PASS vertical-lr, scrollbar-width auto
 PASS vertical-lr, scrollbar-width thin
-FAIL vertical-lr, scrollbar-width none assert_equals: ltr auto clientWidth expected 200 but got 185
+PASS vertical-lr, scrollbar-width none
 PASS vertical-rl, scrollbar-width auto
 PASS vertical-rl, scrollbar-width thin
-FAIL vertical-rl, scrollbar-width none assert_equals: rtl auto clientWidth expected 200 but got 185
+PASS vertical-rl, scrollbar-width none
 

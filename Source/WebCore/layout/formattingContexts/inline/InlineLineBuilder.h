@@ -36,12 +36,12 @@
 namespace WebCore {
 namespace Layout {
 
-struct CommittedContent;
+struct LineContent;
 struct LineCandidate;
 
 class LineBuilder {
 public:
-    LineBuilder(const InlineFormattingContext&, InlineLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
+    LineBuilder(const InlineFormattingContext&, const InlineLayoutState&, FloatingState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
 
     struct LineInput {
         InlineItemRange needsLayoutRange;
@@ -49,45 +49,60 @@ public:
     };
     using PlacedFloatList = FloatingState::FloatList;
     using SuspendedFloatList = Vector<const Box*>;
-    struct LineContent {
-        InlineItemRange committedRange;
-        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
-        PlacedFloatList placedFloats;
-        SuspendedFloatList suspendedFloats;
-        bool hasIntrusiveFloat { false };
-        InlineLayoutUnit lineInitialLogicalLeftIncludingIntrusiveFloats { 0.f };
-        InlineLayoutPoint lineLogicalTopLeft;
-        InlineLayoutUnit lineLogicalWidth { 0.f };
-        InlineLayoutUnit contentLogicalLeft { 0.f };
-        InlineLayoutUnit contentLogicalWidth { 0.f };
-        InlineLayoutUnit contentLogicalRightIncludingNegativeMargin { 0.f }; // Note that with negative horizontal margin value, contentLogicalLeft + contentLogicalWidth is not necessarily contentLogicalRight.
+    struct LayoutResult {
+        InlineItemRange inlineItemRange;
+        const Line::RunList& inlineContent;
+
+        struct FloatContent {
+            PlacedFloatList placedFloats;
+            SuspendedFloatList suspendedFloats;
+            bool hasIntrusiveFloat { false };
+        };
+        FloatContent floatContent { };
+
+        struct ContentGeometry {
+            InlineLayoutUnit logicalLeft { 0.f };
+            InlineLayoutUnit logicalWidth { 0.f };
+            InlineLayoutUnit logicalRightIncludingNegativeMargin { 0.f }; // Note that with negative horizontal margin value, contentLogicalLeft + contentLogicalWidth is not necessarily contentLogicalRight.
+            std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
+        };
+        ContentGeometry contentGeometry { };
+
+        struct LineGeometry {
+            InlineLayoutPoint logicalTopLeft;
+            InlineLayoutUnit logicalWidth { 0.f };
+            InlineLayoutUnit initialLogicalLeftIncludingIntrusiveFloats { 0.f };
+            std::optional<InlineLayoutUnit> initialLetterClearGap;
+        };
+        LineGeometry lineGeometry { };
+
         struct HangingContent {
             bool shouldContributeToScrollableOverflow { false };
-            InlineLayoutUnit width { 0.f };
+            InlineLayoutUnit logicalWidth { 0.f };
         };
-        HangingContent hangingContent;
-        enum class FirstFormattedLine : uint8_t {
-            No,
-            WithinIFC,
-            WithinBFC
-        };
-        FirstFormattedLine isFirstFormattedLine { FirstFormattedLine::WithinIFC };
-        bool isLastLineWithInlineContent { true };
-        size_t nonSpanningInlineLevelBoxCount { 0 };
-        Vector<int32_t> visualOrderList;
-        TextDirection inlineBaseDirection { TextDirection::LTR };
-        const Line::RunList& runs;
-    };
-    LineContent layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
+        HangingContent hangingContent { };
 
-    struct IntrinsicContent {
-        InlineItemRange committedRange;
-        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
-        InlineLayoutUnit contentLogicalWidth { 0 };
-        PlacedFloatList placedFloats;
-        SuspendedFloatList suspendedFloats;
+        struct Directionality {
+            Vector<int32_t> visualOrderList;
+            TextDirection inlineBaseDirection { TextDirection::LTR };
+        };
+        Directionality directionality { };
+
+        struct IsFirstLast {
+            enum class FirstFormattedLine : uint8_t {
+                No,
+                WithinIFC,
+                WithinBFC
+            };
+            FirstFormattedLine isFirstFormattedLine { FirstFormattedLine::WithinIFC };
+            bool isLastLineWithInlineContent { true };
+        };
+        IsFirstLast isFirstLast { };
+        // Misc
+        size_t nonSpanningInlineLevelBoxCount { 0 };
+        std::optional<InlineLayoutUnit> hintForNextLineTopToAvoidIntrusiveFloat { }; // This is only used for cases when intrusive floats prevent any content placement at current vertical position.
     };
-    IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);
+    LayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
 
 private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
@@ -121,8 +136,7 @@ private:
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
     void initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints&, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&);
-    CommittedContent placeInlineContent(const InlineItemRange&);
-    InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
+    LineContent placeInlineAndFloatContent(const InlineItemRange&);
     struct InitialLetterOffsets {
         LayoutUnit capHeightOffset;
         LayoutUnit sunkenBelowFirstLineOffset;
@@ -144,19 +158,18 @@ private:
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
-    BlockLayoutState& blockLayoutState() const { return inlineLayoutState().parentBlockLayoutState(); }
-    FloatingState& floatingState() { return blockLayoutState().floatingState(); }
+    const BlockLayoutState& blockLayoutState() const { return m_inlineLayoutState.parentBlockLayoutState(); }
+    FloatingState& floatingState() { return m_floatingState; }
     const FloatingState& floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
     const ElementBox& root() const;
-    const LayoutState& layoutState() const;
     const RenderStyle& rootStyle() const;
 
 private:
     std::optional<PreviousLine> m_previousLine { };
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
-    InlineLayoutState& m_inlineLayoutState;
+    const InlineLayoutState& m_inlineLayoutState;
+    FloatingState& m_floatingState;
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;
@@ -164,6 +177,7 @@ private:
     InlineRect m_lineLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0.f };
     InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
+    InlineLayoutUnit m_candidateInlineContentEnclosingHeight { 0.f };
     const InlineItems& m_inlineItems;
     PlacedFloatList m_placedFloats;
     SuspendedFloatList m_suspendedFloats;
@@ -173,6 +187,7 @@ private:
     Vector<InlineItem> m_lineSpanningInlineBoxes;
     unsigned m_successiveHyphenatedLineCount { 0 };
     bool m_lineIsConstrainedByFloat { false };
+    std::optional<InlineLayoutUnit> m_initialLetterClearGap;
 };
 
 }

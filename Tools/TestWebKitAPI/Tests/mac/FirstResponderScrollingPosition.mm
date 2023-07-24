@@ -49,8 +49,9 @@ TEST(WebKit, DISABLED_FirstResponderScrollingPosition)
 
     // Turn off threaded scrolling; synchronously waiting for the main thread scroll position to
     // update using WKPageForceRepaint would be better, but for some reason the test still fails occasionally.
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("NoThreadedScrollingPageGroup").get()));
-    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
+    auto configuration = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(configuration.get(), context.get());
+    auto preferences = WKPageConfigurationGetPreferences(configuration.get());
     WKPreferencesSetThreadedScrollingEnabled(preferences, false);
 
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 600)
@@ -58,7 +59,7 @@ TEST(WebKit, DISABLED_FirstResponderScrollingPosition)
     [window.get() makeKeyAndOrderFront:nil];
     EXPECT_TRUE([window.get() isVisible]);
 
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(configuration.get());
 
     WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
@@ -90,7 +91,7 @@ TEST(WebKit, DISABLED_FirstResponderScrollingPosition)
 
     EXPECT_JS_EQ(webView.page(), "window.scrollY", "40");
 
-    PlatformWebView newWebView(context.get(), pageGroup.get());
+    PlatformWebView newWebView(context.get());
     WKPageSetPageNavigationClient(newWebView.page(), &loaderClient.base);
 
     [window.get().contentView addSubview:newWebView.platformView()];

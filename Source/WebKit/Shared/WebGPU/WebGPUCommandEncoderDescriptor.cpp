@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,20 +30,20 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUCommandEncoderDescriptor.h>
+#include <WebCore/WebGPUCommandEncoderDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<CommandEncoderDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::CommandEncoderDescriptor& commandEncoderDescriptor)
+std::optional<CommandEncoderDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::CommandEncoderDescriptor& commandEncoderDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(commandEncoderDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(commandEncoderDescriptor));
     if (!base)
         return std::nullopt;
 
     return { { WTFMove(*base) } };
 }
 
-std::optional<PAL::WebGPU::CommandEncoderDescriptor> ConvertFromBackingContext::convertFromBacking(const CommandEncoderDescriptor& commandEncoderDescriptor)
+std::optional<WebCore::WebGPU::CommandEncoderDescriptor> ConvertFromBackingContext::convertFromBacking(const CommandEncoderDescriptor& commandEncoderDescriptor)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(commandEncoderDescriptor));
     if (!base)

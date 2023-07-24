@@ -106,7 +106,7 @@ public:
         {
             if (it == m_table.commonHeaders().end())
                 return false;
-            m_keyValue.key = httpHeaderNameString(it->key).toStringWithoutCopying();
+            m_keyValue.key = httpHeaderNameString(it->key);
             m_keyValue.keyAsHTTPHeaderName = it->key;
             m_keyValue.value = it->value;
             return true;

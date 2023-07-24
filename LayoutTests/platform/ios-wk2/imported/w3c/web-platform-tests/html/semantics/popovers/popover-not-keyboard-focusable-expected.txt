@@ -3,5 +3,5 @@ This is a popover without a focusable element
 
  Button 2
 
-FAIL Popover should not be keyboard focusable assert_equals: Keyboard focus should skip the open popover expected Element node <button tabindex="0" id="secondfocus">Button 2</button> but got Element node <button tabindex="0" id="firstfocus">Button 1</button>
+FAIL Popover should not be keyboard focusable assert_equals: Keyboard focus should skip the open popover expected Element node <button id="secondfocus" tabindex="0">Button 2</button> but got Element node <button id="firstfocus" tabindex="0">Button 1</button>
 

@@ -51,7 +51,7 @@ public:
     static void cookiesChangedCallback(WebKitCookieManager*, CookieManagerTest* test)
     {
         test->m_cookiesChanged = true;
-        if (test->m_finishLoopWhenCookiesChange && !(--test->m_cookiesExpectedToChangeCount))
+        if (!(--test->m_cookiesExpectedToChangeCount) && test->m_finishLoopWhenCookiesChange)
             g_main_loop_quit(test->m_mainLoop);
     }
 
@@ -156,6 +156,44 @@ public:
         g_list_free_full(m_cookies, reinterpret_cast<GDestroyNotify>(soup_cookie_free));
         m_cookies = nullptr;
         webkit_cookie_manager_get_cookies(m_cookieManager, uri, 0, getCookiesReadyCallback, this);
+        g_main_loop_run(m_mainLoop);
+
+        return m_cookies;
+    }
+
+    static void replaceCookiesReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
+    {
+        CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
+        GUniqueOutPtr<GError> error;
+        webkit_cookie_manager_replace_cookies_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
+        g_assert_no_error(error.get());
+
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void replaceCookies(GList* cookies)
+    {
+        webkit_cookie_manager_replace_cookies(m_cookieManager, cookies, 0, replaceCookiesReadyCallback, this);
+        g_main_loop_run(m_mainLoop);
+
+    }
+
+    static void getAllCookiesReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
+    {
+        GUniqueOutPtr<GError> error;
+        GList* cookies = webkit_cookie_manager_get_all_cookies_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
+        g_assert_no_error(error.get());
+
+        CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
+        test->m_cookies = cookies;
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    GList* getAllCookies()
+    {
+        g_list_free_full(m_cookies, reinterpret_cast<GDestroyNotify>(soup_cookie_free));
+        m_cookies = nullptr;
+        webkit_cookie_manager_get_all_cookies(m_cookieManager, 0, getAllCookiesReadyCallback, this);
         g_main_loop_run(m_mainLoop);
 
         return m_cookies;
@@ -498,6 +536,42 @@ static void testCookieManagerGetCookies(CookieManagerTest* test, gconstpointer)
     g_assert_null(foundCookies);
 }
 
+static void testCookieManagerReplaceGetAllCookies(CookieManagerTest* test, gconstpointer)
+{
+    // Load the html content and retrieve the two cookies automatically added with ALWAYS policy.
+    test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
+    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 2);
+
+    // Retrieve existing cookie jar.
+    GList* foundCookies = test->getAllCookies();
+    g_assert_cmpint(g_list_length(foundCookies), ==, 2);
+
+    GUniquePtr<SoupCookie> firstCookie(soup_cookie_new(kCookieName, kCookieValueNew, kFirstPartyDomain, kCookiePath, SOUP_COOKIE_MAX_AGE_ONE_HOUR));
+    GUniquePtr<GList> cookies;
+    cookies.reset(g_list_prepend(cookies.get(), firstCookie.get()));
+
+    // Only one signal "changed" should be sent in case of setCookieJar.
+    test->m_cookiesChanged = false;
+    test->m_cookiesExpectedToChangeCount = 1;
+    // Set new cookie jar with one cookie.
+    test->replaceCookies(cookies.get());
+    g_assert_true(test->m_cookiesChanged);
+    g_assert_cmpint(test->m_cookiesExpectedToChangeCount, ==, 0);
+
+    // Retrieve the new cookie jar with one cookie.
+    foundCookies = test->getAllCookies();
+    g_assert_cmpint(g_list_length(foundCookies), ==, 1);
+
+    // Finally, delete all cookies.
+    test->deleteAllCookies();
+
+    // Retrieve the empty cookie jar.
+    foundCookies = test->getAllCookies();
+    g_assert_null(foundCookies);
+}
+
 static void testCookieManagerDeleteCookie(CookieManagerTest* test, gconstpointer)
 {
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
@@ -821,6 +895,7 @@ void beforeAll()
     CookieManagerTest::add("WebKitCookieManager", "accept-policy", testCookieManagerAcceptPolicy);
     CookieManagerTest::add("WebKitCookieManager", "add-cookie", testCookieManagerAddCookie);
     CookieManagerTest::add("WebKitCookieManager", "get-cookies", testCookieManagerGetCookies);
+    CookieManagerTest::add("WebKitCookieManager", "replace-get-all-cookies", testCookieManagerReplaceGetAllCookies);
     CookieManagerTest::add("WebKitCookieManager", "delete-cookie", testCookieManagerDeleteCookie);
     CookieManagerTest::add("WebKitCookieManager", "delete-cookies", testCookieManagerDeleteCookies);
     CookieManagerTest::add("WebKitCookieManager", "cookies-changed", testCookieManagerCookiesChanged);

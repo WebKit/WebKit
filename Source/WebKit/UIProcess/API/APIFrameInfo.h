@@ -56,6 +56,7 @@ public:
     Ref<FrameHandle> handle() const;
     WebKit::WebPageProxy* page() { return m_page.get(); }
     RefPtr<FrameHandle> parentFrameHandle() const;
+    ProcessID processID() const { return m_data.processID; }
 
 private:
     FrameInfo(WebKit::FrameInfoData&&, RefPtr<WebKit::WebPageProxy>&&);

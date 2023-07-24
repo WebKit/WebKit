@@ -146,6 +146,7 @@
 #import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/DictationAlternative.h>
 #import <WebCore/DictionaryLookup.h>
+#import <WebCore/DisplayRefreshMonitorManager.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DragController.h>
@@ -1356,7 +1357,7 @@ static RetainPtr<CFMutableSetRef>& allWebViewsSet()
 
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 static bool needsLaBanquePostaleQuirks()
 {
     static bool needsQuirks = WebCore::IOSApplication::isLaBanquePostale() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoLaBanquePostaleQuirks);
@@ -1567,7 +1568,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->setCanStartMedia([self window]);
     _private->page->settings().setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if (needsLaBanquePostaleQuirks())
         [self _injectLaBanquePostaleQuirks];
 #endif
@@ -2040,7 +2041,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     }
 }
 
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
 
 - (BOOL)_requestStartDataInteraction:(CGPoint)clientPosition globalPosition:(CGPoint)globalPosition
 {
@@ -5622,8 +5623,13 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 #if !PLATFORM(IOS_FAMILY)
 - (void)doWindowDidChangeScreen
 {
-    if (_private && _private->page)
-        _private->page->chrome().windowScreenDidChange(WebCore::displayID(self.window.screen), std::nullopt);
+    if (_private && _private->page) {
+        // Try to find the refresh rate from the display refresh monitor, since
+        // we don't have any other easy way to access it from here.
+        auto displayID = WebCore::displayID(self.window.screen);
+        auto nominalFramesPerSecond = WebCore::DisplayRefreshMonitorManager::sharedManager().nominalFramesPerSecondForDisplay(displayID, _private->page->chrome().client().displayRefreshMonitorFactory());
+        _private->page->chrome().windowScreenDidChange(displayID, nominalFramesPerSecond);
+    }
 }
 
 - (void)_windowChangedKeyState
@@ -9580,7 +9586,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 
     auto translationViewController = adoptNS([PAL::allocLTUITranslationViewControllerInstance() init]);
     [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:info.text]).get()];
-    if (info.mode == WebCore::TranslationContextMenuMode::Editable && [translationViewController respondsToSelector:@selector(setReplacementHandler:)]) {
+    if (info.mode == WebCore::TranslationContextMenuMode::Editable) {
         [translationViewController setIsSourceEditable:YES];
         [translationViewController setReplacementHandler:[weakSelf = WeakObjCPtr<WebView>(self)](NSAttributedString *string) {
             auto strongSelf = weakSelf.get();

@@ -30,6 +30,7 @@
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKFormInputSession.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -545,6 +546,7 @@ static bool isQuickboardViewController(UIViewController *viewController)
 {
     if (self.willStartInputSessionCallback)
         self.willStartInputSessionCallback();
+    inputSession.accessoryViewShouldNotShow = self.suppressInputAccessoryView;
 }
 
 - (_WKFocusStartsInputSessionPolicy)_webView:(WKWebView *)webView decidePolicyForFocusedElement:(id<_WKFocusedElementInfo>)info

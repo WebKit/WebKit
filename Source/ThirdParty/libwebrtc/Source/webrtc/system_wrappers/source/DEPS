@@ -1,0 +1,6 @@
+specific_include_rules = {
+  # TODO(bugs.webrtc.org/10335): Remove rule when global string is removed.
+  "field_trial\.cc": [
+    "+experiments/registered_field_trials.h",
+  ],
+}

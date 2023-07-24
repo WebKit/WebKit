@@ -146,7 +146,7 @@ class ABSL_MUST_USE_RESULT StatusOr;
 //
 //   absl::StatusOr<int> i = GetCount();
 //   if (i.ok()) {
-//     updated_total += *i
+//     updated_total += *i;
 //   }
 //
 // NOTE: using `absl::StatusOr<T>::value()` when no valid value is present will
@@ -584,7 +584,7 @@ class StatusOr : private internal_statusor::StatusOrData<T>,
   // Reconstructs the inner value T in-place using the provided args, using the
   // T(args...) constructor. Returns reference to the reconstructed `T`.
   template <typename... Args>
-  T& emplace(Args&&... args) {
+  T& emplace(Args&&... args) ABSL_ATTRIBUTE_LIFETIME_BOUND {
     if (ok()) {
       this->Clear();
       this->MakeValue(std::forward<Args>(args)...);
@@ -600,7 +600,8 @@ class StatusOr : private internal_statusor::StatusOrData<T>,
       absl::enable_if_t<
           std::is_constructible<T, std::initializer_list<U>&, Args&&...>::value,
           int> = 0>
-  T& emplace(std::initializer_list<U> ilist, Args&&... args) {
+  T& emplace(std::initializer_list<U> ilist,
+             Args&&... args) ABSL_ATTRIBUTE_LIFETIME_BOUND {
     if (ok()) {
       this->Clear();
       this->MakeValue(ilist, std::forward<Args>(args)...);
@@ -610,6 +611,21 @@ class StatusOr : private internal_statusor::StatusOrData<T>,
     }
     return this->data_;
   }
+
+  // StatusOr<T>::AssignStatus()
+  //
+  // Sets the status of `absl::StatusOr<T>` to the given non-ok status value.
+  //
+  // NOTE: We recommend using the constructor and `operator=` where possible.
+  // This method is intended for use in generic programming, to enable setting
+  // the status of a `StatusOr<T>` when `T` may be `Status`. In that case, the
+  // constructor and `operator=` would assign into the inner value of type
+  // `Status`, rather than status of the `StatusOr` (b/280392796).
+  //
+  // REQUIRES: !Status(std::forward<U>(v)).ok(). This requirement is DCHECKed.
+  // In optimized builds, passing absl::OkStatus() here will have the effect
+  // of passing absl::StatusCode::kInternal as a fallback.
+  using internal_statusor::StatusOrData<T>::AssignStatus;
 
  private:
   using internal_statusor::StatusOrData<T>::Assign;

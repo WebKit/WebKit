@@ -24,6 +24,7 @@
 #include "api/field_trials_view.h"
 #include "api/packet_socket_factory.h"
 #include "api/rtc_error.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/transport/field_trial_based_config.h"
 #include "api/transport/stun.h"
 #include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
@@ -46,7 +47,6 @@
 #include "rtc_base/socket_address.h"
 #include "rtc_base/system/rtc_export.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
-#include "rtc_base/thread.h"
 #include "rtc_base/weak_ptr.h"
 
 namespace cricket {
@@ -176,9 +176,7 @@ typedef std::set<rtc::SocketAddress> ServerAddresses;
 // Represents a local communication mechanism that can be used to create
 // connections to similar mechanisms of the other client.  Subclasses of this
 // one add support for specific mechanisms like local UDP ports.
-class Port : public PortInterface,
-             public rtc::MessageHandler,
-             public sigslot::has_slots<> {
+class RTC_EXPORT Port : public PortInterface, public sigslot::has_slots<> {
  public:
   // INIT: The state when a port is just created.
   // KEEP_ALIVE_UNTIL_PRUNED: A port should not be destroyed even if no
@@ -186,14 +184,14 @@ class Port : public PortInterface,
   // PRUNED: It will be destroyed if no connection is using it for a period of
   // 30 seconds.
   enum class State { INIT, KEEP_ALIVE_UNTIL_PRUNED, PRUNED };
-  Port(rtc::Thread* thread,
+  Port(webrtc::TaskQueueBase* thread,
        absl::string_view type,
        rtc::PacketSocketFactory* factory,
        const rtc::Network* network,
        absl::string_view username_fragment,
        absl::string_view password,
        const webrtc::FieldTrialsView* field_trials = nullptr);
-  Port(rtc::Thread* thread,
+  Port(webrtc::TaskQueueBase* thread,
        absl::string_view type,
        rtc::PacketSocketFactory* factory,
        const rtc::Network* network,
@@ -232,7 +230,7 @@ class Port : public PortInterface,
   void CancelPendingTasks();
 
   // The thread on which this port performs its I/O.
-  rtc::Thread* thread() { return thread_; }
+  webrtc::TaskQueueBase* thread() { return thread_; }
 
   // The factory used to create the sockets of this port.
   rtc::PacketSocketFactory* socket_factory() const { return factory_; }
@@ -346,8 +344,6 @@ class Port : public PortInterface,
   // Called if the port has no connections and is no longer useful.
   void Destroy();
 
-  void OnMessage(rtc::Message* pmsg) override;
-
   // Debugging description of this port
   std::string ToString() const override;
   uint16_t min_port() { return min_port_; }
@@ -396,8 +392,6 @@ class Port : public PortInterface,
                                 const rtc::SocketAddress& base_address);
 
  protected:
-  enum { MSG_DESTROY_IF_DEAD = 0, MSG_FIRST_AVAILABLE };
-
   virtual void UpdateNetworkCost();
 
   void set_type(absl::string_view type) { type_ = std::string(type); }
@@ -470,6 +464,9 @@ class Port : public PortInterface,
  private:
   void Construct();
 
+  void PostDestroyIfDead(bool delayed);
+  void DestroyIfDead();
+
   // Called internally when deleting a connection object.
   // Returns true if the connection object was removed from the `connections_`
   // list and the state updated accordingly. If the connection was not found
@@ -485,7 +482,7 @@ class Port : public PortInterface,
 
   void OnNetworkTypeChanged(const rtc::Network* network);
 
-  rtc::Thread* const thread_;
+  webrtc::TaskQueueBase* const thread_;
   rtc::PacketSocketFactory* const factory_;
   std::string type_;
   bool send_retransmit_count_attribute_;

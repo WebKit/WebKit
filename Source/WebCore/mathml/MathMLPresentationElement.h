@@ -43,9 +43,6 @@ protected:
     MathMLPresentationElement(const QualifiedName& tagName, Document&, ConstructionType = CreateMathMLPresentationElement);
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
 
-    static bool isPhrasingContent(const Node&);
-    static bool isFlowContent(const Node&);
-
     static std::optional<bool> toOptionalBool(const BooleanValue& value) { return value == BooleanValue::Default ? std::nullopt : std::optional<bool>(value == BooleanValue::True); }
     const BooleanValue& cachedBooleanAttribute(const QualifiedName&, std::optional<BooleanValue>&);
 

@@ -12,13 +12,15 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-#include <openssl/rand.h>
+#include <openssl/ctrdrbg.h>
 
-#include <openssl/type_check.h>
+#include <assert.h>
+
 #include <openssl/mem.h>
 
 #include "internal.h"
 #include "../cipher/internal.h"
+#include "../service_indicator/internal.h"
 
 
 // Section references in this file refer to SP 800-90Ar1:
@@ -26,6 +28,21 @@
 
 // See table 3.
 static const uint64_t kMaxReseedCount = UINT64_C(1) << 48;
+
+CTR_DRBG_STATE *CTR_DRBG_new(const uint8_t entropy[CTR_DRBG_ENTROPY_LEN],
+                             const uint8_t *personalization,
+                             size_t personalization_len) {
+  CTR_DRBG_STATE *drbg = OPENSSL_malloc(sizeof(CTR_DRBG_STATE));
+  if (drbg == NULL ||
+      !CTR_DRBG_init(drbg, entropy, personalization, personalization_len)) {
+    CTR_DRBG_free(drbg);
+    return NULL;
+  }
+
+  return drbg;
+}
+
+void CTR_DRBG_free(CTR_DRBG_STATE *state) { OPENSSL_free(state); }
 
 int CTR_DRBG_init(CTR_DRBG_STATE *drbg,
                   const uint8_t entropy[CTR_DRBG_ENTROPY_LEN],
@@ -58,20 +75,20 @@ int CTR_DRBG_init(CTR_DRBG_STATE *drbg,
   }
 
   drbg->ctr = aes_ctr_set_key(&drbg->ks, NULL, &drbg->block, seed_material, 32);
-  OPENSSL_memcpy(drbg->counter.bytes, seed_material + 32, 16);
+  OPENSSL_memcpy(drbg->counter, seed_material + 32, 16);
   drbg->reseed_counter = 1;
 
   return 1;
 }
 
-OPENSSL_STATIC_ASSERT(CTR_DRBG_ENTROPY_LEN % AES_BLOCK_SIZE == 0,
-                      "not a multiple of AES block size");
+static_assert(CTR_DRBG_ENTROPY_LEN % AES_BLOCK_SIZE == 0,
+              "not a multiple of AES block size");
 
 // ctr_inc adds |n| to the last four bytes of |drbg->counter|, treated as a
 // big-endian number.
 static void ctr32_add(CTR_DRBG_STATE *drbg, uint32_t n) {
-  drbg->counter.words[3] =
-      CRYPTO_bswap4(CRYPTO_bswap4(drbg->counter.words[3]) + n);
+  uint32_t ctr = CRYPTO_load_u32_be(drbg->counter + 12);
+  CRYPTO_store_u32_be(drbg->counter + 12, ctr + n);
 }
 
 static int ctr_drbg_update(CTR_DRBG_STATE *drbg, const uint8_t *data,
@@ -86,7 +103,7 @@ static int ctr_drbg_update(CTR_DRBG_STATE *drbg, const uint8_t *data,
   uint8_t temp[CTR_DRBG_ENTROPY_LEN];
   for (size_t i = 0; i < CTR_DRBG_ENTROPY_LEN; i += AES_BLOCK_SIZE) {
     ctr32_add(drbg, 1);
-    drbg->block(drbg->counter.bytes, temp + i, &drbg->ks);
+    drbg->block(drbg->counter, temp + i, &drbg->ks);
   }
 
   for (size_t i = 0; i < data_len; i++) {
@@ -94,7 +111,7 @@ static int ctr_drbg_update(CTR_DRBG_STATE *drbg, const uint8_t *data,
   }
 
   drbg->ctr = aes_ctr_set_key(&drbg->ks, NULL, &drbg->block, temp, 32);
-  OPENSSL_memcpy(drbg->counter.bytes, temp + 32, 16);
+  OPENSSL_memcpy(drbg->counter, temp + 32, 16);
 
   return 1;
 }
@@ -166,12 +183,12 @@ int CTR_DRBG_generate(CTR_DRBG_STATE *drbg, uint8_t *out, size_t out_len,
     if (drbg->ctr) {
       OPENSSL_memset(out, 0, todo);
       ctr32_add(drbg, 1);
-      drbg->ctr(out, out, num_blocks, &drbg->ks, drbg->counter.bytes);
-      ctr32_add(drbg, num_blocks - 1);
+      drbg->ctr(out, out, num_blocks, &drbg->ks, drbg->counter);
+      ctr32_add(drbg, (uint32_t)(num_blocks - 1));
     } else {
       for (size_t i = 0; i < todo; i += AES_BLOCK_SIZE) {
         ctr32_add(drbg, 1);
-        drbg->block(drbg->counter.bytes, out + i, &drbg->ks);
+        drbg->block(drbg->counter, out + i, &drbg->ks);
       }
     }
 
@@ -182,7 +199,7 @@ int CTR_DRBG_generate(CTR_DRBG_STATE *drbg, uint8_t *out, size_t out_len,
   if (out_len > 0) {
     uint8_t block[AES_BLOCK_SIZE];
     ctr32_add(drbg, 1);
-    drbg->block(drbg->counter.bytes, block, &drbg->ks);
+    drbg->block(drbg->counter, block, &drbg->ks);
 
     OPENSSL_memcpy(out, block, out_len);
   }
@@ -194,6 +211,7 @@ int CTR_DRBG_generate(CTR_DRBG_STATE *drbg, uint8_t *out, size_t out_len,
   }
 
   drbg->reseed_counter++;
+  FIPS_service_indicator_update_state();
   return 1;
 }
 

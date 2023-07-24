@@ -18,55 +18,55 @@ PASS setSelectionRange on an input[type=email] throws InvalidStateError
 FAIL selectionStart on an input[type=datetime-local] returns null assert_equals: expected (object) null but got (number) 0
 FAIL selectionEnd on an input[type=datetime-local] returns null assert_equals: expected (object) null but got (number) 0
 FAIL selectionDirection on an input[type=datetime-local] returns null assert_equals: expected (object) null but got (string) "none"
-FAIL assigning selectionStart on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionStart on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionStart = 0;
       }" did not throw
-FAIL assigning selectionEnd on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionEnd on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionEnd = 0;
       }" did not throw
-FAIL assigning selectionDirection on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionDirection on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionDirection = 'none';
       }" did not throw
-FAIL setRangeText on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL setRangeText on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function(){
         el.setRangeText("foobar");
       }" did not throw
-FAIL setSelectionRange on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL setSelectionRange on an input[type=datetime-local] throws InvalidStateError assert_throws_dom: function "function(){
         el.setSelectionRange(0, 1);
       }" did not throw
 FAIL selectionStart on an input[type=date] returns null assert_equals: expected (object) null but got (number) 0
 FAIL selectionEnd on an input[type=date] returns null assert_equals: expected (object) null but got (number) 0
 FAIL selectionDirection on an input[type=date] returns null assert_equals: expected (object) null but got (string) "none"
-FAIL assigning selectionStart on an input[type=date] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionStart on an input[type=date] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionStart = 0;
       }" did not throw
-FAIL assigning selectionEnd on an input[type=date] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionEnd on an input[type=date] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionEnd = 0;
       }" did not throw
-FAIL assigning selectionDirection on an input[type=date] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionDirection on an input[type=date] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionDirection = 'none';
       }" did not throw
-FAIL setRangeText on an input[type=date] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL setRangeText on an input[type=date] throws InvalidStateError assert_throws_dom: function "function(){
         el.setRangeText("foobar");
       }" did not throw
-FAIL setSelectionRange on an input[type=date] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL setSelectionRange on an input[type=date] throws InvalidStateError assert_throws_dom: function "function(){
         el.setSelectionRange(0, 1);
       }" did not throw
 FAIL selectionStart on an input[type=time] returns null assert_equals: expected (object) null but got (number) 0
 FAIL selectionEnd on an input[type=time] returns null assert_equals: expected (object) null but got (number) 0
 FAIL selectionDirection on an input[type=time] returns null assert_equals: expected (object) null but got (string) "none"
-FAIL assigning selectionStart on an input[type=time] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionStart on an input[type=time] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionStart = 0;
       }" did not throw
-FAIL assigning selectionEnd on an input[type=time] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionEnd on an input[type=time] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionEnd = 0;
       }" did not throw
-FAIL assigning selectionDirection on an input[type=time] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionDirection on an input[type=time] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionDirection = 'none';
       }" did not throw
-FAIL setRangeText on an input[type=time] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL setRangeText on an input[type=time] throws InvalidStateError assert_throws_dom: function "function(){
         el.setRangeText("foobar");
       }" did not throw
-FAIL setSelectionRange on an input[type=time] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL setSelectionRange on an input[type=time] throws InvalidStateError assert_throws_dom: function "function(){
         el.setSelectionRange(0, 1);
       }" did not throw
 PASS selectionStart on an input[type=number] returns null
@@ -88,19 +88,19 @@ PASS setSelectionRange on an input[type=range] throws InvalidStateError
 FAIL selectionStart on an input[type=color] returns null assert_equals: expected (object) null but got (number) 0
 FAIL selectionEnd on an input[type=color] returns null assert_equals: expected (object) null but got (number) 0
 FAIL selectionDirection on an input[type=color] returns null assert_equals: expected (object) null but got (string) "none"
-FAIL assigning selectionStart on an input[type=color] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionStart on an input[type=color] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionStart = 0;
       }" did not throw
-FAIL assigning selectionEnd on an input[type=color] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionEnd on an input[type=color] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionEnd = 0;
       }" did not throw
-FAIL assigning selectionDirection on an input[type=color] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL assigning selectionDirection on an input[type=color] throws InvalidStateError assert_throws_dom: function "function(){
         el.selectionDirection = 'none';
       }" did not throw
-FAIL setRangeText on an input[type=color] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL setRangeText on an input[type=color] throws InvalidStateError assert_throws_dom: function "function(){
         el.setRangeText("foobar");
       }" did not throw
-FAIL setSelectionRange on an input[type=color] throws InvalidStateError assert_throws_dom: function "function (){
+FAIL setSelectionRange on an input[type=color] throws InvalidStateError assert_throws_dom: function "function(){
         el.setSelectionRange(0, 1);
       }" did not throw
 PASS selectionStart on an input[type=checkbox] returns null

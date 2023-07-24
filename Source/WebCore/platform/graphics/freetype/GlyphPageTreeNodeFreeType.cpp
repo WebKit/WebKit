@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  *
@@ -73,10 +73,11 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
         if (!glyph && (isDefaultIgnorableCodePoint(character) || isControlCharacter(character)))
             glyph = zeroWidthSpaceGlyph();
 
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=259205 Determine if the glyph is a color glyph or not.
         if (!glyph)
-            setGlyphForIndex(i, 0);
+            setGlyphForIndex(i, 0, ColorGlyphType::Outline);
         else {
-            setGlyphForIndex(i, glyph);
+            setGlyphForIndex(i, glyph, font.colorGlyphType(glyph));
             haveGlyphs = true;
         }
     }

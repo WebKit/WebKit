@@ -24,12 +24,8 @@ class DummySocketServer : public rtc::SocketServer {
     RTC_DCHECK_NOTREACHED();
     return nullptr;
   }
-  rtc::AsyncSocket* CreateAsyncSocket(int family, int type) override {
-    RTC_NOTREACHED();
-    return nullptr;
-  }
-  bool Wait(int cms, bool process_io) override {
-    RTC_CHECK_EQ(cms, 0);
+  bool Wait(TimeDelta max_wait_duration, bool process_io) override {
+    RTC_CHECK(max_wait_duration.IsZero());
     return true;
   }
   void WakeUp() override {}
@@ -65,58 +61,39 @@ void SimulatedThread::RunReady(Timestamp at_time) {
   }
 }
 
-void SimulatedThread::Send(const rtc::Location& posted_from,
-                           rtc::MessageHandler* phandler,
-                           uint32_t id,
-                           rtc::MessageData* pdata) {
+void SimulatedThread::BlockingCallImpl(rtc::FunctionView<void()> functor,
+                                       const Location& /*location*/) {
   if (IsQuitting())
     return;
-  rtc::Message msg;
-  msg.posted_from = posted_from;
-  msg.phandler = phandler;
-  msg.message_id = id;
-  msg.pdata = pdata;
+
   if (IsCurrent()) {
-    msg.phandler->OnMessage(&msg);
+    functor();
   } else {
     TaskQueueBase* yielding_from = TaskQueueBase::Current();
     handler_->StartYield(yielding_from);
     RunReady(Timestamp::MinusInfinity());
     CurrentThreadSetter set_current(this);
-    msg.phandler->OnMessage(&msg);
+    functor();
     handler_->StopYield(yielding_from);
   }
 }
 
-void SimulatedThread::Post(const rtc::Location& posted_from,
-                           rtc::MessageHandler* phandler,
-                           uint32_t id,
-                           rtc::MessageData* pdata,
-                           bool time_sensitive) {
-  rtc::Thread::Post(posted_from, phandler, id, pdata, time_sensitive);
+void SimulatedThread::PostTaskImpl(absl::AnyInvocable<void() &&> task,
+                                   const PostTaskTraits& traits,
+                                   const Location& location) {
+  rtc::Thread::PostTaskImpl(std::move(task), traits, location);
   MutexLock lock(&lock_);
   next_run_time_ = Timestamp::MinusInfinity();
 }
 
-void SimulatedThread::PostDelayed(const rtc::Location& posted_from,
-                                  int delay_ms,
-                                  rtc::MessageHandler* phandler,
-                                  uint32_t id,
-                                  rtc::MessageData* pdata) {
-  rtc::Thread::PostDelayed(posted_from, delay_ms, phandler, id, pdata);
+void SimulatedThread::PostDelayedTaskImpl(absl::AnyInvocable<void() &&> task,
+                                          TimeDelta delay,
+                                          const PostDelayedTaskTraits& traits,
+                                          const Location& location) {
+  rtc::Thread::PostDelayedTaskImpl(std::move(task), delay, traits, location);
   MutexLock lock(&lock_);
   next_run_time_ =
-      std::min(next_run_time_, Timestamp::Millis(rtc::TimeMillis() + delay_ms));
-}
-
-void SimulatedThread::PostAt(const rtc::Location& posted_from,
-                             int64_t target_time_ms,
-                             rtc::MessageHandler* phandler,
-                             uint32_t id,
-                             rtc::MessageData* pdata) {
-  rtc::Thread::PostAt(posted_from, target_time_ms, phandler, id, pdata);
-  MutexLock lock(&lock_);
-  next_run_time_ = std::min(next_run_time_, Timestamp::Millis(target_time_ms));
+      std::min(next_run_time_, Timestamp::Millis(rtc::TimeMillis()) + delay);
 }
 
 void SimulatedThread::Stop() {

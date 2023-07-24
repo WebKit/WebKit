@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
- * Copyright (C) 2021 Apple, Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,43 +51,45 @@ public:
         bool stencil { false };
     };
 
-    static std::unique_ptr<WebXROpaqueFramebuffer> create(PlatformXR::LayerHandle, WebGLRenderingContextBase&, Attributes&&, uint32_t width, uint32_t height);
+    static std::unique_ptr<WebXROpaqueFramebuffer> create(PlatformXR::LayerHandle, WebGLRenderingContextBase&, Attributes&&, IntSize);
     ~WebXROpaqueFramebuffer();
 
     PlatformXR::LayerHandle handle() const { return m_handle; }
     const WebGLFramebuffer& framebuffer() const { return m_framebuffer.get(); }
-    uint32_t width() const { return m_width; }
-    uint32_t height() const { return m_height; }
+    GCGLint width() const { return m_framebufferSize.width(); }
+    GCGLint height() const { return m_framebufferSize.height(); }
 
     void startFrame(const PlatformXR::Device::FrameData::LayerData&);
     void endFrame();
 
 private:
-    WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, uint32_t width, uint32_t height);
+    WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, IntSize);
 
     bool setupFramebuffer();
+    PlatformGLObject allocateRenderbufferStorage(GraphicsContextGL&, GCGLsizei, GCGLenum, IntSize);
+    PlatformGLObject allocateColorStorage(GraphicsContextGL&, GCGLsizei, IntSize);
+    PlatformGLObject allocateDepthStencilStorage(GraphicsContextGL&, GCGLsizei, IntSize);
+    void bindColorBuffer(GraphicsContextGL&, PlatformGLObject);
+    void bindDepthStencilBuffer(GraphicsContextGL&, PlatformGLObject);
 
     PlatformXR::LayerHandle m_handle;
     Ref<WebGLFramebuffer> m_framebuffer;
     WebGLRenderingContextBase& m_context;
     Attributes m_attributes;
-    uint32_t m_width { 0 };
-    uint32_t m_height { 0 };
+    IntSize m_framebufferSize;
     GCGLOwnedRenderbuffer m_depthStencilBuffer;
-    GCGLOwnedRenderbuffer m_stencilBuffer;
     GCGLOwnedRenderbuffer m_multisampleColorBuffer;
+    GCGLOwnedRenderbuffer m_multisampleDepthStencilBuffer;
     GCGLOwnedFramebuffer m_resolvedFBO;
-    GCGLint m_sampleCount { 0 };
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    GCGLOwnedTexture m_opaqueTexture;
-    void* m_ioSurfaceTextureHandle { nullptr };
-    bool m_ioSurfaceTextureHandleIsShared { false };
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+    GCGLOwnedTexture m_colorTexture;
+    GCEGLImage m_colorImage { };
+    GCEGLImage m_depthStencilImage { };
 #else
-    PlatformGLObject m_opaqueTexture;
+    PlatformGLObject m_colorTexture;
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    RetainPtr<id> m_completionEvent { nullptr };
-    uint64_t m_renderingFrameIndex { 0 };
+    GraphicsContextGL::ExternalEGLSyncEvent m_completionSyncEvent;
 #endif
 };
 

@@ -22,8 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteRenderingBackendProxy NotRefCounted {
-    DidCreateImageBufferBackend(WebKit::ImageBufferBackendHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+messages -> RemoteRenderingBackendProxy NotRefCounted WantsDispatchMessage {
     DidFinalizeRenderingUpdate(WebKit::RenderingUpdateID didRenderingUpdateID)
     DidInitialize(IPC::Semaphore wakeUpSemaphore, IPC::Semaphore clientWaitSemaphore)
     DidMarkLayersAsVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<WebCore::RenderingResourceIdentifier> markedVolatileBufferIdentifiers, bool didMarkAllLayersAsVolatile)

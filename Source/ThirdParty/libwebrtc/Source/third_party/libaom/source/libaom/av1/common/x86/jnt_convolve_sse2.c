@@ -178,31 +178,31 @@ void av1_dist_wtd_convolve_y_sse2(const uint8_t *src, int src_stride,
 
   if (w == 4) {
     __m128i s[8], src6, res, res_shift;
-    src6 = _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 6 * src_stride));
+    src6 = _mm_cvtsi32_si128(*(int *)(src_ptr + 6 * src_stride));
     s[0] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 0 * src_stride)),
-        _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 1 * src_stride)));
+        _mm_cvtsi32_si128(*(int *)(src_ptr + 0 * src_stride)),
+        _mm_cvtsi32_si128(*(int *)(src_ptr + 1 * src_stride)));
     s[1] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 1 * src_stride)),
-        _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 2 * src_stride)));
+        _mm_cvtsi32_si128(*(int *)(src_ptr + 1 * src_stride)),
+        _mm_cvtsi32_si128(*(int *)(src_ptr + 2 * src_stride)));
     s[2] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 2 * src_stride)),
-        _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 3 * src_stride)));
+        _mm_cvtsi32_si128(*(int *)(src_ptr + 2 * src_stride)),
+        _mm_cvtsi32_si128(*(int *)(src_ptr + 3 * src_stride)));
     s[3] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 3 * src_stride)),
-        _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 4 * src_stride)));
+        _mm_cvtsi32_si128(*(int *)(src_ptr + 3 * src_stride)),
+        _mm_cvtsi32_si128(*(int *)(src_ptr + 4 * src_stride)));
     s[4] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 4 * src_stride)),
-        _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 5 * src_stride)));
+        _mm_cvtsi32_si128(*(int *)(src_ptr + 4 * src_stride)),
+        _mm_cvtsi32_si128(*(int *)(src_ptr + 5 * src_stride)));
     s[5] = _mm_unpacklo_epi8(
-        _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 5 * src_stride)), src6);
+        _mm_cvtsi32_si128(*(int *)(src_ptr + 5 * src_stride)), src6);
 
     do {
       s[6] = _mm_unpacklo_epi8(
-          src6, _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 7 * src_stride)));
-      src6 = _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 8 * src_stride));
+          src6, _mm_cvtsi32_si128(*(int *)(src_ptr + 7 * src_stride)));
+      src6 = _mm_cvtsi32_si128(*(int *)(src_ptr + 8 * src_stride));
       s[7] = _mm_unpacklo_epi8(
-          _mm_cvtsi32_si128(*(uint32_t *)(src_ptr + 7 * src_stride)), src6);
+          _mm_cvtsi32_si128(*(int *)(src_ptr + 7 * src_stride)), src6);
 
       res = convolve_lo_y(s + 0, coeffs);
       res_shift = _mm_sll_epi32(res, left_shift);

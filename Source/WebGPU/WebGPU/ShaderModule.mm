@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -326,30 +326,32 @@ static auto wgslViewDimension(WGPUTextureViewDimension viewDimension)
     }
 }
 
-static decltype(WGSL::BindGroupLayoutEntry::bindingMember) populateBindingMember(const WGPUBindGroupLayoutEntry& entry)
+static WGSL::BindGroupLayoutEntry::BindingMember convertBindingLayout(const BindGroupLayout::Entry::BindingLayout& bindingLayout)
 {
-    if (BindGroupLayout::isPresent(entry.buffer)) {
+    return WTF::switchOn(bindingLayout, [](const WGPUBufferBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::BufferBindingLayout {
-            .type = wgslBindingType(entry.buffer.type),
-            .hasDynamicOffset = entry.buffer.hasDynamicOffset,
-            .minBindingSize = entry.buffer.minBindingSize
+            .type = wgslBindingType(bindingLayout.type),
+            .hasDynamicOffset = bindingLayout.hasDynamicOffset,
+            .minBindingSize = bindingLayout.minBindingSize
         };
-    } else if (BindGroupLayout::isPresent(entry.sampler)) {
+    }, [](const WGPUSamplerBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::SamplerBindingLayout {
-            .type = wgslSamplerType(entry.sampler.type)
+            .type = wgslSamplerType(bindingLayout.type)
         };
-    } else if (BindGroupLayout::isPresent(entry.texture)) {
+    }, [](const WGPUTextureBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::TextureBindingLayout {
-            .sampleType = wgslSampleType(entry.texture.sampleType),
-            .viewDimension = wgslViewDimension(entry.texture.viewDimension),
-            .multisampled = entry.texture.multisampled
+            .sampleType = wgslSampleType(bindingLayout.sampleType),
+            .viewDimension = wgslViewDimension(bindingLayout.viewDimension),
+            .multisampled = bindingLayout.multisampled
         };
-    } else {
-        ASSERT(BindGroupLayout::isPresent(entry.storageTexture));
+    }, [](const WGPUStorageTextureBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::StorageTextureBindingLayout {
-            .viewDimension = wgslViewDimension(entry.storageTexture.viewDimension)
+            .viewDimension = wgslViewDimension(bindingLayout.viewDimension)
         };
-    }
+    }, [](const WGPUExternalTextureBindingLayout&) -> WGSL::BindGroupLayoutEntry::BindingMember {
+        return WGSL::ExternalTextureBindingLayout {
+        };
+    });
 }
 
 WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& pipelineLayout)
@@ -361,9 +363,9 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
         WGSL::BindGroupLayout wgslBindGroupLayout;
         for (auto& entry : bindGroupLayout.entries()) {
             WGSL::BindGroupLayoutEntry wgslEntry;
-            wgslEntry.visibility.fromRaw(entry.visibility);
             wgslEntry.binding = entry.binding;
-            wgslEntry.bindingMember = populateBindingMember(entry);
+            wgslEntry.visibility.fromRaw(entry.visibility);
+            wgslEntry.bindingMember = convertBindingLayout(entry.bindingLayout);
             wgslBindGroupLayout.entries.append(wgslEntry);
         }
 
@@ -404,6 +406,11 @@ const WGSL::Reflection::EntryPointInformation* ShaderModule::entryPointInformati
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuShaderModuleReference(WGPUShaderModule shaderModule)
+{
+    WebGPU::fromAPI(shaderModule).ref();
+}
 
 void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 {

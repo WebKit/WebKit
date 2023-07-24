@@ -10,6 +10,7 @@
 
 #include "pc/peer_connection_factory.h"
 
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -21,8 +22,16 @@
 #include "api/jsep.h"
 #include "api/media_stream_interface.h"
 #include "api/test/mock_packet_socket_factory.h"
-#include "api/video_codecs/builtin_video_decoder_factory.h"
-#include "api/video_codecs/builtin_video_encoder_factory.h"
+#include "api/video_codecs/video_decoder_factory_template.h"
+#include "api/video_codecs/video_decoder_factory_template_dav1d_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_libvpx_vp8_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_libvpx_vp9_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_open_h264_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template.h"
+#include "api/video_codecs/video_encoder_factory_template_libaom_av1_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_libvpx_vp8_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
 #include "media/base/fake_frame_source.h"
 #include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_processing/include/audio_processing.h"
@@ -40,6 +49,7 @@
 #include "rtc_base/time_utils.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
@@ -47,14 +57,8 @@
 #include "pc/test/fake_rtc_certificate_generator.h"
 #include "pc/test/fake_video_track_renderer.h"
 
-using webrtc::DataChannelInterface;
-using webrtc::FakeVideoTrackRenderer;
-using webrtc::MediaStreamInterface;
-using webrtc::PeerConnectionFactoryInterface;
-using webrtc::PeerConnectionInterface;
-using webrtc::PeerConnectionObserver;
-using webrtc::VideoTrackInterface;
-using webrtc::VideoTrackSourceInterface;
+namespace webrtc {
+namespace {
 
 using ::testing::_;
 using ::testing::AtLeast;
@@ -62,8 +66,6 @@ using ::testing::InvokeWithoutArgs;
 using ::testing::NiceMock;
 using ::testing::Return;
 using ::testing::UnorderedElementsAre;
-
-namespace {
 
 static const char kStunIceServer[] = "stun:stun.l.google.com:19302";
 static const char kTurnIceServer[] = "turn:test.com:1234";
@@ -119,8 +121,6 @@ class MockNetworkManager : public rtc::NetworkManager {
               (override));
 };
 
-}  // namespace
-
 class PeerConnectionFactoryTest : public ::testing::Test {
  public:
   PeerConnectionFactoryTest()
@@ -141,15 +141,19 @@ class PeerConnectionFactoryTest : public ::testing::Test {
             FakeAudioCaptureModule::Create()),
         webrtc::CreateBuiltinAudioEncoderFactory(),
         webrtc::CreateBuiltinAudioDecoderFactory(),
-        webrtc::CreateBuiltinVideoEncoderFactory(),
-        webrtc::CreateBuiltinVideoDecoderFactory(), nullptr /* audio_mixer */,
-        nullptr /* audio_processing */);
+        std::make_unique<VideoEncoderFactoryTemplate<
+            LibvpxVp8EncoderTemplateAdapter, LibvpxVp9EncoderTemplateAdapter,
+            OpenH264EncoderTemplateAdapter, LibaomAv1EncoderTemplateAdapter>>(),
+        std::make_unique<VideoDecoderFactoryTemplate<
+            LibvpxVp8DecoderTemplateAdapter, LibvpxVp9DecoderTemplateAdapter,
+            OpenH264DecoderTemplateAdapter, Dav1dDecoderTemplateAdapter>>(),
+        nullptr /* audio_mixer */, nullptr /* audio_processing */);
 
     ASSERT_TRUE(factory_.get() != NULL);
     packet_socket_factory_.reset(
         new rtc::BasicPacketSocketFactory(socket_server_.get()));
     port_allocator_.reset(new cricket::FakePortAllocator(
-        rtc::Thread::Current(), packet_socket_factory_.get()));
+        rtc::Thread::Current(), packet_socket_factory_.get(), &field_trials_));
     raw_port_allocator_ = port_allocator_.get();
   }
 
@@ -206,16 +210,33 @@ class PeerConnectionFactoryTest : public ::testing::Test {
                 webrtc::ScalabilityMode::kL2T1h,
                 webrtc::ScalabilityMode::kL2T1_KEY,
                 webrtc::ScalabilityMode::kL2T2,
+                webrtc::ScalabilityMode::kL2T2h,
                 webrtc::ScalabilityMode::kL2T2_KEY,
                 webrtc::ScalabilityMode::kL2T2_KEY_SHIFT,
                 webrtc::ScalabilityMode::kL2T3,
+                webrtc::ScalabilityMode::kL2T3h,
                 webrtc::ScalabilityMode::kL2T3_KEY,
                 webrtc::ScalabilityMode::kL3T1,
+                webrtc::ScalabilityMode::kL3T1h,
+                webrtc::ScalabilityMode::kL3T1_KEY,
+                webrtc::ScalabilityMode::kL3T2,
+                webrtc::ScalabilityMode::kL3T2h,
+                webrtc::ScalabilityMode::kL3T2_KEY,
                 webrtc::ScalabilityMode::kL3T3,
+                webrtc::ScalabilityMode::kL3T3h,
                 webrtc::ScalabilityMode::kL3T3_KEY,
                 webrtc::ScalabilityMode::kS2T1,
+                webrtc::ScalabilityMode::kS2T1h,
+                webrtc::ScalabilityMode::kS2T2,
+                webrtc::ScalabilityMode::kS2T2h,
                 webrtc::ScalabilityMode::kS2T3,
-                webrtc::ScalabilityMode::kS3T3)
+                webrtc::ScalabilityMode::kS2T3h,
+                webrtc::ScalabilityMode::kS3T1,
+                webrtc::ScalabilityMode::kS3T1h,
+                webrtc::ScalabilityMode::kS3T2,
+                webrtc::ScalabilityMode::kS3T2h,
+                webrtc::ScalabilityMode::kS3T3,
+                webrtc::ScalabilityMode::kS3T3h)
             // clang-format on
             )
             << "Codec: " << codec.name;
@@ -227,6 +248,7 @@ class PeerConnectionFactoryTest : public ::testing::Test {
     }
   }
 
+  webrtc::test::ScopedKeyValueConfig field_trials_;
   std::unique_ptr<rtc::SocketServer> socket_server_;
   rtc::AutoSocketServerThread main_thread_;
   rtc::scoped_refptr<PeerConnectionFactoryInterface> factory_;
@@ -255,8 +277,8 @@ TEST(PeerConnectionFactoryTestInternal, DISABLED_CreatePCUsingInternalModules) {
           nullptr /* signaling_thread */, nullptr /* default_adm */,
           webrtc::CreateBuiltinAudioEncoderFactory(),
           webrtc::CreateBuiltinAudioDecoderFactory(),
-          webrtc::CreateBuiltinVideoEncoderFactory(),
-          webrtc::CreateBuiltinVideoDecoderFactory(), nullptr /* audio_mixer */,
+          nullptr /* video_encoder_factory */,
+          nullptr /* video_decoder_factory */, nullptr /* audio_mixer */,
           nullptr /* audio_processing */));
 
   NullPeerConnectionObserver observer;
@@ -548,7 +570,7 @@ TEST_F(PeerConnectionFactoryTest, LocalRendering) {
 
   ASSERT_TRUE(source.get() != NULL);
   rtc::scoped_refptr<VideoTrackInterface> track(
-      factory_->CreateVideoTrack("testlabel", source.get()));
+      factory_->CreateVideoTrack(source, "testlabel"));
   ASSERT_TRUE(track.get() != NULL);
   FakeVideoTrackRenderer local_renderer(track.get());
 
@@ -569,7 +591,7 @@ TEST_F(PeerConnectionFactoryTest, LocalRendering) {
 }
 
 TEST(PeerConnectionFactoryDependenciesTest, UsesNetworkManager) {
-  constexpr int64_t kWaitTimeoutMs = 10000;
+  constexpr webrtc::TimeDelta kWaitTimeout = webrtc::TimeDelta::Seconds(10);
   auto mock_network_manager = std::make_unique<NiceMock<MockNetworkManager>>();
 
   rtc::Event called;
@@ -590,11 +612,11 @@ TEST(PeerConnectionFactoryDependenciesTest, UsesNetworkManager) {
       config, webrtc::PeerConnectionDependencies(&observer));
   ASSERT_TRUE(pc.ok());
 
-  called.Wait(kWaitTimeoutMs);
+  called.Wait(kWaitTimeout);
 }
 
 TEST(PeerConnectionFactoryDependenciesTest, UsesPacketSocketFactory) {
-  constexpr int64_t kWaitTimeoutMs = 10000;
+  constexpr webrtc::TimeDelta kWaitTimeout = webrtc::TimeDelta::Seconds(10);
   auto mock_socket_factory =
       std::make_unique<NiceMock<rtc::MockPacketSocketFactory>>();
 
@@ -625,5 +647,8 @@ TEST(PeerConnectionFactoryDependenciesTest, UsesPacketSocketFactory) {
       config, webrtc::PeerConnectionDependencies(&observer));
   ASSERT_TRUE(pc.ok());
 
-  called.Wait(kWaitTimeoutMs);
+  called.Wait(kWaitTimeout);
 }
+
+}  // namespace
+}  // namespace webrtc

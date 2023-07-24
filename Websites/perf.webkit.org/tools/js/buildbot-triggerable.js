@@ -56,7 +56,9 @@ class BuildbotTriggerable {
         let repositoryGroups = [];
         for (const syncer of this._syncers) {
             for (const config of syncer.testConfigurations()) {
-                const entry = {test: config.test.id(), platform: config.platform.id(), supportedRepetitionTypes: config.supportedRepetitionTypes};
+                const entry = {test: config.test.id(), platform: config.platform.id(),
+                    supportedRepetitionTypes: config.supportedRepetitionTypes,
+                    testParameters: config.testParameters.map(parameter => parameter.id())};
                 map.set(entry.test + '-' + entry.platform, entry);
             }
             // FIXME: Move BuildbotSyncer._loadConfig here and store repository groups directly.

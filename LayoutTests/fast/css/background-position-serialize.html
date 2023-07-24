@@ -1,3 +1,4 @@
+
 <html>
 <body>
 <div id="t"></div>
@@ -98,6 +99,41 @@ shouldBe("t.style.backgroundPositionX", "20%");
 shouldBe("t.style.backgroundPositionY", "20%");
 shouldBe("t.style.cssText", "background-position: 20% 20%;");
 shouldBe("t.getAttribute('style')", "background-position: 20% 20%;");
+
+run("t.style.backgroundPositionY = '0%';");
+shouldBe("t.style.backgroundPosition", "20% 0%");
+shouldBe("t.style.backgroundPositionX", "20%");
+shouldBe("t.style.backgroundPositionY", "0%");
+shouldBe("t.style.cssText", "background-position: 20% 0%;");
+shouldBe("t.getAttribute('style')", "background-position: 20% 0%;");
+
+run("t.style.backgroundPositionX = '0%';");
+shouldBe("t.style.backgroundPosition", "0% 0%");
+shouldBe("t.style.backgroundPositionX", "0%");
+shouldBe("t.style.backgroundPositionY", "0%");
+shouldBe("t.style.cssText", "background-position: 0% 0%;");
+shouldBe("t.getAttribute('style')", "background-position: 0% 0%;");
+
+run("t.style.backgroundPosition = 'center';");
+shouldBe("t.style.backgroundPosition", "center");
+shouldBe("t.style.backgroundPositionX", "center");
+shouldBe("t.style.backgroundPositionY", "center");
+shouldBe("t.style.cssText", "background-position: center;");
+shouldBe("t.getAttribute('style')", "background-position: center;");
+
+run("t.style.backgroundPosition = '0% center';");
+shouldBe("t.style.backgroundPosition", "0%");
+shouldBe("t.style.backgroundPositionX", "0%");
+shouldBe("t.style.backgroundPositionY", "center");
+shouldBe("t.style.cssText", "background-position: 0%;");
+shouldBe("t.getAttribute('style')", "background-position: 0%;");
+
+run("t.style.backgroundPosition = 'center 0%';");
+shouldBe("t.style.backgroundPosition", "center 0%");
+shouldBe("t.style.backgroundPositionX", "center");
+shouldBe("t.style.backgroundPositionY", "0%");
+shouldBe("t.style.cssText", "background-position: center 0%;");
+shouldBe("t.getAttribute('style')", "background-position: center 0%;");
 
 run("t.setAttribute('style', 'background-position: 60% 60% !important;');");
 shouldBe("t.style.backgroundPosition", "60% 60%");

@@ -63,8 +63,28 @@
 
 (allow socket-option-get
     (require-all
+        (socket-option-level IPPROTO_IP)
+        (socket-option-name 25)))
+
+(allow socket-option-get
+    (require-all
         (socket-option-level IPPROTO_IPV6)
         (socket-option-name 125)))
+
+(allow socket-option-get
+    (require-all
+        (socket-option-level IPPROTO_TCP)
+        (socket-option-name 262 SO_REUSEPORT)))
+
+(allow socket-option-set
+    (require-all
+        (socket-option-level IPPROTO_IP)
+        (socket-option-name 7 20 27)))
+
+(allow socket-option-set
+    (require-all
+        (socket-option-level IPPROTO_TCP)
+        (socket-option-name 513)))
 
 (allow socket-option-set
     (require-all
@@ -75,12 +95,18 @@
     (require-all
         (socket-option-level SOL_SOCKET)
         (socket-option-name
+            0 ;; Replace with 131072 when 32 bit size is supported
+            SO_DELEGATED
             SO_MARK_KNOWN_TRACKER
+            SO_MARK_KNOWN_TRACKER_NON_APP_INITIATED
+            SO_NECP_ATTRIBUTES
+            SO_NECP_CLIENTUUID
             SO_NECP_LISTENUUID
             SO_NOSIGPIPE
             SO_RCVBUF
             SO_REUSEADDR
-            SO_REUSEPORT)))
+            SO_REUSEPORT
+            SO_TIMESTAMP)))
 
 (with-filter (mac-policy-name "vnguard")
     (allow system-mac-syscall (mac-syscall-number 1)))
@@ -966,6 +992,10 @@
     (apply subpath issue-extension-secondary-paths))
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/com.apple.WebKit.NetworkingAdditions.sb.in>)
-#include <WebKitAdditions/com.apple.WebKit.NetworkingAdditions.sb.in>
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
+(allow mach-lookup
+    (global-name "com.apple.webprivacyd")
+    (global-name "com.apple.WebPrivacy.Service"))
+
 #endif

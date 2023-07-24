@@ -1,0 +1,22 @@
+Unrelated element
+
+FAIL Test the harness promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'getComputedStyle(element)[property].slice')"
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=auto, invoker=button, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+FAIL hovering the popover keeps it from being hidden, popover=auto, invoker=button, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+FAIL hovering an invoking element keeps the popover from being hidden, popover=auto, invoker=button, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=hint, invoker=button, popovertargetaction=hover assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL hovering the popover keeps it from being hidden, popover=hint, invoker=button, popovertargetaction=hover assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL hovering an invoking element keeps the popover from being hidden, popover=hint, invoker=button, popovertargetaction=hover assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=manual, invoker=button, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+FAIL hovering the popover keeps it from being hidden, popover=manual, invoker=button, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+FAIL hovering an invoking element keeps the popover from being hidden, popover=manual, invoker=button, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=auto, invoker=input, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+FAIL hovering the popover keeps it from being hidden, popover=auto, invoker=input, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+FAIL hovering an invoking element keeps the popover from being hidden, popover=auto, invoker=input, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=hint, invoker=input, popovertargetaction=hover assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL hovering the popover keeps it from being hidden, popover=hint, invoker=input, popovertargetaction=hover assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL hovering an invoking element keeps the popover from being hidden, popover=hint, invoker=input, popovertargetaction=hover assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=manual, invoker=input, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+FAIL hovering the popover keeps it from being hidden, popover=manual, invoker=input, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+FAIL hovering an invoking element keeps the popover from being hidden, popover=manual, invoker=input, popovertargetaction=hover assert_equals: Invoker action hover not supported expected "hover" but got "toggle"
+

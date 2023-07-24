@@ -34,11 +34,11 @@
 #include "RemoteWCLayerTreeHostMessages.h"
 #include "StreamConnectionWorkQueue.h"
 #include "WCScene.h"
-#include "WCUpateInfo.h"
+#include "WCUpdateInfo.h"
 
 namespace WebKit {
 
-static IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
+IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
 {
 #if ENABLE(WEBGL)
     return remoteGraphicsContextGLStreamWorkQueue();
@@ -96,11 +96,11 @@ uint64_t RemoteWCLayerTreeHost::messageSenderDestinationID() const
     return m_identifier.toUInt64();
 }
 
-void RemoteWCLayerTreeHost::update(WCUpateInfo&& update, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
+void RemoteWCLayerTreeHost::update(WCUpdateInfo&& update, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
 {
-    remoteGraphicsStreamWorkQueue().dispatch([this, weakThis = WeakPtr(*this), scene = m_scene.get(), update = WTFMove(update), completionHandler = WTFMove(completionHandler)]() mutable {
+    remoteGraphicsStreamWorkQueue().dispatch([weakThis = WeakPtr(*this), scene = m_scene.get(), update = WTFMove(update), completionHandler = WTFMove(completionHandler)]() mutable {
         auto updateInfo = scene->update(WTFMove(update));
-        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), updateInfo = WTFMove(updateInfo), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), updateInfo = WTFMove(updateInfo), completionHandler = WTFMove(completionHandler)]() mutable {
             if (!weakThis)
                 return;
             completionHandler(WTFMove(updateInfo));

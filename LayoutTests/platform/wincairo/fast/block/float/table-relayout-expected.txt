@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 250x19
           text run at (0,0) width 250: "The two boxes below should be identical."
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,92) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {DIV} at (0,102) size 200x66 [bgcolor=#C0C0C0]
         RenderTable {TABLE} at (0,0) size 200x66
           RenderTableSection {TBODY} at (0,0) size 200x66

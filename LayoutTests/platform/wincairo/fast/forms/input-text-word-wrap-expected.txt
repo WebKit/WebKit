@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (180,0) size 284x19
           text run at (180,0) width 284: " property is ignored for single-line text controls."
       RenderBlock (anonymous) at (0,36) size 784x39
-        RenderTextControl {INPUT} at (2,0) size 150x39 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,0) size 150x39 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
 layer at (12,56) size 146x16 scrollWidth 280
   RenderBlock {DIV} at (2,11) size 146x17

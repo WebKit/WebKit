@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -87,11 +88,11 @@ void RenderRubyBase::adjustInlineDirectionLineBounds(int expansionOpportunityCou
     logicalWidth -= inset;
 }
 
-void RenderRubyBase::cachePriorCharactersIfNeeded(const LazyLineBreakIterator& lineBreakIterator)
+void RenderRubyBase::cachePriorCharactersIfNeeded(const CachedLineBreakIteratorFactory& lineBreakIteratorFactory)
 {
     auto* run = rubyRun();
     if (run)
-        run->setCachedPriorCharacters(lineBreakIterator.lastCharacter(), lineBreakIterator.secondToLastCharacter());
+        run->setCachedPriorCharacters(lineBreakIteratorFactory.priorContext().lastCharacter(), lineBreakIteratorFactory.priorContext().secondToLastCharacter());
 }
 
 bool RenderRubyBase::isEmptyOrHasInFlowContent() const

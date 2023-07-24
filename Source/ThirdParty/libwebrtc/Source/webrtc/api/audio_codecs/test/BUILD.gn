@@ -32,10 +32,6 @@ if (rtc_include_tests) {
       "../g722:audio_encoder_g722",
       "../ilbc:audio_decoder_ilbc",
       "../ilbc:audio_encoder_ilbc",
-      "../isac:audio_decoder_isac_fix",
-      "../isac:audio_decoder_isac_float",
-      "../isac:audio_encoder_isac_fix",
-      "../isac:audio_encoder_isac_float",
       "../opus:audio_decoder_opus",
       "../opus:audio_encoder_opus",
     ]

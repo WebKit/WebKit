@@ -174,10 +174,12 @@ static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoide
         floatAvoider.setVerticalPosition(leftRightFloatPair.verticalConstraint());
 
         // Ensure that the float avoider
-        // 1. does not "overflow" its containing block with the current horiztonal constraints. It simply means that the float avoider's
-        // containing block could push the candidate position beyond the current float horizontally (too far to the left/right)
-        // 2. avoids floats on both sides.
-        if (!floatAvoider.overflowsContainingBlock() && !leftRightFloatPair.intersects(floatAvoider))
+        // 1. avoids floats on both sides
+        // 2. does not overflow its containing block if the horizontal position is constrained by other floats
+        // (i.e. a float avoider may overflow its containing block just fine unless this overflow is the result of getting it pushed by other floats on this vertical position -out of available space)
+        auto isConstrainedByOtherFloats = (floatAvoider.isLeftAligned() && leftRightEdge.left) || (!floatAvoider.isLeftAligned() && leftRightEdge.right);
+        auto overflowsContainingBlockWithConstraints = isConstrainedByOtherFloats && floatAvoider.overflowsContainingBlock();
+        if (!overflowsContainingBlockWithConstraints && !leftRightFloatPair.intersects(floatAvoider))
             return *innerMostLeftAndRight;
 
         bottomMost = leftRightFloatPair.bottom();

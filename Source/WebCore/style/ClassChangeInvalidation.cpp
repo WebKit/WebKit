@@ -117,13 +117,13 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
     auto& ruleSets = m_element.styleResolver().ruleSets();
 
     auto invalidateBeforeChange = [](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
-        if (matchElement == MatchElement::AnySibling)
+        if (matchElement == MatchElement::AnySibling || matchElement == MatchElement::HasNonSubjectOrScopeBreaking)
             return true;
         return type == ClassChangeType::Remove ? isNegation == IsNegation::No : isNegation == IsNegation::Yes;
     };
 
     auto invalidateAfterChange = [](ClassChangeType type, IsNegation isNegation, MatchElement matchElement) {
-        if (matchElement == MatchElement::AnySibling)
+        if (matchElement == MatchElement::AnySibling || matchElement == MatchElement::HasNonSubjectOrScopeBreaking)
             return true;
         return type == ClassChangeType::Add ? isNegation == IsNegation::No : isNegation == IsNegation::Yes;
     };

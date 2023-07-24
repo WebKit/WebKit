@@ -35,8 +35,7 @@
 #include <WebCore/AudioSession.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakHashSet.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -61,7 +60,7 @@ struct WebPageCreationParameters;
 class RemoteVideoFrameObjectHeapProxy;
 #endif
 
-class GPUProcessConnection : public RefCounted<GPUProcessConnection>, public IPC::Connection::Client {
+class GPUProcessConnection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUProcessConnection>, public IPC::Connection::Client {
 public:
     static RefPtr<GPUProcessConnection> create(IPC::Connection& parentConnection);
     ~GPUProcessConnection();
@@ -102,14 +101,17 @@ public:
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
-    class Client : public CanMakeWeakPtr<Client> {
+    class Client {
     public:
         virtual ~Client() = default;
+
+        virtual void ref() const = 0;
+        virtual void deref() const = 0;
+        virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;
 
         virtual void gpuProcessConnectionDidClose(GPUProcessConnection&) { }
     };
     void addClient(const Client& client) { m_clients.add(client); }
-    void removeClient(const Client& client) { m_clients.remove(client); }
 
     static constexpr Seconds defaultTimeout = 3_s;
 private:
@@ -161,7 +163,7 @@ private:
     MediaOverridesForTesting m_mediaOverridesForTesting;
 #endif
 
-    WeakHashSet<Client> m_clients;
+    ThreadSafeWeakHashSet<Client> m_clients;
 };
 
 } // namespace WebKit

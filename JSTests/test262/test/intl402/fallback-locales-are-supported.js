@@ -8,6 +8,7 @@ description: >
     supported locales.
 author: Norbert Lindenberg
 includes: [testIntl.js]
+features: [Array.prototype.includes]
 ---*/
 
 testWithIntlConstructors(function (Constructor) {

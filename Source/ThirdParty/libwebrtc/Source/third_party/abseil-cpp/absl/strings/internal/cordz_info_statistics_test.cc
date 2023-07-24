@@ -19,6 +19,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/config.h"
+#include "absl/crc/internal/crc_cord_state.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/internal/cord_internal.h"
 #include "absl/strings/internal/cord_rep_btree.h"
@@ -62,7 +63,7 @@ CordRepFlat* Flat(size_t size) {
 }
 
 // Creates an external of the specified length
-CordRepExternal* External(int length = 512) {
+CordRepExternal* External(size_t length = 512) {
   return static_cast<CordRepExternal*>(
       NewExternalRep(absl::string_view("", length), [](absl::string_view) {}));
 }
@@ -352,7 +353,7 @@ TEST(CordzInfoStatisticsTest, SharedSubstringRing) {
 }
 
 TEST(CordzInfoStatisticsTest, BtreeLeaf) {
-  ASSERT_THAT(CordRepBtree::kMaxCapacity, Ge(3));
+  ASSERT_THAT(CordRepBtree::kMaxCapacity, Ge(3u));
   RefHelper ref;
   auto* flat1 = Flat(2000);
   auto* flat2 = Flat(200);
@@ -392,7 +393,7 @@ TEST(CordzInfoStatisticsTest, BtreeNodeShared) {
   RefHelper ref;
   static constexpr int leaf_count = 3;
   const size_t flat3_count = CordRepBtree::kMaxCapacity - 3;
-  ASSERT_THAT(flat3_count, Ge(0));
+  ASSERT_THAT(flat3_count, Ge(0u));
 
   CordRepBtree* tree = nullptr;
   size_t mem_size = 0;
@@ -451,7 +452,8 @@ TEST(CordzInfoStatisticsTest, BtreeNodeShared) {
 TEST(CordzInfoStatisticsTest, Crc) {
   RefHelper ref;
   auto* left = Flat(1000);
-  auto* crc = ref.NeedsUnref(CordRepCrc::New(left, 12345));
+  auto* crc =
+      ref.NeedsUnref(CordRepCrc::New(left, crc_internal::CrcCordState()));
 
   CordzStatistics expected;
   expected.size = left->length;

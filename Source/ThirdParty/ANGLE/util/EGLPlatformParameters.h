@@ -10,7 +10,7 @@
 
 #include "util/util_gl.h"
 
-#include "angle_features_autogen.h"
+#include "autogen/angle_features_autogen.h"
 
 #include <string>
 #include <tuple>

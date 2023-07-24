@@ -70,6 +70,7 @@ bool doesGC(Graph& graph, Node* node)
     case SetLocal:
     case MovHint:
     case InitializeEntrypointArguments:
+    case ZombieHint:
     case ExitOK:
     case Phantom:
     case Upsilon:
@@ -261,6 +262,7 @@ bool doesGC(Graph& graph, Node* node)
     case DataViewSet:
     case PutByOffset:
     case WeakMapGet:
+    case NumberIsNaN:
         return false;
 
 #if ASSERT_ENABLED
@@ -386,6 +388,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewInternalFieldObject:
     case Spread:
     case NewArrayWithSize:
+    case NewArrayWithConstantSize:
     case NewArrayWithSpecies:
     case NewArrayBuffer:
     case NewRegexp:
@@ -439,12 +442,17 @@ bool doesGC(Graph& graph, Node* node)
     case ValuePow:
     case ValueBitNot:
     case ValueNegate:
+    case DateSetTime:
+    case StringIndexOf:
 #else // not ASSERT_ENABLED
     // See comment at the top for why the default for all nodes should be to
     // return true.
     default:
 #endif // not ASSERT_ENABLED
         return true;
+
+    case GlobalIsNaN:
+        return node->child1().useKind() != DoubleRepUse;
 
     case CallNumberConstructor:
         switch (node->child1().useKind()) {

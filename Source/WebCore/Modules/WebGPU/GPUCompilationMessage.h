@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 #pragma once
 
 #include "GPUCompilationMessageType.h"
+#include "WebGPUCompilationMessage.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUCompilationMessage.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -36,7 +36,7 @@ namespace WebCore {
 
 class GPUCompilationMessage : public RefCounted<GPUCompilationMessage> {
 public:
-    static Ref<GPUCompilationMessage> create(PAL::WebGPU::CompilationMessage& backing)
+    static Ref<GPUCompilationMessage> create(WebGPU::CompilationMessage& backing)
     {
         return adoptRef(*new GPUCompilationMessage(backing));
     }
@@ -48,16 +48,16 @@ public:
     uint64_t offset() const;
     uint64_t length() const;
 
-    PAL::WebGPU::CompilationMessage& backing() { return m_backing; }
-    const PAL::WebGPU::CompilationMessage& backing() const { return m_backing; }
+    WebGPU::CompilationMessage& backing() { return m_backing; }
+    const WebGPU::CompilationMessage& backing() const { return m_backing; }
 
 private:
-    GPUCompilationMessage(PAL::WebGPU::CompilationMessage& backing)
+    GPUCompilationMessage(WebGPU::CompilationMessage& backing)
         : m_backing(backing)
     {
     }
 
-    Ref<PAL::WebGPU::CompilationMessage> m_backing;
+    Ref<WebGPU::CompilationMessage> m_backing;
 };
 
 }

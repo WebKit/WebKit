@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,11 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUCanvasCompositingAlphaMode.h>
+#include <WebCore/WebGPUPredefinedColorSpace.h>
+#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUTextureUsage.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUCanvasCompositingAlphaMode.h>
-#include <pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h>
-#include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
-#include <pal/graphics/WebGPU/WebGPUTextureUsage.h>
 #include <wtf/Ref.h>
 
 namespace WebKit::WebGPU {
@@ -41,11 +41,11 @@ class Device;
 
 struct CanvasConfiguration {
     WebGPUIdentifier device;
-    PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
-    PAL::WebGPU::TextureUsageFlags usage { PAL::WebGPU::TextureUsage::RenderAttachment };
-    Vector<PAL::WebGPU::TextureFormat> viewFormats;
-    PAL::WebGPU::PredefinedColorSpace colorSpace { PAL::WebGPU::PredefinedColorSpace::SRGB };
-    PAL::WebGPU::CanvasCompositingAlphaMode compositingAlphaMode { PAL::WebGPU::CanvasCompositingAlphaMode::Opaque };
+    WebCore::WebGPU::TextureFormat format { WebCore::WebGPU::TextureFormat::R8unorm };
+    WebCore::WebGPU::TextureUsageFlags usage { WebCore::WebGPU::TextureUsage::RenderAttachment };
+    Vector<WebCore::WebGPU::TextureFormat> viewFormats;
+    WebCore::WebGPU::PredefinedColorSpace colorSpace { WebCore::WebGPU::PredefinedColorSpace::SRGB };
+    WebCore::WebGPU::CanvasCompositingAlphaMode compositingAlphaMode { WebCore::WebGPU::CanvasCompositingAlphaMode::Opaque };
 };
 
 } // namespace WebKit::WebGPU

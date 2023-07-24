@@ -96,7 +96,7 @@ private:
     friend class IPC::Connection;
 #endif
 
-    mutable Type m_handle;
+    Type m_handle;
     size_t m_size { 0 };
 };
 
@@ -114,9 +114,6 @@ public:
     static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
 #elif OS(DARWIN)
     static RefPtr<SharedMemory> wrapMap(void*, size_t, Protection);
-#endif
-#if OS(WINDOWS)
-    static RefPtr<SharedMemory> adopt(HANDLE, size_t, Protection);
 #endif
 
     ~SharedMemory();
@@ -162,13 +159,3 @@ private:
 };
 
 } // namespace WebKit
-
-namespace IPC {
-
-template<> struct ArgumentCoder<WebKit::SharedMemoryHandle, void> {
-    static void encode(Encoder&, const WebKit::SharedMemoryHandle&);
-    static void encode(Encoder&, WebKit::SharedMemoryHandle&&);
-    static std::optional<WebKit::SharedMemoryHandle> decode(Decoder&);
-};
-
-} // namespace IPC

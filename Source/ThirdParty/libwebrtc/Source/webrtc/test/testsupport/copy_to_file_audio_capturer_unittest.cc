@@ -44,7 +44,7 @@ TEST_F(CopyToFileAudioCapturerTest, Capture) {
   // Destruct capturer to close wav file.
   capturer_.reset(nullptr);
 
-  // Read resulted file content with |wav_file_capture| and compare with
+  // Read resulted file content with `wav_file_capture` and compare with
   // what was captured.
   std::unique_ptr<TestAudioDeviceModule::Capturer> wav_file_capturer =
       TestAudioDeviceModule::CreateWavFileReader(temp_filename_, 48000);

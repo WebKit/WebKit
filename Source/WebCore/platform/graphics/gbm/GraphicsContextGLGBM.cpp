@@ -295,8 +295,8 @@ bool GraphicsContextGLGBM::reshapeDrawingBuffer()
     allocateDrawBufferObject();
 
     {
-        GLenum textureTarget = drawingBufferTextureTarget();
-        ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+        auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
+        ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
 
         GL_BindTexture(textureTarget, m_texture);
         GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
@@ -318,9 +318,11 @@ void GraphicsContextGLGBM::allocateDrawBufferObject()
             .height = std::clamp<uint32_t>(size.height(), 0, UINT_MAX),
             .flags = GBMBufferSwapchain::BufferDescription::NoFlags,
         });
+    if (!m_swapchain.drawBO)
+        return;
 
-    GLenum textureTarget = drawingBufferTextureTarget();
-    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
+    ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
 
     auto result = m_swapchain.images.ensure(m_swapchain.drawBO->handle(),
         [&] {

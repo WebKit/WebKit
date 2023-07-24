@@ -18,8 +18,10 @@
 namespace webrtc {
 
 std::unique_ptr<NetworkEmulationManager> CreateNetworkEmulationManager(
-    TimeMode mode) {
-  return std::make_unique<test::NetworkEmulationManagerImpl>(mode);
+    TimeMode time_mode,
+    EmulatedNetworkStatsGatheringMode stats_gathering_mode) {
+  return std::make_unique<test::NetworkEmulationManagerImpl>(
+      time_mode, stats_gathering_mode);
 }
 
 }  // namespace webrtc

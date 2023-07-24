@@ -67,23 +67,19 @@ Ref<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Documen
 
 void SVGMaskElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGTests::parseAttribute(name, newValue);
-    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
-
     SVGParsingError parseError = NoError;
     switch (name.nodeName()) {
     case AttributeNames::maskUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_maskUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
-        return;
+        break;
     }
     case AttributeNames::maskContentUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_maskContentUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
-        return;
+        break;
     }
     case AttributeNames::xAttr:
         m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
@@ -101,6 +97,9 @@ void SVGMaskElement::attributeChanged(const QualifiedName& name, const AtomStrin
         break;
     }
     reportAttributeParsingError(parseError, name, newValue);
+
+    SVGTests::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)

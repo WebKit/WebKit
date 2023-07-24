@@ -56,14 +56,15 @@ void SVGMPathElement::buildPendingResource()
     if (!isConnected())
         return;
 
-    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
+    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScopeForSVGReferences());
     if (!target.element) {
         // Do not register as pending if we are already pending this resource.
-        if (document().accessSVGExtensions().isPendingResource(*this, target.identifier))
+        auto& treeScope = treeScopeForSVGReferences();
+        if (treeScope.isPendingSVGResource(*this, target.identifier))
             return;
 
         if (!target.identifier.isEmpty()) {
-            document().accessSVGExtensions().addPendingResource(target.identifier, *this);
+            treeScope.addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
     } else if (is<SVGElement>(*target.element))
@@ -118,7 +119,7 @@ void SVGMPathElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RefPtr<SVGPathElement> SVGMPathElement::pathElement()
 {
-    auto target = targetElementFromIRIString(href(), treeScope());
+    auto target = targetElementFromIRIString(href(), treeScopeForSVGReferences());
     if (is<SVGPathElement>(target.element))
         return downcast<SVGPathElement>(target.element.get());
     return nullptr;

@@ -286,6 +286,9 @@ public:
     HTMLSlotElement* manuallyAssignedSlot() { return m_manuallyAssignedSlot.get(); }
     void setManuallyAssignedSlot(HTMLSlotElement* slot) { m_manuallyAssignedSlot = slot; }
 
+    bool hasEverPaintedImages() const { return m_hasEverPaintedImages; }
+    void setHasEverPaintedImages(bool hasEverPaintedImages) { m_hasEverPaintedImages = hasEverPaintedImages; }
+
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
     {
@@ -308,7 +311,8 @@ private:
     std::unique_ptr<NodeListsNodeData> m_nodeLists;
     std::unique_ptr<NodeMutationObserverData> m_mutationObserverData;
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_manuallyAssignedSlot;
-    bool m_isElementRareData; // Keep last for better bit packing with ElementRareData.
+    bool m_isElementRareData;
+    bool m_hasEverPaintedImages { false }; // Keep last for better bit packing with ElementRareData.
 };
 
 template<> struct NodeListTypeIdentifier<NameNodeList> {

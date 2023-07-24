@@ -41,12 +41,7 @@ var loadCSSProperties = xhrPromise(new URL("/WebKit/WebKit/main/Source/WebCore/c
     --supported-color: hsl(100, 100%, 30%);
     --non-standard-color: hsl(275.4, 77.7%, 35.1%);
     --in-development-color: hsl(24.5, 91.3%, 50.6%);
-    --no-active-development-color: hsl(240, 60.6%, 59.2%);
-    --partially-supported-color: hsl(180, 25%, 43.9%);
     --experimental-color: hsl(211.3, 100%, 50%);
-    --under-consideration-color: hsl(5.9, 40.2%, 60%);
-    --removed-not-considering-color: hsl(0, 0%, 49.8%);
-    --not-implemented-color: hsl(0, 0%, 29.8%);
     --obsolete-color: hsl(50, 100%, 25.1%);
 }
 
@@ -57,12 +52,7 @@ var loadCSSProperties = xhrPromise(new URL("/WebKit/WebKit/main/Source/WebCore/c
         --supported-color: hsl(79.5, 45.3%, 52%);
         --non-standard-color: hsl(276.7, 36.3%, 51.4%);
         --in-development-color: hsl(24.5, 91.3%, 50.6%);
-        --no-active-development-color: hsl(240, 60.6%, 59.2%);
-        --partially-supported-color: hsl(180, 30%, 52%);
-        --exoerimental-color: hsl(211.3, 100%, 50%);
-        --under-consideration-color: hsl(0, 35%, 61%);
-        --removed-not-considering-color: hsl(0, 0%, 49.8%);
-        --not-implemented-color: hsl(0, 0%, 70.2%);
+        --experimental-color: hsl(211.3, 100%, 50%);
         --obsolete-color: hsl(31.9, 20.5%, 33.1%);
     }
 }
@@ -465,20 +455,6 @@ ul.property-details {
     border-color: var(--in-development-color);
 }
 
-.under-consideration {
-    color: hsl(5.9, 40.2%, 60%);
-    color: var(--under-consideration-color);
-    border-color: hsl(5.9, 40.2%, 60%);
-    border-color: var(--under-consideration-color);
-}
-
-.no-active-development {
-    color: hsl(240, 60.6%, 59.2%);
-    color: var(--no-active-development-color);
-    border-color: hsl(240, 60.6%, 59.2%);
-    border-color: var(--no-active-development-color);
-}
-
 .experimental {
     color: hsl(211.3, 100%, 50%);
     color: var(--experimental-color);
@@ -486,33 +462,11 @@ ul.property-details {
     border-color: var(--experimental-color);
 }
 
-.partial-support {
-    color: hsl(180, 25%, 43.9%);
-    color: var(--partially-supported-color);
-    border-color: hsl(180, 25%, 43.9%);
-    border-color: var(--partially-supported-color);
-}
-
 .non-standard {
     color: hsl(275.4, 77.7%, 35.1%);
     color: var(--non-standard-color);
     border-color: hsl(275.4, 77.7%, 35.1%);
     border-color: var(--non-standard-color);
-}
-
-.removed,
-.not-considering {
-    color: hsl(0, 0%, 49.8%);
-    color: var(--removed-not-considering-color);
-    border-color: hsl(0, 0%, 49.8%);
-    border-color: var(--removed-not-considering-color);
-}
-
-.not-implemented {
-    color: hsl(0, 0%, 29.8%);
-    color: var(--not-implemented-color);
-    border-color: hsl(0, 0%, 29.8%);
-    border-color: var(--not-implemented-color);
 }
 
 .obsolete {
@@ -723,7 +677,7 @@ h3 a[name], .admin-bar h3 a[name] {
                 <template id="success-template">
                     <ul class="properties" id="properties-container"></ul>
 
-                    <p>Cannot find something? You can contact <a href="https://twitter.com/webkit">@webkit</a> on Twitter or contact the <a href="https://lists.webkit.org/mailman/listinfo/webkit-help">webkit-help</a> mailing list for questions.</p>
+                    <p>Cannot find something? Standards positions can be found on <a href="https://github.com/WebKit/standards-positions">this Github repository</a>. For questions, feel free to contact the <a href="https://lists.webkit.org/mailman/listinfo/webkit-help">webkit-help</a> mailing list.</p>
                     <p>You can also <a href="/contributing-code/">contribute to features</a> directly, the entire project is Open Source. To report bugs on existing features or check existing bug reports, see <a href="https://bugs.webkit.org">https://bugs.webkit.org</a>.</p>
                 </template>
 
@@ -745,30 +699,24 @@ h3 a[name], .admin-bar h3 a[name] {
 
 
 <script>
+"use strict";
+
 function initializeStatusPage() {
 
     const statusOrder = [
         'supported',
         'in-development',
-        'under-consideration',
         'experimental',
         'non-standard',
-        'not-considering',
-        'not-implemented',
         'obsolete',
-        'removed',
     ];
 
     const readableStatus = {
         'supported': 'Supported',
         'in-development': 'In Development',
-        'under-consideration': 'Under Consideration',
         'experimental': 'Experimental',
         'non-standard': 'Non-standard',
-        'not-considering': 'Not considering',
-        'not-implemented': 'Not implemented',
         'obsolete': 'Obsolete',
-        'removed': 'Removed',
     };
 
     function sortAlphabetically(array)
@@ -1179,7 +1127,7 @@ function initializeStatusPage() {
 
             // FIXME: need status per value as well.
             if (property.status != undefined) {
-                propertyStatusKey = property.status.status.toLocaleLowerCase();
+                let propertyStatusKey = property.status.status.toLocaleLowerCase();
 
                 if (!statusFilters[propertyStatusKey])
                     statusFilters[propertyStatusKey] = property.status.status;

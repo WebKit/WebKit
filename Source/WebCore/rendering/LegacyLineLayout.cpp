@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003-2019 Apple Inc. All right reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All right reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2013 ChangSeok Oh <shivamidow@gmail.com>
  * Copyright (C) 2013 Adobe Systems Inc. All right reserved.
@@ -939,11 +939,11 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
                 computeExpansionOpportunities(m_flow, textBox, previousRun, run->next(), renderText.stringView(run->m_start, run->m_stop), run->box()->direction());
 
             if (unsigned length = renderText.text().length()) {
-                if (!run->m_start && needsWordSpacing && isSpaceOrNewline(renderText.characterAt(run->m_start)))
+                if (!run->m_start && needsWordSpacing && deprecatedIsSpaceOrNewline(renderText.characterAt(run->m_start)))
                     contentWidth += lineStyle(*renderText.parent(), lineInfo).fontCascade().wordSpacing();
                 // run->m_start == run->m_stop should only be true iff the run is a replaced run for bidi: isolate.
                 ASSERT(run->m_stop > 0 || run->m_start == run->m_stop);
-                needsWordSpacing = run->m_stop == length && !isSpaceOrNewline(renderText.characterAt(run->m_stop - 1));
+                needsWordSpacing = run->m_stop == length && !deprecatedIsSpaceOrNewline(renderText.characterAt(run->m_stop - 1));
             }
             auto currentLogicalLeftPosition = logicalSpacingForInlineTextBoxes.get(&textBox) + contentWidth;
             setLogicalWidthForTextRun(lineBox, run, renderText, currentLogicalLeftPosition, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
@@ -1426,8 +1426,8 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
 
         WordMeasurements wordMeasurements;
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
-        m_flow.cachePriorCharactersIfNeeded(renderTextInfo.lineBreakIterator);
-        renderTextInfo.lineBreakIterator.resetPriorContext();
+        m_flow.cachePriorCharactersIfNeeded(renderTextInfo.lineBreakIteratorFactory);
+        renderTextInfo.lineBreakIteratorFactory.priorContext().reset();
         if (resolver.position().atEnd()) {
             // FIXME: We shouldn't be creating any runs in nextLineBreak to begin with!
             // Once BidiRunList is separated from BidiResolver this will not be needed.

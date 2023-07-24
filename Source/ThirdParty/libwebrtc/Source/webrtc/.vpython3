@@ -56,6 +56,12 @@ wheel: <
   >
 >
 
+# GRPC used by iOS test.
+wheel: <
+  name: "infra/python/wheels/grpcio/${vpython_platform}"
+  version: "version:1.44.0"
+>
+
 wheel: <
   name: "infra/python/wheels/six-py2_py3"
   version: "version:1.15.0"
@@ -79,4 +85,11 @@ wheel: <
 wheel: <
   name: "infra/python/wheels/requests-py2_py3"
   version: "version:2.13.0"
+>
+
+# Used by:
+#   tools_webrtc/sslroots
+wheel: <
+  name: "infra/python/wheels/asn1crypto-py2_py3"
+  version: "version:1.0.1"
 >

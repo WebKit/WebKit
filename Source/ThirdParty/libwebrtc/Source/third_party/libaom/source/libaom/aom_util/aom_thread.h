@@ -28,6 +28,11 @@ extern "C" {
 #if CONFIG_MULTITHREAD
 
 #if defined(_WIN32) && !HAVE_PTHREAD_H
+// Prevent leaking max/min macros.
+#undef NOMINMAX
+#define NOMINMAX
+#undef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
 #include <errno.h>    // NOLINT
 #include <process.h>  // NOLINT
 #include <windows.h>  // NOLINT
@@ -136,151 +141,6 @@ static INLINE int pthread_cond_wait(pthread_cond_t *const condition,
                                     pthread_mutex_t *const mutex) {
   int ok;
   ok = SleepConditionVariableCS(condition, mutex, INFINITE);
-  return !ok;
-}
-#elif defined(__OS2__)
-#define INCL_DOS
-#include <os2.h>  // NOLINT
-
-#include <errno.h>        // NOLINT
-#include <stdlib.h>       // NOLINT
-#include <sys/builtin.h>  // NOLINT
-
-#define pthread_t TID
-#define pthread_mutex_t HMTX
-
-typedef struct {
-  HEV event_sem_;
-  HEV ack_sem_;
-  volatile unsigned wait_count_;
-} pthread_cond_t;
-
-//------------------------------------------------------------------------------
-// simplistic pthread emulation layer
-
-#define THREADFN void *
-#define THREAD_RETURN(val) (val)
-
-typedef struct {
-  void *(*start_)(void *);
-  void *arg_;
-} thread_arg;
-
-static void thread_start(void *arg) {
-  thread_arg targ = *(thread_arg *)arg;
-  free(arg);
-
-  targ.start_(targ.arg_);
-}
-
-static INLINE int pthread_create(pthread_t *const thread, const void *attr,
-                                 void *(*start)(void *), void *arg) {
-  int tid;
-  thread_arg *targ = (thread_arg *)malloc(sizeof(*targ));
-  if (targ == NULL) return 1;
-
-  (void)attr;
-
-  targ->start_ = start;
-  targ->arg_ = arg;
-  tid = (pthread_t)_beginthread(thread_start, NULL, 1024 * 1024, targ);
-  if (tid == -1) {
-    free(targ);
-    return 1;
-  }
-
-  *thread = tid;
-  return 0;
-}
-
-static INLINE int pthread_join(pthread_t thread, void **value_ptr) {
-  (void)value_ptr;
-  return DosWaitThread(&thread, DCWW_WAIT) != 0;
-}
-
-// Mutex
-static INLINE int pthread_mutex_init(pthread_mutex_t *const mutex,
-                                     void *mutexattr) {
-  (void)mutexattr;
-  return DosCreateMutexSem(NULL, mutex, 0, FALSE) != 0;
-}
-
-static INLINE int pthread_mutex_trylock(pthread_mutex_t *const mutex) {
-  return DosRequestMutexSem(*mutex, SEM_IMMEDIATE_RETURN) == 0 ? 0 : EBUSY;
-}
-
-static INLINE int pthread_mutex_lock(pthread_mutex_t *const mutex) {
-  return DosRequestMutexSem(*mutex, SEM_INDEFINITE_WAIT) != 0;
-}
-
-static INLINE int pthread_mutex_unlock(pthread_mutex_t *const mutex) {
-  return DosReleaseMutexSem(*mutex) != 0;
-}
-
-static INLINE int pthread_mutex_destroy(pthread_mutex_t *const mutex) {
-  return DosCloseMutexSem(*mutex) != 0;
-}
-
-// Condition
-static INLINE int pthread_cond_destroy(pthread_cond_t *const condition) {
-  int ok = 1;
-  ok &= DosCloseEventSem(condition->event_sem_) == 0;
-  ok &= DosCloseEventSem(condition->ack_sem_) == 0;
-  return !ok;
-}
-
-static INLINE int pthread_cond_init(pthread_cond_t *const condition,
-                                    void *cond_attr) {
-  int ok = 1;
-  (void)cond_attr;
-
-  ok &=
-      DosCreateEventSem(NULL, &condition->event_sem_, DCE_POSTONE, FALSE) == 0;
-  ok &= DosCreateEventSem(NULL, &condition->ack_sem_, DCE_POSTONE, FALSE) == 0;
-  if (!ok) {
-    pthread_cond_destroy(condition);
-    return 1;
-  }
-  condition->wait_count_ = 0;
-  return 0;
-}
-
-static INLINE int pthread_cond_signal(pthread_cond_t *const condition) {
-  int ok = 1;
-
-  if (!__atomic_cmpxchg32(&condition->wait_count_, 0, 0)) {
-    ok &= DosPostEventSem(condition->event_sem_) == 0;
-    ok &= DosWaitEventSem(condition->ack_sem_, SEM_INDEFINITE_WAIT) == 0;
-  }
-
-  return !ok;
-}
-
-static INLINE int pthread_cond_broadcast(pthread_cond_t *const condition) {
-  int ok = 1;
-
-  while (!__atomic_cmpxchg32(&condition->wait_count_, 0, 0))
-    ok &= pthread_cond_signal(condition) == 0;
-
-  return !ok;
-}
-
-static INLINE int pthread_cond_wait(pthread_cond_t *const condition,
-                                    pthread_mutex_t *const mutex) {
-  int ok = 1;
-
-  __atomic_increment(&condition->wait_count_);
-
-  ok &= pthread_mutex_unlock(mutex) == 0;
-
-  ok &= DosWaitEventSem(condition->event_sem_, SEM_INDEFINITE_WAIT) == 0;
-
-  __atomic_decrement(&condition->wait_count_);
-
-  ok &= DosPostEventSem(condition->ack_sem_) == 0;
-
-  pthread_mutex_lock(mutex);
-
   return !ok;
 }
 #else                 // _WIN32

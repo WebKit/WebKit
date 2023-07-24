@@ -142,6 +142,8 @@ private:
     bool consumeContainerShorthand(bool important);
     bool consumeContainIntrinsicSizeShorthand(bool important);
 
+    bool consumeWhiteSpaceShorthand(bool important);
+
 private:
     // Inputs:
     CSSParserTokenRange m_range;

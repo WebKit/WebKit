@@ -13,14 +13,14 @@ layer at (0,0) size 785x641
         RenderText {#text} at (253,37) size 11x37
           text run at (253,37) width 11: ")"
       RenderBlock {H3} at (0,95) size 769x67
-        RenderText {#text} at (0,0) size 696x22
-          text run at (0,0) width 696: "The orange stripe has 'overflow: auto', 'margin-left: 100px' and 'margin-right: 100px'"
-        RenderBR {BR} at (695,0) size 1x22
-        RenderText {#text} at (0,22) size 658x22
-          text run at (0,22) width 658: "The lime stripes are floats with various width (topmost is 0, bottommost is 150px)"
-        RenderBR {BR} at (657,22) size 1x22
-        RenderText {#text} at (0,44) size 398x22
-          text run at (0,44) width 398: "The wrapping container has a solid silver border."
+        RenderText {#text} at (0,0) size 685x22
+          text run at (0,0) width 685: "The orange stripe has 'overflow: auto', 'margin-left: 100px' and 'margin-right: 100px'"
+        RenderBR {BR} at (684,0) size 1x22
+        RenderText {#text} at (0,22) size 648x22
+          text run at (0,22) width 648: "The lime stripes are floats with various width (topmost is 0, bottommost is 150px)"
+        RenderBR {BR} at (647,22) size 1x22
+        RenderText {#text} at (0,44) size 392x22
+          text run at (0,44) width 392: "The wrapping container has a solid silver border."
       RenderBlock {DIV} at (16,180) size 650x29 [border: (5px solid #C0C0C0)]
         RenderBlock (floating) {DIV} at (5,5) size 0x16 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 39x18
@@ -54,14 +54,14 @@ layer at (0,0) size 785x641
           RenderText {#text} at (0,0) size 84x18
             text run at (0,0) width 84: "floatR 150px"
       RenderBlock {H3} at (0,534) size 769x67
-        RenderText {#text} at (0,0) size 670x22
-          text run at (0,0) width 670: "The orange stripe has 'overflow: auto', 'margin-left: auto' and 'margin-right: auto'"
-        RenderBR {BR} at (669,0) size 1x22
-        RenderText {#text} at (0,22) size 658x22
-          text run at (0,22) width 658: "The lime stripes are floats with various width (topmost is 0, bottommost is 150px)"
-        RenderBR {BR} at (657,22) size 1x22
-        RenderText {#text} at (0,44) size 398x22
-          text run at (0,44) width 398: "The wrapping container has a solid silver border."
+        RenderText {#text} at (0,0) size 660x22
+          text run at (0,0) width 660: "The orange stripe has 'overflow: auto', 'margin-left: auto' and 'margin-right: auto'"
+        RenderBR {BR} at (659,0) size 1x22
+        RenderText {#text} at (0,22) size 648x22
+          text run at (0,22) width 648: "The lime stripes are floats with various width (topmost is 0, bottommost is 150px)"
+        RenderBR {BR} at (647,22) size 1x22
+        RenderText {#text} at (0,44) size 392x22
+          text run at (0,44) width 392: "The wrapping container has a solid silver border."
 layer at (129,207) size 440x18
   RenderBlock {DIV} at (105,5) size 440x18 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 174x18

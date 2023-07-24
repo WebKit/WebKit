@@ -278,11 +278,11 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncResize, (JSGlobalObject* globalObje
     if (UNLIKELY(!thisObject->impl()->isResizableOrGrowableShared()))
         return throwVMTypeError(globalObject, scope, "ArrayBuffer is not resizable"_s);
 
-    if (UNLIKELY(thisObject->impl()->isDetached()))
-        return throwVMTypeError(globalObject, scope, "Receiver is detached"_s);
-
     double newLength = callFrame->argument(0).toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
+
+    if (UNLIKELY(thisObject->impl()->isDetached()))
+        return throwVMTypeError(globalObject, scope, "Receiver is detached"_s);
 
     if (!std::isfinite(newLength) || newLength < 0)
         return throwVMRangeError(globalObject, scope, "new length is out of range"_s);

@@ -91,7 +91,7 @@ void RemoteGraphicsContextGLProxyWC::prepareForDisplay()
     if (isContextLost())
         return;
     auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay());
-    if (!sendResult) {
+    if (!sendResult.succeeded()) {
         markContextLost();
         return;
     }

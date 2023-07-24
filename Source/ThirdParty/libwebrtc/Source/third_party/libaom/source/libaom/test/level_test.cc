@@ -9,6 +9,7 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 #include <memory>
+#include <string>
 
 #include "third_party/googletest/src/googletest/include/gtest/gtest.h"
 
@@ -22,7 +23,7 @@
 namespace {
 const int kLevelMin = 0;
 const int kLevelMax = 31;
-const int kLevelKeepStats = 24;
+const int kLevelKeepStats = 32;
 // Speed settings tested
 static const int kCpuUsedVectors[] = {
   1,
@@ -78,8 +79,8 @@ class LevelTest
   int level_[32];
 };
 
-TEST_P(LevelTest, TestTargetLevelApi) {
-  static aom_codec_iface_t *codec = aom_codec_av1_cx();
+TEST(LevelTest, TestTargetLevelApi) {
+  aom_codec_iface_t *codec = aom_codec_av1_cx();
   aom_codec_ctx_t enc;
   aom_codec_enc_cfg_t cfg;
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_config_default(codec, &cfg, 0));
@@ -87,10 +88,10 @@ TEST_P(LevelTest, TestTargetLevelApi) {
   for (int operating_point = 0; operating_point <= 32; ++operating_point) {
     for (int level = 0; level <= 32; ++level) {
       const int target_level = operating_point * 100 + level;
-      if ((level <= 24 && level != 2 && level != 3 && level != 6 &&
-           level != 7 && level != 10 && level != 11 && level != 20 &&
-           level != 21 && level != 22 && level != 23) ||
-          level == 31 || operating_point > 31) {
+      if (operating_point <= 31 &&
+          ((level < (CONFIG_CWG_C013 ? 28 : 20) && level != 2 && level != 3 &&
+            level != 6 && level != 7 && level != 10 && level != 11) ||
+           level == kLevelMax || level == kLevelKeepStats)) {
         EXPECT_EQ(AOM_CODEC_OK,
                   AOM_CODEC_CONTROL_TYPECHECKED(
                       &enc, AV1E_SET_TARGET_SEQ_LEVEL_IDX, target_level));
@@ -102,6 +103,23 @@ TEST_P(LevelTest, TestTargetLevelApi) {
     }
   }
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
+}
+
+TEST(LevelTest, InvalidOperatingPointIndexErrorDetail) {
+  aom_codec_iface_t *codec = aom_codec_av1_cx();
+  aom_codec_ctx_t enc;
+  aom_codec_enc_cfg_t cfg;
+  EXPECT_EQ(aom_codec_enc_config_default(codec, &cfg, 0), AOM_CODEC_OK);
+  EXPECT_EQ(aom_codec_enc_init(&enc, codec, &cfg, 0), AOM_CODEC_OK);
+  EXPECT_EQ(aom_codec_control(&enc, AV1E_SET_TARGET_SEQ_LEVEL_IDX, 3219),
+            AOM_CODEC_INVALID_PARAM);
+  EXPECT_EQ(aom_codec_error_detail(&enc),
+            std::string("Invalid operating point index: 32"));
+  EXPECT_EQ(aom_codec_set_option(&enc, "target-seq-level-idx", "3319"),
+            AOM_CODEC_INVALID_PARAM);
+  EXPECT_EQ(aom_codec_error_detail(&enc),
+            std::string("Invalid operating point index: 33"));
+  EXPECT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
 }
 
 TEST_P(LevelTest, TestTargetLevel19) {

@@ -31,6 +31,11 @@
 
 namespace WebGPU {
 
+static uint64_t makeKey(uint32_t firstInteger, auto secondValue)
+{
+    return firstInteger | (static_cast<uint64_t>(secondValue) << 32);
+}
+
 bool BindGroupLayout::isPresent(const WGPUBufferBindingLayout& buffer)
 {
     return buffer.type != WGPUBufferBindingType_Undefined;
@@ -57,22 +62,10 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     switch (bufferType) {
     case WGPUBufferBindingType_Uniform:
     case WGPUBufferBindingType_ReadOnlyStorage:
-#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        descriptor.access = MTLArgumentAccessReadOnly;
-ALLOW_DEPRECATED_DECLARATIONS_END
-#else
-        descriptor.access = MTLBindingAccessReadOnly;
-#endif
+        descriptor.access = BindGroupLayout::BindingAccessReadOnly;
         break;
     case WGPUBufferBindingType_Storage:
-#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        descriptor.access = MTLArgumentAccessReadWrite;
-ALLOW_DEPRECATED_DECLARATIONS_END
-#else
-        descriptor.access = MTLBindingAccessReadWrite;
-#endif
+        descriptor.access = BindGroupLayout::BindingAccessReadWrite;
         break;
     case WGPUBufferBindingType_Undefined:
     case WGPUBufferBindingType_Force32:
@@ -95,13 +88,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUSamplerBindingL
     UNUSED_PARAM(sampler);
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeSampler;
-#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    descriptor.access = MTLArgumentAccessReadOnly;
-ALLOW_DEPRECATED_DECLARATIONS_END
-#else
-    descriptor.access = MTLBindingAccessReadOnly;
-#endif
+    descriptor.access = BindGroupLayout::BindingAccessReadOnly;
     return descriptor;
 }
 
@@ -116,16 +103,9 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUTextureBindingL
     if (texture.nextInChain)
         return nil;
 
-    UNUSED_PARAM(texture);
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
-#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    descriptor.access = MTLArgumentAccessReadOnly;
-ALLOW_DEPRECATED_DECLARATIONS_END
-#else
-    descriptor.access = MTLBindingAccessReadOnly;
-#endif
+    descriptor.access = BindGroupLayout::BindingAccessReadOnly;
     return descriptor;
 }
 
@@ -141,10 +121,27 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUStorageTextureB
     if (storageTexture.nextInChain)
         return nil;
 
-    UNUSED_PARAM(storageTexture);
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
     // FIXME: Implement this.
+    return descriptor;
+}
+
+bool BindGroupLayout::isPresent(const WGPUExternalTextureBindingLayout&)
+{
+    return true;
+}
+
+static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUExternalTextureBindingLayout& externalTexture)
+{
+    if (externalTexture.nextInChain)
+        return nil;
+
+    // FIXME: Implement this properly.
+    // External textures have a bunch of information included in them, not just a single texture.
+    auto descriptor = [MTLArgumentDescriptor new];
+    descriptor.dataType = MTLDataTypeTexture;
+    descriptor.access = BindGroupLayout::BindingAccessReadOnly;
     return descriptor;
 }
 
@@ -163,44 +160,72 @@ static bool containsStage(WGPUShaderStageFlags stageBitfield, auto stage)
 
 Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDescriptor& descriptor)
 {
-    if (descriptor.nextInChain || !descriptor.entryCount)
+    if (descriptor.nextInChain)
         return BindGroupLayout::createInvalid(*this);
 
-    HashMap<uint32_t, WGPUShaderStageFlags> shaderStageForBinding;
-    constexpr size_t stageCount = 3;
+    BindGroupLayout::StageMapTable indicesForBinding;
+    constexpr uint32_t stageCount = 3;
     static_assert(stageCount == 3, "vertex, fragment, and compute stages supported");
     NSMutableArray<MTLArgumentDescriptor *> *arguments[stageCount];
-    for (size_t i = 0; i < stageCount; ++i)
+    for (uint32_t i = 0; i < stageCount; ++i)
         arguments[i] = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
 
-    Vector<WGPUBindGroupLayoutEntry> bindGroupLayoutEntries;
-    bindGroupLayoutEntries.resize(descriptor.entryCount);
+    Vector<BindGroupLayout::Entry> bindGroupLayoutEntries;
+    bindGroupLayoutEntries.reserveInitialCapacity(descriptor.entryCount);
     for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
         const WGPUBindGroupLayoutEntry& entry = descriptor.entries[i];
-        if (entry.nextInChain)
-            return BindGroupLayout::createInvalid(*this);
+        if (entry.nextInChain) {
+            if (entry.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture))
+                return BindGroupLayout::createInvalid(*this);
+            if (entry.nextInChain->next)
+                return BindGroupLayout::createInvalid(*this);
+        }
 
-        shaderStageForBinding.add(entry.binding + 1, entry.visibility);
         MTLArgumentDescriptor *descriptor = nil;
 
-        if (BindGroupLayout::isPresent(entry.buffer))
-            descriptor = createArgumentDescriptor(entry.buffer);
-        else if (BindGroupLayout::isPresent(entry.sampler))
-            descriptor = createArgumentDescriptor(entry.sampler);
-        else if (BindGroupLayout::isPresent(entry.texture))
-            descriptor = createArgumentDescriptor(entry.texture);
-        else if (BindGroupLayout::isPresent(entry.storageTexture))
-            descriptor = createArgumentDescriptor(entry.storageTexture);
+        BindGroupLayout::Entry::BindingLayout bindingLayout;
+        auto processBindingLayout = [&](const auto& type) {
+            if (!BindGroupLayout::isPresent(type))
+                return true;
+            if (descriptor)
+                return false;
+            descriptor = createArgumentDescriptor(type);
+            if (!descriptor)
+                return false;
+            bindingLayout = type;
+            return true;
+        };
+        if (!processBindingLayout(entry.buffer))
+            return BindGroupLayout::createInvalid(*this);
+        if (!processBindingLayout(entry.sampler))
+            return BindGroupLayout::createInvalid(*this);
+        if (!processBindingLayout(entry.texture))
+            return BindGroupLayout::createInvalid(*this);
+        if (!processBindingLayout(entry.storageTexture))
+            return BindGroupLayout::createInvalid(*this);
+        if (entry.nextInChain) {
+            const WGPUExternalTextureBindGroupLayoutEntry& externalTextureEntry = *reinterpret_cast<const WGPUExternalTextureBindGroupLayoutEntry*>(entry.nextInChain);
+            ASSERT(externalTextureEntry.chain.sType == static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture));
+            processBindingLayout(entry.storageTexture);
+            if (!processBindingLayout(externalTextureEntry.externalTexture))
+                return BindGroupLayout::createInvalid(*this);
+        }
 
         if (!descriptor)
             return BindGroupLayout::createInvalid(*this);
 
-        for (size_t stage = 0; stage < stageCount; ++stage) {
-            if (containsStage(entry.visibility, stage))
+        for (uint32_t stage = 0; stage < stageCount; ++stage) {
+            if (containsStage(entry.visibility, stage)) {
+                indicesForBinding.add(makeKey(entry.binding, stage), std::make_pair(arguments[stage].count, descriptor.access));
                 addDescriptor(arguments[stage], descriptor);
+            }
         }
 
-        bindGroupLayoutEntries[i] = entry;
+        bindGroupLayoutEntries.uncheckedAppend({
+            entry.binding,
+            entry.visibility,
+            WTFMove(bindingLayout),
+        });
     }
 
     auto label = fromAPI(descriptor.label);
@@ -212,11 +237,11 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             return BindGroupLayout::createInvalid(*this);
     }
 
-    return BindGroupLayout::create(WTFMove(shaderStageForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2], WTFMove(bindGroupLayoutEntries));
+    return BindGroupLayout::create(WTFMove(indicesForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2], WTFMove(bindGroupLayoutEntries));
 }
 
-BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shaderStageForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<WGPUBindGroupLayoutEntry>&& bindGroupLayoutEntries)
-    : m_shaderStageForBinding(WTFMove(shaderStageForBinding))
+BindGroupLayout::BindGroupLayout(StageMapTable&& indicesForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<Entry>&& bindGroupLayoutEntries)
+    : m_indicesForBinding(WTFMove(indicesForBinding))
     , m_vertexArgumentEncoder(vertexArgumentEncoder)
     , m_fragmentArgumentEncoder(fragmentArgumentEncoder)
     , m_computeArgumentEncoder(computeArgumentEncoder)
@@ -225,6 +250,7 @@ BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shade
 }
 
 BindGroupLayout::BindGroupLayout()
+    : m_valid(false)
 {
 }
 
@@ -250,52 +276,23 @@ NSUInteger BindGroupLayout::encodedLength(ShaderStage shaderStage) const
     }
 }
 
-bool BindGroupLayout::bindingContainsStage(uint32_t bindingIndex, ShaderStage shaderStage) const
+std::optional<BindGroupLayout::StageMapValue> BindGroupLayout::indexForBinding(uint32_t bindingIndex, ShaderStage shaderStage) const
 {
-    ASSERT(m_shaderStageForBinding.contains(bindingIndex + 1));
-    return containsStage(m_shaderStageForBinding.find(bindingIndex + 1)->value, shaderStage);
-}
+    auto it = m_indicesForBinding.find(makeKey(bindingIndex, shaderStage));
+    if (it == m_indicesForBinding.end())
+        return std::nullopt;
 
-#if HAVE(METAL_BUFFER_BINDING_REFLECTION)
-WGPUBindGroupLayoutEntry BindGroupLayout::createEntryFromStructMember(MTLStructMember *structMember, uint32_t& currentBindingIndex, WGPUShaderStage shaderStage)
-{
-    WGPUBindGroupLayoutEntry entry = { };
-    entry.binding = currentBindingIndex++;
-    entry.visibility = shaderStage;
-    switch (structMember.dataType) {
-    case MTLDataTypeTexture:
-        entry.texture.sampleType = WGPUTextureSampleType_Float;
-        entry.texture.viewDimension = WGPUTextureViewDimension_2D;
-        break;
-    case MTLDataTypeSampler:
-        entry.sampler.type = WGPUSamplerBindingType_Filtering;
-        break;
-    case MTLDataTypePointer:
-        entry.buffer.type = WGPUBufferBindingType_Uniform;
-        break;
-    case MTLDataTypeFloat3x2:
-        entry.buffer.type = static_cast<decltype(entry.buffer.type)>(WGPUBufferBindingType_Float3x2);
-        break;
-    case MTLDataTypeFloat4x3:
-        entry.buffer.type = static_cast<decltype(entry.buffer.type)>(WGPUBufferBindingType_Float4x3);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return entry;
-}
-#endif // HAVE(METAL_BUFFER_BINDING_REFLECTION)
-
-const Vector<WGPUBindGroupLayoutEntry>& BindGroupLayout::entries() const
-{
-    return m_bindGroupLayoutEntries;
+    return it->value;
 }
 
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuBindGroupLayoutReference(WGPUBindGroupLayout bindGroupLayout)
+{
+    WebGPU::fromAPI(bindGroupLayout).ref();
+}
 
 void wgpuBindGroupLayoutRelease(WGPUBindGroupLayout bindGroupLayout)
 {

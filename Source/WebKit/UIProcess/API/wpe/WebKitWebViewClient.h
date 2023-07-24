@@ -55,5 +55,10 @@ private:
     void didReceiveUserMessage(WKWPE::View&, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&) override;
     WebKit::WebKitWebResourceLoadManager* webResourceLoadManager() override;
 
+#if ENABLE(FULLSCREEN_API)
+    void enterFullScreen(WKWPE::View&) override;
+    void exitFullScreen(WKWPE::View&) override;
+#endif
+
     WebKitWebView* m_webView;
 };

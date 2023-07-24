@@ -70,10 +70,10 @@ class TestActivitiesExecutor {
   // yet.
   Timestamp start_time_ RTC_GUARDED_BY(lock_) = Timestamp::MinusInfinity();
   // Queue of activities that were added before test was started.
-  // Activities from this queue will be posted on the |task_queue_| after test
+  // Activities from this queue will be posted on the `task_queue_` after test
   // will be set up and then this queue will be unused.
   std::queue<ScheduledActivity> scheduled_activities_ RTC_GUARDED_BY(lock_);
-  // List of task handles for activities, that are posted on |task_queue_| as
+  // List of task handles for activities, that are posted on `task_queue_` as
   // repeated during the call.
   std::vector<RepeatingTaskHandle> repeating_task_handles_
       RTC_GUARDED_BY(lock_);

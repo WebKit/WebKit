@@ -3,6 +3,7 @@
 // - src/assignment-target-type/invalid/direct.template
 /*---
 description: Static Semantics AssignmentTargetType, Return invalid. (Direct assignment)
+features: [exponentiation]
 flags: [generated]
 negative:
   phase: parse

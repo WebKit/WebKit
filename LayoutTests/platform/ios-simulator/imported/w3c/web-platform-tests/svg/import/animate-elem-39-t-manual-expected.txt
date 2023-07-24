@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (20,17) size 753x441
-      RenderSVGText {text} at (157,10) size 166x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 166x19
-          chunk 1 (middle anchor) text run 1 at (157.36,25.00) startOffset 0 endOffset 23 width 165.28: "<animate> on xlink:href"
-      RenderSVGContainer {g} at (20,99) size 753x359
+    RenderSVGContainer {g} at (21,16) size 752x442
+      RenderSVGText {text} at (156,9) size 168x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 167x20
+          chunk 1 (middle anchor) text run 1 at (156.84,25.00) startOffset 0 endOffset 23 width 166.32: "<animate> on xlink:href"
+      RenderSVGContainer {g} at (21,99) size 752x359
         RenderSVGContainer {g} at (58,135) size 84x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,90.00)}]
           RenderSVGText {text} at (-26,-9) size 52x24 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 51x24
-              chunk 1 (middle anchor) text run 1 at (-25.14,10.00) startOffset 0 endOffset 5 width 50.29: "<set>"
+              chunk 1 (middle anchor) text run 1 at (-25.02,10.00) startOffset 0 endOffset 5 width 50.04: "<set>"
         RenderSVGContainer {g} at (249,99) size 102x159 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,90.00)}]
           RenderSVGContainer {a} at (249,99) size 102x102
             RenderSVGEllipse {circle} at (249,99) size 102x102 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [cx=0.00] [cy=0.00] [r=30.00]
@@ -44,10 +44,10 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (-26,42) size 52x23 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 51x22
               chunk 1 (middle anchor) text run 1 at (-25.02,60.00) startOffset 0 endOffset 5 width 50.04: "<use>"
-        RenderSVGContainer {g} at (20,335) size 160x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,210.00)}]
+        RenderSVGContainer {g} at (21,335) size 158x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,210.00)}]
           RenderSVGText {text} at (-48,-9) size 96x24 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 95x24
-              chunk 1 (middle anchor) text run 1 at (-47.49,10.00) startOffset 0 endOffset 9 width 94.98: "<animate>"
+              chunk 1 (middle anchor) text run 1 at (-47.26,10.00) startOffset 0 endOffset 9 width 94.51: "<animate>"
         RenderSVGContainer {g} at (249,299) size 102x159 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,210.00)}]
           RenderSVGContainer {a} at (249,299) size 102x102
             RenderSVGEllipse {circle} at (249,299) size 102x102 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [cx=0.00] [cy=0.00] [r=30.00]
@@ -70,8 +70,8 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (-26,42) size 52x23 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 51x22
               chunk 1 (middle anchor) text run 1 at (-25.02,60.00) startOffset 0 endOffset 5 width 50.04: "<use>"
-    RenderSVGContainer {g} at (16,516) size 385x64
-      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x38
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGContainer {g} at (16,516) size 384x64
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

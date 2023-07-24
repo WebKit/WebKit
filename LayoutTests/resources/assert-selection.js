@@ -935,7 +935,7 @@ function assembleDescription() {
     return stack
   }
 
-  const RE_IN_ASSERT_SELECTION = new RegExp('assert_selection\\.js');
+  const RE_IN_ASSERT_SELECTION = new RegExp('assert-selection\\.js');
   for (const line of getStack()) {
     const match = RE_IN_ASSERT_SELECTION.exec(line);
     if (!match) {

@@ -48,6 +48,11 @@ public:
 
     virtual void requestStorageSpace(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
     {
+        UNUSED_PARAM(topOrigin);
+        UNUSED_PARAM(frameOrigin);
+        UNUSED_PARAM(quota);
+        UNUSED_PARAM(currentSize);
+        UNUSED_PARAM(spaceRequired);
         completionHandler({ });
     }
 
@@ -87,6 +92,8 @@ public:
     
     virtual void requestBackgroundFetchPermission(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, CompletionHandler<void(bool)>&& completionHandler)
     {
+        UNUSED_PARAM(topOrigin);
+        UNUSED_PARAM(frameOrigin);
         completionHandler(false);
     }
 

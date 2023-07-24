@@ -42,7 +42,7 @@
 
 namespace WebKit {
 
-RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::RemoteVideoFrameReference&& reference, const WebCore::VideoFrame& videoFrame)
+RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::RemoteVideoFrameReference reference, const WebCore::VideoFrame& videoFrame)
 {
     return {
         WTFMove(reference),
@@ -118,7 +118,7 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
             semaphore.wait();
         } else {
             auto sendResult = m_connection->sendSync(Messages::RemoteVideoFrameObjectHeap::PixelBuffer(newReadReference()), 0, defaultTimeout);
-            if (sendResult)
+            if (sendResult.succeeded())
                 std::tie(m_pixelBuffer) = sendResult.takeReply();
         }
     }
@@ -126,6 +126,12 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
     if (!m_pixelBuffer)
         m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
     return m_pixelBuffer.get();
+}
+
+VideoFrame::ResourceIdentifier RemoteVideoFrameProxy::resourceIdentifier() const
+{
+    auto ref = newReadReference();
+    return std::make_pair(ref.identifier().toUInt64(), ref.version());
 }
 #endif
 

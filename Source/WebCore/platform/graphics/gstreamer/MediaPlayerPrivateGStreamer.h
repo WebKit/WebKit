@@ -34,6 +34,7 @@
 #include "MainThreadNotifier.h"
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"
+#include "PlatformMediaResourceLoader.h"
 #include "TrackPrivateBaseGStreamer.h"
 #include <glib.h>
 #include <gst/gst.h>
@@ -74,10 +75,6 @@ typedef struct _GstMpegtsSection GstMpegtsSection;
 typedef struct _GstStreamVolume GstStreamVolume;
 typedef struct _GstVideoInfo GstVideoInfo;
 
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
-struct wpe_video_plane_display_dmabuf_source;
-#endif
-
 namespace WebCore {
 
 class BitmapTextureGL;
@@ -86,7 +83,6 @@ class GraphicsContext;
 class GraphicsContextGL;
 class IntSize;
 class IntRect;
-class VideoTextureCopierGStreamer;
 
 #if USE(TEXTURE_MAPPER_GL)
 class TextureMapperPlatformLayerProxy;
@@ -187,6 +183,8 @@ public:
     MediaPlayer::MovieLoadType movieLoadType() const final;
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
+    unsigned decodedFrameCount() const final;
+    unsigned droppedFrameCount() const final;
     void acceleratedRenderingStateChanged() final;
     bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) override;
     void isLoopingChanged() final;
@@ -210,10 +208,6 @@ public:
     void handleProtectionEvent(GstEvent*);
 #endif
 
-#if USE(GSTREAMER_GL)
-    bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) override;
-    RefPtr<NativeImage> nativeImageForCurrentTime() override;
-#endif
     RefPtr<VideoFrame> videoFrameForCurrentTime() override;
 
     void updateEnabledVideoTrack();
@@ -339,7 +333,7 @@ protected:
 #endif
 
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
-    MediaPlayer* m_player;
+    ThreadSafeWeakPtr<MediaPlayer> m_player;
     String m_referrer;
     mutable std::optional<MediaTime> m_cachedPosition;
     mutable MediaTime m_cachedDuration;
@@ -382,10 +376,6 @@ protected:
     bool m_canRenderingBeAccelerated { false };
 
     bool m_isBeingDestroyed WTF_GUARDED_BY_LOCK(m_drawLock) { false };
-
-#if USE(GSTREAMER_GL)
-    std::unique_ptr<VideoTextureCopierGStreamer> m_videoTextureCopier;
-#endif
 
     ImageOrientation m_videoSourceOrientation;
 
@@ -446,6 +436,7 @@ private:
     void commitLoad();
     void fillTimerFired();
     void didEnd();
+    void setPlaybackFlags(bool isMediaStream);
 
     GstElement* createVideoSink();
     GstElement* createAudioSink();
@@ -598,9 +589,6 @@ private:
     uint64_t m_sampleCount { 0 };
     uint64_t m_lastVideoFrameMetadataSampleCount { 0 };
     mutable PlatformTimeRanges m_buffered;
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
-    GUniquePtr<struct wpe_video_plane_display_dmabuf_source> m_wpeVideoPlaneDisplayDmaBuf;
-#endif
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
@@ -629,6 +617,8 @@ private:
     HashMap<String, String> m_codecs;
 
     bool isSeamlessSeekingEnabled() const { return m_seekFlags & (1 << GST_SEEK_FLAG_SEGMENT); }
+
+    RefPtr<PlatformMediaResourceLoader> m_loader;
 };
 
 }

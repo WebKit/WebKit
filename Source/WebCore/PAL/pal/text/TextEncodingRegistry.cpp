@@ -294,7 +294,7 @@ template<typename CharacterType> static const char* atomCanonicalTextEncodingNam
 
 const char* atomCanonicalTextEncodingName(StringView alias)
 {
-    if (alias.isEmpty() || !alias.isAllASCII())
+    if (alias.isEmpty() || !alias.containsOnlyASCII())
         return nullptr;
 
     if (alias.is8Bit())

@@ -89,7 +89,7 @@ typedef void (*cdef_init_fb_row_t)(
  * \param[in]       xd        Pointer to common current coding block structure
  * \param[in]       cdef_init_fb_row_fn   Function Pointer
  *
- * \return Nothing is returned. Instead, the filtered frame is output in
+ * \remark Nothing is returned. Instead, the filtered frame is output in
  * \c frame.
  */
 void av1_cdef_frame(YV12_BUFFER_CONFIG *frame, AV1_COMMON *const cm,

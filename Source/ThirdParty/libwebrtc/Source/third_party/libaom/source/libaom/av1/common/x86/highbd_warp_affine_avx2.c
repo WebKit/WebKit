@@ -158,7 +158,7 @@ void av1_highbd_warp_affine_avx2(const int32_t *mat, const uint16_t *ref,
             iy = iy * stride;
 
             __m256i v_refl = _mm256_inserti128_si256(
-                _mm256_set1_epi16(0),
+                _mm256_setzero_si256(),
                 _mm_loadu_si128((__m128i *)&ref[iy + ix4 - 7]), 0);
             v_refl = _mm256_inserti128_si256(
                 v_refl, _mm_loadu_si128((__m128i *)&ref[iy + ix4 + 1]),
@@ -218,7 +218,7 @@ void av1_highbd_warp_affine_avx2(const int32_t *mat, const uint16_t *ref,
                 _mm_shuffle_epi32(v_01, 3));  // A7A6A7A6A7A6A7A6
 
             __m256i v_refl = _mm256_inserti128_si256(
-                _mm256_set1_epi16(0),
+                _mm256_setzero_si256(),
                 _mm_loadu_si128((__m128i *)&ref[iy + ix4 - 7]), 0);
             v_refl = _mm256_inserti128_si256(
                 v_refl, _mm_loadu_si128((__m128i *)&ref[iy + ix4 + 1]),
@@ -333,7 +333,7 @@ void av1_highbd_warp_affine_avx2(const int32_t *mat, const uint16_t *ref,
             iy = iy * stride;
 
             __m256i v_refl = _mm256_inserti128_si256(
-                _mm256_set1_epi16(0),
+                _mm256_setzero_si256(),
                 _mm_loadu_si128((__m128i *)&ref[iy + ix4 - 7]), 0);
             v_refl = _mm256_inserti128_si256(
                 v_refl, _mm_loadu_si128((__m128i *)&ref[iy + ix4 + 1]),
@@ -454,7 +454,7 @@ void av1_highbd_warp_affine_avx2(const int32_t *mat, const uint16_t *ref,
                 _mm256_unpackhi_epi64(v_c0123u, v_c4567u);  // H7H6 ... A7A6
 
             __m256i v_refl = _mm256_inserti128_si256(
-                _mm256_set1_epi16(0),
+                _mm256_setzero_si256(),
                 _mm_loadu_si128((__m128i *)&ref[iy + ix4 - 7]), 0);
             v_refl = _mm256_inserti128_si256(
                 v_refl, _mm_loadu_si128((__m128i *)&ref[iy + ix4 + 1]),

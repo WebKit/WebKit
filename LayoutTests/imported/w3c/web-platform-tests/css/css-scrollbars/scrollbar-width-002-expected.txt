@@ -10,9 +10,9 @@ none
 PASS vertical-lr, scrollbar-width auto
 PASS vertical-lr, scrollbar-width thin
 PASS vertical-lr, scrollbar-width "thin" is same or thinner than "auto"
-FAIL vertical-lr, scrollbar-width none assert_equals: vertical-lr none scrollHeight expected 200 but got 185
+PASS vertical-lr, scrollbar-width none
 PASS vertical-rl, scrollbar-width auto
 PASS vertical-rl, scrollbar-width thin
 PASS vertical-rl, scrollbar-width "thin" is same or thinner than "auto"
-FAIL vertical-rl, scrollbar-width none assert_equals: vertical-rl none scrollHeight expected 200 but got 185
+PASS vertical-rl, scrollbar-width none
 

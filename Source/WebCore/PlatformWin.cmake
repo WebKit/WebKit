@@ -51,9 +51,9 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/PlatformDisplay.cpp
 
-    platform/graphics/egl/GLContext.cpp
+    platform/graphics/angle/PlatformDisplayANGLE.cpp
 
-    platform/graphics/opengl/TemporaryOpenGLSetting.cpp
+    platform/graphics/egl/GLContext.cpp
 
     platform/graphics/opentype/OpenTypeUtilities.cpp
 
@@ -87,7 +87,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/TransformationMatrixWin.cpp
 
     platform/network/win/CurlSSLHandleWin.cpp
-    platform/network/win/DownloadBundleWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
 
     platform/text/Hyphenation.cpp
@@ -115,9 +114,7 @@ list(APPEND WebCore_SOURCES
     platform/win/PasteboardWin.cpp
     platform/win/PlatformMouseEventWin.cpp
     platform/win/PlatformScreenWin.cpp
-    platform/win/PopupMenuWin.cpp
     platform/win/SearchPopupMenuDB.cpp
-    platform/win/SearchPopupMenuWin.cpp
     platform/win/SystemInfo.cpp
     platform/win/UserAgentWin.cpp
     platform/win/WCDataObject.cpp
@@ -151,9 +148,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/win/GDIObjectCounter.h
     platform/win/GDIUtilities.h
     platform/win/HWndDC.h
-    platform/win/PopupMenuWin.h
     platform/win/SearchPopupMenuDB.h
-    platform/win/SearchPopupMenuWin.h
     platform/win/SystemInfo.h
     platform/win/WCDataObject.h
     platform/win/WebCoreBundleWin.h

@@ -10,7 +10,7 @@ info: |
   ...
   2. Let len be ? ToLength(? Get(O, "length")).
   ...
-features: [Symbol]
+features: [Symbol, Array.prototype.includes]
 ---*/
 
 var obj = {

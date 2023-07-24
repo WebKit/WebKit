@@ -51,7 +51,6 @@
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
 #include "ResourceError.h"
-#include "ResourceHandle.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -191,11 +190,10 @@ void PingLoader::sendViolationReport(LocalFrame& frame, const URL& reportURL, Re
         break;
     }
 
-    bool removeCookies = true;
-    if (document.securityOrigin().isSameSchemeHostPort(SecurityOrigin::create(reportURL).get()))
-        removeCookies = false;
-    if (removeCookies)
+    if (document.firstPartyForCookies().isNull() || !document.securityOrigin().isSameSchemeHostPort(SecurityOrigin::create(reportURL).get()))
         request.setAllowCookies(false);
+    else
+        request.setFirstPartyForCookies(document.firstPartyForCookies());
 
     HTTPHeaderMap originalRequestHeader = request.httpHeaderFields();
 

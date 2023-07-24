@@ -45,6 +45,6 @@ layer at (0,0) size 800x236
               RenderText {#text} at (2,2) size 4x19
                 text run at (2,2) width 4: " "
 layer at (8,216) size 182x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,208) size 182x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,208) size 182x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,226) size 520x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,218) size 520x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,218) size 520x2 [color=#808080] [border: (1px inset #808080)]

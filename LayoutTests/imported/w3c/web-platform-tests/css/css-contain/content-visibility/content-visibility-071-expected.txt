@@ -1,13 +1,8 @@
-hello
-hello
-hello
-hello
-hello
 
-FAIL One elements selected:  assert_true: expected true got false
-FAIL Range extended to cover more elements:  assert_true: expected true got false
-FAIL Range shrunk to cover fewer elements:  assert_true: expected true got false
-FAIL Range flipped from back to front:  assert_true: expected true got false
-FAIL Range flipped from front to back:  assert_true: expected true got false
-FAIL Range goes back and forth:  assert_true: expected true got false
+FAIL One elements selected:  assert_false: 2 expected false got true
+FAIL Range extended to cover more elements:  assert_false: 2 expected false got true
+FAIL Range shrunk to cover fewer elements:  assert_false: 2 expected false got true
+FAIL Range flipped from back to front:  assert_false: 2 expected false got true
+FAIL Range flipped from front to back:  assert_false: 3 expected false got true
+FAIL Range goes back and forth:  assert_false: test_0, container_1 expected false got true
 

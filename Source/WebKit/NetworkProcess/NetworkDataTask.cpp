@@ -205,4 +205,15 @@ String NetworkDataTask::attributedBundleIdentifier(WebPageProxyIdentifier pageID
     return { };
 }
 
+void NetworkDataTask::setPendingDownload(PendingDownload& pendingDownload)
+{
+    ASSERT(!m_pendingDownload);
+    m_pendingDownload = { pendingDownload };
+}
+
+PendingDownload* NetworkDataTask::pendingDownload() const
+{
+    return m_pendingDownload.get();
+}
+
 } // namespace WebKit

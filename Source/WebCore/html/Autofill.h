@@ -36,12 +36,12 @@ enum class AutofillMantle {
     Anchor
 };
 
-enum class NonAutofillCredentialType {
+enum class NonAutofillCredentialType : bool {
     None,
     WebAuthn
 };
 
-enum class AutofillFieldName {
+enum class AutofillFieldName : uint8_t {
     None,
     Name,
     HonorificPrefix,
@@ -123,76 +123,3 @@ public:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::AutofillFieldName> {
-    using values = EnumValues<
-        WebCore::AutofillFieldName,
-        WebCore::AutofillFieldName::None,
-        WebCore::AutofillFieldName::Name,
-        WebCore::AutofillFieldName::HonorificPrefix,
-        WebCore::AutofillFieldName::GivenName,
-        WebCore::AutofillFieldName::AdditionalName,
-        WebCore::AutofillFieldName::FamilyName,
-        WebCore::AutofillFieldName::HonorificSuffix,
-        WebCore::AutofillFieldName::Nickname,
-        WebCore::AutofillFieldName::Username,
-        WebCore::AutofillFieldName::NewPassword,
-        WebCore::AutofillFieldName::CurrentPassword,
-        WebCore::AutofillFieldName::OrganizationTitle,
-        WebCore::AutofillFieldName::Organization,
-        WebCore::AutofillFieldName::StreetAddress,
-        WebCore::AutofillFieldName::AddressLine1,
-        WebCore::AutofillFieldName::AddressLine2,
-        WebCore::AutofillFieldName::AddressLine3,
-        WebCore::AutofillFieldName::AddressLevel4,
-        WebCore::AutofillFieldName::AddressLevel3,
-        WebCore::AutofillFieldName::AddressLevel2,
-        WebCore::AutofillFieldName::AddressLevel1,
-        WebCore::AutofillFieldName::Country,
-        WebCore::AutofillFieldName::CountryName,
-        WebCore::AutofillFieldName::PostalCode,
-        WebCore::AutofillFieldName::CcName,
-        WebCore::AutofillFieldName::CcGivenName,
-        WebCore::AutofillFieldName::CcAdditionalName,
-        WebCore::AutofillFieldName::CcFamilyName,
-        WebCore::AutofillFieldName::CcNumber,
-        WebCore::AutofillFieldName::CcExp,
-        WebCore::AutofillFieldName::CcExpMonth,
-        WebCore::AutofillFieldName::CcExpYear,
-        WebCore::AutofillFieldName::CcCsc,
-        WebCore::AutofillFieldName::CcType,
-        WebCore::AutofillFieldName::TransactionCurrency,
-        WebCore::AutofillFieldName::TransactionAmount,
-        WebCore::AutofillFieldName::Language,
-        WebCore::AutofillFieldName::Bday,
-        WebCore::AutofillFieldName::BdayDay,
-        WebCore::AutofillFieldName::BdayMonth,
-        WebCore::AutofillFieldName::BdayYear,
-        WebCore::AutofillFieldName::Sex,
-        WebCore::AutofillFieldName::URL,
-        WebCore::AutofillFieldName::Photo,
-        WebCore::AutofillFieldName::Tel,
-        WebCore::AutofillFieldName::TelCountryCode,
-        WebCore::AutofillFieldName::TelNational,
-        WebCore::AutofillFieldName::TelAreaCode,
-        WebCore::AutofillFieldName::TelLocal,
-        WebCore::AutofillFieldName::TelLocalPrefix,
-        WebCore::AutofillFieldName::TelLocalSuffix,
-        WebCore::AutofillFieldName::TelExtension,
-        WebCore::AutofillFieldName::Email,
-        WebCore::AutofillFieldName::Impp,
-        WebCore::AutofillFieldName::WebAuthn
-    >;
-};
-
-template<> struct EnumTraits<WebCore::NonAutofillCredentialType> {
-    using values = EnumValues<
-        WebCore::NonAutofillCredentialType,
-        WebCore::NonAutofillCredentialType::None,
-        WebCore::NonAutofillCredentialType::WebAuthn
-    >;
-};
-
-} // namespace WTF

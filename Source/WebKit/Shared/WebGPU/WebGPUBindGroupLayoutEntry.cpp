@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUBindGroupLayoutEntry.h>
+#include <WebCore/WebGPUBindGroupLayoutEntry.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<BindGroupLayoutEntry> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::BindGroupLayoutEntry& bindGroupLayoutEntry)
+std::optional<BindGroupLayoutEntry> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BindGroupLayoutEntry& bindGroupLayoutEntry)
 {
     std::optional<BufferBindingLayout> buffer;
     if (bindGroupLayoutEntry.buffer) {
@@ -74,37 +74,37 @@ std::optional<BindGroupLayoutEntry> ConvertToBackingContext::convertToBacking(co
     return { { bindGroupLayoutEntry.binding, bindGroupLayoutEntry.visibility, WTFMove(buffer), WTFMove(sampler), WTFMove(texture), WTFMove(storageTexture), WTFMove(externalTexture) } };
 }
 
-std::optional<PAL::WebGPU::BindGroupLayoutEntry> ConvertFromBackingContext::convertFromBacking(const BindGroupLayoutEntry& bindGroupLayoutEntry)
+std::optional<WebCore::WebGPU::BindGroupLayoutEntry> ConvertFromBackingContext::convertFromBacking(const BindGroupLayoutEntry& bindGroupLayoutEntry)
 {
-    std::optional<PAL::WebGPU::BufferBindingLayout> buffer;
+    std::optional<WebCore::WebGPU::BufferBindingLayout> buffer;
     if (bindGroupLayoutEntry.buffer) {
         buffer = convertFromBacking(*bindGroupLayoutEntry.buffer);
         if (!buffer)
             return std::nullopt;
     }
 
-    std::optional<PAL::WebGPU::SamplerBindingLayout> sampler;
+    std::optional<WebCore::WebGPU::SamplerBindingLayout> sampler;
     if (bindGroupLayoutEntry.sampler) {
         sampler = convertFromBacking(*bindGroupLayoutEntry.sampler);
         if (!sampler)
             return std::nullopt;
     }
 
-    std::optional<PAL::WebGPU::TextureBindingLayout> texture;
+    std::optional<WebCore::WebGPU::TextureBindingLayout> texture;
     if (bindGroupLayoutEntry.texture) {
         texture = convertFromBacking(*bindGroupLayoutEntry.texture);
         if (!texture)
             return std::nullopt;
     }
 
-    std::optional<PAL::WebGPU::StorageTextureBindingLayout> storageTexture;
+    std::optional<WebCore::WebGPU::StorageTextureBindingLayout> storageTexture;
     if (bindGroupLayoutEntry.storageTexture) {
         storageTexture = convertFromBacking(*bindGroupLayoutEntry.storageTexture);
         if (!storageTexture)
             return std::nullopt;
     }
 
-    std::optional<PAL::WebGPU::ExternalTextureBindingLayout> externalTexture;
+    std::optional<WebCore::WebGPU::ExternalTextureBindingLayout> externalTexture;
     if (bindGroupLayoutEntry.externalTexture) {
         externalTexture = convertFromBacking(*bindGroupLayoutEntry.externalTexture);
         if (!externalTexture)

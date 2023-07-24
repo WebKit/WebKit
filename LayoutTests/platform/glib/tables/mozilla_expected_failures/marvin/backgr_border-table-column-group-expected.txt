@@ -6,11 +6,11 @@ layer at (0,0) size 785x1304
       RenderBlock {H1} at (0,0) size 769x30
         RenderText {#text} at (0,0) size 528x30
           text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
-      RenderBlock {H2} at (0,47) size 769x24
-        RenderText {#text} at (0,0) size 372x23
+      RenderBlock {H2} at (0,47) size 769x23
+        RenderText {#text} at (0,0) size 372x22
           text run at (0,0) width 372: "Part D: Background with Borders"
-      RenderBlock {H3} at (0,86) size 769x18
-        RenderText {#text} at (0,0) size 306x17
+      RenderBlock {H3} at (0,85) size 769x19
+        RenderText {#text} at (0,0) size 306x18
           text run at (0,0) width 306: "Background on 'table-column-group'"
       RenderBlock {P} at (0,118) size 769x46
         RenderText {#text} at (0,0) size 752x45

@@ -63,7 +63,8 @@ public:
     bool isExpNode() const { return m_operator == CalcOperator::Exp || m_operator == CalcOperator::Log; }
     bool isInverseTrigNode() const { return m_operator == CalcOperator::Asin || m_operator == CalcOperator::Acos || m_operator == CalcOperator::Atan; }
     bool isAtan2Node() const { return m_operator == CalcOperator::Atan2; }
-    bool isSignNode() const { return m_operator == CalcOperator::Abs || m_operator == CalcOperator::Sign; }
+    bool isSignNode() const { return m_operator == CalcOperator::Sign; }
+    bool isAbsOrSignNode() const { return m_operator == CalcOperator::Abs || isSignNode(); }
     bool shouldSortChildren() const { return isCalcSumNode() || isCalcProductNode(); }
     bool isSteppedNode() const { return m_operator == CalcOperator::Mod || m_operator == CalcOperator::Rem || m_operator == CalcOperator::Round; }
     bool isRoundOperation() const { return m_operator == CalcOperator::Down || m_operator == CalcOperator::Up || m_operator == CalcOperator::ToZero || m_operator == CalcOperator::Nearest; }
@@ -71,7 +72,6 @@ public:
     bool isHypotNode() const { return m_operator == CalcOperator::Hypot; }
     bool isSqrtNode() const { return m_operator == CalcOperator::Sqrt; }
     bool isPowOrSqrtNode() const { return m_operator == CalcOperator::Pow || isSqrtNode(); }
-    bool shouldPreserveFunction() const { return isTrigNode() || isExpNode() || isInverseTrigNode() || isAtan2Node() || isSignNode() || isSignNode() || isSteppedNode() || isRoundOperation() || isPowOrSqrtNode() || isClampNode(); }
     bool isClampNode() const { return m_operator == CalcOperator::Clamp; }
 
     void hoistChildrenWithOperator(CalcOperator);
@@ -86,6 +86,15 @@ public:
 
     const Vector<Ref<CSSCalcExpressionNode>>& children() const { return m_children; }
     Vector<Ref<CSSCalcExpressionNode>>& children() { return m_children; }
+
+    static double convertToTopLevelValue(double value)
+    {
+        // If a top-level calculation would produce a value whose numeric part is NaN,
+        // it instead act as though the numeric part is 0.
+        if (std::isnan(value))
+            value = 0;
+        return value;
+    }
 
 private:
     CSSCalcOperationNode(CalculationCategory category, CalcOperator op, Ref<CSSCalcExpressionNode>&& leftSide, Ref<CSSCalcExpressionNode>&& rightSide)
@@ -131,13 +140,6 @@ private:
         return nullptr;
     }
     
-    static double convertToTopLevelValue(double value)
-    {
-        if (std::isnan(value))
-            value = std::numeric_limits<double>::infinity();
-        return value;
-    }
-    
     double evaluate(const Vector<double>& children) const
     {
         auto result = evaluateOperator(m_operator, children);
@@ -145,7 +147,7 @@ private:
     }
 
     void makeTopLevelCalc();
-    bool shouldNotPreserveFunction() const { return isMinOrMaxNode() || isHypotNode(); }
+    bool isNonCalcFunction() const { return isAbsOrSignNode() || isClampNode() || isMinOrMaxNode() || isExpNode() || isHypotNode() || isRoundOperation() || isSteppedNode() || isPowOrSqrtNode() || isInverseTrigNode() || isAtan2Node() || isTrigNode(); }
     static double evaluateOperator(CalcOperator, const Vector<double>&);
     static Ref<CSSCalcExpressionNode> simplifyNode(Ref<CSSCalcExpressionNode>&&, int depth);
     static Ref<CSSCalcExpressionNode> simplifyRecursive(Ref<CSSCalcExpressionNode>&&, int depth);

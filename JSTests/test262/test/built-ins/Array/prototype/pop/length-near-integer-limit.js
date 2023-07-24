@@ -15,7 +15,8 @@ info: |
     c. Let element be ? Get(O, index).
     d. Perform ? DeletePropertyOrThrow(O, index).
     e. Perform ? Set(O, "length", newLen, true).
-    f. Return element. 
+    f. Return element.
+features: [exponentiation]
 ---*/
 
 var arrayLike = {

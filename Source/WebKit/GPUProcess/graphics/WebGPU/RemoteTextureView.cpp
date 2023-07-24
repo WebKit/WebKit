@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,11 @@
 #include "RemoteTextureViewMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <pal/graphics/WebGPU/WebGPUTextureView.h>
+#include <WebCore/WebGPUTextureView.h>
 
 namespace WebKit {
 
-RemoteTextureView::RemoteTextureView(PAL::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteTextureView::RemoteTextureView(WebCore::WebGPU::TextureView& textureView, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(textureView)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))

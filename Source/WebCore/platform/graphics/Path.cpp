@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2003, 2006 Apple Inc.  All rights reserved.
- *                     2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,54 +22,467 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 
 #include "config.h"
 #include "Path.h"
 
-#include "FloatPoint.h"
-#include "FloatRect.h"
-#include "FloatRoundedRect.h"
-#include "GeometryUtilities.h"
+#include "AffineTransform.h"
+#include "PathStream.h"
 #include "PathTraversalState.h"
-#include "RoundedRect.h"
-#include <math.h>
-#include <wtf/MathExtras.h>
+#include "PlatformPathImpl.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+Path::Path(const Vector<FloatPoint>& points)
+    : m_data(PathStream::create(points))
+{
+}
+
+Path::Path(Vector<PathSegment>&& segments)
+{
+    if (segments.isEmpty())
+        return;
+
+    if (segments.size() == 1)
+        m_data = WTFMove(segments[0]);
+    else
+        m_data = PathStream::create(WTFMove(segments));
+}
+
+Path::Path(UniqueRef<PathImpl>&& impl)
+    : m_data(WTFMove(impl))
+{
+}
+
+Path::Path(const Path& other)
+{
+    *this = other;
+}
+
+Path::Path(PathSegment&& segment)
+{
+    m_data = WTFMove(segment);
+}
+
+Path& Path::operator=(const Path& other)
+{
+    if (auto segment = other.asSingle())
+        m_data = *segment;
+    else if (auto impl = other.asImpl())
+        m_data = impl->clone();
+    else
+        m_data = std::monostate { };
+    return *this;
+}
+
+bool Path::operator==(const Path& other) const
+{
+    if (auto segment = asSingle()) {
+        if (auto otherSegment = other.asSingle())
+            return *segment == *otherSegment;
+        return false;
+    }
+
+    if (auto impl = asImpl()) {
+        if (auto otherImpl = other.asImpl())
+            return *impl == *otherImpl;
+        return false;
+    }
+
+    return true;
+}
+
+PathImpl& Path::setImpl(UniqueRef<PathImpl> impl)
+{
+    auto& platformPathImpl = impl.get();
+    m_data = WTFMove(impl);
+    return platformPathImpl;
+}
+
+PlatformPathImpl& Path::ensurePlatformPathImpl()
+{
+    if (auto segment = asSingle())
+        return downcast<PlatformPathImpl>(setImpl(PlatformPathImpl::create(WTFMove(*segment))));
+
+    if (auto impl = asImpl()) {
+        if (auto* stream = dynamicDowncast<PathStream>(*impl))
+            return downcast<PlatformPathImpl>(setImpl(PlatformPathImpl::create(*stream)));
+        return downcast<PlatformPathImpl>(*impl);
+    }
+
+    return downcast<PlatformPathImpl>(setImpl(PlatformPathImpl::create()));
+}
+
+PathImpl& Path::ensureImpl()
+{
+    if (auto segment = asSingle())
+        return setImpl(PathStream::create(WTFMove(*segment)));
+
+    if (auto impl = asImpl())
+        return *impl;
+
+    return setImpl(PathStream::create());
+}
+
+PathImpl* Path::asImpl()
+{
+    if (auto ref = std::get_if<UniqueRef<PathImpl>>(&m_data))
+        return ref->ptr();
+    return nullptr;
+}
+
+const PathImpl* Path::asImpl() const
+{
+    if (auto ref = std::get_if<UniqueRef<PathImpl>>(&m_data))
+        return ref->ptr();
+    return nullptr;
+}
+
+Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
+{
+    return Path(points);
+}
+
+void Path::moveTo(const FloatPoint& point)
+{
+    if (isEmpty())
+        m_data = PathSegment(PathMoveTo { point });
+    else
+        ensureImpl().moveTo(point);
+}
+
+const PathMoveTo* Path::asSingleMoveTo() const
+{
+    if (auto segment = asSingle())
+        return std::get_if<PathMoveTo>(&segment->data());
+    return nullptr;
+}
+
+void Path::addLineTo(const FloatPoint& point)
+{
+    if (isEmpty())
+        m_data = PathSegment(PathDataLine { { }, point });
+    else if (auto moveTo = asSingleMoveTo())
+        m_data = PathSegment(PathDataLine { moveTo->point, point });
+    else
+        ensureImpl().addLineTo(point);
+}
+
+void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint)
+{
+    if (isEmpty())
+        m_data = PathSegment(PathDataQuadCurve { { }, controlPoint, endPoint });
+    else if (auto moveTo = asSingleMoveTo())
+        m_data = PathSegment(PathDataQuadCurve { moveTo->point, controlPoint, endPoint });
+    else
+        ensureImpl().addQuadCurveTo(controlPoint, endPoint);
+}
+
+void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint)
+{
+    if (isEmpty())
+        m_data = PathSegment(PathDataBezierCurve { { }, controlPoint1, controlPoint2, endPoint });
+    else if (auto moveTo = asSingleMoveTo())
+        m_data = PathSegment(PathDataBezierCurve { moveTo->point, controlPoint1, controlPoint2, endPoint });
+    else
+        ensureImpl().addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
+}
+
+void Path::addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius)
+{
+    if (isEmpty())
+        m_data = PathSegment(PathDataArc { { }, point1, point2, radius });
+    else if (auto moveTo = asSingleMoveTo())
+        m_data = PathSegment(PathDataArc { moveTo->point, point1, point2, radius });
+    else
+        ensureImpl().addArcTo(point1, point2, radius);
+}
+
+void Path::addArc(const FloatPoint& point, float radius, float startAngle, float endAngle, RotationDirection direction)
+{
+    // Workaround for <rdar://problem/5189233> CGPathAddArc hangs or crashes when passed inf as start or end angle,
+    // as well as http://bugs.webkit.org/show_bug.cgi?id=16449, since cairo_arc() functions hang or crash when
+    // passed inf as radius or start/end angle.
+    if (!std::isfinite(radius) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
+        return;
+
+    if (isEmpty())
+        m_data = PathSegment(PathArc { point, radius, startAngle, endAngle, direction });
+    else
+        ensureImpl().addArc(point, radius, startAngle, endAngle, direction);
+}
+
+void Path::addEllipse(const FloatPoint& point, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection direction)
+{
+    if (isEmpty())
+        m_data = PathSegment(PathEllipse { point, radiusX, radiusY, rotation, startAngle, endAngle, direction });
+    else
+        ensureImpl().addEllipse(point, radiusX, radiusY, rotation, startAngle, endAngle, direction);
+}
+
+void Path::addEllipseInRect(const FloatRect& rect)
+{
+    if (isEmpty())
+        m_data = PathSegment(PathEllipseInRect { rect });
+    else
+        ensureImpl().addEllipseInRect(rect);
+}
+
+void Path::addRect(const FloatRect& rect)
+{
+    if (isEmpty())
+        m_data = PathSegment(PathRect { rect });
+    else
+        ensureImpl().addRect(rect);
+}
+
+static FloatRoundedRect calculateEvenRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii)
+{
+    FloatSize radius(roundingRadii);
+    FloatSize halfSize = rect.size() / 2;
+
+    // Apply the SVG corner radius constraints, per the rect section of the SVG shapes spec: if
+    // one of rx,ry is negative, then the other corner radius value is used. If both values are
+    // negative then rx = ry = 0. If rx is greater than half of the width of the rectangle
+    // then set rx to half of the width; ry is handled similarly.
+
+    if (radius.width() < 0)
+        radius.setWidth(std::max<float>(radius.height(), 0));
+
+    if (radius.height() < 0)
+        radius.setHeight(radius.width());
+
+    if (radius.width() > halfSize.width())
+        radius.setWidth(halfSize.width());
+
+    if (radius.height() > halfSize.height())
+        radius.setHeight(halfSize.height());
+
+    return FloatRoundedRect(rect, radius, radius, radius, radius);
+}
+
+void Path::addRoundedRect(const FloatRoundedRect& roundedRect, PathRoundedRect::Strategy strategy)
+{
+    if (roundedRect.isEmpty())
+        return;
+
+    if (!roundedRect.isRenderable()) {
+        // If all the radii cannot be accommodated, return a rect.
+        addRect(roundedRect.rect());
+        return;
+    }
+
+    if (isEmpty())
+        m_data = PathSegment(PathRoundedRect { roundedRect, strategy });
+    else
+        ensureImpl().addRoundedRect(roundedRect, strategy);
+}
+
+void Path::addRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii, PathRoundedRect::Strategy strategy)
+{
+    if (rect.isEmpty())
+        return;
+
+    if (isEmpty())
+        m_data = PathSegment(PathRoundedRect { calculateEvenRoundedRect(rect, roundingRadii), strategy });
+    else
+        ensureImpl().addRoundedRect(calculateEvenRoundedRect(rect, roundingRadii), strategy);
+}
+
+void Path::addRoundedRect(const RoundedRect& rect)
+{
+    addRoundedRect(FloatRoundedRect(rect));
+}
+
+void Path::closeSubpath()
+{
+    if (isEmpty())
+        return;
+
+    ensureImpl().closeSubpath();
+}
+
+void Path::addPath(const Path& path, const AffineTransform& transform)
+{
+    if (path.isEmpty() || !transform.isInvertible())
+        return;
+
+    ensurePlatformPathImpl().addPath(const_cast<Path&>(path).ensurePlatformPathImpl(), transform);
+}
+
+void Path::applySegments(const PathSegmentApplier& applier) const
+{
+    if (auto segment = asSingle())
+        applier(*segment);
+    else if (auto impl = asImpl())
+        impl->applySegments(applier);
+}
+
+void Path::applyElements(const PathElementApplier& applier) const
+{
+    const_cast<Path&>(*this).ensurePlatformPathImpl().applyElements(applier);
+}
+
+void Path::clear()
+{
+    m_data = std::monostate { };
+}
+
+void Path::translate(const FloatSize& delta)
+{
+    transform(AffineTransform::makeTranslation(delta));
+}
+
+void Path::transform(const AffineTransform& transform)
+{
+    if (transform.isIdentity() || isEmpty())
+        return;
+
+    ensurePlatformPathImpl().transform(transform);
+}
+
+std::optional<PathSegment> Path::singleSegment() const
+{
+    if (auto segment = asSingle())
+        return *segment;
+
+    if (auto impl = asImpl())
+        return impl->singleSegment();
+
+    return std::nullopt;
+}
+
+std::optional<PathDataLine> Path::singleDataLine() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathDataLine>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleDataLine();
+
+    return std::nullopt;
+}
+
+std::optional<PathArc> Path::singleArc() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathArc>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleArc();
+
+    return std::nullopt;
+}
+
+std::optional<PathDataQuadCurve> Path::singleQuadCurve() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathDataQuadCurve>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleQuadCurve();
+
+    return std::nullopt;
+}
+
+std::optional<PathDataBezierCurve> Path::singleBezierCurve() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathDataBezierCurve>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleBezierCurve();
+
+    return std::nullopt;
+}
+
+bool Path::isEmpty() const
+{
+    if (std::holds_alternative<std::monostate>(m_data))
+        return true;
+
+    if (auto impl = asImpl())
+        return impl->isEmpty();
+
+    return false;
+}
+
+PlatformPathPtr Path::platformPath() const
+{
+    return const_cast<Path&>(*this).ensurePlatformPathImpl().platformPath();
+}
+
+const Vector<PathSegment>* Path::segmentsIfExists() const
+{
+    if (auto impl = asImpl()) {
+        if (auto* stream = dynamicDowncast<PathStream>(*impl))
+            return &stream->segments();
+    }
+
+    return nullptr;
+}
+
+Vector<PathSegment> Path::segments() const
+{
+    if (const auto* segments = segmentsIfExists())
+        return *segments;
+
+    Vector<PathSegment> segments;
+    applySegments([&](const PathSegment& segment) {
+        segments.append(segment);
+    });
+
+    return segments;
+}
 
 float Path::length() const
 {
     PathTraversalState traversalState(PathTraversalState::Action::TotalLength);
 
-    apply([&traversalState](const PathElement& element) {
+    applyElements([&traversalState](const PathElement& element) {
         traversalState.processPathElement(element);
     });
 
     return traversalState.totalLength();
 }
 
-#if !HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
-
-size_t Path::elementCountSlowCase() const
+bool Path::isClosed() const
 {
-    size_t numPoints = 0;
-    apply([&numPoints](auto&) {
-        ++numPoints;
-    });
-    return numPoints;
+    if (auto impl = asImpl())
+        return impl->isClosed();
+
+    return false;
 }
 
-#endif // !HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
+FloatPoint Path::currentPoint() const
+{
+    if (auto segment = asSingle()) {
+        FloatPoint lastMoveToPoint;
+        return segment->calculateEndPoint({ }, lastMoveToPoint);
+    }
+
+    if (auto impl = asImpl())
+        return impl->currentPoint();
+
+    return { };
+}
 
 PathTraversalState Path::traversalStateAtLength(float length) const
 {
     PathTraversalState traversalState(PathTraversalState::Action::VectorAtLength, length);
 
-    apply([&traversalState](const PathElement& element) {
+    applyElements([&traversalState](const PathElement& element) {
         traversalState.processPathElement(element);
     });
 
@@ -81,494 +494,62 @@ FloatPoint Path::pointAtLength(float length) const
     return traversalStateAtLength(length).current();
 }
 
-void Path::addRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii, RoundedRectStrategy strategy)
+bool Path::contains(const FloatPoint& point, WindRule rule) const
 {
-    if (rect.isEmpty())
-        return;
-
-    FloatSize radius(roundingRadii);
-    FloatSize halfSize = rect.size() / 2;
-
-    // Apply the SVG corner radius constraints, per the rect section of the SVG shapes spec: if
-    // one of rx,ry is negative, then the other corner radius value is used. If both values are
-    // negative then rx = ry = 0. If rx is greater than half of the width of the rectangle
-    // then set rx to half of the width; ry is handled similarly.
-
-    if (radius.width() < 0)
-        radius.setWidth((radius.height() < 0) ? 0 : radius.height());
-
-    if (radius.height() < 0)
-        radius.setHeight(radius.width());
-
-    if (radius.width() > halfSize.width())
-        radius.setWidth(halfSize.width());
-
-    if (radius.height() > halfSize.height())
-        radius.setHeight(halfSize.height());
-
-    addRoundedRect(FloatRoundedRect(rect, radius, radius, radius, radius), strategy);
-}
-
-void Path::addRoundedRect(const FloatRoundedRect& r, RoundedRectStrategy strategy)
-{
-    if (r.isEmpty())
-        return;
-
-    const FloatRoundedRect::Radii& radii = r.radii();
-    const FloatRect& rect = r.rect();
-
-    if (!r.isRenderable()) {
-        // If all the radii cannot be accommodated, return a rect.
-        addRect(rect);
-        return;
-    }
-
-    if (strategy == RoundedRectStrategy::PreferNative) {
-#if USE(CG)
-        platformAddPathForRoundedRect(rect, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight());
-        return;
-#endif
-    }
-
-    addBeziersForRoundedRect(rect, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight());
-}
-
-void Path::addRoundedRect(const RoundedRect& r)
-{
-    addRoundedRect(FloatRoundedRect(r));
-}
-
-void Path::addBeziersForRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius)
-{
-    moveTo(FloatPoint(rect.x() + topLeftRadius.width(), rect.y()));
-
-    addLineTo(FloatPoint(rect.maxX() - topRightRadius.width(), rect.y()));
-    if (topRightRadius.width() > 0 || topRightRadius.height() > 0)
-        addBezierCurveTo(FloatPoint(rect.maxX() - topRightRadius.width() * circleControlPoint(), rect.y()),
-            FloatPoint(rect.maxX(), rect.y() + topRightRadius.height() * circleControlPoint()),
-            FloatPoint(rect.maxX(), rect.y() + topRightRadius.height()));
-    addLineTo(FloatPoint(rect.maxX(), rect.maxY() - bottomRightRadius.height()));
-    if (bottomRightRadius.width() > 0 || bottomRightRadius.height() > 0)
-        addBezierCurveTo(FloatPoint(rect.maxX(), rect.maxY() - bottomRightRadius.height() * circleControlPoint()),
-            FloatPoint(rect.maxX() - bottomRightRadius.width() * circleControlPoint(), rect.maxY()),
-            FloatPoint(rect.maxX() - bottomRightRadius.width(), rect.maxY()));
-    addLineTo(FloatPoint(rect.x() + bottomLeftRadius.width(), rect.maxY()));
-    if (bottomLeftRadius.width() > 0 || bottomLeftRadius.height() > 0)
-        addBezierCurveTo(FloatPoint(rect.x() + bottomLeftRadius.width() * circleControlPoint(), rect.maxY()),
-            FloatPoint(rect.x(), rect.maxY() - bottomLeftRadius.height() * circleControlPoint()),
-            FloatPoint(rect.x(), rect.maxY() - bottomLeftRadius.height()));
-    addLineTo(FloatPoint(rect.x(), rect.y() + topLeftRadius.height()));
-    if (topLeftRadius.width() > 0 || topLeftRadius.height() > 0)
-        addBezierCurveTo(FloatPoint(rect.x(), rect.y() + topLeftRadius.height() * circleControlPoint()),
-            FloatPoint(rect.x() + topLeftRadius.width() * circleControlPoint(), rect.y()),
-            FloatPoint(rect.x() + topLeftRadius.width(), rect.y()));
-
-    closeSubpath();
-}
-
-void Path::apply(const PathApplierFunction& function) const
-{
-    if (isNull())
-        return;
-
-#if ENABLE(INLINE_PATH_DATA)
-    if (hasInlineData<MoveData>()) {
-        PathElement element;
-        element.type = PathElement::Type::MoveToPoint;
-        element.points[0] = std::get<MoveData>(m_inlineData).location;
-        function(element);
-        return;
-    }
-
-    if (hasInlineData<LineData>()) {
-        auto& line = std::get<LineData>(m_inlineData);
-        PathElement element;
-        element.type = PathElement::Type::MoveToPoint;
-        element.points[0] = line.start;
-        function(element);
-        element.type = PathElement::Type::AddLineToPoint;
-        element.points[0] = line.end;
-        function(element);
-        return;
-    }
-
-    if (hasInlineData<BezierCurveData>()) {
-        auto& curve = std::get<BezierCurveData>(m_inlineData);
-        PathElement element;
-        element.type = PathElement::Type::MoveToPoint;
-        element.points[0] = curve.startPoint;
-        function(element);
-        element.type = PathElement::Type::AddCurveToPoint;
-        element.points[0] = curve.controlPoint1;
-        element.points[1] = curve.controlPoint2;
-        element.points[2] = curve.endPoint;
-        function(element);
-        return;
-    }
-
-    if (hasInlineData<QuadCurveData>()) {
-        auto& curve = std::get<QuadCurveData>(m_inlineData);
-        PathElement element;
-        element.type = PathElement::Type::MoveToPoint;
-        element.points[0] = curve.startPoint;
-        function(element);
-        element.type = PathElement::Type::AddQuadCurveToPoint;
-        element.points[0] = curve.controlPoint;
-        element.points[1] = curve.endPoint;
-        function(element);
-        return;
-    }
-#endif
-
-    applySlowCase(function);
-}
-
-bool Path::isEmpty() const
-{
-    if (isNull())
-        return true;
-
-#if ENABLE(INLINE_PATH_DATA)
-    if (hasInlineData())
+    if (isEmpty())
         return false;
-#endif
 
-    return isEmptySlowCase();
+    return const_cast<Path&>(*this).ensurePlatformPathImpl().contains(point, rule);
 }
 
-bool Path::hasCurrentPoint() const
+bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
-    return !isEmpty();
-}
+    ASSERT(strokeStyleApplier);
 
-FloatPoint Path::currentPoint() const
-{
-    if (isNull())
-        return { };
+    if (isEmpty())
+        return false;
 
-#if ENABLE(INLINE_PATH_DATA)
-    if (hasInlineData<MoveData>())
-        return inlineData<MoveData>().location;
-
-    if (hasInlineData<LineData>())
-        return inlineData<LineData>().end;
-
-    if (hasInlineData<BezierCurveData>())
-        return inlineData<BezierCurveData>().endPoint;
-
-    if (hasInlineData<QuadCurveData>())
-        return inlineData<QuadCurveData>().endPoint;
-
-    if (hasInlineData<ArcData>()) {
-        auto& arc = inlineData<ArcData>();
-        if (arc.type == ArcData::Type::ClosedLineAndArc)
-            return arc.start;
-
-        return {
-            arc.center.x() + arc.radius * std::acos(arc.endAngle),
-            arc.center.y() + arc.radius * std::asin(arc.endAngle)
-        };
-    }
-#endif
-
-    return currentPointSlowCase();
-}
-
-bool Path::isClosed() const
-{
-    bool lastElementIsClosed = false;
-
-    // The path is closed if the type of the last PathElement is CloseSubpath. Unfortunately,
-    // the only way to access PathElements is sequentially through apply(), there's no random
-    // access as if they're in a vector.
-    // The lambda below sets lastElementIsClosed if the last PathElement is CloseSubpath.
-    // Because lastElementIsClosed is overridden if there are any remaining PathElements
-    // to be iterated, its final value is the value of the last iteration.
-    // (i.e the last PathElement).
-    // FIXME: find a more efficient way to implement this, that does not require iterating
-    // through all PathElements.
-    apply([&lastElementIsClosed](const WebCore::PathElement& element) {
-        lastElementIsClosed = (element.type == PathElement::Type::CloseSubpath);
-    });
-
-    return lastElementIsClosed;
-}
-
-size_t Path::elementCount() const
-{
-#if ENABLE(INLINE_PATH_DATA)
-    if (hasInlineData<MoveData>())
-        return 1;
-
-    if (hasInlineData<LineData>() || hasInlineData<BezierCurveData>() || hasInlineData<QuadCurveData>())
-        return 2;
-#endif
-
-    return elementCountSlowCase();
-}
-
-void Path::addArc(const FloatPoint& point, float radius, float startAngle, float endAngle, bool anticlockwise)
-{
-    // Workaround for <rdar://problem/5189233> CGPathAddArc hangs or crashes when passed inf as start or end angle,
-    // as well as http://bugs.webkit.org/show_bug.cgi?id=16449, since cairo_arc() functions hang or crash when
-    // passed inf as radius or start/end angle.
-    if (!std::isfinite(radius) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
-        return;
-
-#if ENABLE(INLINE_PATH_DATA)
-    bool hasMoveData = hasInlineData<MoveData>();
-    if (isNull() || hasMoveData) {
-        ArcData arc;
-        if (hasMoveData) {
-            arc.type = ArcData::Type::LineAndArc;
-            arc.start = inlineData<MoveData>().location;
-        }
-        arc.center = point;
-        arc.radius = radius;
-        arc.startAngle = startAngle;
-        arc.endAngle = endAngle;
-        // FIXME: Either ArcData::clockwise needs to be renamed to anticlockwise, or the last argument to
-        // Path::addArc needs to be renamed to clockwise.
-        arc.clockwise = anticlockwise;
-        m_inlineData = { WTFMove(arc) };
-        return;
-    }
-#endif
-
-    addArcSlowCase(point, radius, startAngle, endAngle, anticlockwise);
-}
-
-void Path::addLineTo(const FloatPoint& point)
-{
-#if ENABLE(INLINE_PATH_DATA)
-    bool hasMoveData = hasInlineData<MoveData>();
-    if (isNull() || hasMoveData) {
-        LineData line;
-        line.start = hasMoveData ? inlineData<MoveData>().location : FloatPoint();
-        line.end = point;
-        m_inlineData = { WTFMove(line) };
-        return;
-    }
-
-    if (hasInlineData<ArcData>()) {
-        auto& arc = inlineData<ArcData>();
-        if (arc.type == ArcData::Type::LineAndArc && arc.start == point) {
-            arc.type = ArcData::Type::ClosedLineAndArc;
-            return;
-        }
-    }
-#endif
-
-    addLineToSlowCase(point);
-}
-
-void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint)
-{
-#if ENABLE(INLINE_PATH_DATA)
-    if (isNull() || hasInlineData<MoveData>()) {
-        QuadCurveData curve;
-        curve.startPoint = hasInlineData() ? std::get<MoveData>(m_inlineData).location : FloatPoint();
-        curve.controlPoint = controlPoint;
-        curve.endPoint = endPoint;
-        m_inlineData = { WTFMove(curve) };
-        return;
-    }
-#endif
-
-    addQuadCurveToSlowCase(controlPoint, endPoint);
-}
-
-void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint)
-{
-#if ENABLE(INLINE_PATH_DATA)
-    if (isNull() || hasInlineData<MoveData>()) {
-        BezierCurveData curve;
-        curve.startPoint = hasInlineData() ? std::get<MoveData>(m_inlineData).location : FloatPoint();
-        curve.controlPoint1 = controlPoint1;
-        curve.controlPoint2 = controlPoint2;
-        curve.endPoint = endPoint;
-        m_inlineData = { WTFMove(curve) };
-        return;
-    }
-#endif
-
-    addBezierCurveToSlowCase(controlPoint1, controlPoint2, endPoint);
-}
-
-void Path::moveTo(const FloatPoint& point)
-{
-#if ENABLE(INLINE_PATH_DATA)
-    if (isNull() || hasInlineData<MoveData>()) {
-        m_inlineData = MoveData { point };
-        return;
-    }
-#endif
-
-    moveToSlowCase(point);
-}
-
-FloatRect Path::boundingRect() const
-{
-    if (isNull())
-        return { };
-
-#if ENABLE(INLINE_PATH_DATA)
-    if (auto rect = boundingRectFromInlineData())
-        return *rect;
-#endif
-
-    return boundingRectSlowCase();
+    return const_cast<Path&>(*this).ensurePlatformPathImpl().strokeContains(point, strokeStyleApplier);
 }
 
 FloatRect Path::fastBoundingRect() const
 {
-    if (isNull())
-        return { };
+    if (auto segment = asSingle())
+        return PathStream::computeFastBoundingRect({ segment, 1 });
 
-#if ENABLE(INLINE_PATH_DATA)
-    if (auto rect = fastBoundingRectFromInlineData())
-        return *rect;
-#endif
+    if (auto impl = asImpl())
+        return impl->fastBoundingRect();
 
-    return fastBoundingRectSlowCase();
+    return { };
 }
 
-#if ENABLE(INLINE_PATH_DATA)
-
-std::optional<FloatRect> Path::fastBoundingRectFromInlineData() const
+FloatRect Path::boundingRect() const
 {
-    if (hasInlineData<ArcData>()) {
-        auto& arc = inlineData<ArcData>();
-        auto diameter = 2 * arc.radius;
-        FloatRect approximateBounds { arc.center, FloatSize(diameter, diameter) };
-        approximateBounds.move(-arc.radius, -arc.radius);
-        if (arc.type == ArcData::Type::LineAndArc || arc.type == ArcData::Type::ClosedLineAndArc)
-            approximateBounds.extend(arc.start);
-        return approximateBounds;
-    }
+    if (auto segment = asSingle())
+        return PathStream::computeBoundingRect({ segment, 1 });
 
-    return boundingRectFromInlineData();
+    if (auto impl = asImpl())
+        return impl->boundingRect();
+
+    return { };
 }
 
-static FloatRect computeArcBounds(const FloatPoint& center, float radius, float start, float end, bool clockwise)
+FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
-    if (clockwise)
-        std::swap(start, end);
-
-    if (end - start >= radiansPerTurnFloat) {
-        auto diameter = radius * 2;
-        return { center.x() - radius, center.y() - radius, diameter, diameter };
-    }
-
-    start = normalizeAngleInRadians(start);
-    end = normalizeAngleInRadians(end);
-
-    auto lengthInRadians = end - start;
-    if (start > end)
-        lengthInRadians += radiansPerTurnFloat;
-
-    FloatPoint startPoint { center.x() + radius * cos(start), center.y() + radius * sin(start) };
-    FloatPoint endPoint { center.x() + radius * cos(end), center.y() + radius * sin(end) };
-    FloatRect result;
-    result.fitToPoints(startPoint, endPoint);
-
-    auto contains = [&] (float angleToCheck) {
-        return (start < angleToCheck && start + lengthInRadians > angleToCheck)
-            || (start > angleToCheck && start + lengthInRadians > angleToCheck + radiansPerTurnFloat);
-    };
-
-    if (contains(0))
-        result.shiftMaxXEdgeTo(center.x() + radius);
-
-    if (contains(piOverTwoFloat))
-        result.shiftMaxYEdgeTo(center.y() + radius);
-
-    if (contains(piFloat))
-        result.shiftXEdgeTo(center.x() - radius);
-
-    if (contains(3 * piOverTwoFloat))
-        result.shiftYEdgeTo(center.y() - radius);
-
-    return result;
+    return const_cast<Path&>(*this).ensurePlatformPathImpl().strokeBoundingRect(strokeStyleApplier);
 }
 
-std::optional<FloatRect> Path::boundingRectFromInlineData() const
-{
-    if (hasInlineData<ArcData>()) {
-        auto& arc = inlineData<ArcData>();
-        auto bounds = computeArcBounds(arc.center, arc.radius, arc.startAngle, arc.endAngle, arc.clockwise);
-        if (arc.type == ArcData::Type::LineAndArc || arc.type == ArcData::Type::ClosedLineAndArc)
-            bounds.extend(arc.start);
-        return bounds;
-    }
-
-    if (hasInlineData<MoveData>())
-        return {{ inlineData<MoveData>().location, FloatSize { } }};
-
-    if (hasInlineData<LineData>()) {
-        FloatRect result;
-        auto& line = inlineData<LineData>();
-        result.fitToPoints(line.start, line.end);
-        return result;
-    }
-
-    return std::nullopt;
-}
-
-#endif
-
-#if !USE(CG)
-Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
-{
-    Path path;
-    if (points.size() < 2)
-        return path;
-
-    path.moveTo(points[0]);
-    for (size_t i = 1; i < points.size(); ++i)
-        path.addLineTo(points[i]);
-
-    path.closeSubpath();
-    return path;
-}
-#endif
-
-#ifndef NDEBUG
-void Path::dump() const
-{
-    TextStream stream;
-    stream << *this;
-    WTFLogAlways("%s", stream.release().utf8().data());
-}
-#endif
-
-TextStream& operator<<(TextStream& stream, const Path& path)
+TextStream& operator<<(TextStream& ts, const Path& path)
 {
     bool isFirst = true;
-    path.apply([&stream, &isFirst](const PathElement& element) {
+    path.applySegments([&ts, &isFirst](const PathSegment& segment) {
         if (!isFirst)
-            stream << ", ";
-        isFirst = false;
-        switch (element.type) {
-        case PathElement::Type::MoveToPoint: // The points member will contain 1 value.
-            stream << "move to " << element.points[0];
-            break;
-        case PathElement::Type::AddLineToPoint: // The points member will contain 1 value.
-            stream << "add line to " << element.points[0];
-            break;
-        case PathElement::Type::AddQuadCurveToPoint: // The points member will contain 2 values.
-            stream << "add quad curve to " << element.points[0] << " " << element.points[1];
-            break;
-        case PathElement::Type::AddCurveToPoint: // The points member will contain 3 values.
-            stream << "add curve to " << element.points[0] << " " << element.points[1] << " " << element.points[2];
-            break;
-        case PathElement::Type::CloseSubpath: // The points member will contain no values.
-            stream << "close subpath";
-            break;
-        }
+            ts << ", ";
+        else
+            isFirst = false;
+        ts << segment;
     });
-    
-    return stream;
+    return ts;
 }
 
-}
+} // namespace WebCore

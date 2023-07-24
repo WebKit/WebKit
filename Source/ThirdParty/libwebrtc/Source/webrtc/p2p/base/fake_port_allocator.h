@@ -24,7 +24,6 @@
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
-#include "test/scoped_key_value_config.h"
 
 namespace rtc {
 class SocketFactory;
@@ -86,7 +85,7 @@ class FakePortAllocatorSession : public PortAllocatorSession {
                            int component,
                            absl::string_view ice_ufrag,
                            absl::string_view ice_pwd,
-                           const webrtc::FieldTrialsView& field_trials)
+                           const webrtc::FieldTrialsView* field_trials)
       : PortAllocatorSession(content_name,
                              component,
                              ice_ufrag,
@@ -109,6 +108,7 @@ class FakePortAllocatorSession : public PortAllocatorSession {
         field_trials_(field_trials) {
     ipv4_network_.AddIP(rtc::IPAddress(INADDR_LOOPBACK));
     ipv6_network_.AddIP(rtc::IPAddress(in6addr_loopback));
+    set_ice_tiebreaker(/*kTiebreakerDefault = */ 44444);
   }
 
   void SetCandidateFilter(uint32_t filter) override {
@@ -123,8 +123,9 @@ class FakePortAllocatorSession : public PortAllocatorSession {
               : ipv4_network_;
       port_.reset(TestUDPPort::Create(network_thread_, factory_, &network, 0, 0,
                                       username(), password(), false,
-                                      &field_trials_));
+                                      field_trials_));
       RTC_DCHECK(port_);
+      port_->SetIceTiebreaker(ice_tiebreaker());
       port_->SubscribePortDestroyed(
           [this](PortInterface* port) { OnPortDestroyed(port); });
       AddPort(port_.get());
@@ -211,18 +212,23 @@ class FakePortAllocatorSession : public PortAllocatorSession {
   uint32_t candidate_filter_ = CF_ALL;
   int transport_info_update_count_ = 0;
   bool running_ = false;
-  const webrtc::FieldTrialsView& field_trials_;
+  const webrtc::FieldTrialsView* field_trials_;
 };
 
 class FakePortAllocator : public cricket::PortAllocator {
  public:
   FakePortAllocator(rtc::Thread* network_thread,
-                    rtc::PacketSocketFactory* factory)
-      : FakePortAllocator(network_thread, factory, nullptr) {}
+                    rtc::PacketSocketFactory* factory,
+                    webrtc::FieldTrialsView* field_trials)
+      : FakePortAllocator(network_thread, factory, nullptr, field_trials) {}
 
   FakePortAllocator(rtc::Thread* network_thread,
-                    std::unique_ptr<rtc::PacketSocketFactory> factory)
-      : FakePortAllocator(network_thread, nullptr, std::move(factory)) {}
+                    std::unique_ptr<rtc::PacketSocketFactory> factory,
+                    webrtc::FieldTrialsView* field_trials)
+      : FakePortAllocator(network_thread,
+                          nullptr,
+                          std::move(factory),
+                          field_trials) {}
 
   void SetNetworkIgnoreMask(int network_ignore_mask) override {}
 
@@ -249,9 +255,11 @@ class FakePortAllocator : public cricket::PortAllocator {
  private:
   FakePortAllocator(rtc::Thread* network_thread,
                     rtc::PacketSocketFactory* factory,
-                    std::unique_ptr<rtc::PacketSocketFactory> owned_factory)
+                    std::unique_ptr<rtc::PacketSocketFactory> owned_factory,
+                    webrtc::FieldTrialsView* field_trials)
       : network_thread_(network_thread),
-        factory_(std::move(owned_factory), factory) {
+        factory_(std::move(owned_factory), factory),
+        field_trials_(field_trials) {
     if (network_thread_ == nullptr) {
       network_thread_ = rtc::Thread::Current();
       Initialize();
@@ -260,9 +268,9 @@ class FakePortAllocator : public cricket::PortAllocator {
     SendTask(network_thread_, [this] { Initialize(); });
   }
 
-  webrtc::test::ScopedKeyValueConfig field_trials_;
   rtc::Thread* network_thread_;
   const webrtc::AlwaysValidPointerNoDefault<rtc::PacketSocketFactory> factory_;
+  const webrtc::FieldTrialsView* field_trials_;
   bool mdns_obfuscation_enabled_ = false;
 };
 

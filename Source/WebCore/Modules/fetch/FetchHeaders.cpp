@@ -43,7 +43,7 @@ static ExceptionOr<bool> canWriteHeader(const String& name, const String& value,
 {
     if (!isValidHTTPToken(name))
         return Exception { TypeError, makeString("Invalid header name: '", name, "'") };
-    ASSERT(value.isEmpty() || (!isHTTPSpace(value[0]) && !isHTTPSpace(value[value.length() - 1])));
+    ASSERT(value.isEmpty() || (!isJSONOrHTTPWhitespace(value[0]) && !isJSONOrHTTPWhitespace(value[value.length() - 1])));
     if (!isValidHTTPHeaderValue((value)))
         return Exception { TypeError, makeString("Header '", name, "' has invalid value: '", value, "'") };
     if (guard == FetchHeaders::Guard::Immutable)
@@ -72,7 +72,7 @@ static ExceptionOr<void> appendSetCookie(const String& value, Vector<String>& se
 
 static ExceptionOr<void> appendToHeaderMap(const String& name, const String& value, HTTPHeaderMap& headers, Vector<String>& setCookieValues, FetchHeaders::Guard guard)
 {
-    String normalizedValue = stripLeadingAndTrailingHTTPSpaces(value);
+    String normalizedValue = value.trim(isJSONOrHTTPWhitespace<UChar>);
     if (equalIgnoringASCIICase(name, "set-cookie"_s))
         return appendSetCookie(normalizedValue, setCookieValues, guard);
 
@@ -95,7 +95,7 @@ static ExceptionOr<void> appendToHeaderMap(const String& name, const String& val
 static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapConstIterator::KeyValue& header, HTTPHeaderMap& headers, FetchHeaders::Guard guard)
 {
     ASSERT(!equalIgnoringASCIICase(header.key, "set-cookie"_s));
-    String normalizedValue = stripLeadingAndTrailingHTTPSpaces(header.value);
+    String normalizedValue = header.value.trim(isJSONOrHTTPWhitespace<UChar>);
     auto canWriteResult = canWriteHeader(header.key, normalizedValue, header.value, guard);
     if (canWriteResult.hasException())
         return canWriteResult.releaseException();
@@ -239,7 +239,7 @@ ExceptionOr<bool> FetchHeaders::has(const String& name) const
 
 ExceptionOr<void> FetchHeaders::set(const String& name, const String& value)
 {
-    String normalizedValue = stripLeadingAndTrailingHTTPSpaces(value);
+    String normalizedValue = value.trim(isJSONOrHTTPWhitespace<UChar>);
     auto canWriteResult = canWriteHeader(name, normalizedValue, normalizedValue, m_guard);
     if (canWriteResult.hasException())
         return canWriteResult.releaseException();
@@ -262,7 +262,7 @@ ExceptionOr<void> FetchHeaders::set(const String& name, const String& value)
 void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
 {
     for (auto& header : headers) {
-        String normalizedValue = stripLeadingAndTrailingHTTPSpaces(header.value);
+        String normalizedValue = header.value.trim(isJSONOrHTTPWhitespace<UChar>);
         auto canWriteResult = canWriteHeader(header.key, normalizedValue, header.value, guard);
         if (canWriteResult.hasException())
             continue;

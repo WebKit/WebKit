@@ -70,8 +70,10 @@ private:
     const RenderFlexibleBox& flexBoxRenderer() const { return downcast<RenderFlexibleBox>(m_boxTree.rootRenderer()); }
     RenderFlexibleBox& flexBoxRenderer() { return downcast<RenderFlexibleBox>(m_boxTree.rootRenderer()); }
 
+    Layout::LayoutState& layoutState() { return *m_layoutState; }
+
     BoxTree m_boxTree;
-    Layout::LayoutState m_layoutState;
+    WeakPtr<Layout::LayoutState> m_layoutState;
     Layout::FlexFormattingState& m_flexFormattingState;
 };
 

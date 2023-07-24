@@ -403,7 +403,7 @@ void UnlinkedCodeBlock::allocateSharedProfiles(unsigned numBinaryArithProfiles, 
         unsigned numberOfArrayProfiles = 0;
 
 #define COUNT(__op) numberOfArrayProfiles += m_metadata->numEntries<__op>();
-        FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(COUNT)
+        FOR_EACH_OPCODE_WITH_SIMPLE_ARRAY_PROFILE(COUNT)
 #undef COUNT
         numberOfArrayProfiles += m_metadata->numEntries<OpIteratorNext>();
         numberOfArrayProfiles += m_metadata->numEntries<OpGetById>();

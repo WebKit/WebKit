@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<link rel="help" href="https://drafts.csswg.org/css-values-4/#comp-func">
+<link rel="help" href="https://drafts.csswg.org/css-values-4/#trig-funcs">
 <link rel="help" href="https://drafts.csswg.org/css-values-4/#numbers">
 <link rel="help" href="https://drafts.csswg.org/css-values-4/#calc-type-checking">
 <link rel="author" title="Apple Inc">
@@ -28,7 +28,7 @@ test_math_used('calc(atan(e - 2.7182818284590452354) )', '0deg', {type:'angle', 
 
 // General calculations
 test_math_used('calc(asin(sin(30deg + 1.0471967rad ) ))', '90deg', {type:'angle', approx:0.1});
-test_math_used('calc(acos(cos(30deg - 0.523599rad ) ))', '0deg'), {type:'angle', approx:0.1};
+test_math_used('calc(acos(cos(30deg - 0.523599rad ) ))', '0deg', {type:'angle', approx:0.1});
 test_math_used('calc(asin(sin(3.14159 / 2 + 1 - 1) ))', '90deg', {type:'angle', approx:0.1});
 test_math_used('calc(asin(sin(100grad) ))', '90deg', {type:'angle', approx:0.1});
 test_math_used('calc(acos(cos(0 / 2 + 1 - 1) ))', '0deg', {type:'angle', approx:0.1});
@@ -37,13 +37,12 @@ test_math_used('calc(atan(tan(0.7853975rad ) ))', '45deg', {type:'angle', approx
 test_math_used('calc(atan(tan(3.14159 / 4 + 1 - 1) ))', '45deg', {type:'angle', approx:0.1});
 test_math_used('calc(asin(sin(0.25turn)) )', '90deg', {type:'angle', approx:0.1});
 test_math_used('calc(atan2(0,1))', '0deg', {type:'angle', approx:0.1});
-test_math_used('calc(atan2(0,-1))', '-180deg', {type:'angle', approx:0.1});
+test_math_used('calc(atan2(0,-1) / 4)', '45deg', {type:'angle', approx:0.1}); // atan2(0,-1) equals 180deg, result is divided to avoid ambiguity with -180deg
 test_math_used('calc(atan2(1,-1))', '135deg', {type:'angle', approx:0.1});
 test_math_used('calc(atan2(-1,1))', '-45deg', {type:'angle', approx:0.1});
 
 // Test nesting
 test_math_used('calc(cos(sin(acos(cos(pi)))))', '1', {type:'number', approx:0.1});
-test_math_used('calc(sin(atan(tan(pi/2))))', '1', {type:'number', approx:0.1});
 
 // Test types for atan2
 test_math_used('atan2(1px, -1px)', '135deg', {type:'angle', approx:0.1});

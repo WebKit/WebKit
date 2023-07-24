@@ -532,7 +532,7 @@ void BorderPainter::clipBorderSidePolygon(PaintingContext& paintingContext, cons
     if (firstEdgeMatches == secondEdgeMatches) {
         bool wasAntialiased = paintingContext.context.shouldAntialias();
         paintingContext.context.setShouldAntialias(!firstEdgeMatches);
-        paintingContext.context.clipPath(Path::polygonPathFromPoints(quad), WindRule::NonZero);
+        paintingContext.context.clipPath(Path(quad), WindRule::NonZero);
         paintingContext.context.setShouldAntialias(wasAntialiased);
         return;
     }
@@ -547,7 +547,7 @@ void BorderPainter::clipBorderSidePolygon(PaintingContext& paintingContext, cons
     };
     bool wasAntialiased = paintingContext.context.shouldAntialias();
     paintingContext.context.setShouldAntialias(!firstEdgeMatches);
-    paintingContext.context.clipPath(Path::polygonPathFromPoints(firstQuad), WindRule::NonZero);
+    paintingContext.context.clipPath(Path(firstQuad), WindRule::NonZero);
 
     Vector<FloatPoint> secondQuad = {
         quad[0],
@@ -558,7 +558,7 @@ void BorderPainter::clipBorderSidePolygon(PaintingContext& paintingContext, cons
     };
     // Antialiasing affects the second side.
     paintingContext.context.setShouldAntialias(!secondEdgeMatches);
-    paintingContext.context.clipPath(Path::polygonPathFromPoints(secondQuad), WindRule::NonZero);
+    paintingContext.context.clipPath(Path(secondQuad), WindRule::NonZero);
 
     paintingContext.context.setShouldAntialias(wasAntialiased);
 }
@@ -820,7 +820,7 @@ void BorderPainter::drawLineForBoxSide(PaintingContext& paintingContext, const F
         paintingContext.context.setFillColor(color);
         bool wasAntialiased = paintingContext.context.shouldAntialias();
         paintingContext.context.setShouldAntialias(antialias);
-        paintingContext.context.fillPath(Path::polygonPathFromPoints(quad));
+        paintingContext.context.fillPath(Path(quad));
         paintingContext.context.setShouldAntialias(wasAntialiased);
 
         paintingContext.context.setStrokeStyle(oldStrokeStyle);
@@ -1301,7 +1301,7 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
         auto shadowRectOrigin = fillRect.rect().location() + shadowOffset;
         auto adjustedShadowOffset = shadowRectOrigin - adjustedFillRect.rect().location();
 
-        paintingContext.context.setShadow(adjustedShadowOffset, shadowRadius.value(), resolveColor(shadow.color()), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
+        paintingContext.context.setDropShadow({ adjustedShadowOffset, shadowRadius.value(), resolveColor(shadow.color()), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default });
 
         if (hasBorderRadius) {
             // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
@@ -1412,7 +1412,7 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
         paintingContext.context.translate(extraOffset);
         shadowOffset -= extraOffset;
 
-        paintingContext.context.setShadow(shadowOffset, shadowRadius.value(), resolveColor(shadow.color()), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
+        paintingContext.context.setDropShadow({ shadowOffset, shadowRadius.value(), resolveColor(shadow.color()), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default });
         paintingContext.context.fillRectWithRoundedHole(shadowCastingRect, roundedHoleRect, fillColor);
     };
 

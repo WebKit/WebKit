@@ -34,14 +34,16 @@ promise_test(async () => {
   var rect = document.getElementById("target").getBoundingClientRect();
 
   await new test_driver.Actions()
-             .pointerMove(rect.left - 10, rect.top - 10)
+             .addPointer("default-mouse")
+             .pointerMove(Math.ceil(rect.left - 10), Math.ceil(rect.top - 10))
              .send()
-
+  await resolveWhen(() => { return moveReceived == true });
   receivedEvents = [];
   moveReceived = false;
 
   await new test_driver.Actions()
-             .pointerMove(rect.left + 10, rect.top + 10)
+             .addPointer("default-mouse")
+             .pointerMove(Math.ceil(rect.left + 10), Math.ceil(rect.top + 10))
              .send()
   await resolveWhen(() => { return moveReceived == true });
 
@@ -57,7 +59,8 @@ promise_test(async () => {
   moveReceived = false;
 
   await new test_driver.Actions()
-             .pointerMove(rect.left - 10, rect.top - 10)
+             .addPointer("default-mouse")
+             .pointerMove(Math.ceil(rect.left - 10), Math.ceil(rect.top - 10))
              .send()
   await resolveWhen(() => { return moveReceived == true });
 

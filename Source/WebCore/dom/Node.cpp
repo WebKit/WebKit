@@ -60,6 +60,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "MutationEvent.h"
+#include "NodeName.h"
 #include "NodeRareDataInlines.h"
 #include "NodeRenderStyle.h"
 #include "PointerEvent.h"
@@ -1273,6 +1274,16 @@ void Node::setManuallyAssignedSlot(HTMLSlotElement* slotElement)
     ensureRareData().setManuallyAssignedSlot(slotElement);
 }
 
+bool Node::hasEverPaintedImages() const
+{
+    return hasRareData() && rareData()->hasEverPaintedImages();
+}
+
+void Node::setHasEverPaintedImages(bool hasEverPaintedImages)
+{
+    ensureRareData().setHasEverPaintedImages(hasEverPaintedImages);
+}
+
 ContainerNode* Node::parentInComposedTree() const
 {
     ASSERT(isMainThreadOrGCThread());
@@ -1296,6 +1307,17 @@ Element* Node::parentElementInComposedTree() const
             return downcast<Element>(parent);
     }
     return nullptr;
+}
+
+TreeScope& Node::treeScopeForSVGReferences() const
+{
+    if (auto* shadowRoot = containingShadowRoot(); shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent) {
+        if (shadowRoot->host() && shadowRoot->host()->elementName() == ElementNames::SVG::use) {
+            ASSERT(m_treeScope->parentTreeScope());
+            return *m_treeScope->parentTreeScope();
+        }
+    }
+    return treeScope();
 }
 
 bool Node::isInUserAgentShadowTree() const

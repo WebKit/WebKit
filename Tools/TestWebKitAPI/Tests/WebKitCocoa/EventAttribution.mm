@@ -438,7 +438,7 @@ TEST(PrivateClickMeasurement, DatabaseLocation)
     EXPECT_EQ(webViewToKeepNetworkProcessAlive.get().configuration.websiteDataStore._networkProcessIdentifier, originalNetworkProcessPid);
 }
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
 static RetainPtr<NSURL> testPCMDaemonLocation()
 {
@@ -647,7 +647,7 @@ TEST(PrivateClickMeasurement, NetworkProcessDebugMode)
 }
 #endif // PLATFORM(MAC)
 
-#endif // PLATFORM(MAC) || PLATFORM(IOS)
+#endif // PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
 #if HAVE(UI_EVENT_ATTRIBUTION)
 

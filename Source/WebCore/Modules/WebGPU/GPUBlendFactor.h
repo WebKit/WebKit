@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUBlendFactor.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUBlendFactor.h>
 
 namespace WebCore {
 
@@ -46,35 +46,35 @@ enum class GPUBlendFactor : uint8_t {
     OneMinusConstant,
 };
 
-inline PAL::WebGPU::BlendFactor convertToBacking(GPUBlendFactor blendFactor)
+inline WebGPU::BlendFactor convertToBacking(GPUBlendFactor blendFactor)
 {
     switch (blendFactor) {
     case GPUBlendFactor::Zero:
-        return PAL::WebGPU::BlendFactor::Zero;
+        return WebGPU::BlendFactor::Zero;
     case GPUBlendFactor::One:
-        return PAL::WebGPU::BlendFactor::One;
+        return WebGPU::BlendFactor::One;
     case GPUBlendFactor::Src:
-        return PAL::WebGPU::BlendFactor::Src;
+        return WebGPU::BlendFactor::Src;
     case GPUBlendFactor::OneMinusSrc:
-        return PAL::WebGPU::BlendFactor::OneMinusSrc;
+        return WebGPU::BlendFactor::OneMinusSrc;
     case GPUBlendFactor::SrcAlpha:
-        return PAL::WebGPU::BlendFactor::SrcAlpha;
+        return WebGPU::BlendFactor::SrcAlpha;
     case GPUBlendFactor::OneMinusSrcAlpha:
-        return PAL::WebGPU::BlendFactor::OneMinusSrcAlpha;
+        return WebGPU::BlendFactor::OneMinusSrcAlpha;
     case GPUBlendFactor::Dst:
-        return PAL::WebGPU::BlendFactor::Dst;
+        return WebGPU::BlendFactor::Dst;
     case GPUBlendFactor::OneMinusDst:
-        return PAL::WebGPU::BlendFactor::OneMinusDst;
+        return WebGPU::BlendFactor::OneMinusDst;
     case GPUBlendFactor::DstAlpha:
-        return PAL::WebGPU::BlendFactor::DstAlpha;
+        return WebGPU::BlendFactor::DstAlpha;
     case GPUBlendFactor::OneMinusDstAlpha:
-        return PAL::WebGPU::BlendFactor::OneMinusDstAlpha;
+        return WebGPU::BlendFactor::OneMinusDstAlpha;
     case GPUBlendFactor::SrcAlphaSaturated:
-        return PAL::WebGPU::BlendFactor::SrcAlphaSaturated;
+        return WebGPU::BlendFactor::SrcAlphaSaturated;
     case GPUBlendFactor::Constant:
-        return PAL::WebGPU::BlendFactor::Constant;
+        return WebGPU::BlendFactor::Constant;
     case GPUBlendFactor::OneMinusConstant:
-        return PAL::WebGPU::BlendFactor::OneMinusConstant;
+        return WebGPU::BlendFactor::OneMinusConstant;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

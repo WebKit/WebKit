@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(GBM)
+#if USE(ANGLE_GBM)
 
 #include "GraphicsContextGLGBM.h"
 #include <memory>
@@ -57,4 +57,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(GBM)
+#endif // USE(ANGLE_GBM)

@@ -176,8 +176,7 @@ void lowerMacros(Code& code)
 
                 insertionSet.insert(instIndex, Mul64, origin, lhsLower, rhsLower);
                 insertionSet.insert(instIndex, Mul64, origin, lhsUpper, rhsUpper);
-                insertionSet.insert(instIndex, MoveZeroToVector, origin, dst);
-                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(0), rhsLower, dst);
+                insertionSet.insert(instIndex, VectorSplatInt64, origin, rhsLower, dst);
                 insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(1), rhsUpper, dst);
 
                 inst = Inst();
@@ -400,8 +399,7 @@ void lowerMacros(Code& code)
                     // FIXME: this is bad, we should load
                     auto gpTmp = code.newTmp(GP);
                     insertionSet.insert(instIndex, Move, origin, Arg::bigImm(towerOfPower.u64x2[0]), gpTmp);
-                    insertionSet.insert(instIndex, MoveZeroToVector, origin, maskTmp);
-                    insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(0), gpTmp, maskTmp);
+                    insertionSet.insert(instIndex, VectorSplatInt64, origin, gpTmp, maskTmp);
                     insertionSet.insert(instIndex, Move, origin, Arg::bigImm(towerOfPower.u64x2[1]), gpTmp);
                     insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(1), gpTmp, maskTmp);
                 }

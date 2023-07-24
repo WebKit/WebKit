@@ -162,6 +162,22 @@ int MM21ToYUY2(const uint8_t* src_y,
                int width,
                int height);
 
+// Convert MT2T to P010
+// Note that src_y and src_uv point to packed 10-bit values, so the Y plane will
+// be 10 / 8 times the dimensions of the image. Also for this reason,
+// src_stride_y and src_stride_uv are given in bytes.
+LIBYUV_API
+int MT2TToP010(const uint8_t* src_y,
+               int src_stride_y,
+               const uint8_t* src_uv,
+               int src_stride_uv,
+               uint16_t* dst_y,
+               int dst_stride_y,
+               uint16_t* dst_uv,
+               int dst_stride_uv,
+               int width,
+               int height);
+
 // Convert I422 to NV21.
 LIBYUV_API
 int I422ToNV21(const uint8_t* src_y,
@@ -269,6 +285,23 @@ int I210ToI420(const uint16_t* src_y,
 #define H210ToH422 I210ToI422
 LIBYUV_API
 int I210ToI422(const uint16_t* src_y,
+               int src_stride_y,
+               const uint16_t* src_u,
+               int src_stride_u,
+               const uint16_t* src_v,
+               int src_stride_v,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_u,
+               int dst_stride_u,
+               uint8_t* dst_v,
+               int dst_stride_v,
+               int width,
+               int height);
+
+#define H410ToH420 I410ToI420
+LIBYUV_API
+int I410ToI420(const uint16_t* src_y,
                int src_stride_y,
                const uint16_t* src_u,
                int src_stride_u,
@@ -568,6 +601,36 @@ int NV16ToNV24(const uint8_t* src_y,
                int dst_stride_y,
                uint8_t* dst_uv,
                int dst_stride_uv,
+               int width,
+               int height);
+
+// Convert P010 to I010.
+LIBYUV_API
+int P010ToI010(const uint16_t* src_y,
+               int src_stride_y,
+               const uint16_t* src_uv,
+               int src_stride_uv,
+               uint16_t* dst_y,
+               int dst_stride_y,
+               uint16_t* dst_u,
+               int dst_stride_u,
+               uint16_t* dst_v,
+               int dst_stride_v,
+               int width,
+               int height);
+
+// Convert P012 to I012.
+LIBYUV_API
+int P012ToI012(const uint16_t* src_y,
+               int src_stride_y,
+               const uint16_t* src_uv,
+               int src_stride_uv,
+               uint16_t* dst_y,
+               int dst_stride_y,
+               uint16_t* dst_u,
+               int dst_stride_u,
+               uint16_t* dst_v,
+               int dst_stride_v,
                int width,
                int height);
 

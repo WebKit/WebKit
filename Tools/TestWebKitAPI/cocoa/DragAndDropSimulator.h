@@ -146,10 +146,14 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 
 @end
 
+#if !PLATFORM(MACCATALYST)
+
 @interface DragAndDropSimulator (DOMElementDrag)
 
 - (void)runFromElement:(NSString *)startSelector toElement:(NSString *)endSelector;
 
 @end
+
+#endif // !PLATFORM(MACCATALYST)
 
 #endif // ENABLE(DRAG_SUPPORT)

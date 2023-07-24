@@ -59,6 +59,7 @@ protected:
     CGDisplayListImageBufferBackend(const Parameters&, const WebCore::ImageBufferCreationContext&, WebCore::RenderingMode);
 
     unsigned bytesPerRow() const final;
+    String debugDescription() const final;
 
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }

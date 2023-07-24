@@ -115,14 +115,21 @@ static void encode_mv_component(aom_writer *w, int comp, nmv_component *mvcomp,
         2);
 }
 
-static void build_nmv_component_cost_table(int *mvcost,
-                                           const nmv_component *const mvcomp,
-                                           MvSubpelPrecision precision) {
-  int i, v;
+/* TODO(siekyleb@amazon.com): This function writes MV_VALS ints or 128 KiB. This
+ *   is more than most L1D caches and is a significant chunk of L2. Write
+ *   SIMD that uses streaming writes to avoid loading all of that into L1, or
+ *   just don't update the larger component costs every time this called
+ *   (or both).
+ */
+void av1_build_nmv_component_cost_table(int *mvcost,
+                                        const nmv_component *const mvcomp,
+                                        MvSubpelPrecision precision) {
+  int i, j, v, o, mantissa;
   int sign_cost[2], class_cost[MV_CLASSES], class0_cost[CLASS0_SIZE];
   int bits_cost[MV_OFFSET_BITS][2];
-  int class0_fp_cost[CLASS0_SIZE][MV_FP_SIZE], fp_cost[MV_FP_SIZE];
-  int class0_hp_cost[2], hp_cost[2];
+  int class0_fp_cost[CLASS0_SIZE][MV_FP_SIZE] = { 0 },
+      fp_cost[MV_FP_SIZE] = { 0 };
+  int class0_hp_cost[2] = { 0 }, hp_cost[2] = { 0 };
 
   av1_cost_tokens_from_cdf(sign_cost, mvcomp->sign_cdf, NULL);
   av1_cost_tokens_from_cdf(class_cost, mvcomp->classes_cdf, NULL);
@@ -131,45 +138,114 @@ static void build_nmv_component_cost_table(int *mvcost,
     av1_cost_tokens_from_cdf(bits_cost[i], mvcomp->bits_cdf[i], NULL);
   }
 
-  for (i = 0; i < CLASS0_SIZE; ++i)
-    av1_cost_tokens_from_cdf(class0_fp_cost[i], mvcomp->class0_fp_cdf[i], NULL);
-  av1_cost_tokens_from_cdf(fp_cost, mvcomp->fp_cdf, NULL);
+  if (precision > MV_SUBPEL_NONE) {
+    for (i = 0; i < CLASS0_SIZE; ++i)
+      av1_cost_tokens_from_cdf(class0_fp_cost[i], mvcomp->class0_fp_cdf[i],
+                               NULL);
+    av1_cost_tokens_from_cdf(fp_cost, mvcomp->fp_cdf, NULL);
+  }
 
   if (precision > MV_SUBPEL_LOW_PRECISION) {
     av1_cost_tokens_from_cdf(class0_hp_cost, mvcomp->class0_hp_cdf, NULL);
     av1_cost_tokens_from_cdf(hp_cost, mvcomp->hp_cdf, NULL);
   }
+
+  // Instead of accumulating the cost of each vector component's bits
+  //   individually, compute the costs based on smaller vectors. Costs for
+  //   [2^exp, 2 * 2^exp - 1] are calculated based on [0, 2^exp - 1]
+  //   respectively. Offsets are maintained to swap both 1) class costs when
+  //   treated as a complete vector component with the highest set bit when
+  //   treated as a mantissa (significand) and 2) leading zeros to account for
+  //   the current exponent.
+
+  // Cost offsets
+  int cost_swap[MV_OFFSET_BITS] = { 0 };
+  // Delta to convert positive vector to negative vector costs
+  int negate_sign = sign_cost[1] - sign_cost[0];
+
+  // Initialize with offsets to swap the class costs with the costs of the
+  //   highest set bit.
+  for (i = 1; i < MV_OFFSET_BITS; ++i) {
+    cost_swap[i] = bits_cost[i - 1][1];
+    if (i > CLASS0_BITS) cost_swap[i] -= class_cost[i - CLASS0_BITS];
+  }
+
+  // Seed the fractional costs onto the output (overwritten latter).
+  for (o = 0; o < MV_FP_SIZE; ++o) {
+    int hp;
+    for (hp = 0; hp < 2; ++hp) {
+      v = 2 * o + hp + 1;
+      mvcost[v] = fp_cost[o] + hp_cost[hp] + sign_cost[0];
+    }
+  }
+
   mvcost[0] = 0;
-  for (v = 1; v <= MV_MAX; ++v) {
-    int z, c, o, d, e, f, cost = 0;
-    z = v - 1;
-    c = av1_get_mv_class(z, &o);
-    cost += class_cost[c];
-    d = (o >> 3);     /* int mv data */
-    f = (o >> 1) & 3; /* fractional pel mv data */
-    e = (o & 1);      /* high precision mv data */
-    if (c == MV_CLASS_0) {
-      cost += class0_cost[d];
-    } else {
-      const int b = c + CLASS0_BITS - 1; /* number of bits */
-      for (i = 0; i < b; ++i) cost += bits_cost[i][((d >> i) & 1)];
+  // Fill the costs for each exponent's vectors, using the costs set in the
+  //   previous exponents.
+  for (i = 0; i < MV_OFFSET_BITS; ++i) {
+    const int exponent = (2 * MV_FP_SIZE) << i;
+
+    int class = 0;
+    if (i >= CLASS0_BITS) {
+      class = class_cost[i - CLASS0_BITS + 1];
     }
-    if (precision > MV_SUBPEL_NONE) {
-      if (c == MV_CLASS_0) {
-        cost += class0_fp_cost[d][f];
-      } else {
-        cost += fp_cost[f];
+
+    // Iterate through mantissas, keeping track of the location
+    //   of the highest set bit for the mantissa.
+    // To be clear: in the outer loop, the position of the highest set bit
+    //   (exponent) is tracked and, in this loop, the highest set bit of the
+    //   mantissa is tracked.
+    mantissa = 0;
+    for (j = 0; j <= i; ++j) {
+      for (; mantissa < (2 * MV_FP_SIZE) << j; ++mantissa) {
+        int cost = mvcost[mantissa + 1] + class + cost_swap[j];
+        v = exponent + mantissa + 1;
+        mvcost[v] = cost;
+        mvcost[-v] = cost + negate_sign;
       }
-      if (precision > MV_SUBPEL_LOW_PRECISION) {
-        if (c == MV_CLASS_0) {
-          cost += class0_hp_cost[e];
-        } else {
-          cost += hp_cost[e];
-        }
+      cost_swap[j] += bits_cost[i][0];
+    }
+  }
+
+  // Special case to avoid buffer overrun
+  {
+    int exponent = (2 * MV_FP_SIZE) << MV_OFFSET_BITS;
+    int class = class_cost[MV_CLASSES - 1];
+    mantissa = 0;
+    for (j = 0; j < MV_OFFSET_BITS; ++j) {
+      for (; mantissa < (2 * MV_FP_SIZE) << j; ++mantissa) {
+        int cost = mvcost[mantissa + 1] + class + cost_swap[j];
+        v = exponent + mantissa + 1;
+        mvcost[v] = cost;
+        mvcost[-v] = cost + negate_sign;
       }
     }
-    mvcost[v] = cost + sign_cost[0];
-    mvcost[-v] = cost + sign_cost[1];
+    // At this point: mantissa = exponent >> 1
+
+    // Manually calculate the final cost offset
+    int cost_swap_hi =
+        bits_cost[MV_OFFSET_BITS - 1][1] - class_cost[MV_CLASSES - 2];
+    for (; mantissa < exponent - 1; ++mantissa) {
+      int cost = mvcost[mantissa + 1] + class + cost_swap_hi;
+      v = exponent + mantissa + 1;
+      mvcost[v] = cost;
+      mvcost[-v] = cost + negate_sign;
+    }
+  }
+
+  // Fill costs for class0 vectors, overwriting previous placeholder values
+  //   used for calculating the costs of the larger vectors.
+  for (i = 0; i < CLASS0_SIZE; ++i) {
+    const int top = i * 2 * MV_FP_SIZE;
+    for (o = 0; o < MV_FP_SIZE; ++o) {
+      int hp;
+      int cost = class0_fp_cost[i][o] + class_cost[0] + class0_cost[i];
+      for (hp = 0; hp < 2; ++hp) {
+        v = top + 2 * o + hp + 1;
+        mvcost[v] = cost + class0_hp_cost[hp] + sign_cost[0];
+        mvcost[-v] = cost + class0_hp_cost[hp] + sign_cost[1];
+      }
+    }
   }
 }
 
@@ -219,8 +295,8 @@ void av1_build_nmv_cost_table(int *mvjoint, int *mvcost[2],
                               const nmv_context *ctx,
                               MvSubpelPrecision precision) {
   av1_cost_tokens_from_cdf(mvjoint, ctx->joints_cdf, NULL);
-  build_nmv_component_cost_table(mvcost[0], &ctx->comps[0], precision);
-  build_nmv_component_cost_table(mvcost[1], &ctx->comps[1], precision);
+  av1_build_nmv_component_cost_table(mvcost[0], &ctx->comps[0], precision);
+  av1_build_nmv_component_cost_table(mvcost[1], &ctx->comps[1], precision);
 }
 
 int_mv av1_get_ref_mv_from_stack(int ref_idx,

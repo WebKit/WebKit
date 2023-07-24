@@ -57,7 +57,10 @@ SharedVideoFrameInfo SharedVideoFrameInfo::fromCVPixelBuffer(CVPixelBufferRef pi
     auto type = CVPixelBufferGetPixelFormatType(pixelBuffer);
     if (type == kCVPixelFormatType_32BGRA || type == kCVPixelFormatType_32ARGB)
         return { type, static_cast<uint32_t>(CVPixelBufferGetWidth(pixelBuffer)), static_cast<uint32_t>(CVPixelBufferGetHeight(pixelBuffer)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRow(pixelBuffer)) };
-    return { type, static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1)) };
+
+    return { type, static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0)), static_cast<uint32_t>(CVPixelBufferGetWidthOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetHeightOfPlane(pixelBuffer, 1)), static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1)),
+        type == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar ? static_cast<uint32_t>(CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 2)) : 0
+    };
 }
 
 bool SharedVideoFrameInfo::isReadWriteSupported() const
@@ -67,12 +70,28 @@ bool SharedVideoFrameInfo::isReadWriteSupported() const
         || m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
         || m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
         || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange
-        || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
+        || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange
+        || m_bufferType == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar;
 }
 
 size_t SharedVideoFrameInfo::storageSize() const
 {
-    return (m_bytesPerRow * m_height) + (m_bytesPerRowPlaneB * m_heightPlaneB) + sizeof(SharedVideoFrameInfo);
+    size_t sizePlaneA;
+    if (!WTF::safeMultiply(m_bytesPerRow, m_height, sizePlaneA))
+        return 0;
+
+    size_t sizePlaneB;
+    if (!WTF::safeMultiply(m_bytesPerRowPlaneB, m_heightPlaneB, sizePlaneB))
+        return 0;
+
+    size_t size;
+    if (!WTF::safeAdd(sizePlaneA, sizePlaneB, size) || !WTF::safeAdd(size, sizeof(SharedVideoFrameInfo), size))
+        return 0;
+
+    if (m_bufferType == kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar && !WTF::safeAdd(sizePlaneA, size, size))
+        return 0;
+
+    return size;
 }
 
 void SharedVideoFrameInfo::encode(uint8_t* destination)
@@ -86,6 +105,7 @@ void SharedVideoFrameInfo::encode(uint8_t* destination)
     encoder << m_widthPlaneB;
     encoder << m_heightPlaneB;
     encoder << m_bytesPerRowPlaneB;
+    encoder << m_bytesPerRowPlaneAlpha;
     ASSERT(sizeof(SharedVideoFrameInfo) == encoder.bufferSize());
     std::memcpy(destination, encoder.buffer(), encoder.bufferSize());
 }
@@ -129,7 +149,16 @@ std::optional<SharedVideoFrameInfo> SharedVideoFrameInfo::decode(std::span<const
     if (!bytesPerRowPlaneB)
         return std::nullopt;
 
-    return SharedVideoFrameInfo { *bufferType, *width, *height, *bytesPerRow , *widthPlaneB, *heightPlaneB, *bytesPerRowPlaneB };
+    std::optional<uint32_t> bytesPerRowPlaneA;
+    decoder >> bytesPerRowPlaneA;
+    if (!bytesPerRowPlaneB)
+        return std::nullopt;
+
+    SharedVideoFrameInfo info { *bufferType, *width, *height, *bytesPerRow , *widthPlaneB, *heightPlaneB, *bytesPerRowPlaneB, *bytesPerRowPlaneA };
+    if (!info.storageSize())
+        return std::nullopt;
+
+    return info;
 }
 
 static const uint8_t* copyToCVPixelBufferPlane(CVPixelBufferRef pixelBuffer, size_t planeIndex, const uint8_t* source, size_t height, uint32_t bytesPerRowSource)
@@ -172,10 +201,13 @@ RetainPtr<CVPixelBufferRef> SharedVideoFrameInfo::createPixelBufferFromMemory(co
     });
 
     data = copyToCVPixelBufferPlane(rawPixelBuffer, 0, data, m_height, m_bytesPerRow);
-    if (CVPixelBufferGetPlaneCount(rawPixelBuffer) == 2) {
+    if (CVPixelBufferGetPlaneCount(rawPixelBuffer) >= 2) {
         if (CVPixelBufferGetWidthOfPlane(rawPixelBuffer, 1) != m_widthPlaneB || CVPixelBufferGetHeightOfPlane(rawPixelBuffer, 1) != m_heightPlaneB)
             return nullptr;
-        copyToCVPixelBufferPlane(rawPixelBuffer, 1, data, m_heightPlaneB, m_bytesPerRowPlaneB);
+        data = copyToCVPixelBufferPlane(rawPixelBuffer, 1, data, m_heightPlaneB, m_bytesPerRowPlaneB);
+
+        if (CVPixelBufferGetPlaneCount(rawPixelBuffer) == 3)
+            copyToCVPixelBufferPlane(rawPixelBuffer, 2, data, m_height, m_bytesPerRowPlaneAlpha);
     }
 
     return pixelBuffer;
@@ -205,7 +237,7 @@ bool SharedVideoFrameInfo::writePixelBuffer(CVPixelBufferRef pixelBuffer, uint8_
     size_t planeASize = m_height * m_bytesPerRow;
     std::memcpy(data, planeA, planeASize);
 
-    if (CVPixelBufferGetPlaneCount(pixelBuffer) == 2) {
+    if (CVPixelBufferGetPlaneCount(pixelBuffer) >= 2) {
         auto* planeB = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
         if (!planeB) {
             RELEASE_LOG_ERROR(WebRTC, "SharedVideoFrameInfo::writePixelBuffer plane B is null");
@@ -214,6 +246,17 @@ bool SharedVideoFrameInfo::writePixelBuffer(CVPixelBufferRef pixelBuffer, uint8_
 
         size_t planeBSize = m_heightPlaneB * m_bytesPerRowPlaneB;
         std::memcpy(data + planeASize, planeB, planeBSize);
+
+        if (CVPixelBufferGetPlaneCount(pixelBuffer) == 3) {
+            auto* planeAlpha = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 2));
+            if (!planeAlpha) {
+                RELEASE_LOG_ERROR(WebRTC, "SharedVideoFrameInfo::writePixelBuffer plane A is null");
+                return false;
+            }
+
+            size_t planeAlphaSize = m_height * m_bytesPerRowPlaneAlpha;
+            std::memcpy(data + planeASize + planeBSize, planeAlpha, planeAlphaSize);
+        }
     }
 
     return true;

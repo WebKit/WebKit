@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,15 +22,15 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::SamplerDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
-    PAL::WebGPU::AddressMode addressModeU;
-    PAL::WebGPU::AddressMode addressModeV;
-    PAL::WebGPU::AddressMode addressModeW;
-    PAL::WebGPU::FilterMode magFilter;
-    PAL::WebGPU::FilterMode minFilter;
-    PAL::WebGPU::MipmapFilterMode mipmapFilter;
+    WebCore::WebGPU::AddressMode addressModeU;
+    WebCore::WebGPU::AddressMode addressModeV;
+    WebCore::WebGPU::AddressMode addressModeW;
+    WebCore::WebGPU::FilterMode magFilter;
+    WebCore::WebGPU::FilterMode minFilter;
+    WebCore::WebGPU::MipmapFilterMode mipmapFilter;
     float lodMinClamp;
     float lodMaxClamp;
-    std::optional<PAL::WebGPU::CompareFunction> compare;
+    std::optional<WebCore::WebGPU::CompareFunction> compare;
     uint16_t maxAnisotropy;
 };
 #endif

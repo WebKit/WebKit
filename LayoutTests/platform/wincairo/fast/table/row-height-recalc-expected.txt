@@ -15,7 +15,7 @@ layer at (0,0) size 800x170
             text run at (405,0) width 317: "Row height not updated when cell heights change"
         RenderText {#text} at (722,0) size 4x19
           text run at (722,0) width 4: "."
-      RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,36) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderTable {TABLE} at (0,46) size 100x100
         RenderTableSection {TBODY} at (0,0) size 100x100
           RenderTableRow {TR} at (0,0) size 100x0 [bgcolor=#FF0000]

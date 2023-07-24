@@ -65,9 +65,12 @@ public:
 
     void clearBackend();
     void backingStoreWillChange();
-    void didCreateImageBufferBackend(ImageBufferBackendHandle&&);
-
     std::unique_ptr<WebCore::SerializedImageBuffer> sinkIntoSerializedImageBuffer() final;
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+
+    // Messages
+    void didCreateBackend(ImageBufferBackendHandle&&);
 
 private:
     RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&, std::unique_ptr<WebCore::ImageBufferBackend>&& = nullptr, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate());
@@ -91,8 +94,6 @@ private:
     void convertToLuminanceMask() final;
     void transformToColorSpace(const WebCore::DestinationColorSpace&) final;
 
-    bool prefersPreparationForDisplay() final { return true; }
-    
     void flushDrawingContext() final;
     bool flushDrawingContextAsync() final;
 
@@ -100,6 +101,8 @@ private:
     void prepareForBackingStoreChange();
 
     void assertDispatcherIsCurrent() const;
+
+    IPC::StreamClientConnection& streamConnection() const;
 
     RefPtr<RemoteImageBufferProxyFlushFence> m_pendingFlush;
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
@@ -132,11 +135,8 @@ private:
 
     bool isRemoteSerializedImageBufferProxy() const final { return true; }
 
-    RemoteSerializedImageBufferReferenceTracker m_referenceTracker;
-
     WebCore::ImageBufferBackend::Parameters m_parameters;
     WebCore::ImageBufferBackend::Info m_info;
-
     WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier;
     RefPtr<IPC::Connection> m_connection;
 };

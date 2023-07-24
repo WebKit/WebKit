@@ -74,6 +74,7 @@ public:
     bool allowsFrameScrollbars() const { return m_type.contains(Type::AllowFrameScrollbars); }
     bool allowsChildFrameContent() const { return m_type.contains(Type::AllowChildFrameContent); }
     bool allowsVisibleChildFrameContent() const { return m_type.contains(Type::AllowVisibleChildFrameContentOnly); }
+    bool allowsAnyFrameContent() const { return allowsChildFrameContent() ||  allowsVisibleChildFrameContent(); }
     bool isChildFrameHitTest() const { return m_type.contains(Type::ChildFrameHitTest); }
     bool resultIsElementList() const { return m_type.contains(Type::CollectMultipleElements); }
     bool includesAllElementsUnderPoint() const { return m_type.contains(Type::IncludeAllElementsUnderPoint); }

@@ -152,6 +152,7 @@
 - (void)typeCharacter:(char)character modifiers:(NSEventModifierFlags)modifiers;
 - (void)typeCharacter:(char)character;
 - (void)setEventTimestampOffset:(NSTimeInterval)offset;
+@property (nonatomic, readonly) NSArray<NSString *> *collectLogsForNewConnections;
 @property (nonatomic, readonly) NSTimeInterval eventTimestamp;
 @property (nonatomic) BOOL forceWindowToBecomeKey;
 @end

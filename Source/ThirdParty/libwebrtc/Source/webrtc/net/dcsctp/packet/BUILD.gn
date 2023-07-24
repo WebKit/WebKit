@@ -98,6 +98,8 @@ rtc_library("parameter") {
     "parameter/state_cookie_parameter.h",
     "parameter/supported_extensions_parameter.cc",
     "parameter/supported_extensions_parameter.h",
+    "parameter/zero_checksum_acceptable_chunk_parameter.cc",
+    "parameter/zero_checksum_acceptable_chunk_parameter.h",
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
@@ -323,6 +325,7 @@ if (rtc_include_tests) {
       "parameter/ssn_tsn_reset_request_parameter_test.cc",
       "parameter/state_cookie_parameter_test.cc",
       "parameter/supported_extensions_parameter_test.cc",
+      "parameter/zero_checksum_acceptable_chunk_parameter_test.cc",
       "sctp_packet_test.cc",
       "tlv_trait_test.cc",
     ]

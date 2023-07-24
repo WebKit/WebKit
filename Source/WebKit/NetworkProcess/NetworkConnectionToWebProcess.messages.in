@@ -44,15 +44,20 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     SetRawCookie(struct WebCore::Cookie cookie)
     DeleteCookie(URL url, String cookieName) -> ()
     DomCookiesForHost(URL host, bool subscribeToCookieChangeNotifications) -> (Vector<WebCore::Cookie> cookies) Synchronous
+
+    CookiesForDOMAsync(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, enum:bool WebCore::ApplyTrackingPrevention applyTrackingPrevention, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, struct WebCore::CookieStoreGetOptions options) -> (std::optional<Vector<WebCore::Cookie>> cookies)
+
+    SetCookieFromDOMAsync(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::ApplyTrackingPrevention applyTrackingPrevention, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, struct WebCore::Cookie cookie) -> (bool setSuccessfully)
+
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     UnsubscribeFromCookieChangeNotifications(HashSet<String> hosts)
 #endif
 
-    RegisterFileBlobURL(URL url, String path, String replacementPath, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
-    RegisterBlobURL(URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
-    RegisterBlobURLFromURL(URL url, URL srcURL, struct WebCore::PolicyContainer policyContainer)
-    RegisterBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
-    RegisterBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end, String contentType)
+    RegisterInternalFileBlobURL(URL url, String path, String replacementPath, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
+    RegisterInternalBlobURL(URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
+    RegisterBlobURL(URL url, URL srcURL, struct WebCore::PolicyContainer policyContainer)
+    RegisterInternalBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
+    RegisterInternalBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end, String contentType)
     UnregisterBlobURL(URL url)
     BlobSize(URL url) -> (uint64_t resultSize) Synchronous
     WriteBlobsToTemporaryFilesForIndexedDB(Vector<String> blobURLs) -> (Vector<String> fileNames)
@@ -61,7 +66,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
-    CreateSocketChannel(WebCore::ResourceRequest request, String protocol, WebCore::WebSocketIdentifier identifier, WebKit::WebPageProxyIdentifier webPageProxyID, struct WebCore::ClientOrigin clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy)
+    CreateSocketChannel(WebCore::ResourceRequest request, String protocol, WebCore::WebSocketIdentifier identifier, WebKit::WebPageProxyIdentifier webPageProxyID, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, struct WebCore::ClientOrigin clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> protections, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 
     ClearPageSpecificData(WebCore::PageIdentifier pageID);
 
@@ -118,4 +123,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     LogOnBehalfOfWebContent(IPC::DataReference logChannel, IPC::DataReference logCategory, IPC::DataReference logString, uint8_t logType, int32_t pid)
 #endif
+
+    AddAllowedFirstPartyForCookies(WebCore::RegistrableDomain firstPartyDomain)
+    UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)
 }

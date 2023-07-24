@@ -479,19 +479,19 @@ std::optional<int> ScriptExecutable::overrideLineNumber(VM&) const
     return std::nullopt;
 }
 
-unsigned ScriptExecutable::typeProfilingStartOffset(VM& vm) const
+unsigned ScriptExecutable::typeProfilingStartOffset() const
 {
     if (inherits<FunctionExecutable>())
-        return jsCast<const FunctionExecutable*>(this)->typeProfilingStartOffset(vm);
+        return jsCast<const FunctionExecutable*>(this)->functionStart();
     if (inherits<EvalExecutable>())
         return UINT_MAX;
     return 0;
 }
 
-unsigned ScriptExecutable::typeProfilingEndOffset(VM& vm) const
+unsigned ScriptExecutable::typeProfilingEndOffset() const
 {
     if (inherits<FunctionExecutable>())
-        return jsCast<const FunctionExecutable*>(this)->typeProfilingEndOffset(vm);
+        return jsCast<const FunctionExecutable*>(this)->functionEnd();
     if (inherits<EvalExecutable>())
         return UINT_MAX;
     return source().length() - 1;

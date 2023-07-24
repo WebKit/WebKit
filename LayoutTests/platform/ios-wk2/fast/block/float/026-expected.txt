@@ -41,7 +41,7 @@ layer at (8,208) size 584x59 clip at (10,210) size 565x40
       text run at (292,22) width 5 RTL: "."
       text run at (296,22) width 286: "needed to fit within the remaining line width"
 layer at (8,416) size 584x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 584x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 584x2 [color=#808080] [border: (1px inset #808080)]
 layer at (196,816) size 396x79 clip at (198,818) size 377x60
   RenderBlock {DIV} at (188,0) size 396x79 [border: (2px solid #0000FF)]
     RenderText {#text} at (21,2) size 373x59
@@ -50,4 +50,4 @@ layer at (196,816) size 396x79 clip at (198,818) size 377x60
       text run at (256,42) width 5 RTL: "."
       text run at (260,42) width 134: "remaining line width"
 layer at (198,1024) size 394x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (190,0) size 394x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (190,0) size 394x2 [color=#808080] [border: (1px inset #808080)]

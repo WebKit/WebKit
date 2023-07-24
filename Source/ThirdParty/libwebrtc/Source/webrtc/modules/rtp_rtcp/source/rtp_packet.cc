@@ -60,8 +60,6 @@ RtpPacket::RtpPacket() : RtpPacket(nullptr, kDefaultPacketSize) {}
 RtpPacket::RtpPacket(const ExtensionManager* extensions)
     : RtpPacket(extensions, kDefaultPacketSize) {}
 
-RtpPacket::RtpPacket(const RtpPacket&) = default;
-
 RtpPacket::RtpPacket(const ExtensionManager* extensions, size_t capacity)
     : extensions_(extensions ? *extensions : ExtensionManager()),
       buffer_(capacity) {
@@ -69,7 +67,11 @@ RtpPacket::RtpPacket(const ExtensionManager* extensions, size_t capacity)
   Clear();
 }
 
-RtpPacket::~RtpPacket() {}
+RtpPacket::RtpPacket(const RtpPacket&) = default;
+RtpPacket::RtpPacket(RtpPacket&&) = default;
+RtpPacket& RtpPacket::operator=(const RtpPacket&) = default;
+RtpPacket& RtpPacket::operator=(RtpPacket&&) = default;
+RtpPacket::~RtpPacket() = default;
 
 void RtpPacket::IdentifyExtensions(ExtensionManager extensions) {
   extensions_ = std::move(extensions);
@@ -188,8 +190,8 @@ void RtpPacket::ZeroMutableExtensions() {
       case RTPExtensionType::kRtpExtensionCsrcAudioLevel:
       case RTPExtensionType::kRtpExtensionAbsoluteCaptureTime:
       case RTPExtensionType::kRtpExtensionColorSpace:
-      case RTPExtensionType::kRtpExtensionGenericFrameDescriptor00:
-      case RTPExtensionType::kRtpExtensionGenericFrameDescriptor02:
+      case RTPExtensionType::kRtpExtensionGenericFrameDescriptor:
+      case RTPExtensionType::kRtpExtensionDependencyDescriptor:
       case RTPExtensionType::kRtpExtensionMid:
       case RTPExtensionType::kRtpExtensionNumberOfExtensions:
       case RTPExtensionType::kRtpExtensionPlayoutDelay:
@@ -672,8 +674,12 @@ bool RtpPacket::RemoveExtension(ExtensionType type) {
   }
 
   // Copy payload data to new packet.
-  memcpy(new_packet.AllocatePayload(payload_size()), payload().data(),
-         payload_size());
+  if (payload_size() > 0) {
+    memcpy(new_packet.AllocatePayload(payload_size()), payload().data(),
+           payload_size());
+  } else {
+    new_packet.SetPayloadSize(0);
+  }
 
   // Allocate padding -- must be last!
   new_packet.SetPadding(padding_size());
@@ -685,7 +691,7 @@ bool RtpPacket::RemoveExtension(ExtensionType type) {
 
 std::string RtpPacket::ToString() const {
   rtc::StringBuilder result;
-  result << "{payload_type=" << payload_type_ << "marker=" << marker_
+  result << "{payload_type=" << payload_type_ << ", marker=" << marker_
          << ", sequence_number=" << sequence_number_
          << ", padding_size=" << padding_size_ << ", timestamp=" << timestamp_
          << ", ssrc=" << ssrc_ << ", payload_offset=" << payload_offset_

@@ -21,6 +21,36 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+Modules/ShapeDetection/BarcodeDetector.cpp
+Modules/ShapeDetection/FaceDetector.cpp
+Modules/ShapeDetection/TextDetector.cpp
+Modules/WebGPU/Implementation/WebGPUAdapterImpl.cpp
+Modules/WebGPU/Implementation/WebGPUBindGroupImpl.cpp
+Modules/WebGPU/Implementation/WebGPUBindGroupLayoutImpl.cpp
+Modules/WebGPU/Implementation/WebGPUBufferImpl.cpp
+Modules/WebGPU/Implementation/WebGPUCommandBufferImpl.cpp
+Modules/WebGPU/Implementation/WebGPUCommandEncoderImpl.cpp
+Modules/WebGPU/Implementation/WebGPUCompositorIntegrationImpl.cpp
+Modules/WebGPU/Implementation/WebGPUComputePassEncoderImpl.cpp
+Modules/WebGPU/Implementation/WebGPUComputePipelineImpl.cpp
+Modules/WebGPU/Implementation/WebGPUConvertToBackingContext.cpp
+Modules/WebGPU/Implementation/WebGPUCreateImpl.cpp
+Modules/WebGPU/Implementation/WebGPUDeviceImpl.cpp
+Modules/WebGPU/Implementation/WebGPUDowncastConvertToBackingContext.cpp
+Modules/WebGPU/Implementation/WebGPUExternalTextureImpl.cpp
+Modules/WebGPU/Implementation/WebGPUImpl.cpp
+Modules/WebGPU/Implementation/WebGPUPipelineLayoutImpl.cpp
+Modules/WebGPU/Implementation/WebGPUPresentationContextImpl.cpp
+Modules/WebGPU/Implementation/WebGPUQuerySetImpl.cpp
+Modules/WebGPU/Implementation/WebGPUQueueImpl.cpp
+Modules/WebGPU/Implementation/WebGPURenderBundleEncoderImpl.cpp
+Modules/WebGPU/Implementation/WebGPURenderBundleImpl.cpp
+Modules/WebGPU/Implementation/WebGPURenderPassEncoderImpl.cpp
+Modules/WebGPU/Implementation/WebGPURenderPipelineImpl.cpp
+Modules/WebGPU/Implementation/WebGPUSamplerImpl.cpp
+Modules/WebGPU/Implementation/WebGPUShaderModuleImpl.cpp
+Modules/WebGPU/Implementation/WebGPUTextureImpl.cpp
+Modules/WebGPU/Implementation/WebGPUTextureViewImpl.cpp
 Modules/WebGPU/GPU.cpp
 Modules/WebGPU/GPUAdapter.cpp
 Modules/WebGPU/GPUBindGroup.cpp
@@ -54,9 +84,6 @@ Modules/WebGPU/GPUTexture.cpp
 Modules/WebGPU/GPUTextureView.cpp
 Modules/WebGPU/GPUUncapturedErrorEvent.cpp
 Modules/WebGPU/GPUValidationError.cpp
-Modules/ShapeDetection/BarcodeDetector.cpp
-Modules/ShapeDetection/FaceDetector.cpp
-Modules/ShapeDetection/TextDetector.cpp
 Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
 Modules/applicationmanifest/ApplicationManifestParser.cpp
 Modules/async-clipboard/Clipboard.cpp
@@ -79,6 +106,7 @@ Modules/compression/DecompressionStreamDecoder.cpp
 Modules/contact-picker/ContactsManager.cpp
 Modules/contact-picker/NavigatorContacts.cpp
 Modules/cookie-consent/NavigatorCookieConsent.cpp
+Modules/cookie-store/CookieStore.cpp
 Modules/credentialmanagement/BasicCredential.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp
 Modules/credentialmanagement/NavigatorCredentials.cpp
@@ -184,6 +212,7 @@ Modules/mediarecorder/BlobEvent.cpp
 Modules/mediarecorder/MediaRecorder.cpp
 Modules/mediarecorder/MediaRecorderErrorEvent.cpp
 Modules/mediarecorder/MediaRecorderProvider.cpp
+Modules/mediasource/BufferedChangeEvent.cpp
 Modules/mediasource/DOMURLMediaSource.cpp
 Modules/mediasource/ManagedMediaSource.cpp
 Modules/mediasource/ManagedSourceBuffer.cpp
@@ -316,6 +345,7 @@ Modules/storage/WorkerStorageConnection.cpp
 Modules/streams/ReadableStream.cpp
 Modules/streams/ReadableStreamSink.cpp
 Modules/streams/ReadableStreamSource.cpp
+Modules/streams/TransformStream.cpp
 Modules/streams/WritableStream.cpp
 Modules/web-locks/WebLock.cpp
 Modules/web-locks/WebLockManager.cpp
@@ -1002,6 +1032,7 @@ dom/CompositionEvent.cpp
 dom/ConstantPropertyMap.cpp
 dom/ContainerNode.cpp
 dom/ContainerNodeAlgorithms.cpp
+dom/ContentVisibilityDocumentState.cpp
 dom/ContextDestructionObserver.cpp
 dom/CustomElementDefaultARIA.cpp
 dom/CustomElementReactionQueue.cpp
@@ -1864,6 +1895,7 @@ page/MouseEventWithHitTestResults.cpp
 page/Navigator.cpp
 page/NavigatorBase.cpp
 page/NavigatorIsLoggedIn.cpp
+page/OpportunisticTaskScheduler.cpp
 page/OriginAccessEntry.cpp
 page/OriginAccessPatterns.cpp
 page/Page.cpp
@@ -2023,6 +2055,7 @@ platform/ProcessIdentifier.cpp
 platform/ProcessIdentity.cpp
 platform/ReferrerPolicy.cpp
 platform/RemoteCommandListener.cpp
+platform/RunLoopObserver.cpp
 platform/RuntimeApplicationChecks.cpp
 platform/ScreenOrientationManager.cpp
 platform/ScreenOrientationProvider.cpp
@@ -2189,7 +2222,6 @@ platform/graphics/GraphicsContextState.cpp
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/GraphicsLayerContentsDisplayDelegate.cpp
 platform/graphics/GraphicsLayerTransform.cpp
-platform/graphics/GraphicsLayerUpdater.cpp
 platform/graphics/GraphicsStyle.cpp
 platform/graphics/GraphicsTypes.cpp
 platform/graphics/HEVCUtilities.cpp
@@ -2218,6 +2250,10 @@ platform/graphics/Model.cpp
 platform/graphics/NamedImageGeneratedImage.cpp
 platform/graphics/NativeImage.cpp
 platform/graphics/Path.cpp
+platform/graphics/PathImpl.cpp
+platform/graphics/PathSegment.cpp
+platform/graphics/PathSegmentData.cpp
+platform/graphics/PathStream.cpp
 platform/graphics/PathTraversalState.cpp
 platform/graphics/PathUtilities.cpp
 platform/graphics/Pattern.cpp
@@ -2229,6 +2265,7 @@ platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/PositionedGlyphs.cpp
 platform/graphics/Region.cpp
 platform/graphics/RenderingMode.cpp
+platform/graphics/RotationDirection.cpp
 platform/graphics/RoundedRect.cpp
 platform/graphics/ShadowBlur.cpp
 platform/graphics/SourceBrush.cpp
@@ -2652,6 +2689,8 @@ rendering/style/StyleNonInheritedData.cpp
 rendering/style/StylePaintImage.cpp
 rendering/style/StyleRareInheritedData.cpp
 rendering/style/StyleRareNonInheritedData.cpp
+rendering/style/ScrollbarColor.cpp
+rendering/style/ScrollbarGutter.cpp
 rendering/style/StyleSelfAlignmentData.cpp
 rendering/style/StyleSurroundData.cpp
 rendering/style/StyleTransformData.cpp
@@ -2876,7 +2915,7 @@ svg/SVGPathParser.cpp
 svg/SVGPathSegListBuilder.cpp
 svg/SVGPathSegListSource.cpp
 svg/SVGPathStringBuilder.cpp
-svg/SVGPathStringSource.cpp
+svg/SVGPathStringViewSource.cpp
 svg/SVGPathTraversalStateBuilder.cpp
 svg/SVGPathUtilities.cpp
 svg/SVGPatternElement.cpp
@@ -3146,6 +3185,7 @@ JSBlob.cpp
 JSBlobCallback.cpp
 JSBlobEvent.cpp
 JSBlobPropertyBag.cpp
+JSBufferedChangeEvent.cpp
 JSBroadcastChannel.cpp
 JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp
@@ -3238,6 +3278,12 @@ JSContactsManager.cpp
 JSContactsSelectOptions.cpp
 JSConvolverNode.cpp
 JSConvolverOptions.cpp
+JSCookieInit.cpp
+JSCookieListItem.cpp
+JSCookieSameSite.cpp
+JSCookieStore.cpp
+JSCookieStoreDeleteOptions.cpp
+JSCookieStoreGetOptions.cpp
 JSCountQueuingStrategy.cpp
 JSCredentialCreationOptions.cpp
 JSCredentialRequestOptions.cpp
@@ -4278,6 +4324,7 @@ JSWebCodecsEncodedVideoChunkOutputCallback.cpp
 JSWebCodecsEncodedVideoChunkType.cpp
 JSWebCodecsErrorCallback.cpp
 JSWebCodecsCodecState.cpp
+JSWebCodecsSvcOutputMetadata.cpp
 JSWebCodecsVideoDecoder.cpp
 JSWebCodecsVideoDecoderConfig.cpp
 JSWebCodecsVideoDecoderSupport.cpp

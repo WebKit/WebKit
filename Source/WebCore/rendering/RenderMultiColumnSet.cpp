@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc.  All rights reserved.
  * Copyright (C) 2015 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -439,7 +439,7 @@ LayoutUnit RenderMultiColumnSet::columnGap() const
     // go to the parent block to get the gap.
     RenderBlockFlow& parentBlock = downcast<RenderBlockFlow>(*parent());
     if (parentBlock.style().columnGap().isNormal())
-        return parentBlock.style().fontDescription().computedPixelSize(); // "1em" is recommended as the normal gap setting. Matches <p> margins.
+        return LayoutUnit(parentBlock.style().fontDescription().computedSize()); // "1em" is recommended as the normal gap setting. Matches <p> margins.
     return valueForLength(parentBlock.style().columnGap().length(), parentBlock.availableLogicalWidth());
 }
 
@@ -456,7 +456,10 @@ unsigned RenderMultiColumnSet::columnCount() const
     if (logicalHeightInColumns <= 0)
         return 1;
     
-    unsigned count = ceilf(static_cast<float>(logicalHeightInColumns) / computedColumnHeight);
+    unsigned count = (logicalHeightInColumns / computedColumnHeight).floor();
+    // logicalHeightInColumns may be saturated, so detect the remainder manually.
+    if (count * computedColumnHeight < logicalHeightInColumns)
+        ++count;
     ASSERT(count >= 1);
     return count;
 }

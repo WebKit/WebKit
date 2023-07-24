@@ -60,8 +60,9 @@
 
 #include <openssl/mem.h>
 
-#include "internal.h"
 #include "../../internal.h"
+#include "../service_indicator/internal.h"
+#include "internal.h"
 
 
 // The 32-bit hash algorithms share a common byte-order neutral collector and
@@ -70,7 +71,7 @@
 // this writing, so there is no need for a common collector/padding
 // implementation yet.
 
-static int sha512_final_impl(uint8_t *out, SHA512_CTX *sha);
+static int sha512_final_impl(uint8_t *out, size_t md_len, SHA512_CTX *sha);
 
 int SHA384_Init(SHA512_CTX *sha) {
   sha->h[0] = UINT64_C(0xcbbb9d5dc1059ed8);
@@ -161,10 +162,10 @@ static void sha512_block_data_order(uint64_t *state, const uint8_t *in,
 
 
 int SHA384_Final(uint8_t out[SHA384_DIGEST_LENGTH], SHA512_CTX *sha) {
-  // |SHA384_Init| sets |sha->md_len| to |SHA384_DIGEST_LENGTH|, so this has a
-  // |smaller output.
+  // This function must be paired with |SHA384_Init|, which sets |sha->md_len|
+  // to |SHA384_DIGEST_LENGTH|.
   assert(sha->md_len == SHA384_DIGEST_LENGTH);
-  return sha512_final_impl(out, sha);
+  return sha512_final_impl(out, SHA384_DIGEST_LENGTH, sha);
 }
 
 int SHA384_Update(SHA512_CTX *sha, const void *data, size_t len) {
@@ -176,10 +177,10 @@ int SHA512_256_Update(SHA512_CTX *sha, const void *data, size_t len) {
 }
 
 int SHA512_256_Final(uint8_t out[SHA512_256_DIGEST_LENGTH], SHA512_CTX *sha) {
-  // |SHA512_256_Init| sets |sha->md_len| to |SHA512_256_DIGEST_LENGTH|, so this
-  // has a |smaller output.
+  // This function must be paired with |SHA512_256_Init|, which sets
+  // |sha->md_len| to |SHA512_256_DIGEST_LENGTH|.
   assert(sha->md_len == SHA512_256_DIGEST_LENGTH);
-  return sha512_final_impl(out, sha);
+  return sha512_final_impl(out, SHA512_256_DIGEST_LENGTH, sha);
 }
 
 void SHA512_Transform(SHA512_CTX *c, const uint8_t block[SHA512_CBLOCK]) {
@@ -237,13 +238,13 @@ int SHA512_Update(SHA512_CTX *c, const void *in_data, size_t len) {
 int SHA512_Final(uint8_t out[SHA512_DIGEST_LENGTH], SHA512_CTX *sha) {
   // Ideally we would assert |sha->md_len| is |SHA512_DIGEST_LENGTH| to match
   // the size hint, but calling code often pairs |SHA384_Init| with
-  // |SHA512_Final| and expects |sha->md_len| to carry the over.
+  // |SHA512_Final| and expects |sha->md_len| to carry the size over.
   //
   // TODO(davidben): Add an assert and fix code to match them up.
-  return sha512_final_impl(out, sha);
+  return sha512_final_impl(out, sha->md_len, sha);
 }
 
-static int sha512_final_impl(uint8_t *out, SHA512_CTX *sha) {
+static int sha512_final_impl(uint8_t *out, size_t md_len, SHA512_CTX *sha) {
   uint8_t *p = sha->p;
   size_t n = sha->num;
 
@@ -267,14 +268,14 @@ static int sha512_final_impl(uint8_t *out, SHA512_CTX *sha) {
     return 0;
   }
 
-  assert(sha->md_len % 8 == 0);
-  const size_t out_words = sha->md_len / 8;
+  assert(md_len % 8 == 0);
+  const size_t out_words = md_len / 8;
   for (size_t i = 0; i < out_words; i++) {
-    const uint64_t t = CRYPTO_bswap8(sha->h[i]);
-    memcpy(out, &t, sizeof(t));
-    out += sizeof(t);
+    CRYPTO_store_u64_be(out, sha->h[i]);
+    out += 8;
   }
 
+  FIPS_service_indicator_update_state();
   return 1;
 }
 
@@ -322,42 +323,16 @@ static const uint64_t K512[80] = {
     UINT64_C(0x5fcb6fab3ad6faec), UINT64_C(0x6c44198c4a475817),
 };
 
-#if defined(__GNUC__) && __GNUC__ >= 2 && !defined(OPENSSL_NO_ASM)
-#if defined(__x86_64) || defined(__x86_64__)
-#define ROTR(a, n)                                              \
-  ({                                                            \
-    uint64_t ret;                                               \
-    __asm__("rorq %1, %0" : "=r"(ret) : "J"(n), "0"(a) : "cc"); \
-    ret;                                                        \
-  })
-#elif(defined(_ARCH_PPC) && defined(__64BIT__)) || defined(_ARCH_PPC64)
-#define ROTR(a, n)                                             \
-  ({                                                           \
-    uint64_t ret;                                              \
-    __asm__("rotrdi %0, %1, %2" : "=r"(ret) : "r"(a), "K"(n)); \
-    ret;                                                       \
-  })
-#elif defined(__aarch64__)
-#define ROTR(a, n)                                          \
-  ({                                                        \
-    uint64_t ret;                                           \
-    __asm__("ror %0, %1, %2" : "=r"(ret) : "r"(a), "I"(n)); \
-    ret;                                                    \
-  })
-#endif
-#elif defined(_MSC_VER) && defined(_WIN64)
-#pragma intrinsic(_rotr64)
-#define ROTR(a, n) _rotr64((a), n)
-#endif
-
-#ifndef ROTR
-#define ROTR(x, s) (((x) >> s) | (x) << (64 - s))
-#endif
-
-#define Sigma0(x) (ROTR((x), 28) ^ ROTR((x), 34) ^ ROTR((x), 39))
-#define Sigma1(x) (ROTR((x), 14) ^ ROTR((x), 18) ^ ROTR((x), 41))
-#define sigma0(x) (ROTR((x), 1) ^ ROTR((x), 8) ^ ((x) >> 7))
-#define sigma1(x) (ROTR((x), 19) ^ ROTR((x), 61) ^ ((x) >> 6))
+#define Sigma0(x)                                        \
+  (CRYPTO_rotr_u64((x), 28) ^ CRYPTO_rotr_u64((x), 34) ^ \
+   CRYPTO_rotr_u64((x), 39))
+#define Sigma1(x)                                        \
+  (CRYPTO_rotr_u64((x), 14) ^ CRYPTO_rotr_u64((x), 18) ^ \
+   CRYPTO_rotr_u64((x), 41))
+#define sigma0(x) \
+  (CRYPTO_rotr_u64((x), 1) ^ CRYPTO_rotr_u64((x), 8) ^ ((x) >> 7))
+#define sigma1(x) \
+  (CRYPTO_rotr_u64((x), 19) ^ CRYPTO_rotr_u64((x), 61) ^ ((x) >> 6))
 
 #define Ch(x, y, z) (((x) & (y)) ^ ((~(x)) & (z)))
 #define Maj(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
@@ -525,7 +500,6 @@ static void sha512_block_data_order(uint64_t *state, const uint8_t *in,
 
 #endif  // !SHA512_ASM
 
-#undef ROTR
 #undef Sigma0
 #undef Sigma1
 #undef sigma0

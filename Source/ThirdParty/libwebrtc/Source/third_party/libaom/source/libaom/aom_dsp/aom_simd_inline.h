@@ -18,4 +18,7 @@
 #define SIMD_INLINE static AOM_FORCE_INLINE
 #endif
 
+#define SIMD_CLAMP(value, min, max) \
+  ((value) > (max) ? (max) : (value) < (min) ? (min) : (value))
+
 #endif  // AOM_AOM_DSP_AOM_SIMD_INLINE_H_

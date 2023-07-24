@@ -166,6 +166,8 @@ private:
     Seconds statsLogInterval(Seconds) const;
 #endif
 
+    String trackIdFromSDPMedia(const GstSDPMedia&);
+
     HashMap<String, RealtimeMediaSource::Type> m_mediaForMid;
 
     GStreamerPeerConnectionBackend& m_peerConnectionBackend;

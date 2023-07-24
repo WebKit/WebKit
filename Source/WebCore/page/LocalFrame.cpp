@@ -1063,11 +1063,11 @@ FloatSize LocalFrame::screenSize() const
         return defaultSize;
 
     RefPtr loader = document->loader();
-    if (!loader || !loader->isLoadingInHeadlessMode())
+    if (!loader || !loader->fingerprintingProtectionsEnabled())
         return defaultSize;
 
     if (auto* page = this->page())
-        return page->chrome().client().screenSizeForHeadlessMode(*this, defaultSize);
+        return page->chrome().client().screenSizeForFingerprintingProtections(*this, defaultSize);
 
     return defaultSize;
 }

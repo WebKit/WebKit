@@ -26,10 +26,13 @@
 
 namespace WebCore {
 
-class AudioDestinationGStreamer : public AudioDestination {
+class AudioDestinationGStreamer : public AudioDestination, public RefCounted<AudioDestinationGStreamer> {
 public:
     AudioDestinationGStreamer(AudioIOCallback&, unsigned long numberOfOutputChannels, float sampleRate);
     virtual ~AudioDestinationGStreamer();
+
+    void ref() const final { return RefCounted<AudioDestinationGStreamer>::ref(); }
+    void deref() const final { return RefCounted<AudioDestinationGStreamer>::deref(); }
 
     WEBCORE_EXPORT void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) final;
     WEBCORE_EXPORT void stop(CompletionHandler<void(bool)>&&) final;

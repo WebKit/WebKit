@@ -103,6 +103,11 @@ CSSStyleSheet* StyleSheetList::namedItem(const AtomString& name) const
     return nullptr;
 }
 
+bool StyleSheetList::isSupportedPropertyName(const AtomString& name) const
+{
+    return namedItem(name);
+}
+
 Vector<AtomString> StyleSheetList::supportedPropertyNames()
 {
     // FIXME: Should be implemented.

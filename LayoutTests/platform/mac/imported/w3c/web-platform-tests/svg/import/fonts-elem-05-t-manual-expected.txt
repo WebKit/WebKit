@@ -23,9 +23,9 @@ layer at (0,0) size 800x600
           RenderSVGRect {rect} at (0,0) size 7x7 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
       RenderSVGContainer {g} at (33,133) size 701x274 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,120.00)}]
         RenderSVGContainer {g} at (33,133) size 701x74
-          RenderSVGText {text} at (0,-13) size 175x17 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 175x16
-              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 30 width 174.10: "horiz-origin-x unspecified (0)"
+          RenderSVGText {text} at (0,-13) size 177x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 177x16
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 30 width 176.63: "horiz-origin-x unspecified (0)"
           RenderSVGContainer {use} at (426,133) size 14x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
             RenderSVGContainer {g} at (426,133) size 14x74
               RenderSVGPath {line} at (432,133) size 3x67 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-40.00]
@@ -46,9 +46,9 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (0,0) size 180x31
               chunk 1 text run 1 at (240.00,0.00) startOffset 0 endOffset 4 width 180.00: "1234"
         RenderSVGContainer {g} at (33,233) size 701x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
-          RenderSVGText {text} at (0,-13) size 111x17 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 111x16
-              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 18 width 110.84: "horiz-origin-x=500"
+          RenderSVGText {text} at (0,-13) size 113x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 113x16
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 18 width 112.44: "horiz-origin-x=500"
           RenderSVGContainer {use} at (426,233) size 34x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
             RenderSVGContainer {g} at (426,233) size 34x74
               RenderSVGPath {line} at (432,233) size 3x67 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-40.00]
@@ -77,9 +77,9 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (0,0) size 180x31
               chunk 1 text run 1 at (240.00,0.00) startOffset 0 endOffset 4 width 180.00: "1234"
         RenderSVGContainer {g} at (33,333) size 701x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
-          RenderSVGText {text} at (0,-13) size 180x17 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 180x16
-              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 28 width 179.90: "horiz-adv-x=1000 but ignored"
+          RenderSVGText {text} at (0,-13) size 183x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 183x16
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 28 width 182.51: "horiz-adv-x=1000 but ignored"
           RenderSVGContainer {use} at (426,333) size 59x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
             RenderSVGContainer {g} at (426,333) size 59x74
               RenderSVGPath {line} at (432,333) size 3x67 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-40.00]
@@ -107,8 +107,8 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (240,-31) size 180x32 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 180x31
               chunk 1 text run 1 at (240.00,0.00) startOffset 0 endOffset 4 width 180.00: "1234"
-    RenderSVGContainer {g} at (16,517) size 381x62
-      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 229x37
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.7 $"
+    RenderSVGContainer {g} at (16,517) size 384x62
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

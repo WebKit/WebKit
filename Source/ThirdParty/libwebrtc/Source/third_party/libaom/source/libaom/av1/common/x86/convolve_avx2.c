@@ -13,16 +13,16 @@
 
 #include "config/av1_rtcd.h"
 
+#include "third_party/SVT-AV1/convolve_avx2.h"
+
 #include "aom_dsp/aom_dsp_common.h"
-#include "aom_dsp/x86/convolve_common_intrin.h"
 #include "aom_dsp/x86/convolve_avx2.h"
+#include "aom_dsp/x86/convolve_common_intrin.h"
 #include "aom_dsp/x86/synonyms.h"
 
-void av1_convolve_y_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
-                            int dst_stride, int w, int h,
-                            const InterpFilterParams *filter_params_y,
-                            const int subpel_y_qn) {
-  int i, j, vert_tap = SUBPEL_TAPS;
+static AOM_INLINE void av1_convolve_y_sr_general_avx2(
+    const uint8_t *src, int src_stride, uint8_t *dst, int dst_stride, int w,
+    int h, const InterpFilterParams *filter_params_y, const int subpel_y_qn) {
   // right shift is F-1 because we are already dividing
   // filter co-efficients by 2
   const int right_shift_bits = (FILTER_BITS - 1);
@@ -32,16 +32,7 @@ void av1_convolve_y_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
   __m256i coeffs[6], s[12];
   __m128i d[10];
 
-  // Condition for checking valid vert_filt taps
-  const int16_t *const filter = av1_get_interp_filter_subpel_kernel(
-      filter_params_y, subpel_y_qn & SUBPEL_MASK);
-  if (filter_params_y->taps == 12) {
-    vert_tap = 12;
-  } else if (!(filter[0] | filter[1] | filter[6] | filter[7])) {
-    vert_tap = 4;
-  } else if (!(filter[0] | filter[7])) {
-    vert_tap = 6;
-  }
+  int i, vert_tap = get_filter_tap(filter_params_y, subpel_y_qn);
 
   if (vert_tap == 6)
     prepare_coeffs_6t_lowbd(filter_params_y, subpel_y_qn, coeffs);
@@ -55,7 +46,7 @@ void av1_convolve_y_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
   if (vert_tap == 4) {
     const int fo_vert = 1;
     const uint8_t *const src_ptr = src - fo_vert * src_stride;
-    for (j = 0; j < w; j += 16) {
+    for (int j = 0; j < w; j += 16) {
       const uint8_t *data = &src_ptr[j];
       d[0] = _mm_loadu_si128((__m128i *)(data + 0 * src_stride));
       d[1] = _mm_loadu_si128((__m128i *)(data + 1 * src_stride));
@@ -150,7 +141,7 @@ void av1_convolve_y_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
     const int fo_vert = vert_tap / 2 - 1;
     const uint8_t *const src_ptr = src - fo_vert * src_stride;
 
-    for (j = 0; j < w; j += 16) {
+    for (int j = 0; j < w; j += 16) {
       const uint8_t *data = &src_ptr[j];
       __m256i src6;
 
@@ -255,7 +246,7 @@ void av1_convolve_y_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
     right_shift = _mm_cvtsi32_si128(FILTER_BITS);
     right_shift_const = _mm256_set1_epi32((1 << FILTER_BITS) >> 1);
 
-    for (j = 0; j < w; j += 8) {
+    for (int j = 0; j < w; j += 8) {
       const uint8_t *data = &src_ptr[j];
       __m256i src10;
 
@@ -403,7 +394,7 @@ void av1_convolve_y_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
     const int fo_vert = filter_params_y->taps / 2 - 1;
     const uint8_t *const src_ptr = src - fo_vert * src_stride;
 
-    for (j = 0; j < w; j += 16) {
+    for (int j = 0; j < w; j += 16) {
       const uint8_t *data = &src_ptr[j];
       __m256i src6;
 
@@ -517,18 +508,33 @@ void av1_convolve_y_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
   }
 }
 
-void av1_convolve_x_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
-                            int dst_stride, int w, int h,
-                            const InterpFilterParams *filter_params_x,
-                            const int subpel_x_qn,
-                            ConvolveParams *conv_params) {
+void av1_convolve_y_sr_avx2(const uint8_t *src, int32_t src_stride,
+                            uint8_t *dst, int32_t dst_stride, int32_t w,
+                            int32_t h,
+                            const InterpFilterParams *filter_params_y,
+                            const int32_t subpel_y_q4) {
+  const int vert_tap = get_filter_tap(filter_params_y, subpel_y_q4);
+
+  if (vert_tap == 12) {
+    av1_convolve_y_sr_general_avx2(src, src_stride, dst, dst_stride, w, h,
+                                   filter_params_y, subpel_y_q4);
+  } else {
+    av1_convolve_y_sr_specialized_avx2(src, src_stride, dst, dst_stride, w, h,
+                                       filter_params_y, subpel_y_q4);
+  }
+}
+
+static AOM_INLINE void av1_convolve_x_sr_general_avx2(
+    const uint8_t *src, int src_stride, uint8_t *dst, int dst_stride, int w,
+    int h, const InterpFilterParams *filter_params_x, const int subpel_x_qn,
+    ConvolveParams *conv_params) {
   const int bits = FILTER_BITS - conv_params->round_0;
   const __m128i round_shift = _mm_cvtsi32_si128(bits);
   __m256i round_0_const =
       _mm256_set1_epi16((1 << (conv_params->round_0 - 1)) >> 1);
   __m128i round_0_shift = _mm_cvtsi32_si128(conv_params->round_0 - 1);
   __m256i round_const = _mm256_set1_epi16((1 << bits) >> 1);
-  int i, horiz_tap = SUBPEL_TAPS;
+  int i, horiz_tap = get_filter_tap(filter_params_x, subpel_x_qn);
 
   assert(bits >= 0);
   assert((FILTER_BITS - conv_params->round_1) >= 0 ||
@@ -538,16 +544,6 @@ void av1_convolve_x_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
   __m256i coeffs[6], filt[4];
   filt[0] = _mm256_load_si256((__m256i const *)(filt_global_avx2));
   filt[1] = _mm256_load_si256((__m256i const *)(filt_global_avx2 + 32));
-
-  const int16_t *const filter = av1_get_interp_filter_subpel_kernel(
-      filter_params_x, subpel_x_qn & SUBPEL_MASK);
-  if (filter_params_x->taps == 12) {
-    horiz_tap = 12;
-  } else if (!(filter[0] | filter[1] | filter[6] | filter[7])) {
-    horiz_tap = 4;
-  } else if (!(filter[0] | filter[7])) {
-    horiz_tap = 6;
-  }
 
   if (horiz_tap == 6)
     prepare_coeffs_6t_lowbd(filter_params_x, subpel_x_qn, coeffs);
@@ -718,32 +714,32 @@ void av1_convolve_x_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
                 (__m128i *)(&src_ptr[i * src_stride + src_stride]))),
             0x20);
         // row0 0..7 row1 0..7
-        const __m256i s_16l = _mm256_unpacklo_epi8(data, v_zero);
+        const __m256i s_16lo = _mm256_unpacklo_epi8(data, v_zero);
         // row0 8..F row1 8..F
-        const __m256i s_16h = _mm256_unpackhi_epi8(data, v_zero);
+        const __m256i s_16hi = _mm256_unpackhi_epi8(data, v_zero);
 
         // row0 00 00 01 01 .. 03 03 row1 00 00 01 01 .. 03 03
-        const __m256i s_ll = _mm256_unpacklo_epi16(s_16l, s_16l);
+        const __m256i s_lolo = _mm256_unpacklo_epi16(s_16lo, s_16lo);
         // row0 04 04 .. 07 07 row1 04 04 .. 07 07
-        const __m256i s_lh = _mm256_unpackhi_epi16(s_16l, s_16l);
+        const __m256i s_lohi = _mm256_unpackhi_epi16(s_16lo, s_16lo);
 
         // row0 08 08 09 09 .. 0B 0B row1 08 08 09 09 .. 0B 0B
-        const __m256i s_hl = _mm256_unpacklo_epi16(s_16h, s_16h);
+        const __m256i s_hilo = _mm256_unpacklo_epi16(s_16hi, s_16hi);
         // row0 0C 0C .. 0F 0F row1 0C 0C .. 0F 0F
-        const __m256i s_hh = _mm256_unpackhi_epi16(s_16h, s_16h);
+        const __m256i s_hihi = _mm256_unpackhi_epi16(s_16hi, s_16hi);
 
         // 00 01 01 02 02 03 03 04 10 11 11 12 12 13 13 14
-        s[0] = _mm256_alignr_epi8(s_lh, s_ll, 2);
+        s[0] = _mm256_alignr_epi8(s_lohi, s_lolo, 2);
         // 02 03 03 04 04 05 05 06 12 13 13 14 14 15 15 16
-        s[1] = _mm256_alignr_epi8(s_lh, s_ll, 10);
+        s[1] = _mm256_alignr_epi8(s_lohi, s_lolo, 10);
         // 04 05 05 06 06 07 07 08 14 15 15 16 16 17 17 18
-        s[2] = _mm256_alignr_epi8(s_hl, s_lh, 2);
+        s[2] = _mm256_alignr_epi8(s_hilo, s_lohi, 2);
         // 06 07 07 08 08 09 09 0A 16 17 17 18 18 19 19 1A
-        s[3] = _mm256_alignr_epi8(s_hl, s_lh, 10);
+        s[3] = _mm256_alignr_epi8(s_hilo, s_lohi, 10);
         // 08 09 09 0A 0A 0B 0B 0C 18 19 19 1A 1A 1B 1B 1C
-        s[4] = _mm256_alignr_epi8(s_hh, s_hl, 2);
+        s[4] = _mm256_alignr_epi8(s_hihi, s_hilo, 2);
         // 0A 0B 0B 0C 0C 0D 0D 0E 1A 1B 1B 1C 1C 1D 1D 1E
-        s[5] = _mm256_alignr_epi8(s_hh, s_hl, 10);
+        s[5] = _mm256_alignr_epi8(s_hihi, s_hilo, 10);
 
         const __m256i res_lo = convolve_12taps(s, coeffs);
 
@@ -788,26 +784,26 @@ void av1_convolve_x_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
                   (__m128i *)(&src_ptr[i * src_stride + j + 4]))),
               0x20);
           // row0 0..7 4..B
-          const __m256i s_16l = _mm256_unpacklo_epi8(data, v_zero);
+          const __m256i s_16lo = _mm256_unpacklo_epi8(data, v_zero);
           // row0 8..F C..13
-          const __m256i s_16h = _mm256_unpackhi_epi8(data, v_zero);
+          const __m256i s_16hi = _mm256_unpackhi_epi8(data, v_zero);
 
           // row0 00 00 01 01 .. 03 03 04 04 05 05 .. 07 07
-          const __m256i s_ll = _mm256_unpacklo_epi16(s_16l, s_16l);
+          const __m256i s_lolo = _mm256_unpacklo_epi16(s_16lo, s_16lo);
           // row0 04 04 .. 07 07 08 08 .. 0B 0B
-          const __m256i s_lh = _mm256_unpackhi_epi16(s_16l, s_16l);
+          const __m256i s_lohi = _mm256_unpackhi_epi16(s_16lo, s_16lo);
 
           // row0 08 08 09 09 .. 0B 0B 0C 0C 0D 0D .. 0F 0F
-          const __m256i s_hl = _mm256_unpacklo_epi16(s_16h, s_16h);
+          const __m256i s_hilo = _mm256_unpacklo_epi16(s_16hi, s_16hi);
           // row0 0C 0C 0D 0D .. 0F 0F 10 10 11 11 .. 13 13
-          const __m256i s_hh = _mm256_unpackhi_epi16(s_16h, s_16h);
+          const __m256i s_hihi = _mm256_unpackhi_epi16(s_16hi, s_16hi);
 
-          s[0] = _mm256_alignr_epi8(s_lh, s_ll, 2);
-          s[1] = _mm256_alignr_epi8(s_lh, s_ll, 10);
-          s[2] = _mm256_alignr_epi8(s_hl, s_lh, 2);
-          s[3] = _mm256_alignr_epi8(s_hl, s_lh, 10);
-          s[4] = _mm256_alignr_epi8(s_hh, s_hl, 2);
-          s[5] = _mm256_alignr_epi8(s_hh, s_hl, 10);
+          s[0] = _mm256_alignr_epi8(s_lohi, s_lolo, 2);
+          s[1] = _mm256_alignr_epi8(s_lohi, s_lolo, 10);
+          s[2] = _mm256_alignr_epi8(s_hilo, s_lohi, 2);
+          s[3] = _mm256_alignr_epi8(s_hilo, s_lohi, 10);
+          s[4] = _mm256_alignr_epi8(s_hihi, s_hilo, 2);
+          s[5] = _mm256_alignr_epi8(s_hihi, s_hilo, 10);
 
           const __m256i res_lo = convolve_12taps(s, coeffs);
 
@@ -898,5 +894,23 @@ void av1_convolve_x_sr_avx2(const uint8_t *src, int src_stride, uint8_t *dst,
         }
       }
     }
+  }
+}
+
+void av1_convolve_x_sr_avx2(const uint8_t *src, int32_t src_stride,
+                            uint8_t *dst, int32_t dst_stride, int32_t w,
+                            int32_t h,
+                            const InterpFilterParams *filter_params_x,
+                            const int32_t subpel_x_q4,
+                            ConvolveParams *conv_params) {
+  const int horz_tap = get_filter_tap(filter_params_x, subpel_x_q4);
+
+  if (horz_tap == 12) {
+    av1_convolve_x_sr_general_avx2(src, src_stride, dst, dst_stride, w, h,
+                                   filter_params_x, subpel_x_q4, conv_params);
+  } else {
+    av1_convolve_x_sr_specialized_avx2(src, src_stride, dst, dst_stride, w, h,
+                                       filter_params_x, subpel_x_q4,
+                                       conv_params);
   }
 }

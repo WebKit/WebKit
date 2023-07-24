@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUCompareFunction.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUCompareFunction.h>
 
 namespace WebCore {
 
@@ -41,25 +41,25 @@ enum class GPUCompareFunction : uint8_t {
     Always,
 };
 
-inline PAL::WebGPU::CompareFunction convertToBacking(GPUCompareFunction compareFunction)
+inline WebGPU::CompareFunction convertToBacking(GPUCompareFunction compareFunction)
 {
     switch (compareFunction) {
     case GPUCompareFunction::Never:
-        return PAL::WebGPU::CompareFunction::Never;
+        return WebGPU::CompareFunction::Never;
     case GPUCompareFunction::Less:
-        return PAL::WebGPU::CompareFunction::Less;
+        return WebGPU::CompareFunction::Less;
     case GPUCompareFunction::Equal:
-        return PAL::WebGPU::CompareFunction::Equal;
+        return WebGPU::CompareFunction::Equal;
     case GPUCompareFunction::LessEqual:
-        return PAL::WebGPU::CompareFunction::LessEqual;
+        return WebGPU::CompareFunction::LessEqual;
     case GPUCompareFunction::Greater:
-        return PAL::WebGPU::CompareFunction::Greater;
+        return WebGPU::CompareFunction::Greater;
     case GPUCompareFunction::NotEqual:
-        return PAL::WebGPU::CompareFunction::NotEqual;
+        return WebGPU::CompareFunction::NotEqual;
     case GPUCompareFunction::GreaterEqual:
-        return PAL::WebGPU::CompareFunction::GreaterEqual;
+        return WebGPU::CompareFunction::GreaterEqual;
     case GPUCompareFunction::Always:
-        return PAL::WebGPU::CompareFunction::Always;
+        return WebGPU::CompareFunction::Always;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

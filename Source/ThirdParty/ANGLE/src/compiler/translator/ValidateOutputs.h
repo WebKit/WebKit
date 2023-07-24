@@ -16,6 +16,7 @@
 namespace sh
 {
 
+class TCompiler;
 class TIntermBlock;
 class TDiagnostics;
 
@@ -23,6 +24,7 @@ class TDiagnostics;
 bool ValidateOutputs(TIntermBlock *root,
                      const TExtensionBehavior &extBehavior,
                      int maxDrawBuffers,
+                     bool usesPixelLocalStorage,
                      TDiagnostics *diagnostics);
 
 }  // namespace sh

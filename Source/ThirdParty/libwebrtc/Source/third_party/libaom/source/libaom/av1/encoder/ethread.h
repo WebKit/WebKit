@@ -23,6 +23,8 @@ typedef struct EncWorkerData {
   struct AV1_COMP *cpi;
   struct ThreadData *td;
   struct ThreadData *original_td;
+  AV1LfSync *lf_sync;
+  LFWorkerData *lf_data;
   int start;
   int thread_id;
 } EncWorkerData;
@@ -70,6 +72,10 @@ void av1_mc_flow_dispenser_mt(AV1_COMP *cpi);
 void av1_tpl_dealloc(AV1TplRowMultiThreadSync *tpl_sync);
 
 #endif  // !CONFIG_REALTIME_ONLY
+
+void av1_calc_mb_wiener_var_mt(AV1_COMP *cpi, int num_workers,
+                               double *sum_rec_distortion,
+                               double *sum_est_rate);
 
 void av1_tf_do_filtering_mt(AV1_COMP *cpi);
 

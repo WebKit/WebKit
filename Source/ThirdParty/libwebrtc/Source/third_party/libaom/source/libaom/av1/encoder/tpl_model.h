@@ -104,20 +104,24 @@ typedef struct TplTxfmStats {
 } TplTxfmStats;
 
 typedef struct TplDepStats {
-  int64_t intra_cost;
-  int64_t inter_cost;
-  int64_t srcrf_dist;
-  int64_t recrf_dist;
-  int64_t cmp_recrf_dist[2];
-  int64_t srcrf_rate;
-  int64_t recrf_rate;
   int64_t srcrf_sse;
-  int64_t cmp_recrf_rate[2];
+  int64_t srcrf_dist;
+  int64_t recrf_sse;
+  int64_t recrf_dist;
+  int64_t intra_sse;
+  int64_t intra_dist;
+  int64_t cmp_recrf_dist[2];
   int64_t mc_dep_rate;
   int64_t mc_dep_dist;
-  int_mv mv[INTER_REFS_PER_FRAME];
-  int ref_frame_index[2];
   int64_t pred_error[INTER_REFS_PER_FRAME];
+  int32_t intra_cost;
+  int32_t inter_cost;
+  int32_t srcrf_rate;
+  int32_t recrf_rate;
+  int32_t intra_rate;
+  int32_t cmp_recrf_rate[2];
+  int_mv mv[INTER_REFS_PER_FRAME];
+  int8_t ref_frame_index[2];
 } TplDepStats;
 
 typedef struct TplDepFrame {

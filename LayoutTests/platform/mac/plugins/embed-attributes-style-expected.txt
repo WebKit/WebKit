@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           text run at (405,0) width 372: "Previous versions of WebKit supported valign and border,"
           text run at (0,18) width 44: "which "
           text run at (43,18) width 458: "didn't match IE and FF. The only special support should be for 'hidden.'"
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {DIV} at (0,62) size 784x0
       RenderBlock {DIV} at (0,62) size 784x104
         RenderText {#text} at (50,86) size 126x18

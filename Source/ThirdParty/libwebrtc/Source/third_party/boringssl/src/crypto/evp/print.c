@@ -64,8 +64,25 @@
 #include "../fipsmodule/rsa/internal.h"
 
 
-static int bn_print(BIO *bp, const char *number, const BIGNUM *num,
-                    uint8_t *buf, int off) {
+static int print_hex(BIO *bp, const uint8_t *data, size_t len, int off) {
+  for (size_t i = 0; i < len; i++) {
+    if ((i % 15) == 0) {
+      if (BIO_puts(bp, "\n") <= 0 ||  //
+          !BIO_indent(bp, off + 4, 128)) {
+        return 0;
+      }
+    }
+    if (BIO_printf(bp, "%02x%s", data[i], (i + 1 == len) ? "" : ":") <= 0) {
+      return 0;
+    }
+  }
+  if (BIO_write(bp, "\n", 1) <= 0) {
+    return 0;
+  }
+  return 1;
+}
+
+static int bn_print(BIO *bp, const char *name, const BIGNUM *num, int off) {
   if (num == NULL) {
     return 1;
   }
@@ -74,287 +91,162 @@ static int bn_print(BIO *bp, const char *number, const BIGNUM *num,
     return 0;
   }
   if (BN_is_zero(num)) {
-    if (BIO_printf(bp, "%s 0\n", number) <= 0) {
+    if (BIO_printf(bp, "%s 0\n", name) <= 0) {
       return 0;
     }
     return 1;
   }
 
-  if (BN_num_bytes(num) <= sizeof(long)) {
+  uint64_t u64;
+  if (BN_get_u64(num, &u64)) {
     const char *neg = BN_is_negative(num) ? "-" : "";
-    if (BIO_printf(bp, "%s %s%lu (%s0x%lx)\n", number, neg,
-                   (unsigned long)num->d[0], neg,
-                   (unsigned long)num->d[0]) <= 0) {
-      return 0;
-    }
+    return BIO_printf(bp, "%s %s%" PRIu64 " (%s0x%" PRIx64 ")\n", name, neg,
+                      u64, neg, u64) > 0;
+  }
+
+  if (BIO_printf(bp, "%s%s", name,
+                  (BN_is_negative(num)) ? " (Negative)" : "") <= 0) {
+    return 0;
+  }
+
+  // Print |num| in hex, adding a leading zero, as in ASN.1, if the high bit
+  // is set.
+  //
+  // TODO(davidben): Do we need to do this? We already print "(Negative)" above
+  // and negative values are never valid in keys anyway.
+  size_t len = BN_num_bytes(num);
+  uint8_t *buf = OPENSSL_malloc(len + 1);
+  if (buf == NULL) {
+    return 0;
+  }
+
+  buf[0] = 0;
+  BN_bn2bin(num, buf + 1);
+  int ret;
+  if (len > 0 && (buf[1] & 0x80) != 0) {
+    // Print the whole buffer.
+    ret = print_hex(bp, buf, len + 1, off);
   } else {
-    buf[0] = 0;
-    if (BIO_printf(bp, "%s%s", number,
-                   (BN_is_negative(num)) ? " (Negative)" : "") <= 0) {
-      return 0;
-    }
-    int n = BN_bn2bin(num, &buf[1]);
-
-    if (buf[1] & 0x80) {
-      n++;
-    } else {
-      buf++;
-    }
-
-    int i;
-    for (i = 0; i < n; i++) {
-      if ((i % 15) == 0) {
-        if (BIO_puts(bp, "\n") <= 0 ||
-            !BIO_indent(bp, off + 4, 128)) {
-          return 0;
-        }
-      }
-      if (BIO_printf(bp, "%02x%s", buf[i], ((i + 1) == n) ? "" : ":") <= 0) {
-        return 0;
-      }
-    }
-    if (BIO_write(bp, "\n", 1) <= 0) {
-      return 0;
-    }
+    // Skip the leading zero.
+    ret = print_hex(bp, buf + 1, len, off);
   }
-  return 1;
-}
-
-static void update_buflen(const BIGNUM *b, size_t *pbuflen) {
-  if (!b) {
-    return;
-  }
-
-  size_t len = BN_num_bytes(b);
-  if (*pbuflen < len) {
-    *pbuflen = len;
-  }
+  OPENSSL_free(buf);
+  return ret;
 }
 
 // RSA keys.
 
 static int do_rsa_print(BIO *out, const RSA *rsa, int off,
                         int include_private) {
-  const char *s, *str;
-  uint8_t *m = NULL;
-  int ret = 0, mod_len = 0;
-  size_t buf_len = 0;
-
-  update_buflen(rsa->n, &buf_len);
-  update_buflen(rsa->e, &buf_len);
-
-  if (include_private) {
-    update_buflen(rsa->d, &buf_len);
-    update_buflen(rsa->p, &buf_len);
-    update_buflen(rsa->q, &buf_len);
-    update_buflen(rsa->dmp1, &buf_len);
-    update_buflen(rsa->dmq1, &buf_len);
-    update_buflen(rsa->iqmp, &buf_len);
-  }
-
-  m = (uint8_t *)OPENSSL_malloc(buf_len + 10);
-  if (m == NULL) {
-    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
-    goto err;
-  }
-
+  int mod_len = 0;
   if (rsa->n != NULL) {
     mod_len = BN_num_bits(rsa->n);
   }
 
   if (!BIO_indent(out, off, 128)) {
-    goto err;
+    return 0;
   }
 
+  const char *s, *str;
   if (include_private && rsa->d) {
     if (BIO_printf(out, "Private-Key: (%d bit)\n", mod_len) <= 0) {
-      goto err;
+      return 0;
     }
     str = "modulus:";
     s = "publicExponent:";
   } else {
     if (BIO_printf(out, "Public-Key: (%d bit)\n", mod_len) <= 0) {
-      goto err;
+      return 0;
     }
     str = "Modulus:";
     s = "Exponent:";
   }
-  if (!bn_print(out, str, rsa->n, m, off) ||
-      !bn_print(out, s, rsa->e, m, off)) {
-    goto err;
+  if (!bn_print(out, str, rsa->n, off) ||
+      !bn_print(out, s, rsa->e, off)) {
+    return 0;
   }
 
   if (include_private) {
-    if (!bn_print(out, "privateExponent:", rsa->d, m, off) ||
-        !bn_print(out, "prime1:", rsa->p, m, off) ||
-        !bn_print(out, "prime2:", rsa->q, m, off) ||
-        !bn_print(out, "exponent1:", rsa->dmp1, m, off) ||
-        !bn_print(out, "exponent2:", rsa->dmq1, m, off) ||
-        !bn_print(out, "coefficient:", rsa->iqmp, m, off)) {
-      goto err;
+    if (!bn_print(out, "privateExponent:", rsa->d, off) ||
+        !bn_print(out, "prime1:", rsa->p, off) ||
+        !bn_print(out, "prime2:", rsa->q, off) ||
+        !bn_print(out, "exponent1:", rsa->dmp1, off) ||
+        !bn_print(out, "exponent2:", rsa->dmq1, off) ||
+        !bn_print(out, "coefficient:", rsa->iqmp, off)) {
+      return 0;
     }
   }
-  ret = 1;
 
-err:
-  OPENSSL_free(m);
-  return ret;
+  return 1;
 }
 
-static int rsa_pub_print(BIO *bp, const EVP_PKEY *pkey, int indent,
-                         ASN1_PCTX *ctx) {
-  return do_rsa_print(bp, pkey->pkey.rsa, indent, 0);
+static int rsa_pub_print(BIO *bp, const EVP_PKEY *pkey, int indent) {
+  return do_rsa_print(bp, EVP_PKEY_get0_RSA(pkey), indent, 0);
 }
 
-static int rsa_priv_print(BIO *bp, const EVP_PKEY *pkey, int indent,
-                          ASN1_PCTX *ctx) {
-  return do_rsa_print(bp, pkey->pkey.rsa, indent, 1);
+static int rsa_priv_print(BIO *bp, const EVP_PKEY *pkey, int indent) {
+  return do_rsa_print(bp, EVP_PKEY_get0_RSA(pkey), indent, 1);
 }
 
 
 // DSA keys.
 
 static int do_dsa_print(BIO *bp, const DSA *x, int off, int ptype) {
-  uint8_t *m = NULL;
-  int ret = 0;
-  size_t buf_len = 0;
-  const char *ktype = NULL;
-
-  const BIGNUM *priv_key, *pub_key;
-
-  priv_key = NULL;
+  const BIGNUM *priv_key = NULL;
   if (ptype == 2) {
     priv_key = x->priv_key;
   }
 
-  pub_key = NULL;
+  const BIGNUM *pub_key = NULL;
   if (ptype > 0) {
     pub_key = x->pub_key;
   }
 
-  ktype = "DSA-Parameters";
+  const char *ktype = "DSA-Parameters";
   if (ptype == 2) {
     ktype = "Private-Key";
   } else if (ptype == 1) {
     ktype = "Public-Key";
   }
 
-  update_buflen(x->p, &buf_len);
-  update_buflen(x->q, &buf_len);
-  update_buflen(x->g, &buf_len);
-  update_buflen(priv_key, &buf_len);
-  update_buflen(pub_key, &buf_len);
-
-  m = (uint8_t *)OPENSSL_malloc(buf_len + 10);
-  if (m == NULL) {
-    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
-    goto err;
+  if (!BIO_indent(bp, off, 128) ||
+      BIO_printf(bp, "%s: (%u bit)\n", ktype, BN_num_bits(x->p)) <= 0 ||
+      // |priv_key| and |pub_key| may be NULL, in which case |bn_print| will
+      // silently skip them.
+      !bn_print(bp, "priv:", priv_key, off) ||
+      !bn_print(bp, "pub:", pub_key, off) ||
+      !bn_print(bp, "P:", x->p, off) ||
+      !bn_print(bp, "Q:", x->q, off) ||
+      !bn_print(bp, "G:", x->g, off)) {
+    return 0;
   }
 
-  if (priv_key) {
-    if (!BIO_indent(bp, off, 128) ||
-        BIO_printf(bp, "%s: (%d bit)\n", ktype, BN_num_bits(x->p)) <= 0) {
-      goto err;
-    }
-  }
-
-  if (!bn_print(bp, "priv:", priv_key, m, off) ||
-      !bn_print(bp, "pub: ", pub_key, m, off) ||
-      !bn_print(bp, "P:   ", x->p, m, off) ||
-      !bn_print(bp, "Q:   ", x->q, m, off) ||
-      !bn_print(bp, "G:   ", x->g, m, off)) {
-    goto err;
-  }
-  ret = 1;
-
-err:
-  OPENSSL_free(m);
-  return ret;
+  return 1;
 }
 
-static int dsa_param_print(BIO *bp, const EVP_PKEY *pkey, int indent,
-                           ASN1_PCTX *ctx) {
-  return do_dsa_print(bp, pkey->pkey.dsa, indent, 0);
+static int dsa_param_print(BIO *bp, const EVP_PKEY *pkey, int indent) {
+  return do_dsa_print(bp, EVP_PKEY_get0_DSA(pkey), indent, 0);
 }
 
-static int dsa_pub_print(BIO *bp, const EVP_PKEY *pkey, int indent,
-                         ASN1_PCTX *ctx) {
-  return do_dsa_print(bp, pkey->pkey.dsa, indent, 1);
+static int dsa_pub_print(BIO *bp, const EVP_PKEY *pkey, int indent) {
+  return do_dsa_print(bp, EVP_PKEY_get0_DSA(pkey), indent, 1);
 }
 
-static int dsa_priv_print(BIO *bp, const EVP_PKEY *pkey, int indent,
-                          ASN1_PCTX *ctx) {
-  return do_dsa_print(bp, pkey->pkey.dsa, indent, 2);
+static int dsa_priv_print(BIO *bp, const EVP_PKEY *pkey, int indent) {
+  return do_dsa_print(bp, EVP_PKEY_get0_DSA(pkey), indent, 2);
 }
 
 
 // EC keys.
 
 static int do_EC_KEY_print(BIO *bp, const EC_KEY *x, int off, int ktype) {
-  uint8_t *buffer = NULL;
-  const char *ecstr;
-  size_t buf_len = 0, i;
-  int ret = 0, reason = ERR_R_BIO_LIB;
-  BIGNUM *order = NULL;
-  BN_CTX *ctx = NULL;
   const EC_GROUP *group;
-  const EC_POINT *public_key;
-  const BIGNUM *priv_key;
-  uint8_t *pub_key_bytes = NULL;
-  size_t pub_key_bytes_len = 0;
-
   if (x == NULL || (group = EC_KEY_get0_group(x)) == NULL) {
-    reason = ERR_R_PASSED_NULL_PARAMETER;
-    goto err;
+    OPENSSL_PUT_ERROR(EVP, ERR_R_PASSED_NULL_PARAMETER);
+    return 0;
   }
 
-  ctx = BN_CTX_new();
-  if (ctx == NULL) {
-    reason = ERR_R_MALLOC_FAILURE;
-    goto err;
-  }
-
-  if (ktype > 0) {
-    public_key = EC_KEY_get0_public_key(x);
-    if (public_key != NULL) {
-      pub_key_bytes_len = EC_POINT_point2oct(
-          group, public_key, EC_KEY_get_conv_form(x), NULL, 0, ctx);
-      if (pub_key_bytes_len == 0) {
-        reason = ERR_R_MALLOC_FAILURE;
-        goto err;
-      }
-      pub_key_bytes = OPENSSL_malloc(pub_key_bytes_len);
-      if (pub_key_bytes == NULL) {
-        reason = ERR_R_MALLOC_FAILURE;
-        goto err;
-      }
-      pub_key_bytes_len =
-          EC_POINT_point2oct(group, public_key, EC_KEY_get_conv_form(x),
-                             pub_key_bytes, pub_key_bytes_len, ctx);
-      if (pub_key_bytes_len == 0) {
-        reason = ERR_R_MALLOC_FAILURE;
-        goto err;
-      }
-      buf_len = pub_key_bytes_len;
-    }
-  }
-
-  if (ktype == 2) {
-    priv_key = EC_KEY_get0_private_key(x);
-    if (priv_key && (i = (size_t)BN_num_bytes(priv_key)) > buf_len) {
-      buf_len = i;
-    }
-  } else {
-    priv_key = NULL;
-  }
-
-  if (ktype > 0) {
-    buf_len += 10;
-    if ((buffer = OPENSSL_malloc(buf_len)) == NULL) {
-      reason = ERR_R_MALLOC_FAILURE;
-      goto err;
-    }
-  }
+  const char *ecstr;
   if (ktype == 2) {
     ecstr = "Private-Key";
   } else if (ktype == 1) {
@@ -364,62 +256,61 @@ static int do_EC_KEY_print(BIO *bp, const EC_KEY *x, int off, int ktype) {
   }
 
   if (!BIO_indent(bp, off, 128)) {
-    goto err;
+    return 0;
   }
-  order = BN_new();
-  if (order == NULL || !EC_GROUP_get_order(group, order, NULL) ||
-      BIO_printf(bp, "%s: (%d bit)\n", ecstr, BN_num_bits(order)) <= 0) {
-    goto err;
+  int curve_name = EC_GROUP_get_curve_name(group);
+  if (BIO_printf(bp, "%s: (%s)\n", ecstr,
+                 curve_name == NID_undef
+                     ? "unknown curve"
+                     : EC_curve_nid2nist(curve_name)) <= 0) {
+    return 0;
   }
 
-  if ((priv_key != NULL) &&
-      !bn_print(bp, "priv:", priv_key, buffer, off)) {
-    goto err;
+  if (ktype == 2) {
+    const BIGNUM *priv_key = EC_KEY_get0_private_key(x);
+    if (priv_key != NULL &&  //
+        !bn_print(bp, "priv:", priv_key, off)) {
+      return 0;
+    }
   }
-  if (pub_key_bytes != NULL) {
-    BIO_hexdump(bp, pub_key_bytes, pub_key_bytes_len, off);
-  }
-  // TODO(fork): implement
-  /*
-  if (!ECPKParameters_print(bp, group, off))
-    goto err; */
-  ret = 1;
 
-err:
-  if (!ret) {
-    OPENSSL_PUT_ERROR(EVP, reason);
+  if (ktype > 0 && EC_KEY_get0_public_key(x) != NULL) {
+    uint8_t *pub = NULL;
+    size_t pub_len = EC_KEY_key2buf(x, EC_KEY_get_conv_form(x), &pub, NULL);
+    if (pub_len == 0) {
+      return 0;
+    }
+    int ret = BIO_indent(bp, off, 128) &&  //
+              BIO_puts(bp, "pub:") > 0 &&  //
+              print_hex(bp, pub, pub_len, off);
+    OPENSSL_free(pub);
+    if (!ret) {
+      return 0;
+    }
   }
-  OPENSSL_free(pub_key_bytes);
-  BN_free(order);
-  BN_CTX_free(ctx);
-  OPENSSL_free(buffer);
-  return ret;
+
+  return 1;
 }
 
-static int eckey_param_print(BIO *bp, const EVP_PKEY *pkey, int indent,
-                             ASN1_PCTX *ctx) {
-  return do_EC_KEY_print(bp, pkey->pkey.ec, indent, 0);
+static int eckey_param_print(BIO *bp, const EVP_PKEY *pkey, int indent) {
+  return do_EC_KEY_print(bp, EVP_PKEY_get0_EC_KEY(pkey), indent, 0);
 }
 
-static int eckey_pub_print(BIO *bp, const EVP_PKEY *pkey, int indent,
-                           ASN1_PCTX *ctx) {
-  return do_EC_KEY_print(bp, pkey->pkey.ec, indent, 1);
+static int eckey_pub_print(BIO *bp, const EVP_PKEY *pkey, int indent) {
+  return do_EC_KEY_print(bp, EVP_PKEY_get0_EC_KEY(pkey), indent, 1);
 }
 
 
-static int eckey_priv_print(BIO *bp, const EVP_PKEY *pkey, int indent,
-                            ASN1_PCTX *ctx) {
-  return do_EC_KEY_print(bp, pkey->pkey.ec, indent, 2);
+static int eckey_priv_print(BIO *bp, const EVP_PKEY *pkey, int indent) {
+  return do_EC_KEY_print(bp, EVP_PKEY_get0_EC_KEY(pkey), indent, 2);
 }
 
 
 typedef struct {
   int type;
-  int (*pub_print)(BIO *out, const EVP_PKEY *pkey, int indent, ASN1_PCTX *pctx);
-  int (*priv_print)(BIO *out, const EVP_PKEY *pkey, int indent,
-                    ASN1_PCTX *pctx);
-  int (*param_print)(BIO *out, const EVP_PKEY *pkey, int indent,
-                     ASN1_PCTX *pctx);
+  int (*pub_print)(BIO *out, const EVP_PKEY *pkey, int indent);
+  int (*priv_print)(BIO *out, const EVP_PKEY *pkey, int indent);
+  int (*param_print)(BIO *out, const EVP_PKEY *pkey, int indent);
 } EVP_PKEY_PRINT_METHOD;
 
 static EVP_PKEY_PRINT_METHOD kPrintMethods[] = {
@@ -463,27 +354,27 @@ static int print_unsupported(BIO *out, const EVP_PKEY *pkey, int indent,
 
 int EVP_PKEY_print_public(BIO *out, const EVP_PKEY *pkey, int indent,
                           ASN1_PCTX *pctx) {
-  EVP_PKEY_PRINT_METHOD *method = find_method(pkey->type);
+  EVP_PKEY_PRINT_METHOD *method = find_method(EVP_PKEY_id(pkey));
   if (method != NULL && method->pub_print != NULL) {
-    return method->pub_print(out, pkey, indent, pctx);
+    return method->pub_print(out, pkey, indent);
   }
   return print_unsupported(out, pkey, indent, "Public Key");
 }
 
 int EVP_PKEY_print_private(BIO *out, const EVP_PKEY *pkey, int indent,
                            ASN1_PCTX *pctx) {
-  EVP_PKEY_PRINT_METHOD *method = find_method(pkey->type);
+  EVP_PKEY_PRINT_METHOD *method = find_method(EVP_PKEY_id(pkey));
   if (method != NULL && method->priv_print != NULL) {
-    return method->priv_print(out, pkey, indent, pctx);
+    return method->priv_print(out, pkey, indent);
   }
   return print_unsupported(out, pkey, indent, "Private Key");
 }
 
 int EVP_PKEY_print_params(BIO *out, const EVP_PKEY *pkey, int indent,
                           ASN1_PCTX *pctx) {
-  EVP_PKEY_PRINT_METHOD *method = find_method(pkey->type);
+  EVP_PKEY_PRINT_METHOD *method = find_method(EVP_PKEY_id(pkey));
   if (method != NULL && method->param_print != NULL) {
-    return method->param_print(out, pkey, indent, pctx);
+    return method->param_print(out, pkey, indent);
   }
   return print_unsupported(out, pkey, indent, "Parameters");
 }

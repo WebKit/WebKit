@@ -50,16 +50,24 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPagePr
 {
 }
 
-DrawingAreaProxy::~DrawingAreaProxy()
-{
-    for (auto& process : m_processesWithRegisteredDrawingAreaProxyMessageReceiver)
-        process->removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_identifier);
-}
+DrawingAreaProxy::~DrawingAreaProxy() = default;
 
 void DrawingAreaProxy::startReceivingMessages(WebProcessProxy& process)
 {
-    process.addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_identifier, *this);
-    m_processesWithRegisteredDrawingAreaProxyMessageReceiver.append(process);
+    for (auto& name : messageReceiverNames())
+        process.addMessageReceiver(name, m_identifier, *this);
+}
+
+void DrawingAreaProxy::stopReceivingMessages(WebProcessProxy& process)
+{
+    for (auto& name : messageReceiverNames())
+        process.removeMessageReceiver(name, m_identifier);
+}
+
+std::span<IPC::ReceiverName> DrawingAreaProxy::messageReceiverNames() const
+{
+    static std::array<IPC::ReceiverName, 1> name { Messages::DrawingAreaProxy::messageReceiverName() };
+    return { name };
 }
 
 DelegatedScrollingMode DrawingAreaProxy::delegatedScrollingMode() const

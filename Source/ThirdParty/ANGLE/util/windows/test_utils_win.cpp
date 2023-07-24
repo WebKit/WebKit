@@ -10,7 +10,6 @@
 
 #include <aclapi.h>
 #include <stdarg.h>
-#include <versionhelpers.h>
 #include <windows.h>
 #include <array>
 #include <iostream>
@@ -18,6 +17,7 @@
 
 #include "anglebase/no_destructor.h"
 #include "common/angleutils.h"
+#include "common/platform_helpers.h"
 
 namespace angle
 {
@@ -126,7 +126,7 @@ bool ShouldUseJobObjects()
 #if defined(ANGLE_ENABLE_WINDOWS_UWP)
     return false;
 #else
-    return (::IsWindows10OrGreater());
+    return IsWindows10OrLater();
 #endif
 }
 

@@ -39,19 +39,6 @@ namespace WTF {
 
 using namespace Unicode;
 
-static LazyNeverDestroyed<AtomString> s_emptyString;
-static LazyNeverDestroyed<AtomString> s_nullString;
-
-const String& nullString() { return s_nullString.get(); }
-const String& emptyString() { return s_emptyString.get(); }
-
-void String::initializeStrings()
-{
-    StringImpl::initializeEmptyString();
-    s_emptyString.construct(StringImpl::empty());
-    s_nullString.construct(static_cast<StringImpl*>(nullptr));
-}
-
 // Construct a string with UTF-16 data.
 String::String(const UChar* characters, unsigned length)
     : m_impl(characters ? RefPtr { StringImpl::create(characters, length) } : nullptr)
@@ -166,30 +153,10 @@ String String::convertToUppercaseWithLocale(const AtomString& localeIdentifier) 
     return m_impl ? m_impl->convertToUppercaseWithLocale(localeIdentifier) : String { };
 }
 
-String String::stripWhiteSpace() const
+String String::trim(CodeUnitMatchFunction predicate) const
 {
     // FIXME: Should this function, and the many others like it, be inlined?
-    // FIXME: This function needs a new name. For one thing, "whitespace" is a single
-    // word so the "s" should be lowercase. For another, it's not clear from this name
-    // that the function uses the Unicode definition of whitespace. Most WebKit callers
-    // don't want that and eventually we should consider deleting this.
-    return m_impl ? m_impl->stripWhiteSpace() : String { };
-}
-
-String String::stripLeadingAndTrailingCharacters(CodeUnitMatchFunction predicate) const
-{
-    // FIXME: Should this function, and the many others like it, be inlined?
-    return m_impl ? m_impl->stripLeadingAndTrailingCharacters(predicate) : String { };
-}
-
-String String::simplifyWhiteSpace() const
-{
-    // FIXME: Should this function, and the many others like it, be inlined?
-    // FIXME: This function needs a new name. For one thing, "whitespace" is a single
-    // word so the "s" should be lowercase. For another, it's not clear from this name
-    // that the function uses the Unicode definition of whitespace. Most WebKit callers
-    // don't want that and eventually we should consider deleting this.
-    return m_impl ? m_impl->simplifyWhiteSpace() : String { };
+    return m_impl ? m_impl->trim(predicate) : String { };
 }
 
 String String::simplifyWhiteSpace(CodeUnitMatchFunction isWhiteSpace) const
@@ -640,6 +607,9 @@ float charactersToFloat(const UChar* data, size_t length, size_t& parsedLength)
     // FIXME: This will return ok even when the string fits into a double but not a float.
     return static_cast<float>(toDoubleType<UChar, TrailingJunkPolicy::Allow>(data, length, nullptr, parsedLength));
 }
+
+const StaticString nullStringData { nullptr };
+const StaticString emptyStringData { &StringImpl::s_emptyAtomString };
 
 } // namespace WTF
 

@@ -127,11 +127,6 @@ TextureMapperGLData::~TextureMapperGLData()
 {
     for (auto& entry : m_vbos)
         glDeleteBuffers(1, &entry.value);
-
-#if !USE(OPENGL_ES)
-    if (GLContext::current()->version() >= 320 && m_vao)
-        glDeleteVertexArrays(1, &m_vao);
-#endif
 }
 
 void TextureMapperGLData::initializeStencil()
@@ -164,11 +159,6 @@ GLuint TextureMapperGLData::getStaticVBO(GLenum target, GLsizeiptr size, const v
 
 GLuint TextureMapperGLData::getVAO()
 {
-#if !USE(OPENGL_ES)
-    if (GLContext::current()->version() >= 320 && !m_vao)
-        glGenVertexArrays(1, &m_vao);
-#endif
-
     return m_vao;
 }
 
@@ -211,17 +201,11 @@ void TextureMapperGL::beginPainting(PaintFlags flags, BitmapTexture* surface)
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &data().targetFrameBuffer);
     data().PaintFlags = flags;
     bindSurface(surface);
-
-#if !USE(OPENGL_ES)
-    if (GLContext::current()->version() >= 320) {
-        glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &data().previousVAO);
-        glBindVertexArray(data().getVAO());
-    }
-#endif
 }
 
 void TextureMapperGL::endPainting()
 {
+    glBindFramebuffer(GL_FRAMEBUFFER, data().targetFrameBuffer);
     if (data().didModifyStencil) {
         glClearStencil(1);
         glClear(GL_STENCIL_BUFFER_BIT);
@@ -239,11 +223,6 @@ void TextureMapperGL::endPainting()
         glEnable(GL_DEPTH_TEST);
     else
         glDisable(GL_DEPTH_TEST);
-
-#if !USE(OPENGL_ES)
-    if (GLContext::current()->version() >= 320)
-        glBindVertexArray(data().previousVAO);
-#endif
 }
 
 void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix)
@@ -1021,9 +1000,9 @@ IntRect TextureMapperGL::clipBounds()
     return clipStack().current().scissorBox;
 }
 
-Ref<BitmapTexture> TextureMapperGL::createTexture(GLint internalFormat)
+Ref<BitmapTexture> TextureMapperGL::createTexture()
 {
-    return BitmapTextureGL::create(m_contextAttributes, internalFormat);
+    return BitmapTextureGL::create(m_contextAttributes);
 }
 
 void TextureMapperGL::setDepthRange(double zNear, double zFar)

@@ -23,8 +23,6 @@
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
-#include "rtc_base/location.h"
-#include "rtc_base/message_handler.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
@@ -33,9 +31,9 @@ namespace rtc {
 
 namespace {
 
-const int kLongTime = 10000;  // 10 seconds
-const int kNumThreads = 16;
-const int kOperationsToRun = 1000;
+constexpr webrtc::TimeDelta kLongTime = webrtc::TimeDelta::Seconds(10);
+constexpr int kNumThreads = 16;
+constexpr int kOperationsToRun = 1000;
 
 class UniqueValueVerifier {
  public:
@@ -77,7 +75,7 @@ class CompareAndSwapVerifier {
   int zero_count_;
 };
 
-class RunnerBase : public MessageHandlerAutoCleanup {
+class RunnerBase {
  public:
   explicit RunnerBase(int value)
       : threads_active_(0),
@@ -98,8 +96,6 @@ class RunnerBase : public MessageHandlerAutoCleanup {
   int shared_value() const { return shared_value_; }
 
  protected:
-  // Derived classes must override OnMessage, and call BeforeStart and AfterEnd
-  // at the beginning and the end of OnMessage respectively.
   void BeforeStart() { ASSERT_TRUE(start_event_.Wait(kLongTime)); }
 
   // Returns true if all threads have finished.
@@ -131,7 +127,7 @@ class LockRunner : public RunnerBase {
  public:
   LockRunner() : RunnerBase(0) {}
 
-  void OnMessage(Message* msg) override {
+  void Loop() {
     BeforeStart();
 
     lock_.Lock();
@@ -155,12 +151,13 @@ class LockRunner : public RunnerBase {
   Lock lock_;
 };
 
+template <typename Runner>
 void StartThreads(std::vector<std::unique_ptr<Thread>>* threads,
-                  MessageHandler* handler) {
+                  Runner* handler) {
   for (int i = 0; i < kNumThreads; ++i) {
     std::unique_ptr<Thread> thread(Thread::Create());
     thread->Start();
-    thread->Post(RTC_FROM_HERE, handler);
+    thread->PostTask([handler] { handler->Loop(); });
     threads->push_back(std::move(thread));
   }
 }

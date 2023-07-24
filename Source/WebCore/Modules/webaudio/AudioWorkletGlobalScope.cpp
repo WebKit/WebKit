@@ -144,8 +144,11 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
     m_pendingProcessorConstructionData = makeUnique<AudioWorkletProcessorConstructionData>(String { name }, MessagePort::entangle(*this, WTFMove(port)));
 
     JSC::MarkedArgumentBuffer args;
-    auto arg = options->deserialize(*globalObject, globalObject, SerializationErrorMode::NonThrowing);
+    bool didFail = false;
+    auto arg = options->deserialize(*globalObject, globalObject, SerializationErrorMode::NonThrowing, &didFail);
     RETURN_IF_EXCEPTION(scope, nullptr);
+    if (didFail)
+        return nullptr;
     args.append(arg);
     ASSERT(!args.hasOverflowed());
 
@@ -180,12 +183,11 @@ AudioWorkletThread& AudioWorkletGlobalScope::thread() const
 
 void AudioWorkletGlobalScope::handlePreRenderTasks()
 {
-    // We grab the JS API lock at the beginning of rendering and release it at the end of rendering.
     // This makes sure that we only drain the MicroTask queue after each render quantum.
     // It is only safe to grab the lock if we are on the context thread. We might get called on
     // another thread if audio rendering started before the audio worklet got started.
     if (isContextThread())
-        m_lockDuringRendering.emplace(script()->vm());
+        m_delayMicrotaskDrainingDuringRendering = script()->vm().drainMicrotaskDelayScope();
 }
 
 void AudioWorkletGlobalScope::handlePostRenderTasks(size_t currentFrame)
@@ -197,7 +199,7 @@ void AudioWorkletGlobalScope::handlePostRenderTasks(size_t currentFrame)
         // explicitly allow the following allocation(s).
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         // This takes care of processing the MicroTask queue after rendering.
-        m_lockDuringRendering = std::nullopt;
+        m_delayMicrotaskDrainingDuringRendering = std::nullopt;
     }
 }
 

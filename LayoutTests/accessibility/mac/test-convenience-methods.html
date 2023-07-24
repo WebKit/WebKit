@@ -1,7 +1,8 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 <title>Test Convenience Methods</title>
 </head>
 <body>
@@ -9,29 +10,31 @@
 <!-- Focus test element. -->
 <div id="focus" role="button" style="height:25px; width:25px;" tabindex="0"></div>
 
-<!-- FIXME: Add remaining test elements. -->
-
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This tests that test convenience methods behave correctly.");
-    
-    if (window.accessibilityController) {
-        // isFocused test.
-        var focus = accessibilityController.accessibleElementById("focus");
-        var isFocusedAttribute = focus.boolAttributeValue("AXFocused");
-        var isFocusedConvenience = focus.isFocused;
-        shouldBe("isFocusedConvenience", "isFocusedConvenience");
-        document.getElementById("focus").focus();
+var output = "This tests that test convenience methods behave correctly.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // isFocused test.
+    var focus = accessibilityController.accessibleElementById("focus");
+    var isFocusedAttribute = focus.boolAttributeValue("AXFocused");
+    var isFocusedConvenience = focus.isFocused;
+    output += expect("isFocusedConvenience", "isFocusedConvenience");
+
+    setTimeout(async function() {
+        await waitForFocus("focus");
         isFocusedAttribute = focus.boolAttributeValue("AXFocused");
         isFocusedConvenience = focus.isFocused;
-        shouldBe("isFocusedConvenience", "isFocusedAttribute");
+        output += expect("isFocusedConvenience", "isFocusedAttribute");
         
         // FIXME: Test remaining convenience methods.
-    }
-</script>
 
-<script src="../../resources/js-test-post.js"></script>
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
 </body>
 </html>
+

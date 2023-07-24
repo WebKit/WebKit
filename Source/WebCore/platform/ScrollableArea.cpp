@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
+#include "ScrollbarGutter.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarsControllerMock.h"
 #include <wtf/text/TextStream.h>
@@ -72,16 +73,27 @@ ScrollAnimator& ScrollableArea::scrollAnimator() const
 
 ScrollbarsController& ScrollableArea::scrollbarsController() const
 {
-    if (!m_scrollbarsController) {
-        if (mockScrollbarsControllerEnabled()) {
-            m_scrollbarsController = makeUnique<ScrollbarsControllerMock>(const_cast<ScrollableArea&>(*this), [this](const String& message) {
-                logMockScrollbarsControllerMessage(message);
-            });
-        } else
-            m_scrollbarsController = ScrollbarsController::create(const_cast<ScrollableArea&>(*this));
-    }
+    if (!m_scrollbarsController)
+        const_cast<ScrollableArea&>(*this).internalCreateScrollbarsController();
 
     return *m_scrollbarsController.get();
+}
+
+void ScrollableArea::internalCreateScrollbarsController()
+{
+    if (mockScrollbarsControllerEnabled()) {
+        auto mockController = makeUnique<ScrollbarsControllerMock>(const_cast<ScrollableArea&>(*this), [this](const String& message) {
+            logMockScrollbarsControllerMessage(message);
+        });
+        setScrollbarsController(WTFMove(mockController));
+    } else
+        createScrollbarsController();
+}
+
+void ScrollableArea::createScrollbarsController()
+{
+    auto controller = ScrollbarsController::create(const_cast<ScrollableArea&>(*this));
+    setScrollbarsController(WTFMove(controller));
 }
 
 void ScrollableArea::setScrollbarsController(std::unique_ptr<ScrollbarsController>&& scrollbarsController)
@@ -159,13 +171,13 @@ void ScrollableArea::scrollToPositionWithoutAnimation(const FloatPoint& position
     scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
 }
 
-void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, ScrollClamping clamping)
+void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, const ScrollPositionChangeOptions& options)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithAnimation " << position);
 
-    bool startedAnimation = requestScrollToPosition(roundedIntPoint(position), ScrollType::Programmatic, clamping, ScrollIsAnimated::Yes);
+    bool startedAnimation = requestScrollToPosition(roundedIntPoint(position), { ScrollType::Programmatic, options.clamping, ScrollIsAnimated::Yes, options.snapPointSelectionMethod, options.originalScrollDelta });
     if (!startedAnimation)
-        startedAnimation = scrollAnimator().scrollToPositionWithAnimation(position, clamping);
+        startedAnimation = scrollAnimator().scrollToPositionWithAnimation(position, options.clamping);
 
     if (startedAnimation)
         setScrollAnimationStatus(ScrollAnimationStatus::Animating);
@@ -261,7 +273,7 @@ void ScrollableArea::setScrollPositionFromAnimation(const ScrollPosition& positi
     // An early return here if the position hasn't changed breaks an iOS RTL scrolling test: webkit.org/b/230450.
     auto scrollType = currentScrollType();
     auto clamping = scrollType == ScrollType::User ? ScrollClamping::Unclamped : ScrollClamping::Clamped;
-    if (requestScrollToPosition(position, scrollType, clamping, ScrollIsAnimated::No))
+    if (requestScrollToPosition(position, { scrollType, clamping, ScrollIsAnimated::No }))
         return;
 
     scrollPositionChanged(position);
@@ -401,6 +413,8 @@ void ScrollableArea::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle
 
 void ScrollableArea::invalidateScrollbars()
 {
+    invalidateScrollCorner(scrollCornerRect());
+
     if (auto* scrollbar = horizontalScrollbar()) {
         scrollbar->invalidate();
         scrollbarsController().invalidateScrollbarPartLayers(scrollbar);
@@ -495,6 +509,11 @@ String ScrollableArea::horizontalScrollbarStateForTesting() const
 String ScrollableArea::verticalScrollbarStateForTesting() const
 {
     return scrollbarsController().verticalScrollbarStateForTesting();
+}
+
+ScrollbarGutter ScrollableArea::scrollbarGutterStyle() const
+{
+    return { };
 }
 
 const LayoutScrollSnapOffsetsInfo* ScrollableArea::snapOffsetsInfo() const

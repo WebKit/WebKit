@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUPredefinedColorSpace.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h>
 
 namespace WebCore {
 
@@ -34,11 +34,11 @@ enum class GPUPredefinedColorSpace : uint8_t {
     SRGB,
 };
 
-inline PAL::WebGPU::PredefinedColorSpace convertToBacking(GPUPredefinedColorSpace predefinedColorSpace)
+inline WebGPU::PredefinedColorSpace convertToBacking(GPUPredefinedColorSpace predefinedColorSpace)
 {
     switch (predefinedColorSpace) {
     case GPUPredefinedColorSpace::SRGB:
-        return PAL::WebGPU::PredefinedColorSpace::SRGB;
+        return WebGPU::PredefinedColorSpace::SRGB;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -19,6 +19,7 @@ info: |
     `-` UnaryExpression
     `~` UnaryExpression
     `!` UnaryExpression
+features: [exponentiation]
 ---*/
 
 assert.sameValue(-(3 ** 2), -9, "-(3 ** 2) === -9");

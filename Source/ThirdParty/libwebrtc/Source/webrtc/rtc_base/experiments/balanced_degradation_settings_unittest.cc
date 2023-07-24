@@ -21,40 +21,39 @@ namespace {
 
 void VerifyIsDefault(
     const std::vector<BalancedDegradationSettings::Config>& config) {
-  EXPECT_THAT(config, ::testing::ElementsAre(
-                          BalancedDegradationSettings::Config{
-                              320 * 240,
-                              7,
-                              0,
-                              0,
-                              BalancedDegradationSettings::kNoFpsDiff,
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0}},
-                          BalancedDegradationSettings::Config{
-                              480 * 360,
-                              10,
-                              0,
-                              0,
-                              1,
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0}},
-                          BalancedDegradationSettings::Config{
-                              640 * 480,
-                              15,
-                              0,
-                              0,
-                              1,
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0},
-                              {0, 0, 0, 0, 0}}));
+  EXPECT_THAT(config,
+              ::testing::ElementsAre(
+                  BalancedDegradationSettings::Config{
+                      320 * 240,
+                      7,
+                      0,
+                      0,
+                      BalancedDegradationSettings::kNoFpsDiff,
+                      {0, 0, 0, 0, 0},
+                      {0, 0, 0, 0, 0},
+                      {0, 0, 0, 0, 0},
+                      {0, 0, 0, 0, 0},
+                      {0, 0, 0, 0, 0}},
+                  BalancedDegradationSettings::Config{480 * 360,
+                                                      10,
+                                                      0,
+                                                      0,
+                                                      1,
+                                                      {0, 0, 0, 0, 0},
+                                                      {0, 0, 0, 0, 0},
+                                                      {0, 0, 0, 0, 0},
+                                                      {0, 0, 0, 0, 0},
+                                                      {0, 0, 0, 0, 0}},
+                  BalancedDegradationSettings::Config{640 * 480,
+                                                      15,
+                                                      0,
+                                                      0,
+                                                      1,
+                                                      {0, 0, 0, 0, 0},
+                                                      {0, 0, 0, 0, 0},
+                                                      {0, 0, 0, 0, 0},
+                                                      {0, 0, 0, 0, 0},
+                                                      {0, 0, 0, 0, 0}}));
 }
 }  // namespace
 

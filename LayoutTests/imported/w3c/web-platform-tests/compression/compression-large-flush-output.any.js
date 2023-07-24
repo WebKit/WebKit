@@ -1,5 +1,6 @@
 // META: global=window,worker
 // META: script=third_party/pako/pako_inflate.min.js
+// META: script=resources/concatenate-stream.js
 // META: timeout=long
 
 'use strict';
@@ -10,28 +11,9 @@
 async function compressData(chunk, format) {
   const cs = new CompressionStream(format);
   const writer = cs.writable.getWriter();
- 
   writer.write(chunk);
-
-  const closePromise = writer.close();
-  const out = [];
-  const reader = cs.readable.getReader();
-  let totalSize = 0;
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done)
-      break;
-    out.push(value);
-    totalSize += value.byteLength;
-  }
-  await closePromise;
-  const concatenated = new Uint8Array(totalSize);
-  let offset = 0;
-  for (const array of out) {
-    concatenated.set(array, offset);
-    offset += array.byteLength;
-  }
-  return concatenated;
+  writer.close();
+  return await concatenateStream(cs.readable);
 }
 
 // JSON-encoded array of 10 thousands numbers ("[0,1,2,...]"). This produces 48_891 bytes of data.
@@ -40,20 +22,20 @@ const data = fullData.subarray(0, 35_579);
 const expectedValue = data;
 
 promise_test(async t => {
-const compressedData = await compressData(data, 'deflate');
-// decompress with pako, and check that we got the same result as our original string
-assert_array_equals(expectedValue, pako.inflate(compressedData), 'value should match');
+  const compressedData = await compressData(data, 'deflate');
+  // decompress with pako, and check that we got the same result as our original string
+  assert_array_equals(expectedValue, pako.inflate(compressedData), 'value should match');
 }, `deflate compression with large flush output`);
 
 promise_test(async t => {
-const compressedData = await compressData(data, 'gzip');
-// decompress with pako, and check that we got the same result as our original string
-assert_array_equals(expectedValue, pako.inflate(compressedData), 'value should match');
+  const compressedData = await compressData(data, 'gzip');
+  // decompress with pako, and check that we got the same result as our original string
+  assert_array_equals(expectedValue, pako.inflate(compressedData), 'value should match');
 }, `gzip compression with large flush output`);
 
 promise_test(async t => {
-const compressedData = await compressData(data, 'deflate-raw');
-// decompress with pako, and check that we got the same result as our original string
-assert_array_equals(expectedValue, pako.inflateRaw(compressedData), 'value should match');
+  const compressedData = await compressData(data, 'deflate-raw');
+  // decompress with pako, and check that we got the same result as our original string
+  assert_array_equals(expectedValue, pako.inflateRaw(compressedData), 'value should match');
 }, `deflate-raw compression with large flush output`);
 

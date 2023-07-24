@@ -90,14 +90,16 @@ ImageWithScale StyleImageSet::bestImageForScaleFactor()
         const auto& image = m_images[index];
         if (!image.mimeType.isNull() && !MIMETypeRegistry::isSupportedImageMIMEType(image.mimeType))
             continue;
-
+        if (!result.image->isInvalidImage() && result.scaleFactor == image.scaleFactor)
+            continue;
         if (image.scaleFactor >= m_deviceScaleFactor)
             return image;
+
         result = image;
     }
 
     ASSERT(result.scaleFactor >= 0);
-    if (!result.image || !result.scaleFactor)
+    if (result.image->isInvalidImage() || !result.scaleFactor)
         result = ImageWithScale { StyleInvalidImage::create(), 1, String() };
 
     return result;

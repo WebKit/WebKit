@@ -1,4 +1,4 @@
-# Copyright (c) 2018 The Chromium Authors. All rights reserved.
+# Copyright 2018 The Chromium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -61,6 +61,7 @@ group("absl_component_deps") {
     "//third_party/abseil-cpp/absl/base",
     "//third_party/abseil-cpp/absl/base:config",
     "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/base:prefetch",
     "//third_party/abseil-cpp/absl/cleanup",
     "//third_party/abseil-cpp/absl/container:btree",
     "//third_party/abseil-cpp/absl/container:fixed_array",
@@ -76,11 +77,15 @@ group("absl_component_deps") {
     "//third_party/abseil-cpp/absl/functional:bind_front",
     "//third_party/abseil-cpp/absl/functional:function_ref",
     "//third_party/abseil-cpp/absl/hash",
+    "//third_party/abseil-cpp/absl/log:absl_check",
+    "//third_party/abseil-cpp/absl/log:absl_log",
+    "//third_party/abseil-cpp/absl/log:die_if_null",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/meta:type_traits",
     "//third_party/abseil-cpp/absl/numeric:bits",
     "//third_party/abseil-cpp/absl/numeric:int128",
     "//third_party/abseil-cpp/absl/random",
+    "//third_party/abseil-cpp/absl/random:distributions",
     "//third_party/abseil-cpp/absl/status",
     "//third_party/abseil-cpp/absl/status:statusor",
     "//third_party/abseil-cpp/absl/strings",
@@ -97,22 +102,11 @@ group("absl_component_deps") {
   # The following dependencies currently don't build with NaCl.
   # TODO(https://crbug.com/1114625): Fix build errors and remove this section.
   if (is_nacl) {
-    public_deps -= [
-      "//third_party/abseil-cpp/absl/debugging:failure_signal_handler",
-    ]
+    public_deps -=
+        [ "//third_party/abseil-cpp/absl/debugging:failure_signal_handler" ]
   }
 
   visibility = [ ":absl" ]
-}
-
-group("default") {
-  deps = [
-    "absl/types:any",
-    "absl/types:bad_any_cast",
-    "absl/types:bad_optional_access",
-    "absl/types:optional",
-    "absl/types:span",
-  ]
 }
 
 config("absl_include_config") {
@@ -144,7 +138,6 @@ config("absl_default_cflags_cc") {
       "-Wnon-literal-null-conversion",
       "-Wnull-conversion",
       "-Wobjc-literal-conversion",
-      "-Wno-sign-conversion",
       "-Wstring-conversion",
     ]
     if (!is_nacl) {
@@ -159,7 +152,6 @@ config("absl_test_cflags_cc") {
     cflags_cc += [
       "-Wno-conversion-null",
       "-Wno-missing-declarations",
-      "-Wno-sign-compare",
       "-Wno-unused-function",
       "-Wno-unused-parameter",
       "-Wno-unused-private-field",
@@ -167,8 +159,22 @@ config("absl_test_cflags_cc") {
   }
   if (is_win) {
     cflags_cc += [
-      "/wd4018",  # signed/unsigned mismatch
       "/wd4101",  # unreferenced local variable
+    ]
+  }
+}
+
+config("absl_test_config") {
+  cflags_cc = []
+  if (is_win && !is_clang) {
+    cflags_cc += [ "/wd4996" ]
+  }
+  if (is_clang) {
+    cflags_cc += [
+      "-Wno-deprecated-declarations",
+      "-Wno-implicit-const-int-float-conversion",
+      "-Wno-unused-private-field",
+      "-Wno-unused-function",
     ]
   }
 }
@@ -185,14 +191,38 @@ if (build_with_chromium) {
         "absl/base:config_test",
         "absl/base:prefetch_test",
         "absl/cleanup:cleanup_test",
+        # TODO(mbonadei): Fix issue with EXPECT_DEATH and uncomment.
+        # "absl/container:btree_test",
+        "absl/container:common_policy_traits_test",
         "absl/container:inlined_vector_test",
         "absl/container:node_slot_policy_test",
         "absl/container:sample_element_size_test",
+        "absl/crc:crc32c_test",
+        "absl/crc:crc_cord_state_test",
+        "absl/crc:crc_memcpy_test",
+        "absl/crc:non_temporal_memcpy_test",
+        "absl/debugging:stacktrace_test",
         "absl/functional:any_invocable_test",
+        "absl/functional:function_ref_test",
         "absl/hash:hash_test",
         "absl/hash:low_level_hash_test",
+        "absl/log:absl_check_test",
+        "absl/log:absl_log_basic_test",
+        "absl/log:die_if_null_test",
+        "absl/log:flags_test",
+        "absl/log:globals_test",
+        "absl/log:log_entry_test",
+        "absl/log:log_format_test",
+        "absl/log:log_macro_hygiene_test",
+        "absl/log:log_modifier_methods_test",
+        "absl/log:log_sink_test",
+        "absl/log:log_streamer_test",
+        "absl/log:scoped_mock_log_test",
+        "absl/log:stripping_test",
+        "absl/log/internal:stderr_log_sink_test",
         "absl/memory:memory_test",
         "absl/meta:type_traits_test",
+        "absl/numeric:int128_test",
         "absl/profiling:exponential_biased_test",
         "absl/profiling:periodic_sampler_test",
         "absl/status:statusor_test",
@@ -209,11 +239,16 @@ if (build_with_chromium) {
         "absl/strings:cordz_test",
         "absl/strings:cordz_update_scope_test",
         "absl/strings:cordz_update_tracker_test",
+        "absl/strings:damerau_levenshtein_distance_test",
         "absl/strings:match_test",
         "absl/strings:str_replace_test",
         "absl/strings:string_view_test",
+        "absl/synchronization:kernel_timeout_internal_test",
+        "absl/synchronization:waiter_test",
+        "absl/time:time_test",
         "absl/types:optional_test",
         "absl/types:variant_test",
+        "absl/utility:if_constexpr_test",
         "//third_party/googletest:gtest_main",
       ]
     }
@@ -223,14 +258,8 @@ if (build_with_chromium) {
     testonly = true
     sources = [ "absl_hardening_test.cc" ]
     deps = [
+      ":absl",
       "//base/test:run_all_unittests",
-      "//third_party/abseil-cpp/absl/base:config",
-      "//third_party/abseil-cpp/absl/container:fixed_array",
-      "//third_party/abseil-cpp/absl/container:inlined_vector",
-      "//third_party/abseil-cpp/absl/strings",
-      "//third_party/abseil-cpp/absl/types:optional",
-      "//third_party/abseil-cpp/absl/types:span",
-      "//third_party/abseil-cpp/absl/types:variant",
       "//third_party/googletest:gtest",
     ]
   }

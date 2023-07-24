@@ -92,7 +92,7 @@ int ECDH_compute_key(void *out, size_t out_len, const EC_POINT *pub_key,
     return -1;
   }
 
-  EC_RAW_POINT shared_point;
+  EC_JACOBIAN shared_point;
   uint8_t buf[EC_MAX_BYTES];
   size_t buf_len;
   if (!ec_point_mul_scalar(group, &shared_point, &pub_key->raw, priv) ||

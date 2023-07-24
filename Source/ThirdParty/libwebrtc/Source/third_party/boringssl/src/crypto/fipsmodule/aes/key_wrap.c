@@ -55,6 +55,7 @@
 #include <openssl/mem.h>
 
 #include "../../internal.h"
+#include "../service_indicator/internal.h"
 
 
 // kDefaultIV is the default IV value given in RFC 3394, 2.2.3.1.
@@ -98,6 +99,7 @@ int AES_wrap_key(const AES_KEY *key, const uint8_t *iv, uint8_t *out,
   }
 
   OPENSSL_memcpy(out, A, 8);
+  FIPS_service_indicator_update_state();
   return (int)in_len + 8;
 }
 
@@ -151,6 +153,7 @@ int AES_unwrap_key(const AES_KEY *key, const uint8_t *iv, uint8_t *out,
     return -1;
   }
 
+  FIPS_service_indicator_update_state();
   return (int)in_len - 8;
 }
 
@@ -161,10 +164,8 @@ static const uint8_t kPaddingConstant[4] = {0xa6, 0x59, 0x59, 0xa6};
 int AES_wrap_key_padded(const AES_KEY *key, uint8_t *out, size_t *out_len,
                         size_t max_out, const uint8_t *in, size_t in_len) {
   // See https://tools.ietf.org/html/rfc5649#section-4.1
-  const uint32_t in_len32_be = CRYPTO_bswap4(in_len);
   const uint64_t in_len64 = in_len;
   const size_t padded_len = (in_len + 7) & ~7;
-
   *out_len = 0;
   if (in_len == 0 || in_len64 > 0xffffffffu || in_len + 7 < in_len ||
       padded_len + 8 < padded_len || max_out < padded_len + 8) {
@@ -173,7 +174,7 @@ int AES_wrap_key_padded(const AES_KEY *key, uint8_t *out, size_t *out_len,
 
   uint8_t block[AES_BLOCK_SIZE];
   memcpy(block, kPaddingConstant, sizeof(kPaddingConstant));
-  memcpy(block + 4, &in_len32_be, sizeof(in_len32_be));
+  CRYPTO_store_u32_be(block + 4, (uint32_t)in_len);
 
   if (in_len <= 8) {
     memset(block + 8, 0, 8);
@@ -190,12 +191,15 @@ int AES_wrap_key_padded(const AES_KEY *key, uint8_t *out, size_t *out_len,
   assert(padded_len >= 8);
   memset(padded_in + padded_len - 8, 0, 8);
   memcpy(padded_in, in, in_len);
+  FIPS_service_indicator_lock_state();
   const int ret = AES_wrap_key(key, block, out, padded_in, padded_len);
+  FIPS_service_indicator_unlock_state();
   OPENSSL_free(padded_in);
   if (ret < 0) {
     return 0;
   }
   *out_len = ret;
+  FIPS_service_indicator_update_state();
   return 1;
 }
 
@@ -220,9 +224,7 @@ int AES_unwrap_key_padded(const AES_KEY *key, uint8_t *out, size_t *out_len,
   crypto_word_t ok = constant_time_eq_int(
       CRYPTO_memcmp(iv, kPaddingConstant, sizeof(kPaddingConstant)), 0);
 
-  uint32_t claimed_len32;
-  memcpy(&claimed_len32, iv + 4, sizeof(claimed_len32));
-  const size_t claimed_len = CRYPTO_bswap4(claimed_len32);
+  const size_t claimed_len = CRYPTO_load_u32_be(iv + 4);
   ok &= ~constant_time_is_zero_w(claimed_len);
   ok &= constant_time_eq_w((claimed_len - 1) >> 3, (in_len - 9) >> 3);
 
@@ -232,5 +234,9 @@ int AES_unwrap_key_padded(const AES_KEY *key, uint8_t *out, size_t *out_len,
   }
 
   *out_len = constant_time_select_w(ok, claimed_len, 0);
-  return ok & 1;
+  const int ret = ok & 1;
+  if (ret) {
+    FIPS_service_indicator_update_state();
+  }
+  return ret;
 }

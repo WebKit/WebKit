@@ -35,7 +35,6 @@
 #import "WKAPICast.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
-#import "WKBrowsingContextGroupInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKBrowsingContextLoadDelegatePrivate.h"
 #import "WKBrowsingContextPolicyDelegate.h"
@@ -754,7 +753,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (pid_t)processIdentifier
 {
-    return _page->processIdentifier();
+    return _page->processID();
 }
 
 - (BOOL)_webProcessIsResponsive

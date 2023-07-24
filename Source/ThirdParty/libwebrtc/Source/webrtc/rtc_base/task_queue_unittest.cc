@@ -71,7 +71,7 @@ TEST(TaskQueueTest, DISABLED_PostDelayedHighRes) {
   uint32_t start = Time();
   queue.PostDelayedTask([&event, &queue] { CheckCurrent(&event, &queue); },
                         TimeDelta::Millis(3));
-  EXPECT_TRUE(event.Wait(1000));
+  EXPECT_TRUE(event.Wait(webrtc::TimeDelta::Seconds(1)));
   uint32_t end = TimeMillis();
   // These tests are a little relaxed due to how "powerful" our test bots can
   // be.  Most recently we've seen windows bots fire the callback after 94-99ms,

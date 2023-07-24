@@ -20,12 +20,14 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include <openssl/err.h>
+#include <openssl/mem.h>
 
 #include "../internal.h"
 #include "./test_util.h"
@@ -56,11 +58,11 @@ static const char *FindDelimiter(const char *str) {
 // leading and trailing whitespace removed.
 static std::string StripSpace(const char *str, size_t len) {
   // Remove leading space.
-  while (len > 0 && isspace(*str)) {
+  while (len > 0 && OPENSSL_isspace(*str)) {
     str++;
     len--;
   }
-  while (len > 0 && isspace(str[len - 1])) {
+  while (len > 0 && OPENSSL_isspace(str[len - 1])) {
     len--;
   }
   return std::string(str, len);
@@ -377,7 +379,8 @@ class FileLineReader : public FileTest::LineReader {
       return FileTest::kReadError;
     }
 
-    if (fgets(out, len, file_) == nullptr) {
+    len = std::min(len, size_t{INT_MAX});
+    if (fgets(out, static_cast<int>(len), file_) == nullptr) {
       return feof(file_) ? FileTest::kReadEOF : FileTest::kReadError;
     }
 

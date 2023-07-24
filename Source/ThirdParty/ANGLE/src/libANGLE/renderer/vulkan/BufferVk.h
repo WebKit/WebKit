@@ -119,6 +119,8 @@ class BufferVk : public BufferImpl
         return mBuffer;
     }
 
+    vk::BufferSerial getBufferSerial() { return mBuffer.getBufferSerial(); }
+
     bool isBufferValid() const { return mBuffer.valid(); }
     bool isCurrentlyInUse(RendererVk *renderer) const;
 

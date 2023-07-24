@@ -104,4 +104,4 @@ layer at (0,0) size 785x732
                 RenderText {#text} at (0,0) size 726x17
                   text run at (0,0) width 726: "this paragraph is lowercased and capital characters in the source (e.g. a and \x{E5}) should therefore appear in lowercase."
 layer at (8,130) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,122) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,122) size 769x2 [color=#808080] [border: (1px inset #808080)]

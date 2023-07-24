@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUErrorFilter.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUErrorFilter.h>
 
 namespace WebCore {
 
@@ -36,15 +36,15 @@ enum class GPUErrorFilter : uint8_t {
     Internal,
 };
 
-inline PAL::WebGPU::ErrorFilter convertToBacking(GPUErrorFilter errorFilter)
+inline WebGPU::ErrorFilter convertToBacking(GPUErrorFilter errorFilter)
 {
     switch (errorFilter) {
     case GPUErrorFilter::OutOfMemory:
-        return PAL::WebGPU::ErrorFilter::OutOfMemory;
+        return WebGPU::ErrorFilter::OutOfMemory;
     case GPUErrorFilter::Validation:
-        return PAL::WebGPU::ErrorFilter::Validation;
+        return WebGPU::ErrorFilter::Validation;
     case GPUErrorFilter::Internal:
-        return PAL::WebGPU::ErrorFilter::Internal;
+        return WebGPU::ErrorFilter::Internal;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

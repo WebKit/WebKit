@@ -46,7 +46,7 @@ bool systemHasBattery()
 
     if (!hasBattery.has_value()) {
         hasBattery = [] {
-#if PLATFORM(IOS) || PLATFORM(WATCHOS)
+#if PLATFORM(IOS) || PLATFORM(WATCHOS) || PLATFORM(VISION)
             // Devices running iOS / WatchOS always have a battery.
             return true;
 #elif PLATFORM(APPLETV)

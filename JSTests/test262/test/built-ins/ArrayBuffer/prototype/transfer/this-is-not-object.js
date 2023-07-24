@@ -9,7 +9,7 @@ info: |
   1. Let O be the this value.
   2. Perform ? RequireInternalSlot(O, [[ArrayBufferData]]).
   [...]
-features: [resizable-arraybuffer, Symbol, BigInt]
+features: [arraybuffer-transfer, Symbol, BigInt]
 ---*/
 
 assert.sameValue(typeof ArrayBuffer.prototype.transfer, "function");

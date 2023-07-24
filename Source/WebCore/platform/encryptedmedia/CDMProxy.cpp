@@ -353,12 +353,13 @@ std::optional<KeyHandleValueVariant> CDMProxy::getOrWaitForKeyValue(const KeyIDT
 void CDMInstanceProxy::startedWaitingForKey()
 {
     ASSERT(!isMainThread());
-    ASSERT(m_player);
+    ASSERT(m_player.get());
 
     bool wasWaitingForKey = m_numDecryptorsWaitingForKey > 0;
     m_numDecryptorsWaitingForKey++;
 
-    callOnMainThread([player = m_player, wasWaitingForKey] {
+    callOnMainThread([weakPlayer = m_player, wasWaitingForKey] {
+        auto player = weakPlayer.get();
         if (player && !wasWaitingForKey)
             player->waitingForKeyChanged();
     });
@@ -367,12 +368,13 @@ void CDMInstanceProxy::startedWaitingForKey()
 void CDMInstanceProxy::stoppedWaitingForKey()
 {
     ASSERT(!isMainThread());
-    ASSERT(m_player);
+    ASSERT(m_player.get());
     ASSERT(m_numDecryptorsWaitingForKey > 0);
     m_numDecryptorsWaitingForKey--;
     bool isNobodyWaitingForKey = !m_numDecryptorsWaitingForKey;
 
-    callOnMainThread([player = m_player, isNobodyWaitingForKey] {
+    callOnMainThread([weakPlayer = m_player, isNobodyWaitingForKey] {
+        auto player = weakPlayer.get();
         if (player && isNobodyWaitingForKey)
             player->waitingForKeyChanged();
     });

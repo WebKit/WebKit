@@ -60,21 +60,22 @@ public:
     ~GraphicsContextGLCocoa();
     IOSurface* displayBufferSurface();
 
+    std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
+
     enum class PbufferAttachmentUsage { Read, Write, ReadWrite };
     // Returns a handle which, if non-null, must be released via the
     // detach call below.
     void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void destroyPbufferAndDetachIOSurface(void* handle);
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    using IOSurfaceTextureAttachment = std::optional<std::tuple<void*, unsigned, unsigned>>;
-    IOSurfaceTextureAttachment attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
-    void detachIOSurfaceFromSharedTexture(void* handle);
-#endif
+
+    std::optional<EGLImageAttachResult> createAndBindEGLImage(GCGLenum, EGLImageSource) final;
 
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
-    void* createSyncWithSharedEvent(id sharedEvent, uint64_t signalValue);
-    bool destroySync(void* sync);
-    void clientWaitSyncWithFlush(void* sync, uint64_t timeout);
+    GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;
+    // Short term support for in-process WebGL.
+    GCEGLSync createEGLSync(id, uint64_t);
+
+    bool enableRequiredWebXRExtensions() final;
 
     void waitUntilWorkScheduled();
 

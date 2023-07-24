@@ -154,6 +154,8 @@ void lowerStackArgs(Code& code)
                     switch (arg.kind()) {
                     case Arg::Stack: {
                         StackSlot* slot = arg.stackSlot();
+                        if (inst.kind.opcode == Move && slot->kind() == StackSlotKind::Spill)
+                            inst.kind.spill = true;
                         if (Arg::isZDef(role)
                             && slot->kind() == StackSlotKind::Spill
                             && slot->byteSize() > bytesForWidth(width)) {
@@ -165,7 +167,7 @@ void lowerStackArgs(Code& code)
                             RELEASE_ASSERT(width == Width32);
 
 #if CPU(ARM64) || CPU(RISCV64)
-                            Air::Opcode storeOpcode = Store32;
+                            Air::Opcode storeOpcode = Move32;
                             Air::Arg::Kind operandKind = Arg::ZeroReg;
                             Air::Arg operand = Arg::zeroReg();
 #elif CPU(X86_64) || CPU(ARM)

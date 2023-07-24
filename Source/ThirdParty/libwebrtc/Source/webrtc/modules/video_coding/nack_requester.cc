@@ -14,7 +14,6 @@
 #include <limits>
 
 #include "api/sequence_checker.h"
-#include "api/task_queue/task_queue_base.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/experiments/field_trial_parser.h"
@@ -219,15 +218,17 @@ int NackRequester::OnReceivedPacket(uint16_t seq_num,
 }
 
 void NackRequester::ClearUpTo(uint16_t seq_num) {
-  // Called via RtpVideoStreamReceiver2::FrameContinuous on the network thread.
-  worker_thread_->PostTask(SafeTask(task_safety_.flag(), [seq_num, this]() {
-    RTC_DCHECK_RUN_ON(worker_thread_);
-    nack_list_.erase(nack_list_.begin(), nack_list_.lower_bound(seq_num));
-    keyframe_list_.erase(keyframe_list_.begin(),
-                         keyframe_list_.lower_bound(seq_num));
-    recovered_list_.erase(recovered_list_.begin(),
-                          recovered_list_.lower_bound(seq_num));
-  }));
+  // TODO(bugs.webrtc.org/11993): This method is actually called on the worker
+  // thread even though the caller stack to this call passes thread checkers
+  // indicating they belong to the network thread. The inline execution below
+  // needs to be posted to the worker thread if callers migrate to the network
+  // thread.
+  RTC_DCHECK_RUN_ON(worker_thread_);
+  nack_list_.erase(nack_list_.begin(), nack_list_.lower_bound(seq_num));
+  keyframe_list_.erase(keyframe_list_.begin(),
+                       keyframe_list_.lower_bound(seq_num));
+  recovered_list_.erase(recovered_list_.begin(),
+                        recovered_list_.lower_bound(seq_num));
 }
 
 void NackRequester::UpdateRtt(int64_t rtt_ms) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2022 Jarred Sumner. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,12 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/NotFound.h>
 #include <wtf/UnalignedAccess.h>
+#include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/ASCIILiteral.h>
+
+#if CPU(ARM64)
+#include <arm_neon.h>
+#endif
 
 namespace WTF {
 
@@ -841,6 +846,218 @@ inline bool equalIgnoringASCIICase(const char* string, ASCIILiteral literal)
 inline bool equalIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
 {
     return equalIgnoringASCIICase(a.characters(), a.length(), b.characters(), b.length());
+}
+
+template<typename ElementType>
+inline void copyElements(ElementType* __restrict destination, const ElementType* __restrict source, size_t length)
+{
+    if (length == 1)
+        *destination = *source;
+    else if (length)
+        std::memcpy(destination, source, length * sizeof(ElementType));
+}
+
+inline void copyElements(uint16_t* __restrict destination, const uint8_t* __restrict source, size_t length)
+{
+#if CPU(ARM64)
+    // SIMD Upconvert.
+    const auto* end = destination + length;
+    constexpr uintptr_t memoryAccessSize = 64;
+
+    if (length >= memoryAccessSize) {
+        constexpr uintptr_t memoryAccessMask = memoryAccessSize - 1;
+        const auto* simdEnd = destination + (length & ~memoryAccessMask);
+        uint8x16_t zeros = vdupq_n_u8(0);
+        do {
+            uint8x16x4_t bytes = vld1q_u8_x4(bitwise_cast<const uint8_t*>(source));
+            source += memoryAccessSize;
+
+            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[0], zeros }));
+            destination += memoryAccessSize / 4;
+            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[1], zeros }));
+            destination += memoryAccessSize / 4;
+            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[2], zeros }));
+            destination += memoryAccessSize / 4;
+            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[3], zeros }));
+            destination += memoryAccessSize / 4;
+        } while (destination != simdEnd);
+    }
+
+    while (destination != end)
+        *destination++ = *source++;
+#else
+    for (unsigned i = 0; i < length; ++i)
+        destination[i] = source[i];
+#endif
+}
+
+inline void copyElements(uint8_t* __restrict destination, const uint16_t* __restrict source, size_t length)
+{
+#if CPU(X86_SSE2)
+    const uintptr_t memoryAccessSize = 16; // Memory accesses on 16 byte (128 bit) alignment
+    const uintptr_t memoryAccessMask = memoryAccessSize - 1;
+
+    unsigned i = 0;
+    for (; i < length && !isAlignedTo<memoryAccessMask>(&source[i]); ++i)
+        destination[i] = source[i];
+
+    const uintptr_t sourceLoadSize = 32; // Process 32 bytes (16 uint16_ts) each iteration
+    const unsigned ucharsPerLoop = sourceLoadSize / sizeof(uint16_t);
+    if (length > ucharsPerLoop) {
+        const unsigned endLength = length - ucharsPerLoop + 1;
+        for (; i < endLength; i += ucharsPerLoop) {
+            __m128i first8Uint16s = _mm_load_si128(reinterpret_cast<const __m128i*>(&source[i]));
+            __m128i second8Uint16s = _mm_load_si128(reinterpret_cast<const __m128i*>(&source[i+8]));
+            __m128i packedChars = _mm_packus_epi16(first8Uint16s, second8Uint16s);
+            _mm_storeu_si128(reinterpret_cast<__m128i*>(&destination[i]), packedChars);
+        }
+    }
+
+    for (; i < length; ++i)
+        destination[i] = source[i];
+#elif COMPILER(GCC_COMPATIBLE) && CPU(ARM64) && CPU(ADDRESS64) && !ASSERT_ENABLED
+    const uint8_t* const end = destination + length;
+    const uintptr_t memoryAccessSize = 16;
+
+    if (length >= memoryAccessSize) {
+        const uintptr_t memoryAccessMask = memoryAccessSize - 1;
+
+        // Vector interleaved unpack, we only store the lower 8 bits.
+        const uintptr_t lengthLeft = end - destination;
+        const uint8_t* const simdEnd = destination + (lengthLeft & ~memoryAccessMask);
+        do {
+            asm("ld2   { v0.16B, v1.16B }, [%[SOURCE]], #32\n\t"
+                "st1   { v0.16B }, [%[DESTINATION]], #16\n\t"
+                : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
+                :
+                : "memory", "v0", "v1");
+        } while (destination != simdEnd);
+    }
+
+    while (destination != end)
+        *destination++ = static_cast<uint8_t>(*source++);
+#elif COMPILER(GCC_COMPATIBLE) && CPU(ARM_NEON) && !(CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)) && !ASSERT_ENABLED
+    const uint8_t* const end = destination + length;
+    const uintptr_t memoryAccessSize = 8;
+
+    if (length >= (2 * memoryAccessSize) - 1) {
+        // Prefix: align dst on 64 bits.
+        const uintptr_t memoryAccessMask = memoryAccessSize - 1;
+        while (!isAlignedTo<memoryAccessMask>(destination))
+            *destination++ = static_cast<uint8_t>(*source++);
+
+        // Vector interleaved unpack, we only store the lower 8 bits.
+        const uintptr_t lengthLeft = end - destination;
+        const uint8_t* const simdEnd = end - (lengthLeft % memoryAccessSize);
+        do {
+            asm("vld2.8   { d0-d1 }, [%[SOURCE]] !\n\t"
+                "vst1.8   { d0 }, [%[DESTINATION],:64] !\n\t"
+                : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
+                :
+                : "memory", "d0", "d1");
+        } while (destination != simdEnd);
+    }
+
+    while (destination != end)
+        *destination++ = static_cast<uint8_t>(*source++);
+#else
+    for (unsigned i = 0; i < length; ++i)
+        destination[i] = static_cast<uint8_t>(source[i]);
+#endif
+}
+
+inline void copyElements(uint16_t* __restrict destination, const uint32_t* __restrict source, size_t length)
+{
+    const auto* end = destination + length;
+#if CPU(ARM64) && CPU(ADDRESS64)
+    const uintptr_t memoryAccessSize = 32 / sizeof(uint32_t);
+    if (length >= memoryAccessSize) {
+        const uintptr_t memoryAccessMask = memoryAccessSize - 1;
+        const uintptr_t lengthLeft = end - destination;
+        const auto* const simdEnd = destination + (lengthLeft & ~memoryAccessMask);
+        // Use ld2 to load lower 16bit of 8 uint32_t.
+        do {
+            asm("ld2   { v0.8H, v1.8H }, [%[SOURCE]], #32\n\t"
+                "st1   { v0.8H }, [%[DESTINATION]], #16\n\t"
+                : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
+                :
+                : "memory", "v0", "v1");
+        } while (destination != simdEnd);
+    }
+#endif
+    while (destination != end)
+        *destination++ = *source++;
+}
+
+inline void copyElements(uint32_t* __restrict destination, const uint64_t* __restrict source, size_t length)
+{
+    const auto* end = destination + length;
+#if CPU(ARM64) && CPU(ADDRESS64)
+    const uintptr_t memoryAccessSize = 32 / sizeof(uint64_t);
+    if (length >= memoryAccessSize) {
+        const uintptr_t memoryAccessMask = memoryAccessSize - 1;
+        const uintptr_t lengthLeft = end - destination;
+        const auto* const simdEnd = destination + (lengthLeft & ~memoryAccessMask);
+        // Use ld2 to load lower 32bit of 4 uint64_t.
+        do {
+            asm("ld2   { v0.4S, v1.4S }, [%[SOURCE]], #32\n\t"
+                "st1   { v0.4S }, [%[DESTINATION]], #16\n\t"
+                : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
+                :
+                : "memory", "v0", "v1");
+        } while (destination != simdEnd);
+    }
+#endif
+    while (destination != end)
+        *destination++ = *source++;
+}
+
+inline void copyElements(uint16_t* __restrict destination, const uint64_t* __restrict source, size_t length)
+{
+    const auto* end = destination + length;
+#if CPU(ARM64) && CPU(ADDRESS64)
+    const uintptr_t memoryAccessSize = 64 / sizeof(uint64_t);
+    if (length >= memoryAccessSize) {
+        const uintptr_t memoryAccessMask = memoryAccessSize - 1;
+        const uintptr_t lengthLeft = end - destination;
+        const auto* const simdEnd = destination + (lengthLeft & ~memoryAccessMask);
+        // Use ld4 to load lower 16bit of 8 uint64_t.
+        do {
+            asm("ld4   { v0.8H, v1.8H, v2.8H, v3.8H }, [%[SOURCE]], #64\n\t"
+                "st1   { v0.8H }, [%[DESTINATION]], #16\n\t"
+                : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
+                :
+                : "memory", "v0", "v1", "v2", "v3");
+        } while (destination != simdEnd);
+    }
+#endif
+    while (destination != end)
+        *destination++ = *source++;
+}
+
+inline void copyElements(uint8_t* __restrict destination, const uint64_t* __restrict source, size_t length)
+{
+    const auto* end = destination + length;
+#if CPU(ARM64) && CPU(ADDRESS64)
+    const uintptr_t memoryAccessSize = 64 / sizeof(uint64_t);
+    if (length >= memoryAccessSize) {
+        const uintptr_t memoryAccessMask = memoryAccessSize - 1;
+        const uintptr_t lengthLeft = end - destination;
+        const auto* const simdEnd = destination + (lengthLeft & ~memoryAccessMask);
+        // Since ARM64 does not ld8, we use ld4 to load lower 16bit of 8 uint64_t.
+        // And then narrow 8 16bit lanes into 8 8bit lanes and store it to the destination.
+        do {
+            asm("ld4   { v0.8H, v1.8H, v2.8H, v3.8H }, [%[SOURCE]], #64\n\t"
+                "xtn   v0.8B, v0.8H\n\t"
+                "st1   { v0.8B }, [%[DESTINATION]], #8\n\t"
+                : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
+                :
+                : "memory", "v0", "v1", "v2", "v3");
+        } while (destination != simdEnd);
+    }
+#endif
+    while (destination != end)
+        *destination++ = *source++;
 }
 
 }

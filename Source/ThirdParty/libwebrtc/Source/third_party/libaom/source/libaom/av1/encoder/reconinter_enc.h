@@ -40,6 +40,10 @@ void av1_enc_build_inter_predictor(const AV1_COMMON *cm, MACROBLOCKD *xd,
 
 void av1_enc_build_inter_predictor_y(MACROBLOCKD *xd, int mi_row, int mi_col);
 
+void av1_enc_build_inter_predictor_y_nonrd(MACROBLOCKD *xd,
+                                           InterPredParams *inter_pred_params,
+                                           const SubpelParams *subpel_params);
+
 // Build one inter predictor. It is called for building predictor for single
 // reference case, or just the 1st or 2nd reference in compound reference case.
 // Can build both regular and masked predictors.

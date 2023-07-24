@@ -129,4 +129,4 @@ layer at (0,0) size 785x816
                   RenderText {#text} at (0,0) size 208x18
                     text run at (0,0) width 208: "should be a block-level element."
 layer at (8,130) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,122) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,122) size 769x2 [color=#808080] [border: (1px inset #808080)]

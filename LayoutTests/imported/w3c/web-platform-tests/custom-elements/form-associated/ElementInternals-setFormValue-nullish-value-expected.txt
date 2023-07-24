@@ -1,0 +1,4 @@
+
+PASS ElementInternals.setFormValue(null) clears submission value
+PASS ElementInternals.setFormValue(undefined) clears submission value
+

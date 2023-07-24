@@ -69,8 +69,10 @@
 #include <openssl/bn.h>
 #include <openssl/crypto.h>
 #include <openssl/err.h>
+#include <openssl/pem.h>
+#include <openssl/span.h>
 
-#include "../internal.h"
+#include "../test/test_util.h"
 
 
 // The following values are taken from the updated Appendix 5 to FIPS PUB 186
@@ -168,154 +170,88 @@ static const uint8_t fips_sig_bad_r[] = {
     0xdc, 0xd8, 0xc8,
 };
 
-static bssl::UniquePtr<DSA> GetFIPSDSA(void) {
-  bssl::UniquePtr<DSA>  dsa(DSA_new());
+static bssl::UniquePtr<DSA> GetFIPSDSAGroup(void) {
+  bssl::UniquePtr<DSA> dsa(DSA_new());
   if (!dsa) {
     return nullptr;
   }
-  dsa->p = BN_bin2bn(fips_p, sizeof(fips_p), nullptr);
-  dsa->q = BN_bin2bn(fips_q, sizeof(fips_q), nullptr);
-  dsa->g = BN_bin2bn(fips_g, sizeof(fips_g), nullptr);
-  dsa->pub_key = BN_bin2bn(fips_y, sizeof(fips_y), nullptr);
-  dsa->priv_key = BN_bin2bn(fips_x, sizeof(fips_x), nullptr);
-  if (dsa->p == nullptr || dsa->q == nullptr || dsa->g == nullptr ||
-      dsa->pub_key == nullptr || dsa->priv_key == nullptr) {
+  bssl::UniquePtr<BIGNUM> p(BN_bin2bn(fips_p, sizeof(fips_p), nullptr));
+  bssl::UniquePtr<BIGNUM> q(BN_bin2bn(fips_q, sizeof(fips_q), nullptr));
+  bssl::UniquePtr<BIGNUM> g(BN_bin2bn(fips_g, sizeof(fips_g), nullptr));
+  if (!p || !q || !g || !DSA_set0_pqg(dsa.get(), p.get(), q.get(), g.get())) {
     return nullptr;
   }
+  // |DSA_set0_pqg| takes ownership.
+  p.release();
+  q.release();
+  g.release();
   return dsa;
 }
 
-struct GenerateContext {
-  FILE *out = nullptr;
-  int ok = 0;
-  int num = 0;
-};
-
-static int GenerateCallback(int p, int n, BN_GENCB *arg) {
-  GenerateContext *ctx = reinterpret_cast<GenerateContext *>(arg->arg);
-  char c = '*';
-  switch (p) {
-    case 0:
-      c = '.';
-      ctx->num++;
-      break;
-    case 1:
-      c = '+';
-      break;
-    case 2:
-      c = '*';
-      ctx->ok++;
-      break;
-    case 3:
-      c = '\n';
-  }
-  fputc(c, ctx->out);
-  fflush(ctx->out);
-  if (!ctx->ok && p == 0 && ctx->num > 1) {
-    fprintf(stderr, "error in dsatest\n");
-    return 0;
-  }
-  return 1;
-}
-
-static int TestGenerate(FILE *out) {
-  BN_GENCB cb;
-  int counter, i, j;
-  uint8_t buf[256];
-  unsigned long h;
-  uint8_t sig[256];
-  unsigned int siglen;
-
-  fprintf(out, "test generation of DSA parameters\n");
-
-  GenerateContext ctx;
-  ctx.out = out;
-  BN_GENCB_set(&cb, GenerateCallback, &ctx);
-  bssl::UniquePtr<DSA> dsa(DSA_new());
-  if (!dsa ||
-      !DSA_generate_parameters_ex(dsa.get(), 512, seed, 20, &counter, &h,
-                                  &cb)) {
-    return false;
-  }
-
-  fprintf(out, "seed\n");
-  for (i = 0; i < 20; i += 4) {
-    fprintf(out, "%02X%02X%02X%02X ", seed[i], seed[i + 1], seed[i + 2],
-            seed[i + 3]);
-  }
-  fprintf(out, "\ncounter=%d h=%ld\n", counter, h);
-
-  if (counter != 105) {
-    fprintf(stderr, "counter should be 105\n");
-    return false;
-  }
-  if (h != 2) {
-    fprintf(stderr, "h should be 2\n");
-    return false;
-  }
-
-  i = BN_bn2bin(dsa->q, buf);
-  j = sizeof(fips_q);
-  if (i != j || OPENSSL_memcmp(buf, fips_q, i) != 0) {
-    fprintf(stderr, "q value is wrong\n");
-    return false;
-  }
-
-  i = BN_bn2bin(dsa->p, buf);
-  j = sizeof(fips_p);
-  if (i != j || OPENSSL_memcmp(buf, fips_p, i) != 0) {
-    fprintf(stderr, "p value is wrong\n");
-    return false;
-  }
-
-  i = BN_bn2bin(dsa->g, buf);
-  j = sizeof(fips_g);
-  if (i != j || OPENSSL_memcmp(buf, fips_g, i) != 0) {
-    fprintf(stderr, "g value is wrong\n");
-    return false;
-  }
-
-  if (!DSA_generate_key(dsa.get()) ||
-      !DSA_sign(0, fips_digest, sizeof(fips_digest), sig, &siglen, dsa.get())) {
-    return false;
-  }
-  if (DSA_verify(0, fips_digest, sizeof(fips_digest), sig, siglen, dsa.get()) !=
-      1) {
-    fprintf(stderr, "verification failure\n");
-    return false;
-  }
-
-  return true;
-}
-
-static bool TestVerify(const uint8_t *sig, size_t sig_len, int expect) {
-  bssl::UniquePtr<DSA> dsa = GetFIPSDSA();
+static bssl::UniquePtr<DSA> GetFIPSDSA(void) {
+  bssl::UniquePtr<DSA> dsa = GetFIPSDSAGroup();
   if (!dsa) {
-    return false;
+    return nullptr;
   }
-
-  int ret =
-      DSA_verify(0, fips_digest, sizeof(fips_digest), sig, sig_len, dsa.get());
-  if (ret != expect) {
-    fprintf(stderr, "DSA_verify returned %d, want %d\n", ret, expect);
-    return false;
+  bssl::UniquePtr<BIGNUM> pub_key(BN_bin2bn(fips_y, sizeof(fips_y), nullptr));
+  bssl::UniquePtr<BIGNUM> priv_key(BN_bin2bn(fips_x, sizeof(fips_x), nullptr));
+  if (!pub_key || !priv_key ||
+      !DSA_set0_key(dsa.get(), pub_key.get(), priv_key.get())) {
+    return nullptr;
   }
-
-  // Clear any errors from a test with expected failure.
-  ERR_clear_error();
-  return true;
+  // |DSA_set0_key| takes ownership.
+  pub_key.release();
+  priv_key.release();
+  return dsa;
 }
 
-// TODO(davidben): Convert this file to GTest properly.
-TEST(DSATest, AllTests) {
-  if (!TestGenerate(stdout) ||
-      !TestVerify(fips_sig, sizeof(fips_sig), 1) ||
-      !TestVerify(fips_sig_negative, sizeof(fips_sig_negative), -1) ||
-      !TestVerify(fips_sig_extra, sizeof(fips_sig_extra), -1) ||
-      !TestVerify(fips_sig_bad_length, sizeof(fips_sig_bad_length), -1) ||
-      !TestVerify(fips_sig_bad_r, sizeof(fips_sig_bad_r), 0)) {
-    ADD_FAILURE() << "Tests failed";
-  }
+TEST(DSATest, Generate) {
+  bssl::UniquePtr<DSA> dsa(DSA_new());
+  ASSERT_TRUE(dsa);
+  int counter;
+  unsigned long h;
+  ASSERT_TRUE(DSA_generate_parameters_ex(dsa.get(), 512, seed, 20, &counter, &h,
+                                         nullptr));
+  EXPECT_EQ(counter, 105);
+  EXPECT_EQ(h, 2u);
+
+  auto expect_bn_bytes = [](const char *msg, const BIGNUM *bn,
+                            bssl::Span<const uint8_t> bytes) {
+    std::vector<uint8_t> buf(BN_num_bytes(bn));
+    BN_bn2bin(bn, buf.data());
+    EXPECT_EQ(Bytes(buf), Bytes(bytes)) << msg;
+  };
+  expect_bn_bytes("q value is wrong", DSA_get0_q(dsa.get()), fips_q);
+  expect_bn_bytes("p value is wrong", DSA_get0_p(dsa.get()), fips_p);
+  expect_bn_bytes("g value is wrong", DSA_get0_g(dsa.get()), fips_g);
+
+  ASSERT_TRUE(DSA_generate_key(dsa.get()));
+
+  std::vector<uint8_t> sig(DSA_size(dsa.get()));
+  unsigned sig_len;
+  ASSERT_TRUE(DSA_sign(0, fips_digest, sizeof(fips_digest), sig.data(),
+                       &sig_len, dsa.get()));
+
+  EXPECT_EQ(1, DSA_verify(0, fips_digest, sizeof(fips_digest), sig.data(),
+                          sig_len, dsa.get()));
+}
+
+TEST(DSATest, Verify) {
+  bssl::UniquePtr<DSA> dsa = GetFIPSDSA();
+  ASSERT_TRUE(dsa);
+
+  EXPECT_EQ(1, DSA_verify(0, fips_digest, sizeof(fips_digest), fips_sig,
+                          sizeof(fips_sig), dsa.get()));
+  EXPECT_EQ(-1,
+            DSA_verify(0, fips_digest, sizeof(fips_digest), fips_sig_negative,
+                       sizeof(fips_sig_negative), dsa.get()));
+  EXPECT_EQ(-1, DSA_verify(0, fips_digest, sizeof(fips_digest), fips_sig_extra,
+                           sizeof(fips_sig_extra), dsa.get()));
+  EXPECT_EQ(-1,
+            DSA_verify(0, fips_digest, sizeof(fips_digest), fips_sig_bad_length,
+                       sizeof(fips_sig_bad_length), dsa.get()));
+  EXPECT_EQ(0, DSA_verify(0, fips_digest, sizeof(fips_digest), fips_sig_bad_r,
+                          sizeof(fips_sig_bad_r), dsa.get()));
 }
 
 TEST(DSATest, InvalidGroup) {
@@ -331,4 +267,146 @@ TEST(DSATest, InvalidGroup) {
   uint32_t err = ERR_get_error();
   EXPECT_EQ(ERR_LIB_DSA, ERR_GET_LIB(err));
   EXPECT_EQ(DSA_R_INVALID_PARAMETERS, ERR_GET_REASON(err));
+}
+
+// Signing and verifying should cleanly fail when the DSA object is empty.
+TEST(DSATest, MissingParameters) {
+  bssl::UniquePtr<DSA> dsa(DSA_new());
+  ASSERT_TRUE(dsa);
+  EXPECT_EQ(-1, DSA_verify(0, fips_digest, sizeof(fips_digest), fips_sig,
+                           sizeof(fips_sig), dsa.get()));
+
+  std::vector<uint8_t> sig(DSA_size(dsa.get()));
+  unsigned sig_len;
+  EXPECT_FALSE(DSA_sign(0, fips_digest, sizeof(fips_digest), sig.data(),
+                        &sig_len, dsa.get()));
+}
+
+// Verifying should cleanly fail when the public key is missing.
+TEST(DSATest, MissingPublic) {
+  bssl::UniquePtr<DSA> dsa = GetFIPSDSAGroup();
+  ASSERT_TRUE(dsa);
+  EXPECT_EQ(-1, DSA_verify(0, fips_digest, sizeof(fips_digest), fips_sig,
+                           sizeof(fips_sig), dsa.get()));
+}
+
+// Signing should cleanly fail when the private key is missing.
+TEST(DSATest, MissingPrivate) {
+  bssl::UniquePtr<DSA> dsa = GetFIPSDSAGroup();
+  ASSERT_TRUE(dsa);
+
+  std::vector<uint8_t> sig(DSA_size(dsa.get()));
+  unsigned sig_len;
+  EXPECT_FALSE(DSA_sign(0, fips_digest, sizeof(fips_digest), sig.data(),
+                        &sig_len, dsa.get()));
+}
+
+// A zero private key is invalid and can cause signing to loop forever.
+TEST(DSATest, ZeroPrivateKey) {
+  bssl::UniquePtr<DSA> dsa = GetFIPSDSA();
+  ASSERT_TRUE(dsa);
+  BN_zero(dsa->priv_key);
+
+  static const uint8_t kZeroDigest[32] = {0};
+  std::vector<uint8_t> sig(DSA_size(dsa.get()));
+  unsigned sig_len;
+  EXPECT_FALSE(DSA_sign(0, kZeroDigest, sizeof(kZeroDigest), sig.data(),
+                        &sig_len, dsa.get()));
+}
+
+// If the "field" is actually a ring and the "generator" of the multiplicative
+// subgroup is actually nilpotent with low degree, DSA signing never completes.
+// Test that we give up in the infinite loop.
+TEST(DSATest, NilpotentGenerator) {
+  static const char kPEM[] = R"(
+-----BEGIN DSA PRIVATE KEY-----
+MGECAQACFQHH+MnFXh4NNlZiV/zUVb5a5ib3kwIVAOP8ZOKvDwabKzEr/moq3y1z
+E3vJAhUAl/2Ylx9fWbzHdh1URsc/c6IM/TECAQECFCsjU4AZRcuks45g1NMOUeCB
+Epvg
+-----END DSA PRIVATE KEY-----
+)";
+  bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(kPEM, sizeof(kPEM)));
+  ASSERT_TRUE(bio);
+  bssl::UniquePtr<DSA> dsa(
+      PEM_read_bio_DSAPrivateKey(bio.get(), nullptr, nullptr, nullptr));
+  ASSERT_TRUE(dsa);
+
+  std::vector<uint8_t> sig(DSA_size(dsa.get()));
+  unsigned sig_len;
+  EXPECT_FALSE(DSA_sign(0, fips_digest, sizeof(fips_digest), sig.data(),
+                        &sig_len, dsa.get()));
+}
+
+TEST(DSATest, Overwrite) {
+  // Load an arbitrary DSA private key and use it.
+  static const char kPEM[] = R"(
+-----BEGIN DSA PRIVATE KEY-----
+MIIDTgIBAAKCAQEAyH68EuravtF+7PTFBtWJkwjmp0YJmh8e2Cdpu8ci3dZf87rk
+GwXzfqYkAEkW5H4Hp0cxdICKFiqfxjSaiEauOrNV+nXWZS634hZ9H47I8HnAVS0p
+5MmSmPJ7NNUowymMpyB6M6hfqHl/1pZd7avbTmnzb2SZ0kw0WLWJo6vMekepYWv9
+3o1Xove4ci00hnkr7Qo9Bh/+z84jgeT2/MTdsCVtbuMv/mbcYLhCKVWPBozDZr/D
+qwhGTlomsTRvP3WIbem3b5eYhQaPuMsKiAzntcinoxQXWrIoZB+xJyF/sI013uBI
+i9ePSxY3704U4QGxVM0aR/6fzORz5kh8ZjhhywIdAI9YBUR6eoGevUaLq++qXiYW
+TgXBXlyqE32ESbkCggEBAL/c5GerO5g25D0QsfgVIJtlZHQOwYauuWoUudaQiyf6
+VhWLBNNTAGldkFGdtxsA42uqqZSXCki25LvN6PscGGvFy8oPWaa9TGt+l9Z5ZZiV
+ShNpg71V9YuImsPB3BrQ4L6nZLfhBt6InzJ6KqjDNdg7u6lgnFKue7l6khzqNxbM
+RgxHWMq7PkhMcl+RzpqbiGcxSHqraxldutqCWsnZzhKh4d4GdunuRY8GiFo0Axkb
+Kn0Il3zm81ewv08F/ocu+IZQEzxTyR8YRQ99MLVbnwhVxndEdLjjetCX82l+/uEY
+5fdUy0thR8odcDsvUc/tT57I+yhnno80HbpUUNw2+/sCggEAdh1wp/9CifYIp6T8
+P/rIus6KberZ2Pv/n0bl+Gv8AoToA0zhZXIfY2l0TtanKmdLqPIvjqkN0v6zGSs+
++ahR1QzMQnK718mcsQmB4X6iP5LKgJ/t0g8LrDOxc/cNycmHq76MmF9RN5NEBz4+
+PAnRIftm/b0UQflP6uy3gRQP2X7P8ZebCytOPKTZC4oLyCtvPevSkCiiauq/RGjL
+k6xqRgLxMtmuyhT+dcVbtllV1p1xd9Bppnk17/kR5VCefo/e/7DHu163izRDW8tx
+SrEmiVyVkRijY3bVZii7LPfMz5eEAWEDJRuFwyNv3i6j7CKeZw2d/hzu370Ua28F
+s2lmkAIcLIFUDFrbC2nViaB5ATM9ARKk6F2QwnCfGCyZ6A==
+-----END DSA PRIVATE KEY-----
+)";
+  bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(kPEM, sizeof(kPEM)));
+  ASSERT_TRUE(bio);
+  bssl::UniquePtr<DSA> dsa(
+      PEM_read_bio_DSAPrivateKey(bio.get(), nullptr, nullptr, nullptr));
+  ASSERT_TRUE(dsa);
+
+  std::vector<uint8_t> sig(DSA_size(dsa.get()));
+  unsigned sig_len;
+  ASSERT_TRUE(DSA_sign(0, fips_digest, sizeof(fips_digest), sig.data(),
+                       &sig_len, dsa.get()));
+  sig.resize(sig_len);
+  EXPECT_EQ(1, DSA_verify(0, fips_digest, sizeof(fips_digest), sig.data(),
+                          sig.size(), dsa.get()));
+
+  // Overwrite it with the sample key.
+  bssl::UniquePtr<BIGNUM> p(BN_bin2bn(fips_p, sizeof(fips_p), nullptr));
+  ASSERT_TRUE(p);
+  bssl::UniquePtr<BIGNUM> q(BN_bin2bn(fips_q, sizeof(fips_q), nullptr));
+  ASSERT_TRUE(q);
+  bssl::UniquePtr<BIGNUM> g(BN_bin2bn(fips_g, sizeof(fips_g), nullptr));
+  ASSERT_TRUE(g);
+  ASSERT_TRUE(DSA_set0_pqg(dsa.get(), p.get(), q.get(), g.get()));
+  // |DSA_set0_pqg| takes ownership on success.
+  p.release();
+  q.release();
+  g.release();
+  bssl::UniquePtr<BIGNUM> pub_key(BN_bin2bn(fips_y, sizeof(fips_y), nullptr));
+  ASSERT_TRUE(pub_key);
+  bssl::UniquePtr<BIGNUM> priv_key(BN_bin2bn(fips_x, sizeof(fips_x), nullptr));
+  ASSERT_TRUE(priv_key);
+  ASSERT_TRUE(DSA_set0_key(dsa.get(), pub_key.get(), priv_key.get()));
+  // |DSA_set0_key| takes ownership on success.
+  pub_key.release();
+  priv_key.release();
+
+  // The key should now work correctly for the new parameters.
+  EXPECT_EQ(1, DSA_verify(0, fips_digest, sizeof(fips_digest), fips_sig,
+                          sizeof(fips_sig), dsa.get()));
+
+  // Test signing by verifying it round-trips through the real key.
+  sig.resize(DSA_size(dsa.get()));
+  ASSERT_TRUE(DSA_sign(0, fips_digest, sizeof(fips_digest), sig.data(),
+                       &sig_len, dsa.get()));
+  sig.resize(sig_len);
+  dsa = GetFIPSDSA();
+  ASSERT_TRUE(dsa);
+  EXPECT_EQ(1, DSA_verify(0, fips_digest, sizeof(fips_digest), sig.data(),
+                          sig.size(), dsa.get()));
 }

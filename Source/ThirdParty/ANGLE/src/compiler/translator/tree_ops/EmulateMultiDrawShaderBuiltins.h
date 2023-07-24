@@ -32,14 +32,12 @@ class TSymbolTable;
 [[nodiscard]] bool EmulateGLDrawID(TCompiler *compiler,
                                    TIntermBlock *root,
                                    TSymbolTable *symbolTable,
-                                   std::vector<sh::ShaderVariable> *uniforms,
-                                   bool shouldCollect);
+                                   std::vector<sh::ShaderVariable> *uniforms);
 
 [[nodiscard]] bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
                                                    TIntermBlock *root,
                                                    TSymbolTable *symbolTable,
                                                    std::vector<sh::ShaderVariable> *uniforms,
-                                                   bool shouldCollect,
                                                    bool addBaseVertexToVertexID);
 
 }  // namespace sh

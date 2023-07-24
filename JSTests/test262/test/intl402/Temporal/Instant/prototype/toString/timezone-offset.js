@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-temporal.instant.prototype.tostring
-description: The time zone offset part of the string serialization (Intl time zones)
+description: The time zone offset part of the string serialization (IANA time zones)
 features: [BigInt, Temporal]
 ---*/
 

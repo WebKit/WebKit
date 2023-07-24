@@ -1,0 +1,14 @@
+OPEN FILE PANEL
+Tests that a camera RAW file, chosen via the file picker which accepts RAW files and PNG images, does not transcode the file to PNG.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fileList.length is 1
+PASS file.name is "image.nef"
+PASS file.type is "image/x-nikon-nef"
+PASS file.size is 1955729
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

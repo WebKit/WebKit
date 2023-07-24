@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,6 @@
 #import "Sampler.h"
 #import "ShaderModule.h"
 #import "Texture.h"
-#import <CoreVideo/CVPixelBuffer.h>
 #import <algorithm>
 #import <notify.h>
 #import <wtf/StdLibExtras.h>
@@ -287,6 +286,25 @@ void Device::generateAnOutOfMemoryError(String&& message)
     }
 }
 
+void Device::generateAnInternalError(String&& message)
+{
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-an-internal-error
+
+    auto* scope = currentErrorScope(WGPUErrorFilter_Internal);
+
+    if (scope) {
+        if (!scope->error)
+            scope->error = Error { WGPUErrorType_Internal, WTFMove(message) };
+        return;
+    }
+
+    if (m_uncapturedErrorCallback) {
+        instance().scheduleWork([protectedThis = Ref { *this }, message = WTFMove(message)]() mutable {
+            protectedThis->m_uncapturedErrorCallback(WGPUErrorType_Internal, WTFMove(message));
+        });
+    }
+}
+
 uint32_t Device::maxBuffersPlusVertexBuffersForVertexStage() const
 {
     // FIXME: use value in HardwareCapabilities from https://github.com/gpuweb/gpuweb/issues/2749
@@ -348,15 +366,6 @@ void Device::pushErrorScope(WGPUErrorFilter filter)
     m_errorScopeStack.append(WTFMove(scope));
 }
 
-void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&& callback)
-{
-    m_deviceLostCallback = WTFMove(callback);
-    if (m_isLost)
-        loseTheDevice(WGPUDeviceLostReason_Destroyed);
-    else if (!m_adapter->isValid())
-        loseTheDevice(WGPUDeviceLostReason_Undefined);
-}
-
 void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&& callback)
 {
     m_uncapturedErrorCallback = WTFMove(callback);
@@ -370,6 +379,11 @@ void Device::setLabel(String&&)
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuDeviceReference(WGPUDevice device)
+{
+    WebGPU::fromAPI(device).ref();
+}
 
 void wgpuDeviceRelease(WGPUDevice device)
 {
@@ -499,16 +513,16 @@ bool wgpuDeviceHasFeature(WGPUDevice device, WGPUFeatureName feature)
     return WebGPU::fromAPI(device).hasFeature(feature);
 }
 
-bool wgpuDevicePopErrorScope(WGPUDevice device, WGPUErrorCallback callback, void* userdata)
+void wgpuDevicePopErrorScope(WGPUDevice device, WGPUErrorCallback callback, void* userdata)
 {
-    return WebGPU::fromAPI(device).popErrorScope([callback, userdata](WGPUErrorType type, String&& message) {
+    WebGPU::fromAPI(device).popErrorScope([callback, userdata](WGPUErrorType type, String&& message) {
         callback(type, message.utf8().data(), userdata);
     });
 }
 
-bool wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback)
+void wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback)
 {
-    return WebGPU::fromAPI(device).popErrorScope([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUErrorType type, String&& message) {
+    WebGPU::fromAPI(device).popErrorScope([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUErrorType type, String&& message) {
         callback(type, message.utf8().data());
     });
 }
@@ -516,22 +530,6 @@ bool wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback 
 void wgpuDevicePushErrorScope(WGPUDevice device, WGPUErrorFilter filter)
 {
     WebGPU::fromAPI(device).pushErrorScope(filter);
-}
-
-void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback callback, void* userdata)
-{
-    return WebGPU::fromAPI(device).setDeviceLostCallback([callback, userdata](WGPUDeviceLostReason reason, String&& message) {
-        if (callback)
-            callback(reason, message.utf8().data(), userdata);
-    });
-}
-
-void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback)
-{
-    return WebGPU::fromAPI(device).setDeviceLostCallback([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUDeviceLostReason reason, String&& message) {
-        if (callback)
-            callback(reason, message.utf8().data());
-    });
 }
 
 void wgpuDeviceSetUncapturedErrorCallback(WGPUDevice device, WGPUErrorCallback callback, void* userdata)

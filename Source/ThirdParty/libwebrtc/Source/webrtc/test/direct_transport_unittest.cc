@@ -18,12 +18,13 @@ namespace test {
 TEST(DemuxerTest, Demuxing) {
   constexpr uint8_t kVideoPayloadType = 100;
   constexpr uint8_t kAudioPayloadType = 101;
-  constexpr size_t kPacketSize = 10;
+  constexpr size_t kPacketSize = 12;
   Demuxer demuxer({{kVideoPayloadType, MediaType::VIDEO},
                    {kAudioPayloadType, MediaType::AUDIO}});
 
   uint8_t data[kPacketSize];
   memset(data, 0, kPacketSize);
+  data[0] = 0x80;
   data[1] = kVideoPayloadType;
   EXPECT_EQ(demuxer.GetMediaType(data, kPacketSize), MediaType::VIDEO);
   data[1] = kAudioPayloadType;

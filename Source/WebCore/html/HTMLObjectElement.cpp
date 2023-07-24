@@ -36,7 +36,6 @@
 #include "HTMLMetaElement.h"
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
-#include "HTMLParserIdioms.h"
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "NodeList.h"
@@ -114,7 +113,8 @@ void HTMLObjectElement::attributeChanged(const QualifiedName& name, const AtomSt
         needsWidgetUpdate = true;
         break;
     case AttributeNames::dataAttr:
-        m_url = stripLeadingAndTrailingHTMLSpaces(newValue);
+        // FIXME: trimming whitespace is probably redundant with the URL parser
+        m_url = newValue.string().trim(isASCIIWhitespace);
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         needsWidgetUpdate = true;
         updateImageLoaderWithNewURLSoon();
@@ -176,7 +176,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vect
 
         // FIXME: url adjustment does not belong in this function.
         if (url.isEmpty() && urlParameter.isEmpty() && (equalLettersIgnoringASCIICase(name, "src"_s) || equalLettersIgnoringASCIICase(name, "movie"_s) || equalLettersIgnoringASCIICase(name, "code"_s) || equalLettersIgnoringASCIICase(name, "url"_s)))
-            urlParameter = stripLeadingAndTrailingHTMLSpaces(param.value());
+            urlParameter = param.value().string().trim(isASCIIWhitespace);
         // FIXME: serviceType calculation does not belong in this function.
         if (serviceType.isEmpty() && equalLettersIgnoringASCIICase(name, "type"_s)) {
             serviceType = param.value();
@@ -216,7 +216,7 @@ bool HTMLObjectElement::hasFallbackContent() const
     for (RefPtr<Node> child = firstChild(); child; child = child->nextSibling()) {
         // Ignore whitespace-only text, and <param> tags, any other content is fallback content.
         if (is<Text>(*child)) {
-            if (!downcast<Text>(*child).data().isAllSpecialCharacters<isASCIIWhitespace>())
+            if (!downcast<Text>(*child).data().containsOnly<isASCIIWhitespace>())
                 return true;
         } else if (!is<HTMLParamElement>(*child))
             return true;
@@ -376,7 +376,7 @@ static inline bool preventsParentObjectFromExposure(const Node& child)
     if (is<Element>(child))
         return preventsParentObjectFromExposure(downcast<Element>(child));
     if (is<Text>(child))
-        return !downcast<Text>(child).data().isAllSpecialCharacters<isASCIIWhitespace>();
+        return !downcast<Text>(child).data().containsOnly<isASCIIWhitespace>();
     return true;
 }
 

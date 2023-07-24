@@ -75,7 +75,7 @@ IGNORE_WARNINGS_END
 namespace TestWebKitAPI {
 
 // FIXME Re-enable when https://bugs.webkit.org/show_bug.cgi?id=237125 is resovled 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(WebKitLegacy, DISABLED_ScrollingDoesNotPauseMedia)
 #else
 TEST(WebKitLegacy, ScrollingDoesNotPauseMedia)

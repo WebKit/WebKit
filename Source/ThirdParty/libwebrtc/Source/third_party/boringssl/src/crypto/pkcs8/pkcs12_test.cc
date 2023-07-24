@@ -34,7 +34,7 @@ std::string GetTestData(const char *path);
 static const char kPassword[] = "foo";
 
 // kUnicodePassword is the password for unicode_password.p12
-static const char kUnicodePassword[] = u8"Hello, 世界";
+static const char kUnicodePassword[] = "Hello, 世界";
 
 static bssl::Span<const uint8_t> StringToBytes(const std::string &str) {
   return bssl::MakeConstSpan(reinterpret_cast<const uint8_t *>(str.data()),
@@ -391,7 +391,7 @@ TEST(PKCS12Test, RoundTrip) {
                 {bssl::Span<const uint8_t>(kTestCert2)}, 0, 0, 0, 0);
 
   // Test some Unicode.
-  TestRoundTrip(kPassword, u8"Hello, 世界!",
+  TestRoundTrip(kPassword, "Hello, 世界!",
                 bssl::Span<const uint8_t>(kTestKey),
                 bssl::Span<const uint8_t>(kTestCert),
                 {bssl::Span<const uint8_t>(kTestCert2)}, 0, 0, 0, 0);
@@ -598,4 +598,46 @@ TEST(PKCS12Test, Order) {
   // The same happens if there is a key, but it does not match any certificate.
   ASSERT_TRUE(PKCS12CreateVector(&p12, key1.get(), {cert2.get(), cert3.get()}));
   ExpectPKCS12Parse(p12, key1.get(), nullptr, {cert2.get(), cert3.get()});
+}
+
+TEST(PKCS12Test, CreateWithAlias) {
+  bssl::UniquePtr<EVP_PKEY> key = MakeTestKey();
+  ASSERT_TRUE(key);
+  bssl::UniquePtr<X509> cert1 = MakeTestCert(key.get());
+  ASSERT_TRUE(cert1);
+  bssl::UniquePtr<X509> cert2 = MakeTestCert(key.get());
+  ASSERT_TRUE(cert2);
+
+  std::string alias = "I'm an alias";
+  int res = X509_alias_set1(
+      cert1.get(), reinterpret_cast<const unsigned char *>(alias.data()),
+      alias.size());
+  ASSERT_EQ(res, 1);
+
+  std::vector<X509 *> certs = {cert1.get(), cert2.get()};
+  std::vector<uint8_t> der;
+  ASSERT_TRUE(PKCS12CreateVector(&der, key.get(), certs));
+
+  bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(der.data(), der.size()));
+  ASSERT_TRUE(bio);
+  bssl::UniquePtr<PKCS12> p12(d2i_PKCS12_bio(bio.get(), nullptr));
+  ASSERT_TRUE(p12);
+
+  EVP_PKEY *parsed_key = nullptr;
+  X509 *parsed_cert = nullptr;
+  STACK_OF(X509) *ca_certs = nullptr;
+  ASSERT_TRUE(
+      PKCS12_parse(p12.get(), kPassword, &parsed_key, &parsed_cert, &ca_certs));
+
+  bssl::UniquePtr<EVP_PKEY> delete_key(parsed_key);
+  bssl::UniquePtr<X509> delete_cert(parsed_cert);
+  bssl::UniquePtr<STACK_OF(X509)> delete_ca_certs(ca_certs);
+  ASSERT_EQ(sk_X509_num(ca_certs), 1UL);
+
+  int alias_len = 0;
+  const unsigned char *parsed_alias =
+      X509_alias_get0(sk_X509_value(ca_certs, 0), &alias_len);
+  ASSERT_TRUE(parsed_alias);
+  ASSERT_EQ(alias, std::string(reinterpret_cast<const char *>(parsed_alias),
+                               static_cast<size_t>(alias_len)));
 }

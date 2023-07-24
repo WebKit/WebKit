@@ -100,6 +100,7 @@ class ResourceRequest;
 class UserGestureToken;
 
 enum class EventMakesGamepadsVisible : bool;
+enum class RenderAsTextFlag : uint16_t;
 
 struct ClientOrigin;
 struct DisplayUpdate;
@@ -156,6 +157,7 @@ struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
 enum class RemoteWorkerType : uint8_t;
+enum class UserInterfaceIdiom : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
 #if PLATFORM(IOS_FAMILY)
@@ -342,6 +344,7 @@ public:
     void enableRemoteWebInspector();
 #endif
     void unblockServicesRequiredByAccessibility(const Vector<SandboxExtension::Handle>&);
+    static id accessibilityFocusedUIElement();
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
 #endif
@@ -406,6 +409,17 @@ public:
 
     void deferNonVisibleProcessEarlyMemoryCleanupTimer();
 
+    void addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&&);
+    bool allowsFirstPartyForCookies(const URL&);
+
+#if PLATFORM(MAC)
+    void revokeLaunchServicesSandboxExtension();
+#endif
+
+#if PLATFORM(GTK)
+    const OptionSet<DMABufRendererBufferMode>& dmaBufRendererBufferMode() const { return m_dmaBufRendererBufferMode; }
+#endif
+
 private:
     WebProcess();
     ~WebProcess();
@@ -464,7 +478,9 @@ private:
 
     void setEnhancedAccessibility(bool);
     void remotePostMessage(WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&);
-    
+
+    void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String)>&&);
+
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
     void stopMemorySampler();
     
@@ -561,6 +577,7 @@ private:
     void didClose(IPC::Connection&) final;
 
     // Implemented in generated WebProcessMessageReceiver.cpp
+    bool didReceiveSyncWebProcessMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
     void didReceiveWebProcessMessage(IPC::Connection&, IPC::Decoder&);
 
 #if PLATFORM(MAC)
@@ -589,7 +606,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void userInterfaceIdiomDidChange(bool);
+    void userInterfaceIdiomDidChange(UserInterfaceIdiom);
 
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();
@@ -702,7 +719,7 @@ private:
 
     RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #endif
 
@@ -715,6 +732,8 @@ private:
 
     String m_uiProcessName;
     WebCore::RegistrableDomain m_registrableDomain;
+
+    RefPtr<SandboxExtension> m_launchServicesExtension;
 #endif
 
 #if PLATFORM(COCOA)
@@ -724,8 +743,9 @@ private:
 
     WeakHashMap<WebCore::UserGestureToken, uint64_t> m_userGestureTokens;
 
-#if PLATFORM(GTK) && USE(EGL)
+#if PLATFORM(GTK)
     std::unique_ptr<WebCore::PlatformDisplay> m_displayForCompositing;
+    OptionSet<DMABufRendererBufferMode> m_dmaBufRendererBufferMode;
 #endif
 
     bool m_hasSuspendedPageProxy { false };
@@ -759,6 +779,7 @@ private:
 
 #if PLATFORM(COCOA)
     HashCountedSet<String> m_pendingPasteboardWriteCounts;
+    std::optional<audit_token_t> m_auditTokenForSelf;
 #endif
 
 #if ENABLE(GPU_PROCESS)
@@ -775,6 +796,8 @@ private:
 #endif
     bool m_hadMainFrameMainResourcePrivateRelayed { false };
     bool m_imageAnimationEnabled { true };
+
+    HashSet<WebCore::RegistrableDomain> m_allowedFirstPartiesForCookies;
 };
 
 } // namespace WebKit

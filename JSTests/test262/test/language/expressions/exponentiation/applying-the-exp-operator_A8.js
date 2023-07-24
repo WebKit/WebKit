@@ -4,6 +4,7 @@
 /*---
 esid: sec-applying-the-exp-operator
 description: If abs(base) is 1 and exponent is −∞, the result is NaN.
+features: [exponentiation]
 ---*/
 
 

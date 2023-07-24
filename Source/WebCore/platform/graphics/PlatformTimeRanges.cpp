@@ -103,6 +103,37 @@ void PlatformTimeRanges::unionWith(const PlatformTimeRanges& other)
     m_ranges.swap(unioned.m_ranges);
 }
 
+PlatformTimeRanges& PlatformTimeRanges::operator+=(const PlatformTimeRanges& other)
+{
+    unionWith(other);
+    return *this;
+}
+
+PlatformTimeRanges& PlatformTimeRanges::operator-=(const PlatformTimeRanges& other)
+{
+    for (const auto& range : other.m_ranges)
+        *this -= range;
+
+    return *this;
+}
+
+PlatformTimeRanges& PlatformTimeRanges::operator-=(const Range& range)
+{
+    if (range.isEmpty() || m_ranges.isEmpty())
+        return *this;
+
+    auto firstEnd = std::max(m_ranges[0].start, range.start);
+    auto secondStart = std::min(m_ranges.last().end, range.end);
+    Vector<Range> ranges { 2 };
+    if (m_ranges[0].start != firstEnd)
+        ranges.append({ m_ranges[0].start, firstEnd });
+    if (secondStart != m_ranges.last().end)
+        ranges.append({ secondStart, m_ranges.last().end });
+    intersectWith(WTFMove(ranges));
+
+    return *this;
+}
+
 MediaTime PlatformTimeRanges::start(unsigned index) const
 {
     bool ignoredValid;

@@ -46,6 +46,8 @@ class EventLogAnalyzer {
 
   void CreatePlayoutGraph(Plot* plot);
 
+  void CreateNetEqSetMinimumDelay(Plot* plot);
+
   void CreateAudioLevelGraph(PacketDirection direction, Plot* plot);
 
   void CreateSequenceNumberGraph(Plot* plot);

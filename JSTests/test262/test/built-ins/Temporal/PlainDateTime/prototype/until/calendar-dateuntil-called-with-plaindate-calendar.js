@@ -19,8 +19,8 @@ class Calendar extends Temporal.Calendar {
   }
 
   dateUntil(d1, d2) {
-    assert.sameValue(d1.calendar, this, "d1.calendar");
-    assert.sameValue(d2.calendar, this, "d2.calendar");
+    assert.sameValue(d1.getCalendar(), this, "d1.calendar");
+    assert.sameValue(d2.getCalendar(), this, "d2.calendar");
     return new Temporal.Duration();
   }
 }

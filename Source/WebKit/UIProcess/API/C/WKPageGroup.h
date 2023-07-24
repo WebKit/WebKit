@@ -27,6 +27,7 @@
 #define WKPageGroup_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 #include <WebKit/WKUserContentInjectedFrames.h>
 #include <WebKit/WKUserScriptInjectionTime.h>
 
@@ -34,20 +35,20 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKPageGroupGetTypeID(void);
+WK_EXPORT WKTypeID WKPageGroupGetTypeID(void) WK_C_API_DEPRECATED;
 
-WK_EXPORT WKPageGroupRef WKPageGroupCreateWithIdentifier(WKStringRef identifier);
+WK_EXPORT WKPageGroupRef WKPageGroupCreateWithIdentifier(WKStringRef identifier) WK_C_API_DEPRECATED;
 
-WK_EXPORT void WKPageGroupSetPreferences(WKPageGroupRef pageGroup, WKPreferencesRef preferences);
-WK_EXPORT WKPreferencesRef WKPageGroupGetPreferences(WKPageGroupRef pageGroup);
+WK_EXPORT void WKPageGroupSetPreferences(WKPageGroupRef pageGroup, WKPreferencesRef preferences) WK_C_API_DEPRECATED;
+WK_EXPORT WKPreferencesRef WKPageGroupGetPreferences(WKPageGroupRef pageGroup) WK_C_API_DEPRECATED;
 
-WK_EXPORT WKUserContentControllerRef WKPageGroupGetUserContentController(WKPageGroupRef pageGroup);
+WK_EXPORT WKUserContentControllerRef WKPageGroupGetUserContentController(WKPageGroupRef pageGroup) WK_C_API_DEPRECATED;
 
-WK_EXPORT void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef allowedURLPatterns, WKArrayRef blockedURLPatterns, WKUserContentInjectedFrames);
-WK_EXPORT void WKPageGroupRemoveAllUserStyleSheets(WKPageGroupRef pageGroup);
-    
-WK_EXPORT void WKPageGroupAddUserScript(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef allowedURLPatterns, WKArrayRef blockedURLPatterns, WKUserContentInjectedFrames, _WKUserScriptInjectionTime);
-WK_EXPORT void WKPageGroupRemoveAllUserScripts(WKPageGroupRef pageGroup);
+WK_EXPORT void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef allowedURLPatterns, WKArrayRef blockedURLPatterns, WKUserContentInjectedFrames) WK_C_API_DEPRECATED;
+WK_EXPORT void WKPageGroupRemoveAllUserStyleSheets(WKPageGroupRef pageGroup) WK_C_API_DEPRECATED;
+
+WK_EXPORT void WKPageGroupAddUserScript(WKPageGroupRef pageGroup, WKStringRef source, WKURLRef baseURL, WKArrayRef allowedURLPatterns, WKArrayRef blockedURLPatterns, WKUserContentInjectedFrames, _WKUserScriptInjectionTime) WK_C_API_DEPRECATED;
+WK_EXPORT void WKPageGroupRemoveAllUserScripts(WKPageGroupRef pageGroup) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

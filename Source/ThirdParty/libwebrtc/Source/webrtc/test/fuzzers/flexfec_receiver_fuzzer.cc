@@ -19,7 +19,7 @@ namespace webrtc {
 
 namespace {
 class DummyCallback : public RecoveredPacketReceiver {
-  void OnRecoveredPacket(const uint8_t* packet, size_t length) override {}
+  void OnRecoveredPacket(const RtpPacketReceived& packet) override {}
 };
 }  // namespace
 

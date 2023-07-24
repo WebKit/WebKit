@@ -14,7 +14,7 @@
 #include "anglebase/no_destructor.h"
 #include "common/string_utils.h"
 #include "libANGLE/formatutils.h"
-#include "platform/FeaturesGL_autogen.h"
+#include "platform/autogen/FeaturesGL_autogen.h"
 
 namespace rx
 {

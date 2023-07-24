@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUIndexFormat.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUIndexFormat.h>
 
 namespace WebCore {
 
@@ -35,13 +35,13 @@ enum class GPUIndexFormat : uint8_t {
     Uint32,
 };
 
-inline PAL::WebGPU::IndexFormat convertToBacking(GPUIndexFormat indexFormat)
+inline WebGPU::IndexFormat convertToBacking(GPUIndexFormat indexFormat)
 {
     switch (indexFormat) {
     case GPUIndexFormat::Uint16:
-        return PAL::WebGPU::IndexFormat::Uint16;
+        return WebGPU::IndexFormat::Uint16;
     case GPUIndexFormat::Uint32:
-        return PAL::WebGPU::IndexFormat::Uint32;
+        return WebGPU::IndexFormat::Uint32;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

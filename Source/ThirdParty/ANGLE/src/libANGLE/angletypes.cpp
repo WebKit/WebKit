@@ -51,6 +51,9 @@ RasterizerState::RasterizerState()
     cullFace            = false;
     cullMode            = CullFaceMode::Back;
     frontFace           = GL_CCW;
+    polygonMode         = PolygonMode::Fill;
+    polygonOffsetPoint  = false;
+    polygonOffsetLine   = false;
     polygonOffsetFill   = false;
     polygonOffsetFactor = 0.0f;
     polygonOffsetUnits  = 0.0f;
@@ -1039,3 +1042,27 @@ GLsizeiptr GetBoundBufferAvailableSize(const OffsetBindingPointer<Buffer> &bindi
 }
 
 }  // namespace gl
+   //
+namespace angle
+{
+UnlockedTailCall::UnlockedTailCall() = default;
+
+UnlockedTailCall::~UnlockedTailCall()
+{
+    ASSERT(mCalls.empty());
+}
+
+void UnlockedTailCall::add(CallType &&call)
+{
+    mCalls.push_back(std::move(call));
+}
+
+void UnlockedTailCall::runImpl()
+{
+    for (CallType &call : mCalls)
+    {
+        call();
+    }
+    mCalls.clear();
+}
+}  // namespace angle

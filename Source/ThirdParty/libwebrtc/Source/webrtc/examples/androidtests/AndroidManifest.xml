@@ -19,7 +19,7 @@
         <uses-library android:name="android.test.runner" />
     </application>
 
-    <instrumentation android:name="android.support.test.runner.AndroidJUnitRunner"
+    <instrumentation android:name="androidx.test.runner.AndroidJUnitRunner"
         tools:ignore="MissingPrefix"
         android:targetPackage="org.appspot.apprtc"
         android:label="Tests for AppRTCMobile"/>

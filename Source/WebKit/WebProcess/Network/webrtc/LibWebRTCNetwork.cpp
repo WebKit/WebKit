@@ -144,6 +144,13 @@ void LibWebRTCNetwork::signalClose(WebCore::LibWebRTCSocketIdentifier identifier
         socket->signalClose(error);
 }
 
+void LibWebRTCNetwork::signalUsedInterface(WebCore::LibWebRTCSocketIdentifier identifier, String&& interfaceName)
+{
+    ASSERT(!WTF::isMainRunLoop());
+    if (auto* socket = m_socketFactory.socket(identifier))
+        socket->signalUsedInterface(WTFMove(interfaceName));
+}
+
 #endif
 
 } // namespace WebKit

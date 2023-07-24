@@ -126,12 +126,13 @@ void PrintStackBacktrace()
 
 static void Handler(int sig)
 {
+    printf("\nSignal %d:\n", sig);
+
     if (gCrashHandlerCallback)
     {
         (*gCrashHandlerCallback)();
     }
 
-    printf("\nSignal %d:\n", sig);
     PrintStackBacktrace();
 
     // Exit NOW.  Don't notify other threads, don't call anything registered with atexit().
@@ -645,12 +646,13 @@ void PrintStackBacktrace()
 
 static void Handler(int sig)
 {
+    printf("\nSignal %d [%s]:\n", sig, strsignal(sig));
+
     if (gCrashHandlerCallback)
     {
         (*gCrashHandlerCallback)();
     }
 
-    printf("\nSignal %d [%s]:\n", sig, strsignal(sig));
     PrintStackBacktrace();
 
     // Exit NOW.  Don't notify other threads, don't call anything registered with atexit().

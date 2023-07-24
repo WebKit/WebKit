@@ -27,15 +27,6 @@
 
 namespace webrtc {
 
-PipeWireThreadLoopLock::PipeWireThreadLoopLock(pw_thread_loop* loop)
-    : loop_(loop) {
-  pw_thread_loop_lock(loop_);
-}
-
-PipeWireThreadLoopLock::~PipeWireThreadLoopLock() {
-  pw_thread_loop_unlock(loop_);
-}
-
 PipeWireVersion PipeWireVersion::Parse(const absl::string_view& version) {
   std::vector<absl::string_view> parsed_version = rtc::split(version, '.');
 
@@ -76,11 +67,11 @@ bool PipeWireVersion::operator<=(const PipeWireVersion& other) {
 spa_pod* BuildFormat(spa_pod_builder* builder,
                      uint32_t format,
                      const std::vector<uint64_t>& modifiers,
-                     const struct spa_rectangle* resolution) {
+                     const struct spa_rectangle* resolution,
+                     const struct spa_fraction* frame_rate) {
   spa_pod_frame frames[2];
   spa_rectangle pw_min_screen_bounds = spa_rectangle{1, 1};
   spa_rectangle pw_max_screen_bounds = spa_rectangle{UINT32_MAX, UINT32_MAX};
-
   spa_pod_builder_push_object(builder, &frames[0], SPA_TYPE_OBJECT_Format,
                               SPA_PARAM_EnumFormat);
   spa_pod_builder_add(builder, SPA_FORMAT_mediaType,
@@ -125,7 +116,17 @@ spa_pod* BuildFormat(spa_pod_builder* builder,
                                                        &pw_max_screen_bounds),
                         0);
   }
-
+  if (frame_rate) {
+    static const spa_fraction pw_min_frame_rate = spa_fraction{0, 1};
+    spa_pod_builder_add(builder, SPA_FORMAT_VIDEO_framerate,
+                        SPA_POD_CHOICE_RANGE_Fraction(
+                            frame_rate, &pw_min_frame_rate, frame_rate),
+                        0);
+    spa_pod_builder_add(builder, SPA_FORMAT_VIDEO_maxFramerate,
+                        SPA_POD_CHOICE_RANGE_Fraction(
+                            frame_rate, &pw_min_frame_rate, frame_rate),
+                        0);
+  }
   return static_cast<spa_pod*>(spa_pod_builder_pop(builder, &frames[0]));
 }
 

@@ -69,7 +69,7 @@ AccessibilityObject* AccessibilitySVGElement::targetForUseElement() const
     if (href.isEmpty())
         href = getAttribute(HTMLNames::hrefAttr);
 
-    auto target = SVGURIReference::targetElementFromIRIString(href, use.treeScope());
+    auto target = SVGURIReference::targetElementFromIRIString(href, use.treeScopeForSVGReferences());
     if (!target.element)
         return nullptr;
 
@@ -210,7 +210,7 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
     if (decision == AccessibilityObjectInclusion::IgnoreObject)
         return true;
 
-    if (m_renderer->isLegacySVGHiddenContainer() || m_renderer->isSVGHiddenContainer())
+    if (!m_renderer || m_renderer->isLegacySVGHiddenContainer() || m_renderer->isSVGHiddenContainer())
         return true;
 
     // The SVG AAM states objects with at least one 'title' or 'desc' element MUST be included.
@@ -229,7 +229,7 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
     // The SVG AAM states text elements should also be included, if they have content.
     if (m_renderer->isSVGText() || m_renderer->isSVGTextPath()) {
         for (auto& child : childrenOfType<RenderText>(downcast<RenderElement>(*m_renderer))) {
-            if (!child.isAllCollapsibleWhitespace())
+            if (!child.containsOnlyCollapsibleWhitespace())
                 return false;
         }
     }

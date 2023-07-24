@@ -95,7 +95,7 @@ size_t TestPDFPage::characterCount() const
     return text().length();
 }
 
-inline bool shouldStrip(UChar character)
+inline bool shouldTrim(UChar character)
 {
     // This is a list of trailing and leading white space characters we've seen in PDF generation.
     // It can be expanded if we see more popup.
@@ -105,7 +105,7 @@ inline bool shouldStrip(UChar character)
 String TestPDFPage::text() const
 {
     if (!m_textWithoutSurroundingWhitespace)
-        m_textWithoutSurroundingWhitespace = String(m_page.get().string).stripLeadingAndTrailingCharacters(shouldStrip);
+        m_textWithoutSurroundingWhitespace = String(m_page.get().string).trim(shouldTrim);
 
     return *m_textWithoutSurroundingWhitespace;
 }

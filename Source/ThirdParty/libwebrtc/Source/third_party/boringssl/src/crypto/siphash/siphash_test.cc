@@ -23,14 +23,12 @@
 
 TEST(SipHash, Basic) {
   // This is the example from appendix A of the SipHash paper.
-  union {
-    uint8_t bytes[16];
-    uint64_t words[2];
-  } key;
-
+  uint8_t key_bytes[16];
   for (unsigned i = 0; i < 16; i++) {
-    key.bytes[i] = i;
+    key_bytes[i] = i;
   }
+  uint64_t key[2];
+  memcpy(key, key_bytes, sizeof(key));
 
   uint8_t input[15];
   for (unsigned i = 0; i < sizeof(input); i++) {
@@ -38,7 +36,7 @@ TEST(SipHash, Basic) {
   }
 
   EXPECT_EQ(UINT64_C(0xa129ca6149be45e5),
-            SIPHASH_24(key.words, input, sizeof(input)));
+            SIPHASH_24(key, input, sizeof(input)));
 }
 
 TEST(SipHash, Vectors) {

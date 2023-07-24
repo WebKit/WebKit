@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
 #include <WebCore/MediaSelectionOption.h>
+#include <WebCore/PlatformPlaybackSessionInterface.h>
 #include <WebCore/PlaybackSessionModel.h>
 #include <WebCore/TimeRanges.h>
 #include <wtf/HashCountedSet.h>
@@ -37,18 +38,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-
-#if PLATFORM(IOS_FAMILY)
-#include <WebCore/PlaybackSessionInterfaceAVKit.h>
-#else
-#include <WebCore/PlaybackSessionInterfaceMac.h>
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-typedef WebCore::PlaybackSessionInterfaceAVKit PlatformPlaybackSessionInterface;
-#else
-typedef WebCore::PlaybackSessionInterfaceMac PlatformPlaybackSessionInterface;
-#endif
 
 namespace WebKit {
 
@@ -192,7 +181,7 @@ public:
 
     void invalidate();
 
-    PlatformPlaybackSessionInterface* controlsManagerInterface();
+    WebCore::PlatformPlaybackSessionInterface* controlsManagerInterface();
     void requestControlledElementID();
 
     bool isPaused(PlaybackSessionContextIdentifier) const;
@@ -207,11 +196,11 @@ private:
     explicit PlaybackSessionManagerProxy(WebPageProxy&);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    typedef std::tuple<RefPtr<PlaybackSessionModelContext>, RefPtr<PlatformPlaybackSessionInterface>> ModelInterfaceTuple;
+    typedef std::tuple<RefPtr<PlaybackSessionModelContext>, RefPtr<WebCore::PlatformPlaybackSessionInterface>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
     ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
     PlaybackSessionModelContext& ensureModel(PlaybackSessionContextIdentifier);
-    PlatformPlaybackSessionInterface& ensureInterface(PlaybackSessionContextIdentifier);
+    WebCore::PlatformPlaybackSessionInterface& ensureInterface(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
 

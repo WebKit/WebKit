@@ -88,6 +88,7 @@
 #include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
+#include "Quirks.h"
 #include "Range.h"
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
@@ -234,6 +235,10 @@ TemporarySelectionChange::TemporarySelectionChange(Document& document, std::opti
 
     if (temporarySelection) {
         m_selectionToRestore = document.selection().selection();
+#if PLATFORM(IOS_FAMILY)
+        if (document.selection().isUpdateAppearanceEnabled())
+            document.selection().setNeedsSelectionUpdate();
+#endif
         setSelection(temporarySelection.value(), IsTemporarySelection::Yes);
     }
 }
@@ -591,7 +596,7 @@ bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity g
 
     if (m_document.selection().isRange()) {
         if (isTypingAction) {
-            TypingCommand::deleteKeyPressed(document(), canSmartCopyOrDelete() ? TypingCommand::SmartDelete : 0, granularity);
+            TypingCommand::deleteKeyPressed(document(), canSmartCopyOrDelete() ? TypingCommand::Option::SmartDelete : OptionSet<TypingCommand::Option> { }, granularity);
             revealSelectionAfterEditingOperation();
         } else {
             if (shouldAddToKillRing)
@@ -600,11 +605,11 @@ bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity g
             // Implicitly calls revealSelectionAfterEditingOperation().
         }
     } else {
-        TypingCommand::Options options = 0;
+        OptionSet<TypingCommand::Option> options;
         if (canSmartCopyOrDelete())
-            options |= TypingCommand::SmartDelete;
+            options.add(TypingCommand::Option::SmartDelete);
         if (shouldAddToKillRing)
-            options |= TypingCommand::AddsToKillRing;
+            options.add(TypingCommand::Option::AddsToKillRing);
         switch (direction) {
         case SelectionDirection::Forward:
         case SelectionDirection::Right:
@@ -647,7 +652,7 @@ void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
         return;
     auto sanitizedText = pastingText;
     if (auto* page = m_document.page())
-        sanitizedText = page->sanitizeLookalikeCharacters(sanitizedText, LookalikeCharacterSanitizationTrigger::Paste);
+        sanitizedText = page->applyLinkDecorationFiltering(sanitizedText, LinkDecorationFilteringTrigger::Paste);
     target->dispatchEvent(TextEvent::createForPlainTextPaste(document().windowProxy(), WTFMove(sanitizedText), smartReplace));
 }
 
@@ -1125,30 +1130,60 @@ static void notifyTextFromControls(Element* startRoot, Element* endRoot)
         endingTextControl->didEditInnerTextValue();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/EditorAdditions.cpp>
-#else
 static inline bool shouldRemoveAutocorrectionIndicator(bool shouldConsiderApplyingAutocorrection, bool autocorrectionWasApplied, bool isAutocompletion)
 {
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    bool shouldRemoveIndicator = shouldConsiderApplyingAutocorrection && !autocorrectionWasApplied;
+#if PLATFORM(IOS_FAMILY)
+    // On iOS, unlike macOS, autocorrection is applied as two separate text insertions. The first insertion is
+    // an autocompletion.
+    return shouldRemoveIndicator && !isAutocompletion;
+#else // !PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(isAutocompletion);
+    return shouldRemoveIndicator;
+#endif // !PLATFORM(IOS_FAMILY)
+#else // !HAVE(AUTOCORRECTION_ENHANCEMENTS)
     UNUSED_PARAM(shouldConsiderApplyingAutocorrection);
     UNUSED_PARAM(isAutocompletion);
+#endif // !HAVE(AUTOCORRECTION_ENHANCEMENTS)
     return !autocorrectionWasApplied;
 }
 
-static inline bool didApplyAutocorrection(Document&, AlternativeTextController& alternativeTextController)
+static inline bool didApplyAutocorrection(Document& document, AlternativeTextController& alternativeTextController)
 {
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
+    bool autocorrectionWasApplied = alternativeTextController.applyAutocorrectionBeforeTypingIfAppropriate();
+
+    // On iOS, unlike macOS, autocorrection is applied as two separate text insertions: the correction
+    // itself, followed by a space. This logic detects that an autocorrection was applied after the
+    // space has been inserted.
+
+    auto selection = document.selection().selection();
+    auto startOfSelection = selection.start();
+
+    auto wordStart = startOfWord(startOfSelection, LeftWordIfOnBoundary);
+    auto wordEnd = endOfWord(startOfSelection, LeftWordIfOnBoundary);
+
+    if (auto range = makeSimpleRange(wordStart, wordEnd)) {
+        if (document.markers().hasMarkers(*range, DocumentMarker::CorrectionIndicator))
+            autocorrectionWasApplied = true;
+    }
+
+    return autocorrectionWasApplied;
+#else
+    UNUSED_PARAM(document);
     return alternativeTextController.applyAutocorrectionBeforeTypingIfAppropriate();
-}
-
-static inline void respondToAppliedEditing(Document&, AlternativeTextController& alternativeTextController, CompositeEditCommand& command)
-{
-    alternativeTextController.respondToAppliedEditing(&command);
-}
-
-static inline void adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarker::MarkerType>&)
-{
-}
 #endif
+}
+
+static inline void adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarker::MarkerType>& markerTypes)
+{
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
+    markerTypes.remove(DocumentMarker::CorrectionIndicator);
+#else
+    UNUSED_PARAM(markerTypes);
+#endif
+}
 
 static bool dispatchBeforeInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomString& inputTypeName, IsInputMethodComposing isInputMethodComposing,
     const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
@@ -1219,7 +1254,7 @@ void Editor::appliedEditing(CompositeEditCommand& command)
     if (command.isTopLevelCommand()) {
         updateEditorUINowIfScheduled();
 
-        respondToAppliedEditing(m_document, *m_alternativeTextController, command);
+        m_alternativeTextController->respondToAppliedEditing(&command);
 
         if (!command.preservesTypingStyle())
             m_document.selection().clearTypingStyle();
@@ -1310,10 +1345,11 @@ void Editor::clear()
     if (m_compositionNode) {
         m_compositionNode = nullptr;
         if (EditorClient* client = this->client())
-            client->discardedComposition(m_document.frame());
+            client->discardedComposition(m_document);
     }
     m_customCompositionUnderlines.clear();
     m_customCompositionHighlights.clear();
+    m_customCompositionAnnotations.clear();
     m_shouldStyleWithCSS = false;
     m_defaultParagraphSeparator = EditorParagraphSeparator::div;
     m_mark = { };
@@ -1356,8 +1392,8 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
 
     // FIXME: Should pass false to updateMarkersForWordsAffectedByEditing() to not remove markers if
     // a leading or trailing no-break space is being inserted. See <https://webkit.org/b/212098>.
-    bool isStartOfNewWord = isSpaceOrNewline(selection.visibleStart().characterBefore());
-    updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text[0]) || isStartOfNewWord);
+    bool isStartOfNewWord = deprecatedIsSpaceOrNewline(selection.visibleStart().characterBefore());
+    updateMarkersForWordsAffectedByEditing(deprecatedIsSpaceOrNewline(text[0]) || isStartOfNewWord);
 
     bool shouldConsiderApplyingAutocorrection = false;
     if (text == " "_s || text == "\t"_s)
@@ -1380,14 +1416,14 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
             if (triggeringEvent && triggeringEvent->isDictation())
                 DictationCommand::insertText(document, text, triggeringEvent->dictationAlternatives(), selection);
             else {
-                TypingCommand::Options options = TypingCommand::RetainAutocorrectionIndicator;
+                auto options = OptionSet { TypingCommand::Option::RetainAutocorrectionIndicator };
                 if (selectInsertedText)
-                    options |= TypingCommand::SelectInsertedText;
+                    options.add(TypingCommand::Option::SelectInsertedText);
                 if (triggeringEvent && triggeringEvent->isAutocompletion())
-                    options |= TypingCommand::IsAutocompletion;
-                if (shouldRemoveAutocorrectionIndicator(shouldConsiderApplyingAutocorrection, autocorrectionWasApplied, options & TypingCommand::IsAutocompletion))
-                    options &= ~TypingCommand::RetainAutocorrectionIndicator;
-                TypingCommand::insertText(document, text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionFinal : TypingCommand::TextCompositionNone);
+                    options.add(TypingCommand::Option::IsAutocompletion);
+                if (shouldRemoveAutocorrectionIndicator(shouldConsiderApplyingAutocorrection, autocorrectionWasApplied, options.contains(TypingCommand::Option::IsAutocompletion)))
+                    options.remove(TypingCommand::Option::RetainAutocorrectionIndicator);
+                TypingCommand::insertText(document, text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionType::Final : TypingCommand::TextCompositionType::None);
             }
 
             // Reveal the current selection. Note that focus may have changed after insertion.
@@ -1416,7 +1452,7 @@ bool Editor::insertLineBreak()
     VisiblePosition caret = m_document.selection().selection().visibleStart();
     bool alignToEdge = isEndOfEditableOrNonEditableContent(caret);
     bool autocorrectionIsApplied = m_alternativeTextController->applyAutocorrectionBeforeTypingIfAppropriate();
-    TypingCommand::insertLineBreak(document(), autocorrectionIsApplied ? TypingCommand::RetainAutocorrectionIndicator : 0);
+    TypingCommand::insertLineBreak(document(), autocorrectionIsApplied ? TypingCommand::Option::RetainAutocorrectionIndicator : OptionSet<TypingCommand::Option> { });
     revealSelectionAfterEditingOperation(alignToEdge ? ScrollAlignment::alignToEdgeIfNeeded : ScrollAlignment::alignCenterIfNeeded);
 
     return true;
@@ -1436,7 +1472,7 @@ bool Editor::insertParagraphSeparator()
     VisiblePosition caret = m_document.selection().selection().visibleStart();
     bool alignToEdge = isEndOfEditableOrNonEditableContent(caret);
     bool autocorrectionIsApplied = m_alternativeTextController->applyAutocorrectionBeforeTypingIfAppropriate();
-    TypingCommand::insertParagraphSeparator(document(), autocorrectionIsApplied ? TypingCommand::RetainAutocorrectionIndicator : 0);
+    TypingCommand::insertParagraphSeparator(document(), autocorrectionIsApplied ? TypingCommand::Option::RetainAutocorrectionIndicator : OptionSet<TypingCommand::Option> { });
     revealSelectionAfterEditingOperation(alignToEdge ? ScrollAlignment::alignToEdgeIfNeeded : ScrollAlignment::alignCenterIfNeeded);
 
     return true;
@@ -1685,7 +1721,7 @@ void Editor::copyURL(const URL& url, const String& title, Pasteboard& pasteboard
 {
     auto sanitizedURL = url;
     if (auto* page = m_document.page())
-        sanitizedURL = page->sanitizeLookalikeCharacters(url, LookalikeCharacterSanitizationTrigger::Copy);
+        sanitizedURL = page->applyLinkDecorationFiltering(url, LinkDecorationFilteringTrigger::Copy);
 
     PasteboardURL pasteboardURL;
     pasteboardURL.url = sanitizedURL;
@@ -2088,7 +2124,7 @@ void Editor::confirmOrCancelCompositionAndNotifyClient()
 
     if (auto editorClient = client()) {
         editorClient->respondToChangedSelection(frame.get());
-        editorClient->discardedComposition(frame.get());
+        editorClient->discardedComposition(m_document);
     }
 }
 
@@ -2145,18 +2181,23 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     else
         selectComposition();
 
+    RefPtr previousCompositionNode = m_compositionNode;
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
     m_customCompositionHighlights.clear();
+    m_customCompositionAnnotations.clear();
+
+    if (auto* cache = m_document.existingAXObjectCache(); cache && previousCompositionNode)
+        cache->onTextCompositionChange(*previousCompositionNode, AXObjectCache::CompositionState::Ended, false);
 
     if (m_document.selection().isNone())
         return;
 
     // Always delete the current composition before inserting the finalized composition text if we're confirming our composition.
     // Our default behavior (if the beforeinput event is not prevented) is to insert the finalized composition text back in.
-    // We pass TypingCommand::TextCompositionPending here to indicate that we are deleting the pending composition.
+    // We pass TypingCommand::TextCompositionType::Pending here to indicate that we are deleting the pending composition.
     if (mode != CancelComposition)
-        TypingCommand::deleteSelection(document(), 0, TypingCommand::TextCompositionPending);
+        TypingCommand::deleteSelection(document(), { }, TypingCommand::TextCompositionType::Pending);
 
     insertTextForConfirmedComposition(text);
 
@@ -2169,7 +2210,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     }
 }
 
-void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, unsigned selectionStart, unsigned selectionEnd)
+void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const HashMap<String, Vector<CharacterRange>>& annotations, unsigned selectionStart, unsigned selectionEnd)
 {
     SetCompositionScope setCompositionScope(m_document);
 
@@ -2186,8 +2227,8 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     String originalText = selectedText();
     bool isStartingToRecomposeExistingRange = !text.isEmpty() && selectionStart < selectionEnd && !hasComposition();
     if (isStartingToRecomposeExistingRange) {
-        // We pass TypingCommand::TextCompositionFinal here to indicate that we are removing composition text that has been finalized.
-        TypingCommand::deleteSelection(document(), 0, TypingCommand::TextCompositionFinal);
+        // We pass TypingCommand::TextCompositionType::Final here to indicate that we are removing composition text that has been finalized.
+        TypingCommand::deleteSelection(document(), { }, TypingCommand::TextCompositionType::Final);
         const VisibleSelection& currentSelection = m_document.selection().selection();
         if (currentSelection.isRange()) {
             // If deletion was prevented, then we need to collapse the selection to the end so that the original text will not be recomposed.
@@ -2221,6 +2262,9 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             // We should send a compositionstart event only when the given text is not empty because this
             // function doesn't create a composition node when the text is empty.
             if (!text.isEmpty()) {
+                // When an inline predicition is being offered, there will be text and a non-zero amount of highlights.
+                m_isHandlingAcceptedCandidate = !highlights.isEmpty();
+
                 target->dispatchEvent(CompositionEvent::create(eventNames().compositionstartEvent, document().windowProxy(), originalText));
                 event = CompositionEvent::create(eventNames().compositionupdateEvent, document().windowProxy(), text);
             }
@@ -2234,17 +2278,22 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
     // will delete the old composition with an optimized replace operation.
     if (text.isEmpty()) {
-        TypingCommand::deleteSelection(document(), TypingCommand::PreventSpellChecking, TypingCommand::TextCompositionPending);
+        // The absence of text implies that there are currently no inline predicitions being offered.
+        m_isHandlingAcceptedCandidate = false;
+
+        TypingCommand::deleteSelection(document(), TypingCommand::Option::PreventSpellChecking, TypingCommand::TextCompositionType::Pending);
         if (target)
             target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document().windowProxy(), text));
     }
 
+    RefPtr previousCompositionNode = m_compositionNode;
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
     m_customCompositionHighlights.clear();
+    m_customCompositionAnnotations.clear();
 
     if (!text.isEmpty()) {
-        TypingCommand::insertText(document(), text, TypingCommand::SelectInsertedText | TypingCommand::PreventSpellChecking, TypingCommand::TextCompositionPending);
+        TypingCommand::insertText(document(), text, OptionSet { TypingCommand::Option::SelectInsertedText, TypingCommand::Option::PreventSpellChecking }, TypingCommand::TextCompositionType::Pending);
 
         // Find out what node has the composition now.
         Position base = m_document.selection().selection().base().downstream();
@@ -2268,6 +2317,11 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
                 highlight.startOffset += baseOffset;
                 highlight.endOffset += baseOffset;
             }
+            m_customCompositionAnnotations = annotations;
+            for (auto it = m_customCompositionAnnotations.begin(); it != m_customCompositionAnnotations.end(); ++it) {
+                for (auto& range : it->value)
+                    range.location += baseOffset;
+            }
 
             if (auto renderer = baseNode->renderer())
                 renderer->repaint();
@@ -2276,6 +2330,17 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             unsigned end = std::min(std::max(start, baseOffset + selectionEnd), extentOffset);
             auto range = SimpleRange { { *baseNode, start }, { *baseNode, end } };
             m_document.selection().setSelectedRange(range, Affinity::Downstream, FrameSelection::ShouldCloseTyping::No);
+        }
+    }
+
+    if (auto* cache = m_document.existingAXObjectCache()) {
+        if (previousCompositionNode && previousCompositionNode != m_compositionNode) {
+            auto state = m_compositionNode ? AXObjectCache::CompositionState::InProgress : AXObjectCache::CompositionState::Ended;
+            cache->onTextCompositionChange(*previousCompositionNode, state, true);
+        }
+        if (m_compositionNode) {
+            auto state = previousCompositionNode ? AXObjectCache::CompositionState::InProgress : AXObjectCache::CompositionState::Started;
+            cache->onTextCompositionChange(*m_compositionNode, state, true);
         }
     }
 
@@ -2815,6 +2880,10 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType
 
     // This function is called with selections already expanded to word boundaries.
     if (!client() || !spellingRange || (shouldMarkGrammar && !grammarRange))
+        return;
+
+    // Do not mark spelling or grammer corrections when an inline prediction candidate is currently being offered.
+    if (m_isHandlingAcceptedCandidate)
         return;
 
     // If we're not in an editable node, bail.
@@ -3412,12 +3481,18 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, O
 
 String Editor::selectedText() const
 {
-    return selectedText({ TextIteratorBehavior::TraversesFlatTree, TextIteratorBehavior::IgnoresUserSelectNone });
+    auto options = OptionSet { TextIteratorBehavior::TraversesFlatTree };
+    if (!m_document.quirks().needsToCopyUserSelectNoneQuirk())
+        options.add(TextIteratorBehavior::IgnoresUserSelectNone);
+    return selectedText(options);
 }
 
 String Editor::selectedTextForDataTransfer() const
 {
-    return selectedText(OptionSet { TextIteratorBehavior::EmitsImageAltText, TextIteratorBehavior::TraversesFlatTree, TextIteratorBehavior::IgnoresUserSelectNone });
+    auto options = OptionSet { TextIteratorBehavior::EmitsImageAltText, TextIteratorBehavior::TraversesFlatTree };
+    if (!m_document.quirks().needsToCopyUserSelectNoneQuirk())
+        options.add(TextIteratorBehavior::IgnoresUserSelectNone);
+    return selectedText(options);
 }
 
 String Editor::selectedText(TextIteratorBehaviors behaviors) const
@@ -3908,7 +3983,7 @@ void Editor::editorUIUpdateTimerFired()
             UChar32 c = newStart.characterBefore();
             // FIXME: VisiblePosition::characterAfter() and characterBefore() do not emit newlines the same
             // way as TextIterator, so we do an isStartOfParagraph check here.
-            if (isSpaceOrNewline(c) || c == noBreakSpace || isStartOfParagraph(newStart)) {
+            if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isStartOfParagraph(newStart)) {
                 startWordSide = RightWordIfOnBoundary;
             }
             newAdjacentWords = VisibleSelection(startOfWord(newStart, startWordSide), endOfWord(newStart, RightWordIfOnBoundary));
@@ -4332,9 +4407,6 @@ void Editor::cloneAttachmentData(const String& fromIdentifier, const String& toI
 
 void Editor::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 {
-    if (attachment.isImageOnly())
-        return;
-
     auto identifier = attachment.uniqueIdentifier();
     if (identifier.isEmpty())
         return;

@@ -1,5 +1,5 @@
-<?% config.freshness.reviewed = '2021-06-03' %?>
-<?% config.freshness.owner = 'hta' %?>
+<!-- go/cmark -->
+<!--* freshness: {owner: 'hta' reviewed: '2021-06-03'} *-->
 
 # RTP in WebRTC
 

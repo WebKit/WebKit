@@ -48,11 +48,13 @@ TEST(WebKit, ScrollByLineCommands)
 
     // Turn off threaded scrolling; synchronously waiting for the main thread scroll position to
     // update using WKPageForceRepaint would be better, but for some reason the test still fails occasionally.
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("NoThreadedScrollingPageGroup").get()));
-    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
-    WKPreferencesSetThreadedScrollingEnabled(preferences, false);
+    auto configuration = adoptWK(WKPageConfigurationCreate());
+    auto preferences = adoptWK(WKPreferencesCreate());
+    WKPageConfigurationSetPreferences(configuration.get(), preferences.get());
+    WKPageConfigurationSetContext(configuration.get(), context.get());
+    WKPreferencesSetThreadedScrollingEnabled(preferences.get(), false);
 
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(configuration.get());
 
     WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));

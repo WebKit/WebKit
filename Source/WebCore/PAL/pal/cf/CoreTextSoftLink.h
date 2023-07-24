@@ -27,6 +27,10 @@
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/SoftLinking.h>
 
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreText)
+
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, CoreText, CTFontCopyColorGlyphCoverage, CFBitVectorRef, (CTFontRef font), (font))
+
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, OTSVG)
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OTSVG, OTSVGTableCreateFromData, OTSVGTableRef, (CFDataRef svgTable, unsigned unitsPerEm, CGFloat fontSize), (svgTable, unitsPerEm, fontSize))

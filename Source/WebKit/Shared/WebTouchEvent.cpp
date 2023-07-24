@@ -51,7 +51,7 @@ bool WebTouchEvent::isTouchEventType(WebEventType type)
 bool WebTouchEvent::allTouchPointsAreReleased() const
 {
     for (const auto& touchPoint : touchPoints()) {
-        if (touchPoint.state() != WebPlatformTouchPoint::TouchReleased && touchPoint.state() != WebPlatformTouchPoint::TouchCancelled)
+        if (touchPoint.state() != WebPlatformTouchPoint::State::Released && touchPoint.state() != WebPlatformTouchPoint::State::Cancelled)
             return false;
     }
 

@@ -32,6 +32,11 @@ extern "C" {
 #define AOM_ENC_ALLINTRA_BORDER 64
 #define AOM_DEC_BORDER_IN_PIXELS 64
 
+#if CONFIG_AV1_ENCODER && !CONFIG_REALTIME_ONLY
+struct image_pyramid;
+struct corner_list;
+#endif  // CONFIG_AV1_ENCODER && !CONFIG_REALTIME_ONLY
+
 /*!\endcond */
 /*!
  * \brief YV12 frame buffer data structure
@@ -90,10 +95,12 @@ typedef struct yv12_buffer_config {
   // external reference frame is no longer used.
   uint8_t *store_buf_adr[3];
 
-  // If the frame is stored in a 16-bit buffer, this stores an 8-bit version
-  // for use in global motion detection. It is allocated on-demand.
-  uint8_t *y_buffer_8bit;
-  int buf_8bit_valid;
+  // Global motion search data
+#if CONFIG_AV1_ENCODER && !CONFIG_REALTIME_ONLY
+  // 8-bit downsampling pyramid for the Y plane
+  struct image_pyramid *y_pyramid;
+  struct corner_list *corners;
+#endif  // CONFIG_AV1_ENCODER && !CONFIG_REALTIME_ONLY
 
   uint8_t *buffer_alloc;
   size_t buffer_alloc_sz;
@@ -121,23 +128,44 @@ typedef struct yv12_buffer_config {
 
 #define YV12_FLAG_HIGHBITDEPTH 8
 
+// Allocate a frame buffer
+//
+// If ybf currently contains an image, all associated memory will be freed and
+// then reallocated. In contrast, aom_realloc_frame_buffer() will reuse any
+// existing allocations where possible. So, if ybf is likely to already be
+// set up, please consider aom_realloc_frame_buffer() instead.
+//
+// See aom_realloc_frame_buffer() for the meanings of the arguments, and
+// available return values.
 int aom_alloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height,
                            int ss_x, int ss_y, int use_highbitdepth, int border,
-                           int byte_alignment, int alloc_y_plane_only);
+                           int byte_alignment, int num_pyramid_levels,
+                           int alloc_y_plane_only);
 
 // Updates the yv12 buffer config with the frame buffer. |byte_alignment| must
 // be a power of 2, from 32 to 1024. 0 sets legacy alignment. If cb is not
 // NULL, then libaom is using the frame buffer callbacks to handle memory.
 // If cb is not NULL, libaom will call cb with minimum size in bytes needed
 // to decode the current frame. If cb is NULL, libaom will allocate memory
-// internally to decode the current frame. Returns 0 on success. Returns < 0
-// on failure.
+// internally to decode the current frame.
+//
+// If num_pyramid_levels > 0, then an image pyramid will be allocated with
+// the specified number of levels.
+//
+// Any buffer which may become a source or ref frame buffer in the encoder
+// must have num_pyramid_levels = cpi->image_pyramid_levels. This will cause
+// an image pyramid to be allocated if one is needed.
+//
+// Any other buffers (in particular, any buffers inside the decoder)
+// must have cpi->image_pyramid_levels = 0, as a pyramid is unneeded there.
+//
+// Returns 0 on success. Returns < 0  on failure.
 int aom_realloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width, int height,
                              int ss_x, int ss_y, int use_highbitdepth,
                              int border, int byte_alignment,
                              aom_codec_frame_buffer_t *fb,
                              aom_get_frame_buffer_cb_fn_t cb, void *cb_priv,
-                             int alloc_y_buffer_8bit, int alloc_y_plane_only);
+                             int num_pyramid_levels, int alloc_y_plane_only);
 
 int aom_free_frame_buffer(YV12_BUFFER_CONFIG *ybf);
 

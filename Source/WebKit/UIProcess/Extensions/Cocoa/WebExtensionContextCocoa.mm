@@ -318,7 +318,7 @@ void WebExtensionContext::setUniqueIdentifier(String&& uniqueIdentifier)
     m_customUniqueIdentifier = !uniqueIdentifier.isEmpty();
 
     if (uniqueIdentifier.isEmpty())
-        uniqueIdentifier = UUID::createVersion4().toString();
+        uniqueIdentifier = WTF::UUID::createVersion4().toString();
 
     m_uniqueIdentifier = uniqueIdentifier;
 }

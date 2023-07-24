@@ -857,10 +857,11 @@ class AnalysisTaskPage extends PageWithHeading {
         const existingNames = (this._testGroups || []).map((group) => group.name());
         const newName = CommitSet.createNameWithoutCollision(testGroup.name(), new Set(existingNames));
         const commitSetList = testGroup.requestedCommitSets();
+        const testParameterSetList = testGroup.requestedTestParameterSets();
         const platform = this._task.platform() || testGroup.platform();
         try {
             const testGroups = await TestGroup.createWithCustomConfiguration(this._task, platform, testGroup.test(), newName,
-                repetitionCount, repetitionType, commitSetList, notifyOnCompletion);
+                repetitionCount, repetitionType, commitSetList, testParameterSetList, notifyOnCompletion);
             this._didFetchTestGroups(testGroups);
         } catch (error) {
             alert('Failed to create a new test group: ' + error);
@@ -874,11 +875,13 @@ class AnalysisTaskPage extends PageWithHeading {
 
         for (let i = 1; i < commitSets.length; i++) {
             const previousCommitSet = commitSets[i - 1];
+            const previousTestParameterSet = testGroup.testParameterSetForCommitSet(previousCommitSet);
             const currentCommitSet = commitSets[i];
+            const currentTestParameterSet = testGroup.testParameterSetForCommitSet(currentCommitSet);
             const testGroupName = CommitSet.createNameWithoutCollision(CommitSet.diff(previousCommitSet, currentCommitSet), existingTestGroupNames);
             try {
                 const testGroups = await TestGroup.createAndRefetchTestGroups(testGroup.task(), testGroupName,
-                    repetitionCount, repetitionType, [previousCommitSet, currentCommitSet], notifyOnCompletion);
+                    repetitionCount, repetitionType, [previousCommitSet, currentCommitSet], [previousTestParameterSet, currentTestParameterSet], notifyOnCompletion);
                 this._didFetchTestGroups(testGroups);
             } catch(error) {
                 alert('Failed to create a new test group: ' + error);
@@ -914,7 +917,7 @@ class AnalysisTaskPage extends PageWithHeading {
             commitSets.push(commitSetMap[label]);
 
         try {
-            const testGroups = await TestGroup.createAndRefetchTestGroups(this._task, testGroupName, repetitionCount, repetitionType, commitSets, notifyOnCompletion);
+            const testGroups = await TestGroup.createAndRefetchTestGroups(this._task, testGroupName, repetitionCount, repetitionType, commitSets, null, notifyOnCompletion);
             return this._didFetchTestGroups(testGroups);
         } catch (error) {
             alert('Failed to create a new test group: ' + error);
@@ -931,7 +934,7 @@ class AnalysisTaskPage extends PageWithHeading {
 
         try {
             const testGroups = await TestGroup.createWithCustomConfiguration(this._task, platform, test, testGroupName,
-                repetitionCount, repetitionType, commitSets, notifyOnCompletion);
+                repetitionCount, repetitionType, commitSets, null, notifyOnCompletion);
             this._didFetchTestGroups(testGroups);
         } catch (error) {
             alert('Failed to create a new test group: ' + error);

@@ -38,7 +38,7 @@ TEST(SimulcastEncoderAdapterSettingsTest, GetResolutionAlignment) {
       "requested_resolution_alignment:2/");
 
   SimulcastEncoderAdapterEncoderInfoSettings settings;
-  EXPECT_EQ(2, settings.requested_resolution_alignment());
+  EXPECT_EQ(2u, settings.requested_resolution_alignment());
   EXPECT_FALSE(settings.apply_alignment_to_all_simulcast_layers());
   EXPECT_TRUE(settings.resolution_bitrate_limits().empty());
 }
@@ -50,7 +50,7 @@ TEST(SimulcastEncoderAdapterSettingsTest, GetApplyAlignment) {
       "apply_alignment_to_all_simulcast_layers/");
 
   SimulcastEncoderAdapterEncoderInfoSettings settings;
-  EXPECT_EQ(3, settings.requested_resolution_alignment());
+  EXPECT_EQ(3u, settings.requested_resolution_alignment());
   EXPECT_TRUE(settings.apply_alignment_to_all_simulcast_layers());
   EXPECT_TRUE(settings.resolution_bitrate_limits().empty());
 }
@@ -94,9 +94,9 @@ TEST(EncoderSettingsTest, CommonSettingsUsedIfEncoderNameUnspecified) {
       "WebRTC-GetEncoderInfoOverride/requested_resolution_alignment:3/");
 
   LibvpxVp8EncoderInfoSettings vp8_settings;
-  EXPECT_EQ(2, vp8_settings.requested_resolution_alignment());
+  EXPECT_EQ(2u, vp8_settings.requested_resolution_alignment());
   LibvpxVp9EncoderInfoSettings vp9_settings;
-  EXPECT_EQ(3, vp9_settings.requested_resolution_alignment());
+  EXPECT_EQ(3u, vp9_settings.requested_resolution_alignment());
 }
 
 }  // namespace webrtc

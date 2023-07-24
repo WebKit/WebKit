@@ -80,8 +80,7 @@ std::unique_ptr<Packet> RtpFileSource::NextPacket() {
 }
 
 RtpFileSource::RtpFileSource(absl::optional<uint32_t> ssrc_filter)
-    : PacketSource(),
-      ssrc_filter_(ssrc_filter) {}
+    : PacketSource(), ssrc_filter_(ssrc_filter) {}
 
 bool RtpFileSource::OpenFile(absl::string_view file_name) {
   rtp_reader_.reset(RtpFileReader::Create(RtpFileReader::kRtpDump, file_name));

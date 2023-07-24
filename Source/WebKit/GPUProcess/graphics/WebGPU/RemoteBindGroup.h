@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class BindGroup;
 }
 
@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemoteBindGroup final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteBindGroup> create(PAL::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteBindGroup> create(WebCore::WebGPU::BindGroup& bindGroup, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteBindGroup(bindGroup, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -61,21 +61,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteBindGroup(PAL::WebGPU::BindGroup&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteBindGroup(WebCore::WebGPU::BindGroup&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteBindGroup(const RemoteBindGroup&) = delete;
     RemoteBindGroup(RemoteBindGroup&&) = delete;
     RemoteBindGroup& operator=(const RemoteBindGroup&) = delete;
     RemoteBindGroup& operator=(RemoteBindGroup&&) = delete;
 
-    PAL::WebGPU::BindGroup& backing() { return m_backing; }
+    WebCore::WebGPU::BindGroup& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    Ref<PAL::WebGPU::BindGroup> m_backing;
+    Ref<WebCore::WebGPU::BindGroup> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

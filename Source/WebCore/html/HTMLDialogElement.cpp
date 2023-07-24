@@ -59,9 +59,6 @@ ExceptionOr<void> HTMLDialogElement::show()
         return Exception { InvalidStateError, "Cannot call show() on an open modal dialog."_s };
     }
 
-    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing)
-        return Exception { InvalidStateError, "Element is already an open popover."_s };
-
     setBooleanAttribute(openAttr, true);
 
     m_previouslyFocusedElement = document().focusedElement();
@@ -85,7 +82,7 @@ ExceptionOr<void> HTMLDialogElement::showModal()
     if (!isConnected())
         return Exception { InvalidStateError, "Element is not connected."_s };
 
-    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+    if (isPopoverShowing())
         return Exception { InvalidStateError, "Element is already an open popover."_s };
 
     // setBooleanAttribute will dispatch a DOMSubtreeModified event.
@@ -114,13 +111,13 @@ void HTMLDialogElement::close(const String& result)
 
     setBooleanAttribute(openAttr, false);
 
+    if (isModal())
+        removeFromTopLayer();
+
     setIsModal(false);
 
     if (!result.isNull())
         m_returnValue = result;
-
-    if (isInTopLayer())
-        removeFromTopLayer();
 
     if (RefPtr element = std::exchange(m_previouslyFocusedElement, nullptr).get()) {
         FocusOptions options;
@@ -176,7 +173,7 @@ void HTMLDialogElement::setIsModal(bool newValue)
 {
     if (m_isModal == newValue)
         return;
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassModal, newValue);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Modal, newValue);
     m_isModal = newValue;
 }
 

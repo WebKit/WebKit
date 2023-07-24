@@ -24,6 +24,7 @@
 #include "libANGLE/renderer/vulkan/RenderbufferVk.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/SurfaceVk.h"
+#include "libANGLE/renderer/vulkan/UtilsVk.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
@@ -287,6 +288,32 @@ const vk::Format *AdjustStorageViewFormatPerWorkarounds(RendererVk *renderer,
 
     return intended;
 }
+
+angle::FormatID GetRGBAEmulationDstFormat(angle::FormatID srcFormatID)
+{
+    switch (srcFormatID)
+    {
+        case angle::FormatID::R32G32B32_UINT:
+            return angle::FormatID::R32G32B32A32_UINT;
+        case angle::FormatID::R32G32B32_SINT:
+            return angle::FormatID::R32G32B32A32_SINT;
+        case angle::FormatID::R32G32B32_FLOAT:
+            return angle::FormatID::R32G32B32A32_FLOAT;
+        default:
+            return angle::FormatID::NONE;
+    }
+}
+
+bool NeedsRGBAEmulation(RendererVk *renderer, angle::FormatID formatID)
+{
+    if (renderer->hasBufferFormatFeatureBits(formatID, VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT))
+    {
+        return false;
+    }
+    // Vulkan driver support is required for all formats except the ones we emulate.
+    ASSERT(GetRGBAEmulationDstFormat(formatID) != angle::FormatID::NONE);
+    return true;
+}
 }  // anonymous namespace
 
 // TextureVk implementation.
@@ -429,9 +456,8 @@ bool TextureVk::isFastUnpackPossible(const vk::Format &vkFormat, size_t offset) 
     //    to emulated depth/stencil.
     // 3. vkCmdCopyBufferToImage requires byte offset to be a multiple of 4.
     const angle::Format &bufferFormat = vkFormat.getActualBufferFormat(false);
-    const bool isCombinedDepthStencil = bufferFormat.depthBits > 0 && bufferFormat.stencilBits > 0;
-    const bool isDepthXorStencil = (bufferFormat.depthBits > 0 && bufferFormat.stencilBits == 0) ||
-                                   (bufferFormat.depthBits == 0 && bufferFormat.stencilBits > 0);
+    const bool isCombinedDepthStencil = bufferFormat.hasDepthAndStencilBits();
+    const bool isDepthXorStencil = bufferFormat.hasDepthOrStencilBits() && !isCombinedDepthStencil;
     const bool isCompatibleDepth = vkFormat.getIntendedFormat().depthBits == bufferFormat.depthBits;
     const VkDeviceSize imageCopyAlignment =
         vk::GetImageCopyBufferAlignment(mImage->getActualFormatID());
@@ -1520,35 +1546,6 @@ angle::Result TextureVk::setEGLImageTarget(const gl::Context *context,
 
     ANGLE_TRY(initImageViews(contextVk, getImageViewLevelCount()));
 
-    // Transfer the image to this queue if needed
-    uint32_t rendererQueueFamilyIndex = renderer->getQueueFamilyIndex();
-    if (mImage->isQueueChangeNeccesary(rendererQueueFamilyIndex))
-    {
-        vk::ImageLayout newLayout = vk::ImageLayout::AllGraphicsShadersWrite;
-        if (mImage->getUsage() & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
-        {
-            newLayout = vk::ImageLayout::ColorWrite;
-        }
-        else if (mImage->getUsage() & VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)
-        {
-            newLayout = vk::ImageLayout::DepthWriteStencilWrite;
-        }
-        else if (mImage->getUsage() &
-                 (VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT))
-        {
-            newLayout = vk::ImageLayout::AllGraphicsShadersReadOnly;
-        }
-
-        vk::OutsideRenderPassCommandBuffer *commandBuffer;
-        vk::CommandBufferAccess access;
-        access.onExternalAcquireRelease(mImage);
-        ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
-        mImage->changeLayoutAndQueue(contextVk, mImage->getAspectFlags(), newLayout,
-                                     rendererQueueFamilyIndex, commandBuffer);
-
-        ANGLE_TRY(contextVk->onEGLImageQueueChange());
-    }
-
     return angle::Result::Continue;
 }
 
@@ -1603,7 +1600,10 @@ void TextureVk::releaseAndDeleteImageAndViews(ContextVk *contextVk)
 {
     if (mImage)
     {
-        releaseStagedUpdates(contextVk);
+        if (mOwnsImage)
+        {
+            releaseStagedUpdates(contextVk);
+        }
         releaseImage(contextVk);
         mImageObserverBinding.bind(nullptr);
         mRequiresMutableStorage = false;
@@ -1617,7 +1617,16 @@ void TextureVk::releaseAndDeleteImageAndViews(ContextVk *contextVk)
         contextVk->getShareGroup()->onTextureRelease(this);
     }
 
-    mBufferViews.release(contextVk);
+    if (getBuffer().get() != nullptr)
+    {
+        mBufferContentsObservers->disableForBuffer(getBuffer().get());
+    }
+
+    if (mBufferViews.isInitialized())
+    {
+        mBufferViews.release(contextVk);
+        onStateChange(angle::SubjectMessage::SubjectChanged);
+    }
     mRedefinedLevels.reset();
     mDescriptorSetCacheManager.releaseKeys(contextVk);
 }
@@ -2444,6 +2453,8 @@ angle::Result TextureVk::getAttachmentRenderTarget(const gl::Context *context,
                             ImageMipLevels::EnabledLevels));
     }
 
+    ANGLE_TRY(performImageQueueTransferIfNecessary(contextVk));
+
     const bool hasRenderToTextureEXT =
         contextVk->getFeatures().supportsMultisampledRenderToSingleSampled.enabled ||
         contextVk->getFeatures().supportsMultisampledRenderToSingleSampledGOOGLEX.enabled;
@@ -2540,6 +2551,40 @@ angle::Result TextureVk::flushImageStagedUpdates(ContextVk *contextVk)
     return mImage->flushStagedUpdates(contextVk, firstLevelGL,
                                       firstLevelGL + getImageViewLevelCount(), firstLayer,
                                       firstLayer + getImageViewLayerCount(), mRedefinedLevels);
+}
+
+angle::Result TextureVk::performImageQueueTransferIfNecessary(ContextVk *contextVk)
+{
+    const RendererVk *renderer = contextVk->getRenderer();
+
+    const uint32_t rendererQueueFamilyIndex = renderer->getQueueFamilyIndex();
+    if (mImage->valid() && mImage->isQueueChangeNeccesary(rendererQueueFamilyIndex))
+    {
+        vk::ImageLayout newLayout = vk::ImageLayout::AllGraphicsShadersWrite;
+        if (mImage->getUsage() & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
+        {
+            newLayout = vk::ImageLayout::ColorWrite;
+        }
+        else if (mImage->getUsage() & VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)
+        {
+            newLayout = vk::ImageLayout::DepthWriteStencilWrite;
+        }
+        else if (mImage->getUsage() &
+                 (VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT))
+        {
+            newLayout = vk::ImageLayout::AllGraphicsShadersReadOnly;
+        }
+
+        vk::OutsideRenderPassCommandBuffer *commandBuffer;
+        vk::CommandBufferAccess access;
+        access.onExternalAcquireRelease(mImage);
+        ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
+        mImage->changeLayoutAndQueue(contextVk, mImage->getAspectFlags(), newLayout,
+                                     rendererQueueFamilyIndex, commandBuffer);
+        ANGLE_TRY(contextVk->onEGLImageQueueChange());
+    }
+
+    return angle::Result::Continue;
 }
 
 void TextureVk::initSingleLayerRenderTargets(ContextVk *contextVk,
@@ -2706,20 +2751,6 @@ angle::Result TextureVk::respecifyImageStorageIfNecessary(ContextVk *contextVk, 
         mImageCreateFlags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
     }
 
-    if (mState.is3DTextureAndHasBeenBoundAs2DImage())
-    {
-        if (contextVk->getRenderer()->getFeatures().supportsImage2dViewOf3d.enabled)
-        {
-            mImageCreateFlags |= VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT;
-        }
-        else
-        {
-            // This image may be used with 2d imageviews, despite being a 3d image
-            // The Vulkan core specification does not permit this behavior
-            // Tolerate the VVL errors and move on
-        }
-    }
-
     // Create a new image if used as attachment for the first time. This must be called before
     // prepareForGenerateMipmap since this changes the format which prepareForGenerateMipmap relies
     // on.
@@ -2833,6 +2864,58 @@ angle::Result TextureVk::updateTextureLabel(ContextVk *contextVk)
     return angle::Result::Continue;
 }
 
+vk::BufferHelper *TextureVk::getRGBAConversionBufferHelper(RendererVk *renderer,
+                                                           angle::FormatID formatID) const
+{
+    BufferVk *bufferVk                                        = vk::GetImpl(getBuffer().get());
+    const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding = mState.getBuffer();
+    const VkDeviceSize bindingOffset                          = bufferBinding.getOffset();
+    ConversionBuffer *conversion                              = bufferVk->getVertexConversionBuffer(
+        renderer, formatID, 16, static_cast<uint32_t>(bindingOffset), false);
+    return conversion->data.get();
+}
+
+angle::Result TextureVk::convertBufferToRGBA(ContextVk *contextVk, size_t &conversionBufferSize)
+{
+    RendererVk *renderer               = contextVk->getRenderer();
+    const gl::ImageDesc &baseLevelDesc = mState.getBaseLevelDesc();
+    const vk::Format *imageUniformFormat =
+        &renderer->getFormat(baseLevelDesc.format.info->sizedInternalFormat);
+    const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding = mState.getBuffer();
+    BufferVk *bufferVk                                        = vk::GetImpl(getBuffer().get());
+    const VkDeviceSize bindingOffset                          = bufferBinding.getOffset();
+    const VkDeviceSize bufferSize                             = bufferVk->getSize();
+    const VkDeviceSize bufferSizeFromOffset                   = bufferSize - bindingOffset;
+    conversionBufferSize = roundUpPow2<size_t>(static_cast<size_t>((bufferSizeFromOffset / 3) * 4),
+                                               4 * sizeof(uint32_t));
+
+    ConversionBuffer *conversion =
+        bufferVk->getVertexConversionBuffer(renderer, imageUniformFormat->getIntendedFormatID(), 16,
+                                            static_cast<uint32_t>(bindingOffset), false);
+    mBufferContentsObservers->enableForBuffer(getBuffer().get());
+    vk::BufferHelper *conversionBufferHelper = conversion->data.get();
+    if (!conversionBufferHelper->valid())
+    {
+        ANGLE_TRY(conversionBufferHelper->allocateForVertexConversion(
+            contextVk, conversionBufferSize, vk::MemoryHostVisibility::NonVisible));
+    }
+
+    if (conversion->dirty)
+    {
+        vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
+        UtilsVk &utilsVk               = contextVk->getUtils();
+        const VkDeviceSize pixelSize   = 3 * sizeof(uint32_t);
+        const VkDeviceSize pixelCount  = bufferSizeFromOffset / pixelSize;
+
+        ANGLE_TRY(utilsVk.copyRgbToRgba(contextVk, imageUniformFormat->getIntendedFormat(),
+                                        &bufferHelper, static_cast<uint32_t>(bindingOffset),
+                                        static_cast<uint32_t>(pixelCount), conversionBufferHelper));
+        conversion->dirty = false;
+    }
+
+    return angle::Result::Continue;
+}
+
 angle::Result TextureVk::syncState(const gl::Context *context,
                                    const gl::Texture::DirtyBits &dirtyBits,
                                    gl::Command source)
@@ -2848,8 +2931,16 @@ angle::Result TextureVk::syncState(const gl::Context *context,
 
         const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding = mState.getBuffer();
 
-        const VkDeviceSize offset = bufferBinding.getOffset();
-        const VkDeviceSize size   = gl::GetBoundBufferAvailableSize(bufferBinding);
+        VkDeviceSize offset = bufferBinding.getOffset();
+        VkDeviceSize size   = gl::GetBoundBufferAvailableSize(bufferBinding);
+
+        if (NeedsRGBAEmulation(renderer, getBaseLevelFormat(renderer).getIntendedFormatID()))
+        {
+            size_t conversionBufferSize;
+            ANGLE_TRY(convertBufferToRGBA(contextVk, conversionBufferSize));
+            offset = 0;
+            size   = conversionBufferSize;
+        }
 
         mBufferViews.release(contextVk);
         mBufferViews.init(renderer, offset, size);
@@ -2858,6 +2949,8 @@ angle::Result TextureVk::syncState(const gl::Context *context,
     }
 
     ANGLE_TRY(respecifyImageStorageIfNecessary(contextVk, source));
+
+    ANGLE_TRY(performImageQueueTransferIfNecessary(contextVk));
 
     // Initialize the image storage and flush the pixel buffer.
     const bool isGenerateMipmap = source == gl::Command::GenerateMipmap;
@@ -3118,6 +3211,20 @@ angle::Result TextureVk::getStorageImageView(vk::Context *context,
         format->getActualImageFormatID(getRequiredImageAccess()), imageViewOut);
 }
 
+vk::BufferHelper *TextureVk::getPossiblyEmulatedTextureBuffer(vk::Context *context) const
+{
+    RendererVk *renderer = context->getRenderer();
+
+    angle::FormatID format = getBaseLevelFormat(renderer).getIntendedFormatID();
+    if (NeedsRGBAEmulation(renderer, format))
+    {
+        return getRGBAConversionBufferHelper(renderer, format);
+    }
+
+    BufferVk *bufferVk = vk::GetImpl(getBuffer().get());
+    return &bufferVk->getBuffer();
+}
+
 angle::Result TextureVk::getBufferViewAndRecordUse(vk::Context *context,
                                                    const vk::Format *imageUniformFormat,
                                                    bool isImage,
@@ -3130,8 +3237,7 @@ angle::Result TextureVk::getBufferViewAndRecordUse(vk::Context *context,
     // Use the format specified by glTexBuffer if no format specified by the shader.
     if (imageUniformFormat == nullptr)
     {
-        const gl::ImageDesc &baseLevelDesc = mState.getBaseLevelDesc();
-        imageUniformFormat = &renderer->getFormat(baseLevelDesc.format.info->sizedInternalFormat);
+        imageUniformFormat = &getBaseLevelFormat(renderer);
     }
 
     if (isImage)
@@ -3143,6 +3249,17 @@ angle::Result TextureVk::getBufferViewAndRecordUse(vk::Context *context,
     // Create a view for the required format.
     const vk::BufferHelper &buffer = vk::GetImpl(mState.getBuffer().get())->getBuffer();
     VkDeviceSize bufferOffset      = buffer.getOffset();
+
+    if (NeedsRGBAEmulation(renderer, imageUniformFormat->getIntendedFormatID()))
+    {
+        vk::BufferHelper *conversionBufferHelper =
+            getRGBAConversionBufferHelper(renderer, imageUniformFormat->getIntendedFormatID());
+        const vk::Format *format = &renderer->getFormat(
+            GetRGBAEmulationDstFormat(imageUniformFormat->getIntendedFormatID()));
+
+        return mBufferViews.getView(context, *conversionBufferHelper,
+                                    conversionBufferHelper->getOffset(), *format, viewOut);
+    }
 
     return mBufferViews.getView(context, buffer, bufferOffset, *imageUniformFormat, viewOut);
 }
@@ -3176,6 +3293,11 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
     uint32_t layerCount;
     gl_vk::GetExtentsAndLayerCount(mState.getType(), firstLevelExtents, &vkExtent, &layerCount);
     GLint samples = mState.getBaseLevelDesc().samples ? mState.getBaseLevelDesc().samples : 1;
+
+    if (contextVk->getFeatures().limitSampleCountTo2.enabled)
+    {
+        samples = std::min(samples, 2);
+    }
 
     if (mState.hasProtectedContent())
     {

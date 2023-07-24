@@ -297,7 +297,7 @@ layer at (0,0) size 785x2447
         RenderBlock (anonymous) at (10,46) size 200x18
           RenderBR {BR} at (100,0) size 0x17
 layer at (8,52) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,44) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,44) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (118,1385) size 100x108
   RenderBlock (floating) {DIV} at (110,28) size 100x108
     RenderText {#text} at (0,0) size 98x107
@@ -332,10 +332,10 @@ layer at (118,1907) size 100x108
       text run at (0,72) width 98: "have to wrap to"
       text run at (0,90) width 88: "multiple lines."
 layer at (120,2091) size 82x2 clip at (0,0) size 0x0
-  RenderBlock (floating) {HR} at (112,30) size 82x2 [border: (1px inset #000000)]
+  RenderBlock (floating) {HR} at (112,30) size 82x2 [color=#808080] [border: (1px inset #808080)]
 layer at (120,2195) size 2x2 clip at (0,0) size 0x0
-  RenderBlock (floating) {HR} at (112,30) size 2x2 [border: (1px inset #000000)]
+  RenderBlock (floating) {HR} at (112,30) size 2x2 [color=#808080] [border: (1px inset #808080)]
 layer at (18,2309) size 202x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (10,58) size 202x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (10,58) size 202x2 [color=#808080] [border: (1px inset #808080)]
 layer at (118,2401) size 100x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (110,36) size 100x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (110,36) size 100x2 [color=#808080] [border: (1px inset #808080)]

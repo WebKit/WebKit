@@ -88,7 +88,29 @@ assert.throws(RangeError, () => Temporal.TimeZone.from("2020-05-26T16:02:46.2511
 assert.sameValue(obj.getOffsetStringFor(inst), "+00:00")
 
 // converts to DateTime
-var fakeGregorian = { toString() { return "gregory"; }};
+var fakeGregorian = {
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  day() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  id: "gregory",
+  inLeapYear() {},
+  mergeFields() {},
+  month() {},
+  monthCode() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  year() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
+};
 assert.sameValue(`${ obj.getPlainDateTimeFor(inst) }`, "1970-01-01T00:00:00");
 assert.sameValue(`${ obj.getPlainDateTimeFor(inst, fakeGregorian) }`, "1970-01-01T00:00:00[u-ca=gregory]");
 

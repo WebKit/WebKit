@@ -2248,7 +2248,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case MovHint: {
+    case MovHint:
+    case ZombieHint: {
         compileMovHint(m_currentNode);
         noResult(node);
         break;
@@ -3099,6 +3100,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case StringIndexOf: {
+        compileStringIndexOf(node);
+        break;
+    }
+
     case FunctionToString:
         compileFunctionToString(node);
         break;
@@ -3130,6 +3136,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case NewArrayWithSize: {
         compileNewArrayWithSize(node);
+        break;
+    }
+
+    case NewArrayWithConstantSize: {
+        compileNewArrayWithConstantSize(node);
         break;
     }
 
@@ -3692,6 +3703,16 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg resultGPR = result.gpr();
         callOperation(operationNumberIsInteger, resultGPR, LinkableConstant::globalObject(*this, node), inputRegs);
         booleanResult(resultGPR, node);
+        break;
+    }
+
+    case GlobalIsNaN: {
+        compileGlobalIsNaN(node);
+        break;
+    }
+
+    case NumberIsNaN: {
+        compileNumberIsNaN(node);
         break;
     }
 
@@ -4274,6 +4295,7 @@ void SpeculativeJIT::compile(Node* node)
     case DataViewSet:
     case DateGetInt32OrNaN:
     case DateGetTime:
+    case DateSetTime:
     case StringCodePointAt:
     case CallWasm:
     case FunctionBind:

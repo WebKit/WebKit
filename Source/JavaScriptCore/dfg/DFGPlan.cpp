@@ -50,6 +50,7 @@
 #include "DFGLiveCatchVariablePreservationPhase.h"
 #include "DFGLivenessAnalysisPhase.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
+#include "DFGMovHintRemovalPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSREntrypointCreationPhase.h"
 #include "DFGObjectAllocationSinkingPhase.h"
@@ -369,6 +370,8 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performSSALowering);
         
         // Ideally, these would be run to fixpoint with the object allocation sinking phase.
+        if (Options::usePutStackSinking())
+            RUN_PHASE(performPutStackSinking);
         RUN_PHASE(performArgumentsElimination);
         if (Options::usePutStackSinking())
             RUN_PHASE(performPutStackSinking);
@@ -428,6 +431,12 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performCFA);
         RUN_PHASE(performGlobalStoreBarrierInsertion);
         RUN_PHASE(performStoreBarrierClustering);
+
+        // MovHint removal happens based on the assumption that we no longer inserts random new nodes having new OSR exits.
+        // After this phase, you cannot insert a node having a new OSR exit. (If it does not cause OSR exit, or if it does
+        // not introduce a new OSR exit, then it is totally fine).
+        if (Options::useMovHintRemoval())
+            RUN_PHASE(performMovHintRemoval);
         RUN_PHASE(performCleanUp);
         RUN_PHASE(performDCE); // We rely on this to kill dead code that won't be recognized as dead by B3.
         RUN_PHASE(performStackLayout);

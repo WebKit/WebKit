@@ -196,7 +196,6 @@ class ClearUtils final : angle::NonCopyable
   public:
     ClearUtils() = delete;
     ClearUtils(const std::string &fragmentShaderName);
-    ClearUtils(const ClearUtils &src);
 
     void onDestroy();
 
@@ -228,7 +227,6 @@ class ColorBlitUtils final : angle::NonCopyable
   public:
     ColorBlitUtils() = delete;
     ColorBlitUtils(const std::string &fragmentShaderName);
-    ColorBlitUtils(const ColorBlitUtils &src);
 
     void onDestroy();
 
@@ -283,19 +281,20 @@ class DepthStencilBlitUtils final : angle::NonCopyable
                                            const StencilBlitViaBufferParams &params);
 
   private:
-    void ensureRenderPipelineStateCacheInitialized(ContextMtl *ctx,
-                                                   int sourceDepthTextureType,
-                                                   int sourceStencilTextureType,
-                                                   RenderPipelineCache *cacheOut);
+    angle::Result ensureRenderPipelineStateCacheInitialized(ContextMtl *ctx,
+                                                            int sourceDepthTextureType,
+                                                            int sourceStencilTextureType,
+                                                            RenderPipelineCache *cacheOut);
 
     angle::Result setupDepthStencilBlitWithDraw(const gl::Context *context,
                                                 RenderCommandEncoder *cmdEncoder,
                                                 const DepthStencilBlitParams &params);
 
-    id<MTLRenderPipelineState> getDepthStencilBlitRenderPipelineState(
+    angle::Result getDepthStencilBlitRenderPipelineState(
         const gl::Context *context,
         RenderCommandEncoder *cmdEncoder,
-        const DepthStencilBlitParams &params);
+        const DepthStencilBlitParams &params,
+        id<MTLRenderPipelineState> *outRenderPipelineState);
 
     id<MTLComputePipelineState> getStencilToBufferComputePipelineState(
         ContextMtl *ctx,
@@ -479,7 +478,6 @@ class CopyPixelsUtils final : angle::NonCopyable
   public:
     CopyPixelsUtils() = default;
     CopyPixelsUtils(const std::string &readShaderName, const std::string &writeShaderName);
-    CopyPixelsUtils(const CopyPixelsUtils &src);
 
     void onDestroy();
 

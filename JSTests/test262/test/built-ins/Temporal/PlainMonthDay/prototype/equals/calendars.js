@@ -9,19 +9,41 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  "get calendar a.toString",
-  "call calendar a.toString",
-  "get calendar b.toString",
-  "call calendar b.toString",
+  "get calendar a.id",
+  "get calendar b.id",
 ];
 const actual = [];
 const calendar = (id) => {
-  return TemporalHelpers.toPrimitiveObserver(actual, id, `calendar ${id}`);
+  const c = {
+    dateAdd() {},
+    dateFromFields() {},
+    dateUntil() {},
+    day() {},
+    dayOfWeek() {},
+    dayOfYear() {},
+    daysInMonth() {},
+    daysInWeek() {},
+    daysInYear() {},
+    fields() {},
+    inLeapYear() {},
+    mergeFields() {},
+    month() {},
+    monthCode() {},
+    monthDayFromFields() {},
+    monthsInYear() {},
+    weekOfYear() {},
+    year() {},
+    yearMonthFromFields() {},
+    yearOfWeek() {},
+  };
+  TemporalHelpers.observeProperty(actual, c, "id", id, `calendar ${id}`);
+  return c;
 };
 
 const mdA = new Temporal.PlainMonthDay(2, 7, calendar("a"));
 const mdB = new Temporal.PlainMonthDay(2, 7, calendar("b"));
 const mdC = new Temporal.PlainMonthDay(2, 7, calendar("c"), 1974);
+actual.splice(0);  // disregard the HasProperty checks done in the constructor
 
 assert.sameValue(mdA.equals(mdC), false, "different year");
 assert.compareArray(actual, [], "Should not check calendar");

@@ -24,9 +24,11 @@ info: |
         [...]
     11. Return starResolution.
 negative:
-  phase: runtime
+  phase: resolution
   type: SyntaxError
 flags: [module]
 ---*/
+
+$DONOTEVALUATE();
 
 import { x as y } from './instn-named-err-not-found-empty_FIXTURE.js';

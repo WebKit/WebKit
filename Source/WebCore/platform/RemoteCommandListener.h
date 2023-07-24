@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RemoteCommandListener_h
-#define RemoteCommandListener_h
+#pragma once
 
 #include "DeferrableTask.h"
 #include "PlatformMediaSession.h"
@@ -39,13 +38,15 @@ public:
 };
 
 class WEBCORE_EXPORT RemoteCommandListener {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<RemoteCommandListener> create(RemoteCommandListenerClient&);
+    static RefPtr<RemoteCommandListener> create(RemoteCommandListenerClient&);
     RemoteCommandListener(RemoteCommandListenerClient&);
     virtual ~RemoteCommandListener();
 
-    using CreationFunction = Function<std::unique_ptr<RemoteCommandListener>(RemoteCommandListenerClient&)>;
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
+
+    using CreationFunction = Function<RefPtr<RemoteCommandListener>(RemoteCommandListenerClient&)>;
     static void setCreationFunction(CreationFunction&&);
     static void resetCreationFunction();
 
@@ -72,5 +73,3 @@ private:
 };
 
 }
-
-#endif

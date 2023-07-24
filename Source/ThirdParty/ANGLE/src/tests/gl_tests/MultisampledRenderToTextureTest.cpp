@@ -3093,6 +3093,84 @@ TEST_P(MultisampledRenderToTextureES3Test, DepthStencilAttachment)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+// Draw with depth buffer, with depth discard before the end of the render
+// pass. On desktop Windows AMD drivers, this would previously cause a crash
+// because of a NULL pDepthStencilResolveAttachment pointer when ending the
+// render pass. Other vendors don't seem to mind the NULL pointer.
+TEST_P(MultisampledRenderToTextureES3Test, DepthStencilInvalidate)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    constexpr GLsizei kWidth = 64;
+
+    // Create multisampled framebuffer to draw into, with both color and depth attachments.
+    GLTexture colorMS;
+    glBindTexture(GL_TEXTURE_2D, colorMS);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLRenderbuffer depthMS;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthMS);
+    glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, 4, GL_DEPTH_COMPONENT32F, kWidth, 1);
+
+    GLFramebuffer fboMS;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                         colorMS, 0, 4);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthMS);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Setup draw program
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint colorUniformLocation =
+        glGetUniformLocation(drawColor, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+    GLint positionLocation = glGetAttribLocation(drawColor, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+
+    // Setup vertices such that depth is varied from top to bottom.
+    std::array<Vector3, 6> quadVertices = {
+        Vector3(-1.0f, 1.0f, 0.8f), Vector3(-1.0f, -1.0f, 0.2f), Vector3(1.0f, -1.0f, 0.2f),
+        Vector3(-1.0f, 1.0f, 0.8f), Vector3(1.0f, -1.0f, 0.2f),  Vector3(1.0f, 1.0f, 0.8f),
+    };
+    GLBuffer quadVertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, quadVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 3 * 6, quadVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(positionLocation);
+
+    // Draw red into the framebuffer.
+    glViewport(0, 0, kWidth, 1);
+    glUniform4f(colorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw green such that half the samples of each pixel pass the depth test.
+    glUniform4f(colorUniformLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    glDepthFunc(GL_GREATER);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Invalidate depth attachment
+    GLenum discardDepth[] = {GL_DEPTH_ATTACHMENT};
+    glInvalidateFramebuffer(GL_DRAW_FRAMEBUFFER, 1, discardDepth);
+
+    // End render pass with pixel reads, ensure no crash occurs here.
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fboMS);
+
+    const GLColor kExpected(127, 127, 0, 255);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kExpected, 1);
+    EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, 0, kExpected, 1);
+    EXPECT_PIXEL_COLOR_NEAR(kWidth / 2, 0, kExpected, 1);
+
+    glDisableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 // Draw, copy, then blend.  The copy will make sure an implicit resolve happens.  Regardless, the
 // following draw should retain the data written by the first draw command.
 // Uses color attachments 0 and 1.  Attachment 0 is a normal multisampled texture, while attachment
@@ -4056,34 +4134,26 @@ TEST_P(MultisampledRenderToTextureWithAdvancedBlendTest, RenderbufferClearThenDr
     drawTestCommon(true, InitMethod::Clear);
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND(MultisampledRenderToTextureTest,
-                                                ES3_VULKAN()
-                                                    .disable(Feature::SupportsExtendedDynamicState)
-                                                    .disable(Feature::SupportsExtendedDynamicState2)
-                                                    .disable(Feature::SupportsLogicOpDynamicState),
-                                                ES3_VULKAN()
-                                                    .disable(Feature::SupportsExtendedDynamicState2)
-                                                    .disable(Feature::SupportsLogicOpDynamicState));
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND(
+    MultisampledRenderToTextureTest,
+    ES3_VULKAN()
+        .disable(Feature::SupportsExtendedDynamicState)
+        .disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampledRenderToTextureES3Test);
 ANGLE_INSTANTIATE_TEST_ES3_AND(MultisampledRenderToTextureES3Test,
                                ES3_VULKAN()
                                    .disable(Feature::SupportsExtendedDynamicState)
-                                   .disable(Feature::SupportsExtendedDynamicState2)
-                                   .disable(Feature::SupportsLogicOpDynamicState),
-                               ES3_VULKAN()
-                                   .disable(Feature::SupportsExtendedDynamicState2)
-                                   .disable(Feature::SupportsLogicOpDynamicState));
+                                   .disable(Feature::SupportsExtendedDynamicState2),
+                               ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampledRenderToTextureES31Test);
 ANGLE_INSTANTIATE_TEST_ES31_AND(MultisampledRenderToTextureES31Test,
                                 ES31_VULKAN()
                                     .disable(Feature::SupportsExtendedDynamicState)
-                                    .disable(Feature::SupportsExtendedDynamicState2)
-                                    .disable(Feature::SupportsLogicOpDynamicState),
-                                ES31_VULKAN()
-                                    .disable(Feature::SupportsExtendedDynamicState2)
-                                    .disable(Feature::SupportsLogicOpDynamicState));
+                                    .disable(Feature::SupportsExtendedDynamicState2),
+                                ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampledRenderToTextureWithAdvancedBlendTest);
 ANGLE_INSTANTIATE_TEST_ES3(MultisampledRenderToTextureWithAdvancedBlendTest);

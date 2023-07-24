@@ -33,7 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-enum UseKind {
+enum UseKind : uint8_t {
     // The DFG has 3 representations of values used:
 
     // 1. The JSValue representation for a JSValue that must be stored in a GP

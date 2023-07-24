@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@ public:
     ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration);
     WEBCORE_EXPORT ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, AtomString&& cueID, String&& cueText, String&& settings = { }, String&& sourceID = { }, String&& originalStartTime = { });
     ISOWebVTTCue(const ISOWebVTTCue&) = default;
+    WEBCORE_EXPORT ISOWebVTTCue();
     WEBCORE_EXPORT ISOWebVTTCue(ISOWebVTTCue&&);
     WEBCORE_EXPORT ~ISOWebVTTCue();
 
@@ -63,9 +64,9 @@ public:
 
     String toJSONString() const;
 
-private:
-    bool parse(JSC::DataView&, unsigned& offset) override;
+    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) override;
 
+private:
     MediaTime m_presentationTime;
     MediaTime m_duration;
 

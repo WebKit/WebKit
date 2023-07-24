@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The Escape key may not be used as a user gesture to enter fullscreen
 Tests that pressing the Escape key cannot be used as user interaction to enter fullscreen.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

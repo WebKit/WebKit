@@ -37,8 +37,13 @@ public:
     bool tryCopyToLayer(ImageBuffer&) final;
     void display(PlatformCALayer&) final { }
 
+    bool isGraphicsLayerAsyncContentsDisplayDelegateCocoa() const final { return true; }
+
+    void updateGraphicsLayerCA(GraphicsLayerCA&);
+
 private:
     RetainPtr<CALayer> m_layer;
+    RefPtr<NativeImage> m_image;
 };
 
 }

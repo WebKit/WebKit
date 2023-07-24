@@ -16,7 +16,6 @@ const tests = [
   ["1970-01-01T00:00Z[u-ca=discord]", "annotation is ignored"],
   ["1970-01-01T00:00Z[!u-ca=discord]", "annotation with ! is ignored"],
   ["1970-01-01T00:00Z[u-ca=iso8601][u-ca=discord]", "two annotations are ignored"],
-  ["1970-01-01T00:00Z[u-ca=iso8601][!u-ca=discord]", "two annotations are ignored even with !"],
 ];
 
 const instance = new Temporal.TimeZone("UTC");

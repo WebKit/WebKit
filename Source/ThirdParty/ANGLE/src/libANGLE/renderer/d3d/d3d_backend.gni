@@ -61,13 +61,6 @@ d3d_shared_sources = [
   "formatutilsD3D.h",
 ]
 
-if (!angle_is_winuwp) {
-  d3d_shared_sources += [
-    "../../../third_party/systeminfo/SystemInfo.cpp",
-    "../../../third_party/systeminfo/SystemInfo.h",
-  ]
-}
-
 if (angle_enable_d3d9) {
   d3d9_backend_sources = [
     "d3d9/Blit9.cpp",

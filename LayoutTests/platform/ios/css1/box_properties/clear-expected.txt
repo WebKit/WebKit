@@ -89,4 +89,4 @@ layer at (0,0) size 800x997
               RenderBlock (anonymous) at (4,394) size 671x20
                 RenderBR {BR} at (18,0) size 0x19
 layer at (8,113) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,105) size 784x2 [color=#808080] [border: (1px inset #808080)]

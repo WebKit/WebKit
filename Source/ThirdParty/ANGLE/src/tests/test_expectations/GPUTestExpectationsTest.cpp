@@ -23,7 +23,7 @@ class GPUTestConfigTest : public ANGLETest<>
     void validateConfigBase(const GPUTestConfig &config)
     {
         EXPECT_EQ(IsWindows(), config.getConditions()[GPUTestConfig::kConditionWin]);
-        EXPECT_EQ(IsOSX(), config.getConditions()[GPUTestConfig::kConditionMac]);
+        EXPECT_EQ(IsMac(), config.getConditions()[GPUTestConfig::kConditionMac]);
         EXPECT_EQ(IsIOS(), config.getConditions()[GPUTestConfig::kConditionIOS]);
         EXPECT_EQ(IsLinux(), config.getConditions()[GPUTestConfig::kConditionLinux]);
         EXPECT_EQ(IsAndroid(), config.getConditions()[GPUTestConfig::kConditionAndroid]);

@@ -47,7 +47,6 @@ public:
     TransformState(bool useCSS3DTransformInterop, TransformDirection mappingDirection, const FloatPoint& p, const FloatQuad& quad)
         : m_lastPlanarPoint(p)
         , m_lastPlanarQuad(quad)
-        , m_accumulatingTransform(false)
         , m_mapPoint(true)
         , m_mapQuad(true)
         , m_useCSS3DTransformInterop(useCSS3DTransformInterop)
@@ -57,7 +56,6 @@ public:
     
     TransformState(bool useCSS3DTransformInterop, TransformDirection mappingDirection, const FloatPoint& p)
         : m_lastPlanarPoint(p)
-        , m_accumulatingTransform(false)
         , m_mapPoint(true)
         , m_mapQuad(false)
         , m_useCSS3DTransformInterop(useCSS3DTransformInterop)
@@ -67,7 +65,6 @@ public:
     
     TransformState(bool useCSS3DTransformInterop, TransformDirection mappingDirection, const FloatQuad& quad)
         : m_lastPlanarQuad(quad)
-        , m_accumulatingTransform(false)
         , m_mapPoint(false)
         , m_mapQuad(true)
         , m_useCSS3DTransformInterop(useCSS3DTransformInterop)
@@ -144,7 +141,7 @@ private:
     std::unique_ptr<TransformationMatrix> m_accumulatedTransform;
     std::unique_ptr<TransformationMatrix> m_trackedTransform;
     LayoutSize m_accumulatedOffset;
-    bool m_accumulatingTransform;
+    bool m_accumulatingTransform { false };
     bool m_mapPoint;
     bool m_mapQuad;
     bool m_useCSS3DTransformInterop;

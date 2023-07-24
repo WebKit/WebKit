@@ -44,6 +44,12 @@ SSLCertificateStats::SSLCertificateStats(
 
 SSLCertificateStats::~SSLCertificateStats() {}
 
+std::unique_ptr<SSLCertificateStats> SSLCertificateStats::Copy() const {
+  return std::make_unique<SSLCertificateStats>(
+      std::string(fingerprint), std::string(fingerprint_algorithm),
+      std::string(base64_certificate), issuer ? issuer->Copy() : nullptr);
+}
+
 //////////////////////////////////////////////////////////////////////
 // SSLCertificate
 //////////////////////////////////////////////////////////////////////

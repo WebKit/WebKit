@@ -282,15 +282,16 @@ private:
 };
 
 template<typename T> struct AudioNodeConnectionRefDerefTraits {
-    static ALWAYS_INLINE void refIfNotNull(T* ptr)
+    static ALWAYS_INLINE T* refIfNotNull(T* ptr)
     {
-        if (LIKELY(ptr != nullptr))
+        if (LIKELY(ptr))
             ptr->incrementConnectionCount();
+        return ptr;
     }
 
     static ALWAYS_INLINE void derefIfNotNull(T* ptr)
     {
-        if (LIKELY(ptr != nullptr))
+        if (LIKELY(ptr))
             ptr->decrementConnectionCount();
     }
 };

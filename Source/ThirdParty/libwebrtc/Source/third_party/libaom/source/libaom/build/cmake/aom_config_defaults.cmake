@@ -24,19 +24,13 @@ set_aom_detect_var(INLINE "" "Sets INLINE value for current target.")
 
 # CPUs.
 set_aom_detect_var(ARCH_ARM 0 "Enables ARM architecture.")
-set_aom_detect_var(ARCH_MIPS 0 "Enables MIPS architecture.")
 set_aom_detect_var(ARCH_PPC 0 "Enables PPC architecture.")
 set_aom_detect_var(ARCH_X86 0 "Enables X86 architecture.")
 set_aom_detect_var(ARCH_X86_64 0 "Enables X86_64 architecture.")
 
 # ARM feature flags.
 set_aom_detect_var(HAVE_NEON 0 "Enables NEON intrinsics optimizations.")
-
-# MIPS feature flags.
-set_aom_detect_var(HAVE_DSPR2 0 "Enables DSPR2 optimizations.")
-set_aom_detect_var(HAVE_MIPS32 0 "Enables MIPS32 optimizations.")
-set_aom_detect_var(HAVE_MIPS64 0 "Enables MIPS64 optimizations. ")
-set_aom_detect_var(HAVE_MSA 0 "Enables MSA optimizations.")
+set_aom_detect_var(HAVE_ARM_CRC32 0 "Enables Arm CRC32 optimizations.")
 
 # PPC feature flags.
 set_aom_detect_var(HAVE_VSX 0 "Enables VSX optimizations.")
@@ -161,6 +155,13 @@ set_aom_config_var(CONFIG_TFLITE 0
                    "AV1 experiment: Enable tensorflow lite library.")
 set_aom_config_var(CONFIG_THREE_PASS 0
                    "AV1 experiment: Enable three-pass encoding.")
+set_aom_config_var(CONFIG_OUTPUT_FRAME_SIZE 0
+                   "AV1 experiment: Output frame size information.")
+set_aom_config_var(
+  CONFIG_SALIENCY_MAP 0
+  "AV1 experiment: Enable saliency map based encoding tuning for VMAF.")
+set_aom_config_var(CONFIG_CWG_C013 0
+                   "AV1 experiment: Support for 7.x and 8.x levels.")
 
 #
 # Variables in this section control optional features of the build system.
@@ -189,11 +190,6 @@ set_aom_option_var(ENABLE_WERROR "Converts warnings to errors at compile time."
 
 # ARM assembly/intrinsics flags.
 set_aom_option_var(ENABLE_NEON "Enables NEON optimizations on ARM targets." ON)
-
-# MIPS assembly/intrinsics flags.
-set_aom_option_var(ENABLE_DSPR2 "Enables DSPR2 optimizations on MIPS targets."
-                   OFF)
-set_aom_option_var(ENABLE_MSA "Enables MSA optimizations on MIPS targets." OFF)
 
 # VSX intrinsics flags.
 set_aom_option_var(ENABLE_VSX "Enables VSX optimizations on PowerPC targets."

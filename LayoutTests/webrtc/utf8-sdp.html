@@ -30,7 +30,7 @@ promise_test(async (test) => {
         setTimeout(() => reject("Test timed out"), 5000);
     });
 
-    assert_equals(unicodeString, remoteStream.getVideoTracks()[0].id);
+    assert_equals(remoteStream.getVideoTracks()[0].id, unicodeString);
     video.srcObject = remoteStream;
     return video.play();
 }, "Testing video exchange with UTF-8 track id");

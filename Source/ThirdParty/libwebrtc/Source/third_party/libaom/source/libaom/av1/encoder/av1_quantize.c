@@ -673,15 +673,38 @@ void av1_build_quantizer(aom_bit_depth_t bit_depth, int y_dc_delta_q,
   }
 }
 
+static INLINE bool deltaq_params_have_changed(
+    const DeltaQuantParams *prev_deltaq_params,
+    const CommonQuantParams *quant_params) {
+  return (prev_deltaq_params->y_dc_delta_q != quant_params->y_dc_delta_q ||
+          prev_deltaq_params->u_dc_delta_q != quant_params->u_dc_delta_q ||
+          prev_deltaq_params->v_dc_delta_q != quant_params->v_dc_delta_q ||
+          prev_deltaq_params->u_ac_delta_q != quant_params->u_ac_delta_q ||
+          prev_deltaq_params->v_ac_delta_q != quant_params->v_ac_delta_q);
+}
+
 void av1_init_quantizer(EncQuantDequantParams *const enc_quant_dequant_params,
                         const CommonQuantParams *quant_params,
                         aom_bit_depth_t bit_depth) {
+  DeltaQuantParams *const prev_deltaq_params =
+      &enc_quant_dequant_params->prev_deltaq_params;
+
+  // Re-initialize the quantizer only if any of the dc/ac deltaq parameters
+  // change.
+  if (!deltaq_params_have_changed(prev_deltaq_params, quant_params)) return;
   QUANTS *const quants = &enc_quant_dequant_params->quants;
   Dequants *const dequants = &enc_quant_dequant_params->dequants;
   av1_build_quantizer(bit_depth, quant_params->y_dc_delta_q,
                       quant_params->u_dc_delta_q, quant_params->u_ac_delta_q,
                       quant_params->v_dc_delta_q, quant_params->v_ac_delta_q,
                       quants, dequants);
+
+  // Record the state of deltaq parameters.
+  prev_deltaq_params->y_dc_delta_q = quant_params->y_dc_delta_q;
+  prev_deltaq_params->u_dc_delta_q = quant_params->u_dc_delta_q;
+  prev_deltaq_params->v_dc_delta_q = quant_params->v_dc_delta_q;
+  prev_deltaq_params->u_ac_delta_q = quant_params->u_ac_delta_q;
+  prev_deltaq_params->v_ac_delta_q = quant_params->v_ac_delta_q;
 }
 
 void av1_set_q_index(const EncQuantDequantParams *enc_quant_dequant_params,
@@ -745,14 +768,37 @@ void av1_init_plane_quantizers(const AV1_COMP *cpi, MACROBLOCK *x,
                                int segment_id, const int do_update) {
   const AV1_COMMON *const cm = &cpi->common;
   const CommonQuantParams *const quant_params = &cm->quant_params;
+  const GF_GROUP *const gf_group = &cpi->ppi->gf_group;
+  const int boost_index = AOMMIN(15, (cpi->ppi->p_rc.gfu_boost / 100));
+  const int layer_depth = AOMMIN(gf_group->layer_depth[cpi->gf_frame_index], 6);
+  const FRAME_TYPE frame_type = cm->current_frame.frame_type;
+  int qindex_rd;
+
   const int current_qindex = AOMMAX(
       0,
       AOMMIN(QINDEX_RANGE - 1, cm->delta_q_info.delta_q_present_flag
                                    ? quant_params->base_qindex + x->delta_qindex
                                    : quant_params->base_qindex));
   const int qindex = av1_get_qindex(&cm->seg, segment_id, current_qindex);
-  const int rdmult =
-      av1_compute_rd_mult(cpi, qindex + quant_params->y_dc_delta_q);
+
+  if (cpi->oxcf.sb_qp_sweep) {
+    const int current_rd_qindex =
+        AOMMAX(0, AOMMIN(QINDEX_RANGE - 1, cm->delta_q_info.delta_q_present_flag
+                                               ? quant_params->base_qindex +
+                                                     x->rdmult_delta_qindex
+                                               : quant_params->base_qindex));
+    qindex_rd = av1_get_qindex(&cm->seg, segment_id, current_rd_qindex);
+  } else {
+    qindex_rd = qindex;
+  }
+
+  const int qindex_rdmult = qindex_rd + quant_params->y_dc_delta_q;
+  const int rdmult = av1_compute_rd_mult(
+      qindex_rdmult, cm->seq_params->bit_depth,
+      cpi->ppi->gf_group.update_type[cpi->gf_frame_index], layer_depth,
+      boost_index, frame_type, cpi->oxcf.q_cfg.use_fixed_qp_offsets,
+      is_stat_consumption_stage(cpi));
+
   const int qindex_change = x->qindex != qindex;
   if (qindex_change || do_update) {
     av1_set_q_index(&cpi->enc_quant_dequant_params, qindex, x);
@@ -767,7 +813,7 @@ void av1_init_plane_quantizers(const AV1_COMP *cpi, MACROBLOCK *x,
   x->seg_skip_block = segfeature_active(&cm->seg, segment_id, SEG_LVL_SKIP);
 
   av1_set_error_per_bit(&x->errorperbit, rdmult);
-  av1_set_sad_per_bit(cpi, &x->sadperbit, qindex);
+  av1_set_sad_per_bit(cpi, &x->sadperbit, qindex_rd);
 
   x->prev_segment_id = segment_id;
 }

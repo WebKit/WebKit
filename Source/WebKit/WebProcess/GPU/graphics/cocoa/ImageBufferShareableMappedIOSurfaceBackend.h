@@ -54,6 +54,8 @@ private:
 
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) final;
 
+    String debugDescription() const final;
+
     WebCore::IOSurfaceSeed m_lastSeedWhenCopyingImage { 0 };
 };
 

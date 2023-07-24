@@ -2937,7 +2937,7 @@ void testPCOriginMapDoesntInsertNops()
     compileProc(proc);
 }
 
-void addSShrShTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+void addSShrShTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& tasks)
 {
     RUN(testSShrShl32(42, 24, 24));
     RUN(testSShrShl32(-42, 24, 24));

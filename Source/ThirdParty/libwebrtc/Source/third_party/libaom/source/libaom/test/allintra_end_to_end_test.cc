@@ -132,4 +132,14 @@ AV1_INSTANTIATE_TEST_SUITE(AllIntraEndToEndTest,
                            ::testing::Range(5, 9), ::testing::Range(0, 4),
                            ::testing::Values(1), ::testing::Values(1),
                            ::testing::Values(0, 1));
+
+INSTANTIATE_TEST_SUITE_P(
+    AV1MultiThreaded, AllIntraEndToEndTest,
+    ::testing::Combine(
+        ::testing::Values(
+            static_cast<const libaom_test::CodecFactory *>(&libaom_test::kAV1)),
+        ::testing::ValuesIn(kTestVectors), ::testing::Range(5, 9),
+        ::testing::Range(0, 4), ::testing::Values(6), ::testing::Values(1),
+        ::testing::Values(0, 1)));
+
 }  // namespace

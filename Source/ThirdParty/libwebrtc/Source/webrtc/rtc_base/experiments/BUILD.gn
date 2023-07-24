@@ -192,6 +192,7 @@ rtc_library("rate_control_settings") {
     "../../api/units:data_size",
     "../../api/video_codecs:video_codecs_api",
     "../../system_wrappers:field_trial",
+    "../../video/config:encoder_config",
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
@@ -289,6 +290,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../test:scoped_key_value_config",
       "../../test:test_main",
       "../../test:test_support",
+      "../../video/config:encoder_config",
     ]
     absl_deps = [
       "//third_party/abseil-cpp/absl/strings",

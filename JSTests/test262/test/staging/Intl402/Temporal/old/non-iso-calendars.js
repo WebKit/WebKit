@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal-intl
 description: Non-ISO Calendars
-features: [Temporal]
+features: [Temporal, Array.prototype.includes]
 ---*/
 
 var testChineseData = new Date("2001-02-01T00:00Z").toLocaleString("en-US-u-ca-chinese", {
@@ -46,7 +46,39 @@ var year2000Content = getLocalizedDates("2000-01-01T00:00Z");
 var year1Content = getLocalizedDates("0001-01-01T00:00Z");
 var year2000Snapshot = "iso8601: 1/1/2000\n" + "buddhist: 1/1/2543 BE\n" + "chinese: 11/25/1999\n" + "coptic: 4/22/1716 ERA1\n" + "dangi: 11/25/1999\n" + "ethioaa: 4/22/7492 ERA0\n" + "ethiopic: 4/22/1992 ERA1\n" + "gregory: 1/1/2000\n" + "hebrew: 23 Tevet 5760\n" + "indian: 10/11/1921 Saka\n" + "islamic: 9/25/1420 AH\n" + "islamic-umalqura: 9/24/1420 AH\n" + "islamic-tbla: 9/25/1420 AH\n" + "islamic-civil: 9/24/1420 AH\n" + "islamic-rgsa: 9/25/1420 AH\n" + "islamicc: 9/24/1420 AH\n" + "japanese: 1/1/12 H\n" + "persian: 10/11/1378 AP\n" + "roc: 1/1/89 Minguo";
 assert.sameValue(year2000Content, year2000Snapshot);
-var year1Snapshot = "iso8601: 1/1/1\n" + "buddhist: 1/3/544 BE\n" + "chinese: 11/21/0\n" + "coptic: 5/8/284 ERA0\n" + "dangi: 11/21/0\n" + "ethioaa: 5/8/5493 ERA0\n" + "ethiopic: 5/8/5493 ERA0\n" + "gregory: 1/1/1\n" + "hebrew: 18 Tevet 3761\n" + "indian: 10/11/-78 Saka\n" + "islamic: 5/20/-640 AH\n" + "islamic-umalqura: 5/18/-640 AH\n" + "islamic-tbla: 5/19/-640 AH\n" + "islamic-civil: 5/18/-640 AH\n" + "islamic-rgsa: 5/20/-640 AH\n" + "islamicc: 5/18/-640 AH\n" + "japanese: 1/3/-643 Taika (645\u2013650)\n" + "persian: 10/11/-621 AP\n" + "roc: 1/3/1911 B.R.O.C.";
+
+// Several calendars based on the Gregorian calendar use Julian dates (not
+// proleptic Gregorian dates) before the Gregorian switchover in Oct 1582. See
+// https://bugs.chromium.org/p/chromium/issues/detail?id=1173158. The code below
+// allows these tests to pass regardless of the bug, while still remaining
+// sensitive to other bugs that may crop up.
+const yearOneMonthDay = new Map(
+  ["iso8601", "gregory", "roc", "buddhist", "japanese"].map(calendar => {
+    hasGregorianSwitchoverBug = new Date("+001001-01-01T00:00Z")
+      .toLocaleDateString(`en-US-u-ca-${calendar}`, { timeZone: "UTC" })
+      .startsWith("12");
+    return [calendar, hasGregorianSwitchoverBug ? "1/3" : "1/1"]
+  }));
+var year1Snapshot = 
+  `iso8601: ${yearOneMonthDay.get("iso8601")}/1\n` + 
+  `buddhist: ${yearOneMonthDay.get("buddhist")}/544 BE\n` +
+  "chinese: 11/21/0\n" +
+  "coptic: 5/8/284 ERA0\n" +
+  "dangi: 11/21/0\n" +
+  "ethioaa: 5/8/5493 ERA0\n" +
+  "ethiopic: 5/8/5493 ERA0\n" +
+  `gregory: ${yearOneMonthDay.get("gregory")}/1\n` +
+  "hebrew: 18 Tevet 3761\n" +
+  "indian: 10/11/-78 Saka\n" +
+  "islamic: 5/20/-640 AH\n" +
+  "islamic-umalqura: 5/18/-640 AH\n" +
+  "islamic-tbla: 5/19/-640 AH\n" +
+  "islamic-civil: 5/18/-640 AH\n" +
+  "islamic-rgsa: 5/20/-640 AH\n" +
+  "islamicc: 5/18/-640 AH\n" +
+  `japanese: ${yearOneMonthDay.get("japanese")}/-643 Taika (645\u2013650)\n` +
+  "persian: 10/11/-621 AP\n" +
+  `roc: ${yearOneMonthDay.get("roc")}/1911 B.R.O.C.`;
 assert.sameValue(year1Content, year1Snapshot);
 var fromWithCases = {
   iso8601: {

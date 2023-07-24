@@ -45,6 +45,7 @@ public:
     struct PartialRun {
         size_t length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
+        // FIXME: Remove this and collapse the rest of PartialRun over to PartialTrailingContent.
         std::optional<InlineLayoutUnit> hyphenWidth { };
     };
     enum class IsEndOfLine : bool { No, Yes };
@@ -61,6 +62,7 @@ public:
         struct PartialTrailingContent {
             size_t trailingRunIndex { 0 };
             std::optional<PartialRun> partialRun; // nullopt partial run means the trailing run is a complete run.
+            std::optional<InlineLayoutUnit> hyphenWidth { }; // Hyphen may be at the end of a full run in the middle of the continuous content (e.g. with adjacent InlineTextItems).
         };
         Action action { Action::Keep };
         IsEndOfLine isEndOfLine { IsEndOfLine::No };
@@ -144,6 +146,7 @@ private:
                 // Sometimes the breaking position is at the very beginning of the first run, so there's no trailing run at all.
                 bool overflows { false };
                 std::optional<InlineContentBreaker::PartialRun> partialRun { };
+                std::optional<InlineLayoutUnit> hyphenWidth { };
             };
             std::optional<TrailingContent> trailingContent { };
         };
@@ -154,6 +157,7 @@ private:
     std::optional<OverflowingTextContent::BreakingPosition> tryBreakingOverflowingRun(const LineStatus&, const ContinuousContent::RunList&, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const;
     std::optional<OverflowingTextContent::BreakingPosition> tryBreakingPreviousNonOverflowingRuns(const LineStatus&, const ContinuousContent::RunList&, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const;
     std::optional<OverflowingTextContent::BreakingPosition> tryBreakingNextOverflowingRuns(const LineStatus&, const ContinuousContent::RunList&, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const;
+    std::optional<OverflowingTextContent::BreakingPosition> tryHyphenationAcrossOverflowingInlineTextItems(const LineStatus&, const ContinuousContent::RunList&, size_t overflowingRunIndex) const;
 
     enum class WordBreakRule {
         AtArbitraryPositionWithinWords = 1 << 0,

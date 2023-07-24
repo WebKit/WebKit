@@ -11,6 +11,7 @@ info: |
   7. Repeat, while k < len
     a. Let elementK be the result of ? Get(O, ! ToString(k)).
   ...
+features: [Array.prototype.includes]
 ---*/
 
 function getCleanObj() {

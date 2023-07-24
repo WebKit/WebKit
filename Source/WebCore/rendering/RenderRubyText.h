@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -46,7 +47,7 @@ public:
     
     RenderRubyRun* rubyRun() const;
     
-    bool canBreakBefore(const LazyLineBreakIterator&) const;
+    bool canBreakBefore(const CachedLineBreakIteratorFactory&) const;
    
 private:
     ASCIILiteral renderName() const override { return "RenderRubyText"_s; }

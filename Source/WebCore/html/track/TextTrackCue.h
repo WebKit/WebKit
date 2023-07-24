@@ -51,7 +51,7 @@ public:
     static Ref<TextTrackCueBox> create(Document&, TextTrackCue&);
 
     TextTrackCue* getCue() const;
-    virtual void applyCSSProperties(const IntSize&) { }
+    virtual void applyCSSProperties() { }
 
 protected:
     void initialize();
@@ -109,7 +109,7 @@ public:
     void willChange();
     virtual void didChange();
 
-    virtual RefPtr<TextTrackCueBox> getDisplayTree(const IntSize& videoSize, int fontSize);
+    virtual RefPtr<TextTrackCueBox> getDisplayTree();
     virtual void removeDisplayTree();
 
     virtual RefPtr<DocumentFragment> getCueAsHTML();
@@ -121,7 +121,7 @@ public:
     using RefCounted::deref;
 
     virtual void recalculateStyles() { m_displayTreeNeedsUpdate = true; }
-    virtual void setFontSize(int fontSize, const IntSize& videoSize, bool important);
+    virtual void setFontSize(int fontSize, bool important);
     virtual void updateDisplayTree(const MediaTime&) { }
 
     unsigned cueIndex() const;

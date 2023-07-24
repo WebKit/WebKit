@@ -27,7 +27,7 @@ rtc_library("congestion_controller") {
   ]
 
   deps = [
-    "../../api/transport:field_trial_based_config",
+    "../../api:rtp_parameters",
     "../../api/transport:network_control",
     "../../api/units:data_rate",
     "../../api/units:time_delta",
@@ -39,10 +39,6 @@ rtc_library("congestion_controller") {
     "../remote_bitrate_estimator",
     "../rtp_rtcp:rtp_rtcp_format",
   ]
-
-  if (!build_with_mozilla) {
-    deps += [ "../../rtc_base" ]
-  }
 }
 
 if (rtc_include_tests && !build_with_chromium) {
@@ -58,12 +54,14 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../api/test/network_emulation",
       "../../api/test/network_emulation:create_cross_traffic",
       "../../api/units:data_rate",
+      "../../api/units:data_size",
       "../../api/units:time_delta",
       "../../api/units:timestamp",
       "../../system_wrappers",
       "../../test:test_support",
       "../../test/scenario",
       "../pacing",
+      "../rtp_rtcp:rtp_rtcp_format",
       "goog_cc:estimators",
       "goog_cc:goog_cc_unittests",
       "pcc:pcc_unittests",

@@ -93,6 +93,7 @@ class ProcessThrottlerTimedActivity {
     public:
         explicit ProcessThrottlerTimedActivity(Seconds timeout, ActivityVariant&& = nullptr);
         ProcessThrottlerTimedActivity& operator=(ActivityVariant&&);
+        const ActivityVariant& activity() const { return m_activity; }
 
     private:
         void activityTimedOut();
@@ -133,7 +134,7 @@ public:
     void setAllowsActivities(bool);
     void setShouldDropNearSuspendedAssertionAfterDelay(bool);
     void setShouldTakeNearSuspendedAssertion(bool);
-    bool isSuspended() const { return m_processIdentifier && !m_assertion; }
+    bool isSuspended() const { return m_processID && !m_assertion; }
     ProcessThrottleState currentState() const { return m_state; }
     bool isHoldingNearSuspendedAssertion() const { return m_assertion && m_assertion->type() == ProcessAssertionType::NearSuspended; }
 
@@ -168,7 +169,7 @@ private:
     void clearAssertion();
 
     ProcessThrottlerClient& m_process;
-    ProcessID m_processIdentifier { 0 };
+    ProcessID m_processID { 0 };
     RefPtr<ProcessAssertion> m_assertion;
     RefPtr<ProcessAssertion> m_assertionToClearAfterPrepareToDropLastAssertion;
     RunLoop::Timer m_prepareToSuspendTimeoutTimer;
@@ -185,7 +186,7 @@ private:
     bool m_allowsActivities { true };
 };
 
-#define PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d, throttler=%p] ProcessThrottler::Activity::" msg, this, m_throttler->m_processIdentifier, m_throttler, ##__VA_ARGS__)
+#define PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d, throttler=%p] ProcessThrottler::Activity::" msg, this, m_throttler->m_processID, m_throttler, ##__VA_ARGS__)
 
 inline ProcessThrottlerActivity::ProcessThrottlerActivity(ProcessThrottler& throttler, ASCIILiteral name, ProcessThrottlerActivityType type)
     : m_throttler(&throttler)

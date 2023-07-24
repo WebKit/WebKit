@@ -35,23 +35,83 @@ template<typename T>
 class ThreadSafeWeakHashSet final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    ThreadSafeWeakHashSet() = default;
+    ThreadSafeWeakHashSet(ThreadSafeWeakHashSet&& other) { moveFrom(WTFMove(other)); }
+    ThreadSafeWeakHashSet& operator=(ThreadSafeWeakHashSet&& other)
+    {
+        moveFrom(WTFMove(other));
+        return *this;
+    }
+
+    class const_iterator {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = T;
+        using pointer = const value_type*;
+        using reference = const value_type&;
+
+    private:
+        const_iterator(Vector<Ref<T>>&& strongReferences)
+            : m_strongReferences(WTFMove(strongReferences)) { }
+
+    public:
+        T* get() const
+        {
+            RELEASE_ASSERT(m_position < m_strongReferences.size());
+            return m_strongReferences[m_position].ptr();
+        }
+        T& operator*() const { return *get(); }
+        T* operator->() const { return get(); }
+
+        const_iterator& operator++()
+        {
+            RELEASE_ASSERT(m_position < m_strongReferences.size());
+            ++m_position;
+            return *this;
+        }
+
+        bool operator==(const const_iterator& other) const
+        {
+            // This should only be used to compare with end.
+            ASSERT_UNUSED(other, other.m_strongReferences.isEmpty());
+            return m_position == m_strongReferences.size();
+        }
+
+    private:
+        template<typename> friend class ThreadSafeWeakHashSet;
+
+        Vector<Ref<T>> m_strongReferences;
+        size_t m_position { 0 };
+    };
+
+    const_iterator begin() const
+    {
+        return { values() };
+    }
+
+    const_iterator end() const { return { { } }; }
 
     template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
-    typename HashSet<Ref<ThreadSafeWeakPtrControlBlock<T>>>::AddResult add(const U& value)
+    void add(const U& value)
     {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!value.m_controlBlock.objectHasBeenDeleted());
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!value.controlBlock().objectHasStartedDeletion());
         Locker locker { m_lock };
+        ControlBlockRefPtr retainedControlBlock { &value.controlBlock() };
+        if (!retainedControlBlock)
+            return;
         amortizedCleanupIfNeeded();
-        return m_set.add(reinterpret_cast<ThreadSafeWeakPtrControlBlock<T>&>(value.m_controlBlock));
+        m_set.add({ WTFMove(retainedControlBlock), static_cast<const T*>(&value) });
     }
 
     template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
     bool remove(const U& value)
     {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!value.m_controlBlock.objectHasBeenDeleted());
         Locker locker { m_lock };
+        ControlBlockRefPtr retainedControlBlock { &value.controlBlock() };
+        if (!retainedControlBlock)
+            return false;
         amortizedCleanupIfNeeded();
-        return m_set.remove(reinterpret_cast<ThreadSafeWeakPtrControlBlock<T>&>(value.m_controlBlock));
+        return m_set.remove({ WTFMove(retainedControlBlock), static_cast<const T*>(&value) });
     }
 
     void clear()
@@ -65,29 +125,35 @@ public:
     bool contains(const U& value) const
     {
         Locker locker { m_lock };
+        ControlBlockRefPtr retainedControlBlock { &value.controlBlock() };
+        if (!retainedControlBlock)
+            return false;
         amortizedCleanupIfNeeded();
-        return m_set.contains(value.m_controlBlock);
+        return m_set.contains({ WTFMove(retainedControlBlock), static_cast<const T*>(&value) });
     }
 
     bool isEmptyIgnoringNullReferences() const
     {
         Locker locker { m_lock };
         amortizedCleanupIfNeeded();
-        for (auto& controlBlock : m_set) {
-            if (!controlBlock->objectHasBeenDeleted())
+        for (auto& pair : m_set) {
+            auto& controlBlock = pair.first;
+            if (!controlBlock->objectHasStartedDeletion())
                 return false;
         }
         return true;
     }
 
-    Vector<Ref<T>> values()
+    Vector<Ref<T>> values() const
     {
         Vector<Ref<T>> strongReferences;
         {
             Locker locker { m_lock };
             strongReferences.reserveInitialCapacity(m_set.size());
-            m_set.removeIf([&] (auto& controlBlock) {
-                if (auto refPtr = controlBlock->makeStrongReferenceIfPossible()) {
+            m_set.removeIf([&] (auto& pair) {
+                auto& controlBlock = pair.first;
+                auto* objectOfCorrectType = pair.second;
+                if (auto refPtr = controlBlock->template makeStrongReferenceIfPossible<T>(objectOfCorrectType)) {
                     strongReferences.uncheckedAppend(refPtr.releaseNonNull());
                     return false;
                 }
@@ -99,25 +165,32 @@ public:
     }
 
     template<typename Functor>
-    void forEach(const Functor& callback)
+    void forEach(const Functor& callback) const
     {
         for (auto& item : values())
             callback(item.get());
     }
 
 private:
+    ALWAYS_INLINE void moveFrom(ThreadSafeWeakHashSet&& other)
+    {
+        Locker locker { m_lock };
+        Locker otherLocker { other.m_lock };
+        m_set = std::exchange(other.m_set, { });
+        m_operationCountSinceLastCleanup = std::exchange(other.m_operationCountSinceLastCleanup, 0);
+    }
 
     ALWAYS_INLINE void amortizedCleanupIfNeeded() const WTF_REQUIRES_LOCK(m_lock)
     {
         if (++m_operationCountSinceLastCleanup / 2 > m_set.size()) {
-            m_set.removeIf([] (auto& value) {
-                return value.get().objectHasBeenDeleted();
+            m_set.removeIf([] (auto& pair) {
+                return pair.first->objectHasStartedDeletion();
             });
             m_operationCountSinceLastCleanup = 0;
         }
     }
 
-    mutable HashSet<Ref<ThreadSafeWeakPtrControlBlock<T>>> m_set WTF_GUARDED_BY_LOCK(m_lock);
+    mutable HashSet<std::pair<ControlBlockRefPtr, const T*>> m_set WTF_GUARDED_BY_LOCK(m_lock);
     mutable unsigned m_operationCountSinceLastCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     mutable Lock m_lock;
 };

@@ -28,13 +28,15 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
 
+#import "Logging.h"
+#import "Pasteboard.h"
 #import <Foundation/NSItemProvider.h>
 #import <Foundation/NSProgress.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
-#import <WebCore/Pasteboard.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
@@ -471,6 +473,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
     RetainPtr<NSArray<WebItemProviderRegistrationInfoList *>> _stagedRegistrationInfoLists;
 
     Vector<RetainPtr<WebItemProviderLoadResult>> _loadResults;
+    __weak id<UIDropSession> _dropSession;
 }
 
 + (instancetype)sharedInstance
@@ -522,17 +525,25 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
     return _itemProviders.get();
 }
 
-- (void)setItemProviders:(NSArray<__kindof NSItemProvider *> *)itemProviders
+- (void)setItemProviders:(NSArray<__kindof NSItemProvider *> *)itemProviders dropSession:(id<UIDropSession>)dropSession
 {
     itemProviders = itemProviders ?: @[ ];
     if (_itemProviders == itemProviders || [_itemProviders isEqualToArray:itemProviders])
         return;
 
-    _itemProviders = itemProviders;
-    _changeCount++;
+    if (dropSession != _dropSession || !dropSession)
+        _changeCount++;
+
+    _dropSession = dropSession;
+    _itemProviders = adoptNS(itemProviders.copy);
 
     if (!itemProviders.count)
         _loadResults = { };
+}
+
+- (void)setItemProviders:(NSArray<__kindof NSItemProvider *> *)itemProviders
+{
+    [self setItemProviders:itemProviders dropSession:nil];
 }
 
 - (NSInteger)numberOfItems
@@ -701,6 +712,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, NSString *suggestedName, NSString *typeIdentifier)
 {
+    using WebCore::LogDragAndDrop;
+
     static NSString *defaultDropFolderName = @"folder";
     static NSString *defaultDropFileName = @"file";
     static NSString *droppedDataDirectoryPrefix = @"dropped-data";
@@ -717,11 +730,24 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
-    if (!suggestedName)
-        suggestedName = url.lastPathComponent ?: (isFolder ? defaultDropFolderName : defaultDropFileName);
+    if (!suggestedName.length)
+        suggestedName = url.lastPathComponent;
 
-    if ([suggestedName.pathExtension caseInsensitiveCompare:url.pathExtension] != NSOrderedSame && !isFolder)
-        suggestedName = [suggestedName stringByAppendingPathExtension:url.pathExtension];
+    auto fallbackName = isFolder ? defaultDropFolderName : defaultDropFileName;
+    if (!suggestedName.length)
+        suggestedName = fallbackName;
+
+    auto urlExtension = url.pathExtension;
+    if (!urlExtension.length)
+        urlExtension = [UTType typeWithIdentifier:typeIdentifier].preferredFilenameExtension;
+
+    if (urlExtension.length && [suggestedName.pathExtension caseInsensitiveCompare:urlExtension] != NSOrderedSame && !isFolder)
+        suggestedName = [suggestedName stringByAppendingPathExtension:urlExtension];
+
+    if (!suggestedName.length) {
+        RELEASE_LOG_FAULT(DragAndDrop, "Unable to append appropriate file extension to suggested name");
+        suggestedName = fallbackName;
+    }
 
     destination = [NSURL fileURLWithPath:[temporaryDropDataDirectory stringByAppendingPathComponent:suggestedName]];
     return [fileManager linkItemAtURL:url toURL:destination error:nil] ? destination : nil;

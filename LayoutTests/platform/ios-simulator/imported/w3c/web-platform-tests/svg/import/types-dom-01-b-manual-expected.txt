@@ -9,9 +9,9 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (30,131) size 343x24 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 343x24
               chunk 1 text run 1 at (30.00,150.00) startOffset 0 endOffset 37 width 342.41: "Rotated Text for testing SVGLocatable"
-          RenderSVGText {text} at (100,110) size 304x25 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 304x24
-              chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 35 width 303.25: "Some other text with id 'otherText'"
+          RenderSVGText {text} at (100,111) size 302x24 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 302x24
+              chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 35 width 301.10: "Some other text with id 'otherText'"
           RenderSVGViewportContainer {svg} at (458,75) size 167x167
             RenderSVGEllipse {circle} at (458,75) size 167x167 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.00] [cy=0.00] [r=50.00]
         RenderSVGText {text} at (10,188) size 291x15 contains 1 chunk(s)
@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (10,288) size 273x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 273x15
             chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 47 width 272.48: ".nearestViewportElement of blueCircle=nestedSVG"
-    RenderSVGContainer {g} at (16,516) size 385x64
-      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x38
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.6 $"
+    RenderSVGContainer {g} at (16,516) size 384x64
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

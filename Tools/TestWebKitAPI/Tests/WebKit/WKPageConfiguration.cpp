@@ -40,7 +40,6 @@ TEST(WebKit, WKPageConfigurationEmpty)
 
     ASSERT_NULL(WKPageConfigurationGetContext(configuration.get()));
     ASSERT_NULL(WKPageConfigurationGetUserContentController(configuration.get()));
-    ASSERT_NULL(WKPageConfigurationGetPageGroup(configuration.get()));
     ASSERT_NULL(WKPageConfigurationGetPreferences(configuration.get()));
     ASSERT_NULL(WKPageConfigurationGetRelatedPage(configuration.get()));
 }

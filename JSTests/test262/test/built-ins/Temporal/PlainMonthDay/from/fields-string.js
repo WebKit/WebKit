@@ -12,7 +12,7 @@ for (const argument of TemporalHelpers.ISO.plainMonthDayStringsValid()) {
   const plainMonthDay = Temporal.PlainMonthDay.from(argument);
   assert.notSameValue(plainMonthDay, argument, `from ${argument} converts`);
   TemporalHelpers.assertPlainMonthDay(plainMonthDay, "M10", 1, `from ${argument}`);
-  assert.sameValue(plainMonthDay.calendar.id, "iso8601", `from ${argument} calendar`);
+  assert.sameValue(plainMonthDay.calendarId, "iso8601", `from ${argument} calendar`);
 }
 
 for (const arg of TemporalHelpers.ISO.plainMonthDayStringsInvalid()) {

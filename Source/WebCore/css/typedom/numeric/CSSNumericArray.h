@@ -42,6 +42,7 @@ public:
     static Ref<CSSNumericArray> create(Vector<Ref<CSSNumericValue>>&&);
     size_t length() const { return m_array.size(); };
     RefPtr<CSSNumericValue> item(size_t index);
+    bool isSupportedPropertyIndex(unsigned index) const { return index < m_array.size(); }
     const Vector<Ref<CSSNumericValue>>& array() const { return m_array; }
     void forEach(Function<void(const CSSNumericValue&, bool first)>);
 

@@ -119,7 +119,7 @@ const int defaultHeight = 150;
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , CanvasBase(IntSize(defaultWidth, defaultHeight))
+    , CanvasBase(IntSize(defaultWidth, defaultHeight), document.noiseInjectionHashSalt())
     , ActiveDOMObject(document)
 {
     ASSERT(hasTagName(canvasTag));
@@ -346,14 +346,6 @@ CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type,
 {
     ASSERT_UNUSED(HTMLCanvasElement::is2dType(type), type);
     ASSERT(!m_context);
-
-    // Make sure we don't use more pixel memory than the system can support.
-    size_t requestedPixelMemory = 4 * width() * height();
-    if (activePixelMemory() + requestedPixelMemory > maxActivePixelMemory()) {
-        auto message = makeString("Total canvas memory use exceeds the maximum limit (", maxActivePixelMemory() / 1024 / 1024, " MB).");
-        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
-        return nullptr;
-    }
 
     m_context = CanvasRenderingContext2D::create(*this, WTFMove(settings), document().inQuirksMode());
 
@@ -645,7 +637,7 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 
 
 
-void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r, CompositeOperator op)
+void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 {
     if (m_context)
         m_context->clearAccumulatedDirtyRect();
@@ -664,7 +656,7 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r, Com
         if (shouldPaint) {
             if (hasCreatedImageBuffer()) {
                 if (ImageBuffer* imageBuffer = buffer())
-                    context.drawImageBuffer(*imageBuffer, snappedIntRect(r), op);
+                    context.drawImageBuffer(*imageBuffer, snappedIntRect(r), context.compositeOperation());
             }
         }
     }
@@ -799,7 +791,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
     if (document().settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasRead(document());
 
-    auto pixelBuffer = downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToPixelBuffer();
+    auto pixelBuffer = downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToPixelBuffer(GraphicsContextGL::FlipY::Yes);
     if (!is<ByteArrayPixelBuffer>(pixelBuffer))
         return nullptr;
 
@@ -839,8 +831,9 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
     if (!pixelBuffer)
         return nullptr;
 
+    // FIXME: Set color space.
 #if PLATFORM(COCOA)
-    return VideoFrameCV::createFromPixelBuffer(pixelBuffer.releaseNonNull());
+    return VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull());
 #elif USE(GSTREAMER)
     // FIXME: Hardcoding 30fps here is not great. Ideally we should get this from the compositor refresh rate, somehow.
     return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::Canvas2D, VideoFrameGStreamer::Rotation::None, MediaTime::invalidTime(), { }, 30, false, { });

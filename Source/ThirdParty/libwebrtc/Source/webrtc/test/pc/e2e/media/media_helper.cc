@@ -15,22 +15,14 @@
 #include "absl/types/variant.h"
 #include "api/media_stream_interface.h"
 #include "api/test/create_frame_generator.h"
+#include "api/test/pclf/media_configuration.h"
+#include "api/test/pclf/peer_configurer.h"
 #include "test/frame_generator_capturer.h"
 #include "test/platform_video_capturer.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
-namespace {
-
-using VideoConfig =
-    ::webrtc::webrtc_pc_e2e::PeerConnectionE2EQualityTestFixture::VideoConfig;
-using AudioConfig =
-    ::webrtc::webrtc_pc_e2e::PeerConnectionE2EQualityTestFixture::AudioConfig;
-using CapturingDeviceIndex = ::webrtc::webrtc_pc_e2e::
-    PeerConnectionE2EQualityTestFixture::CapturingDeviceIndex;
-
-}  // namespace
 
 void MediaHelper::MaybeAddAudio(TestPeer* peer) {
   if (!peer->params().audio_config) {
@@ -44,7 +36,7 @@ void MediaHelper::MaybeAddAudio(TestPeer* peer) {
                                            source.get());
   std::string sync_group = audio_config.sync_group
                                ? audio_config.sync_group.value()
-                               : audio_config.stream_label.value();
+                               : audio_config.stream_label.value() + "-sync";
   peer->AddTrack(track, {sync_group, *audio_config.stream_label});
 }
 
@@ -72,22 +64,29 @@ MediaHelper::MaybeAddVideo(TestPeer* peer) {
     RTC_LOG(LS_INFO) << "Adding video with video_config.stream_label="
                      << video_config.stream_label.value();
     rtc::scoped_refptr<VideoTrackInterface> track =
-        peer->pc_factory()->CreateVideoTrack(video_config.stream_label.value(),
-                                             source.get());
+        peer->pc_factory()->CreateVideoTrack(source,
+                                             video_config.stream_label.value());
     if (video_config.content_hint.has_value()) {
       track->set_content_hint(video_config.content_hint.value());
     }
     std::string sync_group = video_config.sync_group
                                  ? video_config.sync_group.value()
-                                 : video_config.stream_label.value();
+                                 : video_config.stream_label.value() + "-sync";
     RTCErrorOr<rtc::scoped_refptr<RtpSenderInterface>> sender =
         peer->AddTrack(track, {sync_group, *video_config.stream_label});
     RTC_CHECK(sender.ok());
-    if (video_config.temporal_layers_count) {
+    if (video_config.temporal_layers_count ||
+        video_config.degradation_preference) {
       RtpParameters rtp_parameters = sender.value()->GetParameters();
-      for (auto& encoding_parameters : rtp_parameters.encodings) {
-        encoding_parameters.num_temporal_layers =
-            video_config.temporal_layers_count;
+      if (video_config.temporal_layers_count) {
+        for (auto& encoding_parameters : rtp_parameters.encodings) {
+          encoding_parameters.num_temporal_layers =
+              video_config.temporal_layers_count;
+        }
+      }
+      if (video_config.degradation_preference) {
+        rtp_parameters.degradation_preference =
+            video_config.degradation_preference;
       }
       RTCError res = sender.value()->SetParameters(rtp_parameters);
       RTC_CHECK(res.ok()) << "Failed to set RTP parameters";
@@ -98,7 +97,7 @@ MediaHelper::MaybeAddVideo(TestPeer* peer) {
 
 std::unique_ptr<test::TestVideoCapturer> MediaHelper::CreateVideoCapturer(
     const VideoConfig& video_config,
-    PeerConfigurerImpl::VideoSource source,
+    PeerConfigurer::VideoSource source,
     std::unique_ptr<test::TestVideoCapturer::FramePreprocessor>
         frame_preprocessor) {
   CapturingDeviceIndex* capturing_device_index =

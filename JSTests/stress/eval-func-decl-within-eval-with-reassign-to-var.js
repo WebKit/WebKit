@@ -57,10 +57,8 @@ for (var i = 0; i < 10000; i++){
     assertThrow(() => _bar, "ReferenceError: Can't find variable: _bar");
 }
 
-// Fixme:  https://bugs.webkit.org/show_bug.cgi?id=167837
 // Current test does not work because it should raise exception
 // that f could not be redeclared
-/*
 function goo() {
     {   
         var error = false;
@@ -79,13 +77,14 @@ for (var i = 0; i < 10000; i++) {
     goo();
     assert(typeof f, "undefined", "#7");
 }
-*/
 
 function hoo() {
     {
         let h = 20;
-        eval('var h = 15; eval(" if (false){ function h() { }; } ");');
-        assert(h, 15);
+        try { eval('var h = 15;'); } catch (e) { var evalError = e; }
+        assert(evalError.toString(), "SyntaxError: Can't create duplicate variable in eval: 'h'");
+        eval('eval("if (false) { function h() {} } ");');
+        assert(h, 20);
     }
     assert(typeof h, "undefined");
 }
@@ -124,12 +123,16 @@ for (var i = 0; i < 10000; i++){
 }
 
 function loo() { 
-    let h = 20; 
-    eval("var h; if (false) { function h() { } }"); 
-    return h; 
-}
+    let error;
+    try {
+        let h = 20;
+        eval("var h; if (false) { function h() { } }");
+    } catch (e) {
+        error = e;
+    }
 
-assert(loo(), 20);
+    assert(`${error}`, "SyntaxError: Can't create duplicate variable in eval: 'h'", "#13");
+}
 
 for (var i = 0; i < 10000; i++) {
     loo();

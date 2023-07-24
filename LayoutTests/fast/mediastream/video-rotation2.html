@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="fuzzy" content="maxDifference=10;totalPixels=30" />
+        <title>Testing video rotation is clockwise</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <div id="redRectangle" style="z-index: 0; position: absolute; top: 0px; left: 0px; background-color:red; width:200px; height:400px"></div>
+        <!-- we just leave a small rectangle hole where the video should be all green -->
+        <video style="z-index: 1; position: absolute; top: 0px; left: 0px;" id="video" autoplay playsInline style="filter:grayscale(100%)"></video>
+        <div id="greenRectangle1" style="z-index: 2; position: absolute; top: 0px; left: 0px; background-color:green; width:45px; height:400px"></div>
+        <div id="greenRectangle2" style="z-index: 2; position: absolute; top: 0px; left: 53px; background-color:green; width:147px; height:400px"></div>
+        <div id="greenRectangle3" style="z-index: 2; position: absolute; top: 0px; left: 0px; background-color:green; width:200px; height:60px"></div>
+        <div id="greenRectangle4" style="z-index: 2; position: absolute; top: 70px; left: 0px; background-color:green; width:200px; height:330px"></div>
+        <image id='image' style="z-index: 0; position: absolute; top: 0px; left: 0px; background-color:red; width:200px; height:400px"></image>
+        <canvas id='canvas' style="z-index: 0; position: absolute; top: 0px; left: 0px; background-color:red; width:200px; height:400px"></canvas>
+        <script>
+if (window.testRunner)
+    testRunner.setMockCameraOrientation(90);
+
+async function getSnapshotData()
+{
+    const dataURL = await new Promise(resolve => testRunner.takeViewPortSnapshot(resolve));
+    const loadPromise = new Promise((resolve, reject) => {
+        image.onload = resolve;
+        image.onerror = reject;
+        setTimeout(() => reject("image load timed out"), 2000);
+    });
+    image.src = dataURL;
+    await loadPromise;
+
+    canvas.width = image.width;
+    canvas.height = image.height;
+    canvas.getContext('2d').drawImage(image, 0, 0);
+
+    return canvas.getContext('2d').getImageData(0, 0, 200, 400).data;
+}
+
+function isWhitePixel(data, i)
+{
+    return data[i] > 250 && data[i + 1] > 250 && data[i + 2] > 250;
+}
+
+function isGreenPixel(data, i)
+{
+    return data[i] < 50 && data[i + 1] > 100 && data[i + 1] < 150 && data[i + 2] < 50;
+}
+
+promise_test(async () => {
+    video.srcObject = await navigator.mediaDevices.getUserMedia({video: {width: 400, height: 200} });
+    await video.play();
+
+    if (!window.testRunner)
+        return;
+
+    let data;
+    let isOK = false;
+    let counter = 0;
+    while (++counter < 100 && !isOK) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        // All data should be almost green
+        data = await getSnapshotData();
+        isOK = true;
+        for (let i = 0; i < data.length; i = i + 4) {
+            if (isOK && counter == 99 && !isGreenPixel(data, i))
+                console.log(i + " : " + data[i] + ", " + data[i + 1] + ", " + data[i + 2]);
+            isOK &= isGreenPixel(data, i);
+        }
+    }
+    assert_less_than(counter, 100);
+    assert_true(!!isOK);
+}, "Ensure rotation is clockwise");
+        </script>
+    </body>
+</html>

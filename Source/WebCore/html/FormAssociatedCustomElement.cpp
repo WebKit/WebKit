@@ -88,13 +88,11 @@ ALWAYS_INLINE static CustomElementFormValue cloneIfIsFormData(CustomElementFormV
     });
 }
 
-void FormAssociatedCustomElement::setFormValue(std::optional<CustomElementFormValue>&& submissionValue, std::optional<CustomElementFormValue>&& state)
+void FormAssociatedCustomElement::setFormValue(CustomElementFormValue&& submissionValue, std::optional<CustomElementFormValue>&& state)
 {
     ASSERT(m_element->isPrecustomizedOrDefinedCustomElement());
 
-    if (submissionValue.has_value())
-        m_submissionValue = cloneIfIsFormData(WTFMove(submissionValue.value()));
-
+    m_submissionValue = cloneIfIsFormData(WTFMove(submissionValue));
     m_state = state.has_value() ? cloneIfIsFormData(WTFMove(state.value())) : m_submissionValue;
 }
 
@@ -114,10 +112,7 @@ bool FormAssociatedCustomElement::appendFormData(DOMFormData& formData)
 {
     ASSERT(m_element->isDefinedCustomElement());
 
-    if (!m_submissionValue.has_value())
-        return false;
-
-    WTF::switchOn(m_submissionValue.value(), [&](RefPtr<DOMFormData> value) {
+    WTF::switchOn(m_submissionValue, [&](RefPtr<DOMFormData> value) {
         for (const auto& item : value->items()) {
             WTF::switchOn(item.data, [&](const String& value) {
                 formData.append(item.name, value);
@@ -131,16 +126,11 @@ bool FormAssociatedCustomElement::appendFormData(DOMFormData& formData)
     }, [&](RefPtr<File> value) {
         if (!name().isEmpty())
             formData.append(name(), *value);
+    }, [](std::nullptr_t) {
+        // do nothing
     });
 
     return true;
-}
-
-void FormAssociatedCustomElement::formWillBeDestroyed()
-{
-    m_formWillBeDestroyed = true;
-    ValidatedFormListedElement::formWillBeDestroyed();
-    m_formWillBeDestroyed = false;
 }
 
 bool FormAssociatedCustomElement::isEnumeratable() const
@@ -166,7 +156,7 @@ void FormAssociatedCustomElement::didChangeForm()
 {
     ASSERT(m_element->isDefinedCustomElement());
     ValidatedFormListedElement::didChangeForm();
-    if (!m_formWillBeDestroyed)
+    if (!belongsToFormThatIsBeingDestroyed())
         CustomElementReactionQueue::enqueueFormAssociatedCallbackIfNeeded(*m_element, form());
 }
 
@@ -233,33 +223,33 @@ FormControlState FormAssociatedCustomElement::saveFormControlState() const
 
     FormControlState savedState;
 
-    if (m_state.has_value()) {
-        // FIXME: Support File when saving / restoring state.
-        // https://bugs.webkit.org/show_bug.cgi?id=249895
-        bool didLogMessage = false;
-        auto logUnsupportedFileWarning = [&](RefPtr<File>) {
-            auto& document = asHTMLElement().document();
-            if (document.frame() && !didLogMessage) {
-                document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "File isn't currently supported when saving / restoring state."_s);
-                didLogMessage = true;
-            }
-        };
+    // FIXME: Support File when saving / restoring state.
+    // https://bugs.webkit.org/show_bug.cgi?id=249895
+    bool didLogMessage = false;
+    auto logUnsupportedFileWarning = [&](RefPtr<File>) {
+        auto& document = asHTMLElement().document();
+        if (document.frame() && !didLogMessage) {
+            document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "File isn't currently supported when saving / restoring state."_s);
+            didLogMessage = true;
+        }
+    };
 
-        WTF::switchOn(m_state.value(), [&](RefPtr<DOMFormData> state) {
-            savedState.reserveInitialCapacity(state->items().size() * 2);
+    WTF::switchOn(m_state, [&](RefPtr<DOMFormData> state) {
+        savedState.reserveInitialCapacity(state->items().size() * 2);
 
-            for (const auto& item : state->items()) {
-                WTF::switchOn(item.data, [&](const String& value) {
-                    savedState.append(item.name);
-                    savedState.append(value);
-                }, logUnsupportedFileWarning);
-            }
+        for (const auto& item : state->items()) {
+            WTF::switchOn(item.data, [&](const String& value) {
+                savedState.append(item.name);
+                savedState.append(value);
+            }, logUnsupportedFileWarning);
+        }
 
-            savedState.shrinkToFit();
-        }, [&](const String& state) {
-            savedState.append(state);
-        }, logUnsupportedFileWarning);
-    }
+        savedState.shrinkToFit();
+    }, [&](const String& state) {
+        savedState.append(state);
+    }, [](std::nullptr_t) {
+        // do nothing
+    }, logUnsupportedFileWarning);
 
     return savedState;
 }

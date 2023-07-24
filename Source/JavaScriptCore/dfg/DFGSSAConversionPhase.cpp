@@ -307,8 +307,8 @@ public:
             }
             
             // Insert Phis by asking the calculator what phis there are in this block. Also update
-            // valueForOperand with those Phis. For Phis associated with variables that are not
-            // flushed, we also insert a MovHint.
+            // valueForOperand with those Phis. We also insert a MovHint/PutStack pair to communicate
+            // the phi value to future phases like PutStack sinking.
             size_t phiInsertionPoint = 0;
             for (SSACalculator::Def* phiDef : calculator.phisForBlock(block)) {
                 VariableAccessData* variable = m_variableForSSAIndex[phiDef->variable()->index()];
@@ -319,6 +319,10 @@ public:
                 m_insertionSet.insertNode(
                     phiInsertionPoint, SpecNone, MovHint, block->at(0)->origin.withInvalidExit(),
                     OpInfo(variable->operand()), phiDef->value()->defaultEdge());
+                auto format = variable->flushFormat();
+                m_insertionSet.insertNode(
+                    phiInsertionPoint, SpecNone, PutStack, block->at(0)->origin.withInvalidExit(),
+                    OpInfo(m_graph.m_stackAccessData.add(variable->operand(), format)), Edge(phiDef->value(), uncheckedUseKindFor(format)));
             }
 
             if (block->at(0)->origin.exitOK)

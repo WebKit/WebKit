@@ -104,7 +104,7 @@ bool ScrollView::setHasScrollbarInternal(RefPtr<Scrollbar>& scrollbar, Scrollbar
 
 Ref<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientation)
 {
-    return Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarControlSize::Regular);
+    return Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarWidth::Auto);
 }
 
 void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode,
@@ -549,7 +549,7 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, const S
         return;
     }
 
-    if (!requestScrollToPosition(newScrollPosition, currentScrollType(), options.clamping))
+    if (!requestScrollToPosition(newScrollPosition, options))
         updateScrollbars(newScrollPosition);
 }
 
@@ -721,7 +721,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
             }
         }
 
-        const unsigned cMaxUpdateScrollbarsPass = 2;
+        const unsigned cMaxUpdateScrollbarsPass = 3;
         if ((sendContentResizedNotification || needAnotherPass) && m_updateScrollbarsPass < cMaxUpdateScrollbarsPass) {
             m_updateScrollbarsPass++;
             availableContentSizeChanged(AvailableSizeChangeReason::ScrollbarsChanged);

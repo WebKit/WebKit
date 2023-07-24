@@ -6,23 +6,23 @@ layer at (0,0) size 785x2107
       RenderBlock {H2} at (0,0) size 769x27
         RenderText {#text} at (0,0) size 147x26
           text run at (0,0) width 147: "Test 1 (1 float)"
-      RenderBlock {HR} at (48,294) size 673x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (48,294) size 673x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H2} at (0,344) size 769x28
         RenderText {#text} at (0,0) size 147x26
           text run at (0,0) width 147: "Test 2 (1 float)"
-      RenderBlock {HR} at (48,639) size 673x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (48,639) size 673x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H2} at (0,689) size 769x28
         RenderText {#text} at (0,0) size 147x26
           text run at (0,0) width 147: "Test 3 (1 float)"
-      RenderBlock {HR} at (48,984) size 673x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (48,984) size 673x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H2} at (0,1034) size 769x28
         RenderText {#text} at (0,0) size 156x26
           text run at (0,0) width 156: "Test 4 (2 floats)"
-      RenderBlock {HR} at (48,1329) size 673x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (48,1329) size 673x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H2} at (0,1379) size 769x28
         RenderText {#text} at (0,0) size 156x26
           text run at (0,0) width 156: "Test 5 (2 floats)"
-      RenderBlock {HR} at (48,1674) size 673x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (48,1674) size 673x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {H2} at (0,1724) size 769x28
         RenderText {#text} at (0,0) size 156x26
           text run at (0,0) width 156: "Test 6 (2 floats)"

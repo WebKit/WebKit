@@ -69,6 +69,8 @@ private:
     Vector<InteractionRegion> m_interactionRegions;
     HashSet<IntRect> m_interactionRects;
     HashSet<IntRect> m_occlusionRects;
+    HashSet<ElementIdentifier> m_containerRemovalCandidates;
+    HashSet<ElementIdentifier> m_containersToRemove;
     HashMap<ElementIdentifier, Region> m_discoveredRegionsByElement;
 #endif
 };
@@ -130,6 +132,7 @@ public:
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     const Vector<InteractionRegion>& interactionRegions() const { return m_interactionRegions; }
     void appendInteractionRegions(const Vector<InteractionRegion>&);
+    void clearInteractionRegions();
 #endif
 
 private:

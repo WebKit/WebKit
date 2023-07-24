@@ -35,15 +35,3 @@ enum class NotificationEventType : bool {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::NotificationEventType> {
-    using values = EnumValues<
-        WebCore::NotificationEventType,
-        WebCore::NotificationEventType::Click,
-        WebCore::NotificationEventType::Close
-    >;
-};
-
-}

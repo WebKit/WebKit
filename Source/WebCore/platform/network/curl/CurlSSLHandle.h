@@ -46,7 +46,6 @@ namespace WebCore {
 class CurlSSLHandle {
     WTF_MAKE_NONCOPYABLE(CurlSSLHandle);
     friend NeverDestroyed<CurlSSLHandle>;
-    using ClientCertificate = std::pair<String, String>;
 
 public:
     using CACertInfo = std::variant<std::monostate, String, CertificateInfo::Certificate>;
@@ -68,12 +67,6 @@ public:
     WEBCORE_EXPORT void setCACertPath(String&&);
     WEBCORE_EXPORT void setCACertData(CertificateInfo::Certificate&&);
     WEBCORE_EXPORT void clearCACertInfo();
-
-    WEBCORE_EXPORT void allowAnyHTTPSCertificatesForHost(const String& host);
-    bool canIgnoreAnyHTTPSCertificatesForHost(const String&) const;
-
-    WEBCORE_EXPORT void setClientCertificateInfo(const String&, const String&, const String&);
-    std::optional<ClientCertificate> getSSLClientCertificate(const String&) const;
 
 private:
 #if NEED_OPENSSL_THREAD_SUPPORT
@@ -111,11 +104,6 @@ private:
     CACertInfo m_caCertInfo;
 
     bool m_ignoreSSLErrors { false };
-
-    mutable Lock m_allowedHostsLock;
-    mutable Lock m_allowedClientHostsLock;
-    HashSet<String, ASCIICaseInsensitiveHash> m_allowedHosts;
-    HashMap<String, ClientCertificate, ASCIICaseInsensitiveHash> m_allowedClientHosts;
 };
 
 } // namespace WebCore

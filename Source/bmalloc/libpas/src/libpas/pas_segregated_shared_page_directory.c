@@ -99,8 +99,9 @@ find_first_eligible_consider_view(
         <= pas_segregated_shared_page_directory_probability_of_ineligibility) {
         if (verbose)
             pas_log("cannot bump at %zu, clearing eligibility.\n", config->index);
-        PAS_SEGREGATED_DIRECTORY_BIT_REFERENCE_SET(
+        bool result = PAS_SEGREGATED_DIRECTORY_BIT_REFERENCE_SET(
             config->directory, config->bit_reference, eligible, false);
+        PAS_UNUSED_PARAM(result);
     }
 
     if (verbose)
@@ -388,7 +389,8 @@ take_last_empty_consider_view(
     }
 
     /* It's possible that the empty bit had gotten set again; clear it. */
-    PAS_SEGREGATED_DIRECTORY_BIT_REFERENCE_SET(directory, bit_reference, empty, false);
+    bool set_bit_result = PAS_SEGREGATED_DIRECTORY_BIT_REFERENCE_SET(directory, bit_reference, empty, false);
+    PAS_UNUSED_PARAM(set_bit_result);
 
     page = pas_segregated_page_for_boundary(shared_handle->page_boundary, page_config);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUImageDataLayout.h>
+#include <WebCore/WebGPUImageDataLayout.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ImageDataLayout> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ImageDataLayout& imageDataLayout)
+std::optional<ImageDataLayout> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ImageDataLayout& imageDataLayout)
 {
     return { { imageDataLayout.offset, imageDataLayout.bytesPerRow, imageDataLayout.rowsPerImage } };
 }
 
-std::optional<PAL::WebGPU::ImageDataLayout> ConvertFromBackingContext::convertFromBacking(const ImageDataLayout& imageDataLayout)
+std::optional<WebCore::WebGPU::ImageDataLayout> ConvertFromBackingContext::convertFromBacking(const ImageDataLayout& imageDataLayout)
 {
     return { { imageDataLayout.offset, imageDataLayout.bytesPerRow, imageDataLayout.rowsPerImage } };
 }

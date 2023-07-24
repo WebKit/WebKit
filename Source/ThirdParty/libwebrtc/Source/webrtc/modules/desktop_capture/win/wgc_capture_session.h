@@ -20,6 +20,8 @@
 
 #include "api/sequence_checker.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
+#include "modules/desktop_capture/screen_capture_frame_queue.h"
+#include "modules/desktop_capture/shared_desktop_frame.h"
 #include "modules/desktop_capture/win/wgc_capture_source.h"
 #include "rtc_base/event.h"
 
@@ -39,21 +41,20 @@ class WgcCaptureSession final {
 
   ~WgcCaptureSession();
 
-  HRESULT StartCapture();
+  HRESULT StartCapture(const DesktopCaptureOptions& options);
 
-  // Returns a frame from the frame pool, if any are present.
-  HRESULT GetFrame(std::unique_ptr<DesktopFrame>* output_frame);
+  // Returns a frame from the local frame queue, if any are present.
+  bool GetFrame(std::unique_ptr<DesktopFrame>* output_frame);
 
   bool IsCaptureStarted() const {
     RTC_DCHECK_RUN_ON(&sequence_checker_);
     return is_capture_started_;
   }
 
-  // We keep 2 buffers in the frame pool to balance the staleness of the frame
-  // with having to wait for frames to arrive too frequently. Too many buffers
-  // will lead to a high latency, and too few will lead to poor performance.
+  // We only keep 1 buffer in the internal frame pool to reduce the latency as
+  // much as possible.
   // We make this public for tests.
-  static constexpr int kNumBuffers = 2;
+  static constexpr int kNumBuffers = 1;
 
  private:
   // Initializes `mapped_texture_` with the properties of the `src_texture`,
@@ -71,22 +72,17 @@ class WgcCaptureSession final {
       ABI::Windows::Graphics::Capture::IGraphicsCaptureItem* sender,
       IInspectable* event_args);
 
-  // Event handler for `frame_pool_`'s FrameArrived event.
-  HRESULT OnFrameArrived(
-      ABI::Windows::Graphics::Capture::IDirect3D11CaptureFramePool* sender,
-      IInspectable* event_args);
+  // Wraps calls to ProcessFrame and deals with the uniqe start-up phase
+  // ensuring that we always have one captured frame available.
+  void EnsureFrame();
 
-  void RemoveEventHandlers();
+  // Process the captured frame and copy it to the `queue_`.
+  HRESULT ProcessFrame();
 
-  // We wait on this event in `GetFrame` if there are no frames in the pool.
-  // `OnFrameArrived` will set the event so we can proceed.
-  rtc::Event wait_for_frame_event_;
-  int frames_in_pool_;
+  void RemoveEventHandler();
 
-  // We're willing to wait for a frame a little longer if it's the first one.
-  bool first_frame_ = true;
+  bool allow_zero_hertz() const { return allow_zero_hertz_; }
 
-  std::unique_ptr<EventRegistrationToken> frame_arrived_token_;
   std::unique_ptr<EventRegistrationToken> item_closed_token_;
 
   // A Direct3D11 Device provided by the caller. We use this to create an
@@ -126,8 +122,24 @@ class WgcCaptureSession final {
       ABI::Windows::Graphics::Capture::IGraphicsCaptureSession>
       session_;
 
+  // Queue of captured video frames. The queue holds 2 frames and it avoids
+  // alloc/dealloc per captured frame. Incoming frames from the internal frame
+  // pool are copied to this queue after required processing in ProcessFrame().
+  ScreenCaptureFrameQueue<SharedDesktopFrame> queue_;
+
   bool item_closed_ = false;
   bool is_capture_started_ = false;
+
+  // Caches the value of DesktopCaptureOptions.allow_wgc_zero_hertz() in
+  // StartCapture(). Adds 0Hz detection in ProcessFrame() when enabled which
+  // adds complexity since memcmp() is performed on two successive frames.
+  bool allow_zero_hertz_ = false;
+
+  // Tracks damage region updates that were reported since the last time a frame
+  // was captured. Currently only supports either the complete rect being
+  // captured or an empty region. Will always be empty if `allow_zero_hertz_` is
+  // false.
+  DesktopRegion damage_region_;
 
   SequenceChecker sequence_checker_;
 };

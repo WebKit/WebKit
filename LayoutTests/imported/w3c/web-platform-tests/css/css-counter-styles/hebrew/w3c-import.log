@@ -14,11 +14,19 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/counter-hebrew-nested-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/counter-hebrew-nested-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/counter-hebrew-nested.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-015-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-015-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-015.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016a-alt-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016a-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-016a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-017-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-017-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/css3-counter-styles-017.html

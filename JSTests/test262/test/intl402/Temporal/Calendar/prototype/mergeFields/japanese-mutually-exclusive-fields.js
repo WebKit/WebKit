@@ -38,40 +38,40 @@ assertEntriesEqual(instance.mergeFields(lastDayOfShowaFields, { day: 10 }), [
 
 assertEntriesEqual(instance.mergeFields(lastDayOfShowaFields, { month: 2 }), [
   ["year", 1989],
-  ["day", 7],
   ["month", 2],
+  ["day", 7],
 ], "month excludes monthCode, era, and eraYear");
 
 assertEntriesEqual(instance.mergeFields(lastDayOfShowaFields, { monthCode: "M03" }), [
   ["year", 1989],
-  ["day", 7],
   ["monthCode", "M03"],
+  ["day", 7],
 ], "monthCode excludes month, era, and eraYear");
 
 assertEntriesEqual(instance.mergeFields(lastDayOfShowaFields, { year: 1988 }), [
+  ["year", 1988],
   ["month", 1],
   ["monthCode", "M01"],
   ["day", 7],
-  ["year", 1988],
 ], "year excludes era and eraYear (within same era)");
 
 assertEntriesEqual(instance.mergeFields(lastDayOfShowaFields, { year: 1990 }), [
+  ["year", 1990],
   ["month", 1],
   ["monthCode", "M01"],
   ["day", 7],
-  ["year", 1990],
 ], "year excludes era and eraYear (in a different era)");
 
 assertEntriesEqual(instance.mergeFields(lastDayOfShowaFields, { eraYear: 1 }), [
+  ["eraYear", 1],
   ["month", 1],
   ["monthCode", "M01"],
   ["day", 7],
-  ["eraYear", 1],
 ], "eraYear excludes year and era");
 
 assertEntriesEqual(instance.mergeFields(lastDayOfShowaFields, { era: "heisei" }), [
+  ["era", "heisei"],
   ["month", 1],
   ["monthCode", "M01"],
   ["day", 7],
-  ["era", "heisei"],
 ], "era excludes year and eraYear");

@@ -17,9 +17,4 @@ invalidStrings.forEach((timeZone) => {
     () => Temporal.Duration.compare(new Temporal.Duration(), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone } }),
     "reject minus zero as extended year"
   );
-  assert.throws(
-    RangeError,
-    () => Temporal.Duration.compare(new Temporal.Duration(), new Temporal.Duration(), { relativeTo: { year: 2000, month: 5, day: 2, timeZone: { timeZone } } }),
-    "reject minus zero as extended year (nested property)"
-  );
 });

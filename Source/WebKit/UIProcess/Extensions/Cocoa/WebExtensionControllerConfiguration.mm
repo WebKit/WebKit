@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-String WebExtensionControllerConfiguration::createStorageDirectoryPath(std::optional<UUID> identifier)
+String WebExtensionControllerConfiguration::createStorageDirectoryPath(std::optional<WTF::UUID> identifier)
 {
     static NeverDestroyed<String> defaultStoragePath;
     static dispatch_once_t onceToken;

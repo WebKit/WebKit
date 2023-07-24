@@ -91,7 +91,7 @@ context_messages_template = (
 messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void Reshape(int32_t width, int32_t height)
 #if PLATFORM(COCOA)
-    void PrepareForDisplay() -> (MachSendRight displayBuffer) Synchronous NotStreamEncodableReply
+    void PrepareForDisplay(IPC::Semaphore finishedFence) -> (MachSendRight displayBuffer) Synchronous NotStreamEncodable NotStreamEncodableReply
 #endif
 #if USE(GRAPHICS_LAYER_WC)
     void PrepareForDisplay() -> (std::optional<WebKit::WCContentBufferIdentifier> contentBuffer) Synchronous
@@ -116,15 +116,18 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void PaintCompositedResultsToVideoFrame() -> (std::optional<WebKit::RemoteVideoFrameProxy::Properties> properties) Synchronous
 #endif
     void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
-    void ReadnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t> data) -> (IPC::ArrayReference<uint8_t> data) Synchronous
-    void ReadnPixels1(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t offset)
-    void ReadnPixels2(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, WebKit::SharedMemory::Handle handle) -> (bool success) Synchronous NotStreamEncodable
+    void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type) -> (std::optional<WebCore::IntSize> readArea, IPC::ArrayReference<uint8_t> data) Synchronous
+    void ReadPixelsSharedMemory(WebCore::IntRect rect, uint32_t format, uint32_t type, WebKit::SharedMemory::Handle handle) -> (std::optional<WebCore::IntSize> readArea) Synchronous NotStreamEncodable
     void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
     void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
     void MultiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)
     void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
     void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
+#if PLATFORM(COCOA)
+    void CreateAndBindEGLImage(GCGLenum target, WebCore::GraphicsContextGL::EGLImageSource source) -> (uint64_t handle, WebCore::IntSize size) Synchronous NotStreamEncodable NotStreamEncodableReply
+    void CreateEGLSync(MachSendRight syncEvent, uint64_t signalValue) -> (uint64_t sync) Synchronous NotStreamEncodable NotStreamEncodableReply
+#endif
 {}
 }}
 
@@ -233,9 +236,9 @@ class cpp_type_container(cpp_type):
     def is_container(self) -> bool:
         return True
     def is_span(self) -> bool:
-        return self.container_name == "Span"
+        return self.container_name == "std::span"
     def is_dynamic_span(self) -> bool:
-        return (self.container_name == "Span" and self.arity is None) or self.container_name == "GCGLSpanTuple"
+        return (self.container_name == "std::span" and self.arity is None) or self.container_name == "GCGLSpanTuple"
     def get_container_name(self):
         return self.container_name
     def get_arity(self) -> Optional[int]:
@@ -530,7 +533,7 @@ def webkit_ipc_make_gcglspan_conversion(expr : cpp_expr, type : cpp_type_contain
         return cpp_expr(type, f"std::span(reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(expr)}.size())")
 
     assert(type.is_span())
-    return cpp_expr(type, f"Span<{element_type}, {str(type.get_arity())}> {{ reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(type.get_arity())} }}")
+    return cpp_expr(type, f"std::span<{element_type}, {str(type.get_arity())}> {{ reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(type.get_arity())} }}")
 
 # See messages.py function_parameter_type
 webkit_ipc_builtin_types = set(
@@ -621,21 +624,21 @@ class webkit_ipc_cpp_proxy_impl(object):
         if is_async:
             self.call_stmts += [
                 f"auto sendResult = send(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}));",
+                "if (sendResult != IPC::Error::NoError) {",
             ]
         else:
             self.call_stmts += [
-                f"auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}));"
+                f"auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}));",
+                "if (!sendResult.succeeded()) {",
             ]
         if self.return_type.is_void():
             self.call_stmts += [
-                "if (!sendResult) {",
                 "    markContextLost();",
                 "    return;",
                 "}",
             ]
         else:
             self.call_stmts += [
-                "if (!sendResult) {",
                 "    markContextLost();",
                 "    return { };",
                 "}",

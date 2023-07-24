@@ -66,18 +66,8 @@ void av1_fwht4x4_neon(const int16_t *input, tran_low_t *output, int stride) {
   a1 = vsub_s16(a1, c1);
   d1 = vadd_s16(d1, b1);
 
-  x[0] = vcombine_s16(a1, c1);
-  x[1] = vcombine_s16(d1, b1);
-
-  transpose4x4(x, s);
-
-  vst1q_s32(&output[0], vshll_n_s16(s[0], UNIT_QUANT_SHIFT));
-  vst1q_s32(&output[4], vshll_n_s16(s[1], UNIT_QUANT_SHIFT));
-  vst1q_s32(&output[8], vshll_n_s16(s[2], UNIT_QUANT_SHIFT));
-  vst1q_s32(&output[12], vshll_n_s16(s[3], UNIT_QUANT_SHIFT));
-}
-
-void av1_highbd_fwht4x4_neon(const int16_t *input, tran_low_t *output,
-                             int stride) {
-  av1_fwht4x4_neon(input, output, stride);
+  vst1q_s32(&output[0], vshll_n_s16(a1, UNIT_QUANT_SHIFT));
+  vst1q_s32(&output[4], vshll_n_s16(c1, UNIT_QUANT_SHIFT));
+  vst1q_s32(&output[8], vshll_n_s16(d1, UNIT_QUANT_SHIFT));
+  vst1q_s32(&output[12], vshll_n_s16(b1, UNIT_QUANT_SHIFT));
 }

@@ -427,7 +427,7 @@ void DrawingAreaCoordinatedGraphics::updateGeometry(const IntSize& size, Complet
         updateInfo.deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
         display(updateInfo);
         if (!m_layerTreeHost)
-            send(Messages::DrawingAreaProxy::Update(0, updateInfo));
+            send(Messages::DrawingAreaProxy::Update(0, WTFMove(updateInfo)));
     }
 
     completionHandler();
@@ -657,12 +657,12 @@ void DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode()
     // Send along a complete update of the page so we can paint the contents right after we exit the
     // accelerated compositing mode, eliminiating flicker.
     if (m_compositingAccordingToProxyMessages) {
-        send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(0, updateInfo));
+        send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(0, WTFMove(updateInfo)));
         m_compositingAccordingToProxyMessages = false;
     } else {
         // If we left accelerated compositing mode before we sent an EnterAcceleratedCompositingMode message to the
         // UI process, we still need to let it know about the new contents, so send an Update message.
-        send(Messages::DrawingAreaProxy::Update(0, updateInfo));
+        send(Messages::DrawingAreaProxy::Update(0, WTFMove(updateInfo)));
     }
 }
 
@@ -714,10 +714,10 @@ void DrawingAreaCoordinatedGraphics::display()
     }
 
     if (m_compositingAccordingToProxyMessages) {
-        send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(0, updateInfo));
+        send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(0, WTFMove(updateInfo)));
         m_compositingAccordingToProxyMessages = false;
     } else
-        send(Messages::DrawingAreaProxy::Update(0, updateInfo));
+        send(Messages::DrawingAreaProxy::Update(0, WTFMove(updateInfo)));
     m_isWaitingForDidUpdate = true;
     m_scheduledWhileWaitingForDidUpdate = false;
 }

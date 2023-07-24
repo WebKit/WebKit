@@ -33,23 +33,24 @@ class ExternalTimeController::TaskQueueWrapper : public TaskQueueBase {
                    std::unique_ptr<TaskQueueBase, TaskQueueDeleter> base)
       : parent_(parent), base_(std::move(base)) {}
 
-  void PostTask(absl::AnyInvocable<void() &&> task) override {
+  void PostTaskImpl(absl::AnyInvocable<void() &&> task,
+                    const PostTaskTraits& traits,
+                    const Location& location) override {
     parent_->UpdateTime();
     base_->PostTask(TaskWrapper(std::move(task)));
     parent_->ScheduleNext();
   }
 
-  void PostDelayedTask(absl::AnyInvocable<void() &&> task,
-                       TimeDelta delay) override {
+  void PostDelayedTaskImpl(absl::AnyInvocable<void() &&> task,
+                           TimeDelta delay,
+                           const PostDelayedTaskTraits& traits,
+                           const Location& location) override {
     parent_->UpdateTime();
-    base_->PostDelayedTask(TaskWrapper(std::move(task)), delay);
-    parent_->ScheduleNext();
-  }
-
-  void PostDelayedHighPrecisionTask(absl::AnyInvocable<void() &&> task,
-                                    TimeDelta delay) override {
-    parent_->UpdateTime();
-    base_->PostDelayedHighPrecisionTask(TaskWrapper(std::move(task)), delay);
+    if (traits.high_precision) {
+      base_->PostDelayedHighPrecisionTask(TaskWrapper(std::move(task)), delay);
+    } else {
+      base_->PostDelayedTask(TaskWrapper(std::move(task)), delay);
+    }
     parent_->ScheduleNext();
   }
 

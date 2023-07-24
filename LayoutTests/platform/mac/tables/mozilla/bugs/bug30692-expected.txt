@@ -41,20 +41,20 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 226x18
                     text run at (0,0) width 226: "OK: the height of the P is 80 pixels"
 layer at (8,70) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,26) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (11,93) size 622x75 clip at (12,94) size 620x73
   RenderTextControl {TEXTAREA} at (1,1) size 623x76 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 617x13
       RenderText {#text} at (0,0) size 223x13
         text run at (0,0) width 223: "BUG: the height of the textarea is not 80%"
 layer at (8,188) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,144) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,144) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (11,208) size 622x80 clip at (12,209) size 620x78
   RenderTextControl {TEXTAREA} at (1,1) size 623x80 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 617x13
       RenderText {#text} at (0,0) size 218x13
         text run at (0,0) width 218: "OK: the height of the textarea is 80 pixels"
 layer at (8,306) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,262) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,262) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,424) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,380) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,380) size 784x2 [color=#808080] [border: (1px inset #808080)]

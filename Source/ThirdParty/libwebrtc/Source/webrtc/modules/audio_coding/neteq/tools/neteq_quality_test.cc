@@ -22,27 +22,16 @@
 #include "modules/audio_coding/neteq/tools/output_wav_file.h"
 #include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/string_encode.h"
 #include "system_wrappers/include/clock.h"
 #include "test/testsupport/file_utils.h"
 
-const std::string& DefaultInFilename() {
-  static const std::string path =
-      ::webrtc::test::ResourcePath("audio_coding/speech_mono_16kHz", "pcm");
-  return path;
-}
-
-const std::string& DefaultOutFilename() {
-  static const std::string path =
-      ::webrtc::test::OutputPath() + "neteq_quality_test_out.pcm";
-  return path;
-}
-
-ABSL_FLAG(
-    std::string,
-    in_filename,
-    DefaultInFilename(),
-    "Filename for input audio (specify sample rate with --input_sample_rate, "
-    "and channels with --channels).");
+ABSL_FLAG(std::string,
+          in_filename,
+          "audio_coding/speech_mono_16kHz.pcm",
+          "Path of the input file (relative to the resources/ directory) for "
+          "input audio (specify sample rate with --input_sample_rate, "
+          "and channels with --channels).");
 
 ABSL_FLAG(int, input_sample_rate, 16000, "Sample rate of input file in Hz.");
 
@@ -50,8 +39,9 @@ ABSL_FLAG(int, channels, 1, "Number of channels in input audio.");
 
 ABSL_FLAG(std::string,
           out_filename,
-          DefaultOutFilename(),
-          "Name of output audio file.");
+          "neteq_quality_test_out.pcm",
+          "Name of output audio file, which will be saved in " +
+              ::webrtc::test::OutputPath());
 
 ABSL_FLAG(
     int,
@@ -96,6 +86,20 @@ std::unique_ptr<NetEq> CreateNetEq(
     Clock* clock,
     const rtc::scoped_refptr<AudioDecoderFactory>& decoder_factory) {
   return DefaultNetEqFactory().CreateNetEq(config, decoder_factory, clock);
+}
+
+const std::string& GetInFilenamePath(absl::string_view file_name) {
+  std::vector<absl::string_view> name_parts = rtc::split(file_name, '.');
+  RTC_CHECK_EQ(name_parts.size(), 2);
+  static const std::string path =
+      ::webrtc::test::ResourcePath(name_parts[0], name_parts[1]);
+  return path;
+}
+
+const std::string& GetOutFilenamePath(absl::string_view file_name) {
+  static const std::string path =
+      ::webrtc::test::OutputPath() + std::string(file_name);
+  return path;
 }
 
 }  // namespace
@@ -181,16 +185,17 @@ NetEqQualityTest::NetEqQualityTest(
           static_cast<size_t>(in_sampling_khz_ * block_duration_ms_)),
       payload_size_bytes_(0),
       max_payload_bytes_(0),
-      in_file_(
-          new ResampleInputAudioFile(absl::GetFlag(FLAGS_in_filename),
-                                     absl::GetFlag(FLAGS_input_sample_rate),
-                                     in_sampling_khz * 1000,
-                                     absl::GetFlag(FLAGS_runtime_ms) > 0)),
+      in_file_(new ResampleInputAudioFile(
+          GetInFilenamePath(absl::GetFlag(FLAGS_in_filename)),
+          absl::GetFlag(FLAGS_input_sample_rate),
+          in_sampling_khz * 1000,
+          absl::GetFlag(FLAGS_runtime_ms) > 0)),
       rtp_generator_(
           new RtpGenerator(in_sampling_khz_, 0, 0, decodable_time_ms_)),
       total_payload_size_bytes_(0) {
   // Flag validation
-  RTC_CHECK(ValidateFilename(absl::GetFlag(FLAGS_in_filename), false))
+  RTC_CHECK(ValidateFilename(
+      GetInFilenamePath(absl::GetFlag(FLAGS_in_filename)), false))
       << "Invalid input filename.";
 
   RTC_CHECK(absl::GetFlag(FLAGS_input_sample_rate) == 8000 ||
@@ -202,7 +207,8 @@ NetEqQualityTest::NetEqQualityTest(
   RTC_CHECK_EQ(absl::GetFlag(FLAGS_channels), 1)
       << "Invalid number of channels, current support only 1.";
 
-  RTC_CHECK(ValidateFilename(absl::GetFlag(FLAGS_out_filename), true))
+  RTC_CHECK(ValidateFilename(
+      GetOutFilenamePath(absl::GetFlag(FLAGS_out_filename)), true))
       << "Invalid output filename.";
 
   RTC_CHECK(absl::GetFlag(FLAGS_packet_loss_rate) >= 0 &&
@@ -224,7 +230,8 @@ NetEqQualityTest::NetEqQualityTest(
   RTC_CHECK_GE(absl::GetFlag(FLAGS_preload_packets), 0)
       << "Invalid number of packets to preload; must be non-negative.";
 
-  const std::string out_filename = absl::GetFlag(FLAGS_out_filename);
+  const std::string out_filename =
+      GetOutFilenamePath(absl::GetFlag(FLAGS_out_filename));
   const std::string log_filename = out_filename + ".log";
   log_file_.open(log_filename.c_str(), std::ofstream::out);
   RTC_CHECK(log_file_.is_open());

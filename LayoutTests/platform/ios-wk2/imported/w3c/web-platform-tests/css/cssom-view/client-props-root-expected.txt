@@ -1,3 +1,0 @@
-
-PASS client* properties on the root element
-

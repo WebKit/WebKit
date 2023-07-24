@@ -153,7 +153,6 @@ VideoProcessor::VideoProcessor(webrtc::VideoEncoder* encoder,
       bitrate_allocator_(
           CreateBuiltinVideoBitrateAllocatorFactory()
               ->CreateVideoBitrateAllocator(config_.codec_settings)),
-      framerate_fps_(0),
       encode_callback_(this),
       input_frame_reader_(input_frame_reader),
       merged_encoded_frames_(num_simulcast_or_spatial_layers_),
@@ -231,15 +230,27 @@ void VideoProcessor::ProcessFrame() {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   RTC_DCHECK(!is_finalized_);
 
+  RTC_DCHECK_GT(target_rates_.size(), 0u);
+  RTC_DCHECK_EQ(target_rates_.begin()->first, 0u);
+  RateProfile target_rate =
+      std::prev(target_rates_.upper_bound(last_inputed_frame_num_))->second;
+
   const size_t frame_number = last_inputed_frame_num_++;
 
   // Get input frame and store for future quality calculation.
+  Resolution resolution = Resolution({.width = config_.codec_settings.width,
+                                      .height = config_.codec_settings.height});
+  FrameReader::Ratio framerate_scale = FrameReader::Ratio(
+      {.num = config_.clip_fps.value_or(config_.codec_settings.maxFramerate),
+       .den = static_cast<int>(config_.codec_settings.maxFramerate)});
   rtc::scoped_refptr<I420BufferInterface> buffer =
-      input_frame_reader_->ReadFrame();
+      input_frame_reader_->PullFrame(
+          /*frame_num*/ nullptr, resolution, framerate_scale);
+
   RTC_CHECK(buffer) << "Tried to read too many frames from the file.";
   const size_t timestamp =
       last_inputed_timestamp_ +
-      static_cast<size_t>(kVideoPayloadTypeFrequency / framerate_fps_);
+      static_cast<size_t>(kVideoPayloadTypeFrequency / target_rate.input_fps);
   VideoFrame input_frame =
       VideoFrame::Builder()
           .set_video_frame_buffer(buffer)
@@ -303,8 +314,10 @@ void VideoProcessor::ProcessFrame() {
   // Encode.
   const std::vector<VideoFrameType> frame_types =
       (frame_number == 0)
-          ? std::vector<VideoFrameType>{VideoFrameType::kVideoFrameKey}
-          : std::vector<VideoFrameType>{VideoFrameType::kVideoFrameDelta};
+          ? std::vector<VideoFrameType>(num_simulcast_or_spatial_layers_,
+                                        VideoFrameType::kVideoFrameKey)
+          : std::vector<VideoFrameType>(num_simulcast_or_spatial_layers_,
+                                        VideoFrameType::kVideoFrameDelta);
   const int encode_return_code = encoder_->Encode(input_frame, &frame_types);
   for (size_t i = 0; i < num_simulcast_or_spatial_layers_; ++i) {
     FrameStatistics* frame_stat = stats_->GetFrame(frame_number, i);
@@ -316,12 +329,14 @@ void VideoProcessor::SetRates(size_t bitrate_kbps, double framerate_fps) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   RTC_DCHECK(!is_finalized_);
 
-  framerate_fps_ = framerate_fps;
-  bitrate_allocation_ =
+  target_rates_[last_inputed_frame_num_] =
+      RateProfile({.target_kbps = bitrate_kbps, .input_fps = framerate_fps});
+
+  auto bitrate_allocation =
       bitrate_allocator_->Allocate(VideoBitrateAllocationParameters(
-          static_cast<uint32_t>(bitrate_kbps * 1000), framerate_fps_));
+          static_cast<uint32_t>(bitrate_kbps * 1000), framerate_fps));
   encoder_->SetRates(
-      VideoEncoder::RateControlParameters(bitrate_allocation_, framerate_fps_));
+      VideoEncoder::RateControlParameters(bitrate_allocation, framerate_fps));
 }
 
 int32_t VideoProcessor::VideoProcessorDecodeCompleteCallback::Decoded(
@@ -363,39 +378,50 @@ void VideoProcessor::FrameEncoded(
   }
 
   // Layer metadata.
-  size_t spatial_idx = encoded_image.SpatialIndex().value_or(0);
+  // We could either have simulcast layers or spatial layers.
+  // TODO(https://crbug.com/webrtc/14891): If we want to support a mix of
+  // simulcast and SVC we'll also need to consider the case where we have both
+  // simulcast and spatial indices.
+  size_t stream_idx = encoded_image.SpatialIndex().value_or(
+      encoded_image.SimulcastIndex().value_or(0));
   size_t temporal_idx = GetTemporalLayerIndex(codec_specific);
 
   FrameStatistics* frame_stat =
-      stats_->GetFrameWithTimestamp(encoded_image.Timestamp(), spatial_idx);
+      stats_->GetFrameWithTimestamp(encoded_image.Timestamp(), stream_idx);
   const size_t frame_number = frame_stat->frame_number;
 
   // Ensure that the encode order is monotonically increasing, within this
   // simulcast/spatial layer.
-  RTC_CHECK(first_encoded_frame_[spatial_idx] ||
-            last_encoded_frame_num_[spatial_idx] < frame_number);
+  RTC_CHECK(first_encoded_frame_[stream_idx] ||
+            last_encoded_frame_num_[stream_idx] < frame_number);
 
   // Ensure SVC spatial layers are delivered in ascending order.
   const size_t num_spatial_layers = config_.NumberOfSpatialLayers();
-  if (!first_encoded_frame_[spatial_idx] && num_spatial_layers > 1) {
-    for (size_t i = 0; i < spatial_idx; ++i) {
+  if (!first_encoded_frame_[stream_idx] && num_spatial_layers > 1) {
+    for (size_t i = 0; i < stream_idx; ++i) {
       RTC_CHECK_LE(last_encoded_frame_num_[i], frame_number);
     }
-    for (size_t i = spatial_idx + 1; i < num_simulcast_or_spatial_layers_;
-         ++i) {
+    for (size_t i = stream_idx + 1; i < num_simulcast_or_spatial_layers_; ++i) {
       RTC_CHECK_GT(frame_number, last_encoded_frame_num_[i]);
     }
   }
-  first_encoded_frame_[spatial_idx] = false;
-  last_encoded_frame_num_[spatial_idx] = frame_number;
+  first_encoded_frame_[stream_idx] = false;
+  last_encoded_frame_num_[stream_idx] = frame_number;
+
+  RateProfile target_rate =
+      std::prev(target_rates_.upper_bound(frame_number))->second;
+  auto bitrate_allocation =
+      bitrate_allocator_->Allocate(VideoBitrateAllocationParameters(
+          static_cast<uint32_t>(target_rate.target_kbps * 1000),
+          target_rate.input_fps));
 
   // Update frame statistics.
   frame_stat->encoding_successful = true;
   frame_stat->encode_time_us = GetElapsedTimeMicroseconds(
       frame_stat->encode_start_ns, encode_stop_ns - post_encode_time_ns_);
   frame_stat->target_bitrate_kbps =
-      bitrate_allocation_.GetTemporalLayerSum(spatial_idx, temporal_idx) / 1000;
-  frame_stat->target_framerate_fps = framerate_fps_;
+      bitrate_allocation.GetTemporalLayerSum(stream_idx, temporal_idx) / 1000;
+  frame_stat->target_framerate_fps = target_rate.input_fps;
   frame_stat->length_bytes = encoded_image.size();
   frame_stat->frame_type = encoded_image._frameType;
   frame_stat->temporal_idx = temporal_idx;
@@ -416,13 +442,13 @@ void VideoProcessor::FrameEncoded(
   if (config_.decode || !encoded_frame_writers_->empty()) {
     if (num_spatial_layers > 1) {
       encoded_image_for_decode = BuildAndStoreSuperframe(
-          encoded_image, codec_type, frame_number, spatial_idx,
+          encoded_image, codec_type, frame_number, stream_idx,
           frame_stat->inter_layer_predicted);
     }
   }
 
   if (config_.decode) {
-    DecodeFrame(*encoded_image_for_decode, spatial_idx);
+    DecodeFrame(*encoded_image_for_decode, stream_idx);
 
     if (codec_specific.end_of_picture && num_spatial_layers > 1) {
       // If inter-layer prediction is enabled and upper layer was dropped then
@@ -435,7 +461,7 @@ void VideoProcessor::FrameEncoded(
                                     last_decoded_frame_num_[i] < frame_number);
 
         // Ensure current layer was decoded.
-        RTC_CHECK(layer_dropped == false || i != spatial_idx);
+        RTC_CHECK(layer_dropped == false || i != stream_idx);
 
         if (!layer_dropped) {
           base_image = &merged_encoded_frames_[i];
@@ -455,7 +481,7 @@ void VideoProcessor::FrameEncoded(
   for (size_t write_temporal_idx = temporal_idx;
        write_temporal_idx < config_.NumberOfTemporalLayers();
        ++write_temporal_idx) {
-    const VideoProcessor::LayerKey layer_key(spatial_idx, write_temporal_idx);
+    const VideoProcessor::LayerKey layer_key(stream_idx, write_temporal_idx);
     auto it = encoded_frame_writers_->find(layer_key);
     if (it != encoded_frame_writers_->cend()) {
       RTC_CHECK(it->second->WriteFrame(*encoded_image_for_decode,

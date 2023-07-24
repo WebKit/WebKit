@@ -67,9 +67,6 @@ public:
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
     static StyleSheetContents* legacyFormControlsIOSStyleSheet;
 #endif
-#if ENABLE(ALTERNATE_FORM_CONTROL_DESIGN)
-    static StyleSheetContents* alternateFormControlDesignStyleSheet;
-#endif
 
     static void initDefaultStyleSheet();
     static void ensureDefaultStyleSheetsForElement(const Element&);

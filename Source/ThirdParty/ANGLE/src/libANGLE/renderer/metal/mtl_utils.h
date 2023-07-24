@@ -109,6 +109,11 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
     bool enableFastMath,
     AutoObjCPtr<NSError *> *error);
 
+AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
+                                                const char *source,
+                                                size_t sourceLen,
+                                                AutoObjCPtr<NSError *> *error);
+
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibraryFromBinary(id<MTLDevice> metalDevice,
                                                           const uint8_t *binarySource,
                                                           size_t binarySourceLen,

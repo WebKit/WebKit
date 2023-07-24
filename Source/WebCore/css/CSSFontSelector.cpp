@@ -77,9 +77,15 @@ CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
     , m_uniqueId(++fontSelectorId)
     , m_version(0)
 {
-    m_fontFamilyNames.reserveInitialCapacity(familyNames->size());
-    for (auto& familyName : familyNames.get())
-        m_fontFamilyNames.uncheckedConstructAndAppend(familyName);
+    if (is<Document>(context)) {
+        m_fontFamilyNames.reserveInitialCapacity(familyNames->size());
+        for (auto& familyName : familyNames.get())
+            m_fontFamilyNames.uncheckedConstructAndAppend(familyName);
+    } else {
+        m_fontFamilyNames.reserveInitialCapacity(familyNamesData->size());
+        for (auto& familyName : familyNamesData.get())
+            m_fontFamilyNames.uncheckedAppend(familyName);
+    }
 
     FontCache::forCurrentThread().addClient(*this);
     m_cssFontFaceSet->addFontModifiedObserver(m_fontModifiedObserver);
@@ -235,8 +241,14 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
 
 void CSSFontSelector::addFontPaletteValuesRule(const StyleRuleFontPaletteValues& fontPaletteValuesRule)
 {
-    AtomString fontFamily = fontPaletteValuesRule.fontFamily().isNull() ? emptyAtom() : fontPaletteValuesRule.fontFamily();
-    AtomString name = fontPaletteValuesRule.name().isNull() ? emptyAtom() : fontPaletteValuesRule.name();
+
+    auto& name = fontPaletteValuesRule.name();
+    ASSERT(!name.isNull());
+
+    auto& fontFamily = fontPaletteValuesRule.fontFamily();
+    if (fontFamily.isNull())
+        return;
+
     m_paletteMap.set(std::make_pair(fontFamily, name), fontPaletteValuesRule.fontPaletteValues());
 
     ++m_version;
@@ -345,6 +357,7 @@ const FontPaletteValues& CSSFontSelector::lookupFontPaletteValues(const AtomStri
     auto iterator = m_paletteMap.find(std::make_pair(familyName, paletteName));
     if (iterator == m_paletteMap.end())
         return emptyFontPaletteValues.get();
+
     return iterator->value;
 }
 
@@ -370,7 +383,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     AtomString familyForLookup = familyName;
     std::optional<FontDescription> overrideFontDescription;
     const FontDescription* fontDescriptionForLookup = &fontDescription;
-    auto resolveAndAssignGenericFamily = [&]() {
+    auto resolveAndAssignGenericFamily = [&] {
         if (auto genericFamilyOptional = resolveGenericFamily(fontDescription, familyName))
             familyForLookup = *genericFamilyOptional;
     };

@@ -46,11 +46,13 @@ public:
 
     static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>&, const MediaTime& presentationTime, Rotation videoRotation = Rotation::None);
 
-    static Ref<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, CanvasContentType canvasContentType, Rotation videoRotation = VideoFrame::Rotation::None, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt);
+    static Ref<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, CanvasContentType canvasContentType, Rotation videoRotation = VideoFrame::Rotation::None, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt, PlatformVideoColorSpace&& = { });
 
     RefPtr<VideoFrameGStreamer> resizeTo(const IntSize&);
 
     GRefPtr<GstSample> resizedSample(const IntSize&);
+
+    GRefPtr<GstSample> downloadSample(std::optional<GstVideoFormat> = { });
 
     GstSample* sample() const { return m_sample.get(); }
 
@@ -64,6 +66,8 @@ private:
     VideoFrameGStreamer(const GRefPtr<GstSample>&, const FloatSize& presentationSize, const MediaTime& presentationTime, Rotation = Rotation::None, PlatformVideoColorSpace&& = { });
 
     bool isGStreamer() const final { return true; }
+
+    GRefPtr<GstSample> convert(GstVideoFormat, const IntSize&);
 
     GRefPtr<GstSample> m_sample;
     FloatSize m_presentationSize;

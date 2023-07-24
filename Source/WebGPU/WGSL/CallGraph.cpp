@@ -29,6 +29,7 @@
 #include "AST.h"
 #include "ASTVisitor.h"
 #include "WGSLShaderModule.h"
+#include <wtf/Deque.h>
 
 namespace WGSL {
 
@@ -47,15 +48,17 @@ public:
 
     CallGraph build();
 
-    // FIXME: we also need to visit function calls when we add support for them
     void visit(AST::Function&) override;
+    void visit(AST::CallExpression&) override;
 
 private:
     void initializeMappings();
 
     CallGraph m_callGraph;
-    AST::Function* m_currentFunction;
     const HashMap<String, std::optional<PipelineLayout>>& m_pipelineLayouts;
+    HashMap<AST::Function*, unsigned> m_calleeBuildingMap;
+    Vector<CallGraph::Callee>* m_callees { nullptr };
+    Deque<AST::Function*> m_queue;
 };
 
 CallGraph CallGraphBuilder::build()
@@ -66,36 +69,62 @@ CallGraph CallGraphBuilder::build()
 
 void CallGraphBuilder::initializeMappings()
 {
-    for (auto& functionDecl : m_callGraph.m_ast.functions()) {
-        const auto& name = functionDecl.name();
+    for (auto& function : m_callGraph.m_ast.functions()) {
+        const auto& name = function.name();
         {
-            auto result = m_callGraph.m_functionsByName.add(name, &functionDecl);
-            ASSERT_UNUSED(result, result.isNewEntry);
-        }
-
-        {
-            auto result = m_callGraph.m_callees.add(&functionDecl, Vector<CallGraph::Callee>());
+            auto result = m_callGraph.m_functionsByName.add(name, &function);
             ASSERT_UNUSED(result, result.isNewEntry);
         }
 
         if (!m_pipelineLayouts.contains(name))
             continue;
 
-        for (auto& attribute : functionDecl.attributes()) {
+        for (auto& attribute : function.attributes()) {
             if (is<AST::StageAttribute>(attribute)) {
                 auto stage = downcast<AST::StageAttribute>(attribute).stage();
-                m_callGraph.m_entrypoints.append({ functionDecl, stage });
+                m_callGraph.m_entrypoints.append({ function, stage });
+                m_queue.append(&function);
                 break;
             }
         }
     }
+
+    while (!m_queue.isEmpty())
+        visit(*m_queue.takeFirst());
 }
 
-void CallGraphBuilder::visit(AST::Function& functionDecl)
+void CallGraphBuilder::visit(AST::Function& function)
 {
-    m_currentFunction = &functionDecl;
-    checkErrorAndVisit(functionDecl.body());
-    m_currentFunction = nullptr;
+    auto result = m_callGraph.m_calleeMap.add(&function, Vector<CallGraph::Callee>());
+    if (!result.isNewEntry)
+        return;
+
+    ASSERT(!m_callees);
+    m_callees = &result.iterator->value;
+    AST::Visitor::visit(function);
+    m_calleeBuildingMap.clear();
+    m_callees = nullptr;
+}
+
+void CallGraphBuilder::visit(AST::CallExpression& call)
+{
+    for (auto& argument : call.arguments())
+        AST::Visitor::visit(argument);
+
+    if (!is<AST::NamedTypeName>(call.target()))
+        return;
+
+    auto& target = downcast<AST::NamedTypeName>(call.target());
+    auto it = m_callGraph.m_functionsByName.find(target.name());
+    if (it == m_callGraph.m_functionsByName.end())
+        return;
+
+    m_queue.append(it->value);
+    auto result = m_calleeBuildingMap.add(it->value, m_callees->size());
+    if (result.isNewEntry)
+        m_callees->append(CallGraph::Callee { it->value, { &call } });
+    else
+        m_callees->at(result.iterator->value).callSites.append(&call);
 }
 
 CallGraph buildCallGraph(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)

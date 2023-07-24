@@ -96,12 +96,12 @@ protected:
     // Expose these so MouseEvent::initMouseEvent can set them.
     IntPoint m_screenLocation;
     LayoutPoint m_clientLocation;
-    double m_movementX { 0 };
-    double m_movementY { 0 };
 
 private:
     void init(bool isSimulated, const IntPoint&);
 
+    double m_movementX { 0 };
+    double m_movementY { 0 };
     LayoutPoint m_pageLocation;
     LayoutPoint m_layerLocation;
     LayoutPoint m_offsetLocation;

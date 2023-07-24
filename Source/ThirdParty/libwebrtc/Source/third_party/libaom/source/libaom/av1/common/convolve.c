@@ -73,45 +73,6 @@ void av1_highbd_convolve_horiz_rs_c(const uint16_t *src, int src_stride,
   }
 }
 
-void av1_convolve_2d_sobel_y_c(const uint8_t *src, int src_stride, double *dst,
-                               int dst_stride, int w, int h, int dir,
-                               double norm) {
-  int16_t im_block[(MAX_SB_SIZE + MAX_FILTER_TAP - 1) * MAX_SB_SIZE];
-  DECLARE_ALIGNED(256, static const int16_t, sobel_a[3]) = { 1, 0, -1 };
-  DECLARE_ALIGNED(256, static const int16_t, sobel_b[3]) = { 1, 2, 1 };
-  const int taps = 3;
-  int im_h = h + taps - 1;
-  int im_stride = w;
-  const int fo_vert = 1;
-  const int fo_horiz = 1;
-
-  // horizontal filter
-  const uint8_t *src_horiz = src - fo_vert * src_stride;
-  const int16_t *x_filter = dir ? sobel_a : sobel_b;
-  for (int y = 0; y < im_h; ++y) {
-    for (int x = 0; x < w; ++x) {
-      int16_t sum = 0;
-      for (int k = 0; k < taps; ++k) {
-        sum += x_filter[k] * src_horiz[y * src_stride + x - fo_horiz + k];
-      }
-      im_block[y * im_stride + x] = sum;
-    }
-  }
-
-  // vertical filter
-  int16_t *src_vert = im_block + fo_vert * im_stride;
-  const int16_t *y_filter = dir ? sobel_b : sobel_a;
-  for (int y = 0; y < h; ++y) {
-    for (int x = 0; x < w; ++x) {
-      int16_t sum = 0;
-      for (int k = 0; k < taps; ++k) {
-        sum += y_filter[k] * src_vert[(y - fo_vert + k) * im_stride + x];
-      }
-      dst[y * dst_stride + x] = sum * norm;
-    }
-  }
-}
-
 void av1_convolve_2d_sr_c(const uint8_t *src, int src_stride, uint8_t *dst,
                           int dst_stride, int w, int h,
                           const InterpFilterParams *filter_params_x,
@@ -138,7 +99,13 @@ void av1_convolve_2d_sr_c(const uint8_t *src, int src_stride, uint8_t *dst,
       for (int k = 0; k < filter_params_x->taps; ++k) {
         sum += x_filter[k] * src_horiz[y * src_stride + x - fo_horiz + k];
       }
-      assert(0 <= sum && sum < (1 << (bd + FILTER_BITS + 1)));
+
+      // TODO(aomedia:3393): for 12-tap filter, in extreme cases, the result can
+      // be beyond the following range. For better prediction, a clamping can be
+      // added for 12 tap filter to ensure the horizontal filtering result is
+      // within 16 bit. The same applies to the vertical filtering.
+      assert(filter_params_x->taps > 8 ||
+             (0 <= sum && sum < (1 << (bd + FILTER_BITS + 1))));
       im_block[y * im_stride + x] =
           (int16_t)ROUND_POWER_OF_TWO(sum, conv_params->round_0);
     }
@@ -155,7 +122,8 @@ void av1_convolve_2d_sr_c(const uint8_t *src, int src_stride, uint8_t *dst,
       for (int k = 0; k < filter_params_y->taps; ++k) {
         sum += y_filter[k] * src_vert[(y - fo_vert + k) * im_stride + x];
       }
-      assert(0 <= sum && sum < (1 << (offset_bits + 2)));
+      assert(filter_params_y->taps > 8 ||
+             (0 <= sum && sum < (1 << (offset_bits + 2))));
       int16_t res = ROUND_POWER_OF_TWO(sum, conv_params->round_1) -
                     ((1 << (offset_bits - conv_params->round_1)) +
                      (1 << (offset_bits - conv_params->round_1 - 1)));
@@ -212,6 +180,114 @@ void av1_convolve_x_sr_c(const uint8_t *src, int src_stride, uint8_t *dst,
   }
 }
 
+// This function is exactly the same as av1_convolve_2d_sr_c, and is an
+// optimized version for intrabc. Use the following 2-tap filter:
+// DECLARE_ALIGNED(256, static const int16_t,
+//                 av1_intrabc_bilinear_filter[2 * SUBPEL_SHIFTS]) = {
+//   128, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//   64,  64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// };
+void av1_convolve_2d_sr_intrabc_c(const uint8_t *src, int src_stride,
+                                  uint8_t *dst, int dst_stride, int w, int h,
+                                  const InterpFilterParams *filter_params_x,
+                                  const InterpFilterParams *filter_params_y,
+                                  const int subpel_x_qn, const int subpel_y_qn,
+                                  ConvolveParams *conv_params) {
+  assert(subpel_x_qn == 8);
+  assert(subpel_y_qn == 8);
+  assert(filter_params_x->taps == 2 && filter_params_y->taps == 2);
+  assert((conv_params->round_0 + conv_params->round_1) == 2 * FILTER_BITS);
+  (void)filter_params_x;
+  (void)subpel_x_qn;
+  (void)filter_params_y;
+  (void)subpel_y_qn;
+  (void)conv_params;
+
+  int16_t im_block[(MAX_SB_SIZE + MAX_FILTER_TAP - 1) * MAX_SB_SIZE];
+  int im_h = h + 1;
+  int im_stride = w;
+  assert(w <= MAX_SB_SIZE && h <= MAX_SB_SIZE);
+  const int bd = 8;
+
+  // horizontal filter
+  // explicitly operate for subpel_x_qn = 8.
+  int16_t *im = im_block;
+  for (int y = 0; y < im_h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      const int32_t sum = (1 << bd) + src[x] + src[x + 1];
+      assert(0 <= sum && sum < (1 << (bd + 2)));
+      im[x] = sum;
+    }
+    src += src_stride;
+    im += im_stride;
+  }
+
+  // vertical filter
+  // explicitly operate for subpel_y_qn = 8.
+  int16_t *src_vert = im_block;
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      const int32_t sum =
+          (1 << (bd + 2)) + src_vert[x] + src_vert[im_stride + x];
+      assert(0 <= sum && sum < (1 << (bd + 4)));
+      const int16_t res =
+          ROUND_POWER_OF_TWO(sum, 2) - ((1 << bd) + (1 << (bd - 1)));
+      dst[x] = clip_pixel(res);
+    }
+    src_vert += im_stride;
+    dst += dst_stride;
+  }
+}
+
+// This function is exactly the same as av1_convolve_y_sr_c, and is an
+// optimized version for intrabc.
+void av1_convolve_y_sr_intrabc_c(const uint8_t *src, int src_stride,
+                                 uint8_t *dst, int dst_stride, int w, int h,
+                                 const InterpFilterParams *filter_params_y,
+                                 const int subpel_y_qn) {
+  assert(subpel_y_qn == 8);
+  assert(filter_params_y->taps == 2);
+  (void)filter_params_y;
+  (void)subpel_y_qn;
+
+  // vertical filter
+  // explicitly operate for subpel_y_qn = 8.
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      const int32_t res = src[x] + src[src_stride + x];
+      dst[x] = clip_pixel(ROUND_POWER_OF_TWO(res, 1));
+    }
+    src += src_stride;
+    dst += dst_stride;
+  }
+}
+
+// This function is exactly the same as av1_convolve_x_sr_c, and is an
+// optimized version for intrabc.
+void av1_convolve_x_sr_intrabc_c(const uint8_t *src, int src_stride,
+                                 uint8_t *dst, int dst_stride, int w, int h,
+                                 const InterpFilterParams *filter_params_x,
+                                 const int subpel_x_qn,
+                                 ConvolveParams *conv_params) {
+  assert(subpel_x_qn == 8);
+  assert(filter_params_x->taps == 2);
+  assert((conv_params->round_0 + conv_params->round_1) == 2 * FILTER_BITS);
+  (void)filter_params_x;
+  (void)subpel_x_qn;
+  (void)conv_params;
+
+  // horizontal filter
+  // explicitly operate for subpel_x_qn = 8.
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      const int32_t res = src[x] + src[x + 1];
+      dst[x] = clip_pixel(ROUND_POWER_OF_TWO(res, 1));
+    }
+    src += src_stride;
+    dst += dst_stride;
+  }
+}
+
 void av1_dist_wtd_convolve_2d_c(const uint8_t *src, int src_stride,
                                 uint8_t *dst, int dst_stride, int w, int h,
                                 const InterpFilterParams *filter_params_x,
@@ -239,7 +315,8 @@ void av1_dist_wtd_convolve_2d_c(const uint8_t *src, int src_stride,
       for (int k = 0; k < filter_params_x->taps; ++k) {
         sum += x_filter[k] * src_horiz[y * src_stride + x - fo_horiz + k];
       }
-      assert(0 <= sum && sum < (1 << (bd + FILTER_BITS + 1)));
+      assert(filter_params_x->taps > 8 ||
+             (0 <= sum && sum < (1 << (bd + FILTER_BITS + 1))));
       im_block[y * im_stride + x] =
           (int16_t)ROUND_POWER_OF_TWO(sum, conv_params->round_0);
     }
@@ -256,7 +333,8 @@ void av1_dist_wtd_convolve_2d_c(const uint8_t *src, int src_stride,
       for (int k = 0; k < filter_params_y->taps; ++k) {
         sum += y_filter[k] * src_vert[(y - fo_vert + k) * im_stride + x];
       }
-      assert(0 <= sum && sum < (1 << (offset_bits + 2)));
+      assert(filter_params_y->taps > 8 ||
+             (0 <= sum && sum < (1 << (offset_bits + 2))));
       CONV_BUF_TYPE res = ROUND_POWER_OF_TWO(sum, conv_params->round_1);
       if (conv_params->do_average) {
         int32_t tmp = dst16[y * dst16_stride + x];
@@ -441,7 +519,8 @@ void av1_convolve_2d_scale_c(const uint8_t *src, int src_stride, uint8_t *dst,
       for (int k = 0; k < filter_params_x->taps; ++k) {
         sum += x_filter[k] * src_x[k - fo_horiz];
       }
-      assert(0 <= sum && sum < (1 << (bd + FILTER_BITS + 1)));
+      assert(filter_params_x->taps > 8 ||
+             (0 <= sum && sum < (1 << (bd + FILTER_BITS + 1))));
       im_block[y * im_stride + x] =
           (int16_t)ROUND_POWER_OF_TWO(sum, conv_params->round_0);
     }
@@ -463,7 +542,8 @@ void av1_convolve_2d_scale_c(const uint8_t *src, int src_stride, uint8_t *dst,
       for (int k = 0; k < filter_params_y->taps; ++k) {
         sum += y_filter[k] * src_y[(k - fo_vert) * im_stride];
       }
-      assert(0 <= sum && sum < (1 << (offset_bits + 2)));
+      assert(filter_params_y->taps > 8 ||
+             (0 <= sum && sum < (1 << (offset_bits + 2))));
       CONV_BUF_TYPE res = ROUND_POWER_OF_TWO(sum, conv_params->round_1);
       if (conv_params->is_compound) {
         if (conv_params->do_average) {
@@ -568,23 +648,22 @@ void av1_convolve_2d_facade(const uint8_t *src, int src_stride, uint8_t *dst,
   const InterpFilterParams *filter_params_y = interp_filters[1];
 
   // TODO(jingning, yunqing): Add SIMD support to 2-tap filter case.
-  // Do we have SIMD support to 4-tap case?
   // 2-tap filter indicates that it is for IntraBC.
   if (filter_params_x->taps == 2 || filter_params_y->taps == 2) {
     assert(filter_params_x->taps == 2 && filter_params_y->taps == 2);
     assert(!scaled);
     if (subpel_x_qn && subpel_y_qn) {
-      av1_convolve_2d_sr_c(src, src_stride, dst, dst_stride, w, h,
-                           filter_params_x, filter_params_y, subpel_x_qn,
-                           subpel_y_qn, conv_params);
+      av1_convolve_2d_sr_intrabc_c(src, src_stride, dst, dst_stride, w, h,
+                                   filter_params_x, filter_params_y,
+                                   subpel_x_qn, subpel_y_qn, conv_params);
       return;
     } else if (subpel_x_qn) {
-      av1_convolve_x_sr_c(src, src_stride, dst, dst_stride, w, h,
-                          filter_params_x, subpel_x_qn, conv_params);
+      av1_convolve_x_sr_intrabc_c(src, src_stride, dst, dst_stride, w, h,
+                                  filter_params_x, subpel_x_qn, conv_params);
       return;
     } else if (subpel_y_qn) {
-      av1_convolve_y_sr_c(src, src_stride, dst, dst_stride, w, h,
-                          filter_params_y, subpel_y_qn);
+      av1_convolve_y_sr_intrabc_c(src, src_stride, dst, dst_stride, w, h,
+                                  filter_params_y, subpel_y_qn);
       return;
     }
   }
@@ -679,7 +758,8 @@ void av1_highbd_convolve_2d_sr_c(const uint16_t *src, int src_stride,
       for (int k = 0; k < filter_params_x->taps; ++k) {
         sum += x_filter[k] * src_horiz[y * src_stride + x - fo_horiz + k];
       }
-      assert(0 <= sum && sum < (1 << (bd + FILTER_BITS + 1)));
+      assert(filter_params_x->taps > 8 ||
+             (0 <= sum && sum < (1 << (bd + FILTER_BITS + 1))));
       im_block[y * im_stride + x] =
           ROUND_POWER_OF_TWO(sum, conv_params->round_0);
     }
@@ -696,7 +776,8 @@ void av1_highbd_convolve_2d_sr_c(const uint16_t *src, int src_stride,
       for (int k = 0; k < filter_params_y->taps; ++k) {
         sum += y_filter[k] * src_vert[(y - fo_vert + k) * im_stride + x];
       }
-      assert(0 <= sum && sum < (1 << (offset_bits + 2)));
+      assert(filter_params_y->taps > 8 ||
+             (0 <= sum && sum < (1 << (offset_bits + 2))));
       int32_t res = ROUND_POWER_OF_TWO(sum, conv_params->round_1) -
                     ((1 << (offset_bits - conv_params->round_1)) +
                      (1 << (offset_bits - conv_params->round_1 - 1)));
@@ -733,7 +814,8 @@ void av1_highbd_dist_wtd_convolve_2d_c(
       for (k = 0; k < filter_params_x->taps; ++k) {
         sum += x_filter[k] * src_horiz[y * src_stride + x - fo_horiz + k];
       }
-      assert(0 <= sum && sum < (1 << (bd + FILTER_BITS + 1)));
+      assert(filter_params_x->taps > 8 ||
+             (0 <= sum && sum < (1 << (bd + FILTER_BITS + 1))));
       (void)bd;
       im_block[y * im_stride + x] =
           (int16_t)ROUND_POWER_OF_TWO(sum, conv_params->round_0);
@@ -751,7 +833,8 @@ void av1_highbd_dist_wtd_convolve_2d_c(
       for (k = 0; k < filter_params_y->taps; ++k) {
         sum += y_filter[k] * src_vert[(y - fo_vert + k) * im_stride + x];
       }
-      assert(0 <= sum && sum < (1 << (offset_bits + 2)));
+      assert(filter_params_y->taps > 8 ||
+             (0 <= sum && sum < (1 << (offset_bits + 2))));
       CONV_BUF_TYPE res = ROUND_POWER_OF_TWO(sum, conv_params->round_1);
       if (conv_params->do_average) {
         int32_t tmp = dst16[y * dst16_stride + x];
@@ -938,7 +1021,8 @@ void av1_highbd_convolve_2d_scale_c(const uint16_t *src, int src_stride,
       for (int k = 0; k < filter_params_x->taps; ++k) {
         sum += x_filter[k] * src_x[k - fo_horiz];
       }
-      assert(0 <= sum && sum < (1 << (bd + FILTER_BITS + 1)));
+      assert(filter_params_x->taps > 8 ||
+             (0 <= sum && sum < (1 << (bd + FILTER_BITS + 1))));
       im_block[y * im_stride + x] =
           (int16_t)ROUND_POWER_OF_TWO(sum, conv_params->round_0);
     }
@@ -960,7 +1044,8 @@ void av1_highbd_convolve_2d_scale_c(const uint16_t *src, int src_stride,
       for (int k = 0; k < filter_params_y->taps; ++k) {
         sum += y_filter[k] * src_y[(k - fo_vert) * im_stride];
       }
-      assert(0 <= sum && sum < (1 << (offset_bits + 2)));
+      assert(filter_params_y->taps > 8 ||
+             (0 <= sum && sum < (1 << (offset_bits + 2))));
       CONV_BUF_TYPE res = ROUND_POWER_OF_TWO(sum, conv_params->round_1);
       if (conv_params->is_compound) {
         if (conv_params->do_average) {

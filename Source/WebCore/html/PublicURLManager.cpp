@@ -69,7 +69,7 @@ void PublicURLManager::revoke(const URL& url)
         return;
 
     URLRegistry::forEach([&](auto& registry) {
-        registry.unregisterURL(url);
+        registry.unregisterURL(url, scriptExecutionContext()->topOrigin().data());
     });
 }
 

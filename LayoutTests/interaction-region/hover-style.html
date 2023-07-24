@@ -8,11 +8,13 @@
         height: 100px;
     }
 
-    #button {
+    #button,
+    #button-overflow-hidden {
         background-color: green;
         border-radius: 10px;
     }
-    #button:hover {
+    #button:hover,
+    #button-overflow-hidden:hover {
         background-color: blue;
     }
     #button-negation {
@@ -30,6 +32,9 @@
         background: gray;
         overflow-y: scroll;
     }
+    #button-overflow-hidden {
+        overflow: hidden;
+    }
 </style>
 <body>
 <div id="button" onclick="click()"></div>
@@ -38,6 +43,7 @@
 <div id="scrollable" onclick="click()">
     <div></div>
 </div>
+<div id="button-overflow-hidden" onclick="click()"></div>
 
 <pre id="results"></pre>
 <script>

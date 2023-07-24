@@ -65,10 +65,12 @@
         element.dataset["b"] = "value2";
         
         assert_equals(element.dataset["c"], undefined);
-        Object.defineProperty(element.dataset, "c", { 
-            get: function() { return 1; },
-            set: function(newValue) { }
-        });
+        try {
+            Object.defineProperty(element.dataset, "c", { 
+                get: function() { return 1; },
+                set: function(newValue) { }
+            });
+        } catch (e) { }
         assert_equals(element.dataset["c"], undefined);
     }, "Test that the setting a non-data descriptor property with Object.defineProperty does not set anything ([OverrideBuiltins] specified).");
 
@@ -165,10 +167,12 @@
         window.sessionStorage["b"] = "value2";
         
         assert_equals(window.sessionStorage["c"], undefined);
-        Object.defineProperty(window.sessionStorage, "c", { 
-            get: function() { return 1; },
-            set: function(newValue) { }
-        });
+        try {
+            Object.defineProperty(window.sessionStorage, "c", { 
+                get: function() { return 1; },
+                set: function(newValue) { }
+            });
+        } catch (e) { }
         assert_equals(window.sessionStorage["c"], undefined);
     }, "Test that the setting a non-data descriptor property with Object.defineProperty does not set anything ([OverrideBuiltins] not specified).");
 

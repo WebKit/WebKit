@@ -30,6 +30,8 @@
 #include "Icon.h"
 #include "LocalizedStrings.h"
 #include "PaintInfo.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderButton.h"
 #include "RenderElementInlines.h"
 #include "RenderText.h"

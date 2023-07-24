@@ -50,7 +50,7 @@ public:
     ContentFilterUnblockHandler unblockHandler() const override;
 #endif
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     WEBCORE_EXPORT static void setHasConsumedSandboxExtension(bool);
 #endif
 
@@ -63,7 +63,7 @@ private:
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
     RetainPtr<NSData> m_replacementData;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     enum class SandboxExtensionState : uint8_t {
         Consumed,
         NotConsumed,

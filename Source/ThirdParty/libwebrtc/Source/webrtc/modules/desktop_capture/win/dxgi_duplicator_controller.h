@@ -41,7 +41,7 @@ namespace webrtc {
 // but a later Duplicate() returns false, this usually means the display mode is
 // changing. Consumers should retry after a while. (Typically 50 milliseconds,
 // but according to hardware performance, this time may vary.)
-// The underyling DxgiOutputDuplicators may take an additional reference on the
+// The underlying DxgiOutputDuplicators may take an additional reference on the
 // frame passed in to the Duplicate methods so that they can guarantee delivery
 // of new frames when requested; since if there have been no updates to the
 // surface, they may be unable to capture a frame.
@@ -49,7 +49,7 @@ class RTC_EXPORT DxgiDuplicatorController {
  public:
   using Context = DxgiFrameContext;
 
-  // A collection of D3d information we are interested on, which may impact
+  // A collection of D3d information we are interested in, which may impact
   // capturer performance or reliability.
   struct D3dInfo {
     // Each video adapter has its own D3D_FEATURE_LEVEL, so this structure
@@ -64,13 +64,17 @@ class RTC_EXPORT DxgiDuplicatorController {
     // version.
   };
 
+  // These values are persisted to logs. Entries should not be renumbered or
+  // reordered and numeric values should never be reused. This enum corresponds
+  // to WebRtcDirectXCapturerResult in tools/metrics/histograms/enums.xml.
   enum class Result {
-    SUCCEEDED,
-    UNSUPPORTED_SESSION,
-    FRAME_PREPARE_FAILED,
-    INITIALIZATION_FAILED,
-    DUPLICATION_FAILED,
-    INVALID_MONITOR_ID,
+    SUCCEEDED = 0,
+    UNSUPPORTED_SESSION = 1,
+    FRAME_PREPARE_FAILED = 2,
+    INITIALIZATION_FAILED = 3,
+    DUPLICATION_FAILED = 4,
+    INVALID_MONITOR_ID = 5,
+    MAX_VALUE = INVALID_MONITOR_ID
   };
 
   // Converts `result` into user-friendly string representation. The return
@@ -101,7 +105,7 @@ class RTC_EXPORT DxgiDuplicatorController {
   // synchronize them manually. We should find a way to do it.
   Result Duplicate(DxgiFrame* frame);
 
-  // Captures one monitor and writes into target. `monitor_id` should >= 0. If
+  // Captures one monitor and writes into target. `monitor_id` must be >= 0. If
   // `monitor_id` is greater than the total screen count of all the Duplicators,
   // this function returns false. May retain a reference to `frame`'s underlying
   // |SharedDesktopFrame|.
@@ -109,7 +113,7 @@ class RTC_EXPORT DxgiDuplicatorController {
 
   // Returns dpi of current system. Returns an empty DesktopVector if system
   // does not support DXGI based capturer.
-  DesktopVector dpi();
+  DesktopVector system_dpi();
 
   // Returns the count of screens on the system. These screens can be retrieved
   // by an integer in the range of [0, ScreenCount()). If system does not
@@ -168,7 +172,7 @@ class RTC_EXPORT DxgiDuplicatorController {
   // Initialize().
   bool DoInitialize() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  // Clears all COM components referred by this instance. So next Duplicate()
+  // Clears all COM components referred to by this instance. So next Duplicate()
   // call will eventually initialize this instance again.
   void Deinitialize() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
@@ -239,12 +243,12 @@ class RTC_EXPORT DxgiDuplicatorController {
   // a Context instance is always initialized after DxgiDuplicatorController.
   int identity_ RTC_GUARDED_BY(mutex_) = 0;
   DesktopRect desktop_rect_ RTC_GUARDED_BY(mutex_);
-  DesktopVector dpi_ RTC_GUARDED_BY(mutex_);
+  DesktopVector system_dpi_ RTC_GUARDED_BY(mutex_);
   std::vector<DxgiAdapterDuplicator> duplicators_ RTC_GUARDED_BY(mutex_);
   D3dInfo d3d_info_ RTC_GUARDED_BY(mutex_);
   DisplayConfigurationMonitor display_configuration_monitor_
       RTC_GUARDED_BY(mutex_);
-  // A number to indicate how many succeeded duplications have been performed.
+  // A number to indicate how many successful duplications have been performed.
   uint32_t succeeded_duplications_ RTC_GUARDED_BY(mutex_) = 0;
 };
 

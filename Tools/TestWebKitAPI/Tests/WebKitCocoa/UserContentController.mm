@@ -983,7 +983,7 @@ TEST(WKUserContentController, AddUserScriptInWorldWithGlobalObjectAvailableInIfr
 
     __block bool done = false;
     [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        [webView _evaluateJavaScript:@"window.worldName" inFrame:mainFrame.childFrames[0] inContentWorld:testWorld.get() completionHandler:^(id result, NSError *error) {
+        [webView _evaluateJavaScript:@"window.worldName" inFrame:mainFrame.childFrames[0].info inContentWorld:testWorld.get() completionHandler:^(id result, NSError *error) {
             EXPECT_WK_STREQ(result, "testWorld");
             done = true;
         }];

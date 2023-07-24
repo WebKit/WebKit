@@ -12,6 +12,8 @@
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 // CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+//go:build ignore
+
 // check_filenames.go checks that filenames are unique. Some of our consumers do
 // not support multiple files with the same name in the same build target, even
 // if they are in different directories.

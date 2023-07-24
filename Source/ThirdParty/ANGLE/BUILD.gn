@@ -65,15 +65,23 @@ declare_args() {
   angle_glesv2_extension = ""
 
   # Enable share context lock. If it is false, the client need to use gl calls in a threadsafe way.
-  # Chromium only uses share contexts on the GPU thread.
-  # angle_deqp_tests contains threading related tests.
+  # Chrome DrDC needs thread safe ANGLE on Android
   angle_enable_share_context_lock =
-      !build_with_chromium || build_angle_deqp_tests
+      is_android || !build_with_chromium || build_angle_deqp_tests
 
   if (is_android) {
     # Use Android TLS slot to store current context.
     angle_use_android_tls_slot = !build_with_chromium
   }
+
+  angle_enable_global_mutex_recursion = is_android && angle_enable_vulkan
+
+  # Potentially can be enabled for other platforms, but limiting to Android platform for now.
+  # Chromium may have problems (requires verification), disabled for safety.
+  angle_enable_global_mutex_load_time_allocate =
+      is_android && !build_with_chromium
+
+  angle_enable_shared_context_mutex = true
 }
 
 if (angle_build_all) {
@@ -159,6 +167,19 @@ config("internal_config") {
     if (angle_use_android_tls_slot) {
       defines += [ "ANGLE_USE_ANDROID_TLS_SLOT=1" ]
     }
+  }
+
+  if (angle_enable_global_mutex_recursion) {
+    defines += [ "ANGLE_ENABLE_GLOBAL_MUTEX_RECURSION=1" ]
+  }
+
+  if (angle_enable_global_mutex_load_time_allocate) {
+    defines += [ "ANGLE_ENABLE_GLOBAL_MUTEX_LOAD_TIME_ALLOCATE=1" ]
+  }
+
+  if (angle_enable_shared_context_mutex && angle_enable_share_context_lock &&
+      !angle_force_context_check_every_call) {
+    defines += [ "ANGLE_ENABLE_SHARED_CONTEXT_MUTEX=1" ]
   }
 
   # Enables debug/trace-related functionality, including logging every GLES/EGL API command to the
@@ -690,8 +711,7 @@ template("translator_lib") {
     }
 
     if (!invoker.gl_d3d_only) {
-      if (angle_enable_vulkan || use_fuzzing_engine ||
-          angle_enable_msl_through_spirv) {
+      if (angle_enable_vulkan || use_fuzzing_engine) {
         _needs_glsl_base = true
         _needs_glsl_and_vulkan_base = true
         _uses_spirv = true
@@ -707,9 +727,6 @@ template("translator_lib") {
       if (angle_enable_metal) {
         sources += angle_translator_lib_metal_sources
         defines += [ "ANGLE_ENABLE_METAL" ]
-        if (angle_enable_msl_through_spirv) {
-          defines += [ "ANGLE_ENABLE_METAL_SPIRV" ]
-        }
       }
     }
 
@@ -960,6 +977,13 @@ config("libANGLE_config") {
   }
   if (angle_enable_perf_counter_output) {
     defines += [ "ANGLE_ENABLE_PERF_COUNTER_OUTPUT=1" ]
+  }
+
+  if (!is_android) {
+    # b/283233503
+    # Only export the ANGLE platform methods on Android, the EGL loader depends on them for
+    # detecting ANGLE. Normally, users are expected to load them through eglGetProcAddress.
+    defines += [ "ANGLE_PLATFORM_EXPORT=" ]
   }
 }
 

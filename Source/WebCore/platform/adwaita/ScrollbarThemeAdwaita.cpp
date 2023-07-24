@@ -84,8 +84,10 @@ bool ScrollbarThemeAdwaita::usesOverlayScrollbars() const
 #endif
 }
 
-int ScrollbarThemeAdwaita::scrollbarThickness(ScrollbarControlSize, ScrollbarExpansionState)
+int ScrollbarThemeAdwaita::scrollbarThickness(ScrollbarWidth scrollbarWidth, ScrollbarExpansionState)
 {
+    if (scrollbarWidth == ScrollbarWidth::None)
+        return 0;
     return scrollbarSize;
 }
 

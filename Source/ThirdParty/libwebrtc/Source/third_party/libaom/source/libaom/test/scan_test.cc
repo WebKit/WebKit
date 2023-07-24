@@ -15,10 +15,10 @@
 #include "test/av1_txfm_test.h"
 
 static int scan_test(const int16_t *scan, const int16_t *iscan, int si, int r,
-                     int c, int w) {
-  if (iscan[r * w + c] != si || scan[si] != r * w + c) {
+                     int c, int h) {
+  if (iscan[c * h + r] != si || scan[si] != c * h + r) {
     printf("r %d c %d ref_iscan %d iscan %d ref_scan %d scan %d\n", r, c, si,
-           iscan[r * w + c], r * w + c, scan[si]);
+           iscan[c * h + r], c * h + r, scan[si]);
     return 1;
   } else {
     return 0;
@@ -37,7 +37,7 @@ int scan_order_test(const SCAN_ORDER *scan_order, int w, int h,
         for (int c = 0; c < w; ++c) {
           int r = i - c;
           if (r >= 0 && r < h) {
-            if (scan_test(scan, iscan, si, r, c, w)) return 1;
+            if (scan_test(scan, iscan, si, r, c, h)) return 1;
             ++si;
           }
         }
@@ -45,7 +45,7 @@ int scan_order_test(const SCAN_ORDER *scan_order, int w, int h,
         for (int r = 0; r < h; ++r) {
           int c = i - r;
           if (c >= 0 && c < w) {
-            if (scan_test(scan, iscan, si, r, c, w)) return 1;
+            if (scan_test(scan, iscan, si, r, c, h)) return 1;
             ++si;
           }
         }
@@ -57,7 +57,7 @@ int scan_order_test(const SCAN_ORDER *scan_order, int w, int h,
       for (int c = 0; c < w; ++c) {
         int r = i - c;
         if (r >= 0 && r < h) {
-          if (scan_test(scan, iscan, si, r, c, w)) return 1;
+          if (scan_test(scan, iscan, si, r, c, h)) return 1;
           ++si;
         }
       }
@@ -68,7 +68,7 @@ int scan_order_test(const SCAN_ORDER *scan_order, int w, int h,
       for (int r = 0; r < h; ++r) {
         int c = i - r;
         if (c >= 0 && c < w) {
-          if (scan_test(scan, iscan, si, r, c, w)) return 1;
+          if (scan_test(scan, iscan, si, r, c, h)) return 1;
           ++si;
         }
       }
@@ -77,7 +77,7 @@ int scan_order_test(const SCAN_ORDER *scan_order, int w, int h,
     int si = 0;
     for (int r = 0; r < h; ++r) {
       for (int c = 0; c < w; ++c) {
-        if (scan_test(scan, iscan, si, r, c, w)) return 1;
+        if (scan_test(scan, iscan, si, r, c, h)) return 1;
         ++si;
       }
     }
@@ -86,7 +86,7 @@ int scan_order_test(const SCAN_ORDER *scan_order, int w, int h,
     int si = 0;
     for (int c = 0; c < w; ++c) {
       for (int r = 0; r < h; ++r) {
-        if (scan_test(scan, iscan, si, r, c, w)) return 1;
+        if (scan_test(scan, iscan, si, r, c, h)) return 1;
         ++si;
       }
     }

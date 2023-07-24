@@ -486,6 +486,28 @@ void derefGPtr<GstDeviceMonitor>(GstDeviceMonitor* ptr)
         gst_object_unref(ptr);
 }
 
+template<>
+GRefPtr<GstDevice> adoptGRef(GstDevice* ptr)
+{
+    return GRefPtr<GstDevice>(ptr, GRefPtrAdopt);
+}
+
+template<>
+GstDevice* refGPtr<GstDevice>(GstDevice* ptr)
+{
+    if (ptr)
+        gst_object_ref(GST_OBJECT_CAST(ptr));
+
+    return ptr;
+}
+
+template<>
+void derefGPtr<GstDevice>(GstDevice* ptr)
+{
+    if (ptr)
+        gst_object_unref(ptr);
+}
+
 template <> GRefPtr<WebKitVideoSink> adoptGRef(WebKitVideoSink* ptr)
 {
     ASSERT(!ptr || !g_object_is_floating(ptr));
@@ -501,6 +523,26 @@ template <> WebKitVideoSink* refGPtr<WebKitVideoSink>(WebKitVideoSink* ptr)
 }
 
 template <> void derefGPtr<WebKitVideoSink>(WebKitVideoSink* ptr)
+{
+    if (ptr)
+        gst_object_unref(GST_OBJECT(ptr));
+}
+
+template <> GRefPtr<GstBaseSink> adoptGRef(GstBaseSink* ptr)
+{
+    ASSERT(!ptr || !g_object_is_floating(ptr));
+    return GRefPtr<GstBaseSink>(ptr, GRefPtrAdopt);
+}
+
+template <> GstBaseSink* refGPtr<GstBaseSink>(GstBaseSink* ptr)
+{
+    if (ptr)
+        gst_object_ref_sink(GST_OBJECT(ptr));
+
+    return ptr;
+}
+
+template <> void derefGPtr<GstBaseSink>(GstBaseSink* ptr)
 {
     if (ptr)
         gst_object_unref(GST_OBJECT(ptr));
@@ -789,6 +831,25 @@ template<> GstRTPHeaderExtension* refGPtr<GstRTPHeaderExtension>(GstRTPHeaderExt
 }
 
 template<> void derefGPtr<GstRTPHeaderExtension>(GstRTPHeaderExtension* ptr)
+{
+    if (ptr)
+        gst_object_unref(ptr);
+}
+
+template<> GRefPtr<GstWebRTCICE> adoptGRef(GstWebRTCICE* ptr)
+{
+    return GRefPtr<GstWebRTCICE>(ptr, GRefPtrAdopt);
+}
+
+template<> GstWebRTCICE* refGPtr<GstWebRTCICE>(GstWebRTCICE* ptr)
+{
+    if (ptr)
+        gst_object_ref(GST_OBJECT(ptr));
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstWebRTCICE>(GstWebRTCICE* ptr)
 {
     if (ptr)
         gst_object_unref(ptr);

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -330,7 +330,9 @@ GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant
     if (mirror)
         c = u_charMirror(c);
 
-    return m_fonts->glyphDataForCharacter(c, m_fontDescription, variant);
+    auto emojiPolicy = resolveEmojiPolicy(FontVariantEmoji::Normal, c);
+
+    return m_fonts->glyphDataForCharacter(c, m_fontDescription, variant, emojiPolicy);
 }
 
 // For font families where any of the fonts don't have a valid entry in the OS/2 table
@@ -1694,7 +1696,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
         switch (translator.underlineType()) {
         case GlyphUnderlineType::SkipDescenders: {
             Path path = translator.path();
-            path.apply([&](const PathElement& element) {
+            path.applyElements([&](const PathElement& element) {
                 findPathIntersections(info, element);
             });
             if (info.minX < info.maxX) {

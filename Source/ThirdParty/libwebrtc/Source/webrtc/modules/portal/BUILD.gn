@@ -1,0 +1,124 @@
+# Copyright (c) 2022 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//build/config/linux/pkg_config.gni")
+import("//tools/generate_stubs/rules.gni")
+import("../../webrtc.gni")
+
+if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+  pkg_config("gio") {
+    packages = [
+      "gio-2.0",
+      "gio-unix-2.0",
+    ]
+  }
+
+  pkg_config("pipewire") {
+    packages = [ "libpipewire-0.3" ]
+    if (!rtc_link_pipewire) {
+      ignore_libs = true
+    }
+  }
+
+  pkg_config("gbm") {
+    packages = [ "gbm" ]
+  }
+  pkg_config("egl") {
+    packages = [ "egl" ]
+  }
+  pkg_config("epoxy") {
+    packages = [ "epoxy" ]
+    ignore_libs = true
+  }
+  pkg_config("libdrm") {
+    packages = [ "libdrm" ]
+  }
+
+  if (!rtc_link_pipewire) {
+    # When libpipewire is not directly linked, use stubs to allow for dlopening of
+    # the binary.
+    generate_stubs("pipewire_stubs") {
+      configs = [
+        "../../:common_config",
+        ":pipewire",
+      ]
+      deps = [ "../../rtc_base:logging" ]
+      extra_header = "pipewire_stub_header.fragment"
+      logging_function = "RTC_LOG(LS_VERBOSE)"
+      logging_include = "rtc_base/logging.h"
+      output_name = "pipewire_stubs"
+      path_from_source = "modules/portal"
+      sigs = [ "pipewire.sigs" ]
+      if (!build_with_chromium) {
+        macro_include = "rtc_base/system/no_cfi_icall.h"
+        macro_deps = [ "../../rtc_base/system:no_cfi_icall" ]
+      }
+    }
+  }
+
+  config("pipewire_base") {
+    configs = [
+      ":gio",
+      ":pipewire",
+    ]
+  }
+
+  config("pipewire_all") {
+    configs = [
+      ":pipewire_base",
+      ":gbm",
+      ":egl",
+      ":epoxy",
+      ":libdrm",
+    ]
+  }
+
+  config("pipewire_config") {
+    defines = [ "WEBRTC_USE_PIPEWIRE" ]
+
+    # Chromecast build config overrides `WEBRTC_USE_PIPEWIRE` even when
+    # `rtc_use_pipewire` is not set, which causes pipewire_config to not be
+    # included in targets. More details in: webrtc:13898
+    if (is_linux && !is_castos) {
+      defines += [ "WEBRTC_USE_GIO" ]
+    }
+  }
+
+  rtc_library("portal") {
+    sources = [
+      "pipewire_utils.cc",
+      "pipewire_utils.h",
+      "portal_request_response.h",
+      "scoped_glib.cc",
+      "scoped_glib.h",
+      "xdg_desktop_portal_utils.cc",
+      "xdg_desktop_portal_utils.h",
+      "xdg_session_details.h",
+    ]
+
+    configs += [
+      ":gio",
+      ":pipewire",
+      ":pipewire_config",
+    ]
+
+    deps = [
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:sanitizer",
+      "../../rtc_base/system:rtc_export",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+
+    if (!rtc_link_pipewire) {
+      defines = [ "WEBRTC_DLOPEN_PIPEWIRE" ]
+
+      deps += [ ":pipewire_stubs" ]
+    }
+  }
+}

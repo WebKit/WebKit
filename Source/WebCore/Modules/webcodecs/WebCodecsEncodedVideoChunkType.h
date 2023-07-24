@@ -29,21 +29,11 @@
 
 namespace WebCore {
 
-enum class WebCodecsEncodedVideoChunkType {
+enum class WebCodecsEncodedVideoChunkType : bool {
     Key,
     Delta
 };
 
 }
 
-namespace WTF {
-template<> struct EnumTraits<WebCore::WebCodecsEncodedVideoChunkType> {
-    using values = EnumValues<
-        WebCore::WebCodecsEncodedVideoChunkType,
-        WebCore::WebCodecsEncodedVideoChunkType::Key,
-        WebCore::WebCodecsEncodedVideoChunkType::Delta
-    >;
-};
-
-}
 #endif

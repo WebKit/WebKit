@@ -59,7 +59,7 @@ using RedirectCompletionHandler = CompletionHandler<void(WebCore::ResourceReques
 using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;
 using ResponseCompletionHandler = CompletionHandler<void(WebCore::PolicyAction)>;
 
-class NetworkDataTaskClient {
+class NetworkDataTaskClient : public CanMakeWeakPtr<NetworkDataTaskClient> {
 public:
     virtual void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) = 0;
     virtual void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) = 0;
@@ -108,22 +108,18 @@ public:
     };
     virtual State state() const = 0;
 
-    NetworkDataTaskClient* client() const { return m_client; }
+    NetworkDataTaskClient* client() const { return m_client.get(); }
     void clearClient() { m_client = nullptr; }
 
     DownloadID pendingDownloadID() const { return m_pendingDownloadID; }
-    PendingDownload* pendingDownload() const { return m_pendingDownload; }
+    PendingDownload* pendingDownload() const;
     void setPendingDownloadID(DownloadID downloadID)
     {
         ASSERT(!m_pendingDownloadID);
         ASSERT(downloadID);
         m_pendingDownloadID = downloadID;
     }
-    void setPendingDownload(PendingDownload& pendingDownload)
-    {
-        ASSERT(!m_pendingDownload);
-        m_pendingDownload = &pendingDownload;
-    }
+    void setPendingDownload(PendingDownload&);
 
     virtual void setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) { m_pendingDownloadLocation = filename; }
     const String& pendingDownloadLocation() const { return m_pendingDownloadLocation; }
@@ -165,8 +161,8 @@ protected:
     void restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest&);
 
     WeakPtr<NetworkSession> m_session;
-    NetworkDataTaskClient* m_client { nullptr };
-    PendingDownload* m_pendingDownload { nullptr };
+    WeakPtr<NetworkDataTaskClient> m_client;
+    WeakPtr<PendingDownload> m_pendingDownload;
     DownloadID m_pendingDownloadID;
     String m_user;
     String m_password;

@@ -15,6 +15,7 @@
 
 #include "api/video/i010_buffer.h"
 #include "api/video/i210_buffer.h"
+#include "api/video/i410_buffer.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/i422_buffer.h"
 #include "api/video/i444_buffer.h"
@@ -47,6 +48,8 @@ SubSampling SubSamplingForType(VideoFrameBuffer::Type type) {
       return {.x = 2, .y = 2};
     case VideoFrameBuffer::Type::kI210:
       return {.x = 2, .y = 1};
+    case VideoFrameBuffer::Type::kI410:
+      return {.x = 1, .y = 1};
     default:
       return {};
   }
@@ -299,7 +302,8 @@ rtc::scoped_refptr<T> CreateAndFillBuffer() {
   auto buf = T::Create(20, 10);
   memset(buf->MutableDataY(), 1, 200);
 
-  if (buf->type() == VideoFrameBuffer::Type::kI444) {
+  if (buf->type() == VideoFrameBuffer::Type::kI444 ||
+      buf->type() == VideoFrameBuffer::Type::kI410) {
     memset(buf->MutableDataU(), 2, 200);
     memset(buf->MutableDataV(), 3, 200);
   } else if (buf->type() == VideoFrameBuffer::Type::kI422 ||
@@ -384,8 +388,12 @@ REGISTER_TYPED_TEST_SUITE_P(TestPlanarYuvBuffer,
                             CropYNotCenter,
                             CropAndScale16x9);
 
-using TestTypesAll = ::testing::
-    Types<I420Buffer, I010Buffer, I444Buffer, I422Buffer, I210Buffer>;
+using TestTypesAll = ::testing::Types<I420Buffer,
+                                      I010Buffer,
+                                      I444Buffer,
+                                      I422Buffer,
+                                      I210Buffer,
+                                      I410Buffer>;
 INSTANTIATE_TYPED_TEST_SUITE_P(All, TestPlanarYuvBuffer, TestTypesAll);
 
 template <class T>
@@ -403,7 +411,8 @@ TYPED_TEST_P(TestPlanarYuvBufferScale, Scale) {
 
 REGISTER_TYPED_TEST_SUITE_P(TestPlanarYuvBufferScale, Scale);
 
-using TestTypesScale = ::testing::Types<I420Buffer, I010Buffer, I210Buffer>;
+using TestTypesScale =
+    ::testing::Types<I420Buffer, I010Buffer, I210Buffer, I410Buffer>;
 INSTANTIATE_TYPED_TEST_SUITE_P(All, TestPlanarYuvBufferScale, TestTypesScale);
 
 template <class T>

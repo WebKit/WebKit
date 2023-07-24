@@ -92,10 +92,10 @@ std::string IDataChunk::ToString() const {
   rtc::StringBuilder sb;
   sb << "I-DATA, type=" << (options().is_unordered ? "unordered" : "ordered")
      << "::"
-     << (*options().is_beginning && *options().is_end
-             ? "complete"
-             : *options().is_beginning ? "first"
-                                       : *options().is_end ? "last" : "middle")
+     << (*options().is_beginning && *options().is_end ? "complete"
+         : *options().is_beginning                    ? "first"
+         : *options().is_end                          ? "last"
+                                                      : "middle")
      << ", tsn=" << *tsn() << ", stream_id=" << *stream_id()
      << ", message_id=" << *message_id();
 

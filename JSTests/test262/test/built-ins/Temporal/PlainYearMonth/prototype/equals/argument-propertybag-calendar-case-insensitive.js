@@ -11,10 +11,6 @@ const instance = new Temporal.PlainYearMonth(2019, 6);
 
 const calendar = "IsO8601";
 
-let arg = { year: 2019, monthCode: "M06", calendar };
-const result1 = instance.equals(arg);
-assert.sameValue(result1, true, "Calendar is case-insensitive");
-
-arg = { year: 2019, monthCode: "M06", calendar: { calendar } };
-const result2 = instance.equals(arg);
-assert.sameValue(result2, true, "Calendar is case-insensitive (nested property)");
+const arg = { year: 2019, monthCode: "M06", calendar };
+const result = instance.equals(arg);
+assert.sameValue(result, true, "Calendar is case-insensitive");

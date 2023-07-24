@@ -38,6 +38,7 @@ public:
     AtomString(AtomStringImpl*);
     AtomString(RefPtr<AtomStringImpl>&&);
     AtomString(Ref<AtomStringImpl>&&);
+    AtomString(const StaticStringImpl*);
     AtomString(StringImpl*);
     explicit AtomString(const String&);
     explicit AtomString(String&&);
@@ -112,7 +113,7 @@ public:
     AtomString(CFStringRef);
 #endif
 
-#ifdef __OBJC__
+#if USE(FOUNDATION) && defined(__OBJC__)
     AtomString(NSString *);
     operator NSString *() const { return m_string; }
 #endif
@@ -142,9 +143,6 @@ private:
     WTF_EXPORT_PRIVATE static AtomString fromUTF8Internal(const char*, const char*);
 
     String m_string;
-
-public:
-    static void initializeStrings();
 };
 
 static_assert(sizeof(AtomString) == sizeof(String), "AtomString and String must be the same size!");
@@ -206,6 +204,11 @@ inline AtomString::AtomString(StringImpl* string)
 {
 }
 
+inline AtomString::AtomString(const StaticStringImpl* string)
+    : m_string(AtomStringImpl::add(string))
+{
+}
+
 inline AtomString::AtomString(const String& string)
     : m_string(AtomStringImpl::add(string.impl()))
 {
@@ -235,7 +238,7 @@ inline AtomString::AtomString(CFStringRef string)
 
 #endif
 
-#ifdef __OBJC__
+#if USE(FOUNDATION) && defined(__OBJC__)
 
 inline AtomString::AtomString(NSString *string)
     : m_string(AtomStringImpl::add((__bridge CFStringRef)string))
@@ -244,8 +247,20 @@ inline AtomString::AtomString(NSString *string)
 
 #endif
 
-WTF_EXPORT_PRIVATE const AtomString& nullAtom();
-WTF_EXPORT_PRIVATE const AtomString& emptyAtom();
+struct StaticAtomString {
+    constexpr StaticAtomString(StringImpl::StaticStringImpl* pointer)
+        : m_pointer(pointer)
+    {
+    }
+
+    StringImpl::StaticStringImpl* m_pointer;
+};
+static_assert(sizeof(AtomString) == sizeof(StaticAtomString), "AtomString and StaticAtomString must be the same size!");
+extern WTF_EXPORT_PRIVATE const StaticAtomString nullAtomData;
+extern WTF_EXPORT_PRIVATE const StaticAtomString emptyAtomData;
+
+inline const AtomString& nullAtom() { return *reinterpret_cast<const AtomString*>(&nullAtomData); }
+inline const AtomString& emptyAtom() { return *reinterpret_cast<const AtomString*>(&emptyAtomData); }
 
 inline AtomString::AtomString(ASCIILiteral literal)
     : m_string(literal.length() ? AtomStringImpl::add(literal.characters(), literal.length()) : Ref { *emptyAtom().impl() })

@@ -70,8 +70,10 @@ class TestSetup(testing.PathTestCase):
             captured.root.log.getvalue(),
             '''Saving GitHub credentials in system credential store...
 GitHub credentials saved via Keyring!
+https://github.example.com/WebKit/WebKit is public, enabling secret scanning on fork
 Verifying user owned fork...
 Created a private fork of 'WebKit' belonging to 'username'!
+Enabled secret scanning on https://github.example.com/username/WebKit!
 ''',
         )
 
@@ -118,6 +120,7 @@ Set git editor to 'SVN_LOG_EDITOR' for this repository
         )
 
     def test_github_checkout(self):
+        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
             MockTerminal.input('n', 'n', 'committer@webkit.org', 'n', 'Committer', 's', 'overwrite', 'y', 'disabled', '1', 'y'), \
             mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
@@ -181,8 +184,10 @@ Setting git editor for {repository}...
 Using the default git editor for this repository
 Saving GitHub credentials in system credential store...
 GitHub credentials saved via Keyring!
+https://github.example.com/WebKit/WebKit is public, enabling secret scanning on fork
 Verifying user owned fork...
 Created a private fork of 'WebKit' belonging to 'username'!
+Enabled secret scanning on https://github.example.com/username/WebKit!
 Adding forked remote as 'fork'...
 Added remote 'fork'
 Fetching 'fork'

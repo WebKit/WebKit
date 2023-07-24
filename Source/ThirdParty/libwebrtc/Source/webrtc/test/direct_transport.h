@@ -47,7 +47,9 @@ class DirectTransport : public Transport {
   DirectTransport(TaskQueueBase* task_queue,
                   std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
                   Call* send_call,
-                  const std::map<uint8_t, MediaType>& payload_type_map);
+                  const std::map<uint8_t, MediaType>& payload_type_map,
+                  rtc::ArrayView<const RtpExtension> audio_extensions,
+                  rtc::ArrayView<const RtpExtension> video_extensions);
 
   ~DirectTransport() override;
 
@@ -63,7 +65,7 @@ class DirectTransport : public Transport {
 
  private:
   void ProcessPackets() RTC_EXCLUSIVE_LOCKS_REQUIRED(&process_lock_);
-  void SendPacket(const uint8_t* data, size_t length);
+  void LegacySendPacket(const uint8_t* data, size_t length);
   void Start();
 
   Call* const send_call_;
@@ -75,6 +77,8 @@ class DirectTransport : public Transport {
 
   const Demuxer demuxer_;
   const std::unique_ptr<SimulatedPacketReceiverInterface> fake_network_;
+  const RtpHeaderExtensionMap audio_extensions_;
+  const RtpHeaderExtensionMap video_extensions_;
 };
 }  // namespace test
 }  // namespace webrtc

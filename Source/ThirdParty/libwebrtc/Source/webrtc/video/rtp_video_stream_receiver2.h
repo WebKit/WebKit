@@ -26,9 +26,9 @@
 #include "call/syncable.h"
 #include "call/video_receive_stream.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "modules/rtp_rtcp/include/recovered_packet_receiver.h"
 #include "modules/rtp_rtcp/include/remote_ntp_time_estimator.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
-#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/absolute_capture_time_interpolator.h"
 #include "modules/rtp_rtcp/source/capture_clock_offset_updater.h"
 #include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
@@ -36,6 +36,7 @@
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
+#include "modules/rtp_rtcp/source/rtp_video_stream_receiver_frame_transformer_delegate.h"
 #include "modules/rtp_rtcp/source/video_rtp_depacketizer.h"
 #include "modules/video_coding/h264_sps_pps_tracker.h"
 #ifndef DISABLE_H265
@@ -46,11 +47,10 @@
 #include "modules/video_coding/packet_buffer.h"
 #include "modules/video_coding/rtp_frame_reference_finder.h"
 #include "rtc_base/experiments/field_trial_parser.h"
-#include "rtc_base/numerics/sequence_number_util.h"
+#include "rtc_base/numerics/sequence_number_unwrapper.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread_annotations.h"
 #include "video/buffered_frame_decryptor.h"
-#include "video/rtp_video_stream_receiver_frame_transformer_delegate.h"
 #include "video/unique_timestamp_counter.h"
 
 namespace webrtc {
@@ -107,6 +107,10 @@ class RtpVideoStreamReceiver2 : public LossNotificationSender,
                        VideoCodecType video_codec,
                        const std::map<std::string, std::string>& codec_params,
                        bool raw_payload);
+  void RemoveReceiveCodec(uint8_t payload_type);
+
+  // Clears state for all receive codecs added via `AddReceiveCodec`.
+  void RemoveReceiveCodecs();
 
   void StartReceive();
   void StopReceive();
@@ -137,7 +141,7 @@ class RtpVideoStreamReceiver2 : public LossNotificationSender,
                              const RTPVideoHeader& video);
 
   // Implements RecoveredPacketReceiver.
-  void OnRecoveredPacket(const uint8_t* packet, size_t packet_length) override;
+  void OnRecoveredPacket(const RtpPacketReceived& packet) override;
 
   // Send an RTCP keyframe request.
   void RequestKeyFrame() override;
@@ -173,11 +177,6 @@ class RtpVideoStreamReceiver2 : public LossNotificationSender,
   // has previously been set. Does not reset the decoder state.
   void SetDepacketizerToDecoderFrameTransformer(
       rtc::scoped_refptr<FrameTransformerInterface> frame_transformer);
-
-  // Updates the rtp header extensions at runtime. Must be called on the
-  // `packet_sequence_checker_` thread.
-  void SetRtpExtensions(const std::vector<RtpExtension>& extensions);
-  const RtpHeaderExtensionMap& GetRtpExtensions() const;
 
   // Called by VideoReceiveStreamInterface when stats are updated.
   void UpdateRtt(int64_t max_rtt_ms);
@@ -322,8 +321,6 @@ class RtpVideoStreamReceiver2 : public LossNotificationSender,
 
   RemoteNtpTimeEstimator ntp_estimator_;
 
-  RtpHeaderExtensionMap rtp_header_extensions_
-      RTC_GUARDED_BY(packet_sequence_checker_);
   // Set by the field trial WebRTC-ForcePlayoutDelay to override any playout
   // delay that is specified in the received packets.
   FieldTrialOptional<int> forced_playout_delay_max_ms_;
@@ -376,6 +373,8 @@ class RtpVideoStreamReceiver2 : public LossNotificationSender,
   // absl::nullopt when `video_structure_ == nullptr`;
   absl::optional<int64_t> video_structure_frame_id_
       RTC_GUARDED_BY(packet_sequence_checker_);
+  Timestamp last_logged_failed_to_parse_dd_
+      RTC_GUARDED_BY(packet_sequence_checker_) = Timestamp::MinusInfinity();
 
   std::unique_ptr<RtpFrameReferenceFinder> reference_finder_
       RTC_GUARDED_BY(packet_sequence_checker_);

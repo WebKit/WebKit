@@ -340,26 +340,11 @@ INSTANTIATE_TEST_SUITE_P(SSE2, LowbdIntraPredTest,
 
 #if HAVE_NEON
 const IntraPredFunc<IntraPred> LowbdIntraPredTestVectorNeon[] = {
-  lowbd_entry(dc, 4, 4, neon),        lowbd_entry(dc, 8, 8, neon),
-  lowbd_entry(dc, 16, 16, neon),      lowbd_entry(dc, 32, 32, neon),
-
-  lowbd_entry(dc_top, 4, 4, neon),    lowbd_entry(dc_top, 8, 8, neon),
-  lowbd_entry(dc_top, 16, 16, neon),  lowbd_entry(dc_top, 32, 32, neon),
-
-  lowbd_entry(dc_left, 4, 4, neon),   lowbd_entry(dc_left, 8, 8, neon),
-  lowbd_entry(dc_left, 16, 16, neon), lowbd_entry(dc_left, 32, 32, neon),
-
-  lowbd_entry(dc_128, 4, 4, neon),    lowbd_entry(dc_128, 8, 8, neon),
-  lowbd_entry(dc_128, 16, 16, neon),  lowbd_entry(dc_128, 32, 32, neon),
-
-  lowbd_entry(v, 4, 4, neon),         lowbd_entry(v, 8, 8, neon),
-  lowbd_entry(v, 16, 16, neon),       lowbd_entry(v, 32, 32, neon),
-
-  lowbd_entry(h, 4, 4, neon),         lowbd_entry(h, 8, 8, neon),
-  lowbd_entry(h, 16, 16, neon),       lowbd_entry(h, 32, 32, neon),
-
-  lowbd_intrapred(smooth, neon),      lowbd_intrapred(smooth_v, neon),
-  lowbd_intrapred(smooth_h, neon),    lowbd_intrapred(paeth, neon),
+  lowbd_intrapred(dc, neon),       lowbd_intrapred(dc_top, neon),
+  lowbd_intrapred(dc_left, neon),  lowbd_intrapred(dc_128, neon),
+  lowbd_intrapred(v, neon),        lowbd_intrapred(h, neon),
+  lowbd_intrapred(smooth, neon),   lowbd_intrapred(smooth_v, neon),
+  lowbd_intrapred(smooth_h, neon), lowbd_intrapred(paeth, neon),
 };
 
 INSTANTIATE_TEST_SUITE_P(NEON, LowbdIntraPredTest,

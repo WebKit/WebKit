@@ -38,11 +38,13 @@ class RemoteFrameClient;
 class RemoteFrameView;
 class WeakPtrImplWithEventTargetData;
 
+enum class RenderAsTextFlag : uint16_t;
+
 class RemoteFrame final : public Frame {
 public:
     WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, ProcessIdentifier);
     WEBCORE_EXPORT static Ref<RemoteFrame> createSubframe(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, Frame& parent, ProcessIdentifier);
-    WEBCORE_EXPORT static Ref<RemoteFrame> createSubframeWithContentsInAnotherProcess(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement&, LayerHostingContextIdentifier, ProcessIdentifier);
+    WEBCORE_EXPORT static Ref<RemoteFrame> createSubframeWithContentsInAnotherProcess(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement&, std::optional<LayerHostingContextIdentifier>, ProcessIdentifier);
     ~RemoteFrame();
 
     RemoteDOMWindow& window() const;
@@ -61,6 +63,7 @@ public:
     Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
 
     ProcessIdentifier remoteProcessIdentifier() const { return m_remoteProcessIdentifier; }
+    String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
 
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame*, Markable<LayerHostingContextIdentifier>, ProcessIdentifier);

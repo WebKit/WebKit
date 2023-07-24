@@ -122,6 +122,8 @@ OPENSSL_EXPORT EVP_PKEY *PKCS8_parse_encrypted_private_key(CBS *cbs,
 // and decrypts it using |password|, sets |*out_key| to the included private
 // key and appends the included certificates to |out_certs|. It returns one on
 // success and zero on error. The caller takes ownership of the outputs.
+// Any friendlyName attributes (RFC 2985) in the PKCS#12 structure will be
+// returned on the |X509| objects as aliases. See also |X509_alias_get0|.
 OPENSSL_EXPORT int PKCS12_get_key_and_certs(EVP_PKEY **out_key,
                                             STACK_OF(X509) *out_certs,
                                             CBS *in, const char *password);
@@ -197,6 +199,10 @@ OPENSSL_EXPORT int PKCS12_parse(const PKCS12 *p12, const char *password,
 OPENSSL_EXPORT int PKCS12_verify_mac(const PKCS12 *p12, const char *password,
                                      int password_len);
 
+// PKCS12_DEFAULT_ITER is the default number of KDF iterations used when
+// creating a |PKCS12| object.
+#define PKCS12_DEFAULT_ITER 2048
+
 // PKCS12_create returns a newly-allocated |PKCS12| object containing |pkey|,
 // |cert|, and |chain|, encrypted with the specified password. |name|, if not
 // NULL, specifies a user-friendly name to encode with the key and
@@ -207,13 +213,19 @@ OPENSSL_EXPORT int PKCS12_verify_mac(const PKCS12 *p12, const char *password,
 //
 // Each of |key_nid|, |cert_nid|, |iterations|, and |mac_iterations| may be zero
 // to use defaults, which are |NID_pbe_WithSHA1And3_Key_TripleDES_CBC|,
-// |NID_pbe_WithSHA1And40BitRC2_CBC|, 2048, and one, respectively.
+// |NID_pbe_WithSHA1And40BitRC2_CBC|, |PKCS12_DEFAULT_ITER|, and one,
+// respectively.
 //
 // |key_nid| or |cert_nid| may also be -1 to disable encryption of the key or
 // certificate, respectively. This option is not recommended and is only
 // implemented for compatibility with external packages. Note the output still
 // requires a password for the MAC. Unencrypted keys in PKCS#12 are also not
 // widely supported and may not open in other implementations.
+//
+// If |cert| or |chain| have associated aliases (see |X509_alias_set1|), they
+// will be included in the output as friendlyName attributes (RFC 2985). It is
+// an error to specify both an alias on |cert| and a non-NULL |name|
+// parameter.
 OPENSSL_EXPORT PKCS12 *PKCS12_create(const char *password, const char *name,
                                      const EVP_PKEY *pkey, X509 *cert,
                                      const STACK_OF(X509) *chain, int key_nid,
@@ -273,5 +285,6 @@ BSSL_NAMESPACE_END
 #define PKCS8_R_UNSUPPORTED_PRF 130
 #define PKCS8_R_INVALID_CHARACTERS 131
 #define PKCS8_R_UNSUPPORTED_OPTIONS 132
+#define PKCS8_R_AMBIGUOUS_FRIENDLY_NAME 133
 
 #endif  // OPENSSL_HEADER_PKCS8_H

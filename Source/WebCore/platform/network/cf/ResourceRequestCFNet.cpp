@@ -58,7 +58,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     auto oldInspectorInitiatorNodeIdentifier = inspectorInitiatorNodeIdentifier();
     auto oldAppInitiatedValue = isAppInitiated();
     auto oldPrivacyProxyFailClosedForUnreachableNonMainHosts = privacyProxyFailClosedForUnreachableNonMainHosts();
-    auto oldUseNetworkConnectionIntegrity = useNetworkConnectionIntegrity();
+    auto oldUseAdvancedPrivacyProtections = useAdvancedPrivacyProtections();
 
     *this = delegateProvidedRequest;
 
@@ -71,7 +71,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
         setInspectorInitiatorNodeIdentifier(*oldInspectorInitiatorNodeIdentifier);
     setIsAppInitiated(oldAppInitiatedValue);
     setPrivacyProxyFailClosedForUnreachableNonMainHosts(oldPrivacyProxyFailClosedForUnreachableNonMainHosts);
-    setUseNetworkConnectionIntegrity(oldUseNetworkConnectionIntegrity);
+    setUseAdvancedPrivacyProtections(oldUseAdvancedPrivacyProtections);
 }
 
 bool ResourceRequest::httpPipeliningEnabled()

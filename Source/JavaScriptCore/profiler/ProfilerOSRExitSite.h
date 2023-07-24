@@ -31,6 +31,9 @@
 
 namespace JSC { namespace Profiler {
 
+class Database;
+class Dumper;
+
 class OSRExitSite {
 public:
     explicit OSRExitSite(const Vector<CodePtr<JSInternalPtrTag>>& codeAddresses)
@@ -40,7 +43,7 @@ public:
     
     const Vector<CodePtr<JSInternalPtrTag>>& codeAddress() const { return m_codeAddresses; }
     
-    JSValue toJS(JSGlobalObject*) const;
+    Ref<JSON::Value> toJSON(Dumper&) const;
 
 private:
     Vector<CodePtr<JSInternalPtrTag>> m_codeAddresses;

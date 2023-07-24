@@ -56,13 +56,20 @@ FAIL Query custom property matching guaranteed-invalid values assert_equals: exp
 PASS Style query with revert keyword is false
 PASS Style query with revert-layer keyword is false
 FAIL Style query 'initial' matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Style query matching negated value-less query against initial value assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Style query 'initial' not matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Style query matching value-less query against non-initial value assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Style query 'inherit' matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Style query 'inherit' not matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Style query 'unset' matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Style query 'unset' not matching assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Match registered <length> custom property with px. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match registered <length> custom property with px via initial keyword. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Match registered <length> custom property with em in query. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Match registered <length> custom property with em in computed value. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Match registered <length> custom property with cqi unit. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match registered <length> custom property with initial value. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match registered <length> custom property with initial value via initial keyword. assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Should only match exact string for numbers in non-registered custom properties assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Spaces should not collapse in non-registered custom properties assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 

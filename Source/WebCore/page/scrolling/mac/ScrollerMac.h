@@ -57,7 +57,7 @@ public:
 
     RetainPtr<NSScrollerImp> takeScrollerImp() { return std::exchange(m_scrollerImp, { }); }
     NSScrollerImp *scrollerImp() { return m_scrollerImp.get(); }
-    void setScrollerImp(NSScrollerImp *imp) { m_scrollerImp = imp; }
+    void setScrollerImp(NSScrollerImp *imp);
     void updateScrollbarStyle();
     void updatePairScrollerImps();
 
@@ -70,8 +70,10 @@ public:
     void setLastKnownMousePositionInScrollbar(IntPoint position) { m_lastKnownMousePositionInScrollbar = position; }
     IntPoint lastKnownMousePositionInScrollbar() const;
     void visibilityChanged(bool);
+    void updateMinimumKnobLength(int);
     void detach();
 private:
+    int m_minimumKnobLength { 0 };
     bool m_isVisible { false };
     ScrollerPairMac& m_pair;
     const ScrollbarOrientation m_orientation;

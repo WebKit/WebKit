@@ -148,6 +148,15 @@ class RTC_EXPORT VideoCodec {
   bool active;
 
   unsigned int qpMax;
+  // The actual number of simulcast streams. This is <= 1 in singlecast (it can
+  // be 0 in old code paths), but it is also 1 in the {active,inactive,inactive}
+  // "single RTP simulcast" use case and the legacy kSVC use case. In all other
+  // cases this is the same as the number of encodings (which may include
+  // inactive encodings). In other words:
+  // - `numberOfSimulcastStreams <= 1` in singlecast and singlecast-like setups
+  //   including legacy kSVC (encodings interpreted as spatial layers) or
+  //   standard kSVC (1 active encoding).
+  // - `numberOfSimulcastStreams > 1` in simulcast of 2+ active encodings.
   unsigned char numberOfSimulcastStreams;
   SimulcastStream simulcastStream[kMaxSimulcastStreams];
   SpatialLayer spatialLayers[kMaxSpatialLayers];

@@ -68,6 +68,10 @@ def _ParseArgs():
                       action='store_true',
                       default=False,
                       help='Use goma.')
+  parser.add_argument('--use-remoteexec',
+                      action='store_true',
+                      default=False,
+                      help='Use RBE.')
   parser.add_argument('--use-unstripped-libs',
                       action='store_true',
                       default=False,
@@ -117,7 +121,7 @@ def _RunGN(args):
 
 def _RunNinja(output_directory, args):
   cmd = [
-      os.path.join(find_depot_tools.DEPOT_TOOLS_PATH, 'ninja'), '-C',
+      os.path.join(SRC_DIR, 'third_party', 'ninja', 'ninja'), '-C',
       output_directory
   ]
   cmd.extend(args)
@@ -163,8 +167,8 @@ def _GetArmVersion(arch):
   raise Exception('Unknown arch: ' + arch)
 
 
-def Build(build_dir, arch, use_goma, extra_gn_args, extra_gn_switches,
-          extra_ninja_switches):
+def Build(build_dir, arch, use_goma, use_remoteexec, extra_gn_args,
+          extra_gn_switches, extra_ninja_switches):
   """Generates target architecture using GN and builds it using ninja."""
   logging.info('Building: %s', arch)
   output_directory = _GetOutputDirectory(build_dir, arch)
@@ -174,7 +178,8 @@ def Build(build_dir, arch, use_goma, extra_gn_args, extra_gn_switches,
       'is_component_build': False,
       'rtc_include_tests': False,
       'target_cpu': _GetTargetCpu(arch),
-      'use_goma': use_goma
+      'use_goma': use_goma,
+      'use_remoteexec': use_remoteexec,
   }
   arm_version = _GetArmVersion(arch)
   if arm_version:
@@ -187,7 +192,7 @@ def Build(build_dir, arch, use_goma, extra_gn_args, extra_gn_switches,
   _RunGN(gn_args_list)
 
   ninja_args = TARGETS[:]
-  if use_goma:
+  if use_goma or use_remoteexec:
     ninja_args.extend(['-j', '200'])
   ninja_args.extend(extra_ninja_switches)
   _RunNinja(output_directory, ninja_args)
@@ -223,6 +228,7 @@ def GenerateLicenses(output_dir, build_dir, archs):
 def BuildAar(archs,
              output_file,
              use_goma=False,
+             use_remoteexec=False,
              extra_gn_args=None,
              ext_build_dir=None,
              extra_gn_switches=None,
@@ -234,8 +240,8 @@ def BuildAar(archs,
   build_dir = ext_build_dir if ext_build_dir else tempfile.mkdtemp()
 
   for arch in archs:
-    Build(build_dir, arch, use_goma, extra_gn_args, extra_gn_switches,
-          extra_ninja_switches)
+    Build(build_dir, arch, use_goma, use_remoteexec, extra_gn_args,
+          extra_gn_switches, extra_ninja_switches)
 
   with zipfile.ZipFile(output_file, 'w') as aar_file:
     # Architecture doesn't matter here, arbitrarily using the first one.
@@ -254,9 +260,9 @@ def main():
   args = _ParseArgs()
   logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO)
 
-  BuildAar(args.arch, args.output, args.use_goma, args.extra_gn_args,
-           args.build_dir, args.extra_gn_switches, args.extra_ninja_switches,
-           args.use_unstripped_libs)
+  BuildAar(args.arch, args.output, args.use_goma, args.use_remoteexec,
+           args.extra_gn_args, args.build_dir, args.extra_gn_switches,
+           args.extra_ninja_switches, args.use_unstripped_libs)
 
 
 if __name__ == '__main__':

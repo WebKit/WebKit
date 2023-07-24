@@ -228,6 +228,7 @@ rtc_source_set("matched_filter") {
   deps = [
     ":aec3_common",
     "../../../api:array_view",
+    "../../../rtc_base:gtest_prod",
     "../../../rtc_base/system:arch",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]

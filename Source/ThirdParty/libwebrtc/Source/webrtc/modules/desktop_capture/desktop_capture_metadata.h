@@ -12,7 +12,7 @@
 #define MODULES_DESKTOP_CAPTURE_DESKTOP_CAPTURE_METADATA_H_
 
 #if defined(WEBRTC_USE_GIO)
-#include "modules/desktop_capture/linux/wayland/xdg_session_details.h"
+#include "modules/portal/xdg_session_details.h"
 #endif  // defined(WEBRTC_USE_GIO)
 
 namespace webrtc {

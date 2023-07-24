@@ -53,11 +53,6 @@
 
 #import <pal/cocoa/PassKitSoftLink.h>
 
-// FIXME: We don't support any platforms without -setThumbnailURLs:, so this can be removed.
-@interface PKPaymentRequest ()
-@property (nonatomic, strong) NSURL *thumbnailURL;
-@end
-
 namespace WebKit {
 
 WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPaymentCoordinatorProxy::Client& client)

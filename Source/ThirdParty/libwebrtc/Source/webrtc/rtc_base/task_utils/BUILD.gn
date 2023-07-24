@@ -36,6 +36,7 @@ if (rtc_include_tests) {
       "..:rtc_task_queue",
       "..:task_queue_for_test",
       "../../api/task_queue",
+      "../../api/task_queue/test:mock_task_queue_base",
       "../../api/units:time_delta",
       "../../api/units:timestamp",
       "../../system_wrappers:system_wrappers",

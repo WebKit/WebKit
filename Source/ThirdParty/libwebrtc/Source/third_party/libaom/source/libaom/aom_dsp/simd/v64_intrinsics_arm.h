@@ -13,6 +13,7 @@
 #define AOM_AOM_DSP_SIMD_V64_INTRINSICS_ARM_H_
 
 #include <arm_neon.h>
+#include <string.h>
 
 #include "aom_dsp/simd/v64_intrinsics_arm.h"
 #include "aom_ports/arm.h"
@@ -50,7 +51,7 @@ SIMD_INLINE v64 v64_from_32(uint32_t x, uint32_t y) {
 
 SIMD_INLINE v64 v64_from_64(uint64_t x) { return vcreate_s64(x); }
 
-SIMD_INLINE uint64_t v64_u64(v64 x) { return (uint64_t)x; }
+SIMD_INLINE uint64_t v64_u64(v64 x) { return (uint64_t)vget_lane_s64(x, 0); }
 
 SIMD_INLINE uint32_t u32_load_aligned(const void *p) {
   return *((uint32_t *)p);
@@ -77,8 +78,7 @@ SIMD_INLINE void u32_store_unaligned(void *p, uint32_t a) {
   } __attribute__((__packed__));
   ((struct Unaligned32Struct *)p)->value = a;
 #else
-  vst1_lane_u32((uint32_t *)p, vreinterpret_u32_s64((uint64x1_t)(uint64_t)a),
-                0);
+  memcpy(p, &a, 4);
 #endif
 }
 
@@ -106,7 +106,8 @@ SIMD_INLINE v64 v64_align(v64 a, v64 b, unsigned int c) {
                  vext_s8(vreinterpret_s8_s64(b), vreinterpret_s8_s64(a), c))
            : b;
 #else
-  return c ? v64_from_64(((uint64_t)b >> c * 8) | ((uint64_t)a << (8 - c) * 8))
+  return c ? v64_from_64(((uint64_t)vget_lane_s64(b, 0) >> c * 8) |
+                         ((uint64_t)vget_lane_s64(a, 0) << (8 - c) * 8))
            : b;
 #endif
 }
@@ -133,7 +134,7 @@ SIMD_INLINE int64_t v64_dotp_su8(v64 x, v64 y) {
   return vaddlvq_s16(t);
 #else
   int64x2_t r = vpaddlq_s32(vpaddlq_s16(t));
-  return (int64_t)vadd_s64(vget_high_s64(r), vget_low_s64(r));
+  return vget_lane_s64(vadd_s64(vget_high_s64(r), vget_low_s64(r)), 0);
 #endif
 }
 
@@ -144,7 +145,7 @@ SIMD_INLINE int64_t v64_dotp_s16(v64 x, v64 y) {
 #else
   int64x2_t r =
       vpaddlq_s32(vmull_s16(vreinterpret_s16_s64(x), vreinterpret_s16_s64(y)));
-  return (int64_t)(vget_high_s64(r) + vget_low_s64(r));
+  return vget_lane_s64(vadd_s64(vget_high_s64(r), vget_low_s64(r)), 0);
 #endif
 }
 
@@ -152,12 +153,13 @@ SIMD_INLINE uint64_t v64_hadd_u8(v64 x) {
 #if defined(__aarch64__)
   return vaddlv_u8(vreinterpret_u8_s64(x));
 #else
-  return (uint64_t)vpaddl_u32(vpaddl_u16(vpaddl_u8(vreinterpret_u8_s64(x))));
+  return vget_lane_u64(
+      vpaddl_u32(vpaddl_u16(vpaddl_u8(vreinterpret_u8_s64(x)))), 0);
 #endif
 }
 
 SIMD_INLINE int64_t v64_hadd_s16(v64 a) {
-  return (int64_t)vpaddl_s32(vpaddl_s16(vreinterpret_s16_s64(a)));
+  return vget_lane_s64(vpaddl_s32(vpaddl_s16(vreinterpret_s16_s64(a))), 0);
 }
 
 typedef uint16x8_t sad64_internal;
@@ -175,7 +177,8 @@ SIMD_INLINE uint32_t v64_sad_u8_sum(sad64_internal s) {
   return vaddlvq_u16(s);
 #else
   uint64x2_t r = vpaddlq_u32(vpaddlq_u16(s));
-  return (uint32_t)(uint64_t)(vget_high_u64(r) + vget_low_u64(r));
+  return (uint32_t)vget_lane_u64(vadd_u64(vget_high_u64(r), vget_low_u64(r)),
+                                 0);
 #endif
 }
 
@@ -556,43 +559,48 @@ SIMD_INLINE v64 v64_cmpeq_16(v64 x, v64 y) {
 }
 
 SIMD_INLINE v64 v64_shl_8(v64 a, unsigned int c) {
-  return vreinterpret_s64_u8(vshl_u8(vreinterpret_u8_s64(a), vdup_n_s8(c)));
+  return vreinterpret_s64_u8(
+      vshl_u8(vreinterpret_u8_s64(a), vdup_n_s8((int8_t)c)));
 }
 
 SIMD_INLINE v64 v64_shr_u8(v64 a, unsigned int c) {
-  return vreinterpret_s64_u8(vshl_u8(vreinterpret_u8_s64(a), vdup_n_s8(-c)));
+  return vreinterpret_s64_u8(
+      vshl_u8(vreinterpret_u8_s64(a), vdup_n_s8(-(int8_t)c)));
 }
 
 SIMD_INLINE v64 v64_shr_s8(v64 a, unsigned int c) {
-  return vreinterpret_s64_s8(vshl_s8(vreinterpret_s8_s64(a), vdup_n_s8(-c)));
+  return vreinterpret_s64_s8(
+      vshl_s8(vreinterpret_s8_s64(a), vdup_n_s8(-(int8_t)c)));
 }
 
 SIMD_INLINE v64 v64_shl_16(v64 a, unsigned int c) {
-  return vreinterpret_s64_u16(vshl_u16(vreinterpret_u16_s64(a), vdup_n_s16(c)));
+  return vreinterpret_s64_u16(
+      vshl_u16(vreinterpret_u16_s64(a), vdup_n_s16((int16_t)c)));
 }
 
 SIMD_INLINE v64 v64_shr_u16(v64 a, unsigned int c) {
   return vreinterpret_s64_u16(
-      vshl_u16(vreinterpret_u16_s64(a), vdup_n_s16(-(int)c)));
+      vshl_u16(vreinterpret_u16_s64(a), vdup_n_s16(-(int16_t)c)));
 }
 
 SIMD_INLINE v64 v64_shr_s16(v64 a, unsigned int c) {
   return vreinterpret_s64_s16(
-      vshl_s16(vreinterpret_s16_s64(a), vdup_n_s16(-(int)c)));
+      vshl_s16(vreinterpret_s16_s64(a), vdup_n_s16(-(int16_t)c)));
 }
 
 SIMD_INLINE v64 v64_shl_32(v64 a, unsigned int c) {
-  return vreinterpret_s64_u32(vshl_u32(vreinterpret_u32_s64(a), vdup_n_s32(c)));
+  return vreinterpret_s64_u32(
+      vshl_u32(vreinterpret_u32_s64(a), vdup_n_s32((int32_t)c)));
 }
 
 SIMD_INLINE v64 v64_shr_u32(v64 a, unsigned int c) {
   return vreinterpret_s64_u32(
-      vshl_u32(vreinterpret_u32_s64(a), vdup_n_s32(-(int)c)));
+      vshl_u32(vreinterpret_u32_s64(a), vdup_n_s32(-(int32_t)c)));
 }
 
 SIMD_INLINE v64 v64_shr_s32(v64 a, unsigned int c) {
   return vreinterpret_s64_s32(
-      vshl_s32(vreinterpret_s32_s64(a), vdup_n_s32(-(int)c)));
+      vshl_s32(vreinterpret_s32_s64(a), vdup_n_s32(-(int32_t)c)));
 }
 
 // The following functions require an immediate.

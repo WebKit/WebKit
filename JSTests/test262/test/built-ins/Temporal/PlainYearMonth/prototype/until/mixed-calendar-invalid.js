@@ -11,8 +11,8 @@ class customCal extends Temporal.Calendar {
   constructor () {
     super('iso8601');
   }
-  
-  toString() {
+
+  get id() {
     return "I am a secret cal.";
   }
 }

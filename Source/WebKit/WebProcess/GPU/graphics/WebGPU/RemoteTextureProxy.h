@@ -29,17 +29,17 @@
 
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUTexture.h>
-#include <pal/graphics/WebGPU/WebGPUTextureDimension.h>
-#include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
-#include <pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUTexture.h>
+#include <WebCore/WebGPUTextureDimension.h>
+#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUTextureViewDescriptor.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteTextureProxy final : public PAL::WebGPU::Texture {
+class RemoteTextureProxy final : public WebCore::WebGPU::Texture {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteTextureProxy> create(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -65,7 +65,7 @@ private:
     
     static inline constexpr Seconds defaultSendTimeout = 30_s;
     template<typename T>
-    WARN_UNUSED_RETURN bool send(T&& message)
+    WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
@@ -75,7 +75,7 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    Ref<PAL::WebGPU::TextureView> createView(const std::optional<PAL::WebGPU::TextureViewDescriptor>&) final;
+    Ref<WebCore::WebGPU::TextureView> createView(const std::optional<WebCore::WebGPU::TextureViewDescriptor>&) final;
 
     void destroy() final;
 

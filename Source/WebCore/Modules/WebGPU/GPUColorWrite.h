@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,8 @@
 #include "GPUBlendFactor.h"
 #include "GPUBlendOperation.h"
 #include "GPUIntegralTypes.h"
+#include "WebGPUColorWrite.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUColorWrite.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -44,17 +44,17 @@ public:
     static constexpr GPUFlagsConstant ALL   = 0xF;
 };
 
-inline PAL::WebGPU::ColorWriteFlags convertColorWriteFlagsToBacking(GPUColorWriteFlags colorWriteFlags)
+inline WebGPU::ColorWriteFlags convertColorWriteFlagsToBacking(GPUColorWriteFlags colorWriteFlags)
 {
-    PAL::WebGPU::ColorWriteFlags result;
+    WebGPU::ColorWriteFlags result;
     if (colorWriteFlags & GPUColorWrite::RED)
-        result.add(PAL::WebGPU::ColorWrite::Red);
+        result.add(WebGPU::ColorWrite::Red);
     if (colorWriteFlags & GPUColorWrite::GREEN)
-        result.add(PAL::WebGPU::ColorWrite::Green);
+        result.add(WebGPU::ColorWrite::Green);
     if (colorWriteFlags & GPUColorWrite::BLUE)
-        result.add(PAL::WebGPU::ColorWrite::Blue);
+        result.add(WebGPU::ColorWrite::Blue);
     if (colorWriteFlags & GPUColorWrite::ALPHA)
-        result.add(PAL::WebGPU::ColorWrite::Alpha);
+        result.add(WebGPU::ColorWrite::Alpha);
     return result;
 }
 

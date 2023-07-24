@@ -38,10 +38,6 @@ rtc_library("control_handler") {
     "../../pacing",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
-
-  if (!build_with_mozilla) {
-    deps += [ "../../../rtc_base" ]
-  }
 }
 rtc_library("transport_feedback") {
   visibility = [ "*" ]
@@ -58,10 +54,11 @@ rtc_library("transport_feedback") {
     "../../../api/transport:network_control",
     "../../../api/units:data_size",
     "../../../api/units:timestamp",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
     "../../../rtc_base:macromagic",
+    "../../../rtc_base:network_route",
+    "../../../rtc_base:rtc_numerics",
     "../../../rtc_base/network:sent_packet",
     "../../../rtc_base/synchronization:mutex",
     "../../../rtc_base/system:no_unique_address",
@@ -88,7 +85,6 @@ if (rtc_include_tests) {
       "../:congestion_controller",
       "../../../api/transport:network_control",
       "../../../logging:mocks",
-      "../../../rtc_base",
       "../../../rtc_base:checks",
       "../../../rtc_base:safe_conversions",
       "../../../rtc_base/network:sent_packet",

@@ -14,14 +14,13 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-enter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-escape.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-left.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/chained-setTimeout.html
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/detached-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/message-event-activation-api-iframe-cross-origin.sub.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/message-event-init.tentative.html

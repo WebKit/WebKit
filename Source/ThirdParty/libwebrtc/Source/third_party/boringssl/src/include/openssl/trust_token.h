@@ -48,6 +48,14 @@ OPENSSL_EXPORT const TRUST_TOKEN_METHOD *TRUST_TOKEN_experiment_v2_voprf(void);
 // PMBTokens and P-384 with up to 3 keys, without RR verification.
 OPENSSL_EXPORT const TRUST_TOKEN_METHOD *TRUST_TOKEN_experiment_v2_pmb(void);
 
+// TRUST_TOKEN_pst_v1_voprf is an experimental Trust Tokens protocol
+// using VOPRFs and P-384 with up to 6 keys, without RR verification.
+OPENSSL_EXPORT const TRUST_TOKEN_METHOD *TRUST_TOKEN_pst_v1_voprf(void);
+
+// TRUST_TOKEN_pst_v1_pmb is an experimental Trust Tokens protocol using
+// PMBTokens and P-384 with up to 3 keys, without RR verification.
+OPENSSL_EXPORT const TRUST_TOKEN_METHOD *TRUST_TOKEN_pst_v1_pmb(void);
+
 // trust_token_st represents a single-use token for the Trust Token protocol.
 // For the client, this is the token and its corresponding signature. For the
 // issuer, this is the token itself.
@@ -78,14 +86,29 @@ OPENSSL_EXPORT void TRUST_TOKEN_free(TRUST_TOKEN *token);
 // to ensure success, these should be at least
 // |TRUST_TOKEN_MAX_PRIVATE_KEY_SIZE| and |TRUST_TOKEN_MAX_PUBLIC_KEY_SIZE|.
 //
-// WARNING: This API is unstable and the serializations of these keys are
-// subject to change. Keys generated with this function may not be persisted.
-//
 // This function returns one on success or zero on error.
 OPENSSL_EXPORT int TRUST_TOKEN_generate_key(
     const TRUST_TOKEN_METHOD *method, uint8_t *out_priv_key,
     size_t *out_priv_key_len, size_t max_priv_key_len, uint8_t *out_pub_key,
     size_t *out_pub_key_len, size_t max_pub_key_len, uint32_t id);
+
+// TRUST_TOKEN_derive_key_from_secret deterministically derives a new Trust
+// Token keypair labeled with |id| from an input |secret| and serializes the
+// private and public keys, writing the private key to |out_priv_key| and
+// setting |*out_priv_key_len| to the number of bytes written, and writing the
+// public key to |out_pub_key| and setting |*out_pub_key_len| to the number of
+// bytes written.
+//
+// At most |max_priv_key_len| and |max_pub_key_len| bytes are written. In order
+// to ensure success, these should be at least
+// |TRUST_TOKEN_MAX_PRIVATE_KEY_SIZE| and |TRUST_TOKEN_MAX_PUBLIC_KEY_SIZE|.
+//
+// This function returns one on success or zero on error.
+OPENSSL_EXPORT int TRUST_TOKEN_derive_key_from_secret(
+    const TRUST_TOKEN_METHOD *method, uint8_t *out_priv_key,
+    size_t *out_priv_key_len, size_t max_priv_key_len, uint8_t *out_pub_key,
+    size_t *out_pub_key_len, size_t max_pub_key_len, uint32_t id,
+    const uint8_t *secret, size_t secret_len);
 
 
 // Trust Token client implementation.
@@ -127,6 +150,15 @@ OPENSSL_EXPORT int TRUST_TOKEN_CLIENT_begin_issuance(TRUST_TOKEN_CLIENT *ctx,
                                                      uint8_t **out,
                                                      size_t *out_len,
                                                      size_t count);
+
+// TRUST_TOKEN_CLIENT_begin_issuance_over_message produces a request for a trust
+// token derived from |msg| and serializes the request into a newly-allocated
+// buffer, setting |*out| to that buffer and |*out_len| to its length. The
+// caller takes ownership of the buffer and must call |OPENSSL_free| when done.
+// It returns one on success and zero on error.
+OPENSSL_EXPORT int TRUST_TOKEN_CLIENT_begin_issuance_over_message(
+    TRUST_TOKEN_CLIENT *ctx, uint8_t **out, size_t *out_len, size_t count,
+    const uint8_t *msg, size_t msg_len);
 
 // TRUST_TOKEN_CLIENT_finish_issuance consumes |response| from the issuer and
 // extracts the tokens, returning a list of tokens and the index of the key used
@@ -224,28 +256,6 @@ OPENSSL_EXPORT int TRUST_TOKEN_ISSUER_issue(
     uint32_t public_metadata, uint8_t private_metadata, size_t max_issuance);
 
 // TRUST_TOKEN_ISSUER_redeem ingests a |request| for token redemption and
-// verifies the token. If the token is valid, a RR is produced with a lifetime
-// of |lifetime| (in seconds), signing over the requested data from the request
-// and the value of the token, storing the result into a newly-allocated buffer
-// and setting |*out| to that buffer and |*out_len| to its length. The extracted
-// |TRUST_TOKEN| is stored into a newly-allocated buffer and stored in
-// |*out_token|. The extracted client data is stored into a newly-allocated
-// buffer and stored in |*out_client_data|. In TrustTokenV1, the extracted
-// redemption time is stored in |*out_redemption_time|. The caller takes
-// ownership of each output buffer and must call |OPENSSL_free| when done. It
-// returns one on success or zero on error.
-//
-// The caller must keep track of all values of |*out_token| seen globally before
-// returning the SRR to the client. If the value has been reused, the caller
-// must discard the SRR and report an error to the caller. Returning an SRR with
-// replayed values allows an attacker to double-spend tokens.
-OPENSSL_EXPORT int TRUST_TOKEN_ISSUER_redeem(
-    const TRUST_TOKEN_ISSUER *ctx, uint8_t **out, size_t *out_len,
-    TRUST_TOKEN **out_token, uint8_t **out_client_data,
-    size_t *out_client_data_len, uint64_t *out_redemption_time,
-    const uint8_t *request, size_t request_len, uint64_t lifetime);
-
-// TRUST_TOKEN_ISSUER_redeem_raw ingests a |request| for token redemption and
 // verifies the token. The public metadata is stored in |*out_public|. The
 // private metadata (if any) is stored in |*out_private|. The extracted
 // |TRUST_TOKEN| is stored into a newly-allocated buffer and stored in
@@ -258,10 +268,34 @@ OPENSSL_EXPORT int TRUST_TOKEN_ISSUER_redeem(
 // returning a response to the client. If the value has been reused, the caller
 // must report an error to the client. Returning a response with replayed values
 // allows an attacker to double-spend tokens.
-OPENSSL_EXPORT int TRUST_TOKEN_ISSUER_redeem_raw(
+OPENSSL_EXPORT int TRUST_TOKEN_ISSUER_redeem(
     const TRUST_TOKEN_ISSUER *ctx, uint32_t *out_public, uint8_t *out_private,
     TRUST_TOKEN **out_token, uint8_t **out_client_data,
     size_t *out_client_data_len, const uint8_t *request, size_t request_len);
+
+// TRUST_TOKEN_ISSUER_redeem_raw is a legacy alias for
+// |TRUST_TOKEN_ISSUER_redeem|.
+#define TRUST_TOKEN_ISSUER_redeem_raw TRUST_TOKEN_ISSUER_redeem
+
+// TRUST_TOKEN_ISSUER_redeem_over_message ingests a |request| for token
+// redemption and a message and verifies the token and that it is derived from
+// the provided |msg|. The public metadata is stored in
+// |*out_public|. The private metadata (if any) is stored in |*out_private|. The
+// extracted |TRUST_TOKEN| is stored into a newly-allocated buffer and stored in
+// |*out_token|. The extracted client data is stored into a newly-allocated
+// buffer and stored in |*out_client_data|. The caller takes ownership of each
+// output buffer and must call |OPENSSL_free| when done. It returns one on
+// success or zero on error.
+//
+// The caller must keep track of all values of |*out_token| seen globally before
+// returning a response to the client. If the value has been reused, the caller
+// must report an error to the client. Returning a response with replayed values
+// allows an attacker to double-spend tokens.
+OPENSSL_EXPORT int TRUST_TOKEN_ISSUER_redeem_over_message(
+    const TRUST_TOKEN_ISSUER *ctx, uint32_t *out_public, uint8_t *out_private,
+    TRUST_TOKEN **out_token, uint8_t **out_client_data,
+    size_t *out_client_data_len, const uint8_t *request, size_t request_len,
+    const uint8_t *msg, size_t msg_len);
 
 // TRUST_TOKEN_decode_private_metadata decodes |encrypted_bit| using the
 // private metadata key specified by a |key| buffer of length |key_len| and the

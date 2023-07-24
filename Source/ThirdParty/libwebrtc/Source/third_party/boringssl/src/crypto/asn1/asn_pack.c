@@ -59,47 +59,40 @@
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
-/* ASN1_ITEM versions of the above */
 
-ASN1_STRING *ASN1_item_pack(void *obj, const ASN1_ITEM *it, ASN1_STRING **oct)
-{
-    ASN1_STRING *octmp;
+ASN1_STRING *ASN1_item_pack(void *obj, const ASN1_ITEM *it, ASN1_STRING **out) {
+  uint8_t *new_data = NULL;
+  int len = ASN1_item_i2d(obj, &new_data, it);
+  if (len <= 0) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_ENCODE_ERROR);
+    return NULL;
+  }
 
-    if (!oct || !*oct) {
-        if (!(octmp = ASN1_STRING_new())) {
-            OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
-            return NULL;
-        }
-        if (oct)
-            *oct = octmp;
-    } else
-        octmp = *oct;
-
-    if (octmp->data) {
-        OPENSSL_free(octmp->data);
-        octmp->data = NULL;
+  ASN1_STRING *ret = NULL;
+  if (out == NULL || *out == NULL) {
+    ret = ASN1_STRING_new();
+    if (ret == NULL) {
+      OPENSSL_free(new_data);
+      return NULL;
     }
+  } else {
+    ret = *out;
+  }
 
-    if (!(octmp->length = ASN1_item_i2d(obj, &octmp->data, it))) {
-        OPENSSL_PUT_ERROR(ASN1, ASN1_R_ENCODE_ERROR);
-        return NULL;
-    }
-    if (!octmp->data) {
-        OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
-        return NULL;
-    }
-    return octmp;
+  ASN1_STRING_set0(ret, new_data, len);
+  if (out != NULL) {
+    *out = ret;
+  }
+  return ret;
 }
 
-/* Extract an ASN1 object from an ASN1_STRING */
-
-void *ASN1_item_unpack(const ASN1_STRING *oct, const ASN1_ITEM *it)
-{
-    const unsigned char *p;
-    void *ret;
-
-    p = oct->data;
-    if (!(ret = ASN1_item_d2i(NULL, &p, oct->length, it)))
-        OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
-    return ret;
+void *ASN1_item_unpack(const ASN1_STRING *oct, const ASN1_ITEM *it) {
+  const unsigned char *p = oct->data;
+  void *ret = ASN1_item_d2i(NULL, &p, oct->length, it);
+  if (ret == NULL || p != oct->data + oct->length) {
+    OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
+    ASN1_item_free(ret, it);
+    return NULL;
+  }
+  return ret;
 }

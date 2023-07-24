@@ -28,7 +28,6 @@
 
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutInitialContainingBlock.h"
-#include "LayoutState.h"
 #include "RenderStyleInlines.h"
 #include "Shape.h"
 #include <wtf/IsoMallocInlines.h>
@@ -64,9 +63,8 @@ BoxGeometry FloatingState::FloatItem::boxGeometry() const
 
 FloatingState::FloatItem::~FloatItem() = default;
 
-FloatingState::FloatingState(LayoutState& layoutState, const ElementBox& blockFormattingContextRoot)
-    : m_layoutState(layoutState)
-    , m_blockFormattingContextRoot(blockFormattingContextRoot)
+FloatingState::FloatingState(const ElementBox& blockFormattingContextRoot)
+    : m_blockFormattingContextRoot(blockFormattingContextRoot)
     , m_isLeftToRightDirection(blockFormattingContextRoot.style().isLeftToRightDirection())
 {
     ASSERT(blockFormattingContextRoot.establishesBlockFormattingContext());

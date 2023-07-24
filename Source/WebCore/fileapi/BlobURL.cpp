@@ -60,7 +60,7 @@ static const Document* blobOwner(const SecurityOrigin& blobOrigin)
         return nullptr;
 
     for (const auto* document : Document::allDocuments()) {
-        if (&document->securityOrigin() == &blobOrigin)
+        if (document->securityOrigin().isSameOriginAs(blobOrigin))
             return document;
     }
     return nullptr;
@@ -92,7 +92,7 @@ bool BlobURL::isSecureBlobURL(const URL& url)
 URL BlobURL::createBlobURL(StringView originString)
 {
     ASSERT(!originString.isEmpty());
-    String urlString = makeString("blob:"_s, originString, '/', UUID::createVersion4());
+    String urlString = makeString("blob:"_s, originString, '/', WTF::UUID::createVersion4());
     return URL({ }, urlString);
 }
 

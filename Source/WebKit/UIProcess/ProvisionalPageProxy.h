@@ -34,6 +34,7 @@
 #include "SandboxExtension.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebsitePoliciesData.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameIdentifier.h>
@@ -49,6 +50,7 @@ class FormDataReference;
 }
 
 namespace WebCore {
+class RegistrableDomain;
 class ResourceRequest;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 }
@@ -56,6 +58,7 @@ enum class ShouldTreatAsContinuingLoad : uint8_t;
 namespace WebKit {
 
 class DrawingAreaProxy;
+class RemotePageProxy;
 class SuspendedPageProxy;
 class UserData;
 class WebBackForwardListItem;
@@ -78,7 +81,7 @@ using LayerHostingContextID = uint32_t;
 class ProvisionalPageProxy : public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProvisionalPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies*);
+    ProvisionalPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>, API::Navigation&, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies*);
     ~ProvisionalPageProxy();
 
     WebPageProxy& page() { return m_page.get(); }
@@ -89,13 +92,14 @@ public:
     ProcessSwapRequestedByClient processSwapRequestedByClient() const { return m_processSwapRequestedByClient; }
     uint64_t navigationID() const { return m_navigationID; }
     const URL& provisionalURL() const { return m_provisionalLoadURL; }
+    std::optional<HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>>> takeRemotePageMap();
 
     bool isProcessSwappingOnNavigationResponse() const { return m_isProcessSwappingOnNavigationResponse; }
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
     std::unique_ptr<DrawingAreaProxy> takeDrawingArea();
 
-    void setNavigationID(uint64_t navigationID) { m_navigationID = navigationID; }
+    void setNavigation(API::Navigation&);
 
 #if PLATFORM(COCOA)
     Vector<uint8_t> takeAccessibilityToken() { return WTFMove(m_accessibilityToken); }
@@ -149,6 +153,7 @@ private:
     void backForwardGoToItem(const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(const WebBackForwardListCounts&)>&&);
     void decidePolicyForNavigationActionSync(WebCore::FrameIdentifier, bool isMainFrame, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, CompletionHandler<void(PolicyDecision&&)>&&);
     void backForwardAddItem(BackForwardListItemState&&);
+    void didDestroyNavigation(uint64_t navigationID);
 #if USE(QUICK_LOOK)
     void requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&&);
 #endif
@@ -182,6 +187,7 @@ private:
     bool m_wasCommitted { false };
     bool m_isProcessSwappingOnNavigationResponse { false };
     URL m_provisionalLoadURL;
+    WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
 
 #if PLATFORM(COCOA)
     Vector<uint8_t> m_accessibilityToken;
@@ -199,6 +205,7 @@ private:
     LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
 #endif
 #endif
+    std::optional<HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>>> m_remotePageMap;
 };
 
 } // namespace WebKit

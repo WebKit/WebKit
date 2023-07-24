@@ -474,7 +474,6 @@ static InputSessionChangeCount nextInputSessionChangeCount()
     RetainPtr<TestMessageHandler> _testHandler;
     RetainPtr<WKUserScript> _onloadScript;
 #if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<ClassMethodSwizzler> _sharedCalloutBarSwizzler;
     InputSessionChangeCount _inputSessionChangeCount;
     UIEdgeInsets _overrideSafeAreaInset;
 #endif
@@ -495,15 +494,6 @@ static InputSessionChangeCount nextInputSessionChangeCount()
     return [self initWithFrame:frame configuration:configuration addToWindow:YES];
 }
 
-#if PLATFORM(IOS_FAMILY)
-
-static UICalloutBar *suppressUICalloutBar()
-{
-    return nil;
-}
-
-#endif
-
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration addToWindow:(BOOL)addToWindow
 {
     self = [super initWithFrame:frame configuration:configuration];
@@ -514,8 +504,6 @@ static UICalloutBar *suppressUICalloutBar()
         [self _setUpTestWindow:frame];
 
 #if PLATFORM(IOS_FAMILY)
-    // FIXME: Remove this workaround once <https://webkit.org/b/175204> is fixed.
-    _sharedCalloutBarSwizzler = makeUnique<ClassMethodSwizzler>([UICalloutBar class], @selector(sharedCalloutBar), reinterpret_cast<IMP>(suppressUICalloutBar));
     _inputSessionChangeCount = 0;
     // We suppress safe area insets by default in order to ensure consistent results when running against device models
     // that may or may not have safe area insets, have insets with different values (e.g. iOS devices with a notch).
@@ -774,7 +762,7 @@ static UICalloutBar *suppressUICalloutBar()
     _overrideSafeAreaInset = inset;
 }
 
-- (UIEdgeInsets)safeAreaInsets
+- (UIEdgeInsets)_safeAreaInsetsForFrame:(CGRect)frame inSuperview:(UIView *)view
 {
     return _overrideSafeAreaInset;
 }
@@ -981,6 +969,32 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     NSEventType keyUpEventType = NSEventTypeKeyUp;
     [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:modifiers timestamp:self.eventTimestamp windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
     [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:modifiers timestamp:self.eventTimestamp windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
+}
+
+// Note: this testing strategy makes a couple of assumptions:
+// 1. The network process hasn't already died and allowed the system to reuse the same PID.
+// 2. The API test did not take more than ~120 seconds to run.
+- (NSArray<NSString *> *)collectLogsForNewConnections
+{
+    auto predicate = [NSString stringWithFormat:@"subsystem == 'com.apple.network'"
+        " AND category == 'connection'"
+        " AND eventMessage endswith 'start'"
+        " AND processIdentifier == %d", self._networkProcessIdentifier];
+    RetainPtr pipe = [NSPipe pipe];
+    // FIXME: This is currently reliant on `NSTask`, which is absent on iOS. We should find a way to
+    // make this helper work on both platforms.
+    auto task = adoptNS([NSTask new]);
+    [task setLaunchPath:@"/usr/bin/log"];
+    [task setArguments:@[ @"show", @"--last", @"2m", @"--style", @"json", @"--predicate", predicate ]];
+    [task setStandardOutput:pipe.get()];
+    [task launch];
+    [task waitUntilExit];
+
+    auto rawData = [pipe fileHandleForReading].availableData;
+    auto messages = [NSMutableArray<NSString *> array];
+    for (id messageData in dynamic_objc_cast<NSArray>([NSJSONSerialization JSONObjectWithData:rawData options:0 error:nil]))
+        [messages addObject:dynamic_objc_cast<NSString>([messageData objectForKey:@"eventMessage"])];
+    return messages;
 }
 
 @end

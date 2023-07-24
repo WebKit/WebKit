@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,9 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
+#include "WebGPUComputePassEncoder.h"
 #include <JavaScriptCore/Uint32Array.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUComputePassEncoder.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -43,7 +43,7 @@ class GPUQuerySet;
 
 class GPUComputePassEncoder : public RefCounted<GPUComputePassEncoder> {
 public:
-    static Ref<GPUComputePassEncoder> create(Ref<PAL::WebGPU::ComputePassEncoder>&& backing)
+    static Ref<GPUComputePassEncoder> create(Ref<WebGPU::ComputePassEncoder>&& backing)
     {
         return adoptRef(*new GPUComputePassEncoder(WTFMove(backing)));
     }
@@ -69,16 +69,16 @@ public:
     void popDebugGroup();
     void insertDebugMarker(String&& markerLabel);
 
-    PAL::WebGPU::ComputePassEncoder& backing() { return m_backing; }
-    const PAL::WebGPU::ComputePassEncoder& backing() const { return m_backing; }
+    WebGPU::ComputePassEncoder& backing() { return m_backing; }
+    const WebGPU::ComputePassEncoder& backing() const { return m_backing; }
 
 private:
-    GPUComputePassEncoder(Ref<PAL::WebGPU::ComputePassEncoder>&& backing)
+    GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
-    Ref<PAL::WebGPU::ComputePassEncoder> m_backing;
+    Ref<WebGPU::ComputePassEncoder> m_backing;
 };
 
 }

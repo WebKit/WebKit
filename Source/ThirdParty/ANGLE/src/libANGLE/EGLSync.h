@@ -56,6 +56,7 @@ class Sync final : public angle::RefCountObject<Display, angle::Result>, public 
     Error dupNativeFenceFD(const Display *display, EGLint *result) const;
 
     EGLenum getType() const { return mType; }
+    const AttributeMap &getAttributeMap() const { return mAttributeMap; }
     EGLint getCondition() const { return mCondition; }
     EGLint getNativeFenceFD() const { return mNativeFenceFD; }
 
@@ -66,6 +67,7 @@ class Sync final : public angle::RefCountObject<Display, angle::Result>, public 
 
     SyncID mId;
     EGLenum mType;
+    AttributeMap mAttributeMap;
     EGLint mCondition;
     EGLint mNativeFenceFD;
 };

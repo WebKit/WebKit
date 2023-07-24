@@ -9,17 +9,11 @@ features: [Temporal]
 
 const calendar = 19970327;
 
-let arg = { year: 1976, monthCode: "M11", day: 18, calendar };
+const arg = { year: 1976, monthCode: "M11", day: 18, calendar };
 const result1 = Temporal.PlainDateTime.compare(arg, new Temporal.PlainDateTime(1976, 11, 18));
 assert.sameValue(result1, 0, "19970327 is a valid ISO string for calendar (first argument)");
 const result2 = Temporal.PlainDateTime.compare(new Temporal.PlainDateTime(1976, 11, 18), arg);
 assert.sameValue(result2, 0, "19970327 is a valid ISO string for calendar (second argument)");
-
-arg = { year: 1976, monthCode: "M11", day: 18, calendar: { calendar } };
-const result3 = Temporal.PlainDateTime.compare(arg, new Temporal.PlainDateTime(1976, 11, 18));
-assert.sameValue(result3, 0, "19970327 is a valid ISO string for calendar (nested property, first argument)");
-const result4 = Temporal.PlainDateTime.compare(new Temporal.PlainDateTime(1976, 11, 18), arg);
-assert.sameValue(result4, 0, "19970327 is a valid ISO string for calendar (nested property, second argument)");
 
 const numbers = [
   1,
@@ -28,7 +22,7 @@ const numbers = [
 ];
 
 for (const calendar of numbers) {
-  let arg = { year: 1976, monthCode: "M11", day: 18, calendar };
+  const arg = { year: 1976, monthCode: "M11", day: 18, calendar };
   assert.throws(
     RangeError,
     () => Temporal.PlainDateTime.compare(arg, new Temporal.PlainDateTime(1976, 11, 18)),
@@ -38,16 +32,5 @@ for (const calendar of numbers) {
     RangeError,
     () => Temporal.PlainDateTime.compare(new Temporal.PlainDateTime(1976, 11, 18), arg),
     `Number ${calendar} does not convert to a valid ISO string for calendar (second argument)`
-  );
-  arg = { year: 1976, monthCode: "M11", day: 18, calendar: { calendar } };
-  assert.throws(
-    RangeError,
-    () => Temporal.PlainDateTime.compare(arg, new Temporal.PlainDateTime(1976, 11, 18)),
-    `Number ${calendar} does not convert to a valid ISO string for calendar (nested property, first argument)`
-  );
-  assert.throws(
-    RangeError,
-    () => Temporal.PlainDateTime.compare(new Temporal.PlainDateTime(1976, 11, 18), arg),
-    `Number ${calendar} does not convert to a valid ISO string for calendar (nested property, second argument)`
   );
 }

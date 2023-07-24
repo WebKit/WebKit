@@ -52,12 +52,16 @@ public:
 private:
     const char* activeDOMObjectName() const override;
 
-    class Source final : public RealtimeMediaSource, private CanvasObserver, private CanvasDisplayBufferObserver {
+    class Source final : public RealtimeMediaSource, private CanvasObserver, private CanvasDisplayBufferObserver, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Source, WTF::DestructionThread::MainRunLoop> {
     public:
         static Ref<Source> create(HTMLCanvasElement&, std::optional<double>&& frameRequestRate);
         
         void requestFrame() { m_shouldEmitFrame = true; }
         std::optional<double> frameRequestRate() const { return m_frameRequestRate; }
+
+        void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Source, WTF::DestructionThread::MainRunLoop>::ref(); }
+        void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Source, WTF::DestructionThread::MainRunLoop>::deref(); }
+        ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Source, WTF::DestructionThread::MainRunLoop>::controlBlock(); }
 
     private:
         Source(HTMLCanvasElement&, std::optional<double>&&);

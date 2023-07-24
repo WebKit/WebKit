@@ -67,6 +67,8 @@ rtc_library("video_adaptation") {
     "../../rtc_base/task_utils:repeating_task",
     "../../system_wrappers:field_trial",
     "../../system_wrappers:system_wrappers",
+    "../../video:video_stream_encoder_interface",
+    "../../video/config:encoder_config",
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",

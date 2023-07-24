@@ -1,13 +1,15 @@
 # Crashes
 accessibility/mac/resolved-text-editing.html [ Crash ]
-accessibility/mac/rowheader-outside-table-role.html [ Crash ]
 
 # Timeouts
 accessibility/aria-controls-with-tabs.html [ Timeout ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
-accessibility/slider-with-lost-renderer.html [ Timeout ]
+accessibility/slider-with-lost-renderer.html [ Timeout Failure ]
 accessibility/mac/combobox-activedescendant-notifications.html [ Timeout ]
 accessibility/mac/relationships-in-frames.html [ Timeout ]
+
+# Times out because `innerText` changes on linked <label>s don't update cached AXTitle value.
+accessibility/multiple-label-input.html [ Timeout ]
 
 # Text failures
 accessibility/aria-current.html [ Failure ]
@@ -24,8 +26,6 @@ accessibility/insert-children-assert.html [ Failure ]
 accessibility/keyevents-for-actions-mimic-real-key-events.html [ Failure ]
 accessibility/keyevents-posted-for-increment-actions.html [ Failure ]
 accessibility/mac/area-with-aria-label.html [ Failure ]
-accessibility/mac/aria-tree.html [ Failure ]
-accessibility/mac/crash-invalid-text-marker-node.html [ Failure ]
 accessibility/mac/document-attributes.html [ Failure ]
 accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Failure ]
 accessibility/mac/frame-with-title.html [ Failure ]
@@ -37,21 +37,7 @@ accessibility/mac/search-predicate-immediate-descendants-only.html [ Failure ]
 accessibility/mac/selection-value-changes-for-aria-textbox.html [ Failure ]
 accessibility/mac/set-value-editable-types.html [ Failure ]
 accessibility/mac/setting-attributes-is-asynchronous.html [ Failure ]
-accessibility/mac/test-convenience-methods.html [ Failure ]
 accessibility/mac/title-attribute-used-as-last-resort.html [ Failure ]
-accessibility/scroll-to-global-point-iframe-nested.html [ Failure ]
-accessibility/scroll-to-global-point-iframe.html [ Failure ]
-accessibility/scroll-to-global-point-main-window.html [ Failure ]
-accessibility/scroll-to-global-point-nested.html [ Failure ]
-accessibility/scroll-to-make-visible-div-overflow.html [ Failure ]
-accessibility/scroll-to-make-visible-iframe-offscreen.html [ Failure ]
-accessibility/scroll-to-make-visible-iframe.html [ Failure ]
-accessibility/scroll-to-make-visible-nested-2.html [ Failure ]
-accessibility/scroll-to-make-visible-nested.html [ Failure ]
-accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
-accessibility/slider-with-lost-renderer.html [ Failure ]
-accessibility/textarea-insertion-point-line-number.html [ Failure ]
-accessibility/title-ui-element-correctness.html [ Failure ]
 accessibility/text-alternative-calculation-hidden-nodes.html [ Failure ]
 accessibility/math-multiscript-attributes.html [ Failure ]
 

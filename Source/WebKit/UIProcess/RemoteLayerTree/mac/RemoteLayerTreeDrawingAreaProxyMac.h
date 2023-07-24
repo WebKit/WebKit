@@ -43,13 +43,14 @@ class RemoteScrollingCoordinatorTransaction;
 class RemoteLayerTreeDrawingAreaProxyMac final : public RemoteLayerTreeDrawingAreaProxy {
 friend class RemoteScrollingCoordinatorProxyMac;
 public:
-    RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);
+    RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&);
     ~RemoteLayerTreeDrawingAreaProxyMac();
 
     void didRefreshDisplay() override;
 
     DisplayLink& displayLink();
-    
+    DisplayLink* existingDisplayLink();
+
     void updateZoomTransactionID();
     WebCore::PlatformLayerIdentifier pageScalingLayerID() { return m_pageScalingLayerID; }
 private:
@@ -71,7 +72,8 @@ private:
     void scheduleDisplayRefreshCallbacks() override;
     void pauseDisplayRefreshCallbacks() override;
     void setPreferredFramesPerSecond(WebCore::FramesPerSecond) override;
-    void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) override;
+    void windowScreenDidChange(WebCore::PlatformDisplayID) override;
+    std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() override;
     void colorSpaceDidChange() override;
 
     void didChangeViewExposedRect() override;
@@ -79,8 +81,6 @@ private:
     void setDisplayLinkWantsFullSpeedUpdates(bool) override;
 
     void removeObserver(std::optional<DisplayLinkObserverID>&);
-
-    DisplayLink* exisingDisplayLink();
 
     WTF::MachSendRight createFence() override;
 

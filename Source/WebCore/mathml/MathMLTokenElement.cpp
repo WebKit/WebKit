@@ -77,12 +77,12 @@ RenderPtr<RenderElement> MathMLTokenElement::createElementRenderer(RenderStyle&&
 bool MathMLTokenElement::childShouldCreateRenderer(const Node& child) const
 {
     // The HTML specification defines <mi>, <mo>, <mn>, <ms> and <mtext> as insertion points.
-    return isPhrasingContent(child) && StyledElement::childShouldCreateRenderer(child);
+    return StyledElement::childShouldCreateRenderer(child);
 }
 
 std::optional<UChar32> MathMLTokenElement::convertToSingleCodePoint(StringView string)
 {
-    auto codePoints = stripLeadingAndTrailingHTTPSpaces(string).codePoints();
+    auto codePoints = string.trim(isJSONOrHTTPWhitespace<UChar>).codePoints();
     auto iterator = codePoints.begin();
     if (iterator == codePoints.end())
         return std::nullopt;

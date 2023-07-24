@@ -48,13 +48,21 @@ RemoteLegacyCDMFactoryProxy::RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProce
 
 RemoteLegacyCDMFactoryProxy::~RemoteLegacyCDMFactoryProxy()
 {
+    clear();
+}
+
+void RemoteLegacyCDMFactoryProxy::clear()
+{
+    auto proxies = std::exchange(m_proxies, { });
+    auto sessions = std::exchange(m_sessions, { });
+
     if (!m_gpuConnectionToWebProcess)
         return;
 
-    for (auto const& session : m_sessions)
+    for (auto const& session : sessions)
         m_gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), session.key.toUInt64());
 
-    for (auto const& proxy : m_proxies)
+    for (auto const& proxy : proxies)
         m_gpuConnectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), proxy.key.toUInt64());
 }
 

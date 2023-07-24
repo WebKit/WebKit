@@ -301,7 +301,7 @@ void ScrollingTreeScrollingNode::requestKeyboardScroll(const RequestedKeyboardSc
 
 void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScrollData& requestedScrollData)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest() - position " << requestedScrollData.scrollPosition << " animated " << (requestedScrollData.animated == ScrollIsAnimated::Yes));
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest()" << " animated " << (requestedScrollData.animated == ScrollIsAnimated::Yes) << " requestedScrollData: " << requestedScrollData);
 
     stopAnimatedScroll();
 
@@ -313,12 +313,14 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
     if (scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData))
         return;
 
+    auto scrollToPosition = requestedScrollData.destinationPosition(currentScrollPosition());
+
     if (requestedScrollData.animated == ScrollIsAnimated::Yes) {
-        startAnimatedScrollToPosition(requestedScrollData.scrollPosition);
+        startAnimatedScrollToPosition(scrollToPosition);
         return;
     }
 
-    scrollTo(requestedScrollData.scrollPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
+    scrollTo(scrollToPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
 }
 
 FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& scrollPosition, ScrollClamping clamping) const
@@ -495,6 +497,11 @@ ScrollPropagationInfo ScrollingTreeScrollingNode::computeScrollPropagation(const
 void ScrollingTreeScrollingNode::scrollbarVisibilityDidChange(ScrollbarOrientation orientation, bool isVisible)
 {
     scrollingTree().scrollingTreeNodeScrollbarVisibilityDidChange(scrollingNodeID(), orientation, isVisible);
+}
+
+void ScrollingTreeScrollingNode::scrollbarMinimumThumbLengthDidChange(ScrollbarOrientation orientation, int minimumThumbLength)
+{
+    scrollingTree().scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(scrollingNodeID(), orientation, minimumThumbLength);
 }
 
 } // namespace WebCore

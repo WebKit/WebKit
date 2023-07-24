@@ -11,10 +11,8 @@ function test()
     if (window.testRunner)
         testRunner.dumpAsText();
 
-    if (window.internals) {
-        window.internals.setMaxCanvasPixelMemory(16384 * 16384 * 4);
+    if (window.internals)
         window.internals.setMaxCanvasArea(134217728);
-    }
 
     var canvas = document.getElementById("bigCanvas");
     var width = canvas.width;

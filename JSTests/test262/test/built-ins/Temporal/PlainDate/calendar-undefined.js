@@ -16,7 +16,7 @@ Object.defineProperty(Temporal.Calendar, "from", {
 });
 
 const dateExplicit = new Temporal.PlainDate(...args, undefined);
-assert.sameValue(dateExplicit.calendar.toString(), "iso8601");
+assert.sameValue(dateExplicit.getISOFields().calendar, "iso8601", "calendar slot should store string");
 
 const dateImplicit = new Temporal.PlainDate(...args);
-assert.sameValue(dateImplicit.calendar.toString(), "iso8601");
+assert.sameValue(dateImplicit.getISOFields().calendar, "iso8601", "calendar slot should store string");

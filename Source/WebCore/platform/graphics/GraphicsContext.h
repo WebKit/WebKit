@@ -124,10 +124,6 @@ public:
     void setDropShadow(const DropShadow& dropShadow) { m_state.setDropShadow(dropShadow); didUpdateState(m_state); }
     void clearShadow() { setDropShadow({ }); }
 
-    // FIXME: Use dropShadow() and setDropShadow() instead of calling these functions.
-    WEBCORE_EXPORT bool getShadow(FloatSize&, float&, Color&) const;
-    void setShadow(const FloatSize& offset, float blurRadius, const Color& color, ShadowRadiusMode shadowRadiusMode = ShadowRadiusMode::Default) { setDropShadow({ offset, blurRadius, color, shadowRadiusMode }); }
-
     bool hasVisibleShadow() const { return dropShadow().isVisible(); }
     bool hasBlurredShadow() const { return dropShadow().isBlurred(); }
     bool hasShadow() const { return dropShadow().hasOutsets(); }

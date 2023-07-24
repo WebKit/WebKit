@@ -31,14 +31,14 @@
 #include "av1/encoder/k_means_template.h"
 #undef AV1_K_MEANS_DIM
 
-static int int_comparer(const void *a, const void *b) {
-  return (*(int *)a - *(int *)b);
+static int int16_comparer(const void *a, const void *b) {
+  return (*(int16_t *)a - *(int16_t *)b);
 }
 
-int av1_remove_duplicates(int *centroids, int num_centroids) {
+int av1_remove_duplicates(int16_t *centroids, int num_centroids) {
   int num_unique;  // number of unique centroids
   int i;
-  qsort(centroids, num_centroids, sizeof(*centroids), int_comparer);
+  qsort(centroids, num_centroids, sizeof(*centroids), int16_comparer);
   // Remove duplicates.
   num_unique = 1;
   for (i = 1; i < num_centroids; ++i) {
@@ -189,14 +189,14 @@ static AOM_INLINE void extend_palette_color_map(uint8_t *const color_map,
 // TODO(huisu): Try other schemes to improve compression.
 static AOM_INLINE void optimize_palette_colors(uint16_t *color_cache,
                                                int n_cache, int n_colors,
-                                               int stride, int *centroids,
+                                               int stride, int16_t *centroids,
                                                int bit_depth) {
   if (n_cache <= 0) return;
   for (int i = 0; i < n_colors * stride; i += stride) {
-    int min_diff = abs(centroids[i] - (int)color_cache[0]);
+    int min_diff = abs((int)centroids[i] - (int)color_cache[0]);
     int idx = 0;
     for (int j = 1; j < n_cache; ++j) {
-      const int this_diff = abs(centroids[i] - color_cache[j]);
+      const int this_diff = abs((int)centroids[i] - (int)color_cache[j]);
       if (this_diff < min_diff) {
         min_diff = this_diff;
         idx = j;
@@ -216,10 +216,10 @@ static AOM_INLINE void optimize_palette_colors(uint16_t *color_cache,
  */
 static AOM_INLINE void palette_rd_y(
     const AV1_COMP *const cpi, MACROBLOCK *x, MB_MODE_INFO *mbmi,
-    BLOCK_SIZE bsize, int dc_mode_cost, const int *data, int *centroids, int n,
-    uint16_t *color_cache, int n_cache, bool do_header_rd_based_gating,
+    BLOCK_SIZE bsize, int dc_mode_cost, const int16_t *data, int16_t *centroids,
+    int n, uint16_t *color_cache, int n_cache, bool do_header_rd_based_gating,
     MB_MODE_INFO *best_mbmi, uint8_t *best_palette_color_map, int64_t *best_rd,
-    int *rate, int *rate_tokenonly, int64_t *distortion, int *skippable,
+    int *rate, int *rate_tokenonly, int64_t *distortion, uint8_t *skippable,
     int *beat_best_rd, PICK_MODE_CONTEXT *ctx, uint8_t *blk_skip,
     uint8_t *tx_type_map, int *beat_best_palette_rd,
     bool *do_header_rd_based_breakout, int discount_color_cost) {
@@ -324,14 +324,14 @@ static AOM_INLINE int is_iter_over(int curr_idx, int end_idx, int step_size) {
 // returns the best number of colors found.
 static AOM_INLINE int perform_top_color_palette_search(
     const AV1_COMP *const cpi, MACROBLOCK *x, MB_MODE_INFO *mbmi,
-    BLOCK_SIZE bsize, int dc_mode_cost, const int *data, int *top_colors,
-    int start_n, int end_n, int step_size, bool do_header_rd_based_gating,
-    int *last_n_searched, uint16_t *color_cache, int n_cache,
-    MB_MODE_INFO *best_mbmi, uint8_t *best_palette_color_map, int64_t *best_rd,
-    int *rate, int *rate_tokenonly, int64_t *distortion, int *skippable,
-    int *beat_best_rd, PICK_MODE_CONTEXT *ctx, uint8_t *best_blk_skip,
-    uint8_t *tx_type_map, int discount_color_cost) {
-  int centroids[PALETTE_MAX_SIZE];
+    BLOCK_SIZE bsize, int dc_mode_cost, const int16_t *data,
+    int16_t *top_colors, int start_n, int end_n, int step_size,
+    bool do_header_rd_based_gating, int *last_n_searched, uint16_t *color_cache,
+    int n_cache, MB_MODE_INFO *best_mbmi, uint8_t *best_palette_color_map,
+    int64_t *best_rd, int *rate, int *rate_tokenonly, int64_t *distortion,
+    uint8_t *skippable, int *beat_best_rd, PICK_MODE_CONTEXT *ctx,
+    uint8_t *best_blk_skip, uint8_t *tx_type_map, int discount_color_cost) {
+  int16_t centroids[PALETTE_MAX_SIZE];
   int n = start_n;
   int top_color_winner = end_n;
   /* clang-format off */
@@ -371,15 +371,15 @@ static AOM_INLINE int perform_top_color_palette_search(
 // returns the best number of colors found.
 static AOM_INLINE int perform_k_means_palette_search(
     const AV1_COMP *const cpi, MACROBLOCK *x, MB_MODE_INFO *mbmi,
-    BLOCK_SIZE bsize, int dc_mode_cost, const int *data, int lower_bound,
+    BLOCK_SIZE bsize, int dc_mode_cost, const int16_t *data, int lower_bound,
     int upper_bound, int start_n, int end_n, int step_size,
     bool do_header_rd_based_gating, int *last_n_searched, uint16_t *color_cache,
     int n_cache, MB_MODE_INFO *best_mbmi, uint8_t *best_palette_color_map,
     int64_t *best_rd, int *rate, int *rate_tokenonly, int64_t *distortion,
-    int *skippable, int *beat_best_rd, PICK_MODE_CONTEXT *ctx,
+    uint8_t *skippable, int *beat_best_rd, PICK_MODE_CONTEXT *ctx,
     uint8_t *best_blk_skip, uint8_t *tx_type_map, uint8_t *color_map,
     int data_points, int discount_color_cost) {
-  int centroids[PALETTE_MAX_SIZE];
+  int16_t centroids[PALETTE_MAX_SIZE];
   const int max_itr = 50;
   int n = start_n;
   int top_color_winner = end_n;
@@ -435,16 +435,19 @@ static AOM_INLINE void set_stage2_params(int *min_n, int *max_n, int *step_size,
   *step_size = AOMMAX(1, *max_n - *min_n);
 }
 
-static AOM_INLINE void fill_data_and_get_bounds(
-    const uint8_t *src, const int src_stride, const int rows, const int cols,
-    const int is_high_bitdepth, int *data, int *lower_bound, int *upper_bound) {
+static AOM_INLINE void fill_data_and_get_bounds(const uint8_t *src,
+                                                const int src_stride,
+                                                const int rows, const int cols,
+                                                const int is_high_bitdepth,
+                                                int16_t *data, int *lower_bound,
+                                                int *upper_bound) {
   if (is_high_bitdepth) {
     const uint16_t *src_ptr = CONVERT_TO_SHORTPTR(src);
     *lower_bound = *upper_bound = src_ptr[0];
     for (int r = 0; r < rows; ++r) {
       for (int c = 0; c < cols; ++c) {
         const int val = src_ptr[c];
-        data[c] = val;
+        data[c] = (int16_t)val;
         *lower_bound = AOMMIN(*lower_bound, val);
         *upper_bound = AOMMAX(*upper_bound, val);
       }
@@ -459,7 +462,7 @@ static AOM_INLINE void fill_data_and_get_bounds(
   for (int r = 0; r < rows; ++r) {
     for (int c = 0; c < cols; ++c) {
       const int val = src[c];
-      data[c] = val;
+      data[c] = (int16_t)val;
       *lower_bound = AOMMIN(*lower_bound, val);
       *upper_bound = AOMMAX(*upper_bound, val);
     }
@@ -487,7 +490,7 @@ int color_count_comp(const void *c1, const void *c2) {
 }
 
 static void find_top_colors(const int *const count_buf, int bit_depth,
-                            int n_colors, int *top_colors) {
+                            int n_colors, int16_t *top_colors) {
   // Top color array, serving as a priority queue if more than n_colors are
   // found.
   struct ColorCount top_color_counts[PALETTE_MAX_SIZE] = { { 0 } };
@@ -527,7 +530,7 @@ static void find_top_colors(const int *const count_buf, int bit_depth,
 void av1_rd_pick_palette_intra_sby(
     const AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize, int dc_mode_cost,
     MB_MODE_INFO *best_mbmi, uint8_t *best_palette_color_map, int64_t *best_rd,
-    int *rate, int *rate_tokenonly, int64_t *distortion, int *skippable,
+    int *rate, int *rate_tokenonly, int64_t *distortion, uint8_t *skippable,
     int *beat_best_rd, PICK_MODE_CONTEXT *ctx, uint8_t *best_blk_skip,
     uint8_t *tx_type_map) {
   MACROBLOCKD *const xd = &x->e_mbd;
@@ -562,8 +565,8 @@ void av1_rd_pick_palette_intra_sby(
 
   uint8_t *const color_map = xd->plane[0].color_index_map;
   if (colors_threshold > 1 && colors_threshold <= 64) {
-    int *const data = x->palette_buffer->kmeans_data_buf;
-    int centroids[PALETTE_MAX_SIZE];
+    int16_t *const data = x->palette_buffer->kmeans_data_buf;
+    int16_t centroids[PALETTE_MAX_SIZE];
     int lower_bound, upper_bound;
     fill_data_and_get_bounds(src, src_stride, rows, cols, is_hbd, data,
                              &lower_bound, &upper_bound);
@@ -575,7 +578,7 @@ void av1_rd_pick_palette_intra_sby(
     const int n_cache = av1_get_palette_cache(xd, 0, color_cache);
 
     // Find the dominant colors, stored in top_colors[].
-    int top_colors[PALETTE_MAX_SIZE] = { 0 };
+    int16_t top_colors[PALETTE_MAX_SIZE] = { 0 };
     find_top_colors(count_buf, bit_depth, AOMMIN(colors, PALETTE_MAX_SIZE),
                     top_colors);
 
@@ -730,6 +733,9 @@ void av1_rd_pick_palette_intra_sby(
   if (best_mbmi->palette_mode_info.palette_size[0] > 0) {
     memcpy(color_map, best_palette_color_map,
            block_width * block_height * sizeof(best_palette_color_map[0]));
+    // Gather the stats to determine whether to use screen content tools in
+    // function av1_determine_sc_tools_with_encoding().
+    x->palette_pixels += (block_width * block_height);
   }
   *mbmi = *best_mbmi;
 }
@@ -740,7 +746,7 @@ void av1_rd_pick_palette_intra_sbuv(const AV1_COMP *cpi, MACROBLOCK *x,
                                     MB_MODE_INFO *const best_mbmi,
                                     int64_t *best_rd, int *rate,
                                     int *rate_tokenonly, int64_t *distortion,
-                                    int *skippable) {
+                                    uint8_t *skippable) {
   MACROBLOCKD *const xd = &x->e_mbd;
   MB_MODE_INFO *const mbmi = xd->mi[0];
   assert(!is_inter_block(mbmi));
@@ -791,8 +797,8 @@ void av1_rd_pick_palette_intra_sbuv(const AV1_COMP *cpi, MACROBLOCK *x,
     const int max_itr = 50;
     int lb_u, ub_u, val_u;
     int lb_v, ub_v, val_v;
-    int *const data = x->palette_buffer->kmeans_data_buf;
-    int centroids[2 * PALETTE_MAX_SIZE];
+    int16_t *const data = x->palette_buffer->kmeans_data_buf;
+    int16_t centroids[2 * PALETTE_MAX_SIZE];
 
     uint16_t *src_u16 = CONVERT_TO_SHORTPTR(src_u);
     uint16_t *src_v16 = CONVERT_TO_SHORTPTR(src_v);
@@ -917,8 +923,8 @@ void av1_restore_uv_color_map(const AV1_COMP *cpi, MACROBLOCK *x) {
   int src_stride = x->plane[1].src.stride;
   const uint8_t *const src_u = x->plane[1].src.buf;
   const uint8_t *const src_v = x->plane[2].src.buf;
-  int *const data = x->palette_buffer->kmeans_data_buf;
-  int centroids[2 * PALETTE_MAX_SIZE];
+  int16_t *const data = x->palette_buffer->kmeans_data_buf;
+  int16_t centroids[2 * PALETTE_MAX_SIZE];
   uint8_t *const color_map = xd->plane[1].color_index_map;
   int r, c;
   const uint16_t *const src_u16 = CONVERT_TO_SHORTPTR(src_u);

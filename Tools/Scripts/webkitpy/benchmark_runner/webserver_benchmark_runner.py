@@ -48,7 +48,6 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
         return result
 
     def _construct_subtest_url(self, subtests):
-        print(subtests)
         if not subtests or not isinstance(subtests, collections.abc.Mapping if sys.version_info >= (3, 10) else collections.Mapping) or 'subtest_url_format' not in self._plan:
             return ''
         subtest_url = ''
@@ -63,6 +62,8 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
         try:
             self._http_server_driver.serve(web_root)
             url = urljoin(self._http_server_driver.base_url(), self._plan_name + '/' + test_file + self._construct_subtest_url(self._subtests))
+            if '?' not in url:
+                url = url.replace('&', '?', 1)
             if enable_profiling:
                 context = self._browser_driver.profile(self._profile_output_dir, profile_filename)
             else:

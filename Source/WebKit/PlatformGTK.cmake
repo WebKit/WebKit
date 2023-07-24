@@ -52,17 +52,15 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 
 list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/ViewGestureController
-    WebProcess/gtk/GtkSettingsManagerProxy
+
+    UIProcess/gtk/AcceleratedBackingStoreDMABuf
+
     WebProcess/WebPage/ViewGestureGeometryCollector
+
+    WebProcess/WebPage/gtk/AcceleratedSurfaceDMABuf
+
+    WebProcess/gtk/GtkSettingsManagerProxy
 )
-
-if (USE_GBM)
-    list(APPEND WebKit_MESSAGES_IN_FILES
-        UIProcess/gtk/AcceleratedBackingStoreDMABuf
-
-        WebProcess/WebPage/gtk/AcceleratedSurfaceDMABuf
-    )
-endif ()
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKitGTK_DERIVED_SOURCES_DIR}/InspectorGResourceBundle.c

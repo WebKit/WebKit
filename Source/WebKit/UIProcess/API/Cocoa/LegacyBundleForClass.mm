@@ -34,7 +34,7 @@
 @implementation className (WKFoundationSupport) \
 + (NSBundle *)bundleForClass \
 { \
-    return [NSBundle bundleWithIdentifier:@"com.apple.WebKit"]; \
+    return [NSBundle bundleForClass:NSClassFromString(@"WKWebView")]; \
 } \
 @end
 

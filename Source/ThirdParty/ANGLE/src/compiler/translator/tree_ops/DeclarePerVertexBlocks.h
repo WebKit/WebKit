@@ -17,10 +17,13 @@ namespace sh
 class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
+class TVariable;
 
 [[nodiscard]] bool DeclarePerVertexBlocks(TCompiler *compiler,
                                           TIntermBlock *root,
-                                          TSymbolTable *symbolTable);
+                                          TSymbolTable *symbolTable,
+                                          const TVariable **inputPerVertexOut,
+                                          const TVariable **outputPerVertexOut);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_DECLAREPERVERTEXBLOCKS_H_

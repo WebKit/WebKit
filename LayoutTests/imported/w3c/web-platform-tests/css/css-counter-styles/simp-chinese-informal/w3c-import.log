@@ -14,13 +14,22 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/counter-simp-chinese-informal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/counter-simp-chinese-informal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/counter-simp-chinese-informal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-071-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-071-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-071.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-072-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-072-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-072.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-073-alt-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-073-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-073-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-073.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-074-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-074-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-074.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-075-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-075-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/css3-counter-styles-075.html

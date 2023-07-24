@@ -524,7 +524,7 @@ void WriteParamValueReplay<ParamType::Tegl_DisplayPointer>(std::ostream &os,
                                                            const CallCapture &call,
                                                            egl::Display *value)
 {
-    os << "EGL_NO_DISPLAY";
+    os << "gEGLDisplay";
 }
 
 template <>

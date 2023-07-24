@@ -202,6 +202,5 @@ public class Receiver extends BroadcastReceiver
 
         context.getContentResolver().registerContentObserver(
                 settingUri, false, developerOptionsObserver);
-        developerOptionsObserver.onChange(true);
     }
 }

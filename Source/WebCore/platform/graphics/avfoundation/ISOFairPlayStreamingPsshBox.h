@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,33 +34,37 @@ public:
     WEBCORE_EXPORT ISOFairPlayStreamingInfoBox();
     WEBCORE_EXPORT ISOFairPlayStreamingInfoBox(const ISOFairPlayStreamingInfoBox&);
     ISOFairPlayStreamingInfoBox(ISOFairPlayStreamingInfoBox&&);
+    WEBCORE_EXPORT ~ISOFairPlayStreamingInfoBox();
 
     static FourCC boxTypeName() { return "fpsi"; }
 
     FourCC scheme() const { return m_scheme; }
 
-private:
-    bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 
+private:
     FourCC m_scheme;
 };
 
 class ISOFairPlayStreamingKeyRequestInfoBox final : public ISOFullBox {
 public:
+    WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestInfoBox();
+    WEBCORE_EXPORT ~ISOFairPlayStreamingKeyRequestInfoBox();
+
     static FourCC boxTypeName() { return "fkri"; }
 
     using KeyID = Vector<uint8_t, 16>;
     const KeyID& keyID() const { return m_keyID; }
 
-private:
-    bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 
+private:
     KeyID m_keyID;
 };
 
 class ISOFairPlayStreamingKeyAssetIdBox final : public ISOBox {
 public:
-    ISOFairPlayStreamingKeyAssetIdBox() = default;
+    WEBCORE_EXPORT ISOFairPlayStreamingKeyAssetIdBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyAssetIdBox(const ISOFairPlayStreamingKeyAssetIdBox&);
     ISOFairPlayStreamingKeyAssetIdBox(ISOFairPlayStreamingKeyAssetIdBox&&) = default;
     WEBCORE_EXPORT ~ISOFairPlayStreamingKeyAssetIdBox();
@@ -71,15 +75,15 @@ public:
     static FourCC boxTypeName() { return "fkai"; }
     const Vector<uint8_t> data() const { return m_data; }
 
-private:
-    bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 
+private:
     Vector<uint8_t> m_data;
 };
 
 class ISOFairPlayStreamingKeyContextBox final : public ISOBox {
 public:
-    ISOFairPlayStreamingKeyContextBox() = default;
+    WEBCORE_EXPORT ISOFairPlayStreamingKeyContextBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyContextBox(const ISOFairPlayStreamingKeyContextBox&);
     ISOFairPlayStreamingKeyContextBox(ISOFairPlayStreamingKeyContextBox&&) = default;
     WEBCORE_EXPORT ~ISOFairPlayStreamingKeyContextBox();
@@ -90,15 +94,15 @@ public:
     static FourCC boxTypeName() { return "fkcx"; }
     const Vector<uint8_t> data() const { return m_data; }
 
-private:
-    bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 
+private:
     Vector<uint8_t> m_data;
 };
 
 class ISOFairPlayStreamingKeyVersionListBox final : public ISOBox {
 public:
-    ISOFairPlayStreamingKeyVersionListBox() = default;
+    WEBCORE_EXPORT ISOFairPlayStreamingKeyVersionListBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyVersionListBox(const ISOFairPlayStreamingKeyVersionListBox&);
     ISOFairPlayStreamingKeyVersionListBox(ISOFairPlayStreamingKeyVersionListBox&&) = default;
     WEBCORE_EXPORT ~ISOFairPlayStreamingKeyVersionListBox();
@@ -109,15 +113,15 @@ public:
     static FourCC boxTypeName() { return "fkvl"; }
     const Vector<uint8_t> versions() const { return m_versions; }
 
-private:
-    bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 
+private:
     Vector<uint8_t> m_versions;
 };
 
 class ISOFairPlayStreamingKeyRequestBox final : public ISOBox {
 public:
-    ISOFairPlayStreamingKeyRequestBox() = default;
+    WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestBox(const ISOFairPlayStreamingKeyRequestBox&);
     ISOFairPlayStreamingKeyRequestBox(ISOFairPlayStreamingKeyRequestBox&&) = default;
     WEBCORE_EXPORT ~ISOFairPlayStreamingKeyRequestBox();
@@ -129,9 +133,9 @@ public:
     const std::optional<ISOFairPlayStreamingKeyContextBox>& content() const { return m_context; }
     const std::optional<ISOFairPlayStreamingKeyVersionListBox>& versionList() const { return m_versionList; }
 
-private:
-    bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 
+private:
     ISOFairPlayStreamingKeyRequestInfoBox m_requestInfo;
     std::optional<ISOFairPlayStreamingKeyAssetIdBox> m_assetID;
     std::optional<ISOFairPlayStreamingKeyContextBox> m_context;
@@ -148,9 +152,9 @@ public:
     const ISOFairPlayStreamingInfoBox& info() const { return m_info; }
     const Vector<ISOFairPlayStreamingKeyRequestBox>& requests() const { return m_requests; }
 
-private:
-    bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 
+private:
     ISOFairPlayStreamingInfoBox m_info;
     Vector<ISOFairPlayStreamingKeyRequestBox> m_requests;
 };
@@ -164,9 +168,9 @@ public:
 
     const ISOFairPlayStreamingInitDataBox& initDataBox() { return m_initDataBox; }
 
-private:
-    bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
 
+private:
     ISOFairPlayStreamingInitDataBox m_initDataBox;
 };
 

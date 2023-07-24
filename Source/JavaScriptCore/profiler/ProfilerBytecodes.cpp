@@ -29,7 +29,9 @@
 #include "CodeBlock.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include "ProfilerDumper.h"
 #include <wtf/StringPrintStream.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace JSC { namespace Profiler {
 
@@ -50,18 +52,23 @@ void Bytecodes::dump(PrintStream& out) const
     out.print("#", m_hash, "(", m_id, ")");
 }
 
-JSValue Bytecodes::toJS(JSGlobalObject* globalObject) const
+Ref<JSON::Value> Bytecodes::toJSON(Dumper& dumper) const
 {
-    VM& vm = globalObject->vm();
-    JSObject* result = constructEmptyObject(globalObject);
-    
-    result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_id));
-    result->putDirect(vm, vm.propertyNames->inferredName, jsString(vm, String::fromUTF8(m_inferredName)));
-    result->putDirect(vm, vm.propertyNames->sourceCode, jsString(vm, String::fromUTF8(m_sourceCode)));
-    result->putDirect(vm, vm.propertyNames->hash, jsString(vm, String::fromUTF8(toCString(m_hash))));
-    result->putDirect(vm, vm.propertyNames->instructionCount, jsNumber(m_instructionCount));
-    addSequenceProperties(globalObject, result);
-    
+    auto result = JSON::Object::create();
+
+    result->setDouble(dumper.keys().m_bytecodesID, m_id);
+    result->setString(dumper.keys().m_inferredName, String::fromUTF8(m_inferredName));
+    String sourceCode = String::fromUTF8(m_sourceCode);
+    if (Options::abbreviateSourceCodeForProfiler()) {
+        unsigned size = Options::abbreviateSourceCodeForProfiler();
+        if (sourceCode.length() > size)
+            sourceCode = makeString(StringView(sourceCode).left(size - 1), horizontalEllipsis);
+    }
+    result->setString(dumper.keys().m_sourceCode, WTFMove(sourceCode));
+    result->setString(dumper.keys().m_hash, String::fromUTF8(toCString(m_hash)));
+    result->setDouble(dumper.keys().m_instructionCount, m_instructionCount);
+    addSequenceProperties(dumper, result.get());
+
     return result;
 }
 

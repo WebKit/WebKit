@@ -1168,6 +1168,11 @@ Caps GenerateMinimumCaps(const Version &clientVersion, const Extensions &extensi
         caps.shaderStorageBufferOffsetAlignment = 256;
     }
 
+    if (extensions.blendFuncExtendedEXT)
+    {
+        caps.maxDualSourceDrawBuffers = 1;
+    }
+
     if (extensions.textureRectangleANGLE)
     {
         caps.maxRectangleTextureSize = 64;

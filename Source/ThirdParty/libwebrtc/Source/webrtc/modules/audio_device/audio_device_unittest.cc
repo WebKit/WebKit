@@ -80,15 +80,15 @@ namespace {
 // an event indicating that the test was OK.
 static constexpr size_t kNumCallbacks = 10;
 // Max amount of time we wait for an event to be set while counting callbacks.
-static constexpr size_t kTestTimeOutInMilliseconds = 10 * 1000;
+static constexpr TimeDelta kTestTimeOut = TimeDelta::Seconds(10);
 // Average number of audio callbacks per second assuming 10ms packet size.
 static constexpr size_t kNumCallbacksPerSecond = 100;
 // Run the full-duplex test during this time (unit is in seconds).
-static constexpr size_t kFullDuplexTimeInSec = 5;
+static constexpr TimeDelta kFullDuplexTime = TimeDelta::Seconds(5);
 // Length of round-trip latency measurements. Number of deteced impulses
-// shall be kImpulseFrequencyInHz * kMeasureLatencyTimeInSec - 1 since the
+// shall be kImpulseFrequencyInHz * kMeasureLatencyTime - 1 since the
 // last transmitted pulse is not used.
-static constexpr size_t kMeasureLatencyTimeInSec = 10;
+static constexpr TimeDelta kMeasureLatencyTime = TimeDelta::Seconds(10);
 // Sets the number of impulses per second in the latency test.
 static constexpr size_t kImpulseFrequencyInHz = 1;
 // Utilized in round-trip latency measurements to avoid capturing noise samples.
@@ -974,7 +974,7 @@ TEST_P(MAYBE_AudioDeviceTest, StartStopPlayoutWithInternalRestart) {
       .Times(AtLeast(kNumCallbacks));
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();
-  event()->Wait(kTestTimeOutInMilliseconds);
+  event()->Wait(kTestTimeOut);
   EXPECT_TRUE(audio_device()->Playing());
   // Restart playout but without stopping the internal audio thread.
   // This procedure uses a non-public test API and it emulates what happens
@@ -997,7 +997,7 @@ TEST_P(MAYBE_AudioDeviceTest, StartStopPlayoutWithInternalRestart) {
   mock.ResetCallbackCounters();
   EXPECT_CALL(mock, NeedMorePlayData(_, _, _, _, NotNull(), _, _, _))
       .Times(AtLeast(kNumCallbacks));
-  event()->Wait(kTestTimeOutInMilliseconds);
+  event()->Wait(kTestTimeOut);
   EXPECT_TRUE(audio_device()->Playing());
   // Stop playout and the audio thread after successful internal restart.
   StopPlayout();
@@ -1016,11 +1016,11 @@ TEST_P(MAYBE_AudioDeviceTest, StartStopRecordingWithInternalRestart) {
   MockAudioTransport mock(TransportType::kRecord);
   mock.HandleCallbacks(event(), nullptr, kNumCallbacks);
   EXPECT_CALL(mock, RecordedDataIsAvailable(NotNull(), _, _, _, _, Ge(0u), 0, _,
-                                            false, _))
+                                            false, _, _))
       .Times(AtLeast(kNumCallbacks));
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartRecording();
-  event()->Wait(kTestTimeOutInMilliseconds);
+  event()->Wait(kTestTimeOut);
   EXPECT_TRUE(audio_device()->Recording());
   // Restart recording but without stopping the internal audio thread.
   // This procedure uses a non-public test API and it emulates what happens
@@ -1042,9 +1042,9 @@ TEST_P(MAYBE_AudioDeviceTest, StartStopRecordingWithInternalRestart) {
   ASSERT_TRUE(Mock::VerifyAndClearExpectations(&mock));
   mock.ResetCallbackCounters();
   EXPECT_CALL(mock, RecordedDataIsAvailable(NotNull(), _, _, _, _, Ge(0u), 0, _,
-                                            false, _))
+                                            false, _, _))
       .Times(AtLeast(kNumCallbacks));
-  event()->Wait(kTestTimeOutInMilliseconds);
+  event()->Wait(kTestTimeOut);
   EXPECT_TRUE(audio_device()->Recording());
   // Stop recording and the audio thread after successful internal restart.
   StopRecording();
@@ -1065,7 +1065,7 @@ TEST_P(MAYBE_AudioDeviceTest, StartPlayoutVerifyCallbacks) {
       .Times(AtLeast(kNumCallbacks));
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();
-  event()->Wait(kTestTimeOutInMilliseconds);
+  event()->Wait(kTestTimeOut);
   StopPlayout();
   PreTearDown();
 }
@@ -1094,11 +1094,11 @@ TEST_P(MAYBE_AudioDeviceTest, MAYBE_StartRecordingVerifyCallbacks) {
   MockAudioTransport mock(TransportType::kRecord);
   mock.HandleCallbacks(event(), nullptr, kNumCallbacks);
   EXPECT_CALL(mock, RecordedDataIsAvailable(NotNull(), _, _, _, _, Ge(0u), 0, _,
-                                            false, _))
+                                            false, _, _))
       .Times(AtLeast(kNumCallbacks));
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartRecording();
-  event()->Wait(kTestTimeOutInMilliseconds);
+  event()->Wait(kTestTimeOut);
   StopRecording();
   PreTearDown();
 }
@@ -1112,12 +1112,12 @@ TEST_P(MAYBE_AudioDeviceTest, MAYBE_StartPlayoutAndRecordingVerifyCallbacks) {
   EXPECT_CALL(mock, NeedMorePlayData(_, _, _, _, NotNull(), _, _, _))
       .Times(AtLeast(kNumCallbacks));
   EXPECT_CALL(mock, RecordedDataIsAvailable(NotNull(), _, _, _, _, Ge(0u), 0, _,
-                                            false, _))
+                                            false, _, _))
       .Times(AtLeast(kNumCallbacks));
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();
   StartRecording();
-  event()->Wait(kTestTimeOutInMilliseconds);
+  event()->Wait(kTestTimeOut);
   StopRecording();
   StopPlayout();
   PreTearDown();
@@ -1140,7 +1140,7 @@ TEST_P(MAYBE_AudioDeviceTest, RunPlayoutAndRecordingInFullDuplex) {
   NiceMock<MockAudioTransport> mock(TransportType::kPlayAndRecord);
   FifoAudioStream audio_stream;
   mock.HandleCallbacks(event(), &audio_stream,
-                       kFullDuplexTimeInSec * kNumCallbacksPerSecond);
+                       kFullDuplexTime.seconds() * kNumCallbacksPerSecond);
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   // Run both sides using the same channel configuration to avoid conversions
   // between mono/stereo while running in full duplex mode. Also, some devices
@@ -1151,8 +1151,7 @@ TEST_P(MAYBE_AudioDeviceTest, RunPlayoutAndRecordingInFullDuplex) {
   EXPECT_EQ(0, audio_device()->SetSpeakerVolume(0));
   StartPlayout();
   StartRecording();
-  event()->Wait(static_cast<int>(
-      std::max(kTestTimeOutInMilliseconds, 1000 * kFullDuplexTimeInSec)));
+  event()->Wait(std::max(kTestTimeOut, kFullDuplexTime));
   StopRecording();
   StopPlayout();
   PreTearDown();
@@ -1204,14 +1203,13 @@ TEST_P(MAYBE_AudioDeviceTest, DISABLED_MeasureLoopbackLatency) {
   NiceMock<MockAudioTransport> mock(TransportType::kPlayAndRecord);
   LatencyAudioStream audio_stream;
   mock.HandleCallbacks(event(), &audio_stream,
-                       kMeasureLatencyTimeInSec * kNumCallbacksPerSecond);
+                       kMeasureLatencyTime.seconds() * kNumCallbacksPerSecond);
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   EXPECT_EQ(0, audio_device()->SetStereoPlayout(true));
   EXPECT_EQ(0, audio_device()->SetStereoRecording(true));
   StartPlayout();
   StartRecording();
-  event()->Wait(static_cast<int>(
-      std::max(kTestTimeOutInMilliseconds, 1000 * kMeasureLatencyTimeInSec)));
+  event()->Wait(std::max(kTestTimeOut, kMeasureLatencyTime));
   StopRecording();
   StopPlayout();
   // Avoid concurrent access to audio_stream.
@@ -1219,7 +1217,7 @@ TEST_P(MAYBE_AudioDeviceTest, DISABLED_MeasureLoopbackLatency) {
   // Verify that a sufficient number of transmitted impulses are detected.
   EXPECT_GE(audio_stream.num_latency_values(),
             static_cast<size_t>(
-                kImpulseFrequencyInHz * kMeasureLatencyTimeInSec - 2));
+                kImpulseFrequencyInHz * kMeasureLatencyTime.seconds() - 2));
   // Print out min, max and average delay values for debugging purposes.
   audio_stream.PrintResults();
 }

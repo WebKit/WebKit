@@ -44,9 +44,11 @@ public:
 
     unsigned length() const;
 
+    bool isSupportedPropertyIndex(unsigned index) const { return index < m_mimeTypes.size(); }
     RefPtr<DOMMimeType> item(unsigned index);
     RefPtr<DOMMimeType> namedItem(const AtomString& propertyName);
     Vector<AtomString> supportedPropertyNames() const;
+    bool isSupportedPropertyName(const AtomString&) const;
 
     const Vector<Ref<DOMMimeType>>& mimeTypes() const { return m_mimeTypes; }
 

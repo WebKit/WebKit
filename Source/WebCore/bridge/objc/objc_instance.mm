@@ -133,7 +133,7 @@ ObjcInstance::~ObjcInstance()
         wrapperCache().remove((__bridge CFTypeRef)_instance.get());
 
         if ([_instance respondsToSelector:@selector(finalizeForWebScript)])
-            [_instance performSelector:@selector(finalizeForWebScript)];
+            [_instance finalizeForWebScript];
         _instance = 0;
     }
 }
@@ -404,14 +404,12 @@ bool ObjcInstance::setValueOfUndefinedField(JSGlobalObject* lexicalGlobalObject,
 
     JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject); // Can't put this inside the @try scope because it unwinds incorrectly.
 
-    // This check is not really necessary because NSObject implements
-    // setValue:forUndefinedKey:, and unfortunately the default implementation
-    // throws an exception.
     if ([targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)]){
         setGlobalException(nil);
     
         ObjcValue objcValue = convertValueToObjcValue(lexicalGlobalObject, aValue, ObjcObjectType);
 
+        // Default implementation throws an exception.
         @try {
             [targetObject setValue:(__bridge id)objcValue.objectValue forUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
         } @catch(NSException* localException) {
@@ -436,12 +434,9 @@ JSC::JSValue ObjcInstance::getValueOfUndefinedField(JSGlobalObject* lexicalGloba
 
     JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject); // Can't put this inside the @try scope because it unwinds incorrectly.
 
-    // This check is not really necessary because NSObject implements
-    // valueForUndefinedKey:, and unfortunately the default implementation
-    // throws an exception.
     if ([targetObject respondsToSelector:@selector(valueForUndefinedKey:)]){
         setGlobalException(nil);
-    
+        // Default implementaion throws an exception.
         @try {
             id objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
             result = convertObjcValueToValue(lexicalGlobalObject, &objcValue, ObjcObjectType, m_rootObject.get());

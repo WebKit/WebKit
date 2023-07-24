@@ -83,6 +83,7 @@ function sampleTestGroup(needsNotification = true, initialRepetitionCount = 2, m
             "revisionItems": [{"commit": "87832"}, {"commit": "96336"}],
             "customRoots": [],
         }],
+        'testParameterSets': [],
         "commits": [{
             "id": "87832",
             "repository": "9",
@@ -217,6 +218,7 @@ function sampleTestGroupForRetry(config) {
             "revisionItems": [{"commit": "87832"}, {"commit": "96336"}],
             "customRoots": [],
         }],
+        'testParameterSets': [],
         "commits": [{
             "id": "87832",
             "repository": "9",
@@ -596,7 +598,7 @@ describe('TestGroup', function () {
             set2.setRevisionForRepository(MockModels.webkit, '191623');
             set2.setRevisionForRepository(MockModels.sharedRepository, '80229');
 
-            const promise = TestGroup.createWithTask('some-task', MockModels.somePlatform, MockModels.someTest, 'some-group', 4, 'alternating', [set1, set2], true, 'alternating');
+            const promise = TestGroup.createWithTask('some-task', MockModels.somePlatform, MockModels.someTest, 'some-group', 4, 'alternating', [set1, set2], null, true);
             assert.equal(requests.length, 2);
             assert.equal(requests[1].url, '/privileged-api/generate-csrf-token');
             requests[1].resolve({
@@ -609,7 +611,7 @@ describe('TestGroup', function () {
             assert.deepEqual(requests[2].data, {taskName: 'some-task', name: 'some-group', platform: 65, test: 1,
                 repetitionCount: 4, revisionSets: [{'11': {ownerRevision: null, patch: null, revision: "191622"},
                     '16': {ownerRevision: null, patch: null, revision: "80229"}}, {'11': {ownerRevision: null, patch: null, revision: "191623"},
-                    '16': {ownerRevision: null, patch: null, revision: "80229"}}], needsNotification: true, repetitionType: 'alternating', token: 'abc'});
+                    '16': {ownerRevision: null, patch: null, revision: "80229"}}], testParametersList: null, needsNotification: true, repetitionType: 'alternating', token: 'abc'});
             assert.equal(requests[2].url, '/privileged-api/create-test-group');
             requests[2].resolve({
                 taskId: 123,

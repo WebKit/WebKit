@@ -12,6 +12,7 @@
 #include "av1/common/warped_motion.h"
 #include "av1/common/thread_common.h"
 
+#include "av1/encoder/allintra_vis.h"
 #include "av1/encoder/bitstream.h"
 #include "av1/encoder/encodeframe.h"
 #include "av1/encoder/encoder.h"
@@ -24,6 +25,7 @@
 #include "av1/encoder/global_motion.h"
 #include "av1/encoder/global_motion_facade.h"
 #include "av1/encoder/intra_mode_search_utils.h"
+#include "av1/encoder/picklpf.h"
 #include "av1/encoder/rdopt.h"
 #include "aom_dsp/aom_dsp_common.h"
 #include "av1/encoder/temporal_filter.h"
@@ -98,7 +100,6 @@ void av1_row_mt_sync_read_dummy(AV1EncRowMultiThreadSync *row_mt_sync, int r,
   (void)row_mt_sync;
   (void)r;
   (void)c;
-  return;
 }
 
 void av1_row_mt_sync_write_dummy(AV1EncRowMultiThreadSync *row_mt_sync, int r,
@@ -107,7 +108,6 @@ void av1_row_mt_sync_write_dummy(AV1EncRowMultiThreadSync *row_mt_sync, int r,
   (void)r;
   (void)c;
   (void)cols;
-  return;
 }
 
 void av1_row_mt_sync_read(AV1EncRowMultiThreadSync *row_mt_sync, int r, int c) {
@@ -221,6 +221,11 @@ static void row_mt_sync_mem_dealloc(AV1EncRowMultiThreadSync *row_mt_sync) {
   }
 }
 
+static AOM_INLINE int get_sb_rows_in_frame(AV1_COMMON *cm) {
+  return CEIL_POWER_OF_TWO(cm->mi_params.mi_rows,
+                           cm->seq_params->mib_size_log2);
+}
+
 static void row_mt_mem_alloc(AV1_COMP *cpi, int max_rows, int max_cols,
                              int alloc_row_ctx) {
   struct AV1Common *cm = &cpi->common;
@@ -228,6 +233,8 @@ static void row_mt_mem_alloc(AV1_COMP *cpi, int max_rows, int max_cols,
   const int tile_cols = cm->tiles.cols;
   const int tile_rows = cm->tiles.rows;
   int tile_col, tile_row;
+
+  av1_row_mt_mem_dealloc(cpi);
 
   // Allocate memory for row based multi-threading
   for (tile_row = 0; tile_row < tile_rows; tile_row++) {
@@ -247,10 +254,16 @@ static void row_mt_mem_alloc(AV1_COMP *cpi, int max_rows, int max_cols,
       }
     }
   }
+  const int sb_rows = get_sb_rows_in_frame(cm);
+  CHECK_MEM_ERROR(
+      cm, enc_row_mt->num_tile_cols_done,
+      aom_malloc(sizeof(*enc_row_mt->num_tile_cols_done) * sb_rows));
+
   enc_row_mt->allocated_tile_cols = tile_cols;
   enc_row_mt->allocated_tile_rows = tile_rows;
   enc_row_mt->allocated_rows = max_rows;
   enc_row_mt->allocated_cols = max_cols - 1;
+  enc_row_mt->allocated_sb_rows = sb_rows;
 }
 
 void av1_row_mt_mem_dealloc(AV1_COMP *cpi) {
@@ -270,10 +283,13 @@ void av1_row_mt_mem_dealloc(AV1_COMP *cpi) {
       if (cpi->oxcf.algo_cfg.cdf_update_mode) aom_free(this_tile->row_ctx);
     }
   }
+  aom_free(enc_row_mt->num_tile_cols_done);
+  enc_row_mt->num_tile_cols_done = NULL;
   enc_row_mt->allocated_rows = 0;
   enc_row_mt->allocated_cols = 0;
   enc_row_mt->allocated_tile_cols = 0;
   enc_row_mt->allocated_tile_rows = 0;
+  enc_row_mt->allocated_sb_rows = 0;
 }
 
 static AOM_INLINE void assign_tile_to_thread(int *thread_id_to_tile_id,
@@ -433,6 +449,40 @@ static int fp_enc_row_mt_worker_hook(void *arg1, void *unused) {
 }
 #endif
 
+static void launch_loop_filter_rows(AV1_COMMON *cm, EncWorkerData *thread_data,
+                                    AV1EncRowMultiThreadInfo *enc_row_mt,
+                                    int mib_size_log2) {
+  AV1LfSync *const lf_sync = (AV1LfSync *)thread_data->lf_sync;
+  const int sb_rows = get_sb_rows_in_frame(cm);
+  AV1LfMTInfo *cur_job_info;
+  (void)enc_row_mt;
+#if CONFIG_MULTITHREAD
+  pthread_mutex_t *enc_row_mt_mutex_ = enc_row_mt->mutex_;
+#endif
+
+  while ((cur_job_info = get_lf_job_info(lf_sync)) != NULL) {
+    LFWorkerData *const lf_data = (LFWorkerData *)thread_data->lf_data;
+    const int lpf_opt_level = cur_job_info->lpf_opt_level;
+    (void)sb_rows;
+#if CONFIG_MULTITHREAD
+    const int cur_sb_row = cur_job_info->mi_row >> mib_size_log2;
+    const int next_sb_row = AOMMIN(sb_rows - 1, cur_sb_row + 1);
+    // Wait for current and next superblock row to finish encoding.
+    pthread_mutex_lock(enc_row_mt_mutex_);
+    while (enc_row_mt->num_tile_cols_done[cur_sb_row] < cm->tiles.cols ||
+           enc_row_mt->num_tile_cols_done[next_sb_row] < cm->tiles.cols) {
+      pthread_cond_wait(enc_row_mt->cond_, enc_row_mt_mutex_);
+    }
+    pthread_mutex_unlock(enc_row_mt_mutex_);
+#endif
+    av1_thread_loop_filter_rows(
+        lf_data->frame_buffer, lf_data->cm, lf_data->planes, lf_data->xd,
+        cur_job_info->mi_row, cur_job_info->plane, cur_job_info->dir,
+        lpf_opt_level, lf_sync, lf_data->params_buf, lf_data->tx_buf,
+        mib_size_log2);
+  }
+}
+
 static int enc_row_mt_worker_hook(void *arg1, void *unused) {
   EncWorkerData *const thread_data = (EncWorkerData *)arg1;
   AV1_COMP *const cpi = thread_data->cpi;
@@ -440,10 +490,17 @@ static int enc_row_mt_worker_hook(void *arg1, void *unused) {
   int thread_id = thread_data->thread_id;
   AV1EncRowMultiThreadInfo *const enc_row_mt = &cpi->mt_info.enc_row_mt;
   int cur_tile_id = enc_row_mt->thread_id_to_tile_id[thread_id];
+  const int mib_size_log2 = cm->seq_params->mib_size_log2;
 #if CONFIG_MULTITHREAD
   pthread_mutex_t *enc_row_mt_mutex_ = enc_row_mt->mutex_;
 #endif
   (void)unused;
+  // Preallocate the pc_tree for realtime coding to reduce the cost of memory
+  // allocation.
+  thread_data->td->rt_pc_root =
+      cpi->sf.rt_sf.use_nonrd_pick_mode
+          ? av1_alloc_pc_tree_node(cm->seq_params->sb_size)
+          : NULL;
 
   assert(cur_tile_id != -1);
 
@@ -480,6 +537,7 @@ static int enc_row_mt_worker_hook(void *arg1, void *unused) {
     const int tile_row = tile_info->tile_row;
     const int tile_col = tile_info->tile_col;
     ThreadData *td = thread_data->td;
+    const int sb_row = current_mi_row >> mib_size_log2;
 
     assert(current_mi_row != -1 && current_mi_row <= tile_info->mi_row_end);
 
@@ -510,11 +568,23 @@ static int enc_row_mt_worker_hook(void *arg1, void *unused) {
 #endif
     this_tile->abs_sum_level += td->abs_sum_level;
     row_mt_sync->num_threads_working--;
+    enc_row_mt->num_tile_cols_done[sb_row]++;
 #if CONFIG_MULTITHREAD
+    pthread_cond_broadcast(enc_row_mt->cond_);
     pthread_mutex_unlock(enc_row_mt_mutex_);
 #endif
   }
-
+  if (cpi->mt_info.pipeline_lpf_mt_with_enc &&
+      (cm->lf.filter_level[PLANE_TYPE_Y] ||
+       cm->lf.filter_level[PLANE_TYPE_UV])) {
+    // Loop-filter a superblock row if encoding of the current and next
+    // superblock row is complete.
+    // TODO(deepa.kg @ittiam.com) Evaluate encoder speed by interleaving
+    // encoding and loop filter stage.
+    launch_loop_filter_rows(cm, thread_data, enc_row_mt, mib_size_log2);
+  }
+  av1_free_pc_tree_recursive(thread_data->td->rt_pc_root, av1_num_planes(cm), 0,
+                             0, cpi->sf.part_sf.partition_search_type);
   return 1;
 }
 
@@ -527,6 +597,12 @@ static int enc_worker_hook(void *arg1, void *unused) {
   int t;
 
   (void)unused;
+  // Preallocate the pc_tree for realtime coding to reduce the cost of memory
+  // allocation.
+  thread_data->td->rt_pc_root =
+      cpi->sf.rt_sf.use_nonrd_pick_mode
+          ? av1_alloc_pc_tree_node(cm->seq_params->sb_size)
+          : NULL;
 
   for (t = thread_data->start; t < tile_rows * tile_cols;
        t += cpi->mt_info.num_workers) {
@@ -539,6 +615,9 @@ static int enc_worker_hook(void *arg1, void *unused) {
     thread_data->td->mb.tile_pb_ctx = &this_tile->tctx;
     av1_encode_tile(cpi, thread_data->td, tile_row, tile_col);
   }
+
+  av1_free_pc_tree_recursive(thread_data->td->rt_pc_root, av1_num_planes(cm), 0,
+                             0, cpi->sf.part_sf.partition_search_type);
 
   return 1;
 }
@@ -594,6 +673,11 @@ void av1_init_mt_sync(AV1_COMP *cpi, int is_first_pass) {
       CHECK_MEM_ERROR(cm, enc_row_mt->mutex_,
                       aom_malloc(sizeof(*(enc_row_mt->mutex_))));
       if (enc_row_mt->mutex_) pthread_mutex_init(enc_row_mt->mutex_, NULL);
+    }
+    if (enc_row_mt->cond_ == NULL) {
+      CHECK_MEM_ERROR(cm, enc_row_mt->cond_,
+                      aom_malloc(sizeof(*(enc_row_mt->cond_))));
+      if (enc_row_mt->cond_) pthread_cond_init(enc_row_mt->cond_, NULL);
     }
   }
 
@@ -1198,6 +1282,7 @@ static AOM_INLINE void accumulate_counters_enc_workers(AV1_COMP *cpi,
     // Accumulate rtc counters.
     if (!frame_is_intra_only(&cpi->common))
       av1_accumulate_rtc_counters(cpi, &thread_data->td->mb);
+    cpi->palette_pixel_num += thread_data->td->mb.palette_pixels;
     if (thread_data->td != &cpi->td) {
       // Keep these conditional expressions in sync with the corresponding ones
       // in prepare_enc_workers().
@@ -1221,9 +1306,6 @@ static AOM_INLINE void accumulate_counters_enc_workers(AV1_COMP *cpi,
           thread_data->td->mb.txfm_search_info.tx_search_count;
 #endif  // CONFIG_SPEED_STATS
     }
-
-    av1_free_pc_tree_recursive(thread_data->td->rt_pc_root,
-                               av1_num_planes(&cpi->common), 0, 0);
   }
 }
 
@@ -1298,6 +1380,8 @@ static AOM_INLINE void prepare_enc_workers(AV1_COMP *cpi, AVxWorkerHook hook,
     // Reset rtc counters.
     av1_init_rtc_counters(&thread_data->td->mb);
 
+    thread_data->td->mb.palette_pixels = 0;
+
     if (thread_data->td->counts != &cpi->counts) {
       memcpy(thread_data->td->counts, &cpi->counts, sizeof(cpi->counts));
     }
@@ -1322,13 +1406,6 @@ static AOM_INLINE void prepare_enc_workers(AV1_COMP *cpi, AVxWorkerHook hook,
             thread_data->td->mb.tmp_pred_bufs[j];
       }
     }
-
-    // Preallocate the pc_tree for realtime coding to reduce the cost of memory
-    // allocation.
-    thread_data->td->rt_pc_root =
-        cpi->sf.rt_sf.use_nonrd_pick_mode
-            ? av1_alloc_pc_tree_node(cm->seq_params->sb_size)
-            : NULL;
   }
 }
 
@@ -1452,22 +1529,34 @@ void av1_accumulate_frame_counts(FRAME_COUNTS *acc_counts,
   for (unsigned int i = 0; i < n_counts; i++) acc[i] += cnt[i];
 }
 
-// Computes the maximum number of sb_rows for row multi-threading of encoding
-// stage
-static AOM_INLINE void compute_max_sb_rows_cols(AV1_COMP *cpi, int *max_sb_rows,
-                                                int *max_sb_cols) {
-  AV1_COMMON *const cm = &cpi->common;
-  const int tile_cols = cm->tiles.cols;
+// Computes the maximum number of sb rows and sb_cols across tiles which are
+// used to allocate memory for multi-threaded encoding with row-mt=1.
+static AOM_INLINE void compute_max_sb_rows_cols(const AV1_COMMON *cm,
+                                                int *max_sb_rows_in_tile,
+                                                int *max_sb_cols_in_tile) {
   const int tile_rows = cm->tiles.rows;
+  const int mib_size_log2 = cm->seq_params->mib_size_log2;
+  const int num_mi_rows = cm->mi_params.mi_rows;
+  const int *const row_start_sb = cm->tiles.row_start_sb;
   for (int row = 0; row < tile_rows; row++) {
-    for (int col = 0; col < tile_cols; col++) {
-      const int tile_index = row * cm->tiles.cols + col;
-      const TileInfo *const tile_info = &cpi->tile_data[tile_index].tile_info;
-      const int num_sb_rows_in_tile = av1_get_sb_rows_in_tile(cm, tile_info);
-      const int num_sb_cols_in_tile = av1_get_sb_cols_in_tile(cm, tile_info);
-      *max_sb_rows = AOMMAX(*max_sb_rows, num_sb_rows_in_tile);
-      *max_sb_cols = AOMMAX(*max_sb_cols, num_sb_cols_in_tile);
-    }
+    const int mi_row_start = row_start_sb[row] << mib_size_log2;
+    const int mi_row_end =
+        AOMMIN(row_start_sb[row + 1] << mib_size_log2, num_mi_rows);
+    const int num_sb_rows_in_tile =
+        CEIL_POWER_OF_TWO(mi_row_end - mi_row_start, mib_size_log2);
+    *max_sb_rows_in_tile = AOMMAX(*max_sb_rows_in_tile, num_sb_rows_in_tile);
+  }
+
+  const int tile_cols = cm->tiles.cols;
+  const int num_mi_cols = cm->mi_params.mi_cols;
+  const int *const col_start_sb = cm->tiles.col_start_sb;
+  for (int col = 0; col < tile_cols; col++) {
+    const int mi_col_start = col_start_sb[col] << mib_size_log2;
+    const int mi_col_end =
+        AOMMIN(col_start_sb[col + 1] << mib_size_log2, num_mi_cols);
+    const int num_sb_cols_in_tile =
+        CEIL_POWER_OF_TWO(mi_col_end - mi_col_start, mib_size_log2);
+    *max_sb_cols_in_tile = AOMMAX(*max_sb_cols_in_tile, num_sb_cols_in_tile);
   }
 }
 
@@ -1498,24 +1587,93 @@ int av1_fp_compute_num_enc_workers(AV1_COMP *cpi) {
 
 // Computes the maximum number of mb_rows for row multi-threading of firstpass
 // stage
-static AOM_INLINE int fp_compute_max_mb_rows(const AV1_COMMON *const cm,
-                                             const TileDataEnc *const tile_data,
-                                             const BLOCK_SIZE fp_block_size) {
-  const int tile_cols = cm->tiles.cols;
+static AOM_INLINE int fp_compute_max_mb_rows(const AV1_COMMON *cm,
+                                             BLOCK_SIZE fp_block_size) {
   const int tile_rows = cm->tiles.rows;
+  const int unit_height_log2 = mi_size_high_log2[fp_block_size];
+  const int mib_size_log2 = cm->seq_params->mib_size_log2;
+  const int num_mi_rows = cm->mi_params.mi_rows;
+  const int *const row_start_sb = cm->tiles.row_start_sb;
   int max_mb_rows = 0;
+
   for (int row = 0; row < tile_rows; row++) {
-    for (int col = 0; col < tile_cols; col++) {
-      const int tile_index = row * cm->tiles.cols + col;
-      const TileInfo *const tile_info = &tile_data[tile_index].tile_info;
-      const int num_mb_rows_in_tile =
-          av1_get_unit_rows_in_tile(tile_info, fp_block_size);
-      max_mb_rows = AOMMAX(max_mb_rows, num_mb_rows_in_tile);
-    }
+    const int mi_row_start = row_start_sb[row] << mib_size_log2;
+    const int mi_row_end =
+        AOMMIN(row_start_sb[row + 1] << mib_size_log2, num_mi_rows);
+    const int num_mb_rows_in_tile =
+        CEIL_POWER_OF_TWO(mi_row_end - mi_row_start, unit_height_log2);
+    max_mb_rows = AOMMAX(max_mb_rows, num_mb_rows_in_tile);
   }
   return max_mb_rows;
 }
 #endif
+
+static void lpf_pipeline_mt_init(AV1_COMP *cpi, int num_workers) {
+  // Pipelining of loop-filtering after encoding is enabled when loop-filter
+  // level is chosen based on quantizer and frame type. It is disabled in case
+  // of 'LOOPFILTER_SELECTIVELY' as the stats collected during encoding stage
+  // decides the filter level. Loop-filtering is disabled in case
+  // of non-reference frames and for frames with intra block copy tool enabled.
+  AV1_COMMON *cm = &cpi->common;
+  const int use_loopfilter = is_loopfilter_used(cm);
+  const int use_superres = av1_superres_scaled(cm);
+  const int use_cdef = is_cdef_used(cm);
+  const int use_restoration = is_restoration_used(cm);
+  MultiThreadInfo *const mt_info = &cpi->mt_info;
+  MACROBLOCKD *xd = &cpi->td.mb.e_mbd;
+
+  const unsigned int skip_apply_postproc_filters =
+      derive_skip_apply_postproc_filters(cpi, use_loopfilter, use_cdef,
+                                         use_superres, use_restoration);
+  mt_info->pipeline_lpf_mt_with_enc =
+      (cpi->oxcf.mode == REALTIME) && (cpi->oxcf.speed >= 5) &&
+      (cpi->sf.lpf_sf.lpf_pick == LPF_PICK_FROM_Q) &&
+      (cpi->oxcf.algo_cfg.loopfilter_control != LOOPFILTER_SELECTIVELY) &&
+      !cpi->ppi->rtc_ref.non_reference_frame && !cm->features.allow_intrabc &&
+      ((skip_apply_postproc_filters & SKIP_APPLY_LOOPFILTER) == 0);
+
+  if (!mt_info->pipeline_lpf_mt_with_enc) return;
+
+  set_postproc_filter_default_params(cm);
+
+  if (!use_loopfilter) return;
+
+  const LPF_PICK_METHOD method = cpi->sf.lpf_sf.lpf_pick;
+  assert(method == LPF_PICK_FROM_Q);
+  assert(cpi->oxcf.algo_cfg.loopfilter_control != LOOPFILTER_SELECTIVELY);
+
+  av1_pick_filter_level(cpi->source, cpi, method);
+
+  struct loopfilter *lf = &cm->lf;
+  const int plane_start = 0;
+  const int plane_end = av1_num_planes(cm);
+  int planes_to_lf[MAX_MB_PLANE];
+  if ((lf->filter_level[PLANE_TYPE_Y] || lf->filter_level[PLANE_TYPE_UV]) &&
+      check_planes_to_loop_filter(lf, planes_to_lf, plane_start, plane_end)) {
+    int lpf_opt_level = get_lpf_opt_level(&cpi->sf);
+    assert(lpf_opt_level == 2);
+
+    const int start_mi_row = 0;
+    const int end_mi_row = start_mi_row + cm->mi_params.mi_rows;
+
+    av1_loop_filter_frame_init(cm, plane_start, plane_end);
+
+    assert(mt_info->num_mod_workers[MOD_ENC] ==
+           mt_info->num_mod_workers[MOD_LPF]);
+    loop_filter_frame_mt_init(cm, start_mi_row, end_mi_row, planes_to_lf,
+                              mt_info->num_mod_workers[MOD_LPF],
+                              &mt_info->lf_row_sync, lpf_opt_level,
+                              cm->seq_params->mib_size_log2);
+
+    for (int i = num_workers - 1; i >= 0; i--) {
+      EncWorkerData *const thread_data = &mt_info->tile_thr_data[i];
+      // Initialize loopfilter data
+      thread_data->lf_sync = &mt_info->lf_row_sync;
+      thread_data->lf_data = &thread_data->lf_sync->lfdata[i];
+      loop_filter_data_reset(thread_data->lf_data, &cm->cur_frame->buf, cm, xd);
+    }
+  }
+}
 
 void av1_encode_tiles_row_mt(AV1_COMP *cpi) {
   AV1_COMMON *const cm = &cpi->common;
@@ -1523,32 +1681,40 @@ void av1_encode_tiles_row_mt(AV1_COMP *cpi) {
   AV1EncRowMultiThreadInfo *const enc_row_mt = &mt_info->enc_row_mt;
   const int tile_cols = cm->tiles.cols;
   const int tile_rows = cm->tiles.rows;
+  const int sb_rows_in_frame = get_sb_rows_in_frame(cm);
   int *thread_id_to_tile_id = enc_row_mt->thread_id_to_tile_id;
-  int max_sb_rows = 0, max_sb_cols = 0;
+  int max_sb_rows_in_tile = 0, max_sb_cols_in_tile = 0;
   int num_workers = mt_info->num_mod_workers[MOD_ENC];
 
-  assert(IMPLIES(cpi->tile_data == NULL,
-                 cpi->allocated_tiles < tile_cols * tile_rows));
-  if (cpi->allocated_tiles < tile_cols * tile_rows) {
-    av1_row_mt_mem_dealloc(cpi);
+  compute_max_sb_rows_cols(cm, &max_sb_rows_in_tile, &max_sb_cols_in_tile);
+  const bool alloc_row_mt_mem =
+      (enc_row_mt->allocated_tile_cols != tile_cols ||
+       enc_row_mt->allocated_tile_rows != tile_rows ||
+       enc_row_mt->allocated_rows != max_sb_rows_in_tile ||
+       enc_row_mt->allocated_cols != (max_sb_cols_in_tile - 1) ||
+       enc_row_mt->allocated_sb_rows != sb_rows_in_frame);
+  const bool alloc_tile_data = cpi->allocated_tiles < tile_cols * tile_rows;
+
+  assert(IMPLIES(cpi->tile_data == NULL, alloc_tile_data));
+  if (alloc_tile_data) {
     av1_alloc_tile_data(cpi);
   }
 
-  av1_init_tile_data(cpi);
-
-  compute_max_sb_rows_cols(cpi, &max_sb_rows, &max_sb_cols);
-
-  if (enc_row_mt->allocated_tile_cols != tile_cols ||
-      enc_row_mt->allocated_tile_rows != tile_rows ||
-      enc_row_mt->allocated_rows != max_sb_rows ||
-      enc_row_mt->allocated_cols != (max_sb_cols - 1)) {
-    av1_row_mt_mem_dealloc(cpi);
-    row_mt_mem_alloc(cpi, max_sb_rows, max_sb_cols,
+  assert(IMPLIES(alloc_tile_data, alloc_row_mt_mem));
+  if (alloc_row_mt_mem) {
+    row_mt_mem_alloc(cpi, max_sb_rows_in_tile, max_sb_cols_in_tile,
                      cpi->oxcf.algo_cfg.cdf_update_mode);
   }
 
+  num_workers = AOMMIN(num_workers, mt_info->num_workers);
+  lpf_pipeline_mt_init(cpi, num_workers);
+
+  av1_init_tile_data(cpi);
+
   memset(thread_id_to_tile_id, -1,
          sizeof(*thread_id_to_tile_id) * MAX_NUM_THREADS);
+  memset(enc_row_mt->num_tile_cols_done, 0,
+         sizeof(*enc_row_mt->num_tile_cols_done) * sb_rows_in_frame);
 
   for (int tile_row = 0; tile_row < tile_rows; tile_row++) {
     for (int tile_col = 0; tile_col < tile_cols; tile_col++) {
@@ -1558,7 +1724,7 @@ void av1_encode_tiles_row_mt(AV1_COMP *cpi) {
 
       // Initialize num_finished_cols to -1 for all rows.
       memset(row_mt_sync->num_finished_cols, -1,
-             sizeof(*row_mt_sync->num_finished_cols) * max_sb_rows);
+             sizeof(*row_mt_sync->num_finished_cols) * max_sb_rows_in_tile);
       row_mt_sync->next_mi_row = this_tile->tile_info.mi_row_start;
       row_mt_sync->num_threads_working = 0;
       row_mt_sync->intrabc_extra_top_right_sb_delay =
@@ -1570,8 +1736,6 @@ void av1_encode_tiles_row_mt(AV1_COMP *cpi) {
                              this_tile->tile_info.mi_col_end, tile_row);
     }
   }
-
-  num_workers = AOMMIN(num_workers, mt_info->num_workers);
 
   assign_tile_to_thread(thread_id_to_tile_id, tile_cols * tile_rows,
                         num_workers);
@@ -1593,17 +1757,23 @@ void av1_fp_encode_tiles_row_mt(AV1_COMP *cpi) {
   int num_workers = 0;
   int max_mb_rows = 0;
 
-  assert(IMPLIES(cpi->tile_data == NULL,
-                 cpi->allocated_tiles < tile_cols * tile_rows));
-  if (cpi->allocated_tiles < tile_cols * tile_rows) {
-    av1_row_mt_mem_dealloc(cpi);
+  max_mb_rows = fp_compute_max_mb_rows(cm, cpi->fp_block_size);
+  const bool alloc_row_mt_mem = enc_row_mt->allocated_tile_cols != tile_cols ||
+                                enc_row_mt->allocated_tile_rows != tile_rows ||
+                                enc_row_mt->allocated_rows != max_mb_rows;
+  const bool alloc_tile_data = cpi->allocated_tiles < tile_cols * tile_rows;
+
+  assert(IMPLIES(cpi->tile_data == NULL, alloc_tile_data));
+  if (alloc_tile_data) {
     av1_alloc_tile_data(cpi);
   }
 
-  av1_init_tile_data(cpi);
+  assert(IMPLIES(alloc_tile_data, alloc_row_mt_mem));
+  if (alloc_row_mt_mem) {
+    row_mt_mem_alloc(cpi, max_mb_rows, -1, 0);
+  }
 
-  const BLOCK_SIZE fp_block_size = cpi->fp_block_size;
-  max_mb_rows = fp_compute_max_mb_rows(cm, cpi->tile_data, fp_block_size);
+  av1_init_tile_data(cpi);
 
   // For pass = 1, compute the no. of workers needed. For single-pass encode
   // (pass = 0), no. of workers are already computed.
@@ -1611,13 +1781,6 @@ void av1_fp_encode_tiles_row_mt(AV1_COMP *cpi) {
     num_workers = av1_fp_compute_num_enc_workers(cpi);
   else
     num_workers = mt_info->num_mod_workers[MOD_FP];
-
-  if (enc_row_mt->allocated_tile_cols != tile_cols ||
-      enc_row_mt->allocated_tile_rows != tile_rows ||
-      enc_row_mt->allocated_rows != max_mb_rows) {
-    av1_row_mt_mem_dealloc(cpi);
-    row_mt_mem_alloc(cpi, max_mb_rows, -1, 0);
-  }
 
   memset(thread_id_to_tile_id, -1,
          sizeof(*thread_id_to_tile_id) * MAX_NUM_THREADS);
@@ -1665,7 +1828,6 @@ void av1_tpl_row_mt_sync_read_dummy(AV1TplRowMultiThreadSync *tpl_mt_sync,
   (void)tpl_mt_sync;
   (void)r;
   (void)c;
-  return;
 }
 
 void av1_tpl_row_mt_sync_write_dummy(AV1TplRowMultiThreadSync *tpl_mt_sync,
@@ -1674,7 +1836,6 @@ void av1_tpl_row_mt_sync_write_dummy(AV1TplRowMultiThreadSync *tpl_mt_sync,
   (void)r;
   (void)c;
   (void)cols;
-  return;
 }
 
 void av1_tpl_row_mt_sync_read(AV1TplRowMultiThreadSync *tpl_row_mt_sync, int r,
@@ -2061,7 +2222,7 @@ static AOM_INLINE void switch_direction(AV1_COMP *cpi, int *frame_idx,
 static AOM_INLINE void init_gm_thread_data(
     const GlobalMotionInfo *gm_info, GlobalMotionThreadData *thread_data) {
   for (int m = 0; m < RANSAC_NUM_MOTIONS; m++) {
-    MotionModel motion_params = thread_data->params_by_motion[m];
+    MotionModel motion_params = thread_data->motion_models[m];
     av1_zero(motion_params.params);
     motion_params.num_inliers = 0;
   }
@@ -2089,7 +2250,6 @@ static int gm_mt_worker_hook(void *arg1, void *unused) {
 
   while (1) {
     int ref_buf_idx = -1;
-    int ref_frame_idx = -1;
 
 #if CONFIG_MULTITHREAD
     pthread_mutex_lock(gm_mt_mutex_);
@@ -2103,11 +2263,6 @@ static int gm_mt_worker_hook(void *arg1, void *unused) {
       switch_direction(cpi, &ref_buf_idx, &cur_dir);
     }
 
-    // 'ref_frame_idx' holds the index of the current reference frame type in
-    // gm_info->reference_frames. job_info->next_frame_to_process will be
-    // incremented in get_next_gm_job() and hence subtracting by 1.
-    ref_frame_idx = job_info->next_frame_to_process[cur_dir] - 1;
-
 #if CONFIG_MULTITHREAD
     pthread_mutex_unlock(gm_mt_mutex_);
 #endif
@@ -2118,23 +2273,18 @@ static int gm_mt_worker_hook(void *arg1, void *unused) {
 
     // Compute global motion for the given ref_buf_idx.
     av1_compute_gm_for_valid_ref_frames(
-        cpi, gm_info->ref_buf, ref_buf_idx, gm_info->num_src_corners,
-        gm_info->src_corners, gm_info->src_buffer,
-        gm_thread_data->params_by_motion, gm_thread_data->segment_map,
-        gm_info->segment_map_w, gm_info->segment_map_h);
+        cpi, gm_info->ref_buf, ref_buf_idx, gm_thread_data->motion_models,
+        gm_thread_data->segment_map, gm_info->segment_map_w,
+        gm_info->segment_map_h);
 
 #if CONFIG_MULTITHREAD
     pthread_mutex_lock(gm_mt_mutex_);
 #endif
-    assert(ref_frame_idx != -1);
     // If global motion w.r.t. current ref frame is
     // INVALID/TRANSLATION/IDENTITY, skip the evaluation of global motion w.r.t
-    // the remaining ref frames in that direction. The below exit is disabled
-    // when ref frame distance w.r.t. current frame is zero. E.g.:
-    // source_alt_ref_frame w.r.t. ARF frames.
+    // the remaining ref frames in that direction.
     if (cpi->sf.gm_sf.prune_ref_frame_for_gm_search &&
-        gm_info->reference_frames[cur_dir][ref_frame_idx].distance != 0 &&
-        cpi->common.global_motion[ref_buf_idx].wmtype != ROTZOOM)
+        cpi->common.global_motion[ref_buf_idx].wmtype <= TRANSLATION)
       job_info->early_exit[cur_dir] = 1;
 
 #if CONFIG_MULTITHREAD
@@ -2199,7 +2349,7 @@ void av1_gm_dealloc(AV1GlobalMotionSync *gm_sync_data) {
       aom_free(thread_data->segment_map);
 
       for (int m = 0; m < RANSAC_NUM_MOTIONS; m++)
-        aom_free(thread_data->params_by_motion[m].inliers);
+        aom_free(thread_data->motion_models[m].inliers);
     }
     aom_free(gm_sync_data->thread_data);
   }
@@ -2228,8 +2378,8 @@ static AOM_INLINE void gm_alloc(AV1_COMP *cpi, int num_workers) {
 
     for (int m = 0; m < RANSAC_NUM_MOTIONS; m++) {
       CHECK_MEM_ERROR(
-          cm, thread_data->params_by_motion[m].inliers,
-          aom_malloc(sizeof(*thread_data->params_by_motion[m].inliers) * 2 *
+          cm, thread_data->motion_models[m].inliers,
+          aom_malloc(sizeof(*thread_data->motion_models[m].inliers) * 2 *
                      MAX_CORNERS));
     }
   }
@@ -2257,6 +2407,130 @@ void av1_global_motion_estimation_mt(AV1_COMP *cpi) {
   sync_enc_workers(&cpi->mt_info, &cpi->common, num_workers);
 }
 #endif  // !CONFIG_REALTIME_ONLY
+
+static AOM_INLINE int get_next_job_allintra(
+    AV1EncRowMultiThreadSync *const row_mt_sync, const int mi_row_end,
+    int *current_mi_row, int mib_size) {
+  if (row_mt_sync->next_mi_row < mi_row_end) {
+    *current_mi_row = row_mt_sync->next_mi_row;
+    row_mt_sync->num_threads_working++;
+    row_mt_sync->next_mi_row += mib_size;
+    return 1;
+  }
+  return 0;
+}
+
+static AOM_INLINE void prepare_wiener_var_workers(AV1_COMP *const cpi,
+                                                  AVxWorkerHook hook,
+                                                  const int num_workers) {
+  MultiThreadInfo *const mt_info = &cpi->mt_info;
+  for (int i = num_workers - 1; i >= 0; i--) {
+    AVxWorker *const worker = &mt_info->workers[i];
+    EncWorkerData *const thread_data = &mt_info->tile_thr_data[i];
+
+    worker->hook = hook;
+    worker->data1 = thread_data;
+    worker->data2 = NULL;
+
+    thread_data->thread_id = i;
+    // Set the starting tile for each thread, in this case the preprocessing
+    // stage does not need tiles. So we set it to 0.
+    thread_data->start = 0;
+
+    thread_data->cpi = cpi;
+    if (i == 0) {
+      thread_data->td = &cpi->td;
+    } else {
+      thread_data->td = thread_data->original_td;
+    }
+
+    if (thread_data->td != &cpi->td) {
+      thread_data->td->mb = cpi->td.mb;
+    }
+  }
+}
+
+static int cal_mb_wiener_var_hook(void *arg1, void *unused) {
+  (void)unused;
+  EncWorkerData *const thread_data = (EncWorkerData *)arg1;
+  AV1_COMP *const cpi = thread_data->cpi;
+  MACROBLOCK *x = &thread_data->td->mb;
+  MACROBLOCKD *xd = &x->e_mbd;
+  const BLOCK_SIZE bsize = cpi->weber_bsize;
+  const int mb_step = mi_size_wide[bsize];
+  AV1EncRowMultiThreadSync *const intra_row_mt_sync =
+      &cpi->ppi->intra_row_mt_sync;
+  AV1EncRowMultiThreadInfo *const enc_row_mt = &cpi->mt_info.enc_row_mt;
+  (void)enc_row_mt;
+#if CONFIG_MULTITHREAD
+  pthread_mutex_t *enc_row_mt_mutex_ = enc_row_mt->mutex_;
+#endif
+  DECLARE_ALIGNED(32, int16_t, src_diff[32 * 32]);
+  DECLARE_ALIGNED(32, tran_low_t, coeff[32 * 32]);
+  DECLARE_ALIGNED(32, tran_low_t, qcoeff[32 * 32]);
+  DECLARE_ALIGNED(32, tran_low_t, dqcoeff[32 * 32]);
+  double sum_rec_distortion = 0;
+  double sum_est_rate = 0;
+  int has_jobs = 1;
+  while (has_jobs) {
+    int current_mi_row = -1;
+#if CONFIG_MULTITHREAD
+    pthread_mutex_lock(enc_row_mt_mutex_);
+#endif
+    has_jobs =
+        get_next_job_allintra(intra_row_mt_sync, cpi->common.mi_params.mi_rows,
+                              &current_mi_row, mb_step);
+#if CONFIG_MULTITHREAD
+    pthread_mutex_unlock(enc_row_mt_mutex_);
+#endif
+    if (!has_jobs) break;
+    // TODO(chengchen): properly accumulate the distortion and rate.
+    av1_calc_mb_wiener_var_row(cpi, x, xd, current_mi_row, src_diff, coeff,
+                               qcoeff, dqcoeff, &sum_rec_distortion,
+                               &sum_est_rate);
+#if CONFIG_MULTITHREAD
+    pthread_mutex_lock(enc_row_mt_mutex_);
+#endif
+    intra_row_mt_sync->num_threads_working--;
+#if CONFIG_MULTITHREAD
+    pthread_mutex_unlock(enc_row_mt_mutex_);
+#endif
+  }
+  return 1;
+}
+
+// This function is the multi-threading version of computing the wiener
+// variance.
+// Note that the wiener variance is used for allintra mode (1 pass) and its
+// computation is before the frame encoding, so we don't need to consider
+// the number of tiles, instead we allocate all available threads to
+// the computation.
+void av1_calc_mb_wiener_var_mt(AV1_COMP *cpi, int num_workers,
+                               double *sum_rec_distortion,
+                               double *sum_est_rate) {
+  (void)sum_rec_distortion;
+  (void)sum_est_rate;
+  AV1_COMMON *const cm = &cpi->common;
+  MultiThreadInfo *const mt_info = &cpi->mt_info;
+  AV1EncRowMultiThreadSync *const intra_row_mt_sync =
+      &cpi->ppi->intra_row_mt_sync;
+
+  // TODO(chengchen): the memory usage could be improved.
+  const int mi_rows = cm->mi_params.mi_rows;
+  row_mt_sync_mem_alloc(intra_row_mt_sync, cm, mi_rows);
+
+  intra_row_mt_sync->intrabc_extra_top_right_sb_delay = 0;
+  intra_row_mt_sync->num_threads_working = num_workers;
+  intra_row_mt_sync->next_mi_row = 0;
+  memset(intra_row_mt_sync->num_finished_cols, -1,
+         sizeof(*intra_row_mt_sync->num_finished_cols) * mi_rows);
+
+  prepare_wiener_var_workers(cpi, cal_mb_wiener_var_hook, num_workers);
+  launch_workers(mt_info, num_workers);
+  sync_enc_workers(mt_info, cm, num_workers);
+
+  row_mt_sync_mem_dealloc(intra_row_mt_sync);
+}
 
 // Compare and order tiles based on absolute sum of tx coeffs.
 static int compare_tile_order(const void *a, const void *b) {
@@ -2732,6 +3006,19 @@ static AOM_INLINE int compute_num_pack_bs_workers(AV1_COMP *cpi) {
   return compute_num_enc_tile_mt_workers(&cpi->common, cpi->oxcf.max_threads);
 }
 
+// Computes num_workers for all intra multi-threading.
+static AOM_INLINE int compute_num_ai_workers(AV1_COMP *cpi) {
+  if (cpi->oxcf.max_threads <= 1) return 1;
+  // The multi-threading implementation of deltaq-mode = 3 in allintra
+  // mode is based on row multi threading.
+  if (!cpi->oxcf.row_mt) return 1;
+  cpi->weber_bsize = BLOCK_8X8;
+  const BLOCK_SIZE bsize = cpi->weber_bsize;
+  const int mb_step = mi_size_wide[bsize];
+  const int num_mb_rows = cpi->common.mi_params.mi_rows / mb_step;
+  return AOMMIN(num_mb_rows, cpi->oxcf.max_threads);
+}
+
 int compute_num_mod_workers(AV1_COMP *cpi, MULTI_THREADED_MODULES mod_name) {
   int num_mod_workers = 0;
   switch (mod_name) {
@@ -2758,6 +3045,14 @@ int compute_num_mod_workers(AV1_COMP *cpi, MULTI_THREADED_MODULES mod_name) {
     case MOD_FRAME_ENC:
       num_mod_workers = cpi->ppi->p_mt_info.num_mod_workers[MOD_FRAME_ENC];
       break;
+    case MOD_AI:
+      if (cpi->oxcf.pass == AOM_RC_ONE_PASS) {
+        num_mod_workers = compute_num_ai_workers(cpi);
+        break;
+      } else {
+        num_mod_workers = 0;
+        break;
+      }
     default: assert(0); break;
   }
   return (num_mod_workers);

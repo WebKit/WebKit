@@ -553,6 +553,18 @@ public:
         m_assembler.popcntq_mr(src.offset, src.base, dst);
     }
 
+    void countPopulation64(RegisterID src, RegisterID dst, FPRegisterID)
+    {
+        ASSERT(supportsCountPopulation());
+        m_assembler.popcntq_rr(src, dst);
+    }
+
+    void countPopulation64(Address src, RegisterID dst, FPRegisterID)
+    {
+        ASSERT(supportsCountPopulation());
+        m_assembler.popcntq_mr(src.offset, src.base, dst);
+    }
+
     void lshift64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.shlq_i8r(imm.m_value, dest);
@@ -1295,6 +1307,10 @@ public:
 
     void materializeVector(v128_t value, FPRegisterID dest)
     {
+        if (bitEquals(value, vectorAllZeros())) {
+            moveZeroToVector(dest);
+            return;
+        }
         move(TrustedImm64(value.u64x2[0]), scratchRegister());
         vectorReplaceLaneInt64(TrustedImm32(0), scratchRegister(), dest);
         move(TrustedImm64(value.u64x2[1]), scratchRegister());
@@ -2884,6 +2900,20 @@ public:
         default:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Invalid SIMD lane for vector multiply.");
         }
+    }
+
+    void vectorFusedMulAdd(SIMDInfo simdInfo, FPRegisterID mul1, FPRegisterID mul2, FPRegisterID addend, FPRegisterID dest, FPRegisterID scratch)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        vectorMul(simdInfo, mul1, mul2, scratch);
+        vectorAdd(simdInfo, addend, scratch, dest);
+    }
+
+    void vectorFusedNegMulAdd(SIMDInfo simdInfo, FPRegisterID mul1, FPRegisterID mul2, FPRegisterID addend, FPRegisterID dest, FPRegisterID scratch)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        vectorMul(simdInfo, mul1, mul2, scratch);
+        vectorSub(simdInfo, addend, scratch, dest);
     }
 
     void vectorDiv(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)

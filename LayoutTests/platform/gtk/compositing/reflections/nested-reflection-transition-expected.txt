@@ -13,5 +13,5 @@ layer at (29,31) size 100x100
   RenderBlock {DIV} at (1,11) size 100x100
 layer at (39,31) size 100x100
   RenderBlock {DIV} at (10,0) size 100x100 [bgcolor=#008000]
-    RenderText {#text} at (33,1) size 34x74
+    RenderText {#text} at (33,1) size 34x73
       text run at (33,1) width 34: "1"

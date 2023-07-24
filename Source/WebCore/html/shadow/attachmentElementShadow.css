@@ -23,20 +23,27 @@
  */
 
 div#attachment-container {
-    display: grid;
-    gap: 0;
 #if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    grid-template-columns: 76px auto;
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    --icon-margin: 8px;
+    --information-margin-end: 8px;
+    width: 187px;
+#else
+    --icon-margin: 10px;
+    --information-margin-end: 26px;
     width: 338px;
-    height: 92px;
+#endif
+    gap: 0;
     background-color: -apple-system-quaternary-fill;
 #else
-    grid-template-columns: 68px auto;
+    --icon-margin: 14px;
+    gap: 4px;
+    --information-margin-end: 24px;
     width: 266px;
-    height: 80px;
     background-color: -apple-system-tertiary-fill;
 #endif
-    margin: 1px;
+    min-height: calc(var(--icon-size) + var(--icon-margin) * 2);
+    display: flex;
     border-radius: 8px;
     font: caption;
     pointer-events: none;
@@ -44,67 +51,52 @@ div#attachment-container {
     -webkit-user-select: none;
 }
 
-div#attachment-container::selection {
-    background-color: -apple-system-selected-content-background;
-}
-
 div#attachment-preview-area {
-    grid-row: 1;
-    grid-column: 1;
-#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    width: 56px; /* Co-dependent with attachmentImageOnlySize.width */
-    height: 72px; /* Co-dependent with attachmentImageOnlySize.height */
-    padding: 10px;
-    border-radius: 12px 0px 0px 12px;
-#else
-    width: 40px;
-    height: 52px; /* Co-dependent with attachmentImageOnlyIconSize */
-    padding: 14px;
-    border-radius: 8px 0px 0px 8px;
-#endif
     display: grid;
-    gap: 0;
     align-items: center;
-    justify-items: center;
+    justify-items: end;
+    flex-shrink: 0;
+    margin: var(--icon-margin);
 }
 
-attachment#attachment-preview {
-    grid-row: 1;
-    grid-column: 1;
-#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    max-width: 72px;
-    max-height: 72px;
-#else
-    max-width: 52px;
-    max-height: 52px;
-#endif
-    overflow: hidden;
+img#attachment-icon,
+div#attachment-placeholder,
+div#attachment-progress {
+    grid-area: 1 / 1;
+    align-self: center;
+    justify-self: center;
+}
+
+div#attachment-placeholder,
+div#attachment-progress {
+    width: calc(3/4 * var(--icon-size));
+    height: calc(3/4 * var(--icon-size));
+}
+
+img#attachment-icon {
+    max-width: var(--icon-size);
+    max-height: var(--icon-size);
+    object-fit: contain;
 }
 
 div#attachment-placeholder {
-    grid-row: 1;
-    grid-column: 1;
-    width: 100%;
-    aspect-ratio: 1;
     /* SF Symbol arrow.down.circle from https://copysfsymbols.apple.com, Regular */
-    background-image: url('data:image/svg+xml,<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path color="-apple-system-label" stroke="currentcolor" fill="currentcolor" d="M29.8071921,59.7070694 C45.9793308,59.7070694 59.4061427,46.3108516 59.4061427,30.1387129 C59.4061427,13.9665149 45.9486179,0.570297031 29.7764199,0.570297031 C13.6287565,0.570297031 0.238811882,13.9665149 0.238811882,30.1387129 C0.238811882,46.3108516 13.6594693,59.7070694 29.8071921,59.7070694 Z M29.8071921,54.7956773 C16.152202,54.7956773 5.20540991,43.8244159 5.20540991,30.1387129 C5.20540991,16.4529505 16.1214297,5.48168318 29.7764199,5.48168318 C43.4621823,5.48168318 54.4641625,16.4529505 54.4641625,30.1387129 C54.4641625,43.8244159 43.4928951,54.7956773 29.8071921,54.7956773 Z M29.8071921,15.3724159 C28.5699446,15.3724159 27.6526575,16.283406 27.6526575,17.5269505 L27.6526575,32.0522377 L27.8804198,38.1703961 L24.9597268,34.6780991 L21.5166773,31.1980397 C21.1471129,30.8284753 20.5993901,30.5700001 19.9776476,30.5700001 C18.7774099,30.5700001 17.8664198,31.4809902 17.8664198,32.6749307 C17.8664198,33.2659605 18.0634099,33.7829704 18.4574495,34.1707129 L28.1269545,43.8157426 C28.7299248,44.3942377 29.1916872,44.6220001 29.8071921,44.6220001 C30.4841822,44.6220001 30.9704199,44.3635248 31.5181426,43.8157426 L41.1939446,34.1707129 C41.5879842,33.7829704 41.7849743,33.2659605 41.7849743,32.6749307 C41.7849743,31.4809902 40.8432119,30.5700001 39.6737466,30.5700001 C39.052004,30.5700001 38.5042813,30.7977624 38.1347169,31.1980397 L34.7224397,34.6780991 L31.7646773,38.207406 L31.9924397,32.0522377 L31.9924397,17.5269505 C31.9924397,16.283406 31.0814496,15.3724159 29.8071921,15.3724159 Z" transform="translate(2 2)"></path></svg>');
-    background-repeat: no-repeat;
-    background-position: center;
-    margin: auto;
+    mask-image: url('data:image/svg+xml,<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M29.8071921,59.7070694 C45.9793308,59.7070694 59.4061427,46.3108516 59.4061427,30.1387129 C59.4061427,13.9665149 45.9486179,0.570297031 29.7764199,0.570297031 C13.6287565,0.570297031 0.238811882,13.9665149 0.238811882,30.1387129 C0.238811882,46.3108516 13.6594693,59.7070694 29.8071921,59.7070694 Z M29.8071921,54.7956773 C16.152202,54.7956773 5.20540991,43.8244159 5.20540991,30.1387129 C5.20540991,16.4529505 16.1214297,5.48168318 29.7764199,5.48168318 C43.4621823,5.48168318 54.4641625,16.4529505 54.4641625,30.1387129 C54.4641625,43.8244159 43.4928951,54.7956773 29.8071921,54.7956773 Z M29.8071921,15.3724159 C28.5699446,15.3724159 27.6526575,16.283406 27.6526575,17.5269505 L27.6526575,32.0522377 L27.8804198,38.1703961 L24.9597268,34.6780991 L21.5166773,31.1980397 C21.1471129,30.8284753 20.5993901,30.5700001 19.9776476,30.5700001 C18.7774099,30.5700001 17.8664198,31.4809902 17.8664198,32.6749307 C17.8664198,33.2659605 18.0634099,33.7829704 18.4574495,34.1707129 L28.1269545,43.8157426 C28.7299248,44.3942377 29.1916872,44.6220001 29.8071921,44.6220001 C30.4841822,44.6220001 30.9704199,44.3635248 31.5181426,43.8157426 L41.1939446,34.1707129 C41.5879842,33.7829704 41.7849743,33.2659605 41.7849743,32.6749307 C41.7849743,31.4809902 40.8432119,30.5700001 39.6737466,30.5700001 C39.052004,30.5700001 38.5042813,30.7977624 38.1347169,31.1980397 L34.7224397,34.6780991 L31.7646773,38.207406 L31.9924397,32.0522377 L31.9924397,17.5269505 C31.9924397,16.283406 31.0814496,15.3724159 29.8071921,15.3724159 Z" transform="translate(2 2)"></path></svg>');
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: -apple-system-label;
 }
 
 div#attachment-progress {
-    grid-row: 1;
-    grid-column: 1;
-    width: 100%;
-    aspect-ratio: 1;
     border-radius: 50%;
     color: -apple-system-secondary-label;
     background: conic-gradient(currentcolor calc(var(--progress) * 100%), transparent 0);
 }
 
 /* FIXME: Move the border into attachment-progress above, and remove this div, when rdar://107621207 is fixed (currently it produces artifacts at the edges). */
-div#attachment-progress-circle {
+div#attachment-progress::before {
+    content: "";
+    display: block;
     width: 100%;
     aspect-ratio: 1;
     border-radius: 50%;
@@ -113,42 +105,26 @@ div#attachment-progress-circle {
 }
 
 div#attachment-information-area {
-    grid-row: 1;
-    grid-column: 2;
-#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    height: 92px;
-    border-radius: 0px 12px 12px 0px;
-#else
-    height: 80px;
-    border-radius: 0px 8px 8px 0px;
-#endif
-    padding: 0;
-    display: grid;
-    gap: 0;
+    display: flex;
     align-items: center;
+    flex: 1 1;
+    margin-inline-end: var(--information-margin-end);
 }
 
 div#attachment-information-block {
-    grid-row: 1;
-    grid-column: 1;
-#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    margin-inline-start: 6px;
-    margin-inline-end: 26px;
-#else
-    margin-inline-start: 4px;
-    margin-inline-end: 24px;
-#endif
-    margin-top: auto;
-    margin-bottom: auto;
     display: grid;
-    gap: 0;
+    width: 100%;
 }
 
 div#attachment-action {
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    font-size: x-small;
+#else
+    font-size: small;
+#endif
     grid-row: 1;
     grid-column: 1;
     justify-self: stretch;
-    font-size: small;
     font-weight: bold;
     color: -apple-system-secondary-label;
     display: -webkit-box;
@@ -158,10 +134,14 @@ div#attachment-action {
 }
 
 div#attachment-title {
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    font-size: x-small;
+#else
+    font-size: small;
+#endif
     grid-row: 2;
     grid-column: 1;
     justify-self: stretch;
-    font-size: small;
     font-weight: bold;
     color: -apple-system-label;
     overflow-wrap: anywhere;
@@ -172,10 +152,14 @@ div#attachment-title {
 }
 
 div#attachment-subtitle {
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    font-size: xx-small;
+#else
+    font-size: x-small;
+#endif
     grid-row: 3;
     grid-column: 1;
     justify-self: stretch;
-    font-size: x-small;
     color: -apple-system-secondary-label;
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -193,34 +177,45 @@ div#attachment-save-area {
 
 button#attachment-save-button {
 #if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    width: 28px;
+    height: 28px;
+#else
     width: 40px;
     height: 40px;
+#endif
     background-color: -apple-system-tertiary-fill;
     border: 0;
 #else
     width: 28px;
     height: 28px;
-    background-color: transparent;
-    border: 1px solid -apple-system-secondary-label;
+    background-color: unset;
+    color: -apple-system-quaternary-label;
+    border: 1px solid;
 #endif
     border-radius: 50%;
-    margin: 0;
     padding: 0;
     pointer-events: initial;
 }
 
-div#attachment-save-icon {
-    /* SF Symbol square.and.arrow.down from https://copysfsymbols.apple.com, Regular */
+button#attachment-save-button::before {
 #if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    background-image: url('data:image/svg+xml,<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path color="-apple-system-blue" stroke="currentcolor" fill="currentcolor" d="M8.80075473,59.9883397 L40.5007359,59.9883397 C46.2924906,59.9883397 49.171302,57.097585 49.171302,51.4056737 L49.171302,23.867434 C49.171302,18.1695849 46.2924906,15.2847736 40.5007359,15.2847736 L32.168717,15.2847736 L32.168717,19.7534717 L40.4302076,19.7534717 C43.1372265,19.7534717 44.7259246,21.2363774 44.7259246,24.0844529 L44.7259246,51.1886684 C44.7259246,54.0660284 43.1372265,55.5136699 40.4302076,55.5136699 L8.87128303,55.5136699 C6.11111322,55.5136699 4.57556605,54.0660284 4.57556605,51.1886684 L4.57556605,24.0844529 C4.57556605,21.2363774 6.11111322,19.7534717 8.87128303,19.7534717 L17.1035095,19.7534717 L17.1035095,15.2847736 L8.80075473,15.2847736 C3.03832076,15.2847736 0.130188679,18.1576415 0.130188679,23.867434 L0.130188679,51.4056737 C0.130188679,57.1095284 3.03832076,59.9883397 8.80075473,59.9883397 Z M24.6361132,41.8179623 C25.2225849,41.8179623 25.6858868,41.6302076 26.2370378,41.0790567 L35.5687925,32.0635472 C36.0028302,31.6588302 36.2491133,31.2015284 36.2491133,30.6150567 C36.2491133,29.4773774 35.375151,28.662 34.214151,28.662 C33.6862642,28.662 33.1231699,28.8849623 32.7184529,29.3482642 L28.5285283,33.8018491 L26.6770189,35.747151 L26.8587736,31.6220944 L26.8587736,2.50086793 C26.8587736,1.32198113 25.8383208,0.336792453 24.6361132,0.336792453 C23.4631699,0.336792453 22.442717,1.32198113 22.442717,2.50086793 L22.442717,31.6220944 L22.6244717,35.753151 L20.7670189,33.8018491 L16.5710944,29.3482642 C16.1723774,28.8849623 15.5799623,28.662 15.0520755,28.662 C13.8851321,28.662 13.0463774,29.4773774 13.0463774,30.6150567 C13.0463774,31.2015284 13.292717,31.6588302 13.697434,32.0635472 L23.0351321,41.0790567 C23.6096604,41.6302076 24.0789623,41.8179623 24.6361132,41.8179623 Z" transform="translate(7.377 2)"></path></svg>');
-    background-size: 83%;
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    mask-size: 14px;
 #else
-    background-image: url('data:image/svg+xml,<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path color="-apple-system-secondary-label" stroke="currentcolor" fill="currentcolor" d="M8.80075473,59.9883397 L40.5007359,59.9883397 C46.2924906,59.9883397 49.171302,57.097585 49.171302,51.4056737 L49.171302,23.867434 C49.171302,18.1695849 46.2924906,15.2847736 40.5007359,15.2847736 L32.168717,15.2847736 L32.168717,19.7534717 L40.4302076,19.7534717 C43.1372265,19.7534717 44.7259246,21.2363774 44.7259246,24.0844529 L44.7259246,51.1886684 C44.7259246,54.0660284 43.1372265,55.5136699 40.4302076,55.5136699 L8.87128303,55.5136699 C6.11111322,55.5136699 4.57556605,54.0660284 4.57556605,51.1886684 L4.57556605,24.0844529 C4.57556605,21.2363774 6.11111322,19.7534717 8.87128303,19.7534717 L17.1035095,19.7534717 L17.1035095,15.2847736 L8.80075473,15.2847736 C3.03832076,15.2847736 0.130188679,18.1576415 0.130188679,23.867434 L0.130188679,51.4056737 C0.130188679,57.1095284 3.03832076,59.9883397 8.80075473,59.9883397 Z M24.6361132,41.8179623 C25.2225849,41.8179623 25.6858868,41.6302076 26.2370378,41.0790567 L35.5687925,32.0635472 C36.0028302,31.6588302 36.2491133,31.2015284 36.2491133,30.6150567 C36.2491133,29.4773774 35.375151,28.662 34.214151,28.662 C33.6862642,28.662 33.1231699,28.8849623 32.7184529,29.3482642 L28.5285283,33.8018491 L26.6770189,35.747151 L26.8587736,31.6220944 L26.8587736,2.50086793 C26.8587736,1.32198113 25.8383208,0.336792453 24.6361132,0.336792453 C23.4631699,0.336792453 22.442717,1.32198113 22.442717,2.50086793 L22.442717,31.6220944 L22.6244717,35.753151 L20.7670189,33.8018491 L16.5710944,29.3482642 C16.1723774,28.8849623 15.5799623,28.662 15.0520755,28.662 C13.8851321,28.662 13.0463774,29.4773774 13.0463774,30.6150567 C13.0463774,31.2015284 13.292717,31.6588302 13.697434,32.0635472 L23.0351321,41.0790567 C23.6096604,41.6302076 24.0789623,41.8179623 24.6361132,41.8179623 Z" transform="translate(7.377 2)"></path></svg>');
-    background-size: 70%;
+    mask-size: 18px;
 #endif
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 22px;
-    height: 22px;
-    margin: auto;
+    background-color: -apple-system-blue;
+#else
+    mask-size: 14px;
+    background-color: -apple-system-secondary-label;
+#endif
+    content: "";
+    display: block;
+    /* SF Symbol square-and-arrow-down from https://copysfsymbols.apple.com/bold.html */
+    mask-image: url('data:image/svg+xml,<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M9.70427779,59.5060001 L41.1172223,59.5060001 C47.3186112,59.5060001 50.6939445,56.1251112 50.6939445,49.9771805 L50.6939445,23.9525556 C50.6939445,17.8017778 47.3186112,14.4237778 41.1172223,14.4237778 L33.7676667,14.4237778 L33.7676667,21.4344445 L40.3501667,21.4344445 C42.5082223,21.4344445 43.6961112,22.5026667 43.6961112,24.7991667 L43.6961112,49.1306001 C43.6961112,51.4430056 42.5082223,52.4924612 40.3501667,52.4924612 L10.4713889,52.4924612 C8.28600001,52.4924612 7.1253889,51.4430056 7.1253889,49.1306001 L7.1253889,24.7991667 C7.1253889,22.5026667 8.28600001,21.4344445 10.4713889,21.4344445 L17.038,21.4344445 L17.038,14.4237778 L9.70427779,14.4237778 C3.51883334,14.4237778 0.127777778,17.7960556 0.127777778,23.9525556 L0.127777778,49.9771805 C0.127777778,56.1308334 3.51883334,59.5060001 9.70427779,59.5060001 Z M25.4028334,42.3922778 C26.2584445,42.3922778 27.0635,42.1008334 27.8845,41.2957223 L36.8785001,32.6482223 C37.4297223,32.1128889 37.7371112,31.5327778 37.7371112,30.7405556 C37.7371112,29.1907778 36.4414445,28.1172778 35.0055556,28.1172778 C34.2292778,28.1172778 33.4977223,28.4433334 32.9623889,29.0263334 L29.6885556,32.5067223 L28.1213889,34.6002778 L28.5527223,30.6265001 L28.5527223,3.32666667 C28.5527223,1.66016667 27.1617223,0.224444445 25.4028334,0.224444445 C23.6598334,0.224444445 22.2688334,1.66016667 22.2688334,3.32666667 L22.2688334,30.6265001 L22.7001667,34.6031112 L21.1301111,32.5067223 L17.8534445,29.0263334 C17.3209445,28.4433334 16.5735,28.1172778 15.7972778,28.1172778 C14.3584445,28.1172778 13.0816111,29.1907778 13.0816111,30.7405556 C13.0816111,31.5327778 13.3889445,32.1128889 13.9242778,32.6482223 L22.9211667,41.2957223 C23.7552223,42.1008334 24.5631112,42.3922778 25.4028334,42.3922778 Z" transform="translate(6.444 2)"></path></svg>');
+    mask-repeat: no-repeat;
+    mask-position: center;
+    width: 100%;
+    height: 100%;
 }

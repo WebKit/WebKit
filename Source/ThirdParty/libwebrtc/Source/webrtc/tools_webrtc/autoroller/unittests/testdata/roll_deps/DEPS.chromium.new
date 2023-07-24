@@ -5,6 +5,7 @@ vars = {
 
   # This is updated compared to the DEPS file.
   'depot_tools_revision': '1206a353e40abb70d8454eb9af53db0ad10b713c',
+  'fuchsia_version': 'version:11.20230207.1.1',
 }
 
 deps = {

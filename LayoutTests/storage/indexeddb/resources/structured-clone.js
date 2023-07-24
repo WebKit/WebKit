@@ -658,8 +658,6 @@ function testBadTypes()
     transaction.onabort = unexpectedAbortCallback;
     transaction.oncomplete = finishJSTest;
 
-    debug("Testing Error");
-    evalAndExpectException("store.put(new Error, 'key')", "DOMException.DATA_CLONE_ERR");
     debug("Testing Function");
     evalAndExpectException("store.put(new Function, 'key')", "DOMException.DATA_CLONE_ERR");
 

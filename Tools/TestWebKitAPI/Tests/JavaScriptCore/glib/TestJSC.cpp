@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2,1 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -165,22 +165,25 @@ static void testJSCBasic()
         ExceptionHandler exceptionHandler(context.get());
 
         GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), "2 + 2", -1));
+        g_object_set_data(G_OBJECT(result.get()), "is-original-jscvalue", GINT_TO_POINTER(TRUE));
         checker.watch(result.get());
         g_assert_true(jsc_value_get_context(result.get()) == context.get());
         g_assert_true(jsc_value_is_number(result.get()));
         g_assert_cmpint(jsc_value_to_int32(result.get()), ==, 4);
+        g_assert_cmpint(GPOINTER_TO_INT(g_object_get_data(G_OBJECT(result.get()), "is-original-jscvalue")), ==, TRUE);
 
         GRefPtr<JSCValue> result2 = adoptGRef(jsc_context_evaluate(context.get(), "2 + 2", -1));
         checker.watch(result2.get());
         g_assert_true(jsc_value_get_context(result2.get()) == context.get());
         g_assert_true(result.get() == result2.get());
+        g_assert_cmpint(GPOINTER_TO_INT(g_object_get_data(G_OBJECT(result2.get()), "is-original-jscvalue")), ==, TRUE);
 
         GRefPtr<JSCValue> result3 = adoptGRef(jsc_context_evaluate(context.get(), "3 + 1", -1));
         checker.watch(result3.get());
         g_assert_true(jsc_value_get_context(result3.get()) == context.get());
         g_assert_true(result.get() == result3.get());
+        g_assert_cmpint(GPOINTER_TO_INT(g_object_get_data(G_OBJECT(result3.get()), "is-original-jscvalue")), ==, TRUE);
 
-        auto* resultPtr = result.get();
         result = nullptr;
         result2 = nullptr;
         result3 = nullptr;
@@ -189,7 +192,7 @@ static void testJSCBasic()
         g_assert_true(jsc_value_get_context(result4.get()) == context.get());
         g_assert_true(jsc_value_is_number(result4.get()));
         g_assert_cmpint(jsc_value_to_int32(result4.get()), ==, 4);
-        g_assert_false(result4.get() == resultPtr);
+        g_assert_cmpint(GPOINTER_TO_INT(g_object_get_data(G_OBJECT(result4.get()), "is-original-jscvalue")), ==, FALSE);
     }
 
     {

@@ -1,0 +1,17 @@
+Tests that XHRs requests have type XHR, inlcuding those with the same URL as the main resource.
+
+Bug 68646 Bug 257407
+
+== Running test suite: Resource.Type.XHR
+-- Running test case: Resource.Type.XHR.Same.As.Main.Resource.Url
+PASS: Resource should be XHR type.
+PASS: Resource should be a GET request.
+PASS: Resource should have a 200 response.
+PASS: Resource should receive main resource in response.
+
+-- Running test case: Resource.Type.XHR.Another.Url
+PASS: Resource should be XHR type.
+PASS: Resource should be a GET request.
+PASS: Resource should have a 200 response.
+PASS: Resource should receive json in response.
+

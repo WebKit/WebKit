@@ -56,11 +56,10 @@ public:
     virtual void activeVideoRouteDidChange(SupportsAirPlayVideo, Ref<MediaPlaybackTarget>&&) = 0;
 };
 
-class WEBCORE_EXPORT MediaSessionHelper {
-    WTF_MAKE_FAST_ALLOCATED;
+class WEBCORE_EXPORT MediaSessionHelper : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSessionHelper> {
 public:
     static MediaSessionHelper& sharedHelper();
-    static void setSharedHelper(UniqueRef<MediaSessionHelper>&&);
+    static void setSharedHelper(Ref<MediaSessionHelper>&&);
     static void resetSharedHelper();
 
     MediaSessionHelper() = default;
@@ -72,7 +71,10 @@ public:
 
     void startMonitoringWirelessRoutes();
     void stopMonitoringWirelessRoutes();
-    virtual void providePresentingApplicationPID(int) = 0;
+
+    enum class ShouldOverride : bool { No, Yes };
+    void providePresentingApplicationPID(int pid) { providePresentingApplicationPID(pid, ShouldOverride::No); }
+    virtual void providePresentingApplicationPID(int, ShouldOverride) = 0;
 
     void setIsExternalOutputDeviceAvailable(bool);
 

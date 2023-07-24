@@ -921,15 +921,15 @@ video::cue(:future) {
     color: gray;
 }
 
-video::-webkit-media-text-track-container b {
+[pseudo="-webkit-media-text-track-display"] b {
     font-weight: bold;
 }
 
-video::-webkit-media-text-track-container u {
+[pseudo="-webkit-media-text-track-display"] u {
     text-decoration: underline;
 }
 
-video::-webkit-media-text-track-container i {
+[pseudo="-webkit-media-text-track-display"] i {
     font-style: italic;
 }
 

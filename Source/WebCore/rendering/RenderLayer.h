@@ -775,8 +775,6 @@ public:
     }
 
     bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && isCSSStackingContext(); }
-
-    bool shouldPaintUsingCompositeCopy() const { return m_shouldPaintUsingCompositeCopy; }
     
     // FIXME: We should ASSERT(!m_hasNotIsolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
     bool hasNotIsolatedBlendingDescendants() const { return m_hasNotIsolatedBlendingDescendants; }
@@ -877,6 +875,8 @@ public:
     String debugDescription() const;
 
     bool setIsOpportunisticStackingContext(bool);
+
+    void setIsHiddenByOverflowTruncation(bool);
 
 private:
 
@@ -1143,8 +1143,6 @@ private:
     
     bool computeHasVisibleContent() const;
 
-    void setShouldPaintUsingCompositeCopy(bool copy) { m_shouldPaintUsingCompositeCopy = copy; }
-
     bool has3DTransformedDescendant() const { return m_has3DTransformedDescendant; }
     bool has3DTransformedAncestor() const { return m_has3DTransformedAncestor; }
 
@@ -1250,7 +1248,7 @@ private:
     bool m_has3DTransformedAncestor : 1;
 
     bool m_insideSVGForeignObject : 1;
-    bool m_shouldPaintUsingCompositeCopy : 1;
+    bool m_isHiddenByOverflowTruncation : 1 { false };
 
     unsigned m_indirectCompositingReason : 4; // IndirectCompositingReason
     unsigned m_viewportConstrainedNotCompositedReason : 2; // ViewportConstrainedNotCompositedReason
@@ -1347,6 +1345,14 @@ inline void RenderLayer::updateZOrderLists()
 inline RenderLayer* RenderLayer::paintOrderParent() const
 {
     return m_isNormalFlowOnly ? m_parent : stackingContext();
+}
+
+inline void RenderLayer::setIsHiddenByOverflowTruncation(bool isHidden)
+{
+    if (m_isHiddenByOverflowTruncation == isHidden)
+        return;
+    m_isHiddenByOverflowTruncation = isHidden;
+    m_visibleContentStatusDirty = true;
 }
 
 #if ASSERT_ENABLED

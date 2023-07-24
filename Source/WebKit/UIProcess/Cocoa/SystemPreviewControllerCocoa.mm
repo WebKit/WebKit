@@ -50,7 +50,7 @@
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
 SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
 SOFT_LINK_CLASS(AssetViewer, ASVLaunchPreview);
 
 @interface ASVLaunchPreview (Staging_101981518)
@@ -273,6 +273,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
         return nil;
 
     _previewController = previewController;
+    _fileHandle = FileSystem::invalidPlatformFileHandle;
     return self;
 }
 
@@ -346,6 +347,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 
 - (void)completeLoad
 {
+    ASSERT(_fileHandle != FileSystem::invalidPlatformFileHandle);
     size_t byteCount = FileSystem::writeToFile(_fileHandle, [_data bytes], [_data length]);
     FileSystem::closeFile(_fileHandle);
 
@@ -361,16 +363,16 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 
 namespace WebKit {
 
-void SystemPreviewController::begin(const URL& url, const WebCore::SystemPreviewInfo& systemPreviewInfo)
+void SystemPreviewController::begin(const URL& url, const WebCore::SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!m_qlPreviewController);
     if (m_qlPreviewController)
-        return;
+        return completionHandler();
 
     UIViewController *presentingViewController = m_webPageProxy.uiClient().presentingViewController();
 
     if (!presentingViewController)
-        return;
+        return completionHandler();
 
     m_systemPreviewInfo = systemPreviewInfo;
 
@@ -378,9 +380,9 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SystemPreview
 
     auto request = WebCore::ResourceRequest(url);
     WeakPtr weakThis { *this };
-    m_webPageProxy.dataTaskWithRequest(WTFMove(request), [weakThis] (Ref<API::DataTask>&& task) {
+    m_webPageProxy.dataTaskWithRequest(WTFMove(request), [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
         if (!weakThis)
-            return;
+            return completionHandler();
 
         auto strongThis = weakThis.get();
 
@@ -388,12 +390,13 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SystemPreview
         strongThis->m_wkSystemPreviewDataTaskDelegate = adoptNS([[_WKSystemPreviewDataTaskDelegate alloc] initWithSystemPreviewController:strongThis]);
         [dataTask setDelegate:strongThis->m_wkSystemPreviewDataTaskDelegate.get()];
         strongThis->takeActivityToken();
+        completionHandler();
     });
 
     m_downloadURL = url;
     m_fragmentIdentifier = url.fragmentIdentifier().toString();
 
-#if !HAVE(UIKIT_WEBKIT_INTERNALS)
+#if !PLATFORM(VISION)
     m_qlPreviewController = adoptNS([PAL::allocQLPreviewControllerInstance() init]);
 
     m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this]);
@@ -417,7 +420,7 @@ void SystemPreviewController::loadStarted(const URL& localFileURL)
     if (!m_fragmentIdentifier.isEmpty())
         m_localFileURL.setFragmentIdentifier(m_fragmentIdentifier);
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:websiteURL:completion:)])
         [getASVLaunchPreviewClass() beginPreviewApplicationWithURLs:localFileURLs() is3DContent:YES websiteURL:m_downloadURL completion:^(NSError *error) { }];
 #endif
@@ -431,7 +434,7 @@ void SystemPreviewController::loadCompleted(const URL& localFileURL)
 
     ASSERT(equalIgnoringFragmentIdentifier(m_localFileURL, localFileURL));
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     if ([getASVLaunchPreviewClass() respondsToSelector:@selector(launchPreviewApplicationWithURLs:completion:)])
         [getASVLaunchPreviewClass() launchPreviewApplicationWithURLs:localFileURLs() completion:^(NSError *error) { }];
 #else
@@ -450,7 +453,7 @@ void SystemPreviewController::loadFailed()
 {
     RELEASE_LOG(SystemPreview, "SystemPreview load has failed on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     if (m_state == State::Loading && [getASVLaunchPreviewClass() respondsToSelector:@selector(cancelPreviewApplicationWithURLs:error:completion:)])
         [getASVLaunchPreviewClass() cancelPreviewApplicationWithURLs:localFileURLs() error:nil completion:^(NSError *error) { }];
 #else
@@ -477,7 +480,7 @@ void SystemPreviewController::end()
 {
     RELEASE_LOG(SystemPreview, "SystemPreview ended on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
 
-#if !HAVE(UIKIT_WEBKIT_INTERNALS)
+#if !PLATFORM(VISION)
     m_qlPreviewControllerDelegate = nullptr;
     m_qlPreviewControllerDataSource = nullptr;
     m_qlPreviewController = nullptr;
@@ -489,7 +492,7 @@ void SystemPreviewController::end()
 
 void SystemPreviewController::updateProgress(float progress)
 {
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     UNUSED_PARAM(progress);
 #else
     if (m_qlPreviewControllerDataSource)
@@ -530,7 +533,7 @@ void SystemPreviewController::triggerSystemPreviewAction()
 
 void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, NSString* documentID, uint64_t pageID)
 {
-    auto uuid = UUID::parseVersion4(String(documentID));
+    auto uuid = WTF::UUID::parseVersion4(String(documentID));
     ASSERT(uuid);
     if (!uuid)
         return;

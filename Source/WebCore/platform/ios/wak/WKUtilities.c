@@ -36,10 +36,10 @@ const CFSetCallBacks WKCollectionSetCallBacks = { 0, WKCollectionRetain, WKColle
 const void *WKCollectionRetain (CFAllocatorRef allocator, const void *value)
 {
     UNUSED_PARAM(allocator);
-    return WKRetain (value);
+    return WAKRetain (value);
 }
 
-const void *WKRetain(const void *o)
+const void *WAKRetain(const void *o)
 {
     WAKObjectRef object = (WAKObjectRef)(uintptr_t)o;
     
@@ -51,10 +51,10 @@ const void *WKRetain(const void *o)
 void WKCollectionRelease (CFAllocatorRef allocator, const void *value)
 {
     UNUSED_PARAM(allocator);
-    WKRelease (value);
+    WAKRelease (value);
 }
 
-void WKRelease(const void *o)
+void WAKRelease(const void *o)
 {
     WAKObjectRef object = (WAKObjectRef)(uintptr_t)o;
 
@@ -90,7 +90,7 @@ const void *WKCreateObjectWithSize (size_t size, WKClassInfo *info)
 
     object->classInfo = info;
     
-    WKRetain(object);
+    WAKRetain(object);
     
     return object;
 }

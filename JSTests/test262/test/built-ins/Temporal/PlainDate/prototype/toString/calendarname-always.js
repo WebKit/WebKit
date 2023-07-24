@@ -7,12 +7,35 @@ description: If calendarName is "always", the calendar ID should be included.
 features: [Temporal]
 ---*/
 
+const calendarMethods = {
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  day() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  inLeapYear() {},
+  mergeFields() {},
+  month() {},
+  monthCode() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  year() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
+};
+
 const tests = [
   [[], "2000-05-02[u-ca=iso8601]", "built-in ISO"],
-  [[{ toString() { return "custom"; } }], "2000-05-02[u-ca=custom]", "custom"],
-  [[{ toString() { return "iso8601"; } }], "2000-05-02[u-ca=iso8601]", "custom with iso8601 toString"],
-  [[{ toString() { return "ISO8601"; } }], "2000-05-02[u-ca=ISO8601]", "custom with caps toString"],
-  [[{ toString() { return "\u0131so8601"; } }], "2000-05-02[u-ca=\u0131so8601]", "custom with dotless i toString"],
+  [[{ id: "custom", ...calendarMethods }], "2000-05-02[u-ca=custom]", "custom"],
+  [[{ id: "iso8601", ...calendarMethods }], "2000-05-02[u-ca=iso8601]", "custom with iso8601 id"],
+  [[{ id: "ISO8601", ...calendarMethods }], "2000-05-02[u-ca=ISO8601]", "custom with caps id"],
+  [[{ id: "\u0131so8601", ...calendarMethods }], "2000-05-02[u-ca=\u0131so8601]", "custom with dotless i id"],
 ];
 
 for (const [args, expected, description] of tests) {

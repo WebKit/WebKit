@@ -29,7 +29,7 @@
 #include "libANGLE/renderer/gl/SurfaceGL.h"
 #include "libANGLE/renderer/gl/formatutilsgl.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
-#include "platform/FeaturesGL_autogen.h"
+#include "platform/autogen/FeaturesGL_autogen.h"
 
 using angle::CheckedNumeric;
 
@@ -1701,6 +1701,7 @@ angle::Result TextureGL::syncState(const gl::Context *context,
                 break;
             }
             case gl::Texture::DIRTY_BIT_USAGE:
+            case gl::Texture::DIRTY_BIT_RENDERABILITY_VALIDATION_ANGLE:
                 break;
 
             case gl::Texture::DIRTY_BIT_IMPLEMENTATION:

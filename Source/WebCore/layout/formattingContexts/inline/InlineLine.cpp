@@ -510,12 +510,6 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
             m_trimmableTrailingContent.addFullyTrimmableContent(lastRunIndex, trimmableContentOffset, trimmableWidth);
             return true;
         }
-        // FIXME: Move it to InlineTextItem after removing the integration codepath check.
-        auto isPartiallyTrimmable = !inlineTextItem.isWhitespace() && style.letterSpacing() > 0 && !formattingContext().layoutState().shouldIgnoreTrailingLetterSpacing();
-        if (isPartiallyTrimmable) {
-            m_trimmableTrailingContent.addPartiallyTrimmableContent(lastRunIndex, style.letterSpacing());
-            return true;
-        }
         m_trimmableTrailingContent.reset();
         return false;
     };
@@ -525,7 +519,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         if (runHasHangablePunctuationStart)
             m_hangingContent.setLeadingPunctuation(TextUtil::hangablePunctuationStartWidth(inlineTextItem, style));
 
-        auto runHasHangableWhitespaceEnd = inlineTextItem.isWhitespace() && !isTrimmable && m_runs[lastRunIndex].shouldTrailingWhitespaceHang();
+        auto runHasHangableWhitespaceEnd = !isTrimmable && inlineTextItem.isWhitespace() && TextUtil::shouldTrailingWhitespaceHang(m_runs[lastRunIndex].style());
         if (runHasHangableWhitespaceEnd) {
             m_hangingContent.setTrailingWhitespace(inlineTextItem.length(), logicalWidth);
             return;

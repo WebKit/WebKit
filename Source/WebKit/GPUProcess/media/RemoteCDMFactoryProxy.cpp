@@ -45,7 +45,15 @@ RemoteCDMFactoryProxy::RemoteCDMFactoryProxy(GPUConnectionToWebProcess& connecti
 {
 }
 
-RemoteCDMFactoryProxy::~RemoteCDMFactoryProxy() = default;
+RemoteCDMFactoryProxy::~RemoteCDMFactoryProxy()
+{
+    clear();
+}
+
+void RemoteCDMFactoryProxy::clear()
+{
+    m_proxies.clear();
+}
 
 static CDMFactory* factoryForKeySystem(const String& keySystem)
 {

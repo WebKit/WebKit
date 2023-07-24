@@ -1,7 +1,7 @@
 
 PASS Test isConfigSupported()
 PASS Test isConfigSupported() with 1080p crop
-FAIL Test that isConfigSupported() returns a parsed configuration assert_equals: color transfer expected (object) null but got (undefined) undefined
+PASS Test that isConfigSupported() returns a parsed configuration
 PASS Test invalid configs
 PASS Test configure()
 PASS Decode a key frame

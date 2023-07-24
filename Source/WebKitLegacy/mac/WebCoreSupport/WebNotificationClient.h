@@ -55,7 +55,7 @@ private:
     void requestPermission(WebCore::ScriptExecutionContext&, WebNotificationPolicyListener *);
 
     WebView *m_webView;
-    HashMap<UUID, RetainPtr<WebNotification>> m_notificationMap;
+    HashMap<WTF::UUID, RetainPtr<WebNotification>> m_notificationMap;
     HashSet<WebCore::SecurityOriginData> m_notificationPermissionRequesters;
 
     bool m_everRequestedPermission { false };

@@ -32,13 +32,13 @@
 #include "RemoteTexture.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <pal/graphics/WebGPU/WebGPUCanvasConfiguration.h>
-#include <pal/graphics/WebGPU/WebGPUPresentationContext.h>
-#include <pal/graphics/WebGPU/WebGPUTexture.h>
+#include <WebCore/WebGPUCanvasConfiguration.h>
+#include <WebCore/WebGPUPresentationContext.h>
+#include <WebCore/WebGPUTexture.h>
 
 namespace WebKit {
 
-RemotePresentationContext::RemotePresentationContext(PAL::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemotePresentationContext::RemotePresentationContext(WebCore::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(presentationContext)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))

@@ -551,6 +551,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean hasGrammarMarker(long from, long length);
     boolean hasAutocorrectedMarker(long from, long length);
     boolean hasDictationAlternativesMarker(long from, long length);
+    boolean hasCorrectionIndicatorMarker(long from, long length);
     undefined setContinuousSpellCheckingEnabled(boolean enabled);
     undefined setAutomaticQuoteSubstitutionEnabled(boolean enabled);
     undefined setAutomaticLinkDetectionEnabled(boolean enabled);
@@ -583,7 +584,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     unsigned long imageDecodeCount(HTMLImageElement element);
     unsigned long imageCachedSubimageCreateCount(HTMLImageElement element);
     unsigned long remoteImagesCountForTesting();
-    undefined setLargeImageAsyncDecodingEnabledForTesting(HTMLImageElement element, boolean enabled);
+    undefined setAsyncDecodingEnabledForTesting(HTMLImageElement element, boolean enabled);
     undefined setForceUpdateImageDataEnabledForTesting(HTMLImageElement element, boolean enabled);
 
     undefined setGridMaxTracksLimit(unsigned long maxTracksLimit);
@@ -860,11 +861,14 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=VIDEO] undefined activeAudioRouteDidChange(boolean shouldPause);
     [Conditional=VIDEO] undefined beginAudioSessionInterruption();
     [Conditional=VIDEO] undefined endAudioSessionInterruption();
+    [Conditional=VIDEO] undefined suspendAllMediaBuffering();
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined mockMediaPlaybackTargetPickerDismissPopup();
     [Conditional=MEDIA_RECORDER] undefined setCustomPrivateRecorderCreator();
+
+    readonly attribute boolean isMonitoringWirelessRoutes;
 
     [Conditional=WEB_AUDIO] undefined useMockAudioDestinationCocoa();
 
@@ -961,10 +965,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setSpeculativeTilingDelayDisabledForTesting(boolean disabled);
 
     [Conditional=WEBGL] undefined simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContext context);
-    [Conditional=WEBGL] boolean hasLowAndHighPowerGPUs();
     [Conditional=WEBGL] RequestedGPU requestedGPU(WebGLRenderingContext context);
-    [Conditional=WEBGL] boolean requestedMetal(WebGLRenderingContext context);
-    [Conditional=WEBGL] boolean platformSupportsMetal(boolean isWebGL2);
 
     undefined setPageVisibility(boolean isVisible);
     undefined setPageIsFocused(boolean isFocused);
@@ -1071,7 +1072,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined markContextAsInsecure();
 
-    undefined setMaxCanvasPixelMemory(unsigned long size);
     undefined setMaxCanvasArea(unsigned long size);
 
     [Conditional=VIDEO] readonly attribute NowPlayingState nowPlayingState;

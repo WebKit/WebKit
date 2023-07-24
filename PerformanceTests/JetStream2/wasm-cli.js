@@ -24,6 +24,8 @@
 */
 
 const isInBrowser = false;
+const isD8 = false;
+const isSpiderMonkey = false;
 console = {
     log: () => { }
 }

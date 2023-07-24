@@ -23,9 +23,11 @@ info: |
           i. Let resolution be ? module.ResolveExport(name, « », « »).
           ii. If resolution is null, throw a SyntaxError exception.
 negative:
-  phase: runtime
+  phase: resolution
   type: SyntaxError
 flags: [module]
 ---*/
+
+$DONOTEVALUATE();
 
 import * as ns from './instn-star-err-not-found-faulty_FIXTURE.js';

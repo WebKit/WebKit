@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+  window.onload = function() {
+    testRunner.display();
+    mutateTree();
+    testRunner.display();
+    testRunner.notifyDone();
+  };
+} else {
+  window.onload = function() { setTimeout(mutateTree, 100); };
+}
+function mutateTree() {
+  // Add a reference from the rect in pattern#p3 to form a cycle.
+  document.getElementsByTagName('rect')[1].setAttribute('fill', 'url(#p1)');
+}
+</script>
+<p>PASS if no crash (stack overflow).</p>
+<svg width="100" height="100">
+  <rect width="100" height="100" fill="url(#p1)"/>
+  <pattern id="p3" width="1" height="1">
+    <rect width="100" height="100"/>
+  </pattern>
+  <pattern id="p2" width="1" height="1">
+    <rect fill="url(#p3)" width="100" height="100"/>
+  </pattern>
+  <pattern id="p1" width="1" height="1">
+    <rect fill="url(#p2)" width="100" height="100"/>
+  </pattern>
+</svg>

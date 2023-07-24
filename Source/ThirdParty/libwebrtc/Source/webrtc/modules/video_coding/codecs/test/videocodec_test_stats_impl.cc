@@ -58,7 +58,20 @@ FrameStatistics* VideoCodecTestStatsImpl::GetFrameWithTimestamp(
   return GetFrame(rtp_timestamp_to_frame_num_[layer_idx][timestamp], layer_idx);
 }
 
-std::vector<FrameStatistics> VideoCodecTestStatsImpl::GetFrameStatistics() {
+FrameStatistics* VideoCodecTestStatsImpl::GetOrAddFrame(size_t timestamp_rtp,
+                                                        size_t spatial_idx) {
+  if (rtp_timestamp_to_frame_num_[spatial_idx].count(timestamp_rtp) > 0) {
+    return GetFrameWithTimestamp(timestamp_rtp, spatial_idx);
+  }
+
+  size_t frame_num = layer_stats_[spatial_idx].size();
+  AddFrame(FrameStatistics(frame_num, timestamp_rtp, spatial_idx));
+
+  return GetFrameWithTimestamp(timestamp_rtp, spatial_idx);
+}
+
+std::vector<FrameStatistics> VideoCodecTestStatsImpl::GetFrameStatistics()
+    const {
   size_t capacity = 0;
   for (const auto& layer_stat : layer_stats_) {
     capacity += layer_stat.second.size();
@@ -92,7 +105,8 @@ VideoCodecTestStatsImpl::SliceAndCalcLayerVideoStatistic(
     for (size_t temporal_idx = 0; temporal_idx < num_temporal_layers;
          ++temporal_idx) {
       VideoStatistics layer_stat = SliceAndCalcVideoStatistic(
-          first_frame_num, last_frame_num, spatial_idx, temporal_idx, false);
+          first_frame_num, last_frame_num, spatial_idx, temporal_idx, false,
+          /*target_bitrate=*/absl::nullopt, /*target_framerate=*/absl::nullopt);
       layer_stats.push_back(layer_stat);
     }
   }
@@ -110,9 +124,24 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcAggregatedVideoStatistic(
   RTC_CHECK_GT(num_spatial_layers, 0);
   RTC_CHECK_GT(num_temporal_layers, 0);
 
-  return SliceAndCalcVideoStatistic(first_frame_num, last_frame_num,
-                                    num_spatial_layers - 1,
-                                    num_temporal_layers - 1, true);
+  return SliceAndCalcVideoStatistic(
+      first_frame_num, last_frame_num, num_spatial_layers - 1,
+      num_temporal_layers - 1, true, /*target_bitrate=*/absl::nullopt,
+      /*target_framerate=*/absl::nullopt);
+}
+
+VideoStatistics VideoCodecTestStatsImpl::CalcVideoStatistic(
+    size_t first_frame_num,
+    size_t last_frame_num,
+    DataRate target_bitrate,
+    Frequency target_framerate) {
+  size_t num_spatial_layers = 0;
+  size_t num_temporal_layers = 0;
+  GetNumberOfEncodedLayers(first_frame_num, last_frame_num, &num_spatial_layers,
+                           &num_temporal_layers);
+  return SliceAndCalcVideoStatistic(
+      first_frame_num, last_frame_num, num_spatial_layers - 1,
+      num_temporal_layers - 1, true, target_bitrate, target_framerate);
 }
 
 size_t VideoCodecTestStatsImpl::Size(size_t spatial_idx) {
@@ -175,7 +204,9 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcVideoStatistic(
     size_t last_frame_num,
     size_t spatial_idx,
     size_t temporal_idx,
-    bool aggregate_independent_layers) {
+    bool aggregate_independent_layers,
+    absl::optional<DataRate> target_bitrate,
+    absl::optional<Frequency> target_framerate) {
   VideoStatistics video_stat;
 
   float buffer_level_bits = 0.0f;
@@ -200,8 +231,11 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcVideoStatistic(
   FrameStatistics last_successfully_decoded_frame(0, 0, 0);
 
   const size_t target_bitrate_kbps =
-      CalcLayerTargetBitrateKbps(first_frame_num, last_frame_num, spatial_idx,
-                                 temporal_idx, aggregate_independent_layers);
+      target_bitrate.has_value()
+          ? target_bitrate->kbps()
+          : CalcLayerTargetBitrateKbps(first_frame_num, last_frame_num,
+                                       spatial_idx, temporal_idx,
+                                       aggregate_independent_layers);
   const size_t target_bitrate_bps = 1000 * target_bitrate_kbps;
   RTC_CHECK_GT(target_bitrate_kbps, 0);  // We divide by `target_bitrate_kbps`.
 
@@ -303,7 +337,9 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcVideoStatistic(
       GetFrame(first_frame_num, spatial_idx)->rtp_timestamp;
   RTC_CHECK_GT(timestamp_delta, 0);
   const float input_framerate_fps =
-      1.0 * kVideoPayloadTypeFrequency / timestamp_delta;
+      target_framerate.has_value()
+          ? target_framerate->millihertz() / 1000.0
+          : 1.0 * kVideoPayloadTypeFrequency / timestamp_delta;
   RTC_CHECK_GT(input_framerate_fps, 0);
   const float duration_sec = num_frames / input_framerate_fps;
 

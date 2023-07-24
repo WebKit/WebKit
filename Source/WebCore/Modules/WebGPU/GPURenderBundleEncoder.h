@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,9 @@
 #include "GPUIndexFormat.h"
 #include "GPUIntegralTypes.h"
 #include "GPURenderBundleDescriptor.h"
+#include "WebGPURenderBundleEncoder.h"
 #include <JavaScriptCore/Uint32Array.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPURenderBundleEncoder.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -45,7 +45,7 @@ class GPURenderPipeline;
 
 class GPURenderBundleEncoder : public RefCounted<GPURenderBundleEncoder> {
 public:
-    static Ref<GPURenderBundleEncoder> create(Ref<PAL::WebGPU::RenderBundleEncoder>&& backing)
+    static Ref<GPURenderBundleEncoder> create(Ref<WebGPU::RenderBundleEncoder>&& backing)
     {
         return adoptRef(*new GPURenderBundleEncoder(WTFMove(backing)));
     }
@@ -82,16 +82,16 @@ public:
 
     Ref<GPURenderBundle> finish(const std::optional<GPURenderBundleDescriptor>&);
 
-    PAL::WebGPU::RenderBundleEncoder& backing() { return m_backing; }
-    const PAL::WebGPU::RenderBundleEncoder& backing() const { return m_backing; }
+    WebGPU::RenderBundleEncoder& backing() { return m_backing; }
+    const WebGPU::RenderBundleEncoder& backing() const { return m_backing; }
 
 private:
-    GPURenderBundleEncoder(Ref<PAL::WebGPU::RenderBundleEncoder>&& backing)
+    GPURenderBundleEncoder(Ref<WebGPU::RenderBundleEncoder>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
-    Ref<PAL::WebGPU::RenderBundleEncoder> m_backing;
+    Ref<WebGPU::RenderBundleEncoder> m_backing;
 };
 
 }

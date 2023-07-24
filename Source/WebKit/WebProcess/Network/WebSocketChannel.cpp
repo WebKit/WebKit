@@ -32,6 +32,7 @@
 #include "NetworkSocketChannelMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/Blob.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/Document.h>
@@ -40,7 +41,6 @@
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/LocalFrame.h>
-#include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/Page.h>
 #include <WebCore/ThreadableWebSocketChannel.h>
 #include <WebCore/WebSocketChannelClient.h>
@@ -130,12 +130,18 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
     if (request->url() != url && m_client)
         m_client->didUpgradeURL();
 
-    OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
+    OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
     bool allowPrivacyProxy { true };
+    std::optional<FrameIdentifier> frameID;
+    std::optional<PageIdentifier> pageID;
+    ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
+    StoredCredentialsPolicy storedCredentialsPolicy { StoredCredentialsPolicy::Use };
     if (auto* frame = m_document ? m_document->frame() : nullptr) {
         auto* mainFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
         if (!mainFrame)
             return ConnectStatus::KO; 
+        frameID = mainFrame->frameID();
+        pageID = mainFrame->pageID();
         if (auto* mainFrameDocumentLoader = mainFrame->document() ? mainFrame->document()->loader() : nullptr) {
             auto* policySourceDocumentLoader = mainFrameDocumentLoader;
             if (!policySourceDocumentLoader->request().url().hasSpecialScheme() && frame->document()->url().protocolIsInHTTPFamily())
@@ -143,14 +149,18 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
 
             if (policySourceDocumentLoader) {
                 allowPrivacyProxy = policySourceDocumentLoader->allowPrivacyProxy();
-                networkConnectionIntegrityPolicy = policySourceDocumentLoader->networkConnectionIntegrityPolicy();
+                advancedPrivacyProtections = policySourceDocumentLoader->advancedPrivacyProtections();
             }
+        }
+        if (auto* page = mainFrame->page()) {
+            shouldRelaxThirdPartyCookieBlocking = page->shouldRelaxThirdPartyCookieBlocking();
+            storedCredentialsPolicy = page->canUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
         }
     }
 
     m_inspector.didCreateWebSocket(url);
     m_url = request->url();
-    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier, m_webPageProxyID, m_document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), allowPrivacyProxy, networkConnectionIntegrityPolicy });
+    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier, m_webPageProxyID, frameID, pageID, m_document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), allowPrivacyProxy, advancedPrivacyProtections, shouldRelaxThirdPartyCookieBlocking, storedCredentialsPolicy });
     return ConnectStatus::OK;
 }
 

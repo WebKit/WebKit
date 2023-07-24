@@ -35,17 +35,22 @@
 
 namespace WebKit {
 
-struct WCUpateInfo;
+struct WCUpdateInfo;
 
 class RemoteWCLayerTreeHostProxy
     : private IPC::MessageSender
-    , private GPUProcessConnection::Client {
+    , private GPUProcessConnection::Client
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteWCLayerTreeHostProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteWCLayerTreeHostProxy(WebPage&, bool usesOffscreenRendering);
     ~RemoteWCLayerTreeHostProxy();
 
-    void update(WCUpateInfo&&, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&&);
+    void update(WCUpdateInfo&&, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&&);
+
+    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteWCLayerTreeHostProxy>::ref(); }
+    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteWCLayerTreeHostProxy>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteWCLayerTreeHostProxy>::controlBlock(); }
 
 private:
     WCLayerTreeHostIdentifier wcLayerTreeHostIdentifier() const { return m_wcLayerTreeHostIdentifier; };
@@ -59,7 +64,7 @@ private:
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
 
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     WCLayerTreeHostIdentifier m_wcLayerTreeHostIdentifier { WCLayerTreeHostIdentifier::generate() };
     WebPage& m_page;
     bool m_usesOffscreenRendering { false };

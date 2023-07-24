@@ -29,8 +29,8 @@
 #include "GPURequestAdapterOptions.h"
 #include "GPUTextureFormat.h"
 #include "JSDOMPromiseDeferredForward.h"
+#include "WebGPU.h"
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -43,7 +43,7 @@ struct GPUPresentationContextDescriptor;
 
 class GPU : public RefCounted<GPU> {
 public:
-    static Ref<GPU> create(Ref<PAL::WebGPU::GPU>&& backing)
+    static Ref<GPU> create(Ref<WebGPU::GPU>&& backing)
     {
         return adoptRef(*new GPU(WTFMove(backing)));
     }
@@ -59,11 +59,11 @@ public:
     Ref<GPUCompositorIntegration> createCompositorIntegration();
 
 private:
-    GPU(Ref<PAL::WebGPU::GPU>&&);
+    GPU(Ref<WebGPU::GPU>&&);
 
     struct PendingRequestAdapterArguments;
     Deque<PendingRequestAdapterArguments> m_pendingRequestAdapterArguments;
-    Ref<PAL::WebGPU::GPU> m_backing;
+    Ref<WebGPU::GPU> m_backing;
 };
 
 }

@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,16 +24,17 @@ import logging
 import os
 import platform
 import re
-import requests
 import shutil
 import subprocess
 import sys
 import tempfile
 import zipfile
 
-from webkitcorepy import Version, arguments, run
+from webkitcorepy import CallByNeed, Version, arguments, run
 from webkitscmpy import local, log
 from .command import Command
+
+requests = CallByNeed(lambda: __import__('requests'))
 
 
 class InstallGitLFS(Command):

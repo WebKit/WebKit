@@ -103,16 +103,15 @@ my $code = <<____;
 .align	16
 gcm_gmult_ssse3:
 .cfi_startproc
-.Lgmult_seh_begin:
+.seh_startproc
 ____
 $code .= <<____ if ($win64);
 	subq	\$40, %rsp
-.Lgmult_seh_allocstack:
+.seh_allocstack	40
 	movdqa	%xmm6, (%rsp)
-.Lgmult_seh_save_xmm6:
+.seh_savexmm128	%xmm6, 0
 	movdqa	%xmm10, 16(%rsp)
-.Lgmult_seh_save_xmm10:
-.Lgmult_seh_prolog_end:
+.seh_savexmm128	%xmm10, 16
 ____
 $code .= <<____;
 	movdqu	($Xi), %xmm0
@@ -230,8 +229,8 @@ $code .= <<____ if ($win64);
 ____
 $code .= <<____;
 	ret
-.Lgmult_seh_end:
 .cfi_endproc
+.seh_endproc
 .size	gcm_gmult_ssse3,.-gcm_gmult_ssse3
 ____
 
@@ -245,19 +244,18 @@ $code .= <<____;
 .globl	gcm_ghash_ssse3
 .align	16
 gcm_ghash_ssse3:
-.Lghash_seh_begin:
 .cfi_startproc
+.seh_startproc
 ____
 $code .= <<____ if ($win64);
 	subq	\$56, %rsp
-.Lghash_seh_allocstack:
+.seh_allocstack	56
 	movdqa	%xmm6, (%rsp)
-.Lghash_seh_save_xmm6:
+.seh_savexmm128	%xmm6, 0
 	movdqa	%xmm10, 16(%rsp)
-.Lghash_seh_save_xmm10:
+.seh_savexmm128	%xmm10, 16
 	movdqa	%xmm11, 32(%rsp)
-.Lghash_seh_save_xmm11:
-.Lghash_seh_prolog_end:
+.seh_savexmm128	%xmm11, 32
 ____
 $code .= <<____;
 	movdqu	($Xi), %xmm0
@@ -329,10 +327,11 @@ $code .= <<____ if ($win64);
 ____
 $code .= <<____;
 	ret
-.Lghash_seh_end:
 .cfi_endproc
+.seh_endproc
 .size	gcm_ghash_ssse3,.-gcm_ghash_ssse3
 
+.section .rodata
 .align	16
 # .Lreverse_bytes is a permutation which, if applied with pshufb, reverses the
 # bytes in an XMM register.
@@ -341,73 +340,8 @@ $code .= <<____;
 # .Llow4_mask is an XMM mask which selects the low four bits of each byte.
 .Llow4_mask:
 .quad	0x0f0f0f0f0f0f0f0f, 0x0f0f0f0f0f0f0f0f
+.text
 ____
-
-if ($win64) {
-  # Add unwind metadata for SEH.
-  #
-  # TODO(davidben): This is all manual right now. Once we've added SEH tests,
-  # add support for emitting these in x86_64-xlate.pl, probably based on MASM
-  # and Yasm's unwind directives, and unify with CFI. Then upstream it to
-  # replace the error-prone and non-standard custom handlers.
-
-  # See https://docs.microsoft.com/en-us/cpp/build/struct-unwind-code?view=vs-2017
-  my $UWOP_ALLOC_SMALL = 2;
-  my $UWOP_SAVE_XMM128 = 8;
-
-  $code .= <<____;
-.section	.pdata
-.align	4
-	.rva	.Lgmult_seh_begin
-	.rva	.Lgmult_seh_end
-	.rva	.Lgmult_seh_info
-
-	.rva	.Lghash_seh_begin
-	.rva	.Lghash_seh_end
-	.rva	.Lghash_seh_info
-
-.section	.xdata
-.align	8
-.Lgmult_seh_info:
-	.byte	1	# version 1, no flags
-	.byte	.Lgmult_seh_prolog_end-.Lgmult_seh_begin
-	.byte	5	# num_slots = 1 + 2 + 2
-	.byte	0	# no frame register
-
-	.byte	.Lgmult_seh_save_xmm10-.Lgmult_seh_begin
-	.byte	@{[$UWOP_SAVE_XMM128 | (10 << 4)]}
-	.value	1
-
-	.byte	.Lgmult_seh_save_xmm6-.Lgmult_seh_begin
-	.byte	@{[$UWOP_SAVE_XMM128 | (6 << 4)]}
-	.value	0
-
-	.byte	.Lgmult_seh_allocstack-.Lgmult_seh_begin
-	.byte	@{[$UWOP_ALLOC_SMALL | (((40 - 8) / 8) << 4)]}
-
-.align	8
-.Lghash_seh_info:
-	.byte	1	# version 1, no flags
-	.byte	.Lghash_seh_prolog_end-.Lghash_seh_begin
-	.byte	7	# num_slots = 1 + 2 + 2 + 2
-	.byte	0	# no frame register
-
-	.byte	.Lghash_seh_save_xmm11-.Lghash_seh_begin
-	.byte	@{[$UWOP_SAVE_XMM128 | (11 << 4)]}
-	.value	2
-
-	.byte	.Lghash_seh_save_xmm10-.Lghash_seh_begin
-	.byte	@{[$UWOP_SAVE_XMM128 | (10 << 4)]}
-	.value	1
-
-	.byte	.Lghash_seh_save_xmm6-.Lghash_seh_begin
-	.byte	@{[$UWOP_SAVE_XMM128 | (6 << 4)]}
-	.value	0
-
-	.byte	.Lghash_seh_allocstack-.Lghash_seh_begin
-	.byte	@{[$UWOP_ALLOC_SMALL | (((56 - 8) / 8) << 4)]}
-____
-}
 
 print $code;
-close STDOUT or die "error closing STDOUT";
+close STDOUT or die "error closing STDOUT: $!";

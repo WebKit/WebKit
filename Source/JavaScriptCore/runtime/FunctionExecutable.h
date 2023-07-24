@@ -208,28 +208,18 @@ public:
         return firstLine() + lineCount();
     }
 
-    unsigned typeProfilingStartOffset(VM&) const
-    {
-        return typeProfilingStartOffset();
-    }
-
-    unsigned typeProfilingStartOffset() const
+    unsigned functionEnd() const
     {
         if (UNLIKELY(m_rareData))
-            return m_rareData->m_typeProfilingStartOffset;
-        return m_unlinkedExecutable->typeProfilingStartOffset();
+            return m_rareData->m_functionEnd;
+        return m_unlinkedExecutable->unlinkedFunctionEnd();
     }
 
-    unsigned typeProfilingEndOffset(VM&) const
-    {
-        return typeProfilingEndOffset();
-    }
-
-    unsigned typeProfilingEndOffset() const
+    unsigned functionStart() const
     {
         if (UNLIKELY(m_rareData))
-            return m_rareData->m_typeProfilingEndOffset;
-        return m_unlinkedExecutable->typeProfilingEndOffset();
+            return m_rareData->m_functionStart;
+        return m_unlinkedExecutable->unlinkedFunctionStart();
     }
 
     unsigned parametersStartOffset() const
@@ -314,11 +304,11 @@ public:
         unsigned m_endColumn;
         Markable<int, IntegralMarkableTraits<int, -1>> m_overrideLineNumber;
         unsigned m_parametersStartOffset { 0 };
-        unsigned m_typeProfilingStartOffset { UINT_MAX };
-        unsigned m_typeProfilingEndOffset { UINT_MAX };
         WriteBarrierStructureID m_cachedPolyProtoStructureID;
         std::unique_ptr<TemplateObjectMap> m_templateObjectMap;
         WriteBarrier<JSString> m_asString;
+        unsigned m_functionStart { UINT_MAX };
+        unsigned m_functionEnd { UINT_MAX };
     };
 
 private:

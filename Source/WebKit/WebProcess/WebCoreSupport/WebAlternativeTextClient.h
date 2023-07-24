@@ -54,7 +54,7 @@ private:
 #if !(USE(AUTOCORRECTION_PANEL) || USE(DICTATION_ALTERNATIVES))
     IGNORE_CLANG_WARNINGS_BEGIN("unused-private-field")
 #endif
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
 #if !(USE(AUTOCORRECTION_PANEL) || USE(DICTATION_ALTERNATIVES))
     IGNORE_CLANG_WARNINGS_END
 #endif

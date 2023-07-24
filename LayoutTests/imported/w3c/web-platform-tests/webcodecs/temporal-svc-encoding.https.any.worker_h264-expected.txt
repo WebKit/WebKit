@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Error in remote https://localhost:9443/resources/testharness.js: Error: assert_own_property: expected property "svc" missing
-
-FAIL SVC L1T2 assert_equals: expected 12 but got 0
-FAIL SVC L1T3 assert_equals: expected 6 but got 0
+NOTRUN SVC L1T2 Unsupported config: {"codec":"avc1.42001E","avc":{"format":"annexb"},"hardwareAcceleration":"prefer-software","width":320,"height":200,"bitrate":1000000,"bitrateMode":"constant","framerate":30,"scalabilityMode":"L1T2"}
+NOTRUN SVC L1T3 Unsupported config: {"codec":"avc1.42001E","avc":{"format":"annexb"},"hardwareAcceleration":"prefer-software","width":320,"height":200,"bitrate":1000000,"bitrateMode":"constant","framerate":30,"scalabilityMode":"L1T3"}
 

@@ -18,10 +18,16 @@ const expected = [
   // PrepareTemporalFields on receiver
   "get this.calendar.day",
   "call this.calendar.day",
+  "get this.hour",
+  "get this.microsecond",
+  "get this.millisecond",
+  "get this.minute",
   "get this.calendar.month",
   "call this.calendar.month",
   "get this.calendar.monthCode",
   "call this.calendar.monthCode",
+  "get this.nanosecond",
+  "get this.second",
   "get this.calendar.year",
   "call this.calendar.year",
   // PrepareTemporalFields on argument
@@ -75,6 +81,13 @@ const calendar = TemporalHelpers.calendarObserver(actual, "this.calendar");
 const instance = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321, calendar);
 // clear observable operations that occurred during the constructor call
 actual.splice(0);
+
+TemporalHelpers.observeProperty(actual, instance, "hour", 12, "this");
+TemporalHelpers.observeProperty(actual, instance, "minute", 34, "this");
+TemporalHelpers.observeProperty(actual, instance, "second", 56, "this");
+TemporalHelpers.observeProperty(actual, instance, "millisecond", 987, "this");
+TemporalHelpers.observeProperty(actual, instance, "microsecond", 654, "this");
+TemporalHelpers.observeProperty(actual, instance, "nanosecond", 321, "this");
 
 const fields = TemporalHelpers.propertyBagObserver(actual, {
   year: 1.7,

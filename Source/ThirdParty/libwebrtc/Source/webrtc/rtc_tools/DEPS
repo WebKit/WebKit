@@ -17,6 +17,7 @@ include_rules = [
   "+system_wrappers",
   "+p2p",
   "+third_party/libyuv",
+  "+video/config",
 ]
 
 specific_include_rules = {

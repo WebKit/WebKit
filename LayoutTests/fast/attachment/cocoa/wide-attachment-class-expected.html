@@ -1,7 +1,11 @@
 <!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true ] -->
-<html>
+<html class="reftest-wait">
 <body>
 <attachment style="transform: translate(0, 2px);" type="public.data"></attachment>
 <attachment style="transform: translate(2px, 0);" title="Title"></attachment>
+<script src="../resources/attachment-test-utils.js"></script>
+<script>
+takeExpectedScreenshotWhenAttachmentsSettled();
+</script>
 </body>
 </html>

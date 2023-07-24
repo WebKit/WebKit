@@ -228,7 +228,7 @@ angle::Result GLES1Renderer::prepareForDraw(PrimitiveMode mode, Context *context
         lightEnables[i]   = light.enabled;
     }
 
-    mShaderState.alphaTestFunc = gles1State.mAlphaTestFunc;
+    mShaderState.alphaTestFunc = gles1State.mAlphaTestParameters.func;
     mShaderState.fogMode       = gles1State.fogParameters().mode;
 
     const bool hasLogicOpANGLE     = context->getExtensions().logicOpANGLE;
@@ -397,7 +397,8 @@ angle::Result GLES1Renderer::prepareForDraw(PrimitiveMode mode, Context *context
     // Alpha test
     if (gles1State.isDirty(GLES1State::DIRTY_GLES1_ALPHA_TEST))
     {
-        setUniform1f(programObject, programState.alphaTestRefLoc, gles1State.mAlphaTestRef);
+        setUniform1f(programObject, programState.alphaTestRefLoc,
+                     gles1State.mAlphaTestParameters.ref);
     }
 
     // Shading, materials, and lighting

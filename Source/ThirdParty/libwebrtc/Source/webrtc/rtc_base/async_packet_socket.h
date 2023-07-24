@@ -54,6 +54,12 @@ struct RTC_EXPORT PacketOptions {
   PacketTimeUpdateParams packet_time_params;
   // PacketInfo is passed to SentPacket when signaling this packet is sent.
   PacketInfo info_signaled_after_sent;
+  // True if this is a batchable packet. Batchable packets are collected at low
+  // levels and sent first when their AsyncPacketSocket receives a
+  // OnSendBatchComplete call.
+  bool batchable = false;
+  // True if this is the last packet of a batch.
+  bool last_packet_in_batch = false;
 };
 
 // Provides the ability to receive packets asynchronously. Sends are not
@@ -148,7 +154,8 @@ class RTC_EXPORT AsyncPacketSocket : public sigslot::has_slots<> {
     on_close_.Send(this, err);
   }
 
-  RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker network_checker_;
+  RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker network_checker_{
+      webrtc::SequenceChecker::kDetached};
 
  private:
   webrtc::CallbackList<AsyncPacketSocket*, int> on_close_

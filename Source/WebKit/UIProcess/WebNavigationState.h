@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include <WebCore/ProcessIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 
 namespace API {
 class Navigation;
@@ -44,23 +46,25 @@ namespace WebKit {
 class WebPageProxy;
 class WebBackForwardListItem;
 
-class WebNavigationState {
+class WebNavigationState : public CanMakeWeakPtr<WebNavigationState> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebNavigationState();
     ~WebNavigationState();
 
-    Ref<API::Navigation> createBackForwardNavigation(WebBackForwardListItem& targetItem, WebBackForwardListItem* currentItem, WebCore::FrameLoadType);
-    Ref<API::Navigation> createLoadRequestNavigation(WebCore::ResourceRequest&&, WebBackForwardListItem* currentItem);
-    Ref<API::Navigation> createReloadNavigation(WebBackForwardListItem* currentAndTargetItem);
-    Ref<API::Navigation> createLoadDataNavigation(std::unique_ptr<API::SubstituteData>&&);
-    Ref<API::Navigation> createSimulatedLoadWithDataNavigation(WebCore::ResourceRequest&&, std::unique_ptr<API::SubstituteData>&&, WebBackForwardListItem* currentItem);
+    Ref<API::Navigation> createBackForwardNavigation(WebCore::ProcessIdentifier, WebBackForwardListItem& targetItem, WebBackForwardListItem* currentItem, WebCore::FrameLoadType);
+    Ref<API::Navigation> createLoadRequestNavigation(WebCore::ProcessIdentifier, WebCore::ResourceRequest&&, WebBackForwardListItem* currentItem);
+    Ref<API::Navigation> createReloadNavigation(WebCore::ProcessIdentifier, WebBackForwardListItem* currentAndTargetItem);
+    Ref<API::Navigation> createLoadDataNavigation(WebCore::ProcessIdentifier, std::unique_ptr<API::SubstituteData>&&);
+    Ref<API::Navigation> createSimulatedLoadWithDataNavigation(WebCore::ProcessIdentifier, WebCore::ResourceRequest&&, std::unique_ptr<API::SubstituteData>&&, WebBackForwardListItem* currentItem);
 
     bool hasNavigation(uint64_t navigationID) const { return m_navigations.contains(navigationID); }
     API::Navigation* navigation(uint64_t navigationID);
     RefPtr<API::Navigation> takeNavigation(uint64_t navigationID);
-    void didDestroyNavigation(uint64_t navigationID);
+    void didDestroyNavigation(WebCore::ProcessIdentifier, uint64_t navigationID);
     void clearAllNavigations();
+
+    void clearNavigationsFromProcess(WebCore::ProcessIdentifier);
 
     uint64_t generateNavigationID()
     {

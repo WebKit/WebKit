@@ -4,7 +4,7 @@
 /*---
 description: Computed property name from math (ComputedPropertyName in ObjectLiteral)
 esid: prod-ComputedPropertyName
-features: [computed-property-names]
+features: [computed-property-names, exponentiation]
 flags: [generated]
 info: |
     ObjectLiteral:

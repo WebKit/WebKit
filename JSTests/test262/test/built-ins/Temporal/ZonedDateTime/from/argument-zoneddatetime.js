@@ -12,7 +12,7 @@ const result = Temporal.ZonedDateTime.from(orig);
 
 assert.sameValue(result.epochNanoseconds, 946684800_000_000_010n, "ZonedDateTime is copied");
 assert.sameValue(result.timeZone, orig.timeZone, "time zone is the same");
-assert.sameValue(result.calendar, orig.calendar, "calendar is the same");
+assert.sameValue(result.getISOFields().calendar, orig.getISOFields().calendar, "calendar is the same");
 
 assert.notSameValue(
   result,

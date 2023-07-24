@@ -103,4 +103,17 @@ void SynchronousLoaderClient::didFail(ResourceHandle* handle, const ResourceErro
 #endif
 }
 
+#if USE(SOUP) || USE(CURL)
+void SynchronousLoaderClient::didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+ResourceError SynchronousLoaderClient::platformBadResponseError()
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+#endif
+
 }

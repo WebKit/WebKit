@@ -142,33 +142,32 @@ TcpMessageRouteImpl::TcpMessageRouteImpl(Clock* clock,
 
 void TcpMessageRouteImpl::SendMessage(size_t size,
                                       std::function<void()> on_received) {
-  task_queue_->PostTask(
-      [this, size, handler = std::move(on_received)] {
-        // If we are currently sending a message we won't reset the connection,
-        // we'll act as if the messages are sent in the same TCP stream. This is
-        // intended to simulate recreation of a TCP session for each message
-        // in the typical case while avoiding the complexity overhead of
-        // maintaining multiple virtual TCP sessions in parallel.
-        if (pending_.empty() && in_flight_.empty()) {
-          cwnd_ = 10;
-          ssthresh_ = INFINITY;
-        }
-        int64_t data_left = static_cast<int64_t>(size);
-        int64_t kMaxPacketSize = 1200;
-        int64_t kMinPacketSize = 4;
-        Message message{std::move(handler)};
-        while (data_left > 0) {
-          int64_t packet_size = std::min(data_left, kMaxPacketSize);
-          int fragment_id = next_fragment_id_++;
-          pending_.push_back(MessageFragment{
-              fragment_id,
-              static_cast<size_t>(std::max(kMinPacketSize, packet_size))});
-          message.pending_fragment_ids.insert(fragment_id);
-          data_left -= packet_size;
-        }
-        messages_.emplace_back(message);
-        SendPackets(clock_->CurrentTime());
-      });
+  task_queue_->PostTask([this, size, handler = std::move(on_received)] {
+    // If we are currently sending a message we won't reset the connection,
+    // we'll act as if the messages are sent in the same TCP stream. This is
+    // intended to simulate recreation of a TCP session for each message
+    // in the typical case while avoiding the complexity overhead of
+    // maintaining multiple virtual TCP sessions in parallel.
+    if (pending_.empty() && in_flight_.empty()) {
+      cwnd_ = 10;
+      ssthresh_ = INFINITY;
+    }
+    int64_t data_left = static_cast<int64_t>(size);
+    int64_t kMaxPacketSize = 1200;
+    int64_t kMinPacketSize = 4;
+    Message message{std::move(handler)};
+    while (data_left > 0) {
+      int64_t packet_size = std::min(data_left, kMaxPacketSize);
+      int fragment_id = next_fragment_id_++;
+      pending_.push_back(MessageFragment{
+          fragment_id,
+          static_cast<size_t>(std::max(kMinPacketSize, packet_size))});
+      message.pending_fragment_ids.insert(fragment_id);
+      data_left -= packet_size;
+    }
+    messages_.emplace_back(message);
+    SendPackets(clock_->CurrentTime());
+  });
 }
 
 void TcpMessageRouteImpl::OnRequest(TcpPacket packet_info) {

@@ -106,7 +106,6 @@
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "ReportingScope.h"
-#include "ResourceHandle.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceLoadObserver.h"
 #include "ResourceRequest.h"
@@ -351,6 +350,7 @@ void FrameLoader::init()
     setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(URL({ }, emptyString())), SubstituteData()).ptr());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     m_provisionalDocumentLoader->startLoadingMainResource();
+    setPolicyDocumentLoader(nullptr);
 
     Ref protectedFrame { m_frame };
     Ref document { *m_frame.document() };
@@ -440,9 +440,9 @@ bool FrameLoader::upgradeRequestforHTTPSOnlyIfNeeded(const URL& originalURL, Res
     auto& newURL = request.url();
     const auto& isSameSiteBypassEnabled = (originalURL.isEmpty()
         || (originalURL.protocolIs("http"_s) && RegistrableDomain(newURL) == RegistrableDomain(originalURL)))
-        && documentLoader->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain);
+        && documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
 
-    if (documentLoader && documentLoader->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnly)
+    if (documentLoader && documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)
         && newURL.protocolIs("http"_s)
         && !isSameSiteBypassEnabled) {
         FRAMELOADER_RELEASE_LOG(ResourceLoading, "upgradeRequestforHTTPSOnlyIfNeeded: upgrading navigation request");
@@ -680,7 +680,7 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
         m_frame.windowProxy().clearJSWindowProxiesNotMatchingDOMWindow(newDocument->domWindow(), m_frame.document()->backForwardCacheState() == Document::AboutToEnterBackForwardCache);
 
         if (shouldClearWindowName(m_frame, *newDocument))
-            m_frame.tree().setName(nullAtom());
+            m_frame.tree().setSpecifiedName(nullAtom());
     }
 
     m_frame.eventHandler().clear();
@@ -750,8 +750,8 @@ static AtomString extractContentLanguageFromHeader(const String& header)
 {
     auto commaIndex = header.find(',');
     if (commaIndex == notFound)
-        return AtomString { stripLeadingAndTrailingHTMLSpaces(header) };
-    return StringView(header).left(commaIndex).stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toAtomString();
+        return AtomString { header.trim(isASCIIWhitespace) };
+    return StringView(header).left(commaIndex).trim(isASCIIWhitespace<UChar>).toAtomString();
 }
 
 void FrameLoader::didBeginDocument(bool dispatch)
@@ -1252,6 +1252,9 @@ void FrameLoader::completed()
         if (auto* localParent = dynamicDowncast<LocalFrame>(parent))
             localParent->loader().checkCompleted();
     }
+
+    if (m_frame.view())
+        m_frame.view()->maintainScrollPositionAtAnchor(nullptr);
 }
 
 void FrameLoader::started()
@@ -1534,7 +1537,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
     Ref<DocumentLoader> loader = m_client->createDocumentLoader(request.resourceRequest(), request.substituteData());
     loader->setIsRequestFromClientOrUserInput(request.isRequestFromClientOrUserInput());
     loader->setIsContinuingLoadAfterProvisionalLoadStarted(request.shouldTreatAsContinuingLoad() == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted);
-    loader->setOriginatorNetworkConnectionIntegrityPolicy(request.networkConnectionIntegrityPolicy());
+    loader->setOriginatorAdvancedPrivacyProtections(request.advancedPrivacyProtections());
     addSameSiteInfoToRequestIfNeeded(loader->request());
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, request);
 
@@ -2627,7 +2630,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             }
         }
 
-        bool isHTTPSFirstApplicable = protector->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSFirst) && !protector->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnly) && !isHTTPFallbackInProgress() && (!protector->mainResourceLoader() || !protector->mainResourceLoader()->redirectCount());
+        bool isHTTPSFirstApplicable = protector->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSFirst) && !protector->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly) && !isHTTPFallbackInProgress() && (!protector->mainResourceLoader() || !protector->mainResourceLoader()->redirectCount());
 
         // Only reset if we aren't already going to a new provisional item.
         bool shouldReset = !history().provisionalItem();
@@ -3140,8 +3143,8 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
     if (shouldUpdate == ShouldUpdateAppInitiatedValue::Yes && localFrame->loader().documentLoader())
         request.setIsAppInitiated(localFrame->loader().documentLoader()->lastNavigationWasAppInitiated());
 
-    if (page)
-        request.setURL(page->chrome().client().sanitizeLookalikeCharacters(request.url(), LookalikeCharacterSanitizationTrigger::Navigation));
+    if (page && isMainResource)
+        request.setURL(page->chrome().client().applyLinkDecorationFiltering(request.url(), LinkDecorationFilteringTrigger::Navigation));
 }
 
 void FrameLoader::scheduleRefreshIfNeeded(Document& document, const String& content, IsMetaRefresh isMetaRefresh)
@@ -3803,7 +3806,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
         mainFrame->loader().forceSandboxFlags(sandboxFlags);
 
     if (!isBlankTargetFrameName(frameName))
-        mainFrame->tree().setName(frameName);
+        mainFrame->tree().setSpecifiedName(frameName);
 
     mainFrame->page()->setOpenedByDOM();
     mainFrame->loader().m_client->dispatchShow();
@@ -3966,7 +3969,7 @@ LocalFrame* FrameLoader::findFrameForNavigation(const AtomString& name, Document
     if (!activeDocument)
         return nullptr;
 
-    auto* frame = dynamicDowncast<LocalFrame>(m_frame.tree().find(name, activeDocument->frame() ? *activeDocument->frame() : m_frame));
+    auto* frame = dynamicDowncast<LocalFrame>(m_frame.tree().findBySpecifiedName(name, activeDocument->frame() ? *activeDocument->frame() : m_frame));
 
     if (!activeDocument->canNavigate(frame))
         return nullptr;
@@ -4396,7 +4399,7 @@ RefPtr<LocalFrame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame
         frame->loader().forceSandboxFlags(openerFrame.document()->sandboxFlags());
 
     if (!isBlankTargetFrameName(request.frameName()))
-        frame->tree().setName(request.frameName());
+        frame->tree().setSpecifiedName(request.frameName());
 
     page->chrome().setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);
 

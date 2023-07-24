@@ -342,6 +342,24 @@ template<typename T> struct ArgumentCoder<std::unique_ptr<T>> {
     }
 };
 
+template<typename T> struct ArgumentCoder<UniqueRef<T>> {
+    template<typename Encoder, typename U>
+    static void encode(Encoder& encoder, U&& object)
+    {
+        static_assert(std::is_same_v<std::remove_cvref_t<U>, UniqueRef<T>>);
+        encoder << std::forward_like<U>(*object);
+    }
+
+    template<typename Decoder>
+    static std::optional<UniqueRef<T>> decode(Decoder& decoder)
+    {
+        auto object = decoder.template decode<T>();
+        if (!object)
+            return std::nullopt;
+        return makeUniqueRef<T>(WTFMove(*object));
+    }
+};
+
 template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
     template<typename Encoder, typename T>
     static void encode(Encoder& encoder, T&& tuple)

@@ -1,0 +1,6 @@
+
+
+
+FAIL captureStream with 3d context drawing - not buffered initially assert_true: expecting value 1 to be part of a green pixel expected true got false
+PASS captureStream with 3d context drawing - buffered initially
+

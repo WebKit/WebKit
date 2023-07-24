@@ -1,5 +1,5 @@
-<?% config.freshness.reviewed = '2021-04-13' %?>
-<?% config.freshness.owner = 'eshr' %?>
+<!-- go/cmark -->
+<!--* freshness: {owner: 'eshr' reviewed: '2021-04-13'} *-->
 
 # Video Adaptation
 

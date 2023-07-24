@@ -55,8 +55,6 @@ Ref<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& ta
 
 void SVGFECompositeElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::operatorAttr: {
         CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(newValue);
@@ -85,6 +83,8 @@ void SVGFECompositeElement::attributeChanged(const QualifiedName& name, const At
     default:
         break;
     }
+
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect& filterEffect, const QualifiedName& attrName)

@@ -68,10 +68,6 @@
 #include <wtf/Scope.h>
 #include <wtf/UUID.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MediaControlsHostAdditions.h>
-#endif
-
 namespace WebCore {
 
 const AtomString& MediaControlsHost::automaticKeyword()
@@ -118,13 +114,12 @@ MediaControlsHost::~MediaControlsHost()
 
 String MediaControlsHost::layoutTraitsClassName() const
 {
-#if defined(MEDIA_CONTROLS_HOST_LAYOUT_TRAITS_CLASS_NAME_OVERRIDE)
-    return MEDIA_CONTROLS_HOST_LAYOUT_TRAITS_CLASS_NAME_OVERRIDE""_s;
-#else
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     return "MacOSLayoutTraits"_s;
 #elif PLATFORM(IOS)
     return "IOSLayoutTraits"_s;
+#elif PLATFORM(VISION)
+    return "VisionLayoutTraits"_s;
 #elif PLATFORM(WATCHOS)
     return "WatchOSLayoutTraits"_s;
 #elif PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)
@@ -132,7 +127,6 @@ String MediaControlsHost::layoutTraitsClassName() const
 #else
     ASSERT_NOT_REACHED();
     return nullString();
-#endif
 #endif
 }
 
@@ -431,11 +425,6 @@ public:
     static Ref<MediaControlsContextMenuEventListener> create(Ref<MediaControlsContextMenuProvider>&& contextMenuProvider)
     {
         return adoptRef(*new MediaControlsContextMenuEventListener(WTFMove(contextMenuProvider)));
-    }
-
-    bool operator==(const EventListener& other) const override
-    {
-        return this == &other;
     }
 
     void handleEvent(ScriptExecutionContext&, Event& event) override

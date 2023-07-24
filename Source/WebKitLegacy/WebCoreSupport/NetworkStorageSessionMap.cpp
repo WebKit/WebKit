@@ -84,7 +84,7 @@ void NetworkStorageSessionMap::ensureSession(PAL::SessionID sessionID, const Str
     if (!addResult.isNewEntry)
         return;
 
-    auto identifier = makeString(identifierBase, ".PrivateBrowsing."_s, UUID::createVersion4()).createCFString();
+    auto identifier = makeString(identifierBase, ".PrivateBrowsing."_s, WTF::UUID::createVersion4()).createCFString();
 
     RetainPtr<CFURLStorageSessionRef> storageSession;
     if (sessionID.isEphemeral())

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 
 namespace WebGPU {
 
-RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResource>&& resources, Device& device)
+RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResources>&& resources, Device& device)
     : m_indirectCommandBuffer(indirectCommandBuffer)
     , m_device(device)
     , m_resources(WTFMove(resources))
@@ -52,6 +52,11 @@ void RenderBundle::setLabel(String&& label)
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuRenderBundleReference(WGPURenderBundle renderBundle)
+{
+    WebGPU::fromAPI(renderBundle).ref();
+}
 
 void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
 {

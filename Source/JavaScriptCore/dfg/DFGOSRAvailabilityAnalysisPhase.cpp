@@ -270,7 +270,8 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         break;
     }
 
-    case MovHint: {
+    case MovHint:
+    case ZombieHint: {
         m_availability.m_locals.operand(node->unlinkedOperand()).setNode(node->child1().node());
         break;
     }

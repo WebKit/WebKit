@@ -27,24 +27,21 @@
 #include "WebDocumentLoader.h"
 
 #include "WebFrame.h"
-
 #include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/FrameLoader.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 WebDocumentLoader::WebDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
     : DocumentLoader(request, substituteData)
-    , m_navigationID(0)
 {
 }
 
 void WebDocumentLoader::detachFromFrame()
 {
-    if (m_navigationID)
-        WebFrame::fromCoreFrame(*frame())->documentLoaderDetached(m_navigationID);
-
-    m_navigationID = 0;
+    if (auto navigationID = std::exchange(m_navigationID, 0))
+        WebFrame::fromCoreFrame(*frame())->documentLoaderDetached(navigationID);
 
     DocumentLoader::detachFromFrame();
 }
@@ -54,6 +51,16 @@ void WebDocumentLoader::setNavigationID(uint64_t navigationID)
     ASSERT(navigationID);
 
     m_navigationID = navigationID;
+}
+
+WebDocumentLoader* WebDocumentLoader::loaderForWebsitePolicies(const LocalFrame& frame, CanIncludeCurrentDocumentLoader canIncludeCurrentDocumentLoader)
+{
+    auto* loader = static_cast<WebDocumentLoader*>(frame.loader().policyDocumentLoader());
+    if (!loader)
+        loader = static_cast<WebDocumentLoader*>(frame.loader().provisionalDocumentLoader());
+    if (!loader && canIncludeCurrentDocumentLoader == CanIncludeCurrentDocumentLoader::Yes)
+        loader = static_cast<WebDocumentLoader*>(frame.loader().documentLoader());
+    return loader;
 }
 
 } // namespace WebKit

@@ -156,21 +156,27 @@ def flattened_target(target_name: str, descs: dict, stop_at_lib: bool =True) -> 
                     existing = flattened.get(k, [])
                     if isinstance(existing, str):
                       existing = [existing]
-                    flattened[k] = sortedi(set(existing + v))
+                    # Use temporary sets then sort them to avoid a bottleneck here
+                    if not isinstance(existing, set):
+                        flattened[k] = set(existing)
+                    flattened[k].update(v)
                 else:
                     #flattened.setdefault(k, v)
                     pass
         return (deps,)
 
     dag_traverse(descs[target_name]['deps'], pre)
+
+    for k, v in flattened.items():
+        if isinstance(v, set):
+            flattened[k] = sortedi(v)
     return flattened
 
 # ------------------------------------------------------------------------------
 # Check that includes are valid. (gn's version of this check doesn't seem to work!)
 
-INCLUDE_REGEX = re.compile(b'(?:^|\\n) *# *include +([<"])([^>"]+)[>"]')
-assert INCLUDE_REGEX.match(b'#include "foo"')
-assert INCLUDE_REGEX.match(b'\n#include "foo"')
+INCLUDE_REGEX = re.compile(b'^ *# *include +([<"])([^>"]+)[>"].*$', re.MULTILINE)
+assert INCLUDE_REGEX.findall(b' #  include <foo>  //comment\n#include "bar"') == [(b'<', b'foo'), (b'"', b'bar')]
 
 # Most of these are ignored because this script does not currently handle
 # #includes in #ifdefs properly, so they will erroneously be marked as being

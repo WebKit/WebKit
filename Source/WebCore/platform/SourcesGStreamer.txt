@@ -1,0 +1,134 @@
+// Copyright (C) 2023 Igalia S.L.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp
+Modules/mediastream/gstreamer/GStreamerDtlsTransportBackend.cpp
+Modules/mediastream/gstreamer/GStreamerIceTransportBackend.cpp
+Modules/mediastream/gstreamer/GStreamerMediaEndpoint.cpp
+Modules/mediastream/gstreamer/GStreamerPeerConnectionBackend.cpp
+Modules/mediastream/gstreamer/GStreamerRtpReceiverBackend.cpp
+Modules/mediastream/gstreamer/GStreamerRtpReceiverTransformBackend.cpp
+Modules/mediastream/gstreamer/GStreamerRtpSenderBackend.cpp
+Modules/mediastream/gstreamer/GStreamerRtpSenderTransformBackend.cpp
+Modules/mediastream/gstreamer/GStreamerRtpTransceiverBackend.cpp
+Modules/mediastream/gstreamer/GStreamerRtpTransformBackend.cpp
+Modules/mediastream/gstreamer/GStreamerSctpTransportBackend.cpp
+Modules/mediastream/gstreamer/GStreamerStatsCollector.cpp
+Modules/mediastream/gstreamer/GStreamerWebRTCUtils.cpp
+
+Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp
+
+platform/audio/gstreamer/AudioDestinationGStreamer.cpp
+platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
+platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp
+platform/audio/gstreamer/FFTFrameGStreamer.cpp
+platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp @no-unify
+
+platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp
+platform/graphics/gstreamer/DMABufVideoSinkGStreamer.cpp @no-unify
+platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp @no-unify
+platform/graphics/gstreamer/GRefPtrGStreamer.cpp
+platform/graphics/gstreamer/GStreamerAudioMixer.cpp
+platform/graphics/gstreamer/GStreamerCommon.cpp
+platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
+platform/graphics/gstreamer/GStreamerSinksWorkarounds.cpp
+platform/graphics/gstreamer/GStreamerVideoFrameHolder.cpp @no-unify
+platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp
+platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
+platform/graphics/gstreamer/ImageDecoderGStreamer.cpp
+platform/graphics/gstreamer/ImageGStreamerCairo.cpp
+platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
+platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.cpp
+platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+platform/graphics/gstreamer/MediaSampleGStreamer.cpp
+platform/graphics/gstreamer/PlatformDisplayGStreamer.cpp
+platform/graphics/gstreamer/TextCombinerGStreamer.cpp @no-unify
+platform/graphics/gstreamer/TextCombinerPadGStreamer.cpp @no-unify
+platform/graphics/gstreamer/TextSinkGStreamer.cpp @no-unify
+platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp
+platform/graphics/gstreamer/VideoDecoderGStreamer.cpp
+platform/graphics/gstreamer/VideoEncoderGStreamer.cpp
+platform/graphics/gstreamer/VideoFrameGStreamer.cpp
+platform/graphics/gstreamer/VideoFrameMetadataGStreamer.cpp
+platform/graphics/gstreamer/VideoSinkGStreamer.cpp @no-unify
+platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp
+platform/graphics/gstreamer/WebKitAudioSinkGStreamer.cpp @no-unify
+platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp @no-unify
+
+platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp
+platform/graphics/gstreamer/eme/CDMProxyThunder.cpp
+platform/graphics/gstreamer/eme/CDMThunder.cpp
+platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp
+platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp
+platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp @no-unify
+
+platform/graphics/gstreamer/mse/AppendPipeline.cpp
+platform/graphics/gstreamer/mse/GStreamerMediaDescription.cpp
+platform/graphics/gstreamer/mse/GStreamerRegistryScannerMSE.cpp
+platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+platform/graphics/gstreamer/mse/MediaSourcePrivateGStreamer.cpp
+platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.cpp
+platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
+platform/graphics/gstreamer/mse/TrackQueue.cpp
+platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp @no-unify
+
+platform/gstreamer/GStreamerCodecUtilities.cpp
+platform/gstreamer/GStreamerElementHarness.cpp
+platform/gstreamer/PlatformSpeechSynthesizerGStreamer.cpp
+platform/gstreamer/VideoEncoderPrivateGStreamer.cpp @no-unify
+platform/gstreamer/WebKitFliteSourceGStreamer.cpp @no-unify
+
+platform/mediarecorder/MediaRecorderPrivateGStreamer.cpp
+
+platform/mediastream/libwebrtc/gstreamer/GStreamerVideoCommon.cpp
+platform/mediastream/libwebrtc/gstreamer/GStreamerVideoDecoderFactory.cpp
+platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoderFactory.cpp
+platform/mediastream/libwebrtc/gstreamer/GStreamerVideoFrameLibWebRTC.cpp
+platform/mediastream/libwebrtc/gstreamer/LibWebRTCProviderGStreamer.cpp
+platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.cpp
+platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.cpp
+platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp
+platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp
+
+platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp
+platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp
+platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp
+platform/mediastream/gstreamer/GStreamerCapturer.cpp
+platform/mediastream/gstreamer/GStreamerDTMFSenderBackend.cpp
+platform/mediastream/gstreamer/GStreamerDisplayCaptureDeviceManager.cpp
+platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp @no-unify
+platform/mediastream/gstreamer/GStreamerMockDevice.cpp @no-unify
+platform/mediastream/gstreamer/GStreamerMockDeviceProvider.cpp @no-unify
+platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp
+platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp
+platform/mediastream/gstreamer/GStreamerWebRTCProvider.cpp
+platform/mediastream/gstreamer/MockDisplayCaptureSourceGStreamer.cpp
+platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp
+platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp
+platform/mediastream/gstreamer/RealtimeIncomingAudioSourceGStreamer.cpp
+platform/mediastream/gstreamer/RealtimeIncomingSourceGStreamer.cpp
+platform/mediastream/gstreamer/RealtimeIncomingVideoSourceGStreamer.cpp
+platform/mediastream/gstreamer/RealtimeMediaSourceCenterGStreamer.cpp
+platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp
+platform/mediastream/gstreamer/RealtimeOutgoingMediaSourceGStreamer.cpp
+platform/mediastream/gstreamer/RealtimeOutgoingVideoSourceGStreamer.cpp

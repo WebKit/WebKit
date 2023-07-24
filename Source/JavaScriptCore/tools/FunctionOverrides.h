@@ -41,8 +41,8 @@ struct FunctionOverrideInfo {
     unsigned startColumn;
     unsigned endColumn;
     unsigned parametersStartOffset;
-    unsigned typeProfilingStartOffset;
-    unsigned typeProfilingEndOffset;
+    unsigned functionStart;
+    unsigned functionEnd;
 };
 
 class FunctionOverrides {

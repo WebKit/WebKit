@@ -124,7 +124,6 @@ public:
         InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespace ? m_trailingWhitespace->width : 0.f; }
         bool isWhitespaceOnly() const { return hasTrailingWhitespace() && m_trailingWhitespace->length == m_textContent->length; }
 
-        bool shouldTrailingWhitespaceHang() const;
         TextDirection inlineDirection() const;
         InlineLayoutUnit letterSpacing() const;
         inline bool hasTextCombine() const;
@@ -140,6 +139,7 @@ public:
         Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
         Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
 
+        const RenderStyle& style() const { return m_style; }
         void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
         void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
         void shrinkHorizontally(InlineLayoutUnit width) { m_logicalWidth -= width; }
@@ -337,11 +337,6 @@ inline void Line::Run::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)
     ASSERT(m_textContent);
     m_textContent->needsHyphen = true;
     m_logicalWidth += hyphenLogicalWidth;
-}
-
-inline bool Line::Run::shouldTrailingWhitespaceHang() const
-{
-    return m_style.whiteSpace() == WhiteSpace::PreWrap;
 }
 
 inline TextDirection Line::Run::inlineDirection() const

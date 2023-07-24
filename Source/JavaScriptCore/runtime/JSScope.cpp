@@ -277,7 +277,7 @@ JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(JSGlobalObject* globalObj
         return scope->isVarScope();
     };
     auto skipPredicate = [&] (JSScope* scope) -> bool {
-        return scope->isWithScope();
+        return scope->isWithScope() || scope->isCatchScopeWithSimpleParameter();
     };
     JSObject* object = resolve(globalObject, scope, ident, returnPredicate, skipPredicate);
     RETURN_IF_EXCEPTION(throwScope, { });
@@ -285,9 +285,7 @@ JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(JSGlobalObject* globalObj
     bool result = false;
     if (JSScope* scope = jsDynamicCast<JSScope*>(object)) {
         if (SymbolTable* scopeSymbolTable = scope->symbolTable()) {
-            result = scope->isGlobalObject()
-                ? JSObject::isExtensible(object, globalObject)
-                : scopeSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope;
+            result = scope->isGlobalObject() || scopeSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope;
         }
     }
 
@@ -336,7 +334,7 @@ void JSScope::collectClosureVariablesUnderTDZ(JSScope* scope, TDZEnvironment& re
         }
 
         SymbolTable* symbolTable = jsCast<JSSymbolTableObject*>(scope)->symbolTable();
-        ASSERT(symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope || symbolTable->scopeType() == SymbolTable::ScopeType::CatchScope);
+        ASSERT(symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope || symbolTable->scopeType() == SymbolTable::ScopeType::CatchScope || symbolTable->scopeType() == SymbolTable::ScopeType::CatchScopeWithSimpleParameter);
         ConcurrentJSLocker locker(symbolTable->m_lock);
         for (auto end = symbolTable->end(locker), iter = symbolTable->begin(locker); iter != end; ++iter)
             result.add(iter->key);
@@ -372,7 +370,17 @@ bool JSScope::isCatchScope()
 {
     if (type() != LexicalEnvironmentType)
         return false;
-    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::CatchScope;
+
+    auto scopeType = jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType();
+    return scopeType == SymbolTable::ScopeType::CatchScope
+        || scopeType == SymbolTable::ScopeType::CatchScopeWithSimpleParameter;
+}
+
+bool JSScope::isCatchScopeWithSimpleParameter()
+{
+    if (type() != LexicalEnvironmentType)
+        return false;
+    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::CatchScopeWithSimpleParameter;
 }
 
 bool JSScope::isFunctionNameScopeObject()

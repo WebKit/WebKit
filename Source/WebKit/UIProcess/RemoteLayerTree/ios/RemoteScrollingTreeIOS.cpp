@@ -28,8 +28,10 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)
 
+#include "RemoteScrollingCoordinatorProxy.h"
 #include "ScrollingTreeFrameScrollingNodeRemoteIOS.h"
 #include "ScrollingTreeOverflowScrollingNodeIOS.h"
+#include <WebCore/ScrollingTreeFixedNodeCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;

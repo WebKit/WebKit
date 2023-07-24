@@ -61,6 +61,7 @@ TEST(RunningStatistics, FullSimpleTest) {
 
   EXPECT_DOUBLE_EQ(*stats.GetMin(), 1.0);
   EXPECT_DOUBLE_EQ(*stats.GetMax(), 100.0);
+  EXPECT_DOUBLE_EQ(*stats.GetSum(), 5050.0);
   // EXPECT_DOUBLE_EQ is too strict (max 4 ULP) for this one.
   ASSERT_NEAR(*stats.GetMean(), 50.5, 1e-10);
 }

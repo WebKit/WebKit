@@ -144,9 +144,19 @@ void RecorderImpl::recordClip(const FloatRect& clipRect)
     append<Clip>(clipRect);
 }
 
+void RecorderImpl::recordClipRoundedRect(const FloatRoundedRect& clipRect)
+{
+    append<ClipRoundedRect>(clipRect);
+}
+
 void RecorderImpl::recordClipOut(const FloatRect& clipRect)
 {
     append<ClipOut>(clipRect);
+}
+
+void RecorderImpl::recordClipOutRoundedRect(const FloatRoundedRect& clipRect)
+{
+    append<ClipOutRoundedRect>(clipRect);
 }
 
 void RecorderImpl::recordClipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
@@ -284,27 +294,32 @@ void RecorderImpl::recordFillRectWithRoundedHole(const FloatRect& rect, const Fl
 
 #if ENABLE(INLINE_PATH_DATA)
 
-void RecorderImpl::recordFillLine(const LineData& line)
+void RecorderImpl::recordFillLine(const PathDataLine& line)
 {
     append<FillLine>(line);
 }
 
-void RecorderImpl::recordFillArc(const ArcData& arc)
+void RecorderImpl::recordFillArc(const PathArc& arc)
 {
     append<FillArc>(arc);
 }
 
-void RecorderImpl::recordFillQuadCurve(const QuadCurveData& curve)
+void RecorderImpl::recordFillQuadCurve(const PathDataQuadCurve& curve)
 {
     append<FillQuadCurve>(curve);
 }
 
-void RecorderImpl::recordFillBezierCurve(const BezierCurveData& curve)
+void RecorderImpl::recordFillBezierCurve(const PathDataBezierCurve& curve)
 {
     append<FillBezierCurve>(curve);
 }
 
 #endif // ENABLE(INLINE_PATH_DATA)
+
+void RecorderImpl::recordFillPathSegment(const PathSegment& segment)
+{
+    append<FillPathSegment>(segment);
+}
 
 void RecorderImpl::recordFillPath(const Path& path)
 {
@@ -335,34 +350,39 @@ void RecorderImpl::recordStrokeRect(const FloatRect& rect, float width)
 
 #if ENABLE(INLINE_PATH_DATA)
 
-void RecorderImpl::recordStrokeLine(const LineData& line)
+void RecorderImpl::recordStrokeLine(const PathDataLine& line)
 {
     append<StrokeLine>(line);
 }
 
-void RecorderImpl::recordStrokeLineWithColorAndThickness(SRGBA<uint8_t> color, float thickness, const LineData& line)
+void RecorderImpl::recordStrokeLineWithColorAndThickness(const PathDataLine& line, SRGBA<uint8_t> color, float thickness)
 {
     append<SetInlineStrokeColor>(color);
     append<SetStrokeThickness>(thickness);
-    append<StrokeLine>(line);
+    append<StrokePathSegment>(PathSegment { line });
 }
 
-void RecorderImpl::recordStrokeArc(const ArcData& arc)
+void RecorderImpl::recordStrokeArc(const PathArc& arc)
 {
     append<StrokeArc>(arc);
 }
 
-void RecorderImpl::recordStrokeQuadCurve(const QuadCurveData& curve)
+void RecorderImpl::recordStrokeQuadCurve(const PathDataQuadCurve& curve)
 {
     append<StrokeQuadCurve>(curve);
 }
 
-void RecorderImpl::recordStrokeBezierCurve(const BezierCurveData& curve)
+void RecorderImpl::recordStrokeBezierCurve(const PathDataBezierCurve& curve)
 {
     append<StrokeBezierCurve>(curve);
 }
 
 #endif // ENABLE(INLINE_PATH_DATA)
+
+void RecorderImpl::recordStrokePathSegment(const PathSegment& segment)
+{
+    append<StrokePathSegment>(segment);
+}
 
 void RecorderImpl::recordStrokePath(const Path& path)
 {

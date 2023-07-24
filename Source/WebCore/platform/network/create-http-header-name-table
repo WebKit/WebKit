@@ -97,14 +97,11 @@ IGNORE_WARNINGS_BEGIN("implicit-fallthrough")
 
 namespace WebCore {
 
-static const struct HeaderNameString {
-    const char* const name;
-    unsigned length;
-} headerNameStrings[] = {
+static const ASCIILiteral headerNameStrings[] = {
 ''')
 
 for http_header_name in http_header_names:
-    gperf_file.write('    { "%s", %u },\n' % (http_header_name, len(http_header_name)))
+    gperf_file.write('    "%s"_s,\n' % (http_header_name,))
 
 gperf_file.write('};\n\n')
 
@@ -163,13 +160,11 @@ bool findHTTPHeaderName(StringView stringView, HTTPHeaderName& headerName)
     return false;
 }
 
-StringView httpHeaderNameString(HTTPHeaderName headerName)
+ASCIILiteral httpHeaderNameString(HTTPHeaderName headerName)
 {
     ASSERT(static_cast<unsigned>(headerName) < numHTTPHeaderNames);
     
-    const auto& name = headerNameStrings[static_cast<unsigned>(headerName)];
-    
-    return StringView { reinterpret_cast<const LChar*>(name.name), static_cast<unsigned>(name.length) };
+    return headerNameStrings[static_cast<unsigned>(headerName)];
 }
 
 } // namespace WebCore
@@ -229,7 +224,7 @@ header_file.write('const size_t minHTTPHeaderNameLength = %u;\n' % len(min(http_
 header_file.write('const size_t maxHTTPHeaderNameLength = %u;\n' % len(max(http_header_names, key=len)));
 header_file.write('''
 bool findHTTPHeaderName(StringView, HTTPHeaderName&);
-WEBCORE_EXPORT StringView httpHeaderNameString(HTTPHeaderName);
+WEBCORE_EXPORT ASCIILiteral httpHeaderNameString(HTTPHeaderName);
 
 } // namespace WebCore
 

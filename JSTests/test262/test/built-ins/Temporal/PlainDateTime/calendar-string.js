@@ -10,4 +10,4 @@ features: [Temporal]
 const arg = "iso8601";
 
 const result = new Temporal.PlainDateTime(2000, 5, 2, 15, 23, 30, 987, 654, 321, arg);
-assert.sameValue(result.calendar.id, "iso8601", `Calendar created from string "${arg}"`);
+assert.sameValue(result.getISOFields().calendar, "iso8601", `Calendar created from string "${arg}"`);

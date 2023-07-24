@@ -142,7 +142,7 @@ bool DtmfSender::InsertDtmf(const std::string& tones,
   }
   safety_flag_ = PendingTaskSafetyFlag::Create();
   // Kick off a new DTMF task.
-  QueueInsertDtmf(RTC_FROM_HERE, 1 /*ms*/);
+  QueueInsertDtmf(1 /*ms*/);
   return true;
 }
 
@@ -166,8 +166,7 @@ int DtmfSender::comma_delay() const {
   return comma_delay_;
 }
 
-void DtmfSender::QueueInsertDtmf(const rtc::Location& posted_from,
-                                 uint32_t delay_ms) {
+void DtmfSender::QueueInsertDtmf(uint32_t delay_ms) {
   signaling_thread_->PostDelayedHighPrecisionTask(
       SafeTask(safety_flag_,
                [this] {
@@ -232,7 +231,7 @@ void DtmfSender::DoInsertDtmf() {
   tones_.erase(0, first_tone_pos + 1);
 
   // Continue with the next tone.
-  QueueInsertDtmf(RTC_FROM_HERE, tone_gap);
+  QueueInsertDtmf(tone_gap);
 }
 
 void DtmfSender::StopSending() {

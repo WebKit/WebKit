@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,20 +30,20 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPURenderBundleDescriptor.h>
+#include <WebCore/WebGPURenderBundleDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<RenderBundleDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::RenderBundleDescriptor& renderBundleDescriptor)
+std::optional<RenderBundleDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderBundleDescriptor& renderBundleDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(renderBundleDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(renderBundleDescriptor));
     if (!base)
         return std::nullopt;
 
     return { { WTFMove(*base) } };
 }
 
-std::optional<PAL::WebGPU::RenderBundleDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderBundleDescriptor& renderBundleDescriptor)
+std::optional<WebCore::WebGPU::RenderBundleDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderBundleDescriptor& renderBundleDescriptor)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(renderBundleDescriptor));
     if (!base)

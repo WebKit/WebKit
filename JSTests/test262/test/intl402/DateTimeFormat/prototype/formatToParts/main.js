@@ -3,6 +3,7 @@
 
 /*---
 description: Tests for existance and behavior of Intl.DateTimeFormat.prototype.formatToParts
+features: [Array.prototype.includes]
 ---*/
 
 function reduce(parts) {

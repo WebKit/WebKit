@@ -31,6 +31,12 @@ ECDSA_SIG *ecdsa_sign_with_nonce_for_known_answer_test(const uint8_t *digest,
                                                        const uint8_t *nonce,
                                                        size_t nonce_len);
 
+// ecdsa_do_verify_no_self_test does the same as |ECDSA_do_verify|, but doesn't
+// try to run the self-test first. This is for use in the self tests themselves,
+// to prevent an infinite loop.
+int ecdsa_do_verify_no_self_test(const uint8_t *digest, size_t digest_len,
+                                 const ECDSA_SIG *sig, const EC_KEY *eckey);
+
 
 #if defined(__cplusplus)
 }

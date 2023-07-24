@@ -226,7 +226,7 @@ public:
         .subscriptionSetIdentifier = {
             .bundleIdentifier = "com.apple.webapp"_s,
             .pushPartition = emptyString(),
-            .dataStoreIdentifier = UUID::parse("c1d79454-1f1a-4135-8764-e71d0de4b02e"_s)
+            .dataStoreIdentifier = WTF::UUID::parse("c1d79454-1f1a-4135-8764-e71d0de4b02e"_s)
         },
         .securityOrigin = "https://www.webkit.org"_s,
         .scope = "https://www.webkit.org/blog"_s,
@@ -241,7 +241,7 @@ public:
         .subscriptionSetIdentifier = {
             .bundleIdentifier = "com.apple.webapp"_s,
             .pushPartition = emptyString(),
-            .dataStoreIdentifier = UUID::parse("c1d79454-1f1a-4135-8764-e71d0de4b02e"_s)
+            .dataStoreIdentifier = WTF::UUID::parse("c1d79454-1f1a-4135-8764-e71d0de4b02e"_s)
         },
         .securityOrigin = "https://www.apple.com"_s,
         .scope = "https://www.apple.com/iphone"_s,
@@ -256,7 +256,7 @@ public:
         .subscriptionSetIdentifier = {
             .bundleIdentifier = "com.apple.webapp"_s,
             .pushPartition = "partition"_s,
-            .dataStoreIdentifier = UUID::parse("c1d79454-1f1a-4135-8764-e71d0de4b02e"_s)
+            .dataStoreIdentifier = WTF::UUID::parse("c1d79454-1f1a-4135-8764-e71d0de4b02e"_s)
         },
         .securityOrigin = "https://www.apple.com"_s,
         .scope = "https://www.apple.com/iphone"_s,
@@ -480,7 +480,7 @@ TEST_F(PushDatabaseTest, InsertRecord)
     
     // Inserting a record that has a different dataStoreIdentifier should succeed.
     PushRecord record9 = record1;
-    record9.subscriptionSetIdentifier.dataStoreIdentifier = UUID::createVersion4Weak();
+    record9.subscriptionSetIdentifier.dataStoreIdentifier = WTF::UUID::createVersion4Weak();
     record9.topic = "topic9"_s;
     EXPECT_TRUE(insertRecord(WTFMove(record9)));
     

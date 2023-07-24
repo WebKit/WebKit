@@ -595,7 +595,7 @@ void GraphicsContextCG::drawLine(const FloatPoint& point1, const FloatPoint& poi
 void GraphicsContextCG::drawEllipse(const FloatRect& rect)
 {
     Path path;
-    path.addEllipse(rect);
+    path.addEllipseInRect(rect);
     drawPath(path);
 }
 
@@ -809,10 +809,9 @@ void GraphicsContextCG::strokePath(const Path& path)
         applyStrokePattern();
 
 #if USE(CG_CONTEXT_STROKE_LINE_SEGMENTS_WHEN_STROKING_PATH)
-    if (path.hasInlineData<LineData>()) {
-        auto& lineData = path.inlineData<LineData>();
-        CGPoint points[2] { lineData.start, lineData.end };
-        CGContextStrokeLineSegments(context, points, 2);
+    if (auto line = path.singleDataLine()) {
+        CGPoint cgPoints[2] { line->start, line->end };
+        CGContextStrokeLineSegments(context, cgPoints, 2);
         return;
     }
 #endif
@@ -1399,6 +1398,22 @@ AffineTransform GraphicsContextCG::getCTM(IncludeDeviceScale includeScale) const
     return CGContextGetCTM(platformContext());
 }
 
+std::optional<std::pair<float, float>> GraphicsContextCG::scaleForRoundingToDevicePixels() const
+{
+    if (m_userToDeviceTransformKnownToBeIdentity)
+        return std::nullopt;
+
+    CGAffineTransform deviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(platformContext());
+    if (CGAffineTransformIsIdentity(deviceMatrix)) {
+        m_userToDeviceTransformKnownToBeIdentity = true;
+        return std::nullopt;
+    }
+
+    float deviceScaleX = std::hypot(deviceMatrix.a, deviceMatrix.b);
+    float deviceScaleY = std::hypot(deviceMatrix.c, deviceMatrix.d);
+    return { { deviceScaleX, deviceScaleY } };
+}
+
 FloatRect GraphicsContextCG::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode) const
 {
     // It is not enough just to round to pixels in device space. The rotation part of the
@@ -1406,18 +1421,11 @@ FloatRect GraphicsContextCG::roundToDevicePixels(const FloatRect& rect, Rounding
     // rotating image like the hands of the world clock widget. We just need the scale, so
     // we get the affine transform matrix and extract the scale.
 
-    if (m_userToDeviceTransformKnownToBeIdentity)
+    auto deviceScale = scaleForRoundingToDevicePixels();
+    if (!deviceScale)
         return roundedIntRect(rect);
 
-    CGAffineTransform deviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(platformContext());
-    if (CGAffineTransformIsIdentity(deviceMatrix)) {
-        m_userToDeviceTransformKnownToBeIdentity = true;
-        return roundedIntRect(rect);
-    }
-
-    float deviceScaleX = std::hypot(deviceMatrix.a, deviceMatrix.b);
-    float deviceScaleY = std::hypot(deviceMatrix.c, deviceMatrix.d);
-
+    auto [deviceScaleX, deviceScaleY] = *deviceScale;
     CGPoint deviceOrigin = CGPointMake(rect.x() * deviceScaleX, rect.y() * deviceScaleY);
     CGPoint deviceLowerRight = CGPointMake((rect.x() + rect.width()) * deviceScaleX,
         (rect.y() + rect.height()) * deviceScaleY);

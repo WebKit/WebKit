@@ -28,14 +28,37 @@
 
 #if HAVE(IOSURFACE)
 
+#include "Logging.h"
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/ImageBufferIOSurfaceBackend.h>
 #include <WebCore/PixelBuffer.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+static TextStream& operator<<(TextStream& ts, const ImageBufferBackendHandle& handle)
+{
+    WTF::switchOn(handle,
+        [&] (const ShareableBitmap::Handle& handle) {
+            if (handle.isNull())
+                ts << "null";
+            else
+                ts << "ShareableBitmap::Handle " << &handle;
+        },
+        [&] (const MachSendRight& machSendRight) {
+            ts << "MachSendRight " << machSendRight.sendRight();
+        }
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        , [&] (const CGDisplayList& handle) {
+            ts << "CGDisplayList handle " << &handle;
+        }
+#endif
+    );
+    return ts;
+}
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferRemoteIOSurfaceBackend);
 
@@ -126,6 +149,14 @@ void ImageBufferRemoteIOSurfaceBackend::putPixelBuffer(const PixelBuffer&, const
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
+
+String ImageBufferRemoteIOSurfaceBackend::debugDescription() const
+{
+    TextStream stream;
+    stream << "ImageBufferRemoteIOSurfaceBackend " << this << " handle " << m_handle << " " << m_volatilityState;
+    return stream.release();
+}
+
 
 } // namespace WebKit
 

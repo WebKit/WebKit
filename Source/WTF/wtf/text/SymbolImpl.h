@@ -52,9 +52,37 @@ public:
 
     WTF_EXPORT_PRIVATE static Ref<SymbolImpl> createNullSymbol();
     WTF_EXPORT_PRIVATE static Ref<SymbolImpl> create(StringImpl& rep);
-    WTF_EXPORT_PRIVATE static Ref<SymbolImpl> createStatic(StringImpl& rep);
-    static inline Ref<SymbolImpl> create(const char* rep, unsigned length) { return create(StringImpl::createStaticStringImplWithoutCopying(rep, length).leakRef()); }
-    static inline Ref<SymbolImpl> createStatic(const char* rep, unsigned length) { return createStatic(StringImpl::createStaticStringImplWithoutCopying(rep, length).leakRef()); }
+
+    class StaticSymbolImpl final : private StringImplShape {
+        WTF_MAKE_NONCOPYABLE(StaticSymbolImpl);
+    public:
+        template<unsigned characterCount>
+        constexpr StaticSymbolImpl(const char (&characters)[characterCount], Flags flags = s_flagDefault)
+            : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
+                s_hashFlag8BitBuffer | s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+            , m_hashForSymbolShiftedWithFlagCount(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
+            , m_flags(flags)
+        {
+        }
+
+        template<unsigned characterCount>
+        constexpr StaticSymbolImpl(const char16_t (&characters)[characterCount], Flags flags = s_flagDefault)
+            : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
+                s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+            , m_hashForSymbolShiftedWithFlagCount(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
+            , m_flags(flags)
+        {
+        }
+
+        operator SymbolImpl&()
+        {
+            return *reinterpret_cast<SymbolImpl*>(this);
+        }
+
+        StringImpl* m_owner { nullptr }; // We do not make StaticSymbolImpl BufferSubstring. Thus we can make this nullptr.
+        unsigned m_hashForSymbolShiftedWithFlagCount;
+        Flags m_flags;
+    };
 
 protected:
     WTF_EXPORT_PRIVATE static unsigned nextHashForSymbol();
@@ -94,13 +122,11 @@ protected:
     unsigned m_hashForSymbolShiftedWithFlagCount;
     Flags m_flags { s_flagDefault };
 };
+static_assert(sizeof(SymbolImpl) == sizeof(SymbolImpl::StaticSymbolImpl));
 
 class PrivateSymbolImpl final : public SymbolImpl {
 public:
     WTF_EXPORT_PRIVATE static Ref<PrivateSymbolImpl> create(StringImpl& rep);
-    WTF_EXPORT_PRIVATE static Ref<PrivateSymbolImpl> createStatic(StringImpl& rep);
-    static inline Ref<PrivateSymbolImpl> create(const char* rep, unsigned length) { return PrivateSymbolImpl::create(StringImpl::createStaticStringImplWithoutCopying(rep, length).leakRef()); }
-    static inline Ref<PrivateSymbolImpl> createStatic(const char* rep, unsigned length) { return PrivateSymbolImpl::createStatic(StringImpl::createStaticStringImplWithoutCopying(rep, length).leakRef()); }
 
 private:
     PrivateSymbolImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base)
@@ -167,6 +193,23 @@ inline RegisteredSymbolImpl* SymbolImpl::asRegisteredSymbolImpl()
     ASSERT(isRegistered());
     return static_cast<RegisteredSymbolImpl*>(this);
 }
+
+#if ASSERT_ENABLED
+// SymbolImpls created from StaticStringImpl will ASSERT
+// in the generic ValueCheck<T>::checkConsistency
+// as they are not allocated by fastMalloc.
+// We don't currently have any way to detect that case
+// so we ignore the consistency check for all SymbolImpls*.
+template<> struct
+ValueCheck<SymbolImpl*> {
+    static void checkConsistency(const SymbolImpl*) { }
+};
+
+template<> struct
+ValueCheck<const SymbolImpl*> {
+    static void checkConsistency(const SymbolImpl*) { }
+};
+#endif // ASSERT_ENABLED
 
 } // namespace WTF
 

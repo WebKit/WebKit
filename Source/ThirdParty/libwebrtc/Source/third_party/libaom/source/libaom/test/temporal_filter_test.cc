@@ -31,9 +31,7 @@
 #include "test/function_equivalence_test.h"
 
 using libaom_test::ACMRandom;
-using libaom_test::FunctionEquivalenceTest;
 using ::testing::Combine;
-using ::testing::Range;
 using ::testing::Values;
 using ::testing::ValuesIn;
 
@@ -47,11 +45,11 @@ typedef enum {
 } ColorFormat;
 static const char *color_fmt_str[] = { "I400", "I420", "I422", "I444" };
 typedef void (*TemporalFilterFunc)(
-    const YV12_BUFFER_CONFIG *ref_frame, const MACROBLOCKD *mbd,
+    const YV12_BUFFER_CONFIG *frame_to_filter, const MACROBLOCKD *mbd,
     const BLOCK_SIZE block_size, const int mb_row, const int mb_col,
     const int num_planes, const double *noise_level, const MV *subblock_mvs,
-    const int *subblock_mses, const int q_factor, const int filter_strenght,
-    const uint8_t *pred, uint32_t *accum, uint16_t *count);
+    const int *subblock_mses, const int q_factor, const int filter_strength,
+    int tf_wgt_calc_lvl, const uint8_t *pred, uint32_t *accum, uint16_t *count);
 typedef libaom_test::FuncParam<TemporalFilterFunc> TemporalFilterFuncParam;
 
 typedef std::tuple<TemporalFilterFuncParam, int> TemporalFilterWithParam;
@@ -62,6 +60,7 @@ class TemporalFilterTest
   virtual ~TemporalFilterTest() {}
   virtual void SetUp() {
     params_ = GET_PARAM(0);
+    tf_wgt_calc_lvl_ = GET_PARAM(1);
     rnd_.Reset(ACMRandom::DeterministicSeed());
     src1_ = reinterpret_cast<uint8_t *>(
         aom_memalign(8, sizeof(uint8_t) * MAX_MB_PLANE * BH * BW));
@@ -121,6 +120,7 @@ class TemporalFilterTest
 
  protected:
   TemporalFilterFuncParam params_;
+  int32_t tf_wgt_calc_lvl_;
   uint8_t *src1_;
   uint8_t *src2_;
   ACMRandom rnd_;
@@ -131,8 +131,9 @@ void TemporalFilterTest::RunTest(int isRandom, int run_times,
                                  ColorFormat color_fmt) {
   aom_usec_timer ref_timer, test_timer;
   const BLOCK_SIZE block_size = TF_BLOCK_SIZE;
-  const int width = block_size_wide[block_size];
-  const int height = block_size_high[block_size];
+  static_assert(block_size == BLOCK_32X32, "");
+  const int width = 32;
+  const int height = 32;
   int num_planes = MAX_MB_PLANE;
   int subsampling_x = 0;
   int subsampling_y = 0;
@@ -173,25 +174,25 @@ void TemporalFilterTest::RunTest(int isRandom, int run_times,
     memset(accumulator_mod, 0, 1024 * 3 * sizeof(accumulator_mod[0]));
     memset(count_mod, 0, 1024 * 3 * sizeof(count_mod[0]));
 
-    assert(width == 32 && height == 32);
+    static_assert(width == 32 && height == 32, "");
     const MV subblock_mvs[4] = { { 0, 0 }, { 5, 5 }, { 7, 8 }, { 2, 10 } };
     const int subblock_mses[4] = { 15, 16, 17, 18 };
     const int q_factor = 12;
     const int filter_strength = 5;
     const int mb_row = 0;
     const int mb_col = 0;
-    std::unique_ptr<YV12_BUFFER_CONFIG> ref_frame(new (std::nothrow)
-                                                      YV12_BUFFER_CONFIG);
-    ASSERT_NE(ref_frame, nullptr);
-    ref_frame->y_crop_height = 360;
-    ref_frame->y_crop_width = 540;
-    ref_frame->heights[PLANE_TYPE_Y] = height;
-    ref_frame->heights[PLANE_TYPE_UV] = height >> subsampling_y;
-    ref_frame->strides[PLANE_TYPE_Y] = stride;
-    ref_frame->strides[PLANE_TYPE_UV] = stride >> subsampling_x;
+    std::unique_ptr<YV12_BUFFER_CONFIG> frame_to_filter(new (std::nothrow)
+                                                            YV12_BUFFER_CONFIG);
+    ASSERT_NE(frame_to_filter, nullptr);
+    frame_to_filter->y_crop_height = 360;
+    frame_to_filter->y_crop_width = 540;
+    frame_to_filter->heights[PLANE_TYPE_Y] = height;
+    frame_to_filter->heights[PLANE_TYPE_UV] = height >> subsampling_y;
+    frame_to_filter->strides[PLANE_TYPE_Y] = stride;
+    frame_to_filter->strides[PLANE_TYPE_UV] = stride >> subsampling_x;
     DECLARE_ALIGNED(16, uint8_t, src[1024 * 3]);
-    ref_frame->buffer_alloc = src;
-    ref_frame->flags = 0;  // Only support low bit-depth test.
+    frame_to_filter->buffer_alloc = src;
+    frame_to_filter->flags = 0;  // Only support low bit-depth test.
     memcpy(src, src1_, 1024 * 3 * sizeof(uint8_t));
 
     std::unique_ptr<MACROBLOCKD> mbd(new (std::nothrow) MACROBLOCKD);
@@ -200,26 +201,28 @@ void TemporalFilterTest::RunTest(int isRandom, int run_times,
     for (int plane = AOM_PLANE_Y; plane < num_planes; plane++) {
       int plane_height = plane ? height >> subsampling_y : height;
       int plane_stride = plane ? stride >> subsampling_x : stride;
-      ref_frame->buffers[plane] =
-          ref_frame->buffer_alloc + plane * plane_stride * plane_height;
+      frame_to_filter->buffers[plane] =
+          frame_to_filter->buffer_alloc + plane * plane_stride * plane_height;
       mbd->plane[plane].subsampling_x = plane ? subsampling_x : 0;
       mbd->plane[plane].subsampling_y = plane ? subsampling_y : 0;
     }
 
-    params_.ref_func(ref_frame.get(), mbd.get(), block_size, mb_row, mb_col,
-                     num_planes, sigma, subblock_mvs, subblock_mses, q_factor,
-                     filter_strength, src2_, accumulator_ref, count_ref);
-    params_.tst_func(ref_frame.get(), mbd.get(), block_size, mb_row, mb_col,
-                     num_planes, sigma, subblock_mvs, subblock_mses, q_factor,
-                     filter_strength, src2_, accumulator_mod, count_mod);
+    params_.ref_func(frame_to_filter.get(), mbd.get(), block_size, mb_row,
+                     mb_col, num_planes, sigma, subblock_mvs, subblock_mses,
+                     q_factor, filter_strength, tf_wgt_calc_lvl_, src2_,
+                     accumulator_ref, count_ref);
+    params_.tst_func(frame_to_filter.get(), mbd.get(), block_size, mb_row,
+                     mb_col, num_planes, sigma, subblock_mvs, subblock_mses,
+                     q_factor, filter_strength, tf_wgt_calc_lvl_, src2_,
+                     accumulator_mod, count_mod);
 
     if (run_times > 1) {
       aom_usec_timer_start(&ref_timer);
       for (int j = 0; j < run_times; j++) {
-        params_.ref_func(ref_frame.get(), mbd.get(), block_size, mb_row, mb_col,
-                         num_planes, sigma, subblock_mvs, subblock_mses,
-                         q_factor, filter_strength, src2_, accumulator_ref,
-                         count_ref);
+        params_.ref_func(frame_to_filter.get(), mbd.get(), block_size, mb_row,
+                         mb_col, num_planes, sigma, subblock_mvs, subblock_mses,
+                         q_factor, filter_strength, tf_wgt_calc_lvl_, src2_,
+                         accumulator_ref, count_ref);
       }
       aom_usec_timer_mark(&ref_timer);
       const int elapsed_time_c =
@@ -227,10 +230,10 @@ void TemporalFilterTest::RunTest(int isRandom, int run_times,
 
       aom_usec_timer_start(&test_timer);
       for (int j = 0; j < run_times; j++) {
-        params_.tst_func(ref_frame.get(), mbd.get(), block_size, mb_row, mb_col,
-                         num_planes, sigma, subblock_mvs, subblock_mses,
-                         q_factor, filter_strength, src2_, accumulator_mod,
-                         count_mod);
+        params_.tst_func(frame_to_filter.get(), mbd.get(), block_size, mb_row,
+                         mb_col, num_planes, sigma, subblock_mvs, subblock_mses,
+                         q_factor, filter_strength, tf_wgt_calc_lvl_, src2_,
+                         accumulator_mod, count_mod);
       }
       aom_usec_timer_mark(&test_timer);
       const int elapsed_time_simd =
@@ -286,7 +289,7 @@ TemporalFilterFuncParam temporal_filter_test_avx2[] = { TemporalFilterFuncParam(
     &av1_apply_temporal_filter_c, &av1_apply_temporal_filter_avx2) };
 INSTANTIATE_TEST_SUITE_P(AVX2, TemporalFilterTest,
                          Combine(ValuesIn(temporal_filter_test_avx2),
-                                 Range(64, 65, 4)));
+                                 Values(0, 1)));
 #endif  // HAVE_AVX2
 
 #if HAVE_SSE2
@@ -294,16 +297,25 @@ TemporalFilterFuncParam temporal_filter_test_sse2[] = { TemporalFilterFuncParam(
     &av1_apply_temporal_filter_c, &av1_apply_temporal_filter_sse2) };
 INSTANTIATE_TEST_SUITE_P(SSE2, TemporalFilterTest,
                          Combine(ValuesIn(temporal_filter_test_sse2),
-                                 Range(64, 65, 4)));
+                                 Values(0, 1)));
 #endif  // HAVE_SSE2
+
+#if HAVE_NEON
+TemporalFilterFuncParam temporal_filter_test_neon[] = { TemporalFilterFuncParam(
+    &av1_apply_temporal_filter_c, &av1_apply_temporal_filter_neon) };
+INSTANTIATE_TEST_SUITE_P(NEON, TemporalFilterTest,
+                         Combine(ValuesIn(temporal_filter_test_neon),
+                                 Values(0, 1)));
+#endif  // HAVE_NEON
+
 #if CONFIG_AV1_HIGHBITDEPTH
 
 typedef void (*HBDTemporalFilterFunc)(
-    const YV12_BUFFER_CONFIG *ref_frame, const MACROBLOCKD *mbd,
+    const YV12_BUFFER_CONFIG *frame_to_filter, const MACROBLOCKD *mbd,
     const BLOCK_SIZE block_size, const int mb_row, const int mb_col,
     const int num_planes, const double *noise_level, const MV *subblock_mvs,
-    const int *subblock_mses, const int q_factor, const int filter_strenght,
-    const uint8_t *pred, uint32_t *accum, uint16_t *count);
+    const int *subblock_mses, const int q_factor, const int filter_strength,
+    int tf_wgt_calc_lvl, const uint8_t *pred, uint32_t *accum, uint16_t *count);
 typedef libaom_test::FuncParam<HBDTemporalFilterFunc>
     HBDTemporalFilterFuncParam;
 
@@ -315,6 +327,7 @@ class HBDTemporalFilterTest
   virtual ~HBDTemporalFilterTest() {}
   virtual void SetUp() {
     params_ = GET_PARAM(0);
+    tf_wgt_calc_lvl_ = GET_PARAM(1);
     rnd_.Reset(ACMRandom::DeterministicSeed());
     src1_ = reinterpret_cast<uint16_t *>(
         aom_memalign(16, sizeof(uint16_t) * MAX_MB_PLANE * BH * BW));
@@ -376,6 +389,7 @@ class HBDTemporalFilterTest
 
  protected:
   HBDTemporalFilterFuncParam params_;
+  int tf_wgt_calc_lvl_;
   uint16_t *src1_;
   uint16_t *src2_;
   ACMRandom rnd_;
@@ -387,8 +401,9 @@ void HBDTemporalFilterTest::RunTest(int isRandom, int run_times, int BD,
                                     ColorFormat color_fmt) {
   aom_usec_timer ref_timer, test_timer;
   const BLOCK_SIZE block_size = TF_BLOCK_SIZE;
-  const int width = block_size_wide[block_size];
-  const int height = block_size_high[block_size];
+  static_assert(block_size == BLOCK_32X32, "");
+  const int width = 32;
+  const int height = 32;
   int num_planes = MAX_MB_PLANE;
   int subsampling_x = 0;
   int subsampling_y = 0;
@@ -429,25 +444,26 @@ void HBDTemporalFilterTest::RunTest(int isRandom, int run_times, int BD,
     memset(accumulator_mod, 0, 1024 * 3 * sizeof(accumulator_mod[0]));
     memset(count_mod, 0, 1024 * 3 * sizeof(count_mod[0]));
 
-    assert(width == 32 && height == 32);
+    static_assert(width == 32 && height == 32, "");
     const MV subblock_mvs[4] = { { 0, 0 }, { 5, 5 }, { 7, 8 }, { 2, 10 } };
     const int subblock_mses[4] = { 15, 16, 17, 18 };
     const int q_factor = 12;
     const int filter_strength = 5;
     const int mb_row = 0;
     const int mb_col = 0;
-    std::unique_ptr<YV12_BUFFER_CONFIG> ref_frame(new (std::nothrow)
-                                                      YV12_BUFFER_CONFIG);
-    ASSERT_NE(ref_frame, nullptr);
-    ref_frame->y_crop_height = 360;
-    ref_frame->y_crop_width = 540;
-    ref_frame->heights[PLANE_TYPE_Y] = height;
-    ref_frame->heights[PLANE_TYPE_UV] = height >> subsampling_y;
-    ref_frame->strides[PLANE_TYPE_Y] = stride;
-    ref_frame->strides[PLANE_TYPE_UV] = stride >> subsampling_x;
+    std::unique_ptr<YV12_BUFFER_CONFIG> frame_to_filter(new (std::nothrow)
+                                                            YV12_BUFFER_CONFIG);
+    ASSERT_NE(frame_to_filter, nullptr);
+    frame_to_filter->y_crop_height = 360;
+    frame_to_filter->y_crop_width = 540;
+    frame_to_filter->heights[PLANE_TYPE_Y] = height;
+    frame_to_filter->heights[PLANE_TYPE_UV] = height >> subsampling_y;
+    frame_to_filter->strides[PLANE_TYPE_Y] = stride;
+    frame_to_filter->strides[PLANE_TYPE_UV] = stride >> subsampling_x;
     DECLARE_ALIGNED(16, uint16_t, src[1024 * 3]);
-    ref_frame->buffer_alloc = CONVERT_TO_BYTEPTR(src);
-    ref_frame->flags = YV12_FLAG_HIGHBITDEPTH;  // Only Hihgbd bit-depth test.
+    frame_to_filter->buffer_alloc = CONVERT_TO_BYTEPTR(src);
+    frame_to_filter->flags =
+        YV12_FLAG_HIGHBITDEPTH;  // Only Hihgbd bit-depth test.
     memcpy(src, src1_, 1024 * 3 * sizeof(uint16_t));
 
     std::unique_ptr<MACROBLOCKD> mbd(new (std::nothrow) MACROBLOCKD);
@@ -456,28 +472,28 @@ void HBDTemporalFilterTest::RunTest(int isRandom, int run_times, int BD,
     for (int plane = AOM_PLANE_Y; plane < num_planes; plane++) {
       int plane_height = plane ? height >> subsampling_y : height;
       int plane_stride = plane ? stride >> subsampling_x : stride;
-      ref_frame->buffers[plane] =
-          ref_frame->buffer_alloc + plane * plane_stride * plane_height;
+      frame_to_filter->buffers[plane] =
+          frame_to_filter->buffer_alloc + plane * plane_stride * plane_height;
       mbd->plane[plane].subsampling_x = plane ? subsampling_x : 0;
       mbd->plane[plane].subsampling_y = plane ? subsampling_y : 0;
     }
 
-    params_.ref_func(ref_frame.get(), mbd.get(), block_size, mb_row, mb_col,
-                     num_planes, sigma, subblock_mvs, subblock_mses, q_factor,
-                     filter_strength, CONVERT_TO_BYTEPTR(src2_),
-                     accumulator_ref, count_ref);
-    params_.tst_func(ref_frame.get(), mbd.get(), block_size, mb_row, mb_col,
-                     num_planes, sigma, subblock_mvs, subblock_mses, q_factor,
-                     filter_strength, CONVERT_TO_BYTEPTR(src2_),
-                     accumulator_mod, count_mod);
+    params_.ref_func(frame_to_filter.get(), mbd.get(), block_size, mb_row,
+                     mb_col, num_planes, sigma, subblock_mvs, subblock_mses,
+                     q_factor, filter_strength, tf_wgt_calc_lvl_,
+                     CONVERT_TO_BYTEPTR(src2_), accumulator_ref, count_ref);
+    params_.tst_func(frame_to_filter.get(), mbd.get(), block_size, mb_row,
+                     mb_col, num_planes, sigma, subblock_mvs, subblock_mses,
+                     q_factor, filter_strength, tf_wgt_calc_lvl_,
+                     CONVERT_TO_BYTEPTR(src2_), accumulator_mod, count_mod);
 
     if (run_times > 1) {
       aom_usec_timer_start(&ref_timer);
       for (int j = 0; j < run_times; j++) {
-        params_.ref_func(ref_frame.get(), mbd.get(), block_size, mb_row, mb_col,
-                         num_planes, sigma, subblock_mvs, subblock_mses,
-                         q_factor, filter_strength, CONVERT_TO_BYTEPTR(src2_),
-                         accumulator_ref, count_ref);
+        params_.ref_func(frame_to_filter.get(), mbd.get(), block_size, mb_row,
+                         mb_col, num_planes, sigma, subblock_mvs, subblock_mses,
+                         q_factor, filter_strength, tf_wgt_calc_lvl_,
+                         CONVERT_TO_BYTEPTR(src2_), accumulator_ref, count_ref);
       }
       aom_usec_timer_mark(&ref_timer);
       const int elapsed_time_c =
@@ -485,10 +501,10 @@ void HBDTemporalFilterTest::RunTest(int isRandom, int run_times, int BD,
 
       aom_usec_timer_start(&test_timer);
       for (int j = 0; j < run_times; j++) {
-        params_.tst_func(ref_frame.get(), mbd.get(), block_size, mb_row, mb_col,
-                         num_planes, sigma, subblock_mvs, subblock_mses,
-                         q_factor, filter_strength, CONVERT_TO_BYTEPTR(src2_),
-                         accumulator_mod, count_mod);
+        params_.tst_func(frame_to_filter.get(), mbd.get(), block_size, mb_row,
+                         mb_col, num_planes, sigma, subblock_mvs, subblock_mses,
+                         q_factor, filter_strength, tf_wgt_calc_lvl_,
+                         CONVERT_TO_BYTEPTR(src2_), accumulator_mod, count_mod);
       }
       aom_usec_timer_mark(&test_timer);
       const int elapsed_time_simd =
@@ -545,7 +561,7 @@ HBDTemporalFilterFuncParam HBDtemporal_filter_test_sse2[] = {
 };
 INSTANTIATE_TEST_SUITE_P(SSE2, HBDTemporalFilterTest,
                          Combine(ValuesIn(HBDtemporal_filter_test_sse2),
-                                 Range(64, 65, 4)));
+                                 Values(0, 1)));
 #endif  // HAVE_SSE2
 #if HAVE_AVX2
 HBDTemporalFilterFuncParam HBDtemporal_filter_test_avx2[] = {
@@ -554,7 +570,7 @@ HBDTemporalFilterFuncParam HBDtemporal_filter_test_avx2[] = {
 };
 INSTANTIATE_TEST_SUITE_P(AVX2, HBDTemporalFilterTest,
                          Combine(ValuesIn(HBDtemporal_filter_test_avx2),
-                                 Range(64, 65, 4)));
+                                 Values(0, 1)));
 #endif  // HAVE_AVX2
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 }  // namespace

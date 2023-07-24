@@ -254,6 +254,12 @@ GLContext* PlatformDisplay::sharingGLContext()
 
 void PlatformDisplay::clearSharingGLContext()
 {
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+    m_gstGLContext = nullptr;
+#endif
+#if ENABLE(WEBGL) && !PLATFORM(WIN)
+    clearANGLESharingGLContext();
+#endif
     m_sharingGLContext = nullptr;
 }
 #endif
@@ -318,6 +324,7 @@ void PlatformDisplay::initializeEGLDisplay()
         m_eglExtensions.KHR_surfaceless_context = findExtension("EGL_KHR_surfaceless_context"_s);
         m_eglExtensions.EXT_image_dma_buf_import = findExtension("EGL_EXT_image_dma_buf_import"_s);
         m_eglExtensions.EXT_image_dma_buf_import_modifiers = findExtension("EGL_EXT_image_dma_buf_import_modifiers"_s);
+        m_eglExtensions.MESA_image_dma_buf_export = findExtension("EGL_MESA_image_dma_buf_export"_s);
     }
 
     if (!m_eglDisplayOwned)
@@ -351,7 +358,6 @@ void PlatformDisplay::terminateEGLDisplay()
 {
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     m_gstGLDisplay = nullptr;
-    m_gstGLContext = nullptr;
 #endif
     clearSharingGLContext();
     ASSERT(m_eglDisplayInitialized);

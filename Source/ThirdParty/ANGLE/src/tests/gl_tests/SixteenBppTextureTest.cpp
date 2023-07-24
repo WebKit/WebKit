@@ -574,10 +574,13 @@ void main()
         }
     }
 
-    void bandingTest(GLenum format, Gradient gradient);
+    void bandingTest(GLenum format, Gradient gradient, bool ditheringExpected);
+    void bandingTestWithSwitch(GLenum format, Gradient gradient);
 };
 
-void SixteenBppTextureDitheringTestES3::bandingTest(GLenum format, Gradient gradient)
+void SixteenBppTextureDitheringTestES3::bandingTest(GLenum format,
+                                                    Gradient gradient,
+                                                    bool ditheringExpected)
 {
     int w = getWindowWidth();
     int h = getWindowHeight();
@@ -636,24 +639,69 @@ void SixteenBppTextureDitheringTestES3::bandingTest(GLenum format, Gradient grad
     EXPECT_PIXEL_COLOR_NEAR(0, h - 1, topColor, maxError);
     EXPECT_PIXEL_COLOR_NEAR(w - 1, h - 1, topRightColor, maxError);
     ASSERT_GL_NO_ERROR();
+
+    // Stricter pixel check on Android where dithering is supported by the driver or emulated.
+    if (getEGLWindow()->isFeatureEnabled(Feature::EmulateDithering) ||
+        getEGLWindow()->isFeatureEnabled(Feature::SupportsLegacyDithering))
+    {
+        uint32_t pixelCount = w * h;
+        std::vector<uint32_t> pixelData(pixelCount);
+        glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixelData.data());
+
+        int samePixelCount = 0;
+        for (EGLint y = 0; y < h; ++y)
+        {
+            for (EGLint x = 0; x < w; ++x)
+            {
+                EGLint srcPixel = x + y * w;
+                if (x < w - 1 && pixelData[srcPixel] == pixelData[srcPixel + 1])
+                {
+                    samePixelCount++;
+                }
+            }
+        }
+
+        double samePixelCountRatio = (1.0 * samePixelCount) / (w * h);
+        // ~0.3 (dithering) vs 0.8+ (no dithering)
+        if (ditheringExpected)
+        {
+            EXPECT_LT(samePixelCountRatio, 0.7);
+        }
+        else
+        {
+            EXPECT_GT(samePixelCountRatio, 0.7);
+        }
+    }
+}
+
+void SixteenBppTextureDitheringTestES3::bandingTestWithSwitch(GLenum format, Gradient gradient)
+{
+    // GL_DITHER defaults to enabled
+    bandingTest(format, gradient, true);
+
+    glDisable(GL_DITHER);
+    bandingTest(format, gradient, false);
+
+    glEnable(GL_DITHER);
+    bandingTest(format, gradient, true);
 }
 
 // Test dithering applied to RGBA4.
 TEST_P(SixteenBppTextureDitheringTestES3, RGBA4)
 {
-    bandingTest(GL_RGBA4, Gradient::RedGreen);
+    bandingTestWithSwitch(GL_RGBA4, Gradient::RedGreen);
 }
 
 // Test dithering applied to RGBA5551.
 TEST_P(SixteenBppTextureDitheringTestES3, RGBA5551)
 {
-    bandingTest(GL_RGB5_A1, Gradient::RedBlue);
+    bandingTestWithSwitch(GL_RGB5_A1, Gradient::RedBlue);
 }
 
 // Test dithering applied to RGB565.
 TEST_P(SixteenBppTextureDitheringTestES3, RGB565)
 {
-    bandingTest(GL_RGB565, Gradient::GreenBlue);
+    bandingTestWithSwitch(GL_RGB565, Gradient::GreenBlue);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2(SixteenBppTextureTest);

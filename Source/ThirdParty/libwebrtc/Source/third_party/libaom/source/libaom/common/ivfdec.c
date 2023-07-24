@@ -17,6 +17,7 @@
 
 #include "aom_ports/mem_ops.h"
 #include "aom_ports/sanitizer.h"
+#include "tools_common.h"
 
 static const char *IVF_SIGNATURE = "DKIF";
 
@@ -29,10 +30,10 @@ static void fix_framerate(int *num, int *den) {
 }
 
 int file_is_ivf(struct AvxInputContext *input_ctx) {
-  char raw_hdr[32];
+  unsigned char raw_hdr[32];
   int is_ivf = 0;
 
-  if (fread(raw_hdr, 1, 32, input_ctx->file) == 32) {
+  if (buffer_input(input_ctx, 32, raw_hdr, /*buffered=*/true) == 32) {
     if (memcmp(IVF_SIGNATURE, raw_hdr, 4) == 0) {
       is_ivf = 1;
 
@@ -53,21 +54,21 @@ int file_is_ivf(struct AvxInputContext *input_ctx) {
   }
 
   if (!is_ivf) {
-    rewind(input_ctx->file);
-    input_ctx->detect.buf_read = 0;
-  } else {
-    input_ctx->detect.position = 4;
+    rewind_detect(input_ctx);
   }
   return is_ivf;
 }
 
-int ivf_read_frame(FILE *infile, uint8_t **buffer, size_t *bytes_read,
-                   size_t *buffer_size, aom_codec_pts_t *pts) {
-  char raw_header[IVF_FRAME_HDR_SZ] = { 0 };
+int ivf_read_frame(struct AvxInputContext *input_ctx, uint8_t **buffer,
+                   size_t *bytes_read, size_t *buffer_size,
+                   aom_codec_pts_t *pts) {
+  unsigned char raw_header[IVF_FRAME_HDR_SZ] = { 0 };
   size_t frame_size = 0;
 
-  if (fread(raw_header, IVF_FRAME_HDR_SZ, 1, infile) != 1) {
-    if (!feof(infile)) fprintf(stderr, "Warning: Failed to read frame size\n");
+  if (read_from_input(input_ctx, IVF_FRAME_HDR_SZ, raw_header) !=
+      IVF_FRAME_HDR_SZ) {
+    if (!input_eof(input_ctx))
+      fprintf(stderr, "Warning: Failed to read frame size\n");
   } else {
     frame_size = mem_get_le32(raw_header);
 
@@ -95,9 +96,9 @@ int ivf_read_frame(FILE *infile, uint8_t **buffer, size_t *bytes_read,
     }
   }
 
-  if (!feof(infile)) {
+  if (!input_eof(input_ctx)) {
     ASAN_UNPOISON_MEMORY_REGION(*buffer, *buffer_size);
-    if (fread(*buffer, 1, frame_size, infile) != frame_size) {
+    if (read_from_input(input_ctx, frame_size, *buffer) != frame_size) {
       fprintf(stderr, "Warning: Failed to read full frame\n");
       return 1;
     }

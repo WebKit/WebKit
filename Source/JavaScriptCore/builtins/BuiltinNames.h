@@ -40,7 +40,7 @@ namespace JSC {
     const JSC::Identifier& name##Symbol() const { return m_##name##Symbol; }
 #define DECLARE_BUILTIN_IDENTIFIER_ACCESSOR_IN_JSC(name) \
     const JSC::Identifier& name##PublicName() const { return m_##name; } \
-    JSC::Identifier name##PrivateName() const { return JSC::Identifier::fromUid(*JSC::Symbols::name##PrivateName.get()); }
+    JSC::Identifier name##PrivateName() const { return JSC::Identifier::fromUid(*bitwise_cast<SymbolImpl*>(&JSC::Symbols::name##PrivateName)); }
 
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
@@ -215,19 +215,17 @@ namespace JSC {
     macro(asyncContext) \
 
 namespace Symbols {
-#define DECLARE_BUILTIN_STATIC_SYMBOLS(name) extern JS_EXPORT_PRIVATE LazyNeverDestroyed<SymbolImpl*> name##Symbol;
+#define DECLARE_BUILTIN_STATIC_SYMBOLS(name) extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl name##Symbol;
 JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(DECLARE_BUILTIN_STATIC_SYMBOLS)
 #undef DECLARE_BUILTIN_STATIC_SYMBOLS
 
-#define DECLARE_BUILTIN_PRIVATE_NAMES(name) extern JS_EXPORT_PRIVATE LazyNeverDestroyed<SymbolImpl*> name##PrivateName;
+#define DECLARE_BUILTIN_PRIVATE_NAMES(name) extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl name##PrivateName;
 JSC_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_PRIVATE_NAMES)
 JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DECLARE_BUILTIN_PRIVATE_NAMES)
 #undef DECLARE_BUILTIN_PRIVATE_NAMES
 
-extern JS_EXPORT_PRIVATE LazyNeverDestroyed<SymbolImpl*> dollarVMPrivateName;
-extern JS_EXPORT_PRIVATE LazyNeverDestroyed<SymbolImpl*> polyProtoPrivateName;
-
-JS_EXPORT_PRIVATE void initializeStaticSymbols();
+extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl dollarVMPrivateName;
+extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl polyProtoPrivateName;
 }
 
 class BuiltinNames {

@@ -17,6 +17,7 @@
 #include "api/scoped_refptr.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/video/i420_buffer.h"
+#include "api/video/nv12_buffer.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
 #include "api/video/video_source_interface.h"
@@ -37,6 +38,9 @@ class SquareGenerator : public FrameGeneratorInterface {
 
   void ChangeResolution(size_t width, size_t height) override;
   VideoFrameData NextFrame() override;
+  Resolution GetResolution() const override;
+
+  absl::optional<int> fps() const override { return absl::nullopt; }
 
  private:
   rtc::scoped_refptr<I420Buffer> CreateI420Buffer(int width, int height);
@@ -58,7 +62,7 @@ class SquareGenerator : public FrameGeneratorInterface {
     const uint8_t yuv_a_;
   };
 
-  Mutex mutex_;
+  mutable Mutex mutex_;
   const OutputType type_;
   int width_ RTC_GUARDED_BY(&mutex_);
   int height_ RTC_GUARDED_BY(&mutex_);
@@ -76,9 +80,11 @@ class YuvFileGenerator : public FrameGeneratorInterface {
 
   VideoFrameData NextFrame() override;
   void ChangeResolution(size_t width, size_t height) override {
-    RTC_LOG(LS_WARNING)
-        << "ScrollingImageFrameGenerator::ChangeResolution not implemented";
+    RTC_LOG(LS_WARNING) << "YuvFileGenerator::ChangeResolution not implemented";
   }
+  Resolution GetResolution() const override;
+
+  absl::optional<int> fps() const override { return absl::nullopt; }
 
  private:
   // Returns true if the new frame was loaded.
@@ -97,6 +103,41 @@ class YuvFileGenerator : public FrameGeneratorInterface {
   rtc::scoped_refptr<I420Buffer> last_read_buffer_;
 };
 
+class NV12FileGenerator : public FrameGeneratorInterface {
+ public:
+  NV12FileGenerator(std::vector<FILE*> files,
+                    size_t width,
+                    size_t height,
+                    int frame_repeat_count);
+
+  ~NV12FileGenerator();
+
+  VideoFrameData NextFrame() override;
+  void ChangeResolution(size_t width, size_t height) override {
+    RTC_LOG(LS_WARNING)
+        << "NV12FileGenerator::ChangeResolution not implemented";
+  }
+  Resolution GetResolution() const override;
+
+  absl::optional<int> fps() const override { return absl::nullopt; }
+
+ private:
+  // Returns true if the new frame was loaded.
+  // False only in case of a single file with a single frame in it.
+  bool ReadNextFrame();
+
+  size_t file_index_;
+  size_t frame_index_;
+  const std::vector<FILE*> files_;
+  const size_t width_;
+  const size_t height_;
+  const size_t frame_size_;
+  const std::unique_ptr<uint8_t[]> frame_buffer_;
+  const int frame_display_count_;
+  int current_display_count_;
+  rtc::scoped_refptr<NV12Buffer> last_read_buffer_;
+};
+
 // SlideGenerator works similarly to YuvFileGenerator but it fills the frames
 // with randomly sized and colored squares instead of reading their content
 // from files.
@@ -108,6 +149,9 @@ class SlideGenerator : public FrameGeneratorInterface {
   void ChangeResolution(size_t width, size_t height) override {
     RTC_LOG(LS_WARNING) << "SlideGenerator::ChangeResolution not implemented";
   }
+  Resolution GetResolution() const override;
+
+  absl::optional<int> fps() const override { return absl::nullopt; }
 
  private:
   // Generates some randomly sized and colored squares scattered
@@ -139,6 +183,9 @@ class ScrollingImageFrameGenerator : public FrameGeneratorInterface {
     RTC_LOG(LS_WARNING)
         << "ScrollingImageFrameGenerator::ChangeResolution not implemented";
   }
+  Resolution GetResolution() const override;
+
+  absl::optional<int> fps() const override { return absl::nullopt; }
 
  private:
   void UpdateSourceFrame(size_t frame_num);

@@ -119,6 +119,14 @@ void RemoteScrollingTree::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
         m_scrollingCoordinatorProxy->scrollingTreeNodeDidEndScroll(nodeID);
 }
 
+void RemoteScrollingTree::clearNodesWithUserScrollInProgress()
+{
+    ScrollingTree::clearNodesWithUserScrollInProgress();
+
+    if (m_scrollingCoordinatorProxy)
+        m_scrollingCoordinatorProxy->clearNodesWithUserScrollInProgress();
+}
+
 void RemoteScrollingTree::scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID nodeID)
 {
     if (m_scrollingCoordinatorProxy)

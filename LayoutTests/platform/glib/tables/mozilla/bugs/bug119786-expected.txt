@@ -86,10 +86,10 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 60x17
                 text run at (2,2) width 60: "Kibology"
 layer at (8,104) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,96) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,96) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,174) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,166) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,166) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,368) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,360) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,360) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,438) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,430) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,430) size 784x2 [color=#808080] [border: (1px inset #808080)]

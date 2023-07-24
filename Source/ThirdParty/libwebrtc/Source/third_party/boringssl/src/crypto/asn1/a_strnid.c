@@ -56,118 +56,73 @@
 
 #include <openssl/asn1.h>
 
-#include <stdlib.h>             /* For bsearch */
+#include <assert.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <openssl/err.h>
 #include <openssl/mem.h>
 #include <openssl/obj.h>
-#include <openssl/stack.h>
 
-DEFINE_STACK_OF(ASN1_STRING_TABLE)
+#include "../internal.h"
+#include "../lhash/internal.h"
+#include "internal.h"
 
-static STACK_OF(ASN1_STRING_TABLE) *stable = NULL;
-static void st_free(ASN1_STRING_TABLE *tbl);
 
-/*
- * This is the global mask for the mbstring functions: this is use to mask
- * out certain types (such as BMPString and UTF8String) because certain
- * software (e.g. Netscape) has problems with them.
- */
+DEFINE_LHASH_OF(ASN1_STRING_TABLE)
 
-static unsigned long global_mask = B_ASN1_UTF8STRING;
+static LHASH_OF(ASN1_STRING_TABLE) *string_tables = NULL;
+static struct CRYPTO_STATIC_MUTEX string_tables_lock = CRYPTO_STATIC_MUTEX_INIT;
 
-void ASN1_STRING_set_default_mask(unsigned long mask)
-{
-    global_mask = mask;
+void ASN1_STRING_set_default_mask(unsigned long mask) {}
+
+unsigned long ASN1_STRING_get_default_mask(void) { return B_ASN1_UTF8STRING; }
+
+int ASN1_STRING_set_default_mask_asc(const char *p) { return 1; }
+
+static const ASN1_STRING_TABLE *asn1_string_table_get(int nid);
+
+// The following function generates an ASN1_STRING based on limits in a
+// table. Frequently the types and length of an ASN1_STRING are restricted by
+// a corresponding OID. For example certificates and certificate requests.
+
+ASN1_STRING *ASN1_STRING_set_by_NID(ASN1_STRING **out, const unsigned char *in,
+                                    ossl_ssize_t len, int inform, int nid) {
+  ASN1_STRING *str = NULL;
+  int ret;
+  if (!out) {
+    out = &str;
+  }
+  const ASN1_STRING_TABLE *tbl = asn1_string_table_get(nid);
+  if (tbl != NULL) {
+    unsigned long mask = tbl->mask;
+    if (!(tbl->flags & STABLE_NO_MASK)) {
+      mask &= B_ASN1_UTF8STRING;
+    }
+    ret = ASN1_mbstring_ncopy(out, in, len, inform, mask, tbl->minsize,
+                              tbl->maxsize);
+  } else {
+    ret = ASN1_mbstring_copy(out, in, len, inform, B_ASN1_UTF8STRING);
+  }
+  if (ret <= 0) {
+    return NULL;
+  }
+  return *out;
 }
 
-unsigned long ASN1_STRING_get_default_mask(void)
-{
-    return global_mask;
-}
+// Now the tables and helper functions for the string table:
 
-/*
- * This function sets the default to various "flavours" of configuration.
- * based on an ASCII string. Currently this is: MASK:XXXX : a numerical mask
- * value. nobmp : Don't use BMPStrings (just Printable, T61). pkix : PKIX
- * recommendation in RFC2459. utf8only : only use UTF8Strings (RFC2459
- * recommendation for 2004). default: the default value, Printable, T61, BMP.
- */
+// See RFC 5280.
+#define ub_name 32768
+#define ub_common_name 64
+#define ub_locality_name 128
+#define ub_state_name 128
+#define ub_organization_name 64
+#define ub_organization_unit_name 64
+#define ub_email_address 128
+#define ub_serial_number 64
 
-int ASN1_STRING_set_default_mask_asc(const char *p)
-{
-    unsigned long mask;
-    char *end;
-    if (!strncmp(p, "MASK:", 5)) {
-        if (!p[5])
-            return 0;
-        mask = strtoul(p + 5, &end, 0);
-        if (*end)
-            return 0;
-    } else if (!strcmp(p, "nombstr"))
-        mask = ~((unsigned long)(B_ASN1_BMPSTRING | B_ASN1_UTF8STRING));
-    else if (!strcmp(p, "pkix"))
-        mask = ~((unsigned long)B_ASN1_T61STRING);
-    else if (!strcmp(p, "utf8only"))
-        mask = B_ASN1_UTF8STRING;
-    else if (!strcmp(p, "default"))
-        mask = 0xFFFFFFFFL;
-    else
-        return 0;
-    ASN1_STRING_set_default_mask(mask);
-    return 1;
-}
-
-/*
- * The following function generates an ASN1_STRING based on limits in a
- * table. Frequently the types and length of an ASN1_STRING are restricted by
- * a corresponding OID. For example certificates and certificate requests.
- */
-
-ASN1_STRING *ASN1_STRING_set_by_NID(ASN1_STRING **out,
-                                    const unsigned char *in, int inlen,
-                                    int inform, int nid)
-{
-    ASN1_STRING_TABLE *tbl;
-    ASN1_STRING *str = NULL;
-    unsigned long mask;
-    int ret;
-    if (!out)
-        out = &str;
-    tbl = ASN1_STRING_TABLE_get(nid);
-    if (tbl) {
-        mask = tbl->mask;
-        if (!(tbl->flags & STABLE_NO_MASK))
-            mask &= global_mask;
-        ret = ASN1_mbstring_ncopy(out, in, inlen, inform, mask,
-                                  tbl->minsize, tbl->maxsize);
-    } else
-        ret =
-            ASN1_mbstring_copy(out, in, inlen, inform,
-                               DIRSTRING_TYPE & global_mask);
-    if (ret <= 0)
-        return NULL;
-    return *out;
-}
-
-/*
- * Now the tables and helper functions for the string table:
- */
-
-/* size limits: this stuff is taken straight from RFC3280 */
-
-#define ub_name                         32768
-#define ub_common_name                  64
-#define ub_locality_name                128
-#define ub_state_name                   128
-#define ub_organization_name            64
-#define ub_organization_unit_name       64
-#define ub_title                        64
-#define ub_email_address                128
-#define ub_serial_number                64
-
-/* This table must be kept in NID order */
+// This table must be kept in NID order
 
 static const ASN1_STRING_TABLE tbl_standard[] = {
     {NID_commonName, 1, ub_common_name, DIRSTRING_TYPE, 0},
@@ -191,123 +146,100 @@ static const ASN1_STRING_TABLE tbl_standard[] = {
     {NID_name, 1, ub_name, DIRSTRING_TYPE, 0},
     {NID_dnQualifier, -1, -1, B_ASN1_PRINTABLESTRING, STABLE_NO_MASK},
     {NID_domainComponent, 1, -1, B_ASN1_IA5STRING, STABLE_NO_MASK},
-    {NID_ms_csp_name, -1, -1, B_ASN1_BMPSTRING, STABLE_NO_MASK}
-};
+    {NID_ms_csp_name, -1, -1, B_ASN1_BMPSTRING, STABLE_NO_MASK}};
 
-static int sk_table_cmp(const ASN1_STRING_TABLE **a,
-                        const ASN1_STRING_TABLE **b)
-{
-    return (*a)->nid - (*b)->nid;
-}
-
-static int table_cmp(const void *in_a, const void *in_b)
-{
-    const ASN1_STRING_TABLE *a = in_a;
-    const ASN1_STRING_TABLE *b = in_b;
-    return a->nid - b->nid;
-}
-
-ASN1_STRING_TABLE *ASN1_STRING_TABLE_get(int nid)
-{
-    int found;
-    size_t idx;
-    ASN1_STRING_TABLE *ttmp;
-    ASN1_STRING_TABLE fnd;
-    fnd.nid = nid;
-
-    ttmp =
-        bsearch(&fnd, tbl_standard,
-                sizeof(tbl_standard) / sizeof(ASN1_STRING_TABLE),
-                sizeof(ASN1_STRING_TABLE), table_cmp);
-    if (ttmp)
-        return ttmp;
-    if (!stable)
-        return NULL;
-    sk_ASN1_STRING_TABLE_sort(stable);
-    found = sk_ASN1_STRING_TABLE_find(stable, &idx, &fnd);
-    if (!found)
-        return NULL;
-    return sk_ASN1_STRING_TABLE_value(stable, idx);
-}
-
-int ASN1_STRING_TABLE_add(int nid,
-                          long minsize, long maxsize, unsigned long mask,
-                          unsigned long flags)
-{
-    ASN1_STRING_TABLE *tmp;
-    char new_nid = 0;
-    flags &= ~STABLE_FLAGS_MALLOC;
-    if (!stable)
-        stable = sk_ASN1_STRING_TABLE_new(sk_table_cmp);
-    if (!stable) {
-        OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
-        return 0;
-    }
-    if (!(tmp = ASN1_STRING_TABLE_get(nid))) {
-        tmp = OPENSSL_malloc(sizeof(ASN1_STRING_TABLE));
-        if (!tmp) {
-            OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
-            return 0;
-        }
-        tmp->flags = flags | STABLE_FLAGS_MALLOC;
-        tmp->nid = nid;
-        tmp->minsize = tmp->maxsize = -1;
-        new_nid = 1;
-    } else
-        tmp->flags = (tmp->flags & STABLE_FLAGS_MALLOC) | flags;
-    if (minsize != -1)
-        tmp->minsize = minsize;
-    if (maxsize != -1)
-        tmp->maxsize = maxsize;
-    tmp->mask = mask;
-    if (new_nid)
-        sk_ASN1_STRING_TABLE_push(stable, tmp);
+static int table_cmp(const ASN1_STRING_TABLE *a, const ASN1_STRING_TABLE *b) {
+  if (a->nid < b->nid) {
+    return -1;
+  }
+  if (a->nid > b->nid) {
     return 1;
+  }
+  return 0;
 }
 
-void ASN1_STRING_TABLE_cleanup(void)
-{
-    STACK_OF(ASN1_STRING_TABLE) *tmp;
-    tmp = stable;
-    if (!tmp)
-        return;
-    stable = NULL;
-    sk_ASN1_STRING_TABLE_pop_free(tmp, st_free);
+static int table_cmp_void(const void *a, const void *b) {
+  return table_cmp(a, b);
 }
 
-static void st_free(ASN1_STRING_TABLE *tbl)
-{
-    if (tbl->flags & STABLE_FLAGS_MALLOC)
-        OPENSSL_free(tbl);
+static uint32_t table_hash(const ASN1_STRING_TABLE *tbl) {
+  return OPENSSL_hash32(&tbl->nid, sizeof(tbl->nid));
 }
 
-#ifdef STRING_TABLE_TEST
+static const ASN1_STRING_TABLE *asn1_string_table_get(int nid) {
+  ASN1_STRING_TABLE key;
+  key.nid = nid;
+  const ASN1_STRING_TABLE *tbl =
+      bsearch(&key, tbl_standard, OPENSSL_ARRAY_SIZE(tbl_standard),
+              sizeof(ASN1_STRING_TABLE), table_cmp_void);
+  if (tbl != NULL) {
+    return tbl;
+  }
 
-int main(void)
-{
-    ASN1_STRING_TABLE *tmp;
-    int i, last_nid = -1;
+  CRYPTO_STATIC_MUTEX_lock_read(&string_tables_lock);
+  if (string_tables != NULL) {
+    tbl = lh_ASN1_STRING_TABLE_retrieve(string_tables, &key);
+  }
+  CRYPTO_STATIC_MUTEX_unlock_read(&string_tables_lock);
+  // Note returning |tbl| without the lock is only safe because
+  // |ASN1_STRING_TABLE_add| cannot modify or delete existing entries. If we
+  // wish to support that, this function must copy the result under a lock.
+  return tbl;
+}
 
-    for (tmp = tbl_standard, i = 0;
-         i < sizeof(tbl_standard) / sizeof(ASN1_STRING_TABLE); i++, tmp++) {
-        if (tmp->nid < last_nid) {
-            last_nid = 0;
-            break;
-        }
-        last_nid = tmp->nid;
-    }
-
-    if (last_nid != 0) {
-        printf("Table order OK\n");
-        exit(0);
-    }
-
-    for (tmp = tbl_standard, i = 0;
-         i < sizeof(tbl_standard) / sizeof(ASN1_STRING_TABLE); i++, tmp++)
-        printf("Index %d, NID %d, Name=%s\n", i, tmp->nid,
-               OBJ_nid2ln(tmp->nid));
-
+int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,
+                          unsigned long mask, unsigned long flags) {
+  // Existing entries cannot be overwritten.
+  if (asn1_string_table_get(nid) != NULL) {
+    OPENSSL_PUT_ERROR(ASN1, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
     return 0;
+  }
+
+  int ret = 0;
+  CRYPTO_STATIC_MUTEX_lock_write(&string_tables_lock);
+
+  if (string_tables == NULL) {
+    string_tables = lh_ASN1_STRING_TABLE_new(table_hash, table_cmp);
+    if (string_tables == NULL) {
+      goto err;
+    }
+  } else {
+    // Check again for an existing entry. One may have been added while
+    // unlocked.
+    ASN1_STRING_TABLE key;
+    key.nid = nid;
+    if (lh_ASN1_STRING_TABLE_retrieve(string_tables, &key) != NULL) {
+      OPENSSL_PUT_ERROR(ASN1, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+      goto err;
+    }
+  }
+
+  ASN1_STRING_TABLE *tbl = OPENSSL_malloc(sizeof(ASN1_STRING_TABLE));
+  if (tbl == NULL) {
+    goto err;
+  }
+  tbl->nid = nid;
+  tbl->flags = flags;
+  tbl->minsize = minsize;
+  tbl->maxsize = maxsize;
+  tbl->mask = mask;
+  ASN1_STRING_TABLE *old_tbl;
+  if (!lh_ASN1_STRING_TABLE_insert(string_tables, &old_tbl, tbl)) {
+    OPENSSL_free(tbl);
+    goto err;
+  }
+  assert(old_tbl == NULL);
+  ret = 1;
+
+err:
+  CRYPTO_STATIC_MUTEX_unlock_write(&string_tables_lock);
+  return ret;
 }
 
-#endif
+void ASN1_STRING_TABLE_cleanup(void) {}
+
+void asn1_get_string_table_for_testing(const ASN1_STRING_TABLE **out_ptr,
+                                       size_t *out_len) {
+  *out_ptr = tbl_standard;
+  *out_len = OPENSSL_ARRAY_SIZE(tbl_standard);
+}

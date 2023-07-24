@@ -52,6 +52,7 @@
         run('sourceBuffer.appendBuffer(loader.initSegment())');
         setTimeout(() => { run('video.currentTime = 2'); });
         video.addEventListener('error', endTestLater);
+        waitForEventOn(sourceBuffer, 'update', failTest, false, true);
     }
     </script>
 </head>

@@ -41,9 +41,6 @@ bool isHTMLSpaceButNotLineBreak(UChar);
 // 2147483647 is 2^31 - 1.
 static const unsigned maxHTMLNonNegativeInteger = 2147483647;
 
-// Strip leading and trailing whitespace as defined by the HTML specification. 
-WEBCORE_EXPORT String stripLeadingAndTrailingHTMLSpaces(const String&);
-
 // An implementation of the HTML specification's algorithm to convert a number to a string for number and range types.
 String serializeForNumberType(const Decimal&);
 String serializeForNumberType(double);

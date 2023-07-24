@@ -10,9 +10,9 @@ layer at (0,0) size 800x600
         RenderSVGPath {line} at (529,414) size 108x155 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=380.00] [y1=250.00] [x2=320.00] [y2=340.00]
         RenderSVGPath {polygon} at (0,0) size 167x167 [fill={[type=SOLID] [color=#0000FF]}] [points="0 0 0 100 100 100 100 0"]
         RenderSVGPath {path} at (416,416) size 101x168 [fill={[type=SOLID] [color=#0000FF]}] [data="M 280 250 L 250 350 L 310 330 Z"]
-        RenderSVGText {text} at (10,227) size 67x117 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 67x116
-            chunk 1 text run 1 at (10.00,320.00) startOffset 0 endOffset 1 width 66.83: "X"
+        RenderSVGText {text} at (10,227) size 67x116 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 67x115
+            chunk 1 text run 1 at (10.00,320.00) startOffset 0 endOffset 1 width 66.70: "X"
         RenderSVGImage {image} at (600,200) size 167x167
         RenderSVGContainer {g} at (400,200) size 167x167
           RenderSVGRect {rect} at (400,200) size 167x167 [fill={[type=SOLID] [color=#0000FF]}] [x=240.00] [y=120.00] [width=100.00] [height=100.00]
@@ -36,8 +36,8 @@ layer at (0,0) size 800x600
             RenderSVGEllipse {circle} at (650,416) size 134x134 [fill={[type=SOLID] [color=#0000FF]}] [cx=40.00] [cy=40.00] [r=40.00]
         RenderSVGPath {line} at (275,433) size 525x167 [fill={[type=SOLID] [color=#000000]}] [end marker=testMarker] [x1=150.00] [y1=260.00] [x2=165.00] [y2=260.00]
         RenderSVGRect {rect} at (400,0) size 167x167 [fill={[type=PATTERN] [id="testPattern"]}] [x=240.00] [y=0.00] [width=100.00] [height=100.00]
-    RenderSVGContainer {g} at (16,517) size 381x62
-      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 229x37
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.4 $"
+    RenderSVGContainer {g} at (16,517) size 384x62
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.4 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

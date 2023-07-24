@@ -53,7 +53,7 @@ ReassemblyQueue::ReassemblyQueue(absl::string_view log_prefix,
                                  TSN peer_initial_tsn,
                                  size_t max_size_bytes,
                                  bool use_message_interleaving)
-    : log_prefix_(std::string(log_prefix) + "reasm: "),
+    : log_prefix_(log_prefix),
       max_size_bytes_(max_size_bytes),
       watermark_bytes_(max_size_bytes * kHighWatermarkLimit),
       last_assembled_tsn_watermark_(

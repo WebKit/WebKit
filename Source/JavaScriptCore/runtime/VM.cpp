@@ -29,6 +29,7 @@
 #include "config.h"
 #include "VM.h"
 
+#include "AbortReason.h"
 #include "AccessCase.h"
 #include "AggregateError.h"
 #include "ArgList.h"
@@ -57,6 +58,7 @@
 #include "HasOwnPropertyCache.h"
 #include "Heap.h"
 #include "HeapProfiler.h"
+#include "IncrementalSweeper.h"
 #include "Interpreter.h"
 #include "IntlCache.h"
 #include "JITCode.h"
@@ -113,6 +115,7 @@
 #include "VMInspector.h"
 #include "VariableEnvironment.h"
 #include "WaiterListManager.h"
+#include "WasmInstance.h"
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
@@ -218,13 +221,14 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , m_builtinExecutables(makeUnique<BuiltinExecutables>(*this))
     , m_syncWaiter(adoptRef(*new Waiter(this)))
 {
-    if (UNLIKELY(vmCreationShouldCrash))
-        CRASH_WITH_INFO(0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
+    if (UNLIKELY(vmCreationShouldCrash || g_jscConfig.vmCreationDisallowed))
+        CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(VMCreationDisallowed, "VM creation disallowed"_s, 0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
 
     VMInspector::instance().add(this);
 
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
     setLastStackTop(Thread::current());
+    stringSplitIndice.reserveInitialCapacity(256);
 
     JSRunLoopTimer::Manager::shared().registerVM(*this);
 
@@ -236,6 +240,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     stringStructure.setWithoutWriteBarrier(JSString::createStructure(*this, nullptr, jsNull()));
 
     smallStrings.initializeCommonStrings(*this);
+    numericStrings.initializeSmallIntCache(*this);
 
     propertyNames = new CommonIdentifiers(*this);
     propertyNameEnumeratorStructure.setWithoutWriteBarrier(JSPropertyNameEnumerator::createStructure(*this, nullptr, jsNull()));
@@ -310,12 +315,14 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     if (UNLIKELY(Options::useProfiler())) {
         m_perBytecodeProfiler = makeUnique<Profiler::Database>(*this);
 
-        StringPrintStream pathOut;
-        const char* profilerPath = getenv("JSC_PROFILER_PATH");
-        if (profilerPath)
-            pathOut.print(profilerPath, "/");
-        pathOut.print("JSCProfile-", getCurrentProcessID(), "-", m_perBytecodeProfiler->databaseID(), ".json");
-        m_perBytecodeProfiler->registerToSaveAtExit(pathOut.toCString().data());
+        if (UNLIKELY(Options::dumpProfilerDataAtExit())) {
+            StringPrintStream pathOut;
+            const char* profilerPath = getenv("JSC_PROFILER_PATH");
+            if (profilerPath)
+                pathOut.print(profilerPath, "/");
+            pathOut.print("JSCProfile-", getCurrentProcessID(), "-", m_perBytecodeProfiler->databaseID(), ".json");
+            m_perBytecodeProfiler->registerToSaveAtExit(pathOut.toCString().data());
+        }
     }
 
     // Initialize this last, as a free way of asserting that VM initialization itself
@@ -572,10 +579,11 @@ SamplingProfiler& VM::ensureSamplingProfiler(Ref<Stopwatch>&& stopwatch)
 }
 #endif // ENABLE(SAMPLING_PROFILER)
 
+static StringImpl::StaticStringImpl terminationErrorString { "JavaScript execution terminated." };
 Exception* VM::ensureTerminationException()
 {
     if (!m_terminationException) {
-        JSString* terminationError = jsNontrivialString(*this, SmallString::terminationErrorString());
+        JSString* terminationError = jsNontrivialString(*this, terminationErrorString);
         m_terminationException = Exception::create(*this, terminationError, Exception::DoNotCaptureStack);
     }
     return m_terminationException;
@@ -595,6 +603,10 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return clz32ThunkGenerator;
     case FromCharCodeIntrinsic:
         return fromCharCodeThunkGenerator;
+    case GlobalIsNaNIntrinsic:
+        return globalIsNaNThunkGenerator;
+    case NumberIsNaNIntrinsic:
+        return numberIsNaNThunkGenerator;
     case SqrtIntrinsic:
         return sqrtThunkGenerator;
     case AbsIntrinsic:
@@ -957,9 +969,7 @@ static void preCommitStackMemory(void* stackLimit)
 
 void VM::updateStackLimits()
 {
-#if OS(WINDOWS)
     void* lastSoftStackLimit = m_softStackLimit;
-#endif
 
     const StackBounds& stack = Thread::current().stack();
     size_t reservedZoneSize = Options::reservedZoneSize();
@@ -978,18 +988,23 @@ void VM::updateStackLimits()
         m_stackLimit = stack.recursionLimit(reservedZoneSize);
     }
 
+    if (lastSoftStackLimit != m_softStackLimit) {
 #if OS(WINDOWS)
-    // We only need to precommit stack memory dictated by the VM::m_softStackLimit limit.
-    // This is because VM::m_softStackLimit applies to stack usage by LLINT asm or JIT
-    // generated code which can allocate stack space that the C++ compiler does not know
-    // about. As such, we have to precommit that stack memory manually.
-    //
-    // In contrast, we do not need to worry about VM::m_stackLimit because that limit is
-    // used exclusively by C++ code, and the C++ compiler will automatically commit the
-    // needed stack pages.
-    if (lastSoftStackLimit != m_softStackLimit)
+        // We only need to precommit stack memory dictated by the VM::m_softStackLimit limit.
+        // This is because VM::m_softStackLimit applies to stack usage by LLINT asm or JIT
+        // generated code which can allocate stack space that the C++ compiler does not know
+        // about. As such, we have to precommit that stack memory manually.
+        //
+        // In contrast, we do not need to worry about VM::m_stackLimit because that limit is
+        // used exclusively by C++ code, and the C++ compiler will automatically commit the
+        // needed stack pages.
         preCommitStackMemory(m_softStackLimit);
 #endif
+#if ENABLE(WEBASSEMBLY)
+        for (auto& instance : m_wasmInstances.values())
+            instance->updateSoftStackLimit(m_softStackLimit);
+#endif
+    }
 }
 
 #if ENABLE(DFG_JIT)
@@ -1235,6 +1250,8 @@ void VM::didExhaustMicrotaskQueue()
                 continue;
 
             callPromiseRejectionCallback(promise);
+            if (UNLIKELY(hasPendingTerminationException()))
+                return;
         }
     }
 }
@@ -1246,25 +1263,25 @@ void VM::promiseRejected(JSPromise* promise)
 
 void VM::drainMicrotasks()
 {
+    if (UNLIKELY(m_drainMicrotaskDelayScopeCount))
+        return;
+
     if (UNLIKELY(executionForbidden()))
         m_microtaskQueue.clear();
     else {
-        VMEntryScope entryScope(*this, nullptr);
-        // Only JSC shell on cocoa platform uses setOnEachMicrotaskTick
-        if (LIKELY(!m_onEachMicrotaskTick)) {
+        do {
             while (!m_microtaskQueue.isEmpty()) {
                 auto task = m_microtaskQueue.dequeue();
                 task.run();
+                if (UNLIKELY(hasPendingTerminationException()))
+                    return;
+                if (m_onEachMicrotaskTick)
+                    m_onEachMicrotaskTick(*this);
             }
             didExhaustMicrotaskQueue();
-        } else {
-            while (!m_microtaskQueue.isEmpty()) {
-                auto task = m_microtaskQueue.dequeue();
-                task.run();
-                m_onEachMicrotaskTick(*this);
-            }
-            didExhaustMicrotaskQueue();
-        }
+            if (UNLIKELY(hasPendingTerminationException()))
+                return;
+        } while (!m_microtaskQueue.isEmpty());
     }
     finalizeSynchronousJSExecution();
 }
@@ -1539,6 +1556,7 @@ template<typename Visitor>
 void VM::visitAggregateImpl(Visitor& visitor)
 {
     m_microtaskQueue.visitAggregate(visitor);
+    numericStrings.visitAggregate(visitor);
 
     visitor.append(structureStructure);
     visitor.append(structureRareDataStructure);
@@ -1604,6 +1622,13 @@ void VM::removeDebugger(Debugger& debugger)
     m_debuggers.remove(&debugger);
 }
 
+void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
+{
+    JSLockHolder locker { *this };
+    if (!deferredWorkTimer->hasAnyPendingWork())
+        heap.sweeper().doWorkUntil(*this, deadline);
+}
+
 void QueuedTask::run()
 {
     if (!m_job.isObject())
@@ -1643,6 +1668,66 @@ void VM::invalidateStructureChainIntegrity(StructureChainIntegrityEvent)
 {
     if (m_megamorphicCache)
         m_megamorphicCache->bumpEpoch();
+}
+
+#if ENABLE(WEBASSEMBLY)
+void VM::registerWasmInstance(Wasm::Instance& instance)
+{
+    m_wasmInstances.add(instance);
+}
+#endif
+
+
+VM::DrainMicrotaskDelayScope::DrainMicrotaskDelayScope(VM& vm)
+    : m_vm(&vm)
+{
+    increment();
+}
+
+VM::DrainMicrotaskDelayScope::~DrainMicrotaskDelayScope()
+{
+    decrement();
+}
+
+VM::DrainMicrotaskDelayScope::DrainMicrotaskDelayScope(const VM::DrainMicrotaskDelayScope& other)
+    : m_vm(other.m_vm)
+{
+    increment();
+}
+
+VM::DrainMicrotaskDelayScope& VM::DrainMicrotaskDelayScope::operator=(const VM::DrainMicrotaskDelayScope& other)
+{
+    if (this == &other)
+        return *this;
+    decrement();
+    m_vm = other.m_vm;
+    increment();
+    return *this;
+}
+
+VM::DrainMicrotaskDelayScope& VM::DrainMicrotaskDelayScope::operator=(VM::DrainMicrotaskDelayScope&& other)
+{
+    decrement();
+    m_vm = std::exchange(other.m_vm, nullptr);
+    increment();
+    return *this;
+}
+
+void VM::DrainMicrotaskDelayScope::increment()
+{
+    if (m_vm)
+        ++m_vm->m_drainMicrotaskDelayScopeCount;
+}
+
+void VM::DrainMicrotaskDelayScope::decrement()
+{
+    if (!m_vm)
+        return;
+    ASSERT(m_vm->m_drainMicrotaskDelayScopeCount);
+    if (!--m_vm->m_drainMicrotaskDelayScopeCount) {
+        JSLockHolder locker(*m_vm);
+        m_vm->drainMicrotasks();
+    }
 }
 
 } // namespace JSC

@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-struct WebKit::BufferIdentifierSet {
+[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::BufferIdentifierSet {
     std::optional<WebCore::RenderingResourceIdentifier> front;
     std::optional<WebCore::RenderingResourceIdentifier> back;
     std::optional<WebCore::RenderingResourceIdentifier> secondaryBack;

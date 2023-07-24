@@ -29,9 +29,11 @@ SyncEGL::~SyncEGL()
 
 void SyncEGL::onDestroy(const egl::Display *display)
 {
-    ASSERT(mSync != EGL_NO_SYNC_KHR);
-    mEGL->destroySyncKHR(mSync);
-    mSync = EGL_NO_SYNC_KHR;
+    if (mSync != EGL_NO_SYNC_KHR)
+    {
+        mEGL->destroySyncKHR(mSync);
+        mSync = EGL_NO_SYNC_KHR;
+    }
 }
 
 egl::Error SyncEGL::initialize(const egl::Display *display,

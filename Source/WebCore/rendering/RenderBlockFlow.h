@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003-2013,  Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -462,7 +462,7 @@ protected:
 
     virtual void computeColumnCountAndWidth();
 
-    virtual void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) {};
+    virtual void cachePriorCharactersIfNeeded(const CachedLineBreakIteratorFactory&) { }
 
 protected:
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle

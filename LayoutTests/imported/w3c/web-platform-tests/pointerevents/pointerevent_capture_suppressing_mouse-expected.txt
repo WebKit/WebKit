@@ -1,0 +1,7 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Validate pointer events track pointer movement without pointer capture. Test timed out
+NOTRUN Test pointer capture.
+

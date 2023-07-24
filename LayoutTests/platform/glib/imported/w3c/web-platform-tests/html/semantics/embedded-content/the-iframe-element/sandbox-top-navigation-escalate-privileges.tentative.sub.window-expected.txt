@@ -1,0 +1,7 @@
+
+PASS A cross origin unsandboxed frame can't escalate privileges in a child     frame
+FAIL An unsandboxed grandchild inherits its parents ability to navigate top. assert_equals: The navigation should succeed. expected true but got false
+PASS A same-origin grandchild with frame allow-top can navigate top
+FAIL A sandboxed same-origin grandchild without allow-same-origin can't     escalate its own top-nav privileges assert_equals: The navigation should fail. expected false but got true
+PASS A sandboxed same-origin grandchild with allow-same-origin can     give itself top-nav privileges
+

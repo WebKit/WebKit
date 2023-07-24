@@ -42,7 +42,7 @@ namespace WebCore {
 class SharedVideoFrameInfo {
 public:
     SharedVideoFrameInfo() = default;
-    SharedVideoFrameInfo(OSType, uint32_t width, uint32_t height, uint32_t bytesPerRow, uint32_t widthPlaneB = 0, uint32_t heightPlaneB = 0, uint32_t bytesPerRowPlaneB = 0);
+    SharedVideoFrameInfo(OSType, uint32_t width, uint32_t height, uint32_t bytesPerRow, uint32_t widthPlaneB = 0, uint32_t heightPlaneB = 0, uint32_t bytesPerRowPlaneB = 0, uint32_t bytesPerRowPlaneA = 0);
 
     WEBCORE_EXPORT void encode(uint8_t*);
     WEBCORE_EXPORT static std::optional<SharedVideoFrameInfo> decode(std::span<const uint8_t>);
@@ -74,12 +74,13 @@ private:
     uint32_t m_widthPlaneB { 0 };
     uint32_t m_heightPlaneB { 0 };
     uint32_t m_bytesPerRowPlaneB { 0 };
+    uint32_t m_bytesPerRowPlaneAlpha { 0 };
 };
 
 
 static constexpr size_t SharedVideoFrameInfoEncodingLength = sizeof(SharedVideoFrameInfo);
 
-inline SharedVideoFrameInfo::SharedVideoFrameInfo(OSType bufferType, uint32_t width, uint32_t height, uint32_t bytesPerRow, uint32_t widthPlaneB, uint32_t heightPlaneB, uint32_t bytesPerRowPlaneB)
+inline SharedVideoFrameInfo::SharedVideoFrameInfo(OSType bufferType, uint32_t width, uint32_t height, uint32_t bytesPerRow, uint32_t widthPlaneB, uint32_t heightPlaneB, uint32_t bytesPerRowPlaneB, uint32_t bytesPerRowPlaneAlpha)
     : m_bufferType(bufferType)
     , m_width(width)
     , m_height(height)
@@ -87,6 +88,7 @@ inline SharedVideoFrameInfo::SharedVideoFrameInfo(OSType bufferType, uint32_t wi
     , m_widthPlaneB(widthPlaneB)
     , m_heightPlaneB(heightPlaneB)
     , m_bytesPerRowPlaneB(bytesPerRowPlaneB)
+    , m_bytesPerRowPlaneAlpha(bytesPerRowPlaneAlpha)
 {
 }
 

@@ -32,6 +32,7 @@
 #include "PlatformView.h"
 #include "PlaybackTargetClientContextIdentifier.h"
 #include <wtf/Ref.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ public:
     virtual void setShouldPlayToPlaybackTarget(PlaybackTargetClientContextIdentifier, bool) = 0;
     virtual void playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdentifier) = 0;
     virtual bool alwaysOnLoggingAllowed() const { return false; }
-    virtual PlatformView* platformView() const = 0;
+    virtual RetainPtr<PlatformView> platformView() const = 0;
 };
 
 } // namespace WebCore

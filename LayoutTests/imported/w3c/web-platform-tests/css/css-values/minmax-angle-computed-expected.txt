@@ -21,14 +21,14 @@ PASS max(91deg, 0.25turn) should be used-value-equivalent to 91deg
 PASS max(1.58rad, 90deg) should be used-value-equivalent to 1.58rad
 PASS min(270deg, max(0.25turn, 3.14rad)) should be used-value-equivalent to 3.14rad
 PASS max(0.25turn, min(270deg, 3.14rad)) should be used-value-equivalent to 3.14rad
-PASS calc(min(90deg, 1.58rad) + 0.25turn) should be used-value-equivalent to 180deg
+PASS calc(min(90deg, 1.58rad) + 0.125turn) should be used-value-equivalent to 135deg
 PASS calc(min(90deg, 1.58rad) - 0.125turn) should be used-value-equivalent to 45deg
-PASS calc(min(90deg, 1.58rad) * 2 should be used-value-equivalent to 180deg
+PASS calc(min(90deg, 1.58rad) * 1.5 should be used-value-equivalent to 135deg
 PASS calc(min(90deg, 1.58rad) / 2 should be used-value-equivalent to 45deg
-PASS calc(max(90deg, 1.56rad) + 0.25turn) should be used-value-equivalent to 180deg
+PASS calc(max(90deg, 1.56rad) + 0.125turn should be used-value-equivalent to 135deg
 PASS calc(max(90deg, 1.56rad) - 0.125turn) should be used-value-equivalent to 45deg
-PASS calc(max(90deg, 1.56rad) * 2 should be used-value-equivalent to 180deg
+PASS calc(max(90deg, 1.56rad) * 1.5 should be used-value-equivalent to 135deg
 PASS calc(max(90deg, 1.56rad) / 2 should be used-value-equivalent to 45deg
-PASS calc(min(90deg, 1.58rad) + max(0.25turn, 99grad)) should be used-value-equivalent to 180deg
+PASS calc(min(90deg, 1.58rad) + max(0.125turn, 49grad)) should be used-value-equivalent to 135deg
 PASS calc(min(90deg, 1.58rad) - max(0.25turn, 99grad)) should be used-value-equivalent to 0deg
 

@@ -83,6 +83,7 @@ bool Frame::isRootFrame() const
 
 void Frame::resetWindowProxy()
 {
+    ASSERT(m_windowProxy->frame() == this);
     m_windowProxy->detachFromFrame();
     m_windowProxy = WindowProxy::create(*this);
 }
@@ -102,6 +103,14 @@ void Frame::disconnectOwnerElement()
     // FIXME: This is a layering violation. Move this code so Frame doesn't do anything with its Document.
     if (auto* document = is<LocalFrame>(*this) ? downcast<LocalFrame>(*this).document() : nullptr)
         document->frameWasDisconnectedFromOwner();
+}
+
+void Frame::takeWindowProxyFrom(Frame& frame)
+{
+    ASSERT(m_windowProxy->frame() == this);
+    m_windowProxy->detachFromFrame();
+    m_windowProxy = frame.windowProxy();
+    m_windowProxy->replaceFrame(*this);
 }
 
 } // namespace WebCore

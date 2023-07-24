@@ -1181,7 +1181,7 @@ TEST_P(CopyTextureTest, CubeMapTarget)
     }
 
     // http://anglebug.com/1932
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntel() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsDesktopOpenGL());
 
     // http://anglebug.com/3145
     ANGLE_SKIP_TEST_IF(IsFuchsia() && IsIntel() && IsVulkan());
@@ -1341,7 +1341,7 @@ TEST_P(CopyTextureTest, CubeMapTargetRGB)
     }
 
     // http://anglebug.com/1932
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntel() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsDesktopOpenGL());
 
     // http://anglebug.com/3145
     ANGLE_SKIP_TEST_IF(IsFuchsia() && IsIntel() && IsVulkan());
@@ -1413,7 +1413,7 @@ TEST_P(CopyTextureTest, CopyToMipmap)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_OES_fbo_render_mipmap"));
 
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntel());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntel());
 
     GLColor pixels[] = {GLColor::red, GLColor::red, GLColor::red, GLColor::red};
 
@@ -2689,7 +2689,7 @@ TEST_P(CopyTextureTestES3, InvalidateCopyThenBlend)
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
 
     // http://anglebug.com/5155
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntel() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsOpenGL());
 
     // http://anglebug.com/5156
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsOpenGL());
@@ -2750,7 +2750,7 @@ void CopyTextureTestES3::invalidateBlitThenBlendCommon(GLsizei layerCount)
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
     // http://anglebug.com/5155
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntel() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntel() && IsOpenGL());
 
     // http://anglebug.com/5156
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsOpenGL());

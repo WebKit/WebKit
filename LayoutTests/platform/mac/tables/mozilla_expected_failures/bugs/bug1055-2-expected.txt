@@ -7,11 +7,11 @@ layer at (0,0) size 785x896
         RenderText {#text} at (0,0) size 357x37
           text run at (0,0) width 357: "Tests de conformit\x{E9} CSS 2"
       RenderBlock {H3} at (0,58) size 769x23
-        RenderText {#text} at (0,0) size 151x22
-          text run at (0,0) width 151: "Tableaux, test 13.8"
+        RenderText {#text} at (0,0) size 149x22
+          text run at (0,0) width 149: "Tableaux, test 13.8"
       RenderBlock {H6} at (0,105) size 769x14
-        RenderText {#text} at (0,0) size 116x13
-          text run at (0,0) width 116: "\x{A9} \x{C9}ditions Eyrolles 1998"
+        RenderText {#text} at (0,0) size 113x13
+          text run at (0,0) width 113: "\x{A9} \x{C9}ditions Eyrolles 1998"
       RenderTable {TABLE} at (192,143) size 577x47
         RenderTableSection {TBODY} at (0,0) size 577x46
           RenderTableRow {TR} at (0,2) size 577x20
@@ -164,6 +164,6 @@ layer at (0,0) size 785x896
         RenderText {#text} at (0,0) size 166x18
           text run at (0,0) width 166: "Auteur : Daniel Glazman."
 layer at (203,162) size 573x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (1,9) size 573x2 [bgcolor=#808080] [border: (1px solid #808080)]
+  RenderBlock {HR} at (1,9) size 573x2 [color=#808080] [bgcolor=#808080] [border: (1px solid #808080)]
 layer at (203,771) size 573x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (1,9) size 573x2 [bgcolor=#808080] [border: (1px solid #808080)]
+  RenderBlock {HR} at (1,9) size 573x2 [color=#808080] [bgcolor=#808080] [border: (1px solid #808080)]

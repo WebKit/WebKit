@@ -11,8 +11,9 @@ ctx = document.createElement('canvas').getContext('2d');
 
 ctx.font = "5ex sans-serif";
 
-size = parseInt(ctx.font.substr(0, 2));
-family = ctx.font.substr(5);
+let index = ctx.font.indexOf(" ");
+size = parseInt(ctx.font.substr(0, index));
+family = ctx.font.substr(index + 1);
 
 shouldBeCloseTo("size", 25, 10);
 shouldBe("family", "'sans-serif'");

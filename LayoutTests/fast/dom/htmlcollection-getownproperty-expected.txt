@@ -14,7 +14,7 @@ PASS htmlCollection.length is 4
 * Named properties should not mask own properties on HTMLCollection
 htmlCollection.foo = 'foo'
 PASS htmlCollection.namedItem('foo') is document.getElementById('fooP')
-PASS htmlCollection.foo is "foo"
+PASS htmlCollection.foo is document.getElementById('fooP')
 
 * Named properties should not mask indexed properties
 PASS htmlCollection.item(0) is testDiv.firstElementChild
@@ -22,9 +22,9 @@ PASS htmlCollection[0] is testDiv.firstElementChild
 PASS htmlCollection.namedItem('0') is document.getElementById('0P')
 PASS htmlCollection['0'] is testDiv.firstElementChild
 
-* Own properties on HTMLCollection should mask properties on prototype
+* Own properties on HTMLCollection should not mask properties on prototype
 htmlCollection.toString = 'InstanceToString'
-PASS htmlCollection.toString is "InstanceToString"
+PASS htmlCollection.toString is oldToString
 PASS successfullyParsed is true
 
 TEST COMPLETE

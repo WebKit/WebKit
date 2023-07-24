@@ -17,8 +17,6 @@
 
 namespace webrtc {
 namespace test {
-// TODO(jonasolsson): remove once all internal usages are gone.
-void ValidateFieldTrialsStringOrDie(const std::string&);
 
 // This class is used to override field-trial configs within specific tests.
 // After this class goes out of scope previous field trials will be restored.

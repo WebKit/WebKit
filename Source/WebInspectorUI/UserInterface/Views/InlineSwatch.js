@@ -195,13 +195,15 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
         switch (this._type) {
         case WI.InlineSwatch.Type.Color:
-            let title = WI.UIString("Click to select a color.");
-            if (this._allowChangingColorFormats())
-                title += "\n" + WI.UIString("Shift-click to switch color formats.");
-            if (InspectorFrontendHost.canPickColorFromScreen())
-                title += "\n" + WI.UIString("Option-click to pick color from screen.");
-
-            this._swatchElement.title = title;
+            if (!this._readOnly) {
+                let title = WI.UIString("Click to select a color.");
+                if (this._allowChangingColorFormats())
+                    title += "\n" + WI.UIString("Shift-click to switch color formats.");
+                if (InspectorFrontendHost.canPickColorFromScreen())
+                    title += "\n" + WI.UIString("Option-click to pick color from screen.");
+                
+                this._swatchElement.title = title;
+            }
             // fallthrough
 
         case WI.InlineSwatch.Type.Gradient:

@@ -114,14 +114,15 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <dl hidden="" aria-hidden="false" id="dl"></dl>
     AXRole: AXList
+    AXSubrole: AXDescriptionList
 
 <ol hidden="" aria-hidden="false" id="ol"></ol>
-    AXRole: AXList
-    computedRoleString: list
+    AXRole: AXGroup
+    AXSubrole: AXContentList
 
 <ul hidden="" aria-hidden="false" id="ul"></ul>
-    AXRole: AXList
-    computedRoleString: list
+    AXRole: AXGroup
+    AXSubrole: AXContentList
 
 <figure hidden="" aria-hidden="false" id="figure"></figure>
     AXRole: AXGroup
@@ -203,8 +204,8 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
     AXSubrole: AXApplicationStatus
 
 <menu hidden="" aria-hidden="false" type="toolbar" id="menu-toolbar"></menu>
-    AXRole: AXList
-    computedRoleString: list
+    AXRole: AXGroup
+    AXSubrole: AXContentList
 
 <hr hidden="" aria-hidden="false" id="hr">
     AXRole: AXSplitter

@@ -79,8 +79,8 @@ class AV1QuantizeTest : public ::testing::TestWithParam<QuantizeFuncParams> {
       }
 
       for (int j = 0; j < 2; j++) {
-        zbin_ptr[j] = rnd.Rand16();
-        quant_shift_ptr[j] = rnd.Rand16();
+        zbin_ptr[j] = rnd.Rand16Signed();
+        quant_shift_ptr[j] = rnd.Rand16Signed();
         // int16_t positive
         dequant_ptr[j] = abs(rnd(dequantRange));
         quant_ptr[j] = static_cast<int16_t>((1 << 16) / dequant_ptr[j]);
@@ -155,8 +155,8 @@ class AV1QuantizeTest : public ::testing::TestWithParam<QuantizeFuncParams> {
       coeff_ptr[rnd(count)] = rnd(coeffRange);
 
       for (int j = 0; j < 2; j++) {
-        zbin_ptr[j] = rnd.Rand16();
-        quant_shift_ptr[j] = rnd.Rand16();
+        zbin_ptr[j] = rnd.Rand16Signed();
+        quant_shift_ptr[j] = rnd.Rand16Signed();
         // int16_t positive
         dequant_ptr[j] = abs(rnd(dequantRange));
         quant_ptr[j] = (1 << 16) / dequant_ptr[j];

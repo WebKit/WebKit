@@ -67,13 +67,14 @@ static void didRunJavascript(WKSerializedScriptValueRef serializedScriptValue, W
 TEST(WebKit, SpacebarScrolling)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
+    auto configuration = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(configuration.get(), context.get());
+    auto preferences = adoptWK(WKPreferencesCreate());
+    WKPageConfigurationSetPreferences(configuration.get(), preferences.get());
+    WKPreferencesSetThreadedScrollingEnabled(preferences.get(), true);
+    WKPreferencesSetInternalDebugFeatureForKey(preferences.get(), true, Util::toWK("AsyncFrameScrollingEnabled").get());
 
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("AsyncScrollingPageGroup").get()));
-    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
-    WKPreferencesSetThreadedScrollingEnabled(preferences, true);
-    WKPreferencesSetInternalDebugFeatureForKey(preferences, true, Util::toWK("AsyncFrameScrollingEnabled").get());
-
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(configuration.get());
 
     WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));

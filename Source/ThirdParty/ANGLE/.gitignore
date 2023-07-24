@@ -32,15 +32,17 @@
 /third_party/abseil-cpp
 /third_party/android_build_tools
 /third_party/android_deps
-/third_party/android_ndk
 /third_party/android_platform
 /third_party/android_sdk
 /third_party/android_system_sdk/*.jar
+/third_party/android_toolchain
 /third_party/astc-encoder/src
 /third_party/bazel/desugar/*.jar
 /third_party/catapult
 /third_party/cherry
+/third_party/clang-format/script
 /third_party/colorama/src
+/third_party/cpu_features/src
 /third_party/depot_tools
 /third_party/EGL-Registry/src
 /third_party/flatbuffers/src
@@ -82,7 +84,7 @@
 /third_party/vulkan_memory_allocator
 /third_party/wayland
 /third_party/zlib
-/tools/android/errorprone_plugin
+/tools/android
 /tools/clang
 /tools/flex-bison/linux/bison
 /tools/flex-bison/linux/flex

@@ -147,11 +147,11 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     info.startColumn = 1;
     info.endColumn = 1; // Faking it. This doesn't really matter for now.
     info.parametersStartOffset = newProviderString.find('(');
-    info.typeProfilingStartOffset = newProviderString.find('{');
-    info.typeProfilingEndOffset = newProviderString.length() - 1;
+    info.functionStart = 0;
+    info.functionEnd = newProviderString.length() - 1;
 
     info.sourceCode =
-        SourceCode(WTFMove(newProvider), info.parametersStartOffset, info.typeProfilingEndOffset + 1, 1, 1);
+        SourceCode(WTFMove(newProvider), info.parametersStartOffset, info.functionEnd + 1, 1, 1);
 }
     
 bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, FunctionOverrides::OverrideInfo& result)

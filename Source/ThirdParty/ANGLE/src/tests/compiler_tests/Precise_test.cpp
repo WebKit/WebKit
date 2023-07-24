@@ -81,7 +81,6 @@ class PreciseTest : public testing::TestWithParam<bool>
         const char *shaderStrings[] = {shaderSource};
 
         ShCompileOptions options = {};
-        options.variables        = true;
         options.objectCode       = true;
 
         bool success = sh::Compile(mCompilerList[shaderOutputType], shaderStrings, 1, options);
@@ -232,62 +231,6 @@ void main()
     TestShaderCompile(kVS, 5);
 }
 
-// Test that precise on struct member works.
-TEST_F(PreciseTest, StructMember)
-{
-    constexpr char kVS[] = R"(#version 320 es
-
-uniform float u;
-
-struct S1
-{
-    precise float f;
-    int i;
-};
-
-struct S2
-{
-    float f;
-};
-
-struct S3
-{
-    precise uint u;
-    S1 s1[2];
-    precise S2 s2;
-};
-
-layout(std430) buffer B
-{
-    S3 o1;
-    S3 o2;
-    S3 o3;
-};
-
-void main()
-{
-    S2 a = S2(u), b = S2(u), c = S2(u);     // a and c are precise
-
-    ++a.f;                  // NoContraction
-    o1.s2 = a;
-
-    c.f += a.f;             // NoContraction
-    o2.s1[0].i = int(a.f);
-    o2.s1[0].i *= 2;
-    o2.s1[0].i /= int(b.f);
-
-    o1.s1[1].i = int(u);
-    --o1.s1[1].i;           // NoContraction
-
-    o2.s1[0].f = c.f;
-
-    o3.u = o1.u + uint(o1.s1[1].i);     // NoContraction
-})";
-
-    InitializeCompiler();
-    TestShaderCompile(kVS, 4);
-}
-
 // Test that precise on function parameters and return value works.
 TEST_F(PreciseTest, Functions)
 {
@@ -342,119 +285,6 @@ void main()
 
     InitializeCompiler();
     TestShaderCompile(kVS, 4);
-}
-
-// Test that struct constructors only apply precise to the precise fields.
-TEST_F(PreciseTest, StructConstructor)
-{
-    constexpr char kVS[] = R"(#version 320 es
-
-uniform float u;
-
-struct S1
-{
-    precise float f;
-    int i;
-    precise vec4 v;
-    mat4 m;
-};
-
-void main()
-{
-    float f = u;            // f is precise
-    int i = int(u);
-    vec4 v1 = vec4(u);      // v1 is precise
-    vec4 v2 = vec4(u);
-
-    f += 1.0;               // NoContraction
-
-    i--;
-    i--;
-
-    v1 *= 2.0;              // NoContraction
-    v1 *= 2.0;              // NoContraction
-    v1 *= 2.0;              // NoContraction
-    v1 *= 2.0;              // NoContraction
-
-    v2 /= 3.0;
-    v2 /= 3.0;
-    v2 /= 3.0;
-    v2 /= 3.0;
-    v2 /= 3.0;
-    v2 /= 3.0;
-    v2 /= 3.0;
-    v2 /= 3.0;
-    v2 /= 3.0;
-
-    S1 s = S1(f, i, v1, mat4(v2, v2, v2, v2));
-
-    gl_Position = vec4(s.f, float(s.i), s.v[0], s.m[0][0]);
-})";
-
-    InitializeCompiler();
-    TestShaderCompile(kVS, 5);
-}
-
-// Test that function call arguments become precise when the return value is assigned to a precise
-// object.
-TEST_F(PreciseTest, FunctionParams)
-{
-    constexpr char kVS[] = R"(#version 320 es
-
-uniform float u;
-
-struct S1
-{
-    precise float f;
-    int i;
-    precise vec4 v;
-    mat4 m;
-};
-
-S1 func(float f, int i, vec4 v, mat4 m)
-{
-    m /= f;
-    --i;
-    v *= m;
-    return S1(f, i, v, m);
-}
-
-void main()
-{
-    float f = u;            // f is precise
-    int i = int(u);         // i is precise
-    vec4 v1 = vec4(u);      // v1 is precise
-    vec4 v2 = vec4(u);      // v2 is precise
-
-    f += 1.0;               // NoContraction
-
-    i--;                    // NoContraction
-    i--;                    // NoContraction
-
-    v1 *= 2.0;              // NoContraction
-    v1 *= 2.0;              // NoContraction
-    v1 *= 2.0;              // NoContraction
-    v1 *= 2.0;              // NoContraction
-
-    v2 /= 3.0;              // NoContraction
-    v2 /= 3.0;              // NoContraction
-    v2 /= 3.0;              // NoContraction
-    v2 /= 3.0;              // NoContraction
-    v2 /= 3.0;              // NoContraction
-    v2 /= 3.0;              // NoContraction
-    v2 /= 3.0;              // NoContraction
-    v2 /= 3.0;              // NoContraction
-    v2 /= 3.0;              // NoContraction
-
-    // s.f and s.v1 are precise, but to calculate them, all parameters of the function must be made
-    // precise.
-    S1 s = func(f, i, v1, mat4(v2, v2, v2, v2));
-
-    gl_Position = vec4(s.f, float(s.i), s.v[0], s.m[0][0]);
-})";
-
-    InitializeCompiler();
-    TestShaderCompile(kVS, 16);
 }
 
 }  // anonymous namespace

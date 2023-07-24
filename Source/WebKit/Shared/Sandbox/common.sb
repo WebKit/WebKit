@@ -36,7 +36,7 @@
 (deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
 
 #if USE(SANDBOX_VERSION_3)
-#if PLATFORM(MACCATALYST) || HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(MACCATALYST) || PLATFORM(VISION)
 (allow file-link (with telemetry) (with report))
 (allow system-fcntl (with telemetry) (with report))
 (allow file-map-executable (with telemetry) (with report))

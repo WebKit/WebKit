@@ -43,6 +43,7 @@ class DEPRECATED_RtpSenderEgress {
 
     void EnqueuePackets(
         std::vector<std::unique_ptr<RtpPacketToSend>> packets) override;
+    void RemovePacketsForSsrc(uint32_t ssrc) override {}
 
    private:
     uint16_t transport_sequence_number_;
@@ -110,7 +111,6 @@ class DEPRECATED_RtpSenderEgress {
   const absl::optional<uint32_t> rtx_ssrc_;
   const absl::optional<uint32_t> flexfec_ssrc_;
   const bool populate_network2_timestamp_;
-  const bool send_side_bwe_with_overhead_;
   Clock* const clock_;
   RtpPacketHistory* const packet_history_;
   Transport* const transport_;
@@ -133,7 +133,6 @@ class DEPRECATED_RtpSenderEgress {
   SendDelayMap::const_iterator max_delay_it_ RTC_GUARDED_BY(lock_);
   // The sum of delays over a kSendSideDelayWindowMs sliding window.
   int64_t sum_delays_ms_ RTC_GUARDED_BY(lock_);
-  uint64_t total_packet_send_delay_ms_ RTC_GUARDED_BY(lock_);
   StreamDataCounters rtp_stats_ RTC_GUARDED_BY(lock_);
   StreamDataCounters rtx_rtp_stats_ RTC_GUARDED_BY(lock_);
   // One element per value in RtpPacketMediaType, with index matching value.

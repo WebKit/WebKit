@@ -447,5 +447,9 @@ std::vector<webrtc::SdpVideoFormat> GStreamerVideoDecoderFactory::GetSupportedFo
 
     return formats;
 }
-}
-#endif
+
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
+
+#endif // ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)

@@ -45,7 +45,8 @@ class WebProcess;
 class RemoteImageDecoderAVFManager final
     : public WebProcessSupplement
     , private GPUProcessConnection::Client
-    , private IPC::MessageReceiver {
+    , private IPC::MessageReceiver
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteImageDecoderAVFManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RemoteImageDecoderAVFManager(WebProcess&);
@@ -58,6 +59,10 @@ public:
     void setUseGPUProcess(bool);
     GPUProcessConnection& ensureGPUProcessConnection();
 
+    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteImageDecoderAVFManager>::ref(); }
+    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteImageDecoderAVFManager>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteImageDecoderAVFManager>::controlBlock(); }
+
 private:
     RefPtr<RemoteImageDecoderAVF> createImageDecoder(WebCore::FragmentedSharedBuffer& data, const String& mimeType, WebCore::AlphaOption, WebCore::GammaAndColorProfileOption);
 
@@ -69,8 +74,7 @@ private:
 
     HashMap<WebCore::ImageDecoderIdentifier, WeakPtr<RemoteImageDecoderAVF>> m_remoteImageDecoders;
 
-    WebProcess& m_process;
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 
 }

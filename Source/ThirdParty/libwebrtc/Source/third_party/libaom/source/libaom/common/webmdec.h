@@ -28,7 +28,7 @@ struct WebmInputContext {
   const void *block;
   int block_frame_index;
   int video_track_index;
-  uint64_t timestamp_ns;
+  int64_t timestamp_ns;
   int is_key_frame;
   int reached_eos;
 };

@@ -98,6 +98,10 @@ OPENSSL_EXPORT HMAC_CTX *HMAC_CTX_new(void);
 // HMAC_CTX_cleanup frees data owned by |ctx|. It does not free |ctx| itself.
 OPENSSL_EXPORT void HMAC_CTX_cleanup(HMAC_CTX *ctx);
 
+// HMAC_CTX_cleanse zeros the digest state from |ctx| and then performs the
+// actions of |HMAC_CTX_cleanup|.
+OPENSSL_EXPORT void HMAC_CTX_cleanse(HMAC_CTX *ctx);
+
 // HMAC_CTX_free calls |HMAC_CTX_cleanup| and then frees |ctx| itself.
 OPENSSL_EXPORT void HMAC_CTX_free(HMAC_CTX *ctx);
 
@@ -132,6 +136,9 @@ OPENSSL_EXPORT int HMAC_Final(HMAC_CTX *ctx, uint8_t *out,
 // HMAC_size returns the size, in bytes, of the HMAC that will be produced by
 // |ctx|. On entry, |ctx| must have been setup with |HMAC_Init_ex|.
 OPENSSL_EXPORT size_t HMAC_size(const HMAC_CTX *ctx);
+
+// HMAC_CTX_get_md returns |ctx|'s hash function.
+OPENSSL_EXPORT const EVP_MD *HMAC_CTX_get_md(const HMAC_CTX *ctx);
 
 // HMAC_CTX_copy_ex sets |dest| equal to |src|. On entry, |dest| must have been
 // initialised by calling |HMAC_CTX_init|. It returns one on success and zero

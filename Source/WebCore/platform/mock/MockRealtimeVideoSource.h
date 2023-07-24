@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockRealtimeVideoSource_h
-#define MockRealtimeVideoSource_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -64,19 +63,20 @@ protected:
 
     Seconds elapsedTime();
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;
-    VideoFrameRotation videoFrameRotation() const final { return m_deviceOrientation; }
+    VideoFrameRotation videoFrameRotation() const final;
     void generatePresets() override;
 
     IntSize captureSize() const;
 
 private:
     friend class MockDisplayCaptureSourceGStreamer;
+    friend class MockRealtimeVideoSourceGStreamer;
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
 
-    void startProducingData() final;
-    void stopProducingData() final;
+    void startProducingData() override;
+    void stopProducingData() override;
     bool isCaptureSource() const final { return true; }
     CaptureDevice::DeviceType deviceType() const final { return mockCamera() ? CaptureDevice::DeviceType::Camera : CaptureDevice::DeviceType::Screen; }
     bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) final;
@@ -127,7 +127,7 @@ private:
     Color m_fillColorWithZoom { Color::red };
     MockMediaDevice m_device;
     std::optional<VideoPreset> m_preset;
-    VideoFrameRotation m_deviceOrientation { };
+    VideoFrameRotation m_deviceOrientation;
 };
 
 } // namespace WebCore
@@ -137,5 +137,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MockRealtimeVideoSource)
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MockRealtimeVideoSource_h

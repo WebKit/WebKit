@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,11 @@ void TextureView::setLabel(String&& label)
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuTextureViewReference(WGPUTextureView textureView)
+{
+    WebGPU::fromAPI(textureView).ref();
+}
 
 void wgpuTextureViewRelease(WGPUTextureView textureView)
 {

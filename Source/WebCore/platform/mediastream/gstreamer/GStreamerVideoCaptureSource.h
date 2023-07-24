@@ -45,14 +45,14 @@ public:
     const RealtimeMediaSourceSettings& settings() override;
     GstElement* pipeline() { return m_capturer->pipeline(); }
     GStreamerCapturer* capturer() { return m_capturer.get(); }
-    void processNewFrame(Ref<VideoFrameGStreamer>&&);
 
     // GStreamerCapturer::Observer
     void sourceCapsChanged(const GstCaps*) final;
+    void captureEnded() final;
 
 protected:
     GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const gchar* source_factory, CaptureDevice::DeviceType, const NodeAndFD&);
-    GStreamerVideoCaptureSource(GStreamerCaptureDevice, MediaDeviceHashSalts&&);
+    GStreamerVideoCaptureSource(GStreamerCaptureDevice&&, MediaDeviceHashSalts&&);
     virtual ~GStreamerVideoCaptureSource();
     void startProducingData() override;
     void stopProducingData() override;
@@ -65,12 +65,10 @@ protected:
     CaptureDevice::DeviceType deviceType() const override { return m_deviceType; }
 
 private:
-    static GstFlowReturn newSampleCallback(GstElement*, GStreamerVideoCaptureSource*);
-
     bool isCaptureSource() const final { return true; }
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
-    std::unique_ptr<GStreamerVideoCapturer> m_capturer;
+    RefPtr<GStreamerVideoCapturer> m_capturer;
     CaptureDevice::DeviceType m_deviceType;
 };
 

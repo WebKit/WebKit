@@ -64,6 +64,7 @@ public:
     using ChangeFlags = OptionSet<Change>;
 
     static constexpr ChangeFlags basicChangeFlags { Change::StrokeThickness, Change::StrokeBrush, Change::FillBrush };
+    static constexpr ChangeFlags strokeChangeFlags { Change::StrokeThickness, Change::StrokeBrush };
 
     WEBCORE_EXPORT GraphicsContextState(const ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
 
@@ -134,6 +135,7 @@ public:
 #endif
     
     bool containsOnlyInlineChanges() const;
+    bool containsOnlyInlineStrokeChanges() const;
     void mergeLastChanges(const GraphicsContextState&, const std::optional<GraphicsContextState>& lastDrawingState = std::nullopt);
     void mergeAllChanges(const GraphicsContextState&);
 

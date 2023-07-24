@@ -16,6 +16,7 @@ info: |
   7. Repeat, while k < len
     ...
   8. Return false.
+features: [Array.prototype.includes]
 ---*/
 
 var sample = [7, 7, 7, 7];

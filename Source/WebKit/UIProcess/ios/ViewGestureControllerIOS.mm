@@ -372,7 +372,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
             return;
         }
 
-        drawingArea->dispatchAfterEnsuringDrawing([pageID, gestureID] {
+        m_webPageProxy.callAfterNextPresentationUpdate([pageID, gestureID] {
             if (auto gestureController = controllerForGesture(pageID, gestureID))
                 gestureController->willCommitPostSwipeTransitionLayerTree(true);
         });

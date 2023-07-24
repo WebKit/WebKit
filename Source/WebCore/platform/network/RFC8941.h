@@ -27,6 +27,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace RFC8941 {

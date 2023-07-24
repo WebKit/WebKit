@@ -77,7 +77,7 @@ layer at (0,0) size 800x600
         RenderSVGPath {line} at (750,66) size 2x419 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [x1=450.50] [y1=10.00] [x2=450.50] [y2=260.50]
         RenderSVGPath {line} at (766,66) size 3x419 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [x1=460.50] [y1=10.00] [x2=460.50] [y2=260.50]
         RenderSVGPath {line} at (783,66) size 2x419 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [x1=470.50] [y1=10.00] [x2=470.50] [y2=260.50]
-      RenderSVGContainer {g} at (66,109) size 632x230 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
+      RenderSVGContainer {g} at (66,109) size 626x230 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,10.00)}]
         RenderSVGContainer {g} at (83,150) size 534x184
           RenderSVGContainer {g} at (83,150) size 34x34 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
             RenderSVGRect {rect} at (83,150) size 34x4 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=2.00]
@@ -94,38 +94,38 @@ layer at (0,0) size 800x600
           RenderSVGContainer {g} at (350,266) size 67x68 [transform={m=((2.00,0.00)(0.00,2.00)) t=(210.00,120.00)}]
             RenderSVGRect {rect} at (350,266) size 67x4 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=1.00]
             RenderSVGRect {rect} at (350,266) size 4x68 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=1.00] [height=20.00]
-        RenderSVGContainer {g} at (66,109) size 632x230
-          RenderSVGText {text} at (40,25) size 114x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 114x18
-              chunk 1 text run 1 at (40.00,40.00) startOffset 0 endOffset 18 width 113.40: "translate (50, 50)"
+        RenderSVGContainer {g} at (66,109) size 626x230
+          RenderSVGText {text} at (40,25) size 108x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 108x18
+              chunk 1 text run 1 at (40.00,40.00) startOffset 0 endOffset 18 width 108.00: "translate (50, 50)"
           RenderSVGRect {rect} at (80,146) size 9x9 [fill={[type=SOLID] [color=#000000]}] [x=48.00] [y=48.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (113,146) size 9x9 [fill={[type=SOLID] [color=#0000FF]}] [x=68.00] [y=48.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (80,180) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=48.00] [y=68.00] [width=5.00] [height=5.00]
-          RenderSVGText {text} at (140,25) size 71x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 71x18
-              chunk 1 text run 1 at (140.00,40.00) startOffset 0 endOffset 11 width 70.80: "rotate(-90)"
+          RenderSVGText {text} at (140,25) size 68x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 68x18
+              chunk 1 text run 1 at (140.00,40.00) startOffset 0 endOffset 11 width 67.80: "rotate(-90)"
           RenderSVGRect {rect} at (246,180) size 9x9 [fill={[type=SOLID] [color=#000000]}] [x=148.00] [y=68.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (246,146) size 9x9 [fill={[type=SOLID] [color=#0000FF]}] [x=148.00] [y=48.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (280,180) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=168.00] [y=68.00] [width=5.00] [height=5.00]
-          RenderSVGText {text} at (240,25) size 79x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 79x18
-              chunk 1 text run 1 at (240.00,40.00) startOffset 0 endOffset 11 width 78.60: "skew x (45)"
+          RenderSVGText {text} at (240,25) size 75x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 75x18
+              chunk 1 text run 1 at (240.00,40.00) startOffset 0 endOffset 11 width 75.00: "skew x (45)"
           RenderSVGRect {rect} at (413,146) size 9x9 [fill={[type=SOLID] [color=#000000]}] [x=248.00] [y=48.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (446,146) size 9x9 [fill={[type=SOLID] [color=#0000FF]}] [x=268.00] [y=48.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (446,180) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=268.00] [y=68.00] [width=5.00] [height=5.00]
-          RenderSVGText {text} at (340,25) size 79x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 79x18
-              chunk 1 text run 1 at (340.00,40.00) startOffset 0 endOffset 11 width 78.60: "skew y (45)"
+          RenderSVGText {text} at (340,25) size 75x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 75x18
+              chunk 1 text run 1 at (340.00,40.00) startOffset 0 endOffset 11 width 75.00: "skew y (45)"
           RenderSVGRect {rect} at (580,146) size 9x9 [fill={[type=SOLID] [color=#000000]}] [x=348.00] [y=48.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (613,180) size 9x9 [fill={[type=SOLID] [color=#0000FF]}] [x=368.00] [y=68.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (580,180) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=348.00] [y=68.00] [width=5.00] [height=5.00]
-          RenderSVGText {text} at (200,95) size 57x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 57x18
-              chunk 1 text run 1 at (200.00,110.00) startOffset 0 endOffset 9 width 56.40: "scale (2)"
+          RenderSVGText {text} at (200,95) size 55x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 55x18
+              chunk 1 text run 1 at (200.00,110.00) startOffset 0 endOffset 9 width 54.60: "scale (2)"
           RenderSVGRect {rect} at (346,263) size 9x9 [fill={[type=SOLID] [color=#000000]}] [x=208.00] [y=118.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (413,263) size 9x9 [fill={[type=SOLID] [color=#0000FF]}] [x=248.00] [y=118.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (346,330) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=208.00] [y=158.00] [width=5.00] [height=5.00]
-      RenderSVGContainer {g} at (66,359) size 694x113
+      RenderSVGContainer {g} at (66,359) size 678x113
         RenderSVGContainer {g} at (83,400) size 434x67
           RenderSVGContainer {g} at (83,400) size 101x67 [transform={m=((3.00,0.00)(0.00,2.00)) t=(50.00,210.00)}]
             RenderSVGRect {rect} at (83,400) size 101x4 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=1.00]
@@ -135,20 +135,20 @@ layer at (0,0) size 800x600
               RenderSVGContainer {g} at (416,400) size 101x67 [transform={m=((1.00,0.00)(0.00,1.00)) t=(16.67,105.00)}]
                 RenderSVGRect {rect} at (416,400) size 101x4 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=1.00]
                 RenderSVGRect {rect} at (416,400) size 5x67 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=0.67] [height=20.00]
-        RenderSVGContainer {g} at (66,359) size 694x113
-          RenderSVGText {text} at (40,185) size 211x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 211x18
-              chunk 1 text run 1 at (40.00,200.00) startOffset 0 endOffset 33 width 210.60: "scale(25, 95) and translate(2, 2)"
+        RenderSVGContainer {g} at (66,359) size 678x113
+          RenderSVGText {text} at (40,185) size 202x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 202x18
+              chunk 1 text run 1 at (40.00,200.00) startOffset 0 endOffset 33 width 201.60: "scale(25, 95) and translate(2, 2)"
           RenderSVGRect {rect} at (80,396) size 9x9 [fill={[type=SOLID] [color=#000000]}] [x=48.00] [y=208.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (180,396) size 9x9 [fill={[type=SOLID] [color=#0000FF]}] [x=108.00] [y=208.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (80,463) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=48.00] [y=248.00] [width=5.00] [height=5.00]
-          RenderSVGText {text} at (240,185) size 216x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 216x18
-              chunk 1 text run 1 at (240.00,200.00) startOffset 0 endOffset 34 width 215.40: "scale(25, 95) then translate(2, 2)"
+          RenderSVGText {text} at (240,185) size 206x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 206x18
+              chunk 1 text run 1 at (240.00,200.00) startOffset 0 endOffset 34 width 205.80: "scale(25, 95) then translate(2, 2)"
           RenderSVGRect {rect} at (413,396) size 9x9 [fill={[type=SOLID] [color=#000000]}] [x=248.00] [y=208.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (513,396) size 9x9 [fill={[type=SOLID] [color=#0000FF]}] [x=308.00] [y=208.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (413,463) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=248.00] [y=248.00] [width=5.00] [height=5.00]
-    RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 269x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.5 $"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.40: "$Revision: 1.5 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

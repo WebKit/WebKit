@@ -26,6 +26,7 @@
 #include <openssl/bytestring.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
+#include <openssl/hpke.h>
 #include <openssl/rand.h>
 #include <openssl/rsa.h>
 #include <openssl/ssl.h>
@@ -230,6 +231,12 @@ const uint8_t kALPNProtocols[] = {
     0x01, 'a', 0x02, 'a', 'a', 0x03, 'a', 'a', 'a',
 };
 
+const uint8_t kECHKey[] = {
+    0x35, 0x6d, 0x45, 0x06, 0xb3, 0x88, 0x89, 0x2e, 0xd6, 0x87, 0x84,
+    0xd2, 0x2d, 0x6f, 0x83, 0x48, 0xad, 0xf2, 0xfd, 0x08, 0x51, 0x73,
+    0x10, 0xa0, 0xb8, 0xdd, 0xe9, 0x96, 0x6a, 0xde, 0xbc, 0x82,
+};
+
 int ALPNSelectCallback(SSL *ssl, const uint8_t **out, uint8_t *out_len,
                        const uint8_t *in, unsigned in_len, void *arg) {
   static const uint8_t kProtocol[] = {'a', 'a'};
@@ -407,12 +414,13 @@ class TLSFuzzer {
     SSL_CTX_enable_ocsp_stapling(ctx_.get());
 
     // Enable versions and ciphers that are off by default.
-    if (!SSL_CTX_set_strict_cipher_list(ctx_.get(), "ALL:NULL-SHA")) {
+    if (!SSL_CTX_set_strict_cipher_list(ctx_.get(), "ALL")) {
       return false;
     }
 
-    static const int kCurves[] = {NID_CECPQ2, NID_X25519, NID_X9_62_prime256v1,
-                                  NID_secp384r1, NID_secp521r1};
+    static const int kCurves[] = {NID_X25519Kyber768Draft00, NID_X25519,
+                                  NID_X9_62_prime256v1, NID_secp384r1,
+                                  NID_secp521r1};
     if (!SSL_CTX_set1_curves(ctx_.get(), kCurves,
                              OPENSSL_ARRAY_SIZE(kCurves))) {
       return false;
@@ -437,6 +445,28 @@ class TLSFuzzer {
       return false;
     }
     SSL_CTX_set_tls_channel_id_enabled(ctx_.get(), 1);
+
+    if (role_ == kServer) {
+      bssl::UniquePtr<SSL_ECH_KEYS> keys(SSL_ECH_KEYS_new());
+      bssl::ScopedEVP_HPKE_KEY key;
+      uint8_t *ech_config;
+      size_t ech_config_len;
+      if (!keys ||
+          !EVP_HPKE_KEY_init(key.get(), EVP_hpke_x25519_hkdf_sha256(), kECHKey,
+                             sizeof(kECHKey)) ||
+          // Match |echConfig| in |addEncryptedClientHelloTests| from runner.go.
+          !SSL_marshal_ech_config(&ech_config, &ech_config_len,
+                                  /*config_id=*/42, key.get(), "public.example",
+                                  /*max_name_len=*/64)) {
+        return false;
+      }
+      bssl::UniquePtr<uint8_t> free_ech_config(ech_config);
+      if (!SSL_ECH_KEYS_add(keys.get(), /*is_retry_config=*/true, ech_config,
+                            ech_config_len, key.get()) ||
+          !SSL_CTX_set1_ech_keys(ctx_.get(), keys.get())) {
+        return false;
+      }
+    }
 
     return true;
   }

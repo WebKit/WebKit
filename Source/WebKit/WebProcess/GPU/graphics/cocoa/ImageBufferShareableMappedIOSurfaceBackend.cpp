@@ -34,6 +34,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -95,6 +96,13 @@ RefPtr<NativeImage> ImageBufferShareableMappedIOSurfaceBackend::copyNativeImage(
         invalidateCachedNativeImage();
 
     return ImageBufferIOSurfaceBackend::copyNativeImage(copyBehavior);
+}
+
+String ImageBufferShareableMappedIOSurfaceBackend::debugDescription() const
+{
+    TextStream stream;
+    stream << "ImageBufferShareableMappedIOSurfaceBackend " << this << " " << ValueOrNull(m_surface.get());
+    return stream.release();
 }
 
 } // namespace WebKit

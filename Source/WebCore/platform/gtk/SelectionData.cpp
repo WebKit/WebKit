@@ -54,7 +54,7 @@ void SelectionData::setURIList(const String& uriListString)
     // from the URI list.
     bool setURL = hasURL();
     for (auto& line : uriListString.split('\n')) {
-        line = line.stripWhiteSpace();
+        line = line.trim(deprecatedIsSpaceOrNewline);
         if (line.isEmpty())
             continue;
         if (line[0] == '#')

@@ -115,7 +115,7 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
                     return !isFirstLine && !searchLocation;
 
                 auto textBeforeMatch = StringView(lineText).substring(searchLocation, matchLocation - searchLocation);
-                return !textBeforeMatch.isEmpty() && isSpaceOrNewline(textBeforeMatch[0]);
+                return !textBeforeMatch.isEmpty() && deprecatedIsSpaceOrNewline(textBeforeMatch[0]);
             })();
 
             searchLocation = matchLocation + childText.length();
@@ -193,7 +193,7 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
             continue;
         }
 
-        if ([paragraph respondsToSelector:@selector(isPassthrough)] && [paragraph isPassthrough])
+        if (paragraph.isPassthrough)
             continue;
 
         auto quad = floatQuad(paragraph.quad);

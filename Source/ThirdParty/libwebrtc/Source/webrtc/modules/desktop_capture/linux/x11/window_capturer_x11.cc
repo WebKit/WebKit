@@ -180,6 +180,7 @@ void WindowCapturerX11::CaptureFrame() {
   frame->mutable_updated_region()->SetRect(
       DesktopRect::MakeSize(frame->size()));
   frame->set_top_left(x_server_pixel_buffer_.window_rect().top_left());
+  frame->set_capturer_id(DesktopCapturerId::kX11CapturerLinux);
 
   callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
 }

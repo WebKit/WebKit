@@ -38,8 +38,8 @@
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 #import "TapHandlingResult.h"
-#import "UIAlertControllerUtilities.h"
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
 #import "VisibleContentRectUpdateInfo.h"
@@ -809,7 +809,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
 - (void)_didRelaunchProcess
 {
-    WKWEBVIEW_RELEASE_LOG("%p -[WKWebView _didRelaunchProcess] (pid=%d)", self, _page->processIdentifier());
+    WKWEBVIEW_RELEASE_LOG("%p -[WKWebView _didRelaunchProcess] (pid=%d)", self, _page->processID());
     _perProcessState.hasScheduledVisibleRectUpdate = NO;
     _viewStabilityWhenVisibleContentRectUpdateScheduled = { };
     if (_gestureController)
@@ -928,7 +928,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateScrollViewForOverscrollBehavior(_scrollView.get(), horizontalOverscrollBehavior, verticalOverscrollBehavior, WebKit::ScrollingTreeScrollingNodeDelegateIOS::AllowOverscrollToPreventScrollPropagation::No);
 
     bool hasDockedInputView = !CGRectIsEmpty(_inputViewBoundsInWindow);
-    bool isZoomed = layerTreeTransaction.pageScaleFactor() > layerTreeTransaction.initialScaleFactor();
+    bool isZoomed = !WebKit::scalesAreEssentiallyEqual(layerTreeTransaction.pageScaleFactor(), layerTreeTransaction.initialScaleFactor()) && (layerTreeTransaction.pageScaleFactor() > layerTreeTransaction.initialScaleFactor());
 
     bool scrollingNeededToRevealUI = false;
     if (_maximumUnobscuredSizeOverride) {
@@ -1299,7 +1299,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     // Don't allow content to do programmatic scrolls for non-scrollable pages when zoomed.
-    if (!_page->scrollingCoordinatorProxy()->hasScrollableMainFrame() && ([_scrollView zoomScale] > [_scrollView minimumZoomScale] || [_scrollView zoomScale] < [_scrollView minimumZoomScale])) {
+    if (!_page->scrollingCoordinatorProxy()->hasScrollableMainFrame() && !WebKit::scalesAreEssentiallyEqual([_scrollView zoomScale], [_scrollView minimumZoomScale])) {
         [self _scheduleForcedVisibleContentRectUpdate];
         return;
     }
@@ -1559,7 +1559,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGFloat verticalSpaceInWebViewCoordinates = (visibleSize.height - focusedElementRectInNewScale.height()) / 2.0;
 
     auto topLeft = CGPointZero;
-    auto scrollViewInsets = [_scrollView _effectiveContentInset];
+    auto scrollViewInsets = [_scrollView adjustedContentInset];
     auto currentTopLeft = [_scrollView contentOffset];
 
     if (_haveSetObscuredInsets) {
@@ -1756,7 +1756,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return YES;
 
     // If the page is not user scalable, we don't allow double tap gestures.
-    if (![_scrollView isZoomEnabled] || [_scrollView minimumZoomScale] >= [_scrollView maximumZoomScale])
+    if (![_scrollView isZoomEnabled] || [_scrollView minimumZoomScale] >= [_scrollView maximumZoomScale] || WebKit::scalesAreEssentiallyEqual([_scrollView minimumZoomScale], [_scrollView maximumZoomScale]))
         return NO;
 
     // If the viewport width was not explicit, we allow double tap gestures.
@@ -2349,7 +2349,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     OptionSet<WebKit::ViewStabilityFlag> stabilityFlags;
 
-    if (scrollView.isDragging || scrollView.isZooming || scrollView._isInterruptingDeceleration)
+    if (scrollView.isDragging || scrollView.isZooming)
         stabilityFlags.add(WebKit::ViewStabilityFlag::ScrollViewInteracting);
 
     if (scrollView.isDecelerating || scrollView._isAnimatingZoom || scrollView._isScrollingToTop || scrollView.isZoomBouncing)
@@ -2914,6 +2914,8 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
     [_passwordView setUserDidEnterPassword:passwordHandler];
     [_passwordView showInScrollView:_scrollView.get()];
     self._currentContentView.hidden = YES;
+
+    [self _didRequestPasswordForDocument];
 }
 
 - (void)_hidePasswordView
@@ -2924,6 +2926,18 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
     self._currentContentView.hidden = NO;
     [_passwordView hide];
     _passwordView = nil;
+
+    [self _didStopRequestingPasswordForDocument];
+}
+
+- (void)_didRequestPasswordForDocument
+{
+    _navigationState->didRequestPasswordForQuickLookDocument();
+}
+
+- (void)_didStopRequestingPasswordForDocument
+{
+    _navigationState->didStopRequestingPasswordForQuickLookDocument();
 }
 
 - (WKPasswordView *)_passwordView
@@ -3164,7 +3178,7 @@ static bool isLockdownModeWarningNeeded()
         });
     });
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if ([self.UIDelegate respondsToSelector:@selector(webView:showLockdownModeFirstUseMessage:completionHandler:)]) {
         [self.UIDelegate webView:self showLockdownModeFirstUseMessage:message completionHandler:decisionHandler.get()];
         return;

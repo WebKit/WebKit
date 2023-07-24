@@ -1,0 +1,245 @@
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+headers: "ArgumentCoders.h"
+
+struct WebKit::WebPageCreationParameters {
+    WebCore::IntSize viewSize;
+
+    OptionSet<WebCore::ActivityState> activityState;
+
+    WebKit::WebPreferencesStore store;
+    WebKit::DrawingAreaType drawingAreaType;
+    WebKit::DrawingAreaIdentifier drawingAreaIdentifier;
+    WebKit::WebPageProxyIdentifier webPageProxyIdentifier;
+    WebKit::WebPageGroupData pageGroupData;
+
+    bool isEditable;
+
+    WebCore::Color underlayColor;
+
+    bool useFixedLayout;
+    WebCore::IntSize fixedLayoutSize;
+
+    WebCore::FloatSize defaultUnobscuredSize;
+    WebCore::FloatSize minimumUnobscuredSize;
+    WebCore::FloatSize maximumUnobscuredSize;
+
+    std::optional<WebCore::FloatRect> viewExposedRect;
+
+    bool alwaysShowsHorizontalScroller;
+    bool alwaysShowsVerticalScroller;
+
+    bool suppressScrollbarAnimations;
+
+    WebCore::Pagination::Mode paginationMode;
+    bool paginationBehavesLikeColumns;
+    double pageLength;
+    double gapBetweenPages;
+
+    String userAgent;
+
+    bool itemStatesWereRestoredByAPIRequest;
+    Vector<WebKit::BackForwardListItemState> itemStates;
+
+    uint64_t visitedLinkTableID;
+    bool canRunBeforeUnloadConfirmPanel;
+    bool canRunModal;
+
+    float deviceScaleFactor;
+    float viewScaleFactor;
+
+    double textZoomFactor;
+    double pageZoomFactor;
+
+    float topContentInset;
+
+    float mediaVolume;
+    WebCore::MediaProducerMutedStateFlags muted;
+    bool openedByDOM;
+    bool mayStartMediaWhenInWindow;
+    bool mediaPlaybackIsSuspended;
+
+    WebCore::IntSize minimumSizeForAutoLayout;
+    WebCore::IntSize sizeToContentAutoSizeMaximumSize;
+    bool autoSizingShouldExpandToViewHeight;
+    std::optional<WebCore::FloatSize> viewportSizeForCSSViewportUnits;
+
+    WebCore::ScrollPinningBehavior scrollPinningBehavior;
+
+    std::optional<uint32_t> scrollbarOverlayStyle;
+
+    bool backgroundExtendsBeyondPage;
+
+    WebKit::LayerHostingMode layerHostingMode;
+
+    bool hasResourceLoadClient;
+
+    Vector<String> mimeTypesWithCustomContentProviders;
+
+    bool controlledByAutomation;
+    bool isProcessSwap;
+
+    bool useDarkAppearance;
+    bool useElevatedUserInterfaceLevel;
+
+#if PLATFORM(MAC)
+    std::optional<WebCore::DestinationColorSpace> colorSpace;
+    bool useSystemAppearance;
+    bool useFormSemanticContext;
+    int headerBannerHeight;
+    int footerBannerHeight;
+#endif
+#if ENABLE(META_VIEWPORT)
+    bool ignoresViewportScaleLimits;
+    WebCore::FloatSize viewportConfigurationViewLayoutSize;
+    double viewportConfigurationLayoutSizeScaleFactor;
+    double viewportConfigurationMinimumEffectiveDeviceWidth;
+    WebCore::FloatSize viewportConfigurationViewSize;
+    std::optional<WebCore::ViewportArguments> overrideViewportArguments;
+#endif
+#if PLATFORM(IOS_FAMILY)
+    WebCore::FloatSize screenSize;
+    WebCore::FloatSize availableScreenSize;
+    WebCore::FloatSize overrideScreenSize;
+    float textAutosizingWidth;
+    WebCore::IntDegrees deviceOrientation;
+    bool keyboardIsAttached;
+    bool canShowWhileLocked;
+    bool isCapturingScreen;
+    WebCore::Color insertionPointColor;
+#endif
+#if PLATFORM(COCOA)
+    bool smartInsertDeleteEnabled;
+    Vector<String> additionalSupportedImageTypes;
+    Vector<WebKit::SandboxExtension::Handle> gpuIOKitExtensionHandles;
+    Vector<WebKit::SandboxExtension::Handle> gpuMachExtensionHandles;
+#endif
+#if HAVE(STATIC_FONT_REGISTRY)
+    Vector<WebKit::SandboxExtension::Handle> fontMachExtensionHandles;
+#endif
+#if HAVE(APP_ACCENT_COLORS)
+    WebCore::Color accentColor;
+#endif
+#if USE(WPE_RENDERER)
+    UnixFileDescriptor hostFileDescriptor;
+#endif
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
+    uint64_t nativeWindowHandle;
+#endif
+#if USE(GRAPHICS_LAYER_WC)
+    bool usesOffscreenRendering;
+#endif
+    bool shouldScaleViewToFitDocument;
+
+    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection;
+    OptionSet<WebCore::LayoutMilestone> observedLayoutMilestones;
+
+    String overrideContentSecurityPolicy;
+    std::optional<double> cpuLimit;
+
+    HashMap<String, WebKit::WebURLSchemeHandlerIdentifier> urlSchemeHandlers;
+    Vector<String> urlSchemesWithLegacyCustomProtocolHandlers;
+
+#if ENABLE(APPLICATION_MANIFEST)
+    std::optional<WebCore::ApplicationManifest> applicationManifest;
+#endif
+
+    bool needsFontAttributes;
+
+    bool iceCandidateFilteringEnabled;
+    bool enumeratingAllNetworkInterfacesEnabled;
+
+    WebKit::UserContentControllerParameters userContentControllerParameters;
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    std::optional<WebKit::WebExtensionControllerParameters> webExtensionControllerParameters;
+#endif
+
+    std::optional<WebCore::Color> backgroundColor;
+
+    std::optional<WebCore::PageIdentifier> oldPageID;
+
+    String overriddenMediaType;
+    Vector<String> corsDisablingPatterns;
+    HashSet<String> maskedURLSchemes;
+    bool userScriptsShouldWaitUntilNotification;
+    bool loadsSubresources;
+    std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>> allowedNetworkHosts;
+
+    bool crossOriginAccessControlCheckEnabled;
+    String processDisplayName;
+
+    bool shouldCaptureAudioInUIProcess;
+    bool shouldCaptureAudioInGPUProcess;
+    bool shouldCaptureVideoInUIProcess;
+    bool shouldCaptureVideoInGPUProcess;
+    bool shouldCaptureDisplayInUIProcess;
+    bool shouldCaptureDisplayInGPUProcess;
+    bool shouldRenderCanvasInGPUProcess;
+    bool shouldRenderDOMInGPUProcess;
+    bool shouldPlayMediaInGPUProcess;
+#if ENABLE(WEBGL)
+    bool shouldRenderWebGLInGPUProcess;
+#endif
+    bool shouldEnableVP8Decoder;
+    bool shouldEnableVP9Decoder;
+    bool shouldEnableVP9SWDecoder;
+#if ENABLE(APP_BOUND_DOMAINS)
+    bool limitsNavigationsToAppBoundDomains;
+#endif
+    bool lastNavigationWasAppInitiated;
+    bool canUseCredentialStorage;
+
+    WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking;
+
+    bool httpsUpgradeEnabled;
+
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload;
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+    WebCore::HighlightVisibility appHighlightsVisible;
+#endif
+
+#if HAVE(TOUCH_BAR)
+    bool requiresUserActionForEditingControlsManager;
+#endif
+
+    bool hasResizableWindows;
+
+    WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension;
+
+    std::optional<WebKit::FrameTreeCreationParameters> subframeProcessFrameTreeCreationParameters;
+    std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
+    std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData;
+    Vector<WebCore::LinkDecorationFilteringData> allowedQueryParametersForAdvancedPrivacyProtections;
+#endif
+
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+    WebKit::SandboxExtension::Handle machBootstrapHandle;
+#endif
+}

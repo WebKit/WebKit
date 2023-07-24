@@ -1,7 +1,0 @@
-
-FAIL Stretchy vertical line assert_approx_equals: Prefix <mo> element expected 150 +/- 1 but got 25
-|
-|
-|
-|
-

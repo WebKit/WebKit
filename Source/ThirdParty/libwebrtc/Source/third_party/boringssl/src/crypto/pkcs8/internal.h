@@ -112,7 +112,6 @@ struct pbe_suite {
                       const char *pass, size_t pass_len, CBS *param);
 };
 
-#define PKCS5_DEFAULT_ITERATIONS 2048
 #define PKCS5_SALT_LEN 8
 
 int PKCS5_pbe2_decrypt_init(const struct pbe_suite *suite, EVP_CIPHER_CTX *ctx,

@@ -194,18 +194,18 @@ unsigned int aom_masked_sad4xh_ssse3(const uint8_t *src_ptr, int src_stride,
   for (y = 0; y < height; y += 2) {
     // Load two rows at a time, this seems to be a bit faster
     // than four rows at a time in this case.
-    const __m128i src = _mm_unpacklo_epi32(
-        _mm_cvtsi32_si128(*(uint32_t *)src_ptr),
-        _mm_cvtsi32_si128(*(uint32_t *)&src_ptr[src_stride]));
+    const __m128i src =
+        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(int *)src_ptr),
+                           _mm_cvtsi32_si128(*(int *)&src_ptr[src_stride]));
     const __m128i a =
-        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(uint32_t *)a_ptr),
-                           _mm_cvtsi32_si128(*(uint32_t *)&a_ptr[a_stride]));
+        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(int *)a_ptr),
+                           _mm_cvtsi32_si128(*(int *)&a_ptr[a_stride]));
     const __m128i b =
-        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(uint32_t *)b_ptr),
-                           _mm_cvtsi32_si128(*(uint32_t *)&b_ptr[b_stride]));
+        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(int *)b_ptr),
+                           _mm_cvtsi32_si128(*(int *)&b_ptr[b_stride]));
     const __m128i m =
-        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(uint32_t *)m_ptr),
-                           _mm_cvtsi32_si128(*(uint32_t *)&m_ptr[m_stride]));
+        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(int *)m_ptr),
+                           _mm_cvtsi32_si128(*(int *)&m_ptr[m_stride]));
     const __m128i m_inv = _mm_sub_epi8(mask_max, m);
 
     const __m128i data = _mm_unpacklo_epi8(a, b);
@@ -367,9 +367,8 @@ unsigned int aom_highbd_masked_sad4xh_ssse3(const uint8_t *src8, int src_stride,
                            _mm_loadl_epi64((const __m128i *)&b_ptr[b_stride]));
     // Zero-extend mask to 16 bits
     const __m128i m = _mm_unpacklo_epi8(
-        _mm_unpacklo_epi32(
-            _mm_cvtsi32_si128(*(const uint32_t *)m_ptr),
-            _mm_cvtsi32_si128(*(const uint32_t *)&m_ptr[m_stride])),
+        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(const int *)m_ptr),
+                           _mm_cvtsi32_si128(*(const int *)&m_ptr[m_stride])),
         _mm_setzero_si128());
     const __m128i m_inv = _mm_sub_epi16(mask_max, m);
 

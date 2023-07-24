@@ -35,6 +35,18 @@ GL_APICALL void GL_APIENTRY glDisableExtensionANGLE (const GLchar *name);
 #define GL_RESOURCE_INITIALIZED_ANGLE 0x969F
 #endif /* GL_ANGLE_robust_resource_initialization */
 
+#ifndef GL_ANGLE_polygon_mode
+#define GL_ANGLE_polygon_mode 1
+#define GL_POLYGON_MODE_ANGLE             0x0B40
+#define GL_POLYGON_OFFSET_LINE_ANGLE      0x2A02
+#define GL_LINE_ANGLE                     0x1B01
+#define GL_FILL_ANGLE                     0x1B02
+typedef void (GL_APIENTRYP PFNGLPOLYGONMODEANGLEPROC) (GLenum face, GLenum mode);
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glPolygonModeANGLE (GLenum face, GLenum mode);
+#endif
+#endif /* GL_ANGLE_polygon_mode */
+
 #ifndef GL_ANGLE_provoking_vertex
 #define GL_ANGLE_provoking_vertex 1
 #define GL_FIRST_VERTEX_CONVENTION_ANGLE             0x8E4D
@@ -65,6 +77,11 @@ GL_APICALL void GL_APIENTRY glProvokingVertexANGLE(GLenum provokeMode);
 #define GL_ANGLE_stencil_texturing 1
 #define GL_DEPTH_STENCIL_TEXTURE_MODE_ANGLE           0x90EA
 #endif /* GL_ANGLE_stencil_texturing */
+
+#ifndef GL_ANGLE_renderability_validation
+#define GL_ANGLE_renderability_validation 1
+#define GL_RENDERABILITY_VALIDATION_ANGLE 0x9EA0
+#endif /* GL_ANGLE_renderability_validation */
 
 #ifndef GL_CHROMIUM_framebuffer_mixed_samples
 #define GL_CHROMIUM_frambuffer_mixed_samples 1

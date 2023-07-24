@@ -129,12 +129,12 @@ layer at (0,0) size 785x1313
                   RenderText {#text} at (0,0) size 344x15
                     text run at (0,0) width 344: "This sentence should be in a monospace font."
 layer at (8,190) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,182) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,420) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,412) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,412) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,506) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,498) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,498) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (25,988) size 747x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (4,216) size 747x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (4,216) size 747x2 [color=#808080] [border: (1px inset #808080)]
 layer at (25,1074) size 747x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (4,302) size 747x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (4,302) size 747x2 [color=#808080] [border: (1px inset #808080)]

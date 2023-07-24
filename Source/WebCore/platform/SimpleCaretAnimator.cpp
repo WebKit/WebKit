@@ -35,8 +35,9 @@ SimpleCaretAnimator::SimpleCaretAnimator(CaretAnimationClient& client)
 {
 }
 
-void SimpleCaretAnimator::updateAnimationProperties(ReducedResolutionSeconds currentTime)
+void SimpleCaretAnimator::updateAnimationProperties()
 {
+    auto currentTime = MonotonicTime::now();
     auto caretBlinkInterval = RenderTheme::singleton().caretBlinkInterval();
 
     setBlinkingSuspended(!caretBlinkInterval);
@@ -59,10 +60,10 @@ void SimpleCaretAnimator::updateAnimationProperties(ReducedResolutionSeconds cur
     }
 }
 
-void SimpleCaretAnimator::start(ReducedResolutionSeconds currentTime)
+void SimpleCaretAnimator::start()
 {
-    m_lastTimeCaretPaintWasToggled = currentTime;
-    didStart(currentTime, RenderTheme::singleton().caretBlinkInterval());
+    m_lastTimeCaretPaintWasToggled = MonotonicTime::now();
+    didStart(m_lastTimeCaretPaintWasToggled, RenderTheme::singleton().caretBlinkInterval());
 }
 
 String SimpleCaretAnimator::debugDescription() const

@@ -48,7 +48,7 @@ ProcessLauncher::ProcessLauncher(Client* client, LaunchOptions&& launchOptions)
 void ProcessLauncher::didFinishLaunchingProcess(ProcessID processIdentifier, IPC::Connection::Identifier identifier)
 {
     tracePoint(ProcessLaunchEnd);
-    m_processIdentifier = processIdentifier;
+    m_processID = processIdentifier;
     m_isLaunching = false;
     
     if (!m_client) {

@@ -9,13 +9,16 @@
     <dependencies>
       <dep package="wpebackend-fdo"/>
       <dep package="icu"/>
-      <dep package="libsoup"/>
       <dep package="manette"/>
+      <dep package="libjxl"/>
       <dep package="libvpx"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
+      <if condition-unset="USE_SOUP2">
+        <dep package="libsoup3"/>
+      </if>
     </dependencies>
   </metamodule>
 
@@ -23,13 +26,16 @@
     <dependencies>
       <dep package="wpebackend-fdo"/>
       <dep package="icu"/>
-      <dep package="libsoup"/>
       <dep package="openxr"/>
+      <dep package="libjxl"/>
       <dep package="libvpx"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
+      <if condition-unset="USE_SOUP2">
+        <dep package="libsoup3"/>
+      </if>
     </dependencies>
   </metamodule>
 
@@ -37,7 +43,7 @@
   <repository type="git" name="github.com"
       href="https://github.com"/>
   <repository type="tarball" name="github-tarball"
-      href="https://github.com/"/>
+      href="https://github.com"/>
   <repository type="tarball" name="sourceware.org-mirror"
       href="http://mirrors.kernel.org/sources.redhat.com/"/>
   <repository type="tarball" name="ftp.gnome.org"
@@ -70,27 +76,26 @@
       href="http://webkitgtk.org/jhbuild_mirror/"/>
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
-  <repository type="tarball" name="wpewebkit"
-      href="https://wpewebkit.org/releases/"/>
-
 
 <!-- This moduleset is used when the environment variable WEBKIT_JHBUILD_MODULESET=minimal is set -->
 <!-- Its intended to allow building WebKit using as much as libraries from your distribution as possible -->
 <!-- In order to ensure its minimal, all the modules should have a pkg-config declaration line -->
 
   <cmake id="libwpe">
-    <branch module="libwpe-${version}.tar.xz" version="1.14.1"
-            repo="wpewebkit"
-            hash="b1d0cdcf0f8dbb494e65b0f7913e357106da9a0d57f4fbb7b9d1238a6dbe9ade"/>
+    <branch repo="github-tarball"
+            module="WebPlatformForEmbedded/libwpe/releases/download/${version}/libwpe-${version}.tar.xz"
+            version="1.14.1"
+            hash="sha256:b1d0cdcf0f8dbb494e65b0f7913e357106da9a0d57f4fbb7b9d1238a6dbe9ade"/>
   </cmake>
 
   <meson id="wpebackend-fdo">
     <dependencies>
       <dep package="libwpe"/>
     </dependencies>
-    <branch module="wpebackend-fdo-${version}.tar.xz" version="1.14.0"
-            repo="wpewebkit"
-            hash="e75b0cb2c7145448416e8696013d8883f675c66c11ed750e06865efec5809155">
+    <branch repo="github-tarball"
+            module="Igalia/WPEBackend-fdo/releases/download/${version}/wpebackend-fdo-${version}.tar.xz"
+            version="1.14.2"
+            hash="sha256:93c9766ae9864eeaeaee2b0a74f22cbca08df42c1a1bdb55b086f2528e380d38">
     </branch>
   </meson>
 
@@ -103,18 +108,21 @@
     </branch>
   </autotools>
 
-  <!-- libsoup >= 2.69 required for SameSite cookie support -->
-  <meson id="libsoup" mesonargs="-Dintrospection=disabled -Dgssapi=disabled -Dvapi=disabled -Dtests=false">
-    <pkg-config>libsoup-2.4.pc</pkg-config>
-    <dependencies>
-      <dep package="libpsl"/>
-    </dependencies>
-    <branch module="/sources/libsoup/2.69/libsoup-${version}.tar.xz" version="2.69.90"
-            repo="download.gnome.org"
-            hash="sha256:8ed18092cfb27d870a7c7c45992f3a216bd22dd6fd6d2c9fbf1adc2d6957cab8">
-    <patch file="libsoup-lower-glib-dependency-to-2.38.patch" strip="1"/>
-    </branch>
-  </meson>
+  <if condition-unset="USE_SOUP2">
+    <meson id="libsoup3" mesonargs="-Dgssapi=disabled -Dvapi=disabled -Dntlm=disabled -Dsysprof=disabled -Dautobahn=disabled -Dpkcs11_tests=disabled">
+      <pkg-config>libsoup-3.0.pc</pkg-config>
+      <dependencies>
+        <dep package="glib"/>
+        <dep package="glib-networking"/>
+        <dep package="libpsl"/>
+      </dependencies>
+      <branch module="/sources/libsoup/3.2/libsoup-${version}.tar.xz"
+              version="3.2.2"
+              repo="download.gnome.org"
+              hash="sha256:83673c685b910fb7d39f1f28eee5afbefb71c05798fc350ac3bf1b885e1efaa1">
+      </branch>
+    </meson>
+  </if>
 
   <autotools id="libpsl" autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
     <pkg-config>libpsl.pc</pkg-config>
@@ -164,15 +172,13 @@
             hash="sha256:85803ccbdbdd7a3b03d930187cb055f1353596969c1f92ebec2db839fa4f834a"/>
   </autotools>
 
-  <!-- glib needed to upgrade gdbus-codegen -->
   <meson id="glib"
          mesonargs="-Dlibmount=disabled -Dselinux=disabled">
-    <dependencies>
-      <dep package="libffi"/>
-    </dependencies>
-    <branch module="/sources/glib/2.70/glib-${version}.tar.xz" version="2.70.0"
+    <pkg-config>glib-2.0.pc</pkg-config>
+    <branch module="/sources/glib/2.72/glib-${version}.tar.xz"
+            version="2.72.4"
             repo="download.gnome.org"
-            hash="sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742">
+            hash="sha256:8848aba518ba2f4217d144307a1d6cb9afcc92b54e5c13ac1f8c4d4608e96f0e">
     </branch>
   </meson>
 
@@ -218,5 +224,35 @@
       <dep package="at-spi2-core"/>
     </dependencies>
   </meson>
+
+  <!-- libjxl required for JPEGXL support -->
+  <cmake id="libjxl"
+         cmakeargs="-DBUILD_TESTING=OFF
+                    -DPROVISION_DEPENDENCIES=ON
+                    -DJPEGXL_ENABLE_FUZZERS=OFF
+                    -DJPEGXL_ENABLE_DEVTOOLS=OFF
+                    -DJPEGXL_ENABLE_TOOLS=OFF
+                    -DJPEGXL_ENABLE_MANPAGES=OFF
+                    -DJPEGXL_ENABLE_BENCHMARK=OFF
+                    -DJPEGXL_ENABLE_EXAMPLES=OFF
+                    -DJPEGXL_ENABLE_JNI=OFF
+                    -DJPEGXL_ENABLE_VIEWERS=OFF
+                    -DJPEGXL_ENABLE_TCMALLOC=OFF
+                    -DJPEGXL_ENABLE_PLUGINS=OFF
+                    -DJPEGXL_ENABLE_COVERAGE=OFF
+                    -DJPEGXL_ENABLE_TRANSCODE_JPEG=OFF
+                    -DJPEGXL_ENABLE_SJPEG=OFF
+                    -DJPEGXL_STATIC=OFF
+                    -DJPEGXL_WARNINGS_AS_ERRORS=OFF
+                    -DJPEGXL_ENABLE_SKCMS=ON">
+    <pkg-config>libjxl.pc</pkg-config>
+    <branch module="libjxl/libjxl.git"
+            version="0.6.1"
+            tag="v0.6.1"
+            checkoutdir="libjxl-0.6.1"
+            repo="github.com">
+      <patch file="libjxl-add-cmake-flag-provision-dependencies.patch" strip="1"/>
+    </branch>
+  </cmake>
 
 </moduleset>

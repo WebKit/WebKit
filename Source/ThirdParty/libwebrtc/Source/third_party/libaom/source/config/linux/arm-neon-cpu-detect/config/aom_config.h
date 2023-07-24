@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Alliance for Open Media. All rights reserved
+ * Copyright (c) 2023, Alliance for Open Media. All rights reserved
  *
  * This source code is subject to the terms of the BSD 2 Clause License and
  * the Alliance for Open Media Patent License 1.0. If the BSD 2 Clause License
@@ -11,7 +11,6 @@
 #ifndef AOM_CONFIG_H_
 #define AOM_CONFIG_H_
 #define ARCH_ARM 1
-#define ARCH_MIPS 0
 #define ARCH_PPC 0
 #define ARCH_X86 0
 #define ARCH_X86_64 0
@@ -29,6 +28,7 @@
 #define CONFIG_COLLECT_COMPONENT_TIMING 0
 #define CONFIG_COLLECT_PARTITION_STATS 0
 #define CONFIG_COLLECT_RD_STATS 0
+#define CONFIG_CWG_C013 0
 #define CONFIG_DEBUG 0
 #define CONFIG_DENOISE 1
 #define CONFIG_DISABLE_FULL_PIXEL_SPLIT_8X8 1
@@ -49,6 +49,7 @@
 #define CONFIG_NORMAL_TILE_MODE 1
 #define CONFIG_OPTICAL_FLOW_API 0
 #define CONFIG_OS_SUPPORT 1
+#define CONFIG_OUTPUT_FRAME_SIZE 0
 #define CONFIG_PARTITION_SEARCH_ORDER 0
 #define CONFIG_PIC 1
 #define CONFIG_RATECTRL_LOG 0
@@ -57,6 +58,7 @@
 #define CONFIG_REALTIME_ONLY 1
 #define CONFIG_RT_ML_PARTITIONING 0
 #define CONFIG_RUNTIME_CPU_DETECT 1
+#define CONFIG_SALIENCY_MAP 0
 #define CONFIG_SHARED 0
 #define CONFIG_SIZE_LIMIT 1
 #define CONFIG_SPATIAL_RESAMPLING 1
@@ -69,14 +71,11 @@
 #define DECODE_HEIGHT_LIMIT 16384
 #define DECODE_WIDTH_LIMIT 16384
 #define FORCE_HIGHBITDEPTH_DECODING 0
+#define HAVE_ARM_CRC32 0
 #define HAVE_AVX 0
 #define HAVE_AVX2 0
-#define HAVE_DSPR2 0
 #define HAVE_FEXCEPT 1
-#define HAVE_MIPS32 0
-#define HAVE_MIPS64 0
 #define HAVE_MMX 0
-#define HAVE_MSA 0
 #define HAVE_NEON 1
 #define HAVE_PTHREAD_H 1
 #define HAVE_SSE 0

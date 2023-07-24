@@ -30,12 +30,12 @@
 #include "modules/audio_processing/include/mock_audio_processing.h"
 #include "modules/rtp_rtcp/mocks/mock_rtcp_bandwidth_observer.h"
 #include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
-#include "rtc_base/task_queue_for_test.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 #include "test/mock_audio_encoder.h"
 #include "test/mock_audio_encoder_factory.h"
 #include "test/scoped_key_value_config.h"
+#include "test/time_controller/real_time_controller.h"
 
 namespace webrtc {
 namespace test {
@@ -66,7 +66,9 @@ const double kEchoReturnLossEnhancement = 101;
 const double kResidualEchoLikelihood = -1.0f;
 const double kResidualEchoLikelihoodMax = 23.0f;
 const CallSendStatistics kCallStats = {112, 12, 13456, 17890};
-const ReportBlock kReportBlock = {456, 780, 123, 567, 890, 132, 143, 13354};
+constexpr int kFractionLost = 123;
+constexpr int kCumulativeLost = 567;
+constexpr uint32_t kInterarrivalJitter = 132;
 const int kTelephoneEventPayloadType = 123;
 const int kTelephoneEventPayloadFrequency = 65432;
 const int kTelephoneEventCode = 45;
@@ -148,17 +150,12 @@ struct ConfigHelper {
   ConfigHelper(bool audio_bwe_enabled,
                bool expect_set_encoder_call,
                bool use_null_audio_processing)
-      : clock_(1000000),
-        task_queue_factory_(CreateDefaultTaskQueueFactory()),
-        stream_config_(/*send_transport=*/nullptr),
+      : stream_config_(/*send_transport=*/nullptr),
         audio_processing_(
             use_null_audio_processing
                 ? nullptr
                 : rtc::make_ref_counted<NiceMock<MockAudioProcessing>>()),
         bitrate_allocator_(&limit_observer_),
-        worker_queue_(task_queue_factory_->CreateTaskQueue(
-            "ConfigHelper_worker_queue",
-            TaskQueueFactory::Priority::NORMAL)),
         audio_encoder_(nullptr) {
     using ::testing::Invoke;
 
@@ -189,13 +186,11 @@ struct ConfigHelper {
   }
 
   std::unique_ptr<internal::AudioSendStream> CreateAudioSendStream() {
-    EXPECT_CALL(rtp_transport_, GetWorkerQueue())
-        .WillRepeatedly(Return(&worker_queue_));
     return std::unique_ptr<internal::AudioSendStream>(
         new internal::AudioSendStream(
-            Clock::GetRealTimeClock(), stream_config_, audio_state_,
-            task_queue_factory_.get(), &rtp_transport_, &bitrate_allocator_,
-            &event_log_, absl::nullopt,
+            time_controller_.GetClock(), stream_config_, audio_state_,
+            time_controller_.GetTaskQueueFactory(), &rtp_transport_,
+            &bitrate_allocator_, &event_log_, absl::nullopt,
             std::unique_ptr<voe::ChannelSendInterface>(channel_send_),
             field_trials));
   }
@@ -286,12 +281,16 @@ struct ConfigHelper {
     using ::testing::SetArgPointee;
     using ::testing::SetArgReferee;
 
-    std::vector<ReportBlock> report_blocks;
-    webrtc::ReportBlock block = kReportBlock;
+    std::vector<ReportBlockData> report_blocks;
+    ReportBlockData block;
+    block.set_source_ssrc(780);
+    block.set_fraction_lost_raw(kFractionLost);
+    block.set_cumulative_lost(kCumulativeLost);
+    block.set_jitter(kInterarrivalJitter);
     report_blocks.push_back(block);  // Has wrong SSRC.
-    block.source_SSRC = kSsrc;
+    block.set_source_ssrc(kSsrc);
     report_blocks.push_back(block);  // Correct block.
-    block.fraction_lost = 0;
+    block.set_fraction_lost_raw(0);
     report_blocks.push_back(block);  // Duplicate SSRC, bad fraction_lost.
 
     EXPECT_TRUE(channel_send_);
@@ -320,13 +319,10 @@ struct ConfigHelper {
     }
   }
 
-  TaskQueueForTest* worker() { return &worker_queue_; }
-
   test::ScopedKeyValueConfig field_trials;
 
  private:
-  SimulatedClock clock_;
-  std::unique_ptr<TaskQueueFactory> task_queue_factory_;
+  RealTimeController time_controller_;
   rtc::scoped_refptr<AudioState> audio_state_;
   AudioSendStream::Config stream_config_;
   ::testing::StrictMock<MockChannelSend>* channel_send_ = nullptr;
@@ -338,9 +334,6 @@ struct ConfigHelper {
   ::testing::NiceMock<MockRtpRtcpInterface> rtp_rtcp_;
   ::testing::NiceMock<MockLimitObserver> limit_observer_;
   BitrateAllocator bitrate_allocator_;
-  // `worker_queue` is defined last to ensure all pending tasks are cancelled
-  // and deleted before any other members.
-  TaskQueueForTest worker_queue_;
   std::unique_ptr<AudioEncoder> audio_encoder_;
 };
 
@@ -448,12 +441,12 @@ TEST(AudioSendStreamTest, GetStats) {
     EXPECT_EQ(kCallStats.header_and_padding_bytes_sent,
               stats.header_and_padding_bytes_sent);
     EXPECT_EQ(kCallStats.packetsSent, stats.packets_sent);
-    EXPECT_EQ(kReportBlock.cumulative_num_packets_lost, stats.packets_lost);
-    EXPECT_EQ(Q8ToFloat(kReportBlock.fraction_lost), stats.fraction_lost);
+    EXPECT_EQ(stats.packets_lost, kCumulativeLost);
+    EXPECT_FLOAT_EQ(stats.fraction_lost, Q8ToFloat(kFractionLost));
     EXPECT_EQ(kIsacFormat.name, stats.codec_name);
-    EXPECT_EQ(static_cast<int32_t>(kReportBlock.interarrival_jitter /
-                                   (kIsacFormat.clockrate_hz / 1000)),
-              stats.jitter_ms);
+    EXPECT_EQ(stats.jitter_ms,
+              static_cast<int32_t>(kInterarrivalJitter /
+                                   (kIsacFormat.clockrate_hz / 1000)));
     EXPECT_EQ(kCallStats.rttMs, stats.rtt_ms);
     EXPECT_EQ(0, stats.audio_level);
     EXPECT_EQ(0, stats.total_input_energy);
@@ -552,7 +545,7 @@ TEST(AudioSendStreamTest, SendCodecAppliesAudioNetworkAdaptor) {
     auto stream_config = helper.config();
     stream_config.audio_network_adaptor_config = kAnaReconfigString;
 
-    send_stream->Reconfigure(stream_config);
+    send_stream->Reconfigure(stream_config, nullptr);
   }
 }
 
@@ -592,7 +585,7 @@ TEST(AudioSendStreamTest, AudioNetworkAdaptorReceivesOverhead) {
     auto stream_config = helper.config();
     stream_config.audio_network_adaptor_config = kAnaConfigString;
 
-    send_stream->Reconfigure(stream_config);
+    send_stream->Reconfigure(stream_config, nullptr);
   }
 }
 
@@ -638,7 +631,7 @@ TEST(AudioSendStreamTest, DoesNotPassHigherBitrateThanMaxBitrate) {
     update.packet_loss_ratio = 0;
     update.round_trip_time = TimeDelta::Millis(50);
     update.bwe_period = TimeDelta::Millis(6000);
-    helper.worker()->SendTask([&] { send_stream->OnBitrateUpdated(update); });
+    send_stream->OnBitrateUpdated(update);
   }
 }
 
@@ -654,7 +647,7 @@ TEST(AudioSendStreamTest, SSBweTargetInRangeRespected) {
     BitrateAllocationUpdate update;
     update.target_bitrate =
         DataRate::BitsPerSec(helper.config().max_bitrate_bps - 5000);
-    helper.worker()->SendTask([&] { send_stream->OnBitrateUpdated(update); });
+    send_stream->OnBitrateUpdated(update);
   }
 }
 
@@ -670,7 +663,7 @@ TEST(AudioSendStreamTest, SSBweFieldTrialMinRespected) {
                                   Eq(DataRate::KilobitsPerSec(6)))));
     BitrateAllocationUpdate update;
     update.target_bitrate = DataRate::KilobitsPerSec(1);
-    helper.worker()->SendTask([&] { send_stream->OnBitrateUpdated(update); });
+    send_stream->OnBitrateUpdated(update);
   }
 }
 
@@ -686,7 +679,7 @@ TEST(AudioSendStreamTest, SSBweFieldTrialMaxRespected) {
                                   Eq(DataRate::KilobitsPerSec(64)))));
     BitrateAllocationUpdate update;
     update.target_bitrate = DataRate::KilobitsPerSec(128);
-    helper.worker()->SendTask([&] { send_stream->OnBitrateUpdated(update); });
+    send_stream->OnBitrateUpdated(update);
   }
 }
 
@@ -706,7 +699,7 @@ TEST(AudioSendStreamTest, SSBweWithOverhead) {
                     &BitrateAllocationUpdate::target_bitrate, Eq(bitrate))));
     BitrateAllocationUpdate update;
     update.target_bitrate = bitrate;
-    helper.worker()->SendTask([&] { send_stream->OnBitrateUpdated(update); });
+    send_stream->OnBitrateUpdated(update);
   }
 }
 
@@ -726,7 +719,7 @@ TEST(AudioSendStreamTest, SSBweWithOverheadMinRespected) {
                     &BitrateAllocationUpdate::target_bitrate, Eq(bitrate))));
     BitrateAllocationUpdate update;
     update.target_bitrate = DataRate::KilobitsPerSec(1);
-    helper.worker()->SendTask([&] { send_stream->OnBitrateUpdated(update); });
+    send_stream->OnBitrateUpdated(update);
   }
 }
 
@@ -746,7 +739,7 @@ TEST(AudioSendStreamTest, SSBweWithOverheadMaxRespected) {
                     &BitrateAllocationUpdate::target_bitrate, Eq(bitrate))));
     BitrateAllocationUpdate update;
     update.target_bitrate = DataRate::KilobitsPerSec(128);
-    helper.worker()->SendTask([&] { send_stream->OnBitrateUpdated(update); });
+    send_stream->OnBitrateUpdated(update);
   }
 }
 
@@ -764,7 +757,7 @@ TEST(AudioSendStreamTest, ProbingIntervalOnBitrateUpdated) {
     update.packet_loss_ratio = 0;
     update.round_trip_time = TimeDelta::Millis(50);
     update.bwe_period = TimeDelta::Millis(5000);
-    helper.worker()->SendTask([&] { send_stream->OnBitrateUpdated(update); });
+    send_stream->OnBitrateUpdated(update);
   }
 }
 
@@ -785,7 +778,7 @@ TEST(AudioSendStreamTest, DontRecreateEncoder) {
         AudioSendStream::Config::SendCodecSpec(9, kG722Format);
     helper.config().send_codec_spec->cng_payload_type = 105;
     auto send_stream = helper.CreateAudioSendStream();
-    send_stream->Reconfigure(helper.config());
+    send_stream->Reconfigure(helper.config(), nullptr);
   }
 }
 
@@ -810,7 +803,7 @@ TEST(AudioSendStreamTest, ReconfigureTransportCcResetsFirst) {
           .Times(1);
     }
 
-    send_stream->Reconfigure(new_config);
+    send_stream->Reconfigure(new_config, nullptr);
   }
 }
 
@@ -866,7 +859,7 @@ TEST(AudioSendStreamTest, AudioOverheadChanged) {
         DataRate::BitsPerSec(helper.config().max_bitrate_bps) +
         kMaxOverheadRate;
     EXPECT_CALL(*helper.channel_send(), OnBitrateAllocation);
-    helper.worker()->SendTask([&] { send_stream->OnBitrateUpdated(update); });
+    send_stream->OnBitrateUpdated(update);
 
     EXPECT_EQ(audio_overhead_per_packet_bytes,
               send_stream->TestOnlyGetPerPacketOverheadBytes());
@@ -874,7 +867,7 @@ TEST(AudioSendStreamTest, AudioOverheadChanged) {
     EXPECT_CALL(*helper.rtp_rtcp(), ExpectedPerPacketOverhead)
         .WillRepeatedly(Return(audio_overhead_per_packet_bytes + 20));
     EXPECT_CALL(*helper.channel_send(), OnBitrateAllocation);
-    helper.worker()->SendTask([&] { send_stream->OnBitrateUpdated(update); });
+    send_stream->OnBitrateUpdated(update);
 
     EXPECT_EQ(audio_overhead_per_packet_bytes + 20,
               send_stream->TestOnlyGetPerPacketOverheadBytes());
@@ -898,7 +891,7 @@ TEST(AudioSendStreamTest, OnAudioAndTransportOverheadChanged) {
         DataRate::BitsPerSec(helper.config().max_bitrate_bps) +
         kMaxOverheadRate;
     EXPECT_CALL(*helper.channel_send(), OnBitrateAllocation);
-    helper.worker()->SendTask([&] { send_stream->OnBitrateUpdated(update); });
+    send_stream->OnBitrateUpdated(update);
 
     EXPECT_EQ(
         transport_overhead_per_packet_bytes + audio_overhead_per_packet_bytes,
@@ -919,11 +912,11 @@ TEST(AudioSendStreamTest, ReconfigureWithFrameEncryptor) {
     new_config.frame_encryptor = mock_frame_encryptor_0;
     EXPECT_CALL(*helper.channel_send(), SetFrameEncryptor(Ne(nullptr)))
         .Times(1);
-    send_stream->Reconfigure(new_config);
+    send_stream->Reconfigure(new_config, nullptr);
 
     // Not updating the frame encryptor shouldn't force it to reconfigure.
     EXPECT_CALL(*helper.channel_send(), SetFrameEncryptor(_)).Times(0);
-    send_stream->Reconfigure(new_config);
+    send_stream->Reconfigure(new_config, nullptr);
 
     // Updating frame encryptor to a new object should force a call to the
     // proxy.
@@ -933,7 +926,7 @@ TEST(AudioSendStreamTest, ReconfigureWithFrameEncryptor) {
     new_config.crypto_options.sframe.require_frame_encryption = true;
     EXPECT_CALL(*helper.channel_send(), SetFrameEncryptor(Ne(nullptr)))
         .Times(1);
-    send_stream->Reconfigure(new_config);
+    send_stream->Reconfigure(new_config, nullptr);
   }
 }
 }  // namespace test

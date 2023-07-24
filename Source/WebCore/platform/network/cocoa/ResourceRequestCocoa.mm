@@ -55,8 +55,8 @@ ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
 #if HAVE(PRIVACY_PROXY_FAIL_CLOSED_FOR_UNREACHABLE_HOSTS)
     setPrivacyProxyFailClosedForUnreachableNonMainHosts(nsRequest._privacyProxyFailClosedForUnreachableNonMainHosts);
 #endif
-#if HAVE(SYSTEM_NETWORK_CONNECTION_INTEGRITY_SUPPORT)
-    setUseNetworkConnectionIntegrity(isNetworkConnectionIntegrityEnabled(nsRequest));
+#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+    setUseAdvancedPrivacyProtections(nsRequest._useEnhancedPrivacyMode);
 #endif
 }
 
@@ -67,7 +67,7 @@ ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, con
         m_nsRequest = platformData.m_urlRequest;
         setIsAppInitiated(*platformData.m_isAppInitiated);
         setPrivacyProxyFailClosedForUnreachableNonMainHosts(platformData.m_privacyProxyFailClosedForUnreachableNonMainHosts);
-        setUseNetworkConnectionIntegrity(platformData.m_useNetworkConnectionIntegrity);
+        setUseAdvancedPrivacyProtections(platformData.m_useAdvancedPrivacyProtections);
     }
 
     setCachePartition(cachePartition);
@@ -124,7 +124,7 @@ ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() co
         isAppInitiated(),
         requester(),
         privacyProxyFailClosedForUnreachableNonMainHosts(),
-        useNetworkConnectionIntegrity(),
+        useAdvancedPrivacyProtections(),
     };
 }
 
@@ -251,8 +251,8 @@ static void configureRequestWithData(NSMutableURLRequest *request, const Resourc
     request._privacyProxyFailClosedForUnreachableNonMainHosts = data.m_privacyProxyFailClosedForUnreachableNonMainHosts;
 #endif
 
-#if HAVE(SYSTEM_NETWORK_CONNECTION_INTEGRITY_SUPPORT)
-    setNetworkConnectionIntegrityEnabled(request, data.m_useNetworkConnectionIntegrity);
+#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+    request._useEnhancedPrivacyMode = data.m_useAdvancedPrivacyProtections;
 #endif
 }
 
@@ -321,7 +321,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     }
 
 #if PLATFORM(MAC)
-    if (m_requestData.m_url.isLocalFile()) {
+    if (m_requestData.m_url.protocolIsFile()) {
         auto filePath = m_requestData.m_url.fileSystemPath();
         if (!filePath.isNull()) {
             auto fileDevice = FileSystem::getFileDeviceId(filePath);

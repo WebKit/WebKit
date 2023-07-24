@@ -11,10 +11,8 @@
 #include <memory>
 
 #include "api/rtp_packet_infos.h"
-#include "modules/video_coding/frame_object.h"
-#include "modules/video_coding/packet_buffer.h"
+#include "modules/rtp_rtcp/source/frame_object.h"
 #include "modules/video_coding/rtp_frame_reference_finder.h"
-#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -58,10 +56,6 @@ class DataReader {
   size_t offset_ = 0;
 };
 
-class NullCallback : public OnCompleteFrameCallback {
-  void OnCompleteFrame(std::unique_ptr<EncodedFrame> frame) override {}
-};
-
 absl::optional<RTPVideoHeader::GenericDescriptorInfo>
 GenerateGenericFrameDependencies(DataReader* reader) {
   absl::optional<RTPVideoHeader::GenericDescriptorInfo> result;
@@ -91,8 +85,7 @@ GenerateGenericFrameDependencies(DataReader* reader) {
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
   DataReader reader(data, size);
-  NullCallback cb;
-  RtpFrameReferenceFinder reference_finder(&cb);
+  RtpFrameReferenceFinder reference_finder;
 
   auto codec = static_cast<VideoCodecType>(reader.GetNum<uint8_t>() % 5);
 

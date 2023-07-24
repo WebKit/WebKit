@@ -110,7 +110,7 @@ def to_base_51(x):
     return ret
 
 def to_literal(x):
-    ret = "{{\n#if defined(BORINGSSL_CURVE25519_64BIT)\n"
+    ret = "{{\n#if defined(OPENSSL_64_BIT)\n"
     ret += ", ".join(map(str, to_base_51(x)))
     ret += "\n#else\n"
     ret += ", ".join(map(str, to_base_25_5(x)))

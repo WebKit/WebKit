@@ -73,14 +73,14 @@ layer at (0,0) size 800x612
             text run at (0,0) width 72: "$%1 @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
 layer at (8,120) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,112) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,112) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,202) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,194) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,194) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,284) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,276) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,276) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,366) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,358) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,358) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,448) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,440) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,440) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,530) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,522) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,522) size 784x2 [color=#808080] [border: (1px inset #808080)]

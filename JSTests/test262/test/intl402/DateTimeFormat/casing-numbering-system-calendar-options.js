@@ -7,6 +7,7 @@ description: >
     Tests that the options numberingSystem and calendar are mapped
     to lower case properly.
 author: Caio Lima
+features: [Array.prototype.includes]
 ---*/
 
 let defaultLocale = new Intl.DateTimeFormat().resolvedOptions().locale;

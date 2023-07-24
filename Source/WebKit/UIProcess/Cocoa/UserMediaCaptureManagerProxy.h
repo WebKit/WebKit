@@ -66,12 +66,13 @@ public:
 #if ENABLE(APP_PRIVACY_REPORT)
         virtual void setTCCIdentity() { }
 #endif
-        virtual void startProducingData(WebCore::RealtimeMediaSource::Type) { }
+        virtual void startProducingData(WebCore::CaptureDevice::DeviceType) { }
         virtual RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() { return nullptr; }
     };
     explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);
     ~UserMediaCaptureManagerProxy();
 
+    void close();
     void clear();
 
     void setOrientation(WebCore::IntDegrees);
@@ -106,8 +107,8 @@ private:
     WebCore::OrientationNotifier m_orientationNotifier { 0 };
 
     struct PageSources {
-        WeakPtr<WebCore::RealtimeMediaSource> microphoneSource;
-        WeakHashSet<WebCore::RealtimeMediaSource> cameraSources;
+        ThreadSafeWeakPtr<WebCore::RealtimeMediaSource> microphoneSource;
+        ThreadSafeWeakHashSet<WebCore::RealtimeMediaSource> cameraSources;
     };
     HashMap<WebCore::PageIdentifier, PageSources> m_pageSources;
 };

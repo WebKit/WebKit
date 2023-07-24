@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "UIKitUtilities.h"
 #import <wtf/WeakObjCPtr.h>
 
 @implementation WKHighlightLongPressGestureRecognizer {
@@ -45,12 +46,8 @@
 {
     [super touchesBegan:touches withEvent:event];
 
-    for (UITouch *touch in touches) {
-        if ([touch.view isKindOfClass:UIScrollView.class]) {
-            _lastTouchedScrollView = (UIScrollView *)touch.view;
-            break;
-        }
-    }
+    if (auto scrollView = WebKit::scrollViewForTouches(touches))
+        _lastTouchedScrollView = scrollView;
 }
 
 - (UIScrollView *)lastTouchedScrollView

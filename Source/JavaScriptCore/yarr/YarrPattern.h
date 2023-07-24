@@ -49,7 +49,7 @@ enum class CompileMode : uint8_t {
 
 struct CharacterRange {
     UChar32 begin { 0 };
-    UChar32 end { 0x10ffff };
+    UChar32 end { UCHAR_MAX_VALUE };
 
     CharacterRange(UChar32 begin, UChar32 end)
         : begin(begin)

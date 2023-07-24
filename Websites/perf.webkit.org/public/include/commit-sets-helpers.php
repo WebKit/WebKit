@@ -4,10 +4,20 @@ require_once('repository-group-finder.php');
 require_once('commit-log-fetcher.php');
 
 # FIXME: Should create a helper class for below 3 helper functions to avoid passing long argument list.
-function create_test_group_and_build_requests($db, $commit_sets, $task_id, $name, $author, $triggerable_id, $platform_id, $test_id, $repetition_count, $repetition_type, $needs_notification)
+function create_test_group_and_build_requests($db, $commit_sets, $test_parameter_sets, $task_id, $name, $author,
+                                              $triggerable_id, $platform_id, $test_id, $repetition_count,
+                                              $repetition_type, $needs_notification)
 {
     assert(in_array($repetition_type, array('alternating', 'sequential', 'paired-parallel')));
-    list ($build_configuration_list, $test_configuration_list) = insert_commit_sets_and_construct_configuration_list($db, $commit_sets);
+
+    if (is_null($test_parameter_sets)) {
+        $test_parameter_sets = array();
+    } elseif (count($test_parameter_sets) != count($commit_sets)) {
+        exit_with_error('InconsistentCommitSetsAndTestParameterSets',
+            array('revisionSets' => $commit_sets, 'TestParameterSets' => $test_parameter_sets));
+    }
+
+    list ($build_configuration_list, $test_configuration_list) = insert_commit_sets_test_parameter_sets_and_construct_configuration_list($db, $commit_sets, $test_parameter_sets);
 
     $group_id = $db->insert_row('analysis_test_groups', 'testgroup',
         array('task' => $task_id, 'name' => $name, 'author' => $author, 'needs_notification' => $needs_notification,
@@ -33,13 +43,13 @@ function create_test_group_and_build_requests($db, $commit_sets, $task_id, $name
     return $group_id;
 }
 
-function insert_commit_sets_and_construct_configuration_list($db, $commit_sets)
+function insert_commit_sets_test_parameter_sets_and_construct_configuration_list($db, $commit_sets, $test_parameter_sets)
 {
     $repository_group_with_builds = array();
     $test_configuration_list = array();
     $build_configuration_list = array();
 
-    foreach ($commit_sets as $commit_list) {
+    foreach (array_map(null, $commit_sets, $test_parameter_sets) as list($commit_list, $test_parameters_list)) {
         $commit_set_id = $db->insert_row('commit_sets', 'commitset', array());
         $need_to_build = FALSE;
         foreach ($commit_list['set'] as $commit_row) {
@@ -49,15 +59,29 @@ function insert_commit_sets_and_construct_configuration_list($db, $commit_sets)
             $need_to_build = $need_to_build || $requires_build;
             $db->insert_row('commit_set_items', 'commitset', $commit_row, 'commit');
         }
+
+        if (is_null($test_parameters_list)) {
+            $test_parameter_set_id = NULL;
+        } else {
+            $test_parameter_set_id = $db->insert_row('test_parameter_sets', 'testparamset', array());
+            foreach ($test_parameters_list['set'] as &$test_parameter) {
+                $test_parameter['set'] = $test_parameter_set_id;
+                $db->insert_row('test_parameter_set_items', 'testparamset', $test_parameter, 'set');
+            }
+            $need_to_build = $need_to_build || $test_parameters_list['need_to_build'];
+        }
+
         $repository_group = $commit_list['repository_group'];
         if ($need_to_build)
             $repository_group_with_builds[$repository_group] = TRUE;
-        array_push($test_configuration_list, array('commit_set' => $commit_set_id, 'repository_group' => $repository_group));
+
+        $test_configuration_list[] = array('commit_set' => $commit_set_id, 'repository_group' => $repository_group,
+            'test_parameter_set' => $test_parameter_set_id);
     }
 
     foreach ($test_configuration_list as &$config) {
         if (array_get($repository_group_with_builds, $config['repository_group']))
-            array_push($build_configuration_list, $config);
+            $build_configuration_list[] = $config;
     }
     return array($build_configuration_list, $test_configuration_list);
 }
@@ -71,7 +95,8 @@ function insert_build_request_for_configuration($db, $configuration, $order, $tr
         'test' => $test_id,
         'group' => $group_id,
         'order' => $order,
-        'commit_set' => $configuration['commit_set']));
+        'commit_set' => $configuration['commit_set'],
+        'test_parameter_set' => $configuration['test_parameter_set']));
 }
 
 function commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list)
@@ -166,5 +191,77 @@ function commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list
             $commit_set_item['requires_build'] = TRUE;
     }
     return $commit_set_list;
+}
+
+function test_parameter_sets_from_test_parameters($db, $platform_id, $test_id, $test_parameters_list)
+{
+    if (is_null($test_parameters_list))
+        return NULL;
+
+    if (count($test_parameters_list) < 2)
+        exit_with_error('InvalidTestParametersList', array('test_parameters_list' => $test_parameters_list));
+
+    $triggerable_configuration = $db->select_first_row('triggerable_configurations', 'trigconfig', array('test' => $test_id, 'platform' => $platform_id));
+    if (!$triggerable_configuration)
+        exit_with_error('TriggerableNotFoundForTestAndPlatform', array('test' => $test_id, 'platform' => $platform_id));
+
+    $trigger_config_id = $triggerable_configuration['trigconfig_id'];
+
+    $test_parameter_rows= $db->query_and_fetch_all('SELECT testparam_id, testparam_name, testparam_type,
+        testparam_has_value, testparam_has_file
+        FROM triggerable_configuration_test_parameters JOIN test_parameters
+            ON triggerable_configuration_test_parameters.trigconfigtestparam_parameter = test_parameters.testparam_id
+        WHERE trigconfigtestparam_config = $1', array($trigger_config_id));
+
+    $parameter_by_id = array();
+
+    foreach($test_parameter_rows as &$row) {
+        $parameter_by_id[$row['testparam_id']] = array(
+            'name' => $row['testparam_name'],
+            'type' => $row['testparam_type'],
+            'has_value' => Database::is_true($row['testparam_has_value']),
+            'has_file' => Database::is_true($row['testparam_has_file']),
+        );
+    }
+
+    $test_parameter_set_list = array();
+    foreach ($test_parameters_list as &$test_parameters) {
+        if (is_null($test_parameters) || !count($test_parameters)) {
+            $test_parameter_set_list[] = NULL;
+            continue;
+        }
+
+        $test_parameter_set = array('set' => array(), 'need_to_build' => FALSE);
+        foreach($test_parameters as $parameter_id => $entry) {
+            if (!array_key_exists($parameter_id, $parameter_by_id))
+                exit_with_error('UnsupportedTestParameter', array('parameter' => $parameter_id, 'supportedParameters' => array_keys($parameter_by_id)));
+            $parameter = $parameter_by_id[$parameter_id];
+            $test_parameter = array('parameter' => $parameter_id);
+            if (!is_array($entry))
+                exit_with_error('InvalidTestParameterEntry', array('parameter' => $parameter, 'entry' => $entry));
+            $has_value = $parameter['has_value'];
+            if ($has_value) {
+                if (!array_key_exists('value', $entry))
+                    exit_with_error('MissingValueForParameter', array('parameter' => $parameter, 'entry' => $entry));
+                $test_parameter['value'] = json_encode($entry['value']);
+            } else if (array_get($entry, 'value')) {
+                exit_with_error('ShouldNotSpecifyValueForParameter', array('parameter' => $parameter, 'entry' => $entry));
+            }
+            $has_file = $parameter['has_file'];
+            if ($has_file) {
+                $file_id = array_get($entry, 'file');
+                if (!is_numeric($file_id) || !$db->select_first_row('uploaded_files', 'file', array('id' => $file_id)))
+                    exit_with_error('InvalidUploadedFileForParameter', array('parameter' => $parameter, 'entry' => $entry));
+                $test_parameter['file'] = $file_id;
+            } else if (array_get($entry, 'file')) {
+                exit_with_error('ShouldNotSpecifyFileForParameter', array('parameter' => $parameter, 'entry' => $entry));
+            }
+            if ($parameter['type'] == 'build')
+                $test_parameter_set['need_to_build'] = TRUE;
+            $test_parameter_set['set'][] = $test_parameter;
+        }
+        $test_parameter_set_list[] = $test_parameter_set;
+    }
+    return $test_parameter_set_list;
 }
 ?>

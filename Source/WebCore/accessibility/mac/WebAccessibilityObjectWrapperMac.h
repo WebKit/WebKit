@@ -51,6 +51,10 @@
 #define NSAccessibilityExpandedTextValueAttribute @"AXExpandedTextValue"
 #endif
 
+#ifndef NSAccessibilityTextCompletionAttribute
+#define NSAccessibilityTextCompletionAttribute @"AXTextCompletion"
+#endif
+
 extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 // TextMarker and TextMarkerRange API constants.

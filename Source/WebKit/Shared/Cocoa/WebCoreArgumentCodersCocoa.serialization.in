@@ -47,16 +47,11 @@ header: <WebCore/ResourceRequest.h>
     std::optional<bool> m_isAppInitiated;
     std::optional<WebCore::ResourceRequestRequester> m_requester;
     bool m_privacyProxyFailClosedForUnreachableNonMainHosts;
-    bool m_useNetworkConnectionIntegrity;
+    bool m_useAdvancedPrivacyProtections;
 };
 
 [Nested] struct WebCore::AttributedString::AttributeValue {
-#if PLATFORM(MAC)
-    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSPresentationIntent>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<NSColor>> value;
-#endif
-#if PLATFORM(IOS_FAMILY)
-    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSPresentationIntent>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<UIColor>> value;
-#endif
+    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSPresentationIntent>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<PlatformColor>, RetainPtr<CGColorRef>> value;
 }
 
 [Nested] struct WebCore::AttributedString::Range {

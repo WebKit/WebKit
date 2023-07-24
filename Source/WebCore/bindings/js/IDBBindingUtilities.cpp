@@ -436,25 +436,25 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return toJS(*lexicalGlobalObject, *globalObject, keyData.maybeCreateIDBKey().get());
 }
 
-static Vector<IDBKeyData> createKeyPathArray(JSGlobalObject& lexicalGlobalObject, JSValue value, const IDBIndexInfo& info, std::optional<IDBKeyPath> objectStoreKeyPath, const IDBKeyData& objectStoreKey)
+static IndexKey::Data createKeyPathArray(JSGlobalObject& lexicalGlobalObject, JSValue value, const IDBIndexInfo& info, std::optional<IDBKeyPath> objectStoreKeyPath, const IDBKeyData& objectStoreKey)
 {
-    auto visitor = WTF::makeVisitor([&](const String& string) -> Vector<IDBKeyData> {
+    auto visitor = WTF::makeVisitor([&](const String& string) -> IndexKey::Data {
         // Value doesn't contain auto-generated key, so we need to manually add key if it is possibly auto-generated.
         if (objectStoreKeyPath && std::holds_alternative<String>(objectStoreKeyPath.value()) && IDBKeyPath(string) == objectStoreKeyPath.value())
-            return { objectStoreKey };
+            return objectStoreKey;
 
         auto idbKey = internalCreateIDBKeyFromScriptValueAndKeyPath(lexicalGlobalObject, value, string);
         if (!idbKey)
-            return { };
+            return nullptr;
 
-        Vector<IDBKeyData> keys;
         if (info.multiEntry() && idbKey->type() == IndexedDB::KeyType::Array) {
+            Vector<IDBKeyData> keys;
             for (auto& key : idbKey->array())
                 keys.append(key.get());
-        } else
-            keys.append(idbKey.get());
-        return keys;
-    }, [&](const Vector<String>& vector) -> Vector<IDBKeyData> {
+            return keys;
+        }
+        return idbKey.get();
+    }, [&](const Vector<String>& vector) -> IndexKey::Data {
         Vector<IDBKeyData> keys;
         for (auto& entry : vector) {
             if (objectStoreKeyPath && std::holds_alternative<String>(objectStoreKeyPath.value()) && IDBKeyPath(entry) == objectStoreKeyPath.value())
@@ -475,7 +475,7 @@ static Vector<IDBKeyData> createKeyPathArray(JSGlobalObject& lexicalGlobalObject
 void generateIndexKeyForValue(JSGlobalObject& lexicalGlobalObject, const IDBIndexInfo& info, JSValue value, IndexKey& outKey, const std::optional<IDBKeyPath>& objectStoreKeyPath, const IDBKeyData& objectStoreKey)
 {
     auto keyDatas = createKeyPathArray(lexicalGlobalObject, value, info, objectStoreKeyPath, objectStoreKey);
-    if (keyDatas.isEmpty())
+    if (std::holds_alternative<std::nullptr_t>(keyDatas))
         return;
 
     outKey = IndexKey(WTFMove(keyDatas));

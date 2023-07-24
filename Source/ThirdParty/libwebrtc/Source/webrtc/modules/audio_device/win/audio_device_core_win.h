@@ -13,12 +13,9 @@
 
 #if (_MSC_VER >= 1400)  // only include for VS 2005 and higher
 
-#include "rtc_base/win32.h"
+#include <wmcodecdsp.h>  // CLSID_CWMAudioAEC
+//(must be before audioclient.h)
 
-#include "modules/audio_device/audio_device_generic.h"
-
-#include <wmcodecdsp.h>   // CLSID_CWMAudioAEC
-                          // (must be before audioclient.h)
 #include <audioclient.h>  // WASAPI
 #include <audiopolicy.h>
 #include <avrt.h>  // Avrt
@@ -27,8 +24,10 @@
 #include <mmdeviceapi.h>  // MMDevice
 
 #include "api/scoped_refptr.h"
+#include "modules/audio_device/audio_device_generic.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/win/scoped_com_initializer.h"
+#include "rtc_base/win32.h"
 
 // Use Multimedia Class Scheduler Service (MMCSS) to boost the thread priority
 #pragma comment(lib, "avrt.lib")

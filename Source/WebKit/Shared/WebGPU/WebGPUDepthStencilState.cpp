@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUDepthStencilState.h>
+#include <WebCore/WebGPUDepthStencilState.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<DepthStencilState> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::DepthStencilState& depthStencilState)
+std::optional<DepthStencilState> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::DepthStencilState& depthStencilState)
 {
     auto stencilFront = convertToBacking(depthStencilState.stencilFront);
     if (!stencilFront)
@@ -47,7 +47,7 @@ std::optional<DepthStencilState> ConvertToBackingContext::convertToBacking(const
     return { { depthStencilState.format, depthStencilState.depthWriteEnabled, depthStencilState.depthCompare, WTFMove(*stencilFront), WTFMove(*stencilBack), depthStencilState.stencilReadMask, depthStencilState.stencilWriteMask, depthStencilState.depthBias, depthStencilState.depthBiasSlopeScale, depthStencilState.depthBiasClamp } };
 }
 
-std::optional<PAL::WebGPU::DepthStencilState> ConvertFromBackingContext::convertFromBacking(const DepthStencilState& depthStencilState)
+std::optional<WebCore::WebGPU::DepthStencilState> ConvertFromBackingContext::convertFromBacking(const DepthStencilState& depthStencilState)
 {
     auto stencilFront = convertFromBacking(depthStencilState.stencilFront);
     if (!stencilFront)

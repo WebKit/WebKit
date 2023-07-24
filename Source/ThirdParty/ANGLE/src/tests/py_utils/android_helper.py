@@ -21,16 +21,19 @@ import time
 
 import angle_path_util
 
-from angle_test_util import ANGLE_TRACE_TEST_SUITE
-
 # Currently we only support a single test package name.
 TEST_PACKAGE_NAME = 'com.android.angle.test'
+
+ANGLE_TRACE_TEST_SUITE = 'angle_trace_tests'
 
 
 class _Global(object):
     initialized = False
     is_android = False
     current_suite = None
+    lib_extension = None
+    traces_outside_of_apk = False
+    temp_dir = None
 
 
 def _ApkPath(suite_name):
@@ -65,8 +68,26 @@ def _FindPackageName(apk_path):
 
 
 def _InitializeAndroid(apk_path):
-    _GetAdbRoot()
+    if _GetAdbRoot():
+        # /data/local/tmp/ is not writable by apps.. So use the app path
+        _Global.temp_dir = '/data/data/' + TEST_PACKAGE_NAME + '/tmp/'
+    else:
+        # /sdcard/ is slow (see https://crrev.com/c/3615081 for details)
+        # logging will be fully-buffered, can be truncated on crashes
+        _Global.temp_dir = '/sdcard/Download/'
+
     assert _FindPackageName(apk_path) == TEST_PACKAGE_NAME
+
+    apk_files = subprocess.check_output([_FindAapt(), 'list', apk_path]).decode().split()
+    apk_so_libs = [posixpath.basename(f) for f in apk_files if f.endswith('.so')]
+    if 'libangle_util.cr.so' in apk_so_libs:
+        _Global.lib_extension = '.cr.so'
+    else:
+        assert 'libangle_util.so' in apk_so_libs
+        _Global.lib_extension = '.so'
+    # When traces are outside of the apk this lib is also outside
+    interpreter_so_lib = 'libangle_trace_interpreter' + _Global.lib_extension
+    _Global.traces_outside_of_apk = interpreter_so_lib not in apk_so_libs
 
     if logging.getLogger().isEnabledFor(logging.DEBUG):
         logging.debug(_AdbShell('dumpsys nfc | grep mScreenState || true').decode())
@@ -130,17 +151,26 @@ def _AdbShell(cmd):
 
 
 def _GetAdbRoot():
-    _AdbRun(['root'])
+    shell_id, su_path = _AdbShell('id -u; which su || echo noroot').decode().strip().split('\n')
+    if int(shell_id) == 0:
+        logging.info('adb already got root')
+        return True
 
-    for _ in range(20):
+    if su_path == 'noroot':
+        logging.warning('adb root not available on this device')
+        return False
+
+    logging.info('Getting adb root (may take a few seconds)')
+    _AdbRun(['root'])
+    for _ in range(20):  # `adb root` restarts adbd which can take quite a few seconds
         time.sleep(0.5)
-        try:
-            id_out = _AdbShell('id').decode('ascii')
-            if 'uid=0(root)' in id_out:
-                return
-        except Exception:
-            continue
-    raise Exception("adb root failed")
+        id_out = _AdbShell('id -u').decode('ascii').strip()
+        if id_out == '0':
+            logging.info('adb root succeeded')
+            return True
+
+    # Device has "su" but we couldn't get adb root. Something is wrong.
+    raise Exception('Failed to get adb root')
 
 
 def _ReadDeviceFile(device_path):
@@ -180,15 +210,25 @@ def _GetDeviceApkPath():
 
 
 def _CompareHashes(local_path, device_path):
-    device_hash = _AdbShell('sha256sum -b ' + device_path +
-                            ' 2> /dev/null || true').decode().strip()
+    if device_path.startswith('/data'):
+        # Use run-as for files that reside on /data, which aren't accessible without root
+        device_hash = _AdbShell('run-as ' + TEST_PACKAGE_NAME + ' sha256sum -b ' + device_path +
+                                ' 2> /dev/null || true').decode().strip()
+    else:
+        device_hash = _AdbShell('sha256sum -b ' + device_path +
+                                ' 2> /dev/null || true').decode().strip()
     if not device_hash:
+        logging.debug('_CompareHashes: File not found on device')
         return False  # file not on device
 
     h = hashlib.sha256()
-    with open(local_path, 'rb') as f:
-        for data in iter(lambda: f.read(65536), b''):
-            h.update(data)
+    try:
+        with open(local_path, 'rb') as f:
+            for data in iter(lambda: f.read(65536), b''):
+                h.update(data)
+    except Exception as e:
+        logging.error('An error occurred in _CompareHashes: %s' % e)
+
     return h.hexdigest() == device_hash
 
 
@@ -214,6 +254,7 @@ def _PrepareTestSuite(suite_name):
     _AdbShell('appops set %s MANAGE_EXTERNAL_STORAGE allow || true' % TEST_PACKAGE_NAME)
 
     _AdbShell('mkdir -p /sdcard/chromium_tests_root/')
+    _AdbShell('mkdir -p %s' % _Global.temp_dir)
 
     if suite_name == ANGLE_TRACE_TEST_SUITE:
         _AddRestrictedTracesJson()
@@ -230,15 +271,48 @@ def PrepareRestrictedTraces(traces):
     total_size = 0
     skipped = 0
 
-    def _Push(local_path, path_from_root):
+    # In order to get files to the app's home directory and loadable as libraries, we must first
+    # push them to tmp on the device.  We then use `run-as` which allows copying files from tmp.
+    # Note that `mv` is not allowed with `run-as`.  This means there will briefly be two copies
+    # of the trace on the device, so keep that in mind as space becomes a problem in the future.
+    app_tmp_path = '/data/local/tmp/angle_traces/'
+
+    def _HashesMatch(local_path, device_path):
         nonlocal total_size, skipped
-        device_path = '/sdcard/chromium_tests_root/' + path_from_root
         if _CompareHashes(local_path, device_path):
             skipped += 1
+            return True
         else:
             total_size += os.path.getsize(local_path)
+            return False
+
+    def _Push(local_path, path_from_root):
+        device_path = '/sdcard/chromium_tests_root/' + path_from_root
+        if not _HashesMatch(local_path, device_path):
             _AdbRun(['push', local_path, device_path])
 
+    def _PushLibToAppDir(lib_name):
+        local_path = lib_name
+        device_path = '/data/user/0/com.android.angle.test/angle_traces/' + lib_name
+        if _HashesMatch(local_path, device_path):
+            return
+
+        tmp_path = posixpath.join(app_tmp_path, lib_name)
+        logging.debug('_PushToAppDir: Pushing %s to %s' % (local_path, tmp_path))
+        try:
+            _AdbRun(['push', local_path, tmp_path])
+            _AdbShell('run-as ' + TEST_PACKAGE_NAME + ' cp ' + tmp_path + ' ./angle_traces/')
+            _AdbShell('rm ' + tmp_path)
+        except Exception as e:
+            logging.error('An error occurred in _PushToAppDir: %s' % e)
+        finally:
+            _RemoveDeviceFile(tmp_path)
+
+    # Create the directories we need
+    _AdbShell('mkdir -p ' + app_tmp_path)
+    _AdbShell('run-as ' + TEST_PACKAGE_NAME + ' mkdir -p angle_traces')
+
+    # Set up each trace
     for trace in traces:
         path_from_root = 'src/tests/restricted_traces/' + trace + '/' + trace + '.angledata.gz'
         _Push('../../' + path_from_root, path_from_root)
@@ -246,7 +320,13 @@ def PrepareRestrictedTraces(traces):
         tracegz = 'gen/tracegz_' + trace + '.gz'
         _Push(tracegz, tracegz)
 
-    logging.info('Synced %d trace files (%.1fMB, %d files already ok) in %.1fs', len(traces),
+    if _Global.traces_outside_of_apk:
+        _PushLibToAppDir('libangle_trace_interpreter' + _Global.lib_extension)
+        for trace in traces:
+            lib_name = 'libangle_restricted_traces_' + trace + _Global.lib_extension
+            _PushLibToAppDir(lib_name)
+
+    logging.info('Synced files for %d traces (%.1fMB, %d files already ok) in %.1fs', len(traces),
                  total_size / 1e6, skipped,
                  time.time() - start)
 
@@ -257,7 +337,7 @@ def _RandomHex():
 
 @contextlib.contextmanager
 def _TempDeviceDir():
-    path = '/sdcard/Download/temp_dir-%s' % _RandomHex()
+    path = posixpath.join(_Global.temp_dir, 'temp_dir-%s' % _RandomHex())
     _AdbShell('mkdir -p ' + path)
     try:
         yield path
@@ -267,7 +347,7 @@ def _TempDeviceDir():
 
 @contextlib.contextmanager
 def _TempDeviceFile():
-    path = '/sdcard/Download/temp_file-%s' % _RandomHex()
+    path = posixpath.join(_Global.temp_dir, 'temp_file-%s' % _RandomHex())
     try:
         yield path
     finally:
@@ -432,7 +512,12 @@ def RunTests(test_suite, args, stdoutfile=None, log_output=True):
                 # When listing tests, there may be no output file. We parse stdout anyways.
                 test_output = '{"interrupted": false}'
             else:
-                test_output = _ReadDeviceFile(device_test_output_path)
+                try:
+                    test_output = _ReadDeviceFile(device_test_output_path)
+                except subprocess.CalledProcessError:
+                    logging.error('Unable to read test json output. Stdout:\n%s', output.decode())
+                    result = 1
+                    return result, output.decode(), None
 
             if test_output_path:
                 with open(test_output_path, 'wb') as f:

@@ -1,0 +1,9 @@
+abc
+
+FAIL Highlight iteration is not modified when a new range is added after starting the iteration assert_true: The iteration ends although we added a new range after starting the iteration expected true got false
+FAIL Highlight iteration is not modified when a new range is added after starting the iteration with one range in the Highlight assert_true: The iteration ends after going through all the ranges that were in the Highlight when the iteration started although there was a range addition after starting the iteration expected true got false
+FAIL Highlight iteration is not modified when the range that was pointed to by the iterator was deleted after starting the iteration assert_false: The iteration doesn't end although the range that was pointed to by the iterator was deleted expected false got true
+FAIL Highlight iteration is not modified when the range that was immediately after the one pointed to by the iterator was deleted after starting the iteration assert_false: The iteration doesn't end when you call .next twice since the beginning of the iteration although the second range was deleted expected false got true
+PASS Highlight iteration is not modified when a range that was already visited is deleted and there are still ranges to visit
+FAIL Highlight iteration is not modified when the range that was pointed to by the iterator was deleted using .clear() after starting the iteration assert_false: The iteration doesn't end although the range that was pointed to by the iterator was deleted using .clear() expected false got true
+

@@ -1,0 +1,5 @@
+This should be green
+
+PASS Initially the color is red
+FAIL After display and --foo changes, style() query causes the color to be green assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

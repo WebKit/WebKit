@@ -1,7 +1,0 @@
-
-PASS mspace layout in multicol
-PASS mfrac layout in multicol
-blah
-blah
-blah
-blah

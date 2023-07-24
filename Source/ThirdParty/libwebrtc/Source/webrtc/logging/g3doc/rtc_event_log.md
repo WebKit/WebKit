@@ -1,7 +1,7 @@
-# RTC event log
+<!-- go/cmark -->
+<!--* freshness: {owner: 'terelius' reviewed: '2021-06-02'} *-->
 
-<?% config.freshness.owner = 'terelius' %?>
-<?% config.freshness.reviewed = '2021-06-02' %?>
+# RTC event log
 
 ## Overview
 

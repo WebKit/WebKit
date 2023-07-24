@@ -24,9 +24,11 @@ info: |
        b. Throw a SyntaxError exception.
        c. NOTE A default export cannot be provided by an export *.
 negative:
-  phase: runtime
+  phase: resolution
   type: SyntaxError
 flags: [module]
 ---*/
+
+$DONOTEVALUATE();
 
 import x from './instn-named-err-dflt-thru-star-int_FIXTURE.js';

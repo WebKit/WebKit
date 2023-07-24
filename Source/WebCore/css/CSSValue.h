@@ -103,6 +103,7 @@ public:
     bool isInsetShape() const { return m_classType == InsetShapeClass; }
     bool isLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
     bool isLinearGradientValue() const { return m_classType == LinearGradientClass; }
+    bool isLinearTimingFunctionValue() const { return m_classType == LinearTimingFunctionClass; }
     bool isNamedImageValue() const { return m_classType == NamedImageClass; }
     bool isOffsetRotateValue() const { return m_classType == OffsetRotateClass; }
     bool isPair() const { return m_classType == ValuePairClass; }
@@ -206,6 +207,7 @@ protected:
         PrefixedRadialGradientClass,
 
         // Timing function classes.
+        LinearTimingFunctionClass,
         CubicBezierTimingFunctionClass,
         SpringTimingFunctionClass,
         StepsTimingFunctionClass,

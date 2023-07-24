@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,6 +85,7 @@ WTF::TextStream& operator<<(TextStream& ts, FontVariantAlternates alternates)
             // Separate elements with a space.
             builder.append(builder.isEmpty() ? "": " ", std::forward<Ts>(args)...);
         };
+        // FIXME: These strings needs to be escaped.
         if (!values.stylistic.isNull())
             append("stylistic(", values.stylistic, ")");
         if (values.historicalForms)

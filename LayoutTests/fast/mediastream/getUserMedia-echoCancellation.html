@@ -1,0 +1,11 @@
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+promise_test(async () => {
+    const stream1 = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false } });
+    assert_false(stream1.getAudioTracks()[0].getSettings().echoCancellation);
+
+    const stream2 = await navigator.mediaDevices.getUserMedia({ audio: true });
+    assert_true(stream2.getAudioTracks()[0].getSettings().echoCancellation);
+}, "echoCancellation should be on by default if not explictly disabled");
+</script>

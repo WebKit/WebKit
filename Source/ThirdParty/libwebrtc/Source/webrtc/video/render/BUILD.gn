@@ -1,0 +1,51 @@
+# Copyright (c) 2022 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("incoming_video_stream") {
+  visibility = [ "*" ]
+
+  sources = [
+    "incoming_video_stream.cc",
+    "incoming_video_stream.h",
+  ]
+
+  deps = [
+    ":video_render_frames",
+    "../../api:sequence_checker",
+    "../../api/task_queue:task_queue",
+    "../../api/units:time_delta",
+    "../../api/video:video_frame",
+    "../../rtc_base:checks",
+    "../../rtc_base:event_tracer",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:race_checker",
+    "../../rtc_base:rtc_task_queue",
+  ]
+
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("video_render_frames") {
+  visibility = [ ":*" ]  # Private.
+
+  sources = [
+    "video_render_frames.cc",
+    "video_render_frames.h",
+  ]
+
+  deps = [
+    "../../api/video:video_frame",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:timeutils",
+    "../../system_wrappers:metrics",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}

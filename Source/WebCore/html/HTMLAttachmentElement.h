@@ -37,7 +37,6 @@ class File;
 class HTMLImageElement;
 class RenderAttachment;
 class ShadowRoot;
-class ShareableBitmap;
 class FragmentedSharedBuffer;
 
 class HTMLAttachmentElement final : public HTMLElement {
@@ -60,8 +59,10 @@ public:
 
     WEBCORE_EXPORT void updateAttributes(std::optional<uint64_t>&& newFileSize, const AtomString& newContentType, const AtomString& newFilename);
     WEBCORE_EXPORT void updateEnclosingImageWithData(const String& contentType, Ref<FragmentedSharedBuffer>&& data);
-    WEBCORE_EXPORT void updateThumbnail(const RefPtr<Image>& thumbnail);
-    WEBCORE_EXPORT void updateIcon(const RefPtr<Image>& icon, const WebCore::FloatSize&);
+    WEBCORE_EXPORT void updateThumbnailForNarrowLayout(const RefPtr<Image>& thumbnail);
+    WEBCORE_EXPORT void updateThumbnailForWideLayout(Vector<uint8_t>&&);
+    WEBCORE_EXPORT void updateIconForNarrowLayout(const RefPtr<Image>& icon, const WebCore::FloatSize&);
+    WEBCORE_EXPORT void updateIconForWideLayout(Vector<uint8_t>&&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
@@ -79,6 +80,7 @@ public:
     RefPtr<Image> thumbnail() const { return m_thumbnail; }
     RefPtr<Image> icon() const { return m_icon; }
     void requestIconWithSize(const FloatSize&) const;
+    void requestWideLayoutIconIfNeeded();
     FloatSize iconSize() const { return m_iconSize; }
     void invalidateRendering();
     DOMRectReadOnly* saveButtonClientRect() const;
@@ -88,7 +90,9 @@ public:
     void setImageMenuEnabled(bool value) { m_isImageMenuEnabled = value; }
 #endif
 
-    bool isImageOnly() const { return m_implementation == Implementation::ImageOnly; }
+    bool isWideLayout() const { return m_implementation == Implementation::WideLayout; }
+    HTMLElement* wideLayoutShadowContainer() const { return m_containerElement.get(); }
+    HTMLElement* wideLayoutImageElement() const;
 
 private:
     friend class AttachmentSaveEventListener;
@@ -97,9 +101,12 @@ private:
     virtual ~HTMLAttachmentElement();
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
-    void ensureModernShadowTree(ShadowRoot&);
+    void ensureWideLayoutShadowTree(ShadowRoot&);
     void updateProgress(const AtomString&);
     void updateSaveButton(bool);
+    void updateImage();
+
+    void setNeedsWideLayoutIconRequest();
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool shouldSelectOnMouseDown() final {
@@ -116,8 +123,8 @@ private:
     bool childShouldCreateRenderer(const Node&) const final;
 #endif
 
-    enum class Implementation: uint8_t { Legacy, Modern, ImageOnly };
-    Implementation m_implementation { Implementation::Legacy };
+    enum class Implementation: uint8_t { NarrowLayout, WideLayout };
+    Implementation m_implementation { Implementation::NarrowLayout };
 
     RefPtr<File> m_file;
     String m_uniqueIdentifier;
@@ -125,7 +132,11 @@ private:
     RefPtr<Image> m_icon;
     FloatSize m_iconSize;
 
-    RefPtr<HTMLAttachmentElement> m_innerLegacyAttachment;
+    // The thumbnail is shown if non-empty, otherwise the icon is shown if non-empty.
+    Vector<uint8_t> m_thumbnailForWideLayout;
+    Vector<uint8_t> m_iconForWideLayout;
+
+    RefPtr<HTMLImageElement> m_imageElement;
     RefPtr<HTMLElement> m_containerElement;
     RefPtr<HTMLElement> m_placeholderElement;
     RefPtr<HTMLElement> m_progressElement;
@@ -136,6 +147,8 @@ private:
     RefPtr<HTMLElement> m_saveArea;
     RefPtr<HTMLElement> m_saveButton;
     mutable RefPtr<DOMRectReadOnly> m_saveButtonClientRect;
+
+    bool m_needsWideLayoutIconRequest { false };
 
 #if ENABLE(SERVICE_CONTROLS)
     bool m_isImageMenuEnabled { false };

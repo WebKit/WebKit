@@ -793,6 +793,7 @@ private:
 };
 
 struct MediaConstraints {
+    void setDefaultAudioConstraints();
     void setDefaultVideoConstraints();
     bool isConstraintSet(const Function<bool(const MediaTrackConstraintSetMap&)>&);
 

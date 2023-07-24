@@ -116,36 +116,36 @@ public:
     void setDefaultWebsitePolicies(WebsitePolicies*);
 
 #if PLATFORM(IOS_FAMILY)
-    bool clientNavigationsRunAtForegroundPriority() const { return m_clientNavigationsRunAtForegroundPriority; }
-    void setClientNavigationsRunAtForegroundPriority(bool value) { m_clientNavigationsRunAtForegroundPriority = value; }
+    bool canShowWhileLocked() const { return m_data.canShowWhileLocked; }
+    void setCanShowWhileLocked(bool canShowWhileLocked) { m_data.canShowWhileLocked = canShowWhileLocked; }
 
-    bool canShowWhileLocked() const { return m_canShowWhileLocked; }
-    void setCanShowWhileLocked(bool canShowWhileLocked) { m_canShowWhileLocked = canShowWhileLocked; }
-
-    const RetainPtr<_UIClickInteractionDriving>& clickInteractionDriverForTesting() const { return m_clickInteractionDriverForTesting; }
-    void setClickInteractionDriverForTesting(RetainPtr<_UIClickInteractionDriving>&& driver) { m_clickInteractionDriverForTesting = WTFMove(driver); }
+    const RetainPtr<_UIClickInteractionDriving>& clickInteractionDriverForTesting() const { return m_data.clickInteractionDriverForTesting; }
+    void setClickInteractionDriverForTesting(RetainPtr<_UIClickInteractionDriving>&& driver) { m_data.clickInteractionDriverForTesting = WTFMove(driver); }
 #endif
-    bool initialCapitalizationEnabled() { return m_initialCapitalizationEnabled; }
-    void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_initialCapitalizationEnabled = initialCapitalizationEnabled; }
+    bool initialCapitalizationEnabled() { return m_data.initialCapitalizationEnabled; }
+    void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_data.initialCapitalizationEnabled = initialCapitalizationEnabled; }
 
-    std::optional<double> cpuLimit() const { return m_cpuLimit; }
-    void setCPULimit(double cpuLimit) { m_cpuLimit = cpuLimit; }
+    std::optional<double> cpuLimit() const { return m_data.cpuLimit; }
+    void setCPULimit(double cpuLimit) { m_data.cpuLimit = cpuLimit; }
 
-    bool waitsForPaintAfterViewDidMoveToWindow() const { return m_waitsForPaintAfterViewDidMoveToWindow; }
-    void setWaitsForPaintAfterViewDidMoveToWindow(bool shouldSynchronize) { m_waitsForPaintAfterViewDidMoveToWindow = shouldSynchronize; }
+    bool waitsForPaintAfterViewDidMoveToWindow() const { return m_data.waitsForPaintAfterViewDidMoveToWindow; }
+    void setWaitsForPaintAfterViewDidMoveToWindow(bool shouldSynchronize) { m_data.waitsForPaintAfterViewDidMoveToWindow = shouldSynchronize; }
 
-    bool drawsBackground() const { return m_drawsBackground; }
-    void setDrawsBackground(bool drawsBackground) { m_drawsBackground = drawsBackground; }
+    bool drawsBackground() const { return m_data.drawsBackground; }
+    void setDrawsBackground(bool drawsBackground) { m_data.drawsBackground = drawsBackground; }
 
-    bool isControlledByAutomation() const { return m_controlledByAutomation; }
-    void setControlledByAutomation(bool controlledByAutomation) { m_controlledByAutomation = controlledByAutomation; }
+    bool isControlledByAutomation() const { return m_data.controlledByAutomation; }
+    void setControlledByAutomation(bool controlledByAutomation) { m_data.controlledByAutomation = controlledByAutomation; }
 
-    const WTF::String& overrideContentSecurityPolicy() const { return m_overrideContentSecurityPolicy; }
-    void setOverrideContentSecurityPolicy(const WTF::String& overrideContentSecurityPolicy) { m_overrideContentSecurityPolicy = overrideContentSecurityPolicy; }
+    const WTF::String& overrideContentSecurityPolicy() const { return m_data.overrideContentSecurityPolicy; }
+    void setOverrideContentSecurityPolicy(const WTF::String& overrideContentSecurityPolicy) { m_data.overrideContentSecurityPolicy = overrideContentSecurityPolicy; }
 
 #if PLATFORM(COCOA)
-    const WTF::Vector<WTF::String>& additionalSupportedImageTypes() const { return m_additionalSupportedImageTypes; }
-    void setAdditionalSupportedImageTypes(WTF::Vector<WTF::String>&& additionalSupportedImageTypes) { m_additionalSupportedImageTypes = WTFMove(additionalSupportedImageTypes); }
+    const WTF::Vector<WTF::String>& additionalSupportedImageTypes() const { return m_data.additionalSupportedImageTypes; }
+    void setAdditionalSupportedImageTypes(WTF::Vector<WTF::String>&& additionalSupportedImageTypes) { m_data.additionalSupportedImageTypes = WTFMove(additionalSupportedImageTypes); }
+
+    bool clientNavigationsRunAtForegroundPriority() const { return m_data.clientNavigationsRunAtForegroundPriority; }
+    void setClientNavigationsRunAtForegroundPriority(bool value) { m_data.clientNavigationsRunAtForegroundPriority = value; }
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -155,140 +155,141 @@ public:
 
     RefPtr<WebKit::WebURLSchemeHandler> urlSchemeHandlerForURLScheme(const WTF::String&);
     void setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLSchemeHandler>&&, const WTF::String&);
-    const HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>>& urlSchemeHandlers() { return m_urlSchemeHandlers; }
+    const HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>>& urlSchemeHandlers() { return m_data.urlSchemeHandlers; }
 
-    const Vector<WTF::String>& corsDisablingPatterns() const { return m_corsDisablingPatterns; }
-    void setCORSDisablingPatterns(Vector<WTF::String>&& patterns) { m_corsDisablingPatterns = WTFMove(patterns); }
+    const Vector<WTF::String>& corsDisablingPatterns() const { return m_data.corsDisablingPatterns; }
+    void setCORSDisablingPatterns(Vector<WTF::String>&& patterns) { m_data.corsDisablingPatterns = WTFMove(patterns); }
 
-    const HashSet<WTF::String>& maskedURLSchemes() const { return m_maskedURLSchemes; }
-    void setMaskedURLSchemes(HashSet<WTF::String>&& schemes) { m_maskedURLSchemes = WTFMove(schemes); }
+    const HashSet<WTF::String>& maskedURLSchemes() const { return m_data.maskedURLSchemes; }
+    void setMaskedURLSchemes(HashSet<WTF::String>&& schemes) { m_data.maskedURLSchemes = WTFMove(schemes); }
 
-    bool userScriptsShouldWaitUntilNotification() const { return m_userScriptsShouldWaitUntilNotification; }
-    void setUserScriptsShouldWaitUntilNotification(bool value) { m_userScriptsShouldWaitUntilNotification = value; }
+    bool userScriptsShouldWaitUntilNotification() const { return m_data.userScriptsShouldWaitUntilNotification; }
+    void setUserScriptsShouldWaitUntilNotification(bool value) { m_data.userScriptsShouldWaitUntilNotification = value; }
 
-    bool crossOriginAccessControlCheckEnabled() const { return m_crossOriginAccessControlCheckEnabled; }
-    void setCrossOriginAccessControlCheckEnabled(bool enabled) { m_crossOriginAccessControlCheckEnabled = enabled; }
+    bool crossOriginAccessControlCheckEnabled() const { return m_data.crossOriginAccessControlCheckEnabled; }
+    void setCrossOriginAccessControlCheckEnabled(bool enabled) { m_data.crossOriginAccessControlCheckEnabled = enabled; }
 
-    const WTF::String& processDisplayName() const { return m_processDisplayName; }
-    void setProcessDisplayName(const WTF::String& name) { m_processDisplayName = name; }
+    const WTF::String& processDisplayName() const { return m_data.processDisplayName; }
+    void setProcessDisplayName(const WTF::String& name) { m_data.processDisplayName = name; }
 
-    bool loadsSubresources() const { return m_loadsSubresources; }
-    void setLoadsSubresources(bool loads) { m_loadsSubresources = loads; }
+    bool loadsSubresources() const { return m_data.loadsSubresources; }
+    void setLoadsSubresources(bool loads) { m_data.loadsSubresources = loads; }
 
-    const std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>& allowedNetworkHosts() const { return m_allowedNetworkHosts; }
-    void setAllowedNetworkHosts(std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>&& hosts) { m_allowedNetworkHosts = WTFMove(hosts); }
+    const std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>& allowedNetworkHosts() const { return m_data.allowedNetworkHosts; }
+    void setAllowedNetworkHosts(std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>&& hosts) { m_data.allowedNetworkHosts = WTFMove(hosts); }
 
 #if ENABLE(APP_BOUND_DOMAINS)
-    bool ignoresAppBoundDomains() const { return m_ignoresAppBoundDomains; }
-    void setIgnoresAppBoundDomains(bool shouldIgnore) { m_ignoresAppBoundDomains = shouldIgnore; }
+    bool ignoresAppBoundDomains() const { return m_data.ignoresAppBoundDomains; }
+    void setIgnoresAppBoundDomains(bool shouldIgnore) { m_data.ignoresAppBoundDomains = shouldIgnore; }
     
-    bool limitsNavigationsToAppBoundDomains() const { return m_limitsNavigationsToAppBoundDomains; }
-    void setLimitsNavigationsToAppBoundDomains(bool limits) { m_limitsNavigationsToAppBoundDomains = limits; }
+    bool limitsNavigationsToAppBoundDomains() const { return m_data.limitsNavigationsToAppBoundDomains; }
+    void setLimitsNavigationsToAppBoundDomains(bool limits) { m_data.limitsNavigationsToAppBoundDomains = limits; }
 #endif
 
-    void setMediaCaptureEnabled(bool value) { m_mediaCaptureEnabled = value; }
-    bool mediaCaptureEnabled() const { return m_mediaCaptureEnabled; }
+    void setMediaCaptureEnabled(bool value) { m_data.mediaCaptureEnabled = value; }
+    bool mediaCaptureEnabled() const { return m_data.mediaCaptureEnabled; }
 
-    void setHTTPSUpgradeEnabled(bool enabled) { m_httpsUpgradeEnabled = enabled; }
-    bool httpsUpgradeEnabled() const { return m_httpsUpgradeEnabled; }
+    void setHTTPSUpgradeEnabled(bool enabled) { m_data.httpsUpgradeEnabled = enabled; }
+    bool httpsUpgradeEnabled() const { return m_data.httpsUpgradeEnabled; }
 
-    void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_shouldRelaxThirdPartyCookieBlocking = value; }
-    WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
+    void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_data.shouldRelaxThirdPartyCookieBlocking = value; }
+    WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_data.shouldRelaxThirdPartyCookieBlocking; }
 
-    void setAttributedBundleIdentifier(WTF::String&& identifier) { m_attributedBundleIdentifier = WTFMove(identifier); }
-    const WTF::String& attributedBundleIdentifier() const { return m_attributedBundleIdentifier; }
+    void setAttributedBundleIdentifier(WTF::String&& identifier) { m_data.attributedBundleIdentifier = WTFMove(identifier); }
+    const WTF::String& attributedBundleIdentifier() const { return m_data.attributedBundleIdentifier; }
 
 #if PLATFORM(IOS_FAMILY)
-    WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting() const { return m_appInitiatedOverrideValueForTesting; }
-    void setAppInitiatedOverrideValueForTesting(WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting) { m_appInitiatedOverrideValueForTesting = appInitiatedOverrideValueForTesting; }
+    WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting() const { return m_data.appInitiatedOverrideValueForTesting; }
+    void setAppInitiatedOverrideValueForTesting(WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting) { m_data.appInitiatedOverrideValueForTesting = appInitiatedOverrideValueForTesting; }
 #endif
 
 #if HAVE(TOUCH_BAR)
-    bool requiresUserActionForEditingControlsManager() const { return m_requiresUserActionForEditingControlsManager; }
-    void setRequiresUserActionForEditingControlsManager(bool value) { m_requiresUserActionForEditingControlsManager = value; }
+    bool requiresUserActionForEditingControlsManager() const { return m_data.requiresUserActionForEditingControlsManager; }
+    void setRequiresUserActionForEditingControlsManager(bool value) { m_data.requiresUserActionForEditingControlsManager = value; }
 #endif
 
     bool isLockdownModeExplicitlySet() const;
     bool lockdownModeEnabled() const;
     
-    void setAllowTestOnlyIPC(bool enabled) { m_allowTestOnlyIPC = enabled; }
-    bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
+    void setAllowTestOnlyIPC(bool enabled) { m_data.allowTestOnlyIPC = enabled; }
+    bool allowTestOnlyIPC() const { return m_data.allowTestOnlyIPC; }
 
-    void setDelaysWebProcessLaunchUntilFirstLoad(bool delaysWebProcessLaunchUntilFirstLoad) { m_delaysWebProcessLaunchUntilFirstLoad = delaysWebProcessLaunchUntilFirstLoad; }
+    void setDelaysWebProcessLaunchUntilFirstLoad(bool);
     bool delaysWebProcessLaunchUntilFirstLoad() const;
 
-    void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_contentSecurityPolicyModeForExtension = mode; }
-    WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }
+    void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_data.contentSecurityPolicyModeForExtension = mode; }
+    WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_data.contentSecurityPolicyModeForExtension; }
 
 private:
-
-    RefPtr<WebKit::WebProcessPool> m_processPool;
-    RefPtr<WebKit::WebUserContentControllerProxy> m_userContentController;
+    struct Data {
+        RefPtr<WebKit::WebProcessPool> processPool;
+        RefPtr<WebKit::WebUserContentControllerProxy> userContentController;
 #if ENABLE(WK_WEB_EXTENSIONS)
-    RefPtr<WebKit::WebExtensionController> m_webExtensionController;
-    WeakPtr<WebKit::WebExtensionController> m_weakWebExtensionController;
+        RefPtr<WebKit::WebExtensionController> webExtensionController;
+        WeakPtr<WebKit::WebExtensionController> weakWebExtensionController;
 #endif
-    RefPtr<WebKit::WebPageGroup> m_pageGroup;
-    RefPtr<WebKit::WebPreferences> m_preferences;
-    RefPtr<WebKit::WebPageProxy> m_relatedPage;
-    WeakPtr<WebKit::WebPageProxy> m_pageToCloneSessionStorageFrom;
-    RefPtr<WebKit::VisitedLinkStore> m_visitedLinkStore;
+        RefPtr<WebKit::WebPageGroup> pageGroup;
+        RefPtr<WebKit::WebPreferences> preferences;
+        RefPtr<WebKit::WebPageProxy> relatedPage;
+        WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;
+        RefPtr<WebKit::VisitedLinkStore> visitedLinkStore;
 
-    RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
-    RefPtr<WebsitePolicies> m_defaultWebsitePolicies;
+        RefPtr<WebKit::WebsiteDataStore> websiteDataStore;
+        RefPtr<WebsitePolicies> defaultWebsitePolicies;
 
 #if PLATFORM(IOS_FAMILY)
-    bool m_clientNavigationsRunAtForegroundPriority { true };
-    bool m_canShowWhileLocked { false };
-    RetainPtr<_UIClickInteractionDriving> m_clickInteractionDriverForTesting;
+        bool canShowWhileLocked { false };
+        WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting { WebKit::AttributionOverrideTesting::NoOverride };
+        RetainPtr<_UIClickInteractionDriving> clickInteractionDriverForTesting;
 #endif
-    bool m_initialCapitalizationEnabled { true };
-    bool m_waitsForPaintAfterViewDidMoveToWindow { true };
-    bool m_drawsBackground { true };
-    bool m_controlledByAutomation { false };
-    bool m_allowTestOnlyIPC { false };
-    std::optional<bool> m_delaysWebProcessLaunchUntilFirstLoad;
-    std::optional<double> m_cpuLimit;
+        bool initialCapitalizationEnabled { true };
+        bool waitsForPaintAfterViewDidMoveToWindow { true };
+        bool drawsBackground { true };
+        bool controlledByAutomation { false };
+        bool allowTestOnlyIPC { false };
+        std::optional<bool> delaysWebProcessLaunchUntilFirstLoad;
+        std::optional<double> cpuLimit;
 
-    WTF::String m_overrideContentSecurityPolicy;
+        WTF::String overrideContentSecurityPolicy;
 
 #if PLATFORM(COCOA)
-    WTF::Vector<WTF::String> m_additionalSupportedImageTypes;
+        WTF::Vector<WTF::String> additionalSupportedImageTypes;
+        bool clientNavigationsRunAtForegroundPriority { true };
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    RefPtr<ApplicationManifest> m_applicationManifest;
+        RefPtr<ApplicationManifest> applicationManifest;
 #endif
 
-    HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> m_urlSchemeHandlers;
-    Vector<WTF::String> m_corsDisablingPatterns;
-    HashSet<WTF::String> m_maskedURLSchemes;
-    bool m_userScriptsShouldWaitUntilNotification { true };
-    bool m_crossOriginAccessControlCheckEnabled { true };
-    WTF::String m_processDisplayName;
-    bool m_loadsSubresources { true };
-    std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>> m_allowedNetworkHosts;
-    
+        HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> urlSchemeHandlers;
+        Vector<WTF::String> corsDisablingPatterns;
+        HashSet<WTF::String> maskedURLSchemes;
+        bool userScriptsShouldWaitUntilNotification { true };
+        bool crossOriginAccessControlCheckEnabled { true };
+        WTF::String processDisplayName;
+        bool loadsSubresources { true };
+        std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>> allowedNetworkHosts;
+
 #if ENABLE(APP_BOUND_DOMAINS)
-    bool m_ignoresAppBoundDomains { false };
-    bool m_limitsNavigationsToAppBoundDomains { false };
+        bool ignoresAppBoundDomains { false };
+        bool limitsNavigationsToAppBoundDomains { false };
 #endif
 
-    bool m_mediaCaptureEnabled { false };
-    bool m_httpsUpgradeEnabled { true };
+        bool mediaCaptureEnabled { false };
+        bool httpsUpgradeEnabled { true };
 
-    WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
-    WTF::String m_attributedBundleIdentifier;
-
-#if PLATFORM(IOS_FAMILY)
-    WebKit::AttributionOverrideTesting m_appInitiatedOverrideValueForTesting { WebKit::AttributionOverrideTesting::NoOverride };
-#endif
+        WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
+        WTF::String attributedBundleIdentifier;
 
 #if HAVE(TOUCH_BAR)
-    bool m_requiresUserActionForEditingControlsManager { false };
+        bool requiresUserActionForEditingControlsManager { false };
 #endif
 
-    WebCore::ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
+        WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
+    };
+
+    // All data members should be added to the Data structure to avoid breaking PageConfiguration::copy().
+    Data m_data;
 };
 
 } // namespace API

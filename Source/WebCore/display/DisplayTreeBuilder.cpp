@@ -39,6 +39,7 @@
 #include "LayoutState.h"
 #include "LayoutTreeBuilder.h" // Just for showLayoutTree.
 #include "Logging.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 

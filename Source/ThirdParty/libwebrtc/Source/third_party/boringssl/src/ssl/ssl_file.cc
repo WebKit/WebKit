@@ -124,129 +124,106 @@
 #include "internal.h"
 
 
-static int xname_cmp(const X509_NAME **a, const X509_NAME **b) {
+static int xname_cmp(const X509_NAME *const *a, const X509_NAME *const *b) {
   return X509_NAME_cmp(*a, *b);
 }
 
-// TODO(davidben): Is there any reason this doesn't call
-// |SSL_add_file_cert_subjects_to_stack|?
-STACK_OF(X509_NAME) *SSL_load_client_CA_file(const char *file) {
-  BIO *in;
-  X509 *x = NULL;
-  X509_NAME *xn = NULL;
-  STACK_OF(X509_NAME) *ret = NULL, *sk;
-
-  sk = sk_X509_NAME_new(xname_cmp);
-  in = BIO_new(BIO_s_file());
-
-  if (sk == NULL || in == NULL) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
-    goto err;
+static int add_bio_cert_subjects_to_stack(STACK_OF(X509_NAME) *out, BIO *bio,
+                                          bool allow_empty) {
+  // This function historically sorted |out| after every addition and skipped
+  // duplicates. This implementation preserves that behavior, but only sorts at
+  // the end, to avoid a quadratic running time. Existing duplicates in |out|
+  // are preserved, but do not introduce new duplicates.
+  bssl::UniquePtr<STACK_OF(X509_NAME)> to_append(sk_X509_NAME_new(xname_cmp));
+  if (to_append == nullptr) {
+    return 0;
   }
 
-  if (!BIO_read_filename(in, file)) {
-    goto err;
-  }
+  // Temporarily switch the comparison function for |out|.
+  struct RestoreCmpFunc {
+    ~RestoreCmpFunc() { sk_X509_NAME_set_cmp_func(stack, old_cmp); }
+    STACK_OF(X509_NAME) *stack;
+    int (*old_cmp)(const X509_NAME *const *, const X509_NAME *const *);
+  };
+  RestoreCmpFunc restore = {out, sk_X509_NAME_set_cmp_func(out, xname_cmp)};
 
+  sk_X509_NAME_sort(out);
+  bool first = true;
   for (;;) {
-    if (PEM_read_bio_X509(in, &x, NULL, NULL) == NULL) {
+    bssl::UniquePtr<X509> x509(
+        PEM_read_bio_X509(bio, nullptr, nullptr, nullptr));
+    if (x509 == nullptr) {
+      if (first && !allow_empty) {
+        return 0;
+      }
+      // TODO(davidben): This ignores PEM syntax errors. It should only succeed
+      // on |PEM_R_NO_START_LINE|.
+      ERR_clear_error();
       break;
     }
-    if (ret == NULL) {
-      ret = sk_X509_NAME_new_null();
-      if (ret == NULL) {
-        OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
-        goto err;
-      }
-    }
-    xn = X509_get_subject_name(x);
-    if (xn == NULL) {
-      goto err;
-    }
+    first = false;
 
-    // Check for duplicates.
-    sk_X509_NAME_sort(sk);
-    if (sk_X509_NAME_find(sk, NULL, xn)) {
+    X509_NAME *subject = X509_get_subject_name(x509.get());
+    // Skip if already present in |out|. Duplicates in |to_append| will be
+    // handled separately.
+    if (sk_X509_NAME_find(out, /*out_index=*/NULL, subject)) {
       continue;
     }
 
-    xn = X509_NAME_dup(xn);
-    if (xn == NULL ||
-        !sk_X509_NAME_push(sk /* non-owning */, xn) ||
-        !sk_X509_NAME_push(ret /* owning */, xn)) {
-      X509_NAME_free(xn);
-      goto err;
+    bssl::UniquePtr<X509_NAME> copy(X509_NAME_dup(subject));
+    if (copy == nullptr ||
+        !bssl::PushToStack(to_append.get(), std::move(copy))) {
+      return 0;
     }
   }
 
-  if (0) {
-  err:
-    sk_X509_NAME_pop_free(ret, X509_NAME_free);
-    ret = NULL;
+  // Append |to_append| to |stack|, skipping any duplicates.
+  sk_X509_NAME_sort(to_append.get());
+  size_t num = sk_X509_NAME_num(to_append.get());
+  for (size_t i = 0; i < num; i++) {
+    bssl::UniquePtr<X509_NAME> name(sk_X509_NAME_value(to_append.get(), i));
+    sk_X509_NAME_set(to_append.get(), i, nullptr);
+    if (i + 1 < num &&
+        X509_NAME_cmp(name.get(), sk_X509_NAME_value(to_append.get(), i + 1)) ==
+            0) {
+      continue;
+    }
+    if (!bssl::PushToStack(out, std::move(name))) {
+      return 0;
+    }
   }
 
-  sk_X509_NAME_free(sk);
-  BIO_free(in);
-  X509_free(x);
-  if (ret != NULL) {
-    ERR_clear_error();
-  }
-  return ret;
+  // Sort |out| one last time, to preserve the historical behavior of
+  // maintaining the sorted list.
+  sk_X509_NAME_sort(out);
+  return 1;
 }
 
-int SSL_add_file_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack,
+STACK_OF(X509_NAME) *SSL_load_client_CA_file(const char *file) {
+  bssl::UniquePtr<BIO> in(BIO_new_file(file, "r"));
+  if (in == nullptr) {
+    return nullptr;
+  }
+  bssl::UniquePtr<STACK_OF(X509_NAME)> ret(sk_X509_NAME_new_null());
+  if (ret == nullptr ||  //
+      !add_bio_cert_subjects_to_stack(ret.get(), in.get(),
+                                      /*allow_empty=*/false)) {
+    return nullptr;
+  }
+  return ret.release();
+}
+
+int SSL_add_file_cert_subjects_to_stack(STACK_OF(X509_NAME) *out,
                                         const char *file) {
-  BIO *in;
-  X509 *x = NULL;
-  X509_NAME *xn = NULL;
-  int ret = 0;
-  int (*oldcmp)(const X509_NAME **a, const X509_NAME **b);
-
-  oldcmp = sk_X509_NAME_set_cmp_func(stack, xname_cmp);
-  in = BIO_new(BIO_s_file());
-
-  if (in == NULL) {
-    OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
-    goto err;
+  bssl::UniquePtr<BIO> in(BIO_new_file(file, "r"));
+  if (in == nullptr) {
+    return 0;
   }
+  return SSL_add_bio_cert_subjects_to_stack(out, in.get());
+}
 
-  if (!BIO_read_filename(in, file)) {
-    goto err;
-  }
-
-  for (;;) {
-    if (PEM_read_bio_X509(in, &x, NULL, NULL) == NULL) {
-      break;
-    }
-    xn = X509_get_subject_name(x);
-    if (xn == NULL) {
-      goto err;
-    }
-
-    // Check for duplicates.
-    sk_X509_NAME_sort(stack);
-    if (sk_X509_NAME_find(stack, NULL, xn)) {
-      continue;
-    }
-
-    xn = X509_NAME_dup(xn);
-    if (xn == NULL ||
-        !sk_X509_NAME_push(stack, xn)) {
-      X509_NAME_free(xn);
-      goto err;
-    }
-  }
-
-  ERR_clear_error();
-  ret = 1;
-
-err:
-  BIO_free(in);
-  X509_free(x);
-
-  (void) sk_X509_NAME_set_cmp_func(stack, oldcmp);
-
-  return ret;
+int SSL_add_bio_cert_subjects_to_stack(STACK_OF(X509_NAME) *out, BIO *bio) {
+  return add_bio_cert_subjects_to_stack(out, bio, /*allow_empty=*/true);
 }
 
 int SSL_use_certificate_file(SSL *ssl, const char *file, int type) {

@@ -32,26 +32,6 @@
 namespace JSC {
 
 template<typename BytecodeMetadata>
-ArrayProfile* arrayProfileForImpl(BytecodeMetadata& metadata, unsigned checkpointIndex)
-{
-    UNUSED_PARAM(checkpointIndex);
-    return &metadata.m_callLinkInfo.m_arrayProfile;
-}
-
-template<typename BytecodeMetadata>
-bool hasArrayProfileFor(BytecodeMetadata& metadata, unsigned checkpointIndex)
-{
-    return arrayProfileForImpl(metadata, checkpointIndex);
-}
-
-template<typename BytecodeMetadata>
-ArrayProfile& arrayProfileFor(BytecodeMetadata& metadata, unsigned checkpointIndex)
-{
-    ASSERT(hasArrayProfileFor(metadata, checkpointIndex));
-    return *arrayProfileForImpl(metadata, checkpointIndex);
-}
-
-template<typename BytecodeMetadata>
 ValueProfile* valueProfileForImpl(BytecodeMetadata& metadata, unsigned checkpointIndex)
 {
     UNUSED_PARAM(checkpointIndex);

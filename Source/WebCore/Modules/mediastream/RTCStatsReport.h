@@ -70,7 +70,6 @@ public:
         std::optional<uint64_t> packetsReceived;
         std::optional<int64_t> packetsLost;
         std::optional<double> jitter;
-        std::optional<uint64_t> packetsDiscarded;
         std::optional<uint64_t> packetsRepaired;
         std::optional<uint64_t> burstPacketsLost;
         std::optional<uint64_t> burstPacketsDiscarded;

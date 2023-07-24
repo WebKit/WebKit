@@ -47,7 +47,6 @@
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "LocalFrame.h"
 #include "ScriptDisallowedScope.h"
 #include <pal/text/TextEncoding.h>
@@ -96,8 +95,8 @@ ASCIILiteral FormSubmission::Attributes::methodString(Method method, bool dialog
 
 void FormSubmission::Attributes::parseAction(const String& action)
 {
-    // FIXME: Can we parse into a URL?
-    m_action = stripLeadingAndTrailingHTMLSpaces(action);
+    // FIXME: Can we parse into a URL? Then we also don't need to trim anymore.
+    m_action = action.trim(isASCIIWhitespace);
 }
 
 String FormSubmission::Attributes::parseEncodingType(const String& type)

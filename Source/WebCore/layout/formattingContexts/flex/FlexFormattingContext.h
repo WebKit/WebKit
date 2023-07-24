@@ -42,20 +42,14 @@ class FlexFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FlexFormattingContext);
 public:
     FlexFormattingContext(const ElementBox& formattingContextRoot, FlexFormattingState&);
-    void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
-    LayoutUnit usedContentHeight() const override;
+
+    void layout(const ConstraintsForFlexContent&);
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraints();
 
     const FlexFormattingGeometry& formattingGeometry() const final { return m_flexFormattingGeometry; }
     const FormattingQuirks& formattingQuirks() const final { return m_flexFormattingQuirks; }
 
-    void layoutInFlowContentForIntegration(const ConstraintsForFlexContent&);
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
-
 private:
-    void sizeAndPlaceFlexItems(const ConstraintsForFlexContent&);
-    void computeIntrinsicWidthConstraintsForFlexItems();
-
     FlexLayout::LogicalFlexItems convertFlexItemsToLogicalSpace(const ConstraintsForFlexContent&);
     void setFlexItemsGeometry(const FlexLayout::LogicalFlexItems&, const FlexLayout::LogicalFlexItemRects&, const ConstraintsForFlexContent&);
 

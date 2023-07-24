@@ -53,7 +53,7 @@ bool WebNotificationClient::show(ScriptExecutionContext& context, NotificationDa
 {
     bool result;
     callOnMainRunLoopAndWait([&result, notification = WTFMove(notification).isolatedCopy(), resources = WTFMove(resources), page = m_page, contextIdentifier = context.identifier(), callbackIdentifier = context.addNotificationCallback(WTFMove(callback))]() mutable {
-        result = WebProcess::singleton().supplement<WebNotificationManager>()->show(WTFMove(notification), WTFMove(resources), page, [contextIdentifier, callbackIdentifier] {
+        result = WebProcess::singleton().supplement<WebNotificationManager>()->show(WTFMove(notification), WTFMove(resources), page.get(), [contextIdentifier, callbackIdentifier] {
             ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [callbackIdentifier](auto& context) {
                 if (auto callback = context.takeNotificationCallback(callbackIdentifier))
                     callback();
@@ -66,14 +66,14 @@ bool WebNotificationClient::show(ScriptExecutionContext& context, NotificationDa
 void WebNotificationClient::cancel(NotificationData&& notification)
 {
     callOnMainRunLoopAndWait([notification = WTFMove(notification).isolatedCopy(), page = m_page]() mutable {
-        WebProcess::singleton().supplement<WebNotificationManager>()->cancel(WTFMove(notification), page);
+        WebProcess::singleton().supplement<WebNotificationManager>()->cancel(WTFMove(notification), page.get());
     });
 }
 
 void WebNotificationClient::notificationObjectDestroyed(NotificationData&& notification)
 {
     callOnMainRunLoopAndWait([notification = WTFMove(notification).isolatedCopy(), page = m_page]() mutable {
-        WebProcess::singleton().supplement<WebNotificationManager>()->didDestroyNotification(WTFMove(notification), page);
+        WebProcess::singleton().supplement<WebNotificationManager>()->didDestroyNotification(WTFMove(notification), page.get());
     });
 }
 

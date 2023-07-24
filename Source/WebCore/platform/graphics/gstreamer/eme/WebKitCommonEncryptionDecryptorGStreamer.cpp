@@ -44,7 +44,7 @@ public:
         : m_decryptor(decryptor) { }
     virtual bool isAborting()
     {
-        return webKitMediaCommonEncryptionDecryptIsFlushing(m_decryptor);
+        return webKitMediaCommonEncryptionDecryptIsAborting(m_decryptor);
     }
     virtual ~CDMProxyDecryptionClientImplementation() = default;
 private:
@@ -66,6 +66,7 @@ struct _WebKitMediaCommonEncryptionDecryptPrivate {
     Condition condition;
 
     bool isFlushing { false };
+    bool isStopped { true };
     std::unique_ptr<CDMProxyDecryptionClientImplementation> cdmProxyDecryptionClientImplementation;
     enum DecryptionState decryptionState { DecryptionState::Idle };
 };
@@ -238,12 +239,16 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
     if (!priv->cdmProxy) {
         GST_DEBUG_OBJECT(self, "CDM not available, going to wait for it");
         priv->condition.waitFor(priv->lock, MaxSecondsToWaitForCDMProxy, [priv] {
-            return priv->isFlushing || priv->cdmProxy;
+            return priv->isFlushing || priv->cdmProxy || priv->isStopped;
         });
         // Note that waitFor() releases the lock internally while it waits, so isFlushing may have been changed.
         if (priv->isFlushing) {
             GST_DEBUG_OBJECT(self, "Decryption aborted because of flush");
             return GST_FLOW_FLUSHING;
+        }
+        if (priv->isStopped) {
+            GST_DEBUG_OBJECT(self, "Element is closing");
+            return GST_FLOW_OK;
         }
         if (!priv->cdmProxy) {
             GST_ELEMENT_ERROR(self, STREAM, FAILED, ("CDMProxy was not retrieved in time"), (nullptr));
@@ -463,11 +468,11 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
     return GST_BASE_TRANSFORM_CLASS(parent_class)->sink_event(trans, event);
 }
 
-bool webKitMediaCommonEncryptionDecryptIsFlushing(WebKitMediaCommonEncryptionDecrypt* self)
+bool webKitMediaCommonEncryptionDecryptIsAborting(WebKitMediaCommonEncryptionDecrypt* self)
 {
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
     Locker locker { priv->lock };
-    return priv->isFlushing;
+    return priv->isFlushing || priv->isStopped;
 }
 
 WeakPtr<WebCore::CDMProxyDecryptionClient> webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient(WebKitMediaCommonEncryptionDecrypt* self)
@@ -482,10 +487,24 @@ static GstStateChangeReturn changeState(GstElement* element, GstStateChange tran
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
 
     switch (transition) {
-    case GST_STATE_CHANGE_PAUSED_TO_READY:
-        GST_DEBUG_OBJECT(self, "PAUSED->READY");
-        priv->condition.notifyOne();
+    case GST_STATE_CHANGE_READY_TO_PAUSED: {
+        GST_DEBUG_OBJECT(self, "READY->PAUSED");
+
+        LockHolder locker(priv->lock);
+        priv->isStopped = false;
         break;
+    }
+    case GST_STATE_CHANGE_PAUSED_TO_READY: {
+        // We need to do this here instead of after the , otherwise we won't be able to break the wait.
+        GST_DEBUG_OBJECT(self, "PAUSED->READY");
+
+        LockHolder locker(priv->lock);
+        priv->isStopped = true;
+        priv->condition.notifyOne();
+        if (priv->cdmProxy)
+            priv->cdmProxy->abortWaitingForKey();
+        break;
+    }
     default:
         break;
     }
@@ -514,5 +533,7 @@ static void setContext(GstElement* element, GstContext* context)
 
     GST_ELEMENT_CLASS(parent_class)->set_context(element, context);
 }
+
+#undef GST_CAT_DEFAULT
 
 #endif // ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)

@@ -47,14 +47,6 @@ RenderTextControlMultiLine::~RenderTextControlMultiLine()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderTextControlMultiLine::willBeDestroyed()
-{
-    if (textAreaElement().isConnected())
-        textAreaElement().rendererWillBeDestroyed();
-
-    RenderTextControl::willBeDestroyed();
-}
-
 HTMLTextAreaElement& RenderTextControlMultiLine::textAreaElement() const
 {
     return downcast<HTMLTextAreaElement>(RenderTextControl::textFormControlElement());

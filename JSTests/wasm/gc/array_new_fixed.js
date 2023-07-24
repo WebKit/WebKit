@@ -612,6 +612,16 @@ function testMissingArgumentCount() {
     assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x89\x80\x80\x80\x00\x02\x5E\x7D\x00\x60\x00\x01\x6B\x00\x03\x82\x80\x80\x80\x00\x01\x01\x07\x87\x80\x80\x80\x00\x01\x03\x6E\x65\x77\x00\x00\x0A\x91\x80\x80\x80\x00\x01\x8B\x80\x80\x80\x00\x00\x43\x00\x00\x80\x3F\xFB\x19\x00\x99\x99")), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 11: can't get argument count for array.new_fixed, in function at index 0");
 }
 
+function testTooManyOperands() {
+    let moduleString = `(module
+  (type $vec (array i32))
+
+  (func $new (export "new") (result (ref $vec))
+    (array.new_canon_fixed $vec 10001)
+  ))`;
+
+    assert.throws(() => compile(moduleString), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array_new_fixed can take at most 10000 operands. Got 10001, in function at index 0");
+}
 
 testArrayNewFixed();
 testArrayNewFixedNested();
@@ -632,3 +642,4 @@ testArrayFuncrefs();
 testArrayExternrefs();
 testArrayRefNull();
 testMissingArgumentCount();
+testTooManyOperands();

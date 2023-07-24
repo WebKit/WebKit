@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "ColorSpaceCG.h"
 #import <UIKit/UIKit.h>
 
 namespace WebCore {
@@ -45,7 +46,18 @@ Color colorFromCocoaColor(UIColor *color)
     CGFloat blueComponent;
     CGFloat alpha;
 
-    [color getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];
+    BOOL success = [color getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alpha];
+    if (!success) {
+        // The color space conversion above can fail if the UIColor is in an incompatible color space.
+        // To workaround this we simply draw a one pixel image of the color and use that pixel's color.
+        uint8_t pixel[4];
+        auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, 4, sRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast));
+
+        CGContextSetFillColorWithColor(bitmapContext.get(), color.CGColor);
+        CGContextFillRect(bitmapContext.get(), CGRectMake(0, 0, 1, 1));
+
+        return makeFromComponentsClamping<SRGBA<uint8_t>>(pixel[0], pixel[1], pixel[2], pixel[3]);
+    }
 
     return convertColor<SRGBA<uint8_t>>(SRGBA<float> { static_cast<float>(redComponent), static_cast<float>(greenComponent), static_cast<float>(blueComponent), static_cast<float>(alpha) });
 }

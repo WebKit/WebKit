@@ -47,12 +47,12 @@
 #include "PageGroupLoadDeferrer.h"
 #include "PopupOpeningObserver.h"
 #include "RenderObject.h"
-#include "ResourceHandle.h"
 #include "Settings.h"
 #include "ShareData.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
 #include "TextDetectorInterface.h"
+#include "WebGPU.h"
 #include "WindowFeatures.h"
 #include "WorkerClient.h"
 #include <JavaScriptCore/VM.h>
@@ -340,7 +340,7 @@ void Chrome::setStatusbarText(LocalFrame& frame, const String& status)
     m_client->setStatusbarText(frame.displayStringModifiedByEncoding(status));
 }
 
-void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
+void Chrome::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
     if (!localMainFrame)
@@ -352,9 +352,9 @@ void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modif
     String toolTip;
     TextDirection toolTipDirection;
     getToolTip(result, toolTip, toolTipDirection);
-    m_client->mouseDidMoveOverElement(result, modifierFlags, toolTip, toolTipDirection);
+    m_client->mouseDidMoveOverElement(result, modifiers, toolTip, toolTipDirection);
 
-    InspectorInstrumentation::mouseDidMoveOverElement(m_page, result, modifierFlags);
+    InspectorInstrumentation::mouseDidMoveOverElement(m_page, result, modifiers);
 }
 
 void Chrome::getToolTip(const HitTestResult& result, String& toolTip, TextDirection& toolTipDirection)
@@ -566,7 +566,7 @@ RefPtr<GraphicsContextGL> Chrome::createGraphicsContextGL(const GraphicsContextG
 }
 #endif
 
-RefPtr<PAL::WebGPU::GPU> Chrome::createGPUForWebGPU() const
+RefPtr<WebGPU::GPU> Chrome::createGPUForWebGPU() const
 {
     return m_client->createGPUForWebGPU();
 }

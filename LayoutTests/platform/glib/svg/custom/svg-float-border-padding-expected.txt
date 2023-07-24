@@ -24,4 +24,4 @@ layer at (0,0) size 800x516
         RenderText {#text} at (0,0) size 353x17
           text run at (0,0) width 353: "There should be a red, white and blue pattern above this"
 layer at (8,270) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {hr} at (0,262) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {hr} at (0,262) size 784x2 [color=#808080] [border: (1px inset #808080)]

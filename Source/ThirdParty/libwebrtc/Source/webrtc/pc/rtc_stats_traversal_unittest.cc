@@ -24,18 +24,21 @@ namespace webrtc {
 class RTCStatsTraversalTest : public ::testing::Test {
  public:
   RTCStatsTraversalTest() {
-    transport_ = new RTCTransportStats("transport", 0);
-    candidate_pair_ = new RTCIceCandidatePairStats("candidate-pair", 0);
-    local_candidate_ = new RTCLocalIceCandidateStats("local-candidate", 0);
-    remote_candidate_ = new RTCRemoteIceCandidateStats("remote-candidate", 0);
-    initial_report_ = RTCStatsReport::Create(0);
+    transport_ = new RTCTransportStats("transport", Timestamp::Zero());
+    candidate_pair_ =
+        new RTCIceCandidatePairStats("candidate-pair", Timestamp::Zero());
+    local_candidate_ =
+        new RTCLocalIceCandidateStats("local-candidate", Timestamp::Zero());
+    remote_candidate_ =
+        new RTCRemoteIceCandidateStats("remote-candidate", Timestamp::Zero());
+    initial_report_ = RTCStatsReport::Create(Timestamp::Zero());
     initial_report_->AddStats(std::unique_ptr<const RTCStats>(transport_));
     initial_report_->AddStats(std::unique_ptr<const RTCStats>(candidate_pair_));
     initial_report_->AddStats(
         std::unique_ptr<const RTCStats>(local_candidate_));
     initial_report_->AddStats(
         std::unique_ptr<const RTCStats>(remote_candidate_));
-    result_ = RTCStatsReport::Create(0);
+    result_ = RTCStatsReport::Create(Timestamp::Zero());
   }
 
   void TakeReferencedStats(std::vector<const RTCStats*> start_nodes) {

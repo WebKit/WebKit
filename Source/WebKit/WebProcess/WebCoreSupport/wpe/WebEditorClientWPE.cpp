@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebEditorClient.h"
 
+#include "WebPage.h"
 #include <WebCore/Document.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventNames.h>

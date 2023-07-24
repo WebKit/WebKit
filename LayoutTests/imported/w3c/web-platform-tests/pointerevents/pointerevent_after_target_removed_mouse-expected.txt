@@ -1,0 +1,7 @@
+done
+
+FAIL pointer events from mouse at parent after child is removed at pointerdown assert_equals: received events expected "pointerenter,pointerover,pointerout,pointerleave" but got "pointerenter"
+FAIL mouse events from mouse at parent after child is removed at pointerdown assert_equals: received events expected "mouseenter,mouseover,mouseout,mouseleave" but got "mouseenter"
+FAIL pointer events from mouse at parent after child is removed at pointerup assert_equals: received events expected "pointerenter,pointerover,pointerout,pointerleave" but got "pointerenter"
+FAIL mouse events from mouse at parent after child is removed at pointerup assert_equals: received events expected "mouseenter,mouseover,mouseout,mouseleave" but got "mouseenter"
+

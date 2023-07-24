@@ -182,6 +182,7 @@ struct FeatureSetBase
     FeatureMap members = FeatureMap();
 
   public:
+    void reset();
     void overrideFeatures(const std::vector<std::string> &featureNames, bool enabled);
     void populateFeatureList(FeatureList *features) const;
 

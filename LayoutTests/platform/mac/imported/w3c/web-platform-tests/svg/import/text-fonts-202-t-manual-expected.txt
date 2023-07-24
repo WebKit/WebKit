@@ -46,15 +46,15 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (60,202) size 170x36 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 170x35
               chunk 1 text run 1 at (60.00,230.00) startOffset 0 endOffset 15 width 169.98: "Blue is lighter"
-        RenderSVGContainer {g} at (50,429) size 371x61
-          RenderSVGText {text} at (30,257) size 210x17 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 210x16
-              chunk 1 text run 1 at (30.00,270.00) startOffset 0 endOffset 34 width 210.00: "ZalamanderCaps is an OpenType font"
-          RenderSVGText {text} at (30,277) size 223x17 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 223x16
-              chunk 1 text run 1 at (30.00,290.00) startOffset 0 endOffset 37 width 222.32: "by Tim Ahrens of Just Another Foundry"
-    RenderSVGContainer {g} at (16,517) size 381x62
-      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 229x37
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.4 $"
+        RenderSVGContainer {g} at (50,429) size 376x61
+          RenderSVGText {text} at (30,257) size 214x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 214x16
+              chunk 1 text run 1 at (30.00,270.00) startOffset 0 endOffset 34 width 213.04: "ZalamanderCaps is an OpenType font"
+          RenderSVGText {text} at (30,277) size 226x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 226x16
+              chunk 1 text run 1 at (30.00,290.00) startOffset 0 endOffset 37 width 225.54: "by Tim Ahrens of Just Another Foundry"
+    RenderSVGContainer {g} at (16,517) size 384x62
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.4 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

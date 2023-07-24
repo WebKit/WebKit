@@ -18,10 +18,11 @@ PASS event.ports contains two ports when two ports re-sent after error
 PASS Sending host object has thrown DataCloneError: The object can not be cloned.
 PASS Sending host object has thrown DataCloneError: The object can not be cloned.
 PASS Sending Function object has thrown DataCloneError: The object can not be cloned.
-PASS Sending Error object has thrown DataCloneError: The object can not be cloned.
+PASS Sending Error object should not throw
 PASS send-port: transferred one port
 PASS send-port-twice: transferred one port twice
 PASS send-two-ports: transferred two ports
+PASS Managed to send an Error object
 
 TEST COMPLETE
 

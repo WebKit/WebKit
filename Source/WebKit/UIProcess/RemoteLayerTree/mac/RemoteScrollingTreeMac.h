@@ -47,6 +47,7 @@ public:
     virtual ~RemoteScrollingTreeMac();
 
     void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, ScrollbarOrientation, bool) override;
+    void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, ScrollbarOrientation, int) override;
 
 private:
     void handleWheelEventPhase(WebCore::ScrollingNodeID, WebCore::PlatformWheelEventPhase) override;
@@ -55,7 +56,7 @@ private:
     OptionSet<WebCore::EventListenerRegionType> eventListenerRegionTypesForPoint(WebCore::FloatPoint) const override;
 #endif
 
-    void didCommitTree() override;
+    void didCommitTree() override WTF_REQUIRES_LOCK(m_treeLock);
 
     void scrollingTreeNodeDidScroll(WebCore::ScrollingTreeScrollingNode&, WebCore::ScrollingLayerPositionAction) override;
     void scrollingTreeNodeDidStopAnimatedScroll(WebCore::ScrollingTreeScrollingNode&) override;
@@ -69,6 +70,8 @@ private:
     // "Default handling" here refers to sending the event to the web process for synchronous scrolling, and DOM event handling.
     void willSendEventForDefaultHandling(const WebCore::PlatformWheelEvent&) override;
     void waitForEventDefaultHandlingCompletion(const WebCore::PlatformWheelEvent&) override;
+    void receivedEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, std::optional<WebCore::WheelScrollGestureState>) override;
+
     WheelEventHandlingResult handleWheelEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
 
     void deferWheelEventTestCompletionForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;
@@ -84,6 +87,7 @@ private:
 
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
+    void clearNodesWithUserScrollInProgress() override;
 
     void scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID) override;

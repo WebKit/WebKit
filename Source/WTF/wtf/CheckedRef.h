@@ -208,6 +208,12 @@ inline const ExpectedType& downcast(const CheckedRef<ArgType, ArgPtrTraits>& sou
     return downcast<ExpectedType>(source.get());
 }
 
+template<typename ExpectedType, typename ArgType, typename ArgPtrTraits>
+inline const ExpectedType& downcast(CheckedRef<const ArgType, ArgPtrTraits>& source)
+{
+    return downcast<ExpectedType>(source.get());
+}
+
 template<typename P> struct CheckedRefHashTraits : SimpleClassHashTraits<CheckedRef<P>> {
     static constexpr bool emptyValueIsZero = true;
     static CheckedRef<P> emptyValue() { return HashTableEmptyValue; }

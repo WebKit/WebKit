@@ -84,6 +84,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-nested-for-color-property-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-nested-for-color-property-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-nested-for-color-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-non-srgb-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-non-srgb-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-non-srgb-001.html
@@ -250,6 +256,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lab-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lab-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lab-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/lab-l-over-100-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/lab-l-over-100-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/lab-l-over-100-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/lab-l-over-100-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/lab-l-over-100-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-002-expected.html
@@ -274,6 +285,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-010-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-l-over-100-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-l-over-100-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-l-over-100-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-l-over-100-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/lch-l-over-100-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/mossgreensquare-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/named-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/named-001.html
@@ -298,6 +314,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-002-expected.html
@@ -322,6 +340,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-010-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters.html
@@ -416,6 +436,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/srgb-linear-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/system-color-compute.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t31-color-currentColor-b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t31-color-currentColor-b-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/t31-color-currentColor-b.xht

@@ -25,4 +25,5 @@ PASS e.style['contain-intrinsic-block-size'] = "none" should set the property va
 PASS e.style['contain-intrinsic-block-size'] = "1px" should set the property value
 PASS e.style['contain-intrinsic-block-size'] = "2em" should set the property value
 PASS e.style['contain-intrinsic-block-size'] = "auto 1px" should set the property value
+PASS e.style['contain-intrinsic-block-size'] = "auto none" should set the property value
 

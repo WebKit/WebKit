@@ -148,18 +148,18 @@ void ec_compute_wNAF(const EC_GROUP *group, int8_t *out,
 }
 
 // compute_precomp sets |out[i]| to (2*i+1)*p, for i from 0 to |len|.
-static void compute_precomp(const EC_GROUP *group, EC_RAW_POINT *out,
-                            const EC_RAW_POINT *p, size_t len) {
+static void compute_precomp(const EC_GROUP *group, EC_JACOBIAN *out,
+                            const EC_JACOBIAN *p, size_t len) {
   ec_GFp_simple_point_copy(&out[0], p);
-  EC_RAW_POINT two_p;
+  EC_JACOBIAN two_p;
   ec_GFp_mont_dbl(group, &two_p, p);
   for (size_t i = 1; i < len; i++) {
     ec_GFp_mont_add(group, &out[i], &out[i - 1], &two_p);
   }
 }
 
-static void lookup_precomp(const EC_GROUP *group, EC_RAW_POINT *out,
-                           const EC_RAW_POINT *precomp, int digit) {
+static void lookup_precomp(const EC_GROUP *group, EC_JACOBIAN *out,
+                           const EC_JACOBIAN *precomp, int digit) {
   if (digit < 0) {
     digit = -digit;
     ec_GFp_simple_point_copy(out, &precomp[digit >> 1]);
@@ -179,9 +179,9 @@ static void lookup_precomp(const EC_GROUP *group, EC_RAW_POINT *out,
 // avoid a malloc.
 #define EC_WNAF_STACK 3
 
-int ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_RAW_POINT *r,
+int ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_JACOBIAN *r,
                                  const EC_SCALAR *g_scalar,
-                                 const EC_RAW_POINT *points,
+                                 const EC_JACOBIAN *points,
                                  const EC_SCALAR *scalars, size_t num) {
   size_t bits = BN_num_bits(&group->order);
   size_t wNAF_len = bits + 1;
@@ -190,9 +190,9 @@ int ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_RAW_POINT *r,
   int8_t wNAF_stack[EC_WNAF_STACK][EC_MAX_BYTES * 8 + 1];
   int8_t (*wNAF_alloc)[EC_MAX_BYTES * 8 + 1] = NULL;
   int8_t (*wNAF)[EC_MAX_BYTES * 8 + 1];
-  EC_RAW_POINT precomp_stack[EC_WNAF_STACK][EC_WNAF_TABLE_SIZE];
-  EC_RAW_POINT (*precomp_alloc)[EC_WNAF_TABLE_SIZE] = NULL;
-  EC_RAW_POINT (*precomp)[EC_WNAF_TABLE_SIZE];
+  EC_JACOBIAN precomp_stack[EC_WNAF_STACK][EC_WNAF_TABLE_SIZE];
+  EC_JACOBIAN (*precomp_alloc)[EC_WNAF_TABLE_SIZE] = NULL;
+  EC_JACOBIAN (*precomp)[EC_WNAF_TABLE_SIZE];
   if (num <= EC_WNAF_STACK) {
     wNAF = wNAF_stack;
     precomp = precomp_stack;
@@ -205,7 +205,6 @@ int ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_RAW_POINT *r,
     wNAF_alloc = OPENSSL_malloc(num * sizeof(wNAF_alloc[0]));
     precomp_alloc = OPENSSL_malloc(num * sizeof(precomp_alloc[0]));
     if (wNAF_alloc == NULL || precomp_alloc == NULL) {
-      OPENSSL_PUT_ERROR(EC, ERR_R_MALLOC_FAILURE);
       goto err;
     }
     wNAF = wNAF_alloc;
@@ -213,9 +212,9 @@ int ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_RAW_POINT *r,
   }
 
   int8_t g_wNAF[EC_MAX_BYTES * 8 + 1];
-  EC_RAW_POINT g_precomp[EC_WNAF_TABLE_SIZE];
+  EC_JACOBIAN g_precomp[EC_WNAF_TABLE_SIZE];
   assert(wNAF_len <= OPENSSL_ARRAY_SIZE(g_wNAF));
-  const EC_RAW_POINT *g = &group->generator->raw;
+  const EC_JACOBIAN *g = &group->generator->raw;
   if (g_scalar != NULL) {
     ec_compute_wNAF(group, g_wNAF, g_scalar, bits, EC_WNAF_WINDOW_BITS);
     compute_precomp(group, g_precomp, g, EC_WNAF_TABLE_SIZE);
@@ -227,7 +226,7 @@ int ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_RAW_POINT *r,
     compute_precomp(group, precomp[i], &points[i], EC_WNAF_TABLE_SIZE);
   }
 
-  EC_RAW_POINT tmp;
+  EC_JACOBIAN tmp;
   int r_is_at_infinity = 1;
   for (size_t k = wNAF_len - 1; k < wNAF_len; k--) {
     if (!r_is_at_infinity) {

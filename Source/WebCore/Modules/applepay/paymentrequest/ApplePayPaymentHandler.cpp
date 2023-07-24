@@ -613,12 +613,24 @@ ExceptionOr<void> ApplePayPaymentHandler::detailsUpdated(PaymentRequest::UpdateR
     switch (reason) {
     case Reason::ShowDetailsResolved:
         return { };
-    case Reason::ShippingAddressChanged:
-        return shippingAddressUpdated(computeErrors(WTFMove(error), WTFMove(addressErrors), WTFMove(payerErrors), paymentMethodErrors));
+    case Reason::ShippingAddressChanged: {
+        auto errors = computeErrors(WTFMove(error), WTFMove(addressErrors), WTFMove(payerErrors), paymentMethodErrors);
+        // computeErrors() may run JavaScript, which may abort the request, so we need to make sure
+        // sure we still have an active session.
+        if (!paymentCoordinator().hasActiveSession())
+            return Exception { InvalidStateError };
+        return shippingAddressUpdated(WTFMove(errors));
+    }
     case Reason::ShippingOptionChanged:
         return shippingOptionUpdated();
-    case Reason::PaymentMethodChanged:
-        return paymentMethodUpdated(computeErrors(WTFMove(error), WTFMove(addressErrors), WTFMove(payerErrors), paymentMethodErrors));
+    case Reason::PaymentMethodChanged: {
+        auto errors = computeErrors(WTFMove(error), WTFMove(addressErrors), WTFMove(payerErrors), paymentMethodErrors);
+        // computeErrors() may run JavaScript, which may abort the request, so we need to make sure
+        // sure we still have an active session.
+        if (!paymentCoordinator().hasActiveSession())
+            return Exception { InvalidStateError };
+        return paymentMethodUpdated(WTFMove(errors));
+    }
     }
 
     ASSERT_NOT_REACHED();
@@ -637,6 +649,11 @@ ExceptionOr<void> ApplePayPaymentHandler::merchantValidationCompleted(JSC::JSVal
     auto merchantSession = PaymentMerchantSession::fromJS(*document().globalObject(), asObject(merchantSessionValue), errorMessage);
     if (!merchantSession)
         return Exception { TypeError, WTFMove(errorMessage) };
+
+    // PaymentMerchantSession::fromJS() may run JS, which may abort the request so we need to
+    // check again if there is an active session.
+    if (!paymentCoordinator().hasActiveSession())
+        return Exception { InvalidStateError };
 
     paymentCoordinator().completeMerchantValidation(*merchantSession);
     return { };
@@ -910,6 +927,11 @@ ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& valida
     auto exception = computePaymentMethodErrors(validationErrors.paymentMethod.get(), errors);
     if (exception.hasException())
         return exception.releaseException();
+
+    // computePaymentMethodErrors() may run JS, which may abort the request so we need to
+    // make sure we still have an active session.
+    if (!paymentCoordinator().hasActiveSession())
+        return Exception { AbortError };
 
     // Ensure there is always at least one error to avoid having a final result.
     if (errors.isEmpty())

@@ -54,7 +54,7 @@ Screen::Screen(LocalDOMWindow& window)
 
 Screen::~Screen() = default;
 
-static bool isLoadingInHeadlessMode(const LocalFrame& frame)
+static bool fingerprintingProtectionsEnabled(const LocalFrame& frame)
 {
     auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
     if (!localFrame)
@@ -65,7 +65,7 @@ static bool isLoadingInHeadlessMode(const LocalFrame& frame)
         return false;
 
     RefPtr loader = mainDocument->loader();
-    return loader && loader->isLoadingInHeadlessMode();
+    return loader && loader->fingerprintingProtectionsEnabled();
 }
 
 int Screen::height() const
@@ -107,7 +107,7 @@ int Screen::availLeft() const
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ScreenAPIsAccessed::AvailLeft);
 
-    if (isLoadingInHeadlessMode(*frame))
+    if (fingerprintingProtectionsEnabled(*frame))
         return 0;
 
     return static_cast<int>(screenAvailableRect(frame->view()).x());
@@ -122,7 +122,7 @@ int Screen::availTop() const
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ScreenAPIsAccessed::AvailTop);
 
-    if (isLoadingInHeadlessMode(*frame))
+    if (fingerprintingProtectionsEnabled(*frame))
         return 0;
 
     return static_cast<int>(screenAvailableRect(frame->view()).y());
@@ -137,7 +137,7 @@ int Screen::availHeight() const
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ScreenAPIsAccessed::AvailHeight);
 
-    if (isLoadingInHeadlessMode(*frame))
+    if (fingerprintingProtectionsEnabled(*frame))
         return static_cast<int>(frame->screenSize().height());
 
     return static_cast<int>(screenAvailableRect(frame->view()).height());
@@ -152,7 +152,7 @@ int Screen::availWidth() const
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ScreenAPIsAccessed::AvailWidth);
 
-    if (isLoadingInHeadlessMode(*frame))
+    if (fingerprintingProtectionsEnabled(*frame))
         return static_cast<int>(frame->screenSize().width());
 
     return static_cast<int>(screenAvailableRect(frame->view()).width());

@@ -156,7 +156,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
                 return;
 
             Ref itemTypeLoader { *weakItemTypeLoader };
-#if !COMPILER(MSVC)
+#if !(COMPILER(MSVC) && !COMPILER(CLANG))
             ASSERT_UNUSED(this, notFound != m_itemTypeLoaders.findIf([&] (auto& loader) { return loader.ptr() == itemTypeLoader.ptr(); }));
 #endif
 
@@ -300,7 +300,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
         if (urlStringToSanitize.isEmpty())
             return;
 
-        m_data = { page->sanitizeLookalikeCharacters(urlStringToSanitize, LookalikeCharacterSanitizationTrigger::Copy) };
+        m_data = { page->applyLinkDecorationFiltering(urlStringToSanitize, LinkDecorationFilteringTrigger::Copy) };
     }
 
     if (m_type == "text/html"_s) {

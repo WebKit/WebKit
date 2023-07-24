@@ -362,10 +362,20 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         newHasHorizontalScroller = NO;
 
     _private->horizontalScrollingAllowedButScrollerHidden = newHasHorizontalScroller && _private->alwaysHideHorizontalScroller;
+    _private->verticalScrollingAllowedButScrollerHidden = newHasVerticalScroller && _private->alwaysHideVerticalScroller;
+
+    if ([documentView isKindOfClass:[WebHTMLView class]]) {
+        WebHTMLView* htmlView = (WebHTMLView*)documentView;
+        WebCore::ScrollbarWidth scrollbarWidthStyle = [htmlView _scrollbarWidthStyle];
+        if (scrollbarWidthStyle == WebCore::ScrollbarWidth::None) {
+            _private->horizontalScrollingAllowedButScrollerHidden = true;
+            _private->verticalScrollingAllowedButScrollerHidden = true;
+        }
+    }
+
     if (_private->horizontalScrollingAllowedButScrollerHidden)
         newHasHorizontalScroller = NO;
 
-    _private->verticalScrollingAllowedButScrollerHidden = newHasVerticalScroller && _private->alwaysHideVerticalScroller;
     if (_private->verticalScrollingAllowedButScrollerHidden)
         newHasVerticalScroller = NO;
 

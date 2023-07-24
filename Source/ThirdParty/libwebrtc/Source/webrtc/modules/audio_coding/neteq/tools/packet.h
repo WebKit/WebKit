@@ -95,7 +95,7 @@ class Packet {
   // Virtual lengths are used when parsing RTP header files (dummy RTP files).
   const size_t virtual_packet_length_bytes_;
   size_t virtual_payload_length_bytes_ = 0;
-  const double time_ms_;     // Used to denote a packet's arrival time.
+  const double time_ms_;  // Used to denote a packet's arrival time.
   const bool valid_header_;
 };
 

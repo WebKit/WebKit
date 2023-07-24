@@ -10,8 +10,12 @@
 
 #include "api/metronome/test/fake_metronome.h"
 
+#include <utility>
+#include <vector>
+
 #include "api/priority.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/event.h"
@@ -22,12 +26,9 @@ namespace webrtc::test {
 ForcedTickMetronome::ForcedTickMetronome(TimeDelta tick_period)
     : tick_period_(tick_period) {}
 
-void ForcedTickMetronome::AddListener(TickListener* listener) {
-  listeners_.insert(listener);
-}
-
-void ForcedTickMetronome::RemoveListener(TickListener* listener) {
-  listeners_.erase(listener);
+void ForcedTickMetronome::RequestCallOnNextTick(
+    absl::AnyInvocable<void() &&> callback) {
+  callbacks_.push_back(std::move(callback));
 }
 
 TimeDelta ForcedTickMetronome::TickPeriod() const {
@@ -35,53 +36,33 @@ TimeDelta ForcedTickMetronome::TickPeriod() const {
 }
 
 size_t ForcedTickMetronome::NumListeners() {
-  return listeners_.size();
+  return callbacks_.size();
 }
 
 void ForcedTickMetronome::Tick() {
-  for (auto* listener : listeners_) {
-    listener->OnTickTaskQueue()->PostTask([listener] { listener->OnTick(); });
+  std::vector<absl::AnyInvocable<void() &&>> callbacks;
+  callbacks_.swap(callbacks);
+  for (auto& callback : callbacks)
+    std::move(callback)();
+}
+
+FakeMetronome::FakeMetronome(TimeDelta tick_period)
+    : tick_period_(tick_period) {}
+
+void FakeMetronome::RequestCallOnNextTick(
+    absl::AnyInvocable<void() &&> callback) {
+  TaskQueueBase* current = TaskQueueBase::Current();
+  callbacks_.push_back(std::move(callback));
+  if (callbacks_.size() == 1) {
+    current->PostDelayedTask(
+        [this] {
+          std::vector<absl::AnyInvocable<void() &&>> callbacks;
+          callbacks_.swap(callbacks);
+          for (auto& callback : callbacks)
+            std::move(callback)();
+        },
+        tick_period_);
   }
-}
-
-FakeMetronome::FakeMetronome(TaskQueueFactory* factory, TimeDelta tick_period)
-    : tick_period_(tick_period),
-      queue_(factory->CreateTaskQueue("MetronomeQueue",
-                                      TaskQueueFactory::Priority::HIGH)) {}
-
-FakeMetronome::~FakeMetronome() {
-  RTC_DCHECK(listeners_.empty());
-}
-
-void FakeMetronome::AddListener(TickListener* listener) {
-  MutexLock lock(&mutex_);
-  listeners_.insert(listener);
-  if (!started_) {
-    tick_task_ = RepeatingTaskHandle::Start(queue_.Get(), [this] {
-      MutexLock lock(&mutex_);
-      // Stop if empty.
-      if (listeners_.empty())
-        return TimeDelta::PlusInfinity();
-      for (auto* listener : listeners_) {
-        listener->OnTickTaskQueue()->PostTask(
-            [listener] { listener->OnTick(); });
-      }
-      return tick_period_;
-    });
-    started_ = true;
-  }
-}
-
-void FakeMetronome::RemoveListener(TickListener* listener) {
-  MutexLock lock(&mutex_);
-  listeners_.erase(listener);
-}
-
-void FakeMetronome::Stop() {
-  MutexLock lock(&mutex_);
-  RTC_DCHECK(listeners_.empty());
-  if (started_)
-    queue_.PostTask([this] { tick_task_.Stop(); });
 }
 
 TimeDelta FakeMetronome::TickPeriod() const {

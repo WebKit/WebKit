@@ -214,7 +214,7 @@ class TestParser(object):
 
             ranges = fuzzy_data.split(u";")
             if len(ranges) != 2:
-                raise ValueError("Malformed fuzzy value %s" % value)
+                raise ValueError("Malformed fuzzy value \"%s\"" % fuzzy_data)
 
             arg_values = {}  # type: Dict[Text, List[int]]
             positional_args = deque()  # type: Deque[List[int]]

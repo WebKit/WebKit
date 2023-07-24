@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<style>
+    input {
+        width: 300px;
+        font-size: 30px;
+        line-height: 40px;
+        background: blue;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<input type="text"></input>
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    document.querySelector("input").focus();
+    await UIHelper.renderingUpdate();
+
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

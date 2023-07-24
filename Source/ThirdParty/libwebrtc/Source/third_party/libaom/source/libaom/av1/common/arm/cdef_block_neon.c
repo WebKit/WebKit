@@ -14,15 +14,15 @@
 #include "av1/common/cdef_block_simd.h"
 
 void cdef_copy_rect8_8bit_to_16bit_neon(uint16_t *dst, int dstride,
-                                        const uint8_t *src, int sstride, int v,
-                                        int h) {
+                                        const uint8_t *src, int sstride,
+                                        int width, int height) {
   int j;
-  for (int i = 0; i < v; i++) {
-    for (j = 0; j < (h & ~0x7); j += 8) {
+  for (int i = 0; i < height; i++) {
+    for (j = 0; j < (width & ~0x7); j += 8) {
       v64 row = v64_load_unaligned(&src[i * sstride + j]);
       v128_store_unaligned(&dst[i * dstride + j], v128_unpack_u8_s16(row));
     }
-    for (; j < h; j++) {
+    for (; j < width; j++) {
       dst[i * dstride + j] = src[i * sstride + j];
     }
   }

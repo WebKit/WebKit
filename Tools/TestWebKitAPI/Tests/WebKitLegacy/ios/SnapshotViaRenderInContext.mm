@@ -57,6 +57,19 @@ IGNORE_WARNINGS_END
 
 @end
 
+@interface UIWebViewWithoutSafeArea : UIWebView
+
+@end
+
+@implementation UIWebViewWithoutSafeArea : UIWebView
+
+- (UIEdgeInsets)_safeAreaInsetsForFrame:(CGRect)frame inSuperview:(UIView *)view
+{
+    return UIEdgeInsetsZero;
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 static NSInteger getPixelIndex(NSInteger x, NSInteger y, NSInteger width)
@@ -69,8 +82,8 @@ TEST(WebKitLegacy, RenderInContextSnapshot)
     const NSInteger width = 800;
     const NSInteger height = 600;
     
-    RetainPtr<UIWindow> uiWindow = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, width, height)]);
-    RetainPtr<UIWebView> uiWebView = adoptNS([[UIWebView alloc] initWithFrame:NSMakeRect(0, 0, width, height)]);
+    auto uiWindow = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, width, height)]);
+    auto uiWebView = adoptNS([[UIWebViewWithoutSafeArea alloc] initWithFrame:NSMakeRect(0, 0, width, height)]);
     [uiWindow addSubview:uiWebView.get()];
     
     RetainPtr<RenderInContextWebViewDelegate> uiDelegate = adoptNS([[RenderInContextWebViewDelegate alloc] init]);

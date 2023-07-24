@@ -111,6 +111,14 @@ OPENSSL_EXPORT int EVP_DecodeBase64(uint8_t *out, size_t *out_len,
 // very specific to PEM. It is also very lenient of invalid input. Use of any of
 // these functions is thus deprecated.
 
+// EVP_ENCODE_CTX_new returns a newly-allocated |EVP_ENCODE_CTX| or NULL on
+// error. The caller must release the result with |EVP_ENCODE_CTX_free|  when
+// done.
+OPENSSL_EXPORT EVP_ENCODE_CTX *EVP_ENCODE_CTX_new(void);
+
+// EVP_ENCODE_CTX_free releases memory associated with |ctx|.
+OPENSSL_EXPORT void EVP_ENCODE_CTX_free(EVP_ENCODE_CTX *ctx);
+
 // EVP_EncodeInit initialises |*ctx|, which is typically stack
 // allocated, for an encoding operation.
 //

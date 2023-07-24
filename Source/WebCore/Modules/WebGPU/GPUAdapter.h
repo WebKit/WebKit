@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,8 @@
 #include "GPUSupportedLimits.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "ScriptExecutionContext.h"
+#include "WebGPUAdapter.h"
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUAdapter.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -42,7 +42,7 @@ namespace WebCore {
 
 class GPUAdapter : public RefCounted<GPUAdapter> {
 public:
-    static Ref<GPUAdapter> create(Ref<PAL::WebGPU::Adapter>&& backing)
+    static Ref<GPUAdapter> create(Ref<WebGPU::Adapter>&& backing)
     {
         return adoptRef(*new GPUAdapter(WTFMove(backing)));
     }
@@ -58,16 +58,16 @@ public:
     using RequestAdapterInfoPromise = DOMPromiseDeferred<IDLInterface<GPUAdapterInfo>>;
     void requestAdapterInfo(const std::optional<Vector<String>>&, RequestAdapterInfoPromise&&);
 
-    PAL::WebGPU::Adapter& backing() { return m_backing; }
-    const PAL::WebGPU::Adapter& backing() const { return m_backing; }
+    WebGPU::Adapter& backing() { return m_backing; }
+    const WebGPU::Adapter& backing() const { return m_backing; }
 
 private:
-    GPUAdapter(Ref<PAL::WebGPU::Adapter>&& backing)
+    GPUAdapter(Ref<WebGPU::Adapter>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
-    Ref<PAL::WebGPU::Adapter> m_backing;
+    Ref<WebGPU::Adapter> m_backing;
 };
 
 }

@@ -32,9 +32,9 @@ namespace WebCore {
 
 IndexKey::IndexKey() = default;
 
-IndexKey::IndexKey(Vector<IDBKeyData>&& keys)
+IndexKey::IndexKey(Data&& keys)
+    : m_keys(WTFMove(keys))
 {
-    m_keys.swap(keys);
 }
 
 IndexKey IndexKey::isolatedCopy() const &
@@ -49,35 +49,42 @@ IndexKey IndexKey::isolatedCopy() &&
 
 IDBKeyData IndexKey::asOneKey() const
 {
-    if (m_keys.isEmpty())
-        return { };
-
-    if (m_keys.size() == 1)
-        return m_keys[0];
-
-    IDBKeyData result;
-    result.setArrayValue(m_keys);
-    return result;
+    return WTF::switchOn(m_keys, [](std::nullptr_t) {
+        return IDBKeyData { };
+    }, [](const IDBKeyData& keyData) {
+        return keyData;
+    }, [](const Vector<IDBKeyData>& keyDataVector) {
+        IDBKeyData result;
+        result.setArrayValue(keyDataVector);
+        return result;
+    });
 }
 
 Vector<IDBKeyData> IndexKey::multiEntry() const
 {
     Vector<IDBKeyData> multiEntry;
-    for (auto& key : m_keys) {
-        if (!key.isValid())
-            continue;
 
-        bool skip = false;
-        for (auto& otherKey : multiEntry) {
-            if (key == otherKey) {
-                skip = true;
-                break;
+    WTF::switchOn(m_keys, [](std::nullptr_t) {
+    }, [&](const IDBKeyData& keyData) {
+        if (keyData.isValid())
+            multiEntry.append(keyData);
+    }, [&](const Vector<IDBKeyData>& keyDataVector) {
+        for (auto& key : keyDataVector) {
+            if (!key.isValid())
+                continue;
+
+            bool skip = false;
+            for (auto& otherKey : multiEntry) {
+                if (key == otherKey) {
+                    skip = true;
+                    break;
+                }
             }
-        }
 
-        if (!skip)
-            multiEntry.append(key);
-    }
+            if (!skip)
+                multiEntry.append(key);
+        }
+    });
 
     return multiEntry;
 }

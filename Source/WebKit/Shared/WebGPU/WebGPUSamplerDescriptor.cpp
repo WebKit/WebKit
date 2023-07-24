@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,20 +30,20 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUSamplerDescriptor.h>
+#include <WebCore/WebGPUSamplerDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<SamplerDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::SamplerDescriptor& samplerDescriptor)
+std::optional<SamplerDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::SamplerDescriptor& samplerDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(samplerDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(samplerDescriptor));
     if (!base)
         return std::nullopt;
 
     return { { WTFMove(*base), samplerDescriptor.addressModeU, samplerDescriptor.addressModeV, samplerDescriptor.addressModeW, samplerDescriptor.magFilter, samplerDescriptor.minFilter, samplerDescriptor.mipmapFilter, samplerDescriptor.lodMinClamp, samplerDescriptor.lodMaxClamp, samplerDescriptor.compare, samplerDescriptor.maxAnisotropy } };
 }
 
-std::optional<PAL::WebGPU::SamplerDescriptor> ConvertFromBackingContext::convertFromBacking(const SamplerDescriptor& samplerDescriptor)
+std::optional<WebCore::WebGPU::SamplerDescriptor> ConvertFromBackingContext::convertFromBacking(const SamplerDescriptor& samplerDescriptor)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(samplerDescriptor));
     if (!base)

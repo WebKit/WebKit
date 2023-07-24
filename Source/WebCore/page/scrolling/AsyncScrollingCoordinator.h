@@ -75,7 +75,6 @@ public:
     
     WEBCORE_EXPORT void setMouseIsOverContentArea(ScrollableArea&, bool) override;
     WEBCORE_EXPORT void setMouseMovedInContentArea(ScrollableArea&) override;
-    WEBCORE_EXPORT void scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID, ScrollbarOrientation, bool);
 
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);
@@ -95,6 +94,7 @@ protected:
     void scheduleRenderingUpdate();
 
     bool eventTrackingRegionsDirty() const { return m_eventTrackingRegionsDirty; }
+    WEBCORE_EXPORT LocalFrameView* frameViewForScrollingNode(ScrollingNodeID) const;
 
 private:
     bool isAsyncScrollingCoordinator() const override { return true; }
@@ -112,7 +112,7 @@ private:
     WEBCORE_EXPORT bool requestStartKeyboardScrollAnimation(ScrollableArea&, const KeyboardScroll&) final;
     WEBCORE_EXPORT bool requestStopKeyboardScrollAnimation(ScrollableArea&, bool) final;
 
-    WEBCORE_EXPORT bool requestScrollToPosition(ScrollableArea&, const ScrollPosition&, ScrollType, ScrollClamping, ScrollIsAnimated) final;
+    WEBCORE_EXPORT bool requestScrollToPosition(ScrollableArea&, const ScrollPosition&, const ScrollPositionChangeOptions& options) final;
     WEBCORE_EXPORT void stopAnimatedScroll(ScrollableArea&) final;
 
     WEBCORE_EXPORT void applyScrollingTreeLayerPositions() override;
@@ -172,8 +172,6 @@ private:
     void wheelEventScrollDidEndForNode(ScrollingNodeID);
     
     WEBCORE_EXPORT void setMouseIsOverScrollbar(Scrollbar*, bool isOverScrollbar) override;
-
-    LocalFrameView* frameViewForScrollingNode(ScrollingNodeID) const;
 
     void hysterisisTimerFired(PAL::HysteresisState);
 

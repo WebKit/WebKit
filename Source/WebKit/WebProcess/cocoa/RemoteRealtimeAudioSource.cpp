@@ -50,10 +50,7 @@ RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifi
     ASSERT(device.type() == CaptureDevice::DeviceType::Microphone);
 }
 
-RemoteRealtimeAudioSource::~RemoteRealtimeAudioSource()
-{
-    removeAsClient();
-}
+RemoteRealtimeAudioSource::~RemoteRealtimeAudioSource() = default;
 
 void RemoteRealtimeAudioSource::remoteAudioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t size)
 {

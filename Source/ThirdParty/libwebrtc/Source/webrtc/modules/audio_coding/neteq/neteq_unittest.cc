@@ -26,7 +26,7 @@
 #include "modules/audio_coding/codecs/pcm16b/pcm16b.h"
 #include "modules/audio_coding/neteq/test/neteq_decoding_test.h"
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
-#include "modules/audio_coding/neteq/tools/neteq_packet_source_input.h"
+#include "modules/audio_coding/neteq/tools/neteq_rtp_dump_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/rtp_rtcp/include/rtcp_statistics.h"
@@ -76,11 +76,9 @@ TEST_F(NetEqDecodingTest, MAYBE_TestOpusBitExactness) {
   const std::string input_rtp_file =
       webrtc::test::ResourcePath("audio_coding/neteq_opus", "rtp");
 
-  // The checksum depends on SSE being enabled, the second part is the non-SSE
-  // checksum.
   const std::string output_checksum =
       "fec6827bb9ee0b21770bbbb4a3a6f8823bf537dc|"
-      "c5eb0a8fcf7e8255a40f821cb815e1096619efeb";
+      "3610cc7be4b3407b9c273b1299ab7f8f47cca96b";
 
   const std::string network_stats_checksum =
       "3d043e47e5f4bb81d37e7bce8c44bf802965c853|"
@@ -100,11 +98,9 @@ TEST_F(NetEqDecodingTest, MAYBE_TestOpusDtxBitExactness) {
   const std::string input_rtp_file =
       webrtc::test::ResourcePath("audio_coding/neteq_opus_dtx", "rtp");
 
-  // The checksum depends on SSE being enabled, the second part is the non-SSE
-  // checksum.
   const std::string output_checksum =
       "b3c4899eab5378ef5e54f2302948872149f6ad5e|"
-      "e97e32a77355e7ce46a2dc2f43bf1c2805530fcb";
+      "589e975ec31ea13f302457fea1425be9380ffb96";
 
   const std::string network_stats_checksum =
       "dc8447b9fee1a21fd5d1f4045d62b982a3fb0215";
@@ -163,7 +159,6 @@ TEST_F(NetEqDecodingTestFaxMode, TestFrameWaitingTimeStatistics) {
   EXPECT_EQ(-1, stats.min_waiting_time_ms);
   EXPECT_EQ(-1, stats.max_waiting_time_ms);
 }
-
 
 TEST_F(NetEqDecodingTest, LongCngWithNegativeClockDrift) {
   // Apply a clock drift of -25 ms / s (sender faster than receiver).
@@ -986,15 +981,15 @@ TEST(NetEqNoTimeStretchingMode, RunTest) {
   NetEq::Config config;
   config.for_test_no_time_stretching = true;
   auto codecs = NetEqTest::StandardDecoderMap();
-  NetEqPacketSourceInput::RtpHeaderExtensionMap rtp_ext_map = {
+  std::map<int, RTPExtensionType> rtp_ext_map = {
       {1, kRtpExtensionAudioLevel},
       {3, kRtpExtensionAbsoluteSendTime},
       {5, kRtpExtensionTransportSequenceNumber},
       {7, kRtpExtensionVideoContentType},
       {8, kRtpExtensionVideoTiming}};
-  std::unique_ptr<NetEqInput> input(new NetEqRtpDumpInput(
+  std::unique_ptr<NetEqInput> input = CreateNetEqRtpDumpInput(
       webrtc::test::ResourcePath("audio_coding/neteq_universal_new", "rtp"),
-      rtp_ext_map, absl::nullopt /*No SSRC filter*/));
+      rtp_ext_map, absl::nullopt /*No SSRC filter*/);
   std::unique_ptr<TimeLimitedNetEqInput> input_time_limit(
       new TimeLimitedNetEqInput(std::move(input), 20000));
   std::unique_ptr<AudioSink> output(new VoidAudioSink);

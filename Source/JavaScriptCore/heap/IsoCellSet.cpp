@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,13 +80,13 @@ Ref<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlockS
     return adoptRef(*new Task(*this));
 }
 
-NEVER_INLINE Bitmap<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(unsigned blockIndex)
+NEVER_INLINE WTF::BitSet<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(unsigned blockIndex)
 {
     Locker locker { m_subspace.m_directory.m_bitvectorLock };
     auto& bitsPtrRef = m_bits[blockIndex];
     auto* bits = bitsPtrRef.get();
     if (!bits) {
-        bitsPtrRef = makeUnique<Bitmap<MarkedBlock::atomsPerBlock>>();
+        bitsPtrRef = makeUnique<WTF::BitSet<MarkedBlock::atomsPerBlock>>();
         bits = bitsPtrRef.get();
         WTF::storeStoreFence();
         m_blocksWithBits[blockIndex] = true;

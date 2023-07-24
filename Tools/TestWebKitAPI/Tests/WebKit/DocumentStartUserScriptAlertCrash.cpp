@@ -48,10 +48,8 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef
 
 TEST(WebKit, DocumentStartUserScriptAlertCrashTest)
 {
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DocumentStartUserScriptAlertCrashTestPageGroup"))); 
-
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DocumentStartUserScriptAlertCrashTest"));
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(context.get());
 
     WKPageUIClientV0 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));

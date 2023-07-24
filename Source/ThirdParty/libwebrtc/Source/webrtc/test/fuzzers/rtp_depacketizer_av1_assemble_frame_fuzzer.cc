@@ -7,14 +7,13 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#include "modules/rtp_rtcp/source/video_rtp_depacketizer_av1.h"
-
 #include <stddef.h>
 #include <stdint.h>
 
 #include <vector>
 
 #include "api/array_view.h"
+#include "modules/rtp_rtcp/source/video_rtp_depacketizer_av1.h"
 #include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {

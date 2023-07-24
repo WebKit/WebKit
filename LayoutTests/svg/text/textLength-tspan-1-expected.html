@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>All lines should have the same length</h1>
+<svg style="display: block; width: 100%; height: 600px;" viewBox="0 0 100 100">
+<text><tspan textLength="80" x="0" dy="1em">SHORT</tspan><tspan textLength="80" x="0" dy="1em">SHORT</tspan><tspan textLength="80" x="0" dy="1em">SHORT</tspan></text>
+<line x1="0" x2="100" y1="1.1em" y2="1.1em" stroke="blue"/>  <!-- Indicates the width of the viewport -->
+<line x1="0" x2="80"  y1="1.1em" y2="1.1em" stroke="green"/> <!-- Indicates the specified text length -->
+</svg>
+</body>
+</html>

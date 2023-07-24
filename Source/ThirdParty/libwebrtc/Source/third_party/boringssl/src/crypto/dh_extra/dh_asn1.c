@@ -63,6 +63,7 @@
 #include <openssl/err.h>
 
 #include "../bytestring/internal.h"
+#include "../fipsmodule/dh/internal.h"
 
 
 static int parse_integer(CBS *cbs, BIGNUM **out) {

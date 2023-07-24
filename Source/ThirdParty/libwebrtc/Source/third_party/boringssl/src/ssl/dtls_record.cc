@@ -123,52 +123,37 @@
 
 BSSL_NAMESPACE_BEGIN
 
-// to_u64_be treats |in| as a 8-byte big-endian integer and returns the value as
-// a |uint64_t|.
-static uint64_t to_u64_be(const uint8_t in[8]) {
-  uint64_t ret = 0;
-  unsigned i;
-  for (i = 0; i < 8; i++) {
-    ret <<= 8;
-    ret |= in[i];
-  }
-  return ret;
-}
-
 // dtls1_bitmap_should_discard returns one if |seq_num| has been seen in
 // |bitmap| or is stale. Otherwise it returns zero.
 static bool dtls1_bitmap_should_discard(DTLS1_BITMAP *bitmap,
-                                        const uint8_t seq_num[8]) {
+                                        uint64_t seq_num) {
   const unsigned kWindowSize = sizeof(bitmap->map) * 8;
 
-  uint64_t seq_num_u = to_u64_be(seq_num);
-  if (seq_num_u > bitmap->max_seq_num) {
+  if (seq_num > bitmap->max_seq_num) {
     return false;
   }
-  uint64_t idx = bitmap->max_seq_num - seq_num_u;
+  uint64_t idx = bitmap->max_seq_num - seq_num;
   return idx >= kWindowSize || (bitmap->map & (((uint64_t)1) << idx));
 }
 
 // dtls1_bitmap_record updates |bitmap| to record receipt of sequence number
 // |seq_num|. It slides the window forward if needed. It is an error to call
 // this function on a stale sequence number.
-static void dtls1_bitmap_record(DTLS1_BITMAP *bitmap,
-                                const uint8_t seq_num[8]) {
+static void dtls1_bitmap_record(DTLS1_BITMAP *bitmap, uint64_t seq_num) {
   const unsigned kWindowSize = sizeof(bitmap->map) * 8;
 
-  uint64_t seq_num_u = to_u64_be(seq_num);
   // Shift the window if necessary.
-  if (seq_num_u > bitmap->max_seq_num) {
-    uint64_t shift = seq_num_u - bitmap->max_seq_num;
+  if (seq_num > bitmap->max_seq_num) {
+    uint64_t shift = seq_num - bitmap->max_seq_num;
     if (shift >= kWindowSize) {
       bitmap->map = 0;
     } else {
       bitmap->map <<= shift;
     }
-    bitmap->max_seq_num = seq_num_u;
+    bitmap->max_seq_num = seq_num;
   }
 
-  uint64_t idx = bitmap->max_seq_num - seq_num_u;
+  uint64_t idx = bitmap->max_seq_num - seq_num;
   if (idx < kWindowSize) {
     bitmap->map |= ((uint64_t)1) << idx;
   }
@@ -192,11 +177,11 @@ enum ssl_open_record_t dtls_open_record(SSL *ssl, uint8_t *out_type,
   // Decode the record.
   uint8_t type;
   uint16_t version;
-  uint8_t sequence[8];
+  uint8_t sequence_bytes[8];
   CBS body;
   if (!CBS_get_u8(&cbs, &type) ||
       !CBS_get_u16(&cbs, &version) ||
-      !CBS_copy_bytes(&cbs, sequence, 8) ||
+      !CBS_copy_bytes(&cbs, sequence_bytes, sizeof(sequence_bytes)) ||
       !CBS_get_u16_length_prefixed(&cbs, &body) ||
       CBS_len(&body) > SSL3_RT_MAX_ENCRYPTED_LENGTH) {
     // The record header was incomplete or malformed. Drop the entire packet.
@@ -222,7 +207,8 @@ enum ssl_open_record_t dtls_open_record(SSL *ssl, uint8_t *out_type,
   Span<const uint8_t> header = in.subspan(0, DTLS1_RT_HEADER_LENGTH);
   ssl_do_msg_callback(ssl, 0 /* read */, SSL3_RT_HEADER, header);
 
-  uint16_t epoch = (((uint16_t)sequence[0]) << 8) | sequence[1];
+  uint64_t sequence = CRYPTO_load_u64_be(sequence_bytes);
+  uint16_t epoch = static_cast<uint16_t>(sequence >> 48);
   if (epoch != ssl->d1->r_epoch ||
       dtls1_bitmap_should_discard(&ssl->d1->bitmap, sequence)) {
     // Drop this record. It's from the wrong epoch or is a replay. Note that if
@@ -304,12 +290,12 @@ bool dtls_seal_record(SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
   // Determine the parameters for the current epoch.
   uint16_t epoch = ssl->d1->w_epoch;
   SSLAEADContext *aead = ssl->s3->aead_write_ctx.get();
-  uint8_t *seq = ssl->s3->write_sequence;
+  uint64_t *seq = &ssl->s3->write_sequence;
   if (use_epoch == dtls1_use_previous_epoch) {
     assert(ssl->d1->w_epoch >= 1);
     epoch = ssl->d1->w_epoch - 1;
     aead = ssl->d1->last_aead_write_ctx.get();
-    seq = ssl->d1->last_write_sequence;
+    seq = &ssl->d1->last_write_sequence;
   }
 
   if (max_out < DTLS1_RT_HEADER_LENGTH) {
@@ -323,9 +309,15 @@ bool dtls_seal_record(SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
   out[1] = record_version >> 8;
   out[2] = record_version & 0xff;
 
-  out[3] = epoch >> 8;
-  out[4] = epoch & 0xff;
-  OPENSSL_memcpy(&out[5], &seq[2], 6);
+  // Ensure the sequence number update does not overflow.
+  const uint64_t kMaxSequenceNumber = (uint64_t{1} << 48) - 1;
+  if (*seq + 1 > kMaxSequenceNumber) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_OVERFLOW);
+    return false;
+  }
+
+  uint64_t seq_with_epoch = (uint64_t{epoch} << 48) | *seq;
+  CRYPTO_store_u64_be(&out[3], seq_with_epoch);
 
   size_t ciphertext_len;
   if (!aead->CiphertextLen(&ciphertext_len, in_len, 0)) {
@@ -339,12 +331,12 @@ bool dtls_seal_record(SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
   size_t len_copy;
   if (!aead->Seal(out + DTLS1_RT_HEADER_LENGTH, &len_copy,
                   max_out - DTLS1_RT_HEADER_LENGTH, type, record_version,
-                  &out[3] /* seq */, header, in, in_len) ||
-      !ssl_record_sequence_update(&seq[2], 6)) {
+                  seq_with_epoch, header, in, in_len)) {
     return false;
   }
   assert(ciphertext_len == len_copy);
 
+  (*seq)++;
   *out_len = DTLS1_RT_HEADER_LENGTH + ciphertext_len;
   ssl_do_msg_callback(ssl, 1 /* write */, SSL3_RT_HEADER, header);
   return true;

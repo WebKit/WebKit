@@ -2133,7 +2133,7 @@ void aom_lpf_horizontal_14_quad_sse2(unsigned char *s, int p,
                                      const unsigned char *_blimit0,
                                      const unsigned char *_limit0,
                                      const unsigned char *_thresh0) {
-  const __m128i zero = _mm_set1_epi16(0);
+  const __m128i zero = _mm_setzero_si128();
   const __m128i one = _mm_set1_epi8(1);
   const __m128i blimit_v = _mm_load_si128((const __m128i *)_blimit0);
   const __m128i limit_v = _mm_load_si128((const __m128i *)_limit0);
@@ -2438,7 +2438,7 @@ void aom_lpf_horizontal_8_quad_sse2(unsigned char *s, int p,
                                     const unsigned char *_blimit0,
                                     const unsigned char *_limit0,
                                     const unsigned char *_thresh0) {
-  const __m128i zero = _mm_set1_epi16(0);
+  const __m128i zero = _mm_setzero_si128();
   const __m128i one = _mm_set1_epi8(1);
   const __m128i blimit_v = _mm_load_si128((const __m128i *)_blimit0);
   const __m128i limit_v = _mm_load_si128((const __m128i *)_limit0);
@@ -2630,7 +2630,7 @@ void aom_lpf_horizontal_6_quad_sse2(unsigned char *s, int p,
                                     const unsigned char *_blimit0,
                                     const unsigned char *_limit0,
                                     const unsigned char *_thresh0) {
-  const __m128i zero = _mm_set1_epi16(0);
+  const __m128i zero = _mm_setzero_si128();
   const __m128i one = _mm_set1_epi8(1);
   const __m128i blimit_v = _mm_load_si128((const __m128i *)_blimit0);
   const __m128i limit_v = _mm_load_si128((const __m128i *)_limit0);
@@ -2802,7 +2802,7 @@ void aom_lpf_horizontal_4_quad_sse2(unsigned char *s, int p,
                                     const unsigned char *_blimit0,
                                     const unsigned char *_limit0,
                                     const unsigned char *_thresh0) {
-  const __m128i zero = _mm_set1_epi16(0);
+  const __m128i zero = _mm_setzero_si128();
   const __m128i blimit_v = _mm_load_si128((const __m128i *)_blimit0);
   const __m128i limit_v = _mm_load_si128((const __m128i *)_limit0);
   const __m128i thresh_v = _mm_load_si128((const __m128i *)_thresh0);
@@ -2928,22 +2928,15 @@ void aom_lpf_vertical_8_quad_sse2(uint8_t *s, int pitch,
                                   const uint8_t *_limit0,
                                   const uint8_t *_thresh0) {
   DECLARE_ALIGNED(16, unsigned char, t_dst[16 * 8]);
-  unsigned char *src[2];
-  unsigned char *dst[2];
 
   // Transpose 16x8
   transpose_16x8(s - 4, s - 4 + pitch * 8, pitch, t_dst, 16);
 
   // Loop filtering
   aom_lpf_horizontal_8_quad(t_dst + 4 * 16, 16, _blimit0, _limit0, _thresh0);
-  src[0] = t_dst;
-  src[1] = t_dst + 8;
-
-  dst[0] = s - 4;
-  dst[1] = s - 4 + pitch * 8;
 
   // Transpose back
-  transpose_8xn(src, 16, dst, pitch, 2);
+  transpose_16x8_to_8x16(t_dst, 16, s - 4, pitch);
 }
 
 void aom_lpf_vertical_6_quad_sse2(uint8_t *s, int pitch,
@@ -2951,22 +2944,15 @@ void aom_lpf_vertical_6_quad_sse2(uint8_t *s, int pitch,
                                   const uint8_t *_limit0,
                                   const uint8_t *_thresh0) {
   DECLARE_ALIGNED(16, unsigned char, t_dst[16 * 8]);
-  unsigned char *src[2];
-  unsigned char *dst[2];
 
-  // Transpose 16x8
+  // Transpose 16x8:: (wxh) 8x16 to 16x8
   transpose_16x8(s - 4, s - 4 + pitch * 8, pitch, t_dst, 16);
 
   // Loop filtering
   aom_lpf_horizontal_6_quad(t_dst + 4 * 16, 16, _blimit0, _limit0, _thresh0);
-  src[0] = t_dst;
-  src[1] = t_dst + 8;
 
-  dst[0] = s - 4;
-  dst[1] = s - 4 + pitch * 8;
-
-  // Transpose back
-  transpose_8xn(src, 16, dst, pitch, 2);
+  // Transpose back:: (wxh) 16x8 to 8x16
+  transpose_16x8_to_8x16(t_dst, 16, s - 4, pitch);
 }
 
 void aom_lpf_vertical_4_quad_sse2(uint8_t *s, int pitch,
@@ -2974,8 +2960,6 @@ void aom_lpf_vertical_4_quad_sse2(uint8_t *s, int pitch,
                                   const uint8_t *_limit0,
                                   const uint8_t *_thresh0) {
   DECLARE_ALIGNED(16, unsigned char, t_dst[16 * 8]);
-  unsigned char *src[2];
-  unsigned char *dst[2];
 
   // Transpose 16x8
   transpose_16x8(s - 4, s - 4 + pitch * 8, pitch, t_dst, 16);
@@ -2983,12 +2967,7 @@ void aom_lpf_vertical_4_quad_sse2(uint8_t *s, int pitch,
   // Loop filtering
   aom_lpf_horizontal_4_quad_sse2(t_dst + 4 * 16, 16, _blimit0, _limit0,
                                  _thresh0);
-  src[0] = t_dst;
-  src[1] = t_dst + 8;
-
-  dst[0] = s - 4;
-  dst[1] = s - 4 + pitch * 8;
 
   // Transpose back
-  transpose_8xn(src, 16, dst, pitch, 2);
+  transpose_16x8_to_8x16(t_dst, 16, s - 4, pitch);
 }

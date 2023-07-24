@@ -359,7 +359,7 @@ private:
     void didReceiveAuthenticationChallenge(PAL::SessionID, WebPageProxyIdentifier, const std::optional<WebCore::SecurityOriginData>&, WebCore::AuthenticationChallenge&&, bool, AuthenticationChallengeIdentifier);
     void negotiatedLegacyTLS(WebPageProxyIdentifier);
     void didNegotiateModernTLS(WebPageProxyIdentifier, const URL&);
-    void didFailLoadDueToNetworkConnectionIntegrity(WebPageProxyIdentifier, const URL&); 
+    void didBlockLoadToKnownTracker(WebPageProxyIdentifier, const URL&);
     void setWebProcessHasUploads(WebCore::ProcessIdentifier, bool);
     void logDiagnosticMessage(WebPageProxyIdentifier, const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithResult(WebPageProxyIdentifier, const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
@@ -455,6 +455,14 @@ private:
 
     WeakHashSet<WebsiteDataStore> m_websiteDataStores;
     HashMap<DataTaskIdentifier, Ref<API::DataTask>> m_dataTasks;
+#if PLATFORM(MAC)
+    // On macOS, we prevent suspension of the NetworkProcess to avoid kills when holding
+    // locked database files. The WebSQLiteDatabaseTracker is not functional on macOS
+    // because the network process is not allowed to talk to talk to runningboardd due
+    // to sandboxing. See rdar://112406083 & rdar://112086186 for potential long-term
+    // fixes.
+    UniqueRef<ProcessThrottlerActivity> m_backgroundActivityToPreventSuspension;
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<id> m_backgroundObserver;

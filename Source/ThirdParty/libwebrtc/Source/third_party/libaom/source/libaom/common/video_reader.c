@@ -32,7 +32,9 @@ struct AvxVideoReaderStruct {
 
 AvxVideoReader *aom_video_reader_open(const char *filename) {
   AvxVideoReader *reader = NULL;
-  FILE *const file = fopen(filename, "rb");
+  const bool using_file = strcmp(filename, "-") != 0;
+  FILE *const file =
+      using_file ? fopen(filename, "rb") : set_binary_mode(stdin);
   if (!file) return NULL;  // Can't open file
 
   reader = (AvxVideoReader *)calloc(1, sizeof(*reader));
@@ -46,18 +48,24 @@ AvxVideoReader *aom_video_reader_open(const char *filename) {
   reader->obu_ctx.avx_ctx = &reader->input_ctx;
   reader->obu_ctx.is_annexb = 1;
 
-  if (file_is_ivf(&reader->input_ctx)) {
-    reader->input_ctx.file_type = FILE_TYPE_IVF;
-    reader->info.codec_fourcc = reader->input_ctx.fourcc;
-    reader->info.frame_width = reader->input_ctx.width;
-    reader->info.frame_height = reader->input_ctx.height;
+  // TODO(https://crbug.com/aomedia/1706): webm type does not support reading
+  // from stdin yet, and file_is_webm is not using the detect buffer when
+  // determining the type. Therefore it should only be checked when using a file
+  // and needs to be checked prior to other types.
+  if (false) {
 #if CONFIG_WEBM_IO
-  } else if (file_is_webm(&reader->webm_ctx, &reader->input_ctx)) {
+  } else if (using_file &&
+             file_is_webm(&reader->webm_ctx, &reader->input_ctx)) {
     reader->input_ctx.file_type = FILE_TYPE_WEBM;
     reader->info.codec_fourcc = reader->input_ctx.fourcc;
     reader->info.frame_width = reader->input_ctx.width;
     reader->info.frame_height = reader->input_ctx.height;
 #endif
+  } else if (file_is_ivf(&reader->input_ctx)) {
+    reader->input_ctx.file_type = FILE_TYPE_IVF;
+    reader->info.codec_fourcc = reader->input_ctx.fourcc;
+    reader->info.frame_width = reader->input_ctx.width;
+    reader->info.frame_height = reader->input_ctx.height;
   } else if (file_is_obu(&reader->obu_ctx)) {
     reader->input_ctx.file_type = FILE_TYPE_OBU;
     // assume AV1
@@ -85,7 +93,7 @@ void aom_video_reader_close(AvxVideoReader *reader) {
 
 int aom_video_reader_read_frame(AvxVideoReader *reader) {
   if (reader->input_ctx.file_type == FILE_TYPE_IVF) {
-    return !ivf_read_frame(reader->input_ctx.file, &reader->buffer,
+    return !ivf_read_frame(&reader->input_ctx, &reader->buffer,
                            &reader->frame_size, &reader->buffer_size,
                            &reader->pts);
   } else if (reader->input_ctx.file_type == FILE_TYPE_OBU) {

@@ -8,7 +8,7 @@
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2012, 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2012-2020 Google Inc. All rights reserved.
  * Copyright (C) 2014, 2020, 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
@@ -155,26 +155,38 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style)
     return DisplayType::Block;
 }
 
+static bool isOutermostSVGElement(const Element* element)
+{
+    return element && element->isSVGElement() && downcast<SVGElement>(*element).isOutermostSVGSVGElement();
+}
+
 static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const Element* element)
 {
     if (style.isFloating() || style.hasOutOfFlowPosition())
         return false;
 
-    auto isAtUserAgentShadowBoundary = [&] {
+    // Media elements have a special rendering where the media controls do not use a proper containing
+    // block model which means we need to manually stop text-decorations to apply to text inside media controls.
+    auto isAtMediaUAShadowBoundary = [&] {
         if (!element)
             return false;
         auto* parentNode = element->parentNode();
-        return parentNode && parentNode->isUserAgentShadowRoot();
+        return parentNode && parentNode->isUserAgentShadowRoot() && parentNode->parentOrShadowHostElement()->isMediaElement();
     }();
 
+    // Outermost <svg> roots are considered to be atomic inline-level.
+    if (isOutermostSVGElement(element))
+        return false;
+
     // There is no other good way to prevent decorations from affecting user agent shadow trees.
-    if (isAtUserAgentShadowBoundary)
+    if (isAtMediaUAShadowBoundary)
         return false;
 
     switch (style.display()) {
-    case DisplayType::Table:
     case DisplayType::InlineTable:
     case DisplayType::InlineBlock:
+    case DisplayType::InlineGrid:
+    case DisplayType::InlineFlex:
     case DisplayType::InlineBox:
         return false;
     default:
@@ -441,7 +453,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             bool isVertical = style.marqueeDirection() == MarqueeDirection::Up || style.marqueeDirection() == MarqueeDirection::Down;
             // Make horizontal marquees not wrap.
             if (!isVertical) {
-                style.setWhiteSpace(WhiteSpace::NoWrap);
+                style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Collapse);
+                style.setTextWrap(TextWrap::NoWrap);
                 style.setTextAlign(TextAlignMode::Start);
             }
             // Apparently this is the expected legacy behavior.
@@ -485,9 +498,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     // FIXME: Eventually table sections will support auto and scroll.
     if (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable
         || style.display() == DisplayType::TableRowGroup || style.display() == DisplayType::TableRow) {
-        if (style.overflowX() != Overflow::Visible && style.overflowX() != Overflow::Hidden)
+        if (style.overflowX() != Overflow::Visible && style.overflowX() != Overflow::Hidden && style.overflowX() != Overflow::Clip)
             style.setOverflowX(Overflow::Visible);
-        if (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden)
+        if (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden && style.overflowY() != Overflow::Clip)
             style.setOverflowY(Overflow::Visible);
     }
 
@@ -509,7 +522,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotAddIntrinsicMarginsToFormControls)) {
         // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
         // alter fonts and heights/widths.
-        if (is<HTMLFormControlElement>(m_element) && style.computedFontPixelSize() >= 11) {
+        if (is<HTMLFormControlElement>(m_element) && style.computedFontSize() >= 11) {
             // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
             // so we have to treat all image buttons as though they were explicitly sized.
             if (!is<HTMLInputElement>(*m_element) || !downcast<HTMLInputElement>(*m_element).isImageButton())
@@ -592,8 +605,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 #endif
     }
 
-    if (style.contentVisibility() == ContentVisibility::Hidden)
-        style.setEffectiveSkipsContent(true);
+    if (isSkippedContentRoot(style, m_element))
+        style.setEffectiveSkippedContent(true);
 
     adjustForSiteSpecificQuirks(style);
 }

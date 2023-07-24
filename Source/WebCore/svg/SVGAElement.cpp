@@ -30,7 +30,6 @@
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
 #include "HTMLAnchorElement.h"
-#include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "LocalFrame.h"
@@ -81,8 +80,6 @@ String SVGAElement::title() const
 
 void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGURIReference::parseAttribute(name, newValue);
-    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     if (name == SVGNames::targetAttr) {
         m_target->setBaseValInternal(newValue);
         return;
@@ -90,6 +87,9 @@ void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& 
         if (m_relList)
             m_relList->associatedAttributeValueChanged(newValue);
     }
+
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -129,7 +129,7 @@ void SVGAElement::defaultEventHandler(Event& event)
         }
 
         if (MouseEvent::canTriggerActivationBehavior(event)) {
-            String url = stripLeadingAndTrailingHTMLSpaces(href());
+            auto url = href().trim(isASCIIWhitespace);
 
             if (url[0] == '#') {
                 RefPtr targetElement = treeScope().getElementById(url.substringSharingImpl(1));

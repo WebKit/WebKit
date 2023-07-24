@@ -39,8 +39,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteCDMFactory::RemoteCDMFactory(WebProcess& process)
-    : m_process(process)
+RemoteCDMFactory::RemoteCDMFactory(WebProcess&)
 {
 }
 
@@ -58,7 +57,7 @@ const char* RemoteCDMFactory::supplementName()
 
 GPUProcessConnection& RemoteCDMFactory::gpuProcessConnection()
 {
-    return m_process.ensureGPUProcessConnection();
+    return WebProcess::singleton().ensureGPUProcessConnection();
 }
 
 bool RemoteCDMFactory::supportsKeySystem(const String& keySystem)

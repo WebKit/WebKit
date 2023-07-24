@@ -42,6 +42,9 @@ class ProgramVk : public ProgramImpl
                                     const gl::ProgramMergedVaryings &mergedVaryings) override;
     GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog) override;
 
+    angle::Result syncState(const gl::Context *context,
+                            const gl::Program::DirtyBits &dirtyBits) override;
+
     void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
     void setUniform2fv(GLint location, GLsizei count, const GLfloat *v) override;
     void setUniform3fv(GLint location, GLsizei count, const GLfloat *v) override;

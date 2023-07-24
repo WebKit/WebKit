@@ -15,19 +15,23 @@
 #include <algorithm>
 #include <cstddef>
 #include <string>
+#include <utility>
 #include <vector>
 
+#include "api/task_queue/pending_task_safety_flag.h"
+#include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/helpers.h"
-#include "rtc_base/location.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/memory_stream.h"
-#include "rtc_base/message_handler.h"
-#include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 
-using cricket::PseudoTcp;
+using ::cricket::PseudoTcp;
+using ::webrtc::ScopedTaskSafety;
+using ::webrtc::TaskQueueBase;
+using ::webrtc::TimeDelta;
 
 static const int kConnectTimeoutMs = 10000;  // ~3 * default RTO of 3000ms
 static const int kTransferTimeoutMs = 15000;
@@ -44,7 +48,6 @@ class PseudoTcpForTest : public cricket::PseudoTcp {
 };
 
 class PseudoTcpTestBase : public ::testing::Test,
-                          public rtc::MessageHandlerAutoCleanup,
                           public cricket::IPseudoTcpNotify {
  public:
   PseudoTcpTestBase()
@@ -121,14 +124,6 @@ class PseudoTcpTestBase : public ::testing::Test,
     UpdateLocalClock();
   }
 
-  enum {
-    MSG_LPACKET,
-    MSG_RPACKET,
-    MSG_LCLOCK,
-    MSG_RCLOCK,
-    MSG_IOCOMPLETE,
-    MSG_WRITE
-  };
   virtual void OnTcpOpen(PseudoTcp* tcp) {
     // Consider ourselves connected when the local side gets OnTcpOpen.
     // OnTcpWriteable isn't fired at open, so we trigger it now.
@@ -173,54 +168,48 @@ class PseudoTcpTestBase : public ::testing::Test,
                           << len;
       return WR_SUCCESS;
     }
-    int id = (tcp == &local_) ? MSG_RPACKET : MSG_LPACKET;
+    PseudoTcp* other;
+    ScopedTaskSafety* timer;
+    if (tcp == &local_) {
+      other = &remote_;
+      timer = &remote_timer_;
+    } else {
+      other = &local_;
+      timer = &local_timer_;
+    }
     std::string packet(buffer, len);
-    rtc::Thread::Current()->PostDelayed(RTC_FROM_HERE, delay_, this, id,
-                                        rtc::WrapMessageData(packet));
+    ++packets_in_flight_;
+    TaskQueueBase::Current()->PostDelayedTask(
+        [other, timer, packet = std::move(packet), this] {
+          --packets_in_flight_;
+          other->NotifyPacket(packet.c_str(), packet.size());
+          UpdateClock(*other, *timer);
+        },
+        TimeDelta::Millis(delay_));
     return WR_SUCCESS;
   }
 
-  void UpdateLocalClock() { UpdateClock(&local_, MSG_LCLOCK); }
-  void UpdateRemoteClock() { UpdateClock(&remote_, MSG_RCLOCK); }
-  void UpdateClock(PseudoTcp* tcp, uint32_t message) {
+  void UpdateLocalClock() { UpdateClock(local_, local_timer_); }
+  void UpdateRemoteClock() { UpdateClock(remote_, remote_timer_); }
+  static void UpdateClock(PseudoTcp& tcp, ScopedTaskSafety& timer) {
     long interval = 0;  // NOLINT
-    tcp->GetNextClock(PseudoTcp::Now(), interval);
+    tcp.GetNextClock(PseudoTcp::Now(), interval);
     interval = std::max<int>(interval, 0L);  // sometimes interval is < 0
-    rtc::Thread::Current()->Clear(this, message);
-    rtc::Thread::Current()->PostDelayed(RTC_FROM_HERE, interval, this, message);
-  }
-
-  virtual void OnMessage(rtc::Message* message) {
-    switch (message->message_id) {
-      case MSG_LPACKET: {
-        const std::string& s(rtc::UseMessageData<std::string>(message->pdata));
-        local_.NotifyPacket(s.c_str(), s.size());
-        UpdateLocalClock();
-        break;
-      }
-      case MSG_RPACKET: {
-        const std::string& s(rtc::UseMessageData<std::string>(message->pdata));
-        remote_.NotifyPacket(s.c_str(), s.size());
-        UpdateRemoteClock();
-        break;
-      }
-      case MSG_LCLOCK:
-        local_.NotifyClock(PseudoTcp::Now());
-        UpdateLocalClock();
-        break;
-      case MSG_RCLOCK:
-        remote_.NotifyClock(PseudoTcp::Now());
-        UpdateRemoteClock();
-        break;
-      default:
-        break;
-    }
-    delete message->pdata;
+    timer.reset();
+    TaskQueueBase::Current()->PostDelayedTask(
+        SafeTask(timer.flag(),
+                 [&tcp, &timer] {
+                   tcp.NotifyClock(PseudoTcp::Now());
+                   UpdateClock(tcp, timer);
+                 }),
+        TimeDelta::Millis(interval));
   }
 
   rtc::AutoThread main_thread_;
   PseudoTcpForTest local_;
   PseudoTcpForTest remote_;
+  ScopedTaskSafety local_timer_;
+  ScopedTaskSafety remote_timer_;
   rtc::MemoryStream send_stream_;
   rtc::MemoryStream recv_stream_;
   bool have_connected_;
@@ -231,6 +220,7 @@ class PseudoTcpTestBase : public ::testing::Test,
   int loss_;
   bool drop_next_packet_ = false;
   bool simultaneous_open_ = false;
+  int packets_in_flight_ = 0;
 };
 
 class PseudoTcpTest : public PseudoTcpTestBase {
@@ -242,8 +232,10 @@ class PseudoTcpTest : public PseudoTcpTestBase {
     // Create some dummy data to send.
     send_stream_.ReserveSize(size);
     for (int i = 0; i < size; ++i) {
-      char ch = static_cast<char>(i);
-      send_stream_.Write(&ch, 1, NULL, NULL);
+      uint8_t ch = static_cast<uint8_t>(i);
+      size_t written;
+      int error;
+      send_stream_.Write(rtc::MakeArrayView(&ch, 1), written, error);
     }
     send_stream_.Rewind();
     // Prepare the receive stream.
@@ -302,15 +294,19 @@ class PseudoTcpTest : public PseudoTcpTestBase {
   void ReadData() {
     char block[kBlockSize];
     size_t position;
-    int rcvd;
+    int received;
     do {
-      rcvd = remote_.Recv(block, sizeof(block));
-      if (rcvd != -1) {
-        recv_stream_.Write(block, rcvd, NULL, NULL);
+      received = remote_.Recv(block, sizeof(block));
+      if (received != -1) {
+        size_t written;
+        int error;
+        recv_stream_.Write(
+            rtc::MakeArrayView(reinterpret_cast<uint8_t*>(block), received),
+            written, error);
         recv_stream_.GetPosition(&position);
         RTC_LOG(LS_VERBOSE) << "Received: " << position;
       }
-    } while (rcvd > 0);
+    } while (received > 0);
   }
   void WriteData(bool* done) {
     size_t position, tosend;
@@ -318,8 +314,10 @@ class PseudoTcpTest : public PseudoTcpTestBase {
     char block[kBlockSize];
     do {
       send_stream_.GetPosition(&position);
-      if (send_stream_.Read(block, sizeof(block), &tosend, NULL) !=
-          rtc::SR_EOS) {
+      int error;
+      if (send_stream_.Read(
+              rtc::MakeArrayView(reinterpret_cast<uint8_t*>(block), kBlockSize),
+              tosend, error) != rtc::SR_EOS) {
         sent = local_.Send(block, tosend);
         UpdateLocalClock();
         if (sent != -1) {
@@ -357,8 +355,10 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
     // Create some dummy data to send.
     send_stream_.ReserveSize(size);
     for (int i = 0; i < size; ++i) {
-      char ch = static_cast<char>(i);
-      send_stream_.Write(&ch, 1, NULL, NULL);
+      uint8_t ch = static_cast<uint8_t>(i);
+      size_t written;
+      int error;
+      send_stream_.Write(rtc::MakeArrayView(&ch, 1), written, error);
     }
     send_stream_.Rewind();
     // Prepare the receive stream.
@@ -417,15 +417,20 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
   void ReadData() {
     char block[kBlockSize];
     size_t position;
-    int rcvd;
+    int received;
     do {
-      rcvd = receiver_->Recv(block, sizeof(block));
-      if (rcvd != -1) {
-        recv_stream_.Write(block, rcvd, NULL, NULL);
+      received = receiver_->Recv(block, sizeof(block));
+      if (received != -1) {
+        size_t written;
+        int error;
+        recv_stream_.Write(
+            rtc::MakeArrayView(reinterpret_cast<const uint8_t*>(block),
+                               received),
+            written, error);
         recv_stream_.GetPosition(&position);
         RTC_LOG(LS_VERBOSE) << "Received: " << position;
       }
-    } while (rcvd > 0);
+    } while (received > 0);
   }
   void WriteData() {
     size_t position, tosend;
@@ -434,7 +439,10 @@ class PseudoTcpTestPingPong : public PseudoTcpTestBase {
     do {
       send_stream_.GetPosition(&position);
       tosend = bytes_per_send_ ? bytes_per_send_ : sizeof(block);
-      if (send_stream_.Read(block, tosend, &tosend, NULL) != rtc::SR_EOS) {
+      int error;
+      if (send_stream_.Read(
+              rtc::MakeArrayView(reinterpret_cast<uint8_t*>(block), tosend),
+              tosend, error) != rtc::SR_EOS) {
         sent = sender_->Send(block, tosend);
         UpdateLocalClock();
         if (sent != -1) {
@@ -468,8 +476,10 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
     // Create some dummy data to send.
     send_stream_.ReserveSize(size);
     for (int i = 0; i < size; ++i) {
-      char ch = static_cast<char>(i);
-      send_stream_.Write(&ch, 1, NULL, NULL);
+      uint8_t ch = static_cast<uint8_t>(i);
+      size_t written;
+      int error;
+      send_stream_.Write(rtc::MakeArrayView(&ch, 1), written, error);
     }
     send_stream_.Rewind();
 
@@ -480,7 +490,7 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
     EXPECT_EQ(0, Connect());
     EXPECT_TRUE_WAIT(have_connected_, kConnectTimeoutMs);
 
-    rtc::Thread::Current()->Post(RTC_FROM_HERE, this, MSG_WRITE);
+    TaskQueueBase::Current()->PostTask([this] { WriteData(); });
     EXPECT_TRUE_WAIT(have_disconnected_, kTransferTimeoutMs);
 
     ASSERT_EQ(2u, send_position_.size());
@@ -496,20 +506,6 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
 
     // Receiver drained the receive window twice.
     EXPECT_EQ(2 * estimated_recv_window, recv_position_[1]);
-  }
-
-  virtual void OnMessage(rtc::Message* message) {
-    int message_id = message->message_id;
-    PseudoTcpTestBase::OnMessage(message);
-
-    switch (message_id) {
-      case MSG_WRITE: {
-        WriteData();
-        break;
-      }
-      default:
-        break;
-    }
   }
 
   uint32_t EstimateReceiveWindowSize() const {
@@ -529,16 +525,20 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
   void ReadUntilIOPending() {
     char block[kBlockSize];
     size_t position;
-    int rcvd;
+    int received;
 
     do {
-      rcvd = remote_.Recv(block, sizeof(block));
-      if (rcvd != -1) {
-        recv_stream_.Write(block, rcvd, NULL, NULL);
+      received = remote_.Recv(block, sizeof(block));
+      if (received != -1) {
+        size_t written;
+        int error;
+        recv_stream_.Write(
+            rtc::MakeArrayView(reinterpret_cast<uint8_t*>(block), received),
+            written, error);
         recv_stream_.GetPosition(&position);
         RTC_LOG(LS_VERBOSE) << "Received: " << position;
       }
-    } while (rcvd > 0);
+    } while (received > 0);
 
     recv_stream_.GetPosition(&position);
     recv_position_.push_back(position);
@@ -558,8 +558,11 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
     char block[kBlockSize];
     do {
       send_stream_.GetPosition(&position);
-      if (send_stream_.Read(block, sizeof(block), &tosend, NULL) !=
-          rtc::SR_EOS) {
+      int error;
+      if (send_stream_.Read(
+              rtc::MakeArrayView(reinterpret_cast<uint8_t*>(block),
+                                 sizeof(block)),
+              tosend, error) != rtc::SR_EOS) {
         sent = local_.Send(block, tosend);
         UpdateLocalClock();
         if (sent != -1) {
@@ -575,15 +578,11 @@ class PseudoTcpTestReceiveWindow : public PseudoTcpTestBase {
     } while (sent > 0);
     // At this point, we've filled up the available space in the send queue.
 
-    int message_queue_size = static_cast<int>(rtc::Thread::Current()->size());
-    // The message queue will always have at least 2 messages, an RCLOCK and
-    // an LCLOCK, since they are added back on the delay queue at the same time
-    // they are pulled off and therefore are never really removed.
-    if (message_queue_size > 2) {
-      // If there are non-clock messages remaining, attempt to continue sending
-      // after giving those messages time to process, which should free up the
-      // send buffer.
-      rtc::Thread::Current()->PostDelayed(RTC_FROM_HERE, 10, this, MSG_WRITE);
+    if (packets_in_flight_ > 0) {
+      // If there are packet tasks, attempt to continue sending after giving
+      // those packets time to process, which should free up the send buffer.
+      rtc::Thread::Current()->PostDelayedTask([this] { WriteData(); },
+                                              TimeDelta::Millis(10));
     } else {
       if (!remote_.isReceiveBufferFull()) {
         RTC_LOG(LS_ERROR) << "This shouldn't happen - the send buffer is full, "

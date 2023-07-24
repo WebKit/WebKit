@@ -43,8 +43,12 @@ class Clock;
 struct PacedPacketInfo;
 struct RTPVideoHeader;
 
-// DEPRECATED.
-class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+class ABSL_DEPRECATED("") ModuleRtpRtcpImpl
+    : public RtpRtcp,
+      public RTCPReceiver::ModuleRtpRtcp {
+#pragma clang diagnostic pop
  public:
   explicit ModuleRtpRtcpImpl(
       const RtpRtcpInterface::Configuration& configuration);
@@ -56,8 +60,7 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
   // Receiver part.
 
   // Called when we receive an RTCP packet.
-  void IncomingRtcpPacket(const uint8_t* incoming_packet,
-                          size_t incoming_packet_length) override;
+  void IncomingRtcpPacket(rtc::ArrayView<const uint8_t> packet) override;
 
   void SetRemoteSSRC(uint32_t ssrc) override;
   void SetLocalSsrc(uint32_t ssrc) override;
@@ -99,8 +102,6 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
 
   void SetMid(absl::string_view mid) override;
 
-  void SetCsrcs(const std::vector<uint32_t>& csrcs) override;
-
   RTCPSender::FeedbackState GetFeedbackState();
 
   void SetRtxSendStatus(int mode) override;
@@ -131,13 +132,18 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
                          int payload_type,
                          bool force_sender_report) override;
 
-  bool TrySendPacket(RtpPacketToSend* packet,
+  bool TrySendPacket(std::unique_ptr<RtpPacketToSend> packet,
                      const PacedPacketInfo& pacing_info) override;
+
+  void OnBatchComplete() override {}
 
   void SetFecProtectionParams(const FecProtectionParams& delta_params,
                               const FecProtectionParams& key_params) override;
 
   std::vector<std::unique_ptr<RtpPacketToSend>> FetchFecPackets() override;
+
+  void OnAbortedRetransmissions(
+      rtc::ArrayView<const uint16_t> sequence_numbers) override;
 
   void OnPacketsAcknowledged(
       rtc::ArrayView<const uint16_t> sequence_numbers) override;
@@ -163,19 +169,8 @@ class ModuleRtpRtcpImpl : public RtpRtcp, public RTCPReceiver::ModuleRtpRtcp {
   // Set RTCP CName.
   int32_t SetCNAME(absl::string_view c_name) override;
 
-  // Get remote NTP.
-  int32_t RemoteNTP(uint32_t* received_ntp_secs,
-                    uint32_t* received_ntp_frac,
-                    uint32_t* rtcp_arrival_time_secs,
-                    uint32_t* rtcp_arrival_time_frac,
-                    uint32_t* rtcp_timestamp) const override;
-
   // Get RoundTripTime.
-  int32_t RTT(uint32_t remote_ssrc,
-              int64_t* rtt,
-              int64_t* avg_rtt,
-              int64_t* min_rtt,
-              int64_t* max_rtt) const override;
+  absl::optional<TimeDelta> LastRtt() const override;
 
   int64_t ExpectedRetransmissionTimeMs() const override;
 

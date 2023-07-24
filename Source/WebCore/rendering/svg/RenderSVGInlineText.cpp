@@ -95,8 +95,8 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
     RenderText::styleDidChange(diff, oldStyle);
     updateScaledFont();
 
-    bool newPreserves = style().whiteSpace() == WhiteSpace::Pre;
-    bool oldPreserves = oldStyle ? oldStyle->whiteSpace() == WhiteSpace::Pre : false;
+    bool newPreserves = style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
+    bool oldPreserves = oldStyle ? oldStyle->whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve : false;
     if (oldPreserves && !newPreserves) {
         setText(applySVGWhitespaceRules(originalText(), false), true);
         return;
@@ -207,20 +207,21 @@ void RenderSVGInlineText::updateScaledFont()
     computeNewScaledFontForStyle(*this, style(), m_scalingFactor, m_scaledFont);
 }
 
+float RenderSVGInlineText::computeScalingFactorForRenderer(const RenderObject& renderer)
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
+        if (const auto* layerRenderer = lineageOfType<RenderLayerModelObject>(renderer).first())
+            return SVGLayerTransformComputation(*layerRenderer).calculateScreenFontSizeScalingFactor();
+    }
+#endif
+    return SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
+}
+
 void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const RenderStyle& style, float& scalingFactor, FontCascade& scaledFont)
 {
-    auto computeScalingFactor = [&renderer]() {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
-            if (const auto* layerRenderer = lineageOfType<RenderLayerModelObject>(renderer).first())
-                return SVGLayerTransformComputation(*layerRenderer).calculateScreenFontSizeScalingFactor();
-        }
-#endif
-        return SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
-    };
-
     // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
-    scalingFactor = computeScalingFactor();
+    scalingFactor = computeScalingFactorForRenderer(renderer);
     if (!scalingFactor || style.fontDescription().textRenderingMode() == TextRenderingMode::GeometricPrecision) {
         scalingFactor = 1;
         scaledFont = style.fontCascade();

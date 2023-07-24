@@ -51,30 +51,30 @@ inline void logLn(Arguments&&... arguments)
 struct ViableOverload {
     const OverloadCandidate* candidate;
     FixedVector<unsigned> ranks;
-    FixedVector<Type*> parameters;
-    Type* result;
+    FixedVector<const Type*> parameters;
+    const Type* result;
 };
 
 class OverloadResolver {
 public:
-    OverloadResolver(TypeStore&, const Vector<OverloadCandidate>&, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments, unsigned numberOfTypeSubstitutions, unsigned numberOfValueSubstitutions);
+    OverloadResolver(TypeStore&, const Vector<OverloadCandidate>&, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments, unsigned numberOfTypeSubstitutions, unsigned numberOfValueSubstitutions);
 
     std::optional<SelectedOverload> resolve();
 
 private:
     FixedVector<std::optional<ViableOverload>> considerCandidates();
     std::optional<ViableOverload> considerCandidate(const OverloadCandidate&);
-    ConversionRank calculateRank(const AbstractType&, Type*);
-    ConversionRank calculateRank(const AbstractScalarType&, Type*);
-    ConversionRank conversionRank(Type*, Type*) const;
+    ConversionRank calculateRank(const AbstractType&, const Type*);
+    ConversionRank calculateRank(const AbstractScalarType&, const Type*);
+    ConversionRank conversionRank(const Type*, const Type*) const;
 
-    bool unify(const TypeVariable*, Type*);
-    bool unify(const AbstractType&, Type*);
-    bool unify(const AbstractScalarType&, Type*);
-    bool assign(TypeVariable, Type*);
-    Type* resolve(TypeVariable) const;
-    Type* materialize(const AbstractType&) const;
-    Type* materialize(const AbstractScalarType&) const;
+    bool unify(const TypeVariable*, const Type*);
+    bool unify(const AbstractType&, const Type*);
+    bool unify(const AbstractScalarType&, const Type*);
+    bool assign(TypeVariable, const Type*);
+    const Type* resolve(TypeVariable) const;
+    const Type* materialize(const AbstractType&) const;
+    const Type* materialize(const AbstractScalarType&) const;
 
     bool unify(const AbstractValue&, unsigned);
     void assign(NumericVariable, unsigned);
@@ -83,13 +83,13 @@ private:
 
     TypeStore& m_types;
     const Vector<OverloadCandidate>& m_candidates;
-    const Vector<Type*>& m_valueArguments;
-    const Vector<Type*>& m_typeArguments;
-    FixedVector<Type*> m_typeSubstitutions;
+    const Vector<const Type*>& m_valueArguments;
+    const Vector<const Type*>& m_typeArguments;
+    FixedVector<const Type*> m_typeSubstitutions;
     FixedVector<std::optional<unsigned>> m_numericSubstitutions;
 };
 
-OverloadResolver::OverloadResolver(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments, unsigned numberOfTypeSubstitutions, unsigned numberOfValueSubstitutions)
+OverloadResolver::OverloadResolver(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments, unsigned numberOfTypeSubstitutions, unsigned numberOfValueSubstitutions)
     : m_types(types)
     , m_candidates(candidates)
     , m_valueArguments(valueArguments)
@@ -139,45 +139,55 @@ std::optional<SelectedOverload> OverloadResolver::resolve()
     return { { WTFMove(selectedCandidate->parameters), selectedCandidate->result } };
 }
 
-Type* OverloadResolver::materialize(const AbstractType& abstractType) const
+const Type* OverloadResolver::materialize(const AbstractType& abstractType) const
 {
     return WTF::switchOn(abstractType,
-        [&](Type* type) -> Type* {
+        [&](const Type* type) -> const Type* {
             return type;
         },
-        [&](TypeVariable variable) -> Type* {
-            Type* type = resolve(variable);
+        [&](TypeVariable variable) -> const Type* {
+            const Type* type = resolve(variable);
             if (!type)
                 return nullptr;
             type = satisfyOrPromote(type, variable.constraints, m_types);
             RELEASE_ASSERT(type);
             return type;
         },
-        [&](const AbstractVector& vector) -> Type* {
+        [&](const AbstractVector& vector) -> const Type* {
             if (auto* element = materialize(vector.element)) {
                 auto size = materialize(vector.size);
                 return m_types.vectorType(element, size);
             }
             return nullptr;
         },
-        [&](const AbstractMatrix& matrix) -> Type* {
+        [&](const AbstractMatrix& matrix) -> const Type* {
             if (auto* element = materialize(matrix.element)) {
                 auto columns = materialize(matrix.columns);
                 auto rows = materialize(matrix.rows);
                 return m_types.matrixType(element, columns, rows);
             }
             return nullptr;
+        },
+        [&](const AbstractTexture& texture) -> const Type* {
+            if (auto* element = materialize(texture.element))
+                return m_types.textureType(element, texture.kind);
+            return nullptr;
         });
 }
 
-Type* OverloadResolver::materialize(const AbstractScalarType& abstractScalarType) const
+const Type* OverloadResolver::materialize(const AbstractScalarType& abstractScalarType) const
 {
     return WTF::switchOn(abstractScalarType,
-        [&](Type* type) -> Type* {
+        [&](const Type* type) -> const Type* {
             return type;
         },
-        [&](TypeVariable variable) -> Type* {
-            return resolve(variable);
+        [&](TypeVariable variable) -> const Type* {
+            const Type* type = resolve(variable);
+            if (!type)
+                return nullptr;
+            type = satisfyOrPromote(type, variable.constraints, m_types);
+            RELEASE_ASSERT(type);
+            return type;
         });
 }
 
@@ -223,7 +233,7 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
     ViableOverload viableOverload {
         &candidate,
         FixedVector<unsigned>(m_valueArguments.size()),
-        FixedVector<Type*>(m_valueArguments.size()),
+        FixedVector<const Type*>(m_valueArguments.size()),
         nullptr
     };
     for (unsigned i = 0; i < m_valueArguments.size(); ++i) {
@@ -265,12 +275,17 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
     return { WTFMove(viableOverload) };
 }
 
-ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, Type* argumentType)
+ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, const Type* argumentType)
 {
     if (auto* variable = std::get_if<TypeVariable>(&parameter)) {
         auto* resolvedType = resolve(*variable);
         ASSERT(resolvedType);
         return conversionRank(argumentType, resolvedType);
+    }
+
+    if (auto* reference = std::get_if<Types::Reference>(argumentType)) {
+        ASSERT(reference->accessMode != AccessMode::Write);
+        return calculateRank(parameter, reference->element);
     }
 
     if (auto* vectorParameter = std::get_if<AbstractVector>(&parameter)) {
@@ -283,11 +298,16 @@ ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, Ty
         return calculateRank(matrixParameter->element, matrixArgument.element);
     }
 
-    auto* parameterType = std::get<Type*>(parameter);
+    if (auto* textureParameter = std::get_if<AbstractTexture>(&parameter)) {
+        auto& textureArgument = std::get<Types::Texture>(*argumentType);
+        return calculateRank(textureParameter->element, textureArgument.element);
+    }
+
+    auto* parameterType = std::get<const Type*>(parameter);
     return conversionRank(argumentType, parameterType);
 }
 
-ConversionRank OverloadResolver::calculateRank(const AbstractScalarType& parameter, Type* argumentType)
+ConversionRank OverloadResolver::calculateRank(const AbstractScalarType& parameter, const Type* argumentType)
 {
     if (auto* variable = std::get_if<TypeVariable>(&parameter)) {
         auto* resolvedType = resolve(*variable);
@@ -295,11 +315,11 @@ ConversionRank OverloadResolver::calculateRank(const AbstractScalarType& paramet
         return conversionRank(argumentType, resolvedType);
     }
 
-    auto* parameterType = std::get<Type*>(parameter);
+    auto* parameterType = std::get<const Type*>(parameter);
     return conversionRank(argumentType, parameterType);
 }
 
-bool OverloadResolver::unify(const TypeVariable* variable, Type* argumentType)
+bool OverloadResolver::unify(const TypeVariable* variable, const Type* argumentType)
 {
     auto* resolvedType = resolve(*variable);
     if (!resolvedType)
@@ -342,11 +362,17 @@ bool OverloadResolver::unify(const TypeVariable* variable, Type* argumentType)
     return !!argumentConversionRank;
 }
 
-bool OverloadResolver::unify(const AbstractType& parameter, Type* argumentType)
+bool OverloadResolver::unify(const AbstractType& parameter, const Type* argumentType)
 {
     logLn("unify parameter type '", parameter, "' with argument '", *argumentType, "'");
     if (auto* variable = std::get_if<TypeVariable>(&parameter))
         return unify(variable, argumentType);
+
+    if (auto* reference = std::get_if<Types::Reference>(argumentType)) {
+        if (reference->accessMode == AccessMode::Write)
+            return false;
+        return unify(parameter, reference->element);
+    }
 
     if (auto* vectorParameter = std::get_if<AbstractVector>(&parameter)) {
         auto* vectorArgument = std::get_if<Types::Vector>(argumentType);
@@ -368,17 +394,26 @@ bool OverloadResolver::unify(const AbstractType& parameter, Type* argumentType)
         return unify(matrixParameter->rows, matrixArgument->rows);
     }
 
-    auto* parameterType = std::get<Type*>(parameter);
+    if (auto* textureParameter = std::get_if<AbstractTexture>(&parameter)) {
+        auto* textureArgument = std::get_if<Types::Texture>(argumentType);
+        if (!textureArgument)
+            return false;
+        if (textureParameter->kind != textureArgument->kind)
+            return false;
+        return unify(textureParameter->element, textureArgument->element);
+    }
+
+    auto* parameterType = std::get<const Type*>(parameter);
     return !!conversionRank(argumentType, parameterType);
 }
 
-bool OverloadResolver::unify(const AbstractScalarType& parameter, Type* argumentType)
+bool OverloadResolver::unify(const AbstractScalarType& parameter, const Type* argumentType)
 {
     logLn("unify parameter type '", parameter, "' with argument '", *argumentType, "'");
     if (auto* variable = std::get_if<TypeVariable>(&parameter))
         return unify(variable, argumentType);
 
-    auto* parameterType = std::get<Type*>(parameter);
+    auto* parameterType = std::get<const Type*>(parameter);
     return !!conversionRank(argumentType, parameterType);
 }
 
@@ -396,7 +431,7 @@ bool OverloadResolver::unify(const AbstractValue& parameter, unsigned argumentVa
     return *resolvedValue == argumentValue;
 }
 
-bool OverloadResolver::assign(TypeVariable variable, Type* type)
+bool OverloadResolver::assign(TypeVariable variable, const Type* type)
 {
     logLn("assign ", variable, " => ", *type);
     if (variable.constraints) {
@@ -413,7 +448,7 @@ void OverloadResolver::assign(NumericVariable variable, unsigned value)
     m_numericSubstitutions[variable.id] = { value };
 }
 
-Type* OverloadResolver::resolve(TypeVariable variable) const
+const Type* OverloadResolver::resolve(TypeVariable variable) const
 {
     return m_typeSubstitutions[variable.id];
 }
@@ -423,14 +458,14 @@ std::optional<unsigned> OverloadResolver::resolve(NumericVariable variable) cons
     return m_numericSubstitutions[variable.id];
 }
 
-ConversionRank OverloadResolver::conversionRank(Type* from, Type* to) const
+ConversionRank OverloadResolver::conversionRank(const Type* from, const Type* to) const
 {
     auto rank = ::WGSL::conversionRank(from, to);
     logLn("conversionRank(from: ", *from, ", to: ", *to, ") = ", rank.value());
     return rank;
 }
 
-std::optional<SelectedOverload> resolveOverloads(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments)
+std::optional<SelectedOverload> resolveOverloads(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments)
 {
 
     unsigned numberOfTypeSubstitutions = 0;
@@ -471,7 +506,7 @@ void printInternal(PrintStream& out, const WGSL::TypeVariable& variable)
 void printInternal(PrintStream& out, const WGSL::AbstractType& type)
 {
     WTF::switchOn(type,
-        [&](WGSL::Type* type) {
+        [&](const WGSL::Type* type) {
             printInternal(out, *type);
         },
         [&](WGSL::TypeVariable variable) {
@@ -492,13 +527,19 @@ void printInternal(PrintStream& out, const WGSL::AbstractType& type)
             out.print(", ");
             printInternal(out, matrix.rows);
             out.print(">");
+        },
+        [&](const WGSL::AbstractTexture& texture) {
+            printInternal(out, texture.kind);
+            out.print("<");
+            printInternal(out, texture.element);
+            out.print(">");
         });
 }
 
 void printInternal(PrintStream& out, const WGSL::AbstractScalarType& type)
 {
     WTF::switchOn(type,
-        [&](WGSL::Type* type) {
+        [&](const WGSL::Type* type) {
             printInternal(out, *type);
         },
         [&](WGSL::TypeVariable variable) {
@@ -536,5 +577,45 @@ void printInternal(PrintStream& out, const WGSL::OverloadCandidate& candidate)
     out.print(") -> ");
     printInternal(out, candidate.result);
 }
+
+void printInternal(PrintStream& out, WGSL::Types::Texture::Kind textureKind)
+{
+    switch (textureKind) {
+    case WGSL::Types::Texture::Kind::Texture1d:
+        out.print("texture_1d");
+        return;
+    case WGSL::Types::Texture::Kind::Texture2d:
+        out.print("texture_2d");
+        return;
+    case WGSL::Types::Texture::Kind::Texture2dArray:
+        out.print("texture_2d_array");
+        return;
+    case WGSL::Types::Texture::Kind::Texture3d:
+        out.print("texture_3d");
+        return;
+    case WGSL::Types::Texture::Kind::TextureCube:
+        out.print("texture_cube");
+        return;
+    case WGSL::Types::Texture::Kind::TextureCubeArray:
+        out.print("texture_cube_array");
+        return;
+    case WGSL::Types::Texture::Kind::TextureMultisampled2d:
+        out.print("texture_multisampled_2d");
+        return;
+    case WGSL::Types::Texture::Kind::TextureStorage1d:
+        out.print("texture_storage_1d");
+        return;
+    case WGSL::Types::Texture::Kind::TextureStorage2d:
+        out.print("texture_storage_2d");
+        return;
+    case WGSL::Types::Texture::Kind::TextureStorage2dArray:
+        out.print("texture_storage_2d_array");
+        return;
+    case WGSL::Types::Texture::Kind::TextureStorage3d:
+        out.print("texture_storage_3d");
+        return;
+    }
+}
+
 
 } // namespace WTF

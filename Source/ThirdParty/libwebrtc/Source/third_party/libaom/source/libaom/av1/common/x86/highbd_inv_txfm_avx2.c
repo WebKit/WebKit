@@ -231,11 +231,10 @@ static void transpose_8x8_flip_avx2(const __m256i *in, __m256i *out) {
   out[7] = _mm256_permute2f128_si256(x0, x1, 0x31);
 }
 
-static void load_buffer_32x32(const int32_t *coeff, __m256i *in,
-                              int input_stiride, int size) {
-  int i;
-  for (i = 0; i < size; ++i) {
-    in[i] = _mm256_loadu_si256((const __m256i *)(coeff + i * input_stiride));
+static INLINE void load_buffer_32bit_input(const int32_t *in, int stride,
+                                           __m256i *out, int out_size) {
+  for (int i = 0; i < out_size; ++i) {
+    out[i] = _mm256_loadu_si256((const __m256i *)(in + i * stride));
   }
 }
 
@@ -4119,9 +4118,9 @@ static void highbd_inv_txfm2d_add_no_identity_avx2(const int32_t *input,
   const int txfm_size_col = tx_size_wide[tx_size];
   const int txfm_size_row = tx_size_high[tx_size];
   const int buf_size_w_div8 = txfm_size_col >> 3;
-  const int buf_size_nonzero_w_div8 = (eobx + 8) >> 3;
+  const int buf_size_nonzero_w = (eobx + 8) >> 3 << 3;
   const int buf_size_nonzero_h_div8 = (eoby + 8) >> 3;
-  const int input_stride = AOMMIN(32, txfm_size_col);
+  const int input_stride = AOMMIN(32, txfm_size_row);
   const int rect_type = get_rect_tx_log_ratio(txfm_size_col, txfm_size_row);
   const int fun_idx_x = lowbd_txfm_all_1d_zeros_idx[eobx];
   const int fun_idx_y = lowbd_txfm_all_1d_zeros_idx[eoby];
@@ -4138,16 +4137,11 @@ static void highbd_inv_txfm2d_add_no_identity_avx2(const int32_t *input,
   // 1st stage: column transform
   for (int i = 0; i < buf_size_nonzero_h_div8; i++) {
     __m256i buf0[64];
-    const int32_t *input_row = input + i * input_stride * 8;
-    for (int j = 0; j < buf_size_nonzero_w_div8; ++j) {
-      __m256i *buf0_cur = buf0 + j * 8;
-      load_buffer_32x32(input_row + j * 8, buf0_cur, input_stride, 8);
-
-      transpose_8x8_avx2(&buf0_cur[0], &buf0_cur[0]);
-    }
+    load_buffer_32bit_input(input + i * 8, input_stride, buf0,
+                            buf_size_nonzero_w);
     if (rect_type == 1 || rect_type == -1) {
-      round_shift_rect_array_32_avx2(buf0, buf0, buf_size_nonzero_w_div8 << 3,
-                                     0, NewInvSqrt2);
+      round_shift_rect_array_32_avx2(buf0, buf0, buf_size_nonzero_w, 0,
+                                     NewInvSqrt2);
     }
     row_txfm(buf0, buf0, INV_COS_BIT, 0, bd, -shift[0]);
 

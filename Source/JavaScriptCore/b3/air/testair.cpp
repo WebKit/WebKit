@@ -2540,6 +2540,80 @@ void testEarlyClobberInterference()
         CHECK(actualResult == expectedResult);
     }
 }
+
+#if CPU(ARM64)
+void testStorePair()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR1), Arg::addr(Tmp(GPRInfo::argumentGPR0), 0));
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR2), Arg::addr(Tmp(GPRInfo::argumentGPR0), 8));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    uint64_t values[2] = { 0, 0 };
+    compileAndRun<uint64_t>(proc, values, 42, 43);
+    CHECK(values[0] == 42);
+    CHECK(values[1] == 43);
+}
+
+void testStorePairClobber()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR1), Arg::addr(Tmp(GPRInfo::argumentGPR0), 0));
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR3), Tmp(GPRInfo::argumentGPR0));
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR2), Arg::addr(Tmp(GPRInfo::argumentGPR0), 8));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    uint64_t values1[2] = { 0, 0 };
+    uint64_t values2[2] = { 0, 0 };
+    compileAndRun<uint64_t>(proc, values1, 42, 43, values2);
+    CHECK(values1[0] == 42);
+    CHECK(values1[1] == 0);
+    CHECK(values2[0] == 0);
+    CHECK(values2[1] == 43);
+}
+
+void testStorePairClobberMemoryStore()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR1), Arg::addr(Tmp(GPRInfo::argumentGPR0), 0));
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR1), Arg::addr(Tmp(GPRInfo::argumentGPR3), 8));
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR2), Arg::addr(Tmp(GPRInfo::argumentGPR0), 8));
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR0), Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    uint64_t values1[2] = { 0, 0 };
+    compileAndRun<uint64_t>(proc, values1, 42, 43, values1);
+    CHECK(values1[0] == 42);
+    CHECK(values1[1] == 43);
+}
+
+void testStorePairClobberMemoryLoad()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR1), Arg::addr(Tmp(GPRInfo::argumentGPR0), 0));
+    root->append(Move, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR3), 8), Tmp(GPRInfo::argumentGPR1));
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR2), Arg::addr(Tmp(GPRInfo::argumentGPR0), 8));
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR1), Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    uint64_t values1[2] = { 0, 24 };
+    CHECK(compileAndRun<uint64_t>(proc, values1, 42, 43, values1) == 24);
+    CHECK(values1[0] == 42);
+    CHECK(values1[1] == 43);
+}
+#endif
 #endif
 
 #define PREFIX "O", Options::defaultB3OptLevel(), ": "
@@ -2650,6 +2724,13 @@ void run(const char* filter)
 
     RUN(testEarlyAndLateUseOfSameTmp());
     RUN(testEarlyClobberInterference());
+
+#if CPU(ARM64)
+    RUN(testStorePair());
+    RUN(testStorePairClobber());
+    RUN(testStorePairClobberMemoryStore());
+    RUN(testStorePairClobberMemoryLoad());
+#endif
 #endif
 
     if (tasks.isEmpty())

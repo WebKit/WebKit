@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
                 text run at (95,0) width 140: "More red on this line:"
         RenderBlock (anonymous) at (2,40) size 780x74
           RenderBlock {H3} at (0,0) size 780x23 [color=#FF0000]
-            RenderText {#text} at (0,0) size 208x22
-              text run at (0,0) width 208: "Suddenly a block appears!"
+            RenderText {#text} at (0,0) size 205x22
+              text run at (0,0) width 205: "Suddenly a block appears!"
           RenderBlock {H2} at (0,42) size 780x31 [color=#FF0000]
             RenderText {#text} at (0,1) size 194x28
               text run at (0,1) width 194: "And another block!"

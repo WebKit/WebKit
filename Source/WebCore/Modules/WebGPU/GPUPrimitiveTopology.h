@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUPrimitiveTopology.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUPrimitiveTopology.h>
 
 namespace WebCore {
 
@@ -38,19 +38,19 @@ enum class GPUPrimitiveTopology : uint8_t {
     TriangleStrip,
 };
 
-inline PAL::WebGPU::PrimitiveTopology convertToBacking(GPUPrimitiveTopology primitiveTopology)
+inline WebGPU::PrimitiveTopology convertToBacking(GPUPrimitiveTopology primitiveTopology)
 {
     switch (primitiveTopology) {
     case GPUPrimitiveTopology::PointList:
-        return PAL::WebGPU::PrimitiveTopology::PointList;
+        return WebGPU::PrimitiveTopology::PointList;
     case GPUPrimitiveTopology::LineList:
-        return PAL::WebGPU::PrimitiveTopology::LineList;
+        return WebGPU::PrimitiveTopology::LineList;
     case GPUPrimitiveTopology::LineStrip:
-        return PAL::WebGPU::PrimitiveTopology::LineStrip;
+        return WebGPU::PrimitiveTopology::LineStrip;
     case GPUPrimitiveTopology::TriangleList:
-        return PAL::WebGPU::PrimitiveTopology::TriangleList;
+        return WebGPU::PrimitiveTopology::TriangleList;
     case GPUPrimitiveTopology::TriangleStrip:
-        return PAL::WebGPU::PrimitiveTopology::TriangleStrip;
+        return WebGPU::PrimitiveTopology::TriangleStrip;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

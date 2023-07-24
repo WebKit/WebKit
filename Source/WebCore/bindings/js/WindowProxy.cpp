@@ -86,6 +86,12 @@ void WindowProxy::detachFromFrame()
     }
 }
 
+void WindowProxy::replaceFrame(Frame& frame)
+{
+    m_frame = frame;
+    setDOMWindow(frame.window());
+}
+
 void WindowProxy::destroyJSWindowProxy(DOMWrapperWorld& world)
 {
     ASSERT(m_jsWindowProxies->contains(&world));

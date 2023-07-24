@@ -20,6 +20,7 @@
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/socket_address.h"
+#include "system_wrappers/include/metrics.h"
 #include "test/gtest.h"
 
 namespace cricket {
@@ -1853,6 +1854,29 @@ TEST_F(StunTest, SizeRestrictionOnAttributes) {
   msg.AddAttribute(std::move(long_username));
   rtc::ByteBufferWriter out;
   ASSERT_FALSE(msg.Write(&out));
+}
+
+TEST_F(StunTest, ValidateMessageIntegrityWithParser) {
+  webrtc::metrics::Reset();  // Ensure counters start from zero.
+  // Try the messages from RFC 5769.
+  StunMessage message;
+  rtc::ByteBufferReader reader(
+      reinterpret_cast<const char*>(kRfc5769SampleRequest),
+      sizeof(kRfc5769SampleRequest));
+  EXPECT_TRUE(message.Read(&reader));
+  EXPECT_EQ(message.ValidateMessageIntegrity(kRfc5769SampleMsgPassword),
+            StunMessage::IntegrityStatus::kIntegrityOk);
+  EXPECT_EQ(webrtc::metrics::NumEvents(
+                "WebRTC.Stun.Integrity.Request",
+                static_cast<int>(StunMessage::IntegrityStatus::kIntegrityOk)),
+            1);
+  EXPECT_EQ(message.RevalidateMessageIntegrity("Invalid password"),
+            StunMessage::IntegrityStatus::kIntegrityBad);
+  EXPECT_EQ(webrtc::metrics::NumEvents(
+                "WebRTC.Stun.Integrity.Request",
+                static_cast<int>(StunMessage::IntegrityStatus::kIntegrityBad)),
+            1);
+  EXPECT_EQ(webrtc::metrics::NumSamples("WebRTC.Stun.Integrity.Request"), 2);
 }
 
 }  // namespace cricket

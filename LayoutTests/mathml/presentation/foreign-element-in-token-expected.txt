@@ -452,21 +452,76 @@ mo
 var:
 mo
 
-Foreign non-phrasing content should not create renderers:
+Foreign non-phrasing content should also create renderers:
 
 p:
+mi
+
+mi
+
+mn
+
+mo
+
 
 div:
+mi
+mi
+mn
+mo
 
 h1:
+mi
+
+mi
+
+mn
+
+mo
+
 
 h2:
+mi
+
+mi
+
+mn
+
+mo
+
 
 h3:
+mi
+
+mi
+
+mn
+
+mo
+
 
 h4:
+mi
+
+mi
+
+mn
+
+mo
+
 
 h6:
+mi
+
+mi
+
+mn
+
+mo
+
 
 blockquote:
-
+mi
+mi
+mn
+mo

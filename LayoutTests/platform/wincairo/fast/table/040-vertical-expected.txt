@@ -23,7 +23,7 @@ layer at (0,0) size 785x2374
         RenderBR {BR} at (126,35) size 0x0
         RenderText {#text} at (0,40) size 128x19
           text run at (0,40) width 128: "Column Two is: 67%"
-      RenderBlock {HR} at (0,250) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,250) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderTable {TABLE} at (0,260) size 40x601
         RenderTableSection {TBODY} at (0,0) size 40x600
           RenderTableRow {TR} at (0,0) size 20x600
@@ -41,7 +41,7 @@ layer at (0,0) size 785x2374
         RenderBR {BR} at (126,35) size 0x0
         RenderText {#text} at (0,40) size 128x19
           text run at (0,40) width 128: "Column Two is: 67%"
-      RenderBlock {HR} at (0,952) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,952) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderTable {TABLE} at (0,962) size 60x601
         RenderTableSection {TBODY} at (0,0) size 60x600
           RenderTableRow {TR} at (0,0) size 40x600
@@ -65,7 +65,7 @@ layer at (0,0) size 785x2374
         RenderBR {BR} at (126,35) size 0x0
         RenderText {#text} at (0,40) size 128x19
           text run at (0,40) width 128: "Column Two is: 67%"
-      RenderBlock {HR} at (0,1654) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,1654) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderTable {TABLE} at (0,1664) size 40x601
         RenderTableSection {TBODY} at (0,0) size 40x600
           RenderTableRow {TR} at (0,0) size 20x600
@@ -85,4 +85,4 @@ layer at (0,0) size 785x2374
         RenderBR {BR} at (126,35) size 0x0
         RenderText {#text} at (0,40) size 128x19
           text run at (0,40) width 128: "Column Two is: 67%"
-      RenderBlock {HR} at (0,2356) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,2356) size 769x3 [color=#808080] [border: (1px inset #808080)]

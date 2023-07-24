@@ -163,12 +163,16 @@ OPENSSL_EXPORT void ERR_free_strings(void);
 
 // ERR_GET_LIB returns the library code for the error. This is one of
 // the |ERR_LIB_*| values.
-#define ERR_GET_LIB(packed_error) ((int)(((packed_error) >> 24) & 0xff))
+OPENSSL_INLINE int ERR_GET_LIB(uint32_t packed_error) {
+  return (int)((packed_error >> 24) & 0xff);
+}
 
 // ERR_GET_REASON returns the reason code for the error. This is one of
 // library-specific |LIB_R_*| values where |LIB| is the library (see
 // |ERR_GET_LIB|). Note that reason codes are specific to the library.
-#define ERR_GET_REASON(packed_error) ((int)((packed_error) & 0xfff))
+OPENSSL_INLINE int ERR_GET_REASON(uint32_t packed_error) {
+  return (int)(packed_error & 0xfff);
+}
 
 // ERR_get_error gets the packed error code for the least recent error and
 // removes that error from the queue. If there are no errors in the queue then
@@ -182,6 +186,15 @@ OPENSSL_EXPORT uint32_t ERR_get_error_line(const char **file, int *line);
 // ERR_FLAG_STRING means that the |data| member is a NUL-terminated string that
 // can be printed. This is always set if |data| is non-NULL.
 #define ERR_FLAG_STRING 1
+
+// ERR_FLAG_MALLOCED is passed into |ERR_set_error_data| to indicate that |data|
+// was allocated with |OPENSSL_malloc|.
+//
+// It is, separately, returned in |*flags| from |ERR_get_error_line_data| to
+// indicate that |*data| has a non-static lifetime, but this lifetime is still
+// managed by the library. The caller must not call |OPENSSL_free| or |free| on
+// |data|.
+#define ERR_FLAG_MALLOCED 2
 
 // ERR_get_error_line_data acts like |ERR_get_error_line|, but also returns the
 // error-specific data pointer and flags. The flags are a bitwise-OR of
@@ -406,11 +419,15 @@ OPENSSL_EXPORT char *ERR_error_string(uint32_t packed_error, char *buf);
 #define ERR_ERROR_STRING_BUF_LEN 120
 
 // ERR_GET_FUNC returns zero. BoringSSL errors do not report a function code.
-#define ERR_GET_FUNC(packed_error) 0
+OPENSSL_INLINE int ERR_GET_FUNC(uint32_t packed_error) {
+  (void)packed_error;
+  return 0;
+}
 
-// ERR_TXT_STRING is provided for compatibility with code that assumes that
-// it's using OpenSSL.
+// ERR_TXT_* are provided for compatibility with code that assumes that it's
+// using OpenSSL.
 #define ERR_TXT_STRING ERR_FLAG_STRING
+#define ERR_TXT_MALLOCED ERR_FLAG_MALLOCED
 
 
 // Private functions.
@@ -443,6 +460,17 @@ OPENSSL_EXPORT void ERR_add_error_data(unsigned count, ...);
 // result as the data on the most recent error.
 OPENSSL_EXPORT void ERR_add_error_dataf(const char *format, ...)
     OPENSSL_PRINTF_FORMAT_FUNC(1, 2);
+
+// ERR_set_error_data sets the data on the most recent error to |data|, which
+// must be a NUL-terminated string. |flags| must contain |ERR_FLAG_STRING|. If
+// |flags| contains |ERR_FLAG_MALLOCED|, this function takes ownership of
+// |data|, which must have been allocated with |OPENSSL_malloc|. Otherwise, it
+// saves a copy of |data|.
+//
+// Note this differs from OpenSSL which, when |ERR_FLAG_MALLOCED| is unset,
+// saves the pointer as-is and requires it remain valid for the lifetime of the
+// address space.
+OPENSSL_EXPORT void ERR_set_error_data(char *data, int flags);
 
 // ERR_NUM_ERRORS is one more than the limit of the number of errors in the
 // queue.

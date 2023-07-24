@@ -39,7 +39,7 @@ TEST(ProbingTest, MidCallProbingRampupTriggeredByUpdatedBitrateConstraints) {
 
   const DataRate kStartRate = DataRate::KilobitsPerSec(300);
   const DataRate kConstrainedRate = DataRate::KilobitsPerSec(100);
-  const DataRate kHighRate = DataRate::KilobitsPerSec(2500);
+  const DataRate kHighRate = DataRate::KilobitsPerSec(1500);
 
   VideoStreamConfig video_config;
   video_config.encoder.codec =

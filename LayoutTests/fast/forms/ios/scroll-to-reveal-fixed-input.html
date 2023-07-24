@@ -1,0 +1,80 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+    html, body {
+        width: 100%;
+        height: 100%;
+        color: lightgray;
+        font-size: 20px;
+    }
+
+    body {
+        margin: 0;
+        text-align: center;
+        font-family: system-ui;
+        background-color: #222;
+        overflow: scroll;
+    }
+
+    .tall {
+        width: 100%;
+        height: 200vh;
+    }
+
+    .container {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+
+    input {
+        border: none;
+        border-radius: 4px;
+        outline: none;
+        font-size: 20px;
+        background-color: lightgray;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 8px;
+    }
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description(`This test verifies that we properly reveal focused elements in fixed position
+        containers which would otherwise be obscured by the software keyboard. To reproduce, tap on
+        the input field below. The software keyboard should not obscure the selection caret.`);
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+
+    const textField = document.querySelector("input");
+    await UIHelper.activateElementAndWaitForInputSession(textField);
+
+    caretRect = await UIHelper.getUICaretViewRectInGlobalCoordinates();
+    inputViewBounds = await UIHelper.inputViewBounds();
+
+    shouldBeGreaterThanOrEqual("inputViewBounds.top", "caretRect.top + caretRect.height");
+
+    textField.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div class="container">
+    <input autofocus placeholder="Tap here"></input>
+</div>
+<div class="tall"></div>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+
+</html>

@@ -67,76 +67,60 @@
 #include "../internal.h"
 
 
+static const struct {
+  int nid;
+  const char *name;
+  const EVP_CIPHER *(*func)(void);
+} kCiphers[] = {
+    {NID_aes_128_cbc, "aes-128-cbc", EVP_aes_128_cbc},
+    {NID_aes_128_ctr, "aes-128-ctr", EVP_aes_128_ctr},
+    {NID_aes_128_ecb, "aes-128-ecb", EVP_aes_128_ecb},
+    {NID_aes_128_gcm, "aes-128-gcm", EVP_aes_128_gcm},
+    {NID_aes_128_ofb128, "aes-128-ofb", EVP_aes_128_ofb},
+    {NID_aes_192_cbc, "aes-192-cbc", EVP_aes_192_cbc},
+    {NID_aes_192_ctr, "aes-192-ctr", EVP_aes_192_ctr},
+    {NID_aes_192_ecb, "aes-192-ecb", EVP_aes_192_ecb},
+    {NID_aes_192_gcm, "aes-192-gcm", EVP_aes_192_gcm},
+    {NID_aes_192_ofb128, "aes-192-ofb", EVP_aes_192_ofb},
+    {NID_aes_256_cbc, "aes-256-cbc", EVP_aes_256_cbc},
+    {NID_aes_256_ctr, "aes-256-ctr", EVP_aes_256_ctr},
+    {NID_aes_256_ecb, "aes-256-ecb", EVP_aes_256_ecb},
+    {NID_aes_256_gcm, "aes-256-gcm", EVP_aes_256_gcm},
+    {NID_aes_256_ofb128, "aes-256-ofb", EVP_aes_256_ofb},
+    {NID_des_cbc, "des-cbc", EVP_des_cbc},
+    {NID_des_ecb, "des-ecb", EVP_des_ecb},
+    {NID_des_ede_cbc, "des-ede-cbc", EVP_des_ede_cbc},
+    {NID_des_ede_ecb, "des-ede", EVP_des_ede},
+    {NID_des_ede3_cbc, "des-ede3-cbc", EVP_des_ede3_cbc},
+    {NID_rc2_cbc, "rc2-cbc", EVP_rc2_cbc},
+    {NID_rc4, "rc4", EVP_rc4},
+};
+
 const EVP_CIPHER *EVP_get_cipherbynid(int nid) {
-  switch (nid) {
-    case NID_rc2_cbc:
-      return EVP_rc2_cbc();
-    case NID_rc2_40_cbc:
-      return EVP_rc2_40_cbc();
-    case NID_des_ede3_cbc:
-      return EVP_des_ede3_cbc();
-    case NID_des_ede_cbc:
-      return EVP_des_cbc();
-    case NID_aes_128_cbc:
-      return EVP_aes_128_cbc();
-    case NID_aes_192_cbc:
-      return EVP_aes_192_cbc();
-    case NID_aes_256_cbc:
-      return EVP_aes_256_cbc();
-    default:
-      return NULL;
+  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kCiphers); i++) {
+    if (kCiphers[i].nid == nid) {
+      return kCiphers[i].func();
+    }
   }
+  return NULL;
 }
 
 const EVP_CIPHER *EVP_get_cipherbyname(const char *name) {
-  if (OPENSSL_strcasecmp(name, "rc4") == 0) {
-    return EVP_rc4();
-  } else if (OPENSSL_strcasecmp(name, "des-cbc") == 0) {
-    return EVP_des_cbc();
-  } else if (OPENSSL_strcasecmp(name, "des-ede3-cbc") == 0 ||
-             // This is not a name used by OpenSSL, but tcpdump registers it
-             // with |EVP_add_cipher_alias|. Our |EVP_add_cipher_alias| is a
-             // no-op, so we support the name here.
-             OPENSSL_strcasecmp(name, "3des") == 0) {
-    return EVP_des_ede3_cbc();
-  } else if (OPENSSL_strcasecmp(name, "aes-128-cbc") == 0) {
-    return EVP_aes_128_cbc();
-  } else if (OPENSSL_strcasecmp(name, "aes-192-cbc") == 0) {
-    return EVP_aes_192_cbc();
-  } else if (OPENSSL_strcasecmp(name, "aes-256-cbc") == 0) {
-    return EVP_aes_256_cbc();
-  } else if (OPENSSL_strcasecmp(name, "aes-128-ctr") == 0) {
-    return EVP_aes_128_ctr();
-  } else if (OPENSSL_strcasecmp(name, "aes-192-ctr") == 0) {
-    return EVP_aes_192_ctr();
-  } else if (OPENSSL_strcasecmp(name, "aes-256-ctr") == 0) {
-    return EVP_aes_256_ctr();
-  } else if (OPENSSL_strcasecmp(name, "aes-128-ecb") == 0) {
-    return EVP_aes_128_ecb();
-  } else if (OPENSSL_strcasecmp(name, "aes-192-ecb") == 0) {
-    return EVP_aes_192_ecb();
-  } else if (OPENSSL_strcasecmp(name, "aes-256-ecb") == 0) {
-    return EVP_aes_256_ecb();
-  } else if (OPENSSL_strcasecmp(name, "aes-128-gcm") == 0) {
-    return EVP_aes_128_gcm();
-  } else if (OPENSSL_strcasecmp(name, "aes-192-gcm") == 0) {
-    return EVP_aes_192_gcm();
-  } else if (OPENSSL_strcasecmp(name, "aes-256-gcm") == 0) {
-    return EVP_aes_256_gcm();
-  } else if (OPENSSL_strcasecmp(name, "aes-128-ofb") == 0) {
-    return EVP_aes_128_ofb();
-  } else if (OPENSSL_strcasecmp(name, "aes-192-ofb") == 0) {
-    return EVP_aes_192_ofb();
-  } else if (OPENSSL_strcasecmp(name, "aes-256-ofb") == 0) {
-    return EVP_aes_256_ofb();
-  } else if (OPENSSL_strcasecmp(name, "des-ecb") == 0) {
-    return EVP_des_ecb();
-  } else if (OPENSSL_strcasecmp(name, "des-ede") == 0) {
-    return EVP_des_ede();
-  } else if (OPENSSL_strcasecmp(name, "des-ede-cbc") == 0) {
-    return EVP_des_ede_cbc();
-  } else if (OPENSSL_strcasecmp(name, "rc2-cbc") == 0) {
-    return EVP_rc2_cbc();
+  if (name == NULL) {
+    return NULL;
+  }
+
+  // This is not a name used by OpenSSL, but tcpdump registers it with
+  // |EVP_add_cipher_alias|. Our |EVP_add_cipher_alias| is a no-op, so we
+  // support the name here.
+  if (OPENSSL_strcasecmp(name, "3des") == 0) {
+    name = "des-ede3-cbc";
+  }
+
+  for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kCiphers); i++) {
+    if (OPENSSL_strcasecmp(kCiphers[i].name, name) == 0) {
+      return kCiphers[i].func();
+    }
   }
 
   return NULL;

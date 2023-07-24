@@ -33,9 +33,18 @@ class ProgramPipelineImpl : public angle::NonCopyable
 
     const gl::ProgramPipelineState &getState() const { return mState; }
 
+    virtual angle::Result syncState(const gl::Context *context,
+                                    const gl::Program::DirtyBits &dirtyBits);
+
   protected:
     const gl::ProgramPipelineState &mState;
 };
+
+inline angle::Result ProgramPipelineImpl::syncState(const gl::Context *context,
+                                                    const gl::Program::DirtyBits &dirtyBits)
+{
+    return angle::Result::Continue;
+}
 
 }  // namespace rx
 

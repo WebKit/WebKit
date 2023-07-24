@@ -553,9 +553,14 @@
 (if (equal? (param "CPU") "arm64")
     (with-filter (iokit-registry-entry-class "IOService")
         (allow iokit-get-properties
-            (iokit-property "chip-id"
+            (iokit-property "apple-coprocessor-version"
+                            "chip-id"
                             "display-rotation"
                             "display-scale"))))
+
+(with-filter (iokit-registry-entry-class "AppleMobileADBE0")
+    (allow iokit-get-properties
+        (iokit-property "GainMapVersion")))
 
 (with-filter (iokit-registry-entry-class "IOPlatformDevice")
     (deny iokit-get-properties (with no-report)
@@ -798,8 +803,12 @@
         "com.apple.DiskArbitration.diskarbitrationd"
         "com.apple.ViewBridgeAuxiliary"
         "com.apple.audioanalyticsd"
-        "com.apple.coreservices.launchservicesd"
         "com.apple.windowserver.active"))
+
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.coreservices.launchservicesd")))
         
 (deny mach-lookup (with no-report)
     (global-name-prefix "com.apple.distributed_notifications"))

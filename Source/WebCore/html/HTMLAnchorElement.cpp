@@ -56,6 +56,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
+#include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/WeakHashMap.h>
@@ -245,7 +246,7 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
         if (wasLink != isLink())
             invalidateStyleForSubtree();
         if (isLink()) {
-            String parsedURL = stripLeadingAndTrailingHTMLSpaces(newValue);
+            auto parsedURL = newValue.string().trim(isASCIIWhitespace);
             if (document().isDNSPrefetchEnabled() && document().frame()) {
                 if (protocolIsInHTTPFamily(parsedURL) || parsedURL.startsWith("//"_s))
                     document().frame()->loader().client().prefetchDNS(document().completeURL(parsedURL).host().toString());
@@ -577,7 +578,7 @@ void HTMLAnchorElement::handleClick(Event& event)
         return;
 
     StringBuilder url;
-    url.append(stripLeadingAndTrailingHTMLSpaces(attributeWithoutSynchronization(hrefAttr)));
+    url.append(attributeWithoutSynchronization(hrefAttr).string().trim(isASCIIWhitespace));
     appendServerMapMousePosition(url, event);
     URL completedURL = document().completeURL(url.toString());
 
@@ -614,7 +615,7 @@ void HTMLAnchorElement::handleClick(Event& event)
             systemPreviewInfo.previewRect = child->boundsInRootViewSpace();
 
         if (auto* page = document().page())
-            page->handleSystemPreview(WTFMove(completedURL), WTFMove(systemPreviewInfo));
+            page->beginSystemPreview(completedURL, WTFMove(systemPreviewInfo), [keepBlobAlive = URLKeepingBlobAlive(completedURL, document().topOrigin().data())] { });
         return;
     }
 #endif

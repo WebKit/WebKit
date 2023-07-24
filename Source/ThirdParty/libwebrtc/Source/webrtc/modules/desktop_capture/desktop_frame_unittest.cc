@@ -44,8 +44,8 @@ void RunTest(const TestData& test) {
   auto dest_frame = CreateTestFrame(test.dest_frame_rect, 0);
   auto src_frame = CreateTestFrame(test.src_frame_rect, 0xff);
 
-  dest_frame->CopyIntersectingPixelsFrom(
-      *src_frame, test.horizontal_scale, test.vertical_scale);
+  dest_frame->CopyIntersectingPixelsFrom(*src_frame, test.horizontal_scale,
+                                         test.vertical_scale);
 
   // Translate the expected overlap rect to be relative to the dest frame/rect.
   DesktopVector dest_frame_origin = test.dest_frame_rect.top_left();
@@ -87,7 +87,25 @@ void RunTests(const TestData* tests, int num_tests) {
 
 }  // namespace
 
+TEST(DesktopFrameTest, NewFrameIsBlack) {
+  auto frame = std::make_unique<BasicDesktopFrame>(DesktopSize(10, 10));
+  EXPECT_TRUE(frame->FrameDataIsBlack());
+}
+
+TEST(DesktopFrameTest, EmptyFrameIsNotBlack) {
+  auto frame = std::make_unique<BasicDesktopFrame>(DesktopSize());
+  EXPECT_FALSE(frame->FrameDataIsBlack());
+}
+
+TEST(DesktopFrameTest, FrameDataSwitchesBetweenNonBlackAndBlack) {
+  auto frame = CreateTestFrame(DesktopRect::MakeXYWH(0, 0, 10, 10), 0xff);
+  EXPECT_FALSE(frame->FrameDataIsBlack());
+  frame->SetFrameDataToBlack();
+  EXPECT_TRUE(frame->FrameDataIsBlack());
+}
+
 TEST(DesktopFrameTest, CopyIntersectingPixelsMatchingRects) {
+  // clang-format off
   const TestData tests[] = {
     {"0 origin",
      DesktopRect::MakeXYWH(0, 0, 2, 2),
@@ -101,6 +119,7 @@ TEST(DesktopFrameTest, CopyIntersectingPixelsMatchingRects) {
      1.0, 1.0,
      DesktopRect::MakeXYWH(-1, -1, 2, 2)}
   };
+  // clang-format on
 
   RunTests(tests, arraysize(tests));
 }
@@ -108,6 +127,7 @@ TEST(DesktopFrameTest, CopyIntersectingPixelsMatchingRects) {
 TEST(DesktopFrameTest, CopyIntersectingPixelsMatchingRectsScaled) {
   // The scale factors shouldn't affect matching rects (they're only applied
   // to any difference between the origins)
+  // clang-format off
   const TestData tests[] = {
     {"0 origin 2x",
      DesktopRect::MakeXYWH(0, 0, 2, 2),
@@ -133,11 +153,13 @@ TEST(DesktopFrameTest, CopyIntersectingPixelsMatchingRectsScaled) {
      0.5, 0.5,
      DesktopRect::MakeXYWH(-1, -1, 2, 2)}
   };
+  // clang-format on
 
   RunTests(tests, arraysize(tests));
 }
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsFullyContainedRects) {
+  // clang-format off
   const TestData tests[] = {
     {"0 origin top left",
      DesktopRect::MakeXYWH(0, 0, 2, 2),
@@ -157,11 +179,13 @@ TEST(DesktopFrameTest, CopyIntersectingPixelsFullyContainedRects) {
      1.0, 1.0,
      DesktopRect::MakeXYWH(-1, 0, 1, 1)}
   };
+  // clang-format on
 
   RunTests(tests, arraysize(tests));
 }
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsFullyContainedRectsScaled) {
+  // clang-format off
   const TestData tests[] = {
     {"0 origin top left 2x",
      DesktopRect::MakeXYWH(0, 0, 2, 2),
@@ -205,12 +229,14 @@ TEST(DesktopFrameTest, CopyIntersectingPixelsFullyContainedRectsScaled) {
      0.5, 0.5,
      DesktopRect::MakeXYWH(-1, -1, 1, 1)}
   };
+  // clang-format on
 
   RunTests(tests, arraysize(tests));
 }
 
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsPartiallyContainedRects) {
+  // clang-format off
   const TestData tests[] = {
     {"Top left",
      DesktopRect::MakeXYWH(0, 0, 2, 2),
@@ -236,11 +262,13 @@ TEST(DesktopFrameTest, CopyIntersectingPixelsPartiallyContainedRects) {
      1.0, 1.0,
      DesktopRect::MakeXYWH(0, 1, 1, 1)}
   };
+  // clang-format on
 
   RunTests(tests, arraysize(tests));
 }
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsPartiallyContainedRectsScaled) {
+  // clang-format off
   const TestData tests[] = {
     {"Top left 2x",
      DesktopRect::MakeXYWH(0, 0, 2, 2),
@@ -266,12 +294,14 @@ TEST(DesktopFrameTest, CopyIntersectingPixelsPartiallyContainedRectsScaled) {
      0.5, 0.5,
      DesktopRect::MakeXYWH(0, 1, 1, 1)}
   };
+  // clang-format on
 
   RunTests(tests, arraysize(tests));
 }
 
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsUncontainedRects) {
+  // clang-format off
   const TestData tests[] = {
     {"Left",
      DesktopRect::MakeXYWH(0, 0, 2, 2),
@@ -298,11 +328,13 @@ TEST(DesktopFrameTest, CopyIntersectingPixelsUncontainedRects) {
      1.0, 1.0,
      DesktopRect::MakeXYWH(0, 0, 0, 0)}
   };
+  // clang-format on
 
   RunTests(tests, arraysize(tests));
 }
 
 TEST(DesktopFrameTest, CopyIntersectingPixelsUncontainedRectsScaled) {
+  // clang-format off
   const TestData tests[] = {
     {"Left 2x",
      DesktopRect::MakeXYWH(0, 0, 2, 2),
@@ -329,6 +361,7 @@ TEST(DesktopFrameTest, CopyIntersectingPixelsUncontainedRectsScaled) {
      0.5, 0.5,
      DesktopRect::MakeXYWH(0, 0, 0, 0)}
   };
+  // clang-format on
 
   RunTests(tests, arraysize(tests));
 }

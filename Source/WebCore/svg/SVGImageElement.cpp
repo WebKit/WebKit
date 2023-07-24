@@ -86,15 +86,21 @@ bool SVGImageElement::renderingTaintsOrigin() const
     if (!cachedImage)
         return false;
 
-    auto* image = cachedImage->image();
-    return image && image->renderingTaintsOrigin();
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return false;
+
+    if (image->renderingTaintsOrigin())
+        return true;
+
+    if (image->sourceURL().protocolIsData())
+        return false;
+
+    return cachedImage->isCORSCrossOrigin();
 }
 
 void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGURIReference::parseAttribute(name, newValue);
-    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     SVGParsingError parseError = NoError;
     switch (name.nodeName()) {
     case AttributeNames::preserveAspectRatioAttr:
@@ -116,6 +122,9 @@ void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     }
     reportAttributeParsingError(parseError, name, newValue);
+
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)

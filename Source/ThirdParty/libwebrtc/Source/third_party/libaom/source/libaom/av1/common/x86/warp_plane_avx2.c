@@ -1028,12 +1028,12 @@ int64_t av1_calc_frame_error_avx2(const uint8_t *const ref, int ref_stride,
   int64_t sum_error = 0;
   int i, j;
   __m256i row_error, col_error;
-  __m256i zero = _mm256_set1_epi16(0);
+  __m256i zero = _mm256_setzero_si256();
   __m256i dup_255 = _mm256_set1_epi16(255);
   col_error = zero;
 
   for (i = 0; i < (p_height / 4); i++) {
-    row_error = _mm256_set1_epi16(0);
+    row_error = _mm256_setzero_si256();
     for (j = 0; j < (p_width / 16); j++) {
       __m256i ref_1_16 = _mm256_cvtepu8_epi16(_mm_load_si128(
           (__m128i *)(ref + (j * 16) + (((i * 4) + 0) * ref_stride))));

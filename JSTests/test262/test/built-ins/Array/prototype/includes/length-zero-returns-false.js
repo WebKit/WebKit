@@ -11,6 +11,7 @@ info: |
   2. Let len be ? ToLength(? Get(O, "length")).
   3. If len is 0, return false.
   ...
+features: [Array.prototype.includes]
 ---*/
 
 var calls = 0;

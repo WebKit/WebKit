@@ -9,4 +9,4 @@ features: [Temporal]
 
 const date = Temporal.Now.plainDate("gregory");
 assert(date instanceof Temporal.PlainDate);
-assert.sameValue(date.calendar.id, "gregory");
+assert.sameValue(date.calendarId, "gregory");

@@ -49,6 +49,11 @@ WebPopupMenu::~WebPopupMenu()
 {
 }
 
+WebPage* WebPopupMenu::page()
+{
+    return m_page.get();
+}
+
 void WebPopupMenu::disconnectClient()
 {
     m_popupClient = 0;

@@ -173,8 +173,8 @@ class TestImporterTest(unittest.TestCase):
         host.executive = MockExecutive2()
         host.filesystem = MockFileSystem(files=files)
 
-        options, args = parse_args(args)
-        importer = TestImporter(host, None, options)
+        options, test_paths = parse_args(args)
+        importer = TestImporter(host, test_paths, options)
         importer._test_downloader = TestDownloaderMock(importer.tests_download_path, importer.host, importer.options)
         importer.do_import()
         return host.filesystem
@@ -310,6 +310,104 @@ class TestImporterTest(unittest.TestCase):
         # 'slow' should remain in tests-options.json.
         tests_options = json.loads(fs.read_text_file('/mock-checkout/LayoutTests/tests-options.json'))
         self.assertIn("slow", tests_options["imported/w3c/web-platform-tests/a/existing-test.html"])
+
+    def test_clean_directory_option_partial_import(self):
+        existing_resource_files = {
+            "directories": [],
+            "files": [
+                "web-platform-tests/a/old-support.html",
+                "web-platform-tests/b/old-support.html",
+                "web-platform-tests/b/existing-support.html",
+            ],
+        }
+        existing_tests_options = {
+            "imported/w3c/web-platform-tests/a/old-test.html": ["slow"],
+            "imported/w3c/web-platform-tests/b/old-test.html": ["slow"],
+            "imported/w3c/web-platform-tests/b/existing-test.html": ["slow"],
+        }
+
+        FAKE_FILES = {
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/a/old-test.html': '1',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/a/old-test-expected.txt': '2',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/a/old-support.html': '3',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/old-test.html': '4',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/old-test-expected.txt': '5',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/old-support.html': '6',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/existing-test.html': '4',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/existing-test-expected.txt': '5',
+            '/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json': json.dumps(existing_resource_files),
+            '/mock-checkout/LayoutTests/tests-options.json': json.dumps(existing_tests_options),
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/b/existing-test.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/test.html': '-1',
+        }
+
+        FAKE_FILES.update(FAKE_REPOSITORIES)
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--clean-dest-dir', 'web-platform-tests/b'], FAKE_FILES)
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/a/old-test.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/a/old-test-expected.txt'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/old-test.html'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/old-test-expected.txt'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/existing-test.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/b/existing-test-expected.txt'))
+
+        resource_files = json.loads(fs.read_text_file('/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json'))
+        self.assertIn("web-platform-tests/a/old-support.html", resource_files["files"])
+        self.assertNotIn("web-platform-tests/b/old-support.html", resource_files["files"])
+
+        tests_options = json.loads(fs.read_text_file('/mock-checkout/LayoutTests/tests-options.json'))
+        self.assertIn("imported/w3c/web-platform-tests/a/old-test.html", tests_options)
+        self.assertNotIn("imported/w3c/web-platform-tests/b/old-test.html", tests_options)
+
+    def test_clean_directory_option_prefix_name(self):
+        existing_resource_files = {
+            "directories": [],
+            "files": [
+                "web-platform-tests/cssom-view/old-support.html",
+                "web-platform-tests/cssom/old-support.html",
+                "web-platform-tests/cssom/existing-support.html",
+            ],
+        }
+        existing_tests_options = {
+            "imported/w3c/web-platform-tests/cssom-view/old-test.html": ["slow"],
+            "imported/w3c/web-platform-tests/cssom/old-test.html": ["slow"],
+            "imported/w3c/web-platform-tests/cssom/existing-test.html": ["slow"],
+        }
+
+        FAKE_FILES = {
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom-view/old-test.html': '1',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom-view/old-test-expected.txt': '2',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom-view/old-support.html': '3',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom/old-test.html': '4',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom/old-test-expected.txt': '5',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom/old-support.html': '6',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom/existing-test.html': '4',
+            '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom/existing-test-expected.txt': '5',
+            '/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json': json.dumps(existing_resource_files),
+            '/mock-checkout/LayoutTests/tests-options.json': json.dumps(existing_tests_options),
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/cssom/existing-test.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/WebKitBuild/w3c-tests/csswg-tests/test.html': '-1',
+        }
+
+        FAKE_FILES.update(FAKE_REPOSITORIES)
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--clean-dest-dir', 'web-platform-tests/cssom'], FAKE_FILES)
+
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom-view/old-test.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom-view/old-test-expected.txt'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom/old-test.html'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom/old-test-expected.txt'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom/existing-test.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/cssom/existing-test-expected.txt'))
+
+        resource_files = json.loads(fs.read_text_file('/mock-checkout/LayoutTests/imported/w3c/resources/resource-files.json'))
+        self.assertIn("web-platform-tests/cssom-view/old-support.html", resource_files["files"])
+        self.assertNotIn("web-platform-tests/cssom/old-support.html", resource_files["files"])
+
+        tests_options = json.loads(fs.read_text_file('/mock-checkout/LayoutTests/tests-options.json'))
+        self.assertIn("imported/w3c/web-platform-tests/cssom-view/old-test.html", tests_options)
+        self.assertNotIn("imported/w3c/web-platform-tests/cssom/old-test.html", tests_options)
 
     def test_git_ignore_generation(self):
         FAKE_FILES = {

@@ -853,7 +853,7 @@ layer at (0,0) size 785x7248
       RenderBlock {P} at (0,7100) size 769x21
         RenderText {#text} at (0,0) size 179x19
           text run at (0,0) width 179: "This test is still being written..."
-      RenderBlock {HR} at (0,7136) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,7136) size 769x3 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,7154) size 769x21
         RenderText {#text} at (0,0) size 57x19
           text run at (0,0) width 57: "(Back to "

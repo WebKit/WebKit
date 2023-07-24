@@ -20,6 +20,10 @@
 #include "webm/reader.h"
 #include "webm/status.h"
 
+#if defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && !defined(WEBM_FUZZER_BYTE_ELEMENT_SIZE_LIMIT)
+#define WEBM_FUZZER_BYTE_ELEMENT_SIZE_LIMIT (4 * 1024 * 1024)
+#endif
+
 namespace webm {
 
 // Parses an EBML string (UTF-8 and ASCII) or binary element from a byte stream.

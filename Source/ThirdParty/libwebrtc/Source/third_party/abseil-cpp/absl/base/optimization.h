@@ -91,6 +91,7 @@
 #define ABSL_CACHELINE_SIZE 64
 #endif
 #endif
+#endif
 
 #ifndef ABSL_CACHELINE_SIZE
 // A reasonable default guess.  Note that overestimates tend to waste more
@@ -141,12 +142,11 @@
 //    the generated machine code.
 // 3) Prefer applying this attribute to individual variables. Avoid
 //    applying it to types. This tends to localize the effect.
+#if defined(__clang__) || defined(__GNUC__)
 #define ABSL_CACHELINE_ALIGNED __attribute__((aligned(ABSL_CACHELINE_SIZE)))
 #elif defined(_MSC_VER)
-#define ABSL_CACHELINE_SIZE 64
 #define ABSL_CACHELINE_ALIGNED __declspec(align(ABSL_CACHELINE_SIZE))
 #else
-#define ABSL_CACHELINE_SIZE 64
 #define ABSL_CACHELINE_ALIGNED
 #endif
 
@@ -181,6 +181,53 @@
 #define ABSL_PREDICT_TRUE(x) (x)
 #endif
 
+// `ABSL_INTERNAL_IMMEDIATE_ABORT_IMPL()` aborts the program in the fastest
+// possible way, with no attempt at logging. One use is to implement hardening
+// aborts with ABSL_OPTION_HARDENED.  Since this is an internal symbol, it
+// should not be used directly outside of Abseil.
+#if ABSL_HAVE_BUILTIN(__builtin_trap) || \
+    (defined(__GNUC__) && !defined(__clang__))
+#define ABSL_INTERNAL_IMMEDIATE_ABORT_IMPL() __builtin_trap()
+#else
+#define ABSL_INTERNAL_IMMEDIATE_ABORT_IMPL() abort()
+#endif
+
+// `ABSL_INTERNAL_UNREACHABLE_IMPL()` is the platform specific directive to
+// indicate that a statement is unreachable, and to allow the compiler to
+// optimize accordingly. Clients should use `ABSL_UNREACHABLE()`, which is
+// defined below.
+#if defined(__cpp_lib_unreachable) && __cpp_lib_unreachable >= 202202L
+#define ABSL_INTERNAL_UNREACHABLE_IMPL() std::unreachable()
+#elif defined(__GNUC__) || ABSL_HAVE_BUILTIN(__builtin_unreachable)
+#define ABSL_INTERNAL_UNREACHABLE_IMPL() __builtin_unreachable()
+#elif ABSL_HAVE_BUILTIN(__builtin_assume)
+#define ABSL_INTERNAL_UNREACHABLE_IMPL() __builtin_assume(false)
+#elif defined(_MSC_VER)
+#define ABSL_INTERNAL_UNREACHABLE_IMPL() __assume(false)
+#else
+#define ABSL_INTERNAL_UNREACHABLE_IMPL()
+#endif
+
+// `ABSL_UNREACHABLE()` is an unreachable statement.  A program which reaches
+// one has undefined behavior, and the compiler may optimize accordingly.
+#if ABSL_OPTION_HARDENED == 1 && defined(NDEBUG)
+// Abort in hardened mode to avoid dangerous undefined behavior.
+#define ABSL_UNREACHABLE()                \
+  do {                                    \
+    ABSL_INTERNAL_IMMEDIATE_ABORT_IMPL(); \
+    ABSL_INTERNAL_UNREACHABLE_IMPL();     \
+  } while (false)
+#else
+// The assert only fires in debug mode to aid in debugging.
+// When NDEBUG is defined, reaching ABSL_UNREACHABLE() is undefined behavior.
+#define ABSL_UNREACHABLE()                       \
+  do {                                           \
+    /* NOLINTNEXTLINE: misc-static-assert */     \
+    assert(false && "ABSL_UNREACHABLE reached"); \
+    ABSL_INTERNAL_UNREACHABLE_IMPL();            \
+  } while (false)
+#endif
+
 // ABSL_ASSUME(cond)
 //
 // Informs the compiler that a condition is always true and that it can assume
@@ -209,18 +256,23 @@
 #define ABSL_ASSUME(cond) assert(cond)
 #elif ABSL_HAVE_BUILTIN(__builtin_assume)
 #define ABSL_ASSUME(cond) __builtin_assume(cond)
+#elif defined(_MSC_VER)
+#define ABSL_ASSUME(cond) __assume(cond)
+#elif defined(__cpp_lib_unreachable) && __cpp_lib_unreachable >= 202202L
+#define ABSL_ASSUME(cond)            \
+  do {                               \
+    if (!(cond)) std::unreachable(); \
+  } while (false)
 #elif defined(__GNUC__) || ABSL_HAVE_BUILTIN(__builtin_unreachable)
 #define ABSL_ASSUME(cond)                 \
   do {                                    \
     if (!(cond)) __builtin_unreachable(); \
-  } while (0)
-#elif defined(_MSC_VER)
-#define ABSL_ASSUME(cond) __assume(cond)
+  } while (false)
 #else
 #define ABSL_ASSUME(cond)               \
   do {                                  \
     static_cast<void>(false && (cond)); \
-  } while (0)
+  } while (false)
 #endif
 
 // ABSL_INTERNAL_UNIQUE_SMALL_NAME(cond)
@@ -247,30 +299,6 @@
   asm(ABSL_INTERNAL_UNIQUE_SMALL_NAME1(.absl.__COUNTER__))
 #else
 #define ABSL_INTERNAL_UNIQUE_SMALL_NAME()
-#endif
-
-// ABSL_IS_TRIVIALLY_RELOCATABLE(type)
-// Detects whether a type is "trivially relocatable" -- meaning it can be
-// relocated without invoking the constructor/destructor, using a form of move
-// elision.
-//
-// Example:
-//
-// if constexpr (ABSL_IS_TRIVIALLY_RELOCATABLE(T)) {
-//   memcpy(new_location, old_location, sizeof(T));
-// } else {
-//   new(new_location) T(std::move(*old_location));
-//   old_location->~T();
-// }
-//
-// Upstream documentation:
-//
-// https://clang.llvm.org/docs/LanguageExtensions.html#:~:text=__is_trivially_relocatable
-//
-#if ABSL_HAVE_BUILTIN(__is_trivially_relocatable)
-#define ABSL_IS_TRIVIALLY_RELOCATABLE(type) __is_trivially_relocatable(type)
-#else
-#define ABSL_IS_TRIVIALLY_RELOCATABLE(type) false
 #endif
 
 #endif  // ABSL_BASE_OPTIMIZATION_H_

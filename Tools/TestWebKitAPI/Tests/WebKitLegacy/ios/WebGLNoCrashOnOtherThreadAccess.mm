@@ -37,7 +37,7 @@
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #import <OpenGL/OpenGL.h>
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
 #import <OpenGLES/EAGL.h>
 #endif
 
@@ -64,7 +64,7 @@ class SetContextCGL {
 };
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 class SetContextEAGL {
 public:
     SetContextEAGL()

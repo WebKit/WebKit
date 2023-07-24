@@ -14,13 +14,22 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/counter-korean-hangul-formal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/counter-korean-hangul-formal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/counter-korean-hangul-formal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-052-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-052-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-052.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-053-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-053-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-053.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-054-alt-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-054-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-054-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-054.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-055-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-055-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-055.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-056-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-056-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-056.html

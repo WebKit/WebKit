@@ -28,10 +28,6 @@
 #include "TextureMapperContextAttributes.h"
 #include "TextureMapperGL.h"
 
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
-#include <gst/gl/egl/gstglmemoryegl.h>
-#endif
-
 namespace WebCore {
 
 GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, TextureMapperGL::Flags flags, bool gstGLEnabled)
@@ -55,34 +51,6 @@ GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, std::optional<GstVid
     GstMemory* memory = gst_buffer_peek_memory(m_buffer.get(), 0);
     if (gst_is_gl_memory(memory))
         m_textureTarget = gst_gl_memory_get_texture_target(GST_GL_MEMORY_CAST(memory));
-
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
-    m_dmabufFD = -1;
-    gsize offset;
-    if (gst_is_gl_memory_egl(memory)) {
-        GstGLMemoryEGL* eglMemory = (GstGLMemoryEGL*) memory;
-        gst_egl_image_export_dmabuf(eglMemory->image, &m_dmabufFD, &m_dmabufStride, &offset);
-    } else if (gst_is_gl_memory(memory)) {
-        GRefPtr<GstEGLImage> eglImage = adoptGRef(gst_egl_image_from_texture(GST_GL_BASE_MEMORY_CAST(memory)->context, GST_GL_MEMORY_CAST(memory), nullptr));
-
-        if (eglImage)
-            gst_egl_image_export_dmabuf(eglImage.get(), &m_dmabufFD, &m_dmabufStride, &offset);
-    }
-
-    if (hasDMABuf() && m_dmabufStride == -1) {
-        m_isMapped = gst_video_frame_map(&m_videoFrame, &videoInfo, m_buffer.get(), GST_MAP_READ);
-        if (m_isMapped)
-            m_dmabufStride = GST_VIDEO_INFO_PLANE_STRIDE(&m_videoFrame.info, 0);
-    }
-
-    if (hasDMABuf() && m_dmabufStride)
-        return;
-
-    static std::once_flag s_onceFlag;
-    std::call_once(s_onceFlag, [] {
-        GST_WARNING("Texture export to DMABuf failed, falling back to internal rendering");
-    });
-#endif // USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
 
     if (gstGLEnabled) {
         m_isMapped = gst_video_frame_map(&m_videoFrame, &videoInfo, m_buffer.get(), static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL));
@@ -113,21 +81,6 @@ GstVideoFrameHolder::~GstVideoFrameHolder()
 
     gst_video_frame_unmap(&m_videoFrame);
 }
-
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
-void GstVideoFrameHolder::handoffVideoDmaBuf(struct wpe_video_plane_display_dmabuf_source* videoPlaneDisplayDmaBufSource, const IntRect& rect)
-{
-    if (m_dmabufFD <= 0)
-        return;
-
-    wpe_video_plane_display_dmabuf_source_update(videoPlaneDisplayDmaBufSource, m_dmabufFD, rect.x(), rect.y(), m_size.width(), m_size.height(), m_dmabufStride, [](void* data) {
-        gst_buffer_unref(GST_BUFFER_CAST(data));
-    }, gst_buffer_ref(m_buffer.get()));
-
-    close(m_dmabufFD);
-    m_dmabufFD = 0;
-}
-#endif
 
 #if USE(GSTREAMER_GL)
 void GstVideoFrameHolder::waitForCPUSync()

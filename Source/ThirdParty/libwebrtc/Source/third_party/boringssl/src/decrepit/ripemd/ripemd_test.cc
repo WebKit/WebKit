@@ -57,17 +57,13 @@ static const RIPEMDTestCase kRIPEMDTestCases[] = {
 
 // TODO(davidben): Convert this file to GTest properly.
 TEST(RIPEMDTest, RunTest) {
-  unsigned test_num = 0;
-  int ok = 1;
-
   for (const auto &test : kRIPEMDTestCases) {
-    test_num++;
-
+    SCOPED_TRACE(test.input);
     const size_t input_len = strlen(test.input);
 
     for (size_t stride = 0; stride <= input_len; stride++) {
+      SCOPED_TRACE(stride);
       uint8_t digest[RIPEMD160_DIGEST_LENGTH];
-
       if (stride == 0) {
         RIPEMD160(reinterpret_cast<const uint8_t *>(test.input), input_len,
                   digest);
@@ -89,12 +85,7 @@ TEST(RIPEMDTest, RunTest) {
         RIPEMD160_Final(digest, &ctx);
       }
 
-      if (OPENSSL_memcmp(digest, test.expected, sizeof(digest)) != 0) {
-        fprintf(stderr, "#%u: bad result with stride %u: ", test_num,
-                static_cast<unsigned>(stride));
-        hexdump(stderr, "", digest, sizeof(digest));
-        ok = 0;
-      }
+      EXPECT_EQ(Bytes(digest), Bytes(test.expected));
     }
   }
 
@@ -107,12 +98,6 @@ TEST(RIPEMDTest, RunTest) {
   static const uint8_t kMillionADigest[RIPEMD160_DIGEST_LENGTH] = {
       0x52, 0x78, 0x32, 0x43, 0xc1, 0x69, 0x7b, 0xdb, 0xe1, 0x6d,
       0x37, 0xf9, 0x7f, 0x68, 0xf0, 0x83, 0x25, 0xdc, 0x15, 0x28};
-
-  if (OPENSSL_memcmp(digest, kMillionADigest, sizeof(digest)) != 0) {
-    fprintf(stderr, u8"Digest incorrect for “million a's” test: ");
-    hexdump(stderr, "", digest, sizeof(digest));
-    ok = 0;
-  }
-
-  EXPECT_EQ(1, ok);
+  EXPECT_EQ(Bytes(digest), Bytes(kMillionADigest))
+      << "Digest incorrect for \"million a's\" test";
 }

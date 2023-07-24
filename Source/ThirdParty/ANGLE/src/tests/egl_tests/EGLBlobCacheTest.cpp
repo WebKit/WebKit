@@ -371,6 +371,9 @@ TEST_P(EGLBlobCacheTest, ThreadSafety)
         ss << essl1_shaders::vs::Simple() << "//" << threadID;
         std::string newEntryVSSource = ss.str().c_str();
         ANGLE_GL_PROGRAM(unusedProgramTemp2, newEntryVSSource.c_str(), essl1_shaders::fs::Red());
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     };
 
     constexpr int kNumThreads = 32;

@@ -75,14 +75,16 @@ TEST(ObjTest, TestSignatureAlgorithms) {
 
 static bool ExpectObj2Txt(const uint8_t *der, size_t der_len,
                           bool always_return_oid, const char *expected) {
-  ASN1_OBJECT obj;
-  OPENSSL_memset(&obj, 0, sizeof(obj));
-  obj.data = der;
-  obj.length = static_cast<int>(der_len);
+  bssl::UniquePtr<ASN1_OBJECT> obj(
+      ASN1_OBJECT_create(NID_undef, der, static_cast<int>(der_len),
+                         /*sn=*/nullptr, /*ln=*/nullptr));
+  if (!obj) {
+    return false;
+  }
 
   int expected_len = static_cast<int>(strlen(expected));
 
-  int len = OBJ_obj2txt(nullptr, 0, &obj, always_return_oid);
+  int len = OBJ_obj2txt(nullptr, 0, obj.get(), always_return_oid);
   if (len != expected_len) {
     fprintf(stderr,
             "OBJ_obj2txt of %s with out_len = 0 returned %d, wanted %d.\n",
@@ -92,7 +94,7 @@ static bool ExpectObj2Txt(const uint8_t *der, size_t der_len,
 
   char short_buf[1];
   OPENSSL_memset(short_buf, 0xff, sizeof(short_buf));
-  len = OBJ_obj2txt(short_buf, sizeof(short_buf), &obj, always_return_oid);
+  len = OBJ_obj2txt(short_buf, sizeof(short_buf), obj.get(), always_return_oid);
   if (len != expected_len) {
     fprintf(stderr,
             "OBJ_obj2txt of %s with out_len = 1 returned %d, wanted %d.\n",
@@ -109,7 +111,7 @@ static bool ExpectObj2Txt(const uint8_t *der, size_t der_len,
   }
 
   char buf[256];
-  len = OBJ_obj2txt(buf, sizeof(buf), &obj, always_return_oid);
+  len = OBJ_obj2txt(buf, sizeof(buf), obj.get(), always_return_oid);
   if (len != expected_len) {
     fprintf(stderr,
             "OBJ_obj2txt of %s with out_len = 256 returned %d, wanted %d.\n",
@@ -166,17 +168,14 @@ TEST(ObjTest, TestObj2Txt) {
   ASSERT_TRUE(ExpectObj2Txt(nullptr, 0, false /* return name */, ""));
   ASSERT_TRUE(ExpectObj2Txt(nullptr, 0, true /* don't return name */, ""));
 
-  ASN1_OBJECT obj;
-  OPENSSL_memset(&obj, 0, sizeof(obj));
-
   // kNonMinimalOID is kBasicConstraints with the final component non-minimally
   // encoded.
-  static const uint8_t kNonMinimalOID[] = {
-      0x55, 0x1d, 0x80, 0x13,
-  };
-  obj.data = kNonMinimalOID;
-  obj.length = sizeof(kNonMinimalOID);
-  ASSERT_EQ(-1, OBJ_obj2txt(NULL, 0, &obj, 0));
+  static const uint8_t kNonMinimalOID[] = {0x55, 0x1d, 0x80, 0x13};
+  bssl::UniquePtr<ASN1_OBJECT> obj(
+      ASN1_OBJECT_create(NID_undef, kNonMinimalOID, sizeof(kNonMinimalOID),
+                         /*sn=*/nullptr, /*ln=*/nullptr));
+  ASSERT_TRUE(obj);
+  ASSERT_EQ(-1, OBJ_obj2txt(NULL, 0, obj.get(), 0));
 
   // kOverflowOID is the DER representation of
   // 1.2.840.113554.4.1.72585.18446744073709551616. (The final value is 2^64.)
@@ -184,16 +183,16 @@ TEST(ObjTest, TestObj2Txt) {
       0x2a, 0x86, 0x48, 0x86, 0xf7, 0x12, 0x04, 0x01, 0x84, 0xb7, 0x09,
       0x82, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x00,
   };
-  obj.data = kOverflowOID;
-  obj.length = sizeof(kOverflowOID);
-  ASSERT_EQ(-1, OBJ_obj2txt(NULL, 0, &obj, 0));
+  obj.reset(ASN1_OBJECT_create(NID_undef, kOverflowOID, sizeof(kOverflowOID),
+                               /*sn=*/nullptr, /*ln=*/nullptr));
+  ASSERT_TRUE(obj);
+  ASSERT_EQ(-1, OBJ_obj2txt(NULL, 0, obj.get(), 0));
 
   // kInvalidOID is a mis-encoded version of kBasicConstraints with the final
   // octet having the high bit set.
-  static const uint8_t kInvalidOID[] = {
-      0x55, 0x1d, 0x93,
-  };
-  obj.data = kInvalidOID;
-  obj.length = sizeof(kInvalidOID);
-  ASSERT_EQ(-1, OBJ_obj2txt(NULL, 0, &obj, 0));
+  static const uint8_t kInvalidOID[] = {0x55, 0x1d, 0x93};
+  obj.reset(ASN1_OBJECT_create(NID_undef, kInvalidOID, sizeof(kInvalidOID),
+                               /*sn=*/nullptr, /*ln=*/nullptr));
+  ASSERT_TRUE(obj);
+  ASSERT_EQ(-1, OBJ_obj2txt(NULL, 0, obj.get(), 0));
 }

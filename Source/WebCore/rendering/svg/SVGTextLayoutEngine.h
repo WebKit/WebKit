@@ -81,25 +81,28 @@ private:
     SVGTextChunkBuilder m_chunkLayoutBuilder;
 
     SVGTextFragment m_currentTextFragment;
-    unsigned m_layoutAttributesPosition;
-    unsigned m_logicalCharacterOffset;
-    unsigned m_logicalMetricsListOffset;
-    unsigned m_visualCharacterOffset;
-    unsigned m_visualMetricsListOffset;
-    float m_x;
-    float m_y;
-    float m_dx;
-    float m_dy;
-    bool m_isVerticalText;
-    bool m_inPathLayout;
+    unsigned m_layoutAttributesPosition { 0 };
+    unsigned m_logicalCharacterOffset { 0 };
+    unsigned m_logicalMetricsListOffset { 0 };
+    unsigned m_visualCharacterOffset { 0 };
+    unsigned m_visualMetricsListOffset { 0 };
+    float m_x { 0.0f };
+    float m_y { 0.0f };
+    float m_dx { 0.0f };
+    float m_dy { 0.0f };
+    float m_lastChunkStartPosition { 0.0f };
+    bool m_lastChunkHasTextLength { false };
+    bool m_lastChunkIsVerticalText { false };
+    bool m_isVerticalText { false };
+    bool m_inPathLayout { false };
 
     // Text on path layout
     Path m_textPath;
-    float m_textPathLength;
-    float m_textPathStartOffset;
-    float m_textPathCurrentOffset;
-    float m_textPathSpacing;
-    float m_textPathScaling;
+    float m_textPathLength { 0.0f };
+    float m_textPathStartOffset { 0.0f };
+    float m_textPathCurrentOffset { 0.0f };
+    float m_textPathSpacing { 0.0f };
+    float m_textPathScaling { 1.0f };
 };
 
 } // namespace WebCore

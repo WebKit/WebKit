@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-inline IndexingType JSArray::mergeIndexingTypeForCopying(IndexingType other)
+inline IndexingType JSArray::mergeIndexingTypeForCopying(IndexingType other, bool allowPromotion)
 {
     IndexingType type = indexingType();
     if (!(type & IsArray && other & IsArray))
@@ -53,6 +53,14 @@ inline IndexingType JSArray::mergeIndexingTypeForCopying(IndexingType other)
         if (other == ArrayWithContiguous)
             return other;
         return type;
+    }
+
+    if (allowPromotion) {
+        if ((type == ArrayWithInt32 || type == ArrayWithDouble) && (other == ArrayWithInt32 || other == ArrayWithDouble)) {
+            if (type == other)
+                return type;
+            return ArrayWithDouble;
+        }
     }
 
     if (type != other)

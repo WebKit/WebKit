@@ -11,4 +11,9 @@ PASS ((height > 0px) or (orientation: landscape)), with contain:size
 PASS (inline-size > 0px)
 PASS (block-size > 0px)
 PASS (block-size > 0px), with writing-mode:vertical-rl
+PASS not (width < 0px)
+PASS not (height < 0px)
+PASS not (inline-size < 0px)
+PASS not (block-size < 0px)
+PASS not (orientation)
 

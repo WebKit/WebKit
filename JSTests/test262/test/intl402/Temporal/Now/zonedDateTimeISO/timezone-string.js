@@ -9,7 +9,7 @@ features: [Temporal]
 
 const zdt = Temporal.Now.zonedDateTimeISO("America/Los_Angeles");
 assert(zdt instanceof Temporal.ZonedDateTime);
-assert(zdt.calendar instanceof Temporal.Calendar);
-assert.sameValue(zdt.calendar.id, "iso8601");
-assert(zdt.timeZone instanceof Temporal.TimeZone);
-assert.sameValue(zdt.timeZone.id, "America/Los_Angeles");
+assert.sameValue(typeof zdt.getISOFields().calendar, "string", "calendar slot should store a string");
+assert.sameValue(zdt.calendarId, "iso8601");
+assert.sameValue(typeof zdt.getISOFields().timeZone, "string", "time zone slot should store a string");
+assert.sameValue(zdt.timeZoneId, "America/Los_Angeles");

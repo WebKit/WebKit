@@ -304,10 +304,10 @@ void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents& i
         layerTreeAgent->pseudoElementDestroyed(pseudoElement);
 }
 
-void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents& instrumentingAgents, const HitTestResult& result, unsigned modifierFlags)
+void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents& instrumentingAgents, const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
     if (auto* domAgent = instrumentingAgents.persistentDOMAgent())
-        domAgent->mouseDidMoveOverElement(result, modifierFlags);
+        domAgent->mouseDidMoveOverElement(result, modifiers);
 }
 
 void InspectorInstrumentation::didScrollImpl(InstrumentingAgents& instrumentingAgents)
@@ -1034,6 +1034,12 @@ void InspectorInstrumentation::stopProfilingImpl(InstrumentingAgents& instrument
 {
     if (auto* timelineAgent = instrumentingAgents.enabledTimelineAgent())
         timelineAgent->stopFromConsole(exec, title);
+}
+
+void InspectorInstrumentation::performanceMarkImpl(InstrumentingAgents& instrumentingAgents, const String& label, std::optional<MonotonicTime> timestamp, LocalFrame* frame)
+{
+    if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
+        timelineAgent->didPerformanceMark(label, timestamp, frame);
 }
 
 void InspectorInstrumentation::consoleStartRecordingCanvasImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& context, JSC::JSGlobalObject& exec, JSC::JSObject* options)

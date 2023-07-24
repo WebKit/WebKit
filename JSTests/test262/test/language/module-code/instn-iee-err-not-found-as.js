@@ -19,9 +19,11 @@ info: |
         [...]
     11. Return starResolution.
 negative:
-  phase: runtime
+  phase: resolution
   type: SyntaxError
 flags: [module]
 ---*/
+
+$DONOTEVALUATE();
 
 export { x as y } from './instn-iee-err-not-found-empty_FIXTURE.js';

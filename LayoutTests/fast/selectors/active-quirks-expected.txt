@@ -75,11 +75,11 @@ PASS document.querySelectorAll(":active[webkit|=rocks]").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
 PASS document.querySelectorAll("[id|=target]:active[webkit|=rocks]").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
-PASS document.querySelectorAll(":nth-child(1):active").length is 1
+PASS document.querySelectorAll("#target:nth-child(1):active").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
-PASS document.querySelectorAll(":active:nth-child(1)").length is 1
+PASS document.querySelectorAll("#target:active:nth-child(1)").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
-PASS document.querySelectorAll(":nth-child(1):active:nth-child(1)").length is 1
+PASS document.querySelectorAll("#target:nth-child(1):active:nth-child(1)").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
 PASS document.querySelectorAll(":nth-child(n):active > #target").length is 1
 PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"

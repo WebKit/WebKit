@@ -60,6 +60,8 @@ class MeasurementAdaptor {
             metricId: null,
             configType: null,
             commitSet: function () { return MeasurementCommitSet.ensureSingleton(id, row[self._revisionsIndex]); },
+            // FIXME: return actual test parameter set when /api/report supports reporting test parameter sets.
+            testParameterSet: () => null,
             build: function () {
                 if (cachedBuild == null && builderId)
                     cachedBuild = new Build(buildId, Builder.findById(builderId), row[self._buildTagIndex], row[self._buildTimeIndex]);

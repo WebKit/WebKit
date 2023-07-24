@@ -47,8 +47,8 @@ layer at (0,0) size 785x793
               text run at (0,0) width 89: "0.5em margin"
       RenderBlock (floating) {DIV} at (0,315) size 192x117 [color=#FFFFFF] [bgcolor=#0000FF]
         RenderBlock {H1} at (8,8) size 176x22
-          RenderText {#text} at (0,0) size 111x22
-            text run at (0,0) width 111: "Bottom menu"
+          RenderText {#text} at (0,0) size 112x22
+            text run at (0,0) width 112: "Bottom menu"
         RenderBlock {UL} at (24,33) size 156x73
           RenderListItem {LI} at (0,0) size 156x18
             RenderListMarker at (-17,0) size 7x18: bullet
@@ -117,8 +117,8 @@ layer at (0,0) size 785x793
                       text run at (0,0) width 89: "0.5em margin"
               RenderBlock (floating) {DIV} at (4,130) size 192x117 [color=#FFFFFF] [bgcolor=#0000FF]
                 RenderBlock {H1} at (8,8) size 176x22
-                  RenderText {#text} at (0,0) size 111x22
-                    text run at (0,0) width 111: "Bottom menu"
+                  RenderText {#text} at (0,0) size 112x22
+                    text run at (0,0) width 112: "Bottom menu"
                 RenderBlock {UL} at (24,33) size 156x73
                   RenderListItem {LI} at (0,0) size 156x18
                     RenderListMarker at (-17,0) size 7x18: bullet
@@ -159,4 +159,4 @@ layer at (0,0) size 785x793
                     text run at (0,18) width 283: "this paragraph belongs) should be vertically"
                     text run at (0,36) width 275: "aligned with the top of the green rectangle."
 layer at (8,187) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,179) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,179) size 769x2 [color=#808080] [border: (1px inset #808080)]

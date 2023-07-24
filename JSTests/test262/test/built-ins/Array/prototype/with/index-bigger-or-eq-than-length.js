@@ -15,7 +15,7 @@ info: |
   5. Else, let actualIndex be len + relativeIndex.
   6. If actualIndex >= len or actualIndex < 0, throw a *RangeError* exception.
   ...
-features: [change-array-by-copy]
+features: [change-array-by-copy, exponentiation]
 ---*/
 
 assert.throws(RangeError, function() {

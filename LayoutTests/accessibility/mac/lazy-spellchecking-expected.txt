@@ -7,7 +7,6 @@ Attributed string with range: wrods is misspelled aab lotsi nowadays. euep.{
         AXFontFamily = Times;
         AXFontName = "Times-Roman";
         AXFontSize = 16;
-        AXVisibleName = "Times Roman";
     };
     AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
 }

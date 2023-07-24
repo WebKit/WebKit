@@ -66,7 +66,6 @@ class FragmentedSharedBuffer;
 
 namespace WebKit {
 class NetworkConnectionToWebProcess;
-class NetworkRTCResolver;
 class NetworkSession;
 struct RTCPacketOptions;
 
@@ -77,7 +76,7 @@ struct SocketComparator {
     }
 };
 
-class NetworkRTCProvider : public rtc::MessageHandler, private FunctionDispatcher, private IPC::MessageReceiver, public ThreadSafeRefCounted<NetworkRTCProvider> {
+class NetworkRTCProvider : private FunctionDispatcher, private IPC::MessageReceiver, public ThreadSafeRefCounted<NetworkRTCProvider> {
 public:
     static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection)
     {
@@ -142,8 +141,6 @@ private:
 
     void createSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<rtc::AsyncPacketSocket>&&, Socket::Type, Ref<IPC::Connection>&&);
 
-    void OnMessage(rtc::Message*);
-
     // FunctionDispatcher
     void dispatch(Function<void()>&&) final;
 
@@ -159,9 +156,8 @@ private:
 
     static constexpr size_t maxSockets { 256 };
 
-    HashMap<LibWebRTCResolverIdentifier, std::unique_ptr<NetworkRTCResolver>> m_resolvers;
     StdMap<WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>, SocketComparator> m_sockets;
-    NetworkConnectionToWebProcess* m_connection;
+    WeakPtr<NetworkConnectionToWebProcess> m_connection;
     Ref<IPC::Connection> m_ipcConnection;
     bool m_isStarted { true };
 

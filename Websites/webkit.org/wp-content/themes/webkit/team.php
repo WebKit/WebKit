@@ -136,6 +136,7 @@ var domainAffiliations = {
     'motorola.com': 'Motorola Mobility',
     'navercorp.com' : 'Naver',
     'nokia.com': 'Nokia',
+    'nvidia.com': 'Nvidia',
     'openbossa.org': 'INdT / Nokia',
     'profusion.mobi': 'ProFUSION',
     'rim.com': 'Research In Motion',

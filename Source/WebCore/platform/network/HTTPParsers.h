@@ -123,22 +123,6 @@ bool isSafeMethod(const String&);
 
 WEBCORE_EXPORT CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView);
 
-inline bool isHTTPSpace(UChar character)
-{
-    return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r');
-}
-
-// Strip leading and trailing whitespace as defined in https://fetch.spec.whatwg.org/#concept-header-value-normalize.
-inline String stripLeadingAndTrailingHTTPSpaces(const String& string)
-{
-    return string.stripLeadingAndTrailingCharacters(isHTTPSpace);
-}
-
-inline StringView stripLeadingAndTrailingHTTPSpaces(StringView string)
-{
-    return string.stripLeadingAndTrailingMatchedCharacters(isHTTPSpace);
-}
-
 template<class HashType>
 bool addToAccessControlAllowList(const String& string, unsigned start, unsigned end, HashSet<String, HashType>& set)
 {
@@ -147,7 +131,7 @@ bool addToAccessControlAllowList(const String& string, unsigned start, unsigned 
         return true;
 
     // Skip white space from start.
-    while (start <= end && isHTTPSpace((*stringImpl)[start]))
+    while (start <= end && isJSONOrHTTPWhitespace((*stringImpl)[start]))
         ++start;
 
     // only white space
@@ -155,7 +139,7 @@ bool addToAccessControlAllowList(const String& string, unsigned start, unsigned 
         return true;
 
     // Skip white space from end.
-    while (end && isHTTPSpace((*stringImpl)[end]))
+    while (end && isJSONOrHTTPWhitespace((*stringImpl)[end]))
         --end;
 
     auto token = string.substring(start, end - start + 1);

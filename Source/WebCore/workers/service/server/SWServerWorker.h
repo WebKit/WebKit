@@ -149,6 +149,8 @@ public:
     const MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>& scriptResourceMap() const { return m_scriptResourceMap; }
     bool matchingImportedScripts(const Vector<std::pair<URL, ScriptBuffer>>&) const;
 
+    void markActivateEventAsFired() { m_isActivateEventFired = true; }
+
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
 
@@ -186,6 +188,7 @@ private:
     LastNavigationWasAppInitiated m_lastNavigationWasAppInitiated;
     int m_functionalEventCounter { 0 };
     bool m_isInspected { false };
+    bool m_isActivateEventFired { false };
 };
 
 } // namespace WebCore

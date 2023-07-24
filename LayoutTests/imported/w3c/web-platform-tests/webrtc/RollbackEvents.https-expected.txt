@@ -1,12 +1,10 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT [audio] Track with stream: removal due to disassociation in rollback and then add it back again Test timed out
-NOTRUN [audio] Track without stream: removal due to disassociation in rollback and then add it back
-NOTRUN [audio] Track with stream: removal due to direction changing and then add back using rollback
-NOTRUN [audio] Track without stream: removal due to direction changing and then add back using rollback
-NOTRUN [video] Track with stream: removal due to disassociation in rollback and then add it back again
-NOTRUN [video] Track without stream: removal due to disassociation in rollback and then add it back
-NOTRUN [video] Track with stream: removal due to direction changing and then add back using rollback
-NOTRUN [video] Track without stream: removal due to direction changing and then add back using rollback
+PASS [audio] Track with stream: removal due to disassociation in rollback and then add it back again
+PASS [audio] Track without stream: removal due to disassociation in rollback and then add it back
+PASS [audio] Track with stream: removal due to direction changing and then add back using rollback
+PASS [audio] Track without stream: removal due to direction changing and then add back using rollback
+PASS [video] Track with stream: removal due to disassociation in rollback and then add it back again
+PASS [video] Track without stream: removal due to disassociation in rollback and then add it back
+PASS [video] Track with stream: removal due to direction changing and then add back using rollback
+PASS [video] Track without stream: removal due to direction changing and then add back using rollback
 

@@ -79,15 +79,13 @@ private:
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     
-    void didShowNotification(const UUID& notificationID);
-    void didClickNotification(const UUID& notificationID);
-    void didCloseNotifications(const Vector<UUID>& notificationIDs);
+    void didShowNotification(const WTF::UUID& notificationID);
+    void didClickNotification(const WTF::UUID& notificationID);
+    void didCloseNotifications(const Vector<WTF::UUID>& notificationIDs);
     void didRemoveNotificationDecisions(const Vector<String>& originStrings);
 
-    WebProcess& m_process;
-
 #if ENABLE(NOTIFICATIONS)
-    HashMap<UUID, WebCore::ScriptExecutionContextIdentifier> m_nonPersistentNotificationsContexts;
+    HashMap<WTF::UUID, WebCore::ScriptExecutionContextIdentifier> m_nonPersistentNotificationsContexts;
     HashMap<String, bool> m_permissionsMap;
 #endif
 };

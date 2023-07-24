@@ -66,7 +66,7 @@
 #include "../internal.h"
 
 
-BIO *BIO_new_mem_buf(const void *buf, int len) {
+BIO *BIO_new_mem_buf(const void *buf, ossl_ssize_t len) {
   BIO *ret;
   BUF_MEM *b;
   const size_t size = len < 0 ? strlen((char *)buf) : (size_t)len;
@@ -116,17 +116,11 @@ static int mem_new(BIO *bio) {
 }
 
 static int mem_free(BIO *bio) {
-  BUF_MEM *b;
-
-  if (bio == NULL) {
-    return 0;
-  }
-
   if (!bio->shutdown || !bio->init || bio->ptr == NULL) {
     return 1;
   }
 
-  b = (BUF_MEM *)bio->ptr;
+  BUF_MEM *b = (BUF_MEM *)bio->ptr;
   if (bio->flags & BIO_FLAGS_MEM_RDONLY) {
     b->data = NULL;
   }
@@ -136,13 +130,15 @@ static int mem_free(BIO *bio) {
 }
 
 static int mem_read(BIO *bio, char *out, int outl) {
-  int ret;
-  BUF_MEM *b = (BUF_MEM*) bio->ptr;
-
   BIO_clear_retry_flags(bio);
-  ret = outl;
-  if (b->length < INT_MAX && ret > (int)b->length) {
-    ret = b->length;
+  if (outl <= 0) {
+    return 0;
+  }
+
+  BUF_MEM *b = bio->ptr;
+  int ret = outl;
+  if ((size_t)ret > b->length) {
+    ret = (int)b->length;
   }
 
   if (ret > 0) {
@@ -163,65 +159,49 @@ static int mem_read(BIO *bio, char *out, int outl) {
 }
 
 static int mem_write(BIO *bio, const char *in, int inl) {
-  int ret = -1;
-  int blen;
-  BUF_MEM *b;
-
-  b = (BUF_MEM *)bio->ptr;
+  BIO_clear_retry_flags(bio);
+  if (inl <= 0) {
+    return 0;  // Successfully write zero bytes.
+  }
 
   if (bio->flags & BIO_FLAGS_MEM_RDONLY) {
     OPENSSL_PUT_ERROR(BIO, BIO_R_WRITE_TO_READ_ONLY_BIO);
-    goto err;
+    return -1;
   }
 
-  BIO_clear_retry_flags(bio);
-  blen = b->length;
-  if (INT_MAX - blen < inl) {
-    goto err;
+  BUF_MEM *b = bio->ptr;
+  if (!BUF_MEM_append(b, in, inl)) {
+    return -1;
   }
-  if (BUF_MEM_grow_clean(b, blen + inl) != ((size_t) blen) + inl) {
-    goto err;
-  }
-  OPENSSL_memcpy(&b->data[blen], in, inl);
-  ret = inl;
 
-err:
-  return ret;
+  return inl;
 }
 
 static int mem_gets(BIO *bio, char *buf, int size) {
-  int i, j;
-  char *p;
-  BUF_MEM *b = (BUF_MEM *)bio->ptr;
-
   BIO_clear_retry_flags(bio);
-  j = b->length;
-  if (size - 1 < j) {
-    j = size - 1;
-  }
-  if (j <= 0) {
-    if (size > 0) {
-      *buf = 0;
-    }
+  if (size <= 0) {
     return 0;
   }
 
-  p = b->data;
-  for (i = 0; i < j; i++) {
-    if (p[i] == '\n') {
-      i++;
-      break;
-    }
+  // The buffer size includes space for the trailing NUL, so we can read at most
+  // one fewer byte.
+  BUF_MEM *b = bio->ptr;
+  int ret = size - 1;
+  if ((size_t)ret > b->length) {
+    ret = (int)b->length;
   }
 
-  // i is now the max num of bytes to copy, either j or up to and including the
-  // first newline
-
-  i = mem_read(bio, buf, i);
-  if (i > 0) {
-    buf[i] = '\0';
+  // Stop at the first newline.
+  const char *newline = OPENSSL_memchr(b->data, '\n', ret);
+  if (newline != NULL) {
+    ret = (int)(newline - b->data + 1);
   }
-  return i;
+
+  ret = mem_read(bio, buf, ret);
+  if (ret >= 0) {
+    buf[ret] = '\0';
+  }
+  return ret;
 }
 
 static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
@@ -318,13 +298,13 @@ long BIO_get_mem_data(BIO *bio, char **contents) {
 }
 
 int BIO_get_mem_ptr(BIO *bio, BUF_MEM **out) {
-  return BIO_ctrl(bio, BIO_C_GET_BUF_MEM_PTR, 0, (char *) out);
+  return (int)BIO_ctrl(bio, BIO_C_GET_BUF_MEM_PTR, 0, (char *) out);
 }
 
 int BIO_set_mem_buf(BIO *bio, BUF_MEM *b, int take_ownership) {
-  return BIO_ctrl(bio, BIO_C_SET_BUF_MEM, take_ownership, (char *) b);
+  return (int)BIO_ctrl(bio, BIO_C_SET_BUF_MEM, take_ownership, (char *) b);
 }
 
 int BIO_set_mem_eof_return(BIO *bio, int eof_value) {
-  return BIO_ctrl(bio, BIO_C_SET_BUF_MEM_EOF_RETURN, eof_value, NULL);
+  return (int)BIO_ctrl(bio, BIO_C_SET_BUF_MEM_EOF_RETURN, eof_value, NULL);
 }

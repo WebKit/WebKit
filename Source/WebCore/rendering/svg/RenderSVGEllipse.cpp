@@ -41,7 +41,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGEllipse);
 
 RenderSVGEllipse::RenderSVGEllipse(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderSVGShape(element, WTFMove(style))
-    , m_usePathFallback(false)
 {
 }
 
@@ -55,6 +54,7 @@ void RenderSVGEllipse::updateShapeFromElement()
     m_strokeBoundingBox = FloatRect();
     m_center = FloatPoint();
     m_radii = FloatSize();
+    clearPath();
 
     calculateRadiiAndCenter();
 
@@ -65,11 +65,8 @@ void RenderSVGEllipse::updateShapeFromElement()
     if (hasNonScalingStroke()) {
         // Fallback to RenderSVGShape if shape has a non-scaling stroke.
         RenderSVGShape::updateShapeFromElement();
-        m_usePathFallback = true;
         return;
     }
-
-    m_usePathFallback = false;
 
     m_fillBoundingBox = FloatRect(m_center.x() - m_radii.width(), m_center.y() - m_radii.height(), 2 * m_radii.width(), 2 * m_radii.height());
     m_strokeBoundingBox = m_fillBoundingBox;
@@ -100,7 +97,7 @@ void RenderSVGEllipse::calculateRadiiAndCenter()
 
 void RenderSVGEllipse::fillShape(GraphicsContext& context) const
 {
-    if (m_usePathFallback) {
+    if (hasPath()) {
         RenderSVGShape::fillShape(context);
         return;
     }
@@ -111,7 +108,7 @@ void RenderSVGEllipse::strokeShape(GraphicsContext& context) const
 {
     if (!style().hasVisibleStroke())
         return;
-    if (m_usePathFallback) {
+    if (hasPath()) {
         RenderSVGShape::strokeShape(context);
         return;
     }
@@ -120,13 +117,13 @@ void RenderSVGEllipse::strokeShape(GraphicsContext& context) const
 
 bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
-    // The optimized contains code below does not support non-smooth strokes so we need
-    // to fall back to RenderSVGShape::shapeDependentStrokeContains in these cases.
-    if (m_usePathFallback || !hasSmoothStroke()) {
-        if (!hasPath())
-            RenderSVGShape::updateShapeFromElement();
+    // The optimized code below does not support non-smooth strokes so we need to
+    // fall back to RenderSVGShape::shapeDependentStrokeContains in these cases.
+    if (!hasSmoothStroke() && !hasPath())
+        RenderSVGShape::updateShapeFromElement();
+
+    if (hasPath())
         return RenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);
-    }
 
     float halfStrokeWidth = strokeWidth() / 2;
     FloatPoint center = FloatPoint(m_center.x() - point.x(), m_center.y() - point.y());
@@ -145,7 +142,7 @@ bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point, Poi
 
 bool RenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
-    if (m_usePathFallback)
+    if (hasPath())
         return RenderSVGShape::shapeDependentFillContains(point, fillRule);
 
     FloatPoint center = FloatPoint(m_center.x() - point.x(), m_center.y() - point.y());

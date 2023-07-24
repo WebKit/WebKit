@@ -196,23 +196,6 @@ void LayoutState::destroyInlineFormattingState(const ElementBox& formattingConte
     m_blockFormattingStates.remove(&formattingContextRoot);
 }
 
-void LayoutState::setViewportSize(const LayoutSize& viewportSize)
-{
-    ASSERT(isInlineFormattingContextIntegration());
-    m_viewportSize = viewportSize;
-}
-
-LayoutSize LayoutState::viewportSize() const
-{
-    ASSERT(isInlineFormattingContextIntegration());
-    return m_viewportSize;
-}
-
-bool LayoutState::shouldIgnoreTrailingLetterSpacing() const
-{
-    return isInlineFormattingContextIntegration();
-}
-
 bool LayoutState::shouldNotSynthesizeInlineBlockBaseline() const
 {
     return isInlineFormattingContextIntegration();

@@ -20,7 +20,7 @@
 
             // Force async image decoding for this image.
             if (window.internals)
-                internals.setLargeImageAsyncDecodingEnabledForTesting(image, true);
+                internals.setAsyncDecodingEnabledForTesting(image, true);
 
             image.onload = (() => {
                 if (window.testRunner)

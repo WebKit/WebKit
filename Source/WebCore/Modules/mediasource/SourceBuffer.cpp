@@ -38,6 +38,7 @@
 #include "AudioTrackList.h"
 #include "AudioTrackPrivate.h"
 #include "BufferSource.h"
+#include "BufferedChangeEvent.h"
 #include "ContentTypeUtilities.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -120,8 +121,7 @@ ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered()
         return Exception { InvalidStateError };
 
     // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute, then update the current value of this attribute to intersection ranges.
-    if (m_buffered->ranges() != m_private->buffered())
-        m_buffered = TimeRanges::create(m_private->buffered());
+    // Handled by sourceBufferPrivateBufferedChanged().
 
     // 6. Return the current value of this attribute.
     return Ref { m_buffered };
@@ -433,7 +433,7 @@ MediaTime SourceBuffer::highestPresentationTimestamp() const
 void SourceBuffer::readyStateChanged()
 {
     if (!isRemoved())
-        m_private->updateBufferedFromTrackBuffers(m_source->isEnded());
+        m_private->clientReadyStateChanged(m_source->isEnded());
 }
 
 void SourceBuffer::removedFromMediaSource()
@@ -1356,11 +1356,25 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
     m_private->setShouldGenerateTimestamps(flag);
 }
 
-void SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&, CompletionHandler<void()>&& completionHandler)
+void SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& ranges, CompletionHandler<void()>&& completionHandler)
 {
+    ASSERT(ranges != m_buffered->ranges(), "sourceBufferPrivateBufferedChanged should only be called if the ranges did change");
+#if ENABLE(MANAGED_MEDIA_SOURCE)
+    if (isManaged()) {
+        auto addedRanges = ranges;
+        addedRanges -= m_buffered->ranges();
+        auto addedTimeRanges = addedRanges.length() ? RefPtr { TimeRanges::create(WTFMove(addedRanges)) } : nullptr;
+
+        auto removedRanges = m_buffered->ranges();
+        removedRanges -= ranges;
+        auto removedTimeRanges = removedRanges.length() ? RefPtr { TimeRanges::create(WTFMove(removedRanges)) } : nullptr;
+
+        ASSERT(addedTimeRanges || removedTimeRanges, "Can't generate an empty dictionary");
+        queueTaskToDispatchEvent(*this, TaskSource::MediaElement, BufferedChangeEvent::create(WTFMove(addedTimeRanges), WTFMove(removedTimeRanges)));
+    }
+#endif
+    m_buffered = TimeRanges::create(ranges);
     setBufferedDirty(true);
-    if (isManaged())
-        scheduleEvent(eventNames().bufferedchangeEvent);
     completionHandler();
 }
 
@@ -1393,12 +1407,14 @@ WebCoreOpaqueRoot SourceBuffer::opaqueRoot()
     return WebCoreOpaqueRoot { this };
 }
 
+#if ENABLE(MANAGED_MEDIA_SOURCE)
 void SourceBuffer::memoryPressure()
 {
     if (!isManaged())
         return;
     m_private->memoryPressure(maximumBufferSize(), m_source->currentTime(), m_source->isEnded());
 }
+#endif
 
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& SourceBuffer::logChannel() const

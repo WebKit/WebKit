@@ -29,6 +29,9 @@
 #include "av1/common/enums.h"
 
 namespace libaom_test {
+
+extern const char *tx_type_name[];
+
 enum {
   TYPE_DCT = 0,
   TYPE_ADST,

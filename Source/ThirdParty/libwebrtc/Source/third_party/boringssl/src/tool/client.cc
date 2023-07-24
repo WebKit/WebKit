@@ -64,6 +64,13 @@ static const struct argument kArguments[] = {
         "-server-name", kOptionalArgument, "The server name to advertise",
     },
     {
+        "-ech-grease", kBooleanArgument, "Enable ECH GREASE",
+    },
+    {
+        "-ech-config-list", kOptionalArgument,
+        "Path to file containing serialized ECHConfigs",
+    },
+    {
         "-select-next-proto", kOptionalArgument,
         "An NPN protocol to select if the server supports NPN",
     },
@@ -114,6 +121,11 @@ static const struct argument kArguments[] = {
     },
     {
         "-grease", kBooleanArgument, "Enable GREASE",
+    },
+    {
+        "-permute-extensions",
+        kBooleanArgument,
+        "Permute extensions in handshake messages",
     },
     {
         "-test-resumption", kBooleanArgument,
@@ -265,6 +277,24 @@ static bool DoConnection(SSL_CTX *ctx,
     SSL_set_tlsext_host_name(ssl.get(), args_map["-server-name"].c_str());
   }
 
+  if (args_map.count("-ech-grease") != 0) {
+    SSL_set_enable_ech_grease(ssl.get(), 1);
+  }
+
+  if (args_map.count("-ech-config-list") != 0) {
+    const char *filename = args_map["-ech-config-list"].c_str();
+    ScopedFILE f(fopen(filename, "rb"));
+    std::vector<uint8_t> data;
+    if (f == nullptr || !ReadAll(&data, f.get())) {
+      fprintf(stderr, "Error reading %s.\n", filename);
+      return false;
+    }
+    if (!SSL_set1_ech_config_list(ssl.get(), data.data(), data.size())) {
+      fprintf(stderr, "Error setting ECHConfigList\n");
+      return false;
+    }
+  }
+
   if (args_map.count("-session-in") != 0) {
     bssl::UniquePtr<BIO> in(BIO_new_file(args_map["-session-in"].c_str(),
                                          "rb"));
@@ -313,15 +343,17 @@ static bool DoConnection(SSL_CTX *ctx,
       }
       early_data = std::string(data.begin(), data.end());
     }
-    int ed_size = early_data.size();
-    int ssl_ret = SSL_write(ssl.get(), early_data.data(), ed_size);
-    if (ssl_ret <= 0) {
-      int ssl_err = SSL_get_error(ssl.get(), ssl_ret);
-      PrintSSLError(stderr, "Error while writing", ssl_err, ssl_ret);
-      return false;
-    } else if (ssl_ret != ed_size) {
-      fprintf(stderr, "Short write from SSL_write.\n");
-      return false;
+    if (!early_data.empty()) {
+      int ed_size = early_data.size();
+      int ssl_ret = SSL_write(ssl.get(), early_data.data(), ed_size);
+      if (ssl_ret <= 0) {
+        int ssl_err = SSL_get_error(ssl.get(), ssl_ret);
+        PrintSSLError(stderr, "Error while writing", ssl_err, ssl_ret);
+        return false;
+      } else if (ssl_ret != ed_size) {
+        fprintf(stderr, "Short write from SSL_write.\n");
+        return false;
+      }
     }
   }
 
@@ -502,6 +534,10 @@ bool Client(const std::vector<std::string> &args) {
 
   if (args_map.count("-grease") != 0) {
     SSL_CTX_set_grease_enabled(ctx.get(), 1);
+  }
+
+  if (args_map.count("-permute-extensions") != 0) {
+    SSL_CTX_set_permute_extensions(ctx.get(), 1);
   }
 
   if (args_map.count("-root-certs") != 0) {

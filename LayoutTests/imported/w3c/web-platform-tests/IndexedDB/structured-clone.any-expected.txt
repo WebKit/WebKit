@@ -115,7 +115,7 @@ PASS ImageData: [object ImageData]
 TIMEOUT Blob: [object Blob] Test timed out
 NOTRUN File: [object File]
 NOTRUN FileList: [object FileList]
-NOTRUN Not serializable: function: function () {}
+NOTRUN Not serializable: function: function() {}
 NOTRUN Not serializable: symbol: Symbol(desc)
 NOTRUN Not serializable: Window: [object Window]
 NOTRUN Not serializable: Event: [object Event]

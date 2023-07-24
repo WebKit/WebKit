@@ -165,4 +165,19 @@ AffineTransform ImageBufferBackend::calculateBaseTransform(const Parameters& par
     return baseTransform;
 }
 
+TextStream& operator<<(TextStream& ts, VolatilityState state)
+{
+    switch (state) {
+    case VolatilityState::NonVolatile: ts << "non-volatile"; break;
+    case VolatilityState::Volatile: ts << "volatile"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const ImageBufferBackend& imageBufferBackend)
+{
+    ts << imageBufferBackend.debugDescription();
+    return ts;
+}
+
 } // namespace WebCore

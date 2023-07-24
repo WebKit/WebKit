@@ -90,9 +90,17 @@ class DtlsTransportInternal : public rtc::PacketTransportInternal {
                                     size_t result_len) = 0;
 
   // Set DTLS remote fingerprint. Must be after local identity set.
+  ABSL_DEPRECATED("Use SetRemoteParameters instead.")
   virtual bool SetRemoteFingerprint(absl::string_view digest_alg,
                                     const uint8_t* digest,
                                     size_t digest_len) = 0;
+
+  // Set DTLS remote fingerprint and role. Must be after local identity set.
+  virtual webrtc::RTCError SetRemoteParameters(
+      absl::string_view digest_alg,
+      const uint8_t* digest,
+      size_t digest_len,
+      absl::optional<rtc::SSLRole> role) = 0;
 
   ABSL_DEPRECATED("Set the max version via construction.")
   bool SetSslMaxProtocolVersion(rtc::SSLProtocolVersion version) {

@@ -408,6 +408,8 @@ void GStreamerDataChannelHandler::postTask(Function<void()>&& function)
     ScriptExecutionContext::postTaskTo(m_contextIdentifier, WTFMove(function));
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER_WEBRTC)

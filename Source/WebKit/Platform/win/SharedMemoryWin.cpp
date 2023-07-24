@@ -64,33 +64,16 @@ static DWORD accessRights(SharedMemory::Protection protection)
 
 RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
 {
-    RefPtr<SharedMemory> memory = adopt(handle.m_handle.get(), handle.m_size, protection);
-    if (!memory)
-        return nullptr;
-
-    // The SharedMemory object now owns the HANDLE.
-    (void) handle.m_handle.leak();
-
-    return memory;
-}
-
-RefPtr<SharedMemory> SharedMemory::adopt(HANDLE handle, size_t size, Protection protection)
-{
-    if (handle == INVALID_HANDLE_VALUE)
-        return nullptr;
-
-    DWORD desiredAccess = accessRights(protection);
-
-    void* baseAddress = ::MapViewOfFile(handle, desiredAccess, 0, 0, size);
-    ASSERT_WITH_MESSAGE(baseAddress, "::MapViewOfFile failed with error %lu %p", ::GetLastError(), handle);
-    if (!baseAddress)
+    ASSERT(!handle.isNull());
+    void* data = ::MapViewOfFile(handle.m_handle.get(), accessRights(protection), 0, 0, handle.size());
+    ASSERT_WITH_MESSAGE(data, "::MapViewOfFile failed with error %lu %p", ::GetLastError(), handle.m_handle.get());
+    if (!data)
         return nullptr;
 
     RefPtr<SharedMemory> memory = adoptRef(new SharedMemory);
-    memory->m_size = size;
-    memory->m_data = baseAddress;
-    memory->m_handle = Win32Handle::adopt(handle);
-
+    memory->m_size = handle.size();
+    memory->m_data = data;
+    memory->m_handle = WTFMove(handle.m_handle);
     return memory;
 }
 

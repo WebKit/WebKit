@@ -147,7 +147,6 @@ RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
     RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
     instance->m_data = data;
     instance->m_size = handle.size();
-    instance->m_fileDescriptor = handle.releaseHandle();
     return instance;
 }
 

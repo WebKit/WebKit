@@ -1010,11 +1010,6 @@ PASS result.toString() is test_data.toString()
 Test types that can't be cloned:
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
-Testing Error
-Expecting exception from store.put(new Error, 'key')
-PASS Exception was thrown.
-PASS code is DOMException.DATA_CLONE_ERR
-Exception message: The object can not be cloned.
 Testing Function
 Expecting exception from store.put(new Function, 'key')
 PASS Exception was thrown.

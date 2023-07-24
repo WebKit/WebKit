@@ -17,7 +17,9 @@
 #include "absl/strings/string_view.h"
 #include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/rtc_export.h"
+#include "rtc_base/thread_annotations.h"
 
 // Including Xlib.h will involve evil defines (Bool, Status, True, False), which
 // easily conflict with other headers.
@@ -76,7 +78,9 @@ class RTC_EXPORT SharedXDisplay
 
   Display* display_;
 
-  EventHandlersMap event_handlers_;
+  Mutex mutex_;
+
+  EventHandlersMap event_handlers_ RTC_GUARDED_BY(mutex_);
 };
 
 }  // namespace webrtc

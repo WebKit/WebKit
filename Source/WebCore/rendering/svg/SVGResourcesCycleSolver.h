@@ -32,18 +32,13 @@ class SVGResources;
 class SVGResourcesCycleSolver {
     WTF_MAKE_NONCOPYABLE(SVGResourcesCycleSolver);
 public:
-    SVGResourcesCycleSolver(RenderElement&, SVGResources&);
-    ~SVGResourcesCycleSolver();
-
-    void resolveCycles();
+    static void resolveCycles(RenderElement&, SVGResources&);
 
 private:
-    bool resourceContainsCycles(RenderElement&) const;
-    void breakCycle(RenderSVGResourceContainer&);
+    SVGResourcesCycleSolver() { }
 
-    RenderElement& m_renderer;
-    SVGResources& m_resources;
-    WeakHashSet<RenderSVGResourceContainer> m_allResources; 
+    static bool resourceContainsCycles(RenderSVGResourceContainer&, WeakHashSet<RenderSVGResourceContainer>& activeResources, WeakHashSet<RenderSVGResourceContainer>& acyclicResources);
+    static void breakCycle(RenderSVGResourceContainer&, SVGResources&);
 };
 
 } // namespace WebCore

@@ -84,7 +84,7 @@ static void ensureITPFileIsCreated()
 }
 
 // FIXME when rdar://109481486 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(ResourceLoadStatistics, DISABLED_GrandfatherCallback)
 #else
 TEST(ResourceLoadStatistics, GrandfatherCallback)

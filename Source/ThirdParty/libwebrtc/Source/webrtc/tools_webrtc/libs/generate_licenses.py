@@ -75,6 +75,7 @@ LIB_TO_LICENSES_DICT = {
     'g722': ['modules/third_party/g722/LICENSE'],
     'ooura': ['common_audio/third_party/ooura/LICENSE'],
     'spl_sqrt_floor': ['common_audio/third_party/spl_sqrt_floor/LICENSE'],
+    'kotlin_stdlib': ['third_party/kotlin_stdlib/LICENSE'],
 
     # TODO(bugs.webrtc.org/1110): Remove this hack. This is not a lib.
     # For some reason it is listed as so in _GetThirdPartyLibraries.
@@ -103,6 +104,13 @@ LIB_REGEX_TO_LICENSES_DICT = {
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 WEBRTC_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, os.pardir, os.pardir))
 SRC_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+
+# Chromium, and potentially other repositories, embed us in the location
+# "//third_party/webrtc". When this is the case, we expect that some of the
+# tools we need are *actually* in their build folder, thus we need to move up
+# to the *true* source root, when we're embedded like this.
+if SRC_DIR.endswith(os.path.join('third_party', 'webrtc')):
+  SRC_DIR = os.path.abspath(os.path.join(SRC_DIR, os.pardir, os.pardir))
 sys.path.append(os.path.join(SRC_DIR, 'build'))
 import find_depot_tools
 

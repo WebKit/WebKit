@@ -265,7 +265,7 @@ class RRSendQueue : public SendQueue {
       TimeMs now,
       size_t max_size);
 
-  const std::string log_prefix_;
+  const absl::string_view log_prefix_;
   DcSctpSocketCallbacks& callbacks_;
   const size_t buffer_size_;
   const StreamPriority default_priority_;

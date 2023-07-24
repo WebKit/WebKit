@@ -456,6 +456,7 @@ protected:
         case VectorFloor:
         case VectorTrunc:
         case VectorTruncSat:
+        case VectorRelaxedTruncSat:
         case VectorConvert:
         case VectorConvertLow:
         case VectorNearest:
@@ -540,11 +541,14 @@ protected:
         case VectorAvgRound:
         case VectorMulByElement:
         case VectorShiftByVector:
+        case VectorRelaxedSwizzle:
             return 2 * sizeof(Value*);
         case Select:
         case AtomicWeakCAS:
         case AtomicStrongCAS:
         case VectorBitwiseSelect:
+        case VectorRelaxedMAdd:
+        case VectorRelaxedNMAdd:
             return 3 * sizeof(Value*);
         case CCall:
         case Check:
@@ -694,6 +698,7 @@ private:
         case VectorAllTrue:
         case VectorExtaddPairwise:
         case VectorDupElement:
+        case VectorRelaxedTruncSat:
             if (UNLIKELY(numArgs != 1))
                 badKind(kind, numArgs);
             return One;
@@ -758,11 +763,14 @@ private:
         case VectorAvgRound:
         case VectorMulByElement:
         case VectorShiftByVector:
+        case VectorRelaxedSwizzle:
             if (UNLIKELY(numArgs != 2))
                 badKind(kind, numArgs);
             return Two;
         case Select:
         case VectorBitwiseSelect:
+        case VectorRelaxedMAdd:
+        case VectorRelaxedNMAdd:
             if (UNLIKELY(numArgs != 3))
                 badKind(kind, numArgs);
             return Three;

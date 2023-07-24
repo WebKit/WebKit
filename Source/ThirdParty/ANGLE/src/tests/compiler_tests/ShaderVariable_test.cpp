@@ -20,7 +20,6 @@ class ShaderVariableTest : public testing::Test
   public:
     ShaderVariableTest() : mVariablesCompileOptions{}, mObjectCodeCompileOptions{}
     {
-        mVariablesCompileOptions.variables   = true;
         mObjectCodeCompileOptions.objectCode = true;
     }
 

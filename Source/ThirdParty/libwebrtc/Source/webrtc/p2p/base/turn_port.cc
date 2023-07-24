@@ -19,19 +19,23 @@
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "api/transport/stun.h"
 #include "p2p/base/connection.h"
 #include "p2p/base/p2p_constants.h"
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace cricket {
+
 using ::webrtc::SafeTask;
+using ::webrtc::TaskQueueBase;
 using ::webrtc::TimeDelta;
 
 // TODO(juberti): Move to stun.h when relay messages have been renamed.
@@ -40,7 +44,6 @@ static const int TURN_ALLOCATE_REQUEST = STUN_ALLOCATE_REQUEST;
 // Attributes in comprehension-optional range,
 // ignored by TURN server that doesn't know about them.
 // https://tools.ietf.org/html/rfc5389#section-18.2
-static const int STUN_ATTR_MULTI_MAPPING = 0xff04;
 const int STUN_ATTR_TURN_LOGGING_ID = 0xff05;
 
 // TODO(juberti): Extract to turnmessage.h
@@ -102,41 +105,36 @@ class TurnRefreshRequest : public StunRequest {
   TurnPort* port_;
 };
 
-class TurnCreatePermissionRequest : public StunRequest,
-                                    public sigslot::has_slots<> {
+class TurnCreatePermissionRequest : public StunRequest {
  public:
   TurnCreatePermissionRequest(TurnPort* port,
                               TurnEntry* entry,
-                              const rtc::SocketAddress& ext_addr,
-                              absl::string_view remote_ufrag);
+                              const rtc::SocketAddress& ext_addr);
+  ~TurnCreatePermissionRequest() override;
   void OnSent() override;
   void OnResponse(StunMessage* response) override;
   void OnErrorResponse(StunMessage* response) override;
   void OnTimeout() override;
 
  private:
-  void OnEntryDestroyed(TurnEntry* entry);
-
   TurnPort* port_;
   TurnEntry* entry_;
   rtc::SocketAddress ext_addr_;
-  std::string remote_ufrag_;
 };
 
-class TurnChannelBindRequest : public StunRequest, public sigslot::has_slots<> {
+class TurnChannelBindRequest : public StunRequest {
  public:
   TurnChannelBindRequest(TurnPort* port,
                          TurnEntry* entry,
                          int channel_id,
                          const rtc::SocketAddress& ext_addr);
+  ~TurnChannelBindRequest() override;
   void OnSent() override;
   void OnResponse(StunMessage* response) override;
   void OnErrorResponse(StunMessage* response) override;
   void OnTimeout() override;
 
  private:
-  void OnEntryDestroyed(TurnEntry* entry);
-
   TurnPort* port_;
   TurnEntry* entry_;
   int channel_id_;
@@ -148,10 +146,8 @@ class TurnChannelBindRequest : public StunRequest, public sigslot::has_slots<> {
 class TurnEntry : public sigslot::has_slots<> {
  public:
   enum BindState { STATE_UNBOUND, STATE_BINDING, STATE_BOUND };
-  TurnEntry(TurnPort* port,
-            int channel_id,
-            const rtc::SocketAddress& ext_addr,
-            absl::string_view remote_ufrag);
+  TurnEntry(TurnPort* port, Connection* conn, int channel_id);
+  ~TurnEntry();
 
   TurnPort* port() { return port_; }
 
@@ -162,15 +158,20 @@ class TurnEntry : public sigslot::has_slots<> {
   const rtc::SocketAddress& address() const { return ext_addr_; }
   BindState state() const { return state_; }
 
-  // If the destruction timestamp is set, that means destruction has been
-  // scheduled (will occur kTurnPermissionTimeout after it's scheduled).
-  absl::optional<int64_t> destruction_timestamp() {
-    return destruction_timestamp_;
-  }
-  void set_destruction_timestamp(int64_t destruction_timestamp) {
-    destruction_timestamp_.emplace(destruction_timestamp);
-  }
-  void reset_destruction_timestamp() { destruction_timestamp_.reset(); }
+  // Adds a new connection object to the list of connections that are associated
+  // with this entry. If prior to this call there were no connections being
+  // tracked (i.e. count goes from 0 -> 1), the internal safety flag is reset
+  // which cancels any potential pending deletion tasks.
+  void TrackConnection(Connection* conn);
+
+  // Removes a connection from the list of tracked connections.
+  // * If `conn` was the last connection removed, the function returns a
+  //   safety flag that's used to schedule the deletion of the entry after a
+  //   timeout expires. If during this timeout `TrackConnection` is called, the
+  //   flag will be reset and pending tasks associated with it, cancelled.
+  // * If `conn` was not the last connection, the return value will be nullptr.
+  rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> UntrackConnection(
+      Connection* conn);
 
   // Helper methods to send permission and channel bind requests.
   void SendCreatePermissionRequest(int delay);
@@ -189,28 +190,21 @@ class TurnEntry : public sigslot::has_slots<> {
   void OnChannelBindError(StunMessage* response, int code);
   void OnChannelBindTimeout();
   // Signal sent when TurnEntry is destroyed.
-  sigslot::signal1<TurnEntry*> SignalDestroyed;
-
-  const std::string& get_remote_ufrag() const { return remote_ufrag_; }
-  void set_remote_ufrag(absl::string_view remote_ufrag) {
-    remote_ufrag_ = std::string(remote_ufrag);
-  }
+  webrtc::CallbackList<TurnEntry*> destroyed_callback_list_;
 
  private:
   TurnPort* port_;
   int channel_id_;
   rtc::SocketAddress ext_addr_;
   BindState state_;
-  // An unset value indicates that this entry is scheduled to be destroyed. It
-  // is also used as an ID of the event scheduling. When the destruction event
-  // actually fires, the TurnEntry will be destroyed only if the timestamp here
-  // matches the one in the firing event.
-  absl::optional<int64_t> destruction_timestamp_;
-
-  std::string remote_ufrag_;
+  // List of associated connection instances to keep track of how many and
+  // which connections are associated with this entry. Once this is empty,
+  // the entry can be deleted.
+  std::vector<Connection*> connections_;
+  webrtc::ScopedTaskSafety task_safety_;
 };
 
-TurnPort::TurnPort(rtc::Thread* thread,
+TurnPort::TurnPort(TaskQueueBase* thread,
                    rtc::PacketSocketFactory* factory,
                    const rtc::Network* network,
                    rtc::AsyncPacketSocket* socket,
@@ -250,7 +244,7 @@ TurnPort::TurnPort(rtc::Thread* thread,
       allocate_mismatch_retries_(0),
       turn_customizer_(customizer) {}
 
-TurnPort::TurnPort(rtc::Thread* thread,
+TurnPort::TurnPort(TaskQueueBase* thread,
                    rtc::PacketSocketFactory* factory,
                    const rtc::Network* network,
                    uint16_t min_port,
@@ -279,7 +273,7 @@ TurnPort::TurnPort(rtc::Thread* thread,
       tls_elliptic_curves_(tls_elliptic_curves),
       tls_cert_verifier_(tls_cert_verifier),
       credentials_(credentials),
-      socket_(NULL),
+      socket_(nullptr),
       error_(0),
       stun_dscp_value_(rtc::DSCP_NO_CHANGE),
       request_manager_(
@@ -302,9 +296,7 @@ TurnPort::~TurnPort() {
     Release();
   }
 
-  while (!entries_.empty()) {
-    DestroyEntry(entries_.front());
-  }
+  entries_.clear();
 
   if (socket_)
     socket_->UnsubscribeClose(this);
@@ -381,9 +373,10 @@ void TurnPort::PrepareAddress() {
     // Insert the current address to prevent redirection pingpong.
     attempted_server_addresses_.insert(server_address_.address);
 
-    RTC_LOG(LS_INFO) << ToString() << ": Trying to connect to TURN server via "
-                     << ProtoToString(server_address_.proto) << " @ "
-                     << server_address_.address.ToSensitiveString();
+    RTC_LOG(LS_INFO)
+        << ToString() << ": Trying to connect to TURN server via "
+        << ProtoToString(server_address_.proto) << " @ "
+        << server_address_.address.ToSensitiveNameAndAddressString();
     if (!CreateTurnClientSocket()) {
       RTC_LOG(LS_ERROR) << "Failed to create TURN client socket";
       OnAllocateError(SERVER_NOT_REACHABLE_ERROR,
@@ -490,21 +483,21 @@ void TurnPort::OnSocketConnect(rtc::AsyncPacketSocket* socket) {
                       })) {
     if (socket->GetLocalAddress().IsLoopbackIP()) {
       RTC_LOG(LS_WARNING) << "Socket is bound to the address:"
-                          << socket_address.ipaddr().ToSensitiveString()
+                          << socket_address.ToSensitiveNameAndAddressString()
                           << ", rather than an address associated with network:"
                           << Network()->ToString()
                           << ". Still allowing it since it's localhost.";
     } else if (IPIsAny(Network()->GetBestIP())) {
       RTC_LOG(LS_WARNING)
           << "Socket is bound to the address:"
-          << socket_address.ipaddr().ToSensitiveString()
+          << socket_address.ToSensitiveNameAndAddressString()
           << ", rather than an address associated with network:"
           << Network()->ToString()
           << ". Still allowing it since it's the 'any' address"
              ", possibly caused by multiple_routes being disabled.";
     } else {
       RTC_LOG(LS_WARNING) << "Socket is bound to the address:"
-                          << socket_address.ipaddr().ToSensitiveString()
+                          << socket_address.ToSensitiveNameAndAddressString()
                           << ", rather than an address associated with network:"
                           << Network()->ToString() << ". Discarding TURN port.";
       OnAllocateError(
@@ -555,7 +548,7 @@ void TurnPort::OnAllocateMismatch() {
   } else {
     delete socket_;
   }
-  socket_ = NULL;
+  socket_ = nullptr;
 
   ResetNonce();
   PrepareAddress();
@@ -588,15 +581,13 @@ Connection* TurnPort::CreateConnection(const Candidate& remote_candidate,
     if (local_candidate.type() == RELAY_PORT_TYPE &&
         local_candidate.address().family() ==
             remote_candidate.address().family()) {
-      // Create an entry, if needed, so we can get our permissions set up
-      // correctly.
-      if (CreateOrRefreshEntry(remote_candidate.address(), next_channel_number_,
-                               remote_candidate.username())) {
-        // An entry was created.
-        next_channel_number_++;
-      }
       ProxyConnection* conn =
           new ProxyConnection(NewWeakPtr(), index, remote_candidate);
+      // Create an entry, if needed, so we can get our permissions set up
+      // correctly.
+      if (CreateOrRefreshEntry(conn, next_channel_number_)) {
+        next_channel_number_++;
+      }
       AddOrReplaceConnection(conn);
       return conn;
     }
@@ -651,11 +642,7 @@ int TurnPort::SendTo(const void* data,
                      bool payload) {
   // Try to find an entry for this specific address; we should have one.
   TurnEntry* entry = FindEntry(addr);
-  if (!entry) {
-    RTC_LOG(LS_ERROR) << "Did not find the TurnEntry for address "
-                      << addr.ToSensitiveString();
-    return 0;
-  }
+  RTC_DCHECK(entry);
 
   if (!ready()) {
     error_ = ENOTCONN;
@@ -667,6 +654,7 @@ int TurnPort::SendTo(const void* data,
   CopyPortInformationToPacketInfo(&modified_options.info_signaled_after_sent);
   int sent = entry->Send(data, size, payload, modified_options);
   if (sent <= 0) {
+    error_ = socket_->GetError();
     return SOCKET_ERROR;
   }
 
@@ -678,6 +666,16 @@ int TurnPort::SendTo(const void* data,
 bool TurnPort::CanHandleIncomingPacketsFrom(
     const rtc::SocketAddress& addr) const {
   return server_address_.address == addr;
+}
+
+void TurnPort::SendBindingErrorResponse(StunMessage* message,
+                                        const rtc::SocketAddress& addr,
+                                        int error_code,
+                                        absl::string_view reason) {
+  if (!GetConnection(addr))
+    return;
+
+  Port::SendBindingErrorResponse(message, addr, error_code, reason);
 }
 
 bool TurnPort::HandleIncomingPacket(rtc::AsyncPacketSocket* socket,
@@ -695,11 +693,10 @@ bool TurnPort::HandleIncomingPacket(rtc::AsyncPacketSocket* socket,
   // alternative server redirection. TODO(guoweis): add a unit test for this
   // race condition.
   if (remote_addr != server_address_.address) {
-    RTC_LOG(LS_WARNING) << ToString()
-                        << ": Discarding TURN message from unknown address: "
-                        << remote_addr.ToSensitiveString()
-                        << " server_address_: "
-                        << server_address_.address.ToSensitiveString();
+    RTC_LOG(LS_WARNING)
+        << ToString() << ": Discarding TURN message from unknown address: "
+        << remote_addr.ToSensitiveNameAndAddressString() << " server_address_: "
+        << server_address_.address.ToSensitiveNameAndAddressString();
     return false;
   }
 
@@ -774,7 +771,7 @@ bool TurnPort::SetAlternateServer(const rtc::SocketAddress& address) {
   AttemptedServerSet::iterator iter = attempted_server_addresses_.find(address);
   if (iter != attempted_server_addresses_.end()) {
     RTC_LOG(LS_WARNING) << ToString() << ": Redirection to ["
-                        << address.ToSensitiveString()
+                        << address.ToSensitiveNameAndAddressString()
                         << "] ignored, allocation failed.";
     return false;
   }
@@ -795,9 +792,9 @@ bool TurnPort::SetAlternateServer(const rtc::SocketAddress& address) {
   }
 
   RTC_LOG(LS_INFO) << ToString() << ": Redirecting from TURN server ["
-                   << server_address_.address.ToSensitiveString()
-                   << "] to TURN server [" << address.ToSensitiveString()
-                   << "]";
+                   << server_address_.address.ToSensitiveNameAndAddressString()
+                   << "] to TURN server ["
+                   << address.ToSensitiveNameAndAddressString() << "]";
   server_address_ = ProtocolAddress(address, server_address_.proto);
 
   // Insert the current address to prevent redirection pingpong.
@@ -812,7 +809,7 @@ void TurnPort::ResolveTurnAddress(const rtc::SocketAddress& address) {
   RTC_LOG(LS_INFO) << ToString() << ": Starting TURN host lookup for "
                    << address.ToSensitiveString();
   resolver_ = socket_factory()->CreateAsyncDnsResolver();
-  resolver_->Start(address, [this] {
+  auto callback = [this] {
     // If DNS resolve is failed when trying to connect to the server using TCP,
     // one of the reason could be due to DNS queries blocked by firewall.
     // In such cases we will try to connect to the server with hostname,
@@ -841,13 +838,10 @@ void TurnPort::ResolveTurnAddress(const rtc::SocketAddress& address) {
                       "TURN host lookup received error.");
       return;
     }
-    // Signal needs both resolved and unresolved address. After signal is sent
-    // we can copy resolved address back into `server_address_`.
-    SignalResolvedServerAddress(this, server_address_.address,
-                                resolved_address);
     server_address_.address = resolved_address;
     PrepareAddress();
-  });
+  };
+  resolver_->Start(address, Network()->family(), std::move(callback));
 }
 
 void TurnPort::OnSendStunPacket(const void* data,
@@ -894,7 +888,8 @@ void TurnPort::OnAllocateError(int error_code, absl::string_view reason) {
   // We will send SignalPortError asynchronously as this can be sent during
   // port initialization. This way it will not be blocking other port
   // creation.
-  thread()->Post(RTC_FROM_HERE, this, MSG_ALLOCATE_ERROR);
+  thread()->PostTask(
+      SafeTask(task_safety_.flag(), [this] { SignalPortError(this); }));
   std::string address = GetLocalAddress().HostAsSensitiveURIString();
   int port = GetLocalAddress().port();
   if (server_address_.proto == PROTO_TCP &&
@@ -911,7 +906,8 @@ void TurnPort::OnRefreshError() {
   // Need to clear the requests asynchronously because otherwise, the refresh
   // request may be deleted twice: once at the end of the message processing
   // and the other in HandleRefreshError().
-  thread()->Post(RTC_FROM_HERE, this, MSG_REFRESH_ERROR);
+  thread()->PostTask(
+      SafeTask(task_safety_.flag(), [this] { HandleRefreshError(); }));
 }
 
 void TurnPort::HandleRefreshError() {
@@ -943,8 +939,9 @@ void TurnPort::Close() {
   state_ = STATE_DISCONNECTED;
   // Delete all existing connections; stop sending data.
   DestroyAllConnections();
-
-  SignalTurnPortClosed(this);
+  if (callbacks_for_test_) {
+    callbacks_for_test_->OnTurnPortClosed();
+  }
 }
 
 rtc::DiffServCodePoint TurnPort::StunDscpValue() const {
@@ -967,39 +964,21 @@ bool TurnPort::AllowedTurnPort(int port,
   return false;
 }
 
-void TurnPort::OnMessage(rtc::Message* message) {
-  switch (message->message_id) {
-    case MSG_ALLOCATE_ERROR:
-      SignalPortError(this);
-      break;
-    case MSG_ALLOCATE_MISMATCH:
-      OnAllocateMismatch();
-      break;
-    case MSG_REFRESH_ERROR:
-      HandleRefreshError();
-      break;
-    case MSG_TRY_ALTERNATE_SERVER:
-      if (server_address().proto == PROTO_UDP) {
-        // Send another allocate request to alternate server, with the received
-        // realm and nonce values.
-        SendRequest(new TurnAllocateRequest(this), 0);
-      } else {
-        // Since it's TCP, we have to delete the connected socket and reconnect
-        // with the alternate server. PrepareAddress will send stun binding once
-        // the new socket is connected.
-        RTC_DCHECK(server_address().proto == PROTO_TCP ||
-                   server_address().proto == PROTO_TLS);
-        RTC_DCHECK(!SharedSocket());
-        delete socket_;
-        socket_ = NULL;
-        PrepareAddress();
-      }
-      break;
-    case MSG_ALLOCATION_RELEASED:
-      Close();
-      break;
-    default:
-      Port::OnMessage(message);
+void TurnPort::TryAlternateServer() {
+  if (server_address().proto == PROTO_UDP) {
+    // Send another allocate request to alternate server, with the received
+    // realm and nonce values.
+    SendRequest(new TurnAllocateRequest(this), 0);
+  } else {
+    // Since it's TCP, we have to delete the connected socket and reconnect
+    // with the alternate server. PrepareAddress will send stun binding once
+    // the new socket is connected.
+    RTC_DCHECK(server_address().proto == PROTO_TCP ||
+               server_address().proto == PROTO_TLS);
+    RTC_DCHECK(!SharedSocket());
+    delete socket_;
+    socket_ = nullptr;
+    PrepareAddress();
   }
 }
 
@@ -1199,107 +1178,67 @@ void TurnPort::ResetNonce() {
 }
 
 bool TurnPort::HasPermission(const rtc::IPAddress& ipaddr) const {
-  return absl::c_any_of(entries_, [&ipaddr](const TurnEntry* e) {
+  return absl::c_any_of(entries_, [&ipaddr](const auto& e) {
     return e->address().ipaddr() == ipaddr;
   });
 }
 
 TurnEntry* TurnPort::FindEntry(const rtc::SocketAddress& addr) const {
   auto it = absl::c_find_if(
-      entries_, [&addr](const TurnEntry* e) { return e->address() == addr; });
-  return (it != entries_.end()) ? *it : NULL;
+      entries_, [&addr](const auto& e) { return e->address() == addr; });
+  return (it != entries_.end()) ? it->get() : nullptr;
 }
 
 TurnEntry* TurnPort::FindEntry(int channel_id) const {
-  auto it = absl::c_find_if(entries_, [&channel_id](const TurnEntry* e) {
+  auto it = absl::c_find_if(entries_, [&channel_id](const auto& e) {
     return e->channel_id() == channel_id;
   });
-  return (it != entries_.end()) ? *it : NULL;
+  return (it != entries_.end()) ? it->get() : nullptr;
 }
 
-bool TurnPort::EntryExists(TurnEntry* e) {
-  return absl::c_linear_search(entries_, e);
-}
-
-bool TurnPort::CreateOrRefreshEntry(const rtc::SocketAddress& addr,
-                                    int channel_number) {
-  return CreateOrRefreshEntry(addr, channel_number, "");
-}
-
-bool TurnPort::CreateOrRefreshEntry(const rtc::SocketAddress& addr,
-                                    int channel_number,
-                                    absl::string_view remote_ufrag) {
-  TurnEntry* entry = FindEntry(addr);
+bool TurnPort::CreateOrRefreshEntry(Connection* conn, int channel_number) {
+  const Candidate& remote_candidate = conn->remote_candidate();
+  TurnEntry* entry = FindEntry(remote_candidate.address());
   if (entry == nullptr) {
-    entry = new TurnEntry(this, channel_number, addr, remote_ufrag);
-    entries_.push_back(entry);
+    entries_.push_back(std::make_unique<TurnEntry>(this, conn, channel_number));
     return true;
-  } else {
-    if (entry->destruction_timestamp()) {
-      // Destruction should have only been scheduled (indicated by
-      // destruction_timestamp being set) if there were no connections using
-      // this address.
-      RTC_DCHECK(!GetConnection(addr));
-      // Resetting the destruction timestamp will ensure that any queued
-      // destruction tasks, when executed, will see that the timestamp doesn't
-      // match and do nothing. We do this because (currently) there's not a
-      // convenient way to cancel queued tasks.
-      entry->reset_destruction_timestamp();
-    } else {
-      // The only valid reason for destruction not being scheduled is that
-      // there's still one connection.
-      RTC_DCHECK(GetConnection(addr));
-    }
-
-    if (field_trials().IsEnabled("WebRTC-TurnAddMultiMapping")) {
-      if (entry->get_remote_ufrag() != remote_ufrag) {
-        RTC_LOG(LS_INFO) << ToString()
-                         << ": remote ufrag updated."
-                            " Sending new permission request";
-        entry->set_remote_ufrag(remote_ufrag);
-        entry->SendCreatePermissionRequest(0);
-      }
-    }
   }
+
+  // Associate this connection object with an existing entry. If the entry
+  // has been scheduled for deletion, this will cancel that task.
+  entry->TrackConnection(conn);
+
   return false;
-}
-
-void TurnPort::DestroyEntry(TurnEntry* entry) {
-  RTC_DCHECK(entry != NULL);
-  entry->SignalDestroyed(entry);
-  entries_.remove(entry);
-  delete entry;
-}
-
-void TurnPort::DestroyEntryIfNotCancelled(TurnEntry* entry, int64_t timestamp) {
-  if (!EntryExists(entry)) {
-    return;
-  }
-  // The destruction timestamp is used to manage pending destructions. Proceed
-  // with destruction if it's set, and matches the timestamp from the posted
-  // task. Note that CreateOrRefreshEntry will unset the timestamp, canceling
-  // destruction.
-  if (entry->destruction_timestamp() &&
-      timestamp == *entry->destruction_timestamp()) {
-    DestroyEntry(entry);
-  }
 }
 
 void TurnPort::HandleConnectionDestroyed(Connection* conn) {
   // Schedule an event to destroy TurnEntry for the connection, which is
-  // already destroyed.
+  // being destroyed.
   const rtc::SocketAddress& remote_address = conn->remote_candidate().address();
+  // We should always have an entry for this connection.
   TurnEntry* entry = FindEntry(remote_address);
-  RTC_DCHECK(entry != NULL);
-  RTC_DCHECK(!entry->destruction_timestamp().has_value());
-  int64_t timestamp = rtc::TimeMillis();
-  entry->set_destruction_timestamp(timestamp);
-  thread()->PostDelayedTask(SafeTask(task_safety_.flag(),
-                                     [this, entry, timestamp] {
-                                       DestroyEntryIfNotCancelled(entry,
-                                                                  timestamp);
-                                     }),
-                            kTurnPermissionTimeout);
+  rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> flag =
+      entry->UntrackConnection(conn);
+  if (flag) {
+    // An assumption here is that the lifetime flag for the entry, is within
+    // the lifetime scope of `task_safety_` and therefore use of `this` is safe.
+    // If an entry gets reused (associated with a new connection) while this
+    // task is pending, the entry will reset the safety flag, thus cancel this
+    // task.
+    thread()->PostDelayedTask(SafeTask(flag,
+                                       [this, entry] {
+                                         entries_.erase(absl::c_find_if(
+                                             entries_, [entry](const auto& e) {
+                                               return e.get() == entry;
+                                             }));
+                                       }),
+                              kTurnPermissionTimeout);
+  }
+}
+
+void TurnPort::SetCallbacksForTest(CallbacksForTest* callbacks) {
+  RTC_DCHECK(!callbacks_for_test_);
+  callbacks_for_test_ = callbacks;
 }
 
 bool TurnPort::SetEntryChannelId(const rtc::SocketAddress& address,
@@ -1449,12 +1388,13 @@ void TurnAllocateRequest::OnErrorResponse(StunMessage* response) {
     case STUN_ERROR_TRY_ALTERNATE:
       OnTryAlternate(response, error_code);
       break;
-    case STUN_ERROR_ALLOCATION_MISMATCH:
+    case STUN_ERROR_ALLOCATION_MISMATCH: {
       // We must handle this error async because trying to delete the socket in
       // OnErrorResponse will cause a deadlock on the socket.
-      port_->thread()->Post(RTC_FROM_HERE, port_,
-                            TurnPort::MSG_ALLOCATE_MISMATCH);
-      break;
+      TurnPort* port = port_;
+      port->thread()->PostTask(SafeTask(
+          port->task_safety_.flag(), [port] { port->OnAllocateMismatch(); }));
+    } break;
     default:
       RTC_LOG(LS_WARNING) << port_->ToString()
                           << ": Received TURN allocate error response, id="
@@ -1551,8 +1491,9 @@ void TurnAllocateRequest::OnTryAlternate(StunMessage* response, int code) {
   // For TCP, we can't close the original Tcp socket during handling a 300 as
   // we're still inside that socket's event handler. Doing so will cause
   // deadlock.
-  port_->thread()->Post(RTC_FROM_HERE, port_,
-                        TurnPort::MSG_TRY_ALTERNATE_SERVER);
+  TurnPort* port = port_;
+  port->thread()->PostTask(SafeTask(port->task_safety_.flag(),
+                                    [port] { port->TryAlternateServer(); }));
 }
 
 TurnRefreshRequest::TurnRefreshRequest(TurnPort* port, int lifetime /*= -1*/)
@@ -1602,11 +1543,14 @@ void TurnRefreshRequest::OnResponse(StunMessage* response) {
   } else {
     // If we scheduled a refresh with lifetime 0, we're releasing this
     // allocation; see TurnPort::Release.
-    port_->thread()->Post(RTC_FROM_HERE, port_,
-                          TurnPort::MSG_ALLOCATION_RELEASED);
+    TurnPort* port = port_;
+    port->thread()->PostTask(
+        SafeTask(port->task_safety_.flag(), [port] { port->Close(); }));
   }
 
-  port_->SignalTurnRefreshResult(port_, TURN_SUCCESS_RESULT_CODE);
+  if (port_->callbacks_for_test_) {
+    port_->callbacks_for_test_->OnTurnRefreshResult(TURN_SUCCESS_RESULT_CODE);
+  }
 }
 
 void TurnRefreshRequest::OnErrorResponse(StunMessage* response) {
@@ -1623,7 +1567,9 @@ void TurnRefreshRequest::OnErrorResponse(StunMessage* response) {
                         << rtc::hex_encode(id()) << ", code=" << error_code
                         << ", rtt=" << Elapsed();
     port_->OnRefreshError();
-    port_->SignalTurnRefreshResult(port_, error_code);
+    if (port_->callbacks_for_test_) {
+      port_->callbacks_for_test_->OnTurnRefreshResult(error_code);
+    }
   }
 }
 
@@ -1636,28 +1582,31 @@ void TurnRefreshRequest::OnTimeout() {
 TurnCreatePermissionRequest::TurnCreatePermissionRequest(
     TurnPort* port,
     TurnEntry* entry,
-    const rtc::SocketAddress& ext_addr,
-    absl::string_view remote_ufrag)
+    const rtc::SocketAddress& ext_addr)
     : StunRequest(
           port->request_manager(),
           std::make_unique<TurnMessage>(TURN_CREATE_PERMISSION_REQUEST)),
       port_(port),
       entry_(entry),
-      ext_addr_(ext_addr),
-      remote_ufrag_(remote_ufrag) {
-  entry_->SignalDestroyed.connect(
-      this, &TurnCreatePermissionRequest::OnEntryDestroyed);
+      ext_addr_(ext_addr) {
+  RTC_DCHECK(entry_);
+  entry_->destroyed_callback_list_.AddReceiver(this, [this](TurnEntry* entry) {
+    RTC_DCHECK(entry_ == entry);
+    entry_ = nullptr;
+  });
   StunMessage* message = mutable_msg();
   // Create the request as indicated in RFC5766, Section 9.1.
   RTC_DCHECK_EQ(message->type(), TURN_CREATE_PERMISSION_REQUEST);
   message->AddAttribute(std::make_unique<StunXorAddressAttribute>(
       STUN_ATTR_XOR_PEER_ADDRESS, ext_addr_));
-  if (port_->field_trials().IsEnabled("WebRTC-TurnAddMultiMapping")) {
-    message->AddAttribute(std::make_unique<cricket::StunByteStringAttribute>(
-        STUN_ATTR_MULTI_MAPPING, remote_ufrag_));
-  }
   port_->AddRequestAuthInfo(message);
   port_->TurnCustomizerMaybeModifyOutgoingStunMessage(message);
+}
+
+TurnCreatePermissionRequest::~TurnCreatePermissionRequest() {
+  if (entry_) {
+    entry_->destroyed_callback_list_.RemoveReceivers(this);
+  }
 }
 
 void TurnCreatePermissionRequest::OnSent() {
@@ -1700,11 +1649,6 @@ void TurnCreatePermissionRequest::OnTimeout() {
   }
 }
 
-void TurnCreatePermissionRequest::OnEntryDestroyed(TurnEntry* entry) {
-  RTC_DCHECK(entry_ == entry);
-  entry_ = NULL;
-}
-
 TurnChannelBindRequest::TurnChannelBindRequest(
     TurnPort* port,
     TurnEntry* entry,
@@ -1716,8 +1660,11 @@ TurnChannelBindRequest::TurnChannelBindRequest(
       entry_(entry),
       channel_id_(channel_id),
       ext_addr_(ext_addr) {
-  entry_->SignalDestroyed.connect(this,
-                                  &TurnChannelBindRequest::OnEntryDestroyed);
+  RTC_DCHECK(entry_);
+  entry_->destroyed_callback_list_.AddReceiver(this, [this](TurnEntry* entry) {
+    RTC_DCHECK(entry_ == entry);
+    entry_ = nullptr;
+  });
   StunMessage* message = mutable_msg();
   // Create the request as indicated in RFC5766, Section 11.1.
   RTC_DCHECK_EQ(message->type(), TURN_CHANNEL_BIND_REQUEST);
@@ -1727,6 +1674,12 @@ TurnChannelBindRequest::TurnChannelBindRequest(
       STUN_ATTR_XOR_PEER_ADDRESS, ext_addr_));
   port_->AddRequestAuthInfo(message);
   port_->TurnCustomizerMaybeModifyOutgoingStunMessage(message);
+}
+
+TurnChannelBindRequest::~TurnChannelBindRequest() {
+  if (entry_) {
+    entry_->destroyed_callback_list_.RemoveReceivers(this);
+  }
 }
 
 void TurnChannelBindRequest::OnSent() {
@@ -1776,28 +1729,37 @@ void TurnChannelBindRequest::OnTimeout() {
   }
 }
 
-void TurnChannelBindRequest::OnEntryDestroyed(TurnEntry* entry) {
-  RTC_DCHECK(entry_ == entry);
-  entry_ = NULL;
-}
-
-TurnEntry::TurnEntry(TurnPort* port,
-                     int channel_id,
-                     const rtc::SocketAddress& ext_addr,
-                     absl::string_view remote_ufrag)
+TurnEntry::TurnEntry(TurnPort* port, Connection* conn, int channel_id)
     : port_(port),
       channel_id_(channel_id),
-      ext_addr_(ext_addr),
+      ext_addr_(conn->remote_candidate().address()),
       state_(STATE_UNBOUND),
-      remote_ufrag_(remote_ufrag) {
+      connections_({conn}) {
   // Creating permission for `ext_addr_`.
   SendCreatePermissionRequest(0);
 }
 
+TurnEntry::~TurnEntry() {
+  destroyed_callback_list_.Send(this);
+}
+
+void TurnEntry::TrackConnection(Connection* conn) {
+  RTC_DCHECK(absl::c_find(connections_, conn) == connections_.end());
+  if (connections_.empty()) {
+    task_safety_.reset();
+  }
+  connections_.push_back(conn);
+}
+
+rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> TurnEntry::UntrackConnection(
+    Connection* conn) {
+  connections_.erase(absl::c_find(connections_, conn));
+  return connections_.empty() ? task_safety_.flag() : nullptr;
+}
+
 void TurnEntry::SendCreatePermissionRequest(int delay) {
-  port_->SendRequest(
-      new TurnCreatePermissionRequest(port_, this, ext_addr_, remote_ufrag_),
-      delay);
+  port_->SendRequest(new TurnCreatePermissionRequest(port_, this, ext_addr_),
+                     delay);
 }
 
 void TurnEntry::SendChannelBindRequest(int delay) {
@@ -1845,8 +1807,10 @@ int TurnEntry::Send(const void* data,
 void TurnEntry::OnCreatePermissionSuccess() {
   RTC_LOG(LS_INFO) << port_->ToString() << ": Create permission for "
                    << ext_addr_.ToSensitiveString() << " succeeded";
-  port_->SignalCreatePermissionResult(port_, ext_addr_,
-                                      TURN_SUCCESS_RESULT_CODE);
+  if (port_->callbacks_for_test_) {
+    port_->callbacks_for_test_->OnTurnCreatePermissionResult(
+        TURN_SUCCESS_RESULT_CODE);
+  }
 
   // If `state_` is STATE_BOUND, the permission will be refreshed
   // by ChannelBindRequest.
@@ -1873,8 +1837,9 @@ void TurnEntry::OnCreatePermissionError(StunMessage* response, int code) {
                            "code="
                         << code << "; pruned connection.";
     }
-    // Send signal with error code.
-    port_->SignalCreatePermissionResult(port_, ext_addr_, code);
+  }
+  if (port_->callbacks_for_test_) {
+    port_->callbacks_for_test_->OnTurnCreatePermissionResult(code);
   }
 }
 

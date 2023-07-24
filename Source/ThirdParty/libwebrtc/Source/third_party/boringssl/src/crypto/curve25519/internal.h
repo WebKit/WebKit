@@ -32,11 +32,7 @@ void x25519_NEON(uint8_t out[32], const uint8_t scalar[32],
                  const uint8_t point[32]);
 #endif
 
-#if defined(BORINGSSL_HAS_UINT128)
-#define BORINGSSL_CURVE25519_64BIT
-#endif
-
-#if defined(BORINGSSL_CURVE25519_64BIT)
+#if defined(OPENSSL_64_BIT)
 // fe means field element. Here the field is \Z/(2^255-19). An element t,
 // entries t[0]...t[4], represents the integer t[0]+2^51 t[1]+2^102 t[2]+2^153
 // t[3]+2^204 t[4].
@@ -106,7 +102,7 @@ typedef struct {
 } ge_cached;
 
 void x25519_ge_tobytes(uint8_t s[32], const ge_p2 *h);
-int x25519_ge_frombytes_vartime(ge_p3 *h, const uint8_t *s);
+int x25519_ge_frombytes_vartime(ge_p3 *h, const uint8_t s[32]);
 void x25519_ge_p3_to_cached(ge_cached *r, const ge_p3 *p);
 void x25519_ge_p1p1_to_p2(ge_p2 *r, const ge_p1p1 *p);
 void x25519_ge_p1p1_to_p3(ge_p3 *r, const ge_p1p1 *p);

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<style>
+    textarea {
+        width: 200px;
+        height: 200px;
+        background: green;
+    }
+    input {
+        width: 300px;
+        font-size: 30px;
+        line-height: 40px;
+        background: blue;
+    }
+</style>
+<body>
+<textarea></textarea>
+<input type="text"></input>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

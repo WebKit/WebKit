@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x584
-      RenderBlock {HR} at (0,43) size 800x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,43) size 800x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,61) size 800x60
         RenderText {#text} at (0,0) size 197x19
           text run at (0,0) width 197: "This tests for regressions against "

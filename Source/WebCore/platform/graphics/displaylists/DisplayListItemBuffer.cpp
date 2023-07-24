@@ -97,8 +97,14 @@ void ItemHandle::apply(GraphicsContext& context)
     case ItemType::Clip:
         get<Clip>().apply(context);
         return;
+    case ItemType::ClipRoundedRect:
+        get<ClipRoundedRect>().apply(context);
+        return;
     case ItemType::ClipOut:
         get<ClipOut>().apply(context);
+        return;
+    case ItemType::ClipOutRoundedRect:
+        get<ClipOutRoundedRect>().apply(context);
         return;
     case ItemType::ClipToImageBuffer:
         ASSERT_NOT_REACHED();
@@ -189,6 +195,9 @@ void ItemHandle::apply(GraphicsContext& context)
         get<FillBezierCurve>().apply(context);
         return;
 #endif
+    case ItemType::FillPathSegment:
+        get<FillPathSegment>().apply(context);
+        return;
     case ItemType::FillPath:
         get<FillPath>().apply(context);
         return;
@@ -217,6 +226,9 @@ void ItemHandle::apply(GraphicsContext& context)
         get<StrokeBezierCurve>().apply(context);
         return;
 #endif
+    case ItemType::StrokePathSegment:
+        get<StrokePathSegment>().apply(context);
+        return;
     case ItemType::StrokePath:
         get<StrokePath>().apply(context);
         return;
@@ -291,6 +303,9 @@ void ItemHandle::destroy()
     case ItemType::FillPath:
         get<FillPath>().~FillPath();
         return;
+    case ItemType::FillPathSegment:
+        get<FillPathSegment>().~FillPathSegment();
+        return;
     case ItemType::FillRectWithColor:
         get<FillRectWithColor>().~FillRectWithColor();
         return;
@@ -311,6 +326,9 @@ void ItemHandle::destroy()
         return;
     case ItemType::StrokePath:
         get<StrokePath>().~StrokePath();
+        return;
+    case ItemType::StrokePathSegment:
+        get<StrokePathSegment>().~StrokePathSegment();
         return;
     case ItemType::ApplyDeviceScaleFactor:
         static_assert(std::is_trivially_destructible<ApplyDeviceScaleFactor>::value);
@@ -335,8 +353,14 @@ void ItemHandle::destroy()
     case ItemType::Clip:
         static_assert(std::is_trivially_destructible<Clip>::value);
         return;
+    case ItemType::ClipRoundedRect:
+        static_assert(std::is_trivially_destructible<ClipRoundedRect>::value);
+        return;
     case ItemType::ClipOut:
         static_assert(std::is_trivially_destructible<ClipOut>::value);
+        return;
+    case ItemType::ClipOutRoundedRect:
+        static_assert(std::is_trivially_destructible<ClipOutRoundedRect>::value);
         return;
     case ItemType::ClipToImageBuffer:
         static_assert(std::is_trivially_destructible<ClipToImageBuffer>::value);
@@ -520,6 +544,8 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<FillCompositedRect>(itemOffset, *this);
     case ItemType::FillPath:
         return copyInto<FillPath>(itemOffset, *this);
+    case ItemType::FillPathSegment:
+        return copyInto<FillPathSegment>(itemOffset, *this);
     case ItemType::FillRectWithColor:
         return copyInto<FillRectWithColor>(itemOffset, *this);
     case ItemType::FillRectWithGradient:
@@ -534,6 +560,8 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<SetState>(itemOffset, *this);
     case ItemType::StrokePath:
         return copyInto<StrokePath>(itemOffset, *this);
+    case ItemType::StrokePathSegment:
+        return copyInto<StrokePathSegment>(itemOffset, *this);
     case ItemType::ApplyDeviceScaleFactor:
         return copyInto<ApplyDeviceScaleFactor>(itemOffset, *this);
 #if USE(CG)
@@ -550,8 +578,12 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<ClearShadow>(itemOffset, *this);
     case ItemType::Clip:
         return copyInto<Clip>(itemOffset, *this);
+    case ItemType::ClipRoundedRect:
+        return copyInto<ClipRoundedRect>(itemOffset, *this);
     case ItemType::ClipOut:
         return copyInto<ClipOut>(itemOffset, *this);
+    case ItemType::ClipOutRoundedRect:
+        return copyInto<ClipOutRoundedRect>(itemOffset, *this);
     case ItemType::ClipToImageBuffer:
         return copyInto<ClipToImageBuffer>(itemOffset, *this);
     case ItemType::ResetClip:

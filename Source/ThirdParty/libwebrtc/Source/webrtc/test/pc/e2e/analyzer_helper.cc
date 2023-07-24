@@ -10,6 +10,7 @@
 
 #include "test/pc/e2e/analyzer_helper.h"
 
+#include <string>
 #include <utility>
 
 namespace webrtc {
@@ -17,6 +18,21 @@ namespace webrtc_pc_e2e {
 
 AnalyzerHelper::AnalyzerHelper() {
   signaling_sequence_checker_.Detach();
+}
+
+void AnalyzerHelper::AddTrackToStreamMapping(
+    absl::string_view track_id,
+    absl::string_view receiver_peer,
+    absl::string_view stream_label,
+    absl::optional<std::string> sync_group) {
+  RTC_DCHECK_RUN_ON(&signaling_sequence_checker_);
+  track_to_stream_map_.insert(
+      {std::string(track_id),
+       StreamInfo{.receiver_peer = std::string(receiver_peer),
+                  .stream_label = std::string(stream_label),
+                  .sync_group = sync_group.has_value()
+                                    ? *sync_group
+                                    : std::string(stream_label)}});
 }
 
 void AnalyzerHelper::AddTrackToStreamMapping(std::string track_id,
@@ -35,22 +51,12 @@ void AnalyzerHelper::AddTrackToStreamMapping(std::string track_id,
        StreamInfo{std::move(stream_label), std::move(sync_group)}});
 }
 
-const AnalyzerHelper::StreamInfo& AnalyzerHelper::GetStreamInfoFromTrackId(
+AnalyzerHelper::StreamInfo AnalyzerHelper::GetStreamInfoFromTrackId(
     absl::string_view track_id) const {
   RTC_DCHECK_RUN_ON(&signaling_sequence_checker_);
   auto track_to_stream_pair = track_to_stream_map_.find(std::string(track_id));
   RTC_CHECK(track_to_stream_pair != track_to_stream_map_.end());
   return track_to_stream_pair->second;
-}
-
-absl::string_view AnalyzerHelper::GetStreamLabelFromTrackId(
-    absl::string_view track_id) const {
-  return GetStreamInfoFromTrackId(track_id).stream_label;
-}
-
-absl::string_view AnalyzerHelper::GetSyncGroupLabelFromTrackId(
-    absl::string_view track_id) const {
-  return GetStreamInfoFromTrackId(track_id).sync_group;
 }
 
 }  // namespace webrtc_pc_e2e

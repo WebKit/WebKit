@@ -23,7 +23,6 @@
 
 import("//build/config/linux/pkg_config.gni")
 import("//build/config/sanitizers/sanitizers.gni")
-import("//third_party/google_benchmark/buildconfig.gni")
 import("webrtc.gni")
 if (rtc_enable_protobuf) {
   import("//third_party/protobuf/proto_library.gni")
@@ -64,6 +63,7 @@ if (!build_with_chromium) {
         "modules/rtp_rtcp:test_packet_masks_metrics",
         "modules/video_capture:video_capture_internal_impl",
         "net/dcsctp:dcsctp_unittests",
+        "pc:peer_connection_mediachannel_split_unittests",
         "pc:peerconnection_unittests",
         "pc:rtc_pc_unittests",
         "pc:slow_peer_connection_unittests",
@@ -105,6 +105,12 @@ if (!build_with_chromium) {
           "logging:rtc_event_log_rtp_dump",
           "tools_webrtc/perf:webrtc_dashboard_upload",
         ]
+      }
+      if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+        deps += [ "modules/desktop_capture:shared_screencast_stream_test" ]
+      }
+      if (is_fuchsia) {
+        deps += [ ":fuchsia_perf_tests" ]
       }
     }
     if (target_os == "android") {
@@ -270,6 +276,18 @@ config("common_config") {
     defines += [ "WEBRTC_ENABLE_PROTOBUF=0" ]
   }
 
+  if (rtc_strict_field_trials == "") {
+    defines += [ "WEBRTC_STRICT_FIELD_TRIALS=0" ]
+  } else if (rtc_strict_field_trials == "dcheck") {
+    defines += [ "WEBRTC_STRICT_FIELD_TRIALS=1" ]
+  } else if (rtc_strict_field_trials == "warn") {
+    defines += [ "WEBRTC_STRICT_FIELD_TRIALS=2" ]
+  } else {
+    assert(false,
+           "Unsupported value for rtc_strict_field_trials: " +
+               "$rtc_strict_field_trials")
+  }
+
   if (rtc_include_internal_audio_device) {
     defines += [ "WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE" ]
   }
@@ -318,9 +336,15 @@ config("common_config") {
     defines += [ "WEBRTC_EXCLUDE_AUDIO_PROCESSING_MODULE" ]
   }
 
-  # TODO(webrtc:13219): Fix -Wshadow instances and enable.
   if (is_clang) {
-    cflags += [ "-Wno-shadow" ]
+    cflags += [
+      # TODO(webrtc:13219): Fix -Wshadow instances and enable.
+      "-Wno-shadow",
+
+      # See https://reviews.llvm.org/D56731 for details about this
+      # warning.
+      "-Wctad-maybe-unsupported",
+    ]
   }
 
   if (build_with_chromium) {
@@ -469,6 +493,17 @@ if (!build_with_chromium) {
       "api/rtc_event_log:rtc_event_log_factory",
       "api/task_queue",
       "api/task_queue:default_task_queue_factory",
+      "api/test/metrics",
+      "api/video_codecs:video_decoder_factory_template",
+      "api/video_codecs:video_decoder_factory_template_dav1d_adapter",
+      "api/video_codecs:video_decoder_factory_template_libvpx_vp8_adapter",
+      "api/video_codecs:video_decoder_factory_template_libvpx_vp9_adapter",
+      "api/video_codecs:video_decoder_factory_template_open_h264_adapter",
+      "api/video_codecs:video_encoder_factory_template",
+      "api/video_codecs:video_encoder_factory_template_libaom_av1_adapter",
+      "api/video_codecs:video_encoder_factory_template_libvpx_vp8_adapter",
+      "api/video_codecs:video_encoder_factory_template_libvpx_vp9_adapter",
+      "api/video_codecs:video_encoder_factory_template_open_h264_adapter",
       "audio",
       "call",
       "common_audio",
@@ -480,7 +515,6 @@ if (!build_with_chromium) {
       "p2p:rtc_p2p",
       "pc:libjingle_peerconnection",
       "pc:rtc_pc",
-      "rtc_base",
       "sdk",
       "video",
     ]
@@ -489,13 +523,6 @@ if (!build_with_chromium) {
       deps += [
         "api/audio_codecs:builtin_audio_decoder_factory",
         "api/audio_codecs:builtin_audio_encoder_factory",
-      ]
-    }
-
-    if (rtc_include_builtin_video_codecs) {
-      deps += [
-        "api/video_codecs:builtin_video_decoder_factory",
-        "api/video_codecs:builtin_video_encoder_factory",
       ]
     }
 
@@ -557,6 +584,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "api/audio_codecs/test:audio_codecs_api_unittests",
       "api/numerics:numerics_unittests",
       "api/task_queue:pending_task_safety_flag_unittests",
+      "api/test/metrics:metrics_unittests",
       "api/transport:stun_unittest",
       "api/video/test:rtc_api_video_unittests",
       "api/video_codecs/test:video_codecs_api_unittests",
@@ -572,12 +600,12 @@ if (rtc_include_tests && !build_with_chromium) {
       "rtc_base:rtc_operations_chain_unittests",
       "rtc_base:rtc_task_queue_unittests",
       "rtc_base:sigslot_unittest",
+      "rtc_base:task_queue_stdlib_unittest",
       "rtc_base:untyped_function_unittest",
       "rtc_base:weak_ptr_unittests",
       "rtc_base/experiments:experiments_unittests",
       "rtc_base/system:file_wrapper_unittests",
       "rtc_base/task_utils:repeating_task_unittests",
-      "rtc_base/time:timestamp_extrapolator_unittests",
       "rtc_base/units:units_unittests",
       "sdk:sdk_tests",
       "test:rtp_test_utils",
@@ -602,7 +630,7 @@ if (rtc_include_tests && !build_with_chromium) {
     }
   }
 
-  if (enable_google_benchmarks) {
+  if (rtc_enable_google_benchmarks) {
     rtc_test("benchmarks") {
       testonly = true
       deps = [
@@ -681,7 +709,6 @@ if (rtc_include_tests && !build_with_chromium) {
   rtc_test("webrtc_perf_tests") {
     testonly = true
     deps = [
-      "audio:audio_perf_tests",
       "call:call_perf_tests",
       "modules/audio_coding:audio_coding_perf_tests",
       "modules/audio_processing:audio_processing_perf_tests",
@@ -703,6 +730,24 @@ if (rtc_include_tests && !build_with_chromium) {
     }
     if (is_ios) {
       deps += [ ":webrtc_perf_tests_bundle_data" ]
+    }
+  }
+
+  if (is_fuchsia) {
+    rtc_test("fuchsia_perf_tests") {
+      testonly = true
+      deps = [
+        #TODO(fxbug.dev/115601) - Enable when fixed
+        "call:call_perf_tests",
+        "modules/audio_coding:audio_coding_perf_tests",
+        "modules/audio_processing:audio_processing_perf_tests",
+        "pc:peerconnection_perf_tests",
+        "test:test_main",
+        "video:video_full_stack_tests",
+        "video:video_pc_full_stack_tests",
+      ]
+
+      data = webrtc_perf_tests_resources
     }
   }
 

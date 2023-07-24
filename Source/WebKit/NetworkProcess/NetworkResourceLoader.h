@@ -160,8 +160,6 @@ public:
 #if ENABLE(SERVICE_WORKER)
     void startWithServiceWorker();
     void serviceWorkerDidNotHandle(ServiceWorkerFetchTask*);
-    void setResultingClientIdentifier(String&& identifier) { m_resultingClientIdentifier = WTFMove(identifier); }
-    const String& resultingClientIdentifier() const { return m_resultingClientIdentifier; }
     void setServiceWorkerRegistration(WebCore::SWServerRegistration& serviceWorkerRegistration) { m_serviceWorkerRegistration = serviceWorkerRegistration; }
     void setWorkerStart(MonotonicTime);
     MonotonicTime workerStart() const { return m_workerStart; }
@@ -181,6 +179,8 @@ public:
 #endif
 
     void willSendServiceWorkerRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&);
+
+    void useRedirectionForCurrentNavigation(WebCore::ResourceResponse&&);
 
 private:
     NetworkResourceLoader(NetworkResourceLoadParameters&&, NetworkConnectionToWebProcess&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse, Vector<uint8_t>&&)>&&);
@@ -314,7 +314,6 @@ private:
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
 #if ENABLE(SERVICE_WORKER)
     std::unique_ptr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
-    String m_resultingClientIdentifier;
     WeakPtr<WebCore::SWServerRegistration> m_serviceWorkerRegistration;
     MonotonicTime m_workerStart;
 #endif
@@ -331,6 +330,8 @@ private:
 
     PrivateRelayed m_privateRelayed { PrivateRelayed::No };
     MemoryCompactRobinHoodHashMap<String, String> m_reportingEndpoints;
+
+    std::unique_ptr<WebCore::ResourceResponse> m_redirectionForCurrentNavigation;
 };
 
 } // namespace WebKit

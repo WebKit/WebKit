@@ -155,7 +155,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 #endif
     auto layerContentsType = this->layerContentsType();
     for (auto& [layerID, propertiesPointer] : transaction.changedLayerProperties()) {
-        const RemoteLayerTreeTransaction::LayerProperties& properties = *propertiesPointer;
+        const auto& properties = *propertiesPointer;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
         if (layerID == transaction.rootLayerID())
@@ -183,7 +183,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 
     for (auto& changedLayer : transaction.changedLayerProperties()) {
         auto layerID = changedLayer.key;
-        const RemoteLayerTreeTransaction::LayerProperties& properties = *changedLayer.value;
+        const auto& properties = *changedLayer.value;
 
         auto* node = nodeForID(layerID);
         ASSERT(node);

@@ -85,6 +85,7 @@ public:
         const FloatSize& bottomRight() const { return m_bottomRight; }
 
         bool isZero() const;
+        bool hasEvenCorners() const;
         bool isUniformCornerRadius() const; // Including no radius.
 
         void scale(float factor);

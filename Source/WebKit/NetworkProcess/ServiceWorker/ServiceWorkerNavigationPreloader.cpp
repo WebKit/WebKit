@@ -64,7 +64,7 @@ void ServiceWorkerNavigationPreloader::start()
 
     if (m_session->cache()) {
         NetworkCache::GlobalFrameID globalID { m_parameters.webPageProxyID, m_parameters.webPageID, m_parameters.webFrameID };
-        m_session->cache()->retrieve(m_parameters.request, globalID, m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.networkConnectionIntegrityPolicy, [this, weakThis = WeakPtr { *this }](auto&& entry, auto&&) mutable {
+        m_session->cache()->retrieve(m_parameters.request, globalID, m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, [this, weakThis = WeakPtr { *this }](auto&& entry, auto&&) mutable {
             if (!weakThis || m_isCancelled)
                 return;
 
@@ -148,7 +148,7 @@ void ServiceWorkerNavigationPreloader::loadFromNetwork()
     if (m_state.enabled)
         m_parameters.request.addHTTPHeaderField(HTTPHeaderName::ServiceWorkerNavigationPreload, m_state.headerValue);
 
-    m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(m_parameters), *m_session);
+    m_networkLoad = makeUnique<NetworkLoad>(*this, WTFMove(m_parameters), *m_session);
     m_networkLoad->start();
 }
 

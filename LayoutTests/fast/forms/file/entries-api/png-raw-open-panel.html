@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input id="input" type="file" accept=".png, .nef">
+</body>
+<script>
+
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that a camera RAW file, chosen via the file picker which accepts RAW files and PNG images, does not transcode the file to PNG.");
+
+    if (window.testRunner)
+        testRunner.setOpenPanelFiles(['resources/images/image.nef']);
+
+    input.addEventListener("change", (event) => {
+        fileList = event.target.files;
+        shouldBe("fileList.length", "1");
+
+        file = fileList[0];
+        shouldBeEqualToString("file.name", "image.nef");
+        shouldBeEqualToString("file.type", "image/x-nikon-nef");
+        shouldBe("file.size", "1955729");
+
+        finishJSTest();
+    });
+
+    UIHelper.activateElement(input);
+});
+
+</script>
+</html>

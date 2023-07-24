@@ -304,7 +304,7 @@ TEST_P(BlendIntegerTest, MRTSigned)
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsWindows() && IsIntel());
 
     // http://anglebug.com/5125
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX() && IsIntel());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac() && IsIntel());
 
     // http://anglebug.com/5126
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAdreno());
@@ -319,7 +319,7 @@ TEST_P(BlendIntegerTest, MRTUnsigned)
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsWindows() && IsIntel());
 
     // http://anglebug.com/5125
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX() && IsIntel());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac() && IsIntel());
 
     // http://anglebug.com/5126
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAdreno());

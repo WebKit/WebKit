@@ -16,8 +16,6 @@
 #include "api/audio_codecs/g711/audio_encoder_g711.h"
 #include "api/audio_codecs/g722/audio_encoder_g722.h"
 #include "api/audio_codecs/ilbc/audio_encoder_ilbc.h"
-#include "api/audio_codecs/isac/audio_encoder_isac_fix.h"
-#include "api/audio_codecs/isac/audio_encoder_isac_float.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -178,49 +176,6 @@ TEST(AudioEncoderFactoryTemplateTest, Ilbc) {
   auto enc = factory->MakeAudioEncoder(17, {"ilbc", 8000, 1}, absl::nullopt);
   ASSERT_NE(nullptr, enc);
   EXPECT_EQ(8000, enc->SampleRateHz());
-}
-
-TEST(AudioEncoderFactoryTemplateTest, IsacFix) {
-  auto factory = CreateAudioEncoderFactory<AudioEncoderIsacFix>();
-  EXPECT_THAT(factory->GetSupportedEncoders(),
-              ::testing::ElementsAre(AudioCodecSpec{
-                  {"ISAC", 16000, 1}, {16000, 1, 32000, 10000, 32000}}));
-  EXPECT_EQ(absl::nullopt, factory->QueryAudioEncoder({"isac", 16000, 2}));
-  EXPECT_EQ(AudioCodecInfo(16000, 1, 32000, 10000, 32000),
-            factory->QueryAudioEncoder({"isac", 16000, 1}));
-  EXPECT_EQ(absl::nullopt, factory->QueryAudioEncoder({"isac", 32000, 1}));
-  EXPECT_EQ(nullptr,
-            factory->MakeAudioEncoder(17, {"isac", 8000, 1}, absl::nullopt));
-  auto enc1 = factory->MakeAudioEncoder(17, {"isac", 16000, 1}, absl::nullopt);
-  ASSERT_NE(nullptr, enc1);
-  EXPECT_EQ(16000, enc1->SampleRateHz());
-  EXPECT_EQ(3u, enc1->Num10MsFramesInNextPacket());
-  auto enc2 = factory->MakeAudioEncoder(
-      17, {"isac", 16000, 1, {{"ptime", "60"}}}, absl::nullopt);
-  ASSERT_NE(nullptr, enc2);
-  EXPECT_EQ(6u, enc2->Num10MsFramesInNextPacket());
-}
-
-TEST(AudioEncoderFactoryTemplateTest, IsacFloat) {
-  auto factory = CreateAudioEncoderFactory<AudioEncoderIsacFloat>();
-  EXPECT_THAT(
-      factory->GetSupportedEncoders(),
-      ::testing::ElementsAre(
-          AudioCodecSpec{{"ISAC", 16000, 1}, {16000, 1, 32000, 10000, 32000}},
-          AudioCodecSpec{{"ISAC", 32000, 1}, {32000, 1, 56000, 10000, 56000}}));
-  EXPECT_EQ(absl::nullopt, factory->QueryAudioEncoder({"isac", 16000, 2}));
-  EXPECT_EQ(AudioCodecInfo(16000, 1, 32000, 10000, 32000),
-            factory->QueryAudioEncoder({"isac", 16000, 1}));
-  EXPECT_EQ(AudioCodecInfo(32000, 1, 56000, 10000, 56000),
-            factory->QueryAudioEncoder({"isac", 32000, 1}));
-  EXPECT_EQ(nullptr,
-            factory->MakeAudioEncoder(17, {"isac", 8000, 1}, absl::nullopt));
-  auto enc1 = factory->MakeAudioEncoder(17, {"isac", 16000, 1}, absl::nullopt);
-  ASSERT_NE(nullptr, enc1);
-  EXPECT_EQ(16000, enc1->SampleRateHz());
-  auto enc2 = factory->MakeAudioEncoder(17, {"isac", 32000, 1}, absl::nullopt);
-  ASSERT_NE(nullptr, enc2);
-  EXPECT_EQ(32000, enc2->SampleRateHz());
 }
 
 TEST(AudioEncoderFactoryTemplateTest, L16) {

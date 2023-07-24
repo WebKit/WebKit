@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="listbox" role="listbox" tabindex="0">
+    <div id="item1" role="listitem"></div>
+    <div id="item2" role="listitem"></div>
+</div>
+
+<script>
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    let output = "Tests that active descendant changes result in focus changes.\n\n";
+
+    document.getElementById("listbox").focus();
+    setTimeout(async () => {
+        var listbox = accessibilityController.accessibleElementById("listbox");
+        output += await expectAsync("accessibilityController.focusedElement.domIdentifier", "'listbox'");
+
+        document.getElementById("listbox").setAttribute("aria-activedescendant", "item1");
+        output += await expectAsync("accessibilityController.focusedElement.domIdentifier", "'item1'");
+
+        document.getElementById("listbox").setAttribute("aria-activedescendant", "item2");
+        output += await expectAsync("accessibilityController.focusedElement.domIdentifier", "'item2'");
+
+        document.getElementById("listbox").removeAttribute("aria-activedescendant");
+        output += await expectAsync("accessibilityController.focusedElement.domIdentifier", "'listbox'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

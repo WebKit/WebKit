@@ -10,9 +10,10 @@
 
 #include "video/video_stream_decoder2.h"
 
+#include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/video_receiver2.h"
 #include "rtc_base/checks.h"
-#include "video/receive_statistics_proxy2.h"
+#include "video/receive_statistics_proxy.h"
 
 namespace webrtc {
 namespace internal {
@@ -60,9 +61,9 @@ void VideoStreamDecoder::OnIncomingPayloadType(int payload_type) {
   receive_stats_callback_->OnIncomingPayloadType(payload_type);
 }
 
-void VideoStreamDecoder::OnDecoderImplementationName(
-    const char* implementation_name) {
-  receive_stats_callback_->OnDecoderImplementationName(implementation_name);
+void VideoStreamDecoder::OnDecoderInfoChanged(
+    const VideoDecoder::DecoderInfo& decoder_info) {
+  receive_stats_callback_->OnDecoderInfo(decoder_info);
 }
 
 }  // namespace internal

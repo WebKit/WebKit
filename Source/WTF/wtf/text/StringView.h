@@ -73,8 +73,6 @@ public:
 
     ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
 
-    static StringView empty();
-
     unsigned length() const;
     bool isEmpty() const;
 
@@ -104,7 +102,7 @@ public:
     // Return characters8() or characters16() depending on CharacterType.
     template<typename CharacterType> const CharacterType* characters() const;
 
-    bool isAllASCII() const;
+    bool containsOnlyASCII() const;
 
     String toString() const;
     String toStringWithoutCopying() const;
@@ -145,8 +143,7 @@ public:
     StringView right(unsigned length) const { return substring(this->length() - length, length); }
 
     template<typename MatchedCharacterPredicate>
-    StringView stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate&) const;
-    WTF_EXPORT_PRIVATE StringView stripWhiteSpace() const;
+    StringView trim(const MatchedCharacterPredicate&) const;
 
     class SplitResult;
     SplitResult split(UChar) const;
@@ -180,7 +177,7 @@ public:
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(StringView) const;
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(StringView, unsigned start) const;
 
-    template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters() const;
+    template<bool isSpecialCharacter(UChar)> bool containsOnly() const;
 
     WTF_EXPORT_PRIVATE bool startsWith(UChar) const;
     WTF_EXPORT_PRIVATE bool startsWith(StringView) const;
@@ -212,7 +209,7 @@ private:
     WTF_EXPORT_PRIVATE size_t reverseFind(const LChar* match, unsigned matchLength, unsigned start) const;
 
     template<typename CharacterType, typename MatchedCharacterPredicate>
-    StringView stripLeadingAndTrailingMatchedCharacters(const CharacterType*, const MatchedCharacterPredicate&) const;
+    StringView trim(const CharacterType*, const MatchedCharacterPredicate&) const;
 
     WTF_EXPORT_PRIVATE bool underlyingStringIsValidImpl() const;
     WTF_EXPORT_PRIVATE void setUnderlyingStringImpl(const StringImpl*);
@@ -268,7 +265,10 @@ WTF_EXPORT_PRIVATE StringViewWithUnderlyingString normalizedNFC(StringView);
 
 WTF_EXPORT_PRIVATE String normalizedNFC(const String&);
 
-}
+inline StringView nullStringView() { return { }; }
+inline StringView emptyStringView() { return StringView("", 0); }
+
+} // namespace WTF
 
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
@@ -446,11 +446,6 @@ inline void StringView::clear()
     m_is8Bit = true;
 }
 
-inline StringView StringView::empty()
-{
-    return StringView("", 0);
-}
-
 inline const LChar* StringView::characters8() const
 {
     ASSERT(is8Bit());
@@ -482,7 +477,7 @@ template<> ALWAYS_INLINE const UChar* StringView::characters<UChar>() const
     return characters16();
 }
 
-inline bool StringView::isAllASCII() const
+inline bool StringView::containsOnlyASCII() const
 {
     if (is8Bit())
         return charactersAreAllASCII(characters8(), length());
@@ -533,7 +528,7 @@ inline bool StringView::is8Bit() const
 inline StringView StringView::substring(unsigned start, unsigned length) const
 {
     if (start >= this->length())
-        return empty();
+        return emptyStringView();
     unsigned maxLength = this->length() - start;
 
     if (length >= maxLength) {
@@ -576,11 +571,11 @@ inline bool StringView::contains(CodeUnitMatchFunction&& function) const
     return find(std::forward<CodeUnitMatchFunction>(function)) != notFound;
 }
 
-template<bool isSpecialCharacter(UChar)> inline bool StringView::isAllSpecialCharacters() const
+template<bool isSpecialCharacter(UChar)> inline bool StringView::containsOnly() const
 {
     if (is8Bit())
-        return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters8(), length());
-    return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters16(), length());
+        return WTF::containsOnly<isSpecialCharacter>(characters8(), length());
+    return WTF::containsOnly<isSpecialCharacter>(characters16(), length());
 }
 
 template<typename CharacterType> inline void StringView::getCharacters8(CharacterType* destination) const
@@ -1104,7 +1099,7 @@ inline bool StringView::SplitResult::Iterator::operator==(const Iterator& other)
 }
 
 template<typename CharacterType, typename MatchedCharacterPredicate>
-inline StringView StringView::stripLeadingAndTrailingMatchedCharacters(const CharacterType* characters, const MatchedCharacterPredicate& predicate) const
+inline StringView StringView::trim(const CharacterType* characters, const MatchedCharacterPredicate& predicate) const
 {
     if (!m_length)
         return *this;
@@ -1116,7 +1111,7 @@ inline StringView StringView::stripLeadingAndTrailingMatchedCharacters(const Cha
         ++start;
 
     if (start > end)
-        return StringView::empty();
+        return emptyStringView();
 
     while (end && predicate(characters[end]))
         --end;
@@ -1130,11 +1125,11 @@ inline StringView StringView::stripLeadingAndTrailingMatchedCharacters(const Cha
 }
 
 template<typename MatchedCharacterPredicate>
-StringView StringView::stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate& predicate) const
+StringView StringView::trim(const MatchedCharacterPredicate& predicate) const
 {
     if (is8Bit())
-        return stripLeadingAndTrailingMatchedCharacters<LChar>(characters8(), predicate);
-    return stripLeadingAndTrailingMatchedCharacters<UChar>(characters16(), predicate);
+        return trim<LChar>(characters8(), predicate);
+    return trim<UChar>(characters16(), predicate);
 }
 
 inline bool equalLettersIgnoringASCIICase(StringView string, ASCIILiteral literal)
@@ -1467,3 +1462,5 @@ using WTF::makeStringBySimplifyingNewLines;
 using WTF::StringView;
 using WTF::StringViewWithUnderlyingString;
 using WTF::hasUnpairedSurrogate;
+using WTF::nullStringView;
+using WTF::emptyStringView;

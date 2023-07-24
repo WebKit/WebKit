@@ -106,6 +106,9 @@ const TestFeatures& TestOptions::defaults()
             { "UsesBackForwardCache", false },
             { "VisualViewportAPIEnabled", true },
             { "WebAudioEnabled", true },
+#if ENABLE(WEBGL)
+            { "WebGLUsingMetal", true },
+#endif
             { "WebSQLEnabled", true },
             { "XSSAuditorEnabled", false },
 

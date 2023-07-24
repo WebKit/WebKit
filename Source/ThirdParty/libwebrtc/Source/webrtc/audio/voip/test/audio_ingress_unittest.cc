@@ -122,7 +122,7 @@ TEST_F(AudioIngressTest, GetAudioFrameAfterRtpReceived) {
   EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(handle_rtp));
   egress_->SendAudioData(GetAudioFrame(0));
   egress_->SendAudioData(GetAudioFrame(1));
-  event.Wait(/*ms=*/1000);
+  event.Wait(TimeDelta::Seconds(1));
 
   AudioFrame audio_frame;
   EXPECT_EQ(
@@ -155,7 +155,7 @@ TEST_F(AudioIngressTest, TestSpeechOutputLevelAndEnergyDuration) {
     egress_->SendAudioData(GetAudioFrame(i));
     fake_clock_.AdvanceTimeMilliseconds(10);
   }
-  event.Wait(/*give_up_after_ms=*/1000);
+  event.Wait(/*give_up_after=*/TimeDelta::Seconds(1));
 
   for (int i = 0; i < kNumRtp * 2; ++i) {
     AudioFrame audio_frame;
@@ -182,7 +182,7 @@ TEST_F(AudioIngressTest, PreferredSampleRate) {
   EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(handle_rtp));
   egress_->SendAudioData(GetAudioFrame(0));
   egress_->SendAudioData(GetAudioFrame(1));
-  event.Wait(/*ms=*/1000);
+  event.Wait(TimeDelta::Seconds(1));
 
   AudioFrame audio_frame;
   EXPECT_EQ(
@@ -214,7 +214,7 @@ TEST_F(AudioIngressTest, GetMutedAudioFrameAfterRtpReceivedAndStopPlay) {
     egress_->SendAudioData(GetAudioFrame(i));
     fake_clock_.AdvanceTimeMilliseconds(10);
   }
-  event.Wait(/*give_up_after_ms=*/1000);
+  event.Wait(/*give_up_after=*/TimeDelta::Seconds(1));
 
   for (int i = 0; i < kNumRtp * 2; ++i) {
     AudioFrame audio_frame;

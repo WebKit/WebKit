@@ -1985,6 +1985,9 @@ typedef void(INTERNAL_GL_APIENTRY *PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMGPROC)(
                                                                                 GLint level,
                                                                                 GLsizei samples);
 
+// GL_NV_polygon_mode
+typedef void(INTERNAL_GL_APIENTRY *PFNGLPOLYGONMODENVPROC)(GLenum face, GLenum mode);
+
 // GL_EXT_polygon_offset_clamp
 typedef void(INTERNAL_GL_APIENTRY *PFNGLPOLYGONOFFSETCLAMPEXTPROC)(GLfloat factor,
                                                                    GLfloat units,

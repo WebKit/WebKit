@@ -2505,12 +2505,15 @@ CallCapture CapturePixelZoom(const State &glState,
     return CallCapture(angle::EntryPoint::GLPixelZoom, std::move(paramBuffer));
 }
 
-CallCapture CapturePolygonMode(const State &glState, bool isCallValid, GLenum face, GLenum mode)
+CallCapture CapturePolygonMode(const State &glState,
+                               bool isCallValid,
+                               GLenum face,
+                               PolygonMode modePacked)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addEnumParam("face", BigGLEnum::TriangleFace, ParamType::TGLenum, face);
-    paramBuffer.addEnumParam("mode", BigGLEnum::PolygonMode, ParamType::TGLenum, mode);
+    paramBuffer.addValueParam("modePacked", ParamType::TPolygonMode, modePacked);
 
     return CallCapture(angle::EntryPoint::GLPolygonMode, std::move(paramBuffer));
 }

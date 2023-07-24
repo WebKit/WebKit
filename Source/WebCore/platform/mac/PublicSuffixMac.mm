@@ -52,7 +52,7 @@ String topPrivatelyControlledDomain(const String& domain)
 {
     if (domain.isEmpty())
         return { };
-    if (!domain.isAllASCII())
+    if (!domain.containsOnlyASCII())
         return domain;
 
     static Lock cacheLock;

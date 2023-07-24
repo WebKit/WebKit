@@ -11,6 +11,7 @@
 #ifndef MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_
 #define MODULES_VIDEO_CODING_VIDEO_CODING_IMPL_H_
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -18,12 +19,11 @@
 #include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/sequence_checker.h"
-#include "modules/video_coding/decoder_database.h"
-#include "modules/video_coding/frame_buffer.h"
+#include "modules/video_coding/deprecated/frame_buffer.h"
+#include "modules/video_coding/deprecated/jitter_buffer.h"
+#include "modules/video_coding/deprecated/receiver.h"
 #include "modules/video_coding/generic_decoder.h"
 #include "modules/video_coding/include/video_coding.h"
-#include "modules/video_coding/jitter_buffer.h"
-#include "modules/video_coding/receiver.h"
 #include "modules/video_coding/timing/timing.h"
 #include "rtc_base/one_time_event.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -53,6 +53,50 @@ class VCMProcessTimer {
   Clock* _clock;
   int64_t _periodMs;
   int64_t _latestMs;
+};
+
+class DEPRECATED_VCMDecoderDataBase {
+ public:
+  DEPRECATED_VCMDecoderDataBase();
+  DEPRECATED_VCMDecoderDataBase(const DEPRECATED_VCMDecoderDataBase&) = delete;
+  DEPRECATED_VCMDecoderDataBase& operator=(
+      const DEPRECATED_VCMDecoderDataBase&) = delete;
+  ~DEPRECATED_VCMDecoderDataBase() = default;
+
+  // Returns a pointer to the previously registered decoder or nullptr if none
+  // was registered for the `payload_type`.
+  VideoDecoder* DeregisterExternalDecoder(uint8_t payload_type);
+  void RegisterExternalDecoder(uint8_t payload_type,
+                               VideoDecoder* external_decoder);
+  bool IsExternalDecoderRegistered(uint8_t payload_type) const;
+
+  void RegisterReceiveCodec(uint8_t payload_type,
+                            const VideoDecoder::Settings& settings);
+  bool DeregisterReceiveCodec(uint8_t payload_type);
+
+  // Returns a decoder specified by frame.PayloadType. The decoded frame
+  // callback of the decoder is set to `decoded_frame_callback`. If no such
+  // decoder already exists an instance will be created and initialized.
+  // nullptr is returned if no decoder with the specified payload type was found
+  // and the function failed to create one.
+  VCMGenericDecoder* GetDecoder(
+      const VCMEncodedFrame& frame,
+      VCMDecodedFrameCallback* decoded_frame_callback);
+
+ private:
+  void CreateAndInitDecoder(const VCMEncodedFrame& frame)
+      RTC_RUN_ON(decoder_sequence_checker_);
+
+  SequenceChecker decoder_sequence_checker_;
+
+  absl::optional<uint8_t> current_payload_type_;
+  absl::optional<VCMGenericDecoder> current_decoder_
+      RTC_GUARDED_BY(decoder_sequence_checker_);
+  // Initialization paramaters for decoders keyed by payload type.
+  std::map<uint8_t, VideoDecoder::Settings> decoder_settings_;
+  // Decoders keyed by payload type.
+  std::map<uint8_t, VideoDecoder*> decoders_
+      RTC_GUARDED_BY(decoder_sequence_checker_);
 };
 
 class VideoReceiver {
@@ -122,7 +166,7 @@ class VideoReceiver {
   // Callbacks are set before the decoder thread starts.
   // Once the decoder thread has been started, usage of `_codecDataBase` moves
   // over to the decoder thread.
-  VCMDecoderDataBase _codecDataBase;
+  DEPRECATED_VCMDecoderDataBase _codecDataBase;
 
   VCMProcessTimer _retransmissionTimer RTC_GUARDED_BY(module_thread_checker_);
   VCMProcessTimer _keyRequestTimer RTC_GUARDED_BY(module_thread_checker_);

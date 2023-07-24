@@ -4,15 +4,15 @@ layer at (-3948,0) size 4748x585 backgroundClip at (0,0) size 4748x585 clip at (
   RenderBlock {html} at (0,0) size 4749x585
     RenderBlock {parsererror} at (16,16) size 547x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
       RenderBlock {h3} at (18,20) size 511x23
-        RenderText {#text} at (0,0) size 324x21
-          text run at (0,0) width 324: "This page contains the following errors:"
+        RenderText {#text} at (0,0) size 309x21
+          text run at (0,0) width 309: "This page contains the following errors:"
       RenderBlock {div} at (18,61) size 511x15
         RenderText {#text} at (0,0) size 511x14
           text run at (0,0) width 511: "error on line 62 at column 1671: Extra content at the end of the document"
           text run at (510,0) width 1: " "
       RenderBlock {h3} at (18,94) size 511x23
-        RenderText {#text} at (0,0) size 427x21
-          text run at (0,0) width 427: "Below is a rendering of the page up to the first error."
+        RenderText {#text} at (0,0) size 410x21
+          text run at (0,0) width 410: "Below is a rendering of the page up to the first error."
     RenderBody {body} at (621,46) size 4069x493
       RenderBlock {h1} at (0,0) size 48x492
         RenderText {#text} at (6,0) size 36x66

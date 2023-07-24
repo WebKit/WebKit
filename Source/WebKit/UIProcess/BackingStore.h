@@ -35,8 +35,8 @@
 namespace WebKit {
 
 class ShareableBitmap;
-class UpdateInfo;
 class WebPageProxy;
+struct UpdateInfo;
 
 class BackingStore {
     WTF_MAKE_FAST_ALLOCATED;

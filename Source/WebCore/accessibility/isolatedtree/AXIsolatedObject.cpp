@@ -143,8 +143,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::SupportsPressAction, object.supportsPressAction());
     setProperty(AXPropertyName::IsGrabbed, object.isGrabbed());
     setObjectProperty(AXPropertyName::TitleUIElement, object.titleUIElement());
-    setObjectProperty(AXPropertyName::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));
-    setObjectProperty(AXPropertyName::HorizontalScrollBar, object.scrollBar(AccessibilityOrientation::Horizontal));
     setProperty(AXPropertyName::PlaceholderValue, object.placeholderValue().isolatedCopy());
     setProperty(AXPropertyName::ExpandedTextValue, object.expandedTextValue().isolatedCopy());
     setProperty(AXPropertyName::SupportsExpandedTextValue, object.supportsExpandedTextValue());
@@ -171,11 +169,12 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::BrailleLabel, object.brailleLabel().isolatedCopy());
 
     RefPtr geometryManager = tree()->geometryManager();
-    std::optional frame = geometryManager ? geometryManager->paintRectForID(object.objectID()) : std::nullopt;
+    std::optional frame = geometryManager ? geometryManager->cachedRectForID(object.objectID()) : std::nullopt;
     if (frame)
         setProperty(AXPropertyName::RelativeFrame, WTFMove(*frame));
-    else if (object.isScrollView() || object.isWebArea()) {
-        // The GeometryManager does not have a relative frame for the ScrollView or the WebArea yet. We need to get it from the live object so that we don't need to hit the main thread in the case a request comes in while the whole isolated tree is being built.
+    else if (object.isScrollView() || object.isWebArea() || object.isScrollbar()) {
+        // The GeometryManager does not have a relative frame for ScrollViews, WebAreas, or scrollbars yet. We need to get it from the
+        // live object so that we don't need to hit the main thread in the case a request comes in while the whole isolated tree is being built.
         setProperty(AXPropertyName::RelativeFrame, enclosingIntRect(object.relativeFrame()));
     } else if (!object.renderer() && object.node() && is<AccessibilityNodeObject>(object)) {
         // The frame of node-only AX objects is made up of their children.
@@ -194,21 +193,19 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     if (object.isTable()) {
         setProperty(AXPropertyName::IsTable, true);
         setProperty(AXPropertyName::IsExposable, object.isExposable());
-        setProperty(AXPropertyName::TableLevel, object.tableLevel());
         setProperty(AXPropertyName::SupportsSelectedRows, object.supportsSelectedRows());
         setObjectVectorProperty(AXPropertyName::Columns, object.columns());
         setObjectVectorProperty(AXPropertyName::Rows, object.rows());
-        setProperty(AXPropertyName::ColumnCount, object.columnCount());
-        setProperty(AXPropertyName::RowCount, object.rowCount());
         setObjectVectorProperty(AXPropertyName::Cells, object.cells());
         setObjectVectorProperty(AXPropertyName::VisibleRows, object.visibleRows());
         setObjectProperty(AXPropertyName::HeaderContainer, object.headerContainer());
         setProperty(AXPropertyName::AXColumnCount, object.axColumnCount());
         setProperty(AXPropertyName::AXRowCount, object.axRowCount());
+        setProperty(AXPropertyName::CellSlots, object.cellSlots());
     }
 
-    if (object.isTableCell()) {
-        setProperty(AXPropertyName::IsTableCell, true);
+    if (object.isExposedTableCell()) {
+        setProperty(AXPropertyName::IsExposedTableCell, true);
         setProperty(AXPropertyName::ColumnIndexRange, object.columnIndexRange());
         setProperty(AXPropertyName::RowIndexRange, object.rowIndexRange());
         setProperty(AXPropertyName::AXColumnIndex, object.axColumnIndex());
@@ -311,6 +308,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         // For the ScrollView and WebArea objects, cache the TitleAttributeValue and DescriptionAttributeValue eagerly to avoid hitting the main thread in getOrRetrievePropertyValue during the construction of the isolated tree.
         setProperty(AXPropertyName::TitleAttributeValue, object.titleAttributeValue().isolatedCopy());
         setProperty(AXPropertyName::DescriptionAttributeValue, object.descriptionAttributeValue().isolatedCopy());
+        setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
     }
 
     if (isRoot == IsRoot::Yes) {
@@ -319,9 +317,13 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setProperty(AXPropertyName::DocumentEncoding, object.documentEncoding().isolatedCopy());
     }
 
-    // We only expose document links in web area objects.
-    if (object.isWebArea())
+    if (object.isScrollView()) {
+        setObjectProperty(AXPropertyName::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));
+        setObjectProperty(AXPropertyName::HorizontalScrollBar, object.scrollBar(AccessibilityOrientation::Horizontal));
+    } else if (object.isWebArea()) {
+        // We only expose document links in web area objects.
         setObjectVectorProperty(AXPropertyName::DocumentLinks, object.documentLinks());
+    }
 
     if (object.isWidget())
         setProperty(AXPropertyName::IsWidget, true);
@@ -487,15 +489,20 @@ bool AXIsolatedObject::isDetachedFromParent()
 
 AXCoreObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsigned rowIndex)
 {
-    AXID cellID = Accessibility::retrieveValueFromMainThread<AXID>([&columnIndex, &rowIndex, this] () -> AXID {
-        if (auto* object = associatedAXObject()) {
-            if (auto cell = object->cellForColumnAndRow(columnIndex, rowIndex))
-                return cell->objectID();
-        }
-        return { };
-    });
+    // AXPropertyName::CellSlots can be big, so make sure not to copy it.
+    auto cellSlotsIterator = m_propertyMap.find(AXPropertyName::CellSlots);
+    if (cellSlotsIterator == m_propertyMap.end())
+        return nullptr;
 
-    return tree()->objectForID(cellID).get();
+    AXID cellID = WTF::switchOn(cellSlotsIterator->value,
+        [&] (Vector<Vector<AXID>>& cellSlots) {
+            if (rowIndex >= cellSlots.size() || columnIndex >= cellSlots[rowIndex].size())
+                return AXID();
+            return cellSlots[rowIndex][columnIndex];
+        },
+        [] (auto&) { return AXID(); }
+    );
+    return cellID ? tree()->objectForID(cellID).get() : nullptr;
 }
 
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
@@ -703,7 +710,7 @@ void AXIsolatedObject::setSelectedText(const String& value)
     });
 }
 
-void AXIsolatedObject::setSelectedTextRange(PlainTextRange&& range)
+void AXIsolatedObject::setSelectedTextRange(CharacterRange&& range)
 {
     performFunctionOnMainThread([range = WTFMove(range)] (auto* object) mutable {
         object->setSelectedTextRange(WTFMove(range));
@@ -986,11 +993,11 @@ std::optional<SimpleRange> AXIsolatedObject::visibleCharacterRange() const
     return axObject ? axObject->visibleCharacterRange() : std::nullopt;
 }
 
-std::optional<SimpleRange> AXIsolatedObject::rangeForPlainTextRange(const PlainTextRange& axRange) const
+std::optional<SimpleRange> AXIsolatedObject::rangeForCharacterRange(const CharacterRange& axRange) const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
-    return axObject ? axObject->rangeForPlainTextRange(axRange) : std::nullopt;
+    return axObject ? axObject->rangeForCharacterRange(axRange) : std::nullopt;
 }
 
 String AXIsolatedObject::stringForRange(const SimpleRange& range) const
@@ -1175,7 +1182,7 @@ FloatRect AXIsolatedObject::convertFrameToSpace(const FloatRect& rect, Accessibi
     });
 }
 
-bool AXIsolatedObject::replaceTextInRange(const String& replacementText, const PlainTextRange& textRange)
+bool AXIsolatedObject::replaceTextInRange(const String& replacementText, const CharacterRange& textRange)
 {
     return Accessibility::retrieveValueFromMainThread<bool>([text = replacementText.isolatedCopy(), &textRange, this] () -> bool {
         if (auto* axObject = associatedAXObject())
@@ -1242,12 +1249,12 @@ bool AXIsolatedObject::isNativeTextControl() const
     return false;
 }
 
-PlainTextRange AXIsolatedObject::selectedTextRange() const
+CharacterRange AXIsolatedObject::selectedTextRange() const
 {
     if (shouldReturnEmptySelectedText())
         return { };
 
-    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([this] () -> PlainTextRange {
+    return Accessibility::retrieveValueFromMainThread<CharacterRange>([this] () -> CharacterRange {
         if (auto* object = associatedAXObject())
             return object->selectedTextRange();
         return { };
@@ -1276,16 +1283,16 @@ String AXIsolatedObject::identifierAttribute() const
 #endif
 }
 
-PlainTextRange AXIsolatedObject::doAXRangeForLine(unsigned lineIndex) const
+CharacterRange AXIsolatedObject::doAXRangeForLine(unsigned lineIndex) const
 {
-    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&lineIndex, this] () -> PlainTextRange {
+    return Accessibility::retrieveValueFromMainThread<CharacterRange>([&lineIndex, this] () -> CharacterRange {
         if (auto* object = associatedAXObject())
             return object->doAXRangeForLine(lineIndex);
         return { };
     });
 }
 
-String AXIsolatedObject::doAXStringForRange(const PlainTextRange& axRange) const
+String AXIsolatedObject::doAXStringForRange(const CharacterRange& axRange) const
 {
     return Accessibility::retrieveValueFromMainThread<String>([&axRange, this] () -> String {
         if (auto* object = associatedAXObject())
@@ -1294,34 +1301,34 @@ String AXIsolatedObject::doAXStringForRange(const PlainTextRange& axRange) const
     });
 }
 
-PlainTextRange AXIsolatedObject::doAXRangeForPosition(const IntPoint& point) const
+CharacterRange AXIsolatedObject::characterRangeForPoint(const IntPoint& point) const
 {
-    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&point, this] () -> PlainTextRange {
+    return Accessibility::retrieveValueFromMainThread<CharacterRange>([&point, this] () -> CharacterRange {
         if (auto* object = associatedAXObject())
-            return object->doAXRangeForPosition(point);
+            return object->characterRangeForPoint(point);
         return { };
     });
 }
 
-PlainTextRange AXIsolatedObject::doAXRangeForIndex(unsigned index) const
+CharacterRange AXIsolatedObject::doAXRangeForIndex(unsigned index) const
 {
-    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&index, this] () -> PlainTextRange {
+    return Accessibility::retrieveValueFromMainThread<CharacterRange>([&index, this] () -> CharacterRange {
         if (auto* object = associatedAXObject())
             return object->doAXRangeForIndex(index);
         return { };
     });
 }
 
-PlainTextRange AXIsolatedObject::doAXStyleRangeForIndex(unsigned index) const
+CharacterRange AXIsolatedObject::doAXStyleRangeForIndex(unsigned index) const
 {
-    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&index, this] () -> PlainTextRange {
+    return Accessibility::retrieveValueFromMainThread<CharacterRange>([&index, this] () -> CharacterRange {
         if (auto* object = associatedAXObject())
             return object->doAXStyleRangeForIndex(index);
         return { };
     });
 }
 
-IntRect AXIsolatedObject::doAXBoundsForRange(const PlainTextRange& axRange) const
+IntRect AXIsolatedObject::doAXBoundsForRange(const CharacterRange& axRange) const
 {
     return Accessibility::retrieveValueFromMainThread<IntRect>([&axRange, this] () -> IntRect {
         if (auto* object = associatedAXObject())
@@ -1330,7 +1337,7 @@ IntRect AXIsolatedObject::doAXBoundsForRange(const PlainTextRange& axRange) cons
     });
 }
 
-IntRect AXIsolatedObject::doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange& axRange) const
+IntRect AXIsolatedObject::doAXBoundsForRangeUsingCharacterOffset(const CharacterRange& axRange) const
 {
     return Accessibility::retrieveValueFromMainThread<IntRect>([&axRange, this] () -> IntRect {
         if (auto* object = associatedAXObject())
@@ -1471,7 +1478,7 @@ VisiblePositionRange AXIsolatedObject::styleRangeForPosition(const VisiblePositi
     return axObject ? axObject->styleRangeForPosition(position) : VisiblePositionRange();
 }
 
-VisiblePositionRange AXIsolatedObject::visiblePositionRangeForRange(const PlainTextRange& plainTextRange) const
+VisiblePositionRange AXIsolatedObject::visiblePositionRangeForRange(const CharacterRange& plainTextRange) const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
@@ -1603,6 +1610,17 @@ bool AXIsolatedObject::hasSameStyle(const AXCoreObject& otherObject) const
     });
 }
 
+AXTextMarkerRange AXIsolatedObject::textInputMarkedTextMarkerRange() const
+{
+    auto value = optionalAttributeValue<std::pair<AXID, CharacterRange>>(AXPropertyName::TextInputMarkedTextMarkerRange);
+    if (!value)
+        return { };
+
+    auto start = static_cast<unsigned>(value->second.location);
+    auto end = start + static_cast<unsigned>(value->second.length);
+    return { tree()->treeID(), value->first, start, end };
+}
+
 // The attribute this value is exposed as is not used by VoiceOver or any other AX client on macOS, so we intentionally don't cache it.
 // Re-visit if ITM expands to more platforms, or if AX clients need to start using this.
 String AXIsolatedObject::linkRelValue() const
@@ -1645,6 +1663,12 @@ bool AXIsolatedObject::supportsChecked() const
 }
 
 bool AXIsolatedObject::isModalNode() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool AXIsolatedObject::isTableCell() const
 {
     ASSERT_NOT_REACHED();
     return false;

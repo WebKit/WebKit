@@ -36,6 +36,7 @@ bool isInsideFlatpak()
     return returnValue;
 }
 
+#if ENABLE(BUBBLEWRAP_SANDBOX)
 bool isInsideUnsupportedContainer()
 {
     static bool inContainer = g_file_test("/run/.containerenv", G_FILE_TEST_EXISTS);
@@ -57,13 +58,14 @@ bool isInsideUnsupportedContainer()
         int waitStatus = 0;
         gboolean spawnSucceeded = g_spawn_sync(nullptr, const_cast<char**>(bwrapArgs), nullptr,
             G_SPAWN_STDERR_TO_DEV_NULL, nullptr, nullptr, nullptr, nullptr, &waitStatus, nullptr);
-        supportedContainer = spawnSucceeded && g_spawn_check_wait_status(waitStatus, nullptr);
+        supportedContainer = spawnSucceeded && g_spawn_check_exit_status(waitStatus, nullptr);
         if (!supportedContainer)
             WTFLogAlways("Bubblewrap does not work inside of this container, sandboxing will be disabled.");
     }
 
     return inContainer && !supportedContainer;
 }
+#endif
 
 bool isInsideSnap()
 {

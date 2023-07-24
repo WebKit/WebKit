@@ -74,6 +74,12 @@ class StateChangeTestES3 : public StateChangeTest
     StateChangeTestES3() {}
 };
 
+class StateChangeTestES31 : public StateChangeTest
+{
+  protected:
+    StateChangeTestES31() {}
+};
+
 // Ensure that CopyTexImage2D syncs framebuffer changes.
 TEST_P(StateChangeTest, CopyTexImage2DSync)
 {
@@ -179,7 +185,7 @@ TEST_P(StateChangeTest, FramebufferIncompleteWithTexStorage)
 TEST_P(StateChangeTestES3, FramebufferIncompleteWithCompressedTex)
 {
     // ETC texture formats are not supported on Mac OpenGL. http://anglebug.com/3853
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsDesktopOpenGL());
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
     glBindTexture(GL_TEXTURE_2D, mTextures[0]);
@@ -5362,7 +5368,7 @@ class RobustBufferAccessWebGL2ValidationStateChangeTest : public WebGL2Validatio
     RobustBufferAccessWebGL2ValidationStateChangeTest()
     {
         // SwS/OSX GL do not support robustness. Mali does not support it.
-        if (!isSwiftshader() && !IsOSX() && !IsIOS() && !IsARM())
+        if (!isSwiftshader() && !IsMac() && !IsIOS() && !IsARM())
         {
             setRobustAccess(true);
         }
@@ -6015,7 +6021,7 @@ void main()
 // Tests negative API state change cases with Transform Feedback bindings.
 TEST_P(WebGL2ValidationStateChangeTest, TransformFeedbackNegativeAPI)
 {
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsMac());
 
     // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
@@ -6186,7 +6192,7 @@ void main()
 // Tests that we retain the correct draw mode settings with transform feedback changes.
 TEST_P(ValidationStateChangeTest, TransformFeedbackDrawModes)
 {
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsMac());
 
     std::vector<std::string> tfVaryings = {"gl_Position"};
     ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(program, essl3_shaders::vs::Simple(),
@@ -7275,7 +7281,7 @@ TEST_P(RobustBufferAccessWebGL2ValidationStateChangeTest, BindZeroSizeBufferThen
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
     // no intent to follow up on this failure.
-    ANGLE_SKIP_TEST_IF(IsOSX());
+    ANGLE_SKIP_TEST_IF(IsMac());
 
     // Mali does not support robustness now.
     ANGLE_SKIP_TEST_IF(IsARM());
@@ -10317,6 +10323,229 @@ TEST_P(StateChangeTestES3, SampleCoverageFramebufferAttachmentSwitch)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that switching FBO attachments affects alpha-to-coverage
+TEST_P(StateChangeTestES3, AlphaToCoverageFramebufferAttachmentSwitch)
+{
+    // Keep this state unchanged during the test
+    glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    glUniform4f(glGetUniformLocation(program, essl1_shaders::ColorUniform()), 0, 1, 0, 0);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLRenderbuffer rbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 0, GL_RGBA8, 1, 1);
+
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+    ASSERT_GL_NO_ERROR();
+
+    // A2C must have no effect
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(0, 255, 0, 0));
+
+    GLRenderbuffer rboMS;
+    glBindRenderbuffer(GL_RENDERBUFFER, rboMS);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, 1, 1);
+
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboMS);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glClearColor(1, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+    ASSERT_GL_NO_ERROR();
+
+    // Use a temporary FBO to resolve
+    {
+        GLFramebuffer fboResolve;
+        glBindFramebuffer(GL_FRAMEBUFFER, fboResolve);
+
+        GLRenderbuffer rboResolve;
+        glBindRenderbuffer(GL_RENDERBUFFER, rboResolve);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 1, 1);
+
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                  rboResolve);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboResolve);
+        glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        // Nothing was drawn because of zero alpha
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fboResolve);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+    ASSERT_GL_NO_ERROR();
+
+    // A2C must have no effect
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(0, 255, 0, 0));
+}
+
+// Tests state change for sample shading.
+TEST_P(StateChangeTestES31, SampleShading)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_sample_shading"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_sample_variables"));
+
+    constexpr GLsizei kSize        = 1;
+    constexpr GLsizei kSampleCount = 4;
+
+    // Create a single sampled texture and framebuffer for verifying results
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Create a multisampled texture and framebuffer.
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    GLTexture msaaTexture;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTexture);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, kSampleCount, GL_RGBA8, kSize, kSize,
+                              false);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+                           msaaTexture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Create a fragment shader whose _resolved_ output is different based on whether sample shading
+    // is enabled or not, but which doesn't use gl_SampleID (which implicitly enables sample
+    // shading).
+    //
+    // This is done by non-linearly transforming a varying, resulting in a different color average
+    // based on the location in which the varying is sampled.  The framebuffer is 1x1 and the vertex
+    // shader outputs the following triangle:
+    //
+    //      (-3, 3)
+    //        |\
+    //        |  \
+    //        |    \
+    //        |      \
+    //        |        \
+    //        |          \
+    //        +-----------+ <----- position evaluates as (1, 1)
+    //        |       X   | \
+    //        |  W        |   \
+    //        |     C     |     \
+    //        |        Z  |       \
+    //        |   Y       |         \
+    //        +-----------+-----------\
+    //      (-1, -1)                (3, -1)
+    //
+    // The varying |gradient| is output as position.  This means that:
+    //
+    // - At the center of the pixel (C), the |gradient| value is (0,0)
+    // - At sample positions W, X, Y and Z, the |gradient| has 0.75 and 0.25 (positive or negative)
+    //   in its components.  Most importantly, its length^2 (i.e. gradient.gradient) is:
+    //
+    //       0.25^2 + 0.75^2 = 0.625
+    //
+    // The fragment shader outputs gradient.gradient + (0.1, 0) as color.  Without sample shading,
+    // this outputs (0.1, 0, 0, 1) in the color.  With sample shading, it outputs
+    // (0.725, 0.625, 0, 1) (for all samples).  By using additive blending, we can verify that when
+    // only sample shading state is modified, that sample shading is indeed toggled.
+    //
+    constexpr char kVS[] = R"(#version 300 es
+
+out mediump vec2 gradient;
+
+void main()
+{
+    vec2 position = vec2(-1, -1);
+    if (gl_VertexID == 1)
+        position = vec2(3, -1);
+    else if (gl_VertexID == 2)
+        position = vec2(-1, 3);
+
+    gradient = position;
+    gl_Position = vec4(position, 0, 1);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+
+in mediump vec2 gradient;
+out mediump vec4 color;
+
+uniform mediump vec2 offset;
+
+void main()
+{
+    mediump float len = dot(gradient, gradient);
+    color = vec4(vec2(len, len) + offset, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    GLint offsetLoc = glGetUniformLocation(program, "offset");
+    ASSERT_NE(offsetLoc, -1);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    glViewport(0, 0, kSize, kSize);
+
+    // Issue 2 draw calls, with sample shading enabled then disabled.
+    glUniform2f(offsetLoc, 0.1f, 0);
+
+    glEnable(GL_SAMPLE_SHADING_OES);
+    glMinSampleShadingOES(1.0f);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDisable(GL_SAMPLE_SHADING_OES);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Verify results
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(210, 159, 0, 255), 1);
+
+    // Do the same test in opposite order (sample shading disabled first, then enabled).
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    glUniform2f(offsetLoc, 0, 0.1f);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glEnable(GL_SAMPLE_SHADING_OES);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Verify results
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(159, 210, 0, 255), 1);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST_ES2(StateChangeTest);
@@ -10324,17 +10553,26 @@ ANGLE_INSTANTIATE_TEST_ES2(LineLoopStateChangeTest);
 ANGLE_INSTANTIATE_TEST_ES2(StateChangeRenderTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(StateChangeTestES3);
-ANGLE_INSTANTIATE_TEST_ES3_AND(StateChangeTestES3,
-                               ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8),
-                               ES3_VULKAN()
-                                   .disable(Feature::SupportsExtendedDynamicState)
-                                   .disable(Feature::SupportsExtendedDynamicState2)
-                                   .disable(Feature::SupportsLogicOpDynamicState),
-                               ES3_VULKAN()
-                                   .disable(Feature::SupportsExtendedDynamicState2)
-                                   .disable(Feature::SupportsLogicOpDynamicState),
-                               ES3_VULKAN().enable(Feature::ForceStaticVertexStrideState),
-                               ES3_VULKAN().enable(Feature::ForceStaticPrimitiveRestartState));
+ANGLE_INSTANTIATE_TEST_ES3_AND(
+    StateChangeTestES3,
+    ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8),
+    ES3_VULKAN()
+        .disable(Feature::SupportsExtendedDynamicState)
+        .disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN().disable(Feature::UseVertexInputBindingStrideDynamicState),
+    ES3_VULKAN().disable(Feature::UsePrimitiveRestartEnableDynamicState));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(StateChangeTestES31);
+ANGLE_INSTANTIATE_TEST_ES31_AND(
+    StateChangeTestES31,
+    ES31_VULKAN().disable(Feature::SupportsIndexTypeUint8),
+    ES31_VULKAN()
+        .disable(Feature::SupportsExtendedDynamicState)
+        .disable(Feature::SupportsExtendedDynamicState2),
+    ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES31_VULKAN().disable(Feature::UseVertexInputBindingStrideDynamicState),
+    ES31_VULKAN().disable(Feature::UsePrimitiveRestartEnableDynamicState));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(StateChangeTestWebGL2);
 ANGLE_INSTANTIATE_TEST_COMBINE_1(StateChangeTestWebGL2,

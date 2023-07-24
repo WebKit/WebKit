@@ -107,7 +107,7 @@ public:
 private:
     void setIsPlayingToAutomotiveHeadUnit(bool);
 
-    void providePresentingApplicationPID(int) final;
+    void providePresentingApplicationPID(int, ShouldOverride) final;
     void startMonitoringWirelessRoutesInternal() final;
     void stopMonitoringWirelessRoutesInternal() final;
 
@@ -117,9 +117,9 @@ private:
 #endif
 };
 
-static std::unique_ptr<MediaSessionHelper>& sharedHelperInstance()
+static RefPtr<MediaSessionHelper>& sharedHelperInstance()
 {
-    static NeverDestroyed<std::unique_ptr<MediaSessionHelper>> helper;
+    static NeverDestroyed<RefPtr<MediaSessionHelper>> helper;
     return helper;
 }
 
@@ -135,12 +135,12 @@ MediaSessionHelper& MediaSessionHelper::sharedHelper()
 
 void MediaSessionHelper::resetSharedHelper()
 {
-    sharedHelperInstance() = makeUnique<MediaSessionHelperiOS>();
+    sharedHelperInstance() = adoptRef(*new MediaSessionHelperiOS());
 }
 
-void MediaSessionHelper::setSharedHelper(UniqueRef<MediaSessionHelper>&& helper)
+void MediaSessionHelper::setSharedHelper(Ref<MediaSessionHelper>&& helper)
 {
-    sharedHelperInstance() = helper.moveToUniquePtr();
+    sharedHelperInstance() = WTFMove(helper);
 }
 
 void MediaSessionHelper::addClient(MediaSessionHelperClient& client)
@@ -249,10 +249,10 @@ MediaSessionHelperiOS::~MediaSessionHelperiOS()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void MediaSessionHelperiOS::providePresentingApplicationPID(int pid)
+void MediaSessionHelperiOS::providePresentingApplicationPID(int pid, ShouldOverride shouldOverride)
 {
 #if HAVE(CELESTIAL)
-    if (m_presentedApplicationPID)
+    if (m_presentedApplicationPID && (*m_presentedApplicationPID == pid || shouldOverride == ShouldOverride::No))
         return;
 
     m_presentedApplicationPID = pid;
@@ -266,6 +266,7 @@ void MediaSessionHelperiOS::providePresentingApplicationPID(int pid)
         WTFLogAlways("Failed to set up PID proxying: %s", error.localizedDescription.UTF8String);
 #else
     UNUSED_PARAM(pid);
+    UNUSED_PARAM(shouldOverride);
 #endif
 }
 

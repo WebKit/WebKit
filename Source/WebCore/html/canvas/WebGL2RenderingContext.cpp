@@ -169,15 +169,6 @@ void WebGL2RenderingContext::initializeNewContext()
     m_boundIndexedUniformBuffers.resize(getIntParameter(GraphicsContextGL::MAX_UNIFORM_BUFFER_BINDINGS));
     m_uniformBufferOffsetAlignment = getIntParameter(GraphicsContextGL::UNIFORM_BUFFER_OFFSET_ALIGNMENT);
 
-    m_packRowLength = 0;
-    m_packSkipPixels = 0;
-    m_packSkipRows = 0;
-    m_unpackRowLength = 0;
-    m_unpackImageHeight = 0;
-    m_unpackSkipPixels = 0;
-    m_unpackSkipRows = 0;
-    m_unpackSkipImages = 0;
-
     m_max3DTextureSize = m_context->getInteger(GraphicsContextGL::MAX_3D_TEXTURE_SIZE);
     m_max3DTextureLevel = WebGLTexture::computeLevelCount(m_max3DTextureSize, m_max3DTextureSize);
     m_maxArrayTextureLayers = m_context->getInteger(GraphicsContextGL::MAX_ARRAY_TEXTURE_LAYERS);
@@ -188,38 +179,6 @@ void WebGL2RenderingContext::initializeNewContext()
     ASSERT(m_textureUnits.size() >= 8);
     m_boundSamplers.clear();
     m_boundSamplers.resize(m_textureUnits.size());
-}
-
-void WebGL2RenderingContext::resetUnpackParameters()
-{
-    WebGLRenderingContextBase::resetUnpackParameters();
-
-    if (m_unpackRowLength)
-        m_context->pixelStorei(GraphicsContextGL::UNPACK_ROW_LENGTH, 0);
-    if (m_unpackImageHeight)
-        m_context->pixelStorei(GraphicsContextGL::UNPACK_IMAGE_HEIGHT, 0);
-    if (m_unpackSkipPixels)
-        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_PIXELS, 0);
-    if (m_unpackSkipRows)
-        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_ROWS, 0);
-    if (m_unpackSkipImages)
-        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_IMAGES, 0);
-}
-
-void WebGL2RenderingContext::restoreUnpackParameters()
-{
-    WebGLRenderingContextBase::restoreUnpackParameters();
-
-    if (m_unpackRowLength)
-        m_context->pixelStorei(GraphicsContextGL::UNPACK_ROW_LENGTH, m_unpackRowLength);
-    if (m_unpackImageHeight)
-        m_context->pixelStorei(GraphicsContextGL::UNPACK_IMAGE_HEIGHT, m_unpackImageHeight);
-    if (m_unpackSkipPixels)
-        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_PIXELS, m_unpackSkipPixels);
-    if (m_unpackSkipRows)
-        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_ROWS, m_unpackSkipRows);
-    if (m_unpackSkipImages)
-        m_context->pixelStorei(GraphicsContextGL::UNPACK_SKIP_IMAGES, m_unpackSkipImages);
 }
 
 long long WebGL2RenderingContext::getInt64Parameter(GCGLenum pname)
@@ -409,7 +368,7 @@ bool WebGL2RenderingContext::validateAndCacheBufferBinding(const AbstractLocker&
 
 IntRect WebGL2RenderingContext::getTextureSourceSubRectangle(GCGLsizei width, GCGLsizei height)
 {
-    return IntRect(m_unpackSkipPixels, m_unpackSkipRows, width, height);
+    return IntRect(m_unpackParameters.skipPixels, m_unpackParameters.skipRows, width, height);
 }
 
 RefPtr<WebGLTexture> WebGL2RenderingContext::validateTexImageBinding(TexImageFunctionID functionID, GCGLenum target)
@@ -563,28 +522,28 @@ void WebGL2RenderingContext::pixelStorei(GCGLenum pname, GCGLint param)
     }
     switch (pname) {
     case GraphicsContextGL::PACK_ROW_LENGTH:
-        m_packRowLength = param;
-        break;
+        m_packParameters.rowLength = param;
+        return; // Not sent to context, handled locally.
     case GraphicsContextGL::PACK_SKIP_PIXELS:
-        m_packSkipPixels = param;
-        break;
+        m_packParameters.skipPixels = param;
+        return; // Not sent to context, handled locally.
     case GraphicsContextGL::PACK_SKIP_ROWS:
-        m_packSkipRows = param;
-        break;
+        m_packParameters.skipRows = param;
+        return; // Not sent to context, handled locally.
     case GraphicsContextGL::UNPACK_ROW_LENGTH:
-        m_unpackRowLength = param;
+        m_unpackParameters.rowLength = param;
         break;
     case GraphicsContextGL::UNPACK_IMAGE_HEIGHT:
-        m_unpackImageHeight = param;
+        m_unpackParameters.imageHeight = param;
         break;
     case GraphicsContextGL::UNPACK_SKIP_PIXELS:
-        m_unpackSkipPixels = param;
+        m_unpackParameters.skipPixels = param;
         break;
     case GraphicsContextGL::UNPACK_SKIP_ROWS:
-        m_unpackSkipRows = param;
+        m_unpackParameters.skipRows = param;
         break;
     case GraphicsContextGL::UNPACK_SKIP_IMAGES:
-        m_unpackSkipImages = param;
+        m_unpackParameters.skipImages = param;
         break;
     default:
         WebGLRenderingContextBase::pixelStorei(pname, param);
@@ -1015,7 +974,7 @@ ExceptionOr<void> WebGL2RenderingContext::texImage3D(GCGLenum target, GCGLint le
         return { };
     }
 
-    return WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID::TexImage3D, target, level, internalformat, border, format, type, 0, 0, 0, getTextureSourceSubRectangle(width, height), depth, m_unpackImageHeight, WTFMove(source));
+    return WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID::TexImage3D, target, level, internalformat, border, format, type, 0, 0, 0, getTextureSourceSubRectangle(width, height), depth, m_unpackParameters.imageHeight, WTFMove(source));
 }
 
 void WebGL2RenderingContext::texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& srcData)
@@ -1161,7 +1120,7 @@ ExceptionOr<void> WebGL2RenderingContext::texSubImage3D(GCGLenum target, GCGLint
         return { };
     }
 
-    return WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID::TexSubImage3D, target, level, 0, 0, format, type, xoffset, yoffset, zoffset, getTextureSourceSubRectangle(width, height), depth, m_unpackImageHeight, WTFMove(source));
+    return WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID::TexSubImage3D, target, level, 0, 0, format, type, xoffset, yoffset, zoffset, getTextureSourceSubRectangle(width, height), depth, m_unpackParameters.imageHeight, WTFMove(source));
 }
 
 void WebGL2RenderingContext::copyTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
@@ -2998,30 +2957,6 @@ GCGLuint WebGL2RenderingContext::maxTransformFeedbackSeparateAttribs() const
     return m_maxTransformFeedbackSeparateAttribs;
 }
 
-WebGLRenderingContextBase::PixelStoreParams WebGL2RenderingContext::getPackPixelStoreParams() const
-{
-    PixelStoreParams params;
-    params.alignment = m_packAlignment;
-    params.rowLength = m_packRowLength;
-    params.skipPixels = m_packSkipPixels;
-    params.skipRows = m_packSkipRows;
-    return params;
-}
-
-WebGLRenderingContextBase::PixelStoreParams WebGL2RenderingContext::getUnpackPixelStoreParams(TexImageDimension dimension) const
-{
-    PixelStoreParams params;
-    params.alignment = m_unpackAlignment;
-    params.rowLength = m_unpackRowLength;
-    params.skipPixels = m_unpackSkipPixels;
-    params.skipRows = m_unpackSkipRows;
-    if (dimension == TexImageDimension::Tex3D) {
-        params.imageHeight = m_unpackImageHeight;
-        params.skipImages = m_unpackSkipImages;
-    }
-    return params;
-}
-
 bool WebGL2RenderingContext::checkAndTranslateAttachments(const char* functionName, GCGLenum target, Vector<GCGLenum>& attachments)
 {
     if (!validateFramebufferTarget(target)) {
@@ -3158,11 +3093,11 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::MIN_PROGRAM_TEXEL_OFFSET:
         return getIntParameter(pname);
     case GraphicsContextGL::PACK_ROW_LENGTH:
-        return getIntParameter(pname);
+        return m_packParameters.rowLength;
     case GraphicsContextGL::PACK_SKIP_PIXELS:
-        return getIntParameter(pname);
+        return m_packParameters.skipPixels;
     case GraphicsContextGL::PACK_SKIP_ROWS:
-        return getIntParameter(pname);
+        return m_packParameters.skipRows;
     case GraphicsContextGL::PIXEL_PACK_BUFFER_BINDING:
         return m_boundPixelPackBuffer;
     case GraphicsContextGL::PIXEL_UNPACK_BUFFER_BINDING:
@@ -3196,15 +3131,15 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::UNIFORM_BUFFER_OFFSET_ALIGNMENT:
         return getIntParameter(pname);
     case GraphicsContextGL::UNPACK_IMAGE_HEIGHT:
-        return getIntParameter(pname);
+        return m_unpackParameters.imageHeight;
     case GraphicsContextGL::UNPACK_ROW_LENGTH:
-        return getIntParameter(pname);
+        return m_unpackParameters.rowLength;
     case GraphicsContextGL::UNPACK_SKIP_IMAGES:
-        return getIntParameter(pname);
+        return m_unpackParameters.skipImages;
     case GraphicsContextGL::UNPACK_SKIP_PIXELS:
-        return getIntParameter(pname);
+        return m_unpackParameters.skipPixels;
     case GraphicsContextGL::UNPACK_SKIP_ROWS:
-        return getIntParameter(pname);
+        return m_unpackParameters.skipRows;
     case GraphicsContextGL::VERTEX_ARRAY_BINDING:
         if (m_boundVertexArrayObject->isDefaultObject())
             return nullptr;
@@ -3446,14 +3381,30 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "invalid type UNSIGNED_INT_24_8");
         return;
     }
+    if (!validateImageFormatAndType("readPixels", format, type))
+        return;
 
+    if (!validateReadPixelsDimensions(width, height))
+        return;
+
+    IntRect rect { x, y, width, height };
+    auto packSizes = GraphicsContextGL::computeImageSize(format, type, rect.size(), 1, m_packParameters);
+    if (!packSizes) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "readPixels", "invalid texture dimensions");
+        return;
+    }
+    auto offsetAndSkip = checkedSum<GCGLintptr>(offset, packSizes->initialSkipBytes);
+    if (offsetAndSkip.hasOverflowed()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "readPixels", "invalid pack parameters");
+        return;
+    }
     // Due to WebGL's same-origin restrictions, it is not possible to
     // taint the origin using the WebGL API.
     ASSERT(canvasBase().originClean());
 
     clearIfComposited(CallerTypeOther);
 
-    m_context->readnPixels(x, y, width, height, format, type, offset);
+    m_context->readPixelsBufferObject(rect, format, type, offsetAndSkip.value(), m_packParameters.alignment, m_packParameters.rowLength);
 }
 
 void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& dstData, GCGLuint dstOffset)

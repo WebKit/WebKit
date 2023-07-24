@@ -6,25 +6,15 @@
 description("Make sure that the document doesn't leak if it contains a modified text input field.");
 jsTestIsAsync = true;
 
-onload = () => {
-    w = open("resources/document-leak-altered-text-field-popup.html");
-    w.onload = () => {
-        // The navigation needs to happen outside the load event in order to create a history item and put the
-        // page in the back/forward cache.
-        setTimeout(async () => {
-            documentIdentifier = internals.documentIdentifier(w.document);
-            // Type in the input field.
-            w.document.getElementById("textField").focus();
-            w.document.execCommand("InsertText", false, "test");
-            shouldBeEqualToString("w.document.getElementById('textField').value", "test");
+let documentIdentifiers = [];
+const popupCount = 30;
 
-            // Submit the form, which will navigate the page.
-            w.document.getElementById("submitButton").click();
-
-            w = null;
-            handle = setInterval(() => {
-                internals.clearBackForwardCache();
-                gc();
+function checkForLeaks()
+{
+     handle = setInterval(() => {
+         internals.clearBackForwardCache();
+         gc();
+         for (let documentIdentifier of documentIdentifiers) {
                 if (!internals.isDocumentAlive(documentIdentifier)) {
                     clearInterval(handle);
                     clearTimeout(timeoutHandle);
@@ -32,14 +22,36 @@ onload = () => {
                     finishJSTest();
                     return;
                 }
-            }, 50);
-            timeoutHandle = setTimeout(() => {
-                testFailed("The document leaked");
-                clearInterval(handle);
-                finishJSTest();
-            }, 10000);
-        }, 0);
-    };
+        }
+    }, 50);
+    timeoutHandle = setTimeout(() => {
+        testFailed("The document leaked");
+        clearInterval(handle);
+        finishJSTest();
+    }, 10000);
+}
+
+onload = () => {
+    for (let i = 0; i < popupCount; i++) {
+        let w = open("resources/document-leak-altered-text-field-popup.html");
+        w.onload = () => {
+            // The navigation needs to happen outside the load event in order to create a history item and put the
+            // page in the back/forward cache.
+            setTimeout(async () => {
+                documentIdentifiers.push(internals.documentIdentifier(w.document));
+
+                // Type in the input field.
+                w.document.getElementById("textField").focus();
+                w.document.execCommand("InsertText", false, "test");
+
+                // Submit the form, which will navigate the page.
+                w.document.getElementById("submitButton").click();
+
+                if (documentIdentifiers.length == popupCount)
+                    checkForLeaks();
+            }, 0);
+        };
+    }
 };
 </script>
 </body>

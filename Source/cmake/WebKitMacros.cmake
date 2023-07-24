@@ -114,51 +114,47 @@ macro(WEBKIT_EXECUTABLE_DECLARE _target)
 endmacro()
 
 # Private macro for setting the properties of a target.
-# Rather than just having _target like WEBKIT_FRAMEWORK and WEBKIT_EXECUTABLE the parameters are
-# split into _target_logical_name, which is used for variable expansion, and _target_cmake_name.
-# This is done to support WEBKIT_WRAP_EXECUTABLE which uses the _target_logical_name variables
-# but requires a different _target_cmake_name.
-macro(_WEBKIT_TARGET _target_logical_name _target_cmake_name)
-    target_sources(${_target_cmake_name} PRIVATE
-        ${${_target_logical_name}_HEADERS}
-        ${${_target_logical_name}_SOURCES}
+macro(_WEBKIT_TARGET _target)
+    target_sources(${_target} PRIVATE
+        ${${_target}_HEADERS}
+        ${${_target}_SOURCES}
     )
 
     if (PLAYSTATION AND CMAKE_GENERATOR MATCHES "Visual Studio")
-        set(${_target_logical_name}_SOURCES_C ${${_target_logical_name}_SOURCES})
-        list(FILTER ${_target_logical_name}_SOURCES_C INCLUDE REGEX "\\.c$")
+        set(${_target}_SOURCES_C ${${_target}_SOURCES})
+        list(FILTER ${_target}_SOURCES_C INCLUDE REGEX "\\.c$")
         set_source_files_properties(
-            ${${_target_logical_name}_SOURCES_C}
+            ${${_target}_SOURCES_C}
             PROPERTIES LANGUAGE C
             COMPILE_OPTIONS --std=gnu17
         )
     endif ()
 
-    target_include_directories(${_target_cmake_name} PUBLIC "$<BUILD_INTERFACE:${${_target_logical_name}_INCLUDE_DIRECTORIES}>")
-    target_include_directories(${_target_cmake_name} SYSTEM PRIVATE "$<BUILD_INTERFACE:${${_target_logical_name}_SYSTEM_INCLUDE_DIRECTORIES}>")
-    target_include_directories(${_target_cmake_name} PRIVATE "$<BUILD_INTERFACE:${${_target_logical_name}_PRIVATE_INCLUDE_DIRECTORIES}>")
+    target_include_directories(${_target} PUBLIC "$<BUILD_INTERFACE:${${_target}_INCLUDE_DIRECTORIES}>")
+    target_include_directories(${_target} SYSTEM PRIVATE "$<BUILD_INTERFACE:${${_target}_SYSTEM_INCLUDE_DIRECTORIES}>")
+    target_include_directories(${_target} PRIVATE "$<BUILD_INTERFACE:${${_target}_PRIVATE_INCLUDE_DIRECTORIES}>")
 
     if (DEVELOPER_MODE_CXX_FLAGS)
-        target_compile_options(${_target_cmake_name} PRIVATE ${DEVELOPER_MODE_CXX_FLAGS})
+        target_compile_options(${_target} PRIVATE ${DEVELOPER_MODE_CXX_FLAGS})
     endif ()
 
-    target_compile_definitions(${_target_cmake_name} PRIVATE "BUILDING_${_target_logical_name}")
-    if (${_target_logical_name}_DEFINITIONS)
-        target_compile_definitions(${_target_cmake_name} PUBLIC ${${_target_logical_name}_DEFINITIONS})
+    target_compile_definitions(${_target} PRIVATE "BUILDING_${_target}")
+    if (${_target}_DEFINITIONS)
+        target_compile_definitions(${_target} PUBLIC ${${_target}_DEFINITIONS})
     endif ()
-    if (${_target_logical_name}_PRIVATE_DEFINITIONS)
-        target_compile_definitions(${_target_cmake_name} PRIVATE ${${_target_logical_name}_PRIVATE_DEFINITIONS})
-    endif ()
-
-    if (${_target_logical_name}_LIBRARIES)
-        target_link_libraries(${_target_cmake_name} PUBLIC ${${_target_logical_name}_LIBRARIES})
-    endif ()
-    if (${_target_logical_name}_PRIVATE_LIBRARIES)
-        target_link_libraries(${_target_cmake_name} PRIVATE ${${_target_logical_name}_PRIVATE_LIBRARIES})
+    if (${_target}_PRIVATE_DEFINITIONS)
+        target_compile_definitions(${_target} PRIVATE ${${_target}_PRIVATE_DEFINITIONS})
     endif ()
 
-    if (${_target_logical_name}_DEPENDENCIES)
-        add_dependencies(${_target_cmake_name} ${${_target_logical_name}_DEPENDENCIES})
+    if (${_target}_LIBRARIES)
+        target_link_libraries(${_target} PUBLIC ${${_target}_LIBRARIES})
+    endif ()
+    if (${_target}_PRIVATE_LIBRARIES)
+        target_link_libraries(${_target} PRIVATE ${${_target}_PRIVATE_LIBRARIES})
+    endif ()
+
+    if (${_target}_DEPENDENCIES)
+        add_dependencies(${_target} ${${_target}_DEPENDENCIES})
     endif ()
 endmacro()
 
@@ -323,7 +319,7 @@ endmacro()
 
 macro(WEBKIT_FRAMEWORK _target)
     _WEBKIT_FRAMEWORK_LINK_FRAMEWORK(${_target})
-    _WEBKIT_TARGET(${_target} ${_target})
+    _WEBKIT_TARGET(${_target})
     _WEBKIT_TARGET_ANALYZE(${_target})
 
     if (${_target}_OUTPUT_NAME)
@@ -349,7 +345,7 @@ endmacro()
 
 macro(WEBKIT_LIBRARY _target)
     _WEBKIT_LIBRARY_LINK_FRAMEWORK(${_target})
-    _WEBKIT_TARGET(${_target} ${_target})
+    _WEBKIT_TARGET(${_target})
     _WEBKIT_TARGET_ANALYZE(${_target})
 
     if (${_target}_OUTPUT_NAME)
@@ -361,7 +357,7 @@ endmacro()
 
 macro(WEBKIT_EXECUTABLE _target)
     _WEBKIT_TARGET_LINK_FRAMEWORK(${_target})
-    _WEBKIT_TARGET(${_target} ${_target})
+    _WEBKIT_TARGET(${_target})
     _WEBKIT_TARGET_ANALYZE(${_target})
 
     if (${_target}_OUTPUT_NAME)
@@ -377,39 +373,6 @@ macro(WEBKIT_EXECUTABLE _target)
         endif ()
         target_link_options(${_target} PRIVATE "/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='${_processor_architecture}' publicKeyToken='6595b64144ccf1df' language='*'")
     endif ()
-endmacro()
-
-macro(WEBKIT_WRAP_EXECUTABLE _target)
-    set(oneValueArgs TARGET_NAME)
-    set(multiValueArgs SOURCES LIBRARIES)
-    cmake_parse_arguments(opt "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-    if (opt_TARGET_NAME)
-        set(_wrapped_target_name ${opt_TARGET_NAME})
-    else ()
-        set(_wrapped_target_name ${_target}Lib)
-    endif ()
-
-    add_library(${_wrapped_target_name} SHARED "${CMAKE_BINARY_DIR}/cmakeconfig.h")
-
-    _WEBKIT_TARGET_LINK_FRAMEWORK(${_target})
-    _WEBKIT_TARGET(${_target} ${_wrapped_target_name})
-    _WEBKIT_TARGET_ANALYZE(${_wrapped_target_name})
-
-    # Unset values
-    unset(${_target}_HEADERS)
-    unset(${_target}_DEFINITIONS)
-    unset(${_target}_PRIVATE_DEFINITIONS)
-    unset(${_target}_INCLUDE_DIRECTORIES)
-    unset(${_target}_SYSTEM_INCLUDE_DIRECTORIES)
-    unset(${_target}_PRIVATE_INCLUDE_DIRECTORIES)
-    unset(${_target}_PRIVATE_LIBRARIES)
-    unset(${_target}_FRAMEWORKS)
-
-    # Reset the sources
-    set(${_target}_SOURCES ${opt_SOURCES})
-    set(${_target}_LIBRARIES ${opt_LIBRARIES})
-    set(${_target}_DEPENDENCIES ${_wrapped_target_name})
 endmacro()
 
 function(WEBKIT_COPY_FILES target_name)

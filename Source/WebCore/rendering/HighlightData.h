@@ -34,8 +34,9 @@
 
 namespace WebCore {
 
-struct HighlightRangeData;
 struct TextBoxSelectableRange;
+
+class HighlightRangeData;
 class RenderMultiColumnSpannerPlaceholder;
 class RenderText;
 

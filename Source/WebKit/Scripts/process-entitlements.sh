@@ -124,6 +124,7 @@ function mac_process_gpu_entitlements()
         fi
 
         plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
+        plistbuddy Add :com.apple.private.pac.exception bool YES
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitGPUSandbox bool YES
         plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
@@ -168,6 +169,7 @@ function mac_process_network_entitlements()
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications array
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications:0 string LSActivePageUserVisibleOriginsKey
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications:1 string LSDisplayName
+        plistbuddy Add :com.apple.private.pac.exception bool YES
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitNetworkingSandbox bool YES
         plistbuddy Add :com.apple.symptom_analytics.configure bool YES
@@ -179,18 +181,15 @@ function mac_process_network_entitlements()
 function webcontent_sandbox_entitlements()
 {
     plistbuddy Add :com.apple.private.security.mutable-state-flags array
-    plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string EnableMachBootstrap
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string AppCacheDisabled
     plistbuddy Add :com.apple.private.security.mutable-state-flags:1 string EnableExperimentalSandbox
     plistbuddy Add :com.apple.private.security.mutable-state-flags:2 string BlockIOKitInWebContentSandbox
-    plistbuddy Add :com.apple.private.security.mutable-state-flags:3 string LockdownModeEnabled
-    plistbuddy Add :com.apple.private.security.mutable-state-flags:4 string WebContentProcessLaunched
-    plistbuddy Add :com.apple.private.security.mutable-state-flags:5 string DisableLogging
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:3 string WebContentProcessLaunched
     plistbuddy Add :com.apple.private.security.enable-state-flags array
-    plistbuddy Add :com.apple.private.security.enable-state-flags:0 string EnableExperimentalSandbox
-    plistbuddy Add :com.apple.private.security.enable-state-flags:1 string BlockIOKitInWebContentSandbox
-    plistbuddy Add :com.apple.private.security.enable-state-flags:2 string LockdownModeEnabled
+    plistbuddy Add :com.apple.private.security.enable-state-flags:0 string AppCacheDisabled
+    plistbuddy Add :com.apple.private.security.enable-state-flags:1 string EnableExperimentalSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:2 string BlockIOKitInWebContentSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:3 string WebContentProcessLaunched
-    plistbuddy Add :com.apple.private.security.enable-state-flags:4 string DisableLogging
 }
 
 function mac_process_webcontent_shared_entitlements()
@@ -317,6 +316,7 @@ function maccatalyst_process_gpu_entitlements()
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
     plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
     plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
+    plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.QuartzCore.webkit-limited-types bool YES
 
@@ -334,6 +334,7 @@ function maccatalyst_process_network_entitlements()
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.security.network.client bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+    plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
 
     plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token array
@@ -393,6 +394,8 @@ function ios_family_process_webcontent_entitlements()
 
 function ios_family_process_webcontent_captiveportal_entitlements()
 {
+    plistbuddy Add :com.apple.private.webkit.lockdown-mode bool YES
+
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
 
     plistbuddy Add :com.apple.imageio.allowabletypes array
@@ -422,6 +425,7 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
+    plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.security.message-filter bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
@@ -478,8 +482,9 @@ function ios_family_process_network_entitlements()
     plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token:1 string kTCCServiceUserTracking
 
     plistbuddy Add :com.apple.private.appstored array
-    plistbuddy Add :com.apple.private.appstored:0 string InstallAttribution
+    plistbuddy Add :com.apple.private.appstored:0 string InstallWebAttribution
 
+    plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.Networking
     plistbuddy Add :com.apple.symptom_analytics.configure bool YES
 

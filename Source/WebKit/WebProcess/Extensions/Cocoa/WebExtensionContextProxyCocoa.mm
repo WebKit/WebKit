@@ -33,6 +33,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "CocoaHelpers.h"
+#include "WKNSData.h"
 #include "WebExtensionAPINamespace.h"
 #include "WebExtensionAPIPermissions.h"
 #include "WebExtensionAPIWebNavigation.h"
@@ -139,6 +140,11 @@ void WebExtensionContextProxy::dispatchWebNavigationOnErrorOccurredEvent(WebPage
         auto& webNavigationObject = namespaceObject.webNavigation();
         webNavigationObject.onErrorOccurred().invokeListenersWithArgument(navigationDetails, frameURL);
     });
+}
+
+RetainPtr<NSDictionary> WebExtensionContextProxy::parseManifest(API::Data& json)
+{
+    return dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:wrapper(json) options:0 error:nullptr]);
 }
 
 } // namespace WebKit

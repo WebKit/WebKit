@@ -439,10 +439,10 @@ layer at (0,0) size 785x2595
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,456) size 769x24
         RenderBlock {H3} at (0,0) size 769x23
-          RenderText {#text} at (0,0) size 117x22
-            text run at (0,0) width 18: "In"
-            text run at (38,0) width 15: " a"
-            text run at (73,0) width 44: " span"
+          RenderText {#text} at (0,0) size 112x22
+            text run at (0,0) width 17: "In"
+            text run at (37,0) width 14: " a"
+            text run at (71,0) width 41: " span"
       RenderBlock (anonymous) at (0,497) size 769x301
         RenderInline {SPAN} at (0,0) size 752x259
           RenderText {#text} at (0,0) size 176x19
@@ -951,8 +951,8 @@ layer at (0,0) size 785x2595
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1306) size 769x24
         RenderBlock {H3} at (0,0) size 769x23
-          RenderText {#text} at (0,0) size 122x22
-            text run at (0,0) width 122: "In a span"
+          RenderText {#text} at (0,0) size 117x22
+            text run at (0,0) width 117: "In a span"
       RenderBlock (anonymous) at (0,1348) size 769x301
         RenderInline {SPAN} at (0,0) size 727x259
           RenderText {#text} at (0,0) size 218x19
@@ -1573,10 +1573,10 @@ layer at (0,0) size 785x2595
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,2157) size 769x24
         RenderBlock {H3} at (0,0) size 769x23
-          RenderText {#text} at (0,0) size 162x22
-            text run at (0,0) width 28: "In"
-            text run at (48,0) width 25: " a"
-            text run at (93,0) width 69: " span"
+          RenderText {#text} at (0,0) size 157x22
+            text run at (0,0) width 27: "In"
+            text run at (47,0) width 24: " a"
+            text run at (91,0) width 66: " span"
       RenderBlock (anonymous) at (0,2199) size 769x381
         RenderInline {SPAN} at (0,0) size 760x379
           RenderText {#text} at (0,0) size 423x19

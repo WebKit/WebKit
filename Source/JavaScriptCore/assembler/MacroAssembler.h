@@ -1667,6 +1667,14 @@ public:
         move(TrustedImm32(1), dest);
         falseCase.link(this);
     }
+
+    void compareDoubleWithZero(DoubleCondition cond, FPRegisterID left, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
 #endif
 
     void lea32(Address address, RegisterID dest)

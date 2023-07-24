@@ -10,4 +10,4 @@ features: [Temporal]
 const arg = "iSo8601";
 
 const result = new Temporal.PlainYearMonth(2000, 5, arg, 1);
-assert.sameValue(result.calendar.id, "iso8601", "Calendar is case-insensitive");
+assert.sameValue(result.calendarId, "iso8601", "Calendar is case-insensitive");

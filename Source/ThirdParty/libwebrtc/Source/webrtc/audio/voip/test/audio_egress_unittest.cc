@@ -141,7 +141,7 @@ TEST_F(AudioEgressTest, ProcessAudioWithMute) {
     fake_clock_.AdvanceTimeMilliseconds(10);
   }
 
-  event.Wait(/*ms=*/1000);
+  event.Wait(TimeDelta::Seconds(1));
   EXPECT_EQ(rtp_count, kExpected);
 
   // we expect on pcmu payload to result in 255 for silenced payload
@@ -177,7 +177,7 @@ TEST_F(AudioEgressTest, ProcessAudioWithSineWave) {
     fake_clock_.AdvanceTimeMilliseconds(10);
   }
 
-  event.Wait(/*ms=*/1000);
+  event.Wait(TimeDelta::Seconds(1));
   EXPECT_EQ(rtp_count, kExpected);
 
   // we expect on pcmu to result in < 255 for payload with sine wave
@@ -211,7 +211,7 @@ TEST_F(AudioEgressTest, SkipAudioEncodingAfterStopSend) {
     fake_clock_.AdvanceTimeMilliseconds(10);
   }
 
-  event.Wait(/*ms=*/1000);
+  event.Wait(TimeDelta::Seconds(1));
   EXPECT_EQ(rtp_count, kExpected);
 
   // Now stop send and yet feed more data.
@@ -287,7 +287,7 @@ TEST_F(AudioEgressTest, SendDTMF) {
     fake_clock_.AdvanceTimeMilliseconds(10);
   }
 
-  event.Wait(/*ms=*/1000);
+  event.Wait(TimeDelta::Seconds(1));
   EXPECT_EQ(dtmf_count, kExpected);
 }
 
@@ -312,7 +312,7 @@ TEST_F(AudioEgressTest, TestAudioInputLevelAndEnergyDuration) {
     fake_clock_.AdvanceTimeMilliseconds(10);
   }
 
-  event.Wait(/*give_up_after_ms=*/1000);
+  event.Wait(/*give_up_after=*/TimeDelta::Seconds(1));
   EXPECT_EQ(rtp_count, kExpected);
 
   constexpr double kExpectedEnergy = 0.00016809565587789564;

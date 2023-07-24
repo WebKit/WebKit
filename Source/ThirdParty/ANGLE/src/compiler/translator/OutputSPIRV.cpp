@@ -179,7 +179,10 @@ bool IsAccessChainRValue(const AccessChain &accessChain)
 class OutputSPIRVTraverser : public TIntermTraverser
 {
   public:
-    OutputSPIRVTraverser(TCompiler *compiler, const ShCompileOptions &compileOptions);
+    OutputSPIRVTraverser(TCompiler *compiler,
+                         const ShCompileOptions &compileOptions,
+                         const angle::HashMap<int, uint32_t> &uniqueToSpirvIdMap,
+                         uint32_t firstUnusedSpirvId);
     ~OutputSPIRVTraverser() override;
 
     spirv::Blob getSpirv();
@@ -361,6 +364,9 @@ class OutputSPIRVTraverser : public TIntermTraverser
                                                spirv::IdRef structValue,
                                                uint32_t fieldIndex);
 
+    void markVertexOutputOnShaderEnd();
+    void markVertexOutputOnEmitVertex();
+
     TCompiler *mCompiler;
     ANGLE_MAYBE_UNUSED_PRIVATE_FIELD const ShCompileOptions &mCompileOptions;
 
@@ -387,6 +393,9 @@ class OutputSPIRVTraverser : public TIntermTraverser
 
     // Whether the current symbol being visited is being declared.
     bool mIsSymbolBeingDeclared = false;
+
+    // What is the id of the current function being generated.
+    spirv::IdRef mCurrentFunctionId;
 };
 
 spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
@@ -496,11 +505,13 @@ spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
 }
 
 OutputSPIRVTraverser::OutputSPIRVTraverser(TCompiler *compiler,
-                                           const ShCompileOptions &compileOptions)
+                                           const ShCompileOptions &compileOptions,
+                                           const angle::HashMap<int, uint32_t> &uniqueToSpirvIdMap,
+                                           uint32_t firstUnusedSpirvId)
     : TIntermTraverser(true, true, true, &compiler->getSymbolTable()),
       mCompiler(compiler),
       mCompileOptions(compileOptions),
-      mBuilder(compiler, compileOptions, compiler->getHashFunction(), compiler->getNameMap())
+      mBuilder(compiler, compileOptions, uniqueToSpirvIdMap, firstUnusedSpirvId)
 {}
 
 OutputSPIRVTraverser::~OutputSPIRVTraverser()
@@ -520,8 +531,9 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
     }
 
     // This must be an implicitly defined variable, define it now.
-    const char *name               = nullptr;
-    spv::BuiltIn builtInDecoration = spv::BuiltInMax;
+    const char *name                = nullptr;
+    spv::BuiltIn builtInDecoration  = spv::BuiltInMax;
+    const TSymbolUniqueId *uniqueId = nullptr;
 
     switch (type.getQualifier())
     {
@@ -579,6 +591,7 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
             name              = "gl_SampleID";
             builtInDecoration = spv::BuiltInSampleId;
             mBuilder.addCapability(spv::CapabilitySampleRateShading);
+            uniqueId = &symbol->uniqueId();
             break;
         case EvqSamplePosition:
             name              = "gl_SamplePosition";
@@ -686,7 +699,7 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
 
     const spirv::IdRef typeId = mBuilder.getTypeData(type, {}).id;
     const spirv::IdRef varId  = mBuilder.declareVariable(
-        typeId, *storageClass, mBuilder.getDecorations(type), nullptr, name);
+        typeId, *storageClass, mBuilder.getDecorations(type), nullptr, name, uniqueId);
 
     mBuilder.addEntryPointInterfaceVariableId(varId);
     spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationBuiltIn,
@@ -966,7 +979,7 @@ spirv::IdRef OutputSPIRVTraverser::accessChainLoad(NodeData *data,
                 // Create a temp variable to hold the rvalue so an access chain can be made on it.
                 const spirv::IdRef tempVar =
                     mBuilder.declareVariable(accessChain.baseTypeId, spv::StorageClassFunction,
-                                             decorations, nullptr, "indexable");
+                                             decorations, nullptr, "indexable", nullptr);
 
                 // Write the rvalue into the temp variable
                 spirv::WriteStore(mBuilder.getSpirvCurrentFunctionBlock(), tempVar, loadResult,
@@ -1207,9 +1220,8 @@ void OutputSPIRVTraverser::declareSpecConst(TIntermDeclaration *decl)
     // All spec consts in ANGLE are initialized to 0.
     ASSERT(initializer->isZero(0));
 
-    const spirv::IdRef specConstId =
-        mBuilder.declareSpecConst(type.getBasicType(), type.getLayoutQualifier().location,
-                                  mBuilder.hashName(variable).data());
+    const spirv::IdRef specConstId = mBuilder.declareSpecConst(
+        type.getBasicType(), type.getLayoutQualifier().location, mBuilder.getName(variable).data());
 
     // Remember the id of the variable for future look up.
     ASSERT(mSymbolIdMap.count(variable) == 0);
@@ -2112,9 +2124,9 @@ spirv::IdRef OutputSPIRVTraverser::createFunctionCall(TIntermAggregate *node,
 
             // Need to create a temp variable and pass that.
             tempVarTypeIds[paramIndex] = mBuilder.getTypeData(paramType, {}).id;
-            tempVarIds[paramIndex] =
-                mBuilder.declareVariable(tempVarTypeIds[paramIndex], spv::StorageClassFunction,
-                                         mBuilder.getDecorations(argType), nullptr, "param");
+            tempVarIds[paramIndex]     = mBuilder.declareVariable(
+                tempVarTypeIds[paramIndex], spv::StorageClassFunction,
+                mBuilder.getDecorations(argType), nullptr, "param", nullptr);
 
             // If it's an in or inout parameter, the temp variable needs to be initialized with the
             // value of the parameter first.
@@ -5566,14 +5578,14 @@ bool OutputSPIRVTraverser::visitFunctionDefinition(Visit visit, TIntermFunctionD
         return true;
     }
 
+    const TFunction *function = node->getFunction();
+
+    ASSERT(mFunctionIdMap.count(function) > 0);
+    const FunctionIds &ids = mFunctionIdMap[function];
+
     // After the prototype is visited, generate the initial code for the function.
     if (visit == InVisit)
     {
-        const TFunction *function = node->getFunction();
-
-        ASSERT(mFunctionIdMap.count(function) > 0);
-        const FunctionIds &ids = mFunctionIdMap[function];
-
         // Declare the function.
         spirv::WriteFunction(mBuilder.getSpirvFunctions(), ids.returnTypeId, ids.functionId,
                              spv::FunctionControlMaskNone, ids.functionTypeId);
@@ -5591,11 +5603,21 @@ bool OutputSPIRVTraverser::visitFunctionDefinition(Visit visit, TIntermFunctionD
             ASSERT(mSymbolIdMap.count(paramVariable) == 0);
             mSymbolIdMap[paramVariable] = paramId;
 
-            spirv::WriteName(mBuilder.getSpirvDebug(), paramId,
-                             mBuilder.hashName(paramVariable).data());
+            mBuilder.writeDebugName(paramId, mBuilder.getName(paramVariable).data());
         }
 
         mBuilder.startNewFunction(ids.functionId, function);
+
+        // For main(), add a non-semantic instruction at the beginning for any initialization code
+        // the transformer may want to add.
+        if (ids.functionId == vk::spirv::kIdEntryPoint &&
+            mCompiler->getShaderType() != GL_COMPUTE_SHADER)
+        {
+            ASSERT(function->isMain());
+            mBuilder.writeNonSemanticInstruction(vk::spirv::kNonSemanticEnter);
+        }
+
+        mCurrentFunctionId = ids.functionId;
 
         return true;
     }
@@ -5603,16 +5625,29 @@ bool OutputSPIRVTraverser::visitFunctionDefinition(Visit visit, TIntermFunctionD
     // If no explicit return was specified, add one automatically here.
     if (!mBuilder.isCurrentFunctionBlockTerminated())
     {
-        if (node->getFunction()->getReturnType().getBasicType() == EbtVoid)
+        if (function->getReturnType().getBasicType() == EbtVoid)
         {
+            switch (ids.functionId)
+            {
+                case vk::spirv::kIdEntryPoint:
+                    // For main(), add a non-semantic instruction at the end of the shader.
+                    markVertexOutputOnShaderEnd();
+                    break;
+                case vk::spirv::kIdXfbEmulationCaptureFunction:
+                    // For the transform feedback emulation capture function, add a non-semantic
+                    // instruction before return for the transformer to fill in as necessary.
+                    mBuilder.writeNonSemanticInstruction(
+                        vk::spirv::kNonSemanticTransformFeedbackEmulation);
+                    break;
+            }
+
             spirv::WriteReturn(mBuilder.getSpirvCurrentFunctionBlock());
         }
         else
         {
             // GLSL allows functions expecting a return value to miss a return.  In that case,
             // return a null constant.
-            const TFunction *function = node->getFunction();
-            const TType &returnType   = function->getReturnType();
+            const TType &returnType = function->getReturnType();
             spirv::IdRef nullConstant;
             if (returnType.isScalar() && !returnType.isArray())
             {
@@ -5633,7 +5668,7 @@ bool OutputSPIRVTraverser::visitFunctionDefinition(Visit visit, TIntermFunctionD
             }
             if (!nullConstant.valid())
             {
-                nullConstant = mBuilder.getNullConstant(mFunctionIdMap[function].returnTypeId);
+                nullConstant = mBuilder.getNullConstant(ids.returnTypeId);
             }
             spirv::WriteReturnValue(mBuilder.getSpirvCurrentFunctionBlock(), nullConstant);
         }
@@ -5644,6 +5679,8 @@ bool OutputSPIRVTraverser::visitFunctionDefinition(Visit visit, TIntermFunctionD
 
     // End the function
     spirv::WriteFunctionEnd(mBuilder.getSpirvFunctions());
+
+    mCurrentFunctionId = {};
 
     return true;
 }
@@ -5714,12 +5751,16 @@ void OutputSPIRVTraverser::visitFunctionPrototype(TIntermFunctionPrototype *node
     //
     // Apply decorations to the return value of the function by applying them to the OpFunction
     // instruction.
-    ids.functionId = mBuilder.getNewId(mBuilder.getDecorations(function->getReturnType()));
-
-    // Remember the ID of main() for the sake of OpEntryPoint.
+    //
+    // Note that some functions have predefined ids.
     if (function->isMain())
     {
-        mBuilder.setEntryPointId(ids.functionId);
+        ids.functionId = spirv::IdRef(vk::spirv::kIdEntryPoint);
+    }
+    else
+    {
+        ids.functionId = mBuilder.getReservedOrNewId(
+            function->uniqueId(), mBuilder.getDecorations(function->getReturnType()));
     }
 
     // Remember the id of the function for future look up.
@@ -5817,6 +5858,11 @@ bool OutputSPIRVTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
             break;
 
         case EOpEmitVertex:
+            if (mCurrentFunctionId == vk::spirv::kIdEntryPoint)
+            {
+                // Add a non-semantic instruction before EmitVertex.
+                markVertexOutputOnEmitVertex();
+            }
             spirv::WriteEmitVertex(mBuilder.getSpirvCurrentFunctionBlock());
             break;
         case EOpEndPrimitive:
@@ -6034,7 +6080,7 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
 
     const spirv::IdRef variableId = mBuilder.declareVariable(
         typeId, storageClass, decorations, initializeWithDeclaration ? &initializerId : nullptr,
-        mBuilder.hashName(variable).data());
+        mBuilder.getName(variable).data(), &variable->uniqueId());
 
     if (!initializeWithDeclaration && initializerId.valid())
     {
@@ -6098,11 +6144,22 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
         spirv::WriteDecorate(mBuilder.getSpirvDecorations(), nonArrayTypeId, decoration, {});
 
         if (type.getQualifier() == EvqBuffer && !memoryQualifier.restrictQualifier &&
-            mCompileOptions.aliasedSSBOUnlessRestrict)
+            mCompileOptions.aliasedUnlessRestrict)
         {
-            // Temporary workaround for issuetracker.google.com/266235549
-            // If GLSL does not specify the SSBO has restrict memory qualifier, assume the memory
-            // qualifier is aliased
+            // If GLSL does not specify the SSBO has restrict memory qualifier, assume the
+            // memory qualifier is aliased
+            // issuetracker.google.com/266235549
+            spirv::WriteDecorate(mBuilder.getSpirvDecorations(), variableId, spv::DecorationAliased,
+                                 {});
+        }
+    }
+    else if (IsImage(type.getBasicType()) && type.getQualifier() == EvqUniform)
+    {
+        // If GLSL does not specify the image has restrict memory qualifier, assume the memory
+        // qualifier is aliased
+        // issuetracker.google.com/266235549
+        if (!memoryQualifier.restrictQualifier && mCompileOptions.aliasedUnlessRestrict)
+        {
             spirv::WriteDecorate(mBuilder.getSpirvDecorations(), variableId, spv::DecorationAliased,
                                  {});
         }
@@ -6399,6 +6456,11 @@ bool OutputSPIRVTraverser::visitBranch(Visit visit, TIntermBranch *node)
             }
             else
             {
+                if (mCurrentFunctionId == vk::spirv::kIdEntryPoint)
+                {
+                    // For main(), add a non-semantic instruction at the end of the shader.
+                    markVertexOutputOnShaderEnd();
+                }
                 spirv::WriteReturn(mBuilder.getSpirvCurrentFunctionBlock());
                 mBuilder.terminateCurrentFunctionBlock();
             }
@@ -6414,6 +6476,31 @@ void OutputSPIRVTraverser::visitPreprocessorDirective(TIntermPreprocessorDirecti
 {
     // No preprocessor directives expected at this point.
     UNREACHABLE();
+}
+
+void OutputSPIRVTraverser::markVertexOutputOnShaderEnd()
+{
+    // Vertex output happens in vertex stages at return from main, except for geometry shaders.  In
+    // that case, it's done at EmitVertex.
+    switch (mCompiler->getShaderType())
+    {
+        case GL_VERTEX_SHADER:
+        case GL_TESS_CONTROL_SHADER_EXT:
+        case GL_TESS_EVALUATION_SHADER_EXT:
+            mBuilder.writeNonSemanticInstruction(vk::spirv::kNonSemanticVertexOutput);
+            break;
+        default:
+            break;
+    }
+}
+
+void OutputSPIRVTraverser::markVertexOutputOnEmitVertex()
+{
+    // Vertex output happens in the geometry stage at EmitVertex.
+    if (mCompiler->getShaderType() == GL_GEOMETRY_SHADER)
+    {
+        mBuilder.writeNonSemanticInstruction(vk::spirv::kNonSemanticVertexOutput);
+    }
 }
 
 spirv::Blob OutputSPIRVTraverser::getSpirv()
@@ -6435,7 +6522,11 @@ spirv::Blob OutputSPIRVTraverser::getSpirv()
 }
 }  // anonymous namespace
 
-bool OutputSPIRV(TCompiler *compiler, TIntermBlock *root, const ShCompileOptions &compileOptions)
+bool OutputSPIRV(TCompiler *compiler,
+                 TIntermBlock *root,
+                 const ShCompileOptions &compileOptions,
+                 const angle::HashMap<int, uint32_t> &uniqueToSpirvIdMap,
+                 uint32_t firstUnusedSpirvId)
 {
     // Find the list of nodes that require NoContraction (as a result of |precise|).
     if (compiler->hasAnyPreciseType())
@@ -6444,7 +6535,8 @@ bool OutputSPIRV(TCompiler *compiler, TIntermBlock *root, const ShCompileOptions
     }
 
     // Traverse the tree and generate SPIR-V instructions
-    OutputSPIRVTraverser traverser(compiler, compileOptions);
+    OutputSPIRVTraverser traverser(compiler, compileOptions, uniqueToSpirvIdMap,
+                                   firstUnusedSpirvId);
     root->traverse(&traverser);
 
     // Generate the final SPIR-V and store in the sink

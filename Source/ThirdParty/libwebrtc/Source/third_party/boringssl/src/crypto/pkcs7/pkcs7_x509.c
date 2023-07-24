@@ -20,6 +20,7 @@
 #include <openssl/bytestring.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
+#include <openssl/obj.h>
 #include <openssl/pem.h>
 #include <openssl/pool.h>
 #include <openssl/stack.h>
@@ -197,7 +198,9 @@ static int pkcs7_bundle_certificates_cb(CBB *out, const void *arg) {
 }
 
 int PKCS7_bundle_certificates(CBB *out, const STACK_OF(X509) *certs) {
-  return pkcs7_bundle(out, pkcs7_bundle_certificates_cb, certs);
+  return pkcs7_add_signed_data(out, /*digest_algos_cb=*/NULL,
+                               pkcs7_bundle_certificates_cb,
+                               /*signer_infos_cb=*/NULL, certs);
 }
 
 static int pkcs7_bundle_crls_cb(CBB *out, const void *arg) {
@@ -228,7 +231,9 @@ static int pkcs7_bundle_crls_cb(CBB *out, const void *arg) {
 }
 
 int PKCS7_bundle_CRLs(CBB *out, const STACK_OF(X509_CRL) *crls) {
-  return pkcs7_bundle(out, pkcs7_bundle_crls_cb, crls);
+  return pkcs7_add_signed_data(out, /*digest_algos_cb=*/NULL,
+                               pkcs7_bundle_crls_cb,
+                               /*signer_infos_cb=*/NULL, crls);
 }
 
 static PKCS7 *pkcs7_new(CBS *cbs) {
@@ -323,7 +328,6 @@ int i2d_PKCS7(const PKCS7 *p7, uint8_t **out) {
   if (*out == NULL) {
     *out = OPENSSL_malloc(p7->ber_len);
     if (*out == NULL) {
-      OPENSSL_PUT_ERROR(PKCS8, ERR_R_MALLOC_FAILURE);
       return -1;
     }
     OPENSSL_memcpy(*out, p7->ber_bytes, p7->ber_len);
@@ -362,26 +366,160 @@ int PKCS7_type_is_enveloped(const PKCS7 *p7) { return 0; }
 int PKCS7_type_is_signed(const PKCS7 *p7) { return 1; }
 int PKCS7_type_is_signedAndEnveloped(const PKCS7 *p7) { return 0; }
 
+// write_sha256_ai writes an AlgorithmIdentifier for SHA-256 to
+// |digest_algos_set|.
+static int write_sha256_ai(CBB *digest_algos_set, const void *arg) {
+  CBB seq;
+  return CBB_add_asn1(digest_algos_set, &seq, CBS_ASN1_SEQUENCE) &&
+         OBJ_nid2cbb(&seq, NID_sha256) &&  //
+         // https://datatracker.ietf.org/doc/html/rfc5754#section-2
+         // "Implementations MUST generate SHA2 AlgorithmIdentifiers with absent
+         //  parameters."
+         CBB_flush(digest_algos_set);
+}
+
+// sign_sha256 writes at most |max_out_sig| bytes of the signature of |data| by
+// |pkey| to |out_sig| and sets |*out_sig_len| to the number of bytes written.
+// It returns one on success or zero on error.
+static int sign_sha256(uint8_t *out_sig, size_t *out_sig_len,
+                       size_t max_out_sig, EVP_PKEY *pkey, BIO *data) {
+  static const size_t kBufSize = 4096;
+  uint8_t *buffer = OPENSSL_malloc(kBufSize);
+  if (!buffer) {
+    return 0;
+  }
+
+  EVP_MD_CTX ctx;
+  EVP_MD_CTX_init(&ctx);
+
+  int ret = 0;
+  if (!EVP_DigestSignInit(&ctx, NULL, EVP_sha256(), NULL, pkey)) {
+    goto out;
+  }
+
+  for (;;) {
+    const int n = BIO_read(data, buffer, kBufSize);
+    if (n == 0) {
+      break;
+    } else if (n < 0 || !EVP_DigestSignUpdate(&ctx, buffer, n)) {
+      goto out;
+    }
+  }
+
+  *out_sig_len = max_out_sig;
+  if (!EVP_DigestSignFinal(&ctx, out_sig, out_sig_len)) {
+    goto out;
+  }
+
+  ret = 1;
+
+out:
+  EVP_MD_CTX_cleanup(&ctx);
+  OPENSSL_free(buffer);
+  return ret;
+}
+
+struct signer_info_data {
+  const X509 *sign_cert;
+  uint8_t *signature;
+  size_t signature_len;
+};
+
+// write_signer_info writes the SignerInfo structure from
+// https://datatracker.ietf.org/doc/html/rfc2315#section-9.2 to |out|. It
+// returns one on success or zero on error.
+static int write_signer_info(CBB *out, const void *arg) {
+  const struct signer_info_data *const si_data = arg;
+
+  int ret = 0;
+  uint8_t *subject_bytes = NULL;
+  uint8_t *serial_bytes = NULL;
+
+  const int subject_len =
+      i2d_X509_NAME(X509_get_subject_name(si_data->sign_cert), &subject_bytes);
+  const int serial_len = i2d_ASN1_INTEGER(
+      (ASN1_INTEGER *)X509_get0_serialNumber(si_data->sign_cert),
+      &serial_bytes);
+
+  CBB seq, issuer_and_serial, signing_algo, null, signature;
+  if (subject_len < 0 ||
+      serial_len < 0 ||
+      !CBB_add_asn1(out, &seq, CBS_ASN1_SEQUENCE) ||
+      // version
+      !CBB_add_asn1_uint64(&seq, 1) ||
+      !CBB_add_asn1(&seq, &issuer_and_serial, CBS_ASN1_SEQUENCE) ||
+      !CBB_add_bytes(&issuer_and_serial, subject_bytes, subject_len) ||
+      !CBB_add_bytes(&issuer_and_serial, serial_bytes, serial_len) ||
+      !write_sha256_ai(&seq, NULL) ||
+      !CBB_add_asn1(&seq, &signing_algo, CBS_ASN1_SEQUENCE) ||
+      !OBJ_nid2cbb(&signing_algo, NID_rsaEncryption) ||
+      !CBB_add_asn1(&signing_algo, &null, CBS_ASN1_NULL) ||
+      !CBB_add_asn1(&seq, &signature, CBS_ASN1_OCTETSTRING) ||
+      !CBB_add_bytes(&signature, si_data->signature, si_data->signature_len) ||
+      !CBB_flush(out)) {
+    goto out;
+  }
+
+  ret = 1;
+
+out:
+  OPENSSL_free(subject_bytes);
+  OPENSSL_free(serial_bytes);
+  return ret;
+}
+
 PKCS7 *PKCS7_sign(X509 *sign_cert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
                   BIO *data, int flags) {
-  if (sign_cert != NULL || pkey != NULL || flags != PKCS7_DETACHED) {
-    OPENSSL_PUT_ERROR(PKCS7, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+  CBB cbb;
+  if (!CBB_init(&cbb, 2048)) {
     return NULL;
   }
 
-  uint8_t *der;
+  uint8_t *der = NULL;
   size_t len;
-  CBB cbb;
-  if (!CBB_init(&cbb, 2048) ||
-      !PKCS7_bundle_certificates(&cbb, certs) ||
-      !CBB_finish(&cbb, &der, &len)) {
-    CBB_cleanup(&cbb);
-    return NULL;
+  PKCS7 *ret = NULL;
+
+  if (sign_cert == NULL && pkey == NULL && flags == PKCS7_DETACHED) {
+    // Caller just wants to bundle certificates.
+    if (!PKCS7_bundle_certificates(&cbb, certs)) {
+      goto out;
+    }
+  } else if (sign_cert != NULL && pkey != NULL && certs == NULL &&
+             data != NULL &&
+             flags == (PKCS7_NOATTR | PKCS7_BINARY | PKCS7_NOCERTS |
+                       PKCS7_DETACHED) &&
+             EVP_PKEY_id(pkey) == NID_rsaEncryption) {
+    // sign-file.c from the Linux kernel.
+    const size_t signature_max_len = EVP_PKEY_size(pkey);
+    struct signer_info_data si_data = {
+      .sign_cert = sign_cert,
+      .signature = OPENSSL_malloc(signature_max_len),
+    };
+
+    if (!si_data.signature ||
+        !sign_sha256(si_data.signature, &si_data.signature_len,
+                     signature_max_len, pkey, data) ||
+        !pkcs7_add_signed_data(&cbb, write_sha256_ai, /*cert_crl_cb=*/NULL,
+                               write_signer_info, &si_data)) {
+      OPENSSL_free(si_data.signature);
+      goto out;
+    }
+    OPENSSL_free(si_data.signature);
+  } else {
+    OPENSSL_PUT_ERROR(PKCS7, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+    goto out;
+  }
+
+  if (!CBB_finish(&cbb, &der, &len)) {
+    goto out;
   }
 
   CBS cbs;
   CBS_init(&cbs, der, len);
-  PKCS7 *ret = pkcs7_new(&cbs);
+  ret = pkcs7_new(&cbs);
+
+out:
+  CBB_cleanup(&cbb);
   OPENSSL_free(der);
   return ret;
 }

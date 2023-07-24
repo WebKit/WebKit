@@ -28,6 +28,7 @@ NetworkProcess/cocoa/NetworkActivityTrackerCocoa.mm
 NetworkProcess/cocoa/NetworkDataTaskCocoa.mm
 NetworkProcess/cocoa/NetworkProcessCocoa.mm
 NetworkProcess/cocoa/NetworkSessionCocoa.mm
+NetworkProcess/cocoa/NetworkTaskCocoa.mm
 NetworkProcess/cocoa/WKURLSessionTaskDelegate.mm
 
 NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
@@ -57,8 +58,6 @@ NetworkProcess/mac/SecItemShim.cpp
 NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
 NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
-NetworkProcess/webrtc/NetworkRTCResolver.cpp
-NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp
 NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm
 NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm
 
@@ -81,11 +80,11 @@ GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
-Platform/cocoa/NetworkConnectionIntegrityHelpers.mm
 Platform/cocoa/PaymentAuthorizationPresenter.mm
 Platform/cocoa/PaymentAuthorizationViewController.mm
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Platform/cocoa/WebKitAdditions.mm @no-unify
+Platform/cocoa/WebPrivacyHelpers.mm
 
 Platform/ios/PaymentAuthorizationController.mm
 
@@ -138,7 +137,7 @@ Shared/WebSQLiteDatabaseTracker.cpp
 Shared/cf/ArgumentCodersCF.cpp @no-unify
 Shared/cf/CookieStorageUtilsCF.mm
 
-Shared/cg/ShareableBitmapCG.cpp
+Shared/cg/ShareableBitmapCG.mm
 
 Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.mm
 Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm
@@ -193,7 +192,6 @@ Shared/ios/NativeWebKeyboardEventIOS.mm
 Shared/ios/NativeWebMouseEventIOS.mm
 Shared/ios/NativeWebTouchEventIOS.mm
 Shared/ios/WebIOSEventFactory.mm
-Shared/ios/WebPlatformTouchPointIOS.cpp
 Shared/ios/WebPreferencesDefaultValuesIOS.mm
 
 Shared/mac/AuxiliaryProcessMac.mm
@@ -310,7 +308,6 @@ UIProcess/API/Cocoa/NSAttributedString.mm
 UIProcess/API/Cocoa/WKBackForwardList.mm
 UIProcess/API/Cocoa/WKBackForwardListItem.mm
 UIProcess/API/Cocoa/WKBrowsingContextController.mm
-UIProcess/API/Cocoa/WKBrowsingContextGroup.mm
 UIProcess/API/Cocoa/WKConnection.mm
 UIProcess/API/Cocoa/WKContentRuleList.mm
 UIProcess/API/Cocoa/WKContentRuleListStore.mm
@@ -473,7 +470,7 @@ UIProcess/ios/ProcessStateMonitor.mm
 UIProcess/ios/RevealFocusedElementDeferrer.mm
 UIProcess/ios/SmartMagnificationController.mm
 UIProcess/ios/TextCheckerIOS.mm
-UIProcess/ios/UIAlertControllerUtilities.mm
+UIProcess/ios/UIKitUtilities.mm
 UIProcess/ios/ViewGestureControllerIOS.mm
 UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm
 UIProcess/ios/WebPageProxyIOS.mm
@@ -500,6 +497,7 @@ UIProcess/ios/WKStylusDeviceObserver.mm
 UIProcess/ios/WKSyntheticFlagsChangedWebEvent.mm
 UIProcess/ios/WKSyntheticTapGestureRecognizer.mm
 UIProcess/ios/WKTouchActionGestureRecognizer.mm
+UIProcess/ios/WKTouchEventsGestureRecognizer.mm
 UIProcess/ios/WKTextSelectionRect.mm
 UIProcess/ios/WKUSDPreviewView.mm
 UIProcess/ios/WKWebEvent.mm
@@ -713,7 +711,6 @@ WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteHost.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteTiledBacking.cpp
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm
-WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm @no-unify
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollbarsController.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
@@ -738,6 +735,7 @@ RemoteMediaSessionHelperMessageReceiver.cpp
 RemoteMediaSessionHelperProxyMessageReceiver.cpp
 RemoteMediaSessionCoordinatorMessageReceiver.cpp
 RemoteMediaSessionCoordinatorProxyMessageReceiver.cpp
+RemoteImageBufferProxyMessageReceiver.cpp
 RemoteRenderingBackendMessageReceiver.cpp
 RemoteRenderingBackendProxyMessageReceiver.cpp
 RemoteSampleBufferDisplayLayerManagerMessageReceiver.cpp

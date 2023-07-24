@@ -91,4 +91,4 @@ layer at (0,0) size 800x2286
                   text run at (549,0) width 214: "Both the content background and"
                   text run at (0,20) width 304: "the normal padding should be aqua (light blue)."
 layer at (8,141) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,133) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,133) size 784x2 [color=#808080] [border: (1px inset #808080)]

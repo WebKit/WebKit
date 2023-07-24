@@ -14,13 +14,22 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-047-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-047-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-047.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-048-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-048-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-048.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-049-alt-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-049-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-049-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-049.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-050-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-050-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-050.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-051-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-051-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/css3-counter-styles-051.html

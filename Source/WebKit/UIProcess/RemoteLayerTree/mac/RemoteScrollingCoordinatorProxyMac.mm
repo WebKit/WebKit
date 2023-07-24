@@ -80,14 +80,15 @@ void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(const WebWheelEvent& w
 #endif
 }
 
-void RemoteScrollingCoordinatorProxyMac::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID, std::optional<WheelScrollGestureState> gestureState)
+void RemoteScrollingCoordinatorProxyMac::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->wheelEventHandlingCompleted(wheelEvent, scrollingNodeID, gestureState);
+    m_wheelEventDispatcher->wheelEventHandlingCompleted(wheelEvent, scrollingNodeID, gestureState, wasHandled);
 #else
     UNUSED_PARAM(wheelEvent);
     UNUSED_PARAM(scrollingNodeID);
     UNUSED_PARAM(gestureState);
+    UNUSED_PARAM(wasHandled);
 #endif
 }
 
@@ -114,6 +115,12 @@ void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool h
 
     drawingArea->setDisplayLinkWantsFullSpeedUpdates(hasAnimatedScrolls);
 #endif
+}
+
+void RemoteScrollingCoordinatorProxyMac::clearNodesWithUserScrollInProgress()
+{
+    m_uiState.clearNodesWithActiveUserScroll();
+    sendUIStateChangedIfNecessary();
 }
 
 void RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
@@ -225,6 +232,13 @@ void RemoteScrollingCoordinatorProxyMac::windowScreenDidChange(PlatformDisplayID
 {
 #if ENABLE(SCROLLING_THREAD)
     m_wheelEventDispatcher->windowScreenDidChange(displayID, nominalFramesPerSecond);
+#endif
+}
+
+void RemoteScrollingCoordinatorProxyMac::windowScreenWillChange()
+{
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->windowScreenWillChange();
 #endif
 }
 

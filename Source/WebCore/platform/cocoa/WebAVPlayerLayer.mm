@@ -29,8 +29,8 @@
 #if HAVE(AVKIT)
 
 #import "GeometryUtilities.h"
+#import "LayoutRect.h"
 #import "Logging.h"
-#import "VideoFullscreenChangeObserver.h"
 #import "VideoFullscreenModel.h"
 #import "WebAVPlayerController.h"
 #import <wtf/LoggerHelper.h>
@@ -75,7 +75,7 @@ private:
 }
 
 @implementation WebAVPlayerLayer {
-    WeakPtr<VideoFullscreenModel> _fullscreenModel;
+    ThreadSafeWeakPtr<VideoFullscreenModel> _fullscreenModel;
     RetainPtr<WebAVPlayerController> _playerController;
     RetainPtr<CALayer> _videoSublayer;
     FloatRect _targetVideoFrame;
@@ -83,6 +83,9 @@ private:
     RetainPtr<NSString> _videoGravity;
     RetainPtr<NSString> _previousVideoGravity;
     std::unique_ptr<WebAVPlayerLayerFullscreenModelClient> _fullscreenModelClient;
+#if !RELEASE_LOG_DISABLED
+    const void* _logIdentifier;
+#endif
 }
 
 - (instancetype)init
@@ -103,30 +106,34 @@ private:
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
     [_pixelBufferAttributes release];
-    if (_fullscreenModel)
-        _fullscreenModel->removeClient(*_fullscreenModelClient);
+    if (auto model = _fullscreenModel.get())
+        model->removeClient(*_fullscreenModelClient);
     [super dealloc];
 }
 
 - (VideoFullscreenModel*)fullscreenModel
 {
-    return _fullscreenModel.get();
+    return _fullscreenModel.get().get();
 }
 
 - (void)setFullscreenModel:(VideoFullscreenModel*)fullscreenModel
 {
-    if (_fullscreenModel == fullscreenModel)
+    auto model = _fullscreenModel.get();
+    if (model == fullscreenModel)
         return;
 
-    if (_fullscreenModel)
-        _fullscreenModel->removeClient(*_fullscreenModelClient);
+    if (model)
+        model->removeClient(*_fullscreenModelClient);
 
     _fullscreenModel = fullscreenModel;
 
-    if (_fullscreenModel)
-        _fullscreenModel->addClient(*_fullscreenModelClient);
+    if (fullscreenModel)
+        fullscreenModel->addClient(*_fullscreenModelClient);
 
-    self.videoDimensions = _fullscreenModel->videoDimensions();
+    self.videoDimensions = fullscreenModel ? fullscreenModel->videoDimensions() : CGSizeZero;
+#if !RELEASE_LOG_DISABLED
+    _logIdentifier = fullscreenModel ? fullscreenModel->nextChildIdentifier() : nullptr;
+#endif
 }
 
 - (AVPlayerController *)playerController
@@ -178,8 +185,26 @@ private:
     else
         ASSERT_NOT_REACHED();
 
-    return targetVideoFrame;
+    return snappedIntRect(LayoutRect(targetVideoFrame));
 }
+
+// Sometimes the `frame` returned by CA will differ from the value assigned
+// by a extremely small amount, but a larger amount than can be accounted for
+// by `areEssentiallyEqual`. Because setting self.videoSublayer.frame will
+// cause layoutSublayers to be called again, this small difference can cause
+// a loop of endless -layoutSublayers/-resolveBounds iterations. Define a
+// constant value to use for a custom `areEssentiallyEqual` where we will
+// bail out of -resolveBounds if the _targetVideoFrame is essentially equal
+// to the current video frame.
+static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const FloatRect& b)
+{
+    static constexpr double frameValueDeltaTolerance { 0.01 };
+    FloatRect delta { FloatPoint { a.location() - b.location() }, a.size() - b.size() };
+    return abs(delta.x()) < frameValueDeltaTolerance
+        && abs(delta.y()) < frameValueDeltaTolerance
+        && abs(delta.width()) < frameValueDeltaTolerance
+        && abs(delta.height()) < frameValueDeltaTolerance;
+};
 
 - (void)layoutSublayers
 {
@@ -194,7 +219,7 @@ private:
     }
 
     FloatRect sourceVideoFrame = self.videoSublayer.bounds;
-    FloatRect targetVideoFrame = [self calculateTargetVideoFrame];
+    _targetVideoFrame = [self calculateTargetVideoFrame];
 
     float videoAspectRatio = self.videoDimensions.width / self.videoDimensions.height;
 
@@ -209,18 +234,24 @@ private:
         // The initial resize will have an empty videoLayerFrame, which makes
         // the subsequent calculations incorrect. When this happens, just do
         // the synchronous resize step instead.
-        _targetVideoFrame = targetVideoFrame;
         OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "sourceVideoFrame is empty; calling -resolveBounds");
         [self resolveBounds];
         return;
     }
 
-    if (sourceVideoFrame == targetVideoFrame && CGAffineTransformIsIdentity([_videoSublayer affineTransform])) {
-        OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame.size(), ") is equal to sourceVideoFrame, and affineTransform is identity, bailing");
+    if (sourceVideoFrame == _targetVideoFrame && CGAffineTransformIsIdentity([_videoSublayer affineTransform])) {
+        OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame, ") is equal to sourceVideoFrame, and affineTransform is identity, bailing");
         return;
     }
 
-    CGAffineTransform transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
+    // CALayer -frame will take the -position, -bounds, and -affineTransform into account,
+    // so bail out if the current -frame is essentially equal to the targetVideoFrame.
+    if (areFramesEssentiallyEqualWithTolerance(self.videoSublayer.frame, _targetVideoFrame)) {
+        OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame, ") is essentially equal to videoSublayer.frame, bailing");
+        return;
+    }
+
+    CGAffineTransform transform = CGAffineTransformMakeScale(_targetVideoFrame.width() / sourceVideoFrame.width(), _targetVideoFrame.height() / sourceVideoFrame.height());
 
     [CATransaction begin];
     [_videoSublayer setAnchorPoint:CGPointMake(0.5, 0.5)];
@@ -228,8 +259,7 @@ private:
     [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds))];
     [CATransaction commit];
 
-    _targetVideoFrame = targetVideoFrame;
-    OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame: ", targetVideoFrame.size(), ", transform: [", transform.a, ", ", transform.d, "]");
+    OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "self.bounds: ", FloatRect(self.bounds), ", targetVideoFrame: ", _targetVideoFrame, ", transform: [", transform.a, ", ", transform.d, "]");
 
     NSTimeInterval animationDuration = [CATransaction animationDuration];
     RunLoop::main().dispatch([self, strongSelf = retainPtr(self), animationDuration] {
@@ -247,8 +277,8 @@ private:
         return;
     }
 
-    if (CGRectEqualToRect(self.videoSublayer.bounds, _targetVideoFrame) && CGAffineTransformIsIdentity([_videoSublayer affineTransform])) {
-        OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame.size(), ") is equal to videoSublayer.bounds, and affineTransform is identity, bailing");
+    if (areFramesEssentiallyEqualWithTolerance(self.videoSublayer.frame, _targetVideoFrame) && CGAffineTransformIsIdentity([_videoSublayer affineTransform])) {
+        OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame, ") is equal to videoSublayer.bounds, and affineTransform is identity, bailing");
         return;
     }
 
@@ -256,11 +286,11 @@ private:
     [CATransaction setAnimationDuration:0];
     [CATransaction setDisableActions:YES];
 
-    OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, _targetVideoFrame.size());
+    OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, _targetVideoFrame);
 
-    if (_fullscreenModel) {
+    if (auto model = _fullscreenModel.get()) {
         FloatRect targetVideoBounds { { }, _targetVideoFrame.size() };
-        _fullscreenModel->setVideoLayerFrame(targetVideoBounds);
+        model->setVideoLayerFrame(targetVideoBounds);
     }
 
     _previousVideoGravity = _videoGravity;
@@ -287,17 +317,19 @@ private:
     _videoGravity = videoGravity;
 
     MediaPlayerEnums::VideoGravity gravity = MediaPlayerEnums::VideoGravity::ResizeAspect;
-    if (videoGravity == AVLayerVideoGravityResize)
+    if ([videoGravity isEqualToString:AVLayerVideoGravityResize])
         gravity = MediaPlayerEnums::VideoGravity::Resize;
-    if (videoGravity == AVLayerVideoGravityResizeAspect)
+    else if ([videoGravity isEqualToString:AVLayerVideoGravityResizeAspect])
         gravity = MediaPlayerEnums::VideoGravity::ResizeAspect;
-    else if (videoGravity == AVLayerVideoGravityResizeAspectFill)
+    else if ([videoGravity isEqualToString:AVLayerVideoGravityResizeAspectFill])
         gravity = MediaPlayerEnums::VideoGravity::ResizeAspectFill;
     else
         ASSERT_NOT_REACHED();
 
-    if (_fullscreenModel)
-        _fullscreenModel->setVideoLayerGravity(gravity);
+    OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, videoGravity.UTF8String);
+
+    if (auto model = _fullscreenModel.get())
+        model->setVideoLayerGravity(gravity);
 
     [self setNeedsLayout];
 }
@@ -333,15 +365,13 @@ private:
 @implementation WebAVPlayerLayer (Logging)
 - (const void*)logIdentifier
 {
-    if (_fullscreenModel)
-        return _fullscreenModel->logIdentifier();
-    return nullptr;
+    return _logIdentifier;
 }
 
 - (const Logger*)loggerPtr
 {
-    if (_fullscreenModel)
-        return _fullscreenModel->loggerPtr();
+    if (auto model = _fullscreenModel.get())
+        return model->loggerPtr();
     return nullptr;
 }
 

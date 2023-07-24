@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <type_traits>
 
 namespace WTF {
@@ -33,6 +34,20 @@ template<typename> struct EnumTraits;
 template<typename> struct EnumTraitsForPersistence;
 
 template<typename E, E...> struct EnumValues;
+
+template<typename E, E... values>
+struct EnumValues {
+    static constexpr E max = std::max({ values... });
+    static constexpr E min = std::min({ values... });
+    static constexpr size_t count = sizeof...(values);
+
+    template <typename Callable>
+    static void forEach(Callable&& c)
+    {
+        for (auto value : { values... })
+            c(value);
+    }
+};
 
 template<typename T, typename E> struct EnumValueChecker;
 
@@ -76,14 +91,40 @@ constexpr bool isValidEnumForPersistence(bool t)
     return !t || t == 1;
 }
 
-
 template<typename E>
 constexpr auto enumToUnderlyingType(E e)
 {
     return static_cast<std::underlying_type_t<E>>(e);
 }
 
+template<typename T, typename E> struct ZeroBasedContiguousEnumChecker;
+
+template<typename T, typename E, E e, E... es>
+struct ZeroBasedContiguousEnumChecker<T, EnumValues<E, e, es...>> {
+    template<size_t INDEX = 0>
+    static constexpr bool isZeroBasedContiguousEnum()
+    {
+        return (enumToUnderlyingType(e) == INDEX) ? ZeroBasedContiguousEnumChecker<T, EnumValues<E, es...>>::template isZeroBasedContiguousEnum<INDEX + 1>() : false;
+    }
+};
+
+template<typename T, typename E>
+struct ZeroBasedContiguousEnumChecker<T, EnumValues<E>> {
+    template<size_t>
+    static constexpr bool isZeroBasedContiguousEnum()
+    {
+        return true;
+    }
+};
+
+template<typename E, typename = std::enable_if_t<!std::is_same_v<std::underlying_type_t<E>, bool>>>
+constexpr bool isZeroBasedContiguousEnum()
+{
+    return ZeroBasedContiguousEnumChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::isZeroBasedContiguousEnum();
 }
+
+} // namespace WTF
 
 using WTF::enumToUnderlyingType;
 using WTF::isValidEnum;
+using WTF::isZeroBasedContiguousEnum;

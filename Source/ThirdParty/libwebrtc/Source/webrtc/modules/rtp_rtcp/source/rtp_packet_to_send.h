@@ -19,6 +19,7 @@
 #include "api/array_view.h"
 #include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_timing.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -120,6 +121,15 @@ class RtpPacketToSend : public RtpPacket {
   void set_is_red(bool is_red) { is_red_ = is_red; }
   bool is_red() const { return is_red_; }
 
+  // The amount of time spent in the send queue, used for totalPacketSendDelay.
+  // https://w3c.github.io/webrtc-stats/#dom-rtcoutboundrtpstreamstats-totalpacketsenddelay
+  void set_time_in_send_queue(TimeDelta time_in_send_queue) {
+    time_in_send_queue_ = time_in_send_queue;
+  }
+  absl::optional<TimeDelta> time_in_send_queue() const {
+    return time_in_send_queue_;
+  }
+
  private:
   webrtc::Timestamp capture_time_ = webrtc::Timestamp::Zero();
   absl::optional<RtpPacketMediaType> packet_type_;
@@ -130,6 +140,7 @@ class RtpPacketToSend : public RtpPacket {
   bool is_key_frame_ = false;
   bool fec_protect_packet_ = false;
   bool is_red_ = false;
+  absl::optional<TimeDelta> time_in_send_queue_;
 };
 
 }  // namespace webrtc

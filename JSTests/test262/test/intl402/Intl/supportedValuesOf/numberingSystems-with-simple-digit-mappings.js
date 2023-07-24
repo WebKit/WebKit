@@ -24,7 +24,7 @@ info: |
     Intl.RelativeTimeFormat objects. The list must include the Numbering System
     value of every row of Table 4, except the header row.
 includes: [testIntl.js]
-features: [Intl-enumeration]
+features: [Intl-enumeration, Array.prototype.includes]
 ---*/
 
 const numberingSystems = Intl.supportedValuesOf("numberingSystem");

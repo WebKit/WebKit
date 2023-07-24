@@ -2217,7 +2217,20 @@ sub SqlifyDate {
         my ($sec, $min, $hour, $mday, $month, $year, $wday)  = localtime($date);
         if ($sign && $sign eq '+') { $amount = -$amount; }
         $startof = 1 if $amount == 0;
-        if ($unit eq 'w') {                  # convert weeks to days
+# WEBKIT_CHANGES: Fixed invalid date returns on some occasions.
+        if ($unit eq 'm') {
+            $month -= $amount;
+            $year += floor($month/12);
+            $month %= 12;
+            if ($startof) {
+                return sprintf("%4d-%02d-01 00:00:00", $year+1900, $month+1);
+            }
+            else {
+                $amount = 31*$amount;
+                $unit = 'd';
+            }
+        }
+        elsif ($unit eq 'w') {                  # convert weeks to days
             $amount = 7*$amount;
             $amount += $wday if $startof;
             $unit = 'd';
@@ -2237,18 +2250,6 @@ sub SqlifyDate {
             else {
                 return sprintf("%4d-%02d-%02d %02d:%02d:%02d", 
                                $year+1900-$amount, $month+1, $mday, $hour, $min, $sec);
-            }
-        }
-        elsif ($unit eq 'm') {
-            $month -= $amount;
-            $year += floor($month/12);
-            $month %= 12;
-            if ($startof) {
-                return sprintf("%4d-%02d-01 00:00:00", $year+1900, $month+1);
-            }
-            else {
-                return sprintf("%4d-%02d-%02d %02d:%02d:%02d", 
-                               $year+1900, $month+1, $mday, $hour, $min, $sec);
             }
         }
         elsif ($unit eq 'h') {

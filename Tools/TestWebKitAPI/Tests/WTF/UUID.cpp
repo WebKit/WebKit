@@ -34,7 +34,7 @@ TEST(WTF, BootSessionUUIDIdentity)
 
 static String parseAndStringifyUUID(const String& value)
 {
-    auto uuid = UUID::parseVersion4(value);
+    auto uuid = WTF::UUID::parseVersion4(value);
     if (!uuid)
         return { };
     return uuid->toString();
@@ -44,30 +44,30 @@ TEST(WTF, TestUUIDVersion4Parsing)
 {
     // xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
 
-    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-5de0-89AB-0123456789ab"_s));
-    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-4dea-79AB-0123456789ab"_s));
-    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-4de0-7fff-0123456789ab"_s));
-    EXPECT_FALSE(!!UUID::parseVersion4("12345678-9abc-4de0-c0000-0123456789ab"_s));
+    EXPECT_FALSE(!!WTF::UUID::parseVersion4("12345678-9abc-5de0-89AB-0123456789ab"_s));
+    EXPECT_FALSE(!!WTF::UUID::parseVersion4("12345678-9abc-4dea-79AB-0123456789ab"_s));
+    EXPECT_FALSE(!!WTF::UUID::parseVersion4("12345678-9abc-4de0-7fff-0123456789ab"_s));
+    EXPECT_FALSE(!!WTF::UUID::parseVersion4("12345678-9abc-4de0-c0000-0123456789ab"_s));
 
-    EXPECT_FALSE(!!UUID::parseVersion4("+ef944c1-5cb8-48aa-Ad12-C5f823f005c3"_s));
-    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-+cb8-48aa-Ad12-C5f823f005c3"_s));
-    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-5cb8-+8aa-Ad12-C5f823f005c3"_s));
-    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-5cb8-48aa-+d12-C5f823f005c3"_s));
-    EXPECT_FALSE(!!UUID::parseVersion4("6ef944c1-5cb8-48aa-Ad12-+5f823f005c3"_s));
+    EXPECT_FALSE(!!WTF::UUID::parseVersion4("+ef944c1-5cb8-48aa-Ad12-C5f823f005c3"_s));
+    EXPECT_FALSE(!!WTF::UUID::parseVersion4("6ef944c1-+cb8-48aa-Ad12-C5f823f005c3"_s));
+    EXPECT_FALSE(!!WTF::UUID::parseVersion4("6ef944c1-5cb8-+8aa-Ad12-C5f823f005c3"_s));
+    EXPECT_FALSE(!!WTF::UUID::parseVersion4("6ef944c1-5cb8-48aa-+d12-C5f823f005c3"_s));
+    EXPECT_FALSE(!!WTF::UUID::parseVersion4("6ef944c1-5cb8-48aa-Ad12-+5f823f005c3"_s));
 
-    EXPECT_FALSE(!!UUID::parseVersion4("00000000-0000-0000-0000-000000000000"_s));
-    EXPECT_FALSE(!!UUID::parseVersion4("00000000-0000-0000-0000-000000000001"_s));
-    EXPECT_TRUE(!!UUID::parseVersion4("00000000-0000-4000-8000-000000000000"_s));
-    EXPECT_TRUE(!!UUID::parseVersion4("00000000-0000-4000-8000-000000000001"_s));
+    EXPECT_FALSE(!!WTF::UUID::parseVersion4("00000000-0000-0000-0000-000000000000"_s));
+    EXPECT_FALSE(!!WTF::UUID::parseVersion4("00000000-0000-0000-0000-000000000001"_s));
+    EXPECT_TRUE(!!WTF::UUID::parseVersion4("00000000-0000-4000-8000-000000000000"_s));
+    EXPECT_TRUE(!!WTF::UUID::parseVersion4("00000000-0000-4000-8000-000000000001"_s));
 
     for (size_t cptr = 0; cptr < 10; ++cptr) {
-        auto createdUUID = UUID::createVersion4();
+        auto createdUUID = WTF::UUID::createVersion4();
         auto createdString = createdUUID.toString();
         EXPECT_EQ(createdString.length(), 36u);
         EXPECT_EQ(createdString[14], '4');
         EXPECT_TRUE(createdString[19] == '8' || createdString[19] == '9' || createdString[19] == 'a' || createdString[19] == 'b');
 
-        auto uuid = UUID::parseVersion4(createdString);
+        auto uuid = WTF::UUID::parseVersion4(createdString);
         EXPECT_TRUE(!!uuid);
         EXPECT_EQ(*uuid, createdUUID);
     }
@@ -88,10 +88,10 @@ TEST(WTF, TestUUIDVersion4Parsing)
 TEST(WTF, TestUUIDVersion4MakeString)
 {
     String testNormal = "12345678-9abc-4de0-89ab-0123456789ab"_s;
-    auto uuid = UUID::parseVersion4(testNormal);
+    auto uuid = WTF::UUID::parseVersion4(testNormal);
     EXPECT_TRUE(!!uuid);
     EXPECT_EQ(makeString(uuid.value()), testNormal);
     EXPECT_EQ(makeString("keyframe-", uuid.value()), String("keyframe-" + testNormal));
 
-    EXPECT_EQ(WTF::StringTypeAdapter<UUID>(uuid.value()).length(), 36U);
+    EXPECT_EQ(WTF::StringTypeAdapter<WTF::UUID>(uuid.value()).length(), 36U);
 }

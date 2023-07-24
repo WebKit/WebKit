@@ -44,6 +44,11 @@ class RTC_LOCKABLE SequenceChecker
   using Impl = webrtc_sequence_checker_internal::SequenceCheckerDoNothing;
 #endif
  public:
+  enum InitialState : bool { kDetached = false, kAttached = true };
+
+  explicit SequenceChecker(InitialState initial_state = kAttached)
+      : Impl(initial_state) {}
+
   // Returns true if sequence checker is attached to the current sequence.
   bool IsCurrent() const { return Impl::IsCurrent(); }
   // Detaches checker from sequence to which it is attached. Next attempt

@@ -10,6 +10,7 @@ BackgroundFetchRegistration conditional=SERVICE_WORKER
 BaseAudioContext conditional=WEB_AUDIO
 BroadcastChannel
 Clipboard
+CookieStore
 DedicatedWorkerGlobalScope
 DOMApplicationCache
 DOMAudioSession conditional=DOM_AUDIO_SESSION

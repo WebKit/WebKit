@@ -10,7 +10,6 @@
 
 #include "test/scoped_key_value_config.h"
 
-#include "api/field_trials_view.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
@@ -97,7 +96,7 @@ ScopedKeyValueConfig* ScopedKeyValueConfig::GetRoot(ScopedKeyValueConfig* n) {
   return n;
 }
 
-std::string ScopedKeyValueConfig::Lookup(absl::string_view key) const {
+std::string ScopedKeyValueConfig::GetValue(absl::string_view key) const {
   if (parent_ == nullptr) {
     return leaf_->LookupRecurse(key);
   } else {

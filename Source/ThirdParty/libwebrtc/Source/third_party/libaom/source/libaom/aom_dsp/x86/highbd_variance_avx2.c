@@ -26,13 +26,13 @@ static uint32_t aom_highbd_var_filter_block2d_bil_avx2(
     const uint32_t xoffset, const uint32_t yoffset, const uint8_t *dst_ptr8,
     int dst_stride, uint32_t *sse) {
   const __m256i filter1 =
-      _mm256_set1_epi32((uint32_t)(bilinear_filters_2t[xoffset][1] << 16) |
+      _mm256_set1_epi32((int)(bilinear_filters_2t[xoffset][1] << 16) |
                         bilinear_filters_2t[xoffset][0]);
   const __m256i filter2 =
-      _mm256_set1_epi32((uint32_t)(bilinear_filters_2t[yoffset][1] << 16) |
+      _mm256_set1_epi32((int)(bilinear_filters_2t[yoffset][1] << 16) |
                         bilinear_filters_2t[yoffset][0]);
   const __m256i one = _mm256_set1_epi16(1);
-  const uint32_t bitshift = (uint32_t)0x40;
+  const int bitshift = 0x40;
   (void)pixel_step;
   unsigned int i, j, prev = 0, curr = 2;
   uint16_t *src_ptr = CONVERT_TO_SHORTPTR(src_ptr8);

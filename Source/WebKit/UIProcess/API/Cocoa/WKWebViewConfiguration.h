@@ -143,9 +143,12 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @property (nonatomic) BOOL limitsNavigationsToAppBoundDomains WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
-#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
-#import <WebKitAdditions/WKWebViewConfigurationAdditions.h>
-#endif
+/*! @abstract A Boolean value indicating whether inline predictions are allowed.
+@discussion The default value is `NO`. If false, inline predictions
+are disabled regardless of the system setting. If true, they are enabled based
+on the system setting.
+*/
+@property (nonatomic) BOOL allowsInlinePredictions API_AVAILABLE(macos(14.0), ios(17.0));
 
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline

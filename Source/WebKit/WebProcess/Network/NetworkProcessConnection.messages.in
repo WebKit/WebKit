@@ -44,4 +44,6 @@ messages -> NetworkProcessConnection LegacyReceiver {
     MessagesAvailableForPort(struct WebCore::MessagePortIdentifier port)
 
     BroadcastConsoleMessage(enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message)
+
+    AddAllowedFirstPartyForCookies(WebCore::RegistrableDomain firstPartyForCookies)
 }

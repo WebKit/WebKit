@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ExceptionOr.h"
+#include "LibWebRTCMacros.h"
 #include "MediaSample.h"
 #include "SharedBuffer.h"
 #include "SourceBufferParser.h"

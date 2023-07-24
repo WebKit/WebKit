@@ -415,7 +415,7 @@ def _UploadCL(commit_queue_mode):
     - 1: Run trybots but do not submit to CQ.
     - 0: Skip CQ, upload only.
   """
-  cmd = ['git', 'cl', 'upload', '--force', '--bypass-hooks', '--send-mail']
+  cmd = ['git', 'cl', 'upload', '--force', '--bypass-hooks']
   if commit_queue_mode >= 2:
     logging.info('Sending the CL to the CQ...')
     cmd.extend(['-o', 'label=Bot-Commit+1'])

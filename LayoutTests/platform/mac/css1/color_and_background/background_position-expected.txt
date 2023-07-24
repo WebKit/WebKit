@@ -146,4 +146,4 @@ layer at (0,0) size 785x1458
                   text run at (169,36) width 569: "The background color will make it easier to determine the edges of the paragraph, which"
                   text run at (0,54) width 226: "should assist in evaluating this test."
 layer at (8,310) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,302) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,302) size 769x2 [color=#808080] [border: (1px inset #808080)]

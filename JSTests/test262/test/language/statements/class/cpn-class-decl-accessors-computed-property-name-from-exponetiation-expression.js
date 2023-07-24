@@ -4,7 +4,7 @@
 /*---
 description: Computed property name from exponentiation expression (ComputedPropertyName in ClassDeclaration)
 esid: prod-ComputedPropertyName
-features: [computed-property-names]
+features: [computed-property-names, exponentiation]
 flags: [generated]
 info: |
     ClassExpression:

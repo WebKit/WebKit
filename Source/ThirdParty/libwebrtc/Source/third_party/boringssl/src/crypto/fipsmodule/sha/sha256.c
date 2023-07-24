@@ -60,8 +60,10 @@
 
 #include <openssl/mem.h>
 
-#include "internal.h"
 #include "../../internal.h"
+#include "../digest/md32_common.h"
+#include "../service_indicator/internal.h"
+#include "internal.h"
 
 
 int SHA224_Init(SHA256_CTX *sha) {
@@ -112,70 +114,63 @@ uint8_t *SHA256(const uint8_t *data, size_t len,
   return out;
 }
 
-int SHA224_Update(SHA256_CTX *ctx, const void *data, size_t len) {
-  return SHA256_Update(ctx, data, len);
-}
-
-int SHA224_Final(uint8_t out[SHA224_DIGEST_LENGTH], SHA256_CTX *ctx) {
-  // SHA224_Init sets |ctx->md_len| to |SHA224_DIGEST_LENGTH|, so this has a
-  // smaller output.
-  return SHA256_Final(out, ctx);
-}
-
-#define DATA_ORDER_IS_BIG_ENDIAN
-
-#define HASH_CTX SHA256_CTX
-#define HASH_CBLOCK 64
-#define HASH_DIGEST_LENGTH 32
-
-// Note that FIPS180-2 discusses "Truncation of the Hash Function Output."
-// default: case below covers for it. It's not clear however if it's permitted
-// to truncate to amount of bytes not divisible by 4. I bet not, but if it is,
-// then default: case shall be extended. For reference. Idea behind separate
-// cases for pre-defined lenghts is to let the compiler decide if it's
-// appropriate to unroll small loops.
-//
-// TODO(davidben): The small |md_len| case is one of the few places a low-level
-// hash 'final' function can fail. This should never happen.
-#define HASH_MAKE_STRING(c, s)                              \
-  do {                                                      \
-    unsigned int nn;                                        \
-    switch ((c)->md_len) {                                  \
-      case SHA224_DIGEST_LENGTH:                            \
-        for (nn = 0; nn < SHA224_DIGEST_LENGTH / 4; nn++) { \
-          CRYPTO_store_u32_be((s), (c)->h[nn]);             \
-          (s) += 4;                                         \
-        }                                                   \
-        break;                                              \
-      case SHA256_DIGEST_LENGTH:                            \
-        for (nn = 0; nn < SHA256_DIGEST_LENGTH / 4; nn++) { \
-          CRYPTO_store_u32_be((s), (c)->h[nn]);             \
-          (s) += 4;                                         \
-        }                                                   \
-        break;                                              \
-      default:                                              \
-        if ((c)->md_len > SHA256_DIGEST_LENGTH) {           \
-          return 0;                                         \
-        }                                                   \
-        for (nn = 0; nn < (c)->md_len / 4; nn++) {          \
-          CRYPTO_store_u32_be((s), (c)->h[nn]);             \
-          (s) += 4;                                         \
-        }                                                   \
-        break;                                              \
-    }                                                       \
-  } while (0)
-
-
-#define HASH_UPDATE SHA256_Update
-#define HASH_TRANSFORM SHA256_Transform
-#define HASH_FINAL SHA256_Final
-#define HASH_BLOCK_DATA_ORDER sha256_block_data_order
 #ifndef SHA256_ASM
 static void sha256_block_data_order(uint32_t *state, const uint8_t *in,
                                     size_t num);
 #endif
 
-#include "../digest/md32_common.h"
+void SHA256_Transform(SHA256_CTX *c, const uint8_t data[SHA256_CBLOCK]) {
+  sha256_block_data_order(c->h, data, 1);
+}
+
+int SHA256_Update(SHA256_CTX *c, const void *data, size_t len) {
+  crypto_md32_update(&sha256_block_data_order, c->h, c->data, SHA256_CBLOCK,
+                     &c->num, &c->Nh, &c->Nl, data, len);
+  return 1;
+}
+
+int SHA224_Update(SHA256_CTX *ctx, const void *data, size_t len) {
+  return SHA256_Update(ctx, data, len);
+}
+
+static int sha256_final_impl(uint8_t *out, size_t md_len, SHA256_CTX *c) {
+  crypto_md32_final(&sha256_block_data_order, c->h, c->data, SHA256_CBLOCK,
+                    &c->num, c->Nh, c->Nl, /*is_big_endian=*/1);
+
+  // TODO(davidben): This overflow check one of the few places a low-level hash
+  // 'final' function can fail. SHA-512 does not have a corresponding check.
+  // These functions already misbehave if the caller arbitrarily mutates |c|, so
+  // can we assume one of |SHA256_Init| or |SHA224_Init| was used?
+  if (md_len > SHA256_DIGEST_LENGTH) {
+    return 0;
+  }
+
+  assert(md_len % 4 == 0);
+  const size_t out_words = md_len / 4;
+  for (size_t i = 0; i < out_words; i++) {
+    CRYPTO_store_u32_be(out, c->h[i]);
+    out += 4;
+  }
+
+  FIPS_service_indicator_update_state();
+  return 1;
+}
+
+int SHA256_Final(uint8_t out[SHA256_DIGEST_LENGTH], SHA256_CTX *c) {
+  // Ideally we would assert |sha->md_len| is |SHA256_DIGEST_LENGTH| to match
+  // the size hint, but calling code often pairs |SHA224_Init| with
+  // |SHA256_Final| and expects |sha->md_len| to carry the size over.
+  //
+  // TODO(davidben): Add an assert and fix code to match them up.
+  return sha256_final_impl(out, c->md_len, c);
+}
+
+int SHA224_Final(uint8_t out[SHA224_DIGEST_LENGTH], SHA256_CTX *ctx) {
+  // This function must be paired with |SHA224_Init|, which sets |ctx->md_len|
+  // to |SHA224_DIGEST_LENGTH|.
+  assert(ctx->md_len == SHA224_DIGEST_LENGTH);
+  return sha256_final_impl(out, SHA224_DIGEST_LENGTH, ctx);
+}
 
 #ifndef SHA256_ASM
 static const uint32_t K256[64] = {
@@ -193,15 +188,17 @@ static const uint32_t K256[64] = {
     0x682e6ff3UL, 0x748f82eeUL, 0x78a5636fUL, 0x84c87814UL, 0x8cc70208UL,
     0x90befffaUL, 0xa4506cebUL, 0xbef9a3f7UL, 0xc67178f2UL};
 
-#define ROTATE(a, n) (((a) << (n)) | ((a) >> (32 - (n))))
-
-// FIPS specification refers to right rotations, while our ROTATE macro
-// is left one. This is why you might notice that rotation coefficients
-// differ from those observed in FIPS document by 32-N...
-#define Sigma0(x) (ROTATE((x), 30) ^ ROTATE((x), 19) ^ ROTATE((x), 10))
-#define Sigma1(x) (ROTATE((x), 26) ^ ROTATE((x), 21) ^ ROTATE((x), 7))
-#define sigma0(x) (ROTATE((x), 25) ^ ROTATE((x), 14) ^ ((x) >> 3))
-#define sigma1(x) (ROTATE((x), 15) ^ ROTATE((x), 13) ^ ((x) >> 10))
+// See FIPS 180-4, section 4.1.2.
+#define Sigma0(x)                                       \
+  (CRYPTO_rotr_u32((x), 2) ^ CRYPTO_rotr_u32((x), 13) ^ \
+   CRYPTO_rotr_u32((x), 22))
+#define Sigma1(x)                                       \
+  (CRYPTO_rotr_u32((x), 6) ^ CRYPTO_rotr_u32((x), 11) ^ \
+   CRYPTO_rotr_u32((x), 25))
+#define sigma0(x) \
+  (CRYPTO_rotr_u32((x), 7) ^ CRYPTO_rotr_u32((x), 18) ^ ((x) >> 3))
+#define sigma1(x) \
+  (CRYPTO_rotr_u32((x), 17) ^ CRYPTO_rotr_u32((x), 19) ^ ((x) >> 10))
 
 #define Ch(x, y, z) (((x) & (y)) ^ ((~(x)) & (z)))
 #define Maj(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
@@ -318,16 +315,6 @@ void SHA256_TransformBlocks(uint32_t state[8], const uint8_t *data,
   sha256_block_data_order(state, data, num_blocks);
 }
 
-#undef DATA_ORDER_IS_BIG_ENDIAN
-#undef HASH_CTX
-#undef HASH_CBLOCK
-#undef HASH_DIGEST_LENGTH
-#undef HASH_MAKE_STRING
-#undef HASH_UPDATE
-#undef HASH_TRANSFORM
-#undef HASH_FINAL
-#undef HASH_BLOCK_DATA_ORDER
-#undef ROTATE
 #undef Sigma0
 #undef Sigma1
 #undef sigma0

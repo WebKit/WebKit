@@ -35,10 +35,10 @@
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
-enum class NetworkConnectionIntegrity : uint16_t;
 class ResourceError;
 class SecurityOrigin;
 class SharedBuffer;
+enum class AdvancedPrivacyProtections : uint16_t;
 }
 
 namespace WebKit {
@@ -59,7 +59,7 @@ public:
         WebPageProxyIdentifier webPageProxyID;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
         bool allowPrivacyProxy { true };
-        OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
+        OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
         bool includeFetchMetadata { false };
     };
     using CompletionCallback = CompletionHandler<void(WebCore::ResourceError&&)>;

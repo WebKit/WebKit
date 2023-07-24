@@ -27,7 +27,7 @@
 
 #include <wtf/EnumTraits.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #include "Device.h"
 #endif
 
@@ -52,7 +52,7 @@ constexpr bool isLandscape(ScreenOrientationType type)
 
 inline ScreenOrientationType naturalScreenOrientationType()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if (deviceHasIPadCapability())
         return ScreenOrientationType::LandscapePrimary;
     return ScreenOrientationType::PortraitPrimary;
@@ -65,17 +65,3 @@ inline ScreenOrientationType naturalScreenOrientationType()
 }
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ScreenOrientationType> {
-    using values = EnumValues<
-        WebCore::ScreenOrientationType,
-        WebCore::ScreenOrientationType::PortraitPrimary,
-        WebCore::ScreenOrientationType::PortraitSecondary,
-        WebCore::ScreenOrientationType::LandscapePrimary,
-        WebCore::ScreenOrientationType::LandscapeSecondary
-    >;
-};
-
-} // namespace WTF

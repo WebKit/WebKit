@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-inline static bool enoughWidthForHyphenation(float availableWidth, float fontPixelSize)
+inline static bool enoughWidthForHyphenation(float availableWidth, float fontSize)
 {
     // If the maximum width available for the prefix before the hyphen is small, then it is very unlikely
     // that an hyphenation opportunity exists, so do not bother to look for it.
-    return availableWidth > fontPixelSize * 5 / 4;
+    return availableWidth > fontSize * 5 / 4;
 
 }
 bool canHyphenate(const AtomString& localeIdentifier);

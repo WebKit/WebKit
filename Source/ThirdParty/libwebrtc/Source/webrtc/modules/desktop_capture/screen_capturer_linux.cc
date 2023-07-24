@@ -27,16 +27,18 @@ namespace webrtc {
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawScreenCapturer(
     const DesktopCaptureOptions& options) {
 #if defined(WEBRTC_USE_PIPEWIRE)
-  if (options.allow_pipewire() && DesktopCapturer::IsRunningUnderWayland()) {
-    return std::make_unique<BaseCapturerPipeWire>(options);
+  if (options.allow_pipewire() && BaseCapturerPipeWire::IsSupported()) {
+    return std::make_unique<BaseCapturerPipeWire>(options,
+                                                  CaptureType::kScreen);
   }
 #endif  // defined(WEBRTC_USE_PIPEWIRE)
 
 #if defined(WEBRTC_USE_X11)
-  return ScreenCapturerX11::CreateRawScreenCapturer(options);
-#else
-  return nullptr;
+  if (!DesktopCapturer::IsRunningUnderWayland())
+    return ScreenCapturerX11::CreateRawScreenCapturer(options);
 #endif  // defined(WEBRTC_USE_X11)
+
+  return nullptr;
 }
 
 }  // namespace webrtc

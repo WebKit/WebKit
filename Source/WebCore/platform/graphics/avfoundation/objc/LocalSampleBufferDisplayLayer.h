@@ -29,6 +29,7 @@
 
 #include "FrameRateMonitor.h"
 #include "SampleBufferDisplayLayer.h"
+#include "VideoFrame.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
@@ -44,15 +45,13 @@ namespace WebCore {
 
 enum class VideoFrameRotation : uint16_t;
 
-class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer, public CanMakeWeakPtr<LocalSampleBufferDisplayLayer, WeakPtrFactoryInitialization::Eager> {
+class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<LocalSampleBufferDisplayLayer> create(Client&);
+    static RefPtr<LocalSampleBufferDisplayLayer> create(Client&);
 
     LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&&, Client&);
     ~LocalSampleBufferDisplayLayer();
-
-    void enqueueBuffer(CVPixelBufferRef, MediaTime);
 
     // API used by WebAVSampleBufferStatusChangeListener
     void layerStatusDidChange();
@@ -63,9 +62,7 @@ public:
 
     PlatformLayer* displayLayer();
 
-    enum class ShouldUpdateRootLayer : bool { No, Yes };
-    void updateRootLayerBoundsAndPosition(CGRect, VideoFrameRotation, ShouldUpdateRootLayer);
-    void updateRootLayerAffineTransform(CGAffineTransform);
+    void updateSampleLayerBoundsAndPosition(std::optional<CGRect>);
 
     // SampleBufferDisplayLayer.
     PlatformLayer* rootLayer() final;
@@ -76,9 +73,7 @@ public:
     bool didFail() const final;
 
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) final;
-
-    void updateAffineTransform(CGAffineTransform)  final;
-    void updateBoundsAndPosition(CGRect, VideoFrameRotation, std::optional<WTF::MachSendRight>&&) final;
+    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&) final;
 
     void flush() final;
     void flushAndRemoveImage() final;
@@ -91,33 +86,41 @@ public:
     void setRenderPolicy(RenderPolicy) final;
 
 private:
-
+    void enqueueBufferInternal(CVPixelBufferRef, MediaTime);
     void removeOldVideoFramesFromPendingQueue();
     void addVideoFrameToPendingQueue(Ref<VideoFrame>&&);
     void requestNotificationWhenReadyForVideoData();
-    void setRootLayerBoundsAndPositions(CGRect, VideoFrameRotation);
 
 #if !RELEASE_LOG_DISABLED
     void onIrregularFrameRateNotification(MonotonicTime frameTime, MonotonicTime lastFrameTime);
 #endif
 
+    WorkQueue& workQueue() { return m_processingQueue.get(); }
+
 private:
     RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayerForQueue WTF_GUARDED_BY_CAPABILITY(workQueue());
+    bool m_isReconfiguring WTF_GUARDED_BY_CAPABILITY(workQueue()) { false };
+    RetainPtr<CVPixelBufferRef> m_lastPixelBuffer WTF_GUARDED_BY_CAPABILITY(workQueue());
+    MediaTime m_lastPresentationTime WTF_GUARDED_BY_CAPABILITY(workQueue());
     RetainPtr<PlatformLayer> m_rootLayer;
     RenderPolicy m_renderPolicy { RenderPolicy::TimingInfo };
-    
-    RefPtr<WorkQueue> m_processingQueue;
+
+    Ref<WorkQueue> m_processingQueue;
 
     // Only accessed through m_processingQueue or if m_processingQueue is null.
     using PendingSampleQueue = Deque<Ref<VideoFrame>>;
     PendingSampleQueue m_pendingVideoFrameQueue;
-    
+
+    WebCore::VideoFrameRotation m_videoFrameRotation { WebCore::VideoFrameRotation::None };
+    CGAffineTransform m_affineTransform { CGAffineTransformIdentity };
+
     bool m_paused { false };
     bool m_didFail { false };
 #if !RELEASE_LOG_DISABLED
     String m_logIdentifier;
-    FrameRateMonitor m_frameRateMonitor;
+    FrameRateMonitor m_frameRateMonitor WTF_GUARDED_BY_CAPABILITY(workQueue());
 #endif
 };
 

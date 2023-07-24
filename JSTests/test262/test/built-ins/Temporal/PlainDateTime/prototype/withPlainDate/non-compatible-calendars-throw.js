@@ -7,9 +7,33 @@ description: If two non-ISO calendars are involved, an error is raised
 features: [Temporal]
 ---*/
 
+const calendarMethods = {
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  day() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  inLeapYear() {},
+  mergeFields() {},
+  month() {},
+  monthCode() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  year() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
+};
+
 const cal = {
   id: "foo",
   toString() { return "this is a string"; },
+  ...calendarMethods,
 };
 
 const dt = new Temporal.PlainDateTime(1995, 12, 7, 3, 24, 30, 0, 0, 0, cal);
@@ -17,6 +41,7 @@ const dt = new Temporal.PlainDateTime(1995, 12, 7, 3, 24, 30, 0, 0, 0, cal);
 const anotherCal = {
   id: "bar",
   toString() { return "this is another string"; },
+  ...calendarMethods,
 };
 
 const date = new Temporal.PlainDate(2008, 9, 6, anotherCal);

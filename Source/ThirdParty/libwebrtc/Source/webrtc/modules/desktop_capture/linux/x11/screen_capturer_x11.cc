@@ -185,6 +185,10 @@ void ScreenCapturerX11::InitXrandr() {
 
 RTC_NO_SANITIZE("cfi-icall")
 void ScreenCapturerX11::UpdateMonitors() {
+  // The queue should be reset whenever |selected_monitor_rect_| changes, so
+  // that the DCHECKs in CaptureScreen() are satisfied.
+  queue_.Reset();
+
   if (monitors_) {
     free_monitors_(monitors_);
     monitors_ = nullptr;
@@ -278,6 +282,7 @@ void ScreenCapturerX11::CaptureFrame() {
   last_invalid_region_ = result->updated_region();
   result->set_capture_time_ms((rtc::TimeNanos() - capture_start_time_nanos) /
                               rtc::kNumNanosecsPerMillisec);
+  result->set_capturer_id(DesktopCapturerId::kX11CapturerLinux);
   callback_->OnCaptureResult(Result::SUCCESS, std::move(result));
 }
 

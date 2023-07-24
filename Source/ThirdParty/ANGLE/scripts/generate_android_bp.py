@@ -210,7 +210,6 @@ third_party_target_allowlist = [
 include_blocklist = [
     '//buildtools/third_party/libc++/',
     '//out/Android/gen/third_party/vulkan-deps/glslang/src/include/',
-    '//third_party/android_ndk/sources/android/cpufeatures/',
     '//third_party/zlib/',
     '//third_party/zlib/google/',
 ]

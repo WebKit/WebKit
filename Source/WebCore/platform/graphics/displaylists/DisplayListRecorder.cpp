@@ -454,19 +454,23 @@ void Recorder::fillRectWithRoundedHole(const FloatRect& rect, const FloatRounded
 void Recorder::fillPath(const Path& path)
 {
     appendStateChangeItemIfNecessary();
+
+    if (auto segment = path.singleSegment()) {
 #if ENABLE(INLINE_PATH_DATA)
-    if (path.hasInlineData()) {
-        if (path.hasInlineData<LineData>())
-            recordFillLine(path.inlineData<LineData>());
-        else if (path.hasInlineData<ArcData>())
-            recordFillArc(path.inlineData<ArcData>());
-        else if (path.hasInlineData<QuadCurveData>())
-            recordFillQuadCurve(path.inlineData<QuadCurveData>());
-        else if (path.hasInlineData<BezierCurveData>())
-            recordFillBezierCurve(path.inlineData<BezierCurveData>());
+        if (auto line = path.singleDataLine())
+            recordFillLine(*line);
+        else if (auto arc = path.singleArc())
+            recordFillArc(*arc);
+        else if (auto curve = path.singleQuadCurve())
+            recordFillQuadCurve(*curve);
+        else if (auto curve = path.singleBezierCurve())
+            recordFillBezierCurve(*curve);
+        else
+#endif
+            recordFillPathSegment(*segment);
         return;
     }
-#endif
+
     recordFillPath(path);
 }
 
@@ -486,29 +490,34 @@ void Recorder::strokePath(const Path& path)
 {
 #if ENABLE(INLINE_PATH_DATA)
     auto& state = currentState().state;
-    if (state.changes() && state.containsOnlyInlineChanges() && !state.changes().contains(GraphicsContextState::Change::FillBrush) && path.hasInlineData() && path.hasInlineData<LineData>()) {
-        recordStrokeLineWithColorAndThickness(*strokeColor().tryGetAsSRGBABytes(), strokeThickness(), path.inlineData<LineData>());
-        state.didApplyChanges();
-        currentState().lastDrawingState = state;
-        return;
+    if (state.containsOnlyInlineStrokeChanges()) {
+        if (auto line = path.singleDataLine()) {
+            recordStrokeLineWithColorAndThickness(*line, *strokeColor().tryGetAsSRGBABytes(), strokeThickness());
+            state.didApplyChanges();
+            currentState().lastDrawingState = state;
+            return;
+        }
     }
-
-    appendStateChangeItemIfNecessary();
-
-    if (path.hasInlineData()) {
-        if (path.hasInlineData<LineData>())
-            recordStrokeLine(path.inlineData<LineData>());
-        else if (path.hasInlineData<ArcData>())
-            recordStrokeArc(path.inlineData<ArcData>());
-        else if (path.hasInlineData<QuadCurveData>())
-            recordStrokeQuadCurve(path.inlineData<QuadCurveData>());
-        else if (path.hasInlineData<BezierCurveData>())
-            recordStrokeBezierCurve(path.inlineData<BezierCurveData>());
-        return;
-    }
-#else
-    appendStateChangeItemIfNecessary();
 #endif
+
+    appendStateChangeItemIfNecessary();
+
+    if (auto segment = path.singleSegment()) {
+#if ENABLE(INLINE_PATH_DATA)
+        if (auto line = path.singleDataLine())
+            recordStrokeLine(*line);
+        else if (auto arc = path.singleArc())
+            recordStrokeArc(*arc);
+        else if (auto curve = path.singleQuadCurve())
+            recordStrokeQuadCurve(*curve);
+        else if (auto curve = path.singleBezierCurve())
+            recordStrokeBezierCurve(*curve);
+        else
+#endif
+            recordStrokePathSegment(*segment);
+        return;
+    }
+
     recordStrokePath(path);
 }
 
@@ -549,6 +558,7 @@ void Recorder::resetClip()
     currentState().clipBounds = m_initialClip;
 
     recordResetClip();
+    clip(m_initialClip);
 }
 
 void Recorder::clip(const FloatRect& rect)
@@ -558,10 +568,23 @@ void Recorder::clip(const FloatRect& rect)
     recordClip(rect);
 }
 
+void Recorder::clipRoundedRect(const FloatRoundedRect& rect)
+{
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
+    currentState().clipBounds.intersect(currentState().ctm.mapRect(rect.rect()));
+    recordClipRoundedRect(rect);
+}
+
 void Recorder::clipOut(const FloatRect& rect)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
     recordClipOut(rect);
+}
+
+void Recorder::clipOutRoundedRect(const FloatRoundedRect& rect)
+{
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
+    recordClipOutRoundedRect(rect);
 }
 
 void Recorder::clipOut(const Path& path)

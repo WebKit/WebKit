@@ -341,7 +341,7 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
     if (!_playbackSessionInterfaceMac)
         return;
 
-    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel(); model && model->isPlaying() != _playing)
         model->sendRemoteCommand(_playing ? WebCore::PlatformMediaSession::RemoteControlCommandType::PlayCommand : WebCore::PlatformMediaSession::RemoteControlCommandType::PauseCommand, { });
 }
 

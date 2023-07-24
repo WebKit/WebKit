@@ -60,7 +60,7 @@ private:
     void setEnabled(bool) final;
     MediaTime startTimeVariance() const final { return m_startTimeVariance; }
 
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     AudioTrackKind m_kind { None };
     AtomString m_id;
     AtomString m_label;

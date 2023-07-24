@@ -36,7 +36,13 @@ void *aom_memalign(size_t align, size_t size);
 void *aom_malloc(size_t size);
 void *aom_calloc(size_t num, size_t size);
 void aom_free(void *memblk);
-void *aom_memset16(void *dest, int val, size_t length);
+
+static INLINE void *aom_memset16(void *dest, int val, size_t length) {
+  size_t i;
+  uint16_t *dest16 = (uint16_t *)dest;
+  for (i = 0; i < length; i++) *dest16++ = val;
+  return dest;
+}
 
 /*returns an addr aligned to the byte boundary specified by align*/
 #define aom_align_addr(addr, align) \

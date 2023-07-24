@@ -28,11 +28,14 @@
 #include "PerformanceUserTiming.h"
 
 #include "Document.h"
+#include "FrameDestructionObserverInlines.h"
+#include "InspectorInstrumentation.h"
 #include "MessagePort.h"
 #include "PerformanceMarkOptions.h"
 #include "PerformanceMeasureOptions.h"
 #include "PerformanceTiming.h"
 #include "SerializedScriptValue.h"
+#include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/SortedArrayMap.h>
 
@@ -91,7 +94,15 @@ static void addPerformanceEntry(PerformanceEntryMap& map, const String& name, Pe
 
 ExceptionOr<Ref<PerformanceMark>> PerformanceUserTiming::mark(JSC::JSGlobalObject& globalObject, const String& markName, std::optional<PerformanceMarkOptions>&& markOptions)
 {
-    auto mark = PerformanceMark::create(globalObject, *m_performance.scriptExecutionContext(), markName, WTFMove(markOptions));
+    Ref context = *m_performance.scriptExecutionContext();
+
+    std::optional<MonotonicTime> timestamp;
+    if (markOptions && markOptions->startTime)
+        timestamp = m_performance.monotonicTimeFromRelativeTime(*markOptions->startTime);
+
+    InspectorInstrumentation::performanceMark(context.get(), markName, timestamp, is<Document>(context) ? downcast<Document>(context).frame() : nullptr);
+
+    auto mark = PerformanceMark::create(globalObject, context, markName, WTFMove(markOptions));
     if (mark.hasException())
         return mark.releaseException();
 

@@ -79,7 +79,16 @@ static String scriptDirectoryPath(const String& directory)
     if (directory.isEmpty())
         return emptyString();
 
-    return FileSystem::pathByAppendingComponents(directory, { "Scripts"_s, scriptVersion });
+    return FileSystem::pathByAppendingComponent(directory, "Scripts"_s);
+}
+
+static String scriptVersionDirectoryPath(const String& directory)
+{
+    auto scriptDirectory = scriptDirectoryPath(directory);
+    if (scriptDirectory.isEmpty())
+        return emptyString();
+
+    return FileSystem::pathByAppendingComponent(scriptDirectory, scriptVersion);
 }
 
 static ASCIILiteral convertUpdateViaCacheToString(ServiceWorkerUpdateViaCache update)
@@ -219,7 +228,7 @@ void SWRegistrationDatabase::close()
 SWScriptStorage& SWRegistrationDatabase::scriptStorage()
 {
     if (!m_scriptStorage)
-        m_scriptStorage = makeUnique<SWScriptStorage>(scriptDirectoryPath(m_directory));
+        m_scriptStorage = makeUnique<SWScriptStorage>(scriptVersionDirectoryPath(m_directory));
         
     return *m_scriptStorage;
 }
@@ -296,8 +305,10 @@ std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRe
     if (!prepareDatabase(ShouldCreateIfNotExists::No))
         return std::nullopt;
 
-    if (!m_database)
+    if (!m_database) {
+        clearAllRegistrations();
         return Vector<ServiceWorkerContextData> { };
+    }
 
     auto statement = cachedStatement(StatementType::GetAllRecords);
     if (!statement) {
@@ -496,7 +507,7 @@ std::optional<Vector<ServiceWorkerScripts>> SWRegistrationDatabase::updateRegist
 void SWRegistrationDatabase::clearAllRegistrations()
 {
     close();
-    FileSystem::deleteFile(databaseFilePath(m_directory));
+    SQLiteFileSystem::deleteDatabaseFile(databaseFilePath(m_directory));
     FileSystem::deleteNonEmptyDirectory(scriptDirectoryPath(m_directory));
     FileSystem::deleteEmptyDirectory(m_directory);
 }

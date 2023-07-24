@@ -1,0 +1,13 @@
+
+RUN(video.src = findMediaFile("video", "content/audio-tracks"))
+EVENT(canplay)
+EXPECTED (video.audioTracks.length > '1') OK
+RUN(video.play())
+EVENT(playing)
+EXPECTED (internals.pageMediaState().includes("IsPlayingAudio") == 'true') OK
+RUN(video.src = "")
+RUN(video.load())
+EVENT(emptied)
+EXPECTED (internals.pageMediaState().includes("IsPlayingAudio") == 'false') OK
+END OF TEST
+

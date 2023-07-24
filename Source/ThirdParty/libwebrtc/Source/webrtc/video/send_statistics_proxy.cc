@@ -743,8 +743,7 @@ VideoSendStream::Stats SendStatisticsProxy::GetStats() {
   PurgeOldStats();
   stats_.input_frame_rate =
       uma_container_->input_frame_rate_tracker_.ComputeRate();
-  stats_.frames =
-      uma_container_->input_frame_rate_tracker_.TotalSampleCount();
+  stats_.frames = uma_container_->input_frame_rate_tracker_.TotalSampleCount();
   stats_.content_type =
       content_type_ == VideoEncoderConfig::ContentType::kRealtimeVideo
           ? VideoContentType::UNSPECIFIED
@@ -937,14 +936,7 @@ void SendStatisticsProxy::OnMinPixelLimitReached() {
 void SendStatisticsProxy::OnSendEncodedImage(
     const EncodedImage& encoded_image,
     const CodecSpecificInfo* codec_info) {
-  // Simulcast is used for VP8, H264 and Generic.
-  int simulcast_idx =
-      (codec_info && (codec_info->codecType == kVideoCodecVP8 ||
-                      codec_info->codecType == kVideoCodecH264 ||
-                      codec_info->codecType == kVideoCodecGeneric))
-          ? encoded_image.SpatialIndex().value_or(0)
-          : 0;
-
+  int simulcast_idx = encoded_image.SimulcastIndex().value_or(0);
   MutexLock lock(&mutex_);
   ++stats_.frames_encoded;
   // The current encode frame rate is based on previously encoded frames.
@@ -985,6 +977,8 @@ void SendStatisticsProxy::OnSendEncodedImage(
   stats->frames_encoded++;
   stats->total_encode_time_ms += encoded_image.timing_.encode_finish_ms -
                                  encoded_image.timing_.encode_start_ms;
+  if (codec_info)
+    stats->scalability_mode = codec_info->scalability_mode;
   // Report resolution of the top spatial layer.
   bool is_top_spatial_layer =
       codec_info == nullptr || codec_info->end_of_picture;
@@ -1008,8 +1002,13 @@ void SendStatisticsProxy::OnSendEncodedImage(
         int spatial_idx = (rtp_config_.ssrcs.size() == 1) ? -1 : simulcast_idx;
         uma_container_->qp_counters_[spatial_idx].vp8.Add(encoded_image.qp_);
       } else if (codec_info->codecType == kVideoCodecVP9) {
-        int spatial_idx = encoded_image.SpatialIndex().value_or(-1);
-        uma_container_->qp_counters_[spatial_idx].vp9.Add(encoded_image.qp_);
+        // We could either have simulcast layers or spatial layers.
+        // TODO(https://crbug.com/webrtc/14891): When its possible to mix
+        // simulcast and SVC we'll also need to consider what, if anything, to
+        // report in a "simulcast of SVC streams" setup.
+        int stream_idx = encoded_image.SpatialIndex().value_or(
+            encoded_image.SimulcastIndex().value_or(-1));
+        uma_container_->qp_counters_[stream_idx].vp9.Add(encoded_image.qp_);
       } else if (codec_info->codecType == kVideoCodecH264) {
         int spatial_idx = (rtp_config_.ssrcs.size() == 1) ? -1 : simulcast_idx;
         uma_container_->qp_counters_[spatial_idx].h264.Add(encoded_image.qp_);
@@ -1053,11 +1052,12 @@ void SendStatisticsProxy::OnSendEncodedImage(
 }
 
 void SendStatisticsProxy::OnEncoderImplementationChanged(
-    const std::string& implementation_name) {
+    EncoderImplementation implementation) {
   MutexLock lock(&mutex_);
   encoder_changed_ = EncoderChangeEvent{stats_.encoder_implementation_name,
-                                        implementation_name};
-  stats_.encoder_implementation_name = implementation_name;
+                                        implementation.name};
+  stats_.encoder_implementation_name = implementation.name;
+  stats_.power_efficient_encoder = implementation.is_hardware_accelerated;
 }
 
 int SendStatisticsProxy::GetInputFrameRate() const {
@@ -1303,20 +1303,19 @@ void SendStatisticsProxy::RtcpPacketTypesCounterUpdated(
 }
 
 void SendStatisticsProxy::OnReportBlockDataUpdated(
-    ReportBlockData report_block_data) {
+    ReportBlockData report_block) {
   MutexLock lock(&mutex_);
   VideoSendStream::StreamStats* stats =
-      GetStatsEntry(report_block_data.report_block().source_ssrc);
+      GetStatsEntry(report_block.source_ssrc());
   if (!stats)
     return;
-  const RTCPReportBlock& report_block = report_block_data.report_block();
   uma_container_->report_block_stats_.Store(
-      /*ssrc=*/report_block.source_ssrc,
-      /*packets_lost=*/report_block.packets_lost,
+      /*ssrc=*/report_block.source_ssrc(),
+      /*packets_lost=*/report_block.cumulative_lost(),
       /*extended_highest_sequence_number=*/
-      report_block.extended_highest_sequence_number);
+      report_block.extended_highest_sequence_number());
 
-  stats->report_block_data = std::move(report_block_data);
+  stats->report_block_data = std::move(report_block);
 }
 
 void SendStatisticsProxy::DataCountersUpdated(
@@ -1385,7 +1384,6 @@ void SendStatisticsProxy::FrameCountUpdated(const FrameCounts& frame_counts,
 
 void SendStatisticsProxy::SendSideDelayUpdated(int avg_delay_ms,
                                                int max_delay_ms,
-                                               uint64_t total_delay_ms,
                                                uint32_t ssrc) {
   MutexLock lock(&mutex_);
   VideoSendStream::StreamStats* stats = GetStatsEntry(ssrc);
@@ -1393,7 +1391,6 @@ void SendStatisticsProxy::SendSideDelayUpdated(int avg_delay_ms,
     return;
   stats->avg_delay_ms = avg_delay_ms;
   stats->max_delay_ms = max_delay_ms;
-  stats->total_packet_send_delay_ms = total_delay_ms;
 
   uma_container_->delay_counter_.Add(avg_delay_ms);
   uma_container_->max_delay_counter_.Add(max_delay_ms);

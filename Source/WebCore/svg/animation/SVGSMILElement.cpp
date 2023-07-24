@@ -191,7 +191,7 @@ void SVGSMILElement::buildPendingResource()
     if (href.isEmpty())
         target = parentElement();
     else {
-        auto result = SVGURIReference::targetElementFromIRIString(href.string(), treeScope());
+        auto result = SVGURIReference::targetElementFromIRIString(href.string(), treeScopeForSVGReferences());
         target = WTFMove(result.element);
         id = WTFMove(result.identifier);
     }
@@ -202,11 +202,11 @@ void SVGSMILElement::buildPendingResource()
 
     if (!svgTarget) {
         // Do not register as pending if we are already pending this resource.
-        if (document().accessSVGExtensions().isPendingResource(*this, id))
+        if (treeScopeForSVGReferences().isPendingSVGResource(*this, id))
             return;
 
         if (!id.isEmpty()) {
-            document().accessSVGExtensions().addPendingResource(id, *this);
+            treeScopeForSVGReferences().addPendingSVGResource(id, *this);
             ASSERT(hasPendingResources());
         }
     } else
@@ -318,7 +318,7 @@ SMILTime SVGSMILElement::parseOffsetValue(StringView data)
 {
     bool ok;
     double result = 0;
-    auto parse = data.stripWhiteSpace();
+    auto parse = data.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
     if (parse.endsWith('h'))
         result = parse.left(parse.length() - 1).toDouble(ok) * 60 * 60;
     else if (parse.endsWith("min"_s))
@@ -339,7 +339,7 @@ SMILTime SVGSMILElement::parseClockValue(StringView data)
     if (data.isNull())
         return SMILTime::unresolved();
 
-    auto parse = data.stripWhiteSpace();
+    auto parse = data.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
     if (parse == indefiniteAtom())
         return SMILTime::indefinite();
 
@@ -372,7 +372,7 @@ static void sortTimeList(Vector<SMILTimeWithOrigin>& timeList)
     
 bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
 {
-    auto parseString = value.stripWhiteSpace();
+    auto parseString = value.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
     
     double sign = 1.;
     size_t pos = parseString.find('+');
@@ -386,8 +386,8 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
     if (pos == notFound)
         conditionString = parseString;
     else {
-        conditionString = parseString.left(pos).stripWhiteSpace();
-        auto offsetString = parseString.substring(pos + 1).stripWhiteSpace();
+        conditionString = parseString.left(pos).trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
+        auto offsetString = parseString.substring(pos + 1).trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
         offset = parseOffsetValue(offsetString);
         if (offset.isUnresolved())
             return false;
@@ -788,7 +788,7 @@ SMILTime SVGSMILElement::findInstanceTime(BeginOrEnd beginOrEnd, SMILTime minimu
         return SMILTime::unresolved();
 
     if (currentTime < minimumTime)
-        return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
+        return SMILTime::unresolved();
     if (currentTime > minimumTime)
         return currentTime;
 
@@ -899,7 +899,7 @@ void SVGSMILElement::resolveFirstInterval()
     }
 }
 
-void SVGSMILElement::resolveNextInterval()
+bool SVGSMILElement::resolveNextInterval()
 {
     SMILTime begin;
     SMILTime end;
@@ -911,7 +911,9 @@ void SVGSMILElement::resolveNextInterval()
         m_intervalEnd = end;
         notifyDependentsIntervalChanged(NewInterval);
         m_nextProgressTime = std::min(m_nextProgressTime, m_intervalBegin);
+        return true;
     }
+    return false;
 }
 
 SMILTime SVGSMILElement::nextProgressTime() const
@@ -1013,13 +1015,15 @@ void SVGSMILElement::seekToIntervalCorrespondingToTime(SMILTime elapsed)
         if (nextBegin < m_intervalEnd && elapsed >= nextBegin) {
             // End current interval, and start a new interval from the 'nextBegin' time.
             m_intervalEnd = nextBegin;
-            resolveNextInterval();
+            if (!resolveNextInterval())
+                break;
             continue;
         }
 
         // If the desired 'elapsed' time is past the current interval, advance to the next.
         if (elapsed >= m_intervalEnd) {
-            resolveNextInterval();
+            if (!resolveNextInterval())
+                break;
             continue;
         }
 

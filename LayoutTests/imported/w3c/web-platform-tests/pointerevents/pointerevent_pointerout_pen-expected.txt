@@ -1,0 +1,13 @@
+pointerout
+
+Test Description: This test checks if pointerout event triggers for pen. Place your pen over the black rectangle and then pull the pen out of the digitizer's detectable range.
+
+Note: this test is for devices that support hover - for pen only
+
+Pointer Events pointerout tests
+
+The following pointer types were detected: mouse.
+
+
+FAIL pointerout event received assert_true: you have to use pen for this test expected true got false
+

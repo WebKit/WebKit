@@ -98,6 +98,9 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::Attr
 {
     Ref frame = CheckedRef(m_page.corePage()->focusController())->focusedOrMainFrame();
     auto& frameSelection = frame->selection();
+    if (!frameSelection.selection().isContentEditable())
+        return;
+
     RefPtr root = frameSelection.rootEditableElementOrDocumentElement();
     if (!root)
         return;
@@ -165,6 +168,11 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
 
 WebCore::AttributedString TextCheckingControllerProxy::annotatedSubstringBetweenPositions(const WebCore::VisiblePosition& start, const WebCore::VisiblePosition& end)
 {
+    if (!isEditablePosition(start.deepEquivalent())) {
+        ASSERT(!isEditablePosition(end.deepEquivalent()));
+        return { };
+    }
+
     auto entireRange = makeSimpleRange(start, end);
     if (!entireRange)
         return { };

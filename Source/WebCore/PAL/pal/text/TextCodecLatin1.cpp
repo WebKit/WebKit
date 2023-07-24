@@ -116,7 +116,7 @@ String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, boo
                 while (source < alignedEnd) {
                     auto chunk = *reinterpret_cast_ptr<const WTF::MachineWord*>(source);
 
-                    if (!WTF::isAllASCII<LChar>(chunk))
+                    if (!WTF::containsOnlyASCII<LChar>(chunk))
                         goto useLookupTable;
 
                     copyASCIIMachineWord(destination, source);
@@ -171,7 +171,7 @@ upConvertTo16Bit:
                 while (source < alignedEnd) {
                     auto chunk = *reinterpret_cast_ptr<const WTF::MachineWord*>(source);
                     
-                    if (!WTF::isAllASCII<LChar>(chunk))
+                    if (!WTF::containsOnlyASCII<LChar>(chunk))
                         goto useLookupTable16;
                     
                     copyASCIIMachineWord(destination16, source);

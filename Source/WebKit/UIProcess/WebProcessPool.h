@@ -249,7 +249,7 @@ public:
     void addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
     void clearSupportedPlugins();
 
-    ProcessID prewarmedProcessIdentifier();
+    ProcessID prewarmedProcessID();
     void activePagesOriginsInWebProcessForTesting(ProcessID, CompletionHandler<void(Vector<String>&&)>&&);
 
     WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }
@@ -631,6 +631,7 @@ private:
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     void setMediaAccessibilityPreferences(WebProcessProxy&);
 #endif
+    void clearAudibleActivity();
 
     Ref<API::ProcessPoolConfiguration> m_configuration;
 
@@ -803,6 +804,7 @@ private:
 #endif
     };
     std::optional<AudibleMediaActivity> m_audibleMediaActivity;
+    RunLoop::Timer m_audibleActivityTimer;
 
     WebProcessWithMediaStreamingCounter m_webProcessWithMediaStreamingCounter;
     bool m_mediaStreamingActivity { false };

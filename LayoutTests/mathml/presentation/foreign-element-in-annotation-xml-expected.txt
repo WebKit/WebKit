@@ -35,9 +35,10 @@ h6
 
 blockquote
 
+mathml
 
 svg
 
 mathml
 
-
+mathml

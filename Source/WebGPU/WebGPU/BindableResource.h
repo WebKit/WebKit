@@ -26,11 +26,12 @@
 #pragma once
 
 #import <Metal/Metal.h>
+#import <wtf/Vector.h>
 
 namespace WebGPU {
 
-struct BindableResource {
-    id<MTLResource> mtlResource;
+struct BindableResources {
+    Vector<id<MTLResource>> mtlResources;
     MTLResourceUsage usage;
     MTLRenderStages renderStages;
 };

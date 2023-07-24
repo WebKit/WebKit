@@ -142,7 +142,7 @@ void NetworkDataTaskSoup::setPendingDownloadLocation(const String& filename, San
 void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCookies wasBlockingCookies)
 {
     m_currentRequest = WTFMove(request);
-    if (m_currentRequest.url().isLocalFile()) {
+    if (m_currentRequest.url().protocolIsFile()) {
         m_file = adoptGRef(g_file_new_for_path(m_currentRequest.url().fileSystemPath().utf8().data()));
         return;
     }

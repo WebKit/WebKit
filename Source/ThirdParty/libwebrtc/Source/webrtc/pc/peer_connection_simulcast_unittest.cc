@@ -18,10 +18,13 @@
 #include <vector>
 
 #include "absl/algorithm/container.h"
+#include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/audio_codecs/opus_audio_decoder_factory.h"
+#include "api/audio_codecs/opus_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
 #include "api/jsep.h"
 #include "api/media_types.h"
@@ -34,19 +37,31 @@
 #include "api/scoped_refptr.h"
 #include "api/uma_metrics.h"
 #include "api/video/video_codec_constants.h"
-#include "api/video_codecs/builtin_video_decoder_factory.h"
-#include "api/video_codecs/builtin_video_encoder_factory.h"
+#include "api/video_codecs/video_decoder_factory_template.h"
+#include "api/video_codecs/video_decoder_factory_template_dav1d_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_libvpx_vp8_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_libvpx_vp9_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_open_h264_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template.h"
+#include "api/video_codecs/video_encoder_factory_template_libaom_av1_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_libvpx_vp8_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
+#include "media/base/media_constants.h"
 #include "media/base/rid_description.h"
 #include "media/base/stream_params.h"
 #include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "pc/channel_interface.h"
 #include "pc/peer_connection_wrapper.h"
+#include "pc/sdp_utils.h"
 #include "pc/session_description.h"
 #include "pc/simulcast_description.h"
 #include "pc/test/fake_audio_capture_module.h"
 #include "pc/test/mock_peer_connection_observers.h"
+#include "pc/test/simulcast_layer_util.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/gunit.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/unique_id_generator.h"
@@ -61,10 +76,12 @@ using ::testing::ElementsAreArray;
 using ::testing::Eq;
 using ::testing::Field;
 using ::testing::IsEmpty;
+using ::testing::Le;
 using ::testing::Ne;
 using ::testing::Pair;
 using ::testing::Property;
 using ::testing::SizeIs;
+using ::testing::StartsWith;
 
 using cricket::MediaContentDescription;
 using cricket::RidDescription;
@@ -87,29 +104,14 @@ std::ostream& operator<<(  // no-presubmit-check TODO(webrtc:8982)
 
 namespace {
 
-std::vector<SimulcastLayer> CreateLayers(const std::vector<std::string>& rids,
-                                         const std::vector<bool>& active) {
-  RTC_DCHECK_EQ(rids.size(), active.size());
-  std::vector<SimulcastLayer> result;
-  absl::c_transform(rids, active, std::back_inserter(result),
-                    [](const std::string& rid, bool is_active) {
-                      return SimulcastLayer(rid, !is_active);
-                    });
-  return result;
-}
-std::vector<SimulcastLayer> CreateLayers(const std::vector<std::string>& rids,
-                                         bool active) {
-  return CreateLayers(rids, std::vector<bool>(rids.size(), active));
-}
-
 #if RTC_METRICS_ENABLED
 std::vector<SimulcastLayer> CreateLayers(int num_layers, bool active) {
   rtc::UniqueStringGenerator rid_generator;
   std::vector<std::string> rids;
   for (int i = 0; i < num_layers; ++i) {
-    rids.push_back(rid_generator());
+    rids.push_back(rid_generator.GenerateString());
   }
-  return CreateLayers(rids, active);
+  return webrtc::CreateLayers(rids, active);
 }
 #endif
 
@@ -120,17 +122,25 @@ namespace webrtc {
 class PeerConnectionSimulcastTests : public ::testing::Test {
  public:
   PeerConnectionSimulcastTests()
-      : pc_factory_(
-            CreatePeerConnectionFactory(rtc::Thread::Current(),
-                                        rtc::Thread::Current(),
-                                        rtc::Thread::Current(),
-                                        FakeAudioCaptureModule::Create(),
-                                        CreateBuiltinAudioEncoderFactory(),
-                                        CreateBuiltinAudioDecoderFactory(),
-                                        CreateBuiltinVideoEncoderFactory(),
-                                        CreateBuiltinVideoDecoderFactory(),
-                                        nullptr,
-                                        nullptr)) {}
+      : pc_factory_(CreatePeerConnectionFactory(
+            rtc::Thread::Current(),
+            rtc::Thread::Current(),
+            rtc::Thread::Current(),
+            FakeAudioCaptureModule::Create(),
+            CreateBuiltinAudioEncoderFactory(),
+            CreateBuiltinAudioDecoderFactory(),
+            std::make_unique<
+                VideoEncoderFactoryTemplate<LibvpxVp8EncoderTemplateAdapter,
+                                            LibvpxVp9EncoderTemplateAdapter,
+                                            OpenH264EncoderTemplateAdapter,
+                                            LibaomAv1EncoderTemplateAdapter>>(),
+            std::make_unique<
+                VideoDecoderFactoryTemplate<LibvpxVp8DecoderTemplateAdapter,
+                                            LibvpxVp9DecoderTemplateAdapter,
+                                            OpenH264DecoderTemplateAdapter,
+                                            Dav1dDecoderTemplateAdapter>>(),
+            nullptr,
+            nullptr)) {}
 
   rtc::scoped_refptr<PeerConnectionInterface> CreatePeerConnection(
       MockPeerConnectionObserver* observer) {
@@ -169,31 +179,12 @@ class PeerConnectionSimulcastTests : public ::testing::Test {
     EXPECT_TRUE(local->SetRemoteDescription(std::move(answer), &err)) << err;
   }
 
-  RtpTransceiverInit CreateTransceiverInit(
-      const std::vector<SimulcastLayer>& layers) {
-    RtpTransceiverInit init;
-    for (const SimulcastLayer& layer : layers) {
-      RtpEncodingParameters encoding;
-      encoding.rid = layer.rid;
-      encoding.active = !layer.is_paused;
-      init.send_encodings.push_back(encoding);
-    }
-    return init;
-  }
-
   rtc::scoped_refptr<RtpTransceiverInterface> AddTransceiver(
       PeerConnectionWrapper* pc,
       const std::vector<SimulcastLayer>& layers,
       cricket::MediaType media_type = cricket::MEDIA_TYPE_VIDEO) {
     auto init = CreateTransceiverInit(layers);
     return pc->AddTransceiver(media_type, init);
-  }
-
-  SimulcastDescription RemoveSimulcast(SessionDescriptionInterface* sd) {
-    auto mcd = sd->description()->contents()[0].media_description();
-    auto result = mcd->simulcast_description();
-    mcd->set_simulcast_description(SimulcastDescription());
-    return result;
   }
 
   void AddRequestToReceiveSimulcast(const std::vector<SimulcastLayer>& layers,
@@ -629,7 +620,7 @@ TEST_F(PeerConnectionSimulcastTests, SimulcastSldModificationRejected) {
 TEST_F(PeerConnectionSimulcastMetricsTests, NoSimulcastUsageIsLogged) {
   auto local = CreatePeerConnectionWrapper();
   auto remote = CreatePeerConnectionWrapper();
-  auto layers = CreateLayers(0, true);
+  auto layers = ::CreateLayers(0, true);
   AddTransceiver(local.get(), layers);
   ExchangeOfferAnswer(local.get(), remote.get(), layers);
 
@@ -643,7 +634,7 @@ TEST_F(PeerConnectionSimulcastMetricsTests, NoSimulcastUsageIsLogged) {
 TEST_F(PeerConnectionSimulcastMetricsTests, SpecComplianceIsLogged) {
   auto local = CreatePeerConnectionWrapper();
   auto remote = CreatePeerConnectionWrapper();
-  auto layers = CreateLayers(3, true);
+  auto layers = ::CreateLayers(3, true);
   AddTransceiver(local.get(), layers);
   ExchangeOfferAnswer(local.get(), remote.get(), layers);
 
@@ -663,7 +654,7 @@ TEST_F(PeerConnectionSimulcastMetricsTests, SpecComplianceIsLogged) {
 TEST_F(PeerConnectionSimulcastMetricsTests, IncomingSimulcastIsLogged) {
   auto local = CreatePeerConnectionWrapper();
   auto remote = CreatePeerConnectionWrapper();
-  auto layers = CreateLayers(3, true);
+  auto layers = ::CreateLayers(3, true);
   AddTransceiver(local.get(), layers);
   auto offer = local->CreateOfferAndSetAsLocal();
   EXPECT_THAT(LocalDescriptionSamples(),
@@ -712,7 +703,7 @@ TEST_F(PeerConnectionSimulcastMetricsTests, RejectedSimulcastIsLogged) {
 TEST_F(PeerConnectionSimulcastMetricsTests, LegacySimulcastIsLogged) {
   auto local = CreatePeerConnectionWrapper();
   auto remote = CreatePeerConnectionWrapper();
-  auto layers = CreateLayers(0, true);
+  auto layers = ::CreateLayers(0, true);
   AddTransceiver(local.get(), layers);
   auto offer = local->CreateOffer();
   // Munge the SDP to set up legacy simulcast.
@@ -781,7 +772,7 @@ const int kMaxLayersInMetricsTest = 8;
 TEST_P(PeerConnectionSimulcastMetricsTests, NumberOfSendEncodingsIsLogged) {
   auto local = CreatePeerConnectionWrapper();
   auto num_layers = GetParam();
-  auto layers = CreateLayers(num_layers, true);
+  auto layers = ::CreateLayers(num_layers, true);
   AddTransceiver(local.get(), layers);
   EXPECT_EQ(1, metrics::NumSamples(
                    "WebRTC.PeerConnection.Simulcast.NumberOfSendEncodings"));
@@ -794,4 +785,5 @@ INSTANTIATE_TEST_SUITE_P(NumberOfSendEncodings,
                          PeerConnectionSimulcastMetricsTests,
                          ::testing::Range(0, kMaxLayersInMetricsTest));
 #endif
+
 }  // namespace webrtc

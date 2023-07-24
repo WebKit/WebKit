@@ -17,9 +17,9 @@ export async function attachIframe(options = {}) {
     ...options,
   };
   const iframe = context.document.createElement("iframe");
-  if (sandbox !== null) iframe.sandbox = sandbox;
   iframe.allowFullscreen = allowFullscreen;
   await new Promise((resolve) => {
+    if (sandbox != null) iframe.sandbox = sandbox;
     iframe.onload = resolve;
     iframe.src = src;
     context.document.body.appendChild(iframe);
@@ -33,11 +33,16 @@ export function getOppositeOrientation() {
     : "portrait";
 }
 
-export function makeCleanup() {
+/**
+ * Exits full screen, and removes the iframe.
+ * @param {HTMLIFrameElement} iframe same-origin iframe.
+ * @returns {() => Promise<void>} The cleanup function.
+ */
+export function makeCleanup(iframe = null) {
+  const context = iframe?.contentWindow ?? window;
+  const doc = iframe?.contentDocument ?? context.document;
   return async () => {
-    screen.orientation.unlock();
-    if (document.fullscreenElement) {
-      await document.fullscreenElement.ownerDocument.exitFullscreen();
-    }
+    await doc.fullscreenElement?.ownerDocument.exitFullscreen();
+    iframe?.remove();
   };
 }

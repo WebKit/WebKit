@@ -54,6 +54,7 @@
 #include "NetworkStorageManager.h"
 #include "PreconnectTask.h"
 #include "PrivateClickMeasurementPersistentStore.h"
+#include "ProcessAssertion.h"
 #include "RemoteWorkerType.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
@@ -146,7 +147,7 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
 #if ENABLE(CONTENT_EXTENSIONS)
     , m_networkContentRuleListManager(*this)
 #endif
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { setIsHoldingLockedFiles(isHoldingLockedFiles); })
 #endif
 {
@@ -332,8 +333,11 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     setPrivateClickMeasurementEnabled(parameters.enablePrivateClickMeasurement);
     m_ftpEnabled = parameters.ftpEnabled;
 
-    for (auto [processIdentifier, domain] : parameters.allowedFirstPartiesForCookies)
+    for (auto [processIdentifier, domain] : parameters.allowedFirstPartiesForCookies) {
+        if (auto* connection = webProcessConnection(processIdentifier))
+            connection->addAllowedFirstPartyForCookies(domain);
         addAllowedFirstPartyForCookies(processIdentifier, WTFMove(domain), LoadedWebArchive::No, [] { });
+    }
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
@@ -417,25 +421,13 @@ void NetworkProcess::webProcessWillLoadWebArchive(WebCore::ProcessIdentifier pro
     }).iterator->value.first = LoadedWebArchive::Yes;
 }
 
-bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty)
-{
-    // FIXME: This should probably not be necessary. If about:blank is the first party for cookies,
-    // we should set it to be the inherited origin then remove this exception.
-    if (firstParty.isAboutBlank())
-        return true;
-
-    if (firstParty.isNull())
-        return true; // FIXME: This shouldn't be allowed.
-
-    RegistrableDomain firstPartyDomain(firstParty);
-    return allowsFirstPartyForCookies(processIdentifier, firstPartyDomain);
-}
-
 bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain)
 {
-    // FIXME: This shouldn't be needed but it is hit sometimes at least with PDFs.
+#if PLATFORM(GTK)
+    // FIXME: This shouldn't be needed but is hit for some web socket tests on GTK.
     if (firstPartyDomain.isEmpty())
         return true;
+#endif
 
     if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
         ASSERT_NOT_REACHED();
@@ -452,14 +444,7 @@ bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
         return true;
 
     auto& set = iterator->value.second;
-    if (!std::remove_reference_t<decltype(set)>::isValidValue(firstPartyDomain)) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    auto result = set.contains(firstPartyDomain);
-    ASSERT(result);
-    return result;
+    return AuxiliaryProcess::allowsFirstPartyForCookies(firstPartyDomain, set);
 }
 
 void NetworkProcess::addStorageSession(PAL::SessionID sessionID, const WebsiteDataStoreParameters& parameters)
@@ -483,7 +468,7 @@ void NetworkProcess::addStorageSession(PAL::SessionID sessionID, const WebsiteDa
 
     auto identifierBase = makeString(uiProcessBundleIdentifier(), '.', sessionID.toUInt64());
     RetainPtr<CFURLStorageSessionRef> storageSession;
-    auto cfIdentifier = makeString(identifierBase, ".PrivateBrowsing."_s, UUID::createVersion4()).createCFString();
+    auto cfIdentifier = makeString(identifierBase, ".PrivateBrowsing."_s, WTF::UUID::createVersion4()).createCFString();
     if (sessionID.isEphemeral())
         storageSession = createPrivateStorageSession(cfIdentifier.get(), std::nullopt, WebCore::NetworkStorageSession::ShouldDisableCFURLCache::Yes);
     else if (sessionID != PAL::SessionID::defaultSessionID())
@@ -2983,6 +2968,28 @@ void NetworkProcess::countNonDefaultSessionSets(PAL::SessionID sessionID, Comple
 void NetworkProcess::requestBackgroundFetchPermission(PAL::SessionID sessionID, const ClientOrigin& origin, CompletionHandler<void(bool)>&& callback)
 {
     parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestBackgroundFetchPermission(sessionID, origin), WTFMove(callback));
+}
+#endif
+
+#if USE(RUNNINGBOARD)
+void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
+{
+#if PLATFORM(MAC)
+    // The sandbox doesn't allow the network process to talk to runningboardd on macOS.
+    UNUSED_PARAM(isHoldingLockedFiles);
+#else
+    if (!isHoldingLockedFiles) {
+        m_holdingLockedFileAssertion = nullptr;
+        return;
+    }
+
+    if (m_holdingLockedFileAssertion && m_holdingLockedFileAssertion->isValid())
+        return;
+
+    // We synchronously take a process assertion when beginning a SQLite transaction so that we don't get suspended
+    // while holding a locked file. We would get killed if suspended while holding locked files.
+    m_holdingLockedFileAssertion = ProcessAssertion::create(getCurrentProcessID(), "Network Process is holding locked files"_s, ProcessAssertionType::FinishTaskInterruptable, ProcessAssertion::Mode::Sync);
+#endif
 }
 #endif
 

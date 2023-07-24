@@ -46,10 +46,11 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/numerics/sequence_number_util.h"
+#include "rtc_base/numerics/sequence_number_unwrapper.h"
 #include "rtc_base/rate_statistics.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_tools/rtc_event_log_visualizer/log_simulation.h"
@@ -205,7 +206,6 @@ absl::optional<double> NetworkDelayDiff_CaptureTime(
   return delay_change;
 }
 
-
 template <typename T>
 TimeSeries CreateRtcpTypeTimeSeries(const std::vector<T>& rtcp_list,
                                     AnalyzerConfig config,
@@ -338,6 +338,72 @@ std::string GetDirectionAsShortString(PacketDirection direction) {
   } else {
     return "Out";
   }
+}
+
+struct FakeExtensionSmall {
+  static constexpr RTPExtensionType kId = kRtpExtensionMid;
+  static constexpr absl::string_view Uri() { return "fake-extension-small"; }
+};
+struct FakeExtensionLarge {
+  static constexpr RTPExtensionType kId = kRtpExtensionRtpStreamId;
+  static constexpr absl::string_view Uri() { return "fake-extension-large"; }
+};
+
+RtpPacketReceived RtpPacketForBWEFromHeader(const RTPHeader& header) {
+  RtpHeaderExtensionMap rtp_header_extensions(/*extmap_allow_mixed=*/true);
+  // ReceiveSideCongestionController doesn't need to know extensions ids as
+  // long as it able to get extensions by type. So any ids would work here.
+  rtp_header_extensions.Register<TransmissionOffset>(1);
+  rtp_header_extensions.Register<AbsoluteSendTime>(2);
+  rtp_header_extensions.Register<TransportSequenceNumber>(3);
+  rtp_header_extensions.Register<FakeExtensionSmall>(4);
+  // Use id > 14 to force two byte header per rtp header when this one is used.
+  rtp_header_extensions.Register<FakeExtensionLarge>(16);
+
+  RtpPacketReceived rtp_packet(&rtp_header_extensions);
+  // Set only fields that might be relevant for the bandwidth estimatior.
+  rtp_packet.SetSsrc(header.ssrc);
+  rtp_packet.SetTimestamp(header.timestamp);
+  size_t num_bwe_extensions = 0;
+  if (header.extension.hasTransmissionTimeOffset) {
+    rtp_packet.SetExtension<TransmissionOffset>(
+        header.extension.transmissionTimeOffset);
+    ++num_bwe_extensions;
+  }
+  if (header.extension.hasAbsoluteSendTime) {
+    rtp_packet.SetExtension<AbsoluteSendTime>(
+        header.extension.absoluteSendTime);
+    ++num_bwe_extensions;
+  }
+  if (header.extension.hasTransportSequenceNumber) {
+    rtp_packet.SetExtension<TransportSequenceNumber>(
+        header.extension.transportSequenceNumber);
+    ++num_bwe_extensions;
+  }
+
+  // All parts of the RTP header are 32bit aligned.
+  RTC_CHECK_EQ(header.headerLength % 4, 0);
+
+  // Original packet could have more extensions, there could be csrcs that are
+  // not propagated by the rtc event log, i.e. logged header size might be
+  // larger that rtp_packet.header_size(). Increase it by setting an extra fake
+  // extension.
+  RTC_CHECK_GE(header.headerLength, rtp_packet.headers_size());
+  size_t bytes_to_add = header.headerLength - rtp_packet.headers_size();
+  if (bytes_to_add > 0) {
+    if (bytes_to_add <= 16) {
+      // one-byte header rtp header extension allows to add up to 16 bytes.
+      rtp_packet.AllocateExtension(FakeExtensionSmall::kId, bytes_to_add - 1);
+    } else {
+      // two-byte header rtp header extension would also add one byte per
+      // already set extension.
+      rtp_packet.AllocateExtension(FakeExtensionLarge::kId,
+                                   bytes_to_add - 2 - num_bwe_extensions);
+    }
+  }
+  RTC_CHECK_EQ(rtp_packet.headers_size(), header.headerLength);
+
+  return rtp_packet;
 }
 
 }  // namespace
@@ -615,6 +681,30 @@ void EventLogAnalyzer::CreatePlayoutGraph(Plot* plot) {
   plot->SetSuggestedYAxis(0, 1, "Time since last playout (ms)", kBottomMargin,
                           kTopMargin);
   plot->SetTitle("Audio playout");
+}
+
+void EventLogAnalyzer::CreateNetEqSetMinimumDelay(Plot* plot) {
+  for (const auto& playout_stream :
+       parsed_log_.neteq_set_minimum_delay_events()) {
+    uint32_t ssrc = playout_stream.first;
+    if (!MatchingSsrc(ssrc, desired_ssrc_))
+      continue;
+
+    TimeSeries time_series(SsrcToString(ssrc), LineStyle::kStep,
+                           PointStyle::kHighlight);
+    for (const auto& event : playout_stream.second) {
+      float x = config_.GetCallTimeSec(event.log_time());
+      float y = event.minimum_delay_ms;
+      time_series.points.push_back(TimeSeriesPoint(x, y));
+    }
+    plot->AppendTimeSeries(std::move(time_series));
+  }
+
+  plot->SetXAxis(config_.CallBeginTimeSec(), config_.CallEndTimeSec(),
+                 "Time (s)", kLeftMargin, kRightMargin);
+  plot->SetSuggestedYAxis(0, 1000, "Minimum Delay (ms)", kBottomMargin,
+                          kTopMargin);
+  plot->SetTitle("Set Minimum Delay");
 }
 
 // For audio SSRCs, plot the audio level.
@@ -1445,12 +1535,16 @@ void EventLogAnalyzer::CreateReceiveSideBweSimulationGraph(Plot* plot) {
   int64_t last_update_us = 0;
   for (const auto& kv : incoming_rtp) {
     const RtpPacketType& packet = *kv.second;
-    int64_t arrival_time_ms = packet.rtp.log_time_us() / 1000;
-    size_t payload = packet.rtp.total_length; /*Should subtract header?*/
-    clock.AdvanceTimeMicroseconds(packet.rtp.log_time_us() -
-                                  clock.TimeInMicroseconds());
-    rscc.OnReceivedPacket(arrival_time_ms, payload, packet.rtp.header);
-    acked_bitrate.Update(payload, arrival_time_ms);
+
+    RtpPacketReceived rtp_packet = RtpPacketForBWEFromHeader(packet.rtp.header);
+    rtp_packet.set_arrival_time(packet.rtp.log_time());
+    rtp_packet.SetPayloadSize(packet.rtp.total_length -
+                              rtp_packet.headers_size());
+
+    clock.AdvanceTime(rtp_packet.arrival_time() - clock.CurrentTime());
+    rscc.OnReceivedPacket(rtp_packet, MediaType::VIDEO);
+    int64_t arrival_time_ms = packet.rtp.log_time().ms();
+    acked_bitrate.Update(packet.rtp.total_length, arrival_time_ms);
     absl::optional<uint32_t> bitrate_bps = acked_bitrate.Rate(arrival_time_ms);
     if (bitrate_bps) {
       uint32_t y = *bitrate_bps / 1000;

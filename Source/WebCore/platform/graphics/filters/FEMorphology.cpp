@@ -5,6 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,8 +40,8 @@ Ref<FEMorphology> FEMorphology::create(MorphologyOperatorType type, float radius
 FEMorphology::FEMorphology(MorphologyOperatorType type, float radiusX, float radiusY)
     : FilterEffect(FilterEffect::Type::FEMorphology)
     , m_type(type)
-    , m_radiusX(radiusX)
-    , m_radiusY(radiusY)
+    , m_radiusX(std::max(0.0f, radiusX))
+    , m_radiusY(std::max(0.0f, radiusY))
 {
 }
 
@@ -62,6 +63,7 @@ bool FEMorphology::setMorphologyOperator(MorphologyOperatorType type)
 
 bool FEMorphology::setRadiusX(float radiusX)
 {
+    radiusX = std::max(0.0f, radiusX);
     if (m_radiusX == radiusX)
         return false;
     m_radiusX = radiusX;
@@ -70,6 +72,7 @@ bool FEMorphology::setRadiusX(float radiusX)
 
 bool FEMorphology::setRadiusY(float radiusY)
 {
+    radiusY = std::max(0.0f, radiusY);
     if (m_radiusY == radiusY)
         return false;
     m_radiusY = radiusY;

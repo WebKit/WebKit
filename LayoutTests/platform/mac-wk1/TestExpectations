@@ -71,6 +71,12 @@ http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Skip ]
 http/tests/navigation/page-cache-mediastream.html [ Skip ]
 media/audio-session-category.html [ Skip ]
 media/audio-session-category-at-most-recent-playback.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-constructor.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-setsinkid.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-state-change.https.html [ Skip ]
+
+# Payment request API is not supported on WK1.
+imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy-attribute-redirect-on-load.https.sub.html [ Skip ]
 
 # No support for the Clear-Site-Data header in WebKit1.
 imported/w3c/web-platform-tests/clear-site-data [ Skip ]
@@ -805,6 +811,11 @@ accessibility/custom-elements/ [ Skip ]
 accessibility/ax-object-destroyed-on-reload.html [ Skip ]
 accessibility/page-reload-deadlock.html [ Skip ]
 
+# Skip because WK1 doesn't seem to support Element::setAttribute.
+accessibility/dynamic-rowspan.html [ Skip ]
+accessibility/dynamic-colspan.html [ Skip ]
+accessibility/dynamic-table-descendants.html [ Skip ] 
+
 # Missing AccessibilityUIElement::isIndeterminate() implementation.
 accessibility/progress-indeterminate-value.html [ Skip ]
 
@@ -812,9 +823,11 @@ accessibility/progress-indeterminate-value.html [ Skip ]
 # role="spinbutton" elements (month, day, year). WK1 renders date inputs using a contenteditable div.
 accessibility/mac/date-input-increment-decrement.html [ Skip ]
 
-accessibility/display-contents-dynamically-added-children.html [ Skip ]
-accessibility/display-contents-aria-owns.html [ Skip ]
+accessibility/display-contents/dynamically-added-children.html [ Skip ]
+accessibility/display-contents/aria-owns.html [ Skip ]
 
+accessibility/mac/text-field-number-of-characters.html [ Skip ]
+accessibility/mac/content-editable-attributed-string.html [ Skip ]
 accessibility/mac/lazy-spellchecking.html [ Skip ]
 
 # DOM paste access requests are not implemented in WebKit1.
@@ -838,6 +851,11 @@ imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/b
 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-blob.html [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/015.html [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/006.html [ Pass Failure ]
+
+# Tests are only relevant in WK2
+http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-redirect.html [ Skip ]
+http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect.html [ Skip ]
+http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party.html [ Skip ]
 
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
@@ -974,6 +992,10 @@ http/tests/media/video-webm-stall.html
 # Screenshots timeline does not capture screenshots for changes in WebKitLegacy.
 webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]
 
+# The CookieStore API is not fully implemented on macOS WK1 yet.
+imported/w3c/web-platform-tests/cookie-store [ Skip ]
+imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End features not supported in WebKit1
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1062,8 +1084,6 @@ webkit.org/b/155067 storage/indexeddb/transaction-abort-private.html [ Pass Cras
 webkit.org/b/172092 [ Debug ] fast/parser/adoption-agency-unload-iframe-4.html [ Pass Timeout ]
 
 webkit.org/b/254706 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Timeout ]
-
-webkit.org/b/255235 [ Ventura Debug ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Failure ]
 
 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ]
 
@@ -1566,6 +1586,9 @@ http/tests/inspector/network/resource-response-inspector-override.html [ Skip ]
 inspector/network/intercept-aborted-request.html [ Skip ]
 inspector/network/interceptContinue.html [ Skip ]
 
+# Resource content retrival times out in WebKit1.
+webkit.org/b/257407 http/tests/inspector/network/xhr-request-type.html [ Skip ]
+
 webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 
 # rdar://92764272 ([ Ventura wk1 ] 18 X fast/html/details (layout-tests) are flaky text failures)
@@ -1781,7 +1804,8 @@ webkit.org/b/195098 pointerevents/mouse/enter-leave-order.html [ Failure ]
 webkit.org/b/195098 pointerevents/mouse/over-enter-out-leave.html [ Failure ]
 webkit.org/b/195098 pointerevents/mouse/pointer-capture.html [ Failure ]
 webkit.org/b/195098 pointerevents/mouse/pointer-events-before-mouse-events.html [ Failure ]
-webkit.org/b/195098 pointer-lock/pointermove-movement-delta.html [ Failure ]
+
+webkit.org/b/244304 [ Monterey+ ] pointer-lock/pointermove-movement-delta.html [ Pass Timeout ]
 
 webkit.org/b/196915 [ Debug ] inspector/timeline/timeline-recording.html [ Pass Failure ]
 
@@ -1935,7 +1959,7 @@ accessibility/element-reflection-ariaerrormessage.html [ Skip ]
 accessibility/mac/pseudo-element-text-markers.html [ Skip ]
 accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 accessibility/selected-state-changed-notifications.html [ Skip ]
-accessibility/display-contents-descendant-menu-item.html [ Skip ]
+accessibility/display-contents/descendant-menu-item.html [ Skip ]
 accessibility/element-line-rects-and-text.html [ Skip ]
 accessibility/mac/line-index-for-textmarker.html [ Skip ]
 accessibility/mac/mathml-elements.html [ Skip ]
@@ -2272,8 +2296,6 @@ webkit.org/b/230842 [ BigSur Debug ] media/track/audio-track.html [ Pass Crash ]
 
 webkit.org/b/230848 [ BigSur Debug ] webrtc/datachannel/datachannel-gc.html [ Pass Crash ]
 
-webkit.org/b/230905 [ BigSur ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Pass Failure ]
-
 # DumpRenderTree doesn't invoke inspector instrumentation when repainting.
 webkit.org/b/232852 inspector/page/setShowPaintRects.html [ Skip ]
 
@@ -2305,7 +2327,7 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_
 imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame.html [ Pass Failure ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture-in-custom-element.html [ Pass Failure ]
 
-webkit.org/b/236128 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]
+webkit.org/b/236128 fullscreen/full-screen-iframe-with-max-width-height.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-param-url.html [ ImageOnlyFailure ]
 
@@ -2523,3 +2545,38 @@ webkit.org/b/255498 css3/scroll-snap/scroll-snap-discrete-wheel-event-in-mainfra
 
 # test failing only on mac-wk1 after importing wpt css/css-tables
 imported/w3c/web-platform-tests/css/css-tables/collapsed-border-positioned-tr-td.html [ ImageOnlyFailure ]
+
+#rdar://105804155 ([ WK1 ] 2 http/tests/resourceLoadStatistics/* (layout-tests) are constant failures)
+http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-js-cookie-checking.html [ Skip ]
+http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-js-cookie-checking.html [ Skip ]
+
+# Site-isolation isn't supported in WK1
+http/tests/site-isolation [ Skip ]
+
+# WebKit Legacy doesn't properly support ::-webkit-scrollbar on viewport
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-001.html  [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-002.html  [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-010.html  [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-014.html  [ Skip ]
+
+# webkit.org/b/258628 Skipping some newly imported pointerevents WPT
+imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-on-object.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-preventdefault-passive.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?mouse [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?pen [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_contextmenu_is_a_pointerevent.html?mouse [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?mouse [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?pen [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_no_pointer_movement.html [ Skip ]
+
+# Lack of support for WPT custom domains.
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-escalate-privileges.tentative.sub.window.html [ Failure ]
+
+# rdar://111704637 - 'mousemove' not emitted from 'eventSender.moveMouseTo()'
+fast/html/transient-activation.html [ Skip ]
+
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-079.html [ ImageOnlyFailure ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-in-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-intrinsic-width.html [ ImageOnlyFailure ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested.html [ ImageOnlyFailure  ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error.html [ ImageOnlyFailure ]

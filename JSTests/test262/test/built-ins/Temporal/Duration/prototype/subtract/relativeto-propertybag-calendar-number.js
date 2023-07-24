@@ -12,13 +12,9 @@ const instance = new Temporal.Duration(1, 0, 0, 1);
 
 const calendar = 19970327;
 
-let relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar };
-const result1 = instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo });
-TemporalHelpers.assertDuration(result1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, "19970327 is a valid ISO string for relativeTo.calendar");
-
-relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar: { calendar } };
-const result2 = instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo });
-TemporalHelpers.assertDuration(result2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, "19970327 is a valid ISO string for relativeTo.calendar (nested property)");
+const relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar };
+const result = instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo });
+TemporalHelpers.assertDuration(result, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, "19970327 is a valid ISO string for relativeTo.calendar");
 
 const numbers = [
   1,
@@ -27,16 +23,10 @@ const numbers = [
 ];
 
 for (const calendar of numbers) {
-  let relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar };
+  const relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar };
   assert.throws(
     RangeError,
     () => instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo }),
     `Number ${calendar} does not convert to a valid ISO string for relativeTo.calendar`
-  );
-  relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar: { calendar } };
-  assert.throws(
-    RangeError,
-    () => instance.subtract(new Temporal.Duration(0, 0, 0, 0, 24), { relativeTo }),
-    `Number ${calendar} does not convert to a valid ISO string for relativeTo.calendar (nested property)`
   );
 }

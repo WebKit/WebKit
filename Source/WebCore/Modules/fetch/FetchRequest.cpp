@@ -245,8 +245,11 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
         auto fillResult = init.headers ? m_headers->fill(*init.headers) : m_headers->fill(input.headers());
         if (fillResult.hasException())
             return fillResult;
-    } else
+        m_navigationPreloadIdentifier = { };
+    } else {
         m_headers->setInternalHeaders(HTTPHeaderMap { input.headers().internalHeaders() });
+        m_navigationPreloadIdentifier = input.m_navigationPreloadIdentifier;
+    }
 
     auto setBodyResult = init.body ? setBody(WTFMove(*init.body)) : setBody(input);
     if (setBodyResult.hasException())

@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 175x86 clip at (18,18) size 155x66
-  RenderBlock (floating) {DIV} at (0,0) size 175x86 [border: (10px solid #FF0000)]
+layer at (8,8) size 168x86 clip at (18,18) size 148x66
+  RenderBlock (floating) {DIV} at (0,0) size 168x86 [border: (10px solid #FF0000)]
     RenderImage {IMG} at (10,10) size 86x66
-    RenderBlock {DIV} at (10,10) size 155x13
-      RenderText {#text} at (92,0) size 7x13
+    RenderBlock {DIV} at (10,10) size 148x12
+      RenderText {#text} at (92,0) size 7x12
         text run at (92,0) width 7: "x"
-    RenderBlock {DIV} at (10,23) size 155x52
-      RenderText {#text} at (92,0) size 52x52
-        text run at (92,0) width 44: "Ted and"
-        text run at (92,13) width 18: "the"
-        text run at (92,26) width 52: "miniature"
-        text run at (92,39) width 33: "Teddy"
+    RenderBlock {DIV} at (10,22) size 148x48
+      RenderText {#text} at (92,0) size 49x48
+        text run at (92,0) width 42: "Ted and"
+        text run at (92,12) width 17: "the"
+        text run at (92,24) width 49: "miniature"
+        text run at (92,36) width 32: "Teddy"

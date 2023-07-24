@@ -45,7 +45,6 @@ static const int kMaxLogLineSize = 1024 - 60;
 #include "absl/strings/string_view.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/never_destroyed.h"
 #include "rtc_base/platform_thread_types.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/string_utils.h"
@@ -221,7 +220,7 @@ LogMessage::~LogMessage() {
   log_line_.set_message(print_stream_.Release());
 
   if (log_line_.severity() >= g_dbg_sev) {
-    OutputToDebug(log_line_.severity(), log_line_);
+    OutputToDebug(log_line_);
   }
 
   webrtc::MutexLock lock(&GetLoggingLock());
@@ -249,7 +248,6 @@ int LogMessage::GetMinLogSeverity() {
 LoggingSeverity LogMessage::GetLogToDebug() {
   return g_dbg_sev;
 }
-
 int64_t LogMessage::LogStartTime() {
   static const int64_t g_start = SystemTimeMillis();
   return g_start;
@@ -369,26 +367,21 @@ void LogMessage::UpdateMinLogSeverity()
   g_min_sev = min_sev;
 }
 
-void LogMessage::OutputToDebug(LoggingSeverity severity, const LogLineRef& log_line) {
+void LogMessage::OutputToDebug(const LogLineRef& log_line) {
   std::string msg_str = log_line.DefaultLogLine();
   bool log_to_stderr = log_to_stderr_;
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS) && defined(NDEBUG)
   // On the Mac, all stderr output goes to the Console log and causes clutter.
   // So in opt builds, don't log to stderr unless the user specifically sets
   // a preference to do so.
-  CFStringRef key = CFStringCreateWithCString(
-      kCFAllocatorDefault, "logToStdErr", kCFStringEncodingUTF8);
   CFStringRef domain = CFBundleGetIdentifier(CFBundleGetMainBundle());
-  if (key != nullptr && domain != nullptr) {
+  if (domain != nullptr) {
     Boolean exists_and_is_valid;
-    Boolean should_log =
-        CFPreferencesGetAppBooleanValue(key, domain, &exists_and_is_valid);
+    Boolean should_log = CFPreferencesGetAppBooleanValue(
+        CFSTR("logToStdErr"), domain, &exists_and_is_valid);
     // If the key doesn't exist or is invalid or is false, we will not log to
     // stderr.
     log_to_stderr = exists_and_is_valid && should_log;
-  }
-  if (key != nullptr) {
-    CFRelease(key);
   }
 #endif  // defined(WEBRTC_MAC) && !defined(WEBRTC_IOS) && defined(NDEBUG)
 
@@ -453,7 +446,7 @@ void LogMessage::OutputToDebug(LoggingSeverity severity, const LogLineRef& log_l
 #endif  // WEBRTC_ANDROID
 #if defined(WEBRTC_WEBKIT_BUILD)
   if (g_log_output_callback) {
-    g_log_output_callback(severity, msg_str.c_str());
+    g_log_output_callback(log_line.severity(), msg_str.c_str());
   }
 #endif
   if (log_to_stderr) {

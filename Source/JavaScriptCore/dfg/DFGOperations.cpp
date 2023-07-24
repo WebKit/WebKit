@@ -2771,6 +2771,96 @@ JSC_DEFINE_JIT_OPERATION(operationStringLocaleCompare, UCPUStrictInt32, (JSGloba
     RELEASE_AND_RETURN(scope, toUCPUStrictInt32(collator->compareStrings(globalObject, string, that)));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationStringIndexOf, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, JSString* argument))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto thisViewWithString = base->viewWithUnderlyingString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto otherViewWithString = argument->viewWithUnderlyingString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    size_t result = thisViewWithString.view.find(otherViewWithString.view);
+    if (result == notFound)
+        return toUCPUStrictInt32(-1);
+    return toUCPUStrictInt32(result);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithOneChar, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, int32_t character))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto thisViewWithString = base->viewWithUnderlyingString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    size_t result = thisViewWithString.view.find(static_cast<UChar>(character));
+    if (result == notFound)
+        return toUCPUStrictInt32(-1);
+    return toUCPUStrictInt32(result);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithIndex, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, JSString* argument, int32_t position))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto thisViewWithString = base->viewWithUnderlyingString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto otherViewWithString = argument->viewWithUnderlyingString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    int32_t length = thisViewWithString.view.length();
+    unsigned pos = 0;
+    if (position >= 0)
+        pos = std::min<uint32_t>(position, length);
+
+    if (static_cast<unsigned>(length) < otherViewWithString.view.length() + pos)
+        return toUCPUStrictInt32(-1);
+
+    size_t result = thisViewWithString.view.find(otherViewWithString.view, pos);
+    if (result == notFound)
+        return toUCPUStrictInt32(-1);
+    return toUCPUStrictInt32(result);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithIndexWithOneChar, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, int32_t position, int32_t character))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto thisViewWithString = base->viewWithUnderlyingString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    int32_t length = thisViewWithString.view.length();
+    unsigned pos = 0;
+    if (position >= 0)
+        pos = std::min<uint32_t>(position, length);
+
+    if (static_cast<unsigned>(length) < 1 + pos)
+        return toUCPUStrictInt32(-1);
+
+    size_t result = thisViewWithString.view.find(static_cast<UChar>(character), pos);
+    if (result == notFound)
+        return toUCPUStrictInt32(-1);
+    return toUCPUStrictInt32(result);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationInt32ToString, char*, (JSGlobalObject* globalObject, int32_t value, int32_t radix))
 {
     VM& vm = globalObject->vm();
@@ -3251,6 +3341,23 @@ JSC_DEFINE_JIT_OPERATION(operationNumberIsInteger, size_t, (JSGlobalObject* glob
     return NumberConstructor::isIntegerImpl(JSValue::decode(value));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationNumberIsNaN, UCPUStrictInt32, (EncodedJSValue value))
+{
+    JSValue argument = JSValue::decode(value);
+    if (!argument.isNumber())
+        return toUCPUStrictInt32(0);
+    return toUCPUStrictInt32(!!std::isnan(argument.asNumber()));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationIsNaN, UCPUStrictInt32, (JSGlobalObject* globalObject, EncodedJSValue value))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    JSValue argument = JSValue::decode(value);
+    return toUCPUStrictInt32(std::isnan(argument.toNumber(globalObject)));
+}
+
 static ALWAYS_INLINE UCPUStrictInt32 arrayIndexOfString(JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index)
 {
     VM& vm = globalObject->vm();
@@ -3320,12 +3427,9 @@ JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfValueInt32OrContiguous, UCPUStrict
     return toUCPUStrictInt32(-1);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfValueDouble, UCPUStrictInt32, (JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index))
+JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfValueDouble, UCPUStrictInt32, (Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index))
 {
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-
+    // We do not cause any exceptions, thus we do not need FrameTracers.
     JSValue searchElement = JSValue::decode(encodedValue);
 
     if (!searchElement.isNumber())
@@ -3339,6 +3443,21 @@ JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfValueDouble, UCPUStrictInt32, (JSG
         if (data[index] == number)
             return toUCPUStrictInt32(index);
     }
+    return toUCPUStrictInt32(-1);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfNonStringIdentityValueContiguous, UCPUStrictInt32, (Butterfly* butterfly, EncodedJSValue searchElement, int32_t index))
+{
+    // We do not cause any exceptions, thus we do not need FrameTracers.
+    int32_t length = butterfly->publicLength();
+    auto data = butterfly->contiguous().data();
+
+    if (index >= length)
+        return toUCPUStrictInt32(-1);
+
+    auto* result = bitwise_cast<const WriteBarrier<Unknown>*>(WTF::find64(bitwise_cast<const uint64_t*>(data + index), searchElement, length - index));
+    if (result)
+        return toUCPUStrictInt32(result - data);
     return toUCPUStrictInt32(-1);
 }
 
@@ -3384,19 +3503,6 @@ JSC_DEFINE_JIT_OPERATION(operationStringFromCharCodeUntyped, EncodedJSValue, (JS
     JSValue charValue = JSValue::decode(encodedValue);
     int32_t chInt = charValue.toUInt32(globalObject);
     return JSValue::encode(JSC::stringFromCharCode(globalObject, chInt));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationConvertBoxedDoubleToInt52, int64_t, (EncodedJSValue encodedValue))
-{
-    JSValue value = JSValue::decode(encodedValue);
-    if (!value.isDouble())
-        return JSValue::notInt52;
-    return tryConvertToInt52(value.asDouble());
-}
-
-JSC_DEFINE_JIT_OPERATION(operationConvertDoubleToInt52, int64_t, (double value))
-{
-    return tryConvertToInt52(value);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewRawObject, char*, (VM* vmPointer, Structure* structure, int32_t length, Butterfly* butterfly))

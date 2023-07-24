@@ -125,11 +125,11 @@ JSPromise::DeferredData JSPromise::convertCapabilityToDeferredData(JSGlobalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    result.promise = promiseCapability.getAs<JSPromise*>(globalObject, vm.propertyNames->builtinNames().promisePrivateName());
+    result.promise = promiseCapability.getAs<JSPromise*>(globalObject, vm.propertyNames->builtinNames().promisePublicName());
     RETURN_IF_EXCEPTION(scope, { });
-    result.resolve = promiseCapability.getAs<JSFunction*>(globalObject, vm.propertyNames->builtinNames().resolvePrivateName());
+    result.resolve = promiseCapability.getAs<JSFunction*>(globalObject, vm.propertyNames->builtinNames().resolvePublicName());
     RETURN_IF_EXCEPTION(scope, { });
-    result.reject = promiseCapability.getAs<JSFunction*>(globalObject, vm.propertyNames->builtinNames().rejectPrivateName());
+    result.reject = promiseCapability.getAs<JSFunction*>(globalObject, vm.propertyNames->builtinNames().rejectPublicName());
     RETURN_IF_EXCEPTION(scope, { });
 
     return result;

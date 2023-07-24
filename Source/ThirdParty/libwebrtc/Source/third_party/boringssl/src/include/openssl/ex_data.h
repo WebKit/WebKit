@@ -145,7 +145,7 @@ OPENSSL_EXPORT int TYPE_get_ex_new_index(long argl, void *argp,
                                          CRYPTO_EX_free *free_func);
 
 // TYPE_set_ex_data sets an extra data pointer on |t|. The |index| argument
-// should have been returned from a previous call to |TYPE_get_ex_new_index|.
+// must have been returned from a previous call to |TYPE_get_ex_new_index|.
 OPENSSL_EXPORT int TYPE_set_ex_data(TYPE *t, int index, void *arg);
 
 // TYPE_get_ex_data returns an extra data pointer for |t|, or NULL if no such

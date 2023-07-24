@@ -41,9 +41,9 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"
-#include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "QualifiedName.h"
+#include "Quirks.h"
 #include "Settings.h"
 #include <wtf/LoggerHelper.h>
 
@@ -69,11 +69,6 @@ Element* FullscreenManager::fullscreenElement() const
     }
 
     return nullptr;
-}
-
-inline bool isInPopoverShowingState(Element& element)
-{
-    return element.popoverData() && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing;
 }
 
 // https://fullscreen.spec.whatwg.org/#dom-element-requestfullscreen
@@ -109,7 +104,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         return;
     }
 
-    if (isInPopoverShowingState(element)) {
+    if (element->isPopoverShowing()) {
         ERROR_LOG(identifier, "Element to fullscreen is an open popover; failing.");
         failedPreflights(WTFMove(element), WTFMove(promise));
         return;
@@ -207,7 +202,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         }
 
         // The element is an open popover.
-        if (isInPopoverShowingState(element)) {
+        if (element->isPopoverShowing()) {
             ERROR_LOG(identifier, "Element to fullscreen is an open popover; failing.");
             failedPreflights(WTFMove(element), WTFMove(promise));
             return;
@@ -301,7 +296,13 @@ void FullscreenManager::cancelFullscreen()
 
     m_pendingExitFullscreen = true;
 
-    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, topDocument = WTFMove(topDocument), identifier = LOGIDENTIFIER] {
+    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, topDocument = WTFMove(topDocument), identifier = LOGIDENTIFIER] {
+#if RELEASE_LOG_DISABLED
+        UNUSED_PARAM(this);
+#endif
+        if (!weakThis)
+            return;
+
         if (!topDocument->page()) {
             INFO_LOG(identifier, "Top document has no page.");
             return;
@@ -309,7 +310,7 @@ void FullscreenManager::cancelFullscreen()
 
         // This triggers finishExitFullscreen with ExitMode::Resize, which fully exits the document.
         if (auto* fullscreenElement = topDocument->fullscreenManager().fullscreenElement())
-            page()->chrome().client().exitFullScreenForElement(fullscreenElement);
+            topDocument->page()->chrome().client().exitFullScreenForElement(fullscreenElement);
         else
             INFO_LOG(identifier, "Top document has no fullscreen element");
     });
@@ -476,7 +477,7 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     }
 
     // The element is an open popover.
-    if (isInPopoverShowingState(element)) {
+    if (element.isPopoverShowing()) {
         ERROR_LOG(LOGIDENTIFIER, "Element to fullscreen is an open popover; bailing.");
         return false;
     }
@@ -523,13 +524,17 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     if (is<HTMLIFrameElement>(element))
         element.setIFrameFullscreenFlag(true);
 
-    notifyAboutFullscreenChangeOrError();
+    if (!document().quirks().shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk())
+        notifyAboutFullscreenChangeOrError();
 
     return true;
 }
 
 bool FullscreenManager::didEnterFullscreen()
 {
+    if (document().quirks().shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk())
+        notifyAboutFullscreenChangeOrError();
+
     if (!m_fullscreenElement) {
         ERROR_LOG(LOGIDENTIFIER, "No fullscreenElement; bailing");
         return false;
@@ -624,12 +629,14 @@ void FullscreenManager::dispatchEventForNode(Node& node, EventType eventType)
 {
     bool supportsUnprefixedAPI = document().settings().unprefixedFullscreenAPIEnabled();
     switch (eventType) {
-    case EventType::Change:
+    case EventType::Change: {
         if (supportsUnprefixedAPI)
             node.dispatchEvent(Event::create(eventNames().fullscreenchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
-        if (!supportsUnprefixedAPI || !node.hasEventListeners(eventNames().fullscreenchangeEvent))
+        bool shouldEmitUnprefixed = !(node.hasEventListeners(eventNames().webkitfullscreenchangeEvent) && node.hasEventListeners(eventNames().fullscreenchangeEvent)) && !(node.document().hasEventListeners(eventNames().webkitfullscreenchangeEvent) && node.document().hasEventListeners(eventNames().fullscreenchangeEvent));
+        if (!supportsUnprefixedAPI || shouldEmitUnprefixed)
             node.dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
         break;
+    }
     case EventType::Error:
         if (supportsUnprefixedAPI)
             node.dispatchEvent(Event::create(eventNames().fullscreenerrorEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
@@ -687,7 +694,7 @@ void FullscreenManager::setAnimatingFullscreen(bool flag)
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_fullscreenElement)
-        emplace(styleInvalidation, *m_fullscreenElement, { { CSSSelector::PseudoClassAnimatingFullScreenTransition, flag } });
+        emplace(styleInvalidation, *m_fullscreenElement, { { CSSSelector::PseudoClassType::AnimatingFullScreenTransition, flag } });
     m_isAnimatingFullscreen = flag;
 }
 
@@ -705,7 +712,7 @@ void FullscreenManager::setFullscreenControlsHidden(bool flag)
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_fullscreenElement)
-        emplace(styleInvalidation, *m_fullscreenElement, { { CSSSelector::PseudoClassFullScreenControlsHidden, flag } });
+        emplace(styleInvalidation, *m_fullscreenElement, { { CSSSelector::PseudoClassType::FullScreenControlsHidden, flag } });
     m_areFullscreenControlsHidden = flag;
 }
 

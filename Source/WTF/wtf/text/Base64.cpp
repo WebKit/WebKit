@@ -173,15 +173,16 @@ String base64EncodeToStringReturnNullIfOverflow(std::span<const std::byte> input
     return tryMakeString(base64Encoded(input, mode));
 }
 
-template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(std::span<const T> inputDataBuffer, Base64DecodeMode mode)
+template<typename T, typename Malloc = VectorBufferMalloc>
+static std::optional<Vector<uint8_t, 0, CrashOnOverflow, 16, Malloc>> base64DecodeInternal(std::span<const T> inputDataBuffer, Base64DecodeMode mode)
 {
     if (!inputDataBuffer.size())
-        return Vector<uint8_t> { };
+        return Vector<uint8_t, 0, CrashOnOverflow, 16, Malloc> { };
 
     auto decodeMap = (mode == Base64DecodeMode::URL) ? base64URLDecMap : base64DecMap;
     auto validatePadding = mode == Base64DecodeMode::DefaultValidatePadding || mode == Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace;
 
-    Vector<uint8_t> destination(inputDataBuffer.size());
+    Vector<uint8_t, 0, CrashOnOverflow, 16, Malloc> destination(inputDataBuffer.size());
 
     unsigned equalsSignCount = 0;
     unsigned destinationLength = 0;
@@ -212,7 +213,7 @@ template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(
     if (!destinationLength) {
         if (equalsSignCount)
             return std::nullopt;
-        return Vector<uint8_t> { };
+        return Vector<uint8_t, 0, CrashOnOverflow, 16, Malloc> { };
     }
 
     // The should be no padding if length is a multiple of 4.
@@ -265,6 +266,20 @@ std::optional<Vector<uint8_t>> base64Decode(StringView input, Base64DecodeMode m
     if (!length || input.is8Bit())
         return base64DecodeInternal(std::span(input.characters8(), length), mode);
     return base64DecodeInternal(std::span(input.characters16(), length), mode);
+}
+
+String base64DecodeToString(StringView input, Base64DecodeMode mode)\
+{
+    auto toString = [&] (auto optionalBuffer) {
+        if (!optionalBuffer)
+            return nullString();
+        return String::adopt(WTFMove(*optionalBuffer));
+    };
+
+    unsigned length = input.length();
+    if (!length || input.is8Bit())
+        return toString(base64DecodeInternal<LChar, StringImplMalloc>(std::span(input.characters8(), length), mode));
+    return toString(base64DecodeInternal<UChar, StringImplMalloc>(std::span(input.characters16(), length), mode));
 }
 
 } // namespace WTF

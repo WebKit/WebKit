@@ -34,10 +34,10 @@ namespace WebKit {
 
 enum RemoteVideoFrameIdentifierType { };
 using RemoteVideoFrameIdentifier = AtomicObjectIdentifier<RemoteVideoFrameIdentifierType>;
-using RemoteVideoFrameReadReference = ObjectIdentifierReadReference<RemoteVideoFrameIdentifier>;
-using RemoteVideoFrameWriteReference = ObjectIdentifierWriteReference<RemoteVideoFrameIdentifier>;
-using RemoteVideoFrameReference = ObjectIdentifierReference<RemoteVideoFrameIdentifier>;
-using RemoteVideoFrameReferenceTracker = ObjectIdentifierReferenceTracker<RemoteVideoFrameIdentifier>;
+using RemoteVideoFrameReadReference = IPC::ObjectIdentifierReadReference<RemoteVideoFrameIdentifier>;
+using RemoteVideoFrameWriteReference = IPC::ObjectIdentifierWriteReference<RemoteVideoFrameIdentifier>;
+using RemoteVideoFrameReference = IPC::ObjectIdentifierReference<RemoteVideoFrameIdentifier>;
+using RemoteVideoFrameReferenceTracker = IPC::ObjectIdentifierReferenceTracker<RemoteVideoFrameIdentifier>;
 
 } // namespace WebKit
 

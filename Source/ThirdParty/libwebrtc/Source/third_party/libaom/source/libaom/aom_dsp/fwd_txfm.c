@@ -16,19 +16,16 @@
 void aom_fdct4x4_c(const int16_t *input, tran_low_t *output, int stride) {
   // The 2D transform is done with two passes which are actually pretty
   // similar. In the first one, we transform the columns and transpose
-  // the results. In the second one, we transform the rows. To achieve that,
-  // as the first pass results are transposed, we transpose the columns (that
-  // is the transposed rows) and transpose the results (so that it goes back
-  // in normal/row positions).
+  // the results. In the second one, we transform the rows.
   // We need an intermediate buffer between passes.
   tran_low_t intermediate[4 * 4];
   const tran_low_t *in_low = NULL;
   tran_low_t *out = intermediate;
-  // Do the two transform/transpose passes
+  // Do the two transform passes
   for (int pass = 0; pass < 2; ++pass) {
-    tran_high_t in_high[4];    // canbe16
-    tran_high_t step[4];       // canbe16
-    tran_high_t temp1, temp2;  // needs32
+    tran_high_t in_high[4];  // canbe16
+    tran_high_t step[4];     // canbe16
+    tran_low_t temp[4];
     for (int i = 0; i < 4; ++i) {
       // Load inputs.
       if (pass == 0) {
@@ -39,30 +36,40 @@ void aom_fdct4x4_c(const int16_t *input, tran_low_t *output, int stride) {
         if (i == 0 && in_high[0]) {
           ++in_high[0];
         }
+        ++input;  // Next column
       } else {
         assert(in_low != NULL);
         in_high[0] = in_low[0 * 4];
         in_high[1] = in_low[1 * 4];
         in_high[2] = in_low[2 * 4];
         in_high[3] = in_low[3 * 4];
-        ++in_low;
+        ++in_low;  // Next column (which is a transposed row)
       }
       // Transform.
       step[0] = in_high[0] + in_high[3];
       step[1] = in_high[1] + in_high[2];
       step[2] = in_high[1] - in_high[2];
       step[3] = in_high[0] - in_high[3];
-      temp1 = (step[0] + step[1]) * cospi_16_64;
-      temp2 = (step[0] - step[1]) * cospi_16_64;
-      out[0] = (tran_low_t)fdct_round_shift(temp1);
-      out[2] = (tran_low_t)fdct_round_shift(temp2);
-      temp1 = step[2] * cospi_24_64 + step[3] * cospi_8_64;
-      temp2 = -step[2] * cospi_8_64 + step[3] * cospi_24_64;
-      out[1] = (tran_low_t)fdct_round_shift(temp1);
-      out[3] = (tran_low_t)fdct_round_shift(temp2);
-      // Do next column (which is a transposed row in second/horizontal pass)
-      ++input;
-      out += 4;
+      temp[0] = (tran_low_t)fdct_round_shift((step[0] + step[1]) * cospi_16_64);
+      temp[2] = (tran_low_t)fdct_round_shift((step[0] - step[1]) * cospi_16_64);
+      temp[1] = (tran_low_t)fdct_round_shift(step[2] * cospi_24_64 +
+                                             step[3] * cospi_8_64);
+      temp[3] = (tran_low_t)fdct_round_shift(-step[2] * cospi_8_64 +
+                                             step[3] * cospi_24_64);
+      // Only transpose the first pass.
+      if (pass == 0) {
+        out[0] = temp[0];
+        out[1] = temp[1];
+        out[2] = temp[2];
+        out[3] = temp[3];
+        out += 4;
+      } else {
+        out[0 * 4] = temp[0];
+        out[1 * 4] = temp[1];
+        out[2 * 4] = temp[2];
+        out[3 * 4] = temp[3];
+        ++out;
+      }
     }
     // Setup in/out for next pass.
     in_low = intermediate;
@@ -78,19 +85,16 @@ void aom_fdct4x4_c(const int16_t *input, tran_low_t *output, int stride) {
 void aom_fdct4x4_lp_c(const int16_t *input, int16_t *output, int stride) {
   // The 2D transform is done with two passes which are actually pretty
   // similar. In the first one, we transform the columns and transpose
-  // the results. In the second one, we transform the rows. To achieve that,
-  // as the first pass results are transposed, we transpose the columns (that
-  // is the transposed rows) and transpose the results (so that it goes back
-  // in normal/row positions).
+  // the results. In the second one, we transform the rows.
   // We need an intermediate buffer between passes.
   int16_t intermediate[4 * 4];
   const int16_t *in_low = NULL;
   int16_t *out = intermediate;
-  // Do the two transform/transpose passes
+  // Do the two transform passes
   for (int pass = 0; pass < 2; ++pass) {
-    int32_t in_high[4];    // canbe16
-    int32_t step[4];       // canbe16
-    int32_t temp1, temp2;  // needs32
+    int32_t in_high[4];  // canbe16
+    int32_t step[4];     // canbe16
+    int16_t temp[4];
     for (int i = 0; i < 4; ++i) {
       // Load inputs.
       if (pass == 0) {
@@ -98,6 +102,7 @@ void aom_fdct4x4_lp_c(const int16_t *input, int16_t *output, int stride) {
         in_high[1] = input[1 * stride] * 16;
         in_high[2] = input[2 * stride] * 16;
         in_high[3] = input[3 * stride] * 16;
+        ++input;
         if (i == 0 && in_high[0]) {
           ++in_high[0];
         }
@@ -114,17 +119,26 @@ void aom_fdct4x4_lp_c(const int16_t *input, int16_t *output, int stride) {
       step[1] = in_high[1] + in_high[2];
       step[2] = in_high[1] - in_high[2];
       step[3] = in_high[0] - in_high[3];
-      temp1 = (step[0] + step[1]) * (int32_t)cospi_16_64;
-      temp2 = (step[0] - step[1]) * (int32_t)cospi_16_64;
-      out[0] = (int16_t)fdct_round_shift(temp1);
-      out[2] = (int16_t)fdct_round_shift(temp2);
-      temp1 = step[2] * (int32_t)cospi_24_64 + step[3] * (int32_t)cospi_8_64;
-      temp2 = -step[2] * (int32_t)cospi_8_64 + step[3] * (int32_t)cospi_24_64;
-      out[1] = (int16_t)fdct_round_shift(temp1);
-      out[3] = (int16_t)fdct_round_shift(temp2);
-      // Do next column (which is a transposed row in second/horizontal pass)
-      ++input;
-      out += 4;
+      temp[0] = (int16_t)fdct_round_shift((step[0] + step[1]) * cospi_16_64);
+      temp[2] = (int16_t)fdct_round_shift((step[0] - step[1]) * cospi_16_64);
+      temp[1] = (int16_t)fdct_round_shift(step[2] * cospi_24_64 +
+                                          step[3] * cospi_8_64);
+      temp[3] = (int16_t)fdct_round_shift(-step[2] * cospi_8_64 +
+                                          step[3] * cospi_24_64);
+      // Only transpose the first pass.
+      if (pass == 0) {
+        out[0] = temp[0];
+        out[1] = temp[1];
+        out[2] = temp[2];
+        out[3] = temp[3];
+        out += 4;
+      } else {
+        out[0 * 4] = temp[0];
+        out[1 * 4] = temp[1];
+        out[2 * 4] = temp[2];
+        out[3 * 4] = temp[3];
+        ++out;
+      }
     }
     // Setup in/out for next pass.
     in_low = intermediate;
@@ -137,6 +151,7 @@ void aom_fdct4x4_lp_c(const int16_t *input, int16_t *output, int stride) {
   }
 }
 
+#if CONFIG_INTERNAL_STATS
 void aom_fdct8x8_c(const int16_t *input, tran_low_t *final_output, int stride) {
   int i, j;
   tran_low_t intermediate[64];
@@ -220,8 +235,9 @@ void aom_fdct8x8_c(const int16_t *input, tran_low_t *final_output, int stride) {
     for (j = 0; j < 8; ++j) final_output[j + i * 8] /= 2;
   }
 }
+#endif  // CONFIG_INTERNAL_STATS
 
-#if CONFIG_AV1_HIGHBITDEPTH
+#if CONFIG_AV1_HIGHBITDEPTH && CONFIG_INTERNAL_STATS
 void aom_highbd_fdct8x8_c(const int16_t *input, tran_low_t *final_output,
                           int stride) {
   aom_fdct8x8_c(input, final_output, stride);

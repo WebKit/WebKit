@@ -21,8 +21,9 @@ using namespace libyuv;
 int main(int argc, const char* argv[]) {
   int cpu_flags = TestCpuFlag(-1);
   int has_arm = TestCpuFlag(kCpuHasARM);
-  int has_mips = TestCpuFlag(kCpuHasMIPS);
+  int has_riscv = TestCpuFlag(kCpuHasRISCV);
   int has_x86 = TestCpuFlag(kCpuHasX86);
+  int has_mips = TestCpuFlag(kCpuHasMIPS);
   int has_loongarch = TestCpuFlag(kCpuHasLOONGARCH);
   (void)argc;
   (void)argv;
@@ -62,24 +63,28 @@ int main(int argc, const char* argv[]) {
            model, model);
   }
 #endif
-  printf("Cpu Flags %x\n", cpu_flags);
-  printf("Has ARM %x\n", has_arm);
-  printf("Has MIPS %x\n", has_mips);
-  printf("Has X86 %x\n", has_x86);
-  printf("Has LOONGARCH %x\n", has_loongarch);
+  printf("Cpu Flags 0x%x\n", cpu_flags);
   if (has_arm) {
     int has_neon = TestCpuFlag(kCpuHasNEON);
-    printf("Has NEON %x\n", has_neon);
+    printf("Has ARM 0x%x\n", has_arm);
+    printf("Has NEON 0x%x\n", has_neon);
+  }
+  if (has_riscv) {
+    int has_rvv = TestCpuFlag(kCpuHasRVV);
+    printf("Has RISCV 0x%x\n", has_riscv);
+    printf("Has RVV 0x%x\n", has_rvv);
   }
   if (has_mips) {
     int has_msa = TestCpuFlag(kCpuHasMSA);
-    printf("Has MSA %x\n", has_msa);
+    printf("Has MIPS 0x%x\n", has_mips);
+    printf("Has MSA 0x%x\n", has_msa);
   }
   if (has_loongarch) {
     int has_lsx  = TestCpuFlag(kCpuHasLSX);
-    printf("Has LSX %x\n", has_lsx);
     int has_lasx = TestCpuFlag(kCpuHasLASX);
-    printf("Has LASX %x\n", has_lasx);
+    printf("Has LOONGARCH 0x%x\n", has_loongarch);
+    printf("Has LSX 0x%x\n", has_lsx);
+    printf("Has LASX 0x%x\n", has_lasx);
   }
   if (has_x86) {
     int has_sse2 = TestCpuFlag(kCpuHasSSE2);
@@ -99,23 +104,24 @@ int main(int argc, const char* argv[]) {
     int has_avx512vbmi2 = TestCpuFlag(kCpuHasAVX512VBMI2);
     int has_avx512vbitalg = TestCpuFlag(kCpuHasAVX512VBITALG);
     int has_avx512vpopcntdq = TestCpuFlag(kCpuHasAVX512VPOPCNTDQ);
-    printf("Has SSE2 %x\n", has_sse2);
-    printf("Has SSSE3 %x\n", has_ssse3);
-    printf("Has SSE4.1 %x\n", has_sse41);
-    printf("Has SSE4.2 %x\n", has_sse42);
-    printf("Has AVX %x\n", has_avx);
-    printf("Has AVX2 %x\n", has_avx2);
-    printf("Has ERMS %x\n", has_erms);
-    printf("Has FMA3 %x\n", has_fma3);
-    printf("Has F16C %x\n", has_f16c);
-    printf("Has GFNI %x\n", has_gfni);
-    printf("Has AVX512BW %x\n", has_avx512bw);
-    printf("Has AVX512VL %x\n", has_avx512vl);
-    printf("Has AVX512VNNI %x\n", has_avx512vnni);
-    printf("Has AVX512VBMI %x\n", has_avx512vbmi);
-    printf("Has AVX512VBMI2 %x\n", has_avx512vbmi2);
-    printf("Has AVX512VBITALG %x\n", has_avx512vbitalg);
-    printf("Has AVX512VPOPCNTDQ %x\n", has_avx512vpopcntdq);
+    printf("Has X86 0x%x\n", has_x86);
+    printf("Has SSE2 0x%x\n", has_sse2);
+    printf("Has SSSE3 0x%x\n", has_ssse3);
+    printf("Has SSE4.1 0x%x\n", has_sse41);
+    printf("Has SSE4.2 0x%x\n", has_sse42);
+    printf("Has AVX 0x%x\n", has_avx);
+    printf("Has AVX2 0x%x\n", has_avx2);
+    printf("Has ERMS 0x%x\n", has_erms);
+    printf("Has FMA3 0x%x\n", has_fma3);
+    printf("Has F16C 0x%x\n", has_f16c);
+    printf("Has GFNI 0x%x\n", has_gfni);
+    printf("Has AVX512BW 0x%x\n", has_avx512bw);
+    printf("Has AVX512VL 0x%x\n", has_avx512vl);
+    printf("Has AVX512VNNI 0x%x\n", has_avx512vnni);
+    printf("Has AVX512VBMI 0x%x\n", has_avx512vbmi);
+    printf("Has AVX512VBMI2 0x%x\n", has_avx512vbmi2);
+    printf("Has AVX512VBITALG 0x%x\n", has_avx512vbitalg);
+    printf("Has AVX512VPOPCNTDQ 0x%x\n", has_avx512vpopcntdq);
   }
   return 0;
 }

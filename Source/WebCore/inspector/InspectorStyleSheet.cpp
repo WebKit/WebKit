@@ -477,14 +477,14 @@ void StyleSheetHandler::observeProperty(unsigned startOffset, unsigned endOffset
         ++endOffset;
     
     ASSERT(startOffset < endOffset);
-    StringView propertyString = StringView(m_parsedText).substring(startOffset, endOffset - startOffset).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
+    auto propertyString = StringView(m_parsedText).substring(startOffset, endOffset - startOffset).trim(deprecatedIsSpaceOrNewline);
     if (propertyString.endsWith(';'))
         propertyString = propertyString.left(propertyString.length() - 1);
     size_t colonIndex = propertyString.find(':');
     ASSERT(colonIndex != notFound);
 
-    String name = propertyString.left(colonIndex).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline).toString();
-    String value = propertyString.substring(colonIndex + 1, propertyString.length()).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline).toString();
+    auto name = propertyString.left(colonIndex).trim(deprecatedIsSpaceOrNewline).toString();
+    auto value = propertyString.substring(colonIndex + 1, propertyString.length()).trim(deprecatedIsSpaceOrNewline).toString();
     
     // FIXME-NEWPARSER: The property range is relative to the declaration start offset, but no
     // good reason for it, and it complicates fixUnparsedProperties.
@@ -509,7 +509,7 @@ void StyleSheetHandler::observeComment(unsigned startOffset, unsigned endOffset)
     // Require well-formed comments.
     if (!commentTextView.endsWith("*/"_s))
         return;
-    commentTextView = commentTextView.left(commentTextView.length() - 2).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
+    commentTextView = commentTextView.left(commentTextView.length() - 2).trim(deprecatedIsSpaceOrNewline);
     if (commentTextView.isEmpty())
         return;
 
@@ -1319,7 +1319,7 @@ static Ref<JSON::ArrayOf<Protocol::CSS::CSSSelector>> selectorsFromSource(const 
 
         // We don't want to see any comments in the selector components, only the meaningful parts.
         replace(selectorText, comment, String());
-        result->addItem(buildObjectForSelectorHelper(selectorText.stripWhiteSpace(), *selectors.at(selectorIndex)));
+        result->addItem(buildObjectForSelectorHelper(selectorText.trim(deprecatedIsSpaceOrNewline), *selectors.at(selectorIndex)));
 
         ++selectorIndex;
     }

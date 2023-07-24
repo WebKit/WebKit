@@ -347,7 +347,7 @@ void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* elem
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
-    int size = std::max(style.computedFontPixelSize(), 10U);
+    auto size = std::max(style.computedFontSize(), 10.f);
     style.setWidth({ size, LengthType::Fixed });
     style.setHeight({ size, LengthType::Fixed });
 }
@@ -506,10 +506,10 @@ void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
-    int size = std::max(style.computedFontPixelSize(), 10U);
+    auto size = std::max(style.computedFontSize(), 10.f);
     style.setWidth({ size, LengthType::Fixed });
     style.setHeight({ size, LengthType::Fixed });
-    style.setBorderRadius({ size / 2, size / 2 });
+    style.setBorderRadius({ static_cast<int>(size / 2), static_cast<int>(size / 2) });
 }
 
 void RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
@@ -601,7 +601,7 @@ void RenderThemeIOS::paintTextFieldInnerShadow(const PaintInfo& paintInfo, const
     const FloatSize innerShadowOffset { 0, 5 };
     constexpr auto innerShadowBlur = 10.0f;
     auto innerShadowColor = DisplayP3<float> { 0, 0, 0, 0.04f };
-    context.setShadow(innerShadowOffset, innerShadowBlur, innerShadowColor);
+    context.setDropShadow({ innerShadowOffset, innerShadowBlur, innerShadowColor, ShadowRadiusMode::Default });
     context.setFillColor(Color::black);
 
     Path innerShadowPath;
@@ -952,11 +952,11 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
         uint8_t opacity = isReadOnlyControl(box) ? 51 : 128;
         paintInfo.context().setStrokeColor(Color::black.colorWithAlphaByte(opacity));
         paintInfo.context().setFillColor(Color::black.colorWithAlphaByte(opacity));
-        paintInfo.context().drawPath(Path::polygonPathFromPoints(shadow));
+        paintInfo.context().drawPath(Path(shadow));
 
         paintInfo.context().setStrokeColor(Color::white);
         paintInfo.context().setFillColor(Color::white);
-        paintInfo.context().drawPath(Path::polygonPathFromPoints(arrow));
+        paintInfo.context().drawPath(Path(arrow));
     }
 }
 
@@ -1616,13 +1616,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         else
             UTI = UTIFromMIMEType(attachmentType);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
         [documentInteractionController setUTI:static_cast<NSString *>(UTI)];
 #endif
     }
 
     RetainPtr<UIImage> result;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     NSArray *icons = [documentInteractionController icons];
     if (!icons.count)
         return IconAndSize { nil, FloatSize() };
@@ -1651,9 +1651,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return IconAndSize { result, size };
 }
 
-LayoutSize RenderThemeIOS::attachmentIntrinsicSize(const RenderAttachment& renderAttachment) const
+LayoutSize RenderThemeIOS::attachmentIntrinsicSize(const RenderAttachment&) const
 {
-    return LayoutSize(FloatSize(renderAttachment.attachmentElement().isImageOnly() ? attachmentImageOnlySize : attachmentSize) * attachmentDynamicTypeScaleFactor());
+    return LayoutSize(FloatSize(attachmentSize) * attachmentDynamicTypeScaleFactor());
 }
 
 static void paintAttachmentIcon(GraphicsContext& context, AttachmentLayout& info)
@@ -1681,7 +1681,7 @@ static void paintAttachmentProgress(GraphicsContext& context, AttachmentLayout& 
     Path progressPath;
     progressPath.moveTo(center);
     progressPath.addLineTo(FloatPoint(center.x(), info.progressRect.y()));
-    progressPath.addArc(center, info.progressRect.width() / 2, -M_PI_2, info.progress * 2 * M_PI - M_PI_2, 0);
+    progressPath.addArc(center, info.progressRect.width() / 2, -M_PI_2, info.progress * 2 * M_PI - M_PI_2, RotationDirection::Counterclockwise);
     progressPath.closeSubpath();
     context.fillPath(progressPath);
 }
@@ -1710,6 +1710,9 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
     const RenderAttachment& attachment = downcast<RenderAttachment>(renderer);
 
+    if (attachment.paintWideLayoutAttachmentOnly(paintInfo, paintRect.location()))
+        return true;
+
     AttachmentLayout info(attachment);
 
     GraphicsContext& context = paintInfo.context();
@@ -1717,7 +1720,7 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
     context.translate(toFloatSize(paintRect.location()));
 
-    if (attachment.shouldDrawBorder() && !attachment.attachmentElement().isImageOnly()) {
+    if (attachment.shouldDrawBorder()) {
         auto borderPath = attachmentBorderPath(info);
         paintAttachmentBorder(context, borderPath);
         context.clipPath(borderPath);
@@ -1849,7 +1852,7 @@ void RenderThemeIOS::paintCheckboxRadioInnerShadow(const PaintInfo& paintInfo, c
 
     bool isEmpty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
     auto firstShadowColor = DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.1f };
-    context.setShadow(innerShadowOffset, innerShadowBlur, firstShadowColor);
+    context.setDropShadow({ innerShadowOffset, innerShadowBlur, firstShadowColor, ShadowRadiusMode::Default });
     context.setFillColor(Color::black);
 
     Path innerShadowPath;
@@ -1866,7 +1869,7 @@ void RenderThemeIOS::paintCheckboxRadioInnerShadow(const PaintInfo& paintInfo, c
     context.fillPath(innerShadowPath);
 
     constexpr auto secondShadowColor = DisplayP3<float> { 1, 1, 1, 0.5f };
-    context.setShadow(FloatSize { 0, 0 }, 1, secondShadowColor);
+    context.setDropShadow({ FloatSize { 0, 0 }, 1, secondShadowColor, ShadowRadiusMode::Default });
 
     context.fillPath(innerShadowPath);
 }
@@ -1997,7 +2000,7 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
         context.fillEllipse(innerCircleRect);
     } else {
         Path path;
-        path.addEllipse(rect);
+        path.addEllipseInRect(rect);
         if (!useAlternateDesign) {
             context.setStrokeColor(checkboxRadioBorderColor(controlStates, styleColorOptions));
             context.setStrokeThickness(checkboxRadioBorderWidth * 2);
@@ -2426,7 +2429,7 @@ void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const 
         FloatRect ellipse(0, 0, length, length);
 
         for (int i = 0; i < count; ++i) {
-            glyphPath.addEllipse(ellipse);
+            glyphPath.addEllipseInRect(ellipse);
             ellipse.move(length + padding, 0);
         }
 

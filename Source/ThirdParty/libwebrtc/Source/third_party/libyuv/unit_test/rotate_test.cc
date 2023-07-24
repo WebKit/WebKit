@@ -14,6 +14,10 @@
 #include "libyuv/cpu_id.h"
 #include "libyuv/rotate.h"
 
+#ifdef ENABLE_ROW_TESTS
+#include "libyuv/rotate_row.h"
+#endif
+
 namespace libyuv {
 
 #define SUBSAMPLE(v, a) ((((v) + (a)-1)) / (a))
@@ -595,5 +599,364 @@ TESTAPLANARTOP(Android420, NV12, 2, 0, 1, 2, 2, I420, 2, 2)
 TESTAPLANARTOP(Android420, NV21, 2, 1, 0, 2, 2, I420, 2, 2)
 #undef TESTAPLANARTOP
 #undef TESTAPLANARTOPI
+
+static void I010TestRotate(int src_width,
+                           int src_height,
+                           int dst_width,
+                           int dst_height,
+                           libyuv::RotationMode mode,
+                           int benchmark_iterations,
+                           int disable_cpu_flags,
+                           int benchmark_cpu_info) {
+  if (src_width < 1) {
+    src_width = 1;
+  }
+  if (src_height == 0) {
+    src_height = 1;
+  }
+  if (dst_width < 1) {
+    dst_width = 1;
+  }
+  if (dst_height < 1) {
+    dst_height = 1;
+  }
+  int src_i010_y_size = src_width * Abs(src_height);
+  int src_i010_uv_size = ((src_width + 1) / 2) * ((Abs(src_height) + 1) / 2);
+  int src_i010_size = src_i010_y_size + src_i010_uv_size * 2;
+  align_buffer_page_end_16(src_i010, src_i010_size);
+  for (int i = 0; i < src_i010_size; ++i) {
+    src_i010[i] = fastrand() & 0x3ff;
+  }
+
+  int dst_i010_y_size = dst_width * dst_height;
+  int dst_i010_uv_size = ((dst_width + 1) / 2) * ((dst_height + 1) / 2);
+  int dst_i010_size = dst_i010_y_size + dst_i010_uv_size * 2;
+  align_buffer_page_end_16(dst_i010_c, dst_i010_size);
+  align_buffer_page_end_16(dst_i010_opt, dst_i010_size);
+  memset(dst_i010_c, 2, dst_i010_size * 2);
+  memset(dst_i010_opt, 3, dst_i010_size * 2);
+
+  MaskCpuFlags(disable_cpu_flags);  // Disable all CPU optimization.
+  I010Rotate(src_i010, src_width, src_i010 + src_i010_y_size,
+             (src_width + 1) / 2, src_i010 + src_i010_y_size + src_i010_uv_size,
+             (src_width + 1) / 2, dst_i010_c, dst_width,
+             dst_i010_c + dst_i010_y_size, (dst_width + 1) / 2,
+             dst_i010_c + dst_i010_y_size + dst_i010_uv_size,
+             (dst_width + 1) / 2, src_width, src_height, mode);
+
+  MaskCpuFlags(benchmark_cpu_info);  // Enable all CPU optimization.
+  for (int i = 0; i < benchmark_iterations; ++i) {
+    I010Rotate(
+        src_i010, src_width, src_i010 + src_i010_y_size, (src_width + 1) / 2,
+        src_i010 + src_i010_y_size + src_i010_uv_size, (src_width + 1) / 2,
+        dst_i010_opt, dst_width, dst_i010_opt + dst_i010_y_size,
+        (dst_width + 1) / 2, dst_i010_opt + dst_i010_y_size + dst_i010_uv_size,
+        (dst_width + 1) / 2, src_width, src_height, mode);
+  }
+
+  // Rotation should be exact.
+  for (int i = 0; i < dst_i010_size; ++i) {
+    EXPECT_EQ(dst_i010_c[i], dst_i010_opt[i]);
+  }
+
+  free_aligned_buffer_page_end_16(dst_i010_c);
+  free_aligned_buffer_page_end_16(dst_i010_opt);
+  free_aligned_buffer_page_end_16(src_i010);
+}
+
+TEST_F(LibYUVRotateTest, I010Rotate0_Opt) {
+  I010TestRotate(benchmark_width_, benchmark_height_, benchmark_width_,
+                 benchmark_height_, kRotate0, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I010Rotate90_Opt) {
+  I010TestRotate(benchmark_width_, benchmark_height_, benchmark_height_,
+                 benchmark_width_, kRotate90, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I010Rotate180_Opt) {
+  I010TestRotate(benchmark_width_, benchmark_height_, benchmark_width_,
+                 benchmark_height_, kRotate180, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I010Rotate270_Opt) {
+  I010TestRotate(benchmark_width_, benchmark_height_, benchmark_height_,
+                 benchmark_width_, kRotate270, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+static void I210TestRotate(int src_width,
+                           int src_height,
+                           int dst_width,
+                           int dst_height,
+                           libyuv::RotationMode mode,
+                           int benchmark_iterations,
+                           int disable_cpu_flags,
+                           int benchmark_cpu_info) {
+  if (src_width < 1) {
+    src_width = 1;
+  }
+  if (src_height == 0) {
+    src_height = 1;
+  }
+  if (dst_width < 1) {
+    dst_width = 1;
+  }
+  if (dst_height < 1) {
+    dst_height = 1;
+  }
+  int src_i210_y_size = src_width * Abs(src_height);
+  int src_i210_uv_size = ((src_width + 1) / 2) * Abs(src_height);
+  int src_i210_size = src_i210_y_size + src_i210_uv_size * 2;
+  align_buffer_page_end_16(src_i210, src_i210_size);
+  for (int i = 0; i < src_i210_size; ++i) {
+    src_i210[i] = fastrand() & 0x3ff;
+  }
+
+  int dst_i210_y_size = dst_width * dst_height;
+  int dst_i210_uv_size = ((dst_width + 1) / 2) * dst_height;
+  int dst_i210_size = dst_i210_y_size + dst_i210_uv_size * 2;
+  align_buffer_page_end_16(dst_i210_c, dst_i210_size);
+  align_buffer_page_end_16(dst_i210_opt, dst_i210_size);
+  memset(dst_i210_c, 2, dst_i210_size * 2);
+  memset(dst_i210_opt, 3, dst_i210_size * 2);
+
+  MaskCpuFlags(disable_cpu_flags);  // Disable all CPU optimization.
+  I210Rotate(src_i210, src_width, src_i210 + src_i210_y_size,
+             (src_width + 1) / 2, src_i210 + src_i210_y_size + src_i210_uv_size,
+             (src_width + 1) / 2, dst_i210_c, dst_width,
+             dst_i210_c + dst_i210_y_size, (dst_width + 1) / 2,
+             dst_i210_c + dst_i210_y_size + dst_i210_uv_size,
+             (dst_width + 1) / 2, src_width, src_height, mode);
+
+  MaskCpuFlags(benchmark_cpu_info);  // Enable all CPU optimization.
+  for (int i = 0; i < benchmark_iterations; ++i) {
+    I210Rotate(
+        src_i210, src_width, src_i210 + src_i210_y_size, (src_width + 1) / 2,
+        src_i210 + src_i210_y_size + src_i210_uv_size, (src_width + 1) / 2,
+        dst_i210_opt, dst_width, dst_i210_opt + dst_i210_y_size,
+        (dst_width + 1) / 2, dst_i210_opt + dst_i210_y_size + dst_i210_uv_size,
+        (dst_width + 1) / 2, src_width, src_height, mode);
+  }
+
+  // Rotation should be exact.
+  for (int i = 0; i < dst_i210_size; ++i) {
+    EXPECT_EQ(dst_i210_c[i], dst_i210_opt[i]);
+  }
+
+  free_aligned_buffer_page_end_16(dst_i210_c);
+  free_aligned_buffer_page_end_16(dst_i210_opt);
+  free_aligned_buffer_page_end_16(src_i210);
+}
+
+TEST_F(LibYUVRotateTest, I210Rotate0_Opt) {
+  I210TestRotate(benchmark_width_, benchmark_height_, benchmark_width_,
+                 benchmark_height_, kRotate0, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I210Rotate90_Opt) {
+  I210TestRotate(benchmark_width_, benchmark_height_, benchmark_height_,
+                 benchmark_width_, kRotate90, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I210Rotate180_Opt) {
+  I210TestRotate(benchmark_width_, benchmark_height_, benchmark_width_,
+                 benchmark_height_, kRotate180, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I210Rotate270_Opt) {
+  I210TestRotate(benchmark_width_, benchmark_height_, benchmark_height_,
+                 benchmark_width_, kRotate270, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+static void I410TestRotate(int src_width,
+                           int src_height,
+                           int dst_width,
+                           int dst_height,
+                           libyuv::RotationMode mode,
+                           int benchmark_iterations,
+                           int disable_cpu_flags,
+                           int benchmark_cpu_info) {
+  if (src_width < 1) {
+    src_width = 1;
+  }
+  if (src_height == 0) {
+    src_height = 1;
+  }
+  if (dst_width < 1) {
+    dst_width = 1;
+  }
+  if (dst_height < 1) {
+    dst_height = 1;
+  }
+  int src_i410_y_size = src_width * Abs(src_height);
+  int src_i410_uv_size = src_width * Abs(src_height);
+  int src_i410_size = src_i410_y_size + src_i410_uv_size * 2;
+  align_buffer_page_end_16(src_i410, src_i410_size);
+  for (int i = 0; i < src_i410_size; ++i) {
+    src_i410[i] = fastrand() & 0x3ff;
+  }
+
+  int dst_i410_y_size = dst_width * dst_height;
+  int dst_i410_uv_size = dst_width * dst_height;
+  int dst_i410_size = dst_i410_y_size + dst_i410_uv_size * 2;
+  align_buffer_page_end_16(dst_i410_c, dst_i410_size);
+  align_buffer_page_end_16(dst_i410_opt, dst_i410_size);
+  memset(dst_i410_c, 2, dst_i410_size * 2);
+  memset(dst_i410_opt, 3, dst_i410_size * 2);
+
+  MaskCpuFlags(disable_cpu_flags);  // Disable all CPU optimization.
+  I410Rotate(src_i410, src_width, src_i410 + src_i410_y_size, src_width,
+             src_i410 + src_i410_y_size + src_i410_uv_size, src_width,
+             dst_i410_c, dst_width, dst_i410_c + dst_i410_y_size, dst_width,
+             dst_i410_c + dst_i410_y_size + dst_i410_uv_size, dst_width,
+             src_width, src_height, mode);
+
+  MaskCpuFlags(benchmark_cpu_info);  // Enable all CPU optimization.
+  for (int i = 0; i < benchmark_iterations; ++i) {
+    I410Rotate(src_i410, src_width, src_i410 + src_i410_y_size, src_width,
+               src_i410 + src_i410_y_size + src_i410_uv_size, src_width,
+               dst_i410_opt, dst_width, dst_i410_opt + dst_i410_y_size,
+               dst_width, dst_i410_opt + dst_i410_y_size + dst_i410_uv_size,
+               dst_width, src_width, src_height, mode);
+  }
+
+  // Rotation should be exact.
+  for (int i = 0; i < dst_i410_size; ++i) {
+    EXPECT_EQ(dst_i410_c[i], dst_i410_opt[i]);
+  }
+
+  free_aligned_buffer_page_end_16(dst_i410_c);
+  free_aligned_buffer_page_end_16(dst_i410_opt);
+  free_aligned_buffer_page_end_16(src_i410);
+}
+
+TEST_F(LibYUVRotateTest, I410Rotate0_Opt) {
+  I410TestRotate(benchmark_width_, benchmark_height_, benchmark_width_,
+                 benchmark_height_, kRotate0, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I410Rotate90_Opt) {
+  I410TestRotate(benchmark_width_, benchmark_height_, benchmark_height_,
+                 benchmark_width_, kRotate90, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I410Rotate180_Opt) {
+  I410TestRotate(benchmark_width_, benchmark_height_, benchmark_width_,
+                 benchmark_height_, kRotate180, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I410Rotate270_Opt) {
+  I410TestRotate(benchmark_width_, benchmark_height_, benchmark_height_,
+                 benchmark_width_, kRotate270, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+#if defined(ENABLE_ROW_TESTS)
+
+TEST_F(LibYUVRotateTest, Transpose4x4_Test) {
+  // dst width and height
+  const int width = 4;
+  const int height = 4;
+  int src_pixels[4][4];
+  int dst_pixels_c[4][4];
+  int dst_pixels_opt[4][4];
+
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      src_pixels[i][j] = i * 10 + j;
+    }
+  }
+  memset(dst_pixels_c, 1, width * height * 4);
+  memset(dst_pixels_opt, 2, width * height * 4);
+
+  Transpose4x4_32_C((const uint8_t*)src_pixels, height * 4,
+                    (uint8_t*)dst_pixels_c, width * 4, width);
+
+  const int benchmark_iterations =
+      (benchmark_iterations_ * benchmark_width_ * benchmark_height_ + 15) /
+      (4 * 4);
+  for (int i = 0; i < benchmark_iterations; ++i) {
+#if defined(HAS_TRANSPOSE4X4_32_NEON)
+    if (TestCpuFlag(kCpuHasNEON)) {
+      Transpose4x4_32_NEON((const uint8_t*)src_pixels, height * 4,
+                           (uint8_t*)dst_pixels_opt, width * 4, width);
+    } else
+#elif defined(HAS_TRANSPOSE4X4_32_SSE2)
+    if (TestCpuFlag(kCpuHasSSE2)) {
+      Transpose4x4_32_SSE2((const uint8_t*)src_pixels, height * 4,
+                           (uint8_t*)dst_pixels_opt, width * 4, width);
+    } else
+#endif
+    {
+      Transpose4x4_32_C((const uint8_t*)src_pixels, height * 4,
+                        (uint8_t*)dst_pixels_opt, width * 4, width);
+    }
+  }
+
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      EXPECT_EQ(dst_pixels_c[i][j], src_pixels[j][i]);
+      EXPECT_EQ(dst_pixels_c[i][j], dst_pixels_opt[i][j]);
+    }
+  }
+}
+
+TEST_F(LibYUVRotateTest, Transpose4x4_Opt) {
+  // dst width and height
+  const int width = ((benchmark_width_ * benchmark_height_ + 3) / 4 + 3) & ~3;
+  const int height = 4;
+  align_buffer_page_end(src_pixels, height * width * 4);
+  align_buffer_page_end(dst_pixels_c, width * height * 4);
+  align_buffer_page_end(dst_pixels_opt, width * height * 4);
+
+  MemRandomize(src_pixels, height * width * 4);
+  memset(dst_pixels_c, 1, width * height * 4);
+  memset(dst_pixels_opt, 2, width * height * 4);
+
+  Transpose4x4_32_C((const uint8_t*)src_pixels, height * 4,
+                    (uint8_t*)dst_pixels_c, width * 4, width);
+
+  for (int i = 0; i < benchmark_iterations_; ++i) {
+#if defined(HAS_TRANSPOSE4X4_32_NEON)
+    if (TestCpuFlag(kCpuHasNEON)) {
+      Transpose4x4_32_NEON((const uint8_t*)src_pixels, height * 4,
+                           (uint8_t*)dst_pixels_opt, width * 4, width);
+    } else
+#elif defined(HAS_TRANSPOSE4X4_32_AVX2)
+    if (TestCpuFlag(kCpuHasAVX2)) {
+      Transpose4x4_32_AVX2((const uint8_t*)src_pixels, height * 4,
+                           (uint8_t*)dst_pixels_opt, width * 4, width);
+    } else if (TestCpuFlag(kCpuHasSSE2)) {
+      Transpose4x4_32_SSE2((const uint8_t*)src_pixels, height * 4,
+                           (uint8_t*)dst_pixels_opt, width * 4, width);
+    } else
+#endif
+    {
+      Transpose4x4_32_C((const uint8_t*)src_pixels, height * 4,
+                        (uint8_t*)dst_pixels_opt, width * 4, width);
+    }
+  }
+
+  for (int i = 0; i < width * height; ++i) {
+    EXPECT_EQ(dst_pixels_c[i], dst_pixels_opt[i]);
+  }
+
+  free_aligned_buffer_page_end(src_pixels);
+  free_aligned_buffer_page_end(dst_pixels_c);
+  free_aligned_buffer_page_end(dst_pixels_opt);
+}
+
+#endif  // ENABLE_ROW_TESTS
 
 }  // namespace libyuv

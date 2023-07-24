@@ -1,0 +1,13 @@
+Pointer Event: Event sequence at implicit release on drag
+
+Follow the test instructions with touch. If you don't have the device skip it.
+
+When a captured pointer is implicitly released after a drag, the boundary events should follow the lostpointercapture event.
+
+Drag quickly down starting on Black.
+Click or tap on Green.
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN touch Event sequence at implicit release on drag
+

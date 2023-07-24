@@ -43,17 +43,57 @@ GBMBufferSwapchain::GBMBufferSwapchain(BufferSwapchainSize size)
 
 GBMBufferSwapchain::~GBMBufferSwapchain() = default;
 
+static inline bool isBufferFormatSupported(const DMABufFormat& format)
+{
+    switch (format.fourcc) {
+    case DMABufFormat::FourCC::XRGB8888:
+    case DMABufFormat::FourCC::XBGR8888:
+    case DMABufFormat::FourCC::RGBX8888:
+    case DMABufFormat::FourCC::BGRX8888:
+    case DMABufFormat::FourCC::ARGB8888:
+    case DMABufFormat::FourCC::ABGR8888:
+    case DMABufFormat::FourCC::RGBA8888:
+    case DMABufFormat::FourCC::BGRA8888:
+    case DMABufFormat::FourCC::I420:
+    case DMABufFormat::FourCC::YV12:
+    case DMABufFormat::FourCC::A420:
+    case DMABufFormat::FourCC::NV12:
+    case DMABufFormat::FourCC::NV21:
+    case DMABufFormat::FourCC::YUY2:
+    case DMABufFormat::FourCC::YVYU:
+    case DMABufFormat::FourCC::UYVY:
+    case DMABufFormat::FourCC::VYUY:
+    case DMABufFormat::FourCC::VUYA:
+    case DMABufFormat::FourCC::AYUV:
+    case DMABufFormat::FourCC::Y444:
+    case DMABufFormat::FourCC::Y41B:
+    case DMABufFormat::FourCC::Y42B:
+    case DMABufFormat::FourCC::P010:
+    case DMABufFormat::FourCC::P016:
+        return true;
+    default:
+        return false;
+    }
+}
+
 RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDescription& description)
 {
     auto* device = GBMDevice::singleton().device();
-    if (!device)
+    if (!device) {
+        WTFLogAlways("Failed to get GBM buffer from swap chain: no GBM device found");
         return nullptr;
+    }
 
     // If the description of the requested buffers has changed, update the description to the new one and wreck the existing buffers.
     // This should handle changes in format or dimension of the buffers.
     if (description.format.fourcc != m_array.description.format.fourcc || description.width != m_array.description.width || description.height != m_array.description.height || description.flags != m_array.description.flags) {
         m_array.description = description;
         m_array.object = { };
+    }
+
+    if (!isBufferFormatSupported(description.format)) {
+        WTFLogAlways("Failed to get GBM buffer from swap chain: unsupported format");
+        return nullptr;
     }
 
     // Swapchain was asked to provide a buffer. The buffer array is traversed to find one.
@@ -64,38 +104,11 @@ RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDes
             m_array.object[i] = buffer.copyRef();
 
             // Fill out the buffer's description and plane information for known and supported formats.
-            switch (description.format.fourcc) {
-            case DMABufFormat::FourCC::XRGB8888:
-            case DMABufFormat::FourCC::XBGR8888:
-            case DMABufFormat::FourCC::RGBX8888:
-            case DMABufFormat::FourCC::BGRX8888:
-            case DMABufFormat::FourCC::ARGB8888:
-            case DMABufFormat::FourCC::ABGR8888:
-            case DMABufFormat::FourCC::RGBA8888:
-            case DMABufFormat::FourCC::BGRA8888:
-            case DMABufFormat::FourCC::I420:
-            case DMABufFormat::FourCC::YV12:
-            case DMABufFormat::FourCC::A420:
-            case DMABufFormat::FourCC::NV12:
-            case DMABufFormat::FourCC::NV21:
-            case DMABufFormat::FourCC::YUY2:
-            case DMABufFormat::FourCC::YVYU:
-            case DMABufFormat::FourCC::UYVY:
-            case DMABufFormat::FourCC::VYUY:
-            case DMABufFormat::FourCC::VUYA:
-            case DMABufFormat::FourCC::AYUV:
-            case DMABufFormat::FourCC::Y444:
-            case DMABufFormat::FourCC::Y41B:
-            case DMABufFormat::FourCC::Y42B:
-                buffer->m_description.format.numPlanes = description.format.numPlanes;
-                for (unsigned i = 0; i < buffer->m_description.format.numPlanes; ++i) {
-                    buffer->m_planes[i].fourcc = description.format.planes[i].fourcc;
-                    buffer->m_planes[i].width = description.format.planeWidth(i, description.width);
-                    buffer->m_planes[i].height = description.format.planeHeight(i, description.height);
-                }
-                break;
-            default:
-                return nullptr;
+            buffer->m_description.format.numPlanes = description.format.numPlanes;
+            for (unsigned i = 0; i < buffer->m_description.format.numPlanes; ++i) {
+                buffer->m_planes[i].fourcc = description.format.planes[i].fourcc;
+                buffer->m_planes[i].width = description.format.planeWidth(i, description.width);
+                buffer->m_planes[i].height = description.format.planeHeight(i, description.height);
             }
 
             uint32_t boFlags = 0;
@@ -141,6 +154,7 @@ RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDes
         return buffer;
     }
 
+    WTFLogAlways("Failed to get GBM buffer from swap chain: no buffers available");
     return nullptr;
 }
 

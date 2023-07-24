@@ -67,9 +67,6 @@ public:
     bool hasUnderline() const override;
 
     void setAccessibleName(const AtomString&) override;
-
-    // Provides common logic used by all elements when determining isIgnored.
-    AccessibilityObjectInclusion defaultObjectInclusion() const override;
     
     int layoutCount() const override;
     
@@ -88,19 +85,15 @@ public:
     Element* anchorElement() const override;
     
     LayoutRect boundingBoxRect() const override;
-    LayoutRect elementRect() const override;
 
-    RenderObject* renderer() const override { return m_renderer.get(); }
+    RenderObject* renderer() const final { return m_renderer.get(); }
     RenderBoxModelObject* renderBoxModelObject() const;
     Node* node() const override;
 
     Document* document() const override;
 
-    RenderView* topRenderer() const;
-    RenderTextControl* textControl() const;
-    
     URL url() const override;
-    PlainTextRange selectedTextRange() const override;
+    CharacterRange selectedTextRange() const override;
     int insertionPointLineNumber() const override;
     String stringValue() const override;
     String helpText() const override;
@@ -113,43 +106,39 @@ public:
     AccessibilityChildrenVector documentLinks() override;
     LocalFrameView* documentFrameView() const override;
 
-    void setSelectedTextRange(PlainTextRange&&) override;
+    void setSelectedTextRange(CharacterRange&&) override;
     bool setValue(const String&) override;
 
     void addChildren() override;
-    bool canHaveChildren() const override;
 
-    VisiblePositionRange visiblePositionRange() const override;
-    VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override;
-    VisiblePositionRange selectedVisiblePositionRange() const override;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
     bool isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange&) const;
 
-    VisiblePosition visiblePositionForPoint(const IntPoint&) const override;
     VisiblePosition visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const override;
     int index(const VisiblePosition&) const override;
 
-    VisiblePosition visiblePositionForIndex(int) const override;
-    int indexForVisiblePosition(const VisiblePosition&) const override;
+    VisiblePosition visiblePositionForIndex(int) const final;
+    int indexForVisiblePosition(const VisiblePosition&) const final;
 
-    PlainTextRange doAXRangeForLine(unsigned) const override;
-    PlainTextRange doAXRangeForIndex(unsigned) const override;
+    CharacterRange doAXRangeForLine(unsigned) const override;
+    CharacterRange doAXRangeForIndex(unsigned) const override;
     
-    String doAXStringForRange(const PlainTextRange&) const override;
-    IntRect doAXBoundsForRange(const PlainTextRange&) const override;
-    IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const override;
+    String doAXStringForRange(const CharacterRange&) const override;
+    IntRect doAXBoundsForRange(const CharacterRange&) const override;
+    IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const override;
     
     String secureFieldValue() const override;
     void titleElementText(Vector<AccessibilityText>&) const override;
 
 protected:
     explicit AccessibilityRenderObject(RenderObject*);
+    explicit AccessibilityRenderObject(Node&);
     void detachRemoteParts(AccessibilityDetachmentType) override;
     ScrollableArea* getScrollableAreaIfScrollable() const override;
     void scrollTo(const IntPoint&) const override;
     
-    bool isDetached() const override { return !m_renderer; }
+    bool isDetached() const final { return !m_renderer && AccessibilityNodeObject::isDetached(); }
 
     bool shouldIgnoreAttributeRole() const override;
     AccessibilityRole determineAccessibilityRole() override;
@@ -164,12 +153,11 @@ protected:
 private:
     bool isAccessibilityRenderObject() const final { return true; }
     bool isAllowedChildOfTree() const;
-    PlainTextRange documentBasedSelectedTextRange() const;
+    CharacterRange documentBasedSelectedTextRange() const;
     Element* rootEditableElementForPosition(const Position&) const;
     bool nodeIsTextControl(const Node*) const;
     Path elementPath() const override;
     
-    LayoutRect checkboxOrRadioRect() const;
     AXCoreObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;

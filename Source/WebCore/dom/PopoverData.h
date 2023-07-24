@@ -62,12 +62,33 @@ public:
     HTMLFormControlElement* invoker() const { return m_invoker.get(); }
     void setInvoker(const HTMLFormControlElement* element) { m_invoker = element; }
 
+    class ScopedStartShowingOrHiding {
+    public:
+    explicit ScopedStartShowingOrHiding(Element& popover)
+        : m_popover(popover)
+        , m_wasSet(popover.popoverData()->m_isHidingOrShowingPopover)
+    {
+        m_popover->popoverData()->m_isHidingOrShowingPopover = true;
+    }
+    ~ScopedStartShowingOrHiding()
+    {
+        if (!m_wasSet && m_popover->popoverData())
+            m_popover->popoverData()->m_isHidingOrShowingPopover = false;
+    }
+    bool wasShowingOrHiding() const { return m_wasSet; }
+
+    private:
+        const Ref<Element> m_popover;
+        bool m_wasSet;
+    };
+
 private:
     PopoverState m_popoverState;
     PopoverVisibilityState m_visibilityState;
     std::optional<PopoverToggleEventData> m_queuedToggleEventData;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
     WeakPtr<HTMLFormControlElement, WeakPtrImplWithEventTargetData> m_invoker;
+    bool m_isHidingOrShowingPopover = false;
 };
 
 }

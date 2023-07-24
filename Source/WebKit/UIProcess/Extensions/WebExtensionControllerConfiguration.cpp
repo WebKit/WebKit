@@ -35,7 +35,7 @@ WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(IsPersi
 {
 }
 
-WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(const UUID& identifier)
+WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(const WTF::UUID& identifier)
     : m_identifier(identifier)
     , m_storageDirectory(createStorageDirectoryPath(identifier))
 {

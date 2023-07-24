@@ -98,27 +98,29 @@ std::vector<VkFormat> DrmFourCCFormatToVkFormats(int fourccFormat)
     switch (fourccFormat)
     {
         case DRM_FORMAT_R8:
-            return {VK_FORMAT_R8_SRGB, VK_FORMAT_R8_UNORM};
+            return {VK_FORMAT_R8_UNORM, VK_FORMAT_R8_SRGB};
         case DRM_FORMAT_R16:
             return {VK_FORMAT_R16_UNORM};
         case DRM_FORMAT_GR88:
-            return {VK_FORMAT_R8G8_SRGB, VK_FORMAT_R8G8_UNORM};
+            return {VK_FORMAT_R8G8_UNORM, VK_FORMAT_R8G8_SRGB};
         case DRM_FORMAT_BGR888:
-            return {VK_FORMAT_R8G8B8_SRGB, VK_FORMAT_R8G8B8_UNORM};
+            return {VK_FORMAT_R8G8B8_UNORM, VK_FORMAT_R8G8B8_SRGB};
         case DRM_FORMAT_RGB888:
-            return {VK_FORMAT_B8G8R8_SRGB, VK_FORMAT_B8G8R8_UNORM};
+            return {VK_FORMAT_B8G8R8_UNORM, VK_FORMAT_B8G8R8_SRGB};
         case DRM_FORMAT_ABGR8888:
         case DRM_FORMAT_XBGR8888:
-            return {VK_FORMAT_R8G8B8A8_SRGB, VK_FORMAT_R8G8B8A8_UNORM};
+            return {VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_SRGB};
         case DRM_FORMAT_ARGB8888:
         case DRM_FORMAT_XRGB8888:
-            return {VK_FORMAT_B8G8R8A8_SRGB, VK_FORMAT_B8G8R8A8_UNORM};
+            return {VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_B8G8R8A8_SRGB};
         case DRM_FORMAT_ABGR2101010:
             return {VK_FORMAT_A2R10G10B10_UNORM_PACK32};
         case DRM_FORMAT_ARGB2101010:
             return {VK_FORMAT_A2B10G10R10_UNORM_PACK32};
         case DRM_FORMAT_RGB565:
             return {VK_FORMAT_B5G6R5_UNORM_PACK16};
+        case DRM_FORMAT_NV12:
+            return {VK_FORMAT_G8_B8R8_2PLANE_420_UNORM};
         default:
             WARN() << "Unknown dma_buf format " << fourccFormat
                    << " used to initialize an EGL image.";

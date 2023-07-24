@@ -128,7 +128,7 @@ const RealtimeMediaSourceCapabilities& MockRealtimeAudioSource::capabilities()
         capabilities.setDeviceId(hashedId());
         capabilities.setVolume(CapabilityValueOrRange(0.0, 1.0));
         capabilities.setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
-        capabilities.setSampleRate(CapabilityValueOrRange(44100, 48000));
+        capabilities.setSampleRate(CapabilityValueOrRange(44100, 96000));
 
         m_capabilities = WTFMove(capabilities);
     }

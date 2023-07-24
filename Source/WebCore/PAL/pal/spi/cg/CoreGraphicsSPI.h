@@ -38,10 +38,6 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(CPP20_INCOMPATIBLE_INTERNAL_HEADERS)
-#define CGCOLORTAGGEDPOINTER_H_
-#endif
-
 #include <CoreGraphics/CGContextDelegatePrivate.h>
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CGPathPrivate.h>
@@ -317,10 +313,6 @@ const void *CGStyleGetData(CGStyleRef);
 CGColorRef CGStyleGetColor(CGStyleRef);
 bool CGColorSpaceEqualToColorSpace(CGColorSpaceRef, CGColorSpaceRef);
 CFStringRef CGColorSpaceCopyICCProfileDescription(CGColorSpaceRef);
-
-#if HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
-size_t CGPathGetNumberOfElements(CGPathRef);
-#endif
 
 #if HAVE(IOSURFACE)
 CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo);

@@ -118,7 +118,7 @@ void RemoteLayerTreeEventDispatcher::invalidate()
 {
     m_displayLinkClient->invalidate();
 
-    stopDisplayLinkObserver();
+    removeDisplayLinkClient();
 
     {
         Locker locker { m_scrollingTreeLock };
@@ -274,21 +274,24 @@ WheelEventHandlingResult RemoteLayerTreeEventDispatcher::internalHandleWheelEven
     return scrollingTree->handleWheelEvent(filteredEvent, processingSteps);
 }
 
-void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID, std::optional<WheelScrollGestureState> gestureState)
+void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)
 {
     ASSERT(isMainRunLoop());
 
     LOG_WITH_STREAM(WheelEvents, stream << "RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted " << wheelEvent << " - sending event to scrolling thread, node " << 0 << " gestureState " << gestureState);
 
-    ScrollingThread::dispatch([protectedThis = Ref { *this }, wheelEvent, scrollingNodeID, gestureState] {
+    if (auto scrollingTree = this->scrollingTree())
+        scrollingTree->receivedEventAfterDefaultHandling(wheelEvent, gestureState);
+
+    ScrollingThread::dispatch([protectedThis = Ref { *this }, wheelEvent, scrollingNodeID, gestureState, wasHandled] {
         auto scrollingTree = protectedThis->scrollingTree();
         if (!scrollingTree)
             return;
 
         auto result = scrollingTree->handleWheelEventAfterDefaultHandling(wheelEvent, scrollingNodeID, gestureState);
-        RunLoop::main().dispatch([protectedThis, result]() {
+        RunLoop::main().dispatch([protectedThis, wasHandled, result]() {
             if (auto* scrollingCoordinator = protectedThis->scrollingCoordinator())
-                scrollingCoordinator->webPageProxy().wheelEventHandlingCompleted(result.wasHandled);
+                scrollingCoordinator->webPageProxy().wheelEventHandlingCompleted(wasHandled || result.wasHandled);
         });
 
     });
@@ -307,6 +310,13 @@ PlatformWheelEvent RemoteLayerTreeEventDispatcher::filteredWheelEvent(const Plat
     return filteredEvent;
 }
 
+RemoteLayerTreeDrawingAreaProxyMac& RemoteLayerTreeEventDispatcher::drawingAreaMac() const
+{
+    auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(m_scrollingCoordinator->webPageProxy().drawingArea());
+    ASSERT(drawingArea && drawingArea->isRemoteLayerTreeDrawingAreaProxyMac());
+    return *static_cast<RemoteLayerTreeDrawingAreaProxyMac*>(drawingArea);
+}
+
 DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const
 {
     ASSERT(isMainRunLoop());
@@ -314,11 +324,17 @@ DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const
     if (!m_scrollingCoordinator)
         return nullptr;
 
-    auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(m_scrollingCoordinator->webPageProxy().drawingArea());
-    ASSERT(drawingArea && drawingArea->isRemoteLayerTreeDrawingAreaProxyMac());
-    auto* drawingAreaMac = static_cast<RemoteLayerTreeDrawingAreaProxyMac*>(drawingArea);
+    return &drawingAreaMac().displayLink();
+}
 
-    return &drawingAreaMac->displayLink();
+DisplayLink* RemoteLayerTreeEventDispatcher::existingDisplayLink() const
+{
+    ASSERT(isMainRunLoop());
+
+    if (!m_scrollingCoordinator)
+        return nullptr;
+
+    return drawingAreaMac().existingDisplayLink();
 }
 
 void RemoteLayerTreeEventDispatcher::startOrStopDisplayLink()
@@ -377,13 +393,24 @@ void RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver()
     if (!m_displayRefreshObserverID)
         return;
 
-    auto* displayLink = this->displayLink();
+    auto* displayLink = existingDisplayLink();
     if (!displayLink)
         return;
 
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver");
 
     displayLink->removeObserver(*m_displayLinkClient, *m_displayRefreshObserverID);
+    m_displayRefreshObserverID = { };
+}
+
+void RemoteLayerTreeEventDispatcher::removeDisplayLinkClient()
+{
+    auto* displayLink = existingDisplayLink();
+    if (!displayLink)
+        return;
+
+    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeEventDispatcher::removeDisplayLinkClient");
+    displayLink->removeClient(*m_displayLinkClient);
     m_displayRefreshObserverID = { };
 }
 
@@ -442,7 +469,9 @@ void RemoteLayerTreeEventDispatcher::scheduleDelayedRenderingUpdateDetectionTime
 void RemoteLayerTreeEventDispatcher::delayedRenderingUpdateDetectionTimerFired()
 {
     ASSERT(ScrollingThread::isCurrentThread());
-    scrollingTree()->tryToApplyLayerPositions();
+
+    if (auto scrollingTree = this->scrollingTree())
+        scrollingTree->tryToApplyLayerPositions();
 }
 
 void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
@@ -525,6 +554,11 @@ void RemoteLayerTreeEventDispatcher::renderingUpdateComplete()
         m_stateCondition.notifyOne();
 
     m_state = SynchronizationState::Idle;
+}
+
+void RemoteLayerTreeEventDispatcher::windowScreenWillChange()
+{
+    removeDisplayLinkClient();
 }
 
 void RemoteLayerTreeEventDispatcher::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)

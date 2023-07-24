@@ -31,6 +31,7 @@ messages -> SourceBufferPrivateRemote NotRefCounted {
     SourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult appendResult, uint64_t totalTrackBufferSizeInBytes, MediaTime timeStampOffset)
     SourceBufferPrivateHighestPresentationTimestampChanged(MediaTime timestamp)
     SourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges buffered) -> ()
+    SourceBufferPrivateTrackBuffersChanged(Vector<WebCore::PlatformTimeRanges> trackBuffers)
     SourceBufferPrivateDurationChanged(MediaTime duration) -> ()
     SourceBufferPrivateDidParseSample(double sampleDuration)
     SourceBufferPrivateDidDropSample()

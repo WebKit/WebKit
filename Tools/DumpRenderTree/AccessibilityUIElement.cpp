@@ -846,6 +846,11 @@ static JSValueRef insertTextCallback(JSContextRef context, JSObjectRef function,
     return JSValueMakeBoolean(context, toAXElement(thisObject)->insertText(text.get()));
 }
 
+static JSValueRef textInputMarkedTextMarkerRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return AccessibilityTextMarkerRange::makeJSAccessibilityTextMarkerRange(context, toAXElement(thisObject)->textInputMarkedTextMarkerRange());
+}
+
 static JSValueRef attributedStringForTextMarkerRangeContainsAttributeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     AccessibilityTextMarkerRange* markerRange = 0;
@@ -1345,6 +1350,12 @@ static JSValueRef getSelectedTextRangeCallback(JSContextRef context, JSObjectRef
     return JSValueMakeString(context, selectedTextRange.get());
 }
 
+static JSValueRef getTextInputMarkedRangeCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    auto textInputMarkedRange = toAXElement(thisObject)->textInputMarkedRange();
+    return JSValueMakeString(context, textInputMarkedRange.get());
+}
+
 static JSValueRef getIsAtomicLiveRegionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isAtomicLiveRegion());
@@ -1773,6 +1784,11 @@ bool AccessibilityUIElement::insertText(JSStringRef)
     return false;
 }
 
+AccessibilityTextMarkerRange AccessibilityUIElement::textInputMarkedTextMarkerRange() const
+{
+    return nullptr;
+}
+
 int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange*)
 {
     return 0;
@@ -1983,6 +1999,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "columnCount", columnCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "insertionPointLineNumber", getInsertionPointLineNumberCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedTextRange", getSelectedTextRangeCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "textInputMarkedRange", getTextInputMarkedRangeCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isAtomicLiveRegion", getIsAtomicLiveRegionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isBusy", getIsBusyCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isEnabled", getIsEnabledCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2126,6 +2143,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "misspellingTextMarkerRange", misspellingTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "textMarkerRangeForElement", textMarkerRangeForElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedTextMarkerRange", selectedTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "textInputMarkedTextMarkerRange", textInputMarkedTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "resetSelectedTextMarkerRange", resetSelectedTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "replaceTextInRange", replaceTextInRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "insertText", insertTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

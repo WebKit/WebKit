@@ -119,10 +119,9 @@ void FullscreenZoomInitialFrame::initializeView(WKWebView *wkView)
 
     WKPageSetPageUIClient(wkView._pageRefForTransitionToWKWebView, &uiClient.base);
 
-    WKRetainPtr<WKStringRef> identifier = adoptWK(WKStringCreateWithUTF8CString("FullscreenZoomInitialFramePreferences"));
-    WKRetainPtr<WKPreferencesRef> customPreferences = adoptWK(WKPreferencesCreateWithIdentifier(identifier.get()));
-    WKPreferencesSetFullScreenEnabled(customPreferences.get(), true);
-    WKPageGroupSetPreferences(WKPageGetPageGroup(wkView._pageRefForTransitionToWKWebView), customPreferences.get());
+    auto configuration = adoptWK(WKPageCopyPageConfiguration(wkView._pageRefForTransitionToWKWebView));
+    auto preferences = WKPageConfigurationGetPreferences(configuration.get());
+    WKPreferencesSetFullScreenEnabled(preferences, true);
 }
 
 void FullscreenZoomInitialFrame::teardownView(WKWebView *wkView)

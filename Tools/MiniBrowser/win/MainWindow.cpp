@@ -125,7 +125,6 @@ void MainWindow::createToolbar(HINSTANCE hInstance)
         return;
 
     const int ImageListID = 0;
-    const int numButtons = 4;
 
     HIMAGELIST hImageList;
     hImageList = ImageList_LoadImage(hInstance, MAKEINTRESOURCE(IDB_TOOLBAR), kToolbarImageSize, 0, CLR_DEFAULT, IMAGE_BITMAP, 0);
@@ -159,7 +158,9 @@ void MainWindow::createToolbar(HINSTANCE hInstance)
 
 void MainWindow::resizeToolbar(int parentWidth)
 {
-    TBBUTTONINFO info { sizeof(TBBUTTONINFO), TBIF_BYINDEX | TBIF_SIZE };
+    TBBUTTONINFO info { };
+    info.cbSize = sizeof(TBBUTTONINFO);
+    info.dwMask = TBIF_BYINDEX | TBIF_SIZE;
     info.cx = parentWidth - m_toolbarItemsWidth;
     SendMessage(m_hToolbarWnd, TB_SETBUTTONINFO, kToolbarURLBarIndex, reinterpret_cast<LPARAM>(&info));
 
@@ -178,8 +179,9 @@ void MainWindow::rescaleToolbar()
     const float scaleFactor = WebCore::deviceScaleFactorForWindow(m_hMainWnd);
     const int scaledImageSize = kToolbarImageSize * scaleFactor;
 
-    TBBUTTONINFO info { sizeof(TBBUTTONINFO), TBIF_BYINDEX | TBIF_SIZE };
-
+    TBBUTTONINFO info { };
+    info.cbSize = sizeof(TBBUTTONINFO);
+    info.dwMask = TBIF_BYINDEX | TBIF_SIZE;
     info.cx = 0;
     SendMessage(m_hToolbarWnd, TB_SETBUTTONINFO, kToolbarURLBarIndex, reinterpret_cast<LPARAM>(&info));
     info.cx = scaledImageSize * 2;

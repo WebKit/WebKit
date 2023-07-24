@@ -82,7 +82,6 @@
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "Quirks.h"
-#include "ResourceHandle.h"
 #include "ResourceLoadObserver.h"
 #include "SWClientConnection.h"
 #include "ScriptableDocumentParser.h"
@@ -136,15 +135,6 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/DocumentLoaderAdditions.cpp>
-#else
-namespace WebCore {
-
-bool DocumentLoader::isLoadingInHeadlessMode() const
-{
-    return false;
-}
-
-} // namespace WebCore
 #endif
 
 namespace WebCore {
@@ -549,6 +539,18 @@ void DocumentLoader::handleSubstituteDataLoadNow()
 {
     Ref<DocumentLoader> protectedThis = Ref { *this };
     
+    if (m_substituteData.response().isRedirection()) {
+        auto newRequest = m_request.redirectedRequest(m_substituteData.response(), true);
+        auto substituteData = std::exchange(m_substituteData, { });
+        auto callback = [protectedThis, newRequest] (auto&& request) mutable {
+            if (request.isNull())
+                return;
+            protectedThis->loadMainResource(WTFMove(newRequest));
+        };
+        redirectReceived(WTFMove(newRequest), substituteData.response(), WTFMove(callback));
+        return;
+    }
+
     ResourceResponse response = m_substituteData.response();
     if (response.url().isEmpty())
         response = ResourceResponse(m_request.url(), m_substituteData.mimeType(), m_substituteData.content()->size(), m_substituteData.textEncoding());
@@ -602,6 +604,11 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
 void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_mainResource);
+    redirectReceived(WTFMove(request), redirectResponse, WTFMove(completionHandler));
+}
+
+void DocumentLoader::redirectReceived(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
+{
 #if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerRegistrationData) {
         m_serviceWorkerRegistrationData = { };
@@ -795,6 +802,12 @@ bool DocumentLoader::tryLoadingRequestFromApplicationCache()
 {
     m_applicationCacheHost->maybeLoadMainResource(m_request, m_substituteData);
     return tryLoadingSubstituteData();
+}
+
+void DocumentLoader::setRedirectionAsSubstituteData(ResourceResponse&& response)
+{
+    ASSERT(response.isRedirection());
+    m_substituteData = { FragmentedSharedBuffer::create(), { }, WTFMove(response), SubstituteData::SessionHistoryVisibility::Visible };
 }
 
 bool DocumentLoader::tryLoadingSubstituteData()
@@ -2580,6 +2593,11 @@ bool DocumentLoader::allowsActiveContentRuleListActionsForURL(const String& cont
             return true;
     }
     return false;
+}
+
+bool DocumentLoader::fingerprintingProtectionsEnabled() const
+{
+    return m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::FingerprintingProtections);
 }
 
 } // namespace WebCore

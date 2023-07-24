@@ -58,11 +58,12 @@
 
 #include <string.h>
 
-#include <openssl/asn1.h>
 #include <openssl/blake2.h>
 #include <openssl/bytestring.h>
+#include <openssl/obj.h>
 #include <openssl/nid.h>
 
+#include "../asn1/internal.h"
 #include "../internal.h"
 #include "../fipsmodule/digest/internal.h"
 
@@ -82,6 +83,7 @@ static const struct nid_to_digest nid_to_digest_mapping[] = {
     {NID_sha256, EVP_sha256, SN_sha256, LN_sha256},
     {NID_sha384, EVP_sha384, SN_sha384, LN_sha384},
     {NID_sha512, EVP_sha512, SN_sha512, LN_sha512},
+    {NID_sha512_256, EVP_sha512_256, SN_sha512_256, LN_sha512_256},
     {NID_md5_sha1, EVP_md5_sha1, SN_md5_sha1, LN_md5_sha1},
     // As a remnant of signing |EVP_MD|s, OpenSSL returned the corresponding
     // hash function when given a signature OID. To avoid unintended lax parsing
@@ -152,13 +154,14 @@ static const EVP_MD *cbs_to_md(const CBS *cbs) {
 }
 
 const EVP_MD *EVP_get_digestbyobj(const ASN1_OBJECT *obj) {
-  // Handle objects with no corresponding OID.
+  // Handle objects with no corresponding OID. Note we don't use |OBJ_obj2nid|
+  // here to avoid pulling in the OID table.
   if (obj->nid != NID_undef) {
     return EVP_get_digestbynid(obj->nid);
   }
 
   CBS cbs;
-  CBS_init(&cbs, obj->data, obj->length);
+  CBS_init(&cbs, OBJ_get0_data(obj), OBJ_length(obj));
   return cbs_to_md(&cbs);
 }
 
@@ -197,7 +200,6 @@ int EVP_marshal_digest_algorithm(CBB *cbb, const EVP_MD *md) {
   CBB algorithm, oid, null;
   if (!CBB_add_asn1(cbb, &algorithm, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1(&algorithm, &oid, CBS_ASN1_OBJECT)) {
-    OPENSSL_PUT_ERROR(DIGEST, ERR_R_MALLOC_FAILURE);
     return 0;
   }
 
@@ -206,7 +208,6 @@ int EVP_marshal_digest_algorithm(CBB *cbb, const EVP_MD *md) {
   for (size_t i = 0; i < OPENSSL_ARRAY_SIZE(kMDOIDs); i++) {
     if (nid == kMDOIDs[i].nid) {
       if (!CBB_add_bytes(&oid, kMDOIDs[i].oid, kMDOIDs[i].oid_len)) {
-        OPENSSL_PUT_ERROR(DIGEST, ERR_R_MALLOC_FAILURE);
         return 0;
       }
       found = 1;
@@ -221,7 +222,6 @@ int EVP_marshal_digest_algorithm(CBB *cbb, const EVP_MD *md) {
 
   if (!CBB_add_asn1(&algorithm, &null, CBS_ASN1_NULL) ||
       !CBB_flush(cbb)) {
-    OPENSSL_PUT_ERROR(DIGEST, ERR_R_MALLOC_FAILURE);
     return 0;
   }
 

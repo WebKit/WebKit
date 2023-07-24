@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,6 +25,6 @@ header: "WebGPURenderPassTimestampWrites.h"
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebKit::WebGPU::RenderPassTimestampWrite {
     WebKit::WebGPUIdentifier querySet
-    PAL::WebGPU::Size32 queryIndex
-    PAL::WebGPU::RenderPassTimestampLocation location
+    WebCore::WebGPU::Size32 queryIndex
+    WebCore::WebGPU::RenderPassTimestampLocation location
 }

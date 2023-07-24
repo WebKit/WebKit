@@ -41,7 +41,7 @@
 
 typedef void (^DataLoadCompletionBlock)(NSData *, NSError *);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 static void checkJSONWithLogging(NSString *jsonString, NSDictionary *expected)
 {
@@ -79,7 +79,7 @@ static _UIDataOwner gLastKnownDataOwner = _UIDataOwnerUndefined;
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 
 namespace TestWebKitAPI {
 
@@ -195,7 +195,7 @@ TEST(UIPasteboardTests, PasteWithCompletionHandler)
     EXPECT_WK_STREQ("https://www.apple.com/", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 TEST(UIPasteboardTests, DataTransferGetDataWhenPastingURL)
 {
@@ -473,7 +473,7 @@ TEST(UIPasteboardTests, PerformAsDataOwnerWithManagedURL)
     }
 }
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 
 } // namespace TestWebKitAPI
 

@@ -219,7 +219,7 @@ def parse_args(args):
     parser = argparse.ArgumentParser(description=helptext)
     parser.add_argument('-c', '--configuration', default='release', help='the configuration to query [release | debug]')
     parser.add_argument('-a', '--architecture', help='the architecture to query, e.g. x86_64, default is no preference')
-    parser.add_argument('-p', '--platform', default=host_platform_name(), help='the platform to query, e.g. mac-bigsur, gtk, ios-simulator-14, win, default is current host platform.')
+    parser.add_argument('-p', '--platform', default=host_platform_name(), help='the platform to query, e.g. mac-ventura, gtk, ios-simulator-14, win, default is current host platform.')
     parser.add_argument('-f', '--full', action='store_true', default=False, help='use full archives containing debug symbols, which are significantly larger files')
     parser.add_argument('-s', '--start', default=None, type=int, help='the starting revision to bisect')
     parser.add_argument('-e', '--end', default=None, type=int, help='the ending revision to bisect')

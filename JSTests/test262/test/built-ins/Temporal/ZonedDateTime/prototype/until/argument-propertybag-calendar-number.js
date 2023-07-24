@@ -13,13 +13,9 @@ const instance = new Temporal.ZonedDateTime(0n, timeZone);
 
 const calendar = 19970327;
 
-let arg = { year: 1970, monthCode: "M01", day: 1, timeZone, calendar };
-const result1 = instance.until(arg);
-TemporalHelpers.assertDuration(result1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "19970327 is a valid ISO string for calendar");
-
-arg = { year: 1970, monthCode: "M01", day: 1, timeZone, calendar: { calendar } };
-const result2 = instance.until(arg);
-TemporalHelpers.assertDuration(result2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "19970327 is a valid ISO string for calendar (nested property)");
+const arg = { year: 1970, monthCode: "M01", day: 1, timeZone, calendar };
+const result = instance.until(arg);
+TemporalHelpers.assertDuration(result, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "19970327 is a valid ISO string for calendar");
 
 const numbers = [
   1,
@@ -28,16 +24,10 @@ const numbers = [
 ];
 
 for (const calendar of numbers) {
-  let arg = { year: 1970, monthCode: "M01", day: 1, timeZone, calendar };
+  const arg = { year: 1970, monthCode: "M01", day: 1, timeZone, calendar };
   assert.throws(
     RangeError,
     () => instance.until(arg),
     `Number ${calendar} does not convert to a valid ISO string for calendar`
-  );
-  arg = { year: 1970, monthCode: "M01", day: 1, timeZone, calendar: { calendar } };
-  assert.throws(
-    RangeError,
-    () => instance.until(arg),
-    `Number ${calendar} does not convert to a valid ISO string for calendar (nested property)`
   );
 }

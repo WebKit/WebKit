@@ -28,6 +28,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/numeric/int128.h"
+#include "absl/strings/str_format.h"
 #include "absl/time/clock.h"
 #include "absl/time/internal/test_util.h"
 
@@ -377,11 +378,6 @@ TEST(Time, FloorConversion) {
 }
 
 TEST(Time, RoundtripConversion) {
-#if defined(ABSL_SKIP_TIME_TESTS_BROKEN_ON_MSVC_OPT) && \
-    ABSL_SKIP_TIME_TESTS_BROKEN_ON_MSVC_OPT
-  GTEST_SKIP();
-#endif
-
 #define TEST_CONVERSION_ROUND_TRIP(SOURCE, FROM, TO, MATCHER) \
   EXPECT_THAT(TO(FROM(SOURCE)), MATCHER(SOURCE))
 
@@ -563,11 +559,6 @@ TEST(Time, FromChrono) {
 }
 
 TEST(Time, ToChronoTime) {
-#if defined(ABSL_SKIP_TIME_TESTS_BROKEN_ON_MSVC_OPT) && \
-    ABSL_SKIP_TIME_TESTS_BROKEN_ON_MSVC_OPT
-  GTEST_SKIP();
-#endif
-
   EXPECT_EQ(std::chrono::system_clock::from_time_t(-1),
             absl::ToChronoTime(absl::FromTimeT(-1)));
   EXPECT_EQ(std::chrono::system_clock::from_time_t(0),
@@ -1285,6 +1276,13 @@ TEST(Time, PrevTransitionNYC) {
   t = absl::InfiniteFuture();
   EXPECT_TRUE(tz.PrevTransition(t, &trans));
   // We have a transition but we don't know which one.
+}
+
+TEST(Time, AbslStringify) {
+  // FormatTime is already well tested, so just use one test case here to
+  // verify that StrFormat("%v", t) works as expected.
+  absl::Time t = absl::Now();
+  EXPECT_EQ(absl::StrFormat("%v", t), absl::FormatTime(t));
 }
 
 }  // namespace

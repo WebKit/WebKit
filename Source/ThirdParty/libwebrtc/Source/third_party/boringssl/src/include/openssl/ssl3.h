@@ -1,4 +1,3 @@
-/* ssl/ssl3.h */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -118,7 +117,6 @@
 #define OPENSSL_HEADER_SSL3_H
 
 #include <openssl/aead.h>
-#include <openssl/type_check.h>
 
 #ifdef  __cplusplus
 extern "C" {
@@ -251,10 +249,6 @@ extern "C" {
 #define SSL3_RT_SEND_MAX_ENCRYPTED_OVERHEAD \
     (EVP_AEAD_MAX_OVERHEAD + EVP_AEAD_MAX_NONCE_LENGTH)
 
-OPENSSL_STATIC_ASSERT(SSL3_RT_MAX_ENCRYPTED_OVERHEAD >=
-                          SSL3_RT_SEND_MAX_ENCRYPTED_OVERHEAD,
-                      "max overheads are inconsistent");
-
 // SSL3_RT_MAX_COMPRESSED_LENGTH is an alias for
 // |SSL3_RT_MAX_PLAIN_LENGTH|. Compression is gone, so don't include the
 // compression overhead.
@@ -275,6 +269,7 @@ OPENSSL_STATIC_ASSERT(SSL3_RT_MAX_ENCRYPTED_OVERHEAD >=
 
 // Pseudo content type for SSL/TLS header info
 #define SSL3_RT_HEADER 0x100
+#define SSL3_RT_CLIENT_HELLO_INNER 0x101
 
 #define SSL3_AL_WARNING 1
 #define SSL3_AL_FATAL 2

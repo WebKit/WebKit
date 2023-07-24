@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,6 +94,8 @@ struct CSSParserContext {
     bool cssNestingEnabled { false };
     bool cssPaintingAPIEnabled { false };
     bool cssTextUnderlinePositionLeftRightEnabled { false };
+    bool cssTextWrapNewValuesEnabled { false };
+    bool cssWordBreakAutoEnabled { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

@@ -153,15 +153,15 @@ void aom_masked_sad8xhx4d_ssse3(const uint8_t *src_ptr, int src_stride,
   _mm_storeu_si128((__m128i *)sad_array, res0);
 }
 
-#define MASK_SAD4XH_ONE_REF(idx)                                               \
-  a = _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(uint32_t *)ref##idx),             \
-                         _mm_cvtsi32_si128(*(uint32_t *)&ref##idx[a_stride])); \
-  data = _mm_unpacklo_epi8(a, b);                                              \
-  mask = _mm_unpacklo_epi8(m, m_inv);                                          \
-  pred = _mm_maddubs_epi16(data, mask);                                        \
-  pred = xx_roundn_epu16(pred, AOM_BLEND_A64_ROUND_BITS);                      \
-                                                                               \
-  pred = _mm_packus_epi16(pred, _mm_setzero_si128());                          \
+#define MASK_SAD4XH_ONE_REF(idx)                                          \
+  a = _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(int *)ref##idx),             \
+                         _mm_cvtsi32_si128(*(int *)&ref##idx[a_stride])); \
+  data = _mm_unpacklo_epi8(a, b);                                         \
+  mask = _mm_unpacklo_epi8(m, m_inv);                                     \
+  pred = _mm_maddubs_epi16(data, mask);                                   \
+  pred = xx_roundn_epu16(pred, AOM_BLEND_A64_ROUND_BITS);                 \
+                                                                          \
+  pred = _mm_packus_epi16(pred, _mm_setzero_si128());                     \
   res##idx = _mm_add_epi32(res##idx, _mm_sad_epu8(pred, src));
 
 void aom_masked_sad4xhx4d_ssse3(const uint8_t *src_ptr, int src_stride,
@@ -182,15 +182,15 @@ void aom_masked_sad4xhx4d_ssse3(const uint8_t *src_ptr, int src_stride,
   const __m128i mask_max = _mm_set1_epi8((1 << AOM_BLEND_A64_ROUND_BITS));
 
   for (int y = 0; y < height; y += 2) {
-    const __m128i src = _mm_unpacklo_epi32(
-        _mm_cvtsi32_si128(*(uint32_t *)src_ptr),
-        _mm_cvtsi32_si128(*(uint32_t *)&src_ptr[src_stride]));
+    const __m128i src =
+        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(int *)src_ptr),
+                           _mm_cvtsi32_si128(*(int *)&src_ptr[src_stride]));
     const __m128i b =
-        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(uint32_t *)b_ptr),
-                           _mm_cvtsi32_si128(*(uint32_t *)&b_ptr[b_stride]));
+        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(int *)b_ptr),
+                           _mm_cvtsi32_si128(*(int *)&b_ptr[b_stride]));
     const __m128i m_copy =
-        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(uint32_t *)m_ptr),
-                           _mm_cvtsi32_si128(*(uint32_t *)&m_ptr[m_stride]));
+        _mm_unpacklo_epi32(_mm_cvtsi32_si128(*(int *)m_ptr),
+                           _mm_cvtsi32_si128(*(int *)&m_ptr[m_stride]));
 
     __m128i m_inv = _mm_sub_epi8(mask_max, m_copy);
     __m128i m = inv_mask ? m_inv : m_copy;

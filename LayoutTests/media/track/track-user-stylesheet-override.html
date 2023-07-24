@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+
+        <script>
+            function firstCueElement() {
+                return internals.shadowRoot(video).querySelector('[pseudo="cue"]');
+            }
+
+            async function runTest()
+            {
+                consoleWrite("");
+                run("internals.setCaptionsStyleSheetOverride('::cue { color: blue; background-color: yellow; }')");
+
+                findMediaElement();
+
+                video.src = findMediaFile('video', '../content/test');
+                waitFor(video, 'error').then(failTest);
+
+                await waitFor(video, 'canplaythrough');
+                video.textTracks[0].mode = 'showing';
+
+                video.currentTime = 0.5;
+                await waitFor(video, 'seeked');
+
+
+                await testExpectedEventually('firstCueElement()', null, '!=');
+                await testExpectedEventually(`window.getComputedStyle(firstCueElement()).color`, 'rgb(0, 0, 255)', '==', 100);
+                await testExpectedEventually(`window.getComputedStyle(firstCueElement()).backgroundColor`, 'rgb(255, 255, 0)', '==', 100);
+            }
+
+            window.addEventListener('load', event => {
+                runTest().catch(failTest).then(endTest);
+            }, {once: true})
+
+        </script>
+    </head>
+    <body>
+        <span>Test that caption styles override UA provided styles</span>
+        <video controls >
+            <track src="captions-webvtt/styling.vtt" kind="captions">
+        </video>
+    </body>
+</html>

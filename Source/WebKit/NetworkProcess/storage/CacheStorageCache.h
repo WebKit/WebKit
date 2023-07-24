@@ -39,6 +39,7 @@ class CacheStorageCache : public CanMakeWeakPtr<CacheStorageCache> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CacheStorageCache(CacheStorageManager&, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&&);
+    ~CacheStorageCache();
     WebCore::DOMCacheIdentifier identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
     const String& uniqueName() const { return m_uniqueName; }
@@ -65,6 +66,7 @@ private:
 
     WeakPtr<CacheStorageManager> m_manager;
     bool m_isInitialized { false };
+    Vector<WebCore::DOMCacheEngine::CacheIdentifierCallback> m_pendingInitializationCallbacks;
     WebCore::DOMCacheIdentifier m_identifier;
     String m_name;
     String m_uniqueName;

@@ -67,14 +67,16 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
     auto* navigationAction = this->navigationAction();
     ASSERT(navigationAction);
     auto* page = this->page();
-    if ((response.httpStatusCode() != 302 && response.httpStatusCode() != 200) || !page) {
+    // FIXME: Enable the useRedirectionForCurrentNavigation code path for all redirections.
+    if ((response.httpStatusCode() != 302 && response.httpStatusCode() != 200 && !(response.httpStatusCode() == 307 && navigationAction->request().httpMethod() == "POST"_s)) || !page) {
         AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d page=%d, so falling back to web path.", response.httpStatusCode(), !!page);
         fallBackToWebPathInternal();
         return;
     }
-    invokeCallback(true);
+
     if (response.httpStatusCode() == 302) {
-#if PLATFORM(IOS)
+        invokeCallback(true);
+#if PLATFORM(IOS) || PLATFORM(VISION)
         // MobileSafari has a WBSURLSpoofingMitigator, which will not display the provisional URL for navigations without user gestures.
         // For slow loads that are initiated from the MobileSafari Favorites screen, the aforementioned behavior will create a period
         // after authentication completion where the new request to the application site loads with a blank URL and blank page. To
@@ -90,11 +92,18 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
         }
 #endif
         page->loadRequest(ResourceRequest(response.httpHeaderFields().get(HTTPHeaderName::Location)));
+        return;
     }
     if (response.httpStatusCode() == 200) {
+        invokeCallback(true);
         page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
         page->loadData(IPC::DataReference(static_cast<const uint8_t*>(data.bytes), data.length), "text/html"_s, "UTF-8"_s, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
+        return;
     }
+
+    ASSERT(response.httpStatusCode() == 307 && navigationAction->request().httpMethod() == "POST"_s);
+    page->useRedirectionForCurrentNavigation(response);
+    invokeCallback(false);
 }
 
 void RedirectSOAuthorizationSession::beforeStart()

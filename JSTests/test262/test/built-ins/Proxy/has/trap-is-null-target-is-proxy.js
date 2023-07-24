@@ -14,7 +14,7 @@ info: |
   6. Let trap be ? GetMethod(handler, "has").
   7. If trap is undefined, then
     a. Return ? target.[[HasProperty]](P).
-features: [Proxy, Symbol, Reflect]
+features: [Proxy, Symbol, Reflect, Array.prototype.includes]
 ---*/
 
 var stringTarget = new Proxy(new String("str"), {});

@@ -59,8 +59,10 @@ struct _WAKObject
 };
 
 const void *WKCreateObjectWithSize (size_t size, WKClassInfo *info);
-const void *WKRetain(const void *object);
-void WKRelease(const void *object);
+// These functions use the WAK prefix to avoid breaking InstallAPI in Mac
+// Catalyst: https://bugs.webkit.org/show_bug.cgi?id=257560
+const void *WAKRetain(const void *object);
+void WAKRelease(const void *object);
 
 const void *WKCollectionRetain (CFAllocatorRef allocator, const void *value);
 void WKCollectionRelease (CFAllocatorRef allocator, const void *value);

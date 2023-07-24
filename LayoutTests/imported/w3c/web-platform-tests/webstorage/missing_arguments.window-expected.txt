@@ -1,12 +1,12 @@
 
-PASS Should throw TypeError for function "function () { localStorage.key(); }".
-PASS Should throw TypeError for function "function () { localStorage.getItem(); }".
-PASS Should throw TypeError for function "function () { localStorage.setItem(); }".
-PASS Should throw TypeError for function "function () { localStorage.setItem("a"); }".
-PASS Should throw TypeError for function "function () { localStorage.removeItem(); }".
-PASS Should throw TypeError for function "function () { sessionStorage.key(); }".
-PASS Should throw TypeError for function "function () { sessionStorage.getItem(); }".
-PASS Should throw TypeError for function "function () { sessionStorage.setItem(); }".
-PASS Should throw TypeError for function "function () { sessionStorage.setItem("a"); }".
-PASS Should throw TypeError for function "function () { sessionStorage.removeItem(); }".
+PASS Should throw TypeError for function "function() { localStorage.key(); }".
+PASS Should throw TypeError for function "function() { localStorage.getItem(); }".
+PASS Should throw TypeError for function "function() { localStorage.setItem(); }".
+PASS Should throw TypeError for function "function() { localStorage.setItem("a"); }".
+PASS Should throw TypeError for function "function() { localStorage.removeItem(); }".
+PASS Should throw TypeError for function "function() { sessionStorage.key(); }".
+PASS Should throw TypeError for function "function() { sessionStorage.getItem(); }".
+PASS Should throw TypeError for function "function() { sessionStorage.setItem(); }".
+PASS Should throw TypeError for function "function() { sessionStorage.setItem("a"); }".
+PASS Should throw TypeError for function "function() { sessionStorage.removeItem(); }".
 

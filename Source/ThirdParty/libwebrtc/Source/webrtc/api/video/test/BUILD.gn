@@ -13,6 +13,7 @@ rtc_library("rtc_api_video_unittests") {
   sources = [
     "color_space_unittest.cc",
     "i210_buffer_unittest.cc",
+    "i410_buffer_unittest.cc",
     "i422_buffer_unittest.cc",
     "i444_buffer_unittest.cc",
     "nv12_buffer_unittest.cc",

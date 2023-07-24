@@ -10,7 +10,9 @@
 // SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 // WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+//go:build ignore
 
 // embed_test_data generates a C++ source file which exports a function,
 // GetTestData, which looks up the specified data files.
@@ -20,7 +22,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -77,7 +78,7 @@ func main() {
 
 	var files []string
 	if len(*fileList) != 0 {
-		data, err := ioutil.ReadFile(*fileList)
+		data, err := os.ReadFile(*fileList)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error reading %s: %s.\n", *fileList, err)
 			os.Exit(1)
@@ -127,7 +128,7 @@ func main() {
 	const chunkSize = 8192
 
 	for i, arg := range files {
-		data, err := ioutil.ReadFile(arg)
+		data, err := os.ReadFile(arg)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error reading %s: %s.\n", arg, err)
 			os.Exit(1)

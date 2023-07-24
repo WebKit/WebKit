@@ -96,13 +96,6 @@ public:
     // when placing a URL in an if statment.
     operator bool() const = delete;
 
-    // Returns true if you can set the host and port for the URL.
-    // Non-hierarchical URLs don't have a host and port.
-    bool canSetHostOrPort() const { return isHierarchical(); }
-
-    bool canSetPathname() const { return isHierarchical(); }
-    WTF_EXPORT_PRIVATE bool isHierarchical() const;
-
     const String& string() const { return m_string; }
     WTF_EXPORT_PRIVATE String stringCenterEllipsizedToLength(unsigned length = 1024) const;
 
@@ -142,14 +135,14 @@ public:
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
     WTF_EXPORT_PRIVATE bool protocolIs(StringView) const;
+    bool protocolIsAbout() const { return protocolIs("about"_s); }
     bool protocolIsBlob() const { return protocolIs("blob"_s); }
     bool protocolIsData() const { return protocolIs("data"_s); }
-    WTF_EXPORT_PRIVATE bool protocolIsAbout() const;
+    bool protocolIsFile() const { return protocolIs("file"_s); }
     WTF_EXPORT_PRIVATE bool protocolIsJavaScript() const;
-    WTF_EXPORT_PRIVATE bool protocolIsInFTPFamily() const;
-    bool protocolIsInHTTPFamily() const;
-    WTF_EXPORT_PRIVATE bool isLocalFile() const;
-    bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }
+    bool protocolIsInFTPFamily() const { return protocolIs("ftp"_s) || protocolIs("ftps"_s); }
+    bool protocolIsInHTTPFamily() const { return m_protocolIsInHTTPFamily; }
+    bool hasOpaquePath() const { return m_hasOpaquePath; }
 
     WTF_EXPORT_PRIVATE bool isAboutBlank() const;
     WTF_EXPORT_PRIVATE bool isAboutSrcDoc() const;
@@ -230,7 +223,7 @@ private:
 
     unsigned m_isValid : 1;
     unsigned m_protocolIsInHTTPFamily : 1;
-    unsigned m_cannotBeABaseURL : 1;
+    unsigned m_hasOpaquePath : 1;
 
     // This is out of order to align the bits better. The port is after the host.
     unsigned m_portLength : 3;
@@ -273,7 +266,6 @@ WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();
 
 WTF_EXPORT_PRIVATE bool protocolIs(StringView url, ASCIILiteral protocol);
 WTF_EXPORT_PRIVATE bool protocolIsJavaScript(StringView url);
-WTF_EXPORT_PRIVATE bool protocolIsInFTPFamily(StringView url);
 WTF_EXPORT_PRIVATE bool protocolIsInHTTPFamily(StringView url);
 
 WTF_EXPORT_PRIVATE std::optional<uint16_t> defaultPortForProtocol(StringView protocol);
@@ -355,11 +347,6 @@ inline bool URL::hasQuery() const
 inline bool URL::hasFragmentIdentifier() const
 {
     return m_isValid && m_string.length() > m_queryEnd;
-}
-
-inline bool URL::protocolIsInHTTPFamily() const
-{
-    return m_protocolIsInHTTPFamily;
 }
 
 inline unsigned URL::pathEnd() const

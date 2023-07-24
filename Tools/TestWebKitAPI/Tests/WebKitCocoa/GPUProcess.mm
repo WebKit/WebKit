@@ -480,7 +480,7 @@ TEST(GPUProcess, CrashWhilePlayingAudioViaCreateMediaElementSource)
     EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
 
     // FIXME: On iOS, video resumes after the GPU process crash but audio does not.
-#if !PLATFORM(IOS)
+#if !(PLATFORM(IOS) || PLATFORM(VISION))
     // Audio should resume playing.
     timeout = 0;
     while (![webView _isPlayingAudio] && timeout++ < 100)

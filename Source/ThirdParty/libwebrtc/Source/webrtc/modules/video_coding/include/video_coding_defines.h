@@ -18,6 +18,7 @@
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_timing.h"
+#include "api/video_codecs/video_decoder.h"
 
 namespace webrtc {
 
@@ -58,33 +59,11 @@ class VCMReceiveCallback {
 
   // Called when the current receive codec changes.
   virtual void OnIncomingPayloadType(int payload_type);
-  virtual void OnDecoderImplementationName(const char* implementation_name);
+  virtual void OnDecoderInfoChanged(
+      const VideoDecoder::DecoderInfo& decoder_info);
 
  protected:
   virtual ~VCMReceiveCallback() {}
-};
-
-// Callback class used for informing the user of the incoming bit rate and frame
-// rate.
-class VCMReceiveStatisticsCallback {
- public:
-  virtual void OnCompleteFrame(bool is_keyframe,
-                               size_t size_bytes,
-                               VideoContentType content_type) = 0;
-
-  virtual void OnDroppedFrames(uint32_t frames_dropped) = 0;
-
-  virtual void OnFrameBufferTimingsUpdated(int max_decode_ms,
-                                           int current_delay_ms,
-                                           int target_delay_ms,
-                                           int jitter_buffer_ms,
-                                           int min_playout_delay_ms,
-                                           int render_delay_ms) = 0;
-
-  virtual void OnTimingFrameInfoUpdated(const TimingFrameInfo& info) = 0;
-
- protected:
-  virtual ~VCMReceiveStatisticsCallback() {}
 };
 
 // Callback class used for telling the user about what frame type needed to

@@ -95,11 +95,6 @@ public:
         return adoptRef(*new OpenDatabaseCallback(executableWithDatabase));
     }
 
-    bool operator==(const EventListener& other) const final
-    {
-        return this == &other;
-    }
-
     void handleEvent(ScriptExecutionContext&, Event& event) final
     {
         if (event.type() != eventNames().successEvent) {
@@ -340,11 +335,6 @@ public:
     }
 
     ~OpenCursorCallback() override = default;
-
-    bool operator==(const EventListener& other) const override
-    {
-        return this == &other;
-    }
 
     void handleEvent(ScriptExecutionContext& context, Event& event) override
     {
@@ -642,11 +632,6 @@ public:
     }
 
     ~ClearObjectStoreListener() override = default;
-
-    bool operator==(const EventListener& other) const override
-    {
-        return this == &other;
-    }
 
     void handleEvent(ScriptExecutionContext&, Event& event) override
     {

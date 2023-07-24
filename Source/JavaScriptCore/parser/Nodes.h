@@ -2224,13 +2224,13 @@ namespace JSC {
     public:
         FunctionMetadataNode(
             ParserArena&, const JSTokenLocation& start, const JSTokenLocation& end, 
-            unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
+            unsigned startColumn, unsigned endColumn, unsigned functionStart,
             int functionNameStart, int parametersStart, ImplementationVisibility, LexicalScopeFeatures,
             ConstructorKind, SuperBinding, unsigned parameterCount,
             SourceParseMode, bool isArrowFunctionBodyExpression);
         FunctionMetadataNode(
             const JSTokenLocation& start, const JSTokenLocation& end, 
-            unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
+            unsigned startColumn, unsigned endColumn, unsigned functionStart,
             int functionNameStart, int parametersStart, ImplementationVisibility, LexicalScopeFeatures,
             ConstructorKind, SuperBinding, unsigned parameterCount,
             SourceParseMode, bool isArrowFunctionBodyExpression);
@@ -2250,7 +2250,7 @@ namespace JSC {
         FunctionMode functionMode() { return m_functionMode; }
 
         int functionNameStart() const { return m_functionNameStart; }
-        int functionKeywordStart() const { return m_functionKeywordStart; }
+        unsigned functionStart() const { return m_functionStart; }
         int parametersStart() const { return m_parametersStart; }
         unsigned startColumn() const { return m_startColumn; }
         unsigned endColumn() const { return m_endColumn; }
@@ -2300,7 +2300,7 @@ namespace JSC {
         Identifier m_ecmaName;
         unsigned m_startColumn;
         unsigned m_endColumn;
-        int m_functionKeywordStart;
+        unsigned m_functionStart;
         int m_functionNameStart;
         int m_parametersStart;
         SourceCode m_source;

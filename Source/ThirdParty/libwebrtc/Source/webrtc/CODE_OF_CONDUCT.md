@@ -1,3 +1,6 @@
+<!-- go/cmark -->
+<!--* freshness: {owner: 'hta' reviewed: '2021-01-01'} *-->
+
 # Contributors Code of Conduct
 
 Google and the WebRTC team are committed to preserving and fostering a diverse, welcoming and open

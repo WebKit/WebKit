@@ -241,7 +241,7 @@ const ClassInfo DatePrototype::s_info = { "Object"_s, &Base::s_info, &dateProtot
   getUTCMilliseconds    dateProtoFuncGetUTCMilliseconds      DontEnum|Function       0  DatePrototypeGetUTCMillisecondsIntrinsic
   getTimezoneOffset     dateProtoFuncGetTimezoneOffset       DontEnum|Function       0  DatePrototypeGetTimezoneOffsetIntrinsic
   getYear               dateProtoFuncGetYear                 DontEnum|Function       0  DatePrototypeGetYearIntrinsic
-  setTime               dateProtoFuncSetTime                 DontEnum|Function       1
+  setTime               dateProtoFuncSetTime                 DontEnum|Function       1  DatePrototypeSetTimeIntrinsic
   setMilliseconds       dateProtoFuncSetMilliSeconds         DontEnum|Function       1
   setUTCMilliseconds    dateProtoFuncSetUTCMilliseconds      DontEnum|Function       1
   setSeconds            dateProtoFuncSetSeconds              DontEnum|Function       2

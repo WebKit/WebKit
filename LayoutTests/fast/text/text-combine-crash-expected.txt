@@ -21,6 +21,6 @@ Errlog webtest_fn_25: ReferenceError: Can't find variable: node_16
 ￼￼Errlog webtest_fn_27: TypeError: undefined is not an object (evaluating 'document.body.contentDocument.execCommand')
 Errlog webtest_fn_31: NotSupportedError: The operation is not supported.
 ￼Errlog webtest_fn_32: TypeError: undefined is not an object (evaluating 'window.frames[2].querySelectorAll')
-Errlog webtest_fn_33: SyntaxError: The string did not match the expected pattern.
+Errlog webtest_fn_33: SyntaxError: ':first + :first-of-type > th:horizontal' is not a valid selector.
 
 

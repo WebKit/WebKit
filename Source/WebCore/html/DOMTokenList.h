@@ -42,6 +42,7 @@ public:
     void deref() { m_element.deref(); }
 
     unsigned length() const;
+    bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     const AtomString& item(unsigned index) const;
 
     WEBCORE_EXPORT bool contains(const AtomString&) const;

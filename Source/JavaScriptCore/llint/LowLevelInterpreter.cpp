@@ -545,9 +545,9 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #endif
 
 #if CPU(ARM_THUMB2)
-#define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY) \
+#define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY, ALIGNMENT) \
     ".text\n"                                    \
-    ".balign 4\n"                                \
+    ALIGNMENT                                    \
     ALT_ENTRY(label)                             \
     ".globl " SYMBOL_STRING(label) "\n"          \
     HIDE_SYMBOL(label) "\n"                      \
@@ -555,15 +555,15 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     ".thumb_func " THUMB_FUNC_PARAM(label) "\n"  \
     SYMBOL_STRING(label) ":\n"
 #elif CPU(ARM64)
-#define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY) \
+#define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY, ALIGNMENT) \
     ".text\n"                                   \
-    ".balign 4\n"                               \
+    ALIGNMENT                                   \
     ALT_ENTRY(label)                            \
     ".globl " SYMBOL_STRING(label) "\n"         \
     HIDE_SYMBOL(label) "\n"                     \
     SYMBOL_STRING(label) ":\n"
 #else
-#define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY) \
+#define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY, ALIGNMENT) \
     ".text\n"                                   \
     ALT_ENTRY(label)                            \
     ".globl " SYMBOL_STRING(label) "\n"         \
@@ -571,12 +571,19 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     SYMBOL_STRING(label) ":\n"
 #endif
 
+#define OFFLINE_ASM_ALIGN4B ".balign 4\n"
+#define OFFLINE_ASM_NOALIGN ""
+
 #if OFFLINE_ASM_USE_ALT_ENTRY
 #define OFFLINE_ASM_GLOBAL_LABEL(label) \
-    OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, OFFLINE_ASM_ALT_ENTRY_DIRECTIVE)
+    OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, OFFLINE_ASM_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_ALIGN4B)
+#define OFFLINE_ASM_UNALIGNED_GLOBAL_LABEL(label) \
+    OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, OFFLINE_ASM_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_NOALIGN)
 #else
 #define OFFLINE_ASM_GLOBAL_LABEL(label) \
-    OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE)
+    OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_ALIGN4B)
+#define OFFLINE_ASM_UNALIGNED_GLOBAL_LABEL(label) \
+    OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_NOALIGN)
 #endif // USE_ALT_ENTRY
 
 #if COMPILER(CLANG) && OFFLINE_ASM_USE_ALT_ENTRY

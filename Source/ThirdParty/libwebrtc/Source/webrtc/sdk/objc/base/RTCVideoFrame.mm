@@ -16,6 +16,7 @@
 @implementation RTCVideoFrame {
   RTCVideoRotation _rotation;
   int64_t _timeStampNs;
+  uint64_t _duration;
 }
 
 @synthesize buffer = _buffer;
@@ -35,6 +36,10 @@
 
 - (int64_t)timeStampNs {
   return _timeStampNs;
+}
+
+- (uint64_t)duration {
+  return _duration;
 }
 
 - (RTCVideoFrame *)newI420VideoFrame {
@@ -70,6 +75,7 @@
     _buffer = buffer;
     _rotation = rotation;
     _timeStampNs = timeStampNs;
+    _duration = 0;
   }
 
   return self;

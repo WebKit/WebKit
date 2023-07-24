@@ -77,9 +77,9 @@ enum class AXPropertyName : uint16_t {
     CaretBrowsingEnabled,
 #endif
     Cells,
+    CellSlots,
     ColorValue,
     Columns,
-    ColumnCount,
     ColumnHeader,
     ColumnHeaders,
     ColumnIndex,
@@ -122,6 +122,7 @@ enum class AXPropertyName : uint16_t {
     IsEnabled,
     IsExpanded,
     IsExposable,
+    IsExposedTableCell,
     IsFieldset,
     IsFocused,
     IsIndeterminate,
@@ -151,7 +152,6 @@ enum class AXPropertyName : uint16_t {
     IsSelected,
     IsSelectedOptionActive,
     IsTable,
-    IsTableCell,
     IsTableColumn,
     IsTableRow,
     IsTree,
@@ -196,7 +196,6 @@ enum class AXPropertyName : uint16_t {
     RolePlatformString,
     RoleDescription,
     Rows,
-    RowCount,
     RowHeaders,
     RowIndex,
     RowIndexRange,
@@ -225,8 +224,8 @@ enum class AXPropertyName : uint16_t {
     SupportsRequiredAttribute,
     SupportsSelectedRows,
     SupportsSetSize,
-    TableLevel,
     TextContent,
+    TextInputMarkedTextMarkerRange,
     Title,
     TitleAttributeValue,
     TitleUIElement,
@@ -239,7 +238,7 @@ enum class AXPropertyName : uint16_t {
     VisibleRows,
 };
 
-using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, PAL::SessionID, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, RetainPtr<NSAttributedString>, InsideLink>;
+using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, PAL::SessionID, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, RetainPtr<NSAttributedString>, InsideLink, Vector<Vector<AXID>>, CharacterRange, std::pair<AXID, CharacterRange>>;
 using AXPropertyMap = HashMap<AXPropertyName, AXPropertyValueVariant, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 struct AXPropertyChange {
@@ -267,7 +266,7 @@ public:
     constexpr AXGeometryManager* geometryManager() const { return m_geometryManager.get(); }
 
     RefPtr<AXIsolatedObject> rootNode();
-    RefPtr<AXIsolatedObject> focusedNode();
+    WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
     RefPtr<AXIsolatedObject> objectForID(const AXID) const;
     Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&);
@@ -315,6 +314,10 @@ public:
     void applyPendingChanges();
 
     AXID treeID() const { return m_id; }
+    void setPageActivityState(OptionSet<ActivityState>);
+    OptionSet<ActivityState> pageActivityState() const;
+    // Use only if the s_storeLock is already held like in findAXTree.
+    WEBCORE_EXPORT OptionSet<ActivityState> lockedPageActivityState() const;
 
 private:
     AXIsolatedTree(AXObjectCache&);
@@ -343,6 +346,7 @@ private:
 
     unsigned m_maxTreeDepth { 0 };
     WeakPtr<AXObjectCache> m_axObjectCache;
+    OptionSet<ActivityState> m_pageActivityState;
     RefPtr<AXGeometryManager> m_geometryManager;
     bool m_usedOnAXThread { true };
 

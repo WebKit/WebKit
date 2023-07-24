@@ -168,12 +168,8 @@ TEST(WKInspectorExtensionDelegate, DISABLED_ShowAndHideTabCallbacks)
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 }
 
-// FIXME: Re-enable this test for debug once webkit.org/b/231847 is fixed.
-#if !defined(NDEBUG)
+// FIXME: Re-enable this test once webkit.org/b/257332 is fixed.
 TEST(WKInspectorExtensionDelegate, DISABLED_InspectedPageNavigatedCallbacks)
-#else
-TEST(WKInspectorExtensionDelegate, InspectedPageNavigatedCallbacks)
-#endif
 {
     resetGlobalState();
 
@@ -241,12 +237,8 @@ TEST(WKInspectorExtensionDelegate, InspectedPageNavigatedCallbacks)
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 }
 
-// FIXME: Re-enable this test for debug once webkit.org/b/231847 is fixed.
-#if !defined(NDEBUG)
+// FIXME: Re-enable this test once webkit.org/b/257332 is fixed.
 TEST(WKInspectorExtensionDelegate, DISABLED_ExtensionTabNavigatedCallbacks)
-#else
-TEST(WKInspectorExtensionDelegate, ExtensionTabNavigatedCallbacks)
-#endif
 {
     resetGlobalState();
 

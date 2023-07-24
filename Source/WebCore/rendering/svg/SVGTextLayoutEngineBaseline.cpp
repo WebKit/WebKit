@@ -40,7 +40,7 @@ float SVGTextLayoutEngineBaseline::calculateBaselineShift(const SVGRenderStyle& 
     if (style.baselineShift() == BaselineShift::Length) {
         auto baselineShiftValueLength = style.baselineShiftValue();
         if (baselineShiftValueLength.lengthType() == SVGLengthType::Percentage)
-            return baselineShiftValueLength.valueAsPercentage() * m_font.pixelSize();
+            return baselineShiftValueLength.valueAsPercentage() * m_font.size();
 
         SVGLengthContext lengthContext(context);
         return baselineShiftValueLength.value(lengthContext);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,9 @@
 using JSC::DataView;
 
 namespace WebCore {
+
+ISOSchemeTypeBox::ISOSchemeTypeBox() = default;
+ISOSchemeTypeBox::~ISOSchemeTypeBox() = default;
 
 bool ISOSchemeTypeBox::parse(DataView& view, unsigned& offset)
 {

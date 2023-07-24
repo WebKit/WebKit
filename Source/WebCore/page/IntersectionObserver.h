@@ -28,7 +28,6 @@
 #include "Document.h"
 #include "GCReachableRef.h"
 #include "IntersectionObserverCallback.h"
-#include "IntersectionObserverEntry.h"
 #include "LengthBox.h"
 #include "ReducedResolutionSeconds.h"
 #include <variant>
@@ -44,8 +43,10 @@ class AbstractSlotVisitor;
 
 namespace WebCore {
 
-class Element;
 class ContainerNode;
+class Document;
+class Element;
+class IntersectionObserverEntry;
 
 struct IntersectionObserverRegistration {
     WeakPtr<IntersectionObserver> observer;
@@ -98,6 +99,9 @@ public:
 
     void targetDestroyed(Element&);
     void rootDestroyed();
+
+    enum class NeedNotify : bool { No, Yes };
+    NeedNotify updateObservations(Document&);
 
     std::optional<ReducedResolutionSeconds> nowTimestamp() const;
 

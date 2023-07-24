@@ -1347,50 +1347,14 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-constexpr CSSValueID toCSSValueID(WhiteSpace e)
-{
-    switch (e) {
-    case WhiteSpace::Normal:
-        return CSSValueNormal;
-    case WhiteSpace::Pre:
-        return CSSValuePre;
-    case WhiteSpace::PreWrap:
-        return CSSValuePreWrap;
-    case WhiteSpace::PreLine:
-        return CSSValuePreLine;
-    case WhiteSpace::NoWrap:
-        return CSSValueNowrap;
-    case WhiteSpace::BreakSpaces:
-        return CSSValueBreakSpaces;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSValueInvalid;
-}
-
-template<> constexpr WhiteSpace fromCSSValueID(CSSValueID valueID)
-{
-    switch (valueID) {
-    case CSSValueNowrap:
-        return WhiteSpace::NoWrap;
-    case CSSValuePre:
-        return WhiteSpace::Pre;
-    case CSSValuePreWrap:
-        return WhiteSpace::PreWrap;
-    case CSSValuePreLine:
-        return WhiteSpace::PreLine;
-    case CSSValueNormal:
-        return WhiteSpace::Normal;
-    case CSSValueBreakSpaces:
-        return WhiteSpace::BreakSpaces;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return WhiteSpace::Normal;
-}
+#define TYPE WhiteSpaceCollapse
+#define FOR_EACH(CASE) CASE(Collapse) CASE(Preserve) CASE(PreserveBreaks) CASE(BreakSpaces)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
 
 #define TYPE WordBreak
-#define FOR_EACH(CASE) CASE(Normal) CASE(BreakAll) CASE(KeepAll) CASE(BreakWord)
+#define FOR_EACH(CASE) CASE(Normal) CASE(BreakAll) CASE(KeepAll) CASE(BreakWord) CASE(Auto)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

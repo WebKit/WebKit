@@ -26,6 +26,7 @@
 #include "absl/strings/internal/cordz_statistics.h"
 #include "absl/strings/internal/cordz_update_tracker.h"
 #include "absl/synchronization/mutex.h"
+#include "absl/time/clock.h"
 #include "absl/types/span.h"
 
 namespace absl {
@@ -35,7 +36,7 @@ namespace cord_internal {
 using ::absl::base_internal::SpinLockHolder;
 
 #ifdef ABSL_INTERNAL_NEED_REDUNDANT_CONSTEXPR_DECL
-constexpr int CordzInfo::kMaxStackDepth;
+constexpr size_t CordzInfo::kMaxStackDepth;
 #endif
 
 ABSL_CONST_INIT CordzInfo::List CordzInfo::global_list_{absl::kConstInit};
@@ -53,7 +54,7 @@ namespace {
 // The top level node is treated specially: we assume the current thread
 // (typically called from the CordzHandler) to hold a reference purely to
 // perform a safe analysis, and not being part of the application. So we
-// substract 1 from the reference count of the top node to compute the
+// subtract 1 from the reference count of the top node to compute the
 // 'application fair share' excluding the reference of the current thread.
 //
 // An example of fair sharing, and why we multiply reference counts:
@@ -291,7 +292,7 @@ CordzInfo::MethodIdentifier CordzInfo::GetParentMethod(const CordzInfo* src) {
                                                            : src->method_;
 }
 
-int CordzInfo::FillParentStack(const CordzInfo* src, void** stack) {
+size_t CordzInfo::FillParentStack(const CordzInfo* src, void** stack) {
   assert(stack);
   if (src == nullptr) return 0;
   if (src->parent_stack_depth_) {
@@ -302,11 +303,14 @@ int CordzInfo::FillParentStack(const CordzInfo* src, void** stack) {
   return src->stack_depth_;
 }
 
-CordzInfo::CordzInfo(CordRep* rep, const CordzInfo* src,
+CordzInfo::CordzInfo(CordRep* rep,
+                     const CordzInfo* src,
                      MethodIdentifier method)
     : rep_(rep),
-      stack_depth_(absl::GetStackTrace(stack_, /*max_depth=*/kMaxStackDepth,
-                                       /*skip_count=*/1)),
+      stack_depth_(
+          static_cast<size_t>(absl::GetStackTrace(stack_,
+                                                  /*max_depth=*/kMaxStackDepth,
+                                                  /*skip_count=*/1))),
       parent_stack_depth_(FillParentStack(src, parent_stack_)),
       method_(method),
       parent_method_(GetParentMethod(src)),

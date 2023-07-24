@@ -45,6 +45,8 @@
 #include "Logging.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
+#include "RemoteFrame.h"
+#include "RemoteFrameView.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderCounter.h"
@@ -642,13 +644,9 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
 
     if (is<RenderWidget>(o)) {
         Widget* widget = downcast<RenderWidget>(o).widget();
-        if (is<LocalFrameView>(widget)) {
-            LocalFrameView& view = downcast<LocalFrameView>(*widget);
-            auto* localFrame = dynamicDowncast<LocalFrame>(view.frame());
-            if (RenderView* root = localFrame ? localFrame->contentRenderer() : nullptr) {
-                if (RenderLayer* layer = root->layer())
-                    writeLayers(ts, *layer, *layer, layer->rect(), behavior);
-            }
+        if (widget) {
+            if (auto* frameView = dynamicDowncast<FrameView>(widget))
+                frameView->writeRenderTreeAsText(ts, behavior);
         }
     }
 
@@ -908,6 +906,11 @@ static TextStream createTextStream(const Document& document)
     return { TextStream::LineMode::MultipleLine, formattingFlags() };
 }
 
+TextStream createTextStream(const RenderView& view)
+{
+    return createTextStream(view.document());
+}
+
 static String externalRepresentation(RenderBox& renderer, OptionSet<RenderAsTextFlag> behavior)
 {
     auto ts = createTextStream(renderer.document());
@@ -953,6 +956,16 @@ String externalRepresentation(LocalFrame* frame, OptionSet<RenderAsTextFlag> beh
         printContext.begin(renderer->width());
 
     return externalRepresentation(*renderer, behavior);
+}
+
+void externalRepresentationForLocalFrame(TextStream &ts, LocalFrame& frame, OptionSet<RenderAsTextFlag> behavior)
+{
+    ASSERT(frame.document());
+
+    if (RenderView* root = frame.contentRenderer()) {
+        if (RenderLayer* layer = root->layer())
+            writeLayers(ts, *layer, *layer, layer->rect(), behavior);
+    }
 }
 
 String externalRepresentation(Element* element, OptionSet<RenderAsTextFlag> behavior)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -219,7 +220,7 @@ static bool shouldOverhang(bool firstLine, const RenderObject* renderer, const R
         return false;
     const RenderStyle& rubyBaseStyle = firstLine ? rubyBase.firstLineStyle() : rubyBase.style();
     const RenderStyle& style = firstLine ? renderer->firstLineStyle() : renderer->style();
-    return style.computedFontPixelSize() <= rubyBaseStyle.computedFontPixelSize();
+    return style.computedFontSize() <= rubyBaseStyle.computedFontSize();
 }
 
 void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, float& startOverhang, float& endOverhang) const
@@ -270,22 +271,22 @@ std::pair<float, float> RenderRubyRun::startAndEndOverhang(bool forFirstLine) co
     auto endOverhang = style().isLeftToRightDirection() ? logicalRightOverhang : logicalLeftOverhang;
 
     const RenderStyle& rubyTextStyle = forFirstLine ? rubyText->firstLineStyle() : rubyText->style();
-    float halfWidthOfFontSize = rubyTextStyle.computedFontPixelSize() / 2.;
+    float halfWidthOfFontSize = rubyTextStyle.computedFontSize() / 2.;
 
     return { std::min(startOverhang, halfWidthOfFontSize), std::min(endOverhang, halfWidthOfFontSize) };
 }
 
-void RenderRubyRun::updatePriorContextFromCachedBreakIterator(LazyLineBreakIterator& iterator) const
+void RenderRubyRun::updatePriorContextFromCachedBreakIterator(CachedLineBreakIteratorFactory& lineBreakIteratorFactory) const
 {
-    iterator.setPriorContext(m_lastCharacter, m_secondToLastCharacter);
+    lineBreakIteratorFactory.priorContext().set({ m_secondToLastCharacter, m_lastCharacter });
 }
 
-bool RenderRubyRun::canBreakBefore(const LazyLineBreakIterator& iterator) const
+bool RenderRubyRun::canBreakBefore(const CachedLineBreakIteratorFactory& lineBreakIteratorFactory) const
 {
     RenderRubyText* rubyText = this->rubyText();
     if (!rubyText)
         return true;
-    return rubyText->canBreakBefore(iterator);
+    return rubyText->canBreakBefore(lineBreakIteratorFactory);
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderRubyRun::annotationsAboveAndBelow() const

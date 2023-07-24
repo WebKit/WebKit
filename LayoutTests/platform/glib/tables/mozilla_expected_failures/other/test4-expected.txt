@@ -201,8 +201,8 @@ layer at (0,0) size 785x2464
         RenderTableSection {THEAD} at (0,0) size 190x18
           RenderTableRow {TR} at (0,2) size 190x14
             RenderTableCell {TD} at (2,2) size 92x14 [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 47x12
-                text run at (1,1) width 47: "HEADER"
+              RenderText {#text} at (1,1) size 46x12
+                text run at (1,1) width 46: "HEADER"
         RenderTableSection {TBODY} at (0,18) size 190x352 [border: (1px solid #000000)]
           RenderTableRow {TR} at (0,0) size 190x20
             RenderTableCell {TD} at (2,0) size 45x20 [r=0 c=0 rs=1 cs=1]
@@ -415,8 +415,8 @@ layer at (0,0) size 785x2464
         RenderTableSection {TFOOT} at (0,370) size 190x16
           RenderTableRow {TR} at (0,0) size 190x14
             RenderTableCell {TD} at (2,0) size 92x14 [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (1,1) size 47x12
-                text run at (1,1) width 47: "FOOTER"
+              RenderText {#text} at (1,1) size 45x12
+                text run at (1,1) width 45: "FOOTER"
         RenderBlock {CAPTION} at (0,404) size 190x18
           RenderText {#text} at (3,0) size 184x17
             text run at (3,0) width 184: "Table 5 has a scrolling tbody."

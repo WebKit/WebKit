@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,14 +31,17 @@ namespace WebCore {
 
 class WEBCORE_EXPORT ISOSchemeTypeBox final : public ISOFullBox {
 public:
+    ISOSchemeTypeBox();
+    ~ISOSchemeTypeBox();
+
     static FourCC boxTypeName() { return "schm"; }
 
     FourCC schemeType() const { return m_schemeType; }
     uint32_t schemeVersion() const { return m_schemeVersion; }
 
-private:
     bool parse(JSC::DataView&, unsigned& offset) override;
 
+private:
     FourCC m_schemeType;
     uint32_t m_schemeVersion { 0 };
 };

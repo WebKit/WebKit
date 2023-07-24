@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+<script src='/webcodecs/videoFrame-utils.js'></script>
+</head>
+<body>
+<canvas id=canvas width=100px hwight=100px></canvas>
+<script>
+promise_test(async t => {
+  const init = {
+    format: 'I420A',
+    timestamp: 0,
+    codedWidth: 4,
+    codedHeight: 2,
+  };
+  const buf = new Uint8Array([
+    128, 128, 128, 128, // y
+    128, 128, 128, 128,
+    128, 128,         // u
+    128, 128,         // v
+    13, 14, 215, 216, // a
+    17, 18, 219, 220,
+  ]);
+
+  const frame = new VideoFrame(buf, init);
+  canvas.getContext('2d').drawImage(frame, 0, 0);
+  t.add_cleanup(() => frame.close());
+
+  const bufCopy = new Uint8Array(20);
+  await frame.copyTo(bufCopy);
+  assert_buffer_equals(bufCopy, buf);
+
+  const data = canvas.getContext('2d').getImageData(0, 0, 4, 2).data;
+
+  assert_equals(data[3], 13, "13");
+  assert_equals(data[7], 14, "14");
+  assert_equals(data[11], 215, "215");
+  assert_equals(data[15], 216, "216");
+  assert_equals(data[19], 17, "17");
+  assert_equals(data[23], 18, "18");
+  assert_equals(data[27], 219, "219");
+  assert_equals(data[31], 220, "220");
+}, 'Test I420A with canvas.');
+</script>
+</body>
+</html>

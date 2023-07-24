@@ -35,7 +35,7 @@ void CodeCacheMap::pruneSlowCase()
 {
     m_minCapacity = std::max(m_size - m_sizeAtLastPrune, static_cast<int64_t>(0));
     m_sizeAtLastPrune = m_size;
-    m_timeAtLastPrune = MonotonicTime::now();
+    m_timeAtLastPrune = ApproximateTime::now();
 
     if (m_capacity < m_minCapacity)
         m_capacity = m_minCapacity;

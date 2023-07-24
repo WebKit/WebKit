@@ -228,27 +228,27 @@ namespace CSSPropertyParserHelpersWorkerSafe {
 static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     StringView parsedURL = CSSPropertyParserHelpers::consumeURLRaw(range);
-    String urlString = !parsedURL.is8Bit() && parsedURL.isAllASCII() ? String::make8Bit(parsedURL.characters16(), parsedURL.length()) : parsedURL.toString();
+    String urlString = !parsedURL.is8Bit() && parsedURL.containsOnlyASCII() ? String::make8Bit(parsedURL.characters16(), parsedURL.length()) : parsedURL.toString();
     auto location = context.completeURL(urlString);
     if (location.resolvedURL.isNull())
         return nullptr;
 
     String format;
-    Vector<FontTechnology> supportedTechnologies;
+    Vector<FontTechnology> technologies;
     if (range.peek().functionId() == CSSValueFormat) {
         format = CSSPropertyParserHelpers::consumeFontFormat(range);
         if (format.isNull())
             return nullptr;
     }
     if (range.peek().functionId() == CSSValueTech) {
-        supportedTechnologies = CSSPropertyParserHelpers::consumeFontTech(range);
-        if (supportedTechnologies.isEmpty())
+        technologies = CSSPropertyParserHelpers::consumeFontTech(range);
+        if (technologies.isEmpty())
             return nullptr;
     }
     if (!range.atEnd())
         return nullptr;
 
-    return CSSFontFaceSrcResourceValue::create(WTFMove(location), WTFMove(format), WTFMove(supportedTechnologies), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
+    return CSSFontFaceSrcResourceValue::create(WTFMove(location), WTFMove(format), WTFMove(technologies), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
 }
 
 static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range)

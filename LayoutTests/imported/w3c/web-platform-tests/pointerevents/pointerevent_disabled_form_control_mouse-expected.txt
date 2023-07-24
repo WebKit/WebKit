@@ -1,0 +1,9 @@
+Pointer Event: pointerevents fire to disabled form controls
+
+Test Description: Pointerevents are dispatched to disabled form controls.
+
+Use the mouse or pen to press on the purple button. Or with touch, tap on the purple box.
+Disabled button
+
+PASS mouse pointerevent attributes
+

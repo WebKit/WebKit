@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "Amstelvar";
+    src: url("resources/Amstelvar/Amstelvar-Roman-VF104.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+This test makes sure that out-of-bounds optical sizes are clamped, rather than being rendered with their default value.
+<div style="font: 144px Amstelvar; font-variation-settings: 'opsz' 145;">History</div>
+</body>
+</html>

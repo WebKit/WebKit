@@ -40,7 +40,7 @@
 {
     WKViewRef view = WKViewCreateWithFrame(rect, &viewContext);
     self = [self _initWithViewRef:view];
-    WKRelease(view);
+    WAKRelease(view);
     return self;
 }
 

@@ -218,7 +218,7 @@ SystemInfo *GetTestSystemInfo()
         // high-performance GPU for tests.
         // We can call the generic GPU info collector which selects the
         // non-Intel GPU as the active one on dual-GPU machines.
-        if (IsOSX())
+        if (IsMac())
         {
             GetDualGPUInfo(sSystemInfo);
         }
@@ -232,42 +232,6 @@ SystemInfo *GetTestSystemInfo()
         }
     }
     return sSystemInfo;
-}
-
-bool IsAndroid()
-{
-#if defined(ANGLE_PLATFORM_ANDROID)
-    return true;
-#else
-    return false;
-#endif
-}
-
-bool IsLinux()
-{
-#if defined(ANGLE_PLATFORM_LINUX)
-    return true;
-#else
-    return false;
-#endif
-}
-
-bool IsOSX()
-{
-#if defined(ANGLE_PLATFORM_MACOS)
-    return true;
-#else
-    return false;
-#endif
-}
-
-bool IsIOS()
-{
-#if ANGLE_PLATFORM_IOS_FAMILY
-    return true;
-#else
-    return false;
-#endif
 }
 
 bool IsARM64()
@@ -299,33 +263,6 @@ bool IsOzone()
     // vague (read the comment above).
     return false;
 #elif defined(USE_OZONE)
-    return true;
-#else
-    return false;
-#endif
-}
-
-bool IsWindows()
-{
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    return true;
-#else
-    return false;
-#endif
-}
-
-bool IsWindows7()
-{
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    return ::IsWindows7OrGreater() && !::IsWindows8OrGreater();
-#else
-    return false;
-#endif
-}
-
-bool IsFuchsia()
-{
-#if defined(ANGLE_PLATFORM_FUCHSIA)
     return true;
 #else
     return false;
@@ -392,7 +329,7 @@ bool IsAMD()
     return HasSystemVendorID(kVendorID_AMD);
 }
 
-bool IsApple()
+bool IsAppleGPU()
 {
     return HasSystemVendorID(kVendorID_Apple);
 }
@@ -535,7 +472,7 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
     }
 
 #if defined(ANGLE_PLATFORM_APPLE)
-    if (IsOSX() || IsIOS())
+    if (IsMac() || IsIOS())
     {
         // We do not support non-ANGLE bindings on OSX.
         if (param.driver != GLESDriverType::AngleEGL)

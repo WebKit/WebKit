@@ -25,8 +25,8 @@ class EncodedImageDataInjector {
  public:
   virtual ~EncodedImageDataInjector() = default;
 
-  // Return encoded image with specified |id| and |discard| flag injected into
-  // its payload. |discard| flag mean does analyzing decoder should discard this
+  // Return encoded image with specified `id` and `discard` flag injected into
+  // its payload. `discard` flag mean does analyzing decoder should discard this
   // encoded image because it belongs to unnecessary simulcast stream or spatial
   // layer.
   virtual EncodedImage InjectData(uint16_t id,
@@ -48,7 +48,7 @@ class EncodedImageDataExtractor {
   virtual ~EncodedImageDataExtractor() = default;
 
   // Invoked by framework before any image will come to the extractor.
-  // |expected_receivers_count| is the expected amount of receivers for each
+  // `expected_receivers_count` is the expected amount of receivers for each
   // encoded image.
   virtual void Start(int expected_receivers_count) = 0;
 
@@ -65,6 +65,12 @@ class EncodedImageDataExtractor {
   // same id.
   virtual EncodedImageExtractionResult ExtractData(
       const EncodedImage& source) = 0;
+};
+
+class EncodedImageDataPropagator : public EncodedImageDataInjector,
+                                   public EncodedImageDataExtractor {
+ public:
+  ~EncodedImageDataPropagator() override = default;
 };
 
 }  // namespace webrtc_pc_e2e

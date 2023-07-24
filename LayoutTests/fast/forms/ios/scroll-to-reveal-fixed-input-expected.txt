@@ -1,0 +1,10 @@
+
+This test verifies that we properly reveal focused elements in fixed position containers which would otherwise be obscured by the software keyboard. To reproduce, tap on the input field below. The software keyboard should not obscure the selection caret.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS inputViewBounds.top is >= caretRect.top + caretRect.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

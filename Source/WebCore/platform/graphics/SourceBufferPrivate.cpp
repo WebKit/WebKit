@@ -108,23 +108,37 @@ void SourceBufferPrivate::setBufferedRanges(PlatformTimeRanges&& timeRanges, Com
         completionHandler();
 }
 
-void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
+Vector<PlatformTimeRanges> SourceBufferPrivate::trackBuffersRanges() const
+{
+    Vector<PlatformTimeRanges> trackBuffers;
+    trackBuffers.reserveInitialCapacity(m_trackBufferMap.size());
+    for (auto&& trackBuffer : m_trackBufferMap.values())
+        trackBuffers.uncheckedAppend(trackBuffer->buffered());
+    return trackBuffers;
+}
+
+void SourceBufferPrivate::clientReadyStateChanged(bool sourceIsEnded)
+{
+    updateBufferedFromTrackBuffers(trackBuffersRanges(), sourceIsEnded);
+}
+
+void SourceBufferPrivate::updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>& trackBuffers, bool sourceIsEnded, CompletionHandler<void()>&& completionHandler)
 {
     // 3.1 Attributes, buffered
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-buffered
 
     // 2. Let highest end time be the largest track buffer ranges end time across all the track buffers managed by this SourceBuffer object.
     MediaTime highestEndTime = MediaTime::negativeInfiniteTime();
-    for (auto& trackBuffer : m_trackBufferMap.values()) {
-        if (!trackBuffer->buffered().length())
+    for (auto& trackBuffer : trackBuffers) {
+        if (!trackBuffer.length())
             continue;
-        highestEndTime = std::max(highestEndTime, trackBuffer->maximumBufferedTime());
+        highestEndTime = std::max(highestEndTime, trackBuffer.maximumBufferedTime());
     }
 
     // NOTE: Short circuit the following if none of the TrackBuffers have buffered ranges to avoid generating
     // a single range of {0, 0}.
     if (highestEndTime.isNegativeInfinite()) {
-        setBufferedRanges(PlatformTimeRanges());
+        setBufferedRanges({ }, WTFMove(completionHandler));
         return;
     }
 
@@ -132,12 +146,12 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
     PlatformTimeRanges intersectionRanges { MediaTime::zeroTime(), highestEndTime };
 
     // 4. For each audio and video track buffer managed by this SourceBuffer, run the following steps:
-    for (auto& trackBuffer : m_trackBufferMap.values()) {
-        if (!trackBuffer->buffered().length())
+    for (auto& trackBuffer : trackBuffers) {
+        if (!trackBuffer.length())
             continue;
 
         // 4.1 Let track ranges equal the track buffer ranges for the current track buffer.
-        PlatformTimeRanges trackRanges = trackBuffer->buffered();
+        auto trackRanges = trackBuffer;
 
         // 4.2 If readyState is "ended", then set the end time on the last range in track ranges to highest end time.
         if (sourceIsEnded)
@@ -150,7 +164,7 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
 
     // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute,
     //    then update the current value of this attribute to intersection ranges.
-    setBufferedRanges(WTFMove(intersectionRanges));
+    setBufferedRanges(WTFMove(intersectionRanges), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivate::advanceOperationState()
@@ -202,9 +216,11 @@ void SourceBufferPrivate::processAppendCompletedOperation(AppendCompletedOperati
 
     // Resolve the changes in TrackBuffers' buffered ranges
     // into the SourceBuffer's buffered ranges
-    updateBufferedFromTrackBuffers(operation.isEnded);
+    auto trackBuffers = trackBuffersRanges();
+    if (isAttached())
+        m_client->sourceBufferPrivateTrackBuffersChanged(trackBuffers);
 
-    m_client->sourceBufferPrivateBufferedChanged(buffered(), [weakSelf = WeakPtr { *this }, this, operation = WTFMove(operation)] () mutable {
+    updateBufferedFromTrackBuffers(trackBuffers, operation.isEnded, [weakSelf = WeakPtr { *this }, this, operation = WTFMove(operation)] () mutable {
         if (!weakSelf || !isAttached())
             return;
 
@@ -260,10 +276,13 @@ void SourceBufferPrivate::clearTrackBuffers(bool shouldReportToClient)
         return;
 
     updateHighestPresentationTimestamp();
-    updateBufferedFromTrackBuffers(true);
 
-    if (isAttached())
+    if (isAttached()) {
+        m_client->sourceBufferPrivateTrackBuffersChanged({ });
         m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+    }
+    bool isEnded = true;
+    updateBufferedFromTrackBuffers({ }, isEnded);
 }
 
 void SourceBufferPrivate::bufferedSamplesForTrackId(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
@@ -462,8 +481,7 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
         TrackBuffer& trackBuffer = trackBufferKeyValue.value;
         AtomString trackID = trackBufferKeyValue.key;
 
-        if (!trackBuffer.removeCodedFrames(start, end, currentTime))
-            continue;
+        trackBuffer.removeCodedFrames(start, end, currentTime);
 
         // 3.4 If this object is in activeSourceBuffers, the current playback position is greater than or equal to start
         // and less than the remove end timestamp, and HTMLMediaElement.readyState is greater than HAVE_METADATA, then set
@@ -473,8 +491,6 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
 
     reenqueueMediaIfNeeded(currentTime);
 
-    updateBufferedFromTrackBuffers(isEnded);
-
     // 4. If buffer full flag equals true and this object is ready to accept more bytes, then set the buffer full flag to false.
     // No-op
 
@@ -482,12 +498,30 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
 
     LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(m_buffered).utf8().data());
 
-    if (!isAttached()) {
-        completionHandler();
-        return;
+    auto trackBuffers = trackBuffersRanges();
+    if (isAttached()) {
+        m_client->sourceBufferPrivateTrackBuffersChanged(trackBuffers);
+        m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
     }
-    m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
-    m_client->sourceBufferPrivateBufferedChanged(buffered(), WTFMove(completionHandler));
+
+    updateBufferedFromTrackBuffers(trackBuffers, isEnded, WTFMove(completionHandler));
+}
+
+size_t SourceBufferPrivate::platformEvictionThreshold() const
+{
+    // Default implementation of the virtual function.
+    return 0;
+}
+
+bool SourceBufferPrivate::hasTooManySamples() const
+{
+    const size_t evictionThreshold = platformEvictionThreshold();
+    if (!evictionThreshold)
+        return false;
+    size_t currentSize = 0;
+    for (const auto& trackBuffer : m_trackBufferMap.values())
+        currentSize += trackBuffer->samples().size();
+    return currentSize > evictionThreshold;
 }
 
 void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded)
@@ -501,7 +535,7 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximu
     // This algorithm is run to free up space in this source buffer when new data is appended.
     // 1. Let new data equal the data that is about to be appended to this SourceBuffer.
     // 2. If the buffer full flag equals false, then abort these steps.
-    bool isBufferFull = isBufferFullFor(newDataSize, maximumBufferSize);
+    bool isBufferFull = isBufferFullFor(newDataSize, maximumBufferSize) || hasTooManySamples();
     if (!isBufferFull)
         return;
 

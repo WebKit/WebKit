@@ -45,13 +45,13 @@ interface GPUQueue {
     undefined writeBuffer(
         GPUBuffer buffer,
         GPUSize64 bufferOffset,
-        [AllowShared] (ArrayBufferView or ArrayBuffer) data,
+        [AllowShared](ArrayBufferView or ArrayBuffer) data,
         optional GPUSize64 dataOffset,
         optional GPUSize64 size);
 
     undefined writeTexture(
         GPUImageCopyTexture destination,
-        [AllowShared] (ArrayBufferView or ArrayBuffer) data,
+        [AllowShared](ArrayBufferView or ArrayBuffer) data,
         GPUImageDataLayout dataLayout,
         GPUExtent3D size);
 

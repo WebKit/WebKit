@@ -652,13 +652,21 @@
             ]
         },
         {
-            "name": "bind_framebuffer_for_timer_queries",
+            "name": "bind_complete_framebuffer_for_timer_queries",
             "category": "Workarounds",
             "description": [
-                "Some drivers require a non-zero framebuffer when beginQuery for TimeElapsed or",
+                "Some drivers require a complete framebuffer when beginQuery for TimeElapsed or",
                 "Timestampis called."
             ],
             "issue": "https://crbug.com/1356053"
+        },
+        {
+            "name": "disable_base_instance_vertex",
+            "category": "Workarounds",
+            "description": [
+                "Some Mali drivers have buggy implementations of glDraw*BaseVertex*."
+            ],
+            "issue": "http://anglebug.com/8172"
         },
         {
             "name": "supports_fragment_shader_interlock_NV",
@@ -707,6 +715,14 @@
                 "Backend GL context supports EXT_shader_pixel_local_storage extension"
             ],
             "issue": "http://anglebug.com/7279"
+        },
+        {
+            "name": "disable_clip_control",
+            "category": "Features",
+            "description": [
+                "Some ARM Mali devices genenerate errors when querying the clip control state."
+            ],
+            "issue": "http://crbug.com/1434317"
         }
     ]
 }

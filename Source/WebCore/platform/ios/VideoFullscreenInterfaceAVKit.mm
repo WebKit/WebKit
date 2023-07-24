@@ -30,11 +30,8 @@
 
 #import "Logging.h"
 #import "PictureInPictureSupport.h"
-#import "PlaybackSessionInterfaceAVKit.h"
 #import "RuntimeApplicationChecks.h"
 #import "TimeRanges.h"
-#import "VideoFullscreenChangeObserver.h"
-#import "VideoFullscreenModel.h"
 #import "WebAVPlayerController.h"
 #import "WebAVPlayerLayer.h"
 #import "WebAVPlayerLayerView.h"
@@ -52,10 +49,6 @@
 
 #if HAVE(PIP_CONTROLLER)
 #import <AVKit/AVPictureInPictureController.h>
-#endif
-
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
-#import <WebKitAdditions/VideoFullscreenInterfaceAVKitAdditions.h>
 #endif
 
 using namespace WebCore;
@@ -410,8 +403,9 @@ NS_ASSUME_NONNULL_END
     _avPlayerViewController.get().delegate = self;
 #endif
 
-#if ENABLE(FULLSCREEN_WINDOW_EFFECTS)
-    setupAVPlayerViewControllerForFullscreenWindowEffects(_avPlayerViewController.get());
+#if PLATFORM(VISION)
+    [_avPlayerViewController setPrefersRoomDimming:NO];
+    [_avPlayerViewController setFullScreenBehaviors:AVPlayerViewControllerFullScreenBehaviorHostContentInline];
 #endif
 
 #if HAVE(PIP_CONTROLLER)
@@ -753,8 +747,8 @@ VideoFullscreenInterfaceAVKit::~VideoFullscreenInterfaceAVKit()
     WebAVPlayerController* playerController = this->playerController();
     if (playerController && playerController.externalPlaybackActive)
         externalPlaybackChanged(false, PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeNone, emptyString());
-    if (m_videoFullscreenModel)
-        m_videoFullscreenModel->removeClient(*this);
+    if (auto model = videoFullscreenModel())
+        model->removeClient(*this);
 }
 
 WebAVPlayerController *VideoFullscreenInterfaceAVKit::playerController() const
@@ -769,14 +763,14 @@ AVPlayerViewController *VideoFullscreenInterfaceAVKit::avPlayerViewController() 
 
 void VideoFullscreenInterfaceAVKit::setVideoFullscreenModel(VideoFullscreenModel* model)
 {
-    if (m_videoFullscreenModel)
-        m_videoFullscreenModel->removeClient(*this);
+    if (auto oldModel = videoFullscreenModel())
+        oldModel->removeClient(*this);
 
     m_videoFullscreenModel = model;
 
-    if (m_videoFullscreenModel) {
-        m_videoFullscreenModel->addClient(*this);
-        m_videoFullscreenModel->requestRouteSharingPolicyAndContextUID([this, protectedThis = Ref { *this }] (RouteSharingPolicy policy, String contextUID) {
+    if (model) {
+        model->addClient(*this);
+        model->requestRouteSharingPolicyAndContextUID([this, protectedThis = Ref { *this }] (RouteSharingPolicy policy, String contextUID) {
             m_routeSharingPolicy = policy;
             m_routingContextUID = contextUID;
 
@@ -785,13 +779,8 @@ void VideoFullscreenInterfaceAVKit::setVideoFullscreenModel(VideoFullscreenModel
         });
     }
 
-    hasVideoChanged(m_videoFullscreenModel ? m_videoFullscreenModel->hasVideo() : false);
-    videoDimensionsChanged(m_videoFullscreenModel ? m_videoFullscreenModel->videoDimensions() : FloatSize());
-}
-
-void VideoFullscreenInterfaceAVKit::setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver* observer)
-{
-    m_fullscreenChangeObserver = observer;
+    hasVideoChanged(model ? model->hasVideo() : false);
+    videoDimensionsChanged(model ? model->videoDimensions() : FloatSize());
 }
 
 void VideoFullscreenInterfaceAVKit::hasVideoChanged(bool hasVideo)
@@ -845,7 +834,8 @@ static UIViewController *fallbackViewController(UIView *view)
 
 UIViewController *VideoFullscreenInterfaceAVKit::presentingViewController()
 {
-    auto *controller = videoFullscreenModel() ? videoFullscreenModel()->presentingViewController() : nil;
+    auto model = videoFullscreenModel();
+    auto *controller = model ? model->presentingViewController() : nil;
     if (!controller)
         controller = fallbackViewController(m_parentView.get());
 
@@ -914,8 +904,9 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
     m_shouldIgnoreAVKitCallbackAboutExitFullscreenReason = false;
 
     m_cleanupNeedsReturnVideoContentLayer = true;
-    if (m_hasVideoContentLayer && m_fullscreenChangeObserver) {
-        m_fullscreenChangeObserver->returnVideoContentLayer();
+    auto model = videoFullscreenModel();
+    if (m_hasVideoContentLayer && model) {
+        model->returnVideoContentLayer();
         return;
     }
     m_cleanupNeedsReturnVideoContentLayer = false;
@@ -943,6 +934,7 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
     if (m_viewController)
         [m_playerViewController removeFromParentViewController];
 
+    [m_playerLayerView setVideoView:nil];
     [m_playerLayerView removeFromSuperview];
     [[m_viewController view] removeFromSuperview];
 
@@ -958,28 +950,21 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
 
     if (m_exitingPictureInPicture) {
         m_exitingPictureInPicture = false;
-        if (m_videoFullscreenModel)
-            m_videoFullscreenModel->didExitPictureInPicture();
+        if (model)
+            model->didExitPictureInPicture();
     }
 
-    if (m_fullscreenChangeObserver)
-        m_fullscreenChangeObserver->didCleanupFullscreen();
+    if (model)
+        model->didCleanupFullscreen();
 }
 
 void VideoFullscreenInterfaceAVKit::invalidate()
 {
     m_videoFullscreenModel = nullptr;
-    m_fullscreenChangeObserver = nullptr;
 
     m_watchdogTimer.stop();
     m_enteringPictureInPicture = false;
     cleanupFullscreen();
-}
-
-void VideoFullscreenInterfaceAVKit::modelDestroyed()
-{
-    ASSERT(isUIThread());
-    invalidate();
 }
 
 void VideoFullscreenInterfaceAVKit::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
@@ -1002,9 +987,10 @@ void VideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
     [m_window setHidden:YES];
     [[m_playerViewController view] setHidden:YES];
 
-    if (playbackSessionModel() && m_videoFullscreenModel) {
+    auto model = videoFullscreenModel();
+    if (playbackSessionModel() && model) {
         playbackSessionModel()->pause();
-        m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
+        model->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
     }
 }
 
@@ -1027,9 +1013,9 @@ void VideoFullscreenInterfaceAVKit::preparedToExitFullscreen()
         return;
 
     m_waitingForPreparedToExit = false;
-    ASSERT(m_videoFullscreenModel);
-    if (m_videoFullscreenModel)
-        m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, true);
+    auto model = videoFullscreenModel();
+    if (model)
+        model->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, true);
 #endif
 }
 
@@ -1041,8 +1027,8 @@ bool VideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoPictureInPicture() 
 void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStop(WTF::Function<void(bool)>&& callback)
 {
     m_prepareToInlineCallback = WTFMove(callback);
-    if (m_fullscreenChangeObserver)
-        m_fullscreenChangeObserver->fullscreenMayReturnToInline();
+    if (auto model = videoFullscreenModel())
+        model->fullscreenMayReturnToInline();
 }
 
 void VideoFullscreenInterfaceAVKit::willStartPictureInPicture()
@@ -1055,10 +1041,11 @@ void VideoFullscreenInterfaceAVKit::willStartPictureInPicture()
         [[m_playerViewController view] setHidden:NO];
     }
 
-    if (!m_hasVideoContentLayer)
-        m_fullscreenChangeObserver->requestVideoContentLayer();
-    if (m_videoFullscreenModel)
-        m_videoFullscreenModel->willEnterPictureInPicture();
+    if (auto model = videoFullscreenModel()) {
+        if (!m_hasVideoContentLayer)
+            model->requestVideoContentLayer();
+        model->willEnterPictureInPicture();
+    }
 }
 
 void VideoFullscreenInterfaceAVKit::didStartPictureInPicture()
@@ -1095,15 +1082,13 @@ void VideoFullscreenInterfaceAVKit::failedToStartPictureInPicture()
     if (m_currentMode.hasFullscreen())
         return;
 
-    if (m_videoFullscreenModel) {
-        m_videoFullscreenModel->failedToEnterPictureInPicture();
-        m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
-        m_videoFullscreenModel->fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenModeNone);
+    if (auto model = videoFullscreenModel()) {
+        model->failedToEnterPictureInPicture();
+        model->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
+        model->fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenModeNone);
+        model->failedToEnterFullscreen();
     }
-    if (m_fullscreenChangeObserver) {
-        m_fullscreenChangeObserver->failedToEnterFullscreen();
-        m_changingStandbyOnly = false;
-    }
+    m_changingStandbyOnly = false;
 
     m_enterFullscreenNeedsExitPictureInPicture = false;
     m_exitFullscreenNeedsExitPictureInPicture = false;
@@ -1119,8 +1104,8 @@ void VideoFullscreenInterfaceAVKit::willStopPictureInPicture()
     if (m_currentMode.hasFullscreen())
         return;
 
-    if (m_videoFullscreenModel)
-        m_videoFullscreenModel->willExitPictureInPicture();
+    if (auto model = videoFullscreenModel())
+        model->willExitPictureInPicture();
 }
 
 void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
@@ -1132,8 +1117,8 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
     if (m_returningToStandby) {
         m_exitingPictureInPicture = false;
         m_enteringPictureInPicture = false;
-        if (m_videoFullscreenModel)
-            m_videoFullscreenModel->didExitPictureInPicture();
+        if (auto model = videoFullscreenModel())
+            model->didExitPictureInPicture();
 
         return;
     }
@@ -1147,8 +1132,8 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
             doExitFullscreen();
         else if (m_exitingPictureInPicture) {
             m_exitingPictureInPicture = false;
-            if (m_videoFullscreenModel)
-                m_videoFullscreenModel->didExitPictureInPicture();
+            if (auto model = videoFullscreenModel())
+                model->didExitPictureInPicture();
         }
 
         if (m_enterFullscreenNeedsExitPictureInPicture)
@@ -1170,8 +1155,8 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
     if (!m_targetMode.hasFullscreen() && !m_currentMode.hasFullscreen() && !m_hasVideoContentLayer) {
         // We have just exited pip and not entered fullscreen in turn. To avoid getting
         // stuck holding the video content layer, explicitly return it here:
-        if (m_fullscreenChangeObserver)
-            m_fullscreenChangeObserver->returnVideoView();
+        if (auto model = videoFullscreenModel())
+            model->returnVideoView();
     }
 }
 
@@ -1213,7 +1198,8 @@ bool VideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason(VideoFullscre
     if (m_shouldIgnoreAVKitCallbackAboutExitFullscreenReason)
         return true;
 
-    if (!m_videoFullscreenModel)
+    auto model = videoFullscreenModel();
+    if (!model)
         return true;
 
     if (reason == ExitFullScreenReason::PictureInPictureStarted)
@@ -1226,19 +1212,14 @@ bool VideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason(VideoFullscre
         m_watchdogTimer.startOneShot(defaultWatchdogTimerInterval);
 
 #if PLATFORM(WATCHOS)
-    if (m_fullscreenChangeObserver) {
-        m_waitingForPreparedToExit = true;
-        m_fullscreenChangeObserver->willExitFullscreen();
-        return false;
-    }
-#endif
-
-    BOOL finished = reason == ExitFullScreenReason::DoneButtonTapped || reason == ExitFullScreenReason::PinchGestureHandled;
-    ASSERT(m_videoFullscreenModel);
-    if (m_videoFullscreenModel)
-        m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, finished);
-
+    m_waitingForPreparedToExit = true;
+    model->willExitFullscreen();
     return false;
+#else
+    BOOL finished = reason == ExitFullScreenReason::DoneButtonTapped || reason == ExitFullScreenReason::PinchGestureHandled;
+    model->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, finished);
+    return false;
+#endif
 }
 
 void VideoFullscreenInterfaceAVKit::setHasVideoContentLayer(bool value)
@@ -1286,10 +1267,11 @@ void VideoFullscreenInterfaceAVKit::doSetup()
         return;
     }
 
-    if (!m_hasUpdatedInlineRect && m_fullscreenChangeObserver) {
+    auto model = videoFullscreenModel();
+    if (!m_hasUpdatedInlineRect && model) {
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "!hasUpdatedInlineRect, bailing");
         m_setupNeedsInlineRect = true;
-        m_fullscreenChangeObserver->requestUpdateInlineRect();
+        model->requestUpdateInlineRect();
         return;
     }
     m_setupNeedsInlineRect = false;
@@ -1319,16 +1301,16 @@ void VideoFullscreenInterfaceAVKit::doSetup()
         m_playerLayerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
     [m_playerLayerView setHidden:[playerController() isExternalPlaybackActive]];
     [m_playerLayerView setBackgroundColor:clearUIColor()];
+    [m_playerLayerView setVideoView:m_videoView.get()];
 
     if (!m_currentMode.hasPictureInPicture() && !m_changingStandbyOnly) {
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Moving videoView to fullscreen WebAVPlayerLayerView");
-        [m_playerLayerView setVideoView:m_videoView.get()];
         [m_playerLayerView addSubview:m_videoView.get()];
     }
 
     WebAVPlayerLayer *playerLayer = (WebAVPlayerLayer *)[m_playerLayerView playerLayer];
 
-    playerLayer.fullscreenModel = m_videoFullscreenModel;
+    playerLayer.fullscreenModel = model.get();
 
     if (!m_playerViewController)
         m_playerViewController = adoptNS([[WebAVPlayerViewController alloc] initWithFullscreenInterface:this]);
@@ -1342,7 +1324,7 @@ void VideoFullscreenInterfaceAVKit::doSetup()
         [m_playerViewController setWebKitOverrideRouteSharingPolicy:(NSUInteger)m_routeSharingPolicy routingContextUID:m_routingContextUID];
 
 #if PLATFORM(WATCHOS)
-    m_viewController = videoFullscreenModel() ? videoFullscreenModel()->createVideoFullscreenViewController(m_playerViewController.get().avPlayerViewController) : nil;
+    m_viewController = model ? model->createVideoFullscreenViewController(m_playerViewController.get().avPlayerViewController) : nil;
 #endif
 
     if (m_viewController) {
@@ -1379,20 +1361,20 @@ void VideoFullscreenInterfaceAVKit::preparedToReturnToStandby()
 void VideoFullscreenInterfaceAVKit::finalizeSetup()
 {
     RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
-        if (m_fullscreenChangeObserver) {
+        if (auto model = videoFullscreenModel()) {
             if (!m_hasVideoContentLayer && m_targetMode.hasVideo()) {
                 m_finalizeSetupNeedsVideoContentLayer = true;
-                m_fullscreenChangeObserver->requestVideoContentLayer();
+                model->requestVideoContentLayer();
                 return;
             }
             m_finalizeSetupNeedsVideoContentLayer = false;
             if (m_hasVideoContentLayer && !m_targetMode.hasVideo()) {
                 m_finalizeSetupNeedsReturnVideoContentLayer = true;
-                m_fullscreenChangeObserver->returnVideoContentLayer();
+                model->returnVideoContentLayer();
                 return;
             }
             m_finalizeSetupNeedsReturnVideoContentLayer = false;
-            m_fullscreenChangeObserver->didSetupFullscreen();
+            model->didSetupFullscreen();
         }
     });
 }
@@ -1431,32 +1413,33 @@ void VideoFullscreenInterfaceAVKit::doEnterFullscreen()
     }
     m_enterFullscreenNeedsExitPictureInPicture = false;
 
-    if (m_fullscreenChangeObserver) {
-        FloatSize size;
+    auto model = videoFullscreenModel();
+    if (!model)
+        return;
+    FloatSize size;
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
-        if (m_currentMode.hasPictureInPicture()) {
-            auto *pipView = (WebAVPictureInPicturePlayerLayerView *)[m_playerLayerView pictureInPicturePlayerLayerView];
-            auto *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
-            auto videoFrame = [pipPlayerLayer calculateTargetVideoFrame];
-            size = FloatSize(videoFrame.size());
-        }
-#endif
-        m_fullscreenChangeObserver->didEnterFullscreen(size);
-        m_enteringPictureInPicture = false;
-        m_changingStandbyOnly = false;
+    if (m_currentMode.hasPictureInPicture()) {
+        auto *pipView = (WebAVPictureInPicturePlayerLayerView *)[m_playerLayerView pictureInPicturePlayerLayerView];
+        auto *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
+        auto videoFrame = [pipPlayerLayer calculateTargetVideoFrame];
+        size = FloatSize(videoFrame.size());
     }
-
-    if (m_currentMode.hasPictureInPicture() && m_videoFullscreenModel)
-        m_videoFullscreenModel->didEnterPictureInPicture();
+#endif
+    model->didEnterFullscreen(size);
+    m_enteringPictureInPicture = false;
+    m_changingStandbyOnly = false;
+    if (m_currentMode.hasPictureInPicture())
+        model->didEnterPictureInPicture();
 }
 
 void VideoFullscreenInterfaceAVKit::doExitFullscreen()
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::doExitFullscreen(%p)", this);
 
-    if (m_currentMode.hasVideo() && !m_hasUpdatedInlineRect && m_fullscreenChangeObserver) {
+    auto model = videoFullscreenModel();
+    if (m_currentMode.hasVideo() && !m_hasUpdatedInlineRect && model) {
         m_exitFullscreenNeedInlineRect = true;
-        m_fullscreenChangeObserver->requestUpdateInlineRect();
+        model->requestUpdateInlineRect();
         return;
     }
     m_exitFullscreenNeedInlineRect = false;
@@ -1477,9 +1460,9 @@ void VideoFullscreenInterfaceAVKit::doExitFullscreen()
     }
     m_exitFullscreenNeedsExitPictureInPicture = false;
 
-    if (m_hasVideoContentLayer && m_fullscreenChangeObserver) {
+    if (m_hasVideoContentLayer && model) {
         m_exitFullscreenNeedsReturnContentLayer = true;
-        m_fullscreenChangeObserver->returnVideoContentLayer();
+        model->returnVideoContentLayer();
         return;
     }
     m_exitFullscreenNeedsReturnContentLayer = false;
@@ -1487,8 +1470,8 @@ void VideoFullscreenInterfaceAVKit::doExitFullscreen()
     m_standby = false;
 
     RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
-        if (m_fullscreenChangeObserver)
-            m_fullscreenChangeObserver->didExitFullscreen();
+        if (auto model = videoFullscreenModel())
+            model->didExitFullscreen();
         m_changingStandbyOnly = false;
     });
 }
@@ -1543,14 +1526,15 @@ void VideoFullscreenInterfaceAVKit::returnToStandby()
 {
     m_returningToStandby = false;
 
-    if (m_fullscreenChangeObserver)
-        m_fullscreenChangeObserver->returnVideoView();
+    auto model = videoFullscreenModel();
+    if (model)
+        model->returnVideoView();
 
     [m_window setHidden:YES];
     [[m_playerViewController view] setHidden:YES];
 
-    if (m_fullscreenChangeObserver)
-        m_fullscreenChangeObserver->didSetupFullscreen();
+    if (model)
+        model->didSetupFullscreen();
 }
 
 NO_RETURN_DUE_TO_ASSERT void VideoFullscreenInterfaceAVKit::watchdogTimerFired()
@@ -1569,8 +1553,9 @@ void VideoFullscreenInterfaceAVKit::setMode(HTMLMediaElementEnums::VideoFullscre
     m_currentMode.setMode(mode);
     // Mode::mode() can be 3 (VideoFullscreenModeStandard | VideoFullscreenModePictureInPicture).
     // HTMLVideoElement does not expect such a value in the fullscreenModeChanged() callback.
-    if (m_videoFullscreenModel && shouldNotifyModel)
-        m_videoFullscreenModel->fullscreenModeChanged(mode);
+    auto model = videoFullscreenModel();
+    if (model && shouldNotifyModel)
+        model->fullscreenModeChanged(mode);
 }
 
 void VideoFullscreenInterfaceAVKit::clearMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool shouldNotifyModel)
@@ -1579,8 +1564,9 @@ void VideoFullscreenInterfaceAVKit::clearMode(HTMLMediaElementEnums::VideoFullsc
         return;
 
     m_currentMode.clearMode(mode);
-    if (m_videoFullscreenModel && shouldNotifyModel)
-        m_videoFullscreenModel->fullscreenModeChanged(m_currentMode.mode());
+    auto model = videoFullscreenModel();
+    if (model && shouldNotifyModel)
+        model->fullscreenModeChanged(m_currentMode.mode());
 }
 
 bool VideoFullscreenInterfaceAVKit::isPlayingVideoInEnhancedFullscreen() const

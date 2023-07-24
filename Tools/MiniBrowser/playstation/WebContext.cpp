@@ -85,7 +85,6 @@ WebContext::WebContext()
     WKContextSetUsesSingleWebProcess(m_context.get(), true);
 
     WKRetainPtr<WKStringRef> groupName = adoptWK(WKStringCreateWithUTF8CString("Default"));
-    m_pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(groupName.get()));
 
     m_preferencesMaster = adoptWK(WKPreferencesCreate());
     WKPreferencesSetFullScreenEnabled(m_preferencesMaster.get(), true);

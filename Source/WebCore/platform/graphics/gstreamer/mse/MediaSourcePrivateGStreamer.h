@@ -75,6 +75,7 @@ public:
 
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateGStreamer*, bool);
     void startPlaybackIfHasAllTracks();
+    bool hasAllTracks() const { return m_hasAllTracks; }
 
     const PlatformTimeRanges& buffered();
 

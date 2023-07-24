@@ -160,7 +160,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     BOOL _mainContentUserGestureOverrideEnabled;
 
 #if PLATFORM(MAC)
-    WKRetainPtr<WKPageGroupRef> _pageGroup;
     BOOL _showsURLsInToolTips;
     BOOL _serviceControlsEnabled;
     BOOL _imageControlsEnabled;
@@ -185,7 +184,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #endif
     double _sampledPageTopColorMaxDifference;
     double _sampledPageTopColorMinHeight;
-    BOOL _markedTextInputEnabled;
+    BOOL _allowsInlinePredictions;
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
     RetainPtr<NSArray<NSString *>> _additionalSupportedImageTypes;
@@ -287,9 +286,19 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _sampledPageTopColorMaxDifference = DEFAULT_VALUE_FOR_SampledPageTopColorMaxDifference;
     _sampledPageTopColorMinHeight = DEFAULT_VALUE_FOR_SampledPageTopColorMinHeight;
 
-    _markedTextInputEnabled = NO;
+    _allowsInlinePredictions = NO;
 
     return self;
+}
+
+- (void)setAllowsInlinePredictions:(BOOL)enabled
+{
+    _allowsInlinePredictions = enabled;
+}
+
+- (BOOL)allowsInlinePredictions
+{
+    return _allowsInlinePredictions;
 }
 
 - (NSString *)description
@@ -449,7 +458,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
     configuration->_imageControlsEnabled = self->_imageControlsEnabled;
     configuration->_contextMenuQRCodeDetectionEnabled = self->_contextMenuQRCodeDetectionEnabled;
-    configuration->_pageGroup = self._pageGroup;
 #endif
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
     configuration->_dataDetectorTypes = self->_dataDetectorTypes;
@@ -481,7 +489,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration->_sampledPageTopColorMaxDifference = self->_sampledPageTopColorMaxDifference;
     configuration->_sampledPageTopColorMinHeight = self->_sampledPageTopColorMinHeight;
 
-    configuration->_markedTextInputEnabled = self->_markedTextInputEnabled;
+    configuration->_allowsInlinePredictions = self->_allowsInlinePredictions;
 
     return configuration;
 }
@@ -651,10 +659,6 @@ static NSString *defaultApplicationNameForUserAgent()
     return static_cast<WebKit::WebURLSchemeHandlerCocoa*>(handler.get())->apiHandler();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewConfigurationAdditions.mm>
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)limitsNavigationsToAppBoundDomains
 {
@@ -806,7 +810,6 @@ static NSString *defaultApplicationNameForUserAgent()
     _allowsMetaRefresh = allowsMetaRefresh;
 }
 
-#if PLATFORM(IOS_FAMILY)
 - (BOOL)_clientNavigationsRunAtForegroundPriority
 {
     return _pageConfiguration->clientNavigationsRunAtForegroundPriority();
@@ -817,6 +820,7 @@ static NSString *defaultApplicationNameForUserAgent()
     _pageConfiguration->setClientNavigationsRunAtForegroundPriority(clientNavigationsRunAtForegroundPriority);
 }
 
+#if PLATFORM(IOS_FAMILY)
 - (BOOL)_alwaysRunsAtForegroundPriority
 {
     return _pageConfiguration->clientNavigationsRunAtForegroundPriority();
@@ -1268,12 +1272,11 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (WKPageGroupRef)_pageGroup
 {
-    return _pageGroup.get();
+    return nullptr;
 }
 
 - (void)_setPageGroup:(WKPageGroupRef)pageGroup
 {
-    _pageGroup = pageGroup;
 }
 
 - (void)_setCPULimit:(double)cpuLimit
@@ -1492,14 +1495,15 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     return WebKit::toWKContentSecurityPolicyModeForExtension(_pageConfiguration->contentSecurityPolicyModeForExtension());
 }
 
+// FIXME: Remove this SPI once rdar://110277838 is resolved and all clients adopt the API.
 - (void)_setMarkedTextInputEnabled:(BOOL)enabled
 {
-    _markedTextInputEnabled = enabled;
+    _allowsInlinePredictions = enabled;
 }
 
 - (BOOL)_markedTextInputEnabled
 {
-    return _markedTextInputEnabled;
+    return _allowsInlinePredictions;
 }
 
 @end

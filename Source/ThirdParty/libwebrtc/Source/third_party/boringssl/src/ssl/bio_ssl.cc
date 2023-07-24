@@ -109,7 +109,7 @@ static long ssl_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       // |bio->next_bio| with |ssl|'s rbio here, and on |BIO_CTRL_PUSH|. We call
       // into the corresponding |BIO| directly. (We can implement the upstream
       // behavior if it ends up necessary.)
-      bio->shutdown = num;
+      bio->shutdown = static_cast<int>(num);
       bio->ptr = ptr;
       bio->init = 1;
       return 1;
@@ -118,7 +118,7 @@ static long ssl_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       return bio->shutdown;
 
     case BIO_CTRL_SET_CLOSE:
-      bio->shutdown = num;
+      bio->shutdown = static_cast<int>(num);
       return 1;
 
     case BIO_CTRL_WPENDING:

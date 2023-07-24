@@ -82,6 +82,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     // scrollSnapType
     // scrollSnapAlign
     // scrollSnapStop
+    // scrollbarGutter
     , scrollbarWidth(RenderStyle::initialScrollbarWidth())
     , zoom(RenderStyle::initialZoom())
     , blockStepSize(RenderStyle::initialBlockStepSize())
@@ -165,6 +166,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , scrollSnapType(o.scrollSnapType)
     , scrollSnapAlign(o.scrollSnapAlign)
     , scrollSnapStop(o.scrollSnapStop)
+    , scrollbarGutter(o.scrollbarGutter)
     , scrollbarWidth(o.scrollbarWidth)
     , zoom(o.zoom)
     , blockStepSize(o.blockStepSize)
@@ -255,6 +257,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && scrollSnapType == o.scrollSnapType
         && scrollSnapAlign == o.scrollSnapAlign
         && scrollSnapStop == o.scrollSnapStop
+        && scrollbarGutter == o.scrollbarGutter
         && scrollbarWidth == o.scrollbarWidth
         && zoom == o.zoom
         && blockStepSize == o.blockStepSize

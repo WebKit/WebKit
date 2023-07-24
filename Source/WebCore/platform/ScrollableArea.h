@@ -54,6 +54,8 @@ class TiledBacking;
 
 enum class WheelScrollGestureState : uint8_t;
 
+struct ScrollbarGutter;
+
 inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orientation)
 {
     switch (orientation) {
@@ -74,7 +76,7 @@ public:
     WEBCORE_EXPORT void endKeyboardScroll(bool);
 
     WEBCORE_EXPORT bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1);
-    WEBCORE_EXPORT void scrollToPositionWithAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
+    WEBCORE_EXPORT void scrollToPositionWithAnimation(const FloatPoint&, const ScrollPositionChangeOptions& options = ScrollPositionChangeOptions::createProgrammatic());
     WEBCORE_EXPORT void scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
     WEBCORE_EXPORT void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
@@ -87,7 +89,7 @@ public:
     // Allows subclasses to handle scroll position updates themselves. If this member function
     // returns true, the scrollable area won't actually update the scroll position and instead
     // expect it to happen sometime in the future.
-    virtual bool requestScrollToPosition(const ScrollPosition&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped, ScrollIsAnimated = ScrollIsAnimated::No) { return false; }
+    virtual bool requestScrollToPosition(const ScrollPosition&, const ScrollPositionChangeOptions& = ScrollPositionChangeOptions::createProgrammatic()) { return false; }
     virtual void stopAsyncAnimatedScroll() { }
 
     virtual bool requestStartKeyboardScrollAnimation(const KeyboardScroll&) { return false; }
@@ -140,6 +142,9 @@ public:
     
     virtual OverscrollBehavior horizontalOverscrollBehavior() const { return OverscrollBehavior::Auto; }
     virtual OverscrollBehavior verticalOverscrollBehavior() const { return OverscrollBehavior::Auto; }
+
+    WEBCORE_EXPORT virtual ScrollbarGutter scrollbarGutterStyle() const;
+    virtual ScrollbarWidth scrollbarWidthStyle() const { return ScrollbarWidth::Auto; }
 
     bool allowsHorizontalScrolling() const;
     bool allowsVerticalScrolling() const;
@@ -195,7 +200,6 @@ public:
     ScrollAnimator* existingScrollAnimator() const { return m_scrollAnimator.get(); }
 
     WEBCORE_EXPORT ScrollbarsController& scrollbarsController() const;
-    void setScrollbarsController(std::unique_ptr<ScrollbarsController>&&);
 
     virtual bool isActive() const = 0;
     WEBCORE_EXPORT virtual void invalidateScrollbar(Scrollbar&, const IntRect&);
@@ -231,6 +235,7 @@ public:
 
     virtual Scrollbar* horizontalScrollbar() const { return nullptr; }
     virtual Scrollbar* verticalScrollbar() const { return nullptr; }
+    virtual void scrollbarFrameRectChanged(const Scrollbar&) const { };
 
     Scrollbar* scrollbarForDirection(ScrollDirection direction) const
     {
@@ -420,12 +425,17 @@ protected:
 
     bool hasLayerForScrollCorner() const;
 
+    WEBCORE_EXPORT virtual void createScrollbarsController();
+    void setScrollbarsController(std::unique_ptr<ScrollbarsController>&&);
+
     LayoutRect getRectToExposeForScrollIntoView(const LayoutRect& visibleBounds, const LayoutRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY, const std::optional<LayoutRect> = std::nullopt) const;
 
 private:
     WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
     void scrollPositionChanged(const ScrollPosition&);
-    
+
+    void internalCreateScrollbarsController();
+
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;
     void setScrollPositionFromAnimation(const ScrollPosition&);
@@ -435,7 +445,7 @@ private:
     virtual void setScrollOffset(const ScrollOffset&) = 0;
 
     mutable std::unique_ptr<ScrollAnimator> m_scrollAnimator;
-    mutable std::unique_ptr<ScrollbarsController> m_scrollbarsController;
+    std::unique_ptr<ScrollbarsController> m_scrollbarsController;
 
     // There are 8 possible combinations of writing mode and direction. Scroll origin will be non-zero in the x or y axis
     // if there is any reversed direction or writing-mode. The combinations are:

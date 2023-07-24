@@ -67,7 +67,7 @@ uint32_t HammingDistance_SSE42(const uint8_t* src_a,
       :
       : "memory", "cc", "rcx", "rdx", "rsi", "rdi", "r8", "r9", "r10");
 
-  return static_cast<uint32_t>(diff);
+  return (uint32_t)(diff);
 }
 #else
 uint32_t HammingDistance_SSE42(const uint8_t* src_a,

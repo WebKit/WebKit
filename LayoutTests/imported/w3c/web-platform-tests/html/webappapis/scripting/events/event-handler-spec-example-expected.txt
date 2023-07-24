@@ -1,6 +1,6 @@
 
 PASS Event handler listeners should be registered when they are first set to an object value (object "[object Object]").
-PASS Event handler listeners should be registered when they are first set to an object value (function "function () {}").
+PASS Event handler listeners should be registered when they are first set to an object value (function "function() {}").
 PASS Event handler listeners should be registered when they are first set to an object value (object "42").
 PASS Event handler listeners should be registered when they are first set to an object value (object "").
 PASS Event handler listeners should be registered when they are first set to an object value (42).

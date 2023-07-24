@@ -21,9 +21,13 @@
 // RTC_LOG(sev) logs the given stream at severity "sev", which must be a
 //     compile-time constant of the LoggingSeverity type, without the namespace
 //     prefix.
+// RTC_LOG_IF(sev, condition) logs the given stream at severitye "sev" if
+//     "condition" is true.
 // RTC_LOG_V(sev) Like RTC_LOG(), but sev is a run-time variable of the
 //     LoggingSeverity type (basically, it just doesn't prepend the namespace).
 // RTC_LOG_F(sev) Like RTC_LOG(), but includes the name of the current function.
+// RTC_LOG_IF_F(sev, condition), Like RTC_LOG_IF(), but includes the name of
+//     the current function.
 // RTC_LOG_T(sev) Like RTC_LOG(), but includes the this pointer.
 // RTC_LOG_T_F(sev) Like RTC_LOG_F(), but includes the this pointer.
 // RTC_LOG_GLE(sev [, mod]) attempt to add a string description of the
@@ -591,7 +595,7 @@ class LogMessage {
   static void UpdateMinLogSeverity();
 
   // This writes out the actual log messages.
-  static void OutputToDebug(LoggingSeverity, const LogLineRef& log_line_ref);
+  static void OutputToDebug(const LogLineRef& log_line_ref);
 
   // Called from the dtor (or from a test) to append optional extra error
   // information to the log stream and a newline character.
@@ -653,6 +657,10 @@ class LogMessage {
   !rtc::LogMessage::IsNoop<::rtc::sev>() && \
       RTC_LOG_FILE_LINE(::rtc::sev, __FILE__, __LINE__)
 
+#define RTC_LOG_IF(sev, condition)                         \
+  !rtc::LogMessage::IsNoop<::rtc::sev>() && (condition) && \
+      RTC_LOG_FILE_LINE(::rtc::sev, __FILE__, __LINE__)
+
 // The _V version is for when a variable is passed in.
 #define RTC_LOG_V(sev) \
   !rtc::LogMessage::IsNoop(sev) && RTC_LOG_FILE_LINE(sev, __FILE__, __LINE__)
@@ -660,10 +668,14 @@ class LogMessage {
 // The _F version prefixes the message with the current function name.
 #if (defined(__GNUC__) && !defined(NDEBUG)) || defined(WANT_PRETTY_LOG_F)
 #define RTC_LOG_F(sev) RTC_LOG(sev) << __PRETTY_FUNCTION__ << ": "
+#define RTC_LOG_IF_F(sev, condition) \
+  RTC_LOG_IF(sev, condition) << __PRETTY_FUNCTION__ << ": "
 #define RTC_LOG_T_F(sev) \
   RTC_LOG(sev) << this << ": " << __PRETTY_FUNCTION__ << ": "
 #else
 #define RTC_LOG_F(sev) RTC_LOG(sev) << __FUNCTION__ << ": "
+#define RTC_LOG_IF_F(sev, condition) \
+  RTC_LOG_IF(sev, condition) << __FUNCTION__ << ": "
 #define RTC_LOG_T_F(sev) RTC_LOG(sev) << this << ": " << __FUNCTION__ << ": "
 #endif
 
@@ -731,16 +743,20 @@ inline const char* AdaptString(const std::string& str) {
 // they only generate code in debug builds.
 #if RTC_DLOG_IS_ON
 #define RTC_DLOG(sev) RTC_LOG(sev)
+#define RTC_DLOG_IF(sev, condition) RTC_LOG_IF(sev, condition)
 #define RTC_DLOG_V(sev) RTC_LOG_V(sev)
 #define RTC_DLOG_F(sev) RTC_LOG_F(sev)
+#define RTC_DLOG_IF_F(sev, condition) RTC_LOG_IF_F(sev, condition)
 #else
 #define RTC_DLOG_EAT_STREAM_PARAMS()                \
   while (false)                                     \
   ::rtc::webrtc_logging_impl::LogMessageVoidify() & \
       (::rtc::webrtc_logging_impl::LogStreamer<>())
 #define RTC_DLOG(sev) RTC_DLOG_EAT_STREAM_PARAMS()
+#define RTC_DLOG_IF(sev, condition) RTC_DLOG_EAT_STREAM_PARAMS()
 #define RTC_DLOG_V(sev) RTC_DLOG_EAT_STREAM_PARAMS()
 #define RTC_DLOG_F(sev) RTC_DLOG_EAT_STREAM_PARAMS()
+#define RTC_DLOG_IF_F(sev, condition) RTC_DLOG_EAT_STREAM_PARAMS()
 #endif
 
 }  // namespace rtc

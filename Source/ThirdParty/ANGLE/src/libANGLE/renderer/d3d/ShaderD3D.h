@@ -93,6 +93,10 @@ class ShaderD3D : public ShaderImpl
     bool usesDepthRange() const { return mUsesDepthRange; }
     bool usesVertexID() const { return mUsesVertexID; }
     bool usesViewID() const { return mUsesViewID; }
+    bool usesSampleID() const { return mUsesSampleID; }
+    bool usesSamplePosition() const { return mUsesSamplePosition; }
+    bool usesSampleMaskIn() const { return mUsesSampleMaskIn; }
+    bool usesSampleMask() const { return mUsesSampleMask; }
     bool hasANGLEMultiviewEnabled() const { return mHasANGLEMultiviewEnabled; }
     FragDepthUsage getFragDepthUsage() const { return mFragDepthUsage; }
     uint8_t getClipDistanceArraySize() const { return mClipDistanceSize; }
@@ -111,6 +115,10 @@ class ShaderD3D : public ShaderImpl
     bool mUsesPointSize;
     bool mUsesPointCoord;
     bool mUsesDepthRange;
+    bool mUsesSampleID;
+    bool mUsesSamplePosition;
+    bool mUsesSampleMaskIn;
+    bool mUsesSampleMask;
     bool mHasANGLEMultiviewEnabled;
     bool mUsesVertexID;
     bool mUsesViewID;

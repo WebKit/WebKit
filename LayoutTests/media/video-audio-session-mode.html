@@ -44,14 +44,14 @@
             runWithKeyDown(() => { run('video.muted = false') });
             await waitFor(video, 'volumechange');
             await waitForCategory('MediaPlayback', 1, '');
-            testExpected('internals.audioSessionMode()', 'MoviePlayback');
+            testExpected('internals.audioSessionMode()', 'Default');
             testExpected('internals.routeSharingPolicy()', 'LongFormAudio');
 
             consoleWrite('<br>** Mute the element, check again after 500ms.');
             run('video.pause()');
             runWithKeyDown(() => { run('video.muted = true') });
             await sleepFor(500);
-            testExpected('internals.audioSessionCategory()', 'MoviePlayback');
+            testExpected('internals.audioSessionCategory()', 'MediaPlayback');
             testExpected('internals.audioSessionMode()', 'Default');
             testExpected('internals.routeSharingPolicy()', 'LongFormAudio');
 

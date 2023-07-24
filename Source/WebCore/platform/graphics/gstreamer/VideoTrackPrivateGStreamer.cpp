@@ -38,7 +38,7 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_video_track_debug);
 #define GST_CAT_DEFAULT webkit_video_track_debug
 
-static void ensureDebugCategoryInitialized()
+static void ensureVideoTrackDebugCategoryInitialized()
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -50,14 +50,14 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, WTFMove(pad), shouldHandleStreamStartEvent)
     , m_player(player)
 {
-    ensureDebugCategoryInitialized();
+    ensureVideoTrackDebugCategoryInitialized();
 }
 
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GstStream* stream)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, stream)
     , m_player(player)
 {
-    ensureDebugCategoryInitialized();
+    ensureVideoTrackDebugCategoryInitialized();
 
     g_signal_connect_swapped(m_stream.get(), "notify::caps", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
         track->m_taskQueue.enqueueTask([track]() {
@@ -86,6 +86,9 @@ void VideoTrackPrivateGStreamer::capsChanged(const String& streamId, const GRefP
 {
     ASSERT(isMainThread());
     updateConfigurationFromCaps(caps);
+
+    if (!m_player)
+        return;
 
     auto codec = m_player->codecForStreamId(streamId);
     if (codec.isEmpty())
@@ -175,6 +178,8 @@ void VideoTrackPrivateGStreamer::setSelected(bool selected)
     if (m_player)
         m_player->updateEnabledVideoTrack();
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

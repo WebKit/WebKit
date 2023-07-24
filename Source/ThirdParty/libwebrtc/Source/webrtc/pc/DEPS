@@ -11,6 +11,7 @@ include_rules = [
   "+modules/rtp_rtcp",
   "+modules/video_coding",
   "+modules/video_render",
+  "+net/dcsctp",
   "+p2p",
   "+system_wrappers",
 ]

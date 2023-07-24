@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,13 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
+#include "WebGPUImageDataLayout.h"
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUImageDataLayout.h>
 
 namespace WebCore {
 
 struct GPUImageDataLayout {
-    PAL::WebGPU::ImageDataLayout convertToBacking() const
+    WebGPU::ImageDataLayout convertToBacking() const
     {
         return {
             offset,

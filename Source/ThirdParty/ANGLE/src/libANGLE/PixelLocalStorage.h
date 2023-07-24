@@ -19,6 +19,7 @@
 namespace gl
 {
 
+struct Caps;
 class Context;
 class Texture;
 
@@ -28,55 +29,42 @@ class Texture;
 // application calls glBeginPixelLocalStorageANGLE, and the manner in which they take effect is
 // highly dependent on the backend implementation. A PixelLocalStoragePlane is just a plain data
 // description what to set up later once PLS is enabled.
-class PixelLocalStoragePlane : angle::NonCopyable
+class PixelLocalStoragePlane : angle::NonCopyable, public angle::ObserverInterface
 {
   public:
-    ~PixelLocalStoragePlane();
+    PixelLocalStoragePlane();
+    ~PixelLocalStoragePlane() override;
 
     // Called when the context is lost or destroyed. Causes this class to clear its GL object
     // handles.
     void onContextObjectsLost();
 
-    // Called when the owning framebuffer is being destroyed. Causes this class to release its
-    // texture object reference.
-    void onFramebufferDestroyed(const Context *);
-
     void deinitialize(Context *);
     void setMemoryless(Context *, GLenum internalformat);
     void setTextureBacked(Context *, Texture *, int level, int layer);
+    void onSubjectStateChange(angle::SubjectIndex, angle::SubjectMessage) override;
 
-    bool isDeinitialized() const { return mInternalformat == GL_NONE; }
-
-    // Returns true if the texture ID bound to this plane has been deleted.
-    //
-    // [ANGLE_shader_pixel_local_storage] Section 4.4.2.X "Configuring Pixel Local Storage
-    // on a Framebuffer": When a texture object is deleted, any pixel local storage plane to
-    // which it was bound is automatically converted to a memoryless plane of matching
-    // internalformat.
-    bool isTextureIDDeleted(const Context *) const;
-
-    bool isMemoryless() const
-    {
-        // isMemoryless() should be false if the plane is deinitialized.
-        ASSERT(!(isDeinitialized() && mMemoryless));
-        return mMemoryless;
-    }
-
-    // Ensures we have an internal backing texture for memoryless planes. In some implementations we
-    // need a backing texture even if the plane is memoryless.
-    void ensureBackingTextureIfMemoryless(Context *, Extents plsSize);
+    // Returns true if the plane is deinitialized, either explicitly or implicitly via deleting the
+    // texture that was attached to it.
+    bool isDeinitialized() const;
 
     GLenum getInternalformat() const { return mInternalformat; }
+    bool isMemoryless() const { return mMemoryless; }
+    TextureID getTextureID() const { return mTextureID; }
 
     // Implements glGetIntegeri_v() for GL_PIXEL_LOCAL_FORMAT_ANGLE,
     // GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE, GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE, and
     // GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE
-    GLint getIntegeri(const Context *, GLenum target) const;
+    GLint getIntegeri(GLenum target) const;
 
     // If this plane is texture backed, stores the bound texture image's {width, height, 0} to
     // Extents and returns true. Otherwise returns false, meaning the plane is either deinitialized
     // or memoryless.
     bool getTextureImageExtents(const Context *, Extents *extents) const;
+
+    // Ensures we have an internal backing texture for memoryless planes. In some implementations we
+    // need a backing texture even if the plane is memoryless.
+    void ensureBackingTextureIfMemoryless(Context *, Extents plsSize);
 
     // Attaches this plane to the specified color attachment point on the current draw framebuffer.
     void attachToDrawFramebuffer(Context *, GLenum colorAttachment) const;
@@ -118,9 +106,8 @@ class PixelLocalStoragePlane : angle::NonCopyable
   private:
     GLenum mInternalformat = GL_NONE;  // GL_NONE if this plane is in a deinitialized state.
     bool mMemoryless       = false;
-    TextureID mMemorylessTextureID{};  // We own memoryless backing textures and must delete them.
+    TextureID mTextureID   = TextureID();
     ImageIndex mTextureImageIndex;
-    Texture *mTextureRef = nullptr;
 
     // Clear value state.
     std::array<GLfloat, 4> mClearValuef{};
@@ -129,6 +116,8 @@ class PixelLocalStoragePlane : angle::NonCopyable
 
     // True if PLS is currently active and this plane is enabled.
     bool mActive = false;
+
+    angle::ObserverBinding mTextureObserver;
 };
 
 // Manages a collection of PixelLocalStoragePlanes and applies them to ANGLE's GL state.
@@ -179,7 +168,7 @@ class PixelLocalStorage
     void restore(Context *);
 
   protected:
-    PixelLocalStorage(const ShPixelLocalStorageOptions &);
+    PixelLocalStorage(const ShPixelLocalStorageOptions &, const Caps &);
 
     // Called when the context is lost or destroyed. Causes the subclass to clear its GL object
     // handles.
@@ -197,7 +186,8 @@ class PixelLocalStorage
     const ShPixelLocalStorageOptions mPLSOptions;
 
   private:
-    std::array<PixelLocalStoragePlane, IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES> mPlanes;
+    angle::FixedVector<PixelLocalStoragePlane, IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES>
+        mPlanes;
     size_t mInterruptCount           = 0;
     GLsizei mActivePlanesAtInterrupt = 0;
 };

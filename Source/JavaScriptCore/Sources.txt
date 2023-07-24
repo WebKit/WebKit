@@ -95,6 +95,7 @@ b3/air/AirLowerEntrySwitch.cpp
 b3/air/AirLowerMacros.cpp
 b3/air/AirLowerStackArgs.cpp
 b3/air/AirOptimizeBlockOrder.cpp
+b3/air/AirOptimizePairedLoadStore.cpp
 b3/air/AirPadInterference.cpp
 b3/air/AirPhaseInsertionSet.cpp
 b3/air/AirPhaseScope.cpp
@@ -386,6 +387,7 @@ dfg/DFGLoopPreHeaderCreationPhase.cpp
 dfg/DFGMayExit.cpp
 dfg/DFGMinifiedGraph.cpp
 dfg/DFGMinifiedNode.cpp
+dfg/DFGMovHintRemovalPhase.cpp
 dfg/DFGMultiGetByOffsetData.cpp
 dfg/DFGNode.cpp
 dfg/DFGNodeAbstractValuePair.cpp
@@ -700,6 +702,7 @@ jit/TagRegistersMode.cpp
 jit/ThunkGenerators.cpp
 jit/Width.cpp
 
+llint/InPlaceInterpreter.cpp
 llint/LLIntCLoop.cpp
 llint/LLIntData.cpp
 llint/LLIntEntrypoint.cpp
@@ -1114,11 +1117,14 @@ wasm/WasmEntryPlan.cpp
 wasm/WasmFaultSignalHandler.cpp
 wasm/WasmFormat.cpp
 wasm/WasmFunctionCodeBlockGenerator.cpp
+wasm/WasmFunctionIPIntMetadataGenerator.cpp
 wasm/WasmGlobal.cpp
 wasm/WasmHandlerInfo.cpp
 wasm/WasmIndexOrName.cpp
 wasm/WasmInstance.cpp
 wasm/WasmInstance.h
+wasm/WasmIPIntGenerator.cpp
+wasm/WasmIPIntPlan.cpp
 wasm/WasmLLIntGenerator.cpp
 wasm/WasmLLIntPlan.cpp
 wasm/WasmLLIntTierUpCounter.cpp
@@ -1151,7 +1157,8 @@ wasm/WasmWorklist.cpp
 wasm/js/JSToWasm.cpp
 wasm/js/JSToWasm.h
 wasm/js/JSWebAssembly.cpp
-wasm/js/JSWebAssemblyArray.cpp
+// FIXME: Remove this @no-unify when clang-AS-debug builds stops crashing in register allocation.
+wasm/js/JSWebAssemblyArray.cpp @no-unify
 wasm/js/JSWebAssemblyCompileError.cpp
 wasm/js/JSWebAssemblyException.cpp
 wasm/js/JSWebAssemblyGlobal.cpp

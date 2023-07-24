@@ -296,8 +296,7 @@ class Span {
   //
   // Returns a reference to the i'th element of this span.
   constexpr reference operator[](size_type i) const noexcept {
-    // MSVC 2015 accepts this as constexpr, but not ptr_[i]
-    return ABSL_HARDENING_ASSERT(i < size()), *(data() + i);
+    return ABSL_HARDENING_ASSERT(i < size()), ptr_[i];
   }
 
   // Span::at()
@@ -420,7 +419,7 @@ class Span {
   //   absl::MakeSpan(vec).subspan(5);     // throws std::out_of_range
   constexpr Span subspan(size_type pos = 0, size_type len = npos) const {
     return (pos <= size())
-               ? Span(data() + pos, span_internal::Min(size() - pos, len))
+               ? Span(data() + pos, (std::min)(size() - pos, len))
                : (base_internal::ThrowStdOutOfRange("pos > size()"), Span());
   }
 

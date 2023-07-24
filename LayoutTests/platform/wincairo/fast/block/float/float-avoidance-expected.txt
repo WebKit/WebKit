@@ -8,7 +8,7 @@ layer at (0,0) size 785x2458
           text run at (0,0) width 517: "Test of objects that avoid floats to see what they do with percentage and auto widths. "
           text run at (517,0) width 237: "This test is designed to illustrate that we"
           text run at (0,20) width 402: "have removed the WinIE quirk and are behaving more like Firefox."
-      RenderBlock {HR} at (0,48) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,48) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,58) size 769x20
         RenderText {#text} at (0,0) size 477x19
           text run at (0,0) width 477: "The inline-level button should be below the select and fill the width of the block."
@@ -279,7 +279,7 @@ layer at (0,0) size 785x2458
               RenderText at (0,0) size 25x16
                 text run at (0,0) width 25: "One"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (10,54) size 202x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (10,54) size 202x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock (anonymous) at (10,64) size 200x20
           RenderBR {BR} at (0,0) size 0x19
       RenderBlock (anonymous) at (0,2344) size 769x20
@@ -296,7 +296,7 @@ layer at (0,0) size 785x2458
               RenderText at (0,0) size 25x16
                 text run at (0,0) width 25: "One"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (110,38) size 100x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (110,38) size 100x2 [color=#808080] [border: (1px inset #808080)]
         RenderBlock (anonymous) at (10,48) size 200x20
           RenderBR {BR} at (100,0) size 0x19
 layer at (118,1416) size 100x100

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +27,14 @@
 
 #include "GPUProgrammableStage.h"
 #include "GPUVertexBufferLayout.h"
+#include "WebGPUVertexState.h"
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUVertexState.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUVertexState : public GPUProgrammableStage {
-    PAL::WebGPU::VertexState convertToBacking() const
+    WebGPU::VertexState convertToBacking() const
     {
         ASSERT(module);
         return {
@@ -43,7 +43,7 @@ struct GPUVertexState : public GPUProgrammableStage {
                 entryPoint,
                 constants,
             },
-            buffers.map([] (auto& buffer) -> std::optional<PAL::WebGPU::VertexBufferLayout> {
+            buffers.map([](auto& buffer) -> std::optional<WebGPU::VertexBufferLayout> {
                 if (buffer)
                     return buffer->convertToBacking();
                 return std::nullopt;

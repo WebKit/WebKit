@@ -350,6 +350,21 @@ PointParameter FromGLenum<PointParameter>(GLenum from);
 GLenum ToGLenum(PointParameter from);
 std::ostream &operator<<(std::ostream &os, PointParameter value);
 
+enum class PolygonMode : uint8_t
+{
+    Point = 0,
+    Line  = 1,
+    Fill  = 2,
+
+    InvalidEnum = 3,
+    EnumCount   = 3,
+};
+
+template <>
+PolygonMode FromGLenum<PolygonMode>(GLenum from);
+GLenum ToGLenum(PolygonMode from);
+std::ostream &operator<<(std::ostream &os, PolygonMode value);
+
 enum class ProvokingVertexConvention : uint8_t
 {
     FirstVertexConvention = 0,

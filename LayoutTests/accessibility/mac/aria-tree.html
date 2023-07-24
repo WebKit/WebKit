@@ -42,78 +42,78 @@
 </ul>
 
 <script>
-    var testOutput = "This tests that aria trees and tree items are converted into AXOutlines and AXRows, with all the right attributes.\n\n";
+var testOutput = "This tests that aria trees and tree items are converted into AXOutlines and AXRows, with all the right attributes.\n\n";
 
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        // Test tree attributes.
-        var tree = accessibilityController.accessibleElementById("tree");
-        testOutput += expect("tree.role", "'AXRole: AXOutline'");
-        var canSetRows = tree.isAttributeSettable('AXSelectedRows');
-        testOutput += expect("canSetRows", "true");
-        testOutput += expect("tree.childrenCount", "8");
-  
-        // Test tree item attributes.
-        var treeitem1 = tree.childAtIndex(0);
-        testOutput += expect("treeitem1.role", "'AXRole: AXRow'");
-        testOutput += expect("treeitem1.subrole", "'AXSubrole: AXOutlineRow'");
-        testOutput += expect("treeitem1.isExpanded", "true");
-        testOutput += expect("treeitem1.hierarchicalLevel", "0");
-        var canSetDisclosing = treeitem1.isAttributeSettable('AXDisclosing');
-        testOutput += expect("canSetDisclosing", "true");
+    // Test tree attributes.
+    var tree = accessibilityController.accessibleElementById("tree");
+    testOutput += expect("tree.role", "'AXRole: AXOutline'");
+    var canSetRows = tree.isAttributeSettable('AXSelectedRows');
+    testOutput += expect("canSetRows", "true");
+    testOutput += expect("tree.childrenCount", "8");
 
-        // Test more tree item attributes as we dive i,
-        var treeitem2 = treeitem1.disclosedRowAtIndex(0);
-        testOutput += expect("treeitem2.role", "'AXRole: AXRow'");
-        testOutput += expect("treeitem2.subrole", "'AXSubrole: AXOutlineRow'");
-        testOutput += expect("treeitem2.isExpanded", "false");
-        testOutput += expect("treeitem2.hierarchicalLevel", "1");
-        testOutput += expect("treeitem2.disclosedByRow().isEqual(treeitem1)", "true");
-        canSetDisclosing = treeitem2.isAttributeSettable('AXDisclosing');
-        testOutput += expect("canSetDisclosing", "false");
+    // Test tree item attributes.
+    var treeitem1 = tree.childAtIndex(0);
+    testOutput += expect("treeitem1.role", "'AXRole: AXRow'");
+    testOutput += expect("treeitem1.subrole", "'AXSubrole: AXOutlineRow'");
+    testOutput += expect("treeitem1.isExpanded", "true");
+    testOutput += expect("treeitem1.hierarchicalLevel", "0");
+    var canSetDisclosing = treeitem1.isAttributeSettable('AXDisclosing');
+    testOutput += expect("canSetDisclosing", "true");
 
-        var treeitem3 = treeitem2.childAtIndex(0);
-        testOutput += expect("treeitem3.stringValue", "'AXValue: Birds'");
-        canSetDisclosing = treeitem3.isAttributeSettable('AXDisclosing');
-        testOutput += expect("canSetDisclosing", "false");
+    // Test more tree item attributes as we dive i,
+    var treeitem2 = treeitem1.disclosedRowAtIndex(0);
+    testOutput += expect("treeitem2.role", "'AXRole: AXRow'");
+    testOutput += expect("treeitem2.subrole", "'AXSubrole: AXOutlineRow'");
+    testOutput += expect("treeitem2.isExpanded", "false");
+    testOutput += expect("treeitem2.hierarchicalLevel", "1");
+    testOutput += expect("treeitem2.disclosedByRow().isEqual(treeitem1)", "true");
+    canSetDisclosing = treeitem2.isAttributeSettable('AXDisclosing');
+    testOutput += expect("canSetDisclosing", "false");
 
-        // Test more AXRow attributes and values as we dive further in.
-        treeitem3 = treeitem1.disclosedRowAtIndex(1);
-        testOutput += expect("treeitem3.role", "'AXRole: AXRow'");
-        testOutput += expect("treeitem3.subrole", "'AXSubrole: AXOutlineRow'");
-        testOutput += expect("treeitem3.isExpanded", "true");
+    var treeitem3 = treeitem2.childAtIndex(0);
+    testOutput += expect("treeitem3.stringValue", "'AXValue: Birds'");
+    canSetDisclosing = treeitem3.isAttributeSettable('AXDisclosing');
+    testOutput += expect("canSetDisclosing", "false");
 
-        // test that the row can be selected correctly.
-        testOutput += expect("treeitem3.isSelected", "false");
-        document.getElementById("treeitem3").setAttribute("aria-selected", true);
-        testOutput += expect("treeitem3.isSelected", "true");
+    // Test more AXRow attributes and values as we dive further in.
+    treeitem3 = treeitem1.disclosedRowAtIndex(1);
+    testOutput += expect("treeitem3.role", "'AXRole: AXRow'");
+    testOutput += expect("treeitem3.subrole", "'AXSubrole: AXOutlineRow'");
+    testOutput += expect("treeitem3.isExpanded", "true");
+
+    var selectedRow, treitem4, treeitem5, treeitem6;
+    // test that the row can be selected correctly.
+    testOutput += expect("treeitem3.isSelected", "false");
+    document.getElementById("treeitem3").setAttribute("aria-selected", true);
+    setTimeout(async function() {
+        testOutput += await expectAsync("treeitem3.isSelected", "true");
 
         // Test that the tree reports the right selected row (treeitem3)
-        var selectedRow = tree.selectedRowAtIndex(0);
+        selectedRow = tree.selectedRowAtIndex(0);
         testOutput += expect("selectedRow.isEqual(treeitem3)", "true");
 
         // Test that hierarchicalLevel can be computed automatically, also,
         // and that it's consistent with the ARIA level.
-        var treeitem4 = accessibilityController.accessibleElementById("treeitem4");
+        treeitem4 = accessibilityController.accessibleElementById("treeitem4");
         testOutput += expect("treeitem4.hierarchicalLevel", "0");
 
-        var treeitem5 = accessibilityController.accessibleElementById("treeitem5");
+        treeitem5 = accessibilityController.accessibleElementById("treeitem5");
         testOutput += expect("treeitem5.hierarchicalLevel", "1");
 
-        var treeitem6 = accessibilityController.accessibleElementById("treeitem6");
+        treeitem6 = accessibilityController.accessibleElementById("treeitem6");
         testOutput += expect("treeitem6.hierarchicalLevel", "1");
 
         testOutput += "\nUpdating aria-level of #treeitem2 to 3.\n";
         document.getElementById("treeitem2").setAttribute("aria-level", "3");
-        setTimeout(async function() {
-            await waitFor(() => treeitem2.hierarchicalLevel === 2);
-            testOutput += expect("treeitem2.hierarchicalLevel", "2");
+        testOutput += await expectAsync("treeitem2.hierarchicalLevel", "2");
 
-            debug(testOutput);
-            finishJSTest();
-        }, 0);
-    }
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>

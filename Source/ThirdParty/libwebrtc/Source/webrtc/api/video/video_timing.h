@@ -124,9 +124,6 @@ struct VideoPlayoutDelay {
   }
 };
 
-// TODO(bugs.webrtc.org/7660): Old name, delete after downstream use is updated.
-using PlayoutDelay = VideoPlayoutDelay;
-
 }  // namespace webrtc
 
 #endif  // API_VIDEO_VIDEO_TIMING_H_

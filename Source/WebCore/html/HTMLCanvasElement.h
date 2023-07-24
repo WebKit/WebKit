@@ -108,7 +108,7 @@ public:
     // Used for rendering
     void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final;
 
-    void paint(GraphicsContext&, const LayoutRect&, CompositeOperator);
+    void paint(GraphicsContext&, const LayoutRect&);
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> toVideoFrame();

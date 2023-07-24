@@ -13,4 +13,4 @@ const result = ym.getISOFields();
 assert.sameValue(result.isoYear, 2000, "isoYear result");
 assert.sameValue(result.isoMonth, 5, "isoMonth result");
 assert.sameValue(result.isoDay, 1, "isoDay result");
-assert.sameValue(result.calendar.id, "iso8601", "calendar result");
+assert.sameValue(result.calendar, "iso8601", "calendar result");

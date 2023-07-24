@@ -45,7 +45,7 @@ enum class PreconnectOnly : bool { No, Yes };
 class NetworkLoadParameters {
 public:
     NetworkLoadParameters() = default;
-    NetworkLoadParameters(WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& sourceOrigin, WTF::ProcessID parentPID, WebCore::ResourceRequest&& request, WebCore::ContentSniffingPolicy contentSniffingPolicy, WebCore::ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ClientCredentialPolicy clientCredentialPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool needsCertificateInfo, bool isMainFrameNavigation, bool isMainResourceNavigationForAnyFrame, WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, PreconnectOnly shouldPreconnectOnly, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy)
+    NetworkLoadParameters(WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& sourceOrigin, WTF::ProcessID parentPID, WebCore::ResourceRequest&& request, WebCore::ContentSniffingPolicy contentSniffingPolicy, WebCore::ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ClientCredentialPolicy clientCredentialPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool needsCertificateInfo, bool isMainFrameNavigation, bool isMainResourceNavigationForAnyFrame, WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, PreconnectOnly shouldPreconnectOnly, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections)
         : webPageProxyID(webPageProxyID)
         , webPageID(webPageID)
         , webFrameID(webFrameID)
@@ -66,7 +66,7 @@ public:
         , isNavigatingToAppBoundDomain(isNavigatingToAppBoundDomain)
         , hadMainFrameMainResourcePrivateRelayed(hadMainFrameMainResourcePrivateRelayed)
         , allowPrivacyProxy(allowPrivacyProxy)
-        , networkConnectionIntegrityPolicy(networkConnectionIntegrityPolicy)
+        , advancedPrivacyProtections(advancedPrivacyProtections)
     {
     }
     
@@ -95,7 +95,7 @@ public:
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
     bool hadMainFrameMainResourcePrivateRelayed { false };
     bool allowPrivacyProxy { true };
-    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
 };
 
 } // namespace WebKit

@@ -14,6 +14,7 @@ info: |
     ...
     `typeof` UnaryExpression
     ...
+features: [exponentiation]
 
 negative:
   phase: parse

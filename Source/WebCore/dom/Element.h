@@ -105,6 +105,14 @@ struct ShadowRootInit;
 using ElementName = NodeName;
 using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
 
+// https://drafts.csswg.org/css-contain/#relevant-to-the-user
+enum class ContentRelevancyStatus : uint8_t {
+    OnScreen = 1 << 0,
+    Focused = 1 << 1,
+    IsInTopLayer = 1 << 2,
+    // FIXME: add Selected (see https://bugs.webkit.org/show_bug.cgi?id=258194).
+};
+
 namespace Style {
 class Resolver;
 enum class Change : uint8_t;
@@ -197,7 +205,7 @@ public:
 
     void scrollBy(const ScrollToOptions&);
     void scrollBy(double x, double y);
-    virtual void scrollTo(const ScrollToOptions&, ScrollClamping = ScrollClamping::Clamped, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest);
+    virtual void scrollTo(const ScrollToOptions&, ScrollClamping = ScrollClamping::Clamped, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest, std::optional<FloatSize> originalScrollDelta = std::nullopt);
     void scrollTo(double x, double y);
 
     // These are only used by WebKitLegacy DOM API.
@@ -589,6 +597,7 @@ public:
     PopoverData* popoverData() const;
     PopoverData& ensurePopoverData();
     void clearPopoverData();
+    bool isPopoverShowing() const;
 
     ExceptionOr<void> setPointerCapture(int32_t);
     ExceptionOr<void> releasePointerCapture(int32_t);
@@ -726,6 +735,13 @@ public:
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap();
     ExplicitlySetAttrElementsMap* explicitlySetAttrElementsMapIfExists() const;
 
+    bool isRelevantToUser() const;
+
+    void contentVisibilityViewportChange(bool);
+
+    OptionSet<ContentRelevancyStatus> contentRelevancyStatus() const;
+    void setContentRelevancyStatus(OptionSet<ContentRelevancyStatus>);
+
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 
@@ -789,7 +805,7 @@ private:
     void updateId(const AtomString& oldId, const AtomString& newId, NotifyObservers = NotifyObservers::Yes);
     void updateIdForTreeScope(TreeScope&, const AtomString& oldId, const AtomString& newId, NotifyObservers = NotifyObservers::Yes);
 
-    enum HTMLDocumentNamedItemMapsUpdatingCondition { AlwaysUpdateHTMLDocumentNamedItemMaps, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute };
+    enum class HTMLDocumentNamedItemMapsUpdatingCondition : bool { Always, UpdateOnlyIfDiffersFromNameAttribute };
     void updateIdForDocument(HTMLDocument&, const AtomString& oldId, const AtomString& newId, HTMLDocumentNamedItemMapsUpdatingCondition);
 
     ExceptionOr<Node*> insertAdjacent(const String& where, Ref<Node>&& newChild);

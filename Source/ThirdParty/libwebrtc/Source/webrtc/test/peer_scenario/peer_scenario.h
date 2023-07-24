@@ -78,14 +78,14 @@ class PeerScenario {
                         std::vector<EmulatedNetworkNode*> send_link,
                         std::vector<EmulatedNetworkNode*> ret_link);
 
-  // Starts feeding the results of comparing captured frames from |send_track|
-  // with decoded frames on |receiver| to |analyzer|.
+  // Starts feeding the results of comparing captured frames from `send_track`
+  // with decoded frames on `receiver` to `analyzer`.
   // TODO(srte): Provide a way to detach to allow removal of tracks.
   void AttachVideoQualityAnalyzer(VideoQualityAnalyzer* analyzer,
                                   VideoTrackInterface* send_track,
                                   PeerScenarioClient* receiver);
 
-  // Waits on |event| while processing messages on the signaling thread.
+  // Waits on `event` while processing messages on the signaling thread.
   bool WaitAndProcess(std::atomic<bool>* event,
                       TimeDelta max_duration = TimeDelta::Seconds(5));
 

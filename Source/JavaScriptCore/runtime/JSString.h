@@ -93,10 +93,7 @@ JSString* asString(JSValue);
 // JSRopeString [   ID      ][  header  ][   1st fiber         xyz][  length  ][2nd lower32][2nd upper16][3rd lower16][3rd upper32]
 //                                                               ^
 //                                            x:(is8Bit),y:(isSubstring),z:(isRope) bit flags
-
-class alignas(16) JSString : public JSCell {
-    WTF_MAKE_NONCOPYABLE(JSString);
-    WTF_MAKE_NONMOVABLE(JSString);
+class JSString : public JSCell {
 public:
     friend class JIT;
     friend class VM;
@@ -111,16 +108,11 @@ public:
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212956
     // Do we really need InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero?
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212958
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesToThis | OverridesPut;
-
-    static constexpr uint8_t numberOfLowerTierCells = 0;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesPut;
 
     static constexpr bool needsDestruction = true;
-    static ALWAYS_INLINE void destroy(JSCell* cell)
-    {
-        static_cast<JSString*>(cell)->JSString::~JSString();
-    }
-    
+    static void destroy(JSCell*);
+
     // We specialize the string subspace to get the fastest possible sweep. This wouldn't be
     // necessary if JSString didn't have a destructor.
     template<typename, SubspaceAccess>
@@ -207,8 +199,6 @@ protected:
     DECLARE_DEFAULT_FINISH_CREATION;
 
 public:
-    ~JSString();
-
     Identifier toIdentifier(JSGlobalObject*) const;
     AtomString toAtomString(JSGlobalObject*) const;
     AtomString toExistingAtomString(JSGlobalObject*) const;
@@ -303,9 +293,9 @@ private:
 // from JSStringSubspace::
 class JSRopeString final : public JSString {
     friend class JSString;
-    WTF_MAKE_NONCOPYABLE(JSRopeString);
-    WTF_MAKE_NONMOVABLE(JSRopeString);
 public:
+    static void destroy(JSCell*);
+
     template<typename, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
@@ -608,12 +598,12 @@ public:
     // The rope value will remain a null string in that case.
     JS_EXPORT_PRIVATE const String& resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const;
 
-    template<typename Fibers, typename CharacterType>
-    static void resolveToBuffer(Fibers*, CharacterType* buffer, unsigned length);
+    template<typename CharacterType>
+    static void resolveToBuffer(JSString*, JSString*, JSString*, CharacterType* buffer, unsigned length, uint8_t* stackLimit);
 
 private:
-    template<typename Fibers, typename CharacterType>
-    static void resolveToBufferSlow(Fibers*, CharacterType* buffer, unsigned length);
+    template<typename CharacterType>
+    static void resolveToBufferSlow(JSString*, JSString*, JSString*, CharacterType* buffer, unsigned length, uint8_t* stackLimit);
 
     static JSRopeString* create(VM& vm, JSString* s1, JSString* s2)
     {
@@ -646,7 +636,7 @@ private:
     template<typename Function> const String& resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&&) const;
     JS_EXPORT_PRIVATE AtomString resolveRopeToAtomString(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE RefPtr<AtomStringImpl> resolveRopeToExistingAtomString(JSGlobalObject*) const;
-    template<typename CharacterType> void resolveRopeInternalNoSubstring(CharacterType*) const;
+    template<typename CharacterType> void resolveRopeInternalNoSubstring(CharacterType*, uint8_t* stackLimit) const;
     Identifier toIdentifier(JSGlobalObject*) const;
     void outOfMemory(JSGlobalObject* nullOrGlobalObjectForOOM) const;
     StringView unsafeView(JSGlobalObject*) const;

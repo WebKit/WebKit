@@ -568,8 +568,8 @@ angle::Result VertexDataManager::storeDynamicAttrib(const gl::Context *context,
     ANGLE_TRY(
         mFactory->getVertexSpaceRequired(context, attrib, binding, 1, 0, 0, &translated->stride));
 
-    size_t totalCount = gl::ComputeVertexBindingElementCount(binding.getDivisor(), count,
-                                                             static_cast<size_t>(instances));
+    size_t totalCount = gl::ComputeVertexBindingElementCount(
+        binding.getDivisor(), count, static_cast<size_t>(std::max(instances, 1)));
 
     ANGLE_TRY(mStreamingBuffer.storeDynamicAttribute(
         context, attrib, binding, translated->currentValueType, firstVertexIndex,

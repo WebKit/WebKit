@@ -245,8 +245,14 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
 
     const gl::TextureState &getState() const { return mState; }
 
+    void setContentsObservers(gl::TextureBufferContentsObservers *observers)
+    {
+        mBufferContentsObservers = observers;
+    }
+
   protected:
     const gl::TextureState &mState;
+    gl::TextureBufferContentsObservers *mBufferContentsObservers = nullptr;
 };
 
 }  // namespace rx

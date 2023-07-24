@@ -55,6 +55,7 @@ public:
     const WTF::URL& originalURL() const { return m_originalURL; }
     const DataTaskClient& client() const { return m_client.get(); }
     void setClient(Ref<DataTaskClient>&&);
+    void networkProcessCrashed();
 
 private:
     DataTask(WebKit::DataTaskIdentifier, WeakPtr<WebKit::WebPageProxy>&&, WTF::URL&&);

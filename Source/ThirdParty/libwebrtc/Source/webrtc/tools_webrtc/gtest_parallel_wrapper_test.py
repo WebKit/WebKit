@@ -146,7 +146,7 @@ class GtestParallelWrapperTest(unittest.TestCase):
           '--output_dir=' + output_dir, '--dump_json_test_results=SOME_DIR',
           'some_test', '--', '--test_artifacts_dir=' + expected_artifacts_dir,
           '--some_flag=some_value', '--another_flag',
-          '--isolated_script_test_perf_output=SOME_OTHER_DIR', '--foo=bar',
+          '--isolated-script-test-perf-output=SOME_OTHER_DIR', '--foo=bar',
           '--baz'
       ])
       self.assertEqual(result.gtest_parallel_args, expected)

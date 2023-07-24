@@ -67,18 +67,18 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
 }
 #endif
 
-static HashSet<MockRealtimeVideoSource*>& allMockRealtimeVideoSource()
+static ThreadSafeWeakHashSet<MockRealtimeVideoSource>& allMockRealtimeVideoSource()
 {
-    static MainThreadNeverDestroyed<HashSet<MockRealtimeVideoSource*>> videoSources;
+    static NeverDestroyed<ThreadSafeWeakHashSet<MockRealtimeVideoSource>> videoSources;
     return videoSources;
 }
 
 MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : RealtimeVideoCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Camera, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
     , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
-    , m_deviceOrientation { VideoFrame::Rotation::None }
+    , m_deviceOrientation { VideoFrameRotation::None }
 {
-    allMockRealtimeVideoSource().add(this);
+    allMockRealtimeVideoSource().add(*this);
 
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());
     ASSERT(device);
@@ -104,7 +104,7 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&&
 
 MockRealtimeVideoSource::~MockRealtimeVideoSource()
 {
-    allMockRealtimeVideoSource().remove(this);
+    allMockRealtimeVideoSource().remove(*this);
 }
 
 bool MockRealtimeVideoSource::supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
@@ -242,6 +242,11 @@ IntSize MockRealtimeVideoSource::captureSize() const
     return m_preset ? m_preset->size() : this->size();
 }
 
+VideoFrameRotation MockRealtimeVideoSource::videoFrameRotation() const
+{
+    return m_deviceOrientation;
+}
+
 void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
     m_currentSettings = std::nullopt;
@@ -287,7 +292,7 @@ void MockRealtimeVideoSource::drawAnimation(GraphicsContext& context)
 
     m_path.clear();
     m_path.moveTo(location);
-    m_path.addArc(location, radius, 0, 2 * piFloat, false);
+    m_path.addArc(location, radius, 0, 2 * piFloat, RotationDirection::Counterclockwise);
     m_path.closeSubpath();
     context.setFillColor(Color::white);
     context.setFillRule(WindRule::NonZero);
@@ -296,7 +301,7 @@ void MockRealtimeVideoSource::drawAnimation(GraphicsContext& context)
     float endAngle = piFloat * (((fmod(m_frameNumber, frameRate()) + 0.5) * (2.0 / frameRate())) + 1);
     m_path.clear();
     m_path.moveTo(location);
-    m_path.addArc(location, radius, 1.5 * piFloat, endAngle, false);
+    m_path.addArc(location, radius, 1.5 * piFloat, endAngle, RotationDirection::Counterclockwise);
     m_path.closeSubpath();
     context.setFillColor(Color::gray);
     context.setFillRule(WindRule::NonZero);
@@ -550,14 +555,14 @@ void MockRealtimeVideoSource::monitorOrientation(OrientationNotifier& notifier)
 
 void MockRealtimeVideoSource::setIsInterrupted(bool isInterrupted)
 {
-    for (auto* source : allMockRealtimeVideoSource()) {
-        if (!source->isProducingData())
+    for (auto& source : allMockRealtimeVideoSource()) {
+        if (!source.isProducingData())
             continue;
         if (isInterrupted)
-            source->m_emitFrameTimer.stop();
+            source.m_emitFrameTimer.stop();
         else
-            source->startCaptureTimer();
-        source->notifyMutedChange(isInterrupted);
+            source.startCaptureTimer();
+        source.notifyMutedChange(isInterrupted);
     }
 }
 

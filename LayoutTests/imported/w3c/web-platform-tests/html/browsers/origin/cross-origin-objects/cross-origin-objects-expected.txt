@@ -18,8 +18,8 @@ PASS proto setter |call| on cross-origin Window with null (function set __proto_
 PASS proto setter |call| on cross-origin Location with null (function set __proto__() {
     [native code]
 }, C)
-PASS proto setter |call| on cross-origin Window with null (function (p) { Object.setPrototypeOf(this, p); }, C)
-PASS proto setter |call| on cross-origin Location with null (function (p) { Object.setPrototypeOf(this, p); }, C)
+PASS proto setter |call| on cross-origin Window with null (function(p) { Object.setPrototypeOf(this, p); }, C)
+PASS proto setter |call| on cross-origin Location with null (function(p) { Object.setPrototypeOf(this, p); }, C)
 PASS [[SetPrototypeOf]] should return false (same-origin + document.domain)
 PASS proto setter |call| on cross-origin Window with null (function set __proto__() {
     [native code]
@@ -27,8 +27,8 @@ PASS proto setter |call| on cross-origin Window with null (function set __proto_
 PASS proto setter |call| on cross-origin Location with null (function set __proto__() {
     [native code]
 }, E)
-PASS proto setter |call| on cross-origin Window with null (function (p) { Object.setPrototypeOf(this, p); }, E)
-PASS proto setter |call| on cross-origin Location with null (function (p) { Object.setPrototypeOf(this, p); }, E)
+PASS proto setter |call| on cross-origin Window with null (function(p) { Object.setPrototypeOf(this, p); }, E)
+PASS proto setter |call| on cross-origin Location with null (function(p) { Object.setPrototypeOf(this, p); }, E)
 PASS [[SetPrototypeOf]] should return false (cross-site)
 PASS proto setter |call| on cross-origin Window with null (function set __proto__() {
     [native code]
@@ -36,8 +36,8 @@ PASS proto setter |call| on cross-origin Window with null (function set __proto_
 PASS proto setter |call| on cross-origin Location with null (function set __proto__() {
     [native code]
 }, G)
-PASS proto setter |call| on cross-origin Window with null (function (p) { Object.setPrototypeOf(this, p); }, G)
-PASS proto setter |call| on cross-origin Location with null (function (p) { Object.setPrototypeOf(this, p); }, G)
+PASS proto setter |call| on cross-origin Window with null (function(p) { Object.setPrototypeOf(this, p); }, G)
+PASS proto setter |call| on cross-origin Location with null (function(p) { Object.setPrototypeOf(this, p); }, G)
 PASS [[IsExtensible]] should return true for cross-origin objects (cross-origin)
 PASS [[IsExtensible]] should return true for cross-origin objects (same-origin + document.domain)
 PASS [[IsExtensible]] should return true for cross-origin objects (cross-site)

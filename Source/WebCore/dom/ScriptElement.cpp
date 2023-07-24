@@ -37,7 +37,6 @@
 #include "EventNames.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
 #include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "InlineClassicScript.h"
@@ -60,8 +59,6 @@
 #include "TextNodeTraversal.h"
 #include <JavaScriptCore/ImportMap.h>
 #include <wtf/Scope.h>
-#include <wtf/SortedArrayMap.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
 
 namespace WebCore {
@@ -108,61 +105,32 @@ void ScriptElement::handleAsyncAttribute()
     m_forceAsync = false;
 }
 
-static bool isLegacySupportedJavaScriptLanguage(const String& language)
-{
-    static constexpr ComparableLettersLiteral languageArray[] = {
-        "ecmascript",
-        "javascript",
-        "javascript1.0",
-        "javascript1.1",
-        "javascript1.2",
-        "javascript1.3",
-        "javascript1.4",
-        "javascript1.5",
-        "javascript1.6",
-        "javascript1.7",
-        "jscript",
-        "livescript",
-    };
-    static constexpr SortedArraySet languageSet { languageArray };
-    return languageSet.contains(language);
-}
-
 void ScriptElement::dispatchErrorEvent()
 {
     m_element.dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 // https://html.spec.whatwg.org/multipage/scripting.html#prepare-a-script
-std::optional<ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport supportLegacyTypes) const
+std::optional<ScriptType> ScriptElement::determineScriptType(const String& type, const String& language, bool isHTMLDocument)
 {
-    // FIXME: isLegacySupportedJavaScriptLanguage() is not valid HTML5. It is used here to maintain backwards compatibility with existing layout tests. The specific violations are:
-    // - Allowing type=javascript. type= should only support MIME types, such as text/javascript.
-    // - Allowing a different set of languages for language= and type=. language= supports Javascript 1.1 and 1.4-1.6, but type= does not.
-    String type = typeAttributeValue();
-    String language = languageAttributeValue();
     if (type.isNull()) {
         if (language.isEmpty())
-            return ScriptType::Classic; // Assume text/javascript.
-        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType("text/" + language))
             return ScriptType::Classic;
-        if (isLegacySupportedJavaScriptLanguage(language))
+        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType("text/" + language))
             return ScriptType::Classic;
         return std::nullopt;
     }
     if (type.isEmpty())
         return ScriptType::Classic; // Assume text/javascript.
 
-    if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.stripWhiteSpace()))
-        return ScriptType::Classic;
-    if (supportLegacyTypes == AllowLegacyTypeInTypeAttribute && isLegacySupportedJavaScriptLanguage(type))
+    if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.trim(isASCIIWhitespace)))
         return ScriptType::Classic;
 
     // FIXME: XHTML spec defines "defer" attribute. But WebKit does not implement it for a long time.
     // And module tag also uses defer attribute semantics. We disable script type="module" for non HTML document.
     // Once "defer" is implemented, we can reconsider enabling modules in XHTML.
     // https://bugs.webkit.org/show_bug.cgi?id=123387
-    if (!m_element.document().isHTMLDocument())
+    if (!isHTMLDocument)
         return std::nullopt;
 
     // https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type
@@ -178,8 +146,13 @@ std::optional<ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport s
     return std::nullopt;
 }
 
-// http://dev.w3.org/html5/spec/Overview.html#prepare-a-script
-bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, LegacyTypeSupport supportLegacyTypes)
+std::optional<ScriptType> ScriptElement::determineScriptType() const
+{
+    return determineScriptType(typeAttributeValue(), languageAttributeValue(), m_element.document().isHTMLDocument());
+}
+
+// https://html.spec.whatwg.org/multipage/scripting.html#prepare-the-script-element
+bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
 {
     if (m_alreadyStarted)
         return false;
@@ -202,7 +175,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
         return false;
 
     ScriptType scriptType = ScriptType::Classic;
-    if (std::optional<ScriptType> result = determineScriptType(supportLegacyTypes))
+    if (std::optional<ScriptType> result = determineScriptType())
         scriptType = result.value();
     else
         return false;
@@ -232,7 +205,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     if (!document.frame()->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript))
         return false;
 
-    if (scriptType == ScriptType::Classic && !isScriptForEventSupported())
+    if (scriptType == ScriptType::Classic && isScriptPreventedByAttributes())
         return false;
 
     // According to the spec, the module tag ignores the "charset" attribute as the same to the worker's
@@ -315,7 +288,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
 {
     ASSERT(m_element.isConnected());
     ASSERT(!m_loadableScript);
-    if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
+    if (!StringView(sourceURL).containsOnly<isASCIIWhitespace<UChar>>()) {
         auto script = LoadableClassicScript::create(m_element.nonce(), m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), fetchPriorityHint(),
             m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree(), hasAsyncAttribute());
 
@@ -354,7 +327,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         ASSERT(m_element.isConnected());
 
         String sourceURL = sourceAttributeValue();
-        if (stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
+        if (StringView(sourceURL).containsOnly<isASCIIWhitespace<UChar>>()) {
             dispatchErrorEvent();
             return false;
         }
@@ -399,7 +372,7 @@ bool ScriptElement::requestImportMap(LocalFrame& frame, const String& sourceURL)
 {
     ASSERT(m_element.isConnected());
     ASSERT(!m_loadableScript);
-    if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
+    if (!StringView(sourceURL).containsOnly<isASCIIWhitespace<UChar>>()) {
         auto script = LoadableImportMap::create(m_element.nonce(), m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(),
             m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), m_element.localName(), m_element.isInUserAgentShadowTree(), hasAsyncAttribute());
 
@@ -606,22 +579,6 @@ void ScriptElement::executePendingScript(PendingScript& pendingScript)
 bool ScriptElement::ignoresLoadRequest() const
 {
     return m_alreadyStarted || m_isExternalScript || m_parserInserted == ParserInserted::Yes || !m_element.isConnected();
-}
-
-bool ScriptElement::isScriptForEventSupported() const
-{
-    String eventAttribute = eventAttributeValue();
-    String forAttribute = forAttributeValue();
-    if (!eventAttribute.isNull() && !forAttribute.isNull()) {
-        forAttribute = stripLeadingAndTrailingHTMLSpaces(forAttribute);
-        if (!equalLettersIgnoringASCIICase(forAttribute, "window"_s))
-            return false;
-
-        eventAttribute = stripLeadingAndTrailingHTMLSpaces(eventAttribute);
-        if (!equalLettersIgnoringASCIICase(eventAttribute, "onload"_s) && !equalLettersIgnoringASCIICase(eventAttribute, "onload()"_s))
-            return false;
-    }
-    return true;
 }
 
 String ScriptElement::scriptContent() const

@@ -42,6 +42,10 @@
 #include <windows.h>
 #endif
 
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
+
 #include <string.h>
 #include <algorithm>
 #include <atomic>
@@ -332,7 +336,7 @@ size_t GetPageSize() {
 #elif defined(__wasm__) || defined(__asmjs__)
   return getpagesize();
 #else
-  return sysconf(_SC_PAGESIZE);
+  return static_cast<size_t>(sysconf(_SC_PAGESIZE));
 #endif
 }
 
@@ -550,7 +554,7 @@ static void *DoAllocWithArena(size_t request, LowLevelAlloc::Arena *arena) {
       size_t new_pages_size = RoundUp(req_rnd, arena->pagesize * 16);
       void *new_pages;
 #ifdef _WIN32
-      new_pages = VirtualAlloc(0, new_pages_size,
+      new_pages = VirtualAlloc(nullptr, new_pages_size,
                                MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
       ABSL_RAW_CHECK(new_pages != nullptr, "VirtualAlloc failed");
 #else
@@ -570,6 +574,18 @@ static void *DoAllocWithArena(size_t request, LowLevelAlloc::Arena *arena) {
         ABSL_RAW_LOG(FATAL, "mmap error: %d", errno);
       }
 
+#ifdef __linux__
+#if defined(PR_SET_VMA) && defined(PR_SET_VMA_ANON_NAME)
+      // Attempt to name the allocated address range in /proc/$PID/smaps on
+      // Linux.
+      //
+      // This invocation of prctl() may fail if the Linux kernel was not
+      // configured with the CONFIG_ANON_VMA_NAME option.  This is OK since
+      // the naming of arenas is primarily a debugging aid.
+      prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME, new_pages, new_pages_size,
+            "absl");
+#endif
+#endif  // __linux__
 #endif  // _WIN32
       arena->mu.Lock();
       s = reinterpret_cast<AllocList *>(new_pages);

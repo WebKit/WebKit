@@ -28,7 +28,6 @@
 
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLPlugInElement.h"
 #include "RenderElement.h"
 #include "Settings.h"
@@ -277,7 +276,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
 
 AtomString YouTubePluginReplacement::youTubeURL(const AtomString& srcString)
 {
-    URL srcURL = m_parentElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(srcString));
+    URL srcURL = m_parentElement->document().completeURL(srcString);
     return youTubeURLFromAbsoluteURL(srcURL, srcString);
 }
 

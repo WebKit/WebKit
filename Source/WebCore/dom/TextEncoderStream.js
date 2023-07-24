@@ -56,9 +56,11 @@ function initializeTextEncoderStream()
         return @Promise.@resolve();
     };
 
-    const transform = @createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm);
+    const [transform, readable, writable] = @createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm);
     @putByIdDirectPrivate(this, "textEncoderStreamTransform", transform);
     @putByIdDirectPrivate(this, "textEncoderStreamEncoder", new @TextEncoderStreamEncoder());
+    @putByIdDirectPrivate(this, "readable", readable);
+    @putByIdDirectPrivate(this, "writable", writable);
 
     return this;
 }
@@ -83,7 +85,7 @@ function readable()
     if (!transform)
         throw @makeThisTypeError("TextEncoderStream", "readable");
 
-    return @getByIdDirectPrivate(transform, "readable");
+    return @getByIdDirectPrivate(this, "readable");
 }
 
 @getter
@@ -95,5 +97,5 @@ function writable()
     if (!transform)
         throw @makeThisTypeError("TextEncoderStream", "writable");
 
-    return @getByIdDirectPrivate(transform, "writable");
+    return @getByIdDirectPrivate(this, "writable");
 }

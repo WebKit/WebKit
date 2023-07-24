@@ -337,7 +337,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     , m_hasTransformedAncestor(false)
     , m_has3DTransformedAncestor(false)
     , m_insideSVGForeignObject(false)
-    , m_shouldPaintUsingCompositeCopy(false)
     , m_indirectCompositingReason(static_cast<unsigned>(IndirectCompositingReason::None))
     , m_viewportConstrainedNotCompositedReason(NoNotCompositedReason)
 #if ASSERT_ENABLED
@@ -884,7 +883,12 @@ bool RenderLayer::canRender3DTransforms() const
 
 bool RenderLayer::paintsWithFilters() const
 {
-    if (!renderer().hasFilter())
+    if (!hasFilter())
+        return false;
+
+    // The SVG rendering codepath should've already applied the filter to the SVG root,
+    // so do not apply the filter again.
+    if (renderer().isSVGRootOrLegacySVGRoot())
         return false;
 
     if (RenderLayerFilters::isIdentity(renderer()))
@@ -1654,6 +1658,9 @@ bool RenderLayer::computeHasVisibleContent() const
     if (renderer().document().settings().layerBasedSVGEngineEnabled() && lineageOfType<RenderSVGHiddenContainer>(renderer()).first())
         return false;
 #endif
+    if (m_isHiddenByOverflowTruncation)
+        return false;
+
     if (renderer().style().visibility() == Visibility::Visible)
         return true;
 
@@ -3098,7 +3105,7 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
 
     if (is<ReferencePathOperation>(style.clipPath())) {
         auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*style.clipPath());
-        if (auto* clipperRenderer = renderer().ensureReferencedSVGResources().referencedClipperRenderer(renderer().document(), referenceClipPathOperation)) {
+        if (auto* clipperRenderer = renderer().ensureReferencedSVGResources().referencedClipperRenderer(renderer().treeScopeForSVGReferences(), referenceClipPathOperation)) {
             // Use the border box as the reference box, even though this is not clearly specified: https://github.com/w3c/csswg-drafts/issues/5786.
             // clippedContentBounds is used as the reference box for inlines, which is also poorly specified: https://github.com/w3c/csswg-drafts/issues/6383.
             auto referenceBox = referenceBoxRectForClipPath(CSSBoxType::BorderBox, offsetFromRoot, clippedContentBounds);
@@ -3453,7 +3460,7 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
     if (layerIterator.begin() == layerIterator.end())
         return;
 
-    if (!hasSelfPaintingLayerDescendant() || renderer().shouldSkipContent())
+    if (!hasSelfPaintingLayerDescendant() || renderer().isSkippedContentRoot())
         return;
 
 #if ASSERT_ENABLED
@@ -5258,6 +5265,13 @@ void RenderLayer::updateSelfPaintingLayer()
     else {
         parent()->dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
         clearRepaintRects();
+        auto updateFloatBoxShouldPaintIfApplicable = [&] {
+            auto* renderBox = this->renderBox();
+            if (!renderBox || !renderBox->isFloating())
+                return;
+            renderBox->updateFloatPainterAfterSelfPaintingLayerChange();
+        };
+        updateFloatBoxShouldPaintIfApplicable();
     }
 }
 
@@ -5285,7 +5299,7 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
             if (renderer.style().effectiveUserSelect() != UserSelect::None)
                 request.setHasPaintedContent();
 
-            if (!renderText.text().isAllSpecialCharacters<isASCIIWhitespace>())
+            if (!renderText.text().containsOnly<isASCIIWhitespace>())
                 request.setHasPaintedContent();
 
             if (request.isSatisfied())
@@ -5406,7 +5420,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
         // Visibility and scrollability are input to canUseCompositedScrolling().
         if (m_scrollableArea) {
             if (visibilityChanged || oldStyle->isOverflowVisible() != renderer().style().isOverflowVisible())
-                m_scrollableArea->computeHasCompositedScrollableOverflow(LayoutUpToDate::No);
+                m_scrollableArea->computeHasCompositedScrollableOverflow(diff <= StyleDifference::RepaintLayer ? LayoutUpToDate::Yes : LayoutUpToDate::No);
         }
     }
 
@@ -5560,14 +5574,13 @@ void RenderLayer::clearLayerScrollableArea()
 
 void RenderLayer::updateFiltersAfterStyleChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    if (!hasFilter()) {
+    if (!paintsWithFilters()) {
         clearLayerFilters();
         return;
     }
 
-    // Add the filter as a client to this renderer, unless we are a RenderLayer accommodating
-    // an SVG. In that case it takes care of its own resource management for filters.
-    if (renderer().style().filter().hasReferenceFilter() && !renderer().isSVGRootOrLegacySVGRoot()) {
+    // Add the filter as a client to this renderer.
+    if (renderer().style().filter().hasReferenceFilter()) {
         ensureLayerFilters();
         m_filters->updateReferenceFilterClients(renderer().style().filter());
     } else if (m_filters)
@@ -5613,7 +5626,7 @@ void RenderLayer::updateFilterPaintingStrategy()
         if (!renderer().style().filter().hasReferenceFilter())
             return;
     }
-    
+
     ensureLayerFilters();
     m_filters->setPreferredFilterRenderingModes(renderer().page().preferredFilterRenderingModes());
     m_filters->setFilterScale({ page().deviceScaleFactor(), page().deviceScaleFactor() });

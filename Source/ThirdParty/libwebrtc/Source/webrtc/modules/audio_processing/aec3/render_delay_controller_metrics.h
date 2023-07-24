@@ -29,12 +29,8 @@ class RenderDelayControllerMetrics {
 
   // Updates the metric with new data.
   void Update(absl::optional<size_t> delay_samples,
-              size_t buffer_delay_blocks,
-              absl::optional<int> skew_shift_blocks,
+              absl::optional<size_t> buffer_delay_blocks,
               ClockdriftDetector::Level clockdrift);
-
-  // Returns true if the metrics have just been reported, otherwise false.
-  bool MetricsReported() { return metrics_reported_; }
 
  private:
   // Resets the metrics.
@@ -44,11 +40,8 @@ class RenderDelayControllerMetrics {
   int reliable_delay_estimate_counter_ = 0;
   int delay_change_counter_ = 0;
   int call_counter_ = 0;
-  int skew_report_timer_ = 0;
   int initial_call_counter_ = 0;
-  bool metrics_reported_ = false;
   bool initial_update = true;
-  int skew_shift_count_ = 0;
 };
 
 }  // namespace webrtc

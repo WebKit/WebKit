@@ -214,4 +214,17 @@ void UIScriptControllerGtk::setWebViewEditable(bool editable)
     WKViewSetEditable(webView, editable);
 }
 
+void UIScriptControllerGtk::zoomToScale(double scale, JSValueRef callback)
+{
+    auto page = TestController::singleton().mainWebView()->page();
+    WKPageSetScaleFactor(page, scale, WKPointMake(0, 0));
+    doAsyncTask(callback);
+}
+
+double UIScriptControllerGtk::zoomScale() const
+{
+    auto page = TestController::singleton().mainWebView()->page();
+    return WKPageGetScaleFactor(page);
+}
+
 } // namespace WTR

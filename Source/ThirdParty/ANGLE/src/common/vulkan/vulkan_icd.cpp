@@ -50,7 +50,12 @@ namespace
 [[maybe_unused]] const std::string WrapICDEnvironment(const char *icdEnvironment)
 {
     // The libraries are bundled into the module directory
-    std::string ret = ConcatenatePath(angle::GetModuleDirectory(), icdEnvironment);
+    std::string moduleDir = angle::GetModuleDirectory();
+    std::string ret       = ConcatenatePath(moduleDir, icdEnvironment);
+#if defined(ANGLE_PLATFORM_MACOS)
+    std::string moduleDirWithLibraries = ConcatenatePath(moduleDir, "Libraries");
+    ret += ":" + ConcatenatePath(moduleDirWithLibraries, icdEnvironment);
+#endif
     return ret;
 }
 

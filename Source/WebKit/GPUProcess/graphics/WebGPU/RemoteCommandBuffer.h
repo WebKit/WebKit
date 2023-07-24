@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class CommandBuffer;
 }
 
@@ -49,7 +49,7 @@ class ObjectHeap;
 class RemoteCommandBuffer final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteCommandBuffer> create(PAL::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteCommandBuffer> create(WebCore::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteCommandBuffer(commandBuffer, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -61,21 +61,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteCommandBuffer(PAL::WebGPU::CommandBuffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteCommandBuffer(WebCore::WebGPU::CommandBuffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteCommandBuffer(const RemoteCommandBuffer&) = delete;
     RemoteCommandBuffer(RemoteCommandBuffer&&) = delete;
     RemoteCommandBuffer& operator=(const RemoteCommandBuffer&) = delete;
     RemoteCommandBuffer& operator=(RemoteCommandBuffer&&) = delete;
 
-    PAL::WebGPU::CommandBuffer& backing() { return m_backing; }
+    WebCore::WebGPU::CommandBuffer& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    Ref<PAL::WebGPU::CommandBuffer> m_backing;
+    Ref<WebCore::WebGPU::CommandBuffer> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

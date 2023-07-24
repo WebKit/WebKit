@@ -21,15 +21,21 @@
 #include "api/video/video_adaptation_reason.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_codec_type.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/video_codec.h"
-#include "api/video_codecs/video_encoder_config.h"
 #include "rtc_base/fake_clock.h"
 #include "system_wrappers/include/metrics.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/scoped_key_value_config.h"
+#include "video/config/video_encoder_config.h"
+#include "video/video_stream_encoder_observer.h"
 
 namespace webrtc {
 namespace {
+
+using ::testing::Optional;
+
 const uint32_t kFirstSsrc = 17;
 const uint32_t kSecondSsrc = 42;
 const uint32_t kFirstRtxSsrc = 18;
@@ -163,15 +169,13 @@ class SendStatisticsProxyTest : public ::testing::Test {
       EXPECT_EQ(a.report_block_data.has_value(),
                 b.report_block_data.has_value());
       if (a.report_block_data.has_value()) {
-        const RTCPReportBlock& a_rtcp_stats =
-            a.report_block_data->report_block();
-        const RTCPReportBlock& b_rtcp_stats =
-            b.report_block_data->report_block();
-        EXPECT_EQ(a_rtcp_stats.fraction_lost, b_rtcp_stats.fraction_lost);
-        EXPECT_EQ(a_rtcp_stats.packets_lost, b_rtcp_stats.packets_lost);
-        EXPECT_EQ(a_rtcp_stats.extended_highest_sequence_number,
-                  b_rtcp_stats.extended_highest_sequence_number);
-        EXPECT_EQ(a_rtcp_stats.jitter, b_rtcp_stats.jitter);
+        EXPECT_EQ(a.report_block_data->fraction_lost_raw(),
+                  b.report_block_data->fraction_lost_raw());
+        EXPECT_EQ(a.report_block_data->cumulative_lost(),
+                  b.report_block_data->cumulative_lost());
+        EXPECT_EQ(a.report_block_data->extended_highest_sequence_number(),
+                  b.report_block_data->extended_highest_sequence_number());
+        EXPECT_EQ(a.report_block_data->jitter(), b.report_block_data->jitter());
       }
     }
   }
@@ -188,14 +192,14 @@ TEST_F(SendStatisticsProxyTest, ReportBlockDataObserver) {
   for (uint32_t ssrc : config_.rtp.ssrcs) {
     // Add statistics with some arbitrary, but unique, numbers.
     uint32_t offset = ssrc * 4;
-    RTCPReportBlock report_block;
-    report_block.source_ssrc = ssrc;
-    report_block.packets_lost = offset;
-    report_block.extended_highest_sequence_number = offset + 1;
-    report_block.fraction_lost = offset + 2;
-    report_block.jitter = offset + 3;
+    rtcp::ReportBlock report_block;
+    report_block.SetMediaSsrc(ssrc);
+    report_block.SetCumulativeLost(offset);
+    report_block.SetExtHighestSeqNum(offset + 1);
+    report_block.SetFractionLost(offset + 2);
+    report_block.SetJitter(offset + 3);
     ReportBlockData data;
-    data.SetReportBlock(report_block, 0);
+    data.SetReportBlock(/*sender_ssrc=*/0, report_block, Timestamp::Zero());
     expected_.substreams[ssrc].report_block_data = data;
 
     callback->OnReportBlockDataUpdated(data);
@@ -203,14 +207,14 @@ TEST_F(SendStatisticsProxyTest, ReportBlockDataObserver) {
   for (uint32_t ssrc : config_.rtp.rtx.ssrcs) {
     // Add statistics with some arbitrary, but unique, numbers.
     uint32_t offset = ssrc * 4;
-    RTCPReportBlock report_block;
-    report_block.source_ssrc = ssrc;
-    report_block.packets_lost = offset;
-    report_block.extended_highest_sequence_number = offset + 1;
-    report_block.fraction_lost = offset + 2;
-    report_block.jitter = offset + 3;
+    rtcp::ReportBlock report_block;
+    report_block.SetMediaSsrc(ssrc);
+    report_block.SetCumulativeLost(offset);
+    report_block.SetExtHighestSeqNum(offset + 1);
+    report_block.SetFractionLost(offset + 2);
+    report_block.SetJitter(offset + 3);
     ReportBlockData data;
-    data.SetReportBlock(report_block, 0);
+    data.SetReportBlock(/*sender_ssrc=*/0, report_block, Timestamp::Zero());
     expected_.substreams[ssrc].report_block_data = data;
 
     callback->OnReportBlockDataUpdated(data);
@@ -322,26 +326,18 @@ TEST_F(SendStatisticsProxyTest, SendSideDelay) {
     // stream.
     int avg_delay_ms = ssrc;
     int max_delay_ms = ssrc + 1;
-    uint64_t total_packet_send_delay_ms = ssrc + 2;
-    observer->SendSideDelayUpdated(avg_delay_ms, max_delay_ms,
-                                   total_packet_send_delay_ms, ssrc);
+    observer->SendSideDelayUpdated(avg_delay_ms, max_delay_ms, ssrc);
     expected_.substreams[ssrc].avg_delay_ms = avg_delay_ms;
     expected_.substreams[ssrc].max_delay_ms = max_delay_ms;
-    expected_.substreams[ssrc].total_packet_send_delay_ms =
-        total_packet_send_delay_ms;
   }
   for (const auto& ssrc : config_.rtp.rtx.ssrcs) {
     // Use ssrc as avg_delay_ms and max_delay_ms to get a unique value for each
     // stream.
     int avg_delay_ms = ssrc;
     int max_delay_ms = ssrc + 1;
-    uint64_t total_packet_send_delay_ms = ssrc + 2;
-    observer->SendSideDelayUpdated(avg_delay_ms, max_delay_ms,
-                                   total_packet_send_delay_ms, ssrc);
+    observer->SendSideDelayUpdated(avg_delay_ms, max_delay_ms, ssrc);
     expected_.substreams[ssrc].avg_delay_ms = avg_delay_ms;
     expected_.substreams[ssrc].max_delay_ms = max_delay_ms;
-    expected_.substreams[ssrc].total_packet_send_delay_ms =
-        total_packet_send_delay_ms;
   }
   VideoSendStream::Stats stats = statistics_proxy_->GetStats();
   ExpectEqual(expected_, stats);
@@ -401,6 +397,34 @@ TEST_F(SendStatisticsProxyTest, OnSendEncodedImageWithoutQpQpSumWontExist) {
   statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
   EXPECT_EQ(absl::nullopt,
             statistics_proxy_->GetStats().substreams[ssrc].qp_sum);
+}
+
+TEST_F(SendStatisticsProxyTest,
+       OnSendEncodedImageSetsScalabilityModeOfCurrentLayer) {
+  EncodedImage encoded_image;
+  CodecSpecificInfo codec_info;
+  ScalabilityMode layer0_mode = ScalabilityMode::kL1T1;
+  ScalabilityMode layer1_mode = ScalabilityMode::kL1T3;
+  auto ssrc0 = config_.rtp.ssrcs[0];
+  auto ssrc1 = config_.rtp.ssrcs[1];
+  EXPECT_EQ(absl::nullopt,
+            statistics_proxy_->GetStats().substreams[ssrc0].scalability_mode);
+  EXPECT_EQ(absl::nullopt,
+            statistics_proxy_->GetStats().substreams[ssrc1].scalability_mode);
+  encoded_image.SetSimulcastIndex(0);
+  codec_info.scalability_mode = layer0_mode;
+  statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
+  EXPECT_THAT(statistics_proxy_->GetStats().substreams[ssrc0].scalability_mode,
+              layer0_mode);
+  EXPECT_EQ(absl::nullopt,
+            statistics_proxy_->GetStats().substreams[ssrc1].scalability_mode);
+  encoded_image.SetSimulcastIndex(1);
+  codec_info.scalability_mode = layer1_mode;
+  statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
+  EXPECT_THAT(statistics_proxy_->GetStats().substreams[ssrc0].scalability_mode,
+              layer0_mode);
+  EXPECT_THAT(statistics_proxy_->GetStats().substreams[ssrc1].scalability_mode,
+              layer1_mode);
 }
 
 TEST_F(SendStatisticsProxyTest, TotalEncodedBytesTargetFirstFrame) {
@@ -492,9 +516,9 @@ TEST_F(SendStatisticsProxyTest, EncodeFrameRateInSubStreamsVp8Simulcast) {
   for (int i = 0; i < 10; ++i) {
     encoded_image.SetTimestamp(encoded_image.Timestamp() +
                                90 * kInterframeDelayMs);
-    encoded_image.SetSpatialIndex(0);
+    encoded_image.SetSimulcastIndex(0);
     statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
-    encoded_image.SetSpatialIndex(1);
+    encoded_image.SetSimulcastIndex(1);
     statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
     fake_clock_.AdvanceTimeMilliseconds(kInterframeDelayMs);
     fake_global_clock.SetTime(
@@ -510,7 +534,7 @@ TEST_F(SendStatisticsProxyTest, EncodeFrameRateInSubStreamsVp8Simulcast) {
   for (int i = 0; i < 10; ++i) {
     encoded_image.SetTimestamp(encoded_image.Timestamp() +
                                90 * kInterframeDelayMs);
-    encoded_image.SetSpatialIndex(0);
+    encoded_image.SetSimulcastIndex(0);
     statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
     fake_clock_.AdvanceTimeMilliseconds(kInterframeDelayMs);
     fake_global_clock.SetTime(
@@ -526,9 +550,9 @@ TEST_F(SendStatisticsProxyTest, EncodeFrameRateInSubStreamsVp8Simulcast) {
   for (int i = 0; i < 10; ++i) {
     encoded_image.SetTimestamp(encoded_image.Timestamp() +
                                90 * kInterframeDelayMs);
-    encoded_image.SetSpatialIndex(0);
+    encoded_image.SetSimulcastIndex(0);
     statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
-    encoded_image.SetSpatialIndex(1);
+    encoded_image.SetSimulcastIndex(1);
     statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
     fake_clock_.AdvanceTimeMilliseconds(kInterframeDelayMs);
     fake_global_clock.SetTime(
@@ -1909,10 +1933,10 @@ TEST_F(SendStatisticsProxyTest, VerifyQpHistogramStats_Vp8) {
   codec_info.codecType = kVideoCodecVP8;
 
   for (int i = 0; i < SendStatisticsProxy::kMinRequiredMetricsSamples; ++i) {
-    encoded_image.SetSpatialIndex(0);
+    encoded_image.SetSimulcastIndex(0);
     encoded_image.qp_ = kQpIdx0;
     statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
-    encoded_image.SetSpatialIndex(1);
+    encoded_image.SetSimulcastIndex(1);
     encoded_image.qp_ = kQpIdx1;
     statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
   }
@@ -1938,7 +1962,7 @@ TEST_F(SendStatisticsProxyTest, VerifyQpHistogramStats_Vp8OneSsrc) {
   codec_info.codecType = kVideoCodecVP8;
 
   for (int i = 0; i < SendStatisticsProxy::kMinRequiredMetricsSamples; ++i) {
-    encoded_image.SetSpatialIndex(0);
+    encoded_image.SetSimulcastIndex(0);
     encoded_image.qp_ = kQpIdx0;
     statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
   }
@@ -1948,7 +1972,7 @@ TEST_F(SendStatisticsProxyTest, VerifyQpHistogramStats_Vp8OneSsrc) {
                    metrics::NumEvents("WebRTC.Video.Encoded.Qp.Vp8", kQpIdx0));
 }
 
-TEST_F(SendStatisticsProxyTest, VerifyQpHistogramStats_Vp9) {
+TEST_F(SendStatisticsProxyTest, VerifyQpHistogramStats_Vp9Svc) {
   EncodedImage encoded_image;
   CodecSpecificInfo codec_info;
   codec_info.codecType = kVideoCodecVP9;
@@ -2000,10 +2024,10 @@ TEST_F(SendStatisticsProxyTest, VerifyQpHistogramStats_H264) {
   codec_info.codecType = kVideoCodecH264;
 
   for (int i = 0; i < SendStatisticsProxy::kMinRequiredMetricsSamples; ++i) {
-    encoded_image.SetSpatialIndex(0);
+    encoded_image.SetSimulcastIndex(0);
     encoded_image.qp_ = kQpIdx0;
     statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
-    encoded_image.SetSpatialIndex(1);
+    encoded_image.SetSimulcastIndex(1);
     encoded_image.qp_ = kQpIdx1;
     statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
   }
@@ -2146,7 +2170,7 @@ TEST_F(SendStatisticsProxyTest,
   statistics_proxy_->UpdateAdaptationSettings(kFramerateScalingDisabled,
                                               kScalingDisabled);
   EncodedImage encoded_image;
-  encoded_image.SetSpatialIndex(0);
+  encoded_image.SetSimulcastIndex(0);
   for (int i = 0; i < SendStatisticsProxy::kMinRequiredMetricsSamples; ++i)
     statistics_proxy_->OnSendEncodedImage(encoded_image, &kDefaultCodecInfo);
 
@@ -2162,7 +2186,7 @@ TEST_F(SendStatisticsProxyTest,
        QualityLimitedHistogramsUpdatedWhenEnabled_NoResolutionDownscale) {
   statistics_proxy_->UpdateAdaptationSettings(kScalingEnabled, kScalingEnabled);
   EncodedImage encoded_image;
-  encoded_image.SetSpatialIndex(0);
+  encoded_image.SetSimulcastIndex(0);
   for (int i = 0; i < SendStatisticsProxy::kMinRequiredMetricsSamples; ++i)
     statistics_proxy_->OnSendEncodedImage(encoded_image, &kDefaultCodecInfo);
 
@@ -2187,7 +2211,7 @@ TEST_F(SendStatisticsProxyTest,
   statistics_proxy_->OnAdaptationChanged(VideoAdaptationReason::kQuality,
                                          cpu_counts, quality_counts);
   EncodedImage encoded_image;
-  encoded_image.SetSpatialIndex(0);
+  encoded_image.SetSimulcastIndex(0);
   for (int i = 0; i < SendStatisticsProxy::kMinRequiredMetricsSamples; ++i)
     statistics_proxy_->OnSendEncodedImage(encoded_image, &kDefaultCodecInfo);
   // Histograms are updated when the statistics_proxy_ is deleted.
@@ -2285,10 +2309,10 @@ TEST_F(SendStatisticsProxyTest, NoSubstreams) {
       1;
   // From ReportBlockDataObserver.
   ReportBlockDataObserver* rtcp_callback = statistics_proxy_.get();
-  RTCPReportBlock report_block;
-  report_block.source_ssrc = excluded_ssrc;
+  rtcp::ReportBlock report_block;
+  report_block.SetMediaSsrc(excluded_ssrc);
   ReportBlockData data;
-  data.SetReportBlock(report_block, 0);
+  data.SetReportBlock(0, report_block, Timestamp::Zero());
   rtcp_callback->OnReportBlockDataUpdated(data);
 
   // From BitrateStatisticsObserver.
@@ -2313,13 +2337,13 @@ TEST_F(SendStatisticsProxyTest, EncodedResolutionTimesOut) {
   EncodedImage encoded_image;
   encoded_image._encodedWidth = kEncodedWidth;
   encoded_image._encodedHeight = kEncodedHeight;
-  encoded_image.SetSpatialIndex(0);
+  encoded_image.SetSimulcastIndex(0);
 
   CodecSpecificInfo codec_info;
   codec_info.codecType = kVideoCodecVP8;
 
   statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
-  encoded_image.SetSpatialIndex(1);
+  encoded_image.SetSimulcastIndex(1);
   statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
 
   VideoSendStream::Stats stats = statistics_proxy_->GetStats();
@@ -2337,10 +2361,10 @@ TEST_F(SendStatisticsProxyTest, EncodedResolutionTimesOut) {
   // Update the first SSRC with bogus RTCP stats to make sure that encoded
   // resolution still times out (no global timeout for all stats).
   ReportBlockDataObserver* rtcp_callback = statistics_proxy_.get();
-  RTCPReportBlock report_block;
-  report_block.source_ssrc = config_.rtp.ssrcs[0];
+  rtcp::ReportBlock report_block;
+  report_block.SetMediaSsrc(config_.rtp.ssrcs[0]);
   ReportBlockData data;
-  data.SetReportBlock(report_block, 0);
+  data.SetReportBlock(0, report_block, Timestamp::Zero());
   rtcp_callback->OnReportBlockDataUpdated(data);
 
   // Report stats for second SSRC to make sure it's not outdated along with the
@@ -2363,13 +2387,13 @@ TEST_F(SendStatisticsProxyTest, ClearsResolutionFromInactiveSsrcs) {
   EncodedImage encoded_image;
   encoded_image._encodedWidth = kEncodedWidth;
   encoded_image._encodedHeight = kEncodedHeight;
-  encoded_image.SetSpatialIndex(0);
+  encoded_image.SetSimulcastIndex(0);
 
   CodecSpecificInfo codec_info;
   codec_info.codecType = kVideoCodecVP8;
 
   statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
-  encoded_image.SetSpatialIndex(1);
+  encoded_image.SetSimulcastIndex(1);
   statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
 
   statistics_proxy_->OnInactiveSsrc(config_.rtp.ssrcs[1]);
@@ -2819,8 +2843,13 @@ TEST_F(SendStatisticsProxyTest, FecBitrateNotReportedWhenNotEnabled) {
 
 TEST_F(SendStatisticsProxyTest, GetStatsReportsEncoderImplementationName) {
   const std::string kName = "encoderName";
-  statistics_proxy_->OnEncoderImplementationChanged(kName);
+  statistics_proxy_->OnEncoderImplementationChanged(EncoderImplementation{
+      .name = kName,
+      .is_hardware_accelerated = true,
+  });
   EXPECT_EQ(kName, statistics_proxy_->GetStats().encoder_implementation_name);
+  EXPECT_THAT(statistics_proxy_->GetStats().power_efficient_encoder,
+              ::testing::IsTrue());
 }
 
 TEST_F(SendStatisticsProxyTest, Vp9SvcLowSpatialLayerDoesNotUpdateResolution) {
@@ -2868,14 +2897,15 @@ class ForcedFallbackTest : public SendStatisticsProxyTest {
     codec_info_.codecSpecific.VP8.temporalIdx = 0;
     encoded_image_._encodedWidth = kWidth;
     encoded_image_._encodedHeight = kHeight;
-    encoded_image_.SetSpatialIndex(0);
+    encoded_image_.SetSimulcastIndex(0);
   }
 
   ~ForcedFallbackTest() override {}
 
  protected:
   void InsertEncodedFrames(int num_frames, int interval_ms) {
-    statistics_proxy_->OnEncoderImplementationChanged(codec_name_);
+    statistics_proxy_->OnEncoderImplementationChanged(
+        {.name = codec_name_, .is_hardware_accelerated = false});
 
     // First frame is not updating stats, insert initial frame.
     if (statistics_proxy_->GetStats().frames_encoded == 0) {
@@ -2955,7 +2985,7 @@ TEST_F(ForcedFallbackEnabled, StatsNotUpdatedForTemporalLayers) {
 }
 
 TEST_F(ForcedFallbackEnabled, StatsNotUpdatedForSimulcast) {
-  encoded_image_.SetSpatialIndex(1);
+  encoded_image_.SetSimulcastIndex(1);
   InsertEncodedFrames(kMinFrames, kFrameIntervalMs);
   statistics_proxy_.reset();
   EXPECT_METRIC_EQ(0,

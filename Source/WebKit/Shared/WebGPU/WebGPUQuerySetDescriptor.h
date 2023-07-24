@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,16 +28,16 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUQueryType.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUQueryType.h>
 #include <wtf/Vector.h>
 
 namespace WebKit::WebGPU {
 
 struct QuerySetDescriptor : public ObjectDescriptorBase {
-    PAL::WebGPU::QueryType type { PAL::WebGPU::QueryType::Occlusion };
-    PAL::WebGPU::Size32 count { 0 };
+    WebCore::WebGPU::QueryType type { WebCore::WebGPU::QueryType::Occlusion };
+    WebCore::WebGPU::Size32 count { 0 };
 };
 
 } // namespace WebKit::WebGPU

@@ -147,7 +147,7 @@ inline void ElementRuleCollector::addElementStyleProperties(const StylePropertie
     if (!isCacheable)
         m_result->isCacheable = false;
 
-    auto matchedProperty = MatchedProperties { propertySet };
+    auto matchedProperty = MatchedProperties { *propertySet };
     matchedProperty.cascadeLayerPriority = priority;
     matchedProperty.fromStyleAttribute = fromStyleAttribute;
     addMatchedProperties(WTFMove(matchedProperty), DeclarationOrigin::Author);
@@ -262,7 +262,7 @@ void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOri
         }
 
         addMatchedProperties({
-            &matchedRule.ruleData->styleRule().properties(),
+            matchedRule.ruleData->styleRule().properties(),
             static_cast<uint8_t>(matchedRule.ruleData->linkMatchType()),
             matchedRule.ruleData->propertyAllowlist(),
             matchedRule.styleScopeOrdinal,
@@ -611,7 +611,7 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
             auto result = downcast<HTMLElement>(styledElement).directionalityIfDirIsAuto();
             auto& properties = result.value_or(TextDirection::LTR) == TextDirection::LTR ? leftToRightDeclaration() : rightToLeftDeclaration();
             if (result)
-                addMatchedProperties({ &properties }, DeclarationOrigin::Author);
+                addMatchedProperties({ properties }, DeclarationOrigin::Author);
         }
     }
     
@@ -663,10 +663,7 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
         if (!m_result->isCacheable)
             return false;
 
-        if (matchedProperties.styleScopeOrdinal != ScopeOrdinal::Element)
-            return false;
-
-        for (auto current : *matchedProperties.properties) {
+        for (auto current : matchedProperties.properties.get()) {
             // Currently the property cache only copy the non-inherited values and resolve
             // the inherited ones.
             // Here we define some exception were we have to resolve some properties that are not inherited
@@ -684,10 +681,7 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
 
             // The value currentColor has implicitely the same side effect. It depends on the value of color,
             // which is an inherited value, making the non-inherited property implicitly inherited.
-            if (is<CSSPrimitiveValue>(value) && StyleColor::isCurrentColor(downcast<CSSPrimitiveValue>(value)))
-                return false;
-
-            if (value.hasVariableReferences())
+            if (is<CSSPrimitiveValue>(value) && StyleColor::containsCurrentColor(downcast<CSSPrimitiveValue>(value)))
                 return false;
         }
 
@@ -702,7 +696,7 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
 void ElementRuleCollector::addAuthorKeyframeRules(const StyleRuleKeyframe& keyframe)
 {
     ASSERT(m_result->authorDeclarations.isEmpty());
-    m_result->authorDeclarations.append({ &keyframe.properties(), SelectorChecker::MatchAll, propertyAllowlistForPseudoId(m_pseudoElementRequest.pseudoId) });
+    m_result->authorDeclarations.append({ keyframe.properties(), SelectorChecker::MatchAll, propertyAllowlistForPseudoId(m_pseudoElementRequest.pseudoId) });
 }
 
 }

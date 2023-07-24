@@ -208,7 +208,7 @@ static void attributeStringSetStyle(NSMutableAttributedString *attrString, Rende
         [attrString addAttribute:UIAccessibilityTextAttributeContext value:UIAccessibilityTextualContextSourceCode range:range];
 }
 
-RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text, AXCoreObject::SpellCheck)
+RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text, const SimpleRange&, AXCoreObject::SpellCheck)
 {
     // Skip invisible text.
     auto* renderer = node->renderer();

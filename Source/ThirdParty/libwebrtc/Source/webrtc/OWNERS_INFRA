@@ -1,0 +1,17 @@
+#Owners for infra and repo related files
+per-file .gitignore=*
+per-file .gn=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
+per-file BUILD.gn=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
+per-file .../BUILD.gn=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
+per-file *.gni=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
+per-file .../*.gni=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
+per-file .vpython=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
+per-file .vpython3=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
+per-file AUTHORS=*
+per-file DEPS=*
+per-file pylintrc=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org
+per-file WATCHLISTS=*
+per-file native-api.md=mbonadei@webrtc.org
+per-file ....lua=titovartem@webrtc.org
+per-file .style.yapf=jleconte@webrtc.org
+per-file *.py=mbonadei@webrtc.org,jansson@webrtc.org,jleconte@webrtc.org

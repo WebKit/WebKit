@@ -95,7 +95,7 @@ EXPRESSION: Promise.resolve()
       {
         "_name": "status",
         "_type": "string",
-        "_value": "resolved",
+        "_value": "fulfilled",
         "_internal": true
       },
       {
@@ -124,7 +124,7 @@ EXPRESSION: Promise.resolve({result:1})
       {
         "_name": "status",
         "_type": "string",
-        "_value": "resolved",
+        "_value": "fulfilled",
         "_internal": true
       },
       {

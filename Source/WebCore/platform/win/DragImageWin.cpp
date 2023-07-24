@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -192,7 +192,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
     if (clipLabelString)
         label = StringTruncator::rightTruncate(label, imageSize.width() - (DragLabelBorderX * 2.0f), labelFont);
 
-    IntPoint textPos(DragLabelBorderX, DragLabelBorderY + labelFont.pixelSize());
+    IntPoint textPos(DragLabelBorderX, DragLabelBorderY + labelFont.size());
     WebCoreDrawDoubledTextAtPoint(context, label, textPos, labelFont, topColor, bottomColor);
 
     deallocContext(contextRef);

@@ -1,1 +1,4 @@
-Test changing style with draggable text. The test passes if WebKit doesn't crash or hit an assertiona
+Test changing style with draggable text. The test passes if WebKit doesn't crash or hit an assertion
+
+a
+a

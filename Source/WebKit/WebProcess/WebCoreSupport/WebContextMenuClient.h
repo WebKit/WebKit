@@ -28,11 +28,10 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include "WebPage.h"
 #include <WebCore/ContextMenuClient.h>
 
 namespace WebKit {
-
-class WebPage;
 
 class WebContextMenuClient : public WebCore::ContextMenuClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -74,7 +73,7 @@ private:
     void showContextMenu() override;
 #endif
 
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
 };
 
 } // namespace WebKit

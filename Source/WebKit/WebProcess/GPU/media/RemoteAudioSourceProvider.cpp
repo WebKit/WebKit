@@ -45,7 +45,7 @@ using namespace WebCore;
 Ref<RemoteAudioSourceProvider> RemoteAudioSourceProvider::create(WebCore::MediaPlayerIdentifier identifier, WTF::LoggerHelper& helper)
 {
     auto provider = adoptRef(*new RemoteAudioSourceProvider(identifier, helper));
-    provider->m_gpuProcessConnection->audioSourceProviderManager().addProvider(provider.copyRef());
+    provider->m_gpuProcessConnection.get()->audioSourceProviderManager().addProvider(provider.copyRef());
     return provider;
 }
 
@@ -61,7 +61,8 @@ RemoteAudioSourceProvider::RemoteAudioSourceProvider(MediaPlayerIdentifier ident
     UNUSED_PARAM(helper);
 
 #if ENABLE(WEB_AUDIO)
-    m_gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::CreateAudioSourceProvider { }, identifier);
+    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::CreateAudioSourceProvider { }, identifier);
 #endif
 }
 
@@ -72,14 +73,14 @@ RemoteAudioSourceProvider::~RemoteAudioSourceProvider()
 void RemoteAudioSourceProvider::close()
 {
     ASSERT(isMainRunLoop());
-    if (m_gpuProcessConnection)
-        m_gpuProcessConnection->audioSourceProviderManager().removeProvider(m_identifier);
+    if (auto gpuProcessConnection = m_gpuProcessConnection.get())
+        gpuProcessConnection->audioSourceProviderManager().removeProvider(m_identifier);
 }
 
 void RemoteAudioSourceProvider::hasNewClient(AudioSourceProviderClient* client)
 {
-    if (m_gpuProcessConnection)
-        m_gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::SetShouldEnableAudioSourceProvider { !!client }, m_identifier);
+    if (auto gpuProcessConnection = m_gpuProcessConnection.get())
+        gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::SetShouldEnableAudioSourceProvider { !!client }, m_identifier);
 }
 
 void RemoteAudioSourceProvider::audioSamplesAvailable(const PlatformAudioData& data, const AudioStreamDescription& description, size_t size)

@@ -173,6 +173,7 @@ public:
     bool preventsAcceleration() const;
     void effectStackNoLongerPreventsAcceleration();
     void effectStackNoLongerAllowsAcceleration();
+    void wasRemovedFromStack();
 
     void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
     void acceleratedPropertiesOverriddenByCascadeDidChange();

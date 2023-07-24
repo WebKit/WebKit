@@ -13,6 +13,7 @@
 
 #include "absl/cleanup/cleanup.h"
 #include "absl/strings/string_view.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/event.h"
 #include "rtc_base/ref_counter.h"
@@ -20,6 +21,13 @@
 
 namespace webrtc {
 namespace {
+
+// Avoids a dependency to system_wrappers.
+void SleepFor(TimeDelta duration) {
+  rtc::ScopedAllowBaseSyncPrimitivesForTesting allow;
+  rtc::Event event;
+  event.Wait(duration);
+}
 
 std::unique_ptr<TaskQueueBase, TaskQueueDeleter> CreateTaskQueue(
     const std::unique_ptr<webrtc::TaskQueueFactory>& factory,
@@ -29,13 +37,13 @@ std::unique_ptr<TaskQueueBase, TaskQueueDeleter> CreateTaskQueue(
 }
 
 TEST_P(TaskQueueTest, Construct) {
-  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()();
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
   auto queue = CreateTaskQueue(factory, "Construct");
   EXPECT_FALSE(queue->IsCurrent());
 }
 
 TEST_P(TaskQueueTest, PostAndCheckCurrent) {
-  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()();
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
   rtc::Event event;
   auto queue = CreateTaskQueue(factory, "PostAndCheckCurrent");
 
@@ -49,11 +57,11 @@ TEST_P(TaskQueueTest, PostAndCheckCurrent) {
     EXPECT_TRUE(queue->IsCurrent());
     event.Set();
   });
-  EXPECT_TRUE(event.Wait(1000));
+  EXPECT_TRUE(event.Wait(TimeDelta::Seconds(1)));
 }
 
 TEST_P(TaskQueueTest, PostCustomTask) {
-  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()();
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
   rtc::Event ran;
   auto queue = CreateTaskQueue(factory, "PostCustomImplementation");
 
@@ -68,30 +76,30 @@ TEST_P(TaskQueueTest, PostCustomTask) {
   } my_task(&ran);
 
   queue->PostTask(my_task);
-  EXPECT_TRUE(ran.Wait(1000));
+  EXPECT_TRUE(ran.Wait(TimeDelta::Seconds(1)));
 }
 
 TEST_P(TaskQueueTest, PostDelayedZero) {
-  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()();
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
   rtc::Event event;
   auto queue = CreateTaskQueue(factory, "PostDelayedZero");
 
   queue->PostDelayedTask([&event] { event.Set(); }, TimeDelta::Zero());
-  EXPECT_TRUE(event.Wait(1000));
+  EXPECT_TRUE(event.Wait(TimeDelta::Seconds(1)));
 }
 
 TEST_P(TaskQueueTest, PostFromQueue) {
-  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()();
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
   rtc::Event event;
   auto queue = CreateTaskQueue(factory, "PostFromQueue");
 
   queue->PostTask(
       [&event, &queue] { queue->PostTask([&event] { event.Set(); }); });
-  EXPECT_TRUE(event.Wait(1000));
+  EXPECT_TRUE(event.Wait(TimeDelta::Seconds(1)));
 }
 
 TEST_P(TaskQueueTest, PostDelayed) {
-  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()();
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
   rtc::Event event;
   auto queue =
       CreateTaskQueue(factory, "PostDelayed", TaskQueueFactory::Priority::HIGH);
@@ -103,7 +111,7 @@ TEST_P(TaskQueueTest, PostDelayed) {
         event.Set();
       },
       TimeDelta::Millis(100));
-  EXPECT_TRUE(event.Wait(1000));
+  EXPECT_TRUE(event.Wait(TimeDelta::Seconds(1)));
   int64_t end = rtc::TimeMillis();
   // These tests are a little relaxed due to how "powerful" our test bots can
   // be.  Most recently we've seen windows bots fire the callback after 94-99ms,
@@ -113,7 +121,7 @@ TEST_P(TaskQueueTest, PostDelayed) {
 }
 
 TEST_P(TaskQueueTest, PostMultipleDelayed) {
-  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()();
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
   auto queue = CreateTaskQueue(factory, "PostMultipleDelayed");
 
   std::vector<rtc::Event> events(100);
@@ -128,11 +136,11 @@ TEST_P(TaskQueueTest, PostMultipleDelayed) {
   }
 
   for (rtc::Event& e : events)
-    EXPECT_TRUE(e.Wait(1000));
+    EXPECT_TRUE(e.Wait(TimeDelta::Seconds(1)));
 }
 
 TEST_P(TaskQueueTest, PostDelayedAfterDestruct) {
-  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()();
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
   rtc::Event run;
   rtc::Event deleted;
   auto queue = CreateTaskQueue(factory, "PostDelayedAfterDestruct");
@@ -142,12 +150,59 @@ TEST_P(TaskQueueTest, PostDelayedAfterDestruct) {
   // Destroy the queue.
   queue = nullptr;
   // Task might outlive the TaskQueue, but still should be deleted.
-  EXPECT_TRUE(deleted.Wait(1000));
-  EXPECT_FALSE(run.Wait(0));  // and should not run.
+  EXPECT_TRUE(deleted.Wait(TimeDelta::Seconds(1)));
+  EXPECT_FALSE(run.Wait(TimeDelta::Zero()));  // and should not run.
+}
+
+TEST_P(TaskQueueTest, PostDelayedHighPrecisionAfterDestruct) {
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
+  rtc::Event run;
+  rtc::Event deleted;
+  auto queue =
+      CreateTaskQueue(factory, "PostDelayedHighPrecisionAfterDestruct");
+  absl::Cleanup cleanup = [&deleted] { deleted.Set(); };
+  queue->PostDelayedHighPrecisionTask(
+      [&run, cleanup = std::move(cleanup)] { run.Set(); },
+      TimeDelta::Millis(100));
+  // Destroy the queue.
+  queue = nullptr;
+  // Task might outlive the TaskQueue, but still should be deleted.
+  EXPECT_TRUE(deleted.Wait(TimeDelta::Seconds(1)));
+  EXPECT_FALSE(run.Wait(TimeDelta::Zero()));  // and should not run.
+}
+
+TEST_P(TaskQueueTest, PostedUnexecutedClosureDestroyedOnTaskQueue) {
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
+  auto queue =
+      CreateTaskQueue(factory, "PostedUnexecutedClosureDestroyedOnTaskQueue");
+  TaskQueueBase* queue_ptr = queue.get();
+  queue->PostTask([] { SleepFor(TimeDelta::Millis(100)); });
+  // Give the task queue a chance to start executing the first lambda.
+  SleepFor(TimeDelta::Millis(10));
+  // Then ensure the next lambda (which is likely not executing yet) is
+  // destroyed in the task queue context when the queue is deleted.
+  auto cleanup = absl::Cleanup(
+      [queue_ptr] { EXPECT_EQ(queue_ptr, TaskQueueBase::Current()); });
+  queue->PostTask([cleanup = std::move(cleanup)] {});
+  queue = nullptr;
+}
+
+TEST_P(TaskQueueTest, PostedExecutedClosureDestroyedOnTaskQueue) {
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
+  auto queue =
+      CreateTaskQueue(factory, "PostedExecutedClosureDestroyedOnTaskQueue");
+  TaskQueueBase* queue_ptr = queue.get();
+  // Ensure an executed lambda is destroyed on the task queue.
+  rtc::Event finished;
+  queue->PostTask([cleanup = absl::Cleanup([queue_ptr, &finished] {
+                     EXPECT_EQ(queue_ptr, TaskQueueBase::Current());
+                     finished.Set();
+                   })] {});
+  finished.Wait(rtc::Event::kForever);
 }
 
 TEST_P(TaskQueueTest, PostAndReuse) {
-  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()();
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
   rtc::Event event;
   auto post_queue = CreateTaskQueue(factory, "PostQueue");
   auto reply_queue = CreateTaskQueue(factory, "ReplyQueue");
@@ -182,7 +237,7 @@ TEST_P(TaskQueueTest, PostAndReuse) {
 
   ReusedTask task(&call_count, reply_queue.get(), &event);
   post_queue->PostTask(std::move(task));
-  EXPECT_TRUE(event.Wait(1000));
+  EXPECT_TRUE(event.Wait(TimeDelta::Seconds(1)));
 }
 
 TEST_P(TaskQueueTest, PostALot) {
@@ -196,14 +251,14 @@ TEST_P(TaskQueueTest, PostALot) {
         event_.Set();
       }
     }
-    bool Wait(int give_up_after_ms) { return event_.Wait(give_up_after_ms); }
+    bool Wait(TimeDelta give_up_after) { return event_.Wait(give_up_after); }
 
    private:
     webrtc_impl::RefCounter count_;
     rtc::Event event_;
   };
 
-  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()();
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
   static constexpr int kTaskCount = 0xffff;
   rtc::Event posting_done;
   BlockingCounter all_destroyed(kTaskCount);
@@ -232,7 +287,7 @@ TEST_P(TaskQueueTest, PostALot) {
   // Expect all tasks are destroyed eventually. In some task queue
   // implementations that might happen on a different thread after task queue is
   // destroyed.
-  EXPECT_TRUE(all_destroyed.Wait(60000));
+  EXPECT_TRUE(all_destroyed.Wait(TimeDelta::Minutes(1)));
   EXPECT_LE(tasks_executed, kTaskCount);
 }
 
@@ -247,7 +302,7 @@ TEST_P(TaskQueueTest, PostALot) {
 // unit test, run it under TSan or some other tool that is able to
 // directly detect data races.
 TEST_P(TaskQueueTest, PostTwoWithSharedUnprotectedState) {
-  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()();
+  std::unique_ptr<webrtc::TaskQueueFactory> factory = GetParam()(nullptr);
   struct SharedState {
     // First task will set this value to 1 and second will assert it.
     int state = 0;
@@ -266,7 +321,7 @@ TEST_P(TaskQueueTest, PostTwoWithSharedUnprotectedState) {
     // Check, that state changing tasks didn't start yet.
     EXPECT_EQ(state.state, 0);
   });
-  EXPECT_TRUE(done.Wait(1000));
+  EXPECT_TRUE(done.Wait(TimeDelta::Seconds(1)));
 }
 
 // TaskQueueTest is a set of tests for any implementation of the TaskQueueBase.

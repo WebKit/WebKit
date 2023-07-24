@@ -201,19 +201,20 @@ template<typename T> struct HashTraits<UniqueRef<T>> : SimpleClassHashTraits<Uni
     static TakeType take(std::nullptr_t) { return nullptr; }
 };
 
-template<typename P> struct HashTraits<RefPtr<P>> : SimpleClassHashTraits<RefPtr<P>> {
+template<typename P, typename Q, typename R> struct HashTraits<RefPtr<P, Q, R>> : SimpleClassHashTraits<RefPtr<P, Q, R>> {
     static P* emptyValue() { return nullptr; }
 
-    typedef P* PeekType;
-    static PeekType peek(const RefPtr<P>& value) { return value.get(); }
+    using PeekType = P*;
+    static PeekType peek(const RefPtr<P, Q, R>& value) { return value.get(); }
     static PeekType peek(P* value) { return value; }
 
-    static void customDeleteBucket(RefPtr<P>& value)
+    static void customDeleteBucket(RefPtr<P, Q, R>& value)
     {
         // See unique_ptr's customDeleteBucket() for an explanation.
-        ASSERT(!SimpleClassHashTraits<RefPtr<P>>::isDeletedValue(value));
+        bool isDeletedValue = SimpleClassHashTraits<RefPtr<P, Q, R>>::isDeletedValue(value);
+        ASSERT_UNUSED(isDeletedValue, !isDeletedValue);
         auto valueToBeDestroyed = WTFMove(value);
-        SimpleClassHashTraits<RefPtr<P>>::constructDeletedValue(value);
+        SimpleClassHashTraits<RefPtr<P, Q, R>>::constructDeletedValue(value);
     }
 };
 

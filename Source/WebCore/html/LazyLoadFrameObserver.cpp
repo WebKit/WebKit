@@ -28,6 +28,7 @@
 
 #include "HTMLIFrameElement.h"
 #include "IntersectionObserverCallback.h"
+#include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
 #include "RenderStyle.h"
 

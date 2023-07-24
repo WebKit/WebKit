@@ -30,6 +30,8 @@
 
 #include "AddEventListenerOptions.h"
 #include "AttachmentElementClient.h"
+#include "CSSPropertyNames.h"
+#include "CSSUnits.h"
 #include "DOMRectReadOnly.h"
 #include "DOMURL.h"
 #include "Document.h"
@@ -52,6 +54,7 @@
 #include "SharedBuffer.h"
 #include "UserAgentStyleSheets.h"
 #include <pal/FileSizeFormatter.h>
+#include <unicode/ubidi.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/URLParser.h>
@@ -71,6 +74,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLAttachmentElement);
 
 using namespace HTMLNames;
 
+#if PLATFORM(VISION)
+constexpr float attachmentIconSize = 40;
+#elif PLATFORM(IOS_FAMILY)
+constexpr float attachmentIconSize = 72;
+#else
+constexpr float attachmentIconSize = 52;
+#endif
+
 HTMLAttachmentElement::HTMLAttachmentElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
 {
@@ -83,9 +94,9 @@ Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& ta
 {
     Ref attachment = adoptRef(*new HTMLAttachmentElement(tagName, document));
     if (document.settings().attachmentWideLayoutEnabled()) {
-        ASSERT(attachment->m_implementation == Implementation::Legacy);
-        ASSERT(!attachment->renderer()); // Switch to modern style *must* be done before renderer is created!
-        attachment->m_implementation = Implementation::Modern;
+        ASSERT(attachment->m_implementation == Implementation::NarrowLayout);
+        ASSERT(!attachment->renderer()); // Switch to wide-layout style *must* be done before renderer is created!
+        attachment->m_implementation = Implementation::WideLayout;
         attachment->ensureUserAgentShadowRoot();
     }
     return attachment;
@@ -93,8 +104,8 @@ Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& ta
 
 void HTMLAttachmentElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
-    if (m_implementation == Implementation::Modern)
-        ensureModernShadowTree(root);
+    if (m_implementation == Implementation::WideLayout)
+        ensureWideLayoutShadowTree(root);
 }
 
 static const AtomString& attachmentContainerIdentifier()
@@ -109,15 +120,15 @@ static const AtomString& attachmentPreviewAreaIdentifier()
     return identifier;
 }
 
-static const AtomString& attachmentPreviewIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-preview"_s);
-    return identifier;
-}
-
 static const AtomString& attachmentPlaceholderIdentifier()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("attachment-placeholder"_s);
+    return identifier;
+}
+
+static const AtomString& attachmentIconIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-icon"_s);
     return identifier;
 }
 
@@ -131,12 +142,6 @@ static const AtomString& attachmentProgressCSSProperty()
 {
     static MainThreadNeverDestroyed<const AtomString> property("--progress"_s);
     return property;
-}
-
-static const AtomString& attachmentProgressCircleIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-progress-circle"_s);
-    return identifier;
 }
 
 static const AtomString& attachmentInformationAreaIdentifier()
@@ -181,9 +186,9 @@ static const AtomString& attachmentSaveButtonIdentifier()
     return identifier;
 }
 
-static const AtomString& attachmentSaveIconIdentifier()
+static const AtomString& attachmentIconSizeProperty()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-save-icon"_s);
+    static MainThreadNeverDestroyed<const AtomString> identifier("--icon-size"_s);
     return identifier;
 }
 
@@ -192,6 +197,36 @@ static const AtomString& saveAtom()
     static MainThreadNeverDestroyed<const AtomString> identifier("save"_s);
     return identifier;
 }
+
+class AttachmentImageEventsListener final : public EventListener {
+public:
+    static void addToImageForAttachment(HTMLImageElement& image, HTMLAttachmentElement& attachment)
+    {
+        auto listener = create(attachment);
+        image.addEventListener(eventNames().loadEvent, listener, { });
+        image.addEventListener(eventNames().errorEvent, listener, { });
+    }
+
+    void handleEvent(ScriptExecutionContext&, Event& event) final
+    {
+        const auto& type = event.type();
+        if (type == eventNames().loadEvent || type == eventNames().errorEvent)
+            m_attachment->dispatchEvent(Event::create(type, Event::CanBubble::No, Event::IsCancelable::No));
+        else
+            ASSERT_NOT_REACHED();
+    }
+
+private:
+    explicit AttachmentImageEventsListener(HTMLAttachmentElement& attachment)
+        : EventListener(CPPEventListenerType)
+        , m_attachment(attachment)
+    {
+    }
+
+    static Ref<AttachmentImageEventsListener> create(HTMLAttachmentElement& attachment) { return adoptRef(*new AttachmentImageEventsListener(attachment)); }
+
+    WeakPtr<HTMLAttachmentElement, WeakPtrImplWithEventTargetData> m_attachment;
+};
 
 template <typename ElementType>
 static Ref<ElementType> createContainedElement(HTMLElement& container, const AtomString& id, String&& textContent = { })
@@ -204,9 +239,9 @@ static Ref<ElementType> createContainedElement(HTMLElement& container, const Ato
     return element;
 }
 
-void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
+void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
 {
-    ASSERT(m_implementation == Implementation::Modern);
+    ASSERT(m_implementation == Implementation::WideLayout);
     if (m_titleElement)
         return;
 
@@ -217,46 +252,33 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
 
     m_containerElement = HTMLDivElement::create(document());
     m_containerElement->setIdAttribute(attachmentContainerIdentifier());
+    m_containerElement->setInlineStyleCustomProperty(attachmentIconSizeProperty(), makeString(attachmentIconSize, "px"_s));
     root.appendChild(*m_containerElement);
 
     auto previewArea = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentPreviewAreaIdentifier());
 
-    // FIXME: This is using the same HTMLAttachmentElement type, but with different behavior (thanks to m_implementation), to fetch and show
-    // the appropriate image (thumbnail, icon, etc.). In the longer term, this functionality should be folded into the Implementation::Modern
-    // code, and the old Legacy/ImageOnly code should be removed; this element could be an image (with a different data member name). See rdar://105252742.
-    m_innerLegacyAttachment = adoptRef(*new HTMLAttachmentElement(HTMLNames::attachmentTag, document()));
-    m_innerLegacyAttachment->m_implementation = Implementation::ImageOnly;
-    auto copyAttribute = [this](const QualifiedName& attr) {
-        m_innerLegacyAttachment->setAttributeWithoutSynchronization(attr, attributeWithoutSynchronization(attr));
-    };
-    copyAttribute(actionAttr);
-    copyAttribute(progressAttr);
-    copyAttribute(subtitleAttr);
-    copyAttribute(titleAttr);
-    copyAttribute(typeAttr);
-    m_innerLegacyAttachment->m_file = m_file;
-    m_innerLegacyAttachment->m_thumbnail = m_thumbnail;
-    m_innerLegacyAttachment->m_icon = m_icon;
-    m_innerLegacyAttachment->m_iconSize = m_iconSize;
-    m_innerLegacyAttachment->setIdAttribute(attachmentPreviewIdentifier());
-    previewArea->appendChild(*m_innerLegacyAttachment);
+    m_imageElement = createContainedElement<HTMLImageElement>(previewArea, attachmentIconIdentifier());
+    AttachmentImageEventsListener::addToImageForAttachment(*m_imageElement, *this);
+    setNeedsWideLayoutIconRequest();
+    updateImage();
 
     m_placeholderElement = createContainedElement<HTMLDivElement>(previewArea, attachmentPlaceholderIdentifier());
 
     m_progressElement = createContainedElement<HTMLDivElement>(previewArea, attachmentProgressIdentifier());
     updateProgress(attributeWithoutSynchronization(progressAttr));
 
-    createContainedElement<HTMLDivElement>(*m_progressElement, attachmentProgressCircleIdentifier());
-
     auto informationArea = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentInformationAreaIdentifier());
 
     m_informationBlock = createContainedElement<HTMLDivElement>(informationArea, attachmentInformationBlockIdentifier());
 
     m_actionTextElement = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentActionIdentifier(), String { attachmentActionForDisplay() });
+    m_actionTextElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
     m_titleElement = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentTitleIdentifier(), String { attachmentTitleForDisplay() });
+    m_titleElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
     m_subtitleElement = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentSubtitleIdentifier(), String { attachmentSubtitleForDisplay() });
+    m_subtitleElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
     updateSaveButton(!attributeWithoutSynchronization(saveAttr).isNull());
 }
@@ -264,11 +286,6 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
 class AttachmentSaveEventListener final : public EventListener {
 public:
     static Ref<AttachmentSaveEventListener> create(HTMLAttachmentElement& attachment) { return adoptRef(*new AttachmentSaveEventListener(attachment)); }
-
-    bool operator==(const EventListener& other) const final
-    {
-        return this == &other;
-    }
 
     void handleEvent(ScriptExecutionContext&, Event& event) final
     {
@@ -305,7 +322,7 @@ void HTMLAttachmentElement::updateProgress(const AtomString& progress)
     bool validProgress = false;
     float value = progress.toFloat(&validProgress);
     if (validProgress && std::isfinite(value)) {
-        m_innerLegacyAttachment->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
+        m_imageElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
         if (!value) {
             m_placeholderElement->removeInlineStyleProperty(CSSPropertyDisplay);
             m_progressElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
@@ -318,7 +335,7 @@ void HTMLAttachmentElement::updateProgress(const AtomString& progress)
         return;
     }
 
-    m_innerLegacyAttachment->removeInlineStyleProperty(CSSPropertyDisplay);
+    m_imageElement->removeInlineStyleProperty(CSSPropertyDisplay);
     m_placeholderElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
     m_progressElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
     m_progressElement->removeInlineStyleCustomProperty(attachmentProgressCSSProperty());
@@ -340,8 +357,6 @@ void HTMLAttachmentElement::updateSaveButton(bool show)
 
         m_saveButton = createContainedElement<HTMLButtonElement>(*m_saveArea, attachmentSaveButtonIdentifier());
         m_saveButton->addEventListener(eventNames().clickEvent, AttachmentSaveEventListener::create(*this), { });
-
-        createContainedElement<HTMLDivElement>(*m_saveButton, attachmentSaveIconIdentifier());
     }
 }
 
@@ -356,11 +371,13 @@ DOMRectReadOnly* HTMLAttachmentElement::saveButtonClientRect() const
     return m_saveButtonClientRect.get();
 }
 
-RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& position)
+HTMLElement* HTMLAttachmentElement::wideLayoutImageElement() const
 {
-    if (m_implementation == Implementation::Modern)
-        return HTMLElement::createElementRenderer(WTFMove(style), position);
+    return m_imageElement.get();
+}
 
+RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+{
     return createRenderer<RenderAttachment>(*this, WTFMove(style));
 }
 
@@ -413,8 +430,6 @@ URL HTMLAttachmentElement::blobURL() const
 void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes updateAttributes)
 {
     m_file = WTFMove(file);
-    if (m_innerLegacyAttachment)
-        m_innerLegacyAttachment->setFile(m_file.copyRef(), updateAttributes);
 
     if (updateAttributes == UpdateDisplayAttributes::Yes) {
         if (m_file) {
@@ -428,12 +443,19 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
         }
     }
 
+    setNeedsWideLayoutIconRequest();
     invalidateRendering();
 }
 
 Node::InsertedIntoAncestorResult HTMLAttachmentElement::insertedIntoAncestor(InsertionType type, ContainerNode& ancestor)
 {
     auto result = HTMLElement::insertedIntoAncestor(type, ancestor);
+    if (isWideLayout()) {
+        setInlineStyleProperty(CSSPropertyMarginLeft, 1, CSSUnitType::CSS_PX);
+        setInlineStyleProperty(CSSPropertyMarginRight, 1, CSSUnitType::CSS_PX);
+        setInlineStyleProperty(CSSPropertyMarginTop, 1, CSSUnitType::CSS_PX);
+        setInlineStyleProperty(CSSPropertyMarginBottom, 1, CSSUnitType::CSS_PX);
+    }
     if (type.connectedToDocument)
         document().didInsertAttachmentElement(*this);
     return result;
@@ -479,12 +501,10 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
     case AttributeNames::subtitleAttr:
     case AttributeNames::titleAttr:
     case AttributeNames::typeAttr:
-        if (m_innerLegacyAttachment)
-            m_innerLegacyAttachment->setAttributeWithoutSynchronization(name, newValue);
         invalidateRendering();
         break;
     case AttributeNames::progressAttr:
-        if (m_implementation == Implementation::Legacy)
+        if (m_implementation == Implementation::NarrowLayout)
             invalidateRendering();
         break;
     default:
@@ -501,6 +521,7 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
     case AttributeNames::titleAttr:
         if (m_titleElement)
             m_titleElement->setTextContent(attachmentTitleForDisplay());
+        setNeedsWideLayoutIconRequest();
         break;
     case AttributeNames::subtitleAttr:
         if (m_subtitleElement)
@@ -512,14 +533,15 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
     case AttributeNames::saveAttr:
         updateSaveButton(!newValue.isNull());
         break;
-#if ENABLE(SERVICE_CONTROLS)
     case AttributeNames::typeAttr:
+#if ENABLE(SERVICE_CONTROLS)
         if (attachmentType() == "application/pdf"_s) {
             setImageMenuEnabled(true);
             ImageControlsMac::updateImageControls(*this);
         }
-        break;
 #endif
+        setNeedsWideLayoutIconRequest();
+        break;
     default:
         break;
     }
@@ -540,37 +562,46 @@ const AtomString& HTMLAttachmentElement::attachmentSubtitle() const
 
 const AtomString& HTMLAttachmentElement::attachmentActionForDisplay() const
 {
-    if (m_implementation == Implementation::ImageOnly)
-        return nullAtom();
-
     return attributeWithoutSynchronization(actionAttr);
 }
 
 String HTMLAttachmentElement::attachmentTitleForDisplay() const
 {
-    if (m_implementation == Implementation::ImageOnly)
-        return { };
-
     auto title = attachmentTitle();
     auto indexOfLastDot = title.reverseFind('.');
     if (indexOfLastDot == notFound)
         return title;
 
+    auto filename = StringView(title).left(indexOfLastDot);
+    auto extension = StringView(title).substring(indexOfLastDot);
+
+    if (isWideLayout() && !filename.is8Bit() && ubidi_getBaseDirection(filename.characters16(), filename.length()) == UBIDI_RTL) {
+        // The filename is deemed RTL, it should be exposed as RTL overall, but keeping the extension to the right.
+        return makeString(
+            rightToLeftMark, // Make this whole text appear as RTL, the element's `dir="auto"` will right-align and put ellipsis on the left (if needed)
+            leftToRightIsolate, // Isolate the filename+extension, and force LTR to ensure that the extension always stays on the right.
+            firstStrongIsolate, // Isolate the filename.
+            filename, // Note: The filename contains its own bidi characters.
+            popDirectionalIsolate, // End isolation of the filename.
+            zeroWidthSpace, // Add a preferred breakpoint before the extension when word-wrapping (so the extension doesn't get split).
+            extension,
+            popDirectionalIsolate // And end the filename+extension LTR isolation.
+        );
+    }
+
+    // Non-RTL or narrow layout: Keep the extension to the right, but the overall direction doesn't need to be exposed.
     return makeString(
-        leftToRightMark,
-        firstStrongIsolate,
-        StringView(title).left(indexOfLastDot),
-        popDirectionalIsolate,
-        zeroWidthSpace,
-        StringView(title).substring(indexOfLastDot)
+        leftToRightMark, // Force LTR to ensure that the extension always stays on the right.
+        firstStrongIsolate, // Isolate the filename.
+        filename, // Note: The filename contains its own bidi characters.
+        popDirectionalIsolate, // End isolation of the filename.
+        zeroWidthSpace, // Add a preferred breakpoint before the extension when word-wrapping (so the extension doesn't get split).
+        extension
     );
 }
 
 const AtomString& HTMLAttachmentElement::attachmentSubtitleForDisplay() const
 {
-    if (m_implementation == Implementation::ImageOnly)
-        return nullAtom();
-
     return attachmentSubtitle();
 }
 
@@ -606,6 +637,7 @@ void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSi
     else
         removeAttribute(subtitleAttr);
 
+    setNeedsWideLayoutIconRequest();
     invalidateRendering();
 }
 
@@ -635,26 +667,87 @@ void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentTy
     enclosingImage->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(document(), Blob::create(&document(), buffer->extractData(), mimeType)) });
 }
 
-void HTMLAttachmentElement::updateThumbnail(const RefPtr<Image>& thumbnail)
+void HTMLAttachmentElement::updateImage()
 {
+    if (!m_imageElement)
+        return;
+
+    if (!m_thumbnailForWideLayout.isEmpty()) {
+        dispatchEvent(Event::create(eventNames().loadeddataEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        m_imageElement->setSrc(AtomString { DOMURL::createObjectURL(document(), Blob::create(&document(), Vector<uint8_t>(m_thumbnailForWideLayout), "image/png"_s)) });
+        return;
+    }
+
+    if (!m_iconForWideLayout.isEmpty()) {
+        dispatchEvent(Event::create(eventNames().loadeddataEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        m_imageElement->setSrc(AtomString { DOMURL::createObjectURL(document(), Blob::create(&document(), Vector<uint8_t>(m_iconForWideLayout), "image/png"_s)) });
+        return;
+    }
+
+    m_imageElement->setSrc(nullAtom());
+}
+
+void HTMLAttachmentElement::updateThumbnailForNarrowLayout(const RefPtr<Image>& thumbnail)
+{
+    ASSERT(!isWideLayout());
     m_thumbnail = thumbnail;
-    if (m_innerLegacyAttachment)
-        m_innerLegacyAttachment->updateThumbnail(thumbnail);
     removeAttribute(HTMLNames::progressAttr);
     invalidateRendering();
 }
 
-void HTMLAttachmentElement::updateIcon(const RefPtr<Image>& icon, const WebCore::FloatSize& iconSize)
+void HTMLAttachmentElement::updateThumbnailForWideLayout(Vector<uint8_t>&& thumbnailSrcData)
 {
+    ASSERT(isWideLayout());
+    m_thumbnailForWideLayout = WTFMove(thumbnailSrcData);
+    updateImage();
+}
+
+void HTMLAttachmentElement::updateIconForNarrowLayout(const RefPtr<Image>& icon, const WebCore::FloatSize& iconSize)
+{
+    ASSERT(!isWideLayout());
+    if (!icon)
+        return;
     m_icon = icon;
     m_iconSize = iconSize;
-    if (m_innerLegacyAttachment)
-        m_innerLegacyAttachment->updateIcon(icon, iconSize);
     invalidateRendering();
+}
+
+void HTMLAttachmentElement::updateIconForWideLayout(Vector<uint8_t>&& iconSrcData)
+{
+    ASSERT(isWideLayout());
+    if (iconSrcData.isEmpty()) {
+        dispatchEvent(Event::create(eventNames().loadingerrorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        return;
+    }
+    m_iconForWideLayout = WTFMove(iconSrcData);
+    updateImage();
+}
+
+void HTMLAttachmentElement::setNeedsWideLayoutIconRequest()
+{
+    m_needsWideLayoutIconRequest = true;
+}
+
+void HTMLAttachmentElement::requestWideLayoutIconIfNeeded()
+{
+    if (!m_needsWideLayoutIconRequest)
+        return;
+
+    if (!document().page() || !document().page()->attachmentElementClient())
+        return;
+
+    m_needsWideLayoutIconRequest = false;
+
+    if (!m_imageElement)
+        return;
+
+    dispatchEvent(Event::create(eventNames().beforeloadEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), FloatSize(attachmentIconSize, attachmentIconSize));
 }
 
 void HTMLAttachmentElement::requestIconWithSize(const FloatSize& size) const
 {
+    ASSERT(!isWideLayout());
     if (!document().page() || !document().page()->attachmentElementClient())
         return;
 

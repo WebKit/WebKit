@@ -53,10 +53,15 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_auto_load_images(settings, FALSE);
     g_assert_false(webkit_settings_get_auto_load_images(settings));
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // load-icons-ignoring-image-load-setting is deprecated and always false.
+    // Make warnings non-fatal for this test to make it pass.
+    Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
     g_assert_false(webkit_settings_get_load_icons_ignoring_image_load_setting(settings));
     webkit_settings_set_load_icons_ignoring_image_load_setting(settings, TRUE);
     g_assert_false(webkit_settings_get_load_icons_ignoring_image_load_setting(settings));
+    Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
+    ALLOW_DEPRECATED_DECLARATIONS_END
     
     // Offline application cache is true by default.
     g_assert_true(webkit_settings_get_enable_offline_web_application_cache(settings));
@@ -392,13 +397,10 @@ void testWebKitSettingsNewWithSettings(Test* test, gconstpointer)
     GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new_with_settings(
         "enable-javascript", FALSE,
         "auto-load-images", FALSE,
-        "load-icons-ignoring-image-load-setting", TRUE,
         nullptr));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(settings.get()));
     g_assert_false(webkit_settings_get_enable_javascript(settings.get()));
     g_assert_false(webkit_settings_get_auto_load_images(settings.get()));
-    // load-icons-ignoring-image-load-setting is deprecated and always false.
-    g_assert_false(webkit_settings_get_load_icons_ignoring_image_load_setting(settings.get()));
 }
 
 void testWebKitFeatures(Test* test, gconstpointer)

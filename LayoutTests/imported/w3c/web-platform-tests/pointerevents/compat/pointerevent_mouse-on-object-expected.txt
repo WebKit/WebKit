@@ -1,7 +1,17 @@
 Verifies that mouse activities on an object fire pointerevents. It expected to get pointerup when the pointerdown happened on the object for compatibility with flash objects.
 
+To test that when clicking inside the blue rectangle all compat mouse events are correct:
 
+Click once in the blue rectangle
+Click the Done button
+To test that when dragging mouse outside all compat mouse events are correct:
+
+Press left mouse button in the blue rectangle
+Drag the mouse cursor out of the blue rectangle
+Release the left mouse button
+Click the Done button
+ Done
 
 PASS Normal click event sequence within object
-FAIL Click and drag outside of object event sequence assert_array_equals: Drag from object should result in the correct sequence of events lengths differ, expected array ["pointermove", "mousemove", "pointerdown", "mousedown", "pointermove", "mousemove", "pointerup", "mouseup"] length 8, got ["pointermove", "mousemove", "pointerdown", "mousedown"] length 4
+FAIL Click and drag outside of object event sequence assert_array_equals: Drag from object should result in the correct sequence of pointer events lengths differ, expected array ["pointermove", "pointerdown", "pointermove", "pointerup"] length 4, got ["pointermove", "pointerdown"] length 2
 

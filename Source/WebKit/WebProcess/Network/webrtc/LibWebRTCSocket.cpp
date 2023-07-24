@@ -29,24 +29,26 @@
 #if USE(LIBWEBRTC)
 
 #include "DataReference.h"
+#include "LibWebRTCNetworkManager.h"
 #include "LibWebRTCSocketFactory.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkRTCProviderMessages.h"
 #include "RTCPacketOptions.h"
 #include "WebProcess.h"
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>
 
 namespace WebKit {
 
-LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, const void* socketGroup, Type type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress)
+LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, WebCore::ScriptExecutionContextIdentifier contextIdentifier, Type type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress)
     : m_factory(factory)
     , m_identifier(WebCore::LibWebRTCSocketIdentifier::generate())
     , m_type(type)
     , m_localAddress(localAddress)
     , m_remoteAddress(remoteAddress)
-    , m_socketGroup(socketGroup)
+    , m_contextIdentifier(contextIdentifier)
 {
     m_factory.addSocket(*this);
 }
@@ -106,6 +108,11 @@ void LibWebRTCSocket::signalClose(int error)
 {
     m_state = STATE_CLOSED;
     SignalClose(this, error);
+}
+
+void LibWebRTCSocket::signalUsedInterface(String&& name)
+{
+    LibWebRTCNetworkManager::signalUsedInterface(m_contextIdentifier, WTFMove(name));
 }
 
 bool LibWebRTCSocket::willSend(size_t size)

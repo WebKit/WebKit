@@ -18,7 +18,6 @@
 
 #include <gtest/gtest.h>
 
-#include <openssl/cpu.h>
 #include <openssl/span.h>
 
 #include "../fipsmodule/rand/fork_detect.h"

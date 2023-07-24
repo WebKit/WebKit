@@ -66,7 +66,7 @@ public:
     bool hostAppHasPushInjectEntitlement();
 
     const String& pushPartitionString() const { return m_pushPartitionString; }
-    std::optional<UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
+    std::optional<WTF::UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
 
     bool debugModeIsEnabled() const { return m_debugModeEnabled; }
     void setDebugModeIsEnabled(bool);
@@ -100,7 +100,7 @@ private:
     std::optional<bool> m_hostAppHasPushEntitlement;
 
     String m_pushPartitionString;
-    Markable<UUID> m_dataStoreIdentifier;
+    Markable<WTF::UUID> m_dataStoreIdentifier;
 
     Deque<std::unique_ptr<AppBundleRequest>> m_pendingBundleRequests;
     std::unique_ptr<AppBundleRequest> m_currentBundleRequest;

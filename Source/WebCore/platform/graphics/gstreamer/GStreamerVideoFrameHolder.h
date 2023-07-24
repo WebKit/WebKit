@@ -32,9 +32,6 @@ public:
     explicit GstVideoFrameHolder(GstSample*, std::optional<GstVideoDecoderPlatform>, TextureMapperGL::Flags, bool gstGLEnabled);
     virtual ~GstVideoFrameHolder();
 
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
-    void handoffVideoDmaBuf(struct wpe_video_plane_display_dmabuf_source*, const IntRect&);
-#endif
 #if USE(GSTREAMER_GL)
     virtual void waitForCPUSync();
 #endif
@@ -48,14 +45,7 @@ public:
     void updateTexture(BitmapTextureGL&);
     std::unique_ptr<TextureMapperPlatformLayerBuffer> platformLayerBuffer();
 
-    bool hasDMABuf() const
-    {
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
-        return m_dmabufFD >= 0;
-#else
-        return false;
-#endif
-    }
+    bool hasDMABuf() const { return false; }
 
 private:
     GRefPtr<GstBuffer> m_buffer;
@@ -70,10 +60,6 @@ private:
 #endif
     bool m_isMapped { false };
     bool m_hasMappedTextures { false };
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
-    int m_dmabufFD { 0 };
-    int m_dmabufStride { 0 };
-#endif
 };
 
 }

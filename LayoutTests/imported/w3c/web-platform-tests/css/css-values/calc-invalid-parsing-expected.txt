@@ -1,0 +1,6 @@
+
+PASS e.style['transform'] = "rotate(calc((0.25turn error)))" should not set the property value
+PASS e.style['width'] = "calc(7px * up)" should not set the property value
+PASS e.style['width'] = "round(nearest, 1px, 1px, 1px)" should not set the property value
+PASS e.style['width'] = "round(nearest, 1px)" should not set the property value
+

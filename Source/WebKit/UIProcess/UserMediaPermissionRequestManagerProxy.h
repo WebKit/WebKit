@@ -39,6 +39,8 @@ namespace WebCore {
 class CaptureDevice;
 class SecurityOrigin;
 
+enum class PermissionName : uint8_t;
+
 struct CaptureDeviceWithCapabilities;
 struct ClientOrigin;
 struct MediaConstraints;
@@ -125,6 +127,8 @@ public:
     bool shouldChangeDeniedToPromptForMicrophone(const WebCore::ClientOrigin&) const;
     bool shouldChangePromptToGrantForCamera(const WebCore::ClientOrigin&) const;
     bool shouldChangePromptToGrantForMicrophone(const WebCore::ClientOrigin&) const;
+
+    void clearUserMediaPermissionRequestHistory(WebCore::PermissionName);
 
 private:
 #if !RELEASE_LOG_DISABLED

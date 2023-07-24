@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,7 @@
 #import "WebAutocorrectionContext.h"
 #import "WebAutocorrectionData.h"
 #import "WebCoreArgumentCoders.h"
+#import "WebPage.h"
 #import "WebPageMessages.h"
 #import "WebPageProxyInternals.h"
 #import "WebProcessMessages.h"
@@ -88,9 +89,9 @@
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 
-#define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageID().toUInt64(), m_process->processIdentifier(), ##__VA_ARGS__)
+#define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageID().toUInt64(), m_process->processID(), ##__VA_ARGS__)
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
 static constexpr CGFloat kTargetFullscreenAspectRatio = 1.7778;
 #endif
 
@@ -229,7 +230,7 @@ WebCore::FloatRect WebPageProxy::computeLayoutViewportRect(const FloatRect& unob
         constrainedUnobscuredRect.intersect(documentRect);
 
     double minimumScale = pageClient().minimumZoomScale();
-    bool isBelowMinimumScale = displayedContentScale < minimumScale;
+    bool isBelowMinimumScale = displayedContentScale < minimumScale && !WebKit::scalesAreEssentiallyEqual(displayedContentScale, minimumScale);
     if (isBelowMinimumScale) {
         const CGFloat slope = 12;
         CGFloat factor = std::max<CGFloat>(1 - slope * (minimumScale - displayedContentScale), 0);
@@ -612,8 +613,10 @@ void WebPageProxy::applicationDidEnterBackground()
 #if !PLATFORM(WATCHOS)
     // We normally delay process suspension when the app is backgrounded until the current page load completes. However,
     // we do not want to do so when the screen is locked for power reasons.
-    if (isSuspendedUnderLock)
-        NavigationState::fromWebPage(*this).releaseNetworkActivity(NavigationState::NetworkActivityReleaseReason::ScreenLocked);
+    if (isSuspendedUnderLock) {
+        if (auto* navigationState = NavigationState::fromWebPage(*this))
+            navigationState->releaseNetworkActivity(NavigationState::NetworkActivityReleaseReason::ScreenLocked);
+    }
 #endif
     m_process->send(Messages::WebPage::ApplicationDidEnterBackground(isSuspendedUnderLock), webPageID());
 }
@@ -844,21 +847,30 @@ FloatSize WebPageProxy::screenSize()
     return WebCore::screenSize();
 }
 
+#if PLATFORM(VISION)
+static FloatSize fullscreenPreferencesScreenSize(CGFloat preferredWidth)
+{
+    CGFloat preferredHeight = preferredWidth / kTargetFullscreenAspectRatio;
+    return FloatSize(CGSizeMake(preferredWidth, preferredHeight));
+}
+#endif
+
 FloatSize WebPageProxy::availableScreenSize()
 {
+#if PLATFORM(VISION)
+    return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
+#else
     return WebCore::availableScreenSize();
+#endif
 }
 
 FloatSize WebPageProxy::overrideScreenSize()
 {
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
-    // Report screen dimensions based on fullscreen preferences.
-    CGFloat preferredWidth = m_preferences->mediaPreferredFullscreenWidth();
-    CGFloat preferredHeight = preferredWidth / kTargetFullscreenAspectRatio;
-    return FloatSize(CGSizeMake(preferredWidth, preferredHeight));
-#endif
-
+#if PLATFORM(VISION)
+    return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
+#else
     return WebCore::overrideScreenSize();
+#endif
 }
 
 float WebPageProxy::textAutosizingWidth()
@@ -1059,14 +1071,14 @@ IPC::Connection::AsyncReplyID WebPageProxy::drawToPDFiOS(FrameIdentifier frameID
     return sendWithAsyncReply(Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(completionHandler));
 }
 
-IPC::Connection::AsyncReplyID WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(WebKit::ShareableBitmap::Handle&&)>&& completionHandler)
+IPC::Connection::AsyncReplyID WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(WebKit::ShareableBitmap::Handle&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });
         return { };
     }
 
-    return sendWithAsyncReply(Messages::WebPage::DrawToImage(frameID, printInfo, pageCount), WTFMove(completionHandler));
+    return sendWithAsyncReply(Messages::WebPage::DrawToImage(frameID, printInfo), WTFMove(completionHandler));
 }
 
 void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)
@@ -1500,24 +1512,6 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
     return WebContentMode::Desktop;
 }
 
-bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
-{
-    // The client may request that we do client navigations at foreground priority, even if the
-    // view is not visible, as long as the application is foreground.
-    if (!configuration().clientNavigationsRunAtForegroundPriority())
-        return false;
-
-    // This setting only applies to background views. There is no need to force foreground
-    // priority for foreground views since they get foreground priority by virtue of being
-    // visible.
-    if (isViewVisible())
-        return false;
-
-    bool canTakeForegroundAssertions = pageClient().canTakeForegroundAssertions();
-    WEBPAGEPROXY_RELEASE_LOG(Process, "WebPageProxy::shouldForceForegroundPriorityForClientNavigation() returns %d based on PageClient::canTakeForegroundAssertions()", canTakeForegroundAssertions);
-    return canTakeForegroundAssertions;
-}
-
 void WebPageProxy::textInputContextsInRect(FloatRect rect, CompletionHandler<void(const Vector<ElementContext>&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
@@ -1634,7 +1628,7 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
 
 void WebPageProxy::statusBarWasTapped()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     RELEASE_LOG_INFO(WebRTC, "WebPageProxy::statusBarWasTapped");
 
 #if USE(APPLE_INTERNAL_SDK)

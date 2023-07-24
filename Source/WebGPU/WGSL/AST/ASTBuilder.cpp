@@ -61,4 +61,32 @@ void Builder::allocateArena()
     ASSERT(arena() == m_arena);
 }
 
+auto Builder::saveCurrentState() -> State
+{
+    State state;
+    state.m_arena = m_arena;
+#if ASSERT_ENABLED
+    state.m_arenaStart = arena();
+    state.m_arenaEnd = m_arenaEnd;
+#endif
+    state.m_numberOfArenas = m_arenas.size();
+    state.m_numberOfNodes = m_nodes.size();
+    allocateArena();
+    return state;
+}
+
+void Builder::restore(State&& state)
+{
+    for (size_t i = state.m_numberOfNodes; i < m_nodes.size(); ++i)
+        m_nodes[i]->~Node();
+    m_nodes.shrink(state.m_numberOfNodes);
+    m_arena = state.m_arena;
+    m_arenas.shrink(state.m_numberOfArenas);
+    m_arenaEnd = m_arenas.last().get() + arenaSize;
+#if ASSERT_ENABLED
+    ASSERT(state.m_arenaStart == m_arenas.last().get());
+    ASSERT(state.m_arenaEnd == m_arenaEnd);
+#endif
+}
+
 } // namespace WGSL::AST

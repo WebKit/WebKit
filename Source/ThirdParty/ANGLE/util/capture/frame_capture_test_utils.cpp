@@ -156,6 +156,14 @@ bool LoadTraceInfoFromJSON(const std::string &traceName,
 TraceLibrary::TraceLibrary(const std::string &traceName, const TraceInfo &traceInfo)
 {
     std::stringstream libNameStr;
+    SearchType searchType = SearchType::ModuleDir;
+
+#if defined(ANGLE_TRACE_EXTERNAL_BINARIES)
+    // This means we are using the binary build of traces on Android, which are
+    // not bundled in the APK, but located in the app's home directory.
+    searchType = SearchType::SystemDir;
+    libNameStr << "/data/user/0/com.android.angle.test/angle_traces/";
+#endif  // defined(ANGLE_TRACE_EXTERNAL_BINARIES)
 #if !defined(ANGLE_PLATFORM_WINDOWS)
     libNameStr << "lib";
 #endif  // !defined(ANGLE_PLATFORM_WINDOWS)
@@ -166,8 +174,71 @@ TraceLibrary::TraceLibrary(const std::string &traceName, const TraceInfo &traceI
     libNameStr << ".cr";
 #endif  // defined(ANGLE_PLATFORM_ANDROID) && defined(COMPONENT_BUILD)
     std::string libName = libNameStr.str();
-    mTraceLibrary.reset(OpenSharedLibrary(libName.c_str(), SearchType::ModuleDir));
+    std::string loadError;
+    mTraceLibrary.reset(OpenSharedLibraryAndGetError(libName.c_str(), searchType, &loadError));
+    if (mTraceLibrary->getNative() == nullptr)
+    {
+        FATAL() << "Failed to load trace library (" << libName << "): " << loadError;
+    }
 
-    callFunc<SetTraceInfoFunc>("SetTraceInfo", traceInfo.traceFiles);
+    callFunc<SetupEntryPoints>("SetupEntryPoints", static_cast<angle::TraceCallbacks *>(this),
+                               &mTraceFunctions);
+    mTraceFunctions->SetTraceInfo(traceInfo);
+    mTraceInfo = traceInfo;
 }
+
+uint8_t *TraceLibrary::LoadBinaryData(const char *fileName)
+{
+    std::ostringstream pathBuffer;
+    pathBuffer << mBinaryDataDir << "/" << fileName;
+    FILE *fp = fopen(pathBuffer.str().c_str(), "rb");
+    if (fp == 0)
+    {
+        fprintf(stderr, "Error loading binary data file: %s\n", fileName);
+        exit(1);
+    }
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    if (mTraceInfo.isBinaryDataCompressed)
+    {
+        if (!strstr(fileName, ".gz"))
+        {
+            fprintf(stderr, "Filename does not end in .gz");
+            exit(1);
+        }
+
+        std::vector<uint8_t> compressedData(size);
+        (void)fread(compressedData.data(), 1, size, fp);
+
+        uint32_t uncompressedSize =
+            zlib_internal::GetGzipUncompressedSize(compressedData.data(), compressedData.size());
+
+        mBinaryData.resize(uncompressedSize + 1);  // +1 to make sure .data() is valid
+        uLong destLen = uncompressedSize;
+        int zResult =
+            zlib_internal::GzipUncompressHelper(mBinaryData.data(), &destLen, compressedData.data(),
+                                                static_cast<uLong>(compressedData.size()));
+
+        if (zResult != Z_OK)
+        {
+            std::cerr << "Failure to decompressed binary data: " << zResult << "\n";
+            exit(1);
+        }
+    }
+    else
+    {
+        if (!strstr(fileName, ".angledata"))
+        {
+            fprintf(stderr, "Filename does not end in .angledata");
+            exit(1);
+        }
+        mBinaryData.resize(size + 1);
+        (void)fread(mBinaryData.data(), 1, size, fp);
+    }
+    fclose(fp);
+
+    return mBinaryData.data();
+}
+
 }  // namespace angle

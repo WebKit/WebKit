@@ -21,7 +21,6 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/simulated_network.h"
 #include "api/video_codecs/sdp_video_format.h"
-#include "api/video_codecs/video_encoder_config.h"
 #include "call/call.h"
 #include "call/fake_network_pipe.h"
 #include "call/rtp_config.h"
@@ -40,6 +39,8 @@
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
 #include "test/rtp_rtcp_observer.h"
+#include "test/video_test_constants.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 namespace {
@@ -63,7 +64,7 @@ class RtcpXrObserver : public test::EndToEndTest {
                  bool expect_target_bitrate,
                  bool enable_zero_target_bitrate,
                  VideoEncoderConfig::ContentType content_type)
-      : EndToEndTest(test::CallTest::kDefaultTimeout),
+      : EndToEndTest(test::VideoTestConstants::kDefaultTimeout),
         enable_rrtr_(enable_rrtr),
         expect_target_bitrate_(expect_target_bitrate),
         enable_zero_target_bitrate_(enable_zero_target_bitrate),
@@ -104,7 +105,7 @@ class RtcpXrObserver : public test::EndToEndTest {
     test::RtcpPacketParser parser;
     EXPECT_TRUE(parser.Parse(packet, length));
 
-    if (parser.sender_ssrc() == test::CallTest::kVideoSendSsrcs[1] &&
+    if (parser.sender_ssrc() == test::VideoTestConstants::kVideoSendSsrcs[1] &&
         enable_zero_target_bitrate_) {
       // Reduce bandwidth restriction to disable second stream after it was
       // enabled for some time.
@@ -158,17 +159,16 @@ class RtcpXrObserver : public test::EndToEndTest {
     return enable_zero_target_bitrate_ ? 2 : 1;
   }
 
-  std::unique_ptr<test::PacketTransport> CreateSendTransport(
-      TaskQueueBase* task_queue,
-      Call* sender_call) {
-    auto network =
-        std::make_unique<SimulatedNetwork>(forward_transport_config_);
-    send_simulated_network_ = network.get();
-    return std::make_unique<test::PacketTransport>(
-        task_queue, sender_call, this, test::PacketTransport::kSender,
-        test::CallTest::payload_type_map_,
-        std::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
-                                          std::move(network)));
+  BuiltInNetworkBehaviorConfig GetSendTransportConfig() const override {
+    return forward_transport_config_;
+  }
+
+  void OnTransportCreated(
+      test::PacketTransport* to_receiver,
+      SimulatedNetworkInterface* sender_network,
+      test::PacketTransport* to_sender,
+      SimulatedNetworkInterface* receiver_network) override {
+    send_simulated_network_ = sender_network;
   }
 
   void ModifyVideoConfigs(
@@ -210,7 +210,7 @@ class RtcpXrObserver : public test::EndToEndTest {
   bool sent_zero_rtcp_target_bitrate_ RTC_GUARDED_BY(&mutex_);
   int sent_rtcp_dlrr_;
   BuiltInNetworkBehaviorConfig forward_transport_config_;
-  SimulatedNetwork* send_simulated_network_;
+  SimulatedNetworkInterface* send_simulated_network_ = nullptr;
 };
 
 TEST_F(ExtendedReportsEndToEndTest,

@@ -153,6 +153,9 @@ public:
 
     // [AllowShared] annotation allows accepting TypedArray originated from SharedArrayBuffer.
     static inline RefPtr<typename Adaptor::ViewType> toWrappedAllowShared(VM&, JSValue);
+
+    inline void copyFromInt32ShapeArray(size_t offset, JSArray*, size_t objectOffset, size_t length);
+    inline void copyFromDoubleShapeArray(size_t offset, JSArray*, size_t objectOffset, size_t length);
     
 protected:
     friend struct TypedArrayClassInfos;

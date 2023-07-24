@@ -8,7 +8,9 @@
  * Media Patent License 1.0 was not distributed with this source code in the
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
+#include "av1/encoder/thirdpass.h"
 
+#if CONFIG_THREE_PASS && CONFIG_AV1_DECODER
 #include "aom/aom_codec.h"
 #include "aom/aomdx.h"
 #include "aom_dsp/psnr.h"
@@ -16,14 +18,9 @@
 #include "av1/av1_iface_common.h"
 #include "av1/encoder/encoder.h"
 #include "av1/encoder/firstpass.h"
-#include "av1/encoder/thirdpass.h"
 #include "av1/common/blockd.h"
-
-#if CONFIG_THREE_PASS
 #include "common/ivfdec.h"
-#endif
 
-#if CONFIG_THREE_PASS
 static void setup_two_pass_stream_input(
     struct AvxInputContext **input_ctx_ptr, const char *input_file_name,
     struct aom_internal_error_info *err_info) {
@@ -64,7 +61,6 @@ static void init_third_pass(THIRD_PASS_DEC_CTX *ctx) {
                                 ctx->err_info);
   }
 
-#if CONFIG_AV1_DECODER
   if (!ctx->decoder.iface) {
     aom_codec_iface_t *decoder_iface = &aom_codec_av1_inspect_algo;
     if (aom_codec_dec_init(&ctx->decoder, decoder_iface, NULL, 0)) {
@@ -72,24 +68,17 @@ static void init_third_pass(THIRD_PASS_DEC_CTX *ctx) {
                          "Failed to initialize decoder.");
     }
   }
-#else
-  aom_internal_error(ctx->err_info, AOM_CODEC_ERROR,
-                     "To utilize three-pass encoding, libaom must be built "
-                     "with CONFIG_AV1_DECODER=1.");
-#endif
 }
-#endif  // CONFIG_THREE_PASS
 
 // Return 0: success
 //        1: cannot read because this is end of file
 //       -1: failure to read the frame
 static int read_frame(THIRD_PASS_DEC_CTX *ctx) {
-#if CONFIG_THREE_PASS
   if (!ctx->input_ctx || !ctx->decoder.iface) {
     init_third_pass(ctx);
   }
   if (!ctx->have_frame) {
-    if (ivf_read_frame(ctx->input_ctx->file, &ctx->buf, &ctx->bytes_in_buffer,
+    if (ivf_read_frame(ctx->input_ctx, &ctx->buf, &ctx->bytes_in_buffer,
                        &ctx->buffer_size, NULL) != 0) {
       if (feof(ctx->input_ctx->file)) {
         return 1;
@@ -101,10 +90,7 @@ static int read_frame(THIRD_PASS_DEC_CTX *ctx) {
     ctx->end_frame = ctx->frame + ctx->bytes_in_buffer;
     ctx->have_frame = 1;
   }
-#else
-  aom_internal_error(ctx->err_info, AOM_CODEC_ERROR,
-                     "Cannot parse bitstream without CONFIG_THREE_PASS.");
-#endif
+
   Av1DecodeReturn adr;
   if (aom_codec_decode(&ctx->decoder, ctx->frame,
                        (unsigned int)ctx->bytes_in_buffer,
@@ -141,7 +127,7 @@ static int get_frame_info(THIRD_PASS_DEC_CTX *ctx) {
     aom_internal_error(ctx->err_info, AOM_CODEC_ERROR,
                        "Third pass frame info ran out of available slots.");
   }
-  int frame_type_flags = 0;
+  aom_codec_frame_flags_t frame_type_flags = 0;
   if (aom_codec_control(&ctx->decoder, AOMD_GET_FRAME_FLAGS,
                         &frame_type_flags) != AOM_CODEC_OK) {
     aom_internal_error(ctx->err_info, AOM_CODEC_ERROR,
@@ -404,10 +390,8 @@ void av1_free_thirdpass_ctx(THIRD_PASS_DEC_CTX *ctx) {
   if (ctx->decoder.iface) {
     aom_codec_destroy(&ctx->decoder);
   }
-#if CONFIG_THREE_PASS
   if (ctx->input_ctx && ctx->input_ctx->file) fclose(ctx->input_ctx->file);
   aom_free(ctx->input_ctx);
-#endif
   if (ctx->buf) free(ctx->buf);
   for (int i = 0; i < MAX_THIRD_PASS_BUF; i++) {
     free_frame_info(&ctx->frame_info[i]);
@@ -705,6 +689,119 @@ PARTITION_TYPE av1_third_pass_get_sb_part_type(THIRD_PASS_DEC_CTX *ctx,
 
   return corner_mi->partition;
 }
+
+#else   // !(CONFIG_THREE_PASS && CONFIG_AV1_DECODER)
+void av1_init_thirdpass_ctx(AV1_COMMON *cm, THIRD_PASS_DEC_CTX **ctx,
+                            const char *file) {
+  (void)ctx;
+  (void)file;
+  aom_internal_error(cm->error, AOM_CODEC_ERROR,
+                     "To utilize three-pass encoding, libaom must be built "
+                     "with CONFIG_THREE_PASS=1 & CONFIG_AV1_DECODER=1.");
+}
+
+void av1_free_thirdpass_ctx(THIRD_PASS_DEC_CTX *ctx) { (void)ctx; }
+
+void av1_set_gop_third_pass(THIRD_PASS_DEC_CTX *ctx) { (void)ctx; }
+
+void av1_pop_third_pass_info(THIRD_PASS_DEC_CTX *ctx) { (void)ctx; }
+
+void av1_open_second_pass_log(struct AV1_COMP *cpi, int is_read) {
+  (void)cpi;
+  (void)is_read;
+}
+
+void av1_close_second_pass_log(struct AV1_COMP *cpi) { (void)cpi; }
+
+void av1_write_second_pass_gop_info(struct AV1_COMP *cpi) { (void)cpi; }
+
+void av1_write_second_pass_per_frame_info(struct AV1_COMP *cpi, int gf_index) {
+  (void)cpi;
+  (void)gf_index;
+}
+
+void av1_read_second_pass_gop_info(FILE *second_pass_log_stream,
+                                   THIRD_PASS_GOP_INFO *gop_info,
+                                   struct aom_internal_error_info *error) {
+  (void)second_pass_log_stream;
+  (void)gop_info;
+  (void)error;
+}
+
+void av1_read_second_pass_per_frame_info(
+    FILE *second_pass_log_stream, THIRD_PASS_FRAME_INFO *frame_info_arr,
+    int frame_info_count, struct aom_internal_error_info *error) {
+  (void)second_pass_log_stream;
+  (void)frame_info_arr;
+  (void)frame_info_count;
+  (void)error;
+}
+
+int av1_check_use_arf(THIRD_PASS_DEC_CTX *ctx) {
+  (void)ctx;
+  return 1;
+}
+
+void av1_get_third_pass_ratio(THIRD_PASS_DEC_CTX *ctx, int fidx, int fheight,
+                              int fwidth, double *ratio_h, double *ratio_w) {
+  (void)ctx;
+  (void)fidx;
+  (void)fheight;
+  (void)fwidth;
+  (void)ratio_h;
+  (void)ratio_w;
+}
+
+THIRD_PASS_MI_INFO *av1_get_third_pass_mi(THIRD_PASS_DEC_CTX *ctx, int fidx,
+                                          int mi_row, int mi_col,
+                                          double ratio_h, double ratio_w) {
+  (void)ctx;
+  (void)fidx;
+  (void)mi_row;
+  (void)mi_col;
+  (void)ratio_h;
+  (void)ratio_w;
+  return NULL;
+}
+
+int_mv av1_get_third_pass_adjusted_mv(THIRD_PASS_MI_INFO *this_mi,
+                                      double ratio_h, double ratio_w,
+                                      MV_REFERENCE_FRAME frame) {
+  (void)this_mi;
+  (void)ratio_h;
+  (void)ratio_w;
+  (void)frame;
+  int_mv mv;
+  mv.as_int = INVALID_MV;
+  return mv;
+}
+
+BLOCK_SIZE av1_get_third_pass_adjusted_blk_size(THIRD_PASS_MI_INFO *this_mi,
+                                                double ratio_h,
+                                                double ratio_w) {
+  (void)this_mi;
+  (void)ratio_h;
+  (void)ratio_w;
+  return BLOCK_INVALID;
+}
+
+void av1_third_pass_get_adjusted_mi(THIRD_PASS_MI_INFO *third_pass_mi,
+                                    double ratio_h, double ratio_w, int *mi_row,
+                                    int *mi_col) {
+  (void)third_pass_mi;
+  (void)ratio_h;
+  (void)ratio_w;
+  (void)mi_row;
+  (void)mi_col;
+}
+
+PARTITION_TYPE av1_third_pass_get_sb_part_type(THIRD_PASS_DEC_CTX *ctx,
+                                               THIRD_PASS_MI_INFO *this_mi) {
+  (void)ctx;
+  (void)this_mi;
+  return PARTITION_INVALID;
+}
+#endif  // CONFIG_THREE_PASS && CONFIG_AV1_DECODER
 
 #if CONFIG_BITRATE_ACCURACY
 static void fwrite_and_check(const void *ptr, size_t size, size_t nmemb,

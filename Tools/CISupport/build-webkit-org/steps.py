@@ -49,6 +49,36 @@ WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 
 
+class CustomFlagsMixin(object):
+
+    def appendCrossTargetFlags(self, additionalArguments):
+        if additionalArguments:
+            for additionalArgument in additionalArguments:
+                if additionalArgument.startswith('--cross-target='):
+                    self.command.append(additionalArgument)
+                    return
+
+    def appendCustomBuildFlags(self, platform, fullPlatform):
+        if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos',):
+            return
+        if 'simulator' in fullPlatform:
+            platform = platform + '-simulator'
+        elif platform in ['ios', 'tvos', 'watchos']:
+            platform = platform + '-device'
+        self.setCommand(self.command + ['--' + platform])
+
+    def appendCustomTestingFlags(self, platform, device_model):
+        if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe'):
+            return
+        if device_model == 'iphone':
+            device_model = 'iphone-simulator'
+        elif device_model == 'ipad':
+            device_model = 'ipad-simulator'
+        else:
+            device_model = platform
+        self.setCommand(self.command + ['--' + device_model])
+
+
 class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
     """A pretty wrapper for LineConsumerLogObserver to avoid
        repeatedly setting up generator processors."""
@@ -271,45 +301,31 @@ class InstallWinCairoDependencies(shell.ShellCommandNewStyle):
     haltOnFailure = True
 
 
-class InstallGtkDependencies(shell.ShellCommandNewStyle):
+class InstallGtkDependencies(shell.ShellCommandNewStyle, CustomFlagsMixin):
     name = "jhbuild"
     description = ["updating gtk dependencies"]
     descriptionDone = ["updated gtk dependencies"]
     command = ["perl", "Tools/Scripts/update-webkitgtk-libs", WithProperties("--%(configuration)s")]
     haltOnFailure = True
 
+    def run(self):
+        self.appendCrossTargetFlags(self.getProperty('additionalArguments'))
+        return super().run()
 
-class InstallWpeDependencies(shell.ShellCommandNewStyle):
+
+class InstallWpeDependencies(shell.ShellCommandNewStyle, CustomFlagsMixin):
     name = "jhbuild"
     description = ["updating wpe dependencies"]
     descriptionDone = ["updated wpe dependencies"]
     command = ["perl", "Tools/Scripts/update-webkitwpe-libs", WithProperties("--%(configuration)s")]
     haltOnFailure = True
 
-
-def appendCustomBuildFlags(step, platform, fullPlatform):
-    if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos',):
-        return
-    if 'simulator' in fullPlatform:
-        platform = platform + '-simulator'
-    elif platform in ['ios', 'tvos', 'watchos']:
-        platform = platform + '-device'
-    step.setCommand(step.command + ['--' + platform])
+    def run(self):
+        self.appendCrossTargetFlags(self.getProperty('additionalArguments'))
+        return super().run()
 
 
-def appendCustomTestingFlags(step, platform, device_model):
-    if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe'):
-        return
-    if device_model == 'iphone':
-        device_model = 'iphone-simulator'
-    elif device_model == 'ipad':
-        device_model = 'ipad-simulator'
-    else:
-        device_model = platform
-    step.setCommand(step.command + ['--' + device_model])
-
-
-class CompileWebKit(shell.Compile):
+class CompileWebKit(shell.Compile, CustomFlagsMixin):
     command = ["perl", "Tools/Scripts/build-webkit", "--no-fatal-warnings", WithProperties("--%(configuration)s")]
     env = {'MFLAGS': ''}
     name = "compile-webkit"
@@ -349,19 +365,13 @@ class CompileWebKit(shell.Compile):
             prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration").title(), "install")
             self.setCommand(self.command + [f'--prefix={prefix}'])
 
-        appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
+        self.appendCustomBuildFlags(platform, self.getProperty('fullPlatform'))
 
         return shell.Compile.start(self)
 
     def buildCommandKwargs(self, warnings):
         kwargs = super(CompileWebKit, self).buildCommandKwargs(warnings)
-        # https://bugs.webkit.org/show_bug.cgi?id=239455: The timeout needs to be >20 min to
-        # work around log output delays on slower machines.
-        # https://bugs.webkit.org/show_bug.cgi?id=247506: Only applies to Xcode 12.x.
-        if self.getProperty('fullPlatform') == 'mac-bigsur':
-            kwargs['timeout'] = 60 * 60
-        else:
-            kwargs['timeout'] = 60 * 30
+        kwargs['timeout'] = 60 * 30
         return kwargs
 
     def parseOutputLine(self, line):
@@ -405,19 +415,24 @@ class InstallBuiltProduct(shell.ShellCommandNewStyle):
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
 
-class ArchiveBuiltProduct(shell.ShellCommandNewStyle):
+class ArchiveBuiltProduct(shell.ShellCommandNewStyle, CustomFlagsMixin):
     command = ["python3", "Tools/CISupport/built-product-archive",
-               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive"]
+               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
     name = "archive-built-product"
     description = ["archiving built product"]
     descriptionDone = ["archived built product"]
     haltOnFailure = True
 
+    def run(self):
+        self.appendCrossTargetFlags(self.getProperty('additionalArguments'))
+        self.command.append("archive")
+        return super().run()
+
 
 class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
     name = 'archive-minified-built-product'
     command = ["python3", "Tools/CISupport/built-product-archive",
-               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive", "--minify"]
+               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "--minify"]
 
 
 # UploadBuiltProductViaSftp() is still unused. Check HOWTO_config_SFTP_uploads.md about how to enable it.
@@ -567,7 +582,7 @@ class DownloadBuiltProductFromMaster(transfer.FileDownload):
         return super(DownloadBuiltProductFromMaster, self).getResultSummary()
 
 
-class RunJavaScriptCoreTests(TestWithFailureCount):
+class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
     name = "jscore-test"
     description = ["jscore-tests running"]
     descriptionDone = ["jscore-tests"]
@@ -616,7 +631,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
         elif platform == 'wincairo':
             self.setCommand(self.command + ['--test-writer=ruby'])
 
-        appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
+        self.appendCustomBuildFlags(platform, self.getProperty('fullPlatform'))
         return shell.Test.start(self)
 
     def countFailures(self, cmd):
@@ -638,7 +653,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
         return count
 
 
-class RunTest262Tests(TestWithFailureCount):
+class RunTest262Tests(TestWithFailureCount, CustomFlagsMixin):
     name = "test262-test"
     description = ["test262-tests running"]
     descriptionDone = ["test262-tests"]
@@ -650,7 +665,7 @@ class RunTest262Tests(TestWithFailureCount):
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
-        appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+        self.appendCustomBuildFlags(self.getProperty('platform'), self.getProperty('fullPlatform'))
         return shell.Test.start(self)
 
     def parseOutputLine(self, line):
@@ -662,7 +677,7 @@ class RunTest262Tests(TestWithFailureCount):
         return self.failedTestCount
 
 
-class RunWebKitTests(shell.Test):
+class RunWebKitTests(shell.Test, CustomFlagsMixin):
     name = "layout-test"
     description = ["layout-tests running"]
     descriptionDone = ["layout-tests"]
@@ -702,7 +717,7 @@ class RunWebKitTests(shell.Test):
         self.testFailures = {}
 
         platform = self.getProperty('platform')
-        appendCustomTestingFlags(self, platform, self.getProperty('device_model'))
+        self.appendCustomTestingFlags(platform, self.getProperty('device_model'))
         additionalArguments = self.getProperty('additionalArguments')
 
         self.setCommand(self.command + ["--results-directory", self.resultDirectory])
@@ -784,7 +799,7 @@ class RunDashboardTests(RunWebKitTests):
         return RunWebKitTests.start(self)
 
 
-class RunAPITests(TestWithFailureCount):
+class RunAPITests(TestWithFailureCount, CustomFlagsMixin):
     name = "run-api-tests"
     VALID_ADDITIONAL_ARGUMENTS_LIST = ["--remote-layer-tree", "--use-gpu-process"]
     description = ["api tests running"]
@@ -816,7 +831,7 @@ class RunAPITests(TestWithFailureCount):
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
-        appendCustomTestingFlags(self, self.getProperty('platform'), self.getProperty('device_model'))
+        self.appendCustomTestingFlags(self.getProperty('platform'), self.getProperty('device_model'))
         additionalArguments = self.getProperty("additionalArguments")
         for additionalArgument in additionalArguments or []:
             if additionalArgument in self.VALID_ADDITIONAL_ARGUMENTS_LIST:
@@ -1091,7 +1106,7 @@ class RunWPEAPITests(RunGLibAPITests):
     command = ["python3", "Tools/Scripts/run-wpe-tests", WithProperties("--%(configuration)s")]
 
 
-class RunWebDriverTests(shell.Test):
+class RunWebDriverTests(shell.Test, CustomFlagsMixin):
     name = "webdriver-test"
     description = ["webdriver-tests running"]
     descriptionDone = ["webdriver-tests"]
@@ -1104,7 +1119,7 @@ class RunWebDriverTests(shell.Test):
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
 
-        appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+        self.appendCustomBuildFlags(self.getProperty('platform'), self.getProperty('fullPlatform'))
         return shell.Test.start(self)
 
     def commandComplete(self, cmd):
@@ -1216,7 +1231,8 @@ class RunBenchmarkTests(shell.Test):
     descriptionDone = ["benchmark tests"]
     command = ["python3", "Tools/Scripts/browserperfdash-benchmark", "--plans-from-config",
                "--config-file", "../../browserperfdash-benchmark-config.txt",
-               "--browser-version", WithProperties("%(archive_revision)s")]
+               "--browser-version", WithProperties("%(archive_revision)s"),
+               "--timestamp-from-repo", "."]
 
     def start(self):
         platform = self.getProperty("platform")
@@ -1449,3 +1465,68 @@ class ShowIdentifier(shell.ShellCommandNewStyle):
 
     def hideStepIf(self, results, step):
         return results == SUCCESS
+
+
+class CheckIfNeededUpdateDeployedCrossTargetImage(shell.ShellCommandNewStyle, CustomFlagsMixin):
+    command = ["python3", "Tools/Scripts/cross-toolchain-helper", "--check-if-image-is-updated", "deployed"]
+    name = "check-if-deployed-cross-target-image-is-updated"
+    description = ["checking if deployed cross target image is updated"]
+    descriptionDone = ["deployed cross target image is updated"]
+    haltOnFailure = False
+    flunkOnFailure = False
+    warnOnFailure = False
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.appendCrossTargetFlags(self.getProperty('additionalArguments'))
+        rc = yield super().run()
+        if rc != SUCCESS:
+            self.build.addStepsAfterCurrentStep([BuildAndDeployCrossTargetImage()])
+        defer.returnValue(rc)
+
+
+class CheckIfNeededUpdateRunningCrossTargetImage(shell.ShellCommandNewStyle):
+    command = ["python3", "Tools/Scripts/cross-toolchain-helper", "--check-if-image-is-updated", "running"]
+    name = "check-if-running-cross-target-image-is-updated"
+    description = ["checking if running cross target image is updated"]
+    descriptionDone = ["running cross target image is updated"]
+    haltOnFailure = False
+    flunkOnFailure = False
+    warnOnFailure = False
+
+    @defer.inlineCallbacks
+    def run(self):
+        rc = yield super().run()
+        if rc != SUCCESS:
+            self.build.addStepsAfterCurrentStep([RebootWithUpdatedCrossTargetImage()])
+        defer.returnValue(rc)
+
+
+class BuildAndDeployCrossTargetImage(shell.ShellCommandNewStyle, CustomFlagsMixin):
+    command = ["python3", "Tools/Scripts/cross-toolchain-helper", "--build-image",
+               "--deploy-image-with-script", "../../cross-toolchain-helper-deploy.sh"]
+    name = "build-and-deploy-cross-target-image"
+    description = ["building and deploying cross target image"]
+    descriptionDone = ["cross target image built and deployed"]
+    haltOnFailure = True
+
+    def run(self):
+        self.appendCrossTargetFlags(self.getProperty('additionalArguments'))
+        return super().run()
+
+
+class RebootWithUpdatedCrossTargetImage(shell.ShellCommandNewStyle):
+    # Either use env var SUDO_ASKPASS or configure /etc/sudoers for passwordless reboot
+    command = ["sudo", "-A", "reboot"]
+    name = "reboot-with-updated-cross-target-image"
+    description = ["rebooting with updated cross target image"]
+    descriptionDone = ["rebooted with updated cross target image"]
+    haltOnFailure = True
+
+    # This step can never succeed.. either it timeouts (bot has rebooted) or it fails.
+    # Ideally buildbot should have built-in reboot support so it waits for the bot to
+    # do a reboot, but it doesn't. See: https://github.com/buildbot/buildbot/issues/4578
+    @defer.inlineCallbacks
+    def run(self):
+        rc = yield super().run()
+        defer.returnValue(FAILURE)

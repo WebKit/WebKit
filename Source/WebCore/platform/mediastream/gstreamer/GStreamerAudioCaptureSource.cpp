@@ -44,16 +44,6 @@ const static RealtimeMediaSourceCapabilities::EchoCancellation defaultEchoCancel
 GST_DEBUG_CATEGORY(webkit_audio_capture_source_debug);
 #define GST_CAT_DEFAULT webkit_audio_capture_source_debug
 
-static void initializeDebugCategory()
-{
-    ensureGStreamerInitialized();
-
-    static std::once_flag debugRegisteredFlag;
-    std::call_once(debugRegisteredFlag, [] {
-        GST_DEBUG_CATEGORY_INIT(webkit_audio_capture_source_debug, "webkitaudiocapturesource", 0, "WebKit Audio Capture Source.");
-    });
-}
-
 class GStreamerAudioCaptureSourceFactory : public AudioCaptureFactory {
 public:
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier) final
@@ -81,7 +71,7 @@ CaptureSourceOrError GStreamerAudioCaptureSource::create(String&& deviceID, Medi
         return CaptureSourceOrError(WTFMove(errorMessage));
     }
 
-    auto source = adoptRef(*new GStreamerAudioCaptureSource(device.value(), WTFMove(hashSalts)));
+    auto source = adoptRef(*new GStreamerAudioCaptureSource(WTFMove(*device), WTFMove(hashSalts)));
 
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
@@ -95,42 +85,48 @@ AudioCaptureFactory& GStreamerAudioCaptureSource::factory()
     return libWebRTCAudioCaptureSourceFactory();
 }
 
-GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice device, MediaDeviceHashSalts&& hashSalts)
+GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice&& device, MediaDeviceHashSalts&& hashSalts)
     : RealtimeMediaSource(device, WTFMove(hashSalts))
-    , m_capturer(makeUnique<GStreamerAudioCapturer>(device))
+    , m_capturer(adoptRef(*new GStreamerAudioCapturer(WTFMove(device))))
 {
-    initializeDebugCategory();
+    ensureGStreamerInitialized();
+
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_audio_capture_source_debug, "webkitaudiocapturesource", 0, "WebKit Audio Capture Source.");
+    });
+
+    auto& singleton = GStreamerAudioCaptureDeviceManager::singleton();
+    singleton.registerCapturer(m_capturer);
 }
 
 GStreamerAudioCaptureSource::~GStreamerAudioCaptureSource()
 {
+    auto& singleton = GStreamerAudioCaptureDeviceManager::singleton();
+    singleton.unregisterCapturer(*m_capturer);
+}
+
+void GStreamerAudioCaptureSource::captureEnded()
+{
+    m_capturer->stop();
+    captureFailed();
 }
 
 void GStreamerAudioCaptureSource::startProducingData()
 {
     m_capturer->setupPipeline();
     m_capturer->setSampleRate(sampleRate());
-    g_signal_connect(m_capturer->sink(), "new-sample", G_CALLBACK(newSampleCallback), this);
-    m_capturer->play();
-}
-
-GstFlowReturn GStreamerAudioCaptureSource::newSampleCallback(GstElement* sink, GStreamerAudioCaptureSource* source)
-{
-    auto sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
-
-    auto* buffer = gst_sample_get_buffer(sample.get());
-    auto bufferSize = gst_buffer_get_size(buffer);
-    MediaTime presentationTime(GST_TIME_AS_USECONDS(GST_BUFFER_PTS(buffer)), G_USEC_PER_SEC);
-
-    GStreamerAudioData frames(WTFMove(sample));
-    GStreamerAudioStreamDescription description(frames.getAudioInfo());
-    source->audioSamplesAvailable(presentationTime, frames, description, bufferSize / description.getInfo().bpf);
-    return GST_FLOW_OK;
+    m_capturer->setSinkAudioCallback([this](auto&& sample, auto&& presentationTime) {
+        auto bufferSize = gst_buffer_get_size(gst_sample_get_buffer(sample.get()));
+        GStreamerAudioData frames(WTFMove(sample));
+        GStreamerAudioStreamDescription description(frames.getAudioInfo());
+        audioSamplesAvailable(presentationTime, frames, description, bufferSize / description.getInfo().bpf);
+    });
+    m_capturer->start();
 }
 
 void GStreamerAudioCaptureSource::stopProducingData()
 {
-    g_signal_handlers_disconnect_by_func(m_capturer->sink(), reinterpret_cast<gpointer>(newSampleCallback), this);
     m_capturer->stop();
 }
 
@@ -212,6 +208,8 @@ void GStreamerAudioCaptureSource::setInterruptedForTesting(bool isInterrupted)
     m_capturer->setInterrupted(isInterrupted);
     RealtimeMediaSource::setInterruptedForTesting(isInterrupted);
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

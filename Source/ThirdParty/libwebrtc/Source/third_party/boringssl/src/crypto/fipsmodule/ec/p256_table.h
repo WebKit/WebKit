@@ -50,7 +50,7 @@
 // Tables for other points have table[i] = iG for i in 0 .. 16.
 
 // fiat_p256_g_pre_comp is the table of precomputed base points
-#if defined(BORINGSSL_NISTP256_64BIT)
+#if defined(OPENSSL_64_BIT)
 static const fiat_p256_felem fiat_p256_g_pre_comp[2][15][2] = {
     {{{0x79e730d418a9143c, 0x75ba95fc5fedb601, 0x79fb732b77622510,
        0x18905f76a53755c6},

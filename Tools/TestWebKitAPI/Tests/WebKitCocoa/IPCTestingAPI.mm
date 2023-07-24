@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "DeprecatedGlobalValues.h"
+#import "PlatformUtilities.h"
 #import "RemoteObjectRegistry.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
@@ -416,8 +417,7 @@ TEST(IPCTestingAPI, CanInterceptAlert)
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
-// FIXME when rdar://108168809 is resolved
-TEST(IPCTestingAPI, DISABLED_CanInterceptHasStorageAccess)
+TEST(IPCTestingAPI, CanInterceptHasStorageAccess)
 {
     auto webView = createWebViewWithIPCTestingAPI();
 
@@ -647,6 +647,50 @@ TEST(IPCTestingAPI, CGColorInNSSecureCoding)
     ASSERT_EQ(CGColorGetNumberOfComponents(resultValue), CGColorGetNumberOfComponents(value.get()));
     for (size_t i = 0; i < CGColorGetNumberOfComponents(resultValue); ++i)
         EXPECT_EQ(CGColorGetComponents(resultValue)[i], CGColorGetComponents(value.get())[i]);
+    [unarchiver finishDecoding];
+    unarchiver.get().delegate = nil;
+}
+
+TEST(IPCTestingAPI, NSURLWithBaseURLInNSSecureCoding)
+{
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
+
+    RetainPtr<id<NSKeyedArchiverDelegate, NSKeyedUnarchiverDelegate>> delegate = adoptNS([[NSClassFromString(@"WKSecureCodingArchivingDelegate") alloc] init]);
+    archiver.get().delegate = delegate.get();
+
+    NSString *key = @"SomeString";
+    NSURL *value = [NSURL URLWithString:@"/garden_home.html" relativeToURL:[NSURL URLWithString:@"amcomponent://com.xunmeng.pinduoduo/"]];
+    EXPECT_WK_STREQ(value.baseURL.absoluteString, @"amcomponent://com.xunmeng.pinduoduo/");
+    EXPECT_WK_STREQ(value.relativeString, @"/garden_home.html");
+    EXPECT_WK_STREQ(value.absoluteString, @"amcomponent://com.xunmeng.pinduoduo/garden_home.html");
+
+    auto payload = @{ key : static_cast<id>(value) };
+    [archiver encodeObject:payload forKey:NSKeyedArchiveRootObjectKey];
+    [archiver finishEncoding];
+    [archiver setDelegate:nil];
+
+    auto data = [archiver encodedData];
+
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:data error:nullptr]);
+    unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
+    unarchiver.get().delegate = delegate.get();
+
+    auto allowedClassSet = adoptNS([NSMutableSet new]);
+    [allowedClassSet addObject:NSDictionary.class];
+    [allowedClassSet addObject:NSString.class];
+    [allowedClassSet addObject:NSClassFromString(@"WKSecureCodingURLWrapper")];
+
+    NSDictionary *result = [unarchiver decodeObjectOfClasses:allowedClassSet.get() forKey:NSKeyedArchiveRootObjectKey];
+
+    EXPECT_EQ(result.count, static_cast<NSUInteger>(1));
+    NSString *resultKey = result.allKeys[0];
+    EXPECT_TRUE([key isEqual:resultKey]);
+    NSURL *resultValue = (NSURL *)(result.allValues[0]);
+
+    // Our coder resolves the URL so we end up with an absolute URL instead of base URL + relative string.
+    EXPECT_WK_STREQ(resultValue.baseURL.absoluteString, @"");
+    EXPECT_WK_STREQ(resultValue.baseURL.relativeString, @"");
+    EXPECT_WK_STREQ(resultValue.absoluteString, @"amcomponent://com.xunmeng.pinduoduo/garden_home.html");
     [unarchiver finishDecoding];
     unarchiver.get().delegate = nil;
 }

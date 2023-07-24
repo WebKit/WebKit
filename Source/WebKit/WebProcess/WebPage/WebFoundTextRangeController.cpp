@@ -287,7 +287,7 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
 
     WebCore::GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    graphicsContext.setShadow(WebCore::FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, shadowColor);
+    graphicsContext.setDropShadow({ WebCore::FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, shadowColor, ShadowRadiusMode::Default });
     graphicsContext.setStrokeColor(foundColor);
     graphicsContext.setStrokeThickness(indicatorBorderWidth * 2);
     for (auto& path : foundFramePaths)
@@ -396,7 +396,7 @@ WebCore::Document* WebFoundTextRangeController::documentForFoundTextRange(const 
     if (range.frameIdentifier.isEmpty())
         return mainFrame.document();
 
-    if (auto* frame = dynamicDowncast<WebCore::LocalFrame>(mainFrame.tree().find(AtomString { range.frameIdentifier }, mainFrame)))
+    if (auto* frame = dynamicDowncast<WebCore::LocalFrame>(mainFrame.tree().findByUniqueName(AtomString { range.frameIdentifier }, mainFrame)))
         return frame->document();
 
     return nullptr;

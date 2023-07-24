@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- DOM IDs are of the format DISPLAY_TYPE, PAGEWIDE_ELEMENT_INDEX. We then can dump the DOM ID in the output and ensure element ordering is as we expect. -->
+<div id="button-container" role="group">
+    <button type="button" id="block-0" style="display:block" onclick="alert(this.innerText);">Block-0</button>
+    <button type="button" id="inline-block-1" style="display:inline-block" onclick="alert(this.innerText);">Inline-Block-1</button>
+    <button type="button" id="contents-2" style="display:contents" onclick="alert(this.innerText);">Contents-2</button>
+    <button type="button" id="block-3" style="display:block" onclick="alert(this.innerText);">Block-3</button>
+    <button type="button" id="inline-block-4" style="display:inline-block" onclick="alert(this.innerText);">Inline-Block-4</button>
+    <button type="button" id="contents-5" style="display:contents" onclick="alert(this.innerText);">Contents-5</button>
+    <button type="button" id="block-6" style="display:block" onclick="alert(this.innerText);">Block-6</button>
+</div>
+
+<div id="heading-container" role="group">
+    <h2 id="flex-7" style="display:flex">Flex-7</h2>
+    <h2 id="grid-8" style="display:grid">Grid-8</h2>
+    <h2 id="block-9" style="display:block">Block-9</h2>
+    <h2 id="inline-block-10" style="display:inline-block">Inline-Block-10</h2>
+    <h2 id="inline-block-11" style="display:inline-block">Inline-Block-11</h2>
+    <h2 id="contents-12" style="display:contents">Contents-12</h2>
+    <h2 id="inline-block-13" style="display:inline-block">Inline-Block-13</h2>
+    <h2 id="inline-block-14" style="display:inline-block">Inline-Block-14</h2>
+    <h2 id="contents-15" style="display:contents">Contents-15</h2>
+    <h2 id="contents-16" style="display:contents">Contents-16</h2>
+    <h2 id="flex-17" style="display:flex">Flex-17</h2>
+    <h2 id="grid-18" style="display:grid">Grid-18</h2>
+    <h2 id="contents-19" style="display:contents">Contents-19</h2>
+</div>
+
+<div id="mixed-element-container" role="group">
+    <h2 id="flex-20" style="display:flex">Flex-20</h2>
+    <h2 id="grid-21" style="display:grid">Grid-21</h2>
+    <button id="contents-22" type="button" style="display:contents" onclick="alert(this.innerText);">Contents-22</button>
+    <h2 id="contents-23" style="display:contents">Contents-23</h2>
+    <button id="block-24" type="button" style="display:block" onclick="alert(this.innerText);">Block-24</button>
+    <h2 id="inline-block-25" style="display:inline-block">Inline-Block-25</h2>
+    <h2 id="contents-26" style="display:contents">Contents-26</h2>
+    <button id="contents-27" type="button" style="display:contents" onclick="alert(this.innerText);">Contents-27</button>
+    <button id="block-28" type="button" style="display:block" onclick="alert(this.innerText);">Block-28</button>
+</div>
+
+<script>
+var testOutput = "This test ensures that display:contents elements are inserted in the correct place in the AX tree.\n\n";
+
+function traverse(containerId) {
+    testOutput += `\nPerforming search traversal of #${containerId}.\n`;
+    const container = accessibilityController.accessibleElementById(containerId);
+    let searchResult = null;
+    while (true) {
+        searchResult = container.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+        const role = searchResult.role;
+        const id = searchResult.domIdentifier;
+        testOutput += `\n${id ? `#${id} ` : ""}${role}`;
+        if (role.includes("StaticText")) {
+            let textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
+            testOutput += `\n${textContent}`;
+        }
+        testOutput += "\n";
+    }
+}
+
+if (window.accessibilityController) {
+    traverse("button-container");
+    traverse("heading-container");
+    traverse("mixed-element-container");
+
+    for (const containerId of ["button-container", "heading-container", "mixed-element-container"])
+        document.getElementById(containerId).style.visibility = "hidden";
+    debug(testOutput);
+}
+</script>
+</body>
+</html>
+
+

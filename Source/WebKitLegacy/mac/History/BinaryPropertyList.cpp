@@ -283,7 +283,7 @@ void BinaryPropertyListPlan::writeStringObject(const String& string)
 {
     unsigned length = string.length();
     m_byteCount += markerPlusLengthByteCount(length) + length;
-    if (!string.isAllASCII())
+    if (!string.containsOnlyASCII())
         m_byteCount += length;
 }
 
@@ -690,7 +690,7 @@ void BinaryPropertyListSerializer::appendStringObject(const String& string)
 {
     startObject();
     unsigned length = string.length();
-    if (string.isAllASCII()) {
+    if (string.containsOnlyASCII()) {
         if (length <= maxLengthInMarkerByte)
             appendByte(static_cast<unsigned char>(asciiStringMarkerByte | length));
         else {

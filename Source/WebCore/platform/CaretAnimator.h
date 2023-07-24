@@ -25,8 +25,9 @@
 
 #pragma once
 
+#include "Document.h"
 #include "LayoutRect.h"
-#include "ReducedResolutionSeconds.h"
+#include "RenderTheme.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -38,16 +39,26 @@ class FloatRect;
 class GraphicsContext;
 class Node;
 class Page;
+class VisibleSelection;
 
 enum class CaretAnimatorType : uint8_t {
     Default,
-    Alternate
+    Dictation
 };
 
 enum class CaretAnimatorStopReason : uint8_t {
     Default,
     CaretRectChanged,
 };
+
+#if HAVE(REDESIGNED_TEXT_CURSOR)
+
+struct KeyFrame {
+    Seconds time;
+    float value;
+};
+
+#endif
 
 class CaretAnimationClient {
 public:
@@ -57,6 +68,8 @@ public:
     virtual LayoutRect localCaretRect() const = 0;
 
     virtual Document* document() = 0;
+
+    virtual Node* caretNode() = 0;
 };
 
 class CaretAnimator {
@@ -73,13 +86,13 @@ public:
 
     virtual ~CaretAnimator() = default;
 
-    virtual void start(ReducedResolutionSeconds currentTime) = 0;
+    virtual void start() = 0;
 
     virtual void stop(CaretAnimatorStopReason = CaretAnimatorStopReason::Default);
 
     bool isActive() const { return m_isActive; }
 
-    void serviceCaretAnimation(ReducedResolutionSeconds);
+    void serviceCaretAnimation();
 
     virtual String debugDescription() const = 0;
 
@@ -89,7 +102,8 @@ public:
     virtual void setVisible(bool) = 0;
 
     PresentationProperties presentationProperties() const { return m_presentationProperties; }
-    virtual void paint(const Node&, GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const;
+
+    virtual void paint(GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const;
     virtual LayoutRect caretRepaintRectForLocalRect(LayoutRect) const;
 
 protected:
@@ -98,9 +112,9 @@ protected:
         , m_blinkTimer(*this, &CaretAnimator::scheduleAnimation)
     { }
 
-    virtual void updateAnimationProperties(ReducedResolutionSeconds) = 0;
+    virtual void updateAnimationProperties() = 0;
 
-    void didStart(ReducedResolutionSeconds currentTime, std::optional<Seconds> interval)
+    void didStart(MonotonicTime currentTime, std::optional<Seconds> interval)
     {
         m_startTime = currentTime;
         m_isActive = true;
@@ -118,7 +132,7 @@ protected:
     Page* page() const;
 
     CaretAnimationClient& m_client;
-    ReducedResolutionSeconds m_startTime;
+    MonotonicTime m_startTime;
     Timer m_blinkTimer;
     PresentationProperties m_presentationProperties { };
 

@@ -128,9 +128,19 @@ void Clip::apply(GraphicsContext& context) const
     context.clip(m_rect);
 }
 
+void ClipRoundedRect::apply(GraphicsContext& context) const
+{
+    context.clipRoundedRect(m_rect);
+}
+
 void ClipOut::apply(GraphicsContext& context) const
 {
     context.clipOut(m_rect);
+}
+
+void ClipOutRoundedRect::apply(GraphicsContext& context) const
+{
+    context.clipOutRoundedRect(m_rect);
 }
 
 void ClipToImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imageBuffer) const
@@ -345,6 +355,11 @@ void FillBezierCurve::apply(GraphicsContext& context) const
 
 #endif // ENABLE(INLINE_PATH_DATA)
 
+void FillPathSegment::apply(GraphicsContext& context) const
+{
+    context.fillPath(path());
+}
+
 void FillPath::apply(GraphicsContext& context) const
 {
     context.fillPath(m_path);
@@ -373,6 +388,11 @@ void StrokePath::apply(GraphicsContext& context) const
     context.strokePath(m_path);
 }
 
+void StrokePathSegment::apply(GraphicsContext& context) const
+{
+    context.strokePath(path());
+}
+
 void StrokeEllipse::apply(GraphicsContext& context) const
 {
     context.strokeEllipse(m_rect);
@@ -381,7 +401,7 @@ void StrokeEllipse::apply(GraphicsContext& context) const
 void StrokeLine::apply(GraphicsContext& context) const
 {
 #if ENABLE(INLINE_PATH_DATA)
-    auto path = Path::from(InlinePathData { LineData { start(), end() } });
+    auto path = Path({ PathSegment { PathDataLine { { start() }, { end() } } } });
 #else
     Path path;
     path.moveTo(start());
@@ -474,7 +494,9 @@ TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::SetLineJoin: ts << "set-line-join"; break;
     case ItemType::SetMiterLimit: ts << "set-miter-limit"; break;
     case ItemType::Clip: ts << "clip"; break;
+    case ItemType::ClipRoundedRect: ts << "clip-rounded-rect"; break;
     case ItemType::ClipOut: ts << "clip-out"; break;
+    case ItemType::ClipOutRoundedRect: ts << "clip-out-rounded-rect"; break;
     case ItemType::ClipToImageBuffer: ts << "clip-to-image-buffer"; break;
     case ItemType::ClipOutToPath: ts << "clip-out-to-path"; break;
     case ItemType::ClipPath: ts << "clip-path"; break;
@@ -506,6 +528,7 @@ TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::FillQuadCurve: ts << "fill-quad-curve"; break;
     case ItemType::FillBezierCurve: ts << "fill-bezier-curve"; break;
 #endif
+    case ItemType::FillPathSegment: ts << "fill-path-segment"; break;
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
 #if ENABLE(VIDEO)
@@ -518,6 +541,7 @@ TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::StrokeQuadCurve: ts << "stroke-quad-curve"; break;
     case ItemType::StrokeBezierCurve: ts << "stroke-bezier-curve"; break;
 #endif
+    case ItemType::StrokePathSegment: ts << "stroke-path-segment"; break;
     case ItemType::StrokePath: ts << "stroke-path"; break;
     case ItemType::StrokeEllipse: ts << "stroke-ellipse"; break;
     case ItemType::ClearRect: ts << "clear-rect"; break;
@@ -606,7 +630,17 @@ void dumpItem(TextStream& ts, const Clip& item, OptionSet<AsTextFlag>)
     ts.dumpProperty("rect", item.rect());
 }
 
+void dumpItem(TextStream& ts, const ClipRoundedRect& item, OptionSet<AsTextFlag>)
+{
+    ts.dumpProperty("rect", item.rect());
+}
+
 void dumpItem(TextStream& ts, const ClipOut& item, OptionSet<AsTextFlag>)
+{
+    ts.dumpProperty("rect", item.rect());
+}
+
+void dumpItem(TextStream& ts, const ClipOutRoundedRect& item, OptionSet<AsTextFlag>)
 {
     ts.dumpProperty("rect", item.rect());
 }
@@ -818,6 +852,11 @@ void dumpItem(TextStream& ts, const StrokeBezierCurve& item, OptionSet<AsTextFla
 
 #endif // ENABLE(INLINE_PATH_DATA)
 
+void dumpItem(TextStream& ts, const FillPathSegment& item, OptionSet<AsTextFlag>)
+{
+    ts.dumpProperty("path", item.path());
+}
+
 void dumpItem(TextStream& ts, const FillPath& item, OptionSet<AsTextFlag>)
 {
     ts.dumpProperty("path", item.path());
@@ -842,6 +881,11 @@ void dumpItem(TextStream& ts, const StrokeRect& item, OptionSet<AsTextFlag>)
 {
     ts.dumpProperty("rect", item.rect());
     ts.dumpProperty("line-width", item.lineWidth());
+}
+
+void dumpItem(TextStream& ts, const StrokePathSegment& item, OptionSet<AsTextFlag>)
+{
+    ts.dumpProperty("path", item.path());
 }
 
 void dumpItem(TextStream& ts, const StrokePath& item, OptionSet<AsTextFlag>)
@@ -930,8 +974,14 @@ void dumpItemHandle(TextStream& ts, const ItemHandle& item, OptionSet<AsTextFlag
     case ItemType::Clip:
         dumpItem(ts, item.get<Clip>(), flags);
         break;
+    case ItemType::ClipRoundedRect:
+        dumpItem(ts, item.get<ClipRoundedRect>(), flags);
+        break;
     case ItemType::ClipOut:
         dumpItem(ts, item.get<ClipOut>(), flags);
+        break;
+    case ItemType::ClipOutRoundedRect:
+        dumpItem(ts, item.get<ClipOutRoundedRect>(), flags);
         break;
     case ItemType::ClipToImageBuffer:
         dumpItem(ts, item.get<ClipToImageBuffer>(), flags);
@@ -1019,6 +1069,9 @@ void dumpItemHandle(TextStream& ts, const ItemHandle& item, OptionSet<AsTextFlag
         dumpItem(ts, item.get<FillBezierCurve>(), flags);
         break;
 #endif
+    case ItemType::FillPathSegment:
+        dumpItem(ts, item.get<FillPathSegment>(), flags);
+        break;
     case ItemType::FillPath:
         dumpItem(ts, item.get<FillPath>(), flags);
         break;
@@ -1047,6 +1100,9 @@ void dumpItemHandle(TextStream& ts, const ItemHandle& item, OptionSet<AsTextFlag
         dumpItem(ts, item.get<StrokeBezierCurve>(), flags);
         break;
 #endif
+    case ItemType::StrokePathSegment:
+        dumpItem(ts, item.get<StrokePathSegment>(), flags);
+        break;
     case ItemType::StrokePath:
         dumpItem(ts, item.get<StrokePath>(), flags);
         break;

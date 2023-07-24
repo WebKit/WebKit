@@ -7,7 +7,7 @@ description: >
   Intl.DateTimeFormat.prototype.resolvedOptions properly
   reflect hourCycle settings when using timeStyle.
 includes: [propertyHelper.js]
-features: [Intl.DateTimeFormat-datetimestyle]
+features: [Intl.DateTimeFormat-datetimestyle, Array.prototype.includes]
 ---*/
 
 const hcValues = ["h11", "h12", "h23", "h24"];

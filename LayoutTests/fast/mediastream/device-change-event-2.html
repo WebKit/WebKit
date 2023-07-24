@@ -100,7 +100,6 @@
 
 
     promise_test(async (test) => {
-
         await setup(test);
 
         await new Promise((resolve, reject) => {
@@ -135,7 +134,6 @@
     }, "'devicechange' event is not fired when the document doesn't has focus or permission to capture");
 
     promise_test(async (test) => {
-
         await setup(test);
 
         await navigator.mediaDevices.getUserMedia({ audio:true, video:true })

@@ -56,16 +56,3 @@ WTF::TextStream& operator<<(WTF::TextStream&, ListStyleType);
 
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ListStyleType::Type> {
-    using values = EnumValues<
-        WebCore::ListStyleType::Type,
-        WebCore::ListStyleType::Type::CounterStyle,
-        WebCore::ListStyleType::Type::String,
-        WebCore::ListStyleType::Type::None
-    >;
-};
-
-} // namespace WTF

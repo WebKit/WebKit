@@ -40,6 +40,10 @@ if(FORCE_HIGHBITDEPTH_DECODING AND NOT CONFIG_AV1_HIGHBITDEPTH)
                          "FORCE_HIGHBITDEPTH_DECODING")
 endif()
 
+if(CONFIG_THREE_PASS AND NOT CONFIG_AV1_DECODER)
+  change_config_and_warn(CONFIG_THREE_PASS 0 "CONFIG_AV1_DECODER=0")
+endif()
+
 # Generate the user config settings.
 list(APPEND aom_build_vars ${AOM_CONFIG_VARS} ${AOM_OPTION_VARS})
 foreach(cache_var ${aom_build_vars})
@@ -67,7 +71,7 @@ if(NOT AOM_TARGET_CPU)
     endif()
   elseif(cpu_lowercase STREQUAL "i386" OR cpu_lowercase STREQUAL "x86")
     set(AOM_TARGET_CPU "x86")
-  elseif(cpu_lowercase MATCHES "^arm" OR cpu_lowercase MATCHES "^mips")
+  elseif(cpu_lowercase MATCHES "^arm")
     set(AOM_TARGET_CPU "${cpu_lowercase}")
   elseif(cpu_lowercase MATCHES "aarch64")
     set(AOM_TARGET_CPU "arm64")
@@ -151,49 +155,61 @@ if(NOT MSVC)
 endif()
 
 if(AOM_TARGET_CPU STREQUAL "x86" OR AOM_TARGET_CPU STREQUAL "x86_64")
-  find_program(AS_EXECUTABLE yasm $ENV{YASM_PATH})
-  if(NOT AS_EXECUTABLE OR ENABLE_NASM)
-    unset(AS_EXECUTABLE CACHE)
-    find_program(AS_EXECUTABLE nasm $ENV{NASM_PATH})
-    if(AS_EXECUTABLE)
-      test_nasm()
-    endif()
+  find_program(CMAKE_ASM_NASM_COMPILER yasm $ENV{YASM_PATH})
+  if(NOT CMAKE_ASM_NASM_COMPILER OR ENABLE_NASM)
+    unset(CMAKE_ASM_NASM_COMPILER CACHE)
+    find_program(CMAKE_ASM_NASM_COMPILER nasm $ENV{NASM_PATH})
   endif()
 
-  if(NOT AS_EXECUTABLE)
+  include(CheckLanguage)
+  check_language(ASM_NASM)
+  if(CMAKE_ASM_NASM_COMPILER)
+    get_asm_obj_format("objformat")
+    unset(CMAKE_ASM_NASM_OBJECT_FORMAT)
+    set(CMAKE_ASM_NASM_OBJECT_FORMAT ${objformat})
+    enable_language(ASM_NASM)
+    if(CMAKE_ASM_NASM_COMPILER_ID STREQUAL "NASM")
+      test_nasm()
+    endif()
+    # Xcode requires building the objects manually, so pass the object format
+    # flag.
+    if(XCODE)
+      set(AOM_AS_FLAGS -f ${objformat} ${AOM_AS_FLAGS})
+    endif()
+  else()
     message(
       FATAL_ERROR
         "Unable to find assembler. Install 'yasm' or 'nasm.' "
         "To build without optimizations, add -DAOM_TARGET_CPU=generic to "
         "your cmake command line.")
   endif()
-  get_asm_obj_format("objformat")
-  set(AOM_AS_FLAGS -f ${objformat} ${AOM_AS_FLAGS})
   string(STRIP "${AOM_AS_FLAGS}" AOM_AS_FLAGS)
 elseif(AOM_TARGET_CPU MATCHES "arm")
   if(AOM_TARGET_SYSTEM STREQUAL "Darwin")
-    set(AS_EXECUTABLE as)
+    set(CMAKE_ASM_COMPILER as)
     set(AOM_AS_FLAGS -arch ${AOM_TARGET_CPU} -isysroot ${CMAKE_OSX_SYSROOT})
   elseif(AOM_TARGET_SYSTEM STREQUAL "Windows")
-    if(NOT AS_EXECUTABLE)
-      set(AS_EXECUTABLE ${CMAKE_C_COMPILER} -c -mimplicit-it=always)
+    if(NOT CMAKE_ASM_COMPILER)
+      set(CMAKE_ASM_COMPILER ${CMAKE_C_COMPILER} -c -mimplicit-it=always)
     endif()
   else()
-    if(NOT AS_EXECUTABLE)
-      set(AS_EXECUTABLE as)
+    if(NOT CMAKE_ASM_COMPILER)
+      set(CMAKE_ASM_COMPILER as)
     endif()
   endif()
-  find_program(as_executable_found ${AS_EXECUTABLE})
-  if(NOT as_executable_found)
+  include(CheckLanguage)
+  check_language(ASM)
+  if(NOT CMAKE_ASM_COMPILER)
     message(
       FATAL_ERROR
         "Unable to find assembler and optimizations are enabled."
-        "Searched for ${AS_EXECUTABLE}. Install it, add it to your path, or "
-        "set the assembler directly by adding -DAS_EXECUTABLE=<assembler path> "
-        "to your CMake command line."
+        "Searched for ${CMAKE_ASM_COMPILER}. Install it, add it to your path,"
+        "or set the assembler directly by adding "
+        "-DCMAKE_ASM_COMPILER=<assembler path> to your CMake command line."
         "To build without optimizations, add -DAOM_TARGET_CPU=generic to your "
         "cmake command line.")
   endif()
+  enable_language(ASM)
   string(STRIP "${AOM_AS_FLAGS}" AOM_AS_FLAGS)
 endif()
 
@@ -226,9 +242,8 @@ if(AOM_TARGET_SYSTEM STREQUAL "Windows")
   # The default _WIN32_WINNT value in MinGW is 0x0502 (Windows XP with SP2). Set
   # it to 0x0601 (Windows 7).
   add_compiler_flag_if_supported("-D_WIN32_WINNT=0x0601")
-  # Prevent windows.h from defining the min and max macros. This allows us to
-  # use std::min and std::max.
-  add_compiler_flag_if_supported("-DNOMINMAX")
+  # Quiet warnings related to fopen, printf, etc.
+  add_compiler_flag_if_supported("-D_CRT_SECURE_NO_WARNINGS")
 endif()
 
 #
@@ -244,7 +259,7 @@ aom_get_inline("INLINE")
 set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
 aom_check_source_compiles("unistd_check" "#include <unistd.h>" HAVE_UNISTD_H)
 
-if(NOT MSVC)
+if(NOT WIN32)
   aom_push_var(CMAKE_REQUIRED_LIBRARIES "m")
   aom_check_c_compiles("fenv_check" "#define _GNU_SOURCE
                         #include <fenv.h>
@@ -296,11 +311,30 @@ if(MSVC)
   endif()
 else()
   require_c_flag("-std=c99" YES)
-  require_cxx_flag_nomsvc("-std=c++11" YES)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
+     AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU"
+     AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
+    # Microsoft's C++ Standard Library requires C++14 as it's MSVC's default and
+    # minimum supported C++ version. If Clang is using this Standard Library
+    # implementation, it cannot target C++11.
+    require_cxx_flag_nomsvc("-std=c++14" YES)
+  else()
+    require_cxx_flag_nomsvc("-std=c++11" YES)
+  endif()
   add_compiler_flag_if_supported("-Wall")
   add_compiler_flag_if_supported("-Wdisabled-optimization")
   add_compiler_flag_if_supported("-Wextra")
-  add_compiler_flag_if_supported("-Wextra-semi")
+  # Prior to version 3.19.0 cmake would fail to parse the warning emitted by gcc
+  # with this flag. Note the order of this check and -Wextra-semi-stmt is
+  # important due to is_flag_present() matching substrings with string(FIND
+  # ...).
+  if(CMAKE_VERSION VERSION_LESS "3.19"
+     AND CMAKE_C_COMPILER_ID STREQUAL "GNU"
+     AND CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 10)
+    add_cxx_flag_if_supported("-Wextra-semi")
+  else()
+    add_compiler_flag_if_supported("-Wextra-semi")
+  endif()
   add_compiler_flag_if_supported("-Wextra-semi-stmt")
   add_compiler_flag_if_supported("-Wfloat-conversion")
   add_compiler_flag_if_supported("-Wformat=2")
@@ -314,6 +348,9 @@ else()
   add_compiler_flag_if_supported("-Wuninitialized")
   add_compiler_flag_if_supported("-Wunused")
   add_compiler_flag_if_supported("-Wvla")
+  add_cxx_flag_if_supported("-Wc++14-extensions")
+  add_cxx_flag_if_supported("-Wc++17-extensions")
+  add_cxx_flag_if_supported("-Wc++20-extensions")
 
   if(CMAKE_C_COMPILER_ID MATCHES "GNU" AND SANITIZE MATCHES "address|undefined")
 

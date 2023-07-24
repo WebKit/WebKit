@@ -44,6 +44,17 @@ class DatarateTest : public ::libaom_test::EncoderTest {
     denoiser_offon_period_ = -1;
     tile_column_ = 0;
     screen_mode_ = false;
+    max_perc_spike_ = 1.0;
+    max_perc_spike_high_ = 1.0;
+    num_spikes_ = 0;
+    num_spikes_high_ = 0;
+    frame_update_bitrate_ = 0;
+    for (int i = 0; i < 3; i++) {
+      target_bitrate_update_[i] = 0;
+      frame_number_dynamic_[i] = 0;
+      bits_total_dynamic_[i] = 0;
+      effective_datarate_dynamic_[i] = 0.0;
+    }
   }
 
   virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
@@ -82,6 +93,16 @@ class DatarateTest : public ::libaom_test::EncoderTest {
         encoder->Control(AOME_SET_CPUUSED, 6);
       } else if (video->frame() == 90) {
         encoder->Control(AOME_SET_CPUUSED, 7);
+      }
+    }
+
+    if (frame_update_bitrate_ > 0) {
+      if (frame_number_ == frame_update_bitrate_) {
+        cfg_.rc_target_bitrate = target_bitrate_update_[1];
+        encoder->Config(&cfg_);
+      } else if (frame_number_ == 2 * frame_update_bitrate_) {
+        cfg_.rc_target_bitrate = target_bitrate_update_[2];
+        encoder->Config(&cfg_);
       }
     }
 
@@ -132,12 +153,38 @@ class DatarateTest : public ::libaom_test::EncoderTest {
     last_pts_ = pkt->data.frame.pts;
     ++frame_number_;
     ++tot_frame_number_;
+    const int per_frame_bandwidth = (cfg_.rc_target_bitrate * 1000) / 30;
+    if (frame_size_in_bits > max_perc_spike_ * per_frame_bandwidth &&
+        frame_number_ > 1)
+      num_spikes_++;
+    if (frame_size_in_bits > max_perc_spike_high_ * per_frame_bandwidth &&
+        frame_number_ > 1)
+      num_spikes_high_++;
+
+    if (frame_update_bitrate_ > 0) {
+      if (frame_number_ < frame_update_bitrate_) {
+        bits_total_dynamic_[0] += frame_size_in_bits;
+        frame_number_dynamic_[0]++;
+      } else if (frame_number_ >= frame_update_bitrate_ &&
+                 frame_number_ < 2 * frame_update_bitrate_) {
+        bits_total_dynamic_[1] += frame_size_in_bits;
+        frame_number_dynamic_[1]++;
+      } else {
+        bits_total_dynamic_[2] += frame_size_in_bits;
+        frame_number_dynamic_[2]++;
+      }
+    }
   }
 
-  virtual void EndPassHook(void) {
+  virtual void EndPassHook() {
     duration_ = (last_pts_ + 1) * timebase_;
     // Effective file datarate:
     effective_datarate_ = (bits_total_ / 1000.0) / duration_;
+    if (frame_update_bitrate_ > 0) {
+      for (int i = 0; i < 3; i++)
+        effective_datarate_dynamic_[i] =
+            30 * (bits_total_dynamic_[i] / 1000.0) / frame_number_dynamic_[i];
+    }
   }
 
   aom_codec_pts_t last_pts_;
@@ -158,6 +205,18 @@ class DatarateTest : public ::libaom_test::EncoderTest {
   bool speed_change_test_;
   int tile_column_;
   bool screen_mode_;
+  double max_perc_spike_;
+  double max_perc_spike_high_;
+  int num_spikes_;
+  int num_spikes_high_;
+  // These are use for test with dynamic bitrate change.
+  // Used to verify that the encoder can respond and hit bitrate that is updated
+  // during the sequence.
+  int frame_update_bitrate_;
+  int target_bitrate_update_[3];
+  double effective_datarate_dynamic_[3];
+  int64_t bits_total_dynamic_[3];
+  int frame_number_dynamic_[3];
 };
 
 }  // namespace

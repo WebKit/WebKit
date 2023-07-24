@@ -96,16 +96,16 @@ layer at (0,0) size 785x1130
             text run at (100,0) width 289: "This paragraph has a bottom margin of 50px."
         RenderBlock {SPAN} at (10,110) size 749x0
 layer at (8,139) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,131) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,131) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,290) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,282) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,282) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (108,396) size 669x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (100,388) size 669x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (100,388) size 669x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,537) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,529) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,529) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,683) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,675) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,675) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,849) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,841) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,841) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,992) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,984) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,984) size 769x2 [color=#808080] [border: (1px inset #808080)]

@@ -69,7 +69,7 @@ static void textUTF16ContextAwareMoveInPrimaryContext(UText* text, int64_t nativ
 {
     ASSERT(text->chunkContents == text->p);
     ASSERT_UNUSED(forward, forward ? nativeIndex >= text->b : nativeIndex > text->b);
-    ASSERT_UNUSED(forward, forward ? nativeIndex < nativeLength : nativeIndex <= nativeLength);
+    ASSERT(nativeIndex <= nativeLength);
     text->chunkNativeStart = text->b;
     text->chunkNativeLimit = nativeLength;
     int64_t length = text->chunkNativeLimit - text->chunkNativeStart;
@@ -93,9 +93,8 @@ static void textUTF16ContextAwareSwitchToPrimaryContext(UText* text, int64_t nat
 static void textUTF16ContextAwareMoveInPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(text->chunkContents == text->q);
-    ASSERT(forward ? nativeIndex < text->b : nativeIndex <= text->b);
-    ASSERT_UNUSED(nativeLength, forward ? nativeIndex < nativeLength : nativeIndex <= nativeLength);
-    ASSERT_UNUSED(forward, forward ? nativeIndex < nativeLength : nativeIndex <= nativeLength);
+    ASSERT_UNUSED(forward, forward ? nativeIndex < text->b : nativeIndex <= text->b);
+    ASSERT_UNUSED(nativeLength, nativeIndex <= nativeLength);
     text->chunkNativeStart = 0;
     text->chunkNativeLimit = text->b;
     text->chunkLength = text->b;

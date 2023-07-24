@@ -193,7 +193,7 @@ protected:
     WTFLogChannel& logChannel() const;
 #endif
 
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
     Ref<PlaybackSessionManager> m_playbackSessionManager;
     HashMap<WebCore::HTMLVideoElement*, PlaybackSessionContextIdentifier> m_videoElements;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;

@@ -55,9 +55,6 @@ protected:
 
     void hitInnerTextElement(HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
 
-    int textBlockLogicalWidth() const;
-    int textBlockLogicalHeight() const;
-
     float scaleEmToUnits(int x) const;
 
     virtual float getAverageCharWidth();

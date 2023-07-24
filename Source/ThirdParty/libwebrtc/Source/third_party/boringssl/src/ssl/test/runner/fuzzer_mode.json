@@ -51,6 +51,8 @@
 
     "Renegotiate-Client-BadExt*": "Fuzzer mode does not check renegotiation_info.",
 
-    "CBCRecordSplitting*": "Fuzzer mode does not implement record-splitting."
+    "CBCRecordSplitting*": "Fuzzer mode does not implement record-splitting.",
+
+    "*-ECH-Server-Decline*": "Encryption with wrong ECHConfig will not fail because fuzzer mode skips HPKE decryption."
   }
 }

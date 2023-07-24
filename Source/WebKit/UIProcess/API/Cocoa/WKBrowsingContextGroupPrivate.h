@@ -27,8 +27,4 @@
 
 #import <WebKit/WKBase.h>
 
-@interface WKBrowsingContextGroup (Private)
-
-@property(readonly) WKPageGroupRef _pageGroupRef;
-
-@end
+// FIXME: Remove this header once rdar://112426343 is resolved.

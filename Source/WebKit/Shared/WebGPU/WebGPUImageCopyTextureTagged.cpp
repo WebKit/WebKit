@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,20 +30,20 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUImageCopyTextureTagged.h>
+#include <WebCore/WebGPUImageCopyTextureTagged.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ImageCopyTextureTagged> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ImageCopyTextureTagged& imageCopyTextureTagged)
+std::optional<ImageCopyTextureTagged> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ImageCopyTextureTagged& imageCopyTextureTagged)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ImageCopyTexture&>(imageCopyTextureTagged));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ImageCopyTexture&>(imageCopyTextureTagged));
     if (!base)
         return std::nullopt;
 
     return { { WTFMove(*base), imageCopyTextureTagged.colorSpace, imageCopyTextureTagged.premultipliedAlpha } };
 }
 
-std::optional<PAL::WebGPU::ImageCopyTextureTagged> ConvertFromBackingContext::convertFromBacking(const ImageCopyTextureTagged& imageCopyTextureTagged)
+std::optional<WebCore::WebGPU::ImageCopyTextureTagged> ConvertFromBackingContext::convertFromBacking(const ImageCopyTextureTagged& imageCopyTextureTagged)
 {
     auto base = convertFromBacking(static_cast<const ImageCopyTexture&>(imageCopyTextureTagged));
     if (!base)

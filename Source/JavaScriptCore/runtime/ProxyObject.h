@@ -51,10 +51,12 @@ public:
     enum class HandlerTrap : uint8_t {
         Has = 0,
         Get,
+        GetOwnPropertyDescriptor,
+        OwnKeys,
         Set,
     };
 
-    static constexpr unsigned numberOfCachedHandlerTrapsOffsets = 3;
+    static constexpr unsigned numberOfCachedHandlerTrapsOffsets = 5;
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -102,12 +104,14 @@ public:
     WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
 
     JSObject* getHandlerTrap(JSGlobalObject*, JSObject*, CallData&, const Identifier&, HandlerTrap);
+    bool forwardsGetOwnPropertyNamesToTarget(DontEnumPropertiesMode);
 
 private:
     JS_EXPORT_PRIVATE ProxyObject(VM&, Structure*);
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSGlobalObject*, JSValue target, JSValue handler);
     JS_EXPORT_PRIVATE static Structure* structureForTarget(JSGlobalObject*, JSValue target);
 
+    bool isHandlerTrapsCacheValid(JSObject* handler);
     void clearHandlerTrapsOffsetsCache();
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
@@ -145,5 +149,10 @@ private:
     WriteBarrierStructureID m_handlerStructureID;
     WriteBarrierStructureID m_handlerPrototypeStructureID;
 };
+
+ALWAYS_INLINE bool ProxyObject::isHandlerTrapsCacheValid(JSObject* handler)
+{
+    return handler->structureID() == m_handlerStructureID.value() && asObject(handler->getPrototypeDirect())->structureID() == m_handlerPrototypeStructureID.value();
+}
 
 } // namespace JSC

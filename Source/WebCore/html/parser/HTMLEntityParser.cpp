@@ -28,126 +28,281 @@
 #include "config.h"
 #include "HTMLEntityParser.h"
 
-#include "CharacterReferenceParserInlines.h"
 #include "HTMLEntitySearch.h"
 #include "HTMLEntityTable.h"
-#include <wtf/text/StringBuilder.h>
+#include "SegmentedString.h"
+#include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
-static const UChar windowsLatin1ExtensionArray[32] = {
+static constexpr UChar windowsLatin1ExtensionArray[32] = {
     0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, // 80-87
     0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008D, 0x017D, 0x008F, // 88-8F
     0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, // 90-97
     0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178, // 98-9F
 };
 
-template<> void appendCharacterTo(Vector<UChar>& output, UChar32 c)
+constexpr DecodedHTMLEntity::DecodedHTMLEntity() = default;
+
+constexpr DecodedHTMLEntity::DecodedHTMLEntity(UChar first)
+    : m_length { 1 }
+    , m_characters { first }
 {
-    if (U_IS_BMP(c)) {
-        output.append(static_cast<UChar>(c));
-        return;
-    }
-    output.append(U16_LEAD(c));
-    output.append(U16_TRAIL(c));
 }
 
-class HTMLEntityParser {
+constexpr DecodedHTMLEntity::DecodedHTMLEntity(UChar first, UChar second)
+    : m_length { 2 }
+    , m_characters { first, second }
+{
+}
+
+constexpr DecodedHTMLEntity::DecodedHTMLEntity(UChar first, UChar second, UChar third)
+    : m_length { 3 }
+    , m_characters { first, second, third }
+{
+}
+
+constexpr DecodedHTMLEntity::DecodedHTMLEntity(ConstructNotEnoughCharactersType)
+    : m_notEnoughCharacters { true }
+{
+}
+
+static constexpr DecodedHTMLEntity makeEntity(UChar32 character)
+{
+    if (character <= 0 || character > UCHAR_MAX_VALUE || U_IS_SURROGATE(character))
+        return { replacementCharacter };
+    if ((character & ~0x1F) != 0x80) {
+        if (U_IS_BMP(character)) {
+            UChar codeUnit = character;
+            return { codeUnit };
+        }
+        return { U16_LEAD(character), U16_TRAIL(character) };
+    }
+    return { windowsLatin1ExtensionArray[character - 0x80] };
+}
+
+static DecodedHTMLEntity makeEntity(const Checked<UChar32, RecordOverflow>& character)
+{
+    if (character.hasOverflowed())
+        return { replacementCharacter };
+    return makeEntity(character.value());
+}
+
+static constexpr DecodedHTMLEntity makeEntity(HTMLEntityTableEntry entry)
+{
+    UChar second = entry.optionalSecondCharacter;
+    if (U_IS_BMP(entry.firstCharacter)) {
+        UChar first = entry.firstCharacter;
+        if (!second)
+            return { first };
+        return { first, second };
+    }
+    if (!second)
+        return { U16_LEAD(entry.firstCharacter), U16_TRAIL(entry.firstCharacter) };
+    return { U16_LEAD(entry.firstCharacter), U16_TRAIL(entry.firstCharacter), second };
+}
+
+class SegmentedStringSource {
 public:
-    static UChar32 legalEntityFor(UChar32 value)
-    {
-        if (value <= 0 || value > UCHAR_MAX_VALUE || U_IS_SURROGATE(value))
-            return replacementCharacter;
-        if ((value & ~0x1F) != 0x80)
-            return value;
-        return windowsLatin1ExtensionArray[value - 0x80];
-    }
+    explicit SegmentedStringSource(SegmentedString&);
 
-    static bool acceptMalformed() { return true; }
+    bool isEmpty() const { return m_source.isEmpty(); }
+    UChar currentCharacter() const { return m_source.currentCharacter(); }
+    void advance();
+    void pushEverythingBack();
+    void pushBackButKeep(unsigned keepCount);
 
-    template<typename DecodedIdentityType>
-    static bool consumeNamedEntity(SegmentedString& source, DecodedIdentityType& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter, UChar& cc)
-    {
-        StringBuilder consumedCharacters;
-        HTMLEntitySearch entitySearch;
-        while (!source.isEmpty()) {
-            cc = source.currentCharacter();
-            entitySearch.advance(cc);
-            if (!entitySearch.isEntityPrefix())
-                break;
-            consumedCharacters.append(cc);
-            source.advancePastNonNewline();
-        }
-        notEnoughCharacters = source.isEmpty() && cc != ';';
-        if (notEnoughCharacters) {
-            // We can't decide on an entity because there might be a longer entity
-            // that we could match if we had more data.
-            unconsumeCharacters(source, consumedCharacters);
-            return false;
-        }
-        if (!entitySearch.match()) {
-            unconsumeCharacters(source, consumedCharacters);
-            return false;
-        }
-        auto& match = *entitySearch.match();
-        auto nameLength = match.nameLength();
-        if (nameLength != entitySearch.currentLength()) {
-            // We've consumed too many characters. Walk the source back
-            // to the point at which we had consumed an actual entity.
-            unconsumeCharacters(source, consumedCharacters);
-            consumedCharacters.clear();
-            for (unsigned i = 0; i < nameLength; ++i) {
-                consumedCharacters.append(source.currentCharacter());
-                source.advancePastNonNewline();
-                ASSERT(!source.isEmpty());
-            }
-            cc = source.currentCharacter();
-        }
-        if (match.nameIncludesTrailingSemicolon
-            || !additionalAllowedCharacter
-            || !(isASCIIAlphanumeric(cc) || cc == '=')) {
-            appendCharacterTo(decodedEntity, match.firstCharacter);
-            if (match.optionalSecondCharacter)
-                appendCharacterTo(decodedEntity, match.optionalSecondCharacter);
-            return true;
-        }
-        unconsumeCharacters(source, consumedCharacters);
-        return false;
-    }
+private:
+    SegmentedString& m_source;
+    Vector<UChar, 64> m_consumedCharacters;
 };
 
-bool consumeHTMLEntity(SegmentedString& source, StringBuilder& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
+template<typename CharacterType> class StringParsingBufferSource {
+public:
+    explicit StringParsingBufferSource(StringParsingBuffer<CharacterType>&);
+
+    static bool isEmpty() { return false; }
+    UChar currentCharacter() const { return m_source.atEnd() ? 0 : *m_source; }
+    void advance() { m_source.advance(); }
+    void pushEverythingBack() { m_source.setPosition(m_startPosition); }
+    void pushBackButKeep(unsigned keepCount) { m_source.setPosition(m_startPosition + keepCount); }
+
+private:
+    StringParsingBuffer<CharacterType>& m_source;
+    const CharacterType* m_startPosition;
+};
+
+SegmentedStringSource::SegmentedStringSource(SegmentedString& source)
+    : m_source { source }
 {
-    return consumeCharacterReference<HTMLEntityParser>(source, decodedEntity, notEnoughCharacters, additionalAllowedCharacter);
 }
 
-bool consumeHTMLEntity(SegmentedString& source, Vector<UChar>& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
+template<typename CharacterType> StringParsingBufferSource<CharacterType>::StringParsingBufferSource(StringParsingBuffer<CharacterType>& source)
+    : m_source { source }
+    , m_startPosition { source.position() }
 {
-    return consumeCharacterReference<HTMLEntityParser>(source, decodedEntity, notEnoughCharacters, additionalAllowedCharacter);
 }
 
-size_t decodeNamedEntityToUCharArray(const char* name, UChar result[4])
+void SegmentedStringSource::advance()
+{
+    m_consumedCharacters.append(currentCharacter());
+    m_source.advancePastNonNewline();
+}
+
+void SegmentedStringSource::pushEverythingBack()
+{
+    m_source.pushBack(String { m_consumedCharacters });
+    m_consumedCharacters.clear();
+}
+
+void SegmentedStringSource::pushBackButKeep(unsigned keepCount)
+{
+    ASSERT(keepCount < m_consumedCharacters.size());
+    unsigned length = m_consumedCharacters.size() - keepCount;
+    m_source.pushBack(String { m_consumedCharacters.data() + keepCount, length });
+    m_consumedCharacters.shrink(keepCount);
+}
+
+template<typename SourceType> DecodedHTMLEntity consumeDecimalHTMLEntity(SourceType& source)
+{
+    Checked<UChar32, RecordOverflow> result = 0;
+    UChar character = source.currentCharacter();
+    do {
+        source.advance();
+        if (source.isEmpty()) {
+            source.pushEverythingBack();
+            return DecodedHTMLEntity::ConstructNotEnoughCharacters;
+        }
+        result *= 10;
+        result += character - '0';
+    } while (isASCIIDigit(character = source.currentCharacter()));
+    if (character == ';')
+        source.advance();
+    return makeEntity(result);
+}
+
+template<typename SourceType> DecodedHTMLEntity consumeHexHTMLEntity(SourceType& source)
+{
+    Checked<UChar32, RecordOverflow> result = 0;
+    UChar character = source.currentCharacter();
+    do {
+        source.advance();
+        if (source.isEmpty()) {
+            source.pushEverythingBack();
+            return DecodedHTMLEntity::ConstructNotEnoughCharacters;
+        }
+        int value = toASCIIHexValue(character);
+        result *= 16;
+        result += value;
+    } while (isASCIIHexDigit(character = source.currentCharacter()));
+    if (character == ';')
+        source.advance();
+    return makeEntity(result);
+}
+
+template<typename SourceType> DecodedHTMLEntity consumeNamedHTMLEntity(SourceType& source, UChar additionalAllowedCharacter)
+{
+    HTMLEntitySearch entitySearch;
+    UChar character;
+    do {
+        character = source.currentCharacter();
+        entitySearch.advance(character);
+        if (!entitySearch.isEntityPrefix())
+            break;
+        source.advance();
+    } while (!source.isEmpty());
+    // We can't decide on an entity because there might be a longer
+    // entity we could match if we had more data.
+    if (source.isEmpty() && character != ';') {
+        source.pushEverythingBack();
+        return DecodedHTMLEntity::ConstructNotEnoughCharacters;
+    }
+    if (!entitySearch.match()) {
+        source.pushEverythingBack();
+        return { };
+    }
+    auto& match = *entitySearch.match();
+    auto nameLength = match.nameLength();
+    if (nameLength != entitySearch.currentLength()) {
+        // We've consumed too many characters. Walk the source back
+        // to the point at which we had consumed an actual entity.
+        source.pushBackButKeep(nameLength);
+        character = source.currentCharacter();
+    }
+    // FIXME: The use of additionalAllowedCharacter as just a boolean here is surprising.
+    if (match.nameIncludesTrailingSemicolon || !additionalAllowedCharacter || !(isASCIIAlphanumeric(character) || character == '='))
+        return makeEntity(match);
+    source.pushEverythingBack();
+    return { };
+}
+
+template<typename SourceType> DecodedHTMLEntity consumeHTMLEntity(SourceType source, UChar additionalAllowedCharacter)
+{
+    if (source.isEmpty())
+        return DecodedHTMLEntity::ConstructNotEnoughCharacters;
+
+    UChar character = source.currentCharacter();
+    if (isASCIIAlpha(character))
+        return consumeNamedHTMLEntity(source, additionalAllowedCharacter);
+    if (character != '#')
+        return { };
+
+    source.advance();
+    if (source.isEmpty()) {
+        source.pushEverythingBack();
+        return DecodedHTMLEntity::ConstructNotEnoughCharacters;
+    }
+
+    character = source.currentCharacter();
+    if (isASCIIDigit(character))
+        return consumeDecimalHTMLEntity(source);
+    if (!isASCIIAlphaCaselessEqual(character, 'x')) {
+        source.pushEverythingBack();
+        return { };
+    }
+
+    source.advance();
+    if (source.isEmpty()) {
+        source.pushEverythingBack();
+        return DecodedHTMLEntity::ConstructNotEnoughCharacters;
+    }
+
+    character = source.currentCharacter();
+    if (isASCIIHexDigit(character))
+        return consumeHexHTMLEntity(source);
+
+    source.pushEverythingBack();
+    return { };
+}
+
+DecodedHTMLEntity consumeHTMLEntity(SegmentedString& source, UChar additionalAllowedCharacter)
+{
+    return consumeHTMLEntity(SegmentedStringSource { source }, additionalAllowedCharacter);
+}
+
+DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<LChar>& source)
+{
+    return consumeHTMLEntity(StringParsingBufferSource<LChar> { source }, 0);
+}
+
+DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<UChar>& source)
+{
+    return consumeHTMLEntity(StringParsingBufferSource<UChar> { source }, 0);
+}
+
+DecodedHTMLEntity decodeNamedHTMLEntityForXMLParser(const char* name)
 {
     HTMLEntitySearch search;
     while (*name) {
         search.advance(*name++);
         if (!search.isEntityPrefix())
-            return 0;
+            return { };
     }
     search.advance(';');
     if (!search.isEntityPrefix())
-        return 0;
-    size_t index = 0;
-    U16_APPEND_UNSAFE(result, index, search.match()->firstCharacter);
-    if (search.match()->optionalSecondCharacter)
-        U16_APPEND_UNSAFE(result, index, search.match()->optionalSecondCharacter);
-    return index;
-}
-
-void appendLegalEntityFor(UChar32 character, Vector<UChar>& outputBuffer)
-{
-    appendCharacterTo(outputBuffer, HTMLEntityParser::legalEntityFor(character));
+        return { };
+    return makeEntity(*search.match());
 }
 
 } // namespace WebCore

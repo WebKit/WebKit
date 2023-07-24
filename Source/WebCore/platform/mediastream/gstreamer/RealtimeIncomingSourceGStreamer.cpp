@@ -218,6 +218,8 @@ bool RealtimeIncomingSourceGStreamer::handleUpstreamQuery(GstQuery* query, int c
     return gst_pad_peer_query(pad.get(), query);
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER_WEBRTC)

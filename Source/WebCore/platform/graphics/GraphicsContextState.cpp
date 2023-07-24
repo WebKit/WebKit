@@ -46,13 +46,24 @@ GraphicsContextState GraphicsContextState::cloneForRecording() const
 
 bool GraphicsContextState::containsOnlyInlineChanges() const
 {
-    if (m_changeFlags != (m_changeFlags & basicChangeFlags))
+    if (m_changeFlags.isEmpty() || m_changeFlags != (m_changeFlags & basicChangeFlags))
         return false;
 
     if (m_changeFlags.contains(Change::StrokeBrush) && !m_strokeBrush.isInlineColor())
         return false;
 
     if (m_changeFlags.contains(Change::FillBrush) && !m_fillBrush.isInlineColor())
+        return false;
+
+    return true;
+}
+
+bool GraphicsContextState::containsOnlyInlineStrokeChanges() const
+{
+    if (m_changeFlags.isEmpty() || m_changeFlags != (m_changeFlags & strokeChangeFlags))
+        return false;
+
+    if (m_changeFlags.contains(Change::StrokeBrush) && !m_strokeBrush.isInlineColor())
         return false;
 
     return true;

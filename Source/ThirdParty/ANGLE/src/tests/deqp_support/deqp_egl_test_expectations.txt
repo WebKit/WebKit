@@ -70,12 +70,24 @@
 1340 WIN : dEQP-EGL.functional.resize.back_buffer.* = SKIP
 1340 WIN : dEQP-EGL.functional.resize.pixel_density.* = SKIP
 
+// Windows D3D11 failures
+8214 WIN D3D11 : dEQP-EGL.functional.color_clears.multi_thread.gles2.other = SKIP
+8214 WIN D3D11 : dEQP-EGL.functional.color_clears.multi_thread.gles3.other = SKIP
+8214 WIN D3D11 : dEQP-EGL.functional.render.multi_thread.gles2.other = SKIP
+8214 WIN D3D11 : dEQP-EGL.functional.render.multi_thread.gles2_gles3.other = SKIP
+8214 WIN D3D11 : dEQP-EGL.functional.render.multi_thread.gles3.other = SKIP
+
 // Windows OpenGL failures
 2546 WIN : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_depth_stencil = FAIL
 2546 WIN : dEQP-EGL.functional.thread_cleanup.* = SKIP
 
 // Windows Vulkan failures
 2716 WIN VULKAN : dEQP-EGL.functional.preserve_swap.no_preserve.* = FAIL
+8214 WIN VULKAN : dEQP-EGL.functional.color_clears.multi_thread.gles2.other = SKIP
+8214 WIN VULKAN : dEQP-EGL.functional.color_clears.multi_thread.gles3.other = SKIP
+8214 WIN VULKAN : dEQP-EGL.functional.render.multi_thread.gles2.other = SKIP
+8214 WIN VULKAN : dEQP-EGL.functional.render.multi_thread.gles2_gles3.other = SKIP
+8214 WIN VULKAN : dEQP-EGL.functional.render.multi_thread.gles3.other = SKIP
 
 // Linux failures
 2546 LINUX : dEQP-EGL.functional.negative_api.copy_buffers = SKIP
@@ -107,30 +119,31 @@
 2567 ANDROID GLES : dEQP-EGL.functional.image.api.create_image_gles2_tex2d_red = FAIL
 2567 ANDROID GLES : dEQP-EGL.functional.image.api.create_image_gles2_tex2d_rg = FAIL
 2716 ANDROID GLES : dEQP-EGL.functional.preserve_swap.preserve.* = FAIL
+// New crash since VK-GL-CTS roller on 2023-05-03
+8169 ANDROID GLES : dEQP-EGL.functional.fence_sync.valid.egl_fence_persistent_buffer = SKIP
 
 // Android failures
-6533 ANDROID : dEQP-EGL.functional.native_color_mapping.native_window.* = SKIP
-6533 ANDROID : dEQP-EGL.functional.native_coord_mapping.native_window.* = SKIP
-
-// Android Vulkan (still failing March 16, 2022)
-6277 ANDROID VULKAN : dEQP-EGL.functional.image.api.create_image_gles2_android_native_rgb8 = FAIL
-6277 ANDROID VULKAN : dEQP-EGL.functional.image.create.gles2_android_native_rgb8_read_pixels = FAIL
-6277 ANDROID VULKAN : dEQP-EGL.functional.image.create.gles2_android_native_rgb8_texture = FAIL
-6277 ANDROID VULKAN : dEQP-EGL.functional.image.create.gles3_android_native_array_rgb565_texture_array = FAIL
-6277 ANDROID VULKAN : dEQP-EGL.functional.image.create.gles3_android_native_array_rgb8_texture_array = FAIL
-6277 ANDROID VULKAN : dEQP-EGL.functional.image.create.gles3_android_native_array_rgba8_texture_array = FAIL
-6277 ANDROID VULKAN : dEQP-EGL.functional.image.modify.android_native_rgb8_renderbuffer_clear_color = FAIL
-6277 ANDROID VULKAN : dEQP-EGL.functional.image.modify.android_native_rgb8_tex_subimage_rgb8 = FAIL
-6277 ANDROID VULKAN : dEQP-EGL.functional.image.render_multiple_contexts.gles2_android_native_rgb8_read_pixels = FAIL
-6277 ANDROID VULKAN : dEQP-EGL.functional.image.render_multiple_contexts.gles2_android_native_rgb8_texture = FAIL
+6533 ANDROID VULKAN : dEQP-EGL.functional.native_color_mapping.native_window.* = SKIP
+6533 ANDROID VULKAN : dEQP-EGL.functional.native_coord_mapping.native_window.* = SKIP
+6533 PIXEL4ORXL GLES : dEQP-EGL.functional.native_color_mapping.native_window.* = SKIP
+6533 PIXEL4ORXL GLES : dEQP-EGL.functional.native_coord_mapping.native_window.* = SKIP
 
 // Pixel 6 Vulkan
-// These fail on the Android S bots, but pass on pre-release Android T drivers:
 6899 PIXEL6 VULKAN : dEQP-EGL.functional.query_context.*.rgb888_window = FAIL
-
-// render_sample_texture_array tests failing on some configurations on bots
-7506 ANDROID VULKAN : dEQP-EGL.functional.image.create.gles3_android_native_array_*_render_sample_texture_array = FAIL
-7506 ANDROID GLES : dEQP-EGL.functional.image.create.gles3_android_native_array_*_render_sample_texture_array = FAIL
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.color_clears.multi_thread.gles2.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.color_clears.multi_thread.gles3.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.render.multi_thread.gles2.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.render.multi_thread.gles2_gles3.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.render.multi_thread.gles3.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.color_clears.multi_context.gles2.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.color_clears.multi_context.gles3.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.color_clears.single_context.gles2.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.color_clears.single_context.gles3.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.render.multi_context.gles2.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.render.multi_context.gles2_gles3.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.render.multi_context.gles3.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.render.single_context.gles2.other = SKIP
+8214 PIXEL6 VULKAN : dEQP-EGL.functional.render.single_context.gles3.other = SKIP
 
 // ES 1 tests
 2306 WIN : dEQP-EGL.functional.color_clears.single_context.gles1* = FAIL
@@ -153,8 +166,19 @@
 
 // Tests that fail when the GL desktop frontend is enabled
 // TODO(http://anglebug.com/7566): Get these tests to pass.
-7533 : dEQP-EGL.functional.create_context_ext.gl_30.* = SKIP
-7533 : dEQP-EGL.functional.create_context_ext.robust_gl_30.* = SKIP
+7533 SWIFTSHADER : dEQP-EGL.functional.create_context_ext.gl_30.* = SKIP
+7533 SWIFTSHADER : dEQP-EGL.functional.create_context_ext.robust_gl_30.* = SKIP
+7533 VULKAN NVIDIA : dEQP-EGL.functional.create_context_ext.gl_30.* = SKIP
+7533 VULKAN NVIDIA : dEQP-EGL.functional.create_context_ext.robust_gl_30.* = SKIP
+
+b/286921997 SWIFTSHADER LINUX : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.compute = SKIP
+b/286921997 SWIFTSHADER LINUX : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.shader_storage_block.compute = SKIP
+b/286921997 SWIFTSHADER LINUX : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.compute = SKIP
+b/286921997 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.fragment = SKIP
+b/286921997 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.vertex_and_fragment = SKIP
+b/286921997 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.shader_storage_block.fragment = SKIP
+b/286921997 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.fragment = SKIP
+b/286921997 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.vertex_and_fragment = SKIP
 
 //// Metal
 
@@ -256,12 +280,10 @@
 // Crashes
 6485 MAC METAL : dEQP-EGL.functional.sharing.gles2.multithread.* = SKIP
 
-6528 PIXEL4ORXL GLES : dEQP-EGL.functional.image.render_multiple_contexts.gles2_android_native_s8_stencil_buffer = SKIP
-6528 PIXEL4ORXL GLES : dEQP-EGL.functional.image.modify.android_native_s8_renderbuffer_clear_stencil = SKIP
+// New crash since VK-GL-CTS roller on 2023-05-03
+8167 MAC METAL : dEQP-EGL.functional.fence_sync.valid.egl_fence_persistent_buffer = SKIP
+
 6528 PIXEL4ORXL GLES : dEQP-EGL.functional.get_frame_timestamps.* = FAIL
-6528 PIXEL4ORXL GLES : dEQP-EGL.functional.image.create.gles3_android_native_array_rgb565_texture_array = FAIL
-6528 PIXEL4ORXL GLES : dEQP-EGL.functional.image.create.gles3_android_native_array_rgb8_texture_array = FAIL
-6528 PIXEL4ORXL GLES : dEQP-EGL.functional.image.create.gles3_android_native_array_rgba8_texture_array = FAIL
 6528 PIXEL4ORXL GLES : dEQP-EGL.functional.wide_color.* = FAIL
 6528 PIXEL4ORXL GLES : dEQP-EGL.functional.choose_config.simple.selection_only.transparent_red_value = FAIL
 6528 PIXEL4ORXL GLES : dEQP-EGL.functional.choose_config.simple.selection_only.transparent_green_value = FAIL

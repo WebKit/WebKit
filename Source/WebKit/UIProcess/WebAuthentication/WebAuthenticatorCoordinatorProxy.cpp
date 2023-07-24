@@ -79,6 +79,11 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
         if (result) {
 #if HAVE(UNIFIED_ASC_AUTH_UI)
             if (!authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
+                if (!isASCAvailable()) {
+                    handler({ }, AuthenticatorAttachment::Platform, ExceptionData { NotSupportedError, "Not implemented."_s });
+                    RELEASE_LOG_ERROR(WebAuthn, "Web Authentication is not currently supported in this environment.");
+                    return;
+                }
                 auto context = contextForRequest(WTFMove(data));
                 if (context.get() == nullptr) {
                     handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });

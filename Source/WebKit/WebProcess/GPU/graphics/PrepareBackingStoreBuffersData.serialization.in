@@ -24,13 +24,13 @@
 
 header: "PrepareBackingStoreBuffersData.h"
 
-[CustomHeader] struct WebKit::PrepareBackingStoreBuffersInputData {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::PrepareBackingStoreBuffersInputData {
     WebKit::BufferIdentifierSet bufferSet;
     bool supportsPartialRepaint;
     bool hasEmptyDirtyRegion;
 };
 
-[CustomHeader] struct WebKit::PrepareBackingStoreBuffersOutputData {
+[CustomHeader, RValue] struct WebKit::PrepareBackingStoreBuffersOutputData {
     WebKit::BufferIdentifierSet bufferSet;
     std::optional<WebKit::ImageBufferBackendHandle> frontBufferHandle;
     WebKit::SwapBuffersDisplayRequirement displayRequirement;

@@ -44,22 +44,3 @@ enum class ApplePayPaymentTiming : uint8_t {
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ApplePayPaymentTiming> {
-    using values = EnumValues<
-        WebCore::ApplePayPaymentTiming,
-        WebCore::ApplePayPaymentTiming::Immediate
-#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
-        , WebCore::ApplePayPaymentTiming::Recurring
-#endif
-#if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
-        , WebCore::ApplePayPaymentTiming::Deferred
-#endif
-#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
-        , WebCore::ApplePayPaymentTiming::AutomaticReload
-#endif
-    >;
-};
-
-} // namespace WTF

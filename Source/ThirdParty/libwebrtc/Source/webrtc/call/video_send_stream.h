@@ -23,19 +23,21 @@
 #include "api/crypto/crypto_options.h"
 #include "api/frame_transformer_interface.h"
 #include "api/rtp_parameters.h"
+#include "api/rtp_sender_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_sink_interface.h"
 #include "api/video/video_source_interface.h"
 #include "api/video/video_stream_encoder_settings.h"
-#include "api/video_codecs/video_encoder_config.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "call/rtp_config.h"
 #include "common_video/frame_counts.h"
 #include "common_video/include/quality_limitation_reason.h"
 #include "modules/rtp_rtcp/include/report_block_data.h"
 #include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 
@@ -77,9 +79,10 @@ class VideoSendStream {
     // TODO(holmer): Move bitrate_bps out to the webrtc::Call layer.
     int total_bitrate_bps = 0;
     int retransmit_bitrate_bps = 0;
+    // `avg_delay_ms` and `max_delay_ms` are only used in tests. Consider
+    // deleting.
     int avg_delay_ms = 0;
     int max_delay_ms = 0;
-    uint64_t total_packet_send_delay_ms = 0;
     StreamDataCounters rtp_stats;
     RtcpPacketTypeCounter rtcp_packet_type_counts;
     // A snapshot of the most recent Report Block with additional data of
@@ -91,6 +94,7 @@ class VideoSendStream {
     uint64_t total_encode_time_ms = 0;
     uint64_t total_encoded_bytes_target = 0;
     uint32_t huge_frames_sent = 0;
+    absl::optional<ScalabilityMode> scalability_mode;
   };
 
   struct Stats {
@@ -140,6 +144,7 @@ class VideoSendStream {
         webrtc::VideoContentType::UNSPECIFIED;
     uint32_t frames_sent = 0;
     uint32_t huge_frames_sent = 0;
+    absl::optional<bool> power_efficient_encoder;
   };
 
   struct Config {
@@ -213,11 +218,15 @@ class VideoSendStream {
   // Note: This starts stream activity if it is inactive and one of the layers
   // is active. This stops stream activity if it is active and all layers are
   // inactive.
-  virtual void UpdateActiveSimulcastLayers(std::vector<bool> active_layers) = 0;
+  // `active_layers` should have the same size as the number of configured
+  // simulcast layers or one if only one rtp stream is used.
+  virtual void StartPerRtpStream(std::vector<bool> active_layers) = 0;
 
   // Starts stream activity.
   // When a stream is active, it can receive, process and deliver packets.
+  // Prefer to use StartPerRtpStream.
   virtual void Start() = 0;
+
   // Stops stream activity.
   // When a stream is stopped, it can't receive, process or deliver packets.
   virtual void Stop() = 0;
@@ -225,9 +234,9 @@ class VideoSendStream {
   // Accessor for determining if the stream is active. This is an inexpensive
   // call that must be made on the same thread as `Start()` and `Stop()` methods
   // are called on and will return `true` iff activity has been started either
-  // via `Start()` or `UpdateActiveSimulcastLayers()`. If activity is either
+  // via `Start()` or `StartPerRtpStream()`. If activity is either
   // stopped or is in the process of being stopped as a result of a call to
-  // either `Stop()` or `UpdateActiveSimulcastLayers()` where all layers were
+  // either `Stop()` or `StartPerRtpStream()` where all layers were
   // deactivated, the return value will be `false`.
   virtual bool started() = 0;
 
@@ -249,10 +258,12 @@ class VideoSendStream {
   // with the VideoStream settings.
   virtual void ReconfigureVideoEncoder(VideoEncoderConfig config) = 0;
 
+  virtual void ReconfigureVideoEncoder(VideoEncoderConfig config,
+                                       SetParametersCallback callback) = 0;
+
   virtual Stats GetStats() = 0;
-#if defined(WEBRTC_WEBKIT_BUILD)
-  virtual void GenerateKeyFrame() = 0;
-#endif
+
+  virtual void GenerateKeyFrame(const std::vector<std::string>& rids) = 0;
 
  protected:
   virtual ~VideoSendStream() {}

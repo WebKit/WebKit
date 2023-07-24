@@ -165,8 +165,6 @@ class PortFactory(object):
             'gtk',
             'ios-simulator-16',
             'ios-simulator-16-wk2',
-            'mac-bigsur-wk1',
-            'mac-bigsur-wk2',
             'mac-monterey-wk1',
             'mac-monterey-wk2',
             'mac-ventura-wk1',

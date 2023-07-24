@@ -90,5 +90,8 @@ RefPtr<SharedBuffer> InitData::extractCencIfNeeded(RefPtr<SharedBuffer>&& unpars
     return payload;
 }
 
-}
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
+
 #endif // ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)

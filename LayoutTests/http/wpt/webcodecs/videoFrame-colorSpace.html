@@ -62,11 +62,11 @@ async function doEncodeDecode(encoderConfig)
   return promise;
 }
 
-function doTest(codec, title)
+function doTest(codec, title, width = 320, height = 200)
 {
   const config = { codec };
-  config.width = 320;
-  config.height = 200;
+  config.width = width;
+  config.height = height;
   config.bitrate = 1000000;
   config.framerate = 30;
 
@@ -81,6 +81,7 @@ function doTest(codec, title)
 doTest('vp8', "VP8 decoded frame color space");
 doTest('vp09.00.10.08', "VP9 decoded frame color space");
 doTest('avc1.42001E', "H.264 decoded frame color space");
+doTest('avc1.64000b', "H.264 high profile decoded frame color space", 1000, 1000);
 </script>
 </body>
 </html>

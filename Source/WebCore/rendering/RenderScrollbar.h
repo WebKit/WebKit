@@ -56,7 +56,7 @@ public:
 
     float opacity() const;
     
-    bool isHiddenByStyle() const final;
+    bool isHiddenByStyle() const override;
 
     std::unique_ptr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId) const;
 

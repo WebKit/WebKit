@@ -12,7 +12,7 @@ info: |
     a. Let elementK be the result of ? Get(O, ! ToString(k)).
   ...
 includes: [compareArray.js]
-features: [Proxy]
+features: [Proxy, Array.prototype.includes]
 ---*/
 
 var calls;

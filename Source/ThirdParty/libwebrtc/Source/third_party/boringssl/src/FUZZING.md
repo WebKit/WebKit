@@ -7,10 +7,8 @@ We use Clang's [libFuzzer](http://llvm.org/docs/LibFuzzer.html) for fuzz testing
 In order to build the fuzz tests you will need at least Clang 6.0. Pass `-DFUZZ=1` on the CMake command line to enable building BoringSSL with coverage and AddressSanitizer, and to build the fuzz test binaries. You'll probably need to set the `CC` and `CXX` environment variables too, like this:
 
 ```
-mkdir build
-cd build
-CC=clang CXX=clang++ cmake -GNinja -DFUZZ=1 ..
-ninja
+CC=clang CXX=clang++ cmake -GNinja -DFUZZ=1 -B build
+ninja -C build
 ```
 
 

@@ -102,11 +102,10 @@ void ServiceWorkerGlobalScope::notifyServiceWorkerPageOfCreationIfNecessary()
     ASSERT(isMainThread());
     serviceWorkerPage->setServiceWorkerGlobalScope(*this);
 
-    Vector<Ref<DOMWrapperWorld>> worlds;
-    static_cast<JSVMClientData*>(vm().clientData)->getAllWorlds(worlds);
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(serviceWorkerPage->mainFrame())) {
-        for (auto& world : worlds)
-            localMainFrame->loader().client().dispatchServiceWorkerGlobalObjectAvailable(world);
+        // FIXME: We currently do not support non-normal worlds in service workers.
+        Ref normalWorld = static_cast<JSVMClientData*>(vm().clientData)->normalWorld();
+        localMainFrame->loader().client().dispatchServiceWorkerGlobalObjectAvailable(normalWorld);
     }
 }
 

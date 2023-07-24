@@ -22,5 +22,5 @@ features: [Temporal]
 
 TemporalHelpers.checkToTemporalCalendarFastPath((temporalObject, calendar) => {
   const result = Temporal.PlainMonthDay.from({ monthCode: "M05", day: 2, calendar: temporalObject });
-  assert.sameValue(result.calendar, calendar, "Temporal object coerced to calendar");
+  assert.sameValue(result.getCalendar(), calendar, "Temporal object coerced to calendar");
 });

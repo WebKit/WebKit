@@ -6,6 +6,8 @@ build-depends:
 
 depends:
 - freedesktop-sdk.bst:components/brotli.bst
+- freedesktop-sdk.bst:components/jpeg.bst
+- freedesktop-sdk.bst:components/libpng.bst
 
 variables:
   cmake-local: |
@@ -16,6 +18,7 @@ variables:
     -DJPEGXL_ENABLE_MANPAGES=OFF \
     -DJPEGXL_ENABLE_BENCHMARK=OFF \
     -DJPEGXL_ENABLE_EXAMPLES=OFF \
+    -DJPEGXL_ENABLE_JPEGLI=OFF \
     -DJPEGXL_ENABLE_JNI=OFF \
     -DJPEGXL_ENABLE_VIEWERS=OFF \
     -DJPEGXL_ENABLE_TCMALLOC=OFF \
@@ -29,7 +32,8 @@ variables:
     -DJPEGXL_ENABLE_SKCMS=ON \
     -DJPEGXL_FORCE_SYSTEM_BROTLI=ON \
     -DJPEGXL_FORCE_SYSTEM_GTEST=ON \
-    -DJPEGXL_FORCE_SYSTEM_HWY=ON
+    -DJPEGXL_FORCE_SYSTEM_HWY=ON \
+    -DJPEGXL_BUNDLE_LIBPNG=OFF
 
 config:
   # libhwy is used only internally and linked statically, yet the
@@ -43,22 +47,10 @@ config:
 
 sources:
 - kind: tar
-  url: https://github.com/libjxl/libjxl/archive/refs/tags/v0.6.1.tar.gz
-  ref: ccbd5a729d730152303be399f033b905e608309d5802d77a61a95faa092592c5
-- kind: remote
-  url: https://github.com/lvandeve/lodepng/raw/8c6a9e30576f07bf470ad6f09458a2dcd7a6a84a/lodepng.h
-  ref: e6cb1736b11217209873f02b8859256e662e14d297f1f9346fbf1778d5efadbb
-  directory: third_party/lodepng
-- kind: remote
-  url: https://github.com/lvandeve/lodepng/raw/8c6a9e30576f07bf470ad6f09458a2dcd7a6a84a/lodepng.cpp
-  ref: 6c61ad12196fde3d2cbb2e5ce689db414ae7f64c98f709b227928b451280ed1b
-  directory: third_party/lodepng
-- kind: remote
-  url: https://github.com/lvandeve/lodepng/raw/8c6a9e30576f07bf470ad6f09458a2dcd7a6a84a/LICENSE
-  ref: bdafa318b8e637d600ca1b60545e894881977a16a16b74809c95e805701621e3
-  directory: third_party/lodepng
+  url: https://github.com/libjxl/libjxl/archive/refs/tags/v0.8.2.tar.gz
+  ref: c70916fb3ed43784eb840f82f05d390053a558e2da106e40863919238fa7b420
 - kind: git
   url: https://skia.googlesource.com/skcms
-  ref: 64374756e03700d649f897dbd98c95e78c30c7da
+  ref: b25b07b4b07990811de121c0356155b2ba0f4318
   directory: third_party/skcms
   checkout-submodules: False

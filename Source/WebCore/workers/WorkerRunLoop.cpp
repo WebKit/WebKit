@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2016-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc.  All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,6 +32,8 @@
 #include "config.h"
 #include "WorkerRunLoop.h"
 
+#include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContext.h"
 #include "SharedTimer.h"
 #include "ThreadGlobalData.h"
@@ -40,6 +42,8 @@
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkerThread.h"
+#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
 
 #if USE(GLIB)
@@ -274,8 +278,21 @@ void WorkerRunLoop::postDebuggerTask(ScriptExecutionContext::Task&& task)
 
 void WorkerDedicatedRunLoop::Task::performTask(WorkerOrWorkletGlobalScope* context)
 {
-    if ((!context->isClosing() && context->script() && !context->script()->isTerminatingExecution()) || m_task.isCleanupTask())
+    if (m_task.isCleanupTask())
         m_task.performTask(*context);
+    else if (!context->isClosing() && context->script() && !context->script()->isTerminatingExecution()) {
+        JSC::VM& vm = context->script()->vm();
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+        m_task.performTask(*context);
+        if (UNLIKELY(context->script() && scope.exception())) {
+            if (vm.hasPendingTerminationException()) {
+                context->script()->forbidExecution();
+                return;
+            }
+            Locker<JSC::JSLock> locker(vm.apiLock());
+            reportException(context->script()->globalScopeWrapper(), scope.exception());
+        }
+    }
 }
 
 WorkerDedicatedRunLoop::Task::Task(ScriptExecutionContext::Task&& task, const String& mode)

@@ -77,8 +77,13 @@ class CustomCalendar extends Temporal.Calendar {
     return new Temporal.PlainMonthDay(isoMonth, isoDay, this, isoYear);
   }
   dateAdd(date, duration, options) {
-    if (duration.months) throw new Error("adding months not implemented in this test");
-    return super.dateAdd(date, duration, options);
+    const {isoYear, isoMonth, isoDay} = date.getISOFields();
+    let {years, months, weeks, days} = duration;
+    let iter = new Temporal.PlainDate(isoYear + years, isoMonth, isoDay, "iso8601");
+    const monthsDays = months * 36;
+    if (iter.dayOfYear + monthsDays > iter.daysInYear || iter.dayOfYear + monthsDays < 1)
+      throw new Error("complicated addition not implemented in this test");
+    return iter.add({ weeks, days: monthsDays + days }).withCalendar(this);
   }
   toString() {
     return "thirty-six";
@@ -132,9 +137,9 @@ TemporalHelpers.assertPlainYearMonth(
   "adding negative less than one month's worth of days yields the same month",
   /* era = */ undefined, /* eraYear = */ undefined, /* referenceISODay = */ 6
 );
-assert.sameValue(calendar.dateFromFieldsCalls.length, 1, "dateFromFields was called");
+assert.sameValue(calendar.dateFromFieldsCalls.length, 2, "dateFromFields was called twice");
 assert.deepEqual(
-  calendar.dateFromFieldsCalls[0][0],
+  calendar.dateFromFieldsCalls[1][0],
   { year: 2022, monthCode: "M02", day: 36 },
   "last day of month 2 passed to dateFromFields when adding negative duration"
 );
@@ -147,9 +152,9 @@ TemporalHelpers.assertPlainYearMonth(
   "adding negative one month's worth of days yields the previous month",
   /* era = */ undefined, /* eraYear = */ undefined, /* referenceISODay = */ 1
 );
-assert.sameValue(calendar.dateFromFieldsCalls.length, 1, "dateFromFields was called");
+assert.sameValue(calendar.dateFromFieldsCalls.length, 2, "dateFromFields was called twice");
 assert.deepEqual(
-  calendar.dateFromFieldsCalls[0][0],
+  calendar.dateFromFieldsCalls[1][0],
   { year: 2022, monthCode: "M02", day: 36 },
   "last day of month 2 passed to dateFromFields when adding negative duration"
 );

@@ -101,7 +101,7 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomString
             styleAttributeChanged(newValue, reason);
         else if (hasPresentationalHintsForAttribute(name)) {
             elementData()->setPresentationalHintStyleIsDirty(true);
-            invalidateStyle();
+            invalidateStyleInternal();
         }
     }
 }
@@ -155,7 +155,7 @@ void StyledElement::styleAttributeChanged(const AtomString& newStyleString, Attr
 
     elementData()->setStyleAttributeIsDirty(false);
 
-    invalidateStyle();
+    invalidateStyleInternal();
     InspectorInstrumentation::didInvalidateStyleAttr(*this);
 }
 
@@ -167,7 +167,7 @@ void StyledElement::invalidateStyleAttribute()
     }
 
     elementData()->setStyleAttributeIsDirty(true);
-    invalidateStyle();
+    invalidateStyleInternal();
 
     // In the rare case of selectors like "[style] ~ div" we need to synchronize immediately to invalidate.
     if (styleResolver().ruleSets().hasComplexSelectorsForStyleAttribute()) {

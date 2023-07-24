@@ -150,6 +150,9 @@ void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
 
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
+    for (const auto& resource : group.resources())
+        [m_computeCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
+
     UNUSED_PARAM(dynamicOffsetCount);
     UNUSED_PARAM(dynamicOffsets);
     [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:groupIndex];
@@ -176,6 +179,11 @@ void ComputePassEncoder::setLabel(String&& label)
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuComputePassEncoderReference(WGPUComputePassEncoder computePassEncoder)
+{
+    WebGPU::fromAPI(computePassEncoder).ref();
+}
 
 void wgpuComputePassEncoderRelease(WGPUComputePassEncoder computePassEncoder)
 {

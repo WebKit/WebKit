@@ -307,7 +307,7 @@ UITargetedDragPreview *DragDropInteractionState::previewForDragItem(UIDragItem *
     if (shouldUseDragImageToCreatePreviewForDragSource(source)) {
         if (shouldUseVisiblePathToCreatePreviewForDragSource(source)) {
             auto path = source.visiblePath.value();
-            UIBezierPath *visiblePath = [UIBezierPath bezierPathWithCGPath:path.ensurePlatformPath()];
+            UIBezierPath *visiblePath = [UIBezierPath bezierPathWithCGPath:path.platformPath()];
             return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, visiblePath).autorelease();
         }
         return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, nil).autorelease();

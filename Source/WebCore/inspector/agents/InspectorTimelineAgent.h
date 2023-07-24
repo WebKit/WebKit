@@ -127,6 +127,7 @@ public:
     void didRecalculateStyle();
     void didScheduleStyleRecalculation(LocalFrame*);
     void didTimeStamp(LocalFrame&, const String&);
+    void didPerformanceMark(const String&, std::optional<MonotonicTime>, LocalFrame*);
     void didRequestAnimationFrame(int callbackId, LocalFrame*);
     void didCancelAnimationFrame(int callbackId, LocalFrame*);
     void willFireAnimationFrame(int callbackId, LocalFrame*);
@@ -180,9 +181,10 @@ private:
     void internalStart(std::optional<int>&& maxCallStackDepth);
     void internalStop();
     double timestamp();
+    std::optional<double> timestampFromMonotonicTime(MonotonicTime);
 
     void sendEvent(Ref<JSON::Object>&&);
-    void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, LocalFrame*);
+    void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
     void pushCurrentRecord(Ref<JSON::Object>&&, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
     void pushCurrentRecord(const TimelineRecordEntry& record) { m_recordStack.append(record); }
 

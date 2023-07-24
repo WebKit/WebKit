@@ -79,21 +79,21 @@ static void changeWordCase(WebPage* page, NSString *(*changeCase)(NSString *))
 
 void WebEditorClient::uppercaseWord()
 {
-    changeWordCase(m_page, [] (NSString *string) {
+    changeWordCase(m_page.get(), [] (NSString *string) {
         return [string uppercaseString];
     });
 }
 
 void WebEditorClient::lowercaseWord()
 {
-    changeWordCase(m_page, [] (NSString *string) {
+    changeWordCase(m_page.get(), [] (NSString *string) {
         return [string lowercaseString];
     });
 }
 
 void WebEditorClient::capitalizeWord()
 {
-    changeWordCase(m_page, [] (NSString *string) {
+    changeWordCase(m_page.get(), [] (NSString *string) {
         return [string capitalizedString];
     });
 }
@@ -180,11 +180,6 @@ void WebEditorClient::toggleAutomaticSpellingCorrection()
 }
 
 #endif // USE(AUTOMATIC_TEXT_REPLACEMENT)
-
-void WebEditorClient::setCaretDecorationVisibility(bool visibility)
-{
-    m_page->send(Messages::WebPageProxy::SetCaretDecorationVisibility(visibility));
-}
 
 } // namespace WebKit
 

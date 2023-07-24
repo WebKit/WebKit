@@ -84,6 +84,7 @@
 #include "Pasteboard.h"
 #include "PlatformEvent.h"
 #include "PlatformKeyboardEvent.h"
+#include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginDocument.h"
 #include "PointerCaptureController.h"
@@ -224,6 +225,42 @@ private:
     double* m_maxDuration;
     MonotonicTime m_start;
 };
+
+static UserGestureType userGestureTypeForPlatformEvent(const PlatformKeyboardEvent& keyEvent)
+{
+    // https://html.spec.whatwg.org/multipage/interaction.html#activation-triggering-input-event
+    // An activation triggering input event is any event whose isTrusted attribute is true and whose type is one of:
+    // * "keydown", provided the key is neither the Esc key nor a shortcut key reserved by the user agent.
+    if (keyEvent.windowsVirtualKeyCode() == VK_ESCAPE)
+        return UserGestureType::EscapeKey;
+    if (keyEvent.type() == PlatformEventType::KeyDown)
+        return UserGestureType::ActivationTriggering;
+
+    // FIXME: This check does not yet handle whether the event represents a "shortcut key reserved by the user agent".
+    return UserGestureType::Other;
+}
+
+static UserGestureType userGestureTypeForPlatformEvent(const PlatformMouseEvent& mouseEvent)
+{
+    // ...
+    // * "mousedown".
+    // * "pointerdown", provided the event's pointerType is "mouse".
+    if (mouseEvent.type() == PlatformEventType::MousePressed)
+        return UserGestureType::ActivationTriggering;
+    return UserGestureType::Other;
+}
+
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+static UserGestureType userGestureTypeForPlatformEvent(const PlatformTouchEvent& touchEvent)
+{
+    // ...
+    // * "pointerup", provided the event's pointerType is not "mouse".
+    // * "touchend".
+    if (touchEvent.type() == PlatformEventType::TouchEnd)
+        return UserGestureType::ActivationTriggering;
+    return UserGestureType::Other;
+}
+#endif
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
 class SyntheticTouchPoint : public PlatformTouchPoint {
@@ -1552,17 +1589,6 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
         }
     }
 
-    // During selection, use an I-beam regardless of the content beneath the cursor.
-    // If a drag may be starting or we're capturing mouse events for a particular node, don't treat this as a selection.
-    if (m_mousePressed
-        && mouseDownMayStartSelect()
-#if ENABLE(DRAG_SUPPORT)
-        && !m_mouseDownMayStartDrag
-#endif
-        && m_frame.selection().isCaretOrRange()
-        && !m_capturingMouseEventsElement)
-        return iBeam;
-
     switch (style ? style->cursor() : CursorType::Auto) {
     case CursorType::Auto: {
         if (ImageOverlay::isOverlayText(node.get())) {
@@ -1584,6 +1610,17 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
             if (inResizer)
                 return layerRenderer.shouldPlaceVerticalScrollbarOnLeft() ? southWestResizeCursor() : southEastResizeCursor();
         }
+
+        // During selection, use an I-beam regardless of the content beneath the cursor.
+        // If a drag may be starting or we're capturing mouse events for a particular node, don't treat this as a selection.
+        if (m_mousePressed
+            && mouseDownMayStartSelect()
+#if ENABLE(DRAG_SUPPORT)
+            && !m_mouseDownMayStartDrag
+#endif
+            && m_frame.selection().isCaretOrRange()
+            && !m_capturingMouseEventsElement)
+                return iBeam;
 
         if ((editable || (renderer && renderer->isText() && node->canStartSelection())) && !inResizer && !result.scrollbar())
             return iBeam;
@@ -1741,7 +1778,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
         return true;
 #endif
 
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document());
+    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), userGestureTypeForPlatformEvent(platformMouseEvent));
 
     // FIXME (bug 68185): this call should be made at another abstraction layer
     m_frame.loader().resetMultipleFormSubmissionProtection();
@@ -1876,7 +1913,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
     m_frame.selection().setCaretBlinkingSuspended(false);
 
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document());
+    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), userGestureTypeForPlatformEvent(platformMouseEvent));
 
 #if ENABLE(POINTER_LOCK)
     if (m_frame.page()->pointerLockController().isLocked()) {
@@ -1962,10 +1999,10 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
         return result;
 
     hitTestResult.setToNonUserAgentShadowAncestor();
-    page->chrome().mouseDidMoveOverElement(hitTestResult, event.modifierFlags());
+    page->chrome().mouseDidMoveOverElement(hitTestResult, event.modifiers());
 
 #if ENABLE(IMAGE_ANALYSIS)
-    if (event.syntheticClickType() == NoTap && m_textRecognitionHoverTimer.isActive())
+    if (event.syntheticClickType() == SyntheticClickType::NoTap && m_textRecognitionHoverTimer.isActive())
         m_textRecognitionHoverTimer.restart();
 #endif
 
@@ -1976,6 +2013,42 @@ bool EventHandler::passMouseMovedEventToScrollbars(const PlatformMouseEvent& eve
 {
     HitTestResult hitTestResult;
     return handleMouseMoveEvent(event, &hitTestResult, true);
+}
+
+OptionSet<HitTestRequest::Type> EventHandler::getHitTypeForMouseMoveEvent(const PlatformMouseEvent& platformMouseEvent, bool onlyUpdateScrollbars)
+{
+    OptionSet hitType { HitTestRequest::Type::Move, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowFrameScrollbars };
+    if (m_mousePressed)
+        hitType.add(HitTestRequest::Type::Active);
+    else if (onlyUpdateScrollbars) {
+        // Mouse events should be treated as "read-only" if we're updating only scrollbars. This
+        // means that :hover and :active freeze in the state they were in, rather than updating
+        // for nodes the mouse moves while the window is not key (which will be the case if
+        // onlyUpdateScrollbars is true).
+        hitType.add(HitTestRequest::Type::ReadOnly);
+    }
+
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    // Treat any mouse move events as readonly if the user is currently touching the screen.
+    if (m_touchPressed) {
+        hitType.add(HitTestRequest::Type::Active);
+        hitType.add(HitTestRequest::Type::ReadOnly);
+    }
+#endif
+
+#if ENABLE(PENCIL_HOVER)
+    if (platformMouseEvent.pointerType() == WebCore::penPointerEventType())
+        hitType.add(WebCore::HitTestRequest::Type::PenEvent);
+#else
+    UNUSED_PARAM(platformMouseEvent);
+#endif
+    return hitType;
+}
+
+HitTestResult EventHandler::getHitTestResultForMouseEvent(const PlatformMouseEvent& platformMouseEvent)
+{
+    HitTestRequest request(getHitTypeForMouseMoveEvent(platformMouseEvent));
+    return prepareMouseEvent(request, platformMouseEvent).hitTestResult();
 }
 
 bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseEvent, HitTestResult* hitTestResult, bool onlyUpdateScrollbars)
@@ -2022,31 +2095,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
         return m_lastScrollbarUnderMouse->mouseMoved(platformMouseEvent);
 #endif
 
-    OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Move, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowFrameScrollbars };
-    if (m_mousePressed)
-        hitType.add(HitTestRequest::Type::Active);
-    else if (onlyUpdateScrollbars) {
-        // Mouse events should be treated as "read-only" if we're updating only scrollbars. This  
-        // means that :hover and :active freeze in the state they were in, rather than updating  
-        // for nodes the mouse moves while the window is not key (which will be the case if 
-        // onlyUpdateScrollbars is true). 
-        hitType.add(HitTestRequest::Type::ReadOnly);
-    }
-
-#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-    // Treat any mouse move events as readonly if the user is currently touching the screen.
-    if (m_touchPressed) {
-        hitType.add(HitTestRequest::Type::Active);
-        hitType.add(HitTestRequest::Type::ReadOnly);
-    }
-#endif
-    
-#if ENABLE(PENCIL_HOVER)
-    if (platformMouseEvent.pointerType() == WebCore::penPointerEventType())
-        hitType.add(WebCore::HitTestRequest::Type::PenEvent);
-#endif
-    
-    HitTestRequest request(hitType);
+    HitTestRequest request(getHitTypeForMouseMoveEvent(platformMouseEvent, onlyUpdateScrollbars));
     MouseEventWithHitTestResults mouseEvent = prepareMouseEvent(request, platformMouseEvent);
     if (hitTestResult)
         *hitTestResult = mouseEvent.hitTestResult();
@@ -2169,7 +2218,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
         return true;
 #endif
 
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), UserGestureType::Other, UserGestureIndicator::ProcessInteractionStyle::Immediate, platformMouseEvent.authorizationToken());
+    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), userGestureTypeForPlatformEvent(platformMouseEvent), UserGestureIndicator::ProcessInteractionStyle::Immediate, platformMouseEvent.authorizationToken());
 
 #if ENABLE(PAN_SCROLLING)
     m_autoscrollController->handleMouseReleaseEvent(platformMouseEvent);
@@ -2320,7 +2369,7 @@ bool EventHandler::dispatchDragEvent(const AtomString& eventType, Element& dragT
     auto dragEvent = DragEvent::create(eventType, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
         event.timestamp().approximateMonotonicTime(), &m_frame.windowProxy(), 0,
         event.globalPosition(), event.position(), event.movementDelta().x(), event.movementDelta().y(),
-        event.modifiers(), 0, 0, nullptr, event.force(), NoTap, &dataTransfer);
+        event.modifiers(), 0, 0, nullptr, event.force(), SyntheticClickType::NoTap, &dataTransfer);
 
     dragTarget.dispatchEvent(dragEvent);
 
@@ -3401,7 +3450,7 @@ bool EventHandler::sendContextMenuEventForKey()
 #else
     PlatformEvent::Type eventType = PlatformEvent::Type::MousePressed;
 #endif
-    PlatformMouseEvent platformMouseEvent(position, globalPosition, RightButton, eventType, 1, { }, WallTime::now(), ForceAtClick, NoTap);
+    PlatformMouseEvent platformMouseEvent(position, globalPosition, RightButton, eventType, 1, { }, WallTime::now(), ForceAtClick, SyntheticClickType::NoTap);
 
     return sendContextMenuEvent(platformMouseEvent);
 }
@@ -3487,7 +3536,7 @@ void EventHandler::fakeMouseMoveEventTimerFired()
         return;
 
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
-    PlatformMouseEvent fakeMouseMoveEvent(valueOrDefault(m_lastKnownMousePosition), m_lastKnownMouseGlobalPosition, NoButton, PlatformEvent::Type::MouseMoved, 0, modifiers, WallTime::now(), 0, NoTap);
+    PlatformMouseEvent fakeMouseMoveEvent(valueOrDefault(m_lastKnownMousePosition), m_lastKnownMouseGlobalPosition, NoButton, PlatformEvent::Type::MouseMoved, 0, modifiers, WallTime::now(), 0, SyntheticClickType::NoTap);
     mouseMoved(fakeMouseMoveEvent);
 }
 #endif // !ENABLE(IOS_TOUCH_EVENTS)
@@ -3672,9 +3721,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     if (!element)
         return false;
 
-    UserGestureType gestureType = UserGestureType::Other;
-    if (initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE)
-        gestureType = UserGestureType::EscapeKey;
+    UserGestureType gestureType = userGestureTypeForPlatformEvent(initialKeyEvent);
 
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), gestureType, UserGestureIndicator::ProcessInteractionStyle::Delayed);
     UserTypingGestureIndicator typingGestureIndicator(m_frame);
@@ -3711,7 +3758,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         bool userHasInteractedViaKeyword = keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty());
 
         if (element.focused() && userHasInteractedViaKeyword) {
-            Style::PseudoClassChangeInvalidation focusVisibleStyleInvalidation(element, CSSSelector::PseudoClassFocusVisible, true);
+            Style::PseudoClassChangeInvalidation focusVisibleStyleInvalidation(element, CSSSelector::PseudoClassType::FocusVisible, true);
             element.setHasFocusVisible(true);
         }
     };
@@ -4753,7 +4800,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
     const Vector<PlatformTouchPoint>& points = event.touchPoints();
 
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document());
+    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), userGestureTypeForPlatformEvent(event));
 
     bool freshTouchEvents = true;
     bool allTouchReleased = true;

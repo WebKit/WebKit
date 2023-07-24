@@ -34,11 +34,11 @@
                 testExpression('max(100px + 200px)', 'calc(300px)', '300px');
                 testExpression('max(100px , 200px)', 'calc(200px)', '200px');
                 testExpression('max(100px,200px)', 'calc(200px)', '200px');
-                testExpression('clamp(100px,123px,200px)', 'clamp(100px, 123px, 200px)', '123px');
-                testExpression('clamp(100px,300px,200px)', 'clamp(100px, 300px, 200px)', '200px');
-                testExpression('clamp(200px,300px,100px)', 'clamp(200px, 300px, 100px)', '200px');
-                testExpression('clamp((50px + 50px),40px,200px)', 'clamp(100px, 40px, 200px)', '100px');
-                testExpression('clamp(50px + 50px,40px,200px)', 'clamp(100px, 40px, 200px)', '100px');
+                testExpression('clamp(100px,123px,200px)', 'calc(123px)', '123px');
+                testExpression('clamp(100px,300px,200px)', 'calc(200px)', '200px');
+                testExpression('clamp(200px,300px,100px)', 'calc(200px)', '200px');
+                testExpression('clamp((50px + 50px),40px,200px)', 'calc(100px)', '100px');
+                testExpression('clamp(50px + 50px,40px,200px)', 'calc(100px)', '100px');
                 testExpression('min(100px,0%)', 'min(100px, 0%)', propertyName == 'width' ? '0px' : "min(100px, 0%)");
                 testExpression('max(100px,0%)', 'max(100px, 0%)', propertyName == 'width' ? '100px' : "max(100px, 0%)");
                 testExpression('clamp(100px,0%,1%)', 'clamp(100px, 0%, 1%)', propertyName == 'width' ? '100px' : "clamp(100px, 0%, 1%)");
@@ -63,6 +63,11 @@
                 testValue('calc(tan(30deg + 15deg) * 100px)', '100');
                 testValue('calc(sin(pi/2) * 100px)', '100');
                 testValue('calc(cos(e - e) * 100px)', '100');
+                testValue('round(117px, 25px)', '125')
+                testValue('round(nearest, 117px, 25px)', '125')
+                testValue('round(up, 117px, 25px)', '125')
+                testValue('round(down, 117px, 25px)', '100')
+                testValue('round(to-zero, 117px, 25px)', '100')
 
                 // Non-parsing expressions.
                 testExpression('calc(100px, 200px)', '999px', '999px');
@@ -99,6 +104,9 @@
                 testExpression('calc(sin(piiii/4) * 100px)', '999px', '999px');
                 testExpression('calc(sin(e e/4) * 100px)', '999px', '999px');
                 testExpression('calc(sin() * 100px)', '999px', '999px');
+                testExpression('round(dummy, 117px, 25px)', '999px', '999px');
+                testExpression('round(nearest)', '999px', '999px');
+                testExpression('round(1px, 2px, 3px)', '999px', '999px');
             }
 
             testProperty("width");

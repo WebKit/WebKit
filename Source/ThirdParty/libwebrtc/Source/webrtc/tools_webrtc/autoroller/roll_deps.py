@@ -32,6 +32,7 @@ def FindSrcDirPath():
 # Skip these dependencies (list without solution name prefix).
 DONT_AUTOROLL_THESE = [
     'src/examples/androidtests/third_party/gradle',
+    'src/third_party/mockito/src',
 ]
 
 # These dependencies are missing in chromium/src/DEPS, either unused or already
@@ -46,8 +47,7 @@ WEBRTC_ONLY_DEPS = [
     'src/testing',
     'src/third_party',
     'src/third_party/gtest-parallel',
-    'src/third_party/jdk/extras',
-    'src/third_party/proguard',
+    'src/third_party/pipewire/linux-amd64',
     'src/tools',
 ]
 
@@ -86,8 +86,11 @@ DepsEntry = collections.namedtuple('DepsEntry', 'path url revision')
 ChangedDep = collections.namedtuple('ChangedDep',
                                     'path url current_rev new_rev')
 CipdDepsEntry = collections.namedtuple('CipdDepsEntry', 'path packages')
+VersionEntry = collections.namedtuple('VersionEntry', 'version')
 ChangedCipdPackage = collections.namedtuple(
     'ChangedCipdPackage', 'path package current_version new_version')
+ChangedVersionEntry = collections.namedtuple(
+    'ChangedVersionEntry', 'path current_version new_version')
 
 ChromiumRevisionUpdate = collections.namedtuple('ChromiumRevisionUpdate',
                                                 ('current_chromium_rev '
@@ -149,7 +152,7 @@ def _RunCommand(command,
   logging.debug('CMD: %s CWD: %s', ' '.join(command), working_dir)
   env = os.environ.copy()
   if extra_env:
-    assert all(isinstance(value, str) for value in list(extra_env.values()))
+    assert all(isinstance(value, str) for value in extra_env.values())
     logging.debug('extra env: %s', extra_env)
     env.update(extra_env)
   p = subprocess.Popen(command,
@@ -248,7 +251,7 @@ def GetMatchingDepsEntries(depsentry_dict, dir_path):
       A list of DepsEntry objects.
     """
   result = []
-  for path, depsentry in list(depsentry_dict.items()):
+  for path, depsentry in depsentry_dict.items():
     if path == dir_path:
       result.append(depsentry)
     else:
@@ -263,7 +266,7 @@ def BuildDepsentryDict(deps_dict):
   result = {}
 
   def AddDepsEntries(deps_subdict):
-    for path, dep in list(deps_subdict.items()):
+    for path, dep in deps_subdict.items():
       if path in result:
         continue
       if not isinstance(dep, dict):
@@ -276,9 +279,19 @@ def BuildDepsentryDict(deps_dict):
         url, revision = dep['url'].split('@')
         result[path] = DepsEntry(path, url, revision)
 
+  def AddVersionEntry(vars_subdict):
+    for key, value in vars_subdict.items():
+      if key in result:
+        continue
+      if not key.endswith('_version'):
+        continue
+      key = re.sub('_version$', '', key)
+      result[key] = VersionEntry(value)
+
   AddDepsEntries(deps_dict['deps'])
   for deps_os in ['win', 'mac', 'unix', 'android', 'ios', 'unix']:
     AddDepsEntries(deps_dict.get('deps_os', {}).get(deps_os, {}))
+  AddVersionEntry(deps_dict.get('vars', {}))
   return result
 
 
@@ -304,6 +317,12 @@ def _FindChangedCipdPackages(path, old_pkgs, new_pkgs):
         logging.debug('Roll dependency %s to %s', path, new_version)
         yield ChangedCipdPackage(path, old_pkg['package'], old_version,
                                  new_version)
+
+
+def _FindChangedVars(name, old_version, new_version):
+  if old_version != new_version:
+    logging.debug('Roll dependency %s to %s', name, new_version)
+    yield ChangedVersionEntry(name, old_version, new_version)
 
 
 def _FindNewDeps(old, new):
@@ -401,7 +420,7 @@ def CalculateChangedDeps(webrtc_deps, new_cr_deps):
   result = []
   webrtc_entries = BuildDepsentryDict(webrtc_deps)
   new_cr_entries = BuildDepsentryDict(new_cr_deps)
-  for path, webrtc_deps_entry in list(webrtc_entries.items()):
+  for path, webrtc_deps_entry in webrtc_entries.items():
     if path in DONT_AUTOROLL_THESE:
       continue
     cr_deps_entry = new_cr_entries.get(path)
@@ -412,6 +431,12 @@ def CalculateChangedDeps(webrtc_deps, new_cr_deps):
         result.extend(
             _FindChangedCipdPackages(path, webrtc_deps_entry.packages,
                                      cr_deps_entry.packages))
+        continue
+
+      if isinstance(cr_deps_entry, VersionEntry):
+        result.extend(
+            _FindChangedVars(path, webrtc_deps_entry.version,
+                             cr_deps_entry.version))
         continue
 
       # Use the revision from Chromium's DEPS file.
@@ -489,6 +514,9 @@ def GenerateCommitMessage(
       if isinstance(c, ChangedCipdPackage):
         commit_msg.append('* %s: %s..%s' %
                           (c.path, c.current_version, c.new_version))
+      elif isinstance(c, ChangedVersionEntry):
+        commit_msg.append('* %s_vesion: %s..%s' %
+                          (c.path, c.current_version, c.new_version))
       else:
         commit_msg.append('* %s: %s/+log/%s..%s' %
                           (c.path, c.url, c.current_rev[0:10], c.new_rev[0:10]))
@@ -543,11 +571,18 @@ def UpdateDepsFile(deps_filename, rev_update, changed_deps, new_cr_content):
                     (ANDROID_DEPS_START, ANDROID_DEPS_END, faulty))
   deps_content = deps_re.sub(new_deps.group(0), deps_content)
 
+  for dep in changed_deps:
+    if isinstance(dep, ChangedVersionEntry):
+      deps_content = deps_content.replace(dep.current_version, dep.new_version)
+
   with open(deps_filename, 'wb') as deps_file:
     deps_file.write(deps_content.encode('utf-8'))
 
   # Update each individual DEPS entry.
   for dep in changed_deps:
+    # ChangedVersionEntry types are already been processed.
+    if isinstance(dep, ChangedVersionEntry):
+      continue
     local_dep_dir = os.path.join(CHECKOUT_ROOT_DIR, dep.path)
     if not os.path.isdir(local_dep_dir):
       raise RollError(

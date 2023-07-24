@@ -47,7 +47,7 @@ static Length parseLength(const UChar* data, unsigned length)
         return Length(1, LengthType::Relative);
 
     unsigned i = 0;
-    while (i < length && isSpaceOrNewline(data[i]))
+    while (i < length && deprecatedIsSpaceOrNewline(data[i]))
         ++i;
     if (i < length && (data[i] == '+' || data[i] == '-'))
         ++i;
@@ -59,7 +59,7 @@ static Length parseLength(const UChar* data, unsigned length)
     unsigned doubleLength = i;
 
     // IE quirk: Skip whitespace between the number and the % character (20 % => 20%).
-    while (i < length && isSpaceOrNewline(data[i]))
+    while (i < length && deprecatedIsSpaceOrNewline(data[i]))
         ++i;
 
     bool ok;
@@ -88,41 +88,9 @@ static unsigned countCharacter(StringImpl& string, UChar character)
     return count;
 }
 
-UniqueArray<Length> newCoordsArray(const String& string, int& len)
-{
-    unsigned length = string.length();
-    LChar* spacifiedCharacters;
-    auto str = StringImpl::createUninitialized(length, spacifiedCharacters);
-    for (unsigned i = 0; i < length; i++) {
-        UChar cc = string[i];
-        if (cc > '9' || (cc < '0' && cc != '-' && cc != '*' && cc != '.'))
-            spacifiedCharacters[i] = ' ';
-        else
-            spacifiedCharacters[i] = cc;
-    }
-    str = str->simplifyWhiteSpace();
-
-    len = countCharacter(str, ' ') + 1;
-    auto r = makeUniqueArray<Length>(len);
-
-    int i = 0;
-    unsigned pos = 0;
-    size_t pos2;
-
-    while ((pos2 = str->find(' ', pos)) != notFound) {
-        r[i++] = parseLength(str->characters16() + pos, pos2 - pos);
-        pos = pos2+1;
-    }
-    r[i] = parseLength(str->characters16() + pos, str->length() - pos);
-
-    ASSERT(i == len - 1);
-
-    return r;
-}
-
 UniqueArray<Length> newLengthArray(const String& string, int& len)
 {
-    RefPtr<StringImpl> str = string.impl()->simplifyWhiteSpace();
+    RefPtr<StringImpl> str = string.impl()->simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
     if (!str->length()) {
         len = 1;
         return nullptr;

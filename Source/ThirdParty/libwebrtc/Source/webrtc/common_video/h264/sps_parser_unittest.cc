@@ -196,15 +196,15 @@ TEST(H264SpsParserTest, TestLog2MaxFrameNumMinus4) {
   EXPECT_EQ(1u, sps->id);
   EXPECT_EQ(4u, sps->log2_max_frame_num);
 
-  GenerateFakeSps(320u, 180u, 1, 28, 0, &buffer);
+  GenerateFakeSps(320u, 180u, 1, 12, 0, &buffer);
   sps = SpsParser::ParseSps(buffer.data(), buffer.size());
   ASSERT_TRUE(sps.has_value());
   EXPECT_EQ(320u, sps->width);
   EXPECT_EQ(180u, sps->height);
   EXPECT_EQ(1u, sps->id);
-  EXPECT_EQ(32u, sps->log2_max_frame_num);
+  EXPECT_EQ(16u, sps->log2_max_frame_num);
 
-  GenerateFakeSps(320u, 180u, 1, 29, 0, &buffer);
+  GenerateFakeSps(320u, 180u, 1, 13, 0, &buffer);
   EXPECT_FALSE(SpsParser::ParseSps(buffer.data(), buffer.size()));
 }
 
@@ -219,15 +219,15 @@ TEST(H264SpsParserTest, TestLog2MaxPicOrderCntMinus4) {
   EXPECT_EQ(1u, sps->id);
   EXPECT_EQ(4u, sps->log2_max_pic_order_cnt_lsb);
 
-  GenerateFakeSps(320u, 180u, 1, 0, 28, &buffer);
+  GenerateFakeSps(320u, 180u, 1, 0, 12, &buffer);
   EXPECT_TRUE(static_cast<bool>(
       sps = SpsParser::ParseSps(buffer.data(), buffer.size())));
   EXPECT_EQ(320u, sps->width);
   EXPECT_EQ(180u, sps->height);
   EXPECT_EQ(1u, sps->id);
-  EXPECT_EQ(32u, sps->log2_max_pic_order_cnt_lsb);
+  EXPECT_EQ(16u, sps->log2_max_pic_order_cnt_lsb);
 
-  GenerateFakeSps(320u, 180u, 1, 0, 29, &buffer);
+  GenerateFakeSps(320u, 180u, 1, 0, 13, &buffer);
   EXPECT_FALSE(SpsParser::ParseSps(buffer.data(), buffer.size()));
 }
 

@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "IteratorOperations.h"
+#include "JITOpaqueByproducts.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyHelpers.h"

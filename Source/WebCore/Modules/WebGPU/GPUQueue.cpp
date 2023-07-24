@@ -50,7 +50,7 @@ void GPUQueue::setLabel(String&& label)
 
 void GPUQueue::submit(Vector<RefPtr<GPUCommandBuffer>>&& commandBuffers)
 {
-    Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>> result;
+    Vector<std::reference_wrapper<WebGPU::CommandBuffer>> result;
     result.reserveInitialCapacity(commandBuffers.size());
     for (const auto& commandBuffer : commandBuffers) {
         if (!commandBuffer)
@@ -62,7 +62,7 @@ void GPUQueue::submit(Vector<RefPtr<GPUCommandBuffer>>&& commandBuffers)
 
 void GPUQueue::onSubmittedWorkDone(OnSubmittedWorkDonePromise&& promise)
 {
-    m_backing->onSubmittedWorkDone([promise = WTFMove(promise)] () mutable {
+    m_backing->onSubmittedWorkDone([promise = WTFMove(promise)]() mutable {
         promise.resolve(nullptr);
     });
 }
@@ -108,13 +108,13 @@ void GPUQueue::writeTexture(
 
 static ImageBuffer* imageBufferForSource(const auto& source)
 {
-    return WTF::switchOn(source, [] (const RefPtr<ImageBitmap>& imageBitmap) {
+    return WTF::switchOn(source, [](const RefPtr<ImageBitmap>& imageBitmap) {
         return imageBitmap->buffer();
-    }, [] (const RefPtr<HTMLCanvasElement>& canvasElement) {
+    }, [](const RefPtr<HTMLCanvasElement>& canvasElement) {
         return canvasElement->buffer();
     }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [] (const RefPtr<OffscreenCanvas>& offscreenCanvasElement) {
+    , [](const RefPtr<OffscreenCanvas>& offscreenCanvasElement) {
         return offscreenCanvasElement->buffer();
     }
 #endif

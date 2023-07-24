@@ -219,6 +219,9 @@ public:
     WEBCORE_EXPORT void setVolatilityState(VolatilityState);
     WEBCORE_EXPORT virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher();
 
+    // This value increments when the ImageBuffer gets a new backend, which can happen if, for example, the GPU Process exits.
+    WEBCORE_EXPORT unsigned backendGeneration() const;
+
     WEBCORE_EXPORT virtual String debugDescription() const;
 
 protected:
@@ -227,10 +230,13 @@ protected:
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread();
     WEBCORE_EXPORT virtual std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer();
 
+    WEBCORE_EXPORT void setBackend(std::unique_ptr<ImageBufferBackend>&&);
+
     ImageBufferBackend::Parameters m_parameters;
     ImageBufferBackend::Info m_backendInfo;
     std::unique_ptr<ImageBufferBackend> m_backend;
     RenderingResourceIdentifier m_renderingResourceIdentifier;
+    unsigned m_backendGeneration { 0 };
 };
 
 class SerializedImageBuffer {

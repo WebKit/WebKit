@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 #include "GPUIntegralTypes.h"
 #include "GPUSampler.h"
 #include "GPUTextureView.h"
-#include <pal/graphics/WebGPU/WebGPUBindGroupEntry.h>
+#include "WebGPUBindGroupEntry.h"
 #include <utility>
 #include <variant>
 
@@ -38,24 +38,24 @@ namespace WebCore {
 
 using GPUBindingResource = std::variant<RefPtr<GPUSampler>, RefPtr<GPUTextureView>, GPUBufferBinding, RefPtr<GPUExternalTexture>>;
 
-inline PAL::WebGPU::BindingResource convertToBacking(const GPUBindingResource& bindingResource)
+inline WebGPU::BindingResource convertToBacking(const GPUBindingResource& bindingResource)
 {
-    return WTF::switchOn(bindingResource, [] (const RefPtr<GPUSampler>& sampler) -> PAL::WebGPU::BindingResource {
+    return WTF::switchOn(bindingResource, [](const RefPtr<GPUSampler>& sampler) -> WebGPU::BindingResource {
         ASSERT(sampler);
         return sampler->backing();
-    }, [] (const RefPtr<GPUTextureView>& textureView) -> PAL::WebGPU::BindingResource {
+    }, [](const RefPtr<GPUTextureView>& textureView) -> WebGPU::BindingResource {
         ASSERT(textureView);
         return textureView->backing();
-    }, [] (const GPUBufferBinding& bufferBinding) -> PAL::WebGPU::BindingResource {
+    }, [](const GPUBufferBinding& bufferBinding) -> WebGPU::BindingResource {
         return bufferBinding.convertToBacking();
-    }, [] (const RefPtr<GPUExternalTexture>& externalTexture) -> PAL::WebGPU::BindingResource {
+    }, [](const RefPtr<GPUExternalTexture>& externalTexture) -> WebGPU::BindingResource {
         ASSERT(externalTexture);
         return externalTexture->backing();
     });
 }
 
 struct GPUBindGroupEntry {
-    PAL::WebGPU::BindGroupEntry convertToBacking() const
+    WebGPU::BindGroupEntry convertToBacking() const
     {
         return {
             binding,

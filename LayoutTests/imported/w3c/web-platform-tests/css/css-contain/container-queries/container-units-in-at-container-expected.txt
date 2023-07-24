@@ -1,22 +1,22 @@
 Test1
 Test1
 
-FAIL cqw unit resolves against appropriate container assert_equals: expected "true" but got ""
-FAIL cqh unit resolves against appropriate container assert_equals: expected "true" but got ""
-FAIL cqi unit resolves against appropriate container assert_equals: expected "true" but got ""
-FAIL cqb unit resolves against appropriate container assert_equals: expected "true" but got ""
-FAIL cqmin unit resolves against appropriate container assert_equals: expected "true" but got ""
-FAIL cqmax unit resolves against appropriate container assert_equals: expected "true" but got ""
-FAIL cqw unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
-FAIL cqh unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
-FAIL cqi unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
-FAIL cqb unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
-FAIL cqmin unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
-FAIL cqmax unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
-FAIL cqw unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
-FAIL cqh unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
-FAIL cqi unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
-FAIL cqb unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
-FAIL cqmin unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
-FAIL cqmax unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
+PASS cqw unit resolves against appropriate container
+PASS cqh unit resolves against appropriate container
+PASS cqi unit resolves against appropriate container
+PASS cqb unit resolves against appropriate container
+PASS cqmin unit resolves against appropriate container
+PASS cqmax unit resolves against appropriate container
+PASS cqw unit resolves against appropriate container (vertical writing-mode on subject)
+PASS cqh unit resolves against appropriate container (vertical writing-mode on subject)
+PASS cqi unit resolves against appropriate container (vertical writing-mode on subject)
+PASS cqb unit resolves against appropriate container (vertical writing-mode on subject)
+PASS cqmin unit resolves against appropriate container (vertical writing-mode on subject)
+PASS cqmax unit resolves against appropriate container (vertical writing-mode on subject)
+PASS cqw unit resolves against appropriate container (vertical writing-mode on container)
+PASS cqh unit resolves against appropriate container (vertical writing-mode on container)
+PASS cqi unit resolves against appropriate container (vertical writing-mode on container)
+PASS cqb unit resolves against appropriate container (vertical writing-mode on container)
+PASS cqmin unit resolves against appropriate container (vertical writing-mode on container)
+PASS cqmax unit resolves against appropriate container (vertical writing-mode on container)
 

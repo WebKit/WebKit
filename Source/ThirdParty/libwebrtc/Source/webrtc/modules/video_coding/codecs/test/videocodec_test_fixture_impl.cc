@@ -21,8 +21,11 @@
 #include <vector>
 
 #include "absl/strings/str_replace.h"
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/test/metrics/global_metrics_logger_and_exporter.h"
+#include "api/test/metrics/metric.h"
 #include "api/transport/field_trial_based_config.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video_codecs/h264_profile_level_id.h"
@@ -34,7 +37,6 @@
 #include "api/video_codecs/video_decoder_factory_template_libvpx_vp8_adapter.h"
 #include "api/video_codecs/video_decoder_factory_template_libvpx_vp9_adapter.h"
 #include "api/video_codecs/video_decoder_factory_template_open_h264_adapter.h"
-#include "api/video_codecs/video_encoder_config.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "api/video_codecs/video_encoder_factory_template.h"
 #include "api/video_codecs/video_encoder_factory_template_libaom_av1_adapter.h"
@@ -43,7 +45,6 @@
 #include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
 #include "common_video/h264/h264_common.h"
 #include "media/base/media_constants.h"
-#include "media/engine/simulcast.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/codecs/vp9/svc_config.h"
 #include "modules/video_coding/utility/ivf_file_writer.h"
@@ -57,15 +58,16 @@
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 #include "test/testsupport/frame_writer.h"
-#include "test/testsupport/perf_test.h"
 #include "test/video_codec_settings.h"
+#include "video/config/simulcast.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 namespace test {
+namespace {
 
 using VideoStatistics = VideoCodecTestStats::VideoStatistics;
 
-namespace {
 const int kBaseKeyFrameInterval = 3000;
 const double kBitratePriority = 1.0;
 const int kDefaultMaxFramerateFps = 30;
@@ -516,7 +518,6 @@ void VideoCodecTestFixtureImpl::AnalyzeAllFrames(
     const std::vector<RateControlThresholds>* rc_thresholds,
     const std::vector<QualityThresholds>* quality_thresholds,
     const BitstreamThresholds* bs_thresholds) {
-
   for (size_t rate_profile_idx = 0; rate_profile_idx < rate_profiles.size();
        ++rate_profile_idx) {
     const size_t first_frame_num = rate_profiles[rate_profile_idx].frame_num;
@@ -542,33 +543,63 @@ void VideoCodecTestFixtureImpl::AnalyzeAllFrames(
       rtc::SimpleStringBuilder modifier(modifier_buf);
       modifier << "_r" << rate_profile_idx << "_sl" << layer_stat.spatial_idx;
 
-      auto PrintResultHelper = [&modifier, this](const std::string& measurement,
-                                                 double value,
-                                                 const std::string& units) {
-        PrintResult(measurement, modifier.str(), config_.test_name, value,
-                    units, /*important=*/false);
+      auto PrintResultHelper = [&modifier, this](
+                                   absl::string_view measurement, double value,
+                                   Unit unit,
+                                   absl::string_view non_standard_unit_suffix,
+                                   ImprovementDirection improvement_direction) {
+        rtc::StringBuilder metric_name(measurement);
+        metric_name << modifier.str() << non_standard_unit_suffix;
+        GetGlobalMetricsLogger()->LogSingleValueMetric(
+            metric_name.str(), config_.test_name, value, unit,
+            improvement_direction);
       };
 
       if (layer_stat.temporal_idx == config_.NumberOfTemporalLayers() - 1) {
-        PrintResultHelper("enc_speed", layer_stat.enc_speed_fps, "fps");
+        PrintResultHelper("enc_speed", layer_stat.enc_speed_fps,
+                          Unit::kUnitless, /*non_standard_unit_suffix=*/"_fps",
+                          ImprovementDirection::kBiggerIsBetter);
         PrintResultHelper("avg_key_frame_size",
-                          layer_stat.avg_key_frame_size_bytes, "bytes");
+                          layer_stat.avg_key_frame_size_bytes, Unit::kBytes,
+                          /*non_standard_unit_suffix=*/"",
+                          ImprovementDirection::kNeitherIsBetter);
         PrintResultHelper("num_key_frames", layer_stat.num_key_frames,
-                          "frames");
+                          Unit::kCount,
+                          /*non_standard_unit_suffix=*/"",
+                          ImprovementDirection::kNeitherIsBetter);
         printf("\n");
       }
 
       modifier << "tl" << layer_stat.temporal_idx;
-      PrintResultHelper("dec_speed", layer_stat.dec_speed_fps, "fps");
+      PrintResultHelper("dec_speed", layer_stat.dec_speed_fps, Unit::kUnitless,
+                        /*non_standard_unit_suffix=*/"_fps",
+                        ImprovementDirection::kBiggerIsBetter);
       PrintResultHelper("avg_delta_frame_size",
-                        layer_stat.avg_delta_frame_size_bytes, "bytes");
-      PrintResultHelper("bitrate", layer_stat.bitrate_kbps, "kbps");
-      PrintResultHelper("framerate", layer_stat.framerate_fps, "fps");
-      PrintResultHelper("avg_psnr_y", layer_stat.avg_psnr_y, "dB");
-      PrintResultHelper("avg_psnr_u", layer_stat.avg_psnr_u, "dB");
-      PrintResultHelper("avg_psnr_v", layer_stat.avg_psnr_v, "dB");
-      PrintResultHelper("min_psnr_yuv", layer_stat.min_psnr, "dB");
-      PrintResultHelper("avg_qp", layer_stat.avg_qp, "");
+                        layer_stat.avg_delta_frame_size_bytes, Unit::kBytes,
+                        /*non_standard_unit_suffix=*/"",
+                        ImprovementDirection::kNeitherIsBetter);
+      PrintResultHelper("bitrate", layer_stat.bitrate_kbps,
+                        Unit::kKilobitsPerSecond,
+                        /*non_standard_unit_suffix=*/"",
+                        ImprovementDirection::kNeitherIsBetter);
+      PrintResultHelper("framerate", layer_stat.framerate_fps, Unit::kUnitless,
+                        /*non_standard_unit_suffix=*/"_fps",
+                        ImprovementDirection::kNeitherIsBetter);
+      PrintResultHelper("avg_psnr_y", layer_stat.avg_psnr_y, Unit::kUnitless,
+                        /*non_standard_unit_suffix=*/"_dB",
+                        ImprovementDirection::kBiggerIsBetter);
+      PrintResultHelper("avg_psnr_u", layer_stat.avg_psnr_u, Unit::kUnitless,
+                        /*non_standard_unit_suffix=*/"_dB",
+                        ImprovementDirection::kBiggerIsBetter);
+      PrintResultHelper("avg_psnr_v", layer_stat.avg_psnr_v, Unit::kUnitless,
+                        /*non_standard_unit_suffix=*/"_dB",
+                        ImprovementDirection::kBiggerIsBetter);
+      PrintResultHelper("min_psnr_yuv", layer_stat.min_psnr, Unit::kUnitless,
+                        /*non_standard_unit_suffix=*/"_dB",
+                        ImprovementDirection::kBiggerIsBetter);
+      PrintResultHelper("avg_qp", layer_stat.avg_qp, Unit::kUnitless,
+                        /*non_standard_unit_suffix=*/"",
+                        ImprovementDirection::kSmallerIsBetter);
       printf("\n");
       if (layer_stat.temporal_idx == config_.NumberOfTemporalLayers() - 1) {
         printf("\n");
@@ -704,13 +735,10 @@ bool VideoCodecTestFixtureImpl::SetUpAndInitObjects(
   int clip_height = config_.clip_height.value_or(config_.codec_settings.height);
 
   // Create file objects for quality analysis.
-  source_frame_reader_.reset(new YuvFrameReaderImpl(
-      config_.filepath, clip_width, clip_height,
-      config_.reference_width.value_or(clip_width),
-      config_.reference_height.value_or(clip_height),
-      YuvFrameReaderImpl::RepeatMode::kPingPong, config_.clip_fps,
-      config_.codec_settings.maxFramerate));
-  EXPECT_TRUE(source_frame_reader_->Init());
+  source_frame_reader_ = CreateYuvFrameReader(
+      config_.filepath,
+      Resolution({.width = clip_width, .height = clip_height}),
+      YuvFrameReaderImpl::RepeatMode::kPingPong);
 
   RTC_DCHECK(encoded_frame_writers_.empty());
   RTC_DCHECK(decoded_frame_writers_.empty());
@@ -770,13 +798,12 @@ bool VideoCodecTestFixtureImpl::SetUpAndInitObjects(
     }
   }
 
-  task_queue->SendTask(
-      [this]() {
-        processor_ = std::make_unique<VideoProcessor>(
-            encoder_.get(), &decoders_, source_frame_reader_.get(), config_,
-            &stats_, &encoded_frame_writers_,
-            decoded_frame_writers_.empty() ? nullptr : &decoded_frame_writers_);
-      });
+  task_queue->SendTask([this]() {
+    processor_ = std::make_unique<VideoProcessor>(
+        encoder_.get(), &decoders_, source_frame_reader_.get(), config_,
+        &stats_, &encoded_frame_writers_,
+        decoded_frame_writers_.empty() ? nullptr : &decoded_frame_writers_);
+  });
   return true;
 }
 
@@ -788,7 +815,7 @@ void VideoCodecTestFixtureImpl::ReleaseAndCloseObjects(
     DestroyEncoderAndDecoder();
   });
 
-  source_frame_reader_->Close();
+  source_frame_reader_.reset();
 
   // Close visualization files.
   for (auto& encoded_frame_writer : encoded_frame_writers_) {

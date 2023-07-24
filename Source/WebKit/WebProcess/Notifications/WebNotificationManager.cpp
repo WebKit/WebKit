@@ -80,7 +80,7 @@ static bool sendMessage(WebPage* page, const Function<bool(IPC::Connection&, uin
 template<typename U> static bool sendNotificationMessage(U&& message, WebPage* page)
 {
     return sendMessage(page, [&] (auto& connection, auto destinationIdentifier) {
-        return connection.send(WTFMove(message), destinationIdentifier);
+        return connection.send(WTFMove(message), destinationIdentifier) == IPC::Error::NoError;
     });
 }
 
@@ -98,10 +98,9 @@ const char* WebNotificationManager::supplementName()
 }
 
 WebNotificationManager::WebNotificationManager(WebProcess& process)
-    : m_process(process)
 {
 #if ENABLE(NOTIFICATIONS)
-    m_process.addMessageReceiver(Messages::WebNotificationManager::messageReceiverName(), *this);
+    process.addMessageReceiver(Messages::WebNotificationManager::messageReceiverName(), *this);
 #endif
 }
 
@@ -227,7 +226,7 @@ void WebNotificationManager::didDestroyNotification(NotificationData&& notificat
 #endif
 }
 
-void WebNotificationManager::didShowNotification(const UUID& notificationID)
+void WebNotificationManager::didShowNotification(const WTF::UUID& notificationID)
 {
     ASSERT(isMainRunLoop());
 
@@ -247,7 +246,7 @@ void WebNotificationManager::didShowNotification(const UUID& notificationID)
 #endif
 }
 
-void WebNotificationManager::didClickNotification(const UUID& notificationID)
+void WebNotificationManager::didClickNotification(const WTF::UUID& notificationID)
 {
     ASSERT(isMainRunLoop());
 
@@ -276,7 +275,7 @@ void WebNotificationManager::didClickNotification(const UUID& notificationID)
 #endif
 }
 
-void WebNotificationManager::didCloseNotifications(const Vector<UUID>& notificationIDs)
+void WebNotificationManager::didCloseNotifications(const Vector<WTF::UUID>& notificationIDs)
 {
     ASSERT(isMainRunLoop());
 

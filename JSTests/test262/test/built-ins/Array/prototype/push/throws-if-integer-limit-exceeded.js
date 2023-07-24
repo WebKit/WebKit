@@ -13,6 +13,7 @@ info: |
   4. Let argCount be the number of elements in items.
   5. If len + argCount > 2^53-1, throw a TypeError exception.
   ...
+features: [exponentiation]
 ---*/
 
 var arrayLike = {};

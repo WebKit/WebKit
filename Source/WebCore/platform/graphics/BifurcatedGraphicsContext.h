@@ -83,12 +83,14 @@ public:
     RenderingMode renderingMode() const final;
 
     void resetClip() final;
+
     void clip(const FloatRect&) final;
-    void clipOut(const FloatRect&) final;
-
-    void clipOut(const Path&) final;
-
+    void clipRoundedRect(const FloatRoundedRect&) final;
     void clipPath(const Path&, WindRule = WindRule::EvenOdd) final;
+
+    void clipOut(const FloatRect&) final;
+    void clipOutRoundedRect(const FloatRoundedRect&) final;
+    void clipOut(const Path&) final;
 
     void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
 

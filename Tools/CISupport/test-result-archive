@@ -59,7 +59,7 @@ def compress_spindumps(layoutTestResultsDir):
                     gzip_file(root, name)
 
 def archive_test_results(configuration, platform, layoutTestResultsDir):
-    assert platform in ('mac', 'win', 'gtk', 'wincairo', 'ios', 'wpe')
+    assert platform in ('mac', 'win', 'gtk', 'wincairo', 'ios', 'watchos', 'wpe')
 
     try:
         os.unlink(archiveFile)
@@ -76,7 +76,7 @@ def archive_test_results(configuration, platform, layoutTestResultsDir):
 
     open(os.path.join(layoutTestResultsDir, '.placeholder'), 'w').close()
 
-    if platform in ('mac', 'ios'):
+    if platform in ('mac', 'ios', 'watchos'):
         compress_spindumps(layoutTestResultsDir)
         if subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", "--zlibCompressionLevel", "2", layoutTestResultsDir, archiveFile]):
             return 1

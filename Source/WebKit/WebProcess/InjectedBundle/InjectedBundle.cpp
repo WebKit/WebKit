@@ -140,7 +140,7 @@ void InjectedBundle::postSynchronousMessage(const String& messageName, API::Obje
 {
     auto& webProcess = WebProcess::singleton();
     auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebProcessPool::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), 0);
-    if (sendResult) {
+    if (sendResult.succeeded()) {
         auto [returnUserData] = sendResult.takeReply();
         returnData = webProcess.transformHandlesToObjects(returnUserData.object());
     } else
@@ -309,7 +309,7 @@ void InjectedBundle::removeAllWebNotificationPermissions(WebPage* page)
 #endif
 }
 
-std::optional<UUID> InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef jsNotification)
+std::optional<WTF::UUID> InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef jsNotification)
 {
 #if ENABLE(NOTIFICATIONS)
     WebCore::Notification* notification = JSNotification::toWrapped(toJS(jsContext)->vm(), toJS(toJS(jsContext), jsNotification));

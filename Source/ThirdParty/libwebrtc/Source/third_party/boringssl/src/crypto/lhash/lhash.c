@@ -62,6 +62,7 @@
 
 #include <openssl/mem.h>
 
+#include "internal.h"
 #include "../internal.h"
 
 
@@ -72,6 +73,16 @@ static const size_t kMinNumBuckets = 16;
 // average chain length exceeds this value, the hash table will be resized.
 static const size_t kMaxAverageChainLength = 2;
 static const size_t kMinAverageChainLength = 1;
+
+// lhash_item_st is an element of a hash chain. It points to the opaque data
+// for this element and to the next item in the chain. The linked-list is NULL
+// terminated.
+typedef struct lhash_item_st {
+  void *data;
+  struct lhash_item_st *next;
+  // hash contains the cached, hash value of |data|.
+  uint32_t hash;
+} LHASH_ITEM;
 
 struct lhash_st {
   // num_items contains the total number of items in the hash table.
@@ -92,7 +103,7 @@ struct lhash_st {
   lhash_hash_func hash;
 };
 
-_LHASH *lh_new(lhash_hash_func hash, lhash_cmp_func comp) {
+_LHASH *OPENSSL_lh_new(lhash_hash_func hash, lhash_cmp_func comp) {
   _LHASH *ret = OPENSSL_malloc(sizeof(_LHASH));
   if (ret == NULL) {
     return NULL;
@@ -112,7 +123,7 @@ _LHASH *lh_new(lhash_hash_func hash, lhash_cmp_func comp) {
   return ret;
 }
 
-void lh_free(_LHASH *lh) {
+void OPENSSL_lh_free(_LHASH *lh) {
   if (lh == NULL) {
     return;
   }
@@ -129,7 +140,7 @@ void lh_free(_LHASH *lh) {
   OPENSSL_free(lh);
 }
 
-size_t lh_num_items(const _LHASH *lh) { return lh->num_items; }
+size_t OPENSSL_lh_num_items(const _LHASH *lh) { return lh->num_items; }
 
 // get_next_ptr_and_hash returns a pointer to the pointer that points to the
 // item equal to |data|. In other words, it searches for an item equal to |data|
@@ -175,16 +186,18 @@ static LHASH_ITEM **get_next_ptr_by_key(const _LHASH *lh, const void *key,
   return ret;
 }
 
-void *lh_retrieve(const _LHASH *lh, const void *data,
-                  lhash_hash_func_helper call_hash_func,
-                  lhash_cmp_func_helper call_cmp_func) {
+void *OPENSSL_lh_retrieve(const _LHASH *lh, const void *data,
+                          lhash_hash_func_helper call_hash_func,
+                          lhash_cmp_func_helper call_cmp_func) {
   LHASH_ITEM **next_ptr =
       get_next_ptr_and_hash(lh, NULL, data, call_hash_func, call_cmp_func);
   return *next_ptr == NULL ? NULL : (*next_ptr)->data;
 }
 
-void *lh_retrieve_key(const _LHASH *lh, const void *key, uint32_t key_hash,
-                      int (*cmp_key)(const void *key, const void *value)) {
+void *OPENSSL_lh_retrieve_key(const _LHASH *lh, const void *key,
+                              uint32_t key_hash,
+                              int (*cmp_key)(const void *key,
+                                             const void *value)) {
   LHASH_ITEM **next_ptr = get_next_ptr_by_key(lh, key, key_hash, cmp_key);
   return *next_ptr == NULL ? NULL : (*next_ptr)->data;
 }
@@ -252,9 +265,9 @@ static void lh_maybe_resize(_LHASH *lh) {
   }
 }
 
-int lh_insert(_LHASH *lh, void **old_data, void *data,
-              lhash_hash_func_helper call_hash_func,
-              lhash_cmp_func_helper call_cmp_func) {
+int OPENSSL_lh_insert(_LHASH *lh, void **old_data, void *data,
+                      lhash_hash_func_helper call_hash_func,
+                      lhash_cmp_func_helper call_cmp_func) {
   uint32_t hash;
   LHASH_ITEM **next_ptr, *item;
 
@@ -287,9 +300,9 @@ int lh_insert(_LHASH *lh, void **old_data, void *data,
   return 1;
 }
 
-void *lh_delete(_LHASH *lh, const void *data,
-                lhash_hash_func_helper call_hash_func,
-                lhash_cmp_func_helper call_cmp_func) {
+void *OPENSSL_lh_delete(_LHASH *lh, const void *data,
+                        lhash_hash_func_helper call_hash_func,
+                        lhash_cmp_func_helper call_cmp_func) {
   LHASH_ITEM **next_ptr, *item, *ret;
 
   next_ptr =
@@ -311,7 +324,7 @@ void *lh_delete(_LHASH *lh, const void *data,
   return ret;
 }
 
-void lh_doall_arg(_LHASH *lh, void (*func)(void *, void *), void *arg) {
+void OPENSSL_lh_doall_arg(_LHASH *lh, void (*func)(void *, void *), void *arg) {
   if (lh == NULL) {
     return;
   }
@@ -337,12 +350,4 @@ void lh_doall_arg(_LHASH *lh, void (*func)(void *, void *), void *arg) {
   // |callback_depth| will have suppressed any resizing. Thus any needed
   // resizing is done here.
   lh_maybe_resize(lh);
-}
-
-uint32_t lh_strhash(const char *c) {
-  if (c == NULL) {
-    return 0;
-  }
-
-  return OPENSSL_hash32(c, strlen(c));
 }

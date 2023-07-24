@@ -272,10 +272,10 @@ func (e *ed25519Signer) verifyMessage(key crypto.PublicKey, msg, sig []byte) err
 	return nil
 }
 
-func getSigner(version uint16, key interface{}, config *Config, sigAlg signatureAlgorithm, isVerify bool) (signer, error) {
+func getSigner(version uint16, key any, config *Config, sigAlg signatureAlgorithm, isVerify bool) (signer, error) {
 	// TLS 1.1 and below use legacy signature algorithms.
-	if version < VersionTLS12 {
-		if config.Bugs.UseLegacySigningAlgorithm == 0 || isVerify {
+	if version < VersionTLS12 || (!isVerify && config.Bugs.AlwaysSignAsLegacyVersion) {
+		if config.Bugs.SigningAlgorithmForLegacyVersions == 0 || isVerify {
 			switch key.(type) {
 			case *rsa.PrivateKey, *rsa.PublicKey:
 				return &rsaPKCS1Signer{crypto.MD5SHA1}, nil
@@ -287,7 +287,7 @@ func getSigner(version uint16, key interface{}, config *Config, sigAlg signature
 		}
 
 		// Fall through, forcing a particular algorithm.
-		sigAlg = config.Bugs.UseLegacySigningAlgorithm
+		sigAlg = config.Bugs.SigningAlgorithmForLegacyVersions
 	}
 
 	switch sigAlg {

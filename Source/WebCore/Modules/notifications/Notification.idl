@@ -60,7 +60,7 @@
     // [SameObject] readonly attribute FrozenArray<unsigned long> vibrate;
     // readonly attribute EpochTimeStamp timestamp;
     // readonly attribute boolean renotify;
-    readonly attribute boolean silent;
+    readonly attribute boolean? silent;
     // readonly attribute boolean requireInteraction;
     [CallWith=CurrentGlobalObject, CachedAttribute, ImplementedAs=dataForBindings] readonly attribute any data;
     // [SameObject] readonly attribute FrozenArray<NotificationAction> actions;

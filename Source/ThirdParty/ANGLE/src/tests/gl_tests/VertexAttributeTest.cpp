@@ -1592,7 +1592,7 @@ TEST_P(VertexAttributeTest, DrawArraysWithDisabledAttribute)
 TEST_P(VertexAttributeTest, DisabledAttribArrays)
 {
     // Known failure on Retina MBP: http://crbug.com/635081
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsNVIDIA());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA());
 
     constexpr char kVS[] =
         "attribute vec4 a_position;\n"
@@ -1725,7 +1725,7 @@ void main()
 TEST_P(VertexAttributeTestES3, DrawWithUnalignedData)
 {
     // http://anglebug.com/7068
-    ANGLE_SKIP_TEST_IF(IsOSX());
+    ANGLE_SKIP_TEST_IF(IsMac());
 
     constexpr char kVS[] = R"(#version 300 es
 precision highp float;
@@ -3674,7 +3674,7 @@ TEST_P(VertexAttributeTest, AliasingVectorAttribLocations)
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
     // http://anglebug.com/3466
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     // http://anglebug.com/3467
     ANGLE_SKIP_TEST_IF(IsD3D());
@@ -3834,7 +3834,7 @@ TEST_P(VertexAttributeTest, AliasingMatrixAttribLocations)
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
     // http://anglebug.com/3466
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     // http://anglebug.com/3467
     ANGLE_SKIP_TEST_IF(IsD3D());
@@ -4068,7 +4068,7 @@ TEST_P(VertexAttributeTest, AliasingVectorAttribLocationsDifferingPrecisions)
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL());
 
     // http://anglebug.com/3466
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     // http://anglebug.com/3467
     ANGLE_SKIP_TEST_IF(IsD3D());

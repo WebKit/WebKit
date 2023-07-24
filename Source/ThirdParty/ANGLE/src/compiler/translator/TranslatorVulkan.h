@@ -26,6 +26,8 @@ class TranslatorVulkan final : public TCompiler
   public:
     TranslatorVulkan(sh::GLenum type, ShShaderSpec spec);
 
+    void assignSpirvId(TSymbolUniqueId uniqueId, uint32_t spirvId);
+
   protected:
     [[nodiscard]] bool translate(TIntermBlock *root,
                                  const ShCompileOptions &compileOptions,
@@ -37,6 +39,12 @@ class TranslatorVulkan final : public TCompiler
                                      PerformanceDiagnostics *perfDiagnostics,
                                      SpecConst *specConst,
                                      DriverUniform *driverUniforms);
+    void assignSpirvIds(TIntermBlock *root);
+
+    // A map from TSymbolUniqueId::mId to SPIR-V reserved ids.  Used by the SPIR-V generator to
+    // quickly know when to use a reserved id and not have to resort to name matching.
+    angle::HashMap<int, uint32_t> mUniqueToSpirvIdMap;
+    uint32_t mFirstUnusedSpirvId;
 };
 
 }  // namespace sh

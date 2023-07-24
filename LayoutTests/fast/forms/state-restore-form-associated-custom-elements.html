@@ -29,10 +29,13 @@ function getXFooConstructor() {
         }
 
         connectedCallback() {
-            this._internals.setFormValue(
-                this._parseFormValue(this.dataset.submissionValue),
-                this._parseFormValue(this.dataset.state),
-            );
+            const value = this._parseFormValue(this.dataset.submissionValue);
+            const state = this._parseFormValue(this.dataset.state);
+
+            if (state == null)
+                this._internals.setFormValue(value);
+            else
+                this._internals.setFormValue(value, state);
         }
 
         formStateRestoreCallback(state) {

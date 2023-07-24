@@ -18,13 +18,13 @@ namespace webrtc {
 
 namespace {
 
-enum { kSpectrumSize = 65 };
+constexpr int kSpectrumSize = 65;
 // Delay history sizes.
-enum { kMaxDelay = 100 };
-enum { kLookahead = 10 };
-enum { kHistorySize = kMaxDelay + kLookahead };
+constexpr int kMaxDelay = 100;
+constexpr int kLookahead = 10;
+constexpr int kHistorySize = kMaxDelay + kLookahead;
 // Length of binary spectrum sequence.
-enum { kSequenceLength = 400 };
+constexpr int kSequenceLength = 400;
 
 const int kDifferentHistorySize = 3;
 const int kDifferentLookahead = 1;

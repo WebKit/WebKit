@@ -135,6 +135,7 @@ CalculationCategory calculationCategoryForCombination(CSSUnitType type)
     case CSSUnitType::CSS_DPPX:
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPCM:
+    case CSSUnitType::CSS_X:
         return CalculationCategory::Resolution;
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:

@@ -36,6 +36,13 @@ class NetEqInput {
     int64_t time_ms;
   };
 
+  struct SetMinimumDelayInfo {
+    SetMinimumDelayInfo(int64_t timestamp_ms_in, int delay_ms_in)
+        : timestamp_ms(timestamp_ms_in), delay_ms(delay_ms_in) {}
+    int64_t timestamp_ms;
+    int delay_ms;
+  };
+
   virtual ~NetEqInput() = default;
 
   // Returns at what time (in ms) NetEq::InsertPacket should be called next, or
@@ -46,16 +53,31 @@ class NetEqInput {
   // empty if no more output events are available.
   virtual absl::optional<int64_t> NextOutputEventTime() const = 0;
 
-  // Returns the time (in ms) for the next event from either NextPacketTime()
-  // or NextOutputEventTime(), or empty if both are out of events.
+  // Returns the information related to the next NetEq set minimum delay event
+  // if available.
+  virtual absl::optional<SetMinimumDelayInfo> NextSetMinimumDelayInfo()
+      const = 0;
+
+  // Returns the time (in ms) for the next event (packet, output or set minimum
+  // delay event) or empty if there are no more events.
   absl::optional<int64_t> NextEventTime() const {
-    const auto a = NextPacketTime();
-    const auto b = NextOutputEventTime();
+    absl::optional<int64_t> next_event_time = NextPacketTime();
+    const auto next_output_time = NextOutputEventTime();
     // Return the minimum of non-empty `a` and `b`, or empty if both are empty.
-    if (a) {
-      return b ? std::min(*a, *b) : a;
+    if (next_output_time) {
+      next_event_time = next_event_time ? std::min(next_event_time.value(),
+                                                   next_output_time.value())
+                                        : next_output_time;
     }
-    return b ? b : absl::nullopt;
+    const auto next_neteq_minimum_delay = NextSetMinimumDelayInfo();
+    if (next_neteq_minimum_delay) {
+      next_event_time =
+          next_event_time
+              ? std::min(next_event_time.value(),
+                         next_neteq_minimum_delay.value().timestamp_ms)
+              : next_neteq_minimum_delay.value().timestamp_ms;
+    }
+    return next_event_time;
   }
 
   // Returns the next packet to be inserted into NetEq. The packet following the
@@ -68,6 +90,10 @@ class NetEqInput {
   // a new value (potentially the same if several output events share the same
   // time).
   virtual void AdvanceOutputEvent() = 0;
+
+  // Move to the next NetEq set minimum delay. This will make
+  // `NextSetMinimumDelayInfo` return a new value.
+  virtual void AdvanceSetMinimumDelay() = 0;
 
   // Returns true if the source has come to an end. An implementation must
   // eventually return true from this method, or the test will end up in an
@@ -88,8 +114,10 @@ class TimeLimitedNetEqInput : public NetEqInput {
   ~TimeLimitedNetEqInput() override;
   absl::optional<int64_t> NextPacketTime() const override;
   absl::optional<int64_t> NextOutputEventTime() const override;
+  absl::optional<SetMinimumDelayInfo> NextSetMinimumDelayInfo() const override;
   std::unique_ptr<PacketData> PopPacket() override;
   void AdvanceOutputEvent() override;
+  void AdvanceSetMinimumDelay() override;
   bool ended() const override;
   absl::optional<RTPHeader> NextHeader() const override;
 

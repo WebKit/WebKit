@@ -86,22 +86,24 @@ int CountActiveStreams(const webrtc::VideoCodec& codec) {
   return active_streams_count;
 }
 
-int VerifyCodec(const webrtc::VideoCodec* inst) {
-  if (inst == nullptr) {
+int VerifyCodec(const webrtc::VideoCodec* codec_settings) {
+  if (codec_settings == nullptr) {
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
-  if (inst->maxFramerate < 1) {
+  if (codec_settings->maxFramerate < 1) {
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
   // allow zero to represent an unspecified maxBitRate
-  if (inst->maxBitrate > 0 && inst->startBitrate > inst->maxBitrate) {
+  if (codec_settings->maxBitrate > 0 &&
+      codec_settings->startBitrate > codec_settings->maxBitrate) {
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
-  if (inst->width <= 1 || inst->height <= 1) {
+  if (codec_settings->width <= 1 || codec_settings->height <= 1) {
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
-  if (inst->codecType == webrtc::kVideoCodecVP8 &&
-      inst->VP8().automaticResizeOn && CountActiveStreams(*inst) > 1) {
+  if (codec_settings->codecType == webrtc::kVideoCodecVP8 &&
+      codec_settings->VP8().automaticResizeOn &&
+      CountActiveStreams(*codec_settings) > 1) {
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
   return WEBRTC_VIDEO_CODEC_OK;
@@ -299,7 +301,7 @@ int SimulcastEncoderAdapter::Release() {
 }
 
 int SimulcastEncoderAdapter::InitEncode(
-    const VideoCodec* inst,
+    const VideoCodec* codec_settings,
     const VideoEncoder::Settings& settings) {
   RTC_DCHECK_RUN_ON(&encoder_queue_);
 
@@ -307,15 +309,15 @@ int SimulcastEncoderAdapter::InitEncode(
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
 
-  int ret = VerifyCodec(inst);
+  int ret = VerifyCodec(codec_settings);
   if (ret < 0) {
     return ret;
   }
 
   Release();
 
-  codec_ = *inst;
-  total_streams_count_ = CountAllStreams(*inst);
+  codec_ = *codec_settings;
+  total_streams_count_ = CountAllStreams(*codec_settings);
 
   // TODO(ronghuawu): Remove once this is handled in LibvpxVp8Encoder.
   if (codec_.qpMax < kDefaultMinQp) {
@@ -349,7 +351,7 @@ int SimulcastEncoderAdapter::InitEncode(
   //   (active_streams_count >= 1). SEA creates N=active_streams_count encoders
   //   and configures each to produce a single stream.
 
-  int active_streams_count = CountActiveStreams(*inst);
+  int active_streams_count = CountActiveStreams(*codec_settings);
   // If we only have a single active layer it is better to create an encoder
   // with only one configured layer than creating it with all-but-one disabled
   // layers because that way we control scaling.
@@ -461,24 +463,14 @@ int SimulcastEncoderAdapter::Encode(
     }
   }
 
-  // All active streams should generate a key frame if
-  // a key frame is requested by any stream.
   bool is_keyframe_needed = false;
-  if (frame_types) {
-    for (const auto& frame_type : *frame_types) {
-      if (frame_type == VideoFrameType::kVideoFrameKey) {
-        is_keyframe_needed = true;
-        break;
-      }
-    }
-  }
-
-  if (!is_keyframe_needed) {
-    for (const auto& layer : stream_contexts_) {
-      if (layer.is_keyframe_needed()) {
-        is_keyframe_needed = true;
-        break;
-      }
+  for (const auto& layer : stream_contexts_) {
+    if (layer.is_keyframe_needed()) {
+      // This is legacy behavior, generating a keyframe on all layers
+      // when generating one for a layer that became active for the first time
+      // or after being disabled.
+      is_keyframe_needed = true;
+      break;
     }
   }
 
@@ -501,17 +493,38 @@ int SimulcastEncoderAdapter::Encode(
     // frame types for all streams should be passed to the encoder unchanged.
     // Otherwise a single per-encoder frame type is passed.
     std::vector<VideoFrameType> stream_frame_types(
-        bypass_mode_ ? total_streams_count_ : 1);
+        bypass_mode_
+            ? std::max<unsigned char>(codec_.numberOfSimulcastStreams, 1)
+            : 1,
+        VideoFrameType::kVideoFrameDelta);
+
+    bool keyframe_requested = false;
     if (is_keyframe_needed) {
       std::fill(stream_frame_types.begin(), stream_frame_types.end(),
                 VideoFrameType::kVideoFrameKey);
-      layer.OnKeyframe(frame_timestamp);
-    } else {
-      if (layer.ShouldDropFrame(frame_timestamp)) {
-        continue;
+      keyframe_requested = true;
+    } else if (frame_types) {
+      if (bypass_mode_) {
+        // In bypass mode, we effectively pass on frame_types.
+        RTC_DCHECK_EQ(frame_types->size(), stream_frame_types.size());
+        stream_frame_types = *frame_types;
+        keyframe_requested =
+            absl::c_any_of(*frame_types, [](const VideoFrameType frame_type) {
+              return frame_type == VideoFrameType::kVideoFrameKey;
+            });
+      } else {
+        size_t stream_idx = static_cast<size_t>(layer.stream_idx());
+        if (frame_types->size() >= stream_idx &&
+            (*frame_types)[stream_idx] == VideoFrameType::kVideoFrameKey) {
+          stream_frame_types[0] = VideoFrameType::kVideoFrameKey;
+          keyframe_requested = true;
+        }
       }
-      std::fill(stream_frame_types.begin(), stream_frame_types.end(),
-                VideoFrameType::kVideoFrameDelta);
+    }
+    if (keyframe_requested) {
+      layer.OnKeyframe(frame_timestamp);
+    } else if (layer.ShouldDropFrame(frame_timestamp)) {
+      continue;
     }
 
     // If scaling isn't required, because the input resolution
@@ -666,7 +679,7 @@ EncodedImageCallback::Result SimulcastEncoderAdapter::OnEncodedImage(
   EncodedImage stream_image(encodedImage);
   CodecSpecificInfo stream_codec_specific = *codecSpecificInfo;
 
-  stream_image.SetSpatialIndex(stream_idx);
+  stream_image.SetSimulcastIndex(stream_idx);
 
   return encoded_complete_callback_->OnEncodedImage(stream_image,
                                                     &stream_codec_specific);
@@ -771,6 +784,26 @@ webrtc::VideoCodec SimulcastEncoderAdapter::MakeStreamCodec(
   codec_params.maxFramerate = stream_params.maxFramerate;
   codec_params.qpMax = stream_params.qpMax;
   codec_params.active = stream_params.active;
+  // By default, `scalability_mode` comes from SimulcastStream when
+  // SimulcastEncoderAdapter is used. This allows multiple encodings of L1Tx,
+  // but SimulcastStream currently does not support multiple spatial layers.
+  ScalabilityMode scalability_mode = stream_params.GetScalabilityMode();
+  // To support the full set of scalability modes in the event that this is the
+  // only active encoding, prefer VideoCodec::GetScalabilityMode() if all other
+  // encodings are inactive.
+  if (codec.GetScalabilityMode().has_value()) {
+    bool only_active_stream = true;
+    for (int i = 0; i < codec.numberOfSimulcastStreams; ++i) {
+      if (i != stream_idx && codec.simulcastStream[i].active) {
+        only_active_stream = false;
+        break;
+      }
+    }
+    if (only_active_stream) {
+      scalability_mode = codec.GetScalabilityMode().value();
+    }
+  }
+  codec_params.SetScalabilityMode(scalability_mode);
   // Settings that are based on stream/resolution.
   if (is_lowest_quality_stream) {
     // Settings for lowest spatial resolutions.

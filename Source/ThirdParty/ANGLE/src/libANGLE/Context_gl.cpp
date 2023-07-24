@@ -1363,11 +1363,6 @@ void Context::pixelZoom(GLfloat xfactor, GLfloat yfactor)
     UNIMPLEMENTED();
 }
 
-void Context::polygonMode(GLenum face, GLenum mode)
-{
-    UNIMPLEMENTED();
-}
-
 void Context::polygonStipple(const GLubyte *mask)
 {
     UNIMPLEMENTED();

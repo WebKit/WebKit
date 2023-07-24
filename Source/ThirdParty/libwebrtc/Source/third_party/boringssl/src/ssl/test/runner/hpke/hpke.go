@@ -14,7 +14,7 @@
 
 // Package hpke implements Hybrid Public Key Encryption (HPKE).
 //
-// See https://tools.ietf.org/html/draft-irtf-cfrg-hpke-08.
+// See RFC 9180.
 package hpke
 
 import (
@@ -30,6 +30,7 @@ import (
 
 // KEM scheme IDs.
 const (
+	P256WithHKDFSHA256   uint16 = 0x0010
 	X25519WithHKDFSHA256 uint16 = 0x0020
 )
 
@@ -134,6 +135,8 @@ func (c *Context) KEM() uint16 { return c.kemID }
 func (c *Context) KDF() uint16 { return c.kdfID }
 
 func (c *Context) AEAD() uint16 { return c.aeadID }
+
+func (c *Context) Overhead() int { return c.aead.Overhead() }
 
 func (c *Context) Seal(plaintext, additionalData []byte) []byte {
 	ciphertext := c.aead.Seal(nil, c.computeNonce(), plaintext, additionalData)

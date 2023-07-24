@@ -195,7 +195,7 @@ static long PacketedCtrl(BIO *bio, int cmd, long num, void *ptr) {
   }
 
   BIO_clear_retry_flags(bio);
-  int ret = BIO_ctrl(bio->next_bio, cmd, num, ptr);
+  long ret = BIO_ctrl(bio->next_bio, cmd, num, ptr);
   BIO_copy_next_retry(bio);
   return ret;
 }

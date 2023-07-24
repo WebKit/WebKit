@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+    Test passing a MessagePort to an AudioWorklet
+  </title>
+  <meta charset="utf-8">
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+   <script src="/webaudio/resources/audit.js"></script>
+ </head>
+ <body>
+   <script id="layout-test-code">
+     let audit = Audit.createTaskRunner();
+
+     let context = new AudioContext();
+     let module = null;
+
+     let filePath = 'processors/message-port-processor.js';
+
+     audit.define(
+         'Test postMessage of MessagePort from AudioWorkletNode to AudioWorkletProcessor',
+         (task, should) => {
+           let workletNode = new AudioWorkletNode(context, 'message-port-processor');
+
+           workletNode.port.onmessage = (event) => {
+             let data = event.data;
+             should(data.state, 'audio worklet was created').beEqualTo('created');
+             // Send a MessagePort back to the worklet.
+             channel = new MessageChannel();
+             channel.port1.onmessage = (event) => {
+               should(event.data.state, 'audio worklet received the MessagePort').beEqualTo('port-received');
+               task.done();
+             };
+             workletNode.port.postMessage({ port: channel.port2 }, [channel.port2]);
+           };
+
+           workletNode.port.onmessageerror = (event) => {
+             should(false, 'Got messageerror from worklet').beTrue();
+             task.done();
+           };
+         });
+
+       context.audioWorklet.addModule(filePath).then(() => {
+         audit.run();
+       });
+   </script>
+ </body>
+</html>

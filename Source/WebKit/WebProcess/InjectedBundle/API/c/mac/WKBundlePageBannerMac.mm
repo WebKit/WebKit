@@ -56,11 +56,6 @@ public:
 
 private:
     // PageBanner::Client.
-    void pageBannerDestroyed(PageBanner*) override
-    {
-        delete this;
-    }
-    
     bool mouseEvent(PageBanner* pageBanner, WebEventType type, WebMouseEventButton button, const IntPoint& position) override
     {
         switch (type) {
@@ -105,7 +100,7 @@ WKBundlePageBannerRef WKBundlePageBannerCreateBannerWithCALayer(CALayer *layer, 
         return 0;
 
     auto clientImpl = makeUnique<WebKit::PageBannerClientImpl>(wkClient);
-    return toAPI(&WebKit::PageBanner::create(layer, height, clientImpl.release()).leakRef());
+    return toAPI(&WebKit::PageBanner::create(layer, height, WTFMove(clientImpl)).leakRef());
 }
 
 CALayer *WKBundlePageBannerGetLayer(WKBundlePageBannerRef pageBanner)

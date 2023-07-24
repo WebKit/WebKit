@@ -78,7 +78,7 @@ namespace WebKit {
 static void applySandbox()
 {
 #if PLATFORM(MAC)
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
+    NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
     auto profilePath = makeString(String([bundle resourcePath]), "/com.apple.WebKit.webpushd.mac.sb"_s);
     if (FileSystem::fileExists(profilePath)) {
         AuxiliaryProcess::applySandboxProfileForDaemon(profilePath, "com.apple.webkit.webpushd"_s);

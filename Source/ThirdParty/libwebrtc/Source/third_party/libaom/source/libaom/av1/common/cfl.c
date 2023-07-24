@@ -27,9 +27,7 @@ void cfl_init(CFL_CTX *cfl, const SequenceHeader *seq_params) {
   cfl->store_y = 0;
   // The DC_PRED cache is disabled by default and is only enabled in
   // cfl_rd_pick_alpha
-  cfl->use_dc_pred_cache = 0;
-  cfl->dc_pred_is_cached[CFL_PRED_U] = 0;
-  cfl->dc_pred_is_cached[CFL_PRED_V] = 0;
+  clear_cfl_dc_pred_cache_flags(cfl);
 }
 
 void cfl_store_dc_pred(MACROBLOCKD *const xd, const uint8_t *input,

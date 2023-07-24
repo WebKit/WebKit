@@ -36,17 +36,17 @@ layer at (0,0) size 785x1121
                 text run at (61,1) width 53: "Names"
               RenderBR {BR} at (114,1) size 0x17
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {SPAN} at (0,0) size 104x15
+            RenderInline {SPAN} at (0,0) size 106x15
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,85) size 769x3
       RenderBlock (anonymous) at (0,94) size 769x68
-        RenderInline {SPAN} at (0,0) size 586x65
-          RenderInline {SPAN} at (0,0) size 586x65
+        RenderInline {SPAN} at (0,0) size 600x65
+          RenderInline {SPAN} at (0,0) size 600x65
             RenderText {#text} at (0,0) size 0x0
-            RenderImage {IMG} at (0,1) size 66x20
+            RenderImage {IMG} at (0,0) size 66x20
             RenderText {#text} at (66,2) size 4x15
               text run at (66,2) width 4: " "
             RenderInline {SPAN} at (0,0) size 83x17
@@ -302,7 +302,7 @@ layer at (0,0) size 785x1121
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,803) size 769x3
+      RenderBlock (anonymous) at (0,803) size 769x2
       RenderBlock (anonymous) at (0,811) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
@@ -354,8 +354,8 @@ layer at (0,0) size 785x1121
               RenderInline {SPAN} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,932) size 769x3
-      RenderBlock (anonymous) at (0,941) size 769x51
-        RenderInline {SPAN} at (0,0) size 196x48
+      RenderBlock (anonymous) at (0,940) size 769x51
+        RenderInline {SPAN} at (0,0) size 199x48
           RenderInline {SPAN} at (0,0) size 0x15
             RenderInline {SPAN} at (0,0) size 0x15
             RenderText {#text} at (0,0) size 0x0
@@ -369,11 +369,11 @@ layer at (0,0) size 785x1121
             RenderBR {BR} at (97,0) size 0x17
           RenderText {#text} at (0,0) size 0x0
           RenderBR {BR} at (0,20) size 0x15
-          RenderInline {SPAN} at (0,0) size 196x15
-            RenderText {#text} at (0,35) size 196x15
-              text run at (0,35) width 126: "SERVICE FEE MCO "
-              text run at (125,35) width 71: "8103220490"
-            RenderBR {BR} at (195,35) size 1x15
+          RenderInline {SPAN} at (0,0) size 199x15
+            RenderText {#text} at (0,35) size 199x15
+              text run at (0,35) width 129: "SERVICE FEE MCO "
+              text run at (128,35) width 71: "8103220490"
+            RenderBR {BR} at (198,35) size 1x15
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,997) size 769x3
       RenderBlock (anonymous) at (0,1006) size 769x22
@@ -392,7 +392,7 @@ layer at (0,0) size 785x1121
               RenderInline {SPAN} at (0,0) size 0x14
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1034) size 769x3
+      RenderBlock (anonymous) at (0,1033) size 769x3
       RenderBlock (anonymous) at (0,1042) size 769x21
         RenderInline {SPAN} at (0,0) size 277x15
           RenderInline {SPAN} at (0,0) size 277x15
@@ -410,75 +410,75 @@ layer at (0,0) size 785x1121
         RenderBlock {P} at (0,15) size 769x16
           RenderText {#text} at (0,0) size 204x15
             text run at (0,0) width 204: "This itinerary is subject to change. "
-          RenderInline {A} at (0,0) size 163x15 [color=#0000EE]
-            RenderText {#text} at (204,0) size 163x15
-              text run at (204,0) width 163: "Click here for latest updates"
+          RenderInline {A} at (0,0) size 164x15 [color=#0000EE]
+            RenderText {#text} at (204,0) size 164x15
+              text run at (204,0) width 164: "Click here for latest updates"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1113) size 769x0
+      RenderBlock (anonymous) at (0,1112) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
 layer at (8,35) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,94) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,176) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,292) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,388) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,600) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,811) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,940) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,1006) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,1042) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,1077) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
-layer at (23,43) size 104x15
-  RenderInline (relative positioned) {SPAN} at (0,0) size 104x15
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
+layer at (23,43) size 106x15
+  RenderInline (relative positioned) {SPAN} at (0,0) size 106x15
     RenderText {#text} at (0,0) size 0x0
-    RenderInline {SPAN} at (0,0) size 104x15
+    RenderInline {SPAN} at (0,0) size 106x15
       RenderText {#text} at (0,0) size 0x0
       RenderImage {IMG} at (0,21) size 20x20
       RenderText {#text} at (20,29) size 4x15
         text run at (20,29) width 4: " "
-      RenderInline {SPAN} at (0,0) size 80x15
-        RenderText {#text} at (24,29) size 80x15
-          text run at (24,29) width 80: "HAO, SCOTT"
-        RenderBR {BR} at (104,29) size 0x15
+      RenderInline {SPAN} at (0,0) size 82x15
+        RenderText {#text} at (24,29) size 82x15
+          text run at (24,29) width 82: "HAO, SCOTT"
+        RenderBR {BR} at (106,29) size 0x15
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
-layer at (23,103) size 586x39
-  RenderInline (relative positioned) {SPAN} at (0,0) size 586x39
+layer at (23,103) size 600x39
+  RenderInline (relative positioned) {SPAN} at (0,0) size 600x39
     RenderText {#text} at (0,0) size 0x0
     RenderImage {IMG} at (0,20) size 20x21
-    RenderText {#text} at (20,28) size 566x16
+    RenderText {#text} at (20,28) size 580x16
       text run at (20,28) width 4: " "
       text run at (24,28) width 56: "Address: "
-      text run at (80,28) width 506: "ST. JUDE MEDICAL, 21700 OXNARD ST SUITE 800, WOODLAND HILLS CA Z/91367"
-    RenderBR {BR} at (585,28) size 1x16
+      text run at (80,28) width 520: "ST. JUDE MEDICAL, 21700 OXNARD ST SUITE 800, WOODLAND HILLS CA Z/91367"
+    RenderBR {BR} at (599,28) size 1x16
     RenderImage {IMG} at (0,43) size 20x21
-    RenderText {#text} at (20,51) size 405x16
+    RenderText {#text} at (20,51) size 415x16
       text run at (20,51) width 4: " "
-      text run at (24,51) width 48: "Deliver: "
-      text run at (72,51) width 104: "DEBI STANGEL, "
-      text run at (175,51) width 115: "119 GLEN COURT, "
-      text run at (289,51) width 136: "DANVILLE CA Z/94526"
-layer at (23,185) size 20x15
+      text run at (24,51) width 49: "Deliver: "
+      text run at (73,51) width 106: "DEBI STANGEL, "
+      text run at (178,51) width 119: "119 GLEN COURT, "
+      text run at (296,51) width 139: "DANVILLE CA Z/94526"
+layer at (23,184) size 20x15
   RenderInline (relative positioned) {SPAN} at (0,0) size 20x15
     RenderText {#text} at (0,0) size 0x0
     RenderImage {IMG} at (0,21) size 20x20
     RenderText {#text} at (0,0) size 0x0
-layer at (23,226) size 769x60
+layer at (23,225) size 769x60
   RenderBlock (anonymous) at (0,217) size 769x61
-layer at (43,211) size 526x60
+layer at (43,210) size 526x60
   RenderTable {TABLE} at (0,0) size 526x60 [border: (1px outset #808080)]
     RenderTableSection {TBODY} at (1,1) size 524x58
       RenderTableRow {TR} at (0,2) size 524x22 [bgcolor=#E0E0E0]

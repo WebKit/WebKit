@@ -27,4 +27,8 @@ void CRYPTO_sysrand(uint8_t *out, size_t requested) {
   zx_cprng_draw(out, requested);
 }
 
+void CRYPTO_sysrand_for_seed(uint8_t *out, size_t requested) {
+  CRYPTO_sysrand(out, requested);
+}
+
 #endif  // OPENSSL_FUCHSIA && !BORINGSSL_UNSAFE_DETERMINISTIC_MODE

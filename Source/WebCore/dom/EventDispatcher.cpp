@@ -63,17 +63,15 @@ static void callDefaultEventHandlersInBubblingOrder(Event& event, const EventPat
     // Non-bubbling events call only one default event handler, the one for the target.
     Ref rootNode { *path.contextAt(0).node() };
     rootNode->defaultEventHandler(event);
-    ASSERT(!event.defaultPrevented());
 
-    if (event.defaultHandled() || !event.bubbles())
+    if (event.defaultHandled() || !event.bubbles() || event.defaultPrevented())
         return;
 
     size_t size = path.size();
     for (size_t i = 1; i < size; ++i) {
         Ref currentNode { *path.contextAt(i).node() };
         currentNode->defaultEventHandler(event);
-        ASSERT(!event.defaultPrevented());
-        if (event.defaultHandled())
+        if (event.defaultPrevented() || event.defaultHandled())
             return;
     }
 }

@@ -27,8 +27,6 @@ void aom_blend_a64_vmask_neon(uint8_t *dst, uint32_t dst_stride,
   uint8x8_t tmp0, tmp1;
   uint8x16_t tmp0_q, tmp1_q, res_q;
   uint16x8_t res, res_low, res_high;
-  uint32x2_t tmp0_32 = vdup_n_u32(0), tmp1_32 = vdup_n_u32(0);
-  uint16x4_t tmp0_16 = vdup_n_u16(0), tmp1_16 = vdup_n_u16(0);
   assert(IMPLIES(src0 == dst, src0_stride == dst_stride));
   assert(IMPLIES(src1 == dst, src1_stride == dst_stride));
 
@@ -89,10 +87,8 @@ void aom_blend_a64_vmask_neon(uint8_t *dst, uint32_t dst_stride,
       const uint16x4_t max_minus_m2 = vdup_n_u16(64 - (uint16_t)mask[i + 1]);
       const uint8x8_t max_minus_m =
           vmovn_u16(vcombine_u16(max_minus_m1, max_minus_m2));
-      load_unaligned_u8_4x2(src0, src0_stride, &tmp0_32);
-      tmp0 = vreinterpret_u8_u32(tmp0_32);
-      load_unaligned_u8_4x2(src1, src1_stride, &tmp1_32);
-      tmp1 = vreinterpret_u8_u32(tmp1_32);
+      tmp0 = load_unaligned_u8_4x2(src0, src0_stride);
+      tmp1 = load_unaligned_u8_4x2(src1, src1_stride);
       res = vmull_u8(m, tmp0);
       res = vmlal_u8(res, max_minus_m, tmp1);
       const uint8x8_t result = vrshrn_n_u16(res, AOM_BLEND_A64_ROUND_BITS);
@@ -118,10 +114,8 @@ void aom_blend_a64_vmask_neon(uint8_t *dst, uint32_t dst_stride,
       const uint16x4x2_t max_minus_m_trn = vtrn_u16(
           vreinterpret_u16_u8(max_minus_m1), vreinterpret_u16_u8(max_minus_m2));
       const uint8x8_t max_minus_m = vreinterpret_u8_u16(max_minus_m_trn.val[0]);
-      load_unaligned_u8_2x2(src0, src0_stride, &tmp0_16);
-      tmp0 = vreinterpret_u8_u16(tmp0_16);
-      load_unaligned_u8_2x2(src1, src1_stride, &tmp1_16);
-      tmp1 = vreinterpret_u8_u16(tmp1_16);
+      tmp0 = load_unaligned_u8_2x2(src0, src0_stride);
+      tmp1 = load_unaligned_u8_2x2(src1, src1_stride);
       res = vmull_u8(m, tmp0);
       res = vmlal_u8(res, max_minus_m, tmp1);
       const uint8x8_t result = vrshrn_n_u16(res, AOM_BLEND_A64_ROUND_BITS);

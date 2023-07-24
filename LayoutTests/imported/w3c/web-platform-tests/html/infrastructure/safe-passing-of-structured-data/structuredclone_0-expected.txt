@@ -26,18 +26,18 @@ PASS ImageData object can be cloned
 PASS ImageData expandos are not cloned
 PASS Window objects cannot be cloned
 PASS Document objects cannot be cloned
-FAIL Empty Error objects can be cloned The object can not be cloned.
-FAIL Error objects can be cloned The object can not be cloned.
-FAIL EvalError objects can be cloned The object can not be cloned.
-FAIL RangeError objects can be cloned The object can not be cloned.
-FAIL ReferenceError objects can be cloned The object can not be cloned.
-FAIL SyntaxError objects can be cloned The object can not be cloned.
-FAIL TypeError objects can be cloned The object can not be cloned.
-FAIL URIError objects can be cloned The object can not be cloned.
-FAIL URIError objects from other realms are treated as URIError The object can not be cloned.
-FAIL Cloning a modified Error The object can not be cloned.
-FAIL Error.message: getter is ignored when cloning The object can not be cloned.
-FAIL Error.message: undefined property is stringified The object can not be cloned.
+PASS Empty Error objects can be cloned
+PASS Error objects can be cloned
+PASS EvalError objects can be cloned
+PASS RangeError objects can be cloned
+PASS ReferenceError objects can be cloned
+PASS SyntaxError objects can be cloned
+PASS TypeError objects can be cloned
+PASS URIError objects can be cloned
+PASS URIError objects from other realms are treated as URIError
+PASS Cloning a modified Error
+PASS Error.message: getter is ignored when cloning
+PASS Error.message: undefined property is stringified
 PASS DOMException objects can be cloned
 PASS DOMException objects created by the UA can be cloned
 

@@ -298,7 +298,7 @@ public:
     };
 
     enum class SkipDescendentFragmentedFlow { No, Yes };
-    void setFragmentedFlowStateIncludingDescendants(FragmentedFlowState, const RenderElement* fragmentedFlowRoot, SkipDescendentFragmentedFlow = SkipDescendentFragmentedFlow::Yes);
+    void setFragmentedFlowStateIncludingDescendants(FragmentedFlowState, SkipDescendentFragmentedFlow = SkipDescendentFragmentedFlow::Yes);
 
     FragmentedFlowState fragmentedFlowState() const { return m_bitfields.fragmentedFlowState(); }
     void setFragmentedFlowState(FragmentedFlowState state) { m_bitfields.setFragmentedFlowState(state); }
@@ -507,6 +507,7 @@ public:
     Node* generatingNode() const { return isPseudoElement() ? generatingPseudoHostElement() : node(); }
 
     Document& document() const { ASSERT(m_node); return m_node->document(); }
+    TreeScope& treeScopeForSVGReferences() const { ASSERT(m_node); return m_node->treeScopeForSVGReferences(); }
     LocalFrame& frame() const;
     Page& page() const;
     Settings& settings() const { return page().settings(); }
@@ -803,7 +804,7 @@ public:
 
     bool isSkippedContent() const;
 
-    bool shouldSkipContent() const;
+    bool isSkippedContentRoot() const;
 
 protected:
     //////////////////////////////////////////
@@ -963,8 +964,8 @@ private:
 
     private:
         unsigned m_positionedState : 2; // PositionedState
-        unsigned m_selectionState : 3; // SelectionState
-        unsigned m_fragmentedFlowState : 2; // FragmentedFlowState
+        unsigned m_selectionState : 3; // HighlightState
+        unsigned m_fragmentedFlowState : 1; // FragmentedFlowState
         unsigned m_boxDecorationState : 2; // BoxDecorationState
 
     public:

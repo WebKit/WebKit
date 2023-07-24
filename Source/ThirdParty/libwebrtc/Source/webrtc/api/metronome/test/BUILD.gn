@@ -23,6 +23,7 @@ rtc_library("fake_metronome") {
     "../../../rtc_base:rtc_task_queue",
     "../../../rtc_base/synchronization:mutex",
     "../../../rtc_base/task_utils:repeating_task",
+    "../../../test:test_support",
     "../../task_queue",
     "../../units:time_delta",
   ]

@@ -137,6 +137,8 @@ public:
         return { };
     }
 
+    bool isSupportedPropertyIndex(unsigned index) const { return index < m_items.size(); }
+
     // Parsers and animators need to have a direct access to the items.
     Vector<ItemType>& items() { return m_items; }
     const Vector<ItemType>& items() const { return m_items; }

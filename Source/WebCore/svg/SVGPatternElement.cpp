@@ -73,28 +73,23 @@ Ref<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, D
 
 void SVGPatternElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGURIReference::parseAttribute(name, newValue);
-    SVGTests::parseAttribute(name, newValue);
-    SVGFitToViewBox::parseAttribute(name, newValue);
-    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     SVGParsingError parseError = NoError;
     switch (name.nodeName()) {
     case AttributeNames::patternUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_patternUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
-        return;
+        break;
     }
     case AttributeNames::patternContentUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_patternContentUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
-        return;
+        break;
     }
     case AttributeNames::patternTransformAttr: {
         m_patternTransform->baseVal()->parse(newValue);
-        return;
+        break;
     }
     case AttributeNames::xAttr:
         m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
@@ -112,6 +107,11 @@ void SVGPatternElement::attributeChanged(const QualifiedName& name, const AtomSt
         break;
     }
     reportAttributeParsingError(parseError, name, newValue);
+
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGTests::parseAttribute(name, newValue);
+    SVGFitToViewBox::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)

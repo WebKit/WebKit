@@ -40,6 +40,7 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, SCContentSharingSession)
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, SCContentSharingPicker)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, SCContentSharingPickerConfiguration)
 #endif
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoStatus, NSString *)

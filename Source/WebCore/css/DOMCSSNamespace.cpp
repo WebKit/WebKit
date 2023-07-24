@@ -47,6 +47,7 @@ namespace WebCore {
 bool DOMCSSNamespace::supports(Document& document, const String& property, const String& value)
 {
     CSSParserContext parserContext(document);
+    parserContext.mode = HTMLStandardMode;
 
     auto propertyNameWithoutWhitespace = property;
     CSSPropertyID propertyID = cssPropertyID(propertyNameWithoutWhitespace);
@@ -75,6 +76,7 @@ bool DOMCSSNamespace::supports(Document& document, const String& property, const
 bool DOMCSSNamespace::supports(Document& document, const String& conditionText)
 {
     CSSParserContext context(document);
+    context.mode = HTMLStandardMode;
     CSSParser parser(context);
     return parser.parseSupportsCondition(conditionText);
 }

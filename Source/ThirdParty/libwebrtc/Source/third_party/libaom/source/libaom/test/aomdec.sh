@@ -131,6 +131,16 @@ aomdec_av1_obu_annexb() {
   fi
 }
 
+aomdec_av1_obu_annexb_pipe_input() {
+  if [ "$(aomdec_can_decode_av1)" = "yes" ]; then
+    local file="${AV1_OBU_ANNEXB_FILE}"
+    if [ ! -e "${file}" ]; then
+      encode_yuv_raw_input_av1 "${file}" --obu --annexb=1 || return 1
+    fi
+    aomdec_pipe "${file}" --summary --noblit --annexb
+  fi
+}
+
 aomdec_av1_obu_section5() {
   if [ "$(aomdec_can_decode_av1)" = "yes" ]; then
     local file="${AV1_OBU_SEC5_FILE}"
@@ -138,6 +148,16 @@ aomdec_av1_obu_section5() {
       encode_yuv_raw_input_av1 "${file}" --obu || return 1
     fi
     aomdec "${file}" --summary --noblit
+  fi
+}
+
+aomdec_av1_obu_section5_pipe_input() {
+  if [ "$(aomdec_can_decode_av1)" = "yes" ]; then
+    local file="${AV1_OBU_SEC5_FILE}"
+    if [ ! -e "${file}" ]; then
+      encode_yuv_raw_input_av1 "${file}" --obu || return 1
+    fi
+    aomdec_pipe "${file}" --summary --noblit
   fi
 }
 
@@ -186,6 +206,8 @@ if [ ! "$(realtime_only_build)" = "yes" ]; then
                 aomdec_av1_ivf_error_resilient
                 aomdec_av1_obu_annexb
                 aomdec_av1_obu_section5
+                aomdec_av1_obu_annexb_pipe_input
+                aomdec_av1_obu_section5_pipe_input
                 aomdec_av1_webm"
 fi
 

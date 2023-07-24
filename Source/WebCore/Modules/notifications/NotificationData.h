@@ -58,7 +58,7 @@ struct NotificationData {
     WebCore::NotificationDirection direction;
     String originString;
     URL serviceWorkerRegistrationURL;
-    UUID notificationID;
+    WTF::UUID notificationID;
     ScriptExecutionContextIdentifier contextIdentifier;
     PAL::SessionID sourceSession;
     MonotonicTime creationTime;

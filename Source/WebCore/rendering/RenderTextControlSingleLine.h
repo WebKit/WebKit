@@ -34,7 +34,6 @@ public:
     virtual ~RenderTextControlSingleLine();
 
 protected:
-    void centerRenderer(RenderBox& renderer) const;
     HTMLElement* containerElement() const;
     HTMLElement* innerBlockElement() const;
     HTMLInputElement& inputElement() const;

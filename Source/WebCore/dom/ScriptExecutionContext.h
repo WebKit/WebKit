@@ -239,8 +239,8 @@ public:
     // Gets the next id in a circular sequence from 1 to 2^31-1.
     int circularSequentialID();
 
-    bool addTimeout(int timeoutId, DOMTimer& timer) { return m_timeouts.add(timeoutId, timer).isNewEntry; }
-    void removeTimeout(int timeoutId) { m_timeouts.remove(timeoutId); }
+    bool addTimeout(int timeoutId, DOMTimer& timer) { return m_timeouts.add(timeoutId, &timer).isNewEntry; }
+    RefPtr<DOMTimer> takeTimeout(int timeoutId) { return m_timeouts.take(timeoutId); }
     DOMTimer* findTimeout(int timeoutId) { return m_timeouts.get(timeoutId); }
 
     virtual JSC::VM& vm() = 0;
@@ -380,7 +380,7 @@ private:
     HashSet<ContextDestructionObserver*> m_destructionObservers;
     HashSet<ActiveDOMObject*> m_activeDOMObjects;
 
-    HashMap<int, Ref<DOMTimer>> m_timeouts;
+    HashMap<int, RefPtr<DOMTimer>> m_timeouts;
 
     struct PendingException;
     std::unique_ptr<Vector<std::unique_ptr<PendingException>>> m_pendingExceptions;

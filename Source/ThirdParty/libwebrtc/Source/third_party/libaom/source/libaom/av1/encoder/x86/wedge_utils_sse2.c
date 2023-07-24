@@ -31,7 +31,7 @@ uint64_t av1_wedge_sse_from_residuals_sse2(const int16_t *r1, const int16_t *d,
   uint64_t csse;
 
   const __m128i v_mask_max_w = _mm_set1_epi16(MAX_MASK_VALUE);
-  const __m128i v_zext_q = xx_set1_64_from_32i(0xffffffff);
+  const __m128i v_zext_q = xx_set1_64_from_32i(~0);
 
   __m128i v_acc0_q = _mm_setzero_si128();
 
@@ -175,7 +175,7 @@ int8_t av1_wedge_sign_from_residuals_sse2(const int16_t *ds, const uint8_t *m,
   v_acc_q = _mm_add_epi64(v_acc_q, _mm_srli_si128(v_acc_q, 8));
 
 #if ARCH_X86_64
-  acc = (uint64_t)_mm_cvtsi128_si64(v_acc_q);
+  acc = _mm_cvtsi128_si64(v_acc_q);
 #else
   xx_storel_64(&acc, v_acc_q);
 #endif

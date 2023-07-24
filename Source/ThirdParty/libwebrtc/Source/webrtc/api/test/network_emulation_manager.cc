@@ -101,4 +101,22 @@ NetworkEmulationManager::SimulatedNetworkNode::Builder::Build(
   res.node = net->CreateEmulatedNode(std::move(behavior));
   return res;
 }
+
+std::pair<EmulatedNetworkManagerInterface*, EmulatedNetworkManagerInterface*>
+NetworkEmulationManager::CreateEndpointPairWithTwoWayRoutes(
+    const BuiltInNetworkBehaviorConfig& config) {
+  auto* alice_node = CreateEmulatedNode(config);
+  auto* bob_node = CreateEmulatedNode(config);
+
+  auto* alice_endpoint = CreateEndpoint(EmulatedEndpointConfig());
+  auto* bob_endpoint = CreateEndpoint(EmulatedEndpointConfig());
+
+  CreateRoute(alice_endpoint, {alice_node}, bob_endpoint);
+  CreateRoute(bob_endpoint, {bob_node}, alice_endpoint);
+
+  return {
+      CreateEmulatedNetworkManagerInterface({alice_endpoint}),
+      CreateEmulatedNetworkManagerInterface({bob_endpoint}),
+  };
+}
 }  // namespace webrtc

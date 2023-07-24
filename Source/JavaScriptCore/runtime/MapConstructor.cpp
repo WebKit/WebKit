@@ -26,20 +26,34 @@
 #include "config.h"
 #include "MapConstructor.h"
 
+#include "BuiltinNames.h"
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "JSMapInlines.h"
 #include "MapPrototype.h"
+#include "VMInlines.h"
+
+#include "MapConstructor.lut.h"
 
 namespace JSC {
 
-const ClassInfo MapConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MapConstructor) };
+const ClassInfo MapConstructor::s_info = { "Function"_s, &Base::s_info, &mapConstructorTable, nullptr, CREATE_METHOD_TABLE(MapConstructor) };
+
+/* Source for MapConstructor.lut.h
+@begin mapConstructorTable
+@end
+*/
 
 void MapConstructor::finishCreation(VM& vm, MapPrototype* mapPrototype, GetterSetter* speciesSymbol)
 {
     Base::finishCreation(vm, 0, "Map"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, mapPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->speciesSymbol, speciesSymbol, PropertyAttribute::Accessor | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+
+    JSGlobalObject* globalObject = mapPrototype->globalObject();
+
+    if (Options::useArrayGroupMethod())
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().groupByPublicName(), mapConstructorGroupByCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 static JSC_DECLARE_HOST_FUNCTION(callMap);

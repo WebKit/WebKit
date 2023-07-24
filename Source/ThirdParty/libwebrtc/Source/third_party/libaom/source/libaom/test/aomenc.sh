@@ -40,12 +40,6 @@ aomenc_can_encode_av1() {
   fi
 }
 
-aomenc_can_encode_av1() {
-  if [ "$(av1_encode_available)" = "yes" ]; then
-    echo yes
-  fi
-}
-
 # Utilities that echo aomenc input file parameters.
 y4m_input_non_square_par() {
   echo ""${Y4M_NOSQ_PAR_INPUT}""

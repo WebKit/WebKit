@@ -22,6 +22,12 @@
 #define MAX_FULL_PEL_VAL ((1 << (MAX_MVSEARCH_STEPS - 1)) - 1)
 // Maximum size of the first step in full pel units
 #define MAX_FIRST_STEP (1 << (MAX_MVSEARCH_STEPS - 1))
+// Maximum number of neighbors to scan per iteration during
+// WARPED_CAUSAL refinement
+// Note: The elements of warp_search_config.neighbor_mask must be at least
+// MAX_WARP_SEARCH_NEIGHBORS many bits wide. So the type may need to be
+// widened if this value is increased.
+#define MAX_WARP_SEARCH_NEIGHBORS 8
 
 #define SEARCH_RANGE_8P 3
 #define SEARCH_GRID_STRIDE_8P (2 * SEARCH_RANGE_8P + 1)
@@ -74,10 +80,30 @@ enum {
   FAST_DIAMOND = 8,
   // BIGDIA search with up to 3 stages.
   FAST_BIGDIA = 9,
+  // BIGDIA search with up to 1 stage.
+  VFAST_DIAMOND = 10,
   // Total number of search methods.
   NUM_SEARCH_METHODS,
   // Number of distinct search methods.
   NUM_DISTINCT_SEARCH_METHODS = SQUARE + 1,
 } UENUM1BYTE(SEARCH_METHODS);
+
+typedef struct warp_search_config {
+  int num_neighbors;
+  MV neighbors[MAX_WARP_SEARCH_NEIGHBORS];
+  // Bitmask which is used to prune the search neighbors at one iteration
+  // based on which direction we chose in the previous iteration.
+  // See comments in av1_refine_warped_mv for details.
+  uint8_t neighbor_mask[MAX_WARP_SEARCH_NEIGHBORS];
+} warp_search_config;
+
+// Methods for refining WARPED_CAUSAL motion vectors
+enum {
+  // Search 4 adjacent points in a diamond shape at each iteration
+  WARP_SEARCH_DIAMOND,
+  // Search 8 adjacent points in a square at each iteration
+  WARP_SEARCH_SQUARE,
+  WARP_SEARCH_METHODS
+} UENUM1BYTE(WARP_SEARCH_METHOD);
 
 #endif  // AOM_AV1_ENCODER_MCOMP_STRUCTS_H_

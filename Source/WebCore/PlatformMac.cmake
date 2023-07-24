@@ -607,7 +607,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cocoa/SharedVideoFrameInfo.h
     platform/cocoa/SystemBattery.h
     platform/cocoa/SystemVersion.h
-    platform/cocoa/VideoFullscreenChangeObserver.h
     platform/cocoa/VideoFullscreenModel.h
     platform/cocoa/VideoFullscreenModelVideoElement.h
 
@@ -744,7 +743,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/network/cf/AuthenticationChallenge.h
     platform/network/cf/CertificateInfo.h
-    platform/network/cf/DownloadBundle.h
     platform/network/cf/ResourceError.h
     platform/network/cf/ResourceRequest.h
     platform/network/cf/ResourceRequestCFNet.h

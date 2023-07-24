@@ -38,6 +38,7 @@
 #import "WKScriptMessageInternal.h"
 #import "WKUserScriptInternal.h"
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
 #import "_WKUserContentFilterInternal.h"

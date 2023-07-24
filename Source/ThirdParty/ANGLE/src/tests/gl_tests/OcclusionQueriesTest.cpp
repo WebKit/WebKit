@@ -87,10 +87,6 @@ TEST_P(OcclusionQueriesTest, IsNotOccluded)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
 
-    // TODO(syoussefi): Using render pass ops to clear the framebuffer attachment results in
-    // AMD/Windows misbehaving in this test.  http://anglebug.com/3286
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
-
     glDepthMask(GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -118,10 +114,6 @@ TEST_P(OcclusionQueriesTest, ClearNotCounted)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
-
-    // TODO(syoussefi): Using render pass ops to clear the framebuffer attachment results in
-    // AMD/Windows misbehaving in this test.  http://anglebug.com/3286
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
 
     // http://anglebug.com/4925
     ANGLE_SKIP_TEST_IF(IsD3D11());
@@ -403,21 +395,78 @@ TEST_P(OcclusionQueriesTest, FramebufferBindingChange)
     EXPECT_GL_TRUE(result);
 }
 
+// Test that switching framebuffers without actually drawing, then issuing a masked clear while a
+// query is active works.
+TEST_P(OcclusionQueriesTestES3, SwitchFramebuffersThenMaskedClear)
+{
+    constexpr GLint kSize = 10;
+
+    GLFramebuffer fbo1, fbo2;
+    GLRenderbuffer rbo1, rbo2;
+
+    // Set up two framebuffers
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo1);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, kSize, kSize);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo1);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo1);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo2);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, kSize, kSize);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo2);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo2);
+
+    // Start render pass on fbo1
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo1);
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+
+    // Begin a query
+    GLQuery query;
+    glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
+
+    // Switch to another render pass and clear.  In the Vulkan backend, this clear is deferred, so
+    // while the framebuffer binding is synced, the previous render pass is not necessarily closed.
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo2);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Switch back to the original render pass and issue a masked stencil clear.  In the Vulkan
+    // backend, this is done with a draw call.
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo1);
+    glStencilMask(0xAA);
+    glClearStencil(0xF4);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Verify the clear worked.
+    GLRenderbuffer color;
+    glBindRenderbuffer(GL_RENDERBUFFER, color);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
+
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 0xA4, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glStencilMask(0xFF);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test multiple occlusion queries.
 TEST_P(OcclusionQueriesTest, MultiQueries)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
 
-    // TODO(syoussefi): Using render pass ops to clear the framebuffer attachment results in
-    // AMD/Windows misbehaving in this test.  http://anglebug.com/3286
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
-
     // http://anglebug.com/4925
     ANGLE_SKIP_TEST_IF(IsOpenGL() || IsD3D11());
 
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     GLQueryEXT query[5];
 

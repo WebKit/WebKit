@@ -12,12 +12,15 @@
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 // CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+//go:build ignore
+
 // This program takes a file containing newline-separated symbols, and generates
 // boringssl_prefix_symbols.h, boringssl_prefix_symbols_asm.h, and
 // boringssl_prefix_symbols_nasm.inc. These header files can be used to build
 // BoringSSL with a prefix for all symbols in order to avoid symbol name
 // conflicts when linking a project with multiple copies of BoringSSL; see
 // BUILDING.md for more details.
+package main
 
 // TODO(joshlf): For platforms which support it, use '#pragma redefine_extname'
 // instead of a custom macro. This avoids the need for a custom macro, but also
@@ -25,8 +28,6 @@
 // consumers (the "HMAC" problem). An example of this approach can be seen in
 // IllumOS' fork of OpenSSL:
 // https://github.com/joyent/illumos-extra/blob/master/openssl1x/sunw_prefix.h
-
-package main
 
 import (
 	"bufio"

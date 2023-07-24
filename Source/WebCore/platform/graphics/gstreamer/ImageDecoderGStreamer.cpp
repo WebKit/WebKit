@@ -320,6 +320,8 @@ void ImageDecoderGStreamer::pushEncodedData(const FragmentedSharedBuffer& shared
     m_decoderHarness->flush();
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER) && ENABLE(VIDEO)

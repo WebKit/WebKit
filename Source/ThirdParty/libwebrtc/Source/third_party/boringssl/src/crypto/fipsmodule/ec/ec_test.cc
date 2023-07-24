@@ -105,6 +105,20 @@ static const uint8_t kECKeyWithZeros[] = {
   0x37, 0xbf, 0x51, 0xf5,
 };
 
+static const uint8_t kECKeyWithZerosPublic[] = {
+    0x04, 0x6b, 0x17, 0xd1, 0xf2, 0xe1, 0x2c, 0x42, 0x47, 0xf8, 0xbc,
+    0xe6, 0xe5, 0x63, 0xa4, 0x40, 0xf2, 0x77, 0x03, 0x7d, 0x81, 0x2d,
+    0xeb, 0x33, 0xa0, 0xf4, 0xa1, 0x39, 0x45, 0xd8, 0x98, 0xc2, 0x96,
+    0x4f, 0xe3, 0x42, 0xe2, 0xfe, 0x1a, 0x7f, 0x9b, 0x8e, 0xe7, 0xeb,
+    0x4a, 0x7c, 0x0f, 0x9e, 0x16, 0x2b, 0xce, 0x33, 0x57, 0x6b, 0x31,
+    0x5e, 0xce, 0xcb, 0xb6, 0x40, 0x68, 0x37, 0xbf, 0x51, 0xf5,
+};
+
+static const uint8_t kECKeyWithZerosRawPrivate[] = {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
+
 // DecodeECPrivateKey decodes |in| as an ECPrivateKey structure and returns the
 // result or nullptr on error.
 static bssl::UniquePtr<EC_KEY> DecodeECPrivateKey(const uint8_t *in,
@@ -191,11 +205,52 @@ TEST(ECTest, ZeroPadding) {
   EXPECT_TRUE(EncodeECPrivateKey(&out, key.get()));
   EXPECT_EQ(Bytes(kECKeyWithZeros), Bytes(out.data(), out.size()));
 
+  // Check the private key encodes correctly, including with the leading zeros.
+  EXPECT_EQ(32u, EC_KEY_priv2oct(key.get(), nullptr, 0));
+  uint8_t buf[32];
+  ASSERT_EQ(32u, EC_KEY_priv2oct(key.get(), buf, sizeof(buf)));
+  EXPECT_EQ(Bytes(buf), Bytes(kECKeyWithZerosRawPrivate));
+
+  // Buffer too small.
+  EXPECT_EQ(0u, EC_KEY_priv2oct(key.get(), buf, sizeof(buf) - 1));
+
+  // Extra space in buffer.
+  uint8_t large_buf[33];
+  ASSERT_EQ(32u, EC_KEY_priv2oct(key.get(), large_buf, sizeof(large_buf)));
+  EXPECT_EQ(Bytes(buf), Bytes(kECKeyWithZerosRawPrivate));
+
+  // Allocating API.
+  uint8_t *buf_alloc;
+  size_t len = EC_KEY_priv2buf(key.get(), &buf_alloc);
+  ASSERT_GT(len, 0u);
+  bssl::UniquePtr<uint8_t> free_buf_alloc(buf_alloc);
+  EXPECT_EQ(Bytes(buf_alloc, len), Bytes(kECKeyWithZerosRawPrivate));
+
   // Keys without leading zeros also parse, but they encode correctly.
   key = DecodeECPrivateKey(kECKeyMissingZeros, sizeof(kECKeyMissingZeros));
   ASSERT_TRUE(key);
   EXPECT_TRUE(EncodeECPrivateKey(&out, key.get()));
   EXPECT_EQ(Bytes(kECKeyWithZeros), Bytes(out.data(), out.size()));
+
+  // Test the key can be constructed with |EC_KEY_oct2*|.
+  key.reset(EC_KEY_new_by_curve_name(NID_X9_62_prime256v1));
+  ASSERT_TRUE(key);
+  ASSERT_TRUE(EC_KEY_oct2key(key.get(), kECKeyWithZerosPublic,
+                             sizeof(kECKeyWithZerosPublic), nullptr));
+  ASSERT_TRUE(EC_KEY_oct2priv(key.get(), kECKeyWithZerosRawPrivate,
+                              sizeof(kECKeyWithZerosRawPrivate)));
+  EXPECT_TRUE(EncodeECPrivateKey(&out, key.get()));
+  EXPECT_EQ(Bytes(kECKeyWithZeros), Bytes(out.data(), out.size()));
+
+  // |EC_KEY_oct2priv|'s format is fixed-width and must match the group order.
+  key.reset(EC_KEY_new_by_curve_name(NID_X9_62_prime256v1));
+  ASSERT_TRUE(key);
+  EXPECT_FALSE(EC_KEY_oct2priv(key.get(), kECKeyWithZerosRawPrivate + 1,
+                               sizeof(kECKeyWithZerosRawPrivate) - 1));
+  uint8_t padded[sizeof(kECKeyWithZerosRawPrivate) + 1] = {0};
+  memcpy(padded + 1, kECKeyWithZerosRawPrivate,
+         sizeof(kECKeyWithZerosRawPrivate));
+  EXPECT_FALSE(EC_KEY_oct2priv(key.get(), padded, sizeof(padded)));
 }
 
 TEST(ECTest, SpecifiedCurve) {
@@ -474,12 +529,12 @@ TEST(ECTest, BrainpoolP256r1) {
   EXPECT_EQ(0, BN_cmp(y.get(), qy.get()));
 }
 
-class ECCurveTest : public testing::TestWithParam<EC_builtin_curve> {
+class ECCurveTest : public testing::TestWithParam<int> {
  public:
   const EC_GROUP *group() const { return group_.get(); }
 
   void SetUp() override {
-    group_.reset(EC_GROUP_new_by_curve_name(GetParam().nid));
+    group_.reset(EC_GROUP_new_by_curve_name(GetParam()));
     ASSERT_TRUE(group_);
   }
 
@@ -489,7 +544,7 @@ class ECCurveTest : public testing::TestWithParam<EC_builtin_curve> {
 
 TEST_P(ECCurveTest, SetAffine) {
   // Generate an EC_KEY.
-  bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(GetParam().nid));
+  bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(GetParam()));
   ASSERT_TRUE(key);
   ASSERT_TRUE(EC_KEY_generate_key(key.get()));
 
@@ -531,7 +586,7 @@ TEST_P(ECCurveTest, SetAffine) {
 }
 
 TEST_P(ECCurveTest, IsOnCurve) {
-  bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(GetParam().nid));
+  bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(GetParam()));
   ASSERT_TRUE(key);
   ASSERT_TRUE(EC_KEY_generate_key(key.get()));
 
@@ -555,12 +610,12 @@ TEST_P(ECCurveTest, IsOnCurve) {
 }
 
 TEST_P(ECCurveTest, Compare) {
-  bssl::UniquePtr<EC_KEY> key1(EC_KEY_new_by_curve_name(GetParam().nid));
+  bssl::UniquePtr<EC_KEY> key1(EC_KEY_new_by_curve_name(GetParam()));
   ASSERT_TRUE(key1);
   ASSERT_TRUE(EC_KEY_generate_key(key1.get()));
   const EC_POINT *pub1 = EC_KEY_get0_public_key(key1.get());
 
-  bssl::UniquePtr<EC_KEY> key2(EC_KEY_new_by_curve_name(GetParam().nid));
+  bssl::UniquePtr<EC_KEY> key2(EC_KEY_new_by_curve_name(GetParam()));
   ASSERT_TRUE(key2);
   ASSERT_TRUE(EC_KEY_generate_key(key2.get()));
   const EC_POINT *pub2 = EC_KEY_get0_public_key(key2.get());
@@ -601,6 +656,7 @@ TEST_P(ECCurveTest, Compare) {
   bssl::UniquePtr<EC_POINT> inf1(EC_POINT_new(group())),
       inf2(EC_POINT_new(group()));
   ASSERT_TRUE(inf1);
+  ASSERT_TRUE(inf2);
   ASSERT_TRUE(EC_POINT_set_to_infinity(group(), inf1.get()));
   // |q| is currently -|pub2|.
   ASSERT_TRUE(EC_POINT_add(group(), inf2.get(), pub2, q.get(), nullptr));
@@ -610,13 +666,13 @@ TEST_P(ECCurveTest, Compare) {
 
 TEST_P(ECCurveTest, GenerateFIPS) {
   // Generate an EC_KEY.
-  bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(GetParam().nid));
+  bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(GetParam()));
   ASSERT_TRUE(key);
   ASSERT_TRUE(EC_KEY_generate_key_fips(key.get()));
 }
 
 TEST_P(ECCurveTest, AddingEqualPoints) {
-  bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(GetParam().nid));
+  bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(GetParam()));
   ASSERT_TRUE(key);
   ASSERT_TRUE(EC_KEY_generate_key(key.get()));
 
@@ -785,11 +841,11 @@ TEST_P(ECCurveTest, MulNonMinimal) {
 
 // Test that EC_KEY_set_private_key rejects invalid values.
 TEST_P(ECCurveTest, SetInvalidPrivateKey) {
-  bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(GetParam().nid));
+  bssl::UniquePtr<EC_KEY> key(EC_KEY_new_by_curve_name(GetParam()));
   ASSERT_TRUE(key);
 
-  bssl::UniquePtr<BIGNUM> bn(BN_new());
-  ASSERT_TRUE(BN_one(bn.get()));
+  bssl::UniquePtr<BIGNUM> bn(BN_dup(BN_value_one()));
+  ASSERT_TRUE(bn);
   BN_set_negative(bn.get(), 1);
   EXPECT_FALSE(EC_KEY_set_private_key(key.get(), bn.get()))
       << "Unexpectedly set a key of -1";
@@ -799,6 +855,11 @@ TEST_P(ECCurveTest, SetInvalidPrivateKey) {
       BN_copy(bn.get(), EC_GROUP_get0_order(EC_KEY_get0_group(key.get()))));
   EXPECT_FALSE(EC_KEY_set_private_key(key.get(), bn.get()))
       << "Unexpectedly set a key of the group order.";
+  ERR_clear_error();
+
+  BN_zero(bn.get());
+  EXPECT_FALSE(EC_KEY_set_private_key(key.get(), bn.get()))
+      << "Unexpectedly set a key of 0";
   ERR_clear_error();
 }
 
@@ -882,26 +943,53 @@ TEST_P(ECCurveTest, P224Bug) {
 
 TEST_P(ECCurveTest, GPlusMinusG) {
   const EC_POINT *g = EC_GROUP_get0_generator(group());
+
   bssl::UniquePtr<EC_POINT> p(EC_POINT_dup(g, group()));
   ASSERT_TRUE(p);
   ASSERT_TRUE(EC_POINT_invert(group(), p.get(), nullptr));
-  bssl::UniquePtr<EC_POINT> sum(EC_POINT_new(group()));
 
+  bssl::UniquePtr<EC_POINT> sum(EC_POINT_new(group()));
+  ASSERT_TRUE(sum);
   ASSERT_TRUE(EC_POINT_add(group(), sum.get(), g, p.get(), nullptr));
   EXPECT_TRUE(EC_POINT_is_at_infinity(group(), sum.get()));
 }
 
-static std::vector<EC_builtin_curve> AllCurves() {
+// Test that we refuse to encode or decode the point at infinity.
+TEST_P(ECCurveTest, EncodeInfinity) {
+  // The point at infinity is encoded as a single zero byte, but we do not
+  // support it.
+  static const uint8_t kInfinity[] = {0};
+  bssl::UniquePtr<EC_POINT> inf(EC_POINT_new(group()));
+  ASSERT_TRUE(inf);
+  EXPECT_FALSE(EC_POINT_oct2point(group(), inf.get(), kInfinity,
+                                  sizeof(kInfinity), nullptr));
+
+  // Encoding it also fails.
+  ASSERT_TRUE(EC_POINT_set_to_infinity(group(), inf.get()));
+  uint8_t buf[128];
+  EXPECT_EQ(
+      0u, EC_POINT_point2oct(group(), inf.get(), POINT_CONVERSION_UNCOMPRESSED,
+                             buf, sizeof(buf), nullptr));
+
+  // Measuring the length of the encoding also fails.
+  EXPECT_EQ(
+      0u, EC_POINT_point2oct(group(), inf.get(), POINT_CONVERSION_UNCOMPRESSED,
+                             nullptr, 0, nullptr));
+}
+
+static std::vector<int> AllCurves() {
   const size_t num_curves = EC_get_builtin_curves(nullptr, 0);
   std::vector<EC_builtin_curve> curves(num_curves);
   EC_get_builtin_curves(curves.data(), num_curves);
-  return curves;
+  std::vector<int> nids;
+  for (const auto& curve : curves) {
+    nids.push_back(curve.nid);
+  }
+  return nids;
 }
 
-static std::string CurveToString(
-    const testing::TestParamInfo<EC_builtin_curve> &params) {
-  // The comment field contains characters GTest rejects, so use the OBJ name.
-  return OBJ_nid2sn(params.param.nid);
+static std::string CurveToString(const testing::TestParamInfo<int> &params) {
+  return OBJ_nid2sn(params.param);
 }
 
 INSTANTIATE_TEST_SUITE_P(All, ECCurveTest, testing::ValuesIn(AllCurves()),
@@ -1124,8 +1212,18 @@ TEST(ECTest, DeriveFromSecret) {
 }
 
 TEST(ECTest, HashToCurve) {
+  auto hash_to_curve_p384_sha512_draft07 =
+      [](const EC_GROUP *group, EC_POINT *out, const uint8_t *dst,
+         size_t dst_len, const uint8_t *msg, size_t msg_len) -> int {
+    if (EC_GROUP_cmp(group, out->group, NULL) != 0) {
+      return 0;
+    }
+    return ec_hash_to_curve_p384_xmd_sha512_sswu_draft07(group, &out->raw, dst,
+                                                         dst_len, msg, msg_len);
+  };
+
   struct HashToCurveTest {
-    int (*hash_to_curve)(const EC_GROUP *group, EC_RAW_POINT *out,
+    int (*hash_to_curve)(const EC_GROUP *group, EC_POINT *out,
                          const uint8_t *dst, size_t dst_len, const uint8_t *msg,
                          size_t msg_len);
     int curve_nid;
@@ -1135,26 +1233,71 @@ TEST(ECTest, HashToCurve) {
     const char *y_hex;
   };
   static const HashToCurveTest kTests[] = {
+      // See draft-irtf-cfrg-hash-to-curve-16, appendix J.1.1.
+      {&EC_hash_to_curve_p256_xmd_sha256_sswu, NID_X9_62_prime256v1,
+       "QUUX-V01-CS02-with-P256_XMD:SHA-256_SSWU_RO_", "",
+       "2c15230b26dbc6fc9a37051158c95b79656e17a1a920b11394ca91"
+       "c44247d3e4",
+       "8a7a74985cc5c776cdfe4b1f19884970453912e9d31528c060be9a"
+       "b5c43e8415"},
+      {&EC_hash_to_curve_p256_xmd_sha256_sswu, NID_X9_62_prime256v1,
+       "QUUX-V01-CS02-with-P256_XMD:SHA-256_SSWU_RO_", "abc",
+       "0bb8b87485551aa43ed54f009230450b492fead5f1cc91658775da"
+       "c4a3388a0f",
+       "5c41b3d0731a27a7b14bc0bf0ccded2d8751f83493404c84a88e71"
+       "ffd424212e"},
+      {&EC_hash_to_curve_p256_xmd_sha256_sswu, NID_X9_62_prime256v1,
+       "QUUX-V01-CS02-with-P256_XMD:SHA-256_SSWU_RO_", "abcdef0123456789",
+       "65038ac8f2b1def042a5df0b33b1f4eca6bff7cb0f9c6c15268118"
+       "64e544ed80",
+       "cad44d40a656e7aff4002a8de287abc8ae0482b5ae825822bb870d"
+       "6df9b56ca3"},
+      {&EC_hash_to_curve_p256_xmd_sha256_sswu, NID_X9_62_prime256v1,
+       "QUUX-V01-CS02-with-P256_XMD:SHA-256_SSWU_RO_",
+       "q128_qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
+       "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
+       "qqqqqqqqqqqqqqqqqqqqqqqqq",
+       "4be61ee205094282ba8a2042bcb48d88dfbb609301c49aa8b07853"
+       "3dc65a0b5d",
+       "98f8df449a072c4721d241a3b1236d3caccba603f916ca680f4539"
+       "d2bfb3c29e"},
+      {&EC_hash_to_curve_p256_xmd_sha256_sswu, NID_X9_62_prime256v1,
+       "QUUX-V01-CS02-with-P256_XMD:SHA-256_SSWU_RO_",
+       "a512_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "457ae2981f70ca85d8e24c308b14db22f3e3862c5ea0f652ca38b5"
+       "e49cd64bc5",
+       "ecb9f0eadc9aeed232dabc53235368c1394c78de05dd96893eefa6"
+       "2b0f4757dc"},
+
       // See draft-irtf-cfrg-hash-to-curve-07, appendix G.2.1.
-      {&ec_hash_to_curve_p384_xmd_sha512_sswu_draft07, NID_secp384r1,
+      {hash_to_curve_p384_sha512_draft07, NID_secp384r1,
        "P384_XMD:SHA-512_SSWU_RO_TESTGEN", "",
        "2fc0b9efdd63a8e43b4db88dc12f03c798f6fd91bccac0c9096185"
        "4386e58fdc54fc2a01f0f358759054ce1f9b762025",
        "949b936fabb72cdb02cd7980b86cb6a3adf286658e81301648851d"
        "b8a49d9bec00ccb57698d559fc5960fa5030a8e54b"},
-      {&ec_hash_to_curve_p384_xmd_sha512_sswu_draft07, NID_secp384r1,
+      {hash_to_curve_p384_sha512_draft07, NID_secp384r1,
        "P384_XMD:SHA-512_SSWU_RO_TESTGEN", "abc",
        "4f3338035391e8ce8ce40c974136f0edc97f392ffd44a643338741"
        "8ed1b8c2603487e1688ec151f048fbc6b2c138c92f",
        "152b90aef6558be328a3168855fb1906452e7167b0f7c8a56ff9d4"
        "fa87d6fb522cdf8e409db54418b2c764fd26260757"},
-      {&ec_hash_to_curve_p384_xmd_sha512_sswu_draft07, NID_secp384r1,
+      {hash_to_curve_p384_sha512_draft07, NID_secp384r1,
        "P384_XMD:SHA-512_SSWU_RO_TESTGEN", "abcdef0123456789",
        "e9e5d7ac397e123d060ad44301cbc8eb972f6e64ebcff29dcc9b9a"
        "10357902aace2240c580fec85e5b427d98b4e80703",
        "916cb8963521ad75105be43cc4148e5a5bbb4fcf107f1577e4f7fa"
        "3ca58cd786aa76890c8e687d2353393bc16c78ec4d"},
-      {&ec_hash_to_curve_p384_xmd_sha512_sswu_draft07, NID_secp384r1,
+      {hash_to_curve_p384_sha512_draft07, NID_secp384r1,
        "P384_XMD:SHA-512_SSWU_RO_TESTGEN",
        "a512_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -1181,7 +1324,7 @@ TEST(ECTest, HashToCurve) {
     bssl::UniquePtr<EC_POINT> p(EC_POINT_new(group.get()));
     ASSERT_TRUE(p);
     ASSERT_TRUE(test.hash_to_curve(
-        group.get(), &p->raw, reinterpret_cast<const uint8_t *>(test.dst),
+        group.get(), p.get(), reinterpret_cast<const uint8_t *>(test.dst),
         strlen(test.dst), reinterpret_cast<const uint8_t *>(test.msg),
         strlen(test.msg)));
 
@@ -1198,11 +1341,30 @@ TEST(ECTest, HashToCurve) {
   // hash-to-curve functions should check for the wrong group.
   bssl::UniquePtr<EC_GROUP> p224(EC_GROUP_new_by_curve_name(NID_secp224r1));
   ASSERT_TRUE(p224);
-  EC_RAW_POINT p;
+  bssl::UniquePtr<EC_GROUP> p384(EC_GROUP_new_by_curve_name(NID_secp384r1));
+  ASSERT_TRUE(p384);
+  EC_JACOBIAN raw;
+  bssl::UniquePtr<EC_POINT> p_p384(EC_POINT_new(p384.get()));
+  ASSERT_TRUE(p_p384);
+  bssl::UniquePtr<EC_POINT> p_p224(EC_POINT_new(p224.get()));
+  ASSERT_TRUE(p_p224);
   static const uint8_t kDST[] = {0, 1, 2, 3};
   static const uint8_t kMessage[] = {4, 5, 6, 7};
-  EXPECT_FALSE(ec_hash_to_curve_p384_xmd_sha512_sswu_draft07(
-      p224.get(), &p, kDST, sizeof(kDST), kMessage, sizeof(kMessage)));
+  EXPECT_FALSE(ec_hash_to_curve_p384_xmd_sha384_sswu(
+      p224.get(), &raw, kDST, sizeof(kDST), kMessage, sizeof(kMessage)));
+  EXPECT_FALSE(EC_hash_to_curve_p384_xmd_sha384_sswu(
+      p224.get(), p_p224.get(), kDST, sizeof(kDST), kMessage,
+      sizeof(kMessage)));
+  EXPECT_FALSE(EC_hash_to_curve_p384_xmd_sha384_sswu(
+      p224.get(), p_p384.get(), kDST, sizeof(kDST), kMessage,
+      sizeof(kMessage)));
+  EXPECT_FALSE(EC_hash_to_curve_p384_xmd_sha384_sswu(
+      p384.get(), p_p224.get(), kDST, sizeof(kDST), kMessage,
+      sizeof(kMessage)));
+
+  // Zero-length DSTs are not allowed.
+  EXPECT_FALSE(ec_hash_to_curve_p384_xmd_sha384_sswu(
+      p384.get(), &raw, nullptr, 0, kMessage, sizeof(kMessage)));
 }
 
 TEST(ECTest, HashToScalar) {

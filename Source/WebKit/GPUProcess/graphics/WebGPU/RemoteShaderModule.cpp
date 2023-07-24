@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,13 +31,13 @@
 #include "RemoteShaderModuleMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <pal/graphics/WebGPU/WebGPUCompilationInfo.h>
-#include <pal/graphics/WebGPU/WebGPUCompilationMessage.h>
-#include <pal/graphics/WebGPU/WebGPUShaderModule.h>
+#include <WebCore/WebGPUCompilationInfo.h>
+#include <WebCore/WebGPUCompilationMessage.h>
+#include <WebCore/WebGPUShaderModule.h>
 
 namespace WebKit {
 
-RemoteShaderModule::RemoteShaderModule(PAL::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteShaderModule::RemoteShaderModule(WebCore::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(shaderModule)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
@@ -60,8 +60,8 @@ void RemoteShaderModule::stopListeningForIPC()
 
 void RemoteShaderModule::compilationInfo(CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&& callback)
 {
-    m_backing->compilationInfo([callback = WTFMove(callback)] (Ref<PAL::WebGPU::CompilationInfo>&& compilationMessage) mutable {
-        auto convertedMessages = compilationMessage->messages().map([] (const Ref<PAL::WebGPU::CompilationMessage>& message) {
+    m_backing->compilationInfo([callback = WTFMove(callback)] (Ref<WebCore::WebGPU::CompilationInfo>&& compilationMessage) mutable {
+        auto convertedMessages = compilationMessage->messages().map([] (const Ref<WebCore::WebGPU::CompilationMessage>& message) {
             return WebGPU::CompilationMessage {
                 message->message(),
                 message->type(),

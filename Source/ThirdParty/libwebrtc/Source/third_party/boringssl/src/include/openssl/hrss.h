@@ -59,29 +59,31 @@ struct HRSS_public_key {
   (HRSS_POLY3_BYTES * 2 + HRSS_PUBLIC_KEY_BYTES + 2 + 32)
 
 // HRSS_generate_key is a deterministic function that outputs a public and
-// private key based on the given entropy.
-OPENSSL_EXPORT void HRSS_generate_key(
+// private key based on the given entropy. It returns one on success or zero
+// on malloc failure.
+OPENSSL_EXPORT int HRSS_generate_key(
     struct HRSS_public_key *out_pub, struct HRSS_private_key *out_priv,
     const uint8_t input[HRSS_GENERATE_KEY_BYTES]);
 
 // HRSS_encap is a deterministic function the generates and encrypts a random
 // session key from the given entropy, writing those values to |out_shared_key|
-// and |out_ciphertext|, respectively.
-OPENSSL_EXPORT void HRSS_encap(uint8_t out_ciphertext[HRSS_CIPHERTEXT_BYTES],
-                               uint8_t out_shared_key[HRSS_KEY_BYTES],
-                               const struct HRSS_public_key *in_pub,
-                               const uint8_t in[HRSS_ENCAP_BYTES]);
+// and |out_ciphertext|, respectively. It returns one on success or zero on
+// malloc failure.
+OPENSSL_EXPORT int HRSS_encap(uint8_t out_ciphertext[HRSS_CIPHERTEXT_BYTES],
+                              uint8_t out_shared_key[HRSS_KEY_BYTES],
+                              const struct HRSS_public_key *in_pub,
+                              const uint8_t in[HRSS_ENCAP_BYTES]);
 
 // HRSS_decap decrypts a session key from |ciphertext_len| bytes of
 // |ciphertext|. If the ciphertext is valid, the decrypted key is written to
 // |out_shared_key|. Otherwise the HMAC of |ciphertext| under a secret key (kept
 // in |in_priv|) is written. If the ciphertext is the wrong length then it will
 // leak which was done via side-channels. Otherwise it should perform either
-// action in constant-time.
-OPENSSL_EXPORT void HRSS_decap(uint8_t out_shared_key[HRSS_KEY_BYTES],
-                               const struct HRSS_private_key *in_priv,
-                               const uint8_t *ciphertext,
-                               size_t ciphertext_len);
+// action in constant-time. It returns one on success (whether the ciphertext
+// was valid or not) and zero on malloc failure.
+OPENSSL_EXPORT int HRSS_decap(uint8_t out_shared_key[HRSS_KEY_BYTES],
+                              const struct HRSS_private_key *in_priv,
+                              const uint8_t *ciphertext, size_t ciphertext_len);
 
 // HRSS_marshal_public_key serialises |in_pub| to |out|.
 OPENSSL_EXPORT void HRSS_marshal_public_key(

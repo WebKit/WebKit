@@ -307,6 +307,10 @@ void av1_lowbd_fwd_txfm2d_64x16_sse2(const int16_t *input, int32_t *output,
 typedef void (*transform_1d_sse2)(const __m128i *input, __m128i *output,
                                   int8_t cos_bit);
 
+void av1_iadst8_sse2(const __m128i *input, __m128i *output);
+
+void av1_idct8_sse2(const __m128i *input, __m128i *output);
+
 typedef struct {
   transform_1d_sse2 col, row;  // vertical and horizontal
 } transform_2d_sse2;

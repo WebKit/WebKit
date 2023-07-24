@@ -16,6 +16,7 @@
 #include "config/aom_scale_rtcd.h"
 
 #include "aom_dsp/aom_dsp_common.h"
+#include "aom_dsp/mathutils.h"
 #include "aom_dsp/odintrin.h"
 #include "aom_mem/aom_mem.h"
 #include "aom_ports/aom_timer.h"
@@ -81,7 +82,7 @@ static void tf_determine_block_partition(const MV block_mv, const int block_mse,
  * \param[out]  subblock_mses   Pointer to the search errors (MSE) for 4
  *                              sub-blocks
  *
- * \return Nothing will be returned. Results are saved in subblock_mvs and
+ * \remark Nothing will be returned. Results are saved in subblock_mvs and
  *         subblock_mses
  */
 static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
@@ -109,9 +110,6 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
   // Parameters used for motion search.
   FULLPEL_MOTION_SEARCH_PARAMS full_ms_params;
   SUBPEL_MOTION_SEARCH_PARAMS ms_params;
-  const SEARCH_METHODS search_method = NSTEP;
-  const search_site_config *search_site_cfg = av1_get_search_site_config(
-      mb->search_site_cfg_buf, &cpi->mv_search_params, search_method, y_stride);
   const int step_param = av1_init_search_range(
       AOMMAX(frame_to_filter->y_crop_width, frame_to_filter->y_crop_height));
   const SUBPEL_SEARCH_TYPE subpel_search_type = USE_8_TAPS;
@@ -131,6 +129,11 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
   mb->plane[0].src.stride = y_stride;
   mbd->plane[0].pre[0].buf = ref_frame->y_buffer + y_offset;
   mbd->plane[0].pre[0].stride = y_stride;
+
+  const SEARCH_METHODS search_method = NSTEP;
+  const search_site_config *search_site_cfg =
+      av1_get_search_site_config(cpi, mb, search_method);
+
   // Unused intermediate results for motion search.
   unsigned int sse, error;
   int distortion;
@@ -180,6 +183,7 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
     ms_params.mv_cost_params.mv_cost_type = MV_COST_NONE;
 
     MV subpel_start_mv = get_mv_from_fullmv(&best_mv.as_fullmv);
+    assert(av1_is_subpelmv_in_range(&ms_params.mv_limits, subpel_start_mv));
     error = cpi->mv_search_params.find_fractional_mv_step(
         &mb->e_mbd, &cpi->common, &ms_params, subpel_start_mv, &best_mv.as_mv,
         &distortion, &sse, NULL);
@@ -187,7 +191,7 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
     block_mv = best_mv.as_mv;
     *ref_mv = best_mv.as_mv;
     // On 4 sub-blocks.
-    const BLOCK_SIZE subblock_size = ss_size_lookup[block_size][1][1];
+    const BLOCK_SIZE subblock_size = av1_ss_size_lookup[block_size][1][1];
     const int subblock_height = block_size_high[subblock_size];
     const int subblock_width = block_size_wide[subblock_size];
     const int subblock_pels = subblock_height * subblock_width;
@@ -227,6 +231,7 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
         ms_params.mv_cost_params.mv_cost_type = MV_COST_NONE;
 
         subpel_start_mv = get_mv_from_fullmv(&best_mv.as_fullmv);
+        assert(av1_is_subpelmv_in_range(&ms_params.mv_limits, subpel_start_mv));
         error = cpi->mv_search_params.find_fractional_mv_step(
             &mb->e_mbd, &cpi->common, &ms_params, subpel_start_mv,
             &best_mv.as_mv, &distortion, &sse, NULL);
@@ -323,7 +328,7 @@ static INLINE int is_frame_high_bitdepth(const YV12_BUFFER_CONFIG *frame) {
  *                             order)
  * \param[out]  pred           Pointer to the predictor to be built
  *
- * \return Nothing returned, But the contents of `pred` will be modified
+ * \remark Nothing returned, But the contents of `pred` will be modified
  */
 static void tf_build_predictor(const YV12_BUFFER_CONFIG *ref_frame,
                                const MACROBLOCKD *mbd,
@@ -545,13 +550,15 @@ void compute_luma_sq_error_sum(uint32_t *square_diff, uint32_t *luma_sse_sum,
  *                              defined in libaom, converted from `qindex`
  * \param[in]   filter_strength Filtering strength. This value lies in range
  *                              [0, 6] where 6 is the maximum strength.
+ * \param[in]   tf_wgt_calc_lvl Controls the weight calculation method during
+ *                              temporal filtering
  * \param[out]  pred            Pointer to the well-built predictors
  * \param[out]  accum           Pointer to the pixel-wise accumulator for
  *                              filtering
  * \param[out]  count           Pointer to the pixel-wise counter for
  *                              filtering
  *
- * \return Nothing returned, But the contents of `accum`, `pred` and 'count'
+ * \remark Nothing returned, But the contents of `accum`, `pred` and 'count'
  *         will be modified
  */
 void av1_apply_temporal_filter_c(
@@ -559,7 +566,8 @@ void av1_apply_temporal_filter_c(
     const BLOCK_SIZE block_size, const int mb_row, const int mb_col,
     const int num_planes, const double *noise_levels, const MV *subblock_mvs,
     const int *subblock_mses, const int q_factor, const int filter_strength,
-    const uint8_t *pred, uint32_t *accum, uint16_t *count) {
+    int tf_wgt_calc_lvl, const uint8_t *pred, uint32_t *accum,
+    uint16_t *count) {
   // Block information.
   const int mb_height = block_size_high[block_size];
   const int mb_width = block_size_wide[block_size];
@@ -689,7 +697,14 @@ void av1_apply_temporal_filter_c(
         double scaled_error =
             combined_error * d_factor[subblock_idx] * decay_factor[plane];
         scaled_error = AOMMIN(scaled_error, 7);
-        const int weight = (int)(exp(-scaled_error) * TF_WEIGHT_SCALE);
+        int weight;
+        if (tf_wgt_calc_lvl == 0) {
+          weight = (int)(exp(-scaled_error) * TF_WEIGHT_SCALE);
+        } else {
+          const float fweight =
+              approx_exp((float)-scaled_error) * TF_WEIGHT_SCALE;
+          weight = iroundpf(fweight);
+        }
 
         const int idx = plane_offset + pred_idx;  // Index with plane shift.
         const int pred_value = is_high_bitdepth ? pred16[idx] : pred[idx];
@@ -712,11 +727,12 @@ void av1_highbd_apply_temporal_filter_c(
     const BLOCK_SIZE block_size, const int mb_row, const int mb_col,
     const int num_planes, const double *noise_levels, const MV *subblock_mvs,
     const int *subblock_mses, const int q_factor, const int filter_strength,
-    const uint8_t *pred, uint32_t *accum, uint16_t *count) {
+    int tf_wgt_calc_lvl, const uint8_t *pred, uint32_t *accum,
+    uint16_t *count) {
   av1_apply_temporal_filter_c(frame_to_filter, mbd, block_size, mb_row, mb_col,
                               num_planes, noise_levels, subblock_mvs,
-                              subblock_mses, q_factor, filter_strength, pred,
-                              accum, count);
+                              subblock_mses, q_factor, filter_strength,
+                              tf_wgt_calc_lvl, pred, accum, count);
 }
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 /*!\brief Normalizes the accumulated filtering result to produce the filtered
@@ -734,7 +750,7 @@ void av1_highbd_apply_temporal_filter_c(
  * \param[in]   count          Pointer to the pre-computed count
  * \param[out]  result_buffer  Pointer to result buffer
  *
- * \return Nothing returned, but the content to which `result_buffer` pointer
+ * \remark Nothing returned, but the content to which `result_buffer` pointer
  *         will be modified
  */
 static void tf_normalize_filtered_frame(
@@ -805,6 +821,7 @@ void av1_tf_do_filtering_row(AV1_COMP *cpi, ThreadData *td, int mb_row) {
   const int mi_h = mi_size_high_log2[block_size];
   const int mi_w = mi_size_wide_log2[block_size];
   const int num_planes = av1_num_planes(&cpi->common);
+  const int weight_calc_level_in_tf = cpi->sf.hl_sf.weight_calc_level_in_tf;
   uint32_t *accum = tf_data->accum;
   uint16_t *count = tf_data->count;
   uint8_t *pred = tf_data->pred;
@@ -861,27 +878,27 @@ void av1_tf_do_filtering_row(AV1_COMP *cpi, ThreadData *td, int mb_row) {
             av1_highbd_apply_temporal_filter(
                 frame_to_filter, mbd, block_size, mb_row, mb_col, num_planes,
                 noise_levels, subblock_mvs, subblock_mses, q_factor,
-                filter_strength, pred, accum, count);
+                filter_strength, weight_calc_level_in_tf, pred, accum, count);
           } else {
 #endif  // CONFIG_AV1_HIGHBITDEPTH
             av1_apply_temporal_filter_c(
                 frame_to_filter, mbd, block_size, mb_row, mb_col, num_planes,
                 noise_levels, subblock_mvs, subblock_mses, q_factor,
-                filter_strength, pred, accum, count);
+                filter_strength, weight_calc_level_in_tf, pred, accum, count);
 #if CONFIG_AV1_HIGHBITDEPTH
           }
 #endif            // CONFIG_AV1_HIGHBITDEPTH
         } else {  // for 8-bit
           if (TF_BLOCK_SIZE == BLOCK_32X32 && TF_WINDOW_LENGTH == 5) {
-            av1_apply_temporal_filter(frame_to_filter, mbd, block_size, mb_row,
-                                      mb_col, num_planes, noise_levels,
-                                      subblock_mvs, subblock_mses, q_factor,
-                                      filter_strength, pred, accum, count);
+            av1_apply_temporal_filter(
+                frame_to_filter, mbd, block_size, mb_row, mb_col, num_planes,
+                noise_levels, subblock_mvs, subblock_mses, q_factor,
+                filter_strength, weight_calc_level_in_tf, pred, accum, count);
           } else {
             av1_apply_temporal_filter_c(
                 frame_to_filter, mbd, block_size, mb_row, mb_col, num_planes,
                 noise_levels, subblock_mvs, subblock_mses, q_factor,
-                filter_strength, pred, accum, count);
+                filter_strength, weight_calc_level_in_tf, pred, accum, count);
           }
         }
       }
@@ -914,7 +931,7 @@ void av1_tf_do_filtering_row(AV1_COMP *cpi, ThreadData *td, int mb_row) {
  * \ingroup src_frame_proc
  * \param[in]   cpi                   Top level encoder instance structure
  *
- * \return Nothing will be returned, but the contents of td->diff will be
+ * \remark Nothing will be returned, but the contents of td->diff will be
  modified.
  */
 static void tf_do_filtering(AV1_COMP *cpi) {
@@ -949,7 +966,7 @@ static void tf_do_filtering(AV1_COMP *cpi) {
  *                              in the lookahead buffer cpi->lookahead
  * \param[in]   gf_frame_index  GOP index
  *
- * \return Nothing will be returned. But the fields `frames`, `num_frames`,
+ * \remark Nothing will be returned. But the fields `frames`, `num_frames`,
  *         `filter_frame_idx` and `noise_levels` will be updated in cpi->tf_ctx.
  */
 static void tf_setup_filtering_buffer(AV1_COMP *cpi,
@@ -1040,7 +1057,7 @@ static void tf_setup_filtering_buffer(AV1_COMP *cpi,
   num_frames = AOMMIN(num_frames + adjust_num, lookahead_depth);
 
   if (frame_type == KEY_FRAME) {
-    num_before = is_forward_keyframe ? num_frames / 2 : 0;
+    num_before = AOMMIN(is_forward_keyframe ? num_frames / 2 : 0, max_before);
     num_after = AOMMIN(num_frames - 1, max_after);
   } else {
     int gfu_boost = av1_calc_arf_boost(&cpi->ppi->twopass, &cpi->twopass_frame,
@@ -1289,22 +1306,11 @@ void av1_tf_info_alloc(TEMPORAL_FILTER_INFO *tf_info, const AV1_COMP *cpi) {
         seq_params->subsampling_x, seq_params->subsampling_y,
         seq_params->use_highbitdepth, cpi->oxcf.border_in_pixels,
         cm->features.byte_alignment, NULL, NULL, NULL,
-        cpi->oxcf.tool_cfg.enable_global_motion, 0);
+        cpi->image_pyramid_levels, 0);
     if (ret) {
       aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
                          "Failed to allocate tf_info");
     }
-  }
-
-  ret = aom_realloc_frame_buffer(
-      &tf_info->tf_buf_second_arf, oxcf->frm_dim_cfg.width,
-      oxcf->frm_dim_cfg.height, seq_params->subsampling_x,
-      seq_params->subsampling_y, seq_params->use_highbitdepth,
-      cpi->oxcf.border_in_pixels, cm->features.byte_alignment, NULL, NULL, NULL,
-      cpi->oxcf.tool_cfg.enable_global_motion, 0);
-  if (ret) {
-    aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
-                       "Failed to allocate tf_info");
   }
 }
 

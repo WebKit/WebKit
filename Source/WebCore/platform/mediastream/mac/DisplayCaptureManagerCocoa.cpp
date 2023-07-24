@@ -37,7 +37,7 @@
 #include "CGDisplayStreamScreenCaptureSource.h"
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #include "ReplayKitCaptureSource.h"
 #endif
 

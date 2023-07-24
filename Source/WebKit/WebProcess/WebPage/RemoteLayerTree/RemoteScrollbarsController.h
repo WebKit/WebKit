@@ -49,12 +49,18 @@ public:
     void mouseExitedScrollbar(WebCore::Scrollbar*) const final;
     bool shouldScrollbarParticipateInHitTesting(WebCore::Scrollbar*) final;
 
+    void setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation, int) final;
     void setScrollbarVisibilityState(WebCore::ScrollbarOrientation, bool) final;
     bool shouldDrawIntoScrollbarLayer(WebCore::Scrollbar&) const final;
+    bool shouldRegisterScrollbars() const final { return scrollableArea().isListBox(); }
+    int minimumThumbLength(WebCore::ScrollbarOrientation) final;
 
 private:
     bool m_horizontalOverlayScrollbarIsVisible { false };
     bool m_verticalOverlayScrollbarIsVisible { false };
+
+    int m_horizontalMinimumThumbLength { 0 };
+    int m_verticalMinimumThumbLength { 0 };
     ThreadSafeWeakPtr<WebCore::ScrollingCoordinator> m_coordinator;
 };
 

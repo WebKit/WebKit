@@ -30,6 +30,7 @@
 #include "JSCInlines.h"
 #include "JSONObject.h"
 #include "ObjectConstructor.h"
+#include "ProfilerDumper.h"
 #include <wtf/FilePrintStream.h>
 
 namespace JSC { namespace Profiler {
@@ -94,69 +95,35 @@ void Database::addCompilation(CodeBlock* codeBlock, Ref<Compilation>&& compilati
     m_compilationMap.set(codeBlock, WTFMove(compilation));
 }
 
-JSValue Database::toJS(JSGlobalObject* globalObject) const
+Ref<JSON::Value> Database::toJSON() const
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* result = constructEmptyObject(globalObject);
-    
-    JSArray* bytecodes = constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, { });
-    for (unsigned i = 0; i < m_bytecodes.size(); ++i) {
-        auto value = m_bytecodes[i].toJS(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        bytecodes->putDirectIndex(globalObject, i, value);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    result->putDirect(vm, vm.propertyNames->bytecodes, bytecodes);
-    
-    JSArray* compilations = constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, { });
-    for (unsigned i = 0; i < m_compilations.size(); ++i) {
-        auto value = m_compilations[i]->toJS(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        compilations->putDirectIndex(globalObject, i, value);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    result->putDirect(vm, vm.propertyNames->compilations, compilations);
-    
-    JSArray* events = constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, { });
-    for (unsigned i = 0; i < m_events.size(); ++i) {
-        auto value = m_events[i].toJS(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        events->putDirectIndex(globalObject, i, value);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    result->putDirect(vm, vm.propertyNames->events, events);
-    
+    Dumper dumper(*this);
+    auto result = JSON::Object::create();
+
+    auto bytecodes = JSON::Array::create();
+    for (unsigned i = 0; i < m_bytecodes.size(); ++i)
+        bytecodes->pushValue(m_bytecodes[i].toJSON(dumper));
+    result->setValue(dumper.keys().m_bytecodes, WTFMove(bytecodes));
+
+    auto compilations = JSON::Array::create();
+    for (unsigned i = 0; i < m_compilations.size(); ++i)
+        compilations->pushValue(m_compilations[i]->toJSON(dumper));
+    result->setValue(dumper.keys().m_compilations, WTFMove(compilations));
+
+    auto events = JSON::Array::create();
+    for (unsigned i = 0; i < m_events.size(); ++i)
+        events->pushValue(m_events[i].toJSON(dumper));
+    result->setValue(dumper.keys().m_events, WTFMove(events));
+
     return result;
-}
-
-String Database::toJSON() const
-{
-    auto scope = DECLARE_THROW_SCOPE(m_vm);
-    JSGlobalObject* globalObject = JSGlobalObject::create(
-        m_vm, JSGlobalObject::createStructure(m_vm, jsNull()));
-
-    auto value = toJS(globalObject);
-    RETURN_IF_EXCEPTION(scope, String());
-    RELEASE_AND_RETURN(scope, JSONStringify(globalObject, value, 0));
 }
 
 bool Database::save(const char* filename) const
 {
-    auto scope = DECLARE_CATCH_SCOPE(m_vm);
     auto out = FilePrintStream::open(filename, "w");
     if (!out)
         return false;
-    
-    String data = toJSON();
-    if (UNLIKELY(scope.exception())) {
-        scope.clearException();
-        return false;
-    }
-    out->print(data);
+    out->print(toJSON().get());
     return true;
 }
 

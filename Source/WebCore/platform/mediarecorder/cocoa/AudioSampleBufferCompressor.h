@@ -88,6 +88,7 @@ private:
     Vector<uint8_t> m_sourceBuffer;
     Vector<uint8_t> m_destinationBuffer;
 
+    CMBufferQueueTriggerToken m_triggerToken;
     RetainPtr<CMBlockBufferRef> m_sampleBlockBuffer;
     size_t m_sampleBlockBufferSize { 0 };
     size_t m_currentOffsetInSampleBlockBuffer { 0 };

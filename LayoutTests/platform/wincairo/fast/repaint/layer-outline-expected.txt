@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
             text run at (547,0) width 197: " Layer outline does not repaint"
         RenderText {#text} at (744,0) size 4x19
           text run at (744,0) width 4: "."
-      RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,36) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (18,194) size 100x100 clip at (19,195) size 98x98
   RenderBlock {DIV} at (10,186) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
 layer at (8,54) size 784x130

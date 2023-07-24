@@ -26,10 +26,12 @@
 #include "config.h"
 #include "RenderLayoutState.h"
 
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderObjectInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include <wtf/WeakPtr.h>

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (28,20) size 731x481
-      RenderSVGText {text} at (127,12) size 226x23 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 225x23
-          chunk 1 (middle anchor) text run 1 at (127.50,30.00) startOffset 0 endOffset 27 width 225.00: "Radial gradient focal point"
+    RenderSVGContainer {g} at (28,19) size 731x482
+      RenderSVGText {text} at (123,11) size 234x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x23
+          chunk 1 (middle anchor) text run 1 at (123.60,30.00) startOffset 0 endOffset 27 width 232.80: "Radial gradient focal point"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (0,0) size 167x100
           RenderSVGRect {rect} at (0,0) size 167x100 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=100.00] [height=60.00]
@@ -260,8 +260,8 @@ layer at (0,0) size 800x600
             RenderSVGRect {rect} at (716,399) size 18x102 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#FFA500]}] [x=75.00] [y=0.00] [width=10.00] [height=60.00]
             RenderSVGRect {rect} at (741,399) size 18x102 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#FFD700]}] [x=90.00] [y=0.00] [width=10.00] [height=60.00]
             RenderSVGRect {rect} at (591,399) size 168x102 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=RADIAL-GRADIENT] [id="grad6d"]}] [x=0.00] [y=0.00] [width=100.00] [height=60.00]
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.5 $"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.5 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

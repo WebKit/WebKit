@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,19 +30,19 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUBindGroupEntry.h>
+#include <WebCore/WebGPUBindGroupEntry.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::BindGroupEntry& bindGroupEntry)
+std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BindGroupEntry& bindGroupEntry)
 {
-    return WTF::switchOn(bindGroupEntry.resource, [&] (std::reference_wrapper<PAL::WebGPU::Sampler> sampler) -> std::optional<BindGroupEntry> {
+    return WTF::switchOn(bindGroupEntry.resource, [&] (std::reference_wrapper<WebCore::WebGPU::Sampler> sampler) -> std::optional<BindGroupEntry> {
         auto identifier = convertToBacking(sampler);
         if (!identifier)
             return std::nullopt;
 
         return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::Sampler } };
-    }, [&] (std::reference_wrapper<PAL::WebGPU::TextureView> textureView) -> std::optional<BindGroupEntry> {
+    }, [&] (std::reference_wrapper<WebCore::WebGPU::TextureView> textureView) -> std::optional<BindGroupEntry> {
         auto identifier = convertToBacking(textureView);
         if (!identifier)
             return std::nullopt;
@@ -54,7 +54,7 @@ std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const PA
             return std::nullopt;
 
         return { { bindGroupEntry.binding, WTFMove(*convertedBufferBinding), convertedBufferBinding->buffer, BindingResourceType::BufferBinding } };
-    }, [&] (std::reference_wrapper<PAL::WebGPU::ExternalTexture> externalTexture) -> std::optional<BindGroupEntry> {
+    }, [&] (std::reference_wrapper<WebCore::WebGPU::ExternalTexture> externalTexture) -> std::optional<BindGroupEntry> {
         auto identifier = convertToBacking(externalTexture);
         if (!identifier)
             return std::nullopt;
@@ -63,7 +63,7 @@ std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const PA
     });
 }
 
-std::optional<PAL::WebGPU::BindGroupEntry> ConvertFromBackingContext::convertFromBacking(const BindGroupEntry& bindGroupEntry)
+std::optional<WebCore::WebGPU::BindGroupEntry> ConvertFromBackingContext::convertFromBacking(const BindGroupEntry& bindGroupEntry)
 {
     switch (bindGroupEntry.type) {
     case BindingResourceType::Sampler: {

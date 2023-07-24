@@ -46,11 +46,21 @@ AccessibilityList::AccessibilityList(RenderObject* renderer)
 {
 }
 
+AccessibilityList::AccessibilityList(Node& node)
+    : AccessibilityRenderObject(node)
+{
+}
+
 AccessibilityList::~AccessibilityList() = default;
 
 Ref<AccessibilityList> AccessibilityList::create(RenderObject* renderer)
 {
     return adoptRef(*new AccessibilityList(renderer));
+}
+
+Ref<AccessibilityList> AccessibilityList::create(Node& node)
+{
+    return adoptRef(*new AccessibilityList(node));
 }
 
 bool AccessibilityList::computeAccessibilityIsIgnored() const
@@ -110,7 +120,7 @@ bool AccessibilityList::childHasPseudoVisibleListItemMarkers(Node* node)
     // those renderers as "ignored" objects.
 #if USE(ATSPI)
     String text = axBeforePseudo->textUnderElement();
-    return !text.isEmpty() && !text.isAllSpecialCharacters<isASCIIWhitespace>();
+    return !text.isEmpty() && !text.containsOnly<isASCIIWhitespace>();
 #else
     return false;
 #endif

@@ -1,6 +1,8 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -18,57 +20,54 @@ line 3
     <div id="contenteditable-line3">Line3</div>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This tests that lineNumberForPosition is reported correctly for textarea and contenteditable elements.");
+var output = "This tests that lineNumberForPosition is reported correctly for textarea and contenteditable elements.\n\n";
 
-    if (window.accessibilityController) {
-        var area1 = document.getElementById("area1");
-        area1.focus();
-        var area1AXUIElement = accessibilityController.focusedElement;
-        var lineNumber = -2;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var currentLine, area1AXUIElement, area2AXUIElement, contenteditableAXUIElement, textareaAXUIElement;
+    setTimeout(async function() {
+        area1AXUIElement = await waitForFocus("area1");
 
         // Set the insertion point to the beginning of each line in area1 and
         // check that accessibility returns the correct line number.
-        for (var currentLine = 0; currentLine < 3; currentLine++) {
+        for (currentLine = 0; currentLine < 3; currentLine++) {
             area1.selectionStart = currentLine * 7;
             area1.selectionEnd = currentLine * 7;
-            shouldBe("area1AXUIElement.insertionPointLineNumber", "currentLine");
+            output += expect("area1AXUIElement.insertionPointLineNumber", "currentLine");
         }
 
         // area2 is an empty textarea so the insertion point line number should be 0.
-        var area2 = document.getElementById("area2");
-        area2.focus();
-        var area2AXUIElement = accessibilityController.focusedElement;
-        shouldBe("area2AXUIElement.insertionPointLineNumber", "0");
+        area2AXUIElement = await waitForFocus("area2");
+        output += expect("area2AXUIElement.insertionPointLineNumber", "0");
 
         // Set focus to the contenteditable-div element and set the insertion
         // point in each of the children lines.
-        var contenteditableDiv = document.getElementById("contenteditable-div");
-        contenteditableDiv.focus();
-        var contenteditableAXUIElement = accessibilityController.focusedElement;
+        contenteditableAXUIElement = await waitForFocus("contenteditable-div");
 
         var contenteditableLine1 = document.getElementById("contenteditable-line1");
         window.getSelection().setBaseAndExtent(contenteditableLine1, 1, contenteditableLine1, 1);
-        shouldBe("contenteditableAXUIElement.insertionPointLineNumber", "0");
+        output += expect("contenteditableAXUIElement.insertionPointLineNumber", "0");
 
         var contenteditableLine2 = document.getElementById("contenteditable-line2");
         window.getSelection().setBaseAndExtent(contenteditableLine2, 1, contenteditableLine2, 1);
-        shouldBe("contenteditableAXUIElement.insertionPointLineNumber", "1");
+        output += expect("contenteditableAXUIElement.insertionPointLineNumber", "1");
 
         var contenteditableLine3 = document.getElementById("contenteditable-line3");
         window.getSelection().setBaseAndExtent(contenteditableLine3, 1, contenteditableLine3, 1);
-        shouldBe("contenteditableAXUIElement.insertionPointLineNumber", "2");
+        output += expect("contenteditableAXUIElement.insertionPointLineNumber", "2");
 
         // Set focus to line 2 and get the insertion point line number relative
         // to the nested textarea, which should be 0.
-        contenteditableLine2.focus();
-        var textareaAXUIElement = accessibilityController.focusedElement;
-        shouldBe("textareaAXUIElement.insertionPointLineNumber", "0");
-    }
+        textareaAXUIElement = await waitForFocus("contenteditable-line2");
+        output += await expectAsync("textareaAXUIElement.insertionPointLineNumber", "0");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

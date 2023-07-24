@@ -326,7 +326,7 @@ bool WebVTTParser::checkAndCreateRegion(StringView line)
     // line starts with the substring "REGION" and remaining characters
     // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
     // (tab) characters expected other than these characters it is invalid.
-    if (line.startsWith("REGION"_s) && line.substring(regionIdentifierLength).isAllSpecialCharacters<isASCIIWhitespace>()) {
+    if (line.startsWith("REGION"_s) && line.substring(regionIdentifierLength).containsOnly<isASCIIWhitespace>()) {
         m_currentRegion = VTTRegion::create(m_document);
         return true;
     }
@@ -355,7 +355,7 @@ bool WebVTTParser::checkStyleSheet(StringView line)
     // line starts with the substring "STYLE" and remaining characters
     // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
     // (tab) characters expected other than these characters it is invalid.
-    if (line.startsWith("STYLE"_s) && line.substring(styleIdentifierLength).isAllSpecialCharacters<isASCIIWhitespace>())
+    if (line.startsWith("STYLE"_s) && line.substring(styleIdentifierLength).containsOnly<isASCIIWhitespace>())
         return true;
 
     return false;
@@ -391,7 +391,7 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
     for (const auto& rule : childRules) {
         if (!rule->isStyleRule())
             return true;
-        const auto& styleRule = downcast<StyleRule>(*rule);
+        const auto& styleRule = downcast<StyleRule>(rule);
 
         const auto& selectorList = styleRule.selectorList();
         if (selectorList.listSize() != 1)

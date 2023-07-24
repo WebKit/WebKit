@@ -44,7 +44,10 @@ class MessagesInChecker(object):
     def check_WTF_prefix(self, lines):
         comment = re.compile(r'^\s*#')
         for line_number, line in enumerate(lines):
-            if not comment.match(line) and 'WTF::' in line:
+            if comment.match(line):
+                continue
+            line = re.sub(r'\bWTF::UUID\b', 'UUID', line)
+            if 'WTF::' in line:
                 self.handle_style_error(line_number + 1,
                                         'build/messagesin/wtf', 5,
                                         'Line contains WTF:: prefix.')

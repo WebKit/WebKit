@@ -31,7 +31,7 @@ WI.WorkerTreeElement = class WorkerTreeElement extends WI.ScriptTreeElement
     constructor(target)
     {
         console.assert(target instanceof WI.Target);
-        console.assert(target.type === WI.TargetType.Worker || target.type === WI.TargetType.ServiceWorker);
+        console.assert(target.type === WI.TargetType.Worker);
         console.assert(target.mainResource instanceof WI.Script);
 
         let options = {};

@@ -64,6 +64,8 @@ MacCapturer::MacCapturer(size_t width,
                          size_t height,
                          size_t target_fps,
                          size_t capture_device_index) {
+  width_ = width;
+  height_ = height;
   RTCTestVideoSourceAdapter *adapter = [[RTCTestVideoSourceAdapter alloc] init];
   adapter_ = (__bridge_retained void *)adapter;
   adapter.capturer = this;

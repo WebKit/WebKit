@@ -41,6 +41,7 @@ public:
 
     size_t length() const { return m_values.size(); }
     DeprecatedCSSOMValue* item(size_t index) { return index < m_values.size() ? m_values[index].ptr() : nullptr; }
+    bool isSupportedPropertyIndex(unsigned index) const { return index < m_values.size(); }
 
 private:
     DeprecatedCSSOMValueList(const CSSValueContainingVector& values, CSSStyleDeclaration& owner)

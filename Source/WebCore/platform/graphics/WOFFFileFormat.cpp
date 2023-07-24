@@ -25,17 +25,21 @@
 
 #include "config.h"
 #include "WOFFFileFormat.h"
-#include <zlib.h>
 
 #include "SharedBuffer.h"
-#include <wtf/ByteOrder.h>
 
+#if !HAVE(WOFF_SUPPORT)
+#include <wtf/ByteOrder.h>
+#include <zlib.h>
 #if USE(WOFF2)
 #include <woff2/decode.h>
 static const uint32_t kWoff2Signature = 0x774f4632; // "wOF2"
 #endif
+#endif
 
 namespace WebCore {
+
+#if !HAVE(WOFF_SUPPORT)
 
 static bool readUInt32(SharedBuffer& buffer, size_t& offset, uint32_t& value)
 {
@@ -285,10 +289,6 @@ bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt)
 
 bool convertWOFFToSfntIfNecessary(RefPtr<SharedBuffer>& buffer)
 {
-#if PLATFORM(COCOA)
-    UNUSED_PARAM(buffer);
-    return false;
-#else
     if (!buffer || !isWOFF(*buffer))
         return false;
 
@@ -299,7 +299,15 @@ bool convertWOFFToSfntIfNecessary(RefPtr<SharedBuffer>& buffer)
         buffer = nullptr;
 
     return true;
-#endif
 }
+
+#else
+
+bool convertWOFFToSfntIfNecessary(RefPtr<SharedBuffer>&)
+{
+    return false;
+}
+
+#endif // HAVE(WOFF_SUPPORT)
 
 } // namespace WebCore

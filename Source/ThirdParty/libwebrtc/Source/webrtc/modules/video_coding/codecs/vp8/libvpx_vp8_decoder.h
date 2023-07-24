@@ -67,9 +67,6 @@ class LibvpxVp8Decoder : public VideoDecoder {
   bool key_frame_required_;
   const absl::optional<DeblockParams> deblock_params_;
   const std::unique_ptr<QpSmoother> qp_smoother_;
-
-  // Decoder should produce this format if possible.
-  const VideoFrameBuffer::Type preferred_output_format_;
 };
 
 }  // namespace webrtc

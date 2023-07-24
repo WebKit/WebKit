@@ -37,6 +37,7 @@ function isoToDecimal(date) {
   };
 }
 var obj = {
+  id: 'decimal',
   toString() {
     return "decimal";
   },
@@ -85,13 +86,41 @@ var obj = {
     var {days} = isoToDecimal(date);
     return days % 10 + 1;
   },
-  mergeFields(fields, additionalFields) {
-  if ("month" in additionalFields || "monthCode" in additionalFields) {
-    let {month, monthCode, ...rest} = fields;
-    return {...rest, ...additionalFields};
-  }
-  return {...fields, ...additionalFields};
-}
+  dateAdd() {},  // left as an exercise for the reader
+  dateUntil() {},  // ditto
+  dayOfWeek() {
+    throw new Error('no weeks');
+  },
+  dayOfYear(date) {
+    return isoToDecimal(date).days;
+  },
+  daysInMonth() {
+    return 10;
+  },
+  daysInWeek() {
+    throw new Error('no weeks');
+  },
+  daysInYear() {
+    return 100;
+  },
+  fields(fields) {
+    return fields;
+  },
+  inLeapYear() {
+    return false;
+  },
+  mergeFields(fields, additional) {
+    return new Temporal.Calendar("iso8601").mergeFields(fields, additional)
+  },
+  monthsInYear() {
+    return 10;
+  },
+  weekOfYear() {
+    throw new Error('no weeks');
+  },
+  yearOfWeek(date) {
+    throw new Error('no weeks');
+  },
 };
 var date = Temporal.PlainDate.from({
   year: 184,
@@ -188,12 +217,12 @@ assert.sameValue(md2.monthCode, "M01");
 var tz = Temporal.TimeZone.from("UTC");
 var inst = Temporal.Instant.fromEpochSeconds(0);
 var dt = tz.getPlainDateTimeFor(inst, obj);
-assert.sameValue(dt.calendar.id, obj.id);
+assert.sameValue(dt.getCalendar(), obj);
 
 // Temporal.Now.plainDateTime()
 var nowDateTime = Temporal.Now.plainDateTime(obj, "UTC");
-assert.sameValue(nowDateTime.calendar.id, obj.id);
+assert.sameValue(nowDateTime.getCalendar(), obj);
 
 // Temporal.Now.plainDate()
 var nowDate = Temporal.Now.plainDate(obj, "UTC");
-assert.sameValue(nowDate.calendar.id, obj.id);
+assert.sameValue(nowDate.getCalendar(), obj);

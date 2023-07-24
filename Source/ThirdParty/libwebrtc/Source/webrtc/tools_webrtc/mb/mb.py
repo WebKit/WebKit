@@ -52,8 +52,10 @@ class WebRTCMetaBuildWrapper(mb.MetaBuildWrapper):
     test_type = isolate_map[target]['type']
 
     is_android = 'target_os="android"' in vals['gn_args']
-    is_linux = self.platform.startswith('linux') and not is_android
+    is_fuchsia = 'target_os="fuchsia"' in vals['gn_args']
     is_ios = 'target_os="ios"' in vals['gn_args']
+    is_linux = self.platform.startswith('linux') and not is_android
+    is_win = self.platform.startswith('win')
 
     if test_type == 'nontest':
       self.WriteFailureAndRaise('We should not be isolating %s.' % target,
@@ -80,27 +82,26 @@ class WebRTCMetaBuildWrapper(mb.MetaBuildWrapper):
       ]
     elif is_android:
       cmdline += [
-          vpython_exe, '../../build/android/test_wrapper/logdog_wrapper.py',
-          '--target', target, '--logdog-bin-cmd', '../../bin/logdog_butler',
-          '--logcat-output-file', '${ISOLATED_OUTDIR}/logcats',
-          '--store-tombstones'
+          'luci-auth', 'context', '--', vpython_exe,
+          '../../build/android/test_wrapper/logdog_wrapper.py', '--target',
+          target, '--logdog-bin-cmd',
+          '../../.task_template_packages/logdog_butler', '--logcat-output-file',
+          '${ISOLATED_OUTDIR}/logcats', '--store-tombstones'
       ]
-    elif is_ios:
-      cmdline += [
-          vpython_exe, '../../tools_webrtc/flags_compatibility.py',
-          'bin/run_%s' % target
-      ]
-      extra_files.append('../../tools_webrtc/flags_compatibility.py')
-    elif test_type == 'raw':
-      cmdline += [vpython_exe, '../../tools_webrtc/flags_compatibility.py']
-      extra_files.append('../../tools_webrtc/flags_compatibility.py')
-      cmdline.append(_GetExecutable(target, self.platform))
+    elif is_ios or is_fuchsia or test_type == 'raw':
+      if is_win:
+        cmdline += ['bin\\run_{}.bat'.format(target)]
+      else:
+        cmdline += ['bin/run_{}'.format(target)]
     else:
       if isolate_map[target].get('use_webcam', False):
         cmdline += [
             vpython_exe, '../../tools_webrtc/ensure_webcam_is_running.py'
         ]
         extra_files.append('../../tools_webrtc/ensure_webcam_is_running.py')
+      if isolate_map[target].get('use_pipewire', False):
+        cmdline += [vpython_exe, '../../tools_webrtc/configure_pipewire.py']
+        extra_files.append('../../tools_webrtc/configure_pipewire.py')
 
       # is_linux uses use_ozone and x11 by default.
       use_x11 = is_linux
@@ -118,16 +119,10 @@ class WebRTCMetaBuildWrapper(mb.MetaBuildWrapper):
           '../../tools_webrtc/gtest-parallel-wrapper.py',
       ]
       output_dir = '${ISOLATED_OUTDIR}/test_logs'
-      timeout = isolate_map[target].get('timeout', 900)
       cmdline += [
           '../../tools_webrtc/gtest-parallel-wrapper.py',
           '--output_dir=%s' % output_dir,
           '--gtest_color=no',
-          # We tell gtest-parallel to interrupt the test after 900
-          # seconds, so it can exit cleanly and report results,
-          # instead of being interrupted by swarming and not
-          # reporting anything.
-          '--timeout=%s' % timeout,
       ]
       if test_type == 'non_parallel_console_test_launcher':
         # Still use the gtest-parallel-wrapper.py script since we

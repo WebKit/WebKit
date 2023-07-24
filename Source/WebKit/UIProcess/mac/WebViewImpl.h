@@ -90,6 +90,10 @@ OBJC_CLASS WKPDFHUDView;
 OBJC_CLASS VKCImageAnalysis;
 OBJC_CLASS VKCImageAnalysisOverlayView;
 
+#if HAVE(REDESIGNED_TEXT_CURSOR) && PLATFORM(MAC)
+OBJC_CLASS _WKWebViewTextInputNotifications;
+#endif
+
 namespace API {
 class HitTestResult;
 class Object;
@@ -228,7 +232,7 @@ public:
     void setFixedLayoutSize(CGSize);
     CGSize fixedLayoutSize() const;
 
-    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&);
+    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy();
     bool isUsingUISideCompositing() const;
     void setDrawingAreaSize(CGSize);
     void updateLayer();
@@ -373,8 +377,9 @@ public:
     bool validateUserInterfaceItem(id <NSValidatedUserInterfaceItem>);
     void setEditableElementIsFocused(bool);
 
-    void setCaretDecorationVisibility(bool);
-    void updateCaretDecorationPlacement();
+#if HAVE(REDESIGNED_TEXT_CURSOR)
+    void updateCursorAccessoryPlacement();
+#endif
 
     void startSpeaking();
     void stopSpeaking(id);
@@ -571,7 +576,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void keyUp(NSEvent *);
     void keyDown(NSEvent *);
     void flagsChanged(NSEvent *);
-    bool markedTextInputEnabled() const;
 
     // Override this so that AppKit will send us arrow keys as key down events so we can
     // support them via the key bindings mechanism.
@@ -735,8 +739,6 @@ private:
     void scheduleSetTopContentInsetDispatch();
     void dispatchSetTopContentInset();
 
-    void postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *);
-
     void sendToolTipMouseExited();
     void sendToolTipMouseEntered();
 
@@ -751,6 +753,8 @@ private:
     void nativeMouseEventHandler(NSEvent *);
     void nativeMouseEventHandlerInternal(NSEvent *);
     
+    void scheduleMouseDidMoveOverElement(NSEvent *);
+
     void mouseMovedInternal(NSEvent *);
     void mouseDownInternal(NSEvent *);
     void mouseUpInternal(NSEvent *);
@@ -762,8 +766,13 @@ private:
     bool mightBeginScrollWhileInactive();
 
     void handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates);
-    void showMarkedTextForCandidates(NSArray<NSTextCheckingResult *> *);
-    void showMarkedTextForCandidate(NSTextCheckingResult *, NSRange, NSRange);
+
+#if HAVE(INLINE_PREDICTIONS)
+    bool allowsInlinePredictions() const;
+    void showInlinePredictionsForCandidates(NSArray<NSTextCheckingResult *> *);
+    void showInlinePredictionsForCandidate(NSTextCheckingResult *, NSRange, NSRange);
+#endif
+
     NSTextCheckingTypes getTextCheckingTypes() const;
 
     void flushPendingMouseEventCallbacks();
@@ -942,7 +951,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WeakObjCPtr<NSPopover> m_lastContextMenuTranslationPopover;
 #endif
 
-    RetainPtr<NSObject> _textInputNotifications;
+#if HAVE(REDESIGNED_TEXT_CURSOR) && PLATFORM(MAC)
+    RetainPtr<_WKWebViewTextInputNotifications> _textInputNotifications;
+#endif
 };
     
 } // namespace WebKit

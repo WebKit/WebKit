@@ -121,7 +121,8 @@ void MediaPlayerPrivateGStreamerMSE::load(const String&)
 {
     // This media engine only supports MediaSource URLs.
     m_networkState = MediaPlayer::NetworkState::FormatError;
-    m_player->networkStateChanged();
+    if (auto player = m_player.get())
+        player->networkStateChanged();
 }
 
 void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const ContentType&, MediaSourcePrivateClient& mediaSource)
@@ -201,7 +202,8 @@ void MediaPlayerPrivateGStreamerMSE::setNetworkState(MediaPlayer::NetworkState n
     m_mediaSourceNetworkState = networkState;
     m_networkState = networkState;
     updateStates();
-    m_player->networkStateChanged();
+    if (auto player = m_player.get())
+        player->networkStateChanged();
 }
 
 void MediaPlayerPrivateGStreamerMSE::setReadyState(MediaPlayer::ReadyState mediaSourceReadyState)
@@ -232,12 +234,14 @@ void MediaPlayerPrivateGStreamerMSE::propagateReadyStateToPlayer()
 
     m_readyState = m_mediaSourceReadyState;
     updateStates(); // Set the pipeline to PLAYING or PAUSED if necessary.
-    m_player->readyStateChanged();
+    auto player = m_player.get();
+    if (player)
+        player->readyStateChanged();
 
     // The readyState change may be a result of monitorSourceBuffers() finding that currentTime == duration, which
     // should cause the video to be marked as ended. Let's have the player check that.
-    if (!m_isWaitingForPreroll || currentMediaTime() == durationMediaTime())
-        m_player->timeChanged();
+    if (player && (!m_isWaitingForPreroll || currentMediaTime() == durationMediaTime()))
+        player->timeChanged();
 }
 
 void MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone()
@@ -264,7 +268,8 @@ void MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone()
         m_isSeeking = false;
         GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", currentMediaTime().toString().utf8().data());
         // By calling timeChanged(), m_isSeeking will be checked an a "seeked" event will be emitted.
-        m_player->timeChanged();
+        if (auto player = m_player.get())
+            player->timeChanged();
     }
 
     propagateReadyStateToPlayer();
@@ -281,7 +286,7 @@ void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
     GST_DEBUG_OBJECT(pipeline(), "Source %p setup (old was: %p)", sourceElement, m_source.get());
     m_source = sourceElement;
 
-    if (m_hasAllTracks)
+    if (m_mediaSourcePrivate->hasAllTracks())
         webKitMediaSrcEmitStreams(WEBKIT_MEDIA_SRC(m_source.get()), m_tracks);
 }
 
@@ -318,8 +323,10 @@ void MediaPlayerPrivateGStreamerMSE::durationChanged()
 
     // Avoid emiting durationchanged in the case where the previous duration was 0 because that case is already handled
     // by the HTMLMediaElement.
-    if (m_mediaTimeDuration != previousDuration && m_mediaTimeDuration.isValid() && previousDuration.isValid())
-        m_player->durationChanged();
+    if (m_mediaTimeDuration != previousDuration && m_mediaTimeDuration.isValid() && previousDuration.isValid()) {
+        if (auto player = m_player.get())
+            player->durationChanged();
+    }
 }
 
 void MediaPlayerPrivateGStreamerMSE::setInitialVideoSize(const FloatSize& videoSize)
@@ -400,6 +407,8 @@ bool MediaPlayerPrivateGStreamerMSE::currentMediaTimeMayProgress() const
         return false;
     return m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered());
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore.
 

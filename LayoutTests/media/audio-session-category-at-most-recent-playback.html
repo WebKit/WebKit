@@ -33,7 +33,7 @@
         await waitFor(video, 'playing');
         await sleepFor(500);
         testExpected('internals.categoryAtMostRecentPlayback(video)', 'MediaPlayback');
-        testExpected('internals.modeAtMostRecentPlayback(video)', 'MoviePlayback');
+        testExpected('internals.modeAtMostRecentPlayback(video)', 'Default');
 
         endTest();
     });

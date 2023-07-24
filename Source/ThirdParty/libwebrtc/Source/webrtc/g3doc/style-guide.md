@@ -1,7 +1,7 @@
-# WebRTC coding style guide
+<!-- go/cmark -->
+<!--* freshness: {owner: 'danilchap' reviewed: '2022-01-17'} *-->
 
-<?% config.freshness.owner = 'danilchap' %?>
-<?% config.freshness.reviewed = '2022-01-17' %?>
+# WebRTC coding style guide
 
 ## General advice
 
@@ -173,6 +173,16 @@ headers you need.
 
 [goog-forward-declarations]: https://google.github.io/styleguide/cppguide.html#Forward_Declarations
 
+### RTTI and dynamic_cast
+
+The Google style guide [permits the use of dynamic_cast](https://google.github.io/styleguide/cppguide.html#Run-Time_Type_Information__RTTI_).
+
+However, WebRTC does not permit it. WebRTC (and Chrome) is compiled with the
+-fno-rtti flag, and the overhead of enabling RTTI it is on the order of 220
+Kbytes (for Android Arm64).
+
+Use static_cast and take your own steps to ensure type safety.
+
 ## C
 
 There's a substantial chunk of legacy C code in WebRTC, and a lot of it is old
@@ -212,16 +222,27 @@ guide.
 
 ### <a name="webrtc-gn-templates"></a>WebRTC-specific GN templates
 
-Use the following [GN templates][gn-templ] to ensure that all our
-[GN targets][gn-target] are built with the same configuration:
+As shown in the table below, for library targets (`source_set` and
+`static_library`), you should default on using `rtc_library` (which abstracts
+away the complexity of using the correct target type for Chromium component
+builds).
 
-| instead of       | use                  |
-|------------------|----------------------|
-| `executable`     | `rtc_executable`     |
-| `shared_library` | `rtc_shared_library` |
-| `source_set`     | `rtc_source_set`     |
-| `static_library` | `rtc_static_library` |
-| `test`           | `rtc_test`           |
+The general rule is for library targets is:
+1. Use `rtc_library`.
+2. If the library is a header only target use `rtc_source_set`.
+3. If you really need to generate a static library, use `rtc_static_library`
+   (same for shared libraries, in such case use `rtc_shared_library`).
+
+To ensure that all our [GN targets][gn-target] are built with the same
+configuration, only use the following [GN templates][gn-templ].
+
+| instead of       | use                                                                                     |
+|------------------|-----------------------------------------------------------------------------------------|
+| `executable`     | `rtc_executable`                                                                        |
+| `shared_library` | `rtc_shared_library`                                                                    |
+| `source_set`     | `rtc_source_set` (only for header only libraries, for everything else use `rtc_library` |
+| `static_library` | `rtc_static_library` (use `rtc_library` unless you really need `rtc_static_library`     |
+| `test`           | `rtc_test`                                                                              |
 
 
 [gn-templ]: https://gn.googlesource.com/gn/+/HEAD/docs/language.md#Templates

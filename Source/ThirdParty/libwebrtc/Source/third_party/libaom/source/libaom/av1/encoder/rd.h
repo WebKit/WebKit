@@ -56,6 +56,38 @@ extern "C" {
 // Factor to weigh the rate for switchable interp filters.
 #define SWITCHABLE_INTERP_RATE_FACTOR 1
 
+// Macros for common video resolutions: width x height
+// For example, 720p represents video resolution of 1280x720 pixels.
+#define RESOLUTION_288P 352 * 288
+#define RESOLUTION_360P 640 * 360
+#define RESOLUTION_480P 640 * 480
+#define RESOLUTION_720P 1280 * 720
+#define RESOLUTION_1080P 1920 * 1080
+#define RESOLUTION_1440P 2560 * 1440
+#define RESOLUTION_4K 3840 * 2160
+
+#define RTC_REFS 4
+static const MV_REFERENCE_FRAME real_time_ref_combos[RTC_REFS][2] = {
+  { LAST_FRAME, NONE_FRAME },
+  { ALTREF_FRAME, NONE_FRAME },
+  { GOLDEN_FRAME, NONE_FRAME },
+  { INTRA_FRAME, NONE_FRAME }
+};
+
+static INLINE int mode_offset(const PREDICTION_MODE mode) {
+  if (mode >= NEARESTMV) {
+    return INTER_OFFSET(mode);
+  } else {
+    switch (mode) {
+      case DC_PRED: return 0;
+      case V_PRED: return 1;
+      case H_PRED: return 2;
+      case SMOOTH_PRED: return 3;
+      default: assert(0); return -1;
+    }
+  }
+}
+
 enum {
   // Default initialization when we are not using winner mode framework. e.g.
   // intrabc
@@ -133,7 +165,9 @@ static INLINE void av1_merge_rd_stats(RD_STATS *rd_stats_dst,
   if (!rd_stats_dst->zero_rate)
     rd_stats_dst->zero_rate = rd_stats_src->zero_rate;
   rd_stats_dst->dist += rd_stats_src->dist;
-  rd_stats_dst->sse += rd_stats_src->sse;
+  if (rd_stats_dst->sse < INT64_MAX && rd_stats_src->sse < INT64_MAX) {
+    rd_stats_dst->sse += rd_stats_src->sse;
+  }
   rd_stats_dst->skip_txfm &= rd_stats_src->skip_txfm;
 #if CONFIG_RD_DEBUG
   // This may run into problems when monochrome video is
@@ -204,7 +238,12 @@ int av1_compute_rd_mult_based_on_qindex(aom_bit_depth_t bit_depth,
                                         FRAME_UPDATE_TYPE update_type,
                                         int qindex);
 
-int av1_compute_rd_mult(const struct AV1_COMP *cpi, int qindex);
+int av1_compute_rd_mult(const int qindex, const aom_bit_depth_t bit_depth,
+                        const FRAME_UPDATE_TYPE update_type,
+                        const int layer_depth, const int boost_index,
+                        const FRAME_TYPE frame_type,
+                        const int use_fixed_qp_offsets,
+                        const int is_stat_consumption_stage);
 
 void av1_initialize_rd_consts(struct AV1_COMP *cpi);
 

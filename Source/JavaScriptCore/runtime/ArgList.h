@@ -248,7 +248,8 @@ public:
         ASSERT(static_cast<int>(callFrame->argumentCount()) >= startingFrom);
     }
 
-    ArgList(const MarkedArgumentBuffer& args)
+    template<size_t inlineCapacity>
+    ArgList(const MarkedVector<JSValue, inlineCapacity, RecordOverflow>& args)
         : m_args(args.m_buffer)
         , m_argCount(args.size())
     {
@@ -272,9 +273,9 @@ public:
         
     JS_EXPORT_PRIVATE void getSlice(int startIndex, ArgList& result) const;
 
-private:
     EncodedJSValue* data() const { return m_args; }
 
+private:
     EncodedJSValue* m_args { nullptr };
     int m_argCount { 0 };
 };

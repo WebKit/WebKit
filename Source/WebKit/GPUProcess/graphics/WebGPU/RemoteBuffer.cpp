@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-RemoteBuffer::RemoteBuffer(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteBuffer::RemoteBuffer(WebCore::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(buffer)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
@@ -50,7 +50,7 @@ void RemoteBuffer::stopListeningForIPC()
     m_streamConnection->stopReceivingMessages(Messages::RemoteBuffer::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
+void RemoteBuffer::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
 {
     m_isMapped = true;
     m_mapModeFlags = mapModeFlags;
@@ -67,11 +67,11 @@ void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::WebGPU:
     });
 }
 
-void RemoteBuffer::getMappedRange(PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
+void RemoteBuffer::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
 {
     auto mappedRange = m_backing->getMappedRange(offset, size);
     m_mappedRange = mappedRange;
-    m_mapModeFlags = { PAL::WebGPU::MapMode::Write };
+    m_mapModeFlags = { WebCore::WebGPU::MapMode::Write };
     m_isMapped = true;
 
     callback(Vector<uint8_t>(static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength));
@@ -83,7 +83,7 @@ void RemoteBuffer::unmap(Vector<uint8_t>&& data)
         return;
     ASSERT(m_isMapped);
 
-    if (m_mapModeFlags.contains(PAL::WebGPU::MapMode::Write))
+    if (m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
         memcpy(m_mappedRange->source, data.data(), data.size());
 
     m_backing->unmap();

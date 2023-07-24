@@ -2,5 +2,5 @@
 Testing different type of ImageData constructor
 Actual output:
 
-FAIL Testing different type of ImageData constructor assert_throws_dom: function "function () { new ImageData(1 << 31, 1 << 31); }" threw object "RangeError: Cannot allocate a buffer of this size" that is not a DOMException INDEX_SIZE_ERR: property "code" is equal to undefined, expected 1
+FAIL Testing different type of ImageData constructor assert_throws_dom: function "function() { new ImageData(1 << 31, 1 << 31); }" threw object "RangeError: Cannot allocate a buffer of this size" that is not a DOMException INDEX_SIZE_ERR: property "code" is equal to undefined, expected 1
 

@@ -249,7 +249,7 @@ public:
     void enableShareHandle();
 
     void setUrl(const URL&);
-    void enableSSLForHost(const String&);
+    void enableSSL();
 
     void appendRequestHeaders(const HTTPHeaderMap&);
     void appendRequestHeader(const String& name, const String& value);
@@ -259,10 +259,8 @@ public:
     void enableHttp();
     void enableHttpGetRequest();
     void enableHttpHeadRequest();
-    void enableHttpPostRequest();
-    void setPostFieldLarge(curl_off_t);
-    void enableHttpPutRequest();
-    void setInFileSizeLarge(curl_off_t);
+    void enableHttpPostRequest(curl_off_t size);
+    void enableHttpPutRequest(curl_off_t size);
     void setHttpCustomRequest(const String&);
 
     void enableConnectionOnly();
@@ -278,9 +276,6 @@ public:
     void setCACertBlob(void*, size_t);
     void setSslVerifyPeer(VerifyPeer);
     void setSslVerifyHost(VerifyHost);
-    void setSslCert(const char*);
-    void setSslCertType(const char*);
-    void setSslKeyPassword(const char*);
     void setSslCipherList(const char*);
     void setSslECCurves(const char*);
 
@@ -329,7 +324,6 @@ private:
     };
 
     void enableRequestHeaders();
-    static int expectedSizeOfCurlOffT();
 
     static CURLcode willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData);
     CURLcode willSetupSslCtx(void* sslCtx);

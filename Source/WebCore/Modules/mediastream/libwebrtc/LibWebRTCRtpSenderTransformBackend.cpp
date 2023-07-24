@@ -59,7 +59,7 @@ void LibWebRTCRtpSenderTransformBackend::setTransformableFrameCallback(Callback&
 void LibWebRTCRtpSenderTransformBackend::requestKeyFrame()
 {
     ASSERT(mediaType() == MediaType::Video);
-    m_rtcSender->GenerateKeyFrame();
+    m_rtcSender->GenerateKeyFrame({ });
 }
 
 } // namespace WebCore

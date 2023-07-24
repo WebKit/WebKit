@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=1; totalPixels=4-45" />
+</head>
+<body style="margin: 0">
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="400">
+  <g id="g" style="font: 25px sans-serif" transform="scale(2)">
+    <text x="50" y="50" fill="red" stroke="blue" stroke-width="3">hello there</text>
+  </g>
+  <g id="g" style="font: 25px sans-serif" transform="translate(0, 100) scale(2)">
+    <text x="50" y="50" fill="red" stroke="blue" stroke-width="3" vector-effect="non-scaling-stroke">hello there</text>
+  </g>
+
+  <defs>
+    <script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    if (window.eventSender)
+        eventSender.zoomPageIn();
+
+    requestAnimationFrame(function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+    </script>
+  </defs>
+</svg>
+</body>
+</html>

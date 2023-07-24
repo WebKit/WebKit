@@ -3,7 +3,7 @@
 /*---
 esid: sec-exp-operator-runtime-semantics-evaluation
 description: Mixing BigInt and Number produces a TypeError for exponentiation operator
-features: [BigInt]
+features: [BigInt, exponentiation]
 info: |
   Let base be ? ToNumeric(leftValue).
   Let exponent be ? ToNumeric(rightValue).

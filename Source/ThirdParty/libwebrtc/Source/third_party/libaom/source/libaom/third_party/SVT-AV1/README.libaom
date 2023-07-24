@@ -1,0 +1,14 @@
+URL: https://gitlab.com/AOMediaCodec/SVT-AV1
+
+Version: 8ff99c90359330d2e807757c9425560bbc452ff3
+License: BSD-3-clause clear
+License File: LICENSE.md
+
+Description:
+Port the x86 intrinsics used for single reference convolve reconstructions.
+
+Local Changes:
+Only ported the functions pertinent to single reference convolves.
+All functions are made static inline to avoid function call overheads.
+References to some arrays are changed to libaom version when applicable.
+Some extra intrinsic functions are added to support missing block sizes.

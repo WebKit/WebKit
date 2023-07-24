@@ -55,6 +55,7 @@ ShaderVariable::ShaderVariable(GLenum typeIn)
       isShaderIOBlock(false),
       isPatch(false),
       texelFetchStaticUse(false),
+      id(0),
       flattenedOffsetInParentArrays(-1)
 {}
 
@@ -94,6 +95,7 @@ ShaderVariable::ShaderVariable(const ShaderVariable &other)
       isShaderIOBlock(other.isShaderIOBlock),
       isPatch(other.isPatch),
       texelFetchStaticUse(other.texelFetchStaticUse),
+      id(other.id),
       flattenedOffsetInParentArrays(other.flattenedOffsetInParentArrays)
 {}
 
@@ -127,6 +129,7 @@ ShaderVariable &ShaderVariable::operator=(const ShaderVariable &other)
     isShaderIOBlock               = other.isShaderIOBlock;
     isPatch                       = other.isPatch;
     texelFetchStaticUse           = other.texelFetchStaticUse;
+    id                            = other.id;
     return *this;
 }
 
@@ -485,7 +488,8 @@ InterfaceBlock::InterfaceBlock()
       staticUse(false),
       active(false),
       isReadOnly(false),
-      blockType(BlockType::BLOCK_UNIFORM)
+      blockType(BlockType::BLOCK_UNIFORM),
+      id(0)
 {}
 
 InterfaceBlock::~InterfaceBlock() {}
@@ -502,7 +506,8 @@ InterfaceBlock::InterfaceBlock(const InterfaceBlock &other)
       active(other.active),
       isReadOnly(other.isReadOnly),
       blockType(other.blockType),
-      fields(other.fields)
+      fields(other.fields),
+      id(other.id)
 {}
 
 InterfaceBlock &InterfaceBlock::operator=(const InterfaceBlock &other)
@@ -518,6 +523,7 @@ InterfaceBlock &InterfaceBlock::operator=(const InterfaceBlock &other)
     active           = other.active;
     isReadOnly       = other.isReadOnly;
     blockType        = other.blockType;
+    id               = other.id;
     fields           = other.fields;
     return *this;
 }

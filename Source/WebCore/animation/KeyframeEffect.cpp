@@ -591,7 +591,7 @@ Ref<KeyframeEffect> KeyframeEffect::create(const Element& target, PseudoId pseud
 }
 
 KeyframeEffect::KeyframeEffect(Element* target, PseudoId pseudoId)
-    : m_keyframesName(makeAtomString("keyframe-effect-"_s, UUID::createVersion4Weak()))
+    : m_keyframesName(makeAtomString("keyframe-effect-"_s, WTF::UUID::createVersion4Weak()))
     , m_target(target)
     , m_pseudoId(pseudoId)
 {
@@ -1962,6 +1962,22 @@ void KeyframeEffect::animationWasCanceled()
         addPendingAcceleratedAction(AcceleratedAction::Stop);
 }
 
+void KeyframeEffect::wasRemovedFromStack()
+{
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        return;
+#endif
+
+    // If the effect was running accelerated, we need to mark it for removal straight away
+    // since it will not be invalidated by a future call to KeyframeEffectStack::applyPendingAcceleratedActions().
+    if (animation() && (isRunningAccelerated() || isAboutToRunAccelerated())) {
+        m_pendingAcceleratedActions.clear();
+        m_pendingAcceleratedActions.append(AcceleratedAction::Stop);
+        applyPendingAcceleratedActions();
+    }
+}
+
 void KeyframeEffect::willChangeRenderer()
 {
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
@@ -1997,6 +2013,7 @@ void KeyframeEffect::applyPendingAcceleratedActionsOrUpdateTimingProperties()
 
     if (m_pendingAcceleratedActions.isEmpty()) {
         m_pendingAcceleratedActions.append(AcceleratedAction::UpdateProperties);
+        m_lastRecordedAcceleratedAction = AcceleratedAction::Play;
         applyPendingAcceleratedActions();
         m_pendingAcceleratedActions.clear();
     } else
@@ -2142,16 +2159,16 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
 
     switch (direction()) {
     case PlaybackDirection::Normal:
-        animation->setDirection(Animation::AnimationDirectionNormal);
+        animation->setDirection(Animation::Direction::Normal);
         break;
     case PlaybackDirection::Alternate:
-        animation->setDirection(Animation::AnimationDirectionAlternate);
+        animation->setDirection(Animation::Direction::Alternate);
         break;
     case PlaybackDirection::Reverse:
-        animation->setDirection(Animation::AnimationDirectionReverse);
+        animation->setDirection(Animation::Direction::Reverse);
         break;
     case PlaybackDirection::AlternateReverse:
-        animation->setDirection(Animation::AnimationDirectionAlternateReverse);
+        animation->setDirection(Animation::Direction::AlternateReverse);
         break;
     }
 

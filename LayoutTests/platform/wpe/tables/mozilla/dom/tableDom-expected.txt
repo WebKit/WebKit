@@ -10,19 +10,19 @@ layer at (0,0) size 800x600
               text run at (5,5) width 72: "append cell"
         RenderText {#text} at (103,6) size 52x17
           text run at (103,6) width 52: "   tbody "
-        RenderTextControl {INPUT} at (155,3) size 53x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (155,3) size 53x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (208,6) size 41x17
           text run at (208,6) width 41: "   row "
-        RenderTextControl {INPUT} at (249,3) size 53x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (249,3) size 53x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (302,6) size 35x17
           text run at (302,6) width 35: "   col "
-        RenderTextControl {INPUT} at (337,3) size 53x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (337,3) size 53x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (390,6) size 74x17
           text run at (390,6) width 74: "   row span "
-        RenderTextControl {INPUT} at (464,3) size 53x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (464,3) size 53x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (517,6) size 68x17
           text run at (517,6) width 68: "   col span "
-        RenderTextControl {INPUT} at (585,3) size 53x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (585,3) size 53x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (638,6) size 20x17
           text run at (638,6) width 20: "     "
         RenderButton {INPUT} at (658,2) size 49x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]

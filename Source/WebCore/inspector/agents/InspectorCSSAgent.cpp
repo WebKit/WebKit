@@ -924,31 +924,31 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM:
 
         switch (*pseudoClass) {
         case Protocol::CSS::ForceablePseudoClass::Active:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassActive);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Active);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Hover:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassHover);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Hover);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Focus:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassFocus);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Focus);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::FocusVisible:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassFocusVisible);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::FocusVisible);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::FocusWithin:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassFocusWithin);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::FocusWithin);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Target:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassTarget);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Target);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Visited:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassVisited);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Visited);
             break;
         }
     }

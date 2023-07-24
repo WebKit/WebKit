@@ -56,10 +56,10 @@
 #define WTF_PLATFORM_MAC 1
 #elif OS(IOS_FAMILY)
 #if OS(IOS)
-/* PLATFORM(IOS) - iOS and iPadOS only (iPhone and iPad), not including macCatalyst, not including watchOS, not including tvOS */
+/* PLATFORM(IOS) - iOS and iPadOS only (iPhone and iPad), not including macCatalyst, not including watchOS, not including tvOS, not including visionOS */
 #define WTF_PLATFORM_IOS 1
 #endif
-/* PLATFORM(IOS_FAMILY) - iOS family, including iOS, iPadOS, macCatalyst, tvOS, watchOS */
+/* PLATFORM(IOS_FAMILY) - iOS family, including iOS, iPadOS, macCatalyst, tvOS, watchOS, visionOS */
 #define WTF_PLATFORM_IOS_FAMILY 1
 #if TARGET_OS_SIMULATOR
 #if OS(IOS)
@@ -87,4 +87,9 @@
 /* PLATFORM(WATCHOS) */
 #if defined(TARGET_OS_WATCH) && TARGET_OS_WATCH
 #define WTF_PLATFORM_WATCHOS 1
+#endif
+
+/* PLATFORM(VISION) */
+#if defined(TARGET_OS_XR) && TARGET_OS_XR
+#define WTF_PLATFORM_VISION 1
 #endif

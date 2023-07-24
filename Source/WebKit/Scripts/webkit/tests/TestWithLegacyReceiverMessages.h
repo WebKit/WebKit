@@ -74,9 +74,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -96,9 +96,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -119,9 +119,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -142,9 +142,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -165,9 +165,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -187,9 +187,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -203,9 +203,9 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_Close; }
     static constexpr bool isSync = false;
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -224,9 +224,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -245,9 +245,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -266,9 +266,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -290,9 +290,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -314,9 +314,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -338,9 +338,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -361,9 +361,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -379,9 +379,9 @@ public:
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -400,9 +400,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -421,9 +421,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -442,9 +442,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -464,9 +464,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -490,9 +490,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -513,9 +513,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:
@@ -536,9 +536,9 @@ public:
     {
     }
 
-    const auto& arguments() const
+    auto&& arguments()
     {
-        return m_arguments;
+        return WTFMove(m_arguments);
     }
 
 private:

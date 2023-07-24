@@ -523,10 +523,13 @@ ScrollbarButtonPressAction ScrollbarThemeGtk::handleMousePressEvent(Scrollbar&, 
     return ScrollbarButtonPressAction::None;
 }
 
-int ScrollbarThemeGtk::scrollbarThickness(ScrollbarControlSize controlSize, ScrollbarExpansionState expansionState)
+int ScrollbarThemeGtk::scrollbarThickness(ScrollbarWidth scrollbarWidth, ScrollbarExpansionState expansionState)
 {
     if (!m_useSystemAppearance)
-        return ScrollbarThemeAdwaita::scrollbarThickness(controlSize, expansionState);
+        return ScrollbarThemeAdwaita::scrollbarThickness(scrollbarWidth, expansionState);
+
+    if (scrollbarWidth == ScrollbarWidth::None)
+        return 0;
 
     auto& scrollbarWidget = static_cast<RenderThemeScrollbar&>(RenderThemeScrollbar::getOrCreate(RenderThemeScrollbar::Type::VerticalScrollbarRight));
     scrollbarWidget.scrollbar().setState(GTK_STATE_FLAG_PRELIGHT);

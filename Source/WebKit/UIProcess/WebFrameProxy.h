@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "FrameLoadState.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebProcessProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -54,6 +55,7 @@ using DataReference = std::span<const uint8_t>;
 namespace WebKit {
 
 class ProvisionalFrameProxy;
+class RemotePageProxy;
 class SafeBrowsingWarning;
 class UserData;
 class WebFramePolicyListenerProxy;
@@ -132,7 +134,7 @@ public:
     void didSameDocumentNavigation(const URL&); // eg. anchor navigation, session state change.
     void didChangeTitle(const String&);
 
-    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&, std::optional<NavigatingToAppBoundDomain>)>&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult, ShouldWaitForInitialLookalikeCharacterStrings);
+    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&, std::optional<NavigatingToAppBoundDomain>)>&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData);
 
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTFMove(contentFilterUnblockHandler); }
@@ -148,16 +150,18 @@ public:
 
     void disconnect();
     void didCreateSubframe(WebCore::FrameIdentifier);
-    ProcessID processIdentifier() const;
-    void swapToProcess(Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&);
+    ProcessID processID() const;
+    void prepareForProvisionalNavigationInProcess(WebProcessProxy&, CompletionHandler<void()>&&);
 
     void commitProvisionalFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
+    void setRemotePageProxy(RemotePageProxy&);
 
     void getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&&);
     FrameTreeCreationParameters frameTreeCreationParameters() const;
 
     WebFrameProxy* parentFrame() { return m_parentFrame.get(); }
     WebProcessProxy& process() { return m_process.get(); }
+    void setProcess(WebProcessProxy& process) { m_process = process; }
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
 
 private:
@@ -180,6 +184,7 @@ private:
     ListHashSet<Ref<WebFrameProxy>> m_childFrames;
     WeakPtr<WebFrameProxy> m_parentFrame;
     std::unique_ptr<ProvisionalFrameProxy> m_provisionalFrame;
+    RefPtr<RemotePageProxy> m_remotePageProxy;
 #if ENABLE(CONTENT_FILTERING)
     WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010-2013 Google Inc. All rights reserved.
  * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -174,8 +174,7 @@ void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChange
         break;
     }
 
-    // FIXME: Why do we do this when eventBehavior == DispatchNoEvent
-    if (!input->focused() || eventBehavior == DispatchNoEvent)
+    if (!input->focused())
         input->setTextAsOfLastFormControlChangeEvent(sanitizedValue);
 
     if (UserTypingGestureIndicator::processingUserTypingGesture())

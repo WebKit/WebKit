@@ -57,11 +57,10 @@ void PlatformWebView::registerWindowClass()
     ::RegisterClassExW(&wndClass);
 }
 
-PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+PlatformWebView::PlatformWebView(WKContextRef contextRef)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(configuration.get(), contextRef);
-    WKPageConfigurationSetPageGroup(configuration.get(), pageGroupRef);
 
     initialize(configuration.get());
 }
@@ -75,7 +74,6 @@ PlatformWebView::PlatformWebView(WKPageRef relatedPage)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(configuration.get(), WKPageGetContext(relatedPage));
-    WKPageConfigurationSetPageGroup(configuration.get(), WKPageGetPageGroup(relatedPage));
     WKPageConfigurationSetRelatedPage(configuration.get(), relatedPage);
 
     initialize(configuration.get());

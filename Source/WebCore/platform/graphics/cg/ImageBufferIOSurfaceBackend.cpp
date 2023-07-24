@@ -199,15 +199,15 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
 void ImageBufferIOSurfaceBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)
 {
     const_cast<ImageBufferIOSurfaceBackend*>(this)->prepareForExternalRead();
-    IOSurface::Locker lock(*m_surface);
-    ImageBufferBackend::getPixelBuffer(srcRect, lock.surfaceBaseAddress(), destination);
+    if (auto lock = m_surface->lock<IOSurface::AccessMode::ReadOnly>())
+        ImageBufferBackend::getPixelBuffer(srcRect, lock->surfaceBaseAddress(), destination);
 }
 
 void ImageBufferIOSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     prepareForExternalWrite();
-    IOSurface::Locker lock(*m_surface, IOSurface::Locker::AccessMode::ReadWrite);
-    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, lock.surfaceBaseAddress());
+    if (auto lock = m_surface->lock<IOSurface::AccessMode::ReadWrite>())
+        ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, lock->surfaceBaseAddress());
 }
 
 IOSurface* ImageBufferIOSurfaceBackend::surface()

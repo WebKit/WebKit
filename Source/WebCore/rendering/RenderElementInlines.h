@@ -73,7 +73,7 @@ inline bool RenderElement::shouldApplyAnyContainment() const
 
 inline bool RenderElement::shouldApplyInlineSizeContainment() const
 {
-    return shouldApplySizeOrStyleContainment(style().containsInlineSize());
+    return isSkippedContentRoot() || shouldApplySizeOrStyleContainment(style().containsInlineSize());
 }
 
 inline bool RenderElement::shouldApplyLayoutContainment() const
@@ -98,12 +98,12 @@ inline bool RenderElement::shouldApplyPaintContainment() const
 
 inline bool RenderElement::shouldApplySizeContainment() const
 {
-    return shouldApplySizeOrStyleContainment(style().containsSize() || style().contentVisibility() == ContentVisibility::Hidden);
+    return isSkippedContentRoot() || shouldApplySizeOrStyleContainment(style().containsSize());
 }
 
 inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
 {
-    return shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize() || style().contentVisibility() == ContentVisibility::Hidden);
+    return isSkippedContentRoot() || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize());
 }
 
 inline bool RenderElement::shouldApplySizeOrStyleContainment(bool containsAccordingToStyle) const

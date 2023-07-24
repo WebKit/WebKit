@@ -13,16 +13,19 @@
 #
 # gen_builtin_symbols.py:
 #  Code generation for the built-in symbol tables.
+import sys
+
+# Conditional import enables getting inputs/outputs with python3 instead of vpython3
+if len(sys.argv) < 2:
+    from perfect_hash import generate_hash, Hash2
 
 from collections import OrderedDict
-from perfect_hash import generate_hash, Hash2
 import argparse
 import copy
 import hashlib
 import json
 import re
 import os
-import sys
 import random
 
 template_immutablestring_cpp = """// GENERATED FILE - DO NOT EDIT.

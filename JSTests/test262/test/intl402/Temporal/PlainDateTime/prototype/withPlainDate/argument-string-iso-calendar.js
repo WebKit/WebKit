@@ -16,7 +16,23 @@ const cal = {
   year() { return 2008; },
   month() { return 9; },
   monthCode() { return "M09"; },
-  day() { return 6; }
+  day() { return 6; },
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  inLeapYear() {},
+  mergeFields() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
 };
 const dt = new Temporal.PlainDateTime(1995, 12, 7, 3, 24, 30, 0, 0, 0, cal);
 const shifted = dt.withPlainDate("2010-11-12");
@@ -30,7 +46,7 @@ TemporalHelpers.assertPlainDateTime(
 );
 
 assert.sameValue(
-  shifted.calendar,
+  shifted.getCalendar(),
   cal,
   "calendar is unchanged if input has ISO calendar (2)"
 );

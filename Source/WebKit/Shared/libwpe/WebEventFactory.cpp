@@ -157,6 +157,33 @@ static inline short pressedMouseButtons(uint32_t modifiers)
     return buttons;
 }
 
+static inline unsigned clickCount(struct wpe_input_pointer_event* event)
+{
+    static const uint32_t doubleClickTime = 500; // Milliseconds.
+    static const int pixelThreshold = 5;
+    static struct wpe_input_pointer_event gLastClickEvent = { };
+    static unsigned gLastClickCount = 1;
+
+    bool cancelPreviousClick = (event->time - gLastClickEvent.time) > doubleClickTime
+        || std::abs(event->x - gLastClickEvent.x) > pixelThreshold
+        || std::abs(event->y - gLastClickEvent.y) > pixelThreshold;
+
+    if (event->type == wpe_input_pointer_event_type_button && event->state) {
+        if (!cancelPreviousClick && (event->button == gLastClickEvent.button))
+            ++gLastClickCount;
+        else
+            gLastClickCount = 1;
+        gLastClickEvent = *event;
+    } else if (event->type == wpe_input_pointer_event_type_motion) {
+        if (cancelPreviousClick) {
+            gLastClickCount = 0;
+            gLastClickEvent = { };
+        }
+    }
+
+    return gLastClickCount;
+}
+
 WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_event* event, float deviceScaleFactor, WebMouseEventSyntheticClickType syntheticClickType)
 {
     auto type = WebEventType::NoType;
@@ -186,13 +213,11 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
         ASSERT_NOT_REACHED();
     }
 
-    unsigned clickCount = (type == WebEventType::MouseDown) ? 1 : 0;
-
-    // FIXME: Proper button support. deltaX/Y/Z. Click count.
+    // FIXME: Proper button support. deltaX/Y/Z.
     WebCore::IntPoint position(event->x, event->y);
     position.scale(1 / deviceScaleFactor);
     return WebMouseEvent({ type, modifiersForEventModifiers(event->modifiers), wallTimeForEventTime(event->time) }, button, pressedMouseButtons(event->modifiers), position, position,
-        0, 0, 0, clickCount, 0, syntheticClickType);
+        0, 0, 0, clickCount(event), 0, syntheticClickType);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
@@ -261,24 +286,24 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
 }
 
 #if ENABLE(TOUCH_EVENTS)
-static WebKit::WebPlatformTouchPoint::TouchPointState stateForTouchPoint(int mainEventId, const struct wpe_input_touch_event_raw* point)
+static WebKit::WebPlatformTouchPoint::State stateForTouchPoint(int mainEventId, const struct wpe_input_touch_event_raw* point)
 {
     if (point->id != mainEventId)
-        return WebKit::WebPlatformTouchPoint::TouchStationary;
+        return WebKit::WebPlatformTouchPoint::State::Stationary;
 
     switch (point->type) {
     case wpe_input_touch_event_type_down:
-        return WebKit::WebPlatformTouchPoint::TouchPressed;
+        return WebKit::WebPlatformTouchPoint::State::Pressed;
     case wpe_input_touch_event_type_motion:
-        return WebKit::WebPlatformTouchPoint::TouchMoved;
+        return WebKit::WebPlatformTouchPoint::State::Moved;
     case wpe_input_touch_event_type_up:
-        return WebKit::WebPlatformTouchPoint::TouchReleased;
+        return WebKit::WebPlatformTouchPoint::State::Released;
     case wpe_input_touch_event_type_null:
         ASSERT_NOT_REACHED();
         break;
     };
 
-    return WebKit::WebPlatformTouchPoint::TouchStationary;
+    return WebKit::WebPlatformTouchPoint::State::Stationary;
 }
 
 WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event* event, float deviceScaleFactor)

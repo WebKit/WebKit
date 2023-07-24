@@ -305,8 +305,8 @@ public:
     {
         return addSpeculationMode(
             add,
-            add->child1()->shouldSpeculateInt32OrBooleanExpectingDefined(),
-            add->child2()->shouldSpeculateInt32OrBooleanExpectingDefined(),
+            add->child1()->shouldSpeculateInt32OrBooleanExpectingDefined(add->mayHaveDoubleResult()),
+            add->child2()->shouldSpeculateInt32OrBooleanExpectingDefined(add->mayHaveDoubleResult()),
             pass);
     }
     
@@ -314,8 +314,8 @@ public:
     {
         return addSpeculationMode(
             add,
-            add->child1()->shouldSpeculateInt32OrBooleanForArithmetic(),
-            add->child2()->shouldSpeculateInt32OrBooleanForArithmetic(),
+            add->child1()->shouldSpeculateInt32OrBooleanForArithmetic(add->mayHaveDoubleResult()),
+            add->child2()->shouldSpeculateInt32OrBooleanForArithmetic(add->mayHaveDoubleResult()),
             pass);
     }
     
@@ -366,7 +366,7 @@ public:
             NodeFlags flags = node->flags() & NodeBytecodeBackPropMask;
             if (!flags)
                 return false;
-            return (flags & (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex)) == flags;
+            return (flags & (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex)) == flags;
         };
 
         // Wrapping Int52 to Value is also not so cheap. Thus, we allow Int52 addition only when the node is used as number.
@@ -1151,17 +1151,7 @@ public:
 
     void freeDFGIRAfterLowering();
 
-    const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(const String& string)
-    {
-        constexpr unsigned minPatternLength = 9;
-        if (string.length() > BoyerMooreHorspoolTable<uint8_t>::maxPatternLength)
-            return nullptr;
-        if (string.length() < minPatternLength)
-            return nullptr;
-        return m_stringSearchTable8.ensure(string, [&]() {
-            return makeUnique<BoyerMooreHorspoolTable<uint8_t>>(string);
-        }).iterator->value.get();
-    }
+    const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(const String&);
 
     StackCheck m_stackChecker;
     VM& m_vm;

@@ -34,7 +34,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-enum class NetworkConnectionIntegrity : uint16_t;
+enum class AdvancedPrivacyProtections : uint16_t;
 class ResourceRequest;
 };
 
@@ -52,7 +52,7 @@ public:
         Timeout,
         Success,
     };
-    AsyncRevalidation(Cache&, const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>&&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy, CompletionHandler<void(Result)>&&);
+    AsyncRevalidation(Cache&, const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>&&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, CompletionHandler<void(Result)>&&);
     void cancel();
 
     const SpeculativeLoad& load() const { return *m_load; }

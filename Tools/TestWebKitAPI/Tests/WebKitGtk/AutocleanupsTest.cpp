@@ -39,7 +39,7 @@ private:
         // Transfer none
         g_autoptr(WebKitWebPage) page = WEBKIT_WEB_PAGE(g_object_ref(G_OBJECT(webPage)));
         g_assert_true(WEBKIT_IS_WEB_PAGE(page));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(page));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(page));
 
 #if !USE(GTK4)
         // Transfer none
@@ -47,21 +47,21 @@ private:
         g_autoptr(WebKitDOMDocument) document = WEBKIT_DOM_DOCUMENT(g_object_ref(G_OBJECT(webkit_web_page_get_dom_document(page))));
         g_assert_true(WEBKIT_DOM_IS_DOCUMENT(document));
         G_GNUC_END_IGNORE_DEPRECATIONS;
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
 
         // Transfer full
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_autoptr(WebKitDOMDOMWindow) window = webkit_dom_document_get_default_view(document);
         g_assert_true(WEBKIT_DOM_IS_DOM_WINDOW(window));
         G_GNUC_END_IGNORE_DEPRECATIONS;
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(window));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(window));
 
         // Transfer full
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_autoptr(WebKitDOMRange) range = webkit_dom_document_create_range(document);
         g_assert_true(WEBKIT_DOM_IS_RANGE(range));
         G_GNUC_END_IGNORE_DEPRECATIONS;
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(range));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(range));
 #endif
 
         return true;

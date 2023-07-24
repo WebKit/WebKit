@@ -18,9 +18,9 @@ bool IsMetalRendererAvailable()
 
     // We only support macos 10.13+ and 11 for now. Since they are requirements for Metal 2.0.
 #if TARGET_OS_SIMULATOR
-    if (ANGLE_APPLE_AVAILABLE_XCI(10.13, 13.0, 13))
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.13, 13.1, 13))
 #else
-    if (ANGLE_APPLE_AVAILABLE_XCI(10.13, 13.0, 11))
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.13, 13.1, 11))
 #endif
     {
         if (!queriedSystemDevice)

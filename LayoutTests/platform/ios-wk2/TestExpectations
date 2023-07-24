@@ -122,6 +122,8 @@ imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html
 webkit.org/b/170713 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/text-transform.html [ ImageOnlyFailure ]
 
+webkit.org/b/259089 imported/w3c/web-platform-tests/css/css-ui/text-overflow-028.html [ ImageOnlyFailure ]
+
 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
 applicationmanifest/ [ Pass ]
@@ -1175,7 +1177,6 @@ webkit.org/b/161631 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 # Newly imported WPT tests that are timing out on iOS.
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate-keyup-prevented.html [ Skip ]
-imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/auxclick_event.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/click_event_target_child_parent.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/click_event_target_siblings.html [ Skip ]
@@ -1897,6 +1898,8 @@ webkit.org/b/215326 imported/w3c/web-platform-tests/css/css-images/image-set/ima
 
 webkit.org/b/215345 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html [ Pass Timeout ]
 
+webkit.org/b/259088 imported/w3c/web-platform-tests/css/css-fonts/cjk-kerning.html [ Failure ]
+
 webkit.org/b/215350 http/tests/xmlhttprequest/overridemimetype-headers-received-state-force-shiftjis.html [ Pass Timeout ]
 
 webkit.org/b/215351 http/wpt/service-workers/module-meta-url-fragment.https.html [ Pass Failure ]
@@ -2079,8 +2082,6 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-select
 
 webkit.org/b/230412 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https.html [ Pass Failure ]
 
-webkit.org/b/217114 compositing/debug-borders-dynamic.html [ Pass Failure ]
-
 webkit.org/b/230695 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-003.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230695 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-004.html [ Pass ImageOnlyFailure ]
 
@@ -2089,8 +2090,6 @@ webkit.org/b/230700 webrtc/datachannel/mdns-ice-candidates.html [ Pass Failure ]
 webkit.org/b/230773 imported/w3c/web-platform-tests/css/css-flexbox/fixed-table-layout-with-percentage-width-in-flex-item.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/230850 remote-layer-tree/ios/uiview-tree-basic.html [ Pass Failure ] 
-
-webkit.org/b/230905 imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Pass Failure ]
 
 webkit.org/b/231752 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-049.html [ Pass Crash ]
 
@@ -2365,13 +2364,11 @@ imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ F
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
 
 # webkit.org/b/246701 Flaky failure only on iOS
-imported/w3c/web-platform-tests/screen-orientation/active-lock.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/event-before-promise.html [ Pass Failure ]
-imported/w3c/web-platform-tests/screen-orientation/lock-basic.html [ Pass Failure ]
-imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Pass Failure ]
-imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/onchange-event.html [ Pass Failure ]
+
+webkit.org/b/259134 imported/w3c/web-platform-tests/screen-orientation/unlock.html [ Failure ]
 
 # UserActivation tests rely on test_driver.click() which is not supported on iOS
 imported/w3c/web-platform-tests/html/user-activation/chained-setTimeout.html [ Skip ]
@@ -2380,7 +2377,6 @@ imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-cros
 imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-sameorigin.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/user-activation-interface.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-same-and-cross-origin.sub.html [ Skip ]
-imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html
 
 # WebGL in OffscreenCanvas requires the GPUP.
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.html [ Skip ]
@@ -2403,7 +2399,11 @@ fast/forms/date/date-validity-badinput.html [ Skip ]
 fast/forms/datetimelocal/datetimelocal-validity-badinput.html [ Skip ]
 fast/forms/time/time-validity-badinput.html [ Skip ]
 
-webkit.org/b/256613 imported/w3c/web-platform-tests/screen-orientation/fullscreen-interactions.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/css/css-color/system-color-compute.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html [ Failure ]
+
+webkit.org/b/259085 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-018.html [ ImageOnlyFailure ]
+webkit.org/b/259085 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-019.html [ ImageOnlyFailure ]
 
 # Skipping scrollbar-width tests that don't work with overlay scrollbars
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-001.html [ Skip ]
@@ -2414,3 +2414,57 @@ imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-005.html [ Sk
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-006.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-007.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-008.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-009.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-010.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-011.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-012.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-013.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-014.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-015.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-016.html [ Skip ]
+
+# Skipping scrollbar-color tests that don't work with overlay scrollbars
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-003.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-004.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-005.html [ Skip ]
+
+# Skipping scrollbar-gutter tests that don't work with overlay scrollbars
+imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-intrinsic-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-intrinsic-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-intrinsic-003.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-dynamic-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-rtl-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-rtl-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-lr-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-lr-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-rl-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-rl-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-003.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-004.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-005.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-006.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-007.html [ Skip ]
+
+# Trailing space/text alignment iOS-specific WPT failures
+webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-and-text-alignment-001.html [ ImageOnlyFailure ]
+webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-and-text-alignment-005.html [ ImageOnlyFailure ]
+webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-and-text-alignment-rtl-001.html [ ImageOnlyFailure ]
+webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-and-text-alignment-rtl-005.html [ ImageOnlyFailure ]
+
+# Layout tests that fail for iOS only for css-highlights 
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-iframe-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-iframe-004.html [ ImageOnlyFailure ]
+
+# Test has been flaky since it import.
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-escalate-privileges.tentative.sub.window.html [ Failure Pass ]
+
+# Requires grammar checking to be enabled (rdar://103646683)
+editing/selection/ios/show-grammar-replacements-on-tap.html [ Skip ]
+
+webkit.org/b/259132 imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch.tentative.html [ Failure ]

@@ -83,6 +83,7 @@ public:
     void setNode(Node*);
     Node* node() const override { return m_node.get(); }
     Document* document() const override;
+    LocalFrameView* documentFrameView() const override;
 
     void setFocused(bool) override;
     bool isFocused() const override;
@@ -120,6 +121,7 @@ public:
     Element* actionElement() const override;
     Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;
     Element* anchorElement() const override;
+    Element* popoverTargetElement() const final;
     AccessibilityObject* internalLinkElement() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
     void addRadioButtonGroupChildren(AXCoreObject&, AccessibilityChildrenVector&) const;
@@ -161,6 +163,7 @@ protected:
     virtual AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
 
+    bool computeAccessibilityIsIgnored() const override;
     void addChildren() override;
     void clearChildren() override;
     void updateChildrenIfNecessary() override;
@@ -176,6 +179,12 @@ protected:
     // This returns true if it's focusable but it's not content editable and it's not a control or ARIA control.
     bool isGenericFocusableElement() const;
 
+    VisiblePositionRange visiblePositionRange() const final;
+    VisiblePositionRange selectedVisiblePositionRange() const final;
+    VisiblePositionRange visiblePositionRangeForLine(unsigned) const final;
+    VisiblePosition visiblePositionForIndex(int) const override;
+    int indexForVisiblePosition(const VisiblePosition&) const override;
+
     bool elementAttributeValue(const QualifiedName&) const;
 
     const String liveRegionStatus() const override;
@@ -186,8 +195,7 @@ protected:
     bool isLabelable() const;
     AccessibilityObject* correspondingControlForLabelElement() const override;
     AccessibilityObject* correspondingLabelForControlElement() const override;
-    HTMLLabelElement* labelForElement(Element*) const;
-    String textForLabelElement(Element*) const;
+    String textForLabelElements(Vector<HTMLLabelElement*>&&) const;
     HTMLLabelElement* labelElementContainer() const;
 
     String ariaAccessibilityDescription() const;
@@ -210,13 +218,13 @@ private:
     void visibleText(Vector<AccessibilityText>&) const;
     String alternativeTextForWebArea() const;
     void ariaLabeledByText(Vector<AccessibilityText>&) const;
-    bool computeAccessibilityIsIgnored() const override;
     bool usesAltTagForTextComputation() const;
     bool roleIgnoresTitle() const;
     bool postKeyboardKeysForValueChange(StepAction);
     void setNodeValue(StepAction, float);
     bool performDismissAction() final;
     bool hasTextAlternative() const;
+    LayoutRect checkboxOrRadioRect() const;
 
     void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
     bool needsToUpdateChildren() const override { return m_childrenDirty; }

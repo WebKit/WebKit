@@ -768,6 +768,8 @@
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with telemetry))
+    (deny syscall-unix (with no-report) (syscall-number
+        SYS_faccessat))
     (allow syscall-unix (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
@@ -790,7 +792,6 @@
         SYS_dup
         SYS_dup2
         SYS_exit
-        SYS_faccessat
         SYS_fcntl
         SYS_fcntl_nocancel
         SYS_fileport_makefd

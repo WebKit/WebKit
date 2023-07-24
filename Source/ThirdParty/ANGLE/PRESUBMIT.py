@@ -233,7 +233,7 @@ def _CheckCodeGeneration(input_api, output_api):
     class Msg(output_api.PresubmitError):
         """Specialized error message"""
 
-        def __init__(self, message):
+        def __init__(self, message, **kwargs):
             super(output_api.PresubmitError, self).__init__(
                 message,
                 long_text='Please ensure your ANGLE repositiory is synced to tip-of-tree\n'
@@ -242,7 +242,8 @@ def _CheckCodeGeneration(input_api, output_api):
                 'If that fails, run scripts/run_code_generation.py to refresh generated hashes.\n'
                 '\n'
                 'If you are building ANGLE inside Chromium you must bootstrap ANGLE\n'
-                'before gclient sync. See the DevSetup documentation for more details.\n')
+                'before gclient sync. See the DevSetup documentation for more details.\n',
+                **kwargs)
 
     code_gen_path = input_api.os_path.join(input_api.PresubmitLocalPath(),
                                            'scripts/run_code_generation.py')

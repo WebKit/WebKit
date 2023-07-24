@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_factory.h"
@@ -33,7 +34,7 @@
 #include "rtc_base/task_queue.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
-#include "video/receive_statistics_proxy2.h"
+#include "video/receive_statistics_proxy.h"
 #include "video/rtp_streams_synchronizer2.h"
 #include "video/rtp_video_stream_receiver2.h"
 #include "video/transport_adapter.h"
@@ -127,7 +128,11 @@ class VideoReceiveStream2
   // Getters for const remote SSRC values that won't change throughout the
   // object's lifetime.
   uint32_t remote_ssrc() const { return config_.rtp.remote_ssrc; }
-  uint32_t rtx_ssrc() const { return config_.rtp.rtx_ssrc; }
+  // RTX ssrc can be updated.
+  uint32_t rtx_ssrc() const {
+    RTC_DCHECK_RUN_ON(&packet_sequence_checker_);
+    return updated_rtx_ssrc_.value_or(config_.rtp.rtx_ssrc);
+  }
 
   void SignalNetworkState(NetworkState state);
   bool DeliverRtcp(const uint8_t* packet, size_t length);
@@ -142,10 +147,6 @@ class VideoReceiveStream2
   void Start() override;
   void Stop() override;
 
-  void SetRtpExtensions(std::vector<RtpExtension> extensions) override;
-  RtpHeaderExtensionMap GetRtpExtensionMap() const override;
-  bool transport_cc() const override;
-  void SetTransportCc(bool transport_cc) override;
   void SetRtcpMode(RtcpMode mode) override;
   void SetFlexFecProtection(RtpPacketSinkInterface* flexfec_sink) override;
   void SetLossNotificationEnabled(bool enabled) override;
@@ -195,6 +196,8 @@ class VideoReceiveStream2
                                          bool generate_key_frame) override;
   void GenerateKeyFrame() override;
 
+  void UpdateRtxSsrc(uint32_t ssrc) override;
+
  private:
   // FrameSchedulingReceiver implementation.
   // Called on packet sequence.
@@ -205,16 +208,6 @@ class VideoReceiveStream2
   void CreateAndRegisterExternalDecoder(const Decoder& decoder);
 
   struct DecodeFrameResult {
-    DecodeFrameResult(bool force_request_key_frame, absl::optional<int64_t> decoded_frame_picture_id, bool keyframe_required)
-      : force_request_key_frame(force_request_key_frame)
-      , decoded_frame_picture_id(std::move(decoded_frame_picture_id))
-      , keyframe_required(keyframe_required)
-    {}
-    DecodeFrameResult(const DecodeFrameResult&) = delete;
-    DecodeFrameResult& operator=(const DecodeFrameResult&) = delete;
-    DecodeFrameResult(DecodeFrameResult&&) = default;
-    DecodeFrameResult& operator=(DecodeFrameResult&&) = default;
-
     // True if the decoder returned code WEBRTC_VIDEO_CODEC_OK_REQUEST_KEYFRAME,
     // or if the decoder failed and a keyframe is required. When true, a
     // keyframe request should be sent even if a keyframe request was sent
@@ -286,15 +279,18 @@ class VideoReceiveStream2
   std::unique_ptr<VideoStreamDecoder> video_stream_decoder_;
   RtpStreamsSynchronizer rtp_stream_sync_;
 
-  // TODO(nisse, philipel): Creation and ownership of video encoders should be
-  // moved to the new VideoStreamDecoder.
-  std::vector<std::unique_ptr<VideoDecoder>> video_decoders_;
-
   std::unique_ptr<VideoStreamBufferController> buffer_;
+
+  // `receiver_controller_` is valid from when RegisterWithTransport is invoked
+  //  until UnregisterFromTransport.
+  RtpStreamReceiverControllerInterface* receiver_controller_
+      RTC_GUARDED_BY(packet_sequence_checker_) = nullptr;
 
   std::unique_ptr<RtpStreamReceiverInterface> media_receiver_
       RTC_GUARDED_BY(packet_sequence_checker_);
   std::unique_ptr<RtxReceiveStream> rtx_receive_stream_
+      RTC_GUARDED_BY(packet_sequence_checker_);
+  absl::optional<uint32_t> updated_rtx_ssrc_
       RTC_GUARDED_BY(packet_sequence_checker_);
   std::unique_ptr<RtpStreamReceiverInterface> rtx_receiver_
       RTC_GUARDED_BY(packet_sequence_checker_);
@@ -347,13 +343,6 @@ class VideoReceiveStream2
   // Buffered encoded frames held while waiting for decoded resolution.
   std::vector<std::unique_ptr<EncodedFrame>> buffered_encoded_frames_
       RTC_GUARDED_BY(decode_queue_);
-
-  // Set by the field trial WebRTC-PreStreamDecoders. The parameter `max`
-  // determines the maximum number of decoders that are created up front before
-  // any video frame has been received.
-  FieldTrialParameter<int> maximum_pre_stream_decoders_;
-
-  DecodeSynchronizer* decode_sync_;
 
   // Defined last so they are destroyed before all other members.
   rtc::TaskQueue decode_queue_;

@@ -159,7 +159,7 @@ TEST(WebKit, CookieCachePruning)
 }
 
 // FIXME: Re-enable this test for iOS once webkit.org/b/253387 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(WebKit, DISABLED_CookieAccessFromPDFInAboutBlank)
 #else
 TEST(WebKit, CookieAccessFromPDFInAboutBlank)

@@ -26,7 +26,7 @@
 
 #define SQR(x) ((x) * (x))
 
-// Best possible pixelwise guarenteed preicison given each float has at most
+// Best possible pixelwise guaranteed precision given each float has at most
 // 3 specified decimals.
 #define PIXELWISE_FLOAT_TOL 1E-2
 

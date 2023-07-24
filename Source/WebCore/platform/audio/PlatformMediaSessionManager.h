@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformMediaSessionManager_h
-#define PlatformMediaSessionManager_h
+#pragma once
 
 #include "MediaUniqueIdentifier.h"
 #include "PlatformMediaSession.h"
@@ -140,9 +139,10 @@ public:
     virtual void sessionCanProduceAudioChanged();
 
 #if PLATFORM(IOS_FAMILY)
-    virtual void configureWireLessTargetMonitoring() { }
+    virtual void configureWirelessTargetMonitoring() { }
 #endif
     virtual bool hasWirelessTargetsAvailable() { return false; }
+    virtual bool isMonitoringWirelessTargets() const { return false; }
 
     virtual void setCurrentSession(PlatformMediaSession&);
     PlatformMediaSession* currentSession() const;
@@ -255,6 +255,4 @@ private:
 #endif
 };
 
-}
-
-#endif // PlatformMediaSessionManager_h
+} // namespace WebCore

@@ -38,6 +38,7 @@
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "NodeName.h"
+#include "Quirks.h"
 #include "RenderStyle.h"
 #include "Settings.h"
 #include "StyleResolveForDocument.h"
@@ -185,6 +186,8 @@ void HTMLMetaElement::process()
 #endif
     else if (equalLettersIgnoringASCIICase(nameValue, "referrer"_s))
         document().processReferrerPolicy(contentValue, ReferrerPolicySource::MetaTag);
+    else if (equalLettersIgnoringASCIICase(nameValue, "confluence-request-time"_s))
+        document().quirks().setNeedsToCopyUserSelectNoneQuirk();
 }
 
 const AtomString& HTMLMetaElement::content() const

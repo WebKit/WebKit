@@ -15,6 +15,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,103) size 22x18
           text run at (0,103) width 22: "foo"
 layer at (8,42) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,34) size 784x2 [color=#808080] [border: (1px inset #808080)]
 selection start: position 0 of child 1 {BR} of child 4 {DIV} of body
 selection end:   position 1 of child 1 {BR} of child 4 {DIV} of body

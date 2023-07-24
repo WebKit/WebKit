@@ -29,6 +29,24 @@
 #include "modules/video_capture/video_capture.h"
 #include "rtc_base/logging.h"
 
+// These defines are here to support building on kernel 3.16 which some
+// downstream projects, e.g. Firefox, use.
+// TODO(apehrson): Remove them and their undefs when no longer needed.
+#ifndef V4L2_PIX_FMT_ABGR32
+#define ABGR32_OVERRIDE 1
+#define V4L2_PIX_FMT_ABGR32 v4l2_fourcc('A', 'R', '2', '4')
+#endif
+
+#ifndef V4L2_PIX_FMT_ARGB32
+#define ARGB32_OVERRIDE 1
+#define V4L2_PIX_FMT_ARGB32 v4l2_fourcc('B', 'A', '2', '4')
+#endif
+
+#ifndef V4L2_PIX_FMT_RGBA32
+#define RGBA32_OVERRIDE 1
+#define V4L2_PIX_FMT_RGBA32 v4l2_fourcc('A', 'B', '2', '4')
+#endif
+
 namespace webrtc {
 namespace videocapturemodule {
 VideoCaptureModuleV4L2::VideoCaptureModuleV4L2()
@@ -115,21 +133,24 @@ int32_t VideoCaptureModuleV4L2::StartCapture(
   // Supported video formats in preferred order.
   // If the requested resolution is larger than VGA, we prefer MJPEG. Go for
   // I420 otherwise.
-  const int nFormats = 5;
-  unsigned int fmts[nFormats];
-  if (capability.width > 640 || capability.height > 480) {
-    fmts[0] = V4L2_PIX_FMT_MJPEG;
-    fmts[1] = V4L2_PIX_FMT_YUV420;
-    fmts[2] = V4L2_PIX_FMT_YUYV;
-    fmts[3] = V4L2_PIX_FMT_UYVY;
-    fmts[4] = V4L2_PIX_FMT_JPEG;
-  } else {
-    fmts[0] = V4L2_PIX_FMT_YUV420;
-    fmts[1] = V4L2_PIX_FMT_YUYV;
-    fmts[2] = V4L2_PIX_FMT_UYVY;
-    fmts[3] = V4L2_PIX_FMT_MJPEG;
-    fmts[4] = V4L2_PIX_FMT_JPEG;
-  }
+  unsigned int hdFmts[] = {
+      V4L2_PIX_FMT_MJPEG,  V4L2_PIX_FMT_YUV420, V4L2_PIX_FMT_YVU420,
+      V4L2_PIX_FMT_YUYV,   V4L2_PIX_FMT_UYVY,   V4L2_PIX_FMT_NV12,
+      V4L2_PIX_FMT_ABGR32, V4L2_PIX_FMT_ARGB32, V4L2_PIX_FMT_RGBA32,
+      V4L2_PIX_FMT_BGR32,  V4L2_PIX_FMT_RGB32,  V4L2_PIX_FMT_BGR24,
+      V4L2_PIX_FMT_RGB24,  V4L2_PIX_FMT_RGB565, V4L2_PIX_FMT_JPEG,
+  };
+  unsigned int sdFmts[] = {
+      V4L2_PIX_FMT_YUV420, V4L2_PIX_FMT_YVU420, V4L2_PIX_FMT_YUYV,
+      V4L2_PIX_FMT_UYVY,   V4L2_PIX_FMT_NV12,   V4L2_PIX_FMT_ABGR32,
+      V4L2_PIX_FMT_ARGB32, V4L2_PIX_FMT_RGBA32, V4L2_PIX_FMT_BGR32,
+      V4L2_PIX_FMT_RGB32,  V4L2_PIX_FMT_BGR24,  V4L2_PIX_FMT_RGB24,
+      V4L2_PIX_FMT_RGB565, V4L2_PIX_FMT_MJPEG,  V4L2_PIX_FMT_JPEG,
+  };
+  const bool isHd = capability.width > 640 || capability.height > 480;
+  unsigned int* fmts = isHd ? hdFmts : sdFmts;
+  static_assert(sizeof(hdFmts) == sizeof(sdFmts));
+  constexpr int nFormats = sizeof(hdFmts) / sizeof(unsigned int);
 
   // Enumerate image formats.
   struct v4l2_fmtdesc fmt;
@@ -171,11 +192,31 @@ int32_t VideoCaptureModuleV4L2::StartCapture(
     _captureVideoType = VideoType::kYUY2;
   else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YUV420)
     _captureVideoType = VideoType::kI420;
+  else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YVU420)
+    _captureVideoType = VideoType::kYV12;
   else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_UYVY)
     _captureVideoType = VideoType::kUYVY;
+  else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_NV12)
+    _captureVideoType = VideoType::kNV12;
+  else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_BGR24)
+    _captureVideoType = VideoType::kRGB24;
+  else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_RGB24)
+    _captureVideoType = VideoType::kBGR24;
+  else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_RGB565)
+    _captureVideoType = VideoType::kRGB565;
+  else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_ABGR32 ||
+           video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_BGR32)
+    _captureVideoType = VideoType::kARGB;
+  else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_ARGB32 ||
+           video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_RGB32)
+    _captureVideoType = VideoType::kBGRA;
+  else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_RGBA32)
+    _captureVideoType = VideoType::kABGR;
   else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_MJPEG ||
            video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_JPEG)
     _captureVideoType = VideoType::kMJPEG;
+  else
+    RTC_DCHECK_NOTREACHED();
 
   // set format and frame size now
   if (ioctl(_deviceFd, VIDIOC_S_FMT, &video_fmt) < 0) {
@@ -419,3 +460,18 @@ int32_t VideoCaptureModuleV4L2::CaptureSettings(
 }
 }  // namespace videocapturemodule
 }  // namespace webrtc
+
+#ifdef ABGR32_OVERRIDE
+#undef ABGR32_OVERRIDE
+#undef V4L2_PIX_FMT_ABGR32
+#endif
+
+#ifdef ARGB32_OVERRIDE
+#undef ARGB32_OVERRIDE
+#undef V4L2_PIX_FMT_ARGB32
+#endif
+
+#ifdef RGBA32_OVERRIDE
+#undef RGBA32_OVERRIDE
+#undef V4L2_PIX_FMT_RGBA32
+#endif

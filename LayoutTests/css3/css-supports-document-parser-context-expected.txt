@@ -1,10 +1,10 @@
-Makes sure that CSS.supports() is parsed within the context of the owning document.
+Makes sure that CSS.supports() uses no-quirks mode.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 PASS document.test1 is false
-PASS document.test2 is true
+PASS document.test2 is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

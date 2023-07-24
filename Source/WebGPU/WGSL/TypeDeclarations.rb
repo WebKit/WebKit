@@ -105,13 +105,91 @@ operator :textureSampleBaseClampToEdge, {
   [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],
 }
 
+# 16.1. Constructor Built-in Functions
+
+# 16.1.1. Zero Value Built-in Functions
+operator :bool, {
+    [].() => Bool,
+}
+operator :i32, {
+    [].() => I32,
+}
+operator :u32, {
+    [].() => U32,
+}
+operator :f32, {
+    [].() => F32,
+}
+operator :vec2, {
+    [T < ConcreteScalar].() => Vector[T, 2],
+}
+operator :vec3, {
+    [T < ConcreteScalar].() => Vector[T, 3],
+}
+operator :vec4, {
+    [T < ConcreteScalar].() => Vector[T, 4],
+}
+(2..4).each do |columns|
+    (2..4).each do |rows|
+        operator :"mat#{columns}x#{rows}", {
+            [T < ConcreteFloat].() => Matrix[T, columns, rows],
+        }
+    end
+end
+
+# 16.1.2. Value Constructor Built-in Functions
+
+# 16.1.2.1. array
+# Implemented inline in the type checker
+
+# 16.1.2.2.
+operator :bool, {
+    [T < ConcreteScalar].(T) => Bool,
+}
+
+# 16.1.2.3. f16
+# FIXME: add support for f16
+
+# 16.1.2.4.
+operator :f32, {
+    [T < ConcreteScalar].(T) => F32,
+}
+
+# 16.1.2.5.
+operator :i32, {
+    [T < ConcreteScalar].(T) => I32,
+}
+
+# 16.1.2.6 - 14: matCxR
+(2..4).each do |columns|
+    (2..4).each do |rows|
+        operator :"mat#{columns}x#{rows}", {
+            [T < ConcreteFloat, S < Float].(Matrix[S, columns, rows]) => Matrix[T, columns, rows],
+            [T < Float].(Matrix[T, columns, rows]) => Matrix[T, columns, rows],
+            [T < Float].(*([T] * columns * rows)) => Matrix[T, columns, rows],
+            [T < Float].(*([Vector[T, rows]] * columns)) => Matrix[T, columns, rows],
+        }
+    end
+end
+
+# 16.1.2.15. Structures
+# Implemented inline in the type checker
+
+# 16.1.2.16.
+operator :u32, {
+    [T < ConcreteScalar].(T) => U32,
+}
+
+# 16.1.2.17.
 operator :vec2, {
     [T < Scalar].(T) => Vector[T, 2],
     [T < ConcreteScalar, S < Scalar].(Vector[S, 2]) => Vector[T, 2],
     [S < Scalar].(Vector[S, 2]) => Vector[S, 2],
     [T < Scalar].(T, T) => Vector[T, 2],
+    [].() => Vector[AbstractInt, 2],
 }
 
+# 16.1.2.18.
 operator :vec3, {
     [T < Scalar].(T) => Vector[T, 3],
     [T < ConcreteScalar, S < Scalar].(Vector[S, 3]) => Vector[T, 3],
@@ -119,8 +197,10 @@ operator :vec3, {
     [T < Scalar].(T, T, T) => Vector[T, 3],
     [T < Scalar].(Vector[T, 2], T) => Vector[T, 3],
     [T < Scalar].(T, Vector[T, 2]) => Vector[T, 3],
+    [].() => Vector[AbstractInt, 3],
 }
 
+# 16.1.2.19.
 operator :vec4, {
     [T < Scalar].(T) => Vector[T, 4],
     [T < ConcreteScalar, S < Scalar].(Vector[S, 4]) => Vector[T, 4],
@@ -132,19 +212,8 @@ operator :vec4, {
     [T < Scalar].(Vector[T, 2], Vector[T, 2]) => Vector[T, 4],
     [T < Scalar].(Vector[T, 3], T) => Vector[T, 4],
     [T < Scalar].(T, Vector[T, 3]) => Vector[T, 4],
+    [].() => Vector[AbstractInt, 4],
 }
-
-(2..4).each do |columns|
-    (2..4).each do |rows|
-        operator :"mat#{columns}x#{rows}", {
-            # FIXME: overload resolution should support explicitly instantiating variables
-            # [T < ConcreteFloat, S < Float].(Matrix[S, columns, rows]) => Matrix[T, columns, rows],
-            [T < Float].(Matrix[T, columns, rows]) => Matrix[T, columns, rows],
-            [T < Float].(*([T] * columns * rows)) => Matrix[T, columns, rows],
-            [T < Float].(*([Vector[T, rows]] * columns)) => Matrix[T, columns, rows],
-        }
-    end
-end
 
 # 7.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
 
@@ -484,4 +553,20 @@ operator :transpose, {
 operator :trunc, {
     [T < Float].(T) => T,
     [T < Float, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.7. Texture Built-in Functions (https://gpuweb.github.io/gpuweb/wgsl/#texture-builtin-functions)
+
+# 17.7.4
+operator :textureLoad, {
+    [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture1d], T, U) => Vector[S, 4],
+    [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture2d], Vector[T, 2], U) => Vector[S, 4],
+    [T < ConcreteInteger, V < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture2dArray], Vector[T, 2], V, U) => Vector[S, 4],
+    [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture3d], Vector[T, 3], U) => Vector[S, 4],
+    [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d], Vector[T, 2], U) => Vector[S, 4],
+
+    [T < ConcreteInteger].(TextureExternal, Vector[T, 2]) => Vector[F32, 4],
+
+    # FIXME: add overloads for texture_depth
+    # https://bugs.webkit.org/show_bug.cgi?id=254515
 }

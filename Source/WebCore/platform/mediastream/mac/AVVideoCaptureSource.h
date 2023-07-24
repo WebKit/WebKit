@@ -115,6 +115,8 @@ private:
 
     AVCaptureDevice* device() const { return m_device.get(); }
 
+    IntDegrees sensorOrientationFromVideoOutput();
+
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "AVVideoCaptureSource"; }
 #endif

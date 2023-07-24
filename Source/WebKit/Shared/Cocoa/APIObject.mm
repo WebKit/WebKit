@@ -29,7 +29,6 @@
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
-#import "WKBrowsingContextGroupInternal.h"
 #import "WKConnectionInternal.h"
 #import "WKContentRuleListInternal.h"
 #import "WKContentRuleListStoreInternal.h"
@@ -310,12 +309,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         wrapper = [WKOpenPanelParameters alloc];
         break;
 #endif
-
-    case Type::PageGroup:
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        wrapper = [WKBrowsingContextGroup alloc];
-ALLOW_DEPRECATED_DECLARATIONS_END
-        break;
 
     case Type::SecurityOrigin:
         wrapper = [WKSecurityOrigin alloc];

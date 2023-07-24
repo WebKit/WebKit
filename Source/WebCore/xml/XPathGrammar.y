@@ -183,8 +183,8 @@ Step:
         String nametest = adoptRef($1);
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList($2);
 
-        String localName;
-        String namespaceURI;
+        AtomString localName;
+        AtomString namespaceURI;
         if (!parser.expandQualifiedName(nametest, localName, namespaceURI)) {
             $$ = nullptr;
             YYABORT;
@@ -212,8 +212,8 @@ Step:
         String nametest = adoptRef($2);
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList($3);
 
-        String localName;
-        String namespaceURI;
+        AtomString localName;
+        AtomString namespaceURI;
         if (!parser.expandQualifiedName(nametest, localName, namespaceURI)) {
             $$ = nullptr;
             YYABORT;
@@ -260,8 +260,10 @@ NodeTest:
     |
     PI '(' LITERAL ')'
     {
-        String literal = adoptRef($3);
-        $$ = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::ProcessingInstructionNodeTest, literal.stripWhiteSpace());
+        auto stringImpl = adoptRef($3);
+        if (stringImpl)
+            stringImpl = stringImpl->trim(deprecatedIsSpaceOrNewline);
+        $$ = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::ProcessingInstructionNodeTest, stringImpl.get());
     }
     ;
 

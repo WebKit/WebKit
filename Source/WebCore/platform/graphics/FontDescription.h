@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -44,7 +44,6 @@ public:
     bool operator==(const FontDescription&) const;
 
     float computedSize() const { return m_computedSize; }
-    unsigned computedPixelSize() const { return unsigned(m_computedSize + 0.5f); }
     // Adjusted size regarding @font-face size-adjust but not regarding font-size-adjust. The latter adjustment is done with updateSizeWithFontSizeAdjust() after the font's creation.
     float adjustedSizeForFontFace(float) const;
     std::optional<FontSelectionValue> italic() const { return m_fontSelectionRequest.slope; }

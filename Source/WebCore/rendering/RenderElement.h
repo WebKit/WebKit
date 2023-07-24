@@ -287,6 +287,8 @@ public:
     virtual bool establishesIndependentFormattingContext() const;
     bool createsNewFormattingContext() const;
 
+    bool isSkippedContentRoot() const;
+
 protected:
     enum BaseTypeFlag {
         RenderLayerModelObjectFlag  = 1 << 0,
@@ -539,6 +541,13 @@ inline RenderObject* RenderElement::lastInFlowChild() const
         return lastChild->previousInFlowSibling();
     }
     return nullptr;
+}
+
+inline bool RenderObject::isSkippedContentRoot() const
+{
+    if (isText())
+        return false;
+    return downcast<RenderElement>(*this).isSkippedContentRoot();
 }
 
 } // namespace WebCore

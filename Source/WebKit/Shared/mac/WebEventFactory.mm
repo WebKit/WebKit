@@ -347,7 +347,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     double pressure = [event type] == NSEventTypePressure ? event.pressure : lastPressureEvent.pressure;
     double force = pressure + stage;
 
-    return WebMouseEvent({ type, modifiers, timestamp, UUID::createVersion4() }, button, buttons, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, force, WebMouseEventSyntheticClickType::NoTap, eventNumber, menuTypeForEvent);
+    return WebMouseEvent({ type, modifiers, timestamp, WTF::UUID::createVersion4() }, button, buttons, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, force, WebMouseEventSyntheticClickType::NoTap, eventNumber, menuTypeForEvent);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)
@@ -430,7 +430,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
         rawPlatformDelta = std::nullopt;
     }
 
-    return WebWheelEvent({ WebEventType::Wheel, modifiers, timestamp, UUID::createVersion4() }, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
+    return WebWheelEvent({ WebEventType::Wheel, modifiers, timestamp, WTF::UUID::createVersion4() }, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
         granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas,
         scrollCount, unacceleratedScrollingDelta, ioHIDEventWallTime, rawPlatformDelta, momentumEndType);
 }
@@ -470,7 +470,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool ha
         unmodifiedText = text;
     }
 
-    return WebKeyboardEvent({ type, modifiers, timestamp, UUID::createVersion4() }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, commands, autoRepeat, isKeypad, isSystemKey);
+    return WebKeyboardEvent({ type, modifiers, timestamp, WTF::UUID::createVersion4() }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, commands, autoRepeat, isKeypad, isSystemKey);
 }
 
 OptionSet<WebKit::WebEventModifier> WebEventFactory::webEventModifiersForNSEventModifierFlags(NSEventModifierFlags modifierFlags)

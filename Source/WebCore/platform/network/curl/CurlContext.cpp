@@ -126,6 +126,7 @@ CurlContext::CurlContext()
     m_scheduler = makeUnique<CurlRequestScheduler>(maxConnects, maxTotalConnections, maxHostConnections);
 
     auto info = curl_version_info(CURLVERSION_NOW);
+    RELEASE_ASSERT(info->features & CURL_VERSION_LARGEFILE);
     m_isAltSvcEnabled = info->features & CURL_VERSION_ALTSVC;
     m_isHttp2Enabled = info->features & CURL_VERSION_HTTP2;
 #if ENABLE_CURL_HTTP3
@@ -323,16 +324,10 @@ const String CurlHandle::errorDescription(CURLcode errorCode)
     return String::fromLatin1(curl_easy_strerror(errorCode));
 }
 
-void CurlHandle::enableSSLForHost(const String& host)
+void CurlHandle::enableSSL()
 {
     auto& sslHandle = CurlContext::singleton().sslHandle();
-    if (auto sslClientCertificate = sslHandle.getSSLClientCertificate(host)) {
-        setSslCert(sslClientCertificate->first.utf8().data());
-        setSslCertType("P12");
-        setSslKeyPassword(sslClientCertificate->second.utf8().data());
-    }
-
-    if (sslHandle.canIgnoreAnyHTTPSCertificatesForHost(host) || sslHandle.shouldIgnoreSSLErrors()) {
+    if (sslHandle.shouldIgnoreSSLErrors()) {
         setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
         setSslVerifyHost(CurlHandle::VerifyHost::LooseNameCheck);
     } else {
@@ -404,7 +399,7 @@ void CurlHandle::setUrl(const URL& url)
     curlUrl.removeFragmentIdentifier();
 
     // Remove any query part sent to a local file.
-    if (curlUrl.isLocalFile()) {
+    if (curlUrl.protocolIsFile()) {
         // By setting the query to a null string it'll be removed.
         if (!curlUrl.query().isEmpty())
             curlUrl.setQuery(String());
@@ -414,7 +409,7 @@ void CurlHandle::setUrl(const URL& url)
     curl_easy_setopt(m_handle, CURLOPT_URL, curlUrl.string().latin1().data());
 
     if (url.protocolIs("https"_s))
-        enableSSLForHost(m_url.host().toString());
+        enableSSL();
 }
 
 void CurlHandle::appendRequestHeaders(const HTTPHeaderMap& headers)
@@ -489,33 +484,17 @@ void CurlHandle::enableHttpHeadRequest()
     curl_easy_setopt(m_handle, CURLOPT_NOBODY, 1L);
 }
 
-void CurlHandle::enableHttpPostRequest()
+void CurlHandle::enableHttpPostRequest(curl_off_t size)
 {
     enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_POST, 1L);
-    curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE, 0L);
-}
-
-void CurlHandle::setPostFieldLarge(curl_off_t size)
-{
-    if (expectedSizeOfCurlOffT() != sizeof(long long))
-        size = static_cast<int>(size);
-
     curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE_LARGE, size);
 }
 
-void CurlHandle::enableHttpPutRequest()
+void CurlHandle::enableHttpPutRequest(curl_off_t size)
 {
     enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(m_handle, CURLOPT_INFILESIZE, 0L);
-}
-
-void CurlHandle::setInFileSizeLarge(curl_off_t size)
-{
-    if (expectedSizeOfCurlOffT() != sizeof(long long))
-        size = static_cast<int>(size);
-
     curl_easy_setopt(m_handle, CURLOPT_INFILESIZE_LARGE, size);
 }
 
@@ -592,21 +571,6 @@ void CurlHandle::setSslVerifyPeer(VerifyPeer verifyPeer)
 void CurlHandle::setSslVerifyHost(VerifyHost verifyHost)
 {
     curl_easy_setopt(m_handle, CURLOPT_SSL_VERIFYHOST, static_cast<long>(verifyHost));
-}
-
-void CurlHandle::setSslCert(const char* cert)
-{
-    curl_easy_setopt(m_handle, CURLOPT_SSLCERT, cert);
-}
-
-void CurlHandle::setSslCertType(const char* type)
-{
-    curl_easy_setopt(m_handle, CURLOPT_SSLCERTTYPE, type);
-}
-
-void CurlHandle::setSslKeyPassword(const char* password)
-{
-    curl_easy_setopt(m_handle, CURLOPT_KEYPASSWD, password);
 }
 
 void CurlHandle::setSslCipherList(const char* cipherList)
@@ -759,6 +723,8 @@ std::optional<long long> CurlHandle::getContentLength()
 
 std::optional<long> CurlHandle::getHttpAuthAvail()
 {
+    auto allowedAuthMethods = CURLAUTH_DIGEST | CURLAUTH_BASIC;
+
     if (!m_handle)
         return std::nullopt;
 
@@ -767,11 +733,13 @@ std::optional<long> CurlHandle::getHttpAuthAvail()
     if (errorCode != CURLE_OK)
         return std::nullopt;
 
-    return httpAuthAvailable;
+    return httpAuthAvailable & allowedAuthMethods;
 }
 
 std::optional<long> CurlHandle::getProxyAuthAvail()
 {
+    auto allowedAuthMethods = CURLAUTH_DIGEST | CURLAUTH_BASIC;
+
     if (!m_handle)
         return std::nullopt;
 
@@ -780,7 +748,7 @@ std::optional<long> CurlHandle::getProxyAuthAvail()
     if (errorCode != CURLE_OK)
         return std::nullopt;
 
-    return proxyAuthAvailable;
+    return proxyAuthAvailable & allowedAuthMethods;
 }
 
 std::optional<long> CurlHandle::getHttpVersion()
@@ -963,22 +931,6 @@ std::optional<CertificateInfo> CurlHandle::certificateInfo() const
     }
 
     return std::nullopt;
-}
-
-int CurlHandle::expectedSizeOfCurlOffT()
-{
-    // The size of a curl_off_t could be different in WebKit and in cURL depending on
-    // compilation flags of both.
-    static int expectedSizeOfCurlOffT = 0;
-    if (!expectedSizeOfCurlOffT) {
-        curl_version_info_data* infoData = curl_version_info(CURLVERSION_NOW);
-        if (infoData->features & CURL_VERSION_LARGEFILE)
-            expectedSizeOfCurlOffT = sizeof(long long);
-        else
-            expectedSizeOfCurlOffT = sizeof(int);
-    }
-
-    return expectedSizeOfCurlOffT;
 }
 
 #ifndef NDEBUG

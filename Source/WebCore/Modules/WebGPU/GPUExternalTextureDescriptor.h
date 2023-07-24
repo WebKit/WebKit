@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,25 +28,64 @@
 #include "GPUObjectDescriptorBase.h"
 #include "GPUPredefinedColorSpace.h"
 #include "HTMLVideoElement.h"
-#include <pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h>
+#include "WebCodecsVideoFrame.h"
+#include "WebGPUExternalTextureDescriptor.h"
 #include <wtf/RefPtr.h>
+
+typedef struct __CVBuffer* CVPixelBufferRef;
 
 namespace WebCore {
 
 class HTMLVideoElement;
+#if ENABLE(WEB_CODECS)
+using GPUVideoSource = std::variant<RefPtr<HTMLVideoElement>, RefPtr<WebCodecsVideoFrame>>;
+#else
+using GPUVideoSource = RefPtr<HTMLVideoElement>;
+#endif
 
 struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
-    PAL::WebGPU::ExternalTextureDescriptor convertToBacking() const
+
+    static WebGPU::VideoSourceIdentifier mediaIdentifierForSource(const GPUVideoSource& videoSource, CVPixelBufferRef& outPixelBuffer)
     {
-        auto playerIdentifier = source->playerIdentifier();
+#if ENABLE(WEB_CODECS)
+        return WTF::switchOn(videoSource, [] (const RefPtr<HTMLVideoElement> videoElement) -> WebGPU::VideoSourceIdentifier {
+            auto playerIdentifier = videoElement->playerIdentifier();
+            return WebGPU::HTMLVideoElementIdentifier { playerIdentifier ? playerIdentifier->toUInt64() : 0 };
+        }
+        , [&outPixelBuffer] (const RefPtr<WebCodecsVideoFrame> videoFrame) -> WebGPU::VideoSourceIdentifier {
+#if PLATFORM(COCOA)
+            if (auto internalFrame = videoFrame->internalFrame()) {
+                if (internalFrame->isRemoteProxy())
+                    return WebGPU::WebCodecsVideoFrameIdentifier { internalFrame->resourceIdentifier() };
+
+                outPixelBuffer = internalFrame->pixelBuffer();
+            }
+#else
+            UNUSED_PARAM(videoFrame);
+            UNUSED_PARAM(outPixelBuffer);
+#endif
+            return WebGPU::WebCodecsVideoFrameIdentifier { };
+        });
+#else
+        UNUSED_PARAM(outPixelBuffer);
+        auto playerIdentifier = videoSource->playerIdentifier();
+        return WebGPU::HTMLVideoElementIdentifier { playerIdentifier ? playerIdentifier->toUInt64() : 0 };
+#endif
+    }
+
+    WebGPU::ExternalTextureDescriptor convertToBacking() const
+    {
+        CVPixelBufferRef pixelBuffer = nullptr;
+        auto mediaIdentifier = mediaIdentifierForSource(source, pixelBuffer);
         return {
             { label },
-            playerIdentifier.has_value() ? playerIdentifier->toUInt64() : 0,
+            mediaIdentifier,
             WebCore::convertToBacking(colorSpace),
+            pixelBuffer
         };
     }
 
-    HTMLVideoElement* source { nullptr };
+    GPUVideoSource source;
     GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
 };
 

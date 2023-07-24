@@ -474,7 +474,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 
     /* libpng comments (here to explain what follows).
      *
-     * this function is called for every row in the image.  If the
+     * this function is called for every row in the image. If the
      * image is interlacing, and you turned on the interlace handler,
      * this function will be called for every row in every pass.
      * Some of these rows will not be changed from the previous pass.
@@ -498,24 +498,24 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
      * png_progressive_combine_row() passing in the row and the
      * old row.  You can call this function for NULL rows (it will
      * just return) and for non-interlaced images (it just does the
-     * memcpy for you) if it will make the code easier.  Thus, you
+     * memcpy for you) if it will make the code easier. Thus, you
      * can just do this for all cases:
      *
      *    png_progressive_combine_row(png_ptr, old_row, new_row);
      *
-     * where old_row is what was displayed for previous rows.  Note
+     * where old_row is what was displayed for previous rows. Note
      * that the first pass (pass == 0 really) will completely cover
-     * the old row, so the rows do not have to be initialized.  After
+     * the old row, so the rows do not have to be initialized. After
      * the first pass (and only for interlaced images), you will have
      * to pass the current row, and the function will combine the
      * old row and the new row.
      */
 
     bool hasAlpha = m_reader->hasAlpha();
-    unsigned colorChannels = hasAlpha ? 4 : 3;
     png_bytep row = rowBuffer;
 
     if (png_bytep interlaceBuffer = m_reader->interlaceBuffer()) {
+        unsigned colorChannels = hasAlpha ? 4 : 3;
         row = interlaceBuffer + (rowIndex * colorChannels * size().width());
 #if ENABLE(APNG)
         if (m_currentFrame) {
@@ -836,12 +836,12 @@ void PNGImageDecoder::frameComplete()
     if (m_currentFrame && interlaceBuffer) {
         IntRect rect = buffer.backingStore()->frameRect();
         bool hasAlpha = m_reader->hasAlpha();
-        unsigned colorChannels = hasAlpha ? 4 : 3;
         bool nonTrivialAlpha = false;
         if (m_blend && !hasAlpha)
             m_blend = 0;
 
         png_bytep row = interlaceBuffer;
+        unsigned colorChannels = hasAlpha ? 4 : 3;
         for (int y = rect.y(); y < rect.maxY(); ++y, row += colorChannels * size().width()) {
             png_bytep pixel = row;
             auto* destRow = buffer.backingStore()->pixelAt(rect.x(), y);

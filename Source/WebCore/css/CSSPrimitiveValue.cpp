@@ -777,16 +777,26 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
 
 double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversionData& conversionData, CSSUnitType primitiveType, double value)
 {
-    auto selectContainerRenderer = [&](CQ::Axis axis) -> const RenderBox* {
+    auto resolveContainerUnit = [&](CQ::Axis physicalAxis) -> std::optional<double> {
+        ASSERT(physicalAxis == CQ::Axis::Width || physicalAxis == CQ::Axis::Height);
+
         conversionData.setUsesContainerUnits();
+
         auto* element = conversionData.elementForContainerUnitResolution();
         if (!element)
-            return nullptr;
+            return { };
+
         // FIXME: Use cached query containers when available.
-        auto* container = Style::ContainerQueryEvaluator::selectContainer(axis, nullString(), *element);
+        auto* container = Style::ContainerQueryEvaluator::selectContainer(physicalAxis, nullString(), *element);
         if (!container)
-            return nullptr;
-        return dynamicDowncast<RenderBox>(container->renderer());
+            return { };
+
+        auto* containerRenderer = dynamicDowncast<RenderBox>(container->renderer());
+        if (!containerRenderer)
+            return { };
+
+        auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentWidth() : containerRenderer->contentHeight();
+        return widthOrHeight * value / 100;
     };
 
     switch (primitiveType) {
@@ -904,27 +914,27 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         break;
 
     case CSSUnitType::CSS_CQW: {
-        if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Width))
-            return containerRenderer->contentWidth() * value / 100;
-        return value * conversionData.smallViewportFactor().width();
+        if (auto resolvedValue = resolveContainerUnit(CQ::Axis::Width))
+            return *resolvedValue;
+        return computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_SVW, value);
     }
 
     case CSSUnitType::CSS_CQH: {
-        if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Height))
-            return containerRenderer->contentHeight() * value / 100;
-        return value * conversionData.smallViewportFactor().height();
+        if (auto resolvedValue = resolveContainerUnit(CQ::Axis::Height))
+            return *resolvedValue;
+        return computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_SVH, value);
     }
 
     case CSSUnitType::CSS_CQI: {
-        if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Inline))
-            return containerRenderer->contentLogicalWidth() * value / 100;
-        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.smallViewportFactor(), conversionData.rootStyle());
+        if (auto resolvedValue = resolveContainerUnit(conversionData.style()->isHorizontalWritingMode() ? CQ::Axis::Width : CQ::Axis::Height))
+            return *resolvedValue;
+        return computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_SVI, value);
     }
 
     case CSSUnitType::CSS_CQB: {
-        if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Block))
-            return containerRenderer->contentLogicalHeight() * value / 100;
-        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Block, conversionData.smallViewportFactor(), conversionData.rootStyle());
+        if (auto resolvedValue = resolveContainerUnit(conversionData.style()->isHorizontalWritingMode() ? CQ::Axis::Height : CQ::Axis::Width))
+            return *resolvedValue;
+        return computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_SVB, value);
     }
 
     case CSSUnitType::CSS_CQMAX:

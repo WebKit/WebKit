@@ -223,10 +223,7 @@ class JsepTransport {
   // TODO(bugs.webrtc.org/9719): Delete method, update callers to use
   // SctpTransport() instead.
   webrtc::DataChannelTransportInterface* data_channel_transport() const {
-    if (sctp_data_channel_transport_) {
-      return sctp_data_channel_transport_.get();
-    }
-    return nullptr;
+    return sctp_transport_.get();
   }
 
   // TODO(deadbeef): The methods below are only public for testing. Should make
@@ -311,8 +308,6 @@ class JsepTransport {
   rtc::scoped_refptr<webrtc::DtlsTransport> rtcp_dtls_transport_
       RTC_GUARDED_BY(network_thread_);
 
-  const std::unique_ptr<webrtc::DataChannelTransportInterface>
-      sctp_data_channel_transport_;
   const rtc::scoped_refptr<webrtc::SctpTransport> sctp_transport_;
 
   SrtpFilter sdes_negotiator_ RTC_GUARDED_BY(network_thread_);

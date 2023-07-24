@@ -28,6 +28,7 @@
 
 #import "DisplayCaptureSessionManager.h"
 #import "UserMediaPermissionRequestManagerProxy.h"
+#import "WebPreferences.h"
 
 namespace WebKit {
 using namespace WebCore;
@@ -70,6 +71,9 @@ void UserMediaPermissionRequestProxyMac::promptForGetDisplayMedia(UserMediaDispl
 bool UserMediaPermissionRequestProxyMac::canRequestDisplayCapturePermission()
 {
 #if ENABLE(MEDIA_STREAM)
+    if (!manager() || manager()->page().preferences().requireUAGetDisplayMediaPrompt())
+        return false;
+
     return DisplayCaptureSessionManager::singleton().canRequestDisplayCapturePermission();
 #else
     return false;

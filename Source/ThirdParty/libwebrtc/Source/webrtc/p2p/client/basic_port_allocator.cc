@@ -31,8 +31,10 @@
 #include "p2p/base/turn_port.h"
 #include "p2p/base/udp_port.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/network_constants.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/metrics.h"
@@ -163,9 +165,12 @@ BasicPortAllocator::BasicPortAllocator(
     rtc::NetworkManager* network_manager,
     rtc::PacketSocketFactory* socket_factory,
     webrtc::TurnCustomizer* customizer,
-    RelayPortFactoryInterface* relay_port_factory)
-    : network_manager_(network_manager), socket_factory_(socket_factory) {
-  Init(relay_port_factory, nullptr);
+    RelayPortFactoryInterface* relay_port_factory,
+    const webrtc::FieldTrialsView* field_trials)
+    : field_trials_(field_trials),
+      network_manager_(network_manager),
+      socket_factory_(socket_factory) {
+  Init(relay_port_factory);
   RTC_DCHECK(relay_port_factory_ != nullptr);
   RTC_DCHECK(network_manager_ != nullptr);
   RTC_CHECK(socket_factory_ != nullptr);
@@ -175,10 +180,12 @@ BasicPortAllocator::BasicPortAllocator(
 
 BasicPortAllocator::BasicPortAllocator(
     rtc::NetworkManager* network_manager,
-    std::unique_ptr<rtc::PacketSocketFactory> owned_socket_factory)
-    : network_manager_(network_manager),
+    std::unique_ptr<rtc::PacketSocketFactory> owned_socket_factory,
+    const webrtc::FieldTrialsView* field_trials)
+    : field_trials_(field_trials),
+      network_manager_(network_manager),
       socket_factory_(std::move(owned_socket_factory)) {
-  Init(nullptr, nullptr);
+  Init(nullptr);
   RTC_DCHECK(relay_port_factory_ != nullptr);
   RTC_DCHECK(network_manager_ != nullptr);
   RTC_CHECK(socket_factory_ != nullptr);
@@ -187,10 +194,12 @@ BasicPortAllocator::BasicPortAllocator(
 BasicPortAllocator::BasicPortAllocator(
     rtc::NetworkManager* network_manager,
     std::unique_ptr<rtc::PacketSocketFactory> owned_socket_factory,
-    const ServerAddresses& stun_servers)
-    : network_manager_(network_manager),
+    const ServerAddresses& stun_servers,
+    const webrtc::FieldTrialsView* field_trials)
+    : field_trials_(field_trials),
+      network_manager_(network_manager),
       socket_factory_(std::move(owned_socket_factory)) {
-  Init(nullptr, nullptr);
+  Init(nullptr);
   RTC_DCHECK(relay_port_factory_ != nullptr);
   RTC_DCHECK(network_manager_ != nullptr);
   RTC_CHECK(socket_factory_ != nullptr);
@@ -198,11 +207,15 @@ BasicPortAllocator::BasicPortAllocator(
                    webrtc::NO_PRUNE, nullptr);
 }
 
-BasicPortAllocator::BasicPortAllocator(rtc::NetworkManager* network_manager,
-                                       rtc::PacketSocketFactory* socket_factory,
-                                       const ServerAddresses& stun_servers)
-    : network_manager_(network_manager), socket_factory_(socket_factory) {
-  Init(nullptr, nullptr);
+BasicPortAllocator::BasicPortAllocator(
+    rtc::NetworkManager* network_manager,
+    rtc::PacketSocketFactory* socket_factory,
+    const ServerAddresses& stun_servers,
+    const webrtc::FieldTrialsView* field_trials)
+    : field_trials_(field_trials),
+      network_manager_(network_manager),
+      socket_factory_(socket_factory) {
+  Init(nullptr);
   RTC_DCHECK(relay_port_factory_ != nullptr);
   RTC_DCHECK(network_manager_ != nullptr);
   RTC_CHECK(socket_factory_ != nullptr);
@@ -270,7 +283,8 @@ PortAllocatorSession* BasicPortAllocator::CreateSessionInternal(
   return session;
 }
 
-void BasicPortAllocator::AddTurnServer(const RelayServerConfig& turn_server) {
+void BasicPortAllocator::AddTurnServerForTesting(
+    const RelayServerConfig& turn_server) {
   CheckRunOnValidThreadAndInitialized();
   std::vector<RelayServerConfig> new_turn_servers = turn_servers();
   new_turn_servers.push_back(turn_server);
@@ -278,20 +292,12 @@ void BasicPortAllocator::AddTurnServer(const RelayServerConfig& turn_server) {
                    turn_port_prune_policy(), turn_customizer());
 }
 
-void BasicPortAllocator::Init(RelayPortFactoryInterface* relay_port_factory,
-                              const webrtc::FieldTrialsView* field_trials) {
+void BasicPortAllocator::Init(RelayPortFactoryInterface* relay_port_factory) {
   if (relay_port_factory != nullptr) {
     relay_port_factory_ = relay_port_factory;
   } else {
     default_relay_port_factory_.reset(new TurnPortFactory());
     relay_port_factory_ = default_relay_port_factory_.get();
-  }
-
-  if (field_trials != nullptr) {
-    field_trials_ = field_trials;
-  } else {
-    owned_field_trials_ = std::make_unique<webrtc::FieldTrialBasedConfig>();
-    field_trials_ = owned_field_trials_.get();
   }
 }
 
@@ -747,6 +753,10 @@ std::vector<const rtc::Network*> BasicPortAllocatorSession::GetNetworks() {
       networks.insert(networks.end(), any_address_networks.begin(),
                       any_address_networks.end());
     }
+    RTC_LOG(LS_INFO) << "Count of networks: " << networks.size();
+    for (const rtc::Network* network : networks) {
+      RTC_LOG(LS_INFO) << network->ToString();
+    }
   }
   // Filter out link-local networks if needed.
   if (flags() & PORTALLOCATOR_DISABLE_LINK_LOCAL_NETWORKS) {
@@ -788,26 +798,59 @@ std::vector<const rtc::Network*> BasicPortAllocatorSession::GetNetworks() {
   }
 
   // Lastly, if we have a limit for the number of IPv6 network interfaces (by
-  // default, it's 5), remove networks to ensure that limit is satisfied.
-  //
-  // TODO(deadbeef): Instead of just taking the first N arbitrary IPv6
-  // networks, we could try to choose a set that's "most likely to work". It's
-  // hard to define what that means though; it's not just "lowest cost".
-  // Alternatively, we could just focus on making our ICE pinging logic smarter
-  // such that this filtering isn't necessary in the first place.
-  int ipv6_networks = 0;
+  // default, it's 5), pick IPv6 networks from different interfaces in a
+  // priority order and stick to the limit.
+  std::vector<const rtc::Network*> ipv6_networks;
   for (auto it = networks.begin(); it != networks.end();) {
     if ((*it)->prefix().family() == AF_INET6) {
-      if (ipv6_networks >= allocator_->max_ipv6_networks()) {
-        it = networks.erase(it);
-        continue;
-      } else {
-        ++ipv6_networks;
-      }
+      ipv6_networks.push_back(*it);
+      it = networks.erase(it);
+      continue;
     }
     ++it;
   }
+  ipv6_networks =
+      SelectIPv6Networks(ipv6_networks, allocator_->max_ipv6_networks());
+  networks.insert(networks.end(), ipv6_networks.begin(), ipv6_networks.end());
   return networks;
+}
+
+std::vector<const rtc::Network*> BasicPortAllocatorSession::SelectIPv6Networks(
+    std::vector<const rtc::Network*>& all_ipv6_networks,
+    int max_ipv6_networks) {
+  if (static_cast<int>(all_ipv6_networks.size()) <= max_ipv6_networks) {
+    return all_ipv6_networks;
+  }
+  // Adapter types are placed in priority order. Cellular type is an alias of
+  // cellular, 2G..5G types.
+  std::vector<rtc::AdapterType> adapter_types = {
+      rtc::ADAPTER_TYPE_ETHERNET, rtc::ADAPTER_TYPE_LOOPBACK,
+      rtc::ADAPTER_TYPE_WIFI,     rtc::ADAPTER_TYPE_CELLULAR,
+      rtc::ADAPTER_TYPE_VPN,      rtc::ADAPTER_TYPE_UNKNOWN,
+      rtc::ADAPTER_TYPE_ANY};
+  int adapter_types_cnt = adapter_types.size();
+  std::vector<const rtc::Network*> selected_networks;
+  int adapter_types_pos = 0;
+
+  while (static_cast<int>(selected_networks.size()) < max_ipv6_networks &&
+         adapter_types_pos < adapter_types_cnt * max_ipv6_networks) {
+    int network_pos = 0;
+    while (network_pos < static_cast<int>(all_ipv6_networks.size())) {
+      if (adapter_types[adapter_types_pos % adapter_types_cnt] ==
+              all_ipv6_networks[network_pos]->type() ||
+          (adapter_types[adapter_types_pos % adapter_types_cnt] ==
+               rtc::ADAPTER_TYPE_CELLULAR &&
+           all_ipv6_networks[network_pos]->IsCellular())) {
+        selected_networks.push_back(all_ipv6_networks[network_pos]);
+        all_ipv6_networks.erase(all_ipv6_networks.begin() + network_pos);
+        break;
+      }
+      network_pos++;
+    }
+    adapter_types_pos++;
+  }
+
+  return selected_networks;
 }
 
 // For each network, see if we have a sequence that covers it already.  If not,
@@ -1328,6 +1371,7 @@ void AllocationSequence::OnNetworkFailed() {
 #if defined(WEBRTC_WEBKIT_BUILD)
   set_network_failed();
 #endif
+  network_failed_ = true;
   // Stop the allocation sequence if its network failed.
   Stop();
 }
@@ -1586,12 +1630,17 @@ void AllocationSequence::CreateRelayPorts() {
     return;
   }
 
+  // Relative priority of candidates from this TURN server in relation
+  // to the candidates from other servers. Required because ICE priorities
+  // need to be unique.
+  int relative_priority = config_->relays.size();
   for (RelayServerConfig& relay : config_->relays) {
-    CreateTurnPort(relay);
+    CreateTurnPort(relay, relative_priority--);
   }
 }
 
-void AllocationSequence::CreateTurnPort(const RelayServerConfig& config) {
+void AllocationSequence::CreateTurnPort(const RelayServerConfig& config,
+                                        int relative_priority) {
   PortList::const_iterator relay_port;
   for (relay_port = config.ports.begin(); relay_port != config.ports.end();
        ++relay_port) {
@@ -1624,6 +1673,7 @@ void AllocationSequence::CreateTurnPort(const RelayServerConfig& config) {
     args.config = &config;
     args.turn_customizer = session_->allocator()->turn_customizer();
     args.field_trials = session_->allocator()->field_trials();
+    args.relative_priority = relative_priority;
 
     std::unique_ptr<cricket::Port> port;
     // Shared socket mode must be enabled only for UDP based ports. Hence

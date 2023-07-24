@@ -30,7 +30,6 @@
 #include "api/audio_codecs/g711/audio_encoder_g711.h"
 #include "api/audio_codecs/g722/audio_encoder_g722.h"
 #include "api/audio_codecs/ilbc/audio_encoder_ilbc.h"
-#include "api/audio_codecs/isac/audio_encoder_isac.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
 #include "modules/audio_coding/codecs/cng/audio_encoder_cng.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
@@ -71,7 +70,6 @@ enum class CodecType {
   kPcm16b32,
   kPcm16b48,
   kIlbc,
-  kIsac
 };
 
 struct CodecTypeAndInfo {
@@ -94,8 +92,7 @@ const std::map<std::string, CodecTypeAndInfo>& CodecList() {
           {"pcm16b_16", {CodecType::kPcm16b16, 94, false}},
           {"pcm16b_32", {CodecType::kPcm16b32, 95, false}},
           {"pcm16b_48", {CodecType::kPcm16b48, 96, false}},
-          {"ilbc", {CodecType::kIlbc, 102, false}},
-          {"isac", {CodecType::kIsac, 103, false}}};
+          {"ilbc", {CodecType::kIlbc, 102, false}}};
   return *codec_list;
 }
 
@@ -236,11 +233,6 @@ std::unique_ptr<AudioEncoder> CreateEncoder(CodecType codec_type,
       return AudioEncoderIlbc::MakeAudioEncoder(
           GetCodecConfig<AudioEncoderIlbc>(), payload_type);
     }
-
-    case CodecType::kIsac: {
-      return AudioEncoderIsac::MakeAudioEncoder(
-          GetCodecConfig<AudioEncoderIsac>(), payload_type);
-    }
   }
   RTC_DCHECK_NOTREACHED();
   return nullptr;
@@ -315,8 +307,7 @@ int RunRtpEncode(int argc, char* argv[]) {
 
   // Set up ACM.
   const int timestamp_rate_hz = codec->RtpTimestampRateHz();
-  AudioCodingModule::Config config;
-  std::unique_ptr<AudioCodingModule> acm(AudioCodingModule::Create(config));
+  auto acm(AudioCodingModule::Create());
   acm->SetEncoder(std::move(codec));
 
   // Open files.

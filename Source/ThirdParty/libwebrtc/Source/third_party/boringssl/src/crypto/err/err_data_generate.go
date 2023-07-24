@@ -1,16 +1,18 @@
-/* Copyright (c) 2015, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright (c) 2015, Google Inc.
+//
+// Permission to use, copy, modify, and/or distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+// OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+//go:build ignore
 
 package main
 
@@ -115,23 +117,8 @@ func (st *stringList) Add(key uint32, value string) error {
 	return nil
 }
 
-// keySlice is a type that implements sorting of entries values.
-type keySlice []uint32
-
-func (ks keySlice) Len() int {
-	return len(ks)
-}
-
-func (ks keySlice) Less(i, j int) bool {
-	return (ks[i] >> 15) < (ks[j] >> 15)
-}
-
-func (ks keySlice) Swap(i, j int) {
-	ks[i], ks[j] = ks[j], ks[i]
-}
-
 func (st *stringList) buildList() []uint32 {
-	sort.Sort(keySlice(st.entries))
+	sort.Slice(st.entries, func(i, j int) bool { return (st.entries[i] >> 15) < (st.entries[j] >> 15) })
 	return st.entries
 }
 
@@ -270,15 +257,15 @@ func main() {
 
 #include <openssl/base.h>
 #include <openssl/err.h>
-#include <openssl/type_check.h>
 
+#include <assert.h>
 
 `)
 
 	for i, name := range libraryNames {
-		fmt.Fprintf(out, "OPENSSL_STATIC_ASSERT(ERR_LIB_%s == %d, \"library value changed\");\n", name, i+1)
+		fmt.Fprintf(out, "static_assert(ERR_LIB_%s == %d, \"library value changed\");\n", name, i+1)
 	}
-	fmt.Fprintf(out, "OPENSSL_STATIC_ASSERT(ERR_NUM_LIBS == %d, \"number of libraries changed\");\n", len(libraryNames)+1)
+	fmt.Fprintf(out, "static_assert(ERR_NUM_LIBS == %d, \"number of libraries changed\");\n", len(libraryNames)+1)
 	out.WriteString("\n")
 
 	e.reasons.WriteTo(out, "Reason")

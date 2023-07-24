@@ -360,11 +360,11 @@ include/GLX/glxext.h
 include/KHR/khrplatform.h
 include/WGL/wgl.h
 include/platform/Feature.h
-include/platform/FeaturesD3D_autogen.h
-include/platform/FeaturesGL_autogen.h
-include/platform/FeaturesMtl_autogen.h
-include/platform/FeaturesVk_autogen.h
-include/platform/FrontendFeatures_autogen.h
+include/platform/autogen/FeaturesD3D_autogen.h
+include/platform/autogen/FeaturesGL_autogen.h
+include/platform/autogen/FeaturesMtl_autogen.h
+include/platform/autogen/FeaturesVk_autogen.h
+include/platform/autogen/FrontendFeatures_autogen.h
 include/platform/PlatformMethods.h
 include/vulkan/vulkan_fuchsia_ext.h
 src/libANGLE/renderer/vulkan/AllocatorHelperPool.cpp
@@ -598,8 +598,8 @@ src/libANGLE/renderer/d3d/VertexDataManager.h
 src/libANGLE/renderer/d3d/driver_utils_d3d.cpp
 src/libANGLE/renderer/d3d/driver_utils_d3d.h
 src/libANGLE/renderer/d3d/formatutilsD3D.h
-src/third_party/systeminfo/SystemInfo.cpp
-src/third_party/systeminfo/SystemInfo.h
+src/gpu_info_util/SystemInfo.cpp
+src/gpu_info_util/SystemInfo.h
 src/libANGLE/renderer/null/BufferNULL.cpp
 src/libANGLE/renderer/null/BufferNULL.h
 src/libANGLE/renderer/null/CompilerNULL.cpp
@@ -710,7 +710,7 @@ src/libANGLE/renderer/metal/renderermtl_utils.cpp
 src/libANGLE/renderer/metal/renderermtl_utils.h
 src/libANGLE/renderer/metal/shaders/constants.h
 src/libANGLE/renderer/metal/shaders/format_autogen.h
-src/libANGLE/renderer/metal/shaders/mtl_default_shaders_src_autogen.inc
+src/libANGLE/renderer/metal/shaders/mtl_internal_shaders_src_autogen.h
 src/libANGLE/renderer/metal/shaders/rewrite_indices_shared.h
 src/libANGLE/capture/FrameCapture.cpp
 src/libANGLE/capture/capture_egl_autogen.cpp

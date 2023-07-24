@@ -245,7 +245,7 @@ int ScrollbarThemeComposite::thumbLength(Scrollbar& scrollbar)
 
 int ScrollbarThemeComposite::minimumThumbLength(Scrollbar& scrollbar)
 {
-    return scrollbarThickness(scrollbar.controlSize());
+    return scrollbarThickness(scrollbar.widthStyle());
 }
 
 int ScrollbarThemeComposite::trackPosition(Scrollbar& scrollbar)

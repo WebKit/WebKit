@@ -67,7 +67,7 @@ die "can't locate x86_64-xlate.pl";
 
 $avx = 2;
 
-open OUT,"| \"$^X\" $xlate $flavour $output";
+open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 *STDOUT=*OUT;
 
 # input parameter block
@@ -78,6 +78,7 @@ $code.=<<___;
 
 .extern OPENSSL_ia32cap_P
 
+.section .rodata
 .align	64
 .Lzero:
 .long	0,0,0,0
@@ -107,6 +108,7 @@ $code.=<<___;
 .Lsixteen:
 .long	16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16
 .asciz	"ChaCha20 for x86_64, CRYPTOGAMS by <appro\@openssl.org>"
+.text
 ___
 
 sub AUTOLOAD()          # thunk [simplified] 32-bit style perlasm
@@ -2782,4 +2784,4 @@ foreach (split("\n",$code)) {
 	print $_,"\n";
 }
 
-close STDOUT or die "error closing STDOUT";
+close STDOUT or die "error closing STDOUT: $!";

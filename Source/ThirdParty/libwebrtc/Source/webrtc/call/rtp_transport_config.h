@@ -44,6 +44,9 @@ struct RtpTransportConfig {
   // Key-value mapping of internal configurations to apply,
   // e.g. field trials.
   const FieldTrialsView* trials = nullptr;
+
+  // The burst interval of the pacer, see TaskQueuePacedSender constructor.
+  absl::optional<TimeDelta> pacer_burst_interval;
 };
 }  // namespace webrtc
 

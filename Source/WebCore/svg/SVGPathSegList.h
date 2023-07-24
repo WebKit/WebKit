@@ -130,7 +130,7 @@ public:
         return m_pathByteStream;
     }
 
-    bool parse(const String& value)
+    bool parse(StringView value)
     {
         pathByteStreamWillChange();
         return buildSVGPathByteStreamFromString(value, m_pathByteStream, UnalteredParsing);

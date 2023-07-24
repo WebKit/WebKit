@@ -46,9 +46,9 @@ layer at (0,0) size 450x500
       RenderSVGText {text} at (174,201) size 102x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 102x12
           chunk 1 (middle anchor) text run 1 at (174.35,210.00) startOffset 0 endOffset 25 width 101.30: "Multi-line Text Selection"
-      RenderSVGText {text} at (159,217) size 132x10 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 131x9
-          chunk 1 (middle anchor) text run 1 at (159.87,225.00) startOffset 0 endOffset 42 width 130.26: "(Try selecting the following text regions)"
+      RenderSVGText {text} at (163,218) size 124x9 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 123x9
+          chunk 1 (middle anchor) text run 1 at (163.85,225.00) startOffset 0 endOffset 42 width 122.31: "(Try selecting the following text regions)"
       RenderSVGText {text} at (120,236) size 210x33 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 206x17
           RenderSVGInlineText {#text} at (0,0) size 206x17

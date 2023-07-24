@@ -149,9 +149,11 @@ public:
                 output[(firstSubpatternId << 1) + i] = offsetNoMatch;
             }
 
+            unsigned nameGroupIdx = 0;
             for (unsigned duplicateNamedGroupId : m_duplicateNamedGroups) {
-                subpatternAndGroupIdBackup[backupOffsetForDuplicateNamedGroup(duplicateNamedGroupId)] = output[m_pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)];
+                subpatternAndGroupIdBackup[backupOffsetForDuplicateNamedGroup(nameGroupIdx)] = output[m_pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)];
                 output[pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)] = 0;
+                ++nameGroupIdx;
             }
 
             new (getDisjunctionContext()) DisjunctionContext();
@@ -167,8 +169,11 @@ public:
             for (unsigned i = 0; i < (m_numNestedSubpatterns << 1); ++i)
                 output[(firstSubpatternId << 1) + i] = subpatternAndGroupIdBackup[i];
 
-            for (unsigned duplicateNamedGroupId : m_duplicateNamedGroups)
-                output[m_pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)] = subpatternAndGroupIdBackup[backupOffsetForDuplicateNamedGroup(duplicateNamedGroupId)];
+            unsigned nameGroupIdx = 0;
+            for (unsigned duplicateNamedGroupId : m_duplicateNamedGroups) {
+                output[m_pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)] = subpatternAndGroupIdBackup[backupOffsetForDuplicateNamedGroup(nameGroupIdx)];
+                ++nameGroupIdx;
+            }
         }
 
         DisjunctionContext* getDisjunctionContext()
@@ -178,8 +183,9 @@ public:
 
         unsigned backupOffsetForDuplicateNamedGroup(unsigned duplicateNamedGroup)
         {
-            ASSERT(duplicateNamedGroup);
-            return (m_numNestedSubpatterns << 1) + duplicateNamedGroup - 1;
+            unsigned offset = (m_numNestedSubpatterns << 1) + duplicateNamedGroup;
+            ASSERT(offset < m_numBackupIds);
+            return offset;
         }
 
         static size_t allocationSize(unsigned numberOfSubpatterns, unsigned numDuplicateNamedGroups)
@@ -275,6 +281,21 @@ public:
                 
                 result = U16_GET_SUPPLEMENTARY(result, input[p + 1]);
                 next();
+            }
+            return result;
+        }
+
+        int readCheckedDontAdvance(unsigned negativePositionOffest)
+        {
+            RELEASE_ASSERT(pos >= negativePositionOffest);
+            unsigned p = pos - negativePositionOffest;
+            ASSERT(p < length);
+            int result = input[p];
+            if (U16_IS_LEAD(result) && decodeSurrogatePairs && p + 1 < length && U16_IS_TRAIL(input[p + 1])) {
+                if (atEnd())
+                    return -1;
+
+                result = U16_GET_SUPPLEMENTARY(result, input[p + 1]);
             }
             return result;
         }
@@ -635,13 +656,13 @@ public:
 
     bool matchAssertionBOL(ByteTerm& term)
     {
-        return (input.atStart(term.inputPosition)) || (pattern->multiline() && testCharacterClass(pattern->newlineCharacterClass, input.readChecked(term.inputPosition + 1)));
+        return (input.atStart(term.inputPosition)) || (pattern->multiline() && testCharacterClass(pattern->newlineCharacterClass, input.readCheckedDontAdvance(term.inputPosition + 1)));
     }
 
     bool matchAssertionEOL(ByteTerm& term)
     {
         if (term.inputPosition)
-            return (input.atEnd(term.inputPosition)) || (pattern->multiline() && testCharacterClass(pattern->newlineCharacterClass, input.readChecked(term.inputPosition)));
+            return (input.atEnd(term.inputPosition)) || (pattern->multiline() && testCharacterClass(pattern->newlineCharacterClass, input.readCheckedDontAdvance(term.inputPosition)));
 
         return (input.atEnd()) || (pattern->multiline() && testCharacterClass(pattern->newlineCharacterClass, input.read()));
     }
@@ -825,7 +846,6 @@ public:
 
         case QuantifierType::Greedy: {
             unsigned position = input.getPos();
-            backTrack->begin = position;
             unsigned matchAmount = 0;
             if (term.matchDirection() == Forward) {
                 while ((matchAmount < term.atom.quantityMaxCount) && input.checkInput(1)) {
@@ -880,27 +900,17 @@ public:
         case QuantifierType::Greedy:
             if (backTrack->matchAmount) {
                 if (isEitherUnicodeCompilation()) {
-                    // Rematch one less match
+                    // Unmatch one codepoint
                     if (term.matchDirection() == Forward) {
-                        input.setPos(backTrack->begin);
                         --backTrack->matchAmount;
-                        for (unsigned matchAmount = 0; (matchAmount < backTrack->matchAmount) && input.checkInput(1); ++matchAmount) {
-                            if (!checkCharacterClass(term, term.inputPosition + 1)) {
-                                input.uncheckInput(1);
-                                break;
-                            }
-                        }
+                        input.uncheckInput(1);
+                        input.tryReadBackward(term.inputPosition);
                         return true;
                     }
                     // matchDirection Backwards
-                    input.setPos(backTrack->begin);
                     --backTrack->matchAmount;
-                    for (unsigned matchAmount = 0; (matchAmount < backTrack->matchAmount) && input.tryUncheckInput(1); ++matchAmount) {
-                        if (!checkCharacterClass(term, term.inputPosition)) {
-                            input.checkInput(1);
-                            break;
-                        }
-                    }
+                    input.readChecked(term.inputPosition);
+                    input.checkInput(1);
                     return true;
                 }
                 --backTrack->matchAmount;
@@ -1050,6 +1060,11 @@ public:
             // For Backward matches, the captured indexes are recorded end then start.
             output[(subpatternId << 1) + term.matchDirection()] = context->getDisjunctionContext()->matchBegin - term.inputPosition;
             output[(subpatternId << 1) + 1 - term.matchDirection()] = context->getDisjunctionContext()->matchEnd - term.inputPosition;
+
+            if (term.duplicateNamedGroupId()) {
+                // Record which of the duplicate named subpatterns matched.
+                output[pattern->offsetForDuplicateNamedGroupId(term.duplicateNamedGroupId())] = subpatternId;
+            }
         }
     }
     void resetMatches(ByteTerm& term, ParenthesesDisjunctionContext* context)
@@ -2468,12 +2483,10 @@ public:
         m_bodyDisjunction->terms.last().m_matchDirection = parenthesesMatchDirection;
         m_allParenthesesInfo.append(WTFMove(parenthesesDisjunction));
 
-        if (m_pattern.hasDuplicateNamedCaptureGroups() && m_bodyDisjunction->terms[beginTerm].capture()) {
+        if (m_pattern.hasDuplicateNamedCaptureGroups() && capture) {
             auto duplicateNamedGroupId = m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId];
-            if (duplicateNamedGroupId) {
-                m_bodyDisjunction->terms[endTerm].atom.parenIds.duplicateNamedGroupId = duplicateNamedGroupId;
+            if (duplicateNamedGroupId)
                 m_bodyDisjunction->terms[beginTerm].atom.parenIds.duplicateNamedGroupId = duplicateNamedGroupId;
-            }
         }
 
         m_bodyDisjunction->terms[beginTerm].atom.quantityMinCount = quantityMinCount;

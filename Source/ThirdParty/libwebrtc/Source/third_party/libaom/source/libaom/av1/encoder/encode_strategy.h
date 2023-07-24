@@ -95,12 +95,12 @@ int is_forced_keyframe_pending(struct lookahead_ctx *lookahead,
                                const COMPRESSOR_STAGE compressor_stage);
 
 static AOM_INLINE int is_frame_droppable(
-    const SVC *const svc,
+    const RTC_REF *const rtc_ref,
     const ExtRefreshFrameFlagsInfo *const ext_refresh_frame_flags) {
   // Droppable frame is only used by external refresh flags. VoD setting won't
   // trigger its use case.
-  if (svc->set_ref_frame_config)
-    return svc->non_reference_frame;
+  if (rtc_ref->set_ref_frame_config)
+    return rtc_ref->non_reference_frame;
   else if (ext_refresh_frame_flags->update_pending)
     return !(ext_refresh_frame_flags->alt_ref_frame ||
              ext_refresh_frame_flags->alt2_ref_frame ||

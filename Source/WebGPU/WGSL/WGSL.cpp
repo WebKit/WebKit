@@ -27,6 +27,7 @@
 #include "WGSL.h"
 
 #include "CallGraph.h"
+#include "ConstantRewriter.h"
 #include "EntryPointRewriter.h"
 #include "GlobalVariableRewriter.h"
 #include "MangleNames.h"
@@ -79,6 +80,10 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     if (maybeFailure.has_value())
         return *maybeFailure;
 
+    maybeFailure = rewriteConstants(shaderModule);
+    if (maybeFailure.has_value())
+        return *maybeFailure;
+
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));
 }
@@ -95,6 +100,8 @@ SuccessfulCheck::~SuccessfulCheck() = default;
 
 inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
+    ShaderModule::Compilation compilation(ast);
+
     PhaseTimes phaseTimes;
     PrepareResult result;
 
@@ -116,7 +123,6 @@ inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, std::o
 
     logPhaseTimes(phaseTimes);
 
-    ast.revertReplacements();
     return result;
 }
 

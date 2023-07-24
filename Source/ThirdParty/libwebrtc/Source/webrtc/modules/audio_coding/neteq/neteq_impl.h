@@ -376,6 +376,8 @@ class NetEqImpl : public webrtc::NetEq {
   size_t decoder_frame_length_ RTC_GUARDED_BY(mutex_);
   Mode last_mode_ RTC_GUARDED_BY(mutex_);
   Operation last_operation_ RTC_GUARDED_BY(mutex_);
+  absl::optional<AudioDecoder::SpeechType> last_decoded_type_
+      RTC_GUARDED_BY(mutex_);
   size_t decoded_buffer_length_ RTC_GUARDED_BY(mutex_);
   std::unique_ptr<int16_t[]> decoded_buffer_ RTC_GUARDED_BY(mutex_);
   uint32_t playout_timestamp_ RTC_GUARDED_BY(mutex_);

@@ -4,7 +4,9 @@ PASS .test 2
 FAIL .test 3 assert_equals:
 <div class="test small-contents overflow-auto cis-width" data-expected-client-width="100" data-expected-client-height="0" data-expected-scroll-width="100" data-expected-scroll-height="20"></div>
 clientWidth expected 100 but got 85
-PASS .test 4
+FAIL .test 4 assert_equals:
+<div class="test small-contents overflow-auto cis-both" data-expected-client-width="100" data-expected-client-height="50" data-expected-scroll-width="100" data-expected-scroll-height="50"></div>
+clientWidth expected 100 but got 85
 PASS .test 5
 PASS .test 6
 PASS .test 7

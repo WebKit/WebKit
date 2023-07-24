@@ -32,4 +32,4 @@ layer at (0,0) size 800x286
           text run at (0,90) width 197: "sollicitudin nisi ut urna blandit"
           text run at (0,108) width 62: "convallis."
 layer at (8,68) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]

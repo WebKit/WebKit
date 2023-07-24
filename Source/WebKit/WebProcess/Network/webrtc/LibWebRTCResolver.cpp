@@ -44,8 +44,9 @@ void LibWebRTCResolver::sendOnMainThread(Function<void(IPC::Connection&)>&& call
     });
 }
 
-void LibWebRTCResolver::Start(const rtc::SocketAddress& address)
+void LibWebRTCResolver::Start(const rtc::SocketAddress& address, int /* family */)
 {
+    // FIXME: Make use of family parameter.
     m_isResolving = true;
     m_addressToResolve = address;
     m_port = address.port();

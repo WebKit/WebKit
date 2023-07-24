@@ -33,7 +33,6 @@
 #import "TestRunnerWKWebView.h"
 #import "WebKitTestRunnerPasteboard.h"
 #import <WebKit/WKContextPrivate.h>
-#import <WebKit/WKPageGroup.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKStringCF.h>
 #import <WebKit/WKURLCF.h>
@@ -171,8 +170,6 @@ void TestController::initializeTestPluginDirectory()
 
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)
 {
-    [LayoutTestSpellChecker uninstallAndReset];
-
     cocoaResetStateToConsistentValues(options);
 
     while ([NSApp nextEventMatchingMask:NSEventMaskGesture | NSEventMaskScrollWheel untilDate:nil inMode:NSDefaultRunLoopMode dequeue:YES]) {

@@ -1,26 +1,26 @@
-/* Copyright (c) 2015, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright (c) 2015, Google Inc.
+//
+// Permission to use, copy, modify, and/or distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+// OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+//go:build ignore
 
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"errors"
 	"flag"
 	"fmt"
-	"math/rand"
 	"os"
 	"os/exec"
 	"path"
@@ -175,10 +175,16 @@ func runTestOnce(test test, mallocNumToFail int64) (passed bool, err error) {
 	} else {
 		cmd = exec.Command(prog, args...)
 	}
-	if test.Env != nil {
+	if test.Env != nil || test.numShards != 0 {
 		cmd.Env = make([]string, len(os.Environ()))
 		copy(cmd.Env, os.Environ())
+	}
+	if test.Env != nil {
 		cmd.Env = append(cmd.Env, test.Env...)
+	}
+	if test.numShards != 0 {
+		cmd.Env = append(cmd.Env, fmt.Sprintf("GTEST_SHARD_INDEX=%d", test.shard))
+		cmd.Env = append(cmd.Env, fmt.Sprintf("GTEST_TOTAL_SHARDS=%d", test.numShards))
 	}
 	var outBuf bytes.Buffer
 	cmd.Stdout = &outBuf
@@ -265,7 +271,7 @@ func worker(tests <-chan test, results chan<- result, done *sync.WaitGroup) {
 }
 
 func (t test) shortName() string {
-	return t.Cmd[0] + t.shardMsg() + t.cpuMsg() + t.envMsg()
+	return strings.Join(t.Cmd, " ") + t.shardMsg() + t.cpuMsg() + t.envMsg()
 }
 
 func SpaceIf(returnSpace bool) string {
@@ -276,7 +282,7 @@ func SpaceIf(returnSpace bool) string {
 }
 
 func (t test) longName() string {
-	return strings.Join(t.Env, " ") + SpaceIf(len(t.Env) != 0) + strings.Join(t.Cmd, " ") + t.cpuMsg()
+	return strings.Join(t.Env, " ") + SpaceIf(len(t.Env) != 0) + strings.Join(t.Cmd, " ") + t.shardMsg() + t.cpuMsg()
 }
 
 func (t test) shardMsg() string {
@@ -313,70 +319,11 @@ func (t test) getGTestShards() ([]test, error) {
 		return []test{t}, nil
 	}
 
-	prog := path.Join(*buildDir, t.Cmd[0])
-	cmd := exec.Command(prog, "--gtest_list_tests")
-	var stdout bytes.Buffer
-	cmd.Stdout = &stdout
-	if err := cmd.Start(); err != nil {
-		return nil, err
-	}
-	if err := cmd.Wait(); err != nil {
-		return nil, err
-	}
-
-	var group string
-	var tests []string
-	scanner := bufio.NewScanner(&stdout)
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		// Remove the parameter comment and trailing space.
-		if idx := strings.Index(line, "#"); idx >= 0 {
-			line = line[:idx]
-		}
-		line = strings.TrimSpace(line)
-		if len(line) == 0 {
-			continue
-		}
-
-		if line[len(line)-1] == '.' {
-			group = line
-			continue
-		}
-
-		if len(group) == 0 {
-			return nil, fmt.Errorf("found test case %q without group", line)
-		}
-		tests = append(tests, group+line)
-	}
-
-	const testsPerShard = 20
-	if len(tests) <= testsPerShard {
-		return []test{t}, nil
-	}
-
-	// Slow tests which process large test vector files tend to be grouped
-	// together, so shuffle the order.
-	shuffled := make([]string, len(tests))
-	perm := rand.Perm(len(tests))
-	for i, j := range perm {
-		shuffled[i] = tests[j]
-	}
-
-	var shards []test
-	for i := 0; i < len(shuffled); i += testsPerShard {
-		n := len(shuffled) - i
-		if n > testsPerShard {
-			n = testsPerShard
-		}
-		shard := t
-		shard.Cmd = []string{shard.Cmd[0], "--gtest_filter=" + strings.Join(shuffled[i:i+n], ":")}
-		shard.shard = len(shards)
-		shards = append(shards, shard)
-	}
-
+	shards := make([]test, *numWorkers)
 	for i := range shards {
-		shards[i].numShards = len(shards)
+		shards[i] = t
+		shards[i].shard = i
+		shards[i].numShards = *numWorkers
 	}
 
 	return shards, nil
@@ -477,14 +424,14 @@ func main() {
 	if len(skipped) > 0 {
 		fmt.Printf("\n%d of %d tests were skipped:\n", len(skipped), len(testCases))
 		for _, test := range skipped {
-			fmt.Printf("\t%s%s\n", strings.Join(test.Cmd, " "), test.cpuMsg())
+			fmt.Printf("\t%s\n", test.shortName())
 		}
 	}
 
 	if len(failed) > 0 {
 		fmt.Printf("\n%d of %d tests failed:\n", len(failed), len(testCases))
 		for _, test := range failed {
-			fmt.Printf("\t%s%s\n", strings.Join(test.Cmd, " "), test.cpuMsg())
+			fmt.Printf("\t%s\n", test.shortName())
 		}
 		os.Exit(1)
 	}

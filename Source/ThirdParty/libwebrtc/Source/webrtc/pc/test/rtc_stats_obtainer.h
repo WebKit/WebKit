@@ -11,6 +11,9 @@
 #ifndef PC_TEST_RTC_STATS_OBTAINER_H_
 #define PC_TEST_RTC_STATS_OBTAINER_H_
 
+#include "api/make_ref_counted.h"
+#include "api/sequence_checker.h"
+#include "api/stats/rtc_stats_collector_callback.h"
 #include "api/stats/rtc_stats_report.h"
 #include "rtc_base/gunit.h"
 

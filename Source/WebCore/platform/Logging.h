@@ -54,6 +54,7 @@ namespace WebCore {
     M(DatabaseTracker) \
     M(DisplayLink) \
     M(DisplayLists) \
+    M(DragAndDrop) \
     M(DOMTimers) \
     M(Editing) \
     M(EME) \

@@ -50,12 +50,6 @@ enum Nalu {
 static const size_t kNalHeaderSize = 1;
 static const size_t kFuAHeaderSize = 2;
 
-// Bit masks for FU (A and B) indicators.
-enum NalDefs { kFBit = 0x80, kNriMask = 0x60, kTypeMask = 0x1F };
-
-// Bit masks for FU (A and B) headers.
-enum FuDefs { kSBit = 0x80, kEBit = 0x40, kRBit = 0x20 };
-
 // Creates Buffer that looks like nal unit of given size.
 rtc::Buffer GenerateNalUnit(size_t size) {
   RTC_CHECK_GT(size, 0);
@@ -74,7 +68,7 @@ rtc::Buffer GenerateNalUnit(size_t size) {
 // Create frame consisting of nalus of given size.
 rtc::Buffer CreateFrame(std::initializer_list<size_t> nalu_sizes) {
   static constexpr int kStartCodeSize = 3;
-  rtc::Buffer frame(absl::c_accumulate(nalu_sizes, 0) +
+  rtc::Buffer frame(absl::c_accumulate(nalu_sizes, size_t{0}) +
                     kStartCodeSize * nalu_sizes.size());
   size_t offset = 0;
   for (size_t nalu_size : nalu_sizes) {
@@ -359,13 +353,13 @@ TEST(RtpPacketizerH264Test, MixedStapAFUA) {
   ASSERT_THAT(packets, SizeIs(3));
   // First expect two FU-A packets.
   EXPECT_THAT(packets[0].payload().subview(0, kFuAHeaderSize),
-              ElementsAre(kFuA, FuDefs::kSBit | nalus[0][0]));
+              ElementsAre(kFuA, kH264SBit | nalus[0][0]));
   EXPECT_THAT(
       packets[0].payload().subview(kFuAHeaderSize),
       ElementsAreArray(nalus[0].data() + kNalHeaderSize, kFuaPayloadSize));
 
   EXPECT_THAT(packets[1].payload().subview(0, kFuAHeaderSize),
-              ElementsAre(kFuA, FuDefs::kEBit | nalus[0][0]));
+              ElementsAre(kFuA, kH264EBit | nalus[0][0]));
   EXPECT_THAT(
       packets[1].payload().subview(kFuAHeaderSize),
       ElementsAreArray(nalus[0].data() + kNalHeaderSize + kFuaPayloadSize,
@@ -426,11 +420,11 @@ std::vector<int> TestFua(size_t frame_payload_size,
     payload_sizes.push_back(payload.size() - kFuAHeaderSize);
   }
 
-  EXPECT_TRUE(fua_header.front() & FuDefs::kSBit);
-  EXPECT_TRUE(fua_header.back() & FuDefs::kEBit);
+  EXPECT_TRUE(fua_header.front() & kH264SBit);
+  EXPECT_TRUE(fua_header.back() & kH264EBit);
   // Clear S and E bits before testing all are duplicating same original header.
-  fua_header.front() &= ~FuDefs::kSBit;
-  fua_header.back() &= ~FuDefs::kEBit;
+  fua_header.front() &= ~kH264SBit;
+  fua_header.back() &= ~kH264EBit;
   EXPECT_THAT(fua_header, Each(Eq((kFuA << 8) | nalu[0][0])));
 
   return payload_sizes;

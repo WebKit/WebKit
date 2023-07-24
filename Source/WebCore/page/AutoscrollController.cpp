@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2012 Digia Plc. and/or its subsidiary(-ies)
  *
@@ -34,6 +35,7 @@
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "RenderBox.h"
+#include "RenderListBox.h"
 #include "RenderView.h"
 #include "ScrollView.h"
 #include "Settings.h"
@@ -75,6 +77,8 @@ void AutoscrollController::startAutoscrollForSelection(RenderObject* renderer)
     if (m_autoscrollTimer.isActive())
         return;
     auto* scrollable = RenderBox::findAutoscrollable(renderer);
+    if (!scrollable)
+        scrollable = renderer->isListBox() ? downcast<RenderListBox>(renderer) : nullptr;
     if (!scrollable)
         return;
     m_autoscrollType = AutoscrollForSelection;

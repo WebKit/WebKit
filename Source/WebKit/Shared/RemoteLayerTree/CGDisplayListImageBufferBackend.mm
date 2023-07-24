@@ -79,9 +79,10 @@ public:
         return m_immutableBaseTransform * GraphicsContextCG::getCTM(includeDeviceScale);
     }
 
-    WebCore::FloatRect roundToDevicePixels(const WebCore::FloatRect& rect, RoundingMode = RoundAllSides) const final
+    std::optional<std::pair<float, float>> scaleForRoundingToDevicePixels() const final
     {
-        return rect;
+        auto scale = WebCore::GraphicsContextCG::scaleForRoundingToDevicePixels().value_or(std::make_pair<float>(1, 1));
+        return { { scale.first * m_resolutionScale, scale.second * m_resolutionScale } };
     }
 
     bool canUseShadowBlur() const final { return false; }
@@ -189,6 +190,13 @@ void CGDisplayListImageBufferBackend::getPixelBuffer(const WebCore::IntRect&, We
 void CGDisplayListImageBufferBackend::putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication)
 {
     ASSERT_NOT_REACHED();
+}
+
+String CGDisplayListImageBufferBackend::debugDescription() const
+{
+    TextStream stream;
+    stream << "CGDisplayListImageBufferBackend " << this;
+    return stream.release();
 }
 
 #pragma mark - CGDisplayListAcceleratedImageBufferBackend

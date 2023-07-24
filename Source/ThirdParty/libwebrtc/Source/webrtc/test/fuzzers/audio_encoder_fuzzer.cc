@@ -18,7 +18,7 @@
 
 namespace webrtc {
 
-// This function reads bytes from |data_view|, interprets them as RTP timestamp
+// This function reads bytes from `data_view`, interprets them as RTP timestamp
 // and input samples, and sends them for encoding. The process continues until
 // no more data is available.
 void FuzzAudioEncoder(rtc::ArrayView<const uint8_t> data_view,

@@ -9,7 +9,6 @@ features: [Temporal]
 
 let timeZone = "2021-08-19T17:30";
 assert.throws(RangeError, () => Temporal.Now.plainTimeISO(timeZone), "bare date-time string is not a time zone");
-assert.throws(RangeError, () => Temporal.Now.plainTimeISO({ timeZone }), "bare date-time string is not a time zone");
 
 // The following are all valid strings so should not throw:
 
@@ -30,5 +29,4 @@ assert.throws(RangeError, () => Temporal.Now.plainTimeISO({ timeZone }), "bare d
   "2021-08-19T1730-0700[UTC]",
 ].forEach((timeZone) => {
   Temporal.Now.plainTimeISO(timeZone);
-  Temporal.Now.plainTimeISO({ timeZone });
 });

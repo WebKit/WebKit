@@ -68,7 +68,14 @@ void RemoteMediaSessionHelperProxy::stopMonitoringWirelessRoutes()
 
 void RemoteMediaSessionHelperProxy::providePresentingApplicationPID(int pid)
 {
+    m_presentingApplicationPID = pid;
     MediaSessionHelper::sharedHelper().providePresentingApplicationPID(pid);
+}
+
+void RemoteMediaSessionHelperProxy::overridePresentingApplicationPIDIfNeeded()
+{
+    if (m_presentingApplicationPID)
+        MediaSessionHelper::sharedHelper().providePresentingApplicationPID(*m_presentingApplicationPID, MediaSessionHelper::ShouldOverride::Yes);
 }
 
 void RemoteMediaSessionHelperProxy::applicationWillEnterForeground(SuspendedUnderLock suspendedUnderLock)

@@ -62,8 +62,9 @@ class IceServerParsingTest : public ::testing::Test {
     server.tls_cert_policy = tls_certificate_policy;
     server.hostname = hostname;
     servers.push_back(server);
-    return webrtc::ParseIceServers(servers, &stun_servers_, &turn_servers_) ==
-           webrtc::RTCErrorType::NONE;
+    return webrtc::ParseIceServersOrError(servers, &stun_servers_,
+                                          &turn_servers_)
+        .ok();
   }
 
  protected:
@@ -187,6 +188,8 @@ TEST_F(IceServerParsingTest, ParseHostnameAndPort) {
   EXPECT_FALSE(ParseUrl("stun:/hostname"));  // / is not allowed
   EXPECT_FALSE(ParseUrl("stun:?hostname"));  // ? is not allowed
   EXPECT_FALSE(ParseUrl("stun:#hostname"));  // # is not allowed
+  // STUN explicitly forbids query parameters.
+  EXPECT_FALSE(ParseUrl("stun:hostname?transport=udp"));
 }
 
 // Test parsing the "?transport=xxx" part of the URL.
@@ -229,26 +232,11 @@ TEST_F(IceServerParsingTest, ParseMultipleUrls) {
   server.username = "foo";
   server.password = "bar";
   servers.push_back(server);
-  EXPECT_EQ(webrtc::RTCErrorType::NONE,
-            webrtc::ParseIceServers(servers, &stun_servers_, &turn_servers_));
+  EXPECT_TRUE(
+      webrtc::ParseIceServersOrError(servers, &stun_servers_, &turn_servers_)
+          .ok());
   EXPECT_EQ(1U, stun_servers_.size());
   EXPECT_EQ(1U, turn_servers_.size());
-}
-
-// Ensure that TURN servers are given unique priorities,
-// so that their resulting candidates have unique priorities.
-TEST_F(IceServerParsingTest, TurnServerPrioritiesUnique) {
-  PeerConnectionInterface::IceServers servers;
-  PeerConnectionInterface::IceServer server;
-  server.urls.push_back("turn:hostname");
-  server.urls.push_back("turn:hostname2");
-  server.username = "foo";
-  server.password = "bar";
-  servers.push_back(server);
-  EXPECT_EQ(webrtc::RTCErrorType::NONE,
-            webrtc::ParseIceServers(servers, &stun_servers_, &turn_servers_));
-  EXPECT_EQ(2U, turn_servers_.size());
-  EXPECT_NE(turn_servers_[0].priority, turn_servers_[1].priority);
 }
 
 }  // namespace webrtc

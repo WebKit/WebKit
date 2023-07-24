@@ -38,16 +38,7 @@ std::string AudioReceiveStreamInterface::Config::Rtp::ToString() const {
   rtc::SimpleStringBuilder ss(ss_buf);
   ss << "{remote_ssrc: " << remote_ssrc;
   ss << ", local_ssrc: " << local_ssrc;
-  ss << ", transport_cc: " << (transport_cc ? "on" : "off");
   ss << ", nack: " << nack.ToString();
-  ss << ", extensions: [";
-  for (size_t i = 0; i < extensions.size(); ++i) {
-    ss << extensions[i].ToString();
-    if (i != extensions.size() - 1) {
-      ss << ", ";
-    }
-  }
-  ss << ']';
   ss << '}';
   return ss.str();
 }
@@ -120,8 +111,6 @@ AudioReceiveStreamImpl::AudioReceiveStreamImpl(
   RTC_DCHECK(config.rtcp_send_transport);
   RTC_DCHECK(audio_state_);
   RTC_DCHECK(channel_receive_);
-
-  packet_sequence_checker_.Detach();
 
   RTC_DCHECK(packet_router);
   // Configure bandwidth estimation.
@@ -209,16 +198,6 @@ void AudioReceiveStreamImpl::Stop() {
   audio_state()->RemoveReceivingStream(this);
 }
 
-bool AudioReceiveStreamImpl::transport_cc() const {
-  RTC_DCHECK_RUN_ON(&packet_sequence_checker_);
-  return config_.rtp.transport_cc;
-}
-
-void AudioReceiveStreamImpl::SetTransportCc(bool transport_cc) {
-  RTC_DCHECK_RUN_ON(&packet_sequence_checker_);
-  config_.rtp.transport_cc = transport_cc;
-}
-
 bool AudioReceiveStreamImpl::IsRunning() const {
   RTC_DCHECK_RUN_ON(&worker_thread_checker_);
   return playing_;
@@ -265,24 +244,6 @@ void AudioReceiveStreamImpl::SetFrameDecryptor(
   channel_receive_->SetFrameDecryptor(std::move(frame_decryptor));
 }
 
-void AudioReceiveStreamImpl::SetRtpExtensions(
-    std::vector<RtpExtension> extensions) {
-  // TODO(bugs.webrtc.org/11993): This is called via WebRtcAudioReceiveStream,
-  // expect to be called on the network thread.
-  RTC_DCHECK_RUN_ON(&worker_thread_checker_);
-  config_.rtp.extensions = std::move(extensions);
-}
-
-const std::vector<RtpExtension>& AudioReceiveStreamImpl::GetRtpExtensions()
-    const {
-  RTC_DCHECK_RUN_ON(&worker_thread_checker_);
-  return config_.rtp.extensions;
-}
-
-RtpHeaderExtensionMap AudioReceiveStreamImpl::GetRtpExtensionMap() const {
-  return RtpHeaderExtensionMap(config_.rtp.extensions);
-}
-
 webrtc::AudioReceiveStreamInterface::Stats AudioReceiveStreamImpl::GetStats(
     bool get_and_clear_legacy_stats) const {
   RTC_DCHECK_RUN_ON(&worker_thread_checker_);
@@ -298,10 +259,10 @@ webrtc::AudioReceiveStreamInterface::Stats AudioReceiveStreamImpl::GetStats(
     return stats;
   }
 
-  stats.payload_bytes_rcvd = call_stats.payload_bytes_rcvd;
-  stats.header_and_padding_bytes_rcvd =
-      call_stats.header_and_padding_bytes_rcvd;
-  stats.packets_rcvd = call_stats.packetsReceived;
+  stats.payload_bytes_received = call_stats.payload_bytes_received;
+  stats.header_and_padding_bytes_received =
+      call_stats.header_and_padding_bytes_received;
+  stats.packets_received = call_stats.packetsReceived;
   stats.packets_lost = call_stats.cumulativeLost;
   stats.nacks_sent = call_stats.nacks_sent;
   stats.capture_start_ntp_time_ms = call_stats.capture_start_ntp_time_ms_;
@@ -412,7 +373,8 @@ AudioReceiveStreamImpl::GetAudioFrameWithInfo(int sample_rate_hz,
                                               AudioFrame* audio_frame) {
   AudioMixer::Source::AudioFrameInfo audio_frame_info =
       channel_receive_->GetAudioFrameWithInfo(sample_rate_hz, audio_frame);
-  if (audio_frame_info != AudioMixer::Source::AudioFrameInfo::kError) {
+  if (audio_frame_info != AudioMixer::Source::AudioFrameInfo::kError &&
+      !audio_frame->packet_infos_.empty()) {
     source_tracker_.OnFrameDelivered(audio_frame->packet_infos_);
   }
   return audio_frame_info;

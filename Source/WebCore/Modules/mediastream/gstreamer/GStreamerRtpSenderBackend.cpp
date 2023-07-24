@@ -203,6 +203,8 @@ std::unique_ptr<RTCDtlsTransportBackend> GStreamerRtpSenderBackend::dtlsTranspor
     return makeUnique<GStreamerDtlsTransportBackend>(WTFMove(transport));
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)

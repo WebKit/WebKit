@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -270,8 +270,10 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
             style.setPaddingBox(WTFMove(paddingBox));
 
         // Whitespace
-        if (Theme::singleton().controlRequiresPreWhiteSpace(appearance))
-            style.setWhiteSpace(WhiteSpace::Pre);
+        if (Theme::singleton().controlRequiresPreWhiteSpace(appearance)) {
+            style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
+            style.setTextWrap(TextWrap::NoWrap);
+        }
 
         // Width / Height
         // The width and height here are affected by the zoom.
@@ -764,7 +766,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderBox& box) c
 
     return {
         extractControlStyleStatesForRenderer(*renderer),
-        renderer->style().computedFontPixelSize(),
+        renderer->style().computedFontSize(),
         renderer->style().effectiveZoom(),
         renderer->style().effectiveAccentColor(),
         renderer->style().visitedDependentColorWithColorFilter(CSSPropertyColor),

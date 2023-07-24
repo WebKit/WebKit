@@ -4,6 +4,7 @@
 /*---
 esid: sec-applying-the-exp-operator
 description: If base is NaN and exponent is nonzero, the result is NaN.
+features: [exponentiation]
 ---*/
 
 

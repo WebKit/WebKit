@@ -19,4 +19,4 @@ assert.sameValue(result.isoSecond, 56, "isoSecond result");
 assert.sameValue(result.isoMillisecond, 987, "isoMillisecond result");
 assert.sameValue(result.isoMicrosecond, 654, "isoMicrosecond result");
 assert.sameValue(result.isoNanosecond, 321, "isoNanosecond result");
-assert.sameValue(result.calendar.id, "iso8601", "calendar result");
+assert.sameValue(result.calendar, "iso8601", "calendar result");

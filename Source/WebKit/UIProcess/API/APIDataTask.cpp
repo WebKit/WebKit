@@ -30,6 +30,7 @@
 #include "DataReference.h"
 #include "NetworkProcessProxy.h"
 #include "WebPageProxy.h"
+#include <WebCore/ResourceError.h>
 
 namespace API {
 
@@ -44,6 +45,11 @@ void DataTask::cancel()
 {
     if (m_networkProcess && m_sessionID)
         m_networkProcess->cancelDataTask(m_identifier, *m_sessionID);
+}
+
+void DataTask::networkProcessCrashed()
+{
+    m_client->didCompleteWithError(*this, WebCore::internalError(m_originalURL));
 }
 
 DataTask::DataTask(WebKit::DataTaskIdentifier identifier, WeakPtr<WebKit::WebPageProxy>&& page, WTF::URL&& originalURL)

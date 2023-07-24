@@ -32,6 +32,7 @@
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
 #include "UserData.h"
+#include "UserInterfaceIdiom.h"
 #include "WebProcessDataStoreParameters.h"
 #include <WebCore/CrossOriginMode.h>
 #include <wtf/HashMap.h>
@@ -56,6 +57,7 @@
 #endif
 
 #if PLATFORM(GTK)
+#include "DMABufRendererBufferMode.h"
 #include "GtkSettingsState.h"
 #endif
 
@@ -75,9 +77,6 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     Vector<SandboxExtension::Handle> enableRemoteWebInspectorExtensionHandles;
-#endif
-#if ENABLE(MEDIA_STREAM)
-    SandboxExtension::Handle audioCaptureExtensionHandle;
 #endif
 
     Vector<String> urlSchemesRegisteredAsEmptyDocument;
@@ -183,7 +182,7 @@ struct WebProcessCreationParameters {
 
     std::optional<WebProcessDataStoreParameters> websiteDataStoreParameters;
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     Vector<SandboxExtension::Handle> compilerServiceExtensionHandles;
 #endif
 
@@ -208,7 +207,7 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    bool currentUserInterfaceIdiomIsSmallScreen { false };
+    UserInterfaceIdiom currentUserInterfaceIdiom { UserInterfaceIdiom::Default };
     bool supportsPictureInPicture { false };
     WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
     WebCore::Color focusRingColor;
@@ -221,7 +220,7 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(GTK)
-    bool useDMABufSurfaceForCompositing { false };
+    OptionSet<DMABufRendererBufferMode> dmaBufRendererBufferMode;
     bool useSystemAppearanceForScrollbars { false };
     GtkSettingsState gtkSettings;
 #endif

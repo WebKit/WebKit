@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -151,7 +151,7 @@ public:
 
     void momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter);
 
-    bool isAllCollapsibleWhitespace() const;
+    bool containsOnlyCollapsibleWhitespace() const;
 
     bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }
 
@@ -170,7 +170,7 @@ public:
 
     StringView stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
     
-    bool containsOnlyHTMLWhitespace(unsigned from, unsigned length) const;
+    bool containsOnlyCSSWhitespace(unsigned from, unsigned length) const;
 
     Vector<std::pair<unsigned, unsigned>> draggedContentRangesBetweenOffsets(unsigned startOffset, unsigned endOffset) const;
 
@@ -239,7 +239,7 @@ private:
                            // just dirtying everything when character data is modified (e.g., appended/inserted
                            // or removed).
     unsigned m_needsVisualReordering : 1 { false };
-    unsigned m_isAllASCII : 1 { false };
+    unsigned m_containsOnlyASCII : 1 { false };
     unsigned m_canUseSimpleFontCodePath : 1 { false };
     mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1 { false };
     unsigned m_useBackslashAsYenSymbol : 1 { false };
@@ -260,7 +260,8 @@ private:
 
 String applyTextTransform(const RenderStyle&, const String&, UChar previousCharacter);
 String capitalize(const String&, UChar previousCharacter);
-LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak);
+TextBreakIterator::LineMode::Behavior mapLineBreakToIteratorMode(LineBreak);
+TextBreakIterator::ContentAnalysis mapWordBreakToContentAnalysis(WordBreak);
 
 inline UChar RenderText::characterAt(unsigned i) const
 {

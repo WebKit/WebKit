@@ -74,7 +74,7 @@ enum class CheckUnsafeHashes : bool { No, Yes };
 
 typedef Vector<std::unique_ptr<ContentSecurityPolicyDirectiveList>> CSPDirectiveListVector;
 
-enum class ContentSecurityPolicyModeForExtension {
+enum class ContentSecurityPolicyModeForExtension : uint8_t {
     None,
     ManifestV2,
     ManifestV3
@@ -274,14 +274,3 @@ private:
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ContentSecurityPolicyModeForExtension> {
-    using values = EnumValues<
-        WebCore::ContentSecurityPolicyModeForExtension,
-        WebCore::ContentSecurityPolicyModeForExtension::None,
-        WebCore::ContentSecurityPolicyModeForExtension::ManifestV2,
-        WebCore::ContentSecurityPolicyModeForExtension::ManifestV3
-    >;
-    };
-}

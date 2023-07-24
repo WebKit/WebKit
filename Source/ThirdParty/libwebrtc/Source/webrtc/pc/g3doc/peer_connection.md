@@ -1,5 +1,5 @@
-<?% config.freshness.reviewed = '2021-05-07' %?>
-<?% config.freshness.owner = 'hta' %?>
+<!-- go/cmark -->
+<!--* freshness: {owner: 'hta' reviewed: '2021-05-07'} *-->
 
 # PeerConnection and friends
 

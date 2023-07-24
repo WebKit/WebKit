@@ -14,6 +14,8 @@
 
 #define INVALID_IDX -1  // Invalid buffer index.
 
+#include <stdbool.h>
+
 #include "config/aom_config.h"
 
 #include "av1/common/enums.h"
@@ -48,7 +50,7 @@ void av1_alloc_cdef_buffers(struct AV1Common *const cm,
 void av1_free_cdef_buffers(struct AV1Common *const cm,
                            struct AV1CdefWorker **cdef_worker,
                            struct AV1CdefSyncData *cdef_sync);
-void av1_alloc_restoration_buffers(struct AV1Common *cm);
+void av1_alloc_restoration_buffers(struct AV1Common *cm, bool is_sgr_enabled);
 void av1_free_restoration_buffers(struct AV1Common *cm);
 
 int av1_alloc_state_buffers(struct AV1Common *cm, int width, int height);

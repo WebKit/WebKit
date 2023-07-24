@@ -61,11 +61,13 @@ function(setup_exports_target)
                    APPEND_STRING
                    PROPERTY LINK_FLAGS "/DEF:${aom_sym_file}")
     else()
-      target_sources(aom PRIVATE "${aom_sym_file}")
+      # For MinGW and MSYS compilers, you can use either version scripts or
+      # module definition files. If the latter, it must be supplied as an
+      # "object".
+      set_property(TARGET aom
+                   APPEND_STRING
+                   PROPERTY LINK_FLAGS "${aom_sym_file}")
     endif()
-
-    # TODO(tomfinegan): Sort out the import lib situation and flags for MSVC.
-
   else()
     set_property(TARGET aom
                  APPEND_STRING

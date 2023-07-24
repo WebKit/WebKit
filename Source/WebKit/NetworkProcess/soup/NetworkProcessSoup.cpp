@@ -37,7 +37,6 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/ResourceHandle.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 #include <wtf/CallbackAggregator.h>

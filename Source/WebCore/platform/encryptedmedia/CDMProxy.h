@@ -255,7 +255,7 @@ public:
     // Media player query methods - main thread only.
     const RefPtr<CDMProxy>& proxy() const { ASSERT(isMainThread()); return m_cdmProxy; }
     virtual bool isWaitingForKey() const { ASSERT(isMainThread()); return m_numDecryptorsWaitingForKey > 0; }
-    void setPlayer(WeakPtr<MediaPlayer>&& player) { ASSERT(isMainThread()); m_player = WTFMove(player); }
+    void setPlayer(ThreadSafeWeakPtr<MediaPlayer>&& player) { ASSERT(isMainThread()); m_player = WTFMove(player); }
 
     // Proxy methods - must be thread-safe.
     void startedWaitingForKey();
@@ -263,7 +263,7 @@ public:
 
 private:
     RefPtr<CDMProxy> m_cdmProxy;
-    WeakPtr<MediaPlayer> m_player;
+    ThreadSafeWeakPtr<MediaPlayer> m_player;
 
     std::atomic<int> m_numDecryptorsWaitingForKey { 0 };
 };

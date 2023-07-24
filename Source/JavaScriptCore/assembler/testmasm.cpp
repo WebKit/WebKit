@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2996,6 +2996,37 @@ void testOrUnsignedRightShift64()
             }
         }
     }
+}
+
+void testZeroExtend48ToWord()
+{
+    auto zext48First = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.zeroExtend48ToWord(GPRInfo::argumentGPR0, GPRInfo::argumentGPR0);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    auto zeroTop16Bits = [] (int64_t value) -> int64_t {
+        return value & (1ull << 48) - 1;
+    };
+
+    for (auto a : int64Operands())
+        CHECK_EQ(invoke<int64_t>(zext48First, a), zeroTop16Bits(a));
+
+    auto zext48Second = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.zeroExtend48ToWord(GPRInfo::argumentGPR1, GPRInfo::argumentGPR0);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto a : int64Operands())
+        CHECK_EQ(invoke<int64_t>(zext48Second, 0, a), zeroTop16Bits(a));
 }
 #endif
 
@@ -5994,6 +6025,49 @@ static void testBranchIfNotType()
     CHECK_EQ(invoke<bool>(isNotType, &cell), true);
 }
 
+#if CPU(X86_64) || CPU(ARM64)
+static void testBranchConvertDoubleToInt52()
+{
+    auto toInt52 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        CCallHelpers::JumpList failureCases;
+        jit.branchConvertDoubleToInt52(FPRInfo::argumentFPR0, GPRInfo::returnValueGPR, failureCases, GPRInfo::returnValueGPR2, FPRInfo::argumentFPR1);
+        auto done = jit.jump();
+        failureCases.link(&jit);
+        jit.move(CCallHelpers::TrustedImm64(1ULL << 52), GPRInfo::returnValueGPR);
+        done.link(&jit);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(1LL << 50))), (1LL << 50));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>((1LL << 50) - 1))), ((1LL << 50) - 1));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>((1LL << 51) - 1))), ((1LL << 51) - 1));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-(1LL << 51)))), (-(1LL << 51)));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(1))), 1LL);
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-1))), -1LL);
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(0))), 0LL);
+
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(1LL << 51))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>((1LL << 51) + 1))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>((1LL << 51) + 42))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-((1LL << 51) + 1)))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-((1LL << 51) + 42)))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(1LL << 52))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>((1LL << 52) + 1))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>((1LL << 52) + 42))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-((1LL << 52) + 1)))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-((1LL << 52) + 42)))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, -static_cast<double>(0))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(std::numeric_limits<double>::infinity()))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-std::numeric_limits<double>::infinity()))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(std::numeric_limits<double>::quiet_NaN()))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(42.195))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(0.3))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-0.1))), (1LL << 52));
+}
+#endif
+
 static void testGPRInfoConsistency()
 {
     for (unsigned index = 0; index < GPRInfo::numberOfRegisters; ++index) {
@@ -6189,6 +6263,8 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testOrLeftShift64());
     RUN(testOrRightShift64());
     RUN(testOrUnsignedRightShift64());
+
+    RUN(testZeroExtend48ToWord());
 #endif
 
 #if CPU(ARM64)
@@ -6251,6 +6327,9 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 
     RUN(testBranchIfType());
     RUN(testBranchIfNotType());
+#if CPU(X86_64) || CPU(ARM64)
+    RUN(testBranchConvertDoubleToInt52());
+#endif
 
     RUN(testOrImmMem());
 

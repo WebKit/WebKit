@@ -258,10 +258,6 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
 
 RenderLayerBacking::~RenderLayerBacking()
 {
-#if USE(OWNING_LAYER_BEAR_TRAP)
-    RELEASE_ASSERT_WITH_MESSAGE(m_owningLayerBearTrap == BEAR_TRAP_VALUE, "~RenderLayerBacking: m_owningLayerBearTrap caught the bear (55699292)");
-    RELEASE_ASSERT_WITH_MESSAGE(&m_owningLayer, "~RenderLayerBacking: m_owningLayer is null (55699292)");
-#endif
     // Note that m_owningLayer->backing() is null here.
     updateAncestorClipping(false, nullptr);
     updateDescendantClippingLayer(false);
@@ -281,11 +277,6 @@ RenderLayerBacking::~RenderLayerBacking()
 
 void RenderLayerBacking::willBeDestroyed()
 {
-#if USE(OWNING_LAYER_BEAR_TRAP)
-    RELEASE_ASSERT_WITH_MESSAGE(m_owningLayerBearTrap == BEAR_TRAP_VALUE, "RenderLayerBacking::willBeDestroyed(): m_owningLayerBearTrap caught the bear (55699292)");
-    RELEASE_ASSERT_WITH_MESSAGE(&m_owningLayer, "RenderLayerBacking::willBeDestroyed(): m_owningLayer is null (55699292)");
-#endif
-
     ASSERT(m_owningLayer.backing() == this);
     compositor().removeFromScrollCoordinatedLayers(m_owningLayer);
 
@@ -572,6 +563,9 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
 #endif
+#if ENABLE(VIDEO)
+    updateVideoGravity(style);
+#endif
     updateContentsScalingFilters(style);
 }
 
@@ -826,6 +820,32 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
 }
 #endif
 
+#if ENABLE(VIDEO)
+void RenderLayerBacking::updateVideoGravity(const RenderStyle& style)
+{
+    if (!renderer().isVideo())
+        return;
+
+    MediaPlayerVideoGravity videoGravity;
+    switch (style.objectFit()) {
+    case ObjectFit::None:
+    case ObjectFit::ScaleDown:
+        // FIXME: Add support for "None" and "ScaleDown" with video gravity modes
+        FALLTHROUGH;
+    case ObjectFit::Fill:
+        videoGravity = MediaPlayerVideoGravity::Resize;
+        break;
+    case ObjectFit::Contain:
+        videoGravity = MediaPlayerVideoGravity::ResizeAspect;
+        break;
+    case ObjectFit::Cover:
+        videoGravity = MediaPlayerVideoGravity::ResizeAspectFill;
+        break;
+    }
+    m_graphicsLayer->setVideoGravity(videoGravity);
+}
+#endif
+
 void RenderLayerBacking::updateContentsScalingFilters(const RenderStyle& style)
 {
     if (!renderer().isCanvas() || canvasCompositingStrategy(renderer()) != CanvasAsLayerContents)
@@ -882,11 +902,6 @@ static bool hasNonZeroTransformOrigin(const RenderObject& renderer)
 
 bool RenderLayerBacking::updateCompositedBounds()
 {
-#if USE(OWNING_LAYER_BEAR_TRAP)
-    RELEASE_ASSERT_WITH_MESSAGE(m_owningLayerBearTrap == BEAR_TRAP_VALUE, "RenderLayerBacking::updateCompositedBounds(): m_owningLayerBearTrap caught the bear (55699292)");
-    RELEASE_ASSERT_WITH_MESSAGE(&m_owningLayer, "RenderLayerBacking::updateCompositedBounds(): m_owningLayer is null (55699292)");
-#endif
-
     LayoutRect layerBounds = m_owningLayer.calculateLayerBounds(&m_owningLayer, { }, RenderLayer::defaultCalculateLayerBoundsFlags() | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
     // Clip to the size of the document or enclosing overflow-scroll layer.
     // If this or an ancestor is transformed, we can't currently compute the correct rect to intersect with.
@@ -978,11 +993,6 @@ void RenderLayerBacking::updateAfterWidgetResize()
 
 void RenderLayerBacking::updateAfterLayout(bool needsClippingUpdate, bool needsFullRepaint)
 {
-#if USE(OWNING_LAYER_BEAR_TRAP)
-    RELEASE_ASSERT_WITH_MESSAGE(m_owningLayerBearTrap == BEAR_TRAP_VALUE, "RenderLayerBacking::updateAfterLayout(): m_owningLayerBearTrap caught the bear (55699292)");
-    RELEASE_ASSERT_WITH_MESSAGE(&m_owningLayer, "RenderLayerBacking::updateAfterLayout(): m_owningLayer is null (55699292)");
-#endif
-
     LOG_WITH_STREAM(Compositing, stream << "RenderLayerBacking::updateAfterLayout (layer " << &m_owningLayer << " needsClippingUpdate " << needsClippingUpdate << " needsFullRepaint " << needsFullRepaint);
 
     // This is the main trigger for layout changing layer geometry, but we have to do the work again in updateBackingAndHierarchy()
@@ -1026,6 +1036,10 @@ void RenderLayerBacking::updateConfigurationAfterStyleChange()
     updateBlendMode(style);
 #endif
     updateContentsScalingFilters(style);
+
+#if ENABLE(VIDEO)
+    updateVideoGravity(style);
+#endif
 }
 
 bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAncestor)
@@ -1121,14 +1135,12 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         layerConfigChanged = true;
     }
 
-#if ENABLE(CSS_COMPOSITING)
     bool shouldPaintUsingCompositeCopy = unscaledBitmap && is<RenderHTMLCanvas>(renderer());
-    if (shouldPaintUsingCompositeCopy != m_owningLayer.shouldPaintUsingCompositeCopy()) {
-        m_owningLayer.setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
+    if (shouldPaintUsingCompositeCopy != m_shouldPaintUsingCompositeCopy) {
+        m_shouldPaintUsingCompositeCopy = shouldPaintUsingCompositeCopy;
         m_graphicsLayer->setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
         layerConfigChanged = true;
     }
-#endif
 
     if (is<RenderEmbeddedObject>(renderer()) && downcast<RenderEmbeddedObject>(renderer()).allowsAcceleratedCompositing()) {
         auto* pluginViewBase = downcast<PluginViewBase>(downcast<RenderWidget>(renderer()).widget());
@@ -1194,11 +1206,6 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 
     if (layerConfigChanged)
         updatePaintingPhases();
-
-#if USE(OWNING_LAYER_BEAR_TRAP)
-    RELEASE_ASSERT_WITH_MESSAGE(m_owningLayerBearTrap == BEAR_TRAP_VALUE, "RenderLayerBacking::updateConfiguration(): m_owningLayerBearTrap caught the bear (55699292)");
-    RELEASE_ASSERT_WITH_MESSAGE(&m_owningLayer, "RenderLayerBacking::updateConfiguration(): m_owningLayer is null (55699292)");
-#endif
 
     return layerConfigChanged;
 }
@@ -1381,6 +1388,10 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     updateBlendMode(style);
 #endif
     updateContentsScalingFilters(style);
+
+#if ENABLE(VIDEO)
+    updateVideoGravity(style);
+#endif
 
     ASSERT(compositedAncestor == m_owningLayer.ancestorCompositingLayer());
     LayoutRect parentGraphicsLayerRect = computeParentGraphicsLayerRect(compositedAncestor);
@@ -1671,11 +1682,6 @@ void RenderLayerBacking::updateAfterDescendants()
         if (m_layerForScrollCorner)
             m_layerForScrollCorner->setUserInteractionEnabled(userInteractive);
     }
-
-#if USE(OWNING_LAYER_BEAR_TRAP)
-    RELEASE_ASSERT_WITH_MESSAGE(m_owningLayerBearTrap == BEAR_TRAP_VALUE, "RenderLayerBacking::updateAfterDescendants(): m_owningLayerBearTrap caught the bear (55699292)");
-    RELEASE_ASSERT_WITH_MESSAGE(&m_owningLayer, "RenderLayerBacking::updateAfterDescendants(): m_owningLayer is null (55699292)");
-#endif
 }
 
 // FIXME: Avoid repaints when clip path changes.
@@ -1960,6 +1966,28 @@ void RenderLayerBacking::updateEventRegion()
     renderer().view().setNeedsEventRegionUpdateForNonCompositedFrame(false);
     
     setNeedsEventRegionUpdate(false);
+}
+#endif
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+void RenderLayerBacking::clearInteractionRegions()
+{
+    auto clearInteractionRegionsForLayer = [&](GraphicsLayer& graphicsLayer) {
+        if (graphicsLayer.eventRegion().interactionRegions().isEmpty())
+            return;
+
+        EventRegion eventRegion = graphicsLayer.eventRegion();
+        eventRegion.clearInteractionRegions();
+        graphicsLayer.setEventRegion(WTFMove(eventRegion));
+    };
+
+    clearInteractionRegionsForLayer(*m_graphicsLayer);
+
+    if (m_scrolledContentsLayer)
+        clearInteractionRegionsForLayer(*m_scrolledContentsLayer);
+
+    if (m_foregroundLayer)
+        clearInteractionRegionsForLayer(*m_foregroundLayer);
 }
 #endif
 
@@ -3113,12 +3141,12 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
 void RenderLayerBacking::contentChanged(ContentChangeType changeType)
 {
     PaintedContentsInfo contentsInfo(*this);
-    if (changeType == ImageChanged) {
+    if (changeType == ImageChanged || changeType == CanvasChanged) {
         if (contentsInfo.isDirectlyCompositedImage()) {
             updateImageContents(contentsInfo);
             return;
         }
-        if (contentsInfo.isUnscaledBitmapOnly()) {
+        if (contentsInfo.isUnscaledBitmapOnly() != m_graphicsLayer->appliesDeviceScale()) {
             compositor().scheduleCompositingLayerUpdate();
             return;
         }
@@ -3306,6 +3334,11 @@ void RenderLayerBacking::setRequiresOwnBackingStore(bool requiresOwnBacking)
     m_owningLayer.computeRepaintRectsIncludingDescendants();
 
     compositor().repaintInCompositedAncestor(m_owningLayer, compositedBounds());
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (!requiresOwnBacking)
+        clearInteractionRegions();
+#endif
 }
 
 void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer shouldClip)
@@ -3399,11 +3432,6 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     const IntRect& paintDirtyRect, // In the coords of rootLayer.
     OptionSet<PaintBehavior> paintBehavior, RegionContext* regionContext)
 {
-#if USE(OWNING_LAYER_BEAR_TRAP)
-    RELEASE_ASSERT_WITH_MESSAGE(m_owningLayerBearTrap == BEAR_TRAP_VALUE, "RenderLayerBacking::paintIntoLayer(): m_owningLayerBearTrap caught the bear (55699292)");
-    RELEASE_ASSERT_WITH_MESSAGE(&m_owningLayer, "RenderLayerBacking::paintIntoLayer(): m_owningLayer is null (55699292)");
-#endif
-
     if ((paintsIntoWindow() || paintsIntoCompositedAncestor()) && graphicsLayer->paintingPhase() != OptionSet<GraphicsLayerPaintingPhase>(GraphicsLayerPaintingPhase::ChildClippingMask)) {
 #if !PLATFORM(IOS_FAMILY) && !OS(WINDOWS)
         // FIXME: Looks like the CALayer tree is out of sync with the GraphicsLayer heirarchy
@@ -3413,7 +3441,6 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 #endif
         return;
     }
-
     auto paintFlags = paintFlagsForLayer(*graphicsLayer);
 
     if (is<EventRegionContext>(regionContext))
@@ -3434,8 +3461,16 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         paintingInfo.regionContext = regionContext;
 
         if (&layer == &m_owningLayer) {
-            layer.paintLayerContents(context, paintingInfo, paintFlags);
-
+            {
+                bool shouldResetCompositeMode = false;
+                if (m_shouldPaintUsingCompositeCopy && context.compositeMode() == CompositeMode { CompositeOperator::SourceOver, BlendMode::Normal }) {
+                    context.setCompositeMode({ CompositeOperator::Copy, BlendMode::Normal });
+                    shouldResetCompositeMode = true;
+                }
+                layer.paintLayerContents(context, paintingInfo, paintFlags);
+                if (shouldResetCompositeMode)
+                    context.setCompositeMode({ CompositeOperator::SourceOver, BlendMode::Normal });
+            }
             auto* scrollableArea = layer.scrollableArea();
             if (scrollableArea && scrollableArea->containsDirtyOverlayScrollbars() && !regionContext)
                 layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerFlag::PaintingOverlayScrollbars);
@@ -3473,11 +3508,6 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 
     if (!regionContext)
         compositor().didPaintBacking(this);
-
-#if USE(OWNING_LAYER_BEAR_TRAP)
-    RELEASE_ASSERT_WITH_MESSAGE(m_owningLayerBearTrap == BEAR_TRAP_VALUE, "RenderLayerBacking::paintIntoLayer() end: m_owningLayerBearTrap caught the bear (55699292)");
-    RELEASE_ASSERT_WITH_MESSAGE(&m_owningLayer, "RenderLayerBacking::paintIntoLayer() end: m_owningLayer is null (55699292)");
-#endif
 }
 
 OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(const GraphicsLayer& graphicsLayer) const
@@ -4065,9 +4095,9 @@ void RenderLayerBacking::notifyFlushRequired(const GraphicsLayer* layer)
     compositor().notifyFlushRequired(layer);
 }
 
-void RenderLayerBacking::notifyFlushBeforeDisplayRefresh(const GraphicsLayer* layer)
+void RenderLayerBacking::notifySubsequentFlushRequired(const GraphicsLayer* layer)
 {
-    compositor().notifyFlushBeforeDisplayRefresh(layer);
+    compositor().notifySubsequentFlushRequired(layer);
 }
 
 // This is used for the 'freeze' API, for testing only.

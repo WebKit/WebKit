@@ -1777,14 +1777,13 @@ public:
 
     unsigned firstLineOffset() const { return m_firstLineOffset; }
     unsigned lineCount() const { return m_lineCount; }
-    unsigned unlinkedFunctionNameStart() const { return m_unlinkedFunctionNameStart; }
+    unsigned unlinkedFunctionStart() const { return m_unlinkedFunctionStart; }
     unsigned unlinkedBodyStartColumn() const { return m_unlinkedBodyStartColumn; }
     unsigned unlinkedBodyEndColumn() const { return m_unlinkedBodyEndColumn; }
     unsigned startOffset() const { return m_startOffset; }
     unsigned sourceLength() const { return m_sourceLength; }
     unsigned parametersStartOffset() const { return m_parametersStartOffset; }
-    unsigned typeProfilingStartOffset() const { return m_typeProfilingStartOffset; }
-    unsigned typeProfilingEndOffset() const { return m_typeProfilingEndOffset; }
+    unsigned unlinkedFunctionEnd() const { return m_unlinkedFunctionEnd; }
     unsigned parameterCount() const { return m_parameterCount; }
 
     CodeFeatures features() const { return m_mutableMetadata.m_features; }
@@ -1818,7 +1817,7 @@ private:
     unsigned m_firstLineOffset : 31;
     unsigned m_lineCount : 31;
     unsigned m_isBuiltinFunction : 1;
-    unsigned m_unlinkedFunctionNameStart : 31;
+    unsigned m_unlinkedFunctionStart : 31;
     unsigned m_isBuiltinDefaultClassConstructor : 1;
     unsigned m_unlinkedBodyStartColumn : 31;
     unsigned m_constructAbility: 1;
@@ -1828,8 +1827,7 @@ private:
     unsigned m_sourceLength : 31;
     unsigned m_superBinding : 1;
     unsigned m_parametersStartOffset : 31;
-    unsigned m_typeProfilingStartOffset;
-    unsigned m_typeProfilingEndOffset;
+    unsigned m_unlinkedFunctionEnd;
     unsigned m_parameterCount:31;
     unsigned m_privateBrandRequirement : 1;
     SourceParseMode m_sourceParseMode;
@@ -2193,14 +2191,13 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
 
     m_firstLineOffset = executable.m_firstLineOffset;
     m_lineCount = executable.m_lineCount;
-    m_unlinkedFunctionNameStart = executable.m_unlinkedFunctionNameStart;
+    m_unlinkedFunctionStart = executable.m_unlinkedFunctionStart;
     m_unlinkedBodyStartColumn = executable.m_unlinkedBodyStartColumn;
     m_unlinkedBodyEndColumn = executable.m_unlinkedBodyEndColumn;
     m_startOffset = executable.m_startOffset;
     m_sourceLength = executable.m_sourceLength;
     m_parametersStartOffset = executable.m_parametersStartOffset;
-    m_typeProfilingStartOffset = executable.m_typeProfilingStartOffset;
-    m_typeProfilingEndOffset = executable.m_typeProfilingEndOffset;
+    m_unlinkedFunctionEnd = executable.m_unlinkedFunctionEnd;
     m_parameterCount = executable.m_parameterCount;
 
     m_sourceParseMode = executable.m_sourceParseMode;
@@ -2242,7 +2239,7 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_isGeneratedFromCache(true)
     , m_lineCount(cachedExecutable.lineCount())
     , m_hasCapturedVariables(cachedExecutable.hasCapturedVariables())
-    , m_unlinkedFunctionNameStart(cachedExecutable.unlinkedFunctionNameStart())
+    , m_unlinkedFunctionStart(cachedExecutable.unlinkedFunctionStart())
     , m_isBuiltinFunction(cachedExecutable.isBuiltinFunction())
     , m_unlinkedBodyStartColumn(cachedExecutable.unlinkedBodyStartColumn())
     , m_isBuiltinDefaultClassConstructor(cachedExecutable.isBuiltinDefaultClassConstructor())
@@ -2254,9 +2251,8 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_superBinding(cachedExecutable.superBinding())
     , m_parametersStartOffset(cachedExecutable.parametersStartOffset())
     , m_isCached(false)
-    , m_typeProfilingStartOffset(cachedExecutable.typeProfilingStartOffset())
+    , m_unlinkedFunctionEnd(cachedExecutable.unlinkedFunctionEnd())
     , m_needsClassFieldInitializer(cachedExecutable.needsClassFieldInitializer())
-    , m_typeProfilingEndOffset(cachedExecutable.typeProfilingEndOffset())
     , m_parameterCount(cachedExecutable.parameterCount())
     , m_privateBrandRequirement(cachedExecutable.privateBrandRequirement())
     , m_features(cachedExecutable.features())

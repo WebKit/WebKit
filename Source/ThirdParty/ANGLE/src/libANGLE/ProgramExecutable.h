@@ -125,7 +125,7 @@ class ProgramExecutable final : public angle::Subject
     void resetInfoLog() { mInfoLog.reset(); }
 
     void resetLinkedShaderStages() { mLinkedShaderStages.reset(); }
-    const ShaderBitSet &getLinkedShaderStages() const { return mLinkedShaderStages; }
+    const ShaderBitSet getLinkedShaderStages() const { return mLinkedShaderStages; }
     void setLinkedShaderStages(ShaderType shaderType)
     {
         mLinkedShaderStages.set(shaderType);

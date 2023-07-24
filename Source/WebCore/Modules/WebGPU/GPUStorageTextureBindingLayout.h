@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,12 @@
 #include "GPUStorageTextureAccess.h"
 #include "GPUTextureFormat.h"
 #include "GPUTextureViewDimension.h"
-#include <pal/graphics/WebGPU/WebGPUStorageTextureBindingLayout.h>
+#include "WebGPUStorageTextureBindingLayout.h"
 
 namespace WebCore {
 
 struct GPUStorageTextureBindingLayout {
-    PAL::WebGPU::StorageTextureBindingLayout convertToBacking() const
+    WebGPU::StorageTextureBindingLayout convertToBacking() const
     {
         return {
             WebCore::convertToBacking(access),

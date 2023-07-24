@@ -37,9 +37,9 @@ struct NetworkProcessConnectionInfo {
     std::optional<audit_token_t> auditToken;
 #endif
 
-    void encode(IPC::Encoder& encoder) const
+    void encode(IPC::Encoder& encoder)
     {
-        encoder << connection;
+        encoder << WTFMove(connection);
         encoder << cookieAcceptPolicy;
 #if HAVE(AUDIT_TOKEN)
         encoder << auditToken;

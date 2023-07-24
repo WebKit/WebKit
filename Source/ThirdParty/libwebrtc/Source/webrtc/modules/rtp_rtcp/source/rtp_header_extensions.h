@@ -13,6 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -48,6 +49,11 @@ class AbsoluteSendTime {
     RTC_DCHECK_GE(time6x18, 0);
     RTC_DCHECK_LT(time6x18, 1 << 24);
     return static_cast<uint32_t>(time6x18);
+  }
+
+  static constexpr Timestamp ToTimestamp(uint32_t time_24bits) {
+    RTC_DCHECK_LT(time_24bits, (1 << 24));
+    return Timestamp::Micros((time_24bits* int64_t{1'000'000}) >> 18);
   }
 };
 

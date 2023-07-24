@@ -137,6 +137,7 @@ public:
     static JSImmutableButterfly* createFromDirectArguments(JSGlobalObject*, DirectArguments*);
     static JSImmutableButterfly* createFromScopedArguments(JSGlobalObject*, ScopedArguments*);
     static JSImmutableButterfly* createFromString(JSGlobalObject*, JSString*);
+    static JSImmutableButterfly* tryCreateFromArgList(VM&, ArgList);
 
     unsigned publicLength() const { return m_header.publicLength(); }
     unsigned vectorLength() const { return m_header.vectorLength(); }

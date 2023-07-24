@@ -126,6 +126,8 @@ class ProgramPipeline final : public RefCountObject<ProgramPipelineID>,
     void resetIsLinked() { mState.mIsLinked = false; }
     angle::Result link(const gl::Context *context);
 
+    angle::Result syncState(const Context *context);
+
     // Ensure program pipeline is linked. Inlined to make sure its overhead is as low as possible.
     void resolveLink(const Context *context)
     {
@@ -148,6 +150,7 @@ class ProgramPipeline final : public RefCountObject<ProgramPipelineID>,
     GLboolean isValid() const { return mState.isValid(); }
     bool isLinked() const { return mState.mIsLinked; }
 
+    void onUniformBufferStateChange(size_t uniformBufferIndex);
     // ObserverInterface implementation.
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 

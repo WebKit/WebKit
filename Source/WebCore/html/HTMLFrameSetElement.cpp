@@ -221,6 +221,11 @@ WindowProxy* HTMLFrameSetElement::namedItem(const AtomString& name)
     return downcast<HTMLFrameElement>(*frameElement).contentWindow();
 }
 
+bool HTMLFrameSetElement::isSupportedPropertyName(const AtomString& name)
+{
+    return namedItem(name);
+}
+
 Vector<AtomString> HTMLFrameSetElement::supportedPropertyNames() const
 {
     // NOTE: Left empty as no specification defines this named getter and we

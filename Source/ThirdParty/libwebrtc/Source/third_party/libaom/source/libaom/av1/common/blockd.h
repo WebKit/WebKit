@@ -188,6 +188,7 @@ static const PREDICTION_MODE fimode_to_intradir[FILTER_INTRA_MODES] = {
 
 typedef struct RD_STATS {
   int rate;
+  int zero_rate;
   int64_t dist;
   // Please be careful of using rdcost, it's not guaranteed to be set all the
   // time.
@@ -196,8 +197,7 @@ typedef struct RD_STATS {
   // rate/dist.
   int64_t rdcost;
   int64_t sse;
-  int skip_txfm;  // sse should equal to dist when skip_txfm == 1
-  int zero_rate;
+  uint8_t skip_txfm;  // sse should equal to dist when skip_txfm == 1
 #if CONFIG_RD_DEBUG
   int txb_coeff_cost[MAX_MB_PLANE];
 #endif  // CONFIG_RD_DEBUG
@@ -285,7 +285,7 @@ typedef struct MB_MODE_INFO {
    ****************************************************************************/
   /**@{*/
   /*! \brief Whether to skip transforming and sending. */
-  int8_t skip_txfm;
+  uint8_t skip_txfm;
   /*! \brief Transform size when fixed size txfm is used (e.g. intra modes). */
   TX_SIZE tx_size;
   /*! \brief Transform size when recursive txfm tree is on. */
@@ -325,9 +325,6 @@ typedef struct MB_MODE_INFO {
   /*! \brief CDEF strength per BLOCK_64X64 */
   int8_t cdef_strength : 4;
   /**@}*/
-
-  /*! \brief Skip CDEF for this superblock */
-  uint8_t skip_cdef_curr_sb;
 
 #if CONFIG_RD_DEBUG
   /*! \brief RD info used for debugging */
@@ -521,11 +518,6 @@ typedef struct {
 
 /*!\cond */
 
-#if CONFIG_DEBUG
-#define CFL_SUB8X8_VAL_MI_SIZE (4)
-#define CFL_SUB8X8_VAL_MI_SQUARE \
-  (CFL_SUB8X8_VAL_MI_SIZE * CFL_SUB8X8_VAL_MI_SIZE)
-#endif  // CONFIG_DEBUG
 #define CFL_MAX_BLOCK_SIZE (BLOCK_32X32)
 #define CFL_BUF_LINE (32)
 #define CFL_BUF_LINE_I128 (CFL_BUF_LINE >> 3)
@@ -540,9 +532,10 @@ typedef struct cfl_ctx {
 
   // Cache the DC_PRED when performing RDO, so it does not have to be recomputed
   // for every scaling parameter
-  int dc_pred_is_cached[CFL_PRED_PLANES];
-  // The DC_PRED cache is disable when decoding
-  int use_dc_pred_cache;
+  bool dc_pred_is_cached[CFL_PRED_PLANES];
+  // Whether the DC_PRED cache is enabled. The DC_PRED cache is disabled when
+  // decoding.
+  bool use_dc_pred_cache;
   // Only cache the first row of the DC_PRED
   int16_t dc_pred_cache[CFL_PRED_PLANES][CFL_BUF_LINE];
 
@@ -1196,7 +1189,7 @@ static INLINE BLOCK_SIZE get_plane_block_size(BLOCK_SIZE bsize,
   assert(bsize < BLOCK_SIZES_ALL);
   assert(subsampling_x >= 0 && subsampling_x < 2);
   assert(subsampling_y >= 0 && subsampling_y < 2);
-  return ss_size_lookup[bsize][subsampling_x][subsampling_y];
+  return av1_ss_size_lookup[bsize][subsampling_x][subsampling_y];
 }
 
 /*

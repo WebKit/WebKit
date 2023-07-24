@@ -25,7 +25,6 @@ rtc::AsyncResolverInterface* BasicAsyncResolverFactory::Create() {
   return new rtc::AsyncResolver();
 }
 
-
 std::unique_ptr<webrtc::AsyncDnsResolverInterface>
 WrappingAsyncDnsResolverFactory::Create() {
   return std::make_unique<WrappingAsyncDnsResolver>(wrapped_factory_->Create());

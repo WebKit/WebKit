@@ -8,10 +8,9 @@
 
 import("../../webrtc.gni")
 
-if (is_android) {
-  rtc_library("utility") {
+rtc_source_set("utility") {
+  if (is_android) {
     visibility = [ "*" ]
-
     sources = [
       "include/helpers_android.h",
       "include/jvm_android.h",
@@ -26,11 +25,5 @@ if (is_android) {
       "../../rtc_base:platform_thread",
       "../../rtc_base/system:arch",
     ]
-  }
-} else {
-  # Add an empty source set so that dependent targets may include utility
-  # unconditionally.
-  rtc_source_set("utility") {
-    visibility = [ "*" ]
   }
 }

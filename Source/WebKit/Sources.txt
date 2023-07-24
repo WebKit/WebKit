@@ -240,7 +240,6 @@ Shared/SharedStringHashTable.cpp
 Shared/TouchBarMenuData.cpp
 Shared/TouchBarMenuItemData.cpp
 Shared/URLSchemeTaskParameters.cpp
-Shared/UpdateInfo.cpp
 Shared/UserData.cpp
 Shared/UserContentControllerParameters.cpp
 Shared/WebBackForwardListItem.cpp
@@ -254,6 +253,7 @@ Shared/WebCoreArgumentCoders.cpp
 Shared/WebErrors.cpp
 Shared/WebEvent.cpp
 Shared/WebEventConversion.cpp
+Shared/WebEventModifier.cpp
 Shared/WebFindOptions.cpp
 Shared/WebFoundTextRange.cpp
 Shared/WebGeolocationPosition.cpp
@@ -263,7 +263,6 @@ Shared/WebKeyboardEvent.cpp
 Shared/WebKit2Initialize.cpp
 Shared/WebMemorySampler.cpp
 Shared/WebMouseEvent.cpp
-Shared/WebPageCreationParameters.cpp
 Shared/WebPageGroupData.cpp
 Shared/WebPageNetworkParameters.cpp
 Shared/WebPlatformTouchPoint.cpp
@@ -403,11 +402,12 @@ UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/ProvisionalFrameProxy.cpp
 UIProcess/ProvisionalPageProxy.cpp
+UIProcess/RemotePageDrawingAreaProxy.cpp
+UIProcess/RemotePageProxy.cpp
 UIProcess/ResponsivenessTimer.cpp
 UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp
 UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp
 UIProcess/SpeechRecognitionServer.cpp
-UIProcess/SubframePageProxy.cpp
 UIProcess/SuspendedPageProxy.cpp
 UIProcess/SystemPreviewController.cpp
 UIProcess/SpeechRecognitionPermissionManager.cpp
@@ -446,6 +446,7 @@ UIProcess/WebPageDiagnosticLoggingClient.cpp
 UIProcess/WebPageGroup.cpp
 UIProcess/WebPageInjectedBundleClient.cpp
 UIProcess/WebPageProxy.cpp
+UIProcess/WebPageProxyMessageReceiverRegistration.cpp
 UIProcess/WebPasteboardProxy.cpp
 UIProcess/WebPermissionControllerProxy.cpp
 UIProcess/WebPreferences.cpp

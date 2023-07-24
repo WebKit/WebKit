@@ -66,7 +66,7 @@ public:
     struct RequestData {
         RequestData() { }
         
-        RequestData(const URL& url, const URL& firstPartyForCookies, double timeoutInterval, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useNetworkConnectionIntegrity = false)
+        RequestData(const URL& url, const URL& firstPartyForCookies, double timeoutInterval, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false)
             : m_url(url)
             , m_firstPartyForCookies(firstPartyForCookies)
             , m_timeoutInterval(timeoutInterval)
@@ -81,7 +81,7 @@ public:
             , m_allowCookies(allowCookies)
             , m_isAppInitiated(isAppInitiated)
             , m_privacyProxyFailClosedForUnreachableNonMainHosts(privacyProxyFailClosedForUnreachableNonMainHosts)
-            , m_useNetworkConnectionIntegrity(useNetworkConnectionIntegrity)
+            , m_useAdvancedPrivacyProtections(useAdvancedPrivacyProtections)
         {
         }
         
@@ -105,7 +105,7 @@ public:
         bool m_allowCookies : 1 { false };
         bool m_isAppInitiated : 1 { true };
         bool m_privacyProxyFailClosedForUnreachableNonMainHosts : 1 { false };
-        bool m_useNetworkConnectionIntegrity : 1 { false };
+        bool m_useAdvancedPrivacyProtections : 1 { false };
     };
 
     ResourceRequestBase(RequestData&& requestData)
@@ -128,7 +128,9 @@ public:
     WEBCORE_EXPORT void setURL(const URL& url);
 
     void redirectAsGETIfNeeded(const ResourceRequestBase &, const ResourceResponse&);
-    WEBCORE_EXPORT ResourceRequest redirectedRequest(const ResourceResponse&, bool shouldClearReferrerOnHTTPSToHTTPRedirect) const;
+
+    enum class ShouldSetHash : bool { No, Yes };
+    WEBCORE_EXPORT ResourceRequest redirectedRequest(const ResourceResponse&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ShouldSetHash = ShouldSetHash::No) const;
 
     WEBCORE_EXPORT void removeCredentials();
 
@@ -261,8 +263,8 @@ public:
     bool privacyProxyFailClosedForUnreachableNonMainHosts() const { return m_requestData.m_privacyProxyFailClosedForUnreachableNonMainHosts; }
     WEBCORE_EXPORT void setPrivacyProxyFailClosedForUnreachableNonMainHosts(bool);
 
-    bool useNetworkConnectionIntegrity() const { return m_requestData.m_useNetworkConnectionIntegrity; }
-    WEBCORE_EXPORT void setUseNetworkConnectionIntegrity(bool);
+    bool useAdvancedPrivacyProtections() const { return m_requestData.m_useAdvancedPrivacyProtections; }
+    WEBCORE_EXPORT void setUseAdvancedPrivacyProtections(bool);
 
 protected:
     // Used when ResourceRequest is initialized from a platform representation of the request

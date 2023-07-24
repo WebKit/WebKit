@@ -44,7 +44,7 @@ class TextureMapperTiledBackingStore;
 namespace WebKit {
 
 class WCSceneContext;
-struct WCUpateInfo;
+struct WCUpdateInfo;
 
 class WCScene {
     WTF_MAKE_FAST_ALLOCATED;
@@ -52,7 +52,7 @@ public:
     WCScene(WebCore::ProcessIdentifier, bool usesOffscreenRendering);
     ~WCScene();
     void initialize(WCSceneContext&);
-    std::optional<UpdateInfo> update(WCUpateInfo&&);
+    std::optional<UpdateInfo> update(WCUpdateInfo&&);
 
 private:
     struct Layer;

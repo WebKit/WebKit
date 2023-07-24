@@ -57,9 +57,18 @@ typedef int64_t GCGLint64;
 typedef uint64_t GCGLuint64;
 
 typedef GCGLuint PlatformGLObject;
+
+// GCGL types match the corresponding EGL types as defined in Khronos Native
+// Platform Graphics Interface - EGL Version 1.5 header file egl.h from
+// khronos.org.
+
+// FIXME: These should be renamed to GCEGLxxx
 using GCGLDisplay = void*;
 using GCGLConfig = void*;
 using GCGLContext = void*;
+using GCEGLImage = void*;
+using GCEGLSuface = void*;
+using GCEGLSync = void*;
 
 #if !PLATFORM(COCOA)
 typedef unsigned GLuint;

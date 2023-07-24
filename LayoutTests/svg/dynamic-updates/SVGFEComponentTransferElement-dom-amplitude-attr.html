@@ -19,22 +19,22 @@ createSVGTestCase();
 var feRFunc = createSVGElement("feFuncR");
 feRFunc.setAttribute("id", "fr");
 feRFunc.setAttribute("type", "gamma");
-feRFunc.setAttribute("amplitude", "3");
+feRFunc.setAttribute("amplitude", "1");
 
 var feGFunc = createSVGElement("feFuncG");
 feGFunc.setAttribute("id", "fg");
 feGFunc.setAttribute("type", "gamma");
-feRFunc.setAttribute("amplitude", "3");
+feGFunc.setAttribute("amplitude", "2");
 
 var feBFunc = createSVGElement("feFuncB");
 feBFunc.setAttribute("id", "fb");
 feBFunc.setAttribute("type", "gamma");
-feRFunc.setAttribute("amplitude", "3");
+feBFunc.setAttribute("amplitude", "3");
 
 var feAFunc = createSVGElement("feFuncA");
 feAFunc.setAttribute("id", "fb");
 feAFunc.setAttribute("type", "gamma");
-feAFunc.setAttribute("amplitude", "3");
+feAFunc.setAttribute("amplitude", "4");
 
 var feComponentTransferElement = createSVGElement("feComponentTransfer");
 feComponentTransferElement.appendChild(feRFunc);
@@ -66,21 +66,21 @@ rootSVGElement.appendChild(imageElement);
 rootSVGElement.setAttribute("width", "400");
 rootSVGElement.setAttribute("height", "200");
 
-shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "3");
-shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "3");
-shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "3");
-shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "3");
+shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "1");
+shouldBeEqualToString("feGFunc.getAttribute('amplitude')", "2");
+shouldBeEqualToString("feBFunc.getAttribute('amplitude')", "3");
+shouldBeEqualToString("feAFunc.getAttribute('amplitude')", "4");
 
 function repaintTest() {
-    feRFunc.setAttribute("amplitude", "1");
-	feGFunc.setAttribute("amplitude", "1");
-	feBFunc.setAttribute("amplitude", "1");
-	feAFunc.setAttribute("amplitude", "1");
+    feRFunc.setAttribute("amplitude", "5");
+    feGFunc.setAttribute("amplitude", "6");
+    feBFunc.setAttribute("amplitude", "7");
+    feAFunc.setAttribute("amplitude", "8");
 
-    shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "1");
-	shouldBeEqualToString("feGFunc.getAttribute('amplitude')", "1");
-	shouldBeEqualToString("feBFunc.getAttribute('amplitude')", "1");
-	shouldBeEqualToString("feAFunc.getAttribute('amplitude')", "1");
+    shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "5");
+    shouldBeEqualToString("feGFunc.getAttribute('amplitude')", "6");
+    shouldBeEqualToString("feBFunc.getAttribute('amplitude')", "7");
+    shouldBeEqualToString("feAFunc.getAttribute('amplitude')", "8");
 
     completeTest();
 }

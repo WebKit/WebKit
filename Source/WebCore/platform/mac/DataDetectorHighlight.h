@@ -27,6 +27,7 @@
 
 #if ENABLE(DATA_DETECTION) && PLATFORM(MAC)
 
+#import "GraphicsLayer.h"
 #import "GraphicsLayerClient.h"
 #import "SimpleRange.h"
 #import "Timer.h"

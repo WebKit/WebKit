@@ -163,6 +163,11 @@ void QuerySet::encodeResolveCommands(id<MTLBlitCommandEncoder> commandEncoder, u
 
 #pragma mark WGPU Stubs
 
+void wgpuQuerySetReference(WGPUQuerySet querySet)
+{
+    WebGPU::fromAPI(querySet).ref();
+}
+
 void wgpuQuerySetRelease(WGPUQuerySet querySet)
 {
     WebGPU::fromAPI(querySet).deref();

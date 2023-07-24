@@ -304,7 +304,7 @@ UCollationResult IntlCollator::compareStrings(JSGlobalObject* globalObject, Stri
             return compareASCIIWithUCADUCET(x.characters16(), x.length(), y.characters16(), y.length());
         }
 
-        if (x.is8Bit() && y.is8Bit() && x.isAllASCII() && y.isAllASCII())
+        if (x.is8Bit() && y.is8Bit() && x.containsOnlyASCII() && y.containsOnlyASCII())
             return ucol_strcollUTF8(m_collator.get(), bitwise_cast<const char*>(x.characters8()), x.length(), bitwise_cast<const char*>(y.characters8()), y.length(), &status);
 
         return std::nullopt;
@@ -502,7 +502,7 @@ void IntlCollator::checkICULocaleInvariants(const LocaleSet& locales)
                         CRASH();
                     }
                 } else {
-                    if (StringView(buffer.data(), buffer.size()).isAllASCII()) {
+                    if (StringView(buffer.data(), buffer.size()).containsOnlyASCII()) {
                         dataLogLn("BAD ", locale, " ", String(buffer.data(), buffer.size()), " including ASCII tailored characters");
                         CRASH();
                     }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
- * Copyright (C) 2007-2019 Apple Inc.
+ * Copyright (C) 2007-2023 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -242,6 +242,8 @@ void PrintContext::spoolPage(GraphicsContext& ctx, int pageNumber, float width)
 
     RELEASE_LOG(Printing, "Spooling page. pageNumber = %d pageRects size = %zu", pageNumber, m_pageRects.size());
 
+    RELEASE_ASSERT(pageNumber < static_cast<int>(m_pageRects.size()));
+
     // FIXME: Not correct for vertical text.
     IntRect pageRect = m_pageRects[pageNumber];
     float scale = width / pageRect.width();
@@ -377,7 +379,7 @@ String PrintContext::pageProperty(LocalFrame* frame, const char* propertyName, i
     if (!strcmp(propertyName, "line-height"))
         return String::number(style->lineHeight().value());
     if (!strcmp(propertyName, "font-size"))
-        return String::number(style->fontDescription().computedPixelSize());
+        return String::number(style->fontDescription().computedSize());
     if (!strcmp(propertyName, "font-family"))
         return style->fontDescription().firstFamily();
     if (!strcmp(propertyName, "size"))

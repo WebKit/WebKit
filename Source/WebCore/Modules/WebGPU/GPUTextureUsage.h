@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
+#include "WebGPUTextureUsage.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUTextureUsage.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -42,19 +42,19 @@ public:
     static constexpr GPUFlagsConstant RENDER_ATTACHMENT = 0x10;
 };
 
-inline PAL::WebGPU::TextureUsageFlags convertTextureUsageFlagsToBacking(GPUTextureUsageFlags textureUsageFlags)
+inline WebGPU::TextureUsageFlags convertTextureUsageFlagsToBacking(GPUTextureUsageFlags textureUsageFlags)
 {
-    PAL::WebGPU::TextureUsageFlags result;
+    WebGPU::TextureUsageFlags result;
     if (textureUsageFlags & GPUTextureUsage::COPY_SRC)
-        result.add(PAL::WebGPU::TextureUsage::CopySource);
+        result.add(WebGPU::TextureUsage::CopySource);
     if (textureUsageFlags & GPUTextureUsage::COPY_DST)
-        result.add(PAL::WebGPU::TextureUsage::CopyDestination);
+        result.add(WebGPU::TextureUsage::CopyDestination);
     if (textureUsageFlags & GPUTextureUsage::TEXTURE_BINDING)
-        result.add(PAL::WebGPU::TextureUsage::TextureBinding);
+        result.add(WebGPU::TextureUsage::TextureBinding);
     if (textureUsageFlags & GPUTextureUsage::STORAGE_BINDING)
-        result.add(PAL::WebGPU::TextureUsage::StorageBinding);
+        result.add(WebGPU::TextureUsage::StorageBinding);
     if (textureUsageFlags & GPUTextureUsage::RENDER_ATTACHMENT)
-        result.add(PAL::WebGPU::TextureUsage::RenderAttachment);
+        result.add(WebGPU::TextureUsage::RenderAttachment);
     return result;
 }
 

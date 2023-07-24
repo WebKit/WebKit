@@ -30,10 +30,23 @@
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/Platform.h>
 #include <wtf/RawPtrTraits.h>
 #include <wtf/StdLibExtras.h>
 
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
+
 namespace WTF {
+
+#if CPU(ADDRESS64)
+#if CPU(ARM64) && OS(DARWIN) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
+#define HAVE_36BIT_ADDRESS 1
+#endif
+#endif
+#endif // CPU(ADDRESS64)
 
 template <typename T>
 class CompactPtr {
@@ -195,14 +208,7 @@ public:
         return a.m_ptr == b.m_ptr;
     }
 
-    template<typename U>
-    friend bool operator!=(const CompactPtr& a, const CompactPtr<U>& b)
-    {
-        return a.m_ptr != b.m_ptr;
-    }
-
-    const StorageType& storage() const { return m_ptr; }
-    StorageType& storage() { return m_ptr; }
+    StorageType storage() const { return m_ptr; }
 
 private:
     template <typename X>

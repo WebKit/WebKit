@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,13 @@
 #include "GPUIndexFormat.h"
 #include "GPUIntegralTypes.h"
 #include "GPUPrimitiveTopology.h"
+#include "WebGPUPrimitiveState.h"
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUPrimitiveState.h>
 
 namespace WebCore {
 
 struct GPUPrimitiveState {
-    PAL::WebGPU::PrimitiveState convertToBacking() const
+    WebGPU::PrimitiveState convertToBacking() const
     {
         return {
             WebCore::convertToBacking(topology),

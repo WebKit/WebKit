@@ -167,10 +167,6 @@ void SVGSVGElement::updateCurrentTranslate()
 
 void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGFitToViewBox::parseAttribute(name, newValue);
-    SVGZoomAndPan::parseAttribute(name, newValue);
-    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     if (!nearestViewportElement() && isConnected()) {
         // For these events, the outermost <svg> element works like a <body> element does,
         // setting certain event handlers directly on the window object.
@@ -231,6 +227,10 @@ void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString
         break;
     }
     reportAttributeParsingError(parseError, name, newValue);
+
+    SVGFitToViewBox::parseAttribute(name, newValue);
+    SVGZoomAndPan::parseAttribute(name, newValue);
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)

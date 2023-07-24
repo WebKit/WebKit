@@ -113,7 +113,7 @@ private:
 };
 
 PageSerializer::SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSerializer& serializer, Document& document, Vector<Node*>* nodes)
-    : MarkupAccumulator(nodes, ResolveURLs::Yes)
+    : MarkupAccumulator(nodes, ResolveURLs::Yes, document.isHTMLDocument() ? SerializationSyntax::HTML : SerializationSyntax::XML)
     , m_serializer(serializer)
     , m_document(document)
 {

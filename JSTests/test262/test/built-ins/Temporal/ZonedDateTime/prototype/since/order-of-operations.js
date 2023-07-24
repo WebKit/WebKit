@@ -11,7 +11,27 @@ features: [Temporal]
 const expected = [
   // ToTemporalZonedDateTime
   "get other.calendar",
-  "has other.calendar.calendar",
+  "has other.calendar.dateAdd",
+  "has other.calendar.dateFromFields",
+  "has other.calendar.dateUntil",
+  "has other.calendar.day",
+  "has other.calendar.dayOfWeek",
+  "has other.calendar.dayOfYear",
+  "has other.calendar.daysInMonth",
+  "has other.calendar.daysInWeek",
+  "has other.calendar.daysInYear",
+  "has other.calendar.fields",
+  "has other.calendar.id",
+  "has other.calendar.inLeapYear",
+  "has other.calendar.mergeFields",
+  "has other.calendar.month",
+  "has other.calendar.monthCode",
+  "has other.calendar.monthDayFromFields",
+  "has other.calendar.monthsInYear",
+  "has other.calendar.weekOfYear",
+  "has other.calendar.year",
+  "has other.calendar.yearMonthFromFields",
+  "has other.calendar.yearOfWeek",
   "get other.calendar.fields",
   "call other.calendar.fields",
   "get other.day",
@@ -48,7 +68,9 @@ const expected = [
   "get other.year",
   "get other.year.valueOf",
   "call other.year.valueOf",
-  "has other.timeZone.timeZone",
+  "has other.timeZone.getOffsetNanosecondsFor",
+  "has other.timeZone.getPossibleInstantsFor",
+  "has other.timeZone.id",
   "get other.calendar.dateFromFields",
   "call other.calendar.dateFromFields",
   "get other.timeZone.getPossibleInstantsFor",
@@ -56,12 +78,8 @@ const expected = [
   "get other.timeZone.getOffsetNanosecondsFor",
   "call other.timeZone.getOffsetNanosecondsFor",
   // CalendarEquals
-  "get this.calendar[Symbol.toPrimitive]",
-  "get this.calendar.toString",
-  "call this.calendar.toString",
-  "get other.calendar[Symbol.toPrimitive]",
-  "get other.calendar.toString",
-  "call other.calendar.toString",
+  "get this.calendar.id",
+  "get other.calendar.id",
   // CopyDataProperties
   "ownKeys options",
   "getOwnPropertyDescriptor options.roundingIncrement",
@@ -129,12 +147,8 @@ actual.splice(0); // clear
 // Making largestUnit a calendar unit adds the following observable operations:
 const expectedOpsForCalendarDifference = [
   // TimeZoneEquals
-  "get this.timeZone[Symbol.toPrimitive]",
-  "get this.timeZone.toString",
-  "call this.timeZone.toString",
-  "get other.timeZone[Symbol.toPrimitive]",
-  "get other.timeZone.toString",
-  "call other.timeZone.toString",
+  "get this.timeZone.id",
+  "get other.timeZone.id",
   // DifferenceZonedDateTime
   "get this.timeZone.getOffsetNanosecondsFor",
   "call this.timeZone.getOffsetNanosecondsFor",
@@ -231,4 +245,9 @@ const expectedOpsForWeekRounding = expected.concat(expectedOpsForCalendarDiffere
   "call this.calendar.dateAdd",  // 11.d MoveRelativeDate
 ]);  // (11.g.iii MoveRelativeDate not called because days already balanced)
 instance.since(otherDateTimePropertyBag, createOptionsObserver({ smallestUnit: "weeks" }));
-assert.compareArray(actual.slice(expected.length), expectedOpsForWeekRounding.slice(expected.length), "order of operations with smallestUnit = weeks");
+assert.compareArray(actual, expectedOpsForWeekRounding, "order of operations with smallestUnit = weeks");
+actual.splice(0); // clear
+
+instance.since(otherDateTimePropertyBag, createOptionsObserver({ largestUnit: "hours" }));
+assert.compareArray(actual, expected, "order of operations with largestUnit being a time unit");
+actual.splice(0);  // clear

@@ -69,7 +69,7 @@ private:
     static void callPermissionHandlersWith(PermissionHandlers&, Permission);
 
     HashMap<WebCore::SecurityOriginData, PermissionHandlers> m_requestsPerOrigin;
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
 #endif
 };
 

@@ -2792,6 +2792,11 @@ bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uin
 
 #pragma mark WGPU Stubs
 
+void wgpuTextureReference(WGPUTexture texture)
+{
+    WebGPU::fromAPI(texture).ref();
+}
+
 void wgpuTextureRelease(WGPUTexture texture)
 {
     WebGPU::fromAPI(texture).deref();

@@ -75,12 +75,9 @@ function testTransfers() {
     try {
         var err = new Error();
         channel0.port1.postMessage({id:"error-object", error:err, port:c4.port1}, [c4.port1]);
-        testFailed("Sending Error object should throw");
+        testPassed("Sending Error object should not throw");
     } catch(e) {
-        if (e.code == DOMException.DATA_CLONE_ERR)
-          testPassed("Sending Error object has thrown " + e);
-        else
-          testPassed("Sending Error object should throw a DataCloneError, got: " + e);
+          testFailed("Sending Error object has thrown " + e);
     }
     c4.port1.postMessage("Should succeed");
     channel0.port1.postMessage({id:"done"});
@@ -91,6 +88,8 @@ function testTransfers() {
                 testPassed("send-port: transferred one port");
             else 
                 testFailed("send-port: port transfer failed");
+        } else if (event.data.id == "error-object") {
+            testPassed("Managed to send an Error object");
         } else if (event.data.id == "send-port-twice") {
             if (event.ports && event.ports.length == 1 && 
                   event.ports[0] === event.data.port0 && event.ports[0] === event.data.port1) 

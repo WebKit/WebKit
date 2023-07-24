@@ -84,8 +84,10 @@ function initializeCompressionStream(format)
         return @Promise.@resolve();
     };
 
-    const transform = @createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm);
+    const [transform, readable, writable] = @createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm);
     @putByIdDirectPrivate(this, "CompressionStreamTransform", transform);
+    @putByIdDirectPrivate(this, "readable", readable);
+    @putByIdDirectPrivate(this, "writable", writable);
     @putByIdDirectPrivate(this, "CompressionStreamEncoder", new @CompressionStreamEncoder(index));
     return this;
 }
@@ -99,7 +101,7 @@ function readable()
     if (!transform)
         throw @makeThisTypeError("CompressionStreamEncoder", "readable");
 
-    return @getByIdDirectPrivate(transform, "readable");
+    return @getByIdDirectPrivate(this, "readable");
 }
 
 @getter
@@ -111,5 +113,5 @@ function writable()
     if (!transform)
         throw @makeThisTypeError("CompressionStreamEncoder", "writable");
 
-    return @getByIdDirectPrivate(transform, "writable");
+    return @getByIdDirectPrivate(this, "writable");
 }

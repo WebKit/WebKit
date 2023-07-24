@@ -221,4 +221,16 @@ bool shouldUseOverlayScrollbars()
     return !!overlayScrolling;
 }
 
+bool eventModifiersContainCapsLock(GdkEvent* event)
+{
+#if USE(GTK4)
+    auto* device = gdk_event_get_source_device(event);
+    if (!device || gdk_device_get_source(device) != GDK_SOURCE_KEYBOARD)
+        device = gdk_seat_get_keyboard(gdk_display_get_default_seat(gdk_event_get_display(event)));
+    return gdk_device_get_caps_lock_state(device);
+#else
+    return gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_event_get_display(event)));
+#endif
+}
+
 } // namespace WebCore

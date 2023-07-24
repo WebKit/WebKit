@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2012 the V8 project authors. All rights reserved.
  * Copyright (C) 2010 Research In Motion Limited. All rights reserved.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -95,6 +96,7 @@ extern WTF_EXPORT_PRIVATE const ASCIILiteral weekdayName[7];
 extern WTF_EXPORT_PRIVATE const ASCIILiteral monthName[12];
 extern WTF_EXPORT_PRIVATE const ASCIILiteral monthFullName[12];
 extern WTF_EXPORT_PRIVATE const int firstDayOfMonth[2][12];
+extern WTF_EXPORT_PRIVATE const int8_t daysInMonths[12];
 
 static constexpr double hoursPerDay = 24.0;
 static constexpr double minutesPerHour = 60.0;
@@ -113,7 +115,7 @@ static constexpr double maxUnixTime = 2145859200.0; // 12/31/2037
 // See 15.9.1.14 of ECMA-262 5th edition.
 static constexpr double maxECMAScriptTime = 8.64E15;
 
-class TimeClippedPositiveMilliseconds {
+class Int64Milliseconds {
 public:
     static constexpr int64_t hoursPerDay = 24;
     static constexpr int64_t minutesPerHour = 60;
@@ -126,11 +128,18 @@ public:
     static constexpr int64_t msPerHour = msPerSecond * secondsPerHour;
     static constexpr int64_t msPerDay = msPerSecond * secondsPerDay;
     static constexpr int64_t maxECMAScriptTime = 8.64E15;
+    static constexpr int64_t minECMAScriptTime = -8.64E15;
 
-    explicit TimeClippedPositiveMilliseconds(int64_t value)
+    static constexpr int64_t daysIn4Years = 4 * 365 + 1;
+    static constexpr int64_t daysIn100Years = 25 * daysIn4Years - 1;
+    static constexpr int64_t daysIn400Years = 4 * daysIn100Years + 1;
+    static constexpr int64_t days1970to2000 = 30 * 365 + 7;
+    static constexpr int32_t daysOffset = 1000 * daysIn400Years + 5 * daysIn400Years - days1970to2000;
+    static constexpr int32_t yearsOffset = 400000;
+
+    explicit Int64Milliseconds(int64_t value)
         : m_value(value)
     {
-        ASSERT(value >= 0);
     }
 
     int64_t value() const { return m_value; }
@@ -201,9 +210,104 @@ inline double msToDays(double ms)
     return floor(ms / msPerDay);
 }
 
-inline int64_t msToDays(TimeClippedPositiveMilliseconds ms)
+inline int32_t msToDays(Int64Milliseconds ms)
 {
-    return ms.value() / TimeClippedPositiveMilliseconds::msPerDay;
+    int64_t time = ms.value();
+    if (time < 0)
+        time -= (Int64Milliseconds::msPerDay - 1);
+    return static_cast<int>(time / Int64Milliseconds::msPerDay);
+}
+
+inline int32_t timeInDay(Int64Milliseconds ms, int days)
+{
+    return static_cast<int32_t>(ms.value() - days * Int64Milliseconds::msPerDay);
+}
+
+inline std::tuple<int32_t, int32_t, int32_t> yearMonthDayFromDays(int32_t passedDays)
+{
+    int32_t days = passedDays;
+    days += Int64Milliseconds::daysOffset;
+    int32_t year = 400 * (days / Int64Milliseconds::daysIn400Years) - Int64Milliseconds::yearsOffset;
+    days %= Int64Milliseconds::daysIn400Years;
+
+    days--;
+    int32_t yd1 = days / Int64Milliseconds::daysIn100Years;
+    days %= Int64Milliseconds::daysIn100Years;
+    year += 100 * yd1;
+
+    days++;
+    int yd2 = days / Int64Milliseconds::daysIn4Years;
+    days %= Int64Milliseconds::daysIn4Years;
+    year += 4 * yd2;
+
+    days--;
+    int yd3 = days / 365;
+    days %= 365;
+    year += yd3;
+
+    bool isLeap = (!yd1 || yd2) && !yd3;
+
+    days += isLeap;
+
+    // Check if the date is after February.
+    int32_t month = 0;
+    int32_t day = 0;
+    if (days >= 31 + 28 + (isLeap ? 1 : 0)) {
+        days -= 31 + 28 + (isLeap ? 1 : 0);
+        // Find the date starting from March.
+        for (int i = 2; i < 12; i++) {
+            if (days < daysInMonths[i]) {
+                month = i;
+                day = days + 1;
+                break;
+            }
+            days -= daysInMonths[i];
+        }
+    } else {
+        // Check January and February.
+        if (days < 31) {
+            month = 0;
+            day = days + 1;
+        } else {
+            month = 1;
+            day = days - 31 + 1;
+        }
+    }
+
+    return std::tuple { year, month, day };
+}
+
+inline int32_t daysFromYearMonth(int32_t year, int32_t month)
+{
+    year += month / 12;
+    month %= 12;
+    if (month < 0) {
+        year--;
+        month += 12;
+    }
+
+    ASSERT(month >= 0);
+    ASSERT(month < 12);
+
+    // yearDelta is an arbitrary number such that:
+    // a) yearDelta = -1 (mod 400)
+    // b) year + yearDelta > 0 for years in the range defined by
+    //    ECMA 262 - 15.9.1.1, i.e. upto 100,000,000 days on either side of
+    //    Jan 1 1970. This is required so that we don't run into integer
+    //    division of negative numbers.
+    // c) there shouldn't be an overflow for 32-bit integers in the following
+    //    operations.
+    static const int32_t yearDelta = 399999;
+    static const int32_t baseDay =
+        365 * (1970 + yearDelta) + (1970 + yearDelta) / 4 -
+        (1970 + yearDelta) / 100 + (1970 + yearDelta) / 400;
+
+    int32_t year1 = year + yearDelta;
+    int32_t dayFromYear = 365 * year1 + year1 / 4 - year1 / 100 + year1 / 400 - baseDay;
+
+    if ((year % 4 != 0) || (year % 100 == 0 && year % 400 != 0))
+        return dayFromYear + firstDayOfMonth[0][month];
+    return dayFromYear + firstDayOfMonth[1][month];
 }
 
 inline int dayInYear(int year, int month, int day)
@@ -215,11 +319,6 @@ inline int dayInYear(double ms, int year)
 {
     double result = msToDays(ms) - daysFrom1970ToYear(year);
     return std::isnan(result) ? 0 : static_cast<int>(result);
-}
-
-inline int dayInYear(TimeClippedPositiveMilliseconds ms, int year)
-{
-    return static_cast<int>(msToDays(ms) - daysFrom1970ToYearTimeClippedPositive(year));
 }
 
 // Returns the number of days from 1970-01-01 to the specified date.
@@ -260,13 +359,6 @@ inline int msToMinutes(double ms)
     return static_cast<int>(result);
 }
 
-inline int msToMinutes(TimeClippedPositiveMilliseconds ms)
-{
-    int64_t result = (ms.value() / TimeClippedPositiveMilliseconds::msPerMinute) % TimeClippedPositiveMilliseconds::minutesPerHour;
-    ASSERT(result >= 0);
-    return static_cast<int>(result);
-}
-
 inline int msToHours(double ms)
 {
     double result = fmod(floor(ms / msPerHour), hoursPerDay);
@@ -275,25 +367,11 @@ inline int msToHours(double ms)
     return static_cast<int>(result);
 }
 
-inline int msToHours(TimeClippedPositiveMilliseconds ms)
-{
-    int64_t result = (ms.value() / TimeClippedPositiveMilliseconds::msPerHour) % TimeClippedPositiveMilliseconds::hoursPerDay;
-    ASSERT(result >= 0);
-    return static_cast<int>(result);
-}
-
 inline int msToSeconds(double ms)
 {
     double result = fmod(floor(ms / msPerSecond), secondsPerMinute);
     if (result < 0)
         result += secondsPerMinute;
-    return static_cast<int>(result);
-}
-
-inline int msToSeconds(TimeClippedPositiveMilliseconds ms)
-{
-    int64_t result = ms.value() / TimeClippedPositiveMilliseconds::msPerSecond % TimeClippedPositiveMilliseconds::secondsPerMinute;
-    ASSERT(result >= 0);
     return static_cast<int>(result);
 }
 
@@ -306,11 +384,10 @@ inline int msToWeekDay(double ms)
     return wd;
 }
 
-inline int msToWeekDay(TimeClippedPositiveMilliseconds ms)
+inline int32_t weekDay(int32_t days)
 {
-    int result = (static_cast<int>(msToDays(ms)) + 4) % 7;
-    ASSERT(result >= 0);
-    return result;
+    int32_t result = (days + 4) % 7;
+    return result >= 0 ? result : result + 7;
 }
 
 inline int monthFromDayInYear(int dayInYear, bool leapYear)
@@ -386,6 +463,38 @@ inline int dayInMonthFromDayInYear(int dayInYear, bool leapYear)
 inline double timeToMS(double hour, double min, double sec, double ms)
 {
     return (((hour * WTF::minutesPerHour + min) * WTF::secondsPerMinute + sec) * WTF::msPerSecond + ms);
+}
+
+// Returns an equivalent year in the range [2008-2035] matching
+// - leap year,
+// - week day of first day.
+// ECMA 262 - 15.9.1.9.
+inline int32_t equivalentYear(int32_t year)
+{
+    int weekDay = WTF::weekDay(daysFromYearMonth(year, 0));
+    int recentYear = (isLeapYear(year) ? 1956 : 1967) + (weekDay * 12) % 28;
+    // Find the year in the range 2008..2037 that is equivalent mod 28.
+    // Add 3*28 to give a positive argument to the modulus operator.
+    return 2008 + (recentYear + 3 * 28 - 2008) % 28;
+}
+
+// Computes a time equivalent to the given time according
+// to ECMA 262 - 15.9.1.9.
+// The issue here is that some library calls don't work right for dates
+// that cannot be represented using a non-negative signed 32 bit integer
+// (measured in whole seconds based on the 1970 epoch).
+// We solve this by mapping the time to a year with same leap-year-ness
+// and same starting day for the year. The ECMAscript specification says
+// we must do this, but for compatibility with other browsers, we use
+// the actual year if it is in the range 1970..2037
+inline int64_t equivalentTime(int64_t ms)
+{
+    Int64Milliseconds timeMS(ms);
+    int32_t days = msToDays(timeMS);
+    int32_t timeWithinDayMS = static_cast<int32_t>(timeMS.value() - days * Int64Milliseconds::msPerDay);
+    auto [year, month, day] = yearMonthDayFromDays(days);
+    int32_t newDays = daysFromYearMonth(equivalentYear(year), month) + day - 1;
+    return static_cast<int64_t>(newDays) * Int64Milliseconds::msPerDay + timeWithinDayMS;
 }
 
 WTF_EXPORT_PRIVATE bool isTimeZoneValid(StringView);

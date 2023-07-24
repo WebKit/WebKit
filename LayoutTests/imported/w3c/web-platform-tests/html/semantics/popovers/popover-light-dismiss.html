@@ -3,17 +3,18 @@
 <title>Popover light dismiss behavior</title>
 <meta name="timeout" content="long">
 <link rel="author" href="mailto:masonf@chromium.org">
-<link rel=help href="https://open-ui.org/components/popup.research.explainer">
+<link rel=help href="https://open-ui.org/components/popover.research.explainer">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/testdriver.js"></script>
 <script src="/resources/testdriver-actions.js"></script>
 <script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/declarative-shadow-dom-polyfill.js"></script>
 <script src="resources/popover-utils.js"></script>
 
 <button id=b1t popovertarget='p1'>Popover 1</button>
 <button id=b1s popovertarget='p1' popovertargetaction=show>Popover 1</button>
-<button id=p1anchor tabindex="0">Popover1 anchor (no action)</button>
+<button id=p1anchor  tabindex="0">Popover1 anchor (no action)</button>
 <span id=outside>Outside all popovers</span>
 <div popover id=p1 anchor=p1anchor>
   <span id=inside1>Inside popover 1</span>
@@ -105,13 +106,14 @@
     popover1.showPopover();
     await waitForRender();
     assert_true(popover1.matches(':popover-open'));
-    const actions = new test_driver.Actions();
-    await actions.pointerMove(0, 0, {origin: outside})
-      .pointerDown({button: actions.ButtonType.LEFT})
+    await new test_driver.Actions()
+      .pointerMove(0, 0, {origin: outside})
+      .pointerDown()
       .send();
     await waitForRender();
     assert_true(popover1.matches(':popover-open'),'pointerdown (outside the popover) should not hide the popover');
-    await actions.pointerUp({button: actions.ButtonType.LEFT})
+    await new test_driver.Actions()
+      .pointerUp()
       .send();
     await waitForRender();
     assert_false(popover1.matches(':popover-open'),'pointerup (outside the popover) should trigger light dismiss');
@@ -340,6 +342,7 @@
   </template>
 </my-element>
 <script>
+  polyfill_declarative_shadow_dom(document.querySelector('#myElement'));
   const button7 = document.querySelector('#myElement').shadowRoot.querySelector('#b7');
   const popover7 = document.querySelector('#myElement').shadowRoot.querySelector('#p7');
   const inside7 = document.querySelector('#myElement').shadowRoot.querySelector('#inside7');
@@ -380,7 +383,7 @@
     await sendTab();
     assert_equals(document.activeElement,popover8Anchor,'Focus should move to the anchor element');
     assert_true(popover8.matches(':popover-open'),'popover should stay open');
-    popover8.hidePopover();
+    popover8.hidePopover(); // Cleanup
   },'Moving focus back to the anchor element should not dismiss the popover');
 </script>
 
@@ -534,5 +537,109 @@ promise_test(async () => {
   assert_true(p13.matches(':popover-open'),'p13 should still be open');
   assert_false(p14.matches(':popover-open'));
   assert_false(p15.matches(':popover-open'));
+  p13.hidePopover(); // Cleanup
 },'Hide the target popover during "hide all popovers until"');
+</script>
+
+<div id=p16 popover>Popover 16
+    <div id=p17 popover>Popover 17</div>
+    <div id=p18 popover>Popover 18</div>
+</div>
+
+<script>
+promise_test(async () => {
+  p16.showPopover();
+  p18.showPopover();
+  let events = [];
+  const logEvents = (e) => {events.push(`${e.newState==='open' ? 'show' : 'hide'} ${e.target.id}`)};
+  p16.addEventListener('beforetoggle', logEvents);
+  p17.addEventListener('beforetoggle', logEvents);
+  p18.addEventListener('beforetoggle', (e) => {
+    logEvents(e);
+    p17.showPopover();
+  });
+  p16.hidePopover();
+  assert_array_equals(events,['hide p18','show p17','hide p16'],'There should not be a hide event for p17');
+  assert_false(p16.matches(':popover-open'));
+  assert_false(p17.matches(':popover-open'));
+  assert_false(p18.matches(':popover-open'));
+},'Show a sibling popover during "hide all popovers until"');
+</script>
+
+<div id=p19 popover>Popover 19</div>
+<div id=p20 popover>Popover 20</div>
+<button id=example2 tabindex="0">Example 2</button>
+
+<script>
+promise_test(async () => {
+  p19.showPopover();
+  let events = [];
+  const logEvents = (e) => {events.push(`${e.newState==='open' ? 'show' : 'hide'} ${e.target.id}`)};
+  p19.addEventListener('beforetoggle', (e) => {
+    logEvents(e);
+    p20.showPopover();
+  });
+  p20.addEventListener('beforetoggle', logEvents);
+  p19.hidePopover();
+  assert_array_equals(events,['hide p19','show p20'],'There should not be a second hide event for 19');
+  assert_false(p19.matches(':popover-open'));
+  assert_true(p20.matches(':popover-open'));
+  p20.hidePopover(); // Cleanup
+},'Show an unrelated popover during "hide popover"');
+</script>
+
+<div id=p21 popover>21
+  <div id=p22 popover>22</div>
+  <div id=p23 popover>23</div>
+  <div id=p24 popover>24</div>
+</div>
+
+<script>
+promise_test(async () => {
+  p21.showPopover();
+  p22.showPopover();
+  let events = [];
+  const logEvents = (e) => { events.push(`${e.newState === 'open' ? 'show' : 'hide'} ${e.target.id}`) };
+  p22.addEventListener('beforetoggle', (e) => {
+    logEvents(e);
+    p24.showPopover()
+  });
+  p23.addEventListener('beforetoggle', logEvents);
+  p24.addEventListener('beforetoggle', logEvents);
+  p23.showPopover();
+  assert_array_equals(events, ['show p23', 'hide p22', 'show p24'], 'hiding p24 does not fire event');
+  assert_false(p22.matches(':popover-open'));
+  assert_true(p23.matches(':popover-open'));
+  assert_false(p24.matches(':popover-open'));
+  p21.hidePopover(); // Cleanup
+},'Show other auto popover during "hide all popover until"');
+</script>
+
+<div id=p25 popover>
+  <div id=p26 popover>26</div>
+  <div id=p27 popover>27</div>
+  <div id=p28 popover>28</div>
+</div>
+<script>
+promise_test(async () => {
+  p25.showPopover();
+  p26.showPopover();
+  let events = [];
+  const logEvents = (e) => { events.push(`${e.newState === 'open' ? 'show' : 'hide'} ${e.target.id}`) };
+  p26.addEventListener('beforetoggle', (e) => {
+    logEvents(e);
+    p28.showPopover();
+  });
+  p27.addEventListener('beforetoggle', logEvents);
+  p28.addEventListener('beforetoggle', (e) => {
+    logEvents(e);
+    p27.showPopover();
+  });
+  p27.showPopover();
+  assert_array_equals(events, ['show p27', 'hide p26', 'show p28', 'show p27'], 'Nested showPopover should not fire event for its HideAllPopoversUntil');
+  assert_false(p26.matches(':popover-open'));
+  assert_true(p27.matches(':popover-open'));
+  assert_false(p28.matches(':popover-open'));
+  p25.hidePopover(); // Cleanup
+}, 'Nested showPopover');
 </script>

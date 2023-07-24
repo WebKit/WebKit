@@ -34,8 +34,8 @@ public:
     explicit SimpleCaretAnimator(CaretAnimationClient&);
 
 private:
-    void updateAnimationProperties(ReducedResolutionSeconds) final;
-    void start(ReducedResolutionSeconds) final;
+    void updateAnimationProperties() final;
+    void start() final;
 
     String debugDescription() const final;
 
@@ -50,7 +50,7 @@ private:
         m_client.caretAnimationDidUpdate(*this);
     }
 
-    ReducedResolutionSeconds m_lastTimeCaretPaintWasToggled;
+    MonotonicTime m_lastTimeCaretPaintWasToggled;
 };
 
 } // namespace WebCore

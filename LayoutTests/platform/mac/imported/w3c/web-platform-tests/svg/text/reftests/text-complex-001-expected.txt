@@ -31,6 +31,6 @@ layer at (0,0) size 800x600
       RenderSVGContainer {use} at (465,265) size 270x270
         RenderSVGEllipse {circle} at (465,265) size 270x270 [stroke={[type=SOLID] [color=#ADD8E6] [dash array={5.00, 5.00}]}] [cx=360.00] [cy=240.00] [r=80.00]
     RenderSVGContainer {g} at (0,0) size 800x7
-      RenderSVGText {text} at (0,-15) size 3140x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 3140x19
-          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 446 width 3139.08: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      RenderSVGText {text} at (0,-15) size 3101x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 3101x19
+          chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 446 width 3100.31: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."

@@ -106,10 +106,11 @@ AXTextMarker::AXTextMarker(const CharacterOffset& characterOffset)
         m_data = cache->textMarkerDataForCharacterOffset(characterOffset);
 }
 
-void AXTextMarker::setNode()
+void AXTextMarker::setNodeIfNeeded() const
 {
     ASSERT(isMainThread());
-    ASSERT(!m_data.node);
+    if (m_data.node)
+        return;
 
     WeakPtr cache = std::get<WeakPtr<AXObjectCache>>(axTreeForID(treeID()));
     if (!cache)
@@ -123,7 +124,7 @@ void AXTextMarker::setNode()
     if (!node)
         return;
 
-    m_data.node = node.get();
+    const_cast<AXTextMarker*>(this)->m_data.node = node.get();
     cache->setNodeInUse(node.get());
 }
 
@@ -132,7 +133,11 @@ AXTextMarker::operator VisiblePosition() const
     ASSERT(isMainThread());
 
     WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID());
-    return cache ? cache->visiblePositionForTextMarkerData(m_data) : VisiblePosition();
+    if (!cache)
+        return { };
+
+    setNodeIfNeeded();
+    return cache->visiblePositionForTextMarkerData(m_data);
 }
 
 AXTextMarker::operator CharacterOffset() const
@@ -142,6 +147,7 @@ AXTextMarker::operator CharacterOffset() const
     if (isIgnored() || isNull())
         return { };
 
+    setNodeIfNeeded();
     CharacterOffset result(m_data.node, m_data.characterStart, m_data.characterOffset);
     // When we are at a line wrap and the VisiblePosition is upstream, it means the text marker is at the end of the previous line.
     // We use the previous CharacterOffset so that it will match the Range.
@@ -172,7 +178,7 @@ std::optional<BoundaryPoint> AXTextMarker::boundaryPoint() const
     int offset = characterOffset.startIndex + characterOffset.offset;
     WeakPtr node = characterOffset.node;
     ASSERT(node);
-    if (AccessibilityObject::replacedNodeNeedsCharacter(node.get()) || node->hasTagName(HTMLNames::brTag))
+    if (AccessibilityObject::replacedNodeNeedsCharacter(node.get()) || (node && node->hasTagName(HTMLNames::brTag)))
         node = nodeAndOffsetForReplacedNode(*node, offset, characterOffset.offset);
     if (!node)
         return std::nullopt;
@@ -198,9 +204,11 @@ RefPtr<AXCoreObject> AXTextMarker::object() const
 String AXTextMarker::debugDescription() const
 {
     auto separator = ", ";
+    RefPtr object = this->object();
     return makeString(
         "treeID ", treeID().loggingString()
         , separator, "objectID ", objectID().loggingString()
+        , separator, "role ", object ? accessibilityRoleToString(object->roleValue()) : String("no object"_s)
         , separator, isMainThread() ? node()->debugDescription()
             : makeString("node 0x", hex(reinterpret_cast<uintptr_t>(m_data.node)))
         , separator, "offset ", m_data.offset
@@ -236,15 +244,18 @@ AXTextMarkerRange::AXTextMarkerRange(const std::optional<SimpleRange>& range)
 }
 
 AXTextMarkerRange::AXTextMarkerRange(const AXTextMarker& start, const AXTextMarker& end)
-    : m_start(start)
-    , m_end(end)
 {
+    bool reverse = is_gt(partialOrder(start, end));
+    m_start = reverse ? end : start;
+    m_end = reverse ? start : end;
 }
 
 AXTextMarkerRange::AXTextMarkerRange(AXID treeID, AXID objectID, unsigned start, unsigned end)
-    : m_start({ treeID, objectID, nullptr, start, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, start })
-    , m_end({ treeID, objectID, nullptr, end, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, end })
 {
+    if (start > end)
+        std::swap(start, end);
+    m_start = AXTextMarker({ treeID, objectID, nullptr, start, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, start });
+    m_end = AXTextMarker({ treeID, objectID, nullptr, end, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, end });
 }
 
 AXTextMarkerRange::operator VisiblePositionRange() const
@@ -264,6 +275,49 @@ std::optional<SimpleRange> AXTextMarkerRange::simpleRange() const
     if (!endBoundaryPoint)
         return std::nullopt;
     return { { *startBoundaryPoint, *endBoundaryPoint } };
+}
+
+std::optional<CharacterRange> AXTextMarkerRange::characterRange() const
+{
+    if (m_start.m_data.objectID != m_end.m_data.objectID
+        || m_start.m_data.treeID != m_end.m_data.treeID)
+        return std::nullopt;
+
+    if (m_start.m_data.characterOffset > m_end.m_data.characterOffset) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+    return { { m_start.m_data.characterOffset, m_end.m_data.characterOffset - m_start.m_data.characterOffset } };
+}
+
+std::partial_ordering partialOrder(const AXTextMarker& marker1, const AXTextMarker& marker2)
+{
+    if (marker1.objectID() == marker2.objectID() && marker1.treeID() == marker2.treeID()) {
+        if (LIKELY(marker1.m_data.characterOffset < marker2.m_data.characterOffset))
+            return std::partial_ordering::less;
+        if (marker1.m_data.characterOffset > marker2.m_data.characterOffset)
+            return std::partial_ordering::greater;
+        return std::partial_ordering::equivalent;
+    }
+
+    auto result = std::partial_ordering::unordered;
+    Accessibility::performFunctionOnMainThreadAndWait([&] () {
+        auto startBoundaryPoint = marker1.boundaryPoint();
+        if (!startBoundaryPoint)
+            return;
+        auto endBoundaryPoint = marker2.boundaryPoint();
+        if (!endBoundaryPoint)
+            return;
+        result = treeOrder<ComposedTree>(*startBoundaryPoint, *endBoundaryPoint);
+    });
+    return result;
+}
+
+bool AXTextMarkerRange::isConfinedTo(AXID objectID) const
+{
+    return m_start.objectID() == objectID
+        && m_end.objectID() == objectID
+        && LIKELY(m_start.treeID() == m_end.treeID());
 }
 
 } // namespace WebCore

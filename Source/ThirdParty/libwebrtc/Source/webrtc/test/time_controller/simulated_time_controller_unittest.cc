@@ -137,7 +137,7 @@ TEST(SimulatedTimeControllerTest, ThreadYeildsOnSynchronousCall) {
     // Wait() triggers YieldExecution() which will runs message processing on
     // all threads that are not in the yielded set.
 
-    yield_event.Wait(0);
+    yield_event.Wait(TimeDelta::Zero());
   });
   // Since we are doing an invoke from the main thread, we don't expect the main
   // thread message loop to be processed.

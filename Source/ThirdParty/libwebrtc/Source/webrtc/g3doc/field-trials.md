@@ -1,7 +1,7 @@
-# Field trials
+<!-- go/cmark -->
+<!--* freshness: {owner: 'lndmrk' reviewed: '2022-06-23'} *-->
 
-<?% config.freshness.owner = 'lndmrk' %?>
-<?% config.freshness.reviewed = '2022-06-23' %?>
+# Field trials
 
 WebRTC provides some means to alter its default behavior during run-time,
 colloquially known as *field trials*. This is foremost used for A/B testing new

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUFrontFace.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUFrontFace.h>
 
 namespace WebCore {
 
@@ -35,13 +35,13 @@ enum class GPUFrontFace : uint8_t {
     Cw,
 };
 
-inline PAL::WebGPU::FrontFace convertToBacking(GPUFrontFace frontFace)
+inline WebGPU::FrontFace convertToBacking(GPUFrontFace frontFace)
 {
     switch (frontFace) {
     case GPUFrontFace::Ccw:
-        return PAL::WebGPU::FrontFace::CCW;
+        return WebGPU::FrontFace::CCW;
     case GPUFrontFace::Cw:
-        return PAL::WebGPU::FrontFace::CW;
+        return WebGPU::FrontFace::CW;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

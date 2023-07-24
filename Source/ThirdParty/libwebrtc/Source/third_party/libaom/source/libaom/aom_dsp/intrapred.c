@@ -52,9 +52,9 @@ static INLINE uint16_t paeth_predictor_single(uint16_t left, uint16_t top,
   const int p_top_left = abs_diff(base, top_left);
 
   // Return nearest to base of left, top and top_left.
-  return (p_left <= p_top && p_left <= p_top_left)
-             ? left
-             : (p_top <= p_top_left) ? top : top_left;
+  return (p_left <= p_top && p_left <= p_top_left) ? left
+         : (p_top <= p_top_left)                   ? top
+                                                   : top_left;
 }
 
 static INLINE void paeth_predictor(uint8_t *dst, ptrdiff_t stride, int bw,

@@ -288,6 +288,7 @@ TEST(RtpTransportTest, SignalHandledRtpPayloadType) {
   rtc::Buffer rtp_data(kRtpData, kRtpLen);
   fake_rtp.SendPacket(rtp_data.data<char>(), kRtpLen, options, flags);
   EXPECT_EQ(1, observer.rtp_count());
+  EXPECT_EQ(0, observer.un_demuxable_rtp_count());
   EXPECT_EQ(0, observer.rtcp_count());
   // Remove the sink before destroying the transport.
   transport.UnregisterRtpDemuxerSink(&observer);
@@ -311,6 +312,7 @@ TEST(RtpTransportTest, DontSignalUnhandledRtpPayloadType) {
   rtc::Buffer rtp_data(kRtpData, kRtpLen);
   fake_rtp.SendPacket(rtp_data.data<char>(), kRtpLen, options, flags);
   EXPECT_EQ(0, observer.rtp_count());
+  EXPECT_EQ(1, observer.un_demuxable_rtp_count());
   EXPECT_EQ(0, observer.rtcp_count());
   // Remove the sink before destroying the transport.
   transport.UnregisterRtpDemuxerSink(&observer);

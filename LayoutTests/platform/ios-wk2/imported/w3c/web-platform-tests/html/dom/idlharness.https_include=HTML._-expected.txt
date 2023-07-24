@@ -3460,7 +3460,7 @@ PASS HTMLTextAreaElement interface: calling setRangeText(DOMString) on document.
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode)" with the proper type
 PASS HTMLTextAreaElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on document.createElement("textarea") with too few arguments must throw TypeError
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
-FAIL HTMLTextAreaElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on document.createElement("textarea") with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
+FAIL HTMLTextAreaElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on document.createElement("textarea") with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function() {
             fn.apply(obj, args);
         }" did not throw
 PASS HTMLOutputElement interface: existence and properties of interface object

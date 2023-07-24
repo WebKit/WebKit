@@ -167,8 +167,12 @@ private:
         NSDictionary<NSString *, NSNumber *> *permissions = [m_delegate.getAutoreleased() notificationPermissionsForWebsiteDataStore:m_dataStore.getAutoreleased()];
         for (NSString *key in permissions) {
             NSNumber *value = permissions[key];
-            auto origin = WebCore::SecurityOriginData::fromURL(URL(key));
-            result.set(origin.toString(), value.boolValue);
+            auto originString = WebCore::SecurityOriginData::fromURL(URL(key)).toString();
+            if (originString.isEmpty()) {
+                RELEASE_LOG(Push, "[WKWebsiteDataStoreDelegate notificationPermissionsForWebsiteDataStore:] returned a URL string that could not be parsed into a security origin. Skipping.");
+                continue;
+            }
+            result.set(originString, value.boolValue);
         }
 
         return result;
@@ -396,7 +400,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!identifier)
         [NSException raise:NSInvalidArgumentException format:@"Identifier is nil"];
 
-    auto uuid = UUID::fromNSUUID(identifier);
+    auto uuid = WTF::UUID::fromNSUUID(identifier);
     if (!uuid || !uuid->isValid())
         [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", String([identifier UUIDString]).utf8().data()];
 
@@ -422,14 +426,14 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
     }
 
-    Vector<std::pair<Vector<uint8_t>, UUID>> configDataVector;
+    Vector<std::pair<Vector<uint8_t>, WTF::UUID>> configDataVector;
     for (nw_proxy_config_t proxyConfig in proxyConfigurations) {
         RetainPtr<NSData> agentData = adoptNS((NSData *)nw_proxy_config_copy_agent_data(proxyConfig));
 
         uuid_t proxyIdentifier;
         nw_proxy_config_get_identifier(proxyConfig, proxyIdentifier);
 
-        configDataVector.append({ vectorFromNSData(agentData.get()), UUID(proxyIdentifier) });
+        configDataVector.append({ vectorFromNSData(agentData.get()), WTF::UUID(proxyIdentifier) });
     }
     
     _websiteDataStore->setProxyConfigData(WTFMove(configDataVector));
@@ -501,7 +505,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return completionHandler([NSError errorWithDomain:@"WKWebSiteDataStore" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:@"Identifier is nil" }]);
 
     auto completionHandlerCopy = makeBlockPtr(completionHandler);
-    auto uuid = UUID::fromNSUUID(identifier);
+    auto uuid = WTF::UUID::fromNSUUID(identifier);
     if (!uuid)
         return completionHandler([NSError errorWithDomain:@"WKWebSiteDataStore" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:@"Identifier is invalid" }]);
 
@@ -981,7 +985,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (pid_t)_networkProcessIdentifier
 {
-    return _websiteDataStore->networkProcess().processIdentifier();
+    return _websiteDataStore->networkProcess().processID();
 }
 
 + (void)_makeNextNetworkProcessLaunchFailForTesting

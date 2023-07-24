@@ -9,4 +9,4 @@ features: [Temporal]
 
 const timeZone = 'uTc';
 const result = Temporal.ZonedDateTime.from({ year: 2000, month: 5, day: 2, timeZone });
-assert.sameValue(result.timeZone.id, 'UTC', `Time zone created from string "${timeZone}"`);
+assert.sameValue(result.timeZoneId, 'UTC', `Time zone created from string "${timeZone}"`);

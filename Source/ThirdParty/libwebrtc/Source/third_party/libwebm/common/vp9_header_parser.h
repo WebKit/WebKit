@@ -64,15 +64,18 @@ class Vp9HeaderParser {
   int color_space() const { return color_space_; }
   int width() const { return width_; }
   int height() const { return height_; }
+  int display_width() const { return display_width_; }
+  int display_height() const { return display_height_; }
   int refresh_frame_flags() const { return refresh_frame_flags_; }
   int row_tiles() const { return row_tiles_; }
   int column_tiles() const { return column_tiles_; }
   int frame_parallel_mode() const { return frame_parallel_mode_; }
 
-  // WebKit Additions:
+#if defined(WEBRTC_WEBKIT_BUILD)
   int color_range() const { return color_range_; }
   int subsampling_x() const { return subsampling_x_; }
   int subsampling_y() const { return subsampling_y_; }
+#endif
 
  private:
   // Set the compressed VP9 frame.
@@ -120,6 +123,8 @@ class Vp9HeaderParser {
   int refresh_frame_flags_;
   int width_;
   int height_;
+  int display_width_;
+  int display_height_;
   int row_tiles_;
   int column_tiles_;
   int frame_parallel_mode_;

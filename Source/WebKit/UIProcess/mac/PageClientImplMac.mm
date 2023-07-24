@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,9 +120,9 @@ void PageClientImpl::setImpl(WebViewImpl& impl)
     m_impl = impl;
 }
 
-std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
+std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
-    return m_impl->createDrawingAreaProxy(process);
+    return m_impl->createDrawingAreaProxy();
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region&)
@@ -430,17 +430,17 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 
 void PageClientImpl::pinnedStateWillChange()
 {
-    [m_webView willChangeValueForKey:@"_pinnedState"];
+    [webView() willChangeValueForKey:@"_pinnedState"];
 }
 
 void PageClientImpl::pinnedStateDidChange()
 {
-    [m_webView didChangeValueForKey:@"_pinnedState"];
+    [webView() didChangeValueForKey:@"_pinnedState"];
 }
 
 void PageClientImpl::drawPageBorderForPrinting(WebCore::FloatSize&& size)
 {
-    [m_webView drawPageBorderWithSize:size];
+    [webView() drawPageBorderWithSize:size];
 }
     
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
@@ -507,12 +507,12 @@ Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& pa
 
 void PageClientImpl::didShowContextMenu()
 {
-    [m_webView _didShowContextMenu];
+    [webView() _didShowContextMenu];
 }
 
 void PageClientImpl::didDismissContextMenu()
 {
-    [m_webView _didDismissContextMenu];
+    [webView() _didDismissContextMenu];
 }
 
 #endif // ENABLE(CONTEXT_MENUS)
@@ -648,7 +648,7 @@ void PageClientImpl::selectionDidChange()
 
 bool PageClientImpl::showShareSheet(const ShareDataWithParsedURL& shareData, WTF::CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_impl->showShareSheet(shareData, WTFMove(completionHandler), m_webView.get().get());
+    m_impl->showShareSheet(shareData, WTFMove(completionHandler), webView().get());
     return true;
 }
 
@@ -757,11 +757,6 @@ void PageClientImpl::setEditableElementIsFocused(bool editableElementIsFocused)
     m_impl->setEditableElementIsFocused(editableElementIsFocused);
 }
 
-void PageClientImpl::setCaretDecorationVisibility(bool visibility)
-{
-    m_impl->setCaretDecorationVisibility(visibility);
-}
-
 void PageClientImpl::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction)
 {
 }
@@ -820,20 +815,26 @@ void PageClientImpl::navigationGestureDidBegin()
 {
     m_impl->dismissContentRelativeChildWindowsWithAnimation(true);
 
-    if (auto webView = m_webView.get())
-        NavigationState::fromWebPage(*webView->_page).navigationGestureDidBegin();
+    if (auto webView = this->webView()) {
+        if (auto* navigationState = NavigationState::fromWebPage(*webView->_page))
+            navigationState->navigationGestureDidBegin();
+    }
 }
 
 void PageClientImpl::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
 {
-    if (auto webView = m_webView.get())
-        NavigationState::fromWebPage(*webView->_page).navigationGestureWillEnd(willNavigate, item);
+    if (auto webView = this->webView()) {
+        if (auto* navigationState = NavigationState::fromWebPage(*webView->_page))
+            navigationState->navigationGestureWillEnd(willNavigate, item);
+    }
 }
 
 void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
 {
-    if (auto webView = m_webView.get())
-        NavigationState::fromWebPage(*webView->_page).navigationGestureDidEnd(willNavigate, item);
+    if (auto webView = this->webView()) {
+        if (auto* navigationState = NavigationState::fromWebPage(*webView->_page))
+            navigationState->navigationGestureDidEnd(willNavigate, item);
+    }
 }
 
 void PageClientImpl::navigationGestureDidEnd()
@@ -842,14 +843,18 @@ void PageClientImpl::navigationGestureDidEnd()
 
 void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 {
-    if (auto webView = m_webView.get())
-        NavigationState::fromWebPage(*webView->_page).willRecordNavigationSnapshot(item);
+    if (auto webView = this->webView()) {
+        if (auto* navigationState = NavigationState::fromWebPage(*webView->_page))
+            navigationState->willRecordNavigationSnapshot(item);
+    }
 }
 
 void PageClientImpl::didRemoveNavigationGestureSnapshot()
 {
-    if (auto webView = m_webView.get())
-        NavigationState::fromWebPage(*webView->_page).navigationGestureSnapshotWasRemoved();
+    if (auto webView = this->webView()) {
+        if (auto* navigationState = NavigationState::fromWebPage(*webView->_page))
+        navigationState->navigationGestureSnapshotWasRemoved();
+    }
 }
 
 void PageClientImpl::didStartProvisionalLoadForMainFrame()
@@ -888,7 +893,7 @@ void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigatio
 
 void PageClientImpl::handleControlledElementIDResponse(const String& identifier)
 {
-    [m_webView _handleControlledElementIDResponse:nsStringFromWebCoreString(identifier)];
+    [webView() _handleControlledElementIDResponse:nsStringFromWebCoreString(identifier)];
 }
 
 void PageClientImpl::didChangeBackgroundColor()

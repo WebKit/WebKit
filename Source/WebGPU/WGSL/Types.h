@@ -35,6 +35,21 @@ namespace WGSL {
 
 struct Type;
 
+enum class AddressSpace : uint8_t {
+    Function,
+    Private,
+    Workgroup,
+    Uniform,
+    Storage,
+    Handle,
+};
+
+enum class AccessMode : uint8_t {
+    Read,
+    Write,
+    ReadWrite,
+};
+
 namespace Types {
 
 #define FOR_EACH_PRIMITIVE_TYPE(f) \
@@ -73,33 +88,40 @@ struct Texture {
         TextureStorage3d,
     };
 
-    Type* element;
+    const Type* element;
     Kind kind;
 };
 
 struct Vector {
-    Type* element;
+    const Type* element;
     uint8_t size;
 };
 
 struct Matrix {
-    Type* element;
+    const Type* element;
     uint8_t columns;
     uint8_t rows;
 };
 
 struct Array {
-    Type* element;
-
+    const Type* element;
     std::optional<unsigned> size;
 };
 
 struct Struct {
     AST::Structure& structure;
-    HashMap<String, Type*> fields { };
+    HashMap<String, const Type*> fields { };
 };
 
 struct Function {
+    WTF::Vector<const Type*> parameters;
+    const Type* result;
+};
+
+struct Reference {
+    AddressSpace addressSpace;
+    AccessMode accessMode;
+    const Type* element;
 };
 
 struct Bottom {
@@ -114,8 +136,9 @@ struct Type : public std::variant<
     Types::Array,
     Types::Struct,
     Types::Function,
-    Types::Bottom,
-    Types::Texture
+    Types::Texture,
+    Types::Reference,
+    Types::Bottom
 > {
     using std::variant<
         Types::Primitive,
@@ -124,8 +147,9 @@ struct Type : public std::variant<
         Types::Array,
         Types::Struct,
         Types::Function,
-        Types::Bottom,
-        Types::Texture
+        Types::Texture,
+        Types::Reference,
+        Types::Bottom
         >::variant;
     void dump(PrintStream&) const;
     String toString() const;
@@ -134,7 +158,10 @@ struct Type : public std::variant<
 };
 
 using ConversionRank = Markable<unsigned, IntegralMarkableTraits<unsigned, std::numeric_limits<unsigned>::max()>>;
-ConversionRank conversionRank(Type* from, Type* to);
+ConversionRank conversionRank(const Type* from, const Type* to);
+
+bool isPrimitive(const Type*, Types::Primitive::Kind);
+bool isPrimitiveReference(const Type*, Types::Primitive::Kind);
 
 } // namespace WGSL
 
@@ -147,4 +174,9 @@ public:
     { }
 };
 
+} // namespace WTF
+
+namespace WTF {
+void printInternal(PrintStream&, WGSL::AddressSpace);
+void printInternal(PrintStream&, WGSL::AccessMode);
 } // namespace WTF

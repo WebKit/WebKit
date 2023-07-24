@@ -9,12 +9,35 @@ features: [BigInt, Proxy, Temporal]
 const actual = [];
 
 const expected = [
-  'has timeZone.timeZone',
+  'has timeZone.getOffsetNanosecondsFor',
+  'has timeZone.getPossibleInstantsFor',
+  'has timeZone.id',
   'get timeZone.getOffsetNanosecondsFor',
   'call timeZone.getOffsetNanosecondsFor'
 ];
 
 const calendar = function() {};
+calendar.dateAdd = () => {};
+calendar.dateFromFields = () => {};
+calendar.dateUntil = () => {};
+calendar.day = () => {};
+calendar.dayOfWeek = () => {};
+calendar.dayOfYear = () => {};
+calendar.daysInMonth = () => {};
+calendar.daysInWeek = () => {};
+calendar.daysInYear = () => {};
+calendar.fields = () => {};
+calendar.id = "test-calendar";
+calendar.inLeapYear = () => {};
+calendar.mergeFields = () => {};
+calendar.month = () => {};
+calendar.monthCode = () => {};
+calendar.monthDayFromFields = () => {};
+calendar.monthsInYear = () => {};
+calendar.weekOfYear = () => {};
+calendar.year = () => {};
+calendar.yearMonthFromFields = () => {};
+calendar.yearOfWeek = () => {};
 
 const timeZone = TemporalHelpers.timeZoneObserver(actual, "timeZone", {
   getOffsetNanosecondsFor(instant) {

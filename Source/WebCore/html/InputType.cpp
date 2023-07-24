@@ -822,7 +822,7 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (wasInRange != inRange)
-        emplace(styleInvalidation, *element(), { { CSSSelector::PseudoClassInRange, inRange }, { CSSSelector::PseudoClassOutOfRange, !inRange } });
+        emplace(styleInvalidation, *element(), { { CSSSelector::PseudoClassType::InRange, inRange }, { CSSSelector::PseudoClassType::OutOfRange, !inRange } });
 
     element()->setValueInternal(sanitizedValue, eventBehavior);
 
@@ -1044,7 +1044,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     // 8. If the element has a minimum, and value is less than that minimum, then set value to the smallest value that, when subtracted from the step
     // base, is an integral multiple of the allowed value step, and that is more than or equal to minimum.
     if (newValue < stepRange.minimum()) {
-        const Decimal alignedMinimum = base + ((stepRange.minimum() - base) / step).ceiling() * step;
+        const Decimal alignedMinimum = base + ((stepRange.minimum() - base) / step).ceil() * step;
         ASSERT(alignedMinimum >= stepRange.minimum());
         newValue = alignedMinimum;
     }
@@ -1174,7 +1174,7 @@ void InputType::stepUpFromRenderer(int n)
             if (sign < 0)
                 newValue = base + ((current - base) / step).floor() * step;
             else if (sign > 0)
-                newValue = base + ((current - base) / step).ceiling() * step;
+                newValue = base + ((current - base) / step).ceil() * step;
             else
                 newValue = current;
 

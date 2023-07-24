@@ -90,7 +90,7 @@ public:
     static Path createValueForKey(const FloatRect& rect)
     {
         Path path;
-        path.addEllipse(rect);
+        path.addEllipseInRect(rect);
         return path;
     }
 };
@@ -111,7 +111,7 @@ struct PolygonPathPolicy : TinyLRUCachePolicy<Vector<FloatPoint>, Path> {
 public:
     static bool isKeyNull(const Vector<FloatPoint>& points) { return !points.size(); }
 
-    static Path createValueForKey(const Vector<FloatPoint>& points) { return Path::polygonPathFromPoints(points); }
+    static Path createValueForKey(const Vector<FloatPoint>& points) { return Path(points); }
 };
 
 struct TransformedByteStreamPathPolicy : TinyLRUCachePolicy<SVGPathTransformedByteStream, Path> {

@@ -942,6 +942,28 @@ private:
                 break;
             }
 
+            case NewArrayWithSize: {
+                if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
+                    if (node->child1().useKind() == Int32Use && node->child1()->isInt32Constant()) {
+                        int32_t length = node->child1()->asInt32();
+                        if (length >= 0 && length < MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH) {
+                            switch (node->indexingType()) {
+                            case ALL_DOUBLE_INDEXING_TYPES:
+                            case ALL_INT32_INDEXING_TYPES:
+                            case ALL_CONTIGUOUS_INDEXING_TYPES: {
+                                node->convertToNewArrayWithConstantSize(m_graph, length);
+                                changed = true;
+                                break;
+                            }
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+
             case ResolveRope: {
                 if (m_state.forNode(node->child1()).m_type & ~SpecStringIdent)
                     break;

@@ -127,7 +127,7 @@ const RemoteEstimateSerializer* GetRemoteEstimateSerializer() {
 
 RemoteEstimate::RemoteEstimate() : serializer_(GetRemoteEstimateSerializer()) {
   SetSubType(kSubType);
-  SetName(kName);
+  SetName(kNameGoog);
   SetSenderSsrc(0);
 }
 

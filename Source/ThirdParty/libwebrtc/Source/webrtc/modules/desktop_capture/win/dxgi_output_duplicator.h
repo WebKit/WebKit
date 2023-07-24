@@ -97,6 +97,11 @@ class DxgiOutputDuplicator {
   bool DoDetectUpdatedRegion(const DXGI_OUTDUPL_FRAME_INFO& frame_info,
                              DesktopRegion* updated_region);
 
+  // Returns true if the mouse cursor is embedded in the captured frame and
+  // false if not. Also logs the same boolean as
+  // WebRTC.DesktopCapture.Win.DirectXCursorEmbedded UMA.
+  bool ContainsMouseCursor(const DXGI_OUTDUPL_FRAME_INFO& frame_info);
+
   bool ReleaseFrame();
 
   // Initializes duplication_ instance. Expects duplication_ is in empty status.

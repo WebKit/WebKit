@@ -711,7 +711,6 @@ TEST_F(RtpDemuxerTest, AssociatingByRsidAndBySsrcCannotTriggerDoubleCall) {
   EXPECT_TRUE(demuxer_.OnRtpPacket(*packet));
 }
 
-
 // If one sink is associated with SSRC x, and another sink with RSID y, then if
 // we receive a packet with both SSRC x and RSID y, route that to only the sink
 // for RSID y since we believe RSID tags to be more trustworthy than signaled

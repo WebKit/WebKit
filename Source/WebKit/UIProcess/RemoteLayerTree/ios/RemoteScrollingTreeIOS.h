@@ -39,7 +39,7 @@ public:
     virtual ~RemoteScrollingTreeIOS();
 
 private:
-    Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) final;
+    Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) final;
 
     void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) final;
 };

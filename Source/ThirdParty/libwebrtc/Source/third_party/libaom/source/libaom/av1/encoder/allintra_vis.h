@@ -22,6 +22,13 @@
 
 void av1_init_mb_wiener_var_buffer(AV1_COMP *cpi);
 
+void av1_calc_mb_wiener_var_row(AV1_COMP *const cpi, MACROBLOCK *x,
+                                MACROBLOCKD *xd, const int mi_row,
+                                int16_t *src_diff, tran_low_t *coeff,
+                                tran_low_t *qcoeff, tran_low_t *dqcoeff,
+                                double *sum_rec_distortion,
+                                double *sum_est_rate);
+
 void av1_set_mb_wiener_variance(AV1_COMP *cpi);
 
 int av1_get_sbq_perceptual_ai(AV1_COMP *const cpi, BLOCK_SIZE bsize, int mi_row,

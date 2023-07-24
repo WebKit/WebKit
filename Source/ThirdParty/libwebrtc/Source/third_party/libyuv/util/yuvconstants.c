@@ -43,9 +43,10 @@
 // #define BR (-VR * 128 + YB)
 
 int main(int argc, const char* argv[]) {
-  if (argc < 2) {
-    printf("yuvconstants Kr Kb\n");
-    printf("  MC BT          KR = 0.2126; KB = 0.0722\n");
+  if (argc < 3) {
+    printf("yuvconstants [KR] [KB]\n");
+    printf("  e.g. yuvconstants 0.2126 0.0722\n");
+    printf("  MC BT          KR           KB\n");
     printf("  1  BT.709      KR = 0.2126; KB = 0.0722\n");
     printf("  4  FCC         KR = 0.30;   KB = 0.11\n");
     printf("  6  BT.601      KR = 0.299;  KB = 0.114\n");
@@ -53,8 +54,8 @@ int main(int argc, const char* argv[]) {
     printf("  9  BT.2020     KR = 0.2627; KB = 0.0593\n");
     return -1;
   }
-  float kr = atof(argv[1]);
-  float kb = atof(argv[2]);
+  float kr = (float)atof(argv[1]);
+  float kb = (float)atof(argv[2]);
   float kg = 1 - kr - kb;
 
   float vr = 2 * (1 - kr);

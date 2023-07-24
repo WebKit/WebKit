@@ -60,6 +60,8 @@
 
 #include <atomic>
 #include <cstdint>
+#include <cstring>
+#include <iterator>
 #include <string>
 
 #include "absl/base/const_init.h"
@@ -90,26 +92,42 @@ struct SynchWaitParams;
 //
 // A `Mutex` has two basic operations: `Mutex::Lock()` and `Mutex::Unlock()`.
 // The `Lock()` operation *acquires* a `Mutex` (in a state known as an
-// *exclusive* -- or write -- lock), while the `Unlock()` operation *releases* a
+// *exclusive* -- or *write* -- lock), and the `Unlock()` operation *releases* a
 // Mutex. During the span of time between the Lock() and Unlock() operations,
-// a mutex is said to be *held*. By design all mutexes support exclusive/write
+// a mutex is said to be *held*. By design, all mutexes support exclusive/write
 // locks, as this is the most common way to use a mutex.
+//
+// Mutex operations are only allowed under certain conditions; otherwise an
+// operation is "invalid", and disallowed by the API. The conditions concern
+// both the current state of the mutex and the identity of the threads that
+// are performing the operations.
 //
 // The `Mutex` state machine for basic lock/unlock operations is quite simple:
 //
-// |                | Lock()     | Unlock() |
-// |----------------+------------+----------|
-// | Free           | Exclusive  | invalid  |
-// | Exclusive      | blocks     | Free     |
+// |                | Lock()                 | Unlock() |
+// |----------------+------------------------+----------|
+// | Free           | Exclusive              | invalid  |
+// | Exclusive      | blocks, then exclusive | Free     |
 //
-// Attempts to `Unlock()` must originate from the thread that performed the
-// corresponding `Lock()` operation.
+// The full conditions are as follows.
 //
-// An "invalid" operation is disallowed by the API. The `Mutex` implementation
-// is allowed to do anything on an invalid call, including but not limited to
+// * Calls to `Unlock()` require that the mutex be held, and must be made in the
+//   same thread that performed the corresponding `Lock()` operation which
+//   acquired the mutex; otherwise the call is invalid.
+//
+// * The mutex being non-reentrant (or non-recursive) means that a call to
+//   `Lock()` or `TryLock()` must not be made in a thread that already holds the
+//   mutex; such a call is invalid.
+//
+// * In other words, the state of being "held" has both a temporal component
+//   (from `Lock()` until `Unlock()`) as well as a thread identity component:
+//   the mutex is held *by a particular thread*.
+//
+// An "invalid" operation has undefined behavior. The `Mutex` implementation
+// is allowed to do anything on an invalid call, including, but not limited to,
 // crashing with a useful error message, silently succeeding, or corrupting
-// data structures. In debug mode, the implementation attempts to crash with a
-// useful error message.
+// data structures. In debug mode, the implementation may crash with a useful
+// error message.
 //
 // `Mutex` is not guaranteed to be "fair" in prioritizing waiting threads; it
 // is, however, approximately fair over long periods, and starvation-free for
@@ -255,7 +273,7 @@ class ABSL_LOCKABLE Mutex {
   // Aliases for `Mutex::Lock()`, `Mutex::Unlock()`, and `Mutex::TryLock()`.
   //
   // These methods may be used (along with the complementary `Reader*()`
-  // methods) to distingish simple exclusive `Mutex` usage (`Lock()`,
+  // methods) to distinguish simple exclusive `Mutex` usage (`Lock()`,
   // etc.) from reader/writer lock usage.
   void WriterLock() ABSL_EXCLUSIVE_LOCK_FUNCTION() { this->Lock(); }
 
@@ -612,12 +630,12 @@ class ABSL_SCOPED_LOCKABLE WriterMutexLock {
 // Condition
 // -----------------------------------------------------------------------------
 //
-// As noted above, `Mutex` contains a number of member functions which take a
-// `Condition` as an argument; clients can wait for conditions to become `true`
-// before attempting to acquire the mutex. These sections are known as
-// "condition critical" sections. To use a `Condition`, you simply need to
-// construct it, and use within an appropriate `Mutex` member function;
-// everything else in the `Condition` class is an implementation detail.
+// `Mutex` contains a number of member functions which take a `Condition` as an
+// argument; clients can wait for conditions to become `true` before attempting
+// to acquire the mutex. These sections are known as "condition critical"
+// sections. To use a `Condition`, you simply need to construct it, and use
+// within an appropriate `Mutex` member function; everything else in the
+// `Condition` class is an implementation detail.
 //
 // A `Condition` is specified as a function pointer which returns a boolean.
 // `Condition` functions should be pure functions -- their results should depend
@@ -677,6 +695,20 @@ class Condition {
   template<typename T>
   Condition(bool (*func)(T *), T *arg);
 
+  // Same as above, but allows for cases where `arg` comes from a pointer that
+  // is convertible to the function parameter type `T*` but not an exact match.
+  //
+  // For example, the argument might be `X*` but the function takes `const X*`,
+  // or the argument might be `Derived*` while the function takes `Base*`, and
+  // so on for cases where the argument pointer can be implicitly converted.
+  //
+  // Implementation notes: This constructor overload is required in addition to
+  // the one above to allow deduction of `T` from `arg` for cases such as where
+  // a function template is passed as `func`. Also, the dummy `typename = void`
+  // template parameter exists just to work around a MSVC mangling bug.
+  template <typename T, typename = void>
+  Condition(bool (*func)(T *), typename absl::internal::identity<T>::type *arg);
+
   // Templated version for invoking a method that returns a `bool`.
   //
   // `Condition(object, &Class::Method)` constructs a `Condition` that evaluates
@@ -727,7 +759,7 @@ class Condition {
       : Condition(obj, static_cast<bool (T::*)() const>(&T::operator())) {}
 
   // A Condition that always returns `true`.
-  static const Condition kTrue;
+  ABSL_CONST_INIT static const Condition kTrue;
 
   // Evaluates the condition.
   bool Eval() const;
@@ -742,22 +774,54 @@ class Condition {
   static bool GuaranteedEqual(const Condition *a, const Condition *b);
 
  private:
-  typedef bool (*InternalFunctionType)(void * arg);
-  typedef bool (Condition::*InternalMethodType)();
-  typedef bool (*InternalMethodCallerType)(void * arg,
-                                           InternalMethodType internal_method);
+  // Sizing an allocation for a method pointer can be subtle. In the Itanium
+  // specifications, a method pointer has a predictable, uniform size. On the
+  // other hand, MSVC ABI, method pointer sizes vary based on the
+  // inheritance of the class. Specifically, method pointers from classes with
+  // multiple inheritance are bigger than those of classes with single
+  // inheritance. Other variations also exist.
 
-  bool (*eval_)(const Condition*);  // Actual evaluator
-  InternalFunctionType function_;   // function taking pointer returning bool
-  InternalMethodType method_;       // method returning bool
-  void *arg_;                       // arg of function_ or object of method_
+#ifndef _MSC_VER
+  // Allocation for a function pointer or method pointer.
+  // The {0} initializer ensures that all unused bytes of this buffer are
+  // always zeroed out.  This is necessary, because GuaranteedEqual() compares
+  // all of the bytes, unaware of which bytes are relevant to a given `eval_`.
+  using MethodPtr = bool (Condition::*)();
+  char callback_[sizeof(MethodPtr)] = {0};
+#else
+  // It is well known that the larget MSVC pointer-to-member is 24 bytes. This
+  // may be the largest known pointer-to-member of any platform. For this
+  // reason we will allocate 24 bytes for MSVC platform toolchains.
+  char callback_[24] = {0};
+#endif
 
-  Condition();        // null constructor used only to create kTrue
+  // Function with which to evaluate callbacks and/or arguments.
+  bool (*eval_)(const Condition*) = nullptr;
+
+  // Either an argument for a function call or an object for a method call.
+  void *arg_ = nullptr;
 
   // Various functions eval_ can point to:
   static bool CallVoidPtrFunction(const Condition*);
   template <typename T> static bool CastAndCallFunction(const Condition* c);
   template <typename T> static bool CastAndCallMethod(const Condition* c);
+
+  // Helper methods for storing, validating, and reading callback arguments.
+  template <typename T>
+  inline void StoreCallback(T callback) {
+    static_assert(
+        sizeof(callback) <= sizeof(callback_),
+        "An overlarge pointer was passed as a callback to Condition.");
+    std::memcpy(callback_, &callback, sizeof(callback));
+  }
+
+  template <typename T>
+  inline void ReadCallback(T *callback) const {
+    std::memcpy(callback, callback_, sizeof(*callback));
+  }
+
+  // Used only to create kTrue.
+  constexpr Condition() = default;
 };
 
 // -----------------------------------------------------------------------------
@@ -949,56 +1013,67 @@ inline CondVar::CondVar() : cv_(0) {}
 // static
 template <typename T>
 bool Condition::CastAndCallMethod(const Condition *c) {
-  typedef bool (T::*MemberType)();
-  MemberType rm = reinterpret_cast<MemberType>(c->method_);
-  T *x = static_cast<T *>(c->arg_);
-  return (x->*rm)();
+  T *object = static_cast<T *>(c->arg_);
+  bool (T::*method_pointer)();
+  c->ReadCallback(&method_pointer);
+  return (object->*method_pointer)();
 }
 
 // static
 template <typename T>
 bool Condition::CastAndCallFunction(const Condition *c) {
-  typedef bool (*FuncType)(T *);
-  FuncType fn = reinterpret_cast<FuncType>(c->function_);
-  T *x = static_cast<T *>(c->arg_);
-  return (*fn)(x);
+  bool (*function)(T *);
+  c->ReadCallback(&function);
+  T *argument = static_cast<T *>(c->arg_);
+  return (*function)(argument);
 }
 
 template <typename T>
 inline Condition::Condition(bool (*func)(T *), T *arg)
     : eval_(&CastAndCallFunction<T>),
-      function_(reinterpret_cast<InternalFunctionType>(func)),
-      method_(nullptr),
-      arg_(const_cast<void *>(static_cast<const void *>(arg))) {}
+      arg_(const_cast<void *>(static_cast<const void *>(arg))) {
+  static_assert(sizeof(&func) <= sizeof(callback_),
+                "An overlarge function pointer was passed to Condition.");
+  StoreCallback(func);
+}
+
+template <typename T, typename>
+inline Condition::Condition(bool (*func)(T *),
+                            typename absl::internal::identity<T>::type *arg)
+    // Just delegate to the overload above.
+    : Condition(func, arg) {}
 
 template <typename T>
 inline Condition::Condition(T *object,
                             bool (absl::internal::identity<T>::type::*method)())
     : eval_(&CastAndCallMethod<T>),
-      function_(nullptr),
-      method_(reinterpret_cast<InternalMethodType>(method)),
-      arg_(object) {}
+      arg_(object) {
+  static_assert(sizeof(&method) <= sizeof(callback_),
+                "An overlarge method pointer was passed to Condition.");
+  StoreCallback(method);
+}
 
 template <typename T>
 inline Condition::Condition(const T *object,
                             bool (absl::internal::identity<T>::type::*method)()
                                 const)
     : eval_(&CastAndCallMethod<T>),
-      function_(nullptr),
-      method_(reinterpret_cast<InternalMethodType>(method)),
-      arg_(reinterpret_cast<void *>(const_cast<T *>(object))) {}
+      arg_(reinterpret_cast<void *>(const_cast<T *>(object))) {
+  StoreCallback(method);
+}
 
-// Register a hook for profiling support.
+// Register hooks for profiling support.
 //
 // The function pointer registered here will be called whenever a mutex is
 // contended.  The callback is given the cycles for which waiting happened (as
 // measured by //absl/base/internal/cycleclock.h, and which may not
 // be real "cycle" counts.)
 //
-// Calls to this function do not race or block, but there is no ordering
-// guaranteed between calls to this function and call to the provided hook.
-// In particular, the previously registered hook may still be called for some
-// time after this function returns.
+// There is no ordering guarantee between when the hook is registered and when
+// callbacks will begin.  Only a single profiler can be installed in a running
+// binary; if this function is called a second time with a different function
+// pointer, the value is ignored (and will cause an assertion failure in debug
+// mode.)
 void RegisterMutexProfiler(void (*fn)(int64_t wait_cycles));
 
 // Register a hook for Mutex tracing.
@@ -1011,12 +1086,10 @@ void RegisterMutexProfiler(void (*fn)(int64_t wait_cycles));
 //
 // The only event name currently sent is "slow release".
 //
-// This has the same memory ordering concerns as RegisterMutexProfiler() above.
+// This has the same ordering and single-use limitations as
+// RegisterMutexProfiler() above.
 void RegisterMutexTracer(void (*fn)(const char *msg, const void *obj,
                                     int64_t wait_cycles));
-
-// TODO(gfalcon): Combine RegisterMutexProfiler() and RegisterMutexTracer()
-// into a single interface, since they are only ever called in pairs.
 
 // Register a hook for CondVar tracing.
 //
@@ -1028,7 +1101,8 @@ void RegisterMutexTracer(void (*fn)(const char *msg, const void *obj,
 // Events that can be sent are "Wait", "Unwait", "Signal wakeup", and
 // "SignalAll wakeup".
 //
-// This has the same memory ordering concerns as RegisterMutexProfiler() above.
+// This has the same ordering and single-use limitations as
+// RegisterMutexProfiler() above.
 void RegisterCondVarTracer(void (*fn)(const char *msg, const void *cv));
 
 // Register a hook for symbolizing stack traces in deadlock detector reports.
@@ -1038,7 +1112,8 @@ void RegisterCondVarTracer(void (*fn)(const char *msg, const void *cv));
 // false if symbolizing failed, or true if a NUL-terminated symbol was written
 // to 'out.'
 //
-// This has the same memory ordering concerns as RegisterMutexProfiler() above.
+// This has the same ordering and single-use limitations as
+// RegisterMutexProfiler() above.
 //
 // DEPRECATED: The default symbolizer function is absl::Symbolize() and the
 // ability to register a different hook for symbolizing stack traces will be

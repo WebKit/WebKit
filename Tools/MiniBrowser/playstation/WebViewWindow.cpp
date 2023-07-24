@@ -40,6 +40,10 @@
 #include <toolkitten/Cursor.h>
 #include <toolkitten/MessageDialog.h>
 
+#if defined(USE_WPE_BACKEND_PLAYSTATION) && USE_WPE_BACKEND_PLAYSTATION
+#include <WPEToolingBackends/HeadlessViewBackend.h>
+#endif
+
 using namespace toolkitten;
 
 inline WebViewWindow* toWebView(const void* clientInfo)
@@ -69,7 +73,6 @@ std::unique_ptr<WebViewWindow> WebViewWindow::create(Client&& windowClient, WKPa
 
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(configuration.get(), context->context());
-    WKPageConfigurationSetPageGroup(configuration.get(), context->pageGroup());
     return std::make_unique<WebViewWindow>(configuration.get(), std::move(windowClient));
 }
 
@@ -84,7 +87,12 @@ WebViewWindow::WebViewWindow(WKPageConfigurationRef configuration, Client&& wind
     WKPreferencesSetAcceleratedCompositingEnabled(m_preferences.get(), false);
     WKPreferencesSetFullScreenEnabled(m_preferences.get(), true);
 
+#if defined(USE_WPE_BACKEND_PLAYSTATION) && USE_WPE_BACKEND_PLAYSTATION
+    m_window = std::make_unique<WPEToolingBackends::HeadlessViewBackend>(1920, 1080);
+    m_view = WKViewCreateWPE(m_window->backend(), configuration);
+#else
     m_view = WKViewCreate(configuration);
+#endif
     m_context->addWindow(this);
 
     WKViewClientV0 viewClient {

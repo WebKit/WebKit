@@ -272,7 +272,7 @@ void RenderMenuList::setTextFromOption(int optionIndex)
     }
 #endif
 
-    setText(text.stripWhiteSpace());
+    setText(text.trim(deprecatedIsSpaceOrNewline));
     didUpdateActiveOption(optionIndex);
 }
 
@@ -560,12 +560,12 @@ HostWindow* RenderMenuList::hostWindow() const
     return RenderFlexibleBox::hostWindow();
 }
 
-Ref<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+Ref<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarWidth widthStyle)
 {
-    bool hasCustomScrollbarStyle = style().hasPseudoStyle(PseudoId::Scrollbar);
-    if (hasCustomScrollbarStyle)
+    bool usesLegacyScrollbarStyle = style().usesLegacyScrollbarStyle();
+    if (usesLegacyScrollbarStyle)
         return RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, &selectElement());
-    return Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);
+    return Scrollbar::createNativeScrollbar(scrollableArea, orientation, widthStyle);
 }
 
 int RenderMenuList::clientInsetLeft() const

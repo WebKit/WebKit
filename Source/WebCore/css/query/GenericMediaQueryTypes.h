@@ -86,11 +86,11 @@ struct FeatureSchema {
     AtomString name;
     Type type;
     ValueType valueType;
-    Vector<CSSValueID> valueIdentifiers;
+    FixedVector<CSSValueID> valueIdentifiers;
 
     virtual EvaluationResult evaluate(const Feature&, const FeatureEvaluationContext&) const { return EvaluationResult::Unknown; }
 
-    FeatureSchema(const AtomString& name, Type type, ValueType valueType, Vector<CSSValueID>&& valueIdentifiers = { })
+    FeatureSchema(const AtomString& name, Type type, ValueType valueType, FixedVector<CSSValueID>&& valueIdentifiers = { })
         : name(name)
         , type(type)
         , valueType(valueType)

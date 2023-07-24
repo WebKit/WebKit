@@ -1638,29 +1638,29 @@ TEST_F(LibYUVPlanarTest, TestDetilePlane) {
   int i, j;
 
   // orig is tiled.  Allocate enough memory for tiles.
-  int orig_width = (benchmark_width_ + 15) & ~15;
-  int orig_height = (benchmark_height_ + 15) & ~15;
-  int orig_plane_size = orig_width * orig_height;
+  int tile_width = (benchmark_width_ + 15) & ~15;
+  int tile_height = (benchmark_height_ + 15) & ~15;
+  int tile_plane_size = tile_width * tile_height;
   int y_plane_size = benchmark_width_ * benchmark_height_;
-  align_buffer_page_end(orig_y, orig_plane_size);
+  align_buffer_page_end(tile_y, tile_plane_size);
   align_buffer_page_end(dst_c, y_plane_size);
   align_buffer_page_end(dst_opt, y_plane_size);
 
-  MemRandomize(orig_y, orig_plane_size);
+  MemRandomize(tile_y, tile_plane_size);
   memset(dst_c, 0, y_plane_size);
   memset(dst_opt, 0, y_plane_size);
 
   // Disable all optimizations.
   MaskCpuFlags(disable_cpu_flags_);
   for (j = 0; j < benchmark_iterations_; j++) {
-    DetilePlane(orig_y, orig_width, dst_c, benchmark_width_, benchmark_width_,
+    DetilePlane(tile_y, tile_width, dst_c, benchmark_width_, benchmark_width_,
                 benchmark_height_, 16);
   }
 
   // Enable optimizations.
   MaskCpuFlags(benchmark_cpu_info_);
   for (j = 0; j < benchmark_iterations_; j++) {
-    DetilePlane(orig_y, orig_width, dst_opt, benchmark_width_, benchmark_width_,
+    DetilePlane(tile_y, tile_width, dst_opt, benchmark_width_, benchmark_width_,
                 benchmark_height_, 16);
   }
 
@@ -1668,7 +1668,46 @@ TEST_F(LibYUVPlanarTest, TestDetilePlane) {
     EXPECT_EQ(dst_c[i], dst_opt[i]);
   }
 
-  free_aligned_buffer_page_end(orig_y);
+  free_aligned_buffer_page_end(tile_y);
+  free_aligned_buffer_page_end(dst_c);
+  free_aligned_buffer_page_end(dst_opt);
+}
+
+TEST_F(LibYUVPlanarTest, TestDetilePlane_16) {
+  int i, j;
+
+  // orig is tiled.  Allocate enough memory for tiles.
+  int tile_width = (benchmark_width_ + 15) & ~15;
+  int tile_height = (benchmark_height_ + 15) & ~15;
+  int tile_plane_size = tile_width * tile_height * 2;
+  int y_plane_size = benchmark_width_ * benchmark_height_ * 2;
+  align_buffer_page_end(tile_y, tile_plane_size);
+  align_buffer_page_end(dst_c, y_plane_size);
+  align_buffer_page_end(dst_opt, y_plane_size);
+
+  MemRandomize(tile_y, tile_plane_size);
+  memset(dst_c, 0, y_plane_size);
+  memset(dst_opt, 0, y_plane_size);
+
+  // Disable all optimizations.
+  MaskCpuFlags(disable_cpu_flags_);
+  for (j = 0; j < benchmark_iterations_; j++) {
+    DetilePlane_16((const uint16_t*)tile_y, tile_width, (uint16_t*)dst_c,
+                   benchmark_width_, benchmark_width_, benchmark_height_, 16);
+  }
+
+  // Enable optimizations.
+  MaskCpuFlags(benchmark_cpu_info_);
+  for (j = 0; j < benchmark_iterations_; j++) {
+    DetilePlane_16((const uint16_t*)tile_y, tile_width, (uint16_t*)dst_opt,
+                   benchmark_width_, benchmark_width_, benchmark_height_, 16);
+  }
+
+  for (i = 0; i < y_plane_size; ++i) {
+    EXPECT_EQ(dst_c[i], dst_opt[i]);
+  }
+
+  free_aligned_buffer_page_end(tile_y);
   free_aligned_buffer_page_end(dst_c);
   free_aligned_buffer_page_end(dst_opt);
 }
@@ -1678,33 +1717,33 @@ TEST_F(LibYUVPlanarTest, TestDetileSplitUVPlane_Correctness) {
   int i, j;
 
   // orig is tiled.  Allocate enough memory for tiles.
-  int orig_width = (benchmark_width_ + 15) & ~15;
-  int orig_height = (benchmark_height_ + 15) & ~15;
-  int orig_plane_size = orig_width * orig_height;
+  int tile_width = (benchmark_width_ + 15) & ~15;
+  int tile_height = (benchmark_height_ + 15) & ~15;
+  int tile_plane_size = tile_width * tile_height;
   int uv_plane_size = ((benchmark_width_ + 1) / 2) * benchmark_height_;
-  align_buffer_page_end(orig_uv, orig_plane_size);
-  align_buffer_page_end(detiled_uv, orig_plane_size);
+  align_buffer_page_end(tile_uv, tile_plane_size);
+  align_buffer_page_end(detiled_uv, tile_plane_size);
   align_buffer_page_end(dst_u_two_stage, uv_plane_size);
   align_buffer_page_end(dst_u_opt, uv_plane_size);
   align_buffer_page_end(dst_v_two_stage, uv_plane_size);
   align_buffer_page_end(dst_v_opt, uv_plane_size);
 
-  MemRandomize(orig_uv, orig_plane_size);
-  memset(detiled_uv, 0, orig_plane_size);
+  MemRandomize(tile_uv, tile_plane_size);
+  memset(detiled_uv, 0, tile_plane_size);
   memset(dst_u_two_stage, 0, uv_plane_size);
   memset(dst_u_opt, 0, uv_plane_size);
   memset(dst_v_two_stage, 0, uv_plane_size);
   memset(dst_v_opt, 0, uv_plane_size);
 
-  DetileSplitUVPlane(orig_uv, orig_width, dst_u_opt, (benchmark_width_ + 1) / 2,
+  DetileSplitUVPlane(tile_uv, tile_width, dst_u_opt, (benchmark_width_ + 1) / 2,
                      dst_v_opt, (benchmark_width_ + 1) / 2, benchmark_width_,
                      benchmark_height_, 16);
 
   // Benchmark 2 step conversion for comparison.
   for (j = 0; j < benchmark_iterations_; j++) {
-    DetilePlane(orig_uv, orig_width, detiled_uv, benchmark_width_,
+    DetilePlane(tile_uv, tile_width, detiled_uv, benchmark_width_,
                 benchmark_width_, benchmark_height_, 16);
-    SplitUVPlane(detiled_uv, orig_width, dst_u_two_stage,
+    SplitUVPlane(detiled_uv, tile_width, dst_u_two_stage,
                  (benchmark_width_ + 1) / 2, dst_v_two_stage,
                  (benchmark_width_ + 1) / 2, (benchmark_width_ + 1) / 2,
                  benchmark_height_);
@@ -1715,7 +1754,7 @@ TEST_F(LibYUVPlanarTest, TestDetileSplitUVPlane_Correctness) {
     EXPECT_EQ(dst_v_two_stage[i], dst_v_opt[i]);
   }
 
-  free_aligned_buffer_page_end(orig_uv);
+  free_aligned_buffer_page_end(tile_uv);
   free_aligned_buffer_page_end(detiled_uv);
   free_aligned_buffer_page_end(dst_u_two_stage);
   free_aligned_buffer_page_end(dst_u_opt);
@@ -1727,17 +1766,17 @@ TEST_F(LibYUVPlanarTest, TestDetileSplitUVPlane_Benchmark) {
   int i, j;
 
   // orig is tiled.  Allocate enough memory for tiles.
-  int orig_width = (benchmark_width_ + 15) & ~15;
-  int orig_height = (benchmark_height_ + 15) & ~15;
-  int orig_plane_size = orig_width * orig_height;
+  int tile_width = (benchmark_width_ + 15) & ~15;
+  int tile_height = (benchmark_height_ + 15) & ~15;
+  int tile_plane_size = tile_width * tile_height;
   int uv_plane_size = ((benchmark_width_ + 1) / 2) * benchmark_height_;
-  align_buffer_page_end(orig_uv, orig_plane_size);
+  align_buffer_page_end(tile_uv, tile_plane_size);
   align_buffer_page_end(dst_u_c, uv_plane_size);
   align_buffer_page_end(dst_u_opt, uv_plane_size);
   align_buffer_page_end(dst_v_c, uv_plane_size);
   align_buffer_page_end(dst_v_opt, uv_plane_size);
 
-  MemRandomize(orig_uv, orig_plane_size);
+  MemRandomize(tile_uv, tile_plane_size);
   memset(dst_u_c, 0, uv_plane_size);
   memset(dst_u_opt, 0, uv_plane_size);
   memset(dst_v_c, 0, uv_plane_size);
@@ -1746,7 +1785,7 @@ TEST_F(LibYUVPlanarTest, TestDetileSplitUVPlane_Benchmark) {
   // Disable all optimizations.
   MaskCpuFlags(disable_cpu_flags_);
 
-  DetileSplitUVPlane(orig_uv, orig_width, dst_u_c, (benchmark_width_ + 1) / 2,
+  DetileSplitUVPlane(tile_uv, tile_width, dst_u_c, (benchmark_width_ + 1) / 2,
                      dst_v_c, (benchmark_width_ + 1) / 2, benchmark_width_,
                      benchmark_height_, 16);
 
@@ -1755,7 +1794,7 @@ TEST_F(LibYUVPlanarTest, TestDetileSplitUVPlane_Benchmark) {
 
   for (j = 0; j < benchmark_iterations_; j++) {
     DetileSplitUVPlane(
-        orig_uv, orig_width, dst_u_opt, (benchmark_width_ + 1) / 2, dst_v_opt,
+        tile_uv, tile_width, dst_u_opt, (benchmark_width_ + 1) / 2, dst_v_opt,
         (benchmark_width_ + 1) / 2, benchmark_width_, benchmark_height_, 16);
   }
 
@@ -1764,7 +1803,7 @@ TEST_F(LibYUVPlanarTest, TestDetileSplitUVPlane_Benchmark) {
     EXPECT_EQ(dst_v_c[i], dst_v_opt[i]);
   }
 
-  free_aligned_buffer_page_end(orig_uv);
+  free_aligned_buffer_page_end(tile_uv);
   free_aligned_buffer_page_end(dst_u_c);
   free_aligned_buffer_page_end(dst_u_opt);
   free_aligned_buffer_page_end(dst_v_c);
@@ -3495,8 +3534,8 @@ TESTTPLANARTOP(MergeXR30, uint16_t, uint8_t, 16)
 // TODO(fbarchard): improve test for platforms and cpu detect
 #ifdef HAS_MERGEUVROW_16_AVX2
 TEST_F(LibYUVPlanarTest, MergeUVRow_16_Opt) {
-  // Round count up to multiple of 16
-  const int kPixels = (benchmark_width_ * benchmark_height_ + 15) & ~15;
+  // Round count up to multiple of 8
+  const int kPixels = (benchmark_width_ * benchmark_height_ + 7) & ~7;
 
   align_buffer_page_end(src_pixels_u, kPixels * 2);
   align_buffer_page_end(src_pixels_v, kPixels * 2);

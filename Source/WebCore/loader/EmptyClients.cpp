@@ -277,7 +277,7 @@ private:
     void respondToChangedContents() final { }
     void respondToChangedSelection(LocalFrame*) final { }
     void updateEditorStateAfterLayoutIfEditabilityChanged() final { }
-    void discardedComposition(LocalFrame*) final { }
+    void discardedComposition(const Document&) final { }
     void canceledComposition() final { }
     void didUpdateComposition() final { }
     void didEndEditing() final { }
@@ -334,8 +334,6 @@ private:
     void uppercaseWord() final { }
     void lowercaseWord() final { }
     void capitalizeWord() final { }
-
-    void setCaretDecorationVisibility(bool) final { }
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)

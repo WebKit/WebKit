@@ -27,6 +27,9 @@ from steps import *
 
 
 class Factory(factory.BuildFactory):
+    shouldInstallDependencies = True
+    shouldUseCrossTargetImage = False
+
     def __init__(self, platform, configuration, architectures, buildOnly, additionalArguments, device_model):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architecture=" ".join(architectures), buildOnly=buildOnly, additionalArguments=additionalArguments, device_model=device_model))
@@ -40,17 +43,18 @@ class Factory(factory.BuildFactory):
         self.addStep(DeleteStaleBuildFiles())
         if platform.startswith('mac'):
             self.addStep(PruneCoreSymbolicationdCacheIfTooLarge())
-        if platform == "win":
-            self.addStep(InstallWin32Dependencies())
-        if platform == "gtk" and "--no-experimental-features" not in (additionalArguments or []):
-            self.addStep(InstallGtkDependencies())
-        if platform == "wpe" and "--no-experimental-features" not in (additionalArguments or []):
-            self.addStep(InstallWpeDependencies())
+        if self.shouldInstallDependencies:
+            if platform == "win":
+                self.addStep(InstallWin32Dependencies())
+            if platform.startswith("gtk"):
+                self.addStep(InstallGtkDependencies())
+            if platform == "wpe":
+                self.addStep(InstallWpeDependencies())
 
 
 class BuildFactory(Factory):
-    ShouldRunJSCBundleStep = False
-    ShouldRunMiniBrowserBundleStep = False
+    shouldRunJSCBundleStep = False
+    shouldRunMiniBrowserBundleStep = False
 
     def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None):
         Factory.__init__(self, platform, configuration, architectures, True, additionalArguments, device_model)
@@ -60,13 +64,15 @@ class BuildFactory(Factory):
         else:
             self.addStep(CompileWebKit())
 
-        if self.ShouldRunJSCBundleStep:
+        if self.shouldUseCrossTargetImage:
+            self.addStep(CheckIfNeededUpdateDeployedCrossTargetImage())
+        if self.shouldRunJSCBundleStep:
             self.addStep(GenerateJSCBundle())
-        if self.ShouldRunMiniBrowserBundleStep:
+        if self.shouldRunMiniBrowserBundleStep:
             self.addStep(GenerateMiniBrowserBundle())
 
         if triggers:
-            if platform == "gtk":
+            if platform.startswith("gtk"):
                 self.addStep(InstallBuiltProduct())
 
             self.addStep(ArchiveBuiltProduct())
@@ -76,6 +82,14 @@ class BuildFactory(Factory):
                 self.addStep(UploadMinifiedBuiltProduct())
             self.addStep(TransferToS3())
             self.addStep(trigger.Trigger(schedulerNames=triggers))
+
+
+class NoInstallDependenciesBuildFactory(BuildFactory):
+    shouldInstallDependencies = False
+
+
+class CrossTargetBuildFactory(NoInstallDependenciesBuildFactory):
+    shouldUseCrossTargetImage = True
 
 
 class TestFactory(Factory):
@@ -123,7 +137,7 @@ class TestFactory(Factory):
         if platform.startswith('mac') or platform.startswith('ios-simulator'):
             self.addStep(TriggerCrashLogSubmission())
 
-        if platform == "gtk":
+        if platform.startswith("gtk"):
             self.addStep(RunGtkAPITests())
             if additionalArguments and "--display-server=wayland" in additionalArguments:
                 self.addStep(RunWebDriverTests())
@@ -172,25 +186,31 @@ class TestAllButJSCFactory(TestFactory):
     JSCTestClass = None
 
 
-class BuildAndTestAllButJSCFactory(BuildAndTestFactory):
+class BuildAndTestAndArchiveAllButJSCFactory(BuildAndTestFactory):
     JSCTestClass = None
 
     def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None, **kwargs):
         BuildAndTestFactory.__init__(self, platform, configuration, architectures, triggers, additionalArguments, device_model, **kwargs)
-        self.addStep(RunWebDriverTests())
+        # The parent class will already archive if triggered
+        if not triggers:
+            self.addStep(InstallBuiltProduct())
+            self.addStep(ArchiveBuiltProduct())
+            self.addStep(UploadBuiltProduct())
+        if platform != "gtk-4":
+            self.addStep(RunWebDriverTests())
 
 
 class BuildAndGenerateJSCBundleFactory(BuildFactory):
-    ShouldRunJSCBundleStep = True
+    shouldRunJSCBundleStep = True
 
 
 class BuildAndGenerateMiniBrowserBundleFactory(BuildFactory):
-    ShouldRunMiniBrowserBundleStep = True
+    shouldRunMiniBrowserBundleStep = True
 
 
 class BuildAndGenerateMiniBrowserJSCBundleFactory(BuildFactory):
-    ShouldRunJSCBundleStep = True
-    ShouldRunMiniBrowserBundleStep = True
+    shouldRunJSCBundleStep = True
+    shouldRunMiniBrowserBundleStep = True
 
 
 class TestJSCFactory(Factory):
@@ -255,15 +275,23 @@ class BuildAndPerfTestFactory(Factory):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
         self.addStep(CompileWebKit())
         self.addStep(RunAndUploadPerfTests())
-        if platform == "gtk":
+        if platform.startswith("gtk"):
             self.addStep(RunBenchmarkTests(timeout=2000))
 
 
 class DownloadAndPerfTestFactory(Factory):
     def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
+        if self.shouldUseCrossTargetImage:
+            self.addStep(CheckIfNeededUpdateRunningCrossTargetImage())
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
-        self.addStep(RunAndUploadPerfTests())
-        if platform == "gtk":
+        if platform != "wpe":
+            self.addStep(RunAndUploadPerfTests())
+        if platform in ["gtk", "wpe"]:
             self.addStep(RunBenchmarkTests(timeout=2000))
+
+
+class CrossTargetDownloadAndPerfTestFactory(DownloadAndPerfTestFactory):
+    shouldInstallDependencies = False
+    shouldUseCrossTargetImage = True

@@ -53,10 +53,10 @@ Ref<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const Q
 
 void SVGFEComponentTransferElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     if (name == SVGNames::inAttr)
         m_in1->setBaseValInternal(newValue);
+
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGFEComponentTransferElement::svgAttributeChanged(const QualifiedName& attrName)

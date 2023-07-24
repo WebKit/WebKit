@@ -1045,14 +1045,18 @@ void SWServer::fireInstallEvent(SWServerWorker& worker)
 
 void SWServer::runServiceWorkerAndFireActivateEvent(SWServerWorker& worker)
 {
-    runServiceWorkerIfNecessary(worker, [identifier = worker.identifier()](auto* contextConnection) {
+    runServiceWorkerIfNecessary(worker, [worker = Ref { worker }](auto* contextConnection) {
         if (!contextConnection) {
             RELEASE_LOG_ERROR(ServiceWorker, "Request to fire activate event on a worker whose context connection does not exist");
             return;
         }
 
-        RELEASE_LOG(ServiceWorker, "SWServer::runServiceWorkerAndFireActivateEvent on worker %llu", identifier.toUInt64());
-        contextConnection->fireActivateEvent(identifier);
+        if (worker->state() != ServiceWorkerState::Activating)
+            return;
+
+        RELEASE_LOG(ServiceWorker, "SWServer::runServiceWorkerAndFireActivateEvent on worker %llu", worker->identifier().toUInt64());
+        worker->markActivateEventAsFired();
+        contextConnection->fireActivateEvent(worker->identifier());
     });
 }
 
@@ -1384,7 +1388,7 @@ void SWServer::getAllOrigins(CompletionHandler<void(HashSet<ClientOrigin>&&)>&& 
 
 void SWServer::addContextConnection(SWServerToContextConnection& connection)
 {
-    RELEASE_LOG(ServiceWorker, "SWServer::addContextConnection");
+    RELEASE_LOG(ServiceWorker, "SWServer::addContextConnection %llu", connection.identifier().toUInt64());
 
     ASSERT(!m_contextConnections.contains(connection.registrableDomain()));
 
@@ -1395,7 +1399,7 @@ void SWServer::addContextConnection(SWServerToContextConnection& connection)
 
 void SWServer::removeContextConnection(SWServerToContextConnection& connection)
 {
-    RELEASE_LOG(ServiceWorker, "SWServer::removeContextConnection");
+    RELEASE_LOG(ServiceWorker, "SWServer::removeContextConnection %llu", connection.identifier().toUInt64());
 
     auto registrableDomain = connection.registrableDomain();
     auto serviceWorkerPageIdentifier = connection.serviceWorkerPageIdentifier();
@@ -1651,6 +1655,8 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
     }
 
     // FIXME: we should check whether we can skip the event and if skipping do a soft-update.
+
+    RELEASE_LOG(ServiceWorker, "SWServer::fireFunctionalEvent serviceWorkerID=%llu, state=%hhu", worker->identifier().toUInt64(), worker->state());
 
     worker->whenActivated([this, weakThis = WeakPtr { *this }, callback = WTFMove(callback), registrationIdentifier = registration.identifier(), serviceWorkerIdentifier = worker->identifier()](bool success) mutable {
         if (!weakThis) {

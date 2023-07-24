@@ -11,11 +11,14 @@
 #include "api/video_codecs/sdp_video_format.h"
 
 #include "absl/strings/match.h"
+#include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "api/video_codecs/av1_profile.h"
 #include "api/video_codecs/h264_profile_level_id.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/vp9_profile.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {
@@ -131,6 +134,38 @@ bool SdpVideoFormat::IsCodecInList(
 bool operator==(const SdpVideoFormat& a, const SdpVideoFormat& b) {
   return a.name == b.name && a.parameters == b.parameters &&
          a.scalability_modes == b.scalability_modes;
+}
+
+absl::optional<SdpVideoFormat> FuzzyMatchSdpVideoFormat(
+    rtc::ArrayView<const SdpVideoFormat> supported_formats,
+    const SdpVideoFormat& format) {
+  absl::optional<SdpVideoFormat> res;
+  int best_parameter_match = 0;
+  for (const auto& supported_format : supported_formats) {
+    if (absl::EqualsIgnoreCase(supported_format.name, format.name)) {
+      int matching_parameters = 0;
+      for (const auto& kv : supported_format.parameters) {
+        auto it = format.parameters.find(kv.first);
+        if (it != format.parameters.end() && it->second == kv.second) {
+          matching_parameters += 1;
+        }
+      }
+
+      if (!res || matching_parameters > best_parameter_match) {
+        res = supported_format;
+        best_parameter_match = matching_parameters;
+      }
+    }
+  }
+
+  if (!res) {
+    RTC_LOG(LS_INFO) << "Failed to match SdpVideoFormat " << format.ToString();
+  } else if (*res != format) {
+    RTC_LOG(LS_INFO) << "Matched SdpVideoFormat " << format.ToString()
+                     << " with " << res->ToString();
+  }
+
+  return res;
 }
 
 }  // namespace webrtc

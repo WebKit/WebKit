@@ -9,9 +9,29 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  // ToTemporalDate 1 → GetTemporalCalendarWithISODefault
+  // ToTemporalDate 1 → GetTemporalCalendarSlotValueWithISODefault
   "get one.calendar",
-  "has one.calendar.calendar",
+  "has one.calendar.dateAdd",
+  "has one.calendar.dateFromFields",
+  "has one.calendar.dateUntil",
+  "has one.calendar.day",
+  "has one.calendar.dayOfWeek",
+  "has one.calendar.dayOfYear",
+  "has one.calendar.daysInMonth",
+  "has one.calendar.daysInWeek",
+  "has one.calendar.daysInYear",
+  "has one.calendar.fields",
+  "has one.calendar.id",
+  "has one.calendar.inLeapYear",
+  "has one.calendar.mergeFields",
+  "has one.calendar.month",
+  "has one.calendar.monthCode",
+  "has one.calendar.monthDayFromFields",
+  "has one.calendar.monthsInYear",
+  "has one.calendar.weekOfYear",
+  "has one.calendar.year",
+  "has one.calendar.yearMonthFromFields",
+  "has one.calendar.yearOfWeek",
   // ToTemporalDate 1 → CalendarFields
   "get one.calendar.fields",
   "call one.calendar.fields",
@@ -31,9 +51,29 @@ const expected = [
   // ToTemporalDate 1 → CalendarDateFromFields
   "get one.calendar.dateFromFields",
   "call one.calendar.dateFromFields",
-  // ToTemporalDate 2 → GetTemporalCalendarWithISODefault
+  // ToTemporalDate 2 → GetTemporalCalendarSlotValueWithISODefault
   "get two.calendar",
-  "has two.calendar.calendar",
+  "has two.calendar.dateAdd",
+  "has two.calendar.dateFromFields",
+  "has two.calendar.dateUntil",
+  "has two.calendar.day",
+  "has two.calendar.dayOfWeek",
+  "has two.calendar.dayOfYear",
+  "has two.calendar.daysInMonth",
+  "has two.calendar.daysInWeek",
+  "has two.calendar.daysInYear",
+  "has two.calendar.fields",
+  "has two.calendar.id",
+  "has two.calendar.inLeapYear",
+  "has two.calendar.mergeFields",
+  "has two.calendar.month",
+  "has two.calendar.monthCode",
+  "has two.calendar.monthDayFromFields",
+  "has two.calendar.monthsInYear",
+  "has two.calendar.weekOfYear",
+  "has two.calendar.year",
+  "has two.calendar.yearMonthFromFields",
+  "has two.calendar.yearOfWeek",
   // ToTemporalDate 2 → CalendarFields
   "get two.calendar.fields",
   "call two.calendar.fields",

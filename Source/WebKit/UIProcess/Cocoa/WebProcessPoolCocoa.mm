@@ -448,31 +448,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 
-#if ENABLE(MEDIA_STREAM)
-    // Allow microphone access if either preference is set because WebRTC requires microphone access.
-    bool mediaDevicesEnabled = m_defaultPageGroup->preferences().mediaDevicesEnabled();
-
-    bool isSafari = false;
-#if PLATFORM(IOS_FAMILY)
-    if (WebCore::IOSApplication::isMobileSafari())
-        isSafari = true;
-#elif PLATFORM(MAC)
-    if (WebCore::MacApplication::isSafari())
-        isSafari = true;
-#endif
-
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (isSafari && mediaDevicesEnabled && !m_defaultPageGroup->preferences().captureAudioInUIProcessEnabled() && !m_defaultPageGroup->preferences().captureAudioInGPUProcessEnabled()) {
-        if (auto handle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s))
-            parameters.audioCaptureExtensionHandle = WTFMove(*handle);
-    }
-#else
-    UNUSED_VARIABLE(mediaDevicesEnabled);
-    UNUSED_VARIABLE(isSafari);
-#endif
-#endif
-
 #if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
     parameters.shouldLogUserInteraction = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
 #endif
@@ -483,7 +458,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.useOverlayScrollbars = ([NSScroller preferredScrollerStyle] == NSScrollerStyleOverlay);
 #endif
     
-#if PLATFORM(IOS) && HAVE(AGX_COMPILER_SERVICE)
+#if (PLATFORM(IOS) || PLATFORM(VISION)) && HAVE(AGX_COMPILER_SERVICE)
     if (WebCore::deviceHasAGXCompilerService())
         parameters.compilerServiceExtensionHandles = SandboxExtension::createHandlesForMachLookup(WebCore::agxCompilerServices(), std::nullopt);
 #endif
@@ -498,7 +473,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.strictSecureDecodingForAllObjCEnabled = IPC::strictSecureDecodingForAllObjCEnabled();
 
 #if PLATFORM(IOS_FAMILY)
-    parameters.currentUserInterfaceIdiomIsSmallScreen = currentUserInterfaceIdiomIsSmallScreen();
+    parameters.currentUserInterfaceIdiom = currentUserInterfaceIdiom();
     parameters.supportsPictureInPicture = supportsPictureInPicture();
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
     parameters.focusRingColor = RenderThemeIOS::systemFocusRingColor();
@@ -799,11 +774,11 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // FIXME: <https://webkit.org/b/246488> Adopt UIScreenBrightnessDidChangeNotification.
     addCFNotificationObserver(backlightLevelDidChangeCallback, (__bridge CFStringRef)UIBacklightLevelChangedNotification);
 ALLOW_DEPRECATED_DECLARATIONS_END
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #if ENABLE(REMOTE_INSPECTOR)
     addCFNotificationObserver(remoteWebInspectorEnabledCallback, CFSTR(WIRServiceEnabledNotification));
 #endif
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 #endif // !PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(IOS_FAMILY)
@@ -821,7 +796,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (![UIApplication sharedApplication]) {
         m_applicationLaunchObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
             if (WebKit::updateCurrentUserInterfaceIdiom())
-                sendToAllProcesses(Messages::WebProcess::UserInterfaceIdiomDidChange(WebKit::currentUserInterfaceIdiomIsSmallScreen()));
+                sendToAllProcesses(Messages::WebProcess::UserInterfaceIdiomDidChange(WebKit::currentUserInterfaceIdiom()));
         }];
     }
 #endif
@@ -874,11 +849,11 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // FIXME: <https://webkit.org/b/255833> Adopt UIScreenBrightnessDidChangeNotification.
     removeCFNotificationObserver((__bridge CFStringRef)UIBacklightLevelChangedNotification);
 ALLOW_DEPRECATED_DECLARATIONS_END
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #if ENABLE(REMOTE_INSPECTOR)
     removeCFNotificationObserver(CFSTR(WIRServiceEnabledNotification));
 #endif
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 #endif // !PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(IOS_FAMILY)
@@ -1195,7 +1170,7 @@ void WebProcessPool::systemDidWake()
 }
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 void WebProcessPool::registerHighDynamicRangeChangeCallback()
 {
     static NeverDestroyed<LowPowerModeNotifier> notifier { [](bool) {
@@ -1204,6 +1179,6 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
             pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));
     } };
 }
-#endif // PLATFORM(MAC) || PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 
 } // namespace WebKit

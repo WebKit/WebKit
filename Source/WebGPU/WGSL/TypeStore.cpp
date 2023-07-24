@@ -49,15 +49,16 @@ using namespace Types;
 // Matrix: rows in byte 1 and columns in byte 2
 // Array: 0 for dynamic array or 32-bit size in the upper 32-bits
 // Texture: kind << 16
+// Reference: AddressSpace + AccessMode compacted into 1 byte and shifted 24 bits left
 struct VectorKey {
-    Type* elementType;
+    const Type* elementType;
     uint8_t size;
 
     uint64_t extra() const { return size; }
 };
 
 struct MatrixKey {
-    Type* elementType;
+    const Type* elementType;
     uint8_t columns;
     uint8_t rows;
 
@@ -65,21 +66,40 @@ struct MatrixKey {
 };
 
 struct ArrayKey {
-    Type* elementType;
+    const Type* elementType;
     std::optional<unsigned> size;
 
     uint64_t extra() const { return size.has_value() ? static_cast<uint64_t>(*size) << 32 : 0; }
 };
 
 struct TextureKey {
-    Type* elementType;
+    const Type* elementType;
     Texture::Kind kind;
 
     uint64_t extra() const { return static_cast<uint64_t>(kind) << 16; }
 };
 
+struct ReferenceKey {
+    const Type* elementType;
+    AddressSpace addressSpace;
+    AccessMode accessMode;
+
+    uint64_t extra() const
+    {
+        constexpr unsigned addressSpaceShift = 2;
+
+        auto addressSpace = WTF::enumToUnderlyingType(this->addressSpace);
+        auto accessMode = WTF::enumToUnderlyingType(this->accessMode);
+
+        ASSERT(accessMode < (1 << addressSpaceShift));
+        ASSERT(addressSpace < (1 << (sizeof(addressSpace) * 8 - addressSpaceShift)));
+
+        return static_cast<uint64_t>(accessMode | (addressSpace << addressSpaceShift)) << 24;
+    }
+};
+
 template<typename Key>
-Type* TypeStore::TypeCache::find(const Key& key) const
+const Type* TypeStore::TypeCache::find(const Key& key) const
 {
     auto it = m_storage.find(std::pair(key.elementType, key.extra()));
     if (it != m_storage.end())
@@ -88,7 +108,7 @@ Type* TypeStore::TypeCache::find(const Key& key) const
 }
 
 template<typename Key>
-void TypeStore::TypeCache::insert(const Key& key, Type* type)
+void TypeStore::TypeCache::insert(const Key& key, const Type* type)
 {
     auto it = m_storage.add(std::pair(key.elementType, key.extra()), type);
     ASSERT_UNUSED(it, it.isNewEntry);
@@ -134,21 +154,21 @@ TypeStore::TypeStore()
     allocateConstructor(&TypeStore::textureType, AST::ParameterizedTypeName::Base::TextureStorage3d, Texture::Kind::TextureStorage3d);
 }
 
-Type* TypeStore::structType(AST::Structure& structure)
+const Type* TypeStore::structType(AST::Structure& structure)
 {
     return allocateType<Struct>(structure);
 }
 
-Type* TypeStore::constructType(AST::ParameterizedTypeName::Base base, Type* elementType)
+const Type* TypeStore::constructType(AST::ParameterizedTypeName::Base base, const Type* elementType)
 {
     auto& typeConstructor = m_typeConstrutors[WTF::enumToUnderlyingType(base)];
     return typeConstructor.construct(elementType);
 }
 
-Type* TypeStore::arrayType(Type* elementType, std::optional<unsigned> size)
+const Type* TypeStore::arrayType(const Type* elementType, std::optional<unsigned> size)
 {
     ArrayKey key { elementType, size };
-    Type* type = m_cache.find(key);
+    const Type* type = m_cache.find(key);
     if (type)
         return type;
     type = allocateType<Array>(elementType, size);
@@ -156,10 +176,10 @@ Type* TypeStore::arrayType(Type* elementType, std::optional<unsigned> size)
     return type;
 }
 
-Type* TypeStore::vectorType(Type* elementType, uint8_t size)
+const Type* TypeStore::vectorType(const Type* elementType, uint8_t size)
 {
     VectorKey key { elementType, size };
-    Type* type = m_cache.find(key);
+    const Type* type = m_cache.find(key);
     if (type)
         return type;
     type = allocateType<Vector>(elementType, size);
@@ -167,10 +187,10 @@ Type* TypeStore::vectorType(Type* elementType, uint8_t size)
     return type;
 }
 
-Type* TypeStore::matrixType(Type* elementType, uint8_t columns, uint8_t rows)
+const Type* TypeStore::matrixType(const Type* elementType, uint8_t columns, uint8_t rows)
 {
     MatrixKey key { elementType, columns, rows };
-    Type* type = m_cache.find(key);
+    const Type* type = m_cache.find(key);
     if (type)
         return type;
     type = allocateType<Matrix>(elementType, columns, rows);
@@ -178,10 +198,10 @@ Type* TypeStore::matrixType(Type* elementType, uint8_t columns, uint8_t rows)
     return type;
 }
 
-Type* TypeStore::textureType(Type* elementType, Texture::Kind kind)
+const Type* TypeStore::textureType(const Type* elementType, Texture::Kind kind)
 {
     TextureKey key { elementType, kind };
-    Type* type = m_cache.find(key);
+    const Type* type = m_cache.find(key);
     if (type)
         return type;
     type = allocateType<Texture>(elementType, kind);
@@ -189,8 +209,24 @@ Type* TypeStore::textureType(Type* elementType, Texture::Kind kind)
     return type;
 }
 
+const Type* TypeStore::functionType(WTF::Vector<const Type*>&& parameters, const Type* result)
+{
+    return allocateType<Function>(WTFMove(parameters), result);
+}
+
+const Type* TypeStore::referenceType(AddressSpace addressSpace, const Type* element, AccessMode accessMode)
+{
+    ReferenceKey key { element, addressSpace, accessMode };
+    const Type* type = m_cache.find(key);
+    if (type)
+        return type;
+    type = allocateType<Reference>(addressSpace, accessMode, element);
+    m_cache.insert(key, type);
+    return type;
+}
+
 template<typename TypeKind, typename... Arguments>
-Type* TypeStore::allocateType(Arguments&&... arguments)
+const Type* TypeStore::allocateType(Arguments&&... arguments)
 {
     m_types.append(std::unique_ptr<Type>(new Type(TypeKind { std::forward<Arguments>(arguments)... })));
     return m_types.last().get();
@@ -200,7 +236,7 @@ template<typename TargetConstructor, typename Base, typename... Arguments>
 void TypeStore::allocateConstructor(TargetConstructor constructor, Base base, Arguments&&... arguments)
 {
     m_typeConstrutors[WTF::enumToUnderlyingType(base)] =
-        TypeConstructor { [this, constructor, arguments...](Type* elementType) -> Type* {
+        TypeConstructor { [this, constructor, arguments...](const Type* elementType) -> const Type* {
             return (this->*constructor)(elementType, arguments...);
         } };
 }
