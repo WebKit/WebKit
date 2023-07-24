@@ -68,7 +68,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
         protocols.reset(static_cast<char**>(g_new0(char*, protocolList.size() + 1)));
         unsigned i = 0;
         for (auto& subprotocol : protocolList)
-            protocols.get()[i++] = g_strdup(subprotocol.trim(isJSONOrHTTPWhitespace<UChar>).utf8().data());
+            protocols.get()[i++] = g_strdup(subprotocol.trim(isASCIIWhitespaceWithoutFF<UChar>).utf8().data());
     }
 
 #if USE(SOUP2)

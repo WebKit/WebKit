@@ -141,46 +141,24 @@ template<typename CharacterType> constexpr bool isTabOrSpace(CharacterType chara
 // Infra's "ASCII whitespace" <https://infra.spec.whatwg.org/#ascii-whitespace>
 template<typename CharacterType> constexpr bool isASCIIWhitespace(CharacterType character)
 {
-    // Histogram from Apple's page load test combined with some ad hoc browsing some other test suites.
-    //
-    //     82%: 216330 non-space characters, all > U+0020
-    //     11%:  30017 plain space characters, U+0020
-    //      5%:  12099 newline characters, U+000A
-    //      2%:   5346 tab characters, U+0009
-    //
-    // No other characters seen. No U+000C or U+000D, and no other control characters.
-    // Accordingly, we check for non-spaces first, then space, then newline, then tab, then the other characters.
-
-    return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r' || character == '\f');
+    return character == ' ' || character == '\n' || character == '\t' || character == '\r' || character == '\f';
 }
 
-template<typename CharacterType> constexpr bool isJSONOrHTTPWhitespace(CharacterType character)
+template<typename CharacterType> constexpr bool isASCIIWhitespaceWithoutFF(CharacterType character)
 {
-    // This is different from isASCIIWhitespace: JSON does not accept \v as a space.
-    // ECMA-404 specifies the followings.
+    // This is different from isASCIIWhitespace: JSON/HTTP/XML do not accept \f as a whitespace.
+    // ECMA-404 specifies the following:
     // > Whitespace is any sequence of one or more of the following code points:
     // > character tabulation (U+0009), line feed (U+000A), carriage return (U+000D), and space (U+0020).
     //
-    // Also, this definition is the same to HTTP whitespace.
+    // This matches HTTP whitespace:
     // https://fetch.spec.whatwg.org/#http-whitespace-byte
-    return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r');
+    //
+    // And XML whitespace:
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#NT-S
+    return character == ' ' || character == '\n' || character == '\t' || character == '\r';
 }
 
-/*
-    Statistics from a run of Apple's page load test for callers of isUnicodeCompatibleASCIIWhitespace:
-
-    character          count
-    ---------          -----
-    non-spaces         689383
-    20  space          294720
-    0A  \n             89059
-    09  \t             28320
-    0D  \r             0
-    0C  \f             0
-    0B  \v             0
-
-    As these are compatible with those for isASCIIWhitespace we let that do most of the work.
-*/
 template<typename CharacterType> constexpr bool isUnicodeCompatibleASCIIWhitespace(CharacterType character)
 {
     return isASCIIWhitespace(character) || character == '\v';
@@ -288,7 +266,7 @@ using WTF::isASCIIOctalDigit;
 using WTF::isASCIIPrintable;
 using WTF::isTabOrSpace;
 using WTF::isASCIIWhitespace;
-using WTF::isJSONOrHTTPWhitespace;
+using WTF::isASCIIWhitespaceWithoutFF;
 using WTF::isUnicodeCompatibleASCIIWhitespace;
 using WTF::isASCIIUpper;
 using WTF::isNotASCIIWhitespace;

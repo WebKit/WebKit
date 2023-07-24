@@ -33,7 +33,6 @@
 #include "XPathNSResolver.h"
 #include "XPathPath.h"
 #include "XPathStep.h"
-#include "XPathUtil.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>
@@ -135,7 +134,7 @@ bool Parser::isBinaryOperatorContext() const
 // See https://www.w3.org/TR/1999/REC-xpath-19991116/#NT-ExprWhitespace .
 void Parser::skipWS()
 {
-    while (m_nextPos < m_data.length() && isXMLSpace(m_data[m_nextPos]))
+    while (m_nextPos < m_data.length() && isASCIIWhitespaceWithoutFF(m_data[m_nextPos]))
         ++m_nextPos;
 }
 

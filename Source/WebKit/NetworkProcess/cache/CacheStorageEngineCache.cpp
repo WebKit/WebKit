@@ -89,7 +89,7 @@ static inline void updateVaryInformation(RecordInformation& recordInformation, c
     }
 
     varyValue.split(',', [&](StringView view) {
-        if (!recordInformation.hasVaryStar && view.trim(isJSONOrHTTPWhitespace<UChar>) == "*"_s)
+        if (!recordInformation.hasVaryStar && view.trim(isASCIIWhitespaceWithoutFF<UChar>) == "*"_s)
             recordInformation.hasVaryStar = true;
         recordInformation.varyHeaders.add(view.toString(), request.httpHeaderField(view));
     });

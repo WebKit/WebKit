@@ -82,7 +82,7 @@ bool MathMLTokenElement::childShouldCreateRenderer(const Node& child) const
 
 std::optional<UChar32> MathMLTokenElement::convertToSingleCodePoint(StringView string)
 {
-    auto codePoints = string.trim(isJSONOrHTTPWhitespace<UChar>).codePoints();
+    auto codePoints = string.trim(isASCIIWhitespaceWithoutFF<UChar>).codePoints();
     auto iterator = codePoints.begin();
     if (iterator == codePoints.end())
         return std::nullopt;
