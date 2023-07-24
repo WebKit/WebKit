@@ -172,6 +172,7 @@ private:
     void wheelEventScrollDidEndForNode(ScrollingNodeID);
     
     WEBCORE_EXPORT void setMouseIsOverScrollbar(Scrollbar*, bool isOverScrollbar) override;
+    WEBCORE_EXPORT void setScrollbarEnabled(Scrollbar&) override;
 
     void hysterisisTimerFired(PAL::HysteresisState);
 

@@ -423,6 +423,20 @@ void AsyncScrollingCoordinator::setMouseMovedInContentArea(ScrollableArea& scrol
     stateNode->setMouseMovedInContentArea(state);
 }
 
+void AsyncScrollingCoordinator::setScrollbarEnabled(Scrollbar& scrollbar)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+    auto scrollingNodeID = scrollbar.scrollableArea().scrollingNodeID();
+    if (!scrollingNodeID)
+        return;
+
+    auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
+    if (!stateNode)
+        return;
+    stateNode->setScrollbarEnabledState(scrollbar.orientation(), scrollbar.enabled());
+}
+
 void AsyncScrollingCoordinator::applyScrollingTreeLayerPositions()
 {
     m_scrollingTree->applyLayerPositions();
@@ -933,6 +947,10 @@ void AsyncScrollingCoordinator::setScrollingNodeScrollableAreaGeometry(Scrolling
     auto* verticalScrollbar = scrollableArea.verticalScrollbar();
     auto* horizontalScrollbar = scrollableArea.horizontalScrollbar();
     scrollingNode->setScrollerImpsFromScrollbars(verticalScrollbar, horizontalScrollbar);
+    if (horizontalScrollbar)
+        scrollingNode->setScrollbarEnabledState(ScrollbarOrientation::Horizontal, horizontalScrollbar->enabled());
+    if (verticalScrollbar)
+        scrollingNode->setScrollbarEnabledState(ScrollbarOrientation::Vertical, verticalScrollbar->enabled());
 
     scrollingNode->setScrollOrigin(scrollableArea.scrollOrigin());
     scrollingNode->setScrollPosition(scrollableArea.scrollPosition());
