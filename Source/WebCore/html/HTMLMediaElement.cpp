@@ -8564,10 +8564,10 @@ void HTMLMediaElement::scheduleUpdateMediaState()
         return;
 
     auto logSiteIdentifier = LOGIDENTIFIER;
-    ALWAYS_LOG(logSiteIdentifier, "task scheduled");
+    INFO_LOG(logSiteIdentifier, "task scheduled");
     queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, m_updateMediaStateTaskCancellationGroup, [this, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
-        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
+        INFO_LOG(logSiteIdentifier, "lambda(), task fired");
         Ref<HTMLMediaElement> protectedThis(*this); // updateMediaState calls methods that can trigger arbitrary DOM mutations.
         updateMediaState();
     });
@@ -9022,7 +9022,7 @@ MediaElementSession& HTMLMediaElement::mediaSession() const
 
 void HTMLMediaElement::updateMediaPlayer(IntSize presentationSize, bool shouldMaintainAspectRatio)
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
+    INFO_LOG(LOGIDENTIFIER);
     m_player->setPresentationSize(presentationSize);
     visibilityStateChanged();
     m_player->setVisibleInViewport(isVisibleInViewport());
