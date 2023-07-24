@@ -89,11 +89,6 @@ class PageConfiguration {
     WTF_MAKE_NONCOPYABLE(PageConfiguration); WTF_MAKE_FAST_ALLOCATED;
 public:
 
-    struct RemoteMainFrameCreationParameters {
-        UniqueRef<RemoteFrameClient> remoteFrameClient;
-        WebCore::ProcessIdentifier remoteProcessIdentifier;
-    };
-
     WEBCORE_EXPORT PageConfiguration(
         std::optional<PageIdentifier>,
         PAL::SessionID,
@@ -105,7 +100,7 @@ public:
         Ref<BackForwardClient>&&,
         Ref<CookieJar>&&,
         UniqueRef<ProgressTrackerClient>&&,
-        std::variant<UniqueRef<LocalFrameLoaderClient>, RemoteMainFrameCreationParameters>&&,
+        std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>>&&,
         FrameIdentifier mainFrameIdentifier,
         UniqueRef<SpeechRecognitionProvider>&&,
         UniqueRef<MediaRecorderProvider>&&,
@@ -154,7 +149,7 @@ public:
     Ref<CookieJar> cookieJar;
     std::unique_ptr<ValidationMessageClient> validationMessageClient;
 
-    std::variant<UniqueRef<LocalFrameLoaderClient>, RemoteMainFrameCreationParameters> clientForMainFrame;
+    std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>> clientForMainFrame;
 
     FrameIdentifier mainFrameIdentifier;
     std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;

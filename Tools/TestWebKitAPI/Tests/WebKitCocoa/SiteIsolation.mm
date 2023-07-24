@@ -1026,10 +1026,17 @@ TEST(SiteIsolation, ChildBeingNavigatedToSameDomainByParent)
 
 TEST(SiteIsolation, ChildBeingNavigatedToNewDomainByParent)
 {
+    auto appleHTML = "<script>"
+        "window.addEventListener('message', (event) => {"
+        "    parent.window.postMessage(event.data + 'pong', { 'targetOrigin' : '*' });"
+        "}, false);"
+        "alert('apple iframe loaded')"
+        "</script>"_s;
+
     HTTPServer server({
         { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe><script>onload = () => { document.getElementById('webkit_frame').src = 'https://apple.com/apple' }</script>"_s } },
         { "/webkit"_s, { "<html></html>"_s } },
-        { "/apple"_s, { "<script>alert('done')</script>"_s } }
+        { "/apple"_s, { appleHTML } }
     }, HTTPServer::Protocol::HttpsProxy);
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
@@ -1040,7 +1047,7 @@ TEST(SiteIsolation, ChildBeingNavigatedToNewDomainByParent)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "apple iframe loaded");
 
     checkFrameTreesInProcesses(webView.get(), {
         { "https://example.com"_s,
@@ -1049,6 +1056,14 @@ TEST(SiteIsolation, ChildBeingNavigatedToNewDomainByParent)
             { { "https://apple.com"_s } }
         }
     });
+
+    NSString *jsCheckingPostMessageRoundTripAfterIframeProcessChange = @""
+    "window.addEventListener('message', (event) => {"
+    "    alert('parent frame received ' + event.data)"
+    "}, false);"
+    "document.getElementById('webkit_frame').contentWindow.postMessage('ping', '*');";
+    [webView evaluateJavaScript:jsCheckingPostMessageRoundTripAfterIframeProcessChange completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "parent frame received pingpong");
 }
 
 TEST(SiteIsolation, IframeRedirectSameSite)
