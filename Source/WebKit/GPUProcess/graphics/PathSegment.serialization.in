@@ -122,6 +122,10 @@ header: <WebCore/PathSegmentData.h>
 };
 
 header: <WebCore/PathSegment.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathCloseSubpath {
+};
+
+header: <WebCore/PathSegment.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::PathSegment {
     WebCore::PathSegment::Data data();
 };
