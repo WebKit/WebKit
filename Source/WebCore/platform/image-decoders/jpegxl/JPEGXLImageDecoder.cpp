@@ -427,12 +427,21 @@ void JPEGXLImageDecoder::prepareColorTransform()
 LCMSProfilePtr JPEGXLImageDecoder::tryDecodeICCColorProfile()
 {
     size_t profileSize = 0;
+#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0, 9, 0)
     if (JxlDecoderGetICCProfileSize(m_decoder.get(), &s_pixelFormat, JXL_COLOR_PROFILE_TARGET_DATA, &profileSize) != JXL_DEC_SUCCESS)
         return nullptr;
 
     Vector<uint8_t> profileData(profileSize);
     if (JxlDecoderGetColorAsICCProfile(m_decoder.get(), &s_pixelFormat, JXL_COLOR_PROFILE_TARGET_DATA, profileData.data(), profileData.size()) != JXL_DEC_SUCCESS)
         return nullptr;
+#else
+    if (JxlDecoderGetICCProfileSize(m_decoder.get(), JXL_COLOR_PROFILE_TARGET_DATA, &profileSize) != JXL_DEC_SUCCESS)
+        return nullptr;
+
+    Vector<uint8_t> profileData(profileSize);
+    if (JxlDecoderGetColorAsICCProfile(m_decoder.get(), JXL_COLOR_PROFILE_TARGET_DATA, profileData.data(), profileData.size()) != JXL_DEC_SUCCESS)
+        return nullptr;
+#endif
 
     return LCMSProfilePtr(cmsOpenProfileFromMem(profileData.data(), profileData.size()));
 }
