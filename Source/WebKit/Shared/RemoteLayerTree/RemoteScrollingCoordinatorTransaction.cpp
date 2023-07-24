@@ -177,6 +177,12 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const 
         encoder << mouseLocationState.locationInHorizontalScrollbar;
         encoder << mouseLocationState.locationInVerticalScrollbar;
     }
+
+    if (node.hasChangedProperty(ScrollingStateNode::Property::ScrollbarEnabledState)) {
+        auto scrollbarEnabledState = node.scrollbarEnabledState();
+        encoder << scrollbarEnabledState.horizontalScrollbarIsEnabled;
+        encoder << scrollbarEnabledState.verticalScrollbarIsEnabled;
+    }
 }
 
 void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, const ScrollingStateFrameScrollingNode& node)
@@ -320,6 +326,18 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
         if (!decoder.decode(locationInVerticalScrollbar))
             return false;
         node.setMouseMovedInContentArea({ locationInHorizontalScrollbar, locationInVerticalScrollbar });
+    }
+
+    if (node.hasChangedProperty(ScrollingStateNode::Property::ScrollbarEnabledState)) {
+        bool horizontalScrollbarEnabled;
+        if (!decoder.decode(horizontalScrollbarEnabled))
+            return false;
+
+        bool verticalScrollbarEnabled;
+        if (!decoder.decode(verticalScrollbarEnabled))
+            return false;
+        node.setScrollbarEnabledState(ScrollbarOrientation::Horizontal, horizontalScrollbarEnabled);
+        node.setScrollbarEnabledState(ScrollbarOrientation::Vertical, verticalScrollbarEnabled);
     }
 
     return true;

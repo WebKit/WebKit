@@ -72,9 +72,14 @@ public:
     void visibilityChanged(bool);
     void updateMinimumKnobLength(int);
     void detach();
+    void setEnabled(bool flag) { m_isEnabled = flag; }
+
 private:
     int m_minimumKnobLength { 0 };
+
+    bool m_isEnabled { false };
     bool m_isVisible { false };
+
     ScrollerPairMac& m_pair;
     const ScrollbarOrientation m_orientation;
     IntPoint m_lastKnownMousePositionInScrollbar;
