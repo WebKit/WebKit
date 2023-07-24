@@ -333,6 +333,10 @@ public:
 #if ENABLE(SAMPLING_PROFILER)
     SamplingProfiler* samplingProfiler() { return m_samplingProfiler.get(); }
     JS_EXPORT_PRIVATE SamplingProfiler& ensureSamplingProfiler(Ref<Stopwatch>&&);
+
+    JS_EXPORT_PRIVATE void enableSamplingProfiler();
+    JS_EXPORT_PRIVATE void disableSamplingProfiler();
+    JS_EXPORT_PRIVATE RefPtr<JSON::Value> takeSamplingProfilerSamplesAsJSON();
 #endif
 
     FuzzerAgent* fuzzerAgent() const { return m_fuzzerAgent.get(); }

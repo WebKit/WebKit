@@ -302,6 +302,7 @@ static JSC_DECLARE_HOST_FUNCTION(assertCall);
 #if ENABLE(SAMPLING_PROFILER)
 static JSC_DECLARE_HOST_FUNCTION(enableSamplingProfiler);
 static JSC_DECLARE_HOST_FUNCTION(disableSamplingProfiler);
+static JSC_DECLARE_HOST_FUNCTION(dumpAndClearSamplingProfilerSamples);
 #endif
 
 static JSC_DECLARE_HOST_FUNCTION(tracePointStart);
@@ -405,22 +406,46 @@ JSC_DEFINE_HOST_FUNCTION(assertCall, (JSGlobalObject* globalObject, CallFrame* c
 #if ENABLE(SAMPLING_PROFILER)
 JSC_DEFINE_HOST_FUNCTION(enableSamplingProfiler, (JSGlobalObject* globalObject, CallFrame*))
 {
-    SamplingProfiler* profiler = globalObject->vm().samplingProfiler();
-    if (!profiler)
-        profiler = &globalObject->vm().ensureSamplingProfiler(Stopwatch::create());
-    profiler->start();
+    globalObject->vm().enableSamplingProfiler();
     return JSValue::encode(jsUndefined());
 }
 
 JSC_DEFINE_HOST_FUNCTION(disableSamplingProfiler, (JSGlobalObject* globalObject, CallFrame*))
 {
-    SamplingProfiler* profiler = globalObject->vm().samplingProfiler();
-    if (!profiler)
-        profiler = &globalObject->vm().ensureSamplingProfiler(Stopwatch::create());
+    globalObject->vm().disableSamplingProfiler();
+    return JSValue::encode(jsUndefined());
+}
 
+JSC_DEFINE_HOST_FUNCTION(dumpAndClearSamplingProfilerSamples, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue argument = callFrame->argument(0);
+    auto filenamePrefix = emptyString();
+    if (!argument.isUndefinedOrNull()) {
+        filenamePrefix = argument.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    auto json = vm.takeSamplingProfilerSamplesAsJSON();
+    if (UNLIKELY(!json))
+        return JSValue::encode(jsUndefined());
+
+    auto jsonData = json->toJSONString();
     {
-        Locker locker { profiler->getLock() };
-        profiler->pause();
+        FileSystem::PlatformFileHandle fileHandle;
+        String tempFilePath = FileSystem::openTemporaryFile(filenamePrefix, fileHandle);
+        if (!FileSystem::isHandleValid(fileHandle)) {
+            dataLogLn("Dumping sampling profiler samples failed to open temporary file");
+            return JSValue::encode(jsUndefined());
+        }
+
+        CString utf8String = jsonData.utf8();
+
+        FileSystem::writeToFile(fileHandle, utf8String.data(), utf8String.length());
+        FileSystem::closeFile(fileHandle);
+        dataLogLn("Dumped sampling profiler samples to ", tempFilePath);
     }
 
     return JSValue::encode(jsUndefined());
@@ -1659,6 +1684,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 #if ENABLE(SAMPLING_PROFILER)
         putDirectWithoutTransition(vm, Identifier::fromString(vm, "__enableSamplingProfiler"_s), JSFunction::create(vm, this, 1, "enableSamplingProfiler"_s, enableSamplingProfiler, ImplementationVisibility::Public), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
         putDirectWithoutTransition(vm, Identifier::fromString(vm, "__disableSamplingProfiler"_s), JSFunction::create(vm, this, 1, "disableSamplingProfiler"_s, disableSamplingProfiler, ImplementationVisibility::Public), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__dumpAndClearSamplingProfilerSamples"_s), JSFunction::create(vm, this, 1, "dumpAndClearSamplingProfilerSamples"_s, dumpAndClearSamplingProfilerSamples, ImplementationVisibility::Public), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 #endif
         putDirectWithoutTransition(vm, Identifier::fromString(vm, "__enableSuperSampler"_s), JSFunction::create(vm, this, 1, "enableSuperSampler"_s, enableSuperSampler, ImplementationVisibility::Public), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
         putDirectWithoutTransition(vm, Identifier::fromString(vm, "__disableSuperSampler"_s), JSFunction::create(vm, this, 1, "disableSuperSampler"_s, disableSuperSampler, ImplementationVisibility::Public), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
