@@ -826,6 +826,8 @@ bool WebPageProxy::hasRunningProcess() const
 
 void WebPageProxy::notifyProcessPoolToPrewarm()
 {
+    if (m_process->processPool().hasPrewarmedProcess())
+        return;
     m_process->processPool().didReachGoodTimeToPrewarm();
 }
 
@@ -5412,6 +5414,7 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     internals().pageLoadState.clearPendingAPIRequest(transaction);
 
     if (frame->isMainFrame()) {
+        notifyProcessPoolToPrewarm();
         process->didStartProvisionalLoadForMainFrame(url);
         reportPageLoadResult(ResourceError { ResourceError::Type::Cancellation });
         internals().pageLoadStart = MonotonicTime::now();
@@ -5912,8 +5915,6 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
             navigation->setClientNavigationActivity(nullptr);
 
         resetRecentCrashCountSoon();
-
-        notifyProcessPoolToPrewarm();
 
         callLoadCompletionHandlersIfNecessary(true);
     }
