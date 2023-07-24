@@ -252,7 +252,7 @@ static void pathSegmentApplierCallback(void* info, const CGPathElement* element)
         break;
 
     case kCGPathElementCloseSubpath:
-        applier({ std::monostate() });
+        applier({ PathCloseSubpath { } });
         break;
     }
 }

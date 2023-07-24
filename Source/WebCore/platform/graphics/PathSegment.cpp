@@ -39,75 +39,44 @@ PathSegment::PathSegment(Data&& data)
 
 FloatPoint PathSegment::calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const
 {
-    return WTF::switchOn(m_data,
-        [&](auto& data) {
-            return data.calculateEndPoint(currentPoint, lastMoveToPoint);
-        },
-        [&](std::monostate) {
-            return lastMoveToPoint;
-        }
-    );
+    return WTF::switchOn(m_data, [&](auto& data) {
+        return data.calculateEndPoint(currentPoint, lastMoveToPoint);
+    });
 }
 
 void PathSegment::extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const
 {
-    WTF::switchOn(m_data,
-        [&](auto& data) {
-            data.extendFastBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
-        },
-        [&](std::monostate) {
-            boundingRect.extend(lastMoveToPoint);
-        }
-    );
+    WTF::switchOn(m_data, [&](auto& data) {
+        data.extendFastBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
+    });
 }
 
 void PathSegment::extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const
 {
-    WTF::switchOn(m_data,
-        [&](auto& data) {
-            data.extendBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
-        },
-        [&](std::monostate) {
-            boundingRect.extend(lastMoveToPoint);
-        }
-    );
+    WTF::switchOn(m_data, [&](auto& data) {
+        data.extendBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
+    });
 }
 
 void PathSegment::addToImpl(PathImpl& impl) const
 {
-    WTF::switchOn(m_data,
-        [&](auto& data) {
-            data.addToImpl(impl);
-        },
-        [&](std::monostate) {
-            impl.closeSubpath();
-        }
-    );
+    WTF::switchOn(m_data, [&](auto& data) {
+        data.addToImpl(impl);
+    });
 }
 
 void PathSegment::applyElements(const PathElementApplier& applier) const
 {
-    WTF::switchOn(m_data,
-        [&](auto& data) {
-            data.applyElements(applier);
-        },
-        [&](std::monostate) {
-            applier({ PathElement::Type::CloseSubpath, { } });
-        }
-    );
+    WTF::switchOn(m_data, [&](auto& data) {
+        data.applyElements(applier);
+    });
 }
 
 TextStream& operator<<(TextStream& ts, const PathSegment& segment)
 {
-    return WTF::switchOn(segment.data(),
-        [&](auto& data) -> TextStream& {
-            return ts << data;
-        },
-        [&](std::monostate) -> TextStream& {
-            ts << "close subpath";
-            return ts;
-        }
-    );
+    return WTF::switchOn(segment.data(), [&](auto& data) -> TextStream& {
+        return ts << data;
+    });
 }
 
 } // namespace WebCore
