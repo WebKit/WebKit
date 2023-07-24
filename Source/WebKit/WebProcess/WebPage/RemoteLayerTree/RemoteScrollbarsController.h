@@ -54,6 +54,7 @@ public:
     bool shouldDrawIntoScrollbarLayer(WebCore::Scrollbar&) const final;
     bool shouldRegisterScrollbars() const final { return scrollableArea().isListBox(); }
     int minimumThumbLength(WebCore::ScrollbarOrientation) final;
+    void updateScrollbarEnabledState(WebCore::Scrollbar&) final;
 
 private:
     bool m_horizontalOverlayScrollbarIsVisible { false };

@@ -208,6 +208,7 @@ public:
     WEBCORE_EXPORT virtual void setMouseIsOverContentArea(ScrollableArea&, bool) { }
     WEBCORE_EXPORT virtual void setMouseMovedInContentArea(ScrollableArea&) { }
     WEBCORE_EXPORT virtual void setMouseIsOverScrollbar(Scrollbar*, bool) { }
+    WEBCORE_EXPORT virtual void setScrollbarEnabled(Scrollbar&) { }
 
 protected:
     explicit ScrollingCoordinator(Page*);

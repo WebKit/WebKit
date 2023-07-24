@@ -50,6 +50,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
 #if PLATFORM(MAC)
     , m_scrollbarHoverState(stateNode.scrollbarHoverState())
     , m_mouseLocationState(stateNode.mouseLocationState())
+    , m_scrollbarEnabledState(stateNode.scrollbarEnabledState())
     , m_verticalScrollerImp(stateNode.verticalScrollerImp())
     , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
 #endif
@@ -300,6 +301,19 @@ void ScrollingStateScrollingNode::setScrollbarHoverState(ScrollbarHoverState hov
 
     m_scrollbarHoverState = hoverState;
     setPropertyChanged(Property::ScrollbarHoverState);
+}
+
+void ScrollingStateScrollingNode::setScrollbarEnabledState(ScrollbarOrientation orientation, bool enabled)
+{
+    if ((orientation == ScrollbarOrientation::Horizontal ? m_scrollbarEnabledState.horizontalScrollbarIsEnabled : m_scrollbarEnabledState.verticalScrollbarIsEnabled) == enabled)
+        return;
+
+    if (orientation == ScrollbarOrientation::Horizontal)
+        m_scrollbarEnabledState.horizontalScrollbarIsEnabled = enabled;
+    else
+        m_scrollbarEnabledState.verticalScrollbarIsEnabled = enabled;
+
+    setPropertyChanged(Property::ScrollbarEnabledState);
 }
 
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const

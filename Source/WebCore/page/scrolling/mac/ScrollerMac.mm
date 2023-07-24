@@ -357,8 +357,7 @@ void ScrollerMac::updateValues()
     auto values = m_pair.valuesForOrientation(m_orientation);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-
-    [m_scrollerImp setEnabled:!!m_hostLayer];
+    [m_scrollerImp setEnabled:m_isEnabled];
     [m_scrollerImp setBoundsSize:NSSizeFromCGSize([m_hostLayer bounds].size)];
     [m_scrollerImp setDoubleValue:values.value];
     [m_scrollerImp setPresentationValue:values.value];
