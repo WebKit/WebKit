@@ -327,13 +327,13 @@ PASS Parsing origin: <blob:http://example.org:88/> against <about:blank>
 PASS Parsing origin: <blob:d3958f5c-0777-0845-9dcf-2cb28783acaf> against <about:blank>
 PASS Parsing origin: <blob:> against <about:blank>
 PASS Parsing origin: <blob:blob:> against <about:blank>
-FAIL Parsing origin: <blob:blob:https://example.org/> against <about:blank> assert_equals: origin expected "null" but got "blob://"
+PASS Parsing origin: <blob:blob:https://example.org/> against <about:blank>
 PASS Parsing origin: <blob:about:blank> against <about:blank>
 FAIL Parsing origin: <blob:file://host/path> against <about:blank> assert_equals: origin expected "null" but got "file://"
-FAIL Parsing origin: <blob:ftp://host/path> against <about:blank> assert_equals: origin expected "null" but got "ftp://host"
-FAIL Parsing origin: <blob:ws://example.org/> against <about:blank> assert_equals: origin expected "null" but got "ws://example.org"
-FAIL Parsing origin: <blob:wss://example.org/> against <about:blank> assert_equals: origin expected "null" but got "wss://example.org"
-FAIL Parsing origin: <blob:http%3a//example.org/> against <about:blank> assert_equals: origin expected "null" but got "http://example.org"
+PASS Parsing origin: <blob:ftp://host/path> against <about:blank>
+PASS Parsing origin: <blob:ws://example.org/> against <about:blank>
+PASS Parsing origin: <blob:wss://example.org/> against <about:blank>
+PASS Parsing origin: <blob:http%3a//example.org/> against <about:blank>
 PASS Parsing origin: <non-special:cannot-be-a-base-url-\0~> against <about:blank>
 PASS Parsing origin: <https://www.example.com/path{path.html?query'=query#fragment<fragment> against <about:blank>
 PASS Parsing origin: <https://user:pass[@foo/bar> against <http://example.org>

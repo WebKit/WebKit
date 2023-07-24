@@ -226,6 +226,7 @@ void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url, const std::
 
 RefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)
 {
+    ASSERT(url.protocolIsBlob());
     RefPtr<SecurityOrigin> cachedOrigin;
 
     bool wasOnMainThread = isMainThread();
@@ -236,7 +237,7 @@ RefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)
     if (cachedOrigin)
         return cachedOrigin;
 
-    if (!url.protocolIsBlob() || !isBlobURLContainsNullOrigin(url))
+    if (!isBlobURLContainsNullOrigin(url))
         return nullptr;
 
     // If we do not have a cached origin for null blob URLs, we use an opaque origin.
