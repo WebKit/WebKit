@@ -457,11 +457,6 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(HTMLVideo
 
     setCurrentlyInFullscreen(interface, false);
 
-    // didCleanupFullscreen() will call removeClientForContext() on Mac
-#if PLATFORM(IOS_FAMILY)
-    removeClientForContext(contextId);
-#endif
-
     m_page->send(Messages::VideoFullscreenManagerProxy::ExitFullscreenWithoutAnimationToMode(contextId, targetMode));
 }
 
