@@ -38,6 +38,7 @@ video::-webkit-media-text-track-container {
     text-decoration: none;
     pointer-events: none;
     -webkit-user-select: none;
+    container-type: size;
 
     flex: 1 1 auto;
 
