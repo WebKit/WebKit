@@ -46,7 +46,6 @@ class WebViewImpl;
     NSView *_view;
 
     WKLayoutMode _layoutMode;
-    unsigned _frameSizeUpdatesDisabledCount;
 }
 
 + (instancetype)layoutStrategyWithPage:(NakedRef<WebKit::WebPageProxy>)page view:(NSView *)view viewImpl:(NakedRef<WebKit::WebViewImpl>)webViewImpl mode:(WKLayoutMode)mode;
