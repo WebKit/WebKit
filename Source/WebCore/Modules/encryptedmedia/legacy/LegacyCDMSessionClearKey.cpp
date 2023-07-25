@@ -26,17 +26,12 @@
 #include "config.h"
 #include "LegacyCDMSessionClearKey.h"
 
-#include "JSExecState.h"
 #include "Logging.h"
-#include <pal/text/TextEncoding.h>
 #include "WebKitMediaKeyError.h"
-#include <JavaScriptCore/BuiltinNames.h>
-#include <JavaScriptCore/GenericTypedArrayView.h>
-#include <JavaScriptCore/JSGlobalObjectInlines.h>
-#include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/JSONObject.h>
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayAdaptors.h>
-#include <JavaScriptCore/VM.h>
+#include <pal/text/TextEncoding.h>
+#include <wtf/JSONValues.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
 
@@ -44,13 +39,6 @@
 
 
 namespace WebCore {
-using namespace JSC;
-
-static VM& clearKeyVM()
-{
-    static VM& vm = VM::create().leakRef();
-    return vm;
-}
 
 CDMSessionClearKey::CDMSessionClearKey(LegacyCDMSessionClient& client)
     : m_client(client)
@@ -87,7 +75,7 @@ void CDMSessionClearKey::releaseKeys()
     m_cachedKeys.clear();
 }
 
-bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
+bool CDMSessionClearKey::update(JSC::Uint8Array* rawKeysData, RefPtr<JSC::Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
 {
     UNUSED_PARAM(nextMessage);
     UNUSED_PARAM(systemCode);
@@ -100,25 +88,19 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
             break;
         }
 
-        auto& vm = clearKeyVM();
-        JSLockHolder lock(vm);
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        auto* globalObject = JSGlobalObject::create(vm, JSGlobalObject::createStructure(vm, jsNull()));
-        auto& lexicalGlobalObject = *globalObject;
-
-        auto keysDataValue = JSONParse(&lexicalGlobalObject, rawKeysString);
-        if (scope.exception() || !keysDataValue.isObject()) {
+        auto keysDataValue = JSON::Value::parseJSON(rawKeysString);
+        if (!keysDataValue || !keysDataValue->asObject()) {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: invalid JSON", this);
             break;
         }
 
-        auto keysArrayValue = asObject(keysDataValue)->get(&lexicalGlobalObject, vm.propertyNames->builtinNames().keysPublicName());
-        if (scope.exception() || !isJSArray(keysArrayValue)) {
+        auto keysDataObject = keysDataValue->asObject();
+        auto keysArray = keysDataObject->getArray("keys"_s);
+        if (!keysArray) {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: keys array missing or empty", this);
             break;
         }
 
-        auto keysArray = asArray(keysArrayValue);
         auto length = keysArray->length();
         if (!length) {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: keys array missing or empty", this);
@@ -127,24 +109,17 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
 
         bool foundValidKey = false;
         for (unsigned i = 0; i < length; ++i) {
-            auto keyValue = keysArray->getIndex(&lexicalGlobalObject, i);
+            auto keyObject = keysArray->get(i)->asObject();
 
-            if (scope.exception() || !keyValue.isObject()) {
+            if (!keyObject) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: null keyDictionary", this);
                 continue;
             }
 
-            auto keyObject = asObject(keyValue);
-
-            auto getStringProperty = [&scope, &lexicalGlobalObject, &keyObject, &vm](ASCIILiteral name) -> String {
-                auto value = keyObject->get(&lexicalGlobalObject, Identifier::fromString(vm, name));
-                if (scope.exception() || !value.isString())
+            auto getStringProperty = [&keyObject](ASCIILiteral name) -> String {
+                String string;
+                if (!keyObject->getString(name, string))
                     return { };
-
-                auto string = asString(value)->value(&lexicalGlobalObject);
-                if (scope.exception())
-                    return { };
-                
                 return string;
             };
 
@@ -191,13 +166,13 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
     return false;
 }
 
-RefPtr<ArrayBuffer> CDMSessionClearKey::cachedKeyForKeyID(const String& keyId) const
+RefPtr<JSC::ArrayBuffer> CDMSessionClearKey::cachedKeyForKeyID(const String& keyId) const
 {
     if (!m_cachedKeys.contains(keyId))
         return nullptr;
 
     auto keyData = m_cachedKeys.get(keyId);
-    auto keyDataArray = Uint8Array::create(keyData.data(), keyData.size());
+    auto keyDataArray = JSC::Uint8Array::create(keyData.data(), keyData.size());
     return keyDataArray->unsharedBuffer();
 }
 
