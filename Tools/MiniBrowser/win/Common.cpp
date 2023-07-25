@@ -78,6 +78,18 @@ bool getAppDataFolder(_bstr_t& directory)
     return true;
 }
 
+bool getKnownFolderPath(REFKNOWNFOLDERID id, std::wstring& knownFolderPath)
+{
+    PWSTR path = nullptr;
+
+    if (FAILED(SHGetKnownFolderPath(id, KF_FLAG_CREATE, 0, &path)))
+        return false;
+
+    knownFolderPath = std::wstring(path);
+    CoTaskMemFree(path);
+    return true;
+}
+
 void createCrashReport(EXCEPTION_POINTERS* exceptionPointers)
 {
     _bstr_t directory;

@@ -27,6 +27,7 @@
 
 #include "stdafx.h"
 #include "MainWindow.h"
+#include <knownfolders.h>
 
 struct CommandLineOptions {
     bool usesLayeredWebView { };
@@ -48,6 +49,7 @@ struct ProxySettings {
 
 void computeFullDesktopFrame();
 bool getAppDataFolder(_bstr_t& directory);
+bool getKnownFolderPath(REFKNOWNFOLDERID, std::wstring&);
 CommandLineOptions parseCommandLine();
 void createCrashReport(EXCEPTION_POINTERS*);
 std::optional<Credential> askCredential(HWND, const std::wstring& realm);
