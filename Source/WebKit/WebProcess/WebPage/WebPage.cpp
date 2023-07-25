@@ -512,13 +512,16 @@ static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(
     return parsedPatterns;
 }
 
-static std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>> clientForMainFrame(Ref<WebFrame>&& mainFrame, bool localMainFrame)
+static std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>> clientForMainFrame(Ref<WebFrame>&& mainFrame, auto frameType)
 {
     auto invalidator = mainFrame->makeInvalidator();
-    if (localMainFrame)
-        return UniqueRef<WebCore::LocalFrameLoaderClient>(makeUniqueRef<WebLocalFrameLoaderClient>(WTFMove(mainFrame), WTFMove(invalidator)));
-
-    return UniqueRef<RemoteFrameClient>(makeUniqueRef<WebRemoteFrameClient>(WTFMove(mainFrame), WTFMove(invalidator)));
+    switch (frameType) {
+    case Frame::FrameType::Local:
+        return UniqueRef<LocalFrameLoaderClient>(makeUniqueRef<WebLocalFrameLoaderClient>(WTFMove(mainFrame), WTFMove(invalidator)));
+    case Frame::FrameType::Remote:
+        return UniqueRef<RemoteFrameClient>(makeUniqueRef<WebRemoteFrameClient>(WTFMove(mainFrame), WTFMove(invalidator)));
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
@@ -641,9 +644,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
-    bool localMainFrame { true };
+    auto frameType { Frame::FrameType::Local };
     if (parameters.subframeProcessFrameTreeCreationParameters && !parameters.openerFrameIdentifier)
-        localMainFrame = false;
+        frameType = Frame::FrameType::Remote;
 
     PageConfiguration pageConfiguration(
         pageID,
@@ -656,7 +659,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebBackForwardListProxy::create(*this),
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
-        clientForMainFrame(m_mainFrame.copyRef(), localMainFrame),
+        clientForMainFrame(m_mainFrame.copyRef(), frameType),
         m_mainFrame->frameID(),
         makeUniqueRef<WebSpeechRecognitionProvider>(pageID),
         makeUniqueRef<MediaRecorderProvider>(*this),
