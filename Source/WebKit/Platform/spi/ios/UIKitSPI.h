@@ -1532,8 +1532,6 @@ BOOL UIKeyboardIsRightToLeftInputModeActive(void);
 extern const float UITableCellDefaultFontSize;
 extern const float UITableViewCellDefaultFontSize;
 
-extern NSString *const _UIApplicationDidFinishSuspensionSnapshotNotification;
-
 extern NSString * const UIWindowDidMoveToScreenNotification;
 extern NSString * const UIWindowDidRotateNotification;
 extern NSString * const UIWindowNewScreenUserInfoKey;

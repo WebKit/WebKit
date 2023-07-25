@@ -36,6 +36,7 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
+#import <wtf/text/TextStream.h>
 
 @interface UIWindow (WKDetails)
 - (BOOL)_isHostedInAnotherProcess;
@@ -84,36 +85,25 @@ ApplicationType applicationType(UIWindow *window)
     return ApplicationType::Application;
 }
 
-ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackgroundSelector, SEL didFinishSnapshottingAfterEnteringBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector)
+ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector)
     : m_view(view)
     , m_didEnterBackgroundSelector(didEnterBackgroundSelector)
-    , m_didFinishSnapshottingAfterEnteringBackgroundSelector(didFinishSnapshottingAfterEnteringBackgroundSelector)
     , m_willEnterForegroundSelector(willEnterForegroundSelector)
     , m_willBeginSnapshotSequenceSelector(willBeginSnapshotSequenceSelector)
     , m_didCompleteSnapshotSequenceSelector(didCompleteSnapshotSequenceSelector)
     , m_isInBackground(true)
     , m_didEnterBackgroundObserver(nullptr)
-    , m_didFinishSnapshottingAfterEnteringBackgroundObserver(nullptr)
     , m_willEnterForegroundObserver(nullptr)
 {
     ASSERT([m_view.get() respondsToSelector:m_didEnterBackgroundSelector]);
-    ASSERT([m_view.get() respondsToSelector:m_didFinishSnapshottingAfterEnteringBackgroundSelector]);
     ASSERT([m_view.get() respondsToSelector:m_willEnterForegroundSelector]);
 
     UIWindow *window = [m_view.get() window];
     RELEASE_ASSERT(window);
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    UIApplication *application = [UIApplication sharedApplication];
 
     WeakPtr weakThis { *this };
-
-    m_didFinishSnapshottingAfterEnteringBackgroundObserver = [notificationCenter addObserverForName:@"_UIApplicationDidFinishSuspensionSnapshotNotification" object:application queue:nil usingBlock:[weakThis](NSNotification *) {
-        auto applicationStateTracker = weakThis.get();
-        if (!applicationStateTracker)
-            return;
-        applicationStateTracker->applicationDidFinishSnapshottingAfterEnteringBackground();
-    }];
 
     switch (applicationType(window)) {
     case ApplicationType::Application: {
@@ -195,7 +185,6 @@ ApplicationStateTracker::~ApplicationStateTracker()
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter removeObserver:m_didEnterBackgroundObserver];
-    [notificationCenter removeObserver:m_didFinishSnapshottingAfterEnteringBackgroundObserver];
     [notificationCenter removeObserver:m_willEnterForegroundObserver];
     [notificationCenter removeObserver:m_willBeginSnapshotSequenceObserver];
     [notificationCenter removeObserver:m_didCompleteSnapshotSequenceObserver];
@@ -211,12 +200,6 @@ void ApplicationStateTracker::applicationDidEnterBackground()
 
     if (auto view = m_view.get())
         wtfObjCMsgSend<void>(view.get(), m_didEnterBackgroundSelector);
-}
-
-void ApplicationStateTracker::applicationDidFinishSnapshottingAfterEnteringBackground()
-{
-    if (auto view = m_view.get())
-        wtfObjCMsgSend<void>(view.get(), m_didFinishSnapshottingAfterEnteringBackgroundSelector);
 }
 
 void ApplicationStateTracker::applicationWillEnterForeground()
