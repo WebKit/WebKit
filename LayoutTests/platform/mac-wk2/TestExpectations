@@ -1823,3 +1823,5 @@ webkit.org/b/259403 [ x86_64 ] fast/canvas/webgl/texImage2D-video-flipY-false.ht
 webkit.org/b/259412 [ Ventura ] accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Pass Failure ]
 
 webkit.org/b/259464 [ Monterey+ ] fast/events/wheel/redispatched-wheel-event.html [ Pass Failure ]
+
+webkit.org/b/259496 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.worker.html?vp9 [ Failure ]
