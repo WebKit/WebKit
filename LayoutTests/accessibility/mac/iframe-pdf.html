@@ -43,7 +43,7 @@
 
             testOutput += "\nFound object:\n";
             testOutput += `${textNode.role}\n`;
-            testOutput += `${textNode.stringValue}\n`;
+            testOutput += `${textNode.stringValue.trimEnd()}\n`;
 
             debug(testOutput);
             finishJSTest();
