@@ -1918,7 +1918,7 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
         return elementStyle.colorByApplyingColorFilter(systemAccentColor);
     }
 
-    return elementStyle.colorByApplyingColorFilter(elementStyle.colorResolvingCurrentColor(elementStyle.caretColor()));
+    return elementStyle.visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
 #else
     RefPtr parentElement = node ? node->parentElement() : nullptr;
     auto* parentStyle = parentElement && parentElement->renderer() ? &parentElement->renderer()->style() : nullptr;
