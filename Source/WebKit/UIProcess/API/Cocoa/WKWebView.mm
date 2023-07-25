@@ -679,6 +679,10 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), (__bridge CFStringRef)notificationName.get(), nullptr);
 #endif
 
+#if PLATFORM(MAC) && HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
+    [self _invalidateWindowSnapshotReadinessHandler];
+#endif
+
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
     [self _invalidateResizeAssertions];
 #endif
@@ -1696,6 +1700,14 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     _page->setMinimumUnobscuredSize(minimumUnobscuredSize);
     _page->setMaximumUnobscuredSize(maximumUnobscuredSize);
 }
+
+#if PLATFORM(MAC) && HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
+- (void)_invalidateWindowSnapshotReadinessHandler
+{
+    if (auto handler = std::exchange(_windowSnapshotReadinessHandler, nil))
+        handler();
+}
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
