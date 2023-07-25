@@ -2767,3 +2767,5 @@ webkit.org/b/252322 [ X86_64 ] media/media-source/media-source-video-renders.htm
 
 # Requires Ventura or later
 [ BigSur Monterey ] media/media-source/media-source-paint-after-display-none.html [ Skip ]
+
+webkit.org/b/259489 [ Monterey+ ] http/tests/media/hls/track-in-band-multiple-cues.html [ Pass Failure ]
