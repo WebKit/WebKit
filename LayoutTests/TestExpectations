@@ -136,7 +136,7 @@ fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
 fast/forms/attributed-strings.html [ Skip ]
 fast/scrolling/latching [ Skip ]
 
-# These tests rely on search field style on Mac WK2. 
+# These tests rely on search field style on Mac WK2.
 fast/forms/search/search-padding-cancel-results-buttons.html [ Skip ]
 fast/forms/search/search-results-hidden-crash.html [ Skip ]
 fast/forms/search/search-recent-searches.html [ Skip ]
@@ -1522,7 +1522,7 @@ imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-006.html 
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-with-dynamic-img.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-with-orthogonal-child-within-flexbox.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/grid-within-flexbox-indefinite.html [ ImageOnlyFailure ]
-  
+
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-002.html [ ImageOnlyFailure ]
@@ -1668,7 +1668,7 @@ imported/w3c/web-platform-tests/css/mediaqueries/mq-non-matching-lazy-load.tenta
 # nth-child tests takes long time and Debug build sometimes timeouts because there are many test cases.
 webkit.org/b/137149 fast/selectors/nth-child-of-basics.html [ Slow ]
 
-# Promises/A+ 2.3.3 has many tests and it sometimes exceeds the time limit. 
+# Promises/A+ 2.3.3 has many tests and it sometimes exceeds the time limit.
 webkit.org/b/136878 js/promises-tests/promises-tests-2-3-3.html [ Slow ]
 
 # Skip W3C tests that are too slow in debug builds.
@@ -2424,12 +2424,12 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-
 imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-004.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-nobackground-005.html
-imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-002.xht [ ImageOnlyFailure ] # only scrollbar webkit.org/b/148818 
+imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-002.xht [ ImageOnlyFailure ] # only scrollbar webkit.org/b/148818
 imported/w3c/web-platform-tests/css/css-multicol/multicol-inherit-003.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-002.xht [ ImageOnlyFailure ] 
-imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-003.xht [ ImageOnlyFailure ] 
-imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-004.xht [ ImageOnlyFailure ] 
-imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-005.xht [ ImageOnlyFailure ] 
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-002.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-004.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-005.xht [ ImageOnlyFailure ]
 webkit.org/b/148816 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-004.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-001.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-nested-balancing-002.html
@@ -2522,7 +2522,7 @@ webkit.org/b/94458 http/tests/security/MessagePort/event-listener-context.html [
 ########################################
 ### START OF IndexedDB failures
 
-# Times out for unexplored reasons                                                             
+# Times out for unexplored reasons
 storage/indexeddb/database-quota.html [ Skip ]
 storage/indexeddb/database-quota-private.html [ Skip ]
 
@@ -3654,7 +3654,7 @@ fast/text/design-system-ui-16.html [ ImageOnlyFailure ]
 
 # This is a crash test.
 fast/editing/apply-relative-font-style-change-crash-004.html [ Pass Failure ]
-webkit.org/b/253182 fast/editing/ruby-with-edited-text-crash.html [ Skip ] 
+webkit.org/b/253182 fast/editing/ruby-with-edited-text-crash.html [ Skip ]
 
 # wpt css-images failures
 webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations002.html [ ImageOnlyFailure ]
@@ -4598,7 +4598,7 @@ webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid
 # Only Cocoa ports support the -apple-system font keywords
 fast/text/text-styles/-apple-system [ ImageOnlyFailure ]
 
-# Artificial web socket delays are only supported on wk2. 
+# Artificial web socket delays are only supported on wk2.
 http/tests/websocket/tests/hybi/closed-port-delay.html [ Skip ]
 
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-004.html [ ImageOnlyFailure ]
@@ -6456,6 +6456,9 @@ imported/w3c/web-platform-tests/css/css-scrollbars/viewport-scrollbar-body.html 
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-003.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-004.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-005.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-006.html [ Skip ]
 
 # Imported WPT css-tables which are crashing or fails.
 imported/w3c/web-platform-tests/css/css-tables/auto-layout-calc-width-001.html [ Crash ]
