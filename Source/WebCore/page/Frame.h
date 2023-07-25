@@ -73,6 +73,7 @@ public:
     virtual void frameDetached() = 0;
     virtual bool preventsParentFromBeingComplete() const = 0;
     virtual void changeLocation(FrameLoadRequest&&) = 0;
+    virtual void broadcastFrameRemovalToOtherProcesses() = 0;
 
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent);

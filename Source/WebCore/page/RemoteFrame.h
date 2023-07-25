@@ -70,6 +70,7 @@ private:
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
+    void broadcastFrameRemovalToOtherProcesses() final;
 
     FrameView* virtualView() const final;
     DOMWindow* virtualWindow() const final;

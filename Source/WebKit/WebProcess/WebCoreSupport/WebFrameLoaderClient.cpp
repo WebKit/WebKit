@@ -170,4 +170,14 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
 }
 
+void WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()
+{
+    auto* webPage = m_frame->page();
+    if (!webPage) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    webPage->send(Messages::WebPageProxy::BroadcastFrameRemovalToOtherProcesses(Process::identifier(), m_frame->frameID()));
+}
+
 }

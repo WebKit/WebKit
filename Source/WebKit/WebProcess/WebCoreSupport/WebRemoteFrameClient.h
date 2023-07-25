@@ -48,6 +48,7 @@ private:
     void postMessageToRemote(WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&) final;
     void changeLocation(WebCore::FrameLoadRequest&&) final;
     String renderTreeAsText(size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>) final;
+    void broadcastFrameRemovalToOtherProcesses() final;
 
     ScopeExit<Function<void()>> m_frameInvalidator;
 };

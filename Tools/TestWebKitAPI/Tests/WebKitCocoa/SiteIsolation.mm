@@ -1139,4 +1139,56 @@ TEST(SiteIsolation, NavigationWithIFrames)
     // FIXME: Implement CachedFrame for RemoteFrames and verify the page is resumed correctly.
 }
 
+TEST(SiteIsolation, RemoveFrames)
+{
+    HTTPServer server({
+        { "/webkit_main"_s, { "<iframe src='https://webkit.org/webkit_iframe' id='wk'></iframe><iframe src='https://example.com/example_iframe' id='ex'></iframe>"_s } },
+        { "/webkit_iframe"_s, { "hi!"_s } },
+        { "/example_iframe"_s, { "<iframe src='example_grandchild_frame'></iframe>"_s } },
+        { "/example_grandchild_frame"_s, { "hi!"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit_main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://webkit.org"_s,
+            { { "https://webkit.org"_s }, { RemoteFrame, { { RemoteFrame } } } }
+        }, { RemoteFrame,
+            { { RemoteFrame }, { "https://example.com"_s, { { "https://example.com"_s } } } }
+        }
+    });
+
+    __block bool removedLocalFrame { false };
+    [webView evaluateJavaScript:@"var frame = document.getElementById('wk');frame.parentNode.removeChild(frame);" completionHandler:^(id, NSError *error) {
+        removedLocalFrame = true;
+    }];
+    Util::run(&removedLocalFrame);
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://webkit.org"_s,
+            { { RemoteFrame, { { RemoteFrame } } } }
+        }, { RemoteFrame,
+            { { "https://example.com"_s, { { "https://example.com"_s } } } }
+        }
+    });
+
+    __block bool removedRemoteFrame { false };
+    [webView evaluateJavaScript:@"var frame = document.getElementById('ex');frame.parentNode.removeChild(frame);" completionHandler:^(id, NSError *error) {
+        removedRemoteFrame = true;
+    }];
+    Util::run(&removedRemoteFrame);
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://webkit.org"_s }
+    });
+}
+
 }

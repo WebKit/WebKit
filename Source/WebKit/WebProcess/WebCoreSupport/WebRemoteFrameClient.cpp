@@ -91,4 +91,9 @@ String WebRemoteFrameClient::renderTreeAsText(size_t baseIndent, OptionSet<WebCo
     return result;
 }
 
+void WebRemoteFrameClient::broadcastFrameRemovalToOtherProcesses()
+{
+    WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses();
+}
+
 }

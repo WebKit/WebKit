@@ -1102,6 +1102,16 @@ void WebPage::didFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
     frame->didFinishLoadInAnotherProcess();
 }
 
+void WebPage::frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
+{
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    frame->removeFromTree();
+}
+
 #if ENABLE(GPU_PROCESS)
 void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuProcessConnection)
 {

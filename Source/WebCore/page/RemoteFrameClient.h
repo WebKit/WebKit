@@ -45,6 +45,7 @@ public:
     virtual void postMessageToRemote(FrameIdentifier, std::optional<SecurityOriginData>, const MessageWithMessagePorts&) = 0;
     virtual void changeLocation(FrameLoadRequest&&) = 0;
     virtual String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>) = 0;
+    virtual void broadcastFrameRemovalToOtherProcesses() = 0;
     virtual ~RemoteFrameClient() { }
 };
 

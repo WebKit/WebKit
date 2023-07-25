@@ -391,6 +391,32 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
     }
 }
 
+void WebFrame::removeFromTree()
+{
+    RefPtr coreFrame = m_coreFrame.get();
+    if (!coreFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr webPage = m_page.get();
+    if (!webPage) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto* corePage = webPage->corePage();
+    if (!corePage) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*coreFrame); localFrame && localFrame->isRootFrame())
+        corePage->removeRootFrame(*localFrame);
+    if (RefPtr parent = coreFrame->tree().parent())
+        parent->tree().removeChild(*coreFrame);
+}
+
 void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
 {
     RefPtr remoteFrame = coreRemoteFrame();

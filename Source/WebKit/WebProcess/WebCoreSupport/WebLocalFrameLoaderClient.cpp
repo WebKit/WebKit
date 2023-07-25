@@ -1891,6 +1891,11 @@ void WebLocalFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<W
         webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcon(icon.first, CallbackID::fromInteger(icon.second)));
 }
 
+void WebLocalFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()
+{
+    WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses();
+}
+
 #if ENABLE(SERVICE_WORKER)
 void WebLocalFrameLoaderClient::didFinishServiceWorkerPageRegistration(bool success)
 {

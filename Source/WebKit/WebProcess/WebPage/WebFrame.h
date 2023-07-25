@@ -113,6 +113,7 @@ public:
 
     void didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>);
     void didFinishLoadInAnotherProcess();
+    void removeFromTree();
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);

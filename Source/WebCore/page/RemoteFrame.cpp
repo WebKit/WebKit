@@ -89,6 +89,11 @@ void RemoteFrame::changeLocation(FrameLoadRequest&& request)
     m_client->changeLocation(WTFMove(request));
 }
 
+void RemoteFrame::broadcastFrameRemovalToOtherProcesses()
+{
+    m_client->broadcastFrameRemovalToOtherProcesses();
+}
+
 FrameView* RemoteFrame::virtualView() const
 {
     return m_view.get();

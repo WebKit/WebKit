@@ -605,6 +605,7 @@ public:
     void continueWillSubmitForm(WebCore::FrameIdentifier, WebKit::FormSubmitListenerIdentifier);
     void didCommitLoadInAnotherProcess(WebCore::FrameIdentifier, std::optional<WebCore::LayerHostingContextIdentifier>);
     void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);
+    void frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier);
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();
 

@@ -5831,6 +5831,19 @@ void WebPageProxy::didFinishDocumentLoadForFrame(FrameIdentifier frameID, uint64
     }
 }
 
+void WebPageProxy::forEachWebContentProcess(Function<void(WebProcessProxy&)>&& function)
+{
+    for (auto& pair : internals().domainToRemotePageProxyMap) {
+        auto& remotePageProxy = pair.value;
+        if (!remotePageProxy) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+        function(remotePageProxy->process());
+    }
+    function(process());
+}
+
 void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame)
 {
     if (!m_preferences->siteIsolationEnabled())
@@ -5842,22 +5855,20 @@ void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame
         return;
     }
 
-    auto& mainFrameProcess = process();
-    auto& newFrameProcess = newFrame.process();
-    auto& internals = this->internals();
+    forEachWebContentProcess([&](auto& webProcess) {
+        if (webProcess.processID() == newFrame.process().processID())
+            return;
+        webProcess.send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID()), webPageID());
+    });
+}
 
-    for (auto& pair : internals.domainToRemotePageProxyMap) {
-        auto& remotePageProxy = pair.value;
-        if (!remotePageProxy) {
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-        if (&remotePageProxy->process() == &newFrameProcess)
-            continue;
-        remotePageProxy->send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID()));
-    }
-    if (&newFrameProcess != &mainFrameProcess)
-        send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID()));
+void WebPageProxy::broadcastFrameRemovalToOtherProcesses(WebCore::ProcessIdentifier processID, WebCore::FrameIdentifier frameID)
+{
+    forEachWebContentProcess([&](auto& webProcess) {
+        if (webProcess.coreProcessIdentifier() == processID)
+            return;
+        webProcess.send(Messages::WebPage::FrameWasRemovedInAnotherProcess(frameID), webPageID());
+    });
 }
 
 void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const UserData& userData)

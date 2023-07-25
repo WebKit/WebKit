@@ -328,6 +328,11 @@ void LocalFrame::changeLocation(FrameLoadRequest&& request)
     loader().changeLocation(WTFMove(request));
 }
 
+void LocalFrame::broadcastFrameRemovalToOtherProcesses()
+{
+    loader().client().broadcastFrameRemovalToOtherProcesses();
+}
+
 void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
 {
     if (!page() || !m_doc || !m_doc->renderView())
