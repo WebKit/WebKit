@@ -1821,3 +1821,5 @@ webkit.org/b/259379 http/wpt/webcodecs/videoFrame-video-element.html [ Pass Fail
 webkit.org/b/259403 [ x86_64 ] fast/canvas/webgl/texImage2D-video-flipY-false.html [ Failure ]
 
 webkit.org/b/259412 [ Ventura ] accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Pass Failure ]
+
+webkit.org/b/259464 [ Monterey+ ] fast/events/wheel/redispatched-wheel-event.html [ Pass Failure ]
