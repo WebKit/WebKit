@@ -38,6 +38,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakHashMap.h>
 
 namespace IPC {
 class Connection;
@@ -195,7 +196,7 @@ protected:
 
     WeakPtr<WebPage> m_page;
     Ref<PlaybackSessionManager> m_playbackSessionManager;
-    HashMap<WebCore::HTMLVideoElement*, PlaybackSessionContextIdentifier> m_videoElements;
+    WeakHashMap<WebCore::HTMLVideoElement, PlaybackSessionContextIdentifier, WebCore::WeakPtrImplWithEventTargetData> m_videoElements;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;

@@ -214,7 +214,7 @@ void VideoFullscreenManager::removeContext(PlaybackSessionContextIdentifier cont
     model->setVideoElement(nullptr);
     model->removeClient(*interface);
     interface->invalidate();
-    m_videoElements.remove(videoElement.get());
+    m_videoElements.remove(*videoElement);
     m_contextMap.remove(contextId);
 }
 
@@ -283,7 +283,7 @@ bool VideoFullscreenManager::supportsVideoFullscreenStandby() const
 void VideoFullscreenManager::setupRemoteLayerHosting(HTMLVideoElement& videoElement)
 {
     auto contextId = m_playbackSessionManager->contextIdForMediaElement(videoElement);
-    auto addResult = m_videoElements.add(&videoElement, contextId);
+    auto addResult = m_videoElements.add(videoElement, contextId);
     if (addResult.isNewEntry)
         m_playbackSessionManager->sendLogIdentifierForMediaElement(videoElement);
     ASSERT(addResult.iterator->value == contextId);
@@ -328,7 +328,7 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     INFO_LOG(LOGIDENTIFIER);
 
     auto contextId = m_playbackSessionManager->contextIdForMediaElement(videoElement);
-    auto addResult = m_videoElements.add(&videoElement, contextId);
+    auto addResult = m_videoElements.add(videoElement, contextId);
     if (addResult.isNewEntry)
         m_playbackSessionManager->sendLogIdentifierForMediaElement(videoElement);
     ASSERT(addResult.iterator->value == contextId);
@@ -410,9 +410,9 @@ void VideoFullscreenManager::exitVideoFullscreenForVideoElement(HTMLVideoElement
 {
     INFO_LOG(LOGIDENTIFIER);
     ASSERT(m_page);
-    ASSERT(m_videoElements.contains(&videoElement));
+    ASSERT(m_videoElements.contains(videoElement));
 
-    auto contextId = m_videoElements.get(&videoElement);
+    auto contextId = m_videoElements.get(videoElement);
     auto& interface = ensureInterface(contextId);
     if (interface.animationState() != VideoFullscreenInterfaceContext::AnimationType::None) {
         completionHandler(false);
@@ -440,12 +440,12 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(HTMLVideo
     INFO_LOG(LOGIDENTIFIER);
 
     ASSERT(m_page);
-    ASSERT(m_videoElements.contains(&videoElement));
+    ASSERT(m_videoElements.contains(videoElement));
 
     if (m_videoElementInPictureInPicture == &videoElement)
         m_videoElementInPictureInPicture = nullptr;
 
-    auto contextId = m_videoElements.get(&videoElement);
+    auto contextId = m_videoElements.get(videoElement);
     if (!contextId.isValid()) {
         // We have somehow managed to be asked to exit video fullscreen
         // for a video element which was either never in fullscreen or
@@ -743,7 +743,7 @@ void VideoFullscreenManager::updateTextTrackRepresentationForVideoElement(WebCor
 {
     if (!m_page)
         return;
-    auto contextId = m_videoElements.get(&videoElement);
+    auto contextId = m_videoElements.get(videoElement);
     m_page->send(Messages::VideoFullscreenManagerProxy::TextTrackRepresentationUpdate(contextId, WTFMove(textTrack)));
 }
 
@@ -751,7 +751,7 @@ void VideoFullscreenManager::setTextTrackRepresentationContentScaleForVideoEleme
 {
     if (!m_page)
         return;
-    auto contextId = m_videoElements.get(&videoElement);
+    auto contextId = m_videoElements.get(videoElement);
     m_page->send(Messages::VideoFullscreenManagerProxy::TextTrackRepresentationSetContentsScale(contextId, scale));
 
 }
@@ -760,7 +760,7 @@ void VideoFullscreenManager::setTextTrackRepresentationIsHiddenForVideoElement(W
 {
     if (!m_page)
         return;
-    auto contextId = m_videoElements.get(&videoElement);
+    auto contextId = m_videoElements.get(videoElement);
     m_page->send(Messages::VideoFullscreenManagerProxy::TextTrackRepresentationSetHidden(contextId, hidden));
 
 }
