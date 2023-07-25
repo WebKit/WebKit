@@ -120,7 +120,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-pan-y-cs
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-span-none-test_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-svg-none-test_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-table-none-test_touch.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_click.html [ Skip ]
 
 http/tests/cookies/same-site [ Pass ]
@@ -178,7 +177,6 @@ webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Fail
 
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
 webkit.org/b/210528 media/video-supports-fullscreen.html [ Pass ]
-webkit.org/b/132262 [ Release ] http/tests/media/video-redirect.html [ Timeout Pass ]
 
 # Media controls
 accessibility/gtk/media-controls-panel-title.html [ Failure ]
@@ -1917,7 +1915,7 @@ webkit.org/b/157179 fast/events/draggable-div-nodata.html [ Failure ]
 webkit.org/b/157179 fast/events/dropzone-001.html [ Failure ]
 webkit.org/b/157179 fast/events/dropzone-002.html [ Failure ]
 webkit.org/b/157179 fast/events/dropzone-003.html [ Failure ]
-webkit.org/b/157179 fast/events/input-events-drag-and-drop.html [ Failure ]
+webkit.org/b/157179 fast/events/input-events-drag-and-drop.html [ Crash Failure ]
 webkit.org/b/157179 fast/events/input-events-insert-by-drop.html [ Failure ]
 webkit.org/b/157179 fast/events/ondrop-text-html.html [ Failure ]
 webkit.org/b/157179 fast/events/standalone-image-drag-to-editable.html [ Failure Timeout ]
@@ -2524,3 +2522,6 @@ webkit.org/b/245324 http/tests/notifications/notification.html  [ Crash ]
 
 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Timeout ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ Timeout ]
+
+animations/font-variations/font-stretch.html [ Crash Pass ]
+fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing.html [ Crash Pass ]

@@ -260,7 +260,7 @@ http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html 
 http/tests/security/canvas-remote-read-remote-video-redirect.html [ Pass ]
 http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Pass ]
-http/tests/security/video-cross-origin-caching.html [ Pass ]
+http/tests/security/video-cross-origin-caching.html [ Crash Pass ]
 media/media-can-play-webm.html [ Pass ]
 media/media-controller-time-constant.html [ Pass ]
 media/media-controller-time.html [ Pass ]
@@ -888,13 +888,14 @@ webkit.org/b/212202 fast/events/wheel/redispatched-wheel-event.html [ Skip ]
 webkit.org/b/212202 fast/scrolling/programmatic-smooth-scroll-after-focus.html [ Skip ]
 webkit.org/b/212202 fast/scrolling/programmatic-smooth-scroll-from-nonzero-offset.html [ Skip ]
 
-webkit.org/b/218931 fast/events/wheel/first-wheel-event-cancelable.html [ Timeout ]
-webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-body-made-passive.html [ Timeout ]
-webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-document-made-passive.html [ Timeout ]
-webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-window-left-active.html [ Timeout ]
-webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-window-made-passive.html [ Timeout ]
-webkit.org/b/218931 fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Timeout ]
-webkit.org/b/218931 fast/events/wheel/wheel-events-become-non-cancelable.html [ Timeout ]
+# Timing out.
+webkit.org/b/218931 fast/events/wheel/first-wheel-event-cancelable.html [ Skip ]
+webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-body-made-passive.html [ Skip ]
+webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-document-made-passive.html [ Skip ]
+webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-window-left-active.html [ Skip ]
+webkit.org/b/218931 fast/events/wheel/wheel-event-listeners-on-window-made-passive.html [ Skip ]
+webkit.org/b/218931 fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Skip ]
+webkit.org/b/218931 fast/events/wheel/wheel-events-become-non-cancelable.html [ Skip ]
 
 # We draw the focus ring of focused links on keydown event.
 imported/blink/fast/events/click-focus-keydown-no-ring.html [ ImageOnlyFailure ]
@@ -1000,6 +1001,8 @@ webkit.org/b/177294 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/132262 http/tests/media/video-redirect.html [ Crash Timeout Pass ]
 
 webkit.org/b/254520 media/video-ended-event-negative-playback.html [ Failure Timeout Pass ]
 webkit.org/b/254519 media/media-continues-playing-after-replace-source.html [ Failure Pass ]
@@ -1766,7 +1769,7 @@ fast/mediastream/apply-constraints-video.html [ Failure ]
 fast/mediastream/cloned-video-stream-aspect-ratio.html [ Failure ]
 fast/mediastream/getDisplayMedia-frame-rate.html [ Failure ]
 fast/mediastream/getDisplayMedia-size.html [ Failure ]
-fast/mediastream/getUserMedia-default.html [ Failure ]
+fast/mediastream/getUserMedia-default.html [ Crash Failure ]
 fast/mediastream/getUserMedia-video-rescaling.html [ Failure ]
 fast/mediastream/getUserMedia-frame-rate.html [ Failure ]
 fast/mediastream/get-user-media-constraints.html [ Failure ]
@@ -1870,7 +1873,7 @@ webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Timeout ]
 webkit.org/b/235885 webrtc/video-getParameters.html [ Failure ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
-webkit.org/b/252878 fast/mediastream/mediastreamtrack-video-clone.html [ Failure Pass Timeout ]
+webkit.org/b/252878 fast/mediastream/mediastreamtrack-video-clone.html [ Crash Failure Timeout Pass ]
 webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure Pass ]
 webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Pass Timeout ]
 webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Pass Timeout ]
@@ -2273,14 +2276,14 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Crash Failure Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos.https.html [ Crash Failure Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.https.html [ Pass ]
+imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.https.html [ Crash Failure Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-at-same-time.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-different-mediakeys.https.html [ Pass ]
@@ -2824,7 +2827,7 @@ webkit.org/b/185548 accessibility/scroll-to-make-visible-iframe-offscreen.html [
 # Font collections.
 webkit.org/b/186086 fast/text/font-collection.html [ ImageOnlyFailure ]
 
-webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
+webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ Crash ImageOnlyFailure ]
 webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
 
 webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
@@ -3327,8 +3330,8 @@ webkit.org/b/252878 fast/css/caret-color-inherit.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/css/caret-color-span-inside-editable-parent.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/css/color-matching-translucent-border-color.html [ ImageOnlyFailure ]
 webkit.org/b/252878 fast/css/computed-image-width-with-percent-height.html [ ImageOnlyFailure ]
-webkit.org/b/252878 fast/hidpi/hidpi-long-page-with-inset-element.html [ ImageOnlyFailure Pass ]
-webkit.org/b/258157 fast/hidpi/filters-drop-shadow.html [ ImageOnlyFailure Pass ]
+webkit.org/b/252878 fast/hidpi/hidpi-long-page-with-inset-element.html [ Crash ImageOnlyFailure Pass ]
+webkit.org/b/258157 fast/hidpi/filters-drop-shadow.html [ Crash ImageOnlyFailure Pass ]
 webkit.org/b/252878 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html [ Timeout ]
 webkit.org/b/252878 http/tests/workers/service/shownotification-allowed.html [ Pass Timeout ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/fetch/http-cache/split-cache.html [ Failure ]
@@ -3388,7 +3391,7 @@ imported/w3c/web-platform-tests/preload/onerror-event.html [ DumpJSConsoleLogInS
 imported/w3c/web-platform-tests/preload/preload-time-to-fetch.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleLogInStdErr ]
 
-# Tests crashin in Debug only.
+# Tests crashing in Debug only.
 [ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Crash ]
 [ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Crash ]
 [ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Crash ]
@@ -3415,12 +3418,21 @@ imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleL
 [ Debug ] fast/hidpi/device-scale-factor-paint.html [ Crash ]
 [ Debug ] fast/hidpi/filters-and-image-buffer-resolution.html [ Crash ]
 [ Debug ] fast/hidpi/filters-blur.html [ Crash ]
-[ Debug ] fast/hidpi/filters-component-transfer.html [ Crash ]
+[ Debug ] fast/hidpi/filters-hue-rotate.html [ Crash ]
 [ Debug ] fast/history/page-cache-closed-audiocontext.html [ Crash ]
 [ Debug ] fast/media/mq-resolution.html [ Crash ]
 [ Debug ] fast/picture/viewport-resize.html [ Crash ]
 [ Debug ] http/tests/loading/sizes/preload-image-sizes-2x.html [ Crash ]
 [ Debug ] http/wpt/dom-ranges-live-range/Range-mutations-deleteData.html [ Crash ]
+[ Debug ] http/wpt/dom-ranges-live-range/Range-mutations-insertData.html [ Crash ]
+[ Debug ] http/wpt/dom-ranges-live-range/Range-mutations-replaceData.html [ Crash ]
+[ Debug ] imported/blink/fast/hidpi/border-background-align.html [ Crash ]
+[ Debug ] imported/blink/svg/zoom/text/lowdpi-zoom-text.html [ Crash ]
+
+# Tests timing out in Debug only.
+[ Debug ] fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Timeout ]
+[ Debug ] http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Timeout ]
+[ Debug ] imported/blink/transitions/remove-accelerated-transition.html [ Timeout ]
 
 # End: Common failures between GTK and WPE.
 
