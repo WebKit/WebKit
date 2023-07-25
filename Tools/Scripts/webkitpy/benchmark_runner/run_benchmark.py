@@ -60,6 +60,7 @@ def config_argument_parser():
     parser.add_argument('--show-iteration-values', dest='show_iteration_values', action='store_true', help="Show the measured value for each iteration in addition to averages.")
     parser.add_argument('--generate-pgo-profiles', dest="generate_pgo_profiles", action='store_true', help="Collect LLVM profiles for PGO, and copy them to the diagnostics directory.")
     parser.add_argument('--profile', action='store_true', help="Collect profiling traces, and copy them to the diagnostic directory.")
+    parser.add_argument('--profiling-interval', default=None, help="Specify the profiling sampling rate.")
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--browser-path', help='Specify the path to a non-default copy of the target browser as a path to the .app.')
@@ -100,6 +101,7 @@ def run_benchmark_plan(args, plan):
                                     args.show_iteration_values, args.device_id, args.diagnose_dir,
                                     args.diagnose_dir if args.generate_pgo_profiles else None,
                                     args.diagnose_dir if args.profile else None,
+                                    args.profiling_interval,
                                     args.browser_args)
     runner.execute()
 
