@@ -48,6 +48,7 @@ public:
     virtual void didDestroyNotification(const WTF::UUID& notificationID) = 0;
     virtual void pageWasNotifiedOfNotificationPermission() = 0;
 
+private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 };

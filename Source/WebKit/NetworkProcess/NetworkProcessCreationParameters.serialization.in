@@ -54,9 +54,6 @@ struct WebKit::NetworkProcessCreationParameters {
 
     bool enablePrivateClickMeasurement
     bool ftpEnabled
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
-    bool builtInNotificationsEnabled
-#endif
 
     Vector<WebKit::WebsiteDataStoreParameters> websiteDataStoreParameters
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;

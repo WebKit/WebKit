@@ -76,9 +76,6 @@ struct NetworkProcessCreationParameters {
 
     bool enablePrivateClickMeasurement { true };
     bool ftpEnabled { false };
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
-    bool builtInNotificationsEnabled { false };
-#endif
 
     Vector<WebsiteDataStoreParameters> websiteDataStoreParameters;
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;

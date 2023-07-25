@@ -332,9 +332,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     setPrivateClickMeasurementEnabled(parameters.enablePrivateClickMeasurement);
     m_ftpEnabled = parameters.ftpEnabled;
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
-    m_builtInNotificationsEnabled = parameters.builtInNotificationsEnabled;
-#endif
 
     for (auto [processIdentifier, domain] : parameters.allowedFirstPartiesForCookies) {
         if (auto* connection = webProcessConnection(processIdentifier))

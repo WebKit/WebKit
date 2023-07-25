@@ -6316,8 +6316,6 @@ imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing [ Sk
 # This test is checking that WebContent is terminated when performing an invalid IPC operation
 ipc/restrictedendpoints/no-test-only-ipc-expected-crash.html [ Crash ]
 ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Crash ]
-[ Debug ] ipc/restrictedendpoints/deny-access-webPush.html [ Crash ]
-[ Release ] ipc/restrictedendpoints/deny-access-webPush.html [ Skip ]
 
 # Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
 http/wpt/loading/early-hints [ Skip ]
