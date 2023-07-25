@@ -6305,12 +6305,6 @@ void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 
 #endif
 
-void Document::setDesignMode(DesignMode value)
-{
-    m_designMode = value;
-    scheduleFullStyleRebuild();
-}
-
 String Document::designMode() const
 {
     return inDesignMode() ? onAtom() : offAtom();
@@ -6319,7 +6313,8 @@ String Document::designMode() const
 void Document::setDesignMode(const String& value)
 {
     DesignMode mode = equalLettersIgnoringASCIICase(value, "on"_s) ? DesignMode::On : DesignMode::Off;
-    setDesignMode(mode);
+    m_designMode = mode;
+    scheduleFullStyleRebuild();
 }
 
 Document* Document::parentDocument() const
