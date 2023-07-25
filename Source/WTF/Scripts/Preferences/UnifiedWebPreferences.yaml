@@ -3203,17 +3203,6 @@ InlineMediaPlaybackRequiresPlaysInlineAttribute:
       "PLATFORM(IOS_FAMILY)": true
       default: false
 
-InlinePredictionsEnabled:
-  type: bool
-  status: embedder
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 InlinePredictionsInAllEditableElementsEnabled:
   type: bool
   status: internal

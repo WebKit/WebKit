@@ -702,6 +702,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void beginTextRecognitionForVideoInElementFullscreen(ShareableBitmap::Handle&&, WebCore::FloatRect);
     void cancelTextRecognitionForVideoInElementFullscreen();
 
+#if HAVE(INLINE_PREDICTIONS)
+    void setInlinePredictionsEnabled(bool enabled) { m_inlinePredictionsEnabled = enabled; }
+    bool inlinePredictionsEnabled() const { return m_inlinePredictionsEnabled; }
+#endif
+
 private:
 #if HAVE(TOUCH_BAR)
     void setUpTextTouchBar(NSTouchBar *);
@@ -959,6 +964,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if HAVE(REDESIGNED_TEXT_CURSOR) && PLATFORM(MAC)
     RetainPtr<_WKWebViewTextInputNotifications> _textInputNotifications;
+#endif
+
+#if HAVE(INLINE_PREDICTIONS)
+    bool m_inlinePredictionsEnabled { false };
 #endif
 };
     

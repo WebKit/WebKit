@@ -424,6 +424,10 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _page = &_impl->page();
 
     _impl->setAutomaticallyAdjustsContentInsets(true);
+
+#if HAVE(INLINE_PREDICTIONS)
+    _impl->setInlinePredictionsEnabled(!![_configuration allowsInlinePredictions]);
+#endif
 #endif
 
     if (NSString *applicationNameForUserAgent = configuration.applicationNameForUserAgent)
@@ -589,10 +593,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #if PLATFORM(IOS_FAMILY)
     pageConfiguration->preferences()->setAlternateFormControlDesignEnabled(WebKit::defaultAlternateFormControlDesignEnabled());
     pageConfiguration->preferences()->setVideoFullscreenRequiresElementFullscreen(WebKit::defaultVideoFullscreenRequiresElementFullscreen());
-#endif
-
-#if HAVE(INLINE_PREDICTIONS)
-    pageConfiguration->preferences()->setInlinePredictionsEnabled(!![_configuration allowsInlinePredictions]);
 #endif
 }
 
