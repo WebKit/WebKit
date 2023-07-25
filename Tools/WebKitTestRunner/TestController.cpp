@@ -3146,6 +3146,7 @@ UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebVi
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef)
 {
+    m_preferences = adoptWK(WKPreferencesCreate());
     return context;
 }
 
