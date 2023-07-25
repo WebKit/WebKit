@@ -1,24 +1,22 @@
 This test ensures PDFs loaded in embed tags are exposed in the accessibility tree.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: pdfEmbedElement.domIdentifier === 'pdfEmbed'
+PASS: pdfEmbedElement.role === 'AXRole: AXGroup'
+PASS: pdfEmbedElement.subrole === 'AXSubrole: '
+PASS: pdfEmbedElement.childrenCount === 1
+PASS: pdfAxObject.stringAttributeValue('AXSubrole') === 'AXPDFPluginSubrole'
+PASS: pdfAxObject.childrenCount === 1
+PASS: pdfAxObject.parentElement().domIdentifier === 'pdfEmbed'
+PASS: pdfLayerController.stringAttributeValue('AXRole') === 'AXGroup'
+PASS: pdfLayerController.stringAttributeValue('AXDescription') === 'document'
+PASS: pdfTextNode.stringAttributeValue('AXRole') === 'AXStaticText'
+PASS: pdfTextNode.stringAttributeValue('AXValue').trimEnd() === 'Welcome to the website for the WebKit Open Source Project!'
+PASS: hitTestResult.stringAttributeValue('AXRole') === 'AXGroup'
+PASS: hitTestResult.stringAttributeValue('AXDescription') === 'document'
+PASS: pdfTextNode.stringAttributeValue('AXRole') === 'AXStaticText'
+PASS: pdfTextNode.stringAttributeValue('AXValue').trimEnd() === 'Welcome to the website for the WebKit Open Source Project!'
+PASS: searchResultElement.stringAttributeValue('AXSubrole') === 'AXPDFPluginSubrole'
 
-
-PASS pdfEmbedElement.domIdentifier is 'pdfEmbed'
-PASS pdfEmbedElement.role is 'AXRole: AXGroup'
-PASS pdfEmbedElement.subrole is 'AXSubrole: '
-PASS pdfEmbedElement.childrenCount is 1
-PASS pdfAxObject.stringAttributeValue('AXSubrole') is 'AXPDFPluginSubrole'
-PASS pdfAxObject.childrenCount is 1
-PASS pdfAxObject.parentElement().domIdentifier is 'pdfEmbed'
-PASS pdfLayerController.stringAttributeValue('AXRole') is 'AXGroup'
-PASS pdfLayerController.stringAttributeValue('AXDescription') is 'document'
-PASS pdfTextNode.stringAttributeValue('AXRole') is 'AXStaticText'
-PASS pdfTextNode.stringAttributeValue('AXValue') is 'Welcome to the website for the WebKit Open Source Project!'
-PASS hitTestResult.stringAttributeValue('AXRole') is 'AXGroup'
-PASS hitTestResult.stringAttributeValue('AXDescription') is 'document'
-PASS pdfTextNode.stringAttributeValue('AXRole') is 'AXStaticText'
-PASS pdfTextNode.stringAttributeValue('AXValue') is 'Welcome to the website for the WebKit Open Source Project!'
-PASS searchResultElement.stringAttributeValue('AXSubrole') is 'AXPDFPluginSubrole'
 PASS successfullyParsed is true
 
 TEST COMPLETE

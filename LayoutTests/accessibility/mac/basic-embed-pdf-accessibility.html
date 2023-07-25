@@ -11,7 +11,7 @@
 </div>
 
 <script>
-    description("This test ensures PDFs loaded in embed tags are exposed in the accessibility tree.")
+    let output = "This test ensures PDFs loaded in embed tags are exposed in the accessibility tree.\n\n";
 
     async function traverseChildrenWithPath(startObject, traversalPath) {
         let currentObject = startObject;
@@ -51,24 +51,24 @@
                 return pdfLayerController && pdfLayerController.children.length >= 1;
             });
 
-            shouldBe("pdfEmbedElement.domIdentifier", "'pdfEmbed'");
-            shouldBe("pdfEmbedElement.role", "'AXRole: AXGroup'");
+            output += expect("pdfEmbedElement.domIdentifier", "'pdfEmbed'");
+            output += expect("pdfEmbedElement.role", "'AXRole: AXGroup'");
             // Verify the group that contains the PDF AX object isn't considered empty via an AXEmptyGroup subrole.
-            shouldBe("pdfEmbedElement.subrole", "'AXSubrole: '");
-            shouldBe("pdfEmbedElement.childrenCount", "1");
+            output += expect("pdfEmbedElement.subrole", "'AXSubrole: '");
+            output += expect("pdfEmbedElement.childrenCount", "1");
 
-            shouldBe("pdfAxObject.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");
-            shouldBe("pdfAxObject.childrenCount", "1");
+            output += expect("pdfAxObject.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");
+            output += expect("pdfAxObject.childrenCount", "1");
             // Ensure the PDF accessibility object considers the embed element to be its parent.
-            shouldBe("pdfAxObject.parentElement().domIdentifier", "'pdfEmbed'");
+            output += expect("pdfAxObject.parentElement().domIdentifier", "'pdfEmbed'");
 
-            shouldBe("pdfLayerController.stringAttributeValue('AXRole')", "'AXGroup'");
-            shouldBe("pdfLayerController.stringAttributeValue('AXDescription')", "'document'");
+            output += expect("pdfLayerController.stringAttributeValue('AXRole')", "'AXGroup'");
+            output += expect("pdfLayerController.stringAttributeValue('AXDescription')", "'document'");
 
             traversalPathToTextNode = [0, 0, 0, 0, 1, 0, 0];
             pdfTextNode = await traverseChildrenWithPath(pdfLayerController, traversalPathToTextNode);
-            shouldBe("pdfTextNode.stringAttributeValue('AXRole')", "'AXStaticText'");
-            shouldBe("pdfTextNode.stringAttributeValue('AXValue')", "'Welcome to the website for the WebKit Open Source Project!'");
+            output += expect("pdfTextNode.stringAttributeValue('AXRole')", "'AXStaticText'");
+            output += expect("pdfTextNode.stringAttributeValue('AXValue').trimEnd()", "'Welcome to the website for the WebKit Open Source Project!'");
 
             // Ensure we can hit test onto the PDF.
             await waitFor(() => {
@@ -82,19 +82,20 @@
                 );
                 return hitTestResult;
             });
-            shouldBe("hitTestResult.stringAttributeValue('AXRole')", "'AXGroup'");
-            shouldBe("hitTestResult.stringAttributeValue('AXDescription')", "'document'");
+            output += expect("hitTestResult.stringAttributeValue('AXRole')", "'AXGroup'");
+            output += expect("hitTestResult.stringAttributeValue('AXDescription')", "'document'");
             pdfTextNode = await traverseChildrenWithPath(hitTestResult, traversalPathToTextNode);
-            shouldBe("pdfTextNode.stringAttributeValue('AXRole')", "'AXStaticText'");
-            shouldBe("pdfTextNode.stringAttributeValue('AXValue')", "'Welcome to the website for the WebKit Open Source Project!'");
+            output += expect("pdfTextNode.stringAttributeValue('AXRole')", "'AXStaticText'");
+            output += expect("pdfTextNode.stringAttributeValue('AXValue').trimEnd()", "'Welcome to the website for the WebKit Open Source Project!'");
 
             // Ensure a search from the embed element returns the PDF accessibility object.
             await waitFor(() => {
                 searchResultElement = pdfEmbedElement.uiElementForSearchPredicate(null, true, "AXAnyTypeSearchKey", "", false);
                 return searchResultElement;
             });
-            shouldBe("searchResultElement.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");
+            output += expect("searchResultElement.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");
 
+            debug(output);
             finishJSTest();
         });
     }
