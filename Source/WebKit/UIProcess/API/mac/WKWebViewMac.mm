@@ -134,6 +134,22 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
     _impl->prepareContentInRect(NSRectToCGRect(rect));
 }
 
+- (void)_doWindowSnapshotReadinessUpdate
+{
+#if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
+    if (!self->_windowSnapshotReadinessHandler)
+        return;
+
+    [self _doAfterNextPresentationUpdate:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        [strongSelf _invalidateWindowSnapshotReadinessHandler];
+    }).get()];
+#endif
+}
+
 - (void)setFrameSize:(NSSize)size
 {
     [super setFrameSize:size];
@@ -142,6 +158,8 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
         _impl->setFrameSize(NSSizeToCGSize(size));
 
     [self _recalculateViewportSizesWithMinimumViewportInset:_minimumViewportInset maximumViewportInset:_maximumViewportInset throwOnInvalidInput:NO];
+
+    [self _doWindowSnapshotReadinessUpdate];
 }
 
 - (void)setUserInterfaceLayoutDirection:(NSUserInterfaceLayoutDirection)userInterfaceLayoutDirection
@@ -1175,6 +1193,26 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_web_didChangeContentSize:(NSSize)newSize
 {
+}
+
+- (void)_holdWindowResizeSnapshotWithReason:(NSString *)reason
+{
+#if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
+    if (!self.window || ![self.window respondsToSelector:@selector(_holdResizeSnapshotWithReason:)])
+        return;
+
+    _windowSnapshotReadinessHandler = makeBlockPtr([self.window _holdResizeSnapshotWithReason:reason]);
+#endif
+}
+
+- (void)_web_windowWillEnterFullScreen
+{
+    [self _holdWindowResizeSnapshotWithReason:@"web view entering full screen"];
+}
+
+- (void)_web_windowWillExitFullScreen
+{
+    [self _holdWindowResizeSnapshotWithReason:@"web view exiting full screen"];
 }
 
 #if ENABLE(DRAG_SUPPORT)
