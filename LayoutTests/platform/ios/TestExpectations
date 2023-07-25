@@ -917,6 +917,7 @@ editing/selection/shrink-selection-after-shift-pagedown.html [ Skip ]
 editing/spelling/spelling-changed-text.html
 editing/undo/undo-deleteWord.html [ Skip ]
 fast/dom/access-key-iframe.html [ Skip ]
+fast/dom/focus-navigation-in-plugin.html [ Skip ]
 fast/dom/fragment-activation-focuses-target.html [ Skip ]
 fast/dom/hidden-iframe-no-focus.html [ Skip ]
 fast/dom/horizontal-scrollbar-in-rtl.html [ Skip ]
