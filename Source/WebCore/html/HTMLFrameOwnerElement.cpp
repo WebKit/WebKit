@@ -80,7 +80,8 @@ void HTMLFrameOwnerElement::clearContentFrame()
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
     if (RefPtr frame = m_contentFrame.get()) {
-        frame->broadcastFrameRemovalToOtherProcesses();
+        if (frame->settings().siteIsolationEnabled())
+            frame->broadcastFrameRemovalToOtherProcesses();
         frame->frameDetached();
         frame->disconnectOwnerElement();
     }
