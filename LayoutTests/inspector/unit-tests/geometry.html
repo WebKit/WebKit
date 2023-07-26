@@ -7,32 +7,6 @@ function test() {
     let suite = InspectorTest.createSyncSuite("WI.Geometry");
 
     suite.addTestCase({
-        name: "WI.Spring",
-        test(resolve, reject) {
-            let testPass = (inputString, expectedString) => {
-                expectedString ||= inputString;
-                InspectorTest.expectEqual(WI.Spring.fromString(inputString).toString(), expectedString, `Should parse '${inputString}' as '${expectedString}'.`);
-            };
-
-            testPass("spring(1 2 3 4)");
-            testPass("spring(0.1 0.2 0.3 0.4)", "spring(1 1 0.3 0.4)");
-
-            let testFail = (inputString) => {
-                InspectorTest.expectNull(WI.Spring.fromString(inputString), `Should not parse invalid '${inputString}'.`);
-            };
-
-            testFail("spring()");
-            testFail("spring(0)");
-            testFail("spring(0 1)");
-            testFail("spring(0 1 2)");
-            testFail("spring(\"test\")");
-            testFail("spring(0 \"test\")");
-            testFail("spring(0 1 \"test\")");
-            testFail("spring(0 1 2 \"test\")");
-        }
-    });
-
-    suite.addTestCase({
         name: "WI.StepFunction",
         test(resolve, reject) {
             let testPass = (inputString, expectedString) => {

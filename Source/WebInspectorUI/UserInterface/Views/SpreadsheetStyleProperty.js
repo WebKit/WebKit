@@ -797,8 +797,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                     valueObject = WI.CubicBezierTimingFunction.fromString(text);
                     inlineSwatchType = WI.InlineSwatch.Type.CubicBezierTimingFunction;
                 } else if (tokenType === "spring") {
-                    valueObject = WI.Spring.fromString(text);
-                    inlineSwatchType = WI.InlineSwatch.Type.Spring;
+                    valueObject = WI.SpringTimingFunction.fromString(text);
+                    inlineSwatchType = WI.InlineSwatch.Type.SpringTimingFunction;
                 }
 
                 if (valueObject)

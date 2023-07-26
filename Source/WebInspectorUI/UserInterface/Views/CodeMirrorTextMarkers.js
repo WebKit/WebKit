@@ -196,8 +196,8 @@ function createCodeMirrorCubicBezierTimingFunctionTextMarkers(codeMirror, range,
     return createCodeMirrorTextMarkers({codeMirror, range, type: "CubicBezierTimingFunction", pattern, ...options});
 }
 
-function createCodeMirrorSpringTextMarkers(codeMirror, range, options = {})
+function createCodeMirrorSpringTimingFunctionTextMarkers(codeMirror, range, options = {})
 {
     const pattern = /(spring\([^)]+\))/g;
-    return createCodeMirrorTextMarkers({codeMirror, range, type: "Spring", pattern, ...options});
+    return createCodeMirrorTextMarkers({codeMirror, range, type: "SpringTimingFunction", pattern, ...options});
 }

@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CodeMirrorSpringEditingController = class CodeMirrorSpringEditingController extends WI.CodeMirrorEditingController
+WI.CodeMirrorSpringTimingFunctionEditingController = class CodeMirrorSpringTimingFunctionEditingController extends WI.CodeMirrorEditingController
 {
     // Public
 
     get initialValue()
     {
-        return WI.Spring.fromString(this.text);
+        return WI.SpringTimingFunction.fromString(this.text);
     }
 
     get cssClassName()
@@ -37,22 +37,24 @@ WI.CodeMirrorSpringEditingController = class CodeMirrorSpringEditingController e
         return "spring";
     }
 
+    // WI.Popover delegate
+
     popoverWillPresent(popover)
     {
-        this._springEditor = new WI.SpringEditor;
-        this._springEditor.addEventListener(WI.SpringEditor.Event.SpringChanged, this._springEditorSpringChanged, this);
-        popover.content = this._springEditor.element;
+        this._springTimingFunctionEditor = new WI.SpringTimingFunctionEditor;
+        this._springTimingFunctionEditor.addEventListener(WI.SpringTimingFunctionEditor.Event.SpringTimingFunctionChanged, this._handleSpringTimingFunctionEditorSpringTimingFunctionChanged, this);
+        popover.content = this._springTimingFunctionEditor.element;
     }
 
     popoverDidPresent(popover)
     {
-        this._springEditor.spring = this.value;
+        this._springTimingFunctionEditor.springTimingFunction = this.value;
     }
 
     // Private
 
-    _springEditorSpringChanged(event)
+    _handleSpringTimingFunctionEditorSpringTimingFunctionChanged(event)
     {
-        this.value = event.data.spring;
+        this.value = event.data.springTimingFunction;
     }
 };

@@ -333,7 +333,7 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
                                 pathSteps.push("H", x + stepX);
                         }
                     }
-                } else if (easing instanceof WI.Spring) {
+                } else if (easing instanceof WI.SpringTimingFunction) {
                     let duration = easing.calculateDuration();
                     for (let i = 0; i < width; i += 1 / window.devicePixelRatio)
                         pathSteps.push("L", i, easing.solve(duration * i / width) * (height + adjustEasingHeight));

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.SpringEditor = class SpringEditor extends WI.Object
+WI.SpringTimingFunctionEditor = class SpringTimingFunctionEditor extends WI.Object
 {
     constructor()
     {
@@ -34,16 +34,16 @@ WI.SpringEditor = class SpringEditor extends WI.Object
         };
 
         this._element = document.createElement("div");
-        this._element.classList.add("spring-editor");
+        this._element.classList.add("spring-timing-function-editor");
 
-        this._previewContainer = this._element.createChild("div", "spring-preview");
+        this._previewContainer = this._element.createChild("div", "preview");
         this._previewContainer.title = WI.UIString("Restart animation");
         this._previewContainer.addEventListener("mousedown", boundResetPreviewAnimation);
 
         this._previewElement = this._previewContainer.createChild("div");
         this._previewElement.addEventListener("transitionend", boundResetPreviewAnimation);
 
-        this._timingContainer = this._element.createChild("div", "spring-timing");
+        this._timingContainer = this._element.createChild("div", "timing");
 
         this._timingElement = this._timingContainer.createChild("div");
 
@@ -80,7 +80,7 @@ WI.SpringEditor = class SpringEditor extends WI.Object
 
         createInputsForParameter.call(this, "initialVelocity", WI.UIString("Initial Velocity"));
 
-        this._spring = new WI.Spring(1, 100, 10, 0);
+        this._springTimingFunction = new WI.SpringTimingFunction(1, 100, 10, 0);
     }
 
     // Public
@@ -90,26 +90,26 @@ WI.SpringEditor = class SpringEditor extends WI.Object
         return this._element;
     }
 
-    get spring()
+    get springTimingFunction()
     {
-        return this._spring;
+        return this._springTimingFunction;
     }
 
-    set spring(spring)
+    set springTimingFunction(springTimingFunction)
     {
-        if (!spring)
+        if (!springTimingFunction)
             return;
 
-        let isSpring = spring instanceof WI.Spring;
-        console.assert(isSpring);
-        if (!isSpring)
+        let isSpringTimingFunction = springTimingFunction instanceof WI.SpringTimingFunction;
+        console.assert(isSpringTimingFunction);
+        if (!isSpringTimingFunction)
             return;
 
-        this._spring = spring;
-        this._massInput.value = this._massSlider.value = this._spring.mass;
-        this._stiffnessInput.value = this._stiffnessSlider.value = this._spring.stiffness;
-        this._dampingInput.value = this._dampingSlider.value = this._spring.damping;
-        this._initialVelocityInput.value = this._initialVelocitySlider.value = this._spring.initialVelocity;
+        this._springTimingFunction = springTimingFunction;
+        this._massInput.value = this._massSlider.value = this._springTimingFunction.mass;
+        this._stiffnessInput.value = this._stiffnessSlider.value = this._springTimingFunction.stiffness;
+        this._dampingInput.value = this._dampingSlider.value = this._springTimingFunction.damping;
+        this._initialVelocityInput.value = this._initialVelocitySlider.value = this._springTimingFunction.initialVelocity;
         this._resetPreviewAnimation();
     }
 
@@ -164,42 +164,42 @@ WI.SpringEditor = class SpringEditor extends WI.Object
         switch (target) {
         case this._massInput:
         case this._massSlider:
-            if (this._spring.mass === value)
+            if (this._springTimingFunction.mass === value)
                 return;
 
-            this._spring.mass = Math.max(1, value);
-            this._massInput.value = this._massSlider.value = this._spring.mass.maxDecimals(3);
+            this._springTimingFunction.mass = Math.max(1, value);
+            this._massInput.value = this._massSlider.value = this._springTimingFunction.mass.maxDecimals(3);
             break;
         case this._stiffnessInput:
         case this._stiffnessSlider:
-            if (this._spring.stiffness === value)
+            if (this._springTimingFunction.stiffness === value)
                 return;
 
-            this._spring.stiffness = Math.max(1, value);
-            this._stiffnessInput.value = this._stiffnessSlider.value = this._spring.stiffness.maxDecimals(3);
+            this._springTimingFunction.stiffness = Math.max(1, value);
+            this._stiffnessInput.value = this._stiffnessSlider.value = this._springTimingFunction.stiffness.maxDecimals(3);
             break;
         case this._dampingInput:
         case this._dampingSlider:
-            if (this._spring.damping === value)
+            if (this._springTimingFunction.damping === value)
                 return;
 
-            this._spring.damping = Math.max(0, value);
-            this._dampingInput.value = this._dampingSlider.value = this._spring.damping.maxDecimals(3);
+            this._springTimingFunction.damping = Math.max(0, value);
+            this._dampingInput.value = this._dampingSlider.value = this._springTimingFunction.damping.maxDecimals(3);
             break;
         case this._initialVelocityInput:
         case this._initialVelocitySlider:
-            if (this._spring.initialVelocity === value)
+            if (this._springTimingFunction.initialVelocity === value)
                 return;
 
-            this._spring.initialVelocity = value;
-            this._initialVelocityInput.value = this._initialVelocitySlider.value = this._spring.initialVelocity.maxDecimals(3);
+            this._springTimingFunction.initialVelocity = value;
+            this._initialVelocityInput.value = this._initialVelocitySlider.value = this._springTimingFunction.initialVelocity.maxDecimals(3);
             break;
         default:
             WI.reportInternalError("Input event fired for unrecognized element");
             return;
         }
 
-        this.dispatchEventToListeners(WI.SpringEditor.Event.SpringChanged, {spring: this._spring});
+        this.dispatchEventToListeners(WI.SpringTimingFunctionEditor.Event.SpringTimingFunctionChanged, {springTimingFunction: this._springTimingFunction});
 
         this._resetPreviewAnimation();
     }
@@ -223,7 +223,7 @@ WI.SpringEditor = class SpringEditor extends WI.Object
     _updatePreviewAnimation(event)
     {
         this._previewContainer.classList.add("animate");
-        this._previewElement.style.transitionTimingFunction = this._spring.toString();
+        this._previewElement.style.transitionTimingFunction = this._springTimingFunction.toString();
 
         this._timingContainer.classList.add("animate");
 
@@ -237,7 +237,7 @@ WI.SpringEditor = class SpringEditor extends WI.Object
 
         // Only calculate the duration when a spring parameter is changed.
         if (!event) {
-            let duration = this._spring.calculateDuration();
+            let duration = this._springTimingFunction.calculateDuration();
 
             this._timingContainer.dataset.duration = duration.toFixed(2);
             this._timingElement.style.transitionDuration = `${duration}s`;
@@ -247,6 +247,6 @@ WI.SpringEditor = class SpringEditor extends WI.Object
     }
 };
 
-WI.SpringEditor.Event = {
-    SpringChanged: "spring-editor-spring-changed"
+WI.SpringTimingFunctionEditor.Event = {
+    SpringTimingFunctionChanged: "spring-timing-function-editor-spring-timing-function-changed"
 };
