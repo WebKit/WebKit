@@ -94,7 +94,7 @@ ImageBufferBackendHandle ImageBufferRemoteIOSurfaceBackend::createBackendHandle(
         return { };
     }
 
-    return std::get<MachSendRight>(m_handle).copySendRight();
+    return MachSendRight { std::get<MachSendRight>(m_handle) };
 }
 
 ImageBufferBackendHandle ImageBufferRemoteIOSurfaceBackend::takeBackendHandle(SharedMemory::Protection)

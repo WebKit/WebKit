@@ -204,7 +204,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     std::optional<ImageBufferBackendHandle> handle;
     if (m_contentsBufferHandle) {
         ASSERT(m_parameters.type == Type::IOSurface);
-        handle = m_contentsBufferHandle;
+        handle = MachSendRight { *m_contentsBufferHandle };
     } else if (m_frontBuffer.imageBuffer)
         handle = handleFromBuffer(*m_frontBuffer.imageBuffer);
 
@@ -405,7 +405,7 @@ bool RemoteLayerBackingStore::supportsPartialRepaint() const
 
 void RemoteLayerBackingStore::setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents& contents)
 {
-    m_contentsBufferHandle = contents.surface.copySendRight();
+    m_contentsBufferHandle = MachSendRight { contents.surface };
     if (contents.finishedFence)
         m_frontBufferFlushers.append(DelegatedContentsFenceFlusher::create(Ref { *contents.finishedFence }));
     m_contentsRenderingResourceIdentifier = contents.surfaceIdentifier;

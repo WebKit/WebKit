@@ -4001,7 +4001,7 @@ struct WebCore::ImageBufferBackendParameters {
 
 enum class WebCore::PreserveResolution : bool;
 
-class WebCore::ProcessIdentity {
+[RValue] class WebCore::ProcessIdentity {
 #if HAVE(TASK_IDENTITY_TOKEN)
     MachSendRight m_taskIdToken;
 #endif

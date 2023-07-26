@@ -721,7 +721,7 @@ void VideoFullscreenManager::setCurrentlyInFullscreen(VideoFullscreenInterfaceCo
     m_currentlyInFullscreen = currentlyInFullscreen;
 }
 
-void VideoFullscreenManager::setVideoLayerFrameFenced(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect bounds, const WTF::MachSendRight& machSendRight)
+void VideoFullscreenManager::setVideoLayerFrameFenced(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect bounds, WTF::MachSendRight&& machSendRight)
 {
     INFO_LOG(LOGIDENTIFIER, contextId.toUInt64());
 
@@ -736,7 +736,7 @@ void VideoFullscreenManager::setVideoLayerFrameFenced(PlaybackSessionContextIden
         interface->layerHostingContext()->setFencePort(machSendRight.sendRight());
         model->setVideoLayerFrame(bounds);
     } else
-        model->setVideoSizeFenced(bounds.size(), machSendRight);
+        model->setVideoSizeFenced(bounds.size(), WTFMove(machSendRight));
 }
 
 void VideoFullscreenManager::updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement& videoElement, ShareableBitmap::Handle&& textTrack)

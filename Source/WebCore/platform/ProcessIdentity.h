@@ -48,9 +48,12 @@ public:
 
     // Creates an empty process identity that does not grant any access.
     ProcessIdentity() = default;
+    WEBCORE_EXPORT ProcessIdentity(const ProcessIdentity&) = default;
 
     // Returns true for a process identity or false on empty identity.
     WEBCORE_EXPORT operator bool() const;
+
+    WEBCORE_EXPORT ProcessIdentity& operator=(const ProcessIdentity&);
 
 #if HAVE(TASK_IDENTITY_TOKEN)
     task_id_token_t taskIdToken() const { return m_taskIdToken.sendRight(); }

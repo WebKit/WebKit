@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-struct WebKit::GPUProcessConnectionParameters {
+[RValue] struct WebKit::GPUProcessConnectionParameters {
     WebCore::ProcessIdentity webProcessIdentity;
     bool isDOMRenderingEnabled;
     bool isLockdownModeEnabled;

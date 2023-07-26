@@ -95,7 +95,7 @@ void SampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bool hid
 
 void SampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std::optional<WTF::MachSendRight>&& fence)
 {
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateBoundsAndPosition { bounds, fence }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateBoundsAndPosition { bounds, WTFMove(fence) }, m_identifier);
 }
 
 void SampleBufferDisplayLayer::flush()
@@ -125,7 +125,7 @@ void SampleBufferDisplayLayer::enqueueBlackFrameFrom(const VideoFrame& videoFram
     auto size = videoFrame.presentationSize();
     WebCore::IntSize blackFrameSize { static_cast<int>(size.width()), static_cast<int>(size.height()) };
     SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), false, videoFrame.rotation(), blackFrameSize };
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { sharedVideoFrame }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTFMove(sharedVideoFrame) }, m_identifier);
 }
 
 void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
@@ -140,7 +140,7 @@ void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
     if (!sharedVideoFrame)
         return;
 
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { *sharedVideoFrame }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTFMove(*sharedVideoFrame) }, m_identifier);
 }
 
 void SampleBufferDisplayLayer::clearVideoFrames()

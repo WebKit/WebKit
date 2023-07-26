@@ -259,7 +259,7 @@ void ARKitInlinePreviewModelPlayerMac::sizeDidChange(WebCore::LayoutSize size)
         if (!drawingArea)
             return;
 
-        auto fenceSendRight = *result;
+        auto fenceSendRight = WTFMove(*result);
         drawingArea->addFence(fenceSendRight);
 
         [strongSelf->m_inlinePreview setFrameWithinFencedTransaction:CGRectMake(0, 0, size.width(), size.height())];

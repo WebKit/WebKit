@@ -215,13 +215,13 @@ void VideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
         m_videoElement->setVideoFullscreenFrame(rect);
 }
 
-void VideoFullscreenModelVideoElement::setVideoSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
+void VideoFullscreenModelVideoElement::setVideoSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
     if (!m_videoElement)
         return;
 
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, size);
-    m_videoElement->setVideoInlineSizeFenced(size, fence);
+    m_videoElement->setVideoInlineSizeFenced(size, WTFMove(fence));
     m_videoElement->setVideoFullscreenFrame({ { }, size });
 
 }

@@ -303,7 +303,7 @@ void ModelElementController::modelElementSizeDidChange(const String& uuid, WebCo
 
             auto fenceSendRight = MachSendRight::adopt([strongFenceHandle copyPort]);
             [strongFenceHandle invalidate];
-            handler(fenceSendRight);
+            handler(WTFMove(fenceSendRight));
         });
     }).get()];
 }

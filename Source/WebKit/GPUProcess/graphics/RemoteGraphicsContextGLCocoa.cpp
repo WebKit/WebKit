@@ -116,14 +116,14 @@ void RemoteGraphicsContextGLCocoa::createEGLSync(WTF::MachSendRight syncEvent, u
 {
     GCEGLSync returnValue = { };
     assertIsCurrent(workQueue());
-    returnValue = m_context->createEGLSync(std::make_tuple(syncEvent, signalValue));
+    returnValue = m_context->createEGLSync(std::make_tuple(WTFMove(syncEvent), signalValue));
     completionHandler(static_cast<uint64_t>(reinterpret_cast<intptr_t>(returnValue)));
 }
 
 void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
     assertIsCurrent(workQueue());
-    m_context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes), WebCore::ProcessIdentity { m_resourceOwner });
+    m_context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes), ProcessIdentity { m_resourceOwner });
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(IPC::Semaphore&& finishedSemaphore, CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)

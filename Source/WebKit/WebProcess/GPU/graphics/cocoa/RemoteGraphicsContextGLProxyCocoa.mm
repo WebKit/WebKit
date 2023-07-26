@@ -96,7 +96,7 @@ public:
     void display(WebCore::PlatformCALayer& layer) final
     {
         if (m_displayBuffer)
-            layer.setDelegatedContents({ m_displayBuffer, m_finishedFence, std::nullopt });
+            layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, m_finishedFence, std::nullopt });
         else
             layer.clearContents();
     }
@@ -106,7 +106,7 @@ public:
         return WebCore::GraphicsLayer::CompositingCoordinatesOrientation::BottomUp;
     }
 
-    void setDisplayBuffer(const MachSendRight& displayBuffer, RefPtr<DisplayBufferFence> finishedFence)
+    void setDisplayBuffer(MachSendRight&& displayBuffer, RefPtr<DisplayBufferFence> finishedFence)
     {
         if (!displayBuffer) {
             m_finishedFence = nullptr;
@@ -116,7 +116,7 @@ public:
         if (m_displayBuffer && displayBuffer.sendRight() == m_displayBuffer.sendRight())
             return;
         m_finishedFence = WTFMove(finishedFence);
-        m_displayBuffer = displayBuffer.copySendRight();
+        m_displayBuffer = WTFMove(displayBuffer);
     }
 
 private:
@@ -164,7 +164,7 @@ std::optional<WebCore::GraphicsContextGL::EGLImageAttachResult> RemoteGraphicsCo
 {
     if (isContextLost())
         return std::nullopt;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateAndBindEGLImage(target, source));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateAndBindEGLImage(target, WTFMove(source)));
     if (!sendResult.succeeded()) {
         markContextLost();
         return std::nullopt;
@@ -180,7 +180,7 @@ GCEGLSync RemoteGraphicsContextGLProxyCocoa::createEGLSync(ExternalEGLSyncEvent 
     if (isContextLost())
         return { };
     auto [eventHandle, signalValue] = syncEvent;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateEGLSync(eventHandle, signalValue));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateEGLSync(WTFMove(eventHandle), signalValue));
     if (!sendResult.succeeded()) {
         markContextLost();
         return { };

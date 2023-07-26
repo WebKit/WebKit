@@ -62,4 +62,13 @@ ProcessIdentity::ProcessIdentity(MachSendRight&& taskIdToken)
 }
 #endif
 
+ProcessIdentity& ProcessIdentity::operator=(const ProcessIdentity& other)
+{
+#if HAVE(TASK_IDENTITY_TOKEN)
+    m_taskIdToken = MachSendRight { other.m_taskIdToken };
+#endif
+    UNUSED_PARAM(other);
+    return *this;
+}
+
 }

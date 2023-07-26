@@ -88,7 +88,7 @@ struct ImageBufferCreationContext {
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
         , useCGDisplayListImageCache(useCGDisplayListImageCache)
 #endif
-        , resourceOwner(resourceOwner)
+        , resourceOwner(WTFMove(resourceOwner))
     { }
 };
 
