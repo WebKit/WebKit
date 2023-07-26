@@ -7147,7 +7147,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #endif
     resetFocusedElementForFrame(frame);
 
-    if (m_textManipulationIncludesSubframes)
+    if (frame->isMainFrame())
+        m_textManipulationIncludesSubframes = false;
+    else if (m_textManipulationIncludesSubframes)
         startTextManipulationForFrame(*frame->coreLocalFrame());
 
     if (!frame->isRootFrame())
