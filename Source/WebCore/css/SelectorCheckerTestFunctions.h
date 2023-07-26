@@ -445,9 +445,7 @@ ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element& element)
 {
     // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies
     // to all elements of that Document.
-    if (!element.document().fullscreenManager().isFullscreen())
-        return false;
-    return true;
+    return element.document().fullscreenManager().fullscreenElement();
 }
 
 ALWAYS_INLINE bool matchesFullScreenControlsHiddenPseudoClass(const Element& element)
