@@ -2468,3 +2468,5 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 editing/selection/ios/show-grammar-replacements-on-tap.html [ Skip ]
 
 webkit.org/b/259132 imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch.tentative.html [ Failure ]
+
+webkit.org/b/259524 media/audioSession/audioSessionState.html [ Pass Failure ]
