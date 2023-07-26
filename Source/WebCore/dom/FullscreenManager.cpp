@@ -463,6 +463,25 @@ bool FullscreenManager::isFullscreenEnabled() const
     return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Fullscreen, document());
 }
 
+static void markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBlock* containingBlockBeforeStyleResolution)
+{
+    if (!is<RenderBox>(renderer) || !renderer->parent() || !containingBlockBeforeStyleResolution)
+        return;
+    auto* newContainingBlock = renderer->containingBlock();
+    ASSERT(newContainingBlock);
+    if (containingBlockBeforeStyleResolution == newContainingBlock)
+        return;
+
+    // Let's carry out the same set of tasks we would normally do when containing block changes for out-of-flow content in RenderBox::styleWillChange.
+    ASSERT(renderer->isFixedPositioned());
+
+    RenderBlock::removePositionedObject(downcast<RenderBox>(*renderer));
+    // This is to make sure we insert the box to the correct containing block list during static position computation.
+    renderer->parent()->setChildNeedsLayout();
+    newContainingBlock->setChildNeedsLayout();
+    renderer->setNeedsLayout();
+}
+
 bool FullscreenManager::willEnterFullscreen(Element& element)
 {
     if (backForwardCacheState() != Document::NotInBackForwardCache) {
@@ -508,14 +527,19 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     for (auto ancestor : makeReversedRange(ancestorsInTreeOrder)) {
         ancestor->document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
 
-        ancestor->setFullscreenFlag(true);
+        auto containingBlockBeforeStyleResolution = WeakPtr<RenderBlock> { };
+        if (auto* renderer = ancestor->renderer())
+            containingBlockBeforeStyleResolution = renderer->containingBlock();
 
+        ancestor->setFullscreenFlag(true);
         ancestor->document().resolveStyle(Document::ResolveStyleType::Rebuild);
 
         // Remove before adding, so we always add at the end of the top layer.
         if (ancestor->isInTopLayer())
             ancestor->removeFromTopLayer();
         ancestor->addToTopLayer();
+
+        markRendererDirtyAfterTopLayerChange(ancestor->renderer(), containingBlockBeforeStyleResolution.get());
     }
 
     for (auto ancestor : ancestorsInTreeOrder)
