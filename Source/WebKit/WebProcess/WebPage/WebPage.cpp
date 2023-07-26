@@ -326,6 +326,7 @@
 #include "WebRemoteObjectRegistry.h"
 #include <WebCore/LegacyWebArchive.h>
 #include <WebCore/UTIRegistry.h>
+#include <pal/spi/cg/ImageIOSPI.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
@@ -636,6 +637,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
         ProcessCapabilities::setHardwareAcceleratedDecodingDisabled(true);
         ProcessCapabilities::setCanUseAcceleratedBuffers(false);
+#if HAVE(CGIMAGESOURCE_DISABLE_HARDWARE_DECODING)
+        OSStatus ok = CGImageSourceDisableHardwareDecoding();
+        ASSERT_UNUSED(ok, ok == noErr);
+#endif
     }
 #endif
 
