@@ -632,5 +632,5 @@ messages -> WebPageProxy {
     RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result)
 
     DidApplyLinkDecorationFiltering(URL originalURL, URL adjustedURL)
-    BroadcastFrameRemovalToOtherProcesses(WebCore::ProcessIdentifier processID, WebCore::FrameIdentifier frameID)
+    BroadcastFrameRemovalToOtherProcesses(WebCore::FrameIdentifier frameID)
 }

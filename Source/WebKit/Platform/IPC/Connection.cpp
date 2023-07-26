@@ -1512,4 +1512,8 @@ const char* errorAsString(Error error)
     return "";
 }
 
+Connection::DecoderOrError::DecoderOrError(DecoderOrError&&) = default;
+
+Connection::DecoderOrError::~DecoderOrError() = default;
+
 } // namespace IPC

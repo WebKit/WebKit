@@ -796,6 +796,18 @@ ChangedLayers& ChangedLayers::operator=(ChangedLayers&&) = default;
 ChangedLayers::ChangedLayers(LayerPropertiesMap&& changedLayerProperties)
     : changedLayerProperties(WTFMove(changedLayerProperties)) { }
 
+RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties() = default;
+
+RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties(LayerCreationProperties&&) = default;
+
+auto RemoteLayerTreeTransaction::LayerCreationProperties::operator=(LayerCreationProperties&&) -> LayerCreationProperties& = default;
+
+RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties(WebCore::PlatformLayerIdentifier layerID, WebCore::PlatformCALayer::LayerType type, std::optional<RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData>&& videoElementData, RemoteLayerTreeTransaction::LayerCreationProperties::AdditionalData&& additionalData)
+    : layerID(layerID)
+    , type(type)
+    , videoElementData(WTFMove(videoElementData))
+    , additionalData(WTFMove(additionalData)) { }
+
 std::optional<WebCore::LayerHostingContextIdentifier> RemoteLayerTreeTransaction::LayerCreationProperties::hostIdentifier() const
 {
     if (auto* identifier = std::get_if<WebCore::LayerHostingContextIdentifier>(&additionalData))

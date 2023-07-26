@@ -177,7 +177,7 @@ void WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()
         ASSERT_NOT_REACHED();
         return;
     }
-    webPage->send(Messages::WebPageProxy::BroadcastFrameRemovalToOtherProcesses(Process::identifier(), m_frame->frameID()));
+    webPage->send(Messages::WebPageProxy::BroadcastFrameRemovalToOtherProcesses(m_frame->frameID()));
 }
 
 }

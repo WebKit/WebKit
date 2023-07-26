@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include "Decoder.h"
-#include "Encoder.h"
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
 #include "ReceiverMatcher.h"
@@ -148,6 +146,8 @@ template<typename AsyncReplyResult> struct AsyncReplyError {
     static AsyncReplyResult create() { return AsyncReplyResult { }; };
 };
 
+class Decoder;
+class Encoder;
 class MachMessage;
 class UnixMessage;
 class WorkQueueMessageReceiver;
@@ -331,6 +331,8 @@ public:
         {
             ASSERT(error != Error::NoError);
         }
+        DecoderOrError(DecoderOrError&&);
+        ~DecoderOrError();
     };
 
     static RefPtr<Connection> connection(UniqueID);

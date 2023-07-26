@@ -195,10 +195,8 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
     if (paintedAnyBackingStore)
         m_nextRenderingUpdateRequiresSynchronousImageDecoding = false;
 
-    transaction.setCreatedLayers(copyToVector(m_createdLayers.values()));
+    transaction.setCreatedLayers(moveToVector(std::exchange(m_createdLayers, { }).values()));
     transaction.setDestroyedLayerIDs(WTFMove(m_destroyedLayers));
-    
-    m_createdLayers.clear();
 }
 
 void RemoteLayerTreeContext::layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote& layer)

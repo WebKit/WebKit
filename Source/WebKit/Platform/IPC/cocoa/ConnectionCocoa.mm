@@ -27,6 +27,7 @@
 #import "Connection.h"
 
 #import "DataReference.h"
+#import "Encoder.h"
 #import "IPCUtilities.h"
 #import "ImportanceAssertion.h"
 #import "Logging.h"

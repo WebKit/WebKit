@@ -5862,10 +5862,10 @@ void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame
     });
 }
 
-void WebPageProxy::broadcastFrameRemovalToOtherProcesses(WebCore::ProcessIdentifier processID, WebCore::FrameIdentifier frameID)
+void WebPageProxy::broadcastFrameRemovalToOtherProcesses(IPC::Connection& connection, WebCore::FrameIdentifier frameID)
 {
     forEachWebContentProcess([&](auto& webProcess) {
-        if (webProcess.coreProcessIdentifier() == processID)
+        if (!webProcess.hasConnection() || webProcess.connection() == &connection)
             return;
         webProcess.send(Messages::WebPage::FrameWasRemovedInAnotherProcess(frameID), webPageID());
     });

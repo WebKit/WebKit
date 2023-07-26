@@ -28,6 +28,7 @@
 #pragma once
 
 #include "Attachment.h"
+#include "Encoder.h"
 #include <wtf/Vector.h>
 
 namespace IPC {

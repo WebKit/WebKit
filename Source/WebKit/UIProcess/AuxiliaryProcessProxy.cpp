@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AuxiliaryProcessProxy.h"
 
+#include "AuxiliaryProcessCreationParameters.h"
 #include "AuxiliaryProcessMessages.h"
 #include "Logging.h"
 #include "OverrideLanguages.h"
@@ -476,7 +477,7 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
     return parameters;
 }
 
-std::optional<SandboxExtension::Handle> AuxiliaryProcessProxy::createMobileGestaltSandboxExtensionIfNeeded() const
+std::optional<SandboxExtensionHandle> AuxiliaryProcessProxy::createMobileGestaltSandboxExtensionIfNeeded() const
 {
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     if (_MGCacheValid())
