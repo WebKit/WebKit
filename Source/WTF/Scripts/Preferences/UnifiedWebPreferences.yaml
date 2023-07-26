@@ -5774,17 +5774,17 @@ SelectionFlippingEnabled:
 
 SendMouseEventsToDisabledFormControlsEnabled:
   type: bool
-  status: preview
+  status: stable
   category: html
   humanReadableName: "Send mouse events to disabled form controls"
   humanReadableDescription: "Send mouse events to disabled form controls"
   defaultValue:
     WebKit:
-      default: false
+      default: true
     WebKitLegacy:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 SerifFontFamily:
   type: String
