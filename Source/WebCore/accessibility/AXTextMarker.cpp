@@ -261,6 +261,8 @@ AXTextMarkerRange::AXTextMarkerRange(AXID treeID, AXID objectID, unsigned start,
 AXTextMarkerRange::operator VisiblePositionRange() const
 {
     ASSERT(isMainThread());
+    if (!m_start || !m_end)
+        return { };
     return { m_start, m_end };
 }
 
