@@ -457,6 +457,10 @@ public:
     PartialResult WARN_UNUSED_RETURN addCrash();
 
     void setParser(FunctionParser<IPIntGenerator>* parser) { m_parser = parser; };
+    size_t getCurrentInstructionLength()
+    {
+        return m_parser->offset() - m_parser->currentOpcodeStartingOffset();
+    }
     void didFinishParsingLocals()
     {
         m_metadata->m_bytecodeOffset = m_parser->offset();
@@ -483,8 +487,7 @@ IPIntGenerator::IPIntGenerator(ModuleInformation& info, unsigned functionIndex, 
 
 Value IPIntGenerator::addConstant(Type type, uint64_t value)
 {
-    auto len = m_parser->offset() - m_parser->currentOpcodeStartingOffset() - 1;
-    m_metadata->addLEB128ConstantAndLengthForType(type, value, len);
+    m_metadata->addLEB128ConstantAndLengthForType(type, value, getCurrentInstructionLength());
     return { };
 }
 
@@ -585,32 +588,46 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLocal(Type, uint32_t count)
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::getLocal(uint32_t index, ExpressionType&)
 {
-    auto len = m_parser->offset() - m_parser->currentOpcodeStartingOffset() - 1;
     if (index >= m_metadata->m_numArguments)
-        m_metadata->addLEB128ConstantInt32AndLength(index + m_metadata->m_nonArgLocalOffset, len);
+        m_metadata->addLEB128ConstantInt32AndLength(index + m_metadata->m_nonArgLocalOffset, getCurrentInstructionLength());
     else
-        m_metadata->addLEB128ConstantInt32AndLength(m_metadata->m_argumentLocations[index], len);
+        m_metadata->addLEB128ConstantInt32AndLength(m_metadata->m_argumentLocations[index], getCurrentInstructionLength());
     return { };
 }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::setLocal(uint32_t index, ExpressionType)
 {
-    auto len = m_parser->offset() - m_parser->currentOpcodeStartingOffset() - 1;
     if (index >= m_metadata->m_numArguments)
-        m_metadata->addLEB128ConstantInt32AndLength(index + m_metadata->m_nonArgLocalOffset, len);
+        m_metadata->addLEB128ConstantInt32AndLength(index + m_metadata->m_nonArgLocalOffset, getCurrentInstructionLength());
     else
-        m_metadata->addLEB128ConstantInt32AndLength(m_metadata->m_argumentLocations[index], len);
+        m_metadata->addLEB128ConstantInt32AndLength(m_metadata->m_argumentLocations[index], getCurrentInstructionLength());
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::getGlobal(uint32_t, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::setGlobal(uint32_t, ExpressionType) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::getGlobal(uint32_t index, ExpressionType&)
+{
+    m_metadata->addLEB128ConstantInt32AndLength(index, getCurrentInstructionLength());
+    return { };
+}
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::setGlobal(uint32_t index, ExpressionType)
+{
+    m_metadata->addLEB128ConstantInt32AndLength(index, getCurrentInstructionLength());
+    return { };
+}
 
 // Loads and Stores
 
 // Implementation status: UNIMPLEMENTED
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::load(LoadOpType, ExpressionType, ExpressionType&, uint32_t) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::store(StoreOpType, ExpressionType, ExpressionType, uint32_t) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::load(LoadOpType, ExpressionType, ExpressionType&, uint32_t offset)
+{
+    m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
+    return { };
+}
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::store(StoreOpType, ExpressionType, ExpressionType, uint32_t offset)
+{
+    m_metadata->addLEB128ConstantInt32AndLength(offset, getCurrentInstructionLength());
+    return { };
+}
 
 // Memories
 

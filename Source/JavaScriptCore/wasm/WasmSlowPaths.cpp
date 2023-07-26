@@ -614,7 +614,7 @@ inline UGPRPair doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
     WASM_CALL_RETURN(instance, codePtr.taggedPtr(), WasmEntryPtrTag);
 }
 
-extern "C" UGPRPair doWasmIPIntCall(Wasm::Instance* instance, unsigned functionIndex)
+WASM_IPINT_EXTERN_CPP_DECL(call, unsigned functionIndex)
 {
     return doWasmCall(instance, functionIndex);
 }
@@ -644,6 +644,11 @@ inline UGPRPair doWasmCallIndirect(CallFrame* callFrame, Wasm::Instance* instanc
         WASM_THROW(Wasm::ExceptionType::BadSignature);
 
     WASM_CALL_RETURN(function.m_instance, function.m_function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(callIndirect, CallFrame* callFrame, unsigned functionIndex, unsigned tableIndex, unsigned typeIndex)
+{
+    return doWasmCallIndirect(callFrame, instance, functionIndex, tableIndex, typeIndex);
 }
 
 WASM_SLOW_PATH_DECL(call_indirect)
@@ -846,6 +851,23 @@ WASM_SLOW_PATH_DECL(set_global_ref)
     auto instruction = pc->as<WasmSetGlobalRef>();
     instance->setGlobal(instruction.m_globalIndex, READ(instruction.m_value).jsValue());
     WASM_END_IMPL();
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(get_global_64, unsigned index)
+{
+#if CPU(ARM64) || CPU(X86_64)
+    WASM_RETURN_TWO(bitwise_cast<void*>(instance->loadI64Global(index)), 0);
+#else
+    UNUSED_PARAM(instance);
+    UNUSED_PARAM(index);
+    RELEASE_ASSERT_NOT_REACHED("IPInt only supports ARM64 and X86_64 (for now)");
+#endif
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(set_global_64, unsigned index, uint64_t value)
+{
+    instance->setGlobal(index, value);
+    WASM_RETURN_TWO(0, 0);
 }
 
 WASM_SLOW_PATH_DECL(set_global_ref_portable_binding)

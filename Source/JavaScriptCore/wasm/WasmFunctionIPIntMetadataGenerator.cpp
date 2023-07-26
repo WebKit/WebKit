@@ -33,36 +33,6 @@ namespace JSC {
 
 namespace Wasm {
 
-static inline int sizeOfLEB128(uint64_t value)
-{
-    // Efficiency!
-    // Start masking from high bits
-    //      6666 5555 5555 5544 4444 4444 3333 3333 3322 2222 2222 1111 1111 1100 0000 0000
-    //      3210 9876 5432 1098 7654 3210 9876 5432 1098 7654 3210 9876 5432 1098 7654 3210
-    // use: A999 9999 8888 8887 7777 7766 6666 6555 5555 4444 4443 3333 3322 2222 2111 1111
-    //      hex0 hex1 hex2 hex3 hex4 hex5 hex6 hex7 hex8 hex9 hexa hexb hexc hexd hexe hexf
-    //            0123456789abcdef
-    if (value & 0xf000000000000000)
-        return 10;
-    if (value & 0x7f00000000000000)
-        return 9;
-    if (value & 0x00fe000000000000)
-        return 8;
-    if (value & 0x0001fc0000000000)
-        return 7;
-    if (value & 0x000004f800000000)
-        return 6;
-    if (value & 0x00000007f0000000)
-        return 5;
-    if (value & 0x000000000fe00000)
-        return 4;
-    if (value & 0x00000000001fc000)
-        return 3;
-    if (value & 0x0000000000003f80)
-        return 2;
-    return 1;
-}
-
 void FunctionIPIntMetadataGenerator::addBlankSpace(uint32_t size)
 {
     m_metadata.grow(m_metadata.size() + size);
@@ -80,7 +50,7 @@ void FunctionIPIntMetadataGenerator::addLEB128ConstantInt32AndLength(uint32_t va
     size_t size = m_metadata.size();
     m_metadata.grow(size + 8);
     WRITE_TO_METADATA(m_metadata.data() + size, value, uint32_t);
-    WRITE_TO_METADATA(m_metadata.data() + size + 4, static_cast<uint32_t>(sizeOfLEB128(length)), uint32_t);
+    WRITE_TO_METADATA(m_metadata.data() + size + 4, length, uint32_t);
 }
 
 void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type, uint64_t value, uint32_t length)

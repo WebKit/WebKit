@@ -402,6 +402,11 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     move 0, PC
     loadp Wasm::IPIntCallee::m_metadata[ws0], PM
     move 0, MC
+    # Load memory
+    loadp Wasm::Instance::m_cachedMemory[wasmInstance], memoryBase
+    if ARM64E
+        removeArrayPtrTag memoryBase
+    end
 
     nextIPIntInstruction()
 
@@ -482,7 +487,7 @@ reservedOpcode(0x09)
 reservedOpcode(0x0a)
 
 instructionLabel(_end)
-    loadp Wasm::IPIntCallee::m_bytecodeLength[ws0], t0
+    loadi Wasm::IPIntCallee::m_bytecodeLength[ws0], t0
     subq 1, t0
     bqeq PC, t0, .ipint_end_ret
     advancePC(1)
@@ -606,7 +611,6 @@ instructionLabel(_local_get)
     pushQuad(t0)
 
     loadi 4[PM, MC], t0
-    addi 1, t0
 
     advancePCByReg(t0)
     advanceMC(8)
@@ -622,7 +626,6 @@ instructionLabel(_local_set)
     storeq t1, [PL, t0, LocalSize]
 
     loadi 4[PM, MC], t0
-    addi 1, t0
 
     advancePCByReg(t0)
     advanceMC(8)
@@ -635,46 +638,441 @@ instructionLabel(_local_tee)
     storeq t1, [PL, t0, LocalSize]
 
     loadi 4[PM, MC], t0
-    addi 1, t0
 
     advancePCByReg(t0)
     advanceMC(16)
     nextIPIntInstruction()
 
-unimplementedInstruction(_global_get)
-unimplementedInstruction(_global_set)
+instructionLabel(_global_get)
+    # Load pre-computed index from metadata
+    loadi [PM, MC], a1
+    move wasmInstance, a0
+    push PC, MC
+    push PL, ws0
+    cCall2(_ipint_extern_get_global_64)
+    pop ws0, PL
+    pop MC, PC
+    if ARM64 or ARM64E
+        pcrtoaddr _ipint_unreachable, IB
+    end
+
+    pushQuad(t0)
+
+    loadi 4[PM, MC], t0
+
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_global_set)
+    # Load pre-computed index from metadata
+    loadi [PM, MC], a1
+    # Pop from stack
+    popQuad(a2, t3)
+    move wasmInstance, a0
+    push PC, MC
+    push PL, ws0
+    cCall3(_ipint_extern_set_global_64)
+    pop ws0, PL
+    pop MC, PC
+    if ARM64 or ARM64E
+        pcrtoaddr _ipint_unreachable, IB
+    end
+
+    loadi 4[PM, MC], t0
+
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
 unimplementedInstruction(_table_get)
 unimplementedInstruction(_table_set)
 
 reservedOpcode(0x27)
 
-unimplementedInstruction(_i32_load_mem)
-unimplementedInstruction(_i64_load_mem)
-unimplementedInstruction(_f32_load_mem)
-unimplementedInstruction(_f64_load_mem)
+instructionLabel(_i32_load_mem)
+    # i32.load
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    loadi [memoryBase, t0], t1
+    pushInt32(t1)
 
-unimplementedInstruction(_i32_load8s_mem)
-unimplementedInstruction(_i32_load8u_mem)
-unimplementedInstruction(_i32_load16s_mem)
-unimplementedInstruction(_i32_load16u_mem)
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
 
-unimplementedInstruction(_i64_load8s_mem)
-unimplementedInstruction(_i64_load8u_mem)
-unimplementedInstruction(_i64_load16s_mem)
-unimplementedInstruction(_i64_load16u_mem)
-unimplementedInstruction(_i64_load32s_mem)
-unimplementedInstruction(_i64_load32u_mem)
+instructionLabel(_i64_load_mem)
+    # i32.load
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadq [memoryBase, t0], t1
+    pushInt64(t1)
 
-unimplementedInstruction(_i32_store_mem)
-unimplementedInstruction(_i64_store_mem)
-unimplementedInstruction(_f32_store_mem)
-unimplementedInstruction(_f64_store_mem)
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
 
-unimplementedInstruction(_i32_store8_mem)
-unimplementedInstruction(_i32_store16_mem)
-unimplementedInstruction(_i64_store8_mem)
-unimplementedInstruction(_i64_store16_mem)
-unimplementedInstruction(_i64_store32_mem)
+instructionLabel(_f32_load_mem)
+    # f32.load
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadf [memoryBase, t0], ft0
+    pushFloat32FT0()
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+    
+instructionLabel(_f64_load_mem)
+    # f64.load
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadd [memoryBase, t0], ft0
+    pushFloat64FT0()
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+    
+
+instructionLabel(_i32_load8s_mem)
+    # i32.load8_s
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadb [memoryBase, t0], t1
+    sxb2i t1, t1
+    pushInt32(t1)
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i32_load8u_mem)
+    # i32.load8_u
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadb [memoryBase, t0], t1
+    pushInt32(t1)
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i32_load16s_mem)
+    # i32.load16_s
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadh [memoryBase, t0], t1
+    sxh2i t1, t1
+    pushInt32(t1)
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i32_load16u_mem)
+    # i32.load16_u
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadh [memoryBase, t0], t1
+    pushInt32(t1)
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+
+instructionLabel(_i64_load8s_mem)
+    # i64.load8_s
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadb [memoryBase, t0], t1
+    sxb2q t1, t1
+    pushInt64(t1)
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_load8u_mem)
+    # i64.load8_u
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadb [memoryBase, t0], t1
+    pushInt64(t1)
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_load16s_mem)
+    # i64.load16_s
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadh [memoryBase, t0], t1
+    sxh2q t1, t1
+    pushInt64(t1)
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_load16u_mem)
+    # i64.load16_u
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadh [memoryBase, t0], t1
+    pushInt64(t1)
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_load32s_mem)
+    # i64.load32_s
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadi [memoryBase, t0], t1
+    sxi2q t1, t1
+    pushInt64(t1)
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_load32u_mem)
+    # i64.load8_s
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    loadi [memoryBase, t0], t1
+    pushInt64(t1)
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+
+instructionLabel(_i32_store_mem)
+    # i32.store
+    # pop data
+    popInt32(t1, t2)
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    storei t1, [memoryBase, t0]
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_store_mem)
+    # i64.store
+    # pop data
+    popInt64(t1, t2)
+    # pop index
+    popInt64(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    storeq t1, [memoryBase, t0]
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_store_mem)
+    # f32.store
+    # pop data
+    popFloat32FT0()
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    storef ft0, [memoryBase, t0]
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_f64_store_mem)
+    # f64.store
+    # pop data
+    popFloat64FT0()
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    stored ft0, [memoryBase, t0]
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i32_store8_mem)
+    # i32.store8
+    # pop data
+    popInt32(t1, t2)
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    storeb t1, [memoryBase, t0]
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i32_store16_mem)
+    # i32.store16
+    # pop data
+    popInt32(t1, t2)
+    # pop index
+    popInt32(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    storeh t1, [memoryBase, t0]
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+    
+instructionLabel(_i64_store8_mem)
+    # i64.store8
+    # pop data
+    popInt64(t1, t2)
+    # pop index
+    popInt64(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    storeb t1, [memoryBase, t0]
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_store16_mem)
+    # i64.store16
+    # pop data
+    popInt64(t1, t2)
+    # pop index
+    popInt64(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    storeh t1, [memoryBase, t0]
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_store32_mem)
+    # i64.store32
+    # pop data
+    popInt64(t1, t2)
+    # pop index
+    popInt64(t0, t2)
+    loadi [PM, MC], t2
+    addq t2, t0
+    # load memory location
+    storei t1, [memoryBase, t0]
+
+    loadi 4[PM, MC], t0
+    advancePC(1)
+    advancePCByReg(t0)
+    advanceMC(8)
+    nextIPIntInstruction()
+
 
 unimplementedInstruction(_memory_size)
 unimplementedInstruction(_memory_grow)
@@ -690,7 +1088,6 @@ instructionLabel(_i32_const)
     # Push to stack
     pushInt32(t0)
     loadi 4[PM, MC], t0
-    addi 1, t0
 
     advancePCByReg(t0)
     advanceMC(8)
@@ -703,7 +1100,6 @@ instructionLabel(_i64_const)
     # Push to stack
     pushInt64(t0)
     loadq 8[PM, MC], t0
-    addi 1, t0
 
     advancePCByReg(t0)
     advanceMC(16)
@@ -1696,14 +2092,20 @@ _ipint_call_impl:
     # Get function data
     move t0, a1
     move wasmInstance, a0
-    cCall2(_doWasmIPIntCall)
+    cCall2(_ipint_extern_call)
 
     move MC, PB
     pushQuad(PL)
 
-    move t0, ws0
-    move t1, wasmInstance
+    move r0, ws0
+    move r1, wasmInstance
+    jmp .ipint_call_common
 
+_ipint_call_indirect_impl:
+    # function index
+    loadi [PM, MC], a2
+
+.ipint_call_common:
     # Set up arguments in registers
     loadb 8[PM, PB], ws1
     lshiftq 4, ws1

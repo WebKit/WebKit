@@ -52,6 +52,12 @@ namespace LLInt {
 #define WASM_SLOW_PATH_HIDDEN_DECL(name) \
     WASM_SLOW_PATH_DECL(name) REFERENCED_FROM_ASM WTF_INTERNAL
 
+#define WASM_IPINT_EXTERN_CPP_DECL(name, ...) \
+    extern "C" UGPRPair ipint_extern_##name(Wasm::Instance* instance, __VA_ARGS__)
+
+#define WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(name, ...) \
+    WASM_IPINT_EXTERN_CPP_DECL(name, __VA_ARGS__) REFERENCED_FROM_ASM WTF_INTERNAL
+
 #if ENABLE(WEBASSEMBLY_B3JIT)
 WASM_SLOW_PATH_HIDDEN_DECL(prologue_osr);
 WASM_SLOW_PATH_HIDDEN_DECL(loop_osr);
@@ -73,13 +79,18 @@ WASM_SLOW_PATH_HIDDEN_DECL(memory_init);
 WASM_SLOW_PATH_HIDDEN_DECL(call);
 WASM_SLOW_PATH_HIDDEN_DECL(call_indirect);
 
-extern "C" UGPRPair doWasmIPIntCall(Wasm::Instance* instance, unsigned functionIndex) REFERENCED_FROM_ASM WTF_INTERNAL;
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call, unsigned);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(callIndirect, CallFrame*, unsigned, unsigned, unsigned);
 
 WASM_SLOW_PATH_HIDDEN_DECL(call_ref);
 WASM_SLOW_PATH_HIDDEN_DECL(tail_call);
 WASM_SLOW_PATH_HIDDEN_DECL(tail_call_indirect);
 WASM_SLOW_PATH_HIDDEN_DECL(call_builtin);
 WASM_SLOW_PATH_HIDDEN_DECL(set_global_ref);
+
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(get_global_64, unsigned);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(set_global_64, unsigned, uint64_t);
+
 WASM_SLOW_PATH_HIDDEN_DECL(set_global_ref_portable_binding);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_wait32);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_wait64);
