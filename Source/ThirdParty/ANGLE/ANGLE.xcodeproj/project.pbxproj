@@ -788,7 +788,6 @@
 		FFC84CA12A4D1CE60063D8E0 /* mtl_buffer_manager.mm in Sources */ = {isa = PBXBuildFile; fileRef = FFC84C9D2A4D1CE50063D8E0 /* mtl_buffer_manager.mm */; };
 		FFC84CA22A4D1CE60063D8E0 /* mtl_pipeline_cache.mm in Sources */ = {isa = PBXBuildFile; fileRef = FFC84C9E2A4D1CE50063D8E0 /* mtl_pipeline_cache.mm */; };
 		FFC84CA52A4D1F330063D8E0 /* mtl_internal_shaders_src_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = FFC84CA32A4D1F330063D8E0 /* mtl_internal_shaders_src_autogen.h */; };
-		FFC84CA62A4D1F330063D8E0 /* mtl_internal_shaders_src_autogen.metal in Sources */ = {isa = PBXBuildFile; fileRef = FFC84CA42A4D1F330063D8E0 /* mtl_internal_shaders_src_autogen.metal */; };
 		FFC84CA72A4D1F830063D8E0 /* mtl_internal_shaders_src_autogen.metal in Sources */ = {isa = PBXBuildFile; fileRef = FFC84CA42A4D1F330063D8E0 /* mtl_internal_shaders_src_autogen.metal */; };
 		FFD0022727449647002BE3BC /* DeviceMtl.mm in Sources */ = {isa = PBXBuildFile; fileRef = FFD0022627449647002BE3BC /* DeviceMtl.mm */; };
 		FFD00234274497C4002BE3BC /* UnfoldShortCircuitAST.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD0022A274497C4002BE3BC /* UnfoldShortCircuitAST.h */; };
@@ -3956,7 +3955,6 @@
 				FF4BB3642769467600994EBF /* mtl_context_device.mm in Sources */,
 				DF83E3872639FEB8000825EF /* mtl_format_table_autogen.mm in Sources */,
 				DF83E3712639FEB8000825EF /* mtl_format_utils.mm in Sources */,
-				FFC84CA62A4D1F330063D8E0 /* mtl_internal_shaders_src_autogen.metal in Sources */,
 				7BDC8C7D2993A4E000C2BDDF /* mtl_library_cache.mm in Sources */,
 				3A0EBFB92980B6C1002C72BC /* mtl_msl_utils.mm in Sources */,
 				DF83E37A2639FEB8000825EF /* mtl_occlusion_query_pool.mm in Sources */,
