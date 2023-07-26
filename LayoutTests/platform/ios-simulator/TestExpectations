@@ -139,3 +139,5 @@ webkit.org/b/254805 webgl/2.0.y/conformance/rendering/blending.html [ Failure ]
 
 # Failure for CSS tables
 imported/w3c/web-platform-tests/css/css-tables/subpixel-collapsed-borders-003.html [ ImageOnlyFailure ]
+
+webkit.org/b/259506 imported/blink/fast/text/international/inline-block-with-mixed-direction-words.html [ ImageOnlyFailure ]
