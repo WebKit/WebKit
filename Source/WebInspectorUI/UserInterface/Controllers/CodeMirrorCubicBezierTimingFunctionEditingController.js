@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CodeMirrorBezierEditingController = class CodeMirrorBezierEditingController extends WI.CodeMirrorEditingController
+WI.CodeMirrorCubicBezierTimingFunctionEditingController = class CodeMirrorCubicBezierTimingFunctionEditingController extends WI.CodeMirrorEditingController
 {
     // Public
 
     get initialValue()
     {
-        return WI.CubicBezier.fromString(this.text);
+        return WI.CubicBezierTimingFunction.fromString(this.text);
     }
 
     get cssClassName()
@@ -37,27 +37,29 @@ WI.CodeMirrorBezierEditingController = class CodeMirrorBezierEditingController e
         return "cubic-bezier";
     }
 
+    // WI.Popover delegate
+
     popoverWillPresent(popover)
     {
-        this._bezierEditor = new WI.BezierEditor;
-        this._bezierEditor.addEventListener(WI.BezierEditor.Event.BezierChanged, this._bezierEditorBezierChanged, this);
-        popover.content = this._bezierEditor.element;
+        this._cubicBezierTimingFunctionEditor = new WI.CubicBezierTimingFunctionEditor;
+        this._cubicBezierTimingFunctionEditor.addEventListener(WI.CubicBezierTimingFunctionEditor.Event.CubicBezierTimingFunctionChanged, this._handleCubicBezierTimingFunctionEditorCubicBezierTimingFunctionChanged, this);
+        popover.content = this._cubicBezierTimingFunctionEditor.element;
     }
 
     popoverDidPresent(popover)
     {
-        this._bezierEditor.bezier = this.value;
+        this._cubicBezierTimingFunctionEditor.cubicBezierTimingFunction = this.value;
     }
 
     popoverDidDismiss(popover)
     {
-        this._bezierEditor.removeListeners();
+        this._cubicBezierTimingFunctionEditor.removeListeners();
     }
 
     // Private
 
-    _bezierEditorBezierChanged(event)
+    _handleCubicBezierTimingFunctionEditorCubicBezierTimingFunctionChanged(event)
     {
-        this.value = event.data.bezier;
+        this.value = event.data.cubicBezierTimingFunction;
     }
 };

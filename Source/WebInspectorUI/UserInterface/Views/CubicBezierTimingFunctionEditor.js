@@ -23,48 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.BezierEditor = class BezierEditor extends WI.Object
+WI.CubicBezierTimingFunctionEditor = class CubicBezierTimingFunctionEditor extends WI.Object
 {
     constructor()
     {
         super();
 
         this._element = document.createElement("div");
-        this._element.classList.add("bezier-editor");
+        this._element.classList.add("cubic-bezier-timing-function-editor");
         this._element.dir = "ltr";
 
         var editorWidth = 184;
         var editorHeight = 200;
         this._padding = 25;
         this._controlHandleRadius = 7;
-        this._bezierWidth = editorWidth - (this._controlHandleRadius * 2);
-        this._bezierHeight = editorHeight - (this._controlHandleRadius * 2) - (this._padding * 2);
+        this._previewWidth = editorWidth - (this._controlHandleRadius * 2);
+        this._previewHeight = editorHeight - (this._controlHandleRadius * 2) - (this._padding * 2);
 
-        this._bezierPreviewContainer = this._element.createChild("div", "bezier-preview");
-        this._bezierPreviewContainer.title = WI.UIString("Restart animation");
-        this._bezierPreviewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bind(this));
+        this._previewContainer = this._element.createChild("div", "preview");
+        this._previewContainer.title = WI.UIString("Restart animation");
+        this._previewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bind(this));
 
-        this._bezierPreview = this._bezierPreviewContainer.createChild("div");
+        this._previewElement = this._previewContainer.createChild("div");
 
-        this._bezierPreviewTiming = this._element.createChild("div", "bezier-preview-timing");
+        this._timingElement = this._element.createChild("div", "timing");
 
-        this._bezierContainer = this._element.appendChild(createSVGElement("svg"));
-        this._bezierContainer.setAttribute("width", editorWidth);
-        this._bezierContainer.setAttribute("height", editorHeight);
-        this._bezierContainer.classList.add("bezier-container");
+        this._curveContainer = this._element.appendChild(createSVGElement("svg"));
+        this._curveContainer.setAttribute("width", editorWidth);
+        this._curveContainer.setAttribute("height", editorHeight);
+        this._curveContainer.classList.add("curve");
 
-        let svgGroup = this._bezierContainer.appendChild(createSVGElement("g"));
+        let svgGroup = this._curveContainer.appendChild(createSVGElement("g"));
         svgGroup.setAttribute("transform", "translate(0, " + this._padding + ")");
 
-        let linearCurve = svgGroup.appendChild(createSVGElement("line"));
-        linearCurve.classList.add("linear-curve");
-        linearCurve.setAttribute("x1", this._controlHandleRadius);
-        linearCurve.setAttribute("y1", this._bezierHeight + this._controlHandleRadius);
-        linearCurve.setAttribute("x2", this._bezierWidth + this._controlHandleRadius);
-        linearCurve.setAttribute("y2", this._controlHandleRadius);
+        let linearCurveElement = svgGroup.appendChild(createSVGElement("line"));
+        linearCurveElement.classList.add("linear");
+        linearCurveElement.setAttribute("x1", this._controlHandleRadius);
+        linearCurveElement.setAttribute("y1", this._previewHeight + this._controlHandleRadius);
+        linearCurveElement.setAttribute("x2", this._previewWidth + this._controlHandleRadius);
+        linearCurveElement.setAttribute("y2", this._controlHandleRadius);
 
-        this._bezierCurve = svgGroup.appendChild(createSVGElement("path"));
-        this._bezierCurve.classList.add("bezier-curve");
+        this._cubicBezierCurveElement = svgGroup.appendChild(createSVGElement("path"));
+        this._cubicBezierCurveElement.classList.add("cubic-bezier");
 
         function createControl(x1, y1)
         {
@@ -84,14 +84,14 @@ WI.BezierEditor = class BezierEditor extends WI.Object
             return {point: null, line, handle};
         }
 
-        this._inControl = createControl.call(this, 0, this._bezierHeight);
-        this._outControl = createControl.call(this, this._bezierWidth, 0);
+        this._inControl = createControl.call(this, 0, this._previewHeight);
+        this._outControl = createControl.call(this, this._previewWidth, 0);
 
         this._numberInputContainer = this._element.createChild("div", "number-input-container");
 
-        function createBezierInput(id, {min, max} = {})
+        function createCoordinateInput(id, {min, max} = {})
         {
-            let key = "_bezier" + id + "Input";
+            let key = "_" + id + "Input";
             this[key] = this._numberInputContainer.createChild("input");
             this[key].type = "number";
             this[key].step = 0.01;
@@ -106,14 +106,14 @@ WI.BezierEditor = class BezierEditor extends WI.Object
             this[key].addEventListener("keydown", this._handleNumberInputKeydown.bind(this));
         }
 
-        createBezierInput.call(this, "InX", {min: 0, max: 1});
-        createBezierInput.call(this, "InY");
-        createBezierInput.call(this, "OutX", {min: 0, max: 1});
-        createBezierInput.call(this, "OutY");
+        createCoordinateInput.call(this, "inX", {min: 0, max: 1});
+        createCoordinateInput.call(this, "inY");
+        createCoordinateInput.call(this, "outX", {min: 0, max: 1});
+        createCoordinateInput.call(this, "outY");
 
         this._selectedControl = null;
         this._mouseDownPosition = null;
-        this._bezierContainer.addEventListener("mousedown", this);
+        this._curveContainer.addEventListener("mousedown", this);
 
         WI.addWindowKeydownListener(this);
     }
@@ -125,23 +125,23 @@ WI.BezierEditor = class BezierEditor extends WI.Object
         return this._element;
     }
 
-    set bezier(bezier)
+    set cubicBezierTimingFunction(cubicBezierTimingFunction)
     {
-        if (!bezier)
+        if (!cubicBezierTimingFunction)
             return;
 
-        var isCubicBezier = bezier instanceof WI.CubicBezier;
+        var isCubicBezier = cubicBezierTimingFunction instanceof WI.CubicBezierTimingFunction;
         console.assert(isCubicBezier);
         if (!isCubicBezier)
             return;
 
-        this._bezier = bezier;
-        this._updateBezierPreview();
+        this._cubicBezierTimingFunction = cubicBezierTimingFunction;
+        this._updatePreview();
     }
 
-    get bezier()
+    get cubicBezierTimingFunction()
     {
-        return this._bezier;
+        return this._cubicBezierTimingFunction;
     }
 
     removeListeners()
@@ -195,13 +195,13 @@ WI.BezierEditor = class BezierEditor extends WI.Object
             vertical *= 10;
         }
 
-        vertical *= this._bezierWidth / 100;
-        horizontal *= this._bezierHeight / 100;
+        vertical *= this._previewWidth / 100;
+        horizontal *= this._previewHeight / 100;
 
-        this._selectedControl.point.x = Number.constrain(this._selectedControl.point.x + horizontal, 0, this._bezierWidth);
+        this._selectedControl.point.x = Number.constrain(this._selectedControl.point.x + horizontal, 0, this._previewWidth);
         this._selectedControl.point.y += vertical;
         this._updateControl(this._selectedControl);
-        this._updateValue();
+        this._updateCubicBezierTimingFunction();
 
         return true;
     }
@@ -217,8 +217,8 @@ WI.BezierEditor = class BezierEditor extends WI.Object
         window.addEventListener("mousemove", this, true);
         window.addEventListener("mouseup", this, true);
 
-        this._bezierPreviewContainer.classList.remove("animate");
-        this._bezierPreviewTiming.classList.remove("animate");
+        this._previewContainer.classList.remove("animate");
+        this._timingElement.classList.remove("animate");
 
         this._updateControlPointsForMouseEvent(event, true);
     }
@@ -240,8 +240,8 @@ WI.BezierEditor = class BezierEditor extends WI.Object
 
     _updateControlPointsForMouseEvent(event, calculateSelectedControlPoint)
     {
-        var point = WI.Point.fromEventInElement(event, this._bezierContainer);
-        point.x = Number.constrain(point.x - this._controlHandleRadius, 0, this._bezierWidth);
+        var point = WI.Point.fromEventInElement(event, this._curveContainer);
+        point.x = Number.constrain(point.x - this._controlHandleRadius, 0, this._previewWidth);
         point.y -= this._controlHandleRadius + this._padding;
 
         if (calculateSelectedControlPoint) {
@@ -262,44 +262,44 @@ WI.BezierEditor = class BezierEditor extends WI.Object
 
         this._selectedControl.point = point;
         this._selectedControl.handle.classList.add("selected");
-        this._updateValue();
+        this._updateCubicBezierTimingFunction();
     }
 
-    _updateValue()
+    _updateCubicBezierTimingFunction()
     {
         function round(num)
         {
             return Math.round(num * 100) / 100;
         }
 
-        var inValueX = round(this._inControl.point.x / this._bezierWidth);
-        var inValueY = round(1 - (this._inControl.point.y / this._bezierHeight));
+        var inValueX = round(this._inControl.point.x / this._previewWidth);
+        var inValueY = round(1 - (this._inControl.point.y / this._previewHeight));
 
-        var outValueX = round(this._outControl.point.x / this._bezierWidth);
-        var outValueY = round(1 - (this._outControl.point.y / this._bezierHeight));
+        var outValueX = round(this._outControl.point.x / this._previewWidth);
+        var outValueY = round(1 - (this._outControl.point.y / this._previewHeight));
 
-        this._bezier = new WI.CubicBezier(inValueX, inValueY, outValueX, outValueY);
-        this._updateBezier();
+        this._cubicBezierTimingFunction = new WI.CubicBezierTimingFunction(inValueX, inValueY, outValueX, outValueY);
+        this._updateCoordinateInputs();
 
-        this.dispatchEventToListeners(WI.BezierEditor.Event.BezierChanged, {bezier: this._bezier});
+        this.dispatchEventToListeners(WI.CubicBezierTimingFunctionEditor.Event.CubicBezierTimingFunctionChanged, {cubicBezierTimingFunction: this._cubicBezierTimingFunction});
     }
 
-    _updateBezier()
+    _updateCoordinateInputs()
     {
         var r = this._controlHandleRadius;
         var inControlX = this._inControl.point.x + r;
         var inControlY = this._inControl.point.y + r;
         var outControlX = this._outControl.point.x + r;
         var outControlY = this._outControl.point.y + r;
-        var path = `M ${r} ${this._bezierHeight + r} C ${inControlX} ${inControlY} ${outControlX} ${outControlY} ${this._bezierWidth + r} ${r}`;
-        this._bezierCurve.setAttribute("d", path);
+        var path = `M ${r} ${this._previewHeight + r} C ${inControlX} ${inControlY} ${outControlX} ${outControlY} ${this._previewWidth + r} ${r}`;
+        this._cubicBezierCurveElement.setAttribute("d", path);
         this._updateControl(this._inControl);
         this._updateControl(this._outControl);
 
-        this._bezierInXInput.value = this._bezier.inPoint.x;
-        this._bezierInYInput.value = this._bezier.inPoint.y;
-        this._bezierOutXInput.value = this._bezier.outPoint.x;
-        this._bezierOutYInput.value = this._bezier.outPoint.y;
+        this._inXInput.value = this._cubicBezierTimingFunction.inPoint.x;
+        this._inYInput.value = this._cubicBezierTimingFunction.inPoint.y;
+        this._outXInput.value = this._cubicBezierTimingFunction.outPoint.x;
+        this._outYInput.value = this._cubicBezierTimingFunction.outPoint.y;
     }
 
     _updateControl(control)
@@ -311,35 +311,35 @@ WI.BezierEditor = class BezierEditor extends WI.Object
         control.line.setAttribute("y2", control.point.y + this._controlHandleRadius);
     }
 
-    _updateBezierPreview()
+    _updatePreview()
     {
-        this._inControl.point = new WI.Point(this._bezier.inPoint.x * this._bezierWidth, (1 - this._bezier.inPoint.y) * this._bezierHeight);
-        this._outControl.point = new WI.Point(this._bezier.outPoint.x * this._bezierWidth, (1 - this._bezier.outPoint.y) * this._bezierHeight);
+        this._inControl.point = new WI.Point(this._cubicBezierTimingFunction.inPoint.x * this._previewWidth, (1 - this._cubicBezierTimingFunction.inPoint.y) * this._previewHeight);
+        this._outControl.point = new WI.Point(this._cubicBezierTimingFunction.outPoint.x * this._previewWidth, (1 - this._cubicBezierTimingFunction.outPoint.y) * this._previewHeight);
 
-        this._updateBezier();
+        this._updateCoordinateInputs();
         this._triggerPreviewAnimation();
     }
 
     _triggerPreviewAnimation()
     {
-        this._bezierPreview.style.animationTimingFunction = this._bezier.toString();
-        this._bezierPreviewContainer.classList.add("animate");
-        this._bezierPreviewTiming.classList.add("animate");
+        this._previewElement.style.animationTimingFunction = this._cubicBezierTimingFunction.toString();
+        this._previewContainer.classList.add("animate");
+        this._timingElement.classList.add("animate");
     }
 
     _resetPreviewAnimation()
     {
-        var parent = this._bezierPreview.parentNode;
-        parent.removeChild(this._bezierPreview);
-        parent.appendChild(this._bezierPreview);
+        var parent = this._previewElement.parentNode;
+        parent.removeChild(this._previewElement);
+        parent.appendChild(this._previewElement);
 
-        this._element.removeChild(this._bezierPreviewTiming);
-        this._element.appendChild(this._bezierPreviewTiming);
+        this._element.removeChild(this._timingElement);
+        this._element.appendChild(this._timingElement);
     }
 
     _handleNumberInputInput(event)
     {
-        this._changeBezierForInput(event.target, event.target.value);
+        this._changeCoordinateForInput(event.target, event.target.value);
     }
 
     _handleNumberInputKeydown(event)
@@ -357,36 +357,36 @@ WI.BezierEditor = class BezierEditor extends WI.Object
             shift *= 10;
 
         event.preventDefault();
-        this._changeBezierForInput(event.target, parseFloat(event.target.value) + shift);
+        this._changeCoordinateForInput(event.target, parseFloat(event.target.value) + shift);
     }
 
-    _changeBezierForInput(target, value)
+    _changeCoordinateForInput(target, value)
     {
         value = Math.round(value * 100) / 100;
 
         switch (target) {
-        case this._bezierInXInput:
-            this._bezier.inPoint.x = Number.constrain(value, 0, 1);
+        case this._inXInput:
+            this._cubicBezierTimingFunction.inPoint.x = Number.constrain(value, 0, 1);
             break;
-        case this._bezierInYInput:
-            this._bezier.inPoint.y = value;
+        case this._inYInput:
+            this._cubicBezierTimingFunction.inPoint.y = value;
             break;
-        case this._bezierOutXInput:
-            this._bezier.outPoint.x = Number.constrain(value, 0, 1);
+        case this._outXInput:
+            this._cubicBezierTimingFunction.outPoint.x = Number.constrain(value, 0, 1);
             break;
-        case this._bezierOutYInput:
-            this._bezier.outPoint.y = value;
+        case this._outYInput:
+            this._cubicBezierTimingFunction.outPoint.y = value;
             break;
         default:
             return;
         }
 
-        this._updateBezierPreview();
+        this._updatePreview();
 
-        this.dispatchEventToListeners(WI.BezierEditor.Event.BezierChanged, {bezier: this._bezier});
+        this.dispatchEventToListeners(WI.CubicBezierTimingFunctionEditor.Event.CubicBezierTimingFunctionChanged, {cubicBezierTimingFunction: this._cubicBezierTimingFunction});
     }
 };
 
-WI.BezierEditor.Event = {
-    BezierChanged: "bezier-editor-bezier-changed"
+WI.CubicBezierTimingFunctionEditor.Event = {
+    CubicBezierTimingFunctionChanged: "cubic-bezier-timing-function-editor-cubic-bezier-timing-function-changed"
 };

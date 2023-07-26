@@ -283,7 +283,7 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
                 let easingPath = easingContainer.appendChild(createSVGElement("path"));
 
                 let pathSteps = [];
-                if (easing instanceof WI.CubicBezier) {
+                if (easing instanceof WI.CubicBezierTimingFunction) {
                     pathSteps.push("C");
                     pathSteps.push(easing.inPoint.x * width); // x1
                     pathSteps.push((1 - easing.inPoint.y) * (height + adjustEasingHeight)); // y1

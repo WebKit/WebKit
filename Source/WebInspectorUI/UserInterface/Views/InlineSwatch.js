@@ -36,7 +36,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         this._preventChangingColorFormats = !!preventChangingColorFormats;
 
         switch (this._type) {
-        case WI.InlineSwatch.Type.Bezier:
+        case WI.InlineSwatch.Type.CubicBezierTimingFunction:
         case WI.InlineSwatch.Type.Spring:
             this._swatchElement = WI.ImageUtilities.useSVGSymbol("Images/CubicBezier.svg");
             break;
@@ -60,7 +60,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._swatchElement.classList.add("read-only");
         else {
             switch (this._type) {
-            case WI.InlineSwatch.Type.Bezier:
+            case WI.InlineSwatch.Type.CubicBezierTimingFunction:
                 this._swatchElement.title = WI.UIString("Edit \u201Ccubic-bezier\u201D function");
                 break;
 
@@ -151,8 +151,8 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         if (this._valueEditor.removeListeners)
             this._valueEditor.removeListeners();
 
-        if (this._valueEditor instanceof WI.BezierEditor)
-            this._valueEditor.removeEventListener(WI.BezierEditor.Event.BezierChanged, this._valueEditorValueDidChange, this);
+        if (this._valueEditor instanceof WI.CubicBezierTimingFunctionEditor)
+            this._valueEditor.removeEventListener(WI.CubicBezierTimingFunctionEditor.Event.CubicBezierTimingFunctionChanged, this._valueEditorValueDidChange, this);
         else if (this._valueEditor instanceof WI.BoxShadowEditor)
             this._valueEditor.removeEventListener(WI.BoxShadowEditor.Event.BoxShadowChanged, this._valueEditorValueDidChange, this);
         else if (this._valueEditor instanceof WI.ColorPicker)
@@ -174,8 +174,8 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
     _fallbackValue()
     {
         switch (this._type) {
-        case WI.InlineSwatch.Type.Bezier:
-            return WI.CubicBezier.fromString("linear");
+        case WI.InlineSwatch.Type.CubicBezierTimingFunction:
+            return WI.CubicBezierTimingFunction.fromString("linear");
         case WI.InlineSwatch.Type.BoxShadow:
             return WI.BoxShadow.fromString("none");
         case WI.InlineSwatch.Type.Color:
@@ -290,9 +290,9 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
         this._valueEditor = null;
         switch (this._type) {
-        case WI.InlineSwatch.Type.Bezier:
-            this._valueEditor = new WI.BezierEditor;
-            this._valueEditor.addEventListener(WI.BezierEditor.Event.BezierChanged, this._valueEditorValueDidChange, this);
+        case WI.InlineSwatch.Type.CubicBezierTimingFunction:
+            this._valueEditor = new WI.CubicBezierTimingFunctionEditor;
+            this._valueEditor.addEventListener(WI.CubicBezierTimingFunctionEditor.Event.CubicBezierTimingFunctionChanged, this._valueEditorValueDidChange, this);
             break;
 
         case WI.InlineSwatch.Type.BoxShadow:
@@ -362,8 +362,8 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         this.dispatchEventToListeners(WI.InlineSwatch.Event.Activated);
 
         switch (this._type) {
-        case WI.InlineSwatch.Type.Bezier:
-            this._valueEditor.bezier = value;
+        case WI.InlineSwatch.Type.CubicBezierTimingFunction:
+            this._valueEditor.cubicBezierTimingFunction = value;
             break;
 
         case WI.InlineSwatch.Type.BoxShadow:
@@ -401,7 +401,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             }
             createCodeMirrorColorTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.Color));
             createCodeMirrorGradientTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.Gradient));
-            createCodeMirrorCubicBezierTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.Bezier));
+            createCodeMirrorCubicBezierTimingFunctionTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.CubicBezierTimingFunction));
             createCodeMirrorSpringTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.Spring));
             break;
         }
@@ -415,8 +415,8 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._value = event.data.boxShadow;
             break;
 
-        case WI.InlineSwatch.Type.Bezier:
-            this._value = event.data.bezier;
+        case WI.InlineSwatch.Type.CubicBezierTimingFunction:
+            this._value = event.data.cubicBezierTimingFunction;
             break;
 
         case WI.InlineSwatch.Type.Color:
@@ -578,7 +578,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 WI.InlineSwatch.Type = {
     Color: "inline-swatch-type-color",
     Gradient: "inline-swatch-type-gradient",
-    Bezier: "inline-swatch-type-bezier",
+    CubicBezierTimingFunction: "inline-swatch-type-cubic-bezier-timing-function",
     BoxShadow: "inline-swatch-type-box-shadow",
     Spring: "inline-swatch-type-spring",
     Variable: "inline-swatch-type-variable",
