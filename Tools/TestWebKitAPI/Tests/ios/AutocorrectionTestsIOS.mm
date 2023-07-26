@@ -146,6 +146,7 @@ TEST(AutocorrectionTests, AutocorrectionContextDoesNotIncludeNewlineInTextField)
 }
 
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+
 TEST(AutocorrectionTests, AutocorrectionIndicatorsDismissAfterNextWord)
 {
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
@@ -187,7 +188,46 @@ TEST(AutocorrectionTests, AutocorrectionIndicatorsDismissAfterNextWord)
     NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
     EXPECT_WK_STREQ("0", hasCorrectionIndicatorMarker);
 }
-#endif
+
+TEST(AutocorrectionTests, AutocorrectionIndicatorsMultiWord)
+{
+    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568) configuration:configuration]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
+
+    auto *contentView = [webView textInputContentView];
+    [contentView insertText:@"tomorrownight"];
+
+    [webView waitForNextPresentationUpdate];
+
+    NSString *hasCorrectionIndicatorMarkerJavaScript = @"internals.hasCorrectionIndicatorMarker(0, 14);";
+
+    __block bool done = false;
+
+    [webView applyAutocorrection:@"tomorrow night" toString:@"tomorrownight" isCandidate:YES withCompletionHandler:^{
+        NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
+        EXPECT_WK_STREQ("1", hasCorrectionIndicatorMarker);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_WK_STREQ("", [webView selectedText]);
+
+    [contentView selectWordForReplacement];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ("tomorrow night", [webView selectedText]);
+}
+
+#endif // HAVE(AUTOCORRECTION_ENHANCEMENTS)
 
 TEST(AutocorrectionTests, AutocorrectionContextBeforeAndAfterEditing)
 {
