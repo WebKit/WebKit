@@ -64,9 +64,18 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGRoot);
 
+const int defaultWidth = 300;
+const int defaultHeight = 150;
+
 RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
     : RenderReplaced(element, WTFMove(style))
 {
+    LayoutSize intrinsicSize(calculateIntrinsicSize());
+    if (!intrinsicSize.width())
+        intrinsicSize.setWidth(defaultWidth);
+    if (!intrinsicSize.height())
+        intrinsicSize.setHeight(defaultHeight);
+    setIntrinsicSize(intrinsicSize);
 }
 
 RenderSVGRoot::~RenderSVGRoot() = default;
@@ -89,22 +98,17 @@ bool RenderSVGRoot::hasIntrinsicAspectRatio() const
     return computeIntrinsicAspectRatio();
 }
 
+FloatSize RenderSVGRoot::calculateIntrinsicSize() const
+{
+    return FloatSize(floatValueForLength(svgSVGElement().intrinsicWidth(), 0), floatValueForLength(svgSVGElement().intrinsicHeight(), 0));
+}
+
 void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const
 {
     ASSERT(!shouldApplySizeContainment());
 
-    // Spec: http://www.w3.org/TR/SVG/coords.html#IntrinsicSizing
-    // SVG needs to specify how to calculate some intrinsic sizing properties to enable inclusion within other languages.
-
-    // The intrinsic aspect ratio of the viewport of SVG content is necessary for example, when including SVG from an ‘object’
-    // element in HTML styled with CSS. It is possible (indeed, common) for an SVG graphic to have an intrinsic aspect ratio but
-    // not to have an intrinsic width or height. The intrinsic aspect ratio must be calculated based upon the following rules:
-    // - The aspect ratio is calculated by dividing a width by a height.
-    // - If the ‘width’ and ‘height’ of the rootmost ‘svg’ element are both specified with unit identifiers (in, mm, cm, pt, pc,
-    //   px, em, ex) or in user units, then the aspect ratio is calculated from the ‘width’ and ‘height’ attributes after
-    //   resolving both values to user units.
-    intrinsicSize.setWidth(floatValueForLength(svgSVGElement().intrinsicWidth(), 0));
-    intrinsicSize.setHeight(floatValueForLength(svgSVGElement().intrinsicHeight(), 0));
+    // https://www.w3.org/TR/SVG/coords.html#IntrinsicSizing
+    intrinsicSize = calculateIntrinsicSize();
 
     if (style().aspectRatioType() == AspectRatioType::Ratio) {
         intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth(), style().aspectRatioLogicalHeight());
@@ -115,10 +119,6 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, F
     if (!intrinsicSize.isEmpty())
         intrinsicRatioValue = { intrinsicSize.width(), intrinsicSize.height() }; 
     else {
-        // - If either/both of the ‘width’ and ‘height’ of the rootmost ‘svg’ element are in percentage units (or omitted), the
-        //   aspect ratio is calculated from the width and height values of the ‘viewBox’ specified for the current SVG document
-        //   fragment. If the ‘viewBox’ is not correctly specified, or set to 'none', the intrinsic aspect ratio cannot be
-        //   calculated and is considered unspecified.
         FloatSize viewBoxSize = svgSVGElement().viewBox().size();
         if (!viewBoxSize.isEmpty()) {
             // The viewBox can only yield an intrinsic ratio, not an intrinsic size.
