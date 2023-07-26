@@ -41,13 +41,15 @@ AXTextMarker::AXTextMarker(PlatformTextMarkerData platformData)
         return;
 
 #if PLATFORM(MAC)
-    ASSERT(CFGetTypeID(platformData) == AXTextMarkerGetTypeID());
-    if (CFGetTypeID(platformData) != AXTextMarkerGetTypeID())
+    if (CFGetTypeID(platformData) != AXTextMarkerGetTypeID()) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
-    ASSERT(AXTextMarkerGetLength(platformData) == sizeof(m_data));
-    if (AXTextMarkerGetLength(platformData) != sizeof(m_data))
+    if (AXTextMarkerGetLength(platformData) != sizeof(m_data)) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     memcpy(&m_data, AXTextMarkerGetBytePtr(platformData), sizeof(m_data));
 #else // PLATFORM(IOS_FAMILY)
@@ -70,7 +72,10 @@ RetainPtr<PlatformTextMarkerData> AXTextMarker::platformData() const
 #if PLATFORM(MAC)
 AXTextMarkerRange::AXTextMarkerRange(AXTextMarkerRangeRef textMarkerRangeRef)
 {
-    ASSERT(CFGetTypeID(textMarkerRangeRef) == AXTextMarkerRangeGetTypeID());
+    if (!textMarkerRangeRef || CFGetTypeID(textMarkerRangeRef) != AXTextMarkerRangeGetTypeID()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     auto start = AXTextMarkerRangeCopyStartMarker(textMarkerRangeRef);
     auto end = AXTextMarkerRangeCopyEndMarker(textMarkerRangeRef);
