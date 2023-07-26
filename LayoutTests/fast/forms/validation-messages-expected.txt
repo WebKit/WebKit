@@ -6,6 +6,7 @@ Required file input:
 Required email input:
 Required url input:
 Required input with pattern:
+Required input with pattern and title:
 Required input with minlength=100:
 Required range with min=5:
 Required range with max=5:
@@ -21,6 +22,7 @@ PASS message is "Select a file"
 PASS message is "Enter an email address"
 PASS message is "Enter a URL"
 PASS message is "Match the requested format"
+PASS message is "Match the requested format: UI testing is awesome"
 PASS message is "Use at least 100 characters"
 PASS message is "Value must be greater than or equal to 5"
 PASS message is "Value must be less than or equal to 5"

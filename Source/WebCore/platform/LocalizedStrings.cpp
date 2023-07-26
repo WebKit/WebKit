@@ -1195,6 +1195,18 @@ String validationMessagePatternMismatchText()
     return WEB_UI_STRING("Match the requested format", "Validation message for input form controls requiring a constrained value according to pattern");
 }
 
+String validationMessagePatternMismatchText(const String& title)
+{
+#if PLATFORM(COCOA)
+    return WEB_UI_FORMAT_CFSTRING("Match the requested format: %@", "Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern", title.createCFString().get());
+#elif USE(GLIB)
+    return WEB_UI_FORMAT_STRING("Match the requested format: %s", "Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern", title.utf8().data());
+#else
+    UNUSED_PARAM(title);
+    return validationMessagePatternMismatchText();
+#endif
+}
+
 #if !PLATFORM(GTK)
 String validationMessageTooShortText(int, int minLength)
 {

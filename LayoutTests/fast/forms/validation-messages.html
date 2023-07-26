@@ -27,6 +27,16 @@
   Required input with pattern: <input type="text" value="1" pattern="[a-z]" required><input id="input_with_pattern_submit" type="submit">
 </form>
 <form>
+  Required input with pattern and title: <input type="text" value="1" pattern="[a-z]" required title="   
+  UI
+  
+  testing
+  
+      is
+      
+          awesome    "><input id="input_with_pattern_title_submit" type="submit">
+</form>
+<form>
   Required input with minlength=100: <input type="text" minlength=100 id="field_with_minlength" required><input id="input_with_minlength_submit" type="submit">
 </form>
 <form>
@@ -52,6 +62,7 @@ var tests = [
     ['required_email_submit', 'Enter an email address'],
     ['required_url_submit', 'Enter a URL'],
     ['input_with_pattern_submit', 'Match the requested format'],
+    ['input_with_pattern_title_submit', 'Match the requested format: UI testing is awesome'],
     ['input_with_minlength_submit', 'Use at least 100 characters'],
     ['range_with_min_submit', 'Value must be greater than or equal to 5'],
     ['range_with_max_submit', 'Value must be less than or equal to 5'],

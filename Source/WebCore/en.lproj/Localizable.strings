@@ -757,6 +757,12 @@
 /* Validation message for input form controls requiring a constrained value according to pattern */
 "Match the requested format" = "Match the requested format";
 
+/* Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern */
+"Match the requested format: %@" = "Match the requested format: %@";
+
+/* Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern */
+"Match the requested format: %s" = "Match the requested format: %s";
+
 /* Malware confirmation dialog */
 "Merely visiting a site is sufficient for malware to install itself and harm your computer." = "Merely visiting a site is sufficient for malware to install itself and harm your computer.";
 
