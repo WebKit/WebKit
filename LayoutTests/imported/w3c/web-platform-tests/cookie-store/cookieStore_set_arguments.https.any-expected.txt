@@ -16,7 +16,7 @@ FAIL cookieStore.set default domain is null and differs from current hostname as
 PASS cookieStore.set with path set to the current directory
 FAIL cookieStore.set with path set to a subdirectory of the current directory assert_equals: expected null but got object "[object Object]"
 FAIL cookieStore.set default path is / assert_equals: expected 1 but got 2
-FAIL cookieStore.set adds / to path that does not end with / assert_equals: expected "/cookie-store/" but got "/cookie-store"
-FAIL cookieStore.set with path that does not start with / assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS cookieStore.set adds / to path that does not end with /
+PASS cookieStore.set with path that does not start with /
 FAIL cookieStore.set with get result assert_equals: expected "old-cookie-value" but got "cookie-value"
 

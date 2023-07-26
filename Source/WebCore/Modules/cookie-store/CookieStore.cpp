@@ -208,21 +208,21 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         return;
     }
 
-    auto& url = document.url();
-    auto& cookieJar = page->cookieJar();
-    auto completionHandler = [promise = WTFMove(promise)] (bool setSuccessfully) {
-        if (!setSuccessfully)
-            promise->reject(TypeError);
-        else
-            promise->resolve();
-    };
-
     Cookie cookie;
     cookie.name = WTFMove(options.name);
     cookie.value = WTFMove(options.value);
     cookie.domain = options.domain.isNull() ? document.domain() : WTFMove(options.domain);
-    cookie.path = WTFMove(options.path);
     cookie.created = WallTime::now().secondsSinceEpoch().milliseconds();
+
+    cookie.path = WTFMove(options.path);
+    if (!cookie.path.isNull()) {
+        if (!cookie.path.startsWith('/')) {
+            promise->reject(Exception { TypeError, "The path must begin with a '/'"_s });
+            return;
+        }
+        if (!cookie.path.endsWith('/'))
+            cookie.path = cookie.path + '/';
+    }
 
     if (options.expires)
         cookie.expires = *options.expires;
@@ -238,6 +238,15 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         cookie.sameSite = Cookie::SameSitePolicy::None;
         break;
     }
+
+    auto& url = document.url();
+    auto& cookieJar = page->cookieJar();
+    auto completionHandler = [promise = WTFMove(promise)] (bool setSuccessfully) {
+        if (!setSuccessfully)
+            promise->reject(TypeError);
+        else
+            promise->resolve();
+    };
 
     cookieJar.setCookieAsync(document, url, cookie, WTFMove(completionHandler));
 }
