@@ -2769,3 +2769,5 @@ webkit.org/b/252322 [ X86_64 ] media/media-source/media-source-video-renders.htm
 [ BigSur Monterey ] media/media-source/media-source-paint-after-display-none.html [ Skip ]
 
 webkit.org/b/259489 [ Monterey+ ] http/tests/media/hls/track-in-band-multiple-cues.html [ Pass Failure ]
+
+webkit.org/b/259183 [ Monterey+ ] fast/attachment/mac/wide-attachment-image-controls-basic.html [ Pass Failure ]
