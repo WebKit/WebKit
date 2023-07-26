@@ -209,7 +209,7 @@ private:
     template<typename ChecksFunctor>
     bool handleIntrinsicGetter(Operand result, SpeculatedType prediction, const GetByVariant& intrinsicVariant, Node* thisNode, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
-    bool handleTypedArrayConstructor(Operand result, JSObject*, int registerOffset, int argumentCountIncludingThis, TypedArrayType, const ChecksFunctor& insertChecks);
+    bool handleTypedArrayConstructor(Operand result, JSObject*, int registerOffset, int argumentCountIncludingThis, TypedArrayType, const ChecksFunctor& insertChecks, CodeSpecializationKind);
     template<typename ChecksFunctor>
     bool handleConstantFunction(Node* callTargetNode, Operand result, JSObject*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, SpeculatedType, const ChecksFunctor& insertChecks);
     Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value);
@@ -4449,7 +4449,7 @@ bool ByteCodeParser::handleProxyObjectLoad(VirtualRegister destination, Speculat
 template<typename ChecksFunctor>
 bool ByteCodeParser::handleTypedArrayConstructor(
     Operand result, JSObject* function, int registerOffset,
-    int argumentCountIncludingThis, TypedArrayType type, const ChecksFunctor& insertChecks)
+    int argumentCountIncludingThis, TypedArrayType type, const ChecksFunctor& insertChecks, CodeSpecializationKind kind)
 {
     if (!isTypedView(type))
         return false;
@@ -4457,6 +4457,9 @@ bool ByteCodeParser::handleTypedArrayConstructor(
     if (function->classInfo() != constructorClassInfoForType(type))
         return false;
     
+    if (kind == CodeForCall)
+        return false;
+
     if (function->globalObject() != m_inlineStackTop->m_codeBlock->globalObject())
         return false;
     
@@ -4628,7 +4631,7 @@ bool ByteCodeParser::handleConstantFunction(
     for (unsigned typeIndex = 0; typeIndex < NumberOfTypedArrayTypes; ++typeIndex) {
         bool handled = handleTypedArrayConstructor(
             result, function, registerOffset, argumentCountIncludingThis,
-            indexToTypedArrayType(typeIndex), insertChecks);
+            indexToTypedArrayType(typeIndex), insertChecks, kind);
         if (handled)
             return true;
     }
