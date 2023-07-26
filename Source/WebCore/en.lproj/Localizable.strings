@@ -85,9 +85,6 @@
 /* Label to describe the number of files selected in a file upload control that allows multiple files */
 "%d files" = "%d files";
 
-/* Label for PDF page number indicator. */
-"%d of %d" = "%d of %d";
-
 /* label next to file upload control; parameters are the number of photos and the number of videos */
 "%lu photo(s) and %lu video(s)" = "%lu photo(s) and %lu video(s)";
 
@@ -174,9 +171,6 @@
 
 /* Allow button title in user media prompt */
 "Allow (usermedia)" = "Allow";
-
-/* Allow button title in window sharing prompt */
-"Allow (window sharing)" = "Allow";
 
 /* Allow screen button title in window and screen sharing prompt */
 "Allow to Share Screen" = "Allow to Share Screen";
@@ -289,11 +283,11 @@
 /* Undo action name */
 "Center (Undo action name)" = "Center";
 
-/* Lockdown Mode alert message */
-"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings." = "Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.";
-
 /* Lockdown Mode alert message (MacCatalyst) */
 "Certain experiences and features may not function as expected. You can manage Lockdown Mode in Settings." = "Certain experiences and features may not function as expected. You can manage Lockdown Mode in Settings.";
+
+/* Lockdown Mode alert message */
+"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings." = "Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.";
 
 /* Undo action name */
 "Change Attributes (Undo action name)" = "Change Attributes";
@@ -325,9 +319,6 @@
 /* Title for file button used in HTML forms for media files */
 "Choose Media (Single)" = "Choose Media (Single)";
 
-/* Message for window sharing prompt */
-"Choose a window to share" = "Choose a window to share";
-
 /* menu item in Recent Searches menu that empties menu's contents */
 "Clear Recent Searches" = "Clear Recent Searches";
 
@@ -345,9 +336,6 @@
 
 /* WebKitErrorCannotShowMIMEType description */
 "Content with specified MIME type can’t be shown" = "Content with specified MIME type can’t be shown";
-
-/* WebKitErrorHTTPSUpgradeRedirectLoop description */
-"HTTPS Upgrade redirect loop detected" = "HTTPS Upgrade redirect loop detected";
 
 /* Continue */
 "Continue" = "Continue";
@@ -462,9 +450,6 @@
 
 /* Disallow button title in window and screen sharing prompt */
 "Don’t Allow (window and screen sharing)" = "Don’t Allow";
-
-/* Disallow button title in window sharing prompt */
-"Don’t Allow (window sharing)" = "Don’t Allow";
 
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";
@@ -607,6 +592,9 @@
 /* accessibility role description for web area */
 "HTML content" = "HTML content";
 
+/* WebKitErrorHTTPSUpgradeRedirectLoop description */
+"HTTPS Upgrade redirect loop detected" = "HTTPS Upgrade redirect loop detected";
+
 /* Title of the Hide button for zoomed form controls. */
 "Hide" = "Hide";
 
@@ -618,9 +606,6 @@
 
 /* menu item title */
 "Hide Substitutions" = "Hide Substitutions";
-
-/* The default, default character encoding on Windows */
-"ISO-8859-1" = "ISO-8859-1";
 
 /* Phishing warning description */
 "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%." = "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%.";
@@ -729,12 +714,6 @@
 
 /* Look Up context menu item with selected word */
 "Look Up “%@”" = "Look Up “%@”";
-
-/* Look Up context menu item with selected word */
-"Look Up “%s”" = "Look Up “%s”";
-
-/* Look Up context menu item with selected word */
-"Look Up “<selection>”" = "Look Up “<selection>”";
 
 /* WKErrorContentRuleListStoreLookupFailed description */
 "Looking up a WKContentRuleList failed" = "Looking up a WKContentRuleList failed";
@@ -910,7 +889,7 @@
 /* Pause All Animations context menu item */
 "Pause All Animations" = "Pause All Animations";
 
-/* Pause animation context menu item */
+/* Title for pause animation action button or context menu item */
 "Pause Animation" = "Pause Animation";
 
 /* File Upload alert sheet button string for choosing an existing media item from the Photo Library */
@@ -925,7 +904,7 @@
 /* Play All Animations context menu item */
 "Play All Animations" = "Play All Animations";
 
-/* Play animation context menu item */
+/* Title for play animation action button or context menu item */
 "Play Animation" = "Play Animation";
 
 /* accessibility help text for enter full screen button */
@@ -1405,17 +1384,11 @@
 /* Web Inspector window title */
 "Web Inspector — %@" = "Web Inspector — %@";
 
-/* Pseudo plug-in name, visible in the Installed Plug-ins page in Safari. */
-"WebKit built-in PDF" = "WebKit built-in PDF";
-
 /* WebKitErrorInternal description */
 "WebKit encountered an internal error" = "WebKit encountered an internal error";
 
 /* Unwanted software warning title */
 "Website With Harmful Software Warning" = "Website With Harmful Software Warning";
-
-/* Label for window sharing menu */
-"Window: " = "Window: ";
 
 /* Year label in date picker */
 "YEAR (Date picker for extra zoom mode)" = "YEAR";
@@ -1431,9 +1404,6 @@
 
 /* Zoom Out context menu item */
 "Zoom Out" = "Zoom Out";
-
-/* HTTP result code string */
-"accepted" = "accepted";
 
 /* Verb stating the action that will occur when a text field is selected, as used by accessibility */
 "activate" = "activate";
@@ -1459,12 +1429,6 @@
 /* accessibility label for seek back 30 seconds button */
 "back 30 seconds" = "back 30 seconds";
 
-/* HTTP result code string */
-"bad gateway" = "bad gateway";
-
-/* HTTP result code string */
-"bad request" = "bad request";
-
 /* An ARIA accessibility group that acts as a banner. */
 "banner" = "banner";
 
@@ -1477,29 +1441,17 @@
 /* Verb stating the action that will occur when an unchecked checkbox is clicked, as used by accessibility */
 "check" = "check";
 
-/* HTTP result code string */
-"client error" = "client error";
-
 /* accessibility role description for a color well */
 "color well" = "color well";
 
 /* An ARIA accessibility group that acts as a region of complementary information. */
 "complementary" = "complementary";
 
-/* HTTP result code string */
-"conflict" = "conflict";
-
 /* Label for the AutoFill contacts button inside a text field. */
 "contact info AutoFill" = "contact info AutoFill";
 
 /* An ARIA accessibility group that contains content. */
 "content information" = "content information";
-
-/* HTTP result code string */
-"continue" = "continue";
-
-/* HTTP result code string */
-"created" = "created";
 
 /* Label for the credit card AutoFill button inside a text field. */
 "credit card AutoFill" = "credit card AutoFill";
@@ -1519,14 +1471,8 @@
 /* accessibility role description for a date field. */
 "date field" = "date field";
 
-/* accessibility label for a date field month input. */
-"month" = "month";
-
 /* accessibility label for a date field day input. */
 "day" = "day";
-
-/* accessibility label for a date field year input. */
-"year" = "year";
 
 /* role description of ARIA definition role */
 "definition" = "definition";
@@ -1555,9 +1501,6 @@
 /* accessibility label for exit full screen button */
 "exit full screen" = "exit full screen";
 
-/* HTTP result code string */
-"expectation failed" = "expectation failed";
-
 /* accessibility label for fast forward button */
 "fast forward" = "fast forward";
 
@@ -1576,15 +1519,6 @@
 /* accessibility role description for a footer */
 "footer" = "footer";
 
-/* HTTP result code string */
-"forbidden" = "forbidden";
-
-/* HTTP result code string */
-"found" = "found";
-
-/* HTTP result code string */
-"gateway timed out" = "gateway timed out";
-
 /* accessibility role description for headings */
 "heading" = "heading";
 
@@ -1600,17 +1534,8 @@
 /* accessibility help text for an indefinite media controller time value */
 "indefinite time" = "indefinite time";
 
-/* HTTP result code string */
-"informational" = "informational";
-
-/* HTTP result code string */
-"internal server error" = "internal server error";
-
 /* Verb stating the action that will occur when a link is clicked, as used by accessibility */
 "jump" = "jump";
-
-/* HTTP result code string */
-"length required" = "length required";
 
 /* accessibility role description for link */
 "link" = "link";
@@ -1633,14 +1558,11 @@
 /* An ARIA accessibility group that contains mathematical symbols. */
 "math" = "math";
 
-/* HTTP result code string */
-"method not allowed" = "method not allowed";
+/* accessibility label for a date field month input. */
+"month" = "month";
 
 /* accessibility role description for a month field. */
 "month and year field" = "month and year field";
-
-/* HTTP result code string */
-"moved permanently" = "moved permanently";
 
 /* accessibility label for timeline slider */
 "movie time" = "movie time";
@@ -1651,9 +1573,6 @@
 /* accessibility help text for timeline slider thumb */
 "movie time scrubber thumb" = "movie time scrubber thumb";
 
-/* HTTP result code string */
-"multiple choices" = "multiple choices";
-
 /* accessibility label for mute button */
 "mute" = "mute";
 
@@ -1663,38 +1582,17 @@
 /* An ARIA accessibility group that contains the main navigation elements of a website. */
 "navigation" = "navigation";
 
-/* HTTP result code string */
-"needs proxy" = "needs proxy";
-
-/* HTTP result code string */
-"no content" = "no content";
-
-/* HTTP result code string */
-"no error" = "no error";
-
 /* text to display in file button used in HTML forms when no file is selected */
 "no file selected" = "no file selected";
 
 /* text to display in file button used in HTML forms when no files are selected and the button allows multiple files to be selected */
 "no files selected" = "no files selected";
 
-/* HTTP result code string */
-"no longer exists" = "no longer exists";
-
 /* Text to display in file button used in HTML forms for media files when no media files are selected and the button allows multiple files to be selected */
 "no media selected (multiple)" = "no media selected (multiple)";
 
 /* Text to display in file button used in HTML forms for media files when no media file is selected */
 "no media selected (single)" = "no media selected (single)";
-
-/* HTTP result code string */
-"non-authoritative information" = "non-authoritative information";
-
-/* HTTP result code string */
-"not found" = "not found";
-
-/* HTTP result code string */
-"not modified" = "not modified";
 
 /* An ARIA accessibility group that acts as a note in a document. */
 "note" = "note";
@@ -1711,9 +1609,6 @@
 /* accessibility role description for an output element */
 "output" = "output";
 
-/* HTTP result code string */
-"partial content" = "partial content";
-
 /* Label for the AutoFill credentials button inside a text field. */
 "password AutoFill" = "password AutoFill";
 
@@ -1723,29 +1618,17 @@
 /* accessibility help text for pause button */
 "pause playback" = "pause playback";
 
-/* HTTP result code string */
-"payment required" = "payment required";
-
 /* accessibility label for play button */
 "play" = "play";
 
-/* HTTP result code string */
-"precondition failed" = "precondition failed";
-
 /* Verb stating the action that will occur when a button is pressed, as used by accessibility */
 "press" = "press";
-
-/* HTTP result code string */
-"proxy authentication required" = "proxy authentication required";
 
 /* Validation message for input form controls with value higher than allowed maximum */
 "range overflow" = "range overflow";
 
 /* Validation message for input form controls with value lower than allowed minimum */
 "range underflow" = "range underflow";
-
-/* HTTP result code string */
-"redirected" = "redirected";
 
 /* An ARIA accessibility group that acts as a distinct region in a document. */
 "region" = "region";
@@ -1756,21 +1639,6 @@
 /* Action from safe browsing warning */
 "report an error" = "report an error";
 
-/* HTTP result code string */
-"request timed out" = "request timed out";
-
-/* HTTP result code string */
-"request too large" = "request too large";
-
-/* HTTP result code string */
-"requested URL too long" = "requested URL too long";
-
-/* HTTP result code string */
-"requested range not satisfiable" = "requested range not satisfiable";
-
-/* HTTP result code string */
-"reset content" = "reset content";
-
 /* accessibility help text for return streaming movie to real time button */
 "resume real time streaming" = "resume real time streaming";
 
@@ -1779,9 +1647,6 @@
 
 /* An ARIA accessibility group that contains a search feature of a website. */
 "search" = "search";
-
-/* HTTP result code string */
-"see other" = "see other";
 
 /* accessibility help text for jump back 30 seconds button */
 "seek movie back 30 seconds" = "seek movie back 30 seconds";
@@ -1797,12 +1662,6 @@
 
 /* accessibility role description for a horizontal rule [<hr>] */
 "separator" = "separator";
-
-/* HTTP result code string */
-"server error" = "server error";
-
-/* HTTP result code string */
-"service unavailable" = "service unavailable";
 
 /* accessibility label for show closed captions button */
 "show closed captions" = "show closed captions";
@@ -1822,26 +1681,17 @@
 /* The suboptimal value description for a meter element. */
 "suboptimal value" = "suboptimal value";
 
-/* HTTP result code string */
-"success" = "success";
-
 /* accessibility role description for a suggestion element */
 "suggestion" = "suggestion";
 
 /* accessibility role description for a summary element */
 "summary" = "summary";
 
-/* HTTP result code string */
-"switching protocols" = "switching protocols";
-
 /* An ARIA accessibility group that contains the content of a tab. */
 "tab panel" = "tab panel";
 
 /* accessibility role description for a telephone number field. */
 "telephone number field" = "telephone number field";
-
-/* HTTP result code string */
-"temporarily redirected" = "temporarily redirected";
 
 /* term word of a description list */
 "term" = "term";
@@ -1861,17 +1711,8 @@
 /* An ARIA accessibility group that acts as a tooltip. */
 "tooltip" = "tooltip";
 
-/* HTTP result code string */
-"unacceptable" = "unacceptable";
-
-/* HTTP result code string */
-"unauthorized" = "unauthorized";
-
 /* Verb stating the action that will occur when a checked checkbox is clicked, as used by accessibility */
 "uncheck" = "uncheck";
-
-/* HTTP result code string */
-"unimplemented" = "unimplemented";
 
 /* Unknown filename */
 "unknown" = "unknown";
@@ -1881,12 +1722,6 @@
 
 /* accessibility help text for un mute button */
 "unmute audio tracks" = "unmute audio tracks";
-
-/* HTTP result code string */
-"unsupported media type" = "unsupported media type";
-
-/* HTTP result code string */
-"unsupported version" = "unsupported version";
 
 /* accessibility help text for video element controller */
 "video element playback controls and status display" = "video element playback controls and status display";
@@ -1908,6 +1743,9 @@
 
 /* accessibility role description for a time field. */
 "week and year field" = "week and year field";
+
+/* accessibility label for a date field year input. */
+"year" = "year";
 
 /* Message for requesting access to the device motion and orientation */
 "“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";

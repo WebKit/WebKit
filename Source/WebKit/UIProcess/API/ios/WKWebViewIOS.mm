@@ -3146,7 +3146,7 @@ static bool isLockdownModeWarningNeeded()
         return;
 
 #if PLATFORM(MACCATALYST)
-    auto message = WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can manage Lockdown Mode in Settings.", "Lockdown Mode alert message");
+    auto message = WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can manage Lockdown Mode in Settings.", "Lockdown Mode alert message (MacCatalyst)");
 #else
     auto message = WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.", "Lockdown Mode alert message");
 #endif

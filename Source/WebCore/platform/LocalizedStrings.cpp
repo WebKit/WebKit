@@ -481,12 +481,12 @@ String contextMenuItemTagPauseAllAnimations()
 
 String contextMenuItemTagPlayAnimation()
 {
-    return WEB_UI_STRING("Play Animation", "Play animation context menu item");
+    return WEB_UI_STRING("Play Animation", "Title for play animation action button or context menu item");
 }
 
 String contextMenuItemTagPauseAnimation()
 {
-    return WEB_UI_STRING("Pause Animation", "Pause animation context menu item");
+    return WEB_UI_STRING("Pause Animation", "Title for pause animation action button or context menu item");
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 

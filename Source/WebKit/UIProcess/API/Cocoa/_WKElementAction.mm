@@ -192,7 +192,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         break;
     case _WKElementActionPlayAnimation:
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-        title = WEB_UI_STRING("Play Animation", "Title for play animation action button");
+        title = WEB_UI_STRING("Play Animation", "Title for play animation action button or context menu item");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
@@ -200,7 +200,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         break;
     case _WKElementActionPauseAnimation:
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-        title = WEB_UI_STRING("Pause Animation", "Title for pause animation action button");
+        title = WEB_UI_STRING("Pause Animation", "Title for pause animation action button or context menu item");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
