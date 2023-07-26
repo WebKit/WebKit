@@ -98,6 +98,10 @@
 #include "LegacyCustomProtocolManagerClient.h"
 #endif
 
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#include <WebCore/DeprecatedGlobalSettings.h>
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 
 namespace WebKit {
@@ -225,6 +229,10 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 
 #if !PLATFORM(COCOA)
     parameters.enablePrivateClickMeasurement = false;
+#endif
+
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+    parameters.builtInNotificationsEnabled = DeprecatedGlobalSettings::builtInNotificationsEnabled();
 #endif
 
     parameters.allowedFirstPartiesForCookies = WebProcessProxy::allowedFirstPartiesForCookies();

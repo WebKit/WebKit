@@ -390,6 +390,7 @@ public:
 #endif
 
     bool ftpEnabled() const { return m_ftpEnabled; }
+    bool builtInNotificationsEnabled() const { return m_builtInNotificationsEnabled; }
 
 #if ENABLE(SERVICE_WORKER)
     void getPendingPushMessages(PAL::SessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
@@ -573,6 +574,7 @@ private:
 
     bool m_privateClickMeasurementEnabled { true };
     bool m_ftpEnabled { false };
+    bool m_builtInNotificationsEnabled { false };
     bool m_isSuspended { false };
     bool m_didSyncCookiesForClose { false };
 #if PLATFORM(COCOA)
