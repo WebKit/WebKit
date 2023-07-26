@@ -50,7 +50,7 @@ WEBCORE_EXPORT bool hasAnyPlainText(const SimpleRange&, TextIteratorBehaviors = 
 WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const SimpleRange&, TextIteratorBehaviors = { }, bool isDisplayString = false);
 
 // Find within the document, based on the text from the text iterator.
-SimpleRange findPlainText(const SimpleRange&, const String&, FindOptions);
+WEBCORE_EXPORT SimpleRange findPlainText(const SimpleRange&, const String&, FindOptions);
 WEBCORE_EXPORT SimpleRange findClosestPlainText(const SimpleRange&, const String&, FindOptions, uint64_t targetCharacterOffset);
 bool containsPlainText(const String& document, const String&, FindOptions); // Lets us use the search algorithm on a string.
 WEBCORE_EXPORT String foldQuoteMarks(const String&);
