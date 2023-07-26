@@ -175,6 +175,8 @@ void JSRopeString::resolveToBufferSlow(JSString* fiber0, JSString* fiber1, JSStr
 template<typename CharacterType>
 inline void JSRopeString::resolveToBuffer(JSString* fiber0, JSString* fiber1, JSString* fiber2, CharacterType* buffer, unsigned length, uint8_t* stackLimit)
 {
+    ASSERT(fiber0);
+
     // We must ensure that all JSRopeString::resolveToBufferSlow and JSRopeString::resolveToBuffer calls must be done directly from this function, and it has
     // exact same signature to JSRopeString::resolveToBuffer, which will be esured by clang via MUST_TAIL_CALL attribute.
     // This allows clang to make these calls tail-calls, constructing significantly efficient rope resolution here.

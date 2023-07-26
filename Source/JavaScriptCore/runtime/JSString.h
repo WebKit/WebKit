@@ -571,22 +571,6 @@ public:
 
     static constexpr unsigned s_maxInternalRopeLength = 3;
 
-    // This JSRopeString is only used to simulate half-baked JSRopeString in DFG and FTL MakeRope. If OSR exit happens in
-    // the middle of MakeRope due to string length overflow, we have half-baked JSRopeString which is the same to the result
-    // of this function. This half-baked JSRopeString will not be exposed to users, but still collectors can see it due to
-    // the conservative stack scan. This JSRopeString is used to test the collector with such a half-baked JSRopeString.
-    // Because this JSRopeString breaks the JSString's invariant (only one singleton JSString can be zero length), almost all the
-    // operations in JS fail to handle this string correctly.
-    static JSRopeString* createNullForTesting(VM& vm)
-    {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm)) JSRopeString(vm);
-        newString->finishCreation(vm);
-        ASSERT(!newString->length());
-        ASSERT(newString->isRope());
-        ASSERT(newString->fiber0() == nullptr);
-        return newString;
-    }
-
     // If nullOrExecForOOM is null, resolveRope() will be do nothing in the event of an OOM error.
     // The rope value will remain a null string in that case.
     JS_EXPORT_PRIVATE const String& resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const;
