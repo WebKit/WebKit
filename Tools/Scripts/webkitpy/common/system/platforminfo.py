@@ -214,7 +214,13 @@ class PlatformInfo(object):
             return []
 
         XCODE_SDK_REGEX = re.compile(r'\-sdk (?P<sdk>\D+)\d+\.\d+(?P<specifier>\D*)')
-        output = self._executive.run_command(['xcodebuild', '-showsdks'], return_stderr=False)
+
+        output = ''
+
+        try:
+            output = self._executive.run_command(['xcodebuild', '-showsdks'], return_stderr=False)
+        except ScriptError:
+            return []
 
         sdks = list()
         for line in output.splitlines():
