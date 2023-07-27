@@ -254,6 +254,19 @@ static RenderBlockFlow* outermostBlockContainingFloatingObject(RenderBox& box)
     return parentBlock;
 }
 
+void RenderBox::removeFloatingAndInvalidateForLayout()
+{
+    ASSERT(isFloating());
+
+    if (renderTreeBeingDestroyed())
+        return;
+
+    if (auto* ancestor = outermostBlockContainingFloatingObject(*this)) {
+        ancestor->markSiblingsWithFloatsForLayout(this);
+        ancestor->markAllDescendantsWithFloatsForLayout(this, false);
+    }
+}
+
 void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
 {
     ASSERT(isFloatingOrOutOfFlowPositioned());
@@ -261,12 +274,8 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
     if (renderTreeBeingDestroyed())
         return;
 
-    if (isFloating()) {
-        if (RenderBlockFlow* parentBlock = outermostBlockContainingFloatingObject(*this)) {
-            parentBlock->markSiblingsWithFloatsForLayout(this);
-            parentBlock->markAllDescendantsWithFloatsForLayout(this, false);
-        }
-    }
+    if (isFloating())
+        removeFloatingAndInvalidateForLayout();
 
     if (isOutOfFlowPositioned())
         RenderBlock::removePositionedObject(*this);

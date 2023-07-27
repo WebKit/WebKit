@@ -526,6 +526,7 @@ public:
 
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
 
+    void removeFloatingAndInvalidateForLayout();
     void removeFloatingOrPositionedChildFromBlockLists();
     
     RenderLayer* enclosingFloatPaintingLayer() const;
