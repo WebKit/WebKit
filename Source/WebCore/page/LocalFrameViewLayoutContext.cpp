@@ -52,6 +52,9 @@
 
 namespace WebCore {
 
+UpdateScrollInfoAfterLayoutTransaction::UpdateScrollInfoAfterLayoutTransaction() = default;
+UpdateScrollInfoAfterLayoutTransaction::~UpdateScrollInfoAfterLayoutTransaction() = default;
+
 void LocalFrameViewLayoutContext::layoutUsingFormattingContext()
 {
     if (!frame().settings().layoutFormattingContextEnabled())
@@ -162,6 +165,13 @@ LocalFrameViewLayoutContext::LocalFrameViewLayoutContext(LocalFrameView& frameVi
 
 LocalFrameViewLayoutContext::~LocalFrameViewLayoutContext()
 {
+}
+
+UpdateScrollInfoAfterLayoutTransaction& LocalFrameViewLayoutContext::updateScrollInfoAfterLayoutTransaction()
+{
+    if (!m_updateScrollInfoAfterLayoutTransaction)
+        m_updateScrollInfoAfterLayoutTransaction = makeUnique<UpdateScrollInfoAfterLayoutTransaction>();
+    return *m_updateScrollInfoAfterLayoutTransaction;
 }
 
 void LocalFrameViewLayoutContext::layout()

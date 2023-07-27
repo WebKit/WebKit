@@ -243,25 +243,6 @@ static PositionedDescendantsMap& positionedDescendantsMap()
 
 typedef HashMap<RenderBlock*, std::unique_ptr<ListHashSet<RenderInline*>>> ContinuationOutlineTableMap;
 
-struct UpdateScrollInfoAfterLayoutTransaction {
-    UpdateScrollInfoAfterLayoutTransaction(const RenderView& view)
-        : nestedCount(0)
-        , view(&view)
-    {
-    }
-
-    int nestedCount;
-    const RenderView* view;
-    HashSet<RenderBlock*> blocks;
-};
-
-typedef Vector<UpdateScrollInfoAfterLayoutTransaction> DelayedUpdateScrollInfoStack;
-static std::unique_ptr<DelayedUpdateScrollInfoStack>& updateScrollInfoAfterLayoutTransactionStack()
-{
-    static NeverDestroyed<std::unique_ptr<DelayedUpdateScrollInfoStack>> delayedUpdatedScrollInfoStack;
-    return delayedUpdatedScrollInfoStack;
-}
-
 // Allocated only when some of these fields have non-default values
 
 struct RenderBlockRareData {
@@ -539,41 +520,26 @@ bool RenderBlock::isSelfCollapsingBlock() const
     return false;
 }
 
-static inline UpdateScrollInfoAfterLayoutTransaction* currentUpdateScrollInfoAfterLayoutTransaction()
-{
-    if (!updateScrollInfoAfterLayoutTransactionStack())
-        return nullptr;
-    return &updateScrollInfoAfterLayoutTransactionStack()->last();
-}
-
 void RenderBlock::beginUpdateScrollInfoAfterLayoutTransaction()
 {
-    if (!updateScrollInfoAfterLayoutTransactionStack())
-        updateScrollInfoAfterLayoutTransactionStack() = makeUnique<DelayedUpdateScrollInfoStack>();
-    if (updateScrollInfoAfterLayoutTransactionStack()->isEmpty() || currentUpdateScrollInfoAfterLayoutTransaction()->view != &view())
-        updateScrollInfoAfterLayoutTransactionStack()->append(UpdateScrollInfoAfterLayoutTransaction(view()));
-    ++currentUpdateScrollInfoAfterLayoutTransaction()->nestedCount;
+    ++view().frameView().layoutContext().updateScrollInfoAfterLayoutTransaction().nestedCount;
 }
 
 void RenderBlock::endAndCommitUpdateScrollInfoAfterLayoutTransaction()
 {
-    UpdateScrollInfoAfterLayoutTransaction* transaction = currentUpdateScrollInfoAfterLayoutTransaction();
+    auto* transaction = view().frameView().layoutContext().updateScrollInfoAfterLayoutTransactionIfExists();
     ASSERT(transaction);
-    ASSERT(transaction->view == &view());
     if (--transaction->nestedCount)
         return;
 
     // Calling RenderLayer::updateScrollInfoAfterLayout() may cause its associated block to layout again and
-    // updates its scroll info (i.e. call RenderBlock::updateScrollInfoAfterLayout()). We remove |transaction|
-    // from the transaction stack to ensure that all subsequent calls to RenderBlock::updateScrollInfoAfterLayout()
-    // are dispatched immediately. That is, to ensure that such subsequent calls aren't added to |transaction|
-    // while we are processing it.
+    // updates its scroll info (i.e. call RenderBlock::updateScrollInfoAfterLayout()). We decrement the nestedCount first
+    // so that all subsequent calls to RenderBlock::updateScrollInfoAfterLayout() are dispatched immediately.
+    // That is, to ensure that such subsequent calls aren't added to |transaction| while we are processing it.
     auto blocksToUpdate = copyToVector(transaction->blocks);
-    updateScrollInfoAfterLayoutTransactionStack()->removeLast();
-    if (updateScrollInfoAfterLayoutTransactionStack()->isEmpty())
-        updateScrollInfoAfterLayoutTransactionStack() = nullptr;
+    transaction->blocks.clear();
 
-    for (auto* block : blocksToUpdate) {
+    for (auto block : blocksToUpdate) {
         ASSERT(block->hasNonVisibleOverflow());
         block->layer()->updateScrollInfoAfterLayout();
     }
@@ -581,12 +547,8 @@ void RenderBlock::endAndCommitUpdateScrollInfoAfterLayoutTransaction()
 
 void RenderBlock::removeFromUpdateScrollInfoAfterLayoutTransaction()
 {
-    if (UNLIKELY(updateScrollInfoAfterLayoutTransactionStack().get() != 0)) {
-        UpdateScrollInfoAfterLayoutTransaction* transaction = currentUpdateScrollInfoAfterLayoutTransaction();
-        ASSERT(transaction);
-        if (transaction->view == &view())
-            transaction->blocks.remove(this);
-    }
+    if (auto* transaction = view().frameView().layoutContext().updateScrollInfoAfterLayoutTransactionIfExists(); transaction && transaction->nestedCount)
+        transaction->blocks.remove(*this);
 }
 
 void RenderBlock::updateScrollInfoAfterLayout()
@@ -599,9 +561,8 @@ void RenderBlock::updateScrollInfoAfterLayout()
     // for items with opposite writing directions, as the contents needs
     // to overflow in that direction
     if (!style().isFlippedBlocksWritingMode()) {
-        UpdateScrollInfoAfterLayoutTransaction* transaction = currentUpdateScrollInfoAfterLayoutTransaction();
-        if (transaction && transaction->view == &view()) {
-            transaction->blocks.add(this);
+        if (auto* transaction = view().frameView().layoutContext().updateScrollInfoAfterLayoutTransactionIfExists(); transaction && transaction->nestedCount) {
+            transaction->blocks.add(*this);
             return;
         }
     }
@@ -620,8 +581,8 @@ void RenderBlock::layout()
     
     // It's safe to check for control clip here, since controls can never be table cells.
     // If we have a lightweight clip, there can never be any overflow from children.
-    UpdateScrollInfoAfterLayoutTransaction* transaction = currentUpdateScrollInfoAfterLayoutTransaction();
-    bool isDelayingUpdateScrollInfoAfterLayoutInView = transaction && transaction->view == &view();
+    auto* transaction = view().frameView().layoutContext().updateScrollInfoAfterLayoutTransactionIfExists();
+    bool isDelayingUpdateScrollInfoAfterLayoutInView = transaction && transaction->nestedCount;
     if (hasControlClip() && m_overflow && !isDelayingUpdateScrollInfoAfterLayoutInView)
         clearLayoutOverflow();
 
