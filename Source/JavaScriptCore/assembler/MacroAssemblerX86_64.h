@@ -479,6 +479,12 @@ public:
         }
     }
 
+    void and64(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        move(src, dest);
+        and64(imm, dest);
+    }
+
     void countLeadingZeros64(RegisterID src, RegisterID dst)
     {
         if (supportsLZCNT()) {
