@@ -2772,6 +2772,8 @@ webkit.org/b/259489 [ Monterey+ ] http/tests/media/hls/track-in-band-multiple-cu
 
 webkit.org/b/259183 [ Monterey+ ] fast/attachment/mac/wide-attachment-image-controls-basic.html [ Pass Failure ]
 
+webkit.org/b/259524 [ Monterey+ ] media/audioSession/audioSessionState.html [ Pass Failure ]
+
 # rdar://110876540 ASSERTION FAILED: firstChild(): [ macOS ] (258183)
 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Crash ]
 
