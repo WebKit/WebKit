@@ -69,8 +69,11 @@ WASM_SLOW_PATH_HIDDEN_DECL(trace);
 WASM_SLOW_PATH_HIDDEN_DECL(out_of_line_jump_target);
 
 WASM_SLOW_PATH_HIDDEN_DECL(ref_func);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(ref_func, unsigned index);
 WASM_SLOW_PATH_HIDDEN_DECL(table_get);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_get, unsigned, unsigned);
 WASM_SLOW_PATH_HIDDEN_DECL(table_set);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_set, unsigned tableIndex, unsigned index, EncodedJSValue value);
 WASM_SLOW_PATH_HIDDEN_DECL(table_init);
 WASM_SLOW_PATH_HIDDEN_DECL(table_fill);
 WASM_SLOW_PATH_HIDDEN_DECL(table_grow);
@@ -78,9 +81,9 @@ WASM_SLOW_PATH_HIDDEN_DECL(grow_memory);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_init);
 WASM_SLOW_PATH_HIDDEN_DECL(call);
 WASM_SLOW_PATH_HIDDEN_DECL(call_indirect);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call_indirect, CallFrame* callFrame, unsigned functionIndex, unsigned* metadataEntry);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call, unsigned);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(callIndirect, CallFrame*, unsigned, unsigned, unsigned);
 
 WASM_SLOW_PATH_HIDDEN_DECL(call_ref);
 WASM_SLOW_PATH_HIDDEN_DECL(tail_call);

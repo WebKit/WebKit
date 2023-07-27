@@ -66,17 +66,23 @@
  * 3. Metadata for Instructions
  * ----------------------------
  *
- * block (0x02):       1 entry; 8B PC of next instruction 
- * loop (0x03):        1 entry; 8B PC of next instruction 
- * if (0x04):          2 entries; 4B new PC, 4B new MC for `else`, 8B new PC for `if`
- * else (0x05):        1 entry; 4B new PC, 4B new MC for `end`
- * end (0x0b):         If exiting the function: ceil((# return values + 2) / 8) entries; 2B for total entry size, 1B / value returned
- * br (0x0c):          2 entries; 4B new PC, 4B new MC, 2B number of values to pop, 2B arity, 4B length of index
- * local.get (0x20):   1 entry; 4B index of local, 4B size of index
- * local.set (0x21):   1 entry; 4B index of local, 4B size of index
- * local.tee (0x22):   2 entries because of how FunctionParser works
- * i32.const (0x41):   1 entry; 4B value, 4B size of value
- * i64.const (0x42):   2 entries; 8B value, 8B size of value
+ * block (0x02):            1 entry; 8B PC of next instruction 
+ * loop (0x03):             1 entry; 8B PC of next instruction 
+ * if (0x04):               2 entries; 4B new PC, 4B new MC for `else`, 8B new PC for `if`
+ * else (0x05):             1 entry; 4B new PC, 4B new MC for `end`
+ * end (0x0b):              If exiting the function: ceil((# return values + 2) / 8) entries; 2B for total entry size, 1B / value returned
+ * br (0x0c):               2 entries; 4B new PC, 4B new MC, 2B number of values to pop, 2B arity, 4B length of index
+ * local.get (0x20):        1 entry; 4B index of local, 4B size of instruction
+ * local.set (0x21):        1 entry; 4B index of local, 4B size of instruction
+ * local.tee (0x22):        2 entries because of how FunctionParser works
+ * global.get (0x23):       1 entry; 4B index of global, 4B size of instruction
+ * global.set (0x24):       1 entry; 4B index of global, 4B size of instruction
+ * table.get (0x23):        1 entry; 4B index of table, 4B size of instruction
+ * table.set (0x24):        1 entry; 4B index of table, 4B size of instruction
+ * mem load (0x28 - 0x35):  1 entry; 4B memarg, 4B size of instruction
+ * mem store (0x28 - 0x35): 1 entry; 4B memarg, 4B size of instruction
+ * i32.const (0x41):        1 entry; 4B value, 4B size of instruction
+ * i64.const (0x42):        2 entries; 8B value, 8B size of instruction
  *
  * i32, i64, f32, and f64 operations (besides the ones shown above) do not require metadata
  * 
@@ -461,6 +467,7 @@ public:
     {
         return m_parser->offset() - m_parser->currentOpcodeStartingOffset();
     }
+    void addCallCommonData(const FunctionSignature&);
     void didFinishParsingLocals()
     {
         m_metadata->m_bytecodeOffset = m_parser->offset();
@@ -525,7 +532,11 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSIMDV_VV(SIMDLaneOperation, 
 // Implementation status: UNIMPLEMENTED
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefIsNull(ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefFunc(uint32_t, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefFunc(uint32_t index, ExpressionType&)
+{
+    m_metadata->addLEB128ConstantInt32AndLength(index, getCurrentInstructionLength());
+    return { };
+}
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefAsNonNull(ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefEq(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
 
@@ -533,8 +544,16 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefEq(ExpressionType, Expres
 
 // Implementation status: UNIMPLEMENTED
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableGet(unsigned, ExpressionType, ExpressionType&) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableSet(unsigned, ExpressionType, ExpressionType) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableGet(unsigned index, ExpressionType, ExpressionType&)
+{
+    m_metadata->addLEB128ConstantInt32AndLength(index, getCurrentInstructionLength());
+    return { };
+}
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableSet(unsigned index, ExpressionType, ExpressionType)
+{
+    m_metadata->addLEB128ConstantInt32AndLength(index, getCurrentInstructionLength());
+    return { };
+}
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableInit(unsigned, unsigned, ExpressionType, ExpressionType, ExpressionType) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElemDrop(unsigned) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableSize(unsigned, ExpressionType&) { return { }; }
@@ -724,7 +743,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Ctz(ExpressionType, Expre
 
 // Floating-Point Arithmetic
 
-// Implementation status: UNIMPLEMENTED
+// Implementation status: No need for metadata, DONE.
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Add(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Add(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
@@ -737,7 +756,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Div(ExpressionType, Expre
 
 // Other Floating-Point Instructions
 
-// Implementation status: UNIMPLEMENTED
+// Implementation status: No need for metadata, DONE.
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Min(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Max(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
@@ -760,7 +779,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF64Abs(ExpressionType, Expre
 
 // Integer Comparisons
 
-// Implementation status: UNIMPLEMENTED
+// Implementation status: No need for metadata, DONE.
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Eq(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI32Ne(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
@@ -788,7 +807,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addI64Eqz(ExpressionType, Expre
 
 // Floating-Point Comparisons
 
-// Implementation status: UNIMPLEMENTED
+// Implementation status: No need for metadata, DONE.
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Eq(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addF32Ne(ExpressionType, ExpressionType, ExpressionType&) { return { }; }
@@ -1038,25 +1057,11 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
 
 // Implementation status: UNIMPLEMENTED
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results, CallType)
+void IPIntGenerator::addCallCommonData(const FunctionSignature& signature)
 {
-    const FunctionSignature& signature = *type.as<FunctionSignature>();
-    for (unsigned i = 0; i < signature.returnCount(); i ++)
-        results.append(Value { });
-
-    // Function index:
-    // 4B for decoded index
-    // 4B for new PC
-    auto newPC = m_parser->offset() - m_metadata->m_bytecodeOffset;
-    auto size = m_metadata->m_metadata.size();
-    m_metadata->addBlankSpace(8);
-    auto functionIndexMetadata = m_metadata->m_metadata.data() + size;
-    WRITE_TO_METADATA(functionIndexMetadata, index, uint32_t);
-    WRITE_TO_METADATA(functionIndexMetadata + 4, newPC, uint16_t);
-
     // Add function signature
     // 8B for offsets of GPR, 8B for offsets of FPR, 2B for length of total metadata, 2B for number of arguments, 2B per stack argument
-    size = m_metadata->m_metadata.size();
+    auto size = m_metadata->m_metadata.size();
     m_metadata->addBlankSpace(16);
     auto signatureMetadata = m_metadata->m_metadata.data() + size;
 
@@ -1105,14 +1110,48 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const T
     for (size_t i = 0; i < signature.returnCount(); ++i)
         returns[i] = signature.returnType(i);
     m_metadata->addReturnData(returns);
-    return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned, const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results, CallType)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results, CallType)
 {
     const FunctionSignature& signature = *type.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.returnCount(); i ++)
         results.append(Value { });
+
+    // Function index:
+    // 4B for decoded index
+    // 4B for new PC
+    auto newPC = m_parser->offset() - m_metadata->m_bytecodeOffset;
+    auto size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(8);
+    auto functionIndexMetadata = m_metadata->m_metadata.data() + size;
+    WRITE_TO_METADATA(functionIndexMetadata, index, uint32_t);
+    WRITE_TO_METADATA(functionIndexMetadata + 4, newPC, uint32_t);
+    addCallCommonData(signature);
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results, CallType)
+{
+    const FunctionSignature& signature = *type.as<FunctionSignature>();
+    for (unsigned i = 0; i < signature.returnCount(); i ++)
+        results.append(Value { });
+
+    // Function index:
+    // 4B for table index
+    // 4B for type index
+    auto newPC = m_parser->offset() - m_metadata->m_bytecodeOffset;
+    auto size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(16);
+    auto functionIndexMetadata = m_metadata->m_metadata.data() + size;
+    WRITE_TO_METADATA(functionIndexMetadata, tableIndex, uint32_t);
+    WRITE_TO_METADATA(functionIndexMetadata + 4, m_metadata->addSignature(type), uint32_t);
+
+    // 4B empty
+    // 4B for PC
+    WRITE_TO_METADATA(functionIndexMetadata + 12, newPC, uint32_t);
+
+    addCallCommonData(signature);
     return { };
 }
 

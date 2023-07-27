@@ -33,6 +33,13 @@ namespace JSC {
 
 namespace Wasm {
 
+unsigned FunctionIPIntMetadataGenerator::addSignature(const TypeDefinition& signature)
+{
+    unsigned index = m_signatures.size();
+    m_signatures.append(&signature);
+    return index;
+}
+
 void FunctionIPIntMetadataGenerator::addBlankSpace(uint32_t size)
 {
     m_metadata.grow(m_metadata.size() + size);
@@ -73,6 +80,11 @@ void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type
         m_metadata.grow(size + 16);
         WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint64_t>(value), uint64_t);
         WRITE_TO_METADATA(m_metadata.data() + size + 8, static_cast<uint64_t>(length), uint64_t);
+    }  else if (type.isFuncref()) {
+        size_t size = m_metadata.size();
+        m_metadata.grow(size + 8);
+        WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint32_t>(value), uint32_t);
+        WRITE_TO_METADATA(m_metadata.data() + size + 4, static_cast<uint32_t>(length), uint32_t);
     } else if (!type.isF32() && !type.isF64())
         ASSERT_NOT_IMPLEMENTED_YET();
 }

@@ -333,6 +333,11 @@ public:
     const uint8_t* getBytecode() const { return m_bytecode; }
     const uint8_t* getMetadata() const { return m_metadata; }
 
+    const TypeDefinition& signature(unsigned index) const
+    {
+        return *m_signatures[index];
+    }
+
     using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
 
 private:
@@ -347,6 +352,7 @@ private:
     RefPtr<OSREntryCallee> m_osrEntryCallees[numberOfMemoryModes];
 #endif
     CodePtr<WasmEntryPtrTag> m_entrypoint;
+    FixedVector<const TypeDefinition*> m_signatures;
 public:
     // I couldn't figure out how to stop LLIntOffsetsExtractor.cpp from yelling at me.
     // So just making these public.

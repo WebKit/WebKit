@@ -49,7 +49,7 @@ do { \
 
 void initialize()
 {
-#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+#if !ENABLE(C_LOOP) && CPU(ADDRESS64) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
     FOR_EACH_IPINT_OPCODE(VALIDATE_IPINT_OPCODE);
 #else
     RELEASE_ASSERT("IPInt only supports ARM64 and X86_64 (for now).");

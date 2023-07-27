@@ -2780,6 +2780,7 @@ macro wasmScope()
     # Wrap the script in a macro since it overwrites some of the LLInt macros,
     # but we don't want to interfere with the LLInt opcodes
     include WebAssembly
+    include InPlaceInterpreter
 end
 
 global _wasmLLIntPCRangeStart
@@ -2821,8 +2822,6 @@ _wasm_trampoline_wasm_tail_call_indirect_wide32:
 end # WEBASSEMBLY and not X86_64_WIN
 
 include? LowLevelInterpreterAdditions
-
-include InPlaceInterpreter
 
 global _llintPCRangeEnd
 _llintPCRangeEnd:
