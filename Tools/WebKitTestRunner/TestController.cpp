@@ -1964,6 +1964,9 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
             return completionHandler(nullptr);
         }
 
+        if (WKStringIsEqualToUTF8CString(subMessageName, "WaitForDeferredMouseEvents"))
+            return completionHandler(nullptr);
+
 #if PLATFORM(MAC)
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseForceClick")) {
             m_eventSenderProxy->mouseForceClick();

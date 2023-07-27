@@ -59,6 +59,7 @@
 #include "UserContentControllerIdentifier.h"
 #include "UserData.h"
 #include "WebBackForwardListProxy.h"
+#include "WebEventType.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebURLSchemeHandlerIdentifier.h"
 #include "WebUndoStepID.h"
@@ -347,15 +348,16 @@ class WebUserContentController;
 class WebWheelEvent;
 class RemoteLayerTreeTransaction;
 
+enum class DragControllerAction : uint8_t;
 enum class FindOptions : uint16_t;
 enum class FindDecorationStyle : uint8_t;
-enum class DragControllerAction : uint8_t;
 enum class NavigatingToAppBoundDomain : bool;
-enum class TextRecognitionUpdateResult : uint8_t;
 enum class SyntheticEditingCommandType : uint8_t;
+enum class TextRecognitionUpdateResult : uint8_t;
 
 struct BackForwardListItemState;
 struct DataDetectionResult;
+struct DeferredDidReceiveMouseEvent;
 struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
 struct EditorState;
@@ -1626,6 +1628,8 @@ public:
     void setInteractionRegionsEnabled(bool);
 #endif
 
+    void flushDeferredDidReceiveMouseEvent();
+
     void generateTestReport(String&& message, String&& group);
 
     bool isUsingUISideCompositing() const;
@@ -2374,6 +2378,12 @@ private:
     bool m_hasWheelEventHandlers { false };
 
     unsigned m_cachedPageCount { 0 };
+
+    struct DeferredDidReceiveMouseEvent {
+        WebEventType type { WebEventType::NoType };
+        bool handled { false };
+    };
+    std::optional<DeferredDidReceiveMouseEvent> m_deferredDidReceiveMouseEvent;
 
     HashSet<WebCore::ResourceLoaderIdentifier> m_trackedNetworkResourceRequestIdentifiers;
 
