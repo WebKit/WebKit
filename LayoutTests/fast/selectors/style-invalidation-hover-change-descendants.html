@@ -1,4 +1,8 @@
 <html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
 <style>
 .container {
     background-color: blue;
@@ -42,7 +46,6 @@
         </div>
     </div>
 </div>
-<pre id=log></pre>
 
 <script>
 function testStyleChangeType(selector, expectedType)
@@ -52,31 +55,35 @@ function testStyleChangeType(selector, expectedType)
     for (var i = 0; i < elements.length; ++i) {
         const type = window.internals.styleChangeType(elements[i]);
         if (type != expectedType) {
-            log.textContent += `FAIL ${selector} styleChangeType was ${type} expected ${expectedType}\n`;
+            testFailed(`${selector} styleChangeType was ${type} expected ${expectedType}`);
             pass = false;
         }
     }
     if (pass)
-        log.textContent += "PASS\n";
+        testPassed(`${selector} styleChangeType was ${expectedType}`);
 }
 
-window.onload = function () {
+jsTestIsAsync = true;
+
+window.onload = async () => {
     if (!window.testRunner)
         return;
-    testRunner.dumpAsText();
 
-    document.body.offsetLeft;
-    eventSender.mouseMoveTo(50,50);
+    addEventListener("mousemove", () => {
+        testStyleChangeType(".target", "InlineStyleChange");
+        testStyleChangeType(".container", "NoStyleChange");
+        testStyleChangeType(".inert", "NoStyleChange");
+    }, { "once" : true });
+    eventSender.mouseMoveTo(50, 50);
 
-    testStyleChangeType(".target", "InlineStyleChange");
-    testStyleChangeType(".container", "NoStyleChange");
-    testStyleChangeType(".inert", "NoStyleChange");
+    await UIHelper.ensurePresentationUpdate();
+    addEventListener("mousemove", () => {
+        testStyleChangeType(".target", "InlineStyleChange");
+        testStyleChangeType(".container", "NoStyleChange");
+        testStyleChangeType(".inert", "NoStyleChange");
+    }, { "once" : true });
+    eventSender.mouseMoveTo(300, 50, "mouse", false);
 
-    document.body.offsetLeft;
-    eventSender.mouseMoveTo(300,50);
-
-    testStyleChangeType(".target", "InlineStyleChange");
-    testStyleChangeType(".container", "NoStyleChange");
-    testStyleChangeType(".inert", "NoStyleChange");
+    finishJSTest();
 };
 </script>
