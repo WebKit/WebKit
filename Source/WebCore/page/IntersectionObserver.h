@@ -66,6 +66,7 @@ struct IntersectionObserverData {
 };
 
 class IntersectionObserver : public RefCounted<IntersectionObserver>, public CanMakeWeakPtr<IntersectionObserver> {
+    WTF_MAKE_ISO_ALLOCATED(IntersectionObserver);
 public:
     struct Init {
         std::optional<std::variant<RefPtr<Element>, RefPtr<Document>>> root;

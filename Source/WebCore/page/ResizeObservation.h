@@ -42,7 +42,7 @@ class Element;
 class WeakPtrImplWithEventTargetData;
 
 class ResizeObservation : public RefCounted<ResizeObservation> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED(ResizeObservation);
 public:
     static Ref<ResizeObservation> create(Element& target, ResizeObserverBoxOptions);
 
