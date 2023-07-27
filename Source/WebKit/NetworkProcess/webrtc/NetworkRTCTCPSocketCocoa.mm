@@ -113,8 +113,8 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
                     return;
                 auto path = adoptNS(nw_connection_copy_current_path(weakThis->m_nwConnection.get()));
                 auto interface = adoptNS(nw_path_copy_interface(path.get()));
-                auto* name = nw_interface_get_name(interface.get());
-                connection->send(Messages::LibWebRTCNetwork::SignalUsedInterface(identifier, String::fromUTF8(name)), 0);
+                if (auto* name = nw_interface_get_name(interface.get()))
+                    connection->send(Messages::LibWebRTCNetwork::SignalUsedInterface(identifier, String::fromUTF8(name)), 0);
             });
             connection->send(Messages::LibWebRTCNetwork::SignalConnect(identifier), 0);
             return;
