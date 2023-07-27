@@ -36,6 +36,11 @@ class PrintStream;
 
 namespace WebCore {
 
+enum class AddTimeRangeOption : uint8_t {
+    None,
+    EliminateSmallGaps,
+};
+
 class WEBCORE_EXPORT PlatformTimeRanges final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -45,6 +50,7 @@ public:
     PlatformTimeRanges copyWithEpsilon(const MediaTime&) const;
 
     static const PlatformTimeRanges& emptyRanges();
+    static MediaTime timeFudgeFactor();
 
     MediaTime start(unsigned index) const;
     MediaTime start(unsigned index, bool& valid) const;
@@ -62,7 +68,7 @@ public:
 
     unsigned length() const { return m_ranges.size(); }
 
-    void add(const MediaTime& start, const MediaTime& end);
+    void add(const MediaTime& start, const MediaTime& end, AddTimeRangeOption = AddTimeRangeOption::None);
     void clear();
     
     bool contain(const MediaTime&) const;

@@ -46,7 +46,7 @@ public:
     
     WEBCORE_EXPORT unsigned length() const;
 
-    WEBCORE_EXPORT void add(double start, double end);
+    WEBCORE_EXPORT void add(double start, double end, AddTimeRangeOption = AddTimeRangeOption::None);
     bool contain(double time) const;
     
     size_t find(double time) const;
