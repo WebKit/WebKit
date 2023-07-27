@@ -496,7 +496,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles);
 #endif
-    
+
+#if PLATFORM(VISION)
+    SandboxExtension::consumePermanently(parameters.metalCacheDirectoryExtensionHandles);
+#endif
+
     setSystemHasBattery(parameters.systemHasBattery);
     setSystemHasAC(parameters.systemHasAC);
     IPC::setStrictSecureDecodingForAllObjCEnabled(parameters.strictSecureDecodingForAllObjCEnabled);
