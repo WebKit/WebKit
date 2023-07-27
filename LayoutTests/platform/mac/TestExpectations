@@ -2779,3 +2779,4 @@ webkit.org/b/259524 [ Monterey+ ] media/audioSession/audioSessionState.html [ Pa
 
 webkit.org/b/259539 [ Debug ] storage/indexeddb/cursor-update.html [ Pass Failure Crash ]
 
+webkit.org/b/259190 http/tests/images/heic-as-heif.html [ Pass Failure ]
