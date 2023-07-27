@@ -68,10 +68,12 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
     CFDictionarySetValue(options.get(), kCGImageSourceShouldPreferRGB32, kCFBooleanTrue);
     CFDictionarySetValue(options.get(), kCGImageSourceSkipMetadata, kCFBooleanTrue);
 
+#if !HAVE(CGIMAGESOURCE_DISABLE_HARDWARE_DECODING)
     if (ProcessCapabilities::isHardwareAcceleratedDecodingDisabled())
         CFDictionarySetValue(options.get(), kCGImageSourceUseHardwareAcceleration, kCFBooleanFalse);
+#endif
 
-#if HAVE(IMAGE_RESTRICTED_DECODING) && USE(APPLE_INTERNAL_SDK)
+#if HAVE(IMAGE_RESTRICTED_DECODING) && USE(APPLE_INTERNAL_SDK) && !HAVE(CGIMAGESOURCE_ENABLE_RESTRICTED_DECODING)
     if (ProcessCapabilities::isHEICDecodingEnabled() || ProcessCapabilities::isAVIFDecodingEnabled())
         CFDictionarySetValue(options.get(), kCGImageSourceEnableRestrictedDecoding, kCFBooleanTrue);
 #endif
