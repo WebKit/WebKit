@@ -757,19 +757,18 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, t
             continue
 
         serialized_members = type.serialized_members()
-        for i in range(len(serialized_members)):
-            member = type.members[i]
-            if i == 0:
-                result.append('            {')
+        for member in serialized_members:
+            if member.condition is not None:
+                result.append('#if ' + member.condition)
+            result.append('            {')
             if 'Nullable' in member.attributes:
                 result.append('                "std::optional<' + member.type + '>"_s,')
             else:
                 result.append('                "' + member.type + '"_s,')
             result.append('                "' + member.name + '"_s')
-            if i == len(serialized_members) - 1:
-                result.append('            }')
-            else:
-                result.append('            }, {')
+            result.append('            },')
+            if member.condition is not None:
+                result.append('#endif')
         result.append('        } },')
     for typedef in typedefs:
         result.append('        { "' + typedef[0] + '"_s, {')
