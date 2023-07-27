@@ -153,6 +153,10 @@ struct WebKit::WebProcessCreationParameters {
     Vector<WebKit::SandboxExtension::Handle> dynamicIOKitExtensionHandles;
 #endif
 
+#if PLATFORM(VISION)
+    Vector<WebKit::SandboxExtension::Handle> metalCacheDirectoryExtensionHandles;
+#endif
+
 #if PLATFORM(COCOA)
     bool systemHasBattery;
     bool systemHasAC;

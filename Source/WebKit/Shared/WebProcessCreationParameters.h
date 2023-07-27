@@ -199,6 +199,11 @@ struct WebProcessCreationParameters {
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
 #endif
 
+#if PLATFORM(VISION)
+    // FIXME: Remove when GPU Process is fully enabled.
+    Vector<SandboxExtension::Handle> metalCacheDirectoryExtensionHandles;
+#endif
+
 #if PLATFORM(COCOA)
     bool systemHasBattery { false };
     bool systemHasAC { false };
