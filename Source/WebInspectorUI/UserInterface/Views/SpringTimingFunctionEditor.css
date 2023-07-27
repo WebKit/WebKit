@@ -23,20 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.spring-editor {
+.spring-timing-function-editor {
     width: 200px;
     height: 200px;
-    --spring-editor-horizontal-margin: 5px;
+    --spring-timing-function-editor-horizontal-margin: 5px;
 }
 
-.spring-editor > .spring-preview {
+.spring-timing-function-editor > .preview {
     width: calc(100% - 10px);
     height: 25px;
-    margin: 5px var(--spring-editor-horizontal-margin) 0;
+    margin: 5px var(--spring-timing-function-editor-horizontal-margin) 0;
     border-bottom: 1px solid var(--border-color);
 }
 
-.spring-editor > .spring-preview > div {
+.spring-timing-function-editor > .preview > div {
     position: relative;
     width: 20px;
     height: 20px;
@@ -44,13 +44,13 @@
     border-radius: 50%;
 }
 
-.spring-editor > .spring-timing {
+.spring-timing-function-editor > .timing {
     position: relative;
-    margin: -0.5px calc(2 * var(--spring-editor-horizontal-margin)) 10px;
+    margin: -0.5px calc(2 * var(--spring-timing-function-editor-horizontal-margin)) 10px;
     padding: 0 1px;
 }
 
-.spring-editor > .spring-timing > div {
+.spring-timing-function-editor > .timing > div {
     width: 0;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
@@ -58,59 +58,59 @@
     transition-timing-function: linear;
 }
 
-.spring-editor > .spring-timing::before,
-.spring-editor > .spring-timing::after {
+.spring-timing-function-editor > .timing::before,
+.spring-timing-function-editor > .timing::after {
     position: absolute;
     top: 2.5px;
     font-size: 9px;
 }
 
-.spring-editor > .spring-timing::before {
+.spring-timing-function-editor > .timing::before {
     content: "0s";
 }
 
-.spring-editor > .spring-timing::after {
+.spring-timing-function-editor > .timing::after {
     content: attr(data-duration) "s";
 }
 
-.spring-editor > .spring-timing::before {
+.spring-timing-function-editor > .timing::before {
     inset-inline-start: 0;
 }
 
-.spring-editor > .spring-timing::after {
+.spring-timing-function-editor > .timing::after {
     inset-inline-end: 0;
 }
 
-.spring-editor > :is(.spring-preview, .spring-timing) > div {
+.spring-timing-function-editor > :is(.preview, .timing) > div {
     transition-property: none;
 }
 
-.spring-editor > .animate:is(.spring-preview, .spring-timing) > div {
+.spring-timing-function-editor > .animate:is(.preview, .timing) > div {
     transition-property: transform;
 }
 
-.spring-editor > .number-input-container > .number-input-row {
+.spring-timing-function-editor > .number-input-container > .number-input-row {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 3px;
 }
 
-.spring-editor > .number-input-container > .number-input-row > .number-input-row-title {
+.spring-timing-function-editor > .number-input-container > .number-input-row > .number-input-row-title {
     width: 100%;
-    margin: 5px var(--spring-editor-horizontal-margin) 0;
+    margin: 5px var(--spring-timing-function-editor-horizontal-margin) 0;
 }
 
-.spring-editor > .number-input-container > .number-input-row > input {
-    width: calc(25% - 2 * var(--spring-editor-horizontal-margin));
-    margin: 0 var(--spring-editor-horizontal-margin);
+.spring-timing-function-editor > .number-input-container > .number-input-row > input {
+    width: calc(25% - 2 * var(--spring-timing-function-editor-horizontal-margin));
+    margin: 0 var(--spring-timing-function-editor-horizontal-margin);
     text-align: end;
 }
 
-.spring-editor > .number-input-container > .number-input-row > input::-webkit-inner-spin-button {
+.spring-timing-function-editor > .number-input-container > .number-input-row > input::-webkit-inner-spin-button {
     appearance: none;
 }
 
-.spring-editor > .number-input-container > .number-input-row > input[type="range"] {
-    width: calc(75% - 2 * var(--spring-editor-horizontal-margin));
+.spring-timing-function-editor > .number-input-container > .number-input-row > input[type="range"] {
+    width: calc(75% - 2 * var(--spring-timing-function-editor-horizontal-margin));
     background-color: transparent;
 }

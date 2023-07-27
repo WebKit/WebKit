@@ -190,14 +190,14 @@ function createCodeMirrorGradientTextMarkers(codeMirror, range, options = {})
     return createdMarkers;
 }
 
-function createCodeMirrorCubicBezierTextMarkers(codeMirror, range, options = {})
+function createCodeMirrorCubicBezierTimingFunctionTextMarkers(codeMirror, range, options = {})
 {
     const pattern = /(cubic-bezier\([^)]+\)|\b\w+\b(?:-\b\w+\b){0,2})/g;
-    return createCodeMirrorTextMarkers({codeMirror, range, type: "CubicBezier", pattern, ...options});
+    return createCodeMirrorTextMarkers({codeMirror, range, type: "CubicBezierTimingFunction", pattern, ...options});
 }
 
-function createCodeMirrorSpringTextMarkers(codeMirror, range, options = {})
+function createCodeMirrorSpringTimingFunctionTextMarkers(codeMirror, range, options = {})
 {
     const pattern = /(spring\([^)]+\))/g;
-    return createCodeMirrorTextMarkers({codeMirror, range, type: "Spring", pattern, ...options});
+    return createCodeMirrorTextMarkers({codeMirror, range, type: "SpringTimingFunction", pattern, ...options});
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CodeMirrorBezierEditingController = class CodeMirrorBezierEditingController extends WI.CodeMirrorEditingController
+WI.CodeMirrorSpringTimingFunctionEditingController = class CodeMirrorSpringTimingFunctionEditingController extends WI.CodeMirrorEditingController
 {
     // Public
 
     get initialValue()
     {
-        return WI.CubicBezier.fromString(this.text);
+        return WI.SpringTimingFunction.fromString(this.text);
     }
 
     get cssClassName()
     {
-        return "cubic-bezier";
+        return "spring";
     }
+
+    // WI.Popover delegate
 
     popoverWillPresent(popover)
     {
-        this._bezierEditor = new WI.BezierEditor;
-        this._bezierEditor.addEventListener(WI.BezierEditor.Event.BezierChanged, this._bezierEditorBezierChanged, this);
-        popover.content = this._bezierEditor.element;
+        this._springTimingFunctionEditor = new WI.SpringTimingFunctionEditor;
+        this._springTimingFunctionEditor.addEventListener(WI.SpringTimingFunctionEditor.Event.SpringTimingFunctionChanged, this._handleSpringTimingFunctionEditorSpringTimingFunctionChanged, this);
+        popover.content = this._springTimingFunctionEditor.element;
     }
 
     popoverDidPresent(popover)
     {
-        this._bezierEditor.bezier = this.value;
-    }
-
-    popoverDidDismiss(popover)
-    {
-        this._bezierEditor.removeListeners();
+        this._springTimingFunctionEditor.springTimingFunction = this.value;
     }
 
     // Private
 
-    _bezierEditorBezierChanged(event)
+    _handleSpringTimingFunctionEditorSpringTimingFunctionChanged(event)
     {
-        this.value = event.data.bezier;
+        this.value = event.data.springTimingFunction;
     }
 };

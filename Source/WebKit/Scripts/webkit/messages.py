@@ -136,13 +136,21 @@ def types_that_must_be_moved():
     return [
         'IPC::Connection::Handle',
         'IPC::StreamServerConnection::Handle',
+        'MachSendRight',
+        'std::optional<MachSendRight>',
+        'std::optional<WebKit::SharedVideoFrame::Buffer>',
         'Vector<WebKit::SharedMemory::Handle>',
+        'WebCore::GraphicsContextGL::EGLImageSource',
         'WebKit::ConsumerSharedCARingBuffer::Handle',
+        'WebKit::GPUProcessConnectionParameters',
         'WebKit::ImageBufferBackendHandle',
         'WebKit::ShareableBitmap::Handle',
         'WebKit::ShareableResource::Handle',
         'WebKit::SharedMemory::Handle',
+        'WebKit::SharedVideoFrame',
+        'WebKit::SharedVideoFrame::Buffer',
         'WebKit::UpdateInfo',
+        'WebKit::WebProcessCreationParameters',
         'Win32Handle',
         'std::optional<Win32Handle>'
     ]

@@ -813,6 +813,11 @@ void WKBundlePageCallAfterTasksAndTimers(WKBundlePageRef pageRef, WKBundlePageTe
     });
 }
 
+void WKBundlePageFlushDeferredDidReceiveMouseEventForTesting(WKBundlePageRef page)
+{
+    WebKit::toImpl(page)->flushDeferredDidReceiveMouseEvent();
+}
+
 void WKBundlePagePostMessage(WKBundlePageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
 {
     WebKit::toImpl(pageRef)->postMessage(WebKit::toWTFString(messageNameRef), WebKit::toImpl(messageBodyRef));

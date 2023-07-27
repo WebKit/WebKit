@@ -92,7 +92,7 @@ void RemoteMediaPlayerProxy::requestHostingContextID(CompletionHandler<void(Laye
     m_layerHostingContextIDRequests.append(WTFMove(completionHandler));
 }
 
-void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& size, const WTF::MachSendRight& machSendRight)
+void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRight&& machSendRight)
 {
     ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());
     if (m_inlineLayerHostingContext)
@@ -101,7 +101,7 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& 
     m_configuration.videoInlineSize = size;
     setVideoInlineSizeIfPossible(size);
 
-    m_player->setVideoInlineSizeFenced(size, machSendRight);
+    m_player->setVideoInlineSizeFenced(size, WTFMove(machSendRight));
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata(VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)

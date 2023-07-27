@@ -646,7 +646,7 @@ public:
 
     FloatSize mediaPlayerVideoInlineSize() const override { return videoInlineSize(); }
     WEBCORE_EXPORT WebCore::FloatSize videoInlineSize() const;
-    void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
+    void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&);
     void updateMediaState();
 
 protected:

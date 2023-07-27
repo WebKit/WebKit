@@ -1823,3 +1823,5 @@ webkit.org/b/259464 [ Monterey+ ] fast/events/wheel/redispatched-wheel-event.htm
 
 webkit.org/b/259497 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp9 [ Failure ]
 webkit.org/b/259496 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.worker.html?vp9 [ Failure ]
+
+webkit.org/b/238033 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html [ Pass Failure ]

@@ -70,7 +70,7 @@ public:
     FloatSize videoDimensions() const final { return m_videoDimensions; }
     bool hasVideo() const final { return m_hasVideo; }
 
-    WEBCORE_EXPORT void setVideoSizeFenced(const FloatSize&, const WTF::MachSendRight&);
+    WEBCORE_EXPORT void setVideoSizeFenced(const FloatSize&, WTF::MachSendRight&&);
 
     WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) final;
 

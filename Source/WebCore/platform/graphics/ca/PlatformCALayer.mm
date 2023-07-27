@@ -187,7 +187,7 @@ void PlatformCALayer::clearContents()
 
 void PlatformCALayer::setDelegatedContents(const PlatformCALayerDelegatedContents& contents)
 {
-    auto surface = WebCore::IOSurface::createFromSendRight(contents.surface.copySendRight());
+    auto surface = WebCore::IOSurface::createFromSendRight(MachSendRight { contents.surface });
     if (!surface) {
         clearContents();
         return;

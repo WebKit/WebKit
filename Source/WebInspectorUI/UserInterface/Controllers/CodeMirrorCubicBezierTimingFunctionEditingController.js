@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CodeMirrorSpringEditingController = class CodeMirrorSpringEditingController extends WI.CodeMirrorEditingController
+WI.CodeMirrorCubicBezierTimingFunctionEditingController = class CodeMirrorCubicBezierTimingFunctionEditingController extends WI.CodeMirrorEditingController
 {
     // Public
 
     get initialValue()
     {
-        return WI.Spring.fromString(this.text);
+        return WI.CubicBezierTimingFunction.fromString(this.text);
     }
 
     get cssClassName()
     {
-        return "spring";
+        return "cubic-bezier";
     }
+
+    // WI.Popover delegate
 
     popoverWillPresent(popover)
     {
-        this._springEditor = new WI.SpringEditor;
-        this._springEditor.addEventListener(WI.SpringEditor.Event.SpringChanged, this._springEditorSpringChanged, this);
-        popover.content = this._springEditor.element;
+        this._cubicBezierTimingFunctionEditor = new WI.CubicBezierTimingFunctionEditor;
+        this._cubicBezierTimingFunctionEditor.addEventListener(WI.CubicBezierTimingFunctionEditor.Event.CubicBezierTimingFunctionChanged, this._handleCubicBezierTimingFunctionEditorCubicBezierTimingFunctionChanged, this);
+        popover.content = this._cubicBezierTimingFunctionEditor.element;
     }
 
     popoverDidPresent(popover)
     {
-        this._springEditor.spring = this.value;
+        this._cubicBezierTimingFunctionEditor.cubicBezierTimingFunction = this.value;
+    }
+
+    popoverDidDismiss(popover)
+    {
+        this._cubicBezierTimingFunctionEditor.removeListeners();
     }
 
     // Private
 
-    _springEditorSpringChanged(event)
+    _handleCubicBezierTimingFunctionEditorCubicBezierTimingFunctionChanged(event)
     {
-        this.value = event.data.spring;
+        this.value = event.data.cubicBezierTimingFunction;
     }
 };

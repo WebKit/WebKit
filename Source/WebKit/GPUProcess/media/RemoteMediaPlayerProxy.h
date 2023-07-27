@@ -171,7 +171,7 @@ public:
     void setPresentationSize(const WebCore::IntSize&);
 
 #if PLATFORM(COCOA)
-    void setVideoInlineSizeFenced(const WebCore::FloatSize&, const WTF::MachSendRight&);
+    void setVideoInlineSizeFenced(const WebCore::FloatSize&, WTF::MachSendRight&&);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

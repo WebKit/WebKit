@@ -53,7 +53,7 @@ public:
     void display(PlatformCALayer& layer) final
     {
         if (m_displayBuffer)
-            layer.setDelegatedContents({ m_displayBuffer, { }, std::nullopt });
+            layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, { }, std::nullopt });
         else
             layer.clearContents();
     }
@@ -71,7 +71,7 @@ public:
         if (m_displayBuffer && displayBuffer.sendRight() == m_displayBuffer.sendRight())
             return;
 
-        m_displayBuffer = displayBuffer.copySendRight();
+        m_displayBuffer = MachSendRight { displayBuffer };
     }
 private:
     GPUDisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)

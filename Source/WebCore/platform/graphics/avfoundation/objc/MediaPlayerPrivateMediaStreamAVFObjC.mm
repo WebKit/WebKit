@@ -1192,14 +1192,14 @@ LayerHostingContextID MediaPlayerPrivateMediaStreamAVFObjC::hostingContextID() c
     return m_sampleBufferDisplayLayer ? m_sampleBufferDisplayLayer->hostingContextID() : 0;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
+void MediaPlayerPrivateMediaStreamAVFObjC::setVideoInlineSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
     if (!m_sampleBufferDisplayLayer || size.isEmpty())
         return;
 
     m_storedBounds = m_sampleBufferDisplayLayer->rootLayer().bounds;
     m_storedBounds->size = size;
-    m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds, fence);
+    m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds, WTFMove(fence));
 }
 
 }

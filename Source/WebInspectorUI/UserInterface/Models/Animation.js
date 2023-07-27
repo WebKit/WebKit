@@ -265,7 +265,7 @@ WI.Animation = class Animation extends WI.Object
 
         if ("timingFunction" in this._effect) {
             let timingFunction = this._effect.timingFunction;
-            this._effect.timingFunction = WI.CubicBezier.fromString(timingFunction) || WI.StepsFunction.fromString(timingFunction) || WI.Spring.fromString(timingFunction);
+            this._effect.timingFunction = WI.CubicBezierTimingFunction.fromString(timingFunction) || WI.StepsTimingFunction.fromString(timingFunction) || WI.SpringTimingFunction.fromString(timingFunction);
             console.assert(this._effect.timingFunction, timingFunction);
         }
 
@@ -273,7 +273,7 @@ WI.Animation = class Animation extends WI.Object
             for (let keyframe of this._effect.keyframes) {
                 if (keyframe.easing) {
                     let easing = keyframe.easing;
-                    keyframe.easing = WI.CubicBezier.fromString(easing) || WI.StepsFunction.fromString(easing) || WI.Spring.fromString(easing);
+                    keyframe.easing = WI.CubicBezierTimingFunction.fromString(easing) || WI.StepsTimingFunction.fromString(easing) || WI.SpringTimingFunction.fromString(easing);
                     console.assert(keyframe.easing, easing);
                 }
 

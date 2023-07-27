@@ -753,7 +753,7 @@ RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sha
 
 GCEGLSync GraphicsContextGLCocoa::createEGLSync(ExternalEGLSyncEvent syncEvent)
 {
-    auto [syncEventHandle, signalValue] = syncEvent;
+    auto [syncEventHandle, signalValue] = WTFMove(syncEvent);
     auto sharedEvent = newSharedEventWithMachPort(syncEventHandle.sendRight());
     if (!sharedEvent) {
         LOG(WebGL, "Unable to create a MTLSharedEvent from the syncEvent in createEGLSync.");

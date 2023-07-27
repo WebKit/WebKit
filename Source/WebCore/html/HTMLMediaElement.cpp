@@ -8546,14 +8546,14 @@ FloatSize HTMLMediaElement::videoInlineSize() const
     return m_videoInlineSize;
 }
 
-void HTMLMediaElement::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
+void HTMLMediaElement::setVideoInlineSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
     if (m_videoInlineSize == size)
         return;
 
     m_videoInlineSize = size;
     if (m_player)
-        m_player->setVideoInlineSizeFenced(size, fence);
+        m_player->setVideoInlineSizeFenced(size, WTFMove(fence));
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

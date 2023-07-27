@@ -51,7 +51,9 @@ class ScrubbingSupport extends MediaControllerSupport
     controlValueDidChange(control)
     {
         const media = this.mediaController.media;
-        media.fastSeek(control.value * media.duration);
+        const seekTime = control.value * media.duration;
+        media.fastSeek(seekTime);
+        this.mediaController.controls.timeControl.currentTime = seekTime;
     }
 
     controlValueDidStopChanging(control)

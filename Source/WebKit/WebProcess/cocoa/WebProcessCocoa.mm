@@ -60,6 +60,7 @@
 #import <JavaScriptCore/Options.h>
 #import <WebCore/AVAssetMIMETypeCache.h>
 #import <pal/spi/cf/VideoToolboxSPI.h>
+#import <pal/spi/cg/ImageIOSPI.h>
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #import <WebCore/AXIsolatedObject.h>
@@ -373,6 +374,13 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         videoDecoderBehavior.add(VideoDecoderBehavior::EnableAVIF);
     }
 
+#if HAVE(CGIMAGESOURCE_ENABLE_RESTRICTED_DECODING)
+    if (parameters.enableDecodingHEIC || parameters.enableDecodingAVIF) {
+        OSStatus ok = CGImageSourceEnableRestrictedDecoding();
+        ASSERT_UNUSED(ok, ok == noErr);
+    }
+#endif
+
     if (videoDecoderBehavior) {
         videoDecoderBehavior.add({ VideoDecoderBehavior::AvoidIOSurface, VideoDecoderBehavior::AvoidHardware });
         setVideoDecoderBehaviors(videoDecoderBehavior);
@@ -488,7 +496,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles);
 #endif
-    
+
+#if PLATFORM(VISION)
+    SandboxExtension::consumePermanently(parameters.metalCacheDirectoryExtensionHandles);
+#endif
+
     setSystemHasBattery(parameters.systemHasBattery);
     setSystemHasAC(parameters.systemHasAC);
     IPC::setStrictSecureDecodingForAllObjCEnabled(parameters.strictSecureDecodingForAllObjCEnabled);

@@ -819,7 +819,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setPresentationSize(const IntSize& ne
         updateDisplayLayerAndDecompressionSession();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::setVideoInlineSizeFenced(const FloatSize& newSize, const WTF::MachSendRight&)
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoInlineSizeFenced(const FloatSize& newSize, WTF::MachSendRight&&)
 {
     if (!m_sampleBufferDisplayLayer && !newSize.isEmpty())
         updateDisplayLayerAndDecompressionSession();

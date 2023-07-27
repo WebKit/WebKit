@@ -81,7 +81,7 @@ WI.TextMarker.Type = {
     Color: "text-marker-type-color",
     Gradient: "text-marker-type-gradient",
     Plain: "text-marker-type-plain",
-    CubicBezier: "text-marker-type-cubic-bezier",
-    Spring: "text-marker-type-spring",
+    CubicBezierTimingFunction: "text-marker-type-cubic-bezier-timing-function",
+    SpringTimingFunction: "text-marker-type-spring-timing-function",
     Variable: "text-marker-type-variable",
 };

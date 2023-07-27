@@ -923,9 +923,9 @@ FloatSize MediaPlayer::videoInlineSize() const
     return client().mediaPlayerVideoInlineSize();
 }
 
-void MediaPlayer::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
+void MediaPlayer::setVideoInlineSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
-    m_private->setVideoInlineSizeFenced(size, fence);
+    m_private->setVideoInlineSizeFenced(size, WTFMove(fence));
 }
 
 #if PLATFORM(IOS_FAMILY)

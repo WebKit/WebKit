@@ -1113,7 +1113,7 @@ void VideoFullscreenManagerProxy::setVideoLayerFrame(PlaybackSessionContextIdent
         fenceSendRight = drawingArea->createFence();
 #endif
 
-    m_page->send(Messages::VideoFullscreenManager::SetVideoLayerFrameFenced(contextId, frame, fenceSendRight));
+    m_page->send(Messages::VideoFullscreenManager::SetVideoLayerFrameFenced(contextId, frame, WTFMove(fenceSendRight)));
 }
 
 void VideoFullscreenManagerProxy::setVideoLayerGravity(PlaybackSessionContextIdentifier contextId, WebCore::MediaPlayerEnums::VideoGravity gravity)

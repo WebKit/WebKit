@@ -23,28 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.bezier-editor {
+.cubic-bezier-timing-function-editor {
     width: 200px;
     height: 258px;
 
-    --bezier-editor-preview-translateX: 170px;
+    --cubic-bezier-timing-function-editor-preview-translateX: 170px;
 }
 
-.bezier-editor > .bezier-preview {
+.cubic-bezier-timing-function-editor > .preview {
     width: calc(100% - 10px);
     height: 25px;
     margin: 5px 5px 0;
     border-bottom: 1px solid var(--border-color);
 }
 
-.bezier-editor > .bezier-preview > div {
+.cubic-bezier-timing-function-editor > .preview > div {
     width: 20px;
     height: 20px;
     background-color: var(--glyph-color-active);
     border-radius: 50%;
 }
 
-.bezier-editor > .bezier-preview-timing {
+.cubic-bezier-timing-function-editor > .timing {
     position: absolute;
     top: 34px;
     margin-inline-start: 11px;
@@ -52,53 +52,53 @@
     border-top: 4px solid var(--text-color);
 }
 
-.bezier-editor > .bezier-preview.animate > div,
-.bezier-editor > .bezier-preview-timing.animate {
-    animation: bezierPreview 2.5s linear 250ms infinite;
+.cubic-bezier-timing-function-editor > .preview.animate > div,
+.cubic-bezier-timing-function-editor > .timing.animate {
+    animation: CubicBezierTimingFunctionPreview 2.5s linear 250ms infinite;
 }
 
-@keyframes bezierPreview {
+@keyframes CubicBezierTimingFunctionPreview {
     from { transform: translateX(0); }
     10% { transform: translateX(0); }
-    90% { transform: translateX(var(--bezier-editor-preview-translateX)); }
-    to { transform: translateX(var(--bezier-editor-preview-translateX)); }
+    90% { transform: translateX(var(--cubic-bezier-timing-function-editor-preview-translateX)); }
+    to { transform: translateX(var(--cubic-bezier-timing-function-editor-preview-translateX)); }
 }
 
-.bezier-editor > .bezier-container {
+.cubic-bezier-timing-function-editor > .curve {
     margin: 0 8px;
 }
 
-.bezier-editor > .bezier-container .linear-curve {
+.cubic-bezier-timing-function-editor > .curve .linear {
     fill: none;
     stroke: var(--text-color-quaternary);
     stroke-width: 2;
     stroke-linecap: round;
 }
 
-.bezier-editor > .bezier-container .bezier-curve {
+.cubic-bezier-timing-function-editor > .curve .cubic-bezier {
     fill: none;
     stroke: var(--text-color);
     stroke-width: 2;
     stroke-linecap: round;
 }
 
-.bezier-editor > .bezier-container .control-line {
+.cubic-bezier-timing-function-editor > .curve .control-line {
     fill: none;
     stroke: var(--glyph-color-active);
     stroke-width: 2;
     stroke-linecap: round;
 }
 
-.bezier-editor > .bezier-container .control-handle {
+.cubic-bezier-timing-function-editor > .curve .control-handle {
     r: 5px;
     fill: var(--glyph-color-active);
 }
 
-.bezier-editor > .bezier-container .control-handle.selected {
+.cubic-bezier-timing-function-editor > .curve .control-handle.selected {
     r: 7px;
 }
 
-.bezier-editor > .number-input-container {
+.cubic-bezier-timing-function-editor > .number-input-container {
     display: flex;
     width: calc(100% - 10px);
     margin: 0 5px;
@@ -106,7 +106,7 @@
     border-top: 1px solid var(--border-color);
 }
 
-.bezier-editor > .number-input-container > input {
+.cubic-bezier-timing-function-editor > .number-input-container > input {
     width: 100%;
     margin: 0 2px;
     padding: 1px 0 1px;

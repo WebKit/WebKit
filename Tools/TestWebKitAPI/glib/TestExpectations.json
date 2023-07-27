@@ -135,9 +135,6 @@
             "/webkit/WebKitWebsiteData/ephemeral": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
             },
-            "/webkit/WebKitWebsiteData/hsts": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
-            },
             "/webkit/WebKitWebsiteData/handle-corrupted-local-storage": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
             }

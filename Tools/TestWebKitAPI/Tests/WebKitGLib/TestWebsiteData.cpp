@@ -657,7 +657,13 @@ static void prepopulateHstsData()
     // an IP address instead of a domain. In order to be able to test the data manager API with HSTS website data, we
     // prepopulate the HSTS storage using the libsoup API directly.
 
+#if !ENABLE(2022_GLIB_API)
     GUniquePtr<char> hstsDatabase(g_build_filename(Test::dataDirectory(), "hsts-storage.sqlite", nullptr));
+#else
+    GUniquePtr<char> hstsCacheDirectory(g_build_filename(Test::dataDirectory(), "HSTS", nullptr));
+    GUniquePtr<char> hstsDatabase(g_build_filename(hstsCacheDirectory.get(), "hsts-storage.sqlite", nullptr));
+    g_mkdir_with_parents(hstsCacheDirectory.get(), 0700);
+#endif
     GRefPtr<SoupHSTSEnforcer> enforcer = adoptGRef(soup_hsts_enforcer_db_new(hstsDatabase.get()));
     GUniquePtr<SoupHSTSPolicy> policy(soup_hsts_policy_new("webkitgtk.org", 3600, true));
     soup_hsts_enforcer_set_policy(enforcer.get(), policy.get());

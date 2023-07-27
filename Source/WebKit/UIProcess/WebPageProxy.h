@@ -28,7 +28,6 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SleepDisablerIdentifier.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/ProcessID.h>
@@ -2174,7 +2173,7 @@ public:
     HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> takeRemotePageMap();
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&);
-    void broadcastFrameRemovalToOtherProcesses(WebCore::ProcessIdentifier, WebCore::FrameIdentifier);
+    void broadcastFrameRemovalToOtherProcesses(IPC::Connection&, WebCore::FrameIdentifier);
 
     void addOpenedPage(WebPageProxy&);
     bool hasOpenedPage() const;

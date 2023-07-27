@@ -746,9 +746,9 @@ std::optional<RetainPtr<CVPixelBufferRef>> ArgumentCoder<RetainPtr<CVPixelBuffer
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
-void ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle>::encode(Encoder& encoder, const WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle& source)
+void ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle>::encode(Encoder& encoder, WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle&& source)
 {
-    encoder << source.handle;
+    encoder << WTFMove(source.handle);
 }
 
 std::optional<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle> ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle>::decode(Decoder& decoder)
@@ -759,9 +759,9 @@ std::optional<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle> Argumen
     return source;
 }
 
-void ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle>::encode(Encoder& encoder, const WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle& source)
+void ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle>::encode(Encoder& encoder, WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle&& source)
 {
-    encoder << source.handle;
+    encoder << WTFMove(source.handle);
 }
 
 std::optional<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle> ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle>::decode(Decoder& decoder)

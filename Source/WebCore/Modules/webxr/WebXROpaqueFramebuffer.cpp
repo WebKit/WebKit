@@ -81,8 +81,8 @@ static GL::EGLImageSource makeEGLImageSource(const std::tuple<WTF::MachSendRight
 {
     auto [imageHandle, isSharedTexture] = imageSource;
     if (isSharedTexture)
-        return GL::EGLImageSourceMTLSharedTextureHandle { imageHandle };
-    return GL::EGLImageSourceIOSurfaceHandle { imageHandle };
+        return GL::EGLImageSourceMTLSharedTextureHandle { WTF::MachSendRight(imageHandle) };
+    return GL::EGLImageSourceIOSurfaceHandle { WTF::MachSendRight(imageHandle) };
 }
 #endif
 

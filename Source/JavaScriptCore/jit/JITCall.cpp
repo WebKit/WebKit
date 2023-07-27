@@ -242,7 +242,7 @@ bool JIT::compileTailCall(const OpTailCall& bytecode, BaselineUnlinkedCallLinkIn
 template<typename Op>
 void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoIndex)
 {
-    OpcodeID opcodeID = Op::opcodeID;
+    constexpr OpcodeID opcodeID = Op::opcodeID;
     auto bytecode = instruction->as<Op>();
     VirtualRegister callee = calleeFor(bytecode, m_bytecodeIndex.checkpoint());
 
@@ -276,7 +276,7 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
     emitGetVirtualRegister(callee, BaselineJITRegisters::Call::calleeJSR);
     storeValue(BaselineJITRegisters::Call::calleeJSR, Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
 
-    if (opcodeID == op_call_direct_eval) {
+    if constexpr (opcodeID == op_call_direct_eval) {
         compileCallDirectEval(bytecode);
         return;
     }
@@ -287,31 +287,31 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
     addSlowCase(branchIfNotCell(BaselineJITRegisters::Call::calleeJSR));
 #endif
 
-    if (compileTailCall(bytecode, callLinkInfo, callLinkInfoIndex))
-        return;
+    if constexpr (opcodeID == op_tail_call) {
+        compileTailCall(bytecode, callLinkInfo, callLinkInfoIndex);
+    } else {
+        materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
+        if constexpr (opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
+            auto slowPaths = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
+                emitRestoreCalleeSaves();
+                prepareForTailCallSlow(BaselineJITRegisters::Call::callLinkInfoGPR);
+            }));
+            addSlowCase(slowPaths);
+            auto doneLocation = label();
+            m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
+        } else {
+            auto slowPaths = CallLinkInfo::emitFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR);
+            auto doneLocation = label();
+            addSlowCase(slowPaths);
 
-    materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
-    if (opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
-        auto slowPaths = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
-            emitRestoreCalleeSaves();
-            prepareForTailCallSlow(BaselineJITRegisters::Call::callLinkInfoGPR);
-        }));
-        addSlowCase(slowPaths);
-        auto doneLocation = label();
-        m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
-        return;
+            m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
+
+            if constexpr (Op::opcodeID != op_iterator_open && Op::opcodeID != op_iterator_next)
+                setFastPathResumePoint();
+            resetSP();
+            emitPutCallResult(bytecode);
+        }
     }
-
-    auto slowPaths = CallLinkInfo::emitFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR);
-    auto doneLocation = label();
-    addSlowCase(slowPaths);
-
-    m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
-
-    if constexpr (Op::opcodeID != op_iterator_open && Op::opcodeID != op_iterator_next)
-        setFastPathResumePoint();
-    resetSP();
-    emitPutCallResult(bytecode);
 }
 
 template<typename Op>

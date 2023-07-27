@@ -523,14 +523,14 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpProfileControlFlow)
 
         LINK(OpCall, callLinkInfo, profile)
-        LINK(OpTailCall, callLinkInfo, profile)
+        LINK(OpTailCall, callLinkInfo)
         LINK(OpCallDirectEval, callLinkInfo, profile)
         LINK(OpConstruct, callLinkInfo, profile)
         LINK(OpIteratorOpen, callLinkInfo)
         LINK(OpIteratorNext, callLinkInfo)
         LINK(OpCallVarargs, callLinkInfo, profile)
-        LINK(OpTailCallVarargs, callLinkInfo, profile)
-        LINK(OpTailCallForwardArguments, callLinkInfo, profile)
+        LINK(OpTailCallVarargs, callLinkInfo)
+        LINK(OpTailCallForwardArguments, callLinkInfo)
         LINK(OpConstructVarargs, callLinkInfo, profile)
 
         case op_new_array_with_species: {

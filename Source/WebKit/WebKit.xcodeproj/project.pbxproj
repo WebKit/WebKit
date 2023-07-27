@@ -2205,6 +2205,7 @@
 		F4BA33F225757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BA33F025757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h */; };
 		F4BE0D7727AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */; };
 		F4CB09E5225D5A0900891487 /* WebsiteMediaSourcePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */; };
+		F4CBF79E2A6ADF7E00C066BF /* WebEventType.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CBF79D2A6ADF5400C066BF /* WebEventType.h */; };
 		F4CF1E9D25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CF1E9B25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h */; };
 		F4D188EF29B99B4500D838D4 /* PrivateClickMeasurementEphemeralStore.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D188ED29B99B4500D838D4 /* PrivateClickMeasurementEphemeralStore.h */; };
 		F4D5F51D206087A10038BBA8 /* WKTextInputListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D5F519206087A00038BBA8 /* WKTextInputListViewController.h */; };
@@ -7237,6 +7238,7 @@
 		F4BA33F125757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKImageAnalysisGestureRecognizer.mm; path = ios/WKImageAnalysisGestureRecognizer.mm; sourceTree = "<group>"; };
 		F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionContextIdentifier.h; sourceTree = "<group>"; };
 		F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsiteMediaSourcePolicy.h; sourceTree = "<group>"; };
+		F4CBF79D2A6ADF5400C066BF /* WebEventType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebEventType.h; sourceTree = "<group>"; };
 		F4CF1E9B25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GestureRecognizerConsistencyEnforcer.h; path = ios/GestureRecognizerConsistencyEnforcer.h; sourceTree = "<group>"; };
 		F4CF1E9C25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GestureRecognizerConsistencyEnforcer.mm; path = ios/GestureRecognizerConsistencyEnforcer.mm; sourceTree = "<group>"; };
 		F4D188ED29B99B4500D838D4 /* PrivateClickMeasurementEphemeralStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementEphemeralStore.h; sourceTree = "<group>"; };
@@ -8113,6 +8115,7 @@
 				BC032DB110F4380F0058C15A /* WebEventConversion.h */,
 				33D059A42A1EEEDC009AFE71 /* WebEventModifier.cpp */,
 				86DD518F28EF28E800DF2A58 /* WebEventModifier.h */,
+				F4CBF79D2A6ADF5400C066BF /* WebEventType.h */,
 				1C0234BF28A00DCF00AC1E5B /* WebExtensionContextIdentifier.h */,
 				1C0234BE28A00DCF00AC1E5B /* WebExtensionContextParameters.h */,
 				1CBEE26128F334D6006D1A02 /* WebExtensionContextParameters.serialization.in */,
@@ -14875,6 +14878,7 @@
 				BC032DBB10F4380F0058C15A /* WebEventConversion.h in Headers */,
 				BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */,
 				86DD519028EF28E800DF2A58 /* WebEventModifier.h in Headers */,
+				F4CBF79E2A6ADF7E00C066BF /* WebEventType.h in Headers */,
 				B6544F932937E45100034EB0 /* WebExtensionAPIEvent.h in Headers */,
 				1C5DC46D290B271E0061EC62 /* WebExtensionAPIExtension.h in Headers */,
 				1C5DC46C290B271E0061EC62 /* WebExtensionAPINamespace.h in Headers */,

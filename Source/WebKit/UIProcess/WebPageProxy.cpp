@@ -3210,6 +3210,9 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
     UNUSED_PARAM(didRemoveEvent);
     LOG_WITH_STREAM(MouseHandling, stream << "UIProcess: " << (didRemoveEvent ? "replaced" : "enqueued") << " mouse event " << event.type() << " (queue size " << internals().mouseEventQueue.size() << ")");
 
+    if (event.type() != WebEventType::MouseMove)
+        send(Messages::WebPage::FlushDeferredDidReceiveMouseEvent());
+
     if (internals().mouseEventQueue.size() == 1) // Otherwise, called from DidReceiveEvent message handler.
         processNextQueuedMouseEvent();
 }
@@ -5862,10 +5865,10 @@ void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame
     });
 }
 
-void WebPageProxy::broadcastFrameRemovalToOtherProcesses(WebCore::ProcessIdentifier processID, WebCore::FrameIdentifier frameID)
+void WebPageProxy::broadcastFrameRemovalToOtherProcesses(IPC::Connection& connection, WebCore::FrameIdentifier frameID)
 {
     forEachWebContentProcess([&](auto& webProcess) {
-        if (webProcess.coreProcessIdentifier() == processID)
+        if (!webProcess.hasConnection() || webProcess.connection() == &connection)
             return;
         webProcess.send(Messages::WebPage::FrameWasRemovedInAnotherProcess(frameID), webPageID());
     });

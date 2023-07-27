@@ -97,7 +97,6 @@ op :tail_call_varargs,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        profile: ValueProfile,
     },
     tmps: {
         argCountIncludingThis: unsigned
@@ -302,7 +301,6 @@ op :tail_call,
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
         arrayProfile: ArrayProfile,
-        profile: ValueProfile,
     }
 
 op :call_direct_eval,
@@ -331,7 +329,6 @@ op :tail_call_forward_arguments,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        profile: ValueProfile,
     }
 
 op_group :CreateInternalFieldObjectOp,

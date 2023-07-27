@@ -1902,7 +1902,6 @@ public:
     bool hasHeapPrediction()
     {
         switch (op()) {
-        case ArithAbs:
         case ArithRound:
         case ArithFloor:
         case ArithCeil:

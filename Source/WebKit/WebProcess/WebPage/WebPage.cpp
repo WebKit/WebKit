@@ -326,6 +326,7 @@
 #include "WebRemoteObjectRegistry.h"
 #include <WebCore/LegacyWebArchive.h>
 #include <WebCore/UTIRegistry.h>
+#include <pal/spi/cg/ImageIOSPI.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
@@ -639,6 +640,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
         ProcessCapabilities::setHardwareAcceleratedDecodingDisabled(true);
         ProcessCapabilities::setCanUseAcceleratedBuffers(false);
+#if HAVE(CGIMAGESOURCE_DISABLE_HARDWARE_DECODING)
+        OSStatus ok = CGImageSourceDisableHardwareDecoding();
+        ASSERT_UNUSED(ok, ok == noErr);
+#endif
     }
 #endif
 
@@ -1693,6 +1698,8 @@ void WebPage::close()
     if (m_isClosed)
         return;
 
+    flushDeferredDidReceiveMouseEvent();
+
     WEBPAGE_RELEASE_LOG(Loading, "close:");
 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ClearPageSpecificData(m_identifier), 0);
@@ -1813,6 +1820,8 @@ void WebPage::sendClose()
 
 void WebPage::suspendForProcessSwap()
 {
+    flushDeferredDidReceiveMouseEvent();
+
     auto failedToSuspend = [this, protectedThis = Ref { *this }] {
         send(Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap());
     };
@@ -3418,9 +3427,45 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
         handled = handleMouseEvent(mouseEvent, this);
     }
 
-    send(Messages::WebPageProxy::DidReceiveEvent(mouseEvent.type(), handled));
-
     revokeSandboxExtensions(mouseEventSandboxExtensions);
+
+    bool shouldDeferDidReceiveEvent = [&] {
+        if (!m_drawingArea)
+            return false;
+
+        if (mouseEvent.type() != WebEventType::MouseMove)
+            return false;
+
+        if (mouseEvent.button() != WebMouseEventButton::NoButton)
+            return false;
+
+        if (mouseEvent.force())
+            return false;
+
+        return true;
+    }();
+
+    flushDeferredDidReceiveMouseEvent();
+
+    if (shouldDeferDidReceiveEvent) {
+        // For mousemove events where the user is only hovering (not clicking and dragging),
+        // we defer sending the DidReceiveEvent() IPC message until the end of the rendering
+        // update to throttle the rate of these events to the rendering update frequency.
+        // This logic works in tandem with the mouse event queue in the UI process, which
+        // coalesces mousemove events until the DidReceiveEvent() message is received after
+        // the rendering update.
+        m_deferredDidReceiveMouseEvent = { { mouseEvent.type(), handled } };
+        m_drawingArea->scheduleRenderingUpdate();
+        return;
+    }
+
+    send(Messages::WebPageProxy::DidReceiveEvent(mouseEvent.type(), handled));
+}
+
+void WebPage::flushDeferredDidReceiveMouseEvent()
+{
+    if (auto info = std::exchange(m_deferredDidReceiveMouseEvent, std::nullopt))
+        send(Messages::WebPageProxy::DidReceiveEvent(info->type, info->handled));
 }
 
 void WebPage::performHitTestForMouseEvent(const WebMouseEvent& event, CompletionHandler<void(WebHitTestResultData&&, OptionSet<WebEventModifier>, UserData&&)>&& completionHandler)
@@ -4807,6 +4852,7 @@ void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> fl
     if (m_remoteRenderingBackendProxy)
         m_remoteRenderingBackendProxy->finalizeRenderingUpdate();
 #endif
+    flushDeferredDidReceiveMouseEvent();
 }
 
 void WebPage::willStartRenderingUpdateDisplay()
@@ -7261,6 +7307,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     m_elementsToExcludeFromRemoveBackground.clear();
 #endif
+
+    flushDeferredDidReceiveMouseEvent();
 }
 
 void WebPage::didFinishDocumentLoad(WebFrame& frame)

@@ -33,16 +33,13 @@
 #include "RemoteLayerBackingStore.h"
 #include "TransactionID.h"
 #include <WebCore/Color.h>
-#include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/MediaPlayerEnums.h>
-#include <WebCore/Model.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/ScrollTypes.h>
-#include <WebCore/TransformationMatrix.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
@@ -56,11 +53,6 @@
 #include <WebCore/AcceleratedEffect.h>
 #include <WebCore/AcceleratedEffectValues.h>
 #endif
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
 
 namespace WebKit {
 
@@ -93,18 +85,24 @@ public:
             WebCore::FloatSize initialSize;
             WebCore::FloatSize naturalSize;
         };
-
-        WebCore::PlatformLayerIdentifier layerID;
-        WebCore::PlatformCALayer::LayerType type { WebCore::PlatformCALayer::LayerTypeLayer };
-        std::optional<VideoElementData> videoElementData;
-        std::variant<
+        using AdditionalData = std::variant<
             NoAdditionalData, // PlatformCALayerRemote and PlatformCALayerRemoteTiledBacking
             CustomData, // PlatformCALayerRemoteCustom
 #if ENABLE(MODEL_ELEMENT)
             Ref<WebCore::Model>, // PlatformCALayerRemoteModelHosting
 #endif
             WebCore::LayerHostingContextIdentifier // PlatformCALayerRemoteHost
-        > additionalData;
+        >;
+
+        WebCore::PlatformLayerIdentifier layerID;
+        WebCore::PlatformCALayer::LayerType type { WebCore::PlatformCALayer::LayerTypeLayer };
+        std::optional<VideoElementData> videoElementData;
+        AdditionalData additionalData;
+
+        LayerCreationProperties();
+        LayerCreationProperties(WebCore::PlatformLayerIdentifier, WebCore::PlatformCALayer::LayerType, std::optional<VideoElementData>&&, AdditionalData&&);
+        LayerCreationProperties(LayerCreationProperties&&);
+        LayerCreationProperties& operator=(LayerCreationProperties&&);
 
         std::optional<WebCore::LayerHostingContextIdentifier> hostIdentifier() const;
         uint32_t hostingContextID() const;

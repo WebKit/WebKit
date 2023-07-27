@@ -45,7 +45,6 @@
     <link rel="stylesheet" href="Views/AuditTestGroupContentView.css">
     <link rel="stylesheet" href="Views/AuditTreeElement.css">
     <link rel="stylesheet" href="Views/BannerView.css">
-    <link rel="stylesheet" href="Views/BezierEditor.css">
     <link rel="stylesheet" href="Views/BlackboxedGroupTreeElement.css">
     <link rel="stylesheet" href="Views/BlackboxedGroupView.css">
     <link rel="stylesheet" href="Views/BlackboxSettingsView.css">
@@ -94,6 +93,7 @@
     <link rel="stylesheet" href="Views/CookiePopover.css">
     <link rel="stylesheet" href="Views/CookieStorageContentView.css">
     <link rel="stylesheet" href="Views/CreateAuditPopover.css">
+    <link rel="stylesheet" href="Views/CubicBezierTimingFunctionEditor.css">
     <link rel="stylesheet" href="Views/DOMBreakpointTreeElement.css">
     <link rel="stylesheet" href="Views/DOMEventsBreakdownView.css">
     <link rel="stylesheet" href="Views/DOMNodeDetailsSidebarPanel.css">
@@ -237,7 +237,7 @@
     <link rel="stylesheet" href="Views/SpreadsheetCSSStyleDeclarationEditor.css">
     <link rel="stylesheet" href="Views/SpreadsheetCSSStyleDeclarationSection.css">
     <link rel="stylesheet" href="Views/SpreadsheetRulesStyleDetailsPanel.css">
-    <link rel="stylesheet" href="Views/SpringEditor.css">
+    <link rel="stylesheet" href="Views/SpringTimingFunctionEditor.css">
     <link rel="stylesheet" href="Views/StackTraceView.css">
     <link rel="stylesheet" href="Views/StorageIcons.css">
     <link rel="stylesheet" href="Views/StorageSidebarPanel.css">
@@ -428,6 +428,7 @@
     <script src="Models/ConsoleSnippet.js"></script>
     <script src="Models/Cookie.js"></script>
     <script src="Models/CookieStorageObject.js"></script>
+    <script src="Models/CubicBezierTimingFunction.js"></script>
     <script src="Models/DOMBreakpoint.js"></script>
     <script src="Models/DOMNode.js"></script>
     <script src="Models/DOMNodeStyles.js"></script>
@@ -516,7 +517,9 @@
     <script src="Models/SourceCodeTextRange.js"></script>
     <script src="Models/SourceCodeTimeline.js"></script>
     <script src="Models/SourceMap.js"></script>
+    <script src="Models/SpringTimingFunction.js"></script>
     <script src="Models/StackTrace.js"></script>
+    <script src="Models/StepsTimingFunction.js"></script>
     <script src="Models/StructureDescription.js"></script>
     <script src="Models/SymbolicBreakpoint.js"></script>
     <script src="Models/TextMarker.js"></script>
@@ -658,7 +661,6 @@
     <script src="Views/AuditTestGroupContentView.js"></script>
     <script src="Views/AuditTreeElement.js"></script>
     <script src="Views/BannerView.js"></script>
-    <script src="Views/BezierEditor.js"></script>
     <script src="Views/BlackboxSettingsView.js"></script>
     <script src="Views/BlackboxedGroupTreeElement.js"></script>
     <script src="Views/BlackboxedGroupView.js"></script>
@@ -710,6 +712,7 @@
     <script src="Views/CookieStorageContentView.js"></script>
     <script src="Views/CookieStorageTreeElement.js"></script>
     <script src="Views/CreateAuditPopover.js"></script>
+    <script src="Views/CubicBezierTimingFunctionEditor.js"></script>
     <script src="Views/DOMBreakpointTreeElement.js"></script>
     <script src="Views/DOMEventsBreakdownView.js"></script>
     <script src="Views/DOMNodeDetailsSidebarPanel.js"></script>
@@ -892,7 +895,7 @@
     <script src="Views/SpreadsheetTextField.js"></script>
     <script src="Views/StyleOriginView.js"></script>
 
-    <script src="Views/SpringEditor.js"></script>
+    <script src="Views/SpringTimingFunctionEditor.js"></script>
     <script src="Views/StackTraceView.js"></script>
     <script src="Views/StackedAreaChart.js"></script>
     <script src="Views/StackedColumnChart.js"></script>
@@ -936,10 +939,10 @@
     <script src="Controllers/CanvasManager.js"></script>
     <script src="Controllers/CodeMirrorColorEditingController.js"></script>
     <script src="Controllers/CodeMirrorCompletionController.js"></script>
-    <script src="Controllers/CodeMirrorBezierEditingController.js"></script>
+    <script src="Controllers/CodeMirrorCubicBezierTimingFunctionEditingController.js"></script>
     <script src="Controllers/CodeMirrorDragToAdjustNumberController.js"></script>
     <script src="Controllers/CodeMirrorGradientEditingController.js"></script>
-    <script src="Controllers/CodeMirrorSpringEditingController.js"></script>
+    <script src="Controllers/CodeMirrorSpringTimingFunctionEditingController.js"></script>
     <script src="Controllers/CodeMirrorTokenTrackingController.js"></script>
     <script src="Controllers/CodeMirrorTextKillController.js"></script>
     <script src="Controllers/ConsoleManager.js"></script>

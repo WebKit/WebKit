@@ -26,6 +26,7 @@
 #import "config.h"
 #import "AuxiliaryProcessProxy.h"
 
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/WebMAudioUtilitiesCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 

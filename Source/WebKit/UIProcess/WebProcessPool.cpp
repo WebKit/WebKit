@@ -910,7 +910,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     if (websiteDataStore)
         parameters.websiteDataStoreParameters = webProcessDataStoreParameters(process, *websiteDataStore);
 
-    process.send(Messages::WebProcess::InitializeWebProcess(parameters), 0);
+    process.send(Messages::WebProcess::InitializeWebProcess(WTFMove(parameters)), 0);
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     setMediaAccessibilityPreferences(process);
