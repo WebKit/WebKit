@@ -211,8 +211,29 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     Cookie cookie;
     cookie.name = WTFMove(options.name);
     cookie.value = WTFMove(options.value);
-    cookie.domain = options.domain.isNull() ? document.domain() : WTFMove(options.domain);
     cookie.created = WallTime::now().secondsSinceEpoch().milliseconds();
+
+    cookie.domain = options.domain.isNull() ? document.domain() : WTFMove(options.domain);
+    auto& url = document.url();
+    if (!cookie.domain.isNull()) {
+        if (cookie.domain.startsWith('.')) {
+            promise->reject(Exception { TypeError, "The domain must not begin with a '.'"_s });
+            return;
+        }
+
+        auto host = url.host();
+        if (!host.endsWith(cookie.domain) || (host.length() > cookie.domain.length() && !StringView(host).substring(0, host.length() - cookie.domain.length()).endsWith('.'))) {
+            promise->reject(Exception { TypeError, "The domain must be a part of the current host"_s });
+            return;
+        }
+
+        // The maximum attribute value size is specified at https://wicg.github.io/cookie-store/#cookie-maximum-attribute-value-size.
+        static constexpr auto maximumAttributeValueSize = 1024;
+        if (cookie.domain.utf8().length() > maximumAttributeValueSize) {
+            promise->reject(Exception { TypeError, makeString("The size of the domain must not be greater than ", maximumAttributeValueSize, " bytes") });
+            return;
+        }
+    }
 
     cookie.path = WTFMove(options.path);
     if (!cookie.path.isNull()) {
@@ -239,7 +260,6 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         break;
     }
 
-    auto& url = document.url();
     auto& cookieJar = page->cookieJar();
     auto completionHandler = [promise = WTFMove(promise)] (bool setSuccessfully) {
         if (!setSuccessfully)
