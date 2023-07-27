@@ -1104,7 +1104,9 @@ private:
         case ValueNegate:
         case ArithNegate:
         case Inc:
-        case Dec: {
+        case Dec:
+        case ToNumber:
+        case ToNumeric: {
             UnaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->unaryArithProfileForBytecodeIndex(m_currentIndex);
             if (!arithProfile)
                 break;
@@ -8885,17 +8887,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_to_number: {
             auto bytecode = currentInstruction->as<OpToNumber>();
-            SpeculatedType prediction = getPrediction();
             Node* value = get(bytecode.m_operand);
-            set(bytecode.m_dst, addToGraph(ToNumber, OpInfo(0), OpInfo(prediction), value));
+            set(bytecode.m_dst, makeSafe(addToGraph(ToNumber, OpInfo(0), OpInfo(), value)));
             NEXT_OPCODE(op_to_number);
         }
 
         case op_to_numeric: {
             auto bytecode = currentInstruction->as<OpToNumeric>();
-            SpeculatedType prediction = getPrediction();
             Node* value = get(bytecode.m_operand);
-            set(bytecode.m_dst, addToGraph(ToNumeric, OpInfo(0), OpInfo(prediction), value));
+            set(bytecode.m_dst, makeSafe(addToGraph(ToNumeric, OpInfo(0), OpInfo(), value)));
             NEXT_OPCODE(op_to_numeric);
         }
 

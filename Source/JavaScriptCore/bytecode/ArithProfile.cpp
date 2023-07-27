@@ -43,7 +43,7 @@ void ArithProfile<BitfieldType>::emitObserveResult(CCallHelpers& jit, JSValueReg
 
     done.append(jit.branchIfInt32(regs, mode));
     CCallHelpers::Jump notDouble = jit.branchIfNotDoubleKnownNotInt32(regs, mode);
-    emitSetDouble(jit);
+    emitSetDouble(jit, tempGPR);
     done.append(jit.jump());
 
     notDouble.link(&jit);
@@ -76,10 +76,17 @@ bool ArithProfile<BitfieldType>::shouldEmitSetDouble() const
 }
 
 template<typename BitfieldType>
-void ArithProfile<BitfieldType>::emitSetDouble(CCallHelpers& jit) const
+void ArithProfile<BitfieldType>::emitSetDouble(CCallHelpers& jit, GPRReg scratchGPR) const
 {
-    if (shouldEmitSetDouble())
+    if (shouldEmitSetDouble()) {
+#if CPU(ARM64)
+        jit.move(CCallHelpers::TrustedImm32(ObservedResults::Int32Overflow | ObservedResults::Int52Overflow | ObservedResults::NegZeroDouble | ObservedResults::NonNegZeroDouble), scratchGPR);
+        emitUnconditionalSet(jit, scratchGPR);
+#else
+        UNUSED_PARAM(scratchGPR);
         emitUnconditionalSet(jit, ObservedResults::Int32Overflow | ObservedResults::Int52Overflow | ObservedResults::NegZeroDouble | ObservedResults::NonNegZeroDouble);
+#endif
+    }
 }
 
 template<typename BitfieldType>
@@ -135,6 +142,12 @@ void ArithProfile<BitfieldType>::emitUnconditionalSet(CCallHelpers& jit, Bitfiel
 {
     static_assert(std::is_same<BitfieldType, uint16_t>::value);
     jit.or16(CCallHelpers::TrustedImm32(mask), CCallHelpers::AbsoluteAddress(addressOfBits()));
+}
+
+template<typename BitfieldType>
+void ArithProfile<BitfieldType>::emitUnconditionalSet(CCallHelpers& jit, GPRReg mask) const
+{
+    jit.or16(mask, CCallHelpers::AbsoluteAddress(addressOfBits()));
 }
 
 // Generate the implementations of the functions above for UnaryArithProfile/BinaryArithProfile

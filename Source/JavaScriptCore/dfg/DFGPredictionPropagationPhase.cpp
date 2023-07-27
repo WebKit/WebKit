@@ -336,7 +336,9 @@ private:
         }
 
         case Inc:
-        case Dec: {
+        case Dec:
+        case ToNumber:
+        case ToNumeric: {
             SpeculatedType prediction = node->child1()->prediction();
 
             if (prediction) {
@@ -963,8 +965,6 @@ private:
         case GetFromArguments:
         case LoadKeyFromMapBucket:
         case LoadValueFromMapBucket:
-        case ToNumber:
-        case ToNumeric:
         case ToObject:
         case CallNumberConstructor:
         case ValueBitAnd:
@@ -1383,6 +1383,8 @@ private:
         case ArithDiv:
         case ArithMod:
         case ArithAbs:
+        case ToNumber:
+        case ToNumeric:
         case GetByVal:
         case ToThis:
         case ToPrimitive: 
