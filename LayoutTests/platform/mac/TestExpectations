@@ -2776,3 +2776,5 @@ webkit.org/b/259183 [ Monterey+ ] fast/attachment/mac/wide-attachment-image-cont
 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Crash ]
 
 webkit.org/b/259539 [ Debug ] storage/indexeddb/cursor-update.html [ Pass Failure Crash ]
+
+webkit.org/b/259190 http/tests/images/heic-as-heif.html [ Pass Failure ]
