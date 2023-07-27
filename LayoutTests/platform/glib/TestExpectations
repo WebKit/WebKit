@@ -1777,6 +1777,7 @@ fast/mediastream/get-user-media-ideal-constraints.html [ Failure ]
 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Failure ]
 fast/mediastream/video-rotation.html [ Skip ]
 webrtc/video-rotation-no-cvo.html [ Failure ]
+webrtc/video-rotation-black.html [ Failure ]
 
 webkit.org/b/256758 fast/mediastream/captureStream/canvas3d.html [ Failure ]
 
