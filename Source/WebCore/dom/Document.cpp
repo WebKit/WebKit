@@ -2988,7 +2988,8 @@ void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>&
 {
     for (auto& highlight : highlightRegister.map()) {
         for (auto& rangeData : highlight.value->rangesData()) {
-            if (rangeData->startPosition().isNotNull() && rangeData->endPosition().isNotNull())
+            // FIXME: For live ranges, we can optimize by only performing this when the range changed.
+            if (rangeData->startPosition().isNotNull() && rangeData->endPosition().isNotNull() && !rangeData->range().isLiveRange())
                 continue;
             auto simpleRange = makeSimpleRange(rangeData->range());
             if (&simpleRange.startContainer().treeScope() != &simpleRange.endContainer().treeScope())
@@ -3013,12 +3014,8 @@ void Document::updateHighlightPositions()
     for (auto& weakRangeData : rangesData) {
         if (auto* rangeData = weakRangeData.get()) {
             VisibleSelection visibleSelection(makeSimpleRange(rangeData->range()));
-            Position startPosition;
-            Position endPosition;
-            if (rangeData->startPosition().isNull())
-                startPosition = visibleSelection.visibleStart().deepEquivalent();
-            if (rangeData->endPosition().isNull())
-                endPosition = visibleSelection.visibleEnd().deepEquivalent();
+            auto startPosition = visibleSelection.visibleStart().deepEquivalent();
+            auto endPosition = visibleSelection.visibleEnd().deepEquivalent();
             if (!weakRangeData.get())
                 continue;
             if (!startPosition.isNull())
