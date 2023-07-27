@@ -294,8 +294,8 @@ public:
             std::unique_ptr<WebCore::IOSurface> surface;
             bool isShared { false };
 #elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
-            std::tuple<MachSendRight, bool> colorTexture = { { }, false };
-            std::tuple<MachSendRight, bool> depthStencilBuffer = { { }, false };
+            std::tuple<MachSendRight, bool> colorTexture = { MachSendRight(), false };
+            std::tuple<MachSendRight, bool> depthStencilBuffer = { MachSendRight(), false };
 #else
             PlatformGLObject opaqueTexture { 0 };
 #endif
@@ -585,8 +585,8 @@ void Device::FrameData::LayerData::encode(Encoder& encoder) const
     encoder << surfaceSendRight;
     encoder << isShared;
 #elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
-    encoder << colorTexture;
-    encoder << depthStencilBuffer;
+    encoder << std::make_tuple(MachSendRight(std::get<0>(colorTexture)), std::get<1>(colorTexture));
+    encoder << std::make_tuple(MachSendRight(std::get<0>(depthStencilBuffer)), std::get<1>(depthStencilBuffer));
 #else
     encoder << opaqueTexture;
 #endif
