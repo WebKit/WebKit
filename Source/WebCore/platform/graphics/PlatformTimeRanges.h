@@ -128,6 +128,8 @@ private:
     PlatformTimeRanges(Vector<Range>&&);
     PlatformTimeRanges& operator-=(const Range&);
 
+    size_t findLastRangeIndexBefore(const MediaTime& start, const MediaTime& end) const;
+
     Vector<Range> m_ranges;
 };
 
