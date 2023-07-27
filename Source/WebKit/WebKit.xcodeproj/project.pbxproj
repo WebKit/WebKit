@@ -1773,6 +1773,7 @@
 		B6544F9F2939457C00034EB0 /* WebExtensionContextAPIEventCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6544F9E2939457C00034EB0 /* WebExtensionContextAPIEventCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		B65DA1D3294BC26300DB503A /* WebExtensionAPIPermissionsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B65DA1D2294BC26300DB503A /* WebExtensionAPIPermissionsCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		B65DA1DD294BDE4700DB503A /* WebExtensionContextAPIPermissionsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B65DA1DC294BDE4700DB503A /* WebExtensionContextAPIPermissionsCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		B65F5A2C2A727B7F00768DAE /* RealitySystemSupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = B65F5A2B2A727B7F00768DAE /* RealitySystemSupportSPI.h */; };
 		B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = B878B613133428DC006888E9 /* CorrectionPanel.h */; };
 		BC017D0716260FF4007054F5 /* WKDOMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BC017CFF16260FF4007054F5 /* WKDOMDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC017D0916260FF4007054F5 /* WKDOMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC017D0116260FF4007054F5 /* WKDOMElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6352,6 +6353,7 @@
 		B65DA1D1294BC25300DB503A /* WebExtensionAPIPermissions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebExtensionAPIPermissions.h; path = WebProcess/Extensions/API/WebExtensionAPIPermissions.h; sourceTree = SOURCE_ROOT; };
 		B65DA1D2294BC26300DB503A /* WebExtensionAPIPermissionsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIPermissionsCocoa.mm; sourceTree = "<group>"; };
 		B65DA1DC294BDE4700DB503A /* WebExtensionContextAPIPermissionsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIPermissionsCocoa.mm; sourceTree = "<group>"; };
+		B65F5A2B2A727B7F00768DAE /* RealitySystemSupportSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealitySystemSupportSPI.h; sourceTree = "<group>"; };
 		B878B613133428DC006888E9 /* CorrectionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorrectionPanel.h; sourceTree = "<group>"; };
 		B878B614133428DC006888E9 /* CorrectionPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CorrectionPanel.mm; sourceTree = "<group>"; };
 		BC017CFF16260FF4007054F5 /* WKDOMDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMDocument.h; sourceTree = "<group>"; };
@@ -13924,6 +13926,7 @@
 			children = (
 				E539DFEA2A44A69100769F09 /* MRUIKitSPI.h */,
 				E539DFEC2A44A78600769F09 /* RealitySimulationServicesSPI.h */,
+				B65F5A2B2A727B7F00768DAE /* RealitySystemSupportSPI.h */,
 			);
 			path = visionos;
 			sourceTree = "<group>";
@@ -14618,6 +14621,7 @@
 				1AEE57252409F142002005D6 /* QuickLookThumbnailLoader.h in Headers */,
 				93B631F327ABAD8000443A44 /* QuotaIncreaseRequestIdentifier.h in Headers */,
 				E539DFED2A44A78600769F09 /* RealitySimulationServicesSPI.h in Headers */,
+				B65F5A2C2A727B7F00768DAE /* RealitySystemSupportSPI.h in Headers */,
 				5CB6AE442609799C00B6ED5A /* ReasonSPI.h in Headers */,
 				7BE9326327F5C75A00D5FEFB /* ReceiverMatcher.h in Headers */,
 				950FECF4285027200002DE4E /* RecurringPaymentRequest.h in Headers */,
