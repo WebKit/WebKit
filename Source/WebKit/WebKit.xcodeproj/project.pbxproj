@@ -16869,14 +16869,12 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Resources/Signposts/LoggingPreferences.plist",
 				"$(SRCROOT)/Resources/Signposts/SystemTracePoints.plist",
 			);
 			name = "Copy Signpost Plists";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(WK_LOGGING_PREFERENCES_OUTPUT_PATH)",
 				"$(WK_TRACE_POINTS_OUTPUT_PATH)",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
