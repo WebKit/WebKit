@@ -79,6 +79,7 @@ Ref<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagNam
 {
     ASSERT_UNUSED(tagName, tagName == textareaTag);
     auto textArea = adoptRef(*new HTMLTextAreaElement(document, form));
+    ScriptDisallowedScope::EventAllowedScope allowedScope(textArea);
     textArea->ensureUserAgentShadowRoot();
     return textArea;
 }
