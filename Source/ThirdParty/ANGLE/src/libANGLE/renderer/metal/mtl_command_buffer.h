@@ -88,6 +88,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
     bool isTimeElapsedEntryComplete(uint64_t id);
     double getTimeElapsedEntryInSeconds(uint64_t id);
 
+    bool isDeviceLost() const { return mIsDeviceLost; }
+
   private:
     void onCommandBufferCompleted(id<MTLCommandBuffer> buf,
                                   uint64_t serial,
@@ -129,6 +131,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
     void recordCommandBufferTimeElapsed(std::lock_guard<std::mutex> &lg,
                                         uint64_t id,
                                         double seconds);
+
+    std::atomic_bool mIsDeviceLost = false;
 };
 
 class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::NonCopyable
