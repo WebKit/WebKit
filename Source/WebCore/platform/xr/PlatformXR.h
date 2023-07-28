@@ -582,7 +582,7 @@ void Device::FrameData::LayerData::encode(Encoder& encoder) const
 {
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     MachSendRight surfaceSendRight = surface ? surface->createSendRight() : MachSendRight();
-    encoder << surfaceSendRight;
+    encoder << WTFMove(surfaceSendRight);
     encoder << isShared;
 #elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     encoder << std::make_tuple(MachSendRight(std::get<0>(colorTexture)), std::get<1>(colorTexture));

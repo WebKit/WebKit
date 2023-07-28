@@ -154,7 +154,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     // FIXME: This is temporary until Cocoa-specific platforms migrate to MTLTEXTURE_FOR_XR_LAYER_DATA.
     auto colorTextureSource = makeEGLImageSource({ data.surface->createSendRight(), false });
-    auto depthStencilBufferSource = makeEGLImageSource({ { }, false });
+    auto depthStencilBufferSource = makeEGLImageSource({ MachSendRight(), false });
 #elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     auto colorTextureSource = makeEGLImageSource(data.colorTexture);
     auto depthStencilBufferSource = makeEGLImageSource(data.depthStencilBuffer);
