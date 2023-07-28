@@ -26,10 +26,11 @@
 #include "config.h"
 #include "InPlaceInterpreter.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "ArithProfile.h"
 #include "CodeBlock.h"
 #include "JSCConfig.h"
-#include "LLIntCLoop.h"
 #include "LLIntPCRanges.h"
 #include "LLIntSlowPaths.h"
 #include "LLIntThunks.h"
@@ -57,3 +58,5 @@ void initialize()
 }
 
 } }
+
+#endif // ENABLE(WEBASSEMBLY)
