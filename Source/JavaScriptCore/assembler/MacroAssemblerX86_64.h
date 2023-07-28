@@ -97,6 +97,12 @@ public:
         or16(imm, Address(scratchRegister()));
     }
 
+    void or16(RegisterID mask, AbsoluteAddress address)
+    {
+        move(TrustedImmPtr(address.m_ptr), scratchRegister());
+        or16(mask, Address(scratchRegister()));
+    }
+
     void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
         move(TrustedImmPtr(address.m_ptr), scratchRegister());

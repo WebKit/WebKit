@@ -365,6 +365,37 @@ private:
             break;
         }
 
+
+        case ToNumber:
+        case ToNumeric: {
+            SpeculatedType prediction = node->child1()->prediction();
+
+            if (prediction) {
+                if (isFullNumberOrBooleanSpeculationExpectingDefined(prediction)) {
+                    if (m_graph.unaryArithShouldSpeculateInt32(node, m_pass))
+                        changed |= mergePrediction(SpecInt32Only);
+                    else if (m_graph.unaryArithShouldSpeculateInt52(node, m_pass))
+                        changed |= mergePrediction(SpecInt52Any);
+                    else
+                        changed |= mergePrediction(speculatedDoubleTypeForPrediction(prediction));
+                }
+#if USE(BIGINT32)
+                else if (node->op() == ToNumeric && m_graph.unaryArithShouldSpeculateBigInt32(node, m_pass))
+                    changed |= mergePrediction(SpecBigInt32);
+#endif
+                else if (node->op() == ToNumeric && isBigIntSpeculation(prediction))
+                    changed |= mergePrediction(SpecBigInt);
+                else {
+                    changed |= mergePrediction(SpecInt32Only);
+                    if (node->mayHaveDoubleResult())
+                        changed |= mergePrediction(SpecBytecodeDouble);
+                    if (node->op() == ToNumeric && node->mayHaveBigIntResult())
+                        changed |= mergePrediction(SpecBigInt);
+                }
+            }
+            break;
+        }
+
         case ValuePow: {
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
@@ -963,8 +994,6 @@ private:
         case GetFromArguments:
         case LoadKeyFromMapBucket:
         case LoadValueFromMapBucket:
-        case ToNumber:
-        case ToNumeric:
         case ToObject:
         case CallNumberConstructor:
         case ValueBitAnd:
@@ -1374,6 +1403,8 @@ private:
         case ValueBitRShift:
         case Inc:
         case Dec:
+        case ToNumber:
+        case ToNumeric:
         case ArithAdd:
         case ArithSub:
         case ArithNegate:

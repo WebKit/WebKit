@@ -173,7 +173,7 @@ bool JITAddGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
     // Do doubleVar + doubleVar.
     jit.addDouble(m_rightFPR, m_leftFPR);
     if (arithProfile && shouldEmitProfiling)
-        arithProfile->emitSetDouble(jit);
+        arithProfile->emitSetDouble(jit, m_scratchGPR);
 
     jit.boxDouble(m_leftFPR, m_result);
 
