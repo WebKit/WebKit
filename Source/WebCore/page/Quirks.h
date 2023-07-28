@@ -174,6 +174,9 @@ public:
     bool needsToCopyUserSelectNoneQuirk() const { return m_needsToCopyUserSelectNoneQuirk; }
     void setNeedsToCopyUserSelectNoneQuirk() { m_needsToCopyUserSelectNoneQuirk = true; }
 
+    bool shouldEnableCanvas2DAdvancedPrivacyProtectionQuirk() const;
+    String advancedPrivacyProtectionSubstituteDataURLForText(const String&) const;
+
 private:
     bool needsQuirks() const;
 
