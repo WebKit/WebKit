@@ -72,7 +72,7 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             },
 #endif
             {
-                "std::optional<RetainPtr<CFTypeRef>>"_s,
+                "RetainPtr<CFTypeRef>"_s,
                 "nullableTestMember"_s
             },
         } },
@@ -182,9 +182,9 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "left()"_s
             },
         } },
-        { "NullableSoftLinkedMember"_s, {
+        { "SoftLinkedMember"_s, {
             {
-                "std::optional<RetainPtr<DDActionContext>>"_s,
+                "RetainPtr<DDActionContext>"_s,
                 "firstMember"_s
             },
             {
@@ -218,7 +218,7 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         } },
         { "WebCore::MoveOnlyDerivedClass"_s, {
             {
-                "std::optional<int>"_s,
+                "int"_s,
                 "firstMember"_s
             },
             {

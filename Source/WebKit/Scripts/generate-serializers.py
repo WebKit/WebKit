@@ -43,9 +43,9 @@ import sys
 # Supported member attributes:
 #
 # BitField - work around the need for http://wg21.link/P0572 and don't check that the serialization order matches the memory layout.
-# Nullable - check if the member is truthy before serializing.
 # Validator - additional C++ to validate the value when decoding
 # NotSerialized - member is present in structure but intentionally not serialized.
+# SecureCodingAllowed - ObjC classes to allow when decoding.
 
 class SerializedType(object):
     def __init__(self, struct_or_class, namespace, name, parent_class_name, members, condition, attributes, other_metadata=None):
@@ -394,14 +394,7 @@ def encode_type(type):
     for member in type.serialized_members():
         if member.condition is not None:
             result.append('#if ' + member.condition)
-        if 'Nullable' in member.attributes:
-            result.append('    encoder << !!instance.' + member.name + ';')
-            result.append('    if (!!instance.' + member.name + ')')
-            if type.rvalue:
-                result.append('        encoder << WTFMove(instance.' + member.name + ');')
-            else:
-                result.append('        encoder << instance.' + member.name + ';')
-        elif member.is_subclass:
+        if member.is_subclass:
             result.append('    if (auto* subclass = dynamicDowncast<' + member.namespace + "::" + member.name + '>(instance)) {')
             result.append('        encoder << ' + type.subclass_enum_name() + "::" + member.name + ";")
             if type.rvalue:
@@ -452,37 +445,7 @@ def decode_type(type):
             result.append('    }')
         else:
             assert len(decodable_classes) == 0
-            r = re.compile(r"SoftLinkedClass='(.*)'")
-            soft_linked_classes = [r.match(m).groups()[0] for m in list(filter(r.match, member.attributes))]
-            if len(soft_linked_classes) == 1:
-                match = re.search("RetainPtr<(.*)>", member.type)
-                assert match
-                indentation = 1
-                if 'Nullable' in member.attributes:
-                    indentation = 2
-                    result.append('    auto has' + sanitized_variable_name + ' = decoder.decode<bool>();')
-                    result.append('    if (UNLIKELY(!decoder.isValid()))')
-                    result.append('        return std::nullopt;')
-                    result.append('    std::optional<' + member.type + '> ' + sanitized_variable_name + ';')
-                    result.append('    if (*has' + sanitized_variable_name + ') {')
-                auto_specifier = '' if 'Nullable' in member.attributes else 'auto '
-                result.append(indent(indentation) + auto_specifier + sanitized_variable_name + ' = IPC::decode<' + match.groups()[0] + '>(decoder, ' + soft_linked_classes[0] + ');')
-                if 'Nullable' in member.attributes:
-                    result.append('    } else')
-                    result.append('        ' + sanitized_variable_name + ' = std::optional<' + member.type + '> { ' + member.type + ' { } };')
-            elif 'Nullable' in member.attributes:
-                result.append('    auto has' + sanitized_variable_name + ' = decoder.decode<bool>();')
-                result.append('    if (UNLIKELY(!decoder.isValid()))')
-                result.append('        return std::nullopt;')
-                result.append('    std::optional<' + member.type + '> ' + sanitized_variable_name + ';')
-                result.append('    if (*has' + sanitized_variable_name + ') {')
-                # FIXME: This should be below
-                result.append('        ' + sanitized_variable_name + ' = decoder.decode<' + member.type + '>();')
-                result.append('    } else')
-                result.append('        ' + sanitized_variable_name + ' = std::optional<' + member.type + '> { ' + member.type + ' { } };')
-            else:
-                assert len(soft_linked_classes) == 0
-                result.append('    auto ' + sanitized_variable_name + ' = decoder.decode<' + member.type + '>();')
+            result.append('    auto ' + sanitized_variable_name + ' = decoder.decode<' + member.type + '>();')
         for attribute in member.attributes:
             match = re.search(r'Validator=\'(.*)\'', attribute)
             if match:
@@ -761,10 +724,7 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, t
             if member.condition is not None:
                 result.append('#if ' + member.condition)
             result.append('            {')
-            if 'Nullable' in member.attributes:
-                result.append('                "std::optional<' + member.type + '>"_s,')
-            else:
-                result.append('                "' + member.type + '"_s,')
+            result.append('                "' + member.type + '"_s,')
             result.append('                "' + member.name + '"_s')
             result.append('            },')
             if member.condition is not None:
@@ -946,11 +906,6 @@ def parse_serialized_types(file, file_name):
             if match:
                 complete, _, allow_list, _ = match.groups()
                 member_attributes.append(allow_list)
-                member_attributes_s = member_attributes_s.replace(complete, "")
-            match = re.search(r"((, |^)+(SoftLinkedClass='.*?'))(, |$)?", member_attributes_s)
-            if match:
-                complete, _, soft_linked_class, _ = match.groups()
-                member_attributes.append(soft_linked_class)
                 member_attributes_s = member_attributes_s.replace(complete, "")
             member_attributes += [member_attribute.strip() for member_attribute in member_attributes_s.split(",")]
             members.append(MemberVariable(member_type, member_name, member_condition, member_attributes))

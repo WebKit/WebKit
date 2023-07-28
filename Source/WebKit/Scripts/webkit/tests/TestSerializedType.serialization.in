@@ -9,7 +9,7 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
     #if ENABLE(SECOND_MEMBER)
     SecondMemberType secondMemberName;
     #endif
-    [Nullable] RetainPtr<CFTypeRef> nullableTestMember;
+    RetainPtr<CFTypeRef> nullableTestMember;
 }
 #endif
 
@@ -95,9 +95,9 @@ class WTF::Seconds {
     float left()
 };
 
-struct NullableSoftLinkedMember {
-    [Nullable, SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> firstMember;
-    [SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> secondMember;
+struct SoftLinkedMember {
+    [SecureCodingAllowed=[PAL::getDDActionContextClass()]] RetainPtr<DDActionContext> firstMember;
+    [SecureCodingAllowed=[PAL::getDDActionContextClass()]] RetainPtr<DDActionContext> secondMember;
 }
 
 [RefCounted] class WebCore::TimingFunction subclasses {
@@ -160,7 +160,7 @@ headers: "CommonHeader.h"
 }
 
 [RValue] class WebCore::MoveOnlyDerivedClass {
-    [Nullable] int firstMember;
+    int firstMember;
     int secondMember;
 }
 
