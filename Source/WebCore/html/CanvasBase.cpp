@@ -353,6 +353,13 @@ bool CanvasBase::shouldInjectNoiseBeforeReadback() const
     return !!m_canvasNoiseHashSalt;
 }
 
+void CanvasBase::recordLastFillText(const String& text)
+{
+    if (!shouldInjectNoiseBeforeReadback())
+        return;
+    m_lastFillText = text;
+}
+
 bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer) const
 {
     if (m_canvasNoiseHashSalt)
