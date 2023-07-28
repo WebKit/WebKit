@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="./resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<ul id="list1">
+    <li id="item1">First item.</li>
+    <li id="item2">Second item.</li>
+    <li id="item3"><em>Third</em> item.</li>
+</ul>
+
+<script>
+let output = "Tests setting and retrieving text selection in list items using TextMarkerRanges.\n\n";
+const bullet = String.fromCharCode(0x2022);
+window.jsTestIsAsync = true;
+
+let list = null;
+let selectedRange = null;
+let selection = "";
+let expectedSelection = "";
+
+async function checkSelection() {
+    await waitFor(() => {
+        selectedRange = list.selectedTextMarkerRange();
+        selection = list.stringForTextMarkerRange(selectedRange);
+        return selection == expectedSelection;
+    });
+    output += expect("selection", "expectedSelection");
+}
+
+if (window.accessibilityController) {
+    // Select the second list item using DOM API.
+    selectTextInNode("item2");
+
+    setTimeout(async () => {
+        // Get the selection range via accessibility API and compare against expectedSelection.
+        list = accessibilityController.accessibleElementById("list1");
+
+        output += "Check that the selection range contains the text for the second item plus the list marker (bullet):\n";
+        expectedSelection = `${bullet} Second item.`;
+        await checkSelection();
+
+        // Set the selection to the first item via accessibility API.
+        let item = accessibilityController.accessibleElementById("item1");
+        let range = list.textMarkerRangeForElement(item);
+        list.setSelectedTextMarkerRange(range);
+
+        output += "Check that the selection range contains the first item text plus the list marker (bullet):\n";
+        expectedSelection = `${bullet} First item.`;
+        await checkSelection();
+
+        // Go down one level and select the range of the static text contained in the list item.
+        let text = item.childAtIndex(1);
+        // Note: childAtIndex(0) is the list marker. The list marker is an AX object backed by an anonymous RenderObject, i.e., it doesn't have an associated Node.
+        // Therefore, the list marker or bullet has no TextMarkerRange. The list marker bullet is included in the range of the static text.
+        range = text.textMarkerRangeForElement(text);
+        list.setSelectedTextMarkerRange(range);
+
+        output += "Check that the selection range contains the static text plus the list marker (bullet):\n";
+        expectedSelection = `${bullet} First item.`;
+        await checkSelection();
+
+        // Move the start of the range and select it. Note that both the first character of the text and the list marker are removed from the range text.
+        let start = list.startTextMarkerForTextMarkerRange(range);
+        start = list.nextTextMarker(start);
+        let end = list.endTextMarkerForTextMarkerRange(range);
+        range = list.textMarkerRangeForMarkers(start, end);
+        list.setSelectedTextMarkerRange(range);
+
+        output += "Check that the selection range doesn't include the first character of the static text nor the list marker after moving the start of the range:\n";
+        expectedSelection = `irst item.`;
+        await checkSelection();
+
+        // Select the third list item using DOM API.
+        selectTextInNode("item3");
+
+        output += "Check that the selection range contains the text for the item plus the list marker (bullet):\n";
+        expectedSelection = `${bullet} Third item.`;
+        await checkSelection();
+
+        debug(output);
+        document.getElementById("list1").style.visibility = "hidden";
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
