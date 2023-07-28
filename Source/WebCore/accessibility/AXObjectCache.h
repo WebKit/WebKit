@@ -39,6 +39,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WTF {
@@ -216,7 +217,7 @@ public:
     double loadingProgress() const { return m_loadingProgress; }
 
     struct AttributeChange {
-        Element* element { nullptr };
+        WeakPtr<Element, WeakPtrImplWithEventTargetData> element { nullptr };
         QualifiedName attrName;
         AtomString oldValue;
         AtomString newValue;
@@ -229,7 +230,9 @@ public:
         , Vector<std::pair<Node*, Node*>>
         , WeakHashSet<Element, WeakPtrImplWithEventTargetData>
         , WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>
-        , WeakHashSet<AccessibilityTable>>;
+        , WeakHashSet<AccessibilityTable>
+        , WeakListHashSet<Node, WeakPtrImplWithEventTargetData>
+        , WeakHashMap<Element, String, WeakPtrImplWithEventTargetData>>;
     void deferModalChange(Element*);
     void deferMenuListValueChange(Element*);
     void deferNodeAddedOrRemoved(Node*);
@@ -440,7 +443,7 @@ public:
 
     AXComputedObjectAttributeCache* computedObjectAttributeCache() { return m_computedObjectAttributeCache.get(); }
 
-    Document& document() const { return m_document; }
+    Document& document() const { return const_cast<Document&>(m_document.get()); }
     constexpr const std::optional<PageIdentifier>& pageID() const { return m_pageID; }
 
 #if PLATFORM(MAC)
@@ -605,14 +608,18 @@ private:
     // Object creation.
     Ref<AccessibilityObject> createObjectFromRenderer(RenderObject*);
 
-    Document& m_document;
+    CheckedRef<Document> m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
     OptionSet<ActivityState> m_pageActivityState;
     HashMap<AXID, RefPtr<AccessibilityObject>> m_objects;
+
+    // The pointers in these mapping HashMaps should never be dereferenced.
     HashMap<RenderObject*, AXID> m_renderObjectMapping;
     HashMap<Widget*, AXID> m_widgetObjectMapping;
     HashMap<Node*, AXID> m_nodeObjectMapping;
+    // The pointers in this HashSet should never be dereferenced.
     ListHashSet<Node*> m_textMarkerNodes;
+
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
 
 #if ENABLE(ACCESSIBILITY)
@@ -650,14 +657,14 @@ private:
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredRecomputeIsIgnoredList;
     WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData> m_deferredRecomputeTableIsExposedList;
     WeakHashSet<AccessibilityTable> m_deferredRecomputeTableCellSlotsList;
-    ListHashSet<Node*> m_deferredTextChangedList;
+    WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredTextChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredSelectedChildredChangedList;
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildrenChangedList;
-    ListHashSet<Node*> m_deferredNodeAddedOrRemovedList;
+    WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredNodeAddedOrRemovedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredModalChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredMenuListChange;
     WeakHashSet<ScrollView> m_deferredScrollbarUpdateChangeList;
-    HashMap<Element*, String> m_deferredTextFormControlValue;
+    WeakHashMap<Element, String, WeakPtrImplWithEventTargetData> m_deferredTextFormControlValue;
     Vector<AttributeChange> m_deferredAttributeChange;
     std::optional<std::pair<WeakPtr<Node, WeakPtrImplWithEventTargetData>, WeakPtr<Node, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
 
