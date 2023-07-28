@@ -176,7 +176,7 @@ static bool isOverlay(const RenderElement& renderer)
         auto lastRenderer = renderBox;
         for (auto& ancestor : ancestorsOfType<RenderBox>(renderer)) {
             // We don't want to occlude any previous siblings.
-            if (ancestor.firstChildBox() != lastRenderer)
+            if (ancestor.firstChild() != lastRenderer)
                 return false;
             lastRenderer = &ancestor;
             if (ancestor.absoluteContentBox() != refContentBox)
