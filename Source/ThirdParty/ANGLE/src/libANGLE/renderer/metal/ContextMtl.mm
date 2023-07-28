@@ -1070,6 +1070,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
 // Device loss
 gl::GraphicsResetStatus ContextMtl::getResetStatus()
 {
+#if ANGLE_METAL_LOSE_CONTEXT_ON_ERROR == ANGLE_ENABLED
+    if (cmdQueue().isDeviceLost())
+    {
+        return gl::GraphicsResetStatus::UnknownContextReset;
+    }
+#endif
+
     return gl::GraphicsResetStatus::NoError;
 }
 

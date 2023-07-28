@@ -47,4 +47,11 @@
 #    define ANGLE_PROGRAM_LINK_VALIDATE_UNIFORM_PRECISION ANGLE_ENABLED
 #endif
 
+// Lose context on Metal command queue error
+// ENABLED check Metal command buffer status on completion for error and lose context on error.
+// DISABLED Metal backed contexts are never lost.
+#if !defined(ANGLE_METAL_LOSE_CONTEXT_ON_ERROR)
+#    define ANGLE_METAL_LOSE_CONTEXT_ON_ERROR ANGLE_ENABLED
+#endif
+
 #endif  // LIBANGLE_FEATURES_H_
