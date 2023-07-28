@@ -32,7 +32,13 @@
 #import "RemoteLayerTreeHost.h"
 
 #if PLATFORM(VISION)
-#import "RealitySystemSupportSPI.h"
+
+#import <RealitySystemSupport/RealitySystemSupport.h>
+#import <wtf/SoftLinking.h>
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(RealitySystemSupport)
+SOFT_LINK_CLASS_OPTIONAL(RealitySystemSupport, RCPGlowEffectLayer)
+SOFT_LINK_CONSTANT_MAY_FAIL(RealitySystemSupport, RCPAllowedInputTypesUserInfoKey, const NSString *)
+
 #endif
 
 namespace WebKit {
@@ -46,7 +52,9 @@ RCPRemoteEffectInputTypes interactionRegionInputTypes = RCPRemoteEffectInputType
 
 static Class interactionRegionLayerClass()
 {
-    return [RCPGlowEffectLayer class];
+    if (getRCPGlowEffectLayerClass())
+        return getRCPGlowEffectLayerClass();
+    return [CALayer class];
 }
 
 static NSDictionary *interactionRegionEffectUserInfo()
@@ -54,7 +62,8 @@ static NSDictionary *interactionRegionEffectUserInfo()
     static NeverDestroyed<RetainPtr<NSDictionary>> interactionRegionEffectUserInfo;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        interactionRegionEffectUserInfo.get() = @{ RCPAllowedInputTypesUserInfoKey: @(interactionRegionInputTypes) };
+        if (canLoadRCPAllowedInputTypesUserInfoKey())
+            interactionRegionEffectUserInfo.get() = @{ getRCPAllowedInputTypesUserInfoKey(): @(interactionRegionInputTypes) };
     });
     return interactionRegionEffectUserInfo.get().get();
 }
@@ -72,7 +81,7 @@ static float brightnessMultiplier()
 
 static void configureLayerForInteractionRegion(CALayer *layer, NSString *groupName)
 {
-    if (![layer isKindOfClass:[RCPGlowEffectLayer class]])
+    if (![layer isKindOfClass:getRCPGlowEffectLayerClass()])
         return;
 
     [(RCPGlowEffectLayer *)layer setBrightnessMultiplier:brightnessMultiplier() forInputTypes:interactionRegionInputTypes];
