@@ -113,8 +113,12 @@ DedicatedWorkerThread& DedicatedWorkerGlobalScope::thread()
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
 CallbackId DedicatedWorkerGlobalScope::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
 {
-    if (!m_workerAnimationController)
-        m_workerAnimationController = WorkerAnimationController::create(*this);
+    if (!m_workerAnimationController) {
+        if (workerClient())
+            m_workerAnimationController = workerClient()->createAnimationController(*this);
+        if (!m_workerAnimationController)
+            m_workerAnimationController = TimerWorkerAnimationController::create(*this);
+    }
     return m_workerAnimationController->requestAnimationFrame(WTFMove(callback));
 }
 
