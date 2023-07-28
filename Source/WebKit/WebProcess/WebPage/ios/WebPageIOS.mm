@@ -5016,6 +5016,16 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         context.annotatedText = m_textCheckingControllerProxy->annotatedSubstringBetweenPositions(contextBeforeStart, contextAfterEnd);
 #endif
 
+    if (request.options.contains(DocumentEditingContextRequest::Options::AutocorrectedRanges)) {
+        if (auto contextRange = makeSimpleRange(contextBeforeStart, contextAfterEnd)) {
+            auto ranges = frame->document()->markers().rangesForMarkersInRange(*contextRange, DocumentMarker::MarkerType::CorrectionIndicator);
+            context.autocorrectedRanges = ranges.map([&] (auto& range) {
+                auto characterRangeInContext = characterRange(*contextRange, range);
+                return DocumentEditingContext::Range { characterRangeInContext.location, characterRangeInContext.length };
+            });
+        }
+    }
+
     completionHandler(context);
 }
 
