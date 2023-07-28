@@ -50,7 +50,7 @@ private:
     void addChildren() override;
     LayoutRect elementRect() const override;
     
-    SpinButtonElement* m_spinButtonElement;
+    WeakPtr<SpinButtonElement, WeakPtrImplWithEventTargetData> m_spinButtonElement;
 }; 
    
 class AccessibilitySpinButtonPart final : public AccessibilityMockObject {

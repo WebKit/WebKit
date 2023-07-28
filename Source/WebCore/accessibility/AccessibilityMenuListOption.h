@@ -43,7 +43,7 @@ private:
 
     AccessibilityRole roleValue() const final { return AccessibilityRole::MenuListOption; }
     bool canHaveChildren() const final { return false; }
-    AccessibilityObject* parentObject() const final { return m_parent; }
+    AccessibilityObject* parentObject() const final { return m_parent.get(); }
 
     Element* actionElement() const final;
     Node* node() const final;
@@ -58,7 +58,7 @@ private:
     bool computeAccessibilityIsIgnored() const final;
 
     WeakPtr<HTMLOptionElement, WeakPtrImplWithEventTargetData> m_element;
-    AccessibilityObject* m_parent;
+    WeakPtr<AccessibilityObject> m_parent;
 };
 
 } // namespace WebCore
