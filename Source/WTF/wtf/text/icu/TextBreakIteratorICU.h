@@ -60,11 +60,12 @@ public:
 
         UErrorCode status = U_ZERO_ERROR;
         m_iterator = ubrk_open(type, localeWithOptionalBreakKeyword.string().utf8().data(), nullptr, 0, &status);
-        if (!m_iterator) {
+        if (!m_iterator || U_FAILURE(status)) {
             status = U_ZERO_ERROR;
-            m_iterator = ubrk_open(type, "", nullptr, 0, &status);
+            m_iterator = ubrk_open(type, "", nullptr, 0, &status); // There's no reason for this to ever fail, unless there's an allocation failure, in which case we _should_ crash; that's the behavior of our allocators.
         }
-        ASSERT(U_SUCCESS(status));
+        RELEASE_ASSERT(m_iterator);
+        RELEASE_ASSERT(U_SUCCESS(status));
 
         setText(string, priorContext, priorContextLength);
     }
@@ -73,10 +74,9 @@ public:
     TextBreakIteratorICU(const TextBreakIteratorICU&) = delete;
 
     TextBreakIteratorICU(TextBreakIteratorICU&& other)
-        : m_iterator(other.m_iterator)
+        : m_iterator(std::exchange(other.m_iterator, nullptr))
         , m_priorContextLength(other.m_priorContextLength)
     {
-        other.m_iterator = nullptr;
     }
 
     TextBreakIteratorICU& operator=(const TextBreakIteratorICU&) = delete;
@@ -85,8 +85,7 @@ public:
     {
         if (m_iterator)
             ubrk_close(m_iterator);
-        m_iterator = other.m_iterator;
-        other.m_iterator = nullptr;
+        m_iterator = std::exchange(other.m_iterator, nullptr);
         return *this;
     }
 
@@ -98,6 +97,8 @@ public:
 
     void setText(StringView string, const UChar* priorContext, unsigned priorContextLength)
     {
+        ASSERT(m_iterator);
+
         UTextWithBuffer textLocal;
         textLocal.text = UTEXT_INITIALIZER;
         textLocal.text.extraSize = sizeof(textLocal.buffer);
@@ -112,12 +113,13 @@ public:
         ASSERT(U_SUCCESS(status));
         ASSERT(text);
 
-        ubrk_setUText(m_iterator, text, &status);
-        ASSERT(U_SUCCESS(status));
-
-        utext_close(text);
-
-        m_priorContextLength = priorContextLength;
+        if (text && U_SUCCESS(status)) {
+            ubrk_setUText(m_iterator, text, &status);
+            ASSERT(U_SUCCESS(status));
+            utext_close(text);
+            m_priorContextLength = priorContextLength;
+        } else
+            m_priorContextLength = 0;
     }
 
     std::optional<unsigned> preceding(unsigned location) const
@@ -189,7 +191,7 @@ private:
         return locale;
     }
 
-    UBreakIterator* m_iterator;
+    UBreakIterator* m_iterator { nullptr };
     unsigned m_priorContextLength { 0 };
 };
 
