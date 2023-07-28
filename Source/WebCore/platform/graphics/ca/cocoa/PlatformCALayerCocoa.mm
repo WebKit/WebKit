@@ -558,10 +558,13 @@ RefPtr<PlatformCAAnimation> PlatformCALayerCocoa::animationForKey(const String& 
     return PlatformCAAnimationCocoa::create(propertyAnimation);
 }
 
-void PlatformCALayerCocoa::setMask(PlatformCALayer* layer)
+void PlatformCALayerCocoa::setMaskLayer(RefPtr<WebCore::PlatformCALayer>&& layer)
 {
+    auto* caLayer = layer ? layer->platformLayer() : nil;
+    PlatformCALayer::setMaskLayer(WTFMove(layer));
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer setMask:layer ? layer->platformLayer() : nil];
+    [m_layer setMask:caLayer];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

@@ -153,7 +153,8 @@ public:
     virtual void setAcceleratedEffectsAndBaseValues(const AcceleratedEffects&, AcceleratedEffectValues&);
 #endif
 
-    virtual void setMask(PlatformCALayer*) = 0;
+    virtual void setMaskLayer(RefPtr<PlatformCALayer>&&);
+    PlatformCALayer* maskLayer() const;
 
     virtual bool isOpaque() const = 0;
     virtual void setOpaque(bool) = 0;
@@ -331,6 +332,7 @@ protected:
     const LayerType m_layerType;
     const PlatformLayerIdentifier m_layerID;
     RetainPtr<PlatformLayer> m_layer;
+    RefPtr<PlatformCALayer> m_maskLayer;
     PlatformCALayerClient* m_owner;
 };
 

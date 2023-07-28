@@ -223,7 +223,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
     }
 
     if (m_maskLayer)
-        m_maskLayer->recursiveBuildTransaction(context, transaction);
+        downcast<PlatformCALayerRemote>(*m_maskLayer).recursiveBuildTransaction(context, transaction);
 }
 
 void PlatformCALayerRemote::didCommit()
@@ -477,18 +477,17 @@ void PlatformCALayerRemote::animationEnded(const String& key)
         m_owner->platformCALayerAnimationEnded(key);
 }
 
-void PlatformCALayerRemote::setMask(PlatformCALayer* layer)
+void PlatformCALayerRemote::setMaskLayer(RefPtr<WebCore::PlatformCALayer>&& layer)
 {
-    if (isEquivalentLayer(layer, m_properties.maskLayerID))
+    if (isEquivalentLayer(layer.get(), m_properties.maskLayerID))
         return;
-    
-    if (layer) {
-        m_maskLayer = downcast<PlatformCALayerRemote>(layer);
-        m_properties.maskLayerID = m_maskLayer->layerID();
-    } else {
-        m_maskLayer = nullptr;
+
+    PlatformCALayer::setMaskLayer(WTFMove(layer));
+
+    if (auto* layer = maskLayer())
+        m_properties.maskLayerID = layer->layerID();
+    else
         m_properties.maskLayerID = { };
-    }
 
     m_properties.notePropertiesChanged(LayerChange::MaskLayerChanged);
 }
