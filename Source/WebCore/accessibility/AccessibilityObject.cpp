@@ -619,8 +619,11 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
 
     auto* displayContentsParent = child->displayContentsParent();
     // To avoid double-inserting a child of a `display: contents` element, only insert if `this` is the rightful parent.
-    if (displayContentsParent && displayContentsParent != this)
+    if (displayContentsParent && displayContentsParent != this) {
+        // Make sure the display:contents parent object knows it has a child it needs to add.
+        displayContentsParent->setNeedsToUpdateChildren();
         return;
+    }
 
     auto thisAncestorFlags = computeAncestorFlags();
     child->initializeAncestorFlags(thisAncestorFlags);
