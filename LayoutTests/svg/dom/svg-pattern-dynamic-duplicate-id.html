@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function doTest() {
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            const pattern1 = document.getElementById('pattern1');
+            pattern1.getBoundingClientRect();
+            const pattern2 = pattern1.cloneNode(true);
+            pattern2.setAttribute('fill', 'green');
+            pattern1.before(pattern2);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    });
+}
+
+</script>
+</head>
+<body onload="doTest()">
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <pattern id="pattern1" viewbox="0 0 10 10" width="10" height="10" fill="red"><rect width="10" height="10"/></pattern>
+        <pattern id="pattern" viewbox="0 0 10 10" width="10" height="10" href="#pattern1"></pattern>
+    </defs>
+    <rect x="0" y="0" width="100" height="100" fill="url(#pattern)"/>
+</svg>
+</body>
+</html>

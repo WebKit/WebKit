@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Test that when two elements with the same id are in the document,
+     elements that reference the duplicated id end up referring to the
+     first of the two. -->
+<!-- If this test passes, you should see the word "PASS". -->
+<script>
+  function doTest() {
+    var defs2 = document.getElementById('defs2');
+    var referencedText2 = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    referencedText2.setAttribute("id", "ReferencedText");
+    referencedText2.textContent = "FAIL";
+    defs2.appendChild(referencedText2);
+
+    var defs1 = document.getElementById('defs1');
+    var referencedText2 = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    referencedText2.setAttribute("id", "ReferencedText");
+    referencedText2.textContent = "PASS";
+    defs1.appendChild(referencedText2);
+  }
+</script>
+</head>
+<body onload="doTest()">
+<svg width="10cm" height="3cm" viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs id="defs1"></defs>
+  <defs id="defs2"></defs>
+  <text x="100" y="100" font-size="45" fill="green" >
+    <tref xlink:href="#ReferencedText"/>
+  </text>
+</svg>
+</body>
+</html>

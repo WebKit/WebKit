@@ -234,7 +234,8 @@ void SVGTRefElement::buildPendingResource()
         treeScopeForSVGReferences().addPendingSVGResource(target.identifier, *this);
         ASSERT(hasPendingResources());
         return;
-    }
+    } else if (!target.identifier.isNull())
+        treeScopeForSVGReferences().addResolvedSVGReference(target.identifier, const_cast<SVGTRefElement&>(*this));
 
     // Don't set up event listeners if this is a shadow tree node.
     // SVGUseElement::transferEventListenersToShadowTree() handles this task, and addEventListener()

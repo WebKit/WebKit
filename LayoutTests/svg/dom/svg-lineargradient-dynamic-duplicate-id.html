@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+function doTest() {
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            const gradient1 = document.getElementById('gradient1');
+            const gradient2 = gradient1.cloneNode(true);
+            gradient2.querySelector('stop').setAttribute('stop-color', 'green');
+            gradient1.before(gradient2);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    });
+}
+</script>
+</head>
+<body onload="doTest()">
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <linearGradient id="gradient1"><stop offset="0" stop-color="red" /></linearGradient>
+    <linearGradient id="gradientUse" href="#gradient1"></linearGradient>
+    <rect id="rect" width="100" height="100" fill="url(#gradientUse)">
+</svg>
+</body>
+</html>

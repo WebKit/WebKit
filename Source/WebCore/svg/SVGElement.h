@@ -70,6 +70,7 @@ public:
     void setHasPendingResources() { setNodeFlag(NodeFlag::HasPendingResources); }
     void clearHasPendingResources() { clearNodeFlag(NodeFlag::HasPendingResources); }
     virtual void buildPendingResource() { }
+    virtual void rebuildResourceReference() { buildPendingResource(); }
 
     virtual bool isSVGGraphicsElement() const { return false; }
     virtual bool isSVGGeometryElement() const { return false; }

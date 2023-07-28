@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function doTest() {
+    const text1 = document.getElementById('text1');
+    const text2 = text1.cloneNode();
+    text2.textContent = 'PASS';
+    text1.before(text2);
+}
+</script>
+</head>
+<body onload="doTest()">
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g style="visibility: hidden">
+        <text id="text1">FAIL</text>
+    </g>
+    <text x="50" y="50">
+        <tref href="#text1"></tref>
+    </text>
+</svg>
+</body>
+</html>

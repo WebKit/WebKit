@@ -980,8 +980,21 @@ Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType 
     updateRelativeLengthsInformation();
 
     if (needsPendingResourceHandling() && insertionType.connectedToDocument && !isInShadowTree()) {
-        if (treeScopeForSVGReferences().isIdOfPendingSVGResource(getIdAttribute()))
+        auto id = getIdAttribute();
+        if (treeScopeForSVGReferences().isIdOfPendingSVGResource(id))
             return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+        if (auto* set = treeScopeForSVGReferences().resolvedSVGReferences(id); set && treeScopeForSVGReferences().getElementById(id) == this) {
+            for (auto& element : copyToVectorOf<Ref<SVGElement>>(*set)) {
+                element->rebuildResourceReference();
+                element->invalidateStyleAndRenderersForSubtree();
+            }
+        }
+    } else if (insertionType.connectedToDocument) {
+        auto& id = getIdAttribute();
+        if (auto* set = treeScopeForSVGReferences().resolvedSVGReferences(id); set && treeScopeForSVGReferences().getElementById(id) == this) {
+            for (auto& element : copyToVectorOf<Ref<SVGElement>>(*set))
+                element->invalidateStyleAndRenderersForSubtree();
+        }
     }
 
     hideNonce();
@@ -1004,20 +1017,19 @@ void SVGElement::buildPendingResourcesIfNeeded()
     if (!treeScope.isIdOfPendingSVGResource(resourceId))
         return;
 
-    treeScope.markPendingSVGResourcesForRemoval(resourceId);
-
-    // Rebuild pending resources for each client of a pending resource that is being removed.
-    while (auto clientElement = treeScope.takeElementFromPendingSVGResourcesForRemovalMap(resourceId)) {
-        ASSERT(clientElement->hasPendingResources());
-        if (clientElement->hasPendingResources()) {
-            clientElement->buildPendingResource();
-            if (auto renderer = clientElement->renderer()) {
+    auto elements = treeScope.removePendingSVGResource(resourceId);
+    for (auto& element : elements) {
+        ASSERT(element.hasPendingResources());
+        if (element.hasPendingResources()) {
+            element.buildPendingResource();
+            if (auto* renderer = element.renderer()) {
                 for (auto& ancestor : ancestorsOfType<RenderSVGResourceContainer>(*renderer))
                     ancestor.markAllClientsForRepaint();
             }
-            treeScope.clearHasPendingSVGResourcesIfPossible(*clientElement);
+            treeScope.clearHasPendingSVGResourcesIfPossible(element);
         }
     }
+    treeScope.addResolvedSVGReferences(resourceId, WTFMove(elements));
 }
 
 void SVGElement::childrenChanged(const ChildChange& change)

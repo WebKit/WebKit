@@ -96,18 +96,18 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
     if (externalDocument) {
         // Enforce that the referenced url matches the url of the document that we've loaded for it!
         ASSERT(equalIgnoringFragmentIdentifier(url, externalDocument->url()));
-        return { externalDocument->getElementById(id), WTFMove(id) };
+        return { externalDocument->getElementById(id), WTFMove(id), true };
     }
 
     // Exit early if the referenced url is external, and we have no externalDocument given.
     if (isExternalURIReference(iri, document))
-        return { nullptr, WTFMove(id) };
+        return { nullptr, WTFMove(id), false };
 
     RefPtr shadowHost = treeScope.rootNode().shadowHost();
     if (is<SVGUseElement>(shadowHost))
-        return { shadowHost->treeScope().getElementById(id), WTFMove(id) };
+        return { shadowHost->treeScope().getElementById(id), WTFMove(id), false };
 
-    return { treeScope.getElementById(id), WTFMove(id) };
+    return { treeScope.getElementById(id), WTFMove(id), false };
 }
 
 bool SVGURIReference::haveLoadedRequiredResources() const

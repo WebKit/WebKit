@@ -209,8 +209,10 @@ void SVGSMILElement::buildPendingResource()
             treeScopeForSVGReferences().addPendingSVGResource(id, *this);
             ASSERT(hasPendingResources());
         }
-    } else
+    } else {
+        treeScopeForSVGReferences().addResolvedSVGReference(id, *this);
         svgTarget->addReferencingElement(*this);
+    }
 }
 
 inline QualifiedName SVGSMILElement::constructAttributeName() const

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function doTest() {
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            const marker1 = document.getElementById('marker1');
+            marker1.getBoundingClientRect();
+            const marker2 = marker1.cloneNode(true);
+            marker2.querySelector('rect').setAttribute('fill', 'green');
+            marker1.before(marker2);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    });
+}
+
+</script>
+</head>
+<body onload="doTest()">
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <marker id="marker1" viewBox="0 0 10 10" markerWidth="50" markerHeight="50"><rect x="0" y="0" width="10" height="10" fill="red"/></marker>
+    <polyline fill="none" stroke="none" points="0,50 50,50" marker-start="url(#marker1)" marker-end="url(#marker1)" />
+</svg>
+</body>
+</html>

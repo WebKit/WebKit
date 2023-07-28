@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function doTest() {
+    const path1 = document.getElementById('path1');
+    const path2 = path1.cloneNode();
+    path2.setAttribute('d', 'M0,50 L50,50');
+    path1.before(path2);
+}
+
+function finishTest() {
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+</script>
+</head>
+<body onload="doTest()">
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <path id="path1" d="M0,50 L100,50"/>
+    <rect id="rect1" x="0" y="0" width="50" height="50" fill="green">
+        <animateMotion href="#rect1" dur="0.01s" repeatCount="1" fill="freeze" onend="finishTest()">
+            <mpath href="#path1"/>
+        </animateMotion>
+    </rect>
+</svg>
+</body>
+</html>

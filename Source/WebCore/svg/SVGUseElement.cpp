@@ -441,17 +441,20 @@ SVGElement* SVGUseElement::findTarget(AtomString* targetID) const
 
     auto targetResult = targetElementFromIRIString(original.href(), original.treeScope(), original.externalDocument());
     if (targetID) {
-        *targetID = WTFMove(targetResult.identifier);
+        *targetID = targetResult.identifier;
         // If the reference is external, don't return the target ID to the caller.
         // The caller would use the target ID to wait for a pending resource on the wrong document.
         // If we ever want the change that and let the caller to wait on the external document,
         // we should change this function so it returns the appropriate document to go with the ID.
-        if (!targetID->isNull() && isExternalURIReference(original.href(), original.document()))
+        if (!targetID->isNull() && targetResult.isExternal)
             *targetID = nullAtom();
     }
     if (!is<SVGElement>(targetResult.element))
         return nullptr;
     auto& target = downcast<SVGElement>(*targetResult.element);
+
+    if (!targetResult.identifier.isNull() && !targetResult.isExternal)
+        treeScopeForSVGReferences().addResolvedSVGReference(targetResult.identifier, const_cast<SVGUseElement&>(*this));
 
     if (!target.isConnected() || isDisallowedElement(target))
         return nullptr;
