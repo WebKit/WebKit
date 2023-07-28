@@ -609,6 +609,12 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
 
     ANGLE_MTL_LOG("Completed MTLCommandBuffer %llu:%p", serial, buf);
 
+    if ([buf status] != MTLCommandBufferStatusCompleted)
+    {
+        mIsDeviceLost = true;
+        return;
+    }
+
     if (timeElapsedEntry != 0)
     {
         // Record this command buffer's elapsed time.

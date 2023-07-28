@@ -181,12 +181,22 @@ void DisplayMtl::terminate()
 
 bool DisplayMtl::testDeviceLost()
 {
-    return false;
+#if ANGLE_METAL_LOSE_CONTEXT_ON_ERROR == ANGLE_ENABLED
+    return mCmdQueue.isDeviceLost();
+#else
+     return false;
+#endif
 }
 
 egl::Error DisplayMtl::restoreLostDevice(const egl::Display *display)
 {
+#if ANGLE_METAL_LOSE_CONTEXT_ON_ERROR == ANGLE_ENABLED
+    // A Metal device cannot be restored, the entire context would have to be
+    // re-created along with any other EGL objects that reference it.
+    return egl::EglBadDisplay();
+#else
     return egl::NoError();
+#endif
 }
 
 std::string DisplayMtl::getRendererDescription()
