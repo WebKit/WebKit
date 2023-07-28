@@ -390,4 +390,10 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 
 #endif
 
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+@interface UIWKDocumentContext (Staging_112795757)
+@property (nonatomic, copy) NSArray<NSValue *> *autocorrectedRanges;
+@end
+#endif
+
 #endif // PLATFORM(IOS_FAMILY)
