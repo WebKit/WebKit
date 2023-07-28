@@ -37,6 +37,7 @@
 
 @interface RCPGLowEffectLayer : CALayer
 @property (nonatomic, copy) void (^effectGroupConfigurator)(CARemoteEffectGroup *group);
+- (void)setBrightnessMultiplier:(CGFloat)multiplier forInputTypes:(RCPRemoteEffectInputTypes)inputTypes;
 @end
 
 @interface CARemoteEffect ()
