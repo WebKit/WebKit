@@ -192,6 +192,10 @@
 #import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/ios/DataDetectorsUISoftLink.h>
 
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+#define UIWKDocumentRequestAutocorrectedRanges (1 << 7)
+#endif
+
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
 #endif
@@ -9613,6 +9617,10 @@ static inline OptionSet<WebKit::DocumentEditingContextRequest::Options> toWebDoc
         options.add(WebKit::DocumentEditingContextRequest::Options::MarkedTextRects);
     if (flags & UIWKDocumentRequestSpatialAndCurrentSelection)
         options.add(WebKit::DocumentEditingContextRequest::Options::SpatialAndCurrentSelection);
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    if (flags & UIWKDocumentRequestAutocorrectedRanges)
+        options.add(WebKit::DocumentEditingContextRequest::Options::AutocorrectedRanges);
+#endif
 
     return options;
 }
