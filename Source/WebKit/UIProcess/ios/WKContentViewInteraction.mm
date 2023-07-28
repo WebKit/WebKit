@@ -5729,8 +5729,13 @@ static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedStrin
 
     Vector<WebCore::CompositionUnderline> underlines;
     [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&underlines](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
-        bool thick = attributes[NSBackgroundColorAttributeName];
-        underlines.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), WebCore::CompositionUnderlineColor::GivenColor, WebCore::Color::black, thick });
+        underlines.append({
+            static_cast<unsigned>(range.location),
+            static_cast<unsigned>(NSMaxRange(range)),
+            WebCore::CompositionUnderlineColor::GivenColor,
+            WebCore::Color::black,
+            [attributes[NSUnderlineStyleAttributeName] isEqual:@(NSUnderlineStyleThick)] || attributes[NSBackgroundColorAttributeName]
+        });
     }];
 
     std::sort(underlines.begin(), underlines.end(), [](auto& a, auto& b) {
