@@ -1,0 +1,17 @@
+Tests setting and retrieving text selection in list items using TextMarkerRanges.
+
+Check that the selection range contains the text for the second item plus the list marker (bullet):
+PASS: selection === expectedSelection
+Check that the selection range contains the first item text plus the list marker (bullet):
+PASS: selection === expectedSelection
+Check that the selection range contains the static text plus the list marker (bullet):
+PASS: selection === expectedSelection
+Check that the selection range doesn't include the first character of the static text nor the list marker after moving the start of the range:
+PASS: selection === expectedSelection
+Check that the selection range contains the text for the item plus the list marker (bullet):
+PASS: selection === expectedSelection
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
