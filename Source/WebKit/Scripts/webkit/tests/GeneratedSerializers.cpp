@@ -246,6 +246,15 @@ void ArgumentCoder<Namespace::EmptyConstructorStruct>::encode(Encoder& encoder, 
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_int)>, int>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_double)>, double>);
+    struct ShouldBeSameSizeAsEmptyConstructorStruct : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::EmptyConstructorStruct>, false> {
+        int m_int;
+        double m_double;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsEmptyConstructorStruct) == sizeof(Namespace::EmptyConstructorStruct));
+    static_assert(MembersInCorrectOrder<0
+        , offsetof(Namespace::EmptyConstructorStruct, m_int)
+        , offsetof(Namespace::EmptyConstructorStruct, m_double)
+    >::value);
     encoder << instance.m_int;
     encoder << instance.m_double;
 }

@@ -25,7 +25,7 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
     std::unique_ptr<int> uniqueMember
 }
 
-[LegacyPopulateFromEmptyConstructor, CustomMemberLayout] struct Namespace::EmptyConstructorStruct {
+[LegacyPopulateFromEmptyConstructor] struct Namespace::EmptyConstructorStruct {
     int m_int;
     double m_double;
 }

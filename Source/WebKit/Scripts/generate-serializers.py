@@ -33,7 +33,6 @@ import sys
 # Alias - this type is not a struct or class, but a typedef.
 # Nested - this type is only serialized as a member of its parent, so work around the need for http://wg21.link/P0289 and don't forward declare it in the header.
 # RefCounted - deserializer returns a std::optional<Ref<T>> instead of a std::optional<T>.
-# CustomMemberLayout - member memory layout doesn't match serialization layout, so don't static_assert that the members are in order.
 # LegacyPopulateFromEmptyConstructor - instead of calling a constructor with the members, call the empty constructor then insert the members one at a time.
 # OptionSet - for enum classes, instead of only allowing deserialization of the exact values, allow deserialization of any bit combination of the values.
 # RValue - serializer takes an rvalue reference, instead of an lvalue.
@@ -66,7 +65,6 @@ class SerializedType(object):
         self.rvalue = False
         self.webkit_platform = False
         self.members_are_subclasses = False
-        self.custom_member_layout = False
         self.custom_encoder = False
         if attributes is not None:
             for attribute in attributes.split(', '):
@@ -87,8 +85,6 @@ class SerializedType(object):
                         self.rvalue = True
                     elif attribute == 'WebKitPlatform':
                         self.webkit_platform = True
-                    elif attribute == 'CustomMemberLayout':
-                        self.custom_member_layout = True
                     elif attribute == 'LegacyPopulateFromEmptyConstructor':
                         self.populate_from_empty_constructor = True
                     elif attribute == 'CustomEncoder':
@@ -117,8 +113,6 @@ class SerializedType(object):
         return 'isValidEnum'
 
     def can_assert_member_order_is_correct(self):
-        if self.custom_member_layout:
-            return False
         for member in self.members:
             if '()' in member.name:
                 return False

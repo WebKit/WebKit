@@ -91,7 +91,7 @@ Ref<FormData> FormData::create(const DOMFormData& formData, EncodingType encodin
     return result;
 }
 
-Ref<FormData> FormData::create(bool alwaysStream, Vector<char>&& boundary, Vector<WebCore::FormDataElement>&& elements, int64_t identifier)
+Ref<FormData> FormData::create(Vector<WebCore::FormDataElement>&& elements, uint64_t identifier, bool alwaysStream, Vector<char>&& boundary)
 {
     auto result = create();
     result->setAlwaysStream(alwaysStream);
