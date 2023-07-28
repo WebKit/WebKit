@@ -41,7 +41,6 @@ SpeculatedType PredictionFileCreatingFuzzerAgent::getPredictionInternal(CodeBloc
     case op_bitand:
     case op_bitor:
     case op_bitxor:
-    case op_bitnot:
     case op_lshift:
     case op_rshift:
     case op_get_by_val:

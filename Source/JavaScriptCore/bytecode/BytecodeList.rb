@@ -366,15 +366,6 @@ op :create_promise,
         cachedCallee: WriteBarrier[JSCell]
     }
 
-op :bitnot,
-    args: {
-        dst: VirtualRegister,
-        operand: VirtualRegister,
-    },
-    metadata: {
-        profile: ValueProfile
-    }
-
 op :catch,
     args: {
         exception: VirtualRegister,
@@ -1371,6 +1362,7 @@ op_group :ProfiledUnaryOp,
     [
         :to_number,
         :to_numeric,
+        :bitnot,
     ],
     args: {
         dst: VirtualRegister,

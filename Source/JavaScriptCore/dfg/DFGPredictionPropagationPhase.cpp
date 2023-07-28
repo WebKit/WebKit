@@ -227,6 +227,27 @@ private:
             break;
         }
 
+        case ValueBitNot: {
+            SpeculatedType prediction = node->child1()->prediction();
+            if (prediction) {
+                if (isFullNumberOrBooleanSpeculationExpectingDefined(prediction))
+                    changed |= mergePrediction(SpecInt32Only);
+#if USE(BIGINT32)
+                else if (m_graph.unaryArithShouldSpeculateBigInt32(node, m_pass))
+                    changed |= mergePrediction(SpecBigInt32);
+#endif
+                else if (isBigIntSpeculation(prediction))
+                    changed |= mergePrediction(SpecBigInt);
+                else {
+                    if (node->mayHaveBigIntResult())
+                        changed |= mergePrediction(SpecBigInt);
+                    else
+                        changed |= mergePrediction(SpecInt32Only);
+                }
+            }
+            break;
+        }
+
         case ValueAdd: {
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
@@ -999,7 +1020,6 @@ private:
         case ValueBitAnd:
         case ValueBitXor:
         case ValueBitOr:
-        case ValueBitNot:
         case CallObjectConstructor:
         case GetArgument:
         case CallDOMGetter:
@@ -1401,6 +1421,7 @@ private:
         case ValuePow:
         case ValueBitLShift:
         case ValueBitRShift:
+        case ValueBitNot:
         case Inc:
         case Dec:
         case ToNumber:

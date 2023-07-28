@@ -665,9 +665,6 @@ void JIT::emit_op_bitnot(const JSInstruction* currentInstruction)
 #if USE(JSVALUE64)
     boxInt32(jsRegT10.payloadGPR(), jsRegT10);
 #endif
-
-    emitValueProfilingSiteIfProfiledOpcode(bytecode);
-
     emitPutVirtualRegister(result, jsRegT10);
 }
 

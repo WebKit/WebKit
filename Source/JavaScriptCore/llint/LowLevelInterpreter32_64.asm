@@ -1381,13 +1381,12 @@ bitOpProfiled(bitand, OpBitand,
 bitOpProfiled(bitor, OpBitor,
     macro (lhs, rhs) ori rhs, lhs end)
 
-llintOpWithProfile(op_bitnot, OpBitnot, macro (size, get, dispatch, return)
+llintOpWithReturn(op_bitnot, OpBitnot, macro (size, get, dispatch, return)
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t2, t3)
     bineq t2, Int32Tag, .opBitNotSlow
     noti t3
     return (Int32Tag, t3)
-
  .opBitNotSlow:
     callSlowPath(_slow_path_bitnot)
     dispatch()

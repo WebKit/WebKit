@@ -1507,7 +1507,7 @@ bitOpProfiled(bitor, OpBitor,
 bitOpProfiled(bitxor, OpBitxor,
     macro (lhs, rhs) xori rhs, lhs end)
 
-llintOpWithProfile(op_bitnot, OpBitnot, macro (size, get, dispatch, return)
+llintOpWithReturn(op_bitnot, OpBitnot, macro (size, get, dispatch, return)
     get(m_operand, t0)
     loadConstantOrVariableInt32(size, t0, t3, .opBitNotSlow)
     noti t3

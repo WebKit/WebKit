@@ -120,7 +120,6 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpGetFromScope) \
     macro(OpBitand) \
     macro(OpBitor) \
-    macro(OpBitnot) \
     macro(OpBitxor) \
     macro(OpLshift) \
     macro(OpRshift) \
@@ -170,6 +169,7 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpSub) \
 
 #define FOR_EACH_OPCODE_WITH_UNARY_ARITH_PROFILE(macro) \
+    macro(OpBitnot) \
     macro(OpInc) \
     macro(OpDec) \
     macro(OpNegate) \

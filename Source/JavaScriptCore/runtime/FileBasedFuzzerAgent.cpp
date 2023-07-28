@@ -58,7 +58,6 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
     case op_bitand: // partially broken https://bugs.webkit.org/show_bug.cgi?id=203604
     case op_bitor: // partially broken https://bugs.webkit.org/show_bug.cgi?id=203604
     case op_bitxor: // partially broken https://bugs.webkit.org/show_bug.cgi?id=203604
-    case op_bitnot: // partially broken
     case op_get_from_scope: // partially broken https://bugs.webkit.org/show_bug.cgi?id=203603
     case op_get_from_arguments: // partially broken https://bugs.webkit.org/show_bug.cgi?id=203608
     case op_get_by_val: // partially broken https://bugs.webkit.org/show_bug.cgi?id=203665

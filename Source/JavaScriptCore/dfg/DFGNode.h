@@ -1959,7 +1959,6 @@ public:
         case ValueBitAnd:
         case ValueBitOr:
         case ValueBitXor:
-        case ValueBitNot:
         case ValueBitLShift:
         case ValueBitRShift:
         case CallObjectConstructor:
