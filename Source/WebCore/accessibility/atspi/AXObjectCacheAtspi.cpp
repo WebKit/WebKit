@@ -147,7 +147,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
     }
 }
 
-void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* coreObject, const AXTextStateChangeIntent&, const VisibleSelection& selection)
+void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* coreObject, const AXTextStateChangeIntent&, const VisibleSelection& selection)
 {
     if (!coreObject)
         coreObject = rootWebArea();
@@ -190,7 +190,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     }
 }
 
-void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCoreObject* coreObject, const String& deletedText, const String& insertedText, HTMLTextFormControlElement&)
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* coreObject, const String& deletedText, const String& insertedText, HTMLTextFormControlElement&)
 {
     if (!coreObject)
         coreObject = rootWebArea();
@@ -211,7 +211,7 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCore
         wrapper->textInserted(insertedText, coreObject->visiblePositionForIndex(insertedText.length()));
 }
 
-void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* coreObject, AXTextEditType, const String& deletedText, AXTextEditType, const String& insertedText, const VisiblePosition& position)
+void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* coreObject, AXTextEditType, const String& deletedText, AXTextEditType, const String& insertedText, const VisiblePosition& position)
 {
     if (!coreObject)
         coreObject = rootWebArea();
