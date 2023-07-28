@@ -1188,27 +1188,27 @@ macro preOp(opcodeName, opcodeStruct, integerOperation)
 
 end
 
-llintOpWithReturn(op_to_number, OpToNumber, macro (size, get, dispatch, return)
+llintOpWithProfile(op_to_number, OpToNumber, macro (size, get, dispatch, return)
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t2)
-    bqaeq t2, numberTag, .opToNumberIsInt
+    bqaeq t2, numberTag, .opToNumberIsImmediate
     btqz t2, numberTag, .opToNumberSlow
-    updateUnaryArithProfile(size, OpToNumber, ArithProfileNumber, t5, t3)
-.opToNumberIsInt:
+.opToNumberIsImmediate:
     return(t2)
+
 .opToNumberSlow:
     callSlowPath(_slow_path_to_number)
     dispatch()
 end)
 
-llintOpWithReturn(op_to_numeric, OpToNumeric, macro (size, get, dispatch, return)
+llintOpWithProfile(op_to_numeric, OpToNumeric, macro (size, get, dispatch, return)
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t2)
-    bqaeq t2, numberTag, .opToNumericIsInt
+    bqaeq t2, numberTag, .opToNumericIsImmediate
     btqz t2, numberTag, .opToNumericSlow
-    updateUnaryArithProfile(size, OpToNumber, ArithProfileNumber, t5, t3)
-.opToNumericIsInt:
+.opToNumericIsImmediate:
     return(t2)
+
 .opToNumericSlow:
     callSlowPath(_slow_path_to_numeric)
     dispatch()

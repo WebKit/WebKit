@@ -118,7 +118,7 @@ bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
     // The flags of ArithNegate are basic in DFG.
     // We only need to know if we ever produced a number.
     if (shouldEmitProfiling && arithProfile && !arithProfile->argObservedType().sawNumber() && !arithProfile->didObserveDouble())
-        arithProfile->emitSetDouble(jit, m_scratchGPR);
+        arithProfile->emitSetDouble(jit);
     return true;
 }
 

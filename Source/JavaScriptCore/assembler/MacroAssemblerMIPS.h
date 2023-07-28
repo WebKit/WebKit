@@ -515,13 +515,6 @@ public:
         }
     }
 
-    void or16(RegisterID mask, AbsoluteAddress dest)
-    {
-        load16(dest.m_ptr, immTempRegister);
-        or32(mask, immTempRegister);
-        store16(immTempRegister, dest.m_ptr);
-    }
-
     void or32(RegisterID src, RegisterID dest)
     {
         m_assembler.orInsn(dest, dest, src);

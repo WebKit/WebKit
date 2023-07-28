@@ -1641,10 +1641,10 @@ RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, R
         emitUnaryOp<OpBitnot>(dst, src);
         break;
     case op_to_number:
-        OpToNumber::emit(this, dst, src, m_codeBlock->addUnaryArithProfile());
+        emitUnaryOp<OpToNumber>(dst, src);
         break;
     case op_to_numeric:
-        OpToNumeric::emit(this, dst, src, m_codeBlock->addUnaryArithProfile());
+        emitUnaryOp<OpToNumeric>(dst, src);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -1713,14 +1713,12 @@ RegisterID* BytecodeGenerator::emitToObject(RegisterID* dst, RegisterID* src, co
 
 RegisterID* BytecodeGenerator::emitToNumber(RegisterID* dst, RegisterID* src)
 {
-    OpToNumber::emit(this, dst, src, m_codeBlock->addUnaryArithProfile());
-    return dst;
+    return emitUnaryOp<OpToNumber>(dst, src);
 }
 
 RegisterID* BytecodeGenerator::emitToNumeric(RegisterID* dst, RegisterID* src)
 {
-    OpToNumeric::emit(this, dst, src, m_codeBlock->addUnaryArithProfile());
-    return dst;
+    return emitUnaryOp<OpToNumeric>(dst, src);
 }
 
 RegisterID* BytecodeGenerator::emitToString(RegisterID* dst, RegisterID* src)

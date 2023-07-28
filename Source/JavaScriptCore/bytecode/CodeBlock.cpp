@@ -477,6 +477,8 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpGetByValWithThis, profile)
         LINK(OpGetPrototypeOf, profile)
         LINK(OpGetFromArguments, profile)
+        LINK(OpToNumber, profile)
+        LINK(OpToNumeric, profile)
         LINK(OpToObject, profile)
         LINK(OpGetArgument, profile)
         LINK(OpGetInternalField, profile)
@@ -3296,15 +3298,14 @@ UnaryArithProfile* CodeBlock::unaryArithProfileForBytecodeIndex(BytecodeIndex by
 BinaryArithProfile* CodeBlock::binaryArithProfileForPC(const JSInstruction* pc)
 {
     switch (pc->opcodeID()) {
-
-#define CASE(Op) \
-    case Op::opcodeID: \
-        return &unlinkedCodeBlock()->binaryArithProfile(pc->as<Op>().m_profileIndex);
-
-        FOR_EACH_OPCODE_WITH_BINARY_ARITH_PROFILE(CASE)
-
-#undef CASE
-
+    case op_add:
+        return &unlinkedCodeBlock()->binaryArithProfile(pc->as<OpAdd>().m_profileIndex);
+    case op_mul:
+        return &unlinkedCodeBlock()->binaryArithProfile(pc->as<OpMul>().m_profileIndex);
+    case op_sub:
+        return &unlinkedCodeBlock()->binaryArithProfile(pc->as<OpSub>().m_profileIndex);
+    case op_div:
+        return &unlinkedCodeBlock()->binaryArithProfile(pc->as<OpDiv>().m_profileIndex);
     default:
         break;
     }
@@ -3315,19 +3316,17 @@ BinaryArithProfile* CodeBlock::binaryArithProfileForPC(const JSInstruction* pc)
 UnaryArithProfile* CodeBlock::unaryArithProfileForPC(const JSInstruction* pc)
 {
     switch (pc->opcodeID()) {
-
-#define CASE(Op) \
-    case Op::opcodeID: \
-        return &unlinkedCodeBlock()->unaryArithProfile(pc->as<Op>().m_profileIndex);
-
-        FOR_EACH_OPCODE_WITH_UNARY_ARITH_PROFILE(CASE)
-
-#undef CASE
-
+    case op_negate:
+        return &unlinkedCodeBlock()->unaryArithProfile(pc->as<OpNegate>().m_profileIndex);
+    case op_inc:
+        return &unlinkedCodeBlock()->unaryArithProfile(pc->as<OpInc>().m_profileIndex);
+    case op_dec:
+        return &unlinkedCodeBlock()->unaryArithProfile(pc->as<OpDec>().m_profileIndex);
     default:
-        return nullptr;
-
+        break;
     }
+
+    return nullptr;
 }
 
 bool CodeBlock::couldTakeSpecialArithFastCase(BytecodeIndex bytecodeIndex)

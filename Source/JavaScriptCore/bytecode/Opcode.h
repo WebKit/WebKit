@@ -110,6 +110,8 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpGetByValWithThis) \
     macro(OpGetPrototypeOf) \
     macro(OpGetFromArguments) \
+    macro(OpToNumber) \
+    macro(OpToNumeric) \
     macro(OpToObject) \
     macro(OpGetArgument) \
     macro(OpGetInternalField) \
@@ -173,8 +175,6 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpInc) \
     macro(OpDec) \
     macro(OpNegate) \
-    macro(OpToNumber) \
-    macro(OpToNumeric) \
 
 
 IGNORE_WARNINGS_BEGIN("type-limits")

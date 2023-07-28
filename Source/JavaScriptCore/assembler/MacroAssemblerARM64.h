@@ -1073,13 +1073,6 @@ public:
         }
     }
 
-    void or16(RegisterID mask, AbsoluteAddress address)
-    {
-        load16(address.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
-        m_assembler.orr<32>(dataTempRegister, dataTempRegister, mask);
-        store16(dataTempRegister, address.m_ptr);
-    }
-
     void or32(RegisterID src, RegisterID dest)
     {
         or32(dest, src, dest);

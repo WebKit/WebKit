@@ -1113,12 +1113,11 @@ macro preOp(opcodeName, opcodeStruct, integerOperation)
 end
 
 
-llintOpWithReturn(op_to_number, OpToNumber, macro (size, get, dispatch, return)
+llintOpWithProfile(op_to_number, OpToNumber, macro (size, get, dispatch, return)
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t2, t3)
     bieq t2, Int32Tag, .opToNumberIsInt
     biaeq t2, LowestTag, .opToNumberSlow
-    updateUnaryArithProfile(size, OpToNumber, ArithProfileNumber, t5, t1)
 .opToNumberIsInt:
     return(t2, t3)
 
@@ -1127,12 +1126,11 @@ llintOpWithReturn(op_to_number, OpToNumber, macro (size, get, dispatch, return)
     dispatch()
 end)
 
-llintOpWithReturn(op_to_numeric, OpToNumeric, macro (size, get, dispatch, return)
+llintOpWithProfile(op_to_numeric, OpToNumeric, macro (size, get, dispatch, return)
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t2, t3)
     bieq t2, Int32Tag, .opToNumericIsInt
     biaeq t2, LowestTag, .opToNumericSlow
-    updateUnaryArithProfile(size, OpToNumber, ArithProfileNumber, t5, t1)
 .opToNumericIsInt:
     return(t2, t3)
 

@@ -3530,7 +3530,7 @@ private:
 
         // At first, attempt to fold Boolean or Int32 to Int32.
         if (node->child1()->shouldSpeculateInt32OrBoolean()) {
-            if ((node->op() == CallNumberConstructor && isInt32Speculation(node->getHeapPrediction())) || (!node->mayHaveDoubleResult() && !node->mayHaveBigIntResult())) {
+            if (isInt32Speculation(node->getHeapPrediction())) {
                 fixIntOrBooleanEdge(node->child1());
                 node->convertToIdentity();
                 return;
@@ -3539,7 +3539,7 @@ private:
 
         // If the prediction of the child is Number, we attempt to convert ToNumber to Identity.
         if (node->child1()->shouldSpeculateNumber()) {
-            if ((node->op() == CallNumberConstructor && isInt32Speculation(node->getHeapPrediction())) || (!node->mayHaveDoubleResult() && !node->mayHaveBigIntResult())) {
+            if (isInt32Speculation(node->getHeapPrediction())) {
                 // If the both predictions of this node and the child is Int32, we just convert ToNumber to Identity, that's simple.
                 if (node->child1()->shouldSpeculateInt32()) {
                     fixEdge<Int32Use>(node->child1());

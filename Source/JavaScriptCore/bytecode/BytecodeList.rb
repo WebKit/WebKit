@@ -278,6 +278,19 @@ op :to_object,
         profile: ValueProfile,
     }
 
+op_group :ValueProfiledUnaryOp,
+    [
+        :to_number,
+        :to_numeric,
+    ],
+    args: {
+        dst: VirtualRegister,
+        operand: VirtualRegister,
+    },
+    metadata: {
+        profile: ValueProfile,
+    }
+
 op :tail_call,
     args: {
         dst: VirtualRegister,
@@ -1365,17 +1378,6 @@ op :has_structure_with_flags,
         dst: VirtualRegister,
         operand: VirtualRegister,
         flags: unsigned,
-    }
-
-op_group :ProfiledUnaryOp,
-    [
-        :to_number,
-        :to_numeric,
-    ],
-    args: {
-        dst: VirtualRegister,
-        operand: VirtualRegister,
-        profileIndex: unsigned,
     }
 
 end_section :Bytecode
