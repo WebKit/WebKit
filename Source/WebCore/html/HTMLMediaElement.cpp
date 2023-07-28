@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2014 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -4825,6 +4825,22 @@ void HTMLMediaElement::didRemoveTextTrack(HTMLTrackElement& trackElement)
     m_textTracksWhenResourceSelectionBegan.removeFirst(&textTrack);
 }
 
+void HTMLMediaElement::configureMetadataTextTrackGroup(const TrackGroup& group)
+{
+    ASSERT(group.tracks.size());
+    // https://html.spec.whatwg.org/multipage/embedded-content.html#honor-user-preferences-for-automatic-text-track-selection
+    // 3. If there are any text tracks in the media element's list of text tracks whose text track kind is
+    // chapters or metadata that correspond to track elements with a default attribute set whose text track mode
+    // is set to disabled, then set the text track mode of all such tracks to hidden.
+    for (auto& textTrack : group.tracks) {
+        if (textTrack->mode() != TextTrack::Mode::Disabled)
+            continue;
+        if (!textTrack->isDefault())
+            continue;
+        textTrack->setMode(TextTrack::Mode::Hidden);
+    }
+}
+
 void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
 {
     ASSERT(group.tracks.size());
@@ -5179,7 +5195,7 @@ void HTMLMediaElement::configureTextTracks()
     if (chapterTracks.tracks.size())
         configureTextTrackGroup(chapterTracks);
     if (metadataTracks.tracks.size())
-        configureTextTrackGroup(metadataTracks);
+        configureMetadataTextTrackGroup(metadataTracks);
     if (otherTracks.tracks.size())
         configureTextTrackGroup(otherTracks);
 
