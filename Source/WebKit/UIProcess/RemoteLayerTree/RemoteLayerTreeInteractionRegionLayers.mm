@@ -42,6 +42,8 @@ NSString *interactionRegionTypeKey = @"WKInteractionRegionType";
 NSString *interactionRegionGroupNameKey = @"WKInteractionRegionGroupName";
 
 #if PLATFORM(VISION)
+RCPRemoteEffectInputTypes interactionRegionInputTypes = RCPRemoteEffectInputTypesAll ^ RCPRemoteEffectInputTypePointer;
+
 static Class interactionRegionLayerClass()
 {
     return [RCPGlowEffectLayer class];
@@ -52,10 +54,20 @@ static NSDictionary *interactionRegionEffectUserInfo()
     static NeverDestroyed<RetainPtr<NSDictionary>> interactionRegionEffectUserInfo;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        RCPRemoteEffectInputTypes allowedInputs = RCPRemoteEffectInputTypesAll ^ RCPRemoteEffectInputTypePointer;
-        interactionRegionEffectUserInfo.get() = @{ RCPAllowedInputTypesUserInfoKey: @(allowedInputs) };
+        interactionRegionEffectUserInfo.get() = @{ RCPAllowedInputTypesUserInfoKey: @(interactionRegionInputTypes) };
     });
     return interactionRegionEffectUserInfo.get().get();
+}
+
+static float brightnessMultiplier()
+{
+    static float multiplier = 1.5;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (auto brightnessUserDefault = [[NSUserDefaults standardUserDefaults] floatForKey:@"WKInteractionRegionBrightnessMultiplier"])
+            multiplier = brightnessUserDefault;
+    });
+    return multiplier;
 }
 
 static void configureLayerForInteractionRegion(CALayer *layer, NSString *groupName)
@@ -63,6 +75,7 @@ static void configureLayerForInteractionRegion(CALayer *layer, NSString *groupNa
     if (![layer isKindOfClass:[RCPGlowEffectLayer class]])
         return;
 
+    [(RCPGlowEffectLayer *)layer setBrightnessMultiplier:brightnessMultiplier() forInputTypes:interactionRegionInputTypes];
     [(RCPGlowEffectLayer *)layer setEffectGroupConfigurator:^void(CARemoteEffectGroup *group)
     {
         group.groupName = groupName;
