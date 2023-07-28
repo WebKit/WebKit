@@ -261,8 +261,10 @@ void HTMLOptionElement::childrenChanged(const ChildChange& change)
     for (auto& dataList : ancestors)
         dataList->optionElementChildrenChanged();
 #endif
-    if (RefPtr select = ownerSelectElement())
-        select->optionElementChildrenChanged();
+    if (change.source != ChildChange::Source::Clone) {
+        if (RefPtr select = ownerSelectElement())
+            select->optionElementChildrenChanged();
+    }
     HTMLElement::childrenChanged(change);
 }
 
