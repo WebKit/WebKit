@@ -19,4 +19,6 @@ PASS cookieStore.set default path is /
 PASS cookieStore.set adds / to path that does not end with /
 PASS cookieStore.set with path that does not start with /
 PASS cookieStore.set with get result
+PASS cookieStore.set checks if the path is too long
+PASS cookieStore.set checks if the domain is too long
 
