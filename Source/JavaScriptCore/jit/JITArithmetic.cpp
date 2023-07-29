@@ -627,6 +627,11 @@ void JIT::emitBitBinaryOpFastPath(const JSInstruction* currentInstruction)
     SnippetOperand leftOperand;
     SnippetOperand rightOperand;
 
+    if constexpr (Op::opcodeID == op_bitand || Op::opcodeID == op_bitor || Op::opcodeID == op_bitxor) {
+        leftOperand = SnippetOperand(bytecode.m_operandTypes.first());
+        rightOperand = SnippetOperand(bytecode.m_operandTypes.second());
+    }
+
     if (isOperandConstantInt(op1))
         leftOperand.setConstInt32(getOperandConstantInt(op1));
     else if (isOperandConstantInt(op2))
