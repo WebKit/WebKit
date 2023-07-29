@@ -129,7 +129,6 @@ using namespace WebCore;
 namespace WebCore {
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 bool ScreenCaptureKitCaptureSource::isAvailable()
 {
@@ -266,8 +265,6 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
     if (m_streamConfiguration)
         return m_streamConfiguration;
 
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-
     m_streamConfiguration = adoptNS([PAL::allocSCStreamConfigurationInstance() init]);
     [m_streamConfiguration setPixelFormat:preferedPixelBufferFormat()];
     [m_streamConfiguration setShowsCursor:YES];
@@ -391,6 +388,8 @@ void ScreenCaptureKitCaptureSource::commitConfiguration(const RealtimeMediaSourc
     m_height = settings.height();
     m_frameRate = settings.frameRate();
 
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, IntSize(m_width, m_height), ", ", m_frameRate);
+
     if (!contentStream())
         return;
 
@@ -479,7 +478,6 @@ std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::windowCaptureDeviceW
     return CaptureDevice(String::number(windowID.value()), CaptureDevice::DeviceType::Window, emptyString(), emptyString(), true);
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 } // namespace WebCore

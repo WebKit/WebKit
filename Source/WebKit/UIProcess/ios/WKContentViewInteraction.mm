@@ -192,6 +192,10 @@
 #import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/ios/DataDetectorsUISoftLink.h>
 
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+#define UIWKDocumentRequestAutocorrectedRanges (1 << 7)
+#endif
+
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
 #endif
@@ -5733,8 +5737,13 @@ static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedStrin
 
     Vector<WebCore::CompositionUnderline> underlines;
     [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&underlines](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
-        bool thick = attributes[NSBackgroundColorAttributeName];
-        underlines.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), WebCore::CompositionUnderlineColor::GivenColor, WebCore::Color::black, thick });
+        underlines.append({
+            static_cast<unsigned>(range.location),
+            static_cast<unsigned>(NSMaxRange(range)),
+            WebCore::CompositionUnderlineColor::GivenColor,
+            WebCore::Color::black,
+            [attributes[NSUnderlineStyleAttributeName] isEqual:@(NSUnderlineStyleThick)] || attributes[NSBackgroundColorAttributeName]
+        });
     }];
 
     std::sort(underlines.begin(), underlines.end(), [](auto& a, auto& b) {
@@ -9613,6 +9622,10 @@ static inline OptionSet<WebKit::DocumentEditingContextRequest::Options> toWebDoc
         options.add(WebKit::DocumentEditingContextRequest::Options::MarkedTextRects);
     if (flags & UIWKDocumentRequestSpatialAndCurrentSelection)
         options.add(WebKit::DocumentEditingContextRequest::Options::SpatialAndCurrentSelection);
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    if (flags & UIWKDocumentRequestAutocorrectedRanges)
+        options.add(WebKit::DocumentEditingContextRequest::Options::AutocorrectedRanges);
+#endif
 
     return options;
 }

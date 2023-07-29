@@ -566,10 +566,8 @@ void RemoteLayerBackingStore::paintContents()
 
         BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), displayListContext);
         drawInContext(context, [&] {
-#if HAVE(CG_DISPLAY_LIST_RESPECTING_CONTENTS_FLIPPED)
             displayListContext.scale(FloatSize(1, -1));
             displayListContext.translate(0, -m_parameters.size.height());
-#endif
         });
         return;
     }

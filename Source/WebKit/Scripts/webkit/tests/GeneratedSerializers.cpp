@@ -126,9 +126,7 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(Encoder& encoder
 #if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
 #endif
-    encoder << !!instance.nullableTestMember;
-    if (!!instance.nullableTestMember)
-        encoder << instance.nullableTestMember;
+    encoder << instance.nullableTestMember;
 }
 
 void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& encoder, const Namespace::Subnamespace::StructName& instance)
@@ -157,9 +155,7 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& en
 #if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
 #endif
-    encoder << !!instance.nullableTestMember;
-    if (!!instance.nullableTestMember)
-        encoder << instance.nullableTestMember;
+    encoder << instance.nullableTestMember;
 }
 
 std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subnamespace::StructName>::decode(Decoder& decoder)
@@ -168,14 +164,7 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
 #if ENABLE(SECOND_MEMBER)
     auto secondMemberName = decoder.decode<SecondMemberType>();
 #endif
-    auto hasnullableTestMember = decoder.decode<bool>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    std::optional<RetainPtr<CFTypeRef>> nullableTestMember;
-    if (*hasnullableTestMember) {
-        nullableTestMember = decoder.decode<RetainPtr<CFTypeRef>>();
-    } else
-        nullableTestMember = std::optional<RetainPtr<CFTypeRef>> { RetainPtr<CFTypeRef> { } };
+    auto nullableTestMember = decoder.decode<RetainPtr<CFTypeRef>>();
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {
@@ -257,6 +246,15 @@ void ArgumentCoder<Namespace::EmptyConstructorStruct>::encode(Encoder& encoder, 
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_int)>, int>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_double)>, double>);
+    struct ShouldBeSameSizeAsEmptyConstructorStruct : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::EmptyConstructorStruct>, false> {
+        int m_int;
+        double m_double;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsEmptyConstructorStruct) == sizeof(Namespace::EmptyConstructorStruct));
+    static_assert(MembersInCorrectOrder<0
+        , offsetof(Namespace::EmptyConstructorStruct, m_int)
+        , offsetof(Namespace::EmptyConstructorStruct, m_double)
+    >::value);
     encoder << instance.m_int;
     encoder << instance.m_double;
 }
@@ -531,40 +529,31 @@ std::optional<WebCore::FloatBoxExtent> ArgumentCoder<WebCore::FloatBoxExtent>::d
     };
 }
 
-void ArgumentCoder<NullableSoftLinkedMember>::encode(Encoder& encoder, const NullableSoftLinkedMember& instance)
+void ArgumentCoder<SoftLinkedMember>::encode(Encoder& encoder, const SoftLinkedMember& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.firstMember)>, RetainPtr<DDActionContext>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.secondMember)>, RetainPtr<DDActionContext>>);
-    struct ShouldBeSameSizeAsNullableSoftLinkedMember : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<NullableSoftLinkedMember>, false> {
+    struct ShouldBeSameSizeAsSoftLinkedMember : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<SoftLinkedMember>, false> {
         RetainPtr<DDActionContext> firstMember;
         RetainPtr<DDActionContext> secondMember;
     };
-    static_assert(sizeof(ShouldBeSameSizeAsNullableSoftLinkedMember) == sizeof(NullableSoftLinkedMember));
+    static_assert(sizeof(ShouldBeSameSizeAsSoftLinkedMember) == sizeof(SoftLinkedMember));
     static_assert(MembersInCorrectOrder<0
-        , offsetof(NullableSoftLinkedMember, firstMember)
-        , offsetof(NullableSoftLinkedMember, secondMember)
+        , offsetof(SoftLinkedMember, firstMember)
+        , offsetof(SoftLinkedMember, secondMember)
     >::value);
-    encoder << !!instance.firstMember;
-    if (!!instance.firstMember)
-        encoder << instance.firstMember;
+    encoder << instance.firstMember;
     encoder << instance.secondMember;
 }
 
-std::optional<NullableSoftLinkedMember> ArgumentCoder<NullableSoftLinkedMember>::decode(Decoder& decoder)
+std::optional<SoftLinkedMember> ArgumentCoder<SoftLinkedMember>::decode(Decoder& decoder)
 {
-    auto hasfirstMember = decoder.decode<bool>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    std::optional<RetainPtr<DDActionContext>> firstMember;
-    if (*hasfirstMember) {
-        firstMember = IPC::decode<DDActionContext>(decoder, PAL::getDDActionContextClass());
-    } else
-        firstMember = std::optional<RetainPtr<DDActionContext>> { RetainPtr<DDActionContext> { } };
-    auto secondMember = IPC::decode<DDActionContext>(decoder, PAL::getDDActionContextClass());
+    auto firstMember = IPC::decode<DDActionContext>(decoder, @[ PAL::getDDActionContextClass() ]);
+    auto secondMember = IPC::decode<DDActionContext>(decoder, @[ PAL::getDDActionContextClass() ]);
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {
-        NullableSoftLinkedMember {
+        SoftLinkedMember {
             WTFMove(*firstMember),
             WTFMove(*secondMember)
         }
@@ -761,22 +750,13 @@ void ArgumentCoder<WebCore::MoveOnlyDerivedClass>::encode(Encoder& encoder, WebC
         , offsetof(WebCore::MoveOnlyDerivedClass, firstMember)
         , offsetof(WebCore::MoveOnlyDerivedClass, secondMember)
     >::value);
-    encoder << !!instance.firstMember;
-    if (!!instance.firstMember)
-        encoder << WTFMove(instance.firstMember);
+    encoder << WTFMove(instance.firstMember);
     encoder << WTFMove(instance.secondMember);
 }
 
 std::optional<WebCore::MoveOnlyDerivedClass> ArgumentCoder<WebCore::MoveOnlyDerivedClass>::decode(Decoder& decoder)
 {
-    auto hasfirstMember = decoder.decode<bool>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    std::optional<int> firstMember;
-    if (*hasfirstMember) {
-        firstMember = decoder.decode<int>();
-    } else
-        firstMember = std::optional<int> { int { } };
+    auto firstMember = decoder.decode<int>();
     auto secondMember = decoder.decode<int>();
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;

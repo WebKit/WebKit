@@ -32,7 +32,13 @@
 #import "RemoteLayerTreeHost.h"
 
 #if PLATFORM(VISION)
-#import "RealitySystemSupportSPI.h"
+
+#import <RealitySystemSupport/RealitySystemSupport.h>
+#import <wtf/SoftLinking.h>
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(RealitySystemSupport)
+SOFT_LINK_CLASS_OPTIONAL(RealitySystemSupport, RCPGlowEffectLayer)
+SOFT_LINK_CONSTANT_MAY_FAIL(RealitySystemSupport, RCPAllowedInputTypesUserInfoKey, const NSString *)
+
 #endif
 
 namespace WebKit {
@@ -42,9 +48,13 @@ NSString *interactionRegionTypeKey = @"WKInteractionRegionType";
 NSString *interactionRegionGroupNameKey = @"WKInteractionRegionGroupName";
 
 #if PLATFORM(VISION)
+RCPRemoteEffectInputTypes interactionRegionInputTypes = RCPRemoteEffectInputTypesAll ^ RCPRemoteEffectInputTypePointer;
+
 static Class interactionRegionLayerClass()
 {
-    return [RCPGlowEffectLayer class];
+    if (getRCPGlowEffectLayerClass())
+        return getRCPGlowEffectLayerClass();
+    return [CALayer class];
 }
 
 static NSDictionary *interactionRegionEffectUserInfo()
@@ -52,17 +62,29 @@ static NSDictionary *interactionRegionEffectUserInfo()
     static NeverDestroyed<RetainPtr<NSDictionary>> interactionRegionEffectUserInfo;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        RCPRemoteEffectInputTypes allowedInputs = RCPRemoteEffectInputTypesAll ^ RCPRemoteEffectInputTypePointer;
-        interactionRegionEffectUserInfo.get() = @{ RCPAllowedInputTypesUserInfoKey: @(allowedInputs) };
+        if (canLoadRCPAllowedInputTypesUserInfoKey())
+            interactionRegionEffectUserInfo.get() = @{ getRCPAllowedInputTypesUserInfoKey(): @(interactionRegionInputTypes) };
     });
     return interactionRegionEffectUserInfo.get().get();
 }
 
+static float brightnessMultiplier()
+{
+    static float multiplier = 1.5;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (auto brightnessUserDefault = [[NSUserDefaults standardUserDefaults] floatForKey:@"WKInteractionRegionBrightnessMultiplier"])
+            multiplier = brightnessUserDefault;
+    });
+    return multiplier;
+}
+
 static void configureLayerForInteractionRegion(CALayer *layer, NSString *groupName)
 {
-    if (![layer isKindOfClass:[RCPGlowEffectLayer class]])
+    if (![layer isKindOfClass:getRCPGlowEffectLayerClass()])
         return;
 
+    [(RCPGlowEffectLayer *)layer setBrightnessMultiplier:brightnessMultiplier() forInputTypes:interactionRegionInputTypes];
     [(RCPGlowEffectLayer *)layer setEffectGroupConfigurator:^void(CARemoteEffectGroup *group)
     {
         group.groupName = groupName;

@@ -214,7 +214,7 @@ void LocalFrameViewLayoutContext::performLayout()
     }
 
     LayoutScope layoutScope(*this);
-    TraceScope tracingScope(LayoutStart, LayoutEnd);
+    TraceScope tracingScope(PerformLayoutStart, PerformLayoutEnd);
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     InspectorInstrumentation::willLayout(downcast<LocalFrame>(view().frame()));
     WeakPtr<RenderElement> layoutRoot;
@@ -254,6 +254,7 @@ void LocalFrameViewLayoutContext::performLayout()
         m_firstLayout = false;
     }
     {
+        TraceScope tracingScope(RenderTreeLayoutStart, RenderTreeLayoutEnd);
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InRenderTreeLayout);
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(subtreeLayoutRoot());

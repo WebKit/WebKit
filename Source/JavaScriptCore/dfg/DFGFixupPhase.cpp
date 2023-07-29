@@ -3537,6 +3537,13 @@ private:
             }
         }
 
+        if (node->child1()->shouldSpeculateInt52()) {
+            fixEdge<Int52RepUse>(node->child1());
+            node->convertToIdentity();
+            node->setResult(NodeResultInt52);
+            return;
+        }
+
         // If the prediction of the child is Number, we attempt to convert ToNumber to Identity.
         if (node->child1()->shouldSpeculateNumber()) {
             if ((node->op() == CallNumberConstructor && isInt32Speculation(node->getHeapPrediction())) || (!node->mayHaveDoubleResult() && !node->mayHaveBigIntResult())) {

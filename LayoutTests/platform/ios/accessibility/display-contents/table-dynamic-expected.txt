@@ -1,0 +1,104 @@
+This test ensures that display:contents tables with dynamic content are accessible.
+
+Dumping table #t0 (expecting row count 3, column count 2)
+PASS: table.rowCount === 3
+PASS: table.columnCount === 2
+PASS: table.cellForColumnAndRow(0, 0).domIdentifier === "r0c0-t0"
+PASS: table.cellForColumnAndRow(1, 0).domIdentifier === "r0c1-t0"
+PASS: table.cellForColumnAndRow(0, 1).domIdentifier === "r1c0-t0"
+PASS: table.cellForColumnAndRow(1, 1).domIdentifier === "r1c1-t0"
+PASS: table.cellForColumnAndRow(0, 2).domIdentifier === "r2c0-t0"
+PASS: table.cellForColumnAndRow(1, 2).domIdentifier === "r2c1-t0"
+Dumping table #t1 (expecting row count 3, column count 2)
+PASS: table.rowCount === 3
+PASS: table.columnCount === 2
+PASS: table.cellForColumnAndRow(0, 0).domIdentifier === "r0c0-t1"
+PASS: table.cellForColumnAndRow(1, 0).domIdentifier === "r0c1-t1"
+PASS: table.cellForColumnAndRow(0, 1).domIdentifier === "r1c0-t1"
+PASS: table.cellForColumnAndRow(1, 1).domIdentifier === "r1c1-t1"
+PASS: table.cellForColumnAndRow(0, 2).domIdentifier === "r2c0-t1"
+PASS: table.cellForColumnAndRow(1, 2).domIdentifier === "r2c1-t1"
+
+Performing search traversal of body.
+
+{StaticText AXLabel: (T0) Author}
+
+{StaticText AXLabel: (T0) Title}
+
+{StaticText AXLabel: (T0) Stephen Hawking}
+
+{StaticText AXLabel: (T0) A Brief History of Time}
+
+{StaticText AXLabel: (T0) Carl Sagan}
+
+{StaticText AXLabel: (T0) Cosmos}
+
+{StaticText AXLabel: (T1) Author}
+
+{StaticText AXLabel: (T1) Title}
+
+{StaticText AXLabel: (T1) Stephen Hawking}
+
+{StaticText AXLabel: (T1) A Brief History of Time}
+
+{StaticText AXLabel: (T1) Carl Sagan}
+
+{StaticText AXLabel: (T1) Cosmos}
+
+Moving #r2-t1 from table one to table zero.
+Dumping table #t0 (expecting row count 4, column count 2)
+PASS: table.rowCount === 4
+PASS: table.columnCount === 2
+table.cellForColumnAndRow(0, 0).domIdentifier is r0c0-t0
+table.cellForColumnAndRow(1, 0).domIdentifier is r0c1-t0
+table.cellForColumnAndRow(0, 1).domIdentifier is r1c0-t0
+table.cellForColumnAndRow(1, 1).domIdentifier is r1c1-t0
+table.cellForColumnAndRow(0, 2).domIdentifier is r2c0-t0
+table.cellForColumnAndRow(1, 2).domIdentifier is r2c1-t0
+table.cellForColumnAndRow(0, 3).domIdentifier is r2c0-t1
+table.cellForColumnAndRow(1, 3).domIdentifier is r2c1-t1
+Dumping table #t1 (expecting row count 2, column count 2)
+PASS: table.rowCount === 2
+PASS: table.columnCount === 2
+PASS: table.cellForColumnAndRow(0, 0).domIdentifier === "r0c0-t1"
+PASS: table.cellForColumnAndRow(1, 0).domIdentifier === "r0c1-t1"
+PASS: table.cellForColumnAndRow(0, 1).domIdentifier === "r1c0-t1"
+PASS: table.cellForColumnAndRow(1, 1).domIdentifier === "r1c1-t1"
+
+Performing search traversal of body.
+
+{StaticText AXLabel: (T0) Author}
+
+{StaticText AXLabel: (T0) Title}
+
+{StaticText AXLabel: (T0) Stephen Hawking}
+
+{StaticText AXLabel: (T0) A Brief History of Time}
+
+{StaticText AXLabel: (T0) Carl Sagan}
+
+{StaticText AXLabel: (T0) Cosmos}
+
+{StaticText AXLabel: (T1) Carl Sagan}
+
+{StaticText AXLabel: (T1) Cosmos}
+
+{StaticText AXLabel: (T1) Author}
+
+{StaticText AXLabel: (T1) Title}
+
+{StaticText AXLabel: (T1) Stephen Hawking}
+
+{StaticText AXLabel: (T1) A Brief History of Time}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Table zero caption
+(T0) Author (T0) Title
+(T0) Stephen Hawking (T0) A Brief History of Time
+(T0) Carl Sagan (T0) Cosmos
+(T1) Carl Sagan (T1) Cosmos
+Table one caption
+(T1) Author (T1) Title
+(T1) Stephen Hawking (T1) A Brief History of Time

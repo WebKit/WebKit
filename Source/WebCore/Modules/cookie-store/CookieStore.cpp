@@ -202,11 +202,15 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     }
 
     auto& document = *downcast<Document>(context);
+    auto& url = document.url();
     auto* page = document.page();
     if (!page) {
         promise->reject(SecurityError);
         return;
     }
+
+    // The maximum attribute value size is specified at https://wicg.github.io/cookie-store/#cookie-maximum-attribute-value-size.
+    static constexpr auto maximumAttributeValueSize = 1024;
 
     Cookie cookie;
     cookie.name = WTFMove(options.name);
@@ -214,7 +218,6 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     cookie.created = WallTime::now().secondsSinceEpoch().milliseconds();
 
     cookie.domain = options.domain.isNull() ? document.domain() : WTFMove(options.domain);
-    auto& url = document.url();
     if (!cookie.domain.isNull()) {
         if (cookie.domain.startsWith('.')) {
             promise->reject(Exception { TypeError, "The domain must not begin with a '.'"_s });
@@ -227,8 +230,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             return;
         }
 
-        // The maximum attribute value size is specified at https://wicg.github.io/cookie-store/#cookie-maximum-attribute-value-size.
-        static constexpr auto maximumAttributeValueSize = 1024;
+        // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
         if (cookie.domain.utf8().length() > maximumAttributeValueSize) {
             promise->reject(Exception { TypeError, makeString("The size of the domain must not be greater than ", maximumAttributeValueSize, " bytes") });
             return;
@@ -241,8 +243,15 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             promise->reject(Exception { TypeError, "The path must begin with a '/'"_s });
             return;
         }
+
         if (!cookie.path.endsWith('/'))
             cookie.path = cookie.path + '/';
+
+        // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
+        if (cookie.path.utf8().length() > maximumAttributeValueSize) {
+            promise->reject(Exception { TypeError, makeString("The size of the path must not be greater than ", maximumAttributeValueSize, " bytes") });
+            return;
+        }
     }
 
     if (options.expires)

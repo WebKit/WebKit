@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(VISION)
+#import "config.h"
 
-#if USE(APPLE_INTERNAL_SDK)
+#import "PlatformUtilities.h"
+#import "Test.h"
+#import <WebKit/WebNSURLExtras.h>
 
-#import <RealitySystemSupport/RealitySystemSupport.h>
+namespace TestWebKitAPI {
 
-#else
+TEST(WebKit, URLCanonicalization)
+{
+    NSURL *url = [NSURL URLWithString:@"http://a@/"];
+    EXPECT_NOT_NULL(url);
+    EXPECT_NULL([url _webkit_canonicalize_with_wtf]);
+}
 
-@interface CALayer ()
-@property (copy, nullable) NSArray<CARemoteEffect *> *remoteEffects;
-@end
+TEST(WebKit, SuggestedFilenameWithMIMEType)
+{
+    NSURL *url = [NSURL URLWithString:@"http://webkit.org/a"];
+    EXPECT_NOT_NULL(url);
 
-@interface RCPGLowEffectLayer : CALayer
-@property (nonatomic, copy) void (^effectGroupConfigurator)(CARemoteEffectGroup *group);
-@end
+    EXPECT_WK_STREQ([url _webkit_suggestedFilenameWithMIMEType:nil], @"a");
+    EXPECT_WK_STREQ([url _webkit_suggestedFilenameWithMIMEType:@"image/jpeg"], @"a.jpg");
+}
 
-@interface CARemoteEffect ()
-@end
-
-@interface CARemoteEffectGroup ()
-+ (instancetype)groupWithEffects:(NSArray<CARemoteEffect *> *)effects;
-@property (copy, nullable) NSString *groupName;
-@property (getter=isMatched) BOOL matched;
-@end
-
-typedef NS_OPTIONS(NSUInteger, RCPRemoteEffectInputTypes) {
-    RCPRemoteEffectInputTypePointer = 1 << 2,
-    RCPRemoteEffectInputTypesAll = ~0ul
-};
-
-NSString * const RCPAllowedInputTypesUserInfoKey = @"RCPAllowedInputTypesUserInfoKey";
-
-#endif // USE(APPLE_INTERNAL_SDK)
-
-#endif // PLATFORM(VISION)
+} // namespace TestWebKitAPI

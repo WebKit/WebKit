@@ -867,7 +867,6 @@ private:
     void endIgnoringTrackDisplayUpdateRequests();
 
     void updateActiveTextTrackCues(const MediaTime&);
-    HTMLTrackElement* showingTrackWithSameKind(HTMLTrackElement*) const;
 
     enum class CueAction : uint8_t { Enter, Exit };
     void executeCueEnterOrExitActionForTime(TextTrackCue&, CueAction);

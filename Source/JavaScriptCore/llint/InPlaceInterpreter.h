@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
 extern "C" void ipint_entry();
 
 #define IPINT_VALIDATE_DEFINE_FUNCTION(opcode, name) \
@@ -226,3 +228,5 @@ namespace JSC { namespace IPInt {
 void initialize();
 
 } }
+
+#endif // ENABLE(WEBASSEMBLY)

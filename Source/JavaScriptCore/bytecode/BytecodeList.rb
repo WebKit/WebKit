@@ -251,23 +251,6 @@ op :construct,
         profile: ValueProfile,
     }
 
-op_group :ValueProfiledBinaryOp,
-    [
-        :bitand,
-        :bitor,
-        :bitxor,
-        :lshift,
-        :rshift,
-    ],
-    args: {
-        dst: VirtualRegister,
-        lhs: VirtualRegister,
-        rhs: VirtualRegister,
-    },
-    metadata: {
-        profile: ValueProfile
-    }
-
 op :to_object,
     args: {
         dst: VirtualRegister,
@@ -364,15 +347,6 @@ op :create_promise,
     },
     metadata: {
         cachedCallee: WriteBarrier[JSCell]
-    }
-
-op :bitnot,
-    args: {
-        dst: VirtualRegister,
-        operand: VirtualRegister,
-    },
-    metadata: {
-        profile: ValueProfile
     }
 
 op :catch,
@@ -1255,12 +1229,15 @@ op_group :BinaryOp,
         rhs: VirtualRegister,
     }
 
-op_group :ProfiledBinaryOp,
+op_group :ProfiledBinaryOpWithOperandTypes,
     [
         :add,
         :mul,
         :div,
         :sub,
+        :bitand,
+        :bitor,
+        :bitxor,
     ],
     args: {
         dst: VirtualRegister,
@@ -1268,6 +1245,18 @@ op_group :ProfiledBinaryOp,
         rhs: VirtualRegister,
         profileIndex: unsigned,
         operandTypes: OperandTypes,
+    }
+
+op_group :ProfiledBinaryOp,
+    [
+        :lshift,
+        :rshift,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+        profileIndex: unsigned,
     }
 
 op_group :UnaryOp,
@@ -1371,6 +1360,7 @@ op_group :ProfiledUnaryOp,
     [
         :to_number,
         :to_numeric,
+        :bitnot,
     ],
     args: {
         dst: VirtualRegister,

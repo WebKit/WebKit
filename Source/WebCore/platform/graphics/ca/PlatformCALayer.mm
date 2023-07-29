@@ -185,6 +185,16 @@ void PlatformCALayer::clearContents()
     setContents(nullptr);
 }
 
+void PlatformCALayer::setMaskLayer(RefPtr<PlatformCALayer>&& layer)
+{
+    m_maskLayer = WTFMove(layer);
+}
+
+PlatformCALayer* PlatformCALayer::maskLayer() const
+{
+    return m_maskLayer.get();
+}
+
 void PlatformCALayer::setDelegatedContents(const PlatformCALayerDelegatedContents& contents)
 {
     auto surface = WebCore::IOSurface::createFromSendRight(MachSendRight { contents.surface });

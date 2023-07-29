@@ -213,17 +213,45 @@ private:
         }
 
         case ValueBitRShift:
-        case ValueBitLShift: {
+        case ValueBitLShift:
+        case ValueBitAnd:
+        case ValueBitOr:
+        case ValueBitXor: {
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
 
             if (left && right) {
                 if (isFullNumberOrBooleanSpeculationExpectingDefined(left) && isFullNumberOrBooleanSpeculationExpectingDefined(right))
                     changed |= mergePrediction(SpecInt32Only);
-                else
-                    changed |= mergePrediction(node->getHeapPrediction());
+                else {
+                    if (node->mayHaveBigIntResult())
+                        changed |= mergePrediction(SpecBigInt);
+                    else
+                        changed |= mergePrediction(SpecInt32Only);
+                }
             }
 
+            break;
+        }
+
+        case ValueBitNot: {
+            SpeculatedType prediction = node->child1()->prediction();
+            if (prediction) {
+                if (isFullNumberOrBooleanSpeculationExpectingDefined(prediction))
+                    changed |= mergePrediction(SpecInt32Only);
+#if USE(BIGINT32)
+                else if (m_graph.unaryArithShouldSpeculateBigInt32(node, m_pass))
+                    changed |= mergePrediction(SpecBigInt32);
+#endif
+                else if (isBigIntSpeculation(prediction))
+                    changed |= mergePrediction(SpecBigInt);
+                else {
+                    if (node->mayHaveBigIntResult())
+                        changed |= mergePrediction(SpecBigInt);
+                    else
+                        changed |= mergePrediction(SpecInt32Only);
+                }
+            }
             break;
         }
 
@@ -336,9 +364,7 @@ private:
         }
 
         case Inc:
-        case Dec:
-        case ToNumber:
-        case ToNumeric: {
+        case Dec: {
             SpeculatedType prediction = node->child1()->prediction();
 
             if (prediction) {
@@ -361,6 +387,37 @@ private:
                     if (node->mayHaveDoubleResult())
                         changed |= mergePrediction(SpecBytecodeDouble);
                     if (node->mayHaveBigIntResult())
+                        changed |= mergePrediction(SpecBigInt);
+                }
+            }
+            break;
+        }
+
+
+        case ToNumber:
+        case ToNumeric: {
+            SpeculatedType prediction = node->child1()->prediction();
+
+            if (prediction) {
+                if (isFullNumberOrBooleanSpeculationExpectingDefined(prediction)) {
+                    if (m_graph.unaryArithShouldSpeculateInt32(node, m_pass))
+                        changed |= mergePrediction(SpecInt32Only);
+                    else if (m_graph.unaryArithShouldSpeculateInt52(node, m_pass))
+                        changed |= mergePrediction(SpecInt52Any);
+                    else
+                        changed |= mergePrediction(speculatedDoubleTypeForPrediction(prediction));
+                }
+#if USE(BIGINT32)
+                else if (node->op() == ToNumeric && m_graph.unaryArithShouldSpeculateBigInt32(node, m_pass))
+                    changed |= mergePrediction(SpecBigInt32);
+#endif
+                else if (node->op() == ToNumeric && isBigIntSpeculation(prediction))
+                    changed |= mergePrediction(SpecBigInt);
+                else {
+                    changed |= mergePrediction(SpecInt32Only);
+                    if (node->mayHaveDoubleResult())
+                        changed |= mergePrediction(SpecBytecodeDouble);
+                    if (node->op() == ToNumeric && node->mayHaveBigIntResult())
                         changed |= mergePrediction(SpecBigInt);
                 }
             }
@@ -967,10 +1024,6 @@ private:
         case LoadValueFromMapBucket:
         case ToObject:
         case CallNumberConstructor:
-        case ValueBitAnd:
-        case ValueBitXor:
-        case ValueBitOr:
-        case ValueBitNot:
         case CallObjectConstructor:
         case GetArgument:
         case CallDOMGetter:
@@ -1372,8 +1425,14 @@ private:
         case ValuePow:
         case ValueBitLShift:
         case ValueBitRShift:
+        case ValueBitNot:
+        case ValueBitAnd:
+        case ValueBitOr:
+        case ValueBitXor:
         case Inc:
         case Dec:
+        case ToNumber:
+        case ToNumeric:
         case ArithAdd:
         case ArithSub:
         case ArithNegate:
@@ -1383,8 +1442,6 @@ private:
         case ArithDiv:
         case ArithMod:
         case ArithAbs:
-        case ToNumber:
-        case ToNumeric:
         case GetByVal:
         case ToThis:
         case ToPrimitive: 

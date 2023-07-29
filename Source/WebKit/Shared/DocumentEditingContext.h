@@ -48,6 +48,7 @@ struct DocumentEditingContextRequest {
         Annotation = 1 << 4,
         MarkedTextRects = 1 << 5,
         SpatialAndCurrentSelection = 1 << 6,
+        AutocorrectedRanges = 1 << 7,
     };
 
     OptionSet<Options> options;
@@ -82,6 +83,7 @@ struct DocumentEditingContext {
     };
 
     Vector<TextRectAndRange> textRects;
+    Vector<Range> autocorrectedRanges;
 };
 
 }
@@ -119,7 +121,8 @@ template<> struct EnumTraits<WebKit::DocumentEditingContextRequest::Options> {
         WebKit::DocumentEditingContextRequest::Options::Spatial,
         WebKit::DocumentEditingContextRequest::Options::Annotation,
         WebKit::DocumentEditingContextRequest::Options::MarkedTextRects,
-        WebKit::DocumentEditingContextRequest::Options::SpatialAndCurrentSelection
+        WebKit::DocumentEditingContextRequest::Options::SpatialAndCurrentSelection,
+        WebKit::DocumentEditingContextRequest::Options::AutocorrectedRanges
     >;
 };
 

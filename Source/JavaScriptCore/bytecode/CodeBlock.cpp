@@ -481,12 +481,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpGetArgument, profile)
         LINK(OpGetInternalField, profile)
         LINK(OpToThis, profile)
-        LINK(OpBitand, profile)
-        LINK(OpBitor, profile)
-        LINK(OpBitnot, profile)
-        LINK(OpBitxor, profile)
-        LINK(OpLshift, profile)
-        LINK(OpRshift, profile)
 
         LINK(OpGetById, profile)
 

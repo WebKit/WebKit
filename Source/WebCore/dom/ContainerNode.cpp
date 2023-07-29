@@ -203,6 +203,7 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
         // FIXME: Merge these two code paths. It's a bug in the parser not to update connectedSubframeCount in time.
         disconnectSubframesIfNeeded(*this, SubframeDisconnectPolicy::DescendantsOnly);
     } else {
+        ASSERT(source == ChildChange::Source::API);
         if (auto containerChild = dynamicDowncast<ContainerNode>(childToRemove))
             disconnectSubframesIfNeeded(*containerChild, SubframeDisconnectPolicy::RootAndDescendants);
     }
@@ -267,6 +268,13 @@ static ContainerNode::ChildChange makeChildChangeForInsertion(ContainerNode& con
         source,
         changeType == ContainerNode::ChildChange::Type::ElementInserted ? ContainerNode::ChildChange::AffectsElements::Yes : ContainerNode::ChildChange::AffectsElements::No
     };
+}
+
+enum class ClonedChildIncludesElements { No, Yes };
+static ContainerNode::ChildChange makeChildChangeForCloneInsertion(ClonedChildIncludesElements clonedChildIncludesElements)
+{
+    return { ContainerNode::ChildChange::Type::AllChildrenReplaced, nullptr, nullptr, nullptr, ContainerNode::ChildChange::Source::Clone,
+        clonedChildIncludesElements == ClonedChildIncludesElements::Yes ? ContainerNode::ChildChange::AffectsElements::Yes : ContainerNode::ChildChange::AffectsElements::No };
 }
 
 template<typename DOMInsertionWork>
@@ -896,11 +904,29 @@ void ContainerNode::childrenChanged(const ChildChange& change)
 void ContainerNode::cloneChildNodes(ContainerNode& clone)
 {
     Document& targetDocument = clone.document();
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+
+    NodeVector postInsertionNotificationTargets;
+    bool hadElement = false;
+    for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
         auto clonedChild = child->cloneNodeInternal(targetDocument, CloningOperation::SelfWithTemplateContent);
-        if (!clone.appendChild(clonedChild).hasException() && is<ContainerNode>(*child))
-            downcast<ContainerNode>(*child).cloneChildNodes(downcast<ContainerNode>(clonedChild.get()));
+        {
+            WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+            ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
+            clonedChild->setTreeScopeRecursively(clone.treeScope());
+
+            clone.appendChildCommon(clonedChild);
+            notifyChildNodeInserted(clone, clonedChild, postInsertionNotificationTargets);
+
+            hadElement = hadElement || is<Element>(clonedChild);
+        }
+        if (is<ContainerNode>(*child))
+            downcast<ContainerNode>(*child).cloneChildNodes(downcast<ContainerNode>(clonedChild));
     }
+    clone.childrenChanged(makeChildChangeForCloneInsertion(hadElement ? ClonedChildIncludesElements::Yes : ClonedChildIncludesElements::No));
+
+    for (auto& target : postInsertionNotificationTargets)
+        target->didFinishInsertingNode();
 }
 
 unsigned ContainerNode::countChildNodes() const

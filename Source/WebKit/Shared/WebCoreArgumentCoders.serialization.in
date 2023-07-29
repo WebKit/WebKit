@@ -3471,11 +3471,12 @@ struct WebCore::CookieRequestHeaderFieldProxy {
     WebCore::IncludeSecureCookies includeSecureCookies;
 };
 
-[RefCounted, CustomMemberLayout] class WebCore::FormData {
-    bool m_alwaysStream;
-    Vector<char> m_boundary;
+[RefCounted] class WebCore::FormData {
     Vector<WebCore::FormDataElement> m_elements;
     int64_t m_identifier;
+    bool m_alwaysStream;
+    Vector<char> m_boundary;
+    [NotSerialized] std::optional<uint64_t> m_lengthInBytes;
 };
 
 #if ENABLE(ASYNC_SCROLLING)

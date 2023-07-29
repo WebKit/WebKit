@@ -638,24 +638,32 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_lshift)
 {
     BEGIN();
     auto bytecode = pc->as<OpLshift>();
+    auto& profile = codeBlock->unlinkedCodeBlock()->binaryArithProfile(bytecode.m_profileIndex);
     JSValue left = GET_C(bytecode.m_lhs).jsValue();
     JSValue right = GET_C(bytecode.m_rhs).jsValue();
 
+    profile.observeLHSAndRHS(left, right);
     JSValue result = jsLShift(globalObject, left, right);
     CHECK_EXCEPTION();
-    RETURN_PROFILED(result);
+    RETURN_WITH_PROFILING(result, {
+        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+    });
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_rshift)
 {
     BEGIN();
     auto bytecode = pc->as<OpRshift>();
+    auto& profile = codeBlock->unlinkedCodeBlock()->binaryArithProfile(bytecode.m_profileIndex);
     JSValue left = GET_C(bytecode.m_lhs).jsValue();
     JSValue right = GET_C(bytecode.m_rhs).jsValue();
 
+    profile.observeLHSAndRHS(left, right);
     JSValue result = jsRShift(globalObject, left, right);
     CHECK_EXCEPTION();
-    RETURN_PROFILED(result);
+    RETURN_WITH_PROFILING(result, {
+        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+    });
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_urshift)
@@ -682,47 +690,66 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_bitnot)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitnot>();
+    auto& profile = codeBlock->unlinkedCodeBlock()->unaryArithProfile(bytecode.m_profileIndex);
     auto operand = GET_C(bytecode.m_operand).jsValue();
 
     auto result = jsBitwiseNot(globalObject, operand);
     CHECK_EXCEPTION();
-    RETURN_PROFILED(result);
+    RETURN_WITH_PROFILING(result, {
+        if (operand.isNumber())
+            profile.argSawNumber();
+        else
+            profile.argSawNonNumber();
+        profile.observeResult(result);
+    });
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_bitand)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitand>();
+    auto& profile = codeBlock->unlinkedCodeBlock()->binaryArithProfile(bytecode.m_profileIndex);
     auto left = GET_C(bytecode.m_lhs).jsValue();
     auto right = GET_C(bytecode.m_rhs).jsValue();
 
+    profile.observeLHSAndRHS(left, right);
     JSValue result = jsBitwiseAnd(globalObject, left, right);
     CHECK_EXCEPTION();
-    RETURN_PROFILED(result);
+    RETURN_WITH_PROFILING(result, {
+        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+    });
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_bitor)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitor>();
+    auto& profile = codeBlock->unlinkedCodeBlock()->binaryArithProfile(bytecode.m_profileIndex);
     auto left = GET_C(bytecode.m_lhs).jsValue();
     auto right = GET_C(bytecode.m_rhs).jsValue();
 
+    profile.observeLHSAndRHS(left, right);
     JSValue result = jsBitwiseOr(globalObject, left, right);
     CHECK_EXCEPTION();
-    RETURN_PROFILED(result);
+    RETURN_WITH_PROFILING(result, {
+        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+    });
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_bitxor)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitxor>();
+    auto& profile = codeBlock->unlinkedCodeBlock()->binaryArithProfile(bytecode.m_profileIndex);
     auto left = GET_C(bytecode.m_lhs).jsValue();
     auto right = GET_C(bytecode.m_rhs).jsValue();
 
+    profile.observeLHSAndRHS(left, right);
     JSValue result = jsBitwiseXor(globalObject, left, right);
     CHECK_EXCEPTION();
-    RETURN_PROFILED(result);
+    RETURN_WITH_PROFILING(result, {
+        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+    });
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_typeof)

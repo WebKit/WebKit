@@ -1956,12 +1956,6 @@ public:
         case StringReplaceString:
         case ToObject:
         case CallNumberConstructor:
-        case ValueBitAnd:
-        case ValueBitOr:
-        case ValueBitXor:
-        case ValueBitNot:
-        case ValueBitLShift:
-        case ValueBitRShift:
         case CallObjectConstructor:
         case LoadKeyFromMapBucket:
         case LoadValueFromMapBucket:

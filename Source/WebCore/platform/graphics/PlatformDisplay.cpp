@@ -488,6 +488,12 @@ static String drmRenderNodeFromPrimaryDeviceFile(const String& primaryDeviceFile
 const String& PlatformDisplay::drmRenderNodeFile()
 {
     if (!m_drmRenderNodeFile.has_value()) {
+        const char* envDeviceFile = getenv("WEBKIT_WEB_RENDER_DEVICE_FILE");
+        if (envDeviceFile && *envDeviceFile) {
+            m_drmRenderNodeFile = String::fromUTF8(envDeviceFile);
+            return m_drmRenderNodeFile.value();
+        }
+
         if (EGLDeviceEXT device = eglDevice()) {
             if (GLContext::isExtensionSupported(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), "EGL_EXT_device_drm_render_node")) {
                 m_drmRenderNodeFile = String::fromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_RENDER_NODE_FILE_EXT));
@@ -506,10 +512,9 @@ const String& PlatformDisplay::drmRenderNodeFile()
 struct gbm_device* PlatformDisplay::gbmDevice()
 {
     auto& device = GBMDevice::singleton();
-    if (!device.isInitialized()) {
-        const char* envDeviceFile = getenv("WEBKIT_WEB_RENDER_DEVICE_FILE");
-        device.initialize(envDeviceFile && *envDeviceFile ? String::fromUTF8(envDeviceFile) : drmRenderNodeFile());
-    }
+    if (!device.isInitialized())
+        device.initialize(drmRenderNodeFile());
+
     return device.device();
 }
 #endif

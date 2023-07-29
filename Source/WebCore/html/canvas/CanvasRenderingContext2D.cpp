@@ -183,6 +183,7 @@ CanvasDirection CanvasRenderingContext2D::direction() const
 
 void CanvasRenderingContext2D::fillText(const String& text, double x, double y, std::optional<double> maxWidth)
 {
+    canvasBase().recordLastFillText(text);
     drawTextInternal(text, x, y, true, maxWidth);
 }
 

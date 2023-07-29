@@ -21,9 +21,10 @@
 
 #if USE(GSTREAMER)
 
+#include <wtf/glib/GRefPtr.h>
+
 #include <gst/gst.h>
 #include <gst/pbutils/encoding-profile.h>
-#include <wtf/glib/GRefPtr.h>
 
 typedef struct _WebKitVideoSink WebKitVideoSink;
 struct WebKitWebSrc;

@@ -1060,7 +1060,17 @@ private:
         switch (node->op()) {
         case ArithAdd:
         case ArithSub:
-        case ValueAdd: {
+        case ValueAdd:
+        case ArithBitAnd:
+        case ValueBitAnd:
+        case ArithBitOr:
+        case ValueBitOr:
+        case ArithBitXor:
+        case ValueBitXor:
+        case ArithBitRShift:
+        case ValueBitRShift:
+        case ArithBitLShift:
+        case ValueBitLShift: {
             ObservedResults observed;
             if (BinaryArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->binaryArithProfileForBytecodeIndex(m_currentIndex))
                 observed = arithProfile->observedResults();
@@ -1103,6 +1113,8 @@ private:
         }
         case ValueNegate:
         case ArithNegate:
+        case ValueBitNot:
+        case ArithBitNot:
         case Inc:
         case Dec:
         case ToNumber:
@@ -6347,48 +6359,44 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_bitnot: {
             auto bytecode = currentInstruction->as<OpBitnot>();
-            SpeculatedType prediction = getPrediction();
             Node* op1 = get(bytecode.m_operand);
             if (op1->hasNumberOrAnyIntResult())
-                set(bytecode.m_dst, addToGraph(ArithBitNot, op1));
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithBitNot, op1)));
             else
-                set(bytecode.m_dst, addToGraph(ValueBitNot, OpInfo(), OpInfo(prediction), op1));
+                set(bytecode.m_dst, makeSafe(addToGraph(ValueBitNot, op1)));
             NEXT_OPCODE(op_bitnot);
         }
 
         case op_bitand: {
             auto bytecode = currentInstruction->as<OpBitand>();
-            SpeculatedType prediction = getPrediction();
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
-                set(bytecode.m_dst, addToGraph(ArithBitAnd, op1, op2));
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithBitAnd, op1, op2)));
             else
-                set(bytecode.m_dst, addToGraph(ValueBitAnd, OpInfo(), OpInfo(prediction), op1, op2));
+                set(bytecode.m_dst, makeSafe(addToGraph(ValueBitAnd, op1, op2)));
             NEXT_OPCODE(op_bitand);
         }
 
         case op_bitor: {
             auto bytecode = currentInstruction->as<OpBitor>();
-            SpeculatedType prediction = getPrediction();
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
-                set(bytecode.m_dst, addToGraph(ArithBitOr, op1, op2));
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithBitOr, op1, op2)));
             else
-                set(bytecode.m_dst, addToGraph(ValueBitOr, OpInfo(), OpInfo(prediction), op1, op2));
+                set(bytecode.m_dst, makeSafe(addToGraph(ValueBitOr, op1, op2)));
             NEXT_OPCODE(op_bitor);
         }
 
         case op_bitxor: {
             auto bytecode = currentInstruction->as<OpBitxor>();
-            SpeculatedType prediction = getPrediction();
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
-                set(bytecode.m_dst, addToGraph(ArithBitXor, op1, op2));
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithBitXor, op1, op2)));
             else
-                set(bytecode.m_dst, addToGraph(ValueBitXor, OpInfo(), OpInfo(prediction), op1, op2));
+                set(bytecode.m_dst, makeSafe(addToGraph(ValueBitXor, op1, op2)));
             NEXT_OPCODE(op_bitxor);
         }
 
@@ -6397,11 +6405,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
-                set(bytecode.m_dst, addToGraph(ArithBitRShift, op1, op2));
-            else {
-                SpeculatedType prediction = getPredictionWithoutOSRExit();
-                set(bytecode.m_dst, addToGraph(ValueBitRShift, OpInfo(), OpInfo(prediction), op1, op2));
-            }
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithBitRShift, op1, op2)));
+            else
+                set(bytecode.m_dst, makeSafe(addToGraph(ValueBitRShift, op1, op2)));
             NEXT_OPCODE(op_rshift);
         }
 
@@ -6410,11 +6416,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = get(bytecode.m_lhs);
             Node* op2 = get(bytecode.m_rhs);
             if (op1->hasNumberOrAnyIntResult() && op2->hasNumberOrAnyIntResult())
-                set(bytecode.m_dst, addToGraph(ArithBitLShift, op1, op2));
-            else {
-                SpeculatedType prediction = getPredictionWithoutOSRExit();
-                set(bytecode.m_dst, addToGraph(ValueBitLShift, OpInfo(), OpInfo(prediction), op1, op2));
-            }
+                set(bytecode.m_dst, makeSafe(addToGraph(ArithBitLShift, op1, op2)));
+            else
+                set(bytecode.m_dst, makeSafe(addToGraph(ValueBitLShift, op1, op2)));
             NEXT_OPCODE(op_lshift);
         }
 
