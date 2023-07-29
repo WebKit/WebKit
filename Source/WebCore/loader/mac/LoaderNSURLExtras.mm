@@ -60,6 +60,9 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
         extension = [filename pathExtension];
     }
 
+    if (!mimeType)
+        return filename;
+
     // Do not correct filenames that are reported with a mime type of tar, and 
     // have a filename which has .tar in it or ends in .tgz
     if ((mimeType == "application/tar"_s || mimeType == "application/x-tar"_s)
