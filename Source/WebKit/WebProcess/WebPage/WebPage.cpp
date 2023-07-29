@@ -3437,7 +3437,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
 
     flushDeferredDidReceiveMouseEvent();
 
-    if (shouldDeferDidReceiveEvent) {
+    if (shouldDeferDidReceiveEvent && m_drawingArea->scheduleRenderingUpdate()) {
         // For mousemove events where the user is only hovering (not clicking and dragging),
         // we defer sending the DidReceiveEvent() IPC message until the end of the rendering
         // update to throttle the rate of these events to the rendering update frequency.
@@ -3445,7 +3445,6 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
         // coalesces mousemove events until the DidReceiveEvent() message is received after
         // the rendering update.
         m_deferredDidReceiveMouseEvent = { { mouseEvent.type(), handled } };
-        m_drawingArea->scheduleRenderingUpdate();
         return;
     }
 

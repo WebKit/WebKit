@@ -37,6 +37,39 @@
 
 namespace TestWebKitAPI {
 
+TEST(MouseEventTests, SendMouseMoveEventStream)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<style>"
+        "    body, html { margin: 0; width: 100%; height: 100%; }"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<script>"
+        "    let eventData = [];"
+        "    addEventListener('mousemove', event => eventData.push({ x: event.clientX, y: event.clientY }));"
+        "</script>"
+        "</body>"
+        "</html>"];
+
+    for (unsigned i = 0; i <= 300; ++i) {
+        [webView mouseMoveToPoint:NSMakePoint(100 + i, 300) withFlags:0];
+        Util::runFor(8_ms);
+    }
+
+    [webView waitForPendingMouseEvents];
+
+    NSArray<NSDictionary *> *mouseEvents = [webView objectByEvaluatingJavaScript:@"eventData"];
+    EXPECT_GT(mouseEvents.count, 2U);
+    EXPECT_EQ([mouseEvents.firstObject[@"x"] doubleValue], 100.0);
+    EXPECT_EQ([mouseEvents.firstObject[@"y"] doubleValue], 300.0);
+    EXPECT_EQ([mouseEvents.lastObject[@"x"] doubleValue], 400.0);
+    EXPECT_EQ([mouseEvents.lastObject[@"y"] doubleValue], 300.0);
+}
+
 TEST(MouseEventTests, CoalesceMouseMoveEvents)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
