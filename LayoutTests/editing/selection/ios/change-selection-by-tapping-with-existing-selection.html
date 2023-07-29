@@ -49,7 +49,7 @@ addEventListener("load", async () => {
     description("Verifies that tapping to change selection works when we already have a selection in the same editable root but do not currently have a focused node in the UIKit sense.");
 
     var target = document.getElementById("target");
-    window.getSelection().setBaseAndExtent(target, 0, target, 1);
+    window.getSelection().setBaseAndExtent(target.firstChild, 0, target.firstChild, 2);
 
     document.querySelector("#selection-before").textContent = selectionToString();
     await tapAndWaitForSelectionChange(5, 5);
