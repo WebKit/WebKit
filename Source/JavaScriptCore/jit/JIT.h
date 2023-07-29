@@ -840,9 +840,7 @@ namespace JSC {
         };
 
         template<typename Op, typename SnippetGenerator>
-        void emitBitBinaryOpFastPath(const JSInstruction* currentInstruction, ProfilingPolicy shouldEmitProfiling = ProfilingPolicy::NoProfiling);
-
-        void emitRightShiftFastPath(const JSInstruction* currentInstruction, OpcodeID);
+        void emitBitBinaryOpFastPath(const JSInstruction* currentInstruction);
 
         template<typename Op>
         void emitRightShiftFastPath(const JSInstruction* currentInstruction, JITRightShiftGenerator::ShiftType);

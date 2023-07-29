@@ -612,7 +612,7 @@ void JIT::emitSlow_op_negate(const JSInstruction* currentInstruction, Vector<Slo
 }
 
 template<typename Op, typename SnippetGenerator>
-void JIT::emitBitBinaryOpFastPath(const JSInstruction* currentInstruction, ProfilingPolicy profilingPolicy)
+void JIT::emitBitBinaryOpFastPath(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     VirtualRegister result = bytecode.m_dst;
@@ -645,8 +645,6 @@ void JIT::emitBitBinaryOpFastPath(const JSInstruction* currentInstruction, Profi
 
     ASSERT(gen.didEmitFastPath());
     gen.endJumpList().link(this);
-    if (profilingPolicy == ProfilingPolicy::ShouldEmitProfiling)
-        emitValueProfilingSiteIfProfiledOpcode(bytecode);
     emitPutVirtualRegister(result, resultRegs);
 
     addSlowCase(gen.slowPathJumpList());
@@ -670,37 +668,22 @@ void JIT::emit_op_bitnot(const JSInstruction* currentInstruction)
 
 void JIT::emit_op_bitand(const JSInstruction* currentInstruction)
 {
-    emitBitBinaryOpFastPath<OpBitand, JITBitAndGenerator>(currentInstruction, ProfilingPolicy::ShouldEmitProfiling);
+    emitBitBinaryOpFastPath<OpBitand, JITBitAndGenerator>(currentInstruction);
 }
 
 void JIT::emit_op_bitor(const JSInstruction* currentInstruction)
 {
-    emitBitBinaryOpFastPath<OpBitor, JITBitOrGenerator>(currentInstruction, ProfilingPolicy::ShouldEmitProfiling);
+    emitBitBinaryOpFastPath<OpBitor, JITBitOrGenerator>(currentInstruction);
 }
 
 void JIT::emit_op_bitxor(const JSInstruction* currentInstruction)
 {
-    emitBitBinaryOpFastPath<OpBitxor, JITBitXorGenerator>(currentInstruction, ProfilingPolicy::ShouldEmitProfiling);
+    emitBitBinaryOpFastPath<OpBitxor, JITBitXorGenerator>(currentInstruction);
 }
 
 void JIT::emit_op_lshift(const JSInstruction* currentInstruction)
 {
     emitBitBinaryOpFastPath<OpLshift, JITLeftShiftGenerator>(currentInstruction);
-}
-
-void JIT::emitRightShiftFastPath(const JSInstruction* currentInstruction, OpcodeID opcodeID)
-{
-    ASSERT(opcodeID == op_rshift || opcodeID == op_urshift);
-    switch (opcodeID) {
-    case op_rshift:
-        emitRightShiftFastPath<OpRshift>(currentInstruction, JITRightShiftGenerator::SignedShift);
-        break;
-    case op_urshift:
-        emitRightShiftFastPath<OpUrshift>(currentInstruction, JITRightShiftGenerator::UnsignedShift);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
 }
 
 template<typename Op>
@@ -744,12 +727,12 @@ void JIT::emitRightShiftFastPath(const JSInstruction* currentInstruction, JITRig
 
 void JIT::emit_op_rshift(const JSInstruction* currentInstruction)
 {
-    emitRightShiftFastPath(currentInstruction, op_rshift);
+    emitRightShiftFastPath<OpRshift>(currentInstruction, JITRightShiftGenerator::SignedShift);
 }
 
 void JIT::emit_op_urshift(const JSInstruction* currentInstruction)
 {
-    emitRightShiftFastPath(currentInstruction, op_urshift);
+    emitRightShiftFastPath<OpUrshift>(currentInstruction, JITRightShiftGenerator::UnsignedShift);
 }
 
 void JIT::emit_op_add(const JSInstruction* currentInstruction)

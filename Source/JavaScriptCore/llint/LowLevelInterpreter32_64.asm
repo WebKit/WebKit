@@ -1356,29 +1356,22 @@ macro bitOp(opcodeName, opcodeStruct, operation)
     commonBitOp(llintOpWithReturn, opcodeName, opcodeStruct, operation)
 end
 
-macro bitOpProfiled(opcodeName, opcodeStruct, operation)
-    commonBitOp(llintOpWithProfile, opcodeName, opcodeStruct, operation)
-end
-
-
-bitOpProfiled(lshift, OpLshift,
+bitOp(lshift, OpLshift,
     macro (lhs, rhs) lshifti rhs, lhs end)
-
 
 bitOp(rshift, OpRshift,
     macro (lhs, rhs) rshifti rhs, lhs end)
 
-
 bitOp(urshift, OpUrshift,
     macro (lhs, rhs) urshifti rhs, lhs end)
 
-bitOpProfiled(bitxor, OpBitxor,
+bitOp(bitxor, OpBitxor,
     macro (lhs, rhs) xori rhs, lhs end)
 
-bitOpProfiled(bitand, OpBitand,
+bitOp(bitand, OpBitand,
     macro (lhs, rhs) andi rhs, lhs end)
 
-bitOpProfiled(bitor, OpBitor,
+bitOp(bitor, OpBitor,
     macro (lhs, rhs) ori rhs, lhs end)
 
 llintOpWithReturn(op_bitnot, OpBitnot, macro (size, get, dispatch, return)

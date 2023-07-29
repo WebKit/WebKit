@@ -38,11 +38,6 @@ SpeculatedType PredictionFileCreatingFuzzerAgent::getPredictionInternal(CodeBloc
 {
     switch (predictionTarget.opcodeId) {
     case op_to_this:
-    case op_bitand:
-    case op_bitor:
-    case op_bitxor:
-    case op_lshift:
-    case op_rshift:
     case op_get_by_val:
     case op_get_argument:
     case op_get_from_arguments:

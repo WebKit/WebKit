@@ -213,15 +213,22 @@ private:
         }
 
         case ValueBitRShift:
-        case ValueBitLShift: {
+        case ValueBitLShift:
+        case ValueBitAnd:
+        case ValueBitOr:
+        case ValueBitXor: {
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
 
             if (left && right) {
                 if (isFullNumberOrBooleanSpeculationExpectingDefined(left) && isFullNumberOrBooleanSpeculationExpectingDefined(right))
                     changed |= mergePrediction(SpecInt32Only);
-                else
-                    changed |= mergePrediction(node->getHeapPrediction());
+                else {
+                    if (node->mayHaveBigIntResult())
+                        changed |= mergePrediction(SpecBigInt);
+                    else
+                        changed |= mergePrediction(SpecInt32Only);
+                }
             }
 
             break;
@@ -1017,9 +1024,6 @@ private:
         case LoadValueFromMapBucket:
         case ToObject:
         case CallNumberConstructor:
-        case ValueBitAnd:
-        case ValueBitXor:
-        case ValueBitOr:
         case CallObjectConstructor:
         case GetArgument:
         case CallDOMGetter:
@@ -1422,6 +1426,9 @@ private:
         case ValueBitLShift:
         case ValueBitRShift:
         case ValueBitNot:
+        case ValueBitAnd:
+        case ValueBitOr:
+        case ValueBitXor:
         case Inc:
         case Dec:
         case ToNumber:

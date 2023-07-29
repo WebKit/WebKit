@@ -251,23 +251,6 @@ op :construct,
         profile: ValueProfile,
     }
 
-op_group :ValueProfiledBinaryOp,
-    [
-        :bitand,
-        :bitor,
-        :bitxor,
-        :lshift,
-        :rshift,
-    ],
-    args: {
-        dst: VirtualRegister,
-        lhs: VirtualRegister,
-        rhs: VirtualRegister,
-    },
-    metadata: {
-        profile: ValueProfile
-    }
-
 op :to_object,
     args: {
         dst: VirtualRegister,
@@ -1246,7 +1229,7 @@ op_group :BinaryOp,
         rhs: VirtualRegister,
     }
 
-op_group :ProfiledBinaryOp,
+op_group :ProfiledBinaryOpWithOperandTypes,
     [
         :add,
         :mul,
@@ -1259,6 +1242,21 @@ op_group :ProfiledBinaryOp,
         rhs: VirtualRegister,
         profileIndex: unsigned,
         operandTypes: OperandTypes,
+    }
+
+op_group :ProfiledBinaryOp,
+    [
+        :bitand,
+        :bitor,
+        :bitxor,
+        :lshift,
+        :rshift,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+        profileIndex: unsigned,
     }
 
 op_group :UnaryOp,

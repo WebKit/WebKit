@@ -672,12 +672,13 @@ namespace JSC {
         template<typename BinaryOp>
         RegisterID* emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes types = { })
         {
+            UNUSED_PARAM(types);
             if constexpr (BinaryOp::opcodeID == op_add || BinaryOp::opcodeID == op_mul || BinaryOp::opcodeID == op_sub || BinaryOp::opcodeID == op_div)
                 BinaryOp::emit(this, dst, src1, src2, m_codeBlock->addBinaryArithProfile(), types);
-            else {
-                UNUSED_PARAM(types);
+            else if constexpr (BinaryOp::opcodeID == op_bitand || BinaryOp::opcodeID == op_bitor || BinaryOp::opcodeID == op_bitxor || BinaryOp::opcodeID == op_lshift || BinaryOp::opcodeID == op_rshift)
+                BinaryOp::emit(this, dst, src1, src2, m_codeBlock->addBinaryArithProfile());
+            else
                 BinaryOp::emit(this, dst, src1, src2);
-            }
             return dst;
         }
 
