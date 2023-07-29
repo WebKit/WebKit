@@ -31,6 +31,7 @@
 #include "CachedCall.h"
 #include "CodeBlock.h"
 #include "ControlFlowProfiler.h"
+#include "DFGIntegerRangeOptimizationPhase.h"
 #include "DOMAttributeGetterSetter.h"
 #include "DOMJITGetterSetter.h"
 #include "Debugger.h"
@@ -2217,6 +2218,10 @@ static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPPAsFirstEntry);
 static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPP);
 static JSC_DECLARE_HOST_FUNCTION(functionCachedCallFromCPP);
 
+// Helpers for testing optimizations
+static JSC_DECLARE_HOST_FUNCTION(functionStartDebugRecordingIRO);
+static JSC_DECLARE_HOST_FUNCTION(functionStopDebugRecordingIRO);
+
 const ClassInfo JSDollarVM::s_info = { "DollarVM"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
 static EncodedJSValue doPrint(JSGlobalObject* globalObject, CallFrame* callFrame, bool addLineFeed)
@@ -4050,6 +4055,24 @@ JSC_DEFINE_HOST_FUNCTION(functionCachedCallFromCPP, (JSGlobalObject* globalObjec
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionStartDebugRecordingIRO, (JSGlobalObject*, CallFrame*))
+{
+#if ENABLE(DFG_JIT)
+    DFG::startDebugRecordingIRO();
+#endif
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionStopDebugRecordingIRO, (JSGlobalObject* globalObject, CallFrame*))
+{
+#if ENABLE(DFG_JIT)
+    uint64_t result = DFG::stopDebugRecordingIRO();
+#else
+    uint64_t result = 0;
+#endif
+    return JSValue::encode(JSBigInt::createFrom(globalObject, result));
+}
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -4237,6 +4260,9 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "callFromCPPAsFirstEntry"_s, functionCallFromCPPAsFirstEntry, 2);
     addFunction(vm, "callFromCPP"_s, functionCallFromCPP, 2);
     addFunction(vm, "cachedCallFromCPP"_s, functionCachedCallFromCPP, 2);
+
+    addFunction(vm, "startDebugRecordingIRO"_s, functionStartDebugRecordingIRO, 0);
+    addFunction(vm, "stopDebugRecordingIRO"_s, functionStopDebugRecordingIRO, 0);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

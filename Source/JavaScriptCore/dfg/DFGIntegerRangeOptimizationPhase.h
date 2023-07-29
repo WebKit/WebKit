@@ -29,6 +29,9 @@
 
 namespace JSC { namespace DFG {
 
+void startDebugRecordingIRO();
+uint64_t stopDebugRecordingIRO();
+
 class Graph;
 
 // Removes overflow checks and out-of-bounds checks by doing a forward flow analysis to prove

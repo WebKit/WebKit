@@ -445,6 +445,8 @@ void printInternal(PrintStream& out, Node* node)
         return;
     }
     out.print("D@", node->index());
+    if (node->isInt32Constant())
+        out.print("[=", node->asInt32(), "]");
     if (node->hasDoubleResult())
         out.print("<Double>");
     else if (node->hasInt52Result())

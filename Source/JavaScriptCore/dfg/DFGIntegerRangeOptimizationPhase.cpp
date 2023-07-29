@@ -35,6 +35,7 @@
 #include "DFGNodeFlowProjection.h"
 #include "DFGPhase.h"
 #include "JSCJSValueInlines.h"
+#include "JSDollarVM.h"
 
 namespace JSC { namespace DFG {
 
@@ -42,6 +43,11 @@ namespace {
 
 namespace DFGIntegerRangeOptimizationPhaseInternal {
 static constexpr bool verbose = false;
+static constexpr bool verboseCounting = false;
+
+static bool shouldRecordCheckInBoundsCounts = false;
+static uint64_t checkInBoundsCountBeforeIRO = 0;
+static uint64_t checkInBoundsCountAfterIRO = 0;
 }
 const unsigned giveUpThreshold = 50;
 
@@ -1317,32 +1323,63 @@ public:
                     changed = true;
                     break;
                 }
-                    
+
                 case CheckInBounds: {
-                    auto iter = m_relationships.find(node->child1().node());
-                    if (iter == m_relationships.end())
-                        break;
-                    
                     bool nonNegative = false;
                     bool lessThanLength = false;
-                    for (Relationship relationship : iter->value) {
+
+                    forEachRelationship(node->child1().node(), [&](auto relationship) {
                         if (relationship.minValueOfLeft() >= 0)
                             nonNegative = true;
-                        
+
                         if (relationship.right() == node->child2().node()) {
                             if (relationship.kind() == Relationship::Equal
                                 && relationship.offset() < 0)
                                 lessThanLength = true;
-                            
+
                             if (relationship.kind() == Relationship::LessThan
                                 && relationship.offset() <= 0)
                                 lessThanLength = true;
                         }
+                    });
+
+                    dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "CheckInBounds ", node, " has: ", nonNegative, " ", lessThanLength);
+
+                    // If child 1 is @y = PureMonotonicOp(@x) and @x has a proven constant bound, we can use that instead.
+                    // This is needed because we may have a graph like this:
+                    // @y = PureMonotonicOp(@x)
+                    // prove something about @x (ex: CheckInBounds(@x))
+                    // CheckInBounds(@y)
+                    if (!lessThanLength && nonNegative) {
+                        auto* value = node->child1().node();
+
+                        auto [minLengthValue, __] = provenBounds(node->child2().node()); // inclusive
+                        if (minLengthValue == std::numeric_limits<int>::max())
+                            break;
+
+                        int32_t significantNodeMaximumAtEndOfArray = std::numeric_limits<int>::max(); // exclusive
+                        Node* signiticantNode = unevaluateMonotonicPureNode(value, minLengthValue, significantNodeMaximumAtEndOfArray);
+
+                        if (significantNodeMaximumAtEndOfArray == std::numeric_limits<int>::max())
+                            break;
+
+                        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "  Found pure op significant node: ", signiticantNode, " with end-of-array value ", significantNodeMaximumAtEndOfArray);
+
+                        auto [_, maxValue] = provenBounds(signiticantNode);
+                        if (maxValue == std::numeric_limits<int>::max())
+                            break;
+
+                        if (!evaluateMonotonicPureNode(value, maxValue, maxValue))
+                            break;
+
+                        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "  Pure op: ", signiticantNode, " -> ", value, " gets ", maxValue, ", array length is at least ", minLengthValue);
+
+                        if (maxValue < minLengthValue)
+                            lessThanLength = true;
                     }
 
-                    if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
-                        dataLogLn("CheckInBounds ", node, " has: ", nonNegative, " ", lessThanLength);
-                    
+                    dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "CheckInBounds ", node, " has: ", nonNegative, " ", lessThanLength);
+
                     if (nonNegative && lessThanLength) {
                         executeNode(block->at(nodeIndex));
                         if (UNLIKELY(Options::validateBoundsCheckElimination()) && node->op() == CheckInBounds)
@@ -1388,6 +1425,105 @@ public:
     }
 
 private:
+    template<typename Functor>
+    void forEachRelationship(Node* node, Functor functor)
+    {
+        auto iter = m_relationships.find(node);
+        if (iter == m_relationships.end())
+            return;
+        for (auto r : iter->value)
+            functor(r);
+    }
+
+    std::pair<int32_t, int32_t> provenBounds(Node* value)
+    {
+        int maxValue = std::numeric_limits<int>::max();
+        int minValue = std::numeric_limits<int>::min();
+
+        forEachRelationship(value, [&] (auto relationship) {
+            maxValue = std::min(maxValue, relationship.maxValueOfLeft());
+            minValue = std::max(minValue, relationship.minValueOfLeft());
+        });
+
+        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, " Node D@", value->index(), " has proven bounds ", minValue, " ", maxValue);
+
+        return { minValue, maxValue };
+    }
+
+    // Consider an expression like Shift(Add(x, cosnt), const). @x is the significant node.
+    // This produces the value of the expression given a value for @x, or false if this node
+    // is not monotonic and pure.
+    bool evaluateMonotonicPureNode(Node* value, int32_t significantNodeValue, int32_t& resultValue, unsigned ttl = 2)
+    {
+        if (!ttl)
+            return false;
+        resultValue = 0;
+        switch (value->op()) {
+        case ArithBitRShift:
+        case BitURShift:
+            if (!value->isBinaryUseKind(Int32Use) || !value->child2()->isInt32Constant())
+                return false;
+
+            if (evaluateMonotonicPureNode(value->child1().node(), significantNodeValue, resultValue, ttl - 1))
+                significantNodeValue = resultValue;
+            resultValue = 0;
+
+            // This operation is only monotonic if it is non-negative
+            if (provenBounds(value).first < 0)
+                return false;
+
+            resultValue = significantNodeValue >> value->child2()->asInt32();
+            return true;
+        case ArithAdd:
+            if (!value->isBinaryUseKind(Int32Use) || !value->child2()->isInt32Constant())
+                return false;
+
+            if (evaluateMonotonicPureNode(value->child1().node(), significantNodeValue, resultValue, ttl - 1))
+                significantNodeValue = resultValue;
+
+            // TODO overflow
+            resultValue = significantNodeValue + value->child2()->asInt32();
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    Node* unevaluateMonotonicPureNode(Node* value, int32_t resultValue, int32_t& significantNodeValue, unsigned ttl = 2)
+    {
+        if (!ttl)
+            return value;
+
+        switch (value->op()) {
+        case ArithBitRShift:
+        case BitURShift:
+            if (!value->isBinaryUseKind(Int32Use) || !value->child2()->isInt32Constant())
+                return value;
+
+            // This operation is only monotonic if the input is non-negative
+            // The output is negative iff the input is negative.
+            // Hence, if we have proven the output is positive already, we can continue.
+            if (provenBounds(value).first < 0)
+                return value;
+
+            // TODO overflow
+            significantNodeValue = resultValue << value->child2()->asInt32();
+
+            return unevaluateMonotonicPureNode(value->child1().node(), significantNodeValue, significantNodeValue, ttl - 1);
+        case ArithAdd:
+            if (!value->isBinaryUseKind(Int32Use) || !value->child2()->isInt32Constant())
+                return value;
+
+            // TODO overflow
+            significantNodeValue = resultValue - value->child2()->asInt32();
+
+            return unevaluateMonotonicPureNode(value->child1().node(), significantNodeValue, significantNodeValue, ttl - 1);
+
+        default:
+            return value;
+        }
+    }
+
     void executeNode(Node* node)
     {
         switch (node->op()) {
@@ -1395,6 +1531,34 @@ private:
         case CheckInBounds: {
             setRelationship(Relationship::safeCreate(node->child1().node(), node->child2().node(), Relationship::LessThan));
             setRelationship(Relationship::safeCreate(node->child1().node(), m_zero, Relationship::GreaterThan, -1));
+
+            // If child 1 is @y = PureMonotonicOp(@x) and @y has a proven constant bound, we should forward that to @x.
+            // We can only really do this if child 2 already has a proven bound, since we have no way to make use of this fact otherwise.
+            // This is needed because we may have a graph like this:
+            // @y = PureMonotonicOp(@x)
+            // CheckInBounds(@x)
+            // ask about @y
+            auto* value = node->child1().node();
+            dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Executing CheckInBounds ", value);
+
+            auto [minLength, _] = provenBounds(node->child2().node());
+            if (minLength != std::numeric_limits<int>::min()) {
+                int32_t significantNodeMaximum = std::numeric_limits<int>::max();
+                Node* signiticantNode = unevaluateMonotonicPureNode(value, minLength, significantNodeMaximum);
+                if (signiticantNode != node && significantNodeMaximum != std::numeric_limits<int>::max()) {
+                    dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, " Updated pure op after check, ", signiticantNode, " gets upper bound ", significantNodeMaximum);
+                    setRelationship(Relationship::safeCreate(signiticantNode, m_zero, Relationship::LessThan, significantNodeMaximum + 1));
+                }
+            }
+
+            {
+                int32_t significantNodeMinimum = std::numeric_limits<int>::min();
+                Node* signiticantNode = unevaluateMonotonicPureNode(value, 0, significantNodeMinimum);
+                if (signiticantNode != node && significantNodeMinimum != std::numeric_limits<int>::min()) {
+                    dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, " Updated pure op after check, ", signiticantNode, " gets lower bound ", significantNodeMinimum);
+                    setRelationship(Relationship::safeCreate(signiticantNode, m_zero, Relationship::GreaterThan, significantNodeMinimum - 1));
+                }
+            }
             break;
         }
 
@@ -1412,11 +1576,9 @@ private:
             // If ArithAbs does not care about overflow, it can return INT32_MIN if the input is INT32_MIN.
             // If minValue is not INT32_MIN, we can still say it is `x >= 0`.
             int minValue = std::numeric_limits<int>::min();
-            auto iter = m_relationships.find(node->child1().node());
-            if (iter != m_relationships.end()) {
-                for (Relationship relationship : iter->value)
-                    minValue = std::max(minValue, relationship.minValueOfLeft());
-            }
+            forEachRelationship(node->child1().node(), [&] (auto relationship) {
+                minValue = std::max(minValue, relationship.minValueOfLeft());
+            });
 
             if (minValue > std::numeric_limits<int>::min())
                 setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
@@ -1525,7 +1687,105 @@ private:
             }
             break;
         }
-            
+
+        case ArithBitRShift: {
+            if (!node->isBinaryUseKind(Int32Use))
+                break;
+
+            // @left >= 0 => this can be an unsigned shift
+            int minValue = std::numeric_limits<int>::min();
+            forEachRelationship(node->child1().node(), [&] (auto relationship) {
+                minValue = std::max(minValue, relationship.minValueOfLeft());
+            });
+
+            if (minValue < 0)
+                break;
+
+            FALLTHROUGH;
+        }
+
+        case BitURShift: {
+            if (!node->isBinaryUseKind(Int32Use))
+                break;
+
+            // Handle shift: @this = @value >> constant.
+            if (!node->child2()->isInt32Constant())
+                break;
+
+            int offset = node->child2()->asInt32();
+
+            if (!offset) {
+                setRelationship(
+                    Relationship(node, node->child1().node(), Relationship::Equal, 0));
+                break;
+            }
+
+            if (offset < 0) {
+                setRelationship(
+                    Relationship(node, m_zero, Relationship::Equal, 0));
+                break;
+            }
+
+            // @this <= @value
+            setRelationship(
+                Relationship(node, node->child1().node(), Relationship::LessThan, 1));
+            // @this >= 0
+            setRelationship(
+                Relationship(node, m_zero, Relationship::GreaterThan, -1));
+            // @value >= 0 (which should have already been proven, since it is a UInt32)
+            // We really should have a better way to distinguish between UInt32 and Int32
+            setRelationship(
+                Relationship(node->child1().node(), m_zero, Relationship::GreaterThan, -1));
+
+            // Now, we copy the the relationships for @value.
+            // While we're at it, we collect the proven bounds so far.
+            Vector<Relationship> toAdd;
+
+            int minValue = std::numeric_limits<int>::min();
+            int maxValue = std::numeric_limits<int>::max();
+
+            forEachRelationship(node->child1().node(), [&] (auto relationship) {
+                minValue = std::max(minValue, relationship.minValueOfLeft());
+                maxValue = std::min(maxValue, relationship.maxValueOfLeft());
+
+                // We have:
+                //     this: @value >> C
+                //     0 <= @value < @y + D
+                // So:
+                //     0 <= (@value >> C) < @y + D
+
+                if (relationship.kind() != Relationship::LessThan && relationship.kind() != Relationship::Equal)
+                    return;
+
+                if (relationship.right() == node)
+                    return;
+
+                Relationship newRelationship = relationship;
+                ASSERT(newRelationship.left() == node->child1().node());
+                newRelationship.setLeft(node);
+                toAdd.append(newRelationship);
+            });
+
+            for (Relationship relationship : toAdd)
+                setRelationship(relationship);
+
+            // @value < D, so @this <= (D >> C)
+            if (maxValue < std::numeric_limits<int>::max() - 1) {
+                setRelationship(Relationship::safeCreate(
+                    node, m_zero, Relationship::LessThan,
+                    (maxValue >> offset) + 1));
+            }
+
+            // D < @value so D >> C <= @this
+            if (minValue > 0) {
+                setRelationship(Relationship::safeCreate(
+                    m_zero, node, Relationship::LessThan,
+                    (minValue >> offset) - 1));
+            }
+
+            break;
+        }
+
         case GetArrayLength:
         case GetVectorLength: {
             setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
@@ -1598,8 +1858,9 @@ private:
     void setRelationship(
         RelationshipMap& relationshipMap, Relationship relationship, unsigned timeToLive = 1)
     {
+        relationship = canonicalizeConstant(relationship);
         setOneSide(relationshipMap, relationship, timeToLive);
-        setOneSide(relationshipMap, relationship.flipped(), timeToLive);
+        setOneSide(relationshipMap, canonicalizeConstant(relationship.flipped()), timeToLive);
     }
     
     void setOneSide(
@@ -1607,7 +1868,8 @@ private:
     {
         if (!relationship)
             return;
-        
+        relationship = canonicalizeConstant(relationship);
+
         if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
             dataLogLn("    Setting: ", relationship, " (ttl = ", timeToLive, ")");
 
@@ -1767,7 +2029,7 @@ private:
             dataLog("    Incoming: ", listDump(sortedRelationships(relationshipMap)), "\n");
             dataLog("    At head: ", listDump(sortedRelationships(m_relationshipsAtHead[target])), "\n");
         }
-        
+
         if (m_seenBlocks.add(target)) {
             // This is a new block. We copy subject to liveness pruning.
             auto isLive = [&] (NodeFlowProjection node) {
@@ -1775,27 +2037,29 @@ private:
                     return true;
                 return target->ssa->liveAtHead.contains(node);
             };
-            
+
             for (auto& entry : relationshipMap) {
-                if (!isLive(entry.key))
+                if (!isLive(entry.key)) {
+                    dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "  Skipping key ", entry.key, " (dead).");
                     continue;
-                
+                }
+
                 Vector<Relationship> values;
                 for (Relationship relationship : entry.value) {
                     ASSERT(relationship.left() == entry.key);
-                    if (isLive(relationship.right())) {
-                        if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
-                            dataLog("  Propagating ", relationship, "\n");
-                        values.append(relationship);
-                    }
+                    if (isLive(relationship.right()) || relationship.right()->isInt32Constant()) {
+                        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "  Propagating ", relationship);
+                        values.append(canonicalizeConstant(relationship));
+                    } else
+                        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "  Skipping ", relationship);
                 }
-                
+
                 std::sort(values.begin(), values.end());
                 m_relationshipsAtHead[target].add(entry.key, values);
             }
             return true;
         }
-        
+
         // Merge by intersecting. We have no notion of BOTTOM, so we use the omission of
         // relationships for a pair of nodes to mean TOP. The reason why we don't need BOTTOM
         // is (1) we just overapproximate contradictions and (2) a value never having been
@@ -1814,6 +2078,7 @@ private:
 
             Vector<Relationship> constantRelationshipsAtHead;
             for (Relationship& relationshipAtHead : entry.value) {
+                relationshipAtHead = canonicalizeConstant(relationshipAtHead);
                 if (relationshipAtHead.right()->isInt32Constant())
                     constantRelationshipsAtHead.append(relationshipAtHead);
             }
@@ -1911,7 +2176,25 @@ private:
     {
         return sortedRelationships(m_relationships);
     }
-    
+
+    // When possible, rewrite this constant relationship with zero instead.
+    Relationship canonicalizeConstant(Relationship relationship)
+    {
+        if (!relationship.left().isStillValid() || !relationship.right().isStillValid())
+            return Relationship();
+        if (relationship.left() == m_zero || relationship.right() == m_zero)
+            return relationship;
+        if (!relationship.right()->isInt32Constant() || relationship.left()->isInt32Constant())
+            return relationship;
+
+        if (!relationship.addToOffset(relationship.right()->asInt32()))
+            return relationship;
+
+        relationship.setRight(m_zero);
+        return relationship;
+
+    }
+
     Node* m_zero;
     RelationshipMap m_relationships;
     BlockSet m_seenBlocks;
@@ -1920,12 +2203,65 @@ private:
 
     unsigned m_iterations { 0 };
 };
-    
+
 } // anonymous namespace
+
+// These functions are useful for writing tests for this phase.
+void startDebugRecordingIRO()
+{
+    DollarVMAssertScope assertScope;
+    if (Options::useConcurrentJIT())
+        return;
+
+    DFGIntegerRangeOptimizationPhaseInternal::shouldRecordCheckInBoundsCounts = true;
+    DFGIntegerRangeOptimizationPhaseInternal::checkInBoundsCountBeforeIRO = 0;
+    DFGIntegerRangeOptimizationPhaseInternal::checkInBoundsCountAfterIRO = 0;
+}
+
+uint64_t stopDebugRecordingIRO()
+{
+    DollarVMAssertScope assertScope;
+    if (Options::useConcurrentJIT())
+        return -1;
+
+    using DFGIntegerRangeOptimizationPhaseInternal::checkInBoundsCountBeforeIRO;
+    using DFGIntegerRangeOptimizationPhaseInternal::checkInBoundsCountAfterIRO;
+
+    DFGIntegerRangeOptimizationPhaseInternal::shouldRecordCheckInBoundsCounts = false;
+    return (checkInBoundsCountAfterIRO << 32) | checkInBoundsCountBeforeIRO;
+}
+
+static int countCheckInBounds(Graph& graph)
+{
+    DollarVMAssertScope assertScope;
+    if (Options::useConcurrentJIT())
+        return -1;
+
+    StringPrintStream sp;
+    graph.dump(sp);
+    auto str = sp.toString();
+    size_t idx = 0;
+    int count = 0;
+    while ((idx = str.findIgnoringASCIICase("CheckInBounds("_s, idx + 1)) != WTF::notFound)
+        ++count;
+
+    dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verboseCounting, str);
+
+    return count;
+}
 
 bool performIntegerRangeOptimization(Graph& graph)
 {
-    return runPhase<IntegerRangeOptimizationPhase>(graph);
+    if (UNLIKELY(DFGIntegerRangeOptimizationPhaseInternal::shouldRecordCheckInBoundsCounts)) {
+        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verboseCounting, "Before IRO:");
+        DFGIntegerRangeOptimizationPhaseInternal::checkInBoundsCountBeforeIRO += countCheckInBounds(graph);
+    }
+    auto result = runPhase<IntegerRangeOptimizationPhase>(graph);
+    if (UNLIKELY(DFGIntegerRangeOptimizationPhaseInternal::shouldRecordCheckInBoundsCounts)) {
+        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verboseCounting, "After IRO:");
+        DFGIntegerRangeOptimizationPhaseInternal::checkInBoundsCountAfterIRO += countCheckInBounds(graph);
+    }
+    return result;
 }
 
 } } // namespace JSC::DFG
