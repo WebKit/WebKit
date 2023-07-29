@@ -829,6 +829,7 @@ accessibility/display-contents/aria-owns.html [ Skip ]
 accessibility/mac/text-field-number-of-characters.html [ Skip ]
 accessibility/mac/content-editable-attributed-string.html [ Skip ]
 accessibility/mac/lazy-spellchecking.html [ Skip ]
+accessibility/text-marker/text-marker-range-with-unordered-markers.html
 
 # DOM paste access requests are not implemented in WebKit1.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]

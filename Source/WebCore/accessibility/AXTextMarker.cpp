@@ -294,7 +294,7 @@ std::optional<CharacterRange> AXTextMarkerRange::characterRange() const
 
 std::partial_ordering partialOrder(const AXTextMarker& marker1, const AXTextMarker& marker2)
 {
-    if (marker1.objectID() == marker2.objectID() && marker1.treeID() == marker2.treeID()) {
+    if (marker1.objectID() == marker2.objectID() && LIKELY(marker1.treeID() == marker2.treeID())) {
         if (LIKELY(marker1.m_data.characterOffset < marker2.m_data.characterOffset))
             return std::partial_ordering::less;
         if (marker1.m_data.characterOffset > marker2.m_data.characterOffset)

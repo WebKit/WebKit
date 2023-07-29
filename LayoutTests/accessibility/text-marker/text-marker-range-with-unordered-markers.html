@@ -32,6 +32,12 @@ if (accessibilityController) {
     output += expect("text.stringForTextMarkerRange(range2)", "'para'");
     output += expect("text.textMarkerRangeLength(range2)", "4");
 
+    if (accessibilityController.platformName == "mac") {
+        var range3 = text.textMarkerRangeForUnorderedMarkers(end, start);
+        output += expect("text.stringForTextMarkerRange(range3)", "'para'");
+        output += expect("text.textMarkerRangeLength(range3)", "4");
+    }
+
     document.getElementById("text").style.visibility = "hidden";
     debug(output);
 }

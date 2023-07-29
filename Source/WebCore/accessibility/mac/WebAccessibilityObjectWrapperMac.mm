@@ -3407,39 +3407,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return nil;
     }
 
-    if ([attribute isEqualToString:AXTextMarkerRangeForTextMarkersAttribute]) {
+    if ([attribute isEqualToString:AXTextMarkerRangeForTextMarkersAttribute]
+        || [attribute isEqualToString:AXTextMarkerRangeForUnorderedTextMarkersAttribute]) {
         if (array.count < 2
             || !AXObjectIsTextMarker([array objectAtIndex:0])
             || !AXObjectIsTextMarker([array objectAtIndex:1]))
             return nil;
 
         return AXTextMarkerRange { { (AXTextMarkerRef)[array objectAtIndex:0] }, { (AXTextMarkerRef)[array objectAtIndex:1] } }.platformData().bridgingAutorelease();
-    }
-
-    if ([attribute isEqualToString:AXTextMarkerRangeForUnorderedTextMarkersAttribute]) {
-        if (array.count < 2
-            || !AXObjectIsTextMarker([array objectAtIndex:0])
-            || !AXObjectIsTextMarker([array objectAtIndex:1]))
-            return nil;
-
-        AXTextMarkerRef textMarker1 = (AXTextMarkerRef)[array objectAtIndex:0];
-        AXTextMarkerRef textMarker2 = (AXTextMarkerRef)[array objectAtIndex:1];
-
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([textMarker1 = retainPtr(textMarker1), textMarker2 = retainPtr(textMarker2), protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
-            auto* backingObject = protectedSelf.get().axBackingObject;
-            if (!backingObject)
-                return nil;
-
-            auto* cache = backingObject->axObjectCache();
-            if (!cache)
-                return nil;
-
-            auto characterOffset1 = characterOffsetForTextMarker(cache, textMarker1.get());
-            auto characterOffset2 = characterOffsetForTextMarker(cache, textMarker2.get());
-            auto range = cache->rangeForUnorderedCharacterOffsets(characterOffset1, characterOffset2);
-
-            return (id)textMarkerRangeFromRange(cache, range);
-        });
     }
 
     if ([attribute isEqualToString:AXNextTextMarkerForTextMarkerAttribute]) {
