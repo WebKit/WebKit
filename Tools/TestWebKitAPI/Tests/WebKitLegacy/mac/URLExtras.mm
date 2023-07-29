@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WebNSURLExtras.h>
 
@@ -35,6 +36,15 @@ TEST(WebKit, URLCanonicalization)
     NSURL *url = [NSURL URLWithString:@"http://a@/"];
     EXPECT_NOT_NULL(url);
     EXPECT_NULL([url _webkit_canonicalize_with_wtf]);
+}
+
+TEST(WebKit, SuggestedFilenameWithMIMEType)
+{
+    NSURL *url = [NSURL URLWithString:@"http://webkit.org/a"];
+    EXPECT_NOT_NULL(url);
+
+    EXPECT_WK_STREQ([url _webkit_suggestedFilenameWithMIMEType:nil], @"a");
+    EXPECT_WK_STREQ([url _webkit_suggestedFilenameWithMIMEType:@"image/jpeg"], @"a.jpg");
 }
 
 } // namespace TestWebKitAPI
