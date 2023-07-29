@@ -2031,6 +2031,17 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForM
     return nullptr;
 }
 
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForUnorderedMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray *textMarkers = @[startMarker->platformTextMarker(), endMarker->platformTextMarker()];
+    auto textMarkerRange = attributeValueForParameter(@"AXTextMarkerRangeForUnorderedTextMarkers", textMarkers);
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForRange(unsigned location, unsigned length)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
