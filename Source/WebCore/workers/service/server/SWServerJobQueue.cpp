@@ -158,6 +158,10 @@ void SWServerJobQueue::scriptContextFailedToStart(const ServiceWorkerJobDataIden
     // If an uncaught runtime script error occurs during the above step, then:
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
+    if (!registration || !registration->preInstallationWorker()) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWServerJobQueue::scriptContextFailedToStart registration is null (%d) or pre installation worker is null", !registration);
+        return;
+    }
 
     ASSERT(registration->preInstallationWorker());
     registration->preInstallationWorker()->terminate();
@@ -181,6 +185,10 @@ void SWServerJobQueue::scriptContextStarted(const ServiceWorkerJobDataIdentifier
 
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
+    if (!registration) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWServerJobQueue::scriptContextStarted registration is null");
+        return;
+    }
 
     install(*registration, identifier);
 }
