@@ -53,6 +53,10 @@
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringPrintStream.h>
 
+#if !USE(SYSTEM_MALLOC)
+#include <bmalloc/Gigacage.h>
+#endif
+
 namespace JSC {
 
 struct PrettyPrinter {
@@ -651,6 +655,12 @@ SpeculatedType speculationFromCell(JSCell* cell)
         ASSERT_NOT_REACHED();
         return SpecNone;
     }
+#if !USE(SYSTEM_MALLOC)
+    if (UNLIKELY(Gigacage::contains(structure))) {
+        ASSERT_NOT_REACHED();
+        return SpecNone;
+    }
+#endif
     return speculationFromStructure(structure);
 }
 
