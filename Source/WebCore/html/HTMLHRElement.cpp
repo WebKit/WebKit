@@ -86,7 +86,7 @@ void HTMLHRElement::collectPresentationalHintsForAttribute(const QualifiedName& 
         break;
     case AttributeNames::widthAttr:
         if (auto valueInteger = parseHTMLInteger(value); valueInteger && !*valueInteger)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyWidth, 1, CSSUnitType::CSS_PX);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWidth, 0, CSSUnitType::CSS_PX);
         else
             addHTMLLengthToStyle(style, CSSPropertyWidth, value);
         break;
