@@ -45,6 +45,10 @@
 #include <wtf/linux/CurrentProcessMemoryStatus.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+#if USE(NICOSIA)
+#include "NicosiaBuffer.h"
+#endif
+
 namespace WebCore {
 
 static float cpuPeriod()
@@ -104,6 +108,9 @@ void ResourceUsageThread::platformSaveStateBeforeStarting()
         if (auto* thread = profiler->thread())
             m_samplingProfilerThreadID = thread->id();
     }
+#endif
+#if USE(NICOSIA)
+    Nicosia::Buffer::resetMemoryUsage();
 #endif
 }
 
@@ -319,6 +326,10 @@ void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageDa
         imagesDecodedSize = MemoryCache::singleton().getStatistics().images.decodedSize;
     });
     data.categories[MemoryCategory::Images].dirtySize = imagesDecodedSize;
+
+#if USE(NICOSIA)
+    data.categories[MemoryCategory::Layers].dirtySize = Nicosia::Buffer::getMemoryUsage();
+#endif
 
     size_t categoriesTotalSize = 0;
     for (auto& category : data.categories)

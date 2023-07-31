@@ -57,6 +57,9 @@ public:
     void completePainting();
     void waitUntilPaintingComplete();
 
+    static void resetMemoryUsage();
+    static double getMemoryUsage();
+
 private:
     Buffer(const WebCore::IntSize&, Flags);
 
@@ -74,6 +77,10 @@ private:
         Condition condition;
         PaintingState state { PaintingState::Complete };
     } m_painting;
+
+    static Lock s_layersMemoryUsageLock;
+    static double s_currentLayersMemoryUsage;
+    static double s_maxLayersMemoryUsage;
 };
 
 } // namespace Nicosia
