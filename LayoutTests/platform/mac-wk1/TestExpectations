@@ -2583,3 +2583,5 @@ webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visi
 webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error.html [ ImageOnlyFailure ]
 
 webkit.org/b/259485 [ Ventura ] http/tests/media/hls/track-in-band-multiple-cues.html [ Crash ]
+
+webkit.org/b/259546 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Crash Timeout ]
