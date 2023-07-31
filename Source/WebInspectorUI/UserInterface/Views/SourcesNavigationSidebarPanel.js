@@ -2383,7 +2383,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
 
         for (let target of WI.targets) {
-            if (target.type === WI.TargetType.Worker) {
+            if (target.type === WI.TargetType.Worker && target.mainResource) {
                 this._addWorkerTargetWithMainResource(target);
                 this._addBreakpointsForSourceCode(target.mainResource);
                 this._addIssuesForSourceCode(target.mainResource);
