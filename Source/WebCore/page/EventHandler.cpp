@@ -3738,6 +3738,9 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     if (initialKeyEvent.type() == PlatformEvent::Type::KeyDown)
         matchedAnAccessKey = handleAccessKey(initialKeyEvent);
 
+    if (initialKeyEvent.type() == PlatformEvent::Type::KeyUp)
+        stopKeyboardScrolling();
+
     // FIXME: it would be fair to let an input method handle KeyUp events before DOM dispatch.
     if (initialKeyEvent.type() == PlatformEvent::Type::KeyUp || initialKeyEvent.type() == PlatformEvent::Type::Char)
         return !element->dispatchKeyEvent(initialKeyEvent);
@@ -3965,6 +3968,9 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
 {
     Ref protectedFrame { m_frame };
 
+    // 'keyup' is handled preemptively in `EventHandler::internalKeyEvent` so that keyboard scrolls
+    // can be properly terminated even if the event is default-prevented.
+
     if (event.type() == eventNames().keydownEvent) {
         m_frame.editor().handleKeyboardEvent(event);
         if (event.defaultHandled())
@@ -3998,8 +4004,6 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
         if (event.charCode() == ' ')
             defaultSpaceEventHandler(event);
     }
-    if (event.type() == eventNames().keyupEvent)
-        stopKeyboardScrolling();
 }
 
 #if ENABLE(DRAG_SUPPORT)
