@@ -136,8 +136,13 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
     }, m_identifier);
 }
 
-void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered()
+void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered(TransactionID nextCommitTransactionID)
 {
+    if (nextCommitTransactionID <= m_lastLayerTreeTransactionID) {
+        LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered nextCommitTransactionID=" << nextCommitTransactionID << ") already obsoleted by m_lastLayerTreeTransactionID=" << m_lastLayerTreeTransactionID);
+        return;
+    }
+
     m_commitLayerTreeMessageState = Idle;
     pauseDisplayRefreshCallbacks();
 #if ENABLE(ASYNC_SCROLLING)
@@ -147,6 +152,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered()
 
 void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(TransactionID transactionID)
 {
+    if (transactionID <= m_lastLayerTreeTransactionID)
+        return;
+
     m_pendingLayerTreeTransactionID = transactionID;
 }
 
@@ -179,6 +187,10 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
 
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree transaction:" << layerTreeTransaction.description());
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree scrolling tree:" << scrollingTreeTransaction.description());
+
+    m_lastLayerTreeTransactionID = layerTreeTransaction.transactionID();
+    if (m_pendingLayerTreeTransactionID < m_lastLayerTreeTransactionID)
+        m_pendingLayerTreeTransactionID = m_lastLayerTreeTransactionID;
 
     bool didUpdateEditorState { false };
     if (layerTreeTransaction.isMainFrameProcessTransaction()) {

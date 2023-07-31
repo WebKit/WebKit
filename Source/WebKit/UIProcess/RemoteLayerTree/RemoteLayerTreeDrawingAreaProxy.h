@@ -113,7 +113,7 @@ private:
     // Message handlers
     virtual void setPreferredFramesPerSecond(WebCore::FramesPerSecond) { }
     void willCommitLayerTree(TransactionID);
-    void commitLayerTreeNotTriggered();
+    void commitLayerTreeNotTriggered(TransactionID);
     void commitLayerTree(IPC::Connection&, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>&);
     void commitLayerTreeTransaction(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     virtual void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) { }
@@ -141,6 +141,7 @@ private:
     RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 
     TransactionID m_pendingLayerTreeTransactionID;
+    TransactionID m_lastLayerTreeTransactionID;
 #if ASSERT_ENABLED
     TransactionID m_lastVisibleTransactionID;
 #endif
