@@ -8906,18 +8906,20 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
             auto isShowingAutoPopover = [](HTMLElement& element) -> bool {
                 return element.popoverState() == PopoverState::Auto && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing;
             };
-            for (auto& element : lineageOfType<HTMLElement>(*startElement)) {
-                if (!clickedPopover && isShowingAutoPopover(element))
-                    clickedPopover = &element;
+            for (RefPtr element = startElement; element; element = element->parentElementInComposedTree()) {
+                if (auto* htmlElement = dynamicDowncast<HTMLElement>(element.get())) {
+                    if (!clickedPopover && isShowingAutoPopover(*htmlElement))
+                        clickedPopover = htmlElement;
 
-                if (!invokerPopover) {
-                    if (auto* button = dynamicDowncast<HTMLFormControlElement>(element)) {
-                        if (auto* popover = button->popoverTargetElement(); popover && isShowingAutoPopover(*popover))
-                            invokerPopover = popover;
+                    if (!invokerPopover) {
+                        if (auto* button = dynamicDowncast<HTMLFormControlElement>(*htmlElement)) {
+                            if (auto* popover = button->popoverTargetElement(); popover && isShowingAutoPopover(*popover))
+                                invokerPopover = popover;
+                        }
                     }
+                    if (clickedPopover && invokerPopover)
+                        break;
                 }
-                if (clickedPopover && invokerPopover)
-                    break;
             }
             return std::tuple { WTFMove(clickedPopover), WTFMove(invokerPopover) };
         }();
