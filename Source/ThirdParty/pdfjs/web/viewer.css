@@ -225,11 +225,19 @@
 }
 
 .annotationLayer
-  :is(.linkAnnotation, .buttonWidgetAnnotation.pushButton)
+  :is(.linkAnnotation, .buttonWidgetAnnotation.pushButton):not(.hasBorder)
   > a:hover {
   opacity: 0.2;
-  background: rgba(255, 255, 0, 1);
+  background-color: rgba(255, 255, 0, 1);
   box-shadow: 0 2px 10px rgba(255, 255, 0, 1);
+}
+
+.annotationLayer .linkAnnotation.hasBorder:hover {
+  background-color: rgba(255, 255, 0, 0.2);
+}
+
+.annotationLayer .hasBorder {
+  background-size: 100% 100%;
 }
 
 .annotationLayer .textAnnotation img {
@@ -478,6 +486,16 @@
 .annotationLayer .annotationTextContent span {
   width: 100%;
   display: inline-block;
+}
+
+.annotationLayer svg.quadrilateralsContainer {
+  contain: strict;
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
 
 
@@ -801,10 +819,18 @@
 
 
 :root {
-  --focus-outline: solid 2px blue;
-  --hover-outline: dashed 2px blue;
+  --outline-width: 2px;
+  --outline-color: blue;
+  --focus-outline: solid var(--outline-width) var(--outline-color);
+  --hover-outline: dashed var(--outline-width) var(--outline-color);
   --freetext-line-height: 1.35;
   --freetext-padding: 2px;
+  --resizer-size: 8px;
+  --resizer-shift: calc(
+    0px - var(--outline-width) - var(--resizer-size) / 2 - var(--outline-width) /
+      2
+  );
+  --resizer-color: white;
   --editorFreeText-editing-cursor: text;
   --editorInk-editing-cursor: url(images/cursor-editorInk.svg) 0 16, pointer;
 }
@@ -818,8 +844,10 @@
 
 @media screen and (forced-colors: active) {
   :root {
-    --focus-outline: solid 3px ButtonText;
-    --hover-outline: dashed 3px ButtonText;
+    --outline-width: 3px;
+    --outline-color: ButtonText;
+    --resizer-size: 12px;
+    --resizer-color: ButtonFace;
   }
 }
 
@@ -836,8 +864,7 @@
 .annotationEditorLayer {
   background: transparent;
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   font-size: calc(100px * var(--scale-factor));
   transform-origin: 0 0;
   cursor: auto;
@@ -852,47 +879,51 @@
   cursor: var(--editorInk-editing-cursor);
 }
 
-.annotationEditorLayer :is(.freeTextEditor, .inkEditor)[draggable="true"] {
+.annotationEditorLayer
+  :is(.freeTextEditor, .inkEditor, .stampEditor)[draggable="true"] {
   cursor: move;
 }
 
 .annotationEditorLayer .selectedEditor {
   outline: var(--focus-outline);
-  resize: none;
 }
 
-.annotationEditorLayer .freeTextEditor {
+.annotationEditorLayer :is(.freeTextEditor, .inkEditor, .stampEditor) {
   position: absolute;
   background: transparent;
   border-radius: 3px;
-  padding: calc(var(--freetext-padding) * var(--scale-factor));
-  resize: none;
-  width: auto;
-  height: auto;
   z-index: 1;
   transform-origin: 0 0;
-  touch-action: none;
   cursor: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.annotationEditorLayer .freeTextEditor {
+  padding: calc(var(--freetext-padding) * var(--scale-factor));
+  width: auto;
+  height: auto;
+  touch-action: none;
 }
 
 .annotationEditorLayer .freeTextEditor .internal {
   background: transparent;
   border: none;
-  top: 0;
-  left: 0;
+  inset: 0;
   overflow: visible;
   white-space: nowrap;
-  resize: none;
   font: 10px sans-serif;
   line-height: var(--freetext-line-height);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 
 .annotationEditorLayer .freeTextEditor .overlay {
   position: absolute;
   display: none;
   background: transparent;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
 }
@@ -908,45 +939,154 @@
 
 .annotationEditorLayer .freeTextEditor .internal:focus {
   outline: none;
-}
-
-.annotationEditorLayer .inkEditor.disabled {
-  resize: none;
-}
-
-.annotationEditorLayer .inkEditor.disabled.selectedEditor {
-  resize: horizontal;
+  -webkit-user-select: auto;
+     -moz-user-select: auto;
+          user-select: auto;
 }
 
 .annotationEditorLayer
-  :is(.freeTextEditor, .inkEditor):hover:not(.selectedEditor) {
+  :is(.freeTextEditor, .inkEditor, .stampEditor):hover:not(.selectedEditor) {
   outline: var(--hover-outline);
 }
 
 .annotationEditorLayer .inkEditor {
-  position: absolute;
-  background: transparent;
-  border-radius: 3px;
-  overflow: auto;
   width: 100%;
   height: 100%;
-  z-index: 1;
-  transform-origin: 0 0;
-  cursor: auto;
 }
 
 .annotationEditorLayer .inkEditor.editing {
-  resize: none;
   cursor: inherit;
 }
 
 .annotationEditorLayer .inkEditor .inkEditorCanvas {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   touch-action: none;
+}
+
+.annotationEditorLayer .stampEditor {
+  width: auto;
+  height: auto;
+}
+
+.annotationEditorLayer .stampEditor.loading {
+  aspect-ratio: 1;
+  width: 10%;
+  height: auto;
+  background-color: rgba(128, 128, 128, 0.5);
+  background-image: var(--loading-icon);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size: 16px 16px;
+  transition-property: background-size;
+  transition-delay: var(--loading-icon-delay);
+}
+
+.annotationEditorLayer .stampEditor canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.annotationEditorLayer .resizers {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+.annotationEditorLayer .resizers.hidden {
+  display: none;
+}
+
+.annotationEditorLayer .resizer {
+  width: var(--resizer-size);
+  height: var(--resizer-size);
+  border-radius: 50%;
+  background: var(--resizer-color);
+  border: var(--focus-outline);
+  position: absolute;
+}
+
+.annotationEditorLayer .resizer.topLeft {
+  cursor: nw-resize;
+  top: var(--resizer-shift);
+  left: var(--resizer-shift);
+}
+
+.annotationEditorLayer .resizer.topMiddle {
+  cursor: n-resize;
+  top: var(--resizer-shift);
+  left: calc(50% + var(--resizer-shift));
+}
+
+.annotationEditorLayer .resizer.topRight {
+  cursor: ne-resize;
+  top: var(--resizer-shift);
+  right: var(--resizer-shift);
+}
+
+.annotationEditorLayer .resizer.middleRight {
+  cursor: e-resize;
+  top: calc(50% + var(--resizer-shift));
+  right: var(--resizer-shift);
+}
+
+.annotationEditorLayer .resizer.bottomRight {
+  cursor: se-resize;
+  bottom: var(--resizer-shift);
+  right: var(--resizer-shift);
+}
+
+.annotationEditorLayer .resizer.bottomMiddle {
+  cursor: s-resize;
+  bottom: var(--resizer-shift);
+  left: calc(50% + var(--resizer-shift));
+}
+
+.annotationEditorLayer .resizer.bottomLeft {
+  cursor: sw-resize;
+  bottom: var(--resizer-shift);
+  left: var(--resizer-shift);
+}
+
+.annotationEditorLayer .resizer.middleLeft {
+  cursor: w-resize;
+  top: calc(50% + var(--resizer-shift));
+  left: var(--resizer-shift);
+}
+
+.annotationEditorLayer.resizingTopLeft {
+  cursor: nw-resize;
+}
+
+.annotationEditorLayer.resizingTopMiddle {
+  cursor: n-resize;
+}
+
+.annotationEditorLayer.resizingTopRight {
+  cursor: ne-resize;
+}
+
+.annotationEditorLayer.resizingMiddleRight {
+  cursor: e-resize;
+}
+
+.annotationEditorLayer.resizingBottomRight {
+  cursor: se-resize;
+}
+
+.annotationEditorLayer.resizingBottomMiddle {
+  cursor: s-resize;
+}
+
+.annotationEditorLayer.resizingBottomLeft {
+  cursor: sw-resize;
+}
+
+.annotationEditorLayer.resizingMiddleLeft {
+  cursor: w-resize;
 }
 
 :root {
@@ -1149,6 +1289,7 @@
   --toggled-btn-color: rgba(0, 0, 0, 1);
   --toggled-btn-bg-color: rgba(0, 0, 0, 0.3);
   --toggled-hover-active-btn-color: rgba(0, 0, 0, 0.4);
+  --toggled-hover-btn-outline: none;
   --dropdown-btn-bg-color: rgba(215, 215, 219, 1);
   --dropdown-btn-border: none;
   --separator-color: rgba(0, 0, 0, 0.3);
@@ -1176,6 +1317,7 @@
   --treeitem-collapsed-icon: url(images/treeitem-collapsed.svg);
   --toolbarButton-editorFreeText-icon: url(images/toolbarButton-editorFreeText.svg);
   --toolbarButton-editorInk-icon: url(images/toolbarButton-editorInk.svg);
+  --toolbarButton-editorStamp-icon: url(images/toolbarButton-editorStamp.svg);
   --toolbarButton-menuArrow-icon: url(images/toolbarButton-menuArrow.svg);
   --toolbarButton-sidebarToggle-icon: url(images/toolbarButton-sidebarToggle.svg);
   --toolbarButton-secondaryToolbarToggle-icon: url(images/toolbarButton-secondaryToolbarToggle.svg);
@@ -1272,6 +1414,8 @@
     --toolbar-icon-opacity: 1;
     --toolbar-icon-bg-color: ButtonText;
     --toolbar-icon-hover-bg-color: ButtonFace;
+    --toggled-hover-active-btn-color: ButtonText;
+    --toggled-hover-btn-outline: 2px solid ButtonBorder;
     --toolbar-border-color: CanvasText;
     --toolbar-border-bottom: 1px solid var(--toolbar-border-color);
     --toolbar-box-shadow: none;
@@ -1379,8 +1523,7 @@ body {
   z-index: 100;
   font: message-box;
   border-top: 1px solid rgba(51, 51, 51, 1);
-  -webkit-border-end: var(--doorhanger-border-color-whcm);
-          border-inline-end: var(--doorhanger-border-color-whcm);
+  border-inline-end: var(--doorhanger-border-color-whcm);
   transition-property: inset-inline-start;
   transition-duration: var(--sidebar-transition-duration);
   transition-timing-function: var(--sidebar-transition-timing-function);
@@ -1572,8 +1715,7 @@ body {
   height: 32px;
 }
 .findbar > div#findbarInputContainer {
-  -webkit-margin-end: 4px;
-          margin-inline-end: 4px;
+  margin-inline-end: 4px;
 }
 .findbar.wrapContainers > div,
 .findbar.wrapContainers > div#findbarMessageContainer > * {
@@ -1644,8 +1786,7 @@ body {
 }
 
 .editorParamsToolbarContainer .editorParamsLabel {
-  -webkit-padding-end: 10px;
-          padding-inline-end: 10px;
+  padding-inline-end: 10px;
   flex: none;
   color: var(--main-color);
 }
@@ -1697,7 +1838,8 @@ body {
 .doorHanger,
 .doorHangerRight {
   border-radius: 2px;
-  box-shadow: 0 1px 5px var(--doorhanger-border-color),
+  box-shadow:
+    0 1px 5px var(--doorhanger-border-color),
     0 0 0 1px var(--doorhanger-border-color);
   border: var(--doorhanger-border-color-whcm);
 }
@@ -1714,14 +1856,12 @@ body {
 }
 .doorHanger::after {
   inset-inline-start: 10px;
-  -webkit-margin-start: -8px;
-          margin-inline-start: -8px;
+  margin-inline-start: -8px;
   border-bottom-color: var(--toolbar-bg-color);
 }
 .doorHangerRight::after {
   inset-inline-end: 10px;
-  -webkit-margin-end: -8px;
-          margin-inline-end: -8px;
+  margin-inline-end: -8px;
   border-bottom-color: var(--doorhanger-bg-color);
 }
 :is(.doorHanger, .doorHangerRight)::before {
@@ -1730,13 +1870,11 @@ body {
 }
 .doorHanger::before {
   inset-inline-start: 10px;
-  -webkit-margin-start: -9px;
-          margin-inline-start: -9px;
+  margin-inline-start: -9px;
 }
 .doorHangerRight::before {
   inset-inline-end: 10px;
-  -webkit-margin-end: -9px;
-          margin-inline-end: -9px;
+  margin-inline-end: -9px;
 }
 
 #findResultsCount {
@@ -1781,16 +1919,13 @@ body {
 }
 
 #toolbarViewerLeft {
-  -webkit-padding-start: 1px;
-          padding-inline-start: 1px;
+  padding-inline-start: 1px;
 }
 #toolbarViewerRight {
-  -webkit-padding-end: 1px;
-          padding-inline-end: 1px;
+  padding-inline-end: 1px;
 }
 #toolbarSidebarRight {
-  -webkit-padding-end: 2px;
-          padding-inline-end: 2px;
+  padding-inline-end: 2px;
 }
 
 .splitToolbarButton {
@@ -1839,8 +1974,7 @@ body {
   margin: 0;
 }
 #toolbarSidebar .splitToolbarButton > .toolbarButton {
-  -webkit-margin-end: 2px;
-          margin-inline-end: 2px;
+  margin-inline-end: 2px;
 }
 
 .splitToolbarButtonSeparator {
@@ -1884,6 +2018,11 @@ body {
   color: var(--toggled-btn-color);
 }
 
+:is(.toolbarButton, .secondaryToolbarButton).toggled:hover,
+.splitToolbarButton.toggled > .toolbarButton.toggled:hover {
+  outline: var(--toggled-hover-btn-outline) !important;
+}
+
 :is(.toolbarButton, .secondaryToolbarButton).toggled::before {
   background-color: var(--toggled-btn-color);
 }
@@ -1921,8 +2060,7 @@ body {
   color: var(--main-color);
   margin: 0;
   padding: 1px 0 2px;
-  -webkit-padding-start: 6px;
-          padding-inline-start: 6px;
+  padding-inline-start: 6px;
   border: none;
   background-color: var(--dropdown-btn-bg-color);
 }
@@ -2034,6 +2172,11 @@ body {
           mask-image: var(--toolbarButton-editorInk-icon);
 }
 
+#editorStamp::before {
+  -webkit-mask-image: var(--toolbarButton-editorStamp-icon);
+          mask-image: var(--toolbarButton-editorStamp-icon);
+}
+
 #print::before,
 #secondaryPrint::before {
   -webkit-mask-image: var(--toolbarButton-print-icon);
@@ -2113,8 +2256,7 @@ a:is(.toolbarButton, .secondaryToolbarButton)[href="#"] {
   position: relative;
   margin: 0;
   padding: 0 0 1px;
-  -webkit-padding-start: 36px;
-          padding-inline-start: 36px;
+  padding-inline-start: 36px;
   height: auto;
   min-height: 26px;
   width: auto;
@@ -2126,8 +2268,7 @@ a:is(.toolbarButton, .secondaryToolbarButton)[href="#"] {
   display: inline-block;
 }
 .secondaryToolbarButton > span {
-  -webkit-padding-end: 4px;
-          padding-inline-end: 4px;
+  padding-inline-end: 4px;
 }
 
 #firstPage::before {
@@ -2234,8 +2375,7 @@ a:is(.toolbarButton, .secondaryToolbarButton)[href="#"] {
   position: absolute !important;
   left: 0;
   margin: 10px 0 3px;
-  -webkit-margin-start: 7px;
-          margin-inline-start: 7px;
+  margin-inline-start: 7px;
 }
 
 #pageNumber {
@@ -2279,8 +2419,7 @@ a:is(.toolbarButton, .secondaryToolbarButton)[href="#"] {
 }
 
 #numPages.toolbarLabel {
-  -webkit-padding-start: 3px;
-          padding-inline-start: 3px;
+  padding-inline-start: 3px;
 }
 
 #thumbnailView,
@@ -2353,8 +2492,7 @@ a:focus > .thumbnail > .thumbnailImage,
 
 .treeWithDeepNesting > .treeItem,
 .treeItem > .treeItems {
-  -webkit-margin-start: 20px;
-          margin-inline-start: 20px;
+  margin-inline-start: 20px;
 }
 
 .treeItem > a {
@@ -2365,8 +2503,7 @@ a:focus > .thumbnail > .thumbnailImage,
   height: auto;
   margin-bottom: 1px;
   padding: 2px 0 5px;
-  -webkit-padding-start: 4px;
-          padding-inline-start: 4px;
+  padding-inline-start: 4px;
   border-radius: 2px;
   color: var(--treeitem-color);
   font-size: 13px;
@@ -2382,8 +2519,7 @@ a:focus > .thumbnail > .thumbnailImage,
   cursor: pointer;
 }
 #layersView .treeItem > a > label {
-  -webkit-padding-start: 4px;
-          padding-inline-start: 4px;
+  padding-inline-start: 4px;
 }
 #layersView .treeItem > a > label > input {
   float: var(--inline-start);
