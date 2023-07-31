@@ -36,22 +36,16 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebMDNSRegister::finishedRegisteringMDNSName(MDNSRegisterIdentifier identifier, String&& name, std::optional<MDNSRegisterError> error)
+void WebMDNSRegister::finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress, String&& name, std::optional<MDNSRegisterError> error, CompletionHandler<void(const String&, std::optional<MDNSRegisterError>)>&& completionHandler)
 {
-    auto pendingRegistration = m_pendingRegistrations.take(identifier);
-    if (!pendingRegistration.callback)
-        return;
-
     if (!error) {
-        auto iterator = m_registeringDocuments.find(pendingRegistration.documentIdentifier);
-        if (iterator == m_registeringDocuments.end()) {
-            pendingRegistration.callback(name, WebCore::MDNSRegisterError::DNSSD);
-            return;
-        }
-        iterator->value.add(pendingRegistration.ipAddress, name);
+        auto iterator = m_registeringDocuments.find(documentIdentifier);
+        if (iterator == m_registeringDocuments.end())
+            return completionHandler(name, WebCore::MDNSRegisterError::DNSSD);
+        iterator->value.add(ipAddress, name);
     }
 
-    pendingRegistration.callback(name, error);
+    completionHandler(name, error);
 }
 
 void WebMDNSRegister::unregisterMDNSNames(ScriptExecutionContextIdentifier identifier)
@@ -75,13 +69,13 @@ void WebMDNSRegister::registerMDNSName(ScriptExecutionContextIdentifier identifi
         return;
     }
 
-    auto requestIdentifier = MDNSRegisterIdentifier::generate();
-    m_pendingRegistrations.add(requestIdentifier, PendingRegistration { WTFMove(callback), identifier, ipAddress });
-
-    // FIXME: Use async reply.
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-    if (connection.send(Messages::NetworkMDNSRegister::RegisterMDNSName { requestIdentifier, identifier, ipAddress }, 0) != IPC::Error::NoError)
-        finishedRegisteringMDNSName(requestIdentifier, { }, MDNSRegisterError::Internal);
+    connection.sendWithAsyncReply(Messages::NetworkMDNSRegister::RegisterMDNSName { identifier, ipAddress }, [weakThis = WeakPtr { *this }, callback = WTFMove(callback), identifier, ipAddress] (String&& mdnsName, std::optional<MDNSRegisterError> error) mutable {
+        if (weakThis)
+            weakThis->finishedRegisteringMDNSName(identifier, ipAddress, WTFMove(mdnsName), error, WTFMove(callback));
+        else
+            callback({ }, MDNSRegisterError::Internal);
+    });
 }
 
 } // namespace WebKit

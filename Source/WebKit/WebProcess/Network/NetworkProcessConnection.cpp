@@ -44,7 +44,6 @@
 #include "WebIDBConnectionToServer.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebLoaderStrategy.h"
-#include "WebMDNSRegisterMessages.h"
 #include "WebPage.h"
 #include "WebPageMessages.h"
 #include "WebPaymentCoordinator.h"
@@ -139,16 +138,6 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
             network.resolver(AtomicObjectIdentifier<LibWebRTCResolverIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
         else
             RELEASE_LOG_ERROR(WebRTC, "Received WebRTCResolver message while libWebRTCNetwork is not active");
-        return;
-    }
-#endif
-#if ENABLE(WEB_RTC)
-    if (decoder.messageReceiverName() == Messages::WebMDNSRegister::messageReceiverName()) {
-        auto& network = WebProcess::singleton().libWebRTCNetwork();
-        if (network.isActive())
-            network.mdnsRegister().didReceiveMessage(connection, decoder);
-        else
-            RELEASE_LOG_ERROR(WebRTC, "Received WebMDNSRegister message while libWebRTCNetwork is not active");
         return;
     }
 #endif

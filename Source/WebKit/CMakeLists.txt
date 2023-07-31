@@ -302,7 +302,6 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/Network/webrtc/LibWebRTCNetwork
     WebProcess/Network/webrtc/RTCDataChannelRemoteManager
-    WebProcess/Network/webrtc/WebMDNSRegister
     WebProcess/Network/webrtc/WebRTCMonitor
     WebProcess/Network/webrtc/WebRTCResolver
 

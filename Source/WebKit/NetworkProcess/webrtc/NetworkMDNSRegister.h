@@ -27,7 +27,6 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "MDNSRegisterIdentifier.h"
 #include "RTCNetwork.h"
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
@@ -54,6 +53,10 @@ namespace PAL {
 class SessionID;
 }
 
+namespace WebCore {
+enum class MDNSRegisterError;
+}
+
 namespace WebKit {
 
 class NetworkConnectionToWebProcess;
@@ -71,8 +74,8 @@ public:
 
 private:
     void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);
-    void registerMDNSName(MDNSRegisterIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& ipAddress);
-    
+    void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
+
     PAL::SessionID sessionID() const;
 
     NetworkConnectionToWebProcess& m_connection;

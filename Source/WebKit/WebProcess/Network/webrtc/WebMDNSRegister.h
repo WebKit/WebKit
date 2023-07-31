@@ -27,7 +27,6 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "MDNSRegisterIdentifier.h"
 #include <WebCore/MDNSRegisterError.h>
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
@@ -35,6 +34,7 @@
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -43,7 +43,7 @@ class Decoder;
 
 namespace WebKit {
 
-class WebMDNSRegister {
+class WebMDNSRegister : public CanMakeWeakPtr<WebMDNSRegister> {
 public:
     WebMDNSRegister() = default;
 
@@ -53,14 +53,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
-    void finishedRegisteringMDNSName(MDNSRegisterIdentifier, String&&, std::optional<WebCore::MDNSRegisterError>);
-
-    struct PendingRegistration {
-        CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)> callback;
-        WebCore::ScriptExecutionContextIdentifier documentIdentifier;
-        String ipAddress;
-    };
-    HashMap<MDNSRegisterIdentifier, PendingRegistration> m_pendingRegistrations;
+    void finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, String&& mdnsName, std::optional<WebCore::MDNSRegisterError>, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
 
     HashMap<WebCore::ScriptExecutionContextIdentifier, HashMap<String, String>> m_registeringDocuments;
 };
