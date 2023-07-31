@@ -22,120 +22,128 @@
 
 namespace JSC {
 
+// macro(JSType, DirectSpeculatedType)
+#define FOR_EACH_JS_TYPE(macro) \
+    /* The CellType value must come before any JSType that is a JSCell. */ \
+    macro(CellType, SpecCellOther) \
+    macro(StructureType, SpecCellOther) \
+    macro(StringType, SpecString) \
+    macro(HeapBigIntType, SpecHeapBigInt) \
+    macro(SymbolType, SpecSymbol) \
+    \
+    macro(GetterSetterType, SpecCellOther) \
+    macro(CustomGetterSetterType, SpecCellOther) \
+    macro(APIValueWrapperType, SpecCellOther) \
+    \
+    macro(NativeExecutableType, SpecCellOther) \
+    \
+    macro(ProgramExecutableType, SpecCellOther) \
+    macro(ModuleProgramExecutableType, SpecCellOther) \
+    macro(EvalExecutableType, SpecCellOther) \
+    macro(FunctionExecutableType, SpecCellOther) \
+    \
+    macro(UnlinkedFunctionExecutableType, SpecCellOther) \
+    \
+    macro(UnlinkedProgramCodeBlockType, SpecCellOther) \
+    macro(UnlinkedModuleProgramCodeBlockType, SpecCellOther) \
+    macro(UnlinkedEvalCodeBlockType, SpecCellOther) \
+    macro(UnlinkedFunctionCodeBlockType, SpecCellOther) \
+    \
+    macro(CodeBlockType, SpecCellOther) \
+    \
+    macro(JSImmutableButterflyType, SpecCellOther) \
+    macro(JSSourceCodeType, SpecCellOther) \
+    macro(JSScriptFetcherType, SpecCellOther) \
+    macro(JSScriptFetchParametersType, SpecCellOther) \
+    \
+    /* The ObjectType value must come before any JSType that is a subclass of JSObject. */ \
+    macro(ObjectType, SpecObjectOther) \
+    macro(FinalObjectType, SpecFinalObject) \
+    macro(JSCalleeType, SpecObjectOther) \
+    macro(JSFunctionType, SpecFunction) \
+    macro(InternalFunctionType, SpecObjectOther) \
+    macro(NullSetterFunctionType, SpecObjectOther) \
+    macro(BooleanObjectType, SpecObjectOther) \
+    macro(NumberObjectType, SpecObjectOther) \
+    macro(ErrorInstanceType, SpecObjectOther) \
+    macro(GlobalProxyType, SpecObjectOther) \
+    macro(DirectArgumentsType, SpecDirectArguments) \
+    macro(ScopedArgumentsType, SpecScopedArguments) \
+    macro(ClonedArgumentsType, SpecObjectOther) \
+    \
+    /* Start JSArray types. */ \
+    macro(ArrayType, SpecArray) \
+    macro(DerivedArrayType, SpecDerivedArray) \
+    /* End JSArray types. */ \
+    \
+    macro(ArrayBufferType, SpecObjectOther) \
+    \
+    /* Start JSArrayBufferView types. Keep in sync with the order of FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW. */ \
+    macro(Int8ArrayType, SpecInt8Array) \
+    macro(Uint8ArrayType,SpecUint8Array) \
+    macro(Uint8ClampedArrayType, SpecUint8ClampedArray) \
+    macro(Int16ArrayType, SpecInt16Array) \
+    macro(Uint16ArrayType, SpecUint16Array) \
+    macro(Int32ArrayType, SpecInt32Array) \
+    macro(Uint32ArrayType, SpecUint32Array) \
+    macro(Float32ArrayType, SpecFloat32Array) \
+    macro(Float64ArrayType, SpecFloat64Array) \
+    macro(BigInt64ArrayType, SpecBigInt64Array) \
+    macro(BigUint64ArrayType, SpecBigUint64Array) \
+    macro(DataViewType, SpecDataViewObject) \
+    /* End JSArrayBufferView types. */ \
+    \
+    /* JSScope <- JSWithScope */ \
+    /*         <- StrictEvalActivation */ \
+    /*         <- JSSymbolTableObject  <- JSLexicalEnvironment      <- JSModuleEnvironment */ \
+    /*                                 <- JSSegmentedVariableObject <- JSGlobalLexicalEnvironment */ \
+    /*                                                              <- JSGlobalObject */ \
+    /* Start JSScope types. */ \
+    /* Start environment record types. */ \
+    macro(GlobalObjectType, SpecObjectOther) \
+    macro(GlobalLexicalEnvironmentType, SpecObjectOther) \
+    macro(LexicalEnvironmentType, SpecObjectOther) \
+    macro(ModuleEnvironmentType, SpecObjectOther) \
+    macro(StrictEvalActivationType, SpecObjectOther) \
+    /* End environment record types. */ \
+    macro(WithScopeType, SpecObjectOther) \
+    /* End JSScope types. */ \
+    \
+    macro(ModuleNamespaceObjectType, SpecObjectOther) \
+    macro(ShadowRealmType, SpecObjectOther) \
+    macro(RegExpObjectType, SpecRegExpObject) \
+    macro(JSDateType, SpecDateObject) \
+    macro(ProxyObjectType, SpecProxyObject) \
+    macro(JSGeneratorType, SpecObjectOther) \
+    macro(JSAsyncGeneratorType, SpecObjectOther) \
+    macro(JSArrayIteratorType, SpecObjectOther) \
+    macro(JSMapIteratorType, SpecObjectOther) \
+    macro(JSSetIteratorType, SpecObjectOther) \
+    macro(JSStringIteratorType, SpecObjectOther) \
+    macro(JSPromiseType, SpecPromiseObject) \
+    macro(JSMapType, SpecMapObject) \
+    macro(JSSetType, SpecSetObject) \
+    macro(JSWeakMapType, SpecWeakMapObject) \
+    macro(JSWeakSetType, SpecWeakSetObject) \
+    macro(WebAssemblyModuleType, SpecObjectOther) \
+    macro(WebAssemblyInstanceType, SpecObjectOther) \
+    macro(WebAssemblyGCObjectType, SpecObjectOther) \
+    /* Start StringObjectType types. */ \
+    macro(StringObjectType, SpecStringObject) \
+    /* We do not want to accept String.prototype in StringObjectUse, so that we do not include it as SpecStringObject. */ \
+    macro(DerivedStringObjectType, SpecObjectOther) \
+    /* End StringObjectType types. */ \
+
+
 enum JSType : uint8_t {
-    // The CellType value must come before any JSType that is a JSCell.
-    CellType,
-    StructureType,
-    StringType,
-    HeapBigIntType,
-    LastMaybeFalsyCellPrimitive = HeapBigIntType,
-    SymbolType,
-
-    GetterSetterType,
-    CustomGetterSetterType,
-    APIValueWrapperType,
-
-    NativeExecutableType,
-
-    ProgramExecutableType,
-    ModuleProgramExecutableType,
-    EvalExecutableType,
-    FunctionExecutableType,
-
-    UnlinkedFunctionExecutableType,
-
-    UnlinkedProgramCodeBlockType,
-    UnlinkedModuleProgramCodeBlockType,
-    UnlinkedEvalCodeBlockType,
-    UnlinkedFunctionCodeBlockType,
-        
-    CodeBlockType,
-
-    JSImmutableButterflyType,
-    JSSourceCodeType,
-    JSScriptFetcherType,
-    JSScriptFetchParametersType,
-
-    // The ObjectType value must come before any JSType that is a subclass of JSObject.
-    ObjectType,
-    FinalObjectType,
-    JSCalleeType,
-    JSFunctionType,
-    InternalFunctionType,
-    NullSetterFunctionType,
-    BooleanObjectType,
-    NumberObjectType,
-    ErrorInstanceType,
-    GlobalProxyType,
-    DirectArgumentsType,
-    ScopedArgumentsType,
-    ClonedArgumentsType,
-
-    // Start JSArray types.
-    ArrayType,
-    DerivedArrayType,
-    // End JSArray types.
-
-    ArrayBufferType,
-
-    // Start JSArrayBufferView types. Keep in sync with the order of FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW.
-    Int8ArrayType,
-    Uint8ArrayType,
-    Uint8ClampedArrayType,
-    Int16ArrayType,
-    Uint16ArrayType,
-    Int32ArrayType,
-    Uint32ArrayType,
-    Float32ArrayType,
-    Float64ArrayType,
-    BigInt64ArrayType,
-    BigUint64ArrayType,
-    DataViewType,
-    // End JSArrayBufferView types.
-
-    // JSScope <- JSWithScope
-    //         <- StrictEvalActivation
-    //         <- JSSymbolTableObject  <- JSLexicalEnvironment      <- JSModuleEnvironment
-    //                                 <- JSSegmentedVariableObject <- JSGlobalLexicalEnvironment
-    //                                                              <- JSGlobalObject
-    // Start JSScope types.
-    // Start environment record types.
-    GlobalObjectType,
-    GlobalLexicalEnvironmentType,
-    LexicalEnvironmentType,
-    ModuleEnvironmentType,
-    StrictEvalActivationType,
-    // End environment record types.
-    WithScopeType,
-    // End JSScope types.
-
-    ModuleNamespaceObjectType,
-    ShadowRealmType,
-    RegExpObjectType,
-    JSDateType,
-    ProxyObjectType,
-    JSGeneratorType,
-    JSAsyncGeneratorType,
-    JSArrayIteratorType,
-    JSMapIteratorType,
-    JSSetIteratorType,
-    JSStringIteratorType,
-    JSPromiseType,
-    JSMapType,
-    JSSetType,
-    JSWeakMapType,
-    JSWeakSetType,
-    WebAssemblyModuleType,
-    WebAssemblyInstanceType,
-    WebAssemblyGCObjectType,
-    // Start StringObjectType types.
-    StringObjectType,
-    DerivedStringObjectType,
-    // End StringObjectType types.
-
+#define JSC_DEFINE_JS_TYPE(type, speculatedType) type,
+    FOR_EACH_JS_TYPE(JSC_DEFINE_JS_TYPE)
+#undef JSC_DEFINE_JS_TYPE
     LastJSCObjectType = DerivedStringObjectType, // This is the last "JSC" Object type. After this, we have embedder's (e.g., WebCore) extended object types.
     MaxJSType = 0b11111111,
 };
+
+static constexpr uint32_t LastMaybeFalsyCellPrimitive = HeapBigIntType;
 
 static constexpr uint32_t FirstTypedArrayType = Int8ArrayType;
 static constexpr uint32_t LastTypedArrayType = DataViewType;
