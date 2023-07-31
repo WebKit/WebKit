@@ -467,6 +467,30 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
 @end
 
+@interface WKMRUIPlatterOrnamentProperties : NSObject
+
+@property (nonatomic, readonly) CGFloat depthDisplacement;
+@property (nonatomic, readonly) CGFloat windowAlpha;
+
+- (instancetype)initWithOrnament:(MRUIPlatterOrnament *)ornament;
+
+@end
+
+@implementation WKMRUIPlatterOrnamentProperties
+
+- (instancetype)initWithOrnament:(MRUIPlatterOrnament *)ornament
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _depthDisplacement = ornament._depthDisplacement;
+    _windowAlpha = ornament.viewController.view.window.alpha;
+
+    return self;
+}
+
+@end
+
 @interface WKFullScreenParentWindowState : NSObject
 
 @property (nonatomic, readonly) CATransform3D transform3D;
@@ -475,16 +499,15 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 @property (nonatomic, readonly) RSSSceneChromeOptions sceneChromeOptions;
 @property (nonatomic, readonly) MRUISceneResizingBehavior sceneResizingBehavior;
 @property (nonatomic, readonly) MRUIDarknessPreference preferredDarkness;
-@property (nonatomic, readonly) BOOL prefersOrnamentsHidden;
 
-@property (nonatomic, readonly) NSMapTable<MRUIPlatterOrnament *, NSNumber *> *ornamentDepths;
+@property (nonatomic, readonly) NSMapTable<MRUIPlatterOrnament *, WKMRUIPlatterOrnamentProperties *> *ornamentProperties;
 
 - (id)initWithWindow:(UIWindow *)window;
 
 @end
 
 @implementation WKFullScreenParentWindowState {
-    RetainPtr<NSMapTable<MRUIPlatterOrnament *, NSNumber *>> _ornamentDepths;
+    RetainPtr<NSMapTable<MRUIPlatterOrnament *, WKMRUIPlatterOrnamentProperties *>> _ornamentProperties;
 }
 
 - (id)initWithWindow:(UIWindow *)window
@@ -500,20 +523,21 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     _sceneMinimumSize = windowScene.sizeRestrictions.minimumSize;
     _sceneChromeOptions = windowScene.mrui_placement.preferredChromeOptions;
     _sceneResizingBehavior = windowScene.mrui_placement.preferredResizingBehavior;
-    _prefersOrnamentsHidden = windowScene.prefersOrnamentsHidden_forLMKOnly;
 
-    _ornamentDepths = [NSMapTable weakToStrongObjectsMapTable];
+    _ornamentProperties = [NSMapTable weakToStrongObjectsMapTable];
 
     MRUIPlatterOrnamentManager *ornamentManager = windowScene._mrui_platterOrnamentManager;
-    for (MRUIPlatterOrnament *ornament in ornamentManager.ornaments)
-        [_ornamentDepths setObject:@(ornament._depthDisplacement) forKey:ornament];
+    for (MRUIPlatterOrnament *ornament in ornamentManager.ornaments) {
+        auto properties = adoptNS([[WKMRUIPlatterOrnamentProperties alloc] initWithOrnament:ornament]);
+        [_ornamentProperties setObject:properties.get() forKey:ornament];
+    }
 
     return self;
 }
 
-- (NSMapTable<MRUIPlatterOrnament *, NSNumber *> *)ornamentDepths
+- (NSMapTable<MRUIPlatterOrnament *, WKMRUIPlatterOrnamentProperties *> *)ornamentProperties
 {
-    return _ornamentDepths.get();
+    return _ornamentProperties.get();
 }
 
 @end
@@ -1562,6 +1586,18 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     });
 }
 
+- (void)_setOrnamentsHidden:(BOOL)hidden
+{
+    for (MRUIPlatterOrnament *ornament in [_parentWindowState ornamentProperties]) {
+        if (hidden)
+            ornament.viewController.view.window.alpha = 0.0;
+        else {
+            CGFloat originalAlpha = [[[_parentWindowState ornamentProperties] objectForKey:ornament] windowAlpha];
+            ornament.viewController.view.window.alpha = originalAlpha;
+        }
+    }
+}
+
 - (void)_performSpatialFullScreenTransition:(BOOL)enter completionHandler:(CompletionHandler<void()>&&)completionHandler
 {
     WKFullScreenWindowController *controller = self;
@@ -1579,9 +1615,10 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     }
 
     [UIView animateWithDuration:kOutgoingWindowFadeDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        outWindow.alpha = 0;
         if (enter)
-            outWindow.windowScene.prefersOrnamentsHidden_forLMKOnly = YES;
+            [self _setOrnamentsHidden:YES];
+
+        outWindow.alpha = 0;
     } completion:nil];
 
     [UIView animateWithDuration:kWindowTranslationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
@@ -1592,8 +1629,8 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         inWindow.transform3D = originalState.transform3D;
     } completion:nil];
 
-    for (MRUIPlatterOrnament *ornament in originalState.ornamentDepths) {
-        CGFloat originalDepth = [[originalState.ornamentDepths objectForKey:ornament] floatValue];
+    for (MRUIPlatterOrnament *ornament in originalState.ornamentProperties) {
+        CGFloat originalDepth = [[originalState.ornamentProperties objectForKey:ornament] depthDisplacement];
         CGFloat finalDepth = originalDepth;
         if (enter)
             finalDepth += kOutgoingWindowZOffset;
@@ -1632,9 +1669,10 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     });
 
     [UIView animateWithDuration:kIncomingWindowFadeDuration delay:kIncomingWindowFadeDelay options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        inWindow.alpha = 1;
         if (!enter)
-            inWindow.windowScene.prefersOrnamentsHidden_forLMKOnly = originalState.prefersOrnamentsHidden;
+            [self _setOrnamentsHidden:NO];
+
+        inWindow.alpha = 1;
     } completion:completion.get()];
 }
 
