@@ -282,6 +282,9 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     }
         
     case Equivalence: {
+        Locker<JSCellLock> cellLocker { NoLockingNecessary };
+        if (concurrency != Concurrency::MainThread && base)
+            cellLocker = Locker { base->cellLock() };
         if (!base || base->structure() != structure) {
             // Conservatively return false, since we cannot verify this one without having the
             // object.
@@ -306,8 +309,8 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
             return false;
         }
 
-        JSValue currentValue = base->getDirect(concurrency, structure, currentOffset);
-        if (currentValue != requiredValue()) {
+        JSValue currentValue = base->getDirect(cellLocker, concurrency, structure, currentOffset);
+        if (currentValue != requiredValue() || !currentValue) {
             if (PropertyConditionInternal::verbose) {
                 dataLog(
                     "Invalid because the value is ", currentValue, " but we require ", requiredValue(),
@@ -509,9 +512,13 @@ bool PropertyCondition::isValidValueForPresence(JSValue value) const
 
 PropertyCondition PropertyCondition::attemptToMakeEquivalenceWithoutBarrier(JSObject* base) const
 {
-    Structure* structure = base->structure();
+    JSValue value;
+    {
+        Locker cellLocker { base->cellLock() };
+        Structure* structure = base->structure();
 
-    JSValue value = base->getDirectConcurrently(structure, offset());
+        value = base->getDirectConcurrently(cellLocker, structure, offset());
+    }
     if (!isValidValueForPresence(value))
         return PropertyCondition();
     return equivalenceWithoutBarrier(uid(), value);
