@@ -1129,8 +1129,7 @@ void KeyframeEffect::computedNeedsForcedLayout()
         if (keyframeStyle->hasTransform()) {
             auto& transformOperations = keyframeStyle->transform();
             for (const auto& operation : transformOperations.operations()) {
-                if (operation->isTranslateTransformOperationType()) {
-                    auto translation = downcast<TranslateTransformOperation>(operation.get());
+                if (auto* translation = dynamicDowncast<TranslateTransformOperation>(operation.get())) {
                     if (translation->x().isPercent() || translation->y().isPercent()) {
                         m_needsForcedLayout = true;
                         return;
