@@ -1918,6 +1918,8 @@ private:
 
     bool isObservingContentVisibilityTargets() const;
 
+    void styleRecalcTimerFired();
+
     const Ref<const Settings> m_settings;
 
     UniqueRef<Quirks> m_quirks;

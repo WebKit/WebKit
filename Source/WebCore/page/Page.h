@@ -1059,6 +1059,8 @@ public:
 
     void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
 
+    bool isInRenderingUpdate() const { return !m_renderingUpdateRemainingSteps.isEmpty(); }
+
 private:
     struct Navigation {
         RegistrableDomain domain;

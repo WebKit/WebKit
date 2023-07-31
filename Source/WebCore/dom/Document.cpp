@@ -598,7 +598,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     , m_extensionStyleSheets(makeUnique<ExtensionStyleSheets>(*this))
     , m_visitedLinkState(makeUnique<VisitedLinkState>(*this))
     , m_markers(makeUnique<DocumentMarkerController>(*this))
-    , m_styleRecalcTimer([this] { updateStyleIfNeeded(); })
+    , m_styleRecalcTimer(*this, &Document::styleRecalcTimerFired)
 #if !LOG_DISABLED
     , m_documentCreationTime(MonotonicTime::now())
 #endif
@@ -2036,6 +2036,12 @@ Ref<TreeWalker> Document::createTreeWalker(Node& root, unsigned long whatToShow,
     return TreeWalker::create(root, whatToShow, WTFMove(filter));
 }
 
+void Document::styleRecalcTimerFired()
+{
+    ASSERT(!page() || !page()->isInRenderingUpdate());
+    updateStyleIfNeeded();
+}
+
 void Document::scheduleFullStyleRebuild()
 {
     m_needsFullStyleRebuild = true;
@@ -2047,6 +2053,9 @@ void Document::scheduleStyleRecalc()
     ASSERT(!m_renderView || !inHitTesting());
 
     if (m_styleRecalcTimer.isActive() || backForwardCacheState() != NotInBackForwardCache)
+        return;
+
+    if (page() && page()->isInRenderingUpdate())
         return;
 
     ASSERT(childNeedsStyleRecalc() || m_needsFullStyleRebuild);
