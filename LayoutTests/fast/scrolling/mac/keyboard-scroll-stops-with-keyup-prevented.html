@@ -1,0 +1,30 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
+    <script>
+        jsTestIsAsync = true;
+
+        async function runTest()
+        {
+            document.body.addEventListener('keyup', (e) => e.preventDefault());
+
+            if (window.eventSender) {
+                await UIHelper.startMonitoringWheelEvents();
+                await UIHelper.rawKeyDown("downArrow");
+                await UIHelper.renderingUpdate();
+                await UIHelper.rawKeyUp("downArrow");
+
+                await UIHelper.waitForScrollCompletion();
+                finishJSTest();
+            }
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <div style="height: 5000px;">
+    </div>
+</body>
+</html>
