@@ -65,6 +65,10 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
+#if ENABLE_MDNS
+    void closeAndForgetService(DNSServiceRef);
+#endif
+
 private:
     void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);
     void registerMDNSName(MDNSRegisterIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& ipAddress);
