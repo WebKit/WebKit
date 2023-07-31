@@ -54,7 +54,14 @@ namespace WebKit {
 
 #if PLATFORM(MAC)
 struct WebHitTestResultPlatformData {
-    RetainPtr<WKDDActionContext> detectedDataActionContext;
+    struct DetectedDataActionContext {
+        RetainPtr<WKDDActionContext> context;
+        struct MarkableTraits {
+            static bool isEmptyValue(const DetectedDataActionContext& context) { return !context.context; }
+            static DetectedDataActionContext emptyValue() { return { nullptr }; }
+        };
+    };
+    Markable<DetectedDataActionContext> detectedDataActionContext;
     WebCore::FloatRect detectedDataBoundingBox;
     RefPtr<WebCore::TextIndicator> detectedDataTextIndicator;
     WebCore::PageOverlay::PageOverlayID detectedDataOriginatingPageOverlay;
