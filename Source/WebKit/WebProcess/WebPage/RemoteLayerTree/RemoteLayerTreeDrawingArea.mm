@@ -438,7 +438,7 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh()
     } else if (wasWaitingForBackingStoreSwap && m_updateRenderingTimer.isActive())
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = true;
     else
-        send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTreeNotTriggered());
+        send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTreeNotTriggered(nextTransactionID()));
 }
 
 auto RemoteLayerTreeDrawingArea::rootLayerInfoWithFrameIdentifier(WebCore::FrameIdentifier frameID) -> RootLayerInfo*
