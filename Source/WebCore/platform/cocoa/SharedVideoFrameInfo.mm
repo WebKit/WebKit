@@ -76,6 +76,9 @@ bool SharedVideoFrameInfo::isReadWriteSupported() const
 
 size_t SharedVideoFrameInfo::storageSize() const
 {
+    if (m_storageSize)
+        return m_storageSize;
+
     size_t sizePlaneA;
     if (!WTF::safeMultiply(m_bytesPerRow, m_height, sizePlaneA))
         return 0;
@@ -92,6 +95,9 @@ size_t SharedVideoFrameInfo::storageSize() const
         return 0;
 
     return size;
+
+    const_cast<SharedVideoFrameInfo*>(this)->m_storageSize = size;
+    return m_storageSize;
 }
 
 void SharedVideoFrameInfo::encode(uint8_t* destination)

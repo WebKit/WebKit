@@ -73,8 +73,8 @@ private:
     uint32_t m_bytesPerRow { 0 };
     uint32_t m_widthPlaneB { 0 };
     uint32_t m_heightPlaneB { 0 };
-    uint32_t m_bytesPerRowPlaneB { 0 };
-    uint32_t m_bytesPerRowPlaneAlpha { 0 };
+    uint32_t m_bytesPerRowPlaneB { 0 };uint32_t m_bytesPerRowPlaneAlpha { 0 };
+    size_t m_storageSize { 0 };
 };
 
 
