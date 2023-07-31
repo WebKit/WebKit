@@ -6552,3 +6552,5 @@ webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
 
 # Only some OSes have support for auto word breaking.
 imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass Failure ImageOnlyFailure ]
+
+webkit.org/b/259658 http/tests/media/video-play-stall.html [ Pass Failure ]
