@@ -38,6 +38,11 @@
 
 namespace WebCore {
 
+static inline bool shouldPreferTextPlainMIMEType(const String& mimeType, const String& proposedMIMEType)
+{
+    return ("text/plain"_s == mimeType) && ((proposedMIMEType == "text/xml"_s) || (proposedMIMEType == "application/xml"_s) || (proposedMIMEType == "image/svg+xml"_s));
+}
+
 void adjustMIMETypeIfNecessary(CFURLResponseRef response, bool isMainResourceLoad)
 {
     auto type = CFURLResponseGetMIMEType(response);
@@ -63,7 +68,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef response, bool isMainResourceLoa
             updatedType = (__bridge CFStringRef)quickLookType.get();
         else if (auto extension = filePathExtension(response))
             updatedType = preferredMIMETypeForFileExtensionFromUTType(extension.get());
-        if (updatedType && (!type || CFStringCompare(type, updatedType.get(), kCFCompareCaseInsensitive) != kCFCompareEqualTo)) {
+        if (updatedType && !shouldPreferTextPlainMIMEType(type, updatedType.get()) && (!type || CFStringCompare(type, updatedType.get(), kCFCompareCaseInsensitive) != kCFCompareEqualTo)) {
             CFURLResponseSetMIMEType(response, updatedType.get());
             return;
         }
