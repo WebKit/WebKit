@@ -897,7 +897,7 @@ void WebAutomationSessionProxy::setFilesForInputFileUpload(WebCore::PageIdentifi
 
 static WebCore::IntRect snapshotElementRectForScreenshot(WebPage& page, WebCore::Element* element, bool clipToViewport)
 {
-    auto* frameView = page.mainFrameView();
+    auto* frameView = page.localMainFrameView();
     if (!frameView)
         return { };
 
@@ -913,7 +913,7 @@ static WebCore::IntRect snapshotElementRectForScreenshot(WebPage& page, WebCore:
         return elementRect;
     }
 
-    if (auto* frameView = page.mainFrameView())
+    if (auto* frameView = page.localMainFrameView())
         return clipToViewport ? frameView->visibleContentRect() : WebCore::IntRect(WebCore::IntPoint(0, 0), frameView->contentsSize());
 
     return { };

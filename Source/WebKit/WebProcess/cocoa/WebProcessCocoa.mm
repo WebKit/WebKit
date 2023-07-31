@@ -1414,7 +1414,7 @@ void WebProcess::updatePageScreenProperties()
     }
 
     bool allPagesAreOnHDRScreens = allOf(m_pageMap.values(), [] (auto& page) {
-        return page && screenSupportsHighDynamicRange(page->mainFrameView());
+        return page && screenSupportsHighDynamicRange(page->localMainFrameView());
     });
     setShouldOverrideScreenSupportsHighDynamicRange(true, allPagesAreOnHDRScreens);
 #endif

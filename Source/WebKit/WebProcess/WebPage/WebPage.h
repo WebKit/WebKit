@@ -598,7 +598,8 @@ public:
     WebFrame& mainWebFrame() const { return m_mainFrame; }
 
     WebCore::Frame* mainFrame() const; // May return nullptr.
-    WebCore::LocalFrameView* mainFrameView() const; // May return nullptr.
+    WebCore::FrameView* mainFrameView() const; // May return nullptr.
+    WebCore::LocalFrameView* localMainFrameView() const; // May return nullptr.
 
     void createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID);
 

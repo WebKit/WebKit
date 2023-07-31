@@ -463,8 +463,11 @@ void DrawingAreaCoordinatedGraphics::displayDidRefresh()
 void DrawingAreaCoordinatedGraphics::adjustTransientZoom(double scale, FloatPoint origin)
 {
     if (!m_transientZoom) {
-        auto& frameView = *m_webPage.mainFrameView();
-        FloatRect unobscuredContentRect = frameView.unobscuredContentRectIncludingScrollbars();
+        auto* frameView = m_webPage.localMainFrameView();
+        if (!frameView)
+            return;
+
+        FloatRect unobscuredContentRect = frameView->unobscuredContentRectIncludingScrollbars();
 
         m_transientZoom = true;
         m_transientZoomInitialOrigin = unobscuredContentRect.location();

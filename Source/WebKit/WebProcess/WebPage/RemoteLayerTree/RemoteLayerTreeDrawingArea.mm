@@ -158,7 +158,7 @@ void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool fl
     if (!m_webPage.minimumSizeForAutoLayout().width() || m_webPage.autoSizingShouldExpandToViewHeight() || (!m_webPage.sizeToContentAutoSizeMaximumSize().width() && !m_webPage.sizeToContentAutoSizeMaximumSize().height()))
         m_webPage.setSize(size);
 
-    auto* frameView = m_webPage.mainFrameView();
+    auto* frameView = m_webPage.localMainFrameView();
 
     if (m_webPage.autoSizingShouldExpandToViewHeight() && frameView)
         frameView->setAutoSizeFixedMinimumHeight(viewSize.height());
@@ -251,13 +251,13 @@ void RemoteLayerTreeDrawingArea::setViewExposedRect(std::optional<WebCore::Float
 {
     m_viewExposedRect = viewExposedRect;
 
-    if (auto* frameView = m_webPage.mainFrameView())
+    if (auto* frameView = m_webPage.localMainFrameView())
         frameView->setViewExposedRect(m_viewExposedRect);
 }
 
 WebCore::FloatRect RemoteLayerTreeDrawingArea::exposedContentRect() const
 {
-    auto* frameView = m_webPage.mainFrameView();
+    auto* frameView = m_webPage.localMainFrameView();
     if (!frameView)
         return FloatRect();
 
@@ -266,7 +266,7 @@ WebCore::FloatRect RemoteLayerTreeDrawingArea::exposedContentRect() const
 
 void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedContentRect)
 {
-    auto* frameView = m_webPage.mainFrameView();
+    auto* frameView = m_webPage.localMainFrameView();
     if (!frameView)
         return;
     if (frameView->exposedContentRect() == exposedContentRect)
@@ -325,7 +325,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
     auto size = m_webPage.size();
     FloatRect visibleRect(FloatPoint(), size);
-    if (auto* mainFrameView = m_webPage.mainFrameView()) {
+    if (auto* mainFrameView = m_webPage.localMainFrameView()) {
         if (auto exposedRect = mainFrameView->viewExposedRect())
             visibleRect.intersect(*exposedRect);
     }

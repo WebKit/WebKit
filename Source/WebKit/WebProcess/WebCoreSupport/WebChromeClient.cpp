@@ -635,7 +635,7 @@ void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
 
     m_page.pageDidScroll();
 #if USE(COORDINATED_GRAPHICS)
-    auto* frameView = m_page.mainFrameView();
+    auto* frameView = m_page.localMainFrameView();
     if (frameView && frameView->delegatesScrolling()) {
         m_page.drawingArea()->scroll(rect, IntSize());
         return;
@@ -1518,7 +1518,10 @@ void WebChromeClient::removePlaybackTargetPickerClient(PlaybackTargetClientConte
 
 void WebChromeClient::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const IntPoint& position, bool isVideo)
 {
-    auto* frameView = m_page.mainFrameView();
+    auto* frameView = m_page.localMainFrameView();
+    if (!frameView)
+        return;
+
     FloatRect rect(frameView->contentsToRootView(frameView->windowToContents(position)), FloatSize());
     m_page.send(Messages::WebPageProxy::ShowPlaybackTargetPicker(contextId, rect, isVideo));
 }

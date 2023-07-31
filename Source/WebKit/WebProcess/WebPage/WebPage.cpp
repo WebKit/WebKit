@@ -1550,13 +1550,13 @@ void WebPage::setCanUseCredentialStorage(bool has)
 
 void WebPage::setTracksRepaints(bool trackRepaints)
 {
-    if (auto* view = mainFrameView())
+    if (auto* view = localMainFrameView())
         view->setTracksRepaints(trackRepaints);
 }
 
 bool WebPage::isTrackingRepaints() const
 {
-    if (auto* view = mainFrameView())
+    if (auto* view = localMainFrameView())
         return view->isTrackingRepaints();
 
     return false;
@@ -1564,13 +1564,13 @@ bool WebPage::isTrackingRepaints() const
 
 void WebPage::resetTrackedRepaints()
 {
-    if (auto* view = mainFrameView())
+    if (auto* view = localMainFrameView())
         view->resetTrackedRepaints();
 }
 
 Ref<API::Array> WebPage::trackedRepaintRects()
 {
-    auto* view = mainFrameView();
+    auto* view = localMainFrameView();
     if (!view)
         return API::Array::create();
 
@@ -2461,7 +2461,11 @@ void WebPage::scalePageInViewCoordinates(double scale, IntPoint centerInViewCoor
     if (totalScale == totalScaleFactor())
         return;
 
-    IntPoint scrollPositionAtNewScale = mainFrameView()->rootViewToContents(-centerInViewCoordinates);
+    auto* frameView = localMainFrameView();
+    if (!frameView)
+        return;
+
+    IntPoint scrollPositionAtNewScale = frameView->rootViewToContents(-centerInViewCoordinates);
     double scaleRatio = scale / pageScaleFactor();
     scrollPositionAtNewScale.scale(scaleRatio);
     scalePage(scale, scrollPositionAtNewScale);
@@ -2557,7 +2561,7 @@ void WebPage::setUseFixedLayout(bool fixed)
     m_page->settings().setFixedElementsLayoutRelativeToFrame(fixed);
 #endif
 
-    auto* view = mainFrameView();
+    auto* view = localMainFrameView();
     if (!view)
         return;
 
@@ -2570,7 +2574,7 @@ void WebPage::setUseFixedLayout(bool fixed)
 
 bool WebPage::setFixedLayoutSize(const IntSize& size)
 {
-    auto* view = mainFrameView();
+    auto* view = localMainFrameView();
     if (!view || view->fixedLayoutSize() == size)
         return false;
 
@@ -2583,7 +2587,7 @@ bool WebPage::setFixedLayoutSize(const IntSize& size)
 
 IntSize WebPage::fixedLayoutSize() const
 {
-    auto* view = mainFrameView();
+    auto* view = localMainFrameView();
     if (!view)
         return IntSize();
     return view->fixedLayoutSize();
@@ -2601,7 +2605,7 @@ void WebPage::setDefaultUnobscuredSize(const FloatSize& defaultUnobscuredSize)
 
 void WebPage::updateSizeForCSSDefaultViewportUnits()
 {
-    auto* mainFrameView = this->mainFrameView();
+    auto* mainFrameView = this->localMainFrameView();
     if (!mainFrameView)
         return;
 
@@ -2626,7 +2630,7 @@ void WebPage::setMinimumUnobscuredSize(const FloatSize& minimumUnobscuredSize)
 
 void WebPage::updateSizeForCSSSmallViewportUnits()
 {
-    auto* mainFrameView = this->mainFrameView();
+    auto* mainFrameView = this->localMainFrameView();
     if (!mainFrameView)
         return;
 
@@ -2651,7 +2655,7 @@ void WebPage::setMaximumUnobscuredSize(const FloatSize& maximumUnobscuredSize)
 
 void WebPage::updateSizeForCSSLargeViewportUnits()
 {
-    auto* mainFrameView = this->mainFrameView();
+    auto* mainFrameView = this->localMainFrameView();
     if (!mainFrameView)
         return;
 
@@ -3844,7 +3848,7 @@ void WebPage::setBackgroundColor(const std::optional<WebCore::Color>& background
 
     m_backgroundColor = backgroundColor;
 
-    if (auto* frameView = mainFrameView())
+    if (auto* frameView = localMainFrameView())
         frameView->updateBackgroundRecursively(backgroundColor);
 
     m_drawingArea->setNeedsDisplay();
@@ -5695,7 +5699,7 @@ void WebPage::addMIMETypeWithCustomContentProvider(const String& mimeType)
 
 void WebPage::updateMainFrameScrollOffsetPinning()
 {
-    auto* frameView = mainFrameView();
+    auto* frameView = localMainFrameView();
     if (!frameView)
         return;
 
@@ -5721,7 +5725,7 @@ void WebPage::mainFrameDidLayout()
         m_viewGestureGeometryCollector->mainFrameDidLayout();
 #endif
 #if PLATFORM(IOS_FAMILY)
-    if (auto* frameView = mainFrameView()) {
+    if (auto* frameView = localMainFrameView()) {
         IntSize newContentSize = frameView->contentsSize();
         LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier.toUInt64() << " mainFrameDidLayout setting content size to " << newContentSize);
         if (m_viewportConfiguration.setContentsSize(newContentSize))
@@ -6513,12 +6517,16 @@ Frame* WebPage::mainFrame() const
     return m_page ? &m_page->mainFrame() : nullptr;
 }
 
-// FIXME: This should return an FrameView.
-LocalFrameView* WebPage::mainFrameView() const
+FrameView* WebPage::mainFrameView() const
 {
-    if (auto* frame = dynamicDowncast<LocalFrame>(mainFrame()))
-        return frame->view();
+    if (auto* frame = mainFrame())
+        return frame->virtualView();
     return nullptr;
+}
+
+LocalFrameView* WebPage::localMainFrameView() const
+{
+    return dynamicDowncast<LocalFrameView>(mainFrameView());
 }
 
 bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
@@ -7698,9 +7706,9 @@ void WebPage::updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize& size)
     m_pendingIntrinsicContentSize = std::nullopt;
     if (!minimumSizeForAutoLayout().width() && !sizeToContentAutoSizeMaximumSize().width() && !sizeToContentAutoSizeMaximumSize().height())
         return;
-    ASSERT(mainFrameView());
-    ASSERT(mainFrameView()->isFixedWidthAutoSizeEnabled() || mainFrameView()->isSizeToContentAutoSizeEnabled());
-    ASSERT(!mainFrameView()->needsLayout());
+    ASSERT(localMainFrameView());
+    ASSERT(localMainFrameView()->isFixedWidthAutoSizeEnabled() || localMainFrameView()->isSizeToContentAutoSizeEnabled());
+    ASSERT(!localMainFrameView()->needsLayout());
     if (m_lastSentIntrinsicContentSize == size)
         return;
     m_lastSentIntrinsicContentSize = size;
@@ -7717,9 +7725,9 @@ void WebPage::scheduleIntrinsicContentSizeUpdate(const IntSize& size)
 {
     if (!minimumSizeForAutoLayout().width() && !sizeToContentAutoSizeMaximumSize().width() && !sizeToContentAutoSizeMaximumSize().height())
         return;
-    ASSERT(mainFrameView());
-    ASSERT(mainFrameView()->isFixedWidthAutoSizeEnabled() || mainFrameView()->isSizeToContentAutoSizeEnabled());
-    ASSERT(!mainFrameView()->needsLayout());
+    ASSERT(localMainFrameView());
+    ASSERT(localMainFrameView()->isFixedWidthAutoSizeEnabled() || localMainFrameView()->isSizeToContentAutoSizeEnabled());
+    ASSERT(!localMainFrameView()->needsLayout());
     m_pendingIntrinsicContentSize = size;
 }
 
@@ -7738,9 +7746,9 @@ void WebPage::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone
         if (drawingAreaRelatedMilestones && m_drawingArea->addMilestonesToDispatch(drawingAreaRelatedMilestones))
             milestones.remove(drawingAreaRelatedMilestones);
     }
-    if (milestones.contains(DidFirstLayout) && mainFrameView()) {
+    if (milestones.contains(DidFirstLayout) && localMainFrameView()) {
         // Ensure we never send DidFirstLayout milestone without updating the intrinsic size.
-        updateIntrinsicContentSizeIfNeeded(mainFrameView()->autoSizingIntrinsicContentSize());
+        updateIntrinsicContentSizeIfNeeded(localMainFrameView()->autoSizingIntrinsicContentSize());
     }
 
     send(Messages::WebPageProxy::DidReachLayoutMilestone(milestones));
@@ -8798,7 +8806,10 @@ void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& inf
 
 void WebPage::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin)
 {
-    mainFrameView()->setScrollPosition(IntPoint(targetRect.minXMinYCorner()));
+    auto* frameView = localMainFrameView();
+    if (!frameView)
+        return;
+    frameView->setScrollPosition(IntPoint(targetRect.minXMinYCorner()));
 }
 
 #if ENABLE(VIDEO)
