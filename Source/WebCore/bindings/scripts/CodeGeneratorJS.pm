@@ -7537,7 +7537,7 @@ sub GenerateHashTableValueArray
         if ($conditional) {
             my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
             push(@implContent, "#if ${conditionalString}\n");
-        }
+     }
 
         my $jscAttributes = StringifyJSCAttributes(@$specials[$i]);
         if ($jscAttributes =~ m/DOMJITFunction/) {
