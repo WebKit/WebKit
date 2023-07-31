@@ -1825,3 +1825,5 @@ webkit.org/b/259497 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/tempora
 webkit.org/b/259496 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.worker.html?vp9 [ Failure ]
 
 webkit.org/b/238033 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html [ Pass Failure ]
+
+webkit.org/b/259544 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Crash ]
