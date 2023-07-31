@@ -405,9 +405,9 @@ void GPUConnectionToWebProcess::destroyVisibilityPropagationContextForPage(WebPa
 }
 #endif
 
+#if !RELEASE_LOG_DISABLED
 void GPUConnectionToWebProcess::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
 {
-#if !RELEASE_LOG_DISABLED
     if  (auto* channel = WebCore::getLogChannel(channelName)) {
         channel->state = state;
         channel->level = level;
@@ -419,12 +419,8 @@ void GPUConnectionToWebProcess::configureLoggingChannel(const String& channelNam
 
     channel->state = state;
     channel->level = level;
-#else
-    UNUSED_PARAM(channelName);
-    UNUSED_PARAM(state);
-    UNUSED_PARAM(level);
-#endif
 }
+#endif
 
 #if USE(GRAPHICS_LAYER_WC)
 void GPUConnectionToWebProcess::createWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)

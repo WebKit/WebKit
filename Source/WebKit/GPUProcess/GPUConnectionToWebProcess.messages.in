@@ -52,7 +52,9 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     ReleaseAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
     CreateRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
     ReleaseRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
+#if !RELEASE_LOG_DISABLED
     ConfigureLoggingChannel(String channelName, enum:uint8_t WTFLogChannelState state, enum:uint8_t WTFLogLevel level)
+#endif
 #if USE(GRAPHICS_LAYER_WC)
     CreateWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering) AllowedWhenWaitingForSyncReply
     ReleaseWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier) AllowedWhenWaitingForSyncReply

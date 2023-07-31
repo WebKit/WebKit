@@ -1940,7 +1940,9 @@ public:
     void speechSynthesisResetState();
 #endif
 
+#if !RELEASE_LOG_DISABLED
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+#endif
 
     void addDidMoveToWindowObserver(WebViewDidMoveToWindowObserver&);
     void removeDidMoveToWindowObserver(WebViewDidMoveToWindowObserver&);

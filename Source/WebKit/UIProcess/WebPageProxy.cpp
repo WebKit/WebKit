@@ -12082,21 +12082,17 @@ const void* WebPageProxy::logIdentifier() const
     return reinterpret_cast<const void*>(intHash(identifier().toUInt64()));
 }
 
+#if !RELEASE_LOG_DISABLED
 void WebPageProxy::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
 {
-#if !RELEASE_LOG_DISABLED
     auto* channel = getLogChannel(channelName);
     if  (!channel)
         return;
 
     channel->state = state;
     channel->level = level;
-#else
-    UNUSED_PARAM(channelName);
-    UNUSED_PARAM(state);
-    UNUSED_PARAM(level);
-#endif
 }
+#endif
 
 #if HAVE(APP_SSO)
 void WebPageProxy::decidePolicyForSOAuthorizationLoad(const String& extension, CompletionHandler<void(SOAuthorizationLoadPolicy)>&& completionHandler)

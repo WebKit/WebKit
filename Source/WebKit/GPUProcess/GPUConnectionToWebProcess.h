@@ -297,7 +297,9 @@ private:
     void createRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
     void releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
     void setMediaOverridesForTesting(MediaOverridesForTesting);
+#if !RELEASE_LOG_DISABLED
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+#endif
 
 #if USE(GRAPHICS_LAYER_WC)
     void createWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier, uint64_t nativeWindow, bool usesOffscreenRendering);

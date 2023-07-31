@@ -555,7 +555,9 @@ messages -> WebPageProxy {
     RemovePDFHUD(WebKit::PDFPluginIdentifier identifier)
 #endif
 
+#if !RELEASE_LOG_DISABLED
     ConfigureLoggingChannel(String channelName, enum:uint8_t WTFLogChannelState state, enum:uint8_t WTFLogLevel level)
+#endif
 
 #if PLATFORM(GTK)
     ShowEmojiPicker(WebCore::IntRect caretRect) -> (String result)
