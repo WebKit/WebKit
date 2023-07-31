@@ -36,6 +36,7 @@
 #include <WebKit/WKCredential.h>
 #include <WebKit/WKDownloadClient.h>
 #include <WebKit/WKDownloadRef.h>
+#include <WebKit/WKFrameInfoRef.h>
 #include <WebKit/WKHTTPCookieStoreRef.h>
 #include <WebKit/WKInspector.h>
 #include <WebKit/WKNavigationResponseRef.h>
@@ -511,7 +512,8 @@ void WebKitBrowserWindow::decidePolicyForNavigationResponse(WKPageRef page, WKNa
         MessageBox(thisWindow.m_hMainWnd, text.str().c_str(), L"No Content", MB_OK | MB_ICONWARNING);
     }
 
-    if (WKNavigationResponseCanShowMIMEType(navigationResponse))
+    auto isMainFrame = WKFrameInfoGetIsMainFrame(WKNavigationResponseGetFrameInfoRef(navigationResponse));
+    if (WKNavigationResponseCanShowMIMEType(navigationResponse) | !isMainFrame)
         WKFramePolicyListenerUse(listener);
     else {
         std::wstringstream text;
