@@ -587,8 +587,10 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
 
                 if (matchStart < 0)
                     patternValue = jsUndefined();
-                else
-                    patternValue = jsSubstring(vm, source, matchStart, matchLen);
+                else {
+                    patternValue = jsSubstring(vm, globalObject, string, matchStart, matchLen);
+                    RETURN_IF_EXCEPTION(scope, nullptr);
+                }
 
                 cachedCall.appendArgument(patternValue);
 
@@ -605,8 +607,10 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                             JSValue captureValue;
                             if (captureStart < 0)
                                 captureValue = jsUndefined();
-                            else
-                                captureValue = jsSubstring(vm, source, captureStart, captureLen);
+                            else {
+                                captureValue = jsSubstring(vm, globalObject, string, captureStart, captureLen);
+                                RETURN_IF_EXCEPTION(scope, nullptr);
+                            }
                             groups->putDirect(vm, Identifier::fromString(vm, groupName), captureValue);
                         } else
                             groups->putDirect(vm, Identifier::fromString(vm, groupName), jsUndefined());
@@ -669,7 +673,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                     if (matchStart < 0)
                         patternValue = jsUndefined();
                     else {
-                        patternValue = jsSubstring(vm, source, matchStart, matchLen);
+                        patternValue = jsSubstring(vm, globalObject, string, matchStart, matchLen);
                         RETURN_IF_EXCEPTION(scope, nullptr);
                     }
 
@@ -689,7 +693,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                                 if (captureStart < 0)
                                     captureValue = jsUndefined();
                                 else {
-                                    captureValue = jsSubstring(vm, source, captureStart, captureLen);
+                                    captureValue = jsSubstring(vm, globalObject, string, captureStart, captureLen);
                                     RETURN_IF_EXCEPTION(scope, nullptr);
                                 }
                                 groups->putDirect(vm, Identifier::fromString(vm, groupName), captureValue);
