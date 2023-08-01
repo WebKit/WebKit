@@ -69,7 +69,7 @@ private:
 
     void startRenderingThread();
     void stopRenderingThread();
-    void renderAudio(unsigned frameCount);
+    void renderQuantum();
 
     IPC::Connection* connection();
     IPC::Connection* existingConnection();
