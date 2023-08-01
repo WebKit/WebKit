@@ -877,8 +877,8 @@ bool AccessibilityRenderObject::supportsPath() const
 Path AccessibilityRenderObject::elementPath() const
 {
     if (is<RenderText>(renderer())) {
-        Vector<IntRect> rects;
-        downcast<RenderText>(*m_renderer).absoluteRects(rects, flooredLayoutPoint(m_renderer->localToAbsolute()));
+        Vector<LayoutRect> rects;
+        downcast<RenderText>(*m_renderer).boundingRects(rects, flooredLayoutPoint(m_renderer->localToAbsolute()));
         // If only 1 rect, don't compute path since the bounding rect will be good enough.
         if (rects.size() < 2)
             return Path();
@@ -886,12 +886,12 @@ Path AccessibilityRenderObject::elementPath() const
         // Compute the path only if this is the last part of a line followed by the beginning of the next line.
         const auto& style = m_renderer->style();
         bool rightToLeftText = style.direction() == TextDirection::RTL;
-        static const int xTolerance = 5;
-        static const int yTolerance = 5;
+        static const auto xTolerance = 5_lu;
+        static const auto yTolerance = 5_lu;
         bool needsPath = false;
-        IntRect unionRect = rects[0];
+        auto unionRect = rects[0];
         for (size_t i = 1; i < rects.size(); ++i) {
-            needsPath = std::abs(rects[i].y() - unionRect.maxY()) < yTolerance // This rect is in a new line.
+            needsPath = absoluteValue(rects[i].y() - unionRect.maxY()) < yTolerance // This rect is in a new line.
                 && (rightToLeftText ? rects[i].x() - unionRect.x() > xTolerance
                     : unionRect.x() - rects[i].x() > xTolerance); // And this rect is to right/left of all previous rects.
 
@@ -922,6 +922,7 @@ Path AccessibilityRenderObject::elementPath() const
             return path;
 
         // The SVG path is in terms of the parent's bounding box. The path needs to be offset to frame coordinates.
+        // FIXME: This seems wrong for SVG inside HTML.
         if (auto svgRoot = ancestorsOfType<LegacyRenderSVGRoot>(*m_renderer).first()) {
             LayoutPoint parentOffset = cache->getOrCreate(&*svgRoot)->elementRect().location();
             path.transform(AffineTransform().translate(parentOffset.x(), parentOffset.y()));

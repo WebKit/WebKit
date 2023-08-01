@@ -2597,6 +2597,7 @@ void LocalFrameView::textFragmentIndicatorTimerFired()
     if (textIndicator) {
         constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
         
+        // FIXME: Why is this using RenderFlexibleBox?
         auto textRects = RenderFlexibleBox::absoluteTextRects(range);
         
         HitTestResult result;

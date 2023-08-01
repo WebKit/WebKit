@@ -276,20 +276,17 @@ private:
     const LayoutPoint& m_accumulatedOffset;
 };
 
-void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
+void RenderInline::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    Vector<LayoutRect> lineboxRects;
-    AbsoluteRectsGeneratorContext context(lineboxRects, accumulatedOffset);
+    AbsoluteRectsGeneratorContext context(rects, accumulatedOffset);
     generateLineBoxRects(context);
-    for (const auto& rect : lineboxRects)
-        rects.append(snappedIntRect(rect));
 
-    if (RenderBoxModelObject* continuation = this->continuation()) {
+    if (auto* continuation = this->continuation()) {
         if (is<RenderBox>(*continuation)) {
             auto& box = downcast<RenderBox>(*continuation);
-            continuation->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location() + box.locationOffset()));
+            continuation->boundingRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location() + box.locationOffset()));
         } else
-            continuation->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location()));
+            continuation->boundingRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location()));
     }
 }
 
