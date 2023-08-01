@@ -59,7 +59,7 @@ def config_argument_parser():
     parser.add_argument('--no-adjust-unit', dest='scale_unit', action='store_false', help="Don't convert to scientific notation.")
     parser.add_argument('--show-iteration-values', dest='show_iteration_values', action='store_true', help="Show the measured value for each iteration in addition to averages.")
     parser.add_argument('--generate-pgo-profiles', dest="generate_pgo_profiles", action='store_true', help="Collect LLVM profiles for PGO, and copy them to the diagnostics directory.")
-    parser.add_argument('--profile', action='store_true', help="Collect profiling traces, and copy them to the diagnostic directory.")
+    parser.add_argument('--profile', dest='trace_type', default=None, help="Collect profiling traces, and copy them to the diagnostic directory. Requires a valid TRACE_TYPE - options are `full` and `profile`.")
     parser.add_argument('--profiling-interval', default=None, help="Specify the profiling sampling rate.")
 
     group = parser.add_mutually_exclusive_group()
@@ -84,7 +84,7 @@ def parse_args(parser=None):
     _log.debug('\tbuild directory\t: %s' % args.build_dir)
     _log.debug('\tplan name\t: %s', args.plan)
 
-    if (args.generate_pgo_profiles or args.profile) and not args.diagnose_dir:
+    if (args.generate_pgo_profiles or args.trace_type) and not args.diagnose_dir:
         raise Exception('Collecting profiles requires a diagnostic directory (--diagnose-directory) to be set.')
 
     if args.generate_pgo_profiles and args.platform != 'osx':
@@ -100,8 +100,8 @@ def run_benchmark_plan(args, plan):
                                     args.platform, args.browser, args.browser_path, args.subtests, args.scale_unit,
                                     args.show_iteration_values, args.device_id, args.diagnose_dir,
                                     args.diagnose_dir if args.generate_pgo_profiles else None,
-                                    args.diagnose_dir if args.profile else None,
-                                    args.profiling_interval,
+                                    args.diagnose_dir if args.trace_type else None,
+                                    args.trace_type, args.profiling_interval,
                                     args.browser_args)
     runner.execute()
 
