@@ -232,7 +232,11 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, Formatting
 
         while (!layoutQueue.isEmpty()) {
             auto layoutBox = layoutQueue.takeLast();
-            if (layoutBox->isInlineTextBox()) {
+            if (layoutBox->isOutOfFlowPositioned()) {
+                // Let's not construct InlineItems for out-of-flow content as they don't participate in the inline layout.
+                // However to be able to static positioning them, we need to compute their approximate positions.
+                outOfFlowBoxes.append(layoutBox);
+            } else if (layoutBox->isInlineTextBox()) {
                 auto& inlineTextBox = downcast<InlineTextBox>(layoutBox);
                 handleTextContent(inlineTextBox, inlineItems, partialContentOffset(inlineTextBox));
             } else if (layoutBox->isAtomicInlineLevelBox() || layoutBox->isLineBreakBox())
@@ -241,11 +245,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, Formatting
                 handleInlineBoxEnd(layoutBox, inlineItems);
             else if (layoutBox->isFloatingPositioned())
                 inlineItems.append({ layoutBox, InlineItem::Type::Float });
-            else if (layoutBox->isOutOfFlowPositioned()) {
-                // Let's not construct InlineItems for out-of-flow content as they don't participate in the inline layout.
-                // However to be able to static positioning them, we need to compute their approximate positions.
-                outOfFlowBoxes.append(layoutBox);
-            } else
+            else
                 ASSERT_NOT_REACHED();
 
             if (auto* nextSibling = layoutBox->nextSibling()) {
