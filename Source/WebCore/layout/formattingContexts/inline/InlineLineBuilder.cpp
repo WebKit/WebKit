@@ -904,15 +904,15 @@ static bool shouldDisableHyphenation(const RenderStyle& rootStyle, unsigned succ
     return successiveHyphenatedLineCount >= limitLines;
 }
 
-static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent& candidateContent, const Line& line, InlineLayoutUnit availableWidthForContent)
+static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent& candidateContent, const Line& line, InlineLayoutUnit lineWidth)
 {
 #if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
     // 1. Preferred width computation sums up floats while line breaker subtracts them.
     // 2. Available space is inherently a LayoutUnit based value (coming from block/flex etc layout) and it is the result of a floored float.
     // These can all lead to epsilon-scale differences.
-    availableWidthForContent += LayoutUnit::epsilon();
+    lineWidth += LayoutUnit::epsilon();
 #endif
-    auto availableWidth = availableWidthForContent - line.contentLogicalRight();
+    auto availableWidth = lineWidth - line.contentLogicalRight();
     auto& inlineBoxListWithClonedDecorationEnd = line.inlineBoxListWithClonedDecorationEnd();
     // We may try to commit a inline box end here which already takes up place implicitly through the cloned decoration.
     // Let's not account for its logical width twice.
@@ -970,10 +970,10 @@ static std::optional<InlineLayoutUnit> eligibleOverflowWidthAsLeading(const Inli
     return { };
 }
 
-std::tuple<InlineRect, bool> LineBuilder::lineBoxForCandidateInlineContent(const LineCandidate& lineCandidate) const
+std::tuple<InlineRect, bool> LineBuilder::adjustedLineRectWithCandidateInlineContent(const LineCandidate& lineCandidate) const
 {
-    auto& inlineContent = lineCandidate.inlineContent;
     // Check if the candidate content would stretch the line and whether additional floats are getting in the way.
+    auto& inlineContent = lineCandidate.inlineContent;
     if (isInIntrinsicWidthMode())
         return { m_lineLogicalRect, false };
     auto maximumLineLogicalHeight = m_lineLogicalRect.height();
@@ -1176,10 +1176,10 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         inlineContentBreaker.setHyphenationDisabled();
 
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
-    auto [adjustedLineForCandidateContent, candidateContentIsConstrainedByFloat] = lineBoxForCandidateInlineContent(lineCandidate);
+    auto [lineRectAdjutedWithCandidateContent, candidateContentIsConstrainedByFloat] = adjustedLineRectWithCandidateInlineContent(lineCandidate);
     // Note that adjusted line height never shrinks.
-    m_candidateInlineContentEnclosingHeight = adjustedLineForCandidateContent.height();
-    auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, adjustedLineForCandidateContent.width());
+    m_candidateInlineContentEnclosingHeight = lineRectAdjutedWithCandidateContent.height();
+    auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, lineRectAdjutedWithCandidateContent.width());
     auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus {
         m_line.contentLogicalRight(),
@@ -1284,7 +1284,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     if (lineGainsNewContent) {
         // Sometimes in order to put this content on the line, we have to avoid additional float boxes (when the new content is taller than any previous content and we have vertically stacked floats on this line)
         // which means we need to adjust the line rect to accommodate such new constraints.
-        m_lineLogicalRect = adjustedLineForCandidateContent;
+        m_lineLogicalRect = lineRectAdjutedWithCandidateContent;
     }
     m_lineIsConstrainedByFloat = m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
     return toLineBuilderResult(lineBreakingResult);
