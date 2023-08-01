@@ -3682,13 +3682,13 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         if (m_quickRedirectComing)
             clientRedirectCancelledOrFinished(NewLoadInProgress::No);
 
-        if (navigationPolicyDecision == NavigationPolicyDecision::StopAllLoads) {
+        if (navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess) {
             stopAllLoaders();
             m_checkTimer.stop();
         }
 
         setPolicyDocumentLoader(nullptr);
-        if (m_frame.isMainFrame() || navigationPolicyDecision != NavigationPolicyDecision::StopAllLoads)
+        if (m_frame.isMainFrame() || navigationPolicyDecision != NavigationPolicyDecision::LoadWillContinueInAnotherProcess)
             checkCompleted();
         else {
             // Don't call checkCompleted until RemoteFrame::didFinishLoadInAnotherProcess,
@@ -3699,7 +3699,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             m_provisionalLoadHappeningInAnotherProcess = true;
         }
 
-        if (navigationPolicyDecision != NavigationPolicyDecision::StopAllLoads)
+        if (navigationPolicyDecision != NavigationPolicyDecision::LoadWillContinueInAnotherProcess)
             checkLoadComplete();
 
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 

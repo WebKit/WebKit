@@ -4875,7 +4875,7 @@ enum class WebCore::PolicyAction : uint8_t {
     Use,
     Download,
     Ignore,
-    StopAllLoads
+    LoadWillContinueInAnotherProcess
 };
 
 [OptionSet] enum class WebCore::ReloadOption : uint8_t {
