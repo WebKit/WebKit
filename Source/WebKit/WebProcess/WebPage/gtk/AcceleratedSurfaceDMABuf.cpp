@@ -449,7 +449,10 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
         break;
 #if USE(GBM)
     case WebCore::PlatformDisplay::Type::GBM:
-        m_target = RenderTargetEGLImage::create(m_id, size);
+        if (display.eglExtensions().EXT_image_dma_buf_import)
+            m_target = RenderTargetEGLImage::create(m_id, size);
+        else
+            m_target = RenderTargetSHMImage::create(m_id, size);
         break;
 #endif
     default:
