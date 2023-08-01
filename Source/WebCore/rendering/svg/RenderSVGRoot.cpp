@@ -634,9 +634,9 @@ LayoutRect RenderSVGRoot::overflowClipRect(const LayoutPoint& location, RenderFr
     return clipRect;
 }
 
-void RenderSVGRoot::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
+void RenderSVGRoot::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    rects.append(snappedIntRect(accumulatedOffset, borderBoxRect().size()));
+    rects.append({ accumulatedOffset, borderBoxRect().size() });
 }
 
 void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const

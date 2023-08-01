@@ -46,7 +46,7 @@ private:
     LayoutRect clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const final { return { }; }
     std::optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject*, VisibleRectContext) const final { return std::make_optional(rect); }
 
-    void absoluteRects(Vector<IntRect>&, const LayoutPoint&) const final { }
+    void boundingRects(Vector<LayoutRect>&, const LayoutPoint&) const final { }
     void absoluteQuads(Vector<FloatQuad>&, bool*) const final { }
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject* = nullptr) const final { }
 
