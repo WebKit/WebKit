@@ -1829,3 +1829,5 @@ webkit.org/b/238033 imported/w3c/web-platform-tests/css/css-contain/content-visi
 webkit.org/b/259544 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Crash ]
 
 webkit.org/b/259183 fast/attachment/mac/wide-attachment-image-controls-basic.html [ Pass Failure ]
+
+webkit.org/b/259699 media/media-source/media-source-duplicate-seeked.html [ Pass Failure ]
