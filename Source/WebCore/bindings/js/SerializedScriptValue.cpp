@@ -218,6 +218,10 @@ enum SerializationTag {
 #endif
     ResizableArrayBufferTag = 54,
     ErrorInstanceTag = 55,
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    InMemoryOffscreenCanvasTag = 56,
+#endif
+    InMemoryMessagePortTag = 57,
     ErrorTag = 255
 };
 
@@ -306,7 +310,9 @@ static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, Seria
     case ImageBitmapTag:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     case OffscreenCanvasTransferTag:
+    case InMemoryOffscreenCanvasTag:
 #endif
+    case InMemoryMessagePortTag:
 #if ENABLE(WEB_RTC)
     case RTCDataChannelTransferTag:
 #endif
@@ -800,7 +806,9 @@ public:
     static SerializationReturnCode serialize(JSGlobalObject* lexicalGlobalObject, JSValue value, Vector<RefPtr<MessagePort>>& messagePorts, Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers, const Vector<RefPtr<ImageBitmap>>& imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
             const Vector<RefPtr<OffscreenCanvas>>& offscreenCanvases,
+            Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases,
 #endif
+            Vector<RefPtr<MessagePort>>& inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
             const Vector<Ref<RTCDataChannel>>& rtcDataChannels,
 #endif
@@ -818,7 +826,9 @@ public:
         CloneSerializer serializer(lexicalGlobalObject, messagePorts, arrayBuffers, imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
             offscreenCanvases,
+            inMemoryOffscreenCanvases,
 #endif
+            inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
             rtcDataChannels,
 #endif
@@ -856,7 +866,9 @@ private:
     CloneSerializer(JSGlobalObject* lexicalGlobalObject, Vector<RefPtr<MessagePort>>& messagePorts, Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers, const Vector<RefPtr<ImageBitmap>>& imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
             const Vector<RefPtr<OffscreenCanvas>>& offscreenCanvases,
+            Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases,
 #endif
+            Vector<RefPtr<MessagePort>>& inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
             const Vector<Ref<RTCDataChannel>>& rtcDataChannels,
 #endif
@@ -875,6 +887,10 @@ private:
         , m_emptyIdentifier(Identifier::fromString(lexicalGlobalObject->vm(), emptyString()))
         , m_context(context)
         , m_sharedBuffers(sharedBuffers)
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+        , m_inMemoryOffscreenCanvases(inMemoryOffscreenCanvases)
+#endif
+        , m_inMemoryMessagePorts(inMemoryMessagePorts)
 #if ENABLE(WEBASSEMBLY)
         , m_wasmModules(wasmModules)
         , m_wasmMemoryHandles(wasmMemoryHandles)
@@ -1362,6 +1378,11 @@ private:
             write(OffscreenCanvasTransferTag);
             write(index->value);
             return;
+        } else if (m_context == SerializationContext::CloneAcrossWorlds) {
+            write(InMemoryOffscreenCanvasTag);
+            write(static_cast<uint32_t>(m_inMemoryOffscreenCanvases.size()));
+            m_inMemoryOffscreenCanvases.append(&jsCast<JSOffscreenCanvas*>(obj)->wrapped());
+            return;
         }
 
         code = SerializationReturnCode::DataCloneError;
@@ -1602,6 +1623,12 @@ private:
                     write(MessagePortReferenceTag);
                     write(index->value);
                     return true;
+                } else if (m_context == SerializationContext::CloneAcrossWorlds) {
+                    // FIXME: Only in clone accross worlds mode.
+                    write (InMemoryMessagePortTag);
+                    write(static_cast<uint32_t>(m_inMemoryMessagePorts.size()));
+                    m_inMemoryMessagePorts.append(&jsCast<JSMessagePort*>(obj)->wrapped());
+                    return true;
                 }
                 // MessagePort object could not be found in transferred message ports
                 code = SerializationReturnCode::ValidationError;
@@ -1676,10 +1703,16 @@ private:
                 WasmMemoryHandleArray dummyMemoryHandles;
 #endif
                 ArrayBufferContentsArray dummySharedBuffers;
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+                Vector<RefPtr<OffscreenCanvas>> dummyInMemoryOffscreenCanvases;
+#endif
+                Vector<RefPtr<MessagePort>> dummyInMemoryMessagePorts;
                 CloneSerializer rawKeySerializer(m_lexicalGlobalObject, dummyMessagePorts, dummyArrayBuffers, { },
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
                     { },
+                    dummyInMemoryOffscreenCanvases,
 #endif
+                    dummyInMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
                     { },
 #endif
@@ -2285,6 +2318,10 @@ private:
     Identifier m_emptyIdentifier;
     SerializationContext m_context;
     ArrayBufferContentsArray& m_sharedBuffers;
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    Vector<RefPtr<OffscreenCanvas>>& m_inMemoryOffscreenCanvases;
+#endif
+    Vector<RefPtr<MessagePort>>& m_inMemoryMessagePorts;
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray& m_wasmModules;
     WasmMemoryHandleArray& m_wasmMemoryHandles;
@@ -2580,7 +2617,9 @@ public:
     static DeserializationResult deserialize(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, Vector<std::optional<ImageBitmapBacking>>&& backingStores
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
+        , const Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases
 #endif
+        , const Vector<RefPtr<MessagePort>>& inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
 #endif
@@ -2600,7 +2639,9 @@ public:
         CloneDeserializer deserializer(lexicalGlobalObject, globalObject, messagePorts, arrayBufferContentsArray, buffer, blobURLs, blobFilePaths, sharedBuffers, WTFMove(backingStores)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
             , WTFMove(detachedOffscreenCanvases)
+            , inMemoryOffscreenCanvases
 #endif
+            , inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
             , WTFMove(detachedRTCDataChannels)
 #endif
@@ -2661,7 +2702,9 @@ private:
     CloneDeserializer(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, ArrayBufferContentsArray* arrayBufferContents, Vector<std::optional<ImageBitmapBacking>>&& backingStores, const Vector<uint8_t>& buffer
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases = { }
+        , const Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases = { }
 #endif
+        , const Vector<RefPtr<MessagePort>>& inMemoryMessagePorts = { }
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels = { }
 #endif
@@ -2689,7 +2732,9 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , m_detachedOffscreenCanvases(WTFMove(detachedOffscreenCanvases))
         , m_offscreenCanvases(m_detachedOffscreenCanvases.size())
+        , m_inMemoryOffscreenCanvases(inMemoryOffscreenCanvases)
 #endif
+        , m_inMemoryMessagePorts(inMemoryMessagePorts)
 #if ENABLE(WEB_RTC)
         , m_detachedRTCDataChannels(WTFMove(detachedRTCDataChannels))
         , m_rtcDataChannels(m_detachedRTCDataChannels.size())
@@ -2712,7 +2757,9 @@ private:
     CloneDeserializer(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, ArrayBufferContentsArray* arrayBufferContents, const Vector<uint8_t>& buffer, const Vector<String>& blobURLs, const Vector<String> blobFilePaths, ArrayBufferContentsArray* sharedBuffers, Vector<std::optional<ImageBitmapBacking>>&& backingStores
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
+        , const Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases
 #endif
+        , const Vector<RefPtr<MessagePort>>& inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
 #endif
@@ -2743,7 +2790,9 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , m_detachedOffscreenCanvases(WTFMove(detachedOffscreenCanvases))
         , m_offscreenCanvases(m_detachedOffscreenCanvases.size())
+        , m_inMemoryOffscreenCanvases(inMemoryOffscreenCanvases)
 #endif
+        , m_inMemoryMessagePorts(inMemoryMessagePorts)
 #if ENABLE(WEB_RTC)
         , m_detachedRTCDataChannels(WTFMove(detachedRTCDataChannels))
         , m_rtcDataChannels(m_detachedRTCDataChannels.size())
@@ -3847,6 +3896,17 @@ private:
         auto offscreenCanvas = m_offscreenCanvases[index].get();
         return getJSValue(offscreenCanvas);
     }
+
+    JSValue readInMemoryOffscreenCanvas()
+    {
+        uint32_t index;
+        bool indexSuccessfullyRead = read(index);
+        if (!indexSuccessfullyRead || index >= m_inMemoryOffscreenCanvases.size()) {
+            fail();
+            return JSValue();
+        }
+        return getJSValue(m_inMemoryOffscreenCanvases[index].get());
+    }
 #endif
 
 #if ENABLE(WEB_RTC)
@@ -4329,6 +4389,15 @@ private:
             }
             return getJSValue(m_messagePorts[index].get());
         }
+        case InMemoryMessagePortTag: {
+            uint32_t index;
+            bool indexSuccessfullyRead = read(index);
+            if (!indexSuccessfullyRead || index >= m_inMemoryMessagePorts.size()) {
+                fail();
+                return JSValue();
+            }
+            return getJSValue(m_inMemoryMessagePorts[index].get());
+        }
 #if ENABLE(WEBASSEMBLY)
         case WasmModuleTag: {
             if (m_version >= 12) {
@@ -4517,6 +4586,8 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         case OffscreenCanvasTransferTag:
             return readOffscreenCanvas();
+        case InMemoryOffscreenCanvasTag:
+            return readInMemoryOffscreenCanvas();
 #endif
 #if ENABLE(WEB_RTC)
         case RTCDataChannelTransferTag:
@@ -4565,7 +4636,9 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     Vector<std::unique_ptr<DetachedOffscreenCanvas>> m_detachedOffscreenCanvases;
     Vector<RefPtr<OffscreenCanvas>> m_offscreenCanvases;
+    const Vector<RefPtr<OffscreenCanvas>>& m_inMemoryOffscreenCanvases;
 #endif
+    const Vector<RefPtr<MessagePort>>& m_inMemoryMessagePorts;
 #if ENABLE(WEB_RTC)
     Vector<std::unique_ptr<DetachedRTCDataChannel>> m_detachedRTCDataChannels;
     Vector<RefPtr<RTCDataChannel>> m_rtcDataChannels;
@@ -4803,7 +4876,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
 SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray, std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray, Vector<std::optional<ImageBitmapBacking>>&& backingStores
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
+        , Vector<RefPtr<OffscreenCanvas>>&& inMemoryOffscreenCanvases
 #endif
+        , Vector<RefPtr<MessagePort>>&& inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
 #endif
@@ -4822,7 +4897,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
     , m_backingStores(WTFMove(backingStores))
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     , m_detachedOffscreenCanvases(WTFMove(detachedOffscreenCanvases))
+    , m_inMemoryOffscreenCanvases(WTFMove(inMemoryOffscreenCanvases))
 #endif
+    , m_inMemoryMessagePorts(WTFMove(inMemoryMessagePorts))
 #if ENABLE(WEB_RTC)
     , m_detachedRTCDataChannels(WTFMove(detachedRTCDataChannels))
 #endif
@@ -5101,6 +5178,10 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 
     Vector<uint8_t> buffer;
     Vector<URLKeepingBlobAlive> blobHandles;
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    Vector<RefPtr<OffscreenCanvas>> inMemoryOffscreenCanvases;
+#endif
+    Vector<RefPtr<MessagePort>> inMemoryMessagePorts;
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray wasmModules;
     WasmMemoryHandleArray wasmMemoryHandles;
@@ -5113,7 +5194,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     auto code = CloneSerializer::serialize(&lexicalGlobalObject, value, messagePorts, arrayBuffers, imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         offscreenCanvases,
+        inMemoryOffscreenCanvases,
 #endif
+        inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
         dataChannels,
 #endif
@@ -5161,7 +5244,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     return adoptRef(*new SerializedScriptValue(WTFMove(buffer), WTFMove(blobHandles), arrayBufferContentsArray.releaseReturnValue(), context == SerializationContext::WorkerPostMessage ? WTFMove(sharedBuffers) : nullptr, WTFMove(backingStores)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
                 , WTFMove(detachedCanvases)
+                , WTFMove(inMemoryOffscreenCanvases)
 #endif
+                , WTFMove(inMemoryMessagePorts)
 #if ENABLE(WEB_RTC)
                 , WTFMove(detachedRTCDataChannels)
 #endif
@@ -5225,7 +5310,9 @@ JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, 
     DeserializationResult result = CloneDeserializer::deserialize(&lexicalGlobalObject, globalObject, messagePorts, WTFMove(m_backingStores)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , WTFMove(m_detachedOffscreenCanvases)
+        , m_inMemoryOffscreenCanvases
 #endif
+        , m_inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , WTFMove(m_detachedRTCDataChannels)
 #endif

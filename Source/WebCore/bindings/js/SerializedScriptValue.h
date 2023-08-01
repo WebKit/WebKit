@@ -56,6 +56,7 @@ namespace WebCore {
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
 class DetachedOffscreenCanvas;
+class OffscreenCanvas;
 #endif
 class IDBValue;
 class MessagePort;
@@ -64,7 +65,7 @@ class FragmentedSharedBuffer;
 enum class SerializationReturnCode;
 
 enum class SerializationErrorMode { NonThrowing, Throwing };
-enum class SerializationContext { Default, WorkerPostMessage, WindowPostMessage };
+enum class SerializationContext { Default, WorkerPostMessage, WindowPostMessage, CloneAcrossWorlds };
 enum class SerializationForStorage : bool { No, Yes };
 
 using ArrayBufferContentsArray = Vector<JSC::ArrayBufferContents>;
@@ -131,7 +132,9 @@ private:
     SerializedScriptValue(Vector<unsigned char>&&, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<ImageBitmapBacking>>&& backingStores
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& = { }
+        , Vector<RefPtr<OffscreenCanvas>>&& = { }
 #endif
+        , Vector<RefPtr<MessagePort>>&& = { }
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }
 #endif
@@ -153,7 +156,9 @@ private:
     Vector<std::optional<ImageBitmapBacking>> m_backingStores;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     Vector<std::unique_ptr<DetachedOffscreenCanvas>> m_detachedOffscreenCanvases;
+    Vector<RefPtr<OffscreenCanvas>> m_inMemoryOffscreenCanvases;
 #endif
+    Vector<RefPtr<MessagePort>> m_inMemoryMessagePorts;
 #if ENABLE(WEB_RTC)
     Vector<std::unique_ptr<DetachedRTCDataChannel>> m_detachedRTCDataChannels;
 #endif

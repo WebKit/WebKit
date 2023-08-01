@@ -30,6 +30,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
+#import "TestWKWebView.h"
 #import "UserContentWorldProtocol.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -183,4 +184,38 @@ TEST(UserContentWorld, IsolatedWorldPlugIn)
     TestWebKitAPI::Util::run(&didObserveWorldWithName);
     TestWebKitAPI::Util::run(&didObserveMainFrame);
     TestWebKitAPI::Util::run(&didObserveSubframe);
+}
+
+static Vector<String> userContentWorldReceivedMessages;
+
+@interface UserContentWorldMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation UserContentWorldMessageHandler
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    userContentWorldReceivedMessages.append(String((NSString*)message.body));
+}
+
+@end
+
+TEST(UserContentWorld, DefaultClientWorldMessageEvent)
+{
+    auto handler = adoptNS([[UserContentWorldMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    [[configuration userContentController] addUserScript:[[WKUserScript alloc] initWithSource:
+        @"window.addEventListener('message', function(message) { console.error(message.data); });"
+        injectionTime:WKUserScriptInjectionTimeAtDocumentStart
+        forMainFrameOnly:NO
+        inContentWorld:WKContentWorld.defaultClientWorld]];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)  configuration:configuration.get() addToWindow:NO]);
+    [webView synchronouslyLoadTestPageNamed:@"postMessage-various-types"];
+    while (userContentWorldReceivedMessages.size() != 4)
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_WK_STREQ(@"Object: Object", userContentWorldReceivedMessages[0]);
+    EXPECT_WK_STREQ(@"ArrayBuffer: ArrayBuffer", userContentWorldReceivedMessages[1]);
+    EXPECT_WK_STREQ(@"OffscreenCanvas: OffscreenCanvas", userContentWorldReceivedMessages[2]);
+    EXPECT_WK_STREQ(@"MessagePort: MessagePort", userContentWorldReceivedMessages[3]);
 }
