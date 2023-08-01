@@ -28,9 +28,11 @@
 #include "DownloadID.h"
 #include "NetworkDataTask.h"
 #include "NetworkLoadParameters.h"
-#include <WebCore/AuthenticationChallenge.h>
-#include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
+
+namespace WebCore {
+class AuthenticationChallenge;
+}
 
 namespace WebKit {
 

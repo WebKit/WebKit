@@ -32,11 +32,7 @@
 #include "DownloadID.h"
 #include "DownloadManager.h"
 #include "NetworkContentRuleListManager.h"
-#include "NetworkProcessConnectionParameters.h"
-#include "NetworkResourceLoadIdentifier.h"
 #include "QuotaIncreaseRequestIdentifier.h"
-#include "RTCDataChannelRemoteManagerProxy.h"
-#include "SandboxExtension.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteData.h"
@@ -110,6 +106,8 @@ class NetworkProximityManager;
 class NetworkResourceLoader;
 class NetworkStorageManager;
 class ProcessAssertion;
+class RTCDataChannelRemoteManagerProxy;
+class SandboxExtensionHandle;
 class WebPageNetworkParameters;
 enum class CallDownloadDidStart : bool;
 enum class LoadedWebArchive : bool;
@@ -119,6 +117,7 @@ enum class StorageAccessStatus : uint8_t;
 enum class WebsiteDataFetchOption : uint8_t;
 enum class WebsiteDataType : uint32_t;
 struct BackgroundFetchState;
+struct NetworkProcessConnectionParameters;
 struct NetworkProcessCreationParameters;
 struct WebPushMessage;
 struct WebsiteDataStoreParameters;
@@ -457,7 +456,7 @@ private:
     // Message Handlers
     bool didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
     void initializeNetworkProcess(NetworkProcessCreationParameters&&, CompletionHandler<void()>&&);
-    void createNetworkConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters,  CompletionHandler<void(std::optional<IPC::Connection::Handle>&&, WebCore::HTTPCookieAcceptPolicy)>&&);
+    void createNetworkConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&,  CompletionHandler<void(std::optional<IPC::Connection::Handle>&&, WebCore::HTTPCookieAcceptPolicy)>&&);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, CompletionHandler<void(WebsiteData&&)>&&);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&&);
@@ -466,10 +465,10 @@ private:
     void clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&&);
 
     void downloadRequest(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, std::optional<NavigatingToAppBoundDomain>, const String& suggestedFilename);
-    void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&, CallDownloadDidStart);
+    void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtensionHandle&&, CallDownloadDidStart);
     void cancelDownload(DownloadID, CompletionHandler<void(const IPC::DataReference&)>&&);
 #if PLATFORM(COCOA)
-    void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);
+    void publishDownloadProgress(DownloadID, const URL&, SandboxExtensionHandle&&);
 #endif
     void dataTaskWithRequest(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, IPC::FormDataReference&&, CompletionHandler<void(DataTaskIdentifier)>&&);
     void cancelDataTask(DataTaskIdentifier, PAL::SessionID);
