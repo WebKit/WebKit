@@ -67,7 +67,7 @@ bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelE
 {
     ASSERT(ScrollingThread::isCurrentThread());
 
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::handleWheelEventAfterMainThread " << wheelEvent << " node " << targetNodeID << " gestureState " << gestureState);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ThreadedScrollingTree::handleWheelEventAfterMainThread " << wheelEvent << " node " << targetNodeID << " gestureState " << gestureState);
 
     Locker locker { m_treeLock };
 
@@ -86,7 +86,7 @@ bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelE
 
 void ThreadedScrollingTree::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, std::optional<WheelScrollGestureState> gestureState)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::wheelEventWasProcessedByMainThread - gestureState " << gestureState);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ThreadedScrollingTree::wheelEventWasProcessedByMainThread - gestureState " << gestureState);
 
     ASSERT(isMainThread());
     
@@ -131,7 +131,7 @@ void ThreadedScrollingTree::waitForEventToBeProcessedByMainThread(const Platform
         setGestureState(WheelScrollGestureState::NonBlocking);
     }
 
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::waitForBeganEventFromMainThread done - timed out " << !receivedEvent << " gesture state is " << gestureState());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ThreadedScrollingTree::waitForBeganEventFromMainThread done - timed out " << !receivedEvent << " gesture state is " << gestureState());
 }
 
 void ThreadedScrollingTree::invalidate()
@@ -261,7 +261,7 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
         return;
     }
 
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::scrollingTreeNodeDidScroll " << node.scrollingNodeID() << " to " << scrollPosition << " triggering main thread rendering update");
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ThreadedScrollingTree::scrollingTreeNodeDidScroll " << node.scrollingNodeID() << " to " << scrollPosition << " triggering main thread rendering update");
 
     addPendingScrollUpdate(WTFMove(scrollUpdate));
 
@@ -277,7 +277,7 @@ void ThreadedScrollingTree::scrollingTreeNodeScrollUpdated(ScrollingTreeScrollin
     if (!m_scrollingCoordinator)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::scrollingTreeNodeScrollUpdated " << node.scrollingNodeID() << " update type " << scrollUpdateType);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ThreadedScrollingTree::scrollingTreeNodeScrollUpdated " << node.scrollingNodeID() << " update type " << scrollUpdateType);
 
     auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), { }, { }, scrollUpdateType };
 

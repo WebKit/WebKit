@@ -860,7 +860,7 @@ static std::optional<ScrollingNodeID> frameHostingNodeForFrame(LocalFrame& frame
 
     auto& widgetRenderer = downcast<RenderWidget>(*frameRenderer);
     if (!widgetRenderer.hasLayer() || !widgetRenderer.layer()->isComposited()) {
-        LOG(Scrolling, "frameHostingNodeForFrame: frame renderer has no layer or is not composited.");
+        WTFLogAlways("**Scrolling** frameHostingNodeForFrame: frame renderer has no layer or is not composited.");
         return { };
     }
 
@@ -3690,7 +3690,7 @@ static void collectStationaryLayerRelatedOverflowNodes(const RenderLayer& layer,
         if (scrollingNodeID)
             scrollingNodes.append(scrollingNodeID);
         else
-            LOG(Scrolling, "Layer %p doesn't have scrolling node ID yet", &overflowLayer);
+            WTFLogAlways("**Scrolling** Layer %p doesn't have scrolling node ID yet", &overflowLayer);
     };
 
     // Collect all the composited scrollers which affect the position of this layer relative to its compositing ancestor (which might be inside the scroller or the scroller itself).
@@ -5227,7 +5227,7 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
             continue;
 
         if (auto enclosingScrollingNodeID = asyncScrollableContainerNodeID(renderer)) {
-            LOG_WITH_STREAM(Scrolling, stream << "RenderLayerCompositor::updateSynchronousScrollingNodes - node " << enclosingScrollingNodeID << " slow-scrolling because of fixed backgrounds");
+            ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RenderLayerCompositor::updateSynchronousScrollingNodes - node " << enclosingScrollingNodeID << " slow-scrolling because of fixed backgrounds");
             ASSERT(enclosingScrollingNodeID != rootScrollingNodeID);
 
             scrollingCoordinator->setSynchronousScrollingReasons(enclosingScrollingNodeID, { SynchronousScrollingReason::HasSlowRepaintObjects });
@@ -5242,7 +5242,7 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
             // tree instead.)
             rootHasSlowRepaintObjects = true;
         } else if (!layer->behavesAsFixed()) {
-            LOG_WITH_STREAM(Scrolling, stream << "RenderLayerCompositor::updateSynchronousScrollingNodes - root node slow-scrolling because of fixed backgrounds");
+            ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RenderLayerCompositor::updateSynchronousScrollingNodes - root node slow-scrolling because of fixed backgrounds");
             rootHasSlowRepaintObjects = true;
         }
     }

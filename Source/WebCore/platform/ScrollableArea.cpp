@@ -167,13 +167,13 @@ void ScrollableArea::endKeyboardScroll(bool immediate)
 
 void ScrollableArea::scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping clamping)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithoutAnimation " << position);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollableArea " << this << " scrollToPositionWithoutAnimation " << position);
     scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
 }
 
 void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, const ScrollPositionChangeOptions& options)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithAnimation " << position);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollableArea " << this << " scrollToPositionWithAnimation " << position);
 
     bool startedAnimation = requestScrollToPosition(roundedIntPoint(position), { ScrollType::Programmatic, options.clamping, ScrollIsAnimated::Yes, options.snapPointSelectionMethod, options.originalScrollDelta });
     if (!startedAnimation)
@@ -185,7 +185,7 @@ void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, c
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToOffsetWithoutAnimation " << offset);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollableArea " << this << " scrollToOffsetWithoutAnimation " << offset);
 
     auto position = scrollPositionFromOffset(offset, toFloatSize(scrollOrigin()));
     scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
@@ -246,7 +246,7 @@ bool ScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& whee
 
     bool handledEvent = scrollAnimator().handleWheelEvent(wheelEvent);
     
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea (" << *this << ") handleWheelEvent - handled " << handledEvent);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollableArea (" << *this << ") handleWheelEvent - handled " << handledEvent);
     return handledEvent;
 }
 

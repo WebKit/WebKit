@@ -8797,6 +8797,7 @@ void WebPage::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::
     auto* frameView = localMainFrameView();
     if (!frameView)
         return;
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "WebPage::scrollToRect " << targetRect << " -> setScrollPosition " << IntPoint(targetRect.minXMinYCorner()));
     frameView->setScrollPosition(IntPoint(targetRect.minXMinYCorner()));
 }
 

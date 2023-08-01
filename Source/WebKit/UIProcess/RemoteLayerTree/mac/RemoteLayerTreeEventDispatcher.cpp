@@ -239,7 +239,7 @@ void RemoteLayerTreeEventDispatcher::continueWheelEventHandling(WheelEventHandli
     if (!m_scrollingCoordinator)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::continueWheelEventHandling - result " << handlingResult);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RemoteLayerTreeEventDispatcher::continueWheelEventHandling - result " << handlingResult);
 
     auto event = m_wheelEventsBeingProcessed.takeFirst();
     m_scrollingCoordinator->continueWheelEventHandling(event, handlingResult);

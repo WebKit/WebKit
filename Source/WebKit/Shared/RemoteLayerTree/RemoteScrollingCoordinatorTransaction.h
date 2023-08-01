@@ -47,6 +47,8 @@ public:
     bool clearScrollLatching() const { return m_clearScrollLatching; }
     void setClearScrollLatching(bool clearLatching) { m_clearScrollLatching = clearLatching; }
 
+    bool hasChanges() const { return m_scrollingStateTree && m_scrollingStateTree->hasChangedProperties(); }
+
 #if !defined(NDEBUG) || !LOG_DISABLED
     String description() const;
     void dump() const;

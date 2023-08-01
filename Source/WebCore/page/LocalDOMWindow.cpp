@@ -1777,11 +1777,17 @@ void LocalDOMWindow::scrollBy(const ScrollToOptions& options) const
     FloatSize originalDelta(scrollToOptions.left.value(), scrollToOptions.top.value());
     scrollToOptions.left.value() += view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().x());
     scrollToOptions.top.value() += view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().y());
+    ALWAYS_LOG_WITH_STREAM(stream
+        << "**Scrolling** " << "LocalDOMWindow::scrollBy " << options.left << "," << options.top
+        << " normalized:" << originalDelta
+        << " += " << view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().x()) << "," << view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().y())
+        << " -> scrollTo " << scrollToOptions.left << "," << scrollToOptions.top);
     scrollTo(scrollToOptions, ScrollClamping::Clamped, ScrollSnapPointSelectionMethod::Directional, originalDelta);
 }
 
 void LocalDOMWindow::scrollTo(double x, double y, ScrollClamping clamping) const
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalDOMWindow::scrollTo(x,y) " << x << "," << y << " -> scrollTo(options) " << x << "," << y);
     scrollTo(ScrollToOptions(x, y), clamping);
 }
 
@@ -1801,7 +1807,7 @@ void LocalDOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping cla
     // This is an optimization for the common case of scrolling to (0, 0) when the scroller is already at the origin.
     // If an animated scroll is in progress, this optimization is skipped to ensure that the animated scroll is really stopped.
     if (view->scrollAnimationStatus() == ScrollAnimationStatus::NotAnimating && !scrollToOptions.left.value() && !scrollToOptions.top.value() && view->contentsScrollPosition().isZero()) {
-        LOG_WITH_STREAM(Scrolling, stream << "LocalDOMWindow::scrollTo bailing because going to 0,0");
+        ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalDOMWindow::scrollTo bailing because going to 0,0");
         return;
     }
 
@@ -1814,6 +1820,7 @@ void LocalDOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping cla
     // See https://bugs.webkit.org/show_bug.cgi?id=205059
     auto animated = useSmoothScrolling(scrollToOptions.behavior.value_or(ScrollBehavior::Auto), document()->documentElement()) ? ScrollIsAnimated::Yes : ScrollIsAnimated::No;
     auto scrollPositionChangeOptions = ScrollPositionChangeOptions::createProgrammaticWithOptions(clamping, animated, snapPointSelectionMethod, originalScrollDelta);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalDOMWindow::scrollTo " << options.left << "," << options.top << " normalized:" << scrollToOptions.left << "," << scrollToOptions.top << " -> setContentsScrollPosition " << layoutPos);
     view->setContentsScrollPosition(layoutPos, scrollPositionChangeOptions);
 }
 

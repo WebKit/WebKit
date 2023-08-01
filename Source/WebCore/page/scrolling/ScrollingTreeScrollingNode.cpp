@@ -252,7 +252,7 @@ void ScrollingTreeScrollingNode::willStartAnimatedScroll()
 
 void ScrollingTreeScrollingNode::didStopAnimatedScroll()
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " didStopAnimatedScroll");
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTreeScrollingNode " << scrollingNodeID() << " didStopAnimatedScroll");
     scrollingTree().scrollingTreeNodeDidStopAnimatedScroll(*this);
 }
 
@@ -301,7 +301,7 @@ void ScrollingTreeScrollingNode::requestKeyboardScroll(const RequestedKeyboardSc
 
 void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScrollData& requestedScrollData)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest()" << " animated " << (requestedScrollData.animated == ScrollIsAnimated::Yes) << " requestedScrollData: " << requestedScrollData);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest()" << " animated " << (requestedScrollData.animated == ScrollIsAnimated::Yes) << " requestedScrollData: " << requestedScrollData);
 
     stopAnimatedScroll();
 
@@ -349,7 +349,7 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType
 
     m_currentScrollPosition = adjustedScrollPosition(position, clamp);
     
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " scrollTo " << position << " adjusted to "
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTreeScrollingNode " << scrollingNodeID() << " scrollTo " << position << " adjusted to "
         << m_currentScrollPosition << " (" << scrollType << ", " << clamp << ") (delta from last committed position " << (m_lastCommittedScrollPosition - m_currentScrollPosition) << ")"
         << " rubberbanding " << scrollingTree().isRubberBandInProgressForNode(scrollingNodeID()));
 

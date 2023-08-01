@@ -256,7 +256,7 @@ ScrollOffset RenderLayerScrollableArea::clampScrollOffset(const ScrollOffset& sc
 bool RenderLayerScrollableArea::requestScrollToPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
 {
 #if ENABLE(ASYNC_SCROLLING)
-    LOG_WITH_STREAM(Scrolling, stream << "RenderLayerScrollableArea::requestScrollToPosition " << position << " options  " << options);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RenderLayerScrollableArea::requestScrollToPosition " << position << " options  " << options);
 
     if (auto* scrollingCoordinator = m_layer.page().scrollingCoordinator())
         return scrollingCoordinator->requestScrollToPosition(*this, position, options);
@@ -286,7 +286,7 @@ bool RenderLayerScrollableArea::requestStopKeyboardScrollAnimation(bool immediat
 void RenderLayerScrollableArea::stopAsyncAnimatedScroll()
 {
 #if ENABLE(ASYNC_SCROLLING)
-    LOG_WITH_STREAM(Scrolling, stream << m_layer << " stopAsyncAnimatedScroll");
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << m_layer << " stopAsyncAnimatedScroll");
 
     if (auto* scrollingCoordinator = m_layer.page().scrollingCoordinator())
         return scrollingCoordinator->stopAnimatedScroll(*this);
@@ -324,7 +324,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     if (!box)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "RenderLayerScrollableArea [" << scrollingNodeID() << "] scrollTo " << position << " from " << m_scrollPosition << " (is user scroll " << (currentScrollType() == ScrollType::User) << ")");
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RenderLayerScrollableArea [" << scrollingNodeID() << "] scrollTo " << position << " from " << m_scrollPosition << " (is user scroll " << (currentScrollType() == ScrollType::User) << ")");
 
     ScrollPosition newPosition = position;
     if (!box->isHTMLMarquee()) {
@@ -1349,7 +1349,7 @@ void RenderLayerScrollableArea::updateScrollInfoAfterLayout()
 
     updateScrollbarsAfterLayout();
 
-    LOG_WITH_STREAM(Scrolling, stream << "RenderLayerScrollableArea [" << scrollingNodeID() << "] updateScrollInfoAfterLayout - new scroll width " << m_scrollWidth << " scroll height " << m_scrollHeight
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RenderLayerScrollableArea [" << scrollingNodeID() << "] updateScrollInfoAfterLayout - new scroll width " << m_scrollWidth << " scroll height " << m_scrollHeight
         << " rubber banding " << isRubberBandInProgress() << " user scrolling " << isUserScrollInProgress() << " scroll position updated from " << originalScrollPosition << " to " << scrollPosition());
 
     if (originalScrollPosition != scrollPosition())

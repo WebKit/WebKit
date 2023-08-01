@@ -416,6 +416,7 @@ void ImageDocument::imageClicked(int x, int y)
         int scrollX = static_cast<int>(x / scale - viewportSize.width() / 2.0f);
         int scrollY = static_cast<int>(y / scale - viewportSize.height() / 2.0f);
 
+        ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ImageDocument::imageClicked " << x << "," << y << " -> setScrollPosition " << IntPoint(scrollX, scrollY));
         view()->setScrollPosition(IntPoint(scrollX, scrollY));
     }
 }

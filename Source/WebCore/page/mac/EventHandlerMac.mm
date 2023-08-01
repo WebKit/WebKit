@@ -924,7 +924,7 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
         LOG_WITH_STREAM(ScrollLatching, stream << "  latching state " << m_frame.page()->scrollLatchingController());
 
         if (!frameHasPlatformWidget(m_frame) && scrollableArea != view) {
-            LOG_WITH_STREAM(Scrolling, stream << "  latched to non-view scroller " << scrollableArea << " and not propagating");
+            ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "  latched to non-view scroller " << scrollableArea << " and not propagating");
             return true;
         }
 

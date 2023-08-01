@@ -98,7 +98,7 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(
         // Event regions are affected by page scale, so no need to map through scale.
         bool isSynchronousDispatchRegion = m_treeState.eventTrackingRegions.trackingTypeForPoint(EventTrackingRegions::EventType::Wheel, roundedPosition) == TrackingType::Synchronous
             || m_treeState.eventTrackingRegions.trackingTypeForPoint(EventTrackingRegions::EventType::Mousewheel, roundedPosition) == TrackingType::Synchronous;
-        LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree::computeWheelProcessingSteps: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
+        ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "\nScrollingTree::computeWheelProcessingSteps: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
 
         if (isSynchronousDispatchRegion)
             return { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
@@ -108,7 +108,7 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(
     auto eventListenerTypes = eventListenerRegionTypesForPoint(position);
     if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel)) {
         if (m_treeState.gestureState.value_or(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking) {
-            LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::computeWheelProcessingSteps: wheelEvent - gesture state made event non-blocking");
+            ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTree::computeWheelProcessingSteps: wheelEvent - gesture state made event non-blocking");
             return { WheelEventProcessingSteps::AsyncScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch };
         }
 
@@ -138,14 +138,14 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
 
     m_latchingController.receivedWheelEvent(wheelEvent, processingSteps, m_allowLatching);
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::determineWheelEventProcessing: " << wheelEvent << " processingSteps " << processingSteps);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTree::determineWheelEventProcessing: " << wheelEvent << " processingSteps " << processingSteps);
 
     return processingSteps;
 }
 
 WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree " << this << " handleWheelEvent " << wheelEvent);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "\nScrollingTree " << this << " handleWheelEvent " << wheelEvent);
 
     Locker locker { m_treeLock };
 
@@ -192,7 +192,7 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
         }
         auto node = scrollingNodeForPoint(position);
 
-        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position);
+        ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position);
 
         return handleWheelEventWithNode(wheelEvent, processingSteps, node.get());
     }();
@@ -294,7 +294,7 @@ void ScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node,
 
 void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const FloatRect& layoutViewport, double)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::viewportChangedViaDelegatedScrolling - layoutViewport " << layoutViewport);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTree::viewportChangedViaDelegatedScrolling - layoutViewport " << layoutViewport);
     
     if (!m_rootNode)
         return;
@@ -367,7 +367,7 @@ bool ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
     propagateSynchronousScrollingReasons(commitState.synchronousScrollingNodes);
 
     for (auto nodeID : commitState.unvisitedNodes) {
-        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::commitTreeState - removing unvisited node " << nodeID);
+        ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTree::commitTreeState - removing unvisited node " << nodeID);
 
         m_latchingController.nodeWasRemoved(nodeID);
 

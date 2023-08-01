@@ -533,7 +533,7 @@ bool Element::dispatchWheelEvent(const PlatformWheelEvent& platformEvent, Option
 
     dispatchEvent(event);
     
-    LOG_WITH_STREAM(Scrolling, stream << "Element " << *this << " dispatchWheelEvent: (cancelable " << event->cancelable() << ") defaultPrevented " << event->defaultPrevented() << " defaultHandled " << event->defaultHandled());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "Element " << *this << " dispatchWheelEvent: (cancelable " << event->cancelable() << ") defaultPrevented " << event->defaultPrevented() << " defaultHandled " << event->defaultHandled());
     
     if (event->defaultPrevented())
         processing.add(EventHandling::DefaultPrevented);
@@ -1175,6 +1175,11 @@ void Element::scrollBy(const ScrollToOptions& options)
     FloatSize originalDelta(scrollToOptions.left.value(), scrollToOptions.top.value());
     scrollToOptions.left.value() += scrollLeft();
     scrollToOptions.top.value() += scrollTop();
+    ALWAYS_LOG_WITH_STREAM(stream
+        << "**Scrolling** " << "Element::scrollBy " << options.left << "," << options.top
+        << " normalized:" << originalDelta
+        << " += " << scrollLeft() << "," << scrollTop()
+        << " -> scrollTo " << scrollToOptions.left << "," << scrollToOptions.top);
     scrollTo(scrollToOptions, ScrollClamping::Clamped, ScrollSnapPointSelectionMethod::Directional, originalDelta);
 }
 
@@ -1185,7 +1190,7 @@ void Element::scrollBy(double x, double y)
 
 void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, ScrollSnapPointSelectionMethod snapPointSelectionMethod, std::optional<FloatSize> originalScrollDelta)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "Element " << *this << " scrollTo " << options.left << ", " << options.top);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "Element " << *this << " scrollTo " << options.left << ", " << options.top);
 
     if (!document().settings().CSSOMViewScrollingAPIEnabled()) {
         // If the element is the root element and document is in quirks mode, terminate these steps.
@@ -1556,6 +1561,7 @@ void Element::setScrollLeft(int newLeft)
     if (document().scrollingElement() == this) {
         if (RefPtr frame = documentFrameWithNonNullView()) {
             IntPoint position(static_cast<int>(newLeft * frame->pageZoomFactor() * frame->frameScaleFactor()), frame->view()->scrollY());
+            ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "Element::setScrollLeft " << newLeft << " -> setScrollPosition " << position);
             frame->view()->setScrollPosition(position, options);
         }
         return;
@@ -1579,6 +1585,7 @@ void Element::setScrollTop(int newTop)
     if (document().scrollingElement() == this) {
         if (RefPtr frame = documentFrameWithNonNullView()) {
             IntPoint position(frame->view()->scrollX(), static_cast<int>(newTop * frame->pageZoomFactor() * frame->frameScaleFactor()));
+            ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "Element::setScrollTop " << newTop << " -> setScrollPosition " << position);
             frame->view()->setScrollPosition(position, options);
         }
         return;

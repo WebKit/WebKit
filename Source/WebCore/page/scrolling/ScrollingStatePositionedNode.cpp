@@ -82,7 +82,7 @@ void ScrollingStatePositionedNode::updateConstraints(const AbsolutePositionConst
     if (m_constraints == constraints)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStatePositionedNode " << scrollingNodeID() << " updateConstraints " << constraints);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingStatePositionedNode " << scrollingNodeID() << " updateConstraints " << constraints);
 
     m_constraints = constraints;
     setPropertyChanged(Property::LayoutConstraintData);

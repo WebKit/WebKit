@@ -174,6 +174,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTre
 
 void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << "]::didCommitLayerTree(transaction's ID=" << transaction.transactionID() << ")");
     m_pageScalingLayerID = transaction.pageScalingLayerID();
 
     if (m_transientZoomScale)
@@ -274,7 +275,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
     IntSize scaledTotalContentsSize = roundedIntSize(m_webPageProxy.scrollingCoordinatorProxy()->totalContentsSize());
     scaledTotalContentsSize.scale(scale / m_webPageProxy.scrollingCoordinatorProxy()->mainFrameScaleFactor());
 
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom constrainScrollPositionForOverhang - constrainedOrigin: " << constrainedOrigin << " visibleContentRect: " << visibleContentRect << " scaledTotalContentsSize: " << scaledTotalContentsSize << "scrollOrigin :"<<m_webPageProxy.scrollingCoordinatorProxy()->scrollOrigin() << "headerHeight :" << m_webPageProxy.scrollingCoordinatorProxy()->headerHeight() << " footerHeight : " << m_webPageProxy.scrollingCoordinatorProxy()->footerHeight());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom constrainScrollPositionForOverhang - constrainedOrigin: " << constrainedOrigin << " visibleContentRect: " << visibleContentRect << " scaledTotalContentsSize: " << scaledTotalContentsSize << "scrollOrigin :"<<m_webPageProxy.scrollingCoordinatorProxy()->scrollOrigin() << "headerHeight :" << m_webPageProxy.scrollingCoordinatorProxy()->headerHeight() << " footerHeight : " << m_webPageProxy.scrollingCoordinatorProxy()->footerHeight());
     
     // Scaling may have exposed the overhang area, so we need to constrain the final
     // layer position exactly like scrolling will once it's committed, to ensure that
@@ -283,7 +284,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
     constrainedOrigin.moveBy(-visibleContentRect.location());
     constrainedOrigin = -constrainedOrigin;
     
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom - constrainedOrigin: " << constrainedOrigin << " origin: " << origin << " scale: " << scale);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom - constrainedOrigin: " << constrainedOrigin << " origin: " << origin << " scale: " << scale);
     
     auto transientZoomScale = std::exchange(m_transientZoomScale, { });
     auto transientZoomOrigin = std::exchange(m_transientZoomOrigin, { });

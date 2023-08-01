@@ -77,7 +77,7 @@ void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportCon
     if (m_constraints == constraints)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateStickyNode " << scrollingNodeID() << " updateConstraints with constraining rect " << constraints.constrainingRectAtLastLayout() << " sticky offset " << constraints.stickyOffsetAtLastLayout() << " layer pos at last layout " << constraints.layerPositionAtLastLayout());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingStateStickyNode " << scrollingNodeID() << " updateConstraints with constraining rect " << constraints.constrainingRectAtLastLayout() << " sticky offset " << constraints.stickyOffsetAtLastLayout() << " layer pos at last layout " << constraints.layerPositionAtLastLayout());
 
     m_constraints = constraints;
     setPropertyChanged(Property::ViewportConstraints);

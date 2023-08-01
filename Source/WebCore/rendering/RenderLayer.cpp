@@ -1196,7 +1196,7 @@ void RenderLayer::updateLayerPositionsAfterOverflowScroll()
 void RenderLayer::updateLayerPositionsAfterDocumentScroll()
 {
     ASSERT(isRenderViewLayer());
-    LOG(Scrolling, "RenderLayer::updateLayerPositionsAfterDocumentScroll");
+    WTFLogAlways("**Scrolling** RenderLayer::updateLayerPositionsAfterDocumentScroll");
 
     willUpdateLayerPositions();
 

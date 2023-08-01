@@ -3058,7 +3058,7 @@ bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, Opt
 #endif
 
 #if PLATFORM(COCOA)
-    LOG_WITH_STREAM(Scrolling, stream << "EventHandler::handleWheelEvent " << event << " processing steps " << processingSteps);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "EventHandler::handleWheelEvent " << event << " processing steps " << processingSteps);
     auto monitor = m_frame.page()->wheelEventTestMonitor();
     if (monitor)
         monitor->receivedWheelEventWithPhases(event.phase(), event.momentumPhase());
@@ -3253,7 +3253,7 @@ bool EventHandler::scrollableAreaCanHandleEvent(const PlatformWheelEvent& wheelE
 bool EventHandler::handleWheelEventInScrollableArea(const PlatformWheelEvent& wheelEvent, ScrollableArea& scrollableArea, OptionSet<EventHandling> eventHandling)
 {
     auto gestureState = updateWheelGestureState(wheelEvent, eventHandling);
-    LOG_WITH_STREAM(Scrolling, stream << "EventHandler::handleWheelEventInScrollableArea() " << scrollableArea << " - eventHandling " << eventHandling << " -> gesture state " << gestureState);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "EventHandler::handleWheelEventInScrollableArea() " << scrollableArea << " - eventHandling " << eventHandling << " -> gesture state " << gestureState);
     return scrollableArea.handleWheelEventForScrolling(wheelEvent, gestureState);
 }
 

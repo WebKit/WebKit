@@ -172,6 +172,8 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     self.directionalLockEnabled = YES;
     self.automaticallyAdjustsScrollIndicatorInsets = YES;
 
+    self.layer.name = @"WKScrollView";
+
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self.contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
@@ -528,7 +530,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     if (UNLIKELY(!canHandlePinch)) {
         static BOOL shouldLogFault = YES;
         if (shouldLogFault) {
-            RELEASE_LOG_FAULT(Scrolling, "UIScrollView no longer responds to -handlePinch:.");
+            WTFLogAlways("**Scrolling** UIScrollView no longer responds to -handlePinch:.");
             shouldLogFault = NO;
         }
         return;

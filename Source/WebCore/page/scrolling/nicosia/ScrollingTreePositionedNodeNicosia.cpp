@@ -68,7 +68,7 @@ void ScrollingTreePositionedNodeNicosia::applyLayerPositions()
     FloatSize delta = scrollDeltaSinceLastCommit();
     FloatPoint layerPosition = m_constraints.layerPositionAtLastLayout() + delta;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << delta << " moving layer to " << layerPosition);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << delta << " moving layer to " << layerPosition);
 
     layerPosition -= m_constraints.alignmentOffset();
 

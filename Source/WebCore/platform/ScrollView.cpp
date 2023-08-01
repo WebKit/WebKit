@@ -214,6 +214,7 @@ void ScrollView::setContentsScrollPosition(const IntPoint& position, const Scrol
     if (platformWidget())
         setActualScrollPosition(position);
 #endif
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollView::setContentsScrollPosition -> setScrollPosition " << position);
     setScrollPosition(position, options);
 }
 
@@ -443,7 +444,7 @@ ScrollPosition ScrollView::documentScrollPositionRelativeToScrollableAreaOrigin(
 
 void ScrollView::setScrollOffset(const ScrollOffset& offset)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "\nScrollView::setScrollOffset " << offset << " clamping " << scrollClamping());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "\nScrollView::setScrollOffset " << offset << " clamping " << scrollClamping());
 
     auto constrainedOffset = offset;
     if (scrollClamping() == ScrollClamping::Clamped)
@@ -486,7 +487,7 @@ void ScrollView::handleDeferredScrollUpdateAfterContentSizeChange()
 
 void ScrollView::scrollTo(const ScrollPosition& newPosition)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollView::scrollTo " << newPosition << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollView::scrollTo " << newPosition << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition());
 
     IntSize scrollDelta = newPosition - m_scrollPosition;
     if (scrollDelta.isZero())
@@ -528,7 +529,7 @@ void ScrollView::completeUpdatesAfterScrollTo(const IntSize& scrollDelta)
 
 void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, const ScrollPositionChangeOptions& options)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollView::setScrollPosition " << scrollPosition);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollView::setScrollPosition " << scrollPosition);
 
     if (prohibitsScrolling())
         return;
@@ -545,7 +546,7 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, const S
 
     ScrollPosition newScrollPosition = (!delegatesScrollingToNativeView() && options.clamping == ScrollClamping::Clamped) ? adjustScrollPositionWithinRange(scrollPosition) : scrollPosition;
     if ((!delegatesScrollingToNativeView() || currentScrollType() == ScrollType::User) && newScrollPosition == this->scrollPosition()) {
-        LOG_WITH_STREAM(Scrolling, stream << "ScrollView::setScrollPosition " << scrollPosition << " return for no change");
+        ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollView::setScrollPosition " << scrollPosition << " return for no change");
         return;
     }
 

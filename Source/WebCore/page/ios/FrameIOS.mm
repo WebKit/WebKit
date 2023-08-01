@@ -791,7 +791,7 @@ NSArray *LocalFrame::interpretationsForCurrentRoot() const
 
 void LocalFrame::viewportOffsetChanged(ViewportOffsetChangeType changeType)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "Frame::viewportOffsetChanged - " << (changeType == IncrementalScrollOffset ? "incremental" : "completed"));
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "Frame::viewportOffsetChanged - " << (changeType == IncrementalScrollOffset ? "incremental" : "completed"));
 
     if (changeType == IncrementalScrollOffset) {
         if (RenderView* root = contentRenderer())
@@ -814,7 +814,7 @@ bool LocalFrame::containsTiledBackingLayers() const
 
 void LocalFrame::overflowScrollPositionChangedForNode(const IntPoint& position, Node* node, bool isUserScroll)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "Frame::overflowScrollPositionChangedForNode " << node << " position " << position);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "Frame::overflowScrollPositionChangedForNode " << node << " position " << position);
 
     RenderObject* renderer = node->renderer();
     if (!renderer || !renderer->hasLayer())

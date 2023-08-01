@@ -62,7 +62,7 @@ void ScrollingTreeOverflowScrollProxyNodeNicosia::applyLayerPositions()
 {
     FloatPoint scrollOffset = computeLayerPosition();
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeOverflowScrollProxyNodeNicosia " << scrollingNodeID() << " applyLayerPositions: setting bounds origin to " << scrollOffset);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTreeOverflowScrollProxyNodeNicosia " << scrollingNodeID() << " applyLayerPositions: setting bounds origin to " << scrollOffset);
     m_layer->accessPending(
         [&scrollOffset](Nicosia::CompositionLayer::LayerState& state)
         {
