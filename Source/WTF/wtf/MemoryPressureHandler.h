@@ -93,6 +93,16 @@ public:
         m_lowMemoryHandler = WTFMove(handler);
     }
 
+    bool isUnderMemoryWarning() const
+    {
+        auto memoryPressureStatus = m_memoryPressureStatus.load();
+        return memoryPressureStatus == MemoryPressureStatus::SystemWarning
+#if PLATFORM(MAC)
+            || m_memoryUsagePolicy == MemoryUsagePolicy::Conservative
+#endif
+            || memoryPressureStatus == MemoryPressureStatus::ProcessLimitWarning;
+    }
+
     bool isUnderMemoryPressure() const
     {
         auto memoryPressureStatus = m_memoryPressureStatus.load();
