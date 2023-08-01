@@ -175,14 +175,6 @@ private:
         vm.heap.reportExtraMemoryAllocated(cost);
     }
 
-    void finishCreation(VM& vm, GCDeferralContext* deferralContext, unsigned length, size_t cost)
-    {
-        ASSERT_UNUSED(length, length > 0);
-        ASSERT(!valueInternal().isNull());
-        Base::finishCreation(vm);
-        vm.heap.reportExtraMemoryAllocated(deferralContext, cost);
-    }
-
     static JSString* createEmptyString(VM&);
 
     static JSString* create(VM& vm, Ref<StringImpl>&& value)
@@ -192,16 +184,6 @@ private:
         size_t cost = value->cost();
         JSString* newString = new (NotNull, allocateCell<JSString>(vm)) JSString(vm, WTFMove(value));
         newString->finishCreation(vm, length, cost);
-        return newString;
-    }
-
-    static JSString* create(VM& vm, GCDeferralContext* deferralContext, Ref<StringImpl>&& value)
-    {
-        unsigned length = value->length();
-        ASSERT(length > 0);
-        size_t cost = value->cost();
-        JSString* newString = new (NotNull, allocateCell<JSString>(vm, deferralContext)) JSString(vm, WTFMove(value));
-        newString->finishCreation(vm, deferralContext, length, cost);
         return newString;
     }
     static JSString* createHasOtherOwner(VM& vm, Ref<StringImpl>&& value)
@@ -986,6 +968,24 @@ inline JSString* jsSubstring(VM& vm, JSGlobalObject* globalObject, JSString* bas
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
     return jsSubstringOfResolved(vm, nullptr, base, offset, length);
+}
+
+inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContext, JSString* s, unsigned offset, unsigned length)
+{
+    ASSERT(offset <= s->length());
+    ASSERT(length <= s->length());
+    ASSERT(offset + length <= s->length());
+    ASSERT(!s->isRope());
+    if (!length)
+        return vm.smallStrings.emptyString();
+    if (!offset && length == s->length())
+        return s;
+    if (length == 1) {
+        auto& base = s->valueInternal();
+        if (auto c = base.characterAt(offset); c <= maxSingleCharacterString)
+            return vm.smallStrings.singleCharacterString(c);
+    }
+    return JSRopeString::createSubstringOfResolved(vm, deferralContext, s, offset, length);
 }
 
 inline JSString* jsSubstringOfResolved(VM& vm, JSString* s, unsigned offset, unsigned length)

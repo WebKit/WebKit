@@ -212,14 +212,8 @@ inline HashSet<MarkedVectorBase*>& Heap::markListSet()
 
 inline void Heap::reportExtraMemoryAllocated(size_t size)
 {
-    if (size > minExtraMemory)
-        reportExtraMemoryAllocatedSlowCase(nullptr, size);
-}
-
-inline void Heap::reportExtraMemoryAllocated(GCDeferralContext* deferralContext, size_t size)
-{
-    if (size > minExtraMemory)
-        reportExtraMemoryAllocatedSlowCase(deferralContext, size);
+    if (size > minExtraMemory) 
+        reportExtraMemoryAllocatedSlowCase(size);
 }
 
 inline void Heap::deprecatedReportExtraMemory(size_t size)

@@ -388,7 +388,6 @@ public:
     // call both of these functions: Calling only one may trigger catastropic
     // memory growth.
     void reportExtraMemoryAllocated(size_t);
-    void reportExtraMemoryAllocated(GCDeferralContext*, size_t);
     JS_EXPORT_PRIVATE void reportExtraMemoryVisited(size_t);
 
 #if ENABLE(RESOURCE_USAGE)
@@ -613,7 +612,7 @@ private:
 
     Lock& lock() { return m_lock; }
 
-    JS_EXPORT_PRIVATE void reportExtraMemoryAllocatedSlowCase(GCDeferralContext*, size_t);
+    JS_EXPORT_PRIVATE void reportExtraMemoryAllocatedSlowCase(size_t);
     JS_EXPORT_PRIVATE void deprecatedReportExtraMemorySlowCase(size_t);
     
     bool shouldCollectInCollectorThread(const AbstractLocker&);

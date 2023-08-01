@@ -587,10 +587,10 @@ void Heap::releaseDelayedReleasedObjects()
 #endif
 }
 
-void Heap::reportExtraMemoryAllocatedSlowCase(GCDeferralContext* deferralContext, size_t size)
+void Heap::reportExtraMemoryAllocatedSlowCase(size_t size)
 {
     didAllocate(size);
-    collectIfNecessaryOrDefer(deferralContext);
+    collectIfNecessaryOrDefer();
 }
 
 void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
@@ -600,7 +600,7 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
     CheckedSize checkedNewSize = m_deprecatedExtraMemorySize;
     checkedNewSize += size;
     m_deprecatedExtraMemorySize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.value();
-    reportExtraMemoryAllocatedSlowCase(nullptr, size);
+    reportExtraMemoryAllocatedSlowCase(size);
 }
 
 bool Heap::overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType)
