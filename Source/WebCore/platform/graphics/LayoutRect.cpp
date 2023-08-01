@@ -180,10 +180,12 @@ void LayoutRect::expandToInfiniteX()
 
 LayoutRect unionRect(const Vector<LayoutRect>& rects)
 {
-    LayoutRect result;
+    if (rects.isEmpty())
+        return { };
 
+    LayoutRect result = rects[0];
     size_t count = rects.size();
-    for (size_t i = 0; i < count; ++i)
+    for (size_t i = 1; i < count; ++i)
         result.unite(rects[i]);
 
     return result;
