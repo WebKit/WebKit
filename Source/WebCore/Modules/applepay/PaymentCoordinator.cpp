@@ -107,6 +107,11 @@ bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession&
     if (!showPaymentUI)
         return false;
 
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    if (paymentRequest.shippingContactEditingMode() == ApplePayShippingContactEditingMode::Enabled)
+        document.addConsoleMessage(MessageSource::PaymentRequest, MessageLevel::Warning, "`enabled` is a deprecated value for `shippingContactEditingMode`. Please use `available` instead."_s);
+#endif
+
     m_activeSession = &paymentSession;
     return true;
 }

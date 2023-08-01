@@ -27,13 +27,29 @@
 
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
-enum class ApplePayShippingContactEditingMode : bool {
-    Enabled,
+enum class ApplePayShippingContactEditingMode : uint8_t {
+    Available,
+    Enabled, // Deprecated in favor of `Available`.
     StorePickup,
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ApplePayShippingContactEditingMode> {
+    using values = EnumValues<
+        WebCore::ApplePayShippingContactEditingMode,
+        WebCore::ApplePayShippingContactEditingMode::Available,
+        WebCore::ApplePayShippingContactEditingMode::Enabled,
+        WebCore::ApplePayShippingContactEditingMode::StorePickup
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
