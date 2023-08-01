@@ -933,7 +933,7 @@ http/wpt/cache-storage/cache-remove-twice.html [ Slow ]
 http/wpt/cache-storage/cache-open-delete-in-parallel.https.html [ Slow ]
 http/wpt/cache-storage/cache-quota-add.any.html [ Slow ]
 http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
-http/wpt/cache-storage/cache-quota-after-restart.any.html [ Slow ]
+webkit.org/b/259677 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Slow Pass Failure ]
 
 webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
 
