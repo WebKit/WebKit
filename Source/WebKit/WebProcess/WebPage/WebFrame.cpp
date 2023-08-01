@@ -384,11 +384,8 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
 
     m_coreFrame = newFrame.get();
 
-    // FIXME: This is also done in the WebCore::Frame constructor. Move one to make this more symmetric.
-    if (ownerElement) {
-        ownerElement->setContentFrame(*m_coreFrame);
+    if (ownerElement)
         ownerElement->scheduleInvalidateStyleAndLayerComposition();
-    }
 }
 
 void WebFrame::removeFromTree()

@@ -159,11 +159,8 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
     ProcessWarming::initializeNames();
     StaticCSSValuePool::init();
 
-    if (ownerElement) {
-        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))
-            localMainFrame->selfOnlyRef();
-        ownerElement->setContentFrame(*this);
-    }
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()); localMainFrame && ownerElement)
+        localMainFrame->selfOnlyRef();
 
 #ifndef NDEBUG
     frameCounter.increment();
