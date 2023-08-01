@@ -730,6 +730,7 @@ webkit.org/b/187476 media/video-background-playback.html [ Pass Failure ]
 # These tests always time out.
 webkit.org/b/112492 media/track/track-prefer-captions.html [ Skip ]
 
+webkit.org/b/259658 http/tests/media/video-play-stall.html [ Pass Failure ]
 webkit.org/b/136708 http/tests/media/video-play-stall-seek.html
 webkit.org/b/136708 media/media-fullscreen-not-in-document.html
 
