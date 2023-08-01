@@ -1831,3 +1831,5 @@ webkit.org/b/259544 [ Debug ] media/modern-media-controls/tracks-support/text-tr
 webkit.org/b/259183 fast/attachment/mac/wide-attachment-image-controls-basic.html [ Pass Failure ]
 
 webkit.org/b/259699 media/media-source/media-source-duplicate-seeked.html [ Pass Failure ]
+
+webkit.org/b/259708 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash Failure Timeout ]
