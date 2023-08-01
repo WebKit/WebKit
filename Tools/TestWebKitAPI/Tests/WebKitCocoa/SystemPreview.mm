@@ -208,6 +208,45 @@ TEST(WebKit, SystemPreviewBlob)
     Util::run(&wasTriggered);
 }
 
+TEST(WebKit, SystemPreviewUnknownMIMEType)
+{
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setSystemPreviewEnabled:YES];
+
+    auto viewController = adoptNS([[UIViewController alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
+    uiDelegate.get().viewController = viewController.get();
+    [webView setUIDelegate:uiDelegate.get()];
+    [viewController setView:webView.get()];
+
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"UnitBox" withExtension:@"usdz" subdirectory:@"TestWebKitAPI.resources"];
+    NSData *modelData = [NSData dataWithContentsOfURL:modelURL];
+    NSString *modelBase64 = [modelData base64EncodedStringWithOptions:0];
+    NSString *html = [NSString stringWithFormat:@"<script>let base64URL = 'data:application/octet-stream;base64,%@';"
+        "fetch(base64URL)"
+        "    .then((response) => response.blob())"
+        "    .then((blob) => {"
+        "        const blobURL = URL.createObjectURL(blob);"
+        "        var a = document.createElement('a');"
+        "        a.href = blobURL;"
+        "        a.rel = 'ar';"
+        "        document.body.appendChild(a);"
+        "        var i = document.createElement('img');"
+        "        a.appendChild(i);"
+        "        a.click();"
+        "    });</script>", modelBase64];
+
+    [webView loadHTMLString:html baseURL:nil];
+
+    [webView _setSystemPreviewCompletionHandlerForLoadTesting:^(bool success) {
+        EXPECT_TRUE(success);
+        wasTriggered = true;
+    }];
+
+    Util::run(&wasTriggered);
+}
+
 TEST(WebKit, SystemPreviewTriggered)
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
