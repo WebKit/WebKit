@@ -130,8 +130,7 @@ void RemoteLayerTreeDrawingArea::attachViewOverlayGraphicsLayer(WebCore::FrameId
 void RemoteLayerTreeDrawingArea::addRootFrame(WebCore::FrameIdentifier frameID)
 {
     auto layer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-    // FIXME: This has an unnecessary string allocation. Adding a StringTypeAdapter for FrameIdentifier or ProcessQualified would remove that.
-    layer->setName(makeString("drawing area root "_s, frameID.toString()));
+    layer->setName(makeString("drawing area root "_s, frameID));
     m_rootLayers.append(RootLayerInfo {
         WTFMove(layer),
         nullptr,

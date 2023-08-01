@@ -155,4 +155,32 @@ template<typename T> struct HashTraits<WebCore::ProcessQualified<T>> : SimpleCla
     static constexpr bool emptyValueIsZero = HashTraits<T>::emptyValueIsZero;
 };
 
+class ProcessQualifiedStringTypeAdapter {
+public:
+    unsigned length() const { return lengthOfIntegerAsString(m_processIdentifier) + lengthOfIntegerAsString(m_objectIdentifier) + 1; }
+    bool is8Bit() const { return true; }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    {
+        auto processIdentifierLength = lengthOfIntegerAsString(m_processIdentifier);
+        writeIntegerToBuffer(m_processIdentifier, destination);
+        *(destination + processIdentifierLength) = '-';
+        writeIntegerToBuffer(m_objectIdentifier, destination + processIdentifierLength + 1);
+    }
+protected:
+    explicit ProcessQualifiedStringTypeAdapter(uint64_t processIdentifier, uint64_t objectIdentifier)
+        : m_processIdentifier(processIdentifier)
+        , m_objectIdentifier(objectIdentifier)
+        { }
+private:
+    uint64_t m_processIdentifier;
+    uint64_t m_objectIdentifier;
+};
+
+template<typename T>
+class StringTypeAdapter<WebCore::ProcessQualified<T>, void> : public ProcessQualifiedStringTypeAdapter {
+public:
+    explicit StringTypeAdapter(const WebCore::ProcessQualified<T>& processQualified)
+        : ProcessQualifiedStringTypeAdapter(processQualified.processIdentifier().toUInt64(), processQualified.object().toUInt64()) { }
+};
+
 } // namespace WTF
