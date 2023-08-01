@@ -5681,6 +5681,26 @@ enum class WebCore::WebGPU::TextureFormat : uint8_t {
     Astc12x12UnormSRGB,
 };
 
+#if ENABLE(MEDIA_STREAM)
+enum class WebCore::MediaAccessDenialReason : uint8_t {
+    NoReason,
+    NoConstraints,
+    UserMediaDisabled,
+    NoCaptureDevices,
+    InvalidConstraint,
+    HardwareError,
+    PermissionDenied,
+    InvalidAccess,
+    OtherFailure
+};
+
+header: <WebCore/RealtimeMediaSource.h>
+[CustomHeader] struct WebCore::CaptureSourceError {
+    String errorMessage;
+    WebCore::MediaAccessDenialReason denialReason;
+};
+#endif
+
 header: <WebCore/WebGPUTextureAspect.h>
 enum class WebCore::WebGPU::TextureAspect : uint8_t {
     All,

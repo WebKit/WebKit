@@ -72,13 +72,13 @@ CaptureSourceOrError GStreamerVideoCaptureSource::create(String&& deviceID, Medi
     auto device = GStreamerVideoCaptureDeviceManager::singleton().gstreamerDeviceWithUID(deviceID);
     if (!device) {
         auto errorMessage = makeString("GStreamerVideoCaptureSource::create(): GStreamer did not find the device: ", deviceID, '.');
-        return CaptureSourceOrError(WTFMove(errorMessage));
+        return CaptureSourceOrError({ WTFMove(errorMessage), MediaAccessDenialReason::HardwareError });
     }
 
     auto source = adoptRef(*new GStreamerVideoCaptureSource(WTFMove(*device), WTFMove(hashSalts)));
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
-            return WTFMove(result->badConstraint);
+            return CaptureSourceOrError({ WTFMove(result->badConstraint), MediaAccessDenialReason::InvalidConstraint });
     }
     return CaptureSourceOrError(WTFMove(source));
 }
@@ -88,7 +88,7 @@ CaptureSourceOrError GStreamerVideoCaptureSource::createPipewireSource(String&& 
     auto source = adoptRef(*new GStreamerVideoCaptureSource(WTFMove(deviceID), { }, WTFMove(hashSalts), "pipewiresrc", deviceType, nodeAndFd));
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
-            return WTFMove(result->badConstraint);
+            return CaptureSourceOrError({ WTFMove(result->badConstraint), MediaAccessDenialReason::InvalidConstraint });
     }
     return CaptureSourceOrError(WTFMove(source));
 }

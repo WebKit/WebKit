@@ -73,7 +73,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
         "org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop", "org.freedesktop.portal.ScreenCast", nullptr, &error.outPtr()));
     if (error) {
         WTFLogAlways("Unable to connect to the Deskop portal: %s", error->message);
-        return { };
+        return CaptureSourceOrError({ { } , MediaAccessDenialReason::PermissionDenied });
     }
 
     auto token = makeString("WebKit", weakRandomNumber<uint32_t>());
@@ -87,7 +87,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
         G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
     if (error) {
         WTFLogAlways("Unable to create a Deskop portal session: %s", error->message);
-        return { };
+        return CaptureSourceOrError({ { } , MediaAccessDenialReason::PermissionDenied });
     }
 
     GUniqueOutPtr<char> objectPath;
@@ -123,7 +123,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
         g_variant_new("(oa{sv})", sessionPath.ascii().data(), &options), G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
     if (error) {
         WTFLogAlways("SelectSources error: %s", error->message);
-        return { };
+        return CaptureSourceOrError({ { } , MediaAccessDenialReason::PermissionDenied });
     }
     g_variant_get(result.get(), "(o)", &objectPath.outPtr());
     waitResponseSignal(objectPath.get());
@@ -135,7 +135,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
         g_variant_new("(osa{sv})", sessionPath.ascii().data(), "", &options), G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
     if (error) {
         WTFLogAlways("Start error: %s", error->message);
-        return { };
+        return CaptureSourceOrError({ { } , MediaAccessDenialReason::PermissionDenied });
     }
 
     std::optional<uint32_t> nodeId;
@@ -168,7 +168,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
 
     if (!nodeId) {
         WTFLogAlways("Unable to retrieve display capture session data");
-        return { };
+        return CaptureSourceOrError({ { } , MediaAccessDenialReason::PermissionDenied });
     }
 
     GRefPtr<GUnixFDList> fdList;
@@ -178,7 +178,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
         g_variant_new("(oa{sv})", sessionPath.ascii().data(), &options), G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &fdList.outPtr(), nullptr, &error.outPtr()));
     if (error) {
         WTFLogAlways("Unable to request display capture. Error: %s", error->message);
-        return { };
+        return CaptureSourceOrError({ { } , MediaAccessDenialReason::PermissionDenied });
     }
 
     int fdOut;

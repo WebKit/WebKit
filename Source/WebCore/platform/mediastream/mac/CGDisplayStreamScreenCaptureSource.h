@@ -41,7 +41,7 @@ namespace WebCore {
 
 class CGDisplayStreamScreenCaptureSource final : public CGDisplayStreamCaptureSource {
 public:
-    static Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> create(const String&);
+    static Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> create(const String&);
 
     explicit CGDisplayStreamScreenCaptureSource(uint32_t);
     ~CGDisplayStreamScreenCaptureSource() = default;

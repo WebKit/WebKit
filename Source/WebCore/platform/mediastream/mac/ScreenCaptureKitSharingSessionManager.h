@@ -101,6 +101,7 @@ public:
     void cancelPicking();
 
     RefPtr<ScreenCaptureSessionSource> createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSource::Observer>, const CaptureDevice&, SCStreamConfiguration*, SCStreamDelegate*);
+    void cancelPendingSessionForDevice(const CaptureDevice&);
 
     WEBCORE_EXPORT void promptForGetDisplayMedia(DisplayCapturePromptType, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
 

@@ -459,7 +459,7 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
         double constraintDistance = fitnessDistance(*widthConstraint);
         if (std::isinf(constraintDistance)) {
             auto range = capabilities.width();
-            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed width constraint, capabilities are [%d, %d]", range.rangeMin().asInt, range.rangeMax().asInt);
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed width constraint, capabilities are [", range.rangeMin().asInt, ", ", range.rangeMax().asInt, "]");
             badConstraint = widthConstraint->name();
             return false;
         }
@@ -1166,7 +1166,7 @@ std::optional<RealtimeMediaSource::ApplyConstraintsError> RealtimeMediaSource::a
     FlattenedConstraint candidates;
     String failedConstraint;
     if (!selectSettings(constraints, candidates, failedConstraint))
-        return ApplyConstraintsError { failedConstraint, "Constraint not supported"_s };
+        return ApplyConstraintsError { failedConstraint, "Invalid constraint"_s };
 
     applyConstraints(candidates);
     return { };

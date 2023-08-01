@@ -75,15 +75,15 @@ static std::optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displa
     return std::nullopt;
 }
 
-Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> CGDisplayStreamScreenCaptureSource::create(const String& deviceID)
+Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> CGDisplayStreamScreenCaptureSource::create(const String& deviceID)
 {
     auto displayID = parseInteger<uint32_t>(deviceID);
     if (!displayID)
-        return makeUnexpected("Invalid display device ID"_s);
+        return makeUnexpected(CaptureSourceError { "Invalid display device ID"_s, MediaAccessDenialReason::PermissionDenied });
 
     auto actualDisplayID = updateDisplayID(displayID.value());
     if (!actualDisplayID)
-        return makeUnexpected("Invalid display ID"_s);
+        return makeUnexpected(CaptureSourceError { "Invalid display device ID"_s, MediaAccessDenialReason::PermissionDenied });
 
     return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<CGDisplayStreamScreenCaptureSource>(actualDisplayID.value()));
 }
