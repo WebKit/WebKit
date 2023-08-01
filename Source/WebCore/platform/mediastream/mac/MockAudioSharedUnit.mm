@@ -91,7 +91,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomStri
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
     ASSERT(device);
     if (!device)
-        return { "No mock microphone device"_s };
+        return CaptureSourceOrError({ "No mock microphone device"_s , MediaAccessDenialReason::PermissionDenied });
 
     MockAudioSharedUnit::singleton().setCaptureDevice(String { deviceID }, 0);
     return CoreAudioCaptureSource::createForTesting(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), constraints, MockAudioSharedUnit::singleton(), pageIdentifier);

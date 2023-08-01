@@ -151,13 +151,13 @@ bool ScreenCaptureKitCaptureSource::isAvailable()
     return PAL::isScreenCaptureKitFrameworkAvailable();
 }
 
-Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> ScreenCaptureKitCaptureSource::create(const CaptureDevice& device, const MediaConstraints*)
+Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> ScreenCaptureKitCaptureSource::create(const CaptureDevice& device, const MediaConstraints*)
 {
     ASSERT(device.type() == CaptureDevice::DeviceType::Screen || device.type() == CaptureDevice::DeviceType::Window);
 
     auto deviceID = parseInteger<uint32_t>(device.persistentId());
     if (!deviceID)
-        return makeUnexpected("Invalid display device ID"_s);
+        return makeUnexpected(CaptureSourceError { "Invalid display device ID"_s, MediaAccessDenialReason::PermissionDenied });
 
     return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<ScreenCaptureKitCaptureSource>(device, deviceID.value()));
 }
@@ -171,6 +171,8 @@ ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource(const CaptureDevice
 
 ScreenCaptureKitCaptureSource::~ScreenCaptureKitCaptureSource()
 {
+    if (!m_sessionSource)
+        ScreenCaptureKitSharingSessionManager::singleton().cancelPendingSessionForDevice(m_captureDevice);
 }
 
 bool ScreenCaptureKitCaptureSource::start()

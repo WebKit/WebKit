@@ -189,23 +189,23 @@ static uint64_t toWebCore(UserMediaPermissionRequestProxy::UserMediaAccessDenial
 {
     switch (reason) {
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints:
-        return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::NoConstraints);
+        return static_cast<uint64_t>(MediaAccessDenialReason::NoConstraints);
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled:
-        return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::UserMediaDisabled);
+        return static_cast<uint64_t>(MediaAccessDenialReason::UserMediaDisabled);
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoCaptureDevices:
-        return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::NoCaptureDevices);
+        return static_cast<uint64_t>(MediaAccessDenialReason::NoCaptureDevices);
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::InvalidConstraint:
-        return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::InvalidConstraint);
+        return static_cast<uint64_t>(MediaAccessDenialReason::InvalidConstraint);
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::HardwareError:
-        return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::HardwareError);
+        return static_cast<uint64_t>(MediaAccessDenialReason::HardwareError);
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied:
-        return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::PermissionDenied);
+        return static_cast<uint64_t>(MediaAccessDenialReason::PermissionDenied);
     case UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure:
-        return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::OtherFailure);
+        return static_cast<uint64_t>(MediaAccessDenialReason::OtherFailure);
     }
 
     ASSERT_NOT_REACHED();
-    return static_cast<uint64_t>(UserMediaRequest::MediaAccessDenialReason::OtherFailure);
+    return static_cast<uint64_t>(MediaAccessDenialReason::OtherFailure);
 }
 #endif
 

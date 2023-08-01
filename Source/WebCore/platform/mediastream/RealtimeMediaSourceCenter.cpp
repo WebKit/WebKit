@@ -83,7 +83,7 @@ void RealtimeMediaSourceCenter::createMediaStream(Ref<const Logger>&& logger, Ne
     if (audioDevice) {
         auto source = audioCaptureFactory().createAudioCaptureSource(WTFMove(audioDevice), MediaDeviceHashSalts { hashSalts }, &request.audioConstraints, request.pageIdentifier);
         if (!source) {
-            completionHandler(makeUnexpected(makeString("Failed to create MediaStream audio source: ", source.errorMessage)));
+            completionHandler(makeUnexpected(WTFMove(source.error)));
             return;
         }
         audioSource = source.source();
@@ -98,21 +98,21 @@ void RealtimeMediaSourceCenter::createMediaStream(Ref<const Logger>&& logger, Ne
             source = displayCaptureFactory().createDisplayCaptureSource(WTFMove(videoDevice), WTFMove(hashSalts), &request.videoConstraints, request.pageIdentifier);
 
         if (!source) {
-            completionHandler(makeUnexpected(makeString("Failed to create MediaStream video source: ", source.errorMessage)));
+            completionHandler(makeUnexpected(WTFMove(source.error)));
             return;
         }
         videoSource = source.source();
     }
 
-    CompletionHandler<void(String&&)> whenAudioSourceReady = [audioSource, videoSource = WTFMove(videoSource), logger = WTFMove(logger), completionHandler = WTFMove(completionHandler)](auto&& errorMessage) mutable {
-        if (!errorMessage.isEmpty())
-            return completionHandler(makeUnexpected(makeString("Failed to create MediaStream audio source: ", errorMessage)));
+    CompletionHandler<void(CaptureSourceError&&)> whenAudioSourceReady = [audioSource, videoSource = WTFMove(videoSource), logger = WTFMove(logger), completionHandler = WTFMove(completionHandler)](auto&& error) mutable {
+        if (error)
+            return completionHandler(makeUnexpected(error));
         if (!videoSource)
             return completionHandler(MediaStreamPrivate::create(WTFMove(logger), WTFMove(audioSource), WTFMove(videoSource)));
 
-        CompletionHandler<void(String&&)> whenVideoSourceReady = [audioSource = WTFMove(audioSource), videoSource, logger = WTFMove(logger), completionHandler = WTFMove(completionHandler)](auto&& errorMessage) mutable {
-            if (!errorMessage.isEmpty())
-                return completionHandler(makeUnexpected(makeString("Failed to create MediaStream video source: ", errorMessage)));
+        CompletionHandler<void(CaptureSourceError&&)> whenVideoSourceReady = [audioSource = WTFMove(audioSource), videoSource, logger = WTFMove(logger), completionHandler = WTFMove(completionHandler)](auto&& error) mutable {
+            if (error)
+                return completionHandler(makeUnexpected(error));
             completionHandler(MediaStreamPrivate::create(WTFMove(logger), WTFMove(audioSource), WTFMove(videoSource)));
         };
         videoSource->whenReady(WTFMove(whenVideoSourceReady));

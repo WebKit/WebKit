@@ -107,12 +107,12 @@ public:
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, device.persistentId()))
-            return { "Unable to find mock camera device with given persistentID"_s };
+            return CaptureSourceOrError({ "Unable to find mock camera device with given persistentID"_s, MediaAccessDenialReason::PermissionDenied });
 
         auto mock = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(device.persistentId());
         ASSERT(mock);
         if (mock->flags.contains(MockMediaDevice::Flag::Invalid))
-            return { "Invalid mock camera device"_s };
+            return CaptureSourceOrError({ "Invalid mock camera device"_s, MediaAccessDenialReason::PermissionDenied });
 
         return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalts), constraints, pageIdentifier);
     }
@@ -187,7 +187,7 @@ public:
     CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
     {
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()))
-            return { "Unable to find mock display device with given persistentID"_s };
+            return CaptureSourceOrError({ "Unable to find mock display device with given persistentID"_s, MediaAccessDenialReason::PermissionDenied });
 
         switch (device.type()) {
         case CaptureDevice::DeviceType::Screen:
@@ -222,12 +222,12 @@ public:
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Microphone || device.type() == CaptureDevice::DeviceType::Speaker);
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()))
-            return { "Unable to find mock microphone or speaker device with given persistentID"_s };
+            return CaptureSourceOrError({ "Unable to find mock microphone or speaker device with given persistentID"_s, MediaAccessDenialReason::PermissionDenied });
 
         auto mock = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(device.persistentId());
         ASSERT(mock);
         if (mock->flags.contains(MockMediaDevice::Flag::Invalid))
-            return { "Invalid mock microphone or speaker device"_s };
+            return CaptureSourceOrError({ "Invalid mock microphone or speaker device"_s, MediaAccessDenialReason::PermissionDenied });
 
         return MockRealtimeAudioSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalts), constraints, pageIdentifier);
     }

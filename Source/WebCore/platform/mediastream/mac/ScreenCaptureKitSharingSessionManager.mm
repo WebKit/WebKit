@@ -511,6 +511,19 @@ static bool operator==(const SCContentFilter* filter, const CaptureDevice& devic
     return false;
 }
 
+void ScreenCaptureKitSharingSessionManager::cancelPendingSessionForDevice(const CaptureDevice& device)
+{
+    ASSERT(isMainThread());
+
+    if (m_pendingContentFilter.get() != device) {
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::createSessionSourceForDevice - unknown capture device.");
+        return;
+    }
+
+    m_pendingContentFilter = nullptr;
+    cancelPicking();
+}
+
 RefPtr<ScreenCaptureSessionSource> ScreenCaptureKitSharingSessionManager::createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSource::Observer> observer, const CaptureDevice& device, SCStreamConfiguration* configuration, SCStreamDelegate* delegate)
 {
     ASSERT(isMainThread());
