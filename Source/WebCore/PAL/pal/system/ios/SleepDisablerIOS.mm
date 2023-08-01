@@ -27,6 +27,8 @@
 #import "SleepDisablerCocoa.h"
 
 #if PLATFORM(IOS_FAMILY)
+#import "Logging.h"
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/NeverDestroyed.h>
 
 #import <pal/ios/UIKitSoftLink.h>
@@ -64,10 +66,11 @@ private:
             return;
 
         bool shouldKeepScreenAwake = !!m_screenSleepDisablerCount.value();
+        RELEASE_LOG(Media, "ScreenSleepDisabler::updateState() shouldKeepScreenAwake=%d", shouldKeepScreenAwake);
         ensureOnMainRunLoop([this, shouldKeepScreenAwake] {
             if (m_screenWakeLockHandler && m_screenWakeLockHandler(shouldKeepScreenAwake))
                 return;
-            [PAL::getUIApplicationClass() sharedApplication].idleTimerDisabled = shouldKeepScreenAwake;
+            [[PAL::getUIApplicationClass() sharedApplication] _setIdleTimerDisabled:shouldKeepScreenAwake forReason:@"WebKit SleepDisabler"];
         });
     }
     ScreenSleepDisablerCounter m_screenSleepDisablerCount;
