@@ -822,7 +822,7 @@ ALWAYS_INLINE UGPRPair iteratorNextTryFastImpl(VM& vm, JSGlobalObject* globalObj
     JSObject* iterator = jsCast<JSObject*>(GET(bytecode.m_iterator).jsValue());;
     JSCell* iterable = GET(bytecode.m_iterable).jsValue().asCell();
     if (auto arrayIterator = jsDynamicCast<JSArrayIterator*>(iterator)) {
-        if (auto array = jsDynamicCast<JSArray*>(iterable)) {
+        if (auto array = jsDynamicCast<JSArray*>(iterable); array && isJSArray(array)) {
             metadata.m_iterableProfile.observeStructureID(array->structureID());
 
             metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;

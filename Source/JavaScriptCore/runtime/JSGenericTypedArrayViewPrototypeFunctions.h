@@ -764,6 +764,9 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncFromFast(VM& vm, JS
         if (!array)
             return JSValue::encode(jsUndefined());
 
+        if (!isJSArray(array))
+            return JSValue::encode(jsUndefined());
+
         if (!array->isIteratorProtocolFastAndNonObservable())
             return JSValue::encode(jsUndefined());
 
