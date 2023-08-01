@@ -35,7 +35,8 @@ namespace WGSL {
 template <typename T>
 Token Lexer<T>::lex()
 {
-    skipWhitespaceAndComments();
+    if (!skipWhitespaceAndComments())
+        return makeToken(TokenType::Invalid);
 
     m_tokenStartingPosition = m_currentPosition;
 
@@ -394,6 +395,8 @@ Token Lexer<T>::lex()
 template <typename T>
 T Lexer<T>::shift(unsigned i)
 {
+    ASSERT(m_code + i <= m_codeEnd);
+
     T last = m_current;
     // At one point timing showed that setting m_current to 0 unconditionally was faster than an if-else sequence.
     m_current = 0;
@@ -421,7 +424,7 @@ void Lexer<T>::newLine()
 }
 
 template <typename T>
-void Lexer<T>::skipBlockComments()
+bool Lexer<T>::skipBlockComments()
 {
     ASSERT(peek(0) == '/' && peek(1) == '*');
     shift(2);
@@ -429,7 +432,7 @@ void Lexer<T>::skipBlockComments()
     T ch = 0;
     unsigned depth = 1u;
 
-    while ((ch = shift())) {
+    while (!isAtEndOfFile() && (ch = shift())) {
         if (ch == '/' && peek() == '*') {
             shift();
             depth += 1;
@@ -440,13 +443,14 @@ void Lexer<T>::skipBlockComments()
                 // This block comment is closed, so for a construction like "/* */ */"
                 // there will be a successfully parsed block comment "/* */"
                 // and " */" will be processed separately.
-                return;
+                return true;
             }
         } else if (ch == '\n')
             newLine();
     }
 
     // FIXME: Report unbalanced block comments, such as "/* this is an unbalanced comment."
+    return false;
 }
 
 template <typename T>
@@ -460,7 +464,7 @@ void Lexer<T>::skipLineComment()
 }
 
 template <typename T>
-void Lexer<T>::skipWhitespaceAndComments()
+bool Lexer<T>::skipWhitespaceAndComments()
 {
     while (!isAtEndOfFile()) {
         if (isUnicodeCompatibleASCIIWhitespace(m_current)) {
@@ -469,13 +473,15 @@ void Lexer<T>::skipWhitespaceAndComments()
         } else if (peek(0) == '/') {
             if (peek(1) == '/')
                 skipLineComment();
-            else if (peek(1) == '*')
-                skipBlockComments();
-            else
+            else if (peek(1) == '*') {
+                if (!skipBlockComments())
+                    return false;
+            } else
                 break;
         } else
             break;
     }
+    return true;
 }
 
 template <typename T>
