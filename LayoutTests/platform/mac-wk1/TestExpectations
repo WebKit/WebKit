@@ -2030,6 +2030,8 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-ste
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-weekmonth.html
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-weekmonth.html
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-weekmonth.html
+fast/forms/ua-shadow-select-all-behavior.html
+fast/forms/ua-shadow-select-all-crash.html
 
 # New failure after update of WPT tests in bug 214278
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vrl-013.xht [ ImageOnlyFailure ]
@@ -2606,3 +2608,13 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_no_pointer
 
 # rdar://111704637 - 'mousemove' not emitted from 'eventSender.moveMouseTo()'
 fast/html/transient-activation.html [ Skip ]
+
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-079.html [ ImageOnlyFailure ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-in-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-intrinsic-width.html [ ImageOnlyFailure ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested.html [ ImageOnlyFailure  ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error.html [ ImageOnlyFailure ]
+
+webkit.org/b/259485 [ Ventura ] http/tests/media/hls/track-in-band-multiple-cues.html [ Crash ]
+
+webkit.org/b/259546 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Crash Timeout ]

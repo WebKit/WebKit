@@ -1,0 +1,20 @@
+Tests `SelectAll` behavior with user agent shadow roots.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS s.type is "Range"
+PASS s.rangeCount is 1
+PASS s.isCollapsed is false
+PASS s.focusOffset is 8
+PASS s.focusNode is document.body
+PASS s.extentOffset is 8
+PASS s.extentNode is document.body
+PASS s.baseOffset is 0
+PASS s.baseNode is document.getElementById('description').firstChild.firstChild.firstChild
+PASS s.anchorOffset is 0
+PASS s.anchorNode is document.getElementById('description').firstChild.firstChild.firstChild
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FOOO  FOO
