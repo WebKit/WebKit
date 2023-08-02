@@ -1,0 +1,26 @@
+This test ensures that the content within an iframe with an ARIA role is accessible.
+
+Traversing initial body content.
+
+StaticText
+AXLabel: Text before iframe
+
+Button
+
+StaticText
+AXLabel: Text after iframe
+
+document.getElementById('iframe').removeAttribute('role');
+
+StaticText
+AXLabel: Text before iframe
+
+Button
+
+StaticText
+AXLabel: Text after iframe
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Text before iframe  Text after iframe

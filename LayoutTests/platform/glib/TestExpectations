@@ -505,6 +505,7 @@ accessibility/search-traversal-after-role-change.html [ Skip ]
 accessibility/table-search-traversal.html [ Skip ]
 accessibility/dynamically-changing-iframe-remains-accessible.html [ Skip ]
 accessibility/ignore-modals-without-any-content.html [ Skip ]
+accessibility/iframe-with-role.html [ Skip ]
 
 # Missing `AccessibilityUIElement::stringDescriptionOfAttributeValue` implementation.
 accessibility/visible-character-range-basic.html [ Skip ]

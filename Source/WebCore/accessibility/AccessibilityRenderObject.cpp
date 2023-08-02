@@ -562,19 +562,15 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
 
 bool AccessibilityRenderObject::isAttachment() const
 {
-    RenderBoxModelObject* renderer = renderBoxModelObject();
-    if (!renderer)
-        return false;
-
+    auto* widget = this->widget();
     // WebKit2 plugins need to be treated differently than attachments, so return false here.
     // Only WebKit1 plugins have an associated platformWidget.
-    if (is<PluginViewBase>(widget()) && !widget()->platformWidget())
+    if (is<PluginViewBase>(widget) && !widget->platformWidget())
         return false;
 
+    auto* renderer = this->renderer();
     // Widgets are the replaced elements that we represent to AX as attachments
-    bool isWidget = renderer->isWidget();
-
-    return isWidget && ariaRoleAttribute() == AccessibilityRole::Unknown;
+    return renderer && renderer->isWidget();
 }
 
 bool AccessibilityRenderObject::isOffScreen() const
