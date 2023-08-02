@@ -3999,7 +3999,6 @@ void LocalFrameView::performFixedWidthAutoSize()
     resize(m_autoSizeConstraint.width(), m_autoSizeConstraint.height());
 
     Ref<LocalFrameView> protectedThis(*this);
-    document->updateStyleIfNeeded();
     document->updateLayoutIgnorePendingStylesheets();
     // While the final content size could slightly be different after the next resize/layout (see below), we intentionally save and report
     // the current value to avoid unstable layout (e.g. content "height: 100%").
