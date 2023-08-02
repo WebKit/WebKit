@@ -204,7 +204,7 @@ public:
     void addCaption(RenderTableCaption&);
     void removeCaption(RenderTableCaption&);
     void addColumn(const RenderTableCol*);
-    void invalidateColumns();
+    void removeColumn(const RenderTableCol*);
 
     LayoutUnit offsetTopForColumn(const RenderTableCol&) const;
     LayoutUnit offsetLeftForColumn(const RenderTableCol&) const;
