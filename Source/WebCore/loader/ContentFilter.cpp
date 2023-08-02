@@ -111,7 +111,6 @@ bool ContentFilter::continueAfterWillSendRequest(ResourceRequest& request, const
     return !request.isNull();
 }
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 void ContentFilter::startFilteringMainResource(const URL& url)
 {
     if (m_state != State::Stopped)
@@ -122,7 +121,6 @@ void ContentFilter::startFilteringMainResource(const URL& url)
     ASSERT(m_mainResourceURL.isEmpty());
     m_mainResourceURL = url;
 }
-#endif
 
 void ContentFilter::startFilteringMainResource(CachedRawResource& resource)
 {
@@ -139,11 +137,7 @@ void ContentFilter::stopFilteringMainResource()
 {
     if (m_state != State::Blocked)
         m_state = State::Stopped;
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     m_mainResourceURL = URL();
-#else
-    m_mainResource = nullptr;
-#endif
 }
 
 bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& response)
@@ -162,7 +156,6 @@ bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& respon
     return m_state != State::Blocked;
 }
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data, size_t encodedDataLength)
 {
     Ref<ContentFilterClient> protectedClient { m_client };
@@ -183,7 +176,6 @@ bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data, size_t e
 
     return m_state != State::Blocked;
 }
-#endif
 
 bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data)
 {
@@ -206,7 +198,6 @@ bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data)
     return m_state != State::Blocked;
 }
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 bool ContentFilter::continueAfterNotifyFinished(const URL& resourceURL)
 {
     Ref<ContentFilterClient> protectedClient { m_client };
@@ -229,7 +220,6 @@ bool ContentFilter::continueAfterNotifyFinished(const URL& resourceURL)
 
     return m_state != State::Blocked;
 }
-#endif
 
 bool ContentFilter::continueAfterNotifyFinished(CachedResource& resource)
 {
@@ -310,11 +300,7 @@ URL ContentFilter::url()
 {
     if (m_mainResource)
         return m_mainResource->url();
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     return m_mainResourceURL;
-#else
-    return URL();
-#endif
 }
 
 const URL& ContentFilter::blockedPageURL()
@@ -364,14 +350,12 @@ void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
     m_client.handleProvisionalLoadFailureFromContentFilter(blockedPageURL(), substituteData);
 }
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 void ContentFilter::deliverStoredResourceData()
 {
     for (auto& buffer : m_buffers)
         deliverResourceData(*buffer.buffer, buffer.encodedDataLength);
     m_buffers.clear();
 }
-#endif
 
 } // namespace WebCore
 

@@ -358,7 +358,7 @@ void WebResourceLoader::didReceiveResource(ShareableResource::Handle&& handle)
 }
 #endif
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
 void WebResourceLoader::contentFilterDidBlockLoad(const WebCore::ContentFilterUnblockHandler& unblockHandler, String&& unblockRequestDeniedScript, const ResourceError& error, const URL& blockedPageURL,  WebCore::SubstituteData&& substituteData)
 {
     if (!m_coreLoader || !m_coreLoader->documentLoader())
@@ -369,7 +369,7 @@ void WebResourceLoader::contentFilterDidBlockLoad(const WebCore::ContentFilterUn
     documentLoader->handleContentFilterDidBlock(unblockHandler, WTFMove(unblockRequestDeniedScript));
     documentLoader->cancelMainResourceLoad(error);
 }
-#endif // ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#endif // ENABLE(CONTENT_FILTERING)
 
 } // namespace WebKit
 

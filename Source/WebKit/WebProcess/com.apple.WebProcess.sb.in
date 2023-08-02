@@ -1769,10 +1769,6 @@
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-            "com.apple.nehelper"
-            "com.apple.nesessionmanager.content-filter"
-#endif
             "com.apple.webinspector"
             "com.apple.coreservices.launchservicesd"
             "com.apple.iconservices"
@@ -1978,10 +1974,6 @@
         SYS_kevent ;; <rdar://89072361>
         SYS_mlock
         SYS_munlock
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-        SYS_necp_client_action
-        SYS_necp_open
-#endif
         SYS_openat_nocancel
         SYS_proc_rlimit_control
         SYS_psynch_rw_rdlock

@@ -206,7 +206,7 @@ public:
 
     NetworkOriginAccessPatterns& originAccessPatterns() { return m_originAccessPatterns.get(); }
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     void installMockContentFilter(WebCore::MockContentFilterSettings&&);
 #endif
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)

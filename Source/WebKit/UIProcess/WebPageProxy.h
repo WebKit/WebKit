@@ -2801,10 +2801,6 @@ private:
     bool setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMainFrame, const URL&, std::optional<NavigatingToAppBoundDomain>);
 #endif
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    static Vector<SandboxExtensionHandle> createNetworkExtensionsSandboxExtensions(WebProcessProxy&);
-#endif
-
     void prepareToLoadWebPage(WebProcessProxy&, LoadParameters&);
 
     void didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState);

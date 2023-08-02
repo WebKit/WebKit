@@ -217,12 +217,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
     NotifyUserScripts()
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, struct WebKit::PolicyDecision policyDecision)
-#endif
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, struct WebKit::PolicyDecision policyDecision, Vector<WebKit::SandboxExtension::Handle> networkExtensionsSandboxExtensions)
-#endif
 
     ClearSelection()
     RestoreSelectionInFocusedEditableElement()

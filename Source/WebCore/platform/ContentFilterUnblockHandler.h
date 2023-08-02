@@ -60,9 +60,7 @@ public:
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
         Vector<uint8_t>&& webFilterEvaluatorData,
 #endif
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
         bool unblockedAfterRequest
-#endif
     );
 
     WEBCORE_EXPORT bool needsUIProcess() const;
@@ -78,10 +76,8 @@ public:
     WEBCORE_EXPORT Vector<uint8_t> webFilterEvaluatorData() const;
 #endif
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     WEBCORE_EXPORT void setUnblockedAfterRequest(bool);
     bool unblockedAfterRequest() const { return m_unblockedAfterRequest; }
-#endif
 
 private:
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
@@ -94,9 +90,7 @@ private:
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
 #endif
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     bool m_unblockedAfterRequest { false };
-#endif
 };
 
 } // namespace WebCore
