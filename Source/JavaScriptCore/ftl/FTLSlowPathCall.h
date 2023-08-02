@@ -111,7 +111,7 @@ SlowPathCall callOperation(
     if (callSiteIndex) {
         jit.store32(
             CCallHelpers::TrustedImm32(callSiteIndex.bits()),
-            CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
+            CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
     }
     return callOperation(vm, usedRegisters, jit, exceptionTarget, function, resultGPR, arguments...);
 }
@@ -162,7 +162,7 @@ SlowPathCall callOperation(
     if (callSiteIndex) {
         jit.store32(
             CCallHelpers::TrustedImm32(callSiteIndex.bits()),
-            CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
+            CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
     }
     return callOperation(vm, usedRegisters, jit, exceptionTarget, function, resultGPR, arguments...);
 }

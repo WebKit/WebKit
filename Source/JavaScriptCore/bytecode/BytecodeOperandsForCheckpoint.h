@@ -111,6 +111,8 @@ Operand destinationFor(const Bytecode& bytecode, unsigned checkpointIndex, JITTy
         default: RELEASE_ASSERT_NOT_REACHED();
         }
         return { };
+    } else if constexpr (Bytecode::opcodeID == op_call_ignore_result) {
+        return { };
     } else
         return bytecode.m_dst;
 }

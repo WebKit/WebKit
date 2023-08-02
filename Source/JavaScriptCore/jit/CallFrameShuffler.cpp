@@ -743,6 +743,7 @@ void CallFrameShuffler::prepareAny()
     if (verbose)
         dataLog("   * Storing the argument count into ", VirtualRegister { CallFrameSlot::argumentCountIncludingThis }, "\n");
     RELEASE_ASSERT(m_numPassedArgs != UINT_MAX);
+
 #if USE(JSVALUE64)
     // Initialize CallFrameSlot::argumentCountIncludingThis's TagOffset and PayloadOffset with 0 and m_numPassedArgs.
     m_jit.store64(MacroAssembler::TrustedImm32(m_numPassedArgs), addressForNew(VirtualRegister { CallFrameSlot::argumentCountIncludingThis }));

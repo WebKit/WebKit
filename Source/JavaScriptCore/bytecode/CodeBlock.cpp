@@ -524,6 +524,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpTailCallVarargs, callLinkInfo)
         LINK(OpTailCallForwardArguments, callLinkInfo)
         LINK(OpConstructVarargs, callLinkInfo, profile)
+        LINK(OpCallIgnoreResult, callLinkInfo)
 
         case op_new_array_with_species: {
             INITIALIZE_METADATA(OpNewArrayWithSpecies)
