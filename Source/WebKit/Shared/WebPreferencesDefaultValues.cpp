@@ -292,7 +292,7 @@ bool defaultPopoverAttributeEnabled()
     static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PopoverAttributeEnabled);
     return newSDK;
 #else
-    return false;
+    return true;
 #endif
 }
 
