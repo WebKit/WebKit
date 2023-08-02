@@ -640,6 +640,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
 #endif
     , m_isSynthesized(constructionFlags.contains(ConstructionFlag::Synthesized))
     , m_isNonRenderedPlaceholder(constructionFlags.contains(ConstructionFlag::NonRenderedPlaceholder))
+    , m_frameIdentifier(frame ? std::optional(frame->frameID()) : std::nullopt)
 {
     addToDocumentsMap();
 
@@ -8605,7 +8606,7 @@ std::optional<PageIdentifier> Document::pageID() const
 
 std::optional<FrameIdentifier> Document::frameID() const
 {
-    return m_frame ? std::optional<FrameIdentifier>(m_frame->loader().frameID()) : std::nullopt;
+    return m_frameIdentifier;
 }
 
 void Document::registerArticleElement(Element& article)

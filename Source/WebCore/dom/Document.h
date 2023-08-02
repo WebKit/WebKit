@@ -2422,6 +2422,7 @@ private:
     static bool hasEverCreatedAnAXObjectCache;
 
     RefPtr<ResizeObserver> m_resizeObserverForContainIntrinsicSize;
+    const std::optional<FrameIdentifier> m_frameIdentifier;
 };
 
 Element* eventTargetElementForDocument(Document*);

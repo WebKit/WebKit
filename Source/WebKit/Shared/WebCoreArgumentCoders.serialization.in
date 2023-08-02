@@ -4308,7 +4308,8 @@ struct WebCore::NavigationRequester {
     Ref<WebCore::SecurityOrigin> securityOrigin;
     Ref<WebCore::SecurityOrigin> topOrigin;
     WebCore::PolicyContainer policyContainer;
-    std::optional<WebCore::GlobalFrameIdentifier> globalFrameIdentifier;
+    std::optional<WebCore::FrameIdentifier> frameID;
+    std::optional<WebCore::PageIdentifier> pageID;
 };
 
 struct WebCore::PolicyContainer {
