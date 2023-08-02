@@ -884,7 +884,7 @@ private:
         : CloneBase(lexicalGlobalObject)
         , m_buffer(out)
         , m_blobHandles(blobHandles)
-        , m_emptyIdentifier(Identifier::fromString(lexicalGlobalObject->vm(), emptyString()))
+        , m_emptyIdentifier(Identifier::fromString(lexicalGlobalObject->vm(), emptyAtom()))
         , m_context(context)
         , m_sharedBuffers(sharedBuffers)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -2591,7 +2591,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
 class CloneDeserializer : CloneBase {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    static String deserializeString(const Vector<uint8_t>& buffer)
+    enum class ShouldAtomize : bool { No, Yes };
+    static String deserializeString(const Vector<uint8_t>& buffer, ShouldAtomize shouldAtomize = ShouldAtomize::No)
     {
         if (buffer.isEmpty())
             return String();
@@ -2609,7 +2610,7 @@ public:
         bool is8Bit = length & StringDataIs8BitFlag;
         length &= ~StringDataIs8BitFlag;
         String str;
-        if (!readString(ptr, end, str, length, is8Bit))
+        if (!readString(ptr, end, str, length, is8Bit, shouldAtomize))
             return String();
         return str;
     }
@@ -2931,7 +2932,7 @@ private:
         return i;
     }
 
-    static bool readString(const uint8_t*& ptr, const uint8_t* end, String& str, unsigned length, bool is8Bit)
+    static bool readString(const uint8_t*& ptr, const uint8_t* end, String& str, unsigned length, bool is8Bit, ShouldAtomize shouldAtomize)
     {
         if (length >= std::numeric_limits<int32_t>::max() / sizeof(UChar))
             return false;
@@ -2939,7 +2940,10 @@ private:
         if (is8Bit) {
             if ((end - ptr) < static_cast<int>(length))
                 return false;
-            str = String { ptr, length };
+            if (shouldAtomize == ShouldAtomize::Yes)
+                str = AtomString { ptr, length };
+            else
+                str = String { ptr, length };
             ptr += length;
             return true;
         }
@@ -2949,7 +2953,10 @@ private:
             return false;
 
 #if ASSUME_LITTLE_ENDIAN
-        str = String(reinterpret_cast<const UChar*>(ptr), length);
+        if (shouldAtomize == ShouldAtomize::Yes)
+            str = AtomString(reinterpret_cast<const UChar*>(ptr), length);
+        else
+            str = String(reinterpret_cast<const UChar*>(ptr), length);
         ptr += length * sizeof(UChar);
 #else
         UChar* characters;
@@ -2959,11 +2966,13 @@ private:
             readLittleEndian(ptr, end, c);
             characters[i] = c;
         }
+        if (shouldAtomize == ShouldAtomize::Yes)
+            str = AtomString { str };
 #endif
         return true;
     }
 
-    bool readNullableString(String& nullableString)
+    bool readNullableString(String& nullableString, ShouldAtomize shouldAtomize = ShouldAtomize::No)
     {
         bool isNull;
         if (!read(isNull))
@@ -2971,19 +2980,19 @@ private:
         if (isNull)
             return true;
         CachedStringRef stringData;
-        if (!readStringData(stringData))
+        if (!readStringData(stringData, shouldAtomize))
             return false;
         nullableString = stringData->string();
         return true;
     }
 
-    bool readStringData(CachedStringRef& cachedString)
+    bool readStringData(CachedStringRef& cachedString, ShouldAtomize shouldAtomize = ShouldAtomize::No)
     {
         bool scratch;
-        return readStringData(cachedString, scratch);
+        return readStringData(cachedString, scratch, shouldAtomize);
     }
 
-    bool readStringData(CachedStringRef& cachedString, bool& wasTerminator)
+    bool readStringData(CachedStringRef& cachedString, bool& wasTerminator, ShouldAtomize shouldAtomize = ShouldAtomize::No)
     {
         if (m_failed)
             return false;
@@ -3006,7 +3015,7 @@ private:
         bool is8Bit = length & StringDataIs8BitFlag;
         length &= ~StringDataIs8BitFlag;
         String str;
-        if (!readString(m_ptr, m_end, str, length, is8Bit)) {
+        if (!readString(m_ptr, m_end, str, length, is8Bit, shouldAtomize)) {
             fail();
             return false;
         }
@@ -4742,7 +4751,7 @@ DeserializationResult CloneDeserializer::deserialize()
         case ObjectStartVisitMember: {
             CachedStringRef cachedString;
             bool wasTerminator = false;
-            if (!readStringData(cachedString, wasTerminator)) {
+            if (!readStringData(cachedString, wasTerminator, ShouldAtomize::Yes)) {
                 if (!wasTerminator)
                     goto error;
 
