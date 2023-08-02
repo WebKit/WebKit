@@ -123,16 +123,6 @@ macro dispatchAfterTailCall(size, opcodeStruct, valueProfileName, dstVirtualRegi
     dispatch()
 end
 
-macro dispatchAfterRegularCallIgnoreResult(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
-    loadPC()
-    if C_LOOP or C_LOOP_WIN
-        # On non C_LOOP builds, CSR restore takes care of this.
-        loadp CodeBlock[cfr], PB
-        loadp CodeBlock::m_instructionsRawPointer[PB], PB
-    end
-    dispatch()
-end
-
 macro cCall2(function)
     checkStackPointerAlignment(t4, 0xbad0c002)
     if C_LOOP or C_LOOP_WIN

@@ -4005,7 +4005,7 @@ void DebuggerStatementNode::emitBytecode(BytecodeGenerator& generator, RegisterI
 void ExprStatementNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     ASSERT(m_expr);
-    generator.emitNodeInTailPositionFromExprStatementNode(dst, m_expr);
+    generator.emitNode(dst, m_expr);
 }
 
 // ------------------------------ DeclarationStatement ----------------------------
@@ -4533,11 +4533,7 @@ void ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     if (dst == generator.ignoredResult())
         dst = nullptr;
 
-    RefPtr<RegisterID> returnRegister = nullptr;
-    if (m_value)
-        returnRegister = generator.emitNodeInTailPositionFromReturnNode(dst, m_value);
-    else
-        returnRegister = generator.emitLoad(dst, jsUndefined());
+    RefPtr<RegisterID> returnRegister = m_value ? generator.emitNodeInTailPosition(dst, m_value) : generator.emitLoad(dst, jsUndefined());
 
     generator.emitProfileType(returnRegister.get(), ProfileTypeBytecodeFunctionReturnStatement, divotStart(), divotEnd());
 

@@ -122,16 +122,6 @@ macro dispatchAfterTailCall(size, opcodeStruct, valueProfileName, dstVirtualRegi
     dispatch()
 end
 
-macro dispatchAfterRegularCallIgnoreResult(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
-    loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
-    if C_LOOP or C_LOOP_WIN
-        # On non C_LOOP builds, CSR restore takes care of this.
-        loadp CodeBlock[cfr], PB
-        loadp CodeBlock::m_instructionsRawPointer[PB], PB
-    end
-    dispatch()
-end
-
 macro cCall2(function)
     if C_LOOP or C_LOOP_WIN
         cloopCallSlowPath function, a0, a1

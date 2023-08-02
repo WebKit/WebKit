@@ -46,7 +46,6 @@ inline bool isOpcodeShape(OpcodeID opcodeID)
             || opcodeID == op_tail_call
             || opcodeID == op_call_direct_eval
             || opcodeID == op_call_varargs
-            || opcodeID == op_call_ignore_result
             || opcodeID == op_tail_call_varargs
             || opcodeID == op_tail_call_forward_arguments
             || opcodeID == op_iterator_open

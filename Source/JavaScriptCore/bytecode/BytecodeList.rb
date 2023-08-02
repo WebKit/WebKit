@@ -516,17 +516,6 @@ op :call,
         profile: ValueProfile,
     }
 
-op :call_ignore_result,
-    args: {
-        callee: VirtualRegister,
-        argc: unsigned,
-        argv: unsigned,
-    },
-    metadata: {
-        callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
-    }
-
 op :get_argument,
     args: {
         dst: VirtualRegister,
@@ -1386,102 +1375,9 @@ begin_section :CLoopHelpers,
     macro_name_component: :CLOOP_BYTECODE_HELPER
 
 op :llint_entry
+op :llint_return_to_host
 op :llint_vm_entry_to_javascript
 op :llint_vm_entry_to_native
-
-end_section :CLoopHelpers
-
-begin_section :NativeHelpers,
-    emit_in_h_file: true,
-    emit_in_asm_file: true,
-    macro_name_component: :BYTECODE_HELPER
-
-op :llint_program_prologue
-op :llint_eval_prologue
-op :llint_module_program_prologue
-op :llint_function_for_call_prologue
-op :llint_function_for_construct_prologue
-op :llint_function_for_call_arity_check
-op :llint_function_for_construct_arity_check
-op :llint_generic_return_point
-op :llint_throw_from_slow_path_trampoline
-op :llint_throw_during_call_trampoline
-op :llint_native_call_trampoline
-op :llint_native_construct_trampoline
-op :llint_internal_function_call_trampoline
-op :llint_internal_function_construct_trampoline
-op :llint_link_call_trampoline
-op :llint_virtual_call_trampoline
-op :llint_virtual_construct_trampoline
-op :llint_virtual_tail_call_trampoline
-op :checkpoint_osr_exit_from_inlined_call_trampoline
-op :checkpoint_osr_exit_trampoline
-op :normal_osr_exit_trampoline
-op :fuzzer_return_early_from_loop_hint
-op :loop_osr_entry_gate
-op :llint_get_host_call_return_value
-op :llint_handle_uncaught_exception
-op :op_call_return_location
-op :op_call_ignore_result_return_location
-op :op_construct_return_location
-op :op_call_varargs_return_location
-op :op_construct_varargs_return_location
-op :op_call_varargs_slow_return_location
-op :op_construct_varargs_slow_return_location
-op :op_get_by_id_return_location
-op :op_get_by_val_return_location
-op :op_put_by_id_return_location
-op :op_put_by_val_return_location
-op :op_iterator_open_return_location
-op :op_iterator_next_return_location
-op :wasm_function_prologue
-op :wasm_function_prologue_simd
-
-op :op_call_slow_return_location
-op :op_call_ignore_result_slow_return_location
-op :op_construct_slow_return_location
-op :op_iterator_open_slow_return_location
-op :op_iterator_next_slow_return_location
-op :op_tail_call_slow_return_location
-op :op_tail_call_forward_arguments_slow_return_location
-op :op_tail_call_varargs_slow_return_location
-op :op_call_direct_eval_slow_return_location
-
-op :js_trampoline_op_call
-op :js_trampoline_op_call_ignore_result
-op :js_trampoline_op_construct
-op :js_trampoline_op_call_varargs
-op :js_trampoline_op_construct_varargs
-op :js_trampoline_op_iterator_next
-op :js_trampoline_op_iterator_open
-op :js_trampoline_op_call_slow
-op :js_trampoline_op_call_ignore_result_slow
-op :js_trampoline_op_tail_call_slow
-op :js_trampoline_op_construct_slow
-op :js_trampoline_op_call_varargs_slow
-op :js_trampoline_op_tail_call_varargs_slow
-op :js_trampoline_op_tail_call_forward_arguments_slow
-op :js_trampoline_op_construct_varargs_slow
-op :js_trampoline_op_call_direct_eval_slow
-op :js_trampoline_op_iterator_next_slow
-op :js_trampoline_op_iterator_open_slow
-op :js_trampoline_llint_function_for_call_arity_check_untag
-op :js_trampoline_llint_function_for_call_arity_check_tag
-op :js_trampoline_llint_function_for_construct_arity_check_untag
-op :js_trampoline_llint_function_for_construct_arity_check_tag
-op :wasm_trampoline_wasm_call
-op :wasm_trampoline_wasm_call_indirect
-op :wasm_trampoline_wasm_call_ref
-op :wasm_trampoline_wasm_tail_call
-op :wasm_trampoline_wasm_tail_call_indirect
-
-end_section :NativeHelpers
-
-begin_section :CLoopReturnHelpers,
-    emit_in_h_file: true,
-    macro_name_component: :CLOOP_RETURN_HELPER
-
-op :llint_return_to_host
 op :llint_cloop_did_return_from_js_1
 op :llint_cloop_did_return_from_js_2
 op :llint_cloop_did_return_from_js_3
@@ -1531,14 +1427,90 @@ op :llint_cloop_did_return_from_js_46
 op :llint_cloop_did_return_from_js_47
 op :llint_cloop_did_return_from_js_48
 op :llint_cloop_did_return_from_js_49
-op :llint_cloop_did_return_from_js_50
-op :llint_cloop_did_return_from_js_51
-op :llint_cloop_did_return_from_js_52
-op :llint_cloop_did_return_from_js_53
-op :llint_cloop_did_return_from_js_54
-op :llint_cloop_did_return_from_js_55
 
-end_section :CLoopReturnHelpers
+end_section :CLoopHelpers
+
+begin_section :NativeHelpers,
+    emit_in_h_file: true,
+    emit_in_asm_file: true,
+    macro_name_component: :BYTECODE_HELPER
+
+op :llint_program_prologue
+op :llint_eval_prologue
+op :llint_module_program_prologue
+op :llint_function_for_call_prologue
+op :llint_function_for_construct_prologue
+op :llint_function_for_call_arity_check
+op :llint_function_for_construct_arity_check
+op :llint_generic_return_point
+op :llint_throw_from_slow_path_trampoline
+op :llint_throw_during_call_trampoline
+op :llint_native_call_trampoline
+op :llint_native_construct_trampoline
+op :llint_internal_function_call_trampoline
+op :llint_internal_function_construct_trampoline
+op :llint_link_call_trampoline
+op :llint_virtual_call_trampoline
+op :llint_virtual_construct_trampoline
+op :llint_virtual_tail_call_trampoline
+op :checkpoint_osr_exit_from_inlined_call_trampoline
+op :checkpoint_osr_exit_trampoline
+op :normal_osr_exit_trampoline
+op :fuzzer_return_early_from_loop_hint
+op :loop_osr_entry_gate
+op :llint_get_host_call_return_value
+op :llint_handle_uncaught_exception
+op :op_call_return_location
+op :op_construct_return_location
+op :op_call_varargs_return_location
+op :op_construct_varargs_return_location
+op :op_call_varargs_slow_return_location
+op :op_construct_varargs_slow_return_location
+op :op_get_by_id_return_location
+op :op_get_by_val_return_location
+op :op_put_by_id_return_location
+op :op_put_by_val_return_location
+op :op_iterator_open_return_location
+op :op_iterator_next_return_location
+op :wasm_function_prologue
+op :wasm_function_prologue_simd
+
+op :op_call_slow_return_location
+op :op_construct_slow_return_location
+op :op_iterator_open_slow_return_location
+op :op_iterator_next_slow_return_location
+op :op_tail_call_slow_return_location
+op :op_tail_call_forward_arguments_slow_return_location
+op :op_tail_call_varargs_slow_return_location
+op :op_call_direct_eval_slow_return_location
+
+op :js_trampoline_op_call
+op :js_trampoline_op_construct
+op :js_trampoline_op_call_varargs
+op :js_trampoline_op_construct_varargs
+op :js_trampoline_op_iterator_next
+op :js_trampoline_op_iterator_open
+op :js_trampoline_op_call_slow
+op :js_trampoline_op_tail_call_slow
+op :js_trampoline_op_construct_slow
+op :js_trampoline_op_call_varargs_slow
+op :js_trampoline_op_tail_call_varargs_slow
+op :js_trampoline_op_tail_call_forward_arguments_slow
+op :js_trampoline_op_construct_varargs_slow
+op :js_trampoline_op_call_direct_eval_slow
+op :js_trampoline_op_iterator_next_slow
+op :js_trampoline_op_iterator_open_slow
+op :js_trampoline_llint_function_for_call_arity_check_untag
+op :js_trampoline_llint_function_for_call_arity_check_tag
+op :js_trampoline_llint_function_for_construct_arity_check_untag
+op :js_trampoline_llint_function_for_construct_arity_check_tag
+op :wasm_trampoline_wasm_call
+op :wasm_trampoline_wasm_call_indirect
+op :wasm_trampoline_wasm_call_ref
+op :wasm_trampoline_wasm_tail_call
+op :wasm_trampoline_wasm_tail_call_indirect
+
+end_section :NativeHelpers
 
 begin_section :Wasm,
     emit_in_h_file: true,

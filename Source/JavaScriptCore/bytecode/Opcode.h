@@ -56,7 +56,7 @@ namespace JSC {
 
 
 #if ENABLE(C_LOOP)
-const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_CLOOP_BYTECODE_HELPER_IDS + NUMBER_OF_BYTECODE_HELPER_IDS + NUMBER_OF_CLOOP_RETURN_HELPER_IDS;
+const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_CLOOP_BYTECODE_HELPER_IDS + NUMBER_OF_BYTECODE_HELPER_IDS;
 #else
 const int numOpcodeIDs = NUMBER_OF_BYTECODE_IDS + NUMBER_OF_BYTECODE_HELPER_IDS;
 #endif
@@ -132,7 +132,6 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpTailCallVarargs) \
     macro(OpTailCallForwardArguments) \
     macro(OpConstructVarargs) \
-    macro(OpCallIgnoreResult) \
 
 #define FOR_EACH_OPCODE_WITH_SIMPLE_ARRAY_PROFILE(macro) \
     macro(OpGetByVal) \

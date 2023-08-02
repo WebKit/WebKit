@@ -638,8 +638,6 @@ void SpeculativeJIT::emitCall(Node* node)
     bool isDirect = false;
     switch (node->op()) {
     case DFG::Call:
-        callType = CallLinkInfo::Call;
-        break;
     case CallDirectEval:
         callType = CallLinkInfo::Call;
         break;

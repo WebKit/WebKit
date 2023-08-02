@@ -466,7 +466,7 @@ namespace JSC { namespace DFG {
     macro(ProfileType, NodeMustGenerate) \
     macro(ProfileControlFlow, NodeMustGenerate) \
     macro(SetFunctionName, NodeMustGenerate) \
-    macro(HasOwnProperty, NodeMustGenerate | NodeResultBoolean) \
+    macro(HasOwnProperty, NodeResultBoolean) \
     \
     macro(GetInternalField, NodeResultJS) \
     macro(PutInternalField, NodeMustGenerate) \

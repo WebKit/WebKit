@@ -64,7 +64,6 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
         break;
 
     case op_call: // op_call appears implicitly in for-of loops, generators, spread/rest elements, destructuring assignment
-    case op_call_ignore_result:
         if (!generated) {
             if (sourceAfterDivot.containsIgnoringASCIICase("of "_s))
                 return original;

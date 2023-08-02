@@ -1774,8 +1774,6 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
 
                     return MethodOfGettingAValueProfile::bytecodeValueProfile(*codeOrigin);
                 }
-                case op_call_ignore_result:
-                    return { };
                 default:
                     return MethodOfGettingAValueProfile::bytecodeValueProfile(node->origin.semantic);
                 }

@@ -214,7 +214,7 @@ void SpeculativeJIT::compileFunction()
         compileEntry();
 
         unsigned numberOfParameters = m_codeBlock->numParameters();
-        load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
+        load32(payloadFor((VirtualRegister)CallFrameSlot::argumentCountIncludingThis), GPRInfo::regT1);
         branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(numberOfParameters)).linkTo(fromArityCheck, this);
 
         getArityPadding(vm(), numberOfParameters, GPRInfo::regT1, GPRInfo::regT0, GPRInfo::regT2, GPRInfo::regT3, stackOverflow);
