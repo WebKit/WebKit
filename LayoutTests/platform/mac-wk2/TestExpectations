@@ -1833,3 +1833,5 @@ webkit.org/b/259699 media/media-source/media-source-duplicate-seeked.html [ Pass
 webkit.org/b/259708 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash Failure Timeout ]
 
 webkit.org/b/259712 media/media-source/media-source-paint-after-display-none.html [ Pass Crash Failure Timeout ]
+
+webkit.org/b/259740 [ Ventura Release arm64 ] css3/color-filters/color-filter-outline.html [ Pass ImageOnlyFailure ]
