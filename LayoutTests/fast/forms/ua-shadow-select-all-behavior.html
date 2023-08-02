@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<button type="button" id="button1">FOOO</button>
+<input type="text" id="input1">
+<script>
+description("Tests `SelectAll` behavior with user agent shadow roots.");
+var button1 = document.getElementById('button1');
+var input1 = document.getElementById('input1');
+input1.setSelectionRange(0, 0);
+input1.type = 'week';
+document.execCommand('SelectAll');
+let s = window.getSelection();
+shouldBeEqualToString("s.type", "Range");
+shouldBe("s.rangeCount", "1");
+shouldBeFalse("s.isCollapsed");
+shouldBe("s.focusOffset", "8");
+shouldBe("s.focusNode", "document.body");
+shouldBe("s.extentOffset", "8");
+shouldBe("s.extentNode", "document.body");
+shouldBe("s.baseOffset", "0");
+shouldBe("s.baseNode", "document.getElementById('description').firstChild.firstChild.firstChild");
+shouldBe("s.anchorOffset", "0");
+shouldBe("s.anchorNode", "document.getElementById('description').firstChild.firstChild.firstChild");
+</script>
+FOO
+</body>
+</html>

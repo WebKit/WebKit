@@ -1999,6 +1999,8 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-ste
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/selection-weekmonth.html
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-weekmonth.html
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode-weekmonth.html
+fast/forms/ua-shadow-select-all-behavior.html
+fast/forms/ua-shadow-select-all-crash.html
 
 # New failure after update of WPT tests in bug 214278
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vrl-013.xht [ ImageOnlyFailure ]
