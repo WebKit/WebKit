@@ -68,6 +68,8 @@ template <typename T, typename Function>
 double evaluateCalcExpression(CalcOperator calcOperator, const Vector<T>& children, Function&& evaluate)
 {
     auto getNearestMultiples = [](double a, double b) -> std::pair<double, double> {
+        if (!std::fmod(a, b))
+            return { a, a };
         double lower = std::floor(a / std::abs(b)) * std::abs(b);
         double upper = lower + std::abs(b);
         return { lower, upper };
