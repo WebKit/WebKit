@@ -234,7 +234,7 @@ void RenderTable::addColumn(const RenderTableCol*)
     invalidateCachedColumns();
 }
 
-void RenderTable::invalidateColumns()
+void RenderTable::removeColumn(const RenderTableCol*)
 {
     invalidateCachedColumns();
     // We don't really need to recompute our sections, but we need to update our
