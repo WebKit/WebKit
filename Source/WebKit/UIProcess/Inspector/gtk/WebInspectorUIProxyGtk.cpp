@@ -165,6 +165,10 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
     });
     if (m_underTest)
         preferences->setHiddenPageDOMTimerThrottlingEnabled(false);
+    const auto& inspectedPagePreferences = inspectedPage()->preferences();
+    preferences->setAcceleratedCompositingEnabled(inspectedPagePreferences.acceleratedCompositingEnabled());
+    preferences->setForceCompositingMode(inspectedPagePreferences.forceCompositingMode());
+    preferences->setThreadedScrollingEnabled(inspectedPagePreferences.threadedScrollingEnabled());
     auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(inspectedPage()));
     auto websiteDataStore = inspectorWebsiteDataStore();
     auto& processPool = WebKit::defaultInspectorProcessPool(inspectionLevel());
