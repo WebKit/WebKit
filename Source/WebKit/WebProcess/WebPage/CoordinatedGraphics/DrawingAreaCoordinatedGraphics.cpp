@@ -815,4 +815,13 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     m_displayTimer.stop();
 }
 
+void DrawingAreaCoordinatedGraphics::forceUpdate()
+{
+    if (m_isWaitingForDidUpdate || m_layerTreeHost)
+        return;
+
+    m_dirtyRegion = m_webPage.bounds();
+    display();
+}
+
 } // namespace WebKit
