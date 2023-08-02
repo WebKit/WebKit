@@ -1831,3 +1831,5 @@ webkit.org/b/259183 fast/attachment/mac/wide-attachment-image-controls-basic.htm
 webkit.org/b/259699 media/media-source/media-source-duplicate-seeked.html [ Pass Failure ]
 
 webkit.org/b/259708 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash Failure Timeout ]
+
+webkit.org/b/259712 media/media-source/media-source-paint-after-display-none.html [ Pass Crash Failure Timeout ]
