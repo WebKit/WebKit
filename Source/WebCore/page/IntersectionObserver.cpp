@@ -365,11 +365,9 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
             return downcast<RenderBox>(targetRenderer)->borderBoundingBox();
 
         if (is<RenderInline>(targetRenderer)) {
-            Vector<FloatQuad> quads;
-            // FIXME: This computes quads in absolute coords, then maps them back to local coords, which is inefficient.
-            targetRenderer->absoluteQuads(quads);
-            auto absoluteTargetBounds = unitedBoundingBoxes(quads);
-            return enclosingLayoutRect(targetRenderer->absoluteToLocalQuad(absoluteTargetBounds).boundingBox());
+            Vector<LayoutRect> rects;
+            targetRenderer->boundingRects(rects, { });
+            return unionRect(rects);
         }
 
         if (is<RenderLineBreak>(targetRenderer))
