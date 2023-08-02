@@ -163,7 +163,7 @@ body.meta-key-pressed .spreadsheet-style-declaration-editor > .property.invalid-
     background-image: url(../Images/Warning.svg);
     background-color: var(--warning-background-color);
     background-repeat: no-repeat;
-    background-size: 9px;
+    background-size: 9px 9px;
     background-position-y: center;
     background-position-x: 7px;
 

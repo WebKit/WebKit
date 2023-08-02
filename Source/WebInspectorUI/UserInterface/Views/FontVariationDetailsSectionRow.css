@@ -137,6 +137,6 @@
     height: var(--warning-icon-size);
     background-image: url(/Images/Warning.svg);
     background-repeat: no-repeat;
-    background-size: var(--warning-icon-size);
+    background-size: var(--warning-icon-size) var(--warning-icon-size);
     background-position: center;
 }

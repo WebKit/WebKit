@@ -45,7 +45,7 @@
     /* Make a checkered background for transparent colors to show against. */
     background-image: linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 80%)),
                       linear-gradient(to bottom, hsl(0, 0%, 80%), hsl(0, 0%, 80%));
-    background-size: 50%;
+    background-size: 50% 50%;
     background-position: top left, bottom right;
     background-repeat: no-repeat;
 }
