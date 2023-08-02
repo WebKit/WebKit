@@ -58,7 +58,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     if (shouldDumpDisassembly() || vm.m_perBytecodeProfiler)
         state.proc->code().setDisassembler(makeUnique<B3::Air::Disassembler>());
 
-    if (!shouldDumpDisassembly() && !verboseCompilationEnabled() && !Options::asyncDisassembly() && !graph.compilation() && !state.proc->needsPCToOriginMap())
+    if (!shouldDumpDisassembly() && !verboseCompilationEnabled() && !Options::verboseValidationFailure() && !Options::asyncDisassembly() && !graph.compilation() && !state.proc->needsPCToOriginMap())
         graph.freeDFGIRAfterLowering();
 
     {
