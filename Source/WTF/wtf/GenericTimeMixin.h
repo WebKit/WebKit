@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Seconds.h>
+#include <wtf/DebugHeap.h>
 
 namespace WTF {
 
@@ -125,10 +126,7 @@ protected:
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - DerivedTime().
     constexpr GenericTimeMixin() = default;
 
-    constexpr GenericTimeMixin(double rawValue)
-        : m_value(rawValue)
-    {
-    }
+    constexpr GenericTimeMixin(double rawValue) : m_value(rawValue) {};
 
     double m_value { 0 };
 };

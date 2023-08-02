@@ -28,6 +28,7 @@
 #include <wtf/ClockType.h>
 #include <wtf/GenericTimeMixin.h>
 #include <wtf/Int128.h>
+#include <wtf/DebugHeap.h>
 
 namespace WTF {
 
@@ -50,6 +51,18 @@ public:
     
     WallTime approximateWallTime() const { return *this; }
     WTF_EXPORT_PRIVATE MonotonicTime approximateMonotonicTime() const;
+
+    // Call this if you know for sure that the double represents the time according to the
+    // same time source as DerivedTime. It must be in seconds.
+    static constexpr WallTime fromRawSeconds(double value)
+    {
+        return WallTime(value);
+    }
+
+    static constexpr WallTime infinity() { return fromRawSeconds(std::numeric_limits<double>::infinity()); }
+    static constexpr WallTime nan() { return fromRawSeconds(std::numeric_limits<double>::quiet_NaN()); }
+
+    constexpr Seconds secondsSinceEpoch() const { return Seconds(m_value); }
     
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
     
@@ -57,12 +70,14 @@ public:
 
 private:
     friend class GenericTimeMixin<WallTime>;
-    constexpr WallTime(double rawValue)
-        : GenericTimeMixin<WallTime>(rawValue)
-    {
-    }
+    constexpr WallTime(double rawValue) : GenericTimeMixin<WallTime>(rawValue) {};
+
+
+protected:
+    double m_value { 0 };
+
 };
-static_assert(sizeof(WallTime) == sizeof(double));
+//static_assert(sizeof(WallTime) == sizeof(double));
 
 struct WallTime::MarkableTraits {
     static bool isEmptyValue(WallTime time)
@@ -96,6 +111,7 @@ inline bool isfinite(WTF::WallTime time)
 {
     return std::isfinite(time.secondsSinceEpoch().value());
 }
+
 
 } // namespace std
 

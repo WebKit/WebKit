@@ -28,6 +28,8 @@
 #include <memory>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/DebugHeap.h>
+#include <wtf/Platform.h>
 
 namespace WTF {
 

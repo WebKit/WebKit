@@ -28,6 +28,8 @@
 #include <wtf/ExportMacros.h>
 #include <wtf/Platform.h>
 
+#include <wtf/NeverDestroyed.h>
+
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 #include <mutex>
 #if OS(DARWIN)

@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Lock.h>
+#include <wtf/RefCounted.h>
 
 namespace WTF {
 
@@ -399,10 +401,10 @@ private: \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #define WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(className) \
-private: \
-    WTF_EXPORT_PRIVATE static WTF::DebugHeap& debugHeap(const char*); \
 public: \
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(className) \
+private: \
+    WTF_EXPORT_PRIVATE static WTF::DebugHeap& debugHeap(const char*); \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #else

@@ -31,10 +31,12 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/DebugHeap.h>
 
 namespace WTF {
 
 class WorkerPool : public ThreadSafeRefCounted<WorkerPool> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE void postTask(Function<void()>&&);
 

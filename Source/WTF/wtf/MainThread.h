@@ -34,6 +34,8 @@
 #include <wtf/Function.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/DebugHeap.h>
+#include <wtf/FastMalloc.h>
 
 namespace WTF {
 

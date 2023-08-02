@@ -28,6 +28,8 @@
 
 #include "ASTNode.h"
 
+#include <wtf/DebugHeap.h>
+
 namespace WGSL::AST {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WGSLAST);

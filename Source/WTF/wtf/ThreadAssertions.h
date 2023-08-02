@@ -28,6 +28,8 @@
 #include <atomic>
 #include <utility>
 #include <wtf/ThreadSafetyAnalysis.h>
+#include <wtf/Assertions.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 

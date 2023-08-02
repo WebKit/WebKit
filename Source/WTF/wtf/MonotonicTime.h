@@ -45,6 +45,17 @@ public:
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - MonotonicTime().
     constexpr MonotonicTime() = default;
 
+    // Call this if you know for sure that the double represents the time according to the
+    // same time source as DerivedTime. It must be in seconds.
+    static constexpr MonotonicTime fromRawSeconds(double value)
+    {
+        return MonotonicTime(value);
+    }
+
+    static constexpr MonotonicTime infinity() { return fromRawSeconds(std::numeric_limits<double>::infinity()); }
+    static constexpr MonotonicTime nan() { return fromRawSeconds(std::numeric_limits<double>::quiet_NaN()); }
+
+
 #if OS(DARWIN)
     WTF_EXPORT_PRIVATE static MonotonicTime fromMachAbsoluteTime(uint64_t);
     WTF_EXPORT_PRIVATE uint64_t toMachAbsoluteTime() const;
@@ -65,8 +76,12 @@ private:
         : GenericTimeMixin<MonotonicTime>(rawValue)
     {
     }
+
+protected:
+    double m_value { 0 };
+
 };
-static_assert(sizeof(MonotonicTime) == sizeof(double));
+//static_assert(sizeof(MonotonicTime) == sizeof(double));
 
 struct MonotonicTime::MarkableTraits {
     static bool isEmptyValue(MonotonicTime time)

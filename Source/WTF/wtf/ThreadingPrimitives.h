@@ -35,6 +35,7 @@
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WallTime.h>
+#include <wtf/DebugHeap.h>
 
 #if OS(WINDOWS)
 #include <windows.h>

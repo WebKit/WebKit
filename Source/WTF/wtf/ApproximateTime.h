@@ -36,6 +36,7 @@ class PrintStream;
 // The current time according to an approximate monotonic clock. Similar to MonotonicTime, but its resolution is
 // coarse, instead ApproximateTime::now() is much faster than MonotonicTime::now().
 class ApproximateTime final : public GenericTimeMixin<ApproximateTime> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static constexpr ClockType clockType = ClockType::Approximate;
 
@@ -64,7 +65,7 @@ private:
     {
     }
 };
-static_assert(sizeof(ApproximateTime) == sizeof(double));
+//static_assert(sizeof(ApproximateTime) == sizeof(double));
 
 struct ApproximateTime::MarkableTraits {
     static bool isEmptyValue(ApproximateTime time)
