@@ -77,14 +77,14 @@ enum class LayerChange : uint64_t {
     ScrollingNodeIDChanged              = 1LLU << 39,
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    SeparatedChanged                    = 1LLU << 40,
+    SeparatedChanged                    = 1LLU << 39,
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-    SeparatedPortalChanged              = 1LLU << 41,
-    DescendentOfSeparatedPortalChanged  = 1LLU << 42,
+    SeparatedPortalChanged              = 1LLU << 40,
+    DescendentOfSeparatedPortalChanged  = 1LLU << 41,
 #endif
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    CoverageRectChanged                 = 1LLU << 43,
+    CoverageRectChanged                 = 1LLU << 42,
 #endif
 };
 
