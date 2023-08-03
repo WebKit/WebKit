@@ -52,6 +52,7 @@ def upload(filename, url):
 
 
 def main():
+    print(f'Starting to upload')
     parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument('--filename', action="store", required=True, help='Path to the file. [path/to/123456.zip]')
     parser.add_argument('--url', action="store", required=False, help='url to upload to')
