@@ -131,7 +131,7 @@ private:
     CallGraph& m_callGraph;
     PrepareResult& m_result;
     HashMap<String, Global> m_globals;
-    IndexMap<Vector<std::pair<unsigned, Global*>>> m_groupBindingMap;
+    IndexMap<Vector<std::pair<unsigned, String>>> m_groupBindingMap;
     IndexMap<const Type*> m_structTypes;
     HashMap<String, AST::Variable*> m_defs;
     HashSet<String> m_reads;
@@ -456,12 +456,11 @@ void RewriteGlobalVariables::collectGlobals()
             resource,
             &globalVar
         });
-        ASSERT(result, result.isNewEntry);
+        ASSERT_UNUSED(result, result.isNewEntry);
 
         if (resource.has_value()) {
-            Global& global = result.iterator->value;
-            auto result = m_groupBindingMap.add(resource->group, Vector<std::pair<unsigned, Global*>>());
-            result.iterator->value.append({ resource->binding, &global });
+            auto result = m_groupBindingMap.add(resource->group, Vector<std::pair<unsigned, String>>());
+            result.iterator->value.append({ resource->binding, globalVar.name() });
             packResource(globalVar);
         }
     }
@@ -812,16 +811,19 @@ void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
         AST::Identifier structName = argumentBufferStructName(group);
         AST::StructureMember::List structMembers;
 
-        for (auto [binding, global] : bindingGlobalMap) {
+        for (auto [binding, globalName] : bindingGlobalMap) {
             if (!usedBindings.contains(binding))
                 continue;
 
-            ASSERT(global->declaration->maybeTypeName());
-            auto span = global->declaration->span();
+            auto it = m_globals.find(globalName);
+            RELEASE_ASSERT(it != m_globals.end());
+            auto& global = it->value;
+            ASSERT(global.declaration->maybeTypeName());
+            auto span = global.declaration->span();
             structMembers.append(m_callGraph.ast().astBuilder().construct<AST::StructureMember>(
                 span,
-                AST::Identifier::make(global->declaration->name()),
-                *global->declaration->maybeReferenceType(),
+                AST::Identifier::make(global.declaration->name()),
+                *global.declaration->maybeReferenceType(),
                 AST::Attribute::List {
                     m_callGraph.ast().astBuilder().construct<AST::BindingAttribute>(
                         span,
