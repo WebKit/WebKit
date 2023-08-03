@@ -132,7 +132,7 @@ ExceptionOr<void> ApplePayAMSUIPaymentHandler::show(Document& document)
 {
     ASSERT(m_applePayAMSUIRequest);
 
-    if (!page().startApplePayAMSUISession(document, *this, *m_applePayAMSUIRequest))
+    if (!page().startApplePayAMSUISession(document.topDocument().url(), *this, *m_applePayAMSUIRequest))
         return Exception { AbortError };
 
     return { };
