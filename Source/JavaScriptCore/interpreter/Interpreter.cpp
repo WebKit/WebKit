@@ -417,7 +417,11 @@ public:
         if (m_results.size() < m_results.capacity()) {
             if (visitor->isWasmFrame()) {
                 m_results.uncheckedAppend(StackFrame(visitor->wasmFunctionIndexOrName()));
+#if USE(ALLOW_LINE_AND_COLUMN_NUMBER_IN_BUILTINS)
+            } else if (!!visitor->codeBlock()) {
+#else 
             } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
+#endif
                 m_results.uncheckedAppend(
                     StackFrame(m_vm, m_owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex()));
             } else {
