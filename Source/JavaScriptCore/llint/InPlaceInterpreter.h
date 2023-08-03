@@ -219,8 +219,29 @@ extern "C" void ipint_entry();
     m(0xfc, fc_block) \
     m(0xfd, simd)
 
+#define FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(m) \
+    m(0x00, i32_trunc_sat_f32_s) \
+    m(0x01, i32_trunc_sat_f32_u) \
+    m(0x02, i32_trunc_sat_f64_s) \
+    m(0x03, i32_trunc_sat_f64_u) \
+    m(0x04, i64_trunc_sat_f32_s) \
+    m(0x05, i64_trunc_sat_f32_u) \
+    m(0x06, i64_trunc_sat_f64_s) \
+    m(0x07, i64_trunc_sat_f64_u) \
+    m(0x08, memory_init) \
+    m(0x09, data_drop) \
+    m(0x0a, memory_copy) \
+    m(0x0b, memory_fill) \
+    m(0x0c, table_init) \
+    m(0x0d, elem_drop) \
+    m(0x0e, table_copy) \
+    m(0x0f, table_grow) \
+    m(0x10, table_size) \
+    m(0x11, table_fill)
+
 #if !ENABLE(C_LOOP) && CPU(ADDRESS64) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
 FOR_EACH_IPINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
+FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 #endif
 
 namespace JSC { namespace IPInt {

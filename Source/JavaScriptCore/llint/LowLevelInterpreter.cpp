@@ -513,7 +513,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 
 #if OFFLINE_ASM_USE_ALT_ENTRY
 #define OFFLINE_ASM_BEGIN   asm ( \
-    OFFLINE_ASM_GLOBAL_LABEL_IMPL(jsc_llint_begin, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE) \
+    OFFLINE_ASM_GLOBAL_LABEL_IMPL(jsc_llint_begin, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_ALIGN4B) \
     OFFLINE_ASM_BEGIN_SPACER
 #else
 #define OFFLINE_ASM_BEGIN   asm (
