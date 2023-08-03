@@ -4952,7 +4952,7 @@ void WebPage::setAllowsMediaDocumentInlinePlayback(bool allows)
 WebFullScreenManager* WebPage::fullScreenManager()
 {
     if (!m_fullScreenManager)
-        m_fullScreenManager = WebFullScreenManager::create(this);
+        m_fullScreenManager = WebFullScreenManager::create(*this);
     return m_fullScreenManager.get();
 }
 #endif
