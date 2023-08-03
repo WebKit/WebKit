@@ -129,15 +129,16 @@ void ArrayBufferContents::tryAllocate(size_t numElements, unsigned elementByteSi
     if (!allocationSize)
         allocationSize = 1; // Make sure malloc actually allocates something, but not too much. We use null to mean that the buffer is detached.
 
-    void* data = Gigacage::tryMalloc(Gigacage::Primitive, allocationSize);
+    void* data = nullptr;
+    if (policy == InitializationPolicy::ZeroInitialize)
+        data = Gigacage::tryZeroedMalloc(Gigacage::Primitive, allocationSize);
+    else
+        data = Gigacage::tryMalloc(Gigacage::Primitive, allocationSize);
     m_data = DataType(data, sizeInBytes.value());
     if (!data) {
         reset();
         return;
     }
-    
-    if (policy == InitializationPolicy::ZeroInitialize)
-        memset(data, 0, allocationSize);
 
     m_sizeInBytes = sizeInBytes.value();
     RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
