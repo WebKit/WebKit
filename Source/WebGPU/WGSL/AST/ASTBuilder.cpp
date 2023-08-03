@@ -27,6 +27,7 @@
 #include "ASTBuilder.h"
 
 #include "ASTNode.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WGSL::AST {
 

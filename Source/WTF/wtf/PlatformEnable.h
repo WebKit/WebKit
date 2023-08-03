@@ -565,7 +565,7 @@
  * Turn BENABLE_MALLOC_HEAP_BREAKDOWN on in bmalloc together when using this.
  */
 #if !defined(ENABLE_MALLOC_HEAP_BREAKDOWN)
-#define ENABLE_MALLOC_HEAP_BREAKDOWN 0
+#define ENABLE_MALLOC_HEAP_BREAKDOWN 1
 #endif
 
 #if !defined(ENABLE_CFPREFS_DIRECT_MODE)
