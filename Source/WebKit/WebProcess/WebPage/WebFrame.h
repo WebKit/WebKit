@@ -106,7 +106,7 @@ public:
     enum class ForNavigationAction : bool { No, Yes };
     uint64_t setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, ForNavigationAction);
     void invalidatePolicyListeners();
-    void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
+    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyCheckIdentifier, PolicyDecision&&);
 
     FormSubmitListenerIdentifier setUpWillSubmitFormListener(CompletionHandler<void()>&&);
     void continueWillSubmitForm(FormSubmitListenerIdentifier);

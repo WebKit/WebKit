@@ -474,8 +474,13 @@ void WebFrame::invalidatePolicyListeners()
         completionHandler();
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& policyDecision)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifier identifier, PolicyDecision&& policyDecision)
 {
+#if ENABLE(APP_BOUND_DOMAINS)
+    if (m_page)
+        m_page->setIsNavigatingToAppBoundDomain(policyDecision.isNavigatingToAppBoundDomain, this);
+#endif
+
     if (!m_coreFrame)
         return;
 
@@ -483,7 +488,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
     if (!policyCheck.policyFunction)
         return;
 
-    ASSERT(policyDecision.identifier == policyCheck.corePolicyIdentifier);
+    ASSERT(identifier == policyCheck.corePolicyIdentifier);
 
     FramePolicyFunction function = WTFMove(policyCheck.policyFunction);
     bool forNavigationAction = policyCheck.forNavigationAction == ForNavigationAction::Yes;
@@ -507,7 +512,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
             page->sandboxExtensionTracker().beginLoad(&page->mainWebFrame(), WTFMove(*(policyDecision.sandboxExtensionHandle)));
     }
 
-    function(policyDecision.policyAction, policyDecision.identifier);
+    function(policyDecision.policyAction, identifier);
 }
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)

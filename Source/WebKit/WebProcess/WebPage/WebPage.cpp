@@ -3995,19 +3995,6 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
     m_drawingArea->setLayerHostingMode(m_layerHostingMode);
 }
 
-void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listenerID, PolicyDecision&& policyDecision)
-{
-    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
-    WEBPAGE_RELEASE_LOG(Loading, "didReceivePolicyDecision: policyAction=%u - frameID=%llu - webFrame=%p - mainFrame=%d", (unsigned)policyDecision.policyAction, frameID.object().toUInt64(), frame, frame ? frame->isMainFrame() : 0);
-
-    if (!frame)
-        return;
-#if ENABLE(APP_BOUND_DOMAINS)
-    setIsNavigatingToAppBoundDomain(policyDecision.isNavigatingToAppBoundDomain, frame);
-#endif
-    frame->didReceivePolicyDecision(listenerID, WTFMove(policyDecision));
-}
-
 void WebPage::didStartPageTransition()
 {
     freezeLayerTree(LayerTreeFreezeReason::PageTransition);
