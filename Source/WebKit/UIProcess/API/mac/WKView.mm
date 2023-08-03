@@ -923,14 +923,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
 }
 
-- (void)_web_windowWillEnterFullScreen
-{
-}
-
-- (void)_web_windowWillExitFullScreen
-{
-}
-
 - (void)_didHandleAcceptedCandidate
 {
 }

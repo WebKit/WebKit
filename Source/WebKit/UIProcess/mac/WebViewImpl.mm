@@ -323,9 +323,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeLayerHosting:) name:_NSWindowDidChangeContentsHostedInLayerSurfaceNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeOcclusionState:) name:NSWindowDidChangeOcclusionStateNotification object:window];
 
-    [defaultNotificationCenter addObserver:self selector:@selector(_windowWillEnterFullScreen:) name:NSWindowWillEnterFullScreenNotification object:window];
-    [defaultNotificationCenter addObserver:self selector:@selector(_windowWillExitFullScreen:) name:NSWindowWillExitFullScreenNotification object:window];
-
     [defaultNotificationCenter addObserver:self selector:@selector(_screenDidChangeColorSpace:) name:NSScreenColorSpaceDidChangeNotification object:nil];
 
     if (_shouldObserveFontPanel)
@@ -359,8 +356,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
     [defaultNotificationCenter removeObserver:self name:_NSWindowDidChangeContentsHostedInLayerSurfaceNotification object:window];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidChangeOcclusionStateNotification object:window];
-    [defaultNotificationCenter removeObserver:self name:NSWindowWillEnterFullScreenNotification object:window];
-    [defaultNotificationCenter removeObserver:self name:NSWindowWillExitFullScreenNotification object:window];
 
     [defaultNotificationCenter removeObserver:self name:NSScreenColorSpaceDidChangeNotification object:nil];
 
@@ -452,16 +447,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 - (void)_windowDidChangeOcclusionState:(NSNotification *)notification
 {
     _impl->windowDidChangeOcclusionState();
-}
-
-- (void)_windowWillEnterFullScreen:(NSNotification *)notification
-{
-    _impl->windowWillEnterFullScreen();
-}
-
-- (void)_windowWillExitFullScreen:(NSNotification *)notification
-{
-    _impl->windowWillExitFullScreen();
 }
 
 - (void)_screenDidChangeColorSpace:(NSNotification *)notification
@@ -2073,16 +2058,6 @@ void WebViewImpl::windowDidChangeOcclusionState()
 {
     LOG(ActivityState, "WebViewImpl %p (page %llu) windowDidChangeOcclusionState", this, m_page->identifier().toUInt64());
     m_page->activityStateDidChange(WebCore::ActivityState::IsVisible);
-}
-
-void WebViewImpl::windowWillEnterFullScreen()
-{
-    [m_view _web_windowWillEnterFullScreen];
-}
-
-void WebViewImpl::windowWillExitFullScreen()
-{
-    [m_view _web_windowWillExitFullScreen];
 }
 
 void WebViewImpl::screenDidChangeColorSpace()
