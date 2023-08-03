@@ -193,7 +193,6 @@ typedef enum {
     kCATransactionPhasePreLayout,
     kCATransactionPhasePreCommit,
     kCATransactionPhasePostCommit,
-    kCATransactionPhasePostSynchronize = 5,
     kCATransactionPhaseNull = ~0u
 } CATransactionPhase;
 
