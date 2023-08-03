@@ -28,8 +28,8 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include <WebCore/SleepDisablerIdentifier.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/OptionSet.h>
 #include <wtf/ProcessID.h>
 #include <wtf/UniqueRef.h>
 
@@ -243,6 +243,7 @@ struct RecentSearch;
 struct RunJavaScriptParameters;
 struct SerializedAttachmentData;
 struct ShareDataWithParsedURL;
+struct SleepDisablerIdentifierType;
 struct SpeechRecognitionError;
 struct SystemPreviewInfo;
 struct TextAlternativeWithRange;
@@ -282,6 +283,7 @@ using PlaybackTargetClientContextIdentifier = ObjectIdentifier<PlaybackTargetCli
 using PointerID = uint32_t;
 using ResourceLoaderIdentifier = AtomicObjectIdentifier<ResourceLoader>;
 using ScrollingNodeID = uint64_t;
+using SleepDisablerIdentifier = ObjectIdentifier<SleepDisablerIdentifierType>;
 using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierType>;
 
 }
@@ -3310,7 +3312,6 @@ private:
 #endif
 
     RefPtr<WebPageProxy> m_pageToCloneSessionStorageFrom;
-    HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
 };
 
 } // namespace WebKit

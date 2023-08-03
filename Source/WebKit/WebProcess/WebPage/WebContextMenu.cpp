@@ -20,11 +20,11 @@
  */
 
 #include "config.h"
+#include "WebContextMenu.h"
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include "WebContextMenu.h"
-
+#include "APIInjectedBundlePageContextMenuClient.h"
 #include "ContextMenuContextData.h"
 #include "MessageSenderInlines.h"
 #include "UserData.h"

@@ -25,12 +25,6 @@
 
 #pragma once
 
-#include "APIInjectedBundleEditorClient.h"
-#include "APIInjectedBundleFormClient.h"
-#include "APIInjectedBundlePageContextMenuClient.h"
-#include "APIInjectedBundlePageLoaderClient.h"
-#include "APIInjectedBundlePageResourceLoadClient.h"
-#include "APIInjectedBundlePageUIClient.h"
 #include "APIObject.h"
 #include "CallbackID.h"
 #include "Connection.h"
@@ -43,7 +37,6 @@
 #include "EventDispatcher.h"
 #include "GeolocationIdentifier.h"
 #include "IdentifierTypes.h"
-#include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageFullScreenClient.h"
 #include "LayerTreeContext.h"
 #include "MediaPlaybackState.h"
@@ -175,13 +168,26 @@ OBJC_CLASS WKAccessibilityWebPageObject;
 
 #define ENABLE_VIEWPORT_RESIZING PLATFORM(IOS_FAMILY)
 
+struct WKBundlePageFullScreenClientBase;
+
 namespace WTF {
 enum class Critical : bool;
 }
 
 namespace API {
 class Array;
-}
+namespace InjectedBundle {
+class EditorClient;
+#if ENABLE(CONTEXT_MENUS)
+class PageContextMenuClient;
+#endif
+class EditorClient;
+class FormClient;
+class PageLoaderClient;
+class ResourceLoadClient;
+class PageUIClient;
+} // namespace InjectedBundle
+} // namespace API
 
 namespace IPC {
 class Connection;

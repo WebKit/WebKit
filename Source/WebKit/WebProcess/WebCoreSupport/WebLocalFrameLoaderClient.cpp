@@ -26,6 +26,9 @@
 #include "config.h"
 #include "WebLocalFrameLoaderClient.h"
 
+#include "APIInjectedBundleFormClient.h"
+#include "APIInjectedBundlePageLoaderClient.h"
+#include "APIInjectedBundlePageResourceLoadClient.h"
 #include "AuthenticationManager.h"
 #include "DataReference.h"
 #include "DrawingArea.h"

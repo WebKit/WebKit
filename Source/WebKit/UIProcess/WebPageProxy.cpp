@@ -1361,7 +1361,7 @@ void WebPageProxy::close()
 
     // Make sure we do this before we clear the UIClient so that we can ask the UIClient
     // to release the wake locks.
-    m_sleepDisablers.clear();
+    internals().sleepDisablers.clear();
 
     reportPageLoadResult(ResourceError { ResourceError::Type::Cancellation });
 
@@ -9128,7 +9128,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_userScriptsNotified = false;
     m_hasActiveAnimatedScroll = false;
     m_registeredForFullSpeedUpdates = false;
-    m_sleepDisablers.clear();
+    internals().sleepDisablers.clear();
 
     internals().editorState = EditorState();
     internals().cachedFontAttributesAtSelectionStart.reset();
@@ -12825,17 +12825,17 @@ void WebPageProxy::didCreateSleepDisabler(SleepDisablerIdentifier identifier, co
 {
     MESSAGE_CHECK(m_process, !reason.isNull());
     auto sleepDisabler = makeUnique<WebCore::SleepDisabler>(reason, display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System, webPageID());
-    m_sleepDisablers.add(identifier, WTFMove(sleepDisabler));
+    internals().sleepDisablers.add(identifier, WTFMove(sleepDisabler));
 }
 
 void WebPageProxy::didDestroySleepDisabler(SleepDisablerIdentifier identifier)
 {
-    m_sleepDisablers.remove(identifier);
+    internals().sleepDisablers.remove(identifier);
 }
 
 bool WebPageProxy::hasSleepDisabler() const
 {
-    return !m_sleepDisablers.isEmpty();
+    return !internals().sleepDisablers.isEmpty();
 }
 
 #if USE(SYSTEM_PREVIEW)
