@@ -336,6 +336,9 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     case op_tail_call:
         handleOpCallLike(instruction->as<OpTailCall>());
         return;
+    case op_call_ignore_result:
+        handleOpCallLike(instruction->as<OpCallIgnoreResult>());
+        return;
 
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -411,6 +414,7 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     case op_profile_type:
     case op_profile_control_flow:
     case op_put_to_arguments:
+    case op_call_ignore_result:
     case op_set_function_name:
     case op_check_traps:
     case op_log_shadow_chicken_prologue:

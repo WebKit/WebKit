@@ -476,7 +476,8 @@ namespace JSC {
 
         void emitNode(RegisterID* dst, StatementNode* n)
         {
-            SetForScope tailPositionPoisoner(m_inTailPosition, false);
+            SetForScope tailPositionPoisoner(m_allowTailCallOptimization, false);
+            SetForScope callIgnoreResultPositionPoisoner(m_allowCallIgnoreResultOptimization, false);
             return emitNodeInTailPosition(dst, n);
         }
 
@@ -510,7 +511,20 @@ namespace JSC {
 
         RegisterID* emitNode(RegisterID* dst, ExpressionNode* n)
         {
-            SetForScope tailPositionPoisoner(m_inTailPosition, false);
+            SetForScope tailPositionPoisoner(m_allowTailCallOptimization, false);
+            SetForScope callIgnoreResultPositionPoisoner(m_allowCallIgnoreResultOptimization, false);
+            return emitNodeInTailPosition(dst, n);
+        }
+
+        RegisterID* emitNodeInTailPositionFromReturnNode(RegisterID* dst, ExpressionNode* n)
+        {
+            SetForScope callIgnoreResultPositionPoisoner(m_allowCallIgnoreResultOptimization, false);
+            return emitNodeInTailPosition(dst, n);
+        }
+
+        RegisterID* emitNodeInTailPositionFromExprStatementNode(RegisterID* dst, ExpressionNode* n)
+        {
+            SetForScope tailPositionPoisoner(m_allowTailCallOptimization, false);
             return emitNodeInTailPosition(dst, n);
         }
 
@@ -1325,7 +1339,8 @@ namespace JSC {
         bool m_expressionTooDeep { false };
         bool m_isBuiltinFunction { false };
         bool m_usesSloppyEval { false };
-        bool m_inTailPosition { false };
+        bool m_allowTailCallOptimization { false };
+        bool m_allowCallIgnoreResultOptimization { false };
         bool m_needsToUpdateArrowFunctionContext : 1;
         ECMAMode m_ecmaMode;
         DerivedContextType m_derivedContextType { DerivedContextType::None };
