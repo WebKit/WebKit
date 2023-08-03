@@ -118,16 +118,15 @@ CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, M
 {
     auto *avDevice = [PAL::getAVCaptureDeviceClass() deviceWithUniqueID:device.persistentId()];
     if (!avDevice)
-        return { "No AVVideoCaptureSource device"_s };
+        return CaptureSourceOrError({ "No AVVideoCaptureSource device"_s , MediaAccessDenialReason::PermissionDenied });
 
     Ref<RealtimeMediaSource> source = adoptRef(*new AVVideoCaptureSource(avDevice, device, WTFMove(hashSalts), pageIdentifier));
     if (constraints) {
-        auto result = source->applyConstraints(*constraints);
-        if (result)
-            return WTFMove(result.value().badConstraint);
+        if (auto result = source->applyConstraints(*constraints))
+            return CaptureSourceOrError({ WTFMove(result->badConstraint), MediaAccessDenialReason::InvalidConstraint });
     }
 
-    return source;
+    return WTFMove(source);
 }
 
 static double cameraZoomScaleFactor(AVCaptureDeviceType deviceType)

@@ -84,11 +84,6 @@ ExceptionOr<void> DOMURL::setHref(const String& url)
     return { };
 }
 
-void DOMURL::setQuery(const String& query)
-{
-    m_url.setQuery(query);
-}
-
 String DOMURL::createObjectURL(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
 {
     return createPublicURL(scriptExecutionContext, blob);

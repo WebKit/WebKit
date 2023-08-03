@@ -7,5 +7,5 @@ PASS A Modal Dialog should *not* close a Modal Dialog.
 PASS A Fullscreen Element should *not* close a Modal Dialog.
 PASS A Popover should *not* close a Fullscreen Element.
 PASS A Modal Dialog should *not* close a Fullscreen Element.
-FAIL A Fullscreen Element should *not* close a Fullscreen Element. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS A Fullscreen Element should *not* close a Fullscreen Element.
 

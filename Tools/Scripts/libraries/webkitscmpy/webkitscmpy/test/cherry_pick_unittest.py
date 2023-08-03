@@ -75,7 +75,7 @@ class TestCherryPick(testing.PathTestCase):
         self.assertEqual(captured.stdout.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), '')
 
-    def test_resolve(self):
+    def test_resolve_default(self):
         with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), MockTime:
             repo.head = repo.commits['branch-a'][-1]
             self.assertEqual(0, program.main(
@@ -88,6 +88,32 @@ class TestCherryPick(testing.PathTestCase):
             repo.head = repo.commits['branch-b'][-1]
             self.assertEqual(0, program.main(
                 args=('cherry-pick', '5848f06de77d'),
+                path=self.path,
+            ))
+            self.assertEqual(repo.head.hash, 'ec36de1acb4f71ede1a63c40eb55d2472f70e949')
+            self.assertEqual(
+                repo.head.message,
+                'Cherry-pick 2.3@branch-a (5848f06de77d). <bug>\n'
+                '    Cherry-pick 5@main (d8bce26fa65c). <bug>\n'
+                '        Patch Series\n',
+            )
+
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_resolve(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), MockTime:
+            repo.head = repo.commits['branch-a'][-1]
+            self.assertEqual(0, program.main(
+                args=('cherry-pick', 'd8bce26fa65c'),
+                path=self.path,
+            ))
+            self.assertEqual(repo.head.hash, '5848f06de77d306791b7410ff2197bf3dd82b9e9')
+            self.assertEqual(repo.head.message, 'Cherry-pick 5@main (d8bce26fa65c). <bug>\n    Patch Series\n')
+
+            repo.head = repo.commits['branch-b'][-1]
+            self.assertEqual(0, program.main(
+                args=('cherry-pick', '5848f06de77d', '--use-original'),
                 path=self.path,
             ))
             self.assertEqual(repo.head.hash, '5848f06de77d306791b7410ff2197bf3dd82b9e9')

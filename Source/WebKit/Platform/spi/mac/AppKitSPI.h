@@ -85,3 +85,11 @@ typedef NS_OPTIONS(NSUInteger, NSWindowShadowOptions) {
 @interface NSCursor ()
 + (void)hideUntilChanged;
 @end
+
+#if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
+// FIXME: Move this above once <rdar://problem/112554759> is in an SDK.
+@interface NSWindow (Staging_112554759)
+typedef void (^NSWindowSnapshotReadinessHandler) (void);
+- (NSWindowSnapshotReadinessHandler)_holdResizeSnapshotWithReason:(NSString *)reason;
+@end
+#endif

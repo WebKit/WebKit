@@ -124,10 +124,13 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
     PlatformLayerIdentifier layerID = layer.layerID();
 
     RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
-    creationProperties.playerIdentifier = videoElement.identifier();
-    creationProperties.initialSize = videoElement.videoInlineSize();
-    creationProperties.naturalSize = videoElement.naturalSize();
     layer.populateCreationProperties(creationProperties, *this, type);
+    ASSERT(!creationProperties.videoElementData);
+    creationProperties.videoElementData = RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData {
+        videoElement.identifier(),
+        videoElement.videoInlineSize(),
+        videoElement.naturalSize()
+    };
 
     m_webPage.videoFullscreenManager().setupRemoteLayerHosting(videoElement);
     m_videoLayers.add(layerID, videoElement.identifier());
@@ -192,10 +195,8 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
     if (paintedAnyBackingStore)
         m_nextRenderingUpdateRequiresSynchronousImageDecoding = false;
 
-    transaction.setCreatedLayers(copyToVector(m_createdLayers.values()));
+    transaction.setCreatedLayers(moveToVector(std::exchange(m_createdLayers, { }).values()));
     transaction.setDestroyedLayerIDs(WTFMove(m_destroyedLayers));
-    
-    m_createdLayers.clear();
 }
 
 void RemoteLayerTreeContext::layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote& layer)

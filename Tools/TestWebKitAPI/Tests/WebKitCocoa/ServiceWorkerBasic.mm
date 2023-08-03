@@ -2210,12 +2210,8 @@ static bool isTestServerTrust(SecTrustRef trust)
     if (SecTrustGetCertificateCount(trust) != 1)
         return false;
 
-#if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
     auto chain = adoptCF(SecTrustCopyCertificateChain(trust));
     auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), 0));
-#else
-    auto certificate = SecTrustGetCertificateAtIndex(trust, 0);
-#endif
     if (![adoptNS((NSString *)SecCertificateCopySubjectSummary(certificate)) isEqualToString:@"Me"])
         return false;
 

@@ -666,6 +666,18 @@ template<typename ValueType, typename ErrorType> struct ArgumentCoder<Expected<V
         encoder << expected.value();
     }
 
+    template<typename Encoder>
+    static void encode(Encoder& encoder, Expected<ValueType, ErrorType>&& expected)
+    {
+        if (!expected.has_value()) {
+            encoder << false;
+            encoder << WTFMove(expected.error());
+            return;
+        }
+        encoder << true;
+        encoder << WTFMove(expected.value());
+    }
+
     template<typename Decoder>
     static std::optional<Expected<ValueType, ErrorType>> decode(Decoder& decoder)
     {

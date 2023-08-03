@@ -57,7 +57,7 @@ class URLKeepingBlobAlive;
 enum class NavigationPolicyDecision : uint8_t {
     ContinueLoad,
     IgnoreLoad,
-    StopAllLoads,
+    LoadWillContinueInAnotherProcess,
 };
 
 enum class PolicyDecisionMode { Synchronous, Asynchronous };

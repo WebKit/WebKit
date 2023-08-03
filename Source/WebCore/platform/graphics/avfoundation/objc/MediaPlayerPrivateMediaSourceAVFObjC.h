@@ -239,7 +239,7 @@ private:
     void notifyActiveSourceBuffersChanged() override;
 
     void setPresentationSize(const IntSize&) final;
-    void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&) final;
+    void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&) final;
 
     void updateDisplayLayerAndDecompressionSession();
 

@@ -28,8 +28,11 @@
 #include "IntersectionObserverEntry.h"
 
 #include "Element.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(IntersectionObserverEntry);
 
 IntersectionObserverEntry::IntersectionObserverEntry(const Init& init)
     : m_time(init.time)

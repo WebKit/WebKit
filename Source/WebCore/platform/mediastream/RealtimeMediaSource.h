@@ -37,11 +37,13 @@
 
 #include "CaptureDevice.h"
 #include "Image.h"
+#include "MediaAccessDenialReason.h"
 #include "MediaConstraints.h"
 #include "MediaDeviceHashSalts.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
+#include "RealtimeMediaSourceIdentifier.h"
 #include "VideoFrameTimeMetadata.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
@@ -73,6 +75,7 @@ class VideoFrame;
 
 enum class VideoFrameRotation : uint16_t;
 
+struct CaptureSourceError;
 struct CaptureSourceOrError;
 struct VideoFrameAdaptor;
 
@@ -132,7 +135,7 @@ public:
     bool isVideo() const { return m_type == Type::Video; }
     bool isAudio() const { return m_type == Type::Audio; }
 
-    virtual void whenReady(CompletionHandler<void(String)>&&);
+    virtual void whenReady(CompletionHandler<void(CaptureSourceError&&)>&&);
 
     virtual bool isProducingData() const;
     void start();
@@ -354,16 +357,29 @@ private:
     unsigned m_videoFrameObserversWithAdaptors { 0 };
 };
 
+struct CaptureSourceError {
+    CaptureSourceError() = default;
+    CaptureSourceError(String&& message, MediaAccessDenialReason reason)
+        : errorMessage(WTFMove(message))
+        , denialReason(reason)
+    { }
+
+    operator bool() const { return denialReason != MediaAccessDenialReason::NoReason; }
+
+    String errorMessage;
+    MediaAccessDenialReason denialReason = MediaAccessDenialReason::NoReason;
+};
+
 struct CaptureSourceOrError {
     CaptureSourceOrError() = default;
     CaptureSourceOrError(Ref<RealtimeMediaSource>&& source) : captureSource(WTFMove(source)) { }
-    CaptureSourceOrError(String&& message) : errorMessage(WTFMove(message)) { }
-    
-    operator bool()  const { return !!captureSource; }
+    explicit CaptureSourceOrError(CaptureSourceError&& error) : error(WTFMove(error)) { }
+
+    operator bool() const { return !!captureSource; }
     Ref<RealtimeMediaSource> source() { return captureSource.releaseNonNull(); }
-    
+
     RefPtr<RealtimeMediaSource> captureSource;
-    String errorMessage;
+    CaptureSourceError error;
 };
 
 String convertEnumerationToString(RealtimeMediaSource::Type);
@@ -373,7 +389,7 @@ inline void RealtimeMediaSource::setName(const AtomString& name)
     m_name = name;
 }
 
-inline void RealtimeMediaSource::whenReady(CompletionHandler<void(String)>&& callback)
+inline void RealtimeMediaSource::whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback)
 {
     callback({ });
 }

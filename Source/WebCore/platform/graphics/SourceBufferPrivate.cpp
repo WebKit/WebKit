@@ -1218,18 +1218,8 @@ void SourceBufferPrivate::processMediaSample(Ref<MediaSample>&& sample)
             resetTimestampOffsetInTrackBuffers();
         }
 
-        // Eliminate small gaps between buffered ranges by coalescing
-        // disjoint ranges separated by less than a "fudge factor".
         auto presentationEndTime = presentationTimestamp + frameDuration;
-        auto nearestToPresentationStartTime = trackBuffer.buffered().nearest(presentationTimestamp);
-        if (nearestToPresentationStartTime.isValid() && (presentationTimestamp - nearestToPresentationStartTime).isBetween(MediaTime::zeroTime(), timeFudgeFactor()))
-            presentationTimestamp = nearestToPresentationStartTime;
-
-        auto nearestToPresentationEndTime = trackBuffer.buffered().nearest(presentationEndTime);
-        if (nearestToPresentationEndTime.isValid() && (nearestToPresentationEndTime - presentationEndTime).isBetween(MediaTime::zeroTime(), timeFudgeFactor()))
-            presentationEndTime = nearestToPresentationEndTime;
-
-        trackBuffer.addBufferedRange(presentationTimestamp, presentationEndTime);
+        trackBuffer.addBufferedRange(presentationTimestamp, presentationEndTime, AddTimeRangeOption::EliminateSmallGaps);
         m_client->sourceBufferPrivateDidParseSample(frameDuration.toDouble());
 
         break;

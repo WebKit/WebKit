@@ -9,7 +9,7 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
     #if ENABLE(SECOND_MEMBER)
     SecondMemberType secondMemberName;
     #endif
-    [Nullable] RetainPtr<CFTypeRef> nullableTestMember;
+    RetainPtr<CFTypeRef> nullableTestMember;
 }
 #endif
 
@@ -25,7 +25,7 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
     std::unique_ptr<int> uniqueMember
 }
 
-[LegacyPopulateFromEmptyConstructor, CustomMemberLayout] struct Namespace::EmptyConstructorStruct {
+[LegacyPopulateFromEmptyConstructor] struct Namespace::EmptyConstructorStruct {
     int m_int;
     double m_double;
 }
@@ -95,9 +95,9 @@ class WTF::Seconds {
     float left()
 };
 
-struct NullableSoftLinkedMember {
-    [Nullable, SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> firstMember;
-    [SoftLinkedClass='PAL::getDDActionContextClass()'] RetainPtr<DDActionContext> secondMember;
+struct SoftLinkedMember {
+    [SecureCodingAllowed=[PAL::getDDActionContextClass()]] RetainPtr<DDActionContext> firstMember;
+    [SecureCodingAllowed=[PAL::getDDActionContextClass()]] RetainPtr<DDActionContext> secondMember;
 }
 
 [RefCounted] class WebCore::TimingFunction subclasses {
@@ -160,7 +160,7 @@ headers: "CommonHeader.h"
 }
 
 [RValue] class WebCore::MoveOnlyDerivedClass {
-    [Nullable] int firstMember;
+    int firstMember;
     int secondMember;
 }
 
@@ -171,4 +171,14 @@ webkit_platform_headers: "PlatformClass.h"
 
 [CustomEncoder] class WebKit::CustomEncoded {
   int value;
+};
+
+class WebKit::LayerProperties {
+    [OptionalTupleBits] OptionSet<WebKit::LayerChange> changedProperties
+    [NotSerialized] int nonSerializedMember
+    [OptionalTupleBit=WebKit::LayerChange::NameChanged] String name;
+#if ENABLE(FEATURE)
+    [OptionalTupleBit=WebKit::LayerChange::TransformChanged] std::unique_ptr<WebCore::TransformationMatrix> featureEnabledMember;
+#endif
+    [OptionalTupleBit=WebKit::LayerChange::FeatureEnabledMember, BitField] bool bitFieldMember;
 };

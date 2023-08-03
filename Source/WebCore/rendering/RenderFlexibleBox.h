@@ -219,8 +219,9 @@ private:
     void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>&, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineState>&, LayoutUnit gapBetweenItems);
     void layoutColumnReverse(const Vector<FlexItem>&, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace, LayoutUnit gapBetweenItems);
     void alignFlexLines(Vector<LineState>&, LayoutUnit gapBetweenLines);
-    void alignChildren(const Vector<LineState>&);
+    void alignChildren(Vector<LineState>&);
     void applyStretchAlignmentToChild(RenderBox& child, LayoutUnit lineCrossAxisExtent);
+    void performBaselineAlignment(LineState&);
     void flipForRightToLeftColumn(const Vector<LineState>& linesState);
     void flipForWrapReverse(const Vector<LineState>&, LayoutUnit crossAxisStartEdge);
     

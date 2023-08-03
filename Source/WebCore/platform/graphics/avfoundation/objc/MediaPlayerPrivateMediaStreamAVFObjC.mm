@@ -286,19 +286,16 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoFrame(VideoFrame& vide
             Locker locker { m_currentVideoFrameLock };
             m_currentVideoFrame = &videoFrame;
         }
-        callOnMainThread([weakThis = WeakPtr { *this }, metadata, presentationTime]() mutable {
-            if (!weakThis)
-                return;
-
+        scheduleDeferredTask([this, metadata, presentationTime]() mutable {
             RefPtr<VideoFrame> videoFrame;
             {
-                Locker locker { weakThis->m_currentVideoFrameLock };
-                videoFrame = WTFMove(weakThis->m_currentVideoFrame);
+                Locker locker { m_currentVideoFrameLock };
+                videoFrame = WTFMove(m_currentVideoFrame);
             }
             if (!videoFrame)
                 return;
 
-            weakThis->processNewVideoFrame(*videoFrame, metadata, presentationTime);
+            processNewVideoFrame(*videoFrame, metadata, presentationTime);
         });
         return;
     }
@@ -1141,7 +1138,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask(Function<void ()
     callOnMainThread([weakThis = WeakPtr { *this }, function = WTFMove(function)] {
         if (!weakThis)
             return;
-
+        auto protectedMediaPlayer = RefPtr { weakThis->m_player.get() };
         function();
     });
 }
@@ -1192,14 +1189,14 @@ LayerHostingContextID MediaPlayerPrivateMediaStreamAVFObjC::hostingContextID() c
     return m_sampleBufferDisplayLayer ? m_sampleBufferDisplayLayer->hostingContextID() : 0;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
+void MediaPlayerPrivateMediaStreamAVFObjC::setVideoInlineSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
     if (!m_sampleBufferDisplayLayer || size.isEmpty())
         return;
 
     m_storedBounds = m_sampleBufferDisplayLayer->rootLayer().bounds;
     m_storedBounds->size = size;
-    m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds, fence);
+    m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds, WTFMove(fence));
 }
 
 }

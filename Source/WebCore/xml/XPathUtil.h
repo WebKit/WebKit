@@ -45,9 +45,6 @@ namespace WebCore {
         /* @return whether the given node is a valid context node */
         bool isValidContextNode(Node&);
 
-        // https://www.w3.org/TR/REC-xml/#NT-S
-        bool isXMLSpace(UChar character);
-
     } // namespace XPath
 
 } // namespace WebCore

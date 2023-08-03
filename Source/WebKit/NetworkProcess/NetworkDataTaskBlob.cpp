@@ -286,7 +286,7 @@ void NetworkDataTaskBlob::dispatchDidReceiveResponse()
             m_buffer.resize(bufferSize);
             read();
             break;
-        case PolicyAction::StopAllLoads:
+        case PolicyAction::LoadWillContinueInAnotherProcess:
             ASSERT_NOT_REACHED();
             break;
         case PolicyAction::Ignore:

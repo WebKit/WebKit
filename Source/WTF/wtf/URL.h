@@ -212,6 +212,9 @@ private:
     unsigned credentialsEnd() const;
     void remove(unsigned start, unsigned length);
     void parse(String&&);
+    void parseAllowingC0AtEnd(String&&);
+
+    void maybeTrimTrailingSpacesFromOpaquePath();
 
     friend WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 

@@ -30,6 +30,7 @@
 
 #import "WebPageProxy.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/URL.h>
 #import <pal/mac/QuickLookUISoftLink.h>
 
 @interface WKQuickLookPreviewController () <QLPreviewPanelDelegate, QLPreviewPanelDataSource>

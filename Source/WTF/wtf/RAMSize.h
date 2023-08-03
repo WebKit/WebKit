@@ -29,6 +29,10 @@ namespace WTF {
 
 WTF_EXPORT_PRIVATE size_t ramSize();
 
+#if OS(DARWIN)
+WTF_EXPORT_PRIVATE size_t ramSizeDisregardingJetsamLimit();
+#endif
+
 }
 
 using WTF::ramSize;

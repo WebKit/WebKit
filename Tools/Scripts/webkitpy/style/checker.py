@@ -192,6 +192,12 @@ _PATH_RULES_SPECIFIER = [
      ["-build/include_order"]),
 
     ([
+     # GRefPtr.h must be included earlier than gst/gst.h, otherwise forward
+     # declaration in the former will cause compilation error
+     os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GRefPtrGStreamer.h')],
+     ["-build/include_order"]),
+
+    ([
       # Header files in ForwardingHeaders have no header guards or
       # exceptional header guards (e.g., WebCore_FWD_Debugger_h).
       os.path.join(os.path.sep, 'ForwardingHeaders')],

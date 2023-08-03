@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="localVideo" autoplay playsInline width=100px ></video>
+        <video id="remoteVideo" autoplay playsInline width=100px></video>
+        <canvas id="canvas0" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+function isVideoBlack(video, canvasId)
+{
+    var canvas = document.getElementById(canvasId);
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+    data = imageData.data;
+    for (var cptr = 0; cptr < canvas.width * canvas.height; ++cptr) {
+        // Approximatively black pixels.
+        if (data[4 * cptr] > 30 || data[4 * cptr + 1] > 30 || data[4 * cptr + 2] > 30)
+            return false;
+    }
+    return true;
+}
+
+function pollVideoBlackCheck(expected, video, canvasId, resolve)
+{
+    if (isVideoBlack(video, canvasId) === expected) {
+        resolve();
+        return;
+    }
+
+    setTimeout(() => pollVideoBlackCheck(expected, video, canvasId, resolve), 100);
+}
+
+function checkVideoBlack(expected, video, canvasId)
+{
+    return new Promise((resolve, reject) => {
+        pollVideoBlackCheck(expected, video, canvasId, resolve);
+        setTimeout(() => reject("checkVideoBlack timed out for '" + canvasId + "', expected " + expected), 15000);
+    });
+}
+
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({video: {width: 640, height: 480}});
+    if (window.testRunner)
+        testRunner.setMockCameraOrientation(90);
+
+    localVideo.srcObject = localStream;
+    await localVideo.play();
+
+    let track;
+    const remoteStream = await new Promise((resolve, reject) => {
+        track = localStream.getVideoTracks()[0].clone();
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(track, localStream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    remoteVideo.srcObject = remoteStream;
+    await remoteVideo.play();
+    track.enabled = false;
+
+    await checkVideoBlack(true, remoteVideo, "canvas0");
+
+    assert_equals(remoteVideo.videoWidth, 480);
+    assert_equals(remoteVideo.videoHeight, 640);
+}, "Rotated disabled track should keep sending the same intrinsic size video if CVO is on");
+        </script>
+    </body>
+</html>

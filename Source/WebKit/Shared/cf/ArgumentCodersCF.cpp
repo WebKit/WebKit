@@ -51,12 +51,6 @@
 namespace IPC {
 using namespace WebCore;
 
-CFTypeRef tokenNullptrTypeRef()
-{
-    static CFStringRef tokenNullptrType = CFSTR("WKNull");
-    return tokenNullptrType;
-}
-
 enum class CFType : uint8_t {
     CFArray,
     CFBoolean,
@@ -84,9 +78,7 @@ enum class CFType : uint8_t {
 
 static CFType typeFromCFTypeRef(CFTypeRef type)
 {
-    ASSERT(type);
-
-    if (type == tokenNullptrTypeRef())
+    if (!type)
         return CFType::Nullptr;
 
     CFTypeID typeID = CFGetTypeID(type);
@@ -326,7 +318,7 @@ std::optional<RetainPtr<CFTypeRef>> ArgumentCoder<RetainPtr<CFTypeRef>>::decode(
         return WTFMove(*trust);
     }
     case CFType::Nullptr:
-        return tokenNullptrTypeRef();
+        return nullptr;
     case CFType::Unknown:
         break;
     }

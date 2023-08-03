@@ -233,7 +233,7 @@ private:
     MediaStreamTrackPrivate* activeVideoTrack() const;
 
     LayerHostingContextID hostingContextID() const final;
-    void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&) final;
+    void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&) final;
 
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;

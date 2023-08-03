@@ -1594,7 +1594,7 @@ enum class WebCore::RenderingPurpose : uint8_t {
 
 enum class WebCore::RotationDirection : bool
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
 [LegacyPopulateFromEmptyConstructor] class WebCore::MockContentFilterSettings {
     bool m_enabled;
     WebCore::MockContentFilterSettings::DecisionPoint m_decisionPoint;
@@ -3471,11 +3471,12 @@ struct WebCore::CookieRequestHeaderFieldProxy {
     WebCore::IncludeSecureCookies includeSecureCookies;
 };
 
-[RefCounted, CustomMemberLayout] class WebCore::FormData {
-    bool m_alwaysStream;
-    Vector<char> m_boundary;
+[RefCounted] class WebCore::FormData {
     Vector<WebCore::FormDataElement> m_elements;
     int64_t m_identifier;
+    bool m_alwaysStream;
+    Vector<char> m_boundary;
+    [NotSerialized] std::optional<uint64_t> m_lengthInBytes;
 };
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -3503,6 +3504,7 @@ header: <WebCore/ScrollingStateNode.h>
     ContentAreaHoverState
     MouseActivityState
     ScrollbarHoverState
+    ScrollbarEnabledState
     FrameScaleFactor
     EventTrackingRegion
     RootContentsLayer
@@ -4000,7 +4002,7 @@ struct WebCore::ImageBufferBackendParameters {
 
 enum class WebCore::PreserveResolution : bool;
 
-class WebCore::ProcessIdentity {
+[RValue] class WebCore::ProcessIdentity {
 #if HAVE(TASK_IDENTITY_TOKEN)
     MachSendRight m_taskIdToken;
 #endif
@@ -4306,7 +4308,8 @@ struct WebCore::NavigationRequester {
     Ref<WebCore::SecurityOrigin> securityOrigin;
     Ref<WebCore::SecurityOrigin> topOrigin;
     WebCore::PolicyContainer policyContainer;
-    std::optional<WebCore::GlobalFrameIdentifier> globalFrameIdentifier;
+    std::optional<WebCore::FrameIdentifier> frameID;
+    std::optional<WebCore::PageIdentifier> pageID;
 };
 
 struct WebCore::PolicyContainer {
@@ -4873,7 +4876,7 @@ enum class WebCore::PolicyAction : uint8_t {
     Use,
     Download,
     Ignore,
-    StopAllLoads
+    LoadWillContinueInAnotherProcess
 };
 
 [OptionSet] enum class WebCore::ReloadOption : uint8_t {
@@ -5679,6 +5682,26 @@ enum class WebCore::WebGPU::TextureFormat : uint8_t {
     Astc12x12UnormSRGB,
 };
 
+#if ENABLE(MEDIA_STREAM)
+enum class WebCore::MediaAccessDenialReason : uint8_t {
+    NoReason,
+    NoConstraints,
+    UserMediaDisabled,
+    NoCaptureDevices,
+    InvalidConstraint,
+    HardwareError,
+    PermissionDenied,
+    InvalidAccess,
+    OtherFailure
+};
+
+header: <WebCore/RealtimeMediaSource.h>
+[CustomHeader] struct WebCore::CaptureSourceError {
+    String errorMessage;
+    WebCore::MediaAccessDenialReason denialReason;
+};
+#endif
+
 header: <WebCore/WebGPUTextureAspect.h>
 enum class WebCore::WebGPU::TextureAspect : uint8_t {
     All,
@@ -5697,3 +5720,9 @@ struct WebCore::CookieStoreGetOptions {
     String name;
     String url;
 };
+
+[RefCounted] class WebCore::Model {
+    Ref<WebCore::SharedBuffer> data()
+    String mimeType()
+    URL url()
+}

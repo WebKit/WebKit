@@ -201,15 +201,23 @@ static String plainTextForDisplay(const std::optional<SimpleRange>& range)
     return range ? plainTextForDisplay(*range) : emptyString();
 }
 
-static void adjustCandidateAutocorrectionInFrame(LocalFrame& frame)
+static void adjustCandidateAutocorrectionInFrame(const String& correction, LocalFrame& frame)
 {
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
-    FrameSelection selection;
-    selection.setSelection(frame.selection().selection());
-    selection.modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::WordGranularity);
+    auto startPosition = frame.selection().selection().start();
+    auto endPosition = frame.selection().selection().end();
 
-    if (auto correctedRange = selection.selection().toNormalizedRange())
-        addMarker(*correctedRange, WebCore::DocumentMarker::CorrectionIndicator);
+    auto firstPositionInEditableContent = startOfEditableContent(startPosition);
+
+    auto referenceRange = makeSimpleRange(firstPositionInEditableContent, endPosition);
+    if (!referenceRange)
+        return;
+
+    auto correctedRange = findPlainText(*referenceRange, correction, { Backwards });
+    if (correctedRange.collapsed())
+        return;
+
+    addMarker(correctedRange, WebCore::DocumentMarker::CorrectionIndicator);
 #else
     UNUSED_PARAM(frame);
 #endif
@@ -1883,7 +1891,7 @@ void WebPage::extendSelectionForReplacement(CompletionHandler<void()>&& completi
     if (!container)
         return;
 
-    auto markerRanges = document->markers().markersFor(*container, { DocumentMarker::DictationAlternatives }).map([&](auto* marker) {
+    auto markerRanges = document->markers().markersFor(*container, { DocumentMarker::DictationAlternatives, DocumentMarker::CorrectionIndicator }).map([&](auto* marker) {
         return makeSimpleRange(*container, *marker);
     });
 
@@ -2706,7 +2714,7 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
     if (correction.length()) {
         frame->editor().insertText(correction, 0, originalText.isEmpty() ? TextEventInputKeyboard : TextEventInputAutocompletion);
         if (isCandidate)
-            adjustCandidateAutocorrectionInFrame(frame.get());
+            adjustCandidateAutocorrectionInFrame(correction, frame.get());
     } else if (originalText.length())
         frame->editor().deleteWithDirection(SelectionDirection::Backward, TextGranularity::CharacterGranularity, false, true);
     return true;
@@ -4200,7 +4208,7 @@ void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale
     updateSizeForCSSSmallViewportUnits();
     updateSizeForCSSLargeViewportUnits();
 
-    auto* mainFrameView = this->mainFrameView();
+    auto* mainFrameView = this->localMainFrameView();
     if (!mainFrameView) {
         // FIXME: This is hit in some site isolation tests on iOS. Investigate and fix.
         return;
@@ -5008,6 +5016,16 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     if (request.options.contains(DocumentEditingContextRequest::Options::Annotation))
         context.annotatedText = m_textCheckingControllerProxy->annotatedSubstringBetweenPositions(contextBeforeStart, contextAfterEnd);
 #endif
+
+    if (request.options.contains(DocumentEditingContextRequest::Options::AutocorrectedRanges)) {
+        if (auto contextRange = makeSimpleRange(contextBeforeStart, contextAfterEnd)) {
+            auto ranges = frame->document()->markers().rangesForMarkersInRange(*contextRange, DocumentMarker::MarkerType::CorrectionIndicator);
+            context.autocorrectedRanges = ranges.map([&] (auto& range) {
+                auto characterRangeInContext = characterRange(*contextRange, range);
+                return DocumentEditingContext::Range { characterRangeInContext.location, characterRangeInContext.length };
+            });
+        }
+    }
 
     completionHandler(context);
 }

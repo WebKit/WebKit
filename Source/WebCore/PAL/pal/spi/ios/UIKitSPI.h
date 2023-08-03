@@ -90,6 +90,7 @@ typedef enum {
 - (BOOL)_isClassic;
 + (UIApplicationSceneClassicMode)_classicMode;
 - (GSKeyboardRef)_hardwareKeyboard;
+- (void)_setIdleTimerDisabled:(BOOL)disabled forReason:(NSString *)reason;
 @end
 
 @interface UIColor ()

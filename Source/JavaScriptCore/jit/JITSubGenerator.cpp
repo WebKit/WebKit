@@ -129,7 +129,7 @@ bool JITSubGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
 
     jit.subDouble(m_rightFPR, m_leftFPR);
     if (arithProfile && shouldEmitProfiling)
-        arithProfile->emitSetDouble(jit);
+        arithProfile->emitSetDouble(jit, m_scratchGPR);
 
     jit.boxDouble(m_leftFPR, m_result);
 

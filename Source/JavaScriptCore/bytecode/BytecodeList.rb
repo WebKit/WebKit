@@ -97,7 +97,6 @@ op :tail_call_varargs,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        profile: ValueProfile,
     },
     tmps: {
         argCountIncludingThis: unsigned
@@ -252,41 +251,11 @@ op :construct,
         profile: ValueProfile,
     }
 
-op_group :ValueProfiledBinaryOp,
-    [
-        :bitand,
-        :bitor,
-        :bitxor,
-        :lshift,
-        :rshift,
-    ],
-    args: {
-        dst: VirtualRegister,
-        lhs: VirtualRegister,
-        rhs: VirtualRegister,
-    },
-    metadata: {
-        profile: ValueProfile
-    }
-
 op :to_object,
     args: {
         dst: VirtualRegister,
         operand: VirtualRegister,
         message: unsigned,
-    },
-    metadata: {
-        profile: ValueProfile,
-    }
-
-op_group :ValueProfiledUnaryOp,
-    [
-        :to_number,
-        :to_numeric,
-    ],
-    args: {
-        dst: VirtualRegister,
-        operand: VirtualRegister,
     },
     metadata: {
         profile: ValueProfile,
@@ -302,7 +271,6 @@ op :tail_call,
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
         arrayProfile: ArrayProfile,
-        profile: ValueProfile,
     }
 
 op :call_direct_eval,
@@ -331,7 +299,6 @@ op :tail_call_forward_arguments,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        profile: ValueProfile,
     }
 
 op_group :CreateInternalFieldObjectOp,
@@ -380,15 +347,6 @@ op :create_promise,
     },
     metadata: {
         cachedCallee: WriteBarrier[JSCell]
-    }
-
-op :bitnot,
-    args: {
-        dst: VirtualRegister,
-        operand: VirtualRegister,
-    },
-    metadata: {
-        profile: ValueProfile
     }
 
 op :catch,
@@ -1271,12 +1229,15 @@ op_group :BinaryOp,
         rhs: VirtualRegister,
     }
 
-op_group :ProfiledBinaryOp,
+op_group :ProfiledBinaryOpWithOperandTypes,
     [
         :add,
         :mul,
         :div,
         :sub,
+        :bitand,
+        :bitor,
+        :bitxor,
     ],
     args: {
         dst: VirtualRegister,
@@ -1284,6 +1245,18 @@ op_group :ProfiledBinaryOp,
         rhs: VirtualRegister,
         profileIndex: unsigned,
         operandTypes: OperandTypes,
+    }
+
+op_group :ProfiledBinaryOp,
+    [
+        :lshift,
+        :rshift,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+        profileIndex: unsigned,
     }
 
 op_group :UnaryOp,
@@ -1381,6 +1354,18 @@ op :has_structure_with_flags,
         dst: VirtualRegister,
         operand: VirtualRegister,
         flags: unsigned,
+    }
+
+op_group :ProfiledUnaryOp,
+    [
+        :to_number,
+        :to_numeric,
+        :bitnot,
+    ],
+    args: {
+        dst: VirtualRegister,
+        operand: VirtualRegister,
+        profileIndex: unsigned,
     }
 
 end_section :Bytecode

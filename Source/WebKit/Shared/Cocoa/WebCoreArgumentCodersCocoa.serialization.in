@@ -29,9 +29,7 @@ class WebCore::ContentFilterUnblockHandler {
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     Vector<uint8_t> webFilterEvaluatorData()
 #endif
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     bool unblockedAfterRequest()
-#endif
 }
 #endif
 

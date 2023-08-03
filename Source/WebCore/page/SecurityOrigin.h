@@ -47,7 +47,9 @@ public:
         Ask
     };
 
+    // https://url.spec.whatwg.org/#concept-url-origin
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const URL&);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> createForBlobURL(const URL&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> createOpaque();
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
@@ -60,19 +62,6 @@ public:
     // navigations. This lets those documents specify the file path that should be allowed to be
     // displayed from their non-local origin.
     static Ref<SecurityOrigin> createNonLocalWithAllowedFilePath(const URL&, const String& filePath);
-
-    // Some URL schemes use nested URLs for their security context. For example,
-    // filesystem URLs look like the following:
-    //
-    //   filesystem:http://example.com/temporary/path/to/file.png
-    //
-    // We're supposed to use "http://example.com" as the origin.
-    //
-    // Generally, we add URL schemes to this list when WebKit support them. For
-    // example, we don't include the "jar" scheme, even though Firefox
-    // understands that "jar" uses an inner URL for it's security origin.
-    static bool shouldUseInnerURL(const URL&);
-    static URL extractInnerURL(const URL&);
 
     // Create a deep copy of this SecurityOrigin. This method is useful
     // when marshalling a SecurityOrigin to another thread.
@@ -92,8 +81,7 @@ public:
     static bool shouldIgnoreHost(const URL&);
 
     // Returns true if a given URL is secure, based either directly on its
-    // own protocol, or, when relevant, on the protocol of its "inner URL"
-    // Protocols like blob: and filesystem: fall into this latter category.
+    // own protocol, or, for blob:, on the protocol of its "inner URL"
     WEBCORE_EXPORT static bool isSecure(const URL&);
 
     // This method implements the "same origin-domain" algorithm from the HTML Standard:

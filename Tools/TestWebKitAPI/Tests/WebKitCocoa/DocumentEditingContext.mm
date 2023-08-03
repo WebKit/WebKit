@@ -29,6 +29,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
+#import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -1540,6 +1541,78 @@ TEST(DocumentEditingContext, CharacterRectsInEditableWebView)
         EXPECT_TRUE([text isEqualToString:@" "] || !CGRectIsEmpty(rectFromContext));
     }
 }
+
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+
+#define UIWKDocumentRequestAutocorrectedRanges (1 << 7)
+
+TEST(DocumentEditingContext, RequestAutocorrectedRanges)
+{
+    if (![UIWKDocumentContext instancesRespondToSelector:@selector(autocorrectedRanges)])
+        return;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
+
+    auto *contentView = [webView textInputContentView];
+    [contentView insertText:@"Should we go to "];
+    [contentView insertText:@"sanfrancisco"];
+
+    [webView waitForNextPresentationUpdate];
+
+    __block bool appliedAutocorrection = false;
+    [webView applyAutocorrection:@"San Francisco" toString:@"sanfrancisco" isCandidate:YES withCompletionHandler:^{
+        appliedAutocorrection = true;
+    }];
+
+    TestWebKitAPI::Util::run(&appliedAutocorrection);
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestAutocorrectedRanges, UITextGranularityParagraph, 1)];
+    NSArray<NSValue *> *autocorrectedRanges = context.autocorrectedRanges;
+
+    EXPECT_NOT_NULL(context);
+    EXPECT_EQ([autocorrectedRanges count], 1u);
+    EXPECT_TRUE(NSEqualRanges([autocorrectedRanges[0] rangeValue], NSMakeRange(16, 13)));
+
+    [contentView insertText:@" atfer"];
+
+    appliedAutocorrection = false;
+    [webView applyAutocorrection:@"after" toString:@"atfer" isCandidate:YES withCompletionHandler:^{
+        appliedAutocorrection = true;
+    }];
+
+    TestWebKitAPI::Util::run(&appliedAutocorrection);
+
+    context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestAutocorrectedRanges, UITextGranularityParagraph, 1)];
+    autocorrectedRanges = context.autocorrectedRanges;
+
+    EXPECT_NOT_NULL(context);
+    EXPECT_EQ([autocorrectedRanges count], 2u);
+    EXPECT_TRUE(NSEqualRanges([autocorrectedRanges[0] rangeValue], NSMakeRange(16, 13)));
+    EXPECT_TRUE(NSEqualRanges([autocorrectedRanges[1] rangeValue], NSMakeRange(30, 5)));
+
+    [contentView insertText:@" "];
+    [contentView insertText:@"work"];
+    [contentView insertText:@" "];
+    [contentView insertText:@"tomorrow?"];
+
+    TestWebKitAPI::Util::runFor(1_s);
+
+    context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestAutocorrectedRanges, UITextGranularityParagraph, 1)];
+    autocorrectedRanges = context.autocorrectedRanges;
+
+    EXPECT_NOT_NULL(context);
+    EXPECT_EQ([autocorrectedRanges count], 0u);
+}
+
+#endif // HAVE(AUTOCORRECTION_ENHANCEMENTS)
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
 

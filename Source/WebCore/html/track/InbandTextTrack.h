@@ -62,6 +62,8 @@ protected:
 
     Ref<InbandTextTrackPrivate> m_private;
 
+    MediaTime startTimeVariance() const override;
+
 private:
     bool isInband() const final { return true; }
     void idChanged(const AtomString&) override;
@@ -84,8 +86,6 @@ private:
     void parseWebVTTFileHeader(String&&) override { ASSERT_NOT_REACHED(); }
     void parseWebVTTCueData(const uint8_t*, unsigned) override { ASSERT_NOT_REACHED(); }
     void parseWebVTTCueData(ISOWebVTTCue&&) override { ASSERT_NOT_REACHED(); }
-
-    MediaTime startTimeVariance() const override;
 };
 
 } // namespace WebCore

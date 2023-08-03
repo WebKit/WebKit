@@ -36,6 +36,7 @@
 #include "ResizeObserverOptions.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -49,6 +50,8 @@ Ref<ResizeObserver> ResizeObserver::createNativeObserver(Document& document, Nat
 {
     return adoptRef(*new ResizeObserver(document, { WTFMove(nativeCallback) }));
 }
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ResizeObserver);
 
 ResizeObserver::ResizeObserver(Document& document, JSOrNativeResizeObserverCallback&& callback)
     : m_document(document)

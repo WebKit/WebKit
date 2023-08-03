@@ -34,65 +34,76 @@ class RemoteLayerBackingStore;
 class RemoteLayerBackingStoreProperties;
 
 enum class LayerChange : uint64_t {
-    NameChanged                         = 1LLU << 1,
-    ChildrenChanged                     = 1LLU << 2,
-    PositionChanged                     = 1LLU << 3,
-    BoundsChanged                       = 1LLU << 4,
-    BackgroundColorChanged              = 1LLU << 5,
-    AnchorPointChanged                  = 1LLU << 6,
-    BorderWidthChanged                  = 1LLU << 7,
-    BorderColorChanged                  = 1LLU << 8,
-    OpacityChanged                      = 1LLU << 9,
-    TransformChanged                    = 1LLU << 10,
-    SublayerTransformChanged            = 1LLU << 11,
-    HiddenChanged                       = 1LLU << 12,
-    GeometryFlippedChanged              = 1LLU << 13,
-    DoubleSidedChanged                  = 1LLU << 14,
-    MasksToBoundsChanged                = 1LLU << 15,
-    OpaqueChanged                       = 1LLU << 16,
-    ContentsHiddenChanged               = 1LLU << 17,
-    MaskLayerChanged                    = 1LLU << 18,
-    ClonedContentsChanged               = 1LLU << 19,
-    ContentsRectChanged                 = 1LLU << 20,
-    ContentsScaleChanged                = 1LLU << 21,
-    CornerRadiusChanged                 = 1LLU << 22,
-    ShapeRoundedRectChanged             = 1LLU << 23,
-    ShapePathChanged                    = 1LLU << 24,
-    MinificationFilterChanged           = 1LLU << 25,
-    MagnificationFilterChanged          = 1LLU << 26,
-    BlendModeChanged                    = 1LLU << 27,
-    WindRuleChanged                     = 1LLU << 28,
-    SpeedChanged                        = 1LLU << 29,
-    TimeOffsetChanged                   = 1LLU << 30,
-    BackingStoreChanged                 = 1LLU << 31,
-    BackingStoreAttachmentChanged       = 1LLU << 32,
-    FiltersChanged                      = 1LLU << 33,
-    AnimationsChanged                   = 1LLU << 34,
-    AntialiasesEdgesChanged             = 1LLU << 35,
-    CustomAppearanceChanged             = 1LLU << 36,
+    NameChanged                         = 1LLU << 0,
+    TransformChanged                    = 1LLU << 1,
+    SublayerTransformChanged            = 1LLU << 2,
+    ShapeRoundedRectChanged             = 1LLU << 3,
+    ChildrenChanged                     = 1LLU << 4,
+    AnimationsChanged                   = 1LLU << 5,
+    PositionChanged                     = 1LLU << 6,
+    AnchorPointChanged                  = 1LLU << 7,
+    BoundsChanged                       = 1LLU << 8,
+    ContentsRectChanged                 = 1LLU << 9,
+    BackingStoreChanged                 = 1LLU << 10,
+    FiltersChanged                      = 1LLU << 11,
+    ShapePathChanged                    = 1LLU << 12,
+    MaskLayerChanged                    = 1LLU << 13,
+    ClonedContentsChanged               = 1LLU << 14,
+    TimeOffsetChanged                   = 1LLU << 15,
+    SpeedChanged                        = 1LLU << 16,
+    ContentsScaleChanged                = 1LLU << 17,
+    CornerRadiusChanged                 = 1LLU << 18,
+    BorderWidthChanged                  = 1LLU << 19,
+    OpacityChanged                      = 1LLU << 20,
+    BackgroundColorChanged              = 1LLU << 21,
+    BorderColorChanged                  = 1LLU << 22,
+    CustomAppearanceChanged             = 1LLU << 23,
+    MinificationFilterChanged           = 1LLU << 24,
+    MagnificationFilterChanged          = 1LLU << 25,
+    BlendModeChanged                    = 1LLU << 26,
+    WindRuleChanged                     = 1LLU << 27,
+    VideoGravityChanged                 = 1LLU << 28,
+    AntialiasesEdgesChanged             = 1LLU << 29,
+    HiddenChanged                       = 1LLU << 30,
+    BackingStoreAttachmentChanged       = 1LLU << 31,
+    GeometryFlippedChanged              = 1LLU << 32,
+    DoubleSidedChanged                  = 1LLU << 33,
+    MasksToBoundsChanged                = 1LLU << 34,
+    OpaqueChanged                       = 1LLU << 35,
+    ContentsHiddenChanged               = 1LLU << 36,
     UserInteractionEnabledChanged       = 1LLU << 37,
     EventRegionChanged                  = 1LLU << 38,
+#if ENABLE(SCROLLING_THREAD)
     ScrollingNodeIDChanged              = 1LLU << 39,
+#endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    SeparatedChanged                    = 1LLU << 40,
+    SeparatedChanged                    = 1LLU << 39,
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-    SeparatedPortalChanged              = 1LLU << 41,
-    DescendentOfSeparatedPortalChanged  = 1LLU << 42,
+    SeparatedPortalChanged              = 1LLU << 40,
+    DescendentOfSeparatedPortalChanged  = 1LLU << 41,
 #endif
 #endif
-    VideoGravityChanged                 = 1LLU << 44,
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    CoverageRectChanged                 = 1LLU << 45,
+    CoverageRectChanged                 = 1LLU << 42,
 #endif
+};
+
+struct RemoteLayerBackingStoreOrProperties {
+    RemoteLayerBackingStoreOrProperties() = default;
+    ~RemoteLayerBackingStoreOrProperties();
+    RemoteLayerBackingStoreOrProperties(RemoteLayerBackingStoreOrProperties&&) = default;
+    RemoteLayerBackingStoreOrProperties& operator=(RemoteLayerBackingStoreOrProperties&&) = default;
+    RemoteLayerBackingStoreOrProperties(std::unique_ptr<RemoteLayerBackingStoreProperties>&& properties)
+        : properties(WTFMove(properties)) { }
+
+    // Used in the WebContent process.
+    std::unique_ptr<RemoteLayerBackingStore> store;
+    // Used in the UI process.
+    std::unique_ptr<RemoteLayerBackingStoreProperties> properties;
 };
 
 struct LayerProperties {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    LayerProperties();
-    LayerProperties(LayerProperties&&);
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, LayerProperties&);
 
     void notePropertiesChanged(OptionSet<LayerChange> changeFlags)
     {
@@ -115,28 +126,24 @@ struct LayerProperties {
 
     Vector<WebCore::PlatformLayerIdentifier> children;
 
-    Vector<std::pair<String, PlatformCAAnimationRemote::Properties>> addedAnimations;
-    HashSet<String> keysOfAnimationsToRemove;
+    struct AnimationChanges {
+        Vector<std::pair<String, PlatformCAAnimationRemote::Properties>> addedAnimations;
+        HashSet<String> keysOfAnimationsToRemove;
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-    Vector<Ref<WebCore::AcceleratedEffect>> effects;
-    WebCore::AcceleratedEffectValues baseValues;
+        Vector<Ref<WebCore::AcceleratedEffect>> effects;
+        WebCore::AcceleratedEffectValues baseValues;
 #endif
+    } animationChanges;
 
     WebCore::FloatPoint3D position;
     WebCore::FloatPoint3D anchorPoint { 0.5, 0.5, 0 };
     WebCore::FloatRect bounds;
     WebCore::FloatRect contentsRect { 0, 0, 1, 1 };
-    // Used in the WebContent process.
-    std::unique_ptr<RemoteLayerBackingStore> backingStore;
-    // Used in the UI process.
-    std::unique_ptr<RemoteLayerBackingStoreProperties> backingStoreProperties;
+    RemoteLayerBackingStoreOrProperties backingStoreOrProperties;
     std::unique_ptr<WebCore::FilterOperations> filters;
     WebCore::Path shapePath;
     Markable<WebCore::PlatformLayerIdentifier> maskLayerID;
     Markable<WebCore::PlatformLayerIdentifier> clonedLayerID;
-#if ENABLE(SCROLLING_THREAD)
-    WebCore::ScrollingNodeID scrollingNodeID { 0 };
-#endif
     double timeOffset { 0 };
     float speed { 1 };
     float contentsScale { 1 };
@@ -162,6 +169,9 @@ struct LayerProperties {
     bool userInteractionEnabled { true };
     WebCore::EventRegion eventRegion;
 
+#if ENABLE(SCROLLING_THREAD)
+    WebCore::ScrollingNodeID scrollingNodeID { 0 };
+#endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     WebCore::FloatRect coverageRect;
 #endif

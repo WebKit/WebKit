@@ -27,23 +27,23 @@
 
 #include "UserContentControllerIdentifier.h"
 #include "WebPageProxyIdentifier.h"
-#include <WebCore/ContentExtensionActions.h>
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/NetworkLoadInformation.h>
-#include <WebCore/ResourceError.h>
-#include <pal/SessionID.h>
 #include <variant>
-#include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
 #include <wtf/WeakPtr.h>
+
+namespace PAL {
+class SessionID;
+}
 
 namespace WebCore {
 class ContentSecurityPolicy;
 class OriginAccessPatterns;
 struct ContentRuleListResults;
 struct ContentSecurityPolicyClient;
+class ResourceError;
 class SecurityOrigin;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class PreflightPolicy : uint8_t;

@@ -65,7 +65,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
 #endif
     scheduleLayerFlush();
 
-    if (auto* frameView = m_webPage.mainFrameView()) {
+    if (auto* frameView = m_webPage.localMainFrameView()) {
         auto contentsSize = frameView->contentsSize();
         if (!contentsSize.isEmpty())
             m_viewportController.didChangeContentsSize(contentsSize);
@@ -186,7 +186,7 @@ void LayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* viewOverlayRootLayer)
 
 void LayerTreeHost::scrollNonCompositedContents(const IntRect& rect)
 {
-    auto* frameView = m_webPage.mainFrameView();
+    auto* frameView = m_webPage.localMainFrameView();
     if (!frameView || !frameView->delegatesScrolling())
         return;
 
@@ -492,21 +492,24 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
 #if PLATFORM(GTK)
 FloatPoint LayerTreeHost::constrainTransientZoomOrigin(double scale, FloatPoint origin) const
 {
-    auto& frameView = *m_webPage.mainFrameView();
-    FloatRect visibleContentRect = frameView.visibleContentRectIncludingScrollbars();
+    auto* frameView = m_webPage.localMainFrameView();
+    if (!frameView)
+        return origin;
+
+    FloatRect visibleContentRect = frameView->visibleContentRectIncludingScrollbars();
 
     FloatPoint constrainedOrigin = visibleContentRect.location();
     constrainedOrigin.moveBy(-origin);
 
-    IntSize scaledTotalContentsSize = frameView.totalContentsSize();
+    IntSize scaledTotalContentsSize = frameView->totalContentsSize();
     scaledTotalContentsSize.scale(scale * m_webPage.viewScaleFactor() / m_webPage.totalScaleFactor());
 
     // Scaling may have exposed the overhang area, so we need to constrain the final
     // layer position exactly like scrolling will once it's committed, to ensure that
     // scrolling doesn't make the view jump.
     constrainedOrigin = ScrollableArea::constrainScrollPositionForOverhang(roundedIntRect(visibleContentRect),
-        scaledTotalContentsSize, roundedIntPoint(constrainedOrigin), frameView.scrollOrigin(),
-        frameView.headerHeight(), frameView.footerHeight());
+        scaledTotalContentsSize, roundedIntPoint(constrainedOrigin), frameView->scrollOrigin(),
+        frameView->headerHeight(), frameView->footerHeight());
     constrainedOrigin.moveBy(-visibleContentRect.location());
     constrainedOrigin = -constrainedOrigin;
 
@@ -515,7 +518,11 @@ FloatPoint LayerTreeHost::constrainTransientZoomOrigin(double scale, FloatPoint 
 
 CoordinatedGraphicsLayer* LayerTreeHost::layerForTransientZoom() const
 {
-    RenderLayerBacking* renderViewBacking = m_webPage.mainFrameView()->renderView()->layer()->backing();
+    auto* frameView = m_webPage.localMainFrameView();
+    if (!frameView)
+        return nullptr;
+
+    RenderLayerBacking* renderViewBacking = frameView->renderView()->layer()->backing();
 
     if (GraphicsLayer* contentsContainmentLayer = renderViewBacking->contentsContainmentLayer())
         return &downcast<CoordinatedGraphicsLayer>(*contentsContainmentLayer);

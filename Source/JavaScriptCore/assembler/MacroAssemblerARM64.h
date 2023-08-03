@@ -441,17 +441,22 @@ public:
         m_assembler.and_<64>(dest, dest, src);
     }
 
-    void and64(TrustedImm32 imm, RegisterID dest)
+    void and64(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         LogicalImmediate logicalImm = LogicalImmediate::create64(static_cast<intptr_t>(static_cast<int64_t>(imm.m_value)));
 
         if (logicalImm.isValid()) {
-            m_assembler.and_<64>(dest, dest, logicalImm);
+            m_assembler.and_<64>(dest, src, logicalImm);
             return;
         }
 
         signExtend32ToPtr(imm, getCachedDataTempRegisterIDAndInvalidate());
-        m_assembler.and_<64>(dest, dest, dataTempRegister);
+        m_assembler.and_<64>(dest, src, dataTempRegister);
+    }
+
+    void and64(TrustedImm32 imm, RegisterID dest)
+    {
+        and64(imm, dest, dest);
     }
 
     void and64(TrustedImmPtr imm, RegisterID dest)
@@ -1066,6 +1071,13 @@ public:
             or32(imm, memoryTempRegister, getCachedDataTempRegisterIDAndInvalidate());
             store16(dataTempRegister, address.m_ptr);
         }
+    }
+
+    void or16(RegisterID mask, AbsoluteAddress address)
+    {
+        load16(address.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.orr<32>(dataTempRegister, dataTempRegister, mask);
+        store16(dataTempRegister, address.m_ptr);
     }
 
     void or32(RegisterID src, RegisterID dest)

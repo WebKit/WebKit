@@ -107,5 +107,11 @@ int RemoteScrollbarsController::minimumThumbLength(WebCore::ScrollbarOrientation
     return orientation == WebCore::ScrollbarOrientation::Horizontal ? m_horizontalMinimumThumbLength : m_verticalMinimumThumbLength;
 }
 
+void RemoteScrollbarsController::updateScrollbarEnabledState(WebCore::Scrollbar& scrollbar)
+{
+    if (auto scrollingCoordinator = m_coordinator.get())
+        scrollingCoordinator->setScrollbarEnabled(scrollbar);
+}
+
 }
 #endif // PLATFORM(MAC)

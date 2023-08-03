@@ -111,7 +111,10 @@ void RenderTableCol::insertedIntoTree(IsInternalMove isInternalMove)
 void RenderTableCol::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
     RenderBox::willBeRemovedFromTree(isInternalMove);
-    table()->removeColumn(this);
+    if (auto* table = this->table()) {
+        // We only need to invalidate the column cache when only individual columns are being removed (as opposed to when the entire table is being collapsed).
+        table->invalidateColumns();
+    }
 }
 
 bool RenderTableCol::isChildAllowed(const RenderObject& child, const RenderStyle& style) const

@@ -640,6 +640,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
 #endif
     , m_isSynthesized(constructionFlags.contains(ConstructionFlag::Synthesized))
     , m_isNonRenderedPlaceholder(constructionFlags.contains(ConstructionFlag::NonRenderedPlaceholder))
+    , m_frameIdentifier(frame ? std::optional(frame->frameID()) : std::nullopt)
 {
     addToDocumentsMap();
 
@@ -2988,7 +2989,8 @@ void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>&
 {
     for (auto& highlight : highlightRegister.map()) {
         for (auto& rangeData : highlight.value->rangesData()) {
-            if (rangeData->startPosition().isNotNull() && rangeData->endPosition().isNotNull())
+            // FIXME: For live ranges, we can optimize by only performing this when the range changed.
+            if (rangeData->startPosition().isNotNull() && rangeData->endPosition().isNotNull() && !rangeData->range().isLiveRange())
                 continue;
             auto simpleRange = makeSimpleRange(rangeData->range());
             if (&simpleRange.startContainer().treeScope() != &simpleRange.endContainer().treeScope())
@@ -3013,12 +3015,8 @@ void Document::updateHighlightPositions()
     for (auto& weakRangeData : rangesData) {
         if (auto* rangeData = weakRangeData.get()) {
             VisibleSelection visibleSelection(makeSimpleRange(rangeData->range()));
-            Position startPosition;
-            Position endPosition;
-            if (rangeData->startPosition().isNull())
-                startPosition = visibleSelection.visibleStart().deepEquivalent();
-            if (rangeData->endPosition().isNull())
-                endPosition = visibleSelection.visibleEnd().deepEquivalent();
+            auto startPosition = visibleSelection.visibleStart().deepEquivalent();
+            auto endPosition = visibleSelection.visibleEnd().deepEquivalent();
             if (!weakRangeData.get())
                 continue;
             if (!startPosition.isNull())
@@ -3909,9 +3907,11 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(LocalFrame&
     if (m_frame->hasHadUserInteraction())
         return false;
 
-    // Only prevent navigations by unsandboxed iframes. Such navigations by unsandboxed iframes would have already been blocked unless
+    // Only prevent navigations by unsandboxed iframes. Such navigations by sandboxed iframes would have already been blocked unless
     // "allow-top-navigation" / "allow-top-navigation-by-user-activation" was explicitly specified.
-    if (sandboxFlags() != SandboxNone) {
+    // We also want to guard against bypassing this block via an iframe-provided CSP sandbox.
+    auto* ownerElement = m_frame->ownerElement();
+    if ((!ownerElement || ownerElement->sandboxFlags() == sandboxFlags()) && sandboxFlags() != SandboxNone) {
         // Navigation is only allowed if the parent of the sandboxed iframe is first-party.
         RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
         RefPtr parentDocument = parentFrame ? parentFrame->document() : nullptr;
@@ -6305,12 +6305,6 @@ void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 
 #endif
 
-void Document::setDesignMode(DesignMode value)
-{
-    m_designMode = value;
-    scheduleFullStyleRebuild();
-}
-
 String Document::designMode() const
 {
     return inDesignMode() ? onAtom() : offAtom();
@@ -6319,7 +6313,8 @@ String Document::designMode() const
 void Document::setDesignMode(const String& value)
 {
     DesignMode mode = equalLettersIgnoringASCIICase(value, "on"_s) ? DesignMode::On : DesignMode::Off;
-    setDesignMode(mode);
+    m_designMode = mode;
+    scheduleFullStyleRebuild();
 }
 
 Document* Document::parentDocument() const
@@ -8611,7 +8606,7 @@ std::optional<PageIdentifier> Document::pageID() const
 
 std::optional<FrameIdentifier> Document::frameID() const
 {
-    return m_frame ? std::optional<FrameIdentifier>(m_frame->loader().frameID()) : std::nullopt;
+    return m_frameIdentifier;
 }
 
 void Document::registerArticleElement(Element& article)
@@ -8912,18 +8907,20 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
             auto isShowingAutoPopover = [](HTMLElement& element) -> bool {
                 return element.popoverState() == PopoverState::Auto && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing;
             };
-            for (auto& element : lineageOfType<HTMLElement>(*startElement)) {
-                if (!clickedPopover && isShowingAutoPopover(element))
-                    clickedPopover = &element;
+            for (RefPtr element = startElement; element; element = element->parentElementInComposedTree()) {
+                if (auto* htmlElement = dynamicDowncast<HTMLElement>(element.get())) {
+                    if (!clickedPopover && isShowingAutoPopover(*htmlElement))
+                        clickedPopover = htmlElement;
 
-                if (!invokerPopover) {
-                    if (auto* button = dynamicDowncast<HTMLFormControlElement>(element)) {
-                        if (auto* popover = button->popoverTargetElement(); popover && isShowingAutoPopover(*popover))
-                            invokerPopover = popover;
+                    if (!invokerPopover) {
+                        if (auto* button = dynamicDowncast<HTMLFormControlElement>(*htmlElement)) {
+                            if (auto* popover = button->popoverTargetElement(); popover && isShowingAutoPopover(*popover))
+                                invokerPopover = popover;
+                        }
                     }
+                    if (clickedPopover && invokerPopover)
+                        break;
                 }
-                if (clickedPopover && invokerPopover)
-                    break;
             }
             return std::tuple { WTFMove(clickedPopover), WTFMove(invokerPopover) };
         }();

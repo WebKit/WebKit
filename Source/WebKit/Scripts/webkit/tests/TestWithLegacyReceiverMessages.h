@@ -459,8 +459,8 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection; }
     static constexpr bool isSync = false;
 
-    DidCreateWebProcessConnection(const MachSendRight& connectionIdentifier, const OptionSet<WebKit::SelectionFlags>& flags)
-        : m_arguments(connectionIdentifier, flags)
+    DidCreateWebProcessConnection(MachSendRight&& connectionIdentifier, const OptionSet<WebKit::SelectionFlags>& flags)
+        : m_arguments(WTFMove(connectionIdentifier), flags)
     {
     }
 
@@ -470,7 +470,7 @@ public:
     }
 
 private:
-    std::tuple<const MachSendRight&, const OptionSet<WebKit::SelectionFlags>&> m_arguments;
+    std::tuple<MachSendRight&&, const OptionSet<WebKit::SelectionFlags>&> m_arguments;
 };
 #endif
 

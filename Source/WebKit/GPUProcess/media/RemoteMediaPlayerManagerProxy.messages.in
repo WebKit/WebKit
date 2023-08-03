@@ -29,9 +29,6 @@ messages -> RemoteMediaPlayerManagerProxy NotRefCounted {
 
     GetSupportedTypes(enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier) -> (Vector<String> types) Synchronous
     SupportsTypeAndCodecs(enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, struct WebCore::MediaEngineSupportParameters type) -> (enum:uint8_t WebCore::MediaPlayerEnums::SupportsType support) Synchronous
-    OriginsInMediaCache(enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, String path) -> (HashSet<WebCore::SecurityOriginData> origins) Synchronous
-    ClearMediaCache(enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, String path, WallTime modifiedSince)
-    ClearMediaCacheForOrigins(enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, String path, HashSet<WebCore::SecurityOriginData> origins)
     SupportsKeySystem(enum:uint8_t WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, String keySystem, String mimeType) -> (bool supports) Synchronous
 }
 

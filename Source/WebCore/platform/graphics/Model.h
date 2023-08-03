@@ -44,10 +44,6 @@ public:
     Ref<SharedBuffer> data() const { return m_data; }
     const String& mimeType() const { return m_mimeType; }
     const URL& url() const { return m_url; }
-    
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static RefPtr<Model> decode(Decoder&);
-
 private:
     explicit Model(Ref<SharedBuffer>&&, String, URL);
 
@@ -55,35 +51,6 @@ private:
     String m_mimeType;
     URL m_url;
 };
-
-template<class Encoder>
-void Model::encode(Encoder& encoder) const
-{
-    encoder << m_data;
-    encoder << m_mimeType;
-    encoder << m_url;
-}
-
-template<class Decoder>
-RefPtr<Model> Model::decode(Decoder& decoder)
-{
-    std::optional<Ref<SharedBuffer>> data;
-    decoder >> data;
-    if (!data)
-        return nullptr;
-
-    std::optional<String> mimeType;
-    decoder >> mimeType;
-    if (!mimeType)
-        return nullptr;
-
-    std::optional<URL> url;
-    decoder >> url;
-    if (!url)
-        return nullptr;
-
-    return Model::create(WTFMove(*data), WTFMove(*mimeType), WTFMove(*url));
-}
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Model&);
 

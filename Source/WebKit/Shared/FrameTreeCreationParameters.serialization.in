@@ -22,6 +22,5 @@
 
 struct WebKit::FrameTreeCreationParameters {
     WebCore::FrameIdentifier frameID;
-    WebCore::ProcessIdentifier remoteProcessIdentifier;
     Vector<WebKit::FrameTreeCreationParameters> children;
 };

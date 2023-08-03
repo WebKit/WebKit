@@ -45,7 +45,6 @@
 #if PLATFORM(COCOA)
 #include "ArgumentCodersDarwin.h"
 #include "MachMessage.h"
-#include "WKCrashReporter.h"
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
@@ -884,16 +883,6 @@ void Connection::processIncomingSyncReply(std::unique_ptr<Decoder> decoder)
     // This can happen if the send timed out, so it's fine to ignore.
 }
 
-static NEVER_INLINE NO_RETURN_DUE_TO_CRASH void terminateDueToIPCTerminateMessage()
-{
-#if PLATFORM(COCOA)
-    WebKit::logAndSetCrashLogMessage("Receives Terminate message");
-#else
-    WTFLogAlways("Receives Terminate message");
-#endif
-    CRASH();
-}
-
 void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
 {
     ASSERT(message->messageReceiverName() != ReceiverName::Invalid);
@@ -902,9 +891,6 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
         processIncomingSyncReply(WTFMove(message));
         return;
     }
-
-    if (message->messageName() == MessageName::Terminate)
-        return terminateDueToIPCTerminateMessage();
 
     if (!MessageReceiveQueueMap::isValidMessage(*message)) {
         dispatchDidReceiveInvalidMessage(message->messageName());
@@ -1511,5 +1497,9 @@ const char* errorAsString(Error error)
 
     return "";
 }
+
+Connection::DecoderOrError::DecoderOrError(DecoderOrError&&) = default;
+
+Connection::DecoderOrError::~DecoderOrError() = default;
 
 } // namespace IPC

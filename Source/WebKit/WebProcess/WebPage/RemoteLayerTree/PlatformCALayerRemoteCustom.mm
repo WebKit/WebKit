@@ -111,9 +111,12 @@ uint32_t PlatformCALayerRemoteCustom::hostingContextID()
 void PlatformCALayerRemoteCustom::populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeContext& context, PlatformCALayer::LayerType type)
 {
     PlatformCALayerRemote::populateCreationProperties(properties, context, type);
-    properties.hostingContextID = hostingContextID();
-    properties.hostingDeviceScaleFactor = context.deviceScaleFactor();
-    properties.preservesFlip = YES;
+    ASSERT(std::holds_alternative<RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData>(properties.additionalData));
+    properties.additionalData = RemoteLayerTreeTransaction::LayerCreationProperties::CustomData {
+        .hostingContextID = hostingContextID(),
+        .hostingDeviceScaleFactor = context.deviceScaleFactor(),
+        .preservesFlip = true
+    };
 }
 
 Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayerClient* owner) const

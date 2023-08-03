@@ -320,9 +320,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotification notification)
 {
-    ASSERT(is<AccessibilityObject>(object));
-    if (!is<AccessibilityObject>(object))
+    if (!is<AccessibilityObject>(object)) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     bool skipSystemNotification = false;
     // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
@@ -449,6 +450,8 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
         return;
     }
 
+    RefPtr protectedObject = object;
+
 #ifndef NDEBUG
     exerciseIsIgnored(downcast<AccessibilityObject>(*object));
 #endif
@@ -479,13 +482,14 @@ static void createIsolatedObjectIfNeeded(AXCoreObject& object, std::optional<Pag
 }
 #endif
 
-void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
+void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
 {
     if (!object)
         object = rootWebArea();
 
     if (!object)
         return;
+    RefPtr protectedObject = object;
 
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:5]);
     if (m_isSynchronizingSelection)
@@ -529,8 +533,8 @@ void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object
 #endif
     }
 
-    if (auto root = rootWebArea()) {
-        AXPostNotificationWithUserInfo(rootWebArea()->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
+    if (RefPtr root = rootWebArea()) {
+        AXPostNotificationWithUserInfo(root->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
         if (root->wrapper() != object->wrapper())
             AXPostNotificationWithUserInfo(object->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
     }
@@ -598,13 +602,14 @@ static void postUserInfoForChanges(AXCoreObject& rootWebArea, AXCoreObject& obje
         AXPostNotificationWithUserInfo(object.wrapper(), NSAccessibilityValueChangedNotification, userInfo.get());
 }
 
-void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* object, AXTextEditType deletionType, const String& deletedText, AXTextEditType insertionType, const String& insertedText, const VisiblePosition& position)
+void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* object, AXTextEditType deletionType, const String& deletedText, AXTextEditType insertionType, const String& insertedText, const VisiblePosition& position)
 {
     if (!object)
         object = rootWebArea();
 
     if (!object)
         return;
+    RefPtr protectedObject = object;
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
     if (NSDictionary *change = textReplacementChangeDictionary(*object, deletionType, deletedText, position))
@@ -612,17 +617,18 @@ void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* object
     if (NSDictionary *change = textReplacementChangeDictionary(*object, insertionType, insertedText, position))
         [changes addObject:change];
 
-    if (auto* root = rootWebArea())
+    if (RefPtr root = rootWebArea())
         postUserInfoForChanges(*root, *object, changes.get(), m_pageID);
 }
 
-void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCoreObject* object, const String& deletedText, const String& insertedText, HTMLTextFormControlElement& textControl)
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String& deletedText, const String& insertedText, HTMLTextFormControlElement& textControl)
 {
     if (!object)
         object = rootWebArea();
 
     if (!object)
         return;
+    RefPtr protectedObject = object;
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
     if (NSDictionary *change = textReplacementChangeDictionary(*object, AXTextEditTypeDelete, deletedText, textControl))
@@ -630,7 +636,7 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCore
     if (NSDictionary *change = textReplacementChangeDictionary(*object, AXTextEditTypeInsert, insertedText, textControl))
         [changes addObject:change];
 
-    if (auto* root = rootWebArea())
+    if (RefPtr root = rootWebArea())
         postUserInfoForChanges(*root, *object, changes.get(), m_pageID);
 }
 

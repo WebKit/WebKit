@@ -451,11 +451,7 @@ static void verifyCertificateAndPublicKey(SecTrustRef trust)
     
     EXPECT_EQ(1, SecTrustGetCertificateCount(trust));
 
-#if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
     auto certificate = adoptCF(SecCertificateCopyData((SecCertificateRef)CFArrayGetValueAtIndex(adoptCF(SecTrustCopyCertificateChain(trust)).get(), 0)));
-#else
-    auto certificate = adoptCF(SecCertificateCopyData(SecTrustGetCertificateAtIndex(trust, 0)));
-#endif
     compareData(certificate, {
         0x30, 0x82, 0x05, 0x80, 0x30, 0x82, 0x03, 0x68, 0x02, 0x09, 0x00, 0x8a, 0x1e, 0x23, 0xd1, 0x53,
         0x93, 0x10, 0xb8, 0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x0b,

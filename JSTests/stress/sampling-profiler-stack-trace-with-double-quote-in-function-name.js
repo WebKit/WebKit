@@ -11,7 +11,7 @@ if (platformSupportsSamplingProfiler()) {
         for (let i = 0; i < 1000; ++i) {
             foo();
             let stacktraces = samplingProfilerStackTraces();
-            for (let stackTrace of stacktraces) { }
+            for (let stackTrace of stacktraces.traces) { }
         }
     }
 

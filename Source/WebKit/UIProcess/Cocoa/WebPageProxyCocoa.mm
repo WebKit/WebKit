@@ -241,22 +241,6 @@ void WebPageProxy::contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&
 void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParameters& loadParameters)
 {
     loadParameters.dataDetectionReferenceDate = m_uiClient->dataDetectionReferenceDate();
-
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    loadParameters.networkExtensionSandboxExtensionHandles = createNetworkExtensionsSandboxExtensions(process);
-#if PLATFORM(IOS) || PLATFORM(VISION)
-    auto auditToken = process.auditToken();
-    if (!process.hasManagedSessionSandboxAccess() && [getWebFilterEvaluatorClass() isManagedSession]) {
-        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
-            loadParameters.contentFilterExtensionHandle = WTFMove(*handle);
-
-        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
-            loadParameters.frontboardServiceExtensionHandle = WTFMove(*handle);
-
-        process.markHasManagedSessionSandboxAccess();
-    }
-#endif // PLATFORM(IOS) || PLATFORM(VISION)
-#endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 }
 
 void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, Vector<SandboxExtension::Handle>& fileUploadHandles)
@@ -826,22 +810,6 @@ void WebPageProxy::abortApplePayAMSUISession()
 
 #endif // ENABLE(APPLE_PAY_AMS_UI)
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
-{
-#if ENABLE(CONTENT_FILTERING)
-    if (!process.hasNetworkExtensionSandboxAccess() && NetworkExtensionContentFilter::isRequired()) {
-        process.markHasNetworkExtensionSandboxAccess();
-        constexpr ASCIILiteral neHelperService { "com.apple.nehelper"_s };
-        constexpr ASCIILiteral neSessionManagerService { "com.apple.nesessionmanager.content-filter"_s };
-        auto auditToken = process.hasConnection() ? process.connection()->getAuditToken();
-        return SandboxExtension::createHandlesForMachLookup({ neHelperService, neSessionManagerService }, auditToken, );
-    }
-#endif
-    return { };
-}
-#endif
-
 #if ENABLE(CONTEXT_MENUS)
 #if HAVE(TRANSLATION_UI_SERVICES)
 
@@ -955,10 +923,6 @@ RetainPtr<WKWebView> WebPageProxy::cocoaView()
 void WebPageProxy::setCocoaView(WKWebView *view)
 {
     internals().cocoaView = view;
-#if PLATFORM(IOS_FAMILY)
-    if (m_screenOrientationManager)
-        m_screenOrientationManager->setWindow(cocoaView().get().window);
-#endif
 }
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

@@ -453,7 +453,32 @@ goog.scope(function() {
 
                 if (inited) {
                     // Run the test, save the result.
+
+                    const debug = tcuTestCase._debug = tcuTestCase._debug || (() => {
+                        function LapStopwatch() {
+                            this.lap = function() {
+                                const now = performance.now();
+                                const ret = now - this.last;
+                                this.last = now;
+                                return ret;
+                            };
+                            this.lap();
+                        }
+                        return {
+                            stopwatch: new LapStopwatch(),
+                            testDoneCount: 0,
+                        };
+                    })();
+                    const overheadDur = debug.stopwatch.lap();
+
                     tcuTestCase.lastResult = state.currentTest.iterate();
+
+                    const testDur = debug.stopwatch.lap();
+                    debug.testDoneCount += 1;
+                    console.log(
+                        `[test ${debug.testDoneCount}] Ran in ${testDur}ms`,
+                        `(+ ${overheadDur}ms overhead)`,
+                    );
                 } else {
                     // Skip uninitialized test.
                     tcuTestCase.lastResult = tcuTestCase.IterateResult.STOP;
@@ -484,8 +509,8 @@ goog.scope(function() {
             }
 
             tcuTestCase.runner.runCallback(tcuTestCase.runTestCases);
-        } else
+        } else {
             tcuTestCase.runner.terminate();
+        }
     };
-
 });

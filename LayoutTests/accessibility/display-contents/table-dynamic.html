@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+td, th { display: contents; }
+</style>
+</head>
+<body role="group" id="body">
+
+<table id="t0">
+<caption>Table zero caption</caption>
+<thead>
+    <tr id="r0-t0">
+        <th id="r0c0-t0">(T0) Author</th>
+        <th id="r0c1-t0">(T0) Title</th>
+    </tr>
+</thead>
+<tbody id="tbody-t0">
+    <tr id="r1-t0">
+        <td id="r1c0-t0">(T0) Stephen Hawking</td>
+        <td id="r1c1-t0">(T0) A Brief History of Time</td>
+    </tr>
+    <tr id="r2-t0">
+        <td id="r2c0-t0">(T0) Carl Sagan</td>
+        <td id="r2c1-t0">(T0) Cosmos</td>
+    </tr>
+</tbody>
+</table>
+
+<table id="t1">
+<caption>Table one caption</caption>
+<thead>
+    <tr id="r0-t1">
+        <th id="r0c0-t1">(T1) Author</th>
+        <th id="r0c1-t1">(T1) Title</th>
+    </tr>
+</thead>
+<tbody id="tbody-t1">
+    <tr id="r1-t1">
+        <td id="r1c0-t1">(T1) Stephen Hawking</td>
+        <td id="r1c1-t1">(T1) A Brief History of Time</td>
+    </tr>
+    <tr id="r2-t1">
+        <td id="r2c0-t1">(T1) Carl Sagan</td>
+        <td id="r2c1-t1">(T1) Cosmos</td>
+    </tr>
+</tbody>
+</table>
+
+<script>
+var output = "This test ensures that display:contents tables with dynamic content are accessible.\n\n";
+
+var table;
+function dumpTable(tableID, expectedRowCount, expectedColumnCount, useExpect = true) {
+    output += `Dumping table #${tableID} (expecting row count ${expectedRowCount}, column count ${expectedColumnCount})\n`;
+    table = accessibilityController.accessibleElementById(tableID);
+    output += expect("table.rowCount", expectedRowCount);
+    output += expect("table.columnCount", expectedColumnCount);
+
+    for (let row = 0; row < expectedRowCount; row++) {
+        for (let column = 0; column < expectedColumnCount; column++) {
+            if (useExpect)
+                output += expect(`table.cellForColumnAndRow(${column}, ${row}).domIdentifier`, `"r${row}c${column}-${tableID}"`);
+            else
+                output += `table.cellForColumnAndRow(${column}, ${row}).domIdentifier is ${table.cellForColumnAndRow(column, row).domIdentifier}\n`;
+        }
+    }
+}
+
+function traverseBody() {
+    output += `\nPerforming search traversal of body.\n`;
+    function elementDescription(axElement) {
+        if (!axElement)
+            return "null";
+
+        const role = axElement.role;
+        const id = axElement.domIdentifier;
+        let result = `${id ? `#${id} ` : ""}${role}`;
+        if (role.includes("StaticText"))
+            result += ` ${accessibilityController.platformName === "ios" ? axElement.description : axElement.stringValue}`;
+        return result;
+    }
+
+    const container = accessibilityController.accessibleElementById("body");
+    let searchResult = null;
+    while (true) {
+        searchResult = container.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+        const parentOutput = accessibilityController.platformName === "ios" ? "" : ` (parent: {${elementDescription(searchResult.parentElement())}})`;
+        output += `\n{${elementDescription(searchResult)}}${parentOutput}\n`;
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    dumpTable("t0", 3, 2);
+    dumpTable("t1", 3, 2);
+    traverseBody();
+
+    output += "\nMoving #r2-t1 from table one to table zero.\n";
+    document.getElementById("tbody-t0").appendChild(document.getElementById("r2-t1"));
+    setTimeout(async () => {
+        await waitFor(() => {
+            var tableZero = accessibilityController.accessibleElementById("t0");
+            var tableOne = accessibilityController.accessibleElementById("t1");
+            if (!tableZero || !tableOne)
+                return false;
+            return tableZero.rowCount >= 4 && tableOne.rowCount === 2;
+        });
+
+        dumpTable("t0", 4, 2, false /* useExpect */);
+        dumpTable("t1", 2, 2);
+        traverseBody();
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>
+

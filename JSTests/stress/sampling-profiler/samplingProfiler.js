@@ -25,10 +25,10 @@ function makeNode(name) {
 
 function updateCallingContextTree(root) {
     let stacktraces = samplingProfilerStackTraces();
-    for (let stackTrace of stacktraces) {
+    for (let stackTrace of stacktraces.traces) {
         let node = root;
-        for (let i = stackTrace.length; i--; ) {
-            let functionName = stackTrace[i];
+        for (let i = stackTrace.frames.length; i--; ) {
+            let functionName = stackTrace.frames[i].name;
             node = node.makeChildIfNeeded(functionName);
         }
     }

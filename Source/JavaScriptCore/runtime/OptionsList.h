@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GCLogging.h"
+#include "JSExportMacros.h"
 #include <wtf/MathExtras.h>
 
 #if OS(DARWIN)

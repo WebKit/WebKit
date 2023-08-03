@@ -57,6 +57,7 @@ public:
     WebCore::RouteSharingPolicy routeSharingPolicy() const { return m_routeSharingPolicy; }
     size_t preferredBufferSize() const { return m_preferredBufferSize; }
     bool isActive() const { return m_active; }
+    bool isInterrupted() const { return m_isInterrupted; }
 
     void configurationChanged();
     void beginInterruption();
@@ -93,6 +94,7 @@ private:
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
     size_t m_preferredBufferSize { 0 };
     bool m_active { false };
+    bool m_isInterrupted { false };
     bool m_isPlayingToBluetoothOverrideChanged { false };
 };
 

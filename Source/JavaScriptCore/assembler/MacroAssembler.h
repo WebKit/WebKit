@@ -187,6 +187,8 @@ public:
 
 #if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
     using MacroAssemblerBase::and64;
+    using MacroAssemblerBase::or64;
+    using MacroAssemblerBase::xor64;
     using MacroAssemblerBase::convertInt32ToDouble;
     using MacroAssemblerBase::store64;
 #endif
@@ -1625,6 +1627,15 @@ public:
             and64(key.value2, dest);
         } else
             and64(imm.asTrustedImm32(), dest);
+    }
+
+    void and64(Imm32 imm, RegisterID src, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            move(src, dest);
+            and64(imm, dest);
+        } else
+            and64(imm.asTrustedImm32(), src, dest);
     }
 
 #endif // USE(JSVALUE64)

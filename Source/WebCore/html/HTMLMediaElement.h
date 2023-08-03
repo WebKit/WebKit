@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -403,6 +404,7 @@ public:
     void scheduleConfigureTextTracks();
     void configureTextTracks();
     void configureTextTrackGroup(const TrackGroup&);
+    void configureMetadataTextTrackGroup(const TrackGroup&);
 
     void setSelectedTextTrack(TextTrack*);
 
@@ -646,7 +648,7 @@ public:
 
     FloatSize mediaPlayerVideoInlineSize() const override { return videoInlineSize(); }
     WEBCORE_EXPORT WebCore::FloatSize videoInlineSize() const;
-    void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
+    void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&);
     void updateMediaState();
 
 protected:
@@ -865,7 +867,6 @@ private:
     void endIgnoringTrackDisplayUpdateRequests();
 
     void updateActiveTextTrackCues(const MediaTime&);
-    HTMLTrackElement* showingTrackWithSameKind(HTMLTrackElement*) const;
 
     enum class CueAction : uint8_t { Enter, Exit };
     void executeCueEnterOrExitActionForTime(TextTrackCue&, CueAction);

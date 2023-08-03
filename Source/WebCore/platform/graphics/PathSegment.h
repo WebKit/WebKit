@@ -51,7 +51,7 @@ public:
         PathDataBezierCurve,
         PathDataArc,
 
-        std::monostate
+        PathCloseSubpath
     >;
 
     WEBCORE_EXPORT PathSegment(Data&&);
@@ -59,7 +59,7 @@ public:
     bool operator==(const PathSegment&) const = default;
 
     const Data& data() const { return m_data; }
-    bool isCloseSubPath() const { return std::holds_alternative<std::monostate>(m_data); }
+    bool isCloseSubPath() const { return std::holds_alternative<PathCloseSubpath>(m_data); }
 
     FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;

@@ -7,6 +7,7 @@
 <body>
 
 <p id="text">This is a paragraph.</p>
+<a href="" id="link">Click me.</a>
 
 <script>
 if (accessibilityController) {
@@ -32,7 +33,25 @@ if (accessibilityController) {
     output += expect("text.stringForTextMarkerRange(range2)", "'para'");
     output += expect("text.textMarkerRangeLength(range2)", "4");
 
+    if (accessibilityController.platformName == "mac") {
+        var range3 = text.textMarkerRangeForUnorderedMarkers(end, start);
+        output += expect("text.stringForTextMarkerRange(range3)", "'para'");
+        output += expect("text.textMarkerRangeLength(range3)", "4");
+    }
+
+    // Build a range that includes the end of the <p> element and the beginning of the <a>.
+    var link = accessibilityController.accessibleElementById("link");
+    start = end;
+    end = link.startTextMarkerForTextMarkerRange(link.textMarkerRangeForElement(link));
+    for (let i = 0; i < 5; ++i)
+        end = link.nextTextMarker(end);
+    var range4 = text.textMarkerRangeForMarkers(end, start);
+    var expected = "graph.\n\nClick";
+    output += expect("text.stringForTextMarkerRange(range4)", "expected");
+    output += expect("text.textMarkerRangeLength(range4)", "expected.length");
+
     document.getElementById("text").style.visibility = "hidden";
+    document.getElementById("link").style.visibility = "hidden";
     debug(output);
 }
 </script>

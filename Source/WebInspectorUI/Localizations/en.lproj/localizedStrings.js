@@ -543,7 +543,6 @@ localizedStrings["Disable Program"] = "Disable Program";
 localizedStrings["Disable Rule"] = "Disable Rule";
 localizedStrings["Disable all breakpoints (%s)"] = "Disable all breakpoints (%s)";
 localizedStrings["Disable cross-origin restrictions"] = "Disable cross-origin restrictions";
-localizedStrings["Disable encryption"] = "Disable encryption";
 localizedStrings["Disable paint flashing"] = "Disable paint flashing";
 localizedStrings["Disable site-specific hacks"] = "Disable site-specific hacks";
 localizedStrings["Disabled"] = "Disabled";

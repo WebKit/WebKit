@@ -153,7 +153,7 @@ public:
 
     // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble).
     bool shouldEmitSetDouble() const;
-    void emitSetDouble(CCallHelpers&) const;
+    void emitSetDouble(CCallHelpers&, GPRReg scratchGPR) const;
 
     void emitSetNonNumeric(CCallHelpers&) const;
     bool shouldEmitSetNonNumeric() const;
@@ -167,6 +167,7 @@ public:
 #endif
 
     void emitUnconditionalSet(CCallHelpers&, BitfieldType) const;
+    void emitUnconditionalSet(CCallHelpers&, GPRReg) const;
 #endif // ENABLE(JIT)
 
     constexpr uint32_t bits() const { return m_bits; }
@@ -211,6 +212,12 @@ public:
     static constexpr UnaryArithProfileBase observedNumberBits()
     {
         constexpr ObservedType observedNumber { ObservedType().withNumber() };
+        constexpr UnaryArithProfileBase bits = observedNumber.bits() << argObservedTypeShift;
+        return bits;
+    }
+    static constexpr UnaryArithProfileBase observedNonNumberBits()
+    {
+        constexpr ObservedType observedNumber { ObservedType().withNonNumber() };
         constexpr UnaryArithProfileBase bits = observedNumber.bits() << argObservedTypeShift;
         return bits;
     }

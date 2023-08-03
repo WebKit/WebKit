@@ -129,20 +129,19 @@ using namespace WebCore;
 namespace WebCore {
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 bool ScreenCaptureKitCaptureSource::isAvailable()
 {
     return PAL::isScreenCaptureKitFrameworkAvailable();
 }
 
-Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> ScreenCaptureKitCaptureSource::create(const CaptureDevice& device, const MediaConstraints*)
+Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> ScreenCaptureKitCaptureSource::create(const CaptureDevice& device, const MediaConstraints*)
 {
     ASSERT(device.type() == CaptureDevice::DeviceType::Screen || device.type() == CaptureDevice::DeviceType::Window);
 
     auto deviceID = parseInteger<uint32_t>(device.persistentId());
     if (!deviceID)
-        return makeUnexpected("Invalid display device ID"_s);
+        return makeUnexpected(CaptureSourceError { "Invalid display device ID"_s, MediaAccessDenialReason::PermissionDenied });
 
     return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<ScreenCaptureKitCaptureSource>(device, deviceID.value()));
 }
@@ -156,6 +155,8 @@ ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource(const CaptureDevice
 
 ScreenCaptureKitCaptureSource::~ScreenCaptureKitCaptureSource()
 {
+    if (!m_sessionSource)
+        ScreenCaptureKitSharingSessionManager::singleton().cancelPendingSessionForDevice(m_captureDevice);
 }
 
 bool ScreenCaptureKitCaptureSource::start()
@@ -265,8 +266,6 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
 {
     if (m_streamConfiguration)
         return m_streamConfiguration;
-
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     m_streamConfiguration = adoptNS([PAL::allocSCStreamConfigurationInstance() init]);
     [m_streamConfiguration setPixelFormat:preferedPixelBufferFormat()];
@@ -391,6 +390,8 @@ void ScreenCaptureKitCaptureSource::commitConfiguration(const RealtimeMediaSourc
     m_height = settings.height();
     m_frameRate = settings.frameRate();
 
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, IntSize(m_width, m_height), ", ", m_frameRate);
+
     if (!contentStream())
         return;
 
@@ -479,7 +480,6 @@ std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::windowCaptureDeviceW
     return CaptureDevice(String::number(windowID.value()), CaptureDevice::DeviceType::Window, emptyString(), emptyString(), true);
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 } // namespace WebCore

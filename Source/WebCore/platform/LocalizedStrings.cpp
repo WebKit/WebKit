@@ -481,12 +481,12 @@ String contextMenuItemTagPauseAllAnimations()
 
 String contextMenuItemTagPlayAnimation()
 {
-    return WEB_UI_STRING("Play Animation", "Play animation context menu item");
+    return WEB_UI_STRING("Play Animation", "Title for play animation action button or context menu item");
 }
 
 String contextMenuItemTagPauseAnimation()
 {
-    return WEB_UI_STRING("Pause Animation", "Pause animation context menu item");
+    return WEB_UI_STRING("Pause Animation", "Title for pause animation action button or context menu item");
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
@@ -1193,6 +1193,18 @@ String validationMessageTypeMismatchForURLText()
 String validationMessagePatternMismatchText()
 {
     return WEB_UI_STRING("Match the requested format", "Validation message for input form controls requiring a constrained value according to pattern");
+}
+
+String validationMessagePatternMismatchText(const String& title)
+{
+#if PLATFORM(COCOA)
+    return WEB_UI_FORMAT_CFSTRING("Match the requested format: %@", "Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern", title.createCFString().get());
+#elif USE(GLIB)
+    return WEB_UI_FORMAT_STRING("Match the requested format: %s", "Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern", title.utf8().data());
+#else
+    UNUSED_PARAM(title);
+    return validationMessagePatternMismatchText();
+#endif
 }
 
 #if !PLATFORM(GTK)

@@ -49,7 +49,7 @@ public:
     static UniqueRef<TrackBuffer> create(RefPtr<MediaDescription>&&, const MediaTime&);
     
     MediaTime maximumBufferedTime() const;
-    void addBufferedRange(const MediaTime& start, const MediaTime& end);
+    void addBufferedRange(const MediaTime& start, const MediaTime& end, AddTimeRangeOption = AddTimeRangeOption::None);
     void addSample(MediaSample&);
     
     bool updateMinimumUpcomingPresentationTime();

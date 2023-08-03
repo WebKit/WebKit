@@ -103,8 +103,10 @@ void initialize()
         JITOperationList::populatePointersInJavaScriptCore();
 
         AssemblyCommentRegistry::initialize();
+#if ENABLE(WEBASSEMBLY)
         if (UNLIKELY(Options::useWasmIPInt()))
             IPInt::initialize();
+#endif
         LLInt::initialize();
         DisallowGC::initialize();
 

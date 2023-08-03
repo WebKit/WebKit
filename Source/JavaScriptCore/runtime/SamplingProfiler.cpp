@@ -44,8 +44,10 @@
 #include "WasmCallee.h"
 #include "WasmCalleeRegistry.h"
 #include "WasmCapabilities.h"
+#include <wtf/CommaPrinter.h>
 #include <wtf/FilePrintStream.h>
 #include <wtf/HashSet.h>
+#include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StackTrace.h>
 #include <wtf/text/StringBuilder.h>
@@ -820,7 +822,6 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
             auto demangled = StackTraceSymbolResolver::demangle(const_cast<void*>(cCodePC));
             if (demangled)
                 return String::fromLatin1(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName());
-            WTF::dataLog("couldn't get a name");
         }
 #endif
         return "(unknown C PC)"_s;
@@ -848,57 +849,6 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
         if (executable->isFunctionExecutable())
             return static_cast<FunctionExecutable*>(executable)->ecmaName().string();
         if (executable->isProgramExecutable() || executable->isEvalExecutable())
-            return "(program)"_s;
-        if (executable->isModuleProgramExecutable())
-            return "(module)"_s;
-
-        RELEASE_ASSERT_NOT_REACHED();
-        return String();
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return String();
-}
-
-String SamplingProfiler::StackFrame::displayNameForJSONTests(VM& vm)
-{
-    {
-        String name = nameFromCallee(vm);
-        if (!name.isEmpty())
-            return name;
-    }
-
-    switch (frameType) {
-    case FrameType::Unknown:
-    case FrameType::C:
-        return "(unknown)"_s;
-
-    case FrameType::RegExp:
-        return "(regexp)"_s;
-
-    case FrameType::Host:
-        return "(host)"_s;
-
-    case FrameType::Wasm: {
-#if ENABLE(WEBASSEMBLY)
-        if (wasmIndexOrName)
-            return makeString(wasmIndexOrName.value());
-#endif
-        return "(wasm)"_s;
-    }
-
-    case FrameType::Executable:
-        if (executable->isHostFunction())
-            return static_cast<NativeExecutable*>(executable)->name();
-
-        if (executable->isFunctionExecutable()) {
-            String result = static_cast<FunctionExecutable*>(executable)->ecmaName().string();
-            if (result.isEmpty())
-                return "(anonymous function)"_s;
-            return result;
-        }
-        if (executable->isEvalExecutable())
-            return "(eval)"_s;
-        if (executable->isProgramExecutable())
             return "(program)"_s;
         if (executable->isModuleProgramExecutable())
             return "(module)"_s;
@@ -1004,7 +954,115 @@ Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces()
     return result;
 }
 
-String SamplingProfiler::stackTracesAsJSON()
+static String descriptionForLocation(SamplingProfiler::StackFrame::CodeLocation location, std::optional<Wasm::CompilationMode> wasmCompilationMode, BytecodeIndex wasmOffset)
+{
+    if (wasmCompilationMode) {
+        StringPrintStream description;
+        description.print(":");
+        description.print(Wasm::makeString(wasmCompilationMode.value()));
+        description.print(":");
+        if (wasmOffset) {
+            uintptr_t offset = wasmOffset.offset();
+            description.print(RawHex(offset));
+        } else
+            description.print("nil");
+        return description.toString();
+    }
+
+    String bytecodeIndex;
+    String codeBlockHash;
+    String jitType;
+    if (location.hasBytecodeIndex())
+        bytecodeIndex = toString(location.bytecodeIndex);
+    else
+        bytecodeIndex = "<nil>"_s;
+
+    if (location.hasCodeBlockHash()) {
+        StringPrintStream stream;
+        location.codeBlockHash.dump(stream);
+        codeBlockHash = stream.toString();
+    } else
+        codeBlockHash = "<nil>"_s;
+
+    if (location.isRegExp)
+        jitType = "RegExp"_s;
+    else
+        jitType = JITCode::typeName(location.jitType);
+
+    return makeString('#', codeBlockHash, ':', jitType, ':', bytecodeIndex);
+}
+
+struct Tiers {
+    static constexpr ASCIILiteral llint { "LLInt"_s };
+    static constexpr ASCIILiteral baseline { "Baseline"_s };
+    static constexpr ASCIILiteral dfg { "DFG"_s };
+    static constexpr ASCIILiteral ftl { "FTL"_s };
+    static constexpr ASCIILiteral builtin { "js builtin"_s };
+    static constexpr ASCIILiteral ipint { "IPInt"_s };
+    static constexpr ASCIILiteral wasmllint { "WasmLLInt"_s };
+    static constexpr ASCIILiteral bbq { "BBQ"_s };
+    static constexpr ASCIILiteral omg { "OMG"_s };
+    static constexpr ASCIILiteral wasm { "Wasm"_s };
+    static constexpr ASCIILiteral host { "Host"_s };
+    static constexpr ASCIILiteral regexp { "RegExp"_s };
+    static constexpr ASCIILiteral cpp { "C/C++"_s };
+    static constexpr ASCIILiteral unknownFrame { "Unknown Frame"_s };
+    static constexpr ASCIILiteral unknownExecutable { "Unknown Executable"_s };
+};
+
+static String tierName(SamplingProfiler::StackFrame& frame)
+{
+    switch (frame.frameType) {
+    case SamplingProfiler::FrameType::Executable:
+        switch (frame.semanticLocation.jitType) {
+        case JITType::HostCallThunk:
+            return Tiers::host;
+        case JITType::InterpreterThunk:
+            return Tiers::llint;
+        case JITType::BaselineJIT:
+            return Tiers::baseline;
+        case JITType::DFGJIT:
+            return Tiers::dfg;
+        case JITType::FTLJIT:
+            return Tiers::ftl;
+        default:
+            return Tiers::unknownExecutable;
+        }
+        break;
+    case SamplingProfiler::FrameType::Wasm:
+        if (frame.wasmCompilationMode) {
+            switch (frame.wasmCompilationMode.value()) {
+            case Wasm::CompilationMode::LLIntMode:
+                return Tiers::wasmllint;
+            case Wasm::CompilationMode::IPIntMode:
+                return Tiers::ipint;
+            case Wasm::CompilationMode::JSEntrypointMode:
+            case Wasm::CompilationMode::JSToWasmICMode:
+            case Wasm::CompilationMode::WasmToJSMode:
+                // Just say "Wasm" for now.
+                break;
+            case Wasm::CompilationMode::BBQMode:
+            case Wasm::CompilationMode::BBQForOSREntryMode:
+                return Tiers::bbq;
+            case Wasm::CompilationMode::OMGMode:
+            case Wasm::CompilationMode::OMGForOSREntryMode:
+                return Tiers::omg;
+            }
+        }
+        return Tiers::wasm;
+    case SamplingProfiler::FrameType::Host:
+        return Tiers::host;
+    case SamplingProfiler::FrameType::RegExp:
+        return Tiers::regexp;
+    case SamplingProfiler::FrameType::C:
+        return Tiers::cpp;
+    case SamplingProfiler::FrameType::Unknown:
+        return Tiers::unknownFrame;
+    }
+    return Tiers::unknownFrame;
+}
+
+Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
 {
     DeferGC deferGC(m_vm);
     Locker locker { m_lock };
@@ -1014,32 +1072,37 @@ String SamplingProfiler::stackTracesAsJSON()
         processUnverifiedStackTraces();
     }
 
-    StringBuilder json;
-    json.append('[');
-
-    bool loopedOnce = false;
-    auto comma = [&] {
-        if (loopedOnce)
-            json.append(',');
+    auto stackFrameAsJSON = [&](StackFrame& stackFrame) {
+        auto result = JSON::Object::create();
+        result->setDouble("sourceID"_s, stackFrame.sourceID());
+        result->setString("name"_s, stackFrame.displayName(m_vm));
+        result->setString("location"_s, descriptionForLocation(stackFrame.semanticLocation, stackFrame.wasmCompilationMode, stackFrame.wasmOffset));
+        result->setString("category"_s, tierName(stackFrame));
+        return result;
     };
-    for (StackTrace& stackTrace : m_stackTraces) {
-        comma();
-        json.append('[');
-        loopedOnce = false;
-        for (StackFrame& stackFrame : stackTrace.frames) {
-            comma();
-            json.appendQuotedJSONString(stackFrame.displayNameForJSONTests(m_vm));
-            loopedOnce = true;
-        }
-        json.append(']');
-        loopedOnce = true;
-    }
 
-    json.append(']');
+    auto stackTraceAsJSON = [&](StackTrace& stackTrace) {
+        auto result = JSON::Object::create();
+        result->setDouble("timestamp"_s, stackTrace.timestamp.seconds());
+        {
+            auto frames = JSON::Array::create();
+            for (StackFrame& stackFrame : stackTrace.frames)
+                frames->pushValue(stackFrameAsJSON(stackFrame));
+            result->setValue("frames"_s, WTFMove(frames));
+        }
+        return result;
+    };
+
+    auto result = JSON::Object::create();
+    result->setDouble("interval"_s, m_timingInterval.seconds());
+    auto traces = JSON::Array::create();
+    for (StackTrace& stackTrace : m_stackTraces)
+        traces->pushValue(stackTraceAsJSON(stackTrace));
+    result->setValue("traces"_s, traces);
 
     clearData();
 
-    return json.toString();
+    return result;
 }
 
 void SamplingProfiler::registerForReportAtExit()
@@ -1161,72 +1224,27 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
     HashMap<String, size_t> bytecodeCounts;
     HashMap<String, size_t> tierCounts;
 
-    String llint = "LLInt"_s;
-    String baseline = "Baseline"_s;
-    String dfg = "DFG"_s;
-    String ftl = "FTL"_s;
-    String builtin = "js builtin"_s;
-    String wasm = "Wasm"_s;
-    String host = "Host"_s;
-    String regexp = "RegExp"_s;
-    String cpp = "C/C++"_s;
-    String unknownFrame = "Unknown Frame"_s;
-    String unknownExecutable = "Unknown Executable"_s;
-
     auto forEachTier = [&] (auto func) {
-        func(llint);
-        func(baseline);
-        func(dfg);
-        func(ftl);
-        func(builtin);
-        func(wasm);
-        func(host);
-        func(regexp);
-        func(cpp);
-        func(unknownFrame);
-        func(unknownExecutable);
+        func(Tiers::llint);
+        func(Tiers::baseline);
+        func(Tiers::dfg);
+        func(Tiers::ftl);
+        func(Tiers::builtin);
+        func(Tiers::ipint);
+        func(Tiers::wasmllint);
+        func(Tiers::bbq);
+        func(Tiers::omg);
+        func(Tiers::wasm);
+        func(Tiers::host);
+        func(Tiers::regexp);
+        func(Tiers::cpp);
+        func(Tiers::unknownFrame);
+        func(Tiers::unknownExecutable);
     };
 
     for (StackTrace& stackTrace : m_stackTraces) {
         if (!stackTrace.frames.size())
             continue;
-
-        auto descriptionForLocation = [&] (StackFrame::CodeLocation location, std::optional<Wasm::CompilationMode> wasmCompilationMode, BytecodeIndex wasmOffset) -> String {
-            if (wasmCompilationMode) {
-                StringPrintStream description;
-                description.print(":");
-                description.print(Wasm::makeString(wasmCompilationMode.value()));
-                description.print(":");
-                if (wasmOffset) {
-                    uintptr_t offset = wasmOffset.offset();
-                    description.print(RawHex(offset));
-                } else
-                    description.print("nil");
-                return description.toString();
-            }
-
-            String bytecodeIndex;
-            String codeBlockHash;
-            String jitType;
-            if (location.hasBytecodeIndex())
-                bytecodeIndex = toString(location.bytecodeIndex);
-            else
-                bytecodeIndex = "<nil>"_s;
-
-            if (location.hasCodeBlockHash()) {
-                StringPrintStream stream;
-                location.codeBlockHash.dump(stream);
-                codeBlockHash = stream.toString();
-            } else
-                codeBlockHash = "<nil>"_s;
-
-            if (location.isRegExp)
-                jitType = "RegExp"_s;
-            else
-                jitType = JITCode::typeName(location.jitType);
-
-            return makeString('#', codeBlockHash, ':', jitType, ':', bytecodeIndex);
-        };
 
         StackFrame& frame = stackTrace.frames.first();
         auto frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation, frame.wasmCompilationMode, frame.wasmOffset));
@@ -1235,60 +1253,15 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
                 machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first, std::nullopt, BytecodeIndex()));
         }
         bytecodeCounts.add(frameDescription, 0).iterator->value++;
-        
-        {
-            String tierName;
-            switch (frame.frameType) {
-            case SamplingProfiler::FrameType::Executable:
-                switch (frame.semanticLocation.jitType) {
-                case JITType::HostCallThunk:
-                    tierName = host;
-                    break;
-                case JITType::InterpreterThunk:
-                    tierName = llint;
-                    break;
-                case JITType::BaselineJIT:
-                    tierName = baseline;
-                    break;
-                case JITType::DFGJIT:
-                    tierName = dfg;
-                    break;
-                case JITType::FTLJIT:
-                    tierName = ftl;
-                    break;
-                default:
-                    tierName = unknownExecutable;
-                    break;
-                }
 
-                if (frame.executable) {
-                    if (auto* executable = jsDynamicCast<FunctionExecutable*>(frame.executable)) {
-                        if (executable->isBuiltinFunction())
-                            tierCounts.add(builtin, 0).iterator->value++;
-                    }
-                }
-
-                break;
-            case SamplingProfiler::FrameType::Wasm:
-                tierName = wasm;
-                break;
-            case SamplingProfiler::FrameType::Host:
-                tierName = host;
-                break;
-            case SamplingProfiler::FrameType::RegExp:
-                tierName = regexp;
-                break;
-            case SamplingProfiler::FrameType::C:
-                tierName = cpp;
-                break;
-            case SamplingProfiler::FrameType::Unknown:
-                tierName = unknownFrame;
-                break;
+        tierCounts.add(tierName(frame), 0).iterator->value++;
+        if (frame.frameType == SamplingProfiler::FrameType::Executable && frame.executable) {
+            if (auto* executable = jsDynamicCast<FunctionExecutable*>(frame.executable)) {
+                if (executable->isBuiltinFunction())
+                    tierCounts.add(Tiers::builtin, 0).iterator->value++;
             }
-
-            tierCounts.add(tierName, 0).iterator->value++;
         }
-         
+
         totalSamples++;
     }
 
@@ -1317,7 +1290,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         });
         auto printTier = [&] (String tier) {
             size_t count = tierCounts.get(tier);
-            if (!count && (tier == unknownFrame || tier == unknownExecutable))
+            if (!count && (tier == Tiers::unknownFrame || tier == Tiers::unknownExecutable))
                 return;
             out.print(tier, ": ");
             for (unsigned i = 0; i < maxTierNameLength + 2 - tier.length(); ++i)

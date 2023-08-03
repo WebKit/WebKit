@@ -90,12 +90,15 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(VM& vm, Structure* s
     if (size.hasOverflowed() || size > MAX_ARRAY_BUFFER_SIZE)
         return;
 
-    m_vector = VectorType(Gigacage::tryMalloc(Gigacage::Primitive, size.value()), m_length);
+    void* memory = nullptr;
+    if (mode == ZeroFill)
+        memory = Gigacage::tryZeroedMalloc(Gigacage::Primitive, size.value());
+    else
+        memory = Gigacage::tryMalloc(Gigacage::Primitive, size.value());
+    m_vector = VectorType(memory, m_length);
     if (!m_vector)
         return;
-    if (mode == ZeroFill)
-        memset(vector(), 0, size);
-    
+
     vm.heap.reportExtraMemoryAllocated(size.value());
     
     m_structure = structure;

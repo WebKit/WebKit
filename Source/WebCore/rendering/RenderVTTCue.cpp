@@ -346,7 +346,6 @@ void RenderVTTCue::repositionCueSnapToLinesSet()
     if (!initializeLayoutParameters(step, position))
         return;
 
-    ASSERT(firstChild());
     if (!firstChild())
         return;
 
@@ -377,7 +376,6 @@ void RenderVTTCue::repositionCueSnapToLinesSet()
 
 void RenderVTTCue::repositionGenericCue()
 {
-    ASSERT(firstChild());
     if (!firstChild())
         return;
 

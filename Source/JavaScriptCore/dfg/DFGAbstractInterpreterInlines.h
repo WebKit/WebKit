@@ -4946,12 +4946,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         const AbstractValue& abstractValue = forNode(node->child1());
         unsigned bits = node->typeInfoOperand();
         ASSERT(bits);
-        if (bits == ImplementsDefaultHasInstance) {
-            if (abstractValue.m_type == SpecFunctionWithDefaultHasInstance) {
-                m_state.setShouldTryConstantFolding(true);
-                break;
-            }
-        }
 
         if (JSValue value = abstractValue.value()) {
             if (value.isCell()) {

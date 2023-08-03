@@ -43,29 +43,38 @@ void JITBitXorGenerator::generateFastPath(CCallHelpers& jit)
         // Try to do intVar ^ intConstant.
         m_slowPathJumpList.append(jit.branchIfNotInt32(var));
         
+#if USE(JSVALUE64)
+        jit.xor32(CCallHelpers::Imm32(constOpr.asConstInt32()), var.payloadGPR(), m_result.payloadGPR());
+        jit.or64(GPRInfo::numberTagRegister, m_result.payloadGPR());
+#else
         jit.moveValueRegs(var, m_result);
-#if USE(JSVALUE64)
-        jit.xor32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
-        jit.or64(GPRInfo::numberTagRegister, m_result.payloadGPR());
-#else
         jit.xor32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
 #endif
-        
-    } else {
-        ASSERT(!m_leftOperand.isConstInt32() && !m_rightOperand.isConstInt32());
-        
-        // Try to do intVar ^ intVar.
-        m_slowPathJumpList.append(jit.branchIfNotInt32(m_left));
-        m_slowPathJumpList.append(jit.branchIfNotInt32(m_right));
-        
-        jit.moveValueRegs(m_left, m_result);
-#if USE(JSVALUE64)
-        jit.xor64(m_right.payloadGPR(), m_result.payloadGPR());
-        jit.or64(GPRInfo::numberTagRegister, m_result.payloadGPR());
-#else
-        jit.xor32(m_right.payloadGPR(), m_result.payloadGPR());
-#endif
+        return;
     }
+
+#if USE(JSVALUE64)
+    if (m_leftOperand.definitelyIsBoolean() && m_rightOperand.definitelyIsBoolean()) {
+        jit.xor32(m_left.payloadGPR(), m_right.payloadGPR(), m_result.payloadGPR());
+        jit.and32(CCallHelpers::TrustedImm32(1), m_result.payloadGPR());
+        jit.or64(GPRInfo::numberTagRegister, m_result.payloadGPR());
+        return;
+    }
+#endif
+
+    ASSERT(!m_leftOperand.isConstInt32() && !m_rightOperand.isConstInt32());
+
+    // Try to do intVar ^ intVar.
+    m_slowPathJumpList.append(jit.branchIfNotInt32(m_left));
+    m_slowPathJumpList.append(jit.branchIfNotInt32(m_right));
+
+#if USE(JSVALUE64)
+    jit.xor32(m_right.payloadGPR(), m_left.payloadGPR(), m_result.payloadGPR());
+    jit.or64(GPRInfo::numberTagRegister, m_result.payloadGPR());
+#else
+    jit.moveValueRegs(m_left, m_result);
+    jit.xor32(m_right.payloadGPR(), m_result.payloadGPR());
+#endif
 }
 
 } // namespace JSC

@@ -137,8 +137,13 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
     }, m_identifier);
 }
 
-void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered()
+void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered(TransactionID nextCommitTransactionID)
 {
+    if (nextCommitTransactionID <= m_lastLayerTreeTransactionID) {
+        LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered nextCommitTransactionID=" << nextCommitTransactionID << ") already obsoleted by m_lastLayerTreeTransactionID=" << m_lastLayerTreeTransactionID);
+        return;
+    }
+
     m_commitLayerTreeMessageState = Idle;
     pauseDisplayRefreshCallbacks();
 #if ENABLE(ASYNC_SCROLLING)
@@ -148,6 +153,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered()
 
 void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(TransactionID transactionID)
 {
+    if (transactionID <= m_lastLayerTreeTransactionID)
+        return;
+
     m_pendingLayerTreeTransactionID = transactionID;
 }
 
@@ -157,7 +165,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
     for (auto& transaction : transactions) {
         // commitLayerTreeTransaction consumes the incoming buffers, so we need to grab them first.
         for (auto& [layerID, properties] : transaction.first.changedLayerProperties()) {
-            const auto backingStoreProperties = properties->backingStoreProperties.get();
+            const auto* backingStoreProperties = properties->backingStoreOrProperties.properties.get();
             if (!backingStoreProperties)
                 continue;
             if (const auto& backendHandle = backingStoreProperties->bufferHandle()) {
@@ -180,6 +188,10 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
 
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree transaction:" << layerTreeTransaction.description());
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree scrolling tree:" << scrollingTreeTransaction.description());
+
+    m_lastLayerTreeTransactionID = layerTreeTransaction.transactionID();
+    if (m_pendingLayerTreeTransactionID < m_lastLayerTreeTransactionID)
+        m_pendingLayerTreeTransactionID = m_lastLayerTreeTransactionID;
 
     bool didUpdateEditorState { false };
     if (layerTreeTransaction.isMainFrameProcessTransaction()) {

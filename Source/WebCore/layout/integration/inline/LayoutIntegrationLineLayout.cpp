@@ -453,6 +453,8 @@ void LineLayout::updateLineBreakBoxDimensions(const RenderLineBreak& lineBreakBo
     boxGeometry.setPadding({ });
     boxGeometry.setContentBoxWidth({ });
     boxGeometry.setVerticalMargin({ });
+    if (lineBreakBox.style().hasOutOfFlowPosition())
+        boxGeometry.setContentBoxHeight({ });
 }
 
 void LineLayout::updateInlineBoxDimensions(const RenderInline& renderInline)
@@ -654,7 +656,8 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         auto& layoutBox = *renderObject->layoutBox();
         if (!layoutBox.isFloatingPositioned() && !layoutBox.isOutOfFlowPositioned())
             continue;
-
+        if (layoutBox.isLineBreakBox())
+            continue;
         auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
         auto& logicalGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
 

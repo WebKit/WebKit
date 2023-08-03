@@ -38,6 +38,7 @@ protected:
     WebFrameLoaderClient(Ref<WebFrame>&&);
 
     void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, WebCore::PolicyDecisionMode, WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&) override;
+    void broadcastFrameRemovalToOtherProcesses();
 
     Ref<WebFrame> m_frame;
 };

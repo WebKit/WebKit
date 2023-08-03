@@ -27,14 +27,8 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/ScreenOrientationLockType.h>
-#include <WebCore/ScreenOrientationProvider.h>
 #include <WebCore/ScreenOrientationType.h>
 #include <wtf/CompletionHandler.h>
-
-#if PLATFORM(IOS_FAMILY)
-#include "WebViewDidMoveToWindowObserver.h"
-OBJC_CLASS UIView;
-#endif
 
 namespace WebCore {
 class Exception;
@@ -44,30 +38,21 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebScreenOrientationManagerProxy final : public IPC::MessageReceiver, public WebCore::ScreenOrientationProvider::Observer
-#if PLATFORM(IOS_FAMILY)
-    , public WebViewDidMoveToWindowObserver
-#endif
-{
+class WebScreenOrientationManagerProxy final : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit WebScreenOrientationManagerProxy(WebPageProxy&);
+    WebScreenOrientationManagerProxy(WebPageProxy&, WebCore::ScreenOrientationType);
     ~WebScreenOrientationManagerProxy();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
-#if PLATFORM(IOS_FAMILY)
-    void setWindow(UIWindow *);
-#endif
-
     void unlockIfNecessary();
 
-private:
-    void platformInitialize();
-    void platformDestroy();
+    void setCurrentOrientation(WebCore::ScreenOrientationType);
 
+private:
     std::optional<WebCore::Exception> platformShouldRejectLockRequest() const;
 
     // IPC message handlers.
@@ -76,18 +61,11 @@ private:
     void unlock();
     void setShouldSendChangeNotification(bool);
 
-    // WebCore::ScreenOrientationProvider::Observer
-    void screenOrientationDidChange(WebCore::ScreenOrientationType) final;
-
-#if PLATFORM(IOS_FAMILY)
-    // WebViewDidMoveToWindowObserver
-    void webViewDidMoveToWindow() final;
-#endif
-
     WebPageProxy& m_page;
-    Ref<WebCore::ScreenOrientationProvider> m_provider;
+    WebCore::ScreenOrientationType m_currentOrientation;
     std::optional<WebCore::ScreenOrientationType> m_currentlyLockedOrientation;
     CompletionHandler<void(std::optional<WebCore::Exception>&&)> m_currentLockRequest;
+    bool m_shouldSendChangeNotifications { false };
 };
 
 } // namespace WebKit

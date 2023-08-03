@@ -34,6 +34,7 @@
 #include "FirstMemberType.h"
 #endif
 #include "HeaderWithoutCondition"
+#include "LayerProperties.h"
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
 #endif
@@ -53,9 +54,19 @@
 #include <wtf/Seconds.h>
 
 template<size_t...> struct MembersInCorrectOrder;
-template<size_t onlyOffset> struct MembersInCorrectOrder<onlyOffset> { static constexpr bool value = true; };
+template<size_t onlyOffset> struct MembersInCorrectOrder<onlyOffset> {
+    static constexpr bool value = true;
+};
 template<size_t firstOffset, size_t secondOffset, size_t... remainingOffsets> struct MembersInCorrectOrder<firstOffset, secondOffset, remainingOffsets...> {
     static constexpr bool value = firstOffset > secondOffset ? false : MembersInCorrectOrder<secondOffset, remainingOffsets...>::value;
+};
+
+template<uint64_t...> struct BitsInIncreasingOrder;
+template<uint64_t onlyBit> struct BitsInIncreasingOrder<onlyBit> {
+    static constexpr bool value = true;
+};
+template<uint64_t firstBit, uint64_t secondBit, uint64_t... remainingBits> struct BitsInIncreasingOrder<firstBit, secondBit, remainingBits...> {
+    static constexpr bool value = firstBit == secondBit >> 1 && BitsInIncreasingOrder<secondBit, remainingBits...>::value;
 };
 
 template<bool, bool> struct VirtualTableAndRefCountOverhead;
@@ -115,7 +126,7 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(Encoder& encoder
         RetainPtr<CFTypeRef> nullableTestMember;
     };
     static_assert(sizeof(ShouldBeSameSizeAsStructName) == sizeof(Namespace::Subnamespace::StructName));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(Namespace::Subnamespace::StructName, firstMemberName)
 #if ENABLE(SECOND_MEMBER)
         , offsetof(Namespace::Subnamespace::StructName, secondMemberName)
@@ -126,9 +137,7 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(Encoder& encoder
 #if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
 #endif
-    encoder << !!instance.nullableTestMember;
-    if (!!instance.nullableTestMember)
-        encoder << instance.nullableTestMember;
+    encoder << instance.nullableTestMember;
 }
 
 void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& encoder, const Namespace::Subnamespace::StructName& instance)
@@ -146,7 +155,7 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& en
         RetainPtr<CFTypeRef> nullableTestMember;
     };
     static_assert(sizeof(ShouldBeSameSizeAsStructName) == sizeof(Namespace::Subnamespace::StructName));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(Namespace::Subnamespace::StructName, firstMemberName)
 #if ENABLE(SECOND_MEMBER)
         , offsetof(Namespace::Subnamespace::StructName, secondMemberName)
@@ -157,9 +166,7 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& en
 #if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
 #endif
-    encoder << !!instance.nullableTestMember;
-    if (!!instance.nullableTestMember)
-        encoder << instance.nullableTestMember;
+    encoder << instance.nullableTestMember;
 }
 
 std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subnamespace::StructName>::decode(Decoder& decoder)
@@ -168,14 +175,7 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
 #if ENABLE(SECOND_MEMBER)
     auto secondMemberName = decoder.decode<SecondMemberType>();
 #endif
-    auto hasnullableTestMember = decoder.decode<bool>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    std::optional<RetainPtr<CFTypeRef>> nullableTestMember;
-    if (*hasnullableTestMember) {
-        nullableTestMember = decoder.decode<RetainPtr<CFTypeRef>>();
-    } else
-        nullableTestMember = std::optional<RetainPtr<CFTypeRef>> { RetainPtr<CFTypeRef> { } };
+    auto nullableTestMember = decoder.decode<RetainPtr<CFTypeRef>>();
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {
@@ -202,7 +202,7 @@ void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namesp
         RetainPtr<NSArray> dataDetectorResults;
     };
     static_assert(sizeof(ShouldBeSameSizeAsOtherClass) == sizeof(Namespace::OtherClass));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(Namespace::OtherClass, a)
         , offsetof(Namespace::OtherClass, dataDetectorResults)
     >::value);
@@ -257,6 +257,15 @@ void ArgumentCoder<Namespace::EmptyConstructorStruct>::encode(Encoder& encoder, 
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_int)>, int>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_double)>, double>);
+    struct ShouldBeSameSizeAsEmptyConstructorStruct : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::EmptyConstructorStruct>, false> {
+        int m_int;
+        double m_double;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsEmptyConstructorStruct) == sizeof(Namespace::EmptyConstructorStruct));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(Namespace::EmptyConstructorStruct, m_int)
+        , offsetof(Namespace::EmptyConstructorStruct, m_double)
+    >::value);
     encoder << instance.m_int;
     encoder << instance.m_double;
 }
@@ -290,7 +299,7 @@ void ArgumentCoder<Namespace::EmptyConstructorWithIf>::encode(Encoder& encoder, 
 #endif
     };
     static_assert(sizeof(ShouldBeSameSizeAsEmptyConstructorWithIf) == sizeof(Namespace::EmptyConstructorWithIf));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
         , offsetof(Namespace::EmptyConstructorWithIf, m_type)
 #endif
@@ -333,7 +342,7 @@ void ArgumentCoder<WithoutNamespace>::encode(Encoder& encoder, const WithoutName
         int a;
     };
     static_assert(sizeof(ShouldBeSameSizeAsWithoutNamespace) == sizeof(WithoutNamespace));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(WithoutNamespace, a)
     >::value);
     encoder << instance.a;
@@ -358,7 +367,7 @@ void ArgumentCoder<WithoutNamespaceWithAttributes>::encode(Encoder& encoder, con
         int a;
     };
     static_assert(sizeof(ShouldBeSameSizeAsWithoutNamespaceWithAttributes) == sizeof(WithoutNamespaceWithAttributes));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(WithoutNamespaceWithAttributes, a)
     >::value);
     encoder << instance.a;
@@ -371,7 +380,7 @@ void ArgumentCoder<WithoutNamespaceWithAttributes>::encode(OtherEncoder& encoder
         int a;
     };
     static_assert(sizeof(ShouldBeSameSizeAsWithoutNamespaceWithAttributes) == sizeof(WithoutNamespaceWithAttributes));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(WithoutNamespaceWithAttributes, a)
     >::value);
     encoder << instance.a;
@@ -392,11 +401,11 @@ std::optional<WithoutNamespaceWithAttributes> ArgumentCoder<WithoutNamespaceWith
 void ArgumentCoder<WebCore::InheritsFrom>::encode(Encoder& encoder, const WebCore::InheritsFrom& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(WithoutNamespace, a)
     >::value);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.b)>, float>);
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(WebCore::InheritsFrom, b)
     >::value);
     encoder << instance.a;
@@ -422,15 +431,15 @@ std::optional<WebCore::InheritsFrom> ArgumentCoder<WebCore::InheritsFrom>::decod
 void ArgumentCoder<WebCore::InheritanceGrandchild>::encode(Encoder& encoder, const WebCore::InheritanceGrandchild& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(WithoutNamespace, a)
     >::value);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.b)>, float>);
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(WebCore::InheritsFrom, b)
     >::value);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.c)>, double>);
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(WebCore::InheritanceGrandchild, c)
     >::value);
     encoder << instance.a;
@@ -483,7 +492,7 @@ void ArgumentCoder<WTF::CreateUsingClass>::encode(Encoder& encoder, const WTF::C
         double value;
     };
     static_assert(sizeof(ShouldBeSameSizeAsCreateUsingClass) == sizeof(WTF::CreateUsingClass));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(WTF::CreateUsingClass, value)
     >::value);
     encoder << instance.value;
@@ -531,40 +540,31 @@ std::optional<WebCore::FloatBoxExtent> ArgumentCoder<WebCore::FloatBoxExtent>::d
     };
 }
 
-void ArgumentCoder<NullableSoftLinkedMember>::encode(Encoder& encoder, const NullableSoftLinkedMember& instance)
+void ArgumentCoder<SoftLinkedMember>::encode(Encoder& encoder, const SoftLinkedMember& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.firstMember)>, RetainPtr<DDActionContext>>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.secondMember)>, RetainPtr<DDActionContext>>);
-    struct ShouldBeSameSizeAsNullableSoftLinkedMember : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<NullableSoftLinkedMember>, false> {
+    struct ShouldBeSameSizeAsSoftLinkedMember : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<SoftLinkedMember>, false> {
         RetainPtr<DDActionContext> firstMember;
         RetainPtr<DDActionContext> secondMember;
     };
-    static_assert(sizeof(ShouldBeSameSizeAsNullableSoftLinkedMember) == sizeof(NullableSoftLinkedMember));
-    static_assert(MembersInCorrectOrder<0
-        , offsetof(NullableSoftLinkedMember, firstMember)
-        , offsetof(NullableSoftLinkedMember, secondMember)
+    static_assert(sizeof(ShouldBeSameSizeAsSoftLinkedMember) == sizeof(SoftLinkedMember));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(SoftLinkedMember, firstMember)
+        , offsetof(SoftLinkedMember, secondMember)
     >::value);
-    encoder << !!instance.firstMember;
-    if (!!instance.firstMember)
-        encoder << instance.firstMember;
+    encoder << instance.firstMember;
     encoder << instance.secondMember;
 }
 
-std::optional<NullableSoftLinkedMember> ArgumentCoder<NullableSoftLinkedMember>::decode(Decoder& decoder)
+std::optional<SoftLinkedMember> ArgumentCoder<SoftLinkedMember>::decode(Decoder& decoder)
 {
-    auto hasfirstMember = decoder.decode<bool>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    std::optional<RetainPtr<DDActionContext>> firstMember;
-    if (*hasfirstMember) {
-        firstMember = IPC::decode<DDActionContext>(decoder, PAL::getDDActionContextClass());
-    } else
-        firstMember = std::optional<RetainPtr<DDActionContext>> { RetainPtr<DDActionContext> { } };
-    auto secondMember = IPC::decode<DDActionContext>(decoder, PAL::getDDActionContextClass());
+    auto firstMember = IPC::decode<DDActionContext>(decoder, @[ PAL::getDDActionContextClass() ]);
+    auto secondMember = IPC::decode<DDActionContext>(decoder, @[ PAL::getDDActionContextClass() ]);
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {
-        NullableSoftLinkedMember {
+        SoftLinkedMember {
             WTFMove(*firstMember),
             WTFMove(*secondMember)
         }
@@ -645,7 +645,7 @@ void ArgumentCoder<Namespace::ConditionalCommonClass>::encode(Encoder& encoder, 
         int value;
     };
     static_assert(sizeof(ShouldBeSameSizeAsConditionalCommonClass) == sizeof(Namespace::ConditionalCommonClass));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(Namespace::ConditionalCommonClass, value)
     >::value);
     encoder << instance.value;
@@ -672,7 +672,7 @@ void ArgumentCoder<Namespace::CommonClass>::encode(Encoder& encoder, const Names
         int value;
     };
     static_assert(sizeof(ShouldBeSameSizeAsCommonClass) == sizeof(Namespace::CommonClass));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(Namespace::CommonClass, value)
     >::value);
     encoder << instance.value;
@@ -699,7 +699,7 @@ void ArgumentCoder<Namespace::AnotherCommonClass>::encode(Encoder& encoder, cons
         double notSerialized;
     };
     static_assert(sizeof(ShouldBeSameSizeAsAnotherCommonClass) == sizeof(Namespace::AnotherCommonClass));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(Namespace::AnotherCommonClass, value)
         , offsetof(Namespace::AnotherCommonClass, notSerialized)
     >::value);
@@ -757,26 +757,17 @@ void ArgumentCoder<WebCore::MoveOnlyDerivedClass>::encode(Encoder& encoder, WebC
         int secondMember;
     };
     static_assert(sizeof(ShouldBeSameSizeAsMoveOnlyDerivedClass) == sizeof(WebCore::MoveOnlyDerivedClass));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(WebCore::MoveOnlyDerivedClass, firstMember)
         , offsetof(WebCore::MoveOnlyDerivedClass, secondMember)
     >::value);
-    encoder << !!instance.firstMember;
-    if (!!instance.firstMember)
-        encoder << WTFMove(instance.firstMember);
+    encoder << WTFMove(instance.firstMember);
     encoder << WTFMove(instance.secondMember);
 }
 
 std::optional<WebCore::MoveOnlyDerivedClass> ArgumentCoder<WebCore::MoveOnlyDerivedClass>::decode(Decoder& decoder)
 {
-    auto hasfirstMember = decoder.decode<bool>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    std::optional<int> firstMember;
-    if (*hasfirstMember) {
-        firstMember = decoder.decode<int>();
-    } else
-        firstMember = std::optional<int> { int { } };
+    auto firstMember = decoder.decode<int>();
     auto secondMember = decoder.decode<int>();
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
@@ -798,6 +789,86 @@ std::optional<WebKit::CustomEncoded> ArgumentCoder<WebKit::CustomEncoded>::decod
             WTFMove(*value)
         }
     };
+}
+
+void ArgumentCoder<WebKit::LayerProperties>::encode(Encoder& encoder, const WebKit::LayerProperties& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.changedProperties)>, OptionSet<WebKit::LayerChange>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.nonSerializedMember)>, int>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.name)>, String>);
+#if ENABLE(FEATURE)
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.featureEnabledMember)>, std::unique_ptr<WebCore::TransformationMatrix>>);
+#endif
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.bitFieldMember)>, bool>);
+    struct ShouldBeSameSizeAsLayerProperties : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::LayerProperties>, false> {
+        OptionSet<WebKit::LayerChange> changedProperties;
+        int nonSerializedMember;
+        String name;
+#if ENABLE(FEATURE)
+        std::unique_ptr<WebCore::TransformationMatrix> featureEnabledMember;
+#endif
+        bool bitFieldMember : 1;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsLayerProperties) == sizeof(WebKit::LayerProperties));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::LayerProperties, changedProperties)
+        , offsetof(WebKit::LayerProperties, nonSerializedMember)
+        , offsetof(WebKit::LayerProperties, name)
+#if ENABLE(FEATURE)
+        , offsetof(WebKit::LayerProperties, featureEnabledMember)
+#endif
+    >::value);
+    static_assert(static_cast<uint64_t>(WebKit::LayerChange::NameChanged) == 1);
+    static_assert(BitsInIncreasingOrder<
+        static_cast<uint64_t>(WebKit::LayerChange::NameChanged)
+#if ENABLE(FEATURE)
+        , static_cast<uint64_t>(WebKit::LayerChange::TransformChanged)
+#endif
+        , static_cast<uint64_t>(WebKit::LayerChange::FeatureEnabledMember)
+    >::value);
+    encoder << instance.changedProperties;
+    if (instance.changedProperties & WebKit::LayerChange::NameChanged)
+        encoder << instance.name;
+#if ENABLE(FEATURE)
+    if (instance.changedProperties & WebKit::LayerChange::TransformChanged)
+        encoder << instance.featureEnabledMember;
+#endif
+    if (instance.changedProperties & WebKit::LayerChange::FeatureEnabledMember)
+        encoder << instance.bitFieldMember;
+}
+
+std::optional<WebKit::LayerProperties> ArgumentCoder<WebKit::LayerProperties>::decode(Decoder& decoder)
+{
+    WebKit::LayerProperties result;
+    auto bits = decoder.decode<OptionSet<WebKit::LayerChange>>();
+    if (!bits)
+        return std::nullopt;
+    result.changedProperties = *bits;
+
+    if (*bits & WebKit::LayerChange::NameChanged) {
+        if (auto deserialized = decoder.decode<String>())
+            result.name = WTFMove(*deserialized);
+        else
+            return std::nullopt;
+    }
+
+#if ENABLE(FEATURE)
+    if (*bits & WebKit::LayerChange::TransformChanged) {
+        if (auto deserialized = decoder.decode<std::unique_ptr<WebCore::TransformationMatrix>>())
+            result.featureEnabledMember = WTFMove(*deserialized);
+        else
+            return std::nullopt;
+    }
+#endif
+
+    if (*bits & WebKit::LayerChange::FeatureEnabledMember) {
+        if (auto deserialized = decoder.decode<bool>())
+            result.bitFieldMember = WTFMove(*deserialized);
+        else
+            return std::nullopt;
+    }
+
+    return { WTFMove(result) };
 }
 
 } // namespace IPC

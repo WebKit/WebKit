@@ -159,11 +159,8 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
     ProcessWarming::initializeNames();
     StaticCSSValuePool::init();
 
-    if (ownerElement) {
-        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))
-            localMainFrame->selfOnlyRef();
-        ownerElement->setContentFrame(*this);
-    }
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()); localMainFrame && ownerElement)
+        localMainFrame->selfOnlyRef();
 
 #ifndef NDEBUG
     frameCounter.increment();
@@ -326,6 +323,11 @@ bool LocalFrame::preventsParentFromBeingComplete() const
 void LocalFrame::changeLocation(FrameLoadRequest&& request)
 {
     loader().changeLocation(WTFMove(request));
+}
+
+void LocalFrame::broadcastFrameRemovalToOtherProcesses()
+{
+    loader().client().broadcastFrameRemovalToOtherProcesses();
 }
 
 void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)

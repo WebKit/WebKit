@@ -1111,7 +1111,6 @@ public:
 
     // designMode support
     enum class DesignMode : bool { Off, On };
-    void setDesignMode(DesignMode value);
     bool inDesignMode() const { return m_designMode == DesignMode::On; }
     WEBCORE_EXPORT String designMode() const;
     WEBCORE_EXPORT void setDesignMode(const String&);
@@ -2423,6 +2422,7 @@ private:
     static bool hasEverCreatedAnAXObjectCache;
 
     RefPtr<ResizeObserver> m_resizeObserverForContainIntrinsicSize;
+    const std::optional<FrameIdentifier> m_frameIdentifier;
 };
 
 Element* eventTargetElementForDocument(Document*);

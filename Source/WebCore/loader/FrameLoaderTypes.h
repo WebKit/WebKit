@@ -47,7 +47,7 @@ enum class PolicyAction : uint8_t {
     Use,
     Download,
     Ignore,
-    StopAllLoads
+    LoadWillContinueInAnotherProcess
 };
 
 enum class ReloadOption : uint8_t {

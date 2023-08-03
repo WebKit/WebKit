@@ -54,7 +54,7 @@ public:
     RefPtr<WebCore::SharedBuffer> buffer() const { return m_displayList; }
     Vector<MachSendRight> takeSurfaces() { return std::exchange(m_surfaces, { }); }
 
-    void encode(IPC::Encoder&) const;
+    void encode(IPC::Encoder&) &&;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, CGDisplayList&);
 
 private:

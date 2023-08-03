@@ -136,6 +136,8 @@ WK_EXPORT void WKBundlePagePostSynchronousMessageForTesting(WKBundlePageRef page
 // Same as WKBundlePagePostMessage() but the message cannot become synchronous, even if the connection is in fully synchronous mode.
 WK_EXPORT void WKBundlePagePostMessageIgnoringFullySynchronousMode(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody);
 
+WK_EXPORT void WKBundlePageFlushDeferredDidReceiveMouseEventForTesting(WKBundlePageRef page);
+
 #ifdef __cplusplus
 }
 #endif

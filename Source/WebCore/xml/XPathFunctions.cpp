@@ -568,10 +568,10 @@ Value FunNormalizeSpace::evaluate() const
     // https://www.w3.org/TR/1999/REC-xpath-19991116/#function-normalize-space
     if (!argumentCount()) {
         String s = Value(Expression::evaluationContext().node.get()).toString();
-        return s.simplifyWhiteSpace(isXMLSpace);
+        return s.simplifyWhiteSpace(isASCIIWhitespaceWithoutFF<UChar>);
     }
     String s = argument(0).evaluate().toString();
-    return s.simplifyWhiteSpace(isXMLSpace);
+    return s.simplifyWhiteSpace(isASCIIWhitespaceWithoutFF<UChar>);
 }
 
 Value FunTranslate::evaluate() const

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitWebEditor.h"
 
+#include "APIInjectedBundleEditorClient.h"
 #include "WebKitWebEditorPrivate.h"
 #include "WebKitWebPagePrivate.h"
 #include <wtf/glib/WTFGType.h>

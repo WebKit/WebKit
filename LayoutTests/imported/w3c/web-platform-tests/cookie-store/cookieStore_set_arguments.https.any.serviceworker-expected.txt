@@ -19,4 +19,6 @@ FAIL cookieStore.set default path is / promise_test: Unhandled rejection with va
 FAIL cookieStore.set adds / to path that does not end with / promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
 FAIL cookieStore.set with path that does not start with / promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
 FAIL cookieStore.set with get result promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.set checks if the path is too long promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.set checks if the domain is too long promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
 

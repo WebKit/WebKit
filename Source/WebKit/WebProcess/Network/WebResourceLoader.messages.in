@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebResourceLoader LegacyReceiver {
-    WillSendRequest(WebCore::ResourceRequest request, IPC::FormDataReference requestBody, WebCore::ResourceResponse redirectResponse)
+    WillSendRequest(WebCore::ResourceRequest request, IPC::FormDataReference requestBody, WebCore::ResourceResponse redirectResponse) -> (WebCore::ResourceRequest newRequest, bool isAllowedToAskUserForCredentials)
     SetWorkerStart(MonotonicTime value)
     DidSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
     DidReceiveResponse(WebCore::ResourceResponse response, enum:bool WebKit::PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage, std::optional<WebCore::NetworkLoadMetrics> optionalNetworkLoadMetrics)
@@ -39,7 +39,7 @@ messages -> WebResourceLoader LegacyReceiver {
     DidReceiveResource(WebKit::ShareableResource::Handle resource)
 #endif
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     ContentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler unblockHandler, String unblockRequestDeniedScript, WebCore::ResourceError error, URL blockedPageURL, WebCore::SubstituteData substituteData)
 #endif
 

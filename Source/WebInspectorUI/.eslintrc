@@ -130,9 +130,9 @@
 
         // CodeMirror
         "createCodeMirrorColorTextMarkers": true,
-        "createCodeMirrorCubicBezierTextMarkers": true,
+        "createCodeMirrorCubicBezierTimingFunctionTextMarkers": true,
         "createCodeMirrorGradientTextMarkers": true,
-        "createCodeMirrorSpringTextMarkers": true,
+        "createCodeMirrorSpringTimingFunctionTextMarkers": true,
     },
     "rules": {
         "array-bracket-spacing": [2, "never"],

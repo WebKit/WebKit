@@ -2058,7 +2058,6 @@ platform/RemoteCommandListener.cpp
 platform/RunLoopObserver.cpp
 platform/RuntimeApplicationChecks.cpp
 platform/ScreenOrientationManager.cpp
-platform/ScreenOrientationProvider.cpp
 platform/ScrollAlignment.cpp
 platform/ScrollAnimation.cpp
 platform/ScrollAnimationKeyboard.cpp

@@ -722,6 +722,11 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType,
         return UncachedString { dataURL(imageData->pixelBuffer(), encodingMIMEType, quality) };
 #endif
 
+    if (document().quirks().shouldEnableCanvas2DAdvancedPrivacyProtectionQuirk()) {
+        if (auto url = document().quirks().advancedPrivacyProtectionSubstituteDataURLForText(lastFillText()); !url.isNull())
+            return UncachedString { url };
+    }
+
     makeRenderingResultsAvailable();
 
     return UncachedString { buffer()->toDataURL(encodingMIMEType, quality) };

@@ -33,7 +33,6 @@
 namespace WebKit {
 
 struct PolicyDecision {
-    WebCore::PolicyCheckIdentifier identifier { };
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { std::nullopt };
     WebCore::PolicyAction policyAction { WebCore::PolicyAction::Ignore };
     uint64_t navigationID { 0 };

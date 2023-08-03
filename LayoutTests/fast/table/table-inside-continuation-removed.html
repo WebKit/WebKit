@@ -1,0 +1,20 @@
+<style>
+#container {
+  display: -webkit-box;
+}
+</style>
+PASS if no crash or assert.
+<div id=container>
+  <span><div></div></span>
+  <dialog id=dialog contenteditable="true">
+    <table><col></col></table>
+  </dialog>
+</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.body.offsetHeight;
+dialog.showModal();
+container.style.webkitColumnSpan = "all";
+</script>

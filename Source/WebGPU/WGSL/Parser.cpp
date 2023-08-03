@@ -348,7 +348,7 @@ Result<void> Parser<Lexer>::parseShader()
 {
     // FIXME: parse directives here.
 
-    while (!m_lexer.isAtEndOfFile()) {
+    while (current().type != TokenType::EndOfFile) {
         auto globalExpected = parseGlobalDecl();
         if (!globalExpected)
             return makeUnexpected(globalExpected.error());

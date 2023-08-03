@@ -30,27 +30,16 @@
 
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeHost.h"
-#import <QuartzCore/QuartzCore.h>
-#import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/SoftLinking.h>
 
 #if PLATFORM(VISION)
-#import <RealitySystemSupport/RealitySystemSupport.h>
-#endif
 
-//// FIXME: rdar://105775731
+#import <RealitySystemSupport/RealitySystemSupport.h>
+#import <wtf/SoftLinking.h>
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(RealitySystemSupport)
 SOFT_LINK_CLASS_OPTIONAL(RealitySystemSupport, RCPGlowEffectLayer)
-#if PLATFORM(VISION)
 SOFT_LINK_CONSTANT_MAY_FAIL(RealitySystemSupport, RCPAllowedInputTypesUserInfoKey, const NSString *)
-#endif
 
-@interface CALayer ()
-@property (nonatomic) CGFloat sizeMultiplier;
-#if PLATFORM(VISION)
-@property (nonatomic, copy) void (^effectGroupConfigurator)(CARemoteEffectGroup *group);
 #endif
-@end
 
 namespace WebKit {
 using namespace WebCore;
@@ -59,6 +48,8 @@ NSString *interactionRegionTypeKey = @"WKInteractionRegionType";
 NSString *interactionRegionGroupNameKey = @"WKInteractionRegionGroupName";
 
 #if PLATFORM(VISION)
+RCPRemoteEffectInputTypes interactionRegionInputTypes = RCPRemoteEffectInputTypesAll ^ RCPRemoteEffectInputTypePointer;
+
 static Class interactionRegionLayerClass()
 {
     if (getRCPGlowEffectLayerClass())
@@ -71,29 +62,35 @@ static NSDictionary *interactionRegionEffectUserInfo()
     static NeverDestroyed<RetainPtr<NSDictionary>> interactionRegionEffectUserInfo;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        if (canLoadRCPAllowedInputTypesUserInfoKey()) {
-            RCPRemoteEffectInputTypes allowedInputs = RCPRemoteEffectInputTypesAll ^ RCPRemoteEffectInputTypePointer;
-            interactionRegionEffectUserInfo.get() = @{ getRCPAllowedInputTypesUserInfoKey(): @(allowedInputs) };
-        }
+        if (canLoadRCPAllowedInputTypesUserInfoKey())
+            interactionRegionEffectUserInfo.get() = @{ getRCPAllowedInputTypesUserInfoKey(): @(interactionRegionInputTypes) };
     });
     return interactionRegionEffectUserInfo.get().get();
 }
 
+static float brightnessMultiplier()
+{
+    static float multiplier = 1.5;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (auto brightnessUserDefault = [[NSUserDefaults standardUserDefaults] floatForKey:@"WKInteractionRegionBrightnessMultiplier"])
+            multiplier = brightnessUserDefault;
+    });
+    return multiplier;
+}
+
 static void configureLayerForInteractionRegion(CALayer *layer, NSString *groupName)
 {
-    if (auto multiplier = [[NSUserDefaults standardUserDefaults] floatForKey:@"WKInteractionRegionLayerSizeMultiplier"]) {
-        if ([layer respondsToSelector:@selector(setSizeMultiplier:)])
-            [layer setSizeMultiplier:multiplier];
-    }
+    if (![layer isKindOfClass:getRCPGlowEffectLayerClass()])
+        return;
 
-    if ([layer respondsToSelector:@selector(setEffectGroupConfigurator:)]) {
-        [layer setEffectGroupConfigurator:^void(CARemoteEffectGroup *group)
-        {
-            group.groupName = groupName;
-            group.matched = YES;
-            group.userInfo = interactionRegionEffectUserInfo();
-        }];
-    }
+    [(RCPGlowEffectLayer *)layer setBrightnessMultiplier:brightnessMultiplier() forInputTypes:interactionRegionInputTypes];
+    [(RCPGlowEffectLayer *)layer setEffectGroupConfigurator:^void(CARemoteEffectGroup *group)
+    {
+        group.groupName = groupName;
+        group.matched = YES;
+        group.userInfo = interactionRegionEffectUserInfo();
+    }];
 }
 
 static void configureLayerAsGuard(CALayer *layer, NSString *groupName)

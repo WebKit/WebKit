@@ -1232,6 +1232,11 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
     uint32_t length = static_cast<uint32_t>(length64);
     uint32_t index = static_cast<uint32_t>(index64);
 
+    if constexpr (direction == IndexOfDirection::Forward) {
+        if (index >= length)
+            return jsNumber(-1);
+    }
+
     switch (array->indexingType()) {
     case ALL_INT32_INDEXING_TYPES: {
         if (!searchElement.isNumber())
@@ -1270,6 +1275,13 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         auto data = butterfly.contiguous().data();
 
         if (direction == IndexOfDirection::Forward) {
+            if (searchElement.isObject()) {
+                auto* result = bitwise_cast<const WriteBarrier<Unknown>*>(WTF::find64(bitwise_cast<const uint64_t*>(data + index), JSValue::encode(searchElement), length - index));
+                if (result)
+                    return jsNumber(result - data);
+                return jsNumber(-1);
+            }
+
             for (; index < length; ++index) {
                 JSValue value = data[index].get();
                 if (!value)

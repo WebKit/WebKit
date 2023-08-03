@@ -33,16 +33,13 @@
 #include "RemoteLayerBackingStore.h"
 #include "TransactionID.h"
 #include <WebCore/Color.h>
-#include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/MediaPlayerEnums.h>
-#include <WebCore/Model.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/ScrollTypes.h>
-#include <WebCore/TransformationMatrix.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
@@ -56,11 +53,6 @@
 #include <WebCore/AcceleratedEffect.h>
 #include <WebCore/AcceleratedEffectValues.h>
 #endif
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
 
 namespace WebKit {
 
@@ -82,28 +74,40 @@ class RemoteLayerTreeTransaction {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct LayerCreationProperties {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        LayerCreationProperties();
-
-        void encode(IPC::Encoder&) const;
-        static std::optional<LayerCreationProperties> decode(IPC::Decoder&);
+        struct NoAdditionalData { };
+        struct CustomData {
+            uint32_t hostingContextID { 0 };
+            float hostingDeviceScaleFactor { 1 };
+            bool preservesFlip { false };
+        };
+        struct VideoElementData {
+            PlaybackSessionContextIdentifier playerIdentifier;
+            WebCore::FloatSize initialSize;
+            WebCore::FloatSize naturalSize;
+        };
+        using AdditionalData = std::variant<
+            NoAdditionalData, // PlatformCALayerRemote and PlatformCALayerRemoteTiledBacking
+            CustomData, // PlatformCALayerRemoteCustom
+#if ENABLE(MODEL_ELEMENT)
+            Ref<WebCore::Model>, // PlatformCALayerRemoteModelHosting
+#endif
+            WebCore::LayerHostingContextIdentifier // PlatformCALayerRemoteHost
+        >;
 
         WebCore::PlatformLayerIdentifier layerID;
-        WebCore::PlatformCALayer::LayerType type;
-        std::optional<PlaybackSessionContextIdentifier> playerIdentifier;
-        std::optional<WebCore::FloatSize> initialSize;
-        std::optional<WebCore::FloatSize> naturalSize;
+        WebCore::PlatformCALayer::LayerType type { WebCore::PlatformCALayer::LayerTypeLayer };
+        std::optional<VideoElementData> videoElementData;
+        AdditionalData additionalData;
 
-        uint32_t hostingContextID;
-        float hostingDeviceScaleFactor;
-        bool preservesFlip;
+        LayerCreationProperties();
+        LayerCreationProperties(WebCore::PlatformLayerIdentifier, WebCore::PlatformCALayer::LayerType, std::optional<VideoElementData>&&, AdditionalData&&);
+        LayerCreationProperties(LayerCreationProperties&&);
+        LayerCreationProperties& operator=(LayerCreationProperties&&);
 
-        // FIXME: This could be a variant<CustomData, HostData, ModelData, NoData>.
-        Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier;
-
-#if ENABLE(MODEL_ELEMENT)
-        RefPtr<WebCore::Model> model;
-#endif
+        std::optional<WebCore::LayerHostingContextIdentifier> hostIdentifier() const;
+        uint32_t hostingContextID() const;
+        bool preservesFlip() const;
+        float hostingDeviceScaleFactor() const;
     };
 
     explicit RemoteLayerTreeTransaction();

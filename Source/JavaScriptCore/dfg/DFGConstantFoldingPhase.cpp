@@ -1157,13 +1157,6 @@ private:
                 const AbstractValue& abstractValue = m_state.forNode(node->child1());
                 unsigned bits = node->typeInfoOperand();
                 ASSERT(bits);
-                if (bits == ImplementsDefaultHasInstance) {
-                    if (abstractValue.m_type == SpecFunctionWithDefaultHasInstance) {
-                        eliminated = true;
-                        node->remove(m_graph);
-                        break;
-                    }
-                }
 
                 if (JSValue value = abstractValue.value()) {
                     if (value.isCell()) {

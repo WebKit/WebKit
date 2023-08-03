@@ -70,17 +70,13 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     Vector<uint8_t>&& webFilterEvaluatorData,
 #endif
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     bool unblockedAfterRequest
-#endif
     ) : m_unblockURLHost(WTFMove(unblockURLHost))
     , m_unreachableURL(WTFMove(unreachableURL))
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     , m_webFilterEvaluator(unpackWebFilterEvaluatorData(WTFMove(webFilterEvaluatorData)))
 #endif
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     , m_unblockedAfterRequest(unblockedAfterRequest)
-#endif
 {
 }
 
@@ -128,11 +124,7 @@ bool ContentFilterUnblockHandler::needsUIProcess() const
 
 bool ContentFilterUnblockHandler::canHandleRequest(const ResourceRequest& request) const
 {
-    if (!m_unblockRequester
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-        && !m_unblockedAfterRequest
-#endif
-        ) {
+    if (!m_unblockRequester && !m_unblockedAfterRequest) {
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
         if (!m_webFilterEvaluator)
             return false;
@@ -163,13 +155,11 @@ void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction de
     }
 #endif
     auto unblockRequester = m_unblockRequester;
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     if (!unblockRequester && m_unblockedAfterRequest) {
         unblockRequester = [unblocked = m_unblockedAfterRequest](ContentFilterUnblockHandler::DecisionHandlerFunction function) {
             function(unblocked);
         };
     }
-#endif
     if (unblockRequester) {
         unblockRequester([decisionHandler](bool unblocked) {
             callOnMainThread([decisionHandler, unblocked] {
@@ -184,12 +174,10 @@ void ContentFilterUnblockHandler::requestUnblockAsync(DecisionHandlerFunction de
     }
 }
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 void ContentFilterUnblockHandler::setUnblockedAfterRequest(bool unblocked)
 {
     m_unblockedAfterRequest = unblocked;
 }
-#endif
 
 } // namespace WebCore
 

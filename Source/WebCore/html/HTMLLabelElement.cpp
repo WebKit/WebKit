@@ -30,11 +30,8 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "FormListedElement.h"
-#include "FrameSelection.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
-#include "LocalFrame.h"
-#include "MouseEvent.h"
 #include "SelectionRestorationMode.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
@@ -143,14 +140,6 @@ bool HTMLLabelElement::isEventTargetedAtInteractiveDescendants(Event& event) con
 void HTMLLabelElement::defaultEventHandler(Event& event)
 {
     if (event.type() == eventNames().clickEvent && !m_processingClick) {
-        // If text of label element is selected, do not pass the event to control element.
-        // Note: a click event may be not a mouse event if created by document.createEvent().
-        if (event.isMouseEvent() && !downcast<MouseEvent>(event).isSimulated()) {
-            auto* frame = document().frame();
-            if (frame && frame->selection().selection().isRange())
-                return;
-        }
-
         auto control = this->control();
 
         // If we can't find a control or if the control received the click

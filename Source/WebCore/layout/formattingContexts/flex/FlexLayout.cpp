@@ -502,8 +502,10 @@ void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, si
     // If the flex container has a definite cross size, align-content is stretch, and the sum of the flex lines' cross sizes is less than the flex container's inner cross size,
     // increase the cross size of each flex line by equal amounts such that the sum of their cross sizes exactly equals the flex container's inner cross size.
     auto linesMayStretch = [&] {
-        auto alignContent = flexContainerStyle().alignContent().distribution();
-        return alignContent == ContentDistribution::Stretch || alignContent == ContentDistribution::Default;
+        auto alignContent = flexContainerStyle().alignContent();
+        if (alignContent.distribution() == ContentDistribution::Stretch)
+            return true;
+        return alignContent.distribution() == ContentDistribution::Default && alignContent.position() == ContentPosition::Normal;
     };
     if (!linesMayStretch() || !crossAxis.definiteSize)
         return;

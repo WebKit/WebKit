@@ -41,9 +41,7 @@ typedef uint64_t SpeculatedType;
 static constexpr SpeculatedType SpecNone                              = 0; // We don't know anything yet.
 static constexpr SpeculatedType SpecFinalObject                       = 1ull << 0; // It's definitely a JSFinalObject.
 static constexpr SpeculatedType SpecArray                             = 1ull << 1; // It's definitely a JSArray.
-static constexpr SpeculatedType SpecFunctionWithDefaultHasInstance    = 1ull << 2; // It's definitely a JSFunction that has its ImplementsDefaultHasInstance type info flags bit set.
-static constexpr SpeculatedType SpecFunctionWithNonDefaultHasInstance = 1ull << 3; // It's definitely a JSFunction that does not have its ImplementsDefaultHasInstance type info flags bit set.
-static constexpr SpeculatedType SpecFunction                          = SpecFunctionWithDefaultHasInstance | SpecFunctionWithNonDefaultHasInstance; // It's definitely a JSFunction.
+static constexpr SpeculatedType SpecFunction                          = 1ull << 2; // It's definitely a JSFunction.
 static constexpr SpeculatedType SpecInt8Array                         = 1ull << 4; // It's definitely an Int8Array or one of its subclasses.
 static constexpr SpeculatedType SpecInt16Array                        = 1ull << 5; // It's definitely an Int16Array or one of its subclasses.
 static constexpr SpeculatedType SpecInt32Array                        = 1ull << 6; // It's definitely an Int32Array or one of its subclasses.
@@ -521,7 +519,7 @@ SpeculatedType speculationFromClassInfoInheritance(const ClassInfo*);
 
 SpeculatedType speculationFromStructure(Structure*);
 SpeculatedType speculationFromCell(JSCell*);
-JS_EXPORT_PRIVATE SpeculatedType speculationFromValue(JSValue);
+SpeculatedType speculationFromValue(JSValue);
 // If it's an anyInt(), it'll return speculated types from the Int52 lattice.
 // Otherwise, it'll return types from the JSValue lattice.
 JS_EXPORT_PRIVATE SpeculatedType int52AwareSpeculationFromValue(JSValue);

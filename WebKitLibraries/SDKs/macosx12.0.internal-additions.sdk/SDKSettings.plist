@@ -8,6 +8,7 @@
         <string>NO</string>
         <key>FrameworkSearchPaths</key>
         <array>
+            <!-- Make additional private frameworks (i.e. AppleJPEGXL.framework) implicitly visible in internal builds. -->
             <string>System/Library/PrivateFrameworks</string>
         </array>
 </dict>

@@ -1,0 +1,21 @@
+<style>
+* { transform: skew(180deg, 90deg); }
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function load() {
+    input.focus();
+    document.execCommand("insertHTML", false, "A");
+}
+
+</script>
+<body onload="load()">
+    <div>PASS if no crash.</div>
+    <input id="input" list="list">
+    <datalist id="list">
+        <option id="option">AAAAAAAAAA</option>
+    </datalist>
+</body>

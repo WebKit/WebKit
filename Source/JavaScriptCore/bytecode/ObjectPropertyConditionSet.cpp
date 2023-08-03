@@ -230,13 +230,23 @@ ObjectPropertyCondition generateCondition(
         break;
     }
     case PropertyCondition::Equivalence: {
-        unsigned attributes;
-        PropertyOffset offset = structure->get(vm, concurrency, uid, attributes);
-        if (offset == invalidOffset)
-            return ObjectPropertyCondition();
-        JSValue value = object->getDirect(concurrency, structure, offset);
-        if (!value)
-            return ObjectPropertyCondition();
+        JSValue value;
+        {
+            Locker<JSCellLock> cellLocker { NoLockingNecessary };
+            if (concurrency != Concurrency::MainThread) {
+                cellLocker = Locker { object->cellLock() };
+                if (object->structure() != structure)
+                    return ObjectPropertyCondition();
+                // The structure might change from now on, but we are guaranteed to have a sane view of the butterfly.
+            }
+            unsigned attributes;
+            PropertyOffset offset = structure->get(vm, concurrency, uid, attributes);
+            if (offset == invalidOffset)
+                return ObjectPropertyCondition();
+            value = object->getDirect(cellLocker, concurrency, structure, offset);
+            if (!value)
+                return ObjectPropertyCondition();
+        }
         result = ObjectPropertyCondition::equivalence(vm, owner, object, uid, value);
         break;
     }

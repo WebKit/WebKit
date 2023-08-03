@@ -2,13 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-        <key>CanonicalName</key>
-        <string>macosx14.0-additions</string>
-        <key>IsBaseSDK</key>
-        <string>NO</string>
-        <key>HeaderSearchPaths</key>
-        <array>
-            <string>usr/local/include</string>
-        </array>
+	<key>CanonicalName</key>
+	<string>WebKitSDKAdditions</string>
+	<key>HeaderSearchPaths</key>
+	<array>
+		<string>usr/local/include</string>
+	</array>
+	<key>IsBaseSDK</key>
+	<string>NO</string>
 </dict>
 </plist>

@@ -71,10 +71,12 @@ void RemoteLayerTreeDrawingAreaMac::mainFrameContentSizeChanged(WebCore::FrameId
 
 void RemoteLayerTreeDrawingAreaMac::applyTransientZoomToPage(double scale, FloatPoint origin)
 {
-    auto& frameView = *m_webPage.mainFrameView();
+    auto* frameView = m_webPage.localMainFrameView();
+    if (!frameView)
+        return;
 
     auto unscrolledOrigin = origin;
-    FloatRect unobscuredContentRect = frameView.unobscuredContentRectIncludingScrollbars();
+    FloatRect unobscuredContentRect = frameView->unobscuredContentRectIncludingScrollbars();
     unscrolledOrigin.moveBy(-unobscuredContentRect.location());
     m_webPage.scalePage(scale / m_webPage.viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
     updateRendering();
@@ -103,7 +105,7 @@ void RemoteLayerTreeDrawingAreaMac::commitTransientZoom(double scale, WebCore::F
 void RemoteLayerTreeDrawingAreaMac::willCommitLayerTree(RemoteLayerTreeTransaction& transaction)
 {
     // FIXME: Probably need something here for PDF.
-    auto* frameView = m_webPage.mainFrameView();
+    auto* frameView = m_webPage.localMainFrameView();
     if (!frameView)
         return;
 

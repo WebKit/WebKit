@@ -54,6 +54,11 @@ struct MouseLocationState {
     IntPoint locationInVerticalScrollbar;
 };
 
+struct ScrollbarEnabledState {
+    bool horizontalScrollbarIsEnabled { false };
+    bool verticalScrollbarIsEnabled { false };
+};
+
 class ScrollingStateScrollingNode : public ScrollingStateNode {
 public:
     virtual ~ScrollingStateScrollingNode();
@@ -124,6 +129,9 @@ public:
     ScrollbarHoverState scrollbarHoverState() const { return m_scrollbarHoverState; }
     WEBCORE_EXPORT void setScrollbarHoverState(ScrollbarHoverState);
 
+    ScrollbarEnabledState scrollbarEnabledState() const { return m_scrollbarEnabledState; }
+    WEBCORE_EXPORT void setScrollbarEnabledState(ScrollbarOrientation, bool);
+
     void setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
 
     WEBCORE_EXPORT void setMouseIsOverContentArea(bool);
@@ -157,6 +165,7 @@ private:
     
     ScrollbarHoverState m_scrollbarHoverState;
     MouseLocationState m_mouseLocationState;
+    ScrollbarEnabledState m_scrollbarEnabledState;
 
 #if PLATFORM(MAC)
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;

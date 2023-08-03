@@ -40,6 +40,10 @@
 #include <bmalloc/bmalloc.h>
 #endif
 
+#if OS(DARWIN)
+#include <mach/mach.h>
+#endif
+
 namespace WTF {
 
 #if OS(WINDOWS)
@@ -81,5 +85,25 @@ size_t ramSize()
     });
     return ramSize;
 }
+
+#if OS(DARWIN)
+size_t ramSizeDisregardingJetsamLimit()
+{
+    host_basic_info_data_t hostInfo;
+
+    mach_port_t host = mach_host_self();
+    mach_msg_type_number_t count = HOST_BASIC_INFO_COUNT;
+    kern_return_t r = host_info(host, HOST_BASIC_INFO, (host_info_t)&hostInfo, &count);
+    if (mach_port_deallocate(mach_task_self(), host) != KERN_SUCCESS)
+        return 0;
+    if (r != KERN_SUCCESS)
+        return 0;
+
+    if (hostInfo.max_mem > std::numeric_limits<size_t>::max())
+        return std::numeric_limits<size_t>::max();
+
+    return static_cast<size_t>(hostInfo.max_mem);
+}
+#endif
 
 } // namespace WTF

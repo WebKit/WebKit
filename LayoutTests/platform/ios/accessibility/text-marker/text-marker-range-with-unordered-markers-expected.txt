@@ -1,0 +1,16 @@
+This test ensures that clietns can build an AXTextMarkerRange from unordered TextMarkers, i.e., start > end.
+
+PASS: text.stringForTextMarkerRange(range) === 'This is a paragraph.'
+PASS: text.textMarkerRangeLength(range) === 20
+PASS: text.stringForTextMarkerRange(range1) === 'This is a paragraph.'
+PASS: text.textMarkerRangeLength(range1) === 20
+PASS: text.stringForTextMarkerRange(range2) === 'para'
+PASS: text.textMarkerRangeLength(range2) === 4
+PASS: text.stringForTextMarkerRange(range4) === expected
+PASS: text.textMarkerRangeLength(range4) === expected.length
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

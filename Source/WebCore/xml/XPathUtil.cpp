@@ -74,10 +74,5 @@ bool isValidContextNode(Node& node)
     return false;
 }
 
-bool isXMLSpace(UChar character)
-{
-    return character == ' ' || character == '\t' || character == '\r' || character == '\n';
-}
-
 }
 }

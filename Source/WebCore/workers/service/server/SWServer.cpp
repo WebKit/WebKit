@@ -1207,6 +1207,10 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     bool didUnregister = false;
     if (auto registration = m_serviceWorkerPageIdentifierToRegistrationMap.get(clientIdentifier)) {
         removeFromScopeToRegistrationMap(registration->key());
+        if (auto* preinstallingServiceWorker = registration->preInstallationWorker()) {
+            if (auto* jobQueue = m_jobQueues.get(registration->key()))
+                jobQueue->cancelJobsFromServiceWorker(preinstallingServiceWorker->identifier());
+        }
         registration->clear();
         ASSERT(!m_serviceWorkerPageIdentifierToRegistrationMap.contains(clientIdentifier));
         didUnregister = true;

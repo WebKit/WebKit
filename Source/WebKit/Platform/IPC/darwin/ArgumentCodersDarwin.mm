@@ -30,11 +30,6 @@
 
 namespace IPC {
 
-void ArgumentCoder<MachSendRight>::encode(Encoder& encoder, const MachSendRight& sendRight)
-{
-    encoder.addAttachment(MachSendRight { sendRight });
-}
-
 void ArgumentCoder<MachSendRight>::encode(Encoder& encoder, MachSendRight&& sendRight)
 {
     encoder.addAttachment(WTFMove(sendRight));

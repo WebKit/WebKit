@@ -164,8 +164,9 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
 
             if (!privateStreamOrError.has_value()) {
                 RELEASE_LOG(MediaStream, "UserMediaRequest::allow failed to create media stream!");
-                scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, privateStreamOrError.error());
-                deny(MediaAccessDenialReason::HardwareError);
+                auto error = privateStreamOrError.error();
+                scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.errorMessage);
+                deny(error.denialReason, error.errorMessage);
                 return;
             }
             auto privateStream = WTFMove(privateStreamOrError).value();
@@ -218,6 +219,10 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
 
     ExceptionCode code;
     switch (reason) {
+    case MediaAccessDenialReason::NoReason:
+        ASSERT_NOT_REACHED();
+        code = AbortError;
+        break;
     case MediaAccessDenialReason::NoConstraints:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - no constraints");
         code = TypeError;

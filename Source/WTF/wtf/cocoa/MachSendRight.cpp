@@ -133,22 +133,6 @@ MachSendRight& MachSendRight::operator=(MachSendRight&& other)
     return *this;
 }
 
-MachSendRight& MachSendRight::operator=(const MachSendRight& other)
-{
-    if (this != &other) {
-        releaseSendRight(m_port);
-        m_port = other.sendRight();
-        retainSendRight(m_port);
-    }
-
-    return *this;
-}
-
-MachSendRight MachSendRight::copySendRight() const
-{
-    return create(m_port);
-}
-
 mach_port_t MachSendRight::leakSendRight()
 {
     return std::exchange(m_port, MACH_PORT_NULL);

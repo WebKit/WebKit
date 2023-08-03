@@ -1,0 +1,24 @@
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpResourceResponseMIMETypes();
+    testRunner.dumpAsText();
+}
+</script>
+<body>
+<script>
+function runTests() {
+    let iframe = document.createElement("iframe");
+    iframe.src = 'resources/svg-with-html.svg';
+    if (window.testRunner) {
+        iframe.onerror = testRunner.notifyDone();
+        iframe.onload = testRunner.notifyDone();
+    }
+    document.body.appendChild(iframe);
+}
+runTests();
+</script>
+</body>
+</html>
+

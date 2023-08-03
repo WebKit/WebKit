@@ -47,7 +47,6 @@ public:
 
     const URL& href() const { return m_url; }
     ExceptionOr<void> setHref(const String&);
-    void setQuery(const String&);
 
     URLSearchParams& searchParams();
 

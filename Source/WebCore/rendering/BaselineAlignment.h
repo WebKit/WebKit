@@ -54,6 +54,8 @@ public:
     void update(const RenderBox&, LayoutUnit ascent);
     LayoutUnit maxAscent() const { return m_maxAscent; }
     int computeSize() const { return m_items.computeSize(); }
+    auto begin() { return m_items.begin(); }
+    auto end() { return m_items.end(); }
 
 private:
     friend class BaselineAlignmentState;
@@ -74,7 +76,7 @@ private:
     WritingMode m_blockFlow;
     ItemPosition m_preference;
     LayoutUnit m_maxAscent;
-    WeakHashSet<const RenderBox> m_items;
+    WeakHashSet<RenderBox> m_items;
 };
 
 //
@@ -101,6 +103,7 @@ public:
     // We pass the item's baseline-preference to avoid dependencies with the LayoutGrid class, which is the one
     // managing the alignment behavior of the Grid Items.
     void updateSharedGroup(const RenderBox& child, ItemPosition preference, LayoutUnit ascent);
+    Vector<BaselineGroup>& sharedGroups();
 
 private:
     // Returns the baseline-sharing group compatible with an item.

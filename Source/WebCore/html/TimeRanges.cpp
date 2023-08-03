@@ -100,9 +100,9 @@ unsigned TimeRanges::length() const
     return m_ranges.length();
 }
 
-void TimeRanges::add(double start, double end)
+void TimeRanges::add(double start, double end, AddTimeRangeOption addTimeRangeOption)
 {
-    m_ranges.add(MediaTime::createWithDouble(start), MediaTime::createWithDouble(end));
+    m_ranges.add(MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), addTimeRangeOption);
 }
 
 bool TimeRanges::contain(double time) const

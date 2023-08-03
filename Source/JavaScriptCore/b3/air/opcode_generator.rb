@@ -995,17 +995,17 @@ writeH("OpcodeGenerated") {
         | opcode |
         outp.puts "case Opcode::#{opcode.name}:"
 
+        numArgs = opcode.custom ? 0 : opcode.overloads.map {
+            | overload |
+            overload.signature.length
+        }.max
+
         if opcode.custom
             outp.puts "OPGEN_RETURN(#{opcode.name}Custom::admitsStack(*this, argIndex));"
-        else
+        elsif numArgs > 0
             # Switch on the argIndex.
             outp.puts "switch (argIndex) {"
 
-            numArgs = opcode.overloads.map {
-                | overload |
-                overload.signature.length
-            }.max
-            
             numArgs.times {
                 | argIndex |
                 outp.puts "case #{argIndex}:"

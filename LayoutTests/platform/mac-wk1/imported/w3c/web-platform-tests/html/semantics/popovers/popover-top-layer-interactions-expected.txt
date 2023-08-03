@@ -1,0 +1,14 @@
+This is a Fullscreen Element
+
+Harness Error (FAIL), message = Test named 'A Fullscreen Element should *not* close a Fullscreen Element.' specified 1 'cleanup' function, and 1 failed.
+
+PASS A Popover should close a Popover.
+PASS A Modal Dialog should close a Popover.
+PASS A Fullscreen Element should close a Popover.
+PASS A Popover should *not* close a Modal Dialog.
+PASS A Modal Dialog should *not* close a Modal Dialog.
+PASS A Fullscreen Element should *not* close a Modal Dialog.
+PASS A Popover should *not* close a Fullscreen Element.
+PASS A Modal Dialog should *not* close a Fullscreen Element.
+PASS A Fullscreen Element should *not* close a Fullscreen Element.
+

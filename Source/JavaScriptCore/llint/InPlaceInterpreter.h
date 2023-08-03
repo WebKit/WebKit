@@ -25,10 +25,12 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
 extern "C" void ipint_entry();
 
 #define IPINT_VALIDATE_DEFINE_FUNCTION(opcode, name) \
-    extern "C" void ipint_ ## name ## _validate();
+    extern "C" void ipint_ ## name ## _validate() REFERENCED_FROM_ASM WTF_INTERNAL;
 
 #define FOR_EACH_IPINT_OPCODE(m) \
     m(0x00, unreachable) \
@@ -217,7 +219,7 @@ extern "C" void ipint_entry();
     m(0xfc, fc_block) \
     m(0xfd, simd)
 
-#if CPU(ARM64) || CPU(X86_64)
+#if !ENABLE(C_LOOP) && CPU(ADDRESS64) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
 FOR_EACH_IPINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 #endif
 
@@ -226,3 +228,5 @@ namespace JSC { namespace IPInt {
 void initialize();
 
 } }
+
+#endif // ENABLE(WEBASSEMBLY)

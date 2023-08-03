@@ -485,7 +485,7 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
     if (!count)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, count, " sample buffers at time ", presentationTime);
+    ALWAYS_LOG(LOGIDENTIFIER, count, " sample buffers at time ", presentationTime);
 
     for (CFIndex i = 0; i < count; i++) {
         RefPtr<ArrayBuffer> buffer;
@@ -494,57 +494,60 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
         if (!readNativeSampleBuffer(nativeSamples, i, buffer, duration, formatDescription))
             continue;
 
-        auto view = JSC::DataView::create(WTFMove(buffer), 0, buffer->byteLength());
-        auto peekResult = ISOBox::peekBox(view, 0);
-        if (!peekResult)
-            continue;
+        while (true) {
+            buffer = ArrayBuffer::create(m_sampleInputBuffer.data(), m_sampleInputBuffer.size());
+            auto view = JSC::DataView::create(WTFMove(buffer), 0, buffer->byteLength());
 
-        auto type = peekResult.value().first;
-        auto boxLength = peekResult.value().second;
-        if (boxLength > view->byteLength()) {
-            ERROR_LOG(LOGIDENTIFIER, "chunk  type = '", type, "', size = ", boxLength, " larger than buffer length!");
-            continue;
+            auto peekResult = ISOBox::peekBox(view, 0);
+            if (!peekResult)
+                break;
+
+            auto type = peekResult.value().first;
+            auto boxLength = peekResult.value().second;
+            if (boxLength > view->byteLength()) {
+                ERROR_LOG(LOGIDENTIFIER, "chunk  type = '", type, "', size = ", boxLength, " larger than buffer length!");
+                break;
+            }
+
+            INFO_LOG(LOGIDENTIFIER, "chunk  type = '", type, "', size = ", boxLength);
+
+            do {
+                if (m_haveReportedVTTHeader || !formatDescription)
+                    break;
+
+                CFDictionaryRef extensions = CMFormatDescriptionGetExtensions(formatDescription);
+                if (!extensions)
+                    break;
+
+                CFDictionaryRef sampleDescriptionExtensions = static_cast<CFDictionaryRef>(CFDictionaryGetValue(extensions, kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+                if (!sampleDescriptionExtensions)
+                    break;
+
+                CFDataRef webvttHeaderData = static_cast<CFDataRef>(CFDictionaryGetValue(sampleDescriptionExtensions, CFSTR("vttC")));
+                if (!webvttHeaderData)
+                    break;
+
+                unsigned length = CFDataGetLength(webvttHeaderData);
+                if (!length)
+                    break;
+
+                // A WebVTT header is terminated by "One or more WebVTT line terminators" so append two line feeds to make sure the parser
+                // reccognized this string as a full header.
+                auto header = makeString(StringView { CFDataGetBytePtr(webvttHeaderData), length }, "\n\n");
+
+                INFO_LOG(LOGIDENTIFIER, "VTT header ", header);
+                client()->parseWebVTTFileHeader(WTFMove(header));
+                m_haveReportedVTTHeader = true;
+            } while (0);
+
+            if (type == ISOWebVTTCue::boxTypeName()) {
+                ISOWebVTTCue cueData = ISOWebVTTCue(presentationTime, duration);
+                cueData.read(view);
+                client()->parseWebVTTCueData(WTFMove(cueData));
+            }
+
+            m_sampleInputBuffer.remove(0, (size_t)boxLength);
         }
-
-        INFO_LOG(LOGIDENTIFIER, "chunk  type = '", type, "', size = ", boxLength);
-
-        do {
-            if (m_haveReportedVTTHeader || !formatDescription)
-                break;
-
-            CFDictionaryRef extensions = CMFormatDescriptionGetExtensions(formatDescription);
-            if (!extensions)
-                break;
-
-            CFDictionaryRef sampleDescriptionExtensions = static_cast<CFDictionaryRef>(CFDictionaryGetValue(extensions, kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
-            if (!sampleDescriptionExtensions)
-                break;
-            
-            CFDataRef webvttHeaderData = static_cast<CFDataRef>(CFDictionaryGetValue(sampleDescriptionExtensions, CFSTR("vttC")));
-            if (!webvttHeaderData)
-                break;
-
-            unsigned length = CFDataGetLength(webvttHeaderData);
-            if (!length)
-                break;
-
-            // A WebVTT header is terminated by "One or more WebVTT line terminators" so append two line feeds to make sure the parser
-            // reccognized this string as a full header.
-            auto header = makeString(StringView { CFDataGetBytePtr(webvttHeaderData), length }, "\n\n");
-
-            INFO_LOG(LOGIDENTIFIER, "VTT header ", header);
-            client()->parseWebVTTFileHeader(WTFMove(header));
-            m_haveReportedVTTHeader = true;
-        } while (0);
-
-        if (type == ISOWebVTTCue::boxTypeName()) {
-            ISOWebVTTCue cueData = ISOWebVTTCue(presentationTime, duration);
-            cueData.read(view);
-            INFO_LOG(LOGIDENTIFIER, "VTT cue data ", cueData);
-            client()->parseWebVTTCueData(WTFMove(cueData));
-        }
-
-        m_sampleInputBuffer.remove(0, (size_t)boxLength);
     }
 }
 

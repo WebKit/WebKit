@@ -463,8 +463,11 @@ void DrawingAreaCoordinatedGraphics::displayDidRefresh()
 void DrawingAreaCoordinatedGraphics::adjustTransientZoom(double scale, FloatPoint origin)
 {
     if (!m_transientZoom) {
-        auto& frameView = *m_webPage.mainFrameView();
-        FloatRect unobscuredContentRect = frameView.unobscuredContentRectIncludingScrollbars();
+        auto* frameView = m_webPage.localMainFrameView();
+        if (!frameView)
+            return;
+
+        FloatRect unobscuredContentRect = frameView->unobscuredContentRectIncludingScrollbars();
 
         m_transientZoom = true;
         m_transientZoomInitialOrigin = unobscuredContentRect.location();
@@ -810,6 +813,15 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     // Layout can trigger more calls to setNeedsDisplay and we don't want to process them
     // until the UI process has painted the update, so we stop the timer here.
     m_displayTimer.stop();
+}
+
+void DrawingAreaCoordinatedGraphics::forceUpdate()
+{
+    if (m_isWaitingForDidUpdate || m_layerTreeHost)
+        return;
+
+    m_dirtyRegion = m_webPage.bounds();
+    display();
 }
 
 } // namespace WebKit

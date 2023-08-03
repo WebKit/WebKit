@@ -43,12 +43,6 @@ RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomS
     gst_element_set_name(bin(), makeString("incoming-video-source-", sourceCounter.exchangeAdd(1)).ascii().data());
     GST_DEBUG_OBJECT(bin(), "New incoming video source created");
 
-    RealtimeMediaSourceSupportedConstraints constraints;
-    constraints.setSupportsWidth(true);
-    constraints.setSupportsHeight(true);
-    m_currentSettings = RealtimeMediaSourceSettings { };
-    m_currentSettings->setSupportedConstraints(WTFMove(constraints));
-
     auto sinkPad = adoptGRef(gst_element_get_static_pad(bin(), "sink"));
     gst_pad_add_probe(sinkPad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_BUFFER), [](GstPad*, GstPadProbeInfo* info, gpointer) -> GstPadProbeReturn {
         auto videoFrameTimeMetadata = std::make_optional<VideoFrameTimeMetadata>({ });
@@ -74,14 +68,22 @@ const RealtimeMediaSourceSettings& RealtimeIncomingVideoSourceGStreamer::setting
     if (m_currentSettings)
         return m_currentSettings.value();
 
-    RealtimeMediaSourceSupportedConstraints constraints;
-    constraints.setSupportsWidth(true);
-    constraints.setSupportsHeight(true);
-
     RealtimeMediaSourceSettings settings;
+    RealtimeMediaSourceSupportedConstraints constraints;
+
     auto& size = this->size();
-    settings.setWidth(size.width());
-    settings.setHeight(size.height());
+    if (!size.isZero()) {
+        constraints.setSupportsWidth(true);
+        constraints.setSupportsHeight(true);
+        settings.setWidth(size.width());
+        settings.setHeight(size.height());
+    }
+
+    if (double frameRate = this->frameRate()) {
+        constraints.setSupportsFrameRate(true);
+        settings.setFrameRate(frameRate);
+    }
+
     settings.setSupportedConstraints(constraints);
 
     m_currentSettings = WTFMove(settings);
@@ -90,13 +92,25 @@ const RealtimeMediaSourceSettings& RealtimeIncomingVideoSourceGStreamer::setting
 
 void RealtimeIncomingVideoSourceGStreamer::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
-    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height }))
+    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height, RealtimeMediaSourceSettings::Flag::FrameRate }))
         m_currentSettings = std::nullopt;
 }
 
 void RealtimeIncomingVideoSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& sample)
 {
     auto* buffer = gst_sample_get_buffer(sample.get());
+    auto* caps = gst_sample_get_caps(sample.get());
+    if (auto size = getVideoResolutionFromCaps(caps))
+        setSize({ static_cast<int>(size->width()), static_cast<int>(size->height()) });
+
+    int frameRateNumerator, frameRateDenominator;
+    auto* structure = gst_caps_get_structure(caps, 0);
+    if (gst_structure_get_fraction(structure, "framerate", &frameRateNumerator, &frameRateDenominator)) {
+        double framerate;
+        gst_util_fraction_to_double(frameRateNumerator, frameRateDenominator, &framerate);
+        setFrameRate(framerate);
+    }
+
     videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(sample), size(), fromGstClockTime(GST_BUFFER_PTS(buffer))), { });
 }
 

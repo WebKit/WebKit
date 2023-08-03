@@ -28,6 +28,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "HardwareAccelerationManager.h"
 #include "RemoteWebInspectorUIMessages.h"
 #include "WebInspectorUIProxy.h"
 #include "WebKitInspectorWindow.h"
@@ -62,6 +63,13 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
     preferences->setDeveloperExtrasEnabled(true);
     preferences->setLogsPageMessagesToSystemConsoleEnabled(true);
 #endif
+
+    // If hardware acceleration is available and not forced already, force it always for the remote inspector view.
+    const auto& hardwareAccelerationManager = HardwareAccelerationManager::singleton();
+    if (hardwareAccelerationManager.canUseHardwareAcceleration() && !hardwareAccelerationManager.forceHardwareAcceleration()) {
+        preferences->setForceCompositingMode(true);
+        preferences->setThreadedScrollingEnabled(true);
+    }
     auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(nullptr));
 
     auto pageConfiguration = API::PageConfiguration::create();

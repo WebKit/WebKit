@@ -1041,7 +1041,7 @@ void CanvasRenderingContext2DBase::clip(Path2D& path, CanvasFillRule windingRule
     clipInternal(path.path(), windingRule);
 }
 
-static inline IntRect computeImageDataRect(const ImageBuffer& buffer, int width, int height, IntRect destRect, const IntSize& destOffset)
+static inline IntRect computeImageDataRect(const ImageBuffer& buffer, int width, int height, IntRect& destRect, const IntSize& destOffset)
 {
     destRect.intersect(IntRect { 0, 0, width, height });
     destRect.move(destOffset);
@@ -2381,6 +2381,8 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
 
     IntSize destOffset { dx, dy };
     IntRect destRect { dirtyX, dirtyY, dirtyWidth, dirtyHeight };
+    // FIXME: computeImageDataRect also updates destRect. Maybe return a tuple? Or move
+    // the calculation of the real destRect to here.
     IntRect sourceRect = computeImageDataRect(*buffer, data.width(), data.height(), destRect, destOffset);
 
     if (!sourceRect.isEmpty())

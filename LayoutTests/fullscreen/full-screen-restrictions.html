@@ -26,20 +26,6 @@
         };
 
         var step3 = function() {
-            consoleWrite('"The context object\'s node document fullscreen element stack is not empty and its top element is not an ancestor of the context object."');
-            var div = document.documentElement.appendChild(document.createElement('div'));
-            var div2 = document.documentElement.appendChild(document.createElement('div'));
-            waitForEventOnce(document, 'webkitfullscreenchange', function() {
-                waitForEventOnce(document, 'webkitfullscreenerror', function() {
-                   waitForEventOnce(document, 'webkitfullscreenchange', step4);
-                   document.webkitExitFullscreen(); 
-                });
-                runWithKeyDown(function(){div2.webkitRequestFullscreen()});
-            });
-            runWithKeyDown(function(){div.webkitRequestFullscreen()});
-        };
-
-        var step4 = function() {
             consoleWrite('"A descendant browsing context\'s document has a non-empty fullscreen element stack."');
             var iframe = document.documentElement.appendChild(document.createElement('iframe'));
             iframe.setAttribute('webkitallowfullscreen', 'true');
@@ -47,7 +33,7 @@
             var div2 = document.documentElement.appendChild(document.createElement('div'));
             waitForEventOnce(iframe.contentDocument, 'webkitfullscreenchange', function() {
                 waitForEventOnce(document, 'webkitfullscreenerror', function(){
-                    waitForEventOnce(iframe.contentDocument, 'webkitfullscreenchange', step5);
+                    waitForEventOnce(iframe.contentDocument, 'webkitfullscreenchange', step4);
                     iframe.contentDocument.webkitExitFullscreen(); 
                 });
                 runWithKeyDown(function(){div2.webkitRequestFullscreen()});
@@ -55,7 +41,7 @@
             runWithKeyDown(function(){div.webkitRequestFullscreen()});
         };
 
-        var step5 = function() {
+        var step4 = function() {
             consoleWrite('"This algorithm is not allowed to show a pop-up."');
             var div = document.documentElement.appendChild(document.createElement('div'));
             waitForEventOnce(document, 'webkitfullscreenerror', endTest);

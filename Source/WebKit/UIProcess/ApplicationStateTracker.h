@@ -40,7 +40,7 @@ namespace WebKit {
 class ApplicationStateTracker : public CanMakeWeakPtr<ApplicationStateTracker> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL didFinishSnapshottingAfterEnteringBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector);
+    ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector);
     ~ApplicationStateTracker();
 
     bool isInBackground() const { return m_isInBackground; }
@@ -54,7 +54,6 @@ private:
 
     WeakObjCPtr<UIView> m_view;
     SEL m_didEnterBackgroundSelector;
-    SEL m_didFinishSnapshottingAfterEnteringBackgroundSelector;
     SEL m_willEnterForegroundSelector;
     SEL m_willBeginSnapshotSequenceSelector;
     SEL m_didCompleteSnapshotSequenceSelector;
@@ -62,7 +61,6 @@ private:
     bool m_isInBackground;
 
     id m_didEnterBackgroundObserver;
-    id m_didFinishSnapshottingAfterEnteringBackgroundObserver;
     id m_willEnterForegroundObserver;
     id m_willBeginSnapshotSequenceObserver;
     id m_didCompleteSnapshotSequenceObserver;

@@ -126,20 +126,8 @@
     },
     "TestWebsiteData": {
         "subtests": {
-            "/webkit/WebKitWebsiteData/appcache": {
-                "expected": {"all": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/188117"}}
-            },
             "/webkit/WebKitWebsiteData/cache": {
                 "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/254002"}}
-            },
-            "/webkit/WebKitWebsiteData/configuration": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
-            },
-            "/webkit/WebKitWebsiteData/ephemeral": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
-            },
-            "/webkit/WebKitWebsiteData/hsts": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
             },
             "/webkit/WebKitWebsiteData/handle-corrupted-local-storage": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}

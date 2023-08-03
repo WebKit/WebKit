@@ -52,6 +52,9 @@
 
 namespace WebCore {
 
+UpdateScrollInfoAfterLayoutTransaction::UpdateScrollInfoAfterLayoutTransaction() = default;
+UpdateScrollInfoAfterLayoutTransaction::~UpdateScrollInfoAfterLayoutTransaction() = default;
+
 void LocalFrameViewLayoutContext::layoutUsingFormattingContext()
 {
     if (!frame().settings().layoutFormattingContextEnabled())
@@ -164,6 +167,13 @@ LocalFrameViewLayoutContext::~LocalFrameViewLayoutContext()
 {
 }
 
+UpdateScrollInfoAfterLayoutTransaction& LocalFrameViewLayoutContext::updateScrollInfoAfterLayoutTransaction()
+{
+    if (!m_updateScrollInfoAfterLayoutTransaction)
+        m_updateScrollInfoAfterLayoutTransaction = makeUnique<UpdateScrollInfoAfterLayoutTransaction>();
+    return *m_updateScrollInfoAfterLayoutTransaction;
+}
+
 void LocalFrameViewLayoutContext::layout()
 {
     LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " LocalFrameViewLayoutContext::layout() with size " << view().layoutSize());
@@ -204,7 +214,7 @@ void LocalFrameViewLayoutContext::performLayout()
     }
 
     LayoutScope layoutScope(*this);
-    TraceScope tracingScope(LayoutStart, LayoutEnd);
+    TraceScope tracingScope(PerformLayoutStart, PerformLayoutEnd);
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     InspectorInstrumentation::willLayout(downcast<LocalFrame>(view().frame()));
     WeakPtr<RenderElement> layoutRoot;
@@ -244,6 +254,7 @@ void LocalFrameViewLayoutContext::performLayout()
         m_firstLayout = false;
     }
     {
+        TraceScope tracingScope(RenderTreeLayoutStart, RenderTreeLayoutEnd);
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InRenderTreeLayout);
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(subtreeLayoutRoot());
