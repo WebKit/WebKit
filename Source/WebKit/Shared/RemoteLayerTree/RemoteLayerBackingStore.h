@@ -251,6 +251,7 @@ class RemoteLayerBackingStoreProperties {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLayerBackingStoreProperties() = default;
+    RemoteLayerBackingStoreProperties(RemoteLayerBackingStoreProperties&&) = default;
 
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStoreProperties&);
 

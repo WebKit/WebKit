@@ -165,7 +165,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
     for (auto& transaction : transactions) {
         // commitLayerTreeTransaction consumes the incoming buffers, so we need to grab them first.
         for (auto& [layerID, properties] : transaction.first.changedLayerProperties()) {
-            const auto backingStoreProperties = properties->backingStoreProperties.get();
+            const auto* backingStoreProperties = properties->backingStoreOrProperties.properties.get();
             if (!backingStoreProperties)
                 continue;
             if (const auto& backendHandle = backingStoreProperties->bufferHandle()) {

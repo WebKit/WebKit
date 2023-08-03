@@ -23,52 +23,54 @@
 header: "RemoteLayerTreeTransaction.h"
 [OptionSet] enum class WebKit::LayerChange : uint64_t {
     NameChanged
-    ChildrenChanged
-    PositionChanged
-    BoundsChanged
-    BackgroundColorChanged
-    AnchorPointChanged
-    BorderWidthChanged
-    BorderColorChanged
-    OpacityChanged
     TransformChanged
     SublayerTransformChanged
+    ShapeRoundedRectChanged
+    ChildrenChanged
+    AnimationsChanged
+    PositionChanged
+    AnchorPointChanged
+    BoundsChanged
+    ContentsRectChanged
+    BackingStoreChanged
+    FiltersChanged
+    ShapePathChanged
+    MaskLayerChanged
+    ClonedContentsChanged
+    TimeOffsetChanged
+    SpeedChanged
+    ContentsScaleChanged
+    CornerRadiusChanged
+    BorderWidthChanged
+    OpacityChanged
+    BackgroundColorChanged
+    BorderColorChanged
+    CustomAppearanceChanged
+    MinificationFilterChanged
+    MagnificationFilterChanged
+    BlendModeChanged
+    WindRuleChanged
+    VideoGravityChanged
+    AntialiasesEdgesChanged
     HiddenChanged
+    BackingStoreAttachmentChanged
     GeometryFlippedChanged
     DoubleSidedChanged
     MasksToBoundsChanged
     OpaqueChanged
     ContentsHiddenChanged
-    MaskLayerChanged
-    ClonedContentsChanged
-    ContentsRectChanged
-    ContentsScaleChanged
-    CornerRadiusChanged
-    ShapeRoundedRectChanged
-    ShapePathChanged
-    MinificationFilterChanged
-    MagnificationFilterChanged
-    BlendModeChanged
-    WindRuleChanged
-    SpeedChanged
-    TimeOffsetChanged
-    BackingStoreChanged
-    BackingStoreAttachmentChanged
-    FiltersChanged
-    AnimationsChanged
-    AntialiasesEdgesChanged
-    CustomAppearanceChanged
     UserInteractionEnabledChanged
     EventRegionChanged
+#if ENABLE(SCROLLING_THREAD)
+    ScrollingNodeIDChanged
+#endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     SeparatedChanged
-#endif
-#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS) && HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
     SeparatedPortalChanged
     DescendentOfSeparatedPortalChanged
 #endif
-    ScrollingNodeIDChanged
-    VideoGravityChanged
+#endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     CoverageRectChanged
 #endif
@@ -168,5 +170,80 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 #endif
 #if !ENABLE(MODEL_ELEMENT)
     std::variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, WebCore::LayerHostingContextIdentifier> additionalData;
+#endif
+};
+
+[Nested] struct WebKit::LayerProperties::AnimationChanges {
+    Vector<std::pair<String, WebKit::PlatformCAAnimationRemote::Properties>> addedAnimations;
+    HashSet<String> keysOfAnimationsToRemove;
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    Vector<Ref<WebCore::AcceleratedEffect>> effects;
+    WebCore::AcceleratedEffectValues baseValues;
+#endif
+};
+
+[CustomEncoder, CustomHeader] struct WebKit::RemoteLayerBackingStoreOrProperties {
+    [NotSerialized] std::unique_ptr<RemoteLayerBackingStore> backingStore;
+    std::unique_ptr<WebKit::RemoteLayerBackingStoreProperties> properties;
+};
+
+struct WebKit::LayerProperties {
+    [OptionalTupleBits] OptionSet<WebKit::LayerChange> changedProperties;
+    [NotSerialized] OptionSet<WebKit::LayerChange> everChangedProperties;
+
+    [OptionalTupleBit=WebKit::LayerChange::NameChanged] String name;
+    [OptionalTupleBit=WebKit::LayerChange::TransformChanged] std::unique_ptr<WebCore::TransformationMatrix> transform;
+    [OptionalTupleBit=WebKit::LayerChange::SublayerTransformChanged] std::unique_ptr<WebCore::TransformationMatrix> sublayerTransform;
+    [OptionalTupleBit=WebKit::LayerChange::ShapeRoundedRectChanged] std::unique_ptr<WebCore::FloatRoundedRect> shapeRoundedRect;
+
+    [OptionalTupleBit=WebKit::LayerChange::ChildrenChanged] Vector<WebCore::PlatformLayerIdentifier> children;
+
+    [OptionalTupleBit=WebKit::LayerChange::AnimationsChanged] WebKit::LayerProperties::AnimationChanges animationChanges;
+
+    [OptionalTupleBit=WebKit::LayerChange::PositionChanged] WebCore::FloatPoint3D position;
+    [OptionalTupleBit=WebKit::LayerChange::AnchorPointChanged] WebCore::FloatPoint3D anchorPoint;
+    [OptionalTupleBit=WebKit::LayerChange::BoundsChanged] WebCore::FloatRect bounds;
+    [OptionalTupleBit=WebKit::LayerChange::ContentsRectChanged] WebCore::FloatRect contentsRect;
+    [OptionalTupleBit=WebKit::LayerChange::BackingStoreChanged] WebKit::RemoteLayerBackingStoreOrProperties backingStoreOrProperties;
+    [OptionalTupleBit=WebKit::LayerChange::FiltersChanged] std::unique_ptr<WebCore::FilterOperations> filters;
+    [OptionalTupleBit=WebKit::LayerChange::ShapePathChanged] WebCore::Path shapePath;
+    [OptionalTupleBit=WebKit::LayerChange::MaskLayerChanged] Markable<WebCore::PlatformLayerIdentifier> maskLayerID;
+    [OptionalTupleBit=WebKit::LayerChange::ClonedContentsChanged] Markable<WebCore::PlatformLayerIdentifier> clonedLayerID;
+    [OptionalTupleBit=WebKit::LayerChange::TimeOffsetChanged] double timeOffset;
+    [OptionalTupleBit=WebKit::LayerChange::SpeedChanged] float speed;
+    [OptionalTupleBit=WebKit::LayerChange::ContentsScaleChanged] float contentsScale;
+    [OptionalTupleBit=WebKit::LayerChange::CornerRadiusChanged] float cornerRadius;
+    [OptionalTupleBit=WebKit::LayerChange::BorderWidthChanged] float borderWidth;
+    [OptionalTupleBit=WebKit::LayerChange::OpacityChanged] float opacity;
+    [OptionalTupleBit=WebKit::LayerChange::BackgroundColorChanged] WebCore::Color backgroundColor;
+    [OptionalTupleBit=WebKit::LayerChange::BorderColorChanged] WebCore::Color borderColor;
+    [OptionalTupleBit=WebKit::LayerChange::CustomAppearanceChanged] WebCore::GraphicsLayer::CustomAppearance customAppearance;
+    [OptionalTupleBit=WebKit::LayerChange::MinificationFilterChanged] WebCore::PlatformCALayer::FilterType minificationFilter;
+    [OptionalTupleBit=WebKit::LayerChange::MagnificationFilterChanged] WebCore::PlatformCALayer::FilterType magnificationFilter;
+    [OptionalTupleBit=WebKit::LayerChange::BlendModeChanged] WebCore::BlendMode blendMode;
+    [OptionalTupleBit=WebKit::LayerChange::WindRuleChanged] WebCore::WindRule windRule;
+    [OptionalTupleBit=WebKit::LayerChange::VideoGravityChanged] WebCore::MediaPlayerVideoGravity videoGravity;
+    [OptionalTupleBit=WebKit::LayerChange::AntialiasesEdgesChanged] bool antialiasesEdges;
+    [OptionalTupleBit=WebKit::LayerChange::HiddenChanged] bool hidden;
+    [OptionalTupleBit=WebKit::LayerChange::BackingStoreAttachmentChanged] bool backingStoreAttached;
+    [OptionalTupleBit=WebKit::LayerChange::GeometryFlippedChanged] bool geometryFlipped;
+    [OptionalTupleBit=WebKit::LayerChange::DoubleSidedChanged] bool doubleSided;
+    [OptionalTupleBit=WebKit::LayerChange::MasksToBoundsChanged] bool masksToBounds;
+    [OptionalTupleBit=WebKit::LayerChange::OpaqueChanged] bool opaque;
+    [OptionalTupleBit=WebKit::LayerChange::ContentsHiddenChanged] bool contentsHidden;
+    [OptionalTupleBit=WebKit::LayerChange::UserInteractionEnabledChanged] bool userInteractionEnabled;
+    [OptionalTupleBit=WebKit::LayerChange::EventRegionChanged] WebCore::EventRegion eventRegion;
+#if ENABLE(SCROLLING_THREAD)
+    [OptionalTupleBit=WebKit::LayerChange::ScrollingNodeIDChanged] WebCore::ScrollingNodeID scrollingNodeID;
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    [OptionalTupleBit=WebKit::LayerChange::CoverageRectChanged] WebCore::FloatRect coverageRect;
+#endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    [OptionalTupleBit=WebKit::LayerChange::SeparatedChanged] bool isSeparated;
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    [OptionalTupleBit=WebKit::LayerChange::SeparatedPortalChanged] bool isSeparatedPortal;
+    [OptionalTupleBit=WebKit::LayerChange::DescendentOfSeparatedPortalChanged] bool isDescendentOfSeparatedPortal;
+#endif
 #endif
 };

@@ -257,7 +257,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::BackingStoreChanged
         || properties.changedProperties & LayerChange::BackingStoreAttachmentChanged)
     {
-        auto* backingStore = properties.backingStoreProperties.get();
+        auto* backingStore = properties.backingStoreOrProperties.properties.get();
         if (backingStore && properties.backingStoreAttached) {
             std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier;
             if (layerTreeNode) {
@@ -274,7 +274,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations());
 
     if (properties.changedProperties & LayerChange::AnimationsChanged)
-        PlatformCAAnimationRemote::updateLayerAnimations(layer, layerTreeHost, properties.addedAnimations, properties.keysOfAnimationsToRemove);
+        PlatformCAAnimationRemote::updateLayerAnimations(layer, layerTreeHost, properties.animationChanges.addedAnimations, properties.animationChanges.keysOfAnimationsToRemove);
 
     if (properties.changedProperties & LayerChange::AntialiasesEdgesChanged)
         layer.edgeAntialiasingMask = properties.antialiasesEdges ? (kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge) : 0;

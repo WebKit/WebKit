@@ -65,6 +65,7 @@ namespace WebCore { class MoveOnlyBaseClass; }
 namespace WebCore { class MoveOnlyDerivedClass; }
 namespace WebKit { class PlatformClass; }
 namespace WebKit { class CustomEncoded; }
+namespace WebKit { class LayerProperties; }
 
 namespace IPC {
 
@@ -176,6 +177,11 @@ template<> struct ArgumentCoder<WebKit::PlatformClass> {
 template<> struct ArgumentCoder<WebKit::CustomEncoded> {
     static void encode(Encoder&, const WebKit::CustomEncoded&);
     static std::optional<WebKit::CustomEncoded> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebKit::LayerProperties> {
+    static void encode(Encoder&, const WebKit::LayerProperties&);
+    static std::optional<WebKit::LayerProperties> decode(Decoder&);
 };
 
 } // namespace IPC
