@@ -1,10 +1,11 @@
 # Crashes
-accessibility/mac/resolved-text-editing.html [ Crash ]
+#
+# This test crashes when run repeatedly.
+accessibility/mac/resolved-text-editing.html [ Crash Pass ]
 
 # Timeouts
 accessibility/aria-controls-with-tabs.html [ Timeout ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
-accessibility/slider-with-lost-renderer.html [ Timeout Failure ]
 accessibility/mac/combobox-activedescendant-notifications.html [ Timeout ]
 accessibility/mac/relationships-in-frames.html [ Timeout ]
 
@@ -13,7 +14,6 @@ accessibility/multiple-label-input.html [ Timeout ]
 
 # Text failures
 accessibility/aria-current.html [ Failure ]
-accessibility/aria-labelledby-overrides-aria-label.html [ Failure ]
 accessibility/dialog-showModal.html [ Failure ]
 accessibility/dynamically-ignored-canvas.html [ Failure ]
 accessibility/element-reflection-ariacontrols.html [ Failure ]
@@ -22,7 +22,7 @@ accessibility/element-reflection-ariaerrormessage.html [ Failure ]
 accessibility/element-reflection-ariaflowto.html [ Failure ]
 accessibility/element-reflection-ariaowns.html [ Failure ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
-accessibility/insert-children-assert.html [ Failure ]
+accessibility/image-link-inline-cont.html [ Failure ]
 accessibility/keyevents-for-actions-mimic-real-key-events.html [ Failure ]
 accessibility/keyevents-posted-for-increment-actions.html [ Failure ]
 accessibility/mac/area-with-aria-label.html [ Failure ]
@@ -34,12 +34,19 @@ accessibility/mac/pseudo-element-text-markers.html [ Failure ]
 accessibility/mac/ruby-hierarchy-roles.html [ Failure ]
 accessibility/mac/search-predicate-from-ignored-element.html [ Failure ]
 accessibility/mac/search-predicate-immediate-descendants-only.html [ Failure ]
-accessibility/mac/selection-value-changes-for-aria-textbox.html [ Failure ]
 accessibility/mac/set-value-editable-types.html [ Failure ]
 accessibility/mac/setting-attributes-is-asynchronous.html [ Failure ]
 accessibility/mac/title-attribute-used-as-last-resort.html [ Failure ]
-accessibility/text-alternative-calculation-hidden-nodes.html [ Failure ]
-accessibility/math-multiscript-attributes.html [ Failure ]
+accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Failure ]
+accessibility/mac/text-input-marked-range.html [ Failure ]
+accessibility/mac/text-input-marked-text-marker-range.html [ Failure ]
+
+# Fails because we build relations too soon before elements have renderers because calls to
+# AccessibilityNodeObject::ownerParentObject() require building relations very early in tree building.
+# One possible solution would be in AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType relationType),
+# if either origin or target elements are !Element::renderer() && Element::rendererIsNeeded(const RenderStyle&), then we have
+# to queue them up to be processed after a timer in a new m_deferredRelationsUpdate list.
+accessibility/mac/grid-selected-cells.html [ Failure ]
 
 # Frames are off by 1px vs. non-ITM mode.
 accessibility/table-cells.html [ Failure ]
