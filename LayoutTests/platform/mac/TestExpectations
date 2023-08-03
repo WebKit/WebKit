@@ -135,6 +135,9 @@ accessibility/aria-switch-sends-notification.html
 accessibility/combo-box-collapsed-selection-changed.html
 accessibility/multiselect-list-reports-active-option.html
 
+# uiController.simulateRotationLikeSafari() is not implemented on macOS.
+fast/screen-orientation/orientation-in-resize-event.html [ Skip ]
+
 # Need to implement AccessibilityUIElement::clearSelectedChildren()
 accessibility/aria-listbox-clear-selection-crash.html
 accessibility/listbox-clear-selection.html
