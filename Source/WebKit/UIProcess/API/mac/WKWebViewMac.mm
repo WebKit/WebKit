@@ -134,12 +134,25 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
     _impl->prepareContentInRect(NSRectToCGRect(rect));
 }
 
+- (BOOL)_holdWindowResizeSnapshotIfNeeded
+{
+#if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
+    if (self->_windowSnapshotReadinessHandler)
+        return NO;
+
+    if (!self.window || ![self.window respondsToSelector:@selector(_holdResizeSnapshotWithReason:)])
+        return NO;
+
+    _windowSnapshotReadinessHandler = makeBlockPtr([self.window _holdResizeSnapshotWithReason:@"full screen"]);
+    return !!_windowSnapshotReadinessHandler;
+#else
+    return NO;
+#endif
+}
+
 - (void)_doWindowSnapshotReadinessUpdate
 {
 #if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
-    if (!self->_windowSnapshotReadinessHandler)
-        return;
-
     [self _doAfterNextPresentationUpdate:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
@@ -152,6 +165,8 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
 
 - (void)setFrameSize:(NSSize)size
 {
+    BOOL didCreateWindowSnapshotReadinessHandler = [self _holdWindowResizeSnapshotIfNeeded];
+
     [super setFrameSize:size];
     [_safeBrowsingWarning setFrame:self.bounds];
     if (_impl)
@@ -159,7 +174,8 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
 
     [self _recalculateViewportSizesWithMinimumViewportInset:_minimumViewportInset maximumViewportInset:_maximumViewportInset throwOnInvalidInput:NO];
 
-    [self _doWindowSnapshotReadinessUpdate];
+    if (didCreateWindowSnapshotReadinessHandler)
+        [self _doWindowSnapshotReadinessUpdate];
 }
 
 - (void)setUserInterfaceLayoutDirection:(NSUserInterfaceLayoutDirection)userInterfaceLayoutDirection
