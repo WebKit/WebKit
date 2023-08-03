@@ -163,13 +163,6 @@ void AccessibilityRenderObject::detachRemoteParts(AccessibilityDetachmentType de
     m_renderer = nullptr;
 }
 
-RenderBoxModelObject* AccessibilityRenderObject::renderBoxModelObject() const
-{
-    if (!is<RenderBoxModelObject>(renderer()))
-        return nullptr;
-    return downcast<RenderBoxModelObject>(renderer());
-}
-
 static inline bool isInlineWithContinuation(RenderObject& object)
 {
     return is<RenderInline>(object) && downcast<RenderInline>(object).continuation();
@@ -2033,9 +2026,8 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return m_ariaRole;
 
     Node* node = m_renderer->node();
-    RenderBoxModelObject* cssBox = renderBoxModelObject();
 
-    if (cssBox && cssBox->isListItem())
+    if (m_renderer->isListItem())
         return AccessibilityRole::ListItem;
     if (m_renderer->isListMarker())
         return AccessibilityRole::ListMarker;
@@ -2043,7 +2035,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return AccessibilityRole::StaticText;
     if (is<HTMLImageElement>(node) && downcast<HTMLImageElement>(*node).hasAttributeWithoutSynchronization(usemapAttr))
         return AccessibilityRole::ImageMap;
-    if (cssBox && cssBox->isImage()) {
+    if (m_renderer->isImage()) {
         if (is<HTMLInputElement>(node))
             return hasPopup() ? AccessibilityRole::PopUpButton : AccessibilityRole::Button;
 
@@ -2054,15 +2046,15 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return AccessibilityRole::Image;
     }
 
-    if (cssBox && cssBox->isRenderView())
+    if (m_renderer->isRenderView())
         return AccessibilityRole::WebArea;
-    if (cssBox && cssBox->isTextField()) {
+    if (m_renderer->isTextField()) {
         if (is<HTMLInputElement>(node))
             return downcast<HTMLInputElement>(*node).isSearchField() ? AccessibilityRole::SearchField : AccessibilityRole::TextField;
     }
-    if (cssBox && cssBox->isTextArea())
+    if (m_renderer->isTextArea())
         return AccessibilityRole::TextArea;
-    if (cssBox && cssBox->isMenuList())
+    if (m_renderer->isMenuList())
         return AccessibilityRole::PopUpButton;
 
     if (m_renderer->isSVGRootOrLegacySVGRoot())
@@ -2163,11 +2155,11 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     
 void AccessibilityRenderObject::addImageMapChildren()
 {
-    RenderBoxModelObject* cssBox = renderBoxModelObject();
-    if (!is<RenderImage>(cssBox))
+    auto* renderImage = dynamicDowncast<RenderImage>(m_renderer.get());
+    if (!renderImage)
         return;
-    
-    HTMLMapElement* map = downcast<RenderImage>(*cssBox).imageMap();
+
+    RefPtr map = renderImage->imageMap();
     if (!map)
         return;
 
@@ -2177,7 +2169,7 @@ void AccessibilityRenderObject::addImageMapChildren()
             continue;
         auto& areaObject = downcast<AccessibilityImageMapLink>(*axObjectCache()->create(AccessibilityRole::ImageMapLink));
         areaObject.setHTMLAreaElement(&area);
-        areaObject.setHTMLMapElement(map);
+        areaObject.setHTMLMapElement(map.get());
         areaObject.setParent(this);
         if (!areaObject.accessibilityIsIgnored())
             addChild(&areaObject);

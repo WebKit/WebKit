@@ -87,7 +87,6 @@ public:
     LayoutRect boundingBoxRect() const override;
 
     RenderObject* renderer() const final { return m_renderer.get(); }
-    RenderBoxModelObject* renderBoxModelObject() const;
     Node* node() const override;
 
     Document* document() const override;
