@@ -67,20 +67,6 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
     }
 
     var iteratorMethod = items.@@iterator;
-
-    if (!mapFn && @isTypedArrayView(arrayLike)) {
-        var arrayLikeLength = @toLength(arrayLike.length);
-
-        var result = new this(arrayLikeLength);
-        if (@typedArrayLength(result) < arrayLikeLength)
-            @throwTypeError("TypedArray.from constructed typed array of insufficient length");
-
-        // This is not precise enough I think?
-        // .slice() isn't exactly right because the arrays could be a different type
-        this.prototype.set.@call(result, arrayLike);
-        return result;
-    }
-
     if (!@isUndefinedOrNull(iteratorMethod)) {
         if (!@isCallable(iteratorMethod))
             @throwTypeError("TypedArray.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
