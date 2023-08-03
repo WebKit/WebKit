@@ -91,16 +91,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLRenderingContext);
 
-std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase& canvas, GraphicsContextGLAttributes attributes)
-{
-    auto renderingContext = std::unique_ptr<WebGLRenderingContext>(new WebGLRenderingContext(canvas, attributes));
-    // This context is pending policy resolution, so don't call initializeNewContext on it yet.
-
-    InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
-
-    return renderingContext;
-}
-
 std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase& canvas, Ref<GraphicsContextGL>&& context, GraphicsContextGLAttributes attributes)
 {
     auto renderingContext = std::unique_ptr<WebGLRenderingContext>(new WebGLRenderingContext(canvas, WTFMove(context), attributes));
@@ -112,16 +102,9 @@ std::unique_ptr<WebGLRenderingContext> WebGLRenderingContext::create(CanvasBase&
     return renderingContext;
 }
 
-WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, GraphicsContextGLAttributes attributes)
-    : WebGLRenderingContextBase(canvas, attributes)
-{
-}
-
 WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, Ref<GraphicsContextGL>&& context, GraphicsContextGLAttributes attributes)
     : WebGLRenderingContextBase(canvas, WTFMove(context), attributes)
 {
-    if (isContextLost())
-        return;
 }
 
 WebGLRenderingContext::~WebGLRenderingContext()
