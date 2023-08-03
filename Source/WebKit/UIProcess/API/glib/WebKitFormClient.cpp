@@ -37,7 +37,7 @@ public:
     }
 
 private:
-    void willSubmitForm(WebPageProxy&, WebFrameProxy&, WebFrameProxy&, const Vector<std::pair<String, String>>& values, API::Object*, WTF::Function<void(void)>&& completionHandler) override
+    void willSubmitForm(WebPageProxy&, WebFrameProxy&, WebFrameProxy&, const Vector<std::pair<String, String>>& values, API::Object*, CompletionHandler<void()>&& completionHandler) override
     {
         GRefPtr<WebKitFormSubmissionRequest> request = adoptGRef(webkitFormSubmissionRequestCreate(values, WebFormSubmissionListenerProxy::create(WTFMove(completionHandler))));
         webkitWebViewSubmitFormRequest(m_webView, request.get());

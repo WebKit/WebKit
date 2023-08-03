@@ -48,6 +48,7 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
         return TailCallVarargs;        
 
     case op_call:
+    case op_call_ignore_result:
     case op_call_direct_eval:
     case op_iterator_open:
     case op_iterator_next:

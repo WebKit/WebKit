@@ -25,8 +25,7 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 class WebFrameProxy;
@@ -41,7 +40,7 @@ class FormClient {
 public:
     virtual ~FormClient() { }
 
-    virtual void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, const Vector<std::pair<WTF::String, WTF::String>>&, API::Object*, WTF::Function<void(void)>&& completionHandler)
+    virtual void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, const Vector<std::pair<WTF::String, WTF::String>>&, API::Object*, CompletionHandler<void()>&& completionHandler)
     {
         completionHandler();
     }

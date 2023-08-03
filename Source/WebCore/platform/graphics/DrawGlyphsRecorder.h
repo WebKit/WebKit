@@ -88,7 +88,7 @@ private:
         Yes,
         No
     };
-    void updateShadow(const DropShadow&, ShadowsIgnoreTransforms);
+    void updateShadow(const std::optional<GraphicsDropShadow>&, ShadowsIgnoreTransforms);
 
 #if USE(CORE_TEXT)
     void updateFillColor(CGColorRef);
@@ -113,7 +113,7 @@ private:
         SourceBrush fillBrush;
         SourceBrush strokeBrush;
         AffineTransform ctm;
-        DropShadow dropShadow;
+        std::optional<GraphicsDropShadow> dropShadow;
         bool ignoreTransforms { false };
     };
     State m_originalState;

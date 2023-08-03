@@ -117,7 +117,11 @@ void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& con
     m_internalContext->applyStrokePattern();
 
     m_internalContext->setShadowsIgnoreTransforms(m_originalState.ignoreTransforms);
-    m_internalContext->setDropShadow(m_originalState.dropShadow);
+
+    if (m_originalState.dropShadow)
+        m_internalContext->setDropShadow(*m_originalState.dropShadow);
+    else
+        m_internalContext->clearShadow();
 
     m_internalContext->setTextDrawingMode(contextState.textDrawingMode());
 }
@@ -199,9 +203,13 @@ void DrawGlyphsRecorder::updateCTM(const AffineTransform& ctm)
         m_owner.concatCTM(*inverseOfCurrentCTM * ctm);
 }
 
-void DrawGlyphsRecorder::updateShadow(const DropShadow& dropShadow, ShadowsIgnoreTransforms shadowsIgnoreTransforms)
+void DrawGlyphsRecorder::updateShadow(const std::optional<GraphicsDropShadow>& dropShadow, ShadowsIgnoreTransforms shadowsIgnoreTransforms)
 {
-    m_owner.setDropShadow(dropShadow);
+    if (dropShadow)
+        m_owner.setDropShadow(*dropShadow);
+    else
+        m_owner.clearShadow();
+
     m_owner.setShadowsIgnoreTransforms(shadowsIgnoreTransforms == ShadowsIgnoreTransforms::Yes);
 }
 
@@ -216,8 +224,9 @@ void DrawGlyphsRecorder::updateShadow(CGStyleRef style)
     const auto& shadowStyle = *static_cast<const CGShadowStyle*>(CGStyleGetData(style));
     auto rad = deg2rad(shadowStyle.azimuth - 180);
     auto shadowOffset = FloatSize(std::cos(rad), std::sin(rad)) * shadowStyle.height;
+    auto shadowRadius = static_cast<float>(shadowStyle.radius);
     auto shadowColor = CGStyleGetColor(style);
-    updateShadow({ shadowOffset, static_cast<float>(shadowStyle.radius), Color::createAndPreserveColorSpace(shadowColor) }, ShadowsIgnoreTransforms::Yes);
+    updateShadow({ { shadowOffset, shadowRadius, Color::createAndPreserveColorSpace(shadowColor), ShadowRadiusMode::Default } }, ShadowsIgnoreTransforms::Yes);
 }
 
 void DrawGlyphsRecorder::recordBeginLayer(CGRenderingStateRef, CGGStateRef gstate, CGRect)

@@ -930,6 +930,11 @@ Class webAVPlayerControllerClass()
     return self;
 }
 
+- (NSString *)displayName
+{
+    return self.localizedDisplayName;
+}
+
 - (NSString *)localizedDisplayName
 {
     return _localizedDisplayName.get();

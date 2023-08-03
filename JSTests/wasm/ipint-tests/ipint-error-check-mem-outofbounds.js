@@ -16,7 +16,7 @@ let wat = `
 async function test() {
     const instance = await instantiate(wat, {});
     const { memory, test } = instance.exports
-    test(65536);
+    assert.throws(() => {test(65536)}, WebAssembly.RuntimeError, "Out of bounds memory access (evaluating 'test(65536)')")
 }
 
 assert.asyncTest(test())

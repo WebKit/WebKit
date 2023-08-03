@@ -77,14 +77,14 @@ enum class LayerChange : uint64_t {
     ScrollingNodeIDChanged              = 1LLU << 39,
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    SeparatedChanged                    = 1LLU << 39,
+    SeparatedChanged                    = 1LLU << 40,
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-    SeparatedPortalChanged              = 1LLU << 40,
-    DescendentOfSeparatedPortalChanged  = 1LLU << 41,
+    SeparatedPortalChanged              = 1LLU << 41,
+    DescendentOfSeparatedPortalChanged  = 1LLU << 42,
 #endif
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    CoverageRectChanged                 = 1LLU << 42,
+    CoverageRectChanged                 = 1LLU << 43,
 #endif
 };
 
@@ -172,15 +172,15 @@ struct LayerProperties {
 #if ENABLE(SCROLLING_THREAD)
     WebCore::ScrollingNodeID scrollingNodeID { 0 };
 #endif
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    WebCore::FloatRect coverageRect;
-#endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     bool isSeparated { false };
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
     bool isSeparatedPortal { false };
     bool isDescendentOfSeparatedPortal { false };
 #endif
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    WebCore::FloatRect coverageRect;
 #endif
 };
 

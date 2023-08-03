@@ -117,16 +117,12 @@ public:
     StrokeStyle strokeStyle() const { return m_state.strokeStyle(); }
     void setStrokeStyle(StrokeStyle style) { m_state.setStrokeStyle(style); didUpdateState(m_state); }
 
-    const DropShadow& dropShadow() const { return m_state.dropShadow(); }
-    FloatSize shadowOffset() const { return dropShadow().offset; }
-    float shadowBlur() const { return dropShadow().blurRadius; }
-    const Color& shadowColor() const { return dropShadow().color; }
-    void setDropShadow(const DropShadow& dropShadow) { m_state.setDropShadow(dropShadow); didUpdateState(m_state); }
-    void clearShadow() { setDropShadow({ }); }
-
-    bool hasVisibleShadow() const { return dropShadow().isVisible(); }
-    bool hasBlurredShadow() const { return dropShadow().isBlurred(); }
-    bool hasShadow() const { return dropShadow().hasOutsets(); }
+    std::optional<GraphicsDropShadow> dropShadow() const { return m_state.dropShadow(); }
+    void setDropShadow(const GraphicsDropShadow& dropShadow) { m_state.setStyle(dropShadow); didUpdateState(m_state); }
+    WEBCORE_EXPORT void clearShadow();
+    bool hasVisibleShadow() const;
+    bool hasBlurredShadow() const;
+    bool hasShadow() const;
 
     std::optional<GraphicsStyle> style() const { return m_state.style(); }
     void setStyle(const std::optional<GraphicsStyle>& style) { m_state.setStyle(style); didUpdateState(m_state); }

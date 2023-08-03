@@ -167,11 +167,24 @@ bool isPrimitiveReference(const Type*, Types::Primitive::Kind);
 
 namespace WTF {
 
-template<> class StringTypeAdapter<WGSL::Type, void> : public StringTypeAdapter<String, void> {
+template<> class StringTypeAdapter<WGSL::Type, void> {
 public:
     StringTypeAdapter(const WGSL::Type& type)
-        : StringTypeAdapter<String, void> { type.toString() }
-    { }
+        : m_string { type.toString() }
+    {
+    }
+
+    unsigned length() const { return m_string.length(); }
+    bool is8Bit() const { return m_string.is8Bit(); }
+    template<typename CharacterType>
+    void writeTo(CharacterType* destination) const
+    {
+        StringView { m_string }.getCharacters(destination);
+        WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING();
+    }
+
+private:
+    String const m_string;
 };
 
 } // namespace WTF

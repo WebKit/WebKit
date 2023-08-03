@@ -108,9 +108,6 @@ public:
     void invalidatePolicyListeners();
     void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyCheckIdentifier, PolicyDecision&&);
 
-    FormSubmitListenerIdentifier setUpWillSubmitFormListener(CompletionHandler<void()>&&);
-    void continueWillSubmitForm(FormSubmitListenerIdentifier);
-
     void didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>);
     void didFinishLoadInAnotherProcess();
     void removeFromTree();
@@ -244,7 +241,6 @@ private:
     };
     HashMap<uint64_t, PolicyCheck> m_pendingPolicyChecks;
 
-    HashMap<FormSubmitListenerIdentifier, CompletionHandler<void()>> m_willSubmitFormCompletionHandlers;
     std::optional<DownloadID> m_policyDownloadID;
 
     WeakPtr<LoadListener> m_loadListener;
