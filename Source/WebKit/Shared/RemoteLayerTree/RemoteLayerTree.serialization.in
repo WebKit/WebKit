@@ -236,14 +236,14 @@ struct WebKit::LayerProperties {
 #if ENABLE(SCROLLING_THREAD)
     [OptionalTupleBit=WebKit::LayerChange::ScrollingNodeIDChanged] WebCore::ScrollingNodeID scrollingNodeID;
 #endif
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    [OptionalTupleBit=WebKit::LayerChange::CoverageRectChanged] WebCore::FloatRect coverageRect;
-#endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     [OptionalTupleBit=WebKit::LayerChange::SeparatedChanged] bool isSeparated;
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
     [OptionalTupleBit=WebKit::LayerChange::SeparatedPortalChanged] bool isSeparatedPortal;
     [OptionalTupleBit=WebKit::LayerChange::DescendentOfSeparatedPortalChanged] bool isDescendentOfSeparatedPortal;
 #endif
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    [OptionalTupleBit=WebKit::LayerChange::CoverageRectChanged] WebCore::FloatRect coverageRect;
 #endif
 };

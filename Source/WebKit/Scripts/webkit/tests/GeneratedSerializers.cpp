@@ -66,7 +66,7 @@ template<uint64_t onlyBit> struct BitsInIncreasingOrder<onlyBit> {
     static constexpr bool value = true;
 };
 template<uint64_t firstBit, uint64_t secondBit, uint64_t... remainingBits> struct BitsInIncreasingOrder<firstBit, secondBit, remainingBits...> {
-    static constexpr bool value = firstBit == secondBit >> 1 && BitsInIncreasingOrder<secondBit, remainingBits...>::value;
+    static constexpr bool value = firstBit < secondBit && BitsInIncreasingOrder<secondBit, remainingBits...>::value;
 };
 
 template<bool, bool> struct VirtualTableAndRefCountOverhead;

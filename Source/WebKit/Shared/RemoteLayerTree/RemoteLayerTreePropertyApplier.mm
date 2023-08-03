@@ -323,7 +323,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
     applyCommonPropertiesToLayer(node.interactionRegionsLayer(), properties);
     // Replicate animations on the InteractionRegion layers, the LayerTreeHost only keeps track of the original animations.
     if (properties.changedProperties & LayerChange::AnimationsChanged)
-        PlatformCAAnimationRemote::updateLayerAnimations(node.interactionRegionsLayer(), nullptr, properties.addedAnimations, properties.keysOfAnimationsToRemove);
+        PlatformCAAnimationRemote::updateLayerAnimations(node.interactionRegionsLayer(), nullptr, properties.animationChanges.addedAnimations, properties.animationChanges.keysOfAnimationsToRemove);
     if (properties.changedProperties & LayerChange::EventRegionChanged || properties.changedProperties & LayerChange::CoverageRectChanged)
         updateLayersForInteractionRegions(node);
 #endif

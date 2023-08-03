@@ -596,7 +596,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result.append('    static constexpr bool value = true;')
     result.append('};')
     result.append('template<uint64_t firstBit, uint64_t secondBit, uint64_t... remainingBits> struct BitsInIncreasingOrder<firstBit, secondBit, remainingBits...> {')
-    result.append('    static constexpr bool value = firstBit == secondBit >> 1 && BitsInIncreasingOrder<secondBit, remainingBits...>::value;')
+    result.append('    static constexpr bool value = firstBit < secondBit && BitsInIncreasingOrder<secondBit, remainingBits...>::value;')
     result.append('};')
     result.append('')
     result.append('template<bool, bool> struct VirtualTableAndRefCountOverhead;')
