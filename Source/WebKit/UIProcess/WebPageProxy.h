@@ -174,6 +174,7 @@ enum class PolicyAction : uint8_t;
 enum class ReasonForDismissingAlternativeText : uint8_t;
 enum class ReloadOption : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
+enum class ScreenOrientationType : uint8_t;
 enum class ScrollGranularity : uint8_t;
 enum class ScrollIsAnimated : bool;
 enum class ScrollPinningBehavior : uint8_t;
@@ -2588,6 +2589,7 @@ private:
     bool isValidPerformActionOnElementAuthorizationToken(const String& authorizationToken) const;
     bool isDesktopClassBrowsingRecommended(const WebCore::ResourceRequest&) const;
     bool useDesktopClassBrowsing(const API::WebsitePolicies&, const WebCore::ResourceRequest&) const;
+    static WebCore::ScreenOrientationType toScreenOrientationType(WebCore::IntDegrees);
 #endif
 
     void focusedFrameChanged(const std::optional<WebCore::FrameIdentifier>&);

@@ -24,6 +24,7 @@
 
 #include "GStreamerCommon.h"
 #include "GStreamerRegistryScanner.h"
+#include "MediaStreamTrack.h"
 #include "VideoEncoderPrivateGStreamer.h"
 
 #include <wtf/glib/WTFGType.h>

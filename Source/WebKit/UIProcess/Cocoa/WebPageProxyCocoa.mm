@@ -955,10 +955,6 @@ RetainPtr<WKWebView> WebPageProxy::cocoaView()
 void WebPageProxy::setCocoaView(WKWebView *view)
 {
     internals().cocoaView = view;
-#if PLATFORM(IOS_FAMILY)
-    if (m_screenOrientationManager)
-        m_screenOrientationManager->setWindow(cocoaView().get().window);
-#endif
 }
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

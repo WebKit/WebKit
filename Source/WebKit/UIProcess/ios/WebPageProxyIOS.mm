@@ -68,6 +68,7 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
+#import "WebScreenOrientationManagerProxy.h"
 #import <WebCore/AGXCompilerService.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/NotImplemented.h>
@@ -311,8 +312,22 @@ void WebPageProxy::setForceAlwaysUserScalable(bool userScalable)
         m_process->send(Messages::WebPage::SetForceAlwaysUserScalable(userScalable), webPageID());
 }
 
+WebCore::ScreenOrientationType WebPageProxy::toScreenOrientationType(IntDegrees angle)
+{
+    if (angle == -90)
+        return WebCore::ScreenOrientationType::LandscapeSecondary;
+    if (angle == 180)
+        return WebCore::ScreenOrientationType::PortraitSecondary;
+    if (angle == 90)
+        return WebCore::ScreenOrientationType::LandscapePrimary;
+    return WebCore::ScreenOrientationType::PortraitPrimary;
+}
+
 void WebPageProxy::setDeviceOrientation(IntDegrees deviceOrientation)
 {
+    if (m_screenOrientationManager)
+        m_screenOrientationManager->setCurrentOrientation(toScreenOrientationType(deviceOrientation));
+
     if (deviceOrientation != m_deviceOrientation) {
         m_deviceOrientation = deviceOrientation;
         if (hasRunningProcess())
