@@ -115,6 +115,13 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const { return m_logger; }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "WebFullScreenManagerProxy"; }
+    WTFLogChannel& logChannel() const;
+#endif
+
     WebPageProxy& m_page;
     WebFullScreenManagerProxyClient& m_client;
     FullscreenState m_fullscreenState { FullscreenState::NotInFullscreen };
@@ -123,6 +130,11 @@ private:
     bool m_isVideoElement { false };
 #endif
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 } // namespace WebKit
