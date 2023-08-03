@@ -488,7 +488,6 @@ public:
     const PixelStoreParameters& unpackPixelStoreParameters() const { return m_unpackParameters; };
 
 protected:
-    WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
     WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGL>&&, WebGLContextAttributes);
 
     friend class EXTDisjointTimerQuery;
