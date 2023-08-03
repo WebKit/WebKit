@@ -57,7 +57,6 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     if (mode == UASheetMode) {
         colorMixEnabled = true;
         focusVisibleEnabled = true;
-        propertySettings.cssContainmentEnabled = true;
         propertySettings.cssIndividualTransformPropertiesEnabled = true;
         propertySettings.cssInputSecurityEnabled = true;
         propertySettings.cssCounterStyleAtRulesEnabled = true;

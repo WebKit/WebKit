@@ -956,34 +956,6 @@ CSSContainIntrinsicSizeEnabled:
     WebCore:
       default: true
 
-CSSContainerQueriesEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS Container Queries"
-  humanReadableDescription: "Enable CSS Container Queries"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-CSSContainmentEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS Containment"
-  humanReadableDescription: "Enable contain CSS property"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSContentVisibilityEnabled:
   type: bool
   status: testable
