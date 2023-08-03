@@ -40,7 +40,7 @@ WebFormClient::WebFormClient(const WKPageFormClientBase* wkClient)
     initialize(wkClient);
 }
 
-void WebFormClient::willSubmitForm(WebPageProxy& page, WebFrameProxy& frame, WebFrameProxy& sourceFrame, const Vector<std::pair<String, String>>& textFieldValues, API::Object* userData, WTF::Function<void(void)>&& completionHandler)
+void WebFormClient::willSubmitForm(WebPageProxy& page, WebFrameProxy& frame, WebFrameProxy& sourceFrame, const Vector<std::pair<String, String>>& textFieldValues, API::Object* userData, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_client.willSubmitForm) {
         completionHandler();

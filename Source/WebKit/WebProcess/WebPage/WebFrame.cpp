@@ -177,10 +177,6 @@ WebFrame::~WebFrame()
 {
     ASSERT(!m_coreFrame);
 
-    auto willSubmitFormCompletionHandlers = std::exchange(m_willSubmitFormCompletionHandlers, { });
-    for (auto& completionHandler : willSubmitFormCompletionHandlers.values())
-        completionHandler();
-
     ASSERT_WITH_MESSAGE(!WebProcess::singleton().webFrame(m_frameID), "invalidate should have removed this WebFrame before destruction");
 
 #ifndef NDEBUG
@@ -307,20 +303,6 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::PolicyCheckIdentifier identifier
     });
 
     return policyListenerID;
-}
-
-FormSubmitListenerIdentifier WebFrame::setUpWillSubmitFormListener(CompletionHandler<void()>&& completionHandler)
-{
-    auto identifier = FormSubmitListenerIdentifier::generate();
-    m_willSubmitFormCompletionHandlers.set(identifier, WTFMove(completionHandler));
-    return identifier;
-}
-
-void WebFrame::continueWillSubmitForm(FormSubmitListenerIdentifier listenerID)
-{
-    Ref<WebFrame> protectedThis(*this);
-    if (auto completionHandler = m_willSubmitFormCompletionHandlers.take(listenerID))
-        completionHandler();
 }
 
 void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
@@ -468,10 +450,6 @@ void WebFrame::invalidatePolicyListeners()
     auto pendingPolicyChecks = std::exchange(m_pendingPolicyChecks, { });
     for (auto& policyCheck : pendingPolicyChecks.values())
         policyCheck.policyFunction(PolicyAction::Ignore, policyCheck.corePolicyIdentifier);
-
-    auto willSubmitFormCompletionHandlers = WTFMove(m_willSubmitFormCompletionHandlers);
-    for (auto& completionHandler : willSubmitFormCompletionHandlers.values())
-        completionHandler();
 }
 
 void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifier identifier, PolicyDecision&& policyDecision)
