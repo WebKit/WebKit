@@ -2392,6 +2392,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     storage/StorageNamespaceProvider.h
     storage/StorageQuotaManager.h
     storage/StorageType.h
+    storage/StorageUtilities.h
 
     style/StyleAppearance.h
     style/StyleChange.h
