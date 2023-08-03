@@ -424,6 +424,10 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _page = &_impl->page();
 
     _impl->setAutomaticallyAdjustsContentInsets(true);
+
+#if HAVE(INLINE_PREDICTIONS)
+    _impl->setInlinePredictionsEnabled(!![_configuration allowsInlinePredictions]);
+#endif
 #endif
 
     if (NSString *applicationNameForUserAgent = configuration.applicationNameForUserAgent)
@@ -590,10 +594,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setAlternateFormControlDesignEnabled(WebKit::defaultAlternateFormControlDesignEnabled());
     pageConfiguration->preferences()->setVideoFullscreenRequiresElementFullscreen(WebKit::defaultVideoFullscreenRequiresElementFullscreen());
 #endif
-
-#if HAVE(INLINE_PREDICTIONS)
-    pageConfiguration->preferences()->setInlinePredictionsEnabled(!![_configuration allowsInlinePredictions]);
-#endif
 }
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
@@ -677,6 +677,10 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     auto notificationName = adoptNS([[NSString alloc] initWithCString:kGSEventHardwareKeyboardAvailabilityChangedNotification encoding:NSUTF8StringEncoding]);
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), (__bridge CFStringRef)notificationName.get(), nullptr);
+#endif
+
+#if PLATFORM(MAC) && HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
+    [self _invalidateWindowSnapshotReadinessHandler];
 #endif
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -1696,6 +1700,14 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     _page->setMinimumUnobscuredSize(minimumUnobscuredSize);
     _page->setMaximumUnobscuredSize(maximumUnobscuredSize);
 }
+
+#if PLATFORM(MAC) && HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
+- (void)_invalidateWindowSnapshotReadinessHandler
+{
+    if (auto handler = std::exchange(_windowSnapshotReadinessHandler, nil))
+        handler();
+}
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 

@@ -90,6 +90,7 @@ typedef void (^MRUIWindowSceneResizeRequestCompletion)(CGSize grantedSize, NSErr
 
 @interface MRUIPlatterOrnament : NSObject
 @property (nonatomic, assign, getter=_depthDisplacement, setter=_setDepthDisplacement:) CGFloat depthDisplacement;
+@property (nonatomic, readwrite, strong) UIViewController *viewController;
 @end
 
 @interface MRUIPlatterOrnamentManager : NSObject
@@ -98,7 +99,6 @@ typedef void (^MRUIWindowSceneResizeRequestCompletion)(CGSize grantedSize, NSErr
 
 @interface UIWindowScene (MRUIPlatterOrnaments)
 @property (nonatomic, readonly) MRUIPlatterOrnamentManager *_mrui_platterOrnamentManager;
-@property (nonatomic, readwrite) BOOL prefersOrnamentsHidden_forLMKOnly;
 @end
 
 #endif // PLATFORM(VISION)

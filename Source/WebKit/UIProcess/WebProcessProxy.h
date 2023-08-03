@@ -428,10 +428,6 @@ public:
     bool hasNetworkExtensionSandboxAccess() const { return m_hasNetworkExtensionSandboxAccess; }
     void markHasNetworkExtensionSandboxAccess() { m_hasNetworkExtensionSandboxAccess = true; }
 #endif
-#if (PLATFORM(IOS) || PLATFORM(VISION)) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    bool hasManagedSessionSandboxAccess() const { return m_hasManagedSessionSandboxAccess; }
-    void markHasManagedSessionSandboxAccess() { m_hasManagedSessionSandboxAccess = true; }
-#endif
 
 #if ENABLE(ROUTING_ARBITRATION)
     AudioSessionRoutingArbitratorProxy& audioSessionRoutingArbitrator() { return m_routingArbitrator.get(); }
@@ -542,8 +538,8 @@ private:
     void updateBackForwardItem(const BackForwardListItemState&);
     void didDestroyFrame(WebCore::FrameIdentifier, WebPageProxyIdentifier);
     void didDestroyUserGestureToken(uint64_t);
-    void postMessageToRemote(WebCore::ProcessIdentifier, WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&);
-    void renderTreeAsText(WebCore::ProcessIdentifier, WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String)>&&);
+    void postMessageToRemote(WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&);
+    void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String)>&&);
 
     bool canBeAddedToWebProcessCache() const;
     void shouldTerminate(CompletionHandler<void(bool)>&&);
@@ -711,9 +707,6 @@ private:
     WebCore::CrossOriginMode m_crossOriginMode { WebCore::CrossOriginMode::Shared };
 #if PLATFORM(COCOA)
     bool m_hasNetworkExtensionSandboxAccess { false };
-#endif
-#if (PLATFORM(IOS) || PLATFORM(VISION)) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    bool m_hasManagedSessionSandboxAccess { false };
 #endif
 
 #if ENABLE(WEBCONTENT_CRASH_TESTING)

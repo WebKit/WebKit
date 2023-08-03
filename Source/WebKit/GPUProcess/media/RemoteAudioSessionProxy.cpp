@@ -120,11 +120,13 @@ void RemoteAudioSessionProxy::configurationChanged()
 
 void RemoteAudioSessionProxy::beginInterruption()
 {
+    m_isInterrupted = true;
     connection().send(Messages::RemoteAudioSession::BeginInterruptionRemote(), { });
 }
 
 void RemoteAudioSessionProxy::endInterruption(AudioSession::MayResume mayResume)
 {
+    m_isInterrupted = false;
     connection().send(Messages::RemoteAudioSession::EndInterruptionRemote(mayResume), { });
 }
 

@@ -26,7 +26,9 @@
 
 /* https://fullscreen.spec.whatwg.org/#user-agent-level-style-sheet-defaults */
 
-:not(:root):fullscreen {
+@namespace "http://www.w3.org/1999/xhtml";
+
+*|*:not(:root):fullscreen {
   position: fixed !important;
   inset: 0 !important;
   margin: 0 !important;
@@ -40,14 +42,14 @@
   transform: none !important;
 
   /* intentionally not !important */
-  object-fit:contain;
+  object-fit: contain;
 }
 
-:root:-webkit-full-screen-document:not(:fullscreen) {
+*|*:root:-webkit-full-screen-document:not(:fullscreen) {
     overflow: hidden !important;
 }
 
-:fullscreen video,
+*|*:fullscreen video,
 video:fullscreen {
     -webkit-cursor-visibility: auto-hide;
 }
@@ -63,7 +65,7 @@ iframe:fullscreen {
     padding: 0 !important;
 }
 
-:not(:root):fullscreen::backdrop {
+*|*:not(:root):fullscreen::backdrop {
     background: black;
 }
 

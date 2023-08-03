@@ -326,13 +326,13 @@ PASS Origin parsing: <blob:http://example.org:88/> without base
 PASS Origin parsing: <blob:d3958f5c-0777-0845-9dcf-2cb28783acaf> without base
 PASS Origin parsing: <blob:> without base
 PASS Origin parsing: <blob:blob:> without base
-FAIL Origin parsing: <blob:blob:https://example.org/> without base assert_equals: origin expected "null" but got "blob://"
+PASS Origin parsing: <blob:blob:https://example.org/> without base
 PASS Origin parsing: <blob:about:blank> without base
 FAIL Origin parsing: <blob:file://host/path> without base assert_equals: origin expected "null" but got "file://"
-FAIL Origin parsing: <blob:ftp://host/path> without base assert_equals: origin expected "null" but got "ftp://host"
-FAIL Origin parsing: <blob:ws://example.org/> without base assert_equals: origin expected "null" but got "ws://example.org"
-FAIL Origin parsing: <blob:wss://example.org/> without base assert_equals: origin expected "null" but got "wss://example.org"
-FAIL Origin parsing: <blob:http%3a//example.org/> without base assert_equals: origin expected "null" but got "http://example.org"
+PASS Origin parsing: <blob:ftp://host/path> without base
+PASS Origin parsing: <blob:ws://example.org/> without base
+PASS Origin parsing: <blob:wss://example.org/> without base
+PASS Origin parsing: <blob:http%3a//example.org/> without base
 PASS Origin parsing: <non-special:cannot-be-a-base-url-\0~> without base
 PASS Origin parsing: <https://www.example.com/path{path.html?query'=query#fragment<fragment> without base
 PASS Origin parsing: <https://user:pass[@foo/bar> against <http://example.org>

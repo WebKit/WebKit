@@ -138,10 +138,11 @@ void RemoteRealtimeMediaSourceProxy::end()
     m_connection->send(Messages::UserMediaCaptureManagerProxy::RemoveSource { m_identifier }, 0);
 }
 
-void RemoteRealtimeMediaSourceProxy::whenReady(CompletionHandler<void(String)>&& callback)
+void RemoteRealtimeMediaSourceProxy::whenReady(CompletionHandler<void(WebCore::CaptureSourceError&&)>&& callback)
 {
     if (m_isReady)
-        return callback(WTFMove(m_errorMessage));
+        return callback(WebCore::CaptureSourceError(m_failureReason));
+
     m_callback = WTFMove(callback);
 }
 
@@ -153,12 +154,12 @@ void RemoteRealtimeMediaSourceProxy::setAsReady()
         m_callback({ });
 }
 
-void RemoteRealtimeMediaSourceProxy::didFail(String&& errorMessage)
+void RemoteRealtimeMediaSourceProxy::didFail(CaptureSourceError&& reason)
 {
     m_isReady = true;
-    m_errorMessage = WTFMove(errorMessage);
+    m_failureReason = WTFMove(reason);
     if (m_callback)
-        m_callback(m_errorMessage);
+        m_callback(WebCore::CaptureSourceError(m_failureReason));
 }
 
 }

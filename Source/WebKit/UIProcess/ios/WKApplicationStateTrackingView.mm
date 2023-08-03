@@ -67,7 +67,7 @@
     auto page = [_webViewToTrack _page];
     bool lastObservedStateWasBackground = page ? page->lastObservedStateWasBackground() : false;
 
-    _applicationStateTracker = makeUnique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground), @selector(_willBeginSnapshotSequence), @selector(_didCompleteSnapshotSequence));
+    _applicationStateTracker = makeUnique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground), @selector(_willBeginSnapshotSequence), @selector(_didCompleteSnapshotSequence));
     RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID=%" PRIu64 "] was added to a window, _lastObservedStateWasBackground=%d, isNowBackground=%d", self, page.get(), page ? page->identifier().toUInt64() : 0, lastObservedStateWasBackground, [self isBackground]);
 
     if (lastObservedStateWasBackground && ![self isBackground])
@@ -88,8 +88,12 @@
 
 - (void)_applicationDidFinishSnapshottingAfterEnteringBackground
 {
-    if (auto page = [_webViewToTrack _page])
-        page->applicationDidFinishSnapshottingAfterEnteringBackground();
+    auto page = [_webViewToTrack _page];
+    if (!page)
+        return;
+
+    RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID=%" PRIu64 "] did finish snapshotting after entering background", self, page.get(), page ? page->identifier().toUInt64() : 0);
+    page->applicationDidFinishSnapshottingAfterEnteringBackground();
 }
 
 - (void)_applicationWillEnterForeground
@@ -108,6 +112,7 @@
     if (!page)
         return;
 
+    RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID=%" PRIu64 "] will begin snapshot sequence", self, page.get(), page ? page->identifier().toUInt64() : 0);
     page->setIsTakingSnapshotsForApplicationSuspension(true);
 }
 
@@ -117,7 +122,11 @@
     if (!page)
         return;
 
+    RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID=%" PRIu64 "] did complete snapshot sequence", self, page.get(), page ? page->identifier().toUInt64() : 0);
+
     page->setIsTakingSnapshotsForApplicationSuspension(false);
+    if ([self isBackground])
+        page->applicationDidFinishSnapshottingAfterEnteringBackground();
 }
 
 - (BOOL)isBackground

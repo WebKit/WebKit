@@ -67,7 +67,7 @@ public:
     void animationStarted(const String& key, MonotonicTime beginTime) override;
     void animationEnded(const String& key) override;
 
-    void setMask(PlatformCALayer*) override;
+    void setMaskLayer(RefPtr<WebCore::PlatformCALayer>&&) override;
 
     bool isOpaque() const override;
     void setOpaque(bool) override;

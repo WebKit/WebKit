@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-class VisitedLinkTableController final : public WebCore::VisitedLinkStore , private IPC::MessageReceiver {
+class VisitedLinkTableController final : public WebCore::VisitedLinkStore, public IPC::MessageReceiver {
 public:
     static Ref<VisitedLinkTableController> getOrCreate(uint64_t identifier);
     virtual ~VisitedLinkTableController();

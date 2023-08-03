@@ -51,6 +51,8 @@ public:
     bool mightBeNumber() const { return m_resultType.mightBeNumber(); }
     bool definitelyIsNumber() const { return m_resultType.definitelyIsNumber(); }
 
+    bool definitelyIsBoolean() const { return m_resultType.definitelyIsBoolean(); }
+
     bool isConst() const { return m_type != Variable; }
     bool isConstInt32() const { return m_type == ConstInt32; }
     bool isConstDouble() const { return m_type == ConstDouble; }

@@ -86,31 +86,35 @@ onload = () => {
     }, 0);
 }
 
-function validateResult(result)
+function expectedCacheMode(url)
 {
-    if (result.url === "http://localhost:8800/WebKit/service-workers/cache-mode-hard-reload-serviceworker.html")
-        return result.cache === "reload";
-    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?first-script-static")
-        return result.cache === "reload";
-    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?second-script-dynamic")
-        return result.cache === "reload";
-    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?third-script-async")
-        return result.cache === "reload";
+    if (url === "http://localhost:8800/WebKit/service-workers/cache-mode-hard-reload-serviceworker.html")
+        return "reload";
+    if (url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?first-script-static")
+        return "reload";
+    if (url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?second-script-dynamic")
+        return "reload";
+    if (url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?third-script-async")
+        return "reload";
 
-    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?fourth-script-during-onload")
-        return result.cache === "reload";
-    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?fifth-script-just-after-onload")
-        return result.cache === "reload";
-    if (result.url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?sixth-script-async")
-        return result.cache === "reload";
+    if (url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?fourth-script-during-onload")
+        return "default";
+    if (url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?fifth-script-just-after-onload")
+        return "default";
+    if (url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?sixth-script-async")
+        return "default";
 
 }
 
 function validateResults(results)
 {
     clearLog();
-    for (let result of results)
-        log((validateResult(result) ? "PASS" : "FAIL") + " : " + JSON.stringify(result));
+    for (let result of results) {
+        if (expectedCacheMode(result.url) === "reload")
+            log((result.cache === "reload" ? "PASS" : "FAIL") + " : " + JSON.stringify(result));
+        else if (result.cache !== "default")
+            log("FAIL : " + JSON.stringify(result));
+    }
 }
 
 </script>

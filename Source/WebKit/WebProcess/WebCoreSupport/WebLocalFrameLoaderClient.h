@@ -275,6 +275,8 @@ private:
 
     inline bool hasPlugInView() const;
 
+    void broadcastFrameRemovalToOtherProcesses() final;
+
     ScopeExit<Function<void()>> m_frameInvalidator;
 
 #if ENABLE(PDFKIT_PLUGIN)

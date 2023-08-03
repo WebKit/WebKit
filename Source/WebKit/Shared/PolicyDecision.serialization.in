@@ -21,7 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    
 struct WebKit::PolicyDecision {
-    WebCore::PolicyCheckIdentifier identifier;
     std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
     WebCore::PolicyAction policyAction;
     uint64_t navigationID;

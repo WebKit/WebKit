@@ -1,0 +1,2 @@
+xml-with-html.xml has MIME type text/plain
+

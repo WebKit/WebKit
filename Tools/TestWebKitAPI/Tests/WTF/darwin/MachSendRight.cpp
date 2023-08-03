@@ -79,7 +79,7 @@ TEST(MachSendRight, Copy)
 
     {
         MachSendRight right = MachSendRight::adopt(port);
-        MachSendRight copy = right;
+        MachSendRight copy = MachSendRight { right };
 
         EXPECT_EQ(getSendRefs(port), 2u);
     }
@@ -110,7 +110,7 @@ TEST(MachSendRight, Overwrite)
         MachSendRight firstRight = MachSendRight::adopt(first);
         MachSendRight secondRight = MachSendRight::adopt(second);
 
-        secondRight = firstRight;
+        secondRight = MachSendRight { firstRight };
 
         EXPECT_EQ(getSendRefs(first), 2u);
         EXPECT_EQ(getSendRefs(second), 0u);

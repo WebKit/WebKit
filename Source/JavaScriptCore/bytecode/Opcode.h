@@ -100,8 +100,6 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
 
 #define FOR_EACH_OPCODE_WITH_VALUE_PROFILE(macro) \
     macro(OpCallVarargs) \
-    macro(OpTailCallVarargs) \
-    macro(OpTailCallForwardArguments) \
     macro(OpConstructVarargs) \
     macro(OpGetByVal) \
     macro(OpEnumeratorGetByVal) \
@@ -112,23 +110,14 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpGetByValWithThis) \
     macro(OpGetPrototypeOf) \
     macro(OpGetFromArguments) \
-    macro(OpToNumber) \
-    macro(OpToNumeric) \
     macro(OpToObject) \
     macro(OpGetArgument) \
     macro(OpGetInternalField) \
     macro(OpToThis) \
     macro(OpCall) \
-    macro(OpTailCall) \
     macro(OpCallDirectEval) \
     macro(OpConstruct) \
     macro(OpGetFromScope) \
-    macro(OpBitand) \
-    macro(OpBitor) \
-    macro(OpBitnot) \
-    macro(OpBitxor) \
-    macro(OpLshift) \
-    macro(OpRshift) \
     macro(OpGetPrivateName) \
     macro(OpNewArrayWithSpecies) \
 
@@ -173,11 +162,19 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpMul) \
     macro(OpDiv) \
     macro(OpSub) \
+    macro(OpBitand) \
+    macro(OpBitor) \
+    macro(OpBitxor) \
+    macro(OpLshift) \
+    macro(OpRshift) \
 
 #define FOR_EACH_OPCODE_WITH_UNARY_ARITH_PROFILE(macro) \
+    macro(OpBitnot) \
     macro(OpInc) \
     macro(OpDec) \
     macro(OpNegate) \
+    macro(OpToNumber) \
+    macro(OpToNumeric) \
 
 
 IGNORE_WARNINGS_BEGIN("type-limits")

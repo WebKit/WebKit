@@ -86,7 +86,7 @@ public:
     virtual void requestHostingContextID(LayerHostingContextIDCallback&& completionHandler) { completionHandler({ }); }
     virtual LayerHostingContextID hostingContextID() const { return 0; }
     virtual FloatSize videoInlineSize() const { return { }; }
-    virtual void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&) { }
+    virtual void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&) { }
 
 #if PLATFORM(IOS_FAMILY)
     virtual NSArray *timedMetadata() const { return nil; }

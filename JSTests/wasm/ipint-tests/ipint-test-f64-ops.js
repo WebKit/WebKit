@@ -3,90 +3,151 @@ import * as assert from "../assert.js"
 
 let wat = `
 (module
-    (func (export "clz") (param i32) (result i32)
+    (func (export "abs") (param f64) (result f64)
         (local.get 0)
-        (i32.clz)
+        (f64.abs)
         (return)
     )
-    (func (export "ctz") (param i32) (result i32)
+
+    (func (export "neg") (param f64) (result f64)
         (local.get 0)
-        (i32.ctz)
+        (f64.neg)
         (return)
     )
-    (func (export "add") (param i32 i32) (result i32)
+
+    (func (export "ceil") (param f64) (result f64)
+        (local.get 0)
+        (f64.ceil)
+        (return)
+    )
+
+    (func (export "floor") (param f64) (result f64)
+        (local.get 0)
+        (f64.floor)
+        (return)
+    )
+
+    (func (export "trunc") (param f64) (result f64)
+        (local.get 0)
+        (f64.trunc)
+        (return)
+    )
+
+    (func (export "nearest") (param f64) (result f64)
+        (local.get 0)
+        (f64.nearest)
+        (return)
+    )
+
+    (func (export "sqrt") (param f64) (result f64)
+        (local.get 0)
+        (f64.sqrt)
+        (return)
+    )
+
+    (func (export "add") (param f64 f64) (result f64)
         (local.get 0)
         (local.get 1)
-        (i32.add)
+        (f64.add)
         (return)
     )
-    (func (export "sub") (param i32 i32) (result i32)
+
+    (func (export "sub") (param f64 f64) (result f64)
         (local.get 0)
         (local.get 1)
-        (i32.sub)
+        (f64.sub)
         (return)
     )
-    (func (export "mul") (param i32 i32) (result i32)
+
+    (func (export "mul") (param f64 f64) (result f64)
         (local.get 0)
         (local.get 1)
-        (i32.mul)
+        (f64.mul)
         (return)
     )
-    (func (export "divs") (param i32 i32) (result i32)
+
+    (func (export "div") (param f64 f64) (result f64)
         (local.get 0)
         (local.get 1)
-        (i32.div_s)
+        (f64.div)
         (return)
     )
-    (func (export "divu") (param i32 i32) (result i32)
+
+    (func (export "min") (param f64 f64) (result f64)
         (local.get 0)
         (local.get 1)
-        (i32.div_u)
+        (f64.min)
         (return)
     )
-    (func (export "and") (param i32 i32) (result i32)
+
+    (func (export "max") (param f64 f64) (result f64)
         (local.get 0)
         (local.get 1)
-        (i32.and)
+        (f64.max)
         (return)
     )
-    (func (export "or") (param i32 i32) (result i32)
+
+    (func (export "copysign") (param f64 f64) (result f64)
         (local.get 0)
         (local.get 1)
-        (i32.or)
-        (return)
-    )
-    (func (export "xor") (param i32 i32) (result i32)
-        (local.get 0)
-        (local.get 1)
-        (i32.xor)
+        (f64.copysign)
         (return)
     )
 )
 `
 
+function close(a, b) {
+    return Math.abs(a - b) < 0.001;
+}
+
+let assertClose = (x, y) => assert.truthy(close(x, y))
+
 async function test() {
     const instance = await instantiate(wat, {});
-    const { clz, ctz, add, sub, mul, divs, divu, and, or, xor } = instance.exports
-    assert.eq(clz(1), 31)
-    assert.eq(clz(8), 28)
-    assert.eq(ctz(1), 0)
-    assert.eq(ctz(8), 3)
-    assert.eq(add(1, 2), 3)
-    assert.eq(add(3, 4), 7)
-    assert.eq(sub(3, 2), 1)
-    assert.eq(sub(1, 5), -4)
-    assert.eq(mul(3, 2), 6)
-    assert.eq(mul(1, 5), 5)
-    assert.eq(divs(3, 2), 1)
-    assert.eq(divs(-10, 5), -2)
-    assert.eq(divu(3, 2), 1)
-    assert.eq(divu(1, 5), 0)
-    assert.eq(and(3, 2), 2)
-    assert.eq(and(3, 5), 1)
-    assert.eq(or(3, 2), 3)
-    assert.eq(or(3, 5), 7)
-    assert.eq(xor(3, 2), 1)
-    assert.eq(xor(3, 5), 6)
+    const { abs, neg, ceil, floor, trunc, nearest, sqrt, add, sub, mul, div, min, max, copysign }= instance.exports
+    assertClose(abs(1.5), 1.5)
+    assertClose(abs(-1.5), 1.5)
+
+    assertClose(neg(1.5), -1.5)
+    assertClose(neg(-1.5), 1.5)
+
+    assertClose(ceil(2.25), 3)
+    assertClose(ceil(-3.75), -3)
+
+    assertClose(floor(2.25), 2)
+    assertClose(floor(-3.75), -4)
+
+    assertClose(trunc(2.75), 2)
+    assertClose(trunc(-2.75), -2)
+
+    assertClose(nearest(2.75), 3)
+    assertClose(nearest(-2.75), -3)
+
+    assertClose(sqrt(4), 2)
+    assertClose(sqrt(2), 1.414)
+
+    assertClose(add(1, 2), 3)
+    assertClose(add(3.5, 4.25), 7.75)
+
+    assertClose(sub(1, 2), -1)
+    assertClose(sub(7.27, 2.81), 4.46)
+
+    assertClose(mul(2, 4), 8)
+    assertClose(mul(2.5, 1.25), 3.125)
+
+    assertClose(div(1, 2), 0.5)
+    assertClose(div(22, 7), 3.143)
+
+    assertClose(min(1, 2), 1)
+    assertClose(min(3.5, 4.25), 3.5)
+
+    assertClose(max(1, 2), 2)
+    assertClose(max(3.5, 4.25), 4.25)
+
+    assertClose(copysign(1, 2), 1)
+    assertClose(copysign(-3.5, 4.25), 3.5)
+    assertClose(copysign(1.25, -1.6), -1.25)
+    assertClose(copysign(-2.56, -1.28), -2.56)
 }
 
 assert.asyncTest(test())

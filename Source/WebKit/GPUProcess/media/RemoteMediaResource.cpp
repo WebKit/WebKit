@@ -73,7 +73,7 @@ bool RemoteMediaResource::didPassAccessControlCheck() const
 void RemoteMediaResource::responseReceived(const ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
     if (!m_client)
-        return;
+        return completionHandler(ShouldContinuePolicyCheck::No);
 
     m_didPassAccessControlCheck = didPassAccessControlCheck;
     m_client->responseReceived(*this, response, [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
@@ -89,6 +89,8 @@ void RemoteMediaResource::redirectReceived(ResourceRequest&& request, const Reso
 {
     if (m_client)
         m_client->redirectReceived(*this, WTFMove(request), response, WTFMove(completionHandler));
+    else
+        completionHandler({ });
 }
 
 void RemoteMediaResource::dataSent(uint64_t bytesSent, uint64_t totalBytesToBeSent)

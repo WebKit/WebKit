@@ -52,6 +52,11 @@ size_t InsertionSet::execute(BasicBlock* block)
     return executeInsertions(*block, m_insertions);
 }
 
+Node* InsertionSet::insertConstant(size_t index, NodeOrigin origin, FrozenValue* value, NodeType op)
+{
+    return insertNode(index, speculationFromValue(value->value()), op, origin, OpInfo(value));
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

@@ -1141,7 +1141,6 @@
 		51F060E11654318500F3281F /* WebRTCMonitorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3281F /* WebRTCMonitorMessageReceiver.cpp */; };
 		51F060E11654318500F3282C /* WebRTCResolverMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282C /* WebRTCResolverMessageReceiver.cpp */; };
 		51F060E11654318500F3282E /* NetworkRTCProviderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282E /* NetworkRTCProviderMessageReceiver.cpp */; };
-		51F060E11654318500F3282F /* WebMDNSRegisterMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282F /* WebMDNSRegisterMessageReceiver.cpp */; };
 		51F060E11654318500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp */; };
 		51F886A61F2C228100C193EF /* WKTestingSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F886A41F2C214A00C193EF /* WKTestingSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51FAEC3A1B0657630009C4E7 /* AuxiliaryProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FAEC371B0657310009C4E7 /* AuxiliaryProcessMessages.h */; };
@@ -2205,6 +2204,7 @@
 		F4BA33F225757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BA33F025757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.h */; };
 		F4BE0D7727AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */; };
 		F4CB09E5225D5A0900891487 /* WebsiteMediaSourcePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */; };
+		F4CBF79E2A6ADF7E00C066BF /* WebEventType.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CBF79D2A6ADF5400C066BF /* WebEventType.h */; };
 		F4CF1E9D25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CF1E9B25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h */; };
 		F4D188EF29B99B4500D838D4 /* PrivateClickMeasurementEphemeralStore.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D188ED29B99B4500D838D4 /* PrivateClickMeasurementEphemeralStore.h */; };
 		F4D5F51D206087A10038BBA8 /* WKTextInputListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D5F519206087A00038BBA8 /* WKTextInputListViewController.h */; };
@@ -4531,7 +4531,6 @@
 		41684C4D24643BFA001CE8ED /* RemoteCaptureSampleManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteCaptureSampleManager.messages.in; sourceTree = "<group>"; };
 		41684C4E24643C81001CE8ED /* RemoteCaptureSampleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCaptureSampleManager.h; sourceTree = "<group>"; };
 		41684C4F24643D3F001CE8ED /* RemoteCaptureSampleManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCaptureSampleManager.cpp; sourceTree = "<group>"; };
-		416CD74523FB178B00661D99 /* MDNSRegisterIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MDNSRegisterIdentifier.h; path = Network/webrtc/MDNSRegisterIdentifier.h; sourceTree = "<group>"; };
 		416EDC052600F6B000092675 /* RTCDataChannelRemoteManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RTCDataChannelRemoteManager.cpp; path = Network/webrtc/RTCDataChannelRemoteManager.cpp; sourceTree = "<group>"; };
 		416EDC062600F6B000092675 /* RTCDataChannelRemoteManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RTCDataChannelRemoteManager.h; path = Network/webrtc/RTCDataChannelRemoteManager.h; sourceTree = "<group>"; };
 		416F8086245B397400B68F02 /* LibWebRTCNetwork.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LibWebRTCNetwork.messages.in; path = Network/webrtc/LibWebRTCNetwork.messages.in; sourceTree = "<group>"; };
@@ -4580,7 +4579,6 @@
 		41B28B081F83AD3E00FB52AC /* RTCPacketOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPacketOptions.h; sourceTree = "<group>"; };
 		41B28B091F83AD3E00FB52AC /* RTCPacketOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPacketOptions.cpp; sourceTree = "<group>"; };
 		41B7ED6C20681DCE0087D853 /* WebMDNSRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMDNSRegister.h; path = Network/webrtc/WebMDNSRegister.h; sourceTree = "<group>"; };
-		41B7ED6D20681DCF0087D853 /* WebMDNSRegister.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebMDNSRegister.messages.in; path = Network/webrtc/WebMDNSRegister.messages.in; sourceTree = "<group>"; };
 		41B7ED6E20681DCF0087D853 /* WebMDNSRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebMDNSRegister.cpp; path = Network/webrtc/WebMDNSRegister.cpp; sourceTree = "<group>"; };
 		41B7ED6F206965900087D853 /* NetworkMDNSRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkMDNSRegister.cpp; sourceTree = "<group>"; };
 		41B7ED70206965900087D853 /* NetworkMDNSRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkMDNSRegister.h; sourceTree = "<group>"; };
@@ -5037,7 +5035,6 @@
 		51F060DD1654317500F3281F /* WebRTCMonitorMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebRTCMonitorMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DD1654317500F3282C /* WebRTCResolverMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebRTCResolverMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DD1654317500F3282E /* NetworkRTCProviderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCProviderMessageReceiver.cpp; sourceTree = "<group>"; };
-		51F060DD1654317500F3282F /* WebMDNSRegisterMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMDNSRegisterMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DD1654317500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkMDNSRegisterMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebResourceLoaderMessages.h; sourceTree = "<group>"; };
 		51F7BB74274498BA00C45A72 /* MockAppBundleForTesting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MockAppBundleForTesting.mm; sourceTree = "<group>"; };
@@ -7237,6 +7234,7 @@
 		F4BA33F125757E89000A3CE8 /* WKImageAnalysisGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKImageAnalysisGestureRecognizer.mm; path = ios/WKImageAnalysisGestureRecognizer.mm; sourceTree = "<group>"; };
 		F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionContextIdentifier.h; sourceTree = "<group>"; };
 		F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsiteMediaSourcePolicy.h; sourceTree = "<group>"; };
+		F4CBF79D2A6ADF5400C066BF /* WebEventType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebEventType.h; sourceTree = "<group>"; };
 		F4CF1E9B25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GestureRecognizerConsistencyEnforcer.h; path = ios/GestureRecognizerConsistencyEnforcer.h; sourceTree = "<group>"; };
 		F4CF1E9C25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GestureRecognizerConsistencyEnforcer.mm; path = ios/GestureRecognizerConsistencyEnforcer.mm; sourceTree = "<group>"; };
 		F4D188ED29B99B4500D838D4 /* PrivateClickMeasurementEphemeralStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementEphemeralStore.h; sourceTree = "<group>"; };
@@ -8113,6 +8111,7 @@
 				BC032DB110F4380F0058C15A /* WebEventConversion.h */,
 				33D059A42A1EEEDC009AFE71 /* WebEventModifier.cpp */,
 				86DD518F28EF28E800DF2A58 /* WebEventModifier.h */,
+				F4CBF79D2A6ADF5400C066BF /* WebEventType.h */,
 				1C0234BF28A00DCF00AC1E5B /* WebExtensionContextIdentifier.h */,
 				1C0234BE28A00DCF00AC1E5B /* WebExtensionContextParameters.h */,
 				1CBEE26128F334D6006D1A02 /* WebExtensionContextParameters.serialization.in */,
@@ -10384,13 +10383,11 @@
 				413075A01DE85EE70039EC69 /* LibWebRTCSocket.h */,
 				413075A51DE85EE70039EC69 /* LibWebRTCSocketFactory.cpp */,
 				413075A61DE85EE70039EC69 /* LibWebRTCSocketFactory.h */,
-				416CD74523FB178B00661D99 /* MDNSRegisterIdentifier.h */,
 				416EDC052600F6B000092675 /* RTCDataChannelRemoteManager.cpp */,
 				416EDC062600F6B000092675 /* RTCDataChannelRemoteManager.h */,
 				411223B72602152B00B0A0B6 /* RTCDataChannelRemoteManager.messages.in */,
 				41B7ED6E20681DCF0087D853 /* WebMDNSRegister.cpp */,
 				41B7ED6C20681DCE0087D853 /* WebMDNSRegister.h */,
-				41B7ED6D20681DCF0087D853 /* WebMDNSRegister.messages.in */,
 				413075A21DE85EE70039EC69 /* WebRTCMonitor.cpp */,
 				413075A31DE85EE70039EC69 /* WebRTCMonitor.h */,
 				413075A41DE85EE70039EC69 /* WebRTCMonitor.messages.in */,
@@ -13527,7 +13524,6 @@
 				1CA8B943127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp */,
 				1CA8B944127C882A00576C2B /* WebInspectorUIProxyMessages.h */,
 				5C9E0F972A577EC400FC2664 /* WebKitPlatformGeneratedSerializers.mm */,
-				51F060DD1654317500F3282F /* WebMDNSRegisterMessageReceiver.cpp */,
 				31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */,
 				31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */,
 				C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */,
@@ -14875,6 +14871,7 @@
 				BC032DBB10F4380F0058C15A /* WebEventConversion.h in Headers */,
 				BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */,
 				86DD519028EF28E800DF2A58 /* WebEventModifier.h in Headers */,
+				F4CBF79E2A6ADF7E00C066BF /* WebEventType.h in Headers */,
 				B6544F932937E45100034EB0 /* WebExtensionAPIEvent.h in Headers */,
 				1C5DC46D290B271E0061EC62 /* WebExtensionAPIExtension.h in Headers */,
 				1C5DC46C290B271E0061EC62 /* WebExtensionAPINamespace.h in Headers */,
@@ -16865,14 +16862,12 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Resources/Signposts/LoggingPreferences.plist",
 				"$(SRCROOT)/Resources/Signposts/SystemTracePoints.plist",
 			);
 			name = "Copy Signpost Plists";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(WK_LOGGING_PREFERENCES_OUTPUT_PATH)",
 				"$(WK_TRACE_POINTS_OUTPUT_PATH)",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
@@ -17395,7 +17390,6 @@
 				1A6280F31919982A006AD9F9 /* WebKit.m in Sources */,
 				A181A79821ACC74B0059A316 /* WebKitAdditions.mm in Sources */,
 				CDF1B91B267025550007EC10 /* WebKitSwiftSoftLink.mm in Sources */,
-				51F060E11654318500F3282F /* WebMDNSRegisterMessageReceiver.cpp in Sources */,
 				E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */,
 				31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */,
 				2DF6FE52212E110900469030 /* WebPage.cpp in Sources */,

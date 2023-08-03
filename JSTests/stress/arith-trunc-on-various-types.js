@@ -90,6 +90,7 @@ function testAllTypesCall() {
                 throw "Failed testAllTypesCall for input " + testCaseInput[0] + " expected " + testCaseInput[1] + " got " + output;
         }
     }
+    // Because DoubleRep has three UseKinds we could pick before getting to the generic version
     if (numberOfDFGCompiles(opaqueAllTypesTrunc) > 3)
         throw "We should have detected trunc() was polymorphic and generated a generic version.";
 }
@@ -111,6 +112,7 @@ function testAllTypesWithoutNegativeZeroCall() {
                 throw "Failed testAllTypesWithoutNegativeZeroCall for input " + testCaseInput[0] + " expected " + testCaseInput[1] + " got " + output;
         }
     }
+    // Because DoubleRep has three UseKinds we could pick before getting to the generic version
     if (numberOfDFGCompiles(opaqueAllTypesTrunc) > 3)
         throw "We should have detected trunc() was polymorphic and generated a generic version.";
 }

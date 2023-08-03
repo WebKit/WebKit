@@ -82,7 +82,13 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
         if (scrollingStateNode.scrollableAreaParameters().verticalNativeScrollbarVisibility != NativeScrollbarVisibility::Visible)
             m_scrollerPair->verticalScroller().setHostLayer(nullptr);
     }
-    
+
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollbarEnabledState)) {
+        auto scrollbarEnabledState = scrollingStateNode.scrollbarEnabledState();
+        m_scrollerPair->horizontalScroller().setEnabled(scrollbarEnabledState.horizontalScrollbarIsEnabled);
+        m_scrollerPair->verticalScroller().setEnabled(scrollbarEnabledState.verticalScrollbarIsEnabled);
+    }
+
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentAreaHoverState)) {
         if (scrollingStateNode.mouseIsOverContentArea())
             m_scrollerPair->mouseEnteredContentArea();

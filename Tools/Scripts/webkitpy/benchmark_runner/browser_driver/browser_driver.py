@@ -56,7 +56,7 @@ class BrowserDriver(object):
         yield
 
     @contextmanager
-    def profile(self, output_path, profile_filename, timeout=300):
+    def profile(self, output_path, profile_filename, profiling_interval, trace_type='profile', timeout=300):
         _log.error('The --profile option was specified, but an empty context was called. This run will not be profiled.')
         yield
 

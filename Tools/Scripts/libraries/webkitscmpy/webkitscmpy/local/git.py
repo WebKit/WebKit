@@ -702,7 +702,7 @@ class Git(Scm):
                     )
 
                 if identifier > base_count:
-                    raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout'.format(identifier))
+                    raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout. Latest identifier on this branch is {}'.format(identifier, base_count))
                 log = run(
                     [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier)] + log_format + ['--'],
                     cwd=self.root_path,

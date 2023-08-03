@@ -135,6 +135,9 @@ accessibility/aria-switch-sends-notification.html
 accessibility/combo-box-collapsed-selection-changed.html
 accessibility/multiselect-list-reports-active-option.html
 
+# uiController.simulateRotationLikeSafari() is not implemented on macOS.
+fast/screen-orientation/orientation-in-resize-event.html [ Skip ]
+
 # Need to implement AccessibilityUIElement::clearSelectedChildren()
 accessibility/aria-listbox-clear-selection-crash.html
 accessibility/listbox-clear-selection.html
@@ -730,6 +733,7 @@ webkit.org/b/187476 media/video-background-playback.html [ Pass Failure ]
 # These tests always time out.
 webkit.org/b/112492 media/track/track-prefer-captions.html [ Skip ]
 
+webkit.org/b/259658 http/tests/media/video-play-stall.html [ Pass Failure ]
 webkit.org/b/136708 http/tests/media/video-play-stall-seek.html
 webkit.org/b/136708 media/media-fullscreen-not-in-document.html
 
@@ -2755,7 +2759,7 @@ webkit.org/b/256108 media/video-audio-session-mode.html [ Failure ]
 [ x86_64 ] media/media-source/media-source-webm-configuration-framerate.html [ Pass Failure ]
 [ x86_64 ] media/media-source/media-source-webm-configuration-vp9-header-color.html [ Pass Failure ]
 
-webkit.org/b/258181 [ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Slow ]
+webkit.org/b/258181 [ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Slow Failure ]
 
 # webkit.org/b/258328 Umbrella Bug: Batch mark expectations slowing down EWS
 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-denormals.https.window.html [ Failure ]
@@ -2767,3 +2771,14 @@ webkit.org/b/252322 [ X86_64 ] media/media-source/media-source-video-renders.htm
 
 # Requires Ventura or later
 [ BigSur Monterey ] media/media-source/media-source-paint-after-display-none.html [ Skip ]
+
+webkit.org/b/259489 [ Monterey+ ] http/tests/media/hls/track-in-band-multiple-cues.html [ Pass Failure ]
+
+webkit.org/b/259524 [ Monterey+ ] media/audioSession/audioSessionState.html [ Pass Failure ]
+
+# rdar://110876540 ASSERTION FAILED: firstChild(): [ macOS ] (258183)
+[ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Crash ]
+
+webkit.org/b/259539 [ Debug ] storage/indexeddb/cursor-update.html [ Pass Failure Crash ]
+
+webkit.org/b/259190 http/tests/images/heic-as-heif.html [ Pass ImageOnlyFailure ]

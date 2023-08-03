@@ -78,6 +78,6 @@ PaymentSetupConfiguration::PaymentSetupConfiguration(const WebCore::ApplePaySetu
 {
 }
 
-} // namespace WebKitAdditions
+} // namespace WebKit
 
 #endif // ENABLE(APPLE_PAY)

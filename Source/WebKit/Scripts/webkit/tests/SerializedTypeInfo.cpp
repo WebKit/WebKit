@@ -34,6 +34,7 @@
 #include "FirstMemberType.h"
 #endif
 #include "HeaderWithoutCondition"
+#include "LayerProperties.h"
 #include "PlatformClass.h"
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
@@ -64,115 +65,133 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "FirstMemberType"_s,
                 "firstMemberName"_s
-            }, {
+            },
+#if ENABLE(SECOND_MEMBER)
+            {
                 "SecondMemberType"_s,
                 "secondMemberName"_s
-            }, {
-                "std::optional<RetainPtr<CFTypeRef>>"_s,
+            },
+#endif
+            {
+                "RetainPtr<CFTypeRef>"_s,
                 "nullableTestMember"_s
-            }
+            },
         } },
         { "Namespace::OtherClass"_s, {
             {
                 "int"_s,
                 "a"_s
-            }, {
+            },
+            {
                 "bool"_s,
                 "b"_s
-            }, {
+            },
+            {
                 "RetainPtr<NSArray>"_s,
                 "dataDetectorResults"_s
-            }
+            },
         } },
         { "Namespace::ReturnRefClass"_s, {
             {
                 "double"_s,
                 "functionCall().member1"_s
-            }, {
+            },
+            {
                 "double"_s,
                 "functionCall().member2"_s
-            }, {
+            },
+            {
                 "std::unique_ptr<int>"_s,
                 "uniqueMember"_s
-            }
+            },
         } },
         { "Namespace::EmptyConstructorStruct"_s, {
             {
                 "int"_s,
                 "m_int"_s
-            }, {
+            },
+            {
                 "double"_s,
                 "m_double"_s
-            }
+            },
         } },
         { "Namespace::EmptyConstructorWithIf"_s, {
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
             {
                 "MemberType"_s,
                 "m_type"_s
-            }, {
+            },
+#endif
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
+            {
                 "OtherMemberType"_s,
                 "m_value"_s
-            }
+            },
+#endif
         } },
         { "WithoutNamespace"_s, {
             {
                 "int"_s,
                 "a"_s
-            }
+            },
         } },
         { "WithoutNamespaceWithAttributes"_s, {
             {
                 "int"_s,
                 "a"_s
-            }
+            },
         } },
         { "WebCore::InheritsFrom"_s, {
             {
                 "float"_s,
                 "b"_s
-            }
+            },
         } },
         { "WebCore::InheritanceGrandchild"_s, {
             {
                 "double"_s,
                 "c"_s
-            }
+            },
         } },
         { "Seconds"_s, {
             {
                 "double"_s,
                 "value()"_s
-            }
+            },
         } },
         { "CreateUsingClass"_s, {
             {
                 "double"_s,
                 "value"_s
-            }
+            },
         } },
         { "WebCore::FloatBoxExtent"_s, {
             {
                 "float"_s,
                 "top()"_s
-            }, {
+            },
+            {
                 "float"_s,
                 "right()"_s
-            }, {
+            },
+            {
                 "float"_s,
                 "bottom()"_s
-            }, {
+            },
+            {
                 "float"_s,
                 "left()"_s
-            }
+            },
         } },
-        { "NullableSoftLinkedMember"_s, {
+        { "SoftLinkedMember"_s, {
             {
-                "std::optional<RetainPtr<DDActionContext>>"_s,
+                "RetainPtr<DDActionContext>"_s,
                 "firstMember"_s
-            }, {
+            },
+            {
                 "RetainPtr<DDActionContext>"_s,
                 "secondMember"_s
-            }
+            },
         } },
         { "WebCore::TimingFunction"_s, {
             { "std::variant<WebCore::LinearTimingFunction, WebCore::CubicBezierTimingFunction, WebCore::StepsTimingFunction, WebCore::SpringTimingFunction>"_s, "subclasses"_s }
@@ -181,43 +200,56 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "int"_s,
                 "value"_s
-            }
+            },
         } },
         { "Namespace::CommonClass"_s, {
             {
                 "int"_s,
                 "value"_s
-            }
+            },
         } },
         { "Namespace::AnotherCommonClass"_s, {
             {
                 "int"_s,
                 "value"_s
-            }
+            },
         } },
         { "WebCore::MoveOnlyBaseClass"_s, {
             { "std::variant<WebCore::MoveOnlyDerivedClass>"_s, "subclasses"_s }
         } },
         { "WebCore::MoveOnlyDerivedClass"_s, {
             {
-                "std::optional<int>"_s,
+                "int"_s,
                 "firstMember"_s
-            }, {
+            },
+            {
                 "int"_s,
                 "secondMember"_s
-            }
+            },
         } },
         { "WebKit::PlatformClass"_s, {
             {
                 "int"_s,
                 "value"_s
-            }
+            },
         } },
         { "WebKit::CustomEncoded"_s, {
             {
                 "int"_s,
                 "value"_s
-            }
+            },
+        } },
+        { "WebKit::LayerProperties"_s, {
+            {
+                "OptionalTuple<"
+                    "String"
+#if ENABLE(FEATURE)
+                    ", std::unique_ptr<WebCore::TransformationMatrix>"
+#endif
+                    ", bool"
+                ">"_s,
+                "optionalTuple"_s
+            },
         } },
         { "WebCore::SharedStringHash"_s, {
             { "uint32_t"_s, "alias"_s }

@@ -24,8 +24,11 @@ headers: <WebCore/TextIndicator.h>
 
 #if PLATFORM(MAC)
 header: "WebHitTestResultData.h" <pal/mac/DataDetectorsSoftLink.h>
+[Nested] struct WebKit::WebHitTestResultPlatformData::DetectedDataActionContext {
+    [SecureCodingAllowed=[PAL::getWKDDActionContextClass()]] RetainPtr<WKDDActionContext> context;
+};
 [CustomHeader] struct WebKit::WebHitTestResultPlatformData {
-    [Nullable, SoftLinkedClass='PAL::getWKDDActionContextClass()'] RetainPtr<WKDDActionContext> detectedDataActionContext;
+    Markable<WebKit::WebHitTestResultPlatformData::DetectedDataActionContext> detectedDataActionContext;
     WebCore::FloatRect detectedDataBoundingBox;
     RefPtr<WebCore::TextIndicator> detectedDataTextIndicator;
     WebCore::PageOverlay::PageOverlayID detectedDataOriginatingPageOverlay;

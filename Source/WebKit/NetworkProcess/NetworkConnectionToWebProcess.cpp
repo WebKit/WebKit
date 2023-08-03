@@ -41,6 +41,7 @@
 #include "NetworkOriginAccessPatterns.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
+#include "NetworkProcessConnectionParameters.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkRTCMonitorMessages.h"
@@ -53,6 +54,7 @@
 #include "NetworkSocketChannel.h"
 #include "NetworkSocketChannelMessages.h"
 #include "NetworkStorageManager.h"
+#include "NotificationManagerMessageHandlerMessages.h"
 #include "PingLoad.h"
 #include "PreconnectTask.h"
 #include "RTCDataChannelRemoteManagerProxy.h"
@@ -76,6 +78,7 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieStoreGetOptions.h>
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/LogInitialization.h>
@@ -122,12 +125,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<NetworkConnectionToWebProcess> NetworkConnectionToWebProcess::create(NetworkProcess& networkProcess, WebCore::ProcessIdentifier webProcessIdentifier, PAL::SessionID sessionID, NetworkProcessConnectionParameters parameters, IPC::Connection::Identifier connectionIdentifier)
+Ref<NetworkConnectionToWebProcess> NetworkConnectionToWebProcess::create(NetworkProcess& networkProcess, WebCore::ProcessIdentifier webProcessIdentifier, PAL::SessionID sessionID, NetworkProcessConnectionParameters&& parameters, IPC::Connection::Identifier connectionIdentifier)
 {
-    return adoptRef(*new NetworkConnectionToWebProcess(networkProcess, webProcessIdentifier, sessionID, parameters, connectionIdentifier));
+    return adoptRef(*new NetworkConnectionToWebProcess(networkProcess, webProcessIdentifier, sessionID, WTFMove(parameters), connectionIdentifier));
 }
 
-NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& networkProcess, WebCore::ProcessIdentifier webProcessIdentifier, PAL::SessionID sessionID, NetworkProcessConnectionParameters parameters, IPC::Connection::Identifier connectionIdentifier)
+NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& networkProcess, WebCore::ProcessIdentifier webProcessIdentifier, PAL::SessionID sessionID, NetworkProcessConnectionParameters&& parameters, IPC::Connection::Identifier connectionIdentifier)
     : m_connection(IPC::Connection::createServerConnection(connectionIdentifier))
     , m_networkProcess(networkProcess)
     , m_sessionID(sessionID)
@@ -225,11 +228,10 @@ void NetworkConnectionToWebProcess::transferKeptAliveLoad(NetworkResourceLoader&
 
 void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
-    ASSERT(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName());
+    ASSERT_WITH_SECURITY_IMPLICATION(RunLoop::isMain());
 
-    if (m_networkProcess->messageReceiverMap().dispatchMessage(connection, decoder))
-        return;
+    // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
+    ASSERT_WITH_SECURITY_IMPLICATION(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName());
 
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveNetworkConnectionToWebProcessMessage(connection, decoder);
@@ -256,6 +258,14 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         return;
     }
 
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+    if (decoder.messageReceiverName() == Messages::NotificationManagerMessageHandler::messageReceiverName()) {
+        NETWORK_PROCESS_MESSAGE_CHECK(m_networkProcess->builtInNotificationsEnabled());
+        if (auto* networkSession = this->networkSession())
+            networkSession->notificationManager().didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
 #if USE(LIBWEBRTC)
     if (decoder.messageReceiverName() == Messages::NetworkRTCMonitor::messageReceiverName()) {
         rtcProvider().didReceiveNetworkRTCMonitorMessage(connection, decoder);
@@ -1457,7 +1467,7 @@ RefPtr<NetworkResourceLoader> NetworkConnectionToWebProcess::takeNetworkResource
     return m_networkResourceLoaders.take(resourceLoadIdentifier);
 }
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
 void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockContentFilterSettings&& settings)
 {
     MockContentFilterSettings::singleton() = WTFMove(settings);

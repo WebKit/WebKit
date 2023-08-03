@@ -424,6 +424,17 @@ WASM_SLOW_PATH_DECL(ref_func)
     WASM_RETURN(Wasm::refFunc(instance, instruction.m_functionIndex));
 }
 
+WASM_IPINT_EXTERN_CPP_DECL(ref_func, unsigned index)
+{
+#if CPU(ARM64) || CPU(X86_64)
+    WASM_RETURN_TWO(bitwise_cast<void*>(Wasm::refFunc(instance, index)), 0);
+#else
+    UNUSED_PARAM(instance);
+    UNUSED_PARAM(index);
+    RELEASE_ASSERT_NOT_REACHED("IPInt only supported on ARM64 and X86_64 (for now)");
+#endif
+}
+
 WASM_SLOW_PATH_DECL(array_new)
 {
     auto instruction = pc->as<WasmArrayNew>();
@@ -548,6 +559,21 @@ WASM_SLOW_PATH_DECL(table_get)
     WASM_RETURN(result);
 }
 
+WASM_IPINT_EXTERN_CPP_DECL(table_get, unsigned tableIndex, unsigned index)
+{
+#if CPU(ARM64) || CPU(X86_64)
+    EncodedJSValue result = Wasm::tableGet(instance, tableIndex, index);
+    if (!result)
+        WASM_RETURN_TWO(0, bitwise_cast<void*>(static_cast<uint64_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+    WASM_RETURN_TWO(bitwise_cast<void*>(result), 0);
+#else
+    UNUSED_PARAM(instance);
+    UNUSED_PARAM(tableIndex);
+    UNUSED_PARAM(index);
+    RELEASE_ASSERT_NOT_REACHED("IPInt only supported on ARMv8 and X86_64 (for now)");
+#endif
+}
+
 WASM_SLOW_PATH_DECL(table_set)
 {
     auto instruction = pc->as<WasmTableSet>();
@@ -556,6 +582,21 @@ WASM_SLOW_PATH_DECL(table_set)
     if (!Wasm::tableSet(instance, instruction.m_tableIndex, index, value))
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsTableAccess);
     WASM_END();
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(table_set, unsigned tableIndex, unsigned index, EncodedJSValue value)
+{
+#if CPU(ARM64) || CPU(X86_64)
+    if (!Wasm::tableSet(instance, tableIndex, index, value))
+        WASM_RETURN_TWO(0, bitwise_cast<void*>(static_cast<uint64_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+    WASM_RETURN_TWO(0, 0);
+#else
+    UNUSED_PARAM(instance);
+    UNUSED_PARAM(tableIndex);
+    UNUSED_PARAM(index);
+    UNUSED_PARAM(value);
+    RELEASE_ASSERT_NOT_REACHED("IPInt only supports ARM64 and X86_64 (for now)");
+#endif
 }
 
 WASM_SLOW_PATH_DECL(table_init)
@@ -614,7 +655,7 @@ inline UGPRPair doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
     WASM_CALL_RETURN(instance, codePtr.taggedPtr(), WasmEntryPtrTag);
 }
 
-extern "C" UGPRPair doWasmIPIntCall(Wasm::Instance* instance, unsigned functionIndex)
+WASM_IPINT_EXTERN_CPP_DECL(call, unsigned functionIndex)
 {
     return doWasmCall(instance, functionIndex);
 }
@@ -640,6 +681,27 @@ inline UGPRPair doWasmCallIndirect(CallFrame* callFrame, Wasm::Instance* instanc
         WASM_THROW(Wasm::ExceptionType::NullTableEntry);
 
     const auto& callSignature = CALLEE()->signature(typeIndex);
+    if (callSignature.index() != function.m_function.typeIndex)
+        WASM_THROW(Wasm::ExceptionType::BadSignature);
+
+    WASM_CALL_RETURN(function.m_instance, function.m_function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(call_indirect, CallFrame* callFrame, unsigned functionIndex, unsigned* metadataEntry)
+{
+    unsigned tableIndex = metadataEntry[0];
+    unsigned typeIndex = metadataEntry[1];
+    Wasm::FuncRefTable* table = instance->table(tableIndex)->asFuncrefTable();
+
+    if (functionIndex >= table->length())
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsCallIndirect);
+
+    const Wasm::FuncRefTable::Function& function = table->function(functionIndex);
+
+    if (function.m_function.typeIndex == Wasm::TypeDefinition::invalidIndex)
+        WASM_THROW(Wasm::ExceptionType::NullTableEntry);
+
+    const auto& callSignature = static_cast<Wasm::IPIntCallee*>(callFrame->callee().asWasmCallee())->signature(typeIndex);
     if (callSignature.index() != function.m_function.typeIndex)
         WASM_THROW(Wasm::ExceptionType::BadSignature);
 
@@ -846,6 +908,23 @@ WASM_SLOW_PATH_DECL(set_global_ref)
     auto instruction = pc->as<WasmSetGlobalRef>();
     instance->setGlobal(instruction.m_globalIndex, READ(instruction.m_value).jsValue());
     WASM_END_IMPL();
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(get_global_64, unsigned index)
+{
+#if CPU(ARM64) || CPU(X86_64)
+    WASM_RETURN_TWO(bitwise_cast<void*>(instance->loadI64Global(index)), 0);
+#else
+    UNUSED_PARAM(instance);
+    UNUSED_PARAM(index);
+    RELEASE_ASSERT_NOT_REACHED("IPInt only supports ARM64 and X86_64 (for now)");
+#endif
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(set_global_64, unsigned index, uint64_t value)
+{
+    instance->setGlobal(index, value);
+    WASM_RETURN_TWO(0, 0);
 }
 
 WASM_SLOW_PATH_DECL(set_global_ref_portable_binding)

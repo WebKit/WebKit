@@ -129,7 +129,7 @@ bool PageBanner::mouseEvent(const WebMouseEvent& mouseEvent)
     if (m_isHidden)
         return false;
 
-    auto* frameView = m_webPage->mainFrameView();
+    auto* frameView = m_webPage->localMainFrameView();
     if (!frameView)
         return false;
 

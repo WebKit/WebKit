@@ -1,0 +1,5 @@
+Element A
+Element B
+
+PASS Requesting fullscreen on A, then B, then A
+

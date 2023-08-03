@@ -142,7 +142,7 @@ public:
 
         {
             Locker locker { m_surfaceLock };
-            m_surfaceSendRight = std::get<MachSendRight>(backendHandle);
+            m_surfaceSendRight = MachSendRight { std::get<MachSendRight>(backendHandle) };
             m_surfaceIdentifier = clone->renderingResourceIdentifier();
         }
 
@@ -155,7 +155,7 @@ public:
     {
         Locker locker { m_surfaceLock };
         if (m_surfaceSendRight)
-            layer.setDelegatedContents({ *m_surfaceSendRight, { }, std::optional<RenderingResourceIdentifier>(m_surfaceIdentifier) });
+            layer.setDelegatedContents({ MachSendRight { *m_surfaceSendRight }, { }, std::optional<RenderingResourceIdentifier>(m_surfaceIdentifier) });
     }
 
     void setDestinationLayerID(WebCore::PlatformLayerIdentifier layerID)

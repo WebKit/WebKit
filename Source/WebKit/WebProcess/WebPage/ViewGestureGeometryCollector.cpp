@@ -83,7 +83,11 @@ void ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificati
 
 void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(FloatPoint origin)
 {
-    FloatRect visibleContentRect = m_webPage.mainFrameView()->unobscuredContentRectIncludingScrollbars();
+    auto* frameView = m_webPage.localMainFrameView();
+    if (!frameView)
+        return;
+
+    FloatRect visibleContentRect = frameView->unobscuredContentRectIncludingScrollbars();
 
     if (m_webPage.handlesPageScaleGesture())
         return;
@@ -114,7 +118,7 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     }
 #endif // PLATFORM(IOS_FAMILY)
 
-    IntPoint originInContentsSpace = m_webPage.mainFrameView()->windowToContents(roundedIntPoint(origin));
+    IntPoint originInContentsSpace = frameView->windowToContents(roundedIntPoint(origin));
     HitTestResult hitTestResult = HitTestResult(originInContentsSpace);
 
     if (auto* mainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.mainFrame()))
@@ -251,7 +255,11 @@ void ViewGestureGeometryCollector::computeMinimumAndMaximumViewportScales(double
 #if !PLATFORM(IOS_FAMILY)
 void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
 {
-    FloatRect visibleContentRect = m_webPage.mainFrameView()->unobscuredContentRectIncludingScrollbars();
+    auto* frameView = m_webPage.localMainFrameView();
+    if (!frameView)
+        return;
+
+    FloatRect visibleContentRect = frameView->unobscuredContentRectIncludingScrollbars();
     bool frameHandlesMagnificationGesture = m_webPage.handlesPageScaleGesture();
     m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect, frameHandlesMagnificationGesture));
 }

@@ -27,6 +27,7 @@
     Conditional=APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE,
     ExportMacro=WEBCORE_EXPORT,
 ] enum ApplePayShippingContactEditingMode {
+    "available",
     "enabled",
     "storePickup"
 };

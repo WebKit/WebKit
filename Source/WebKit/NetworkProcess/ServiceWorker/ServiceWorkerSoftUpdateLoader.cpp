@@ -130,8 +130,9 @@ void ServiceWorkerSoftUpdateLoader::loadFromNetwork(NetworkSession& session, Res
 #endif
 }
 
-void ServiceWorkerSoftUpdateLoader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&&)
+void ServiceWorkerSoftUpdateLoader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
+    completionHandler({ });
     fail(ResourceError { ResourceError::Type::Cancellation });
 }
 

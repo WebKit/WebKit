@@ -80,6 +80,8 @@ public:
     const uint8_t* getBytecode() const { return m_bytecode; }
     const uint8_t* getMetadata() const { return m_metadata.data(); }
 
+    unsigned addSignature(const TypeDefinition&);
+
 private:
 
     void addBlankSpace(uint32_t size);
@@ -102,6 +104,8 @@ private:
     unsigned m_numArgumentsOnStack { 0 };
     unsigned m_nonArgLocalOffset { 0 };
     Vector<uint32_t> m_argumentLocations { };
+
+    Vector<const TypeDefinition*> m_signatures;
 };
 
 } } // namespace JSC::Wasm

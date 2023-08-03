@@ -68,7 +68,7 @@ static HashCountedSet<String>& blobURLReferencesMap()
     return map;
 }
 
-static inline bool isBlobURLContainsNullOrigin(const URL& url)
+static inline bool isBlobURLContainingNullOrigin(const URL& url)
 {
     ASSERT(url.protocolIsBlob());
     unsigned startIndex = url.pathStart();
@@ -85,7 +85,7 @@ static inline bool isInternalBlobURL(const URL& url)
 // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
 static void addToOriginMapIfNecessary(const URL& url, RefPtr<SecurityOrigin>&& origin)
 {
-    if (!origin || !isBlobURLContainsNullOrigin(url))
+    if (!origin || !isBlobURLContainingNullOrigin(url))
         return;
 
     auto urlWithoutFragment = url.stringWithoutFragmentIdentifier();
@@ -125,7 +125,7 @@ void ThreadableBlobRegistry::registerInternalBlobURL(const URL& url, Vector<Blob
 static void unregisterBlobURLOriginIfNecessaryOnMainThread(const URL& url)
 {
     ASSERT(isMainThread());
-    if (!isBlobURLContainsNullOrigin(url))
+    if (!isBlobURLContainingNullOrigin(url))
         return;
 
     auto urlWithoutFragment = url.stringWithoutFragmentIdentifier();
@@ -209,7 +209,7 @@ void ThreadableBlobRegistry::unregisterBlobURL(const URLKeepingBlobAlive& url)
 void ThreadableBlobRegistry::registerBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>&)
 {
     ensureOnMainThread([url = url.isolatedCopy()] {
-        if (isBlobURLContainsNullOrigin(url))
+        if (isBlobURLContainingNullOrigin(url))
             blobURLReferencesMap().add(url.stringWithoutFragmentIdentifier());
 
         blobRegistry().registerBlobURLHandle(url);
@@ -226,6 +226,7 @@ void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url, const std::
 
 RefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)
 {
+    ASSERT(url.protocolIsBlob());
     RefPtr<SecurityOrigin> cachedOrigin;
 
     bool wasOnMainThread = isMainThread();
@@ -236,7 +237,7 @@ RefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)
     if (cachedOrigin)
         return cachedOrigin;
 
-    if (!url.protocolIsBlob() || !isBlobURLContainsNullOrigin(url))
+    if (!isBlobURLContainingNullOrigin(url))
         return nullptr;
 
     // If we do not have a cached origin for null blob URLs, we use an opaque origin.

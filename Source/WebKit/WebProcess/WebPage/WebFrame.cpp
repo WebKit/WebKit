@@ -143,13 +143,13 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     return frame;
 }
 
-Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier remoteProcessIdentifier)
+Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID)
 {
     auto frame = create(page, frameID);
     auto client = makeUniqueRef<WebRemoteFrameClient>(frame.copyRef(), frame->makeInvalidator());
     RELEASE_ASSERT(page.corePage());
     RELEASE_ASSERT(parent.coreFrame());
-    auto coreFrame = RemoteFrame::createSubframe(*page.corePage(), WTFMove(client), frameID, *parent.coreFrame(), remoteProcessIdentifier);
+    auto coreFrame = RemoteFrame::createSubframe(*page.corePage(), WTFMove(client), frameID, *parent.coreFrame());
     frame->m_coreFrame = coreFrame.get();
 
     // FIXME: Pass in a name and call FrameTree::setName here.
@@ -323,7 +323,7 @@ void WebFrame::continueWillSubmitForm(FormSubmitListenerIdentifier listenerID)
         completionHandler();
 }
 
-void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier, WebCore::ProcessIdentifier remoteProcessIdentifier)
+void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
 {
     RefPtr coreFrame = m_coreFrame.get();
     if (!coreFrame) {
@@ -371,8 +371,8 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
         coreFrame->disconnectOwnerElement();
     auto client = makeUniqueRef<WebRemoteFrameClient>(*this, WTFMove(invalidator));
     auto newFrame = ownerElement
-        ? WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(client), m_frameID, *ownerElement, layerHostingContextIdentifier, remoteProcessIdentifier)
-        : parent ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(client), m_frameID, *parent, remoteProcessIdentifier) : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, remoteProcessIdentifier);
+        ? WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(client), m_frameID, *ownerElement, layerHostingContextIdentifier)
+        : parent ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(client), m_frameID, *parent) : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(client), m_frameID);
 
     if (!parent)
         newFrame->takeWindowProxyFrom(*localFrame);
@@ -384,11 +384,34 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
 
     m_coreFrame = newFrame.get();
 
-    // FIXME: This is also done in the WebCore::Frame constructor. Move one to make this more symmetric.
-    if (ownerElement) {
-        ownerElement->setContentFrame(*m_coreFrame);
+    if (ownerElement)
         ownerElement->scheduleInvalidateStyleAndLayerComposition();
+}
+
+void WebFrame::removeFromTree()
+{
+    RefPtr coreFrame = m_coreFrame.get();
+    if (!coreFrame) {
+        ASSERT_NOT_REACHED();
+        return;
     }
+
+    RefPtr webPage = m_page.get();
+    if (!webPage) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto* corePage = webPage->corePage();
+    if (!corePage) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*coreFrame); localFrame && localFrame->isRootFrame())
+        corePage->removeRootFrame(*localFrame);
+    if (RefPtr parent = coreFrame->tree().parent())
+        parent->tree().removeChild(*coreFrame);
 }
 
 void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
@@ -451,8 +474,13 @@ void WebFrame::invalidatePolicyListeners()
         completionHandler();
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& policyDecision)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifier identifier, PolicyDecision&& policyDecision)
 {
+#if ENABLE(APP_BOUND_DOMAINS)
+    if (m_page)
+        m_page->setIsNavigatingToAppBoundDomain(policyDecision.isNavigatingToAppBoundDomain, this);
+#endif
+
     if (!m_coreFrame)
         return;
 
@@ -460,7 +488,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
     if (!policyCheck.policyFunction)
         return;
 
-    ASSERT(policyDecision.identifier == policyCheck.corePolicyIdentifier);
+    ASSERT(identifier == policyCheck.corePolicyIdentifier);
 
     FramePolicyFunction function = WTFMove(policyCheck.policyFunction);
     bool forNavigationAction = policyCheck.forNavigationAction == ForNavigationAction::Yes;
@@ -484,7 +512,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
             page->sandboxExtensionTracker().beginLoad(&page->mainWebFrame(), WTFMove(*(policyDecision.sandboxExtensionHandle)));
     }
 
-    function(policyDecision.policyAction, policyDecision.identifier);
+    function(policyDecision.policyAction, identifier);
 }
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)

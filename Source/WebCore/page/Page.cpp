@@ -269,14 +269,14 @@ static constexpr OptionSet<ActivityState> pageInitialActivityState()
     return { ActivityState::IsVisible, ActivityState::IsInWindow };
 }
 
-static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<LocalFrameLoaderClient>, PageConfiguration::RemoteMainFrameCreationParameters>&& frameCreationParameter, FrameIdentifier identifier)
+static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& client, FrameIdentifier identifier)
 {
-    return switchOn(WTFMove(frameCreationParameter), [&] (UniqueRef<LocalFrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
+    return switchOn(WTFMove(client), [&] (UniqueRef<LocalFrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
         auto localFrame = LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier);
         page.addRootFrame(localFrame.get());
         return localFrame;
-    }, [&] (PageConfiguration::RemoteMainFrameCreationParameters&& remoteMainFrameCreationParameters) -> Ref<Frame> {
-        return RemoteFrame::createMainFrame(page, WTFMove(remoteMainFrameCreationParameters.remoteFrameClient), identifier, remoteMainFrameCreationParameters.remoteProcessIdentifier);
+    }, [&] (UniqueRef<RemoteFrameClient>&& remoteFrameClient) -> Ref<Frame> {
+        return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClient), identifier);
     });
 }
 

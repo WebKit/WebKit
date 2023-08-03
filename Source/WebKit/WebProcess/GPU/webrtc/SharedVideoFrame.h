@@ -62,7 +62,7 @@ struct SharedVideoFrame {
     using Buffer = std::variant<std::nullptr_t, RemoteVideoFrameReadReference, MachSendRight, WebCore::IntSize>;
     Buffer buffer;
 
-    template<class Encoder> void encode(Encoder&) const;
+    template<class Encoder> void encode(Encoder&) &&;
     template<class Decoder> static std::optional<SharedVideoFrame> decode(Decoder&);
 };
 
@@ -133,12 +133,12 @@ private:
     RetainPtr<CVPixelBufferRef> m_blackFrame;
 };
 
-template<class Encoder> void SharedVideoFrame::encode(Encoder& encoder) const
+template<class Encoder> void SharedVideoFrame::encode(Encoder& encoder) &&
 {
     encoder << time;
     encoder << mirrored;
     encoder << rotation;
-    encoder << buffer;
+    encoder << WTFMove(buffer);
 }
 
 template<class Decoder> std::optional<SharedVideoFrame> SharedVideoFrame::decode(Decoder& decoder)

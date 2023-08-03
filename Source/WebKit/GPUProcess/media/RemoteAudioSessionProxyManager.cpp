@@ -143,7 +143,7 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
 
     size_t activeProxyCount { 0 };
     for (auto& otherProxy : m_proxies) {
-        if (otherProxy.isActive())
+        if (otherProxy.isActive() && !otherProxy.isInterrupted())
             ++activeProxyCount;
     }
 

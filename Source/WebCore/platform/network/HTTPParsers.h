@@ -131,7 +131,7 @@ bool addToAccessControlAllowList(const String& string, unsigned start, unsigned 
         return true;
 
     // Skip white space from start.
-    while (start <= end && isJSONOrHTTPWhitespace((*stringImpl)[start]))
+    while (start <= end && isASCIIWhitespaceWithoutFF((*stringImpl)[start]))
         ++start;
 
     // only white space
@@ -139,7 +139,7 @@ bool addToAccessControlAllowList(const String& string, unsigned start, unsigned 
         return true;
 
     // Skip white space from end.
-    while (end && isJSONOrHTTPWhitespace((*stringImpl)[end]))
+    while (end && isASCIIWhitespaceWithoutFF((*stringImpl)[end]))
         --end;
 
     auto token = string.substring(start, end - start + 1);

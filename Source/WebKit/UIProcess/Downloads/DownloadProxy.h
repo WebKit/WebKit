@@ -117,7 +117,7 @@ public:
     void didCreateDestination(const String& path);
     void didFinish();
     void didFail(const WebCore::ResourceError&, const IPC::DataReference& resumeData);
-    void willSendRequest(WebCore::ResourceRequest&& redirectRequest, const WebCore::ResourceResponse& redirectResponse);
+    void willSendRequest(WebCore::ResourceRequest&& redirectRequest, const WebCore::ResourceResponse& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse&, String&& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&&);
 
 private:

@@ -234,7 +234,7 @@ WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
     ASSERT(!!m_data ^ !!m_sendRight);
 
     if (m_sendRight && m_protection == protection)
-        return m_sendRight;
+        return MachSendRight { m_sendRight };
 
     ASSERT(m_data);
     return makeMemoryEntry(m_size, toVMAddress(m_data), protection, MACH_PORT_NULL);

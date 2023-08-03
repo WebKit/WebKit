@@ -405,7 +405,11 @@
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
 
-    WKDDActionContext *actionContext = _hitTestResultData.platformData.detectedDataActionContext.get();
+    auto& detectedContext = _hitTestResultData.platformData.detectedDataActionContext;
+    if (!detectedContext)
+        return nil;
+
+    WKDDActionContext *actionContext = detectedContext->context.get();
     if (!actionContext)
         return nil;
 

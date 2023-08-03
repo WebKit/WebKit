@@ -980,7 +980,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     FileSystem::makeAllDirectories(FileSystem::parentPath(databasePath));
     m_sqliteDB = makeUnique<SQLiteDatabase>();
     if (!m_sqliteDB->open(databasePath, SQLiteDatabase::OpenMode::ReadWriteCreate, SQLiteDatabase::OpenOptions::CanSuspendWhileLocked)) {
-        LOG_ERROR("Failed to open SQLite database at path '%s'", databasePath.utf8().data());
+        RELEASE_LOG_ERROR(IndexedDB, "%p - SQLiteIDBBackingStore::getOrEstablishDatabaseInfo: Failed to open database at path '%" PUBLIC_LOG_STRING "' (%d) - %" PUBLIC_LOG_STRING, this, databasePath.utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         closeSQLiteDB();
     }
 

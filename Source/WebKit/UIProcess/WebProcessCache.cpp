@@ -185,13 +185,20 @@ void WebProcessCache::updateCapacity(WebProcessPool& processPool)
             WEBPROCESSCACHE_RELEASE_LOG("updateCapacity: Cache is disabled because cache model is not PrimaryWebBrowser", 0);
         m_capacity = 0;
     } else {
-        size_t memorySize = ramSize() / GB;
+#if PLATFORM(IOS_FAMILY)
+        constexpr unsigned maxProcesses = 10;
+        size_t memorySize = WTF::ramSizeDisregardingJetsamLimit() / GB;
+#else
+        constexpr unsigned maxProcesses = 30;
+        size_t memorySize = WTF::ramSize() / GB;
+#endif
+        WEBPROCESSCACHE_RELEASE_LOG("memory size %zu GB", 0, memorySize);
         if (memorySize < 3) {
             m_capacity = 0;
             WEBPROCESSCACHE_RELEASE_LOG("updateCapacity: Cache is disabled because device does not have enough RAM", 0);
         } else {
-            // Allow 4 processes in the cache per GB of RAM, up to 30 processes.
-            m_capacity = std::min<unsigned>(memorySize * 4, 30);
+            // Allow 4 processes in the cache per GB of RAM, up to maxProcesses.
+            m_capacity = std::min<unsigned>(memorySize * 4, maxProcesses);
             WEBPROCESSCACHE_RELEASE_LOG("updateCapacity: Cache has a capacity of %u processes", 0, capacity());
         }
     }

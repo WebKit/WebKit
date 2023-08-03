@@ -141,7 +141,7 @@ Ref<WebCore::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(c
             UNUSED_VARIABLE(sendResult);
         }, canSendIOSurface);
 
-        auto sendResult = send(Messages::RemoteDevice::ImportExternalTextureFromPixelBuffer(*convertedDescriptor, sharedVideoFrameBuffer, identifier));
+        auto sendResult = send(Messages::RemoteDevice::ImportExternalTextureFromPixelBuffer(*convertedDescriptor, WTFMove(sharedVideoFrameBuffer), identifier));
         UNUSED_VARIABLE(sendResult);
     }  else {
         auto sendResult = send(Messages::RemoteDevice::ImportExternalTexture(*convertedDescriptor, identifier));

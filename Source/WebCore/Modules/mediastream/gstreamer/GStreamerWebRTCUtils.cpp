@@ -112,7 +112,7 @@ GUniquePtr<GstStructure> fromRTCEncodingParameters(const RTCRtpEncodingParameter
         "rid", G_TYPE_STRING, parameters.rid.utf8().data(), "bitrate-priority", G_TYPE_DOUBLE, toWebRTCBitRatePriority(parameters.priority), nullptr));
 
     if (parameters.ssrc)
-        gst_structure_set(rtcParameters.get(), "ssrc", G_TYPE_ULONG, parameters.ssrc, nullptr);
+        gst_structure_set(rtcParameters.get(), "ssrc", G_TYPE_UINT, parameters.ssrc, nullptr);
 
     if (parameters.maxBitrate)
         gst_structure_set(rtcParameters.get(), "max-bitrate", G_TYPE_ULONG, parameters.maxBitrate, nullptr);
@@ -181,6 +181,8 @@ RTCRtpSendParameters toRTCRtpSendParameters(const GstStructure* rtcParameters)
         return { };
 
     RTCRtpSendParameters parameters;
+    parameters.transactionId = makeString(gst_structure_get_string(rtcParameters, "transaction-id"));
+
     auto* encodings = gst_structure_get_value(rtcParameters, "encodings");
     unsigned size = gst_value_list_get_size(encodings);
     for (unsigned i = 0; i < size; i++) {
@@ -193,6 +195,22 @@ RTCRtpSendParameters toRTCRtpSendParameters(const GstStructure* rtcParameters)
     return parameters;
 }
 
+GUniquePtr<GstStructure> fromRTCSendParameters(const RTCRtpSendParameters& parameters)
+{
+    GUniquePtr<GstStructure> gstParameters(gst_structure_new("send-parameters", "transaction-id", G_TYPE_STRING, parameters.transactionId.ascii().data(), nullptr));
+    GValue encodingsValue = G_VALUE_INIT;
+    g_value_init(&encodingsValue, GST_TYPE_LIST);
+    for (auto& encoding : parameters.encodings) {
+        auto encodingData = fromRTCEncodingParameters(encoding);
+        GValue value = G_VALUE_INIT;
+        g_value_init(&value, GST_TYPE_STRUCTURE);
+        gst_value_set_structure(&value, encodingData.get());
+        gst_value_list_append_value(&encodingsValue, &value);
+        g_value_unset(&value);
+    }
+    gst_structure_take_value(gstParameters.get(), "encodings", &encodingsValue);
+    return gstParameters;
+}
 
 static void ensureDebugCategoryInitialized()
 {

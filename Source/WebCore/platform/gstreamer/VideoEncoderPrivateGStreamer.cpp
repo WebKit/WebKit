@@ -585,7 +585,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
     Encoders::registerEncoder(X264, "x264enc", "h264parse", "video/x-h264",
         "video/x-h264,alignment=au,stream-format=byte-stream",
         [](WebKitVideoEncoder* self) {
-            g_object_set(self->priv->encoder.get(), "key-int-max", 15, "threads", NUMBER_OF_THREADS, nullptr);
+            g_object_set(self->priv->encoder.get(), "key-int-max", 15, "threads", NUMBER_OF_THREADS, "b-adapt", FALSE, "vbv-buf-capacity", 120, nullptr);
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
 
             const auto* structure = gst_caps_get_structure(self->priv->encodedCaps.get(), 0);
@@ -673,6 +673,8 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
         });
 
     auto setVpxEncoderInputFormat = [](auto* self) {
+        g_object_set(self->priv->encoder.get(), "buffer-initial-size", 100, "buffer-optimal-size", 120, "buffer-size" , 150, "max-intra-bitrate", 250, nullptr);
+        gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "error-resilient", "default");
         auto inputCaps = adoptGRef(gst_caps_new_any());
         const auto* structure = gst_caps_get_structure(self->priv->encodedCaps.get(), 0);
         if (const char* profileString = gst_structure_get_string(structure, "profile")) {

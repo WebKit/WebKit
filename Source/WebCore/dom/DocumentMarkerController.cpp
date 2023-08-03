@@ -466,7 +466,7 @@ Vector<RenderedDocumentMarker*> DocumentMarkerController::markersFor(Node& node,
     return result;
 }
 
-void DocumentMarkerController::forEach(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types, Function<bool(RenderedDocumentMarker&)> function)
+void DocumentMarkerController::forEach(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types, Function<bool(Node&, RenderedDocumentMarker&)> function)
 {
     if (!possiblyHasMarkers(types))
         return;
@@ -480,7 +480,7 @@ void DocumentMarkerController::forEach(const SimpleRange& range, OptionSet<Docum
                 if (marker.startOffset() >= offsetRange.end)
                     break;
                 if (marker.endOffset() > offsetRange.start && types.contains(marker.type())) {
-                    if (function(marker))
+                    if (function(node, marker))
                         return;
                 }
             }
@@ -508,11 +508,21 @@ Vector<RenderedDocumentMarker*> DocumentMarkerController::markersInRange(const S
 {
     // FIXME: Consider making forEach public and changing callers to use that function instead of this one.
     Vector<RenderedDocumentMarker*> markers;
-    forEach(range, types, [&] (RenderedDocumentMarker& marker) {
+    forEach(range, types, [&] (Node&, RenderedDocumentMarker& marker) {
         markers.append(&marker);
         return false;
     });
     return markers;
+}
+
+Vector<SimpleRange> DocumentMarkerController::rangesForMarkersInRange(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types)
+{
+    Vector<SimpleRange> ranges;
+    forEach(range, types, [&] (Node& node, RenderedDocumentMarker& marker) {
+        ranges.append(makeSimpleRange(node, marker));
+        return false;
+    });
+    return ranges;
 }
 
 void DocumentMarkerController::removeMarkers(Node& node, OptionSet<DocumentMarker::MarkerType> types)
@@ -726,7 +736,7 @@ void DocumentMarkerController::fadeAnimationTimerFired()
 bool DocumentMarkerController::hasMarkers(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types)
 {
     bool foundMarker = false;
-    forEach(range, types, [&] (RenderedDocumentMarker&) {
+    forEach(range, types, [&] (Node&, RenderedDocumentMarker&) {
         foundMarker = true;
         return true;
     });
@@ -735,7 +745,7 @@ bool DocumentMarkerController::hasMarkers(const SimpleRange& range, OptionSet<Do
 
 void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types)
 {
-    forEach(range, types, [&] (RenderedDocumentMarker& marker) {
+    forEach(range, types, [&] (Node&, RenderedDocumentMarker& marker) {
         marker.clearData();
         return false;
     });

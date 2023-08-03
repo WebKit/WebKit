@@ -238,7 +238,7 @@ IterationRecord iteratorForIterable(JSGlobalObject* globalObject, JSValue iterab
 
 IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterable, JSValue symbolIterator)
 {
-    if (!iterable.inherits<JSArray>())
+    if (!isJSArray(iterable))
         return IterationMode::Generic;
 
     if (!globalObject->arrayIteratorProtocolWatchpointSet().isStillValid())
@@ -259,7 +259,7 @@ IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterab
 
 IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterable)
 {
-    if (!iterable.inherits<JSArray>())
+    if (!isJSArray(iterable))
         return IterationMode::Generic;
 
     JSArray* array = jsCast<JSArray*>(iterable);

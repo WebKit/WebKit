@@ -1441,7 +1441,55 @@ TEST(TextManipulation, StartTextManipulationFindsContentInIframeInsertedLater)
     EXPECT_EQ(items[2].isCrossSiteSubframe, NO);
     EXPECT_EQ(items[2].tokens.count, 1UL);
     EXPECT_WK_STREQ("WebKit", items[2].tokens[0].content);
+}
 
+TEST(TextManipulation, StartTextManipulationDoesNotFindContentInNewMainFrame)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    auto configuration = adoptNS([[_WKTextManipulationConfiguration alloc] init]);
+    configuration.get().includeSubframes = YES;
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView stringByEvaluatingJavaScript:@"document.body.innerHTML = '<p>hey, <em>earth</em></p>'"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 1UL);
+    EXPECT_EQ(items[0].tokens.count, 2UL);
+    EXPECT_STREQ("hey, ", items[0].tokens[0].content.UTF8String);
+    EXPECT_STREQ("earth", items[0].tokens[1].content.UTF8String);
+
+    [webView synchronouslyLoadTestPageNamed:@"copy-html"];
+
+    done = false;
+    [NSTimer scheduledTimerWithTimeInterval:0.05 repeats:NO block:^(NSTimer *timer) {
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ([delegate items].count, 1UL);
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:configuration.get() completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_STREQ("some text", items[1].tokens[0].content.UTF8String);
+
+    TestWebKitAPI::Util::run(&done);
 }
 
 struct Token {

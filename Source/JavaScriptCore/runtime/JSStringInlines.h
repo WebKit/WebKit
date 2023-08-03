@@ -183,6 +183,8 @@ void JSRopeString::resolveToBufferSlow(JSString* fiber0, JSString* fiber1, JSStr
 template<typename CharacterType>
 inline void JSRopeString::resolveToBuffer(JSString* fiber0, JSString* fiber1, JSString* fiber2, CharacterType* buffer, unsigned length, uint8_t* stackLimit)
 {
+    ASSERT(fiber0);
+
     // We must ensure that all JSRopeString::resolveToBufferSlow and JSRopeString::resolveToBuffer calls must be done directly from this function, and it has
     // exact same signature to JSRopeString::resolveToBuffer, which will be esured by clang via MUST_TAIL_CALL attribute.
     // This allows clang to make these calls tail-calls, constructing significantly efficient rope resolution here.
@@ -472,6 +474,37 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* s1
     resolveWith3Fibers(s1, s2, s3, characters, length);
     WTF::HashTranslatorCharBuffer<UChar> buffer { characters, length };
     return vm.keyAtomStringCache.make(vm, buffer, createFromFibers);
+}
+
+inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContext, JSString* s, unsigned offset, unsigned length)
+{
+    ASSERT(offset <= s->length());
+    ASSERT(length <= s->length());
+    ASSERT(offset + length <= s->length());
+    ASSERT(!s->isRope());
+    if (!length)
+        return vm.smallStrings.emptyString();
+    if (!offset && length == s->length())
+        return s;
+    if (length == 1) {
+        auto& base = s->valueInternal();
+        if (auto c = base.characterAt(offset); c <= maxSingleCharacterString)
+            return vm.smallStrings.singleCharacterString(c);
+    } else if (length == 2) {
+        auto& base = s->valueInternal();
+        UChar first = base.characterAt(offset);
+        UChar second = base.characterAt(offset + 1);
+        if ((first | second) < 0x80) {
+            auto createFromSubstring = [&](VM& vm, auto& buffer) {
+                auto impl = AtomStringImpl::add(buffer);
+                return JSString::create(vm, deferralContext, impl.releaseNonNull());
+            };
+            LChar buf[] = { static_cast<LChar>(first), static_cast<LChar>(second) };
+            WTF::HashTranslatorCharBuffer<LChar> buffer { buf, length };
+            return vm.keyAtomStringCache.make(vm, buffer, createFromSubstring);
+        }
+    }
+    return JSRopeString::createSubstringOfResolved(vm, deferralContext, s, offset, length);
 }
 
 } // namespace JSC

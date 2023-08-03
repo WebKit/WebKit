@@ -263,6 +263,7 @@ RefPtr<RTCError> toRTCError(GError*);
 
 GUniquePtr<GstStructure> fromRTCEncodingParameters(const RTCRtpEncodingParameters&);
 RTCRtpSendParameters toRTCRtpSendParameters(const GstStructure*);
+GUniquePtr<GstStructure> fromRTCSendParameters(const RTCRtpSendParameters&);
 
 std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&&, const PeerConnectionBackend::CertificateInformation&);
 

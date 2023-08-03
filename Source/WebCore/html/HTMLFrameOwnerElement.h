@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -71,9 +71,9 @@ protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document&, ConstructionType = CreateHTMLFrameOwnerElement);
     void setSandboxFlags(SandboxFlags);
     bool isProhibitedSelfReference(const URL&) const;
+    bool isKeyboardFocusable(KeyboardEvent*) const override;
 
 private:
-    bool isKeyboardFocusable(KeyboardEvent*) const override;
     bool isFrameOwnerElement() const final { return true; }
 
     WeakPtr<Frame> m_contentFrame;

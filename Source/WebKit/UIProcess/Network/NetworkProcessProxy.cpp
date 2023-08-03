@@ -98,39 +98,22 @@
 #include "LegacyCustomProtocolManagerClient.h"
 #endif
 
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+#include <WebCore/DeprecatedGlobalSettings.h>
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 
 namespace WebKit {
 using namespace WebCore;
 
 static constexpr Seconds networkProcessResponsivenessTimeout = 6_s;
-static constexpr int unresponsivenessCountLimit = 3;
-static constexpr Seconds unresponsivenessCheckPeriod = 15_s;
 
 static HashSet<NetworkProcessProxy*>& networkProcessesSet()
 {
     ASSERT(RunLoop::isMain());
     static NeverDestroyed<HashSet<NetworkProcessProxy*>> set;
     return set;
-}
-
-static bool shouldTerminateNetworkProcessBySendingMessage()
-{
-    static WallTime unresponsivenessPeriodStartTime = WallTime::now();
-    static int unresponsivenessCountDuringThisPeriod = 0;
-    auto now = WallTime::now();
-
-    if (now - unresponsivenessPeriodStartTime > unresponsivenessCheckPeriod) {
-        unresponsivenessCountDuringThisPeriod = 1;
-        unresponsivenessPeriodStartTime = now;
-        return false;
-    }
-
-    ++unresponsivenessCountDuringThisPeriod;
-    if (unresponsivenessCountDuringThisPeriod >= unresponsivenessCountLimit)
-        return true;
-
-    return false;
 }
 
 Vector<Ref<NetworkProcessProxy>> NetworkProcessProxy::allNetworkProcesses()
@@ -174,21 +157,6 @@ void NetworkProcessProxy::didBecomeUnresponsive()
 {
     RELEASE_LOG_ERROR(Process, "NetworkProcessProxy::didBecomeUnresponsive: NetworkProcess with PID %d became unresponsive, terminating it", processID());
 
-    // Let network process terminates itself and generate crash report for investigation of hangs.
-    // We currently only do this when network process becomes unresponsive multiple times in a short
-    // time period to avoid generating too many crash reports with same back trace on user's device.
-    if (shouldTerminateNetworkProcessBySendingMessage()) {
-        sendMessage(makeUniqueRef<IPC::Encoder>(IPC::MessageName::Terminate, 0), { });
-        RunLoop::main().dispatchAfter(1_s, [weakThis = WeakPtr { *this }] () mutable {
-            if (weakThis) {
-                weakThis->terminate();
-                weakThis->networkProcessDidTerminate(ProcessTerminationReason::Unresponsive);
-            }
-
-        });
-        return;
-    }
-
     terminate();
     networkProcessDidTerminate(ProcessTerminationReason::Unresponsive);
 }
@@ -225,6 +193,10 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 
 #if !PLATFORM(COCOA)
     parameters.enablePrivateClickMeasurement = false;
+#endif
+
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+    parameters.builtInNotificationsEnabled = DeprecatedGlobalSettings::builtInNotificationsEnabled();
 #endif
 
     parameters.allowedFirstPartiesForCookies = WebProcessProxy::allowedFirstPartiesForCookies();

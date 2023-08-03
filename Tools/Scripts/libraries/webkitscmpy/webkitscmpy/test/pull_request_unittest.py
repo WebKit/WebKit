@@ -1539,6 +1539,72 @@ No pre-PR checks to run""")
             ],
         )
 
+    def test_no_update_issue(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), bmocks.Radar(issues=bmocks.ISSUES), patch(
+            'webkitbugspy.Tracker._trackers', [
+                bugzilla.Tracker(self.BUGZILLA, radar_importer=bmocks.USERS['Radar WebKit Bug Importer']),
+                radar.Tracker(),
+            ],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1\n<rdar://problem/1>\n'
+                )
+            ]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history', '--no-issue'),
+                path=self.path,
+            ))
+
+            self.assertEqual(
+                Tracker.instance().issue(1).comments[-1].content,
+                'Trying to prepare a fix for 1.2.4',
+            )
+            gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
+            self.assertEqual(gh_issue.project, 'WebKit')
+            self.assertEqual(gh_issue.component, 'Text')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created 'PR 1 | [Testing] Existing commit'!\n"
+            'https://github.example.com/WebKit/WebKit/pull/1\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Using committed changes...",
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Creating pull-request for 'eng/pr-branch'...",
+                'Syncing PR labels with issue component...',
+                'Synced PR labels with issue component!',
+            ],
+        )
+
     def test_bitbucket(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],

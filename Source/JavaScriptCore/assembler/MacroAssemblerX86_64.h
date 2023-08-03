@@ -97,6 +97,12 @@ public:
         or16(imm, Address(scratchRegister()));
     }
 
+    void or16(RegisterID mask, AbsoluteAddress address)
+    {
+        move(TrustedImmPtr(address.m_ptr), scratchRegister());
+        or16(mask, Address(scratchRegister()));
+    }
+
     void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
         move(TrustedImmPtr(address.m_ptr), scratchRegister());
@@ -471,6 +477,12 @@ public:
             move(op2, dest);
             and64(op1, dest);
         }
+    }
+
+    void and64(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        move(src, dest);
+        and64(imm, dest);
     }
 
     void countLeadingZeros64(RegisterID src, RegisterID dst)

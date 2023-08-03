@@ -1,0 +1,2 @@
+svg-with-html.svg has MIME type text/plain
+

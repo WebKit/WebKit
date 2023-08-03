@@ -8,3 +8,8 @@ compositing/reflections/direct-image-object-fit-reflected.html [ Skip ]
 http/wpt/webxr [ Skip ]
 imported/w3c/web-platform-tests/webxr [ Skip ]
 webxr [ Skip ]
+
+# rdar://112801240
+[ Ventura x86_64 ] fast/events/wheel/redispatched-wheel-event.html [ Pass Failure ]
+
+webkit.org/b/259699 media/media-source/media-source-duplicate-seeked.html [ Pass Failure ]

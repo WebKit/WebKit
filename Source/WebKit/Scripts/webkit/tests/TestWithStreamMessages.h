@@ -149,8 +149,8 @@ public:
     static constexpr bool isStreamEncodable = false;
     static constexpr bool isStreamBatched = false;
 
-    explicit SendMachSendRight(const MachSendRight& a1)
-        : m_arguments(a1)
+    explicit SendMachSendRight(MachSendRight&& a1)
+        : m_arguments(WTFMove(a1))
     {
     }
 
@@ -160,7 +160,7 @@ public:
     }
 
 private:
-    std::tuple<const MachSendRight&> m_arguments;
+    std::tuple<MachSendRight&&> m_arguments;
 };
 #endif
 
@@ -200,8 +200,8 @@ public:
 
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<MachSendRight>;
-    explicit SendAndReceiveMachSendRight(const MachSendRight& a1)
-        : m_arguments(a1)
+    explicit SendAndReceiveMachSendRight(MachSendRight&& a1)
+        : m_arguments(WTFMove(a1))
     {
     }
 
@@ -211,7 +211,7 @@ public:
     }
 
 private:
-    std::tuple<const MachSendRight&> m_arguments;
+    std::tuple<MachSendRight&&> m_arguments;
 };
 #endif
 

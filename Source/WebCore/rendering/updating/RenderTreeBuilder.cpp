@@ -647,8 +647,8 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
             auto clearDescendantFloats = [&] {
                 // These descendent floats can not intrude other, sibling block containers anymore.
                 for (auto& descendant : descendantsOfType<RenderBox>(renderer)) {
-                    if (descendant.isFloatingOrOutOfFlowPositioned())
-                        descendant.removeFloatingOrPositionedChildFromBlockLists();
+                    if (descendant.isFloating())
+                        descendant.removeFloatingAndInvalidateForLayout();
                 }
             };
             clearDescendantFloats();

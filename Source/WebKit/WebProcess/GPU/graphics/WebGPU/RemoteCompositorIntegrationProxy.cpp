@@ -55,7 +55,7 @@ Vector<MachSendRight> RemoteCompositorIntegrationProxy::recreateRenderBuffers(in
         return { };
 
     auto [renderBuffers] = sendResult.takeReply();
-    return renderBuffers;
+    return WTFMove(renderBuffers);
 }
 #endif
 

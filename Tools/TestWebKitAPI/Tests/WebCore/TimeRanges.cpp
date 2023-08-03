@@ -287,5 +287,34 @@ TEST(TimeRanges, IntersectWith_Gaps3)
     ASSERT_RANGE("{ [1,5) [6,9) }", rangesB);
 }
 
+TEST(TimeRanges, Add_SmallGaps)
+{
+    RefPtr<TimeRanges> ranges = TimeRanges::create();
+
+    const MediaTime duration { MediaTime::createWithDouble(1.0) };
+    const double smallGap { 0.001 };
+    const unsigned numberOfSamples { 10 };
+
+    for (unsigned i = 0; i < numberOfSamples; ++i) {
+        const double start = duration.toDouble() * i;
+        const double end = start + duration.toDouble() - smallGap;
+
+        ranges->add(start, end, AddTimeRangeOption::None);
+    }
+
+    EXPECT_EQ(numberOfSamples, ranges->length());
+
+    ranges = TimeRanges::create();
+
+    for (unsigned i = 0; i < numberOfSamples; ++i) {
+        const double start = duration.toDouble() * i;
+        const double end = start + duration.toDouble() - smallGap;
+
+        ranges->add(start, end, AddTimeRangeOption::EliminateSmallGaps);
+    }
+
+    EXPECT_EQ(1u, ranges->length());
+}
+
 }
 

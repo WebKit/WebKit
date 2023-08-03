@@ -605,6 +605,10 @@ void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navig
 {
 }
 
+void EmptyFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()
+{
+}
+
 void EmptyFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<FormState>&&)
 {
 }

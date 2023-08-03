@@ -674,7 +674,7 @@ IGNORE_WARNINGS_END
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         DollarVMAssertScope assertScope;
-        return Structure::create(vm, globalObject, prototype, TypeInfo(DerivedArrayType, StructureFlags), info(), ArrayClass);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(DerivedArrayType, StructureFlags), info(), NonArray);
     }
 
 protected:
@@ -2137,7 +2137,6 @@ static JSC_DECLARE_HOST_FUNCTION(functionCallWithStackSize);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateGlobalObject);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateProxy);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateRuntimeArray);
-static JSC_DECLARE_HOST_FUNCTION(functionCreateNullRopeString);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateImpureGetter);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateCustomGetterObject);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateDOMJITNodeObject);
@@ -2990,14 +2989,6 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateRuntimeArray, (JSGlobalObject* globalObje
     JSLockHolder lock(globalObject);
     RuntimeArray* array = RuntimeArray::create(globalObject, callFrame);
     return JSValue::encode(array);
-}
-
-JSC_DEFINE_HOST_FUNCTION(functionCreateNullRopeString, (JSGlobalObject* globalObject, CallFrame*))
-{
-    DollarVMAssertScope assertScope;
-    VM& vm = globalObject->vm();
-    JSLockHolder lock(vm);
-    return JSValue::encode(JSRopeString::createNullForTesting(vm));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionCreateImpureGetter, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -4139,7 +4130,6 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "createGlobalObject"_s, functionCreateGlobalObject, 0);
     addFunction(vm, "createGlobalProxy"_s, functionCreateProxy, 1);
     addFunction(vm, "createRuntimeArray"_s, functionCreateRuntimeArray, 0);
-    addFunction(vm, "createNullRopeString"_s, functionCreateNullRopeString, 0);
 
     addFunction(vm, "createImpureGetter"_s, functionCreateImpureGetter, 1);
     addFunction(vm, "createCustomGetterObject"_s, functionCreateCustomGetterObject, 0);

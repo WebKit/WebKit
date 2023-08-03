@@ -1,0 +1,31 @@
+<style>
+#container {
+  float: left;
+  font-family: monospace;
+}
+.parent {
+  position: relative;
+}
+#mutate_this {
+  position: absolute;
+  background-color: green;
+}
+#remove_this {
+  display: inline-block;
+}
+</style>
+<div id=container>
+  <div class=parent>
+    <div id=mutate_this>
+      <div id=remove_this></div>
+    </div>
+  </div>
+</div>
+<script>
+document.body.offsetHeight;
+container.style.position = "fixed";
+remove_this.remove();
+
+document.body.offsetHeight;
+mutate_this.appendChild(document.createTextNode("PASS if this text is visible"));
+</script>

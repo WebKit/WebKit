@@ -369,7 +369,7 @@ WI.Popover = class Popover extends WI.Object
         var startTime = Date.now();
         var duration = 350;
         var epsilon = 1 / (200 * duration);
-        var spline = new WI.CubicBezier(0.25, 0.1, 0.25, 1);
+        var spline = new WI.CubicBezierTimingFunction(0.25, 0.1, 0.25, 1);
 
         var fromFrame = this._frame.copy();
         var fromAnchor = this._anchorPoint.copy();

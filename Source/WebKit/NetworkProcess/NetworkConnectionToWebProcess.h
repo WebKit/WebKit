@@ -100,6 +100,8 @@ class WebSWServerToContextConnection;
 class WebSharedWorkerServerConnection;
 class WebSharedWorkerServerToContextConnection;
 
+struct NetworkProcessConnectionParameters;
+
 enum class PrivateRelayed : bool;
 
 namespace NetworkCache {
@@ -118,7 +120,7 @@ class NetworkConnectionToWebProcess
 public:
     using RegistrableDomain = WebCore::RegistrableDomain;
 
-    static Ref<NetworkConnectionToWebProcess> create(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters, IPC::Connection::Identifier);
+    static Ref<NetworkConnectionToWebProcess> create(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier);
     virtual ~NetworkConnectionToWebProcess();
     
     PAL::SessionID sessionID() const { return m_sessionID; }
@@ -204,7 +206,7 @@ public:
 
     NetworkOriginAccessPatterns& originAccessPatterns() { return m_originAccessPatterns.get(); }
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     void installMockContentFilter(WebCore::MockContentFilterSettings&&);
 #endif
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
@@ -214,8 +216,12 @@ public:
     void addAllowedFirstPartyForCookies(const RegistrableDomain&);
     void useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&);
 
+#if ENABLE(WEB_RTC)
+    NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
+#endif
+
 private:
-    NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters, IPC::Connection::Identifier);
+    NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier);
 
     void didFinishPreconnection(WebCore::ResourceLoaderIdentifier preconnectionIdentifier, const WebCore::ResourceError&);
     WebCore::NetworkStorageSession* storageSession();
@@ -312,7 +318,6 @@ private:
     NetworkRTCProvider& rtcProvider();
 #endif
 #if ENABLE(WEB_RTC)
-    NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
     void registerToRTCDataChannelProxy();
     void unregisterToRTCDataChannelProxy();
 #endif

@@ -33,6 +33,7 @@
 #include "IntRect.h"
 #include "LayoutRect.h"
 #include <cmath>
+#include <float.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
@@ -907,6 +908,13 @@ TransformationMatrix& TransformationMatrix::scale3d(double sx, double sy, double
     return *this;
 }
 
+static double roundEpsilonToZero(double val)
+{
+    if (-DBL_EPSILON < val && val < DBL_EPSILON)
+        return 0.0f;
+    return val;
+}
+
 TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double z, double angle)
 {
     // Normalize the axis of rotation
@@ -923,8 +931,8 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
     // Angles are in degrees. Switch to radians.
     angle = deg2rad(angle);
 
-    double sinTheta = sin(angle);
-    double cosTheta = cos(angle);
+    double sinTheta = roundEpsilonToZero(sin(angle));
+    double cosTheta = roundEpsilonToZero(cos(angle));
 
     TransformationMatrix mat;
 
@@ -1000,8 +1008,8 @@ TransformationMatrix& TransformationMatrix::rotate(double angle)
         return *this;
 
     angle = deg2rad(angle);
-    double sinZ = sin(angle);
-    double cosZ = cos(angle);
+    double sinZ = roundEpsilonToZero(sin(angle));
+    double cosZ = roundEpsilonToZero(cos(angle));
     multiply({ cosZ, sinZ, -sinZ, cosZ, 0, 0 });
     return *this;
 }
@@ -1015,8 +1023,8 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
 
     TransformationMatrix mat;
 
-    double sinTheta = sin(rz);
-    double cosTheta = cos(rz);
+    double sinTheta = roundEpsilonToZero(sin(rz));
+    double cosTheta = roundEpsilonToZero(cos(rz));
 
     mat.m_matrix[0][0] = cosTheta;
     mat.m_matrix[0][1] = sinTheta;

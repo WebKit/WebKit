@@ -669,6 +669,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
     m_videoLayerManager->didDestroyVideoLayer();
 
     m_videoLayer = nil;
+    m_haveBeenAskedToCreateLayer = false;
 
     setNeedsRenderingModeChanged();
 }

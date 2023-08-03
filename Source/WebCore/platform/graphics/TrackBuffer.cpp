@@ -67,9 +67,9 @@ MediaTime TrackBuffer::maximumBufferedTime() const
     return m_buffered.maximumBufferedTime();
 }
 
-void TrackBuffer::addBufferedRange(const MediaTime& start, const MediaTime& end)
+void TrackBuffer::addBufferedRange(const MediaTime& start, const MediaTime& end, AddTimeRangeOption addTimeRangeOption)
 {
-    m_buffered.add(start, end);
+    m_buffered.add(start, end, addTimeRangeOption);
 }
 
 void TrackBuffer::addSample(MediaSample& sample)
@@ -198,7 +198,7 @@ PlatformTimeRanges TrackBuffer::removeSamples(const DecodeOrderSampleMap::MapTyp
 
         auto startTime = sample->presentationTime();
         auto endTime = startTime + sample->duration();
-        erasedRanges.add(startTime, endTime);
+        erasedRanges.add(startTime, endTime, AddTimeRangeOption::EliminateSmallGaps);
 
 #if !RELEASE_LOG_DISABLED
         bytesRemoved += startBufferSize - m_samples.sizeInBytes();

@@ -27,18 +27,16 @@
 
 #include "DownloadID.h"
 #include "NetworkDataTask.h"
-#include "NetworkLoadClient.h"
 #include "NetworkLoadParameters.h"
-#include <WebCore/AuthenticationChallenge.h>
-#include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class BlobRegistryImpl;
+class AuthenticationChallenge;
 }
 
 namespace WebKit {
 
+class NetworkLoadClient;
 class NetworkLoadScheduler;
 class NetworkProcess;
 
@@ -62,8 +60,6 @@ public:
     const NetworkLoadParameters& parameters() const { return m_parameters; }
     const URL& url() const { return parameters().request.url(); }
     String attributedBundleIdentifier(WebPageProxyIdentifier);
-
-    void continueWillSendRequest(WebCore::ResourceRequest&&);
 
     void convertTaskToDownload(PendingDownload&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, ResponseCompletionHandler&&);
     void setPendingDownloadID(DownloadID);
@@ -96,7 +92,6 @@ private:
     std::reference_wrapper<NetworkLoadClient> m_client;
     Ref<NetworkProcess> m_networkProcess;
     const NetworkLoadParameters m_parameters;
-    CompletionHandler<void(WebCore::ResourceRequest&&)> m_redirectCompletionHandler;
     RefPtr<NetworkDataTask> m_task;
     WeakPtr<NetworkLoadScheduler> m_scheduler;
 

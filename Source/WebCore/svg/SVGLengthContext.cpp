@@ -230,8 +230,6 @@ static inline const RenderStyle* renderStyleForLengthResolving(const SVGElement*
         currentContext = currentContext->parentNode();
     } while (currentContext);
 
-    // There must be at least a LegacyRenderSVGRoot renderer, carrying a style.
-    ASSERT_NOT_REACHED();
     return nullptr;
 }
 

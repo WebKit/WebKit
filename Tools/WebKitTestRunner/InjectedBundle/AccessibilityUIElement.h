@@ -338,7 +338,8 @@ public:
     int lineIndexForTextMarker(AccessibilityTextMarker*) const;
     RefPtr<AccessibilityTextMarkerRange> misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward);
     RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForElement(AccessibilityUIElement*);
-    RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker);
+    RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForMarkers(AccessibilityTextMarker*, AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForUnorderedMarkers(AccessibilityTextMarker*, AccessibilityTextMarker*);
     RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForRange(unsigned location, unsigned length);
     RefPtr<AccessibilityTextMarkerRange> selectedTextMarkerRange();
     void resetSelectedTextMarkerRange();

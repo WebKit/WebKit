@@ -55,6 +55,10 @@ public:
     virtual bool setPayloadType(const GRefPtr<GstCaps>&) { return false; }
     virtual void teardown() { }
 
+    GUniquePtr<GstStructure> parameters();
+    virtual void fillEncodingParameters(const GUniquePtr<GstStructure>&) { }
+    virtual void setParameters(GUniquePtr<GstStructure>&&) { }
+
 protected:
     explicit RealtimeOutgoingMediaSourceGStreamer(const RefPtr<UniqueSSRCGenerator>&, const String& mediaStreamId, MediaStreamTrack&);
 
@@ -86,6 +90,7 @@ protected:
     GRefPtr<GstWebRTCRTPSender> m_sender;
     GRefPtr<GstPad> m_webrtcSinkPad;
     RefPtr<UniqueSSRCGenerator> m_ssrcGenerator;
+    GUniquePtr<GstStructure> m_parameters;
 
 private:
     void sourceMutedChanged();

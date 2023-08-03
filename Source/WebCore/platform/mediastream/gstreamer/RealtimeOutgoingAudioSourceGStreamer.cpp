@@ -193,6 +193,11 @@ void RealtimeOutgoingAudioSourceGStreamer::linkOutgoingSource()
     g_object_set(m_inputSelector.get(), "active-pad", sinkPad.get(), nullptr);
 }
 
+void RealtimeOutgoingAudioSourceGStreamer::setParameters(GUniquePtr<GstStructure>&& parameters)
+{
+    m_parameters = WTFMove(parameters);
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore

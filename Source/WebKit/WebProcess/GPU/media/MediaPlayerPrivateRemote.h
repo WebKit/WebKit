@@ -116,7 +116,7 @@ public:
 #if PLATFORM(COCOA)
     void layerHostingContextIdChanged(std::optional<WebKit::LayerHostingContextID>&&, const WebCore::IntSize&);
     WebCore::FloatSize videoInlineSize() const final { return m_videoInlineSize; }
-    void setVideoInlineSizeFenced(const WebCore::FloatSize&, const WTF::MachSendRight&) final;
+    void setVideoInlineSizeFenced(const WebCore::FloatSize&, WTF::MachSendRight&&) final;
 #endif
 
     void currentTimeChanged(const MediaTime&, const MonotonicTime&, bool);

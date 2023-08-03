@@ -51,7 +51,7 @@ public:
     // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
     constexpr static size_t hostnameBufferLength = 2048;
 
-#define URLTextEncodingSentinelAllowingC0AtEndOfHash reinterpret_cast<const URLTextEncoding*>(-1)
+#define URLTextEncodingSentinelAllowingC0AtEnd reinterpret_cast<const URLTextEncoding*>(-1)
 
     WTF_EXPORT_PRIVATE static bool allValuesEqual(const URL&, const URL&);
     WTF_EXPORT_PRIVATE static bool internalValuesConsistent(const URL&);

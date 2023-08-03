@@ -57,6 +57,11 @@ const PlatformTimeRanges& PlatformTimeRanges::emptyRanges()
     return emptyRanges.get();
 }
 
+MediaTime PlatformTimeRanges::timeFudgeFactor()
+{
+    return { 2002, 24000 };
+}
+
 void PlatformTimeRanges::invert()
 {
     PlatformTimeRanges inverted;
@@ -192,7 +197,7 @@ MediaTime PlatformTimeRanges::minimumBufferedTime() const
     return m_ranges[0].start;
 }
 
-void PlatformTimeRanges::add(const MediaTime& start, const MediaTime& end)
+void PlatformTimeRanges::add(const MediaTime& start, const MediaTime& end, AddTimeRangeOption addTimeRangeOption)
 {
 #if !PLATFORM(MAC) // https://bugs.webkit.org/show_bug.cgi?id=180253
     ASSERT(start.isValid());
@@ -200,17 +205,28 @@ void PlatformTimeRanges::add(const MediaTime& start, const MediaTime& end)
 #endif
     ASSERT(start <= end);
 
-    unsigned overlappingArcIndex;
-    Range addedRange { .start = start, .end = end };
+    auto startTime = start;
+    auto endTime = end;
+    if (addTimeRangeOption == AddTimeRangeOption::EliminateSmallGaps) {
+        // Eliminate small gaps between buffered ranges by coalescing
+        // disjoint ranges separated by less than a "fudge factor".
+        auto nearestToPresentationStartTime = nearest(startTime);
+        if (nearestToPresentationStartTime.isValid() && (startTime - nearestToPresentationStartTime).isBetween(MediaTime::zeroTime(), timeFudgeFactor()))
+            startTime = nearestToPresentationStartTime;
+
+        auto nearestToPresentationEndTime = nearest(endTime);
+        if (nearestToPresentationEndTime.isValid() && (nearestToPresentationEndTime - endTime).isBetween(MediaTime::zeroTime(), timeFudgeFactor()))
+            endTime = nearestToPresentationEndTime;
+    }
+    size_t overlappingArcIndex;
+    Range addedRange { .start = startTime, .end = endTime };
 
     // For each present range check if we need to:
     // - merge with the added range, in case we are overlapping or contiguous
     // - Need to insert in place, we we are completely, not overlapping and not contiguous
     // in between two ranges.
-    //
-    // TODO: Given that we assume that ranges are correctly ordered, this could be optimized.
 
-    for (overlappingArcIndex = 0; overlappingArcIndex < m_ranges.size(); overlappingArcIndex++) {
+    for (overlappingArcIndex = findLastRangeIndexBefore(start, end); overlappingArcIndex < m_ranges.size(); overlappingArcIndex++) {
         if (addedRange.isOverlappingRange(m_ranges[overlappingArcIndex]) || addedRange.isContiguousWithRange(m_ranges[overlappingArcIndex])) {
             // We need to merge the addedRange and that range.
             addedRange = addedRange.unionWithOverlappingOrContiguousRange(m_ranges[overlappingArcIndex]);
@@ -347,6 +363,33 @@ String PlatformTimeRanges::toString() const
 bool PlatformTimeRanges::operator==(const PlatformTimeRanges& other) const
 {
     return m_ranges == other.m_ranges;
+}
+
+size_t PlatformTimeRanges::findLastRangeIndexBefore(const MediaTime& start, const MediaTime& end) const
+{
+    ASSERT(start <= end);
+
+    if (m_ranges.isEmpty())
+        return 0;
+
+    const Range range { .start = start, .end = end };
+    size_t first, last, middle;
+    size_t index = 0;
+
+    first = 0;
+    last = m_ranges.size() - 1;
+    middle = first + ((last - first) / 2);
+
+    while (first < last && middle > 0) {
+        if (m_ranges[middle].isBeforeRange(range)) {
+            index = middle;
+            first = middle + 1;
+        } else
+            last = middle - 1;
+
+        middle = first + ((last - first) / 2);
+    }
+    return index;
 }
 
 }

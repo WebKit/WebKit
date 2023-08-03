@@ -40,6 +40,7 @@
 #import "NetworkProcessProxy.h"
 #import "PreferenceObserver.h"
 #import "ProcessThrottler.h"
+#import "SandboxExtension.h"
 #import "SandboxUtilities.h"
 #import "TextChecker.h"
 #import "UserInterfaceIdiom.h"
@@ -466,6 +467,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(IOS_FAMILY) && HAVE(AGX_COMPILER_SERVICE)
     if (WebCore::deviceHasAGXCompilerService())
         parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(WebCore::agxCompilerClasses(), std::nullopt);
+#endif
+
+#if PLATFORM(VISION)
+    auto metalDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/com.apple.metal"_s);
+    if (auto metalDirectoryHandle = SandboxExtension::createHandleForReadWriteDirectory(metalDirectory))
+        parameters.metalCacheDirectoryExtensionHandles.append(WTFMove(*metalDirectoryHandle));
+    auto metalFEDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/com.apple.metalfe"_s);
+    if (auto metalFEDirectoryHandle = SandboxExtension::createHandleForReadWriteDirectory(metalFEDirectory))
+        parameters.metalCacheDirectoryExtensionHandles.append(WTFMove(*metalFEDirectoryHandle));
 #endif
 
     parameters.systemHasBattery = systemHasBattery();

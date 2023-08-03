@@ -794,11 +794,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 let valueObject;
                 let inlineSwatchType;
                 if (tokenType === "cubic-bezier") {
-                    valueObject = WI.CubicBezier.fromString(text);
-                    inlineSwatchType = WI.InlineSwatch.Type.Bezier;
+                    valueObject = WI.CubicBezierTimingFunction.fromString(text);
+                    inlineSwatchType = WI.InlineSwatch.Type.CubicBezierTimingFunction;
                 } else if (tokenType === "spring") {
-                    valueObject = WI.Spring.fromString(text);
-                    inlineSwatchType = WI.InlineSwatch.Type.Spring;
+                    valueObject = WI.SpringTimingFunction.fromString(text);
+                    inlineSwatchType = WI.InlineSwatch.Type.SpringTimingFunction;
                 }
 
                 if (valueObject)
@@ -807,8 +807,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                     newTokens.pushAll(rawTokens);
 
                 startIndex = NaN;
-            } else if (token.value in WI.CubicBezier.keywordValues)
-                newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.Bezier, [token], WI.CubicBezier.fromString(token.value)));
+            } else if (token.value in WI.CubicBezierTimingFunction.keywordValues)
+                newTokens.push(this._createInlineSwatch(WI.InlineSwatch.Type.CubicBezierTimingFunction, [token], WI.CubicBezierTimingFunction.fromString(token.value)));
             else if (isNaN(startIndex))
                 newTokens.push(token);
         }

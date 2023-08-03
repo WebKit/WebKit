@@ -45,6 +45,7 @@
 #include "NetworkLoad.h"
 #include "NetworkLoadScheduler.h"
 #include "NetworkOriginAccessPatterns.h"
+#include "NetworkProcessConnectionParameters.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessPlatformStrategies.h"
 #include "NetworkProcessProxyMessages.h"
@@ -55,6 +56,7 @@
 #include "PreconnectTask.h"
 #include "PrivateClickMeasurementPersistentStore.h"
 #include "ProcessAssertion.h"
+#include "RTCDataChannelRemoteManagerProxy.h"
 #include "RemoteWorkerType.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
@@ -332,6 +334,9 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     setPrivateClickMeasurementEnabled(parameters.enablePrivateClickMeasurement);
     m_ftpEnabled = parameters.ftpEnabled;
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+    m_builtInNotificationsEnabled = parameters.builtInNotificationsEnabled;
+#endif
 
     for (auto [processIdentifier, domain] : parameters.allowedFirstPartiesForCookies) {
         if (auto* connection = webProcessConnection(processIdentifier))
@@ -374,7 +379,7 @@ void NetworkProcess::initializeConnection(IPC::Connection* connection)
         supplement->initializeConnection(connection);
 }
 
-void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, NetworkProcessConnectionParameters parameters, CompletionHandler<void(std::optional<IPC::Connection::Handle>&&, HTTPCookieAcceptPolicy)>&& completionHandler)
+void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, NetworkProcessConnectionParameters&& parameters, CompletionHandler<void(std::optional<IPC::Connection::Handle>&&, HTTPCookieAcceptPolicy)>&& completionHandler)
 {
     auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
     if (!connectionIdentifiers) {
@@ -382,7 +387,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
         return;
     }
 
-    auto newConnection = NetworkConnectionToWebProcess::create(*this, identifier, sessionID, parameters, connectionIdentifiers->server);
+    auto newConnection = NetworkConnectionToWebProcess::create(*this, identifier, sessionID, WTFMove(parameters), connectionIdentifiers->server);
     auto& connection = newConnection.get();
 
     ASSERT(!m_webProcessConnections.contains(identifier));
@@ -2105,11 +2110,6 @@ void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const URL& u
     downloadManager().publishDownloadProgress(downloadID, url, WTFMove(sandboxExtensionHandle));
 }
 #endif
-
-void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
-{
-    downloadManager().continueWillSendRequest(downloadID, WTFMove(request));
-}
 
 void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTask, ResponseCompletionHandler&& completionHandler, const ResourceResponse& response)
 {

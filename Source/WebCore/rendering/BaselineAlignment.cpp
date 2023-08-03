@@ -91,6 +91,11 @@ const BaselineGroup& BaselineAlignmentState::sharedGroup(const RenderBox& child,
     return const_cast<BaselineAlignmentState*>(this)->findCompatibleSharedGroup(child, preference);
 }
 
+Vector<BaselineGroup>& BaselineAlignmentState::sharedGroups()
+{
+    return m_sharedGroups;
+}
+
 void BaselineAlignmentState::updateSharedGroup(const RenderBox& child, ItemPosition preference, LayoutUnit ascent)
 {
     ASSERT(isBaselinePosition(preference));

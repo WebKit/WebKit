@@ -989,9 +989,9 @@ void MediaPlayerPrivateRemote::setPresentationSize(const IntSize& size)
 }
 
 #if PLATFORM(COCOA)
-void MediaPlayerPrivateRemote::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& machSendRight)
+void MediaPlayerPrivateRemote::setVideoInlineSizeFenced(const FloatSize& size, WTF::MachSendRight&& machSendRight)
 {
-    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoInlineSizeFenced(size, machSendRight), m_id);
+    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoInlineSizeFenced(size, WTFMove(machSendRight)), m_id);
     m_videoInlineSize = size;
 }
 #endif

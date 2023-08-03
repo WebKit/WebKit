@@ -97,7 +97,7 @@ void MediaRecorderPrivate::videoFrameAvailable(VideoFrame& videoFrame, VideoFram
             m_blackFrameSize = WebCore::IntSize { static_cast<int>(size.width()), static_cast<int>(size.height()) };
         }
         SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), videoFrame.isMirrored(), videoFrame.rotation(), *m_blackFrameSize };
-        m_connection->send(Messages::RemoteMediaRecorder::VideoFrameAvailable { sharedVideoFrame }, m_identifier);
+        m_connection->send(Messages::RemoteMediaRecorder::VideoFrameAvailable { WTFMove(sharedVideoFrame) }, m_identifier);
         return;
     }
 

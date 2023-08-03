@@ -36,8 +36,8 @@
     [CEReactions=NotNeeded, Reflect] attribute boolean isMap;
     [CEReactions=NotNeeded] attribute unsigned long width;
     [CEReactions=NotNeeded] attribute unsigned long height;
-    readonly attribute long naturalHeight;
-    readonly attribute long naturalWidth;
+    readonly attribute unsigned long naturalHeight;
+    readonly attribute unsigned long naturalWidth;
     readonly attribute boolean complete;
     readonly attribute USVString currentSrc;
     [CEReactions=NotNeeded, EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;

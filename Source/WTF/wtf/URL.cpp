@@ -585,6 +585,11 @@ void URL::parse(String&& string)
     *this = URLParser(WTFMove(string)).result();
 }
 
+void URL::parseAllowingC0AtEnd(String&& string)
+{
+    *this = URLParser(WTFMove(string), { }, URLTextEncodingSentinelAllowingC0AtEnd).result();
+}
+
 void URL::remove(unsigned start, unsigned length)
 {
     if (!length)
@@ -653,7 +658,15 @@ void URL::setFragmentIdentifier(StringView identifier)
     if (!m_isValid)
         return;
 
-    *this = URLParser(makeString(StringView(m_string).left(m_queryEnd), '#', identifier), { }, URLTextEncodingSentinelAllowingC0AtEndOfHash).result();
+    parseAllowingC0AtEnd(makeString(StringView(m_string).left(m_queryEnd), '#', identifier));
+}
+
+void URL::maybeTrimTrailingSpacesFromOpaquePath()
+{
+    if (!m_isValid || !hasOpaquePath() || hasFragmentIdentifier() || hasQuery())
+        return;
+
+    parse(makeString(StringView(m_string).left(m_pathEnd)));
 }
 
 void URL::removeFragmentIdentifier()
@@ -662,6 +675,8 @@ void URL::removeFragmentIdentifier()
         return;
 
     m_string = m_string.left(m_queryEnd);
+
+    maybeTrimTrailingSpacesFromOpaquePath();
 }
 
 void URL::removeQueryAndFragmentIdentifier()
@@ -671,6 +686,8 @@ void URL::removeQueryAndFragmentIdentifier()
 
     m_string = m_string.left(m_pathEnd);
     m_queryEnd = m_pathEnd;
+
+    maybeTrimTrailingSpacesFromOpaquePath();
 }
 
 void URL::setQuery(StringView newQuery)
@@ -681,12 +698,15 @@ void URL::setQuery(StringView newQuery)
     if (!m_isValid)
         return;
 
-    parse(makeString(
+    parseAllowingC0AtEnd(makeString(
         StringView(m_string).left(m_pathEnd),
         (!newQuery.startsWith('?') && !newQuery.isNull()) ? "?"_s : ""_s,
         newQuery,
         StringView(m_string).substring(m_queryEnd)
     ));
+
+    if (newQuery.isNull())
+        maybeTrimTrailingSpacesFromOpaquePath();
 }
 
 static String escapePathWithoutCopying(StringView path)
@@ -702,7 +722,7 @@ void URL::setPath(StringView path)
     if (!m_isValid)
         return;
 
-    parse(makeString(
+    parseAllowingC0AtEnd(makeString(
         StringView(m_string).left(pathStart()),
         path.startsWith('/') || (path.startsWith('\\') && (hasSpecialScheme() || protocolIsFile())) || (!hasSpecialScheme() && path.isEmpty() && m_schemeEnd + 1U < pathStart()) ? ""_s : "/"_s,
         !hasSpecialScheme() && host().isEmpty() && path.startsWith("//"_s) && path.length() > 2 ? "/."_s : ""_s,

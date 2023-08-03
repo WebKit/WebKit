@@ -215,6 +215,7 @@ set(PdfJSFiles
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-download.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorFreeText.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorInk.svg
+    ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-editorStamp.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-menuArrow.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-openFile.svg
     ${THIRDPARTY_DIR}/pdfjs/web/images/toolbarButton-pageDown.svg

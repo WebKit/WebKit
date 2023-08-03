@@ -68,6 +68,8 @@ template <typename T, typename Function>
 double evaluateCalcExpression(CalcOperator calcOperator, const Vector<T>& children, Function&& evaluate)
 {
     auto getNearestMultiples = [](double a, double b) -> std::pair<double, double> {
+        if (!std::fmod(a, b))
+            return { a, a };
         double lower = std::floor(a / std::abs(b)) * std::abs(b);
         double upper = lower + std::abs(b);
         return { lower, upper };
@@ -225,11 +227,18 @@ double evaluateCalcExpression(CalcOperator calcOperator, const Vector<T>& childr
             return std::numeric_limits<double>::quiet_NaN();
         auto left = evaluate(children[0]);
         auto right = evaluate(children[1]);
-        if (!right)
+        // In mod(A, B) only, if B is infinite and A has opposite sign to B
+        // (including an oppositely-signed zero), the result is NaN.
+        // https://drafts.csswg.org/css-values/#round-infinities
+        if (std::isinf(right) && std::signbit(left) != std::signbit(right))
             return std::numeric_limits<double>::quiet_NaN();
-        if ((left < 0) == (right < 0))
-            return std::fmod(left, right);
-        return std::remainder(left, right);
+        auto result = std::fmod(left, right);
+        // If the result is on opposite side of zero from B,
+        // put it between 0 and B.
+        // https://drafts.csswg.org/css-values/#round-func
+        if (std::signbit(result) != std::signbit(right))
+            result += right;
+        return result;
     }
     case CalcOperator::Rem: {
         if (children.size() != 2)

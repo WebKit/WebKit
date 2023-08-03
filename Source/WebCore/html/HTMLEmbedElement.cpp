@@ -82,10 +82,9 @@ RenderWidget* HTMLEmbedElement::renderWidgetLoadingPlugin() const
 void HTMLEmbedElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == hiddenAttr) {
-        if (equalLettersIgnoringASCIICase(value, "yes"_s) || equalLettersIgnoringASCIICase(value, "true"_s)) {
-            addPropertyToPresentationalHintStyle(style, CSSPropertyWidth, 0, CSSUnitType::CSS_PX);
-            addPropertyToPresentationalHintStyle(style, CSSPropertyHeight, 0, CSSUnitType::CSS_PX);
-        }
+        ASSERT(!value.isNull());
+        addPropertyToPresentationalHintStyle(style, CSSPropertyWidth, 0, CSSUnitType::CSS_PX);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyHeight, 0, CSSUnitType::CSS_PX);
     } else
         HTMLPlugInImageElement::collectPresentationalHintsForAttribute(name, value, style);
 }

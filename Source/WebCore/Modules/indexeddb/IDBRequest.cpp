@@ -296,10 +296,15 @@ void IDBRequest::dispatchEvent(Event& event)
     LOG(IndexedDB, "IDBRequest::dispatchEvent - %s (%p)", event.type().string().utf8().data(), this);
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
-    ASSERT(m_hasPendingActivity);
     ASSERT(!isContextStopped());
 
     Ref protectedThis { *this };
+    if (!event.isTrusted()) {
+        EventDispatcher::dispatchEvent({ this }, event);
+        return;
+    }
+
+    ASSERT(m_hasPendingActivity);
     m_eventBeingDispatched = &event;
 
     if (event.type() != eventNames().blockedEvent)
@@ -312,9 +317,7 @@ void IDBRequest::dispatchEvent(Event& event)
     else if (m_transaction && !m_transaction->didDispatchAbortOrCommit())
         targets = { this, m_transaction.get(), &m_transaction->database() };
 
-    if (event.isTrusted())
-        m_hasPendingActivity = false;
-
+    m_hasPendingActivity = false;
     {
         TransactionActivator activator(m_transaction.get());
         EventDispatcher::dispatchEvent(targets, event);

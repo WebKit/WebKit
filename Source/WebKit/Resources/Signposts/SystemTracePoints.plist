@@ -155,7 +155,7 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>Layout</string>
+                 <string>Layout (including before/after activities)</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -427,6 +427,18 @@
                      <key>Arg2</key>
                      <string>Recent Events?</string>
                  </dict>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Render tree layout</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5045</string>
+                 <key>CodeEnd</key>
+                 <string>5046</string>
              </dict>
              <dict>
                  <key>Name</key>

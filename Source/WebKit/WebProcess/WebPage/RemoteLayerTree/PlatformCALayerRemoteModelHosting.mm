@@ -65,7 +65,8 @@ Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteModelHosting::clone(WebCore::
 void PlatformCALayerRemoteModelHosting::populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeContext& context, PlatformCALayer::LayerType type)
 {
     PlatformCALayerRemote::populateCreationProperties(properties, context, type);
-    properties.model = m_model.ptr();
+    ASSERT(std::holds_alternative<RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData>(properties.additionalData));
+    properties.additionalData = m_model;
 }
 
 void PlatformCALayerRemoteModelHosting::dumpAdditionalProperties(TextStream& ts, OptionSet<WebCore::PlatformLayerTreeAsTextFlags> flags)

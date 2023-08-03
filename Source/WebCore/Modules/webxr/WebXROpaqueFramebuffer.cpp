@@ -81,8 +81,8 @@ static GL::EGLImageSource makeEGLImageSource(const std::tuple<WTF::MachSendRight
 {
     auto [imageHandle, isSharedTexture] = imageSource;
     if (isSharedTexture)
-        return GL::EGLImageSourceMTLSharedTextureHandle { imageHandle };
-    return GL::EGLImageSourceIOSurfaceHandle { imageHandle };
+        return GL::EGLImageSourceMTLSharedTextureHandle { WTF::MachSendRight(imageHandle) };
+    return GL::EGLImageSourceIOSurfaceHandle { WTF::MachSendRight(imageHandle) };
 }
 #endif
 
@@ -154,7 +154,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     // FIXME: This is temporary until Cocoa-specific platforms migrate to MTLTEXTURE_FOR_XR_LAYER_DATA.
     auto colorTextureSource = makeEGLImageSource({ data.surface->createSendRight(), false });
-    auto depthStencilBufferSource = makeEGLImageSource({ { }, false });
+    auto depthStencilBufferSource = makeEGLImageSource({ MachSendRight(), false });
 #elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     auto colorTextureSource = makeEGLImageSource(data.colorTexture);
     auto depthStencilBufferSource = makeEGLImageSource(data.depthStencilBuffer);

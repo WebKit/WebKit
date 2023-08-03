@@ -2547,7 +2547,8 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     CGFloat scaleFactor = contentZoomScale(self);
     CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, computedContentInsetUnadjustedForKeyboard);
     WebCore::FloatRect unobscuredRectInContentCoordinates = WebCore::FloatRect(_perProcessState.frozenUnobscuredContentRect ? _perProcessState.frozenUnobscuredContentRect.value() : [self convertRect:unobscuredRect toView:_contentView.get()]);
-    unobscuredRectInContentCoordinates.intersect([self _contentBoundsExtendedForRubberbandingWithScale:scaleFactor]);
+    if (![_contentView sizeChangedSinceLastVisibleContentRectUpdate])
+        unobscuredRectInContentCoordinates.intersect([self _contentBoundsExtendedForRubberbandingWithScale:scaleFactor]);
 
     auto contentInsets = [self currentlyVisibleContentInsetsWithScale:scaleFactor obscuredInsets:computedContentInsetUnadjustedForKeyboard];
 
@@ -3145,7 +3146,7 @@ static bool isLockdownModeWarningNeeded()
         return;
 
 #if PLATFORM(MACCATALYST)
-    auto message = WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can manage Lockdown Mode in Settings.", "Lockdown Mode alert message");
+    auto message = WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can manage Lockdown Mode in Settings.", "Lockdown Mode alert message (MacCatalyst)");
 #else
     auto message = WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.", "Lockdown Mode alert message");
 #endif

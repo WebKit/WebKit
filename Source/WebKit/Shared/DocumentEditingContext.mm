@@ -31,6 +31,7 @@
 #import "UIKitSPI.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/ElementContext.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 
@@ -62,6 +63,17 @@ UIWKDocumentContext *DocumentEditingContext::toPlatformContext(OptionSet<Documen
         [platformContext addTextRect:rect.rect forCharacterRange:toNSRange(rect.range)];
 
     [platformContext setAnnotatedText:annotatedText.nsAttributedString().get()];
+
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    if (options.contains(DocumentEditingContextRequest::Options::AutocorrectedRanges)) {
+        auto ranges = createNSArray(autocorrectedRanges, [&] (DocumentEditingContext::Range range) {
+            return [NSValue valueWithRange:toNSRange(range)];
+        });
+
+        if ([platformContext respondsToSelector:@selector(setAutocorrectedRanges:)])
+            [platformContext setAutocorrectedRanges:ranges.get()];
+    }
+#endif
 
     return platformContext.autorelease();
 #else
@@ -125,6 +137,7 @@ void ArgumentCoder<WebKit::DocumentEditingContext>::encode(Encoder& encoder, con
     encoder << context.selectedRangeInMarkedText;
 
     encoder << context.textRects;
+    encoder << context.autocorrectedRanges;
 }
 
 std::optional<WebKit::DocumentEditingContext> ArgumentCoder<WebKit::DocumentEditingContext>::decode(Decoder& decoder)
@@ -168,6 +181,9 @@ std::optional<WebKit::DocumentEditingContext> ArgumentCoder<WebKit::DocumentEdit
     context.selectedRangeInMarkedText = *selectedRangeInMarkedText;
 
     if (!decoder.decode(context.textRects))
+        return std::nullopt;
+
+    if (!decoder.decode(context.autocorrectedRanges))
         return std::nullopt;
 
     return context;

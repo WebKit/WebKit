@@ -97,8 +97,8 @@ Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerBackin
     for (auto& layer : transaction.changedLayers()) {
         if (layer->properties().changedProperties & LayerChange::BackingStoreChanged) {
             needToScheduleVolatilityTimer = true;
-            if (layer->properties().backingStore)
-                flushers.appendVector(layer->properties().backingStore->takePendingFlushers());
+            if (layer->properties().backingStoreOrProperties.store)
+                flushers.appendVector(layer->properties().backingStoreOrProperties.store->takePendingFlushers());
         }
 
         layer->didCommit();

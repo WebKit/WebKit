@@ -32,10 +32,10 @@
 
 namespace WebKit {
 
-void CGDisplayList::encode(IPC::Encoder& encoder) const
+void CGDisplayList::encode(IPC::Encoder& encoder) &&
 {
     encoder << m_displayList;
-    encoder << m_surfaces;
+    encoder << WTFMove(m_surfaces);
 }
 
 bool CGDisplayList::decode(IPC::Decoder& decoder, CGDisplayList& displayList)

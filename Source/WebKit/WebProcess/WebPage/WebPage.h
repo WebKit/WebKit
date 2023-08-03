@@ -25,12 +25,6 @@
 
 #pragma once
 
-#include "APIInjectedBundleEditorClient.h"
-#include "APIInjectedBundleFormClient.h"
-#include "APIInjectedBundlePageContextMenuClient.h"
-#include "APIInjectedBundlePageLoaderClient.h"
-#include "APIInjectedBundlePageResourceLoadClient.h"
-#include "APIInjectedBundlePageUIClient.h"
 #include "APIObject.h"
 #include "CallbackID.h"
 #include "Connection.h"
@@ -43,7 +37,6 @@
 #include "EventDispatcher.h"
 #include "GeolocationIdentifier.h"
 #include "IdentifierTypes.h"
-#include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageFullScreenClient.h"
 #include "LayerTreeContext.h"
 #include "MediaPlaybackState.h"
@@ -59,6 +52,7 @@
 #include "UserContentControllerIdentifier.h"
 #include "UserData.h"
 #include "WebBackForwardListProxy.h"
+#include "WebEventType.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebURLSchemeHandlerIdentifier.h"
 #include "WebUndoStepID.h"
@@ -174,13 +168,26 @@ OBJC_CLASS WKAccessibilityWebPageObject;
 
 #define ENABLE_VIEWPORT_RESIZING PLATFORM(IOS_FAMILY)
 
+struct WKBundlePageFullScreenClientBase;
+
 namespace WTF {
 enum class Critical : bool;
 }
 
 namespace API {
 class Array;
-}
+namespace InjectedBundle {
+class EditorClient;
+#if ENABLE(CONTEXT_MENUS)
+class PageContextMenuClient;
+#endif
+class EditorClient;
+class FormClient;
+class PageLoaderClient;
+class ResourceLoadClient;
+class PageUIClient;
+} // namespace InjectedBundle
+} // namespace API
 
 namespace IPC {
 class Connection;
@@ -347,15 +354,16 @@ class WebUserContentController;
 class WebWheelEvent;
 class RemoteLayerTreeTransaction;
 
+enum class DragControllerAction : uint8_t;
 enum class FindOptions : uint16_t;
 enum class FindDecorationStyle : uint8_t;
-enum class DragControllerAction : uint8_t;
 enum class NavigatingToAppBoundDomain : bool;
-enum class TextRecognitionUpdateResult : uint8_t;
 enum class SyntheticEditingCommandType : uint8_t;
+enum class TextRecognitionUpdateResult : uint8_t;
 
 struct BackForwardListItemState;
 struct DataDetectionResult;
+struct DeferredDidReceiveMouseEvent;
 struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
 struct EditorState;
@@ -596,15 +604,17 @@ public:
     WebFrame& mainWebFrame() const { return m_mainFrame; }
 
     WebCore::Frame* mainFrame() const; // May return nullptr.
-    WebCore::LocalFrameView* mainFrameView() const; // May return nullptr.
+    WebCore::FrameView* mainFrameView() const; // May return nullptr.
+    WebCore::LocalFrameView* localMainFrameView() const; // May return nullptr.
 
-    void createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, WebCore::ProcessIdentifier remoteProcessIdentifier);
+    void createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID);
 
     void getFrameInfo(WebCore::FrameIdentifier, CompletionHandler<void(FrameInfoData&&)>&&);
     void getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&&);
     void continueWillSubmitForm(WebCore::FrameIdentifier, WebKit::FormSubmitListenerIdentifier);
-    void didCommitLoadInAnotherProcess(WebCore::FrameIdentifier, std::optional<WebCore::LayerHostingContextIdentifier>, WebCore::ProcessIdentifier remoteProcessIdentifier);
+    void didCommitLoadInAnotherProcess(WebCore::FrameIdentifier, std::optional<WebCore::LayerHostingContextIdentifier>);
     void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);
+    void frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier);
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();
 
@@ -1625,6 +1635,8 @@ public:
     void setInteractionRegionsEnabled(bool);
 #endif
 
+    void flushDeferredDidReceiveMouseEvent();
+
     void generateTestReport(String&& message, String&& group);
 
     bool isUsingUISideCompositing() const;
@@ -1879,11 +1891,6 @@ private:
     void clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    void didReceivePolicyDecision(WebCore::FrameIdentifier, uint64_t listenerID, PolicyDecision&&);
-#else
-    void didReceivePolicyDecision(WebCore::FrameIdentifier, uint64_t listenerID, PolicyDecision&&, const Vector<SandboxExtension::Handle>&);
-#endif
     void setUserAgent(const String&);
     void setCustomTextEncodingName(const String&);
     void suspendActiveDOMObjectsAndAnimations();
@@ -2121,10 +2128,6 @@ private:
     void revokeSandboxExtensions(Vector<Ref<SandboxExtension>>& sandboxExtensions);
 
     void setSelectionRange(const WebCore::IntPoint&, WebCore::TextGranularity, bool);
-
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    void consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExtension::Handle>&);
-#endif
 
     bool hasPendingEditorStateUpdate() const;
     bool shouldAvoidComputingPostLayoutDataForEditorState() const;
@@ -2373,6 +2376,12 @@ private:
     bool m_hasWheelEventHandlers { false };
 
     unsigned m_cachedPageCount { 0 };
+
+    struct DeferredDidReceiveMouseEvent {
+        WebEventType type { WebEventType::NoType };
+        bool handled { false };
+    };
+    std::optional<DeferredDidReceiveMouseEvent> m_deferredDidReceiveMouseEvent;
 
     HashSet<WebCore::ResourceLoaderIdentifier> m_trackedNetworkResourceRequestIdentifiers;
 

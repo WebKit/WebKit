@@ -112,7 +112,7 @@ MainFrameMainResource WebResourceLoader::mainFrameMainResource() const
     return MainFrameMainResource::Yes;
 }
 
-void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::FormDataReference&& proposedRequestBody, ResourceResponse&& redirectResponse)
+void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::FormDataReference&& proposedRequestBody, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&, bool)>&& completionHandler)
 {
     Ref<WebResourceLoader> protectedThis(*this);
 
@@ -124,7 +124,7 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
 
     if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(m_coreLoader.get(), proposedRequest, redirectResponse)) {
         WEBRESOURCELOADER_RELEASE_LOG("willSendRequest: exiting early because maybeLoadFallbackForRedirect returned false");
-        return;
+        return completionHandler({ }, false);
     }
     
     if (auto* frame = m_coreLoader->frame()) {
@@ -134,14 +134,14 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
         }
     }
 
-    m_coreLoader->willSendRequest(WTFMove(proposedRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis)](ResourceRequest&& request) {
+    m_coreLoader->willSendRequest(WTFMove(proposedRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
         if (!m_coreLoader || !m_coreLoader->identifier()) {
             WEBRESOURCELOADER_RELEASE_LOG("willSendRequest: exiting early because no coreloader or identifier");
-            return;
+            return completionHandler({ }, false);
         }
 
         WEBRESOURCELOADER_RELEASE_LOG("willSendRequest: returning ContinueWillSendRequest");
-        send(Messages::NetworkResourceLoader::ContinueWillSendRequest(request, m_coreLoader->isAllowedToAskUserForCredentials()));
+        completionHandler(WTFMove(request), m_coreLoader->isAllowedToAskUserForCredentials());
     });
 }
 
@@ -358,7 +358,7 @@ void WebResourceLoader::didReceiveResource(ShareableResource::Handle&& handle)
 }
 #endif
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
 void WebResourceLoader::contentFilterDidBlockLoad(const WebCore::ContentFilterUnblockHandler& unblockHandler, String&& unblockRequestDeniedScript, const ResourceError& error, const URL& blockedPageURL,  WebCore::SubstituteData&& substituteData)
 {
     if (!m_coreLoader || !m_coreLoader->documentLoader())
@@ -369,7 +369,7 @@ void WebResourceLoader::contentFilterDidBlockLoad(const WebCore::ContentFilterUn
     documentLoader->handleContentFilterDidBlock(unblockHandler, WTFMove(unblockRequestDeniedScript));
     documentLoader->cancelMainResourceLoad(error);
 }
-#endif // ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#endif // ENABLE(CONTENT_FILTERING)
 
 } // namespace WebKit
 

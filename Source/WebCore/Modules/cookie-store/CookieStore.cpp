@@ -202,27 +202,57 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     }
 
     auto& document = *downcast<Document>(context);
+    auto& url = document.url();
     auto* page = document.page();
     if (!page) {
         promise->reject(SecurityError);
         return;
     }
 
-    auto& url = document.url();
-    auto& cookieJar = page->cookieJar();
-    auto completionHandler = [promise = WTFMove(promise)] (bool setSuccessfully) {
-        if (!setSuccessfully)
-            promise->reject(TypeError);
-        else
-            promise->resolve();
-    };
+    // The maximum attribute value size is specified at https://wicg.github.io/cookie-store/#cookie-maximum-attribute-value-size.
+    static constexpr auto maximumAttributeValueSize = 1024;
 
     Cookie cookie;
     cookie.name = WTFMove(options.name);
     cookie.value = WTFMove(options.value);
-    cookie.domain = options.domain.isNull() ? document.domain() : WTFMove(options.domain);
-    cookie.path = WTFMove(options.path);
     cookie.created = WallTime::now().secondsSinceEpoch().milliseconds();
+
+    cookie.domain = options.domain.isNull() ? document.domain() : WTFMove(options.domain);
+    if (!cookie.domain.isNull()) {
+        if (cookie.domain.startsWith('.')) {
+            promise->reject(Exception { TypeError, "The domain must not begin with a '.'"_s });
+            return;
+        }
+
+        auto host = url.host();
+        if (!host.endsWith(cookie.domain) || (host.length() > cookie.domain.length() && !StringView(host).substring(0, host.length() - cookie.domain.length()).endsWith('.'))) {
+            promise->reject(Exception { TypeError, "The domain must be a part of the current host"_s });
+            return;
+        }
+
+        // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
+        if (cookie.domain.utf8().length() > maximumAttributeValueSize) {
+            promise->reject(Exception { TypeError, makeString("The size of the domain must not be greater than ", maximumAttributeValueSize, " bytes") });
+            return;
+        }
+    }
+
+    cookie.path = WTFMove(options.path);
+    if (!cookie.path.isNull()) {
+        if (!cookie.path.startsWith('/')) {
+            promise->reject(Exception { TypeError, "The path must begin with a '/'"_s });
+            return;
+        }
+
+        if (!cookie.path.endsWith('/'))
+            cookie.path = cookie.path + '/';
+
+        // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
+        if (cookie.path.utf8().length() > maximumAttributeValueSize) {
+            promise->reject(Exception { TypeError, makeString("The size of the path must not be greater than ", maximumAttributeValueSize, " bytes") });
+            return;
+        }
+    }
 
     if (options.expires)
         cookie.expires = *options.expires;
@@ -238,6 +268,14 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         cookie.sameSite = Cookie::SameSitePolicy::None;
         break;
     }
+
+    auto& cookieJar = page->cookieJar();
+    auto completionHandler = [promise = WTFMove(promise)] (bool setSuccessfully) {
+        if (!setSuccessfully)
+            promise->reject(TypeError);
+        else
+            promise->resolve();
+    };
 
     cookieJar.setCookieAsync(document, url, cookie, WTFMove(completionHandler));
 }

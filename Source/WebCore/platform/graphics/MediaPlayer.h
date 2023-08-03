@@ -351,7 +351,7 @@ public:
     void requestHostingContextID(LayerHostingContextIDCallback&&);
     LayerHostingContextID hostingContextID() const;
     FloatSize videoInlineSize() const;
-    void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
+    void setVideoInlineSizeFenced(const FloatSize&, WTF::MachSendRight&&);
 
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const;

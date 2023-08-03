@@ -75,8 +75,11 @@ void DrawingAreaProxyCoordinatedGraphics::paint(BackingStore::PlatformGraphicsCo
     if (isInAcceleratedCompositingMode())
         return;
 
-    if (!m_backingStore)
+    if (!m_backingStore) {
+        if (!m_isWaitingForDidUpdateGeometry)
+            m_webPageProxy.send(Messages::DrawingArea::ForceUpdate(), m_identifier);
         return;
+    }
 
     m_backingStore->paint(context, rect);
     unpaintedRegion.subtract(IntRect(IntPoint(), m_backingStore->size()));
@@ -260,7 +263,7 @@ void DrawingAreaProxyCoordinatedGraphics::discardBackingStoreSoon()
 
     // We'll wait this many seconds after the last paint before throwing away our backing store to save memory.
     // FIXME: It would be smarter to make this delay based on how expensive painting is. See <http://webkit.org/b/55733>.
-    static const Seconds discardBackingStoreDelay = 2_s;
+    static const Seconds discardBackingStoreDelay = 10_s;
 
     m_discardBackingStoreTimer.startOneShot(discardBackingStoreDelay);
 }

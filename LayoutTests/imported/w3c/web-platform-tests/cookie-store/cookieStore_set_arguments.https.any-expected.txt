@@ -7,16 +7,18 @@ PASS cookieStore.set with expires set to a future Date
 PASS cookieStore.set with expires set to a past Date
 PASS cookieStore.set with expires set to a future timestamp
 PASS cookieStore.set with expires set to a past timestamp
-FAIL cookieStore.set domain starts with "." assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL cookieStore.set with domain that is not equal current host assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS cookieStore.set domain starts with "."
+PASS cookieStore.set with domain that is not equal current host
 PASS cookieStore.set with domain set to the current hostname
-FAIL cookieStore.set with domain set to a subdomain of the current hostname assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL cookieStore.set with domain set to a non-domain-matching suffix of the current hostname assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL cookieStore.set default domain is null and differs from current hostname assert_array_equals: expected property 0 to be "cookie-value1" but got "cookie-value" (expected array ["cookie-value1", "cookie-value2"] got ["cookie-value", "cookie-value2"])
+PASS cookieStore.set with domain set to a subdomain of the current hostname
+PASS cookieStore.set with domain set to a non-domain-matching suffix of the current hostname
+FAIL cookieStore.set default domain is null and differs from current hostname assert_equals: expected 2 but got 1
 PASS cookieStore.set with path set to the current directory
-FAIL cookieStore.set with path set to a subdirectory of the current directory assert_equals: expected null but got object "[object Object]"
-FAIL cookieStore.set default path is / assert_equals: expected 1 but got 2
-FAIL cookieStore.set adds / to path that does not end with / assert_equals: expected "/cookie-store/" but got "/cookie-store"
-FAIL cookieStore.set with path that does not start with / assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL cookieStore.set with get result assert_equals: expected "old-cookie-value" but got "cookie-value"
+PASS cookieStore.set with path set to a subdirectory of the current directory
+PASS cookieStore.set default path is /
+PASS cookieStore.set adds / to path that does not end with /
+PASS cookieStore.set with path that does not start with /
+PASS cookieStore.set with get result
+PASS cookieStore.set checks if the path is too long
+PASS cookieStore.set checks if the domain is too long
 

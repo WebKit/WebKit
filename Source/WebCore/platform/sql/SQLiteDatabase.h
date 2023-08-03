@@ -68,6 +68,8 @@ public:
     bool isOpen() const { return m_db; }
     WEBCORE_EXPORT void close();
 
+    WEBCORE_EXPORT int executeSlow(StringView);
+    WEBCORE_EXPORT int execute(ASCIILiteral);
     WEBCORE_EXPORT bool executeCommandSlow(StringView);
     WEBCORE_EXPORT bool executeCommand(ASCIILiteral);
     

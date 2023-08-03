@@ -101,10 +101,10 @@ bool ReplayKitCaptureSource::isAvailable()
     return [PAL::getRPScreenRecorderClass() sharedRecorder].isAvailable;
 }
 
-Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> ReplayKitCaptureSource::create(const String&)
+Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> ReplayKitCaptureSource::create(const String&)
 {
     if (!isAvailable())
-        return makeUnexpected("Screen capture unavailable"_s);
+        return makeUnexpected(CaptureSourceError { "Screen capture unavailable"_s, MediaAccessDenialReason::NoCaptureDevices });
 
     return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<ReplayKitCaptureSource>());
 }

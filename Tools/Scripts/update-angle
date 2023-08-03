@@ -164,7 +164,11 @@ cleanup_after_successful_rebase_and_exit() {
     regenerate_changes_diff "$ANGLE_TARGET_COMMIT"
     echo "Generating contents of commit message into commit-message.txt."
     echo "Be sure to copy out this file's contents and delete it before committing."
-    echo "Update ANGLE to $(git log -1 ${COMMIT_HASH} --format=%cs) (${COMMIT_HASH}))" > commit-message.txt
+    echo "Update ANGLE to $(git log -1 ${COMMIT_HASH} --format=%cs) (${COMMIT_HASH})" > commit-message.txt
+    echo "Need the bug URL (OOPS!)." >> commit-message.txt
+    echo "Include a Radar link (OOPS!)." >> commit-message.txt
+    echo "" >> commit-message.txt
+    echo "Reviewed by NOBODY (OOPS!)" >> commit-message.txt
     echo "" >> commit-message.txt
     echo "Contains upstream commits:" >> commit-message.txt
     echo git log --oneline "$PREVIOUS_ANGLE_COMMIT_HASH".."$COMMIT_HASH" --pretty="%h %s" >> commit-message.txt

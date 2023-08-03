@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test that containing block changes are reflected when going fullscreen</title>
+</head>
+<body>
+    <!-- will-change: transform creates a containing-block for fixed positioned elements, but the top layer overrides it --->
+    <div style="height: 400px; width: 400px; will-change: transform;">
+        <!-- container-type: size triggers layout during style resolution -->
+        <iframe style="container-type: size; width: 100%; height: 100%; background: lightgreen;" id="iframe"></iframe>
+    </div>
+    <p>Test passes if the lightgreen area is fullscreen after clicking the button.</p>
+    <script src="full-screen-test.js"></script>
+    <script>
+        async function test() {
+            await new Promise(resolve => {
+                iframe.addEventListener("load", resolve, {once: true});
+                iframe.src = "resources/inner.html";
+            });
+            await new Promise(resolve => {
+                internals.withUserGesture(() => {
+                    iframe.contentDocument.documentElement.requestFullscreen().then(resolve);   
+                });
+            });
+
+            testExpected("iframe.offsetWidth > 400", true);
+            testExpected("iframe.offsetHeight > 400", true);
+            endTest();
+        }
+
+        test();
+    </script>
+</body>
+</html>

@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-struct WebKit::WebProcessCreationParameters {
+[RValue] struct WebKit::WebProcessCreationParameters {
     WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
     String injectedBundlePath;
     WebKit::SandboxExtension::Handle injectedBundlePathExtensionHandle;
@@ -151,6 +151,10 @@ struct WebKit::WebProcessCreationParameters {
 
 #if PLATFORM(IOS_FAMILY)
     Vector<WebKit::SandboxExtension::Handle> dynamicIOKitExtensionHandles;
+#endif
+
+#if PLATFORM(VISION)
+    Vector<WebKit::SandboxExtension::Handle> metalCacheDirectoryExtensionHandles;
 #endif
 
 #if PLATFORM(COCOA)

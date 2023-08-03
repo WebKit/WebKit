@@ -74,7 +74,8 @@ function testAllTypesCall() {
                 throw "Failed testAllTypesCall for input " + testCaseInput[0] + " expected " + testCaseInput[1] + " got " + output;
         }
     }
-    if (numberOfDFGCompiles(opaqueAllTypesExpm1) > 2)
+    // Because DoubleRep has three UseKinds we could pick before getting to the generic version
+    if (numberOfDFGCompiles(opaqueAllTypesExpm1) > 3)
         throw "We should have detected expm1() was polymorphic and generated a generic version.";
 }
 testAllTypesCall();

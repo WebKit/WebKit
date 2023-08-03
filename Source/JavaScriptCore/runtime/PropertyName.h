@@ -140,7 +140,7 @@ ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName
             return true;
     } else if (!isASCIIDigit(first)) {
         // Infinity and NaN should go to the slow path.
-        if (!(length == strlen("Infinity") || first == 'I') && !(length == strlen("NaN") || first == 'N'))
+        if (!(length == strlen("Infinity") && first == 'I') && !(length == strlen("NaN") && first == 'N'))
             return false;
     }
 

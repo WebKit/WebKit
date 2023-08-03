@@ -183,9 +183,12 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
     test->runJavaScriptAndWaitUntilFinished("window.localStorage.myproperty = 42;", nullptr);
-    GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "localstorage", nullptr));
 #if !ENABLE(2022_GLIB_API)
+    GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "localstorage", nullptr));
     g_assert_cmpstr(localStorageDirectory.get(), ==, webkit_website_data_manager_get_local_storage_directory(test->m_manager));
+#endif
+#if ENABLE(2022_GLIB_API)
+    GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "storage", nullptr));
 #endif
     test->assertFileIsCreated(localStorageDirectory.get());
     g_assert_true(g_file_test(localStorageDirectory.get(), G_FILE_TEST_IS_DIR));
@@ -194,9 +197,12 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
     test->runJavaScriptAndWaitUntilFinished("window.indexedDB.open('TestDatabase');", nullptr);
-    GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "databases", "indexeddb", nullptr));
 #if !ENABLE(2022_GLIB_API)
+    GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "databases", "indexeddb", nullptr));
     g_assert_cmpstr(indexedDBDirectory.get(), ==, webkit_website_data_manager_get_indexeddb_directory(test->m_manager));
+#endif
+#if ENABLE(2022_GLIB_API)
+    GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "storage", nullptr));
 #endif
     test->assertFileIsCreated(indexedDBDirectory.get());
     g_assert_true(g_file_test(indexedDBDirectory.get(), G_FILE_TEST_IS_DIR));
@@ -375,6 +381,9 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     // Non persistent data can be queried in an ephemeral manager.
 #if ENABLE(2022_GLIB_API)
     auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
         "web-context", webkit_web_view_get_context(test->m_webView),
         "network-session", session.get(),
         nullptr));
@@ -651,7 +660,13 @@ static void prepopulateHstsData()
     // an IP address instead of a domain. In order to be able to test the data manager API with HSTS website data, we
     // prepopulate the HSTS storage using the libsoup API directly.
 
+#if !ENABLE(2022_GLIB_API)
     GUniquePtr<char> hstsDatabase(g_build_filename(Test::dataDirectory(), "hsts-storage.sqlite", nullptr));
+#else
+    GUniquePtr<char> hstsCacheDirectory(g_build_filename(Test::dataDirectory(), "HSTS", nullptr));
+    GUniquePtr<char> hstsDatabase(g_build_filename(hstsCacheDirectory.get(), "hsts-storage.sqlite", nullptr));
+    g_mkdir_with_parents(hstsCacheDirectory.get(), 0700);
+#endif
     GRefPtr<SoupHSTSEnforcer> enforcer = adoptGRef(soup_hsts_enforcer_db_new(hstsDatabase.get()));
     GUniquePtr<SoupHSTSPolicy> policy(soup_hsts_policy_new("webkitgtk.org", 3600, true));
     soup_hsts_enforcer_set_policy(enforcer.get(), policy.get());

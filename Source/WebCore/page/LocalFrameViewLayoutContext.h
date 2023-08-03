@@ -27,6 +27,7 @@
 
 #include "LayoutUnit.h"
 #include "Timer.h"
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ class LayoutScope;
 class LayoutSize;
 class LocalFrame;
 class LocalFrameView;
+class RenderBlock;
 class RenderBlockFlow;
 class RenderBox;
 class RenderObject;
@@ -46,6 +48,16 @@ namespace Layout {
 class LayoutState;
 class LayoutTree;
 }
+
+struct UpdateScrollInfoAfterLayoutTransaction {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    UpdateScrollInfoAfterLayoutTransaction();
+    ~UpdateScrollInfoAfterLayoutTransaction();
+
+    int nestedCount { 0 };
+    WeakHashSet<RenderBlock> blocks;
+};
 
 class LocalFrameViewLayoutContext {
 public:
@@ -113,6 +125,9 @@ public:
 
     const Layout::LayoutState* layoutFormattingState() const { return m_layoutState.get(); }
 
+    UpdateScrollInfoAfterLayoutTransaction& updateScrollInfoAfterLayoutTransaction();
+    UpdateScrollInfoAfterLayoutTransaction* updateScrollInfoAfterLayoutTransactionIfExists() { return m_updateScrollInfoAfterLayoutTransaction.get(); }
+
 private:
     friend class LayoutScope;
     friend class LayoutStateMaintainer;
@@ -176,6 +191,7 @@ private:
     LayoutStateStack m_layoutStateStack;
     std::unique_ptr<Layout::LayoutTree> m_layoutTree;
     std::unique_ptr<Layout::LayoutState> m_layoutState;
+    std::unique_ptr<UpdateScrollInfoAfterLayoutTransaction> m_updateScrollInfoAfterLayoutTransaction;
 };
 
 } // namespace WebCore

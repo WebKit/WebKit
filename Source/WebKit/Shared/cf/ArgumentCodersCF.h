@@ -165,6 +165,4 @@ template<> struct ArgumentCoder<RetainPtr<SecTrustRef>> : CFRetainPtrArgumentCod
     template<typename Decoder> static std::optional<RetainPtr<SecTrustRef>> decode(Decoder&);
 };
 
-CFTypeRef tokenNullptrTypeRef();
-
 } // namespace IPC

@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: NotSupportedError: The operation is not supported.
+PASS if no assert is triggered.

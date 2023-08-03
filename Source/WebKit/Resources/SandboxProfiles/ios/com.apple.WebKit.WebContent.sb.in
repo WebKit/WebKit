@@ -853,13 +853,8 @@
 (with-filter (require-not (state-flag "WebContentProcessLaunched"))
     (allow file-map-executable))
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 (deny system-necp-client-action)
 (deny necp-client-open)
-#else
-;; Allow ManagedPreference access
-(allow file-read* (literal "/private/var/Managed Preferences/mobile/com.apple.webcontentfilter.plist"))
-#endif
 
 (allow file-read-data
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
@@ -932,11 +927,6 @@
             "com.apple.iphone.axserver-systemwide"
             "com.apple.mobileassetd.v2"
             "com.apple.mobilegestalt.xpc"
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-            "com.apple.nehelper"
-            "com.apple.nesessionmanager.content-filter"
-            "com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"
-#endif
             "com.apple.tccd"
             "com.apple.webinspector"
 )))
@@ -1141,10 +1131,6 @@
 (define (syscall-unix-rarely-in-use-need-backtrace)
     (syscall-number
         SYS___pthread_kill
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-        SYS_necp_client_action
-        SYS_necp_open
-#endif
         ))
 
 (deny syscall-unix (with telemetry))

@@ -109,18 +109,6 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
     m_dataDetectionReferenceDate = parameters.dataDetectionReferenceDate;
-
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    consumeNetworkExtensionSandboxExtensions(parameters.networkExtensionSandboxExtensionHandles);
-#if PLATFORM(IOS) || PLATFORM(VISION)
-    if (parameters.contentFilterExtensionHandle)
-        SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
-    ParentalControlsContentFilter::setHasConsumedSandboxExtension(parameters.contentFilterExtensionHandle.has_value());
-
-    if (parameters.frontboardServiceExtensionHandle)
-        SandboxExtension::consumePermanently(*parameters.frontboardServiceExtensionHandle);
-#endif // PLATFORM(IOS) || PLATFORM(VISION)
-#endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 }
 
 void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& completionHandler)
@@ -555,18 +543,6 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
         postLayoutData.editableRootIsTransparentOrFullyClipped = result.isContentEditable && isTransparentOrFullyClipped(*editableRootOrFormControl);
     }
 }
-
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-void WebPage::consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExtension::Handle>& networkExtensionsHandles)
-{
-#if ENABLE(CONTENT_FILTERING)
-    SandboxExtension::consumePermanently(networkExtensionsHandles);
-    NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(networkExtensionsHandles.size());
-#else
-    UNUSED_PARAM(networkExtensionsHandles);
-#endif
-}
-#endif
 
 void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
 {

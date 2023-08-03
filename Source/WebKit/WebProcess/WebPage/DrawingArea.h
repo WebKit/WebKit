@@ -206,6 +206,7 @@ private:
                                          const WebCore::IntSize& /*scrollOffset*/) { }
     virtual void targetRefreshRateDidChange(unsigned /*rate*/) { }
     virtual void setDeviceScaleFactor(float) { }
+    virtual void forceUpdate() { }
 #endif
     virtual void displayDidRefresh() { }
 

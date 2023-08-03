@@ -68,7 +68,7 @@ void PreconnectTask::start()
 
 PreconnectTask::~PreconnectTask() = default;
 
-void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
+void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     // HSTS "redirection" may happen here.
 #if ASSERT_ENABLED
@@ -77,7 +77,7 @@ void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceReques
     url.setProtocol("https"_s);
     ASSERT(redirectRequest.url() == url);
 #endif
-    m_networkLoad->continueWillSendRequest(WTFMove(redirectRequest));
+    completionHandler(WTFMove(redirectRequest));
 }
 
 void PreconnectTask::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)

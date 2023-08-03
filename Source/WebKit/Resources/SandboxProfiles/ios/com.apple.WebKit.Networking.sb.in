@@ -244,9 +244,7 @@
         (prefix "/private/var/db/com.apple.networkextension.")
     )
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     (allow file-read* (literal "/private/var/Managed Preferences/mobile/com.apple.webcontentfilter.plist"))
-#endif
 
     (allow mach-lookup
            (global-name "com.apple.AppSSO.service-xpc"))

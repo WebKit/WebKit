@@ -65,7 +65,6 @@ FuzzerPredictions::FuzzerPredictions(const char* filename)
         // Example predictions:
         // foo.js|op_construct|702|721:1000084
         // foo.js|op_call|748|760:408800
-        // foo.js|op_bitnot|770|770:280000000
 
         // Predictions can be generated using PredictionFileCreatingFuzzerAgent.
         // Some opcodes are aliased together to make generating the predictions more straightforward.

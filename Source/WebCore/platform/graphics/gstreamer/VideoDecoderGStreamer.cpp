@@ -139,8 +139,10 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
 
     GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
     GRefPtr<GstCaps> inputCaps;
+    const char* parser = nullptr;
     if (codecName.startsWith("avc1"_s)) {
         inputCaps = adoptGRef(gst_caps_new_simple("video/x-h264", "stream-format", G_TYPE_STRING, "avc", "alignment", G_TYPE_STRING, "au", nullptr));
+        parser = "h264parse";
 
         Vector<uint8_t> data { config.description };
         if (!data.isEmpty()) {
@@ -152,19 +154,42 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
 
             gst_caps_set_simple(inputCaps.get(), "codec_data", GST_TYPE_BUFFER, codecData, nullptr);
         }
-    } else if (codecName.startsWith("av01"_s))
+    } else if (codecName.startsWith("av01"_s)) {
         inputCaps = adoptGRef(gst_caps_new_simple("video/x-av1", "stream-format", G_TYPE_STRING, "obu-stream", "alignment", G_TYPE_STRING, "frame", nullptr));
-    else if (codecName.startsWith("vp8"_s))
+        parser = "av1parse";
+    } else if (codecName.startsWith("vp8"_s))
         inputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp8"));
-    else if (codecName.startsWith("vp09"_s))
+    else if (codecName.startsWith("vp09"_s)) {
         inputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
-    else {
+        parser = "vp9parse";
+    } else {
         WTFLogAlways("Codec %s not wired in yet", codecName.ascii().data());
         return;
     }
 
-    gst_caps_set_simple(inputCaps.get(), "width", G_TYPE_INT, config.width, "height", G_TYPE_INT, config.height, nullptr);
-    m_harness = GStreamerElementHarness::create(WTFMove(element), [protectedThis = Ref { *this }, this](auto& stream, const GRefPtr<GstBuffer>& outputBuffer) {
+    if (config.width && config.height)
+        gst_caps_set_simple(inputCaps.get(), "width", G_TYPE_INT, config.width, "height", G_TYPE_INT, config.height, nullptr);
+
+    GRefPtr<GstElement> harnessedElement;
+    auto* factory = gst_element_get_factory(element.get());
+    if (parser && !gst_element_factory_can_sink_all_caps(factory, inputCaps.get())) {
+        // The decoder won't accept the input caps, so put a parser in front.
+        auto* parserElement = makeGStreamerElement(parser, nullptr);
+        if (!parserElement) {
+            GST_WARNING_OBJECT(element.get(), "Required parser %s not found, decoding will fail", parser);
+            return;
+        }
+        harnessedElement = gst_bin_new(nullptr);
+        gst_bin_add_many(GST_BIN_CAST(harnessedElement.get()), parserElement, element.get(), nullptr);
+        gst_element_link(parserElement, element.get());
+        auto sinkPad = adoptGRef(gst_element_get_static_pad(parserElement, "sink"));
+        gst_element_add_pad(harnessedElement.get(), gst_ghost_pad_new("sink", sinkPad.get()));
+        auto srcPad = adoptGRef(gst_element_get_static_pad(element.get(), "src"));
+        gst_element_add_pad(harnessedElement.get(), gst_ghost_pad_new("src", srcPad.get()));
+    } else
+        harnessedElement = WTFMove(element);
+
+    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [protectedThis = Ref { *this }, this](auto& stream, const GRefPtr<GstBuffer>& outputBuffer) {
         if (protectedThis->m_isClosed)
             return;
 

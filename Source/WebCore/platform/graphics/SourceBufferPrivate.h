@@ -162,7 +162,7 @@ protected:
 
     virtual void appendInternal(Ref<SharedBuffer>&&) = 0;
     virtual void resetParserStateInternal() = 0;
-    virtual MediaTime timeFudgeFactor() const { return { 2002, 24000 }; }
+    virtual MediaTime timeFudgeFactor() const { return PlatformTimeRanges::timeFudgeFactor(); }
     virtual bool isActive() const { return false; }
     virtual bool isSeeking() const { return false; }
     virtual MediaTime currentMediaTime() const { return { }; }

@@ -24,7 +24,7 @@
 
 messages -> NetworkMDNSRegister NotRefCounted {
     UnregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier documentIdentifier)
-    RegisterMDNSName(WebKit::MDNSRegisterIdentifier requestIdentifier, WebCore::ScriptExecutionContextIdentifier documentIdentifier, String ipAddress)
+    RegisterMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, String ipAddress) -> (String mdnsName, std::optional<WebCore::MDNSRegisterError> error)
 }
 
 #endif // ENABLE(WEB_RTC)
