@@ -287,7 +287,7 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
 
     WebCore::GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    graphicsContext.setDropShadow({ WebCore::FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, shadowColor, ShadowRadiusMode::Default });
+    graphicsContext.setDropShadow({ { shadowOffsetX, shadowOffsetY }, shadowBlurRadius, shadowColor, ShadowRadiusMode::Default });
     graphicsContext.setStrokeColor(foundColor);
     graphicsContext.setStrokeThickness(indicatorBorderWidth * 2);
     for (auto& path : foundFramePaths)

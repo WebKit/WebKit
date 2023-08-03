@@ -4189,10 +4189,10 @@ header: <WebCore/GraphicsTypes.h>
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder]  enum class WebCore::ShadowRadiusMode : bool;
 
-header: <WebCore/GraphicsTypes.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DropShadow {
+header: <WebCore/GraphicsStyle.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::GraphicsDropShadow {
     WebCore::FloatSize offset;
-    float blurRadius;
+    float radius;
     WebCore::Color color;
     WebCore::ShadowRadiusMode radiusMode;
 };

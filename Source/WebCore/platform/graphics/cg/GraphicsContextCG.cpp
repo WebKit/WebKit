@@ -861,7 +861,10 @@ void GraphicsContextCG::fillRect(const FloatRect& rect)
     if (drawOwnShadow) {
         clearCGShadow();
 
-        ShadowBlur contextShadow(dropShadow(), shadowsIgnoreTransforms());
+        const auto shadow = dropShadow();
+        ASSERT(shadow);
+
+        ShadowBlur contextShadow(*shadow, shadowsIgnoreTransforms());
         contextShadow.drawRectShadow(*this, FloatRoundedRect(rect));
     }
 
@@ -881,7 +884,10 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, const Color& color)
     if (drawOwnShadow) {
         clearCGShadow();
 
-        ShadowBlur contextShadow(dropShadow(), shadowsIgnoreTransforms());
+        const auto shadow = dropShadow();
+        ASSERT(shadow);
+
+        ShadowBlur contextShadow(*shadow, shadowsIgnoreTransforms());
         contextShadow.drawRectShadow(*this, FloatRoundedRect(rect));
     }
 
@@ -907,7 +913,10 @@ void GraphicsContextCG::fillRoundedRectImpl(const FloatRoundedRect& rect, const 
     if (drawOwnShadow) {
         clearCGShadow();
 
-        ShadowBlur contextShadow(dropShadow(), shadowsIgnoreTransforms());
+        const auto shadow = dropShadow();
+        ASSERT(shadow);
+
+        ShadowBlur contextShadow(*shadow, shadowsIgnoreTransforms());
         contextShadow.drawRectShadow(*this, rect);
     }
 
@@ -955,7 +964,10 @@ void GraphicsContextCG::fillRectWithRoundedHole(const FloatRect& rect, const Flo
     if (drawOwnShadow) {
         clearCGShadow();
 
-        ShadowBlur contextShadow(dropShadow(), shadowsIgnoreTransforms());
+        const auto shadow = dropShadow();
+        ASSERT(shadow);
+
+        ShadowBlur contextShadow(*shadow, shadowsIgnoreTransforms());
         contextShadow.drawInsetShadow(*this, rect, roundedHoleRect);
     }
 
@@ -1087,18 +1099,16 @@ static void applyShadowOffsetWorkaroundIfNeeded(CGContextRef context, CGFloat& x
 #endif
 }
 
-void GraphicsContextCG::setCGShadow(RenderingMode renderingMode, const FloatSize& offset, float blur, const Color& color, bool shadowsIgnoreTransforms)
+void GraphicsContextCG::setCGShadow(const GraphicsDropShadow& shadow, bool shadowsIgnoreTransforms)
 {
-    if (offset.isZero() && !blur) {
+    if (!shadow.color.isValid() || (shadow.offset.isZero() && !shadow.radius)) {
         clearCGShadow();
         return;
     }
 
-    // FIXME: we could avoid the shadow setup cost when we know we'll render the shadow ourselves.
-
-    CGFloat xOffset = offset.width();
-    CGFloat yOffset = offset.height();
-    CGFloat blurRadius = blur;
+    CGFloat xOffset = shadow.offset.width();
+    CGFloat yOffset = shadow.offset.height();
+    CGFloat blurRadius = shadow.radius;
     CGContextRef context = platformContext();
 
     if (!shadowsIgnoreTransforms) {
@@ -1111,9 +1121,9 @@ void GraphicsContextCG::setCGShadow(RenderingMode renderingMode, const FloatSize
 
         CGFloat smallEigenvalue = narrowPrecisionToCGFloat(sqrt(0.5 * ((A + D) - sqrt(4 * B * C + (A - D) * (A - D)))));
 
-        blurRadius = blur * smallEigenvalue;
+        blurRadius *= smallEigenvalue;
 
-        CGSize offsetInBaseSpace = CGSizeApplyAffineTransform(offset, userToBaseCTM);
+        CGSize offsetInBaseSpace = CGSizeApplyAffineTransform(shadow.offset, userToBaseCTM);
 
         xOffset = offsetInBaseSpace.width;
         yOffset = offsetInBaseSpace.height;
@@ -1122,66 +1132,65 @@ void GraphicsContextCG::setCGShadow(RenderingMode renderingMode, const FloatSize
     // Extreme "blur" values can make text drawing crash or take crazy long times, so clamp
     blurRadius = std::min(blurRadius, narrowPrecisionToCGFloat(1000.0));
 
-    if (renderingMode != RenderingMode::Accelerated)
+    if (renderingMode() != RenderingMode::Accelerated)
         applyShadowOffsetWorkaroundIfNeeded(context, xOffset, yOffset);
 
-    // Check for an invalid color, as this means that the color was not set for the shadow
-    // and we should therefore just use the default shadow color.
-    if (!color.isValid())
-        CGContextSetShadow(context, CGSizeMake(xOffset, yOffset), blurRadius);
-    else
-        CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(color).get());
+#if HAVE(CGSTYLE_CREATE_SHADOW2)
+    auto style = adoptCF(CGStyleCreateShadow2(CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(shadow.color).get()));
+    CGContextSetStyle(context, style.get());
+#else
+    CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(shadow.color).get());
+#endif
 }
 
 void GraphicsContextCG::clearCGShadow()
 {
+#if HAVE(CGSTYLE_CREATE_SHADOW2)
+    CGContextSetStyle(platformContext(), nullptr);
+#else
     CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
+#endif
 }
 
-static void setCGStyle(CGContextRef context, const std::optional<GraphicsStyle>& style)
+void GraphicsContextCG::setCGStyle(const std::optional<GraphicsStyle>& style, bool shadowsIgnoreTransforms)
 {
+    auto context = platformContext();
+
     if (!style) {
         CGContextSetStyle(context, nullptr);
         return;
     }
 
-    auto cgStyle = WTF::switchOn(*style,
-        [&] (const GraphicsDropShadow& dropShadow) -> RetainPtr<CGStyleRef> {
-#if HAVE(CGSTYLE_CREATE_SHADOW2)
-            return adoptCF(CGStyleCreateShadow2(dropShadow.offset, dropShadow.radius.width(), cachedCGColor(dropShadow.color).get()));
-#else
-            ASSERT_NOT_REACHED();
-            UNUSED_PARAM(dropShadow);
-            return nullptr;
-#endif
+    WTF::switchOn(*style,
+        [&] (const GraphicsDropShadow& dropShadow) {
+            setCGShadow(dropShadow, shadowsIgnoreTransforms);
         },
-        [&] (const GraphicsGaussianBlur& gaussianBlur) -> RetainPtr<CGStyleRef> {
+        [&] (const GraphicsGaussianBlur& gaussianBlur) {
 #if HAVE(CGSTYLE_COLORMATRIX_BLUR)
             ASSERT(gaussianBlur.radius.width() == gaussianBlur.radius.height());
+
             CGGaussianBlurStyle gaussianBlurStyle = { 1, gaussianBlur.radius.width() };
-            return adoptCF(CGStyleCreateGaussianBlur(&gaussianBlurStyle));
+            auto style = adoptCF(CGStyleCreateGaussianBlur(&gaussianBlurStyle));
+            CGContextSetStyle(context, style.get());
 #else
             ASSERT_NOT_REACHED();
             UNUSED_PARAM(gaussianBlur);
-            return nullptr;
 #endif
         },
-        [&] (const GraphicsColorMatrix& colorMatrix) -> RetainPtr<CGStyleRef> {
+        [&] (const GraphicsColorMatrix& colorMatrix) {
 #if HAVE(CGSTYLE_COLORMATRIX_BLUR)
             CGColorMatrixStyle colorMatrixStyle = { 1, { 0 } };
             for (size_t i = 0; i < colorMatrix.values.size(); ++i)
                 colorMatrixStyle.matrix[i] = colorMatrix.values[i];
-            return adoptCF(CGStyleCreateColorMatrix(&colorMatrixStyle));
+
+            auto style = adoptCF(CGStyleCreateColorMatrix(&colorMatrixStyle));
+            CGContextSetStyle(context, style.get());
 #else
             ASSERT_NOT_REACHED();
             UNUSED_PARAM(colorMatrix);
-            return nullptr;
 #endif
         }
     );
-
-    if (cgStyle)
-        CGContextSetStyle(context, cgStyle.get());
 }
 
 void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
@@ -1209,12 +1218,8 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
             setCGBlendMode(context, state.compositeMode().operation, state.compositeMode().blendMode);
             break;
 
-        case GraphicsContextState::Change::DropShadow:
-            setCGShadow(renderingMode(), state.dropShadow().offset, state.dropShadow().blurRadius, state.dropShadow().color, state.shadowsIgnoreTransforms());
-            break;
-
         case GraphicsContextState::Change::Style:
-            setCGStyle(context, state.style());
+            setCGStyle(state.style(), state.shadowsIgnoreTransforms());
             break;
 
         case GraphicsContextState::Change::Alpha:

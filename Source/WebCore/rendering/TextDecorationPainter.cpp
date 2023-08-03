@@ -276,7 +276,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
 
             auto shadowX = m_isHorizontal ? shadow->x().value() : shadow->y().value();
             auto shadowY = m_isHorizontal ? shadow->y().value() : -shadow->x().value();
-            m_context.setDropShadow({ FloatSize { shadowX, shadowY - extraOffset }, shadow->radius().value(), shadowColor, ShadowRadiusMode::Default });
+            m_context.setDropShadow({ { shadowX, shadowY - extraOffset }, shadow->radius().value(), shadowColor, ShadowRadiusMode::Default });
             shadow = shadow->next();
         };
         applyShadowIfNeeded();

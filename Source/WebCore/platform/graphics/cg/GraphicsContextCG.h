@@ -139,9 +139,10 @@ public:
     // Returns false if there has not been any potential draws since last call.
     // Returns true if there has been potential draws since last call.
     bool consumeHasDrawn();
-protected:
-    virtual void setCGShadow(RenderingMode, const FloatSize& offset, float blur, const Color&, bool shadowsIgnoreTransforms);
 
+protected:
+    virtual void setCGShadow(const GraphicsDropShadow&, bool shadowsIgnoreTransforms);
+    void setCGStyle(const std::optional<GraphicsStyle>&, bool shadowsIgnoreTransforms);
 
 private:
     void convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>&);

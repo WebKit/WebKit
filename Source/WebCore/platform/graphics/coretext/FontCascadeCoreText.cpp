@@ -361,16 +361,16 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         }
     };
 
-    bool hasSimpleShadow = context.textDrawingMode() == TextDrawingMode::Fill && shadow.color.isValid() && !shadow.blurRadius && !platformData.isColorBitmapFont() && (!context.shadowsIgnoreTransforms() || contextCTM.isIdentityOrTranslationOrFlipped()) && !context.isInTransparencyLayer();
+    bool hasSimpleShadow = context.textDrawingMode() == TextDrawingMode::Fill && shadow && shadow->color.isValid() && !shadow->radius && !platformData.isColorBitmapFont() && (!context.shadowsIgnoreTransforms() || contextCTM.isIdentityOrTranslationOrFlipped()) && !context.isInTransparencyLayer();
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         context.clearShadow();
         Color fillColor = context.fillColor();
-        Color shadowFillColor = shadow.color.colorWithAlphaMultipliedBy(fillColor.alphaAsFloat());
+        Color shadowFillColor = shadow->color.colorWithAlphaMultipliedBy(fillColor.alphaAsFloat());
         context.setFillColor(shadowFillColor);
-        float shadowTextX = point.x() + shadow.offset.width();
+        float shadowTextX = point.x() + shadow->offset.width();
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
-        float shadowTextY = point.y() + shadow.offset.height() * (context.shadowsIgnoreTransforms() ? -1 : 1);
+        float shadowTextY = point.y() + shadow->offset.height() * (context.shadowsIgnoreTransforms() ? -1 : 1);
         showGlyphsWithAdvances(FloatPoint(shadowTextX, shadowTextY), font, cgContext, glyphs, advances, numGlyphs, textMatrix);
         if (syntheticBoldOffset)
             showGlyphsWithAdvances(FloatPoint(shadowTextX + syntheticBoldOffset, shadowTextY), font, cgContext, glyphs, advances, numGlyphs, textMatrix);
@@ -383,7 +383,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), font, cgContext, glyphs, advances, numGlyphs, textMatrix);
 
     if (hasSimpleShadow)
-        context.setDropShadow(shadow);
+        context.setDropShadow(*shadow);
 
 #if !PLATFORM(IOS_FAMILY)
     if (shouldSmoothFonts != originalShouldUseFontSmoothing)
