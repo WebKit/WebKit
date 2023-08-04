@@ -1031,8 +1031,6 @@ void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, Complet
     resourceRequest.setURL(m_view->mainResourceURL());
     resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, "-"_s, position + count - 1));
     resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
-    if (auto* document = coreFrame->document())
-        resourceRequest.setFirstPartyForCookies(document->topDocument().url());
 
 #if !LOG_DISABLED
     pdfLog(makeString("Scheduling a stream loader for request ", identifier, " (", count, " bytes at ", position, ")"));
