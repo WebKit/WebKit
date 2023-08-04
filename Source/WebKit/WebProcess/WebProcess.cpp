@@ -2351,7 +2351,9 @@ void WebProcess::addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&& fir
 
 bool WebProcess::allowsFirstPartyForCookies(const URL& firstParty)
 {
-    return AuxiliaryProcess::allowsFirstPartyForCookies(WebCore::RegistrableDomain { firstParty }, m_allowedFirstPartiesForCookies);
+    return AuxiliaryProcess::allowsFirstPartyForCookies(firstParty, [&] {
+        return AuxiliaryProcess::allowsFirstPartyForCookies(WebCore::RegistrableDomain { firstParty }, m_allowedFirstPartiesForCookies);
+    });
 }
 
 } // namespace WebKit
