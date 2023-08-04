@@ -107,7 +107,7 @@ class TestDownloader(object):
     def update_import_expectations(self, test_paths):
         import_lines = json.loads(self._filesystem.read_text_file(self.import_expectations_path))
         for path in test_paths:
-            import_lines[path] = 'import'
+            import_lines[path.rstrip(self._filesystem.sep)] = 'import'
         self._filesystem.write_text_file(self.import_expectations_path, json.dumps(import_lines, sort_keys=True, indent=4, separators=(',', ': ')))
 
     def _add_test_suite_paths(self, test_paths, directory, webkit_path):

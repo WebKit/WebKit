@@ -212,6 +212,13 @@ class TestImporter(object):
                 return
 
         test_paths = self.test_paths if self.test_paths else [test_repository['name'] for test_repository in self.test_downloader().test_repositories]
+
+        test_paths = (
+            [p.rstrip(self.filesystem.sep) + self.filesystem.sep for p in test_paths]
+            if test_paths
+            else []
+        )
+
         for test_path in test_paths:
             self.find_importable_tests(self.filesystem.join(self.source_directory, test_path))
 
@@ -219,7 +226,7 @@ class TestImporter(object):
             for test_path in test_paths:
                 self.clean_destination_directory(test_path)
             if self._test_resource_files:
-                test_paths_tuple = tuple(p.rstrip(self.filesystem.sep) + self.filesystem.sep for p in test_paths)
+                test_paths_tuple = tuple(test_paths)
                 self._test_resource_files["files"] = [t for t in self._test_resource_files["files"]
                                                       if not t.startswith(test_paths_tuple)]
                 if self._tests_options:
