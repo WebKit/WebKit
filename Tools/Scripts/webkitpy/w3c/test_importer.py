@@ -74,6 +74,8 @@ import mimetypes
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.port.factory import PortFactory
+from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.w3c.common import TEMPLATED_TEST_HEADER, WPT_GH_URL, WPTPaths
 from webkitpy.w3c.test_parser import TestParser
 from webkitpy.w3c.test_converter import convert_for_webkit
@@ -156,6 +158,7 @@ class TestImporter(object):
         self.options = options
         self.test_paths = test_paths if test_paths else []
 
+        self.port = PortFactory(host).get()
         self.filesystem = self.host.filesystem
 
         webkit_finder = WebKitFinder(self.filesystem)
@@ -280,9 +283,11 @@ class TestImporter(object):
     def remove_dangling_expectations(self, filename):
         #FIXME: Clean also the expected files stored in all platform specific folders.
         directory = self.filesystem.join(self.destination_directory, filename)
+        tests = LayoutTestFinder(self.port, None).find_tests_by_path([directory])
+        baselines_for_tests = {self.port.expected_filename(test.test_path, '.txt') for test in tests}
         for relative_path in self.filesystem.files_under(directory, file_filter=self._is_baseline):
             path = self.filesystem.join(directory, relative_path)
-            if self.filesystem.glob(path.replace('-expected.txt', '*')) == [path]:
+            if path not in baselines_for_tests:
                 self.filesystem.remove(path)
 
     def _source_root_directory_for_path(self, path):
