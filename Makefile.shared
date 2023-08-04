@@ -93,6 +93,14 @@ CONFIG_OPTIONS += --no-asan
 endif
 endif
 
+ifeq ($(LIBFUZZER),YES)
+CONFIG_OPTIONS += --libfuzzer
+else
+ifeq ($(LIBFUZZER),NO)
+CONFIG_OPTIONS += --no-libfuzzer
+endif
+endif
+
 ifeq ($(TSAN),YES)
 CONFIG_OPTIONS += --tsan
 else
