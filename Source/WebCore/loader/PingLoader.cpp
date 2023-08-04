@@ -190,11 +190,10 @@ void PingLoader::sendViolationReport(LocalFrame& frame, const URL& reportURL, Re
         break;
     }
 
-    bool removeCookies = true;
-    if (document.securityOrigin().isSameSchemeHostPort(SecurityOrigin::create(reportURL).get()))
-        removeCookies = false;
-    if (removeCookies)
+    if (document.firstPartyForCookies().isNull() || !document.securityOrigin().isSameSchemeHostPort(SecurityOrigin::create(reportURL).get()))
         request.setAllowCookies(false);
+    else
+        request.setFirstPartyForCookies(document.firstPartyForCookies());
 
     HTTPHeaderMap originalRequestHeader = request.httpHeaderFields();
 

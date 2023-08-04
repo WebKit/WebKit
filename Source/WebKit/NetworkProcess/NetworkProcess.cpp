@@ -421,16 +421,14 @@ void NetworkProcess::webProcessWillLoadWebArchive(WebCore::ProcessIdentifier pro
     }).iterator->value.first = LoadedWebArchive::Yes;
 }
 
-bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty)
-{
-    return AuxiliaryProcess::allowsFirstPartyForCookies(firstParty, [&] {
-        RegistrableDomain firstPartyDomain(firstParty);
-        return allowsFirstPartyForCookies(processIdentifier, firstPartyDomain);
-    });
-}
-
 bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain)
 {
+#if PLATFORM(GTK)
+    // FIXME: This shouldn't be needed but is hit for some web socket tests on GTK.
+    if (firstPartyDomain.isEmpty())
+        return true;
+#endif
+
     if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
         ASSERT_NOT_REACHED();
         return false;
