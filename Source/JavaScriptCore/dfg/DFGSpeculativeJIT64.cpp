@@ -3930,6 +3930,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ArraySpliceExtract: {
+        compileArraySpliceExtract(node);
+        break;
+    }
+
     case ArrayIndexOf: {
         compileArrayIndexOf(node);
         break;

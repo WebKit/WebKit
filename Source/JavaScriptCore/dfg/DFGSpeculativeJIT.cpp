@@ -10455,6 +10455,31 @@ void SpeculativeJIT::compileArraySlice(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileArraySpliceExtract(Node* node)
+{
+    unsigned refCount = node->refCount();
+    bool mustGenerate = node->mustGenerate();
+    if (mustGenerate)
+        --refCount;
+
+    SpeculateCellOperand base(this, node->child1());
+    SpeculateInt32Operand start(this, node->child2());
+    SpeculateInt32Operand deleteCount(this, node->child3());
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg startGPR = start.gpr();
+    GPRReg deleteCountGPR = deleteCount.gpr();
+
+    speculateArray(node->child1(), baseGPR);
+
+    flushRegisters();
+    JSValueRegsFlushedCallResult result(this);
+    JSValueRegs resultRegs = result.regs();
+    callOperation(operationArraySpliceExtract, resultRegs, LinkableConstant::globalObject(*this, node), baseGPR, startGPR, deleteCountGPR, TrustedImm32(refCount));
+    exceptionCheck();
+    jsValueResult(resultRegs, node);
+}
+
 void SpeculativeJIT::compileArrayIndexOf(Node* node)
 {
     ASSERT(node->op() == ArrayIndexOf);

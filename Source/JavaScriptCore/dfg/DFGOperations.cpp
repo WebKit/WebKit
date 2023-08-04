@@ -1240,7 +1240,126 @@ JSC_DEFINE_JIT_OPERATION(operationArrayPopAndRecoverLength, EncodedJSValue, (JSG
     
     return JSValue::encode(array->pop(globalObject));
 }
-        
+
+JSC_DEFINE_JIT_OPERATION(operationArraySpliceExtract, EncodedJSValue, (JSGlobalObject* globalObject, JSArray* base, int32_t start, int32_t deleteCount, unsigned refCount))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    uint64_t length = base->length();
+    if (!length) {
+        scope.release();
+        setLength(globalObject, vm, base, length);
+        constexpr bool throwException = true;
+        base->setLength(globalObject, 0, throwException);
+        return JSValue::encode(jsUndefined());
+    }
+
+    uint64_t actualStart = 0;
+    int64_t startInt64 = start;
+    if (startInt64 < 0) {
+        startInt64 += length;
+        actualStart = startInt64 < 0 ? 0 : static_cast<uint64_t>(startInt64);
+    } else
+        actualStart = std::min(static_cast<uint64_t>(startInt64), length);
+
+    uint64_t actualDeleteCount = 0;
+    if (deleteCount < 0)
+        actualDeleteCount = 0;
+    else if (deleteCount > static_cast<int64_t>(length - actualStart))
+        actualDeleteCount = length - actualStart;
+    else
+        actualDeleteCount = static_cast<uint64_t>(deleteCount);
+
+    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(globalObject, base, actualDeleteCount);
+    EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
+    if (speciesResult.first == SpeciesConstructResult::Exception)
+        return JSValue::encode(jsUndefined());
+
+    JSValue result;
+    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
+        // DFG / FTL tells the hint that the result array is not used at all.
+        // If this condition is met, we can skip creation of this array completely.
+        auto canFastSliceWithoutSideEffect = [](JSGlobalObject* globalObject, JSArray* base, uint64_t count) {
+            auto arrayType = base->indexingType() | IsArray;
+            switch (arrayType) {
+            case ArrayWithDouble:
+            case ArrayWithInt32:
+            case ArrayWithContiguous: {
+                if (count >= MIN_SPARSE_ARRAY_INDEX || base->structure()->holesMustForwardToPrototype(base))
+                    return false;
+
+                Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(arrayType);
+                if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
+                    return false;
+
+                return true;
+            }
+            case ArrayWithArrayStorage: {
+                if (count >= MIN_SPARSE_ARRAY_INDEX || base->structure()->holesMustForwardToPrototype(base))
+                    return false;
+
+                Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+                if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
+                    return false;
+                return true;
+            }
+            case ArrayWithUndecided: {
+                return true;
+            }
+            default:
+                return false;
+            }
+        };
+
+        if (!refCount && canFastSliceWithoutSideEffect(globalObject, base, actualDeleteCount))
+            result = jsUndefined();
+        else {
+            result = JSArray::fastSlice(globalObject, base, actualStart, actualDeleteCount);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+    }
+
+    if (UNLIKELY(!result)) {
+        JSObject* resultObject = nullptr;
+        if (speciesResult.first == SpeciesConstructResult::CreatedObject)
+            resultObject = speciesResult.second;
+        else {
+            if (UNLIKELY(actualDeleteCount > std::numeric_limits<uint32_t>::max())) {
+                throwRangeError(globalObject, scope, LengthExceededTheMaximumArrayLengthError);
+                return { };
+            }
+            resultObject = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), static_cast<uint32_t>(actualDeleteCount));
+            if (UNLIKELY(!resultObject)) {
+                throwOutOfMemoryError(globalObject, scope);
+                return { };
+            }
+        }
+        for (uint64_t k = 0; k < actualDeleteCount; ++k) {
+            JSValue v = getProperty(globalObject, base, k + actualStart);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (UNLIKELY(!v))
+                continue;
+            resultObject->putDirectIndex(globalObject, k, v, 0, PutDirectIndexShouldThrow);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+        setLength(globalObject, vm, resultObject, actualDeleteCount);
+        RETURN_IF_EXCEPTION(scope, { });
+        result = resultObject;
+    }
+
+    if (actualDeleteCount) {
+        shift<JSArray::ShiftCountForSplice>(globalObject, base, actualStart, actualDeleteCount, 0, length);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    scope.release();
+    setLength(globalObject, vm, base, length - actualDeleteCount);
+    return JSValue::encode(result);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationRegExpExecString, EncodedJSValue, (JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* argument))
 {
     SuperSamplerScope superSamplerScope(false);

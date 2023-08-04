@@ -2744,6 +2744,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case ArraySpliceExtract:
+        clobberWorld();
+        makeBytecodeTopForNode(node);
+        break;
+
     case ArrayIndexOf: {
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
