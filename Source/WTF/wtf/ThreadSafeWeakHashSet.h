@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/Algorithms.h>
-#include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WTF {
@@ -100,24 +100,21 @@ public:
         if (!retainedControlBlock)
             return;
         amortizedCleanupIfNeeded();
-        m_set.add({ WTFMove(retainedControlBlock), static_cast<const T*>(&value) });
+        m_map.add(static_cast<const T*>(&value), WTFMove(retainedControlBlock));
     }
 
     template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
     bool remove(const U& value)
     {
         Locker locker { m_lock };
-        ControlBlockRefPtr retainedControlBlock { &value.controlBlock() };
-        if (!retainedControlBlock)
-            return false;
         amortizedCleanupIfNeeded();
-        return m_set.remove({ WTFMove(retainedControlBlock), static_cast<const T*>(&value) });
+        return m_map.remove(static_cast<const T*>(&value));
     }
 
     void clear()
     {
         Locker locker { m_lock };
-        m_set.clear();
+        m_map.clear();
         m_operationCountSinceLastCleanup = 0;
     }
 
@@ -125,19 +122,15 @@ public:
     bool contains(const U& value) const
     {
         Locker locker { m_lock };
-        ControlBlockRefPtr retainedControlBlock { &value.controlBlock() };
-        if (!retainedControlBlock)
-            return false;
         amortizedCleanupIfNeeded();
-        return m_set.contains({ WTFMove(retainedControlBlock), static_cast<const T*>(&value) });
+        return m_map.contains(static_cast<const T*>(&value));
     }
 
     bool isEmptyIgnoringNullReferences() const
     {
         Locker locker { m_lock };
         amortizedCleanupIfNeeded();
-        for (auto& pair : m_set) {
-            auto& controlBlock = pair.first;
+        for (auto& controlBlock : m_map.values()) {
             if (!controlBlock->objectHasStartedDeletion())
                 return false;
         }
@@ -149,10 +142,10 @@ public:
         Vector<Ref<T>> strongReferences;
         {
             Locker locker { m_lock };
-            strongReferences.reserveInitialCapacity(m_set.size());
-            m_set.removeIf([&] (auto& pair) {
-                auto& controlBlock = pair.first;
-                auto* objectOfCorrectType = pair.second;
+            strongReferences.reserveInitialCapacity(m_map.size());
+            m_map.removeIf([&] (auto& pair) {
+                auto& controlBlock = pair.value;
+                auto* objectOfCorrectType = pair.key;
                 if (auto refPtr = controlBlock->template makeStrongReferenceIfPossible<T>(objectOfCorrectType)) {
                     strongReferences.uncheckedAppend(refPtr.releaseNonNull());
                     return false;
@@ -171,27 +164,36 @@ public:
             callback(item.get());
     }
 
+    unsigned sizeIncludingEmptyEntriesForTesting()
+    {
+        Locker locker { m_lock };
+        return m_map.size();
+    }
+
 private:
     ALWAYS_INLINE void moveFrom(ThreadSafeWeakHashSet&& other)
     {
         Locker locker { m_lock };
         Locker otherLocker { other.m_lock };
-        m_set = std::exchange(other.m_set, { });
+        m_map = std::exchange(other.m_map, { });
         m_operationCountSinceLastCleanup = std::exchange(other.m_operationCountSinceLastCleanup, 0);
     }
 
+    static constexpr unsigned initialMaxOperationCountWithoutCleanup = 512;
     ALWAYS_INLINE void amortizedCleanupIfNeeded() const WTF_REQUIRES_LOCK(m_lock)
     {
-        if (++m_operationCountSinceLastCleanup / 2 > m_set.size()) {
-            m_set.removeIf([] (auto& pair) {
-                return pair.first->objectHasStartedDeletion();
+        if (++m_operationCountSinceLastCleanup / 2 > m_map.size() || m_operationCountSinceLastCleanup > m_maxOperationCountWithoutCleanup) {
+            bool didRemove = m_map.removeIf([] (auto& pair) {
+                return pair.value->objectHasStartedDeletion();
             });
+            m_maxOperationCountWithoutCleanup = didRemove ? std::max(initialMaxOperationCountWithoutCleanup, m_maxOperationCountWithoutCleanup / 2) : m_maxOperationCountWithoutCleanup * 2;
             m_operationCountSinceLastCleanup = 0;
         }
     }
 
-    mutable HashSet<std::pair<ControlBlockRefPtr, const T*>> m_set WTF_GUARDED_BY_LOCK(m_lock);
+    mutable HashMap<const T*, ControlBlockRefPtr> m_map WTF_GUARDED_BY_LOCK(m_lock);
     mutable unsigned m_operationCountSinceLastCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    mutable unsigned m_maxOperationCountWithoutCleanup WTF_GUARDED_BY_LOCK(m_lock) { initialMaxOperationCountWithoutCleanup };
     mutable Lock m_lock;
 };
 

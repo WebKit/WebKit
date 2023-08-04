@@ -177,10 +177,11 @@ public:
 #endif
 
 private:
-    ALWAYS_INLINE void removeNullReferences()
+    ALWAYS_INLINE bool removeNullReferences()
     {
-        m_set.removeIf([] (auto& value) { return !value.get(); });
+        bool didRemove = m_set.removeIf([] (auto& value) { return !value.get(); });
         m_operationCountSinceLastCleanup = 0;
+        return didRemove;
     }
 
     ALWAYS_INLINE unsigned increaseOperationCountSinceLastCleanup(unsigned count = 1) const
@@ -189,15 +190,19 @@ private:
         return currentCount;
     }
 
+    static constexpr unsigned initialMaxOperationCountWithoutCleanup = 512;
     ALWAYS_INLINE void amortizedCleanupIfNeeded() const
     {
         unsigned currentCount = increaseOperationCountSinceLastCleanup();
-        if (currentCount / 2 > m_set.size())
-            const_cast<WeakHashSet&>(*this).removeNullReferences();
+        if (currentCount / 2 > m_set.size() || currentCount > m_maxOperationCountWithoutCleanup) {
+            bool didRemove = const_cast<WeakHashSet&>(*this).removeNullReferences();
+            m_maxOperationCountWithoutCleanup = didRemove ? std::max(initialMaxOperationCountWithoutCleanup, m_maxOperationCountWithoutCleanup / 2) : m_maxOperationCountWithoutCleanup * 2;
+        }
     }
 
     WeakPtrImplSet m_set;
     mutable unsigned m_operationCountSinceLastCleanup { 0 };
+    mutable unsigned m_maxOperationCountWithoutCleanup { initialMaxOperationCountWithoutCleanup };
 };
 
 template<typename MapFunction, typename T, typename WeakMapImpl>
