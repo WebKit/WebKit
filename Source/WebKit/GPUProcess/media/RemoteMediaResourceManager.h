@@ -72,7 +72,7 @@ private:
     void loadFailed(RemoteMediaResourceIdentifier, const WebCore::ResourceError&);
     void loadFinished(RemoteMediaResourceIdentifier, const WebCore::NetworkLoadMetrics&);
 
-    HashMap<RemoteMediaResourceIdentifier, RemoteMediaResource*> m_remoteMediaResources;
+    HashMap<RemoteMediaResourceIdentifier, ThreadSafeWeakPtr<RemoteMediaResource>> m_remoteMediaResources;
 };
 
 } // namespace WebKit
