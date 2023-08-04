@@ -489,6 +489,8 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/BackgroundFetchState.serialization.in \
 	Shared/DisplayListArgumentCoders.serialization.in \
 	Shared/EditorState.serialization.in \
+	Shared/Extensions/WebExtensionContextParameters.serialization.in \
+	Shared/Extensions/WebExtensionControllerParameters.serialization.in \
 	Shared/Extensions/WebExtensionEventListenerType.serialization.in \
 	Shared/FileSystemSyncAccessHandleInfo.serialization.in \
 	Shared/FocusedElementInformation.serialization.in \
@@ -519,9 +521,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/UserInterfaceIdiom.serialization.in \
 	Shared/WTFArgumentCoders.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
-	Shared/WebExtensionContextParameters.serialization.in \
 	Shared/WebEvent.serialization.in \
-	Shared/WebExtensionControllerParameters.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
 	Shared/WebPageCreationParameters.serialization.in \
 	Shared/WebPopupItem.serialization.in \
