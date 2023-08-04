@@ -1,0 +1,15 @@
+Basic test for the memory warning simulation mechanism.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Verify that we're not running under memory warning from the beginning.
+PASS internals.isUnderMemoryWarning is false
+Begin simulated memory warning.
+PASS internals.isUnderMemoryWarning is true
+End simulated memory warning.
+PASS internals.isUnderMemoryWarning is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
