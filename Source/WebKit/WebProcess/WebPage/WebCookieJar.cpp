@@ -44,6 +44,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/StorageSessionProvider.h>
 #include <optional>
+#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -177,14 +178,26 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, applyTrackingPreventionInNetworkProcess, cookieString, shouldRelaxThirdPartyCookieBlocking(webFrame)), 0);
 }
 
-void WebCookieJar::cookiesAdded(const String& host, const Vector<WebCore::Cookie>& cookies)
+void WebCookieJar::cookiesAdded(const String& host, Vector<WebCore::Cookie>&& cookies)
 {
-    m_cache.cookiesAdded(host, cookies);
+    auto it = m_changeListeners.find(host);
+    if (it == m_changeListeners.end())
+        return;
+
+    it->value.forEach([&](auto& listener) {
+        listener.cookiesAdded(host, cookies);
+    });
 }
 
-void WebCookieJar::cookiesDeleted(const String& host, const Vector<WebCore::Cookie>& cookies)
+void WebCookieJar::cookiesDeleted(const String& host, Vector<WebCore::Cookie>&& cookies)
 {
-    m_cache.cookiesDeleted(host, cookies);
+    auto it = m_changeListeners.find(host);
+    if (it == m_changeListeners.end())
+        return;
+
+    it->value.forEach([&](auto& listener) {
+        listener.cookiesDeleted(host, cookies);
+    });
 }
 
 void WebCookieJar::allCookiesDeleted()
@@ -309,5 +322,31 @@ void WebCookieJar::setCookieAsync(WebCore::Document& document, const URL& url, c
 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SetCookieFromDOMAsync(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, applyTrackingPreventionInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame), cookie), WTFMove(completionHandler));
 }
+
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+void WebCookieJar::addChangeListener(const String& host, const WebCore::CookieChangeListener& listener)
+{
+    auto& listenersForHost = m_changeListeners.add(host, WeakHashSet<CookieChangeListener> { }).iterator->value;
+    auto addResult = listenersForHost.add(listener);
+    if (listenersForHost.computeSize() > 1 || !addResult.isNewEntry)
+        return;
+
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SubscribeToCookieChangeNotifications(host), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void WebCookieJar::removeChangeListener(const String& host, const WebCore::CookieChangeListener& listener)
+{
+    auto it = m_changeListeners.find(host);
+    if (it == m_changeListeners.end())
+        return;
+
+    it->value.remove(listener);
+    if (!it->value.isEmptyIgnoringNullReferences())
+        return;
+
+    m_changeListeners.remove(it);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnsubscribeFromCookieChangeNotifications(host), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+#endif
 
 } // namespace WebKit

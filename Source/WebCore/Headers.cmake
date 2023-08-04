@@ -1325,6 +1325,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/CORPViolationReportBody.h
     loader/CanvasActivityRecord.h
     loader/ContentFilterClient.h
+    loader/CookieChangeListener.h
     loader/CookieJar.h
     loader/CrossOriginAccessControl.h
     loader/CrossOriginEmbedderPolicy.h

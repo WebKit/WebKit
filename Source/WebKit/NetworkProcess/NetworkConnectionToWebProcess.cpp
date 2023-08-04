@@ -90,6 +90,7 @@
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityPolicy.h>
 #include <optional>
+#include <wtf/HashSet.h>
 #include <wtf/LogInitialization.h>
 
 #if PLATFORM(COCOA)
@@ -887,7 +888,7 @@ void NetworkConnectionToWebProcess::setCookieFromDOMAsync(const URL& firstParty,
     completionHandler(result);
 }
 
-void NetworkConnectionToWebProcess::domCookiesForHost(const URL& url, bool subscribeToCookieChangeNotifications, CompletionHandler<void(const Vector<WebCore::Cookie>&)>&& completionHandler)
+void NetworkConnectionToWebProcess::domCookiesForHost(const URL& url, CompletionHandler<void(const Vector<WebCore::Cookie>&)>&& completionHandler)
 {
     auto host = url.host().toString();
     NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(HashSet<String>::isValidValue(host), completionHandler({ }));
@@ -897,28 +898,27 @@ void NetworkConnectionToWebProcess::domCookiesForHost(const URL& url, bool subsc
     if (!networkStorageSession)
         return completionHandler({ });
 
-#if HAVE(COOKIE_CHANGE_LISTENER_API)
-    if (subscribeToCookieChangeNotifications) {
-        ASSERT(!m_hostsWithCookieListeners.contains(host));
-        m_hostsWithCookieListeners.add(host);
-        networkStorageSession->startListeningForCookieChangeNotifications(*this, host);
-    }
-#else
-    UNUSED_PARAM(subscribeToCookieChangeNotifications);
-#endif
-
     completionHandler(networkStorageSession->domCookiesForHost(host));
 }
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
 
-void NetworkConnectionToWebProcess::unsubscribeFromCookieChangeNotifications(const HashSet<String>& hosts)
+void NetworkConnectionToWebProcess::subscribeToCookieChangeNotifications(const String& host)
 {
-    bool removed = m_hostsWithCookieListeners.remove(hosts.begin(), hosts.end());
+    ASSERT(!m_hostsWithCookieListeners.contains(host));
+    m_hostsWithCookieListeners.add(host);
+
+    if (auto* networkStorageSession = storageSession())
+        networkStorageSession->startListeningForCookieChangeNotifications(*this, host);
+}
+
+void NetworkConnectionToWebProcess::unsubscribeFromCookieChangeNotifications(const String& host)
+{
+    bool removed = m_hostsWithCookieListeners.remove(host);
     ASSERT_UNUSED(removed, removed);
 
     if (auto* networkStorageSession = storageSession())
-        networkStorageSession->stopListeningForCookieChangeNotifications(*this, hosts);
+        networkStorageSession->stopListeningForCookieChangeNotifications(*this, HashSet<String> { host });
 }
 
 void NetworkConnectionToWebProcess::cookiesAdded(const String& host, const Vector<WebCore::Cookie>& cookies)
