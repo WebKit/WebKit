@@ -76,15 +76,6 @@
     --inline-controls-bar-margin: 12px;
 }
 
-.media-controls.vision.fullscreen > .controls-bar.top-right,
-.media-controls.vision.fullscreen > .controls-bar.top-right * {
-    --inline-controls-bar-margin: 2px;
-}
-
-.media-controls.vision.fullscreen > .controls-bar.top-right {
-    padding: 0 0 0 11px;
-}
-
 /* Captions */
 
 :host(video[controls]) .visible-controls-bar:has(+ .vision) {
@@ -112,11 +103,21 @@
 
 /* Simple layout controls bar */
 
+.media-controls.vision > .controls-bar.top-right,
+.media-controls.vision > .controls-bar.top-right * {
+    --inline-controls-bar-margin: 2px;
+}
+
+.media-controls.vision > .controls-bar.top-right {
+    padding: 0 0 0 11px;
+}
+
 .media-controls.vision .controls-bar.simple-layout {
     display: flex;
     align-items: center;
 }
 
+.media-controls.vision .controls-bar.simple-layout .volume-container > .slider.vision.volume,
 .media-controls.vision .controls-bar.simple-layout > *:not(.background-tint) {
     position: relative;
     margin-right: var(--inline-controls-bar-margin);
@@ -124,6 +125,24 @@
 
 .media-controls.vision .controls-bar.simple-layout > *:last-child {
     margin-right: 0 !important;
+}
+
+.media-controls.vision .controls-bar.simple-layout.top-right > .overflow {
+    margin: 0 0 0 5px;
+}
+
+.media-controls.vision .volume-container {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    padding: 0 0 0 11px;
+}
+
+.media-controls.vision .volume-container > .mute.bar {
+    position: relative;
+    width: auto !important;
+    aspect-ratio: 1;
+    border-radius: 50%;
 }
 
 /* Background tint */
@@ -137,6 +156,7 @@
     display: none;
 }
 
+.media-controls.vision:not(.audio) .volume-container > .background-tint > .blur,
 .media-controls.vision:not(.audio) button > .background-tint > .blur {
     background-color: rgba(255, 255, 255, 0.15);
     -webkit-backdrop-filter: saturate(20%) blur(50px);
