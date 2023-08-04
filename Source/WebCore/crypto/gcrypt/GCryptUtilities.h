@@ -39,6 +39,9 @@ namespace WebCore {
 
 namespace CryptoConstants {
 
+static const std::array<uint8_t, 12> s_ed25519Identifier { { "1.3.101.112" } };
+static const std::array<uint8_t, 12> s_x25519Identifier { { "1.3.101.110" } };
+
 static const std::array<uint8_t, 18> s_ecPublicKeyIdentifier { { "1.2.840.10045.2.1" } };
 static const std::array<uint8_t, 13> s_ecDHIdentifier { { "1.3.132.1.12" } };
 

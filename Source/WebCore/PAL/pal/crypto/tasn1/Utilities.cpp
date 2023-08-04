@@ -57,6 +57,7 @@ static asn1_node asn1Definitions()
         { "Version", 1073741827, nullptr },
         { "PrivateKeyAlgorithmIdentifier", 1073741826, "AlgorithmIdentifier"},
         { "PrivateKey", 1073741831, nullptr },
+        { "CurvePrivateKey", 1073741831, nullptr },
         { "Attributes", 1610612751, nullptr },
         { nullptr, 2, "Attribute"},
         { "Attribute", 1610612741, nullptr },

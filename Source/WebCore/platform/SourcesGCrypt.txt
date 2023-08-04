@@ -28,6 +28,7 @@ crypto/gcrypt/CryptoAlgorithmAES_GCMGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmAES_KWGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmECDHGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmECDSAGCrypt.cpp
+crypto/gcrypt/CryptoAlgorithmEd25519GCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmHKDFGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmHMACGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmPBKDF2GCrypt.cpp
@@ -37,6 +38,7 @@ crypto/gcrypt/CryptoAlgorithmRSA_OAEPGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmRSA_PSSGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmRegistryGCrypt.cpp
 crypto/gcrypt/CryptoKeyECGCrypt.cpp
+crypto/gcrypt/CryptoKeyOKPGCrypt.cpp
 crypto/gcrypt/CryptoKeyRSAGCrypt.cpp
 crypto/gcrypt/GCryptUtilities.cpp
 crypto/gcrypt/SerializedCryptoKeyWrapGCrypt.cpp
