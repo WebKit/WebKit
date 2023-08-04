@@ -125,6 +125,7 @@ public:
     WebCore::NetworkStorageSession* networkStorageSession() const;
 
     void registerNetworkDataTask(NetworkDataTask&);
+    void unregisterNetworkDataTask(NetworkDataTask&);
 
     void destroyPrivateClickMeasurementStore(CompletionHandler<void()>&&);
 
@@ -267,6 +268,7 @@ public:
 #endif
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    std::optional<int64_t> bytesPerSecondLimit() const { return m_bytesPerSecondLimit; }
     void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
 #endif
 
