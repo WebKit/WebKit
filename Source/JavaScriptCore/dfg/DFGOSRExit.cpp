@@ -272,8 +272,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         debugInfo->codeBlock = jit.codeBlock();
         debugInfo->kind = exit.m_kind;
         debugInfo->bytecodeIndex = exit.m_codeOrigin.bytecodeIndex();
-
-        jit.debugCall(vm, operationDebugPrintSpeculationFailure, debugInfo);
+        jit.probe(tagCFunction<JITProbePtrTag>(operationDebugPrintSpeculationFailure), debugInfo, SavedFPWidth::DontSaveVectors);
     }
 
     // Perform speculation recovery. This only comes into play when an operation
@@ -882,15 +881,16 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     adjustAndJumpToTarget(vm, jit, exit);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (CallFrame* callFrame, void* debugInfoRaw, void* scratch))
+JSC_DEFINE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (Probe::Context& context))
 {
-    VM& vm = callFrame->deprecatedVM();
-    NativeCallFrameTracer tracer(vm, callFrame);
-    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(scratch), GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
-
-    SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
+    auto* debugInfo = context.arg<SpeculationFailureDebugInfo*>();
     CodeBlock* codeBlock = debugInfo->codeBlock;
     CodeBlock* alternative = codeBlock->alternative();
+    CallFrame* callFrame = bitwise_cast<CallFrame*>(context.fp());
+
+    VM& vm = codeBlock->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
+
     dataLog("Speculation failure in ", *codeBlock);
     dataLog(" @ exit #", vm.osrExitIndex, " (", debugInfo->bytecodeIndex, ", ", exitKindToString(debugInfo->kind), ") with ");
     if (alternative) {
@@ -902,21 +902,18 @@ JSC_DEFINE_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (CallFrame
         dataLog("no alternative code block (i.e. we've been jettisoned)");
     dataLog(", osrExitCounter = ", codeBlock->osrExitCounter(), "\n");
     dataLog("    GPRs at time of exit:");
-    char* scratchPointer = static_cast<char*>(scratch);
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
         GPRReg gpr = GPRInfo::toRegister(i);
-        dataLog(" ", GPRInfo::debugName(gpr), ":", RawPointer(*reinterpret_cast_ptr<void**>(scratchPointer)));
-        scratchPointer += sizeof(EncodedJSValue);
+        dataLog(" ", GPRInfo::debugName(gpr), ":", RawPointer(context.gpr<void*>(gpr)));
     }
     dataLog("\n");
     dataLog("    FPRs at time of exit:");
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         FPRReg fpr = FPRInfo::toRegister(i);
         dataLog(" ", FPRInfo::debugName(fpr), ":");
-        uint64_t bits = *reinterpret_cast_ptr<uint64_t*>(scratchPointer);
-        double value = *reinterpret_cast_ptr<double*>(scratchPointer);
+        uint64_t bits = context.fpr<uint64_t>(fpr);
+        double value = bitwise_cast<double>(bits);
         dataLogF("%llx:%lf", static_cast<long long>(bits), value);
-        scratchPointer += sizeof(EncodedJSValue);
     }
     dataLog("\n");
 }
