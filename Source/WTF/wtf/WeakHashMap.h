@@ -351,11 +351,14 @@ private:
         return currentCount;
     }
 
+    static constexpr unsigned initialMaxOperationCountWithoutCleanup = 512;
     ALWAYS_INLINE void amortizedCleanupIfNeeded(unsigned operationsPerformed = 1) const
     {
         unsigned currentCount = increaseOperationCountSinceLastCleanup(operationsPerformed);
-        if (currentCount / 2 > m_map.size())
-            const_cast<WeakHashMap&>(*this).removeNullReferences();
+        if (currentCount / 2 > m_map.size() || currentCount > m_maxOperationCountWithoutCleanup) {
+            bool didRemove = const_cast<WeakHashMap&>(*this).removeNullReferences();
+            m_maxOperationCountWithoutCleanup = didRemove ? std::max(initialMaxOperationCountWithoutCleanup, m_maxOperationCountWithoutCleanup / 2) : m_maxOperationCountWithoutCleanup * 2;
+        }
     }
 
     template <typename T>
@@ -375,6 +378,7 @@ private:
 
     WeakHashImplMap m_map;
     mutable unsigned m_operationCountSinceLastCleanup { 0 }; // FIXME: Store this as a HashTable meta data.
+    mutable unsigned m_maxOperationCountWithoutCleanup { initialMaxOperationCountWithoutCleanup };
 
     template <typename, typename, typename, typename> friend class WeakHashMapIteratorBase;
 };

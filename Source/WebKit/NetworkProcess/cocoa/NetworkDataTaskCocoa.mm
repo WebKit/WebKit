@@ -327,8 +327,6 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     if (parameters.networkActivityTracker)
         m_task.get()._nw_activity = parameters.networkActivityTracker->getPlatformObject();
 #endif
-
-    m_session->registerNetworkDataTask(*this);
 }
 
 NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
