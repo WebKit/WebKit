@@ -402,6 +402,8 @@
 		7B76083F289832BD000012A1 /* TransformFeedbackImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */; };
 		7B81955B28CF63D800C7ABCD /* MemoryShaderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */; };
 		7B81955C28CF63D800C7ABCD /* MemoryShaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */; };
+		7BC689152A7BD3AE0022260B /* angle_commit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BC689132A7BD3AE0022260B /* angle_commit.h */; };
+		7BC689162A7BD3AE0022260B /* ANGLEShaderProgramVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BC689142A7BD3AE0022260B /* ANGLEShaderProgramVersion.h */; };
 		7BCF49C528AD1C8C0090D34A /* apple_platform_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */; };
 		7BCF49C628AD1C8C0090D34A /* CircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */; };
 		7BCF49C728AD1C8C0090D34A /* apple_platform_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */; };
@@ -1473,6 +1475,8 @@
 		7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFeedbackImpl.cpp; sourceTree = "<group>"; };
 		7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryShaderCache.cpp; sourceTree = "<group>"; };
 		7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryShaderCache.h; sourceTree = "<group>"; };
+		7BC689132A7BD3AE0022260B /* angle_commit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = angle_commit.h; path = WebKit/angle_commit.h; sourceTree = "<group>"; };
+		7BC689142A7BD3AE0022260B /* ANGLEShaderProgramVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ANGLEShaderProgramVersion.h; path = WebKit/ANGLEShaderProgramVersion.h; sourceTree = "<group>"; };
 		7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = apple_platform_utils.mm; sourceTree = "<group>"; };
 		7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircularBuffer.h; sourceTree = "<group>"; };
 		7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform_utils.h; sourceTree = "<group>"; };
@@ -2854,6 +2858,8 @@
 		7B037F8E29E98CDC00D23E74 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				7BC689132A7BD3AE0022260B /* angle_commit.h */,
+				7BC689142A7BD3AE0022260B /* ANGLEShaderProgramVersion.h */,
 				7B037F9129E98CF100D23E74 /* SourcesCGL-mm.mm */,
 				7B037F9329E98CF100D23E74 /* SourcesCGL.cpp */,
 				7B037F8F29E98CF100D23E74 /* SourcesEAGL.cpp */,
@@ -3250,8 +3256,10 @@
 				FFD00237274497C4002BE3BC /* AddAndTrueToLoopCondition.h in Headers */,
 				31CDFF5C2491848C00486F27 /* aligned_memory.h in Headers */,
 				7B19599326C3C22000C09322 /* android_util.h in Headers */,
+				7BC689152A7BD3AE0022260B /* angle_commit.h in Headers */,
 				31CDFE11249183F000486F27 /* angle_gl.h in Headers */,
 				FFD0029827449E12002BE3BC /* angle_version_info.h in Headers */,
+				7BC689162A7BD3AE0022260B /* ANGLEShaderProgramVersion.h in Headers */,
 				31CD007F249184FD00486F27 /* angletypes.h in Headers */,
 				31CDFF542491848C00486F27 /* angleutils.h in Headers */,
 				7BCF49C728AD1C8C0090D34A /* apple_platform_utils.h in Headers */,
