@@ -294,16 +294,20 @@ public:
 
     void checkConsistency() { } // To be implemented.
 
-    void removeNullReferences()
+    bool removeNullReferences()
     {
+        bool didRemove = false;
         auto it = m_set.begin();
         while (it != m_set.end()) {
             auto currentIt = it;
             ++it;
-            if (!currentIt->get())
+            if (!currentIt->get()) {
                 m_set.remove(currentIt);
+                didRemove = true;
+            }
         }
         m_operationCountSinceLastCleanup = 0;
+        return didRemove;
     }
 
 private:
@@ -313,15 +317,19 @@ private:
         return currentCount;
     }
 
+    static constexpr unsigned initialMaxOperationCountWithoutCleanup = 512;
     ALWAYS_INLINE void amortizedCleanupIfNeeded(unsigned count = 1) const
     {
         unsigned currentCount = increaseOperationCountSinceLastCleanup(count);
-        if (currentCount / 2 > m_set.size())
-            const_cast<WeakListHashSet&>(*this).removeNullReferences();
+        if (currentCount / 2 > m_set.size() || currentCount > m_maxOperationCountWithoutCleanup) {
+            bool didRemove = const_cast<WeakListHashSet&>(*this).removeNullReferences();
+            m_maxOperationCountWithoutCleanup = didRemove ? std::max(initialMaxOperationCountWithoutCleanup, m_maxOperationCountWithoutCleanup / 2) : m_maxOperationCountWithoutCleanup * 2;
+        }
     }
 
     WeakPtrImplSet m_set;
     mutable unsigned m_operationCountSinceLastCleanup { 0 };
+    mutable unsigned m_maxOperationCountWithoutCleanup { initialMaxOperationCountWithoutCleanup };
 };
 
 template<typename MapFunction, typename T, typename WeakMapImpl>
