@@ -75,6 +75,7 @@ MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivat
 
 MediaRecorderPrivateAVFImpl::~MediaRecorderPrivateAVFImpl()
 {
+    m_writer->close();
 }
 
 void MediaRecorderPrivateAVFImpl::startRecording(StartRecordingCallback&& callback)
