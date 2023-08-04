@@ -190,7 +190,7 @@ class InstallHooks(Command):
             with open(source_path, 'r') as f:
                 from jinja2 import Template
                 contents = Template(f.read()).render(
-                    location=source_path,
+                    location=os.path.relpath(source_path, repository.root_path),
                     python=os.path.basename(sys.executable),
                     prefer_radar=bool(radar.Tracker.radarclient()),
                     default_pre_push_mode="'{}'".format(getattr(args, 'mode', cls.MODES[0])),
