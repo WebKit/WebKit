@@ -1438,9 +1438,81 @@ test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
 test/intl402/NumberFormat/prototype/format/value-decimal-string.js:
   default: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «1.0000000000000001») to be true'
+test/intl402/NumberFormat/prototype/formatRange/builtin.js:
+  default: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
+  strict mode: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
+test/intl402/NumberFormat/prototype/formatRange/en-US.js:
+  default: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+  strict mode: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+test/intl402/NumberFormat/prototype/formatRange/invoked-as-func.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/intl402/NumberFormat/prototype/formatRange/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/NumberFormat/prototype/formatRange/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/NumberFormat/prototype/formatRange/nan-arguments-throws.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/intl402/NumberFormat/prototype/formatRange/prop-desc.js:
+  default: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRange` is `function` Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRange` is `function` Expected SameValue(«undefined», «function») to be true'
+test/intl402/NumberFormat/prototype/formatRange/pt-PT.js:
+  default: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+  strict mode: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(3, 5)', 'nf.formatRange' is undefined)"
+test/intl402/NumberFormat/prototype/formatRange/x-greater-than-y-not-throws.js:
+  default: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(23, 12)', 'nf.formatRange' is undefined)"
+  strict mode: "TypeError: nf.formatRange is not a function. (In 'nf.formatRange(23, 12)', 'nf.formatRange' is undefined)"
+test/intl402/NumberFormat/prototype/formatRangeToParts/builtin.js:
+  default: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
+  strict mode: 'Test262Error: The [[Class]] internal property of a built-in function must be "Function". Expected SameValue(«[object Undefined]», «[object Function]») to be true'
 test/intl402/NumberFormat/prototype/formatRangeToParts/en-US.js:
-  default: 'Test262Error: Expected SameValue(«2», «3») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«2», «3») to be true'
+  default: "TypeError: nf.formatRangeToParts is not a function. (In 'nf.formatRangeToParts(3, 5)', 'nf.formatRangeToParts' is undefined)"
+  strict mode: "TypeError: nf.formatRangeToParts is not a function. (In 'nf.formatRangeToParts(3, 5)', 'nf.formatRangeToParts' is undefined)"
+test/intl402/NumberFormat/prototype/formatRangeToParts/invoked-as-func.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/intl402/NumberFormat/prototype/formatRangeToParts/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/NumberFormat/prototype/formatRangeToParts/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/NumberFormat/prototype/formatRangeToParts/nan-arguments-throws.js:
+  default: 'Test262Error: Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/intl402/NumberFormat/prototype/formatRangeToParts/prop-desc.js:
+  default: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRangeToParts` is `function` Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: `typeof Intl.NumberFormat.prototype.formatRangeToParts` is `function` Expected SameValue(«undefined», «function») to be true'
+test/intl402/NumberFormat/prototype/formatRangeToParts/x-greater-than-y-not-throws.js:
+  default: "TypeError: nf.formatRangeToParts is not a function. (In 'nf.formatRangeToParts(23, 12)', 'nf.formatRangeToParts' is undefined)"
+  strict mode: "TypeError: nf.formatRangeToParts is not a function. (In 'nf.formatRangeToParts(23, 12)', 'nf.formatRangeToParts' is undefined)"
+test/intl402/NumberFormat/test-option-roundingPriority-mixed-options.js:
+  default: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"minimumSignificantDigits":2,"minimumFractionDigits":2,"roundingPriority":"morePrecision","userGrouping":false} is ١٫٠٠; expected ١٫٠.'
+  strict mode: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"minimumSignificantDigits":2,"minimumFractionDigits":2,"roundingPriority":"morePrecision","userGrouping":false} is ١٫٠٠; expected ١٫٠.'
+test/intl402/PluralRules/prototype/selectRange/default-en-us.js:
+  default: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
+  strict mode: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
+test/intl402/PluralRules/prototype/selectRange/invoked-as-func.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
+test/intl402/PluralRules/prototype/selectRange/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/PluralRules/prototype/selectRange/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/intl402/PluralRules/prototype/selectRange/nan-arguments-throws.js:
+  default: 'Test262Error: NaN/Number Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: NaN/Number Expected a RangeError but got a TypeError'
+test/intl402/PluralRules/prototype/selectRange/prop-desc.js:
+  default: 'Test262Error: `typeof Intl.PluralRules.prototype.selectRange` is `function` Expected SameValue(«undefined», «function») to be true'
+  strict mode: 'Test262Error: `typeof Intl.PluralRules.prototype.selectRange` is `function` Expected SameValue(«undefined», «function») to be true'
+test/intl402/PluralRules/prototype/selectRange/x-greater-than-y-not-throws.js:
+  default: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(201, 102)', 'pr.selectRange' is undefined)"
+  strict mode: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(201, 102)', 'pr.selectRange' is undefined)"
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-generator.js:
