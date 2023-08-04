@@ -28,6 +28,8 @@ sources:
   path: patches/fdo-0009-gst-plugins-bad-Enable-x265-encoder.patch
 - kind: patch
   path: patches/fdo-0001-gst-plugins-base-Vendor-patch-scheduled-for-1.22.6.patch
+- kind: patch
+  path: patches/fdo-0001-gst-plugins-base-Vendor-patches-scheduled-for-1.22.6.patch
 config:
   options:
     target_arch: '%{arch}'
