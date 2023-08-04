@@ -640,14 +640,12 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<Gra
     m_contextGroup = WebGLContextGroup::create();
     m_contextGroup->addContext(*this);
 
-    m_context->getIntegerv(GraphicsContextGL::MAX_VIEWPORT_DIMS, m_maxViewportDims);
-
-    setupFlags();
-
     registerWithWebGLStateTracker();
-    if (canvas.isHTMLCanvasElement())
+    if (auto* canvas = htmlCanvas()) {
         m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
-
+        if (Page* page = canvas->document().page())
+            m_synthesizedErrorsToConsole = page->settings().webGLErrorsToConsoleEnabled();
+    }
     addActivityStateChangeObserverIfNecessary();
 }
 
@@ -675,7 +673,7 @@ OffscreenCanvas* WebGLRenderingContextBase::offscreenCanvas()
 // and to discard temporary GL contexts (e.g. feature detection).
 void WebGLRenderingContextBase::checkForContextLossHandling()
 {
-    auto canvas = htmlCanvas();
+    auto* canvas = htmlCanvas();
     if (!canvas)
         return;
 
@@ -692,7 +690,7 @@ void WebGLRenderingContextBase::checkForContextLossHandling()
 
 void WebGLRenderingContextBase::registerWithWebGLStateTracker()
 {
-    auto canvas = htmlCanvas();
+    auto* canvas = htmlCanvas();
     if (!canvas)
         return;
 
@@ -771,6 +769,8 @@ void WebGLRenderingContextBase::initializeNewContext()
     m_maxCubeMapTextureSize = m_context->getInteger(GraphicsContextGL::MAX_CUBE_MAP_TEXTURE_SIZE);
     m_maxCubeMapTextureLevel = WebGLTexture::computeLevelCount(m_maxCubeMapTextureSize, m_maxCubeMapTextureSize);
     m_maxRenderbufferSize = m_context->getInteger(GraphicsContextGL::MAX_RENDERBUFFER_SIZE);
+    m_context->getIntegerv(GraphicsContextGL::MAX_VIEWPORT_DIMS, m_maxViewportDims);
+    m_isDepthStencilSupported = m_context->isExtensionEnabled("GL_OES_packed_depth_stencil"_s) || m_context->isExtensionEnabled("GL_ANGLE_depth_texture"_s);
 
     // These two values from EXT_draw_buffers are lazily queried.
     m_maxDrawBuffers = 0;
@@ -799,29 +799,6 @@ void WebGLRenderingContextBase::initializeNewContext()
     ADD_VALUES_TO_SET(m_supportedTexImageSourceTypes, supportedTypesES2);
 
     initializeVertexArrayObjects();
-}
-
-void WebGLRenderingContextBase::setupFlags()
-{
-    ASSERT(m_context);
-
-    auto canvas = htmlCanvas();
-    if (canvas) {
-        if (Page* page = canvas->document().page())
-            m_synthesizedErrorsToConsole = page->settings().webGLErrorsToConsoleEnabled();
-    }
-
-    // FIXME: With ANGLE as a backend this probably isn't needed any more. Unfortunately
-    // turning it off causes problems.
-    m_isGLES2Compliant = m_context->isGLES2Compliant();
-    if (m_isGLES2Compliant) {
-        m_isGLES2NPOTStrict = !m_context->isExtensionEnabled("GL_OES_texture_npot"_s);
-        m_isDepthStencilSupported = m_context->isExtensionEnabled("GL_OES_packed_depth_stencil"_s) || m_context->isExtensionEnabled("GL_ANGLE_depth_texture"_s);
-    } else {
-        m_isGLES2NPOTStrict = true;
-        m_isDepthStencilSupported = m_context->isExtensionEnabled("GL_EXT_packed_depth_stencil"_s) || m_context->isExtensionEnabled("GL_ANGLE_depth_texture"_s);
-    }
-    m_isRobustnessEXTSupported = m_context->isExtensionEnabled("GL_EXT_robustness"_s);
 }
 
 void WebGLRenderingContextBase::addCompressedTextureFormat(GCGLenum format)
@@ -2116,10 +2093,10 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram
     if (!m_context->getActiveUniform(program.object(), index, info))
         return nullptr;
     // FIXME: Do we still need this for the ANGLE backend?
-    if (!isGLES2Compliant())
+    if (!isWebGL2()) {
         if (info.size > 1 && !info.name.endsWith("[0]"_s))
             info.name = makeString(info.name, "[0]"_s);
-
+    }
     LOG(WebGL, "Returning active uniform %d: %s", index, info.name.utf8().data());
 
     return WebGLActiveInfo::create(info.name, info.type, info.size);
@@ -3219,7 +3196,7 @@ bool WebGLRenderingContextBase::linkProgramWithoutInvalidatingAttribLocations(We
 void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promise)
 {
     // Returning an exception in these two checks is not part of the spec.
-    auto canvas = htmlCanvas();
+    auto* canvas = htmlCanvas();
     if (!canvas) {
         m_isXRCompatible = false;
         promise.reject(Exception { InvalidStateError });
@@ -5734,7 +5711,6 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     setGraphicsContextGL(context.releaseNonNull());
     addActivityStateChangeObserverIfNecessary();
     m_contextLostState = std::nullopt;
-    setupFlags();
     initializeNewContext();
 
     if (!isContextLost()) {
