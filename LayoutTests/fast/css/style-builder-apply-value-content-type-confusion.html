@@ -1,0 +1,9 @@
+<script>
+  onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    d.attributeStyleMap.set('content', 'url(A)');
+  };
+</script>
+<div id="d"></div>
+<p>PASS if no crash.</p>
