@@ -84,7 +84,7 @@ public:
      * equal array of run values.
      * @stable ICU 4.4
      */
-    UBool operator==(const FieldPositionIterator&) const;
+    bool operator==(const FieldPositionIterator&) const;
 
     /**
      * Returns the complement of the result of operator==
@@ -92,11 +92,11 @@ public:
      * @return the complement of the result of operator==
      * @stable ICU 4.4
      */
-    UBool operator!=(const FieldPositionIterator& rhs) const { return !operator==(rhs); }
+    bool operator!=(const FieldPositionIterator& rhs) const { return !operator==(rhs); }
 
     /**
      * If the current position is valid, updates the FieldPosition values, advances the iterator,
-     * and returns TRUE, otherwise returns FALSE.
+     * and returns true, otherwise returns false.
      * @stable ICU 4.4
      */
     UBool next(FieldPosition& fp);

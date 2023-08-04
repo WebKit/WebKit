@@ -30,8 +30,11 @@
 #include "unicode/utypes.h"
 #include "unicode/ucnv.h"
 #include "unicode/utrans.h"
-#include "unicode/localpointer.h"
 #include "unicode/unum.h"
+
+#if U_SHOW_CPLUSPLUS_API
+#include "unicode/localpointer.h"
+#endif   // U_SHOW_CPLUSPLUS_API
 
 #if !UCONFIG_NO_CONVERSION
 
@@ -48,7 +51,7 @@
     wastes a lot of time and space.
  * Test stdin and stdout with the u_f* functions
  * Testing should be done for reading and writing multi-byte encodings,
-    and make sure that a character that is contained across buffer boundries
+    and make sure that a character that is contained across buffer boundaries
     works even for incomplete characters.
  * Make sure that the last character is flushed when the file/string is closed.
  * snprintf should follow the C99 standard for the return value, which is
@@ -99,7 +102,7 @@
  * <p>This API provides an stdio-like API wrapper around ICU's other
  * formatting and parsing APIs. It is meant to ease the transition of adding
  * Unicode support to a preexisting applications using stdio. The following
- * is a small list of noticable differences between stdio and ICU I/O's
+ * is a small list of noticeable differences between stdio and ICU I/O's
  * ustdio implementation.</p>
  *
  * <ul>
@@ -228,18 +231,18 @@ typedef enum {
  * That is, data written to a UFILE will be formatted using the conventions
  * specified by that UFILE's Locale; this data will be in the character set
  * specified by that UFILE's codepage.
- * @param filename The name of the file to open.
+ * @param filename The name of the file to open. Must be 0-terminated.
  * @param perm The read/write permission for the UFILE; one of "r", "w", "rw"
  * @param locale The locale whose conventions will be used to format 
  * and parse output. If this parameter is NULL, the default locale will 
  * be used.
  * @param codepage The codepage in which data will be written to and
- * read from the file. If this paramter is NULL the system default codepage
+ * read from the file. If this parameter is NULL the system default codepage
  * will be used.
  * @return A new UFILE, or NULL if an error occurred.
  * @stable ICU 3.0
  */
-U_STABLE UFILE* U_EXPORT2
+U_CAPI UFILE* U_EXPORT2
 u_fopen(const char    *filename,
     const char    *perm,
     const char    *locale,
@@ -251,18 +254,18 @@ u_fopen(const char    *filename,
  * That is, data written to a UFILE will be formatted using the conventions
  * specified by that UFILE's Locale; this data will be in the character set
  * specified by that UFILE's codepage.
- * @param filename The name of the file to open.
+ * @param filename The name of the file to open. Must be 0-terminated.
  * @param perm The read/write permission for the UFILE; one of "r", "w", "rw"
  * @param locale The locale whose conventions will be used to format
  * and parse output. If this parameter is NULL, the default locale will
  * be used.
  * @param codepage The codepage in which data will be written to and
- * read from the file. If this paramter is NULL the system default codepage
+ * read from the file. If this parameter is NULL the system default codepage
  * will be used.
  * @return A new UFILE, or NULL if an error occurred.
  * @stable ICU 54
  */
-U_STABLE UFILE* U_EXPORT2
+U_CAPI UFILE* U_EXPORT2
 u_fopen_u(const UChar    *filename,
     const char    *perm,
     const char    *locale,
@@ -278,13 +281,13 @@ u_fopen_u(const UChar    *filename,
  * and parse output. If this parameter is NULL, the default locale will 
  * be used.
  * @param codepage The codepage in which data will be written to and
- * read from the file. If this paramter is NULL, data will be written and
+ * read from the file. If this parameter is NULL, data will be written and
  * read using the default codepage for <TT>locale</TT>, unless <TT>locale</TT>
  * is NULL, in which case the system default codepage will be used.
  * @return A new UFILE, or NULL if an error occurred.
  * @stable ICU 3.0
  */
-U_STABLE UFILE* U_EXPORT2
+U_CAPI UFILE* U_EXPORT2
 u_finit(FILE        *f,
     const char    *locale,
     const char    *codepage);
@@ -298,14 +301,14 @@ u_finit(FILE        *f,
  * and parse output. If this parameter is NULL, the default locale will
  * be used.
  * @param codepage The codepage in which data will be written to and
- * read from the file. If this paramter is NULL, data will be written and
+ * read from the file. If this parameter is NULL, data will be written and
  * read using the default codepage for <TT>locale</TT>, unless <TT>locale</TT>
  * is NULL, in which case the system default codepage will be used.
  * @return A new UFILE, or NULL if an error occurred. If an error occurs
  * the ownership of the FILE* stream remains with the caller.
  * @stable ICU 4.4
  */
-U_STABLE UFILE* U_EXPORT2
+U_CAPI UFILE* U_EXPORT2
 u_fadopt(FILE     *f,
     const char    *locale,
     const char    *codepage);
@@ -324,7 +327,7 @@ u_fadopt(FILE     *f,
  * @return A new UFILE, or NULL if an error occurred.
  * @stable ICU 3.0
  */
-U_STABLE UFILE* U_EXPORT2
+U_CAPI UFILE* U_EXPORT2
 u_fstropen(UChar      *stringBuf,
            int32_t     capacity,
            const char *locale);
@@ -335,7 +338,7 @@ u_fstropen(UChar      *stringBuf,
  * @stable ICU 3.0
  * @see u_fflush
  */
-U_STABLE void U_EXPORT2
+U_CAPI void U_EXPORT2
 u_fclose(UFILE *file);
 
 #if U_SHOW_CPLUSPLUS_API
@@ -360,12 +363,12 @@ U_NAMESPACE_END
 /**
  * Tests if the UFILE is at the end of the file stream.
  * @param f The UFILE from which to read.
- * @return Returns TRUE after the first read operation that attempts to
- * read past the end of the file. It returns FALSE if the current position is
+ * @return Returns true after the first read operation that attempts to
+ * read past the end of the file. It returns false if the current position is
  * not end of file.
  * @stable ICU 3.0
 */
-U_STABLE UBool U_EXPORT2
+U_CAPI UBool U_EXPORT2
 u_feof(UFILE  *f);
 
 /**
@@ -378,7 +381,7 @@ u_feof(UFILE  *f);
  * @param file The UFILE to flush.
  * @stable ICU 3.0
  */
-U_STABLE void U_EXPORT2
+U_CAPI void U_EXPORT2
 u_fflush(UFILE *file);
 
 /**
@@ -386,7 +389,7 @@ u_fflush(UFILE *file);
  * @param file The UFILE to rewind.
  * @stable ICU 3.0
  */
-U_STABLE void
+U_CAPI void
 u_frewind(UFILE *file);
 
 /**
@@ -395,7 +398,7 @@ u_frewind(UFILE *file);
  * @return A FILE*, owned by the UFILE. (The FILE <EM>must not</EM> be modified or closed)
  * @stable ICU 3.0
  */
-U_STABLE FILE* U_EXPORT2
+U_CAPI FILE* U_EXPORT2
 u_fgetfile(UFILE *f);
 
 #if !UCONFIG_NO_FORMATTING
@@ -408,7 +411,7 @@ u_fgetfile(UFILE *f);
  * @return The locale whose conventions are used to format and parse output.
  * @stable ICU 3.0
  */
-U_STABLE const char* U_EXPORT2
+U_CAPI const char* U_EXPORT2
 u_fgetlocale(UFILE *file);
 
 /**
@@ -419,7 +422,7 @@ u_fgetlocale(UFILE *file);
  * @return NULL if successful, otherwise a negative number.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_fsetlocale(UFILE      *file,
              const char *locale);
 
@@ -434,7 +437,7 @@ u_fsetlocale(UFILE      *file,
  * or NULL if an error occurred.
  * @stable ICU 3.0
  */
-U_STABLE const char* U_EXPORT2
+U_CAPI const char* U_EXPORT2
 u_fgetcodepage(UFILE *file);
 
 /**
@@ -452,7 +455,7 @@ u_fgetcodepage(UFILE *file);
  * @see u_frewind
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_fsetcodepage(const char   *codepage,
                UFILE        *file);
 
@@ -463,7 +466,7 @@ u_fsetcodepage(const char   *codepage,
  * @return alias to the converter (The converter <EM>must not</EM> be modified or closed)
  * @stable ICU 3.0
  */
-U_STABLE UConverter* U_EXPORT2 u_fgetConverter(UFILE *f);
+U_CAPI UConverter* U_EXPORT2 u_fgetConverter(UFILE *f);
 
 #if !UCONFIG_NO_FORMATTING
 /**
@@ -472,7 +475,7 @@ U_STABLE UConverter* U_EXPORT2 u_fgetConverter(UFILE *f);
  * @return alias to the number formatter (The formatter <EM>must not</EM> be modified or closed)
  * @stable ICU 51
 */
- U_STABLE const UNumberFormat* U_EXPORT2 u_fgetNumberFormat(UFILE *f);
+ U_CAPI const UNumberFormat* U_EXPORT2 u_fgetNumberFormat(UFILE *f);
 
 /* Output functions */
 
@@ -483,7 +486,7 @@ U_STABLE UConverter* U_EXPORT2 u_fgetConverter(UFILE *f);
  * @return The number of Unicode characters written to <TT>stdout</TT>
  * @stable ICU 49
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_printf(const char *patternSpecification,
          ... );
 
@@ -495,7 +498,7 @@ u_printf(const char *patternSpecification,
  * @return The number of Unicode characters written to <TT>f</TT>.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_fprintf(UFILE         *f,
           const char    *patternSpecification,
           ... );
@@ -512,7 +515,7 @@ u_fprintf(UFILE         *f,
  * @see u_fprintf
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_vfprintf(UFILE        *f,
            const char   *patternSpecification,
            va_list      ap);
@@ -524,7 +527,7 @@ u_vfprintf(UFILE        *f,
  * @return The number of Unicode characters written to <TT>stdout</TT>
  * @stable ICU 49
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_printf_u(const UChar *patternSpecification,
            ... );
 
@@ -533,7 +536,7 @@ u_printf_u(const UChar *patternSpecification,
  * @return UFILE that writes to <TT>stdout</TT>
  * @stable ICU 49
  */
-U_STABLE UFILE * U_EXPORT2
+U_CAPI UFILE * U_EXPORT2
 u_get_stdout(void);
 
 /**
@@ -544,7 +547,7 @@ u_get_stdout(void);
  * @return The number of Unicode characters written to <TT>f</TT>.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_fprintf_u(UFILE       *f,
             const UChar *patternSpecification,
             ... );
@@ -561,7 +564,7 @@ u_fprintf_u(UFILE       *f,
  * @see u_fprintf_u
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_vfprintf_u(UFILE      *f,
             const UChar *patternSpecification,
             va_list     ap);
@@ -576,7 +579,7 @@ u_vfprintf_u(UFILE      *f,
  * @see u_file_write
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_fputs(const UChar *s,
         UFILE       *f);
 
@@ -587,7 +590,7 @@ u_fputs(const UChar *s,
  * @return The character written if successful, EOF otherwise.
  * @stable ICU 3.0
  */
-U_STABLE UChar32 U_EXPORT2
+U_CAPI UChar32 U_EXPORT2
 u_fputc(UChar32  uc,
         UFILE  *f);
 
@@ -602,7 +605,7 @@ u_fputc(UChar32  uc,
  * @see u_fputs
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_file_write(const UChar    *ustring, 
              int32_t        count, 
              UFILE          *f);
@@ -620,7 +623,7 @@ u_file_write(const UChar    *ustring,
  * if an error occurred.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_fscanf(UFILE      *f,
          const char *patternSpecification,
          ... );
@@ -638,7 +641,7 @@ u_fscanf(UFILE      *f,
  * @see u_fscanf
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_vfscanf(UFILE         *f,
           const char    *patternSpecification,
           va_list        ap);
@@ -652,7 +655,7 @@ u_vfscanf(UFILE         *f,
  * if an error occurred.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_fscanf_u(UFILE        *f,
            const UChar  *patternSpecification,
            ... );
@@ -670,7 +673,7 @@ u_fscanf_u(UFILE        *f,
  * @see u_fscanf_u
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_vfscanf_u(UFILE       *f,
             const UChar *patternSpecification,
             va_list      ap);
@@ -688,7 +691,7 @@ u_vfscanf_u(UFILE       *f,
  * @return A pointer to <TT>s</TT>, or NULL if no characters were available.
  * @stable ICU 3.0
  */
-U_STABLE UChar* U_EXPORT2
+U_CAPI UChar* U_EXPORT2
 u_fgets(UChar  *s,
         int32_t n,
         UFILE  *f);
@@ -702,7 +705,7 @@ u_fgets(UChar  *s,
  * @return The UChar value read, or U+FFFF if no character was available.
  * @stable ICU 3.0
  */
-U_STABLE UChar U_EXPORT2
+U_CAPI UChar U_EXPORT2
 u_fgetc(UFILE   *f);
 
 /**
@@ -715,21 +718,21 @@ u_fgetc(UFILE   *f);
  * @see u_unescape()
  * @stable ICU 3.0
  */
-U_STABLE UChar32 U_EXPORT2
+U_CAPI UChar32 U_EXPORT2
 u_fgetcx(UFILE  *f);
 
 /**
  * Unget a UChar from a UFILE.
  * If this function is not the first to operate on <TT>f</TT> after a call
  * to <TT>u_fgetc</TT>, the results are undefined.
- * If this function is passed a character that was not recieved from the
+ * If this function is passed a character that was not received from the
  * previous <TT>u_fgetc</TT> or <TT>u_fgetcx</TT> call, the results are undefined.
  * @param c The UChar to put back on the stream.
  * @param f The UFILE to receive <TT>c</TT>.
  * @return The UChar32 value put back if successful, U_EOF otherwise.
  * @stable ICU 3.0
  */
-U_STABLE UChar32 U_EXPORT2
+U_CAPI UChar32 U_EXPORT2
 u_fungetc(UChar32   c,
       UFILE        *f);
 
@@ -743,7 +746,7 @@ u_fungetc(UChar32   c,
  * @return The number of Unicode characters read.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_file_read(UChar        *chars, 
         int32_t        count, 
         UFILE         *f);
@@ -767,7 +770,7 @@ u_file_read(UChar        *chars,
  * on the result of this function.
  * @stable ICU 3.0
  */
-U_STABLE UTransliterator* U_EXPORT2
+U_CAPI UTransliterator* U_EXPORT2
 u_fsettransliterator(UFILE *file, UFileDirection direction,
                      UTransliterator *adopt, UErrorCode *status);
 
@@ -788,7 +791,7 @@ u_fsettransliterator(UFILE *file, UFileDirection direction,
  * does not include the terminating null character.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_sprintf(UChar       *buffer,
         const char    *patternSpecification,
         ... );
@@ -810,7 +813,7 @@ u_sprintf(UChar       *buffer,
  * the terminating null character.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_snprintf(UChar      *buffer,
         int32_t       count,
         const char    *patternSpecification,
@@ -829,7 +832,7 @@ u_snprintf(UChar      *buffer,
  * @see u_sprintf
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_vsprintf(UChar      *buffer,
         const char    *patternSpecification,
         va_list        ap);
@@ -854,7 +857,7 @@ u_vsprintf(UChar      *buffer,
  * @see u_sprintf
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_vsnprintf(UChar     *buffer,
         int32_t       count,
         const char    *patternSpecification,
@@ -869,7 +872,7 @@ u_vsnprintf(UChar     *buffer,
  * @return The number of Unicode characters written to <TT>buffer</TT>.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_sprintf_u(UChar      *buffer,
         const UChar    *patternSpecification,
         ... );
@@ -890,7 +893,7 @@ u_sprintf_u(UChar      *buffer,
  * <TT>buffer</TT> had count been sufficiently large.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_snprintf_u(UChar     *buffer,
         int32_t        count,
         const UChar    *patternSpecification,
@@ -909,7 +912,7 @@ u_snprintf_u(UChar     *buffer,
  * @see u_sprintf_u
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_vsprintf_u(UChar     *buffer,
         const UChar    *patternSpecification,
         va_list        ap);
@@ -934,7 +937,7 @@ u_vsprintf_u(UChar     *buffer,
  * @see u_sprintf_u
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_vsnprintf_u(UChar *buffer,
         int32_t         count,
         const UChar     *patternSpecification,
@@ -952,7 +955,7 @@ u_vsnprintf_u(UChar *buffer,
  * if an error occurred.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_sscanf(const UChar   *buffer,
         const char     *patternSpecification,
         ... );
@@ -971,7 +974,7 @@ u_sscanf(const UChar   *buffer,
  * @see u_sscanf
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_vsscanf(const UChar  *buffer,
         const char     *patternSpecification,
         va_list        ap);
@@ -986,7 +989,7 @@ u_vsscanf(const UChar  *buffer,
  * if an error occurred.
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_sscanf_u(const UChar  *buffer,
         const UChar     *patternSpecification,
         ... );
@@ -1005,7 +1008,7 @@ u_sscanf_u(const UChar  *buffer,
  * @see u_sscanf_u
  * @stable ICU 3.0
  */
-U_STABLE int32_t U_EXPORT2
+U_CAPI int32_t U_EXPORT2
 u_vsscanf_u(const UChar *buffer,
         const UChar     *patternSpecification,
         va_list         ap);
