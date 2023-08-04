@@ -705,6 +705,7 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-media-controls.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-media-controls.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-slider.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-slider.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-volume-container.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-activity-indicator.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-activity-indicator.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-layout-traits.js
