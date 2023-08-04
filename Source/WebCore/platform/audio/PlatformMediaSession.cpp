@@ -279,6 +279,10 @@ void PlatformMediaSession::clientWillBeDOMSuspended()
 void PlatformMediaSession::pauseSession()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+
+    if (state() == Interrupted)
+        m_stateToRestore = Paused;
+
     m_client.suspendPlayback();
 }
 
