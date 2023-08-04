@@ -193,10 +193,17 @@ void PathStream::applySegments(const PathSegmentApplier& applier) const
         applier(segment);
 }
 
-void PathStream::applyElements(const PathElementApplier& applier) const
+bool PathStream::applyElements(const PathElementApplier& applier) const
 {
+    for (auto& segment : m_segmentsData->segments) {
+        if (!segment.canApplyElements())
+            return false;
+    }
+
     for (auto& segment : m_segmentsData->segments)
         segment.applyElements(applier);
+
+    return true;
 }
 
 std::optional<PathSegment> PathStream::singleSegment() const

@@ -70,7 +70,7 @@ public:
     void addBeziersForRoundedRect(const FloatRoundedRect&);
 
     virtual void applySegments(const PathSegmentApplier&) const = 0;
-    virtual void applyElements(const PathElementApplier&) const = 0;
+    virtual bool applyElements(const PathElementApplier&) const = 0;
 
     virtual std::optional<PathSegment> singleSegment() const { return std::nullopt; }
     virtual std::optional<PathDataLine> singleDataLine() const { return std::nullopt; }

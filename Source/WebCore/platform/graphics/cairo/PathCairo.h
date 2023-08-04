@@ -52,7 +52,7 @@ public:
 
     void addPath(const PathCairo&, const AffineTransform&);
 
-    void applyElements(const PathElementApplier&) const;
+    bool applyElements(const PathElementApplier&) const final;
 
     void transform(const AffineTransform&);
 

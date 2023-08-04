@@ -66,7 +66,9 @@ public:
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void addToImpl(PathImpl&) const;
-    void applyElements(const PathElementApplier&) const;
+
+    bool canApplyElements() const;
+    bool applyElements(const PathElementApplier&) const;
 
 private:
     Data m_data;
