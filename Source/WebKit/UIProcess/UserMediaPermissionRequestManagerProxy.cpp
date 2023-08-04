@@ -819,7 +819,7 @@ void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(bool 
         for (auto& device : devices) {
             RealtimeMediaSourceCapabilities deviceCapabilities;
 
-            if (device.isInputDevice()) {
+            if (revealIdsAndLabels && device.isInputDevice()) {
                 auto capabilities = RealtimeMediaSourceCenter::singleton().getCapabilities(device);
                 if (!capabilities)
                     continue;
