@@ -1727,7 +1727,6 @@
 		FF81FEAC25818D6800894E24 /* constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = constants.h; sourceTree = "<group>"; };
 		FF81FEAD25818D6800894E24 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		FF81FEAF25818D6800894E24 /* copy_buffer.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = copy_buffer.metal; sourceTree = "<group>"; };
-		FF81FEB025818D6800894E24 /* format_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = format_autogen.h; sourceTree = "<group>"; };
 		FF81FEB125818D6800894E24 /* clear.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = clear.metal; sourceTree = "<group>"; };
 		FF81FEB225818D6800894E24 /* gen_mipmap.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = gen_mipmap.metal; sourceTree = "<group>"; };
 		FF81FEB325818D6800894E24 /* gen_indices.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = gen_indices.metal; sourceTree = "<group>"; };
@@ -3137,7 +3136,6 @@
 				FF81FEAC25818D6800894E24 /* constants.h */,
 				FF81FEAF25818D6800894E24 /* copy_buffer.metal */,
 				FFDA50D6269F9E5800AE11E2 /* create_mtl_internal_shaders.py */,
-				FF81FEB025818D6800894E24 /* format_autogen.h */,
 				FF81FEB325818D6800894E24 /* gen_indices.metal */,
 				FF81FEB225818D6800894E24 /* gen_mipmap.metal */,
 				FFC84CA32A4D1F330063D8E0 /* mtl_internal_shaders_src_autogen.h */,

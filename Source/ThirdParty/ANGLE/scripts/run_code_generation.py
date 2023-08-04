@@ -134,7 +134,7 @@ generators = {
 # Fast and supports --verify-only without hashes.
 hashless_generators = {
     'ANGLE features': 'include/platform/gen_features.py',
-    #'Test spec JSON': 'infra/specs/generate_test_spec_json.py',
+    'Test spec JSON': 'infra/specs/generate_test_spec_json.py',
 }
 
 
