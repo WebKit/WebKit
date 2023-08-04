@@ -2730,7 +2730,7 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
     }
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    m_layer->setCoverageRect(m_coverageRect);
+    m_layer->setVisibleRect(m_visibleRect);
 #endif
 
     bool requiresBacking = m_intersectsCoverageRect

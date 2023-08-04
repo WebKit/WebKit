@@ -699,7 +699,7 @@ bool PlatformCALayerCocoa::backingStoreAttached() const
 }
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-void PlatformCALayerCocoa::setCoverageRect(const FloatRect&)
+void PlatformCALayerCocoa::setVisibleRect(const FloatRect&)
 {
 }
 #endif

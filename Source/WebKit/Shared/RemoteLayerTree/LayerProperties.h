@@ -84,7 +84,7 @@ enum class LayerChange : uint64_t {
 #endif
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    CoverageRectChanged                 = 1LLU << 42,
+    VisibleRectChanged                  = 1LLU << 42,
 #endif
 };
 
@@ -180,7 +180,7 @@ struct LayerProperties {
 #endif
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    WebCore::FloatRect coverageRect;
+    WebCore::FloatRect visibleRect;
 #endif
 };
 
