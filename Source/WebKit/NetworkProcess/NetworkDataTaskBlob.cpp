@@ -73,7 +73,6 @@ NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, NetworkDataTas
 
     m_blobData = session.blobRegistry().getBlobDataFromURL(request.url());
 
-    m_session->registerNetworkDataTask(*this);
     LOG(NetworkSession, "%p - Created NetworkDataTaskBlob for %s", this, request.url().string().utf8().data());
 }
 
