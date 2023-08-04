@@ -376,8 +376,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if HAVE(CGIMAGESOURCE_ENABLE_RESTRICTED_DECODING)
     if (parameters.enableDecodingHEIC || parameters.enableDecodingAVIF) {
-        OSStatus ok = CGImageSourceEnableRestrictedDecoding();
-        ASSERT_UNUSED(ok, ok == noErr);
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [] {
+            OSStatus ok = CGImageSourceEnableRestrictedDecoding();
+            ASSERT_UNUSED(ok, ok == noErr);
+        });
     }
 #endif
 

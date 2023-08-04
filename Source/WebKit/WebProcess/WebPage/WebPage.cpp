@@ -647,8 +647,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         ProcessCapabilities::setHardwareAcceleratedDecodingDisabled(true);
         ProcessCapabilities::setCanUseAcceleratedBuffers(false);
 #if HAVE(CGIMAGESOURCE_DISABLE_HARDWARE_DECODING)
-        OSStatus ok = CGImageSourceDisableHardwareDecoding();
-        ASSERT_UNUSED(ok, ok == noErr);
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [] {
+            OSStatus ok = CGImageSourceDisableHardwareDecoding();
+            ASSERT_UNUSED(ok, ok == noErr);
+        });
 #endif
     }
 #endif
