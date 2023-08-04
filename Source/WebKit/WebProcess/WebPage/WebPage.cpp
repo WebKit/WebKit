@@ -4461,7 +4461,14 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled(false);
 #endif
-    settings.setDownloadableBinaryFontAllowedTypes(DownloadableBinaryFontAllowedTypes::Restricted);
+    switch (settings.downloadableBinaryFontAllowedTypes()) {
+    case DownloadableBinaryFontAllowedTypes::Any:
+        settings.setDownloadableBinaryFontAllowedTypes(DownloadableBinaryFontAllowedTypes::Restricted);
+        break;
+    case DownloadableBinaryFontAllowedTypes::Restricted:
+    case DownloadableBinaryFontAllowedTypes::None:
+        break;
+    }
 #if ENABLE(WEB_CODECS)
     settings.setWebCodecsEnabled(false);
     settings.setWebCodecsAV1Enabled(false);
