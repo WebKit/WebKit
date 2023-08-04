@@ -5,6 +5,8 @@ sources:
   track: 'release/22.08'
   ref: freedesktop-sdk-22.08.13-17-g4cbd1d47a91cfa60269974bf84396dc12ff8df36
 - kind: patch
+  path: patches/fdo-0001-mesa-Bump-to-23.1.5.patch
+- kind: patch
   path: patches/fdo-0001-pipewire-base-Disable-AEC-module.patch
 - kind: patch
   path: patches/fdo-0001-gst-plugins-bad-Add-support-Kate.patch
