@@ -69,6 +69,11 @@ namespace WebKit {
 using namespace WebKit;
 using namespace WebCore;
 
+static constexpr float ZoomForFullscreenWindow = 1.0;
+#if PLATFORM(VISION)
+static constexpr float ZoomForVisionFullscreenVideoWindow = 1.36;
+#endif
+
 static CGSize sizeExpandedToSize(CGSize initial, CGSize other)
 {
     return CGSizeMake(std::max(initial.width, other.width),  std::max(initial.height, other.height));
@@ -832,10 +837,18 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
             manager->setAnimatingFullScreen(true);
 
         WebCore::ViewportArguments arguments { WebCore::ViewportArguments::CSSDeviceAdaptation };
-        arguments.zoom = 1;
-        arguments.minZoom = 1;
-        arguments.maxZoom = 1;
-        arguments.userZoom = 1;
+        arguments.zoom = WebKit::ZoomForFullscreenWindow;
+        arguments.minZoom = WebKit::ZoomForFullscreenWindow;
+        arguments.maxZoom = WebKit::ZoomForFullscreenWindow;
+        arguments.userZoom = WebKit::ZoomForFullscreenWindow;
+#if PLATFORM(VISION)
+        if (manager->isVideoElement()) {
+            arguments.zoom = WebKit::ZoomForVisionFullscreenVideoWindow;
+            arguments.minZoom = WebKit::ZoomForVisionFullscreenVideoWindow;
+            arguments.maxZoom = WebKit::ZoomForVisionFullscreenVideoWindow;
+            arguments.userZoom = WebKit::ZoomForVisionFullscreenVideoWindow;
+        }
+#endif
         page->setOverrideViewportArguments(arguments);
 
         page->forceRepaint([protectedSelf = retainPtr(self), self] {
