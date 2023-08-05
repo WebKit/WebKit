@@ -489,7 +489,7 @@ UIProcess/ios/WKKeyboardScrollingAnimator.mm
 UIProcess/ios/WKModelInteractionGestureRecognizer.mm
 UIProcess/ios/WKModelView.mm
 UIProcess/ios/WKMouseDeviceObserver.mm
-UIProcess/ios/WKMouseGestureRecognizer.mm
+UIProcess/ios/WKMouseInteraction.mm
 UIProcess/ios/WKPasswordView.mm
 UIProcess/ios/WKPDFView.mm
 UIProcess/ios/WKScrollView.mm

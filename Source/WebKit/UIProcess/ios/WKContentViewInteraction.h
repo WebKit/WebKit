@@ -42,6 +42,7 @@
 #import "TextCheckingController.h"
 #import "TransactionID.h"
 #import "UIKitSPI.h"
+#import "WKMouseInteraction.h"
 #import <WebKit/WKActionSheetAssistant.h>
 #import <WebKit/WKAirPlayRoutePicker.h>
 #import <WebKit/WKContactPicker.h>
@@ -123,9 +124,7 @@ class WebPageProxy;
 @class WKFormInputSession;
 @class WKFormSelectControl;
 @class WKHighlightLongPressGestureRecognizer;
-@class WKHoverGestureRecognizer;
 @class WKImageAnalysisGestureRecognizer;
-@class WKMouseGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
 @class WKTargetedPreviewContainer;
 @class WKTextRange;
@@ -326,11 +325,8 @@ struct ImageAnalysisContextMenuActionData {
 #endif
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    RetainPtr<WKMouseGestureRecognizer> _mouseGestureRecognizer;
+    RetainPtr<WKMouseInteraction> _mouseInteraction;
     WebCore::MouseEventPolicy _mouseEventPolicy;
-#if ENABLE(PENCIL_HOVER)
-    RetainPtr<WKMouseGestureRecognizer> _pencilHoverGestureRecognizer;
-#endif
 #endif
 
 #if HAVE(PENCILKIT_TEXT_INPUT)
@@ -577,6 +573,9 @@ struct ImageAnalysisContextMenuActionData {
     , WKTouchActionGestureRecognizerDelegate
 #if HAVE(UIFINDINTERACTION)
     , UITextSearching
+#endif
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    , WKMouseInteractionDelegate
 #endif
 >
 

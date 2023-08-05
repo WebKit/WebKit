@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 Apple Inc. All rights reserved.
+* Copyright (C) 2023 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -23,22 +23,33 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#pragma once
+
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
-#import <UIKit/UIHoverGestureRecognizer.h>
 #import "NativeWebMouseEvent.h"
-#import "UIKitSPI.h"
+#import <UIKit/UIKit.h>
 
-@interface WKMouseGestureRecognizer : UIHoverGestureRecognizer
-#if HAVE(UIKIT_HOVER_EVENT_PROTOCOL)
-<_UIHoverEventRespondable>
-#endif
+@class WKMouseInteraction;
 
-- (std::optional<CGPoint>)lastMouseLocation;
-- (std::unique_ptr<WebKit::NativeWebMouseEvent>)takeLastMouseEvent;
+@protocol WKMouseInteractionDelegate<NSObject>
+- (void)mouseInteraction:(WKMouseInteraction *)interaction changedWithEvent:(const WebKit::NativeWebMouseEvent&)event;
+@end
 
-- (UITouch *)mouseTouch;
+@interface WKMouseInteraction : NSObject<UIInteraction>
+
+- (instancetype)initWithDelegate:(id <WKMouseInteractionDelegate>)delegate;
+
+- (CGPoint)locationInView:(UIView *)view;
+- (BOOL)hasGesture:(UIGestureRecognizer *)gesture;
+
+@property (nonatomic, getter=isEnabled) BOOL enabled;
+@property (nonatomic, readonly, weak) id <WKMouseInteractionDelegate> delegate;
+@property (nonatomic, readonly) UITouch *mouseTouch;
+@property (nonatomic, readonly) std::optional<CGPoint> lastLocation;
+@property (nonatomic, weak, readonly) UIView *view;
+@property (nonatomic, readonly) UIGestureRecognizer *mouseTouchGestureRecognizer;
 
 @end
 
-#endif
+#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)

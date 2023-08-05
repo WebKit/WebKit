@@ -62,7 +62,6 @@
 #import "WKImageAnalysisGestureRecognizer.h"
 #import "WKImagePreviewViewController.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
-#import "WKMouseGestureRecognizer.h"
 #import "WKNSURLExtras.h"
 #import "WKPreviewActionItemIdentifiers.h"
 #import "WKPreviewActionItemInternal.h"
@@ -1179,12 +1178,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _gestureRecognizerConsistencyEnforcer->reset();
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    [_mouseGestureRecognizer setDelegate:nil];
-    [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
-#if ENABLE(PENCIL_HOVER)
-    [_pencilHoverGestureRecognizer setDelegate:nil];
-    [self removeGestureRecognizer:_pencilHoverGestureRecognizer.get()];
-#endif
+    [self removeInteraction:_mouseInteraction.get()];
 #endif
 
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
@@ -1333,10 +1327,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    [self removeGestureRecognizer:_mouseGestureRecognizer.get()];
-#if ENABLE(PENCIL_HOVER)
-    [self removeGestureRecognizer:_pencilHoverGestureRecognizer.get()];
-#endif
+    [self removeInteraction:_mouseInteraction.get()];
 #endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1361,10 +1352,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    [self addGestureRecognizer:_mouseGestureRecognizer.get()];
-#if ENABLE(PENCIL_HOVER)
-    [self addGestureRecognizer:_pencilHoverGestureRecognizer.get()];
-#endif
+    [self addInteraction:_mouseInteraction.get()];
 #endif
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     [self addGestureRecognizer:_lookupGestureRecognizer.get()];
@@ -1864,10 +1852,11 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 #endif
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch && touch._isPointerTouch)
+    auto isMouseGestureRecognizer = gestureRecognizer == [_mouseInteraction mouseTouchGestureRecognizer];
+    if (!isMouseGestureRecognizer && [_mouseInteraction mouseTouch] == touch && touch._isPointerTouch)
         return NO;
 
-    if (gestureRecognizer == _mouseGestureRecognizer && !touch._isPointerTouch)
+    if (isMouseGestureRecognizer && !touch._isPointerTouch)
         return NO;
 
     if (gestureRecognizer == _doubleTapGestureRecognizer || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer)
@@ -2557,7 +2546,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return (a == x && b == y) || (b == x && a == y);
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     for (WKDeferringGestureRecognizer *gesture in self.deferringGestures) {
         if (isSamePair(gestureRecognizer, otherGestureRecognizer, _touchEventGestureRecognizer.get(), gesture))
@@ -2585,7 +2574,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return YES;
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    if ([gestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[WKMouseGestureRecognizer class]])
+    if ([_mouseInteraction hasGesture:otherGestureRecognizer])
         return YES;
 #endif
 
@@ -8242,8 +8231,8 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (!rect) {
-        if (auto lastMouseLocation = [_mouseGestureRecognizer lastMouseLocation]) {
-            auto hoverLocationInWebView = [self convertPoint:*lastMouseLocation toView:self.webView];
+        if (auto lastLocation = [_mouseInteraction lastLocation]) {
+            auto hoverLocationInWebView = [self convertPoint:*lastLocation toView:self.webView];
             rect = WebCore::FloatRect(hoverLocationInWebView.x, hoverLocationInWebView.y, 1, 1);
         }
     }
@@ -8867,12 +8856,8 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         return NO;
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    if (gestureRecognizer == _mouseGestureRecognizer)
+    if ([_mouseInteraction hasGesture:gestureRecognizer])
         return NO;
-#if ENABLE(PENCIL_HOVER)
-    if (gestureRecognizer == _pencilHoverGestureRecognizer)
-        return NO;
-#endif
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -10421,50 +10406,36 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
 - (void)setUpMouseGestureRecognizer
 {
-    _mouseGestureRecognizer = adoptNS([[WKMouseGestureRecognizer alloc] initWithTarget:self action:@selector(mouseGestureRecognizerChanged:)]);
-    [_mouseGestureRecognizer setDelegate:self];
-#if ENABLE(PENCIL_HOVER)
-    _pencilHoverGestureRecognizer = adoptNS([[WKMouseGestureRecognizer alloc] initWithTarget:self action:@selector(mouseGestureRecognizerChanged:)]);
-    [_pencilHoverGestureRecognizer setDelegate:self];
-#endif
+    if (_mouseInteraction)
+        [self removeInteraction:_mouseInteraction.get()];
+
+    _mouseInteraction = adoptNS([[WKMouseInteraction alloc] initWithDelegate:self]);
+    [self addInteraction:_mouseInteraction.get()];
+
     [self _configureMouseGestureRecognizer];
-    
-    [self addGestureRecognizer:_mouseGestureRecognizer.get()];
-#if ENABLE(PENCIL_HOVER)
-    [self addGestureRecognizer:_pencilHoverGestureRecognizer.get()];
-#endif
 }
 
-- (void)mouseGestureRecognizerChanged:(WKMouseGestureRecognizer *)gestureRecognizer
+- (void)mouseInteraction:(WKMouseInteraction *)interaction changedWithEvent:(const WebKit::NativeWebMouseEvent&)event
 {
     if (!_page->hasRunningProcess())
         return;
 
-    auto event = gestureRecognizer.takeLastMouseEvent;
-    if (!event)
-        return;
-
-    if (event->type() == WebKit::WebEventType::MouseDown) {
+    if (event.type() == WebKit::WebEventType::MouseDown) {
         _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
 
-        if (auto lastMouseLocation = gestureRecognizer.lastMouseLocation)
-            _lastInteractionLocation = *lastMouseLocation;
+        if (auto lastLocation = interaction.lastLocation)
+            _lastInteractionLocation = *lastLocation;
     }
 
-    if (event->type() == WebKit::WebEventType::MouseUp && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
+    if (event.type() == WebKit::WebEventType::MouseUp && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
         [self.window makeKeyWindow];
 
-    _page->handleMouseEvent(*event);
+    _page->handleMouseEvent(event);
 }
 
 - (void)_configureMouseGestureRecognizer
 {
-    [_mouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
-#if ENABLE(PENCIL_HOVER)
-    [_pencilHoverGestureRecognizer setAllowedTouchTypes:@[ @(UITouchTypePencil)] ];
-    [_mouseGestureRecognizer setAllowedTouchTypes:@[@(UITouchTypeDirect), @(UITouchTypeIndirectPointer)] ];
-    [_pencilHoverGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
-#endif
+    [_mouseInteraction setEnabled:self.shouldUseMouseGestureRecognizer];
 }
 
 - (void)_setMouseEventPolicy:(WebCore::MouseEventPolicy)policy
@@ -10473,7 +10444,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     [self _configureMouseGestureRecognizer];
 }
 
-#endif
+#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
