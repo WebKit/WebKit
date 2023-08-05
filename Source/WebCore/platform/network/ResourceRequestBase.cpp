@@ -232,7 +232,7 @@ void ResourceRequestBase::setTimeoutInterval(double timeoutInterval)
     m_platformRequestUpdated = false;
 }
 
-const URL& ResourceRequestBase::firstPartyOrigin() const
+const SecurityOriginData& ResourceRequestBase::firstPartyOrigin() const
 {
     updateResourceRequest(); 
     
@@ -240,6 +240,11 @@ const URL& ResourceRequestBase::firstPartyOrigin() const
 }
 
 void ResourceRequestBase::setFirstPartyOrigin(const URL& firstPartyOrigin)
+{
+    setFirstPartyOrigin(SecurityOriginData::fromURL(firstPartyOrigin));
+}
+
+void ResourceRequestBase::setFirstPartyOrigin(const SecurityOriginData& firstPartyOrigin)
 { 
     updateResourceRequest(); 
 
@@ -829,7 +834,7 @@ String ResourceRequestBase::partitionName(const String& domain)
 
 bool ResourceRequestBase::isThirdParty() const
 {
-    return !areRegistrableDomainsEqual(url(), firstPartyOrigin());
+    return !areRegistrableDomainsEqual(url(), firstPartyOrigin().toURL());
 }
 
 }

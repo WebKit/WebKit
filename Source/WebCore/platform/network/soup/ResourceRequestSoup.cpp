@@ -67,8 +67,9 @@ GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRe
 
     updateSoupMessageHeaders(soup_message_get_request_headers(soupMessage.get()));
 
-    if (firstPartyOrigin().protocolIsInHTTPFamily()) {
-        if (auto firstParty = urlToSoupURI(firstPartyOrigin()))
+    auto firstPartyOrigin = firstPartyOrigin().toURL();
+    if (firstPartyOrigin.protocolIsInHTTPFamily()) {
+        if (auto firstParty = urlToSoupURI(firstPartyOrigin))
             soup_message_set_first_party(soupMessage.get(), firstParty.get());
     }
 

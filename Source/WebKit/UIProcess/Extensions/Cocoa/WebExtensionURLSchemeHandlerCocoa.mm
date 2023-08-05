@@ -59,7 +59,7 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         // In this case, consider the firstPartyOrigin() to be the document including the frame. This fails for nested frames, since
         // it is always the main frame URL, not the immediate parent frame.
         // FIXME: <rdar://problem/59193765> Remove this workaround when there is a way to know the proper parent frame.
-        URL frameDocumentURL = task.frameInfo().request().url().isEmpty() ? task.request().firstPartyOrigin() : task.frameInfo().request().url();
+        URL frameDocumentURL = task.frameInfo().request().url().isEmpty() ? task.request().firstPartyOrigin().toURL() : task.frameInfo().request().url();
         URL requestURL = task.request().url();
 
         if (!m_webExtensionController) {

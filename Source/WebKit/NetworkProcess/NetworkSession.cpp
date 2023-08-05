@@ -410,6 +410,7 @@ void NetworkSession::handlePrivateClickMeasurementConversion(WebCore::PCM::Attri
 
         auto redirectDomain = RegistrableDomain(redirectRequest.url());
         auto firstPartyOrigin = redirectRequest.firstPartyOrigin();
+        auto firstPartyURL = firstPartyOrigin.toURL();
 
         bool hasAgedOut = WallTime::now() - ephemeralMeasurement.timeOfAdClick() > WebCore::PrivateClickMeasurement::maxAge();
         if (hasAgedOut) {
@@ -418,13 +419,13 @@ void NetworkSession::handlePrivateClickMeasurementConversion(WebCore::PCM::Attri
         }
 
         // Ephemeral measurement can only have one pending click.
-        if (ephemeralMeasurement.isNeitherSameSiteNorCrossSiteTriggeringEvent(redirectDomain, firstPartyOrigin, attributionTriggerData))
+        if (ephemeralMeasurement.isNeitherSameSiteNorCrossSiteTriggeringEvent(redirectDomain, firstPartyURL, attributionTriggerData))
             return;
         if (ephemeralMeasurement.destinationSite().registrableDomain != RegistrableDomain(firstPartyOrigin))
             return;
 
         // Insert ephemeral measurement right before attribution.
-        privateClickMeasurement().storeUnattributed(WTFMove(ephemeralMeasurement), [this, weakThis = WeakPtr { *this }, attributionTriggerData = WTFMove(attributionTriggerData), requestURL, redirectDomain = WTFMove(redirectDomain), firstPartyOrigin = WTFMove(firstPartyOrigin), appBundleID = WTFMove(appBundleID)] () mutable {
+        privateClickMeasurement().storeUnattributed(WTFMove(ephemeralMeasurement), [this, weakThis = WeakPtr { *this }, attributionTriggerData = WTFMove(attributionTriggerData), requestURL, redirectDomain = WTFMove(redirectDomain), firstPartyOrigin = WTFMove(firstPartyURL), appBundleID = WTFMove(appBundleID)] () mutable {
             if (!weakThis)
                 return;
             privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, WTFMove(redirectDomain), firstPartyOrigin, appBundleID);
@@ -432,7 +433,7 @@ void NetworkSession::handlePrivateClickMeasurementConversion(WebCore::PCM::Attri
         return;
     }
 
-    privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, RegistrableDomain(redirectRequest.url()), redirectRequest.firstPartyOrigin(), appBundleID);
+    privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, RegistrableDomain(redirectRequest.url()), redirectRequest.firstPartyOrigin().toURL(), appBundleID);
 }
 
 void NetworkSession::dumpPrivateClickMeasurement(CompletionHandler<void(String)>&& completionHandler)

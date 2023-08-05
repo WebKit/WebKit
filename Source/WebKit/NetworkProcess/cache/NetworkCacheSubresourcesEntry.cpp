@@ -85,7 +85,7 @@ SubresourceInfo::SubresourceInfo(const Key& key, const WebCore::ResourceRequest&
     , m_isTransient(!previousInfo)
     , m_isSameSite(request.isSameSite())
     , m_isAppInitiated(request.isAppInitiated())
-    , m_firstPartyForCookies(request.firstPartyOrigin())
+    , m_firstPartyForCookies(request.firstPartyOrigin().toURL())
     , m_requestHeaders(request.httpHeaderFields())
     , m_priority(request.priority())
 {

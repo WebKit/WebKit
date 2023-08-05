@@ -1775,7 +1775,7 @@ header: <WebCore/FrameLoaderTypes.h>
 header: <WebCore/ResourceRequest.h>
 [CustomHeader, Nested] class WebCore::ResourceRequest::RequestData {
     URL m_url;
-    URL m_firstPartyOrigin;
+    WebCore::SecurityOriginData m_firstPartyOrigin;
     double m_timeoutInterval;
     String m_httpMethod;
     WebCore::HTTPHeaderMap m_httpHeaderFields;

@@ -101,7 +101,7 @@ ResourceRequest EarlyHintsResourceLoader::constructPreconnectRequest(const Resou
 
     // firstPartyOrigin and user agent are part of the HTTP socket pool keys in CFNetwork: rdar://59434166
     auto firstPartyOrigin = originalRequest.firstPartyOrigin();
-    if (firstPartyOrigin.isValid())
+    if (!firstPartyOrigin.isNull())
         request.setFirstPartyOrigin(firstPartyOrigin);
 
     auto userAgent = originalRequest.httpUserAgent();

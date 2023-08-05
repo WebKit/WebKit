@@ -168,7 +168,7 @@ void ResourceRequest::doUpdateResourceRequest()
     if (m_requestData.m_cachePolicy == ResourceRequestCachePolicy::UseProtocolCachePolicy)
         m_requestData.m_cachePolicy = fromPlatformRequestCachePolicy([m_nsRequest cachePolicy]);
     m_requestData.m_timeoutInterval = [m_nsRequest timeoutInterval];
-    m_requestData.m_firstPartyOrigin = [m_nsRequest mainDocumentURL];
+    m_requestData.m_firstPartyOrigin = SecurityOriginData::fromURL([m_nsRequest mainDocumentURL]);
 
     URL siteForCookies { [m_nsRequest _propertyForKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"] };
     m_requestData.m_sameSiteDisposition = siteForCookies.isNull() ? SameSiteDisposition::Unspecified : (areRegistrableDomainsEqual(siteForCookies, m_requestData.m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
@@ -291,7 +291,7 @@ void ResourceRequest::doUpdatePlatformRequest()
         [nsRequest setTimeoutInterval:timeoutInterval];
     // Otherwise, respect NSURLRequest default timeout.
 
-    [nsRequest setMainDocumentURL:firstPartyOrigin()];
+    [nsRequest setMainDocumentURL:firstPartyOrigin().toURL()];
     if (!httpMethod().isEmpty())
         [nsRequest setHTTPMethod:httpMethod()];
     [nsRequest setHTTPShouldHandleCookies:allowCookies()];

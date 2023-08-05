@@ -129,12 +129,12 @@ void NetworkTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore::Res
     // Cap expiry of incoming cookies in response if it is a same-site
     // subresource but it resolves to a different CNAME than the top
     // site request, a.k.a. third-party CNAME cloaking.
-    auto firstPartyURL = request.firstPartyOrigin();
-    auto firstPartyHostName = firstPartyURL.host().toString();
+    auto firstPartyOrigin = request.firstPartyOrigin();
+    auto firstPartyHostName = firstPartyOrigin.host();
     auto firstPartyHostCNAME = m_networkSession->firstPartyHostCNAMEDomain(firstPartyHostName);
     auto firstPartyAddress = m_networkSession->firstPartyHostIPAddress(firstPartyHostName);
 
-    task()._cookieTransformCallback = makeBlockPtr([requestURL = crossThreadCopy(request.url()), firstPartyURL = crossThreadCopy(firstPartyURL), firstPartyHostCNAME = crossThreadCopy(firstPartyHostCNAME), firstPartyAddress = crossThreadCopy(firstPartyAddress), thirdPartyCNAMEDomainForTesting = crossThreadCopy(m_networkSession->thirdPartyCNAMEDomainForTesting()), ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies), weakTask = WeakObjCPtr<NSURLSessionTask>(task()), debugLoggingEnabled = m_networkSession->networkStorageSession()->trackingPreventionDebugLoggingEnabled()] (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
+    task()._cookieTransformCallback = makeBlockPtr([requestURL = crossThreadCopy(request.url()), firstPartyOrigin = crossThreadCopy(firstPartyOrigin), firstPartyHostCNAME = crossThreadCopy(firstPartyHostCNAME), firstPartyAddress = crossThreadCopy(firstPartyAddress), thirdPartyCNAMEDomainForTesting = crossThreadCopy(m_networkSession->thirdPartyCNAMEDomainForTesting()), ageCapForCNAMECloakedCookies = crossThreadCopy(m_ageCapForCNAMECloakedCookies), weakTask = WeakObjCPtr<NSURLSessionTask>(task()), debugLoggingEnabled = m_networkSession->networkStorageSession()->trackingPreventionDebugLoggingEnabled()] (NSArray<NSHTTPCookie*> *cookiesSetInResponse) -> NSArray<NSHTTPCookie*> * {
         auto task = weakTask.get();
         if (!task || ![cookiesSetInResponse count])
             return cookiesSetInResponse;
@@ -169,7 +169,7 @@ void NetworkTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore::Res
         // CNAME cloaking is a first-party sub resource that resolves
         // through a CNAME that differs from the first-party domain and
         // also differs from the top frame host's CNAME, if one exists.
-        if (!cnameDomain.matches(firstPartyURL) && (!firstPartyHostCNAME || cnameDomain != *firstPartyHostCNAME)) {
+        if (!cnameDomain.matches(firstPartyOrigin) && (!firstPartyHostCNAME || cnameDomain != *firstPartyHostCNAME)) {
             // Don't use RetainPtr here. This array has to be retained and
             // auto released to not be released before returned to the code
             // executing the block.
@@ -233,7 +233,7 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
         if (storedCredentialsPolicy() == WebCore::StoredCredentialsPolicy::EphemeralStateless
             || (m_networkSession->networkStorageSession() && m_networkSession->networkStorageSession()->shouldBlockCookies(request, frameID(), pageID(), m_shouldRelaxThirdPartyCookieBlocking)))
             blockCookies();
-    } else if (storedCredentialsPolicy() != WebCore::StoredCredentialsPolicy::EphemeralStateless && needsFirstPartyCookieBlockingLatchModeQuirk(request.firstPartyOrigin(), request.url(), redirectResponse.url()))
+    } else if (storedCredentialsPolicy() != WebCore::StoredCredentialsPolicy::EphemeralStateless && needsFirstPartyCookieBlockingLatchModeQuirk(request.firstPartyOrigin().toURL(), request.url(), redirectResponse.url()))
         unblockCookies();
 #if !RELEASE_LOG_DISABLED
     if (m_networkSession->shouldLogCookieInformation())

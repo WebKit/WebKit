@@ -48,7 +48,7 @@ WKURLRef WKURLRequestCopyURL(WKURLRequestRef requestRef)
 
 WKURLRef WKURLRequestCopyFirstPartyForCookies(WKURLRequestRef requestRef)
 {
-    return WebKit::toCopiedURLAPI(WebKit::toImpl(requestRef)->resourceRequest().firstPartyOrigin());
+    return WebKit::toCopiedURLAPI(WebKit::toImpl(requestRef)->resourceRequest().firstPartyOrigin().toURL());
 }
 
 WKStringRef WKURLRequestCopyHTTPMethod(WKURLRequestRef requestRef)

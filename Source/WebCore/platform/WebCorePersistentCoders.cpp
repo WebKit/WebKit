@@ -220,7 +220,7 @@ void Coder<WebCore::ResourceRequest>::encode(Encoder& encoder, const WebCore::Re
     ASSERT(!instance.platformRequestUpdated());
     encoder << instance.url();
     encoder << instance.timeoutInterval();
-    encoder << instance.firstPartyOrigin().string();
+    encoder << instance.firstPartyOrigin();
     encoder << instance.httpMethod();
     encoder << instance.httpHeaderFields();
     encoder << instance.responseContentDispositionEncodingFallbackArray();
@@ -245,7 +245,7 @@ std::optional<WebCore::ResourceRequest> Coder<WebCore::ResourceRequest>::decode(
     if (!timeoutInterval)
         return std::nullopt;
 
-    std::optional<String> firstPartyOrigin;
+    std::optional<WebCore::SecurityOriginData> firstPartyOrigin;
     decoder >> firstPartyOrigin;
     if (!firstPartyOrigin)
         return std::nullopt;
@@ -303,7 +303,7 @@ std::optional<WebCore::ResourceRequest> Coder<WebCore::ResourceRequest>::decode(
     WebCore::ResourceRequest request;
     request.setURL(WTFMove(*url));
     request.setTimeoutInterval(WTFMove(*timeoutInterval));
-    request.setFirstPartyOrigin(URL({ }, *firstPartyOrigin));
+    request.setFirstPartyOrigin(*firstPartyOrigin);
     request.setHTTPMethod(WTFMove(*httpMethod));
     request.setHTTPHeaderFields(WTFMove(*fields));
     request.setResponseContentDispositionEncodingFallbackArray(WTFMove(*array));

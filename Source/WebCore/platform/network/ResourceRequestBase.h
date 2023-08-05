@@ -32,6 +32,7 @@
 #include "HTTPHeaderMap.h"
 #include "IntRect.h"
 #include "ResourceLoadPriority.h"
+#include "SecurityOriginData.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/URL.h>
 
@@ -66,7 +67,7 @@ public:
     struct RequestData {
         RequestData() { }
         
-        RequestData(const URL& url, const URL& firstPartyOrigin, double timeoutInterval, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false)
+        RequestData(const URL& url, const SecurityOriginData& firstPartyOrigin, double timeoutInterval, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false)
             : m_url(url)
             , m_firstPartyOrigin(firstPartyOrigin)
             , m_timeoutInterval(timeoutInterval)
@@ -92,8 +93,7 @@ public:
         }
         
         URL m_url;
-        // FIXME: This should be a SecurityOriginData.
-        URL m_firstPartyOrigin;
+        SecurityOriginData m_firstPartyOrigin;
         double m_timeoutInterval { s_defaultTimeoutInterval }; // 0 is a magic value for platform default on platforms that have one.
         String m_httpMethod { "GET"_s };
         HTTPHeaderMap m_httpHeaderFields;
@@ -141,8 +141,9 @@ public:
     WEBCORE_EXPORT double timeoutInterval() const; // May return 0 when using platform default.
     WEBCORE_EXPORT void setTimeoutInterval(double);
     
-    WEBCORE_EXPORT const URL& firstPartyOrigin() const;
+    WEBCORE_EXPORT const SecurityOriginData& firstPartyOrigin() const;
     WEBCORE_EXPORT void setFirstPartyOrigin(const URL&);
+    WEBCORE_EXPORT void setFirstPartyOrigin(const SecurityOriginData&);
 
     WEBCORE_EXPORT bool isThirdParty() const;
 

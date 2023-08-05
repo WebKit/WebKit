@@ -136,6 +136,11 @@ bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, s
     
 bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyOrigin, const URL& resource, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
 {
+    return shouldBlockCookies(SecurityOriginData::fromURL(firstPartyOrigin), resource, frameID, pageID, shouldRelaxThirdPartyCookieBlocking);
+}
+
+bool NetworkStorageSession::shouldBlockCookies(const SecurityOriginData& firstPartyOrigin, const URL& resource, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
+{
     if (shouldRelaxThirdPartyCookieBlocking == ShouldRelaxThirdPartyCookieBlocking::Yes)
         return false;
 

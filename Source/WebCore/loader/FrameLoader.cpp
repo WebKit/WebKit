@@ -3069,7 +3069,7 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
     // But make sure to set it on all requests regardless of protocol, as it has significance beyond the cookie policy (<rdar://problem/6616664>).
     bool isMainResource = mainResource == IsMainResource::Yes;
     bool isMainFrameMainResource = isMainResource && (m_frame.isMainFrame() || willOpenInNewWindow == WillOpenInNewWindow::Yes);
-    if (request.firstPartyOrigin().isEmpty()) {
+    if (request.firstPartyOrigin().isNull()) {
         if (isMainFrameMainResource)
             request.setFirstPartyOrigin(request.url());
         else if (Document* document = m_frame.document())
