@@ -266,6 +266,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/API/glib"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
+    "${WEBKIT_DIR}/Shared/Extensions"
     "${WEBKIT_DIR}/Shared/glib"
     "${WEBKIT_DIR}/Shared/gtk"
     "${WEBKIT_DIR}/Shared/linux"
