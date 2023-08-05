@@ -43,6 +43,7 @@ bool isRunningTest(const String& bundleID);
 void determineTrackingPreventionState();
 bool doesAppHaveTrackingPreventionEnabled();
 bool doesParentProcessHaveTrackingPreventionEnabled(AuxiliaryProcess&, bool hasRequestedCrossWebsiteTrackingPermission);
+bool shouldEvaluateJavaScriptWithoutTransientActivation();
 bool isFullWebBrowserOrRunningTest();
 bool isParentProcessAFullWebBrowser(AuxiliaryProcess&);
 
