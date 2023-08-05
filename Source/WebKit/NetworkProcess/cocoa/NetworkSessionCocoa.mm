@@ -1592,7 +1592,7 @@ SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(WebPageProxyIdentifie
 
 #if ENABLE(TRACKING_PREVENTION)
     if (auto* storageSession = networkStorageSession()) {
-        auto firstParty = WebCore::RegistrableDomain(request.firstPartyForCookies());
+        auto firstParty = WebCore::RegistrableDomain(request.firstPartyOrigin());
         if (storageSession->shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor(firstParty))
             return sessionSetForPage(webPageProxyID).isolatedSession(storedCredentialsPolicy, firstParty, shouldBeConsideredAppBound, *this);
     } else

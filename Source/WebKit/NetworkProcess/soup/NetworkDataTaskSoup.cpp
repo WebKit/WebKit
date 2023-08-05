@@ -958,7 +958,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
     request.removeCredentials();
 
     if (isTopLevelNavigation())
-        request.setFirstPartyForCookies(request.url());
+        request.setFirstPartyOrigin(request.url());
 
     if (isCrossOrigin) {
         // The network layer might carry over some headers from the original request that
@@ -1579,11 +1579,11 @@ bool NetworkDataTaskSoup::shouldAllowHSTSPolicySetting() const
     //  "Limit HSTS State to the Hostname, or the Top Level Domain + 1"
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     return isTopLevelNavigation()
-        || m_currentRequest.url().host() == m_currentRequest.firstPartyForCookies().host()
+        || m_currentRequest.url().host() == m_currentRequest.firstPartyOrigin().host()
         || isPublicSuffix(m_currentRequest.url().host());
 #else
     return isTopLevelNavigation()
-        || m_currentRequest.url().host() == m_currentRequest.firstPartyForCookies().host();
+        || m_currentRequest.url().host() == m_currentRequest.firstPartyOrigin().host();
 #endif
 }
 

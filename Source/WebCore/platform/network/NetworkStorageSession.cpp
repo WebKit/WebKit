@@ -131,10 +131,10 @@ bool NetworkStorageSession::hasHadUserInteractionAsFirstParty(const RegistrableD
 
 bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
 {
-    return shouldBlockCookies(request.firstPartyForCookies(), request.url(), frameID, pageID, shouldRelaxThirdPartyCookieBlocking);
+    return shouldBlockCookies(request.firstPartyOrigin(), request.url(), frameID, pageID, shouldRelaxThirdPartyCookieBlocking);
 }
     
-bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
+bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyOrigin, const URL& resource, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
 {
     if (shouldRelaxThirdPartyCookieBlocking == ShouldRelaxThirdPartyCookieBlocking::Yes)
         return false;
@@ -142,7 +142,7 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     if (!m_isTrackingPreventionEnabled)
         return false;
 
-    RegistrableDomain firstPartyDomain { firstPartyForCookies };
+    RegistrableDomain firstPartyDomain { firstPartyOrigin };
     if (firstPartyDomain.isEmpty())
         return false;
 

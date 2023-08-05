@@ -554,7 +554,7 @@ ResourceRequest SWServer::createScriptRequest(const URL& url, const ServiceWorke
 
     request.setDomainForCachePartition(jobData.domainForCachePartition);
     request.setAllowCookies(true);
-    request.setFirstPartyForCookies(originURL(topOrigin));
+    request.setFirstPartyOrigin(originURL(topOrigin));
 
     request.setHTTPHeaderField(HTTPHeaderName::Origin, origin->toString());
     request.setHTTPReferrer(originURL(origin).string());

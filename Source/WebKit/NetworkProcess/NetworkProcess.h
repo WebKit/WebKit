@@ -418,6 +418,7 @@ public:
 
     bool allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const URL&);
     bool allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const RegistrableDomain&);
+    bool allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const WebCore::SecurityOriginData&);
     void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
     void webProcessWillLoadWebArchive(WebCore::ProcessIdentifier);
 

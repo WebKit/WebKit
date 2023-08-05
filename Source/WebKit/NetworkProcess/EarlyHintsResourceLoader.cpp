@@ -99,10 +99,10 @@ ResourceRequest EarlyHintsResourceLoader::constructPreconnectRequest(const Resou
 {
     ResourceRequest request { url };
 
-    // firstPartyForCookies and user agent are part of the HTTP socket pool keys in CFNetwork: rdar://59434166
-    auto firstPartyForCookies = originalRequest.firstPartyForCookies();
-    if (firstPartyForCookies.isValid())
-        request.setFirstPartyForCookies(firstPartyForCookies);
+    // firstPartyOrigin and user agent are part of the HTTP socket pool keys in CFNetwork: rdar://59434166
+    auto firstPartyOrigin = originalRequest.firstPartyOrigin();
+    if (firstPartyOrigin.isValid())
+        request.setFirstPartyOrigin(firstPartyOrigin);
 
     auto userAgent = originalRequest.httpUserAgent();
     if (!userAgent.isEmpty())

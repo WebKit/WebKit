@@ -704,7 +704,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
     if (m_frame->isMainFrame())
-        newRequest.setFirstPartyForCookies(newRequest.url());
+        newRequest.setFirstPartyOrigin(newRequest.url());
 
     FrameLoader::addSameSiteInfoToRequestIfNeeded(newRequest, m_frame->document());
 

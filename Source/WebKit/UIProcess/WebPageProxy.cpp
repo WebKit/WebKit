@@ -5359,7 +5359,7 @@ void WebPageProxy::preconnectTo(ResourceRequest&& request)
             request.setHTTPUserAgent(WTFMove(userAgent));
         }
     }
-    request.setFirstPartyForCookies(request.url());
+    request.setFirstPartyOrigin(request.url());
     request.setPriority(ResourceLoadPriority::VeryHigh);
     websiteDataStore().networkProcess().preconnectTo(sessionID(), identifier(), webPageID(), WTFMove(request), storedCredentialsPolicy, isNavigatingToAppBoundDomain());
 }

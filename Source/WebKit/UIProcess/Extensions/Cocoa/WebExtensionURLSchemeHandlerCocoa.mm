@@ -56,10 +56,10 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
 {
     NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr([this, &task, protectedThis = Ref { *this }, protectedTask = Ref { task }]() {
         // If a frame is loading, the frame request URL will be an empty string, since the request is actually the frame URL being loaded.
-        // In this case, consider the firstPartyForCookies() to be the document including the frame. This fails for nested frames, since
+        // In this case, consider the firstPartyOrigin() to be the document including the frame. This fails for nested frames, since
         // it is always the main frame URL, not the immediate parent frame.
         // FIXME: <rdar://problem/59193765> Remove this workaround when there is a way to know the proper parent frame.
-        URL frameDocumentURL = task.frameInfo().request().url().isEmpty() ? task.request().firstPartyForCookies() : task.frameInfo().request().url();
+        URL frameDocumentURL = task.frameInfo().request().url().isEmpty() ? task.request().firstPartyOrigin() : task.frameInfo().request().url();
         URL requestURL = task.request().url();
 
         if (!m_webExtensionController) {

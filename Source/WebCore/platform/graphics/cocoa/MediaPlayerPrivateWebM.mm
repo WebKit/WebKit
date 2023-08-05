@@ -167,7 +167,7 @@ void MediaPlayerPrivateWebM::load(const String& url)
 
     ResourceRequest request(url);
     request.setAllowCookies(true);
-    request.setFirstPartyForCookies(URL(url));
+    request.setFirstPartyOrigin(URL(url));
 
     auto loader = player->createResourceLoader();
     m_resourceClient = WebMResourceClient::create(*this, *loader, WTFMove(request));

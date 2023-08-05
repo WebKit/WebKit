@@ -2392,7 +2392,7 @@ void WebsiteDataStore::download(const DownloadProxy& downloadProxy, const String
 {
     std::optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     WebCore::ResourceRequest updatedRequest(downloadProxy.request());
-    // Request's firstPartyForCookies will be used as Original URL of the download request.
+    // Request's firstPartyOrigin will be used as Original URL of the download request.
     // We set the value to top level document's URL.
     if (auto* initiatingPage = downloadProxy.originatingPage()) {
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -2400,12 +2400,12 @@ void WebsiteDataStore::download(const DownloadProxy& downloadProxy, const String
 #endif
 
         URL initiatingPageURL = URL { initiatingPage->pageLoadState().url() };
-        updatedRequest.setFirstPartyForCookies(initiatingPageURL);
+        updatedRequest.setFirstPartyOrigin(initiatingPageURL);
         updatedRequest.setIsSameSite(WebCore::areRegistrableDomainsEqual(initiatingPageURL, downloadProxy.request().url()));
         if (!updatedRequest.hasHTTPHeaderField(WebCore::HTTPHeaderName::UserAgent))
             updatedRequest.setHTTPUserAgent(initiatingPage->userAgentForURL(downloadProxy.request().url()));
     } else {
-        updatedRequest.setFirstPartyForCookies(URL());
+        updatedRequest.setFirstPartyOrigin(URL());
         updatedRequest.setIsSameSite(false);
         if (!updatedRequest.hasHTTPHeaderField(WebCore::HTTPHeaderName::UserAgent))
             updatedRequest.setHTTPUserAgent(WebPageProxy::standardUserAgent());

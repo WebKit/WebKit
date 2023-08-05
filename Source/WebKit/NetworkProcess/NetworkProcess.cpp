@@ -434,6 +434,11 @@ bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
     });
 }
 
+bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const SecurityOriginData& firstPartyOrigin)
+{
+    return allowsFirstPartyForCookies(processIdentifier, RegistrableDomain { firstPartyOrigin });
+}
+
 bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain)
 {
     if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {

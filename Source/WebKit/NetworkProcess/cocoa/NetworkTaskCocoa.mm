@@ -129,7 +129,7 @@ void NetworkTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore::Res
     // Cap expiry of incoming cookies in response if it is a same-site
     // subresource but it resolves to a different CNAME than the top
     // site request, a.k.a. third-party CNAME cloaking.
-    auto firstPartyURL = request.firstPartyForCookies();
+    auto firstPartyURL = request.firstPartyOrigin();
     auto firstPartyHostName = firstPartyURL.host().toString();
     auto firstPartyHostCNAME = m_networkSession->firstPartyHostCNAMEDomain(firstPartyHostName);
     auto firstPartyAddress = m_networkSession->firstPartyHostIPAddress(firstPartyHostName);
@@ -233,7 +233,7 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
         if (storedCredentialsPolicy() == WebCore::StoredCredentialsPolicy::EphemeralStateless
             || (m_networkSession->networkStorageSession() && m_networkSession->networkStorageSession()->shouldBlockCookies(request, frameID(), pageID(), m_shouldRelaxThirdPartyCookieBlocking)))
             blockCookies();
-    } else if (storedCredentialsPolicy() != WebCore::StoredCredentialsPolicy::EphemeralStateless && needsFirstPartyCookieBlockingLatchModeQuirk(request.firstPartyForCookies(), request.url(), redirectResponse.url()))
+    } else if (storedCredentialsPolicy() != WebCore::StoredCredentialsPolicy::EphemeralStateless && needsFirstPartyCookieBlockingLatchModeQuirk(request.firstPartyOrigin(), request.url(), redirectResponse.url()))
         unblockCookies();
 #if !RELEASE_LOG_DISABLED
     if (m_networkSession->shouldLogCookieInformation())

@@ -1177,7 +1177,7 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
     if (auto result = WebCore::PrivateClickMeasurement::parseAttributionRequest(redirectRequest.url())) {
         privateClickMeasurementAttributionTriggerData = result.value();
         if (privateClickMeasurementAttributionTriggerData)
-            privateClickMeasurementAttributionTriggerData->destinationSite = WebCore::RegistrableDomain { request.firstPartyForCookies() };
+            privateClickMeasurementAttributionTriggerData->destinationSite = WebCore::RegistrableDomain { request.firstPartyOrigin() };
     } else if (!result.error().isEmpty())
         addConsoleMessage(MessageSource::PrivateClickMeasurement, MessageLevel::Error, result.error());
 
@@ -1777,7 +1777,7 @@ void NetworkResourceLoader::logCookieInformation() const
     auto* networkStorageSession = m_connection->networkProcess().storageSession(sessionID());
     ASSERT(networkStorageSession);
 
-    logCookieInformation(m_connection, "NetworkResourceLoader"_s, reinterpret_cast<const void*>(this), *networkStorageSession, originalRequest().firstPartyForCookies(), SameSiteInfo::create(originalRequest()), originalRequest().url(), originalRequest().httpReferrer(), frameID(), pageID(), coreIdentifier());
+    logCookieInformation(m_connection, "NetworkResourceLoader"_s, reinterpret_cast<const void*>(this), *networkStorageSession, originalRequest().firstPartyOrigin(), SameSiteInfo::create(originalRequest()), originalRequest().url(), originalRequest().httpReferrer(), frameID(), pageID(), coreIdentifier());
 }
 
 static void logBlockedCookieInformation(NetworkConnectionToWebProcess& connection, ASCIILiteral label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const String& referrer, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, std::optional<WebCore::ResourceLoaderIdentifier> identifier)

@@ -105,7 +105,7 @@ std::optional<ResourceRequest> ThreadableWebSocketChannel::webSocketConnectReque
     request.setHTTPUserAgent(document.userAgent(validatedURL->url));
     request.setDomainForCachePartition(document.domainForCachePartition());
     request.setAllowCookies(validatedURL->areCookiesAllowed);
-    request.setFirstPartyForCookies(document.firstPartyForCookies());
+    request.setFirstPartyOrigin(document.firstPartyForCookies());
     request.setHTTPHeaderField(HTTPHeaderName::Origin, document.securityOrigin().toString());
 
     if (auto* documentLoader = document.loader())

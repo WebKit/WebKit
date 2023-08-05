@@ -530,7 +530,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         existingNetworkResourceLoadIdentifierToResume = std::exchange(m_existingNetworkResourceLoadIdentifierToResume, std::nullopt);
     WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: Resource is being scheduled with the NetworkProcess (priority=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64 ")", static_cast<int>(resourceLoader.request().priority()), valueOrDefault(existingNetworkResourceLoadIdentifierToResume).toUInt64());
 
-    if (frame && !frame->settings().siteIsolationEnabled() && !WebProcess::singleton().allowsFirstPartyForCookies(loadParameters.request.firstPartyForCookies()))
+    if (frame && !frame->settings().siteIsolationEnabled() && !WebProcess::singleton().allowsFirstPartyForCookies(loadParameters.request.firstPartyOrigin()))
         RELEASE_LOG_FAULT(IPC, "scheduleLoad: Process will terminate due to failed allowsFirstPartyForCookies check");
 
     if (WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters, existingNetworkResourceLoadIdentifierToResume), 0) != IPC::Error::NoError) {
@@ -901,9 +901,9 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
     auto* mainFrame = dynamicDowncast<WebCore::LocalFrame>(webPage.mainFrame());
     if (auto* document = mainFrame ? mainFrame->document() : nullptr) {
         if (shouldPreconnectAsFirstParty == ShouldPreconnectAsFirstParty::Yes)
-            request.setFirstPartyForCookies(request.url());
+            request.setFirstPartyOrigin(request.url());
         else
-            request.setFirstPartyForCookies(document->firstPartyForCookies());
+            request.setFirstPartyOrigin(document->firstPartyForCookies());
         if (auto* loader = document->loader())
             request.setIsAppInitiated(loader->lastNavigationWasAppInitiated());
     }

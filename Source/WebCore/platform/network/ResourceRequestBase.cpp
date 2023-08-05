@@ -63,7 +63,7 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     setURL(other.url().isolatedCopy());
     setCachePolicy(other.cachePolicy());
     setTimeoutInterval(other.timeoutInterval());
-    setFirstPartyForCookies(other.firstPartyForCookies().isolatedCopy());
+    setFirstPartyOrigin(other.firstPartyOrigin().isolatedCopy());
     setHTTPMethod(other.httpMethod().isolatedCopy());
     setPriority(other.priority());
     setRequester(other.requester());
@@ -232,21 +232,21 @@ void ResourceRequestBase::setTimeoutInterval(double timeoutInterval)
     m_platformRequestUpdated = false;
 }
 
-const URL& ResourceRequestBase::firstPartyForCookies() const
+const URL& ResourceRequestBase::firstPartyOrigin() const
 {
     updateResourceRequest(); 
     
-    return m_requestData.m_firstPartyForCookies;
+    return m_requestData.m_firstPartyOrigin;
 }
 
-void ResourceRequestBase::setFirstPartyForCookies(const URL& firstPartyForCookies)
+void ResourceRequestBase::setFirstPartyOrigin(const URL& firstPartyOrigin)
 { 
     updateResourceRequest(); 
 
-    if (m_requestData.m_firstPartyForCookies == firstPartyForCookies)
+    if (m_requestData.m_firstPartyOrigin == firstPartyOrigin)
         return;
 
-    m_requestData.m_firstPartyForCookies = firstPartyForCookies;
+    m_requestData.m_firstPartyOrigin = firstPartyOrigin;
     
     m_platformRequestUpdated = false;
 }
@@ -674,7 +674,7 @@ bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceReque
     if (a.timeoutInterval() != b.timeoutInterval())
         return false;
     
-    if (a.firstPartyForCookies() != b.firstPartyForCookies())
+    if (a.firstPartyOrigin() != b.firstPartyOrigin())
         return false;
 
     if (a.isSameSite() != b.isSameSite())
@@ -829,7 +829,7 @@ String ResourceRequestBase::partitionName(const String& domain)
 
 bool ResourceRequestBase::isThirdParty() const
 {
-    return !areRegistrableDomainsEqual(url(), firstPartyForCookies());
+    return !areRegistrableDomainsEqual(url(), firstPartyOrigin());
 }
 
 }

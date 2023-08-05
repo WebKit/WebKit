@@ -229,7 +229,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     if (parameters.isMainFrameNavigation
         || parameters.hadMainFrameMainResourcePrivateRelayed
-        || request.url().host() == request.firstPartyForCookies().host()) {
+        || request.url().host() == request.firstPartyOrigin().host()) {
         if ([mutableRequest respondsToSelector:@selector(_setPrivacyProxyFailClosedForUnreachableNonMainHosts:)])
             [mutableRequest _setPrivacyProxyFailClosedForUnreachableNonMainHosts:YES];
     }
@@ -457,7 +457,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     }
 
     if (isTopLevelNavigation())
-        request.setFirstPartyForCookies(request.url());
+        request.setFirstPartyOrigin(request.url());
 
     NetworkTaskCocoa::willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = ThreadSafeWeakPtr { *this }, redirectResponse] (auto&& request) mutable {
         auto strongThis = weakThis.get();

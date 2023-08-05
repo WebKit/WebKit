@@ -764,7 +764,7 @@ void FrameLoader::didBeginDocument(bool dispatch)
     if (dispatch)
         dispatchDidClearWindowObjectsInAllWorlds();
 
-    updateFirstPartyForCookies();
+    updateFirstPartyOrigin();
     m_frame.document()->initContentSecurityPolicy();
 
     const Settings& settings = m_frame.settings();
@@ -1118,7 +1118,7 @@ void FrameLoader::resetMultipleFormSubmissionProtection()
     m_submittedFormURL = URL();
 }
 
-void FrameLoader::updateFirstPartyForCookies()
+void FrameLoader::updateFirstPartyOrigin()
 {
     if (auto* localParent = dynamicDowncast<LocalFrame>(m_frame.tree().parent()))
         setFirstPartyForCookies(localParent->document()->firstPartyForCookies());
@@ -2448,7 +2448,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
 
     document->domWindow()->resumeFromBackForwardCache();
 
-    updateFirstPartyForCookies();
+    updateFirstPartyOrigin();
 
     cachedFrame.restore();
 }
@@ -2771,9 +2771,9 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
     // If the originalURL is the same as the requested URL, we are processing a download
     // initiated directly without a page and do not need to specify the originalURL.
     if (originalURL == request.url())
-        request.setFirstPartyForCookies(URL());
+        request.setFirstPartyOrigin(URL());
     else
-        request.setFirstPartyForCookies(originalURL);
+        request.setFirstPartyOrigin(originalURL);
     addSameSiteInfoToRequestIfNeeded(request, initiator);
 }
 
@@ -3069,11 +3069,11 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
     // But make sure to set it on all requests regardless of protocol, as it has significance beyond the cookie policy (<rdar://problem/6616664>).
     bool isMainResource = mainResource == IsMainResource::Yes;
     bool isMainFrameMainResource = isMainResource && (m_frame.isMainFrame() || willOpenInNewWindow == WillOpenInNewWindow::Yes);
-    if (request.firstPartyForCookies().isEmpty()) {
+    if (request.firstPartyOrigin().isEmpty()) {
         if (isMainFrameMainResource)
-            request.setFirstPartyForCookies(request.url());
+            request.setFirstPartyOrigin(request.url());
         else if (Document* document = m_frame.document())
-            request.setFirstPartyForCookies(document->firstPartyForCookies());
+            request.setFirstPartyOrigin(document->firstPartyForCookies());
     }
 
     if (request.isSameSiteUnspecified()) {
@@ -3294,7 +3294,7 @@ ResourceLoaderIdentifier FrameLoader::loadResourceSynchronously(const ResourceRe
     addHTTPOriginIfNeeded(initialRequest, outgoingOrigin());
 
     if (auto* localFrame = dynamicDowncast<LocalFrame>(m_frame.mainFrame()))
-        initialRequest.setFirstPartyForCookies(localFrame->loader().documentLoader()->request().url());
+        initialRequest.setFirstPartyOrigin(localFrame->loader().documentLoader()->request().url());
     
     updateRequestAndAddExtraFields(initialRequest, IsMainResource::No);
 

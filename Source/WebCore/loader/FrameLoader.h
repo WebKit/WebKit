@@ -354,7 +354,7 @@ private:
 
     void loadProvisionalItemFromCachedPage();
 
-    void updateFirstPartyForCookies();
+    void updateFirstPartyOrigin();
     void setFirstPartyForCookies(const URL&);
 
     ResourceRequestCachePolicy defaultRequestCachingPolicy(const ResourceRequest&, FrameLoadType, bool isMainResource);

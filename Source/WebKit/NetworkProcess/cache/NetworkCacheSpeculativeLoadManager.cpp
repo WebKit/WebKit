@@ -91,7 +91,7 @@ static inline ResourceRequest constructRevalidationRequest(const Key& key, const
 {
     ResourceRequest revalidationRequest(key.identifier());
     revalidationRequest.setHTTPHeaderFields(subResourceInfo.requestHeaders());
-    revalidationRequest.setFirstPartyForCookies(subResourceInfo.firstPartyForCookies());
+    revalidationRequest.setFirstPartyOrigin(subResourceInfo.firstPartyForCookies());
     revalidationRequest.setIsSameSite(subResourceInfo.isSameSite());
     revalidationRequest.setIsTopSite(subResourceInfo.isTopSite());
     revalidationRequest.setIsAppInitiated(subResourceInfo.isAppInitiated());

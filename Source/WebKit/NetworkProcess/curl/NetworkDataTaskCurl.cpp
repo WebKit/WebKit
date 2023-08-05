@@ -529,7 +529,7 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
 void NetworkDataTaskCurl::appendCookieHeader(WebCore::ResourceRequest& request)
 {
     auto includeSecureCookies = request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-    auto cookieHeaderField = m_session->networkStorageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ApplyTrackingPrevention::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
+    auto cookieHeaderField = m_session->networkStorageSession()->cookieRequestHeaderFieldValue(request.firstPartyOrigin(), WebCore::SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ApplyTrackingPrevention::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
     if (!cookieHeaderField.isEmpty())
         request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
 }
@@ -541,7 +541,7 @@ void NetworkDataTaskCurl::handleCookieHeaders(const WebCore::ResourceRequest& re
     for (auto header : response.headers) {
         if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
             String setCookieString = header.right(header.length() - setCookieHeader.length());
-            m_session->networkStorageSession()->setCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url, setCookieString);
+            m_session->networkStorageSession()->setCookiesFromHTTPResponse(request.firstPartyOrigin(), response.url, setCookieString);
         }
     }
 }
@@ -576,7 +576,7 @@ bool NetworkDataTaskCurl::shouldBlockCookies(const WebCore::ResourceRequest& req
 
 bool NetworkDataTaskCurl::isThirdPartyRequest(const WebCore::ResourceRequest& request)
 {
-    return !WebCore::areRegistrableDomainsEqual(request.url(), request.firstPartyForCookies());
+    return !WebCore::areRegistrableDomainsEqual(request.url(), request.firstPartyOrigin());
 }
 
 void NetworkDataTaskCurl::updateNetworkLoadMetrics(WebCore::NetworkLoadMetrics& networkLoadMetrics)

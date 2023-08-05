@@ -91,7 +91,7 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     preflightRequest.setHTTPMethod("OPTIONS"_s);
     preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestMethod, request.httpMethod());
     preflightRequest.setPriority(request.priority());
-    preflightRequest.setFirstPartyForCookies(request.firstPartyForCookies());
+    preflightRequest.setFirstPartyOrigin(request.firstPartyOrigin());
     preflightRequest.setIsAppInitiated(request.isAppInitiated());
     if (!referrer.isNull())
         preflightRequest.setHTTPReferrer(referrer);

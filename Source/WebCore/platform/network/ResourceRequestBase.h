@@ -66,9 +66,9 @@ public:
     struct RequestData {
         RequestData() { }
         
-        RequestData(const URL& url, const URL& firstPartyForCookies, double timeoutInterval, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false)
+        RequestData(const URL& url, const URL& firstPartyOrigin, double timeoutInterval, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false)
             : m_url(url)
-            , m_firstPartyForCookies(firstPartyForCookies)
+            , m_firstPartyOrigin(firstPartyOrigin)
             , m_timeoutInterval(timeoutInterval)
             , m_httpMethod(httpMethod)
             , m_httpHeaderFields(httpHeaderFields)
@@ -92,7 +92,8 @@ public:
         }
         
         URL m_url;
-        URL m_firstPartyForCookies;
+        // FIXME: This should be a SecurityOriginData.
+        URL m_firstPartyOrigin;
         double m_timeoutInterval { s_defaultTimeoutInterval }; // 0 is a magic value for platform default on platforms that have one.
         String m_httpMethod { "GET"_s };
         HTTPHeaderMap m_httpHeaderFields;
@@ -140,8 +141,8 @@ public:
     WEBCORE_EXPORT double timeoutInterval() const; // May return 0 when using platform default.
     WEBCORE_EXPORT void setTimeoutInterval(double);
     
-    WEBCORE_EXPORT const URL& firstPartyForCookies() const;
-    WEBCORE_EXPORT void setFirstPartyForCookies(const URL&);
+    WEBCORE_EXPORT const URL& firstPartyOrigin() const;
+    WEBCORE_EXPORT void setFirstPartyOrigin(const URL&);
 
     WEBCORE_EXPORT bool isThirdParty() const;
 
