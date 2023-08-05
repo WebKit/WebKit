@@ -269,6 +269,6 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVRouteDetectorMult
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVOutputContextOutputDevicesDidChangeNotification, NSNotificationName, PAL_EXPORT)
 #endif // HAVE(AVROUTEPICKERVIEW)
 
-SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVURLAssetExtendedMIMETypePlayabilityTreatSupportedPlaylistMIMETypesAsISOBMFFMediaDataContainersKey, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVURLAssetExtendedMIMETypePlayabilityTreatPlaylistMIMETypesAsISOBMFFMediaDataContainersKey, NSString *, PAL_EXPORT)
 
 #endif // USE(AVFOUNDATION)
