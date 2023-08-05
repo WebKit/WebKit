@@ -105,15 +105,21 @@
 
 - (void)disableFrameSizeUpdates
 {
+    _frameSizeUpdatesDisabledCount++;
 }
 
 - (void)enableFrameSizeUpdates
 {
+    if (!_frameSizeUpdatesDisabledCount)
+        return;
+
+    if (!(--_frameSizeUpdatesDisabledCount))
+        [self didChangeFrameSize];
 }
 
 - (BOOL)frameSizeUpdatesDisabled
 {
-    return NO;
+    return _frameSizeUpdatesDisabledCount > 0;
 }
 
 - (void)didChangeViewScale
@@ -130,6 +136,9 @@
 
 - (void)didChangeFrameSize
 {
+    if ([self frameSizeUpdatesDisabled])
+        return;
+
     if (_webViewImpl->clipsToVisibleRect())
         _webViewImpl->updateViewExposedRect();
     _webViewImpl->setDrawingAreaSize(NSSizeToCGSize(_view.frame.size));

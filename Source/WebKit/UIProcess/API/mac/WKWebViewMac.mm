@@ -134,12 +134,25 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
     _impl->prepareContentInRect(NSRectToCGRect(rect));
 }
 
+- (BOOL)_holdWindowResizeSnapshotIfNeeded
+{
+#if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
+    if (self->_windowSnapshotReadinessHandler)
+        return NO;
+
+    if (!self.window || ![self.window respondsToSelector:@selector(_holdResizeSnapshotWithReason:)])
+        return NO;
+
+    _windowSnapshotReadinessHandler = makeBlockPtr([self.window _holdResizeSnapshotWithReason:@"full screen"]);
+    return !!_windowSnapshotReadinessHandler;
+#else
+    return NO;
+#endif
+}
+
 - (void)_doWindowSnapshotReadinessUpdate
 {
 #if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
-    if (!self->_windowSnapshotReadinessHandler)
-        return;
-
     [self _doAfterNextPresentationUpdate:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
@@ -161,7 +174,8 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
 
     [self _recalculateViewportSizesWithMinimumViewportInset:_minimumViewportInset maximumViewportInset:_maximumViewportInset throwOnInvalidInput:NO];
 
-    [self _doWindowSnapshotReadinessUpdate];
+    if (didCreateWindowSnapshotReadinessHandler)
+        [self _doWindowSnapshotReadinessUpdate];
 }
 
 - (void)setUserInterfaceLayoutDirection:(NSUserInterfaceLayoutDirection)userInterfaceLayoutDirection
@@ -1195,26 +1209,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_web_didChangeContentSize:(NSSize)newSize
 {
-}
-
-- (void)_holdWindowResizeSnapshotWithReason:(NSString *)reason
-{
-#if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
-    if (!self.window || ![self.window respondsToSelector:@selector(_holdResizeSnapshotWithReason:)])
-        return;
-
-    _windowSnapshotReadinessHandler = makeBlockPtr([self.window _holdResizeSnapshotWithReason:reason]);
-#endif
-}
-
-- (void)_web_windowWillEnterFullScreen
-{
-    [self _holdWindowResizeSnapshotWithReason:@"web view entering full screen"];
-}
-
-- (void)_web_windowWillExitFullScreen
-{
-    [self _holdWindowResizeSnapshotWithReason:@"web view exiting full screen"];
 }
 
 #if ENABLE(DRAG_SUPPORT)
