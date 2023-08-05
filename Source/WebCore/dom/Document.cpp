@@ -2989,13 +2989,24 @@ void Document::collectRangeDataFromRegister(Vector<WeakPtr<HighlightRangeData>>&
 {
     for (auto& highlight : highlightRegister.map()) {
         for (auto& rangeData : highlight.value->rangesData()) {
-            // FIXME: For live ranges, we can optimize by only performing this when the range changed.
             if (rangeData->startPosition().isNotNull() && rangeData->endPosition().isNotNull() && !rangeData->range().isLiveRange())
                 continue;
+
+            if (auto* liveRange = dynamicDowncast<Range>(rangeData->range()); liveRange && !liveRange->didChangeHighlight())
+                continue;
+
             auto simpleRange = makeSimpleRange(rangeData->range());
             if (&simpleRange.startContainer().treeScope() != &simpleRange.endContainer().treeScope())
                 continue;
             rangesData.append(rangeData.get());
+        }
+    }
+
+    // One range can belong to multiple highlights so resetting a range's flag cannot be done in the loops above.
+    for (auto& highlight : highlightRegister.map()) {
+        for (auto& rangeData : highlight.value->rangesData()) {
+            if (auto* liveRange = dynamicDowncast<Range>(rangeData->range()); liveRange && liveRange->didChangeHighlight())
+                liveRange->resetDidChangeHighlight();
         }
     }
 }
