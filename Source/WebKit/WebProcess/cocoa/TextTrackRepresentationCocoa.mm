@@ -31,9 +31,9 @@
 #import "VideoFullscreenManager.h"
 #import "VideoFullscreenManagerProxyMessages.h"
 #import "WebPage.h"
-
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/HTMLVideoElement.h>
+#import <WebCore/Page.h>
 
 namespace WebKit {
 

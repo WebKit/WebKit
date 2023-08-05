@@ -36,6 +36,8 @@
 #include "APIInjectedBundlePageLoaderClient.h"
 #include "APIInjectedBundlePageResourceLoadClient.h"
 #include "APIInjectedBundlePageUIClient.h"
+#include "Connection.h"
+#include "ContentAsStringIncludesChildFrames.h"
 #include "DataReference.h"
 #include "DragControllerAction.h"
 #include "DrawingArea.h"
@@ -5206,6 +5208,11 @@ void WebPage::setActivePopupMenu(WebPopupMenu* menu)
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
+WebColorChooser* WebPage::activeColorChooser() const
+{
+    return m_activeColorChooser.get();
+}
+
 void WebPage::setActiveColorChooser(WebColorChooser* colorChooser)
 {
     m_activeColorChooser = colorChooser;
@@ -7986,7 +7993,7 @@ WebCore::DOMPasteAccessResponse WebPage::requestDOMPasteAccess(WebCore::DOMPaste
     // should be removed once <rdar://problem/16207002> is resolved.
     preemptivelySendAutocorrectionContext();
 #endif
-    auto sendResult = sendSyncWithDelayedReply(Messages::WebPageProxy::RequestDOMPasteAccess(pasteAccessCategory, rectForElementAtInteractionLocation(), originIdentifier));
+    auto sendResult = sendSyncWithDelayedReply(Messages::WebPageProxy::RequestDOMPasteAccess(pasteAccessCategory, rectForElementAtInteractionLocation(), originIdentifier), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
     auto [response] = sendResult.takeReplyOr(WebCore::DOMPasteAccessResponse::DeniedForGesture);
     return response;
 }

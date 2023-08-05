@@ -27,8 +27,6 @@
 
 #include "APIObject.h"
 #include "CallbackID.h"
-#include "Connection.h"
-#include "ContentAsStringIncludesChildFrames.h"
 #include "ContentWorldShared.h"
 #include "DataReference.h"
 #include "DownloadID.h"
@@ -46,7 +44,6 @@
 #include "PDFPluginIdentifier.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
-#include "SharedMemory.h"
 #include "StorageNamespaceIdentifier.h"
 #include "TransactionID.h"
 #include "UserContentControllerIdentifier.h"
@@ -58,7 +55,6 @@
 #include "WebUndoStepID.h"
 #include "WebsitePoliciesData.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
-#include <WebCore/ActivityState.h>
 #include <WebCore/AppHighlight.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DictationContext.h>
@@ -73,7 +69,6 @@
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/MediaKeySystemRequest.h>
-#include <WebCore/Page.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PlatformLayerIdentifier.h>
@@ -89,8 +84,6 @@
 #include <WebCore/TextManipulationController.h>
 #include <WebCore/TextManipulationItem.h>
 #include <WebCore/UserActivity.h>
-#include <WebCore/UserContentTypes.h>
-#include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/UserMediaRequestIdentifier.h>
 #include <WebCore/UserScriptTypes.h>
 #include <WebCore/VisibilityState.h>
@@ -206,6 +199,8 @@ class DragData;
 class WeakPtrImplWithEventTargetData;
 class FontAttributeChanges;
 class FontChanges;
+class Frame;
+class FrameView;
 class FrameSelection;
 class GraphicsContext;
 class HTMLElement;
@@ -239,7 +234,9 @@ class SubstituteData;
 class TextCheckingRequest;
 class VisiblePosition;
 
-enum class SyntheticClickType : uint8_t;
+enum LayoutMilestone : uint16_t;
+
+enum class ActivityState : uint16_t;
 enum class COEPDisposition : bool;
 enum class CaretAnimatorType : uint8_t;
 enum class CreateNewGroupForHighlight : bool;
@@ -256,11 +253,14 @@ enum class MediaProducerMediaState : uint32_t;
 enum class MediaProducerMutedState : uint8_t;
 enum class SelectionDirection : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
+enum class SyntheticClickType : uint8_t;
 enum class TextIndicatorPresentationTransition : uint8_t;
 enum class TextGranularity : uint8_t;
+enum class UserContentInjectedFrames : bool;
+enum class UserInterfaceLayoutDirection : bool;
+enum class ViolationReportType : uint8_t;
 enum class WheelEventProcessingSteps : uint8_t;
 enum class WritingDirection : uint8_t;
-enum class ViolationReportType : uint8_t;
 
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
@@ -315,6 +315,7 @@ class PluginView;
 class RemoteMediaSessionCoordinator;
 class RemoteRenderingBackendProxy;
 class RemoteWebInspectorUI;
+class SharedMemoryHandle;
 class TextCheckingControllerProxy;
 class UserMediaPermissionRequestManager;
 class ViewGestureGeometryCollector;
@@ -354,6 +355,7 @@ class WebUserContentController;
 class WebWheelEvent;
 class RemoteLayerTreeTransaction;
 
+enum class ContentAsStringIncludesChildFrames : bool;
 enum class DragControllerAction : uint8_t;
 enum class FindOptions : uint16_t;
 enum class FindDecorationStyle : uint8_t;
@@ -546,7 +548,7 @@ public:
     inline void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    WebColorChooser* activeColorChooser() const { return m_activeColorChooser; }
+    WebColorChooser* activeColorChooser() const;
     void setActiveColorChooser(WebColorChooser*);
     void didChooseColor(const WebCore::Color&);
     void didEndColorPicker();
@@ -1133,8 +1135,8 @@ public:
     void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground,  CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 
 #if PLATFORM(GTK)
-    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, WebCore::ResourceError&&)>&&);
-    void drawPagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, WebCore::ResourceError&&)>&& completionHandler) { drawPagesForPrinting(frameID, printInfo, WTFMove(completionHandler)); }
+    void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<SharedMemoryHandle>&&, WebCore::ResourceError&&)>&&);
+    void drawPagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemoryHandle>&&, WebCore::ResourceError&&)>&& completionHandler) { drawPagesForPrinting(frameID, printInfo, WTFMove(completionHandler)); }
 #endif
 
     void addResourceRequest(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&);
@@ -1444,7 +1446,6 @@ public:
     SendSyncResult<T> sendSyncWithDelayedReply(T&& message, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
     {
         cancelCurrentInteractionInformationRequest();
-        sendSyncOptions = sendSyncOptions | IPC::SendSyncOption::InformPlatformProcessWillSuspend;
         return sendSync(WTFMove(message), Seconds::infinity(), sendSyncOptions);
     }
 
@@ -1574,7 +1575,7 @@ public:
     WebCore::HighlightVisibility appHighlightsVisiblility() const { return m_appHighlightsVisible; }
 
     bool createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
-    void restoreAppHighlightsAndScrollToIndex(Vector<SharedMemory::Handle>&&, const std::optional<unsigned> index);
+    void restoreAppHighlightsAndScrollToIndex(Vector<SharedMemoryHandle>&&, const std::optional<unsigned> index);
     void setAppHighlightsVisibility(const WebCore::HighlightVisibility);
 #endif
 
@@ -2284,7 +2285,7 @@ private:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    WebColorChooser* m_activeColorChooser { nullptr };
+    WeakPtr<WebColorChooser> m_activeColorChooser;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -2523,7 +2524,7 @@ private:
     WallTime m_loadCommitTime;
 #endif
 
-    WebCore::UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { WebCore::UserInterfaceLayoutDirection::LTR };
+    WebCore::UserInterfaceLayoutDirection m_userInterfaceLayoutDirection;
 
     const String m_overrideContentSecurityPolicy;
     const std::optional<double> m_cpuLimit;

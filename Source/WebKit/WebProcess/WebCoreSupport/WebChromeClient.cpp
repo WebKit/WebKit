@@ -465,7 +465,7 @@ bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, LocalFr
 
     HangDetectionDisabler hangDetectionDisabler;
 
-    auto sendResult = m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(webFrame->frameID(), webFrame->info(), message));
+    auto sendResult = m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(webFrame->frameID(), webFrame->info(), message), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
     auto [shouldClose] = sendResult.takeReplyOr(false);
     return shouldClose;
 }
@@ -511,7 +511,7 @@ void WebChromeClient::runJavaScriptAlert(LocalFrame& frame, const String& alertT
     HangDetectionDisabler hangDetectionDisabler;
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
 
-    m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), webFrame->info(), alertText), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
+    m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), webFrame->info(), alertText), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages, IPC::SendSyncOption::InformPlatformProcessWillSuspend });
 }
 
 bool WebChromeClient::runJavaScriptConfirm(LocalFrame& frame, const String& message)
@@ -529,7 +529,7 @@ bool WebChromeClient::runJavaScriptConfirm(LocalFrame& frame, const String& mess
     HangDetectionDisabler hangDetectionDisabler;
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
 
-    auto sendResult = m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptConfirm(webFrame->frameID(), webFrame->info(), message), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
+    auto sendResult = m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptConfirm(webFrame->frameID(), webFrame->info(), message), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages, IPC::SendSyncOption::InformPlatformProcessWillSuspend });
     auto [result] = sendResult.takeReplyOr(false);
     return result;
 }
@@ -549,7 +549,7 @@ bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& messa
     HangDetectionDisabler hangDetectionDisabler;
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
 
-    auto sendResult = m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), webFrame->info(), message, defaultValue), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
+    auto sendResult = m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), webFrame->info(), message, defaultValue), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages, IPC::SendSyncOption::InformPlatformProcessWillSuspend });
     if (!sendResult.succeeded())
         return false;
 
@@ -778,7 +778,7 @@ void WebChromeClient::print(LocalFrame& frame, const StringWithDirection& title)
     auto truncatedTitle = truncateFromEnd(title, maxTitleLength);
 
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
-    m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::PrintFrame(webFrame->frameID(), truncatedTitle.string, pdfFirstPageSize));
+    m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::PrintFrame(webFrame->frameID(), truncatedTitle.string, pdfFirstPageSize), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
 }
 
 void WebChromeClient::reachedMaxAppCacheSize(int64_t)
@@ -797,7 +797,7 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin,
     if (!cacheStorage.calculateQuotaForOrigin(origin, currentQuota))
         return;
 
-    auto sendResult = m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::ReachedApplicationCacheOriginQuota(origin.data().databaseIdentifier(), currentQuota, totalBytesNeeded));
+    auto sendResult = m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::ReachedApplicationCacheOriginQuota(origin.data().databaseIdentifier(), currentQuota, totalBytesNeeded), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
     auto [newQuota] = sendResult.takeReplyOr(0);
 
     cacheStorage.storeUpdatedQuotaForOrigin(&origin, newQuota);
