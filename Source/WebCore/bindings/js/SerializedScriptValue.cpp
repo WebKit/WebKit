@@ -528,8 +528,9 @@ const uint8_t cryptoKeyOKPOpNameTagMaximumValue = 1;
  * Version 11. added support for Blob's memory cost.
  * Version 12. added support for agent cluster ID.
  * Version 13. added support for ErrorInstance objects.
+ * Version 14. encode booleans as uint8_t instead of int32_t.
  */
-static constexpr unsigned CurrentVersion = 13;
+static constexpr unsigned CurrentVersion = 14;
 static constexpr unsigned TerminatorTag = 0xFFFFFFFF;
 static constexpr unsigned StringPoolTag = 0xFFFFFFFE;
 static constexpr unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -913,30 +914,13 @@ private:
 #endif
     }
 
-    template <class T>
-    void fillTransferMap(const Vector<RefPtr<T>>& input, ObjectPool& result)
+    template<typename T>
+    void fillTransferMap(const Vector<T>& input, ObjectPool& result)
     {
-        if (input.isEmpty())
-            return;
-        JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(m_lexicalGlobalObject);
-        for (size_t i = 0; i < input.size(); i++) {
-            JSC::JSValue value = toJS(m_lexicalGlobalObject, globalObject, input[i].get());
-            JSC::JSObject* obj = value.getObject();
-            if (obj && !result.contains(obj))
-                result.add(obj, i);
-        }
-    }
-    template <class T>
-    void fillTransferMap(const Vector<Ref<T>>& input, ObjectPool& result)
-    {
-        if (input.isEmpty())
-            return;
-        JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(m_lexicalGlobalObject);
-        for (size_t i = 0; i < input.size(); i++) {
-            JSC::JSValue value = toJS(m_lexicalGlobalObject, globalObject, input[i].get());
-            JSC::JSObject* obj = value.getObject();
-            if (obj && !result.contains(obj))
-                result.add(obj, i);
+        auto* globalObject = jsCast<JSDOMGlobalObject*>(m_lexicalGlobalObject);
+        for (size_t i = 0; i < input.size(); ++i) {
+            if (auto* object = toJS(globalObject, globalObject, input[i].get()).getObject())
+                result.add(object, i);
         }
     }
 
@@ -1125,7 +1109,7 @@ private:
 #if USE(BIGINT32)
     void dumpBigInt32Data(int32_t integer)
     {
-        write(static_cast<uint8_t>(integer < 0));
+        write(integer < 0);
         if (!integer) {
             write(static_cast<uint32_t>(0)); // Length-in-uint64_t
             return;
@@ -1140,7 +1124,7 @@ private:
 
     void dumpHeapBigIntData(JSBigInt* bigInt)
     {
-        write(static_cast<uint8_t>(bigInt->sign()));
+        write(bigInt->sign());
         if constexpr (sizeof(JSBigInt::Digit) == sizeof(uint64_t)) {
             write(static_cast<uint32_t>(bigInt->length()));
             for (unsigned index = 0; index < bigInt->length(); ++index)
@@ -1279,7 +1263,7 @@ private:
 
         auto& matrix = jsCast<JSDOMMatrixReadOnly*>(obj)->wrapped();
         bool is2D = matrix.is2D();
-        write(static_cast<uint8_t>(is2D));
+        write(is2D);
         if (is2D) {
             write(matrix.m11());
             write(matrix.m12());
@@ -1624,8 +1608,7 @@ private:
                     write(index->value);
                     return true;
                 } else if (m_context == SerializationContext::CloneAcrossWorlds) {
-                    // FIXME: Only in clone accross worlds mode.
-                    write (InMemoryMessagePortTag);
+                    write(InMemoryMessagePortTag);
                     write(static_cast<uint32_t>(m_inMemoryMessagePorts.size()));
                     m_inMemoryMessagePorts.append(&jsCast<JSMessagePort*>(obj)->wrapped());
                     return true;
@@ -1878,7 +1861,7 @@ private:
 
     void write(bool b)
     {
-        writeLittleEndian(m_buffer, static_cast<int32_t>(b));
+        write(static_cast<uint8_t>(b));
     }
 
     void write(uint8_t c)
@@ -2662,8 +2645,8 @@ public:
 
 private:
     struct CachedString {
-        CachedString(const String& string)
-            : m_string(string)
+        CachedString(String&& string)
+            : m_string(WTFMove(string))
         {
         }
 
@@ -2682,11 +2665,8 @@ private:
     };
 
     struct CachedStringRef {
-        CachedStringRef()
-            : m_base(0)
-            , m_index(0)
-        {
-        }
+        CachedStringRef() = default;
+
         CachedStringRef(Vector<CachedString>* base, size_t index)
             : m_base(base)
             , m_index(index)
@@ -2696,8 +2676,8 @@ private:
         CachedString* operator->() { ASSERT(m_base); return &m_base->at(m_index); }
         
     private:
-        Vector<CachedString>* m_base;
-        size_t m_index;
+        Vector<CachedString>* m_base { nullptr };
+        size_t m_index { 0 };
     };
 
     CloneDeserializer(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, ArrayBufferContentsArray* arrayBufferContents, Vector<std::optional<ImageBitmapBacking>>&& backingStores, const Vector<uint8_t>& buffer
@@ -2856,12 +2836,20 @@ private:
     }
 #endif
 
-    bool read(bool& b)
+    enum class ForceReadingAs8Bit : bool { No, Yes };
+    bool read(bool& b, ForceReadingAs8Bit forceReadingAs8Bit = ForceReadingAs8Bit::No)
     {
-        int32_t integer;
-        if (!readLittleEndian(integer) || integer > 1)
-            return false;
-        b = !!integer;
+        if (m_version >= 14 || forceReadingAs8Bit == ForceReadingAs8Bit::Yes) {
+            uint8_t integer;
+            if (!read(integer) || integer > 1)
+                return false;
+            b = !!integer;
+        } else {
+            int32_t integer;
+            if (!read(integer) || integer > 1)
+                return false;
+            b = !!integer;
+        }
         return true;
     }
 
@@ -3019,7 +3007,7 @@ private:
             fail();
             return false;
         }
-        m_constantPool.append(str);
+        m_constantPool.append(WTFMove(str));
         cachedString = CachedStringRef(&m_constantPool, m_constantPool.size() - 1);
         return true;
     }
@@ -3487,7 +3475,7 @@ private:
         if (!read(algorithm))
             return false;
 
-        int32_t isRestrictedToHash;
+        bool isRestrictedToHash;
         CryptoAlgorithmIdentifier hash = CryptoAlgorithmIdentifier::SHA_1;
         if (!read(isRestrictedToHash))
             return false;
@@ -3624,7 +3612,7 @@ private:
         if (!read(keyFormatVersion) || keyFormatVersion > currentKeyFormatVersion)
             return false;
 
-        int32_t extractable;
+        bool extractable;
         if (!read(extractable))
             return false;
 
@@ -3738,8 +3726,8 @@ private:
     template<class T>
     JSValue readDOMMatrix()
     {
-        uint8_t is2D;
-        if (!read(is2D))
+        bool is2D;
+        if (!read(is2D, ForceReadingAs8Bit::Yes))
             return { };
 
         if (is2D) {
@@ -4064,8 +4052,8 @@ private:
 
     JSValue readBigInt()
     {
-        uint8_t sign = 0;
-        if (!read(sign))
+        bool sign;
+        if (!read(sign, ForceReadingAs8Bit::Yes))
             return JSValue();
         uint32_t lengthInUint64 = 0;
         if (!read(lengthInUint64))
