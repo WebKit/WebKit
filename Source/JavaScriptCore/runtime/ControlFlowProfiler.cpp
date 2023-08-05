@@ -66,7 +66,7 @@ void ControlFlowProfiler::dumpData() const
     }
 }
 
-Vector<BasicBlockRange> ControlFlowProfiler::getExecutedBasicBlocksForSourceID(SourceID sourceID, VM& vm) const
+Vector<BasicBlockRange> ControlFlowProfiler::getBasicBlocksForSourceIDWithoutFunctionRange(SourceID sourceID, VM& vm) const
 {
     Vector<BasicBlockRange> result(0);
     auto bucketFindResult = m_sourceIDBuckets.find(sourceID);
@@ -77,8 +77,6 @@ Vector<BasicBlockRange> ControlFlowProfiler::getExecutedBasicBlocksForSourceID(S
     for (const BasicBlockLocation* block : cache.values()) {
         bool hasExecuted = block->hasExecuted();
         size_t executionCount = block->executionCount();
-        if (!hasExecuted && !executionCount)
-            continue;
 
         const Vector<BasicBlockLocation::Gap>& blockRanges = block->getExecutedRanges();
         result.reserveCapacity(result.size() + blockRanges.size());
