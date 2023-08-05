@@ -1281,6 +1281,7 @@ imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-indexes.any.serv
 imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-store-cursors.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-store.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.serviceworker.html [ Skip ]
+http/tests/security/service-worker-network-load.html [ Skip ]
 
 # No Cross-Origin-Opener-Policy / Cross-Origin-Embedder-Policy in WK1.
 imported/w3c/web-platform-tests/html/anonymous-iframe [ Skip ]

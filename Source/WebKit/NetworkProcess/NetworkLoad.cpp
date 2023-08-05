@@ -193,6 +193,8 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
         if (m_currentRequest.isNull()) {
             NetworkLoadMetrics emptyMetrics;
             didCompleteWithError(cancelledError(m_currentRequest), emptyMetrics);
+            completionHandler({ });
+            return;
         }
         completionHandler(ResourceRequest(m_currentRequest));
     });
