@@ -11,8 +11,7 @@ const iframe = document.createElement('iframe');
 document.body.appendChild(iframe);
 
 let isInitialLoad = true;
-const logsA = [];
-const logsB = [];
+const logs = [];
 if (window.testRunner)
   setTimeout(() => testRunner.notifyDone(), 3000);
 
@@ -26,25 +25,22 @@ window.addEventListener("pageshow", function(event) {
       setTimeout(() => testRunner.notifyDone(), 3000);
 
     shouldBeTrue('event.persisted');
-    shouldBe('logsA.length', '0');
-    shouldBe('logsB.length', '0');
-    iframe.contentWindow.requestIdleCallback(() => logsB.push('B3'));
-    requestIdleCallback(() => logsA.push('A4'));
+    shouldBe('logs.length', '0');
+    iframe.contentWindow.requestIdleCallback(() => logs.push('B3'));
+    requestIdleCallback(() => logs.push('A4'));
     requestIdleCallback(() => {
-        shouldBe('logsA.length', '4');
-        shouldBeEqualToString('logsA.join(", ")', 'A1, A2, A3, A4');
-        shouldBe('logsB.length', '3');
-        shouldBeEqualToString('logsB.join(", ")', 'B1, B2, B3');
+        shouldBe('logs.length', '7');
+        shouldBeEqualToString('logs.join(", ")', 'A1, B1, A2, B2, A3, B3, A4');
         finishJSTest();
     });
 });
 
 window.addEventListener("pagehide", function(event) {
-    requestIdleCallback(() => logsA.push('A1'));
-    iframe.contentWindow.requestIdleCallback(() => logsB.push('B1'));
-    requestIdleCallback(() => logsA.push('A2'));
-    iframe.contentWindow.requestIdleCallback(() => logsB.push('B2'));
-    requestIdleCallback(() => logsA.push('A3'));
+    requestIdleCallback(() => logs.push('A1'));
+    iframe.contentWindow.requestIdleCallback(() => logs.push('B1'));
+    requestIdleCallback(() => logs.push('A2'));
+    iframe.contentWindow.requestIdleCallback(() => logs.push('B2'));
+    requestIdleCallback(() => logs.push('A3'));
 });
 
 onload = () => {

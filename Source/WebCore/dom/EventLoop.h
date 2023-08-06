@@ -91,9 +91,6 @@ protected:
     void run();
     void clearAllTasks();
 
-    // FIXME: Account for fully-activeness of each document.
-    bool hasTasksForFullyActiveDocument() const { return !m_tasks.isEmpty(); }
-
 private:
     void scheduleToRunIfNeeded();
     virtual void scheduleToRun() = 0;

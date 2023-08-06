@@ -173,7 +173,6 @@
 #include "WheelEventDeltaFilter.h"
 #include "WheelEventTestMonitor.h"
 #include "Widget.h"
-#include "WindowEventLoop.h"
 #include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/VM.h>
 #include <wtf/FileSystem.h>
@@ -1686,12 +1685,9 @@ void Page::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps
 
 void Page::scheduleRenderingUpdateInternal()
 {
-    if (!chrome().client().scheduleRenderingUpdate())
-        renderingUpdateScheduler().scheduleRenderingUpdate();
-
-    forEachWindowEventLoop([](WindowEventLoop& windowEventLoop) {
-        windowEventLoop.didScheduleRenderingUpdate();
-    });
+    if (chrome().client().scheduleRenderingUpdate())
+        return;
+    renderingUpdateScheduler().scheduleRenderingUpdate();
 }
 
 void Page::didScheduleRenderingUpdate()
@@ -2038,13 +2034,8 @@ void Page::renderingUpdateCompleted()
         m_unfulfilledRequestedSteps = { };
     }
 
-    if (!isUtilityPage()) {
-        auto nextRenderingUpdate = m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval();
-        forEachWindowEventLoop([&](WindowEventLoop& eventLoop) {
-            eventLoop.didFinishRenderingUpdate();
-        });
-        m_opportunisticTaskScheduler->reschedule(nextRenderingUpdate);
-    }
+    if (!isUtilityPage())
+        m_opportunisticTaskScheduler->reschedule(m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval());
 }
 
 void Page::willStartRenderingUpdateDisplay()
@@ -3850,27 +3841,6 @@ void Page::forEachFrame(const Function<void(LocalFrame&)>& functor)
         functor(frame);
 }
 
-void Page::forEachWindowEventLoop(const Function<void(WindowEventLoop&)>& functor)
-{
-    HashSet<Ref<WindowEventLoop>> windowEventLoops;
-    WindowEventLoop* lastEventLoop = nullptr;
-    for (const Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
-        if (!localFrame)
-            continue;
-        auto* document = localFrame->document();
-        if (!document)
-            continue;
-        Ref currentEventLoop = document->windowEventLoop();
-        if (lastEventLoop == currentEventLoop.ptr())
-            continue; // Common and faster than a hash table lookup
-        lastEventLoop = currentEventLoop.ptr();
-        windowEventLoops.add(WTFMove(currentEventLoop));
-    }
-    for (auto& eventLoop : windowEventLoops)
-        functor(eventLoop);
-}
-
 bool Page::allowsLoadFromURL(const URL& url, MainFrameMainResource mainFrameMainResource) const
 {
     if (mainFrameMainResource == MainFrameMainResource::No && !m_loadsSubresources)
@@ -4511,9 +4481,6 @@ void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::opt
 
 void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
 {
-    forEachWindowEventLoop([&](WindowEventLoop& eventLoop) {
-        eventLoop.opportunisticallyRunIdleCallbacks();
-    });
     commonVM().performOpportunisticallyScheduledTasks(deadline);
 }
 
