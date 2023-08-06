@@ -64,11 +64,16 @@ skip:
     # Slightly different formatting. We should update test262 side.
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts/en-US.js
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts/fractionalSecondDigits.js
+    - test/intl402/NumberFormat/test-option-roundingPriority-mixed-options.js
     - test/intl402/NumberFormat/prototype/format/unit-ja-JP.js
     - test/intl402/NumberFormat/prototype/format/unit-zh-TW.js
     - test/intl402/NumberFormat/prototype/formatToParts/unit-ja-JP.js
     - test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js
     - test/intl402/DurationFormat/prototype/format/style-digital-en.js
+    - test/intl402/DurationFormat/prototype/format/style-narrow-en.js
+    - test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-default-en.js
+    - test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-long-en.js
+    - test/intl402/DurationFormat/prototype/formatToParts/formatToParts-style-short-en.js
 
     # New ICU (66~) raises a different failure
     - test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js
@@ -78,10 +83,18 @@ skip:
     # ICU canonicalization bug
     # https://unicode-org.atlassian.net/browse/ICU-21367
     - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js
+    - test/intl402/Locale/constructor-options-region-valid.js
+    - test/intl402/Intl/getCanonicalLocales/complex-language-subtag-replacement.js
+    - test/intl402/Intl/getCanonicalLocales/complex-region-subtag-replacement.js
+    - test/intl402/Intl/getCanonicalLocales/grandfathered.js
+    - test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js
 
     # Test is obsolete. microseconds and nanoseconds are added in the spec.
     - test/intl402/Intl/supportedValuesOf/units.js
     - test/intl402/NumberFormat/prototype/format/units-invalid.js
+
+    # Approximately sign is only supported after ICU 71.
+    - test/intl402/NumberFormat/prototype/formatRangeToParts/en-US.js
 
     # Depends on Temporal.Duration relativeTo option
     - test/built-ins/Temporal/Duration/compare/basic.js
