@@ -427,7 +427,7 @@ std::optional<MonotonicTime> DOMTimer::alignedFireTime(MonotonicTime fireTime) c
 
 void DOMTimer::makeOpportunisticTaskDeferralScopeIfPossible(ScriptExecutionContext& context)
 {
-    if (!m_oneShot || m_currentTimerInterval <= 1_ms) {
+    if (!m_oneShot || m_currentTimerInterval > 1_ms) {
         // FIXME: This should eventually account for repeating timers and one-shot timers that were
         // previously scheduled, and are about to fire.
         return;
