@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests breakToAllowRenderingUpdate successfully stops the current run of the event loop.');
+
+if (!window.internals)
+    testFailed('This test relies on window.internals');
+else {
+    jsTestIsAsync = true;
+    logs = [];
+}
+
+function runTest() {
+    internals.queueTask("DOMManipulation", () => logs.push('1'));
+    setTimeout(() => logs.push('3'));
+    internals.queueTask("DOMManipulation", () => {
+        logs.push('2');
+        internals.breakToAllowRenderingUpdate();
+    });
+    internals.queueTask("DOMManipulation", () => logs.push('4'));
+
+    setTimeout(() => {
+        shouldBeEqualToString('logs.join(", ")', '1, 2, 3, 4');
+        finishJSTest();
+    }, 100);
+}
+
+onload = runTest;
+
+successfullyParsed = true;
+
+</script>
+</body>
+</html>

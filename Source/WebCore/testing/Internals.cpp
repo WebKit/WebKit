@@ -237,6 +237,7 @@
 #include "WebAnimationUtilities.h"
 #include "WebCoreJSClientData.h"
 #include "WebRTCProvider.h"
+#include "WindowEventLoop.h"
 #include "WindowProxy.h"
 #include "WorkerThread.h"
 #include "WorkletGlobalScope.h"
@@ -5613,6 +5614,11 @@ ExceptionOr<bool> Internals::hasSameEventLoopAs(WindowProxy& proxy)
         return Exception { InvalidStateError };
 
     return context->eventLoop().hasSameEventLoopAs(proxyContext->eventLoop());
+}
+
+void Internals::breakToAllowRenderingUpdate()
+{
+    WindowEventLoop::breakToAllowRenderingUpdate();
 }
 
 Vector<String> Internals::accessKeyModifiers() const

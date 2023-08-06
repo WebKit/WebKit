@@ -1067,6 +1067,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [CallWith=CurrentScriptExecutionContext] undefined queueTask(DOMString source, VoidCallback callback);
     [CallWith=CurrentDocument] undefined queueTaskToQueueMicrotask(DOMString source, VoidCallback callback);
     boolean hasSameEventLoopAs(WindowProxy windowProxy);
+    undefined breakToAllowRenderingUpdate();
 
     DOMString windowLocationHost(LocalDOMWindow window);
 
