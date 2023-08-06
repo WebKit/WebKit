@@ -274,9 +274,6 @@
             "WTF_Condition.OneProducerTenConsumersHundredSlotsNotifyOne": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246472" }}
             },
-            "WTF_DateMath.calculateLocalTimeOffset": {
-                "expected": {"wpe": {"status": ["FAIL", "PASS"]}}
-            },
             "WTF_Lock.ContendedShortSection": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
