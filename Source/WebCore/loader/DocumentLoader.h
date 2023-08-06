@@ -418,10 +418,8 @@ public:
     WEBCORE_EXPORT void setRedirectionAsSubstituteData(ResourceResponse&&);
 
 #if ENABLE(CONTENT_FILTERING)
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     void setBlockedPageURL(const URL& blockedPageURL) { m_blockedPageURL = blockedPageURL; }
     void setSubstituteDataFromContentFilter(SubstituteData&& substituteDataFromContentFilter) { m_substituteDataFromContentFilter = WTFMove(substituteDataFromContentFilter); }
-#endif // ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     ContentFilter* contentFilter() const { return m_contentFilter.get(); }
     void ref() const final { RefCounted<DocumentLoader>::ref(); }
     void deref() const final { RefCounted<DocumentLoader>::deref(); }
@@ -669,11 +667,9 @@ private:
 
 #if ENABLE(CONTENT_FILTERING)
     std::unique_ptr<ContentFilter> m_contentFilter;
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     ResourceError m_blockedError;
     URL m_blockedPageURL;
     SubstituteData m_substituteDataFromContentFilter;
-#endif // ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 #endif // ENABLE(CONTENT_FILTERING)
 
 #if USE(QUICK_LOOK)
@@ -746,9 +742,9 @@ private:
     bool m_finishedLoadingApplicationManifest { false };
 #endif
 
-#if ENABLE(CONTENT_FILTERING) && ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     bool m_blockedByContentFilter { false };
-#endif // ENABLE(CONTENT_FILTERING) && ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#endif
 
 #if ENABLE(SERVICE_WORKER)
     bool m_canUseServiceWorkers { true };

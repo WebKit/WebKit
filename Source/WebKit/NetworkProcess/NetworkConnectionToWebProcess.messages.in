@@ -43,14 +43,15 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     GetRawCookies(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::ApplyTrackingPrevention applyTrackingPrevention, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) -> (Vector<WebCore::Cookie> cookies) Synchronous
     SetRawCookie(struct WebCore::Cookie cookie)
     DeleteCookie(URL url, String cookieName) -> ()
-    DomCookiesForHost(URL host, bool subscribeToCookieChangeNotifications) -> (Vector<WebCore::Cookie> cookies) Synchronous
+    DomCookiesForHost(URL host) -> (Vector<WebCore::Cookie> cookies) Synchronous
 
     CookiesForDOMAsync(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, enum:bool WebCore::ApplyTrackingPrevention applyTrackingPrevention, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, struct WebCore::CookieStoreGetOptions options) -> (std::optional<Vector<WebCore::Cookie>> cookies)
 
     SetCookieFromDOMAsync(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::ApplyTrackingPrevention applyTrackingPrevention, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, struct WebCore::Cookie cookie) -> (bool setSuccessfully)
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    UnsubscribeFromCookieChangeNotifications(HashSet<String> hosts)
+    SubscribeToCookieChangeNotifications(String host) AllowedWhenWaitingForSyncReply
+    UnsubscribeFromCookieChangeNotifications(String host) AllowedWhenWaitingForSyncReply
 #endif
 
     RegisterInternalFileBlobURL(URL url, String path, String replacementPath, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
@@ -117,7 +118,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     SetResourceLoadSchedulingMode(WebCore::PageIdentifier webPageID, enum:uint8_t WebCore::LoadSchedulingMode mode)
     PrioritizeResourceLoads(Vector<WebCore::ResourceLoaderIdentifier> loadIdentifiers)
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
 #endif
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)

@@ -69,6 +69,7 @@ bool WorkerAnimationController::virtualHasPendingActivity() const
 void WorkerAnimationController::stop()
 {
     m_animationTimer.stop();
+    m_animationCallbacks.clear();
 }
 
 void WorkerAnimationController::suspend(ReasonForSuspension)

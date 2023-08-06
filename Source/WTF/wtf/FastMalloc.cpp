@@ -117,13 +117,6 @@ void fastSetMaxSingleAllocationSize(size_t size)
 
 #endif // !defined(NDEBUG)
 
-void* fastZeroedMalloc(size_t n) 
-{
-    void* result = fastMalloc(n);
-    memset(result, 0, n);
-    return result;
-}
-
 char* fastStrDup(const char* src)
 {
     size_t len = strlen(src) + 1;
@@ -139,15 +132,6 @@ void* fastMemDup(const void* mem, size_t bytes)
 
     void* result = fastMalloc(bytes);
     memcpy(result, mem, bytes);
-    return result;
-}
-
-TryMallocReturnValue tryFastZeroedMalloc(size_t n) 
-{
-    void* result;
-    if (!tryFastMalloc(n).getValue(result))
-        return nullptr;
-    memset(result, 0, n);
     return result;
 }
 
@@ -241,6 +225,22 @@ void* fastMalloc(size_t n)
     if (!result)
         CRASH();
 
+    return result;
+}
+
+void* fastZeroedMalloc(size_t n)
+{
+    void* result = fastMalloc(n);
+    memset(result, 0, n);
+    return result;
+}
+
+TryMallocReturnValue tryFastZeroedMalloc(size_t n)
+{
+    void* result;
+    if (!tryFastMalloc(n).getValue(result))
+        return nullptr;
+    memset(result, 0, n);
     return result;
 }
 
@@ -536,6 +536,25 @@ void* fastMalloc(size_t size)
         MallocCallTracker::singleton().recordMalloc(result, size);
 #endif
     return result;
+}
+
+void* fastZeroedMalloc(size_t size)
+{
+    ASSERT_IS_WITHIN_LIMIT(size);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
+    void* result = bmalloc::api::zeroedMalloc(size);
+#if ENABLE(MALLOC_HEAP_BREAKDOWN) && TRACK_MALLOC_CALLSTACK
+    if (!AvoidRecordingScope::avoidRecordingCount())
+        MallocCallTracker::singleton().recordMalloc(result, size);
+#endif
+    return result;
+}
+
+TryMallocReturnValue tryFastZeroedMalloc(size_t size)
+{
+    FAIL_IF_EXCEEDS_LIMIT(size);
+    ASSERT(!forbidMallocUseScopeCount || disableMallocRestrictionScopeCount);
+    return bmalloc::api::tryZeroedMalloc(size);
 }
 
 void* fastCalloc(size_t numElements, size_t elementSize)

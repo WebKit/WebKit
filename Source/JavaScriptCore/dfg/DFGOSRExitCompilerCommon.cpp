@@ -157,6 +157,8 @@ static CodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCall
         case InlineCallFrame::BoundFunctionCall: {
             if (callInstruction.opcodeID() == op_call)
                 jumpTarget = LLINT_RETURN_LOCATION(op_call);
+            else if (callInstruction.opcodeID() == op_call_ignore_result)
+                jumpTarget = LLINT_RETURN_LOCATION(op_call_ignore_result);
             else if (callInstruction.opcodeID() == op_iterator_open)
                 jumpTarget = LLINT_RETURN_LOCATION(op_iterator_open);
             else if (callInstruction.opcodeID() == op_iterator_next)
@@ -326,7 +328,9 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         if (!inlineCallFrame->isVarargs())
             jit.store32(AssemblyHelpers::TrustedImm32(inlineCallFrame->argumentCountIncludingThis), AssemblyHelpers::payloadFor(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis)));
         jit.storePtr(callerFrameGPR, AssemblyHelpers::addressForByteOffset(inlineCallFrame->callerFrameOffset()));
-        uint32_t locationBits = CallSiteIndex(baselineCodeBlock->bytecodeIndexForExit(codeOrigin->bytecodeIndex())).bits();
+
+        BytecodeIndex exitIndex = baselineCodeBlock->bytecodeIndexForExit(codeOrigin->bytecodeIndex());
+        uint32_t locationBits = CallSiteIndex(exitIndex).bits();
         jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::tagFor(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis)));
         if (!inlineCallFrame->isClosureCall)
             jit.storeCell(AssemblyHelpers::TrustedImmPtr(inlineCallFrame->calleeConstant()), AssemblyHelpers::addressFor(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::callee)));
@@ -334,7 +338,8 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 
     // Don't need to set the toplevel code origin if we only did inline tail calls
     if (codeOrigin) {
-        uint32_t locationBits = CallSiteIndex(BytecodeIndex(codeOrigin->bytecodeIndex().offset())).bits();
+        BytecodeIndex exitIndex(codeOrigin->bytecodeIndex().offset());
+        uint32_t locationBits = CallSiteIndex(exitIndex).bits();
         jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
     }
 }

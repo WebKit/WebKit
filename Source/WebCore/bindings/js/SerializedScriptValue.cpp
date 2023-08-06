@@ -218,6 +218,10 @@ enum SerializationTag {
 #endif
     ResizableArrayBufferTag = 54,
     ErrorInstanceTag = 55,
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    InMemoryOffscreenCanvasTag = 56,
+#endif
+    InMemoryMessagePortTag = 57,
     ErrorTag = 255
 };
 
@@ -306,7 +310,9 @@ static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, Seria
     case ImageBitmapTag:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     case OffscreenCanvasTransferTag:
+    case InMemoryOffscreenCanvasTag:
 #endif
+    case InMemoryMessagePortTag:
 #if ENABLE(WEB_RTC)
     case RTCDataChannelTransferTag:
 #endif
@@ -522,8 +528,9 @@ const uint8_t cryptoKeyOKPOpNameTagMaximumValue = 1;
  * Version 11. added support for Blob's memory cost.
  * Version 12. added support for agent cluster ID.
  * Version 13. added support for ErrorInstance objects.
+ * Version 14. encode booleans as uint8_t instead of int32_t.
  */
-static constexpr unsigned CurrentVersion = 13;
+static constexpr unsigned CurrentVersion = 14;
 static constexpr unsigned TerminatorTag = 0xFFFFFFFF;
 static constexpr unsigned StringPoolTag = 0xFFFFFFFE;
 static constexpr unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -800,7 +807,9 @@ public:
     static SerializationReturnCode serialize(JSGlobalObject* lexicalGlobalObject, JSValue value, Vector<RefPtr<MessagePort>>& messagePorts, Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers, const Vector<RefPtr<ImageBitmap>>& imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
             const Vector<RefPtr<OffscreenCanvas>>& offscreenCanvases,
+            Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases,
 #endif
+            Vector<RefPtr<MessagePort>>& inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
             const Vector<Ref<RTCDataChannel>>& rtcDataChannels,
 #endif
@@ -818,7 +827,9 @@ public:
         CloneSerializer serializer(lexicalGlobalObject, messagePorts, arrayBuffers, imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
             offscreenCanvases,
+            inMemoryOffscreenCanvases,
 #endif
+            inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
             rtcDataChannels,
 #endif
@@ -856,7 +867,9 @@ private:
     CloneSerializer(JSGlobalObject* lexicalGlobalObject, Vector<RefPtr<MessagePort>>& messagePorts, Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers, const Vector<RefPtr<ImageBitmap>>& imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
             const Vector<RefPtr<OffscreenCanvas>>& offscreenCanvases,
+            Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases,
 #endif
+            Vector<RefPtr<MessagePort>>& inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
             const Vector<Ref<RTCDataChannel>>& rtcDataChannels,
 #endif
@@ -872,9 +885,13 @@ private:
         : CloneBase(lexicalGlobalObject)
         , m_buffer(out)
         , m_blobHandles(blobHandles)
-        , m_emptyIdentifier(Identifier::fromString(lexicalGlobalObject->vm(), emptyString()))
+        , m_emptyIdentifier(Identifier::fromString(lexicalGlobalObject->vm(), emptyAtom()))
         , m_context(context)
         , m_sharedBuffers(sharedBuffers)
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+        , m_inMemoryOffscreenCanvases(inMemoryOffscreenCanvases)
+#endif
+        , m_inMemoryMessagePorts(inMemoryMessagePorts)
 #if ENABLE(WEBASSEMBLY)
         , m_wasmModules(wasmModules)
         , m_wasmMemoryHandles(wasmMemoryHandles)
@@ -897,30 +914,13 @@ private:
 #endif
     }
 
-    template <class T>
-    void fillTransferMap(const Vector<RefPtr<T>>& input, ObjectPool& result)
+    template<typename T>
+    void fillTransferMap(const Vector<T>& input, ObjectPool& result)
     {
-        if (input.isEmpty())
-            return;
-        JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(m_lexicalGlobalObject);
-        for (size_t i = 0; i < input.size(); i++) {
-            JSC::JSValue value = toJS(m_lexicalGlobalObject, globalObject, input[i].get());
-            JSC::JSObject* obj = value.getObject();
-            if (obj && !result.contains(obj))
-                result.add(obj, i);
-        }
-    }
-    template <class T>
-    void fillTransferMap(const Vector<Ref<T>>& input, ObjectPool& result)
-    {
-        if (input.isEmpty())
-            return;
-        JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(m_lexicalGlobalObject);
-        for (size_t i = 0; i < input.size(); i++) {
-            JSC::JSValue value = toJS(m_lexicalGlobalObject, globalObject, input[i].get());
-            JSC::JSObject* obj = value.getObject();
-            if (obj && !result.contains(obj))
-                result.add(obj, i);
+        auto* globalObject = jsCast<JSDOMGlobalObject*>(m_lexicalGlobalObject);
+        for (size_t i = 0; i < input.size(); ++i) {
+            if (auto* object = toJS(globalObject, globalObject, input[i].get()).getObject())
+                result.add(object, i);
         }
     }
 
@@ -1109,7 +1109,7 @@ private:
 #if USE(BIGINT32)
     void dumpBigInt32Data(int32_t integer)
     {
-        write(static_cast<uint8_t>(integer < 0));
+        write(integer < 0);
         if (!integer) {
             write(static_cast<uint32_t>(0)); // Length-in-uint64_t
             return;
@@ -1124,7 +1124,7 @@ private:
 
     void dumpHeapBigIntData(JSBigInt* bigInt)
     {
-        write(static_cast<uint8_t>(bigInt->sign()));
+        write(bigInt->sign());
         if constexpr (sizeof(JSBigInt::Digit) == sizeof(uint64_t)) {
             write(static_cast<uint32_t>(bigInt->length()));
             for (unsigned index = 0; index < bigInt->length(); ++index)
@@ -1263,7 +1263,7 @@ private:
 
         auto& matrix = jsCast<JSDOMMatrixReadOnly*>(obj)->wrapped();
         bool is2D = matrix.is2D();
-        write(static_cast<uint8_t>(is2D));
+        write(is2D);
         if (is2D) {
             write(matrix.m11());
             write(matrix.m12());
@@ -1361,6 +1361,11 @@ private:
         if (index != m_transferredOffscreenCanvases.end()) {
             write(OffscreenCanvasTransferTag);
             write(index->value);
+            return;
+        } else if (m_context == SerializationContext::CloneAcrossWorlds) {
+            write(InMemoryOffscreenCanvasTag);
+            write(static_cast<uint32_t>(m_inMemoryOffscreenCanvases.size()));
+            m_inMemoryOffscreenCanvases.append(&jsCast<JSOffscreenCanvas*>(obj)->wrapped());
             return;
         }
 
@@ -1602,6 +1607,11 @@ private:
                     write(MessagePortReferenceTag);
                     write(index->value);
                     return true;
+                } else if (m_context == SerializationContext::CloneAcrossWorlds) {
+                    write(InMemoryMessagePortTag);
+                    write(static_cast<uint32_t>(m_inMemoryMessagePorts.size()));
+                    m_inMemoryMessagePorts.append(&jsCast<JSMessagePort*>(obj)->wrapped());
+                    return true;
                 }
                 // MessagePort object could not be found in transferred message ports
                 code = SerializationReturnCode::ValidationError;
@@ -1676,10 +1686,16 @@ private:
                 WasmMemoryHandleArray dummyMemoryHandles;
 #endif
                 ArrayBufferContentsArray dummySharedBuffers;
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+                Vector<RefPtr<OffscreenCanvas>> dummyInMemoryOffscreenCanvases;
+#endif
+                Vector<RefPtr<MessagePort>> dummyInMemoryMessagePorts;
                 CloneSerializer rawKeySerializer(m_lexicalGlobalObject, dummyMessagePorts, dummyArrayBuffers, { },
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
                     { },
+                    dummyInMemoryOffscreenCanvases,
 #endif
+                    dummyInMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
                     { },
 #endif
@@ -1845,7 +1861,7 @@ private:
 
     void write(bool b)
     {
-        writeLittleEndian(m_buffer, static_cast<int32_t>(b));
+        write(static_cast<uint8_t>(b));
     }
 
     void write(uint8_t c)
@@ -2285,6 +2301,10 @@ private:
     Identifier m_emptyIdentifier;
     SerializationContext m_context;
     ArrayBufferContentsArray& m_sharedBuffers;
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    Vector<RefPtr<OffscreenCanvas>>& m_inMemoryOffscreenCanvases;
+#endif
+    Vector<RefPtr<MessagePort>>& m_inMemoryMessagePorts;
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray& m_wasmModules;
     WasmMemoryHandleArray& m_wasmMemoryHandles;
@@ -2554,7 +2574,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
 class CloneDeserializer : CloneBase {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    static String deserializeString(const Vector<uint8_t>& buffer)
+    enum class ShouldAtomize : bool { No, Yes };
+    static String deserializeString(const Vector<uint8_t>& buffer, ShouldAtomize shouldAtomize = ShouldAtomize::No)
     {
         if (buffer.isEmpty())
             return String();
@@ -2572,7 +2593,7 @@ public:
         bool is8Bit = length & StringDataIs8BitFlag;
         length &= ~StringDataIs8BitFlag;
         String str;
-        if (!readString(ptr, end, str, length, is8Bit))
+        if (!readString(ptr, end, str, length, is8Bit, shouldAtomize))
             return String();
         return str;
     }
@@ -2580,7 +2601,9 @@ public:
     static DeserializationResult deserialize(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, Vector<std::optional<ImageBitmapBacking>>&& backingStores
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
+        , const Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases
 #endif
+        , const Vector<RefPtr<MessagePort>>& inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
 #endif
@@ -2600,7 +2623,9 @@ public:
         CloneDeserializer deserializer(lexicalGlobalObject, globalObject, messagePorts, arrayBufferContentsArray, buffer, blobURLs, blobFilePaths, sharedBuffers, WTFMove(backingStores)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
             , WTFMove(detachedOffscreenCanvases)
+            , inMemoryOffscreenCanvases
 #endif
+            , inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
             , WTFMove(detachedRTCDataChannels)
 #endif
@@ -2620,8 +2645,8 @@ public:
 
 private:
     struct CachedString {
-        CachedString(const String& string)
-            : m_string(string)
+        CachedString(String&& string)
+            : m_string(WTFMove(string))
         {
         }
 
@@ -2640,11 +2665,8 @@ private:
     };
 
     struct CachedStringRef {
-        CachedStringRef()
-            : m_base(0)
-            , m_index(0)
-        {
-        }
+        CachedStringRef() = default;
+
         CachedStringRef(Vector<CachedString>* base, size_t index)
             : m_base(base)
             , m_index(index)
@@ -2654,14 +2676,16 @@ private:
         CachedString* operator->() { ASSERT(m_base); return &m_base->at(m_index); }
         
     private:
-        Vector<CachedString>* m_base;
-        size_t m_index;
+        Vector<CachedString>* m_base { nullptr };
+        size_t m_index { 0 };
     };
 
     CloneDeserializer(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, ArrayBufferContentsArray* arrayBufferContents, Vector<std::optional<ImageBitmapBacking>>&& backingStores, const Vector<uint8_t>& buffer
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases = { }
+        , const Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases = { }
 #endif
+        , const Vector<RefPtr<MessagePort>>& inMemoryMessagePorts = { }
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels = { }
 #endif
@@ -2689,7 +2713,9 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , m_detachedOffscreenCanvases(WTFMove(detachedOffscreenCanvases))
         , m_offscreenCanvases(m_detachedOffscreenCanvases.size())
+        , m_inMemoryOffscreenCanvases(inMemoryOffscreenCanvases)
 #endif
+        , m_inMemoryMessagePorts(inMemoryMessagePorts)
 #if ENABLE(WEB_RTC)
         , m_detachedRTCDataChannels(WTFMove(detachedRTCDataChannels))
         , m_rtcDataChannels(m_detachedRTCDataChannels.size())
@@ -2712,7 +2738,9 @@ private:
     CloneDeserializer(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, ArrayBufferContentsArray* arrayBufferContents, const Vector<uint8_t>& buffer, const Vector<String>& blobURLs, const Vector<String> blobFilePaths, ArrayBufferContentsArray* sharedBuffers, Vector<std::optional<ImageBitmapBacking>>&& backingStores
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
+        , const Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases
 #endif
+        , const Vector<RefPtr<MessagePort>>& inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
 #endif
@@ -2743,7 +2771,9 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , m_detachedOffscreenCanvases(WTFMove(detachedOffscreenCanvases))
         , m_offscreenCanvases(m_detachedOffscreenCanvases.size())
+        , m_inMemoryOffscreenCanvases(inMemoryOffscreenCanvases)
 #endif
+        , m_inMemoryMessagePorts(inMemoryMessagePorts)
 #if ENABLE(WEB_RTC)
         , m_detachedRTCDataChannels(WTFMove(detachedRTCDataChannels))
         , m_rtcDataChannels(m_detachedRTCDataChannels.size())
@@ -2806,12 +2836,20 @@ private:
     }
 #endif
 
-    bool read(bool& b)
+    enum class ForceReadingAs8Bit : bool { No, Yes };
+    bool read(bool& b, ForceReadingAs8Bit forceReadingAs8Bit = ForceReadingAs8Bit::No)
     {
-        int32_t integer;
-        if (!readLittleEndian(integer) || integer > 1)
-            return false;
-        b = !!integer;
+        if (m_version >= 14 || forceReadingAs8Bit == ForceReadingAs8Bit::Yes) {
+            uint8_t integer;
+            if (!read(integer) || integer > 1)
+                return false;
+            b = !!integer;
+        } else {
+            int32_t integer;
+            if (!read(integer) || integer > 1)
+                return false;
+            b = !!integer;
+        }
         return true;
     }
 
@@ -2882,7 +2920,7 @@ private:
         return i;
     }
 
-    static bool readString(const uint8_t*& ptr, const uint8_t* end, String& str, unsigned length, bool is8Bit)
+    static bool readString(const uint8_t*& ptr, const uint8_t* end, String& str, unsigned length, bool is8Bit, ShouldAtomize shouldAtomize)
     {
         if (length >= std::numeric_limits<int32_t>::max() / sizeof(UChar))
             return false;
@@ -2890,7 +2928,10 @@ private:
         if (is8Bit) {
             if ((end - ptr) < static_cast<int>(length))
                 return false;
-            str = String { ptr, length };
+            if (shouldAtomize == ShouldAtomize::Yes)
+                str = AtomString { ptr, length };
+            else
+                str = String { ptr, length };
             ptr += length;
             return true;
         }
@@ -2900,7 +2941,10 @@ private:
             return false;
 
 #if ASSUME_LITTLE_ENDIAN
-        str = String(reinterpret_cast<const UChar*>(ptr), length);
+        if (shouldAtomize == ShouldAtomize::Yes)
+            str = AtomString(reinterpret_cast<const UChar*>(ptr), length);
+        else
+            str = String(reinterpret_cast<const UChar*>(ptr), length);
         ptr += length * sizeof(UChar);
 #else
         UChar* characters;
@@ -2910,11 +2954,13 @@ private:
             readLittleEndian(ptr, end, c);
             characters[i] = c;
         }
+        if (shouldAtomize == ShouldAtomize::Yes)
+            str = AtomString { str };
 #endif
         return true;
     }
 
-    bool readNullableString(String& nullableString)
+    bool readNullableString(String& nullableString, ShouldAtomize shouldAtomize = ShouldAtomize::No)
     {
         bool isNull;
         if (!read(isNull))
@@ -2922,19 +2968,19 @@ private:
         if (isNull)
             return true;
         CachedStringRef stringData;
-        if (!readStringData(stringData))
+        if (!readStringData(stringData, shouldAtomize))
             return false;
         nullableString = stringData->string();
         return true;
     }
 
-    bool readStringData(CachedStringRef& cachedString)
+    bool readStringData(CachedStringRef& cachedString, ShouldAtomize shouldAtomize = ShouldAtomize::No)
     {
         bool scratch;
-        return readStringData(cachedString, scratch);
+        return readStringData(cachedString, scratch, shouldAtomize);
     }
 
-    bool readStringData(CachedStringRef& cachedString, bool& wasTerminator)
+    bool readStringData(CachedStringRef& cachedString, bool& wasTerminator, ShouldAtomize shouldAtomize = ShouldAtomize::No)
     {
         if (m_failed)
             return false;
@@ -2957,11 +3003,11 @@ private:
         bool is8Bit = length & StringDataIs8BitFlag;
         length &= ~StringDataIs8BitFlag;
         String str;
-        if (!readString(m_ptr, m_end, str, length, is8Bit)) {
+        if (!readString(m_ptr, m_end, str, length, is8Bit, shouldAtomize)) {
             fail();
             return false;
         }
-        m_constantPool.append(str);
+        m_constantPool.append(WTFMove(str));
         cachedString = CachedStringRef(&m_constantPool, m_constantPool.size() - 1);
         return true;
     }
@@ -3429,7 +3475,7 @@ private:
         if (!read(algorithm))
             return false;
 
-        int32_t isRestrictedToHash;
+        bool isRestrictedToHash;
         CryptoAlgorithmIdentifier hash = CryptoAlgorithmIdentifier::SHA_1;
         if (!read(isRestrictedToHash))
             return false;
@@ -3566,7 +3612,7 @@ private:
         if (!read(keyFormatVersion) || keyFormatVersion > currentKeyFormatVersion)
             return false;
 
-        int32_t extractable;
+        bool extractable;
         if (!read(extractable))
             return false;
 
@@ -3680,8 +3726,8 @@ private:
     template<class T>
     JSValue readDOMMatrix()
     {
-        uint8_t is2D;
-        if (!read(is2D))
+        bool is2D;
+        if (!read(is2D, ForceReadingAs8Bit::Yes))
             return { };
 
         if (is2D) {
@@ -3847,6 +3893,17 @@ private:
         auto offscreenCanvas = m_offscreenCanvases[index].get();
         return getJSValue(offscreenCanvas);
     }
+
+    JSValue readInMemoryOffscreenCanvas()
+    {
+        uint32_t index;
+        bool indexSuccessfullyRead = read(index);
+        if (!indexSuccessfullyRead || index >= m_inMemoryOffscreenCanvases.size()) {
+            fail();
+            return JSValue();
+        }
+        return getJSValue(m_inMemoryOffscreenCanvases[index].get());
+    }
 #endif
 
 #if ENABLE(WEB_RTC)
@@ -3995,8 +4052,8 @@ private:
 
     JSValue readBigInt()
     {
-        uint8_t sign = 0;
-        if (!read(sign))
+        bool sign;
+        if (!read(sign, ForceReadingAs8Bit::Yes))
             return JSValue();
         uint32_t lengthInUint64 = 0;
         if (!read(lengthInUint64))
@@ -4329,6 +4386,15 @@ private:
             }
             return getJSValue(m_messagePorts[index].get());
         }
+        case InMemoryMessagePortTag: {
+            uint32_t index;
+            bool indexSuccessfullyRead = read(index);
+            if (!indexSuccessfullyRead || index >= m_inMemoryMessagePorts.size()) {
+                fail();
+                return JSValue();
+            }
+            return getJSValue(m_inMemoryMessagePorts[index].get());
+        }
 #if ENABLE(WEBASSEMBLY)
         case WasmModuleTag: {
             if (m_version >= 12) {
@@ -4517,6 +4583,8 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         case OffscreenCanvasTransferTag:
             return readOffscreenCanvas();
+        case InMemoryOffscreenCanvasTag:
+            return readInMemoryOffscreenCanvas();
 #endif
 #if ENABLE(WEB_RTC)
         case RTCDataChannelTransferTag:
@@ -4565,7 +4633,9 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     Vector<std::unique_ptr<DetachedOffscreenCanvas>> m_detachedOffscreenCanvases;
     Vector<RefPtr<OffscreenCanvas>> m_offscreenCanvases;
+    const Vector<RefPtr<OffscreenCanvas>>& m_inMemoryOffscreenCanvases;
 #endif
+    const Vector<RefPtr<MessagePort>>& m_inMemoryMessagePorts;
 #if ENABLE(WEB_RTC)
     Vector<std::unique_ptr<DetachedRTCDataChannel>> m_detachedRTCDataChannels;
     Vector<RefPtr<RTCDataChannel>> m_rtcDataChannels;
@@ -4669,7 +4739,7 @@ DeserializationResult CloneDeserializer::deserialize()
         case ObjectStartVisitMember: {
             CachedStringRef cachedString;
             bool wasTerminator = false;
-            if (!readStringData(cachedString, wasTerminator)) {
+            if (!readStringData(cachedString, wasTerminator, ShouldAtomize::Yes)) {
                 if (!wasTerminator)
                     goto error;
 
@@ -4803,7 +4873,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
 SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray, std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray, Vector<std::optional<ImageBitmapBacking>>&& backingStores
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
+        , Vector<RefPtr<OffscreenCanvas>>&& inMemoryOffscreenCanvases
 #endif
+        , Vector<RefPtr<MessagePort>>&& inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
 #endif
@@ -4822,7 +4894,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
     , m_backingStores(WTFMove(backingStores))
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     , m_detachedOffscreenCanvases(WTFMove(detachedOffscreenCanvases))
+    , m_inMemoryOffscreenCanvases(WTFMove(inMemoryOffscreenCanvases))
 #endif
+    , m_inMemoryMessagePorts(WTFMove(inMemoryMessagePorts))
 #if ENABLE(WEB_RTC)
     , m_detachedRTCDataChannels(WTFMove(detachedRTCDataChannels))
 #endif
@@ -5101,6 +5175,10 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 
     Vector<uint8_t> buffer;
     Vector<URLKeepingBlobAlive> blobHandles;
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    Vector<RefPtr<OffscreenCanvas>> inMemoryOffscreenCanvases;
+#endif
+    Vector<RefPtr<MessagePort>> inMemoryMessagePorts;
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray wasmModules;
     WasmMemoryHandleArray wasmMemoryHandles;
@@ -5113,7 +5191,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     auto code = CloneSerializer::serialize(&lexicalGlobalObject, value, messagePorts, arrayBuffers, imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         offscreenCanvases,
+        inMemoryOffscreenCanvases,
 #endif
+        inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
         dataChannels,
 #endif
@@ -5161,7 +5241,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     return adoptRef(*new SerializedScriptValue(WTFMove(buffer), WTFMove(blobHandles), arrayBufferContentsArray.releaseReturnValue(), context == SerializationContext::WorkerPostMessage ? WTFMove(sharedBuffers) : nullptr, WTFMove(backingStores)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
                 , WTFMove(detachedCanvases)
+                , WTFMove(inMemoryOffscreenCanvases)
 #endif
+                , WTFMove(inMemoryMessagePorts)
 #if ENABLE(WEB_RTC)
                 , WTFMove(detachedRTCDataChannels)
 #endif
@@ -5225,7 +5307,9 @@ JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, 
     DeserializationResult result = CloneDeserializer::deserialize(&lexicalGlobalObject, globalObject, messagePorts, WTFMove(m_backingStores)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , WTFMove(m_detachedOffscreenCanvases)
+        , m_inMemoryOffscreenCanvases
 #endif
+        , m_inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , WTFMove(m_detachedRTCDataChannels)
 #endif

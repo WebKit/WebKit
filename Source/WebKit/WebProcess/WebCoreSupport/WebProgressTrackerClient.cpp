@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProgressTrackerClient.h"
 
+#include "APIInjectedBundlePageLoaderClient.h"
 #include "MessageSenderInlines.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"

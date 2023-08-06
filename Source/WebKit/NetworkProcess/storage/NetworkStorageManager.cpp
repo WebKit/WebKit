@@ -45,10 +45,10 @@
 #include "StorageAreaBase.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageAreaRegistry.h"
-#include "StorageUtilities.h"
 #include "UnifiedOriginStorageLevel.h"
 #include "WebsiteDataType.h"
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/StorageUtilities.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
 #include <pal/crypto/CryptoDigest.h>
@@ -347,7 +347,7 @@ void NetworkStorageManager::writeOriginToFileIfNecessary(const WebCore::ClientOr
         return;
 
     auto originFile = originFilePath(originDirectory);
-    bool didWrite = writeOriginToFile(originFile, origin);
+    bool didWrite = WebCore::StorageUtilities::writeOriginToFile(originFile, origin);
     auto timestamp = FileSystem::fileCreationTime(originFile);
     manager->setOriginFileCreationTimestamp(timestamp);
 #if PLATFORM(IOS_FAMILY)
@@ -929,7 +929,7 @@ HashSet<WebCore::ClientOrigin> NetworkStorageManager::getAllOrigins()
         allOrigins.add(origin);
 
     forEachOriginDirectory([&](auto directory) {
-        if (auto origin = readOriginFromFile(originFilePath(directory)))
+        if (auto origin = WebCore::StorageUtilities::readOriginFromFile(originFilePath(directory)))
             allOrigins.add(*origin);
     });
 

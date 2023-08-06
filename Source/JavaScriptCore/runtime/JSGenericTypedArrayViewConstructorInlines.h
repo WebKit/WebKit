@@ -184,7 +184,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
 
         // This getPropertySlot operation should not be observed by the Proxy.
         // So we use VMInquiry. And purge the opaque object cases (proxy and namespace object) by isTaintedByOpaqueObject() guard.
-        if (JSArray* array = jsDynamicCast<JSArray*>(object); LIKELY(array && array->isIteratorProtocolFastAndNonObservable()))
+        if (JSArray* array = jsDynamicCast<JSArray*>(object); LIKELY(array && isJSArray(array) && array->isIteratorProtocolFastAndNonObservable()))
             length = array->length();
         else {
             PropertySlot lengthSlot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);

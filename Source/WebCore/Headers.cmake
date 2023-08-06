@@ -471,6 +471,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/mediastream/DetachedRTCDataChannel.h
     Modules/mediastream/DoubleRange.h
     Modules/mediastream/LongRange.h
+    Modules/mediastream/MediaAccessDenialReason.h
     Modules/mediastream/MediaDeviceHashSalts.h
     Modules/mediastream/MediaStreamTrack.h
     Modules/mediastream/MediaTrackCapabilities.h
@@ -1324,6 +1325,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/CORPViolationReportBody.h
     loader/CanvasActivityRecord.h
     loader/ContentFilterClient.h
+    loader/CookieChangeListener.h
     loader/CookieJar.h
     loader/CrossOriginAccessControl.h
     loader/CrossOriginEmbedderPolicy.h
@@ -1693,7 +1695,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/RemoteCommandListener.h
     platform/RuntimeApplicationChecks.h
     platform/ScreenOrientationManager.h
-    platform/ScreenOrientationProvider.h
     platform/ScreenProperties.h
     platform/ScriptExecutionContextIdentifier.h
     platform/ScrollAlignment.h
@@ -2392,6 +2393,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     storage/StorageNamespaceProvider.h
     storage/StorageQuotaManager.h
     storage/StorageType.h
+    storage/StorageUtilities.h
 
     style/StyleAppearance.h
     style/StyleChange.h

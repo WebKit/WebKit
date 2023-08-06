@@ -223,7 +223,7 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
     if (m_isDone)
         return;
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     if (!m_loader.continueAfterServiceWorkerReceivedResponse(response))
         return;
 #endif
@@ -268,7 +268,7 @@ void ServiceWorkerFetchTask::didReceiveData(const IPC::SharedBufferReference& da
 
     ASSERT(!m_timeoutTimer || !m_timeoutTimer->isActive());
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     RefPtr<WebCore::SharedBuffer> buffer = data.unsafeBuffer();
     if (!buffer)
         return;
@@ -285,7 +285,7 @@ void ServiceWorkerFetchTask::didReceiveDataFromPreloader(const WebCore::Fragment
 
     ASSERT(!m_timeoutTimer || !m_timeoutTimer->isActive());
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     RefPtr<WebCore::SharedBuffer> buffer = data.makeContiguous();
     if (!buffer)
         return;
@@ -313,7 +313,7 @@ void ServiceWorkerFetchTask::didFinish(const NetworkLoadMetrics& networkLoadMetr
     if (m_timeoutTimer)
         m_timeoutTimer->stop();
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     m_loader.serviceWorkerDidFinish();
 #endif
 

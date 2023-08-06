@@ -203,7 +203,7 @@ private:
     void inlineCall(Node* callTargetNode, Operand result, CallVariant, int registerOffset, int argumentCountIncludingThis, InlineCallFrame::Kind, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     template<typename ChecksFunctor>
-    CallOptimizationResult handleIntrinsicCall(Node* callee, Operand result, CallVariant, Intrinsic, int registerOffset, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, CodeSpecializationKind, SpeculatedType prediction, const ChecksFunctor& insertChecks);
+    CallOptimizationResult handleIntrinsicCall(Node* callee, Operand result, CallVariant, Intrinsic, int registerOffset, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind, CodeSpecializationKind, SpeculatedType prediction, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
     bool handleDOMJITCall(Node* callee, Operand result, const DOMJIT::Signature*, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
@@ -945,6 +945,13 @@ private:
     {
         auto getValueProfilePredictionFromForCodeBlockAndBytecodeOffset = [&] (CodeBlock* codeBlock, const CodeOrigin& codeOrigin)
         {
+            // If this instruction is derived from op_call_ignore_result, then we do not need to care about the result's prediction.
+            // Let's just return SpecFullTop to avoid SpecNone related ForceOSRExit.
+            auto instruction = codeBlock->instructions().at(codeOrigin.bytecodeIndex().offset());
+            OpcodeID opcodeID = instruction->opcodeID();
+            if (opcodeID == op_call_ignore_result)
+                return SpecFullTop;
+
             SpeculatedType prediction;
             {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
@@ -953,6 +960,7 @@ private:
             auto* fuzzerAgent = m_vm->fuzzerAgent();
             if (UNLIKELY(fuzzerAgent))
                 return fuzzerAgent->getPrediction(codeBlock, codeOrigin, prediction) & SpecBytecodeTop;
+
             return prediction;
         };
 
@@ -2013,7 +2021,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
 
     Intrinsic intrinsic = callee.intrinsicFor(specializationKind);
     if (intrinsic != NoIntrinsic) {
-        CallOptimizationResult optimizationResult = handleIntrinsicCall(callTargetNode, result, callee, intrinsic, registerOffset, argumentCountIncludingThis, osrExitIndex, callOp, specializationKind, prediction, insertChecksWithAccounting);
+        CallOptimizationResult optimizationResult = handleIntrinsicCall(callTargetNode, result, callee, intrinsic, registerOffset, argumentCountIncludingThis, osrExitIndex, callOp, kind, specializationKind, prediction, insertChecksWithAccounting);
         if (optimizationResult != CallOptimizationResult::DidNothing) {
             endSpecialCase();
             return optimizationResult;
@@ -2379,14 +2387,16 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
 }
 
 template<typename ChecksFunctor>
-void ByteCodeParser::handleMinMax(Operand result, NodeType op, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& insertChecks)
+void ByteCodeParser::handleMinMax(Operand resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& insertChecks)
 {
     ASSERT(op == ArithMin || op == ArithMax);
 
     if (argumentCountIncludingThis == 1) {
         insertChecks();
         double limit = op == ArithMax ? -std::numeric_limits<double>::infinity() : +std::numeric_limits<double>::infinity();
-        set(result, addToGraph(JSConstant, OpInfo(m_graph.freeze(jsDoubleNumber(limit)))));
+        Node* resultNode = addToGraph(JSConstant, OpInfo(m_graph.freeze(jsDoubleNumber(limit))));
+        if (resultOperand.isValid())
+            set(resultOperand, resultNode);
         return;
     }
      
@@ -2394,44 +2404,37 @@ void ByteCodeParser::handleMinMax(Operand result, NodeType op, int registerOffse
         insertChecks();
         Node* resultNode = get(VirtualRegister(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
         addToGraph(Phantom, Edge(resultNode, NumberUse));
-        set(result, resultNode);
+        if (resultOperand.isValid())
+            set(resultOperand, resultNode);
         return;
     }
     
     insertChecks();
     for (int index = 1; index < argumentCountIncludingThis; ++index)
         addVarArgChild(get(virtualRegisterForArgumentIncludingThis(index, registerOffset)));
-    set(result, addToGraph(Node::VarArg, op, OpInfo(), OpInfo()));
-    return;
+    Node* resultNode = addToGraph(Node::VarArg, op, OpInfo(), OpInfo());
+    if (resultOperand.isValid())
+        set(resultOperand, resultNode);
 }
 
 template<typename ChecksFunctor>
-auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVariant variant, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, CodeSpecializationKind kind, SpeculatedType prediction, const ChecksFunctor& insertChecks) -> CallOptimizationResult
+auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, CallVariant variant, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind kind, CodeSpecializationKind specializationKind, SpeculatedType prediction, const ChecksFunctor& insertChecks) -> CallOptimizationResult
 {
     VERBOSE_LOG("       The intrinsic is ", intrinsic, "\n");
     UNUSED_PARAM(callOp);
     UNUSED_PARAM(kind);
+    UNUSED_PARAM(specializationKind);
 
     if (!isOpcodeShape<OpCallShape>(m_currentInstruction)) {
         VERBOSE_LOG("    Failing because instruction is not OpCallShape.\n");
         return CallOptimizationResult::DidNothing;
     }
 
-    // It so happens that the code below doesn't handle the invalid result case. We could fix that, but
-    // it would only benefit intrinsics called as setters, like if you do:
-    //
-    //     o.__defineSetter__("foo", Math.pow)
-    //
-    // Which is extremely amusing, but probably not worth optimizing.
-    if (!result.isValid()) {
-        VERBOSE_LOG("    Failing result operand is invalid.\n");
-        return CallOptimizationResult::DidNothing;
-    }
-
     bool didSetResult = false;
     auto setResult = [&] (Node* node) {
         RELEASE_ASSERT(!didSetResult);
-        set(result, node);
+        if (resultOperand.isValid())
+            set(resultOperand, node);
         didSetResult = true;
     };
 
@@ -2460,7 +2463,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
 
         case MinIntrinsic:
         case MaxIntrinsic:
-            handleMinMax(result, intrinsic == MinIntrinsic ? ArithMin : ArithMax, registerOffset, argumentCountIncludingThis, insertChecks);
+            handleMinMax(resultOperand, intrinsic == MinIntrinsic ? ArithMin : ArithMax, registerOffset, argumentCountIncludingThis, insertChecks);
             didSetResult = true;
             return CallOptimizationResult::Inlined;
 
@@ -2670,6 +2673,30 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
 
             RELEASE_ASSERT_NOT_REACHED();
             return CallOptimizationResult::DidNothing;
+        }
+
+        case ArraySpliceIntrinsic: {
+            // Currently we only handle extracting pattern `array.splice(x, y)` in a super fast manner.
+            if (argumentCountIncludingThis != 3)
+                return CallOptimizationResult::DidNothing;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantCache)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return CallOptimizationResult::DidNothing;
+
+            ArrayMode arrayMode = getArrayMode(Array::Read);
+            if (!arrayMode.isJSArray())
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+
+            Node* result = addToGraph(ArraySpliceExtract, OpInfo(), OpInfo(prediction),
+                get(virtualRegisterForArgumentIncludingThis(0, registerOffset)),
+                get(virtualRegisterForArgumentIncludingThis(1, registerOffset)),
+                get(virtualRegisterForArgumentIncludingThis(2, registerOffset)));
+            setResult(result);
+            return CallOptimizationResult::Inlined;
         }
 
         case ArrayIndexOfIntrinsic: {
@@ -4037,7 +4064,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             auto* frozenFunction = m_graph.freeze(function);
             addToGraph(CheckIsConstant, OpInfo(frozenFunction), Edge(callee, CellUse));
             RELEASE_ASSERT(!didSetResult);
-            addCall(result, callOp, OpInfo(), jsConstant(frozenFunction), argumentCountIncludingThis, registerOffset, prediction);
+            addCall(resultOperand, callOp, OpInfo(), jsConstant(frozenFunction), argumentCountIncludingThis, registerOffset, prediction);
             didSetResult = true;
             return CallOptimizationResult::Inlined;
         }
@@ -4111,7 +4138,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
 
             // Bound function itself is completely wiped. And we should behave as if the current caller is directly calling this function.
             // If the current caller is calling the callee in a tail-call form, then it should be a tail-call.
-            Terminality terminality = handleCall(result, callOp, callOp == Call ? InlineCallFrame::BoundFunctionCall : InlineCallFrame::BoundFunctionTailCall, osrExitIndex, jsConstant(boundFunction->targetFunction()), numberOfParameters - 1, newRegisterOffset, CallLinkStatus(CallVariant(boundFunction->targetFunction())), prediction);
+            Terminality terminality = handleCall(resultOperand, callOp, callOp == Call ? InlineCallFrame::BoundFunctionCall : InlineCallFrame::BoundFunctionTailCall, osrExitIndex, jsConstant(boundFunction->targetFunction()), numberOfParameters - 1, newRegisterOffset, CallLinkStatus(CallVariant(boundFunction->targetFunction())), prediction);
             didSetResult = true;
             return terminality == NonTerminal ? CallOptimizationResult::Inlined : CallOptimizationResult::InlinedTerminal;
         }
@@ -7845,6 +7872,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_call_direct_eval);
         }
 
+        case op_call_ignore_result:
+            handleCall<OpCallIgnoreResult>(currentInstruction, Call, CallMode::Regular, nextOpcodeIndex());
+            ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleCall, which may have inlined the callee, trashed m_currentInstruction");
+            NEXT_OPCODE(op_call_ignore_result);
+
         case op_iterator_open: {
             auto bytecode = currentInstruction->as<OpIteratorOpen>();
             auto& metadata = bytecode.metadata(codeBlock);
@@ -7872,7 +7904,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 numberOfRemainingModes--;
                 if (!numberOfRemainingModes) {
                     addToGraph(CheckIsConstant, OpInfo(frozenSymbolIteratorFunction), symbolIterator);
-                    addToGraph(CheckJSCast, OpInfo(JSArray::info()), get(bytecode.m_iterable));
+                    addToGraph(Check, Edge(get(bytecode.m_iterable), ArrayUse));
                 } else {
                     BasicBlock* fastArrayBlock = allocateUntargetableBlock();
                     genericBlock = allocateUntargetableBlock();

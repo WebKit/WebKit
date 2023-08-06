@@ -75,7 +75,7 @@ protected:
     PlatformMediaResourceLoader() = default;
 };
 
-class PlatformMediaResource : public ThreadSafeRefCounted<PlatformMediaResource, WTF::DestructionThread::Main> {
+class PlatformMediaResource : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PlatformMediaResource, WTF::DestructionThread::Main> {
     WTF_MAKE_NONCOPYABLE(PlatformMediaResource); WTF_MAKE_FAST_ALLOCATED;
 public:
     PlatformMediaResource() = default;

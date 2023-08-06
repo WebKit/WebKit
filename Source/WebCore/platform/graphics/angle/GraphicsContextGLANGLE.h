@@ -60,7 +60,6 @@ public:
     static bool releaseThreadResources(ReleaseThreadResourceBehavior);
 
     // GraphicsContextGL overrides.
-    bool isGLES2Compliant() const final;
     void activeTexture(GCGLenum texture) final;
     void attachShader(PlatformGLObject program, PlatformGLObject shader) final;
     void bindAttribLocation(PlatformGLObject, GCGLuint index, const String& name) final;

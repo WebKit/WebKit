@@ -288,6 +288,7 @@
 		46F03C1C255B2D5A00AA51C5 /* audio-context-playing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46F03C1B255B2D3600AA51C5 /* audio-context-playing.html */; };
 		46FA2FEE23846CA5000CCB0C /* HTTPHeaderMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46FA2FED23846C9A000CCB0C /* HTTPHeaderMap.cpp */; };
 		46FACF7423E8842300A9EBC6 /* beforeunload-slow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46FACF7323E883EE00A9EBC6 /* beforeunload-slow.html */; };
+		46FD40382A6B3E6800A1B210 /* postMessage-various-types.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46FD40302A6B3E3500A1B210 /* postMessage-various-types.html */; };
 		48124A272925A0C100EED506 /* AnimationControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = 48124A262925A0C100EED506 /* AnimationControl.mm */; };
 		48354DD929F08047003E566D /* animated-red-green-blue-repeat-infinite.gif in Copy Resources */ = {isa = PBXBuildFile; fileRef = 48354DD129F08036003E566D /* animated-red-green-blue-repeat-infinite.gif */; };
 		48354DDB29F092D1003E566D /* img-animation-in-anchor.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 48354DDA29F092B1003E566D /* img-animation-in-anchor.html */; };
@@ -1799,6 +1800,7 @@
 				F415086D1DA040C50044BE9B /* play-audio-on-click.html in Copy Resources */,
 				0EBBCC661FFF9E0C00FA42AB /* pop-up-check.html in Copy Resources */,
 				465C23AF2640C3FE00F2FC7F /* postMessage-regularly.html in Copy Resources */,
+				46FD40382A6B3E6800A1B210 /* postMessage-various-types.html in Copy Resources */,
 				F41AB9A81EF4696B0083FA08 /* prevent-operation.html in Copy Resources */,
 				F41AB9A91EF4696B0083FA08 /* prevent-start.html in Copy Resources */,
 				F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */,
@@ -2371,6 +2373,7 @@
 		46F03C1B255B2D3600AA51C5 /* audio-context-playing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "audio-context-playing.html"; sourceTree = "<group>"; };
 		46FA2FED23846C9A000CCB0C /* HTTPHeaderMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPHeaderMap.cpp; sourceTree = "<group>"; };
 		46FACF7323E883EE00A9EBC6 /* beforeunload-slow.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "beforeunload-slow.html"; sourceTree = "<group>"; };
+		46FD40302A6B3E3500A1B210 /* postMessage-various-types.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "postMessage-various-types.html"; sourceTree = "<group>"; };
 		48124A262925A0C100EED506 /* AnimationControl.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = AnimationControl.mm; sourceTree = "<group>"; };
 		48354DD129F08036003E566D /* animated-red-green-blue-repeat-infinite.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = "animated-red-green-blue-repeat-infinite.gif"; path = "Tests/WebKitCocoa/animated-red-green-blue-repeat-infinite.gif"; sourceTree = SOURCE_ROOT; };
 		48354DDA29F092B1003E566D /* img-animation-in-anchor.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "img-animation-in-anchor.html"; path = "Tests/WebKitCocoa/img-animation-in-anchor.html"; sourceTree = SOURCE_ROOT; };
@@ -4815,6 +4818,7 @@
 				3FCC4FE61EC4E87E0076E37C /* PictureInPictureDelegate.html */,
 				F415086C1DA040C10044BE9B /* play-audio-on-click.html */,
 				465C23AE2640C3C500F2FC7F /* postMessage-regularly.html */,
+				46FD40302A6B3E3500A1B210 /* postMessage-various-types.html */,
 				F41AB9941EF4692C0083FA08 /* prevent-operation.html */,
 				F41AB99A1EF4692C0083FA08 /* prevent-start.html */,
 				A12DDBFF1E8373C100CF6CAE /* rendered-image-excluding-overflow.html */,

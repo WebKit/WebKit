@@ -13,7 +13,7 @@ let wat = `
 async function test() {
     const instance = await instantiate(wat, {});
     const { memory, test } = instance.exports
-    test(4294967296)
+    assert.throws(() => {test(4294967296)}, WebAssembly.RuntimeError, "Out of bounds Trunc operation (evaluating 'test(4294967296)')");
 }
 
 assert.asyncTest(test())

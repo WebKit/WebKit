@@ -28,9 +28,19 @@
 #include "PlatformClass.h"
 
 template<size_t...> struct MembersInCorrectOrder;
-template<size_t onlyOffset> struct MembersInCorrectOrder<onlyOffset> { static constexpr bool value = true; };
+template<size_t onlyOffset> struct MembersInCorrectOrder<onlyOffset> {
+    static constexpr bool value = true;
+};
 template<size_t firstOffset, size_t secondOffset, size_t... remainingOffsets> struct MembersInCorrectOrder<firstOffset, secondOffset, remainingOffsets...> {
     static constexpr bool value = firstOffset > secondOffset ? false : MembersInCorrectOrder<secondOffset, remainingOffsets...>::value;
+};
+
+template<uint64_t...> struct BitsInIncreasingOrder;
+template<uint64_t onlyBit> struct BitsInIncreasingOrder<onlyBit> {
+    static constexpr bool value = true;
+};
+template<uint64_t firstBit, uint64_t secondBit, uint64_t... remainingBits> struct BitsInIncreasingOrder<firstBit, secondBit, remainingBits...> {
+    static constexpr bool value = firstBit == secondBit >> 1 && BitsInIncreasingOrder<secondBit, remainingBits...>::value;
 };
 
 template<bool, bool> struct VirtualTableAndRefCountOverhead;
@@ -75,7 +85,7 @@ void ArgumentCoder<WebKit::PlatformClass>::encode(Encoder& encoder, const WebKit
         int value;
     };
     static_assert(sizeof(ShouldBeSameSizeAsPlatformClass) == sizeof(WebKit::PlatformClass));
-    static_assert(MembersInCorrectOrder<0
+    static_assert(MembersInCorrectOrder < 0
         , offsetof(WebKit::PlatformClass, value)
     >::value);
     encoder << instance.value;

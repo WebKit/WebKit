@@ -39,6 +39,11 @@ void* tryMalloc(Kind, size_t size)
     return FastMalloc::tryMalloc(size);
 }
 
+void* tryZeroedMalloc(Kind, size_t size)
+{
+    return FastMalloc::tryZeroedMalloc(size);
+}
+
 void* tryRealloc(Kind, void* pointer, size_t size)
 {
     return FastMalloc::tryRealloc(pointer, size);
@@ -96,6 +101,13 @@ void* tryMalloc(Kind kind, size_t size)
     return result;
 }
 
+void* tryZeroedMalloc(Kind kind, size_t size)
+{
+    void* result = bmalloc::api::tryZeroedMalloc(size, bmalloc::heapKind(kind));
+    WTF::compilerFence();
+    return result;
+}
+
 void* tryRealloc(Kind kind, void* pointer, size_t size)
 {
     void* result = bmalloc::api::tryRealloc(pointer, size, bmalloc::heapKind(kind));
@@ -145,6 +157,13 @@ void* tryMallocArray(Kind kind, size_t numElements, size_t elementSize)
 void* malloc(Kind kind, size_t size)
 {
     void* result = tryMalloc(kind, size);
+    RELEASE_ASSERT(result);
+    return result;
+}
+
+void* zeroedMalloc(Kind kind, size_t size)
+{
+    void* result = tryZeroedMalloc(kind, size);
     RELEASE_ASSERT(result);
     return result;
 }

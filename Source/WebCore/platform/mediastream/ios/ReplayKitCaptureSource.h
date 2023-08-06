@@ -38,7 +38,7 @@ namespace WebCore {
 
 class ReplayKitCaptureSource final : public DisplayCaptureSourceCocoa::Capturer, public CanMakeWeakPtr<ReplayKitCaptureSource> {
 public:
-    static Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> create(const String&);
+    static Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> create(const String&);
 
     ReplayKitCaptureSource();
     virtual ~ReplayKitCaptureSource();

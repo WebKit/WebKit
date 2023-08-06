@@ -4208,7 +4208,7 @@ void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale
     updateSizeForCSSSmallViewportUnits();
     updateSizeForCSSLargeViewportUnits();
 
-    auto* mainFrameView = this->mainFrameView();
+    auto* mainFrameView = this->localMainFrameView();
     if (!mainFrameView) {
         // FIXME: This is hit in some site isolation tests on iOS. Investigate and fix.
         return;

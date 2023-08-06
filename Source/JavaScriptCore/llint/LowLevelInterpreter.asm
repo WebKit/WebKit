@@ -1235,6 +1235,10 @@ macro invokeForRegularCall(opcodeName, size, opcodeStruct, valueProfileName, dst
     callTargetFunction(opcodeName, size, opcodeStruct, dispatchAfterRegularCall, valueProfileName, dstVirtualRegister, dispatch, callee, callPtrTag)
 end
 
+macro invokeForRegularCallIgnoreResult(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, maybeOldCFR, callPtrTag)
+    callTargetFunction(opcodeName, size, opcodeStruct, dispatchAfterRegularCallIgnoreResult, valueProfileName, dstVirtualRegister, dispatch, callee, callPtrTag)
+end
+
 # t5 is metadata
 macro prepareForPolymorphicRegularCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callPtrTag)
 end
@@ -2390,6 +2394,10 @@ commonCallOp(op_tail_call, _llint_slow_path_tail_call, OpTailCall, prepareForTai
     # reload metadata since checkSwitchToJITForEpilogue() might have trashed t5
     metadata(t5, t0)
 end, dispatchAfterTailCall)
+
+commonCallOp(op_call_ignore_result, _llint_slow_path_call, OpCallIgnoreResult, prepareForRegularCall, invokeForRegularCallIgnoreResult, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+    arrayProfileForCall(OpCallIgnoreResult, getu)
+end, dispatchAfterRegularCallIgnoreResult)
 
 macro branchIfException(exceptionTarget)
     loadp CodeBlock[cfr], t3

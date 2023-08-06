@@ -4,8 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS a3 is a2 + 1
-PASS logs.length is 3
-PASS logs.join(", ") is "1.A1, 3.A2, 4.A3"
+PASS logsA.length is 2
+PASS logsB.length is 1
+PASS logsA.join(", ") is "A1, A3"
+PASS logsB.join(", ") is "B1"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -99,29 +99,6 @@ struct DocumentMarkerLineStyle {
     Color color;
 };
 
-// Legacy shadow blur radius is used for canvas, and -webkit-box-shadow.
-// It has different treatment of radii > 8px.
-enum class ShadowRadiusMode : bool {
-    Default,
-    Legacy
-};
-
-struct DropShadow {
-    FloatSize offset;
-    float blurRadius { 0 };
-    Color color;
-    ShadowRadiusMode radiusMode { ShadowRadiusMode::Default };
-
-    bool isVisible() const { return color.isVisible(); }
-    bool isBlurred() const { return isVisible() && blurRadius; }
-    bool hasOutsets() const { return isBlurred() || (isVisible() && !offset.isZero()); }
-};
-
-inline bool operator==(const DropShadow& a, const DropShadow& b)
-{
-    return a.offset == b.offset && a.blurRadius == b.blurRadius && a.color == b.color && a.radiusMode == b.radiusMode;
-}
-
 enum class GradientSpreadMethod : uint8_t {
     Pad,
     Reflect,
@@ -194,7 +171,6 @@ bool parseCompositeAndBlendOperator(const String&, WebCore::CompositeOperator&, 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::BlendMode);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::CompositeOperator);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, CompositeMode);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const DropShadow&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, GradientSpreadMethod);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, InterpolationQuality);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineCap);

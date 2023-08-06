@@ -71,21 +71,6 @@ void PropertyCondition::dump(PrintStream& out) const
     dumpInContext(out, nullptr);
 }
 
-ALWAYS_INLINE static bool nonStructurePropertyMayBecomeReadOnlyWithoutTransition(Structure* structure, UniquedStringImpl* uid)
-{
-    switch (structure->typeInfo().type()) {
-    case ArrayType:
-    case DerivedArrayType:
-        return uid == structure->vm().propertyNames->length.impl();
-
-    case RegExpObjectType:
-        return uid == structure->vm().propertyNames->lastIndex.impl();
-
-    default:
-        return false;
-    }
-}
-
 bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     Concurrency concurrency, Structure* structure, JSObject* base) const
 {
@@ -201,10 +186,18 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
                 }
                 return false;
             }
-        } else if (nonStructurePropertyMayBecomeReadOnlyWithoutTransition(structure, uid())) {
+        } else if (structure->typeInfo().overridesPut() && JSObject::mightBeSpecialProperty(structure->vm(), structure->typeInfo().type(), uid())) {
             if (PropertyConditionInternal::verbose)
-                dataLog("Invalid because its put() override may treat ", uid(), " property as read-only.\n");
+                dataLog("Invalid because its put() override may treat ", uid(), " property as special non-structure one.\n");
             return false;
+        } else if (structure->hasNonReifiedStaticProperties()) {
+            if (auto entry = structure->findPropertyHashEntry(uid())) {
+                if (entry->value->attributes() & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue) {
+                    if (PropertyConditionInternal::verbose)
+                        dataLog("Invalid because we expected not to have a setter, but we have one in non-reified static property table: ", uid(), ".\n");
+                    return false;
+                }
+            }
         }
 
         if (structure->hasPolyProto()) {
@@ -282,6 +275,9 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     }
         
     case Equivalence: {
+        Locker<JSCellLock> cellLocker { NoLockingNecessary };
+        if (concurrency != Concurrency::MainThread && base)
+            cellLocker = Locker { base->cellLock() };
         if (!base || base->structure() != structure) {
             // Conservatively return false, since we cannot verify this one without having the
             // object.
@@ -306,8 +302,8 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
             return false;
         }
 
-        JSValue currentValue = base->getDirect(concurrency, structure, currentOffset);
-        if (currentValue != requiredValue()) {
+        JSValue currentValue = base->getDirect(cellLocker, concurrency, structure, currentOffset);
+        if (currentValue != requiredValue() || !currentValue) {
             if (PropertyConditionInternal::verbose) {
                 dataLog(
                     "Invalid because the value is ", currentValue, " but we require ", requiredValue(),
@@ -509,9 +505,13 @@ bool PropertyCondition::isValidValueForPresence(JSValue value) const
 
 PropertyCondition PropertyCondition::attemptToMakeEquivalenceWithoutBarrier(JSObject* base) const
 {
-    Structure* structure = base->structure();
+    JSValue value;
+    {
+        Locker cellLocker { base->cellLock() };
+        Structure* structure = base->structure();
 
-    JSValue value = base->getDirectConcurrently(structure, offset());
+        value = base->getDirectConcurrently(cellLocker, structure, offset());
+    }
     if (!isValidValueForPresence(value))
         return PropertyCondition();
     return equivalenceWithoutBarrier(uid(), value);

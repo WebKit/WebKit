@@ -2595,15 +2595,14 @@ void LocalFrameView::textFragmentIndicatorTimerFired()
         return;
     
     if (textIndicator) {
-        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
-        
-        auto textRects = RenderFlexibleBox::absoluteTextRects(range);
-        
-        HitTestResult result;
         auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
         if (!localMainFrame)
             return;
-        result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.first().center()), hitType);
+
+        auto textRects = RenderObject::absoluteTextRects(range);
+
+        constexpr auto hitType = OptionSet { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+        auto result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.first().center()), hitType);
         if (!intersects(range, *result.targetNode()))
             return;
         
@@ -3998,7 +3997,6 @@ void LocalFrameView::performFixedWidthAutoSize()
     resize(m_autoSizeConstraint.width(), m_autoSizeConstraint.height());
 
     Ref<LocalFrameView> protectedThis(*this);
-    document->updateStyleIfNeeded();
     document->updateLayoutIgnorePendingStylesheets();
     // While the final content size could slightly be different after the next resize/layout (see below), we intentionally save and report
     // the current value to avoid unstable layout (e.g. content "height: 100%").

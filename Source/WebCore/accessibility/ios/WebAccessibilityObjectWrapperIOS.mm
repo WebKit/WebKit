@@ -42,6 +42,7 @@
 #import "HTMLFrameOwnerElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
+#import "HTMLTextAreaElement.h"
 #import "IntRect.h"
 #import "LocalFrame.h"
 #import "LocalizedStrings.h"
@@ -840,6 +841,13 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         if (self.axBackingObject->isVisited())
             traits |= [self _axVisitedTrait];
         break;
+    case AccessibilityRole::ComboBox: {
+        auto* node = self.axBackingObject->node();
+        auto* inputElement = dynamicDowncast<HTMLInputElement>(node);
+        if ((inputElement && inputElement->isTextField()) || is<HTMLTextAreaElement>(node))
+            traits |= [self _accessibilityTextEntryTraits];
+        break;
+    }
     case AccessibilityRole::TextField:
     case AccessibilityRole::SearchField:
     case AccessibilityRole::TextArea:

@@ -106,10 +106,7 @@ public:
     enum class ForNavigationAction : bool { No, Yes };
     uint64_t setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, ForNavigationAction);
     void invalidatePolicyListeners();
-    void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
-
-    FormSubmitListenerIdentifier setUpWillSubmitFormListener(CompletionHandler<void()>&&);
-    void continueWillSubmitForm(FormSubmitListenerIdentifier);
+    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyCheckIdentifier, PolicyDecision&&);
 
     void didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>);
     void didFinishLoadInAnotherProcess();
@@ -244,7 +241,6 @@ private:
     };
     HashMap<uint64_t, PolicyCheck> m_pendingPolicyChecks;
 
-    HashMap<FormSubmitListenerIdentifier, CompletionHandler<void()>> m_willSubmitFormCompletionHandlers;
     std::optional<DownloadID> m_policyDownloadID;
 
     WeakPtr<LoadListener> m_loadListener;

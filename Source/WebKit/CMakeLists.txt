@@ -40,6 +40,7 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/CoreIPCSupport"
     "${WEBKIT_DIR}/Shared/Databases"
     "${WEBKIT_DIR}/Shared/Databases/IndexedDB"
+    "${WEBKIT_DIR}/Shared/Extensions"
     "${WEBKIT_DIR}/Shared/FileAPI"
     "${WEBKIT_DIR}/Shared/Gamepad"
     "${WEBKIT_DIR}/Shared/Notifications"
@@ -302,7 +303,6 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/Network/webrtc/LibWebRTCNetwork
     WebProcess/Network/webrtc/RTCDataChannelRemoteManager
-    WebProcess/Network/webrtc/WebMDNSRegister
     WebProcess/Network/webrtc/WebRTCMonitor
     WebProcess/Network/webrtc/WebRTCResolver
 

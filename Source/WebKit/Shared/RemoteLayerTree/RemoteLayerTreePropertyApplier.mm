@@ -257,7 +257,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::BackingStoreChanged
         || properties.changedProperties & LayerChange::BackingStoreAttachmentChanged)
     {
-        auto* backingStore = properties.backingStoreProperties.get();
+        auto* backingStore = properties.backingStoreOrProperties.properties.get();
         if (backingStore && properties.backingStoreAttached) {
             std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier;
             if (layerTreeNode) {
@@ -274,7 +274,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations());
 
     if (properties.changedProperties & LayerChange::AnimationsChanged)
-        PlatformCAAnimationRemote::updateLayerAnimations(layer, layerTreeHost, properties.addedAnimations, properties.keysOfAnimationsToRemove);
+        PlatformCAAnimationRemote::updateLayerAnimations(layer, layerTreeHost, properties.animationChanges.addedAnimations, properties.animationChanges.keysOfAnimationsToRemove);
 
     if (properties.changedProperties & LayerChange::AntialiasesEdgesChanged)
         layer.edgeAntialiasingMask = properties.antialiasesEdges ? (kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge) : 0;
@@ -318,13 +318,13 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
     updateMask(node, properties, relatedLayers);
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if (properties.changedProperties & LayerChange::CoverageRectChanged)
-        node.setCoverageRect(properties.coverageRect);
+    if (properties.changedProperties & LayerChange::VisibleRectChanged)
+        node.setVisibleRect(properties.visibleRect);
     applyCommonPropertiesToLayer(node.interactionRegionsLayer(), properties);
     // Replicate animations on the InteractionRegion layers, the LayerTreeHost only keeps track of the original animations.
     if (properties.changedProperties & LayerChange::AnimationsChanged)
-        PlatformCAAnimationRemote::updateLayerAnimations(node.interactionRegionsLayer(), nullptr, properties.addedAnimations, properties.keysOfAnimationsToRemove);
-    if (properties.changedProperties & LayerChange::EventRegionChanged || properties.changedProperties & LayerChange::CoverageRectChanged)
+        PlatformCAAnimationRemote::updateLayerAnimations(node.interactionRegionsLayer(), nullptr, properties.animationChanges.addedAnimations, properties.animationChanges.keysOfAnimationsToRemove);
+    if (properties.changedProperties & LayerChange::EventRegionChanged || properties.changedProperties & LayerChange::VisibleRectChanged)
         updateLayersForInteractionRegions(node);
 #endif
 

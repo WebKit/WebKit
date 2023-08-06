@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -804,6 +804,8 @@
 		E3149A37228BB42200BFA6C7 /* Bag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEBA64120CF37100074941C /* Bag.cpp */; };
 		E3149A39228BB43500BFA6C7 /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F95B63420CB53C100479635 /* Vector.cpp */; };
 		E3149A3B228BDCAC00BFA6C7 /* ConcurrentBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3149A3A228BDCAB00BFA6C7 /* ConcurrentBuffer.cpp */; };
+		E320BFE52A7CB712003C0B3A /* unumberrangeformatter.h in Headers */ = {isa = PBXBuildFile; fileRef = E320BFE32A7CB712003C0B3A /* unumberrangeformatter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E320BFE62A7CB712003C0B3A /* localematcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E320BFE42A7CB712003C0B3A /* localematcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E324FAA328C9ADBA007089DF /* StringSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = E324FAA228C9ADBA007089DF /* StringSearch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E336674A2722551100259122 /* Int128.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33667492722550900259122 /* Int128.cpp */; };
 		E361DB532891159C00B2A2B8 /* FastFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E361DB512891159B00B2A2B8 /* FastFloat.cpp */; };
@@ -1700,6 +1702,8 @@
 		E3149A3A228BDCAB00BFA6C7 /* ConcurrentBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConcurrentBuffer.cpp; sourceTree = "<group>"; };
 		E31CF0A5261058580036E673 /* RobinHoodHashTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobinHoodHashTable.h; sourceTree = "<group>"; };
 		E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformRegisters.h; sourceTree = "<group>"; };
+		E320BFE32A7CB712003C0B3A /* unumberrangeformatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unumberrangeformatter.h; sourceTree = "<group>"; };
+		E320BFE42A7CB712003C0B3A /* localematcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = localematcher.h; sourceTree = "<group>"; };
 		E324FAA228C9ADBA007089DF /* StringSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringSearch.h; sourceTree = "<group>"; };
 		E32561122611B5B600A72CC5 /* RobinHoodHashSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobinHoodHashSet.h; sourceTree = "<group>"; };
 		E32A207323C5902D0034A092 /* NakedRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedRef.h; sourceTree = "<group>"; };
@@ -2632,6 +2636,7 @@
 				DDD8BB2727B347C500C109E0 /* idna.h */,
 				DDD8BB1827B347C500C109E0 /* listformatter.h */,
 				DDD8BB2927B347C500C109E0 /* localebuilder.h */,
+				E320BFE42A7CB712003C0B3A /* localematcher.h */,
 				DDD8BB7427B347C500C109E0 /* localpointer.h */,
 				DDD8BB0827B347C500C109E0 /* locdspnm.h */,
 				DDD8BB5427B347C500C109E0 /* locid.h */,
@@ -2739,6 +2744,7 @@
 				DDD8BB2827B347C500C109E0 /* unorm2.h */,
 				DDD8BB3827B347C500C109E0 /* unum.h */,
 				DDD8BAF727B347C500C109E0 /* unumberformatter.h */,
+				E320BFE32A7CB712003C0B3A /* unumberrangeformatter.h */,
 				DDD8BB6B27B347C500C109E0 /* unumsys.h */,
 				DDD8BB1927B347C500C109E0 /* uobject.h */,
 				DDD8BB2127B347C500C109E0 /* upluralrules.h */,
@@ -3435,6 +3441,7 @@
 				DDF308A327C44F08006A526F /* idna.h in Headers */,
 				DDF3083827C44F08006A526F /* listformatter.h in Headers */,
 				DDF3085527C44F08006A526F /* localebuilder.h in Headers */,
+				E320BFE62A7CB712003C0B3A /* localematcher.h in Headers */,
 				DDF308C927C44F08006A526F /* localpointer.h in Headers */,
 				DDF3083C27C44F08006A526F /* locdspnm.h in Headers */,
 				DDF3088427C44F08006A526F /* locid.h in Headers */,
@@ -3542,6 +3549,7 @@
 				DDF3087D27C44F08006A526F /* unorm2.h in Headers */,
 				DDF308B127C44F08006A526F /* unum.h in Headers */,
 				DDF308A027C44F08006A526F /* unumberformatter.h in Headers */,
+				E320BFE52A7CB712003C0B3A /* unumberrangeformatter.h in Headers */,
 				DDF3083F27C44F08006A526F /* unumsys.h in Headers */,
 				DDF308AF27C44F08006A526F /* uobject.h in Headers */,
 				DDF3086427C44F08006A526F /* upluralrules.h in Headers */,

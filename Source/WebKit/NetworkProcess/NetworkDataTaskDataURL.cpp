@@ -62,7 +62,6 @@ Ref<NetworkDataTask> NetworkDataTaskDataURL::create(NetworkSession& session, Net
 NetworkDataTaskDataURL::NetworkDataTaskDataURL(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
     : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation)
 {
-    m_session->registerNetworkDataTask(*this);
 }
 
 NetworkDataTaskDataURL::~NetworkDataTaskDataURL()
@@ -151,7 +150,7 @@ void NetworkDataTaskDataURL::didDecodeDataURL(std::optional<WebCore::DataURLDeco
         case PolicyAction::Download:
             downloadDecodedData(WTFMove(data));
             break;
-        case PolicyAction::StopAllLoads:
+        case PolicyAction::LoadWillContinueInAnotherProcess:
             ASSERT_NOT_REACHED();
             break;
         }

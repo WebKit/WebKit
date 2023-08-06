@@ -68,14 +68,8 @@ public:
         return insert(index, m_graph.addNode(type, params...));
     }
     
-    Node* insertConstant(
-        size_t index, NodeOrigin origin, FrozenValue* value,
-        NodeType op = JSConstant)
-    {
-        return insertNode(
-            index, speculationFromValue(value->value()), op, origin, OpInfo(value));
-    }
-    
+    Node* insertConstant(size_t index, NodeOrigin, FrozenValue*, NodeType op = JSConstant);
+
     Edge insertConstantForUse(
         size_t index, NodeOrigin origin, FrozenValue* value, UseKind useKind)
     {

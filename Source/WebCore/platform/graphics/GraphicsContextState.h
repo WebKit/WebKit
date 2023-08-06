@@ -45,20 +45,19 @@ public:
         StrokeStyle                 = 1 << 4,
 
         CompositeMode               = 1 << 5,
-        DropShadow                  = 1 << 6,
-        Style                       = 1 << 7,
+        Style                       = 1 << 6,
 
-        Alpha                       = 1 << 8,
-        TextDrawingMode             = 1 << 9,
-        ImageInterpolationQuality   = 1 << 10,
+        Alpha                       = 1 << 7,
+        TextDrawingMode             = 1 << 8,
+        ImageInterpolationQuality   = 1 << 9,
 
-        ShouldAntialias             = 1 << 11,
-        ShouldSmoothFonts           = 1 << 12,
-        ShouldSubpixelQuantizeFonts = 1 << 13,
-        ShadowsIgnoreTransforms     = 1 << 14,
-        DrawLuminanceMask           = 1 << 15,
+        ShouldAntialias             = 1 << 10,
+        ShouldSmoothFonts           = 1 << 11,
+        ShouldSubpixelQuantizeFonts = 1 << 12,
+        ShadowsIgnoreTransforms     = 1 << 13,
+        DrawLuminanceMask           = 1 << 14,
 #if HAVE(OS_DARK_MODE_SUPPORT)
-        UseDarkAppearance           = 1 << 16,
+        UseDarkAppearance           = 1 << 15,
 #endif
     };
     using ChangeFlags = OptionSet<Change>;
@@ -99,8 +98,7 @@ public:
     const CompositeMode& compositeMode() const { return m_compositeMode; }
     void setCompositeMode(CompositeMode compositeMode) { setProperty(Change::CompositeMode, &GraphicsContextState::m_compositeMode, compositeMode); }
 
-    const DropShadow& dropShadow() const { return m_dropShadow; }
-    void setDropShadow(const DropShadow& dropShadow) { setProperty(Change::DropShadow, &GraphicsContextState::m_dropShadow, dropShadow); }
+    WEBCORE_EXPORT std::optional<GraphicsDropShadow> dropShadow() const;
 
     const std::optional<GraphicsStyle>& style() const { return m_style; }
     void setStyle(const std::optional<GraphicsStyle>& style) { setProperty(Change::Style, &GraphicsContextState::m_style, style); }
@@ -179,7 +177,6 @@ private:
     StrokeStyle m_strokeStyle { StrokeStyle::SolidStroke };
 
     CompositeMode m_compositeMode { CompositeOperator::SourceOver, BlendMode::Normal };
-    DropShadow m_dropShadow;
     std::optional<GraphicsStyle> m_style;
 
     float m_alpha { 1 };
@@ -214,7 +211,6 @@ void GraphicsContextState::encode(Encoder& encoder) const
     encode(Change::StrokeStyle,                     &GraphicsContextState::m_strokeStyle);
 
     encode(Change::CompositeMode,                   &GraphicsContextState::m_compositeMode);
-    encode(Change::DropShadow,                      &GraphicsContextState::m_dropShadow);
     encode(Change::Style,                           &GraphicsContextState::m_style);
 
     encode(Change::Alpha,                           &GraphicsContextState::m_alpha);
@@ -269,8 +265,6 @@ std::optional<GraphicsContextState> GraphicsContextState::decode(Decoder& decode
 
     if (!decode(state, Change::CompositeMode,               &GraphicsContextState::m_compositeMode))
         return std::nullopt;
-    if (!decode(state, Change::DropShadow,                  &GraphicsContextState::m_dropShadow))
-        return std::nullopt;
     if (!decode(state, Change::Style,                       &GraphicsContextState::m_style))
         return std::nullopt;
 
@@ -317,7 +311,6 @@ template<> struct EnumTraits<WebCore::GraphicsContextState::Change> {
         WebCore::GraphicsContextState::Change::StrokeStyle,
 
         WebCore::GraphicsContextState::Change::CompositeMode,
-        WebCore::GraphicsContextState::Change::DropShadow,
         WebCore::GraphicsContextState::Change::Style,
 
         WebCore::GraphicsContextState::Change::Alpha,

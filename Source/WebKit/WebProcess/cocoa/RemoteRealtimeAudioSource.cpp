@@ -30,6 +30,7 @@
 
 #include "GPUProcessConnection.h"
 #include "UserMediaCaptureManager.h"
+#include "UserMediaCaptureManagerProxyMessages.h"
 #include "WebProcess.h"
 
 namespace WebKit {

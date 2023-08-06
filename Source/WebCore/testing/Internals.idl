@@ -657,7 +657,11 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined insertAuthorCSS(DOMString css);
     undefined insertUserCSS(DOMString css);
 
+    readonly attribute boolean isUnderMemoryWarning;
     readonly attribute boolean isUnderMemoryPressure;
+
+    undefined beginSimulatedMemoryWarning();
+    undefined endSimulatedMemoryWarning();
     undefined beginSimulatedMemoryPressure();
     undefined endSimulatedMemoryPressure();
 

@@ -1594,7 +1594,7 @@ enum class WebCore::RenderingPurpose : uint8_t {
 
 enum class WebCore::RotationDirection : bool
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
 [LegacyPopulateFromEmptyConstructor] class WebCore::MockContentFilterSettings {
     bool m_enabled;
     WebCore::MockContentFilterSettings::DecisionPoint m_decisionPoint;
@@ -4189,10 +4189,10 @@ header: <WebCore/GraphicsTypes.h>
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder]  enum class WebCore::ShadowRadiusMode : bool;
 
-header: <WebCore/GraphicsTypes.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DropShadow {
+header: <WebCore/GraphicsStyle.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::GraphicsDropShadow {
     WebCore::FloatSize offset;
-    float blurRadius;
+    float radius;
     WebCore::Color color;
     WebCore::ShadowRadiusMode radiusMode;
 };
@@ -4308,7 +4308,8 @@ struct WebCore::NavigationRequester {
     Ref<WebCore::SecurityOrigin> securityOrigin;
     Ref<WebCore::SecurityOrigin> topOrigin;
     WebCore::PolicyContainer policyContainer;
-    std::optional<WebCore::GlobalFrameIdentifier> globalFrameIdentifier;
+    std::optional<WebCore::FrameIdentifier> frameID;
+    std::optional<WebCore::PageIdentifier> pageID;
 };
 
 struct WebCore::PolicyContainer {
@@ -4875,7 +4876,7 @@ enum class WebCore::PolicyAction : uint8_t {
     Use,
     Download,
     Ignore,
-    StopAllLoads
+    LoadWillContinueInAnotherProcess
 };
 
 [OptionSet] enum class WebCore::ReloadOption : uint8_t {
@@ -5680,6 +5681,26 @@ enum class WebCore::WebGPU::TextureFormat : uint8_t {
     Astc12x12Unorm,
     Astc12x12UnormSRGB,
 };
+
+#if ENABLE(MEDIA_STREAM)
+enum class WebCore::MediaAccessDenialReason : uint8_t {
+    NoReason,
+    NoConstraints,
+    UserMediaDisabled,
+    NoCaptureDevices,
+    InvalidConstraint,
+    HardwareError,
+    PermissionDenied,
+    InvalidAccess,
+    OtherFailure
+};
+
+header: <WebCore/RealtimeMediaSource.h>
+[CustomHeader] struct WebCore::CaptureSourceError {
+    String errorMessage;
+    WebCore::MediaAccessDenialReason denialReason;
+};
+#endif
 
 header: <WebCore/WebGPUTextureAspect.h>
 enum class WebCore::WebGPU::TextureAspect : uint8_t {

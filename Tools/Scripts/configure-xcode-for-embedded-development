@@ -140,12 +140,12 @@ XCSPEC_INFO = [dict(
 )]
 
 SDKS_TO_UPDATE = [
-    "iphoneos",
-    "iphonesimulator",
-    "appletvos",
-    "appletvsimulator",
-    "watchos",
-    "watchsimulator",
+    ("iphoneos", ("armv7-ios", "armv7s-ios", "arm64-ios", "arm64e-ios")),
+    ("iphonesimulator", ("i386-ios-simulator", "x86_64-ios-simulator", "arm64-ios-simulator")),
+    ("appletvos", ("arm64-tvos", "arm64e-tvos")),
+    ("appletvsimulator", ("x86_64-tvos-simulator", "arm64-tvos-simulator")),
+    ("watchos", ("armv7k-watchos", "arm64-watchos", "arm64e-watchos", "arm64_32-watchos")),
+    ("watchsimulator", ("i386-watchos-simulator", "x86_64-watchos-simulator", "arm64-watchos-simulator")),
 ]
 
 PLIST_BUDDY_PATH = pathlib.Path("/usr/libexec/PlistBuddy")
@@ -231,15 +231,15 @@ def do_copy(source_path, dest_path):
 # architectures for which WebKit is built, regardless of whether the associated
 # library/framework was actually built for all those architectures.
 
-def patch_tbd_architecture(framework_path):
+def patch_tbd_architecture(framework_path, targets):
     for tbd_path in framework_path.glob("*.tbd"):
         with open(tbd_path, "r") as f:
             lines = f.readlines()
 
         modified_lines = []
         for line in lines:
-            if re.match(".*(archs|targets): +\[.*\]", line) is not None:
-                line = re.sub("\[.*\]", "[ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]", line)
+            if re.match(".*targets: +\[.*\]", line) is not None:
+                line = re.sub("\[.*\]", f"[ {', '.join(targets)} ]", line)
             modified_lines.append(line)
 
         with open(tbd_path, "w") as f:
@@ -300,7 +300,7 @@ def copy_missing_headers(source_sdk, dest_sdk):
         do_copy(source_sdk_path / missing_header, dest_sdk_path / missing_header)
 
 
-def copy_missing_frameworks(source_sdk, dest_sdk):
+def copy_missing_frameworks(source_sdk, dest_sdk, targets):
     if source_sdk == dest_sdk:
         return
     source_sdk_path, dest_sdk_path = get_and_check_sdk_directories(source_sdk, dest_sdk)
@@ -311,7 +311,7 @@ def copy_missing_frameworks(source_sdk, dest_sdk):
         dest_framework_path = dest_frameworks_path / missing_framework
         if force or not dest_framework_path.exists():
             do_copy(source_framework_path, dest_framework_path)
-            patch_tbd_architecture(dest_framework_path)
+            patch_tbd_architecture(dest_framework_path, targets)
 
 
 def main():
@@ -320,9 +320,9 @@ def main():
 
     update_xcspec_files()
 
-    for sdk in SDKS_TO_UPDATE:
+    for sdk, targets in SDKS_TO_UPDATE:
         copy_missing_headers("macosx", sdk)
-        copy_missing_frameworks("iphoneos", sdk)
+        copy_missing_frameworks("iphoneos", sdk, targets)
     return 0
 
 

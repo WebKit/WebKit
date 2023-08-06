@@ -365,7 +365,7 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
         }
 
         FloatRect visibleRect = [m_hostingLayer frame];
-        if (auto exposedRect = m_webPage.mainFrameView()->viewExposedRect())
+        if (auto exposedRect = m_webPage.localMainFrameView()->viewExposedRect())
             visibleRect.intersect(*exposedRect);
 
         // Because our view-relative overlay root layer is not attached to the main GraphicsLayer tree, we need to flush it manually.
@@ -483,7 +483,7 @@ void TiledCoreAnimationDrawingArea::setViewExposedRect(std::optional<FloatRect> 
 {
     m_viewExposedRect = viewExposedRect;
 
-    if (auto* frameView = m_webPage.mainFrameView())
+    if (auto* frameView = m_webPage.localMainFrameView())
         frameView->setViewExposedRect(m_viewExposedRect);
 }
 
@@ -508,7 +508,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool
     if (!m_webPage.minimumSizeForAutoLayout().width() || m_webPage.autoSizingShouldExpandToViewHeight() || (!m_webPage.sizeToContentAutoSizeMaximumSize().width() && !m_webPage.sizeToContentAutoSizeMaximumSize().height()))
         m_webPage.setSize(size);
 
-    auto* frameView = m_webPage.mainFrameView();
+    auto* frameView = m_webPage.localMainFrameView();
 
     if (m_webPage.autoSizingShouldExpandToViewHeight() && frameView)
         frameView->setAutoSizeFixedMinimumHeight(viewSize.height());
@@ -648,7 +648,7 @@ bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const Loca
 
 PlatformCALayer* TiledCoreAnimationDrawingArea::layerForTransientZoom() const
 {
-    auto* scaledLayer = dynamicDowncast<GraphicsLayerCA>(m_webPage.mainFrameView()->graphicsLayerForPageScale());
+    auto* scaledLayer = dynamicDowncast<GraphicsLayerCA>(m_webPage.localMainFrameView()->graphicsLayerForPageScale());
     if (!scaledLayer)
         return nullptr;
 
@@ -657,7 +657,7 @@ PlatformCALayer* TiledCoreAnimationDrawingArea::layerForTransientZoom() const
 
 PlatformCALayer* TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom() const
 {
-    auto* shadowLayer = dynamicDowncast<GraphicsLayerCA>(m_webPage.mainFrameView()->graphicsLayerForTransientZoomShadow());
+    auto* shadowLayer = dynamicDowncast<GraphicsLayerCA>(m_webPage.localMainFrameView()->graphicsLayerForTransientZoomShadow());
     if (!shadowLayer)
         return nullptr;
 
@@ -689,6 +689,9 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToLayers(double scale, Flo
     if (!m_hostingLayer)
         return;
 
+    if (!m_webPage.localMainFrameView())
+        return;
+
     TransformationMatrix transform;
     transform.translate(origin.x(), origin.y());
     transform.scale(scale);
@@ -699,7 +702,7 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToLayers(double scale, Flo
     zoomLayer->setPosition(FloatPoint3D());
     
     if (PlatformCALayer* shadowLayer = shadowLayerForTransientZoom()) {
-        auto& frameView = *m_webPage.mainFrameView();
+        auto& frameView = *m_webPage.localMainFrameView();
         shadowLayer->setBounds(shadowLayerBoundsForFrame(frameView, scale));
         shadowLayer->setPosition(shadowLayerPositionForFrame(frameView, origin));
     }
@@ -722,9 +725,12 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
 
 void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint origin)
 {
+    if (!m_webPage.localMainFrameView())
+        return;
+
     scale *= m_webPage.viewScaleFactor();
 
-    auto& frameView = *m_webPage.mainFrameView();
+    auto& frameView = *m_webPage.localMainFrameView();
     FloatRect visibleContentRect = frameView.visibleContentRectIncludingScrollbars();
 
     FloatPoint constrainedOrigin = visibleContentRect.location();
@@ -797,13 +803,16 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
 
 void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, FloatPoint origin)
 {
+    if (!m_webPage.localMainFrameView())
+        return;
+
     // If the page scale is already the target scale, setPageScaleFactor() will short-circuit
     // and not apply the transform, so we can't depend on it to do so.
     TransformationMatrix finalTransform;
     finalTransform.scale(scale);
     layerForTransientZoom()->setTransform(finalTransform);
     
-    auto& frameView = *m_webPage.mainFrameView();
+    auto& frameView = *m_webPage.localMainFrameView();
 
     if (PlatformCALayer* shadowLayer = shadowLayerForTransientZoom()) {
         shadowLayer->setBounds(shadowLayerBoundsForFrame(frameView, 1));

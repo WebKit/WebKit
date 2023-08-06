@@ -270,7 +270,7 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
         if (callData.type != CallData::Type::None) {
             JSValue replacement;
             if (cachedCall) {
-                auto* substring = jsSubstring(vm, string, matchStart, searchStringLength);
+                auto* substring = jsSubstring(vm, globalObject, jsString, matchStart, searchStringLength);
                 RETURN_IF_EXCEPTION(scope, nullptr);
                 cachedCall->clearArguments();
                 cachedCall->appendArgument(substring);
@@ -280,7 +280,7 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
                 replacement = cachedCall->call();
             } else {
                 MarkedArgumentBuffer args;
-                auto* substring = jsSubstring(vm, string, matchStart, searchString.impl()->length());
+                auto* substring = jsSubstring(vm, globalObject, jsString, matchStart, searchString.impl()->length());
                 RETURN_IF_EXCEPTION(scope, nullptr);
                 args.append(substring);
                 args.append(jsNumber(matchStart));

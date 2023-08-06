@@ -27,6 +27,7 @@ const MinSizeToShowLargeProminentControl = 292;
 
 const MinWidthToShowTopCornerControlsBars = 262;
 const MinWidthToShowBottomBar = 390;
+const MinWidthToShowVolumeSlider = 390;
 const MinWidthToShowSeekingControls = 520;
 const MinWidthToShowOverflowButton = 520;
 const MinWidthToShowLargeCentralControls = 640;
@@ -172,7 +173,7 @@ class VisionMediaControls extends MediaControls
 
         this.timeControl.scrubber = new VisionSlider(this.layoutDelegate, "scrubber");
 
-        // Controls Bars
+        // Controls Bars.
 
         this._topLeftControlsBar = new ControlsBar("simple-layout top-left");
         this._topLeftControlsBar.hasBackgroundTint = false;
@@ -185,6 +186,12 @@ class VisionMediaControls extends MediaControls
 
         this._bottomBarLeftContainer = new ButtonsContainer({ cssClassName: "left" });
         this._bottomBarRightContainer = new ButtonsContainer({ cssClassName: "right" });
+
+        this.volumeSlider = new VisionSlider(this, "volume");
+        this.volumeSlider.width = 150;
+        this.volumeSlider.recessed = true;
+
+        this.volumeContainer = new VolumeContainer("volume-container");
     }
 
     _performLayout()
@@ -193,6 +200,11 @@ class VisionMediaControls extends MediaControls
     }
 
     _topRightControlsBarChildren()
+    {
+        throw "Derived class must implement this function.";
+    }
+
+    _performVolumeContainerLayout()
     {
         throw "Derived class must implement this function.";
     }
@@ -207,6 +219,8 @@ class VisionMediaControls extends MediaControls
 
     _performTopRightControlsBarLayout()
     {
+        this._performVolumeContainerLayout();
+
         this._topRightControlsBar.children = this._topRightControlsBarChildren();
     }
 
@@ -243,8 +257,6 @@ class VisionInlineMediaControls extends VisionMediaControls
     {
         super._createControls();
 
-        this.muteButton.style = Button.Styles.Rounded;
-        this.muteButton.circular = true;
         this.overflowButton.style = Button.Styles.Rounded;
         this.overflowButton.circular = true;
 
@@ -277,7 +289,7 @@ class VisionInlineMediaControls extends VisionMediaControls
             children.push(this._topLeftControlsBar);
             children.push(this._topRightControlsBar);
         }
-    
+
         this._performCentralContainerLayout();
         children.push(this._centerControlsBar);
     
@@ -291,9 +303,16 @@ class VisionInlineMediaControls extends VisionMediaControls
 
     _topRightControlsBarChildren()
     {
-        const children = [this.muteButton];
+        const children = [];
+
+        if (this._widthForSizeClassDetermination >= MinWidthToShowVolumeSlider)
+            children.push(this.volumeContainer);
+        else
+            children.push(this.muteButton);
+
         if (this._widthForSizeClassDetermination >= MinWidthToShowOverflowButton)
             children.push(this.overflowButton);
+
         return children;
     }
 
@@ -317,7 +336,20 @@ class VisionInlineMediaControls extends VisionMediaControls
         }
         this._centerControlsBar.children = buttons;
     }
-    
+
+    _performVolumeContainerLayout()
+    {
+        if (this._widthForSizeClassDetermination >= MinWidthToShowVolumeSlider) {
+            this.muteButton.style = Button.Styles.Bar;
+            this.muteButton.circular = false;
+            this.volumeContainer.children = [this.volumeSlider, this.muteButton];
+        } else {
+            this.muteButton.style = Button.Styles.Rounded;
+            this.muteButton.circular = true;
+            this.volumeContainer.children = [];
+        }
+    }
+
     _performBottomBarLayout()
     {
         const margin = this.computedValueForStylePropertyInPx("--inline-controls-inside-margin");
@@ -386,13 +418,9 @@ class VisionFullscreenMediaControls extends VisionMediaControls
     {
         super._createControls();
 
-        this.volumeSlider = new VisionSlider(this, "volume");
-        this.volumeSlider.width = 150;
-        this.volumeSlider.recessed = true;
-
         this.timeControl.scrubber.recessed = true;
 
-        this._topRightControlsBar.hasBackgroundTint = true;
+        this._topRightControlsBar.hasBackgroundTint = false;
 
         this.muteButton.style = Button.Styles.Bar;
         this.overflowButton.style = Button.Styles.Bar;
@@ -419,9 +447,16 @@ class VisionFullscreenMediaControls extends VisionMediaControls
         this.children = [this._backdrop, this._topLeftControlsBar, this._topRightControlsBar, this.bottomControlsBar];
     }
 
+    _performVolumeContainerLayout()
+    {
+        this.muteButton.style = Button.Styles.Bar;
+        this.muteButton.circular = false;
+        this.volumeContainer.children = [this.volumeSlider, this.muteButton];
+    }
+
     _topRightControlsBarChildren()
     {
-        return [this.volumeSlider, this.muteButton];
+        return [this.volumeContainer];
     }
 
     _performBottomBarLayout()

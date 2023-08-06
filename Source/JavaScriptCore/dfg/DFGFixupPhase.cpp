@@ -1533,6 +1533,13 @@ private:
             break;
         }
 
+        case ArraySpliceExtract: {
+            fixEdge<ArrayUse>(node->child1());
+            fixEdge<Int32Use>(node->child2());
+            fixEdge<Int32Use>(node->child3());
+            break;
+        }
+
         case ArrayIndexOf:
             fixupArrayIndexOf(node);
             break;

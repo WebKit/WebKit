@@ -27,6 +27,8 @@
 #include "config.h"
 #include "WasmFunctionIPIntMetadataGenerator.h"
 
+#include <numeric>
+
 #if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
@@ -42,7 +44,9 @@ unsigned FunctionIPIntMetadataGenerator::addSignature(const TypeDefinition& sign
 
 void FunctionIPIntMetadataGenerator::addBlankSpace(uint32_t size)
 {
+    auto s = m_metadata.size();
     m_metadata.grow(m_metadata.size() + size);
+    std::iota(m_metadata.data() + s, m_metadata.data() + s + size, 0x41);
 }
 
 void FunctionIPIntMetadataGenerator::addRawValue(uint64_t value)
@@ -92,6 +96,7 @@ void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type
 void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type>& types)
 {
     size_t size = m_metadata.size();
+    m_returnMetadata = size;
     // 2 bytes for count (just in case we have a lot. if you're returning more than 65k values,
     // congratulations?) Actually is count to skip since the round up
     // 1 byte for each value returned (bit 0 = use FPR, bit 1 = on stack, bit 2 = valid)

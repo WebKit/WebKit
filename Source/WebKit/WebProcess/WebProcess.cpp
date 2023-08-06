@@ -234,7 +234,7 @@
 #include <wtf/linux/RealTimeThreads.h>
 #endif
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
 #include "WebMockContentFilterManager.h"
 #endif
 
@@ -353,7 +353,7 @@ WebProcess::WebProcess()
 
     Gigacage::forbidDisablingPrimitiveGigacage();
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     WebMockContentFilterManager::singleton().startObservingSettings();
 #endif
 
@@ -2351,7 +2351,9 @@ void WebProcess::addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&& fir
 
 bool WebProcess::allowsFirstPartyForCookies(const URL& firstParty)
 {
-    return AuxiliaryProcess::allowsFirstPartyForCookies(WebCore::RegistrableDomain { firstParty }, m_allowedFirstPartiesForCookies);
+    return AuxiliaryProcess::allowsFirstPartyForCookies(firstParty, [&] {
+        return AuxiliaryProcess::allowsFirstPartyForCookies(WebCore::RegistrableDomain { firstParty }, m_allowedFirstPartiesForCookies);
+    });
 }
 
 } // namespace WebKit

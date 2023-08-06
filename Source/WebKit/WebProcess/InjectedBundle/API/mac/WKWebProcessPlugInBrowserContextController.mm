@@ -27,6 +27,8 @@
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 
 #import "APIData.h"
+#import "APIInjectedBundleEditorClient.h"
+#import "APIInjectedBundleFormClient.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "WKBrowsingContextHandleInternal.h"

@@ -25,14 +25,15 @@
 
 #pragma once
 
-#include <WebCore/ResourceError.h>
-#include <WebCore/ResourceRequest.h>
-#include <WebCore/ResourceResponse.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 class AuthenticationChallenge;
 class NetworkLoadMetrics;
 class FragmentedSharedBuffer;
+class ResourceError;
+class ResourceRequest;
+class ResourceResponse;
 enum class PolicyAction : uint8_t;
 }
 

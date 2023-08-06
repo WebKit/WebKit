@@ -48,4 +48,11 @@ void registerNotifyCallback(ASCIILiteral notifyID, Function<void()>&& callback)
 #endif
 }
 
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+#define DEFINE_PAL_LOG_CHANNEL(name) DEFINE_LOG_CHANNEL(name, LOG_CHANNEL_WEBKIT_SUBSYSTEM)
+PAL_LOG_CHANNELS(DEFINE_PAL_LOG_CHANNEL)
+
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
 } // namespace WebCore

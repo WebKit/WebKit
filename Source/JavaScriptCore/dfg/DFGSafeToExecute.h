@@ -725,6 +725,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case StringLocaleCompare:
     case FunctionBind:
     case DateSetTime:
+    case ArraySpliceExtract:
         return false;
 
     case StringReplaceString:

@@ -538,15 +538,36 @@ TestHarness.prototype.runTests = function(opt_options) {
   this.startNextTest();
 };
 
-TestHarness.prototype.setTimeout = function(test) {
-  var that = this;
-  test.timeoutId = this.window.setTimeout(function() {
-      that.timeout(test);
-    }, this.timeoutDelay);
+TestHarness.prototype._bumpTimeout = function(test) {
+  const newTimeoutAt = performance.now() + this.timeoutDelay;
+  if (test.timeoutAt) {
+    test.timeoutAt = newTimeoutAt;
+    return;
+  }
+  test.timeoutAt = newTimeoutAt;
+
+  const harness = this;
+
+  function enqueueWatchdog() {
+    const remaining = test.timeoutAt - performance.now();
+    //console.log(`watchdog started at ${performance.now()}, ${test.timeoutAt} requested`);
+    this.window.setTimeout(() => {
+      if (!test.timeoutAt) return; // Timeout was cleared.
+      const remainingAtCheckTime = test.timeoutAt - performance.now();
+      if (performance.now() >= test.timeoutAt) {
+        //console.log(`watchdog won at ${performance.now()}, ${test.timeoutAt} requested`);
+        harness.timeout(test);
+        return;
+      }
+      //console.log(`watchdog lost at ${performance.now()}, as ${test.timeoutAt} is now requested`);
+      enqueueWatchdog();
+    }, remaining);
+  }
+  enqueueWatchdog();
 };
 
 TestHarness.prototype.clearTimeout = function(test) {
-  this.window.clearTimeout(test.timeoutId);
+  test.timeoutAt = null;
 };
 
 TestHarness.prototype.startNextTest = function() {
@@ -577,7 +598,7 @@ TestHarness.prototype.startTest = function(iframe, testFile, webglVersion) {
       "dumpShaders": this.dumpShaders,
       "quiet": this.quiet
     });
-    this.setTimeout(test);
+    this._bumpTimeout(test);
   } else {
     this.reportResults(url, !!this.allowSkip, "skipped", true);
     this.notifyFinished(url);
@@ -595,11 +616,15 @@ TestHarness.prototype.getTest = function(url) {
 TestHarness.prototype.reportResults = function(url, success, msg, skipped) {
   url = FilterURL(url);
   var test = this.getTest(url);
-  this.clearTimeout(test);
-  log((success ? "PASS" : "FAIL") + ": " + msg);
+  if (0) {
+    // This is too slow to leave on for tests like
+    // deqp/functional/gles3/vertexarrays/multiple_attributes.output.html
+    // which has 33013505 calls to reportResults.
+    log((success ? "PASS" : "FAIL") + ": " + msg);
+  }
   this.reportFunc(TestHarness.reportType.TEST_RESULT, url, msg, success, skipped);
   // For each result we get, reset the timeout
-  this.setTimeout(test);
+  this._bumpTimeout(test);
 };
 
 TestHarness.prototype.dequeTest = function(test) {

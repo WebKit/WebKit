@@ -137,8 +137,13 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
     }, m_identifier);
 }
 
-void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered()
+void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered(TransactionID nextCommitTransactionID)
 {
+    if (nextCommitTransactionID <= m_lastLayerTreeTransactionID) {
+        LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered nextCommitTransactionID=" << nextCommitTransactionID << ") already obsoleted by m_lastLayerTreeTransactionID=" << m_lastLayerTreeTransactionID);
+        return;
+    }
+
     m_commitLayerTreeMessageState = Idle;
     pauseDisplayRefreshCallbacks();
 #if ENABLE(ASYNC_SCROLLING)
@@ -148,30 +153,16 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered()
 
 void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(TransactionID transactionID)
 {
+    if (transactionID <= m_lastLayerTreeTransactionID)
+        return;
+
     m_pendingLayerTreeTransactionID = transactionID;
 }
 
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connection, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>& transactions)
 {
-    Vector<MachSendRight> sendRights;
-    for (auto& transaction : transactions) {
-        // commitLayerTreeTransaction consumes the incoming buffers, so we need to grab them first.
-        for (auto& [layerID, properties] : transaction.first.changedLayerProperties()) {
-            const auto backingStoreProperties = properties->backingStoreProperties.get();
-            if (!backingStoreProperties)
-                continue;
-            if (const auto& backendHandle = backingStoreProperties->bufferHandle()) {
-                if (const auto* sendRight = std::get_if<MachSendRight>(&backendHandle.value()))
-                    sendRights.append(*sendRight);
-            }
-        }
-
+    for (auto& transaction : transactions)
         commitLayerTreeTransaction(connection, transaction.first, transaction.second);
-    }
-
-    // Keep IOSurface send rights alive until the commit makes it to the render server, otherwise we will
-    // prematurely drop the only reference to them, and `inUse` will be wrong for a brief window.
-    [CATransaction addCommitHandler:[sendRights = WTFMove(sendRights)]() { } forPhase:kCATransactionPhasePostSynchronize];
 }
 
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection& connection, const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)
@@ -180,6 +171,10 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
 
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree transaction:" << layerTreeTransaction.description());
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree scrolling tree:" << scrollingTreeTransaction.description());
+
+    m_lastLayerTreeTransactionID = layerTreeTransaction.transactionID();
+    if (m_pendingLayerTreeTransactionID < m_lastLayerTreeTransactionID)
+        m_pendingLayerTreeTransactionID = m_lastLayerTreeTransactionID;
 
     bool didUpdateEditorState { false };
     if (layerTreeTransaction.isMainFrameProcessTransaction()) {

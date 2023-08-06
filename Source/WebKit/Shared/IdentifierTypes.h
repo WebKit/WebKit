@@ -33,9 +33,6 @@ namespace WebKit {
 struct AuthenticationChallengeIdentifierType;
 using AuthenticationChallengeIdentifier = ObjectIdentifier<AuthenticationChallengeIdentifierType>;
 
-struct FormSubmitListenerIdentifierType;
-using FormSubmitListenerIdentifier = ObjectIdentifier<FormSubmitListenerIdentifierType>;
-
 struct PageGroupIdentifierType;
 using PageGroupIdentifier = ObjectIdentifier<PageGroupIdentifierType>;
 

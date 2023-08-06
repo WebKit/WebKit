@@ -638,6 +638,8 @@ void SpeculativeJIT::emitCall(Node* node)
     bool isDirect = false;
     switch (node->op()) {
     case DFG::Call:
+        callType = CallLinkInfo::Call;
+        break;
     case CallDirectEval:
         callType = CallLinkInfo::Call;
         break;
@@ -3925,6 +3927,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case ArraySlice: {
         compileArraySlice(node);
+        break;
+    }
+
+    case ArraySpliceExtract: {
+        compileArraySpliceExtract(node);
         break;
     }
 

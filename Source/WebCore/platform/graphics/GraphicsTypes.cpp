@@ -143,15 +143,6 @@ TextStream& operator<<(TextStream& ts, CompositeMode compositeMode)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const DropShadow& dropShadow)
-{
-    ts.dumpProperty("shadow-offset", dropShadow.offset);
-    ts.dumpProperty("shadow-blur", dropShadow.blurRadius);
-    ts.dumpProperty("shadow-color", dropShadow.color);
-    ts.dumpProperty("shadows-use-legacy-radius", dropShadow.radiusMode == ShadowRadiusMode::Legacy);
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, GradientSpreadMethod spreadMethod)
 {
     switch (spreadMethod) {

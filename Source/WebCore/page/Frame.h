@@ -75,13 +75,14 @@ public:
     virtual void changeLocation(FrameLoadRequest&&) = 0;
     virtual void broadcastFrameRemovalToOtherProcesses() = 0;
 
+    virtual FrameView* virtualView() const = 0;
+
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent);
     void resetWindowProxy();
 
 private:
     virtual DOMWindow* virtualWindow() const = 0;
-    virtual FrameView* virtualView() const = 0;
 
     WeakPtr<Page> m_page;
     const FrameIdentifier m_frameID;

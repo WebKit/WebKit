@@ -12,7 +12,7 @@ let wat = `
             (local.get 0)
             (i32.const 5)
             (i32.sub)
-            (br_if 1)
+            (br_if 0)
         )
         (return)
     )

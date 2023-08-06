@@ -8,8 +8,11 @@ PASS: text.stringForTextMarkerRange(range2) === 'para'
 PASS: text.textMarkerRangeLength(range2) === 4
 PASS: text.stringForTextMarkerRange(range3) === 'para'
 PASS: text.textMarkerRangeLength(range3) === 4
+PASS: text.stringForTextMarkerRange(range4) === expected
+PASS: text.textMarkerRangeLength(range4) === expected.length
 
 PASS successfullyParsed is true
 
 TEST COMPLETE
+
 

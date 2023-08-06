@@ -817,7 +817,11 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 
 void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
 {
+#if PLATFORM(MAC)
+    auto initializationActivity = process.throttler().foregroundActivity("WebProcess initialization"_s);
+#else
     auto initializationActivity = process.throttler().backgroundActivity("WebProcess initialization"_s);
+#endif
     auto scopeExit = makeScopeExit([&process, initializationActivity = WTFMove(initializationActivity)]() mutable {
         // Round-trip to the Web Content process before releasing the
         // initialization activity, so that we're sure that all

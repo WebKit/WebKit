@@ -65,8 +65,6 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
     , m_sourceOrigin(parameters.sourceOrigin)
     , m_timeoutSource(RunLoop::main(), this, &NetworkDataTaskSoup::timeoutFired)
 {
-    m_session->registerNetworkDataTask(*this);
-
     auto request = parameters.request;
     if (request.url().protocolIsInHTTPFamily()) {
 #if USE(SOUP2)
@@ -503,7 +501,7 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
         case PolicyAction::Download:
             download();
             break;
-        case PolicyAction::StopAllLoads:
+        case PolicyAction::LoadWillContinueInAnotherProcess:
             ASSERT_NOT_REACHED();
             break;
         }

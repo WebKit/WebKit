@@ -514,9 +514,13 @@ public:
 
     ExceptionOr<void> garbageCollectDocumentResources() const;
 
+    bool isUnderMemoryWarning();
+    bool isUnderMemoryPressure();
+
+    void beginSimulatedMemoryWarning();
+    void endSimulatedMemoryWarning();
     void beginSimulatedMemoryPressure();
     void endSimulatedMemoryPressure();
-    bool isUnderMemoryPressure();
 
     ExceptionOr<void> insertAuthorCSS(const String&) const;
     ExceptionOr<void> insertUserCSS(const String&) const;

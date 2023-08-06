@@ -1233,6 +1233,10 @@ http/wpt/html/browsers/browsing-the-web/navigating-across-documents/href.html
 # Content encoding sniffing is only supported by CFNetwork.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]
 
+# Only supported on CF (Apple) WebKit2 ports for now.
+requestidlecallback [ Skip ]
+imported/w3c/web-platform-tests/requestidlecallback [ Skip ]
+
 # Only supported in WebKit2.
 http/wpt/cross-origin-resource-policy/ [ Skip ]
 
@@ -4896,7 +4900,6 @@ webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/220325 http/wpt/css/css-highlight-api/highlight-text-cascade.html [ ImageOnlyFailure ]
 
 # Tests need updating relating to Highlight Spec
-imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-008.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/css-target-text-decoration-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-below-target-text.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-inheritance-001.html [ ImageOnlyFailure ]
@@ -5373,6 +5376,7 @@ http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [
 compositing/plugins [ Skip ]
 compositing/geometry/empty-embed-rects.html [ Skip ]
 accessibility/plugin.html [ Skip ]
+accessibility/video-element-url-attribute.html [ Timeout ]
 editing/selection/selection-plugin-clear-crash.html [ Skip ]
 fast/dom/Window/Plug-ins.html [ Skip ]
 fast/frames/iframe-plugin-load-remove-document-crash.html [ Skip ]
@@ -6203,9 +6207,6 @@ imported/w3c/web-platform-tests/payment-request/payment-is-showing.https.html [ 
 imported/w3c/web-platform-tests/permissions/permissions-query-feature-policy-attribute.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_in_pointerlock.html [ Skip ]
 imported/w3c/web-platform-tests/pointerlock/mouse_buttons_back_forward.html [ Skip ]
-imported/w3c/web-platform-tests/requestidlecallback/callback-idle-periods.html [ Skip ]
-imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Skip ]
-imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html [ Skip ]
 imported/w3c/web-platform-tests/resize-observer/observe.html [ Skip ]
 imported/w3c/web-platform-tests/resize-observer/svg.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/entry-attributes.html [ Skip ]
@@ -6552,3 +6553,5 @@ webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
 
 # Only some OSes have support for auto word breaking.
 imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass Failure ImageOnlyFailure ]
+
+webkit.org/b/255970 [ Debug ] fullscreen/exit-full-screen-video-crash.html [ Crash ]

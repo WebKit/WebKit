@@ -299,7 +299,7 @@ void Path::addRoundedRect(const RoundedRect& rect)
 
 void Path::closeSubpath()
 {
-    if (isEmpty())
+    if (isEmpty() || isClosed())
         return;
 
     ensureImpl().closeSubpath();
@@ -323,6 +323,17 @@ void Path::applySegments(const PathSegmentApplier& applier) const
 
 void Path::applyElements(const PathElementApplier& applier) const
 {
+    if (isEmpty())
+        return;
+
+    auto segment = asSingle();
+    if (segment && segment->applyElements(applier))
+        return;
+
+    auto impl = asImpl();
+    if (impl && impl->applyElements(applier))
+        return;
+
     const_cast<Path&>(*this).ensurePlatformPathImpl().applyElements(applier);
 }
 

@@ -25,7 +25,9 @@ description("This test verifies the functionality of the EXT_disjoint_timer_quer
 var wtu = WebGLTestUtils;
 var canvas = document.getElementById("canvas");
 var gl = wtu.create3DContext(canvas, null, 2);
+var gl2 = null;
 var ext = null;
+var ext2 = null;
 var query = null;
 var query2 = null;
 var elapsed_query = null;
@@ -62,6 +64,8 @@ if (!gl) {
             wtu.glErrorShouldBe(gl, gl.NO_ERROR);
         }
         verifyQueryResultsNotAvailable();
+        verifyDeleteQueryBehavior();
+        verifyDeleteQueryErrorBehavior();
         wtu.glErrorShouldBe(gl, gl.NO_ERROR);
 
         window.requestAnimationFrame(checkQueryResults);
@@ -247,6 +251,60 @@ function verifyQueryResultsNotAvailable() {
     }
 
     testPassed("Queries' results didn't become available in a spin loop");
+}
+
+function verifyDeleteQueryBehavior() {
+    debug("");
+    debug("Testing deleting an active query should end it.");
+
+    // Use a new context for this test
+    gl2 = wtu.create3DContext(null, null, 2);
+    if (!gl2) return;
+    ext2 = gl2.getExtension("EXT_disjoint_timer_query_webgl2");
+    if (!ext2) return;
+
+    query = gl2.createQuery();
+    gl2.beginQuery(ext.TIME_ELAPSED_EXT, query);
+    wtu.glErrorShouldBe(gl2, gl2.NONE, "The query began successfully");
+    gl2.deleteQuery(query);
+    wtu.glErrorShouldBe(gl2, gl2.NONE, "Deletion of the active query succeeds");
+    shouldBeNull("gl2.getQuery(ext2.TIME_ELAPSED_EXT, gl2.CURRENT_QUERY)");
+    shouldBeFalse("gl2.isQuery(query)");
+    query = gl2.createQuery();
+    gl2.beginQuery(ext2.TIME_ELAPSED_EXT, query);
+    wtu.glErrorShouldBe(gl, gl2.NONE, "Beginning a new query succeeds");
+    gl2.endQuery(gl2.TIME_ELAPSED_EXT);
+    gl2.deleteQuery(query);
+    wtu.glErrorShouldBe(gl, gl.NONE);
+    query = null;
+    ext2 = null;
+    gl2 = null;
+}
+
+function verifyDeleteQueryErrorBehavior() {
+    debug("");
+    debug("Testing deleting a query created by another context.");
+
+    // Use new contexts for this test
+    gl2 = wtu.create3DContext(null, null, 2);
+    var gl3 = wtu.create3DContext(null, null, 2);
+    if (!gl2 || !gl3) return;
+    ext2 = gl2.getExtension("EXT_disjoint_timer_query_webgl2");
+    if (!ext2) return;
+
+    query = gl2.createQuery();
+    gl2.beginQuery(ext2.TIME_ELAPSED_EXT, query);
+    gl3.deleteQuery(query);
+    wtu.glErrorShouldBe(gl3, gl3.INVALID_OPERATION);
+    shouldBeTrue("gl2.isQuery(query)");
+    shouldBe("gl2.getQuery(ext2.TIME_ELAPSED_EXT, gl2.CURRENT_QUERY)", "query");
+    gl2.endQuery(ext2.TIME_ELAPSED_EXT);
+    gl2.deleteQuery(query);
+    wtu.glErrorShouldBe(gl2, gl2.NONE);
+    query = null;
+    ext2 = null;
+    gl2 = null;
+    gl3 = null;
 }
 
 function checkQueryResults() {

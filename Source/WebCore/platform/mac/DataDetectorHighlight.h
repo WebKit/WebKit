@@ -60,7 +60,7 @@ public:
     static Ref<DataDetectorHighlight> createForTelephoneNumber(Page&, DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
     static Ref<DataDetectorHighlight> createForImageOverlay(Page&, DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
 
-    ~DataDetectorHighlight() = default;
+    ~DataDetectorHighlight();
 
     void invalidate();
 

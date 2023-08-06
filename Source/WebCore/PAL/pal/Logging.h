@@ -31,5 +31,22 @@ namespace PAL {
 
 PAL_EXPORT void registerNotifyCallback(ASCIILiteral, Function<void()>&&);
 
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+#ifndef LOG_CHANNEL_PREFIX
+#define LOG_CHANNEL_PREFIX Log
+#endif
+
+#define PAL_LOG_CHANNELS(M) \
+    M(Media)
+
+#undef DECLARE_LOG_CHANNEL
+#define DECLARE_LOG_CHANNEL(name) \
+PAL_EXPORT extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
+
+PAL_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
+
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
 } // namespace PAL
 

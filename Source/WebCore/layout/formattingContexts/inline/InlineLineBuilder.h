@@ -131,7 +131,7 @@ private:
     enum MayOverConstrainLine : bool { No, Yes };
     bool tryPlacingFloatBox(const Box&, MayOverConstrainLine);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
-    std::tuple<InlineRect, bool> lineBoxForCandidateInlineContent(const LineCandidate&) const;
+    std::tuple<InlineRect, bool> adjustedLineRectWithCandidateInlineContent(const LineCandidate&) const;
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);

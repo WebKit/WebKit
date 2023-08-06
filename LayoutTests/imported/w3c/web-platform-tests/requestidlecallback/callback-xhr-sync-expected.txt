@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT re-schedule idle callbacks after sync xhr Test timed out
+PASS re-schedule idle callbacks after sync xhr
 

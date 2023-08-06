@@ -35,6 +35,7 @@
 #import "FontInfo.h"
 #import "FrameInfoData.h"
 #import "InjectedBundleHitTestResult.h"
+#import "InjectedBundlePageContextMenuClient.h"
 #import "LaunchServicesDatabaseManager.h"
 #import "PDFPlugin.h"
 #import "PageBanner.h"
@@ -912,7 +913,8 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
             continue;
 
         pageOverlayDidOverrideDataDetectors = true;
-        immediateActionResult.platformData.detectedDataActionContext = actionContext->context.get();
+        if (auto* detectedContext = actionContext->context.get())
+            immediateActionResult.platformData.detectedDataActionContext = { { detectedContext } };
         immediateActionResult.platformData.detectedDataBoundingBox = view->contentsToWindow(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(actionContext->range))));
         immediateActionResult.platformData.detectedDataTextIndicator = TextIndicator::createWithRange(actionContext->range, indicatorOptions(actionContext->range), TextIndicatorPresentationTransition::FadeIn);
         immediateActionResult.platformData.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
@@ -922,7 +924,8 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     // FIXME: Avoid scanning if we will just throw away the result (e.g. we're over a link).
     if (!pageOverlayDidOverrideDataDetectors && hitTestResult.innerNode() && (hitTestResult.innerNode()->isTextNode() || hitTestResult.isOverTextInsideFormControlElement())) {
         if (auto result = DataDetection::detectItemAroundHitTestResult(hitTestResult)) {
-            immediateActionResult.platformData.detectedDataActionContext = WTFMove(result->actionContext);
+            if (auto detectedContext = WTFMove(result->actionContext))
+                immediateActionResult.platformData.detectedDataActionContext = { { WTFMove(detectedContext) } };
             immediateActionResult.platformData.detectedDataBoundingBox = result->boundingBox;
             immediateActionResult.platformData.detectedDataTextIndicator = TextIndicator::createWithRange(result->range, indicatorOptions(result->range), TextIndicatorPresentationTransition::FadeIn);
         }

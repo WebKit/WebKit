@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SQLiteTransaction.h"
 
+#include "Logging.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteDatabaseTracker.h"
 
@@ -56,14 +57,20 @@ void SQLiteTransaction::begin()
         // http://www.sqlite.org/lang_transaction.html
         // http://www.sqlite.org/lockingv3.html#locking
         SQLiteDatabaseTracker::incrementTransactionInProgressCount();
+        int result = SQLITE_OK;
         if (m_readOnly)
-            m_inProgress = m_db.executeCommand("BEGIN"_s);
+            result = m_db.execute("BEGIN"_s);
         else
-            m_inProgress = m_db.executeCommand("BEGIN IMMEDIATE"_s);
+            result = m_db.execute("BEGIN IMMEDIATE"_s);
+        if (result == SQLITE_DONE)
+            m_inProgress = true;
+        else
+            RELEASE_LOG_ERROR(SQLDatabase, "SQLiteTransaction::begin: Failed to begin transaction (error %d)", result);
         m_db.m_transactionInProgress = m_inProgress;
         if (!m_inProgress)
             SQLiteDatabaseTracker::decrementTransactionInProgressCount();
-    }
+    } else
+        RELEASE_LOG_ERROR(SQLDatabase, "SQLiteTransaction::begin: Transaction is already in progress");
 }
 
 void SQLiteTransaction::commit()

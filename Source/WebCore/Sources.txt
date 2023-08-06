@@ -2058,7 +2058,6 @@ platform/RemoteCommandListener.cpp
 platform/RunLoopObserver.cpp
 platform/RuntimeApplicationChecks.cpp
 platform/ScreenOrientationManager.cpp
-platform/ScreenOrientationProvider.cpp
 platform/ScrollAlignment.cpp
 platform/ScrollAnimation.cpp
 platform/ScrollAnimationKeyboard.cpp
@@ -2785,6 +2784,7 @@ storage/StorageEventDispatcher.cpp
 storage/StorageMap.cpp
 storage/StorageNamespaceProvider.cpp
 storage/StorageQuotaManager.cpp
+storage/StorageUtilities.cpp
 style/AttributeChangeInvalidation.cpp
 style/ChildChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp

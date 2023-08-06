@@ -74,9 +74,9 @@ private:
     T shift(unsigned = 1);
     T peek(unsigned = 0);
     void newLine();
-    void skipBlockComments();
+    bool skipBlockComments();
     void skipLineComment();
-    void skipWhitespaceAndComments();
+    bool skipWhitespaceAndComments();
 
     // Reads [0-9]+
     std::optional<uint64_t> parseDecimalInteger();

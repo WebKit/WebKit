@@ -1,0 +1,8 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/FontServices.framework/libFontParser.dylib
+exports:
+-       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+        symbols: [_FPFontCopyPostScriptName, _FPFontCopySFNTData, _FPFontCreateFontsFromData]
+...

@@ -34,6 +34,7 @@
 #include "FirstMemberType.h"
 #endif
 #include "HeaderWithoutCondition"
+#include "LayerProperties.h"
 #include "PlatformClass.h"
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
@@ -236,6 +237,18 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "int"_s,
                 "value"_s
+            },
+        } },
+        { "WebKit::LayerProperties"_s, {
+            {
+                "OptionalTuple<"
+                    "String"
+#if ENABLE(FEATURE)
+                    ", std::unique_ptr<WebCore::TransformationMatrix>"
+#endif
+                    ", bool"
+                ">"_s,
+                "optionalTuple"_s
             },
         } },
         { "WebCore::SharedStringHash"_s, {

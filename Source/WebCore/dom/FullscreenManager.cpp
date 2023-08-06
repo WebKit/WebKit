@@ -216,14 +216,6 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
             return;
         }
 
-        // The context object's node document fullscreen element stack is not empty and its top element
-        // is not an ancestor of the context object.
-        if (auto* currentFullscreenElement = fullscreenElement(); currentFullscreenElement && !currentFullscreenElement->contains(element.get())) {
-            ERROR_LOG(identifier, "task - fullscreen stack not empty; failing.");
-            failedPreflights(WTFMove(element), WTFMove(promise));
-            return;
-        }
-
         // A descendant browsing context's document has a non-empty fullscreen element stack.
         bool descendentHasNonEmptyStack = false;
         for (auto* descendant = frame() ? frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
@@ -402,9 +394,13 @@ void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
         else {
             finishExitFullscreen(document(), ExitMode::NoResize);
 
-            INFO_LOG(identifier, "task - New fullscreen element.");
             m_pendingFullscreenElement = fullscreenElement();
-            page->chrome().client().enterFullScreenForElement(*m_pendingFullscreenElement);
+            if (m_pendingFullscreenElement)
+                page->chrome().client().enterFullScreenForElement(*m_pendingFullscreenElement);
+            else if (m_pendingPromise) {
+                m_pendingPromise->resolve();
+                m_pendingPromise = nullptr;
+            }
         }
     });
 }

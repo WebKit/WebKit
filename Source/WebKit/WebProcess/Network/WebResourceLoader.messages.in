@@ -39,7 +39,7 @@ messages -> WebResourceLoader LegacyReceiver {
     DidReceiveResource(WebKit::ShareableResource::Handle resource)
 #endif
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     ContentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler unblockHandler, String unblockRequestDeniedScript, WebCore::ResourceError error, URL blockedPageURL, WebCore::SubstituteData substituteData)
 #endif
 

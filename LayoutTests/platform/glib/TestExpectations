@@ -270,6 +270,9 @@ media/video-controller-currentTime-rate.html [ Pass ]
 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Pass ]
 webaudio/codec-tests/mp3/128kbps-44khz.html [ Pass ]
 
+# uiController.simulateRotationLikeSafari() is not implemented on glib ports.
+fast/screen-orientation/orientation-in-resize-event.html [ Skip ]
+
 # Pass since r273206
 imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2.html
 imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2a.html
@@ -505,6 +508,7 @@ accessibility/search-traversal-after-role-change.html [ Skip ]
 accessibility/table-search-traversal.html [ Skip ]
 accessibility/dynamically-changing-iframe-remains-accessible.html [ Skip ]
 accessibility/ignore-modals-without-any-content.html [ Skip ]
+accessibility/iframe-with-role.html [ Skip ]
 
 # Missing `AccessibilityUIElement::stringDescriptionOfAttributeValue` implementation.
 accessibility/visible-character-range-basic.html [ Skip ]
@@ -1890,9 +1894,6 @@ webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 imported/w3c/web-platform-tests/mediacapture-streams/GUM-required-constraint-with-ideal-value.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Pass Failure ]
 
-# Playback pipeline mishandles the video track caps change.
-webkit.org/b/254212 webrtc/video-disabled-black.html [ Skip ]
-
 # In these tests only one canvas frame is pushed towards the sender webrtcbin,
 # this is not enough for the receiver webrtcbin to create its video source pad,
 # because on sender side we need at least a complete GOP... So the tests time
@@ -1976,10 +1977,6 @@ webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapK
 webkit.org/b/213678 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.html [ Failure Timeout ]
 webkit.org/b/213678 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html [ Failure Timeout ]
 # Needs rebasing.
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_Ed25519.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_Ed25519.https.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_Ed25519.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_Ed25519.https.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/historical.any.sharedworker.html [ Failure ]
@@ -1988,12 +1985,6 @@ imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.an
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey.https.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_Ed25519.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_Ed25519.https.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa.https.any.worker.html [ Failure ]
 
 # TODO: This failure exists in the general TestExpectations, I got in a GTK run.
 # I think marking the whole folder as 'Slow' makes the expected result for this test 'Pass'.

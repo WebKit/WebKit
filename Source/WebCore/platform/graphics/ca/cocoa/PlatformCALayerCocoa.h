@@ -100,7 +100,7 @@ public:
     bool backingStoreAttached() const override;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    void setCoverageRect(const FloatRect&) override;
+    void setVisibleRect(const FloatRect&) override;
 #endif
 
     bool geometryFlipped() const override;

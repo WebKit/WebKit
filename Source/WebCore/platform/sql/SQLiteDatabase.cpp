@@ -443,16 +443,32 @@ void SQLiteDatabase::setBusyHandler(int(*handler)(void*, int))
         LOG(SQLDatabase, "Busy handler set on non-open database");
 }
 
-bool SQLiteDatabase::executeCommandSlow(StringView query)
+int SQLiteDatabase::executeSlow(StringView query)
 {
     auto statement = prepareStatementSlow(query);
-    return statement && statement->executeCommand();
+    if (!statement)
+        return statement.error();
+
+    return statement->step();
+}
+
+int SQLiteDatabase::execute(ASCIILiteral query)
+{
+    auto statement = prepareStatement(query);
+    if (!statement)
+        return statement.error();
+
+    return statement->step();
+}
+
+bool SQLiteDatabase::executeCommandSlow(StringView query)
+{
+    return executeSlow(query) == SQLITE_DONE;
 }
 
 bool SQLiteDatabase::executeCommand(ASCIILiteral query)
 {
-    auto statement = prepareStatement(query);
-    return statement && statement->executeCommand();
+    return execute(query) == SQLITE_DONE;
 }
 
 bool SQLiteDatabase::tableExists(StringView tableName)

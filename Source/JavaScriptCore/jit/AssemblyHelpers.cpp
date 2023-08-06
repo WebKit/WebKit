@@ -1363,51 +1363,6 @@ void AssemblyHelpers::prepareWasmCallOperation(GPRReg instanceGPR)
 
 #endif // ENABLE(WEBASSEMBLY)
 
-void AssemblyHelpers::debugCall(VM& vm, V_DebugOperation_EPP function, void* argument)
-{
-    JIT_COMMENT(*this, "debugCall");
-    size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
-    ScratchBuffer* scratchBuffer = vm.scratchBufferForSize(scratchSize);
-    EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
-
-    for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
-#if USE(JSVALUE64)
-        store64(GPRInfo::toRegister(i), buffer + i);
-#else
-        store32(GPRInfo::toRegister(i), buffer + i);
-#endif
-    }
-
-    for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
-        move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
-        storeDouble(FPRInfo::toRegister(i), Address(GPRInfo::regT0));
-    }
-
-#if CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM64) || CPU(MIPS) || CPU(RISCV64)
-    move(TrustedImmPtr(buffer), GPRInfo::argumentGPR2);
-    move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
-    move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    GPRReg scratch = selectScratchGPR(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
-#else
-#error "JIT not supported on this platform."
-#endif
-    prepareCallOperation(vm);
-    move(TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(function)), scratch);
-    call(scratch, OperationPtrTag);
-
-    for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
-        move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
-        loadDouble(Address(GPRInfo::regT0), FPRInfo::toRegister(i));
-    }
-    for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
-#if USE(JSVALUE64)
-        load64(buffer + i, GPRInfo::toRegister(i));
-#else
-        load32(buffer + i, GPRInfo::toRegister(i));
-#endif
-    }
-}
-
 void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer)
 {
     JIT_COMMENT(*this, "copyCalleeSavesToEntryFrameCalleeSavesBufferImpl ", calleeSavesBuffer);

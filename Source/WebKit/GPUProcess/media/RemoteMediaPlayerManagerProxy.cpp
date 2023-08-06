@@ -120,39 +120,6 @@ void RemoteMediaPlayerManagerProxy::supportsTypeAndCodecs(MediaPlayerEnums::Medi
     completionHandler(result);
 }
 
-void RemoteMediaPlayerManagerProxy::originsInMediaCache(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& path, CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler)
-{
-    auto engine = MediaPlayer::mediaEngine(engineIdentifier);
-    if (!engine) {
-        WTFLogAlways("Failed to find media engine.");
-        completionHandler({ });
-        return;
-    }
-
-    completionHandler(engine->originsInMediaCache(path));
-}
-
-void RemoteMediaPlayerManagerProxy::clearMediaCache(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&&path, WallTime modifiedSince)
-{
-    auto engine = MediaPlayer::mediaEngine(engineIdentifier);
-    if (!engine) {
-        WTFLogAlways("Failed to find media engine.");
-        return;
-    }
-
-    engine->clearMediaCache(path, modifiedSince);
-}
-
-void RemoteMediaPlayerManagerProxy::clearMediaCacheForOrigins(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& path, HashSet<WebCore::SecurityOriginData>&& origins)
-{
-    auto engine = MediaPlayer::mediaEngine(engineIdentifier);
-    if (!engine) {
-        WTFLogAlways("Failed to find media engine.");
-        return;
-    }
-    engine->clearMediaCacheForOrigins(path, origins);
-}
-
 void RemoteMediaPlayerManagerProxy::supportsKeySystem(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& keySystem, const String&& mimeType, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto engine = MediaPlayer::mediaEngine(engineIdentifier);

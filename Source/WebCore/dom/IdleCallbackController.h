@@ -45,9 +45,10 @@ public:
     int queueIdleCallback(Ref<IdleRequestCallback>&&, Seconds timeout);
     void removeIdleCallback(int);
 
+    void startIdlePeriod();
+
 private:
     void queueTaskToStartIdlePeriod();
-    void startIdlePeriod();
     void queueTaskToInvokeIdleCallbacks(MonotonicTime deadline);
     void invokeIdleCallbacks(MonotonicTime deadline);
 

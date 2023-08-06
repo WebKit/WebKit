@@ -59,11 +59,7 @@ ServicesOverlayController::ServicesOverlayController(Page& page)
 {
 }
 
-ServicesOverlayController::~ServicesOverlayController()
-{
-    for (auto& highlight : m_highlights)
-        highlight.invalidate();
-}
+ServicesOverlayController::~ServicesOverlayController() = default;
 
 void ServicesOverlayController::willMoveToPage(PageOverlay&, Page* page)
 {

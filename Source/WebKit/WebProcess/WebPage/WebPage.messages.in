@@ -197,7 +197,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     GetFrameInfo(WebCore::FrameIdentifier frameID) -> (struct WebKit::FrameInfoData data)
     GetFrameTree() -> (struct WebKit::FrameTreeNodeData data)
-    ContinueWillSubmitForm(WebCore::FrameIdentifier frameID, WebKit::FormSubmitListenerIdentifier listenerID)
     DidCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
     DidFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
     FrameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
@@ -217,12 +216,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
     NotifyUserScripts()
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, struct WebKit::PolicyDecision policyDecision)
-#endif
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, struct WebKit::PolicyDecision policyDecision, Vector<WebKit::SandboxExtension::Handle> networkExtensionsSandboxExtensions)
-#endif
 
     ClearSelection()
     RestoreSelectionInFocusedEditableElement()
@@ -449,8 +442,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     # Printing.
     BeginPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo)
     BeginPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
-    EndPrinting()
-    EndPrintingDuringDOMPrintOperation() AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    EndPrinting() -> ()
+    EndPrintingDuringDOMPrintOperation() -> () AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
     ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin)
     ComputePagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebCore::RectEdges<float> computedPageMargin) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 #if PLATFORM(COCOA)

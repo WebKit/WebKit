@@ -167,6 +167,8 @@ public:
 
     void requestBackingStoreUpdate();
 
+    double backingStoreMemoryEstimate() const override;
+
 private:
     enum class FlushNotification {
         Required,

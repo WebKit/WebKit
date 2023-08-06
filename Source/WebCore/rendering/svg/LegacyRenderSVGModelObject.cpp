@@ -83,10 +83,10 @@ LayoutRect LegacyRenderSVGModelObject::outlineBoundsForRepaint(const RenderLayer
     return LayoutRect(snapRectToDevicePixels(LayoutRect(containerRelativeQuad.boundingBox()), document().deviceScaleFactor()));
 }
 
-void LegacyRenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
+void LegacyRenderSVGModelObject::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    IntRect rect = enclosingIntRect(strokeBoundingBox());
-    rect.moveBy(roundedIntPoint(accumulatedOffset));
+    auto rect = LayoutRect { strokeBoundingBox() };
+    rect.moveBy(accumulatedOffset);
     rects.append(rect);
 }
 

@@ -12,7 +12,13 @@ if sys.stdout.isatty() and os.path.exists('/dev/tty'):
 else:
     TTY = None
 
-LOCATION = r'{{ location }}'
+ENCODING_KWARGS = dict()
+if sys.version_info >= (3, 6):
+    ENCODING_KWARGS = dict(encoding='utf-8')
+
+TOPLEVEL = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], **ENCODING_KWARGS).strip()
+
+LOCATION = os.path.join(TOPLEVEL, r'{{ location }}')
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
 sys.path.append(SCRIPTS)
 
@@ -36,10 +42,6 @@ UNPACK_SECONDARY_RE = re.compile(r' \(({})\)'.format(COMMIT_REF_BASE))
 DEV_BRANCHES = re.compile(r'.*[(eng)(dev)(bug)]/.+')
 PROD_BRANCHES = re.compile(r'\S+-[\d+\.]+-branch')
 DEFAULT_BRANCHES = ('master', 'main')
-
-ENCODING_KWARGS = dict()
-if sys.version_info >= (3, 6):
-    ENCODING_KWARGS = dict(encoding='utf-8')
 
 QUIET = -1
 VERBOSE = 1

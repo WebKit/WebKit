@@ -161,14 +161,17 @@ bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)
 
 WebCore::TiledBacking* DrawingArea::mainFrameTiledBacking() const
 {
-    auto* frameView = m_webPage.mainFrameView();
+    auto* frameView = m_webPage.localMainFrameView();
     return frameView ? frameView->tiledBacking() : nullptr;
 }
 
 void DrawingArea::prepopulateRectForZoom(double scale, WebCore::FloatPoint origin)
 {
     double currentPageScale = m_webPage.totalScaleFactor();
-    auto* frameView = m_webPage.mainFrameView();
+    auto* frameView = m_webPage.localMainFrameView();
+    if (!frameView)
+        return;
+
     FloatRect tileCoverageRect = frameView->visibleContentRectIncludingScrollbars();
     tileCoverageRect.moveBy(-origin);
     tileCoverageRect.scale(currentPageScale / scale);
@@ -188,11 +191,11 @@ void DrawingArea::scaleViewToFitDocumentIfNeeded()
     LOG(Resize, "DrawingArea %p scaleViewToFitDocumentIfNeeded", this);
     m_webPage.layoutIfNeeded();
 
-    if (!m_webPage.mainFrameView() || !m_webPage.mainFrameView()->renderView())
+    if (!m_webPage.localMainFrameView() || !m_webPage.localMainFrameView()->renderView())
         return;
 
     int viewWidth = m_webPage.size().width();
-    int documentWidth = m_webPage.mainFrameView()->renderView()->unscaledDocumentRect().width();
+    int documentWidth = m_webPage.localMainFrameView()->renderView()->unscaledDocumentRect().width();
 
     bool documentWidthChanged = m_lastDocumentSizeForScaleToFit.width() != documentWidth;
     bool viewWidthChanged = m_lastViewSizeForScaleToFit.width() != viewWidth;
@@ -237,10 +240,10 @@ void DrawingArea::scaleViewToFitDocumentIfNeeded()
     m_webPage.setUseFixedLayout(false);
     m_webPage.layoutIfNeeded();
 
-    if (!m_webPage.mainFrameView() || !m_webPage.mainFrameView()->renderView())
+    if (!m_webPage.localMainFrameView() || !m_webPage.localMainFrameView()->renderView())
         return;
 
-    IntSize documentSize = m_webPage.mainFrameView()->renderView()->unscaledDocumentRect().size();
+    IntSize documentSize = m_webPage.localMainFrameView()->renderView()->unscaledDocumentRect().size();
     m_lastViewSizeForScaleToFit = m_webPage.size();
     m_lastDocumentSizeForScaleToFit = documentSize;
 

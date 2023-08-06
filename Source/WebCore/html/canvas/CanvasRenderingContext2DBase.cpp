@@ -1392,9 +1392,9 @@ void CanvasRenderingContext2DBase::applyShadow()
     if (shouldDrawShadows()) {
         float width = state().shadowOffset.width();
         float height = state().shadowOffset.height();
-        c->setDropShadow({ FloatSize(width, -height), state().shadowBlur, state().shadowColor, ShadowRadiusMode::Legacy });
+        c->setDropShadow({ { width, -height }, state().shadowBlur, state().shadowColor, ShadowRadiusMode::Legacy });
     } else
-        c->setDropShadow({ FloatSize(), 0, Color::transparentBlack, ShadowRadiusMode::Legacy });
+        c->setDropShadow({ { }, 0, Color::transparentBlack, ShadowRadiusMode::Legacy });
 }
 
 bool CanvasRenderingContext2DBase::shouldDrawShadows() const
@@ -2586,13 +2586,14 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
             FloatSize offset(0, 2 * maskRect.height());
 
             auto shadow = c->dropShadow();
+            ASSERT(shadow);
 
             FloatRect shadowRect(maskRect);
-            shadowRect.inflate(shadow.blurRadius * 1.4);
-            shadowRect.move(shadow.offset * -1);
+            shadowRect.inflate(shadow->radius * 1.4);
+            shadowRect.move(shadow->offset * -1);
             c->clip(shadowRect);
 
-            c->setDropShadow({ shadow.offset + offset, shadow.blurRadius, shadow.color, ShadowRadiusMode::Legacy });
+            c->setDropShadow({ shadow->offset + offset, shadow->radius, shadow->color, ShadowRadiusMode::Legacy });
 
             if (fill)
                 c->setFillColor(Color::black);

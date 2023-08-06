@@ -177,10 +177,6 @@ WebFrame::~WebFrame()
 {
     ASSERT(!m_coreFrame);
 
-    auto willSubmitFormCompletionHandlers = std::exchange(m_willSubmitFormCompletionHandlers, { });
-    for (auto& completionHandler : willSubmitFormCompletionHandlers.values())
-        completionHandler();
-
     ASSERT_WITH_MESSAGE(!WebProcess::singleton().webFrame(m_frameID), "invalidate should have removed this WebFrame before destruction");
 
 #ifndef NDEBUG
@@ -309,20 +305,6 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::PolicyCheckIdentifier identifier
     return policyListenerID;
 }
 
-FormSubmitListenerIdentifier WebFrame::setUpWillSubmitFormListener(CompletionHandler<void()>&& completionHandler)
-{
-    auto identifier = FormSubmitListenerIdentifier::generate();
-    m_willSubmitFormCompletionHandlers.set(identifier, WTFMove(completionHandler));
-    return identifier;
-}
-
-void WebFrame::continueWillSubmitForm(FormSubmitListenerIdentifier listenerID)
-{
-    Ref<WebFrame> protectedThis(*this);
-    if (auto completionHandler = m_willSubmitFormCompletionHandlers.take(listenerID))
-        completionHandler();
-}
-
 void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
 {
     RefPtr coreFrame = m_coreFrame.get();
@@ -384,11 +366,8 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
 
     m_coreFrame = newFrame.get();
 
-    // FIXME: This is also done in the WebCore::Frame constructor. Move one to make this more symmetric.
-    if (ownerElement) {
-        ownerElement->setContentFrame(*m_coreFrame);
+    if (ownerElement)
         ownerElement->scheduleInvalidateStyleAndLayerComposition();
-    }
 }
 
 void WebFrame::removeFromTree()
@@ -471,14 +450,15 @@ void WebFrame::invalidatePolicyListeners()
     auto pendingPolicyChecks = std::exchange(m_pendingPolicyChecks, { });
     for (auto& policyCheck : pendingPolicyChecks.values())
         policyCheck.policyFunction(PolicyAction::Ignore, policyCheck.corePolicyIdentifier);
-
-    auto willSubmitFormCompletionHandlers = WTFMove(m_willSubmitFormCompletionHandlers);
-    for (auto& completionHandler : willSubmitFormCompletionHandlers.values())
-        completionHandler();
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& policyDecision)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifier identifier, PolicyDecision&& policyDecision)
 {
+#if ENABLE(APP_BOUND_DOMAINS)
+    if (m_page)
+        m_page->setIsNavigatingToAppBoundDomain(policyDecision.isNavigatingToAppBoundDomain, this);
+#endif
+
     if (!m_coreFrame)
         return;
 
@@ -486,7 +466,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
     if (!policyCheck.policyFunction)
         return;
 
-    ASSERT(policyDecision.identifier == policyCheck.corePolicyIdentifier);
+    ASSERT(identifier == policyCheck.corePolicyIdentifier);
 
     FramePolicyFunction function = WTFMove(policyCheck.policyFunction);
     bool forNavigationAction = policyCheck.forNavigationAction == ForNavigationAction::Yes;
@@ -510,7 +490,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
             page->sandboxExtensionTracker().beginLoad(&page->mainWebFrame(), WTFMove(*(policyDecision.sandboxExtensionHandle)));
     }
 
-    function(policyDecision.policyAction, policyDecision.identifier);
+    function(policyDecision.policyAction, identifier);
 }
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)

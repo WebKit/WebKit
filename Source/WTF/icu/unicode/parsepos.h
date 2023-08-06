@@ -97,17 +97,17 @@ public:
 
     /**
      * Equality operator.
-     * @return TRUE if the two parse positions are equal, FALSE otherwise.
+     * @return true if the two parse positions are equal, false otherwise.
      * @stable ICU 2.0
      */
-    inline UBool              operator==(const ParsePosition& that) const;
+    inline bool               operator==(const ParsePosition& that) const;
 
     /**
      * Equality operator.
-     * @return TRUE if the two parse positions are not equal, FALSE otherwise.
+     * @return true if the two parse positions are not equal, false otherwise.
      * @stable ICU 2.0
      */
-    inline UBool              operator!=(const ParsePosition& that) const;
+    inline bool               operator!=(const ParsePosition& that) const;
 
     /**
      * Clone this object.
@@ -166,7 +166,7 @@ public:
      *
      * @stable ICU 2.2
      */
-    virtual UClassID getDynamicClassID() const;
+    virtual UClassID getDynamicClassID() const override;
 
 private:
     /**
@@ -192,16 +192,16 @@ ParsePosition::operator=(const ParsePosition& copy)
   return *this;
 }
 
-inline UBool
+inline bool
 ParsePosition::operator==(const ParsePosition& copy) const
 {
   if(index != copy.index || errorIndex != copy.errorIndex)
-  return FALSE;
+  return false;
   else
-  return TRUE;
+  return true;
 }
 
-inline UBool
+inline bool
 ParsePosition::operator!=(const ParsePosition& copy) const
 {
   return !operator==(copy);

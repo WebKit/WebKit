@@ -76,9 +76,9 @@ bool ProcessThrottler::addActivity(Activity& activity)
     }
 
     if (activity.isForeground())
-        m_foregroundActivities.add(&activity);
+        m_foregroundActivities.add(activity);
     else
-        m_backgroundActivities.add(&activity);
+        m_backgroundActivities.add(activity);
     updateThrottleStateIfNeeded();
     return true;
 }
@@ -87,16 +87,16 @@ void ProcessThrottler::removeActivity(Activity& activity)
 {
     ASSERT(isMainRunLoop());
     if (!m_allowsActivities) {
-        ASSERT(m_foregroundActivities.isEmpty());
-        ASSERT(m_backgroundActivities.isEmpty());
+        ASSERT(m_foregroundActivities.isEmptyIgnoringNullReferences());
+        ASSERT(m_backgroundActivities.isEmptyIgnoringNullReferences());
         return;
     }
 
     bool wasRemoved;
     if (activity.isForeground())
-        wasRemoved = m_foregroundActivities.remove(&activity);
+        wasRemoved = m_foregroundActivities.remove(activity);
     else
-        wasRemoved = m_backgroundActivities.remove(&activity);
+        wasRemoved = m_backgroundActivities.remove(activity);
     ASSERT(wasRemoved);
     if (!wasRemoved)
         return;
@@ -107,11 +107,11 @@ void ProcessThrottler::removeActivity(Activity& activity)
 void ProcessThrottler::invalidateAllActivities()
 {
     ASSERT(isMainRunLoop());
-    PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivities: BEGIN (foregroundActivityCount: %u, backgroundActivityCount: %u)", m_foregroundActivities.size(), m_backgroundActivities.size());
-    while (!m_foregroundActivities.isEmpty())
-        (*m_foregroundActivities.begin())->invalidate();
-    while (!m_backgroundActivities.isEmpty())
-        (*m_backgroundActivities.begin())->invalidate();
+    PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivities: BEGIN (foregroundActivityCount: %u, backgroundActivityCount: %u)", m_foregroundActivities.computeSize(), m_backgroundActivities.computeSize());
+    while (!m_foregroundActivities.isEmptyIgnoringNullReferences())
+        m_foregroundActivities.begin()->invalidate();
+    while (!m_backgroundActivities.isEmptyIgnoringNullReferences())
+        m_backgroundActivities.begin()->invalidate();
     PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivities: END");
 }
 
@@ -126,9 +126,9 @@ void ProcessThrottler::invalidateAllActivitiesAndDropAssertion()
 
 ProcessThrottleState ProcessThrottler::expectedThrottleState()
 {
-    if (!m_foregroundActivities.isEmpty())
+    if (!m_foregroundActivities.isEmptyIgnoringNullReferences())
         return ProcessThrottleState::Foreground;
-    if (!m_backgroundActivities.isEmpty())
+    if (!m_backgroundActivities.isEmptyIgnoringNullReferences())
         return ProcessThrottleState::Background;
     return ProcessThrottleState::Suspended;
 }
@@ -184,7 +184,7 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
     if (m_assertion && m_assertion->isValid() && m_assertion->type() == newType)
         return;
 
-    PROCESSTHROTTLER_RELEASE_LOG("setThrottleState: Updating process assertion type to %u (foregroundActivities=%u, backgroundActivities=%u)", WTF::enumToUnderlyingType(newType), m_foregroundActivities.size(), m_backgroundActivities.size());
+    PROCESSTHROTTLER_RELEASE_LOG("setThrottleState: Updating process assertion type to %u (foregroundActivities=%u, backgroundActivities=%u)", WTF::enumToUnderlyingType(newType), m_foregroundActivities.computeSize(), m_backgroundActivities.computeSize());
 
     // Keep the previous assertion active until the new assertion is taken asynchronously.
     auto previousAssertion = std::exchange(m_assertion, nullptr);
@@ -359,8 +359,8 @@ void ProcessThrottler::setAllowsActivities(bool allow)
         invalidateAllActivities();
     }
 
-    ASSERT(m_foregroundActivities.isEmpty());
-    ASSERT(m_backgroundActivities.isEmpty());
+    ASSERT(m_foregroundActivities.isEmptyIgnoringNullReferences());
+    ASSERT(m_backgroundActivities.isEmptyIgnoringNullReferences());
     m_allowsActivities = allow;
 }
 
@@ -473,18 +473,18 @@ void ProcessThrottlerTimedActivity::updateTimer()
 template <typename T>
 static void logActivityNames(WTF::TextStream& ts, ASCIILiteral description, const T& activities, bool& didLog)
 {
-    if (!activities.size())
+    if (activities.isEmptyIgnoringNullReferences())
         return;
 
     ts << (didLog ? ", "_s : ""_s) << description << ": "_s;
     didLog = true;
 
     bool isFirstItem = true;
-    for (const auto* activity : activities) {
-        if (activity && !activity->isQuietActivity()) {
+    for (const auto& activity : activities) {
+        if (!activity.isQuietActivity()) {
             if (!isFirstItem)
                 ts << ", "_s;
-            ts << activity->name();
+            ts << activity.name();
             isFirstItem = false;
         }
     }

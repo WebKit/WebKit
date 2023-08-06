@@ -593,14 +593,18 @@ bool RenderLayerCompositor::updateCompositingPolicy()
         m_compositingPolicy = page().compositingPolicyOverride().value();
         return m_compositingPolicy != currentPolicy;
     }
-    
+
+    const auto isCurrentlyUnderMemoryPressureOrWarning = [] {
+        return MemoryPressureHandler::singleton().isUnderMemoryPressure() || MemoryPressureHandler::singleton().isUnderMemoryWarning();
+    };
+
     static auto cachedMemoryPolicy = WTF::MemoryUsagePolicy::Unrestricted;
-    static MonotonicTime cachedMemoryPolicyTime;
-    static constexpr auto memoryPolicyCachingDuration = 2_s;
-    auto now = MonotonicTime::now();
-    if (now - cachedMemoryPolicyTime > memoryPolicyCachingDuration) {
+    bool nowUnderMemoryPressure = isCurrentlyUnderMemoryPressureOrWarning();
+    static bool cachedIsUnderMemoryPressureOrWarning = nowUnderMemoryPressure;
+
+    if (cachedIsUnderMemoryPressureOrWarning != nowUnderMemoryPressure) {
         cachedMemoryPolicy = MemoryPressureHandler::singleton().currentMemoryUsagePolicy();
-        cachedMemoryPolicyTime = now;
+        cachedIsUnderMemoryPressureOrWarning = nowUnderMemoryPressure;
     }
 
     m_compositingPolicy = cachedMemoryPolicy == WTF::MemoryUsagePolicy::Unrestricted ? CompositingPolicy::Normal : CompositingPolicy::Conservative;

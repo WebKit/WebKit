@@ -348,9 +348,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
     }
 
     auto& renderer = downcast<RenderElement>(child);
-    if (renderer.isSVGRootOrLegacySVGRoot())
-        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
-
 #if !ALLOW_RUBY
     if (renderer.isRubyRun())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);

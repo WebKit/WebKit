@@ -376,8 +376,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if HAVE(CGIMAGESOURCE_ENABLE_RESTRICTED_DECODING)
     if (parameters.enableDecodingHEIC || parameters.enableDecodingAVIF) {
-        OSStatus ok = CGImageSourceEnableRestrictedDecoding();
-        ASSERT_UNUSED(ok, ok == noErr);
+        static bool restricted { false };
+        if (!std::exchange(restricted, true)) {
+            OSStatus ok = CGImageSourceEnableRestrictedDecoding();
+            ASSERT_UNUSED(ok, ok == noErr);
+        }
     }
 #endif
 
@@ -1414,7 +1417,7 @@ void WebProcess::updatePageScreenProperties()
     }
 
     bool allPagesAreOnHDRScreens = allOf(m_pageMap.values(), [] (auto& page) {
-        return page && screenSupportsHighDynamicRange(page->mainFrameView());
+        return page && screenSupportsHighDynamicRange(page->localMainFrameView());
     });
     setShouldOverrideScreenSupportsHighDynamicRange(true, allPagesAreOnHDRScreens);
 #endif

@@ -88,6 +88,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifie
 
     switch (namedCurve) {
     case NamedCurve::Ed25519:
+        // FIXME: this is already done in the Algorithm's importKey method for each format, so it seems we can remoev this duplicated code.
         if (!keyData.d.isEmpty()) {
             if (usages & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey))
                 return nullptr;
@@ -197,7 +198,7 @@ auto CryptoKeyOKP::algorithm() const -> KeyAlgorithm
     return CryptoKeyAlgorithm { CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()) };
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(GCRYPT)
 bool CryptoKeyOKP::isPlatformSupportedCurve(NamedCurve)
 {
     return false;

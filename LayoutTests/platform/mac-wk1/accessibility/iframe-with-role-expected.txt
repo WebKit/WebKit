@@ -1,0 +1,30 @@
+This test ensures that the content within an iframe with an ARIA role is accessible.
+
+Traversing initial body content.
+
+AXRole: AXStaticText
+AXValue: Text before iframe
+
+AXRole: AXWebArea
+
+AXRole: AXButton
+
+AXRole: AXStaticText
+AXValue:  Text after iframe
+
+document.getElementById('iframe').removeAttribute('role');
+
+AXRole: AXStaticText
+AXValue: Text before iframe
+
+AXRole: AXWebArea
+
+AXRole: AXButton
+
+AXRole: AXStaticText
+AXValue:  Text after iframe
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Text before iframe  Text after iframe

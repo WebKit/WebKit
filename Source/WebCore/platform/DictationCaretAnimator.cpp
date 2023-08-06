@@ -260,9 +260,9 @@ void DictationCaretAnimator::fillCaretTail(const FloatRect& rect, GraphicsContex
     gradient->addColorStop({ isLTR ? 1.f : 0.f, tailColor.colorWithAlpha(0.35f * glowOpacity) });
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=253139 - this should be computed based on the render area
     constexpr auto shadowOffset = 10000.f;
-    DropShadow dropShadow = {
-        .offset = FloatSize(shadowOffset, shadowOffset),
-        .blurRadius = tailBlurRadius(rect.height()),
+    GraphicsDropShadow dropShadow = {
+        .offset = { shadowOffset, shadowOffset },
+        .radius = tailBlurRadius(rect.height()),
         .color = tailColor.colorWithAlpha(glowOpacity),
         .radiusMode = ShadowRadiusMode::Default,
     };
@@ -300,14 +300,8 @@ void DictationCaretAnimator::paint(GraphicsContext& context, const FloatRect& re
     GraphicsContextStateSaver stateSaver(context);
     context.resetClip();
     const auto targetOpacity = (fillTail ? 1.0 : m_presentationProperties.opacity) - m_initialScale;
-    if (targetOpacity > 0 && !blinkingSuspended) {
-        context.setDropShadow({
-            .offset = { },
-            .blurRadius = caretBlurRadius(rect.height()),
-            .color = caretColor.colorWithAlpha(targetOpacity),
-            .radiusMode = ShadowRadiusMode::Default,
-        });
-    }
+    if (targetOpacity > 0 && !blinkingSuspended)
+        context.setDropShadow({ { }, caretBlurRadius(rect.height()), caretColor.colorWithAlpha(targetOpacity), ShadowRadiusMode::Default });
 
     context.fillRoundedRect(expandedCaretRect(rect, fillTail), caretColor);
 

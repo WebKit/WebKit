@@ -92,16 +92,15 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
     return { };
 }
 
-CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Capturer>, String>&& capturer, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
+CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Capturer>, CaptureSourceError>&& capturer, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
     if (!capturer.has_value())
         return CaptureSourceOrError { WTFMove(capturer.error()) };
 
     auto source = adoptRef(*new DisplayCaptureSourceCocoa(WTFMove(capturer.value()), device, WTFMove(hashSalts), pageIdentifier));
     if (constraints) {
-        auto result = source->applyConstraints(*constraints);
-        if (result)
-            return WTFMove(result.value().badConstraint);
+        if (auto result = source->applyConstraints(*constraints))
+            return CaptureSourceOrError({ WTFMove(result->badConstraint), MediaAccessDenialReason::InvalidConstraint });
     }
 
     return CaptureSourceOrError(WTFMove(source));

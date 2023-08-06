@@ -753,6 +753,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case DeleteByVal:
     case ArrayPush:
     case ArrayPop:
+    case ArraySpliceExtract:
     case Call:
     case DirectCall:
     case TailCallInlinedCaller:

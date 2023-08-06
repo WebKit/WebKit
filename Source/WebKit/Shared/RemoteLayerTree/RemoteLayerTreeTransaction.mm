@@ -41,443 +41,11 @@
 namespace WebKit {
 
 RemoteLayerTreeTransaction::RemoteLayerTreeTransaction(RemoteLayerTreeTransaction&&) = default;
+
 RemoteLayerTreeTransaction& RemoteLayerTreeTransaction::operator=(RemoteLayerTreeTransaction&&) = default;
 
-LayerProperties::LayerProperties() = default;
-
-LayerProperties::LayerProperties(LayerProperties&&) = default;
-
-void LayerProperties::encode(IPC::Encoder& encoder) const
-{
-    encoder << changedProperties;
-
-    if (changedProperties & LayerChange::NameChanged)
-        encoder << name;
-
-    if (changedProperties & LayerChange::ChildrenChanged)
-        encoder << children;
-
-    if (changedProperties & LayerChange::AnimationsChanged) {
-        encoder << addedAnimations;
-        encoder << keysOfAnimationsToRemove;
-#if ENABLE(THREADED_ANIMATION_RESOLUTION)
-        encoder << effects;
-        encoder << baseValues;
-#endif
-    }
-
-    if (changedProperties & LayerChange::PositionChanged)
-        encoder << position;
-
-    if (changedProperties & LayerChange::BoundsChanged)
-        encoder << bounds;
-
-    if (changedProperties & LayerChange::BackgroundColorChanged)
-        encoder << backgroundColor;
-
-    if (changedProperties & LayerChange::AnchorPointChanged)
-        encoder << anchorPoint;
-
-    if (changedProperties & LayerChange::BorderWidthChanged)
-        encoder << borderWidth;
-
-    if (changedProperties & LayerChange::BorderColorChanged)
-        encoder << borderColor;
-
-    if (changedProperties & LayerChange::OpacityChanged)
-        encoder << opacity;
-
-    if (changedProperties & LayerChange::TransformChanged)
-        encoder << *transform;
-
-    if (changedProperties & LayerChange::SublayerTransformChanged)
-        encoder << *sublayerTransform;
-
-    if (changedProperties & LayerChange::AntialiasesEdgesChanged)
-        encoder << antialiasesEdges;
-
-    if (changedProperties & LayerChange::HiddenChanged)
-        encoder << hidden;
-
-    if (changedProperties & LayerChange::GeometryFlippedChanged)
-        encoder << geometryFlipped;
-
-    if (changedProperties & LayerChange::DoubleSidedChanged)
-        encoder << doubleSided;
-
-    if (changedProperties & LayerChange::MasksToBoundsChanged)
-        encoder << masksToBounds;
-
-    if (changedProperties & LayerChange::OpaqueChanged)
-        encoder << opaque;
-
-    if (changedProperties & LayerChange::ContentsHiddenChanged)
-        encoder << contentsHidden;
-
-    if (changedProperties & LayerChange::MaskLayerChanged)
-        encoder << maskLayerID;
-
-    if (changedProperties & LayerChange::ClonedContentsChanged)
-        encoder << clonedLayerID;
-
-#if ENABLE(SCROLLING_THREAD)
-    if (changedProperties & LayerChange::ScrollingNodeIDChanged)
-        encoder << scrollingNodeID;
-#endif
-
-    if (changedProperties & LayerChange::ContentsRectChanged)
-        encoder << contentsRect;
-
-    if (changedProperties & LayerChange::ContentsScaleChanged)
-        encoder << contentsScale;
-
-    if (changedProperties & LayerChange::CornerRadiusChanged)
-        encoder << cornerRadius;
-
-    if (changedProperties & LayerChange::ShapeRoundedRectChanged)
-        encoder << *shapeRoundedRect;
-
-    if (changedProperties & LayerChange::ShapePathChanged)
-        encoder << shapePath;
-
-    if (changedProperties & LayerChange::MinificationFilterChanged)
-        encoder << minificationFilter;
-
-    if (changedProperties & LayerChange::MagnificationFilterChanged)
-        encoder << magnificationFilter;
-
-    if (changedProperties & LayerChange::BlendModeChanged)
-        encoder << blendMode;
-
-    if (changedProperties & LayerChange::WindRuleChanged)
-        encoder << windRule;
-
-    if (changedProperties & LayerChange::SpeedChanged)
-        encoder << speed;
-
-    if (changedProperties & LayerChange::TimeOffsetChanged)
-        encoder << timeOffset;
-
-    if (changedProperties & LayerChange::BackingStoreChanged) {
-        bool hasFrontBuffer = backingStore && backingStore->hasFrontBuffer();
-        encoder << hasFrontBuffer;
-        if (hasFrontBuffer)
-            encoder << *backingStore;
-    }
-
-    if (changedProperties & LayerChange::BackingStoreAttachmentChanged)
-        encoder << backingStoreAttached;
-
-    if (changedProperties & LayerChange::FiltersChanged)
-        encoder << *filters;
-
-    if (changedProperties & LayerChange::CustomAppearanceChanged)
-        encoder << customAppearance;
-
-    if (changedProperties & LayerChange::UserInteractionEnabledChanged)
-        encoder << userInteractionEnabled;
-
-    if (changedProperties & LayerChange::EventRegionChanged)
-        encoder << eventRegion;
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if (changedProperties & LayerChange::CoverageRectChanged)
-        encoder << coverageRect;
-#endif
-#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    if (changedProperties & LayerChange::SeparatedChanged)
-        encoder << isSeparated;
-
-#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-    if (changedProperties & LayerChange::SeparatedPortalChanged)
-        encoder << isSeparatedPortal;
-
-    if (changedProperties & LayerChange::DescendentOfSeparatedPortalChanged)
-        encoder << isDescendentOfSeparatedPortal;
-#endif
-#endif
-
-    if (changedProperties & LayerChange::VideoGravityChanged)
-        encoder << videoGravity;
-}
-
-bool LayerProperties::decode(IPC::Decoder& decoder, LayerProperties& result)
-{
-    if (!decoder.decode(result.changedProperties))
-        return false;
-
-    if (result.changedProperties & LayerChange::NameChanged) {
-        if (!decoder.decode(result.name))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::ChildrenChanged) {
-        if (!decoder.decode(result.children))
-            return false;
-
-        for (auto& layerID : result.children) {
-            if (!layerID)
-                return false;
-        }
-    }
-
-    if (result.changedProperties & LayerChange::AnimationsChanged) {
-        if (!decoder.decode(result.addedAnimations))
-            return false;
-
-        if (!decoder.decode(result.keysOfAnimationsToRemove))
-            return false;
-#if ENABLE(THREADED_ANIMATION_RESOLUTION)
-        if (!decoder.decode(result.effects))
-            return false;
-
-        if (!decoder.decode(result.baseValues))
-            return false;
-#endif
-    }
-
-    if (result.changedProperties & LayerChange::PositionChanged) {
-        if (!decoder.decode(result.position))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::BoundsChanged) {
-        if (!decoder.decode(result.bounds))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::BackgroundColorChanged) {
-        if (!decoder.decode(result.backgroundColor))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::AnchorPointChanged) {
-        if (!decoder.decode(result.anchorPoint))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::BorderWidthChanged) {
-        if (!decoder.decode(result.borderWidth))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::BorderColorChanged) {
-        if (!decoder.decode(result.borderColor))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::OpacityChanged) {
-        if (!decoder.decode(result.opacity))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::TransformChanged) {
-        WebCore::TransformationMatrix transform;
-        if (!decoder.decode(transform))
-            return false;
-        
-        result.transform = makeUnique<WebCore::TransformationMatrix>(transform);
-    }
-
-    if (result.changedProperties & LayerChange::SublayerTransformChanged) {
-        WebCore::TransformationMatrix transform;
-        if (!decoder.decode(transform))
-            return false;
-
-        result.sublayerTransform = makeUnique<WebCore::TransformationMatrix>(transform);
-    }
-
-    if (result.changedProperties & LayerChange::AntialiasesEdgesChanged) {
-        if (!decoder.decode(result.antialiasesEdges))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::HiddenChanged) {
-        if (!decoder.decode(result.hidden))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::GeometryFlippedChanged) {
-        if (!decoder.decode(result.geometryFlipped))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::DoubleSidedChanged) {
-        if (!decoder.decode(result.doubleSided))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::MasksToBoundsChanged) {
-        if (!decoder.decode(result.masksToBounds))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::OpaqueChanged) {
-        if (!decoder.decode(result.opaque))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::ContentsHiddenChanged) {
-        if (!decoder.decode(result.contentsHidden))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::MaskLayerChanged) {
-        if (!decoder.decode(result.maskLayerID))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::ClonedContentsChanged) {
-        if (!decoder.decode(result.clonedLayerID))
-            return false;
-    }
-
-#if ENABLE(SCROLLING_THREAD)
-    if (result.changedProperties & LayerChange::ScrollingNodeIDChanged) {
-        if (!decoder.decode(result.scrollingNodeID))
-            return false;
-    }
-#endif
-
-    if (result.changedProperties & LayerChange::ContentsRectChanged) {
-        if (!decoder.decode(result.contentsRect))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::ContentsScaleChanged) {
-        if (!decoder.decode(result.contentsScale))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::CornerRadiusChanged) {
-        if (!decoder.decode(result.cornerRadius))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::ShapeRoundedRectChanged) {
-        WebCore::FloatRoundedRect roundedRect;
-        if (!decoder.decode(roundedRect))
-            return false;
-        
-        result.shapeRoundedRect = makeUnique<WebCore::FloatRoundedRect>(roundedRect);
-    }
-
-    if (result.changedProperties & LayerChange::ShapePathChanged) {
-        WebCore::Path path;
-        if (!decoder.decode(path))
-            return false;
-        
-        result.shapePath = WTFMove(path);
-    }
-
-    if (result.changedProperties & LayerChange::MinificationFilterChanged) {
-        if (!decoder.decode(result.minificationFilter))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::MagnificationFilterChanged) {
-        if (!decoder.decode(result.magnificationFilter))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::BlendModeChanged) {
-        if (!decoder.decode(result.blendMode))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::WindRuleChanged) {
-        if (!decoder.decode(result.windRule))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::SpeedChanged) {
-        if (!decoder.decode(result.speed))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::TimeOffsetChanged) {
-        if (!decoder.decode(result.timeOffset))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::BackingStoreChanged) {
-        bool hasFrontBuffer = false;
-        if (!decoder.decode(hasFrontBuffer))
-            return false;
-        if (hasFrontBuffer) {
-            auto backingStore = makeUnique<RemoteLayerBackingStoreProperties>();
-            if (!decoder.decode(*backingStore))
-                return false;
-            
-            result.backingStoreProperties = WTFMove(backingStore);
-        } else
-            result.backingStoreProperties = nullptr;
-    }
-
-    if (result.changedProperties & LayerChange::BackingStoreAttachmentChanged) {
-        if (!decoder.decode(result.backingStoreAttached))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::FiltersChanged) {
-        auto filters = makeUnique<WebCore::FilterOperations>();
-        if (!decoder.decode(*filters))
-            return false;
-        result.filters = WTFMove(filters);
-    }
-
-    if (result.changedProperties & LayerChange::CustomAppearanceChanged) {
-        if (!decoder.decode(result.customAppearance))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::UserInteractionEnabledChanged) {
-        if (!decoder.decode(result.userInteractionEnabled))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::EventRegionChanged) {
-        std::optional<WebCore::EventRegion> eventRegion;
-        decoder >> eventRegion;
-        if (!eventRegion)
-            return false;
-        result.eventRegion = WTFMove(*eventRegion);
-    }
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if (result.changedProperties & LayerChange::CoverageRectChanged) {
-        if (!decoder.decode(result.coverageRect))
-            return false;
-    }
-#endif
-#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    if (result.changedProperties & LayerChange::SeparatedChanged) {
-        if (!decoder.decode(result.isSeparated))
-            return false;
-    }
-
-#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
-    if (result.changedProperties & LayerChange::SeparatedPortalChanged) {
-        if (!decoder.decode(result.isSeparatedPortal))
-            return false;
-    }
-
-    if (result.changedProperties & LayerChange::DescendentOfSeparatedPortalChanged) {
-        if (!decoder.decode(result.isDescendentOfSeparatedPortal))
-            return false;
-    }
-#endif
-#endif
-
-    if (result.changedProperties & LayerChange::VideoGravityChanged) {
-        if (!decoder.decode(result.videoGravity))
-            return false;
-    }
-
-    return true;
-}
-
 RemoteLayerTreeTransaction::RemoteLayerTreeTransaction() = default;
+
 RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction() = default;
 
 void RemoteLayerTreeTransaction::setRootLayerID(WebCore::PlatformLayerIdentifier rootLayerID)
@@ -618,7 +186,7 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
             ts.dumpProperty("timeOffset", layerProperties.timeOffset);
 
         if (layerProperties.changedProperties & LayerChange::BackingStoreChanged) {
-            if (auto* backingStoreProperties = layerProperties.backingStoreProperties.get())
+            if (auto* backingStoreProperties = layerProperties.backingStoreOrProperties.properties.get())
                 ts.dumpProperty("backingStore", *backingStoreProperties);
             else
                 ts.dumpProperty("backingStore", "removed");
@@ -631,10 +199,10 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
             ts.dumpProperty("filters", layerProperties.filters ? *layerProperties.filters : WebCore::FilterOperations());
 
         if (layerProperties.changedProperties & LayerChange::AnimationsChanged) {
-            for (const auto& keyAnimationPair : layerProperties.addedAnimations)
+            for (const auto& keyAnimationPair : layerProperties.animationChanges.addedAnimations)
                 ts.dumpProperty("animation " +  keyAnimationPair.first, keyAnimationPair.second);
 
-            for (const auto& name : layerProperties.keysOfAnimationsToRemove)
+            for (const auto& name : layerProperties.animationChanges.keysOfAnimationsToRemove)
                 ts.dumpProperty("removed animation", name);
         }
 
@@ -651,8 +219,8 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
             ts.dumpProperty("eventRegion", layerProperties.eventRegion);
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        if (layerProperties.changedProperties & LayerChange::CoverageRectChanged)
-            ts.dumpProperty("coverageRect", layerProperties.coverageRect);
+        if (layerProperties.changedProperties & LayerChange::VisibleRectChanged)
+            ts.dumpProperty("visibleRect", layerProperties.visibleRect);
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         if (layerProperties.changedProperties & LayerChange::SeparatedChanged)
@@ -802,6 +370,8 @@ RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties(Lay
 
 auto RemoteLayerTreeTransaction::LayerCreationProperties::operator=(LayerCreationProperties&&) -> LayerCreationProperties& = default;
 
+RemoteLayerBackingStoreOrProperties::~RemoteLayerBackingStoreOrProperties() = default;
+
 RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties(WebCore::PlatformLayerIdentifier layerID, WebCore::PlatformCALayer::LayerType type, std::optional<RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData>&& videoElementData, RemoteLayerTreeTransaction::LayerCreationProperties::AdditionalData&& additionalData)
     : layerID(layerID)
     , type(type)
@@ -850,6 +420,17 @@ void ArgumentCoder<WebKit::ChangedLayers>::encode(Encoder& encoder, const WebKit
         encoder << layer->layerID();
         encoder << layer->properties();
     }
+}
+
+void ArgumentCoder<WebKit::RemoteLayerBackingStoreOrProperties>::encode(Encoder& encoder, const WebKit::RemoteLayerBackingStoreOrProperties& instance)
+{
+    // The web content process has a std::unique_ptr<RemoteLayerBackingStore> but we want it to decode
+    // in the UI process as a std::unique_ptr<RemoteLayerBackingStoreProperties>.
+    ASSERT(WebCore::isInWebProcess());
+    bool hasFrontBuffer = instance.store && instance.store->hasFrontBuffer();
+    encoder << hasFrontBuffer;
+    if (hasFrontBuffer)
+        encoder << *instance.store;
 }
 
 }

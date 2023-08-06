@@ -66,10 +66,9 @@ class FunctionIPIntMetadataGenerator {
     friend class IPIntCallee;
 
 public:
-    FunctionIPIntMetadataGenerator(uint32_t functionIndex, const uint8_t* bytecode, const uint32_t bytecodeLength)
+    FunctionIPIntMetadataGenerator(uint32_t functionIndex, const uint8_t* bytecode, const uint32_t)
         : m_functionIndex(functionIndex)
         , m_bytecode(bytecode)
-        , m_bytecodeLength(bytecodeLength)
     {
     }
 
@@ -95,8 +94,9 @@ private:
     BitVector m_tailCallSuccessors;
 
     const uint8_t* m_bytecode;
-    const uint32_t m_bytecodeLength;
+    uint32_t m_bytecodeLength { 0 };
     Vector<uint8_t> m_metadata { };
+    uint32_t m_returnMetadata { 0 };
 
     uint32_t m_bytecodeOffset { 0 };
     unsigned m_numLocals { 0 };

@@ -49,6 +49,9 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
 {
     if (parent)
         parent->tree().appendChild(*this);
+
+    if (ownerElement)
+        ownerElement->setContentFrame(*this);
 }
 
 Frame::~Frame()

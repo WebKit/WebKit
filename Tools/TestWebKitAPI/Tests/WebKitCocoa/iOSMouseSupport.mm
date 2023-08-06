@@ -43,6 +43,16 @@
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
 
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+
+@interface WKMouseDeviceObserver
++ (WKMouseDeviceObserver *)sharedInstance;
+- (void)startWithCompletionHandler:(void (^)(void))completionHandler;
+- (void)_setHasMouseDeviceForTesting:(BOOL)hasMouseDevice;
+@end
+
+#endif
+
 @interface MouseSupportUIDelegate : NSObject <WKUIDelegatePrivate>
 @end
 
@@ -63,40 +73,8 @@
 
 @end
 
-@interface WKMouseGestureRecognizer : UIGestureRecognizer
-- (void)_hoverEntered:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-- (void)_hoverExited:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
-@end
-
 @interface WKContentView ()
-- (void)mouseGestureRecognizerChanged:(WKMouseGestureRecognizer *)gestureRecognizer;
 - (void)prepareSelectionForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, RVItem *item))completionHandler;
-@end
-
-@interface WKTestingEvent : UIEvent
-@end
-
-@implementation WKTestingEvent {
-    UIEventButtonMask _buttonMask;
-}
-
-- (CGPoint)locationInView:(UIView *)view
-{
-    return CGPointMake(10, 10);
-}
-
-- (void)_setButtonMask:(UIEventButtonMask)buttonMask
-{
-    _buttonMask = buttonMask;
-}
-
-- (UIEventButtonMask)_buttonMask
-{
-    return _buttonMask;
-}
-
 @end
 
 @interface WKTestingTouch : UITouch
@@ -104,16 +82,33 @@
 
 @implementation WKTestingTouch {
     NSUInteger _tapCount;
+    CGPoint _overriddenLocation;
+    UITouchPhase _overriddenPhase;
 }
 
 - (CGPoint)locationInView:(UIView *)view
 {
-    return CGPointMake(10, 10);
+    return _overriddenLocation;
+}
+
+- (void)setLocationInView:(CGPoint)location
+{
+    _overriddenLocation = location;
 }
 
 - (void)setTapCount:(NSUInteger)tapCount
 {
     _tapCount = tapCount;
+}
+
+- (void)setPhase:(UITouchPhase)phase
+{
+    _overriddenPhase = phase;
+}
+
+- (UITouchPhase)phase
+{
+    return _overriddenPhase;
 }
 
 - (NSUInteger)tapCount
@@ -126,17 +121,112 @@
     return MonotonicTime::now().secondsSinceEpoch().value();
 }
 
+- (BOOL)_isPointerTouch
+{
+    return YES;
+}
+
 @end
 
-static WKMouseGestureRecognizer *mouseGesture(UIView *view)
-{
-    for (UIGestureRecognizer *recognizer in view.gestureRecognizers) {
-        if ([recognizer isKindOfClass:NSClassFromString(@"WKMouseGestureRecognizer")])
-            return (WKMouseGestureRecognizer *)recognizer;
+@protocol WKMouseInteractionForTesting<UIGestureRecognizerDelegate>
+@property (readonly, nonatomic, getter=isEnabled) BOOL enabled;
+- (void)_updateMouseTouches:(NSSet<UITouch *> *)touches;
+- (void)_hoverGestureRecognized:(UIHoverGestureRecognizer *)gestureRecognizer;
+@end
+
+namespace TestWebKitAPI {
+
+class MouseEventTestHarness {
+public:
+    MouseEventTestHarness(TestWKWebView *webView)
+        : m_webView(webView)
+    {
+        auto contentView = m_webView.wkContentView;
+        for (id<UIInteraction> interaction in contentView.interactions) {
+            if ([interaction respondsToSelector:@selector(_updateMouseTouches:)] && [interaction respondsToSelector:@selector(_hoverGestureRecognized:)]) {
+                m_mouseInteraction = static_cast<id<WKMouseInteractionForTesting>>(interaction);
+                break;
+            }
+        }
+
+        for (UIGestureRecognizer *gestureRecognizer in contentView.gestureRecognizers) {
+            auto hoverGestureRecognizer = dynamic_objc_cast<UIHoverGestureRecognizer>(gestureRecognizer);
+            if ([hoverGestureRecognizer.allowedTouchTypes containsObject:@(UITouchTypeIndirectPointer)]) {
+                m_hoverGestureRecognizer = hoverGestureRecognizer;
+                break;
+            }
+        }
+
+        RELEASE_ASSERT(m_mouseInteraction);
+        RELEASE_ASSERT(m_hoverGestureRecognizer);
+
+        auto overrideLocationInView = imp_implementationWithBlock([&](UIGestureRecognizer *) {
+            return m_locationInRootView;
+        });
+        m_gestureLocationSwizzler = makeUnique<InstanceMethodSwizzler>(UIGestureRecognizer.class, @selector(locationInView:), overrideLocationInView);
+        m_hoverGestureLocationSwizzler = makeUnique<InstanceMethodSwizzler>(UIHoverGestureRecognizer.class, @selector(locationInView:), overrideLocationInView);
+        m_gestureButtonMaskSwizzler = makeUnique<InstanceMethodSwizzler>(UIGestureRecognizer.class, @selector(buttonMask), imp_implementationWithBlock([&](UIGestureRecognizer *) {
+            return m_buttonMask;
+        }));
     }
 
-    return nil;
-}
+    MouseEventTestHarness() = delete;
+
+    void mouseMove(CGFloat x, CGFloat y)
+    {
+        if (!m_activeTouch) {
+            m_activeTouch = adoptNS([[WKTestingTouch alloc] init]);
+            EXPECT_TRUE([m_mouseInteraction gestureRecognizer:m_hoverGestureRecognizer shouldReceiveTouch:m_activeTouch.get()]);
+        }
+
+        m_locationInRootView = CGPointMake(x, y);
+        [m_activeTouch setLocationInView:m_locationInRootView];
+
+        bool shouldBeginGesture = std::exchange(m_needsToDispatchHoverGestureBegan, false);
+        [m_activeTouch setPhase:shouldBeginGesture ? UITouchPhaseRegionEntered : UITouchPhaseRegionMoved];
+        m_hoverGestureRecognizer.state = shouldBeginGesture ? UIGestureRecognizerStateBegan : UIGestureRecognizerStateChanged;
+        [m_mouseInteraction _hoverGestureRecognized:m_hoverGestureRecognizer];
+    }
+
+    void mouseDown(UIEventButtonMask buttons = UIEventButtonMaskPrimary)
+    {
+        [m_activeTouch setPhase:UITouchPhaseBegan];
+        m_buttonMask = buttons;
+        [m_activeTouch setTapCount:1];
+        [m_mouseInteraction _updateMouseTouches:[NSSet setWithObject:m_activeTouch.get()]];
+    }
+
+    void mouseUp()
+    {
+        [m_activeTouch setPhase:UITouchPhaseEnded];
+        [m_activeTouch setTapCount:0];
+        m_buttonMask = 0;
+        [m_mouseInteraction _updateMouseTouches:[NSSet setWithObject:m_activeTouch.get()]];
+    }
+
+    void mouseCancel()
+    {
+        [m_activeTouch setPhase:UITouchPhaseCancelled];
+        [m_activeTouch setTapCount:0];
+        m_buttonMask = 0;
+        [m_mouseInteraction _updateMouseTouches:[NSSet setWithObject:m_activeTouch.get()]];
+    }
+
+    TestWKWebView *webView() const { return m_webView; }
+    id<WKMouseInteractionForTesting> mouseInteraction() const { return m_mouseInteraction; }
+
+private:
+    std::unique_ptr<InstanceMethodSwizzler> m_gestureLocationSwizzler;
+    std::unique_ptr<InstanceMethodSwizzler> m_hoverGestureLocationSwizzler;
+    std::unique_ptr<InstanceMethodSwizzler> m_gestureButtonMaskSwizzler;
+    RetainPtr<WKTestingTouch> m_activeTouch;
+    __weak UIHoverGestureRecognizer *m_hoverGestureRecognizer;
+    __weak id<WKMouseInteractionForTesting> m_mouseInteraction;
+    __weak TestWKWebView *m_webView { nil };
+    CGPoint m_locationInRootView { CGPointZero };
+    UIEventButtonMask m_buttonMask { 0 };
+    bool m_needsToDispatchHoverGestureBegan { true };
+};
 
 TEST(iOSMouseSupport, DoNotChangeSelectionWithRightClick)
 {
@@ -145,22 +235,10 @@ TEST(iOSMouseSupport, DoNotChangeSelectionWithRightClick)
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView objectByEvaluatingJavaScript:@"document.body.setAttribute('contenteditable','');"];
 
-    auto contentView = [webView wkContentView];
-    auto gesture = mouseGesture(contentView);
-
-    RetainPtr<WKTestingTouch> touch = adoptNS([[WKTestingTouch alloc] init]);
-    RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
-
-    RetainPtr<WKTestingEvent> event = adoptNS([[WKTestingEvent alloc] init]);
-
-    [gesture _hoverEntered:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [touch setTapCount:1];
-    [event _setButtonMask:UIEventButtonMaskSecondary];
-    [gesture touchesBegan:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [gesture touchesEnded:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
+    MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(10, 10);
+    testHarness.mouseDown(UIEventButtonMaskSecondary);
+    testHarness.mouseUp();
 
     __block bool done = false;
 
@@ -199,25 +277,13 @@ TEST(iOSMouseSupport, RightClickDoesNotShowMenuIfPreventDefault)
     [webView synchronouslyLoadTestPageNamed:@"image"];
     [webView stringByEvaluatingJavaScript:@"window.didContextMenu = false; document.addEventListener('contextmenu', (event) => { event.preventDefault(); didContextMenu = true; })"];
 
-    auto contentView = [webView wkContentView];
-    auto gesture = mouseGesture(contentView);
-
-    RetainPtr<WKTestingTouch> touch = adoptNS([[WKTestingTouch alloc] init]);
-    RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
-
-    RetainPtr<WKTestingEvent> event = adoptNS([[WKTestingEvent alloc] init]);
-
-    [gesture _hoverEntered:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [touch setTapCount:1];
-    [event _setButtonMask:UIEventButtonMaskSecondary];
-    [gesture touchesBegan:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [gesture touchesEnded:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
+    MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(10, 10);
+    testHarness.mouseDown(UIEventButtonMaskSecondary);
+    testHarness.mouseUp();
 
     __block bool done = false;
-    [contentView prepareSelectionForContextMenuWithLocationInView:CGPointMake(10, 10) completionHandler:^(BOOL shouldPresentMenu, RVItem *) {
+    [[webView wkContentView] prepareSelectionForContextMenuWithLocationInView:CGPointMake(10, 10) completionHandler:^(BOOL shouldPresentMenu, RVItem *) {
         EXPECT_FALSE(shouldPresentMenu);
 
         NSNumber *didContextMenu = [webView objectByEvaluatingJavaScript:@"window.didContextMenu"];
@@ -233,30 +299,17 @@ TEST(iOSMouseSupport, TrackButtonMaskFromTouchStart)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView synchronouslyLoadHTMLString:@"<script>"
-    "window.didReleaseRightButton = false;"
-    "document.documentElement.addEventListener('mouseup', function (e) {"
-    "    if (e.button == 2)"
-    "        window.didReleaseRightButton = true;"
-    "});"
-    "</script>"];
+        "window.didReleaseRightButton = false;"
+        "document.documentElement.addEventListener('mouseup', function (e) {"
+        "    if (e.button == 2)"
+        "        window.didReleaseRightButton = true;"
+        "});"
+        "</script>"];
 
-    auto contentView = [webView wkContentView];
-    auto gesture = mouseGesture(contentView);
-
-    RetainPtr<WKTestingTouch> touch = adoptNS([[WKTestingTouch alloc] init]);
-    RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
-
-    RetainPtr<WKTestingEvent> event = adoptNS([[WKTestingEvent alloc] init]);
-
-    [gesture _hoverEntered:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [touch setTapCount:1];
-    [event _setButtonMask:UIEventButtonMaskSecondary];
-    [gesture touchesBegan:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [event _setButtonMask:0];
-    [gesture touchesEnded:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
+    MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(10, 10);
+    testHarness.mouseDown(UIEventButtonMaskSecondary);
+    testHarness.mouseUp();
 
     __block bool done = false;
 
@@ -274,29 +327,16 @@ TEST(iOSMouseSupport, MouseTimestampTimebase)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView synchronouslyLoadHTMLString:@"<script>"
-    "window.mouseDownTimestamp = -1;"
-    "document.documentElement.addEventListener('mousedown', function (e) {"
-    "    window.mouseDownTimestamp = e.timeStamp;"
-    "});"
-    "</script>"];
+        "window.mouseDownTimestamp = -1;"
+        "document.documentElement.addEventListener('mousedown', function (e) {"
+        "    window.mouseDownTimestamp = e.timeStamp;"
+        "});"
+        "</script>"];
 
-    auto contentView = [webView wkContentView];
-    auto gesture = mouseGesture(contentView);
-
-    RetainPtr<WKTestingTouch> touch = adoptNS([[WKTestingTouch alloc] init]);
-    RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
-
-    RetainPtr<WKTestingEvent> hoverEvent = adoptNS([[NSClassFromString(@"UIHoverEvent") alloc] init]);
-    RetainPtr<WKTestingEvent> event = adoptNS([[WKTestingEvent alloc] init]);
-
-    [gesture _hoverEntered:touchSet.get() withEvent:hoverEvent.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [touch setTapCount:1];
-    [event _setButtonMask:UIEventButtonMaskPrimary];
-    [gesture touchesBegan:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [gesture touchesEnded:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
+    MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(10, 10);
+    testHarness.mouseDown();
+    testHarness.mouseUp();
 
     __block bool done = false;
 
@@ -319,29 +359,16 @@ TEST(iOSMouseSupport, EndedTouchesTriggerClick)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView synchronouslyLoadHTMLString:@"<script>"
-    "window.wasClicked = false;"
-    "document.documentElement.addEventListener('click', function (e) {"
-    "    window.wasClicked = true;"
-    "});"
-    "</script>"];
+        "window.wasClicked = false;"
+        "document.documentElement.addEventListener('click', function (e) {"
+        "    window.wasClicked = true;"
+        "});"
+        "</script>"];
 
-    auto contentView = [webView wkContentView];
-    auto gesture = mouseGesture(contentView);
-
-    auto touch = adoptNS([[WKTestingTouch alloc] init]);
-    RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
-
-    auto hoverEvent = adoptNS([[NSClassFromString(@"UIHoverEvent") alloc] init]);
-    auto event = adoptNS([[WKTestingEvent alloc] init]);
-
-    [gesture _hoverEntered:touchSet.get() withEvent:hoverEvent.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [touch setTapCount:1];
-    [event _setButtonMask:UIEventButtonMaskPrimary];
-    [gesture touchesBegan:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [gesture touchesEnded:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
+    MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(10, 10);
+    testHarness.mouseDown();
+    testHarness.mouseUp();
 
     [webView waitForPendingMouseEvents];
 
@@ -354,29 +381,16 @@ TEST(iOSMouseSupport, CancelledTouchesDoNotTriggerClick)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     [webView synchronouslyLoadHTMLString:@"<script>"
-    "window.wasClicked = false;"
-    "document.documentElement.addEventListener('click', function (e) {"
-    "    window.wasClicked = true;"
-    "});"
-    "</script>"];
+        "window.wasClicked = false;"
+        "document.documentElement.addEventListener('click', function (e) {"
+        "    window.wasClicked = true;"
+        "});"
+        "</script>"];
 
-    auto contentView = [webView wkContentView];
-    auto gesture = mouseGesture(contentView);
-
-    auto touch = adoptNS([[WKTestingTouch alloc] init]);
-    RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
-
-    auto hoverEvent = adoptNS([[NSClassFromString(@"UIHoverEvent") alloc] init]);
-    auto event = adoptNS([[WKTestingEvent alloc] init]);
-
-    [gesture _hoverEntered:touchSet.get() withEvent:hoverEvent.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [touch setTapCount:1];
-    [event _setButtonMask:UIEventButtonMaskPrimary];
-    [gesture touchesBegan:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-    [gesture touchesCancelled:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
+    MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(10, 10);
+    testHarness.mouseDown();
+    testHarness.mouseCancel();
 
     [webView waitForPendingMouseEvents];
 
@@ -400,15 +414,7 @@ TEST(iOSMouseSupport, MouseDidMoveOverElement)
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView setUIDelegate:delegate.get()];
 
-    auto contentView = [webView wkContentView];
-    auto gesture = mouseGesture(contentView);
-    auto touch = adoptNS([[WKTestingTouch alloc] init]);
-    auto touchSet = RetainPtr { [NSSet setWithObject:touch.get()] };
-    auto event = adoptNS([[WKTestingEvent alloc] init]);
-
-    [gesture _hoverEntered:touchSet.get() withEvent:event.get()];
-    [contentView mouseGestureRecognizerChanged:gesture];
-
+    MouseEventTestHarness { webView.get() }.mouseMove(10, 10);
     TestWebKitAPI::Util::run(&mouseDidMoveOverElement);
 
     EXPECT_TRUE(mouseDidMoveOverElement);
@@ -552,50 +558,30 @@ TEST(iOSMouseSupport, ContextClickAtEndOfSelection)
 TEST(iOSMouseSupport, WebsiteMouseEventPolicies)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    MouseEventTestHarness testHarness { webView.get() };
 
-    auto contentView = [webView wkContentView];
-    auto gesture = mouseGesture(contentView);
-
-    void (^tapAndWait)(void) = ^{
-        RetainPtr<WKTestingTouch> touch = adoptNS([[WKTestingTouch alloc] init]);
-        RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
-
-        RetainPtr<WKTestingEvent> event = adoptNS([[WKTestingEvent alloc] init]);
-
-        [gesture _hoverEntered:touchSet.get() withEvent:event.get()];
-        [contentView mouseGestureRecognizerChanged:gesture];
-        [touch setTapCount:1];
-        [event _setButtonMask:UIEventButtonMaskPrimary];
-        [gesture touchesBegan:touchSet.get() withEvent:event.get()];
-        [contentView mouseGestureRecognizerChanged:gesture];
-        [event _setButtonMask:0];
-        [gesture touchesEnded:touchSet.get() withEvent:event.get()];
-        [contentView mouseGestureRecognizerChanged:gesture];
-
-        __block bool done = false;
-
-        [webView _doAfterProcessingAllPendingMouseEvents:^{
-            done = true;
-        }];
-
-        TestWebKitAPI::Util::run(&done);
+    auto tapAndWait = [&] {
+        testHarness.mouseMove(10, 10);
+        testHarness.mouseDown();
+        testHarness.mouseUp();
+        [webView waitForPendingMouseEvents];
     };
 
     // By default, a mouse should generate mouse events.
 
     [webView synchronouslyLoadHTMLString:@"<script>"
-    "window.lastPointerEventType = undefined;"
-    "document.documentElement.addEventListener('pointerdown', function (e) {"
-    "    window.lastPointerEventType = e.pointerType;"
-    "});"
-    "</script>"];
+        "window.lastPointerEventType = undefined;"
+        "document.documentElement.addEventListener('pointerdown', function (e) {"
+        "    window.lastPointerEventType = e.pointerType;"
+        "});"
+        "</script>"];
 
     tapAndWait();
 
     NSString *result = [webView objectByEvaluatingJavaScript:@"window.lastPointerEventType"];
     EXPECT_WK_STREQ("mouse", result);
 
-    EXPECT_TRUE([gesture isEnabled]);
+    EXPECT_TRUE(testHarness.mouseInteraction().enabled);
 
     // If loaded with _WKWebsiteMouseEventPolicySynthesizeTouchEvents, it should send touch events instead.
 
@@ -608,18 +594,12 @@ TEST(iOSMouseSupport, WebsiteMouseEventPolicies)
     // we can't just tapAndWait() again and expect the fact that it's disabled to stop the mouse events.
     // Instead, we'll just ensure that the gesture is disabled.
 
-    EXPECT_FALSE([gesture isEnabled]);
+    EXPECT_FALSE(testHarness.mouseInteraction().enabled);
 }
 
 #endif // ENABLE(IOS_TOUCH_EVENTS)
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
-
-@interface WKMouseDeviceObserver
-+ (WKMouseDeviceObserver *)sharedInstance;
-- (void)startWithCompletionHandler:(void (^)(void))completionHandler;
-- (void)_setHasMouseDeviceForTesting:(BOOL)hasMouseDevice;
-@end
 
 TEST(iOSMouseSupport, MouseInitiallyDisconnected)
 {
@@ -795,5 +775,7 @@ TEST(iOSMouseSupport, MouseAlwaysConnected)
 }
 
 #endif // PLATFORM(MACCATALYST)
+
+} // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)

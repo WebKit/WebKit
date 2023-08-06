@@ -39,7 +39,6 @@
 #include "JSIPCBinding.h"
 #include "LegacyCustomProtocolID.h"
 #include "LibWebRTCResolverIdentifier.h"
-#include "MDNSRegisterIdentifier.h"
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
 #include "MediaRecorderIdentifier.h"
 #include "NetworkResourceLoadIdentifier.h"
@@ -450,14 +449,12 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::ContentWorldIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::DataTaskIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::DownloadID));
-    static_assert(sizeof(uint64_t) == sizeof(WebKit::FormSubmitListenerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GeolocationIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GraphicsContextGLIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCConnectionTesterIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCStreamTesterIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::LegacyCustomProtocolID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::LibWebRTCResolverIdentifier));
-    static_assert(sizeof(uint64_t) == sizeof(WebKit::MDNSRegisterIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::MarkSurfacesAsVolatileRequestIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::MediaRecorderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::NetworkResourceLoadIdentifier));
@@ -550,14 +547,12 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::ContentWorldIdentifier"_s,
         "WebKit::DataTaskIdentifier"_s,
         "WebKit::DownloadID"_s,
-        "WebKit::FormSubmitListenerIdentifier"_s,
         "WebKit::GeolocationIdentifier"_s,
         "WebKit::GraphicsContextGLIdentifier"_s,
         "WebKit::IPCConnectionTesterIdentifier"_s,
         "WebKit::IPCStreamTesterIdentifier"_s,
         "WebKit::LegacyCustomProtocolID"_s,
         "WebKit::LibWebRTCResolverIdentifier"_s,
-        "WebKit::MDNSRegisterIdentifier"_s,
         "WebKit::MarkSurfacesAsVolatileRequestIdentifier"_s,
         "WebKit::MediaRecorderIdentifier"_s,
         "WebKit::NetworkResourceLoadIdentifier"_s,

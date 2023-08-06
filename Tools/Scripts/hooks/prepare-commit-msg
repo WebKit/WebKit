@@ -5,8 +5,15 @@ import re
 import subprocess
 import sys
 
-LOCATION = r'{{ location }}'
+ENCODING_KWARGS = dict()
+if sys.version_info >= (3, 6):
+    ENCODING_KWARGS = dict(encoding='utf-8')
+
+TOPLEVEL = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], **ENCODING_KWARGS).strip()
+
+LOCATION = os.path.join(TOPLEVEL, r'{{ location }}')
 SPACING = 8
+IDENT = 4
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
 CHERRY_PICKING_RE = re.compile(r'^# You are currently cherry-picking commit (?P<hash>[a-f0-9A-F]+)\.$')
 CHERRY_PICK_COMMIT_RE = re.compile(r'^(?P<a>\S+)( \((?P<b>\S+)\))?$')
@@ -19,9 +26,14 @@ DEFAULT_BRANCH = '{{ default_branch }}'
 SOURCE_REMOTES = {{ source_remotes }}
 TRAILERS_TO_STRIP = {{ trailers_to_strip }}
 
-ENCODING_KWARGS = dict()
-if sys.version_info >= (3, 6):
-    ENCODING_KWARGS = dict(encoding='utf-8')
+COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+(\.\d+)?@?([0-9a-zA-z\-\/\.]+[0-9a-zA-z\-\/])?'
+COMPOUND_COMMIT_REF = r'(?P<primary>{})(?P<secondary> \({}\))?'.format(COMMIT_REF_BASE, COMMIT_REF_BASE)
+CHERRY_PICK_RE = [
+    re.compile(r'\S* ?[Cc]herry[- ][Pp]ick of {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\S* ?[Cc]herry[- ][Pp]ick {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\S* ?[Cc]herry[- ][Pp]icked {}'.format(COMPOUND_COMMIT_REF)),
+]
+UNPACK_SECONDARY_RE = re.compile(r' \(({})\)'.format(COMMIT_REF_BASE))
 
 sys.path.append(SCRIPTS)
 from webkitpy.common.checkout.diff_parser import DiffParser
@@ -239,15 +251,33 @@ def cherry_pick(content):
 
     is_trunk_bound = DEFAULT_BRANCH in source_branches()
     in_suffix = False
-    cherry_pick_metadata = '{}. {}'.format(cherry_picked or '???', bug or '<bug>')
     result = []
-    if not is_trunk_bound and production_hash:
+    unindent = False
+
+    lines = list(content.splitlines())
+    for header in CHERRY_PICK_RE:
+        match = header.match(lines[0])
+        if not match:
+            continue
+        cherry_picked = '{}{}'.format(match.group('primary'), match.group('secondary') or '')
+        unindent = True
+        lines = lines[1:]
+        while not lines[0].rstrip():
+            lines = lines[1:]
+        break
+
+    cherry_pick_metadata = '{}. {}'.format(cherry_picked or '???', bug or '<bug>')
+    if not is_trunk_bound:
         result += ['Cherry-pick {}'.format(cherry_pick_metadata), '']
-    for line in content.splitlines():
+
+    for line in lines:
         line = line.rstrip()
         if not line:
             result.append('')
             continue
+        if unindent and line.startswith(IDENT*' '):
+            line = line[IDENT:]
+
         if line[0] == '#' and not in_suffix:
             in_suffix = True
             if is_trunk_bound and production_hash:
@@ -255,7 +285,7 @@ def cherry_pick(content):
                     del result[-1]
                 result += ['', 'Originally-landed-as: {}'.format(cherry_pick_metadata)]
         if line[0] != '#' and not is_trunk_bound and production_hash:
-            result.append(4*' ' + line)
+            result.append(IDENT*' ' + line)
         else:
             result.append(line)
     return '\n'.join(result)

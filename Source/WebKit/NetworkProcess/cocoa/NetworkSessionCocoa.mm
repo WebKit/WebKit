@@ -117,7 +117,7 @@ constexpr unsigned maxNumberOfIsolatedSessions { 10 };
 static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
 {
     switch (disposition) {
-    case WebCore::PolicyAction::StopAllLoads:
+    case WebCore::PolicyAction::LoadWillContinueInAnotherProcess:
         ASSERT_NOT_REACHED();
 #if !ASSERT_ENABLED
         FALLTHROUGH;

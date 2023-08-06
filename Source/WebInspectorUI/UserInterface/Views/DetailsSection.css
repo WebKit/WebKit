@@ -246,7 +246,7 @@ body[dir=rtl] .details-section > .header::before {
     background-image: url(/Images/Warning.svg);
     background-color: var(--warning-background-color);
     background-repeat: no-repeat;
-    background-size: var(--warning-icon-size);
+    background-size: var(--warning-icon-size) var(--warning-icon-size);
     background-position-y: center;
     background-position-x: calc(var(--warning-badge-arrow-depth) + var(--warning-icon-inline-padding));
     clip-path: polygon(0% 50%, var(--warning-badge-arrow-depth) 0%, 100% 0%, 100% 100%, var(--warning-badge-arrow-depth) 100%);

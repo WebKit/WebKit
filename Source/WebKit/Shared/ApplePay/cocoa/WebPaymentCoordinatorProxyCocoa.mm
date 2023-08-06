@@ -216,6 +216,7 @@ PKShippingMethods *toPKShippingMethods(const Vector<WebCore::ApplePayShippingMet
 static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::ApplePayShippingContactEditingMode shippingContactEditingMode)
 {
     switch (shippingContactEditingMode) {
+    case WebCore::ApplePayShippingContactEditingMode::Available:
     case WebCore::ApplePayShippingContactEditingMode::Enabled:
 #if USE(PKSHIPPINGCONTACTEDITINGMODEENABLED)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

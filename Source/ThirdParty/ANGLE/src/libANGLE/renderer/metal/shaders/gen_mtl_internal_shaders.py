@@ -181,6 +181,7 @@ def generate_combined_metal_src(metal_src_files):
 
     combined_source = subprocess.check_output(args)
     os.remove(temp_fname)
+    os.remove(autogen_header_file)
 
     # Remove '@@' tokens
     final_combined_src_string = combined_source.replace('@@'.encode('utf-8'), ''.encode('utf-8'))

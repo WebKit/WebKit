@@ -417,6 +417,7 @@ public:
     bool isInDescriptionListTerm() const;
 
     bool hasContainedByFieldsetTrait();
+    bool hasTextEntryTrait();
     RefPtr<AccessibilityUIElement> fieldsetAncestorElement();
 
     bool isIsolatedObject() const;

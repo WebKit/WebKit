@@ -132,6 +132,8 @@ MediaRecorderPrivateWriter::MediaRecorderPrivateWriter(bool hasAudio, bool hasVi
 MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
 {
     ASSERT(isMainThread());
+    ASSERT(!m_audioCompressor);
+    ASSERT(!m_videoCompressor);
 
     m_pendingAudioSampleQueue.clear();
     m_pendingVideoFrameQueue.clear();
@@ -145,6 +147,12 @@ MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
 
     if (auto completionHandler = WTFMove(m_fetchDataCompletionHandler))
         completionHandler(nullptr, 0);
+}
+
+void MediaRecorderPrivateWriter::close()
+{
+    m_audioCompressor = nullptr;
+    m_videoCompressor = nullptr;
 }
 
 bool MediaRecorderPrivateWriter::initialize(const MediaRecorderPrivateOptions& options)

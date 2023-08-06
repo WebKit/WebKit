@@ -148,6 +148,9 @@ imported/w3c/web-platform-tests/file-system-access/ [ Pass ]
 imported/w3c/web-platform-tests/fs/ [ Pass ]
 storage/filesystemaccess/ [ Pass ]
 
+requestidlecallback [ Pass ]
+imported/w3c/web-platform-tests/requestidlecallback [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -933,7 +936,7 @@ http/wpt/cache-storage/cache-remove-twice.html [ Slow ]
 http/wpt/cache-storage/cache-open-delete-in-parallel.https.html [ Slow ]
 http/wpt/cache-storage/cache-quota-add.any.html [ Slow ]
 http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
-http/wpt/cache-storage/cache-quota-after-restart.any.html [ Slow ]
+webkit.org/b/259677 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Slow Pass Failure ]
 
 webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
 
@@ -1824,4 +1827,12 @@ webkit.org/b/259464 [ Monterey+ ] fast/events/wheel/redispatched-wheel-event.htm
 webkit.org/b/259497 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp9 [ Failure ]
 webkit.org/b/259496 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.worker.html?vp9 [ Failure ]
 
-webkit.org/b/238033 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html [ Pass Failure ]
+webkit.org/b/259183 fast/attachment/mac/wide-attachment-image-controls-basic.html [ Pass Failure ]
+
+webkit.org/b/259699 media/media-source/media-source-duplicate-seeked.html [ Pass Failure ]
+
+webkit.org/b/259708 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash Failure Timeout ]
+
+webkit.org/b/259712 media/media-source/media-source-paint-after-display-none.html [ Pass Crash Failure Timeout ]
+
+webkit.org/b/259740 [ Ventura Release arm64 ] css3/color-filters/color-filter-outline.html [ Pass ImageOnlyFailure ]

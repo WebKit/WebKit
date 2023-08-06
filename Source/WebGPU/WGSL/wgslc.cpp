@@ -107,13 +107,18 @@ static int runWGSL(const CommandLine& options)
 
 
     String fileName = String::fromLatin1(options.file());
-    auto readResult = FileSystem::readEntireFile(fileName);
-    if (!readResult.has_value()) {
+    auto handle = FileSystem::openFile(fileName, FileSystem::FileOpenMode::Read);
+    if (!FileSystem::isHandleValid(handle)) {
+        FileSystem::closeFile(handle);
         dataLogLn("Failed to open ", fileName);
         return EXIT_FAILURE;
     }
 
-    auto source = String::fromUTF8WithLatin1Fallback(readResult->data(), readResult->size());
+    auto readResult = FileSystem::readEntireFile(handle);
+    FileSystem::closeFile(handle);
+    auto source = emptyString();
+    if (readResult.has_value())
+        source = String::fromUTF8WithLatin1Fallback(readResult->data(), readResult->size());
     auto checkResult = WGSL::staticCheck(source, std::nullopt, configuration);
     if (auto* failedCheck = std::get_if<WGSL::FailedCheck>(&checkResult)) {
         for (const auto& error : failedCheck->errors)

@@ -123,6 +123,16 @@ macro dispatchAfterTailCall(size, opcodeStruct, valueProfileName, dstVirtualRegi
     dispatch()
 end
 
+macro dispatchAfterRegularCallIgnoreResult(size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch)
+    loadPC()
+    if C_LOOP or C_LOOP_WIN
+        # On non C_LOOP builds, CSR restore takes care of this.
+        loadp CodeBlock[cfr], PB
+        loadp CodeBlock::m_instructionsRawPointer[PB], PB
+    end
+    dispatch()
+end
+
 macro cCall2(function)
     checkStackPointerAlignment(t4, 0xbad0c002)
     if C_LOOP or C_LOOP_WIN
@@ -2190,7 +2200,7 @@ macro llintJumpTrueOrFalseOp(opcodeName, opcodeStruct, miscConditionOp, truthyCe
 
     .maybeCell:
         btqnz t0, notCellMask, .slow
-        bbbeq JSCell::m_type[t0], constexpr JSType::LastMaybeFalsyCellPrimitive, .slow
+        bbbeq JSCell::m_type[t0], constexpr LastMaybeFalsyCellPrimitive, .slow
         btbnz JSCell::m_flags[t0], constexpr MasqueradesAsUndefined, .slow
         truthyCellConditionOp(dispatch)
 

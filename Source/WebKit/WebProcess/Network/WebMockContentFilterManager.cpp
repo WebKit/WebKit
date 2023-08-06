@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebMockContentFilterManager.h"
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
 
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"

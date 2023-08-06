@@ -9,26 +9,35 @@ description('This tests that when requestIdleCallback is enabled, requestIdleCal
 jsTestIsAsync = true;
 
 const iframe = document.createElement('iframe');
-const logs = [];
+const logsA = [];
+const logsB = [];
 
 iframe.onload = () => {
     requestIdleCallback(() => {
-        logs.push('1.A1');
-        iframe.contentWindow.cancelIdleCallback(b1);
+        logsA.push('A1');
+        cancelIdleCallback(b1);
     });
 
-    const b1 = iframe.contentWindow.requestIdleCallback(() => logs.push('2.B1'));
+    const b1 = iframe.contentWindow.requestIdleCallback(() => {
+        logsB.push('B1');
+        iframe.contentWindow.cancelIdleCallback(a3);
+        iframe.contentWindow.cancelIdleCallback(b2);
+    });
+    const b2 = iframe.contentWindow.requestIdleCallback(() => logsB.push('B2'));
 
-    window.a2 = requestIdleCallback(() => logs.push('3.A2'));
+    window.a2 = requestIdleCallback(() => logsA.push('A2'));
     cancelIdleCallback(a2 + 1);
-    window.a3 = requestIdleCallback(() => logs.push('4.A3'));
+    window.a3 = requestIdleCallback(() => logsA.push('A3'));
     shouldBe('a3', 'a2 + 1');
+    cancelIdleCallback(a2);
 }
 document.body.appendChild(iframe);
 
 setTimeout(() => {
-    shouldBe('logs.length', '3');
-    shouldBeEqualToString('logs.join(", ")', '1.A1, 3.A2, 4.A3');
+    shouldBe('logsA.length', '2');
+    shouldBe('logsB.length', '1');
+    shouldBeEqualToString('logsA.join(", ")', 'A1, A3');
+    shouldBeEqualToString('logsB.join(", ")', 'B1');
     finishJSTest();
 }, 200);
 

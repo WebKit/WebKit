@@ -286,19 +286,16 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoFrame(VideoFrame& vide
             Locker locker { m_currentVideoFrameLock };
             m_currentVideoFrame = &videoFrame;
         }
-        callOnMainThread([weakThis = WeakPtr { *this }, metadata, presentationTime]() mutable {
-            if (!weakThis)
-                return;
-
+        scheduleDeferredTask([this, metadata, presentationTime]() mutable {
             RefPtr<VideoFrame> videoFrame;
             {
-                Locker locker { weakThis->m_currentVideoFrameLock };
-                videoFrame = WTFMove(weakThis->m_currentVideoFrame);
+                Locker locker { m_currentVideoFrameLock };
+                videoFrame = WTFMove(m_currentVideoFrame);
             }
             if (!videoFrame)
                 return;
 
-            weakThis->processNewVideoFrame(*videoFrame, metadata, presentationTime);
+            processNewVideoFrame(*videoFrame, metadata, presentationTime);
         });
         return;
     }
@@ -1141,7 +1138,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask(Function<void ()
     callOnMainThread([weakThis = WeakPtr { *this }, function = WTFMove(function)] {
         if (!weakThis)
             return;
-
+        auto protectedMediaPlayer = RefPtr { weakThis->m_player.get() };
         function();
     });
 }

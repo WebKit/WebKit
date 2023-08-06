@@ -807,16 +807,14 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms, bool* wasFixed
     }
 
     FloatPoint absPos = localToAbsolute(FloatPoint(), { } /* ignore transforms */, wasFixed);
-    Vector<IntRect> rects;
-    absoluteRects(rects, flooredLayoutPoint(absPos));
+    Vector<LayoutRect> rects;
+    boundingRects(rects, flooredLayoutPoint(absPos));
 
     size_t n = rects.size();
     if (!n)
         return IntRect();
 
-    LayoutRect result = rects[0];
-    for (size_t i = 1; i < n; ++i)
-        result.unite(rects[i]);
+    LayoutRect result = unionRect(rects);
     return snappedIntRect(result);
 }
 
@@ -2230,17 +2228,23 @@ Vector<IntRect> RenderObject::absoluteTextRects(const SimpleRange& range, Option
 {
     ASSERT(!behavior.contains(BoundingRectBehavior::UseVisibleBounds));
     ASSERT(!behavior.contains(BoundingRectBehavior::IgnoreTinyRects));
-    Vector<IntRect> rects;
+    Vector<LayoutRect> rects;
     for (auto& node : intersectingNodes(range)) {
         auto renderer = node.renderer();
         if (renderer && renderer->isBR())
-            downcast<RenderLineBreak>(*renderer).absoluteRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
+            downcast<RenderLineBreak>(*renderer).boundingRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
         else if (is<Text>(node)) {
             for (auto& rect : absoluteRectsForRangeInText(range, downcast<Text>(node), behavior))
-                rects.append(enclosingIntRect(rect));
+                rects.append(LayoutRect { rect });
         }
     }
-    return rects;
+
+    Vector<IntRect> result;
+    result.reserveInitialCapacity(rects.size());
+    for (auto& layoutRect : rects)
+        result.uncheckedAppend(enclosingIntRect(layoutRect));
+
+    return result;
 }
 
 static RefPtr<Node> nodeBefore(const BoundaryPoint& point)

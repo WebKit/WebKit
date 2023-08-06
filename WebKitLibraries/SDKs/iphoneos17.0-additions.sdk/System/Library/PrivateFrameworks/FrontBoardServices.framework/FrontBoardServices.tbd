@@ -1,0 +1,27 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices
+current-version: 0
+reexported-libraries:
+-       targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+        libraries: [/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard, /System/Library/PrivateFrameworks/BoardServices.framework/BoardServices]
+exports:
+-       targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+        symbols: [_FBSActivateForEventOptionTypeBackgroundContentFetching, _FBSOpenApplicationOptionKeyActivateForEvent, _FBSOpenApplicationOptionKeyPayloadOptions,
+                _FBSOpenApplicationOptionKeyPayloadURL]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard
+current-version: 0
+exports: []
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/BoardServices.framework/BoardServices
+current-version: 0
+exports: []
+...

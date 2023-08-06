@@ -48,12 +48,14 @@ namespace JSC {
 
 #define JSC_JS_GATE_OPCODES(v) \
     v(op_call, JSEntryPtrTag) \
+    v(op_call_ignore_result, JSEntryPtrTag) \
     v(op_construct, JSEntryPtrTag) \
     v(op_iterator_next, JSEntryPtrTag) \
     v(op_iterator_open, JSEntryPtrTag) \
     v(op_call_varargs, JSEntryPtrTag) \
     v(op_construct_varargs, JSEntryPtrTag) \
     v(op_call_slow, JSEntryPtrTag) \
+    v(op_call_ignore_result_slow, JSEntryPtrTag) \
     v(op_tail_call_slow, JSEntryPtrTag) \
     v(op_construct_slow, JSEntryPtrTag) \
     v(op_iterator_next_slow, JSEntryPtrTag) \

@@ -1640,6 +1640,11 @@ static JSValueRef hasContainedByFieldsetTraitCallback(JSContextRef context, JSOb
     return JSValueMakeBoolean(context, toAXElement(thisObject)->hasContainedByFieldsetTrait());
 }
 
+static JSValueRef hasTextEntryTraitCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->hasTextEntryTrait());
+}
+
 static JSValueRef textMarkerRangeMatchesTextNearMarkersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     JSStringRef searchText = nullptr;
@@ -2051,6 +2056,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "elementTextLength", getElementTextLengthCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stringForSelection", stringForSelectionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "hasContainedByFieldsetTrait", hasContainedByFieldsetTraitCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "hasTextEntryTrait", hasTextEntryTraitCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isSearchField", getIsSearchFieldCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isTextArea", getIsTextAreaCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isInsertion", getIsInsertionCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

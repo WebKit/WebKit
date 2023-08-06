@@ -79,7 +79,6 @@ ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_
     Message('LegacySessionState', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('SetStreamDestinationID', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('ProcessOutOfStreamMessage', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
-    Message('Terminate', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
 ], condition=None)
 
 

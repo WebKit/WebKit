@@ -291,6 +291,11 @@ OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(con
     return types;
 }
 
+static bool isOverflowClipOrVisible(Overflow overflow)
+{
+    return overflow == Overflow::Clip || overflow == Overflow::Visible;
+}
+
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
 {
     if (style.display() == DisplayType::Contents)
@@ -468,41 +473,48 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     else
         style.setTextDecorationsInEffect(style.textDecorationLine());
 
-    auto overflowReplacement = [] (Overflow overflow, Overflow overflowInOtherDimension) -> std::optional<Overflow> {
-        if (overflow != Overflow::Visible && overflow != Overflow::Clip) {
-            if (overflowInOtherDimension == Overflow::Visible)
-                return Overflow::Auto;
-            if (overflowInOtherDimension == Overflow::Clip)
-                return Overflow::Hidden;
-        }
-        return std::nullopt;
-    };
+    bool overflowIsClipOrVisible = isOverflowClipOrVisible(style.overflowX()) && isOverflowClipOrVisible(style.overflowX());
 
-    // If either overflow value is not visible, change to auto. Similarly if either overflow
-    // value is not clip, change to hidden.
-    // FIXME: Once we implement pagination controls, overflow-x should default to hidden
-    // if overflow-y is set to -webkit-paged-x or -webkit-page-y. For now, we'll let it
-    // default to auto so we can at least scroll through the pages.
-    if (auto replacement = overflowReplacement(style.overflowY(), style.overflowX()))
-        style.setOverflowX(*replacement);
-    else if (auto replacement = overflowReplacement(style.overflowX(), style.overflowY()))
-        style.setOverflowY(*replacement);
+    if (!overflowIsClipOrVisible && (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable)) {
+        // Tables only support overflow:hidden and overflow:visible and ignore anything else,
+        // see https://drafts.csswg.org/css2/#overflow. As a table is not a block
+        // container box the rules for resolving conflicting x and y values in CSS Overflow Module
+        // Level 3 do not apply. Arguably overflow-x and overflow-y aren't allowed on tables but
+        // all UAs allow it.
+        if (style.overflowX() != Overflow::Hidden)
+            style.setOverflowX(Overflow::Visible);
+        if (style.overflowY() != Overflow::Hidden)
+            style.setOverflowY(Overflow::Visible);
+        // If we are left with conflicting overflow values for the x and y axes on a table then resolve
+        // both to Overflow::Visible. This is interoperable behaviour but is not specced anywhere.
+        if (style.overflowX() == Overflow::Visible)
+            style.setOverflowY(Overflow::Visible);
+        else if (style.overflowY() == Overflow::Visible)
+            style.setOverflowX(Overflow::Visible);
+    } else if (!isOverflowClipOrVisible(style.overflowY())) {
+        // FIXME: Once we implement pagination controls, overflow-x should default to hidden
+        // if overflow-y is set to -webkit-paged-x or -webkit-page-y. For now, we'll let it
+        // default to auto so we can at least scroll through the pages.
+        // Values of 'clip' and 'visible' can only be used with 'clip' and 'visible'.
+        // If they aren't, 'clip' and 'visible' is reset.
+        if (style.overflowX() == Overflow::Visible)
+            style.setOverflowX(Overflow::Auto);
+        else if (style.overflowX() == Overflow::Clip)
+            style.setOverflowX(Overflow::Hidden);
+    } else if (!isOverflowClipOrVisible(style.overflowX())) {
+        // Values of 'clip' and 'visible' can only be used with 'clip' and 'visible'.
+        // If they aren't, 'clip' and 'visible' is reset.
+        if (style.overflowY() == Overflow::Visible)
+            style.setOverflowY(Overflow::Auto);
+        else if (style.overflowY() == Overflow::Clip)
+            style.setOverflowY(Overflow::Hidden);
+    }
 
     // Call setStylesForPaginationMode() if a pagination mode is set for any non-root elements. If these
     // styles are specified on a root element, then they will be incorporated in
     // Style::createForm_document.
     if ((style.overflowY() == Overflow::PagedX || style.overflowY() == Overflow::PagedY) && !(m_element && (m_element->hasTagName(htmlTag) || m_element->hasTagName(bodyTag))))
         style.setColumnStylesFromPaginationMode(WebCore::paginationModeForRenderStyle(style));
-
-    // Table rows, sections and the table itself will support overflow:hidden and will ignore scroll/auto.
-    // FIXME: Eventually table sections will support auto and scroll.
-    if (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable
-        || style.display() == DisplayType::TableRowGroup || style.display() == DisplayType::TableRow) {
-        if (style.overflowX() != Overflow::Visible && style.overflowX() != Overflow::Hidden && style.overflowX() != Overflow::Clip)
-            style.setOverflowX(Overflow::Visible);
-        if (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden && style.overflowY() != Overflow::Clip)
-            style.setOverflowY(Overflow::Visible);
-    }
 
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     // Touch overflow scrolling creates a stacking context.

@@ -1,5 +1,5 @@
 
-FAIL
+PASS
     Element#requestFullscreen() for non-top element in fullscreen element stack
- promise_test: Unhandled rejection with value: object "TypeError: Type error"
+
 

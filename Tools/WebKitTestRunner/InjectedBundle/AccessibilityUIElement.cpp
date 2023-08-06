@@ -84,6 +84,7 @@ bool AccessibilityUIElement::scrollPageDown() { return false; }
 bool AccessibilityUIElement::scrollPageLeft() { return false; }
 bool AccessibilityUIElement::scrollPageRight() { return false; }
 bool AccessibilityUIElement::hasContainedByFieldsetTrait() { return false; }
+bool AccessibilityUIElement::hasTextEntryTrait() { return false; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::fieldsetAncestorElement() { return nullptr; }
 bool AccessibilityUIElement::isSearchField() const { return false; }
 bool AccessibilityUIElement::isTextArea() const { return false; }

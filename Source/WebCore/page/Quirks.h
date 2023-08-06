@@ -143,7 +143,6 @@ public:
 #if ENABLE(TRACKING_PREVENTION)
     static bool isMicrosoftTeamsRedirectURL(const URL&);
     static bool hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>&, const RegistrableDomain&);
-    static const String& BBCRadioPlayerURLString();
     WEBCORE_EXPORT static const String& staticRadioPlayerURLString();
     StorageAccessResult requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&&) const;
 #endif

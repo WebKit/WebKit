@@ -587,7 +587,7 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
 
     // Draw white frames around the holes.
     // We double the thickness because half of the stroke will be erased when we clear the holes.
-    graphicsContext.setDropShadow({ FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, shadowColor, ShadowRadiusMode::Default });
+    graphicsContext.setDropShadow({ { shadowOffsetX, shadowOffsetY }, shadowBlurRadius, shadowColor, ShadowRadiusMode::Default });
     graphicsContext.setStrokeColor(Color::white);
     graphicsContext.setStrokeThickness(borderWidth * 2);
     for (auto& path : whiteFramePaths)
