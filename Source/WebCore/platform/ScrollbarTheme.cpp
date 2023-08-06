@@ -28,6 +28,7 @@
 
 #include "DeprecatedGlobalSettings.h"
 #include "PlatformMouseEvent.h"
+#include "ScrollableArea.h"
 #include "ScrollbarThemeMock.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -40,6 +41,17 @@ ScrollbarTheme& ScrollbarTheme::theme()
         return mockTheme;
     }
     return nativeTheme();
+}
+
+void ScrollbarTheme::paintScrollCorner(ScrollableArea& area, GraphicsContext& context, const IntRect& cornerRect)
+{
+    Color color = Color::white;
+
+    auto scrollbarTrackColorStyle = area.scrollbarTrackColorStyle();
+
+    if (scrollbarTrackColorStyle.isValid())
+        color = scrollbarTrackColorStyle;
+    context.fillRect(cornerRect, color);
 }
 
 ScrollbarButtonPressAction ScrollbarTheme::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)

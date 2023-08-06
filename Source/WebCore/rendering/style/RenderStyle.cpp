@@ -1224,6 +1224,7 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
 #if ENABLE(DARK_MODE_CSS)
         || first.colorScheme != second.colorScheme
 #endif
+        || first.scrollbarColor != second.scrollbarColor
     ;
 }
 
@@ -2466,6 +2467,28 @@ Color RenderStyle::effectiveAccentColor() const
         return colorByApplyingColorFilter(colorResolvingCurrentColor(accentColor()));
 
     return colorResolvingCurrentColor(accentColor());
+}
+
+Color RenderStyle::effectiveScrollbarThumbColor() const
+{
+    if (!scrollbarColor().has_value())
+        return { };
+
+    if (hasAppleColorFilter())
+        return colorByApplyingColorFilter(colorResolvingCurrentColor(scrollbarColor().value().thumbColor));
+
+    return colorResolvingCurrentColor(scrollbarColor().value().thumbColor);
+}
+
+Color RenderStyle::effectiveScrollbarTrackColor() const
+{
+    if (!scrollbarColor().has_value())
+        return { };
+
+    if (hasAppleColorFilter())
+        return colorByApplyingColorFilter(colorResolvingCurrentColor(scrollbarColor().value().trackColor));
+
+    return colorResolvingCurrentColor(scrollbarColor().value().trackColor);
 }
 
 const BorderValue& RenderStyle::borderBefore() const

@@ -6311,6 +6311,24 @@ OverscrollBehavior LocalFrameView::verticalOverscrollBehavior()  const
     return OverscrollBehavior::Auto;
 }
 
+Color LocalFrameView::scrollbarThumbColorStyle() const
+{
+    auto* document = m_frame->document();
+    auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    if (scrollingObject)
+        return scrollingObject->style().effectiveScrollbarThumbColor();
+    return { };
+}
+
+Color LocalFrameView::scrollbarTrackColorStyle() const
+{
+    auto* document = m_frame->document();
+    auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    if (scrollingObject)
+        return scrollingObject->style().effectiveScrollbarTrackColor();
+    return { };
+}
+
 ScrollbarGutter LocalFrameView::scrollbarGutterStyle()  const
 {
     auto* document = m_frame->document();

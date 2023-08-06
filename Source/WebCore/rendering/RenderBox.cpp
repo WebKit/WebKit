@@ -372,6 +372,11 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     }
 #endif
 
+    if (layer() && oldStyle && oldStyle->scrollbarColor() != newStyle.scrollbarColor()) {
+        if (auto* scrollableArea = layer()->scrollableArea())
+            scrollableArea->invalidateScrollbars();
+    }
+
     // Our opaqueness might have changed without triggering layout.
     if (diff >= StyleDifference::Repaint && diff <= StyleDifference::RepaintLayer) {
         auto parentToInvalidate = parent();

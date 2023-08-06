@@ -28,6 +28,7 @@
 
 // FIXME: This is a layering violation.
 #include "DeprecatedGlobalSettings.h"
+#include "ScrollableArea.h"
 #include "Scrollbar.h"
 
 namespace WebCore {
@@ -53,13 +54,28 @@ int ScrollbarThemeMock::scrollbarThickness(ScrollbarWidth scrollbarWidth, Scroll
 
 void ScrollbarThemeMock::paintTrackBackground(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& trackRect)
 {
-    context.fillRect(trackRect, scrollbar.enabled() ? Color::lightGray : SRGBA<uint8_t> { 224, 224, 224 });
+    Color trackColor = scrollbar.enabled() ? Color::lightGray : SRGBA<uint8_t> { 224, 224, 224 };
+
+    auto scrollbarTrackColorStyle = scrollbar.scrollableArea().scrollbarTrackColorStyle();
+
+    if (scrollbarTrackColorStyle.isValid())
+        trackColor = scrollbarTrackColorStyle;
+
+    context.fillRect(trackRect, trackColor);
 }
 
 void ScrollbarThemeMock::paintThumb(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& thumbRect)
 {
-    if (scrollbar.enabled())
-        context.fillRect(thumbRect, Color::darkGray);
+    if (scrollbar.enabled()) {
+        Color thumbColor = Color::darkGray;
+
+        auto scrollbarThumbColorStyle = scrollbar.scrollableArea().scrollbarThumbColorStyle();
+
+        if (scrollbarThumbColorStyle.isValid())
+            thumbColor = scrollbarThumbColorStyle;
+
+        context.fillRect(thumbRect, thumbColor);
+    }
 }
 
 bool ScrollbarThemeMock::usesOverlayScrollbars() const

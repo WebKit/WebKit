@@ -84,9 +84,7 @@ public:
 
     virtual void invalidatePart(Scrollbar&, ScrollbarPart) { }
 
-    virtual void paintScrollCorner(ScrollableArea& area, GraphicsContext& context, const IntRect& cornerRect) { defaultPaintScrollCorner(area, context, cornerRect); }
-    static void defaultPaintScrollCorner(ScrollableArea&, GraphicsContext& context, const IntRect& cornerRect) { context.fillRect(cornerRect, Color::white); }
-
+    virtual void paintScrollCorner(ScrollableArea&, GraphicsContext&, const IntRect&);
     virtual void paintTickmarks(GraphicsContext&, Scrollbar&, const IntRect&) { }
     virtual void paintOverhangAreas(ScrollView&, GraphicsContext&, const IntRect&, const IntRect&, const IntRect&) { }
 
