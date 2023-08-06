@@ -148,6 +148,9 @@ imported/w3c/web-platform-tests/file-system-access/ [ Pass ]
 imported/w3c/web-platform-tests/fs/ [ Pass ]
 storage/filesystemaccess/ [ Pass ]
 
+requestidlecallback [ Pass ]
+imported/w3c/web-platform-tests/requestidlecallback [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

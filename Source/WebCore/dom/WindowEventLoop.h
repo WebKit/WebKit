@@ -53,6 +53,11 @@ public:
 
     CustomElementQueue& backupElementQueue();
 
+    void didScheduleRenderingUpdate() { m_hasARenderingOpportunity = true; }
+    void didFinishRenderingUpdate() { m_hasARenderingOpportunity = false; }
+    void opportunisticallyRunIdleCallbacks();
+    bool shouldEndIdlePeriod();
+
     WEBCORE_EXPORT static void breakToAllowRenderingUpdate();
 
 private:
@@ -82,6 +87,8 @@ private:
 
     std::unique_ptr<CustomElementQueue> m_customElementQueue;
     bool m_processingBackupElementQueue { false };
+
+    bool m_hasARenderingOpportunity { false };
 };
 
 } // namespace WebCore
