@@ -224,7 +224,7 @@ void LocalFrameViewLayoutContext::performLayout()
 
 #if !LOG_DISABLED
     if (m_firstLayout && !frame().ownerElement())
-        LOG(Layout, "LocalFrameView %p elapsed time before first layout: %.3fs", this, document()->timeSinceDocumentCreation().value());
+        LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " elapsed time before first layout: " << document()->timeSinceDocumentCreation());
 #endif
 #if PLATFORM(IOS_FAMILY)
     if (view().updateFixedPositionLayoutRect() && subtreeLayoutRoot())
@@ -250,6 +250,9 @@ void LocalFrameViewLayoutContext::performLayout()
 
         layoutRoot = subtreeLayoutRoot() ? subtreeLayoutRoot() : renderView();
         m_needsFullRepaint = is<RenderView>(layoutRoot) && (m_firstLayout || renderView()->printing());
+
+        LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " layout " << m_layoutCount << " - subtree root " << subtreeLayoutRoot() << ", needsFullRepaint " << m_needsFullRepaint);
+
         view().willDoLayout(layoutRoot);
         m_firstLayout = false;
     }
@@ -269,6 +272,14 @@ void LocalFrameViewLayoutContext::performLayout()
         applyTextSizingIfNeeded(*layoutRoot.get());
 #endif
         clearSubtreeLayoutRoot();
+
+#if !LOG_DISABLED
+        auto layoutLogEnabled = [] {
+            return LogLayout.state == WTFLogChannelState::On;
+        };
+        if (layoutLogEnabled())
+            showRenderTree(renderView());
+#endif
     }
     {
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InViewSizeAdjust);
