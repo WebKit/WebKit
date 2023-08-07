@@ -128,9 +128,6 @@
         "subtests": {
             "/webkit/WebKitWebsiteData/cache": {
                 "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/254002"}}
-            },
-            "/webkit/WebKitWebsiteData/handle-corrupted-local-storage": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
             }
         }
     },
@@ -273,9 +270,6 @@
             },
             "WTF_Condition.OneProducerTenConsumersHundredSlotsNotifyOne": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246472" }}
-            },
-            "WTF_DateMath.calculateLocalTimeOffset": {
-                "expected": {"wpe": {"status": ["FAIL", "PASS"]}}
             },
             "WTF_Lock.ContendedShortSection": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}

@@ -449,6 +449,7 @@ streams/readable-stream-byob-request.html [ Skip ]
 streams/readable-stream-byob-request-worker.html [ Skip ]
 
 # image diffs off by 0.0x%
+# Some tests need disabling Ahem font antialiasing <https://webkit.org/b/204197>
 css2.1/20110323/border-conflict-element-021a.htm [ ImageOnlyFailure ]
 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 css2.1/20110323/c541-word-sp-001.htm [ ImageOnlyFailure ]
@@ -509,10 +510,9 @@ fast/css/absolute-child-with-percent-height-inside-relative-parent.html [ Failur
 fast/css/background-image-with-baseurl.html [ Failure ]
 fast/css/draggable-region-parser.html [ Failure ]
 fast/css/empty-generated-content.html [ Failure ]
-fast/css/first-letter-block-form-controls-crash.html [ Pass Failure ]
 fast/css/font-face-default-font.html [ Failure ]
 fast/css/font-face-in-media-rule.html [ Failure ]
-fast/css/font-face-locally-installed.html [ Pass Failure ]
+fast/css/font-face-locally-installed.html [ Failure ]
 fast/css/font-face-multiple-ranges-for-unicode-range.html [ Failure ]
 fast/css/font-face-woff.html [ Failure ]
 fast/css/font-size-negative.html [ Failure ]
@@ -525,26 +525,12 @@ fast/css/line-height-negative.html [ Failure ]
 fast/css/max-height-none.html [ Failure ]
 fast/css/min-width-with-spanned-cell-fixed.html [ Failure ]
 fast/css/outline-auto-empty-rects.html [ Failure ]
-fast/css/relative-position-replaced-in-table-display-crash.html [ Pass Failure ]
 fast/css/vertical-align-lengths.html [ Failure ]
 fast/css/visibility-hit-test.html [ Failure ]
 
-fast/doctypes/xhtml-with-xhtmlmp-doctype.xhtml [ Pass Failure ]
-fast/doctypes/xhtml-with-xhtmlmp12-doctype.xhtml [ Pass Failure ]
-
-fast/dom/boolean-attribute-reflection.html [ Pass Failure ]
-fast/dom/reflect-unsigned-long.html [ Pass Failure ]
-fast/dom/javascript-url-crash-function.html [ Pass Failure ]
-fast/dom/URL-attribute-reflection.html [ Pass Failure ]
 fast/dom/HTMLLinkElement/preconnect-support.html [ Failure ]
-fast/dom/Range/surround-contents-font-face-crash.svg [ Pass Failure ]
-fast/dom/Window/messageevent-source-postmessage-reified.html [ Pass Failure ]
-fast/dom/Window/messageevent-source-postmessage.html [ Pass Failure ]
-fast/dom/Window/mozilla-focus-blur.html [ Pass Failure ]
-fast/dom/Window/named-getter-frame-id.html [ Pass Failure ]
-fast/dom/Window/window-special-properties.html [ Pass Failure ]
 
-[ Debug ] fast/html/marquee-reparent-check.html [ Pass Failure ]
+fast/dom/Window/mozilla-focus-blur.html [ Pass Failure ]
 
 # The CookieStore API is not fully implemented on WinCario yet.
 imported/w3c/web-platform-tests/cookie-store [ Skip ]
@@ -555,10 +541,9 @@ imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 # LayoutTest/fast/loader tests that fail or time out.
-fast/loader/local-CSS-from-local.html [ Failure Timeout ]
-fast/loader/local-JavaScript-from-local.html [ Failure Timeout ]
-fast/loader/local-image-from-local.html [ Failure Timeout ]
-fast/loader/local-iFrame-source-from-local.html [ Failure Timeout Pass ]
+fast/loader/local-CSS-from-local.html [ Failure ]
+fast/loader/local-JavaScript-from-local.html [ Failure ]
+fast/loader/local-image-from-local.html [ Failure ]
 
 # These are expected mismatches, so they should fail, and the bug is they sometimes pass.
 fast/text/control-characters/visible-control-characters-1.html [ ImageOnlyFailure Pass ]
@@ -1755,6 +1740,7 @@ fast/preloader [ Skip ]
 fast/repaint [ Skip ]
 fast/replaced [ Skip ]
 fast/ruby [ Skip ]
+fast/screen-orientation [ Skip ]
 fast/scrolling [ Skip ]
 fast/selectors [ Skip ]
 fast/shadow-dom [ Skip ]

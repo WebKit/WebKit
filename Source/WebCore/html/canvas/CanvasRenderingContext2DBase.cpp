@@ -59,6 +59,7 @@
 #include "ImageData.h"
 #include "OffscreenCanvas.h"
 #include "Path2D.h"
+#include "PixelBufferConversion.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
@@ -269,7 +270,8 @@ void CanvasRenderingContext2DBase::reset()
     m_stateStack.first() = State();
     m_path.clear();
     m_unrealizedSaveCount = 0;
-    
+    m_cachedImageData = std::nullopt;
+
     m_recordingContext = nullptr;
 }
 
@@ -2174,6 +2176,9 @@ void CanvasRenderingContext2DBase::didDrawEntireCanvas()
 
 void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, OptionSet<DidDrawOption> options)
 {
+    if (!options.contains(DidDrawOption::PreserveCachedImageData))
+        m_cachedImageData = std::nullopt;
+
     if (!drawingContext())
         return;
 
@@ -2270,6 +2275,7 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
     return canvasBase().drawingContext();
 }
 
+
 void CanvasRenderingContext2DBase::prepareForDisplay()
 {
     if (auto buffer = canvasBase().buffer())
@@ -2309,6 +2315,93 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw
     return imageData;
 }
 
+static void roundTripThroughPremultipliedRepresentationForQuantization(unsigned bytesPerRow, uint8_t* data, const IntSize& size)
+{
+    ConstPixelBufferConversionView source {
+        .format = {
+            .alphaFormat = AlphaPremultiplication::Unpremultiplied,
+            .pixelFormat = PixelFormat::RGBA8,
+            .colorSpace = DestinationColorSpace::SRGB(),
+        },
+        .bytesPerRow = bytesPerRow,
+        .rows = data,
+    };
+    PixelBufferConversionView destination {
+        .format = {
+            .alphaFormat = AlphaPremultiplication::Premultiplied,
+            .pixelFormat = PixelFormat::RGBA8,
+            .colorSpace = DestinationColorSpace::SRGB(),
+        },
+        .bytesPerRow = bytesPerRow,
+        .rows = data,
+    };
+    convertImagePixels(source, destination, size);
+
+    source.format.alphaFormat = AlphaPremultiplication::Premultiplied;
+    destination.format.alphaFormat = AlphaPremultiplication::Unpremultiplied;
+    convertImagePixels(source, destination, size);
+}
+
+void CanvasRenderingContext2DBase::evictCachedImageData()
+{
+    if (m_cachedImageData)
+        m_cachedImageData->imageData = nullptr;
+}
+
+CanvasRenderingContext2DBase::CachedImageData::CachedImageData(CanvasRenderingContext2DBase& context)
+    : evictionTimer(context, &CanvasRenderingContext2DBase::evictCachedImageData, 5_s)
+{
+}
+
+static constexpr unsigned minimumConsecutiveCachedImageDataRequestsBeforeCaching = 2;
+static constexpr unsigned imageDataSizeThresholdForCaching = 60 * 60;
+
+bool CanvasRenderingContext2DBase::cacheImageDataIfPossible(ImageData& data, const IntPoint& destinationPosition, const IntRect& sourceRect)
+{
+    if (!destinationPosition.isZero() || !sourceRect.location().isZero() || sourceRect.size() != data.size() || sourceRect.size() != canvasBase().size())
+        return false;
+
+    if (data.colorSpace() != m_settings.colorSpace)
+        return false;
+
+    if (data.size().area() > imageDataSizeThresholdForCaching)
+        return false;
+
+    if (m_cachedImageData) {
+        if (++m_cachedImageData->requestCount >= minimumConsecutiveCachedImageDataRequestsBeforeCaching) {
+            m_cachedImageData->imageData = data.clone();
+            m_cachedImageData->evictionTimer.restart();
+        }
+    } else
+        m_cachedImageData.emplace(*this);
+
+    return true;
+}
+
+RefPtr<ImageData> CanvasRenderingContext2DBase::takeCachedImageDataIfPossible(const IntRect& sourceRect, PredefinedColorSpace colorSpace) const
+{
+    if (!m_cachedImageData || !m_cachedImageData->imageData)
+        return nullptr;
+
+    if (sourceRect != IntRect { { }, canvasBase().size() })
+        return nullptr;
+
+    if (canvasBase().size() != m_cachedImageData->imageData->size())
+        return nullptr;
+
+    if (colorSpace != m_settings.colorSpace)
+        return nullptr;
+
+    ++m_cachedImageData->requestCount;
+
+    RefPtr result = m_cachedImageData->imageData.releaseNonNull();
+
+    if (result)
+        roundTripThroughPremultipliedRepresentationForQuantization(static_cast<unsigned>(result->size().width() * 4), result->data().data(), result->size());
+
+    return result;
+}
+
 ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh, std::optional<ImageDataSettings> settings) const
 {
     if (!sw || !sh)
@@ -2331,6 +2424,13 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     IntRect imageDataRect { sx, sy, sw, sh };
 
+    auto computedColorSpace = ImageData::computeColorSpace(settings, m_settings.colorSpace);
+
+    if (auto imageData = takeCachedImageDataIfPossible({ sx, sy, sw, sh }, computedColorSpace))
+        return imageData.releaseNonNull();
+    if (m_cachedImageData)
+        m_cachedImageData->imageData = nullptr;
+
     canvasBase().makeRenderingResultsAvailable();
     ImageBuffer* buffer = canvasBase().buffer();
     if (!buffer) {
@@ -2339,8 +2439,6 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
             initializeEmptyImageData(imageData.returnValue());
         return imageData;
     }
-
-    auto computedColorSpace = ImageData::computeColorSpace(settings, m_settings.colorSpace);
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(computedColorSpace) };
     auto pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
@@ -2388,7 +2486,12 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
     if (!sourceRect.isEmpty())
         buffer->putPixelBuffer(data.pixelBuffer(), sourceRect, IntPoint { destOffset });
 
-    didDraw(FloatRect { destRect }, { }); // ignore transform, shadow, clip, and post-processing
+    OptionSet<DidDrawOption> options; // ignore transform, shadow, clip, and post-processing
+
+    if (cacheImageDataIfPossible(data, { dx, dy }, sourceRect))
+        options.add(DidDrawOption::PreserveCachedImageData);
+
+    didDraw(FloatRect { destRect }, options);
 }
 
 void CanvasRenderingContext2DBase::inflateStrokeRect(FloatRect& rect) const

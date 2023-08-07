@@ -1900,7 +1900,7 @@ ExceptionOr<int> LocalDOMWindow::setTimeout(std::unique_ptr<ScheduledAction> act
 
     action->addArguments(WTFMove(arguments));
 
-    return DOMTimer::install(*context, WTFMove(action), Seconds::fromMilliseconds(timeout), true);
+    return DOMTimer::install(*context, WTFMove(action), Seconds::fromMilliseconds(timeout), DOMTimer::Type::SingleShot);
 }
 
 void LocalDOMWindow::clearTimeout(int timeoutId)
@@ -1925,7 +1925,7 @@ ExceptionOr<int> LocalDOMWindow::setInterval(std::unique_ptr<ScheduledAction> ac
 
     action->addArguments(WTFMove(arguments));
 
-    return DOMTimer::install(*context, WTFMove(action), Seconds::fromMilliseconds(timeout), false);
+    return DOMTimer::install(*context, WTFMove(action), Seconds::fromMilliseconds(timeout), DOMTimer::Type::Repeating);
 }
 
 void LocalDOMWindow::clearInterval(int timeoutId)

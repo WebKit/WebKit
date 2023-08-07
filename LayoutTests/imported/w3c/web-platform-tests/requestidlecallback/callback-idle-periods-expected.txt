@@ -3,5 +3,7 @@ Test of requestIdleCallback idle period behavior
 This test validates that window.requestIdleCallback deals with callbacks during idle periods correctly.
 
 
-PASS Check that if an idle callback calls requestIdleCallback the new callback doesn't run in the current idle period.
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Check that if an idle callback calls requestIdleCallback the new callback doesn't run in the current idle period. Test timed out
 

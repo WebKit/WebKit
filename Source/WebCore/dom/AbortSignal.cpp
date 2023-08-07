@@ -72,7 +72,7 @@ Ref<AbortSignal> AbortSignal::timeout(ScriptExecutionContext& context, uint64_t 
         Locker locker { vm.apiLock() };
         signal->signalAbort(toJS(globalObject, globalObject, DOMException::create(TimeoutError)));
     };
-    DOMTimer::install(context, WTFMove(action), Seconds::fromMilliseconds(milliseconds), true);
+    DOMTimer::install(context, WTFMove(action), Seconds::fromMilliseconds(milliseconds), DOMTimer::Type::SingleShot);
     return signal;
 }
 

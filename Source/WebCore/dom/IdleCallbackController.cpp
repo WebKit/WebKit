@@ -29,7 +29,6 @@
 #include "Document.h"
 #include "FrameDestructionObserverInlines.h"
 #include "IdleDeadline.h"
-#include "Timer.h"
 #include "WindowEventLoop.h"
 
 namespace WebCore {
@@ -41,10 +40,17 @@ IdleCallbackController::IdleCallbackController(Document& document)
 }
 int IdleCallbackController::queueIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds)
 {
+    bool startIdlePeriod = m_idleRequestCallbacks.isEmpty() && m_runnableIdleCallbacks.isEmpty();
+
     ++m_idleCallbackIdentifier;
     auto handle = m_idleCallbackIdentifier;
 
     m_idleRequestCallbacks.append({ handle, WTFMove(callback) });
+
+    if (startIdlePeriod)
+        queueTaskToStartIdlePeriod();
+
+    // FIXME: Queue a task if timeout is positive.
 
     return handle;
 }
@@ -87,9 +93,7 @@ void IdleCallbackController::startIdlePeriod()
         m_runnableIdleCallbacks.append({ request.identifier, WTFMove(request.callback) });
     m_idleRequestCallbacks.clear();
 
-    if (m_runnableIdleCallbacks.isEmpty())
-        return;
-
+    ASSERT(!m_runnableIdleCallbacks.isEmpty());
     queueTaskToInvokeIdleCallbacks(deadline);
 
     m_lastDeadline = deadline;

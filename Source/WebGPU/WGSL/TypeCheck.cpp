@@ -129,8 +129,8 @@ private:
     void inferred(const Type*);
     bool unify(const Type*, const Type*) WARN_UNUSED_RETURN;
     bool isBottom(const Type*) const;
-    void introduceType(const String&, const Type*);
-    void introduceValue(const String&, const Type*);
+    void introduceType(const AST::Identifier&, const Type*);
+    void introduceValue(const AST::Identifier&, const Type*);
 
     template<typename CallArguments>
     const Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
@@ -148,12 +148,12 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     : m_shaderModule(shaderModule)
     , m_types(shaderModule.types())
 {
-    introduceType("bool"_s, m_types.boolType());
-    introduceType("i32"_s, m_types.i32Type());
-    introduceType("u32"_s, m_types.u32Type());
-    introduceType("f32"_s, m_types.f32Type());
-    introduceType("sampler"_s, m_types.samplerType());
-    introduceType("texture_external"_s, m_types.textureExternalType());
+    introduceType(AST::Identifier::make("bool"_s), m_types.boolType());
+    introduceType(AST::Identifier::make("i32"_s), m_types.i32Type());
+    introduceType(AST::Identifier::make("u32"_s), m_types.u32Type());
+    introduceType(AST::Identifier::make("f32"_s), m_types.f32Type());
+    introduceType(AST::Identifier::make("sampler"_s), m_types.samplerType());
+    introduceType(AST::Identifier::make("texture_external"_s), m_types.textureExternalType());
 
     // This file contains the declarations generated from `TypeDeclarations.rb`
 #include "TypeDeclarations.h" // NOLINT
@@ -1053,14 +1053,16 @@ bool TypeChecker::isBottom(const Type* type) const
     return type == m_types.bottomType();
 }
 
-void TypeChecker::introduceType(const String& name, const Type* type)
+void TypeChecker::introduceType(const AST::Identifier& name, const Type* type)
 {
-    introduceVariable(name, { Binding::Type, type });
+    if (!introduceVariable(name, { Binding::Type, type }))
+        typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
 }
 
-void TypeChecker::introduceValue(const String& name, const Type* type)
+void TypeChecker::introduceValue(const AST::Identifier& name, const Type* type)
 {
-    introduceVariable(name, { Binding::Value, type });
+    if (!introduceVariable(name, { Binding::Value, type }))
+        typeError(InferBottom::No, name.span(), "redeclaration of '", name, "'");
 }
 
 template<typename... Arguments>
