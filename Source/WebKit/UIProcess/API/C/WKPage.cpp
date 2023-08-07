@@ -533,6 +533,13 @@ void WKPageTerminate(WKPageRef pageRef)
     protectedProcessProxy->requestTermination(ProcessTerminationReason::RequestedByClient);
 }
 
+void WKPageResetProcessState(WKPageRef pageRef)
+{
+    CRASH_IF_SUSPENDED;
+    Ref<WebProcessProxy> protectedProcessProxy(toImpl(pageRef)->process());
+    protectedProcessProxy->resetState();
+}
+
 WKStringRef WKPageGetSessionHistoryURLValueType()
 {
     static auto& sessionHistoryURLValueType = API::String::create("SessionHistoryURL"_s).leakRef();
