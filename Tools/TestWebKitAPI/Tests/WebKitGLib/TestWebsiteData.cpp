@@ -941,7 +941,18 @@ static void testWebViewHandleCorruptedLocalStorage(WebsiteDataTest* test, gconst
     g_assert_cmpstr(fooValue.get(), ==, "");
 
     // Creating a second web view and loading a web page with the same url to read the item from localStorage.
+#if ENABLE(2022_GLIB_API)
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
+        "web-context", webkit_web_view_get_context(test->m_webView),
+        "network-session", test->m_networkSession.get(),
+        nullptr));
+    g_assert_true(webkit_web_view_get_network_session(webView.get()) == test->m_networkSession.get());
+#else
     auto webView = Test::adoptView(Test::createWebView(test->m_webContext.get()));
+#endif
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
     webkit_web_view_load_html(webView.get(), html, "http://example.com");
     test->waitUntilLoadFinished(webView.get());

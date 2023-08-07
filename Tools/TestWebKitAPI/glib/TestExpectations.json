@@ -128,9 +128,6 @@
         "subtests": {
             "/webkit/WebKitWebsiteData/cache": {
                 "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/254002"}}
-            },
-            "/webkit/WebKitWebsiteData/handle-corrupted-local-storage": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
             }
         }
     },
