@@ -471,9 +471,12 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         if (!origin.isNull())
             loadParameters.sourceOrigin = SecurityOrigin::createFromString(origin);
     }
-    if (isMainFrameNavigation)
-        loadParameters.topOrigin = SecurityOrigin::create(request.url());
-    else if (document)
+    if (isMainFrameNavigation) {
+        if (request.url().protocolIsBlob() && resourceLoader.documentLoader() && !resourceLoader.documentLoader()->triggeringAction().isEmpty() && resourceLoader.documentLoader()->triggeringAction().requester())
+            loadParameters.topOrigin = resourceLoader.documentLoader()->triggeringAction().requester()->topOrigin.ptr();
+        else
+            loadParameters.topOrigin = SecurityOrigin::create(request.url());
+    } else if (document)
         loadParameters.topOrigin = &document->topOrigin();
 
     if (document)

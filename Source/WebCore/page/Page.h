@@ -621,7 +621,7 @@ public:
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    void beginSystemPreview(const URL&, const SystemPreviewInfo&, CompletionHandler<void()>&&);
+    void beginSystemPreview(const URL&, const SecurityOriginData& topOrigin, const SystemPreviewInfo&, CompletionHandler<void()>&&);
 #endif
 
 #if ENABLE(WEB_AUTHN)

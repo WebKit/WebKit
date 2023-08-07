@@ -53,7 +53,7 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkLoadParameters&& para
     , m_currentRequest(m_parameters.request)
 {
     if (m_parameters.request.url().protocolIsBlob())
-        m_task = NetworkDataTaskBlob::create(networkSession, *this, m_parameters.request, m_parameters.blobFileReferences);
+        m_task = NetworkDataTaskBlob::create(networkSession, *this, m_parameters.request, m_parameters.blobFileReferences, m_parameters.topOrigin);
     else
         m_task = NetworkDataTask::create(networkSession, *this, m_parameters);
 }

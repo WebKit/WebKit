@@ -59,6 +59,7 @@ static Ref<ResourceHandle> createBlobResourceHandle(const ResourceRequest& reque
 
 static void loadBlobResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
+    // This seems like it is only used from WebKitLegacy, so it does not support blob registry partitioning
     auto* blobData = blobRegistry().blobRegistryImpl()->getBlobDataFromURL(request.url());
     BlobResourceHandle::loadResourceSynchronously(blobData, request, error, response, data);
 }
@@ -76,6 +77,7 @@ static void registerBlobResourceHandleConstructor()
 
 Ref<ResourceHandle> BlobRegistryImpl::createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
+    // This seems like it is only used from WebKitLegacy, so it does not support blob registry partitioning
     auto handle = BlobResourceHandle::createAsync(getBlobDataFromURL(request.url()), request, client);
     handle->start();
     return handle;
@@ -186,9 +188,9 @@ void BlobRegistryImpl::registerInternalBlobURL(const URL& url, Vector<BlobPart>&
     addBlobData(url.string(), WTFMove(blobData));
 }
 
-void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL, const PolicyContainer& policyContainer, const std::optional<SecurityOriginData>&)
+void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL, const PolicyContainer& policyContainer, const std::optional<SecurityOriginData>& topOrigin)
 {
-    registerBlobURLOptionallyFileBacked(url, srcURL, nullptr, { }, policyContainer);
+    registerBlobURLOptionallyFileBacked(url, srcURL, nullptr, { }, policyContainer, topOrigin);
 }
 
 void BlobRegistryImpl::registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const PolicyContainer& policyContainer)
@@ -196,7 +198,7 @@ void BlobRegistryImpl::registerInternalBlobURLOptionallyFileBacked(const URL& ur
     registerBlobURLOptionallyFileBacked(url, srcURL, WTFMove(file), contentType, policyContainer);
 }
 
-void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const PolicyContainer& policyContainer)
+void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const PolicyContainer& policyContainer, const std::optional<SecurityOriginData>& topOrigin)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -204,11 +206,11 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
     BlobData* src = getBlobDataFromURL(srcURL);
     if (src) {
         if (src->policyContainer() == policyContainer)
-            addBlobData(url.string(), src);
+            addBlobData(url.string(), src, topOrigin);
         else {
             auto clone = src->clone();
             clone->setPolicyContainer(policyContainer);
-            addBlobData(url.string(), WTFMove(clone));
+            addBlobData(url.string(), WTFMove(clone), topOrigin);
         }
         return;
     }
@@ -220,7 +222,7 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
     backingFile->appendFile(file.releaseNonNull());
     backingFile->setPolicyContainer(policyContainer);
 
-    addBlobData(url.string(), WTFMove(backingFile));
+    addBlobData(url.string(), WTFMove(backingFile), topOrigin);
 }
 
 void BlobRegistryImpl::registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, const String& contentType)
@@ -266,7 +268,7 @@ void BlobRegistryImpl::unregisterBlobURL(const URL& url, const std::optional<Web
         m_blobs.remove(url.string());
 }
 
-BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
+BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url, const std::optional<SecurityOriginData>&) const
 {
     ASSERT(isMainThread());
     if (url.hasFragmentIdentifier())
@@ -375,9 +377,9 @@ void BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB(const Vector<Strin
     });
 }
 
-Vector<RefPtr<BlobDataFileReference>> BlobRegistryImpl::filesInBlob(const URL& url) const
+Vector<RefPtr<BlobDataFileReference>> BlobRegistryImpl::filesInBlob(const URL& url, const std::optional<SecurityOriginData>& topOrigin) const
 {
-    auto* blobData = getBlobDataFromURL(url);
+    auto* blobData = getBlobDataFromURL(url, topOrigin);
     if (!blobData)
         return { };
 
@@ -390,7 +392,7 @@ Vector<RefPtr<BlobDataFileReference>> BlobRegistryImpl::filesInBlob(const URL& u
     return result;
 }
 
-void BlobRegistryImpl::addBlobData(const String& url, RefPtr<BlobData>&& blobData)
+void BlobRegistryImpl::addBlobData(const String& url, RefPtr<BlobData>&& blobData, const std::optional<WebCore::SecurityOriginData>&)
 {
     auto addResult = m_blobs.set(url, WTFMove(blobData));
     if (addResult.isNewEntry)
