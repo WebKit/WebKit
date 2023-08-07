@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -158,6 +158,11 @@ Ref<ByteArrayPixelBuffer> ImageData::pixelBuffer() const
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_colorSpace) };
     return ByteArrayPixelBuffer::create(format, m_size, m_data.get());
+}
+
+RefPtr<ImageData> ImageData::clone() const
+{
+    return ImageData::create(m_size, Uint8ClampedArray::create(m_data->data(), m_data->length()), m_colorSpace);
 }
 
 TextStream& operator<<(TextStream& ts, const ImageData& imageData)
