@@ -33,6 +33,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
+#include "EventLoop.h"
 #include "FloatQuad.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
@@ -85,10 +86,8 @@ static bool markersHaveIdenticalDescription(const Vector<RenderedDocumentMarker*
 }
 
 AlternativeTextController::AlternativeTextController(Document& document)
-    : m_timer(&document, *this, &AlternativeTextController::timerFired)
-    , m_document(document)
+    : m_document(document)
 {
-    m_timer.suspendIfNeeded();
 }
 
 AlternativeTextController::~AlternativeTextController()
@@ -114,12 +113,19 @@ void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType 
     if (type == AlternativeTextType::Correction)
         m_rangeWithAlternative = std::nullopt;
     m_type = type;
-    m_timer.startOneShot(correctionPanelTimerInterval);
+    stopAlternativeTextUITimer();
+    m_timer = m_document.eventLoop().scheduleTask(correctionPanelTimerInterval, m_document, TaskSource::UserInteraction, [weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+        weakThis->timerFired();
+    });
 }
 
 void AlternativeTextController::stopAlternativeTextUITimer()
 {
-    m_timer.cancel();
+    if (m_timer)
+        m_document.eventLoop().cancelScheduledTask(m_timer);
+    m_timer = 0;
     m_rangeWithAlternative = std::nullopt;
 }
 

@@ -36,6 +36,7 @@ namespace WebCore {
 
 class ActiveDOMCallbackMicrotask;
 class EventLoopTaskGroup;
+class EventLoopTimer;
 class EventTarget;
 class MicrotaskQueue;
 class ScriptExecutionContext;
@@ -60,13 +61,18 @@ private:
     WeakPtr<EventLoopTaskGroup> m_group;
 };
 
+using EventLoopTimerPtr = uintptr_t;
+
 // https://html.spec.whatwg.org/multipage/webappapis.html#event-loop
 class EventLoop : public RefCounted<EventLoop>, public CanMakeWeakPtr<EventLoop> {
 public:
-    virtual ~EventLoop() = default;
+    virtual ~EventLoop();
 
     typedef Function<void ()> TaskFunction;
     void queueTask(std::unique_ptr<EventLoopTask>&&);
+
+    EventLoopTimerPtr scheduleTask(Seconds timeout, ScriptExecutionContext&, std::unique_ptr<EventLoopTask>&&);
+    void cancelScheduledTask(EventLoopTimerPtr);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-microtask
     void queueMicrotask(std::unique_ptr<EventLoopTask>&&);
@@ -87,7 +93,7 @@ public:
     void removeAssociatedContext(ScriptExecutionContext&);
 
 protected:
-    EventLoop() = default;
+    EventLoop();
     void run();
     void clearAllTasks();
 
@@ -98,6 +104,7 @@ private:
 
     // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
     Vector<std::unique_ptr<EventLoopTask>> m_tasks;
+    HashSet<std::unique_ptr<EventLoopTimer>> m_scheduledTasks;
     WeakHashSet<EventLoopTaskGroup> m_associatedGroups;
     WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspendedTasks;
     WeakHashSet<ScriptExecutionContext> m_associatedContexts;
@@ -195,6 +202,9 @@ public:
     void performMicrotaskCheckpoint();
 
     void runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&);
+
+    EventLoopTimerPtr scheduleTask(Seconds timeout, ScriptExecutionContext&, TaskSource, EventLoop::TaskFunction&&);
+    void cancelScheduledTask(EventLoopTimerPtr);
 
 private:
     enum class State : uint8_t { Running, Suspended, ReadyToStop, Stopped };

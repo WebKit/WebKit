@@ -30,6 +30,7 @@
 #include "Blob.h"
 #include "CSSStyleImageValue.h"
 #include "CachedImage.h"
+#include "EventLoop.h"
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
 #include "FileReaderLoader.h"
@@ -49,7 +50,6 @@
 #include "LocalFrameView.h"
 #include "RenderElement.h"
 #include "SharedBuffer.h"
-#include "SuspendableTimer.h"
 #include "WebCodecsVideoFrame.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
@@ -735,9 +735,7 @@ private:
         , m_options(WTFMove(options))
         , m_rect(WTFMove(rect))
         , m_completionHandler(WTFMove(completionHandler))
-        , m_createImageBitmapTimer(&scriptExecutionContext, *this, &PendingImageBitmap::createImageBitmapAndCallCompletionHandler)
     {
-        m_createImageBitmapTimer.suspendIfNeeded();
     }
 
     void start(ScriptExecutionContext& scriptExecutionContext)
@@ -779,9 +777,11 @@ private:
 
     void createImageBitmapAndCallCompletionHandlerSoon(RefPtr<ArrayBuffer>&& arrayBuffer)
     {
-        ASSERT(!m_createImageBitmapTimer.isActive());
         m_arrayBufferToProcess = WTFMove(arrayBuffer);
-        m_createImageBitmapTimer.startOneShot(0_s);
+        scriptExecutionContext()->eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr { *this }] {
+            if (weakThis)
+                weakThis->createImageBitmapAndCallCompletionHandler();
+        });
     }
 
     void createImageBitmapAndCallCompletionHandler()
@@ -803,7 +803,6 @@ private:
     ImageBitmapOptions m_options;
     std::optional<IntRect> m_rect;
     ImageBitmap::ImageBitmapCompletionHandler m_completionHandler;
-    SuspendableTimer m_createImageBitmapTimer;
     RefPtr<ArrayBuffer> m_arrayBufferToProcess;
 };
 

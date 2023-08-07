@@ -28,7 +28,6 @@
 #include "AlternativeTextClient.h"
 #include "DocumentMarker.h"
 #include "Position.h"
-#include "SuspendableTimer.h"
 #include <variant>
 #include <wtf/Noncopyable.h>
 
@@ -47,6 +46,8 @@ struct DictationAlternative;
 struct SimpleRange;
 struct TextCheckingResult;
 
+using EventLoopTimerPtr = uintptr_t;
+
 #if USE(AUTOCORRECTION_PANEL)
 // These backslashes are for making style checker happy.
 #define UNLESS_ENABLED(functionBody) \
@@ -56,7 +57,7 @@ struct TextCheckingResult;
 #define UNLESS_ENABLED(functionBody) functionBody
 #endif
 
-class AlternativeTextController {
+class AlternativeTextController : public CanMakeWeakPtr<AlternativeTextController> {
     WTF_MAKE_NONCOPYABLE(AlternativeTextController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -119,7 +120,7 @@ private:
     FloatRect rootViewRectForRange(const SimpleRange&) const;
     void markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand*);
 
-    SuspendableTimer m_timer;
+    EventLoopTimerPtr m_timer { 0 };
     std::optional<SimpleRange> m_rangeWithAlternative;
     bool m_isActive { };
     bool m_isDismissedByEditing { };

@@ -33,7 +33,6 @@
 #include "GraphicsContextGL.h"
 #include "ImageBuffer.h"
 #include "PredefinedColorSpace.h"
-#include "SuspendableTimer.h"
 #include "Timer.h"
 #include "WebGLAny.h"
 #include "WebGLBuffer.h"
@@ -146,6 +145,8 @@ using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
 class VideoFrame;
 #endif
 
+using EventLoopTimerPtr = uintptr_t;
+
 class InspectorScopedShaderProgramHighlight {
 public:
     InspectorScopedShaderProgramHighlight(WebGLRenderingContextBase&, WebGLProgram*);
@@ -176,6 +177,11 @@ class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBa
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
     using WebGLVersion = GraphicsContextGLWebGLVersion;
+
+    using GPUBasedCanvasRenderingContext::weakPtrFactory;
+    using GPUBasedCanvasRenderingContext::WeakValueType;
+    using GPUBasedCanvasRenderingContext::WeakPtrImplType;
+
     static std::unique_ptr<WebGLRenderingContextBase> create(CanvasBase&, WebGLContextAttributes&, WebGLVersion);
     virtual ~WebGLRenderingContextBase();
 
@@ -602,7 +608,7 @@ protected:
     RefPtr<WebGLContextGroup> m_contextGroup;
     Lock m_objectGraphLock;
 
-    SuspendableTimer m_restoreTimer;
+    EventLoopTimerPtr m_restoreTimer { 0 };
     GCGLErrorCodeSet m_errors;
     bool m_needsUpdate;
     bool m_markedCanvasDirty;
@@ -1069,6 +1075,7 @@ protected:
 private:
     void scheduleTaskToDispatchContextLostEvent();
     // Helper for restoration after context lost.
+    void maybeRestoreContextSoon(Seconds timeout = 0_s);
     void maybeRestoreContext();
 
     void registerWithWebGLStateTracker();

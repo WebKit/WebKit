@@ -48,6 +48,7 @@
 #include "EXTTextureFilterAnisotropic.h"
 #include "EXTTextureNorm16.h"
 #include "EXTsRGB.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameLoader.h"
 #include "GraphicsContext.h"
@@ -624,7 +625,6 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
 
 WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<GraphicsContextGL>&& context, WebGLContextAttributes attributes)
     : GPUBasedCanvasRenderingContext(canvas)
-    , m_restoreTimer(canvas.scriptExecutionContext(), *this, &WebGLRenderingContextBase::maybeRestoreContext)
     , m_generatedImageCache(4)
     , m_attributes(attributes)
     , m_numGLErrorsToConsoleAllowed(maxGLErrorsAllowedToConsole)
@@ -634,8 +634,6 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<Gra
 #endif
 {
     setGraphicsContextGL(WTFMove(context));
-
-    m_restoreTimer.suspendIfNeeded();
 
     m_contextGroup = WebGLContextGroup::create();
     m_contextGroup->addContext(*this);
@@ -5031,8 +5029,7 @@ void WebGLRenderingContextBase::forceRestoreContext()
         return;
     }
 
-    if (!m_restoreTimer.isActive())
-        m_restoreTimer.startOneShot(0_s);
+    maybeRestoreContextSoon();
 }
 
 bool WebGLRenderingContextBase::isContextUnrecoverablyLost() const
@@ -5676,7 +5673,26 @@ void WebGLRenderingContextBase::scheduleTaskToDispatchContextLostEvent()
         canvasBase().dispatchEvent(event);
         m_contextLostState->restoreRequested = event->defaultPrevented();
         if (m_contextLostState->mode == RealLostContext && m_contextLostState->restoreRequested)
-            m_restoreTimer.startOneShot(0_s);
+            maybeRestoreContextSoon();
+    });
+}
+
+void WebGLRenderingContextBase::maybeRestoreContextSoon(Seconds timeout)
+{
+    auto scriptExecutionContext = canvasBase().scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return;
+
+    if (m_restoreTimer) {
+        scriptExecutionContext->eventLoop().cancelScheduledTask(m_restoreTimer);
+        m_restoreTimer = 0;
+    }
+
+    m_restoreTimer = scriptExecutionContext->eventLoop().scheduleTask(timeout, *scriptExecutionContext, TaskSource::WebGL, [weakThis = WeakPtr { *this }] {
+        if (CheckedPtr checkedThis = weakThis.get()) {
+            checkedThis->m_restoreTimer = 0;
+            checkedThis->maybeRestoreContext();
+        }
     });
 }
 
@@ -5702,7 +5718,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     RefPtr<GraphicsContextGL> context = graphicsClient->createGraphicsContextGL(m_attributes);
     if (!context) {
         if (m_contextLostState->mode == RealLostContext)
-            m_restoreTimer.startOneShot(secondsBetweenRestoreAttempts);
+            maybeRestoreContextSoon(secondsBetweenRestoreAttempts);
         else
             printToConsole(MessageLevel::Error, "WebGL: error restoring lost context."_s);
         return;

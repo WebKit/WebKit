@@ -28,8 +28,35 @@
 
 #include "Microtasks.h"
 #include "ScriptExecutionContext.h"
+#include "SuspendableTimer.h"
 
 namespace WebCore {
+
+class EventLoopTimer final : public SuspendableTimerBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    EventLoopTimer(ScriptExecutionContext& context, std::unique_ptr<EventLoopTask>&& task)
+        : SuspendableTimerBase(&context)
+        , m_task(WTFMove(task))
+    {
+    }
+
+private:
+    void fired() final
+    {
+        m_task->execute();
+    }
+
+    const char* activeDOMObjectName() const final
+    {
+        return "EventLoopTimer";
+    }
+
+    std::unique_ptr<EventLoopTask> m_task;
+};
+
+EventLoop::EventLoop() = default;
+EventLoop::~EventLoop() = default;
 
 void EventLoop::queueTask(std::unique_ptr<EventLoopTask>&& task)
 {
@@ -38,6 +65,27 @@ void EventLoop::queueTask(std::unique_ptr<EventLoopTask>&& task)
     ASSERT(isContextThread());
     scheduleToRunIfNeeded();
     m_tasks.append(WTFMove(task));
+}
+
+// FIXME: Remove the dependency on ScriptExecutionContext.
+EventLoopTimerPtr EventLoop::scheduleTask(Seconds timeout, ScriptExecutionContext& context, std::unique_ptr<EventLoopTask>&& action)
+{
+    ASSERT(m_associatedContexts.contains(context));
+    auto timer = makeUnique<EventLoopTimer>(context, WTFMove(action));
+    timer->suspendIfNeeded();
+    timer->startOneShot(timeout);
+    auto* pointer = timer.get();
+    m_scheduledTasks.add(WTFMove(timer));
+    return reinterpret_cast<EventLoopTimerPtr>(pointer);
+}
+
+void EventLoop::cancelScheduledTask(EventLoopTimerPtr task)
+{
+    auto it = m_scheduledTasks.find(reinterpret_cast<EventLoopTimer*>(task));
+    if (it == m_scheduledTasks.end())
+        return;
+    (*it)->cancel();
+    m_scheduledTasks.remove(it);
 }
 
 void EventLoop::queueMicrotask(std::unique_ptr<EventLoopTask>&& microtask)
@@ -187,6 +235,20 @@ void EventLoopTaskGroup::runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&
         return;
 
     microtaskQueue().addCheckpointTask(makeUnique<EventLoopFunctionDispatchTask>(TaskSource::IndexedDB, *this, WTFMove(function)));
+}
+
+EventLoopTimerPtr EventLoopTaskGroup::scheduleTask(Seconds timeout, ScriptExecutionContext& context, TaskSource source, EventLoop::TaskFunction&& function)
+{
+    if (m_state == State::Stopped || !m_eventLoop)
+        return 0;
+    return m_eventLoop->scheduleTask(timeout, context, makeUnique<EventLoopFunctionDispatchTask>(source, *this, WTFMove(function)));
+}
+
+void EventLoopTaskGroup::cancelScheduledTask(EventLoopTimerPtr timer)
+{
+    if (m_state == State::Stopped || !m_eventLoop)
+        return;
+    m_eventLoop->cancelScheduledTask(timer);
 }
 
 void EventLoop::forEachAssociatedContext(const Function<void(ScriptExecutionContext&)>& apply)
