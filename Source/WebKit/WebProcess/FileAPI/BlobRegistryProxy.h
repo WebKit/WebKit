@@ -33,9 +33,9 @@ class BlobRegistryProxy final : public WebCore::BlobRegistry {
 public:
     void registerInternalFileBlobURL(const URL&, Ref<WebCore::BlobDataFileReference>&&, const String& path, const String& contentType) final;
     void registerInternalBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType) final;
-    void registerBlobURL(const URL&, const URL& srcURL, const WebCore::PolicyContainer&) final;
+    void registerBlobURL(const URL&, const URL& srcURL, const WebCore::PolicyContainer&, const std::optional<SecurityOriginData>& topOrigin) final;
     void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&&, const String& contentType) final;
-    void unregisterBlobURL(const URL&) final;
+    void unregisterBlobURL(const URL&, const std::optional<SecurityOriginData>& topOrigin) final;
     void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) final;
     unsigned long long blobSize(const URL&) final;
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final;
