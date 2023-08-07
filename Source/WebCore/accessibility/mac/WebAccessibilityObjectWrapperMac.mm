@@ -70,7 +70,6 @@
 #import "RenderTextControl.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
-#import "RuntimeApplicationChecks.h"
 #import "ScrollView.h"
 #import "TextIterator.h"
 #import "VisibleUnits.h"
@@ -3692,7 +3691,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 // until it finds something that responds to this method.
 - (pid_t)accessibilityPresenterProcessIdentifier
 {
-    return WebCore::presentingApplicationPID();
+    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
+    return backingObject ? backingObject->processID() : 0;
 }
 
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount

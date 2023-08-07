@@ -31,6 +31,7 @@
 #include "AccessibilityObjectInterface.h"
 #include "PageIdentifier.h"
 #include "RenderStyleConstants.h"
+#include "RuntimeApplicationChecks.h"
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -262,6 +263,7 @@ public:
 
     static RefPtr<AXIsolatedTree> treeForPageID(std::optional<PageIdentifier>);
     static RefPtr<AXIsolatedTree> treeForPageID(PageIdentifier);
+    constexpr ProcessID processID() const { return m_processID; }
     AXObjectCache* axObjectCache() const;
     constexpr AXGeometryManager* geometryManager() const { return m_geometryManager.get(); }
 
@@ -344,6 +346,7 @@ private:
     Vector<NodeChange> resolveAppends();
     void queueAppendsAndRemovals(Vector<NodeChange>&&, Vector<AXID>&&);
 
+    const ProcessID m_processID { presentingApplicationPID() };
     unsigned m_maxTreeDepth { 0 };
     WeakPtr<AXObjectCache> m_axObjectCache;
     OptionSet<ActivityState> m_pageActivityState;
