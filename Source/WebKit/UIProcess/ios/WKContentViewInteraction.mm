@@ -10842,6 +10842,26 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if HAVE(UIFINDINTERACTION)
 
+- (void)find:(id)sender
+{
+    [self.webView find:sender];
+}
+
+- (void)findAndReplace:(id)sender
+{
+    [self.webView findAndReplace:sender];
+}
+
+- (void)findNext:(id)sender
+{
+    [self.webView findNext:sender];
+}
+
+- (void)findPrevious:(id)sender
+{
+    [self.webView findPrevious:sender];
+}
+
 - (void)useSelectionForFindForWebView:(id)sender
 {
     if (!_page->hasSelectedRange())
