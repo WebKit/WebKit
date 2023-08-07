@@ -43,6 +43,19 @@ void RequestedScrollData::merge(RequestedScrollData&& other)
             other.requestedDataBeforeAnimatedScroll = requestedDataBeforeAnimatedScroll;
             break;
         }
+    } else if (other.requestType == ScrollRequestType::DeltaUpdate && animated == ScrollIsAnimated::No) {
+        switch (requestType) {
+        case ScrollRequestType::PositionUpdate: {
+            other.requestType = ScrollRequestType::PositionUpdate;
+            other.scrollPositionOrDelta = std::get<FloatPoint>(scrollPositionOrDelta) + std::get<FloatSize>(other.scrollPositionOrDelta);
+            break;
+        }
+        case ScrollRequestType::DeltaUpdate:
+            std::get<FloatSize>(other.scrollPositionOrDelta) += std::get<FloatSize>(scrollPositionOrDelta);
+            break;
+        default:
+            break;
+        }
     }
     *this = WTFMove(other);
 }
