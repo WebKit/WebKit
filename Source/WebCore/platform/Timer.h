@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,10 @@ class TimerBase {
 public:
     WEBCORE_EXPORT TimerBase();
     WEBCORE_EXPORT virtual ~TimerBase();
+
+    // TimerBase's destructor inspects Ref<Thread> m_thread, which won't work if we are moved-from.
+    TimerBase(TimerBase&&) = delete;
+    TimerBase& operator=(TimerBase&&) = delete;
 
     WEBCORE_EXPORT void start(Seconds nextFireInterval, Seconds repeatInterval);
 
