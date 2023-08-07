@@ -199,6 +199,7 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::LiveRangeSelectionEnabledForAllApps);
         disableBehavior(SDKAlignedBehavior::DoesNotOverrideUAFromNSUserDefault);
         disableBehavior(SDKAlignedBehavior::EvaluateJavaScriptWithoutTransientActivation);
+        disableBehavior(SDKAlignedBehavior::ResettingTransitionCancelsRunningTransitionQuirk);
     }
 
     disableAdditionalSDKAlignedBehaviors(behaviors);

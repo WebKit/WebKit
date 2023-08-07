@@ -1618,4 +1618,14 @@ String Quirks::advancedPrivacyProtectionSubstituteDataURLForText(const String& t
     return ""_s;
 }
 
+// DOFUS Touch app (rdar://112679186)
+bool Quirks::needsResettingTransitionCancelsRunningTransitionQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ResettingTransitionCancelsRunningTransitionQuirk) && IOSApplication::isDOFUSTouch();
+#else
+    return false;
+#endif
+}
+
 }
