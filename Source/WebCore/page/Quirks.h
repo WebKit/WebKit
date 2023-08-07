@@ -177,6 +177,8 @@ public:
     bool shouldEnableCanvas2DAdvancedPrivacyProtectionQuirk() const;
     String advancedPrivacyProtectionSubstituteDataURLForText(const String&) const;
 
+    bool needsResettingTransitionCancelsRunningTransitionQuirk() const;
+
 private:
     bool needsQuirks() const;
 
