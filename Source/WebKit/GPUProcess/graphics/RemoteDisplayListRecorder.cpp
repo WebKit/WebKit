@@ -62,7 +62,8 @@ RemoteResourceCache& RemoteDisplayListRecorder::resourceCache()
 
 GraphicsContext& RemoteDisplayListRecorder::drawingContext()
 {
-    return m_imageBuffer->context();
+    auto imageBuffer = m_imageBuffer.get();
+    return imageBuffer->context();
 }
 
 void RemoteDisplayListRecorder::startListeningForIPC()
@@ -526,18 +527,20 @@ void RemoteDisplayListRecorder::fillEllipse(const FloatRect& rect)
 
 void RemoteDisplayListRecorder::convertToLuminanceMask()
 {
-    m_imageBuffer->convertToLuminanceMask();
+    auto imageBuffer = m_imageBuffer.get();
+    imageBuffer->convertToLuminanceMask();
 }
 
 void RemoteDisplayListRecorder::transformToColorSpace(const WebCore::DestinationColorSpace& colorSpace)
 {
-    m_imageBuffer->transformToColorSpace(colorSpace);
+    auto imageBuffer = m_imageBuffer.get();
+    imageBuffer->transformToColorSpace(colorSpace);
 }
 
 #if ENABLE(VIDEO)
 void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
 {
-    m_renderingBackend->gpuConnectionToWebProcess().performWithMediaPlayerOnMainThread(identifier, [imageBuffer = RefPtr { m_imageBuffer.get() }, destination](MediaPlayer& player) {
+    m_renderingBackend->gpuConnectionToWebProcess().performWithMediaPlayerOnMainThread(identifier, [imageBuffer = m_imageBuffer.get(), destination](MediaPlayer& player) {
         // It is currently not safe to call paintFrameForMedia() off the main thread.
         imageBuffer->context().paintFrameForMedia(player, destination);
     });
@@ -647,13 +650,15 @@ void RemoteDisplayListRecorder::applyDeviceScaleFactor(float scaleFactor)
 
 void RemoteDisplayListRecorder::flushContext(IPC::Semaphore&& semaphore)
 {
-    m_imageBuffer->flushDrawingContext();
+    auto imageBuffer = m_imageBuffer.get();
+    imageBuffer->flushDrawingContext();
     semaphore.signal();
 }
 
 void RemoteDisplayListRecorder::flushContextSync(CompletionHandler<void()>&& completionHandler)
 {
-    m_imageBuffer->flushDrawingContext();
+    auto imageBuffer = m_imageBuffer.get();
+    imageBuffer->flushDrawingContext();
     completionHandler();
 }
 

@@ -70,10 +70,11 @@ void RemoteDisplayListRecorderProxy::transformToColorSpace(const DestinationColo
 template<typename T>
 ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
 {
-    if (UNLIKELY(!(m_renderingBackend && m_imageBuffer)))
+    auto imageBuffer = m_imageBuffer.get();
+    if (UNLIKELY(!(m_renderingBackend && imageBuffer)))
         return;
 
-    m_imageBuffer->backingStoreWillChange();
+    imageBuffer->backingStoreWillChange();
     auto result = m_renderingBackend->streamConnection().send(WTFMove(message), m_destinationBufferIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
 #if !RELEASE_LOG_DISABLED
     if (UNLIKELY(result != IPC::Error::NoError)) {
@@ -89,10 +90,11 @@ ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
 template<typename T>
 ALWAYS_INLINE void RemoteDisplayListRecorderProxy::sendSync(T&& message)
 {
-    if (UNLIKELY(!(m_renderingBackend && m_imageBuffer)))
+    auto imageBuffer = m_imageBuffer.get();
+    if (UNLIKELY(!(m_renderingBackend && imageBuffer)))
         return;
 
-    m_imageBuffer->backingStoreWillChange();
+    imageBuffer->backingStoreWillChange();
     auto result = m_renderingBackend->streamConnection().sendSync(WTFMove(message), m_destinationBufferIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
 #if !RELEASE_LOG_DISABLED
     if (UNLIKELY(!result.succeeded())) {
@@ -107,7 +109,8 @@ ALWAYS_INLINE void RemoteDisplayListRecorderProxy::sendSync(T&& message)
 
 RenderingMode RemoteDisplayListRecorderProxy::renderingMode() const
 {
-    return m_imageBuffer ? m_imageBuffer->renderingMode() : RenderingMode::Unaccelerated;
+    auto imageBuffer = m_imageBuffer.get();
+    return imageBuffer ? imageBuffer->renderingMode() : RenderingMode::Unaccelerated;
 }
 
 void RemoteDisplayListRecorderProxy::recordSave()
