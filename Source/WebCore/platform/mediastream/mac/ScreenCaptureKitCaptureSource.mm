@@ -48,6 +48,21 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
 
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+// FIXME: Remove this once it is in a public header.
+typedef NS_ENUM(NSInteger, SCPresenterOverlayAlertSetting);
+
+typedef NS_ENUM(NSInteger, WK_SCPresenterOverlayAlertSetting) {
+    WK_SCPresenterOverlayAlertSettingSystem,
+    WK_SCPresenterOverlayAlertSettingNever,
+    WK_SCPresenterOverlayAlertSettingAlways
+};
+
+@interface SCStreamConfiguration (SCStreamConfiguration_Pending_Public_API)
+@property (nonatomic, assign) SCPresenterOverlayAlertSetting presenterOverlayPrivacyAlertSetting;
+@end
+#endif
+
 using namespace WebCore;
 @interface WebCoreScreenCaptureKitHelper : NSObject<SCStreamDelegate, SCStreamOutput> {
     WeakPtr<ScreenCaptureKitCaptureSource> _callback;
@@ -274,6 +289,10 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
     [m_streamConfiguration setQueueDepth:6];
     [m_streamConfiguration setColorSpaceName:kCGColorSpaceSRGB];
     [m_streamConfiguration setColorMatrix:kCGDisplayStreamYCbCrMatrix_SMPTE_240M_1995];
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    if ([m_streamConfiguration respondsToSelector:@selector(setPresenterOverlayPrivacyAlertSetting:)])
+        [m_streamConfiguration setPresenterOverlayPrivacyAlertSetting:static_cast<SCPresenterOverlayAlertSetting>(WK_SCPresenterOverlayAlertSettingNever)];
+#endif
 
     if (m_frameRate)
         [m_streamConfiguration setMinimumFrameInterval:PAL::CMTimeMakeWithSeconds(1 / m_frameRate, 1000)];
