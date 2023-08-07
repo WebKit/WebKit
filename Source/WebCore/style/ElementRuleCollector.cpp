@@ -637,8 +637,7 @@ void ElementRuleCollector::addElementInlineStyleProperties(bool includeSMILPrope
         return;
 
     if (auto* inlineStyle = downcast<StyledElement>(element()).inlineStyle()) {
-        // FIXME: Media control shadow trees seem to have problems with caching.
-        bool isInlineStyleCacheable = !inlineStyle->isMutable() && !element().isInShadowTree();
+        bool isInlineStyleCacheable = !inlineStyle->isMutable();
         addElementStyleProperties(inlineStyle, RuleSet::cascadeLayerPriorityForUnlayered, isInlineStyleCacheable, FromStyleAttribute::Yes);
     }
 
