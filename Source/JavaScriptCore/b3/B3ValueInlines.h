@@ -250,6 +250,7 @@ ALWAYS_INLINE size_t Value::adjacencyListOffset() const
 
 ALWAYS_INLINE Value* Value::cloneImpl() const
 {
+    ASSERT(!kind().isCloningForbidden());
 #define VALUE_TYPE_CLONE(ValueType) allocate<ValueType>(*static_cast<const ValueType*>(this))
     DISPATCH_ON_KIND(VALUE_TYPE_CLONE);
 #undef VALUE_TYPE_CLONE

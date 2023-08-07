@@ -43,6 +43,8 @@ void Kind::dump(PrintStream& out) const
         out.print(comma, "Traps");
     if (isSensitiveToNaN())
         out.print(comma, "SensitiveToNaN");
+    if (isCloningForbidden())
+        out.print(comma, "CloningForbidden");
     if (comma.didPrint())
         out.print(">");
 }
