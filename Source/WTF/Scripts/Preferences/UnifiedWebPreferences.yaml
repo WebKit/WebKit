@@ -783,10 +783,12 @@ BlobRegistryTopOriginPartitioningEnabled:
   status: unstable
   humanReadableName: "Partition Blob URL Registry"
   humanReadableDescription: "Partition Blob URL Registry by Top-Level Origin"
-  webcoreBinding: none
-  exposed: [ WebKit ]
   defaultValue:
+    WebKitLegacy:
+      default: false
     WebKit:
+      default: false
+    WebCore:
       default: false
 
 BlockIOKitInWebContentSandbox:

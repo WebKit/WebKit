@@ -33,6 +33,7 @@
 
 #include "BlobData.h"
 #include "BlobRegistry.h"
+#include "SecurityOriginData.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/URLHash.h>
@@ -46,6 +47,7 @@ class ResourceHandleClient;
 class ResourceRequest;
 class ThreadSafeDataBuffer;
 struct PolicyContainer;
+
 
 // BlobRegistryImpl is not thread-safe. It should only be called from main thread.
 class WEBCORE_EXPORT BlobRegistryImpl {
@@ -91,6 +93,7 @@ private:
 
     HashCountedSet<String> m_blobReferences;
     MemoryCompactRobinHoodHashMap<String, RefPtr<BlobData>> m_blobs;
+    MemoryCompactRobinHoodHashMap<String, WebCore::SecurityOriginData> m_allowedBlobURLTopOrigins;
     String m_fileDirectory;
     bool m_isPartitioningEnabled { false };
 };

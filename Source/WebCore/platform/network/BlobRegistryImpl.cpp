@@ -35,11 +35,13 @@
 #include "BlobData.h"
 #include "BlobPart.h"
 #include "BlobResourceHandle.h"
+#include "Logging.h"
 #include "PolicyContainer.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityOriginData.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
@@ -201,6 +203,7 @@ void BlobRegistryImpl::registerInternalBlobURLOptionallyFileBacked(const URL& ur
 void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const PolicyContainer& policyContainer, const std::optional<SecurityOriginData>& topOrigin)
 {
     ASSERT(isMainThread());
+    ASSERT(BlobURL::isInternalURL(url) || topOrigin);
     registerBlobResourceHandleConstructor();
 
     BlobData* src = getBlobDataFromURL(srcURL);
@@ -261,19 +264,31 @@ void BlobRegistryImpl::registerInternalBlobURLForSlice(const URL& url, const URL
     addBlobData(url.string(), WTFMove(newData));
 }
 
-void BlobRegistryImpl::unregisterBlobURL(const URL& url, const std::optional<WebCore::SecurityOriginData>&)
+void BlobRegistryImpl::unregisterBlobURL(const URL& url, const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
     ASSERT(isMainThread());
-    if (m_blobReferences.remove(url.string()))
-        m_blobs.remove(url.string());
+    ASSERT(BlobURL::isInternalURL(url) || topOrigin);
+    auto& urlKey = url.string();
+    if (m_isPartitioningEnabled && m_blobs.contains(urlKey) && topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {
+        RELEASE_LOG(Network, "Rejecting unregistering blob URL with incorrect top origin.");
+        return;
+    }
+    if (m_blobReferences.remove(urlKey)) {
+        m_blobs.remove(urlKey);
+        m_allowedBlobURLTopOrigins.remove(urlKey);
+    }
 }
 
-BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url, const std::optional<SecurityOriginData>&) const
+BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url, const std::optional<SecurityOriginData>& topOrigin) const
 {
     ASSERT(isMainThread());
-    if (url.hasFragmentIdentifier())
-        return m_blobs.get<StringViewHashTranslator>(url.viewWithoutFragmentIdentifier());
-    return m_blobs.get(url.string());
+    auto urlKey = url.stringWithoutFragmentIdentifier();
+    auto* blobData = m_blobs.get(urlKey);
+    if (m_isPartitioningEnabled && blobData && topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {
+        RELEASE_LOG(Network, "Requested blob URL with incorrect top origin.");
+        return nullptr;
+    }
+    return blobData;
 }
 
 unsigned long long BlobRegistryImpl::blobSize(const URL& url)
@@ -392,25 +407,42 @@ Vector<RefPtr<BlobDataFileReference>> BlobRegistryImpl::filesInBlob(const URL& u
     return result;
 }
 
-void BlobRegistryImpl::addBlobData(const String& url, RefPtr<BlobData>&& blobData, const std::optional<WebCore::SecurityOriginData>&)
+void BlobRegistryImpl::addBlobData(const String& url, RefPtr<BlobData>&& blobData, const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
+    ASSERT(BlobURL::isInternalURL(URL { { }, url }) || topOrigin);
     auto addResult = m_blobs.set(url, WTFMove(blobData));
-    if (addResult.isNewEntry)
+    if (addResult.isNewEntry) {
         m_blobReferences.add(url);
+        if (m_isPartitioningEnabled && topOrigin)
+            m_allowedBlobURLTopOrigins.set(url, *topOrigin);
+    }
 }
 
-void BlobRegistryImpl::registerBlobURLHandle(const URL& url, const std::optional<WebCore::SecurityOriginData>&)
+void BlobRegistryImpl::registerBlobURLHandle(const URL& url, const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
+    ASSERT(BlobURL::isInternalURL(url) || topOrigin);
     auto urlKey = url.stringWithoutFragmentIdentifier();
-    if (m_blobs.contains(urlKey))
+    if (m_blobs.contains(urlKey)) {
+        if (m_isPartitioningEnabled && topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {
+            RELEASE_LOG(Network, "Rejecting registering blob URL handle with incorrect top origin.");
+            return;
+        }
         m_blobReferences.add(urlKey);
+    }
 }
 
-void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url, const std::optional<WebCore::SecurityOriginData>&)
+void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url, const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
+    ASSERT(BlobURL::isInternalURL(url) || topOrigin);
     auto urlKey = url.stringWithoutFragmentIdentifier();
-    if (m_blobReferences.remove(urlKey))
+    if (m_isPartitioningEnabled && m_blobs.contains(urlKey) && topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {
+        RELEASE_LOG(Network, "Rejecting unregistering blob URL handle with incorrect top origin.");
+        return;
+    }
+    if (m_blobReferences.remove(urlKey)) {
         m_blobs.remove(urlKey);
+        m_allowedBlobURLTopOrigins.remove(urlKey);
+    }
 }
 
 } // namespace WebCore

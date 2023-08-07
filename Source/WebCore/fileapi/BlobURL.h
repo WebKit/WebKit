@@ -52,6 +52,7 @@ public:
 
     static URL getOriginURL(const URL&);
     static bool isSecureBlobURL(const URL&);
+    static bool isInternalURL(const URL&);
 
 private:
     static URL createBlobURL(StringView originString);

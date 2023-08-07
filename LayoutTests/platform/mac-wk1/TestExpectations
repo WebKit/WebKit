@@ -895,6 +895,10 @@ webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-dispos
 webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-octet-stream-no-extension.html [ Skip ]
 webkit.org/b/156069 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Skip ]
+webkit.org/b/156069 http/tests/local/blob/download-blob-from-iframe.html [ Skip ]
+
+# Blob URL registry partitioning not supported
+http/tests/local/blob/navigate-blob.html [ Skip ]
 
 # Not supported on WK1
 media/no-fullscreen-when-hidden.html [ Skip ]
