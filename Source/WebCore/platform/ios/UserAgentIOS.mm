@@ -94,8 +94,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
 
 #if USE(STATIC_IPAD_USER_AGENT_VALUE)
     UNUSED_PARAM(userAgentOSVersion);
-    UNUSED_PARAM(separator);
-    return makeString("Mozilla/5.0 (iPad; CPU OS 16_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.3 Mobile/15E148 Safari/604.1");
+    return makeString("Mozilla/5.0 (iPad; CPU OS 16_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)", separator, applicationName);
 #else
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotOverrideUAFromNSUserDefault)) {
         if (auto override = dynamic_cf_cast<CFStringRef>(adoptCF(CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"))))) {
