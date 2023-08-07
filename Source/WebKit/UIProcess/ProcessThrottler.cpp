@@ -458,7 +458,11 @@ auto ProcessThrottlerTimedActivity::operator=(ProcessThrottler::ActivityVariant&
 void ProcessThrottlerTimedActivity::activityTimedOut()
 {
     RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessThrottlerTimedActivity::activityTimedOut:", this);
-    m_activity = nullptr;
+    // Use variant::swap() to make sure that m_activity is in a good state when the underlying
+    // ProcessThrottlerActivity gets destroyed. This is important as destroying the activity runs code
+    // that may use / modify m_activity.
+    ActivityVariant nullActivity { nullptr };
+    m_activity.swap(nullActivity);
 }
 
 void ProcessThrottlerTimedActivity::updateTimer()
