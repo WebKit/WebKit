@@ -674,10 +674,26 @@ Result<AST::Variable::Ref> Parser<Lexer>::parseVariableWithAttributes(AST::Attri
     }
 
     AST::Expression::Ptr maybeInitializer = nullptr;
-    if (current().type == TokenType::Equal) {
-        consume();
+    if (varFlavor == AST::VariableFlavor::Const || varFlavor == AST::VariableFlavor::Let || current().type == TokenType::Equal) {
+        CONSUME_TYPE(Equal);
         PARSE(initializerExpr, Expression);
         maybeInitializer = &initializerExpr.get();
+    }
+
+    if (!maybeType && !maybeInitializer) {
+        ASCIILiteral flavor = [&] {
+            switch (varFlavor) {
+            case AST::VariableFlavor::Const:
+                RELEASE_ASSERT_NOT_REACHED();
+            case AST::VariableFlavor::Let:
+                RELEASE_ASSERT_NOT_REACHED();
+            case AST::VariableFlavor::Override:
+                return "override"_s;
+            case AST::VariableFlavor::Var:
+                return "var"_s;
+            }
+        }();
+        FAIL(makeString(flavor, " declaration requires a type or initializer"_s));
     }
 
     RETURN_ARENA_NODE(Variable, varFlavor, WTFMove(name), WTFMove(maybeQualifier), WTFMove(maybeType), WTFMove(maybeInitializer), WTFMove(attributes));

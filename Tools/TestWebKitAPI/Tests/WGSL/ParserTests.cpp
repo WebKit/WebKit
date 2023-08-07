@@ -37,6 +37,7 @@
 #include "WGSLShaderModule.h"
 
 #include <wtf/Assertions.h>
+#include <wtf/DataLog.h>
 
 static void checkBuiltin(WGSL::AST::Attribute& attr, ASCIILiteral attrName)
 {
@@ -1112,6 +1113,84 @@ TEST(WGSLParserTests, RedFrag)
     EXPECT_TRUE(shader->structures().isEmpty());
     EXPECT_TRUE(shader->variables().isEmpty());
     EXPECT_EQ(shader->functions().size(), 1u);
+}
+
+TEST(WGSLParserTests, GlobalVarWithoutTypeOrInitializer)
+{
+    auto shader = parse("var x;"_s);
+    EXPECT_FALSE(shader.has_value());
+    EXPECT_EQ(shader.error().message(), "var declaration requires a type or initializer"_s);
+}
+
+TEST(WGSLParserTests, GlobalConstWithoutTypeOrInitializer)
+{
+    auto shader = parse("const x;"_s);
+    EXPECT_FALSE(shader.has_value());
+    EXPECT_EQ(shader.error().message(), "Expected a =, but got a ;"_s);
+}
+
+TEST(WGSLParserTests, GlobalConstWithoutInitializer)
+{
+    auto shader = parse("const x: i32;"_s);
+    EXPECT_FALSE(shader.has_value());
+    EXPECT_EQ(shader.error().message(), "Expected a =, but got a ;"_s);
+}
+
+TEST(WGSLParserTests, GlobalOverrideWithoutTypeOrInitializer)
+{
+    auto shader = parse("override x;"_s);
+    EXPECT_FALSE(shader.has_value());
+    EXPECT_EQ(shader.error().message(), "override declaration requires a type or initializer"_s);
+}
+
+TEST(WGSLParserTests, LocalVarWithoutTypeOrInitializer)
+{
+    auto shader = parse(
+        "fn f() {\n"
+        "   var x;\n"
+        "}"_s);
+    EXPECT_FALSE(shader.has_value());
+    EXPECT_EQ(shader.error().message(), "var declaration requires a type or initializer"_s);
+}
+
+TEST(WGSLParserTests, LocalLetWithoutTypeOrInitializer)
+{
+    auto shader = parse(
+        "fn f() {\n"
+        "   let x;\n"
+        "}"_s);
+    EXPECT_FALSE(shader.has_value());
+    EXPECT_EQ(shader.error().message(), "Expected a =, but got a ;"_s);
+}
+
+TEST(WGSLParserTests, LocalLetWithoutInitializer)
+{
+    auto shader = parse(
+        "fn f() {\n"
+        "   let x: i32;\n"
+        "}"_s);
+    EXPECT_FALSE(shader.has_value());
+    EXPECT_EQ(shader.error().message(), "Expected a =, but got a ;"_s);
+}
+
+TEST(WGSLParserTests, LocalConstWithoutTypeOrInitializer)
+{
+    auto shader = parse(
+        "fn f() {\n"
+        "   const x;\n"
+        "}"_s);
+    EXPECT_FALSE(shader.has_value());
+    EXPECT_EQ(shader.error().message(), "Expected a =, but got a ;"_s);
+}
+
+TEST(WGSLParserTests, LocalConstWithoutInitializer)
+{
+    auto shader = parse(
+        "fn f() {\n"
+        "   const x: i32;\n"
+        "}"_s);
+    EXPECT_FALSE(shader.has_value());
+    EXPECT_EQ(shader.error().message(), "Expected a =, but got a ;"_s);
 }
 
 }
