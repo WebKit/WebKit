@@ -164,3 +164,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 webkit.org/b/242748 [ Release arm64 ] css3/color-filters/svg/color-filter-inline-svg.html [ ImageOnlyFailure ]
 
 webkit.org/b/254872 webrtc/video-rotation.html [ Pass Timeout ]
+
+fast/overflow/infiniteRecursion.html [ Failure Pass ]
+tables/mozilla/bugs/bug2479-2.html [ Failure Pass ]

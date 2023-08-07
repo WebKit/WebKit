@@ -3068,7 +3068,6 @@ fast/text/incorrect-deselection-across-multiple-elements.html [ Failure ]
 
 # <rdar://problem/51828203> 2 platform/ipad/fast/viewport/viewport* Layout tests are timing out on iOS 13
 platform/ipad/fast/viewport/viewport-overriden-by-minimum-effective-width-if-ignore-meta-viewport.html [ Timeout ]
-platform/ipad/fast/viewport/viewport-unchanged-by-minimum-effective-width-if-not-ignore-meta-viewport.html [ Timeout ]
 
 # Skip until we have the fixes for <rdar://problem/53613454> and <rdar://problem/54001139>.
 fast/events/ios/multiple-key-press-and-release-ordering.html [ Skip ]
@@ -3716,12 +3715,6 @@ webkit.org/b/242273 fast/events/ios/dragstart-on-image-by-long-pressing.html [ P
 
 # Requires platform support (see rdar://94324932).
 http/tests/media/media-source/mediasource-rvfc.html [ Skip ]
-
-# Crashing in a system framework rdar://102159271
-fast/forms/ios/file-upload-panel-capture.html [ Skip ]
-fast/forms/ios/file-upload-panel.html [ Skip ]
-fast/forms/ios/show-file-upload-context-menu-above-keyboard.html [ Skip ]
-fast/forms/ios/file-upload-panel-accept.html [ Skip ]
 
 webkit.org/b/242825 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
 
@@ -4376,3 +4369,211 @@ imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-tex
 webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
 
 webkit.org/b/259379 http/wpt/webcodecs/videoFrame-video-element.html [ Pass Failure ]
+
+# rdar://102857582 (iOS17-iOS-Simulator queues timing out before finishing layout tests)
+fast/events/ios/rotation/ [ Skip ]
+
+# These tests require compile-time flags in WebKit that are only enabled in iOS17. They were marked as Skip in
+# https://bugs.webkit.org/show_bug.cgi?id=248545 — re-enable them here.
+fast/images/animations-resume-from-last-displayed-frame.html [ Pass ]
+fast/images/individual-animation-toggle.html [ Pass ]
+fast/images/page-wide-animation-toggle.html [ Pass ]
+fast/images/pagewide-play-pause-animateTransform-svg-animation.html [ Pass ]
+fast/images/pagewide-play-pause-offscreen-animations.html [ Pass ]
+
+# Re-enabling tests fixed by DocumentManager in iOS16+ rdar://102159271
+fast/forms/ios/file-upload-panel-capture.html [ Pass ]
+fast/forms/ios/file-upload-panel.html [ Pass ]
+fast/forms/ios/show-file-upload-context-menu-above-keyboard.html [ Pass ]
+fast/forms/ios/file-upload-panel-accept.html [ Pass ]
+
+# rdar://104087645 (REGRESSION (iOS17): [ iOS17 ] fast/events/ios/keydown-keyup-special-keys-in-non-editable-element.html is a consistent timeout)
+fast/events/ios/keydown-keyup-special-keys-in-non-editable-element.html [ Timeout ]
+
+# rdar://104152683 (REGRESSION (iOS17 Sonoma): [ iOS17 Sonoma ] compositing/video/video-border-radius-clipping.html is a consistent image failure)
+compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
+
+# rdar://110034620 (REGRESSION ( iOS17 ): [ iOS17 ] compositing/clipping/nested-overflow-with-border-radius.html is a consistent image failure)
+compositing/clipping/nested-overflow-with-border-radius.html [ ImageOnlyFailure ]
+
+# rdar://104406385 (REGRESSION (iOS17): [ iOS17 ] webaudio/decode-audio-data-wav.html is a consistent failure)
+webaudio/decode-audio-data-wav.html [ Failure ]
+
+# rdar://104451028 (REGRESSION (iOS17 ): [ iOS17 ] fast/scrolling/keyboard-scrolling-distance-pageDown.html is a consistent timeout)
+fast/scrolling/keyboard-scrolling-distance-pageDown.html [ Timeout ]
+
+# rdar://104460194 (REGRESSION (iOS17 Sonoma23A177 ): [ iOS17 Sonoma ] fast/box-shadow/inset-box-shadow-fractional-radius.html is a consistent image failure)
+fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
+
+# rdar://104483285 ([ New Test ] (243542@main): [ iOS16+ ] imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class.html is a consistent image failure)
+imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class.html [ ImageOnlyFailure ]
+
+# rdar://104501919 (REGRESSION (iOS17): [ iOS17 ] fast/events/ios/keypress-keys-in-non-editable-element.html is a consistent timeout)
+fast/events/ios/keypress-keys-in-non-editable-element.html [ Timeout ]
+
+# rdar://104583471 (REGRESSION (iOS17): [ iOS17 ] fast/box-shadow/inset-spread-box-shadow-split-inline.html is a consistent image failure)
+fast/box-shadow/inset-spread-box-shadow-split-inline.html [ ImageOnlyFailure ]
+
+# rdar://104605846 (REGRESSION (iOS17 ): [ iOS17 Sonoma ] fast/box-shadow/inset-box-shadow.html is a consistent failure)
+fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
+
+# rdar://107678680 ([ iOS17 Simulator ] editing/caret/ios/caret-color-currentcolor.html is a constant timeout.)
+editing/caret/ios/caret-color-currentcolor.html [ Pass Timeout ]
+
+# rdar://107679255 ([ iOS17 Simulator ] editing/caret/ios/caret-color-after-refocusing-input.html is a constant timeout.)
+editing/caret/ios/caret-color-after-refocusing-input.html [ Timeout ]
+
+# rdar://107686490 (REGRESSION(261554@main?): [ iOS17 Simulator ] 8x editing/selection/ios tests are constant timeouts.)
+editing/selection/ios/caret-rect-after-animating-focused-text-field.html [ Timeout ]
+editing/selection/ios/hide-selection-in-empty-overflow-hidden-container.html [ Timeout ]
+editing/selection/ios/hide-selection-in-textarea-with-transform.html [ Timeout ]
+editing/selection/ios/select-text-after-changing-focus.html [ Timeout ]
+editing/selection/ios/select-text-under-hidden-subframe.html [ Timeout ]
+editing/selection/ios/selection-is-visible-after-focusing-editable-area.html [ Timeout ]
+editing/selection/ios/show-selection-in-transformed-container-2.html [ Timeout ]
+editing/selection/ios/show-selection-in-transformed-container.html [ Timeout ]
+
+# rdar://104627548 (REGRESSION (iOS17 ): [ iOS17 Debug ] 28 webaudio tests consistently crash: ASSERTION FAILED: isBusGood)
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-nominal-range.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/automation-rate.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/ctor-panner.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-exponential.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-inverse.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-linear.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-equalpower-stereo.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-position.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower-stereo.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower.html [ Crash ]
+webaudio/AudioListener/audiolistener-automation-position.html [ Crash ]
+webaudio/AudioListener/audiolistener-set-position.html [ Crash ]
+webaudio/AudioParam/audioparam-k-rate.html [ Crash ]
+webaudio/AudioParam/audioparam-nominal-range.html [ Crash ]
+webaudio/AudioParam/audioparam-processing.html [ Crash ]
+webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering-with-nodes.html [ Crash ]
+webaudio/Panner/panner-cone-gain-nan.html [ Crash ]
+webaudio/construct-node-with-closed-context.html [ Crash ]
+webaudio/distance-exponential.html [ Crash ]
+webaudio/distance-inverse.html [ Crash ]
+webaudio/distance-linear.html [ Crash ]
+webaudio/dom-exceptions.html [ Crash ]
+webaudio/panner-equalpower-stereo.html [ Crash ]
+webaudio/panner-equalpower.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping.html [ Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-basic.window.html [ Crash ]
+webaudio/pannernode-basic.html [ Crash ]
+
+# rdar://104646153 ([ iOS17 ] Four flaky crashing test: com.apple.WebCore: WebCore::JSVMClientData::~JSVMClientData)
+imported/w3c/web-platform-tests/fetch/api/credentials/authentication-basic.any.serviceworker.html [ Pass Crash ]
+imported/w3c/web-platform-tests/webaudio/idlharness.https.window.html [ Pass Crash ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-connect-method-chaining.html [ Pass Crash ]
+storage/indexeddb/modern/deleteindex-4-private.html [ Pass Crash ]
+
+# rdar://104694723 ([ iOS16+ debug ] media/vp9.html is a consistent timeout)
+[ Debug ] media/vp9.html [ Timeout ]
+
+# rdar://104761905 ([ iOS16+ ] fast/canvas/canvas-scale-strokePath-shadow.html is a consistent failure)
+fast/canvas/canvas-scale-strokePath-shadow.html [ Failure ]
+
+# rdar://104763200 (REGRESSION (iOS17 ): [ iOS17 ] css3/masking/clip-path-inset-corners.html is a consistent image failure)
+css3/masking/clip-path-inset-corners.html [ ImageOnlyFailure ]
+
+# rdar://105103818 ([OOP] WebKit tests can timeout due to UIHelper.activateAndWaitForInputSession)
+editing/caret/ios/emoji.html [ Skip ]
+editing/input/ios/rtl-keyboard-input-on-focus-in-non-editable-page.html [ Skip ]
+editing/pasteboard/smart-paste-002.html [ Skip ]
+editing/pasteboard/smart-paste-006.html [ Skip ]
+editing/pasteboard/smart-paste-paragraph-002.html [ Skip ]
+editing/selection/ios/hide-selection-in-contenteditable-nested-transparency.html [ Skip ]
+editing/selection/ios/no-scrolling-when-focusing-large-editable-area.html [ Skip ]
+editing/selection/ios/scrolling-to-focused-element-inside-iframe.html [ Failure Timeout ]
+editing/selection/ios/show-selection-in-empty-overflow-hidden-document.html [ Skip ]
+editing/text-placeholder/insert-and-remove-into-text-field.html [ Skip ]
+fast/events/focusing-element-with-tabindex-by-tap-or-click.html [ Skip ]
+fast/events/ios/before-input-events-prevent-candidate-insertion.html [ Skip ]
+fast/events/ios/click-selectionchange-once.html [ Skip ]
+fast/events/ios/input-events-fired-when-typing-in-contenteditable.html [ Skip ]
+
+# rdar://106007933 (REGRESSION ( iOS17 ): [ iOS17 ] Five editing/selection/ios/ tests are a consistent failure or timeout)
+editing/selection/ios/changing-selection-does-not-trigger-autocapitalization.html [ Failure ]
+editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Timeout ]
+editing/selection/ios/do-not-zoom-to-focused-hidden-contenteditable.html [ Timeout ]
+editing/selection/ios/hide-selection-in-non-focused-element.html [ Timeout ]
+editing/selection/ios/place-selection-in-overflow-area.html [ Timeout ]
+
+# rdar://105392730 (REGRESSION ( iOS17 ): [ iOS17 ]  AQ::API::V2Impl::CreateClientProcessingTap :: API Misuse)
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/cors-check.https.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Skip ]
+
+# rdar://110491039 (Master Bug for iOS17 constant test failures)
+editing/find/ios/find-interaction-adjusts-scroll-view-insets.html [ Timeout ]
+editing/selection/ios/hide-selection-when-scrolling-overflow-container.html [ Timeout ]
+fast/events/ios/key-command-italic-dispatches-keydown.html [ Timeout ]
+fast/events/ios/key-events-comprehensive/key-events-control.html [ Timeout ]
+fast/events/ios/key-events-comprehensive/key-events-meta.html [ Timeout ]
+fast/events/ios/key-events-comprehensive/key-events-option.html [ Timeout ]
+fast/events/ios/key-events-comprehensive/key-events-shift.html [ Timeout ]
+fast/repaint/placeholder-after-caps-lock-hidden.html [ Timeout ]
+editing/input/composition-underline-color.html [ ImageOnlyFailure ]
+fast/borders/hidpi-border-painting-groove.html [ ImageOnlyFailure ]
+fast/borders/hidpi-border-painting-ridge.html [ ImageOnlyFailure ]
+fast/borders/wrong-border-color-when-radius-is-present.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-013.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ui/text-overflow-028.html [ ImageOnlyFailure ]
+editing/spelling/editing-word-with-marker-1.html [ Failure ]
+fast/css/rtl-ordering.html [ Failure ]
+fast/css/text-overflow-input.html [ Failure ]
+fast/events/ios/key-command-italic.html [ Failure ]
+fast/forms/basic-inputs.html [ Failure ]
+fast/forms/input-appearance-height.html [ Failure ]
+fast/forms/input-value.html [ Failure ]
+fast/forms/listbox-bidi-align.html [ Failure ]
+fast/forms/placeholder-pseudo-style.html [ Failure ]
+fast/forms/select-visual-hebrew.html [ Failure ]
+fast/forms/time/time-input-rendering-basic.html [ Failure ]
+fast/scrolling/ios/body-overflow-hidden-height-100-percent-keyboard.html [ Failure ]
+http/wpt/webcodecs/videoFrame-colorSpace.html [ Failure ]
+http/wpt/webcodecs/webcodecs-gc.html [ Failure ]
+http/wpt/webrtc/video-script-transform-keyframe-only.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-fonts/cjk-kerning.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-tables/border-writing-mode-dynamic-001.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-tables/table-model-fixup-2.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/baseline-td.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/rowspan-height-redistribution.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/table-height-redistribution.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/tbody-height-redistribution.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-rowspan-002-border-separate.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-rowspan-002.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-rowspan-003-border-separate.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-rowspan-003.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-rowspan-004-dynamic.html [ Failure ]
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-sequence-of-scrolls.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/editing/other/empty-elements-insertion.html [ Failure ]
+imported/w3c/web-platform-tests/editing/run/caret-navigation-around-line-break.html [ Failure ]
+imported/w3c/web-platform-tests/fetch/range/non-matching-range-response.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/light-dismiss-event-ordering.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nesting.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.html [ Failure ]
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Failure ]
+imported/w3c/web-platform-tests/xhr/open-method-case-sensitive.htm [ Failure ]
+media/media-can-play-h265-video.html [ Failure ]
+media/media-can-play-mpeg4-video.html [ Failure ]
+media/media-can-play-wav-audio.html [ Failure ]
+platform/ipad/fast/viewport/viewport-unchanged-by-minimum-effective-width-if-not-ignore-meta-viewport.html [ Failure ]
+tables/mozilla_expected_failures/bugs/bug92647-1.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-hide-hide.tentative.html [ Crash ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-hide-hover.tentative.html [ Crash ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-hide-show.tentative.html [ Crash ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-hover-hide-toggle.tentative.html [ Crash ]
+
+# rdar://111127781 (REGRESSION(iOS17): [ iOS17 ] platform/ios/mediastream/video-muted-in-background-tab.html is a constant crash)
+platform/ios/mediastream/video-muted-in-background-tab.html [ Crash ]
+
+imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass ]
+
+editing/selection/ios/show-grammar-replacements-on-tap.html [ Pass ]
