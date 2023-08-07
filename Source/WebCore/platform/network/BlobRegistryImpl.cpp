@@ -186,7 +186,7 @@ void BlobRegistryImpl::registerInternalBlobURL(const URL& url, Vector<BlobPart>&
     addBlobData(url.string(), WTFMove(blobData));
 }
 
-void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL, const PolicyContainer& policyContainer)
+void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL, const PolicyContainer& policyContainer, const std::optional<SecurityOriginData>&)
 {
     registerBlobURLOptionallyFileBacked(url, srcURL, nullptr, { }, policyContainer);
 }
@@ -259,7 +259,7 @@ void BlobRegistryImpl::registerInternalBlobURLForSlice(const URL& url, const URL
     addBlobData(url.string(), WTFMove(newData));
 }
 
-void BlobRegistryImpl::unregisterBlobURL(const URL& url)
+void BlobRegistryImpl::unregisterBlobURL(const URL& url, const std::optional<WebCore::SecurityOriginData>&)
 {
     ASSERT(isMainThread());
     if (m_blobReferences.remove(url.string()))
