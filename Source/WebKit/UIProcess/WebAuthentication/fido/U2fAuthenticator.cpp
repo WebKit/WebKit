@@ -54,10 +54,8 @@ U2fAuthenticator::U2fAuthenticator(std::unique_ptr<CtapDriver>&& driver)
 void U2fAuthenticator::makeCredential()
 {
     auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
-    if (!isConvertibleToU2fRegisterCommand(creationOptions)) {
-        receiveRespond(ExceptionData { NotSupportedError, "Cannot convert the request to U2F command."_s });
+    if (!isConvertibleToU2fRegisterCommand(creationOptions))
         return;
-    }
     if (!creationOptions.excludeCredentials.isEmpty()) {
         ASSERT(!m_nextListIndex);
         checkExcludeList(m_nextListIndex++);
@@ -87,10 +85,8 @@ void U2fAuthenticator::issueRegisterCommand()
 
 void U2fAuthenticator::getAssertion()
 {
-    if (!isConvertibleToU2fSignCommand(std::get<PublicKeyCredentialRequestOptions>(requestData().options))) {
-        receiveRespond(ExceptionData { NotSupportedError, "Cannot convert the request to U2F command."_s });
+    if (!isConvertibleToU2fSignCommand(std::get<PublicKeyCredentialRequestOptions>(requestData().options)))
         return;
-    }
     ASSERT(!m_nextListIndex);
     issueSignCommand(m_nextListIndex++);
 }
