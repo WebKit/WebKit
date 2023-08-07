@@ -28,10 +28,12 @@
 
 #include "FloatingContext.h"
 #include "FontCascade.h"
+#include "InlineContentBalancer.h"
 #include "InlineDamage.h"
 #include "InlineDisplayBox.h"
 #include "InlineDisplayContentBuilder.h"
 #include "InlineDisplayLineBuilder.h"
+#include "InlineFormattingGeometry.h"
 #include "InlineFormattingState.h"
 #include "InlineItemsBuilder.h"
 #include "InlineLayoutState.h"
@@ -39,6 +41,7 @@
 #include "InlineLineBoxBuilder.h"
 #include "InlineLineTypes.h"
 #include "InlineTextItem.h"
+#include "InlineWidthOverride.h"
 #include "LayoutBox.h"
 #include "LayoutContext.h"
 #include "LayoutElementBox.h"
@@ -110,6 +113,14 @@ InlineLayoutResult InlineFormattingContext::layoutInFlowAndFloatContent(const Co
         // FIXME: We should be able to extract the last line information and provide it to layout as "previous line" (ends in line break and inline direction).
         return PreviousLine { lastLineIndex, { }, { }, { }, { } };
     };
+
+    if (root().style().textWrap() == TextWrap::Balance) {
+        auto balancer = InlineContentBalancer { *this, inlineItems, constraints.horizontal() };
+        auto lineWidths = balancer.computeBalanceConstraints();
+        if (lineWidths)
+            inlineLayoutState.setInlineWidthOverride({ *lineWidths });
+    }
+
     return lineLayout(inlineItems, needsLayoutRange, previousLine(), constraints, inlineLayoutState);
 }
 
@@ -151,24 +162,6 @@ LayoutUnit InlineFormattingContext::maximumContentSize()
         InlineItemsBuilder { root(), inlineFormattingState }.build({ });
 
     return ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum));
-}
-
-static InlineItemPosition leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineTrailingInlineItemPosition, InlineItemPosition layoutRangeEnd)
-{
-    if (!previousLineTrailingInlineItemPosition)
-        return lineContentEnd;
-    if (previousLineTrailingInlineItemPosition->index < lineContentEnd.index || (previousLineTrailingInlineItemPosition->index == lineContentEnd.index && previousLineTrailingInlineItemPosition->offset < lineContentEnd.offset)) {
-        // Either full or partial advancing.
-        return lineContentEnd;
-    }
-    if (previousLineTrailingInlineItemPosition->index == lineContentEnd.index && !previousLineTrailingInlineItemPosition->offset && !lineContentEnd.offset) {
-        // Can't mangage to put any content on line (most likely due to floats). Note that this only applies to full content.
-        return lineContentEnd;
-    }
-    // This looks like a partial content and we are stuck. Let's force-move over to the next inline item.
-    // We certainly lose some content, but we would be busy looping otherwise.
-    ASSERT_NOT_REACHED();
-    return { std::min(lineContentEnd.index + 1, layoutRangeEnd.index), { } };
 }
 
 static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, size_t lineIndex, const InlineDisplay::Boxes& newContent)
@@ -215,7 +208,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(const InlineItems& inline
             inlineLayoutState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
 
         auto lineContentEnd = lineLayoutResult.inlineItemRange.end;
-        leadingInlineItemPosition = leadingInlineItemPositionForNextLine(lineContentEnd, previousLineEnd, needsLayoutRange.end);
+        leadingInlineItemPosition = InlineFormattingGeometry::leadingInlineItemPositionForNextLine(lineContentEnd, previousLineEnd, needsLayoutRange.end);
         auto isLastLine = leadingInlineItemPosition == needsLayoutRange.end && lineLayoutResult.floatContent.suspendedFloats.isEmpty();
         if (isLastLine) {
             layoutResult.range = !isPartialLayout ? InlineLayoutResult::Range::Full : InlineLayoutResult::Range::FullFromDamage;
@@ -311,7 +304,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
         };
         maximumContentWidth = std::max(maximumContentWidth, lineLayoutResult.lineGeometry.logicalTopLeft.x() + lineLayoutResult.contentGeometry.logicalWidth + floatContentWidth());
 
-        layoutRange.start = leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, layoutRange.end);
+        layoutRange.start = InlineFormattingGeometry::leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, layoutRange.end);
         previousLineEnd = layoutRange.start;
         previousLine = PreviousLine { lineIndex++, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, { }, { }, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
     }

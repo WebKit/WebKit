@@ -459,6 +459,24 @@ InlineLayoutUnit InlineFormattingGeometry::horizontalAlignmentOffset(InlineLayou
     return { };
 }
 
+InlineItemPosition InlineFormattingGeometry::leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineTrailingInlineItemPosition, InlineItemPosition layoutRangeEnd)
+{
+    if (!previousLineTrailingInlineItemPosition)
+        return lineContentEnd;
+    if (previousLineTrailingInlineItemPosition->index < lineContentEnd.index || (previousLineTrailingInlineItemPosition->index == lineContentEnd.index && previousLineTrailingInlineItemPosition->offset < lineContentEnd.offset)) {
+        // Either full or partial advancing.
+        return lineContentEnd;
+    }
+    if (previousLineTrailingInlineItemPosition->index == lineContentEnd.index && !previousLineTrailingInlineItemPosition->offset && !lineContentEnd.offset) {
+        // Can't mangage to put any content on line (most likely due to floats). Note that this only applies to full content.
+        return lineContentEnd;
+    }
+    // This looks like a partial content and we are stuck. Let's force-move over to the next inline item.
+    // We certainly lose some content, but we would be busy looping otherwise.
+    ASSERT_NOT_REACHED();
+    return { std::min(lineContentEnd.index + 1, layoutRangeEnd.index), { } };
+}
+
 }
 }
 

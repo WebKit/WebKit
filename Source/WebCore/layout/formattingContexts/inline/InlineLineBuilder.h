@@ -103,6 +103,7 @@ public:
         std::optional<InlineLayoutUnit> hintForNextLineTopToAvoidIntrusiveFloat { }; // This is only used for cases when intrusive floats prevent any content placement at current vertical position.
     };
     LayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
+    Vector<size_t> listBreakOpportunities(const InlineItemRange& layoutRange);
 
 private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);

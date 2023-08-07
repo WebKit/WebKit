@@ -64,6 +64,8 @@ public:
     enum class IsLastLineOrAfterLineBreak : bool { No, Yes };
     InlineLayoutUnit horizontalAlignmentOffset(InlineLayoutUnit horizontalAvailableSpace, IsLastLineOrAfterLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride = std::nullopt) const;
 
+    static InlineItemPosition leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineTrailingInlineItemPosition, InlineItemPosition layoutRangeEnd);
+
 private:
     InlineLayoutUnit contentLeftAfterLastLine(const ConstraintsForInFlowContent&, std::optional<InlineLayoutUnit> lastLineLogicalBottom, const FloatingContext&) const;
 
