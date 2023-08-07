@@ -335,7 +335,7 @@ ExceptionOr<int> WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> 
 
     action->addArguments(WTFMove(arguments));
 
-    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), true);
+    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), DOMTimer::Type::SingleShot);
 }
 
 void WorkerGlobalScope::clearTimeout(int timeoutId)
@@ -353,7 +353,7 @@ ExceptionOr<int> WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction>
 
     action->addArguments(WTFMove(arguments));
 
-    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), false);
+    return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), DOMTimer::Type::Repeating);
 }
 
 void WorkerGlobalScope::clearInterval(int timeoutId)

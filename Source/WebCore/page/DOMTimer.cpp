@@ -159,17 +159,17 @@ private:
 
 bool NestedTimersMap::isTrackingNestedTimers = false;
 
-DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds interval, bool oneShot)
+DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds interval, Type type)
     : SuspendableTimerBase(&context)
     , m_nestingLevel(context.timerNestingLevel())
     , m_action(WTFMove(action))
     , m_originalInterval(interval)
     , m_throttleState(Undetermined)
-    , m_oneShot(oneShot)
+    , m_oneShot(type == Type::SingleShot)
     , m_currentTimerInterval(intervalClampedToMinimum())
     , m_userGestureTokenToForward(UserGestureIndicator::currentUserGesture())
 {
-    if (oneShot)
+    if (m_oneShot)
         startOneShot(m_currentTimerInterval);
     else
         startRepeating(m_originalInterval, m_currentTimerInterval);
@@ -177,17 +177,17 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutio
 
 DOMTimer::~DOMTimer() = default;
 
-int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds timeout, bool oneShot)
+int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds timeout, Type type)
 {
     auto actionFunction = [action = WTFMove(action)](ScriptExecutionContext& context) mutable {
         action->execute(context);
     };
-    return DOMTimer::install(context, WTFMove(actionFunction), timeout, oneShot);
+    return DOMTimer::install(context, WTFMove(actionFunction), timeout, type);
 }
 
-int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds timeout, bool oneShot)
+int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds timeout, Type type)
 {
-    Ref<DOMTimer> timer = adoptRef(*new DOMTimer(context, WTFMove(action), timeout, oneShot));
+    Ref<DOMTimer> timer = adoptRef(*new DOMTimer(context, WTFMove(action), timeout, type));
     timer->suspendIfNeeded();
     timer->makeOpportunisticTaskDeferralScopeIfPossible(context);
 
@@ -196,7 +196,7 @@ int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecu
         timer->m_timeoutId = context.circularSequentialID();
     } while (!context.addTimeout(timer->m_timeoutId, timer.get()));
 
-    InspectorInstrumentation::didInstallTimer(context, timer->m_timeoutId, timeout, oneShot);
+    InspectorInstrumentation::didInstallTimer(context, timer->m_timeoutId, timeout, type == Type::SingleShot);
 
     // Keep track of nested timer installs.
     if (NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context))
@@ -204,7 +204,7 @@ int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecu
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     if (is<Document>(context)) {
         auto& document = downcast<Document>(context);
-        document.contentChangeObserver().didInstallDOMTimer(timer.get(), timeout, oneShot);
+        document.contentChangeObserver().didInstallDOMTimer(timer.get(), timeout, type == Type::SingleShot);
         if (DeferDOMTimersForScope::isDeferring())
             document.domTimerHoldingTank().add(timer.get());
     }
