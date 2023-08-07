@@ -1502,7 +1502,8 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
     case AccessCase::CustomValueGetter:
     case AccessCase::CustomAccessorGetter:
     case AccessCase::CustomValueSetter:
-    case AccessCase::CustomAccessorSetter: {
+    case AccessCase::CustomAccessorSetter:
+    case AccessCase::IntrinsicGetter: {
         GPRReg valueRegsPayloadGPR = valueRegs.payloadGPR();
 
         Structure* currStructure = accessCase.hasAlternateBase() ? accessCase.alternateBase()->structure() : accessCase.structure();
@@ -1512,7 +1513,8 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
         bool doesPropertyStorageLoads = accessCase.m_type == AccessCase::Load
             || accessCase.m_type == AccessCase::GetGetter
             || accessCase.m_type == AccessCase::Getter
-            || accessCase.m_type == AccessCase::Setter;
+            || accessCase.m_type == AccessCase::Setter
+            || accessCase.m_type == AccessCase::IntrinsicGetter;
 
         bool takesPropertyOwnerAsCFunctionArgument = accessCase.m_type == AccessCase::CustomValueGetter || accessCase.m_type == AccessCase::CustomValueSetter;
 
@@ -1534,7 +1536,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
             // JSGlobalProxy's target. For getters/setters, we'll also invoke them with the JSGlobalProxy as |this|,
             // but we need to load the actual GetterSetter cell from the JSGlobalProxy's target.
 
-            if (accessCase.m_type == AccessCase::Getter || accessCase.m_type == AccessCase::Setter)
+            if (accessCase.m_type == AccessCase::Getter || accessCase.m_type == AccessCase::Setter || accessCase.m_type == AccessCase::IntrinsicGetter)
                 propertyOwnerGPR = scratchGPR;
             else
                 propertyOwnerGPR = valueRegsPayloadGPR;
@@ -1555,7 +1557,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
             else
                 loadedValueGPR = scratchGPR;
 
-            ASSERT((accessCase.m_type != AccessCase::Getter && accessCase.m_type != AccessCase::Setter) || loadedValueGPR != baseGPR);
+            ASSERT((accessCase.m_type != AccessCase::Getter && accessCase.m_type != AccessCase::Setter && accessCase.m_type != AccessCase::IntrinsicGetter) || loadedValueGPR != baseGPR);
             ASSERT(accessCase.m_type != AccessCase::Setter || loadedValueGPR != valueRegsPayloadGPR);
 
             GPRReg storageGPR;
@@ -1604,6 +1606,13 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
                 emitDOMJITGetter(access, access.domAttribute()->domJIT, receiverGPR);
                 return;
             }
+        }
+
+        if (accessCase.m_type == AccessCase::IntrinsicGetter) {
+            jit.loadPtr(CCallHelpers::Address(loadedValueGPR, GetterSetter::offsetOfGetter()), loadedValueGPR);
+            m_failAndIgnore.append(jit.branchPtr(CCallHelpers::NotEqual, loadedValueGPR, CCallHelpers::TrustedImmPtr(accessCase.as<IntrinsicGetterAccessCase>().intrinsicFunction())));
+            emitIntrinsicGetter(accessCase.as<IntrinsicGetterAccessCase>());
+            return;
         }
 
         // Stuff for custom getters/setters.
@@ -2154,22 +2163,6 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
         jit.moveTrustedValue(jsUndefined(), valueRegs);
         succeed();
         return;
-
-    case AccessCase::IntrinsicGetter: {
-        RELEASE_ASSERT(isValidOffset(accessCase.offset()));
-
-        // We need to ensure the getter value does not move from under us. Note that GetterSetters
-        // are immutable so we just need to watch the property not any value inside it.
-        Structure* currStructure;
-        if (!accessCase.hasAlternateBase())
-            currStructure = accessCase.structure();
-        else
-            currStructure = accessCase.alternateBase()->structure();
-        currStructure->startWatchingPropertyForReplacements(vm, accessCase.offset());
-
-        emitIntrinsicGetter(accessCase.as<IntrinsicGetterAccessCase>());
-        return;
-    }
 
     case AccessCase::DirectArgumentsLength:
     case AccessCase::ScopedArgumentsLength:
