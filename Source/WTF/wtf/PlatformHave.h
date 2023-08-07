@@ -235,9 +235,6 @@
 
 #if OS(DARWIN) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
 #define HAVE_BACKTRACE 1
-#endif
-
-#if (OS(DARWIN) || OS(LINUX)) && (PLATFORM(GTK) || PLATFORM(WPE)) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS)
 #define HAVE_BACKTRACE_SYMBOLS 1
 #endif
 
