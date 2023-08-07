@@ -31,7 +31,7 @@ WK_CLASS_AVAILABLE(macos(11.0), ios(14.0))
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-@property (nonatomic, readonly, copy) WKFrameInfo *info WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, copy) WKFrameInfo *info WK_API_AVAILABLE(macos(14.0), ios(17.0));
 @property (nonatomic, readonly) NSArray<_WKFrameTreeNode *> *childFrames;
 
 @end

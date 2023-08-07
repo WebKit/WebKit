@@ -33,10 +33,10 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface _WKProcessPoolConfiguration : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSURL *injectedBundleURL;
-@property (nonatomic, copy) NSSet<Class> *customClassesForParameterCoder WK_API_DEPRECATED("No longer supported", macos(10.15.4, WK_MAC_TBA), ios(13.4, WK_IOS_TBA));
+@property (nonatomic, copy) NSSet<Class> *customClassesForParameterCoder WK_API_DEPRECATED("No longer supported", macos(10.15.4, 14.0), ios(13.4, 17.0));
 @property (nonatomic) NSUInteger maximumProcessCount WK_API_DEPRECATED("It is no longer possible to limit the number of processes", macos(10.0, 10.15), ios(1.0, 13.0));
 @property (nonatomic) BOOL usesSingleWebProcess WK_API_AVAILABLE(macos(10.15), ios(13.0));
-@property (nonatomic, nullable, copy) NSString *customWebContentServiceBundleIdentifier WK_API_DEPRECATED("No longer supported", macos(10.14.4, WK_MAC_TBA), ios(12.2, WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSString *customWebContentServiceBundleIdentifier WK_API_DEPRECATED("No longer supported", macos(10.14.4, 14.0), ios(12.2, 17.0));
 
 @property (nonatomic) BOOL ignoreSynchronousMessagingTimeoutsForTesting WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic) BOOL attrStyleEnabled WK_API_AVAILABLE(macos(10.14.4), ios(12.2));

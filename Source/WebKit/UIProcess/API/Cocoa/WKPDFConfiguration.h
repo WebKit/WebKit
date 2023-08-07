@@ -41,7 +41,7 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 /*! @abstract A Boolean value indicating whether the PDF should allow transparent backgrounds.
  @discussion The default value is `NO`.
  */
-@property (nonatomic) BOOL allowTransparentBackground WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL allowTransparentBackground WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 @end
 
