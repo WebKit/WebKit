@@ -145,6 +145,9 @@ public:
 
     CSSParserContext& cssParserContext();
 
+    using HTMLElement::ref;
+    using HTMLElement::deref;
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
