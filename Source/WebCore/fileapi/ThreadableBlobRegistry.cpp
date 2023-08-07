@@ -206,21 +206,21 @@ void ThreadableBlobRegistry::unregisterBlobURL(const URLKeepingBlobAlive& url)
     unregisterBlobURL(url, url.topOrigin());
 }
 
-void ThreadableBlobRegistry::registerBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>&)
+void ThreadableBlobRegistry::registerBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
 {
-    ensureOnMainThread([url = url.isolatedCopy()] {
+    ensureOnMainThread([url = url.isolatedCopy(), topOrigin = crossThreadCopy(topOrigin)] {
         if (isBlobURLContainingNullOrigin(url))
             blobURLReferencesMap().add(url.stringWithoutFragmentIdentifier());
 
-        blobRegistry().registerBlobURLHandle(url);
+        blobRegistry().registerBlobURLHandle(url, topOrigin);
     });
 }
 
-void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>&)
+void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
 {
-    ensureOnMainThread([url = url.isolatedCopy()] {
+    ensureOnMainThread([url = url.isolatedCopy(), topOrigin = crossThreadCopy(topOrigin)] {
         unregisterBlobURLOriginIfNecessaryOnMainThread(url);
-        blobRegistry().unregisterBlobURLHandle(url);
+        blobRegistry().unregisterBlobURLHandle(url, topOrigin);
     });
 }
 

@@ -397,14 +397,14 @@ void BlobRegistryImpl::addBlobData(const String& url, RefPtr<BlobData>&& blobDat
         m_blobReferences.add(url);
 }
 
-void BlobRegistryImpl::registerBlobURLHandle(const URL& url)
+void BlobRegistryImpl::registerBlobURLHandle(const URL& url, const std::optional<WebCore::SecurityOriginData>&)
 {
     auto urlKey = url.stringWithoutFragmentIdentifier();
     if (m_blobs.contains(urlKey))
         m_blobReferences.add(urlKey);
 }
 
-void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url)
+void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url, const std::optional<WebCore::SecurityOriginData>&)
 {
     auto urlKey = url.stringWithoutFragmentIdentifier();
     if (m_blobReferences.remove(urlKey))

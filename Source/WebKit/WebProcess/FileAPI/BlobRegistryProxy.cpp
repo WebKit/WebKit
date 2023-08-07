@@ -77,14 +77,14 @@ void BlobRegistryProxy::registerInternalBlobURLForSlice(const URL& url, const UR
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterInternalBlobURLForSlice(url, srcURL, start, end, contentType), 0);
 }
 
-void BlobRegistryProxy::registerBlobURLHandle(const URL& url)
+void BlobRegistryProxy::registerBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLHandle(url), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLHandle(url, topOrigin), 0);
 }
 
-void BlobRegistryProxy::unregisterBlobURLHandle(const URL& url)
+void BlobRegistryProxy::unregisterBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnregisterBlobURLHandle(url), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnregisterBlobURLHandle(url, topOrigin), 0);
 }
 
 unsigned long long BlobRegistryProxy::blobSize(const URL& url)

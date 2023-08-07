@@ -62,8 +62,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     UnregisterBlobURL(URL url)
     BlobSize(URL url) -> (uint64_t resultSize) Synchronous
     WriteBlobsToTemporaryFilesForIndexedDB(Vector<String> blobURLs) -> (Vector<String> fileNames)
-    RegisterBlobURLHandle(URL url);
-    UnregisterBlobURLHandle(URL url);
+    RegisterBlobURLHandle(URL url, std::optional<WebCore::SecurityOriginData> topOrigin);
+    UnregisterBlobURLHandle(URL url, std::optional<WebCore::SecurityOriginData> topOrigin);
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
