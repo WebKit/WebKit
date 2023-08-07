@@ -578,7 +578,7 @@ public:
     bool hasMediaStreamSrcObject() const { return m_mediaProvider && std::holds_alternative<RefPtr<MediaStream>>(*m_mediaProvider); }
 #endif
 
-    bool supportsSeeking() const override;
+    bool supportsSeeking() const override { return true; };
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return *m_logger.get(); }

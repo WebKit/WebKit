@@ -128,16 +128,6 @@ bool Quirks::needsAutoplayPlayPauseEvents() const
     return allowedAutoplayQuirks(m_document->topDocument()).contains(AutoplayQuirk::SynthesizedPauseEvents);
 }
 
-// netflix.com https://bugs.webkit.org/show_bug.cgi?id=173030
-bool Quirks::needsSeekingSupportDisabled() const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto host = m_document->topDocument().url().host();
-    return equalLettersIgnoringASCIICase(host, "netflix.com"_s) || host.endsWithIgnoringASCIICase(".netflix.com"_s);
-}
-
 // netflix.com https://bugs.webkit.org/show_bug.cgi?id=193301
 bool Quirks::needsPerDocumentAutoplayBehavior() const
 {
