@@ -4310,6 +4310,7 @@ struct WebCore::NavigationRequester {
     WebCore::PolicyContainer policyContainer;
     std::optional<WebCore::FrameIdentifier> frameID;
     std::optional<WebCore::PageIdentifier> pageID;
+    WebCore::ScriptExecutionContextIdentifier documentIdentifier;
 };
 
 struct WebCore::PolicyContainer {
