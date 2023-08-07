@@ -4481,6 +4481,7 @@ void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::opt
 
 void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
 {
+    TraceScope tracingScope(PerformOpportunisticallyScheduledTasksStart, PerformOpportunisticallyScheduledTasksEnd, (deadline - MonotonicTime::now()).microseconds());
     commonVM().performOpportunisticallyScheduledTasks(deadline);
 }
 
