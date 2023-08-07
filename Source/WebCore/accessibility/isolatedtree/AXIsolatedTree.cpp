@@ -48,7 +48,6 @@ AXIsolatedTree::AXIsolatedTree(AXObjectCache& axObjectCache)
     , m_axObjectCache(&axObjectCache)
     , m_pageActivityState(axObjectCache.pageActivityState())
     , m_geometryManager(axObjectCache.m_geometryManager.ptr())
-    , m_usedOnAXThread(axObjectCache.usedOnAXThread())
 {
     AXTRACE("AXIsolatedTree::AXIsolatedTree"_s);
     ASSERT(isMainThread());
@@ -171,11 +170,11 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::objectForID(const AXID axID) const
 {
-    // In isolated tree mode 2, only access m_readerThreadNodeMap on the AX thread.
-    ASSERT(m_usedOnAXThread ? !isMainThread() : isMainThread());
-    if (m_usedOnAXThread && isMainThread())
+    // In isolated tree mode, only access m_readerThreadNodeMap on the AX thread.
+    if (isMainThread()) {
+        ASSERT_NOT_REACHED();
         return nullptr;
-
+    }
     return axID.isValid() ? m_readerThreadNodeMap.get(axID) : nullptr;
 }
 
@@ -904,10 +903,11 @@ void AXIsolatedTree::applyPendingChanges()
 {
     AXTRACE("AXIsolatedTree::applyPendingChanges"_s);
 
-    // In isolated tree mode 2, only apply pending changes on the AX thread.
-    ASSERT(m_usedOnAXThread ? !isMainThread() : isMainThread());
-    if (m_usedOnAXThread && isMainThread())
+    // In isolated tree mode, only apply pending changes on the AX thread.
+    if (isMainThread()) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     Locker locker { m_changeLogLock };
 

@@ -720,13 +720,6 @@ void AXObjectCache::initializeSecondaryAXThread()
     if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread)
         _AXUIElementUseSecondaryAXThread(true);
 }
-
-bool AXObjectCache::usedOnAXThread()
-{
-    ASSERT(isIsolatedTreeEnabled());
-    return _AXSIsolatedTreeModeFunctionIsAvailable()
-        && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread;
-}
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 bool AXObjectCache::shouldSpellCheck()

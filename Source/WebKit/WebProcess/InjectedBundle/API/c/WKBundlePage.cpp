@@ -308,37 +308,6 @@ void* WKAccessibilityFocusedUIElement()
 #endif
 }
 
-bool WKAccessibilityCanUseSecondaryAXThread(WKBundlePageRef pageRef)
-{
-#if ENABLE(ACCESSIBILITY) && ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (!pageRef)
-        return false;
-
-    WebCore::Page* page = WebKit::toImpl(pageRef)->corePage();
-    if (!page)
-        return false;
-    
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
-    if (!localMainFrame)
-        return false;
-
-    auto& core = *localMainFrame;
-    if (!core.document())
-        return false;
-
-    WebCore::AXObjectCache::enableAccessibility();
-
-    auto* axObjectCache = core.document()->axObjectCache();
-    if (!axObjectCache)
-        return false;
-
-    return axObjectCache->usedOnAXThread();
-#else
-    UNUSED_PARAM(pageRef);
-    return false;
-#endif
-}
-
 void WKAccessibilitySetForceDeferredSpellChecking(bool shouldForce)
 {
     WebCore::AXObjectCache::setForceDeferredSpellChecking(shouldForce);
