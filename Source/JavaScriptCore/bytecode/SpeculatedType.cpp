@@ -535,7 +535,7 @@ SpeculatedType speculationFromClassInfoInheritance(const ClassInfo* classInfo)
 }
 
 using SpeculationMapping = std::array<SpeculatedType, static_cast<unsigned>(UINT8_MAX) + 1>;
-static constexpr SpeculationMapping speculatedTypeMapping = ([]() -> SpeculationMapping {
+static const SpeculationMapping speculatedTypeMapping = ([]() -> SpeculationMapping {
     SpeculationMapping result { };
     result.fill(SpecObjectOther);
 #define JSC_DEFINE_JS_TYPE(type, speculatedType) result[type] = speculatedType;
