@@ -58,9 +58,9 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, MemoryCompactLookupOnlyRo
             }
         };
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         auto allUTIs = adoptCF(_UTCopyDeclaredTypeIdentifiers());
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         for (NSString *uti in (__bridge NSArray<NSString *> *)allUTIs.get()) {
             auto type = adoptCF(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)uti, kUTTagClassMIMEType));
             if (!type)
