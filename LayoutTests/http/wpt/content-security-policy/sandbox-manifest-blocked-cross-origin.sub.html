@@ -1,0 +1,16 @@
+<head>
+    <link
+        rel="manifest"
+        href="http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/content-security-policy/manifest.json"
+    />
+</head>
+<script>
+    testRunner?.dumpAsText();
+    testRunner?.dumpResourceLoadCallbacks();
+    testRunner?.waitUntilDone();
+    testRunner?.getApplicationManifestThen(() => {
+        const elem = document.querySelector("link");
+        console.log(`Fetched manifest: ${elem.href}`);
+        testRunner.notifyDone();
+    });
+</script>

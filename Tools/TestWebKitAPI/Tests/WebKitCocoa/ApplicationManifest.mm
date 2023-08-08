@@ -83,7 +83,9 @@ TEST(ApplicationManifest, Basic)
 
     done = false;
     NSDictionary *manifestObject = @{ @"name": @"Test" };
-    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]]];
+    NSString *json = [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0];
+    NSString *manifestString = [NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", json];
+    [webView synchronouslyLoadHTMLString:manifestString];
     [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
         EXPECT_TRUE([manifest.name isEqualToString:@"Test"]);
         done = true;
@@ -99,7 +101,8 @@ TEST(ApplicationManifest, Basic)
         @"scope": @"http://example.com/app",
         @"theme_color": @"red",
     };
-    NSString *htmlString = [NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:text/plain;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]];
+    json = [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0];
+    NSString *htmlString = [NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:text/plain;charset=utf-8;base64,%@\">", json];
     [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"http://example.com/app/index"]];
     [webView _test_waitForDidFinishNavigation];
     [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
@@ -150,12 +153,13 @@ TEST(ApplicationManifest, DisplayMode)
     }];
 }
 
-TEST(ApplicationManifest, AlwaysFetch)
+TEST(ApplicationManifest, AlwaysFetchData)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);
 
     NSDictionary *manifestObject = @{ @"theme_color": @"red" };
-    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]]];
+    NSString *json = [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0];
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", json]];
 
     {
         auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
@@ -180,8 +184,10 @@ TEST(ApplicationManifest, OnlyFirstManifest)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);
 
     NSDictionary *manifestObject1 = @{ @"theme_color": @"red" };
+    NSString *json1 = [[NSJSONSerialization dataWithJSONObject:manifestObject1 options:0 error:nil] base64EncodedStringWithOptions:0];
     NSDictionary *manifestObject2 = @{ @"theme_color": @"blue" };
-    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\"><link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject1 options:0 error:nil] base64EncodedStringWithOptions:0], [[NSJSONSerialization dataWithJSONObject:manifestObject2 options:0 error:nil] base64EncodedStringWithOptions:0]]];
+    NSString *json2 = [[NSJSONSerialization dataWithJSONObject:manifestObject2 options:0 error:nil] base64EncodedStringWithOptions:0];
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\"><link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", json1, json2]];
 
     {
         auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
@@ -223,8 +229,10 @@ TEST(ApplicationManifest, MediaAttriute)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);
 
     NSDictionary *manifestObject1 = @{ @"theme_color": @"blue" };
+    NSString *json1 = [[NSJSONSerialization dataWithJSONObject:manifestObject1 options:0 error:nil] base64EncodedStringWithOptions:0];
     NSDictionary *manifestObject2 = @{ @"theme_color": @"red" };
-    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\" media=\"invalid\"><link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\" media=\"screen\">", [[NSJSONSerialization dataWithJSONObject:manifestObject1 options:0 error:nil] base64EncodedStringWithOptions:0], [[NSJSONSerialization dataWithJSONObject:manifestObject2 options:0 error:nil] base64EncodedStringWithOptions:0]]];
+    NSString *json2 = [[NSJSONSerialization dataWithJSONObject:manifestObject2 options:0 error:nil] base64EncodedStringWithOptions:0];
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\" media=\"invalid\"><link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\" media=\"screen\">", json1, json2]];
 
     {
         auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
@@ -266,7 +274,8 @@ TEST(ApplicationManifest, Blocked)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);
 
     NSDictionary *manifestObject = @{ @"theme_color": @"red" };
-    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<meta http-equiv=\"Content-Security-Policy\" content=\"manifest-src 'none'\"><link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]]];
+    NSString *json = [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0];
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<meta http-equiv=\"Content-Security-Policy\" content=\"manifest-src 'none'\"><link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", json]];
 
     EXPECT_NULL([webView themeColor]);
 
@@ -309,7 +318,8 @@ TEST(ApplicationManifest, Icons)
         @"theme_color": @"red",
         @"icons": expectedIcons
     };
-    NSString *htmlString = [NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:text/plain;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]];
+    NSString *json = [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0];
+    NSString *htmlString = [NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:text/plain;charset=utf-8;base64,%@\">", json];
     [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"http://example.com/app/index"]];
     [webView _test_waitForDidFinishNavigation];
     [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
