@@ -341,6 +341,14 @@ void Path::transform(const AffineTransform& transform)
     if (transform.isIdentity() || isEmpty())
         return;
 
+    auto segment = asSingle();
+    if (segment && segment->transform(transform))
+        return;
+
+    auto impl = asImpl();
+    if (impl && impl->transform(transform))
+        return;
+
     ensurePlatformPathImpl().transform(transform);
 }
 

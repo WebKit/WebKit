@@ -305,10 +305,11 @@ FloatPoint PathCG::currentPoint() const
     return CGPathGetCurrentPoint(platformPath());
 }
 
-void PathCG::transform(const AffineTransform& transform)
+bool PathCG::transform(const AffineTransform& transform)
 {
     CGAffineTransform transformCG = transform;
     m_platformPath = adoptCF(CGPathCreateMutableCopyByTransformingPath(platformPath(), &transformCG));
+    return true;
 }
 
 static void copyClosingSubpathsApplierFunction(void* info, const CGPathElement* element)

@@ -3358,6 +3358,58 @@ imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ Fail
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ Failure ]
 svg/W3C-SVG-1.1/painting-marker-03-f.svg [ Failure ]
 
+# Path with transform failures
+imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.skew.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.stroke.skew.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.stroke.skew.worker.html [ Failure ]
+
+imported/w3c/web-platform-tests/preload/onerror-event.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/preload/preload-time-to-fetch.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleLogInStdErr ]
+
+# Tests crashing in Debug only.
+[ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Crash ]
+[ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Crash ]
+[ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Crash ]
+[ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Crash ]
+[ Debug ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
+[ Debug ] fast/backgrounds/gradient-background-leakage-hidpi.html [ Crash ]
+[ Debug ] fast/canvas/2d.backingStorePixelRatio.html [ Crash ]
+[ Debug ] fast/canvas/canvas-as-image-hidpi.html [ Crash ]
+[ Debug ] fast/canvas/canvas-resize-reset-pixelRatio.html [ Crash ]
+[ Debug ] fast/css-custom-paint/simple-hidpi.html [ Crash ]
+[ Debug ] fast/css-grid-layout/flex-content-sized-columns-resize.html [ Crash ]
+[ Debug ] fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Crash ]
+[ Debug ] fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Crash ]
+[ Debug ] fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml.html [ Crash ]
+[ Debug ] fast/dom/Window/window-resize-contents.html [ Crash ]
+[ Debug ] fast/dom/Window/window-resize-update-scrollbars.html [ Crash ]
+[ Debug ] fast/dynamic/window-resize-scrollbars-test.html [ Crash ]
+[ Debug ] fast/fixed-layout/fixed-layout.html [ Crash ]
+[ Debug ] fast/forms/textarea-node-removed-from-document-crash.html [ Crash ]
+[ Debug ] fast/hidpi/broken-image-icon-hidpi.html [ Crash ]
+[ Debug ] fast/hidpi/broken-image-icon-very-hidpi.html [ Crash ]
+[ Debug ] fast/hidpi/broken-image-with-size-hidpi.html [ Crash ]
+[ Debug ] fast/hidpi/clip-text-in-hidpi.html [ Crash ]
+[ Debug ] fast/hidpi/device-scale-factor-paint.html [ Crash ]
+[ Debug ] fast/hidpi/filters-and-image-buffer-resolution.html [ Crash ]
+[ Debug ] fast/hidpi/filters-blur.html [ Crash ]
+[ Debug ] fast/hidpi/filters-hue-rotate.html [ Crash ]
+[ Debug ] fast/history/page-cache-closed-audiocontext.html [ Crash ]
+[ Debug ] fast/media/mq-resolution.html [ Crash ]
+[ Debug ] fast/picture/viewport-resize.html [ Crash ]
+[ Debug ] http/tests/loading/sizes/preload-image-sizes-2x.html [ Crash ]
+[ Debug ] http/wpt/dom-ranges-live-range/Range-mutations-deleteData.html [ Crash ]
+[ Debug ] http/wpt/dom-ranges-live-range/Range-mutations-insertData.html [ Crash ]
+[ Debug ] http/wpt/dom-ranges-live-range/Range-mutations-replaceData.html [ Crash ]
+[ Debug ] imported/blink/fast/hidpi/border-background-align.html [ Crash ]
+[ Debug ] imported/blink/svg/zoom/text/lowdpi-zoom-text.html [ Crash ]
+
+# Tests timing out in Debug only.
+[ Debug ] fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Timeout ]
+[ Debug ] http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Timeout ]
+[ Debug ] imported/blink/transitions/remove-accelerated-transition.html [ Timeout ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
