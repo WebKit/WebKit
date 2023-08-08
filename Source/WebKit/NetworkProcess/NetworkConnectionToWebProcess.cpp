@@ -461,7 +461,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
         for (auto& [urlAndOrigin, count] : m_blobURLHandles) {
             auto& [url, topOrigin] = urlAndOrigin;
             for (unsigned i = 0; i < count; ++i)
-                networkSession->blobRegistry().unregisterBlobURLHandle(url);
+                networkSession->blobRegistry().unregisterBlobURLHandle(url, topOrigin);
         }
     }
 
@@ -1002,24 +1002,24 @@ void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url, const std:
     session->blobRegistry().unregisterBlobURL(url, topOrigin);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url)
+void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
 {
     auto* session = networkSession();
     if (!session)
         return;
 
-    m_blobURLHandles.add({ url, std::nullopt });
-    session->blobRegistry().registerBlobURLHandle(url);
+    m_blobURLHandles.add({ url, topOrigin });
+    session->blobRegistry().registerBlobURLHandle(url, topOrigin);
 }
 
-void NetworkConnectionToWebProcess::unregisterBlobURLHandle(const URL& url)
+void NetworkConnectionToWebProcess::unregisterBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
 {
     auto* session = networkSession();
     if (!session)
         return;
 
-    m_blobURLHandles.remove({ url, std::nullopt });
-    session->blobRegistry().unregisterBlobURLHandle(url);
+    m_blobURLHandles.remove({ url, topOrigin });
+    session->blobRegistry().unregisterBlobURLHandle(url, topOrigin);
 }
 
 void NetworkConnectionToWebProcess::blobSize(const URL& url, CompletionHandler<void(uint64_t)>&& completionHandler)
