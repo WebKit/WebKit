@@ -102,6 +102,8 @@ private:
     ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&);
     void notifyServiceWorkerPageOfCreationIfNecessary();
 
+    void prepareForDestruction() final;
+
     Type type() const final { return Type::ServiceWorker; }
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 
