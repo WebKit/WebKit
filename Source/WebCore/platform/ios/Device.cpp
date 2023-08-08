@@ -42,7 +42,7 @@ bool deviceClassIsSmallScreen()
     return deviceClass == MGDeviceClassiPhone || deviceClass == MGDeviceClassiPod || deviceClass == MGDeviceClassWatch;
 }
 
-bool deviceClassIsReality()
+bool deviceClassIsVision()
 {
 #if PLATFORM(VISION)
     static auto deviceClass = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);

@@ -329,7 +329,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     }];
 
 #if PLATFORM(VISION)
-    if (webView.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomReality) {
+    if (webView.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomVision) {
         [_shareSheetViewController setAllowsCustomPresentationStyle:YES];
         [_shareSheetViewController setModalPresentationStyle:UIModalPresentationFormSheet];
     } else

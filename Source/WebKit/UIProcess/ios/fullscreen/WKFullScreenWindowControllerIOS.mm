@@ -101,7 +101,7 @@ static void replaceViewWithView(UIView *view, UIView *otherView)
 
 static bool useSpatialFullScreenTransition()
 {
-    return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomReality;
+    return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomVision;
 }
 
 static void resizeScene(UIWindowScene *scene, CGSize size, CompletionHandler<void()>&& completionHandler)
