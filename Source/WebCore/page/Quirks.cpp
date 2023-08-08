@@ -378,7 +378,6 @@ bool Quirks::isGoogleMaps() const
 // soundcloud.com rdar://52915981
 // naver.com rdar://48068610
 // mybinder.org rdar://51770057
-// nba.com rdar://58804360
 bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 {
     if (m_document->settings().mouseEventsSimulationEnabled())
@@ -420,8 +419,6 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
         if (host == "soundcloud.com"_s)
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "naver.com"_s)
-            return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "nba.com"_s || host.endsWith(".nba.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host.endsWith(".naver.com"_s)) {
             // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
