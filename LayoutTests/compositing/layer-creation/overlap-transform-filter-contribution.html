@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            margin: 200px;
+            border: 1px solid black;
+            width: 200px;
+            height: 200px;
+            
+        }
+        .box {
+            position: absolute;
+            top: 50px;
+            left: 0px;
+            width: 100%;
+            height: 300px;
+            opacity: 0.5;
+            object-fit: cover;
+            background-color: blue;
+            filter: blur(4px);
+            transform: translate(100px, -100px);
+            will-change: transform;
+        }
+        
+        .dot {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 4px;
+            width: 4px;
+            background-color: silver;
+        }
+        
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function makeCornerDots(centerLeft, centerTop)
+        {
+            const width = 2;
+            const height = 2;
+            
+            const spacing = 20;
+            
+            for (let row = 0; row < height; ++row) {
+                for (let col = 0; col < width; ++col) {
+                    const dot = document.createElement('div');
+                    dot.className = 'dot';
+                    dot.style.left = `${centerLeft + spacing * col}px`
+                    dot.style.top = `${centerTop + spacing * row}px`
+                    document.body.appendChild(dot);
+                }
+            }
+        }
+        
+        function makeDots()
+        {
+            makeCornerDots(290, 130);
+            makeCornerDots(290, 445);
+            makeCornerDots(505, 445);
+            makeCornerDots(505, 130);
+
+            if (window.testRunner)
+                document.getElementById("layers").innerText = window.internals.layerTreeAsText(document);
+        }
+        
+        window.addEventListener('load', makeDots, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="box"></div>
+    </div>
+<pre id="layers">Layer tree goes here</pre>
+</body>
+</html>

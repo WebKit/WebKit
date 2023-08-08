@@ -1,0 +1,41 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 629.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 629.00)
+      (contentsOpaque 1)
+      (children 5
+        (GraphicsLayer
+          (position 209.00 251.00)
+          (bounds 200.00 300.00)
+          (opacity 0.50)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [100.00 -100.00 0.00 1.00])
+        )
+        (GraphicsLayer
+          (position 310.00 150.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 310.00 445.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 505.00 445.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 505.00 150.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
+        )
+      )
+    )
+  )
+)
+
