@@ -19,7 +19,7 @@ function testStructOfInts() {
       (type $s (struct (field i32) (field i32) (field i32)))
 
       (func $new (result (ref $s))
-         (struct.new_canon $s (i32.const 5) (i32.const 17) (i32.const 0)))
+         (struct.new $s (i32.const 5) (i32.const 17) (i32.const 0)))
 
       (func (export "get0") (result i32)
          (struct.get $s 0 (call $new)))
@@ -41,9 +41,9 @@ function testStructDeclaration() {
       (type $s (struct (field (ref $a)) (field (ref $a)) (field (ref $a))))
 
       (func $new (result (ref $s))
-         (struct.new_canon $s (array.new_canon_default $a (i32.const 5))
-                              (array.new_canon_default $a (i32.const 17))
-                              (array.new_canon_default $a (i32.const 0))))
+         (struct.new $s (array.new_default $a (i32.const 5))
+                        (array.new_default $a (i32.const 17))
+                        (array.new_default $a (i32.const 0))))
 
       (func (export "len0") (result i32)
          (struct.get $s 0 (call $new))

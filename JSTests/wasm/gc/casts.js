@@ -7,14 +7,14 @@ function testBasicCasts() {
   instantiate(`
      (module
        (func (export "f") (result (ref null extern))
-         (ref.cast null extern (ref.null extern))))
+         (ref.cast externref (ref.null extern))))
   `).exports.f();
 
   assert.eq(
     instantiate(`
        (module
          (func (export "f") (result i32)
-           (ref.test null extern (ref.null extern))))
+           (ref.test externref (ref.null extern))))
     `).exports.f(),
     1
   );
@@ -22,14 +22,14 @@ function testBasicCasts() {
   instantiate(`
      (module
        (func (export "f") (result (ref null func))
-         (ref.cast null func (ref.null func))))
+         (ref.cast funcref (ref.null func))))
   `).exports.f();
 
   assert.eq(
     instantiate(`
        (module
          (func (export "f") (result i32)
-           (ref.test null func (ref.null func))))
+           (ref.test funcref (ref.null func))))
     `).exports.f(),
     1
   );
@@ -39,7 +39,7 @@ function testBasicCasts() {
        (type (array i32))
        (start 0)
        (func (export "f")
-         (ref.cast null 0 (ref.null 0))
+         (ref.cast (ref null 0) (ref.null 0))
          drop))
   `).exports.f();
 
@@ -48,7 +48,7 @@ function testBasicCasts() {
        (module
          (type (array i32))
          (func (export "f") (result i32)
-           (ref.test null 0 (ref.null 0))))
+           (ref.test (ref null 0) (ref.null 0))))
     `).exports.f(),
     1
   );
@@ -57,7 +57,7 @@ function testBasicCasts() {
     () => instantiate(`
       (module
         (func (export "f") (result (ref null extern))
-          (ref.cast extern (ref.null extern))))
+          (ref.cast (ref extern) (ref.null extern))))
     `).exports.f(),
     WebAssembly.RuntimeError,
     "ref.cast failed to cast reference to target heap type"
@@ -67,7 +67,7 @@ function testBasicCasts() {
     instantiate(`
       (module
         (func (export "f") (result i32)
-          (ref.test extern (ref.null extern))))
+          (ref.test (ref extern) (ref.null extern))))
     `).exports.f(),
     0
   );
@@ -78,7 +78,7 @@ function testI31Casts() {
     (module
       (start 1)
       (func (result i31ref)
-        (ref.cast i31 (i31.new (i32.const 42))))
+        (ref.cast (ref i31) (i31.new (i32.const 42))))
       (func (call 0) drop))
   `);
 
@@ -86,7 +86,7 @@ function testI31Casts() {
     instantiate(`
       (module
         (func (export "f") (result i32)
-          (ref.test i31 (i31.new (i32.const 42)))))
+          (ref.test (ref i31) (i31.new (i32.const 42)))))
     `).exports.f(),
     1
   )
@@ -97,7 +97,7 @@ function testI31Casts() {
         (type (array i32))
         (start 0)
         (func
-          (ref.cast i31 (array.new_canon 0 (i32.const 42) (i32.const 5)))
+          (ref.cast (ref i31) (array.new 0 (i32.const 42) (i32.const 5)))
           drop))
     `),
     WebAssembly.RuntimeError,
@@ -109,7 +109,7 @@ function testI31Casts() {
       (module
         (type (array i32))
         (func (export "f") (result i32)
-          (ref.test i31 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+          (ref.test (ref i31) (array.new 0 (i32.const 42) (i32.const 5)))))
     `).exports.f(),
     0
   );
@@ -123,7 +123,7 @@ function testFunctionCasts() {
       (start 2)
       (func (type 0) (i32.const 42))
       (func (result funcref)
-        (ref.cast func (ref.func 0)))
+        (ref.cast (ref func) (ref.func 0)))
       (func (call 1) drop))
   `);
 
@@ -134,7 +134,7 @@ function testFunctionCasts() {
         (elem declare funcref (ref.func 0))
         (func (type 0) (i32.const 42))
         (func (export "f") (result i32)
-          (ref.test func (ref.func 0))))
+          (ref.test (ref func) (ref.func 0))))
     `).exports.f(),
     1
   )
@@ -146,7 +146,7 @@ function testFunctionCasts() {
       (start 2)
       (func (type 0) (i32.const 42))
       (func (param funcref)
-        (ref.cast 0 (local.get 0))
+        (ref.cast (ref 0) (local.get 0))
         drop)
       (func (call 1 (ref.func 0))))
   `);
@@ -158,7 +158,7 @@ function testFunctionCasts() {
         (elem declare funcref (ref.func 0))
         (func (type 0) (i32.const 42))
         (func (param funcref) (result i32)
-          (ref.test 0 (local.get 0)))
+          (ref.test (ref 0) (local.get 0)))
         (func (export "f") (result i32)
           (call 1 (ref.func 0))))
     `).exports.f(),
@@ -181,7 +181,7 @@ function testFunctionCasts() {
       (module
         (type (func (param) (result i32)))
         (func (export "g") (param funcref) (result i32)
-          (call_ref 0 (ref.cast 0 (local.get 0)))))
+          (call_ref 0 (ref.cast (ref 0) (local.get 0)))))
     `).exports.g(f);
 
     assert.eq(
@@ -189,7 +189,7 @@ function testFunctionCasts() {
         (module
           (type (func (param) (result i32)))
           (func (export "g") (param funcref) (result i32)
-            (ref.test 0 (local.get 0))))
+            (ref.test (ref 0) (local.get 0))))
       `).exports.g(f),
       1
     )
@@ -200,7 +200,7 @@ function testFunctionCasts() {
       (module
         (start 0)
         (func
-          (ref.cast func (i31.new (i32.const 42)))
+          (ref.cast (ref func) (i31.new (i32.const 42)))
           drop))
     `),
     WebAssembly.CompileError,
@@ -211,7 +211,7 @@ function testFunctionCasts() {
     () => instantiate(`
       (module
         (func (export "f") (result i32)
-          (ref.test func (i31.new (i32.const 42)))))
+          (ref.test (ref func) (i31.new (i32.const 42)))))
     `),
     WebAssembly.CompileError,
     "WebAssembly.Module doesn't validate: ref.test to type I31ref expected a funcref"
@@ -226,7 +226,7 @@ function testFunctionCasts() {
         (start 2)
         (func (type 1) (f32.const 42))
         (func (param funcref)
-          (ref.cast 0 (local.get 0))
+          (ref.cast (ref 0) (local.get 0))
           drop)
         (func (call 1 (ref.func 0))))
     `),
@@ -242,7 +242,7 @@ function testFunctionCasts() {
         (elem declare funcref (ref.func 0))
         (func (type 1) (f32.const 42))
         (func (param funcref) (result i32)
-          (ref.test 0 (local.get 0)))
+          (ref.test (ref 0) (local.get 0)))
         (func (export "f") (result i32)
           (call 1 (ref.func 0))))
     `).exports.f(),
@@ -258,7 +258,7 @@ function testFunctionCasts() {
         (start 1)
         (func (type 0) (i32.const 42))
         (func
-          (ref.cast 1 (ref.func 0))
+          (ref.cast (ref 1) (ref.func 0))
           drop))
     `),
     WebAssembly.RuntimeError,
@@ -273,7 +273,7 @@ function testFunctionCasts() {
         (elem declare funcref (ref.func 0))
         (func (type 0) (i32.const 42))
         (func (export "f") (result i32)
-          (ref.test 1 (ref.func 0))))
+          (ref.test (ref 1) (ref.func 0))))
     `).exports.f(),
     0
   );
@@ -285,7 +285,7 @@ function testArrayCasts() {
       (type (array i32))
       (start 1)
       (func (result arrayref)
-        (ref.cast array (array.new_canon 0 (i32.const 42) (i32.const 5))))
+        (ref.cast (ref array) (array.new 0 (i32.const 42) (i32.const 5))))
       (func (call 0) drop))
   `);
 
@@ -294,7 +294,7 @@ function testArrayCasts() {
       (module
         (type (array i32))
         (func (export "f") (result i32)
-          (ref.test array (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+          (ref.test (ref array) (array.new 0 (i32.const 42) (i32.const 5)))))
     `).exports.f(),
     1
   )
@@ -304,9 +304,9 @@ function testArrayCasts() {
       (type (array i32))
       (start 1)
       (func (param arrayref)
-        (ref.cast 0 (local.get 0))
+        (ref.cast (ref 0) (local.get 0))
         drop)
-      (func (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+      (func (call 0 (array.new 0 (i32.const 42) (i32.const 5)))))
   `);
 
   assert.eq(
@@ -314,9 +314,9 @@ function testArrayCasts() {
       (module
         (type (array i32))
         (func (param arrayref) (result i32)
-          (ref.test 0 (local.get 0)))
+          (ref.test (ref 0) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+          (call 0 (array.new 0 (i32.const 42) (i32.const 5)))))
     `).exports.f(),
     1
   )
@@ -326,7 +326,7 @@ function testArrayCasts() {
       (module
         (start 0)
         (func
-          (ref.cast array (i31.new (i32.const 42)))
+          (ref.cast (ref array) (i31.new (i32.const 42)))
           drop))
     `),
     WebAssembly.RuntimeError,
@@ -337,7 +337,7 @@ function testArrayCasts() {
     instantiate(`
       (module
         (func (export "f") (result i32)
-          (ref.test array (i31.new (i32.const 42)))))
+          (ref.test (ref array) (i31.new (i32.const 42)))))
     `).exports.f(),
     0
   );
@@ -349,9 +349,9 @@ function testArrayCasts() {
         (type (array f32))
         (start 1)
         (func (param arrayref)
-          (ref.cast 0 (local.get 0))
+          (ref.cast (ref 0) (local.get 0))
           drop)
-        (func (call 0 (array.new_canon 1 (f32.const 42.2) (i32.const 5)))))
+        (func (call 0 (array.new 1 (f32.const 42.2) (i32.const 5)))))
     `),
     WebAssembly.RuntimeError,
     "ref.cast failed to cast reference to target heap type"
@@ -363,9 +363,9 @@ function testArrayCasts() {
         (type (array i32))
         (type (array f32))
         (func (param arrayref) (result i32)
-          (ref.test 0 (local.get 0)))
+          (ref.test (ref 0) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (array.new_canon 1 (f32.const 42.2) (i32.const 5)))))
+          (call 0 (array.new 1 (f32.const 42.2) (i32.const 5)))))
     `).exports.f(),
     0
   );
@@ -377,7 +377,7 @@ function testArrayCasts() {
         (type (array f32))
         (start 0)
         (func
-          (ref.cast 1 (array.new_canon 0 (i32.const 42) (i32.const 5)))
+          (ref.cast (ref 1) (array.new 0 (i32.const 42) (i32.const 5)))
           drop))
     `),
     WebAssembly.RuntimeError,
@@ -390,7 +390,7 @@ function testArrayCasts() {
         (type (array i32))
         (type (array f32))
         (func (export "f") (result i32)
-          (ref.test 1 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+          (ref.test (ref 1) (array.new 0 (i32.const 42) (i32.const 5)))))
     `).exports.f(),
     0
   );
@@ -402,7 +402,7 @@ function testStructCasts() {
       (type (struct (field i32)))
       (start 1)
       (func (result structref)
-        (ref.cast struct (struct.new_canon 0 (i32.const 42))))
+        (ref.cast (ref struct) (struct.new 0 (i32.const 42))))
       (func (call 0) drop))
   `);
 
@@ -411,7 +411,7 @@ function testStructCasts() {
       (module
         (type (struct (field i32)))
         (func (export "f") (result i32)
-          (ref.test struct (struct.new_canon 0 (i32.const 42)))))
+          (ref.test (ref struct) (struct.new 0 (i32.const 42)))))
     `).exports.f(),
     1
   )
@@ -421,9 +421,9 @@ function testStructCasts() {
       (type (struct (field i32)))
       (start 1)
       (func (param structref)
-        (ref.cast 0 (local.get 0))
+        (ref.cast (ref 0) (local.get 0))
         drop)
-      (func (call 0 (struct.new_canon 0 (i32.const 42)))))
+      (func (call 0 (struct.new 0 (i32.const 42)))))
   `);
 
   assert.eq(
@@ -431,9 +431,9 @@ function testStructCasts() {
       (module
         (type (struct (field i32)))
         (func (param structref) (result i32)
-          (ref.test 0 (local.get 0)))
+          (ref.test (ref 0) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (struct.new_canon 0 (i32.const 42)))))
+          (call 0 (struct.new 0 (i32.const 42)))))
     `).exports.f(),
     1
   )
@@ -443,7 +443,7 @@ function testStructCasts() {
       (module
         (start 0)
         (func
-          (ref.cast struct (i31.new (i32.const 42)))
+          (ref.cast (ref struct) (i31.new (i32.const 42)))
           drop))
     `),
     WebAssembly.RuntimeError,
@@ -454,7 +454,7 @@ function testStructCasts() {
     instantiate(`
       (module
         (func (export "f") (result i32)
-          (ref.test struct (i31.new (i32.const 42)))))
+          (ref.test (ref struct) (i31.new (i32.const 42)))))
     `).exports.f(),
     0
   );
@@ -466,9 +466,9 @@ function testStructCasts() {
         (type (struct (field f32)))
         (start 1)
         (func (param structref)
-          (ref.cast 0 (local.get 0))
+          (ref.cast (ref 0) (local.get 0))
           drop)
-        (func (call 0 (struct.new_canon 1 (f32.const 42.2)))))
+        (func (call 0 (struct.new 1 (f32.const 42.2)))))
     `),
     WebAssembly.RuntimeError,
     "ref.cast failed to cast reference to target heap type"
@@ -480,9 +480,9 @@ function testStructCasts() {
         (type (struct (field i32)))
         (type (struct (field f32)))
         (func (param structref) (result i32)
-          (ref.test 0 (local.get 0)))
+          (ref.test (ref 0) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (struct.new_canon 1 (f32.const 42.2)))))
+          (call 0 (struct.new 1 (f32.const 42.2)))))
     `).exports.f(),
     0
   );
@@ -494,7 +494,7 @@ function testStructCasts() {
         (type (struct (field f32)))
         (start 0)
         (func
-          (ref.cast 1 (struct.new_canon 0 (i32.const 42)))
+          (ref.cast (ref 1) (struct.new 0 (i32.const 42)))
           drop))
     `),
     WebAssembly.RuntimeError,
@@ -507,7 +507,7 @@ function testStructCasts() {
         (type (struct (field i32)))
         (type (struct (field f32)))
         (func (export "f") (result i32)
-          (ref.test 1 (struct.new_canon 0 (i32.const 42)))))
+          (ref.test (ref 1) (struct.new 0 (i32.const 42)))))
     `).exports.f(),
     0
   );
@@ -520,9 +520,9 @@ function testSubtypeCasts() {
       (type (sub 0 (array i32)))
       (start 1)
       (func (param arrayref)
-        (ref.cast 0 (local.get 0))
+        (ref.cast (ref 0) (local.get 0))
         drop)
-      (func (call 0 (array.new_canon 1 (i32.const 42) (i32.const 5)))))
+      (func (call 0 (array.new 1 (i32.const 42) (i32.const 5)))))
   `);
 
   assert.eq(
@@ -531,9 +531,9 @@ function testSubtypeCasts() {
         (type (array i32))
         (type (sub 0 (array i32)))
         (func (param arrayref) (result i32)
-          (ref.test 0 (local.get 0)))
+          (ref.test (ref 0) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (array.new_canon 1 (i32.const 42) (i32.const 5)))))
+          (call 0 (array.new 1 (i32.const 42) (i32.const 5)))))
     `).exports.f(),
     1
   );
@@ -544,9 +544,9 @@ function testSubtypeCasts() {
       (type (sub 0 (struct (field i32) (field i64))))
       (start 1)
       (func (param structref)
-        (ref.cast 0 (local.get 0))
+        (ref.cast (ref 0) (local.get 0))
         drop)
-      (func (call 0 (struct.new_canon 1 (i32.const 42) (i64.const 43)))))
+      (func (call 0 (struct.new 1 (i32.const 42) (i64.const 43)))))
   `);
 
   assert.eq(
@@ -555,9 +555,9 @@ function testSubtypeCasts() {
         (type (struct (field i32)))
         (type (sub 0 (struct (field i32) (field i64))))
         (func (param structref) (result i32)
-          (ref.test 0 (local.get 0)))
+          (ref.test (ref 0) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (struct.new_canon 1 (i32.const 42) (i64.const 43)))))
+          (call 0 (struct.new 1 (i32.const 42) (i64.const 43)))))
     `).exports.f(),
     1
   );
@@ -570,7 +570,7 @@ function testSubtypeCasts() {
       (start 2)
       (func (type 1) (i32.const 42))
       (func (param funcref)
-        (ref.cast 0 (local.get 0))
+        (ref.cast (ref 0) (local.get 0))
         drop)
       (func (call 1 (ref.func 0))))
   `);
@@ -583,7 +583,7 @@ function testSubtypeCasts() {
         (elem declare funcref (ref.func 0))
         (func (type 1) (i32.const 42))
         (func (param funcref) (result i32)
-          (ref.test 0 (local.get 0)))
+          (ref.test (ref 0) (local.get 0)))
         (func (export "f") (result i32)
           (call 1 (ref.func 0))))
     `).exports.f(),
@@ -597,9 +597,9 @@ function testSubtypeCasts() {
         (type (sub 0 (array i32)))
         (start 1)
         (func (param arrayref)
-          (ref.cast 1 (local.get 0))
+          (ref.cast (ref 1) (local.get 0))
           drop)
-        (func (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+        (func (call 0 (array.new 0 (i32.const 42) (i32.const 5)))))
     `),
     WebAssembly.RuntimeError,
     "ref.cast failed to cast reference to target heap type"
@@ -611,9 +611,9 @@ function testSubtypeCasts() {
         (type (array i32))
         (type (sub 0 (array i32)))
         (func (param arrayref) (result i32)
-          (ref.test 1 (local.get 0)))
+          (ref.test (ref 1) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+          (call 0 (array.new 0 (i32.const 42) (i32.const 5)))))
     `).exports.f(),
     0
   );
@@ -627,7 +627,7 @@ function testSubtypeCasts() {
         (start 2)
         (func (type 0) (i32.const 42))
         (func (param funcref)
-          (ref.cast 1 (local.get 0))
+          (ref.cast (ref 1) (local.get 0))
           drop)
         (func (call 1 (ref.func 0))))
     `),
@@ -643,7 +643,7 @@ function testSubtypeCasts() {
         (elem declare funcref (ref.func 0))
         (func (type 0) (i32.const 42))
         (func (param funcref) (result i32)
-          (ref.test 1 (local.get 0)))
+          (ref.test (ref 1) (local.get 0)))
         (func (export "f") (result i32)
           (call 1 (ref.func 0))))
     `).exports.f(),
@@ -657,9 +657,9 @@ function testEqCasts() {
       (type (array i32))
       (start 1)
       (func (param arrayref) (result eqref)
-        (ref.cast eq (local.get 0)))
+        (ref.cast (ref eq) (local.get 0)))
       (func
-        (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))
+        (call 0 (array.new 0 (i32.const 42) (i32.const 5)))
         drop))
   `);
 
@@ -668,9 +668,9 @@ function testEqCasts() {
       (module
         (type (array i32))
         (func (param arrayref) (result i32)
-          (ref.test eq (local.get 0)))
+          (ref.test (ref eq) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+          (call 0 (array.new 0 (i32.const 42) (i32.const 5)))))
     `).exports.f(),
     1
   );
@@ -680,9 +680,9 @@ function testEqCasts() {
       (type (struct (field i32)))
       (start 1)
       (func (param structref) (result eqref)
-        (ref.cast eq (local.get 0)))
+        (ref.cast (ref eq) (local.get 0)))
       (func
-        (call 0 (struct.new_canon 0 (i32.const 42)))
+        (call 0 (struct.new 0 (i32.const 42)))
         drop))
   `);
 
@@ -691,9 +691,9 @@ function testEqCasts() {
       (module
         (type (struct (field i32)))
         (func (param structref) (result i32)
-          (ref.test eq (local.get 0)))
+          (ref.test (ref eq) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (struct.new_canon 0 (i32.const 42)))))
+          (call 0 (struct.new 0 (i32.const 42)))))
     `).exports.f(),
     1
   );
@@ -702,7 +702,7 @@ function testEqCasts() {
     (module
       (start 1)
       (func (param i31ref) (result eqref)
-        (ref.cast eq (local.get 0)))
+        (ref.cast (ref eq) (local.get 0)))
       (func
         (call 0 (i31.new (i32.const 42)))
         drop))
@@ -712,7 +712,7 @@ function testEqCasts() {
     instantiate(`
       (module
         (func (param i31ref) (result i32)
-          (ref.test eq (local.get 0)))
+          (ref.test (ref eq) (local.get 0)))
         (func (export "f") (result i32)
           (call 0 (i31.new (i32.const 42)))))
     `).exports.f(),
@@ -726,7 +726,7 @@ function testEqCasts() {
         (elem declare funcref (ref.func 0))
         (func (type 0) (i32.const 42))
         (func (param funcref)
-          (ref.cast eq (local.get 0))
+          (ref.cast (ref eq) (local.get 0))
           drop))
     `),
     WebAssembly.CompileError,
@@ -740,9 +740,9 @@ function testAnyCasts() {
       (type (array i32))
       (start 1)
       (func (param arrayref) (result anyref)
-        (ref.cast any (local.get 0)))
+        (ref.cast (ref any) (local.get 0)))
       (func
-        (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))
+        (call 0 (array.new 0 (i32.const 42) (i32.const 5)))
         drop))
   `);
 
@@ -751,9 +751,9 @@ function testAnyCasts() {
       (module
         (type (array i32))
         (func (param arrayref) (result i32)
-          (ref.test any (local.get 0)))
+          (ref.test (ref any) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+          (call 0 (array.new 0 (i32.const 42) (i32.const 5)))))
     `).exports.f(),
     1
   );
@@ -763,9 +763,9 @@ function testAnyCasts() {
       (type (struct (field i32)))
       (start 1)
       (func (param structref) (result anyref)
-        (ref.cast any (local.get 0)))
+        (ref.cast (ref any) (local.get 0)))
       (func
-        (call 0 (struct.new_canon 0 (i32.const 42)))
+        (call 0 (struct.new 0 (i32.const 42)))
         drop))
   `);
 
@@ -774,9 +774,9 @@ function testAnyCasts() {
       (module
         (type (struct (field i32)))
         (func (param structref) (result i32)
-          (ref.test any (local.get 0)))
+          (ref.test (ref any) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (struct.new_canon 0 (i32.const 42)))))
+          (call 0 (struct.new 0 (i32.const 42)))))
     `).exports.f(),
     1
   );
@@ -785,7 +785,7 @@ function testAnyCasts() {
     (module
       (start 1)
       (func (param i31ref) (result anyref)
-        (ref.cast any (local.get 0)))
+        (ref.cast (ref any) (local.get 0)))
       (func
         (call 0 (i31.new (i32.const 42)))
         drop))
@@ -795,7 +795,7 @@ function testAnyCasts() {
     instantiate(`
       (module
         (func (param i31ref) (result i32)
-          (ref.test any (local.get 0)))
+          (ref.test (ref any) (local.get 0)))
         (func (export "f") (result i32)
           (call 0 (i31.new (i32.const 42)))))
     `).exports.f(),
@@ -809,7 +809,7 @@ function testAnyCasts() {
         (elem declare funcref (ref.func 0))
         (func (type 0) (i32.const 42))
         (func (param funcref)
-          (ref.cast any (local.get 0))
+          (ref.cast (ref any) (local.get 0))
           drop))
     `),
     WebAssembly.CompileError,
@@ -824,9 +824,9 @@ function testNullCasts() {
         (type (array i32))
         (start 1)
         (func (param arrayref) (result nullref)
-          (ref.cast none (local.get 0)))
+          (ref.cast (ref none) (local.get 0)))
         (func
-          (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))
+          (call 0 (array.new 0 (i32.const 42) (i32.const 5)))
           drop))
     `),
     WebAssembly.RuntimeError,
@@ -838,9 +838,9 @@ function testNullCasts() {
       (module
         (type (array i32))
         (func (param arrayref) (result i32)
-          (ref.test none (local.get 0)))
+          (ref.test (ref none) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))))
+          (call 0 (array.new 0 (i32.const 42) (i32.const 5)))))
     `).exports.f(),
     0
   );
@@ -851,9 +851,9 @@ function testNullCasts() {
         (type (struct (field i32)))
         (start 1)
         (func (param structref) (result nullref)
-          (ref.cast none (local.get 0)))
+          (ref.cast (ref none) (local.get 0)))
         (func
-          (call 0 (struct.new_canon 0 (i32.const 42)))
+          (call 0 (struct.new 0 (i32.const 42)))
           drop))
     `),
     WebAssembly.RuntimeError,
@@ -865,9 +865,9 @@ function testNullCasts() {
       (module
         (type (struct (field i32)))
         (func (param structref) (result i32)
-          (ref.test none (local.get 0)))
+          (ref.test (ref none) (local.get 0)))
         (func (export "f") (result i32)
-          (call 0 (struct.new_canon 0 (i32.const 42)))))
+          (call 0 (struct.new 0 (i32.const 42)))))
     `).exports.f(),
     0
   );
@@ -877,7 +877,7 @@ function testNullCasts() {
       (module
         (start 1)
         (func (param i31ref) (result nullref)
-          (ref.cast none (local.get 0)))
+          (ref.cast (ref none) (local.get 0)))
         (func
           (call 0 (i31.new (i32.const 42)))
           drop))
@@ -890,7 +890,7 @@ function testNullCasts() {
     instantiate(`
       (module
         (func (param i31ref) (result i32)
-          (ref.test none (local.get 0)))
+          (ref.test (ref none) (local.get 0)))
         (func (export "f") (result i32)
           (call 0 (i31.new (i32.const 42)))))
     `).exports.f(),
@@ -904,7 +904,7 @@ function testNullCasts() {
         (elem declare funcref (ref.func 0))
         (func (type 0) (i32.const 42))
         (func (param funcref)
-          (ref.cast none (local.get 0))
+          (ref.cast (ref none) (local.get 0))
           drop))
     `),
     WebAssembly.CompileError,

@@ -31,7 +31,7 @@ function checkDataSegmentIndex(createModuleString, dataSegmentIndex, expectedVal
     assert.eq(retVal, expectedVal);
 }
 
-// Test array.new_canon_data with all numeric and packed types
+// Test array.new_data with all numeric and packed types
 function testArrayNewCanonData() {
     let arraySize = 8;
     let string = "WebAssemblyGarbageCollectionProposalWebAssemblyGarbageCollectionProposal";
@@ -46,7 +46,7 @@ function testArrayNewCanonData() {
         (func (export "f") (result ` + resultType + `)
           (i32.const 0)
           (i32.const ` + arraySize + `)
-          (array.new_canon_data 0 0)
+          (array.new_data 0 0)
           (i32.const ` + i + `)
           (array.` + getter + ` 0)))
     `;
@@ -90,7 +90,7 @@ function testBadDataSegment() {
         (func (export "f") (result i32)
           (i32.const 0)
           (i32.const 1)
-          (array.new_canon_data 0 2)
+          (array.new_data 0 2)
           (i32.const 0)
           (array.get_u 0)))`),
                   WebAssembly.CompileError,
@@ -102,7 +102,7 @@ function testBadDataSegment() {
         (func (export "f") (result i32)
           (i32.const 0)
           (i32.const 1)
-          (array.new_canon_data 0 0)
+          (array.new_data 0 0)
           (i32.const 0)
           (array.get_u 0)))`),
                   WebAssembly.CompileError,
@@ -123,7 +123,7 @@ function testOtherDataSegments() {
         (func (export "f") (result i32)
           (i32.const 0)
           (i32.const 1)
-          (array.new_canon_data 0 ` + dataSegmentIndex + `)
+          (array.new_data 0 ` + dataSegmentIndex + `)
           (i32.const 0)
           (array.get_u 0)))`);
 
@@ -146,7 +146,7 @@ function testBadOffset() {
         (func (export "f") (result i32)
           (i32.const 10)
           (i32.const 2)
-          (array.new_canon_data 0 0)
+          (array.new_data 0 0)
           (i32.const 0)
           (array.get_u 0)))`)),
                   WebAssembly.RuntimeError,
@@ -159,7 +159,7 @@ function testBadOffset() {
         (func (export "f") (result i32)
           (i32.const -2)
           (i32.const 1)
-          (array.new_canon_data 0 0)
+          (array.new_data 0 0)
           (i32.const 0)
           (array.get_u 0)))`)),
                   WebAssembly.RuntimeError,
@@ -177,7 +177,7 @@ function testOffsets() {
                (func (export "f") (result i32)
                  (i32.const ` + offset + `)
                  (i32.const 2)
-                 (array.new_canon_data 0 ` + dataSegmentIndex + `)
+                 (array.new_data 0 ` + dataSegmentIndex + `)
                  (i32.const 0)
                  (array.get_u 0)))`);
         var i = 0;
@@ -207,7 +207,7 @@ function testReadOutOfBounds() {
           (func (export "f") (result i` + resultBits + `)
             (i32.const ` + offset + `)
             (i32.const ` + arrayLength + `)
-            (array.new_canon_data 0 0)
+            (array.new_data 0 0)
             (i32.const 0)
             (array.get` + suffix + ` 0)))`)).exports.f(),
                   WebAssembly.RuntimeError,
@@ -238,7 +238,7 @@ function testInt32Overflow() {
         (func (export "f") (result i32)
           (i32.const ` + offset + `)
           (i32.const ` + len + `)
-          (array.new_canon_data 0 0)
+          (array.new_data 0 0)
           (array.len)))`).exports.f();
     let maxUint32 = 0xffffffff;
     assert.throws(() => instantiate(f(1, maxUint32)),
@@ -274,7 +274,7 @@ function testInt32Overflow() {
         (func (export "f") (result i32)
           (i32.const ` + offset + `)
           (i32.const ` + len + `)
-          (array.new_canon_data 0 0)
+          (array.new_data 0 0)
           (array.len)))`).exports.f();
     // (maxUint32 / 4) + 1
     let badArraySize = 0x40000000;
@@ -298,7 +298,7 @@ function testZeroLengthArray() {
         (func (export "f") (result i32)
           (i32.const ` + offset + `)
           (i32.const 0)
-          (array.new_canon_data 0 0)
+          (array.new_data 0 0)
           (array.len)))`);
     var m = f("", 0);
     assert.eq(instantiate(m).exports.f(), 0);
@@ -330,7 +330,7 @@ function testSingletonArray() {
         (func (export "f") (result i32)
           (i32.const ` + offset + `)
           (i32.const 1)
-          (array.new_canon_data 0 0)
+          (array.new_data 0 0)
           (array.len)))`);
     let msg = "Offset + array length would exceed the size of a data segment";
     // singleton array from 0-length data segment -- should throw
@@ -365,10 +365,10 @@ function testTypeErrors() {
                (func (export "f") (result i32)
                  (i32.const 0)
                  (i32.const 2)
-                 (array.new_canon_data 0 0)))`), WebAssembly.CompileError, msg);
+                 (array.new_data 0 0)))`), WebAssembly.CompileError, msg);
     };
     /*
-      `array.new_canon_data $t $d` should be a type error if:
+      `array.new_data $t $d` should be a type error if:
         * $t is non-array (struct or func)
         * $t is an array of t' where t' is not numeric, vector or packed
      */
@@ -389,7 +389,7 @@ function testBadOperands() {
                (func (export "f") (result i32)
                  (i64.const 0)
                  (i32.const 2)
-                 (array.new_canon_data 0 0) (drop) (i32.const 0)))`),
+                 (array.new_data 0 0) (drop) (i32.const 0)))`),
                   WebAssembly.CompileError,
                   "WebAssembly.Module doesn't validate: array.new_data: offset has type I64 expected I32");
     assert.throws(() => compile (`
@@ -400,7 +400,7 @@ function testBadOperands() {
                (func (export "f") (result i32)
                  (i32.const 0)
                  (i64.const 2)
-                 (array.new_canon_data 0 0) (drop) (i32.const 0)))`),
+                 (array.new_data 0 0) (drop) (i32.const 0)))`),
                   WebAssembly.CompileError,
                   "WebAssembly.Module doesn't validate: array.new_data: size has type I64 expected I32");
     assert.throws(() => compile (`
@@ -410,7 +410,7 @@ function testBadOperands() {
                (type (array (mut i32)))
                (func (export "f") (result i32)
                  (i32.const 0)
-                 (array.new_canon_data 0 0) (drop) (i32.const 0)))`),
+                 (array.new_data 0 0) (drop) (i32.const 0)))`),
                   WebAssembly.CompileError,
                   "WebAssembly.Module doesn't parse at byte 7: can't pop empty stack in array.new_data, in function at index 0");
     assert.throws(() => compile (`
@@ -419,7 +419,7 @@ function testBadOperands() {
                (data "")
                (type (array (mut i32)))
                (func (export "f") (result i32)
-                 (array.new_canon_data 0 0) (drop) (i32.const 0)))`),
+                 (array.new_data 0 0) (drop) (i32.const 0)))`),
                   WebAssembly.CompileError,
                   "WebAssembly.Module doesn't parse at byte 5: can't pop empty stack in array.new_data, in function at index 0");
 }

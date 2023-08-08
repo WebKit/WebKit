@@ -50,7 +50,7 @@ function testValidation() {
       (module
         (type (struct))
         (func (param (ref none)) (result))
-        (func (call 0 (struct.new_canon 0))))
+        (func (call 0 (struct.new 0))))
     `),
     WebAssembly.CompileError,
     "WebAssembly.Module doesn't validate: argument type mismatch in call, got (), expected Nullref, in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
@@ -68,7 +68,7 @@ function testAnyref() {
     (module
       (type (struct))
       (func (param anyref) (result))
-      (func (export "f") (call 0 (struct.new_canon 0))))
+      (func (export "f") (call 0 (struct.new 0))))
   `).exports.f();
 }
 
