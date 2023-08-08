@@ -1705,6 +1705,7 @@ layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/formattingContexts/inline/InlineLineBoxVerticalAligner.cpp
 layout/formattingContexts/inline/InlineTextItem.cpp
+layout/formattingContexts/inline/InlineWidthOverride.cpp
 layout/formattingContexts/inline/display/InlineDisplayContent.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayLineBuilder.cpp

@@ -959,7 +959,14 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     auto [lineRectAdjutedWithCandidateContent, candidateContentIsConstrainedByFloat] = adjustedLineRectWithCandidateInlineContent(lineCandidate);
     // Note that adjusted line height never shrinks.
     m_candidateInlineContentEnclosingHeight = lineRectAdjutedWithCandidateContent.height();
-    auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, lineRectAdjutedWithCandidateContent.width());
+
+    // If width constraint overrides exist, modify the available width accordingly.
+    auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
+    const auto& inlineWidthOverride = m_inlineLayoutState.inlineWidthOverride();
+    auto widthOverride = inlineWidthOverride.getWidthOverride(lineIndex);
+    auto availableTotalWidthForContent = widthOverride ? InlineLayoutUnit { widthOverride.value() } - m_lineMarginStart : lineRectAdjutedWithCandidateContent.width();
+
+    auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, availableTotalWidthForContent);
     auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus {
         m_line.contentLogicalRight(),

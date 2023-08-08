@@ -27,6 +27,7 @@
 
 #include "BlockLayoutState.h"
 #include "FloatingState.h"
+#include "InlineWidthOverride.h"
 
 namespace WebCore {
 namespace Layout {
@@ -46,12 +47,16 @@ public:
 
     LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffsets.get(&listMarkerBox); }
 
+    void setInlineWidthOverride(InlineWidthOverride inlineWidthOverride) { m_inlineWidthOverride = inlineWidthOverride; }
+    const InlineWidthOverride& inlineWidthOverride() const { return m_inlineWidthOverride; }
+
 private:
     BlockLayoutState& m_parentBlockLayoutState;
     InlineLayoutUnit m_clearGapBeforeFirstLine { 0.f };
     InlineLayoutUnit m_clearGapAfterLastLine { 0.f };
     // FIXME: This is required by the integaration codepath.
     HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
+    InlineWidthOverride m_inlineWidthOverride;
 };
 
 inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState, HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets)
