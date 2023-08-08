@@ -29,14 +29,19 @@
 #if ENABLE(WEBGL)
 
 #include "CachedImage.h"
+#include "EXTClipControl.h"
 #include "EXTColorBufferFloat.h"
 #include "EXTColorBufferHalfFloat.h"
+#include "EXTConservativeDepth.h"
+#include "EXTDepthClamp.h"
 #include "EXTDisjointTimerQueryWebGL2.h"
 #include "EXTFloatBlend.h"
 #include "EXTPolygonOffsetClamp.h"
+#include "EXTRenderSnorm.h"
 #include "EXTTextureCompressionBPTC.h"
 #include "EXTTextureCompressionRGTC.h"
 #include "EXTTextureFilterAnisotropic.h"
+#include "EXTTextureMirrorClampToEdge.h"
 #include "EXTTextureNorm16.h"
 #include "EventLoop.h"
 #include "HTMLCanvasElement.h"
@@ -47,7 +52,10 @@
 #include "InspectorInstrumentation.h"
 #include "KHRParallelShaderCompile.h"
 #include "Logging.h"
+#include "NVShaderNoperspectiveInterpolation.h"
 #include "OESDrawBuffersIndexed.h"
+#include "OESSampleVariables.h"
+#include "OESShaderMultisampleInterpolation.h"
 #include "OESTextureFloatLinear.h"
 #include "OffscreenCanvas.h"
 #include "RenderBox.h"
@@ -69,11 +77,14 @@
 #include "WebGLLoseContext.h"
 #include "WebGLMultiDraw.h"
 #include "WebGLMultiDrawInstancedBaseVertexBaseInstance.h"
+#include "WebGLPolygonMode.h"
 #include "WebGLProgram.h"
 #include "WebGLProvokingVertex.h"
 #include "WebGLQuery.h"
+#include "WebGLRenderSharedExponent.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLSampler.h"
+#include "WebGLStencilTexturing.h"
 #include "WebGLSync.h"
 #include "WebGLTexture.h"
 #include "WebGLTransformFeedback.h"
@@ -827,6 +838,11 @@ WebGLAny WebGL2RenderingContext::getTexParameter(GCGLenum target, GCGLenum pname
     case GraphicsContextGL::TEXTURE_MIN_LOD:
     case GraphicsContextGL::TEXTURE_MAX_LOD:
         return m_context->getTexParameterf(target, pname);
+    case GraphicsContextGL::DEPTH_STENCIL_TEXTURE_MODE_ANGLE:
+        if (m_webglStencilTexturing)
+            return m_context->getTexParameteri(target, pname);
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getTexParameter", "invalid parameter name, WEBGL_stencil_texturing not enabled");
+        return nullptr;
     default:
         return WebGLRenderingContextBase::getTexParameter(target, pname);
     }
@@ -2567,17 +2583,25 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
         return variable.get(); \
     }
 
+    ENABLE_IF_REQUESTED(EXTClipControl, m_extClipControl, "EXT_clip_control"_s, EXTClipControl::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(EXTColorBufferFloat, m_extColorBufferFloat, "EXT_color_buffer_float"_s, EXTColorBufferFloat::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTColorBufferHalfFloat, m_extColorBufferHalfFloat, "EXT_color_buffer_half_float"_s, EXTColorBufferHalfFloat::supported(*m_context));
+    ENABLE_IF_REQUESTED(EXTConservativeDepth, m_extConservativeDepth, "EXT_conservative_depth"_s, EXTConservativeDepth::supported(*m_context) && enableDraftExtensions);
+    ENABLE_IF_REQUESTED(EXTDepthClamp, m_extDepthClamp, "EXT_depth_clamp"_s, EXTDepthClamp::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(EXTDisjointTimerQueryWebGL2, m_extDisjointTimerQueryWebGL2, "EXT_disjoint_timer_query_webgl2"_s, EXTDisjointTimerQueryWebGL2::supported(*m_context) && scriptExecutionContext()->settingsValues().webGLTimerQueriesEnabled);
     ENABLE_IF_REQUESTED(EXTFloatBlend, m_extFloatBlend, "EXT_float_blend"_s, EXTFloatBlend::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTPolygonOffsetClamp, m_extPolygonOffsetClamp, "EXT_polygon_offset_clamp"_s, EXTPolygonOffsetClamp::supported(*m_context) && enableDraftExtensions);
+    ENABLE_IF_REQUESTED(EXTRenderSnorm, m_extRenderSnorm, "EXT_render_snorm"_s, EXTRenderSnorm::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(EXTTextureCompressionBPTC, m_extTextureCompressionBPTC, "EXT_texture_compression_bptc"_s, EXTTextureCompressionBPTC::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTTextureCompressionRGTC, m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc"_s, EXTTextureCompressionRGTC::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic"_s, EXTTextureFilterAnisotropic::supported(*m_context));
+    ENABLE_IF_REQUESTED(EXTTextureMirrorClampToEdge, m_extTextureMirrorClampToEdge, "EXT_texture_mirror_clamp_to_edge"_s, EXTTextureMirrorClampToEdge::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(EXTTextureNorm16, m_extTextureNorm16, "EXT_texture_norm16"_s, EXTTextureNorm16::supported(*m_context));
     ENABLE_IF_REQUESTED(KHRParallelShaderCompile, m_khrParallelShaderCompile, "KHR_parallel_shader_compile"_s, KHRParallelShaderCompile::supported(*m_context));
+    ENABLE_IF_REQUESTED(NVShaderNoperspectiveInterpolation, m_nvShaderNoperspectiveInterpolation, "NV_shader_noperspective_interpolation"_s, NVShaderNoperspectiveInterpolation::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(OESDrawBuffersIndexed, m_oesDrawBuffersIndexed, "OES_draw_buffers_indexed"_s, OESDrawBuffersIndexed::supported(*m_context));
+    ENABLE_IF_REQUESTED(OESSampleVariables, m_oesSampleVariables, "OES_sample_variables"_s, OESSampleVariables::supported(*m_context) && enableDraftExtensions);
+    ENABLE_IF_REQUESTED(OESShaderMultisampleInterpolation, m_oesShaderMultisampleInterpolation, "OES_shader_multisample_interpolation"_s, OESShaderMultisampleInterpolation::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(OESTextureFloatLinear, m_oesTextureFloatLinear, "OES_texture_float_linear"_s, OESTextureFloatLinear::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLClipCullDistance, m_webglClipCullDistance, "WEBGL_clip_cull_distance"_s, WebGLClipCullDistance::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(WebGLCompressedTextureASTC, m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc"_s, WebGLCompressedTextureASTC::supported(*m_context));
@@ -2593,7 +2617,10 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context"_s, true);
     ENABLE_IF_REQUESTED(WebGLMultiDraw, m_webglMultiDraw, "WEBGL_multi_draw"_s, WebGLMultiDraw::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLMultiDrawInstancedBaseVertexBaseInstance, m_webglMultiDrawInstancedBaseVertexBaseInstance, "WEBGL_multi_draw_instanced_base_vertex_base_instance"_s, WebGLMultiDrawInstancedBaseVertexBaseInstance::supported(*m_context) && enableDraftExtensions);
+    ENABLE_IF_REQUESTED(WebGLPolygonMode, m_webglPolygonMode, "WEBGL_polygon_mode"_s, WebGLPolygonMode::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(WebGLProvokingVertex, m_webglProvokingVertex, "WEBGL_provoking_vertex"_s, WebGLProvokingVertex::supported(*m_context));
+    ENABLE_IF_REQUESTED(WebGLRenderSharedExponent, m_webglRenderSharedExponent, "WEBGL_render_shared_exponent"_s, WebGLRenderSharedExponent::supported(*m_context) && enableDraftExtensions);
+    ENABLE_IF_REQUESTED(WebGLStencilTexturing, m_webglStencilTexturing, "WEBGL_stencil_texturing"_s, WebGLStencilTexturing::supported(*m_context) && enableDraftExtensions);
     return nullptr;
 }
 
@@ -2610,17 +2637,25 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     if (condition) \
         result.append(nameLiteral ## _s);
 
+    APPEND_IF_SUPPORTED("EXT_clip_control", EXTClipControl::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("EXT_color_buffer_float", EXTColorBufferFloat::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*m_context))
+    APPEND_IF_SUPPORTED("EXT_conservative_depth", EXTConservativeDepth::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("EXT_depth_clamp", EXTDepthClamp::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("EXT_disjoint_timer_query_webgl2", EXTDisjointTimerQueryWebGL2::supported(*m_context) && scriptExecutionContext()->settingsValues().webGLTimerQueriesEnabled)
     APPEND_IF_SUPPORTED("EXT_float_blend", EXTFloatBlend::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_polygon_offset_clamp", EXTPolygonOffsetClamp::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("EXT_render_snorm", EXTRenderSnorm::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("EXT_texture_compression_bptc", EXTTextureCompressionBPTC::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_texture_compression_rgtc", EXTTextureCompressionRGTC::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_texture_filter_anisotropic", EXTTextureFilterAnisotropic::supported(*m_context))
+    APPEND_IF_SUPPORTED("EXT_texture_mirror_clamp_to_edge", EXTTextureMirrorClampToEdge::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("EXT_texture_norm16", EXTTextureNorm16::supported(*m_context))
     APPEND_IF_SUPPORTED("KHR_parallel_shader_compile", KHRParallelShaderCompile::supported(*m_context))
+    APPEND_IF_SUPPORTED("NV_shader_noperspective_interpolation", NVShaderNoperspectiveInterpolation::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("OES_draw_buffers_indexed", OESDrawBuffersIndexed::supported(*m_context))
+    APPEND_IF_SUPPORTED("OES_sample_variables", OESSampleVariables::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("OES_shader_multisample_interpolation", OESShaderMultisampleInterpolation::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("OES_texture_float_linear", OESTextureFloatLinear::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_clip_cull_distance", WebGLClipCullDistance::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("WEBGL_compressed_texture_astc", WebGLCompressedTextureASTC::supported(*m_context))
@@ -2636,7 +2671,10 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     APPEND_IF_SUPPORTED("WEBGL_lose_context", true)
     APPEND_IF_SUPPORTED("WEBGL_multi_draw", WebGLMultiDraw::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_multi_draw_instanced_base_vertex_base_instance", WebGLMultiDrawInstancedBaseVertexBaseInstance::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("WEBGL_polygon_mode", WebGLPolygonMode::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("WEBGL_provoking_vertex", WebGLProvokingVertex::supported(*m_context))
+    APPEND_IF_SUPPORTED("WEBGL_render_shared_exponent", WebGLRenderSharedExponent::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("WEBGL_stencil_texturing", WebGLStencilTexturing::supported(*m_context) && enableDraftExtensions)
 
     return result;
 }
@@ -2909,11 +2947,36 @@ void WebGL2RenderingContext::renderbufferStorageImpl(GCGLenum target, GCGLsizei 
         }
         renderbufferStorageHelper(target, samples, internalformat, width, height);
         break;
+    case GraphicsContextGL::RGB9_E5:
+        if (!m_webglRenderSharedExponent) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "WEBGL_render_shared_exponent not enabled");
+            return;
+        }
+        renderbufferStorageHelper(target, samples, internalformat, width, height);
+        break;
     case GraphicsContextGL::R16_EXT:
     case GraphicsContextGL::RG16_EXT:
     case GraphicsContextGL::RGBA16_EXT:
         if (!m_extTextureNorm16) {
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "EXT_texture_norm16 not enabled");
+            return;
+        }
+        renderbufferStorageHelper(target, samples, internalformat, width, height);
+        break;
+    case GraphicsContextGL::R8_SNORM:
+    case GraphicsContextGL::RG8_SNORM:
+    case GraphicsContextGL::RGBA8_SNORM:
+        if (!m_extRenderSnorm) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "EXT_render_snorm not enabled");
+            return;
+        }
+        renderbufferStorageHelper(target, samples, internalformat, width, height);
+        break;
+    case GraphicsContextGL::R16_SNORM_EXT:
+    case GraphicsContextGL::RG16_SNORM_EXT:
+    case GraphicsContextGL::RGBA16_SNORM_EXT:
+        if (!m_extRenderSnorm || !m_extTextureNorm16) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "EXT_render_snorm or EXT_texture_norm16 not enabled");
             return;
         }
         renderbufferStorageHelper(target, samples, internalformat, width, height);
@@ -3149,6 +3212,16 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
         if (m_webglProvokingVertex)
             return getUnsignedIntParameter(GraphicsContextGL::PROVOKING_VERTEX_ANGLE);
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_provoking_vertex not enabled");
+        return nullptr;
+    case GraphicsContextGL::MIN_FRAGMENT_INTERPOLATION_OFFSET_OES:
+    case GraphicsContextGL::MAX_FRAGMENT_INTERPOLATION_OFFSET_OES:
+    case GraphicsContextGL::FRAGMENT_INTERPOLATION_OFFSET_BITS_OES:
+        if (m_oesShaderMultisampleInterpolation) {
+            if (pname == GraphicsContextGL::FRAGMENT_INTERPOLATION_OFFSET_BITS_OES)
+                return getIntParameter(pname);
+            return getFloatParameter(pname);
+        }
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, OES_shader_multisample_interpolation not enabled");
         return nullptr;
     default:
         return WebGLRenderingContextBase::getParameter(pname);
