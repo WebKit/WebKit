@@ -39,7 +39,8 @@ NavigationRequester NavigationRequester::from(Document& document)
         document.policyContainer(),
         document.frameID(),
         document.pageID(),
-        document.identifier()
+        document.identifier(),
+        document.sandboxFlags()
     };
 }
 

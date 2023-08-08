@@ -4311,6 +4311,7 @@ struct WebCore::NavigationRequester {
     std::optional<WebCore::FrameIdentifier> frameID;
     std::optional<WebCore::PageIdentifier> pageID;
     WebCore::ScriptExecutionContextIdentifier documentIdentifier;
+    WebCore::SandboxFlags sandboxFlags;
 };
 
 struct WebCore::PolicyContainer {
