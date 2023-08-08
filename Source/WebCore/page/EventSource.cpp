@@ -137,7 +137,7 @@ void EventSource::scheduleInitialConnect()
     auto* context = scriptExecutionContext();
     if (m_connectTimer)
         context->eventLoop().cancelScheduledTask(m_connectTimer);
-    m_connectTimer = context->eventLoop().scheduleTask(0_s, *context, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
+    m_connectTimer = context->eventLoop().scheduleTask(0_s, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
         if (RefPtr strongThis = weakThis.get())
             strongThis->connect();
     });
@@ -150,7 +150,7 @@ void EventSource::scheduleReconnect()
     auto* context = scriptExecutionContext();
     if (m_connectTimer)
         context->eventLoop().cancelScheduledTask(m_connectTimer);
-    m_connectTimer = context->eventLoop().scheduleTask(1_ms * m_reconnectDelay, *context, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
+    m_connectTimer = context->eventLoop().scheduleTask(1_ms * m_reconnectDelay, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
         if (RefPtr strongThis = weakThis.get())
             strongThis->connect();
     });

@@ -71,10 +71,11 @@ public:
     typedef Function<void ()> TaskFunction;
     void queueTask(std::unique_ptr<EventLoopTask>&&);
 
-    EventLoopTimerPtr scheduleTask(Seconds timeout, ScriptExecutionContext&, std::unique_ptr<EventLoopTask>&&);
+    EventLoopTimerPtr scheduleTask(Seconds timeout, std::unique_ptr<EventLoopTask>&&);
     void cancelScheduledTask(EventLoopTimerPtr);
+    void didExecuteScheduledTask(EventLoopTimer&);
 
-    EventLoopTimerPtr scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, ScriptExecutionContext&, std::unique_ptr<EventLoopTask>&&);
+    EventLoopTimerPtr scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, std::unique_ptr<EventLoopTask>&&);
     void cancelRepeatingTask(EventLoopTimerPtr);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-microtask
@@ -110,8 +111,8 @@ private:
 
     // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
     Vector<std::unique_ptr<EventLoopTask>> m_tasks;
-    HashSet<std::unique_ptr<EventLoopTimer>> m_scheduledTasks;
-    HashSet<std::unique_ptr<EventLoopTimer>> m_repeatingTasks;
+    HashSet<Ref<EventLoopTimer>> m_scheduledTasks;
+    HashSet<Ref<EventLoopTimer>> m_repeatingTasks;
     WeakHashSet<EventLoopTaskGroup> m_associatedGroups;
     WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspendedTasks;
     WeakHashSet<ScriptExecutionContext> m_associatedContexts;
@@ -149,23 +150,7 @@ public:
 
     // Marks the group as ready to stop but it won't actually be stopped
     // until all groups in this event loop are ready to stop.
-    void markAsReadyToStop()
-    {
-        if (isReadyToStop() || isStoppedPermanently())
-            return;
-
-        bool wasSuspended = isSuspended();
-        m_state = State::ReadyToStop;
-        if (auto* eventLoop = m_eventLoop.get())
-            eventLoop->stopAssociatedGroupsIfNecessary();
-
-        if (wasSuspended && !isStoppedPermanently()) {
-            // We we get marked as ready to stop while suspended (happens when a CachedPage gets destroyed) then the
-            // queued tasks will never be able to run (since tasks don't run while suspended and we will never resume).
-            // As a result, we can simply discard our tasks and stop permanently.
-            stopAndDiscardAllTasks();
-        }
-    }
+    void markAsReadyToStop();
 
     // This gets called by the event loop when all groups in the EventLoop as ready to stop.
     void stopAndDiscardAllTasks()
@@ -176,23 +161,8 @@ public:
             eventLoop->stopGroup(*this);
     }
 
-    void suspend()
-    {
-        ASSERT(!isStoppedPermanently());
-        ASSERT(!isReadyToStop());
-        m_state = State::Suspended;
-        // We don't remove suspended tasks to preserve the ordering.
-        // EventLoop::run checks whether each task's group is suspended or not.
-    }
-
-    void resume()
-    {
-        ASSERT(!isStoppedPermanently());
-        ASSERT(!isReadyToStop());
-        m_state = State::Running;
-        if (auto* eventLoop = m_eventLoop.get())
-            eventLoop->resumeGroup(*this);
-    }
+    void suspend();
+    void resume();
 
     bool isStoppedPermanently() const { return m_state == State::Stopped; }
     bool isSuspended() const { return m_state == State::Suspended; }
@@ -210,16 +180,21 @@ public:
 
     void runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&);
 
-    EventLoopTimerPtr scheduleTask(Seconds timeout, ScriptExecutionContext&, TaskSource, EventLoop::TaskFunction&&);
+    EventLoopTimerPtr scheduleTask(Seconds timeout, TaskSource, EventLoop::TaskFunction&&);
     void cancelScheduledTask(EventLoopTimerPtr);
+    void didExecuteScheduledTask(EventLoopTimer&);
 
-    EventLoopTimerPtr scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, ScriptExecutionContext&, TaskSource, EventLoop::TaskFunction&&);
+    EventLoopTimerPtr scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TaskSource, EventLoop::TaskFunction&&);
     void cancelRepeatingTask(EventLoopTimerPtr);
+
+    void didAddTimer(EventLoopTimer&);
+    void didRemoveTimer(EventLoopTimer&);
 
 private:
     enum class State : uint8_t { Running, Suspended, ReadyToStop, Stopped };
 
     WeakPtr<EventLoop> m_eventLoop;
+    WeakHashSet<EventLoopTimer> m_timers;
     State m_state { State::Running };
 };
 

@@ -61,7 +61,7 @@ void XMLHttpRequestProgressEventThrottle::updateProgress(bool isAsync, bool leng
 
         dispatchEventWhenPossible(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, lengthComputable, loaded, total));
         m_dispatchThrottledProgressEventTimer = m_target.scriptExecutionContext()->eventLoop().scheduleRepeatingTask(
-            minimumProgressEventDispatchingInterval, minimumProgressEventDispatchingInterval, *m_target.scriptExecutionContext(), TaskSource::Networking, [weakThis = WeakPtr { *this }] {
+            minimumProgressEventDispatchingInterval, minimumProgressEventDispatchingInterval, TaskSource::Networking, [weakThis = WeakPtr { *this }] {
                 if (weakThis)
                     weakThis->dispatchThrottledProgressEventTimerFired();
             });

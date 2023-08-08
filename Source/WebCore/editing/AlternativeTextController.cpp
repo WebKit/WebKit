@@ -114,7 +114,7 @@ void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType 
         m_rangeWithAlternative = std::nullopt;
     m_type = type;
     stopAlternativeTextUITimer();
-    m_timer = m_document.eventLoop().scheduleTask(correctionPanelTimerInterval, m_document, TaskSource::UserInteraction, [weakThis = WeakPtr { *this }] {
+    m_timer = m_document.eventLoop().scheduleTask(correctionPanelTimerInterval, TaskSource::UserInteraction, [weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->timerFired();

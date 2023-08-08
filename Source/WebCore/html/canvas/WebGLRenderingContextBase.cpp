@@ -5753,7 +5753,7 @@ void WebGLRenderingContextBase::maybeRestoreContextSoon(Seconds timeout)
         m_restoreTimer = 0;
     }
 
-    m_restoreTimer = scriptExecutionContext->eventLoop().scheduleTask(timeout, *scriptExecutionContext, TaskSource::WebGL, [weakThis = WeakPtr { *this }] {
+    m_restoreTimer = scriptExecutionContext->eventLoop().scheduleTask(timeout, TaskSource::WebGL, [weakThis = WeakPtr { *this }] {
         if (CheckedPtr checkedThis = weakThis.get()) {
             checkedThis->m_restoreTimer = 0;
             checkedThis->maybeRestoreContext();
