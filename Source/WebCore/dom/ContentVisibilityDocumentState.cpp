@@ -31,7 +31,7 @@
 #include "IntersectionObserverEntry.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

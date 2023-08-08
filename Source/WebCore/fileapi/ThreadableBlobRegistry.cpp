@@ -76,11 +76,13 @@ static inline bool isBlobURLContainingNullOrigin(const URL& url)
     return StringView(url.string()).substring(startIndex, endIndex - startIndex - 1) == "null"_s;
 }
 
+#if ASSERT_ENABLED
 static inline bool isInternalBlobURL(const URL& url)
 {
     constexpr auto prefix = "blob:blobinternal://"_s;
     return url.string().startsWith(prefix);
 }
+#endif
 
 // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
 static void addToOriginMapIfNecessary(const URL& url, RefPtr<SecurityOrigin>&& origin)

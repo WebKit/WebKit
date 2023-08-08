@@ -64,26 +64,6 @@ InlineFormattingContext::InlineFormattingContext(const ElementBox& formattingCon
 {
 }
 
-static inline const Box* nextInlineLevelBoxToLayout(const Box& layoutBox, const ElementBox& stayWithin)
-{
-    // Atomic inline-level boxes and floats are opaque boxes meaning that they are
-    // responsible for their own content (do not need to descend into their subtrees).
-    // Only inline boxes may have relevant descendant content.
-    if (layoutBox.isInlineBox()) {
-        if (is<ElementBox>(layoutBox) && downcast<ElementBox>(layoutBox).hasInFlowOrFloatingChild()) {
-            // Anonymous inline text boxes/line breaks can't have descendant content by definition.
-            ASSERT(!layoutBox.isInlineTextBox() && !layoutBox.isLineBreakBox());
-            return downcast<ElementBox>(layoutBox).firstInFlowOrFloatingChild();
-        }
-    }
-
-    for (auto* nextInPreOrder = &layoutBox; nextInPreOrder && nextInPreOrder != &stayWithin; nextInPreOrder = &nextInPreOrder->parent()) {
-        if (auto* nextSibling = nextInPreOrder->nextInFlowOrFloatingSibling())
-            return nextSibling;
-    }
-    return nullptr;
-}
-
 InlineLayoutResult InlineFormattingContext::layoutInFlowAndFloatContent(const ConstraintsForInlineContent& constraints, InlineLayoutState& inlineLayoutState)
 {
     if (!root().hasInFlowChild()) {

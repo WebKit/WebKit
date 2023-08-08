@@ -41,6 +41,7 @@
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
+#include "Quirks.h"
 #include "RenderElement.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"

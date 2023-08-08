@@ -31,6 +31,7 @@
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteTransaction.h>
 #include <WebCore/StorageMap.h>
+#include <wtf/FileSystem.h>
 
 namespace WebKit {
 

@@ -32,7 +32,10 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
+#include "FrameDestructionObserverInlines.h"
+#include "FrameLoader.h"
 #include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {

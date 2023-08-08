@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SecurityOriginData.h"
 
+#include "BlobURL.h"
 #include "Document.h"
 #include "LegacySchemeRegistry.h"
 #include "LocalFrame.h"

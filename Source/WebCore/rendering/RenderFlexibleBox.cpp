@@ -31,6 +31,7 @@
 #include "config.h"
 #include "RenderFlexibleBox.h"
 
+#include "BaselineAlignment.h"
 #include "FlexibleBoxAlgorithm.h"
 #include "FontBaseline.h"
 #include "HitTestResult.h"

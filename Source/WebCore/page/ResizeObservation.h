@@ -29,6 +29,7 @@
 #include "LayoutSize.h"
 #include "ResizeObserverBoxOptions.h"
 
+#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 

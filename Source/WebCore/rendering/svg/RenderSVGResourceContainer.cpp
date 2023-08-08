@@ -35,11 +35,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceContainer);
 
-static inline SVGDocumentExtensions& svgExtensionsFromElement(SVGElement& element)
-{
-    return element.document().accessSVGExtensions();
-}
-
 RenderSVGResourceContainer::RenderSVGResourceContainer(SVGElement& element, RenderStyle&& style)
     : LegacyRenderSVGHiddenContainer(element, WTFMove(style))
     , m_id(element.getIdAttribute())

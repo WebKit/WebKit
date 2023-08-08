@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Connection.h"
 
+#include "Encoder.h"
 #include "Logging.h"
 #include "MessageFlags.h"
 #include "MessageReceiveQueues.h"
