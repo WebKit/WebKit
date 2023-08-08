@@ -68,6 +68,9 @@ public:
     void addToImpl(PathImpl&) const;
     void applyElements(const PathElementApplier&) const;
 
+    bool canTransform() const;
+    bool transform(const AffineTransform&);
+
 private:
     Data m_data;
 };

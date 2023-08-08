@@ -403,13 +403,16 @@ FloatPoint PathCairo::currentPoint() const
     return FloatPoint(x, y);
 }
 
-void PathCairo::transform(const AffineTransform& transform)
+bool PathCairo::transform(const AffineTransform& transform)
 {
+    if (m_elementsStream && !m_elementsStream->transform(transform))
+        m_elementsStream = nullptr;
+
     cairo_matrix_t matrix = toCairoMatrix(transform);
     cairo_matrix_invert(&matrix);
     cairo_transform(platformPath(), &matrix);
 
-    m_elementsStream = nullptr;
+    return true;
 }
 
 bool PathCairo::contains(const FloatPoint &point, WindRule rule) const
