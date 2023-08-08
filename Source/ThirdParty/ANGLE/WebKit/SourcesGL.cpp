@@ -26,12 +26,15 @@
 #include "common/platform.h"
 
 #if ANGLE_ENABLE_GLSL && ANGLE_ENABLE_APPLE_WORKAROUNDS
-#    include "compiler/translator/tree_ops/apple/AddAndTrueToLoopCondition.cpp"
-#    include "compiler/translator/tree_ops/apple/RewriteDoWhile.cpp"
-#    include "compiler/translator/tree_ops/apple/RewriteRowMajorMatrices.cpp"
-#    include "compiler/translator/tree_ops/apple/RewriteUnaryMinusOperatorFloat.cpp"
-#    include "compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp"
+#    include "compiler/translator/tree_ops/glsl/apple/AddAndTrueToLoopCondition.cpp"
+#    include "compiler/translator/tree_ops/glsl/apple/RewriteDoWhile.cpp"
+#    include "compiler/translator/tree_ops/glsl/apple/RewriteRowMajorMatrices.cpp"
+#    include "compiler/translator/tree_ops/glsl/apple/RewriteUnaryMinusOperatorFloat.cpp"
+#    include "compiler/translator/tree_ops/glsl/apple/UnfoldShortCircuitAST.cpp"
 #endif
 #if ANGLE_ENABLE_GLSL
-#    include "compiler/translator/tree_ops/gl/RegenerateStructNames.cpp"
+#    include "compiler/translator/tree_ops/glsl/RegenerateStructNames.cpp"
+#    include "compiler/translator/tree_ops/glsl/RewriteRepeatedAssignToSwizzled.cpp"
+#    include "compiler/translator/tree_ops/glsl/ScalarizeVecAndMatConstructorArgs.cpp"
+#    include "compiler/translator/tree_ops/glsl/UseInterfaceBlockFields.cpp"
 #endif

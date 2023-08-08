@@ -189,11 +189,11 @@ VkColorSpaceKHR MapEglColorSpaceToVkColorSpace(RendererVk *renderer, EGLenum EGL
             return VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
         case EGL_GL_COLORSPACE_LINEAR:
         case EGL_GL_COLORSPACE_SRGB_KHR:
-        case EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT:
             return VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
         case EGL_GL_COLORSPACE_DISPLAY_P3_LINEAR_EXT:
             return VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT;
         case EGL_GL_COLORSPACE_DISPLAY_P3_EXT:
+        case EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT:
             return VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT;
         case EGL_GL_COLORSPACE_SCRGB_LINEAR_EXT:
             return VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT;
@@ -2040,8 +2040,16 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
     vk::Framebuffer &currentFramebuffer = chooseFramebuffer(SwapchainResolveMode::Disabled);
 
     // Make sure deferred clears are applied, if any.
-    ANGLE_TRY(
-        image.image->flushStagedUpdates(contextVk, gl::LevelIndex(0), gl::LevelIndex(1), 0, 1, {}));
+    if (mColorImageMS.valid())
+    {
+        ANGLE_TRY(mColorImageMS.flushStagedUpdates(contextVk, gl::LevelIndex(0), gl::LevelIndex(1),
+                                                   0, 1, {}));
+    }
+    else
+    {
+        ANGLE_TRY(image.image->flushStagedUpdates(contextVk, gl::LevelIndex(0), gl::LevelIndex(1),
+                                                  0, 1, {}));
+    }
 
     // If user calls eglSwapBuffer without use it, image may already in Present layout (if swap
     // without any draw) or Undefined (first time present). In this case, if

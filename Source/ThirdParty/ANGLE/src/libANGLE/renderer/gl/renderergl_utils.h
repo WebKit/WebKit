@@ -84,6 +84,13 @@ angle::Result CheckError(const gl::Context *context,
                          const char *file,
                          const char *function,
                          unsigned int line);
+// Propagates a single error, marking it as handled, and checks for more errors.
+angle::Result HandleError(const gl::Context *context,
+                          GLenum error,
+                          const char *call,
+                          const char *file,
+                          const char *function,
+                          unsigned int line);
 
 #define ANGLE_GL_TRY_ALWAYS_CHECK(context, call)                      \
     (ClearErrors(context, __FILE__, __FUNCTION__, __LINE__), (call)); \

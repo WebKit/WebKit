@@ -229,6 +229,10 @@ a GN arg:
 angle_expose_non_conformant_extensions_and_versions = true
 ```
 
+## Accessing ANGLE traces
+
+To sync and build the ANGLE traces, jump to [ANGLE Restricted Traces](https://chromium.googlesource.com/angle/angle.git/+/HEAD/src/tests/restricted_traces/README.md#angle-restricted-traces).
+
 ## Command line for launching chrome on Android
 
 [This Makefile](https://github.com/phuang/test/blob/main/chromium/Makefile) contains many useful

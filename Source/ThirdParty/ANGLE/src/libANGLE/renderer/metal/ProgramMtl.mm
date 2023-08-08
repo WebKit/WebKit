@@ -385,7 +385,7 @@ constexpr size_t PipelineParametersToFragmentShaderVariantIndex(bool multisample
 bool UseFastMathForShaderCompilation(ContextMtl *context,
                                      const mtl::TranslatedShaderInfo *translatedMslInfo)
 {
-    return !context->getDisplay()->getFeatures().intelDisableFastMath.enabled ||
+    return !context->getDisplay()->getFeatures().intelDisableFastMath.enabled &&
            !translatedMslInfo->hasInvariantOrAtan;
 }
 

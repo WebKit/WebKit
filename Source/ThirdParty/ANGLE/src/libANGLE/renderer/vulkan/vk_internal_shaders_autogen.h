@@ -90,6 +90,20 @@ enum Conversion
 constexpr size_t kArrayLen = 0x00000008;
 }  // namespace ConvertVertex_comp
 
+namespace CopyImageToBuffer_comp
+{
+enum SrcFormat
+{
+    kSrcIsFloat = 0x00000000,
+};
+enum SrcType
+{
+    kSrcIs2D = 0x00000000,
+    kSrcIs3D = 0x00000001,
+};
+constexpr size_t kArrayLen = 0x00000002;
+}  // namespace CopyImageToBuffer_comp
+
 namespace EtcToBc_comp
 {
 enum OutputFormat
@@ -156,25 +170,26 @@ constexpr size_t kArrayLen = 0x00000030;
 
 namespace ImageCopy_frag
 {
+enum SrcType
+{
+    kSrcIs2D      = 0x00000000,
+    kSrcIs2DArray = 0x00000001,
+    kSrcIs3D      = 0x00000002,
+    kSrcIsYUV     = 0x00000003,
+};
 enum DestFormat
 {
     kDestIsFloat = 0x00000000,
-    kDestIsSint  = 0x00000001,
-    kDestIsUint  = 0x00000002,
+    kDestIsSint  = 0x00000004,
+    kDestIsUint  = 0x00000008,
 };
 enum SrcFormat
 {
     kSrcIsFloat = 0x00000000,
-    kSrcIsSint  = 0x00000004,
-    kSrcIsUint  = 0x00000008,
+    kSrcIsSint  = 0x00000010,
+    kSrcIsUint  = 0x00000020,
 };
-enum SrcType
-{
-    kSrcIs2D      = 0x00000000,
-    kSrcIs2DArray = 0x00000010,
-    kSrcIs3D      = 0x00000020,
-};
-constexpr size_t kArrayLen = 0x0000002B;
+constexpr size_t kArrayLen = 0x0000002C;
 }  // namespace ImageCopy_frag
 
 namespace OverlayDraw_frag
@@ -215,6 +230,9 @@ class ShaderLibrary final : angle::NonCopyable
     angle::Result getConvertVertex_comp(Context *context,
                                         uint32_t shaderFlags,
                                         RefCounted<ShaderModule> **shaderOut);
+    angle::Result getCopyImageToBuffer_comp(Context *context,
+                                            uint32_t shaderFlags,
+                                            RefCounted<ShaderModule> **shaderOut);
     angle::Result getEtcToBc_comp(Context *context,
                                   uint32_t shaderFlags,
                                   RefCounted<ShaderModule> **shaderOut);
@@ -252,6 +270,8 @@ class ShaderLibrary final : angle::NonCopyable
         [InternalShader::ConvertIndirectLineLoop_comp::kArrayLen];
     RefCounted<ShaderModule>
         mConvertVertex_comp_shaders[InternalShader::ConvertVertex_comp::kArrayLen];
+    RefCounted<ShaderModule>
+        mCopyImageToBuffer_comp_shaders[InternalShader::CopyImageToBuffer_comp::kArrayLen];
     RefCounted<ShaderModule> mEtcToBc_comp_shaders[InternalShader::EtcToBc_comp::kArrayLen];
     RefCounted<ShaderModule>
         mExportStencil_frag_shaders[InternalShader::ExportStencil_frag::kArrayLen];

@@ -277,10 +277,10 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // State sync with dirty bits.
     angle::Result syncState(const gl::Context *context,
-                            const gl::state::DirtyBits &dirtyBits,
-                            const gl::state::DirtyBits &bitMask,
-                            const gl::state::ExtendedDirtyBits &extendedDirtyBits,
-                            const gl::state::ExtendedDirtyBits &extendedBitMask,
+                            const gl::state::DirtyBits dirtyBits,
+                            const gl::state::DirtyBits bitMask,
+                            const gl::state::ExtendedDirtyBits extendedDirtyBits,
+                            const gl::state::ExtendedDirtyBits extendedBitMask,
                             gl::Command command) override;
 
     // Disjoint timer queries
@@ -799,8 +799,15 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     bool isEligibleForMutableTextureFlush() const
     {
         return getFeatures().mutableMipmapTextureUpload.enabled && !hasDisplayTextureShareGroup() &&
-               mShareGroupVk->getContextCount() == 1;
+               mShareGroupVk->getContexts().size() == 1;
     }
+
+    vk::RenderPassUsageFlags getDepthStencilAttachmentFlags() const
+    {
+        return mDepthStencilAttachmentFlags;
+    }
+
+    bool isDitherEnabled() { return mState.isDitherEnabled(); }
 
   private:
     // Dirty bits.
@@ -1286,17 +1293,17 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     angle::Result endRenderPassIfComputeReadAfterTransformFeedbackWrite();
     angle::Result endRenderPassIfComputeAccessAfterGraphicsImageAccess();
 
-    // Update framebuffer's read-only depth feedback loop mode.  Typically called from
+    // Update read-only depth feedback loop mode.  Typically called from
     // handleDirtyGraphicsReadOnlyDepthFeedbackLoopMode, but can be called from UtilsVk in functions
     // that don't necessarily break the render pass.
-    angle::Result updateRenderPassDepthFeedbackLoopModeImpl(
-        DirtyBits::Iterator *dirtyBitsIterator,
-        DirtyBits dirtyBitMask,
-        UpdateDepthFeedbackLoopReason depthReason,
-        UpdateDepthFeedbackLoopReason stencilReason);
-    bool shouldSwitchToReadOnlyDepthStencilFeedbackLoopMode(gl::Texture *texture,
-                                                            gl::Command command,
-                                                            bool isStencilTexture) const;
+    angle::Result switchOutReadOnlyDepthStencilMode(DirtyBits::Iterator *dirtyBitsIterator,
+                                                    DirtyBits dirtyBitMask,
+                                                    UpdateDepthFeedbackLoopReason depthReason,
+                                                    UpdateDepthFeedbackLoopReason stencilReason);
+    angle::Result switchToReadOnlyDepthStencilMode(gl::Texture *texture,
+                                                   gl::Command command,
+                                                   FramebufferVk *drawFramebuffer,
+                                                   bool isStencilTexture);
 
     angle::Result onResourceAccess(const vk::CommandBufferAccess &access);
     angle::Result flushCommandBuffersIfNecessary(const vk::CommandBufferAccess &access);
@@ -1361,6 +1368,11 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // mCurrentWindowSurface->getPreTransform().
     SurfaceRotation mCurrentRotationDrawFramebuffer;
     SurfaceRotation mCurrentRotationReadFramebuffer;
+
+    // Tracks if we are in depth/stencil *read-only* or feedback loop mode. The read only is
+    // specially allowed as both usages attachment and texture are read-only. When switching away
+    // from read-only mode, the render pass is broken is to accommodate the new writable layout.
+    vk::RenderPassUsageFlags mDepthStencilAttachmentFlags;
 
     // Keep a cached pipeline description structure that can be used to query the pipeline cache.
     // Kept in a pointer so allocations can be aligned, and structs can be portably packed.

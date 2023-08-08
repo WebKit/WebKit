@@ -44,8 +44,9 @@ def _ApkPath(suite_name):
 def _FindAapt():
     build_tools = (
         pathlib.Path(angle_path_util.ANGLE_ROOT_DIR) / 'third_party' / 'android_sdk' / 'public' /
-        'build-tools' / '33.0.0')
-    aapt = str(build_tools / 'aapt') if build_tools.exists() else 'aapt'
+        'build-tools')
+    latest_build_tools = sorted(build_tools.iterdir())[-1]
+    aapt = str(latest_build_tools / 'aapt')
     aapt_info = subprocess.check_output([aapt, 'version']).decode()
     logging.info('aapt version: %s', aapt_info.strip())
     return aapt
@@ -313,18 +314,22 @@ def PrepareRestrictedTraces(traces):
     _AdbShell('run-as ' + TEST_PACKAGE_NAME + ' mkdir -p angle_traces')
 
     # Set up each trace
-    for trace in traces:
+    for idx, trace in enumerate(sorted(traces)):
+        logging.info('Syncing %s trace (%d/%d)', trace, idx + 1, len(traces))
+
         path_from_root = 'src/tests/restricted_traces/' + trace + '/' + trace + '.angledata.gz'
         _Push('../../' + path_from_root, path_from_root)
 
         tracegz = 'gen/tracegz_' + trace + '.gz'
         _Push(tracegz, tracegz)
 
-    if _Global.traces_outside_of_apk:
-        _PushLibToAppDir('libangle_trace_interpreter' + _Global.lib_extension)
-        for trace in traces:
+        if _Global.traces_outside_of_apk:
             lib_name = 'libangle_restricted_traces_' + trace + _Global.lib_extension
             _PushLibToAppDir(lib_name)
+
+    # Push one additional file when running outside the APK
+    if _Global.traces_outside_of_apk:
+        _PushLibToAppDir('libangle_trace_interpreter' + _Global.lib_extension)
 
     logging.info('Synced files for %d traces (%.1fMB, %d files already ok) in %.1fs', len(traces),
                  total_size / 1e6, skipped,

@@ -922,6 +922,8 @@ EXPORTS
     glTexBufferEXT
     glTexBufferRangeEXT
 
+    ; GL_EXT_texture_compression_astc_decode_mode
+
     ; GL_EXT_texture_compression_bptc
 
     ; GL_EXT_texture_compression_dxt1
@@ -1293,6 +1295,10 @@ EXPORTS
     ; EGL_ANGLE_device_creation
     EGL_CreateDeviceANGLE
     EGL_ReleaseDeviceANGLE
+
+    ; EGL_ANGLE_external_context_and_surface
+    EGL_AcquireExternalContextANGLE
+    EGL_ReleaseExternalContextANGLE
 
     ; EGL_ANGLE_feature_control
     EGL_QueryDisplayAttribANGLE

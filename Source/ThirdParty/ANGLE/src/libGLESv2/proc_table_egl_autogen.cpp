@@ -45,6 +45,7 @@ namespace egl
 const ProcEntry g_procTable[] = {
     {"ANGLEGetDisplayPlatform", P(ANGLEGetDisplayPlatform)},
     {"ANGLEResetDisplayPlatform", P(ANGLEResetDisplayPlatform)},
+    {"eglAcquireExternalContextANGLE", P(EGL_AcquireExternalContextANGLE)},
     {"eglBindAPI", P(EGL_BindAPI)},
     {"eglBindTexImage", P(EGL_BindTexImage)},
     {"eglChooseConfig", P(EGL_ChooseConfig)},
@@ -130,6 +131,7 @@ const ProcEntry g_procTable[] = {
     {"eglQuerySurfacePointerANGLE", P(EGL_QuerySurfacePointerANGLE)},
     {"eglReacquireHighPowerGPUANGLE", P(EGL_ReacquireHighPowerGPUANGLE)},
     {"eglReleaseDeviceANGLE", P(EGL_ReleaseDeviceANGLE)},
+    {"eglReleaseExternalContextANGLE", P(EGL_ReleaseExternalContextANGLE)},
     {"eglReleaseHighPowerGPUANGLE", P(EGL_ReleaseHighPowerGPUANGLE)},
     {"eglReleaseTexImage", P(EGL_ReleaseTexImage)},
     {"eglReleaseThread", P(EGL_ReleaseThread)},

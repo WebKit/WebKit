@@ -2,9 +2,10 @@ Name: (Components of) Bazel
 Short Name: (Components of) Bazel
 URL: https://github.com/bazelbuild/bazel
 License: Apache 2.0
-License File: NOT_SHIPPED
+License File: LICENSE
 Version: Unknown
 Security Critical: no
+Shipped: no
 
 Description:
 This directory contains Bazel components used for building Android binaries.

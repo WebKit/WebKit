@@ -376,6 +376,19 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_ReleaseDeviceANGLE(Thread *th
     return {};
 }
 
+// EGL_ANGLE_external_context_and_surface
+ANGLE_INLINE ScopedContextMutexLock
+GetContextLock_AcquireExternalContextANGLE(Thread *thread, egl::Display *dpyPacked)
+{
+    return TryLockCurrentContext(thread);
+}
+
+ANGLE_INLINE ScopedContextMutexLock
+GetContextLock_ReleaseExternalContextANGLE(Thread *thread, egl::Display *dpyPacked)
+{
+    return TryLockCurrentContext(thread);
+}
+
 // EGL_ANGLE_feature_control
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_QueryStringiANGLE(Thread *thread,
                                                                      egl::Display *dpyPacked)

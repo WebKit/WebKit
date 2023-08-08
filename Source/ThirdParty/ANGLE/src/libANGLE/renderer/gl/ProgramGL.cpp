@@ -1059,15 +1059,6 @@ void ProgramGL::updateEnabledClipDistances(uint8_t enabledClipDistancesPacked) c
                                   enabledClipDistancesPacked);
 }
 
-void ProgramGL::enableSideBySideRenderingPath() const
-{
-    ASSERT(mState.usesMultiview());
-    ASSERT(mMultiviewBaseViewLayerIndexUniformLocation != -1);
-
-    ASSERT(mFunctions->programUniform1i != nullptr);
-    mFunctions->programUniform1i(mProgramID, mMultiviewBaseViewLayerIndexUniformLocation, -1);
-}
-
 void ProgramGL::enableLayeredRenderingPath(int baseViewIndex) const
 {
     ASSERT(mState.usesMultiview());

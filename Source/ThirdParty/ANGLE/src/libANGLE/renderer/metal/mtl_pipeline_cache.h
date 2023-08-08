@@ -19,13 +19,17 @@ namespace rx
 namespace mtl
 {
 
-struct RenderPipelineKey
+struct PipelineKey
 {
     AutoObjCPtr<id<MTLFunction>> vertexShader;
     AutoObjCPtr<id<MTLFunction>> fragmentShader;
     RenderPipelineDesc pipelineDesc;
 
-    bool operator==(const RenderPipelineKey &rhs) const;
+    AutoObjCPtr<id<MTLFunction>> computeShader;
+
+    bool isRenderPipeline() const;
+
+    bool operator==(const PipelineKey &rhs) const;
     size_t hash() const;
 };
 
@@ -36,9 +40,9 @@ namespace std
 {
 
 template <>
-struct hash<rx::mtl::RenderPipelineKey>
+struct hash<rx::mtl::PipelineKey>
 {
-    size_t operator()(const rx::mtl::RenderPipelineKey &key) const { return key.hash(); }
+    size_t operator()(const rx::mtl::PipelineKey &key) const { return key.hash(); }
 };
 
 }  // namespace std
@@ -58,6 +62,9 @@ class PipelineCache : angle::NonCopyable
                                     id<MTLFunction> fragmentShader,
                                     const RenderPipelineDesc &desc,
                                     AutoObjCPtr<id<MTLRenderPipelineState>> *outRenderPipeline);
+    angle::Result getComputePipeline(ContextMtl *context,
+                                     id<MTLFunction> computeShader,
+                                     AutoObjCPtr<id<MTLComputePipelineState>> *outComputePipeline);
 
   private:
     static constexpr unsigned int kMaxPipelines = 128;
@@ -65,9 +72,14 @@ class PipelineCache : angle::NonCopyable
     // The cache tries to clean up this many states at once.
     static constexpr unsigned int kGCLimit = 32;
 
-    using RenderPipelineMap =
-        angle::base::HashingMRUCache<RenderPipelineKey, AutoObjCPtr<id<MTLRenderPipelineState>>>;
-    RenderPipelineMap mRenderPiplineCache;
+    struct PipelineVariant
+    {
+        AutoObjCPtr<id<MTLRenderPipelineState>> renderPipeline;
+        AutoObjCPtr<id<MTLComputePipelineState>> computePipeline;
+    };
+
+    using RenderPipelineMap = angle::base::HashingMRUCache<PipelineKey, PipelineVariant>;
+    RenderPipelineMap mPipelineCache;
 };
 
 }  // namespace mtl

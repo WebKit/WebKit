@@ -11,7 +11,7 @@
 
 #include <map>
 
-#include "compiler/translator/TranslatorMetalDirect.h"
+#include "compiler/translator/msl/TranslatorMSL.h"
 #include "libANGLE/renderer/ShaderImpl.h"
 namespace rx
 {

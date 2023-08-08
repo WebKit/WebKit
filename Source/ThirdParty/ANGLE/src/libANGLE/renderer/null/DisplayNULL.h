@@ -11,11 +11,15 @@
 #define LIBANGLE_RENDERER_NULL_DISPLAYNULL_H_
 
 #include "libANGLE/renderer/DisplayImpl.h"
+#include "libANGLE/renderer/ShareGroupImpl.h"
 
 namespace rx
 {
 class ShareGroupNULL : public ShareGroupImpl
-{};
+{
+  public:
+    ShareGroupNULL(const egl::ShareGroupState &state) : ShareGroupImpl(state) {}
+};
 
 class AllocationTrackerNULL;
 
@@ -79,7 +83,7 @@ class DisplayNULL : public DisplayImpl
     StreamProducerImpl *createStreamProducerD3DTexture(egl::Stream::ConsumerType consumerType,
                                                        const egl::AttributeMap &attribs) override;
 
-    ShareGroupImpl *createShareGroup() override;
+    ShareGroupImpl *createShareGroup(const egl::ShareGroupState &state) override;
 
     void populateFeatureList(angle::FeatureList *features) override {}
 

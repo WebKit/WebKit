@@ -1385,6 +1385,11 @@ angle::Result InitializeRenderPassFromDesc(ContextVk *contextVk,
         }
     }
 
+    if (contextVk->getFeatures().supportsLegacyDithering.enabled && desc.isLegacyDitherEnabled())
+    {
+        subpassDesc.back().flags |= VK_SUBPASS_DESCRIPTION_ENABLE_LEGACY_DITHERING_BIT_EXT;
+    }
+
     // If depth/stencil is to be resolved, add a VkSubpassDescriptionDepthStencilResolve to the
     // pNext chain of the subpass description.
     VkSubpassDescriptionDepthStencilResolve depthStencilResolve  = {};
@@ -2844,6 +2849,11 @@ size_t RenderPassDesc::attachmentCount() const
     size_t depthStencilResolveCount = hasDepthStencilResolveAttachment() ? 1 : 0;
     return colorAttachmentCount + mColorResolveAttachmentMask.count() + depthStencilCount +
            depthStencilResolveCount;
+}
+
+void RenderPassDesc::setLegacyDither(bool enabled)
+{
+    SetBitField(mLegacyDitherEnabled, enabled ? 1 : 0);
 }
 
 bool operator==(const RenderPassDesc &lhs, const RenderPassDesc &rhs)
@@ -5510,7 +5520,7 @@ void WriteDescriptorDescs::updateImages(const gl::ProgramExecutable &executable,
             variableInfoMap.getVariableById(firstShaderType, imageUniform.getId(firstShaderType));
 
         uint32_t arraySize       = static_cast<uint32_t>(imageBinding.boundImageUnits.size());
-        uint32_t descriptorCount = arraySize * gl::ArraySizeProduct(imageUniform.outerArraySizes);
+        uint32_t descriptorCount = arraySize * imageUniform.outerArraySizeProduct;
         VkDescriptorType descriptorType = (imageBinding.textureType == gl::TextureType::Buffer)
                                               ? VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER
                                               : VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
@@ -5569,7 +5579,7 @@ void WriteDescriptorDescs::updateExecutableActiveTextures(
             variableInfoMap.getVariableById(firstShaderType, samplerUniform.getId(firstShaderType));
 
         uint32_t arraySize       = static_cast<uint32_t>(samplerBinding.boundTextureUnits.size());
-        uint32_t descriptorCount = arraySize * gl::ArraySizeProduct(samplerUniform.outerArraySizes);
+        uint32_t descriptorCount = arraySize * samplerUniform.outerArraySizeProduct;
         VkDescriptorType descriptorType = (samplerBinding.textureType == gl::TextureType::Buffer)
                                               ? VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER
                                               : VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;

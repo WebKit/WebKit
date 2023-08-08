@@ -97,7 +97,7 @@ class ShaderD3D : public ShaderImpl
     bool usesSamplePosition() const { return mUsesSamplePosition; }
     bool usesSampleMaskIn() const { return mUsesSampleMaskIn; }
     bool usesSampleMask() const { return mUsesSampleMask; }
-    bool hasANGLEMultiviewEnabled() const { return mHasANGLEMultiviewEnabled; }
+    bool hasMultiviewEnabled() const { return mHasMultiviewEnabled; }
     FragDepthUsage getFragDepthUsage() const { return mFragDepthUsage; }
     uint8_t getClipDistanceArraySize() const { return mClipDistanceSize; }
     uint8_t getCullDistanceArraySize() const { return mCullDistanceSize; }
@@ -119,7 +119,7 @@ class ShaderD3D : public ShaderImpl
     bool mUsesSamplePosition;
     bool mUsesSampleMaskIn;
     bool mUsesSampleMask;
-    bool mHasANGLEMultiviewEnabled;
+    bool mHasMultiviewEnabled;
     bool mUsesVertexID;
     bool mUsesViewID;
     bool mUsesDiscardRewriting;

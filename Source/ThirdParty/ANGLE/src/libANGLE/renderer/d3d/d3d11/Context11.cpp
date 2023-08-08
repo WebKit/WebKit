@@ -483,63 +483,65 @@ angle::Result Context11::drawElementsIndirect(const gl::Context *context,
 }
 
 #define DRAW_ARRAYS__                                                                           \
+    do                                                                                          \
     {                                                                                           \
         ANGLE_TRY(mRenderer->getStateManager()->updateState(                                    \
             context, mode, firsts[drawID], counts[drawID], gl::DrawElementsType::InvalidEnum,   \
             nullptr, 0, 0, 0, false));                                                          \
         ANGLE_TRY(                                                                              \
             mRenderer->drawArrays(context, mode, firsts[drawID], counts[drawID], 0, 0, false)); \
-    }
+    } while (0)
 #define DRAW_ARRAYS_INSTANCED_                                                                \
+    do                                                                                        \
     {                                                                                         \
         ANGLE_TRY(mRenderer->getStateManager()->updateState(                                  \
             context, mode, firsts[drawID], counts[drawID], gl::DrawElementsType::InvalidEnum, \
             nullptr, instanceCounts[drawID], 0, 0, false));                                   \
         ANGLE_TRY(mRenderer->drawArrays(context, mode, firsts[drawID], counts[drawID],        \
                                         instanceCounts[drawID], 0, true));                    \
-    }
+    } while (0)
 #define DRAW_ARRAYS_INSTANCED_BASE_INSTANCE                                                    \
+    do                                                                                         \
     {                                                                                          \
         ANGLE_TRY(mRenderer->getStateManager()->updateState(                                   \
             context, mode, firsts[drawID], counts[drawID], gl::DrawElementsType::InvalidEnum,  \
             nullptr, instanceCounts[drawID], 0, baseInstances[drawID], false));                \
         ANGLE_TRY(mRenderer->drawArrays(context, mode, firsts[drawID], counts[drawID],         \
                                         instanceCounts[drawID], baseInstances[drawID], true)); \
-    }
-#define DRAW_ELEMENTS__                                                                           \
-    {                                                                                             \
-        ANGLE_TRY(drawElementsImpl(context, mode, counts[drawID], type, indices[drawID], 0, 0, 0, \
-                                   false, false));                                                \
-    }
-#define DRAW_ELEMENTS_INSTANCED_                                                         \
-    {                                                                                    \
-        ANGLE_TRY(drawElementsImpl(context, mode, counts[drawID], type, indices[drawID], \
-                                   instanceCounts[drawID], 0, 0, false, true));          \
-    }
-#define DRAW_ELEMENTS_INSTANCED_BASE_VERTEX_BASE_INSTANCE                                \
-    {                                                                                    \
-        ANGLE_TRY(drawElementsImpl(context, mode, counts[drawID], type, indices[drawID], \
-                                   instanceCounts[drawID], baseVertices[drawID],         \
-                                   baseInstances[drawID], false, true));                 \
-    }
+    } while (0)
+#define DRAW_ELEMENTS__                                                                       \
+    ANGLE_TRY(drawElementsImpl(context, mode, counts[drawID], type, indices[drawID], 0, 0, 0, \
+                               false, false))
+#define DRAW_ELEMENTS_INSTANCED_                                                     \
+    ANGLE_TRY(drawElementsImpl(context, mode, counts[drawID], type, indices[drawID], \
+                               instanceCounts[drawID], 0, 0, false, true))
+#define DRAW_ELEMENTS_INSTANCED_BASE_VERTEX_BASE_INSTANCE                            \
+    ANGLE_TRY(drawElementsImpl(context, mode, counts[drawID], type, indices[drawID], \
+                               instanceCounts[drawID], baseVertices[drawID],         \
+                               baseInstances[drawID], false, true))
 
 #define DRAW_CALL(drawType, instanced, bvbi) DRAW_##drawType##instanced##bvbi
 
 #define MULTI_DRAW_BLOCK(drawType, instanced, bvbi, hasDrawID, hasBaseVertex, hasBaseInstance) \
-    for (GLsizei drawID = 0; drawID < drawcount; ++drawID)                                     \
+    do                                                                                         \
     {                                                                                          \
-        if (ANGLE_NOOP_DRAW(instanced))                                                        \
+        for (GLsizei drawID = 0; drawID < drawcount; ++drawID)                                 \
         {                                                                                      \
-            continue;                                                                          \
+            if (ANGLE_NOOP_DRAW(instanced))                                                    \
+            {                                                                                  \
+                continue;                                                                      \
+            }                                                                                  \
+            ANGLE_SET_DRAW_ID_UNIFORM(hasDrawID)(drawID);                                      \
+            ANGLE_SET_BASE_VERTEX_UNIFORM(hasBaseVertex)(baseVertices[drawID]);                \
+            ANGLE_SET_BASE_INSTANCE_UNIFORM(hasBaseInstance)(baseInstances[drawID]);           \
+            ASSERT(counts[drawID] > 0);                                                        \
+            DRAW_CALL(drawType, instanced, bvbi);                                              \
+            ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE(instanced);                                    \
+            gl::MarkShaderStorageUsage(context);                                               \
         }                                                                                      \
-        ANGLE_SET_DRAW_ID_UNIFORM(hasDrawID)(drawID);                                          \
-        ANGLE_SET_BASE_VERTEX_UNIFORM(hasBaseVertex)(baseVertices[drawID]);                    \
-        ANGLE_SET_BASE_INSTANCE_UNIFORM(hasBaseInstance)(baseInstances[drawID]);               \
-        ASSERT(counts[drawID] > 0);                                                            \
-        DRAW_CALL(drawType, instanced, bvbi);                                                  \
-        ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE(instanced);                                        \
-        gl::MarkShaderStorageUsage(context);                                                   \
-    }
+        /* reset the uniform to zero for non-multi-draw uses of the program */                 \
+        ANGLE_SET_DRAW_ID_UNIFORM(hasDrawID)(0);                                               \
+    } while (0)
 
 angle::Result Context11::multiDrawArrays(const gl::Context *context,
                                          gl::PrimitiveMode mode,
@@ -551,11 +553,11 @@ angle::Result Context11::multiDrawArrays(const gl::Context *context,
     const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
     if (hasDrawID)
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _, _, 1, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _, _, 1, 0, 0);
     }
     else
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _, _, 0, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -572,11 +574,11 @@ angle::Result Context11::multiDrawArraysInstanced(const gl::Context *context,
     const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
     if (hasDrawID)
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 1, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 1, 0, 0);
     }
     else
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 0, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -602,11 +604,11 @@ angle::Result Context11::multiDrawElements(const gl::Context *context,
     const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
     if (hasDrawID)
     {
-        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 1, 0, 0)
+        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 1, 0, 0);
     }
     else
     {
-        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 0, 0, 0)
+        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -624,11 +626,11 @@ angle::Result Context11::multiDrawElementsInstanced(const gl::Context *context,
     const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
     if (hasDrawID)
     {
-        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 1, 0, 0)
+        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 1, 0, 0);
     }
     else
     {
-        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 0, 0, 0)
+        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -660,19 +662,19 @@ angle::Result Context11::multiDrawArraysInstancedBaseInstance(const gl::Context 
 
     if (hasDrawID && hasBaseInstance)
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 1)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 1);
     }
     else if (hasDrawID)
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 0);
     }
     else if (hasBaseInstance)
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 1)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 1);
     }
     else
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -701,22 +703,22 @@ angle::Result Context11::multiDrawElementsInstancedBaseVertexBaseInstance(
         {
             if (hasBaseInstance)
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 1)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 1);
             }
             else
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 0)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 0);
             }
         }
         else
         {
             if (hasBaseInstance)
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 1)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 1);
             }
             else
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 0)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 0);
             }
         }
     }
@@ -726,22 +728,22 @@ angle::Result Context11::multiDrawElementsInstancedBaseVertexBaseInstance(
         {
             if (hasBaseInstance)
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 1)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 1);
             }
             else
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 0)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 0);
             }
         }
         else
         {
             if (hasBaseInstance)
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 1)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 1);
             }
             else
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 0)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 0);
             }
         }
     }
@@ -797,10 +799,10 @@ angle::Result Context11::popDebugGroup(const gl::Context *context)
 }
 
 angle::Result Context11::syncState(const gl::Context *context,
-                                   const gl::state::DirtyBits &dirtyBits,
-                                   const gl::state::DirtyBits &bitMask,
-                                   const gl::state::ExtendedDirtyBits &extendedDirtyBits,
-                                   const gl::state::ExtendedDirtyBits &extendedBitMask,
+                                   const gl::state::DirtyBits dirtyBits,
+                                   const gl::state::DirtyBits bitMask,
+                                   const gl::state::ExtendedDirtyBits extendedDirtyBits,
+                                   const gl::state::ExtendedDirtyBits extendedBitMask,
                                    gl::Command command)
 {
     mRenderer->getStateManager()->syncState(context, dirtyBits, extendedDirtyBits, command);

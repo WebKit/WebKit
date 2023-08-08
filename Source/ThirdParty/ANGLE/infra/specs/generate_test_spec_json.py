@@ -25,25 +25,23 @@ import generate_buildbot_json
 # Add custom mixins here.
 ADDITIONAL_MIXINS = {
     'angle_skia_gold_test': {
-        '$mixin_append': {
-            'args': [
-                '--git-revision=${got_angle_revision}',
-                # BREAK GLASS IN CASE OF EMERGENCY
-                # Uncommenting this argument will bypass all interactions with Skia
-                # Gold in any tests that use it. This is meant as a temporary
-                # emergency stop in case of a Gold outage that's affecting the bots.
-                # '--bypass-skia-gold-functionality',
-            ],
-            'precommit_args': [
-                '--gerrit-issue=${patch_issue}',
-                '--gerrit-patchset=${patch_set}',
-                '--buildbucket-id=${buildbucket_build_id}',
-                # This normally evaluates to "0", but will evaluate to "1" if
-                # "Use-Permissive-Angle-Pixel-Comparison: True" is present as a
-                # CL footer.
-                '--use-permissive-pixel-comparison=${use_permissive_angle_pixel_comparison}',
-            ],
-        }
+        'args': [
+            '--git-revision=${got_angle_revision}',
+            # BREAK GLASS IN CASE OF EMERGENCY
+            # Uncommenting this argument will bypass all interactions with Skia
+            # Gold in any tests that use it. This is meant as a temporary
+            # emergency stop in case of a Gold outage that's affecting the bots.
+            # '--bypass-skia-gold-functionality',
+        ],
+        'precommit_args': [
+            '--gerrit-issue=${patch_issue}',
+            '--gerrit-patchset=${patch_set}',
+            '--buildbucket-id=${buildbucket_build_id}',
+            # This normally evaluates to "0", but will evaluate to "1" if
+            # "Use-Permissive-Angle-Pixel-Comparison: True" is present as a
+            # CL footer.
+            '--use-permissive-pixel-comparison=${use_permissive_angle_pixel_comparison}',
+        ],
     },
     'timeout_120m': {
         'swarming': {

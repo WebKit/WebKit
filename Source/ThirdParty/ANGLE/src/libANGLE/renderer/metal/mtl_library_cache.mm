@@ -30,6 +30,8 @@ namespace rx
 namespace mtl
 {
 
+LibraryCache::LibraryCache() : mCache(kMaxCachedLibraries) {}
+
 AutoObjCPtr<id<MTLLibrary>> LibraryCache::get(const std::shared_ptr<const std::string> &source,
                                               const std::map<std::string, std::string> &macros,
                                               bool enableFastMath)
@@ -192,7 +194,17 @@ LibraryCache::LibraryCacheEntry &LibraryCache::getCacheEntry(LibraryKey &&key)
 {
     // Lock while searching or adding new items to the cache.
     std::lock_guard<std::mutex> cacheLockGuard(mCacheLock);
-    return mCache[std::move(key)];
+
+    auto iter = mCache.Get(key);
+    if (iter != mCache.end())
+    {
+        return iter->second;
+    }
+
+    angle::TrimCache(kMaxCachedLibraries, kGCLimit, "metal library", &mCache);
+
+    iter = mCache.Put(std::move(key), LibraryCacheEntry());
+    return iter->second;
 }
 
 LibraryCache::LibraryKey::LibraryKey(const std::shared_ptr<const std::string> &sourceIn,
@@ -218,6 +230,24 @@ size_t LibraryCache::LibraryKeyHasher::operator()(const LibraryKey &k) const
     }
     angle::HashCombine(hash, k.enableFastMath);
     return hash;
+}
+
+LibraryCache::LibraryCacheEntry::~LibraryCacheEntry()
+{
+    // Lock the cache entry before deletion to ensure there is no other thread compiling and
+    // preparing to write to the library. LibraryCacheEntry objects can only be deleted while the
+    // mCacheLock is held so only one thread modifies mCache at a time.
+    std::lock_guard<std::mutex> entryLockGuard(lock);
+}
+
+LibraryCache::LibraryCacheEntry::LibraryCacheEntry(LibraryCacheEntry &&moveFrom)
+{
+    // Lock the cache entry being moved from to make sure the library can be safely accessed.
+    // Mutexes cannot be moved so a new one will be created in this entry
+    std::lock_guard<std::mutex> entryLockGuard(moveFrom.lock);
+
+    library          = std::move(moveFrom.library);
+    moveFrom.library = nullptr;
 }
 
 }  // namespace mtl

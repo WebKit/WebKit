@@ -57,8 +57,11 @@
 /third_party/jsoncpp
 /third_party/kotlin_stdlib
 /third_party/libdrm
+/third_party/libc++/src
+/third_party/libc++abi/src
 /third_party/libjpeg_turbo
 /third_party/libpng/src
+/third_party/libunwind/src
 /third_party/llvm-build
 /third_party/markupsafe
 /third_party/meson

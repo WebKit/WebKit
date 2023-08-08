@@ -15,7 +15,7 @@
 #include "compiler/translator/InitializeDll.h"
 #include "compiler/translator/length_limits.h"
 #ifdef ANGLE_ENABLE_HLSL
-#    include "compiler/translator/TranslatorHLSL.h"
+#    include "compiler/translator/hlsl/TranslatorHLSL.h"
 #endif  // ANGLE_ENABLE_HLSL
 #include "angle_gl.h"
 #include "compiler/translator/VariablePacker.h"

@@ -10,7 +10,6 @@
 
 #include "common/angleutils.h"
 #include "compiler/translator/SymbolTable.h"
-#include "compiler/translator/TranslatorVulkan.h"
 #include "compiler/translator/tree_util/DriverUniform.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"

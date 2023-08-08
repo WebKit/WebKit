@@ -11,6 +11,14 @@ if (angle_use_wayland) {
 
 declare_args() {
   angle_use_custom_libvulkan = !is_android && !is_fuchsia && !is_ggp
+
+  # On real CrOS devices, we should use the system Vulkan loader. On the
+  # ChromeOS-for-Linux build, we should use the built libvulkan because the
+  # build is used for MSAN tests. Mixing the non-MSAN system libvulkan with the
+  # MSAN ANGLE build can result in false positives.
+  if (is_chromeos && is_chromeos_device) {
+    angle_use_custom_libvulkan = false
+  }
 }
 
 config("angle_libvulkan_config") {

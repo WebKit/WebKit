@@ -17,6 +17,8 @@
 namespace gl
 {
 class Context;
+class PrivateState;
+class ErrorSet;
 
 // GL 1.0
 bool ValidateAccum(const Context *context, angle::EntryPoint entryPoint, GLenum op, GLfloat value);
@@ -470,7 +472,8 @@ bool ValidatePixelZoom(const Context *context,
                        angle::EntryPoint entryPoint,
                        GLfloat xfactor,
                        GLfloat yfactor);
-bool ValidatePolygonMode(const Context *context,
+bool ValidatePolygonMode(const PrivateState &state,
+                         ErrorSet *errors,
                          angle::EntryPoint entryPoint,
                          GLenum face,
                          PolygonMode modePacked);

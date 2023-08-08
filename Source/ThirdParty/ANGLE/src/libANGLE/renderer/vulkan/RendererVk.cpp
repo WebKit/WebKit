@@ -122,6 +122,22 @@ bool IsQualcommOpenSource(uint32_t vendorId, uint32_t driverId, const char *devi
     return strstr(deviceName, "Venus") != nullptr || strstr(deviceName, "Turnip") != nullptr;
 }
 
+bool IsPixel()
+{
+    if (!IsAndroid())
+    {
+        return false;
+    }
+
+    angle::SystemInfo info;
+    if (!angle::GetSystemInfo(&info))
+    {
+        return false;
+    }
+
+    return strstr(info.machineModelName.c_str(), "Pixel") != nullptr;
+}
+
 angle::vk::ICD ChooseICDFromAttribs(const egl::AttributeMap &attribs)
 {
 #if !defined(ANGLE_PLATFORM_ANDROID)
@@ -208,9 +224,6 @@ constexpr const char *kSkippedMessages[] = {
     // framebuffer that's accessed by the command buffer is identically laid out.
     // http://anglebug.com/6811
     "VUID-vkCmdExecuteCommands-pCommandBuffers-00099",
-    // http://anglebug.com/7105
-    "VUID-vkCmdDraw-None-06538",
-    "VUID-vkCmdDrawIndexed-None-06538",
     // http://anglebug.com/7325
     "VUID-vkCmdBindVertexBuffers2-pStrides-06209",
     // http://anglebug.com/7729
@@ -223,6 +236,7 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdDrawIndexed-None-06887",
     // http://anglebug.com/7865
     "VUID-VkDescriptorImageInfo-imageView-06711",
+    "VUID-VkDescriptorImageInfo-descriptorType-06713",
     // http://crbug.com/1412096
     "VUID-VkImageCreateInfo-pNext-00990",
     // http://crbug.com/1420265
@@ -232,11 +246,7 @@ constexpr const char *kSkippedMessages[] = {
     // http://anglebug.com/8119
     "VUID-VkGraphicsPipelineCreateInfo-Input-07904",
     "VUID-VkGraphicsPipelineCreateInfo-Input-07905",
-    "VUID-vkCmdDraw-None-02859",
-    "VUID-vkCmdDrawIndexed-None-02859",
     "VUID-vkCmdDrawIndexed-None-07835",
-    "VUID-vkCmdDrawIndexedIndirect-None-02859",
-    "VUID-vkCmdDrawIndirect-None-02859",
     "VUID-VkGraphicsPipelineCreateInfo-Input-08733",
     // http://anglebug.com/8151
     "VUID-vkCmdDraw-None-07844",
@@ -248,6 +258,13 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkVertexInputBindingDivisorDescriptionEXT-divisor-01870",
     // https://anglebug.com/8237
     "VUID-VkGraphicsPipelineCreateInfo-topology-08890",
+    // https://anglebug.com/8242
+    "VUID-vkCmdDraw-None-08608",
+    "VUID-vkCmdDrawIndexed-None-08608",
+    "VUID-vkCmdDraw-None-08753",
+    "VUID-vkCmdDrawIndexed-None-08753",
+    "VUID-vkCmdDraw-None-09003",
+    "VUID-vkCmdDrawIndexed-None-09003",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -2295,6 +2312,7 @@ void RendererVk::appendDeviceExtensionFeaturesPromotedTo11(
 // - VK_KHR_shader_subgroup_extended_types: shaderSubgroupExtendedTypes (feature)
 // - VK_EXT_host_query_reset:               hostQueryReset (feature)
 // - VK_KHR_imageless_framebuffer:          imagelessFramebuffer (feature)
+// - VK_KHR_timeline_semaphore:             timelineSemaphore (feature)
 //
 // Note that supportedDepthResolveModes is used just to check if the property struct is populated.
 // ANGLE always uses VK_RESOLVE_MODE_SAMPLE_ZERO_BIT for both depth and stencil, and support for
@@ -2333,6 +2351,11 @@ void RendererVk::appendDeviceExtensionFeaturesPromotedTo12(
     if (ExtensionFound(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME, deviceExtensionNames))
     {
         vk::AddToPNextChain(deviceFeatures, &mImagelessFramebufferFeatures);
+    }
+
+    if (ExtensionFound(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &mTimelineSemaphoreFeatures);
     }
 }
 
@@ -2528,6 +2551,10 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mDrmProperties       = {};
     mDrmProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRM_PROPERTIES_EXT;
 
+    mTimelineSemaphoreFeatures = {};
+    mTimelineSemaphoreFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
+
     if (!vkGetPhysicalDeviceProperties2KHR || !vkGetPhysicalDeviceFeatures2KHR)
     {
         return;
@@ -2595,6 +2622,7 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mSwapchainMaintenance1Features.pNext                    = nullptr;
     mDitheringFeatures.pNext                                = nullptr;
     mDrmProperties.pNext                                    = nullptr;
+    mTimelineSemaphoreFeatures.pNext                        = nullptr;
 }
 
 // See comment above appendDeviceExtensionFeaturesNotPromoted.  Additional extensions are enabled
@@ -3036,6 +3064,12 @@ void RendererVk::enableDeviceExtensionsPromotedTo12(
     {
         mEnabledDeviceExtensions.push_back(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME);
         vk::AddToPNextChain(&mEnabledFeatures, &mImagelessFramebufferFeatures);
+    }
+
+    if (mFeatures.supportsTimelineSemaphore.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mTimelineSemaphoreFeatures);
     }
 }
 
@@ -3878,9 +3912,17 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
                              mPhysicalDeviceProperties.deviceName);
     const bool isQualcommProprietary = isQualcomm && !isQualcommOpenSource;
 
+    // Lacking other explicit ways to tell if mali GPU is job manager based or command stream front
+    // end based, we use maxDrawIndirectCount as equivalent since all JM based has
+    // maxDrawIndirectCount==1 and all CSF based has maxDrawIndirectCount>1.
+    bool isMaliJobManagerBasedGPU =
+        isARM && getPhysicalDeviceProperties().limits.maxDrawIndirectCount <= 1;
     // Parse the ARM driver version to be readable/comparable
     const ARMDriverVersion armDriverVersion =
         ParseARMDriverVersion(mPhysicalDeviceProperties.driverVersion);
+
+    // Identify Google Pixel brand Android devices
+    const bool isPixel = IsPixel();
 
     angle::VersionInfo nvidiaVersion;
     if (isNvidia)
@@ -4055,7 +4097,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         &mFeatures, supportsExternalFenceFd,
         ExtensionFound(VK_KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME, deviceExtensionNames));
 
-#if defined(ANGLE_PLATFORM_ANDROID)
+#if defined(ANGLE_PLATFORM_ANDROID) || defined(ANGLE_PLATFORM_LINUX)
     if (mFeatures.supportsExternalFenceCapabilities.enabled &&
         mFeatures.supportsExternalSemaphoreCapabilities.enabled)
     {
@@ -4092,7 +4134,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
                                 (mFeatures.supportsExternalFenceFd.enabled &&
                                  mFeatures.supportsExternalSemaphoreFd.enabled));
     }
-#endif  // defined(ANGLE_PLATFORM_ANDROID)
+#endif  // defined(ANGLE_PLATFORM_ANDROID) || defined(ANGLE_PLATFORM_LINUX)
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsShaderStencilExport,
@@ -4195,9 +4237,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, allocateNonZeroMemory, false);
 
     // ARM does buffer copy on geometry pipeline, which may create a GPU pipeline bubble that
-    // prevents vertex shader to overlap with fragment shader. For now we always choose CPU to do
-    // copy on ARM. This may need to test with future ARM GPU architecture as well.
-    ANGLE_FEATURE_CONDITION(&mFeatures, preferCPUForBufferSubData, isARM);
+    // prevents vertex shader to overlap with fragment shader on job manager based architecture. For
+    // now we always choose CPU to do copy on ARM job manager based GPU.
+    ANGLE_FEATURE_CONDITION(&mFeatures, preferCPUForBufferSubData, isMaliJobManagerBasedGPU);
 
     // On android, we usually are GPU limited, we try to use CPU to do data copy when other
     // conditions are the same. Set to zero will use GPU to do copy. This is subject to further
@@ -4413,8 +4455,17 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
                             mSwapchainMaintenance1Features.swapchainMaintenance1 == VK_TRUE);
 
     // The VK_EXT_legacy_dithering extension enables dithering support without emulation
+    // Disable the usage of VK_EXT_legacy_dithering on ARM until the driver bug
+    // http://issuetracker.google.com/293136916, http://issuetracker.google.com/292282210 are fixed.
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsLegacyDithering,
-                            mDitheringFeatures.legacyDithering == VK_TRUE);
+                            mDitheringFeatures.legacyDithering == VK_TRUE && !isARM);
+
+    // Applications on Android have come to rely on hardware dithering, and visually regress without
+    // it.  On desktop GPUs, OpenGL's dithering is a no-op.  The following setting mimics that
+    // behavior.  Dithering is also currently not enabled on SwiftShader, but can be as needed
+    // (which would require Chromium and Capture/Replay test expectations updates).
+    ANGLE_FEATURE_CONDITION(&mFeatures, emulateDithering,
+                            IsAndroid() && !mFeatures.supportsLegacyDithering.enabled);
 
     // http://anglebug.com/6872
     // On ARM hardware, framebuffer-fetch-like behavior on Vulkan is already coherent, so we can
@@ -4443,12 +4494,6 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // http://anglebug.com/6878
     // Android needs swapbuffers to update image and present to display.
     ANGLE_FEATURE_CONDITION(&mFeatures, swapbuffersOnFlushOrFinishWithSingleBuffer, IsAndroid());
-
-    // Applications on Android have come to rely on hardware dithering, and visually regress without
-    // it.  On desktop GPUs, OpenGL's dithering is a no-op.  The following setting mimics that
-    // behavior.  Dithering is also currently not enabled on SwiftShader, but can be as needed
-    // (which would require Chromium and Capture/Replay test expectations updates).
-    ANGLE_FEATURE_CONDITION(&mFeatures, emulateDithering, IsAndroid());
 
     // Workaround a Qualcomm imprecision with dithering
     ANGLE_FEATURE_CONDITION(&mFeatures, roundOutputAfterDithering, isQualcomm);
@@ -4484,27 +4529,42 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         &mFeatures, preferDeviceLocalMemoryHostVisible,
         canPreferDeviceLocalMemoryHostVisible(mPhysicalDeviceProperties.deviceType));
 
-    // http://issuetracker.google.com/287318431
-    // There are multiple issues with dynamic states, disabling on ARM driver temporarily
+    bool dynamicStateWorks = true;
+    if (isARM)
+    {
+        // Multiple dynamic state issues on ARM have been fixed.
+        // http://issuetracker.google.com/285124778
+        // http://issuetracker.google.com/285196249
+        // http://issuetracker.google.com/286224923
+        // http://issuetracker.google.com/287318431
+
+        // Use it on drivers/devices known to work.
+        if (isPixel)
+        {
+            // Pixel devices are working after r44
+            dynamicStateWorks = armDriverVersion >= ARMDriverVersion(44, 0, 0);
+        }
+        else
+        {
+            // Others should work after r44p1
+            dynamicStateWorks = armDriverVersion >= ARMDriverVersion(44, 1, 0);
+        }
+    }
+
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsExtendedDynamicState,
-        mExtendedDynamicStateFeatures.extendedDynamicState == VK_TRUE && !isARM);
+        mExtendedDynamicStateFeatures.extendedDynamicState == VK_TRUE && dynamicStateWorks);
 
-    // By default, use all state from VK_EXT_extended_dynamic_state, unless they hit driver bugs.
     ANGLE_FEATURE_CONDITION(&mFeatures, useVertexInputBindingStrideDynamicState,
-                            mFeatures.supportsExtendedDynamicState.enabled && !isARM);
-    // http://issuetracker.google.com/285196249
-    // Dynamic cull mode not working on some ARM drivers
+                            mFeatures.supportsExtendedDynamicState.enabled && dynamicStateWorks);
     ANGLE_FEATURE_CONDITION(&mFeatures, useCullModeDynamicState,
-                            mFeatures.supportsExtendedDynamicState.enabled && !isARM);
+                            mFeatures.supportsExtendedDynamicState.enabled && dynamicStateWorks);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthCompareOpDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthTestEnableDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
-    // http://issuetracker.google.com/286224923
-    // Dynamic depth write not working on some ARM drivers
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthWriteEnableDynamicState,
-                            mFeatures.supportsExtendedDynamicState.enabled && !isARM);
+                            mFeatures.supportsExtendedDynamicState.enabled && dynamicStateWorks);
     ANGLE_FEATURE_CONDITION(&mFeatures, useFrontFaceDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useStencilOpDynamicState,
@@ -4512,15 +4572,12 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, useStencilTestEnableDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
 
-    // http://issuetracker.google.com/287318431
-    // There are multiple issues with dynamic states, disabling on ARM driver temporarily
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsExtendedDynamicState2,
-        mExtendedDynamicState2Features.extendedDynamicState2 == VK_TRUE && !isARM);
+        mExtendedDynamicState2Features.extendedDynamicState2 == VK_TRUE && dynamicStateWorks);
 
-    // By default, use all state from VK_EXT_extended_dynamic_state, unless they hit driver bugs.
     ANGLE_FEATURE_CONDITION(&mFeatures, usePrimitiveRestartEnableDynamicState,
-                            mFeatures.supportsExtendedDynamicState2.enabled && !isARM);
+                            mFeatures.supportsExtendedDynamicState2.enabled && dynamicStateWorks);
     ANGLE_FEATURE_CONDITION(&mFeatures, useRasterizerDiscardEnableDynamicState,
                             mFeatures.supportsExtendedDynamicState2.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthBiasEnableDynamicState,
@@ -4594,7 +4651,12 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     // On SwiftShader, no data is retrieved from the pipeline cache, so there is no reason to
     // serialize it or put it in the blob cache.
-    ANGLE_FEATURE_CONDITION(&mFeatures, hasEffectivePipelineCacheSerialization, !isSwiftShader);
+    // For Windows Nvidia Vulkan driver older than 520, Vulkan pipeline cache will only generate one
+    // single huge cache for one process shared by all graphics piplines in the same process, which
+    // can be huge.
+    const bool nvVersionLessThan520 = isNvidia && (nvidiaVersion.major < 520u);
+    ANGLE_FEATURE_CONDITION(&mFeatures, hasEffectivePipelineCacheSerialization,
+                            !isSwiftShader && !nvVersionLessThan520);
 
     // When the driver sets graphicsPipelineLibraryFastLinking, it means that monolithic pipelines
     // are just a bundle of the libraries, and that there is no benefit in creating monolithic
@@ -4651,7 +4713,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // workaround, per-sample shading is inferred by ANGLE and explicitly enabled by the API.
     ANGLE_FEATURE_CONDITION(&mFeatures, explicitlyEnablePerSampleShading, isARM);
 
-    ANGLE_FEATURE_CONDITION(&mFeatures, explicitlyCastMediumpFloatTo16Bit, isARM);
+    ANGLE_FEATURE_CONDITION(&mFeatures, explicitlyCastMediumpFloatTo16Bit, isARM && !isVenus);
 
     // Force to create swapchain with continuous refresh on shared present. Disabled by default.
     // Only enable it on integrations without EGL_FRONT_BUFFER_AUTO_REFRESH_ANDROID passthrough.
@@ -4735,6 +4797,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, mapUnspecifiedColorSpaceToPassThrough, isVenus);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, enablePipelineCacheDataCompression, true);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsTimelineSemaphore,
+                            mTimelineSemaphoreFeatures.timelineSemaphore == VK_TRUE);
 
     ApplyFeatureOverrides(&mFeatures, displayVk->getState());
 

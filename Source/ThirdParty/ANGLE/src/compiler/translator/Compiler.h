@@ -36,7 +36,7 @@ class TParseContext;
 class TranslatorHLSL;
 #endif  // ANGLE_ENABLE_HLSL
 #ifdef ANGLE_ENABLE_METAL
-class TranslatorMetalDirect;
+class TranslatorMSL;
 #endif  // ANGLE_ENABLE_METAL
 
 using SpecConstUsageBits = angle::PackedEnumBitSet<vk::SpecConstUsage, uint32_t>;
@@ -64,12 +64,12 @@ class TShHandleBase
   public:
     TShHandleBase();
     virtual ~TShHandleBase();
-    virtual TCompiler *getAsCompiler() { return 0; }
+    virtual TCompiler *getAsCompiler() { return nullptr; }
 #ifdef ANGLE_ENABLE_HLSL
-    virtual TranslatorHLSL *getAsTranslatorHLSL() { return 0; }
+    virtual TranslatorHLSL *getAsTranslatorHLSL() { return nullptr; }
 #endif  // ANGLE_ENABLE_HLSL
 #ifdef ANGLE_ENABLE_METAL
-    virtual TranslatorMetalDirect *getAsTranslatorMetalDirect() { return nullptr; }
+    virtual TranslatorMSL *getAsTranslatorMSL() { return nullptr; }
 #endif  // ANGLE_ENABLE_METAL
 
   protected:

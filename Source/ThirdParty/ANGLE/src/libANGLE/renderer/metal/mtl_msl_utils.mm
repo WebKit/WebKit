@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #include "common/utilities.h"
-#include "compiler/translator/TranslatorMetalDirect.h"
+#include "compiler/translator/msl/TranslatorMSL.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/ShaderMtl.h"
 #include "libANGLE/renderer/metal/mtl_msl_utils.h"
@@ -25,7 +25,7 @@ template <size_t N>
 constexpr size_t ConstStrLen(const char (&)[N])
 {
     static_assert(N > 0, "C++ shouldn't allow N to be zero");
-
+    
     // The length of a string defined as a char array is the size of the array minus 1 (the
     // terminating '\0').
     return N - 1;

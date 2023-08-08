@@ -405,26 +405,22 @@ class GPUPowerStats():
     # GPU power measured in uWs
 
     def __init__(self):
-        self.gpu_power = 0
-        self.big_cpu_power = 0
-        self.mid_cpu_power = 0
-        self.little_cpu_power = 0
+        self.power = {'gpu': 0, 'big_cpu': 0, 'mid_cpu': 0, 'little_cpu': 0}
 
-    def get_gpu_power(self, device_number):
-        gpu_power_command = 'shell "'
-        gpu_power_command += 'cat /sys/bus/iio/devices/iio:device'
-        gpu_power_command += device_number
-        gpu_power_command += '/energy_value'
-        gpu_power_command += '"'
+    def gpu_delta(self, starting):
+        return self.power['gpu'] - starting.power['gpu']
 
-        logging.debug("gpu_power_command %s" % gpu_power_command)
+    def cpu_delta(self, starting):
+        big = self.power['big_cpu'] - starting.power['big_cpu']
+        mid = self.power['mid_cpu'] - starting.power['mid_cpu']
+        little = self.power['little_cpu'] - starting.power['little_cpu']
+        return big + mid + little
 
-        gpu_result = run_adb_command(gpu_power_command)
-
-        # Read the last value from this line:
-        # CH6(T=251741617)[S2S_VDD_G3D], 3702041607
+    def get_power_data(self):
+        energy_value_result = run_adb_command(
+            'shell cat /sys/bus/iio/devices/iio:device*/energy_value')
+        # Output like this (ordering doesn't matter)
         #
-        # Out of output like this:
         # t=251741617
         # CH0(T=251741617)[VSYS_PWR_WLAN_BT], 192612469095
         # CH1(T=251741617)[L2S_VDD_AOC_RET], 1393792850
@@ -434,30 +430,6 @@ class GPUPowerStats():
         # CH5(T=251741617)[S4S_VDD2H_MEM], 4597271837
         # CH6(T=251741617)[S2S_VDD_G3D], 3702041607
         # CH7(T=251741617)[L9S_GNSS_CORE], 88535064
-
-        # Read the starting power
-        while True:
-            line = gpu_result.process.stdout.readline()
-            logging.debug('Checking line: %s' % line)
-            if not line:
-                break
-            if "S2S_VDD_G3D" in line:
-                self.gpu_power = line.split()[1]
-                break
-
-        logging.debug("self.gpu_power %s" % self.gpu_power)
-
-    def get_cpu_power(self, device_number):
-        # Also grab the sum of CPU powers
-        cpu_power_command = 'shell "'
-        cpu_power_command += 'cat /sys/bus/iio/devices/iio:device'
-        cpu_power_command += device_number
-        cpu_power_command += '/energy_value'
-        cpu_power_command += '"'
-
-        cpu_result = run_adb_command(cpu_power_command)
-
-        # Output like this
         # t=16086645
         # CH0(T=16086645)[PPVAR_VSYS_PWR_DISP], 611687448
         # CH1(T=16086645)[VSYS_PWR_MODEM], 179646995
@@ -468,71 +440,26 @@ class GPUPowerStats():
         # CH6(T=16086645)[S5M_VDD_INT], 190164699
         # CH7(T=16086645)[S1M_VDD_MIF], 196512891
 
-        # Sum up the CPU parts
-        while True:
-            line = cpu_result.process.stdout.readline()
-            logging.debug('Checking line: %s' % line)
-            if not line:
-                break
-            if "S2M_VDD_CPUCL2" in line:
-                self.big_cpu_power = line.split()[1]
-                break
-        logging.debug("self.big_cpu_power %s" % self.big_cpu_power)
+        id_map = {
+            'S2S_VDD_G3D': 'gpu',
+            'S2M_VDD_CPUCL2': 'big_cpu',
+            'S3M_VDD_CPUCL1': 'mid_cpu',
+            'S4M_VDD_CPUCL0': 'little_cpu',
+        }
 
-        while True:
-            line = cpu_result.process.stdout.readline()
-            logging.debug('Checking line: %s' % line)
-            if not line:
-                break
-            if "S3M_VDD_CPUCL1" in line:
-                self.mid_cpu_power = line.split()[1]
-                break
-        logging.debug("self.mid_cpu_power %s" % self.mid_cpu_power)
+        for m in id_map.values():
+            self.power[m] = 0  # Set to 0 to check for missing values and dupes below
 
-        while True:
-            line = cpu_result.process.stdout.readline()
-            logging.debug('Checking line: %s' % line)
-            if not line:
-                break
-            if "S2M_VDD_CPUCL0" in line:
-                self.little_cpu_power = line.split()[1]
-                break
-        logging.debug("self.little_cpu_power %s" % self.little_cpu_power)
+        for line in energy_value_result.process.stdout:
+            for mid, m in id_map.items():
+                if mid in line:
+                    value = int(line.split()[1])
+                    logging.debug('Power metric %s (%s): %d', mid, m, value)
+                    assert self.power[m] == 0, 'Duplicate power metric: %s (%s)' % (mid, m)
+                    self.power[m] = value
 
-    def get_power_data(self):
-
-        logging.debug('Checking where CPU and GPU data are mapped on enabled_rails')
-        enabled_rails_command = 'shell "'
-        enabled_rails_command += 'cat /sys/bus/iio/devices/iio:device0/enabled_rails'
-        enabled_rails_command += '"'
-
-        enabled_rails_result = run_adb_command(enabled_rails_command)
-
-        # See which rails are on device 0
-        rails0 = ''
-        while True:
-            line = enabled_rails_result.process.stdout.readline()
-            logging.debug('Checking line: %s' % line)
-            if not line:
-                break
-            if "S2S_VDD_G3D" in line:
-                rails0 = 'GPU'
-                break
-            if "S2M_VDD_CPUCL2" in line:
-                rails0 = 'CPU'
-                break
-
-        if "CPU" in rails0:
-            logging.debug('CPU is rail 0, GPU is rail 1')
-            self.get_cpu_power('0')
-            self.get_gpu_power('1')
-        elif "GPU" in rails0:
-            logging.debug('GPU is rail 0, CPU is rail 1')
-            self.get_cpu_power('1')
-            self.get_gpu_power('0')
-        else:
-            logging.error('Failed to select device in get_power_data')
-            exit()
+        for mid, m in id_map.items():
+            assert self.power[m] != 0, 'Power metric not found: %s (%s)' % (mid, m)
 
 
 def drop_high_low_and_average(values):
@@ -620,6 +547,20 @@ def main():
 
     logging.basicConfig(level=args.log.upper())
 
+    run_adb_command('root')
+
+    try:
+        run_traces(args)
+    finally:
+        # Clean up settings, including in case of exceptions (including Ctrl-C)
+        run_adb_command('shell settings delete global angle_debug_package')
+        run_adb_command('shell settings delete global angle_gl_driver_selection_pkgs')
+        run_adb_command('shell settings delete global angle_gl_driver_selection_values')
+
+    return 0
+
+
+def run_traces(args):
     # Load trace names
     with open(os.path.join(DEFAULT_TEST_DIR, DEFAULT_TEST_JSON)) as f:
         traces = json.loads(f.read())
@@ -682,8 +623,6 @@ def main():
                column_width['gpu_mem_peak'], 'gpu_mem_peak', column_width['proc_mem_median'],
                'proc_mem_median', column_width['proc_mem_peak'], 'proc_mem_peak'))
 
-    run_adb_command('root')
-
     if args.power:
         starting_power = GPUPowerStats()
         ending_power = GPUPowerStats()
@@ -739,22 +678,14 @@ def main():
 
                 if args.power:
                     starting_power.get_power_data()
-                    logging.debug('Starting GPU power: %i' % int(starting_power.gpu_power))
-                    logging.debug('Starting big CPU power: %i' % int(starting_power.big_cpu_power))
-                    logging.debug('Starting mid CPU power: %i' % int(starting_power.mid_cpu_power))
-                    logging.debug('Starting little CPU power: %i' %
-                                  int(starting_power.little_cpu_power))
+                    logging.debug('Starting power: %s' % starting_power.power)
 
                 logging.debug('Running %s' % test)
                 test_time = run_trace(test, args)
 
                 if args.power:
                     ending_power.get_power_data()
-                    logging.debug('Ending GPU power: %i' % int(ending_power.gpu_power))
-                    logging.debug('Ending big CPU power: %i' % int(ending_power.big_cpu_power))
-                    logging.debug('Ending mid CPU power: %i' % int(ending_power.mid_cpu_power))
-                    logging.debug('Ending little CPU power: %i' %
-                                  int(ending_power.little_cpu_power))
+                    logging.debug('Ending power: %s' % ending_power.power)
 
                 wall_time = get_test_time()
 
@@ -769,16 +700,9 @@ def main():
                     # Report the difference between the start and end power
                     frame_count = int(get_frame_count())
                     if frame_count > 0:
-                        consumed_gpu_power = int(ending_power.gpu_power) - int(
-                            starting_power.gpu_power)
+                        consumed_gpu_power = ending_power.gpu_delta(starting_power)
                         gpu_power_per_frame = consumed_gpu_power / int(frame_count)
-                        consumed_big_cpu_power = int(ending_power.big_cpu_power) - int(
-                            starting_power.big_cpu_power)
-                        consumed_mid_cpu_power = int(ending_power.mid_cpu_power) - int(
-                            starting_power.mid_cpu_power)
-                        consumed_little_cpu_power = int(ending_power.little_cpu_power) - int(
-                            starting_power.little_cpu_power)
-                        consumed_cpu_power = consumed_big_cpu_power + consumed_mid_cpu_power + consumed_little_cpu_power
+                        consumed_cpu_power = ending_power.cpu_delta(starting_power)
                         cpu_power_per_frame = consumed_cpu_power / int(frame_count)
 
                 gpu_mem_sustained, gpu_mem_peak = get_gpu_memory(test_time)
@@ -1000,13 +924,6 @@ def main():
             percent(data["vulkan"][17]),
             percent(safe_divide(data["native"][16], data["vulkan"][16]))
         ])
-
-    # Clean up settings
-    run_adb_command('shell settings delete global angle_debug_package')
-    run_adb_command('shell settings delete global angle_gl_driver_selection_pkgs')
-    run_adb_command('shell settings delete global angle_gl_driver_selection_values')
-
-    return 0
 
 
 if __name__ == '__main__':

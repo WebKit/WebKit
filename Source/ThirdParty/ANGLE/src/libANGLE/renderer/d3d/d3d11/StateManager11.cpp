@@ -434,14 +434,6 @@ void ShaderConstants11::setComputeWorkGroups(GLuint numGroupsX,
     mShaderConstantsDirty.set(gl::ShaderType::Compute);
 }
 
-void ShaderConstants11::setMultiviewWriteToViewportIndex(GLfloat index)
-{
-    mVertex.multiviewWriteToViewportIndex = index;
-    mPixel.multiviewWriteToViewportIndex  = index;
-    mShaderConstantsDirty.set(gl::ShaderType::Vertex);
-    mShaderConstantsDirty.set(gl::ShaderType::Fragment);
-}
-
 void ShaderConstants11::onViewportChange(const gl::Rectangle &glViewport,
                                          const D3D11_VIEWPORT &dxViewport,
                                          const gl::Offset &glFragCoordOffset,
@@ -493,8 +485,6 @@ void ShaderConstants11::onViewportChange(const gl::Rectangle &glViewport,
 
     mPixel.viewScale[0] = 1.0f;
     mPixel.viewScale[1] = presentPathFast ? 1.0f : -1.0f;
-    // Updates to the multiviewWriteToViewportIndex member are to be handled whenever the draw
-    // framebuffer's layout is changed.
 
     mVertex.viewScale[0] = mPixel.viewScale[0];
     mVertex.viewScale[1] = mPixel.viewScale[1];
@@ -573,6 +563,18 @@ bool ShaderConstants11::onClipDistancesEnabledChange(const uint32_t value)
         mShaderConstantsDirty.set(gl::ShaderType::Vertex);
     }
     return clipDistancesEnabledDirty;
+}
+
+bool ShaderConstants11::onMultisamplingChange(bool multisampling)
+{
+    const bool multisamplingDirty =
+        ((mPixel.misc & kPixelMiscMultisamplingMask) != 0) != multisampling;
+    if (multisamplingDirty)
+    {
+        mPixel.misc ^= kPixelMiscMultisamplingMask;
+        mShaderConstantsDirty.set(gl::ShaderType::Fragment);
+    }
+    return multisamplingDirty;
 }
 
 angle::Result ShaderConstants11::updateBuffer(const gl::Context *context,
@@ -1116,11 +1118,12 @@ void StateManager11::syncState(const gl::Context *context,
                 break;
             case gl::state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING:
                 invalidateRenderTarget();
-                if (mIsMultiviewEnabled)
-                {
-                    handleMultiviewDrawFramebufferChange(context);
-                }
                 mFramebuffer11 = GetImplAs<Framebuffer11>(state.getDrawFramebuffer());
+                if (mShaderConstants.onMultisamplingChange(
+                        state.getDrawFramebuffer()->getSamples(context) != 0))
+                {
+                    invalidateDriverUniforms();
+                }
                 break;
             case gl::state::DIRTY_BIT_VERTEX_ARRAY_BINDING:
                 invalidateVertexBuffer();
@@ -1242,21 +1245,6 @@ void StateManager11::syncState(const gl::Context *context,
     }
 
     // TODO(jmadill): Input layout and vertex buffer state.
-}
-
-void StateManager11::handleMultiviewDrawFramebufferChange(const gl::Context *context)
-{
-    const auto &glState                    = context->getState();
-    const gl::Framebuffer *drawFramebuffer = glState.getDrawFramebuffer();
-    ASSERT(drawFramebuffer != nullptr);
-
-    if (drawFramebuffer->isMultiview())
-    {
-        // Because the base view index is applied as an offset to the 2D texture array when the
-        // RTV is created, we just have to pass a boolean to select which code path is to be
-        // used.
-        mShaderConstants.setMultiviewWriteToViewportIndex(0.0f);
-    }
 }
 
 angle::Result StateManager11::syncBlendState(const gl::Context *context,

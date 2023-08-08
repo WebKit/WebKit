@@ -470,6 +470,12 @@ struct Extensions
     // GL_OES_texture_compression_astc
     bool textureCompressionAstcOES = false;
 
+    // GL_EXT_texture_compression_astc_decode_mode
+    bool textureCompressionAstcDecodeModeEXT = false;
+
+    // GL_EXT_texture_compression_astc_decode_mode_rgb9e5
+    bool textureCompressionAstcDecodeModeRgb9e5EXT = false;
+
     // GL_KHR_texture_compression_astc_hdr
     bool textureCompressionAstcHdrKHR = false;
 

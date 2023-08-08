@@ -21,9 +21,9 @@ namespace gl
 {
 namespace
 {
-LinkedUniform *FindUniform(std::vector<LinkedUniform> &list, const std::string &name)
+UsedUniform *FindUniform(std::vector<UsedUniform> &list, const std::string &name)
 {
-    for (LinkedUniform &uniform : list)
+    for (UsedUniform &uniform : list)
     {
         if (uniform.name == name)
             return &uniform;
@@ -54,7 +54,7 @@ LinkMismatchError LinkValidateUniforms(const sh::ShaderVariable &uniform1,
                                        const sh::ShaderVariable &uniform2,
                                        std::string *mismatchedStructFieldName)
 {
-#if ANGLE_PROGRAM_LINK_VALIDATE_UNIFORM_PRECISION == ANGLE_ENABLED
+#if ANGLE_PROGRAM_LINK_VALIDATE_UNIFORM_PRECISION
     const bool validatePrecisionFeature = true;
 #else
     const bool validatePrecisionFeature = false;
@@ -354,11 +354,11 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
   public:
     FlattenUniformVisitor(ShaderType shaderType,
                           const sh::ShaderVariable &uniform,
-                          std::vector<LinkedUniform> *uniforms,
-                          std::vector<LinkedUniform> *samplerUniforms,
-                          std::vector<LinkedUniform> *imageUniforms,
-                          std::vector<LinkedUniform> *atomicCounterUniforms,
-                          std::vector<LinkedUniform> *inputAttachmentUniforms,
+                          std::vector<UsedUniform> *uniforms,
+                          std::vector<UsedUniform> *samplerUniforms,
+                          std::vector<UsedUniform> *imageUniforms,
+                          std::vector<UsedUniform> *atomicCounterUniforms,
+                          std::vector<UsedUniform> *inputAttachmentUniforms,
                           std::vector<UnusedUniform> *unusedUniforms)
         : sh::VariableNameVisitor("", ""),
           mShaderType(shaderType),
@@ -389,11 +389,11 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
                             const std::string &mappedName,
                             const std::vector<unsigned int> &arraySizes) override
     {
-        bool isSampler                          = IsSamplerType(variable.type);
-        bool isImage                            = IsImageType(variable.type);
-        bool isAtomicCounter                    = IsAtomicCounterType(variable.type);
-        bool isFragmentInOut                    = variable.isFragmentInOut;
-        std::vector<LinkedUniform> *uniformList = mUniforms;
+        bool isSampler                        = IsSamplerType(variable.type);
+        bool isImage                          = IsImageType(variable.type);
+        bool isAtomicCounter                  = IsAtomicCounterType(variable.type);
+        bool isFragmentInOut                  = variable.isFragmentInOut;
+        std::vector<UsedUniform> *uniformList = mUniforms;
         if (isSampler)
         {
             uniformList = mSamplerUniforms;
@@ -422,7 +422,7 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
             fullMappedNameWithArrayIndex += "[0]";
         }
 
-        LinkedUniform *existingUniform = FindUniform(*uniformList, fullNameWithArrayIndex);
+        UsedUniform *existingUniform = FindUniform(*uniformList, fullNameWithArrayIndex);
         if (existingUniform)
         {
             if (getBinding() != -1)
@@ -449,9 +449,9 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
         }
         else
         {
-            LinkedUniform linkedUniform(variable.type, variable.precision, fullNameWithArrayIndex,
-                                        variable.arraySizes, getBinding(), getOffset(), mLocation,
-                                        -1, sh::kDefaultBlockMemberInfo);
+            UsedUniform linkedUniform(variable.type, variable.precision, fullNameWithArrayIndex,
+                                      variable.arraySizes, getBinding(), getOffset(), mLocation, -1,
+                                      sh::kDefaultBlockMemberInfo);
             linkedUniform.mappedName          = fullMappedNameWithArrayIndex;
             linkedUniform.active              = mMarkActive;
             linkedUniform.staticUse           = mMarkStaticUse;
@@ -551,11 +551,11 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
     int mBinding;
     int mOffset;
     int mLocation;
-    std::vector<LinkedUniform> *mUniforms;
-    std::vector<LinkedUniform> *mSamplerUniforms;
-    std::vector<LinkedUniform> *mImageUniforms;
-    std::vector<LinkedUniform> *mAtomicCounterUniforms;
-    std::vector<LinkedUniform> *mInputAttachmentUniforms;
+    std::vector<UsedUniform> *mUniforms;
+    std::vector<UsedUniform> *mSamplerUniforms;
+    std::vector<UsedUniform> *mImageUniforms;
+    std::vector<UsedUniform> *mAtomicCounterUniforms;
+    std::vector<UsedUniform> *mInputAttachmentUniforms;
     std::vector<UnusedUniform> *mUnusedUniforms;
     std::vector<unsigned int> mArrayElementStack;
     ShaderUniformCount mUniformCount;
@@ -874,6 +874,58 @@ bool ValidateInterfaceBlocksCount(GLuint maxInterfaceBlocks,
 }
 }  // anonymous namespace
 
+// UsedUniform implementation
+UsedUniform::UsedUniform() {}
+
+UsedUniform::UsedUniform(GLenum typeIn,
+                         GLenum precisionIn,
+                         const std::string &nameIn,
+                         const std::vector<unsigned int> &arraySizesIn,
+                         const int bindingIn,
+                         const int offsetIn,
+                         const int locationIn,
+                         const int bufferIndexIn,
+                         const sh::BlockMemberInfo &blockInfoIn)
+    : typeInfo(&GetUniformTypeInfo(typeIn)),
+      bufferIndex(bufferIndexIn),
+      blockInfo(blockInfoIn),
+      outerArrayOffset(0)
+{
+    type       = typeIn;
+    precision  = precisionIn;
+    name       = nameIn;
+    arraySizes = arraySizesIn;
+    binding    = bindingIn;
+    offset     = offsetIn;
+    location   = locationIn;
+    ASSERT(!isArrayOfArrays());
+    ASSERT(!isArray() || !isStruct());
+}
+
+UsedUniform::UsedUniform(const UsedUniform &other)
+{
+    *this = other;
+}
+
+UsedUniform &UsedUniform::operator=(const UsedUniform &other)
+{
+    if (this != &other)
+    {
+        sh::ShaderVariable::operator=(other);
+        activeVariable = other.activeVariable;
+
+        typeInfo         = other.typeInfo;
+        bufferIndex      = other.bufferIndex;
+        blockInfo        = other.blockInfo;
+        outerArraySizes  = other.outerArraySizes;
+        outerArrayOffset = other.outerArrayOffset;
+    }
+    return *this;
+}
+
+UsedUniform::~UsedUniform() {}
+
+// UniformLinker implementation
 UniformLinker::UniformLinker(const ShaderBitSet &activeShaderStages,
                              const ShaderMap<std::vector<sh::ShaderVariable>> &shaderUniforms)
     : mActiveShaderStages(activeShaderStages), mShaderUniforms(shaderUniforms)
@@ -885,7 +937,10 @@ void UniformLinker::getResults(std::vector<LinkedUniform> *uniforms,
                                std::vector<UnusedUniform> *unusedUniformsOutOrNull,
                                std::vector<VariableLocation> *uniformLocationsOutOrNull)
 {
-    uniforms->swap(mUniforms);
+    for (const UsedUniform &usedUniform : mUniforms)
+    {
+        uniforms->emplace_back(usedUniform);
+    }
 
     if (unusedUniformsOutOrNull)
     {
@@ -1018,7 +1073,7 @@ bool UniformLinker::indexUniforms(InfoLog &infoLog,
 
     for (size_t uniformIndex = 0; uniformIndex < mUniforms.size(); uniformIndex++)
     {
-        const LinkedUniform &uniform = mUniforms[uniformIndex];
+        const UsedUniform &uniform = mUniforms[uniformIndex];
 
         if ((uniform.isBuiltIn() && !uniform.isEmulatedBuiltIn()) ||
             IsAtomicCounterType(uniform.type) || uniform.isFragmentInOut)
@@ -1095,7 +1150,7 @@ bool UniformLinker::gatherUniformLocationsAndCheckConflicts(
     // All the locations where another uniform can't be located.
     std::set<GLuint> reservedLocations;
 
-    for (const LinkedUniform &uniform : mUniforms)
+    for (const UsedUniform &uniform : mUniforms)
     {
         if ((uniform.isBuiltIn() && !uniform.isEmulatedBuiltIn()) || uniform.isFragmentInOut)
         {
@@ -1182,10 +1237,10 @@ void UniformLinker::pruneUnusedUniforms()
 bool UniformLinker::flattenUniformsAndCheckCapsForShader(
     ShaderType shaderType,
     const Caps &caps,
-    std::vector<LinkedUniform> &samplerUniforms,
-    std::vector<LinkedUniform> &imageUniforms,
-    std::vector<LinkedUniform> &atomicCounterUniforms,
-    std::vector<LinkedUniform> &inputAttachmentUniforms,
+    std::vector<UsedUniform> &samplerUniforms,
+    std::vector<UsedUniform> &imageUniforms,
+    std::vector<UsedUniform> &atomicCounterUniforms,
+    std::vector<UsedUniform> &inputAttachmentUniforms,
     std::vector<UnusedUniform> &unusedUniforms,
     InfoLog &infoLog)
 {
@@ -1258,10 +1313,10 @@ bool UniformLinker::flattenUniformsAndCheckCapsForShader(
 
 bool UniformLinker::flattenUniformsAndCheckCaps(const Caps &caps, InfoLog &infoLog)
 {
-    std::vector<LinkedUniform> samplerUniforms;
-    std::vector<LinkedUniform> imageUniforms;
-    std::vector<LinkedUniform> atomicCounterUniforms;
-    std::vector<LinkedUniform> inputAttachmentUniforms;
+    std::vector<UsedUniform> samplerUniforms;
+    std::vector<UsedUniform> imageUniforms;
+    std::vector<UsedUniform> atomicCounterUniforms;
+    std::vector<UsedUniform> inputAttachmentUniforms;
     std::vector<UnusedUniform> unusedUniforms;
 
     for (const ShaderType shaderType : mActiveShaderStages)

@@ -10,6 +10,7 @@
 #define LIBANGLE_RENDERER_GL_DISPLAYGL_H_
 
 #include "libANGLE/renderer/DisplayImpl.h"
+#include "libANGLE/renderer/ShareGroupImpl.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 
 namespace egl
@@ -21,7 +22,10 @@ namespace rx
 {
 
 class ShareGroupGL : public ShareGroupImpl
-{};
+{
+  public:
+    ShareGroupGL(const egl::ShareGroupState &state) : ShareGroupImpl(state) {}
+};
 
 class RendererGL;
 
@@ -47,7 +51,7 @@ class DisplayGL : public DisplayImpl
     StreamProducerImpl *createStreamProducerD3DTexture(egl::Stream::ConsumerType consumerType,
                                                        const egl::AttributeMap &attribs) override;
 
-    ShareGroupImpl *createShareGroup() override;
+    ShareGroupImpl *createShareGroup(const egl::ShareGroupState &state) override;
 
     egl::Error makeCurrent(egl::Display *display,
                            egl::Surface *drawSurface,

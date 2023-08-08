@@ -6,6 +6,7 @@ SOURCE CODE: Copy the Chromium folder manually into this folder and run git cl f
 Date: 24/05/2017
 Revision: 28b5bbb227d331c01e6ff9b2f8729732135aadc7 (Chromium)
 Security Critical: no
+Shipped: yes
 License: Chromium
 License File: LICENSE in Chromium/src
 

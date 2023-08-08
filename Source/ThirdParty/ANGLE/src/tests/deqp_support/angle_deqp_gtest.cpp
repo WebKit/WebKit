@@ -63,14 +63,17 @@ constexpr char kSupportPath[] = "src/tests/deqp_support/";
 #define EGL_CTS_DIR(PATH) "external/openglcts/data/mustpass/egl/" PATH
 
 const char *gCaseListFiles[] = {
+    EGL_CTS_DIR("aosp_mustpass/main/egl-master.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles2-master.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles3-master.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles31-master.txt"),
-    EGL_CTS_DIR("aosp_mustpass/main/egl-master.txt"),
     GLES_CTS_DIR("khronos_mustpass/main/gles2-khr-master.txt"),
     GLES_CTS_DIR("khronos_mustpass/main/gles3-khr-master.txt"),
     GLES_CTS_DIR("khronos_mustpass/main/gles31-khr-master.txt"),
     GLES_CTS_DIR("khronos_mustpass/main/gles32-khr-master.txt"),
+    GLES_CTS_DIR("khronos_mustpass_noctx/main/gles2-khr-noctx-master.txt"),
+    GLES_CTS_DIR("khronos_mustpass_noctx/main/gles32-khr-noctx-master.txt"),
+    GLES_CTS_DIR("khronos_mustpass_single/main/gles32-khr-single.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles3-rotate-landscape.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles3-rotate-reverse-portrait.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles3-rotate-reverse-landscape.txt"),
@@ -84,13 +87,23 @@ const char *gCaseListFiles[] = {
 #undef GL_CTS_DIR
 
 const char *gTestExpectationsFiles[] = {
-    "deqp_gles2_test_expectations.txt",         "deqp_gles3_test_expectations.txt",
-    "deqp_gles31_test_expectations.txt",        "deqp_egl_test_expectations.txt",
-    "deqp_khr_gles2_test_expectations.txt",     "deqp_khr_gles3_test_expectations.txt",
-    "deqp_khr_gles31_test_expectations.txt",    "deqp_khr_gles32_test_expectations.txt",
-    "deqp_gles3_rotate_test_expectations.txt",  "deqp_gles3_rotate_test_expectations.txt",
-    "deqp_gles3_rotate_test_expectations.txt",  "deqp_gles31_rotate_test_expectations.txt",
-    "deqp_gles31_rotate_test_expectations.txt", "deqp_gles31_rotate_test_expectations.txt",
+    "deqp_egl_test_expectations.txt",
+    "deqp_gles2_test_expectations.txt",
+    "deqp_gles3_test_expectations.txt",
+    "deqp_gles31_test_expectations.txt",
+    "deqp_khr_gles2_test_expectations.txt",
+    "deqp_khr_gles3_test_expectations.txt",
+    "deqp_khr_gles31_test_expectations.txt",
+    "deqp_khr_gles32_test_expectations.txt",
+    "deqp_khr_noctx_gles2_test_expectations.txt",
+    "deqp_khr_noctx_gles32_test_expectations.txt",
+    "deqp_khr_single_gles32_test_expectations.txt",
+    "deqp_gles3_rotate_test_expectations.txt",
+    "deqp_gles3_rotate_test_expectations.txt",
+    "deqp_gles3_rotate_test_expectations.txt",
+    "deqp_gles31_rotate_test_expectations.txt",
+    "deqp_gles31_rotate_test_expectations.txt",
+    "deqp_gles31_rotate_test_expectations.txt",
     "deqp_gl46_test_expectations.txt",
 };
 
@@ -694,19 +707,19 @@ void HandleLogImages(const char *logImagesString)
 
 size_t GetTestModuleIndex()
 {
-#ifdef ANGLE_DEQP_GLES2_TESTS
+#ifdef ANGLE_DEQP_EGL_TESTS
     return 0;
 #endif
 
-#ifdef ANGLE_DEQP_GLES3_TESTS
+#ifdef ANGLE_DEQP_GLES2_TESTS
     return 1;
 #endif
 
-#ifdef ANGLE_DEQP_GLES31_TESTS
+#ifdef ANGLE_DEQP_GLES3_TESTS
     return 2;
 #endif
 
-#ifdef ANGLE_DEQP_EGL_TESTS
+#ifdef ANGLE_DEQP_GLES31_TESTS
     return 3;
 #endif
 
@@ -726,32 +739,44 @@ size_t GetTestModuleIndex()
     return 7;
 #endif
 
-#ifdef ANGLE_DEQP_GLES3_ROTATE90_TESTS
+#ifdef ANGLE_DEQP_KHR_NOCTX_GLES2_TESTS
     return 8;
 #endif
 
-#ifdef ANGLE_DEQP_GLES3_ROTATE180_TESTS
+#ifdef ANGLE_DEQP_KHR_NOCTX_GLES32_TESTS
     return 9;
 #endif
 
-#ifdef ANGLE_DEQP_GLES3_ROTATE270_TESTS
+#ifdef ANGLE_DEQP_KHR_SINGLE_GLES32_TESTS
     return 10;
 #endif
 
-#ifdef ANGLE_DEQP_GLES31_ROTATE90_TESTS
+#ifdef ANGLE_DEQP_GLES3_ROTATE90_TESTS
     return 11;
 #endif
 
-#ifdef ANGLE_DEQP_GLES31_ROTATE180_TESTS
+#ifdef ANGLE_DEQP_GLES3_ROTATE180_TESTS
     return 12;
 #endif
 
-#ifdef ANGLE_DEQP_GLES31_ROTATE270_TESTS
+#ifdef ANGLE_DEQP_GLES3_ROTATE270_TESTS
     return 13;
 #endif
 
-#ifdef ANGLE_DEQP_GL_TESTS
+#ifdef ANGLE_DEQP_GLES31_ROTATE90_TESTS
     return 14;
+#endif
+
+#ifdef ANGLE_DEQP_GLES31_ROTATE180_TESTS
+    return 15;
+#endif
+
+#ifdef ANGLE_DEQP_GLES31_ROTATE270_TESTS
+    return 16;
+#endif
+
+#ifdef ANGLE_DEQP_GL_TESTS
+    return 17;
 #endif
 }
 

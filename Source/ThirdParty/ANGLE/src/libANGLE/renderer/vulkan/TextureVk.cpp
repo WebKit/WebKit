@@ -3303,13 +3303,6 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
     {
         mImageCreateFlags |= VK_IMAGE_CREATE_PROTECTED_BIT;
     }
-    if (mOwnsImage && samples == 1 &&
-        contextVk->getFeatures().supportsMultisampledRenderToSingleSampled.enabled)
-    {
-        // Conservatively add the MSRTSS flag, because any texture might end up as an MSRTT
-        // attachment.
-        mImageCreateFlags |= VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT;
-    }
 
     if (renderer->getFeatures().supportsComputeTranscodeEtcToBc.enabled &&
         IsETCFormat(intendedImageFormatID) && IsBCFormat(actualImageFormatID))
@@ -3318,6 +3311,25 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
                              VK_IMAGE_CREATE_EXTENDED_USAGE_BIT |
                              VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT;
         mImageUsageFlags |= VK_IMAGE_USAGE_STORAGE_BIT;
+    }
+
+    if ((mImageUsageFlags & (VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
+                             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)) != 0 &&
+        mOwnsImage && samples == 1 &&
+        contextVk->getFeatures().supportsMultisampledRenderToSingleSampled.enabled)
+    {
+
+        // Note: If we ever fail the following check, we should use the emulation path for this
+        // texture instead of ignoring MSRTT.
+        if (formatSupportsMultisampledRenderToSingleSampled(
+                renderer, rx::vk::GetVkFormatFromFormatID(actualImageFormatID),
+                gl_vk::GetImageType(mState.getType()), mImage->getTilingMode(), mImageUsageFlags,
+                mImageCreateFlags))
+        {
+            // If supported by format add the MSRTSS flag because any texture might end up as an
+            // MSRTT attachment.
+            mImageCreateFlags |= VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT;
+        }
     }
 
     ANGLE_TRY(mImage->initExternal(
@@ -3887,4 +3899,38 @@ void TextureVk::updateCachedImageViewSerials()
     mCachedImageViewSubresourceSerialSkipDecode =
         getImageViewSubresourceSerialImpl(GL_SKIP_DECODE_EXT);
 }
+
+bool TextureVk::formatSupportsMultisampledRenderToSingleSampled(RendererVk *renderer,
+                                                                VkFormat format,
+                                                                VkImageType imageType,
+                                                                VkImageTiling tilingMode,
+                                                                VkImageUsageFlags usageFlags,
+                                                                VkImageCreateFlags createFlags)
+{
+    // Verify support for this image format after adding MSRTSS flag
+    VkPhysicalDeviceImageFormatInfo2 imageFormatInfo = {};
+    imageFormatInfo.sType  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
+    imageFormatInfo.format = format;
+    imageFormatInfo.type   = imageType;
+    imageFormatInfo.tiling = tilingMode;
+    imageFormatInfo.usage  = usageFlags;
+    imageFormatInfo.flags =
+        createFlags | VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT;
+
+    VkImageFormatProperties imageFormatProperties                            = {};
+    VkSamplerYcbcrConversionImageFormatProperties ycbcrImageFormatProperties = {};
+    ycbcrImageFormatProperties.sType =
+        VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
+
+    VkImageFormatProperties2 imageFormatProperties2 = {};
+    imageFormatProperties2.sType                    = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
+    imageFormatProperties2.pNext                    = &ycbcrImageFormatProperties;
+    imageFormatProperties2.imageFormatProperties    = imageFormatProperties;
+
+    VkResult result = vkGetPhysicalDeviceImageFormatProperties2(
+        renderer->getPhysicalDevice(), &imageFormatInfo, &imageFormatProperties2);
+
+    return (result == VK_SUCCESS);
+}
+
 }  // namespace rx

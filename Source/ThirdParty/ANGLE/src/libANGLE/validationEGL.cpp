@@ -1285,6 +1285,20 @@ bool ValidateCompatibleSurface(const ValidationContext *val,
     return true;
 }
 
+bool ValidateSurfaceBadAccess(const ValidationContext *val,
+                              const gl::Context *previousContext,
+                              const Surface *surface)
+{
+    if (surface->isReferenced() &&
+        (previousContext == nullptr || (surface != previousContext->getCurrentDrawSurface() &&
+                                        surface != previousContext->getCurrentReadSurface())))
+    {
+        val->setError(EGL_BAD_ACCESS, "Surface can only be current on one thread");
+        return false;
+    }
+    return true;
+}
+
 bool ValidateCreateSyncBase(const ValidationContext *val,
                             const Display *display,
                             EGLenum type,
@@ -3318,31 +3332,29 @@ bool ValidateMakeCurrent(const ValidationContext *val,
         return false;
     }
 
-    if (!noDraw)
-    {
-        ANGLE_VALIDATION_TRY(ValidateSurface(val, display, drawSurfaceID));
-    }
-
     const Surface *drawSurface = GetSurfaceIfValid(display, drawSurfaceID);
     const Surface *readSurface = GetSurfaceIfValid(display, readSurfaceID);
     const gl::Context *context = GetContextIfValid(display, contextID);
+
+    const gl::Context *previousContext = val->eglThread->getContext();
+    if (!noContext && context->isReferenced() && context != previousContext)
+    {
+        val->setError(EGL_BAD_ACCESS, "Context can only be current on one thread");
+        return false;
+    }
 
     if (!noRead)
     {
         ANGLE_VALIDATION_TRY(ValidateSurface(val, display, readSurfaceID));
         ANGLE_VALIDATION_TRY(ValidateCompatibleSurface(val, display, context, readSurface));
+        ANGLE_VALIDATION_TRY(ValidateSurfaceBadAccess(val, previousContext, readSurface));
     }
 
-    if (drawSurface != readSurface)
+    if (drawSurface != readSurface && !noDraw)
     {
-        if (drawSurface)
-        {
-            ANGLE_VALIDATION_TRY(ValidateCompatibleSurface(val, display, context, drawSurface));
-        }
-        if (readSurface)
-        {
-            ANGLE_VALIDATION_TRY(ValidateCompatibleSurface(val, display, context, readSurface));
-        }
+        ANGLE_VALIDATION_TRY(ValidateSurface(val, display, drawSurfaceID));
+        ANGLE_VALIDATION_TRY(ValidateCompatibleSurface(val, display, context, drawSurface));
+        ANGLE_VALIDATION_TRY(ValidateSurfaceBadAccess(val, previousContext, drawSurface));
     }
     return true;
 }
@@ -6862,4 +6874,48 @@ bool ValidateQueryDmaBufModifiersEXT(ValidationContext const *val,
     return true;
 }
 
+bool ValidateAcquireExternalContextANGLE(const ValidationContext *val,
+                                         const egl::Display *display,
+                                         SurfaceID drawAndReadPacked)
+{
+    ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
+    ANGLE_VALIDATION_TRY(ValidateSurface(val, display, drawAndReadPacked));
+
+    const DisplayExtensions &displayExtensions = display->getExtensions();
+    if (!displayExtensions.externalContextAndSurface)
+    {
+        val->setError(EGL_BAD_ACCESS, "EGL_ANGLE_external_context_and_surface is not available");
+        return false;
+    }
+
+    gl::Context *currentContext = val->eglThread->getContext();
+    if (currentContext == nullptr || !currentContext->isExternal())
+    {
+        val->setError(EGL_BAD_CONTEXT, "Current context is not an external context");
+        return false;
+    }
+
+    return true;
+}
+
+bool ValidateReleaseExternalContextANGLE(const ValidationContext *val, const egl::Display *display)
+{
+    ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
+
+    const DisplayExtensions &displayExtensions = display->getExtensions();
+    if (!displayExtensions.externalContextAndSurface)
+    {
+        val->setError(EGL_BAD_ACCESS, "EGL_ANGLE_external_context_and_surface is not available");
+        return false;
+    }
+
+    gl::Context *currentContext = val->eglThread->getContext();
+    if (currentContext == nullptr || !currentContext->isExternal())
+    {
+        val->setError(EGL_BAD_CONTEXT, "Current context is not an external context");
+        return false;
+    }
+
+    return true;
+}
 }  // namespace egl

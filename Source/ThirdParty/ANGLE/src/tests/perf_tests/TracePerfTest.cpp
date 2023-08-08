@@ -1543,9 +1543,9 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
 
     if (traceNameIs("pubg_mobile_launch"))
     {
-        if (isIntelWinNative)
+        if (isIntelWinNative || isIntelWinANGLE)
         {
-            skipTest("http://anglebug.com/7929 Too slow on Win Intel native");
+            skipTest("http://anglebug.com/7929 Too slow on Win Intel native and Vulkan");
         }
     }
 
@@ -1625,6 +1625,22 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         if (!mParams->isANGLE() && (IsWindows() || IsLinux()))
         {
             skipTest("TODO: https://anglebug.com/8191 Undefined behavior on native");
+        }
+    }
+
+    if (traceNameIs("street_fighter_iv_ce"))
+    {
+        if (mParams->isSwiftshader())
+        {
+            skipTest("https://anglebug.com/8243 Too slow on Swiftshader (large keyframe)");
+        }
+    }
+
+    if (traceNameIs("monster_hunter_stories"))
+    {
+        if (isIntelWinANGLE)
+        {
+            skipTest("http://anglebug.com/7557 Flaky context lost on Win Intel Vulkan");
         }
     }
 

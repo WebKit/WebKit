@@ -83,7 +83,7 @@ generators = {
     'DXGI format support':
         'src/libANGLE/renderer/gen_dxgi_support_tables.py',
     'Emulated HLSL functions':
-        'src/compiler/translator/gen_emulated_builtin_function_tables.py',
+        'src/compiler/translator/hlsl/gen_emulated_builtin_function_tables.py',
     'Extension files':
         'src/libANGLE/gen_extensions.py',
     'GL copy conversion table':

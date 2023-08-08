@@ -84,6 +84,16 @@ declare_args() {
   angle_enable_shared_context_mutex = true
 }
 
+declare_args() {
+  # May need to enable to fix recursion when vkAcquireNextImageKHR() returns back to ANGLE from
+  # eglClientWaitSyncKHR(). May happen if Android Presentation Engine uses
+  # EGL_KHR_fence_sync instead of EGL_ANDROID_native_fence_sync for synchronization.
+  # To check call: adb shell "dumpsys SurfaceFlinger | grep 'Sync configuration'"
+  # The Android's "testDrawingHardwareBitmapNotLeaking" test may be used for testing.
+  # Disable this option to save performance on platforms that does not require recursion.
+  angle_enable_context_mutex_recursion = angle_enable_global_mutex_recursion
+}
+
 if (angle_build_all) {
   group("all") {
     testonly = true
@@ -180,6 +190,10 @@ config("internal_config") {
   if (angle_enable_shared_context_mutex && angle_enable_share_context_lock &&
       !angle_force_context_check_every_call) {
     defines += [ "ANGLE_ENABLE_SHARED_CONTEXT_MUTEX=1" ]
+  }
+
+  if (angle_enable_context_mutex_recursion) {
+    defines += [ "ANGLE_ENABLE_CONTEXT_MUTEX_RECURSION=1" ]
   }
 
   # Enables debug/trace-related functionality, including logging every GLES/EGL API command to the
@@ -426,7 +440,7 @@ config("angle_common_config") {
 
   defines = []
   if (angle_delegate_workers) {
-    defines += [ "ANGLE_DELEGATE_WORKERS" ]
+    defines += [ "ANGLE_DELEGATE_WORKERS=1" ]
   }
 }
 
@@ -716,8 +730,7 @@ template("translator_lib") {
         _needs_glsl_and_vulkan_base = true
         _uses_spirv = true
 
-        # This translator is needed by metal backend also.
-        sources += angle_translator_lib_vulkan_sources
+        sources += angle_translator_lib_spirv_sources
       }
 
       if (angle_enable_vulkan || use_fuzzing_engine) {
@@ -725,7 +738,7 @@ template("translator_lib") {
       }
 
       if (angle_enable_metal) {
-        sources += angle_translator_lib_metal_sources
+        sources += angle_translator_lib_msl_sources
         defines += [ "ANGLE_ENABLE_METAL" ]
       }
     }
@@ -1029,6 +1042,7 @@ angle_source_set("libANGLE_no_vulkan") {
   defines = []
   if (angle_enable_gl_desktop_frontend) {
     defines += [ "ANGLE_ENABLE_GL_DESKTOP_FRONTEND" ]
+    sources += libangle_gl_sources
   }
 
   include_dirs = []

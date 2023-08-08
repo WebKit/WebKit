@@ -1344,6 +1344,13 @@
                 "Enable use of VK_KHR_portability_enumeration extension"
             ],
             "issue": "http://anglebug.com/8229"
+        },
+        {
+            "name": "supports_timeline_semaphore",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_timeline_semaphore extension"
+            ]
         }
     ]
 }

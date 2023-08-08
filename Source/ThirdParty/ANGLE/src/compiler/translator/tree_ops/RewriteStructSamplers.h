@@ -35,4 +35,4 @@ class TSymbolTable;
                                          int *removedUniformsCountOut);
 }  // namespace sh
 
-#endif  // COMPILER_TRANSLATOR_TREEOPS_VULKAN_REWRITESTRUCTSAMPLERS_H_
+#endif  // COMPILER_TRANSLATOR_TREEOPS_REWRITESTRUCTSAMPLERS_H_

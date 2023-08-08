@@ -681,12 +681,13 @@ angle::Result ContextMtl::drawArraysProvokingVertexImpl(const gl::Context *conte
     gl::DrawElementsType convertedType = gl::DrawElementsType::UnsignedInt;
     gl::PrimitiveMode outIndexMode     = gl::PrimitiveMode::InvalidEnum;
 
-    mtl::BufferRef drawIdxBuffer = mProvokingVertexHelper.generateIndexBuffer(
+    mtl::BufferRef drawIdxBuffer;
+    ANGLE_TRY(mProvokingVertexHelper.generateIndexBuffer(
         mtl::GetImpl(context), first, count, mode, convertedType, outIndexCount, outIndexOffset,
-        outIndexMode);
+        outIndexMode, drawIdxBuffer));
     GLsizei outIndexCounti32     = static_cast<GLsizei>(outIndexCount);
     const uint8_t *mappedIndices = drawIdxBuffer->mapReadOnly(this);
-    if (!drawIdxBuffer || !mappedIndices)
+    if (!mappedIndices)
     {
         return angle::Result::Stop;
     }
@@ -804,14 +805,10 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
     {
         size_t outIndexCount      = 0;
         gl::PrimitiveMode newMode = gl::PrimitiveMode::InvalidEnum;
-        drawIdxBuffer             = mProvokingVertexHelper.preconditionIndexBuffer(
+        ANGLE_TRY(mProvokingVertexHelper.preconditionIndexBuffer(
             mtl::GetImpl(context), idxBuffer, count, convertedOffset,
             mState.isPrimitiveRestartEnabled(), mode, convertedType, outIndexCount,
-            provokingVertexAdditionalOffset, newMode);
-        if (!drawIdxBuffer)
-        {
-            return angle::Result::Stop;
-        }
+            provokingVertexAdditionalOffset, newMode, drawIdxBuffer));
         // Line strips and triangle strips are rewritten to flat line arrays and tri arrays.
         convertedCounti32 = (uint32_t)outIndexCount;
         mode              = newMode;
@@ -1114,10 +1111,10 @@ angle::Result ContextMtl::popDebugGroup(const gl::Context *context)
 
 // State sync with dirty bits.
 angle::Result ContextMtl::syncState(const gl::Context *context,
-                                    const gl::state::DirtyBits &dirtyBits,
-                                    const gl::state::DirtyBits &bitMask,
-                                    const gl::state::ExtendedDirtyBits &extendedDirtyBits,
-                                    const gl::state::ExtendedDirtyBits &extendedBitMask,
+                                    const gl::state::DirtyBits dirtyBits,
+                                    const gl::state::DirtyBits bitMask,
+                                    const gl::state::ExtendedDirtyBits extendedDirtyBits,
+                                    const gl::state::ExtendedDirtyBits extendedBitMask,
                                     gl::Command command)
 {
     const gl::State &glState = context->getState();
@@ -1366,7 +1363,7 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
 }
 
 void ContextMtl::updateExtendedState(const gl::State &glState,
-                                     const gl::state::ExtendedDirtyBits &extendedDirtyBits)
+                                     const gl::state::ExtendedDirtyBits extendedDirtyBits)
 {
     for (size_t extendedDirtyBit : extendedDirtyBits)
     {
@@ -1838,13 +1835,17 @@ void ContextMtl::flushCommandBufferIfNeeded()
 {
     if (mRenderPassesSinceFlush >= mtl::kMaxRenderPassesPerCommandBuffer)
     {
-        // WaitUntilScheduled here is intended to help the CPU-GPU pipeline and
-        // helps to keep the number of inflight render passes in the system to a
-        // minimum.
+#if defined(ANGLE_PLATFORM_MACOS)
+        // Ensure that we don't accumulate too many unflushed render passes. Don't wait until they
+        // are submitted, other components handle backpressure so don't create uneccessary CPU/GPU
+        // synchronization.
+        flushCommandBuffer(mtl::NoWait);
+#else
+        // WaitUntilScheduled is used on iOS to avoid regressing untested devices.
         flushCommandBuffer(mtl::WaitUntilScheduled);
+#endif
     }
-
-    if (mCmdBuffer.needsFlushForDrawCallLimits())
+    else if (mCmdBuffer.needsFlushForDrawCallLimits())
     {
         flushCommandBuffer(mtl::NoWait);
     }
@@ -1917,22 +1918,16 @@ mtl::RenderCommandEncoder *ContextMtl::getRenderPassCommandEncoder(const mtl::Re
     const mtl::ContextDevice &metalDevice = getMetalDevice();
     if (mtl::DeviceHasMaximumRenderTargetSize(metalDevice))
     {
-        ANGLE_MTL_OBJC_SCOPE
+        NSUInteger maxSize = mtl::GetMaxRenderTargetSizeForDeviceInBytes(metalDevice);
+        NSUInteger renderTargetSize =
+            ComputeTotalSizeUsedForMTLRenderPassDescriptor(desc, this, metalDevice);
+        if (renderTargetSize > maxSize)
         {
-            MTLRenderPassDescriptor *objCDesc = [MTLRenderPassDescriptor renderPassDescriptor];
-            desc.convertToMetalDesc(objCDesc, getNativeCaps().maxColorAttachments);
-            NSUInteger maxSize = mtl::GetMaxRenderTargetSizeForDeviceInBytes(metalDevice);
-            NSUInteger renderTargetSize =
-                ComputeTotalSizeUsedForMTLRenderPassDescriptor(objCDesc, this, metalDevice);
-            if (renderTargetSize > maxSize)
-            {
-                std::stringstream errorStream;
-                errorStream << "This set of render targets requires " << renderTargetSize
-                            << " bytes of pixel storage. This device supports " << maxSize
-                            << " bytes.";
-                ANGLE_MTL_HANDLE_ERROR(this, errorStream.str().c_str(), GL_INVALID_OPERATION);
-                return nil;
-            }
+            std::stringstream errorStream;
+            errorStream << "This set of render targets requires " << renderTargetSize
+                        << " bytes of pixel storage. This device supports " << maxSize << " bytes.";
+            ANGLE_MTL_HANDLE_ERROR(this, errorStream.str().c_str(), GL_INVALID_OPERATION);
+            return nullptr;
         }
     }
     return &mRenderEncoder.restart(desc, getNativeCaps().maxColorAttachments);

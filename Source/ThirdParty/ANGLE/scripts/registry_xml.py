@@ -140,6 +140,8 @@ gles_requestable_extensions = [
     "GL_EXT_tessellation_shader",
     "GL_EXT_texture_border_clamp",
     "GL_EXT_texture_buffer",
+    "GL_EXT_texture_compression_astc_decode_mode",
+    "GL_EXT_texture_compression_astc_decode_mode_rgb9e5",
     "GL_EXT_texture_compression_bptc",
     "GL_EXT_texture_compression_dxt1",
     "GL_EXT_texture_compression_rgtc",
@@ -320,6 +322,7 @@ supported_egl_extensions = [
     "EGL_ANGLE_device_d3d",
     "EGL_ANGLE_display_semaphore_share_group",
     "EGL_ANGLE_display_texture_share_group",
+    "EGL_ANGLE_external_context_and_surface",
     "EGL_ANGLE_feature_control",
     "EGL_ANGLE_ggp_stream_descriptor",
     "EGL_ANGLE_metal_create_context_ownership_identity",
@@ -393,7 +396,7 @@ supported_cl_extensions = [
 ]
 
 # Strip these suffixes from Context entry point names. NV is excluded (for now).
-strip_suffixes = ["AMD", "ANDROID", "ANGLE", "CHROMIUM", "EXT", "KHR", "OES", "OVR"]
+strip_suffixes = ["AMD", "ANDROID", "ANGLE", "CHROMIUM", "EXT", "KHR", "OES", "OVR", "QCOM"]
 check_sorted('strip_suffixes', strip_suffixes)
 
 # The EGL_ANGLE_explicit_context extension is generated differently from other extensions.

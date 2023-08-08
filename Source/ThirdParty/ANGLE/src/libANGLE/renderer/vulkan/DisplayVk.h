@@ -109,7 +109,7 @@ class DisplayVk : public DisplayImpl, public vk::Context
 
     void populateFeatureList(angle::FeatureList *features) override;
 
-    ShareGroupImpl *createShareGroup() override;
+    ShareGroupImpl *createShareGroup(const egl::ShareGroupState &state) override;
 
     bool isConfigFormatSupported(VkFormat format) const;
     bool isSurfaceFormatColorspacePairSupported(VkSurfaceKHR surface,

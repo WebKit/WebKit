@@ -148,10 +148,10 @@ bool IsMaliG31OrOlder(const FunctionsGL *functions)
     return number != 0 && number <= 31;
 }
 
-bool IsMaliG72OrG76(const FunctionsGL *functions)
+bool IsMaliG72OrG76OrG51(const FunctionsGL *functions)
 {
     int number = getMaliGNumber(functions);
-    return number == 72 || number == 76;
+    return number == 72 || number == 76 || number == 51;
 }
 
 bool IsMaliValhall(const FunctionsGL *functions)
@@ -2020,6 +2020,10 @@ void GenerateCaps(const FunctionsGL *functions,
                                      functions->hasGLESExtension("GL_EXT_clip_control");
     }
 
+    constexpr uint32_t kRequiredClipDistances                = 8;
+    constexpr uint32_t kRequiredCullDistances                = 8;
+    constexpr uint32_t kRequiredCombinedClipAndCullDistances = 8;
+
     // GL_APPLE_clip_distance cannot be implemented on top of GL_EXT_clip_cull_distance,
     // so require either native support or desktop GL.
     extensions->clipDistanceAPPLE = functions->isAtLeastGL(gl::Version(3, 0)) ||
@@ -2027,6 +2031,13 @@ void GenerateCaps(const FunctionsGL *functions,
     if (extensions->clipDistanceAPPLE)
     {
         caps->maxClipDistances = QuerySingleGLInt(functions, GL_MAX_CLIP_DISTANCES_APPLE);
+
+        if (caps->maxClipDistances < kRequiredClipDistances)
+        {
+            WARN() << "Disabling GL_APPLE_clip_distance because only " << caps->maxClipDistances
+                   << " clip distances are supported by the driver.";
+            extensions->clipDistanceAPPLE = false;
+        }
     }
 
     // GL_EXT_clip_cull_distance spec requires shader interface blocks to support
@@ -2042,11 +2053,23 @@ void GenerateCaps(const FunctionsGL *functions,
         caps->maxCullDistances = QuerySingleGLInt(functions, GL_MAX_CULL_DISTANCES_EXT);
         caps->maxCombinedClipAndCullDistances =
             QuerySingleGLInt(functions, GL_MAX_COMBINED_CLIP_AND_CULL_DISTANCES_EXT);
+
+        if (caps->maxClipDistances < kRequiredClipDistances ||
+            caps->maxCullDistances < kRequiredCullDistances ||
+            caps->maxCombinedClipAndCullDistances < kRequiredCombinedClipAndCullDistances)
+        {
+            WARN() << "Disabling GL_EXT_clip_cull_distance because only " << caps->maxClipDistances
+                   << " clip distances, " << caps->maxCullDistances << " cull distances and "
+                   << caps->maxCombinedClipAndCullDistances
+                   << " combined clip/cull distances are supported by the driver.";
+            extensions->clipCullDistanceEXT = false;
+        }
     }
 
     // Same as GL_EXT_clip_cull_distance but with cull distance support being optional.
     extensions->clipCullDistanceANGLE =
-        functions->isAtLeastGL(gl::Version(3, 0)) || extensions->clipCullDistanceEXT;
+        (functions->isAtLeastGL(gl::Version(3, 0)) || extensions->clipCullDistanceEXT) &&
+        caps->maxClipDistances >= kRequiredClipDistances;
     ASSERT(!extensions->clipCullDistanceANGLE || caps->maxClipDistances > 0);
 
     // GL_OES_shader_image_atomic
@@ -2567,10 +2590,16 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, bindCompleteFramebufferForTimerQueries, isMali);
 
     // https://crbug.com/1434317
-    ANGLE_FEATURE_CONDITION(features, disableClipControl, IsMaliG72OrG76(functions));
+    ANGLE_FEATURE_CONDITION(features, disableClipControl, IsMaliG72OrG76OrG51(functions));
 
     // http://anglebug.com/8172
     ANGLE_FEATURE_CONDITION(features, disableBaseInstanceVertex, IsMaliValhall(functions));
+
+    // http://crbug.com/1420130
+    ANGLE_FEATURE_CONDITION(features, scalarizeVecAndMatConstructorArgs, isMali);
+
+    // http://crbug.com/1456243
+    ANGLE_FEATURE_CONDITION(features, ensureNonEmptyBufferIsBoundForDraw, IsApple() || IsAndroid());
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)
@@ -2871,9 +2900,17 @@ angle::Result CheckError(const gl::Context *context,
                          const char *function,
                          unsigned int line)
 {
-    const FunctionsGL *functions = GetFunctionsGL(context);
+    return HandleError(context, GetFunctionsGL(context)->getError(), call, file, function, line);
+}
 
-    GLenum error = functions->getError();
+angle::Result HandleError(const gl::Context *context,
+                          GLenum error,
+                          const char *call,
+                          const char *file,
+                          const char *function,
+                          unsigned int line)
+{
+    const FunctionsGL *functions = GetFunctionsGL(context);
     if (ANGLE_UNLIKELY(error != GL_NO_ERROR))
     {
         ContextGL *contextGL = GetImplAs<ContextGL>(context);

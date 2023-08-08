@@ -35,7 +35,7 @@ class ProgramBinaryTest : public ANGLETest<>
 
     void testSetUp() override
     {
-        mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+        mProgram = CompileProgram(essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
         if (mProgram == 0)
         {
             FAIL() << "shader compilation failed.";

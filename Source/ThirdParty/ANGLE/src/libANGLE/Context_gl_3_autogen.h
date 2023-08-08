@@ -16,22 +16,6 @@
     void endConditionalRender();                                                                   \
     void framebufferTexture1D(GLenum target, GLenum attachment, TextureTarget textargetPacked,     \
                               TextureID texturePacked, GLint level);                               \
-    void vertexAttribI1i(GLuint index, GLint x);                                                   \
-    void vertexAttribI1iv(GLuint index, const GLint *v);                                           \
-    void vertexAttribI1ui(GLuint index, GLuint x);                                                 \
-    void vertexAttribI1uiv(GLuint index, const GLuint *v);                                         \
-    void vertexAttribI2i(GLuint index, GLint x, GLint y);                                          \
-    void vertexAttribI2iv(GLuint index, const GLint *v);                                           \
-    void vertexAttribI2ui(GLuint index, GLuint x, GLuint y);                                       \
-    void vertexAttribI2uiv(GLuint index, const GLuint *v);                                         \
-    void vertexAttribI3i(GLuint index, GLint x, GLint y, GLint z);                                 \
-    void vertexAttribI3iv(GLuint index, const GLint *v);                                           \
-    void vertexAttribI3ui(GLuint index, GLuint x, GLuint y, GLuint z);                             \
-    void vertexAttribI3uiv(GLuint index, const GLuint *v);                                         \
-    void vertexAttribI4bv(GLuint index, const GLbyte *v);                                          \
-    void vertexAttribI4sv(GLuint index, const GLshort *v);                                         \
-    void vertexAttribI4ubv(GLuint index, const GLubyte *v);                                        \
-    void vertexAttribI4usv(GLuint index, const GLushort *v);                                       \
     void getActiveUniformName(ShaderProgramID programPacked, GLuint uniformIndex, GLsizei bufSize, \
                               GLsizei *length, GLchar *uniformName);                               \
     void primitiveRestartIndex(GLuint index);                                                      \
@@ -64,14 +48,6 @@
     void texCoordP3uiv(GLenum type, const GLuint *coords);                                         \
     void texCoordP4ui(GLenum type, GLuint coords);                                                 \
     void texCoordP4uiv(GLenum type, const GLuint *coords);                                         \
-    void vertexAttribP1ui(GLuint index, GLenum type, GLboolean normalized, GLuint value);          \
-    void vertexAttribP1uiv(GLuint index, GLenum type, GLboolean normalized, const GLuint *value);  \
-    void vertexAttribP2ui(GLuint index, GLenum type, GLboolean normalized, GLuint value);          \
-    void vertexAttribP2uiv(GLuint index, GLenum type, GLboolean normalized, const GLuint *value);  \
-    void vertexAttribP3ui(GLuint index, GLenum type, GLboolean normalized, GLuint value);          \
-    void vertexAttribP3uiv(GLuint index, GLenum type, GLboolean normalized, const GLuint *value);  \
-    void vertexAttribP4ui(GLuint index, GLenum type, GLboolean normalized, GLuint value);          \
-    void vertexAttribP4uiv(GLuint index, GLenum type, GLboolean normalized, const GLuint *value);  \
     void vertexP2ui(GLenum type, GLuint value);                                                    \
     void vertexP2uiv(GLenum type, const GLuint *value);                                            \
     void vertexP3ui(GLenum type, GLuint value);                                                    \

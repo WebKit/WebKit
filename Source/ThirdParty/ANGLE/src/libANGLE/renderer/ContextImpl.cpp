@@ -66,6 +66,10 @@ egl::Error ContextImpl::reacquireHighPowerGPU(gl::Context *)
     return egl::NoError();
 }
 
+void ContextImpl::acquireExternalContext(const gl::Context *context) {}
+
+void ContextImpl::releaseExternalContext(const gl::Context *context) {}
+
 angle::Result ContextImpl::acquireTextures(const gl::Context *context,
                                            const gl::TextureBarrierVector &textureBarriers)
 {

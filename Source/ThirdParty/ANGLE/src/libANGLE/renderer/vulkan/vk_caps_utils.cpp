@@ -283,6 +283,7 @@ void RendererVk::ensureCapsInitialized() const
     mNativeExtensions.robustnessEXT                 = true;
     mNativeExtensions.discardFramebufferEXT         = true;
     mNativeExtensions.stencilTexturingANGLE         = true;
+    mNativeExtensions.packReverseRowOrderANGLE      = true;
     mNativeExtensions.textureBorderClampOES = getFeatures().supportsCustomBorderColor.enabled;
     mNativeExtensions.textureBorderClampEXT = getFeatures().supportsCustomBorderColor.enabled;
     mNativeExtensions.polygonModeNV         = mPhysicalDeviceFeatures.fillModeNonSolid == VK_TRUE;

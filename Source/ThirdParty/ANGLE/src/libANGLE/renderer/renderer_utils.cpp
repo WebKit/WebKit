@@ -1172,20 +1172,25 @@ void GetSamplePosition(GLsizei sampleCount, size_t index, GLfloat *xy)
 #define DRAW_CALL(drawType, instanced, bvbi) DRAW_##drawType##instanced##bvbi
 
 #define MULTI_DRAW_BLOCK(drawType, instanced, bvbi, hasDrawID, hasBaseVertex, hasBaseInstance) \
-    for (GLsizei drawID = 0; drawID < drawcount; ++drawID)                                     \
+    do                                                                                         \
     {                                                                                          \
-        if (ANGLE_NOOP_DRAW(instanced))                                                        \
+        for (GLsizei drawID = 0; drawID < drawcount; ++drawID)                                 \
         {                                                                                      \
-            ANGLE_TRY(contextImpl->handleNoopDrawEvent());                                     \
-            continue;                                                                          \
+            if (ANGLE_NOOP_DRAW(instanced))                                                    \
+            {                                                                                  \
+                ANGLE_TRY(contextImpl->handleNoopDrawEvent());                                 \
+                continue;                                                                      \
+            }                                                                                  \
+            ANGLE_SET_DRAW_ID_UNIFORM(hasDrawID)(drawID);                                      \
+            ANGLE_SET_BASE_VERTEX_UNIFORM(hasBaseVertex)(baseVertices[drawID]);                \
+            ANGLE_SET_BASE_INSTANCE_UNIFORM(hasBaseInstance)(baseInstances[drawID]);           \
+            ANGLE_TRY(DRAW_CALL(drawType, instanced, bvbi));                                   \
+            ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE(instanced);                                    \
+            gl::MarkShaderStorageUsage(context);                                               \
         }                                                                                      \
-        ANGLE_SET_DRAW_ID_UNIFORM(hasDrawID)(drawID);                                          \
-        ANGLE_SET_BASE_VERTEX_UNIFORM(hasBaseVertex)(baseVertices[drawID]);                    \
-        ANGLE_SET_BASE_INSTANCE_UNIFORM(hasBaseInstance)(baseInstances[drawID]);               \
-        ANGLE_TRY(DRAW_CALL(drawType, instanced, bvbi));                                       \
-        ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE(instanced);                                        \
-        gl::MarkShaderStorageUsage(context);                                                   \
-    }
+        /* reset the uniform to zero for non-multi-draw uses of the program */                 \
+        ANGLE_SET_DRAW_ID_UNIFORM(hasDrawID)(0);                                               \
+    } while (0)
 
 angle::Result MultiDrawArraysGeneral(ContextImpl *contextImpl,
                                      const gl::Context *context,
@@ -1198,11 +1203,11 @@ angle::Result MultiDrawArraysGeneral(ContextImpl *contextImpl,
     const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
     if (hasDrawID)
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _, _, 1, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _, _, 1, 0, 0);
     }
     else
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _, _, 0, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -1246,11 +1251,11 @@ angle::Result MultiDrawArraysInstancedGeneral(ContextImpl *contextImpl,
     const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
     if (hasDrawID)
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 1, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 1, 0, 0);
     }
     else
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 0, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -1268,11 +1273,11 @@ angle::Result MultiDrawElementsGeneral(ContextImpl *contextImpl,
     const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
     if (hasDrawID)
     {
-        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 1, 0, 0)
+        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 1, 0, 0);
     }
     else
     {
-        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 0, 0, 0)
+        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -1319,11 +1324,11 @@ angle::Result MultiDrawElementsInstancedGeneral(ContextImpl *contextImpl,
     const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
     if (hasDrawID)
     {
-        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 1, 0, 0)
+        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 1, 0, 0);
     }
     else
     {
-        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 0, 0, 0)
+        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -1345,19 +1350,19 @@ angle::Result MultiDrawArraysInstancedBaseInstanceGeneral(ContextImpl *contextIm
 
     if (hasDrawID && hasBaseInstance)
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 1)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 1);
     }
     else if (hasDrawID)
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 0);
     }
     else if (hasBaseInstance)
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 1)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 1);
     }
     else
     {
-        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 0)
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 0);
     }
 
     return angle::Result::Continue;
@@ -1386,22 +1391,22 @@ angle::Result MultiDrawElementsInstancedBaseVertexBaseInstanceGeneral(ContextImp
         {
             if (hasBaseInstance)
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 1)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 1);
             }
             else
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 0)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 0);
             }
         }
         else
         {
             if (hasBaseInstance)
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 1)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 1);
             }
             else
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 0)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 0);
             }
         }
     }
@@ -1411,22 +1416,22 @@ angle::Result MultiDrawElementsInstancedBaseVertexBaseInstanceGeneral(ContextImp
         {
             if (hasBaseInstance)
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 1)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 1);
             }
             else
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 0)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 0);
             }
         }
         else
         {
             if (hasBaseInstance)
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 1)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 1);
             }
             else
             {
-                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 0)
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 0);
             }
         }
     }

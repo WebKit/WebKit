@@ -61,6 +61,7 @@ class BinaryInputStream : angle::NonCopyable
     void readIntVector(std::vector<VectorElementT> *param)
     {
         size_t size = readInt<size_t>();
+        param->reserve(size);
         for (size_t index = 0; index < size; ++index)
         {
             param->push_back(readInt<IntT>());
@@ -247,6 +248,13 @@ class BinaryOutputStream : angle::NonCopyable
     {
         writeInt(v.length());
         write(v.c_str(), v.length());
+    }
+
+    void writeString(const char *v)
+    {
+        size_t len = strlen(v);
+        writeInt(len);
+        write(v, len);
     }
 
     void writeBytes(const unsigned char *bytes, size_t count) { write(bytes, count); }

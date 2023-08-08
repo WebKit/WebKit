@@ -133,7 +133,7 @@ class MockEGLFactory : public EGLImplFactory
                                const egl::AttributeMap &));
     MOCK_METHOD2(createStreamProducerD3DTexture,
                  StreamProducerImpl *(egl::Stream::ConsumerType, const egl::AttributeMap &));
-    MOCK_METHOD0(createShareGroup, ShareGroupImpl *());
+    MOCK_METHOD1(createShareGroup, ShareGroupImpl *(const egl::ShareGroupState &));
 };
 
 }  // namespace rx

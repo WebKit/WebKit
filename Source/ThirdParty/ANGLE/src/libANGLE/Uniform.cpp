@@ -5,6 +5,7 @@
 //
 
 #include "libANGLE/Uniform.h"
+#include "libANGLE/ProgramLinkedResources.h"
 
 #include <cstring>
 
@@ -43,9 +44,26 @@ void ActiveVariable::unionReferencesWith(const ActiveVariable &other)
 }
 
 LinkedUniform::LinkedUniform()
-    : typeInfo(nullptr),
+    : type(GL_NONE),
+      precision(0),
+      staticUse(false),
+      active(false),
+      isStruct(false),
+      location(-1),
+      binding(-1),
+      imageUnitFormat(GL_NONE),
+      offset(-1),
+      rasterOrdered(false),
+      readonly(false),
+      writeonly(false),
+      isFragmentInOut(false),
+      texelFetchStaticUse(false),
+      id(0),
+      flattenedOffsetInParentArrays(-1),
+      typeInfo(nullptr),
       bufferIndex(-1),
       blockInfo(sh::kDefaultBlockMemberInfo),
+      outerArraySizeProduct(1),
       outerArrayOffset(0)
 {}
 
@@ -58,51 +76,96 @@ LinkedUniform::LinkedUniform(GLenum typeIn,
                              const int locationIn,
                              const int bufferIndexIn,
                              const sh::BlockMemberInfo &blockInfoIn)
-    : typeInfo(&GetUniformTypeInfo(typeIn)),
+    : type(typeIn),
+      precision(precisionIn),
+      name(nameIn),
+      arraySizes(arraySizesIn),
+      location(locationIn),
+      binding(bindingIn),
+      offset(offsetIn),
+      typeInfo(&GetUniformTypeInfo(typeIn)),
       bufferIndex(bufferIndexIn),
-      blockInfo(blockInfoIn),
-      outerArrayOffset(0)
+      blockInfo(blockInfoIn)
 {
-    type       = typeIn;
-    precision  = precisionIn;
-    name       = nameIn;
-    arraySizes = arraySizesIn;
-    binding    = bindingIn;
-    offset     = offsetIn;
-    location   = locationIn;
+    staticUse                     = false;
+    active                        = false;
+    isStruct                      = false;
+    rasterOrdered                 = false;
+    readonly                      = false;
+    writeonly                     = false;
+    isFragmentInOut               = false;
+    texelFetchStaticUse           = false;
+    id                            = 0;
+    flattenedOffsetInParentArrays = -1;
+    outerArraySizeProduct         = 1;
+    outerArrayOffset              = 0;
+    imageUnitFormat               = GL_NONE;
     ASSERT(!isArrayOfArrays());
-    ASSERT(!isArray() || !isStruct());
+    ASSERT(!isArray() || !isStruct);
 }
 
-LinkedUniform::LinkedUniform(const sh::ShaderVariable &uniform)
-    : sh::ShaderVariable(uniform),
-      typeInfo(&GetUniformTypeInfo(type)),
-      bufferIndex(-1),
-      blockInfo(sh::kDefaultBlockMemberInfo)
+LinkedUniform::LinkedUniform(const LinkedUniform &other)
 {
-    ASSERT(!isArrayOfArrays());
-    ASSERT(!isArray() || !isStruct());
+    *this = other;
 }
 
-LinkedUniform::LinkedUniform(const LinkedUniform &uniform)
-    : sh::ShaderVariable(uniform),
-      ActiveVariable(uniform),
-      typeInfo(uniform.typeInfo),
-      bufferIndex(uniform.bufferIndex),
-      blockInfo(uniform.blockInfo),
-      outerArraySizes(uniform.outerArraySizes),
-      outerArrayOffset(uniform.outerArrayOffset)
-{}
-
-LinkedUniform &LinkedUniform::operator=(const LinkedUniform &uniform)
+LinkedUniform::LinkedUniform(const UsedUniform &usedUniform)
 {
-    sh::ShaderVariable::operator=(uniform);
-    ActiveVariable::operator=(uniform);
-    typeInfo         = uniform.typeInfo;
-    bufferIndex      = uniform.bufferIndex;
-    blockInfo        = uniform.blockInfo;
-    outerArraySizes  = uniform.outerArraySizes;
-    outerArrayOffset = uniform.outerArrayOffset;
+    type                          = usedUniform.type;
+    precision                     = usedUniform.precision;
+    name                          = usedUniform.name;
+    mappedName                    = usedUniform.mappedName;
+    arraySizes                    = usedUniform.arraySizes;
+    staticUse                     = usedUniform.staticUse;
+    active                        = usedUniform.active;
+    isStruct                      = usedUniform.isStruct();
+    flattenedOffsetInParentArrays = usedUniform.getFlattenedOffsetInParentArrays();
+    location                      = usedUniform.location;
+    binding                       = usedUniform.binding;
+    imageUnitFormat               = usedUniform.imageUnitFormat;
+    offset                        = usedUniform.offset;
+    rasterOrdered                 = usedUniform.rasterOrdered;
+    readonly                      = usedUniform.readonly;
+    writeonly                     = usedUniform.writeonly;
+    isFragmentInOut               = usedUniform.isFragmentInOut;
+    texelFetchStaticUse           = usedUniform.texelFetchStaticUse;
+    id                            = usedUniform.id;
+    activeVariable                = usedUniform.activeVariable;
+    typeInfo                      = usedUniform.typeInfo;
+    bufferIndex                   = usedUniform.bufferIndex;
+    blockInfo                     = usedUniform.blockInfo;
+    outerArraySizeProduct         = ArraySizeProduct(usedUniform.outerArraySizes);
+    outerArrayOffset              = usedUniform.outerArrayOffset;
+}
+
+LinkedUniform &LinkedUniform::operator=(const LinkedUniform &other)
+{
+    type                          = other.type;
+    precision                     = other.precision;
+    name                          = other.name;
+    mappedName                    = other.mappedName;
+    arraySizes                    = other.arraySizes;
+    staticUse                     = other.staticUse;
+    active                        = other.active;
+    isStruct                      = other.isStruct;
+    flattenedOffsetInParentArrays = other.flattenedOffsetInParentArrays;
+    location                      = other.location;
+    binding                       = other.binding;
+    imageUnitFormat               = other.imageUnitFormat;
+    offset                        = other.offset;
+    rasterOrdered                 = other.rasterOrdered;
+    readonly                      = other.readonly;
+    writeonly                     = other.writeonly;
+    isFragmentInOut               = other.isFragmentInOut;
+    texelFetchStaticUse           = other.texelFetchStaticUse;
+    id                            = other.id;
+    activeVariable                = other.activeVariable;
+    typeInfo                      = other.typeInfo;
+    bufferIndex                   = other.bufferIndex;
+    blockInfo                     = other.blockInfo;
+    outerArraySizeProduct         = other.outerArraySizeProduct;
+    outerArrayOffset              = other.outerArrayOffset;
+
     return *this;
 }
 
