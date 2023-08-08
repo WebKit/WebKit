@@ -280,11 +280,6 @@ namespace WebCore {
     WEBCORE_EXPORT String multipleFileUploadText(unsigned numberOfFiles);
     String unknownFileSizeText();
 
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT String uploadFileText();
-    WEBCORE_EXPORT String allFilesText();
-#endif
-
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT String postScriptDocumentTypeDescription();
     String keygenMenuItem2048();

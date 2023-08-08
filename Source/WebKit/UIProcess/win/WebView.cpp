@@ -51,7 +51,6 @@
 #include <WebCore/Region.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
-#include <WebCore/WindowsTouch.h>
 #include <wtf/FileSystem.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/text/StringBuffer.h>
