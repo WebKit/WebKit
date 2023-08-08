@@ -61,6 +61,7 @@ public:
     bool shouldIgnoreInvalidSignal() const;
     bool needsFormControlToBeMouseFocusable() const;
     bool needsAutoplayPlayPauseEvents() const;
+    bool needsSeekingSupportDisabled() const;
     bool needsPerDocumentAutoplayBehavior() const;
     bool shouldAutoplayWebAudioForArbitraryUserGesture() const;
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;

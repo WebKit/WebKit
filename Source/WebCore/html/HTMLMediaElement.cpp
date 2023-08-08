@@ -8467,6 +8467,11 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     }
 }
 
+bool HTMLMediaElement::supportsSeeking() const
+{
+    return !document().quirks().needsSeekingSupportDisabled();
+}
+
 bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType type) const
 {
     if (type == PlatformMediaSession::EnteringBackground) {
