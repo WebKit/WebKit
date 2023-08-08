@@ -56,6 +56,9 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
             style.textStyles.strokeColor = renderStyle->computedStrokeColor();
             style.textStyles.hasExplicitlySetFillColor = renderStyle->hasExplicitlySetColor();
 
+            if (auto* shadowData = renderStyle->textShadow())
+                style.textShadow = ShadowData::clone(shadowData);
+
             auto color = TextDecorationPainter::decorationColor(*renderStyle.get());
             auto decorationStyle = renderStyle->textDecorationStyle();
             auto decorations = renderStyle->textDecorationsInEffect();
@@ -177,6 +180,8 @@ static Vector<StyledMarkedText> coalesceAdjacentWithSameRanges(Vector<StyledMark
                 // If higher or same priority and opaque, override background color.
                 if (it->style.backgroundColor.isOpaque())
                     previousStyledMarkedText.style.backgroundColor = it->style.backgroundColor;
+                if (it->style.textShadow)
+                    previousStyledMarkedText.style.textShadow = WTFMove(it->style.textShadow);
             }
             continue;
         }
