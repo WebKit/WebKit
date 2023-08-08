@@ -263,7 +263,7 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     if (UserGestureIndicator::processingUserGesture()) {
         for (auto& element : m_listedElements) {
             if (auto* formControlElement = dynamicDowncast<HTMLFormControlElement>(*element))
-                formControlElement->setInteractedWithSinceLastFormSubmitEvent(false);
+                formControlElement->setInteractedWithSinceLastFormSubmitEvent(true);
         }
     }
 

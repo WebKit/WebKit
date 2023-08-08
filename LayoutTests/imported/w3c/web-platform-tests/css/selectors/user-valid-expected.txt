@@ -1,4 +1,10 @@
 
+Test form interactions (reset / submit):
+
+
+
+
 
 PASS :user-valid selector should respond to user action
+PASS :user-valid selector properly interacts with submit & reset buttons
 
