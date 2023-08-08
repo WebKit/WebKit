@@ -26,14 +26,16 @@
 
 #pragma once
 
-#include "SuspendableTimer.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Event;
 class XMLHttpRequest;
+
+using EventLoopTimerPtr = uintptr_t;
 
 enum ProgressEventAction {
     DoNotFlushProgressEvent,
@@ -42,7 +44,7 @@ enum ProgressEventAction {
 
 // This implements the XHR2 progress event dispatching: "dispatch a progress event called progress
 // about every 50ms or for every byte received, whichever is least frequent".
-class XMLHttpRequestProgressEventThrottle {
+class XMLHttpRequestProgressEventThrottle : public CanMakeWeakPtr<XMLHttpRequestProgressEventThrottle> {
 public:
     explicit XMLHttpRequestProgressEventThrottle(XMLHttpRequest&);
     virtual ~XMLHttpRequestProgressEventThrottle();
@@ -68,7 +70,7 @@ private:
     unsigned long long m_loaded { 0 };
     unsigned long long m_total { 0 };
 
-    SuspendableTimer m_dispatchThrottledProgressEventTimer;
+    EventLoopTimerPtr m_dispatchThrottledProgressEventTimer { 0 };
 
     bool m_hasPendingThrottledProgressEvent { false };
     bool m_lengthComputable { false };

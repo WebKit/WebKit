@@ -148,9 +148,4 @@ void SuspendableTimerBase::augmentRepeatInterval(Seconds delta)
     }
 }
 
-const char* SuspendableTimer::activeDOMObjectName() const
-{
-    return "SuspendableTimer";
-}
-
 } // namespace WebCore

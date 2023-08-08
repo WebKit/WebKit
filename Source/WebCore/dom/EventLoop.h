@@ -74,6 +74,9 @@ public:
     EventLoopTimerPtr scheduleTask(Seconds timeout, ScriptExecutionContext&, std::unique_ptr<EventLoopTask>&&);
     void cancelScheduledTask(EventLoopTimerPtr);
 
+    EventLoopTimerPtr scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, ScriptExecutionContext&, std::unique_ptr<EventLoopTask>&&);
+    void cancelRepeatingTask(EventLoopTimerPtr);
+
     // https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-microtask
     void queueMicrotask(std::unique_ptr<EventLoopTask>&&);
 
@@ -105,6 +108,7 @@ private:
     // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
     Vector<std::unique_ptr<EventLoopTask>> m_tasks;
     HashSet<std::unique_ptr<EventLoopTimer>> m_scheduledTasks;
+    HashSet<std::unique_ptr<EventLoopTimer>> m_repeatingTasks;
     WeakHashSet<EventLoopTaskGroup> m_associatedGroups;
     WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspendedTasks;
     WeakHashSet<ScriptExecutionContext> m_associatedContexts;
@@ -205,6 +209,9 @@ public:
 
     EventLoopTimerPtr scheduleTask(Seconds timeout, ScriptExecutionContext&, TaskSource, EventLoop::TaskFunction&&);
     void cancelScheduledTask(EventLoopTimerPtr);
+
+    EventLoopTimerPtr scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, ScriptExecutionContext&, TaskSource, EventLoop::TaskFunction&&);
+    void cancelRepeatingTask(EventLoopTimerPtr);
 
 private:
     enum class State : uint8_t { Running, Suspended, ReadyToStop, Stopped };

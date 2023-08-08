@@ -88,6 +88,27 @@ void EventLoop::cancelScheduledTask(EventLoopTimerPtr task)
     m_scheduledTasks.remove(it);
 }
 
+// FIXME: Remove the dependency on ScriptExecutionContext.
+EventLoopTimerPtr EventLoop::scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, ScriptExecutionContext& context, std::unique_ptr<EventLoopTask>&& action)
+{
+    ASSERT(m_associatedContexts.contains(context));
+    auto timer = makeUnique<EventLoopTimer>(context, WTFMove(action));
+    timer->suspendIfNeeded();
+    timer->startRepeating(nextTimeout, interval);
+    auto* pointer = timer.get();
+    m_repeatingTasks.add(WTFMove(timer));
+    return reinterpret_cast<EventLoopTimerPtr>(pointer);
+}
+
+void EventLoop::cancelRepeatingTask(EventLoopTimerPtr task)
+{
+    auto it = m_repeatingTasks.find(reinterpret_cast<EventLoopTimer*>(task));
+    if (it == m_repeatingTasks.end())
+        return;
+    (*it)->cancel();
+    m_repeatingTasks.remove(it);
+}
+
 void EventLoop::queueMicrotask(std::unique_ptr<EventLoopTask>&& microtask)
 {
     ASSERT(microtask->taskSource() == TaskSource::Microtask);
@@ -249,6 +270,20 @@ void EventLoopTaskGroup::cancelScheduledTask(EventLoopTimerPtr timer)
     if (m_state == State::Stopped || !m_eventLoop)
         return;
     m_eventLoop->cancelScheduledTask(timer);
+}
+
+EventLoopTimerPtr EventLoopTaskGroup::scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, ScriptExecutionContext& context, TaskSource source, EventLoop::TaskFunction&& function)
+{
+    if (m_state == State::Stopped || !m_eventLoop)
+        return 0;
+    return m_eventLoop->scheduleRepeatingTask(nextTimeout, interval, context, makeUnique<EventLoopFunctionDispatchTask>(source, *this, WTFMove(function)));
+}
+
+void EventLoopTaskGroup::cancelRepeatingTask(EventLoopTimerPtr timer)
+{
+    if (m_state == State::Stopped || !m_eventLoop)
+        return;
+    m_eventLoop->cancelRepeatingTask(timer);
 }
 
 void EventLoop::forEachAssociatedContext(const Function<void(ScriptExecutionContext&)>& apply)
