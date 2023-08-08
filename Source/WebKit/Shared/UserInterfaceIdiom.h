@@ -32,11 +32,11 @@ namespace WebKit {
 enum class UserInterfaceIdiom : uint8_t {
     Default,
     SmallScreen,
-    Reality
+    Vision
 };
 
 bool currentUserInterfaceIdiomIsSmallScreen();
-bool currentUserInterfaceIdiomIsReality();
+bool currentUserInterfaceIdiomIsVision();
 
 UserInterfaceIdiom currentUserInterfaceIdiom();
 void setCurrentUserInterfaceIdiom(UserInterfaceIdiom);

@@ -70,12 +70,12 @@ bool defaultShouldPrintBackgrounds()
 
 bool defaultAlternateFormControlDesignEnabled()
 {
-    return currentUserInterfaceIdiomIsReality();
+    return currentUserInterfaceIdiomIsVision();
 }
 
 bool defaultVideoFullscreenRequiresElementFullscreen()
 {
-    return currentUserInterfaceIdiomIsReality();
+    return currentUserInterfaceIdiomIsVision();
 }
 
 #endif

@@ -42,11 +42,11 @@ bool currentUserInterfaceIdiomIsSmallScreen()
     return s_currentUserInterfaceIdiom == UserInterfaceIdiom::SmallScreen;
 }
 
-bool currentUserInterfaceIdiomIsReality()
+bool currentUserInterfaceIdiomIsVision()
 {
     if (!s_currentUserInterfaceIdiom)
         updateCurrentUserInterfaceIdiom();
-    return s_currentUserInterfaceIdiom == UserInterfaceIdiom::Reality;
+    return s_currentUserInterfaceIdiom == UserInterfaceIdiom::Vision;
 }
 
 UserInterfaceIdiom currentUserInterfaceIdiom()
@@ -72,15 +72,15 @@ bool updateCurrentUserInterfaceIdiom()
         if (![UIApplication sharedApplication]) {
             if (WebCore::deviceClassIsSmallScreen())
                 return UserInterfaceIdiom::SmallScreen;
-            if (WebCore::deviceClassIsReality())
-                return UserInterfaceIdiom::Reality;
+            if (WebCore::deviceClassIsVision())
+                return UserInterfaceIdiom::Vision;
         } else {
             auto idiom = [[UIDevice currentDevice] userInterfaceIdiom];
             if (idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch)
                 return UserInterfaceIdiom::SmallScreen;
 #if PLATFORM(VISION)
-            if (idiom == UIUserInterfaceIdiomReality)
-                return UserInterfaceIdiom::Reality;
+            if (idiom == UIUserInterfaceIdiomVision)
+                return UserInterfaceIdiom::Vision;
 #endif
         }
 
