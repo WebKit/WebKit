@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "FrameDestructionObserverInlines.h"
 #include "IdleDeadline.h"
+#include "Timer.h"
 #include "WindowEventLoop.h"
 
 namespace WebCore {
@@ -93,7 +94,9 @@ void IdleCallbackController::startIdlePeriod()
         m_runnableIdleCallbacks.append({ request.identifier, WTFMove(request.callback) });
     m_idleRequestCallbacks.clear();
 
-    ASSERT(!m_runnableIdleCallbacks.isEmpty());
+    if (m_runnableIdleCallbacks.isEmpty())
+        return;
+
     queueTaskToInvokeIdleCallbacks(deadline);
 
     m_lastDeadline = deadline;

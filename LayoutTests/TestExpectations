@@ -1233,6 +1233,10 @@ http/wpt/html/browsers/browsing-the-web/navigating-across-documents/href.html
 # Content encoding sniffing is only supported by CFNetwork.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]
 
+# Only supported on CF (Apple) WebKit2 ports for now.
+requestidlecallback [ Skip ]
+imported/w3c/web-platform-tests/requestidlecallback [ Skip ]
+
 # Only supported in WebKit2.
 http/wpt/cross-origin-resource-policy/ [ Skip ]
 
@@ -6202,13 +6206,6 @@ imported/w3c/web-platform-tests/payment-request/payment-is-showing.https.html [ 
 imported/w3c/web-platform-tests/permissions/permissions-query-feature-policy-attribute.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_in_pointerlock.html [ Skip ]
 imported/w3c/web-platform-tests/pointerlock/mouse_buttons_back_forward.html [ Skip ]
-imported/w3c/web-platform-tests/requestidlecallback/callback-idle-periods.html [ Skip ]
-imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Skip ]
-imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html [ Skip ]
-imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Pass Failure ]
-imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF.html [ Pass Failure ]
-imported/w3c/web-platform-tests/requestidlecallback/deadline-max-timeout-dynamic.html [ Pass Failure ]
-imported/w3c/web-platform-tests/requestidlecallback/deadline-max.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resize-observer/observe.html [ Skip ]
 imported/w3c/web-platform-tests/resize-observer/svg.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/entry-attributes.html [ Skip ]

@@ -30,6 +30,7 @@
 #include "CustomElementReactionQueue.h"
 #include "Document.h"
 #include "HTMLSlotElement.h"
+#include "IdleCallbackController.h"
 #include "Microtasks.h"
 #include "MutationObserver.h"
 #include "SecurityOrigin.h"
@@ -113,6 +114,33 @@ MicrotaskQueue& WindowEventLoop::microtaskQueue()
     if (!m_microtaskQueue)
         m_microtaskQueue = makeUnique<MicrotaskQueue>(commonVM(), *this);
     return *m_microtaskQueue;
+}
+
+void WindowEventLoop::opportunisticallyRunIdleCallbacks()
+{
+    if (shouldEndIdlePeriod())
+        return;
+
+    forEachAssociatedContext([](ScriptExecutionContext& context) {
+        RefPtr document = dynamicDowncast<Document>(context);
+        if (!document)
+            return;
+        auto* idleCallbackController = document->idleCallbackController();
+        if (!idleCallbackController)
+            return;
+        idleCallbackController->startIdlePeriod();
+    });
+}
+
+bool WindowEventLoop::shouldEndIdlePeriod()
+{
+    if (hasTasksForFullyActiveDocument())
+        return true;
+    if (!microtaskQueue().isEmpty())
+        return true;
+    if (m_hasARenderingOpportunity)
+        return true;
+    return false;
 }
 
 void WindowEventLoop::didReachTimeToRun()

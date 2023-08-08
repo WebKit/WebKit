@@ -162,6 +162,16 @@ imported/w3c/web-platform-tests/file-system-access/ [ Pass ]
 imported/w3c/web-platform-tests/fs/ [ Pass ]
 storage/filesystemaccess/ [ Pass ]
 
+requestidlecallback [ Pass ]
+imported/w3c/web-platform-tests/requestidlecallback [ Pass ]
+imported/w3c/web-platform-tests/requestidlecallback/callback-idle-periods.html [ Skip ]
+imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Skip ]
+imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html [ Skip ]
+imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Pass Failure ]
+imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF.html [ Pass Failure ]
+imported/w3c/web-platform-tests/requestidlecallback/deadline-max-timeout-dynamic.html [ Pass Failure ]
+imported/w3c/web-platform-tests/requestidlecallback/deadline-max.html [ Pass Failure ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -2119,8 +2129,6 @@ webkit.org/b/231631 [ Debug ] fast/selectors/case-insensitive-attribute-bascis.h
 webkit.org/b/231638 [ Debug ] webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html [ Pass Timeout ]
 
 webkit.org/b/228127 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html [ Pass Crash Failure ]
-
-webkit.org/b/231684 [ Debug ] requestidlecallback/requestidlecallback-document-gc.html [ Pass Crash ]
 
 webkit.org/b/230509 fast/events/ios/dom-update-on-keydown-quirk.html [ Pass Failure ]
 
