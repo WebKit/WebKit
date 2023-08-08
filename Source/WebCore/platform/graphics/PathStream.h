@@ -70,6 +70,8 @@ public:
     void applySegments(const PathSegmentApplier&) const final;
     void applyElements(const PathElementApplier&) const final;
 
+    bool transform(const AffineTransform&) final;
+
     FloatRect fastBoundingRect() const final;
     FloatRect boundingRect() const final;
 
