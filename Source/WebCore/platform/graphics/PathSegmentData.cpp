@@ -56,6 +56,11 @@ void PathMoveTo::applyElements(const PathElementApplier& applier) const
     applier({ PathElement::Type::MoveToPoint, { point } });
 }
 
+void PathMoveTo::transform(const AffineTransform& transform)
+{
+    point = transform.mapPoint(point);
+}
+
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathMoveTo& data)
 {
     ts << "move to " << data.point;
@@ -86,6 +91,11 @@ void PathLineTo::addToImpl(PathImpl& impl) const
 void PathLineTo::applyElements(const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::AddLineToPoint, { point } });
+}
+
+void PathLineTo::transform(const AffineTransform& transform)
+{
+    point = transform.mapPoint(point);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathLineTo& data)
@@ -156,6 +166,12 @@ void PathQuadCurveTo::addToImpl(PathImpl& impl) const
 void PathQuadCurveTo::applyElements(const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::AddQuadCurveToPoint, { controlPoint, endPoint } });
+}
+
+void PathQuadCurveTo::transform(const AffineTransform& transform)
+{
+    controlPoint = transform.mapPoint(controlPoint);
+    endPoint = transform.mapPoint(endPoint);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathQuadCurveTo& data)
@@ -263,6 +279,13 @@ void PathBezierCurveTo::addToImpl(PathImpl& impl) const
 void PathBezierCurveTo::applyElements(const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::AddCurveToPoint, { controlPoint1, controlPoint2, endPoint } });
+}
+
+void PathBezierCurveTo::transform(const AffineTransform& transform)
+{
+    controlPoint1 = transform.mapPoint(controlPoint1);
+    controlPoint2 = transform.mapPoint(controlPoint2);
+    endPoint = transform.mapPoint(endPoint);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathBezierCurveTo& data)
@@ -561,6 +584,12 @@ void PathDataLine::applyElements(const PathElementApplier& applier) const
     applier({ PathElement::Type::AddLineToPoint, { end } });
 }
 
+void PathDataLine::transform(const AffineTransform& transform)
+{
+    start = transform.mapPoint(start);
+    end = transform.mapPoint(end);
+}
+
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataLine& data)
 {
     ts << "move to " << data.start;
@@ -600,6 +629,13 @@ void PathDataQuadCurve::applyElements(const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::MoveToPoint, { start } });
     applier({ PathElement::Type::AddQuadCurveToPoint, { controlPoint, endPoint } });
+}
+
+void PathDataQuadCurve::transform(const AffineTransform& transform)
+{
+    start = transform.mapPoint(start);
+    controlPoint = transform.mapPoint(controlPoint);
+    endPoint = transform.mapPoint(endPoint);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataQuadCurve& data)
@@ -643,6 +679,14 @@ void PathDataBezierCurve::applyElements(const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::MoveToPoint, { start } });
     applier({ PathElement::Type::AddCurveToPoint, { controlPoint1, controlPoint2, endPoint } });
+}
+
+void PathDataBezierCurve::transform(const AffineTransform& transform)
+{
+    start = transform.mapPoint(start);
+    controlPoint1 = transform.mapPoint(controlPoint1);
+    controlPoint2 = transform.mapPoint(controlPoint2);
+    endPoint = transform.mapPoint(endPoint);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataBezierCurve& data)
@@ -710,6 +754,10 @@ void PathCloseSubpath::addToImpl(PathImpl& impl) const
 void PathCloseSubpath::applyElements(const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::CloseSubpath, { } });
+}
+
+void PathCloseSubpath::transform(const AffineTransform&)
+{
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathCloseSubpath&)

@@ -3378,6 +3378,11 @@ imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ Fail
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ Failure ]
 svg/W3C-SVG-1.1/painting-marker-03-f.svg [ Failure ]
 
+# Path with transform failures
+imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.skew.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.stroke.skew.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.stroke.skew.worker.html [ Failure ]
+
 imported/w3c/web-platform-tests/preload/onerror-event.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/preload/preload-time-to-fetch.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleLogInStdErr ]
