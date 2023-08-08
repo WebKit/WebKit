@@ -141,6 +141,7 @@ class MediaPlaybackTarget;
 class MediaRecorderProvider;
 class MediaSessionCoordinatorPrivate;
 class ModelPlayerProvider;
+class OpportunisticTaskDeferralScope;
 class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;

@@ -38,7 +38,6 @@ namespace WebCore {
 
 class DOMTimerFireState;
 class Document;
-class OpportunisticTaskDeferralScope;
 class ScheduledAction;
 
 class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimerBase, public CanMakeWeakPtr<DOMTimer> {
@@ -70,9 +69,6 @@ private:
 
     WEBCORE_EXPORT Seconds intervalClampedToMinimum() const;
 
-    void makeOpportunisticTaskDeferralScopeIfPossible(ScriptExecutionContext&);
-    void clearOpportunisticTaskDeferralScopeIfPossible();
-
     bool isDOMTimersThrottlingEnabled(const Document&) const;
     void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
 
@@ -98,7 +94,6 @@ private:
     bool m_oneShot;
     Seconds m_currentTimerInterval;
     RefPtr<UserGestureToken> m_userGestureTokenToForward;
-    std::unique_ptr<OpportunisticTaskDeferralScope> m_opportunisticTaskDeferralScope;
 };
 
 } // namespace WebCore
