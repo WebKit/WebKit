@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <wtf/ObjectIdentifier.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
@@ -43,7 +44,7 @@
 #define PlatformNSTextList              NSTextList
 #define PlatformNSTextTab               NSTextTab
 #define PlatformNSTextTable             NSTextTable
-#define PlatformNSTextTableBlock        NSTextTableBlock
+#define PlatformNSTextTableBlock        NSTextTableBlock.class
 #else
 #define PlatformColor                   UIColor
 #define PlatformColorClass              PAL::getUIColorClass()
@@ -79,6 +80,19 @@ struct WEBCORE_EXPORT AttributedString {
         size_t location { 0 };
         size_t length { 0 };
     };
+
+    struct TextTableIDType;
+    using TextTableID = ObjectIdentifier<TextTableIDType>;
+
+    struct TextListIDType;
+    using TextListID = ObjectIdentifier<TextListIDType>;
+
+    struct ParagraphStyleWithTableAndListIDs {
+        RetainPtr<NSParagraphStyle> style;
+        Vector<std::optional<TextTableID>> tableIDs; // Same length as `-textBlocks`.
+        Vector<TextListID> listIDs; // Same length as `-textLists`.
+    };
+
     struct AttributeValue {
         std::variant<
             double,
@@ -87,7 +101,7 @@ struct WEBCORE_EXPORT AttributedString {
             Ref<Font>,
             Vector<String>,
             Vector<double>,
-            RetainPtr<NSParagraphStyle>,
+            ParagraphStyleWithTableAndListIDs,
             RetainPtr<NSPresentationIntent>,
             RetainPtr<NSTextAttachment>,
             RetainPtr<NSShadow>,

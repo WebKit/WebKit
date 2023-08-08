@@ -29,8 +29,25 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
-#import <WebKit/WebKit.h>
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+
+@implementation WKWebView (WKWebViewGetContents)
+
+- (NSAttributedString *)_contentsAsAttributedString
+{
+    __block bool finished = false;
+    __block RetainPtr<NSAttributedString> result;
+    [self _getContentsAsAttributedStringWithCompletionHandler:^(NSAttributedString *string, NSDictionary *, NSError *) {
+        result = string;
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+    return result.autorelease();
+}
+
+@end
 
 TEST(WKWebView, GetContentsShouldReturnString)
 {
@@ -246,4 +263,101 @@ TEST(WKWebView, AttributedStringAttributeTypes)
     }];
 
     TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WKWebView, AttributedStringFromTable)
+{
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@"<html>"
+        "  <body>"
+        "    <table>"
+        "      <tbody>"
+        "        <tr><td>One</td><td>Two</td></tr>"
+        "        <tr><td>Three</td><td>Four</td></tr>"
+        "      </tbody>"
+        "    </table>"
+        "    <table>"
+        "      <tbody>"
+        "        <tr><td>Five</td><td>Six</td></tr>"
+        "        <tr><td>Seven</td><td>Eight</td></tr>"
+        "      </tbody>"
+        "    </table>"
+        "  </body>"
+        "</html>"];
+
+    __block Vector<std::pair<NSString *, NSTextTableBlock *>> allTableCells;
+    RetainPtr string = [webView _contentsAsAttributedString];
+    [string enumerateAttributesInRange:NSMakeRange(0, [string length]) options:0 usingBlock:^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+        auto trimmedSubstring = [[[string string] substringWithRange:range] stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+        auto textBlocks = [attributes[NSParagraphStyleAttributeName] textBlocks];
+        EXPECT_EQ(textBlocks.count, 1U);
+        EXPECT_TRUE([textBlocks[0] isKindOfClass:NSClassFromString(@"NSTextTableBlock")]);
+        allTableCells.append({ trimmedSubstring, static_cast<NSTextTableBlock *>(textBlocks[0]) });
+    }];
+
+    auto checkCellAtIndex = ^(size_t index, NSString *expectedText, NSInteger expectedColumn, NSInteger expectedRow, NSTextTable *expectedTable) {
+        auto [text, cell] = allTableCells[index];
+        EXPECT_WK_STREQ(expectedText, text);
+        EXPECT_EQ(cell.startingColumn, expectedColumn);
+        EXPECT_EQ(cell.startingRow, expectedRow);
+        EXPECT_EQ(cell.columnSpan, static_cast<NSInteger>(1));
+        EXPECT_EQ(cell.rowSpan, static_cast<NSInteger>(1));
+        EXPECT_EQ(cell.table, expectedTable);
+    };
+
+    EXPECT_EQ(allTableCells.size(), 8U);
+    auto firstTable = allTableCells.first().second.table;
+    auto secondTable = allTableCells.last().second.table;
+
+    checkCellAtIndex(0, @"One", 0, 0, firstTable);
+    checkCellAtIndex(1, @"Two", 1, 0, firstTable);
+    checkCellAtIndex(2, @"Three", 0, 1, firstTable);
+    checkCellAtIndex(3, @"Four", 1, 1, firstTable);
+    checkCellAtIndex(4, @"Five", 0, 0, secondTable);
+    checkCellAtIndex(5, @"Six", 1, 0, secondTable);
+    checkCellAtIndex(6, @"Seven", 0, 1, secondTable);
+    checkCellAtIndex(7, @"Eight", 1, 1, secondTable);
+}
+
+TEST(WKWebView, AttributedStringFromList)
+{
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@"<html>"
+        "  <body>"
+        "    <ol>"
+        "      <li>One</li><li>Two</li>"
+        "    </ol>"
+        "    <ul>"
+        "      <li>Three</li><li>Four</li>"
+        "    </ul>"
+        "  </body>"
+        "</html>"];
+
+    __block Vector<std::pair<NSString *, NSTextList *>> allTextLists;
+    RetainPtr string = [webView _contentsAsAttributedString];
+    [string enumerateAttributesInRange:NSMakeRange(0, [string length]) options:0 usingBlock:^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+        auto trimmedSubstring = [[[string string] substringWithRange:range] stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+        auto textLists = [attributes[NSParagraphStyleAttributeName] textLists];
+        EXPECT_EQ(textLists.count, 1U);
+        allTextLists.append({ trimmedSubstring, textLists[0] });
+    }];
+
+    auto checkListAtIndex = ^(size_t index, NSString *expectedText, NSTextList *expectedList) {
+        auto [text, list] = allTextLists[index];
+        EXPECT_WK_STREQ(expectedText, text);
+        EXPECT_EQ(list, expectedList);
+    };
+
+    EXPECT_EQ(allTextLists.size(), 8U);
+    auto firstList = allTextLists.first().second;
+    auto secondList = allTextLists.last().second;
+
+    checkListAtIndex(0, @"1", firstList);
+    checkListAtIndex(1, @"One", firstList);
+    checkListAtIndex(2, @"2", firstList);
+    checkListAtIndex(3, @"Two", firstList);
+    checkListAtIndex(4, @"•", secondList);
+    checkListAtIndex(5, @"Three", secondList);
+    checkListAtIndex(6, @"•", secondList);
+    checkListAtIndex(7, @"Four", secondList);
 }
