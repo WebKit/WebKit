@@ -795,3 +795,16 @@ index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa
 +
 +if __name__ == '__main__':
 +    sys.exit(main())
+diff --git a/Source/ThirdParty/ANGLE/src/compiler/translator/Compiler.cpp b/Source/ThirdParty/ANGLE/src/compiler/translator/Compiler.cpp
+index 622defe818b3..6c2f8b654d4c 100644
+--- a/Source/ThirdParty/ANGLE/src/compiler/translator/Compiler.cpp
++++ b/Source/ThirdParty/ANGLE/src/compiler/translator/Compiler.cpp
+@@ -1208,7 +1208,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
+ 
+ bool TCompiler::resizeClipAndCullDistanceBuiltins(TIntermBlock *root)
+ {
+-    auto resizeVariable = [=](const ImmutableString &name, uint32_t size, uint32_t maxSize) {
++    auto resizeVariable = [this, root](const ImmutableString &name, uint32_t size, uint32_t maxSize) {
+         // Skip if the variable is not used or implicitly has the maximum size
+         if (size == 0 || size == maxSize)
+             return true;
