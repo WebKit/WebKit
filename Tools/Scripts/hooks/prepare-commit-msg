@@ -5,9 +5,8 @@ import re
 import subprocess
 import sys
 
-LOCATION = r'{{ location }}'
 SPACING = 8
-SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
+SCRIPTS = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'Tools', 'Scripts'))
 CHERRY_PICKING_RE = re.compile(r'^# You are currently cherry-picking commit (?P<hash>[a-f0-9A-F]+)\.$')
 CHERRY_PICK_COMMIT_RE = re.compile(r'^(?P<a>\S+)( \((?P<b>\S+)\))?$')
 REFNAME_RE = re.compile(r'^refs/remotes/(?P<remote>[^/ ]+)/(?P<branch>\S+)$')

@@ -4,9 +4,7 @@ import os
 import subprocess
 import sys
 
-LOCATION = r'{{ location }}'
-SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
-
+SCRIPTS = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'Tools', 'Scripts'))
 
 def files(staged=True):
     try:

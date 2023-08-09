@@ -12,8 +12,7 @@ if sys.stdout.isatty() and os.path.exists('/dev/tty'):
 else:
     TTY = None
 
-LOCATION = r'{{ location }}'
-SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
+SCRIPTS = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'Tools', 'Scripts'))
 sys.path.append(SCRIPTS)
 
 REMOTE_RE = re.compile(r'{{ remote_re }}')
