@@ -4387,7 +4387,7 @@ class UploadBuiltProduct(transfer.FileUpload):
         return super().getResultSummary()
 
 
-class UploadFileToS3(shell.ShellCommandNewStyle):
+class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
     name = 'upload-file-to-s3'
     descriptionDone = name
     haltOnFailure = False
@@ -4402,6 +4402,7 @@ class UploadFileToS3(shell.ShellCommandNewStyle):
         steps_to_add = [UploadBuiltProduct(), TransferToS3()]
         if not s3url:
             rc = FAILURE
+            yield self._addToLog('stdio', f'Failed to get s3url: {s3url}')
             self.build.addStepsAfterCurrentStep(steps_to_add)
             return defer.returnValue(rc)
 
@@ -4441,10 +4442,15 @@ class GenerateS3URL(master.MasterShellCommand):
         log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
         match = re.search(r'S3 URL: (?P<url>[^\s]+)', log_text)
         # Sample log: S3 URL: https://s3-us-west-2.amazonaws.com/ews-archives.webkit.org/ios-simulator-12-x86_64-release/123456.zip
-        s3url = ''
+
+        self.build.s3url = ''
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
         if match:
-            s3url = match.group('url')
-        self.build.s3url = s3url
+            self.build.s3url = match.group('url')
+            print(f'build: {build_url}, url for GenerateS3URL: {self.build.s3url}')
+        else:
+            print(f'build: {build_url}, logs for GenerateS3URL:\n{log_text}')
+            return super().finished(FAILURE)
         return super().finished(results)
 
     def hideStepIf(self, results, step):
