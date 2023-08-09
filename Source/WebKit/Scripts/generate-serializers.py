@@ -22,6 +22,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import re
 import sys
 
@@ -879,7 +880,7 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, t
     return '\n'.join(result)
 
 
-def parse_serialized_types(file, file_name):
+def parse_serialized_types(file):
     serialized_types = []
     serialized_enums = []
     typedefs = []
@@ -1037,9 +1038,19 @@ def main(argv):
     headers = []
     header_set = set()
     file_extension = argv[1]
-    for i in range(3, len(argv)):
-        with open(argv[2] + argv[i]) as file:
-            new_types, new_enums, new_headers, new_typedefs = parse_serialized_types(file, argv[i])
+    skip = False
+    directory = None
+    for i in range(2, len(argv)):
+        if skip:
+            directory = argv[i]
+            skip = False
+            continue
+        if argv[i] == 'DIRECTORY':
+            skip = True
+            continue
+        path = os.path.sep.join([directory, argv[i]])
+        with open(path) as file:
+            new_types, new_enums, new_headers, new_typedefs = parse_serialized_types(file)
             for type in new_types:
                 serialized_types.append(type)
             for enum in new_enums:

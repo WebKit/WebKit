@@ -2431,7 +2431,7 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/HTMLEntityTable.cpp)
 
 # Generate HTTP header names
 add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.h
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.h ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.serialization.in
     MAIN_DEPENDENCY ${WEBCORE_DIR}/platform/network/HTTPHeaderNames.in
     DEPENDS ${WEBCORE_DIR}/platform/network/create-http-header-name-table
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
