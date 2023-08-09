@@ -585,13 +585,13 @@ void Device::FrameData::LayerData::encode(Encoder& encoder) const
     encoder << WTFMove(surfaceSendRight);
     encoder << isShared;
 #elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
-    encoder << std::make_tuple(MachSendRight(std::get<0>(colorTexture)), std::get<1>(colorTexture));
-    encoder << std::make_tuple(MachSendRight(std::get<0>(depthStencilBuffer)), std::get<1>(depthStencilBuffer));
+    encoder << std::tuple(colorTexture);
+    encoder << std::tuple(depthStencilBuffer);
 #else
     encoder << opaqueTexture;
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    encoder << completionSyncEvent;
+    encoder << std::tuple(completionSyncEvent);
 #endif
 }
 
