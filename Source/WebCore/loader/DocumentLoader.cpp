@@ -2105,6 +2105,11 @@ void DocumentLoader::startLoadingMainResource()
 
     Ref<DocumentLoader> protectedThis(*this);
 
+    if (m_request.url().protocolIsAbout() && !(m_request.url().isAboutBlank() || m_request.url().isAboutSrcDoc())) {
+        cancelMainResourceLoad(frameLoader()->client().cannotShowURLError(m_request));
+        return;
+    }
+
     if (maybeLoadEmpty()) {
         DOCUMENTLOADER_RELEASE_LOG("startLoadingMainResource: Returning empty document");
         return;
