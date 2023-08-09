@@ -940,7 +940,7 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
         tree = AXIsolatedTree::create(*this);
     setIsolatedTreeRoot(tree->rootNode().get());
 
-    AXObjectCache::initializeSecondaryAXThread();
+    initializeAXThreadIfNeeded();
 
     return tree;
 }

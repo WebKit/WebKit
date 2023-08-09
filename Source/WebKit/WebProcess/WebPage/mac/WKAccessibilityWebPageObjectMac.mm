@@ -161,7 +161,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
-    
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (WebCore::AXObjectCache::isIsolatedTreeEnabled())
+        WebCore::AXObjectCache::initializeAXThreadIfNeeded();
+#endif
+
     if ([attribute isEqualToString:NSAccessibilityParentAttribute])
         return m_parent.get();
     
