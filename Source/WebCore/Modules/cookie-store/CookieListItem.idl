@@ -35,6 +35,6 @@ typedef double DOMHighResTimeStamp;
     [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] USVString? domain;
     [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] USVString path;
     [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] DOMHighResTimeStamp? expires;
-    [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] boolean secure;
-    [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] CookieSameSite sameSite;
+    [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] boolean secure = false;
+    [EnabledBySetting=CookieStoreAPIExtendedAttributesEnabled] CookieSameSite sameSite = "strict";
 };

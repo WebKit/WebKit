@@ -414,6 +414,8 @@ $(PROJECT_DIR)/Modules/contact-picker/ContactsSelectOptions.idl
 $(PROJECT_DIR)/Modules/contact-picker/Navigator+Contacts.idl
 $(PROJECT_DIR)/Modules/cookie-consent/Navigator+CookieConsent.idl
 $(PROJECT_DIR)/Modules/cookie-consent/RequestCookieConsentOptions.idl
+$(PROJECT_DIR)/Modules/cookie-store/CookieChangeEvent.idl
+$(PROJECT_DIR)/Modules/cookie-store/CookieChangeEventInit.idl
 $(PROJECT_DIR)/Modules/cookie-store/CookieInit.idl
 $(PROJECT_DIR)/Modules/cookie-store/CookieListItem.idl
 $(PROJECT_DIR)/Modules/cookie-store/CookieSameSite.idl

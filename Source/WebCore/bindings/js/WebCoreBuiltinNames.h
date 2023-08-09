@@ -159,6 +159,7 @@ namespace WebCore {
     macro(CSSUnitValue) \
     macro(CSSUnparsedValue) \
     macro(CSSVariableReferenceValue) \
+    macro(CookieChangeEvent) \
     macro(CookieStore) \
     macro(CustomElementRegistry) \
     macro(CustomEffect) \

@@ -106,6 +106,7 @@ Modules/compression/DecompressionStreamDecoder.cpp
 Modules/contact-picker/ContactsManager.cpp
 Modules/contact-picker/NavigatorContacts.cpp
 Modules/cookie-consent/NavigatorCookieConsent.cpp
+Modules/cookie-store/CookieChangeEvent.cpp
 Modules/cookie-store/CookieStore.cpp
 Modules/credentialmanagement/BasicCredential.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp
@@ -3289,6 +3290,8 @@ JSContactsManager.cpp
 JSContactsSelectOptions.cpp
 JSConvolverNode.cpp
 JSConvolverOptions.cpp
+JSCookieChangeEvent.cpp
+JSCookieChangeEventInit.cpp
 JSCookieInit.cpp
 JSCookieListItem.cpp
 JSCookieSameSite.cpp
