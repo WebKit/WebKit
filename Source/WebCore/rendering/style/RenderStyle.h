@@ -27,6 +27,7 @@
 
 #include <unicode/utypes.h>
 #include <wtf/DataRef.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
