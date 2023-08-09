@@ -210,10 +210,23 @@ void JITPlan::compileInThread(JITWorklistThread* thread)
         break;
     }
     if (m_codeBlock) { // m_codeBlock will be null if the compilation was cancelled.
-        if (path == FTLPath)
+        switch (path) {
+        case FTLPath:
             CODEBLOCK_LOG_EVENT(m_codeBlock, "ftlCompile", ("took ", (after - before).milliseconds(), " ms (DFG: ", (m_timeBeforeFTL - before).milliseconds(), ", B3: ", (after - m_timeBeforeFTL).milliseconds(), ") with ", pathName));
-        else
+            break;
+        case DFGPath:
             CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgCompile", ("took ", (after - before).milliseconds(), " ms with ", pathName));
+            break;
+        case BaselinePath:
+            CODEBLOCK_LOG_EVENT(m_codeBlock, "baselineCompile", ("took ", (after - before).milliseconds(), " ms with ", pathName));
+            break;
+        case FailPath:
+            CODEBLOCK_LOG_EVENT(m_codeBlock, "failed compilation", ("took ", (after - before).milliseconds(), " ms with ", pathName));
+            break;
+        case CancelPath:
+            CODEBLOCK_LOG_EVENT(m_codeBlock, "cancelled compilation", ("took ", (after - before).milliseconds(), " ms with ", pathName));
+            break;
+        }
     }
     if (UNLIKELY(reportCompileTimes())) {
         dataLog("Optimized ", codeBlockName, " using ", m_mode, " with ", pathName, " into ", codeSize(), " bytes in ", (after - before).milliseconds(), " ms");
