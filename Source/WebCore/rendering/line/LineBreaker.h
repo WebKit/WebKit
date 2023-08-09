@@ -50,7 +50,7 @@ public:
         reset();
     }
 
-    LegacyInlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements&);
+    LegacyInlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements&, std::optional<LayoutUnit> widthOverride = std::nullopt);
 
     bool lineWasHyphenated() { return m_hyphenated; }
     const Vector<RenderBox*>& positionedObjects() { return m_positionedObjects; }

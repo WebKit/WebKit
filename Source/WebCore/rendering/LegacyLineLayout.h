@@ -75,6 +75,7 @@ public:
 
     static void appendRunsForObject(BidiRunList<BidiRun>*, int start, int end, RenderObject&, InlineBidiResolver&);
     static void updateLogicalWidthForAlignment(RenderBlockFlow&, const TextAlignMode&, const LegacyRootInlineBox*, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount);
+    std::optional<LayoutUnit> computeTextWrapBalanceWidthConstraint(LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
 private:
     std::unique_ptr<LegacyRootInlineBox> createRootInlineBox();

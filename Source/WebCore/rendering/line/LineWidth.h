@@ -45,7 +45,7 @@ enum IndentTextOrNot { DoNotIndentText, IndentText };
 
 class LineWidth {
 public:
-    LineWidth(RenderBlockFlow&, bool isFirstLine, IndentTextOrNot shouldIndentText);
+    LineWidth(RenderBlockFlow&, bool isFirstLine, IndentTextOrNot shouldIndentText, std::optional<LayoutUnit> widthOverride = std::nullopt);
 
     bool fitsOnLine(bool ignoringTrailingSpace = false) const;
     bool fitsOnLineIncludingExtraWidth(float extra) const;
@@ -95,6 +95,7 @@ private:
     float m_left { 0 };
     float m_right { 0 };
     float m_availableWidth { 0 };
+    std::optional<LayoutUnit> m_widthOverride { std::nullopt };
     bool m_isFirstLine { true };
     bool m_hasCommitted { false };
     bool m_hasCommittedReplaced { false };

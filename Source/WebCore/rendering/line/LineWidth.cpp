@@ -37,8 +37,9 @@
 
 namespace WebCore {
 
-LineWidth::LineWidth(RenderBlockFlow& block, bool isFirstLine, IndentTextOrNot shouldIndentText)
+LineWidth::LineWidth(RenderBlockFlow& block, bool isFirstLine, IndentTextOrNot shouldIndentText, std::optional<LayoutUnit> widthOverride)
     : m_block(block)
+    , m_widthOverride(widthOverride)
     , m_isFirstLine(isFirstLine)
     , m_shouldIndentText(shouldIndentText)
 {
@@ -166,6 +167,9 @@ void LineWidth::updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWid
     if (newLineWidth <= m_availableWidth)
         return;
 
+    if (m_widthOverride)
+        return;
+
     m_block.setLogicalHeight(newLineTop);
     m_availableWidth = newLineWidth + m_overhangWidth;
     m_left = newLineLeft;
@@ -233,7 +237,15 @@ void LineWidth::setTrailingWhitespaceWidth(float collapsedWhitespace, float bord
 
 void LineWidth::computeAvailableWidthFromLeftAndRight()
 {
-    m_availableWidth = std::max<float>(0, m_right - m_left) + m_overhangWidth;
+    // Width override should always take precedence over m_block left and right for available width
+    if (m_widthOverride) {
+        m_availableWidth = *m_widthOverride + m_overhangWidth;
+
+        // Because m_block left and right accounts for text indentation, we should do so manually here.
+        if (m_shouldIndentText)
+            m_availableWidth -= m_block.textIndentOffset();
+    } else
+        m_availableWidth = std::max<float>(0, m_right - m_left) + m_overhangWidth;
 }
 
 IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBreak, const RenderStyle& style)

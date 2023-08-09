@@ -1425,7 +1425,7 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
         FloatingObject* lastFloatFromPreviousLine = (m_flow.containsFloats()) ? m_flow.floatingObjects()->set().last().get() : nullptr;
 
         WordMeasurements wordMeasurements;
-        end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+        end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements, layoutState.widthOverride());
         m_flow.cachePriorCharactersIfNeeded(renderTextInfo.lineBreakIteratorFactory);
         renderTextInfo.lineBreakIteratorFactory.priorContext().reset();
         if (resolver.position().atEnd()) {
@@ -1708,6 +1708,10 @@ void LegacyLineLayout::linkToEndLineIfNeeded(LineLayoutState& layoutState)
 
 void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
+    std::optional<LayoutUnit> balanceWidth { std::nullopt };
+    if (style().textWrap() == TextWrap::Balance)
+        balanceWidth = computeTextWrapBalanceWidthConstraint(repaintLogicalTop, repaintLogicalBottom);
+
     m_flow.setLogicalHeight(m_flow.borderAndPaddingBefore());
     
     // Lay out our hypothetical grid line as though it occurs at the top of the block.
@@ -1721,6 +1725,7 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
     // FIXME: Handle resize eventually!
     bool isFullLayout = !firstRootBox() || m_flow.selfNeedsLayout() || relayoutChildren || clearLinesForPagination;
     LineLayoutState layoutState(m_flow, isFullLayout, repaintLogicalTop, repaintLogicalBottom, fragmentedFlow);
+    layoutState.setWidthOverride(balanceWidth);
 
     if (isFullLayout)
         lineBoxes().deleteLineBoxes();
@@ -2336,6 +2341,162 @@ void LegacyLineLayout::updateFragmentForLine(LegacyRootInlineBox* lineBox) const
     // correctly if the line is positioned at the top of the last fragment container.
     if (lineBox->containingFragment() != prevLineBox->containingFragment())
         lineBox->setIsFirstAfterPageBreak(true);
+}
+
+std::optional<LayoutUnit> LegacyLineLayout::computeTextWrapBalanceWidthConstraint(LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
+{
+    // Do not balance content if there exist floats in the block formatting context
+    if (m_flow.containsFloats())
+        return std::nullopt;
+
+    // Local variables modified by the following lambda function
+    bool containsFloat = false;
+    bool containsForcedLineBreak = false;
+    size_t layoutLineCount;
+
+    // Performs a line layout at a specified width constraint
+    auto lineLayoutWithWidthConstraint = [&](LayoutUnit widthConstraint) {
+        bool isFullLayout = true;
+        bool relayoutChildren = true;
+
+        m_flow.setLogicalHeight(m_flow.borderAndPaddingBefore());
+
+        // Lay out our hypothetical grid line as though it occurs at the top of the block.
+        if (layoutContext().layoutState() && layoutContext().layoutState()->lineGrid() == &m_flow)
+            m_flow.layoutLineGridBox();
+
+        RenderFragmentedFlow* fragmentedFlow = m_flow.enclosingFragmentedFlow();
+        LineLayoutState layoutState(m_flow, isFullLayout, repaintLogicalTop, repaintLogicalBottom, fragmentedFlow);
+        layoutState.setWidthOverride(widthConstraint);
+
+        if (isFullLayout)
+            lineBoxes().deleteLineBoxes();
+
+        // Text truncation kicks in in two cases:
+        //     1) If your overflow isn't visible and your text-overflow-mode isn't clip.
+        //     2) If you're an anonymous block with a block parent that satisfies #1.
+        // FIXME: CSS3 says that descendants that are clipped must also know how to truncate. This is insanely
+        // difficult to figure out in general (especially in the middle of doing layout), so we only handle the
+        // simple case of an anonymous block truncating when it's parent is clipped.
+        auto* parent = m_flow.parent();
+        bool hasTextOverflow = (style().textOverflow() == TextOverflow::Ellipsis && m_flow.hasNonVisibleOverflow())
+            || (m_flow.isAnonymousBlock() && parent && parent->isRenderBlock() && parent->style().textOverflow() == TextOverflow::Ellipsis && parent->hasNonVisibleOverflow());
+
+        // Walk all the lines and delete our ellipsis line boxes if they exist.
+        if (hasTextOverflow)
+            deleteEllipsisLineBoxes();
+
+        if (m_flow.firstChild()) {
+            // In full layout mode, clear the line boxes of children upfront. Otherwise,
+            // siblings can run into stale root lineboxes during layout. Then layout
+            // the replaced elements later. In partial layout mode, line boxes are not
+            // deleted and only dirtied. In that case, we can layout the replaced
+            // elements at the same time.
+            bool hasInlineChild = false;
+            auto hasDirtyRenderCounterWithInlineBoxParent = false;
+            Vector<RenderBox*> replacedChildren;
+            for (InlineWalker walker(m_flow); !walker.atEnd(); walker.advance()) {
+                RenderObject& o = *walker.current();
+
+                if (!hasInlineChild && o.isInline())
+                    hasInlineChild = true;
+
+                if (o.isReplacedOrInlineBlock() || o.isFloating() || o.isOutOfFlowPositioned()) {
+                    RenderBox& box = downcast<RenderBox>(o);
+
+                    if (relayoutChildren || box.hasRelativeDimensions())
+                        box.setChildNeedsLayout(MarkOnlyThis);
+
+                    // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
+                    if (relayoutChildren && box.needsPreferredWidthsRecalculation())
+                        box.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
+
+                    if (box.isOutOfFlowPositioned())
+                        box.containingBlock()->insertPositionedObject(box);
+                    else if (box.isFloating()) {
+                        containsFloat = true;
+                        return;
+                    } else if (isFullLayout || box.needsLayout()) {
+                        // Replaced element.
+                        if (isFullLayout && is<RenderRubyRun>(box)) {
+                            // FIXME: This resets the overhanging margins that we set during line layout (see computeInlineDirectionPositionsForSegment)
+                            // Find a more suitable place for this.
+                            m_flow.setMarginStartForChild(box, 0);
+                            m_flow.setMarginEndForChild(box, 0);
+                        }
+                        box.dirtyLineBoxes(isFullLayout);
+                        if (isFullLayout)
+                            replacedChildren.append(&box);
+                        else
+                            box.layoutIfNeeded();
+                    }
+                } else if (o.isTextOrLineBreak() || is<RenderInline>(o)) {
+                    if (o.isLineBreak()) {
+                        containsForcedLineBreak = true;
+                        return;
+                    }
+
+                    if (layoutState.isFullLayout() || o.selfNeedsLayout()) {
+                        dirtyLineBoxesForRenderer(o, layoutState.isFullLayout());
+                        hasDirtyRenderCounterWithInlineBoxParent = hasDirtyRenderCounterWithInlineBoxParent || (is<RenderCounter>(o) && is<RenderInline>(o.parent()));
+                    }
+                    o.clearNeedsLayout();
+                }
+            }
+
+            for (size_t i = 0; i < replacedChildren.size(); i++)
+                replacedChildren[i]->layoutIfNeeded();
+
+            auto clearNeedsLayoutIfNeeded = [&] {
+                if (!hasDirtyRenderCounterWithInlineBoxParent)
+                    return;
+                for (InlineWalker walker(m_flow); !walker.atEnd(); walker.advance()) {
+                    auto& renderer = *walker.current();
+                    if (is<RenderCounter>(renderer) || is<RenderInline>(renderer))
+                        renderer.clearNeedsLayout();
+                }
+            };
+            clearNeedsLayoutIfNeeded();
+
+            layoutRunsAndFloats(layoutState, hasInlineChild);
+        }
+
+        layoutLineCount = lineCount();
+    };
+
+    // Compute original width for line boxes
+    LayoutUnit height = m_flow.logicalHeight();
+    LayoutUnit replacedHeight = 0;
+    LayoutUnit logicalHeight = m_flow.minLineHeightForReplacedRenderer(true, replacedHeight);
+    LayoutUnit left = m_flow.logicalLeftOffsetForLine(height, DoNotIndentText, logicalHeight);
+    LayoutUnit right = m_flow.logicalRightOffsetForLine(height, DoNotIndentText, logicalHeight);
+    LayoutUnit originalWidth = right - left;
+
+    // Perform initial line layout with the original width
+    auto candidateWidth = originalWidth;
+    lineLayoutWithWidthConstraint(candidateWidth);
+
+    // Fallback to original width if incompatibilities are detected
+    if (containsFloat || containsForcedLineBreak)
+        return std::nullopt;
+
+    // Binary search for minimum width that doesn't cause an extra line to appear
+    auto initialLineCount = layoutLineCount;
+    int high = candidateWidth.rawValue();
+    int low = 0;
+    while (low <= high) {
+        LayoutUnit mid;
+        mid.setRawValue(low + (high - low) / 2);
+        lineLayoutWithWidthConstraint(mid);
+        if (layoutLineCount > initialLineCount)
+            low = mid.rawValue() + 1;
+        else {
+            candidateWidth = mid;
+            high = mid.rawValue() - 1;
+        }
+    }
+
+    return candidateWidth;
 }
 
 const RenderStyle& LegacyLineLayout::style() const

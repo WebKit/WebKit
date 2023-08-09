@@ -153,6 +153,9 @@ public:
 
     FloatList& floatList() { return m_floatList; }
 
+    std::optional<LayoutUnit> widthOverride() const { return m_widthOverride; }
+    void setWidthOverride(std::optional<LayoutUnit> widthOverride) { m_widthOverride = widthOverride; }
+
 private:
     LineInfo m_lineInfo;
     LayoutUnit m_endLineLogicalTop;
@@ -166,6 +169,8 @@ private:
     // FIXME: Should this be a range object instead of two ints?
     LayoutUnit& m_repaintLogicalTop;
     LayoutUnit& m_repaintLogicalBottom;
+
+    std::optional<LayoutUnit> m_widthOverride;
 
     RenderBlockFlow::MarginInfo m_marginInfo;
 
