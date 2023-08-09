@@ -156,8 +156,8 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     auto colorTextureSource = makeEGLImageSource({ data.surface->createSendRight(), false });
     auto depthStencilBufferSource = makeEGLImageSource({ MachSendRight(), false });
 #elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
-    auto colorTextureSource = makeEGLImageSource(data.colorTexture);
-    auto depthStencilBufferSource = makeEGLImageSource(data.depthStencilBuffer);
+    auto colorTextureSource = makeEGLImageSource({ WTFMove(data.colorTexture.handle), data.colorTexture.isShared });
+    auto depthStencilBufferSource = makeEGLImageSource({ WTFMove(data.depthStencilBuffer.handle), data.depthStencilBuffer.isShared });
 #endif
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
@@ -198,7 +198,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 #endif
 
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    m_completionSyncEvent = data.completionSyncEvent;
+    m_completionSyncEvent = { WTFMove(data.completionSyncEvent.handle), data.completionSyncEvent.signalValue };
 #endif
 }
 

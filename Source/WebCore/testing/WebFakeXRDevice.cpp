@@ -160,7 +160,7 @@ void SimulatedXRDevice::frameTimerFired()
         data.layers.add(layer.key, FrameData::LayerData { .surface = IOSurface::create(nullptr, recommendedResolution(PlatformXR::SessionMode::ImmersiveVr), DestinationColorSpace::SRGB()) });
 #elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
         auto surface = IOSurface::create(nullptr, recommendedResolution(PlatformXR::SessionMode::ImmersiveVr), DestinationColorSpace::SRGB());
-        data.layers.add(layer.key, FrameData::LayerData { .colorTexture = std::make_tuple(surface->createSendRight(), false) });
+        data.layers.add(layer.key, FrameData::LayerData { .colorTexture = { surface->createSendRight(), false } });
 #else
         data.layers.add(layer.key, FrameData::LayerData { .opaqueTexture = layer.value });
 #endif

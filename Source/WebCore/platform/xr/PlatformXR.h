@@ -289,18 +289,38 @@ public:
             template<class Decoder> static std::optional<StageParameters> decode(Decoder&);
         };
 
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+        struct SharedTexture {
+            mutable MachSendRight handle = { };
+            bool isShared = false;
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static std::optional<SharedTexture> decode(Decoder&);
+        };
+#endif
+
+#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+        struct SyncEvent {
+            mutable MachSendRight handle;
+            uint64_t signalValue;
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static std::optional<SyncEvent> decode(Decoder&);
+        };
+#endif
+
         struct LayerData {
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
             std::unique_ptr<WebCore::IOSurface> surface;
             bool isShared { false };
 #elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
-            std::tuple<MachSendRight, bool> colorTexture = { MachSendRight(), false };
-            std::tuple<MachSendRight, bool> depthStencilBuffer = { MachSendRight(), false };
+            SharedTexture colorTexture;
+            SharedTexture depthStencilBuffer;
 #else
             PlatformGLObject opaqueTexture { 0 };
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-            std::tuple<MachSendRight, uint64_t> completionSyncEvent;
+            SyncEvent completionSyncEvent;
 #endif
 
             template<class Encoder> void encode(Encoder&) const;
@@ -577,6 +597,46 @@ std::optional<Device::FrameData::StageParameters> Device::FrameData::StageParame
     return stageParameters;
 }
 
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+template<class Encoder>
+void Device::FrameData::SharedTexture::encode(Encoder& encoder) const
+{
+    encoder << WTFMove(handle);
+    encoder << isShared;
+}
+
+template<class Decoder>
+std::optional<Device::FrameData::SharedTexture> Device::FrameData::SharedTexture::decode(Decoder& decoder)
+{
+    Device::FrameData::SharedTexture sharedTexture;
+    if (!decoder.decode(sharedTexture.handle))
+        return std::nullopt;
+    if (!decoder.decode(sharedTexture.isShared))
+        return std::nullopt;
+    return sharedTexture;
+}
+#endif
+
+#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+template<class Encoder>
+void Device::FrameData::SyncEvent::encode(Encoder& encoder) const
+{
+    encoder << WTFMove(handle);
+    encoder << signalValue;
+}
+
+template<class Decoder>
+std::optional<Device::FrameData::SyncEvent> Device::FrameData::SyncEvent::decode(Decoder& decoder)
+{
+    Device::FrameData::SyncEvent syncEvent;
+    if (!decoder.decode(syncEvent.handle))
+        return std::nullopt;
+    if (!decoder.decode(syncEvent.signalValue))
+        return std::nullopt;
+    return syncEvent;
+}
+#endif
+
 template<class Encoder>
 void Device::FrameData::LayerData::encode(Encoder& encoder) const
 {
@@ -585,8 +645,8 @@ void Device::FrameData::LayerData::encode(Encoder& encoder) const
     encoder << WTFMove(surfaceSendRight);
     encoder << isShared;
 #elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
-    encoder << std::make_tuple(MachSendRight(std::get<0>(colorTexture)), std::get<1>(colorTexture));
-    encoder << std::make_tuple(MachSendRight(std::get<0>(depthStencilBuffer)), std::get<1>(depthStencilBuffer));
+    encoder << colorTexture;
+    encoder << depthStencilBuffer;
 #else
     encoder << opaqueTexture;
 #endif
