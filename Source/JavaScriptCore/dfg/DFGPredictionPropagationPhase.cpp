@@ -1493,6 +1493,7 @@ private:
         case CheckTierUpAtReturn:
         case CheckTierUpAndOSREnter:
         case AssertInBounds:
+        case MultiCheckInBounds:
         case CheckInBounds:
         case CheckInBoundsInt52:
         case ValueToInt32:

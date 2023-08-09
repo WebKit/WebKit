@@ -373,6 +373,9 @@ private:
                 break;
             }
 
+            case MultiCheckInBounds:
+                RELEASE_ASSERT_NOT_REACHED();
+
             case CheckInBounds: {
                 JSValue left = m_state.forNode(node->child1()).value();
                 JSValue right = m_state.forNode(node->child2()).value();

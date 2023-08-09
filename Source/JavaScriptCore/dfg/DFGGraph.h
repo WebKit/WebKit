@@ -1293,6 +1293,8 @@ public:
     HashSet<Node*> m_slowGetByVal;
     HashSet<Node*> m_slowPutByVal;
 
+    Vector<Vector<Edge>> m_multiCheckInBoundsData;
+
 private:
     template<typename Visitor> void visitChildrenImpl(Visitor&);
 

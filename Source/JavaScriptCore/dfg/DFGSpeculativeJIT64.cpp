@@ -6263,6 +6263,7 @@ void SpeculativeJIT::compile(Node* node)
     case Upsilon:
     case ExtractOSREntryLocal:
     case AssertInBounds:
+    case MultiCheckInBounds:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case ArithIMul:

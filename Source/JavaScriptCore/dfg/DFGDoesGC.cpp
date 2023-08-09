@@ -182,6 +182,7 @@ bool doesGC(Graph& graph, Node* node)
     case InvalidationPoint:
     case NotifyWrite:
     case AssertInBounds:
+    case MultiCheckInBounds:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case ConstantStoragePointer:

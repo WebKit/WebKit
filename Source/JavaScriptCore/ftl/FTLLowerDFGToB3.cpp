@@ -1066,6 +1066,9 @@ private:
         case AssertInBounds:
             compileAssertInBounds();
             break;
+        case MultiCheckInBounds:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
         case CheckInBounds:
             compileCheckInBounds();
             break;

@@ -1,9 +1,9 @@
 //@skip if $memoryLimited
-//@ runDefault("--useConcurrentJIT=0", "--useDollarVM=1", "--jitAllowList=provableRedundantBitshift,provableRedundantEasy,provableRedundantBitshiftNegative")
+//@ runDefault("--useConcurrentJIT=0", "--useDollarVM=1", "--jitAllowList=provableRedundantBitshift,provableRedundantEasy,provableRedundantBitshiftNegative,provableRedundantBitshiftReversed")
 
-// jsc JSTests/stress/bounds-check-zlib.js --useConcurrentJIT=0 --useDollarVM=1 --jitAllowList=provableRedundantBitshift,provableRedundantEasy,provableRedundantBitshiftNegative --dumpDisassembly=0
+// jsc JSTests/stress/bounds-check-zlib.js --useConcurrentJIT=0 --useDollarVM=1 --jitAllowList=provableRedundantBitshift,provableRedundantEasy,provableRedundantBitshiftNegative,provableRedundantBitshiftReversed --dumpDisassembly=0
 // Based on:
-// jsc -e "testList = ['octane-zlib'];" cli.js --useConcurrentJIT=0 --jitAllowList=a6#A8KgFt --dumpDisassembly=1 --forceICFailure=1
+// jsc -e "testList = ['octane-zlib'];" cli.js --useConcurrentJIT=0 --jitAllowList=a6#A8KgFt --useDollarVM=1 --dumpDisassembly=1 --forceICFailure=1
 
 let arr = Array(1000).fill(0)
 let tests = []
@@ -97,7 +97,39 @@ function provableRedundantBitshiftNegative(b, d) {
     return sum
 }
 noInline(provableRedundantBitshiftNegative)
-tests.push({ fn: provableRedundantBitshiftNegative, before: 7, after: 2 })
+tests.push({ fn: provableRedundantBitshiftNegative, before: 7, after: 3 })
+
+function provableRedundantBitshiftReversed(b, d) {
+    "use strict";
+
+    reachedFTL |= $vm.ftlTrue();
+
+    b = b | 0
+    d = d | 0
+
+    if (arr.length != 1000 || b < 0 || d < 0 || d > 499)
+        return;
+
+    let sum = 0
+
+    sum += arr[(b + 100) >>> 2] | 0
+    sum += arr[(b + 200) >>> 2] | 0
+    sum += arr[(b + 300) >>> 2] | 0
+    sum += arr[(b + 400) >>> 2] | 0
+    sum += arr[(b + 500) >>> 4] | 0
+    sum += arr[(b + 500) >>> 3] | 0
+
+    sum += arr[(d + 500) >>> 2] | 0
+    sum += arr[(d + 500) >>> 3] | 0
+    sum += arr[(d + 500) >>> 4] | 0
+    sum += arr[(d + 400) >>> 2] | 0
+
+    sum += arr[(b + 500) >>> 2] | 0
+
+    return sum
+}
+noInline(provableRedundantBitshiftReversed)
+tests.push({ fn: provableRedundantBitshiftReversed, before: 11, after: 1 })
 
 function main() {
     for (test of tests) {

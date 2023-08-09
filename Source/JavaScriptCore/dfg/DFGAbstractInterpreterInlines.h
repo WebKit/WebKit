@@ -4532,6 +4532,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case AssertInBounds:
         break;
 
+    case MultiCheckInBounds:
+        RELEASE_ASSERT_NOT_REACHED();
+
     case CheckInBounds: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();

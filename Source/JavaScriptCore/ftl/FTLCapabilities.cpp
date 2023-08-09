@@ -205,6 +205,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ToBoolean:
     case LogicalNot:
     case AssertInBounds:
+    case MultiCheckInBounds:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case ConstantStoragePointer:

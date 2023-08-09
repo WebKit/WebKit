@@ -672,6 +672,7 @@ private:
                 case Phi:
                 case Upsilon:
                 case AssertInBounds:
+                case MultiCheckInBounds:
                 case CheckInBounds:
                 case CheckInBoundsInt52:
                 case PhantomNewObject:

@@ -222,7 +222,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CompareEqPtr:
         def(PureValue(node, node->cellOperand()->cell()));
         return;
-        
+
     case ArithIMul:
     case ArithPow:
     case GetScope:
@@ -244,6 +244,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case IsTypedArrayView:
     case ToBoolean:
     case LogicalNot:
+    case MultiCheckInBounds:
     case CheckInBounds:
     case CheckInBoundsInt52:
     case DoubleRep:

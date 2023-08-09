@@ -579,6 +579,7 @@ public:
         case CheckIsConstant:
         case CheckNotEmpty:
         case CheckBadValue:
+        case MultiCheckInBounds:
         case CheckInBounds:
         case CheckInBoundsInt52:
         case CheckIdent:
@@ -3504,6 +3505,18 @@ public:
     {
         m_opInfo = OpInfoWrapper();
         m_opInfo2 = OpInfoWrapper();
+    }
+
+    uint64_t multiCheckInBoundsData()
+    {
+        ASSERT(m_op == MultiCheckInBounds);
+        return static_cast<unsigned>(m_opInfo.as<uint64_t>());
+    }
+
+    void setMultiCheckInBoundsData(uint64_t index)
+    {
+        ASSERT(m_op == MultiCheckInBounds);
+        m_opInfo = index;
     }
 
     void dumpChildren(PrintStream& out)
