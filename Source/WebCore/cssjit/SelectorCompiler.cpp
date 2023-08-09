@@ -75,6 +75,8 @@
 
 #define ENABLE_SELECTOR_OPERATION_STATS 0
 
+#define SELECTOR_LENGTH_COMPILATION_THRESHOLD 2000
+
 namespace WebCore {
 namespace SelectorCompiler {
 
@@ -636,6 +638,18 @@ void compileSelector(CompiledSelector& compiledSelector, const CSSSelector* sele
     ASSERT(compiledSelector.status == SelectorCompilationStatus::NotCompiled);
 
     if (!JSC::Options::useJIT()) {
+        compiledSelector.status = SelectorCompilationStatus::CannotCompile;
+        return;
+    }
+
+    // Compiling very long selector is too costly, we skip it.
+    unsigned selectorLength = 0;
+    CSSSelector::Functor checkSelectorLength = [&] (CSSSelector&) {
+        if (selectorLength++ > SELECTOR_LENGTH_COMPILATION_THRESHOLD)
+            return true;
+        return false;
+    };
+    if (selector && selector->visitAllSimpleSelectors(checkSelectorLength)) {
         compiledSelector.status = SelectorCompilationStatus::CannotCompile;
         return;
     }

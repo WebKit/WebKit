@@ -63,7 +63,8 @@ struct PossiblyQuotedIdentifier {
         std::array<uint8_t, 3> computeSpecificityTuple() const;
         unsigned specificityForPage() const;
 
-        bool visitAllSimpleSelectors(auto& apply) const;
+        using Functor = std::function<bool(CSSSelector&)>;
+        bool visitAllSimpleSelectors(Functor& apply) const;
 
         bool hasExplicitNestingParent() const;
         bool hasExplicitPseudoClassScope() const;
