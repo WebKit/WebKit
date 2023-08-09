@@ -34,7 +34,7 @@
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkSession.h"
 #include "PrivateClickMeasurementManager.h"
-#include "ResourceLoadStatisticsDatabaseStore.h"
+#include "ResourceLoadStatisticsStore.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "WebFrameProxy.h"
@@ -161,7 +161,7 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& n
 
     if (!resourceLoadStatisticsDirectory.isEmpty()) {
         postTask([this, resourceLoadStatisticsDirectory = resourceLoadStatisticsDirectory.isolatedCopy(), shouldIncludeLocalhost, sessionID = networkSession.sessionID()] {
-            m_statisticsStore = makeUnique<ResourceLoadStatisticsDatabaseStore>(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory, sessionID);
+            m_statisticsStore = makeUnique<ResourceLoadStatisticsStore>(*this, m_statisticsQueue, shouldIncludeLocalhost, resourceLoadStatisticsDirectory, sessionID);
 
             auto legacyPlistFilePath = FileSystem::pathByAppendingComponent(resourceLoadStatisticsDirectory, "full_browsing_session_resourceLog.plist"_s);
             if (FileSystem::fileExists(legacyPlistFilePath))
@@ -234,13 +234,12 @@ void WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk(CompletionHandl
     ASSERT(RunLoop::isMain());
     
     postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
-        if (m_statisticsStore && is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
-            auto& databaseStore = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore);
-            if (databaseStore.isNewResourceLoadStatisticsDatabaseFile()) {
+        if (m_statisticsStore) {
+            if (m_statisticsStore->isNewResourceLoadStatisticsDatabaseFile()) {
                 m_statisticsStore->grandfatherExistingWebsiteData([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
                     postTaskReply(WTFMove(completionHandler));
                 });
-                databaseStore.setIsNewResourceLoadStatisticsDatabaseFile(false);
+                m_statisticsStore->setIsNewResourceLoadStatisticsDatabaseFile(false);
             } else
                 postTaskReply([this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
                     logTestingEvent("PopulatedWithoutGrandfathering"_s);
@@ -304,12 +303,12 @@ void WebResourceLoadStatisticsStore::statisticsDatabaseHasAllTables(CompletionHa
     ASSERT(RunLoop::isMain());
     
     postTask([this, completionHandler = WTFMove(completionHandler)]() mutable { 
-        if (!m_statisticsStore || !is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
+        if (!m_statisticsStore) {
             completionHandler(false);
             ASSERT_NOT_REACHED();
             return;
         }
-        auto missingTables = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).checkForMissingTablesInSchema();
+        auto missingTables = m_statisticsStore->checkForMissingTablesInSchema();
         postTaskReply([hasAllTables = missingTables ? false : true, completionHandler = WTFMove(completionHandler)] () mutable {
             completionHandler(hasAllTables);
         });
@@ -741,8 +740,7 @@ void WebResourceLoadStatisticsStore::performDailyTasks()
     postTask([this] {
         if (m_statisticsStore) {
             m_statisticsStore->includeTodayAsOperatingDateIfNecessary();
-            if (is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore))
-                downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).runIncrementalVacuumCommand();
+            m_statisticsStore->runIncrementalVacuumCommand();
         }
     });
 }
@@ -903,12 +901,12 @@ void WebResourceLoadStatisticsStore::isRelationshipOnlyInDatabaseOnce(Registrabl
     ASSERT(RunLoop::isMain());
 
     postTask([this, subDomain = WTFMove(subDomain).isolatedCopy(), topDomain = WTFMove(topDomain).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        if (!m_statisticsStore || !is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
+        if (!m_statisticsStore) {
             completionHandler(false);
             return;
         }
         
-        bool isRelationshipOnlyInDatabaseOnce = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).isCorrectSubStatisticsCount(subDomain, topDomain);
+        bool isRelationshipOnlyInDatabaseOnce = m_statisticsStore->isCorrectSubStatisticsCount(subDomain, topDomain);
         
         postTaskReply([isRelationshipOnlyInDatabaseOnce, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(isRelationshipOnlyInDatabaseOnce);
@@ -1176,8 +1174,7 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
             if (shouldGrandfather == ShouldGrandfatherStatistics::Yes) {
                 if (m_statisticsStore) {
                     m_statisticsStore->grandfatherExistingWebsiteData([callbackAggregator = WTFMove(callbackAggregator)]() mutable { });
-                    if (is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore))
-                        downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).setIsNewResourceLoadStatisticsDatabaseFile(true);
+                    m_statisticsStore->setIsNewResourceLoadStatisticsDatabaseFile(true);
                 } else
                     RELEASE_LOG(ResourceLoadStatistics, "WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent After being cleared, m_statisticsStore is null when trying to grandfather data.");
             }
@@ -1210,12 +1207,11 @@ void WebResourceLoadStatisticsStore::domainIDExistsInDatabase(int domainID, Comp
     ASSERT(RunLoop::isMain());
 
     postTask([this, domainID, completionHandler = WTFMove(completionHandler)]() mutable {
-        if (!m_statisticsStore || !is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
+        if (!m_statisticsStore) {
             completionHandler(false);
             return;
         }
-        auto& databaseStore = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore);
-        bool domainIDExists = databaseStore.domainIDExistsInDatabase(domainID);
+        bool domainIDExists = m_statisticsStore->domainIDExistsInDatabase(domainID);
         postTaskReply([domainIDExists, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(domainIDExists);
         });
@@ -1522,7 +1518,7 @@ void WebResourceLoadStatisticsStore::aggregatedThirdPartyData(CompletionHandler<
 void WebResourceLoadStatisticsStore::suspend(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    sharedStatisticsQueue()->suspend(ResourceLoadStatisticsDatabaseStore::interruptAllDatabases, WTFMove(completionHandler));
+    sharedStatisticsQueue()->suspend(ResourceLoadStatisticsStore::interruptAllDatabases, WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::resume()
