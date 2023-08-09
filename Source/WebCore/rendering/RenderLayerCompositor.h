@@ -29,6 +29,7 @@
 #include "GraphicsLayerClient.h"
 #include "LayerAncestorClippingStack.h"
 #include "RenderLayer.h"
+#include <pal/HysteresisActivity.h>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
 
@@ -388,6 +389,7 @@ private:
 
     // Returns true if the policy changed.
     bool updateCompositingPolicy();
+    bool canUpdateCompositingPolicy() const;
     
     // GraphicsLayerClient implementation
     void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>) override;
@@ -571,6 +573,7 @@ private:
     bool m_hasAcceleratedCompositing { true };
     
     CompositingPolicy m_compositingPolicy { CompositingPolicy::Normal };
+    PAL::HysteresisActivity m_compositingPolicyHysteresis;
 
     bool m_showDebugBorders { false };
     bool m_showRepaintCounter { false };
