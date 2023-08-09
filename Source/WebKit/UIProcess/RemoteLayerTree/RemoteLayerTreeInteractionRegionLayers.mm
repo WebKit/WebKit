@@ -193,7 +193,7 @@ void updateLayersForInteractionRegions(const RemoteLayerTreeNode& node)
     for (const WebCore::InteractionRegion& region : node.eventRegion().interactionRegions()) {
         IntRect rect = region.rectInLayerCoordinates;
 
-        if (node.coverageRect() && !node.coverageRect()->intersects(rect))
+        if (!node.visibleRect() || !node.visibleRect()->intersects(rect))
             continue;
 
         bool foundInPosition = false;
@@ -245,7 +245,6 @@ void updateLayersForInteractionRegions(const RemoteLayerTreeNode& node)
                 }
                 break;
             }
-            [layer insertSublayer:regionLayer.get() atIndex:insertionPoint];
         }
 
         if (!foundInPosition)

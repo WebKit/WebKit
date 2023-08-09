@@ -170,7 +170,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , userInteractionEnabled(other.userInteractionEnabled)
     , eventRegion(other.eventRegion)
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    , coverageRect(other.coverageRect)
+    , visibleRect(other.visibleRect)
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     , isSeparated(other.isSeparated)
@@ -327,8 +327,8 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
         encoder << eventRegion;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if (changedProperties & LayerChange::CoverageRectChanged)
-        encoder << coverageRect;
+    if (changedProperties & LayerChange::VisibleRectChanged)
+        encoder << visibleRect;
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (changedProperties & LayerChange::SeparatedChanged)
@@ -591,8 +591,8 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
     }
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if (result.changedProperties & LayerChange::CoverageRectChanged) {
-        if (!decoder.decode(result.coverageRect))
+    if (result.changedProperties & LayerChange::VisibleRectChanged) {
+        if (!decoder.decode(result.visibleRect))
             return false;
     }
 #endif
@@ -1016,8 +1016,8 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
             ts.dumpProperty("eventRegion", layerProperties.eventRegion);
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        if (layerProperties.changedProperties & LayerChange::CoverageRectChanged)
-            ts.dumpProperty("coverageRect", layerProperties.coverageRect);
+        if (layerProperties.changedProperties & LayerChange::VisibleRectChanged)
+            ts.dumpProperty("visibleRect", layerProperties.visibleRect);
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         if (layerProperties.changedProperties & LayerChange::SeparatedChanged)

@@ -113,7 +113,7 @@ enum class LayerChange : uint64_t {
 #endif
     VideoGravityChanged                 = 1LLU << 44,
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    CoverageRectChanged                 = 1LLU << 45,
+    VisibleRectChanged                  = 1LLU << 45,
 #endif
 };
 
@@ -222,7 +222,7 @@ public:
         WebCore::EventRegion eventRegion;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        WebCore::FloatRect coverageRect;
+        WebCore::FloatRect visibleRect;
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         bool isSeparated { false };
