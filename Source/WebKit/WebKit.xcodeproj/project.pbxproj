@@ -406,6 +406,11 @@
 		1C1CE975288DF5030098D3A1 /* _WKWebExtensionMatchPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C1CE971288DF5030098D3A1 /* _WKWebExtensionMatchPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C20936022318CB000026A39 /* NSAttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C20935E22318CB000026A39 /* NSAttributedString.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1C2184022233872800BAC700 /* NSAttributedStringPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C2184012233872800BAC700 /* NSAttributedStringPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C2B4D3F2A815ACC00C528A1 /* WebExtensionContextAPIAlarmsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C2B4D3E2A815ACC00C528A1 /* WebExtensionContextAPIAlarmsCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1C2B4D422A817D7200C528A1 /* WebExtensionAlarmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C2B4D412A817D6B00C528A1 /* WebExtensionAlarmParameters.h */; };
+		1C2B4D442A8199C100C528A1 /* WebExtensionAPIAlarmsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C2B4D432A8199C100C528A1 /* WebExtensionAPIAlarmsCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1C2B4D462A8199CD00C528A1 /* WebExtensionAPIAlarms.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C2B4D452A8199CC00C528A1 /* WebExtensionAPIAlarms.h */; };
+		1C2B4D4B2A819D0D00C528A1 /* JSWebExtensionAPIAlarms.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C2B4D492A819D0C00C528A1 /* JSWebExtensionAPIAlarms.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1C3BEB502887492F00E66E38 /* WebExtensionControllerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C3BEB492887492600E66E38 /* WebExtensionControllerMessages.h */; };
 		1C3BEB512887492F00E66E38 /* WebExtensionControllerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C3BEB4E2887492700E66E38 /* WebExtensionControllerProxyMessages.h */; };
 		1C3BEB522887492F00E66E38 /* WebExtensionControllerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C3BEB4A2887492600E66E38 /* WebExtensionControllerMessageReceiver.cpp */; };
@@ -3367,6 +3372,16 @@
 		1C20935E22318CB000026A39 /* NSAttributedString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSAttributedString.h; sourceTree = "<group>"; };
 		1C20935F22318CB000026A39 /* NSAttributedString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NSAttributedString.mm; sourceTree = "<group>"; };
 		1C2184012233872800BAC700 /* NSAttributedStringPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringPrivate.h; sourceTree = "<group>"; };
+		1C2B4D3C2A8091FF00C528A1 /* WebExtensionAlarm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionAlarm.cpp; sourceTree = "<group>"; };
+		1C2B4D3D2A8091FF00C528A1 /* WebExtensionAlarm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAlarm.h; sourceTree = "<group>"; };
+		1C2B4D3E2A815ACC00C528A1 /* WebExtensionContextAPIAlarmsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIAlarmsCocoa.mm; sourceTree = "<group>"; };
+		1C2B4D402A817D6A00C528A1 /* WebExtensionAlarmParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAlarmParameters.serialization.in; sourceTree = "<group>"; };
+		1C2B4D412A817D6B00C528A1 /* WebExtensionAlarmParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionAlarmParameters.h; sourceTree = "<group>"; };
+		1C2B4D432A8199C100C528A1 /* WebExtensionAPIAlarmsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIAlarmsCocoa.mm; sourceTree = "<group>"; };
+		1C2B4D452A8199CC00C528A1 /* WebExtensionAPIAlarms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIAlarms.h; sourceTree = "<group>"; };
+		1C2B4D472A819C4700C528A1 /* WebExtensionAPIAlarms.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIAlarms.idl; sourceTree = "<group>"; };
+		1C2B4D482A819D0C00C528A1 /* JSWebExtensionAPIAlarms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIAlarms.h; sourceTree = "<group>"; };
+		1C2B4D492A819D0C00C528A1 /* JSWebExtensionAPIAlarms.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIAlarms.mm; sourceTree = "<group>"; };
 		1C3BEB46288740AE00E66E38 /* WebExtensionControllerParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionControllerParameters.h; sourceTree = "<group>"; };
 		1C3BEB482887415100E66E38 /* WebExtensionControllerIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionControllerIdentifier.h; sourceTree = "<group>"; };
 		1C3BEB492887492600E66E38 /* WebExtensionControllerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionControllerMessages.h; sourceTree = "<group>"; };
@@ -8490,6 +8505,7 @@
 		1C1549802926E7CC001B9E5B /* API */ = {
 			isa = PBXGroup;
 			children = (
+				1C2B4D3E2A815ACC00C528A1 /* WebExtensionContextAPIAlarmsCocoa.mm */,
 				B6544F9E2939457C00034EB0 /* WebExtensionContextAPIEventCocoa.mm */,
 				B65DA1DC294BDE4700DB503A /* WebExtensionContextAPIPermissionsCocoa.mm */,
 				1C1549812926E7CC001B9E5B /* WebExtensionContextAPITestCocoa.mm */,
@@ -8512,6 +8528,7 @@
 			isa = PBXGroup;
 			children = (
 				1C5DC4502908A9D00061EC62 /* Cocoa */,
+				1C2B4D452A8199CC00C528A1 /* WebExtensionAPIAlarms.h */,
 				B6544F912937E45000034EB0 /* WebExtensionAPIEvent.h */,
 				1C5DC468290B239C0061EC62 /* WebExtensionAPIExtension.h */,
 				1C5DC44F290888140061EC62 /* WebExtensionAPINamespace.h */,
@@ -8528,6 +8545,7 @@
 		1C5DC4502908A9D00061EC62 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				1C2B4D432A8199C100C528A1 /* WebExtensionAPIAlarmsCocoa.mm */,
 				B6544F952937E46900034EB0 /* WebExtensionAPIEventCocoa.mm */,
 				1C5DC465290B23890061EC62 /* WebExtensionAPIExtensionCocoa.mm */,
 				1C5DC4512908A9D00061EC62 /* WebExtensionAPINamespaceCocoa.mm */,
@@ -8668,6 +8686,7 @@
 		1C9DD98F28FA19A30093BDB0 /* Interfaces */ = {
 			isa = PBXGroup;
 			children = (
+				1C2B4D472A819C4700C528A1 /* WebExtensionAPIAlarms.idl */,
 				B6544F7C29357B1B00034EB0 /* WebExtensionAPIEvent.idl */,
 				1C9DD99028FA19A30093BDB0 /* WebExtensionAPIExtension.idl */,
 				1C9DD9A428FA19A30093BDB0 /* WebExtensionAPINamespace.idl */,
@@ -8981,6 +9000,8 @@
 			children = (
 				1C627476288A1DDE00CED3A2 /* Cocoa */,
 				1C3BEB5E2888710500E66E38 /* WebExtension.h */,
+				1C2B4D3C2A8091FF00C528A1 /* WebExtensionAlarm.cpp */,
+				1C2B4D3D2A8091FF00C528A1 /* WebExtensionAlarm.h */,
 				1C0234C128A00E7D00AC1E5B /* WebExtensionContext.cpp */,
 				1C0234C228A00E7D00AC1E5B /* WebExtensionContext.h */,
 				1C0234C328A00E7E00AC1E5B /* WebExtensionContext.messages.in */,
@@ -11874,6 +11895,8 @@
 			children = (
 				337822452947FBA4002106BB /* _WKWebExtensionUtilities.h */,
 				337822462947FBA4002106BB /* _WKWebExtensionUtilities.mm */,
+				1C2B4D412A817D6B00C528A1 /* WebExtensionAlarmParameters.h */,
+				1C2B4D402A817D6A00C528A1 /* WebExtensionAlarmParameters.serialization.in */,
 				1C0234BF28A00DCF00AC1E5B /* WebExtensionContextIdentifier.h */,
 				1C0234BE28A00DCF00AC1E5B /* WebExtensionContextParameters.h */,
 				1CBEE26128F334D6006D1A02 /* WebExtensionContextParameters.serialization.in */,
@@ -13269,6 +13292,8 @@
 				0F5562DE27EE28D000953585 /* GPUProcessMessages.h */,
 				0F5562E827EE28D200953585 /* GPUProcessProxyMessageReceiver.cpp */,
 				0F5562E427EE28D100953585 /* GPUProcessProxyMessages.h */,
+				1C2B4D482A819D0C00C528A1 /* JSWebExtensionAPIAlarms.h */,
+				1C2B4D492A819D0C00C528A1 /* JSWebExtensionAPIAlarms.mm */,
 				B6114A7C2939498000380B1B /* JSWebExtensionAPIEvent.h */,
 				B6114A7D29394A1500380B1B /* JSWebExtensionAPIEvent.mm */,
 				1C5DC462290B1C470061EC62 /* JSWebExtensionAPIExtension.h */,
@@ -14859,6 +14884,8 @@
 				BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */,
 				86DD519028EF28E800DF2A58 /* WebEventModifier.h in Headers */,
 				F4CBF79E2A6ADF7E00C066BF /* WebEventType.h in Headers */,
+				1C2B4D422A817D7200C528A1 /* WebExtensionAlarmParameters.h in Headers */,
+				1C2B4D462A8199CD00C528A1 /* WebExtensionAPIAlarms.h in Headers */,
 				B6544F932937E45100034EB0 /* WebExtensionAPIEvent.h in Headers */,
 				1C5DC46D290B271E0061EC62 /* WebExtensionAPIExtension.h in Headers */,
 				1C5DC46C290B271E0061EC62 /* WebExtensionAPINamespace.h in Headers */,
@@ -17011,6 +17038,7 @@
 				51E9049727BCB3D900929E7E /* ICAppBundle.mm in Sources */,
 				2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */,
 				2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */,
+				1C2B4D4B2A819D0D00C528A1 /* JSWebExtensionAPIAlarms.mm in Sources */,
 				B6114A7F29394A1600380B1B /* JSWebExtensionAPIEvent.mm in Sources */,
 				1C5DC471290B33A20061EC62 /* JSWebExtensionAPIExtension.mm in Sources */,
 				1C5DC4552908AC900061EC62 /* JSWebExtensionAPINamespace.mm in Sources */,
@@ -17337,6 +17365,7 @@
 				E3866B0B2399A2DD00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp in Sources */,
 				E3866AE52397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm in Sources */,
 				E3866B092399A2D500F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp in Sources */,
+				1C2B4D442A8199C100C528A1 /* WebExtensionAPIAlarmsCocoa.mm in Sources */,
 				B6544F972937E46900034EB0 /* WebExtensionAPIEventCocoa.mm in Sources */,
 				1C5DC467290B23890061EC62 /* WebExtensionAPIExtensionCocoa.mm in Sources */,
 				1C5DC4522908A9D00061EC62 /* WebExtensionAPINamespaceCocoa.mm in Sources */,
@@ -17346,6 +17375,7 @@
 				3375A37129429DDA0028536D /* WebExtensionAPIWebNavigationCocoa.mm in Sources */,
 				33F68340293FFB3F005C63C0 /* WebExtensionAPIWebNavigationEventCocoa.mm in Sources */,
 				1C627478288A1E1D00CED3A2 /* WebExtensionCocoa.mm in Sources */,
+				1C2B4D3F2A815ACC00C528A1 /* WebExtensionContextAPIAlarmsCocoa.mm in Sources */,
 				B6544F9F2939457C00034EB0 /* WebExtensionContextAPIEventCocoa.mm in Sources */,
 				B65DA1DD294BDE4700DB503A /* WebExtensionContextAPIPermissionsCocoa.mm in Sources */,
 				1C1549822926E7CC001B9E5B /* WebExtensionContextAPITestCocoa.mm in Sources */,

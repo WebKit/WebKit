@@ -489,6 +489,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/BackgroundFetchState.serialization.in \
 	Shared/DisplayListArgumentCoders.serialization.in \
 	Shared/EditorState.serialization.in \
+	Shared/Extensions/WebExtensionAlarmParameters.serialization.in \
 	Shared/Extensions/WebExtensionContextParameters.serialization.in \
 	Shared/Extensions/WebExtensionControllerParameters.serialization.in \
 	Shared/Extensions/WebExtensionEventListenerType.serialization.in \
@@ -641,6 +642,7 @@ BINDINGS_SCRIPTS = \
 #
 
 EXTENSION_INTERFACES = \
+    WebExtensionAPIAlarms \
     WebExtensionAPIEvent \
     WebExtensionAPIExtension \
     WebExtensionAPINamespace \

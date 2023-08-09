@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPINamespace {
+#pragma once
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAlarms alarms;
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-    readonly attribute WebExtensionAPIExtension extension;
+#include <wtf/Forward.h>
+#include <wtf/MonotonicTime.h>
 
-    readonly attribute WebExtensionAPIRuntime runtime;
+namespace WebKit {
 
-    [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
-
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebNavigation webNavigation;
-
-    [Dynamic] readonly attribute WebExtensionAPITest test;
-
+struct WebExtensionAlarmParameters {
+    String name;
+    Seconds initialInterval;
+    Seconds repeatInterval;
+    MonotonicTime nextScheduledTime;
 };
+
+} // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

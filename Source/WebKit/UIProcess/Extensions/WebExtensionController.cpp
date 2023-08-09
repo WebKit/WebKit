@@ -30,6 +30,7 @@
 
 #include "WebExtensionControllerParameters.h"
 #include "WebExtensionControllerProxyMessages.h"
+#include "WebPageProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 

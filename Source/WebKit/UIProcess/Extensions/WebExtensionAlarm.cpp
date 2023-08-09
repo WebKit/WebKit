@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPINamespace {
+#include "config.h"
+#include "WebExtensionAlarm.h"
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAlarms alarms;
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-    readonly attribute WebExtensionAPIExtension extension;
+namespace WebKit {
 
-    readonly attribute WebExtensionAPIRuntime runtime;
+using namespace WebCore;
 
-    [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
+void WebExtensionAlarm::schedule()
+{
+    m_parameters.nextScheduledTime = MonotonicTime::now() + initialInterval();
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebNavigation webNavigation;
+    RELEASE_LOG_INFO(Extensions, "Scheduled alarm; initial = %f seconds; repeat = %f seconds", initialInterval().seconds(), repeatInterval().seconds());
 
-    [Dynamic] readonly attribute WebExtensionAPITest test;
+    m_timer = makeUnique<Timer>(*this, &WebExtensionAlarm::fire);
+    m_timer->start(initialInterval(), repeatInterval());
+}
 
-};
+void WebExtensionAlarm::fire()
+{
+    // Calculate the next scheduled time now, so the handler's work time does not count against it.
+    auto nextScheduledTime = MonotonicTime::now() + repeatInterval();
+
+    m_handler(*this);
+
+    if (!repeatInterval()) {
+        m_timer = nullptr;
+        return;
+    }
+
+    m_parameters.nextScheduledTime = nextScheduledTime;
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

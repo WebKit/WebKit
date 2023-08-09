@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,42 +27,50 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "JSWebExtensionAPINamespace.h"
-#include "WebExtensionAPIAlarms.h"
-#include "WebExtensionAPIExtension.h"
-#include "WebExtensionAPIObject.h"
-#include "WebExtensionAPIPermissions.h"
-#include "WebExtensionAPIRuntime.h"
-#include "WebExtensionAPITest.h"
-#include "WebExtensionAPIWebNavigation.h"
+#include "WebExtensionAlarmParameters.h"
+#include <WebCore/Timer.h>
+#include <wtf/Forward.h>
+#include <wtf/Function.h>
+#include <wtf/RefCounted.h>
 
 namespace WebKit {
 
-class WebExtensionAPIExtension;
-class WebExtensionAPIRuntime;
+class WebExtensionContext;
 
-class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPINamespace, namespace);
+class WebExtensionAlarm : public RefCounted<WebExtensionAlarm> {
+    WTF_MAKE_NONCOPYABLE(WebExtensionAlarm);
+    WTF_MAKE_FAST_ALLOCATED;
 
 public:
-#if PLATFORM(COCOA)
-    bool isPropertyAllowed(String propertyName, WebPage*);
+    template<typename... Args>
+    static Ref<WebExtensionAlarm> create(Args&&... args)
+    {
+        return adoptRef(*new WebExtensionAlarm(std::forward<Args>(args)...));
+    }
 
-    WebExtensionAPIAlarms& alarms();
-    WebExtensionAPIExtension& extension();
-    WebExtensionAPIPermissions& permissions();
-    WebExtensionAPIRuntime& runtime() final;
-    WebExtensionAPITest& test();
-    WebExtensionAPIWebNavigation& webNavigation();
-#endif
+    explicit WebExtensionAlarm(String name, Seconds initialInterval, Seconds repeatInterval, Function<void(WebExtensionAlarm&)>&& handler = nullptr)
+        : m_parameters({ name, initialInterval, repeatInterval, MonotonicTime::nan() })
+        , m_handler(WTFMove(handler))
+    {
+        ASSERT(!name.isNull());
+        schedule();
+    }
+
+    const WebExtensionAlarmParameters& parameters() const { return m_parameters; }
+
+    const String& name() const { return m_parameters.name; }
+    Seconds initialInterval() const { return m_parameters.initialInterval; }
+    Seconds repeatInterval() const { return m_parameters.repeatInterval; }
+    MonotonicTime nextScheduledTime() const { return m_parameters.nextScheduledTime; }
 
 private:
-    RefPtr<WebExtensionAPIAlarms> m_alarms;
-    RefPtr<WebExtensionAPIExtension> m_extension;
-    RefPtr<WebExtensionAPIPermissions> m_permissions;
-    RefPtr<WebExtensionAPIRuntime> m_runtime;
-    RefPtr<WebExtensionAPITest> m_test;
-    RefPtr<WebExtensionAPIWebNavigation> m_webNavigation;
+    void schedule();
+    void fire();
+
+    WebExtensionAlarmParameters m_parameters;
+
+    Function<void(WebExtensionAlarm&)> m_handler;
+    std::unique_ptr<WebCore::Timer> m_timer;
 };
 
 } // namespace WebKit

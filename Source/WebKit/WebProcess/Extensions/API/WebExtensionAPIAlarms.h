@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPINamespace {
+#pragma once
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAlarms alarms;
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-    readonly attribute WebExtensionAPIExtension extension;
+#include "JSWebExtensionAPIAlarms.h"
+#include "WebExtensionAPIEvent.h"
+#include "WebExtensionAPIObject.h"
 
-    readonly attribute WebExtensionAPIRuntime runtime;
+OBJC_CLASS NSDictionary;
+OBJC_CLASS NSString;
 
-    [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
+namespace WebKit {
 
-    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebNavigation webNavigation;
+class WebExtensionAPIAlarms : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIAlarms, alarms);
 
-    [Dynamic] readonly attribute WebExtensionAPITest test;
+public:
+#if PLATFORM(COCOA)
+    void createAlarm(NSString *name, NSDictionary *alarmInfo, NSString **outExceptionString);
 
+    void get(NSString *name, Ref<WebExtensionCallbackHandler>&&);
+    void getAll(Ref<WebExtensionCallbackHandler>&&);
+
+    void clear(NSString *name, Ref<WebExtensionCallbackHandler>&&);
+    void clearAll(Ref<WebExtensionCallbackHandler>&&);
+
+    WebExtensionAPIEvent& onAlarm();
+
+private:
+    RefPtr<WebExtensionAPIEvent> m_onAlarm;
+#endif
 };
+
+} // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

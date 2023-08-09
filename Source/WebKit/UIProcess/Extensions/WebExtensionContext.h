@@ -33,6 +33,7 @@
 #include "APIUserStyleSheet.h"
 #include "MessageReceiver.h"
 #include "WebExtension.h"
+#include "WebExtensionAlarm.h"
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionController.h"
 #include "WebExtensionEventListenerType.h"
@@ -92,6 +93,8 @@ public:
 
     using UserScriptVector = Vector<Ref<API::UserScript>>;
     using UserStyleSheetVector = Vector<Ref<API::UserStyleSheet>>;
+
+    using AlarmInfoMap = HashMap<String, double>;
 
     using PermissionsSet = WebExtension::PermissionsSet;
     using MatchPatternSet = WebExtension::MatchPatternSet;
@@ -287,15 +290,23 @@ private:
     void testYielded(String message, String sourceURL, unsigned lineNumber);
     void testFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 
+    // Alarms APIs
+    void alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval);
+    void alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>)>&&);
+    void alarmsClear(const String& name, CompletionHandler<void()>&&);
+    void alarmsGetAll(CompletionHandler<void(Vector<WebExtensionAlarmParameters>&&)>&&);
+    void alarmsClearAll(CompletionHandler<void()>&&);
+    void fireAlarmsEventIfNeeded(const WebExtensionAlarm&);
+
     // Event APIs
     void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType);
     void removeListener(WebPageProxyIdentifier, WebExtensionEventListenerType);
 
     // Permissions APIs
     void permissionsGetAll(CompletionHandler<void(Vector<String> permissions, Vector<String> origins)>&&);
-    void permissionsContains(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler);
-    void permissionsRequest(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler);
-    void permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler);
+    void permissionsContains(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);
+    void permissionsRequest(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);
+    void permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);
     void firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType, const PermissionsSet&, const MatchPatternSet&);
 
     // IPC::MessageReceiver.
@@ -356,6 +367,8 @@ private:
 
     HashMap<Ref<WebExtensionMatchPattern>, UserScriptVector> m_injectedScriptsPerPatternMap;
     HashMap<Ref<WebExtensionMatchPattern>, UserStyleSheetVector> m_injectedStyleSheetsPerPatternMap;
+
+    HashMap<String, Ref<WebExtensionAlarm>> m_alarmMap;
 };
 
 template<typename T>

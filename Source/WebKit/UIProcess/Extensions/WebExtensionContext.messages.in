@@ -33,6 +33,13 @@ messages -> WebExtensionContext {
     TestYielded(String message, String sourceURL, unsigned lineNumber);
     TestFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 
+    // Alarms APIs
+    AlarmsCreate(String name, Seconds initialInterval, Seconds repeatInterval);
+    AlarmsGet(String name) -> (std::optional<WebKit::WebExtensionAlarmParameters> alarmInfo);
+    AlarmsClear(String name) -> ();
+    AlarmsGetAll() -> (Vector<WebKit::WebExtensionAlarmParameters> alarms);
+    AlarmsClearAll() -> ();
+
     // Event APIs
     AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type);
     RemoveListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type);
