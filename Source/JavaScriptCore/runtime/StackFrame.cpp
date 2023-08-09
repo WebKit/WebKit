@@ -58,18 +58,10 @@ SourceID StackFrame::sourceID() const
     return m_codeBlock->ownerExecutable()->sourceID();
 }
 
-String StackFrame::sourceURL(VM& vm) const
+static String processSourceURL(VM& vm, const JSC::StackFrame& frame, const String& sourceURL)
 {
-    if (m_isWasmFrame)
-        return "[wasm code]"_s;
-
-    if (!m_codeBlock)
-        return "[native code]"_s;
-
-    String sourceURL = m_codeBlock->ownerExecutable()->sourceURL();
-
     if (vm.clientData && !sourceURL.startsWithIgnoringASCIICase("http"_s)) {
-        String overrideURL = vm.clientData->overrideSourceURL(*this, sourceURL);
+        String overrideURL = vm.clientData->overrideSourceURL(frame, sourceURL);
         if (!overrideURL.isNull())
             return overrideURL;
     }
@@ -79,9 +71,26 @@ String StackFrame::sourceURL(VM& vm) const
     return emptyString();
 }
 
+String StackFrame::sourceURL(VM& vm) const
+{
+    if (m_isWasmFrame)
+        return "[wasm code]"_s;
+
+    if (!m_codeBlock)
+        return "[native code]"_s;
+
+    return processSourceURL(vm, *this, m_codeBlock->ownerExecutable()->sourceURL());
+}
+
 String StackFrame::sourceURLStripped(VM& vm) const
 {
-    return URL(sourceURL(vm)).strippedForUseAsReport();
+    if (m_isWasmFrame)
+        return "[wasm code]"_s;
+
+    if (!m_codeBlock)
+        return "[native code]"_s;
+
+    return processSourceURL(vm, *this, m_codeBlock->ownerExecutable()->sourceURLStripped());
 }
 
 String StackFrame::functionName(VM& vm) const

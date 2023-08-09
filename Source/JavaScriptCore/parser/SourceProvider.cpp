@@ -52,6 +52,16 @@ void SourceProvider::getID()
     }
 }
 
+const String& SourceProvider::sourceURLStripped()
+{
+    if (UNLIKELY(m_sourceURL.isNull()))
+        return m_sourceURLStripped;
+    if (LIKELY(!m_sourceURLStripped.isNull()))
+        return m_sourceURLStripped;
+    m_sourceURLStripped = URL(m_sourceURL).strippedForUseAsReport();
+    return m_sourceURLStripped;
+}
+
 #if ENABLE(WEBASSEMBLY)
 BaseWebAssemblySourceProvider::BaseWebAssemblySourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL)
     : SourceProvider(sourceOrigin, WTFMove(sourceURL), String(), TextPosition(), SourceProviderSourceType::WebAssembly)
