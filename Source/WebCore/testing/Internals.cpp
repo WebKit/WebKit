@@ -1337,6 +1337,17 @@ ExceptionOr<RefPtr<Element>> Internals::pseudoElement(Element& element, const St
     return pseudoId == "before"_s ? element.beforePseudoElement() : element.afterPseudoElement();
 }
 
+double Internals::preferredRenderingUpdateInterval()
+{
+    auto* document = contextDocument();
+    if (!document)
+        return 0;
+    auto* page = document->page();
+    if (!page)
+        return 0;
+    return page->preferredRenderingUpdateInterval().milliseconds();
+}
+
 ExceptionOr<String> Internals::elementRenderTreeAsText(Element& element)
 {
     element.document().updateStyleIfNeeded();

@@ -1,3 +1,3 @@
 
-FAIL The deadline after an expired timer must not be negative assert_false: expected false got true
+PASS The deadline after an expired timer must not be negative
 

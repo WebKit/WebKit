@@ -39,19 +39,28 @@ IdleCallbackController::IdleCallbackController(Document& document)
 {
 
 }
-int IdleCallbackController::queueIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds)
-{
-    bool startIdlePeriod = m_idleRequestCallbacks.isEmpty() && m_runnableIdleCallbacks.isEmpty();
 
+int IdleCallbackController::queueIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds timeout)
+{
     ++m_idleCallbackIdentifier;
     auto handle = m_idleCallbackIdentifier;
 
     m_idleRequestCallbacks.append({ handle, WTFMove(callback) });
 
-    if (startIdlePeriod)
-        queueTaskToStartIdlePeriod();
-
-    // FIXME: Queue a task if timeout is positive.
+    if (timeout > 0_s) {
+        Timer::schedule(timeout, [weakThis = WeakPtr { *this }, handle]() {
+            if (!weakThis)
+                return;
+            RefPtr document = weakThis->m_document.get();
+            if (!document)
+                return;
+            document->eventLoop().queueTask(TaskSource::IdleTask, [weakThis, handle]() {
+                if (!weakThis)
+                    return;
+                weakThis->invokeIdleCallbackTimeout(handle);
+            });
+        });
+    }
 
     return handle;
 }
@@ -80,16 +89,8 @@ void IdleCallbackController::queueTaskToStartIdlePeriod()
 }
 
 // https://w3c.github.io/requestidlecallback/#start-an-idle-period-algorithm
-static const auto deadlineCapToEnsureResponsiveness = 50_ms;
 void IdleCallbackController::startIdlePeriod()
 {
-    auto now = MonotonicTime::now();
-    if (m_lastDeadline > now)
-        return;
-
-    // FIXME: Take other tasks in the WindowEventLoop into account.
-    auto deadline = now + deadlineCapToEnsureResponsiveness;
-
     for (auto& request : m_idleRequestCallbacks)
         m_runnableIdleCallbacks.append({ request.identifier, WTFMove(request.callback) });
     m_idleRequestCallbacks.clear();
@@ -97,42 +98,56 @@ void IdleCallbackController::startIdlePeriod()
     if (m_runnableIdleCallbacks.isEmpty())
         return;
 
-    queueTaskToInvokeIdleCallbacks(deadline);
-
-    m_lastDeadline = deadline;
+    queueTaskToInvokeIdleCallbacks();
 }
 
-void IdleCallbackController::queueTaskToInvokeIdleCallbacks(MonotonicTime deadline)
+void IdleCallbackController::queueTaskToInvokeIdleCallbacks()
 {
-    m_document->eventLoop().queueTask(TaskSource::IdleTask, [protectedDocument = Ref { *m_document }, deadline, this] {
+    m_document->eventLoop().queueTask(TaskSource::IdleTask, [protectedDocument = Ref { *m_document }, this] {
         RELEASE_ASSERT(protectedDocument->idleCallbackController() == this);
-        invokeIdleCallbacks(deadline);
+        invokeIdleCallbacks();
     });
 }
 
 // https://w3c.github.io/requestidlecallback/#invoke-idle-callbacks-algorithm
-void IdleCallbackController::invokeIdleCallbacks(MonotonicTime deadline)
+void IdleCallbackController::invokeIdleCallbacks()
 {
-    if (!m_document || !m_document->frame())
+    RefPtr document = m_document.get();
+    if (!document || !document->frame())
         return;
+
+    Ref windowEventLoop = document->windowEventLoop();
+    // FIXME: Implement "if the user-agent believes it should end the idle period early due to newly scheduled high-priority work, return from the algorithm."
 
     auto now = MonotonicTime::now();
-    if (now < deadline) {
-        // FIXME: Don't do this if there is a higher priority task in the event loop.
-        // https://github.com/w3c/requestidlecallback/issues/83
-        if (m_runnableIdleCallbacks.isEmpty())
-            return;
-
-        auto request = m_runnableIdleCallbacks.takeFirst();
-        auto idleDeadline = IdleDeadline::create(deadline);
-        request.callback->handleEvent(idleDeadline.get());
-        if (!m_runnableIdleCallbacks.isEmpty())
-            queueTaskToInvokeIdleCallbacks(deadline);
+    if (now >= windowEventLoop->computeIdleDeadline() || m_runnableIdleCallbacks.isEmpty())
         return;
-    }
 
-    if (!m_idleRequestCallbacks.isEmpty() || !m_runnableIdleCallbacks.isEmpty())
-        queueTaskToStartIdlePeriod();
+    auto request = m_runnableIdleCallbacks.takeFirst();
+    auto idleDeadline = IdleDeadline::create(IdleDeadline::DidTimeout::No);
+    request.callback->handleEvent(idleDeadline.get());
+
+    if (!m_runnableIdleCallbacks.isEmpty())
+        queueTaskToInvokeIdleCallbacks();
+}
+
+// https://w3c.github.io/requestidlecallback/#dfn-invoke-idle-callback-timeout-algorithm
+void IdleCallbackController::invokeIdleCallbackTimeout(unsigned identifier)
+{
+    if (!m_document)
+        return;
+
+    auto it = m_idleRequestCallbacks.findIf([identifier](auto& request) {
+        return request.identifier == identifier;
+    });
+
+    if (it == m_idleRequestCallbacks.end())
+        return;
+
+    auto idleDeadline = IdleDeadline::create(IdleDeadline::DidTimeout::Yes);
+    auto callback = WTFMove(it->callback);
+    m_idleRequestCallbacks.remove(it);
+    callback->handleEvent(idleDeadline.get());
 }
 
 } // namespace WebCore

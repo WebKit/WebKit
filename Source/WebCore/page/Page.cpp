@@ -1689,8 +1689,8 @@ void Page::scheduleRenderingUpdateInternal()
     if (!chrome().client().scheduleRenderingUpdate())
         renderingUpdateScheduler().scheduleRenderingUpdate();
 
-    forEachWindowEventLoop([](WindowEventLoop& windowEventLoop) {
-        windowEventLoop.didScheduleRenderingUpdate();
+    forEachWindowEventLoop([&](WindowEventLoop& windowEventLoop) {
+        windowEventLoop.didScheduleRenderingUpdate(*this, m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval());
     });
 }
 
@@ -2041,7 +2041,7 @@ void Page::renderingUpdateCompleted()
     if (!isUtilityPage()) {
         auto nextRenderingUpdate = m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval();
         forEachWindowEventLoop([&](WindowEventLoop& eventLoop) {
-            eventLoop.didFinishRenderingUpdate();
+            eventLoop.didFinishRenderingUpdate(*this);
         });
         m_opportunisticTaskScheduler->reschedule(nextRenderingUpdate);
     }
