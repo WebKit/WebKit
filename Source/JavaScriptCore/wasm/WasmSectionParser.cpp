@@ -777,8 +777,8 @@ auto SectionParser::parseI32InitExpr(std::optional<I32InitExpr>& initExpr, ASCII
 auto SectionParser::parseFunctionType(uint32_t position, RefPtr<TypeDefinition>& functionSignature) -> PartialResult
 {
     uint32_t argumentCount;
-    WASM_PARSER_FAIL_IF(!parseVarUInt32(argumentCount), "can't get ", position, "th Type's argument count");
-    WASM_PARSER_FAIL_IF(argumentCount > maxFunctionParams, position, "th argument count is too big ", argumentCount, " maximum ", maxFunctionParams);
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(argumentCount), "can't get Type's argument count at index ", position);
+    WASM_PARSER_FAIL_IF(argumentCount > maxFunctionParams, "argument count of Type at index ", position, " is too big ", argumentCount, " maximum ", maxFunctionParams);
     Vector<Type> argumentTypes;
     WASM_PARSER_FAIL_IF(!argumentTypes.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", position, "th signature");
 
@@ -789,10 +789,11 @@ auto SectionParser::parseFunctionType(uint32_t position, RefPtr<TypeDefinition>&
     }
 
     uint32_t returnCount;
-    WASM_PARSER_FAIL_IF(!parseVarUInt32(returnCount), "can't get ", position, "th Type's return count");
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(returnCount), "can't get Type's return count at index ", position);
+    WASM_PARSER_FAIL_IF(returnCount > maxFunctionReturns, "return count of Type at index ", position, " is too big ", returnCount, " maximum ", maxFunctionReturns);
 
     Vector<Type, 1> returnTypes;
-    WASM_PARSER_FAIL_IF(!returnTypes.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", position, "th signature");
+    WASM_PARSER_FAIL_IF(!returnTypes.tryReserveCapacity(returnCount), "can't allocate enough memory for Type section's ", position, "th signature");
     for (unsigned i = 0; i < returnCount; ++i) {
         Type value;
         WASM_PARSER_FAIL_IF(!parseValueType(m_info, value), "can't get ", i, "th Type's return value");
