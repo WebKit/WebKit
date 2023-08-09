@@ -1213,7 +1213,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
 
 bool TCompiler::resizeClipAndCullDistanceBuiltins(TIntermBlock *root)
 {
-    auto resizeVariable = [=](const ImmutableString &name, uint32_t size, uint32_t maxSize) {
+    auto resizeVariable = [this, root](const ImmutableString &name, uint32_t size, uint32_t maxSize) {
         // Skip if the variable is not used or implicitly has the maximum size
         if (size == 0 || size == maxSize)
             return true;
