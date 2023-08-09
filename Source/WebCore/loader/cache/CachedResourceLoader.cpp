@@ -93,7 +93,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include "Device.h"
+#import <pal/system/ios/Device.h>
 #endif
 
 #undef CACHEDRESOURCELOADER_RELEASE_LOG

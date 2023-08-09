@@ -33,7 +33,7 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #if PLATFORM(IOS_FAMILY)
-#include "UserInterfaceIdiom.h"
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #endif
 #endif
 
@@ -70,12 +70,12 @@ bool defaultShouldPrintBackgrounds()
 
 bool defaultAlternateFormControlDesignEnabled()
 {
-    return currentUserInterfaceIdiomIsVision();
+    return PAL::currentUserInterfaceIdiomIsVision();
 }
 
 bool defaultVideoFullscreenRequiresElementFullscreen()
 {
-    return currentUserInterfaceIdiomIsVision();
+    return PAL::currentUserInterfaceIdiomIsVision();
 }
 
 #endif

@@ -28,7 +28,6 @@
 
 #import "APIPageConfiguration.h"
 #import "CSPExtensionUtilities.h"
-#import "UserInterfaceIdiom.h"
 #import <WebKit/WKPreferences.h>
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKRetainPtr.h>
@@ -44,6 +43,7 @@
 #import "_WKVisitedLinkStore.h"
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RobinHoodHashSet.h>
 #import <wtf/URLParser.h>
@@ -205,7 +205,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _allowsPictureInPictureMediaPlayback = YES;
 #endif
 
-    _allowsInlineMediaPlayback = !WebKit::currentUserInterfaceIdiomIsSmallScreen();
+    _allowsInlineMediaPlayback = !PAL::currentUserInterfaceIdiomIsSmallScreen();
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
     _mediaDataLoadsAutomatically = _allowsInlineMediaPlayback;

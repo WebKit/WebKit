@@ -92,6 +92,9 @@ typedef enum {
 - (GSKeyboardRef)_hardwareKeyboard;
 @end
 
+static const UIUserInterfaceIdiom UIUserInterfaceIdiomWatch = (UIUserInterfaceIdiom)4;
+
+
 @interface UIColor ()
 
 + (UIColor *)systemBlueColor;

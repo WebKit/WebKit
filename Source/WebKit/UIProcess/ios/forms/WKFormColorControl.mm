@@ -30,10 +30,10 @@
 
 #import "FocusedElementInformation.h"
 #import "UIKitSPI.h"
-#import "UserInterfaceIdiom.h"
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
 #import <WebCore/ColorCocoa.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #pragma mark - WKColorPicker

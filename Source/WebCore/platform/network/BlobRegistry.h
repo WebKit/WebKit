@@ -40,6 +40,7 @@ class BlobDataFileReference;
 class BlobPart;
 class BlobRegistry;
 class BlobRegistryImpl;
+class SecurityOriginData;
 
 struct PolicyContainer;
 

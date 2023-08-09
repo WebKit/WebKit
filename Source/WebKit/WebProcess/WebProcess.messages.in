@@ -117,7 +117,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    UserInterfaceIdiomDidChange(enum:uint8_t WebKit::UserInterfaceIdiom idiom)
+    UserInterfaceIdiomDidChange(enum:uint8_t PAL::UserInterfaceIdiom idiom)
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

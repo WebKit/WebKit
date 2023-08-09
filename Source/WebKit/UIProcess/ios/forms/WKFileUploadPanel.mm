@@ -34,7 +34,6 @@
 #import "APIString.h"
 #import "PhotosUISPI.h"
 #import "UIKitSPI.h"
-#import "UserInterfaceIdiom.h"
 #import "WKContentViewInteraction.h"
 #import "WKData.h"
 #import "WKStringCF.h"
@@ -47,6 +46,7 @@
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/MainThread.h>
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>

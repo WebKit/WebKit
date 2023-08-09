@@ -164,7 +164,7 @@ struct WebKit::WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    WebKit::UserInterfaceIdiom currentUserInterfaceIdiom;
+    PAL::UserInterfaceIdiom currentUserInterfaceIdiom;
     bool supportsPictureInPicture;
     WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
     WebCore::Color focusRingColor;

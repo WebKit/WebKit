@@ -29,8 +29,8 @@
 #import <wtf/NeverDestroyed.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "Device.h"
 #import <pal/spi/ios/UIKitSPI.h>
+#import <pal/system/ios/Device.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

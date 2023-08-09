@@ -137,11 +137,11 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "RunningBoardServicesSPI.h"
-#import "UserInterfaceIdiom.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIAccessibility.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY) && USE(APPLE_INTERNAL_SDK)
@@ -1132,9 +1132,9 @@ void WebProcess::releaseSystemMallocMemory()
 
 #if PLATFORM(IOS_FAMILY)
 
-void WebProcess::userInterfaceIdiomDidChange(UserInterfaceIdiom idiom)
+void WebProcess::userInterfaceIdiomDidChange(PAL::UserInterfaceIdiom idiom)
 {
-    WebKit::setCurrentUserInterfaceIdiom(idiom);
+    PAL::setCurrentUserInterfaceIdiom(idiom);
 }
 
 bool WebProcess::shouldFreezeOnSuspension() const

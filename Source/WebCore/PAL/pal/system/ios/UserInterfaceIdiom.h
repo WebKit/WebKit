@@ -27,7 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-namespace WebKit {
+namespace PAL {
 
 enum class UserInterfaceIdiom : uint8_t {
     Default,
@@ -35,13 +35,13 @@ enum class UserInterfaceIdiom : uint8_t {
     Vision
 };
 
-bool currentUserInterfaceIdiomIsSmallScreen();
-bool currentUserInterfaceIdiomIsVision();
+PAL_EXPORT bool currentUserInterfaceIdiomIsSmallScreen();
+PAL_EXPORT bool currentUserInterfaceIdiomIsVision();
 
-UserInterfaceIdiom currentUserInterfaceIdiom();
-void setCurrentUserInterfaceIdiom(UserInterfaceIdiom);
+PAL_EXPORT UserInterfaceIdiom currentUserInterfaceIdiom();
+PAL_EXPORT void setCurrentUserInterfaceIdiom(UserInterfaceIdiom);
 
-bool updateCurrentUserInterfaceIdiom();
+PAL_EXPORT bool updateCurrentUserInterfaceIdiom();
 
 }
 

@@ -29,7 +29,6 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
-#import "UserInterfaceIdiom.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
@@ -37,6 +36,7 @@
 #import "WKWebViewPrivateForTesting.h"
 #import "WebPageProxy.h"
 #import <WebCore/LocalizedStrings.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 
 using namespace WebKit;
 
@@ -1191,7 +1191,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
 - (void)configurePresentation
 {
-    if (WebKit::currentUserInterfaceIdiomIsSmallScreen()) {
+    if (PAL::currentUserInterfaceIdiomIsSmallScreen()) {
         [[_navigationController navigationBar] setBarTintColor:UIColor.systemGroupedBackgroundColor];
 
         UIPresentationController *presentationController = [_navigationController presentationController];

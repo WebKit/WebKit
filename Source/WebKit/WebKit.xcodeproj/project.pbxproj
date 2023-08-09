@@ -2128,7 +2128,6 @@
 		E3866B092399A2D500F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3866B042399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp */; };
 		E3866B0A2399A2D900F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E3866B072399979D00F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h */; };
 		E3866B0B2399A2DD00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3866B062399979C00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp */; };
-		E38A1FC023A551BF00D2374F /* UserInterfaceIdiom.mm in Sources */ = {isa = PBXBuildFile; fileRef = E38A1FBF23A551BF00D2374F /* UserInterfaceIdiom.mm */; };
 		E39628DD23960CC600658ECD /* WebDeviceOrientationUpdateProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */; };
 		E39628DE23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */; };
 		E3C6727329D4A3AD00AD4452 /* TextTrackRepresentationCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = E36A00E129CF4EBA00AC4E8A /* TextTrackRepresentationCocoa.h */; };
@@ -7090,8 +7089,6 @@
 		E3866B052399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationUpdateProviderProxyMessages.h; sourceTree = "<group>"; };
 		E3866B062399979C00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDeviceOrientationUpdateProviderMessageReceiver.cpp; sourceTree = "<group>"; };
 		E3866B072399979D00F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationUpdateProviderMessages.h; sourceTree = "<group>"; };
-		E38A1FBE23A5511400D2374F /* UserInterfaceIdiom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserInterfaceIdiom.h; sourceTree = "<group>"; };
-		E38A1FBF23A551BF00D2374F /* UserInterfaceIdiom.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UserInterfaceIdiom.mm; sourceTree = "<group>"; };
 		E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationUpdateProvider.h; sourceTree = "<group>"; };
 		E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDeviceOrientationUpdateProvider.cpp; sourceTree = "<group>"; };
 		E39628E423971F3400658ECD /* WebDeviceOrientationUpdateProvider.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebDeviceOrientationUpdateProvider.messages.in; sourceTree = "<group>"; };
@@ -9582,8 +9579,6 @@
 				2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */,
 				4459984122833E6000E61373 /* SyntheticEditingCommandType.h */,
 				F4E2B44A268FDE1A00327ABC /* TapHandlingResult.h */,
-				E38A1FBE23A5511400D2374F /* UserInterfaceIdiom.h */,
-				E38A1FBF23A551BF00D2374F /* UserInterfaceIdiom.mm */,
 				F40D1B68220BDC0F00B49A01 /* WebAutocorrectionContext.h */,
 				86BAAFD529A3CD160013F9A9 /* WebAutocorrectionContext.serialization.in */,
 				F42D633F22A0EFD300D2FB3A /* WebAutocorrectionData.h */,
@@ -17327,7 +17322,6 @@
 				5C411DAA27CED4220068241A /* UnifiedSource128.cpp in Sources */,
 				5C411DAD27CED4220068241A /* UnifiedSource129.cpp in Sources */,
 				5C411DA727CED4220068241A /* UnifiedSource130.cpp in Sources */,
-				E38A1FC023A551BF00D2374F /* UserInterfaceIdiom.mm in Sources */,
 				CD491B0D1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp in Sources */,
 				CD491B171E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp in Sources */,
 				3F418EF91887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp in Sources */,

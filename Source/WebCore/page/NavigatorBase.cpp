@@ -46,7 +46,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include "Device.h"
+#import <pal/system/ios/Device.h>
 #endif
 
 #ifndef WEBCORE_NAVIGATOR_PRODUCT
@@ -97,7 +97,7 @@ String NavigatorBase::platform() const
     });
     return platformName->isolatedCopy();
 #elif PLATFORM(IOS_FAMILY)
-    return deviceName();
+    return PAL::deviceName();
 #elif OS(MACOS)
     return "MacIntel"_s;
 #elif OS(WINDOWS)
