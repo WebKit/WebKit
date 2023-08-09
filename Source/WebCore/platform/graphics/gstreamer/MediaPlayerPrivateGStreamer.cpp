@@ -3873,6 +3873,9 @@ RefPtr<VideoFrame> MediaPlayerPrivateGStreamer::videoFrameForCurrentTime()
     auto* buffer = gst_sample_get_buffer(m_sample.get());
     auto frame = VideoFrameGStreamer::createWrappedSample(m_sample.get(), fromGstClockTime(GST_BUFFER_PTS(buffer)));
     auto convertedSample = frame->downloadSample(GST_VIDEO_FORMAT_BGRA);
+    if (!convertedSample)
+        return nullptr;
+
     auto size = getVideoResolutionFromCaps(gst_sample_get_caps(m_sample.get())).value_or(FloatSize { 0, 0 });
     return VideoFrameGStreamer::create(WTFMove(convertedSample), size);
 }
