@@ -281,8 +281,7 @@ public:
     template<typename Functor>
     bool removeIf(Functor&& functor)
     {
-        m_operationCountSinceLastCleanup = 0;
-        return m_map.removeIf([&](auto& entry) {
+        bool result = m_map.removeIf([&](auto& entry) {
             auto* key = static_cast<KeyType*>(entry.key->template get<KeyType>());
             bool isReleasedWeakKey = !key;
             if (isReleasedWeakKey)
@@ -290,12 +289,14 @@ public:
             PeekType peek { *key, entry.value };
             return functor(peek);
         });
+        cleanupHappened();
+        return result;
     }
 
     void clear()
     {
-        m_operationCountSinceLastCleanup = 0;
         m_map.clear();
+        cleanupHappened();
     }
 
     unsigned capacity() const { return m_map.capacity(); }
@@ -321,7 +322,7 @@ public:
         if (result)
             increaseOperationCountSinceLastCleanup(count);
         else
-            m_operationCountSinceLastCleanup = 0;
+            cleanupHappened();
         return result;
     }
 
@@ -333,8 +334,9 @@ public:
 
     NEVER_INLINE bool removeNullReferences()
     {
-        m_operationCountSinceLastCleanup = 0;
-        return m_map.removeIf([](auto& iterator) { return !iterator.key.get(); });
+        bool result = m_map.removeIf([](auto& iterator) { return !iterator.key.get(); });
+        cleanupHappened();
+        return result;
     }
 
 #if ASSERT_ENABLED
@@ -344,6 +346,12 @@ public:
 #endif
 
 private:
+    ALWAYS_INLINE void cleanupHappened() const
+    {
+        m_operationCountSinceLastCleanup = 0;
+        m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, m_map.size()) * 2;
+    }
+
     ALWAYS_INLINE unsigned increaseOperationCountSinceLastCleanup(unsigned operationsPerformed = 1) const
     {
         unsigned currentCount = m_operationCountSinceLastCleanup;
@@ -351,14 +359,11 @@ private:
         return currentCount;
     }
 
-    static constexpr unsigned initialMaxOperationCountWithoutCleanup = 512;
     ALWAYS_INLINE void amortizedCleanupIfNeeded(unsigned operationsPerformed = 1) const
     {
         unsigned currentCount = increaseOperationCountSinceLastCleanup(operationsPerformed);
-        if (currentCount / 2 > m_map.size() || currentCount > m_maxOperationCountWithoutCleanup) {
-            bool didRemove = const_cast<WeakHashMap&>(*this).removeNullReferences();
-            m_maxOperationCountWithoutCleanup = didRemove ? std::max(initialMaxOperationCountWithoutCleanup, m_maxOperationCountWithoutCleanup / 2) : m_maxOperationCountWithoutCleanup * 2;
-        }
+        if (currentCount > m_maxOperationCountWithoutCleanup)
+            const_cast<WeakHashMap&>(*this).removeNullReferences();
     }
 
     template <typename T>
@@ -377,8 +382,8 @@ private:
     }
 
     WeakHashImplMap m_map;
-    mutable unsigned m_operationCountSinceLastCleanup { 0 }; // FIXME: Store this as a HashTable meta data.
-    mutable unsigned m_maxOperationCountWithoutCleanup { initialMaxOperationCountWithoutCleanup };
+    mutable unsigned m_operationCountSinceLastCleanup { 0 };
+    mutable unsigned m_maxOperationCountWithoutCleanup { 0 };
 
     template <typename, typename, typename, typename> friend class WeakHashMapIteratorBase;
 };
