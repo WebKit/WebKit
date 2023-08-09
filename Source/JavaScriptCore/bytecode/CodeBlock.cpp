@@ -2970,11 +2970,10 @@ bool CodeBlock::shouldOptimizeNow()
             numberOfSamplesInProfiles, ValueProfile::numberOfBuckets * numberOfNonArgumentValueProfiles());
     }
 
-    if (static_cast<unsigned>(m_optimizationDelayCounter) + 1 >= Options::minimumOptimizationDelay()) {
-        if ((!numberOfNonArgumentValueProfiles() || (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles() >= (Options::desiredProfileLivenessRate() / (static_cast<unsigned>(m_optimizationDelayCounter) + 1)))
-            && (!totalNumberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / totalNumberOfValueProfiles() >= (Options::desiredProfileFullnessRate() / (static_cast<unsigned>(m_optimizationDelayCounter) + 1))))
-            return true;
-    }
+    if ((!numberOfNonArgumentValueProfiles() || (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles() >= Options::desiredProfileLivenessRate())
+        && (!totalNumberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / totalNumberOfValueProfiles() >= Options::desiredProfileFullnessRate())
+        && static_cast<unsigned>(m_optimizationDelayCounter) + 1 >= Options::minimumOptimizationDelay())
+        return true;
     
     ASSERT(m_optimizationDelayCounter < std::numeric_limits<uint8_t>::max());
     m_optimizationDelayCounter++;
