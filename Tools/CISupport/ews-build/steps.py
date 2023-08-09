@@ -947,7 +947,7 @@ class CleanWorkingDirectory(shell.ShellCommandNewStyle):
     def run(self):
         platform = self.getProperty('platform')
         if platform in ('gtk', 'wpe'):
-            self.setCommand(self.command + ['--keep-jhbuild-directory'])
+            self.command = self.command + ['--keep-jhbuild-directory']
         return super().run()
 
 

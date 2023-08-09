@@ -3466,6 +3466,19 @@ class TestCleanWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Cleaned working directory')
         return self.runStep()
 
+    def test_success_wpe(self):
+        self.setupStep(CleanWorkingDirectory())
+        self.setProperty('platform', 'wpe')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/clean-webkit', '--keep-jhbuild-directory'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned working directory')
+        return self.runStep()
+
     def test_failure(self):
         self.setupStep(CleanWorkingDirectory())
         self.expectRemoteCommands(
