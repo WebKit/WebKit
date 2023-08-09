@@ -932,10 +932,7 @@ void ProgramExecutableVk::addImageDescriptorSetDesc(const gl::ProgramExecutable 
         // The front-end always binds array image units sequentially.
         const gl::ImageBinding &imageBinding = imageBindings[imageIndex];
         uint32_t arraySize = static_cast<uint32_t>(imageBinding.boundImageUnits.size());
-        for (unsigned int outerArraySize : imageUniform.outerArraySizes)
-        {
-            arraySize *= outerArraySize;
-        }
+        arraySize *= imageUniform.outerArraySizeProduct;
 
         const gl::ShaderType firstShaderType = imageUniform.getFirstActiveShaderType();
         const ShaderInterfaceVariableInfo &info =
@@ -1009,10 +1006,7 @@ angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
         // The front-end always binds array sampler units sequentially.
         const gl::SamplerBinding &samplerBinding = samplerBindings[textureIndex];
         uint32_t arraySize = static_cast<uint32_t>(samplerBinding.boundTextureUnits.size());
-        for (unsigned int outerArraySize : samplerUniform.outerArraySizes)
-        {
-            arraySize *= outerArraySize;
-        }
+        arraySize *= samplerUniform.outerArraySizeProduct;
 
         const gl::ShaderType firstShaderType    = samplerUniform.getFirstActiveShaderType();
         const ShaderInterfaceVariableInfo &info = mVariableInfoMap.getVariableById(

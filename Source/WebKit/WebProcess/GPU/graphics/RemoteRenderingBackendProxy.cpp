@@ -378,7 +378,7 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
         if (!identifier)
             return nullptr;
 
-        auto* buffer = m_remoteResourceCacheProxy.cachedImageBuffer(*identifier);
+        auto buffer = m_remoteResourceCacheProxy.cachedImageBuffer(*identifier);
         if (!buffer)
             return nullptr;
 
@@ -457,7 +457,7 @@ void RemoteRenderingBackendProxy::didPaintLayers()
 bool RemoteRenderingBackendProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::RemoteImageBufferProxy::messageReceiverName()) {
-        auto* imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(RenderingResourceIdentifier { decoder.destinationID() });
+        auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(RenderingResourceIdentifier { decoder.destinationID() });
         if (imageBuffer)
             imageBuffer->didReceiveMessage(connection, decoder);
         // Messages to already removed instances are ok.

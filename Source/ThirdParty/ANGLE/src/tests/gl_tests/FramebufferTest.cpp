@@ -479,6 +479,86 @@ TEST_P(FramebufferTest_ES3, SubInvalidatePartial)
     EXPECT_PIXEL_COLOR_EQ(kWidth - 1, kHeight - 1, GLColor::red);
 }
 
+// Test that invalidating depth/stencil of the default framebuffer doesn't crash.
+TEST_P(FramebufferTest_ES3, InvalidateDefaultFramebufferDepthStencil)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    std::array<GLenum, 2> attachments = {GL_DEPTH, GL_STENCIL};
+
+    // Invalidate default framebuffer depth/stencil attachments
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 2, attachments.data());
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that invalidating color of the default framebuffer doesn't crash.
+TEST_P(FramebufferTest_ES3, InvalidateDefaultFramebufferColor)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    std::array<GLenum, 1> attachments = {GL_COLOR};
+
+    // Invalidate default framebuffer color attachment.
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, attachments.data());
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that invalidating all attachments on the default framebuffer doesn't crash.
+TEST_P(FramebufferTest_ES3, InvalidateDefaultFramebuffer)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    std::array<GLenum, 3> attachments = {GL_COLOR, GL_DEPTH, GL_STENCIL};
+
+    // Invalidate all default framebuffer attachments.
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 3, attachments.data());
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that invalidating combined depth/stencil attachment doesn't crash.
+TEST_P(FramebufferTest_ES3, InvalidateDepthStencil)
+{
+    // Create the framebuffer that will be invalidated
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 2, 2);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthStencil);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    EXPECT_GL_NO_ERROR();
+
+    std::array<GLenum, 2> attachments = {GL_STENCIL_ATTACHMENT, GL_DEPTH_ATTACHMENT};
+
+    // Invalidate both depth and stencil.
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 2, attachments.data());
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that invalidating stencil-only attachment doesn't crash.
+TEST_P(FramebufferTest_ES3, InvalidateStencilOnly)
+{
+    // Create the framebuffer that will be invalidated
+    GLRenderbuffer stencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, stencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, 2, 2);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, stencil);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    EXPECT_GL_NO_ERROR();
+
+    std::array<GLenum, 1> attachments = {GL_STENCIL_ATTACHMENT};
+
+    // Invalidate both depth and stencil.
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, attachments.data());
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test that invalidating stencil of a depth-only attachment doesn't crash.
 TEST_P(FramebufferTest_ES3, DepthOnlyAttachmentInvalidateStencil)
 {
@@ -1218,6 +1298,74 @@ TEST_P(FramebufferTest_ES3, RenderSharedExponent)
     EXPECT_PIXEL_COLOR32F_EQ(0, 0, kFloatRed);
 }
 
+// Test color write masks with GL_RGB9_E5 color buffers.
+TEST_P(FramebufferTest_ES3, RenderSharedExponentWithMask)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_QCOM_render_shared_exponent"));
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+layout(location = 0) out vec4 color0;
+layout(location = 1) out vec4 color1;
+void main()
+{
+    color0 = vec4(1.0, 0.0, 0.0, 1.0);
+    color1 = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLRenderbuffer rb0;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb0);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB9_E5, 4, 4);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb0);
+
+    GLRenderbuffer rb1;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb1);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 4, 4);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER, rb1);
+
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    for (int mask = 0; mask < 16; mask++)
+    {
+        glColorMask(mask & 1, mask & 2, mask & 4, mask & 8);
+        for (const bool enableSharedExponentAttachment : {false, true})
+        {
+            GLenum bufs[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+            bufs[0]        = enableSharedExponentAttachment ? GL_COLOR_ATTACHMENT0 : GL_NONE;
+            glDrawBuffers(2, bufs);
+
+            auto expectError = [](bool enabled, int mask) {
+                if (!enabled || mask == 0 || mask == 8 || mask == 7 || mask == 15)
+                {
+                    EXPECT_GL_NO_ERROR();
+                }
+                else
+                {
+                    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+                }
+            };
+
+            drawQuad(program, essl3_shaders::PositionAttrib(), 0.0f);
+            expectError(enableSharedExponentAttachment, mask);
+
+            glClear(GL_COLOR_BUFFER_BIT);
+            expectError(enableSharedExponentAttachment, mask);
+
+            GLfloat clearValuef[4] = {};
+            glClearBufferfv(GL_COLOR, 0, clearValuef);
+            expectError(enableSharedExponentAttachment, mask);
+            glClearBufferfv(GL_COLOR, 1, clearValuef);
+            EXPECT_GL_NO_ERROR();
+        }
+    }
+}
+
 // Test that R8_SNORM, RG8_SNORM, and RGBA8_SNORM are renderable with the extension.
 TEST_P(FramebufferTest_ES3, RenderSnorm8)
 {
@@ -1242,6 +1390,69 @@ TEST_P(FramebufferTest_ES3, RenderSnorm8)
         glUniform4f(colorLocation, -1.0f, -0.5f, -0.25f, -0.125f);
         drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
         ASSERT_GL_NO_ERROR();
+
+        if (format == GL_R8_SNORM)
+        {
+            EXPECT_PIXEL_8S_NEAR(0, 0, -127, 0, 0, 127, 2);
+        }
+        else if (format == GL_RG8_SNORM)
+        {
+            EXPECT_PIXEL_8S_NEAR(0, 0, -127, -64, 0, 127, 2);
+        }
+        else if (format == GL_RGBA8_SNORM)
+        {
+            EXPECT_PIXEL_8S_NEAR(0, 0, -127, -64, -32, -16, 2);
+        }
+    };
+
+    test(GL_R8_SNORM);
+    test(GL_RG8_SNORM);
+    test(GL_RGBA8_SNORM);
+}
+
+// Test that non-trivial, e.g., reversed, blits are supported for signed normalized formats.
+TEST_P(FramebufferTest_ES3, BlitReversedSnorm8)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_render_snorm"));
+
+    auto test = [&](GLenum format) {
+        GLRenderbuffer rbo1;
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo1);
+        glRenderbufferStorage(GL_RENDERBUFFER, format, 4, 4);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo1;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo1);
+        glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo1);
+        ASSERT_GL_NO_ERROR();
+
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+        glUseProgram(program);
+        GLint colorLocation = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+        glUniform4f(colorLocation, -1.0f, -0.5f, -0.25f, -0.125f);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo1);
+
+        GLRenderbuffer rbo2;
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo2);
+        glRenderbufferStorage(GL_RENDERBUFFER, format, 4, 4);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo2;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo2);
+        glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo2);
+        ASSERT_GL_NO_ERROR();
+
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+        glBlitFramebuffer(0, 0, 4, 4, 4, 4, 0, 0, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo2);
 
         if (format == GL_R8_SNORM)
         {
@@ -2280,6 +2491,17 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitDifferentFormats)
                  nullptr);
     glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture, 0);
+
+    // Another attachment of the same format as the blit source
+    // to ensure that it does not confuse the backend.
+    GLTexture resolveTexture2;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, resolveTexture2, 0);
+
+    GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, drawBuffers);
+
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, msaaFBO);
@@ -2288,12 +2510,16 @@ TEST_P(FramebufferTest_ES31, MultisampleResolveWithBlitDifferentFormats)
     ASSERT_GL_NO_ERROR();
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
-    constexpr uint8_t kHalfPixelGradient = 256 / kSize / 2;
-    EXPECT_PIXEL_NEAR(0, 0, kHalfPixelGradient, kHalfPixelGradient, 0, 255, 1.0);
-    EXPECT_PIXEL_NEAR(kSize - 1, 0, 255 - kHalfPixelGradient, kHalfPixelGradient, 0, 255, 1.0);
-    EXPECT_PIXEL_NEAR(0, kSize - 1, kHalfPixelGradient, 255 - kHalfPixelGradient, 0, 255, 1.0);
-    EXPECT_PIXEL_NEAR(kSize - 1, kSize - 1, 255 - kHalfPixelGradient, 255 - kHalfPixelGradient, 0,
-                      255, 1.0);
+    for (const GLenum buffer : {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1})
+    {
+        glReadBuffer(buffer);
+        constexpr uint8_t kHalfPixelGradient = 256 / kSize / 2;
+        EXPECT_PIXEL_NEAR(0, 0, kHalfPixelGradient, kHalfPixelGradient, 0, 255, 1.0);
+        EXPECT_PIXEL_NEAR(kSize - 1, 0, 255 - kHalfPixelGradient, kHalfPixelGradient, 0, 255, 1.0);
+        EXPECT_PIXEL_NEAR(0, kSize - 1, kHalfPixelGradient, 255 - kHalfPixelGradient, 0, 255, 1.0);
+        EXPECT_PIXEL_NEAR(kSize - 1, kSize - 1, 255 - kHalfPixelGradient, 255 - kHalfPixelGradient,
+                          0, 255, 1.0);
+    }
 }
 
 // Test resolving a multisampled texture with blit after drawing to mulitiple FBOs.

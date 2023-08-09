@@ -391,15 +391,13 @@ ObjectPropertyConditionSet generateConditionsForIndexedMiss(VM& vm, JSCell* owne
 
 ObjectPropertyConditionSet generateConditionsForPrototypePropertyHit(
     VM& vm, JSCell* owner, JSGlobalObject* globalObject, Structure* headStructure, JSObject* prototype,
-    UniquedStringImpl* uid, PropertyCondition::Kind prototypeConditionKind)
+    UniquedStringImpl* uid)
 {
-    ASSERT(prototypeConditionKind == PropertyCondition::Presence || prototypeConditionKind == PropertyCondition::Equivalence);
-
     return generateConditions(
         globalObject, headStructure, prototype, uid,
         [&](auto& conditions, JSObject* object, Structure* structure) -> bool {
             PropertyCondition::Kind kind =
-                object == prototype ? prototypeConditionKind : PropertyCondition::Absence;
+                object == prototype ? PropertyCondition::Presence : PropertyCondition::Absence;
             ObjectPropertyCondition result =
                 generateCondition(vm, owner, object, structure, uid, kind, Concurrency::MainThread);
             if (!result)

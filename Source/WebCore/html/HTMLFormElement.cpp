@@ -263,7 +263,7 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     if (UserGestureIndicator::processingUserGesture()) {
         for (auto& element : m_listedElements) {
             if (auto* formControlElement = dynamicDowncast<HTMLFormControlElement>(*element))
-                formControlElement->setInteractedWithSinceLastFormSubmitEvent(false);
+                formControlElement->setInteractedWithSinceLastFormSubmitEvent(true);
         }
     }
 
@@ -480,7 +480,7 @@ void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomStri
         if (!m_attributes.action().isEmpty()) {
             if (RefPtr f = document().frame()) {
                 if (auto* topFrame = dynamicDowncast<LocalFrame>(f->tree().top()))
-                    MixedContentChecker::checkFormForMixedContent(*topFrame, topFrame->document()->securityOrigin(), document().completeURL(m_attributes.action()));
+                    MixedContentChecker::checkFormForMixedContent(*topFrame, document().completeURL(m_attributes.action()));
             }
         }
         break;

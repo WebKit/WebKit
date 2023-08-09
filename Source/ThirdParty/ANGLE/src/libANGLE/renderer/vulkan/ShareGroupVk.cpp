@@ -46,16 +46,35 @@ constexpr double kMonolithicPipelineJobPeriod = 0.002;
 
 // Time interval in seconds that we should try to prune default buffer pools.
 constexpr double kTimeElapsedForPruneDefaultBufferPool = 0.25;
+
+bool ValidateIdenticalPriority(const egl::ContextMap &contexts, egl::ContextPriority sharedPriority)
+{
+    if (sharedPriority == egl::ContextPriority::InvalidEnum)
+    {
+        return false;
+    }
+
+    for (auto context : contexts)
+    {
+        const ContextVk *contextVk = vk::GetImpl(context.second);
+        if (contextVk->getPriority() != sharedPriority)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
 }  // namespace
 
 // Set to true will log bufferpool stats into INFO stream
 #define ANGLE_ENABLE_BUFFER_POOL_STATS_LOGGING 0
 
-ShareGroupVk::ShareGroupVk()
-    : mContextsPriority(egl::ContextPriority::InvalidEnum),
+ShareGroupVk::ShareGroupVk(const egl::ShareGroupState &state)
+    : ShareGroupImpl(state),
+      mContextsPriority(egl::ContextPriority::InvalidEnum),
       mIsContextsPriorityLocked(false),
-      mLastMonolithicPipelineJobTime(0),
-      mOrphanNonEmptyBufferBlock(false)
+      mLastMonolithicPipelineJobTime(0)
 {
     mLastPruneTime = angle::GetCurrentSystemTime();
     mSizeLimitForBuddyAlgorithm[BufferUsageType::Dynamic] =
@@ -63,23 +82,9 @@ ShareGroupVk::ShareGroupVk()
     mSizeLimitForBuddyAlgorithm[BufferUsageType::Static] = kMaxStaticBufferSizeToUseBuddyAlgorithm;
 }
 
-void ShareGroupVk::addContext(ContextVk *contextVk)
+void ShareGroupVk::onContextAdd()
 {
-    // All mContexts must have mContextsPriority set
-    ASSERT(mContextsPriority != egl::ContextPriority::InvalidEnum);
-    ASSERT(contextVk->getPriority() == mContextsPriority);
-
-    mContexts.insert(contextVk);
-
-    if (contextVk->getState().hasDisplayTextureShareGroup())
-    {
-        mOrphanNonEmptyBufferBlock = true;
-    }
-}
-
-void ShareGroupVk::removeContext(ContextVk *contextVk)
-{
-    mContexts.erase(contextVk);
+    ASSERT(ValidateIdenticalPriority(getContexts(), mContextsPriority));
 }
 
 angle::Result ShareGroupVk::unifyContextsPriority(ContextVk *newContextVk)
@@ -90,7 +95,7 @@ angle::Result ShareGroupVk::unifyContextsPriority(ContextVk *newContextVk)
     if (mContextsPriority == egl::ContextPriority::InvalidEnum)
     {
         ASSERT(!mIsContextsPriorityLocked);
-        ASSERT(mContexts.empty());
+        ASSERT(getContexts().empty());
         mContextsPriority = newContextPriority;
         return angle::Result::Continue;
     }
@@ -131,16 +136,16 @@ angle::Result ShareGroupVk::updateContextsPriority(ContextVk *contextVk,
     ASSERT(newPriority != mContextsPriority);
     if (mContextsPriority == egl::ContextPriority::InvalidEnum)
     {
-        ASSERT(mContexts.empty());
+        ASSERT(getContexts().empty());
         mContextsPriority = newPriority;
         return angle::Result::Continue;
     }
 
     vk::ProtectionTypes protectionTypes;
     protectionTypes.set(contextVk->getProtectionType());
-    for (ContextVk *ctx : mContexts)
+    for (auto context : getContexts())
     {
-        protectionTypes.set(ctx->getProtectionType());
+        protectionTypes.set(vk::GetImpl(context.second)->getProtectionType());
     }
 
     {
@@ -151,10 +156,12 @@ angle::Result ShareGroupVk::updateContextsPriority(ContextVk *contextVk,
                                                      newPriority, index.get()));
     }
 
-    for (ContextVk *ctx : mContexts)
+    for (auto context : getContexts())
     {
-        ASSERT(ctx->getPriority() == mContextsPriority);
-        ctx->setPriority(newPriority);
+        ContextVk *sharedContextVk = vk::GetImpl(context.second);
+
+        ASSERT(sharedContextVk->getPriority() == mContextsPriority);
+        sharedContextVk->setPriority(newPriority);
     }
     mContextsPriority = newPriority;
 
@@ -171,7 +178,10 @@ void ShareGroupVk::onDestroy(const egl::Display *display)
         {
             if (pool)
             {
-                pool->destroy(renderer, mOrphanNonEmptyBufferBlock);
+                // If any context uses display texture share group, it is expected that a
+                // BufferBlock may still in used by textures that outlived ShareGroup.  The
+                // non-empty BufferBlock will be put into RendererVk's orphan list instead.
+                pool->destroy(renderer, mState.hasAnyContextWithDisplayTextureShareGroup());
             }
         }
     }

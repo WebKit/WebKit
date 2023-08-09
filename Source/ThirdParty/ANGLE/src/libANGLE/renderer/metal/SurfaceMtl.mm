@@ -761,7 +761,7 @@ egl::Error OffscreenSurfaceMtl::bindTexImage(const gl::Context *context,
                                              EGLint buffer)
 {
     ContextMtl *contextMtl = mtl::GetImpl(context);
-    contextMtl->flushCommandBuffer(mtl::WaitUntilScheduled);
+    contextMtl->flushCommandBuffer(mtl::NoWait);
 
     // Initialize offscreen textures if needed:
     ANGLE_TO_EGL_TRY(ensureTexturesSizeCorrect(context));

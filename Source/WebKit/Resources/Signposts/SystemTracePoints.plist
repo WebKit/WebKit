@@ -57,6 +57,32 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Incremental Sweep</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>2511</string>
+                 <key>CodeEnd</key>
+                 <string>2512</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Heap Size</string>
+                     <key>Arg2</key>
+                     <string>Heap Capacity</string>
+                 </dict>
+                 <key>ArgValueTypesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>UInt64</string>
+                     <key>Arg2</key>
+                     <string>UInt64</string>
+                 </dict>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Main Resource Load</string>
                  <key>Type</key>
                  <string>Interval</string>
@@ -439,6 +465,28 @@
                  <string>5045</string>
                  <key>CodeEnd</key>
                  <string>5046</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Perform opportunistically scheduled tasks</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5047</string>
+                 <key>CodeEnd</key>
+                 <string>5048</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Time remaining (microseconds)</string>
+                 </dict>
+                 <key>ArgValueTypesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>UInt64</string>
+                 </dict>
              </dict>
              <dict>
                  <key>Name</key>

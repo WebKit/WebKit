@@ -571,7 +571,8 @@ bool ValidateScissorIndexedv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribL1d(const Context *context,
+bool ValidateVertexAttribL1d(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLdouble x)
@@ -579,7 +580,8 @@ bool ValidateVertexAttribL1d(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribL1dv(const Context *context,
+bool ValidateVertexAttribL1dv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLdouble *v)
@@ -587,7 +589,8 @@ bool ValidateVertexAttribL1dv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribL2d(const Context *context,
+bool ValidateVertexAttribL2d(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLdouble x,
@@ -596,7 +599,8 @@ bool ValidateVertexAttribL2d(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribL2dv(const Context *context,
+bool ValidateVertexAttribL2dv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLdouble *v)
@@ -604,7 +608,8 @@ bool ValidateVertexAttribL2dv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribL3d(const Context *context,
+bool ValidateVertexAttribL3d(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLdouble x,
@@ -614,7 +619,8 @@ bool ValidateVertexAttribL3d(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribL3dv(const Context *context,
+bool ValidateVertexAttribL3dv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLdouble *v)
@@ -622,7 +628,8 @@ bool ValidateVertexAttribL3dv(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribL4d(const Context *context,
+bool ValidateVertexAttribL4d(const PrivateState &state,
+                             ErrorSet *errors,
                              angle::EntryPoint entryPoint,
                              GLuint index,
                              GLdouble x,
@@ -633,7 +640,8 @@ bool ValidateVertexAttribL4d(const Context *context,
     return true;
 }
 
-bool ValidateVertexAttribL4dv(const Context *context,
+bool ValidateVertexAttribL4dv(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint index,
                               const GLdouble *v)
@@ -1088,7 +1096,8 @@ bool ValidateClearNamedFramebufferuiv(const Context *context,
     return true;
 }
 
-bool ValidateClipControl(const Context *context,
+bool ValidateClipControl(const PrivateState &state,
+                         ErrorSet *errors,
                          angle::EntryPoint entryPoint,
                          ClipOrigin originPacked,
                          ClipDepthMode depthPacked)
@@ -2200,7 +2209,8 @@ bool ValidateMultiDrawElementsIndirectCount(const Context *context,
     return true;
 }
 
-bool ValidatePolygonOffsetClamp(const Context *context,
+bool ValidatePolygonOffsetClamp(const PrivateState &state,
+                                ErrorSet *errors,
                                 angle::EntryPoint entryPoint,
                                 GLfloat factor,
                                 GLfloat units,

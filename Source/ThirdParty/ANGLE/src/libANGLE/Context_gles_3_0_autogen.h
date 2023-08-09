@@ -154,10 +154,6 @@
                             const GLfloat *value);                                                 \
     GLboolean unmapBuffer(BufferBinding targetPacked);                                             \
     void vertexAttribDivisor(GLuint index, GLuint divisor);                                        \
-    void vertexAttribI4i(GLuint index, GLint x, GLint y, GLint z, GLint w);                        \
-    void vertexAttribI4iv(GLuint index, const GLint *v);                                           \
-    void vertexAttribI4ui(GLuint index, GLuint x, GLuint y, GLuint z, GLuint w);                   \
-    void vertexAttribI4uiv(GLuint index, const GLuint *v);                                         \
     void vertexAttribIPointer(GLuint index, GLint size, VertexAttribType typePacked,               \
                               GLsizei stride, const void *pointer);                                \
     void waitSync(SyncID syncPacked, GLbitfield flags, GLuint64 timeout);

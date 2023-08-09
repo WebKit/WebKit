@@ -75,7 +75,7 @@ void InitializeViewIDAndInstanceID(const TVariable *viewID,
     initializers->push_back(viewIDInitializer);
 }
 
-// Adds a branch to write int(ViewID_OVR) to either gl_ViewportIndex or gl_Layer. The branch is
+// Write int(ViewID_OVR) to gl_Layer. The assignment is
 // added to the end of the initializers' sequence.
 void SelectViewIndexInVertexShader(const TVariable *viewID,
                                    const TVariable *multiviewBaseViewLayerIndex,
@@ -88,14 +88,6 @@ void SelectViewIndexInVertexShader(const TVariable *viewID,
     TIntermAggregate *viewIDAsInt = TIntermAggregate::CreateConstructor(
         TType(EbtInt, EbpHigh, EvqTemporary), &viewIDSymbolCastArguments);
 
-    // Create a gl_ViewportIndex node.
-    TIntermSymbol *viewportIndexSymbol = new TIntermSymbol(BuiltInVariable::gl_ViewportIndex());
-
-    // Create a { gl_ViewportIndex = int(ViewID_OVR) } node.
-    TIntermBlock *viewportIndexInitializerInBlock = new TIntermBlock();
-    viewportIndexInitializerInBlock->appendStatement(
-        new TIntermBinary(EOpAssign, viewportIndexSymbol, viewIDAsInt));
-
     // Create a gl_Layer node.
     TIntermSymbol *layerSymbol = new TIntermSymbol(BuiltInVariable::gl_LayerVS());
 
@@ -103,22 +95,7 @@ void SelectViewIndexInVertexShader(const TVariable *viewID,
     TIntermBinary *sumOfViewIDAndBaseViewIndex = new TIntermBinary(
         EOpAdd, viewIDAsInt->deepCopy(), new TIntermSymbol(multiviewBaseViewLayerIndex));
 
-    // Create a { gl_Layer = int(ViewID_OVR) + multiviewBaseViewLayerIndex } node.
-    TIntermBlock *layerInitializerInBlock = new TIntermBlock();
-    layerInitializerInBlock->appendStatement(
-        new TIntermBinary(EOpAssign, layerSymbol, sumOfViewIDAndBaseViewIndex));
-
-    // Create a node to compare whether the base view index uniform is less than zero.
-    TIntermBinary *multiviewBaseViewLayerIndexZeroComparison =
-        new TIntermBinary(EOpLessThan, new TIntermSymbol(multiviewBaseViewLayerIndex),
-                          CreateZeroNode(TType(EbtInt, EbpHigh, EvqConst)));
-
-    // Create an if-else statement to select the code path.
-    TIntermIfElse *multiviewBranch =
-        new TIntermIfElse(multiviewBaseViewLayerIndexZeroComparison,
-                          viewportIndexInitializerInBlock, layerInitializerInBlock);
-
-    initializers->push_back(multiviewBranch);
+    initializers->push_back(new TIntermBinary(EOpAssign, layerSymbol, sumOfViewIDAndBaseViewIndex));
 }
 
 }  // namespace
@@ -133,10 +110,9 @@ bool DeclareAndInitBuiltinsForInstancedMultiview(TCompiler *compiler,
 {
     ASSERT(shaderType == GL_VERTEX_SHADER || shaderType == GL_FRAGMENT_SHADER);
 
-    TQualifier viewIDQualifier = (shaderType == GL_VERTEX_SHADER) ? EvqFlatOut : EvqFlatIn;
     const TVariable *viewID =
-        new TVariable(symbolTable, kViewIDVariableName,
-                      new TType(EbtUInt, EbpHigh, viewIDQualifier), SymbolType::AngleInternal);
+        new TVariable(symbolTable, kViewIDVariableName, new TType(EbtUInt, EbpHigh, EvqViewIDOVR),
+                      SymbolType::AngleInternal);
 
     DeclareGlobalVariable(root, viewID);
     if (!ReplaceVariable(compiler, root, BuiltInVariable::gl_ViewID_OVR(), viewID))
@@ -161,7 +137,7 @@ bool DeclareAndInitBuiltinsForInstancedMultiview(TCompiler *compiler,
         InitializeViewIDAndInstanceID(viewID, instanceID, numberOfViews, *symbolTable,
                                       &initializers);
 
-        // The AST transformation which adds the expression to select the viewport index should
+        // The AST transformation which adds the expression to select the layer index should
         // be done only for the GLSL and ESSL output.
         const bool selectView = compileOptions.selectViewInNvGLSLVertexShader;
         // Assert that if the view is selected in the vertex shader, then the output is
@@ -169,7 +145,7 @@ bool DeclareAndInitBuiltinsForInstancedMultiview(TCompiler *compiler,
         ASSERT(!selectView || IsOutputGLSL(shaderOutput) || IsOutputESSL(shaderOutput));
         if (selectView)
         {
-            // Add a uniform to switch between side-by-side and layered rendering.
+            // Add a uniform to pass the base view index.
             const TType *baseLayerIndexVariableType =
                 StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>();
             const TVariable *multiviewBaseViewLayerIndex =
@@ -177,8 +153,7 @@ bool DeclareAndInitBuiltinsForInstancedMultiview(TCompiler *compiler,
                               baseLayerIndexVariableType, SymbolType::AngleInternal);
             DeclareGlobalVariable(root, multiviewBaseViewLayerIndex);
 
-            // Setting a value to gl_ViewportIndex or gl_Layer should happen after ViewID_OVR's
-            // initialization.
+            // Setting a value to gl_Layer should happen after ViewID_OVR's initialization.
             SelectViewIndexInVertexShader(viewID, multiviewBaseViewLayerIndex, &initializers,
                                           *symbolTable);
         }

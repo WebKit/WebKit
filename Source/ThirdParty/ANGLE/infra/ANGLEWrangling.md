@@ -117,12 +117,13 @@ Chrome with the latest ANGLE changes.
 The [ANGLE into Android auto-roller](https://autoroll.skia.org/r/angle-android-autoroll) updates Android with
 the latest ANGLE changes. You must manually approve and land these rolls.
 
-We also use additional auto-rollers to roll third party libraries into ANGLE:
+We also use additional auto-rollers to roll third party libraries into ANGLE and Chromium:
 
  * [SwiftShader into ANGLE](https://autoroll.skia.org/r/swiftshader-angle-autoroll)
  * [vulkan-deps into ANGLE](https://autoroll.skia.org/r/vulkan-deps-angle-autoroll)
  * [VK-GL-CTS into ANGLE](https://autoroll.skia.org/r/vk-gl-cts-angle-autoroll)
  * [Chromium into ANGLE](https://autoroll.skia.org/r/chromium-angle-autoroll)
+ * [SwiftShader into Chromium](https://autoroll.skia.org/r/swiftshader-chromium-autoroll)
 
 **Roller health**: You will be cc'ed on all rolls. Please check failed rolls
   to verify there is no blocking breakage.

@@ -1,6 +1,0 @@
-2d.text.measure.boundingBox.textAlign
-Measurement should be related to textAlignment
-Actual output:
-
-PASS Measurement should be related to textAlignment
-

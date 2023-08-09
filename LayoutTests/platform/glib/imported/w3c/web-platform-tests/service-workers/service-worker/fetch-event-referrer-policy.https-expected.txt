@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: [blocked] The page at https://web-platform.test:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was not allowed to display insecure content from http://web-platform.test:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+CONSOLE MESSAGE: [blocked] The page at https://web-platform.test:9443/service-workers/service-worker/resources/simple.html?referrerPolicy was not allowed to display insecure content from http://web-platform.test:8800/service-workers/service-worker//resources/simple.html?referrerFull.
 
 CONSOLE MESSAGE: Not allowed to request resource
 CONSOLE MESSAGE: Fetch API cannot load http://web-platform.test:8800/service-workers/service-worker//resources/simple.html?referrerFull due to access control checks.

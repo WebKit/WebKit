@@ -52,7 +52,6 @@
 #import "TextCheckingControllerProxy.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
-#import "UserInterfaceIdiom.h"
 #import "ViewGestureGeometryCollector.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
@@ -156,6 +155,7 @@
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/Scope.h>
@@ -5196,7 +5196,7 @@ void WebPage::animationDidFinishForElement(const WebCore::Element& animatedEleme
 
 FloatSize WebPage::screenSizeForFingerprintingProtections(const LocalFrame&, FloatSize defaultSize) const
 {
-    if (!currentUserInterfaceIdiomIsSmallScreen())
+    if (!PAL::currentUserInterfaceIdiomIsSmallScreen())
         return m_viewportConfiguration.minimumLayoutSize();
 
     static constexpr std::array fixedSizes {

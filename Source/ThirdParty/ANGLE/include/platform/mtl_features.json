@@ -383,14 +383,6 @@
             "issue": "http://crbug.com/1423136"
         },
         {
-            "name": "disable_metal_on_gpu_family_1",
-            "category": "Features",
-            "description": [
-                "GPUs that don't support Mac GPU family 2 or greater are unsupported by the Metal backend."
-            ],
-            "issue": "http://anglebug.com/7952"
-        },
-        {
             "name": "disable_metal_on_nvidia",
             "category": "Features",
             "description": [
@@ -404,6 +396,22 @@
             "description": [
                 "Flush after calls to StreamVertexData to work around driver bugs."
             ]
+        },
+        {
+            "name": "require_gpu_family_2",
+            "category": "Features",
+            "description": [
+                "Mac GPU Family 2 is required to support all the features of OpenGL ES 2.0"
+            ],
+            "issue": "http://anglebug.com/7952"
+        },
+        {
+            "name": "require_msl_2_1",
+            "category": "Features",
+            "description": [
+                "MSL 2.1 is required to support all the features of OpenGL ES 2.0"
+            ],
+            "issue": "http://anglebug.com/8258"
         }
     ]
 }

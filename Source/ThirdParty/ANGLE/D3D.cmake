@@ -67,13 +67,6 @@ set(d3d_shared_sources
     "src/libANGLE/renderer/d3d/formatutilsD3D.h"
 )
 
-if(NOT angle_is_winuwp)
-    list(APPEND d3d_shared_sources
-        "src/libANGLE/renderer/d3d/../../../gpu_info_util/SystemInfo.cpp"
-        "src/libANGLE/renderer/d3d/../../../gpu_info_util/SystemInfo.h"
-    )
-endif()
-
 if(angle_enable_d3d9)
     set(d3d9_backend_sources
         "src/libANGLE/renderer/d3d/d3d9/Blit9.cpp"

@@ -51,6 +51,10 @@
 		41E9EE2628BCA19E006A2298 /* SBSStatusBarSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E9EE2528BCA19E006A2298 /* SBSStatusBarSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4450FC9F21F5F602004DFA56 /* QuickLookSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4450FC9D21F5F602004DFA56 /* QuickLookSoftLink.mm */; };
 		4469328B28483EF700614F16 /* FoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4469328A2848321C00614F16 /* FoundationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		44B1A8642A7C334F00DC80A6 /* Device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44B1A8632A7C334F00DC80A6 /* Device.cpp */; };
+		44B1A8672A7C339400DC80A6 /* UserInterfaceIdiom.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44B1A8652A7C339200DC80A6 /* UserInterfaceIdiom.mm */; };
+		44B1A8682A7C5BAD00DC80A6 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = 44B1A8622A7C334D00DC80A6 /* Device.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		44B1A8692A7C606000DC80A6 /* UserInterfaceIdiom.h in Headers */ = {isa = PBXBuildFile; fileRef = 44B1A8662A7C339300DC80A6 /* UserInterfaceIdiom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */; };
 		46FF911929196C73006005B5 /* SleepDisablerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46FF911829196C73006005B5 /* SleepDisablerIOS.mm */; };
 		57F1C90A25DCF0CF00E8F6EA /* CryptoKitPrivateSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57F1C90825DCF0CF00E8F6EA /* CryptoKitPrivateSoftLink.mm */; };
@@ -551,6 +555,10 @@
 		4450FC9D21F5F602004DFA56 /* QuickLookSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLookSoftLink.mm; sourceTree = "<group>"; };
 		4450FC9E21F5F602004DFA56 /* QuickLookSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookSoftLink.h; sourceTree = "<group>"; };
 		4469328A2848321C00614F16 /* FoundationSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FoundationSPI.h; sourceTree = "<group>"; };
+		44B1A8622A7C334D00DC80A6 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		44B1A8632A7C334F00DC80A6 /* Device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Device.cpp; sourceTree = "<group>"; };
+		44B1A8652A7C339200DC80A6 /* UserInterfaceIdiom.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UserInterfaceIdiom.mm; sourceTree = "<group>"; };
+		44B1A8662A7C339300DC80A6 /* UserInterfaceIdiom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserInterfaceIdiom.h; sourceTree = "<group>"; };
 		44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LookupSoftLink.h; sourceTree = "<group>"; };
 		44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LookupSoftLink.mm; sourceTree = "<group>"; };
 		44EEA0FE2747438900594A83 /* NSServicesRolloverButtonCellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSServicesRolloverButtonCellSPI.h; sourceTree = "<group>"; };
@@ -1096,7 +1104,11 @@
 		46FF911529196C02006005B5 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				44B1A8632A7C334F00DC80A6 /* Device.cpp */,
+				44B1A8622A7C334D00DC80A6 /* Device.h */,
 				46FF911829196C73006005B5 /* SleepDisablerIOS.mm */,
+				44B1A8662A7C339300DC80A6 /* UserInterfaceIdiom.h */,
+				44B1A8652A7C339200DC80A6 /* UserInterfaceIdiom.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -1272,6 +1284,7 @@
 				DD20DE1127BC90D80093D175 /* DataDetectorsUISPI.h in Headers */,
 				DD20DE4D27BC90D80093D175 /* DecodeEscapeSequences.h in Headers */,
 				DD20DE4427BC90D80093D175 /* DefaultSearchProvider.h in Headers */,
+				44B1A8682A7C5BAD00DC80A6 /* Device.h in Headers */,
 				DD20DE4E27BC90D80093D175 /* EncodingTables.h in Headers */,
 				DD20DE5E27BC90D80093D175 /* ExportMacros.h in Headers */,
 				DD20DDE527BC90D70093D175 /* FeatureFlagsSPI.h in Headers */,
@@ -1416,6 +1429,7 @@
 				DD20DE5D27BC90D80093D175 /* UnencodableHandling.h in Headers */,
 				DD20DE0C27BC90D80093D175 /* URLFormattingSPI.h in Headers */,
 				DD20DD2527BC90D60093D175 /* UsageTrackingSoftLink.h in Headers */,
+				44B1A8692A7C606000DC80A6 /* UserInterfaceIdiom.h in Headers */,
 				DD20DD1927BC90D60093D175 /* VideoToolboxSoftLink.h in Headers */,
 				1CDE179A2A3BC3F9004E646F /* VideoToolboxSPI.h in Headers */,
 				DD20DD2627BC90D60093D175 /* VisionKitCoreSoftLink.h in Headers */,
@@ -1529,6 +1543,7 @@
 				F4E0875C266ACA53000F814A /* DataDetectorsSoftLink.mm in Sources */,
 				7AA1E2D029EF5947002D4455 /* DataDetectorsUISoftLink.mm in Sources */,
 				A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */,
+				44B1A8642A7C334F00DC80A6 /* Device.cpp in Sources */,
 				1C5C57D427571626003B540D /* EncodingTables.cpp in Sources */,
 				F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */,
 				F44291681FA52705002CC93E /* FileSizeFormatterCocoa.mm in Sources */,
@@ -1582,6 +1597,7 @@
 				F44C007C29A06B1C00211F33 /* TranslationUIServicesSoftLink.mm in Sources */,
 				2E1342CD215AA10A007199D2 /* UIKitSoftLink.mm in Sources */,
 				07611DB7243FA5BF00D80704 /* UsageTrackingSoftLink.mm in Sources */,
+				44B1A8672A7C339400DC80A6 /* UserInterfaceIdiom.mm in Sources */,
 				41E1F344248A6A000022D5DE /* VideoToolboxSoftLink.cpp in Sources */,
 				F46B8C4D26740918007A6554 /* VisionKitCoreSoftLink.mm in Sources */,
 				E57B44B729AB462E006069DE /* VisionSoftLink.mm in Sources */,

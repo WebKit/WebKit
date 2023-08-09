@@ -162,9 +162,6 @@ webkit.org/b/235941 accessibility/gtk/text-at-offset-embedded-objects.html [ Fai
 webkit.org/b/235941 accessibility/gtk/text-at-offset-special-chars.html [ Failure ]
 webkit.org/b/235941 accessibility/gtk/caret-offsets.html [ Timeout ]
 
-# canvas
-webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure ]
-
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
 

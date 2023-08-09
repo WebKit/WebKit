@@ -646,6 +646,8 @@ VariableLocation::VariableLocation(unsigned int arrayIndex, unsigned int index)
 }
 
 // SamplerBindings implementation.
+SamplerBinding::SamplerBinding() = default;
+
 SamplerBinding::SamplerBinding(TextureType textureTypeIn,
                                GLenum samplerTypeIn,
                                SamplerFormat formatIn,
@@ -676,7 +678,8 @@ int ProgramBindings::getBindingByName(const std::string &name) const
     return (iter != mBindings.end()) ? iter->second : -1;
 }
 
-int ProgramBindings::getBinding(const sh::ShaderVariable &variable) const
+template <typename T>
+int ProgramBindings::getBinding(const T &variable) const
 {
     return getBindingByName(variable.name);
 }
@@ -742,7 +745,8 @@ int ProgramAliasedBindings::getBindingByLocation(GLuint location) const
     return -1;
 }
 
-int ProgramAliasedBindings::getBinding(const sh::ShaderVariable &variable) const
+template <typename T>
+int ProgramAliasedBindings::getBinding(const T &variable) const
 {
     const std::string &name = variable.name;
 
@@ -778,6 +782,10 @@ int ProgramAliasedBindings::getBinding(const sh::ShaderVariable &variable) const
 
     return getBindingByName(name);
 }
+template int ProgramAliasedBindings::getBinding<gl::UsedUniform>(
+    const gl::UsedUniform &variable) const;
+template int ProgramAliasedBindings::getBinding<sh::ShaderVariable>(
+    const sh::ShaderVariable &variable) const;
 
 ProgramAliasedBindings::const_iterator ProgramAliasedBindings::begin() const
 {
@@ -806,6 +814,8 @@ ImageBinding::ImageBinding(GLuint imageUnit, size_t count, TextureType textureTy
         boundImageUnits.push_back(imageUnit + static_cast<GLuint>(index));
     }
 }
+
+ImageBinding::ImageBinding() = default;
 
 ImageBinding::ImageBinding(const ImageBinding &other) = default;
 
@@ -3522,6 +3532,8 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
 
     stream.writeInt(angle::GetANGLESHVersion());
 
+    stream.writeString(context->getRendererString());
+
     // nullptr context is supported when computing binary length.
     if (context)
     {
@@ -3629,6 +3641,13 @@ angle::Result Program::deserialize(const Context *context,
     if (angleSHVersion != angle::GetANGLESHVersion())
     {
         infoLog << "cannot load program binaries across different angle sh version.";
+        return angle::Result::Stop;
+    }
+
+    std::string rendererString = stream.readString();
+    if (rendererString != context->getRendererString())
+    {
+        infoLog << "Cannot load program binary due to changed renderer string.";
         return angle::Result::Stop;
     }
 

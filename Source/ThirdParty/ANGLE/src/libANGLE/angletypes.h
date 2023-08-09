@@ -990,6 +990,8 @@ template <typename T>
 using TransformFeedbackBuffersArray =
     std::array<T, gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS>;
 
+using ClipDistanceEnableBits = angle::BitSet32<IMPLEMENTATION_MAX_CLIP_DISTANCES>;
+
 template <typename T>
 using QueryTypeMap = angle::PackedEnumMap<QueryType, T>;
 

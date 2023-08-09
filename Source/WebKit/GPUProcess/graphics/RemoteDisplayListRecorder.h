@@ -170,7 +170,7 @@ private:
     void setSharedVideoFrameMemory(SharedMemory::Handle&&);
 #endif
 
-    WeakPtr<WebCore::ImageBuffer> m_imageBuffer;
+    ThreadSafeWeakPtr<WebCore::ImageBuffer> m_imageBuffer;
     QualifiedRenderingResourceIdentifier m_imageBufferIdentifier;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
     RefPtr<RemoteRenderingBackend> m_renderingBackend;

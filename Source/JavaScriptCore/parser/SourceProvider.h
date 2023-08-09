@@ -75,6 +75,7 @@ class UnlinkedFunctionCodeBlock;
 
         // This is NOT the path that should be used for computing relative paths from a script. Use SourceOrigin's URL for that, the values may or may not be the same...
         const String& sourceURL() const { return m_sourceURL; }
+        const String& sourceURLStripped();
         const String& preRedirectURL() const { return m_preRedirectURL; }
         const String& sourceURLDirective() const { return m_sourceURLDirective; }
         const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
@@ -98,6 +99,7 @@ class UnlinkedFunctionCodeBlock;
         SourceProviderSourceType m_sourceType;
         SourceOrigin m_sourceOrigin;
         String m_sourceURL;
+        String m_sourceURLStripped;
         String m_preRedirectURL;
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;

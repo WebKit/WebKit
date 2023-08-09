@@ -1,6 +1,0 @@
-canvas-filter-sequence-conversion
-Test converting types into sequences
-Actual output:
-
-FAIL Test pixels on CanvasFilter() various inputs to tableValues (which is a sequence) ctx.reset is not a function. (In 'ctx.reset()', 'ctx.reset' is undefined)
-

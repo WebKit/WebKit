@@ -40,6 +40,14 @@
 
 #import <pal/mac/ScreenCaptureKitSoftLink.h>
 
+// FIXME: Remove this once it is in a public header.
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+@interface SCContentSharingPicker (SCContentSharingPicker_Pending_Public_API)
+- (void)presentPickerUsingContentStyle:(SCShareableContentStyle)contentStyle;
+@end
+#endif
+
 using namespace WebCore;
 
 @interface WebDisplayMediaPromptHelper : NSObject <SCContentSharingSessionProtocol
@@ -432,15 +440,19 @@ bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingPicker(Dis
     ASSERT(useSCContentSharingPicker());
 
     auto configuration = adoptNS([PAL::allocSCContentSharingPickerConfigurationInstance() init]);
+    SCShareableContentStyle shareableContentStyle = SCShareableContentStyleWindow;
     switch (promptType) {
     case DisplayCapturePromptType::Window:
         [configuration setAllowedPickerModes:SCContentSharingPickerModeSingleWindow];
+        shareableContentStyle = SCShareableContentStyleWindow;
         break;
     case DisplayCapturePromptType::Screen:
         [configuration setAllowedPickerModes:SCContentSharingPickerModeSingleDisplay];
+        shareableContentStyle = SCShareableContentStyleDisplay;
         break;
     case DisplayCapturePromptType::UserChoose:
         [configuration setAllowedPickerModes:SCContentSharingPickerModeSingleWindow | SCContentSharingPickerModeSingleDisplay];
+        shareableContentStyle = SCShareableContentStyleNone;
         break;
     }
 
@@ -449,7 +461,11 @@ bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingPicker(Dis
     picker.maximumStreamCount = @(1);
     picker.defaultConfiguration = configuration.get();
     [m_promptHelper startObservingPicker:picker];
-    [picker present];
+
+    if (shareableContentStyle != SCShareableContentStyleNone && [picker respondsToSelector:@selector(presentPickerUsingContentStyle:)])
+        [picker presentPickerUsingContentStyle:shareableContentStyle];
+    else
+        [picker present];
 
     return true;
 #else

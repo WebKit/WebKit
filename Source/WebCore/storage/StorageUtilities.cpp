@@ -32,6 +32,10 @@
 #include <wtf/Scope.h>
 #include <wtf/persistence/PersistentCoders.h>
 
+#if ASSERT_ENABLED
+#include <wtf/RunLoop.h>
+#endif
+
 namespace WebCore {
 namespace StorageUtilities {
 
@@ -82,8 +86,5 @@ bool writeOriginToFile(const String& filePath, const ClientOrigin& origin)
     return true;
 }
 
-} // namespace WebKit
 } // namespace StorageUtilities
-
-
-
+} // namespace WebCore

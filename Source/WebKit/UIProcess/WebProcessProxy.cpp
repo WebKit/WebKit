@@ -2543,6 +2543,12 @@ Logger& WebProcessProxy::logger()
     return *m_logger;
 }
 
+void WebProcessProxy::resetState()
+{
+    m_hasCommittedAnyProvisionalLoads = false;
+    m_hasCommittedAnyMeaningfulProvisionalLoads = false;
+}
+
 TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
 {
     auto appendCount = [&ts](unsigned value, ASCIILiteral description) {

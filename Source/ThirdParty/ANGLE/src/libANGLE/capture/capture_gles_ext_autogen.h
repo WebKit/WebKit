@@ -1957,6 +1957,8 @@ angle::CallCapture CaptureTexBufferRangeEXT(const State &glState,
                                             GLintptr offset,
                                             GLsizeiptr size);
 
+// GL_EXT_texture_compression_astc_decode_mode
+
 // GL_EXT_texture_compression_bptc
 
 // GL_EXT_texture_compression_dxt1

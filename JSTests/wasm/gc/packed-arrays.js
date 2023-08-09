@@ -22,7 +22,7 @@ function testArrayGetPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon_default 0 (i32.const 5))
+          (array.new_default 0 (i32.const 5))
           (i32.const 2)
           (array.get_u 0)))
     `;
@@ -39,7 +39,7 @@ function testArrayGetUWithNewCanonPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0x7FFF_FFFF) (i32.const 5))
+          (array.new 0 (i32.const 0x7FFF_FFFF) (i32.const 5))
           (i32.const 2)
           (array.get_u 0)))
     `;
@@ -55,7 +55,7 @@ function testArrayGetUWithNewCanonPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0xFFFF_FFFF) (i32.const 5))
+          (array.new 0 (i32.const 0xFFFF_FFFF) (i32.const 5))
           (i32.const 2)
           (array.get_u 0)))
     `;
@@ -71,7 +71,7 @@ function testArrayGetUWithNewCanonPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0x4000_0000) (i32.const 5))
+          (array.new 0 (i32.const 0x4000_0000) (i32.const 5))
           (i32.const 2)
           (array.get_u 0)))
     `;
@@ -87,7 +87,7 @@ function testArrayGetUWithNewCanonPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0x80) (i32.const 5))
+          (array.new 0 (i32.const 0x80) (i32.const 5))
           (i32.const 2)
           (array.get_u 0)))
     `;
@@ -103,7 +103,7 @@ function testArrayGetUWithNewCanonPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0xaaaa_aaaa) (i32.const 5))
+          (array.new 0 (i32.const 0xaaaa_aaaa) (i32.const 5))
           (i32.const 2)
           (array.get_u 0)))
     `;
@@ -114,7 +114,7 @@ function testArrayGetUWithNewCanonPacked() {
 }
 
 // These tests test two different things at once (that array.get_s sign-extends properly,
-// and that array.new_canon truncates properly)
+// and that array.new truncates properly)
 function testArrayGetSWithNewCanonPacked() {
     /*
      * maxint32 => truncate to 0xFF (or 0xFFFF) => sign-extend to 0xFFFFFFFF
@@ -125,7 +125,7 @@ function testArrayGetSWithNewCanonPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0x7FFF_FFFF) (i32.const 5))
+          (array.new 0 (i32.const 0x7FFF_FFFF) (i32.const 5))
           (i32.const 2)
           (array.get_s 0)))
     `;
@@ -142,7 +142,7 @@ function testArrayGetSWithNewCanonPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0xFFFF_FFFF) (i32.const 5))
+          (array.new 0 (i32.const 0xFFFF_FFFF) (i32.const 5))
           (i32.const 2)
           (array.get_s 0)))
     `;
@@ -159,7 +159,7 @@ function testArrayGetSWithNewCanonPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0x4000_0000) (i32.const 5))
+          (array.new 0 (i32.const 0x4000_0000) (i32.const 5))
           (i32.const 2)
           (array.get_s 0)))
     `;
@@ -176,7 +176,7 @@ function testArrayGetSWithNewCanonPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0x0000_0080) (i32.const 5))
+          (array.new 0 (i32.const 0x0000_0080) (i32.const 5))
           (i32.const 2)
           (array.get_s 0)))
     `;
@@ -193,7 +193,7 @@ function testArrayGetSWithNewCanonPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0x0000_8000) (i32.const 5))
+          (array.new 0 (i32.const 0x0000_8000) (i32.const 5))
           (i32.const 2)
           (array.get_s 0)))
     `;
@@ -211,7 +211,7 @@ function testArrayGetSWithNewCanonPacked() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0xaaaa_aaaa) (i32.const 5))
+          (array.new 0 (i32.const 0xaaaa_aaaa) (i32.const 5))
           (i32.const 2)
           (array.get_s 0)))
     `;
@@ -228,7 +228,7 @@ function testTypeMismatch64() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i64.const 0) (i32.const 5))
+          (array.new 0 (i64.const 0) (i32.const 5))
           (i32.const 2)
           (array.get_u 0)))
     `),
@@ -246,7 +246,7 @@ function testTypeMismatchArrayGet() {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-          (array.new_canon 0 (i32.const 0) (i32.const 5))
+          (array.new 0 (i32.const 0) (i32.const 5))
           (i32.const 2)
           (array.get 0)))
     `);
@@ -315,7 +315,7 @@ function testTypeError(type, element, elementType) {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-        (array.new_canon_default 0 (i32.const 5))
+        (array.new_default 0 (i32.const 5))
         (i32.const 2)`
         + element +
         `\n(array.set 0)
@@ -346,7 +346,7 @@ function testTrapsOutOfBounds(type, len, index) {
       (module
         (type (array (mut ` + type + `)))
         (func (export "f") (result i32)
-        (array.new_canon_default 0 (i32.const ` + len + `))
+        (array.new_default 0 (i32.const ` + len + `))
         (i32.const ` + index + `)
         (i32.const 17)
         (array.set 0)
@@ -363,7 +363,7 @@ function testSetGetRoundtrip(type, len, index, value) {
         (type (array (mut ` + type + `)))
         (global (mut (ref null 0)) (ref.null 0))
         (func (export "init")
-           (global.set 0 (array.new_canon_default 0 (i32.const ` + len + `))))
+           (global.set 0 (array.new_default 0 (i32.const ` + len + `))))
         (func (export "f") (result i32)
           (array.set 0 (global.get 0) (i32.const ` + index + `) (i32.const ` + value + `))
           (array.get_u 0 (global.get 0) (i32.const ` + index + `))))`);
@@ -378,7 +378,7 @@ function testSetGetTruncate(type, signMode, inValue, outValue) {
         (type (array (mut ` + type + `)))
         (global (mut (ref null 0)) (ref.null 0))
         (func (export "init")
-           (global.set 0 (array.new_canon_default 0 (i32.const 5))))
+           (global.set 0 (array.new_default 0 (i32.const 5))))
         (func (export "f") (result i32)
           (array.set 0 (global.get 0) (i32.const 3) (i32.const ` + inValue + `))
           (array.get_` + signMode + ` 0 (global.get 0) (i32.const 3))))`);
@@ -443,7 +443,7 @@ function testArrayGetUnreachable() {
    (type (array (mut i8)))
    (func (export "f") (result i32)
       (return)
-      (array.new_canon_default 0 (i32.const 5))
+      (array.new_default 0 (i32.const 5))
       (i32.const 2)
       (array.get_s -1)))
 */
@@ -455,7 +455,7 @@ function testArrayGetUnreachable() {
    (type (array (mut i8)))
    (func (export "f") (result i32)
       (return)
-      (array.new_canon_default 0 (i32.const 5))
+      (array.new_default 0 (i32.const 5))
       (i32.const 2)
       (array.get_u -1)))
 */

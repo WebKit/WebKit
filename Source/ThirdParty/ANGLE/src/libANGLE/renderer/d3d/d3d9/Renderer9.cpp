@@ -217,7 +217,7 @@ egl::Error Renderer9::initialize()
     // inclined to report a lost context, for example when the user switches
     // desktop. Direct3D9Ex is available in Windows Vista and later if suitable drivers are
     // available.
-    if (ANGLE_D3D9EX == ANGLE_ENABLED && Direct3DCreate9ExPtr &&
+    if (static_cast<bool>(ANGLE_D3D9EX) && Direct3DCreate9ExPtr &&
         SUCCEEDED(Direct3DCreate9ExPtr(D3D_SDK_VERSION, &mD3d9Ex)))
     {
         ANGLE_TRACE_EVENT0("gpu.angle", "D3d9Ex_QueryInterface");
@@ -2359,7 +2359,7 @@ bool Renderer9::isRemovedDeviceResettable() const
 {
     bool success = false;
 
-#if ANGLE_D3D9EX == ANGLE_ENABLED
+#if ANGLE_D3D9EX
     IDirect3D9Ex *d3d9Ex = nullptr;
     typedef HRESULT(WINAPI * Direct3DCreate9ExFunc)(UINT, IDirect3D9Ex **);
     Direct3DCreate9ExFunc Direct3DCreate9ExPtr =

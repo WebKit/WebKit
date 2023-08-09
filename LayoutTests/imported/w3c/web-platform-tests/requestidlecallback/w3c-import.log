@@ -23,8 +23,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html
 /LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/callback-removed-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/callback-suspended.html
+/LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/callback-timeRemaining-cross-realm-method.html
 /LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/callback-timeout-when-busy.html
 /LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/callback-timeout.html
 /LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html
 /LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/cancel-invoked.html
+/LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/deadline-after-expired-timer.html
+/LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF.html
+/LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/deadline-max-timeout-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/deadline-max.html
 /LayoutTests/imported/w3c/web-platform-tests/requestidlecallback/idlharness.window.js

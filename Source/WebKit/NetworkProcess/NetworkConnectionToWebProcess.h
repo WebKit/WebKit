@@ -266,15 +266,15 @@ private:
 
     void registerInternalFileBlobURL(const URL&, const String& path, const String& replacementPath, SandboxExtension::Handle&&, const String& contentType);
     void registerInternalBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
-    void registerBlobURL(const URL&, const URL& srcURL, WebCore::PolicyContainer&&);
+    void registerBlobURL(const URL&, const URL& srcURL, WebCore::PolicyContainer&&, const std::optional<WebCore::SecurityOriginData>& topOrigin);
     void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, const String& fileBackedPath, const String& contentType);
     void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, int64_t start, int64_t end, const String& contentType);
     void blobSize(const URL&, CompletionHandler<void(uint64_t)>&&);
-    void unregisterBlobURL(const URL&);
+    void unregisterBlobURL(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin);
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
 
-    void registerBlobURLHandle(const URL&);
-    void unregisterBlobURLHandle(const URL&);
+    void registerBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin);
+    void unregisterBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin);
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
 

@@ -251,41 +251,6 @@ const char *kVkValidationLayerNames[]           = {
     "VK_LAYER_LUNARG_object_tracker", "VK_LAYER_LUNARG_core_validation",
     "VK_LAYER_GOOGLE_unique_objects"};
 
-bool HasValidationLayer(const std::vector<VkLayerProperties> &layerProps, const char *layerName)
-{
-    for (const auto &layerProp : layerProps)
-    {
-        if (std::string(layerProp.layerName) == layerName)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool HasKhronosValidationLayer(const std::vector<VkLayerProperties> &layerProps)
-{
-    return HasValidationLayer(layerProps, kVkKhronosValidationLayerName);
-}
-
-bool HasStandardValidationLayer(const std::vector<VkLayerProperties> &layerProps)
-{
-    return HasValidationLayer(layerProps, kVkStandardValidationLayerName);
-}
-
-bool HasValidationLayers(const std::vector<VkLayerProperties> &layerProps)
-{
-    for (const char *layerName : kVkValidationLayerNames)
-    {
-        if (!HasValidationLayer(layerProps, layerName))
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
 }  // anonymous namespace
 
 const char *VulkanResultString(VkResult result)
@@ -361,23 +326,35 @@ bool GetAvailableValidationLayers(const std::vector<VkLayerProperties> &layerPro
                                   bool mustHaveLayers,
                                   VulkanLayerVector *enabledLayerNames)
 {
-    // Favor unified Khronos layer, but fallback to standard validation
-    if (HasKhronosValidationLayer(layerProps))
+
+    ASSERT(enabledLayerNames);
+    for (const auto &layerProp : layerProps)
     {
-        enabledLayerNames->push_back(kVkKhronosValidationLayerName);
-    }
-    else if (HasStandardValidationLayer(layerProps))
-    {
-        enabledLayerNames->push_back(kVkStandardValidationLayerName);
-    }
-    else if (HasValidationLayers(layerProps))
-    {
-        for (const char *layerName : kVkValidationLayerNames)
+        std::string layerPropLayerName = std::string(layerProp.layerName);
+
+        // Favor unified Khronos layer, but fallback to standard validation
+        if (layerPropLayerName == kVkKhronosValidationLayerName)
         {
-            enabledLayerNames->push_back(layerName);
+            enabledLayerNames->push_back(kVkKhronosValidationLayerName);
+            continue;
+        }
+        else if (layerPropLayerName == kVkStandardValidationLayerName)
+        {
+            enabledLayerNames->push_back(kVkStandardValidationLayerName);
+            continue;
+        }
+
+        for (const char *validationLayerName : kVkValidationLayerNames)
+        {
+            if (layerPropLayerName == validationLayerName)
+            {
+                enabledLayerNames->push_back(validationLayerName);
+                break;
+            }
         }
     }
-    else
+
+    if (enabledLayerNames->size() == 0)
     {
         // Generate an error if the layers were explicitly requested, warning otherwise.
         if (mustHaveLayers)

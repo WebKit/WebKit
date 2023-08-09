@@ -88,6 +88,7 @@ class Object;
 
 namespace PAL {
 class SessionID;
+enum class UserInterfaceIdiom : uint8_t;
 }
 
 namespace WebCore {
@@ -157,7 +158,6 @@ struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
 enum class RemoteWorkerType : uint8_t;
-enum class UserInterfaceIdiom : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
 #if PLATFORM(IOS_FAMILY)
@@ -606,7 +606,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void userInterfaceIdiomDidChange(UserInterfaceIdiom);
+    void userInterfaceIdiomDidChange(PAL::UserInterfaceIdiom);
 
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();

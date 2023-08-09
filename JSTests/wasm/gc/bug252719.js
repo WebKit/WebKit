@@ -24,7 +24,7 @@ function testIntFields() {
       (type $s (struct (field i32) (field i32)))
 
       (func $new (export "new") (result (ref $s))
-         (struct.new_canon $s (i32.const 1) (i32.const 5)))
+         (struct.new $s (i32.const 1) (i32.const 5)))
 
       (func (export "len0") (result i32)
          (struct.get $s 0 (call $new)))

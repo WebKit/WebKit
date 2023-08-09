@@ -3,6 +3,7 @@ URL: http://angleproject.org
 Version: unknown
 License: BSD
 License File: LICENSE
+Shipped: yes
 
 Description:
 The goal of ANGLE is to allow users of multiple operating systems

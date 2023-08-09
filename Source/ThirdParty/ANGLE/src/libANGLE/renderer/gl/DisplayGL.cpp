@@ -120,9 +120,9 @@ StreamProducerImpl *DisplayGL::createStreamProducerD3DTexture(
     return nullptr;
 }
 
-ShareGroupImpl *DisplayGL::createShareGroup()
+ShareGroupImpl *DisplayGL::createShareGroup(const egl::ShareGroupState &state)
 {
-    return new ShareGroupGL();
+    return new ShareGroupGL(state);
 }
 
 egl::Error DisplayGL::makeCurrent(egl::Display *display,

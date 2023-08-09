@@ -178,7 +178,8 @@ class ProgramBindings final : angle::NonCopyable
 
     void bindLocation(GLuint index, const std::string &name);
     int getBindingByName(const std::string &name) const;
-    int getBinding(const sh::ShaderVariable &variable) const;
+    template <typename T>
+    int getBinding(const T &variable) const;
 
     using const_iterator = angle::HashMap<std::string, GLuint>::const_iterator;
     const_iterator begin() const;
@@ -200,7 +201,8 @@ class ProgramAliasedBindings final : angle::NonCopyable
     void bindLocation(GLuint index, const std::string &name);
     int getBindingByName(const std::string &name) const;
     int getBindingByLocation(GLuint location) const;
-    int getBinding(const sh::ShaderVariable &variable) const;
+    template <typename T>
+    int getBinding(const T &variable) const;
 
     using const_iterator = angle::HashMap<std::string, ProgramBinding>::const_iterator;
     const_iterator begin() const;
@@ -386,7 +388,7 @@ class ProgramState final : angle::NonCopyable
     bool mSeparable;
     rx::SpecConstUsageBits mSpecConstUsageBits;
 
-    // ANGLE_multiview.
+    // GL_OVR_multiview / GL_OVR_multiview2
     int mNumViews;
 
     // GL_ANGLE_multi_draw

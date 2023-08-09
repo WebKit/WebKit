@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+// Do not use this class for new code. Use EventLoop's scheduleTask and scheduleRepeatingTask instead.
 class SuspendableTimerBase : private TimerBase, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -76,33 +77,6 @@ private:
 
     bool m_suspended { false };
     bool m_savedIsActive { false };
-};
-
-class SuspendableTimer final : public SuspendableTimerBase {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    template <typename TimerFiredClass, typename TimerFiredBaseClass>
-    SuspendableTimer(ScriptExecutionContext* context, TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
-        : SuspendableTimerBase(context)
-        , m_function(std::bind(function, &object))
-    {
-    }
-
-    SuspendableTimer(ScriptExecutionContext* context, Function<void()>&& function)
-        : SuspendableTimerBase(context)
-        , m_function(WTFMove(function))
-    {
-    }
-
-private:
-    void fired() final
-    {
-        m_function();
-    }
-
-    const char* activeDOMObjectName() const final;
-
-    Function<void()> m_function;
 };
 
 } // namespace WebCore

@@ -1,5 +1,0 @@
-Testing the NULL character
-Actual output:
-
-PASS Testing letter spacing and word spacing
-

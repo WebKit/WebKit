@@ -720,7 +720,7 @@ public:
     unsigned numberOfDFGCompiles() { return 0; }
 #endif
 
-    bool shouldOptimizeNow();
+    bool shouldOptimizeNowFromBaseline();
     void updateAllNonLazyValueProfilePredictions(const ConcurrentJSLocker&);
     void updateAllLazyValueProfilePredictions(const ConcurrentJSLocker&);
     void updateAllArrayProfilePredictions(const ConcurrentJSLocker&);

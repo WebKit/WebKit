@@ -1123,6 +1123,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
 {
+    m_playing = effectiveRate() != 0;
     if (auto player = m_player.get())
         player->rateChanged();
 }

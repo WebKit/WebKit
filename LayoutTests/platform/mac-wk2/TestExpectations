@@ -100,6 +100,8 @@ imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html
 
 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
+http/wpt/content-security-policy/sandbox-manifest-blocked.html [ Pass ]
+http/wpt/content-security-policy/sandbox-manifest-blocked-cross-origin.sub.html [ Pass ]
 applicationmanifest/ [ Pass ]
 
 webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Pass ]
@@ -147,6 +149,16 @@ webanimations/frame-rate [ Pass ]
 imported/w3c/web-platform-tests/file-system-access/ [ Pass ]
 imported/w3c/web-platform-tests/fs/ [ Pass ]
 storage/filesystemaccess/ [ Pass ]
+
+requestidlecallback [ Pass ]
+imported/w3c/web-platform-tests/requestidlecallback [ Pass ]
+imported/w3c/web-platform-tests/requestidlecallback/callback-idle-periods.html [ Skip ]
+imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Skip ]
+imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html [ Skip ]
+imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Pass Failure ]
+imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF.html [ Pass Failure ]
+imported/w3c/web-platform-tests/requestidlecallback/deadline-max-timeout-dynamic.html [ Pass Failure ]
+imported/w3c/web-platform-tests/requestidlecallback/deadline-max.html [ Pass Failure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.

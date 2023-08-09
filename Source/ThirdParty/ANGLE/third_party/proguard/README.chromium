@@ -3,8 +3,9 @@ URL: http://proguard.sourceforge.net/
 Version: 6.0.3
 Date: June 22, 2016
 License: GPL v2
-License File: NOT_SHIPPED
+License File: LICENSE
 Security Critical: no
+Shipped: no
 
 Description:
 This directory includes proguard.jar to allow Chromium to shrink, optimize java

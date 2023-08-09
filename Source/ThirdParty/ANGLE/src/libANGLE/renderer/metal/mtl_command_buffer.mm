@@ -20,6 +20,7 @@
 #include "common/debug.h"
 #include "libANGLE/renderer/metal/mtl_occlusion_query_pool.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
+#include "libANGLE/renderer/metal/mtl_utils.h"
 
 // Use to compare the new values with the values already set in the command encoder:
 static inline bool operator==(const MTLViewport &lhs, const MTLViewport &rhs)
@@ -372,11 +373,6 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
     [encoder setVisibilityResultMode:mode offset:offset];
 }
 
-#if (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_15) || \
-    (defined(__IPHONE_13_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_13_0)
-#    define ANGLE_MTL_USE_RESOURCE_USAGE_STAGES_AVAILABLE 1
-#endif
-
 #if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
     (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
 #    define ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED 1
@@ -388,6 +384,9 @@ inline void UseResourceCmd(id<MTLRenderCommandEncoder> encoder, IntermediateComm
     MTLResourceUsage usage   = stream->fetch<MTLResourceUsage>();
     mtl::RenderStages stages = stream->fetch<mtl::RenderStages>();
     ANGLE_UNUSED_VARIABLE(stages);
+#if ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED
+    [encoder useResource:resource usage:usage stages:stages];
+#else
 #if defined(__IPHONE_13_0) || defined(__MAC_10_15)
     if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13.0))
     {
@@ -400,6 +399,7 @@ inline void UseResourceCmd(id<MTLRenderCommandEncoder> encoder, IntermediateComm
         [encoder useResource:resource usage:usage];
         ANGLE_APPLE_ALLOW_DEPRECATED_END
     }
+#endif
     [resource ANGLE_MTL_RELEASE];
 }
 
@@ -470,6 +470,16 @@ NSString *cppLabelToObjC(const std::string &marker)
     }
     return label;
 }
+
+inline void CheckPrimitiveType(MTLPrimitiveType primitiveType)
+{
+    if (ANGLE_UNLIKELY(primitiveType == MTLPrimitiveTypeInvalid))
+    {
+        // Should have been caught by validation higher up.
+        FATAL() << "invalid primitive type was uncaught by validation";
+    }
+}
+
 }  // namespace
 
 // CommandQueue implementation
@@ -1944,6 +1954,7 @@ RenderCommandEncoder &RenderCommandEncoder::draw(MTLPrimitiveType primitiveType,
 {
     ASSERT(mPipelineStateSet &&
            "Render Pipeline State was never set and we've issued a draw command.");
+    CheckPrimitiveType(primitiveType);
     mHasDrawCalls = true;
     mCommands.push(CmdType::Draw).push(primitiveType).push(vertexStart).push(vertexCount);
 
@@ -1957,6 +1968,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawInstanced(MTLPrimitiveType primi
 {
     ASSERT(mPipelineStateSet &&
            "Render Pipeline State was never set and we've issued a draw command.");
+    CheckPrimitiveType(primitiveType);
     mHasDrawCalls = true;
     mCommands.push(CmdType::DrawInstanced)
         .push(primitiveType)
@@ -1976,6 +1988,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawInstancedBaseInstance(
 {
     ASSERT(mPipelineStateSet &&
            "Render Pipeline State was never set and we've issued a draw command.");
+    CheckPrimitiveType(primitiveType);
     mHasDrawCalls = true;
     mCommands.push(CmdType::DrawInstancedBaseInstance)
         .push(primitiveType)
@@ -1995,6 +2008,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawIndexed(MTLPrimitiveType primiti
 {
     ASSERT(mPipelineStateSet &&
            "Render Pipeline State was never set and we've issued a draw command.");
+    CheckPrimitiveType(primitiveType);
     if (!indexBuffer)
     {
         return *this;
@@ -2022,6 +2036,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawIndexedInstanced(MTLPrimitiveTyp
 {
     ASSERT(mPipelineStateSet &&
            "Render Pipeline State was never set and we've issued a draw command.");
+    CheckPrimitiveType(primitiveType);
     if (!indexBuffer)
     {
         return *this;
@@ -2053,6 +2068,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawIndexedInstancedBaseVertexBaseIn
 {
     ASSERT(mPipelineStateSet &&
            "Render Pipeline State was never set and we've issued a draw command.");
+    CheckPrimitiveType(primitiveType);
     if (!indexBuffer)
     {
         return *this;

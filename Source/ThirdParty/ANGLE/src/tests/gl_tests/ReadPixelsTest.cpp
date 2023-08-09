@@ -346,6 +346,101 @@ TEST_P(ReadPixelsPBOTest, Basic)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test copy to snorm
+TEST_P(ReadPixelsPBOTest, Snorm)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_render_snorm"));
+
+    constexpr GLsizei kSize = 6;
+
+    GLRenderbuffer rbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_SNORM, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glEnable(GL_SCISSOR_TEST);
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glScissor(0, 0, kSize / 2, kSize / 2);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glScissor(kSize / 2, 0, kSize / 2, kSize / 2);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glScissor(0, kSize / 2, kSize / 2, kSize / 2);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+    glScissor(kSize / 2, kSize / 2, kSize / 2, kSize / 2);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    glDisable(GL_SCISSOR_TEST);
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+    glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_BYTE, 0);
+
+    std::vector<GLColor> result(kSize * kSize);
+    void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4, GL_MAP_READ_BIT);
+    memcpy(result.data(), mappedPtr, kSize * kSize * 4);
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    auto verify = [&](const GLColor expect[4]) {
+        for (size_t i = 0; i < kSize; ++i)
+        {
+            for (size_t j = 0; j < kSize; ++j)
+            {
+                uint32_t index = (i < kSize / 2 ? 0 : 1) << 1 | (j < kSize / 2 ? 0 : 1);
+                EXPECT_EQ(result[i * kSize + j], expect[index]) << i << " " << j;
+            }
+        }
+    };
+
+    // The image should have the following colors
+    //
+    //     +---+---+
+    //     | R | G |
+    //     +---+---+
+    //     | B | Y |
+    //     +---+---+
+    //
+    const GLColor kColors[4] = {
+        GLColor(127, 0, 0, 127),
+        GLColor(0, 127, 0, 127),
+        GLColor(0, 0, 127, 127),
+        GLColor(127, 127, 0, 127),
+    };
+    verify(kColors);
+
+    // Test again, but this time with reverse order
+    if (EnsureGLExtensionEnabled("GL_ANGLE_pack_reverse_row_order"))
+    {
+        glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, GL_TRUE);
+        glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_BYTE, 0);
+
+        mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4, GL_MAP_READ_BIT);
+        memcpy(result.data(), mappedPtr, kSize * kSize * 4);
+        glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+        EXPECT_GL_NO_ERROR();
+
+        const GLColor kReversedColors[4] = {
+            GLColor(0, 0, 127, 127),
+            GLColor(127, 127, 0, 127),
+            GLColor(127, 0, 0, 127),
+            GLColor(0, 127, 0, 127),
+        };
+        verify(kReversedColors);
+    }
+}
+
 // Test an error is generated when the PBO is too small.
 TEST_P(ReadPixelsPBOTest, PBOTooSmall)
 {
@@ -401,9 +496,6 @@ TEST_P(ReadPixelsPBOTest, ArrayBufferTarget)
 // Test that using a PBO does not overwrite existing data.
 TEST_P(ReadPixelsPBOTest, ExistingDataPreserved)
 {
-    // TODO(geofflang): Figure out why this fails on AMD OpenGL (http://anglebug.com/1291)
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
-
     // Clear backbuffer to red
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -420,7 +512,8 @@ TEST_P(ReadPixelsPBOTest, ExistingDataPreserved)
 
     // Read 16x16 region from green backbuffer to PBO at offset 16
     glReadPixels(0, 0, 16, 16, GL_RGBA, GL_UNSIGNED_BYTE, reinterpret_cast<void *>(16));
-    void *mappedPtr    = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, 32, GL_MAP_READ_BIT);
+    void *mappedPtr =
+        glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, 17 * sizeof(GLColor), GL_MAP_READ_BIT);
     GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
     EXPECT_GL_NO_ERROR();
 
@@ -781,7 +874,7 @@ TEST_P(ReadPixelsMultisampleTest, BasicClear)
 class ReadPixelsTextureTest : public ANGLETest<>
 {
   public:
-    ReadPixelsTextureTest() : mFBO(0), mTexture(0)
+    ReadPixelsTextureTest() : mFBO(0), mTextureRGBA(0), mTextureBGRA(0)
     {
         setWindowWidth(32);
         setWindowHeight(32);
@@ -793,7 +886,8 @@ class ReadPixelsTextureTest : public ANGLETest<>
 
     void testSetUp() override
     {
-        glGenTextures(1, &mTexture);
+        glGenTextures(1, &mTextureRGBA);
+        glGenTextures(1, &mTextureBGRA);
         glGenFramebuffers(1, &mFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     }
@@ -801,32 +895,68 @@ class ReadPixelsTextureTest : public ANGLETest<>
     void testTearDown() override
     {
         glDeleteFramebuffers(1, &mFBO);
-        glDeleteTextures(1, &mTexture);
+        glDeleteTextures(1, &mTextureRGBA);
+        glDeleteTextures(1, &mTextureBGRA);
     }
 
-    void initTexture(GLenum textureTarget,
-                     GLint levels,
-                     GLint attachmentLevel,
-                     GLint attachmentLayer)
+    void initTextureRGBA(GLenum textureTarget,
+                         GLint levels,
+                         GLint attachmentLevel,
+                         GLint attachmentLayer)
     {
-        glBindTexture(textureTarget, mTexture);
-        glTexStorage3D(textureTarget, levels, GL_RGBA8, 4, 4, 4);
-        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, mTexture, attachmentLevel,
-                                  attachmentLayer);
-        initializeTextureData(textureTarget, levels);
+        glBindTexture(textureTarget, mTextureRGBA);
+        glTexStorage3D(textureTarget, levels, GL_RGBA8, kSize, kSize, kSize);
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, mTextureRGBA,
+                                  attachmentLevel, attachmentLayer);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        ASSERT_GL_NO_ERROR();
+        initializeTextureData(textureTarget, levels, GL_RGBA);
+    }
+
+    void initTextureBGRA(GLenum textureTarget,
+                         GLint levels,
+                         GLint attachmentLevel,
+                         GLint attachmentLayer)
+    {
+        glBindTexture(textureTarget, mTextureBGRA);
+        for (GLint level = 0; level < levels; ++level)
+        {
+            glTexImage3D(textureTarget, level, GL_BGRA_EXT, kSize >> level, kSize >> level,
+                         textureTarget == GL_TEXTURE_3D ? kSize >> level : kSize, 0, GL_BGRA_EXT,
+                         GL_UNSIGNED_BYTE, nullptr);
+        }
+        glTexParameteri(textureTarget, GL_TEXTURE_BASE_LEVEL, 0);
+        glTexParameteri(textureTarget, GL_TEXTURE_MAX_LEVEL, levels - 1);
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, mTextureBGRA,
+                                  attachmentLevel, attachmentLayer);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        ASSERT_GL_NO_ERROR();
+        initializeTextureData(textureTarget, levels, GL_BGRA_EXT);
     }
 
     void testRead(GLenum textureTarget, GLint levels, GLint attachmentLevel, GLint attachmentLayer)
     {
-        initTexture(textureTarget, levels, attachmentLevel, attachmentLayer);
+        initTextureRGBA(textureTarget, levels, attachmentLevel, attachmentLayer);
         verifyColor(attachmentLevel, attachmentLayer);
+
+        // Skip BGRA test on GL/Nvidia, leading to internal incomplete framebuffer error.
+        // http://anglebug.com/8239
+        ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsOpenGL());
+
+        if (IsGLExtensionEnabled("GL_EXT_texture_format_BGRA8888"))
+        {
+            initTextureBGRA(textureTarget, levels, attachmentLevel, attachmentLayer);
+            verifyColor(attachmentLevel, attachmentLayer);
+        }
     }
 
     void initPBO()
     {
+        // Create a buffer big enough to hold mip 0 + allow some offset during readback.
         glGenBuffers(1, &mBuffer);
         glBindBuffer(GL_PIXEL_PACK_BUFFER, mBuffer);
-        glBufferData(GL_PIXEL_PACK_BUFFER, sizeof(angle::GLColor), nullptr, GL_STREAM_COPY);
+        glBufferData(GL_PIXEL_PACK_BUFFER, sizeof(angle::GLColor) * 16 * 2, nullptr,
+                     GL_STREAM_COPY);
         ASSERT_GL_NO_ERROR();
     }
 
@@ -836,8 +966,18 @@ class ReadPixelsTextureTest : public ANGLETest<>
                      GLint attachmentLayer)
     {
         initPBO();
-        initTexture(textureTarget, levels, attachmentLevel, attachmentLayer);
+        initTextureRGBA(textureTarget, levels, attachmentLevel, attachmentLayer);
         verifyPBO(attachmentLevel, attachmentLayer);
+
+        // Skip BGRA test on GL/Nvidia, leading to internal incomplete framebuffer error.
+        // http://anglebug.com/8239
+        ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsOpenGL());
+
+        if (IsGLExtensionEnabled("GL_EXT_texture_format_BGRA8888"))
+        {
+            initTextureBGRA(textureTarget, levels, attachmentLevel, attachmentLayer);
+            verifyPBO(attachmentLevel, attachmentLayer);
+        }
     }
 
     // Give each {level,layer} pair a (probably) unique color via random.
@@ -849,31 +989,36 @@ class ReadPixelsTextureTest : public ANGLETest<>
 
     void verifyColor(GLint level, GLint layer)
     {
-        angle::GLColor colorValue(getColorValue(level, layer));
-        EXPECT_PIXEL_COLOR_EQ(0, 0, colorValue);
+        const angle::GLColor colorValue(getColorValue(level, layer));
+        const GLint size = kSize >> level;
+        EXPECT_PIXEL_RECT_EQ(0, 0, size, size, colorValue);
     }
 
     void verifyPBO(GLint level, GLint layer)
     {
-        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        const GLint size     = kSize >> level;
+        const GLsizei offset = kSize * (level + layer);
+        glReadPixels(0, 0, size, size, GL_RGBA, GL_UNSIGNED_BYTE, reinterpret_cast<void *>(offset));
 
-        angle::GLColor expectedColor(getColorValue(level, layer));
-        void *mapPointer =
-            glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, sizeof(angle::GLColor), GL_MAP_READ_BIT);
+        const std::vector<angle::GLColor> expectedColor(size * size, getColorValue(level, layer));
+        std::vector<angle::GLColor> actualColor(size * size);
+
+        void *mapPointer = glMapBufferRange(GL_PIXEL_PACK_BUFFER, offset,
+                                            sizeof(angle::GLColor) * size * size, GL_MAP_READ_BIT);
         ASSERT_NE(nullptr, mapPointer);
-        angle::GLColor actualColor;
-        memcpy(&actualColor, mapPointer, sizeof(angle::GLColor));
+        memcpy(actualColor.data(), mapPointer, sizeof(angle::GLColor) * size * size);
         glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+
         ASSERT_GL_NO_ERROR();
         EXPECT_EQ(expectedColor, actualColor);
     }
 
-    void initializeTextureData(GLenum textureTarget, GLint levels)
+    void initializeTextureData(GLenum textureTarget, GLint levels, GLenum format)
     {
         for (GLint level = 0; level < levels; ++level)
         {
-            GLint mipSize = 4 >> level;
-            GLint layers  = (textureTarget == GL_TEXTURE_3D ? mipSize : 4);
+            GLint mipSize = kSize >> level;
+            GLint layers  = (textureTarget == GL_TEXTURE_3D ? mipSize : kSize);
 
             size_t layerSize = mipSize * mipSize;
             std::vector<GLuint> textureData(layers * layerSize);
@@ -882,18 +1027,30 @@ class ReadPixelsTextureTest : public ANGLETest<>
             {
                 GLuint colorValue = getColorValue(level, layer);
                 size_t offset     = (layer * layerSize);
+
+                if (format == GL_BGRA_EXT)
+                {
+                    const GLuint rb = colorValue & 0x00FF00FF;
+                    const GLuint br = (rb & 0xFF) << 16 | rb >> 16;
+                    const GLuint ga = colorValue & 0xFF00FF00;
+                    colorValue      = ga | br;
+                }
+
                 std::fill(textureData.begin() + offset, textureData.begin() + offset + layerSize,
                           colorValue);
             }
 
-            glTexSubImage3D(textureTarget, level, 0, 0, 0, mipSize, mipSize, layers, GL_RGBA,
+            glTexSubImage3D(textureTarget, level, 0, 0, 0, mipSize, mipSize, layers, format,
                             GL_UNSIGNED_BYTE, textureData.data());
         }
     }
 
+    static constexpr GLint kSize = 4;
+
     angle::RNG mRNG;
     GLuint mFBO;
-    GLuint mTexture;
+    GLuint mTextureRGBA;
+    GLuint mTextureBGRA;
     GLuint mBuffer;
 };
 
@@ -1031,6 +1188,40 @@ class ReadPixelsErrorTest : public ReadPixelsTest
         glDeleteFramebuffers(1, &mFBO);
     }
 
+    void testUnsupportedTypeConversions(std::vector<GLenum> internalFormats,
+                                        std::vector<GLenum> unsupportedTypes)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+        for (GLenum internalFormat : internalFormats)
+        {
+            GLRenderbuffer rbo;
+            glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+            glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, 1, 1);
+            ASSERT_GL_NO_ERROR();
+
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+            ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+            GLenum implementationFormat, implementationType;
+            glGetIntegerv(GL_IMPLEMENTATION_COLOR_READ_FORMAT,
+                          reinterpret_cast<GLint *>(&implementationFormat));
+            ASSERT_GL_NO_ERROR();
+            glGetIntegerv(GL_IMPLEMENTATION_COLOR_READ_TYPE,
+                          reinterpret_cast<GLint *>(&implementationType));
+            ASSERT_GL_NO_ERROR();
+
+            for (GLenum type : unsupportedTypes)
+            {
+                uint8_t pixel[8] = {};
+                if (implementationFormat != GL_RGBA || implementationType != type)
+                {
+                    glReadPixels(0, 0, 1, 1, GL_RGBA, type, pixel);
+                    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+                }
+            }
+        }
+    }
+
     GLuint mTexture;
     GLuint mFBO;
 };
@@ -1046,6 +1237,27 @@ TEST_P(ReadPixelsErrorTest, ReadBufferIsNone)
     EXPECT_GL_NO_ERROR();
     glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// The test verifies that glReadPixels generates a GL_INVALID_OPERATION
+// error when reading signed 8-bit color buffers using incompatible types.
+TEST_P(ReadPixelsErrorTest, ColorBufferSnorm8)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_render_snorm"));
+
+    testUnsupportedTypeConversions({GL_R8_SNORM, GL_RG8_SNORM, GL_RGBA8_SNORM},
+                                   {GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT});
+}
+
+// The test verifies that glReadPixels generates a GL_INVALID_OPERATION
+// error when reading signed 16-bit color buffers using incompatible types.
+TEST_P(ReadPixelsErrorTest, ColorBufferSnorm16)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_render_snorm"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_norm16"));
+
+    testUnsupportedTypeConversions({GL_R16_SNORM_EXT, GL_RG16_SNORM_EXT, GL_RGBA16_SNORM_EXT},
+                                   {GL_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT});
 }
 
 // a test class to be used for error checking of glReadPixels with WebGLCompatibility

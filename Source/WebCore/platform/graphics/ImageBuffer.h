@@ -34,7 +34,7 @@
 #include "RenderingResourceIdentifier.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WTF {
 class TextStream;
@@ -92,7 +92,7 @@ struct ImageBufferCreationContext {
     { }
 };
 
-class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer>, public CanMakeWeakPtr<ImageBuffer> {
+class ImageBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageBuffer> {
 public:
 
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, OptionSet<ImageBufferOptions> = { }, const ImageBufferCreationContext& = { });

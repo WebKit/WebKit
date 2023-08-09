@@ -56,7 +56,6 @@
 #import "TapHandlingResult.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
-#import "UserInterfaceIdiom.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -79,6 +78,7 @@
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/TextStream.h>
 
@@ -1324,7 +1324,7 @@ static bool desktopClassBrowsingSupported()
     static bool supportsDesktopClassBrowsing = false;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        supportsDesktopClassBrowsing = !currentUserInterfaceIdiomIsSmallScreen();
+        supportsDesktopClassBrowsing = !PAL::currentUserInterfaceIdiomIsSmallScreen();
     });
     return supportsDesktopClassBrowsing;
 }

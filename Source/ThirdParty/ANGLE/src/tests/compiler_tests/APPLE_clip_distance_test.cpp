@@ -177,7 +177,7 @@ TEST_P(APPLEClipDistanceTest, CompileSucceedsWithoutExtSupportVulkan)
 #endif
 
 #if defined(ANGLE_ENABLE_METAL)
-// With extension flag and extension directive, compiling using TranslatorMetalDirect succeeds.
+// With extension flag and extension directive, compiling using TranslatorMSL succeeds.
 TEST_P(APPLEClipDistanceTest, CompileSucceedsMetal)
 {
     mResources.APPLE_clip_distance = 1;

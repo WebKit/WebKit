@@ -3295,6 +3295,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         }
         GraphicsContext& currentContext = filterContext ? *filterContext : context;
 
+        if (filterContext)
+            localPaintingInfo.paintBehavior.add(PaintBehavior::DontShowVisitedLinks);
+
         // If this layer's renderer is a child of the subtreePaintRoot, we render unconditionally, which
         // is done by passing a nil subtreePaintRoot down to our renderer (as if no subtreePaintRoot was ever set).
         // Otherwise, our renderer tree may or may not contain the subtreePaintRoot root, so we pass that root along
@@ -3727,6 +3730,9 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
     // FIXME: It's unclear if this flag copying is necessary.
     constexpr OptionSet<PaintBehavior> flagsToCopy { PaintBehavior::ExcludeSelection, PaintBehavior::Snapshotting, PaintBehavior::DefaultAsynchronousImageDecode, PaintBehavior::CompositedOverflowScrollContent, PaintBehavior::ForceSynchronousImageDecode };
     localPaintBehavior.add(localPaintingInfo.paintBehavior & flagsToCopy);
+
+    if (localPaintingInfo.paintBehavior & PaintBehavior::DontShowVisitedLinks)
+        localPaintBehavior.add(PaintBehavior::DontShowVisitedLinks);
 
     GraphicsContextStateSaver stateSaver(context, false);
     RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
@@ -4930,8 +4936,8 @@ FloatRect RenderLayer::absoluteBoundingBoxForPainting() const
 LayoutRect RenderLayer::overlapBounds() const
 {
     if (overlapBoundsIncludeChildren())
-        return calculateLayerBounds(this, { }, defaultCalculateLayerBoundsFlags() | IncludeFilterOutsets);
-    
+        return calculateLayerBounds(this, { }, { UseLocalClipRectIfPossible, IncludeFilterOutsets, UseFragmentBoxesExcludingCompositing });
+
     return localBoundingBox();
 }
 
@@ -5811,6 +5817,7 @@ TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
     case PaintBehavior::EventRegionIncludeForeground: ts << "EventRegionIncludeForeground"; break;
     case PaintBehavior::EventRegionIncludeBackground: ts << "EventRegionIncludeBackground"; break;
     case PaintBehavior::Snapshotting: ts << "Snapshotting"; break;
+    case PaintBehavior::DontShowVisitedLinks: ts << "DontShowVisitedLinks"; break;
     }
 
     return ts;

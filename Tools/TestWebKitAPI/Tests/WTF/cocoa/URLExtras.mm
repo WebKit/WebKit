@@ -163,6 +163,10 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--n-uwf"_s, // 'n' U+0E01
         "xn--3hb112n"_s, // U+065B
         "xn--a-ypc062v"_s, // 'a' U+065B
+        "xn--2j8c"_s, // U+1043D
+        "xn--ikg"_s, // U+1E9C
+        "xn--jkg"_s, // U+1E9D
+        "xn--cng"_s, // U+1EFE or U+1EFF
     };
     for (auto& host : punycodedSpoofHosts) {
         auto url = makeString("http://", host, "/").utf8();

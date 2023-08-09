@@ -694,7 +694,8 @@ void QueryBufferParameterBase(const Buffer *buffer, GLenum pname, ParamType *par
     }
 }
 
-GLint GetCommonVariableProperty(const sh::ShaderVariable &var, GLenum prop)
+template <typename T>
+GLint GetCommonVariableProperty(const T &var, GLenum prop)
 {
     switch (prop)
     {

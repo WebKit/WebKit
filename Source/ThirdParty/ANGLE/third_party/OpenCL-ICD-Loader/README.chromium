@@ -6,6 +6,7 @@ SOURCE CODE: git clone -b OpenCL-ICD-Loader https://chromium.googlesource.com/ex
 Date: 29/04/2021
 Revision: 9b5e3849b49a1448996c8b96ba086cd774d987db
 Security Critical: no
+Shipped: yes
 License: Apache 2.0
 License File: LICENSE
 

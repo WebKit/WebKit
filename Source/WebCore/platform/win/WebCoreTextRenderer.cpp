@@ -26,14 +26,10 @@
 #include "WebCoreTextRenderer.h"
 
 #include "FontCascade.h"
-#include "FontDescription.h"
 #include "GraphicsContext.h"
-#include "StringTruncator.h"
 #include "TextRun.h"
 
 namespace WebCore {
-
-static bool shouldUseFontSmoothing = true;
 
 static bool isOneLeftToRightRun(const TextRun& run)
 {
@@ -87,31 +83,6 @@ void WebCoreDrawDoubledTextAtPoint(GraphicsContext& context, const String& text,
     doDrawTextAtPoint(context, text, textPos, font, topColor, underlinedIndex);
 
     context.restore();
-}
-
-float WebCoreTextFloatWidth(const String& text, const FontCascade& font)
-{
-    return StringTruncator::width(text, font);
-}
-
-void WebCoreSetShouldUseFontSmoothing(bool smooth)
-{
-    shouldUseFontSmoothing = smooth;
-}
-
-bool WebCoreShouldUseFontSmoothing()
-{
-    return shouldUseFontSmoothing;
-}
-
-void WebCoreSetAlwaysUsesComplexTextCodePath(bool complex)
-{
-    FontCascade::setCodePath(complex ? FontCascade::CodePath::Complex : FontCascade::CodePath::Auto);
-}
-
-bool WebCoreAlwaysUsesComplexTextCodePath()
-{
-    return FontCascade::codePath() == FontCascade::CodePath::Complex;
 }
 
 } // namespace WebCore

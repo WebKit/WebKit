@@ -322,6 +322,9 @@ public:
     void didCommitProvisionalLoad() { m_hasCommittedAnyProvisionalLoads = true; }
     bool hasCommittedAnyProvisionalLoads() const { return m_hasCommittedAnyProvisionalLoads; }
 
+    void didCommitMeaningfulProvisionalLoad() { m_hasCommittedAnyMeaningfulProvisionalLoads = true; }
+    bool hasCommittedAnyMeaningfulProvisionalLoads() const { return m_hasCommittedAnyMeaningfulProvisionalLoads; }
+
 #if PLATFORM(WATCHOS)
     void startBackgroundActivityForFullscreenInput();
     void endBackgroundActivityForFullscreenInput();
@@ -491,6 +494,8 @@ public:
     void addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain&);
 
     Logger& logger();
+
+    void resetState();
 
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
@@ -702,6 +707,7 @@ private:
 #endif
 
     bool m_hasCommittedAnyProvisionalLoads { false };
+    bool m_hasCommittedAnyMeaningfulProvisionalLoads { false }; // True if the process has committed a provisional load to a URL that was not about:*.
     bool m_isPrewarmed;
     LockdownMode m_lockdownMode { LockdownMode::Disabled };
     WebCore::CrossOriginMode m_crossOriginMode { WebCore::CrossOriginMode::Shared };

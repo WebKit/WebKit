@@ -5,6 +5,7 @@ Version: 0
 License: MIT
 License File: LICENSE.md
 Security Critical: yes
+Shipped: yes
 
 Description:
 volk is a meta-loader for Vulkan. It allows you to dynamically load

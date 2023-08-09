@@ -110,7 +110,6 @@ class ProgramGL : public ProgramImpl
 
     void updateEnabledClipDistances(uint8_t enabledClipDistancesPacked) const;
 
-    void enableSideBySideRenderingPath() const;
     void enableLayeredRenderingPath(int baseViewIndex) const;
 
     angle::Result syncState(const gl::Context *context,

@@ -1,0 +1,7 @@
+2d.path.roundrect.badinput
+
+roundRect() throws or does not throw errors given the strange inputs.
+
+
+PASS roundRect() throws or does not throw errors given the strange inputs.
+

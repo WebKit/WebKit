@@ -81,8 +81,8 @@ bool IsFragmentOutput(TQualifier qualifier);
 bool IsOutputESSL(ShShaderOutput output);
 bool IsOutputGLSL(ShShaderOutput output);
 bool IsOutputHLSL(ShShaderOutput output);
-bool IsOutputVulkan(ShShaderOutput output);
-bool IsOutputMetalDirect(ShShaderOutput output);
+bool IsOutputSPIRV(ShShaderOutput output);
+bool IsOutputMSL(ShShaderOutput output);
 
 bool IsInShaderStorageBlock(TIntermTyped *node);
 

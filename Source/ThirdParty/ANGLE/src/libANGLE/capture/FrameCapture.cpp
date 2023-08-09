@@ -3877,7 +3877,7 @@ void CaptureShareGroupMidExecutionSetup(
     if (currentUnpackState.alignment != 1)
     {
         cap(CapturePixelStorei(replayState, true, GL_UNPACK_ALIGNMENT, 1));
-        replayState.setUnpackAlignment(1);
+        replayState.getMutablePrivateStateForCapture()->setUnpackAlignment(1);
     }
 
     // Capture Texture setup and data.
@@ -4538,7 +4538,7 @@ void CaptureShareGroupMidExecutionSetup(
     if (currentUnpackState.alignment != contextUnpackAlignment)
     {
         cap(CapturePixelStorei(replayState, true, GL_UNPACK_ALIGNMENT, contextUnpackAlignment));
-        replayState.setUnpackAlignment(contextUnpackAlignment);
+        replayState.getMutablePrivateStateForCapture()->setUnpackAlignment(contextUnpackAlignment);
     }
 }
 
@@ -4676,7 +4676,7 @@ void CaptureMidExecutionSetup(const gl::Context *context,
     if (currentUnpackState.alignment != 1)
     {
         cap(CapturePixelStorei(replayState, true, GL_UNPACK_ALIGNMENT, 1));
-        replayState.setUnpackAlignment(1);
+        replayState.getMutablePrivateStateForCapture()->setUnpackAlignment(1);
     }
 
     // Capture Texture setup and data.
@@ -4700,7 +4700,8 @@ void CaptureMidExecutionSetup(const gl::Context *context,
                 {
                     cap(CaptureActiveTexture(replayState, true,
                                              GL_TEXTURE0 + static_cast<GLenum>(bindingIndex)));
-                    replayState.setActiveSampler(static_cast<unsigned int>(bindingIndex));
+                    replayState.getMutablePrivateStateForCapture()->setActiveSampler(
+                        static_cast<unsigned int>(bindingIndex));
                 }
 
                 cap(CaptureBindTexture(replayState, true, textureType, apiTextureID));
@@ -4725,7 +4726,8 @@ void CaptureMidExecutionSetup(const gl::Context *context,
     {
         cap(CaptureActiveTexture(replayState, true,
                                  GL_TEXTURE0 + static_cast<GLenum>(apiState.getActiveSampler())));
-        replayState.setActiveSampler(apiState.getActiveSampler());
+        replayState.getMutablePrivateStateForCapture()->setActiveSampler(
+            apiState.getActiveSampler());
     }
 
     // Set Renderbuffer binding.
@@ -5538,7 +5540,7 @@ void CaptureMidExecutionSetup(const gl::Context *context,
     if (currentUnpackState.alignment != contextUnpackAlignment)
     {
         cap(CapturePixelStorei(replayState, true, GL_UNPACK_ALIGNMENT, contextUnpackAlignment));
-        replayState.setUnpackAlignment(contextUnpackAlignment);
+        replayState.getMutablePrivateStateForCapture()->setUnpackAlignment(contextUnpackAlignment);
     }
 
     if (validationEnabled)
@@ -7830,7 +7832,7 @@ void FrameCaptureShared::captureCall(gl::Context *context, CallCapture &&inCall,
         // If the context ID has changed, then we need to inject an eglMakeCurrent() call. Only do
         // this if there is more than 1 context in the share group to avoid unnecessary
         // eglMakeCurrent() calls.
-        size_t contextCount = context->getShareGroup()->getShareGroupContextCount();
+        size_t contextCount = context->getShareGroup()->getContexts().size();
         if (contextCount > 1 && mLastContextId != context->id())
         {
             // Inject the eglMakeCurrent() call. Ignore the display and surface.

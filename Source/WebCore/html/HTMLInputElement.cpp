@@ -981,6 +981,7 @@ void HTMLInputElement::reset()
         updateValidity();
     }
 
+    setInteractedWithSinceLastFormSubmitEvent(false);
     setAutoFilled(false);
     setAutoFilledAndViewable(false);
     setAutoFilledAndObscured(false);

@@ -47,7 +47,7 @@ size_t ComputeShaderHash(const std::string &mergedSource)
     return std::hash<std::string>{}(mergedSource);
 }
 
-std::string GetShaderDumpFilePath(size_t shaderHash)
+std::string GetShaderDumpFilePath(size_t shaderHash, const char *suffix)
 {
     std::stringstream path;
     std::string shaderDumpDir = GetShaderDumpFileDirectory();
@@ -55,7 +55,7 @@ std::string GetShaderDumpFilePath(size_t shaderHash)
     {
         path << shaderDumpDir << "/";
     }
-    path << shaderHash << ".essl";
+    path << shaderHash << "." << suffix;
 
     return path.str();
 }
@@ -236,9 +236,10 @@ void Shader::setSource(const Context *context,
     const angle::FrontendFeatures &frontendFeatures = context->getFrontendFeatures();
 
     bool substitutedShader = false;
+    const char *suffix     = "essl";
     if (frontendFeatures.enableShaderSubstitution.enabled)
     {
-        std::string subsitutionShaderPath = GetShaderDumpFilePath(sourceHash);
+        std::string subsitutionShaderPath = GetShaderDumpFilePath(sourceHash, suffix);
 
         std::string substituteShader;
         if (angle::ReadFileToString(subsitutionShaderPath, &substituteShader))
@@ -253,7 +254,7 @@ void Shader::setSource(const Context *context,
     // back to the file.
     if (frontendFeatures.dumpShaderSource.enabled && !substitutedShader)
     {
-        std::string dumpFile = GetShaderDumpFilePath(sourceHash);
+        std::string dumpFile = GetShaderDumpFilePath(sourceHash, suffix);
 
         writeFile(dumpFile.c_str(), source.c_str(), source.length());
         INFO() << "Dumped shader source: " << dumpFile;
@@ -450,11 +451,6 @@ void Shader::compile(const Context *context)
         options.validateLoopIndexing = true;
     }
 
-    if (context->getFrontendFeatures().scalarizeVecAndMatConstructorArgs.enabled)
-    {
-        options.scalarizeVecAndMatConstructorArgs = true;
-    }
-
     if (context->getFrontendFeatures().forceInitShaderVariables.enabled)
     {
         options.initOutputVariables           = true;
@@ -524,6 +520,52 @@ void Shader::resolveCompile(const Context *context)
     const ShShaderOutput outputType = mCompilingState->shCompilerInstance.getShaderOutputType();
     bool isBinaryOutput             = outputType == SH_SPIRV_VULKAN_OUTPUT;
     mState.mCompiledShaderState.buildCompiledShaderState(compilerHandle, isBinaryOutput);
+
+    const angle::FrontendFeatures &frontendFeatures = context->getFrontendFeatures();
+    bool substitutedTranslatedShader                = false;
+    const char *suffix                              = "translated";
+    if (frontendFeatures.enableTranslatedShaderSubstitution.enabled)
+    {
+        // To support reading/writing compiled binaries (SPIR-V
+        // representation), need more file input/output facilities,
+        // and figure out the byte ordering of writing the 32-bit
+        // words to disk.
+        if (isBinaryOutput)
+        {
+            INFO() << "Can not substitute compiled binary (SPIR-V) shaders yet";
+        }
+        else
+        {
+            std::string substituteShaderPath = GetShaderDumpFilePath(mState.mSourceHash, suffix);
+
+            std::string substituteShader;
+            if (angle::ReadFileToString(substituteShaderPath, &substituteShader))
+            {
+                mState.mCompiledShaderState.translatedSource = std::move(substituteShader);
+                substitutedTranslatedShader                  = true;
+                INFO() << "Trasnslated shader substitute found, loading from "
+                       << substituteShaderPath;
+            }
+        }
+    }
+
+    // Only dump translated shaders that have not been previously substituted. It would write the
+    // same data back to the file.
+    if (frontendFeatures.dumpTranslatedShaders.enabled && !substitutedTranslatedShader)
+    {
+        if (isBinaryOutput)
+        {
+            INFO() << "Can not dump compiled binary (SPIR-V) shaders yet";
+        }
+        else
+        {
+            std::string dumpFile = GetShaderDumpFilePath(mState.mSourceHash, suffix);
+
+            const std::string &translatedSource = mState.mCompiledShaderState.translatedSource;
+            writeFile(dumpFile.c_str(), translatedSource.c_str(), translatedSource.length());
+            INFO() << "Dumped translated source: " << dumpFile;
+        }
+    }
 
 #if !defined(NDEBUG)
     if (outputType != SH_SPIRV_VULKAN_OUTPUT)

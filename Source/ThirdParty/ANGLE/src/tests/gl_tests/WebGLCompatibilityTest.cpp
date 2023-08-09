@@ -4443,6 +4443,24 @@ TEST_P(WebGL2CompatibilityTest, ClearBufferDefaultFramebuffer)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+// Test that clearing a non-existent drawbuffer of the default
+// framebuffer does not cause an assertion in WebGL validation
+TEST_P(WebGL2CompatibilityTest, ClearBuffer1OnDefaultFramebufferNoAssert)
+{
+    constexpr float clearFloat[]   = {0.0f, 0.0f, 0.0f, 0.0f};
+    constexpr int32_t clearInt[]   = {0, 0, 0, 0};
+    constexpr uint32_t clearUint[] = {0, 0, 0, 0};
+
+    glClearBufferfv(GL_COLOR, 1, clearFloat);
+    EXPECT_GL_NO_ERROR();
+
+    glClearBufferiv(GL_COLOR, 1, clearInt);
+    EXPECT_GL_NO_ERROR();
+
+    glClearBufferuiv(GL_COLOR, 1, clearUint);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Verify that errors are generate when trying to blit from an image to itself
 TEST_P(WebGL2CompatibilityTest, BlitFramebufferSameImage)
 {
@@ -5284,8 +5302,8 @@ void main()
 
     constexpr char kVSArrayTooLarge[] =
         R"(varying vec4 color;
-// 1 MB / 32 aligned bytes per mat2 = 32768
-const int array_size = 32769;
+// 16 MB / 32 aligned bytes per mat2 = 524288
+const int array_size = 524289;
 void main()
 {
     mat2 array[array_size];
@@ -5297,7 +5315,7 @@ void main()
 
     constexpr char kVSArrayMuchTooLarge[] =
         R"(varying vec4 color;
-const int array_size = 55600;
+const int array_size = 757000;
 void main()
 {
     mat2 array[array_size];
@@ -5361,9 +5379,9 @@ TEST_P(WebGLCompatibilityTest, ValidateTotalPrivateSize)
     constexpr char kTooLargeGlobalMemory1[] =
         R"(precision mediump float;
 
-// 1 MB / 16 bytes per vec4 = 65536
-vec4 array[32768];
-vec4 array2[32769];
+// 16 MB / 16 bytes per vec4 = 1048576
+vec4 array[524288];
+vec4 array2[524289];
 
 void main()
 {
@@ -5376,9 +5394,9 @@ void main()
     constexpr char kTooLargeGlobalMemory2[] =
         R"(precision mediump float;
 
-// 1 MB / 16 bytes per vec4 = 65536
-vec4 array[32767];
-vec4 array2[32767];
+// 16 MB / 16 bytes per vec4 = 1048576
+vec4 array[524287];
+vec4 array2[524287];
 vec4 x, y, z;
 
 void main()
@@ -5392,12 +5410,12 @@ void main()
     constexpr char kTooLargeGlobalAndLocalMemory1[] =
         R"(precision mediump float;
 
-// 1 MB / 16 bytes per vec4 = 65536
-vec4 array[32768];
+// 16 MB / 16 bytes per vec4 = 1048576
+vec4 array[524288];
 
 void main()
 {
-    vec4 array2[32769];
+    vec4 array2[524289];
     if (array[0].x + array[1].x == 2.0)
         gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
     else
@@ -5408,18 +5426,18 @@ void main()
     constexpr char kTooLargeGlobalAndLocalMemory2[] =
         R"(precision mediump float;
 
-// 1 MB / 16 bytes per vec4 = 65536
-vec4 array[32768];
+// 16 MB / 16 bytes per vec4 = 1048576
+vec4 array[524288];
 
 float f()
 {
-    vec4 array2[16384];
+    vec4 array2[524288];
     return array2[0].x;
 }
 
 float g()
 {
-    vec4 array3[16383];
+    vec4 array3[524287];
     return array3[0].x;
 }
 
@@ -6120,6 +6138,26 @@ void main() {
     GLProgram prg;
     prg.makeRaster(essl3_shaders::vs::Simple(), kFS);
     EXPECT_FALSE(prg.valid());
+}
+
+// Test for a mishandling of instanced vertex attributes with zero-sized buffers bound on Apple
+// OpenGL drivers.
+TEST_P(WebGL2CompatibilityTest, DrawWithZeroSizedBuffer)
+{
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    glUseProgram(program);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
+    GLint posLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
+    glEnableVertexAttribArray(posLocation);
+
+    glVertexAttribDivisor(posLocation, 1);
+    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 9,
+                          reinterpret_cast<void *>(0x41424344));
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);

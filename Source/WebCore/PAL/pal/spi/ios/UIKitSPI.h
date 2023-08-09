@@ -93,6 +93,9 @@ typedef enum {
 - (void)_setIdleTimerDisabled:(BOOL)disabled forReason:(NSString *)reason;
 @end
 
+static const UIUserInterfaceIdiom UIUserInterfaceIdiomWatch = (UIUserInterfaceIdiom)4;
+
+
 @interface UIColor ()
 
 + (UIColor *)systemBlueColor;
@@ -188,6 +191,90 @@ typedef NS_ENUM(NSInteger, _UIDataOwner) {
 @interface UIColor (IPI)
 + (UIColor *)keyboardFocusIndicatorColor;
 + (UIColor *)tableCellDefaultSelectionTintColor;
+@end
+
+typedef NS_ENUM(NSUInteger, NSTextBlockValueType) {
+    NSTextBlockAbsoluteValueType    = 0, // Absolute value in points
+    NSTextBlockPercentageValueType  = 1 // Percentage value (out of 100)
+};
+
+typedef NS_ENUM(NSUInteger, NSTextBlockDimension) {
+    NSTextBlockWidth            = 0,
+    NSTextBlockMinimumWidth     = 1,
+    NSTextBlockMaximumWidth     = 2,
+    NSTextBlockHeight           = 4,
+    NSTextBlockMinimumHeight    = 5,
+    NSTextBlockMaximumHeight    = 6
+};
+
+typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
+    NSTextBlockPadding  = -1,
+    NSTextBlockBorder   =  0,
+    NSTextBlockMargin   =  1
+};
+
+typedef NS_ENUM(NSUInteger, NSTextTableLayoutAlgorithm) {
+    NSTextTableAutomaticLayoutAlgorithm = 0,
+    NSTextTableFixedLayoutAlgorithm     = 1
+};
+
+typedef NS_ENUM(NSUInteger, NSTextBlockVerticalAlignment) {
+    NSTextBlockTopAlignment         = 0,
+    NSTextBlockMiddleAlignment      = 1,
+    NSTextBlockBottomAlignment      = 2,
+    NSTextBlockBaselineAlignment    = 3
+};
+
+typedef NS_ENUM(NSUInteger, NSTextTabType) {
+    NSLeftTabStopType = 0,
+    NSRightTabStopType,
+    NSCenterTabStopType,
+    NSDecimalTabStopType
+};
+
+@interface NSColor : UIColor
++ (id)colorWithCalibratedRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
+@end
+
+@interface NSTextTab ()
+- (id)initWithType:(NSTextTabType)type location:(CGFloat)loc;
+@end
+
+@interface NSTextBlock : NSObject
+- (void)setValue:(CGFloat)val type:(NSTextBlockValueType)type forDimension:(NSTextBlockDimension)dimension;
+- (void)setBackgroundColor:(UIColor *)color;
+- (UIColor *)backgroundColor;
+- (void)setBorderColor:(UIColor *)color; // Convenience method sets all edges at once
+- (void)setVerticalAlignment:(NSTextBlockVerticalAlignment)alignment;
+@end
+
+@interface NSTextTable : NSTextBlock
+- (void)setNumberOfColumns:(NSUInteger)numCols;
+- (void)setCollapsesBorders:(BOOL)flag;
+- (void)setHidesEmptyCells:(BOOL)flag;
+- (void)setLayoutAlgorithm:(NSTextTableLayoutAlgorithm)algorithm;
+- (NSUInteger)numberOfColumns;
+- (void)release;
+@end
+
+@interface NSTextTableBlock : NSTextBlock
+- (id)initWithTable:(NSTextTable *)table startingRow:(NSInteger)row rowSpan:(NSInteger)rowSpan startingColumn:(NSInteger)col columnSpan:(NSInteger)colSpan; // Designated initializer
+- (NSTextTable *)table;
+- (NSInteger)startingColumn;
+- (NSInteger)startingRow;
+- (NSUInteger)numberOfColumns;
+- (NSInteger)columnSpan;
+- (NSInteger)rowSpan;
+@end
+
+@interface NSParagraphStyle ()
+- (NSInteger)headerLevel;
+- (NSArray<NSTextBlock *> *)textBlocks;
+@end
+
+@interface NSMutableParagraphStyle ()
+- (void)setHeaderLevel:(NSInteger)level;
+- (void)setTextBlocks:(NSArray<NSTextBlock *> *)array;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -1213,6 +1213,7 @@
         <extension name="GL_ANGLE_stencil_texturing" supported='gles2'>
             <require>
                 <enum name="GL_DEPTH_STENCIL_TEXTURE_MODE_ANGLE"/>
+                <enum name="GL_STENCIL_INDEX_ANGLE"/>
             </require>
           </extension>
           <extension name="GL_ANGLE_renderability_validation" supported='gles2'>
@@ -1379,6 +1380,7 @@
 
     <enums namespace="GL" vendor="ANGLE">
         <enum value="0x90EA" name="GL_DEPTH_STENCIL_TEXTURE_MODE_ANGLE" group="TextureParameterName"/>
+        <enum value="0x1901" name="GL_STENCIL_INDEX_ANGLE"/>
     </enums>
 
     <enums namespace="GL" vendor="ANGLE">

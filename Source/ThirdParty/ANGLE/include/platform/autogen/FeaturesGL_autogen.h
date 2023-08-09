@@ -615,7 +615,7 @@ struct FeaturesGL : FeatureSetBase
     FeatureInfo disableBaseInstanceVertex = {
         "disableBaseInstanceVertex",
         FeatureCategory::OpenGLWorkarounds,
-        "Some Mali drivers have buggy implementations of glDraw*BaseVertex*.",
+        "Some drivers have buggy implementations of glDraw*BaseVertex*.",
         &members, "http://anglebug.com/8172"
     };
 
@@ -664,8 +664,22 @@ struct FeaturesGL : FeatureSetBase
     FeatureInfo disableClipControl = {
         "disableClipControl",
         FeatureCategory::OpenGLFeatures,
-        "Some ARM Mali devices genenerate errors when querying the clip control state.",
+        "Some devices genenerate errors when querying the clip control state",
         &members, "http://crbug.com/1434317"
+    };
+
+    FeatureInfo scalarizeVecAndMatConstructorArgs = {
+        "scalarizeVecAndMatConstructorArgs",
+        FeatureCategory::OpenGLWorkarounds,
+        "Rewrite vec/mat constructors to work around driver bugs",
+        &members, "http://crbug.com/1420130"
+    };
+
+    FeatureInfo ensureNonEmptyBufferIsBoundForDraw = {
+        "ensureNonEmptyBufferIsBoundForDraw",
+        FeatureCategory::OpenGLFeatures,
+        "Apple OpenGL drivers crash when drawing with a zero-sized buffer bound using a non-zero divisor.",
+        &members, "http://crbug.com/1456243"
     };
 
 };

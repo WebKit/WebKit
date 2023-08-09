@@ -1282,6 +1282,9 @@ enum class RenderPassClosureReason
     TemporaryForImageCopy,
     TemporaryForOverlayDraw,
 
+    // LegacyDithering requires updating the render pass
+    LegacyDithering,
+
     InvalidEnum,
     EnumCount = InvalidEnum,
 };

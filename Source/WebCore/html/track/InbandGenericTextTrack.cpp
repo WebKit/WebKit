@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
+#include "TextTrackCueList.h"
 #include "TextTrackList.h"
 #include "VTTRegionList.h"
 #include <math.h>

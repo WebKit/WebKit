@@ -26,7 +26,7 @@
 #import "common/platform.h"
 
 #if ANGLE_ENABLE_EAGL
-#    import "libANGLE/renderer/gl/eagl/DisplayEAGL.mm"
-#    import "libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm"
-#    import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm"
+#import "libANGLE/renderer/gl/eagl/DisplayEAGL.mm"
+#import "libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm"
+#import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm"
 #endif

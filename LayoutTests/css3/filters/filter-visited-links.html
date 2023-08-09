@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<style>
+    .container {
+        margin: 10px;
+        width: 400px;
+        height: 140px;
+        padding: 10px;
+        border: 1px solid black;
+        font-size: 20pt;
+        text-align: center;
+    }
+    h1 {
+        font-size: 20pt;
+    }
+    .no-op-css-filter {
+        filter: blur(0px);
+    }
+    .no-op-svg-filter {
+        filter: url(#svg-no-op-blur);
+    }
+    .css-filter {
+        filter: blur(2px);
+    }
+    .svg-filter {
+        filter: url(#svg-blur);
+    }
+    a {
+        color: blue;
+        text-decoration: none;
+    }
+    a:visited {
+        color: purple;
+    }
+</style>
+<body>
+    <div class="container">
+        <h1>No filter</h1>
+        <a href="">Visited link</a>
+    </div>
+    <div class="container">
+        <h1>No-op filter</h1>
+        <a class="no-op-css-filter" href="">Visited link (CSS filter)</a>
+        <br>
+        <a class="no-op-svg-filter" href="">Visited link (SVG filter)</a>
+    </div>
+    <div class="container">
+        <h1>Blur filter</h1>
+        <a class="css-filter" href="">Visited link (CSS filter)</a>
+        <br>
+        <a class="svg-filter" href="">Visited link (SVG filter)</a>
+    </div>
+    <svg style="position: absolute; top: -99999px">
+        <filter id="svg-no-op-blur">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="0"/>
+        </filter>
+        <filter id="svg-blur">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="2"/>
+        </filter>
+    </svg>
+</body>

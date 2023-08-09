@@ -199,15 +199,20 @@ void Debug::insertMessage(GLenum source,
         return;
     }
 
+    // TODO(geofflang) Check the synchronous flag and potentially flush messages from another
+    // thread.
+    // If isOutputSynchronous(), mMutex does not need to be held, but instead the message should be
+    // dropped/queued if it doesn't originate from the current context.  If !isOutputSynchronous(),
+    // the callback is expected to be thread-safe per spec, so there is no need for locking.
     if (mCallbackFunction != nullptr)
     {
-        // TODO(geofflang) Check the synchronous flag and potentially flush messages from another
-        // thread.
         mCallbackFunction(source, type, id, severity, static_cast<GLsizei>(message.length()),
                           message.c_str(), mCallbackUserParam);
     }
     else
     {
+        std::lock_guard<std::mutex> lock(mMutex);
+
         if (mMessages.size() >= mMaxLoggedMessages)
         {
             // Drop messages over the limit
@@ -234,6 +239,8 @@ size_t Debug::getMessages(GLuint count,
                           GLsizei *lengths,
                           GLchar *messageLog)
 {
+    std::lock_guard<std::mutex> lock(mMutex);
+
     size_t messageCount       = 0;
     size_t messageStringIndex = 0;
     while (messageCount <= count && !mMessages.empty())
@@ -290,11 +297,13 @@ size_t Debug::getMessages(GLuint count,
 
 size_t Debug::getNextMessageLength() const
 {
+    std::lock_guard<std::mutex> lock(mMutex);
     return mMessages.empty() ? 0 : mMessages.front().message.length() + 1;
 }
 
 size_t Debug::getMessageCount() const
 {
+    std::lock_guard<std::mutex> lock(mMutex);
     return mMessages.size();
 }
 
@@ -367,7 +376,7 @@ void Debug::insertPerfWarning(GLenum severity, const char *message, uint32_t *re
         msg += " (this message will no longer repeat)";
     }
 
-    // Release the lock before we call insertMessage. It will re-acquire the lock.
+    // Note: insertMessage will acquire GetDebugMutex(), so it must be released before this call.
     insertMessage(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_PERFORMANCE, 0, severity, std::move(msg),
                   gl::LOG_INFO, angle::EntryPoint::Invalid);
 }

@@ -1120,6 +1120,7 @@ void HTMLSelectElement::reset()
     if (!selectedOption && firstOption && !m_multiple && m_size <= 1)
         firstOption->setSelectedState(true);
 
+    setInteractedWithSinceLastFormSubmitEvent(false);
     invalidateSelectedItems();
     setOptionsChangedOnRenderer();
     invalidateStyleForSubtree();

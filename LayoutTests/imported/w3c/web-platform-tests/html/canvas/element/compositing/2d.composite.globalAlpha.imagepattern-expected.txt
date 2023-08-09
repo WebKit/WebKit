@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-PASS Canvas test: 2d.composite.globalAlpha.imagepattern
+FAIL Canvas test: 2d.composite.globalAlpha.imagepattern promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

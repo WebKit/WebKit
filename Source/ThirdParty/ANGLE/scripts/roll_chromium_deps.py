@@ -29,15 +29,11 @@ def FindSrcDirPath():
     # Special cased for ANGLE.
     return os.path.dirname(os.path.abspath(os.path.join(__file__, '..')))
 
-
 ANGLE_CHROMIUM_DEPS = [
     'build',
     'buildtools',
     'buildtools/linux64',
     'buildtools/mac',
-    'buildtools/third_party/libc++/trunk',
-    'buildtools/third_party/libc++abi/trunk',
-    'buildtools/third_party/libunwind/trunk',
     'buildtools/win',
     'testing',
     'third_party/abseil-cpp',
@@ -67,7 +63,10 @@ ANGLE_CHROMIUM_DEPS = [
     'third_party/jdk/extras',
     'third_party/jinja2',
     'third_party/kotlin_stdlib',
+    'third_party/libc++/src',
+    'third_party/libc++abi/src',
     'third_party/libjpeg_turbo',
+    'third_party/libunwind/src',
     'third_party/markupsafe',
     'third_party/nasm',
     'third_party/ninja',

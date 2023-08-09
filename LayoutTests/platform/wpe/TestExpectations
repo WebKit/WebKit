@@ -174,9 +174,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-inter
 http/tests/cache/network-error-during-revalidation.html [ DumpJSConsoleLogInStdErr ]
 http/tests/xmlhttprequest/state-after-network-error.html [ DumpJSConsoleLogInStdErr ]
 
-# Still failing in GTK
-webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Pass ]
-
 # WPE passing since (237579@main - 237582@main]. GTK back failing after revert.
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Pass ]
@@ -1023,6 +1020,8 @@ webkit.org/b/252878 webaudio/automatic-pull-node.html [ Pass Timeout ]
 webkit.org/b/252878 webrtc/audio-peer-connection-g722.html [ Failure Pass Timeout ]
 webkit.org/b/252878 webrtc/audio-peer-connection-webaudio.html [ Pass Timeout ]
 webkit.org/b/252878 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Crash Failure Pass Timeout ]
+
+webkit.org/b/187064 webkit.org/b/235885 webrtc/video-remote-mute.html [ Failure ]
 
 # Flaky tests detected on May2023
 webkit.org/b/257624 accessibility/iframe-within-cell.html [ Crash Pass ]

@@ -1,6 +1,0 @@
-
-FAIL tests drawing SRGB color on e-sRGB canvas and getting e-sRGB image data. assert_approx_equals: expected 0.2 +/- 0.01 but got 51
-FAIL tests putting and getting in-range e-sRGB image data on e-sRGB canvas. assert_approx_equals: expected 0.2 +/- 0.01 but got 0
-FAIL tests putting and getting out-of-range e-sRGB image data on e-sRGB canvas. assert_approx_equals: expected 1.3 +/- 0.01 but got 0
-FAIL tests putting SRGB image data on e-sRGB canvas and getting e-sRGB image data. assert_approx_equals: expected 0.2 +/- 0.01 but got 51
-

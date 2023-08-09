@@ -51,6 +51,8 @@ public:
     static Ref<AXIsolatedObject> create(const Ref<AccessibilityObject>&, AXIsolatedTree*);
     ~AXIsolatedObject();
 
+    ProcessID processID() const override { return tree()->processID(); }
+
     void attachPlatformWrapper(AccessibilityObjectWrapper*);
     bool isDetached() const override;
     bool isTable() const final { return boolAttributeValue(AXPropertyName::IsTable); }

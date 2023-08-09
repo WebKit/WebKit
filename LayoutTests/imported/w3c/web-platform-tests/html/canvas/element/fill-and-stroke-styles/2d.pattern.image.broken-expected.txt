@@ -1,5 +1,5 @@
 2d.pattern.image.broken
 Actual output:
 
-FAIL Canvas test: 2d.pattern.image.broken assert_equals: ctx.createPattern(img, 'repeat') === null (got [object CanvasPattern][object], expected [object]) expected null but got object "[object CanvasPattern]"
+FAIL Canvas test: 2d.pattern.image.broken assert_throws_dom: function "function() { ctx.createPattern(img, 'repeat'); }" did not throw
 

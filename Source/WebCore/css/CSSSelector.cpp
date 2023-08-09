@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "SelectorPseudoTypeMap.h"
 #include <memory>
+#include <queue>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -979,23 +980,32 @@ CSSSelector::CSSSelector(const CSSSelector& other)
     }
 }
 
-void CSSSelector::visitAllSimpleSelectors(auto& apply) const
+bool CSSSelector::visitAllSimpleSelectors(auto& apply) const
 {
-    // Effective C++ advices for this cast to deal with generic const/non-const member function.
-    apply(*const_cast<CSSSelector*>(this));
+    std::queue<const CSSSelector*> worklist;
+    worklist.push(this);
+    while (!worklist.empty()) {
+        auto current = worklist.front();
+        worklist.pop();
 
-    // Visit the selector list member (if any) recursively (such as: :has(<list>), :is(<list>),...)
-    if (auto selectorList = this->selectorList()) {
-        auto next = selectorList->first();
-        while (next) {
-            next->visitAllSimpleSelectors(apply);
-            next = CSSSelectorList::next(next);
+        // Effective C++ advices for this cast to deal with generic const/non-const member function.
+        if (apply(*const_cast<CSSSelector*>(current)))
+            return true;
+
+        // Visit the selector list member (if any) recursively (such as: :has(<list>), :is(<list>),...)
+        if (auto selectorList = current->selectorList()) {
+            auto next = selectorList->first();
+            while (next) {
+                worklist.push(next);
+                next = CSSSelectorList::next(next);
+            }
         }
-    }
 
-    // Visit the next simple selector recursively
-    if (auto next = tagHistory())
-        next->visitAllSimpleSelectors(apply); 
+        // Visit the next simple selector
+        if (auto next = current->tagHistory())
+            worklist.push(next);
+    }
+    return false;
 }
 
 void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
@@ -1007,6 +1017,7 @@ void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
             selector.setPseudoClassType(PseudoClassType::Is);
             selector.setSelectorList(makeUnique<CSSSelectorList>(parent));
         }
+        return false;
     };
 
     visitAllSimpleSelectors(replaceParentSelector);
@@ -1020,6 +1031,7 @@ void CSSSelector::replaceNestingParentByPseudoClassScope()
             selector.setMatch(Match::PseudoClass);
             selector.setPseudoClassType(PseudoClassType::Scope);
         }
+        return false;
     };
 
     visitAllSimpleSelectors(replaceParentSelector); 
@@ -1027,16 +1039,13 @@ void CSSSelector::replaceNestingParentByPseudoClassScope()
 
 bool CSSSelector::hasExplicitNestingParent() const
 {
-    bool result = false;
-
-    auto checkForExplicitParent = [&result] (const CSSSelector& selector) {
+    auto checkForExplicitParent = [] (const CSSSelector& selector) {
         if (selector.match() == CSSSelector::Match::NestingParent)
-            result = true;
+            return true;
+        return false;
     };
 
-    visitAllSimpleSelectors(checkForExplicitParent);
-
-    return result;
+    return visitAllSimpleSelectors(checkForExplicitParent);
 }
 
 } // namespace WebCore

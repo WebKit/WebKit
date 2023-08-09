@@ -56,6 +56,7 @@ set(bmalloc_SOURCES
     libpas/src/libpas/pas_alignment.c
     libpas/src/libpas/pas_all_heaps.c
     libpas/src/libpas/pas_allocation_callbacks.c
+    libpas/src/libpas/pas_allocation_result.c
     libpas/src/libpas/pas_all_shared_page_directories.c
     libpas/src/libpas/pas_baseline_allocator.c
     libpas/src/libpas/pas_baseline_allocator_table.c

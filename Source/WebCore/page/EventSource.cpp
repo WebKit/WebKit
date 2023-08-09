@@ -35,6 +35,7 @@
 
 #include "CachedResourceRequestInitiatorTypes.h"
 #include "ContentSecurityPolicy.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "MessageEvent.h"
 #include "ResourceError.h"
@@ -60,9 +61,7 @@ inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url,
     , m_url(url)
     , m_withCredentials(eventSourceInit.withCredentials)
     , m_decoder(TextResourceDecoder::create("text/plain"_s, "UTF-8"))
-    , m_connectTimer(&context, *this, &EventSource::connect)
 {
-    m_connectTimer.suspendIfNeeded();
 }
 
 ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& context, const String& url, const Init& eventSourceInit)
@@ -135,14 +134,22 @@ void EventSource::scheduleInitialConnect()
     ASSERT(m_state == CONNECTING);
     ASSERT(!m_requestInFlight);
 
-    m_connectTimer.startOneShot(0_s);
+    auto* context = scriptExecutionContext();
+    m_connectTimer = context->eventLoop().scheduleTask(0_s, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
+        if (RefPtr strongThis = weakThis.get())
+            strongThis->connect();
+    });
 }
 
 void EventSource::scheduleReconnect()
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForBackForwardCache);
     m_state = CONNECTING;
-    m_connectTimer.startOneShot(1_ms * m_reconnectDelay);
+    auto* context = scriptExecutionContext();
+    m_connectTimer = context->eventLoop().scheduleTask(1_ms * m_reconnectDelay, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
+        if (RefPtr strongThis = weakThis.get())
+            strongThis->connect();
+    });
     dispatchErrorEvent();
 }
 
@@ -154,8 +161,7 @@ void EventSource::close()
     }
 
     // Stop trying to connect/reconnect if EventSource was explicitly closed or if ActiveDOMObject::stop() was called.
-    if (m_connectTimer.isActive())
-        m_connectTimer.cancel();
+    m_connectTimer = nullptr;
 
     if (m_requestInFlight)
         doExplicitLoadCancellation();

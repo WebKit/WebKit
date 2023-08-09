@@ -15,16 +15,16 @@ namespace egl
 
 namespace
 {
-bool CheckThreadIdCurrent(const std::atomic<angle::ThreadId> &threadId,
-                          angle::ThreadId *currentThreadIdOut)
+[[maybe_unused]] bool CheckThreadIdCurrent(const std::atomic<angle::ThreadId> &threadId,
+                                           angle::ThreadId *currentThreadIdOut)
 {
     *currentThreadIdOut = angle::GetCurrentThreadId();
     return (threadId.load(std::memory_order_relaxed) == *currentThreadIdOut);
 }
 
-bool TryUpdateThreadId(std::atomic<angle::ThreadId> *threadId,
-                       angle::ThreadId oldThreadId,
-                       angle::ThreadId newThreadId)
+[[maybe_unused]] bool TryUpdateThreadId(std::atomic<angle::ThreadId> *threadId,
+                                        angle::ThreadId oldThreadId,
+                                        angle::ThreadId newThreadId)
 {
     const bool ok = (threadId->load(std::memory_order_relaxed) == oldThreadId);
     if (ok)
@@ -90,15 +90,31 @@ bool SingleContextMutex::try_lock()
     return false;
 }
 
+#if defined(ANGLE_ENABLE_CONTEXT_MUTEX_RECURSION)
 void SingleContextMutex::lock()
 {
+    const int oldValue = mState.fetch_add(1, std::memory_order_relaxed);
+    ASSERT(oldValue >= 0);
+}
+
+void SingleContextMutex::unlock()
+{
+    const int oldValue = mState.fetch_sub(1, std::memory_order_release);
+    ASSERT(oldValue > 0);
+}
+#else
+void SingleContextMutex::lock()
+{
+    ASSERT(!isLocked(std::memory_order_relaxed));
     mState.store(1, std::memory_order_relaxed);
 }
 
 void SingleContextMutex::unlock()
 {
+    ASSERT(isLocked(std::memory_order_relaxed));
     mState.store(0, std::memory_order_release);
 }
+#endif
 
 // SharedContextMutex
 template <class Mutex>
@@ -124,6 +140,81 @@ void SharedContextMutex<Mutex>::unlock()
     root->doUnlock();
 }
 
+#if defined(ANGLE_ENABLE_CONTEXT_MUTEX_RECURSION)
+template <class Mutex>
+ANGLE_INLINE SharedContextMutex<Mutex> *SharedContextMutex<Mutex>::doTryLock()
+{
+    const angle::ThreadId threadId = angle::GetCurrentThreadId();
+    if (ANGLE_UNLIKELY(!mMutex.try_lock()))
+    {
+        if (ANGLE_UNLIKELY(mOwnerThreadId.load(std::memory_order_relaxed) == threadId))
+        {
+            ASSERT(this == getRoot());
+            ASSERT(mLockLevel > 0);
+            ++mLockLevel;
+            return this;
+        }
+        return nullptr;
+    }
+    ASSERT(mOwnerThreadId.load(std::memory_order_relaxed) == angle::InvalidThreadId());
+    ASSERT(mLockLevel == 0);
+    SharedContextMutex *const root = getRoot();
+    if (ANGLE_UNLIKELY(this != root))
+    {
+        // Unlock, so only the "stable root" mutex remains locked
+        mMutex.unlock();
+        SharedContextMutex *const lockedRoot = root->doTryLock();
+        ASSERT(lockedRoot == nullptr || lockedRoot == getRoot());
+        return lockedRoot;
+    }
+    mOwnerThreadId.store(threadId, std::memory_order_relaxed);
+    mLockLevel = 1;
+    return this;
+}
+
+template <class Mutex>
+ANGLE_INLINE SharedContextMutex<Mutex> *SharedContextMutex<Mutex>::doLock()
+{
+    const angle::ThreadId threadId = angle::GetCurrentThreadId();
+    if (ANGLE_UNLIKELY(!mMutex.try_lock()))
+    {
+        if (ANGLE_UNLIKELY(mOwnerThreadId.load(std::memory_order_relaxed) == threadId))
+        {
+            ASSERT(this == getRoot());
+            ASSERT(mLockLevel > 0);
+            ++mLockLevel;
+            return this;
+        }
+        mMutex.lock();
+    }
+    ASSERT(mOwnerThreadId.load(std::memory_order_relaxed) == angle::InvalidThreadId());
+    ASSERT(mLockLevel == 0);
+    SharedContextMutex *const root = getRoot();
+    if (ANGLE_UNLIKELY(this != root))
+    {
+        // Unlock, so only the "stable root" mutex remains locked
+        mMutex.unlock();
+        SharedContextMutex *const lockedRoot = root->doLock();
+        ASSERT(lockedRoot == getRoot());
+        return lockedRoot;
+    }
+    mOwnerThreadId.store(threadId, std::memory_order_relaxed);
+    mLockLevel = 1;
+    return this;
+}
+
+template <class Mutex>
+ANGLE_INLINE void SharedContextMutex<Mutex>::doUnlock()
+{
+    ASSERT(mOwnerThreadId.load(std::memory_order_relaxed) == angle::GetCurrentThreadId());
+    ASSERT(mLockLevel > 0);
+    if (ANGLE_LIKELY(--mLockLevel == 0))
+    {
+        mOwnerThreadId.store(angle::InvalidThreadId(), std::memory_order_relaxed);
+        mMutex.unlock();
+    }
+}
+#else
 template <class Mutex>
 ANGLE_INLINE SharedContextMutex<Mutex> *SharedContextMutex<Mutex>::doTryLock()
 {
@@ -172,15 +263,17 @@ ANGLE_INLINE void SharedContextMutex<Mutex>::doUnlock()
         TryUpdateThreadId(&mOwnerThreadId, angle::GetCurrentThreadId(), angle::InvalidThreadId()));
     mMutex.unlock();
 }
+#endif
 
 template <class Mutex>
 SharedContextMutex<Mutex>::SharedContextMutex()
-    : mRoot(this), mRank(0), mOwnerThreadId(angle::InvalidThreadId())
+    : mOwnerThreadId(angle::InvalidThreadId()), mLockLevel(0), mRoot(this), mRank(0)
 {}
 
 template <class Mutex>
 SharedContextMutex<Mutex>::~SharedContextMutex()
 {
+    ASSERT(mLockLevel == 0);
     ASSERT(this == getRoot());
     ASSERT(mOldRoots.empty());
     ASSERT(mLeaves.empty());
@@ -227,6 +320,7 @@ void SharedContextMutex<Mutex>::Merge(SharedContextMutex *lockedMutex,
         }
         // Lock was unsuccessful - unlock and retry...
         // May use "doUnlock()" because lockedRoot is a "stable root" mutex.
+        // Note: lock will be preserved in case of the recursive lock.
         lockedRoot->doUnlock();
         // Sleep random amount to allow one of the thread acquire the lock next time...
         std::this_thread::sleep_for(std::chrono::microseconds(rand() % 91 + 10));
@@ -241,28 +335,36 @@ void SharedContextMutex<Mutex>::Merge(SharedContextMutex *lockedMutex,
 
     // Decide the new "root". See mRank comment for more details...
 
-    // Make "otherLockedRoot" the root of the "merged" mutex
-    if (lockedRoot->mRank > otherLockedRoot->mRank)
+    SharedContextMutex *oldRoot = otherLockedRoot;
+    SharedContextMutex *newRoot = lockedRoot;
+
+    if (oldRoot->mRank > newRoot->mRank)
     {
-        // So the "lockedRoot" is lower rank.
-        std::swap(lockedRoot, otherLockedRoot);
+        std::swap(oldRoot, newRoot);
     }
-    else if (lockedRoot->mRank == otherLockedRoot->mRank)
+    else if (oldRoot->mRank == newRoot->mRank)
     {
-        ++otherLockedRoot->mRank;
+        ++newRoot->mRank;
     }
 
     // Update the structure
-    for (SharedContextMutex *const leaf : lockedRoot->mLeaves)
+    for (SharedContextMutex *const leaf : oldRoot->mLeaves)
     {
-        ASSERT(leaf->getRoot() == lockedRoot);
-        leaf->setNewRoot(otherLockedRoot);
+        ASSERT(leaf->getRoot() == oldRoot);
+        leaf->setNewRoot(newRoot);
     }
-    lockedRoot->mLeaves.clear();
-    lockedRoot->setNewRoot(otherLockedRoot);
+    oldRoot->mLeaves.clear();
+    oldRoot->setNewRoot(newRoot);
 
-    // Leave only the "merged" mutex locked. "lockedRoot" already merged, need to use "doUnlock()"
-    lockedRoot->doUnlock();
+    // Leave only the "merged" mutex locked. "oldRoot" already merged, need to use "doUnlock()"
+    oldRoot->doUnlock();
+
+    // Merge from recursive lock is unexpected. Handle such cases anyway to be safe.
+    while (oldRoot->mLockLevel > 0)
+    {
+        newRoot->doLock();
+        oldRoot->doUnlock();
+    }
 }
 
 template <class Mutex>

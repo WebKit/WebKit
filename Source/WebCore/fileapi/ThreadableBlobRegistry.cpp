@@ -76,11 +76,13 @@ static inline bool isBlobURLContainingNullOrigin(const URL& url)
     return StringView(url.string()).substring(startIndex, endIndex - startIndex - 1) == "null"_s;
 }
 
+#if ASSERT_ENABLED
 static inline bool isInternalBlobURL(const URL& url)
 {
     constexpr auto prefix = "blob:blobinternal://"_s;
     return url.string().startsWith(prefix);
 }
+#endif
 
 // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
 static void addToOriginMapIfNecessary(const URL& url, RefPtr<SecurityOrigin>&& origin)
@@ -133,11 +135,11 @@ static void unregisterBlobURLOriginIfNecessaryOnMainThread(const URL& url)
         originMap().remove(urlWithoutFragment);
 }
 
-void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyContainer&& policyContainer, const URL& url, const URL& srcURL, const std::optional<SecurityOriginData>&)
+void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyContainer&& policyContainer, const URL& url, const URL& srcURL, const std::optional<SecurityOriginData>& topOrigin)
 {
     if (isMainThread()) {
         addToOriginMapIfNecessary(url, origin);
-        blobRegistry().registerBlobURL(url, srcURL, policyContainer);
+        blobRegistry().registerBlobURL(url, srcURL, policyContainer, topOrigin);
         return;
     }
 
@@ -145,15 +147,15 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyConta
     if (origin)
         strongOrigin = origin->isolatedCopy();
 
-    callOnMainThread([url = url.isolatedCopy(), srcURL = srcURL.isolatedCopy(), policyContainer = crossThreadCopy(WTFMove(policyContainer)), strongOrigin = WTFMove(strongOrigin)]() mutable {
+    callOnMainThread([url = url.isolatedCopy(), srcURL = srcURL.isolatedCopy(), policyContainer = crossThreadCopy(WTFMove(policyContainer)), strongOrigin = WTFMove(strongOrigin), topOrigin = crossThreadCopy(topOrigin)]() mutable {
         addToOriginMapIfNecessary(url, WTFMove(strongOrigin));
-        blobRegistry().registerBlobURL(url, srcURL, policyContainer);
+        blobRegistry().registerBlobURL(url, srcURL, policyContainer, topOrigin);
     });
 }
 
-void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyContainer&& policyContainer, const URL& url, const URLKeepingBlobAlive& srcURL)
+void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyContainer&& policyContainer, const URLKeepingBlobAlive& url, const URL& srcURL)
 {
-    registerBlobURL(origin, std::forward<PolicyContainer>(policyContainer), url, srcURL, srcURL.topOrigin());
+    registerBlobURL(origin, std::forward<PolicyContainer>(policyContainer), url, srcURL, url.topOrigin());
 }
 
 void ThreadableBlobRegistry::registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
@@ -193,11 +195,11 @@ unsigned long long ThreadableBlobRegistry::blobSize(const URL& url)
     return resultSize;
 }
 
-void ThreadableBlobRegistry::unregisterBlobURL(const URL& url, const std::optional<SecurityOriginData>&)
+void ThreadableBlobRegistry::unregisterBlobURL(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
 {
-    ensureOnMainThread([url = url.isolatedCopy()] {
+    ensureOnMainThread([url = url.isolatedCopy(), topOrigin = crossThreadCopy(topOrigin)] {
         unregisterBlobURLOriginIfNecessaryOnMainThread(url);
-        blobRegistry().unregisterBlobURL(url);
+        blobRegistry().unregisterBlobURL(url, topOrigin);
     });
 }
 
@@ -206,21 +208,21 @@ void ThreadableBlobRegistry::unregisterBlobURL(const URLKeepingBlobAlive& url)
     unregisterBlobURL(url, url.topOrigin());
 }
 
-void ThreadableBlobRegistry::registerBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>&)
+void ThreadableBlobRegistry::registerBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
 {
-    ensureOnMainThread([url = url.isolatedCopy()] {
+    ensureOnMainThread([url = url.isolatedCopy(), topOrigin = crossThreadCopy(topOrigin)] {
         if (isBlobURLContainingNullOrigin(url))
             blobURLReferencesMap().add(url.stringWithoutFragmentIdentifier());
 
-        blobRegistry().registerBlobURLHandle(url);
+        blobRegistry().registerBlobURLHandle(url, topOrigin);
     });
 }
 
-void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>&)
+void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
 {
-    ensureOnMainThread([url = url.isolatedCopy()] {
+    ensureOnMainThread([url = url.isolatedCopy(), topOrigin = crossThreadCopy(topOrigin)] {
         unregisterBlobURLOriginIfNecessaryOnMainThread(url);
-        blobRegistry().unregisterBlobURLHandle(url);
+        blobRegistry().unregisterBlobURLHandle(url, topOrigin);
     });
 }
 

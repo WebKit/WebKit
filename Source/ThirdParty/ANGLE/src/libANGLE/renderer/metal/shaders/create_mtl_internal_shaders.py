@@ -39,17 +39,6 @@ def append_file_as_byte_array_string(variable_name, filename, dest_src_file):
         out_file.write(string)
 
 
-# Compile metal shader.
-# compiled_file: The compiled metallib
-# variable_name: name of C++ variable that will hold the compiled binary data as a C array.
-# additional_flags: additional shader compiler flags
-# src_files: metal source files
-def gen_precompiled_shaders(compiled_file, variable_name, output_file):
-    append_file_as_byte_array_string(variable_name, compiled_file, output_file)
-    os.system('echo "constexpr size_t {0}_len=sizeof({0});" >> \"{1}\"'.format(
-        variable_name, output_file))
-
-
 def main():
     input_file = sys.argv[1]
     output_file = sys.argv[2]
@@ -67,7 +56,7 @@ def main():
 
     os.system('echo "// clang-format off" >> \"{0}\"'.format(output_file))
 
-    gen_precompiled_shaders(input_file, 'gMetalBinaryShaders', output_file)
+    append_file_as_byte_array_string('gDefaultMetallib', input_file, output_file)
 
     os.system('echo "// clang-format on" >> \"{0}\"'.format(output_file))
 

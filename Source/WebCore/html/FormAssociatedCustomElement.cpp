@@ -142,6 +142,7 @@ bool FormAssociatedCustomElement::isEnumeratable() const
 void FormAssociatedCustomElement::reset()
 {
     ASSERT(m_element->isDefinedCustomElement());
+    setInteractedWithSinceLastFormSubmitEvent(false);
     CustomElementReactionQueue::enqueueFormResetCallbackIfNeeded(*m_element);
 }
 

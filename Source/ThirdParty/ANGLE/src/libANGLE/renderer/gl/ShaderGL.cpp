@@ -381,6 +381,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderGL::compile(const gl::Context *conte
         options->emulateClipDistanceState = true;
     }
 
+    if (features.scalarizeVecAndMatConstructorArgs.enabled)
+    {
+        options->scalarizeVecAndMatConstructorArgs = true;
+    }
+
     if (mRenderer->getNativeExtensions().shaderPixelLocalStorageANGLE)
     {
         options->pls = mRenderer->getNativePixelLocalStorageOptions();

@@ -205,9 +205,9 @@ StreamProducerImpl *DisplayNULL::createStreamProducerD3DTexture(
     return nullptr;
 }
 
-ShareGroupImpl *DisplayNULL::createShareGroup()
+ShareGroupImpl *DisplayNULL::createShareGroup(const egl::ShareGroupState &state)
 {
-    return new ShareGroupNULL();
+    return new ShareGroupNULL(state);
 }
 
 void DisplayNULL::generateExtensions(egl::DisplayExtensions *outExtensions) const

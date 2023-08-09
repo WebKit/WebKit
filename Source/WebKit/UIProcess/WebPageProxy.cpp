@@ -5389,6 +5389,17 @@ void WebPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frameID, Fram
     didStartProvisionalLoadForFrameShared(m_process.copyRef(), frameID, WTFMove(frameInfo), WTFMove(request), navigationID, WTFMove(url), WTFMove(unreachableURL), userData);
 }
 
+static bool shouldPrewarmWebProcessOnProvisionalLoad()
+{
+#if ENABLE(PREWARM_WEBPROCESS_ON_PROVISIONAL_LOAD)
+    // With sufficient number of cores, page load times improve when prewarming a Web process when the provisional load starts.
+    // Otherwise, a Web process will be prewarmed when the main frame load is finished.
+    return WTF::numberOfProcessorCores() > 4;
+#else
+    return false;
+#endif
+}
+
 void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& process, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, URL&& url, URL&& unreachableURL, const UserData& userData)
 {
     PageClientProtector protector(pageClient());
@@ -5416,7 +5427,8 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     internals().pageLoadState.clearPendingAPIRequest(transaction);
 
     if (frame->isMainFrame()) {
-        notifyProcessPoolToPrewarm();
+        if (shouldPrewarmWebProcessOnProvisionalLoad())
+            notifyProcessPoolToPrewarm();
         process->didStartProvisionalLoadForMainFrame(url);
         reportPageLoadResult(ResourceError { ResourceError::Type::Cancellation });
         internals().pageLoadStart = MonotonicTime::now();
@@ -5461,6 +5473,8 @@ void WebPageProxy::didExplicitOpenForFrame(FrameIdentifier frameID, URL&& url, S
 
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
+    if (!url.protocolIsAbout())
+        m_process->didCommitMeaningfulProvisionalLoad();
 
     internals().pageLoadState.commitChanges();
 }
@@ -5702,6 +5716,8 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
+    if (!request.url().protocolIsAbout())
+        m_process->didCommitMeaningfulProvisionalLoad();
 
     if (frame->isMainFrame()) {
         m_hasUpdatedRenderingAfterDidCommitLoad = false;
@@ -5930,6 +5946,9 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
             navigation->setClientNavigationActivity(nullptr);
 
         resetRecentCrashCountSoon();
+
+        if (!shouldPrewarmWebProcessOnProvisionalLoad())
+            notifyProcessPoolToPrewarm();
 
         callLoadCompletionHandlersIfNecessary(true);
     }

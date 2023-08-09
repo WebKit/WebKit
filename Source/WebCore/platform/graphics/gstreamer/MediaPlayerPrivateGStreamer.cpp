@@ -2305,6 +2305,13 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
 #endif
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+    if (m_streamPrivate && !g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstWesterosSink") && gstObjectHasProperty(element, "immediate-output")) {
+        GST_DEBUG_OBJECT(pipeline(), "Enable 'immediate-output' in WesterosSink");
+        g_object_set(element, "immediate-output", TRUE, nullptr);
+    }
+#endif
+
 #if ENABLE(MEDIA_STREAM) && PLATFORM(REALTEK)
     if (m_streamPrivate) {
         if (gstObjectHasProperty(element, "media-tunnel")) {
@@ -3866,6 +3873,9 @@ RefPtr<VideoFrame> MediaPlayerPrivateGStreamer::videoFrameForCurrentTime()
     auto* buffer = gst_sample_get_buffer(m_sample.get());
     auto frame = VideoFrameGStreamer::createWrappedSample(m_sample.get(), fromGstClockTime(GST_BUFFER_PTS(buffer)));
     auto convertedSample = frame->downloadSample(GST_VIDEO_FORMAT_BGRA);
+    if (!convertedSample)
+        return nullptr;
+
     auto size = getVideoResolutionFromCaps(gst_sample_get_caps(m_sample.get())).value_or(FloatSize { 0, 0 });
     return VideoFrameGStreamer::create(WTFMove(convertedSample), size);
 }

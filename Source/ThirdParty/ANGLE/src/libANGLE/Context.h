@@ -89,10 +89,12 @@ struct VertexAttribute;
 class ErrorSet : angle::NonCopyable
 {
   public:
-    explicit ErrorSet(Context *context);
+    explicit ErrorSet(Debug *debug,
+                      const angle::FrontendFeatures &frontendFeatures,
+                      const egl::AttributeMap &attribs);
     ~ErrorSet();
 
-    bool empty() const;
+    bool empty() const { return mHasAnyErrors.load(std::memory_order_relaxed) == 0; }
     GLenum popError();
 
     void handleError(GLenum errorCode,
@@ -102,10 +104,51 @@ class ErrorSet : angle::NonCopyable
                      unsigned int line);
 
     void validationError(angle::EntryPoint entryPoint, GLenum errorCode, const char *message);
+    ANGLE_FORMAT_PRINTF(4, 5)
+    void validationErrorF(angle::EntryPoint entryPoint, GLenum errorCode, const char *format, ...);
+
+    bool skipValidation() const
+    {
+        // Ensure we don't skip validation when context becomes lost, since implementations
+        // generally assume a non-lost context, non-null objects, etc.
+        ASSERT(!isContextLost() || !mSkipValidation);
+        return mSkipValidation.load(std::memory_order_relaxed) != 0;
+    }
+    void forceValidation() { mSkipValidation = 0; }
+
+    void markContextLost(GraphicsResetStatus status);
+    bool isContextLost() const { return mContextLost.load(std::memory_order_relaxed) != 0; }
+    GLenum getGraphicsResetStatus(rx::ContextImpl *contextImpl);
+    GLenum getResetStrategy() const { return mResetStrategy; }
 
   private:
-    Context *mContext;
+    void setContextLost();
+    void pushError(GLenum errorCode);
+    std::unique_lock<std::mutex> getLockIfNotAlready();
+
+    // Non-atomic members of this class are protected by a mutex.  This is to allow errors to be
+    // safely set by entry points that don't hold a lock.  Note that other contexts may end up
+    // triggering an error on this context (through making failable calls on other contexts in the
+    // share group).
+    //
+    // Note also that the functionality used through the Debug class is thread-safe.
+    std::mutex mMutex;
+
+    // Error handling and reporting
+    Debug *mDebug;
     std::set<GLenum> mErrors;
+
+    const GLenum mResetStrategy;
+    const bool mLoseContextOnOutOfMemory;
+
+    // Context-loss handling
+    bool mContextLostForced;
+    GraphicsResetStatus mResetStatus;
+
+    // The following are atomic and lockless as they are very frequently accessed.
+    std::atomic_int mSkipValidation;
+    std::atomic_int mContextLost;
+    std::atomic_int mHasAnyErrors;
 };
 
 enum class VertexAttribTypeCase
@@ -114,6 +157,34 @@ enum class VertexAttribTypeCase
     Valid          = 1,
     ValidSize4Only = 2,
     ValidSize3or4  = 3,
+};
+
+// Part of StateCache (see below) that is private to the context and is inaccessible to other
+// contexts.
+class PrivateStateCache final : angle::NonCopyable
+{
+  public:
+    PrivateStateCache();
+    ~PrivateStateCache();
+
+    void onCapChange() { mIsCachedBasicDrawStatesErrorValid = false; }
+    void onColorMaskChange() { mIsCachedBasicDrawStatesErrorValid = false; }
+    void onDefaultVertexAttributeChange() { mIsCachedBasicDrawStatesErrorValid = false; }
+    void onBlendFuncIndexedChange() { mIsCachedBasicDrawStatesErrorValid = false; }
+    void onBlendEquationChange() { mIsCachedBasicDrawStatesErrorValid = false; }
+    void onStencilStateChange() { mIsCachedBasicDrawStatesErrorValid = false; }
+
+    bool isCachedBasicDrawStatesErrorValid() const { return mIsCachedBasicDrawStatesErrorValid; }
+    void setCachedBasicDrawStatesErrorValid() const { mIsCachedBasicDrawStatesErrorValid = true; }
+
+  private:
+    // StateCache::mCachedBasicDrawStatesError* may be invalidated through numerous calls (see the
+    // comment on getBasicDrawStatesErrorString), some of which may originate from other contexts
+    // (through the observer interface).  However, ContextPrivate* helpers may also need to
+    // invalidate the draw states, but they are called without holding the share group lock.  The
+    // following tracks whether StateCache::mCachedBasicDrawStatesError* values are valid and is
+    // accessed only by the context itself.
+    mutable bool mIsCachedBasicDrawStatesErrorValid;
 };
 
 // Helper class for managing cache variables and state changes.
@@ -155,24 +226,31 @@ class StateCache final : angle::NonCopyable
     // 4. onVertexArrayStateChange.
     // 5. onVertexArrayBufferStateChange.
     // 6. onDrawFramebufferChange.
-    // 7. onContextCapChange.
-    // 8. onStencilStateChange.
-    // 9. onDefaultVertexAttributeChange.
-    // 10. onActiveTextureChange.
-    // 11. onQueryChange.
-    // 12. onActiveTransformFeedbackChange.
-    // 13. onUniformBufferStateChange.
-    // 14. onColorMaskChange.
-    // 15. onBufferBindingChange.
-    // 16. onBlendFuncIndexedChange.
-    intptr_t getBasicDrawStatesErrorString(const Context *context) const
+    // 7. onActiveTextureChange.
+    // 8. onQueryChange.
+    // 9. onActiveTransformFeedbackChange.
+    // 10. onUniformBufferStateChange.
+    // 11. onBufferBindingChange.
+    //
+    // Additionally, the following in PrivateStateCache can lead to updateBasicDrawStatesError:
+    // 1. onCapChange.
+    // 2. onStencilStateChange.
+    // 3. onDefaultVertexAttributeChange.
+    // 4. onColorMaskChange.
+    // 5. onBlendFuncIndexedChange.
+    // 6. onBlendEquationChange.
+    intptr_t getBasicDrawStatesErrorString(const Context *context,
+                                           const PrivateStateCache *privateStateCache) const
     {
-        if (mCachedBasicDrawStatesErrorString != kInvalidPointer)
+        // This is only ever called with the context that owns this state cache
+        ASSERT(isCurrentContext(context, privateStateCache));
+        if (privateStateCache->isCachedBasicDrawStatesErrorValid() &&
+            mCachedBasicDrawStatesErrorString != kInvalidPointer)
         {
             return mCachedBasicDrawStatesErrorString;
         }
 
-        return getBasicDrawStatesErrorImpl(context);
+        return getBasicDrawStatesErrorImpl(context, privateStateCache);
     }
 
     // The GL error enum to use when generating errors due to failed draw states. Only valid if
@@ -274,21 +352,17 @@ class StateCache final : angle::NonCopyable
     void onVertexArrayBufferStateChange(Context *context);
     void onGLES1ClientStateChange(Context *context);
     void onDrawFramebufferChange(Context *context);
-    void onContextCapChange(Context *context);
-    void onStencilStateChange(Context *context);
-    void onDefaultVertexAttributeChange(Context *context);
     void onActiveTextureChange(Context *context);
     void onQueryChange(Context *context);
     void onActiveTransformFeedbackChange(Context *context);
     void onUniformBufferStateChange(Context *context);
     void onAtomicCounterBufferStateChange(Context *context);
     void onShaderStorageBufferStateChange(Context *context);
-    void onColorMaskChange(Context *context);
     void onBufferBindingChange(Context *context);
-    void onBlendFuncIndexedChange(Context *context);
-    void onBlendEquationChange(Context *context);
 
   private:
+    bool isCurrentContext(const Context *context, const PrivateStateCache *privateStateCache) const;
+
     // Cache update functions.
     void updateActiveAttribsMask(Context *context);
     void updateVertexElementLimits(Context *context);
@@ -312,7 +386,8 @@ class StateCache final : angle::NonCopyable
                            bool triAdjOK,
                            bool patchOK);
 
-    intptr_t getBasicDrawStatesErrorImpl(const Context *context) const;
+    intptr_t getBasicDrawStatesErrorImpl(const Context *context,
+                                         const PrivateStateCache *privateStateCache) const;
     intptr_t getProgramPipelineErrorImpl(const Context *context) const;
     intptr_t getBasicDrawElementsErrorImpl(const Context *context) const;
 
@@ -480,19 +555,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
                      const char *function,
                      unsigned int line);
 
-    void validationError(angle::EntryPoint entryPoint, GLenum errorCode, const char *message) const;
-    ANGLE_FORMAT_PRINTF(4, 5)
-    void validationErrorF(angle::EntryPoint entryPoint,
-                          GLenum errorCode,
-                          const char *format,
-                          ...) const;
-
-    void markContextLost(GraphicsResetStatus status);
-
-    bool isContextLost() const { return mContextLost; }
-    void setContextLost();
-
-    GLenum getGraphicsResetStrategy() const { return mResetStrategy; }
     bool isResetNotificationEnabled() const;
 
     bool isRobustnessEnabled() const;
@@ -549,6 +611,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     void setShared() { mShared = true; }
 
     const State &getState() const { return mState; }
+    const PrivateState &getPrivateState() const { return mState.privateState(); }
     GLint getClientMajorVersion() const { return mState.getClientMajorVersion(); }
     GLint getClientMinorVersion() const { return mState.getClientMinorVersion(); }
     const Version &getClientVersion() const { return mState.getClientVersion(); }
@@ -558,13 +621,15 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     const Limitations &getLimitations() const { return mState.getLimitations(); }
     bool isGLES1() const;
 
-    bool skipValidation() const
-    {
-        // Ensure we don't skip validation when context becomes lost, since implementations
-        // generally assume a non-lost context, non-null objects, etc.
-        ASSERT(!isContextLost() || !mSkipValidation);
-        return mSkipValidation;
-    }
+    // To be used **only** directly by the entry points.
+    PrivateState *getMutablePrivateState() { return mState.getMutablePrivateState(); }
+    GLES1State *getMutableGLES1State() { return mState.getMutableGLES1State(); }
+
+    bool skipValidation() const { return mErrors.skipValidation(); }
+    void markContextLost(GraphicsResetStatus status) { mErrors.markContextLost(status); }
+    bool isContextLost() const { return mErrors.isContextLost(); }
+
+    ErrorSet *getMutableErrorSetForValidation() const { return &mErrors; }
 
     // Specific methods needed for validation.
     bool getQueryParameterInfo(GLenum pname, GLenum *type, unsigned int *numParams) const;
@@ -606,6 +671,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     bool isWebGL() const { return mState.isWebGL(); }
     bool isWebGL1() const { return mState.isWebGL1(); }
+    const char *getRendererString() const { return mRendererString; }
 
     bool isValidBufferBinding(BufferBinding binding) const { return mValidBufferBindings[binding]; }
 
@@ -621,6 +687,9 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     const StateCache &getStateCache() const { return mStateCache; }
     StateCache &getStateCache() { return mStateCache; }
+
+    const PrivateStateCache &getPrivateStateCache() const { return mPrivateStateCache; }
+    PrivateStateCache *getMutablePrivateStateCache() { return &mPrivateStateCache; }
 
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
@@ -648,6 +717,10 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     egl::Error reacquireHighPowerGPU();
     void onGPUSwitch();
 
+    // EGL_ANGLE_external_context_and_surface implementation.
+    egl::Error acquireExternalContext(egl::Surface *drawAndReadSurface);
+    egl::Error releaseExternalContext();
+
     bool noopDraw(PrimitiveMode mode, GLsizei count) const;
     bool noopDrawInstanced(PrimitiveMode mode, GLsizei count, GLsizei instanceCount) const;
     bool noopMultiDraw(GLsizei drawcount) const;
@@ -657,7 +730,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     void addRef() const { mRefCount++; }
     void release() const { mRefCount--; }
-    size_t getRefCount() const { return mRefCount; }
+    bool isReferenced() const { return mRefCount > 0; }
 
     egl::ShareGroup *getShareGroup() const { return mState.getShareGroup(); }
 
@@ -690,8 +763,12 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     bool isDestroyed() const { return mIsDestroyed; }
     void setIsDestroyed() { mIsDestroyed = true; }
 
-    void setLogicOpEnabled(bool enabled) { mState.setLogicOpEnabled(enabled); }
-    void setLogicOp(LogicalOperation opcode) { mState.setLogicOp(opcode); }
+    // This function acts as glEnable(GL_COLOR_LOGIC_OP), but it's called from the GLES1 emulation
+    // code to implement logicOp using the non-GLES1 functionality (i.e. GL_ANGLE_logic_op).  The
+    // ContextPrivateEnable() entry point implementation cannot be used (as ContextPrivate*
+    // functions are typically used by other frontend-emulated features) because it forwards this
+    // back to GLES1.
+    void setLogicOpEnabledForGLES1(bool enabled);
 
     // Needed by capture serialization logic that works with a "const" Context pointer.
     void finishImmutable() const;
@@ -717,17 +794,18 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
   private:
     void initializeDefaultResources();
+    void releaseSharedObjects();
 
     angle::Result prepareForDraw(PrimitiveMode mode);
     angle::Result prepareForClear(GLbitfield mask);
     angle::Result prepareForClearBuffer(GLenum buffer, GLint drawbuffer);
-    angle::Result syncState(const state::DirtyBits &bitMask,
-                            const state::ExtendedDirtyBits &extendedBitMask,
+    angle::Result syncState(const state::DirtyBits bitMask,
+                            const state::ExtendedDirtyBits extendedBitMask,
                             const state::DirtyObjects &objectMask,
                             Command command);
     angle::Result syncAllDirtyBits(Command command);
-    angle::Result syncDirtyBits(const state::DirtyBits &bitMask,
-                                const state::ExtendedDirtyBits &extendedBitMask,
+    angle::Result syncDirtyBits(const state::DirtyBits bitMask,
+                                const state::ExtendedDirtyBits extendedBitMask,
                                 Command command);
     angle::Result syncDirtyObjects(const state::DirtyObjects &objectMask, Command command);
     angle::Result syncStateForReadPixels();
@@ -777,12 +855,11 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     State mState;
     bool mShared;
-    bool mSkipValidation;
     bool mDisplayTextureShareGroup;
     bool mDisplaySemaphoreShareGroup;
 
     // Recorded errors
-    ErrorSet mErrors;
+    mutable ErrorSet mErrors;
 
     // Stores for each buffer binding type whether is it allowed to be used in this context.
     angle::PackedEnumBitSet<BufferBinding> mValidBufferBindings;
@@ -827,10 +904,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     // Current/lost context flags
     bool mHasBeenCurrent;
-    bool mContextLost;  // Set with setContextLost so that we also set mSkipValidation=false.
-    GraphicsResetStatus mResetStatus;
-    bool mContextLostForced;
-    GLenum mResetStrategy;
     const bool mSurfacelessSupported;
     egl::Surface *mCurrentDrawSurface;
     egl::Surface *mCurrentReadSurface;
@@ -844,33 +917,15 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     state::DirtyObjects mDrawDirtyObjects;
 
     StateCache mStateCache;
+    PrivateStateCache mPrivateStateCache;
 
-    state::DirtyBits mAllDirtyBits;
-    state::ExtendedDirtyBits mAllExtendedDirtyBits;
-    state::DirtyBits mTexImageDirtyBits;
-    state::ExtendedDirtyBits mTexImageExtendedDirtyBits;
     state::DirtyObjects mTexImageDirtyObjects;
-    state::DirtyBits mReadPixelsDirtyBits;
-    state::ExtendedDirtyBits mReadPixelsExtendedDirtyBits;
     state::DirtyObjects mReadPixelsDirtyObjects;
-    state::DirtyBits mClearDirtyBits;
-    state::ExtendedDirtyBits mClearExtendedDirtyBits;
     state::DirtyObjects mClearDirtyObjects;
-    state::DirtyBits mBlitDirtyBits;
-    state::ExtendedDirtyBits mBlitExtendedDirtyBits;
     state::DirtyObjects mBlitDirtyObjects;
-    state::DirtyBits mComputeDirtyBits;
-    state::ExtendedDirtyBits mComputeExtendedDirtyBits;
     state::DirtyObjects mComputeDirtyObjects;
     state::DirtyBits mCopyImageDirtyBits;
-    state::ExtendedDirtyBits mCopyImageExtendedDirtyBits;
     state::DirtyObjects mCopyImageDirtyObjects;
-    state::DirtyBits mReadInvalidateDirtyBits;
-    state::ExtendedDirtyBits mReadInvalidateExtendedDirtyBits;
-    state::DirtyBits mDrawInvalidateDirtyBits;
-    state::ExtendedDirtyBits mDrawInvalidateExtendedDirtyBits;
-    state::DirtyBits mPixelLocalStorageEXTEnableDisableDirtyBits;
-    state::ExtendedDirtyBits mPixelLocalStorageEXTEnableDisableExtendedDirtyBits;
     state::DirtyObjects mPixelLocalStorageEXTEnableDisableDirtyObjects;
 
     // Binding to container objects that use dependent state updates.

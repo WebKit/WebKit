@@ -412,6 +412,11 @@ class Framebuffer final : public angle::ObserverInterface,
         return mFloat32ColorAttachmentBits & getDrawBufferMask();
     }
 
+    DrawBufferMask getActiveSharedExponentColorAttachmentDrawBufferMask() const
+    {
+        return mSharedExponentColorAttachmentBits & getDrawBufferMask();
+    }
+
     bool hasResourceThatNeedsInit() const { return mState.mResourceNeedsInit.any(); }
 
     angle::Result syncState(const Context *context,
@@ -507,10 +512,18 @@ class Framebuffer final : public angle::ObserverInterface,
 
     FramebufferAttachment *getAttachmentFromSubjectIndex(angle::SubjectIndex index);
 
-    ANGLE_INLINE void updateFloat32ColorAttachmentBits(size_t index, const InternalFormat *format)
+    ANGLE_INLINE void updateFloat32AndSharedExponentColorAttachmentBits(
+        size_t index,
+        const InternalFormat *format)
     {
         mFloat32ColorAttachmentBits.set(index, format->type == GL_FLOAT);
+        mSharedExponentColorAttachmentBits.set(index, format->type == GL_UNSIGNED_INT_5_9_9_9_REV);
     }
+
+    angle::Result syncAllDrawAttachmentState(const Context *context, Command command) const;
+    angle::Result syncAttachmentState(const Context *context,
+                                      Command command,
+                                      const FramebufferAttachment *attachment) const;
 
     FramebufferState mState;
     rx::FramebufferImpl *mImpl;
@@ -522,6 +535,7 @@ class Framebuffer final : public angle::ObserverInterface,
 
     mutable DirtyBits mDirtyBits;
     DrawBufferMask mFloat32ColorAttachmentBits;
+    DrawBufferMask mSharedExponentColorAttachmentBits;
 
     // The dirty bits guard is checked when we get a dependent state change message. We verify that
     // we don't set a dirty bit that isn't already set, when inside the dirty bits syncState.

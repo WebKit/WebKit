@@ -128,7 +128,7 @@ void ShaderD3D::uncompile()
     mUsesSampleMaskIn            = false;
     mUsesSampleMask              = false;
     mUsesDepthRange              = false;
-    mHasANGLEMultiviewEnabled    = false;
+    mHasMultiviewEnabled         = false;
     mUsesVertexID                = false;
     mUsesViewID                  = false;
     mUsesDiscardRewriting        = false;
@@ -316,13 +316,12 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
         mUsesSampleMask     = translatedSource.find("GL_USES_SAMPLE_MASK_OUT") != std::string::npos;
         mUsesHelperInvocation =
             translatedSource.find("GL_USES_HELPER_INVOCATION") != std::string::npos;
-        mUsesPointSize  = translatedSource.find("GL_USES_POINT_SIZE") != std::string::npos;
-        mUsesPointCoord = translatedSource.find("GL_USES_POINT_COORD") != std::string::npos;
-        mUsesDepthRange = translatedSource.find("GL_USES_DEPTH_RANGE") != std::string::npos;
-        mHasANGLEMultiviewEnabled =
-            translatedSource.find("GL_ANGLE_MULTIVIEW_ENABLED") != std::string::npos;
-        mUsesVertexID = translatedSource.find("GL_USES_VERTEX_ID") != std::string::npos;
-        mUsesViewID   = translatedSource.find("GL_USES_VIEW_ID") != std::string::npos;
+        mUsesPointSize       = translatedSource.find("GL_USES_POINT_SIZE") != std::string::npos;
+        mUsesPointCoord      = translatedSource.find("GL_USES_POINT_COORD") != std::string::npos;
+        mUsesDepthRange      = translatedSource.find("GL_USES_DEPTH_RANGE") != std::string::npos;
+        mHasMultiviewEnabled = translatedSource.find("GL_MULTIVIEW_ENABLED") != std::string::npos;
+        mUsesVertexID        = translatedSource.find("GL_USES_VERTEX_ID") != std::string::npos;
+        mUsesViewID          = translatedSource.find("GL_USES_VIEW_ID") != std::string::npos;
         mUsesDiscardRewriting =
             translatedSource.find("ANGLE_USES_DISCARD_REWRITING") != std::string::npos;
         mUsesNestedBreak = translatedSource.find("ANGLE_USES_NESTED_BREAK") != std::string::npos;

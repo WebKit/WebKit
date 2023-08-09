@@ -23,14 +23,6 @@
             ]
         },
         {
-            "name": "scalarize_vec_and_mat_constructor_args",
-            "category": "Workarounds",
-            "description": [
-                "Always rewrite vec/mat constructors to be consistent"
-            ],
-            "issue": "http://crbug.com/1165751"
-        },
-        {
             "name": "disable_program_binary",
             "category": "Features",
             "description": [
@@ -153,6 +145,22 @@
                 "Disables saving programs to the cache"
             ],
             "issue": "http://anglebug.com/1423136"
+        },
+        {
+            "name": "dump_translated_shaders",
+            "category": "Features",
+            "description": [
+                "Write translated shaders to temp directory"
+            ],
+            "issue": "http://anglebug.com/8280"
+        },
+        {
+            "name": "enable_translated_shader_substitution",
+            "category": "Workarounds",
+            "description": [
+                "Check the filesystem for translated shaders to use instead of the shader translator's"
+            ],
+            "issue": "http://anglebug.com/8280"
         }
     ]
 }

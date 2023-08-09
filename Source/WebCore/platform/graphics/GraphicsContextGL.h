@@ -720,6 +720,9 @@ public:
     // EXT_color_buffer_half_float
     static constexpr GCGLenum FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT = 0x8211;
 
+    // GL_EXT_depth_clamp
+    static constexpr GCGLenum DEPTH_CLAMP_EXT = 0x864F;
+
     // GL_EXT_disjoint_timer_query
     static constexpr GCGLenum QUERY_COUNTER_BITS_EXT = 0x8864;
     static constexpr GCGLenum CURRENT_QUERY_EXT = 0x8865;
@@ -826,6 +829,9 @@ public:
     static constexpr GCGLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE;
     static constexpr GCGLenum MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF;
 
+    // GL_EXT_texture_mirror_clamp_to_edge
+    static constexpr GCGLenum MIRROR_CLAMP_TO_EDGE_EXT = 0x8743;
+
     // GL_EXT_texture_norm16
     static constexpr GCGLenum R16_EXT = 0x822A;
     static constexpr GCGLenum RG16_EXT = 0x822C;
@@ -835,6 +841,14 @@ public:
     static constexpr GCGLenum RG16_SNORM_EXT = 0x8F99;
     static constexpr GCGLenum RGB16_SNORM_EXT = 0x8F9A;
     static constexpr GCGLenum RGBA16_SNORM_EXT = 0x8F9B;
+
+    // GL_EXT_clip_control
+    static constexpr GCGLenum LOWER_LEFT_EXT = 0x8CA1;
+    static constexpr GCGLenum UPPER_LEFT_EXT = 0x8CA2;
+    static constexpr GCGLenum NEGATIVE_ONE_TO_ONE_EXT = 0x935E;
+    static constexpr GCGLenum ZERO_TO_ONE_EXT = 0x935F;
+    static constexpr GCGLenum CLIP_ORIGIN_EXT = 0x935C;
+    static constexpr GCGLenum CLIP_DEPTH_MODE_EXT = 0x935D;
 
     // GL_ANGLE_clip_cull_distance
     static constexpr GCGLenum MAX_CLIP_DISTANCES_ANGLE = 0x0D32;
@@ -854,8 +868,19 @@ public:
     static constexpr GCGLenum LAST_VERTEX_CONVENTION_ANGLE = 0x8E4E;
     static constexpr GCGLenum PROVOKING_VERTEX_ANGLE = 0x8E4F;
 
+    // GL_ANGLE_polygon_mode
+    static constexpr GCGLenum POLYGON_MODE_ANGLE = 0x0B40;
+    static constexpr GCGLenum POLYGON_OFFSET_LINE_ANGLE = 0x2A02;
+    static constexpr GCGLenum LINE_ANGLE = 0x1B01;
+    static constexpr GCGLenum FILL_ANGLE = 0x1B02;
+
     // GL_EXT_polygon_offset_clamp
     static constexpr GCGLenum POLYGON_OFFSET_CLAMP_EXT = 0x8E1B;
+
+    // GL_OES_shader_multisample_interpolation
+    static constexpr GCGLenum MIN_FRAGMENT_INTERPOLATION_OFFSET_OES = 0x8E5B;
+    static constexpr GCGLenum MAX_FRAGMENT_INTERPOLATION_OFFSET_OES = 0x8E5C;
+    static constexpr GCGLenum FRAGMENT_INTERPOLATION_OFFSET_BITS_OES = 0x8E5D;
 
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     static constexpr GCGLenum MAX_DRAW_BUFFERS_EXT = 0x8824;
@@ -892,6 +917,10 @@ public:
     static constexpr GCGLenum COLOR_ATTACHMENT13_EXT = 0x8CED;
     static constexpr GCGLenum COLOR_ATTACHMENT14_EXT = 0x8CEE;
     static constexpr GCGLenum COLOR_ATTACHMENT15_EXT = 0x8CEF;
+
+    // GL_ANGLE_stencil_texturing
+    static constexpr GCGLenum DEPTH_STENCIL_TEXTURE_MODE_ANGLE = 0x90EA;
+    static constexpr GCGLenum STENCIL_INDEX_ANGLE = 0x1901;
 
     // GL_KHR_parallel_shader_compile
     static constexpr GCGLenum COMPLETION_STATUS_KHR = 0x91B1;
@@ -1555,8 +1584,14 @@ public:
     virtual void multiDrawArraysInstancedBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei, const GCGLuint> firstsCountsInstanceCountsAndBaseInstances) = 0;
     virtual void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei, const GCGLint, const GCGLuint> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, GCGLenum type) = 0;
 
+    // GL_EXT_clip_control
+    virtual void clipControlEXT(GCGLenum origin, GCGLenum depth) = 0;
+
     // GL_ANGLE_provoking_vertex
     virtual void provokingVertexANGLE(GCGLenum provokeMode) = 0;
+
+    // GL_ANGLE_polygon_mode
+    virtual void polygonModeANGLE(GCGLenum face, GCGLenum mode) = 0;
 
     // GL_EXT_polygon_offset_clamp
     virtual void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) = 0;

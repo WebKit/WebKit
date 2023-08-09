@@ -162,7 +162,7 @@ struct ClipPlaneParameters
 
 class Context;
 class GLES1Renderer;
-class State;
+class PrivateState;
 
 class GLES1State final : angle::NonCopyable
 {
@@ -170,7 +170,7 @@ class GLES1State final : angle::NonCopyable
     GLES1State();
     ~GLES1State();
 
-    void initialize(const Context *context, const State *state);
+    void initialize(const Context *context, const PrivateState *state);
 
     void setAlphaTestParameters(AlphaTestFunc func, GLfloat ref);
     const AlphaTestParameters &getAlphaTestParameters() const;
@@ -271,11 +271,11 @@ class GLES1State final : angle::NonCopyable
     void setAllDirty() { mDirtyBits.set(); }
 
   private:
-    friend class State;
+    friend class PrivateState;
     friend class GLES1Renderer;
 
     // Back pointer for reading from State.
-    const State *mGLState;
+    const PrivateState *mGLState;
 
     using DirtyBits = angle::BitSet<DIRTY_GLES1_MAX>;
     DirtyBits mDirtyBits;

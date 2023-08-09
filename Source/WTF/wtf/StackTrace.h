@@ -123,7 +123,7 @@ public:
             if (demangled)
                 name = demangled->demangledName() ? demangled->demangledName() : demangled->mangledName();
 #if HAVE(BACKTRACE_SYMBOLS)
-            if (!name)
+            if (!name || !strcmp(name, "<redacted>"))
                 name = symbols[i];
 #elif OS(WINDOWS)
             if (!name && DbgHelper::SymFromAddress(hProc, reinterpret_cast<DWORD64>(m_stack[i]), nullptr, symbolInfo))

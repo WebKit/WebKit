@@ -206,6 +206,19 @@ bool PathStream::applyElements(const PathElementApplier& applier) const
     return true;
 }
 
+bool PathStream::transform(const AffineTransform& transform)
+{
+    for (auto& segment : m_segmentsData->segments) {
+        if (!segment.canTransform())
+            return false;
+    }
+
+    for (auto& segment : m_segmentsData.access().segments)
+        segment.transform(transform);
+
+    return true;
+}
+
 std::optional<PathSegment> PathStream::singleSegment() const
 {
     if (m_segmentsData->segments.size() != 1)

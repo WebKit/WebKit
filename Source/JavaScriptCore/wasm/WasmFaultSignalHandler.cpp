@@ -26,8 +26,7 @@
 #include "config.h"
 #include "WasmFaultSignalHandler.h"
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=259108 Support signal handlers on Windows
-#if ENABLE(WEBASSEMBLY) && OS(UNIX)
+#if ENABLE(WEBASSEMBLY)
 
 #include "ExecutableAllocator.h"
 #include "LLIntData.h"
@@ -133,5 +132,5 @@ void prepareSignalingMemory()
     
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY) && OS(UNIX)
+#endif // ENABLE(WEBASSEMBLY)
 

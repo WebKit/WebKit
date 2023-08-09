@@ -43,7 +43,6 @@
 #import "SandboxExtension.h"
 #import "SandboxUtilities.h"
 #import "TextChecker.h"
-#import "UserInterfaceIdiom.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebBackForwardCache.h"
 #import "WebMemoryPressureHandler.h"
@@ -71,8 +70,8 @@
 #import <pal/Logging.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFNotificationCenterSPI.h>
-#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <sys/param.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
@@ -85,6 +84,8 @@
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/TextStream.h>
+
+#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
@@ -486,7 +487,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.strictSecureDecodingForAllObjCEnabled = IPC::strictSecureDecodingForAllObjCEnabled();
 
 #if PLATFORM(IOS_FAMILY)
-    parameters.currentUserInterfaceIdiom = currentUserInterfaceIdiom();
+    parameters.currentUserInterfaceIdiom = PAL::currentUserInterfaceIdiom();
     parameters.supportsPictureInPicture = supportsPictureInPicture();
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
     parameters.focusRingColor = RenderThemeIOS::systemFocusRingColor();
@@ -808,8 +809,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     if (![UIApplication sharedApplication]) {
         m_applicationLaunchObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
-            if (WebKit::updateCurrentUserInterfaceIdiom())
-                sendToAllProcesses(Messages::WebProcess::UserInterfaceIdiomDidChange(WebKit::currentUserInterfaceIdiom()));
+            if (PAL::updateCurrentUserInterfaceIdiom())
+                sendToAllProcesses(Messages::WebProcess::UserInterfaceIdiomDidChange(PAL::currentUserInterfaceIdiom()));
         }];
     }
 #endif

@@ -702,6 +702,19 @@
 6297 MAC METAL : dEQP-GLES3.functional.attribute_location.bind_aliasing.cond* = FAIL
 6297 MAC METAL : dEQP-GLES3.functional.attribute_location.bind_aliasing.max_cond* = FAIL
 
+// Some trig functions have precision issues when fast math is enabled in Metal shader compilation
+8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.mix.mediump_fragment.scalar = FAIL
+8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.mix.mediump_vertex.scalar = FAIL
+8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.refract.lowp_vertex.scalar = FAIL
+8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_fragment.scalar = FAIL
+8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_fragment.vec2 = FAIL
+8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_fragment.vec3 = FAIL
+8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_fragment.vec4 = FAIL
+8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_vertex.scalar = FAIL
+8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_vertex.vec2 = FAIL
+8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_vertex.vec3 = FAIL
+8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_vertex.vec4 = FAIL
+
 
 // Metal/Intel
 

@@ -30,7 +30,7 @@ function testCanvasDisplayingPattern(canvas, width, height, sourceIsVideo, flipp
         [topRight, bottomRight] = [bottomRight, topRight];
     }
     const check = (x, y, [r, g, b, a]) =>
-        _assertPixelApprox(canvas, x,y, r,g,b,a, `${x},${y}`, `${r},${g},${b},${a}`, tolerance);
+        _assertPixelApprox(canvas, x,y, r,g,b,a, tolerance);
     check(1 * width / 4, 1 * height / 4, topLeft);
     check(3 * width / 4, 1 * height / 4, topRight);
     check(1 * width / 4, 3 * height / 4, bottomLeft);
@@ -55,10 +55,10 @@ function testDrawImageBitmap(source, args = [], flipped, { resizeWidth = 20, res
 for (let { name, factory } of imageSourceTypes) {
     promise_test(function() {
         return factory().then(function(img) {
-            const options = { imageOrientation: 'none' };
+            const options = { imageOrientation: 'from-image' };
             return testDrawImageBitmap(img, [options], false);
         });
-    }, `createImageBitmap from ${name} imageOrientation: "none", and drawImage on the created ImageBitmap`);
+    }, `createImageBitmap from ${name} imageOrientation: "from-image", and drawImage on the created ImageBitmap`);
 
     promise_test(function() {
         return factory().then(function(img) {

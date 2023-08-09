@@ -184,7 +184,7 @@ function testStructNew() {
       (type $Empty (struct))
       (func (export "main")
         (drop
-          (struct.new_canon $Empty)
+          (struct.new $Empty)
         )
       )
     )
@@ -197,7 +197,7 @@ function testStructNew() {
       (type $Empty (sub 0 (struct)))
       (func (export "main")
         (drop
-          (struct.new_canon $Empty)
+          (struct.new $Empty)
         )
       )
     )
@@ -275,7 +275,7 @@ function testStructNew() {
       (type $Point (struct (field $x i32) (field $y i32)))
       (func (export "main")
         unreachable
-        struct.new_canon $Point (i32.const 19) (i32.const 37)
+        struct.new $Point (i32.const 19) (i32.const 37)
       )
     )
   `);
@@ -287,7 +287,7 @@ function testStructNewDefault() {
       (type $Empty (struct))
       (func (export "main")
         (drop
-          (struct.new_canon_default $Empty)
+          (struct.new_default $Empty)
         )
       )
     )
@@ -300,7 +300,7 @@ function testStructNewDefault() {
       (type $Empty (sub 0 (struct)))
       (func (export "main")
         (drop
-          (struct.new_canon_default $Empty)
+          (struct.new_default $Empty)
         )
       )
     )
@@ -311,7 +311,7 @@ function testStructNewDefault() {
        (type $Point (struct (field $x i32) (field $y i32)))
        (func (export "main")
          (drop
-           (struct.new_canon_default $Point)
+           (struct.new_default $Point)
          )
        )
      )
@@ -323,7 +323,7 @@ function testStructNewDefault() {
               (type $Point (struct (field $x (ref func))))
               (func (export "main")
                 (drop
-                  (struct.new_canon_default $Point)
+                  (struct.new_default $Point)
                 )
               )
             )
@@ -338,7 +338,7 @@ function testStructNewDefault() {
               (type $Point (struct (field $x i32) (field $y i32)))
               (func (export "main")
                 (drop
-                  (struct.new_canon_default 3)
+                  (struct.new_default 3)
                 )
               )
             )
@@ -353,7 +353,7 @@ function testStructNewDefault() {
               (type $Point (struct (field $x i32) (field $y i32)))
               (func (export "main")
                 unreachable
-                struct.new_canon_default 2
+                struct.new_default 2
               )
             )
          `),
@@ -386,7 +386,7 @@ function testStructGet() {
         (type $Point (struct (field $x i32)))
          (func (export "main") (result i32)
            (struct.get $Point $x
-             (struct.new_canon $Point (i32.const 37))
+             (struct.new $Point (i32.const 37))
            )
          )
       )
@@ -400,7 +400,7 @@ function testStructGet() {
         (type $Point (struct (field $x i32)))
          (func (export "main") (result i32)
            (struct.get $Point $x
-             (struct.new_canon_default $Point)
+             (struct.new_default $Point)
            )
          )
       )
@@ -416,7 +416,7 @@ function testStructGet() {
         (type $Point (sub 0 (struct (field $x i32))))
          (func (export "main") (result i32)
            (struct.get $Point $x
-             (struct.new_canon $Point (i32.const 37))
+             (struct.new $Point (i32.const 37))
            )
          )
       )
@@ -447,7 +447,7 @@ function testStructGet() {
         (type $Point (struct (field $x f32)))
          (func (export "main") (result f32)
            (struct.get $Point $x
-             (struct.new_canon_default $Point)
+             (struct.new_default $Point)
            )
          )
       )
@@ -483,7 +483,7 @@ function testStructGet() {
           (i64.eq
             (i64.const 0)
             (struct.get $Point $x
-              (struct.new_canon_default $Point)
+              (struct.new_default $Point)
             )
           )
         )
@@ -515,7 +515,7 @@ function testStructGet() {
         (type $Point (struct (field $x f64)))
          (func (export "main") (result f64)
            (struct.get $Point $x
-             (struct.new_canon_default $Point)
+             (struct.new_default $Point)
            )
          )
       )
@@ -547,7 +547,7 @@ function testStructGet() {
         (type $Point (struct (field $x externref)))
         (func (export "main") (result externref)
           (struct.get $Point $x
-            (struct.new_canon_default $Point)
+            (struct.new_default $Point)
           )
         )
       )
@@ -586,7 +586,7 @@ function testStructGet() {
         (type $Point (struct (field $x funcref)))
         (func (export "main") (result funcref)
           (struct.get $Point $x
-            (struct.new_canon_default $Point)
+            (struct.new_default $Point)
           )
         )
       )
@@ -787,7 +787,7 @@ function testStructSet() {
 
         (func (export "main") (result i32)
           (call $doTest
-            (struct.new_canon $Point (i32.const 0))
+            (struct.new $Point (i32.const 0))
           )
         )
       )
@@ -813,7 +813,7 @@ function testStructSet() {
 
         (func (export "main") (result i32)
           (call $doTest
-            (struct.new_canon $Point (i32.const 0))
+            (struct.new $Point (i32.const 0))
           )
         )
       )
@@ -828,7 +828,7 @@ function testStructSet() {
         (type $Point (struct (field $x (mut i32))))
         (type $Sub (sub 0 (struct (field (mut i32) (mut i32)))))
         (func $doTest (result i32) (local $p (ref null $Sub))
-          (local.set $p (struct.new_canon $Sub (i32.const 0) (i32.const 1)))
+          (local.set $p (struct.new $Sub (i32.const 0) (i32.const 1)))
           (struct.set $Point $x
             (local.get $p)
             (i32.const 37)
@@ -1162,7 +1162,7 @@ function testStructTable() {
         (type (struct (field i32)))
         (table 10 (ref null 0))
         (func (export "set") (param i32) (result)
-          (table.set (local.get 0) (struct.new_canon 0 (i32.const 42))))
+          (table.set (local.get 0) (struct.new 0 (i32.const 42))))
         (func (export "get") (param i32) (result i32)
           (struct.get 0 0 (table.get (local.get 0)))
           )
@@ -1206,13 +1206,13 @@ function testStructTable() {
         (table (export "t") 10 (ref null 0))
         (start 0)
         (func
-          (table.fill (i32.const 0) (struct.new_canon 0) (i32.const 10)))
-        (func (export "makeStruct") (result (ref 0)) (struct.new_canon 0)))
+          (table.fill (i32.const 0) (struct.new 0) (i32.const 10)))
+        (func (export "makeStruct") (result (ref 0)) (struct.new 0)))
     `);
     const m2 = instantiate(`
       (module
         (type (array i32))
-        (func (export "makeArray") (result (ref 0)) (array.new_canon_default 0 (i32.const 5))))
+        (func (export "makeArray") (result (ref 0)) (array.new_default 0 (i32.const 5))))
     `);
     assert.eq(m.exports.t.get(0) !== null, true);
     assert.throws(

@@ -22,6 +22,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.componentTransfer.linear.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.componentTransfer.table.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.convolveMatrix.exceptions.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.dropShadow.exceptions.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.dropShadow.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.dropShadow.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.dropShadow.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.turbulence.inputTypes.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.value.html

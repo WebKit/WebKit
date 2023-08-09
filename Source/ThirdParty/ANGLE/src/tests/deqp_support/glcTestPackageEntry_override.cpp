@@ -25,6 +25,7 @@
 #include "gl4cTestPackages.hpp"
 
 #include "glcNoDefaultContextPackage.hpp"
+#include "glcSingleConfigTestPackage.hpp"
 
 namespace glcts
 {
@@ -58,10 +59,15 @@ static tcu::TestPackage *createES32Package(tcu::TestContext &testCtx)
     return new es32cts::ES32TestPackage(testCtx, "KHR-GLES32");
 }
 
-// static tcu::TestPackage* createNoDefaultCustomContextPackage(tcu::TestContext& testCtx)
-// {
-//     return new glcts::NoDefaultContextPackage(testCtx, "KHR-NoContext");
-// }
+static tcu::TestPackage *createNoDefaultCustomContextPackage(tcu::TestContext &testCtx)
+{
+    return new glcts::NoDefaultContextPackage(testCtx, "KHR-NoContext");
+}
+
+static tcu::TestPackage *createSingleConfigES32TestPackage(tcu::TestContext &testCtx)
+{
+    return new glcts::SingleConfigES32TestPackage(testCtx, "KHR-Single-GLES32");
+}
 
 // static tcu::TestPackage* createGL30Package(tcu::TestContext& testCtx)
 // {
@@ -123,7 +129,8 @@ void registerPackages(void)
 
     registry->registerPackage("KHR-GLES32", createES32Package);
 
-    // registry->registerPackage("KHR-NoContext", createNoDefaultCustomContextPackage);
+    registry->registerPackage("KHR-NoContext", createNoDefaultCustomContextPackage);
+    registry->registerPackage("KHR-Single-GLES32", createSingleConfigES32TestPackage);
 
     // registry->registerPackage("KHR-GL30", createGL30Package);
     // registry->registerPackage("KHR-GL31", createGL31Package);

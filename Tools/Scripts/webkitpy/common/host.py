@@ -76,6 +76,8 @@ class Host(SystemHost):
     # We call this from the Host constructor, as it's one of the
     # earliest calls made for all webkitpy-based programs.
     def _engage_awesome_locale_hacks(self):
+        if sys.platform.startswith('win'):
+            return
         # To make life easier on our non-english users, we override
         # the locale environment variables inside webkitpy.
         # If we don't do this, programs like SVN will output localized

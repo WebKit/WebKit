@@ -83,6 +83,24 @@ bool PathSegment::applyElements(const PathElementApplier& applier) const
     });
 }
 
+bool PathSegment::canTransform() const
+{
+    return WTF::switchOn(m_data, [&](auto& data) {
+        return data.canTransform;
+    });
+}
+
+bool PathSegment::transform(const AffineTransform& transform)
+{
+    return WTF::switchOn(m_data, [&](auto& data) {
+        if constexpr (std::decay_t<decltype(data)>::canTransform) {
+            data.transform(transform);
+            return true;
+        }
+        return false;
+    });
+}
+
 TextStream& operator<<(TextStream& ts, const PathSegment& segment)
 {
     return WTF::switchOn(segment.data(), [&](auto& data) -> TextStream& {

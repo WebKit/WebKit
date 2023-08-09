@@ -664,7 +664,7 @@
             "name": "disable_base_instance_vertex",
             "category": "Workarounds",
             "description": [
-                "Some Mali drivers have buggy implementations of glDraw*BaseVertex*."
+                "Some drivers have buggy implementations of glDraw*BaseVertex*."
             ],
             "issue": "http://anglebug.com/8172"
         },
@@ -720,9 +720,25 @@
             "name": "disable_clip_control",
             "category": "Features",
             "description": [
-                "Some ARM Mali devices genenerate errors when querying the clip control state."
+                "Some devices genenerate errors when querying the clip control state"
             ],
             "issue": "http://crbug.com/1434317"
+        },
+        {
+            "name": "scalarize_vec_and_mat_constructor_args",
+            "category": "Workarounds",
+            "description": [
+                "Rewrite vec/mat constructors to work around driver bugs"
+            ],
+            "issue": "http://crbug.com/1420130"
+        },
+        {
+            "name": "ensure_non_empty_buffer_is_bound_for_draw",
+            "category": "Features",
+            "description": [
+                "Apple OpenGL drivers crash when drawing with a zero-sized buffer bound using a non-zero divisor."
+            ],
+            "issue": "http://crbug.com/1456243"
         }
     ]
 }

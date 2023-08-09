@@ -403,6 +403,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7316 WIN D3D11 : StateChangeTestES3.StencilTestAndFunc/* = SKIP
 7329 WIN D3D11 : StateChangeTestES3.PrimitiveRestart/* = SKIP
 8100 WIN D3D11 : WebGL2GLSLTest.InitOutputParams/* = SKIP
+1456243 WIN D3D11 : WebGL2CompatibilityTest.DrawWithZeroSizedBuffer/* = SKIP
 
 // Android
 6095 ANDROID GLES : GLSLTest_ES3.InitGlobalComplexConstant/* = SKIP
@@ -508,6 +509,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7703 PIXEL4ORXL GLES : FramebufferFetchES31.ProgramPipeline* = SKIP
 7703 PIXEL4ORXL GLES : FramebufferFetchES31.DrawNonFetchDrawFetchInStorageBuffer* = SKIP
 2046 PIXEL4ORXL GLES : WebGL2GLSLTest.InitOutputParams/* = SKIP
+8250 PIXEL4ORXL GLES : GLSLTest_ES3.ComplexConstructor/* = SKIP
 
 3423 PIXEL4ORXL VULKAN : ClearTestES3.MaskedClearBufferBug/* = SKIP
 3423 PIXEL4ORXL VULKAN : DrawBuffersWebGL2Test.TwoProgramsWithDifferentOutputsAndClear/* = SKIP
@@ -705,6 +707,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7653 IOS : Texture3DTestES2.CopySubImageAlpha/ES2_OpenGL = SKIP
 7653 IOS : Texture3DTestES2.CopySubImageLuminance/ES2_OpenGL = SKIP
 7653 IOS : Texture3DTestES2.CopySubImageRGBA/ES2_OpenGL = SKIP
+7653 IOS : Texture3DTestES2.DefineTexture2DArrayShouldFail/ES2_OpenGL = SKIP
 7653 IOS : Texture3DTestES2.Luminance/ES2_OpenGL = SKIP
 7653 IOS : Texture3DTestES2.RGBA/ES2_OpenGL = SKIP
 7653 IOS : TransformFeedbackTest.RenderOnceChangeXfbBufferRenderAgain/ES3_OpenGL = SKIP
@@ -783,6 +786,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7778 IOS : FramebufferTest_ES3.DrawWithDifferentPreRotations/ES3_OpenGL = SKIP
 7833 IOS : ShaderBinaryTest.* = SKIP
 7853 IOS : FramebufferExtensionsTest.ColorBufferHalfFloat/ES2_OpenGL = SKIP
+8264 IOS : WebGL2CompatibilityTest.DrawWithZeroSizedBuffer/ES3_OpenGL = SKIP
 
 // Some Metal tests fail on iOS Intel simulator
 7994 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/ES2_Metal = SKIP
@@ -910,7 +914,9 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7994 IOS METAL : WebGL2ValidationStateChangeTest.MultiAttachmentDrawFramebufferNegativeAPI/ES3_Metal = SKIP
 8043 IOS METAL : FramebufferTest_ES3.RenderSharedExponent/ES3_Metal = SKIP
 8051 IOS METAL : Texture2DDepthStencilTestES3.TexSampleModes*Swizzled/ES3_Metal = SKIP
-
+8278 IOS METAL : GLSLTest_ES3.LiteralInfinityOutput/ES3_Metal = SKIP
+8278 IOS METAL : GLSLTest_ES3.LiteralNegativeInfinityOutput/ES3_Metal = SKIP
+  
 // Test is disabled as it only pertains to desktop GLSL
 6197 : GLSLTest_ES31.InterpolateAtWithSwizzle/* = SKIP
 
@@ -1116,10 +1122,13 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 
 // ReadPixels clamps snorm color values to [0, 1]; fixed in Mesa 21.3.0
 8048 LINUX INTEL OPENGL : FramebufferTest_ES3.RenderSnorm* = SKIP
+8048 LINUX INTEL OPENGL : FramebufferTest_ES3.BlitReversedSnorm8/* = SKIP
 
 // ReadPixels clamps Red and Red-Green 16-bit snorm
 // color values to [0, 1] when using GL_RGBA format
+// As of June 2023, the driver issue has been fixed
 8048 NVIDIA GLES : FramebufferTest_ES3.RenderSnorm16* = SKIP
+8048 NVIDIA GLES : FramebufferTest_ES3.BlitReversedSnorm8/* = SKIP
 
 // D3D needs a workaround to follow OpenGL rules
 8077 D3D9 : DepthWriteTest.Test/ES2_D3D9__DepthRangeReduced_Clipped_VertexDepthInsideClipVolume_FragmentDepthBetweenZeroAndNearPlane_* = SKIP
@@ -1335,11 +1344,6 @@ b/266235549 D3D11 : ComputeShaderTest.SSBOAliasOverWrite/* = SKIP
 8212 MALIG710 VULKAN : ProgramPipelineTest31.ImageUniforms/* = SKIP
 8212 MALIG710 VULKAN : RobustBufferAccessBehaviorTest.DrawElementsIndexOutOfRangeWithDynamicDraw/* = SKIP
 8212 MALIG710 VULKAN : RobustBufferAccessBehaviorTest.DrawElementsIndexOutOfRangeWithStaticDraw/* = SKIP
-8212 MALIG710 VULKAN : Texture2DTestES3.TexStorage2DCycleThroughYuvAndRgbSources/* = SKIP
-8212 MALIG710 VULKAN : Texture2DTestES3.TexStorage2DCycleThroughYuvSourcesNoData/* = SKIP
-8212 MALIG710 VULKAN : Texture2DTestES3.TexStorage2DLargeYuvTextureCount/* = SKIP
-8212 MALIG710 VULKAN : Texture2DTestES3.TexStorage2DSimultaneousUseOfMultipleYuvSourcesNoData/* = SKIP
-8212 MALIG710 VULKAN : Texture2DTestES3YUV.TexStorage2DYuvFilterModes/* = SKIP
 8212 MALIG710 VULKAN : TransformFeedbackTest.BaseInstance/* = SKIP
 8212 MALIG710 VULKAN : TransformFeedbackTest.BufferRebinding/* = SKIP
 8212 MALIG710 VULKAN : TransformFeedbackTest.OffsetResetOnBeginTransformFeedback/* = SKIP

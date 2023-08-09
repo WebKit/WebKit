@@ -1,7 +1,7 @@
 2d.text.measure.fontBoundingBox
 
-Testing fontBoundingBox for OffscreenCanvas
+Testing fontBoundingBox measurements
 
 
-PASS Testing fontBoundingBox for OffscreenCanvas
+PASS Testing fontBoundingBox measurements
 

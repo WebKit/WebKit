@@ -3389,96 +3389,6 @@
     "imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.uncovered.fill.destination-in.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.3arg.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.5arg.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.9arg.basic.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.9arg.destpos.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.9arg.destsize.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.9arg.sourcepos.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.9arg.sourcesize.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.alpha.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.animated.poster.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.broken.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.canvas.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.clip.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.composite.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.floatsource.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.negativedest.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.negativedir.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.negativesource.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.nonfinite.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.nowrap.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.null.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.path.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.self.1.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.self.2.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.svg.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.transform.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.wrongtype.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerocanvas.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.image.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fill.maxWidth.zero.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/anonymous-iframe-popup.tentative.https.html": [
         "slow"
     ],
@@ -5276,10 +5186,19 @@
     "imported/w3c/web-platform-tests/quirks/unitless-length/no-quirks.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/requestidlecallback/callback-idle-periods.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/requestidlecallback/callback-iframe.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/requestidlecallback/callback-invoked.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/requestidlecallback/callback-suspended.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/requestidlecallback/callback-timeRemaining-cross-realm-method.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/requestidlecallback/callback-timeout-when-busy.html": [
@@ -5289,6 +5208,18 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/requestidlecallback/deadline-max-timeout-dynamic.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/requestidlecallback/deadline-max.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/resource-timing/nested-context-navigations-embed.html": [

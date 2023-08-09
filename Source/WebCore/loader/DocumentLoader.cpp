@@ -664,6 +664,24 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         return completionHandler(WTFMove(newRequest));
     }
 
+    if (auto requester = m_triggeringAction.requester(); requester && requester->documentIdentifier) {
+        if (RefPtr requestingDocument = Document::allDocumentsMap().get(requester->documentIdentifier); requestingDocument && requestingDocument->frame()) {
+            if (m_frame && requestingDocument->isNavigationBlockedByThirdPartyIFrameRedirectBlocking(*m_frame, newRequest.url())) {
+                DOCUMENTLOADER_RELEASE_LOG("willSendRequest: canceling - cross-site redirect of top frame triggered by third-party iframe");
+                if (m_frame->document()) {
+                    auto message = makeString("Unsafe JavaScript attempt to initiate navigation for frame with URL '"
+                        , m_frame->document()->url().string()
+                        , "' from frame with URL '"
+                        , requestingDocument->url().string()
+                        , "'. The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame.");
+                    m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
+                }
+                cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
+                return completionHandler(WTFMove(newRequest));
+            }
+        }
+    }
+
     ASSERT(timing().startTime());
     if (didReceiveRedirectResponse) {
         if (newRequest.url().protocolIsAbout() || newRequest.url().protocolIsData()) {
@@ -721,14 +739,11 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     if (isRedirectToGetAfterPost(m_request, newRequest))
         newRequest.clearHTTPOrigin();
 
-    // FIXME: Get mixed content checking working when the top frame is a RemoteFrame.
     if (topFrame && topFrame != m_frame) {
-        ASSERT(topFrame->document());
-        if (!MixedContentChecker::canDisplayInsecureContent(*m_frame, m_frame->document()->securityOrigin(), MixedContentChecker::ContentType::Active, newRequest.url(), MixedContentChecker::AlwaysDisplayInNonStrictMode::Yes)) {
-            cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
-            return completionHandler(WTFMove(newRequest));
-        }
-        if (!topFrame || !MixedContentChecker::canDisplayInsecureContent(*m_frame, topFrame->document()->securityOrigin(), MixedContentChecker::ContentType::Active, newRequest.url())) {
+        // We shouldn't check for mixed content against the current frame when navigating; we only need to be concerned with the ancestor frames.
+        auto* parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
+        ASSERT(parentFrame && topFrame);
+        if (!MixedContentChecker::frameAndAncestorsCanDisplayInsecureContent(*parentFrame, MixedContentChecker::ContentType::Active, newRequest.url())) {
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
             return completionHandler(WTFMove(newRequest));
         }

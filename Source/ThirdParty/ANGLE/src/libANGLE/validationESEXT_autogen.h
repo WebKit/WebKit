@@ -17,6 +17,8 @@
 namespace gl
 {
 class Context;
+class PrivateState;
+class ErrorSet;
 
 // GL_AMD_performance_monitor
 bool ValidateBeginPerfMonitorAMD(const Context *context,
@@ -231,7 +233,8 @@ bool ValidateVertexAttribDivisorANGLE(const Context *context,
                                       GLuint divisor);
 
 // GL_ANGLE_logic_op
-bool ValidateLogicOpANGLE(const Context *context,
+bool ValidateLogicOpANGLE(const PrivateState &state,
+                          ErrorSet *errors,
                           angle::EntryPoint entryPoint,
                           LogicalOperation opcodePacked);
 
@@ -330,7 +333,8 @@ bool ValidateMultiDrawElementsInstancedANGLE(const Context *context,
 // GL_ANGLE_pack_reverse_row_order
 
 // GL_ANGLE_polygon_mode
-bool ValidatePolygonModeANGLE(const Context *context,
+bool ValidatePolygonModeANGLE(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLenum face,
                               PolygonMode modePacked);
@@ -338,7 +342,8 @@ bool ValidatePolygonModeANGLE(const Context *context,
 // GL_ANGLE_program_binary
 
 // GL_ANGLE_provoking_vertex
-bool ValidateProvokingVertexANGLE(const Context *context,
+bool ValidateProvokingVertexANGLE(const PrivateState &state,
+                                  ErrorSet *errors,
                                   angle::EntryPoint entryPoint,
                                   ProvokingVertexConvention provokeModePacked);
 
@@ -956,7 +961,8 @@ bool ValidateGetMultisamplefvANGLE(const Context *context,
                                    GLenum pname,
                                    GLuint index,
                                    const GLfloat *val);
-bool ValidateSampleMaskiANGLE(const Context *context,
+bool ValidateSampleMaskiANGLE(const PrivateState &state,
+                              ErrorSet *errors,
                               angle::EntryPoint entryPoint,
                               GLuint maskNumber,
                               GLbitfield mask);
@@ -1033,7 +1039,8 @@ bool ValidateCopySubTextureCHROMIUM(const Context *context,
                                     GLboolean unpackUnmultiplyAlpha);
 
 // GL_CHROMIUM_framebuffer_mixed_samples
-bool ValidateCoverageModulationCHROMIUM(const Context *context,
+bool ValidateCoverageModulationCHROMIUM(const PrivateState &state,
+                                        ErrorSet *errors,
                                         angle::EntryPoint entryPoint,
                                         GLenum components);
 
@@ -1118,7 +1125,8 @@ bool ValidateBufferStorageEXT(const Context *context,
                               GLbitfield flags);
 
 // GL_EXT_clip_control
-bool ValidateClipControlEXT(const Context *context,
+bool ValidateClipControlEXT(const PrivateState &state,
+                            ErrorSet *errors,
                             angle::EntryPoint entryPoint,
                             ClipOrigin originPacked,
                             ClipDepthMode depthPacked);
@@ -1243,43 +1251,51 @@ bool ValidateDrawBuffersEXT(const Context *context,
                             const GLenum *bufs);
 
 // GL_EXT_draw_buffers_indexed
-bool ValidateBlendEquationSeparateiEXT(const Context *context,
+bool ValidateBlendEquationSeparateiEXT(const PrivateState &state,
+                                       ErrorSet *errors,
                                        angle::EntryPoint entryPoint,
                                        GLuint buf,
                                        GLenum modeRGB,
                                        GLenum modeAlpha);
-bool ValidateBlendEquationiEXT(const Context *context,
+bool ValidateBlendEquationiEXT(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint buf,
                                GLenum mode);
-bool ValidateBlendFuncSeparateiEXT(const Context *context,
+bool ValidateBlendFuncSeparateiEXT(const PrivateState &state,
+                                   ErrorSet *errors,
                                    angle::EntryPoint entryPoint,
                                    GLuint buf,
                                    GLenum srcRGB,
                                    GLenum dstRGB,
                                    GLenum srcAlpha,
                                    GLenum dstAlpha);
-bool ValidateBlendFunciEXT(const Context *context,
+bool ValidateBlendFunciEXT(const PrivateState &state,
+                           ErrorSet *errors,
                            angle::EntryPoint entryPoint,
                            GLuint buf,
                            GLenum src,
                            GLenum dst);
-bool ValidateColorMaskiEXT(const Context *context,
+bool ValidateColorMaskiEXT(const PrivateState &state,
+                           ErrorSet *errors,
                            angle::EntryPoint entryPoint,
                            GLuint index,
                            GLboolean r,
                            GLboolean g,
                            GLboolean b,
                            GLboolean a);
-bool ValidateDisableiEXT(const Context *context,
+bool ValidateDisableiEXT(const PrivateState &state,
+                         ErrorSet *errors,
                          angle::EntryPoint entryPoint,
                          GLenum target,
                          GLuint index);
-bool ValidateEnableiEXT(const Context *context,
+bool ValidateEnableiEXT(const PrivateState &state,
+                        ErrorSet *errors,
                         angle::EntryPoint entryPoint,
                         GLenum target,
                         GLuint index);
-bool ValidateIsEnablediEXT(const Context *context,
+bool ValidateIsEnablediEXT(const PrivateState &state,
+                           ErrorSet *errors,
                            angle::EntryPoint entryPoint,
                            GLenum target,
                            GLuint index);
@@ -1501,14 +1517,16 @@ bool ValidateRenderbufferStorageMultisampleEXT(const Context *context,
 // GL_EXT_occlusion_query_boolean
 
 // GL_EXT_polygon_offset_clamp
-bool ValidatePolygonOffsetClampEXT(const Context *context,
+bool ValidatePolygonOffsetClampEXT(const PrivateState &state,
+                                   ErrorSet *errors,
                                    angle::EntryPoint entryPoint,
                                    GLfloat factor,
                                    GLfloat units,
                                    GLfloat clamp);
 
 // GL_EXT_primitive_bounding_box
-bool ValidatePrimitiveBoundingBoxEXT(const Context *context,
+bool ValidatePrimitiveBoundingBoxEXT(const PrivateState &state,
+                                     ErrorSet *errors,
                                      angle::EntryPoint entryPoint,
                                      GLfloat minX,
                                      GLfloat minY,
@@ -1878,7 +1896,8 @@ bool ValidateFramebufferFetchBarrierEXT(const Context *context, angle::EntryPoin
 // GL_EXT_shadow_samplers
 
 // GL_EXT_tessellation_shader
-bool ValidatePatchParameteriEXT(const Context *context,
+bool ValidatePatchParameteriEXT(const PrivateState &state,
+                                ErrorSet *errors,
                                 angle::EntryPoint entryPoint,
                                 GLenum pname,
                                 GLint value);
@@ -1938,6 +1957,8 @@ bool ValidateTexBufferRangeEXT(const Context *context,
                                BufferID bufferPacked,
                                GLintptr offset,
                                GLsizeiptr size);
+
+// GL_EXT_texture_compression_astc_decode_mode
 
 // GL_EXT_texture_compression_bptc
 
@@ -2142,7 +2163,8 @@ bool ValidateBlitFramebufferNV(const Context *context,
 // GL_NV_pixel_buffer_object
 
 // GL_NV_polygon_mode
-bool ValidatePolygonModeNV(const Context *context,
+bool ValidatePolygonModeNV(const PrivateState &state,
+                           ErrorSet *errors,
                            angle::EntryPoint entryPoint,
                            GLenum face,
                            PolygonMode modePacked);
@@ -2201,43 +2223,51 @@ bool ValidateCopyImageSubDataOES(const Context *context,
 // GL_OES_depth_texture
 
 // GL_OES_draw_buffers_indexed
-bool ValidateBlendEquationSeparateiOES(const Context *context,
+bool ValidateBlendEquationSeparateiOES(const PrivateState &state,
+                                       ErrorSet *errors,
                                        angle::EntryPoint entryPoint,
                                        GLuint buf,
                                        GLenum modeRGB,
                                        GLenum modeAlpha);
-bool ValidateBlendEquationiOES(const Context *context,
+bool ValidateBlendEquationiOES(const PrivateState &state,
+                               ErrorSet *errors,
                                angle::EntryPoint entryPoint,
                                GLuint buf,
                                GLenum mode);
-bool ValidateBlendFuncSeparateiOES(const Context *context,
+bool ValidateBlendFuncSeparateiOES(const PrivateState &state,
+                                   ErrorSet *errors,
                                    angle::EntryPoint entryPoint,
                                    GLuint buf,
                                    GLenum srcRGB,
                                    GLenum dstRGB,
                                    GLenum srcAlpha,
                                    GLenum dstAlpha);
-bool ValidateBlendFunciOES(const Context *context,
+bool ValidateBlendFunciOES(const PrivateState &state,
+                           ErrorSet *errors,
                            angle::EntryPoint entryPoint,
                            GLuint buf,
                            GLenum src,
                            GLenum dst);
-bool ValidateColorMaskiOES(const Context *context,
+bool ValidateColorMaskiOES(const PrivateState &state,
+                           ErrorSet *errors,
                            angle::EntryPoint entryPoint,
                            GLuint index,
                            GLboolean r,
                            GLboolean g,
                            GLboolean b,
                            GLboolean a);
-bool ValidateDisableiOES(const Context *context,
+bool ValidateDisableiOES(const PrivateState &state,
+                         ErrorSet *errors,
                          angle::EntryPoint entryPoint,
                          GLenum target,
                          GLuint index);
-bool ValidateEnableiOES(const Context *context,
+bool ValidateEnableiOES(const PrivateState &state,
+                        ErrorSet *errors,
                         angle::EntryPoint entryPoint,
                         GLenum target,
                         GLuint index);
-bool ValidateIsEnablediOES(const Context *context,
+bool ValidateIsEnablediOES(const PrivateState &state,
+                           ErrorSet *errors,
                            angle::EntryPoint entryPoint,
                            GLenum target,
                            GLuint index);
@@ -2450,7 +2480,8 @@ bool ValidatePointSizePointerOES(const Context *context,
 // GL_OES_point_sprite
 
 // GL_OES_primitive_bounding_box
-bool ValidatePrimitiveBoundingBoxOES(const Context *context,
+bool ValidatePrimitiveBoundingBoxOES(const PrivateState &state,
+                                     ErrorSet *errors,
                                      angle::EntryPoint entryPoint,
                                      GLfloat minX,
                                      GLfloat minY,
@@ -2470,7 +2501,8 @@ bool ValidateQueryMatrixxOES(const Context *context,
 // GL_OES_rgb8_rgba8
 
 // GL_OES_sample_shading
-bool ValidateMinSampleShadingOES(const Context *context,
+bool ValidateMinSampleShadingOES(const PrivateState &state,
+                                 ErrorSet *errors,
                                  angle::EntryPoint entryPoint,
                                  GLfloat value);
 
@@ -2721,7 +2753,10 @@ bool ValidateFramebufferTextureMultiviewOVR(const Context *context,
 // GL_QCOM_render_shared_exponent
 
 // GL_QCOM_shading_rate
-bool ValidateShadingRateQCOM(const Context *context, angle::EntryPoint entryPoint, GLenum rate);
+bool ValidateShadingRateQCOM(const PrivateState &state,
+                             ErrorSet *errors,
+                             angle::EntryPoint entryPoint,
+                             GLenum rate);
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_ESEXT_AUTOGEN_H_

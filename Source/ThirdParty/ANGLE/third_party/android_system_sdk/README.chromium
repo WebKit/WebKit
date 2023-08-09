@@ -6,6 +6,7 @@ Revision: RPB2.200611.009
 License: GPL v2
 License File: LICENSE
 Security Critical: No
+Shipped: yes
 
 Description:
 System SDK stubs for compiling Android Webview and Monochrome targets.

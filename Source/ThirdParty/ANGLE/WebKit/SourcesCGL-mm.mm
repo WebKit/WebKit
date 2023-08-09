@@ -26,6 +26,6 @@
 #include "common/platform.h"
 
 #if ANGLE_ENABLE_CGL
-#    import "libANGLE/renderer/gl/cgl/DisplayCGL.mm"
-#    import "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm"
+#import "libANGLE/renderer/gl/cgl/DisplayCGL.mm"
+#import "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm"
 #endif

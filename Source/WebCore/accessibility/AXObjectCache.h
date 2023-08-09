@@ -233,6 +233,7 @@ public:
         , WeakHashSet<AccessibilityTable>
         , WeakListHashSet<Node, WeakPtrImplWithEventTargetData>
         , WeakHashMap<Element, String, WeakPtrImplWithEventTargetData>>;
+    void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
     void deferModalChange(Element*);
     void deferMenuListValueChange(Element*);
     void deferNodeAddedOrRemoved(Node*);
@@ -472,7 +473,7 @@ public:
     void scheduleObjectRegionsUpdate(bool scheduleImmediately = false) { m_geometryManager->scheduleObjectRegionsUpdate(scheduleImmediately); }
     void willUpdateObjectRegions() { m_geometryManager->willUpdateObjectRegions(); }
     WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
-    WEBCORE_EXPORT static bool usedOnAXThread();
+    WEBCORE_EXPORT static void initializeAXThreadIfNeeded();
 private:
     static bool clientSupportsIsolatedTree();
     static bool isTestClient();
@@ -485,7 +486,6 @@ private:
     void updateIsolatedTree(AccessibilityObject&, AXNotification);
     void updateIsolatedTree(AccessibilityObject*, AXNotification);
     void updateIsolatedTree(const Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>>&);
-    static void initializeSecondaryAXThread();
 #endif
 
 protected:

@@ -67,6 +67,18 @@
     "label": "//src/tests:angle_deqp_khr_gles32_tests",
     "type": "windowed_test_launcher",
   },
+  "angle_deqp_khr_noctx_gles2_tests": {
+    "label": "//src/tests:angle_deqp_khr_noctx_gles2_tests",
+    "type": "windowed_test_launcher",
+  },
+  "angle_deqp_khr_noctx_gles32_tests": {
+    "label": "//src/tests:angle_deqp_khr_noctx_gles32_tests",
+    "type": "windowed_test_launcher",
+  },
+  "angle_deqp_khr_single_gles32_tests": {
+    "label": "//src/tests:angle_deqp_khr_single_gles32_tests",
+    "type": "windowed_test_launcher",
+  },
   "angle_deqp_gles3_rotate180_tests": {
     "label": "//src/tests:angle_deqp_gles3_rotate180_tests",
     "type": "windowed_test_launcher",

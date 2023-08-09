@@ -66,6 +66,10 @@ def RunAndroidTestSuite(args, extra_args):
         traces = set(android_helper.GetTraceFromTestName(test) for test in tests)
         android_helper.PrepareRestrictedTraces(traces)
 
+        if args.prepare_only:
+            print('Prepared traces: %s' % traces)
+            return 0
+
     flags = ['--gtest_filter=' + args.filter] if args.filter else []
     return android_helper.RunTests(args.suite, flags + extra_args)[0]
 
@@ -76,6 +80,7 @@ def main():
     parser.add_argument('--output-directory', required=True)
     parser.add_argument('--wrapper-script-args')
     parser.add_argument('--runtime-deps-path')
+    parser.add_argument('--prepare-only', action='store_true')
     AddCommonParserArgs(parser)
 
     args, extra_args = parser.parse_known_args()

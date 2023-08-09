@@ -17,7 +17,7 @@ function testArrayNewFixedImmutable() {
   (type $vec (array f32))
 
   (func $new (export "new") (result (ref $vec))
-    (array.new_canon_fixed $vec 2 (f32.const 1) (f32.const 2))
+    (array.new_fixed $vec 2 (f32.const 1) (f32.const 2))
   )
 
   (func $get (param $i i32) (param $v (ref $vec)) (result f32)
@@ -45,13 +45,13 @@ function testArrayFuncrefs() {
      (i32.add))
 
   (func (export "get") (param $i i32) (result (ref $fty))
-    (array.new_canon_fixed $a 2 (ref.func $f) (ref.func $f))
+    (array.new_fixed $a 2 (ref.func $f) (ref.func $f))
     (local.get $i)
     (array.get $a))
 
   (func (export "get_and_call") (param $i i32) (result i32)
     (i32.const 5)
-    (array.new_canon_fixed $a 2 (ref.func $f) (ref.func $f))
+    (array.new_fixed $a 2 (ref.func $f) (ref.func $f))
     (local.get $i)
     (array.get $a)
     (call_ref $fty)))`);
@@ -72,7 +72,7 @@ function testArrayExternrefs() {
      (i32.add))
 
   (func $new (result (ref $a))
-    (array.new_canon_fixed $a 2 (ref.null extern) (ref.null extern)))
+    (array.new_fixed $a 2 (ref.null extern) (ref.null extern)))
 
   (func (export "get") (param $i i32) (result externref)
     (call $new)
@@ -99,7 +99,7 @@ function testArrayRefNull() {
      (i32.add))
 
   (func $new (result (ref $a))
-    (array.new_canon_fixed $a 3 (ref.func $f) (ref.null $fty) (ref.func $f)))
+    (array.new_fixed $a 3 (ref.func $f) (ref.null $fty) (ref.func $f)))
 
   (func (export "get") (param $i i32) (result (ref null $fty))
     (call $new)
@@ -121,7 +121,7 @@ function testZeroLengthArray() {
   (type $vec (array i32))
 
   (func $new (export "new") (result (ref $vec))
-    (array.new_canon_fixed $vec 0)
+    (array.new_fixed $vec 0)
   )
 
   (func $get (param $i i32) (param $v (ref $vec)) (result i32)
@@ -148,7 +148,7 @@ function testSingletonArray() {
   (type $vec (array i32))
 
   (func $new (export "new") (result (ref $vec))
-    (array.new_canon_fixed $vec 1 (i32.const 42))
+    (array.new_fixed $vec 1 (i32.const 42))
   )
 
   (func $get (param $i i32) (param $v (ref $vec)) (result i32)
@@ -176,7 +176,7 @@ function testTypeMismatch() {
   (type $vec (array i32))
 
   (func $new (export "new") (result (ref $vec))
-    (array.new_canon_fixed $vec 3 (f32.const 0) (f32.const 1) (f32.const 2))
+    (array.new_fixed $vec 3 (f32.const 0) (f32.const 1) (f32.const 2))
   ))`;
 
     assert.throws(() => compile(moduleString), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: argument type mismatch in array.new_fixed, got F32, expected a subtype of I32, in function at index 0");
@@ -187,7 +187,7 @@ function testArgLengthMismatch() {
   (type $vec (array i32))
 
   (func $new (export "new") (result (ref $vec))
-    (array.new_canon_fixed $vec 1)
+    (array.new_fixed $vec 1)
   ))`;
 
     assert.throws(() => compile(noArgs), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array_new_fixed: found 0 operands on stack; expected 1 operands, in function at index 0");
@@ -196,7 +196,7 @@ function testArgLengthMismatch() {
   (type $vec (array i32))
 
   (func $new (export "new") (result (ref $vec))
-    (array.new_canon_fixed $vec 3 (f32.const 1) (f32.const 2))
+    (array.new_fixed $vec 3 (f32.const 1) (f32.const 2))
   ))`;
 
     assert.throws(() => compile(tooFewArgs), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array_new_fixed: found 2 operands on stack; expected 3 operands, in function at index 0");
@@ -205,7 +205,7 @@ function testArgLengthMismatch() {
   (type $vec (array i32))
 
   (func $new (export "new") (result (ref $vec))
-    (array.new_canon_fixed $vec 2 (i32.const 1) (i32.const 2) (i32.const 0) (i32.const 3))
+    (array.new_fixed $vec 2 (i32.const 1) (i32.const 2) (i32.const 0) (i32.const 3))
   ))`;
 
     // The `array.fixed` operation itself isn't erroneous, but the additional arguments shouldn't be consumed when parsing it
@@ -216,7 +216,7 @@ function testArgLengthMismatch() {
 
   (func $new (result (ref null $vec))
     (local (ref null $vec))
-    (array.new_canon_fixed $vec 2 (f32.const 1) (f32.const 2) (f32.const 0) (f32.const 3.14))
+    (array.new_fixed $vec 2 (f32.const 1) (f32.const 2) (f32.const 0) (f32.const 3.14))
     (local.set 0)
     (drop)
     (drop)
@@ -234,7 +234,7 @@ function testInvalidArrayType() {
     let nonExistentType = `(module
 
   (func $new (export "new") (result)
-    (array.new_canon_fixed 0 2 (f32.const 1) (f32.const 2))
+    (array.new_fixed 0 2 (f32.const 1) (f32.const 2))
     (drop)
   ))`;
 
@@ -244,7 +244,7 @@ function testInvalidArrayType() {
     let nonArrayType = `(module
        (type $s (struct (field i32) (field i32)))
   (func $new (export "new") (result (ref $s))
-    (array.new_canon_fixed $s 2 (f32.const 1) (f32.const 2))
+    (array.new_fixed $s 2 (f32.const 1) (f32.const 2))
   ))`;
 
     assert.throws(() => compile(nonArrayType), WebAssembly.CompileError, errorMessage);
@@ -259,7 +259,7 @@ function testSubtyping() {
   (func $g (export "g") (param $i i32) (result i32) (local.get $i))
 
   (func $new (export "new") (result (ref $a))
-    (array.new_canon_fixed $a 4 (ref.func $f) (ref.func $g) (ref.func $f) (ref.func $g))
+    (array.new_fixed $a 4 (ref.func $f) (ref.func $g) (ref.func $f) (ref.func $g))
   )
 
   (func $get (param $i i32) (param $v (ref $a)) (result funcref)
@@ -278,10 +278,10 @@ function testNestedArrays() {
     (type $a (array (ref $bvec)))
 
     (func $new (export "new") (result (ref $a))
-       (array.new_canon_fixed $a 4 (array.new_canon_default $bvec (i32.const 2))
-                                   (array.new_canon_default $bvec (i32.const 55))
-                                   (array.new_canon_default $bvec (i32.const 0))
-                                   (array.new_canon_default $bvec (i32.const 1))))
+       (array.new_fixed $a 4 (array.new_default $bvec (i32.const 2))
+                             (array.new_default $bvec (i32.const 55))
+                             (array.new_default $bvec (i32.const 0))
+                             (array.new_default $bvec (i32.const 1))))
 
     (func (export "get_len") (param $i i32) (result i32)
       (call $new)
@@ -300,7 +300,7 @@ function testPackedTypes()
           (type $a (array i8))
 
           (func $new (export "new") (result (ref $a))
-            (array.new_canon_fixed $a 3 (i32.const 1) (i32.const 2) (i32.const 65536)))
+            (array.new_fixed $a 3 (i32.const 1) (i32.const 2) (i32.const 65536)))
 
           (func $get (param $i i32) (param $v (ref $a)) (result i32)
             (array.get_u $a (local.get $v) (local.get $i)))
@@ -318,7 +318,7 @@ function testPackedTypes()
           (type $a (array i16))
 
           (func $new (export "new") (result (ref $a))
-            (array.new_canon_fixed $a 3 (i32.const 1) (i32.const 2) (i32.const ` + num + `)))
+            (array.new_fixed $a 3 (i32.const 1) (i32.const 2) (i32.const ` + num + `)))
 
           (func $get (param $i i32) (param $v (ref $a)) (result i32)
             (array.get_u $a (local.get $v) (local.get $i)))
@@ -340,7 +340,7 @@ function testNumericTypes() {
           (type $a (array i32))
 
           (func $new (export "new") (result (ref $a))
-            (array.new_canon_fixed $a 3 (i32.const 1) (i32.const 2) (i32.const ` + num + `)))
+            (array.new_fixed $a 3 (i32.const 1) (i32.const 2) (i32.const ` + num + `)))
 
           (func $get (param $i i32) (param $v (ref $a)) (result i32)
             (array.get $a (local.get $v) (local.get $i)))
@@ -357,7 +357,7 @@ function testNumericTypes() {
           (type $a (array i64))
 
           (func $new (export "new") (result (ref $a))
-            (array.new_canon_fixed $a 3 (i64.const 1) (i64.const 2) (i64.const -5)))
+            (array.new_fixed $a 3 (i64.const 1) (i64.const 2) (i64.const -5)))
 
           (func $get (param $i i32) (param $v (ref $a)) (result i64)
             (array.get $a (local.get $v) (local.get $i)))
@@ -374,7 +374,7 @@ function testNumericTypes() {
          (type $a (array f32))
 
          (func $new (export "new") (result (ref $a))
-           (array.new_canon_fixed $a 3 (f32.const 1) (f32.const 3.14) (f32.const -4.2)))
+           (array.new_fixed $a 3 (f32.const 1) (f32.const 3.14) (f32.const -4.2)))
 
          (func $get (param $i i32) (param $v (ref $a)) (result f32)
            (array.get $a (local.get $v) (local.get $i)))
@@ -393,7 +393,7 @@ function testNumericTypes() {
           (type $a (array f64))
 
           (func $new (export "new") (result (ref $a))
-            (array.new_canon_fixed $a 3 (f64.const 1) (f64.const 3.14) (f64.const -4.2)))
+            (array.new_fixed $a 3 (f64.const 1) (f64.const 3.14) (f64.const -4.2)))
 
           (func $get (param $i i32) (param $v (ref $a)) (result f64)
             (array.get $a (local.get $v) (local.get $i)))
@@ -416,10 +416,10 @@ function testStructs() {
   (type $a (array (ref $s)))
 
   (func $new (export "new") (result (ref $a))
-    (array.new_canon_fixed $a 4 (struct.new_canon $s (i32.const 3) (array.new_canon_default $bvec (i32.const 1)) (f64.const 100.1))
-                                (struct.new_canon $s (i32.const 42) (array.new_canon_default $bvec (i32.const 6)) (f64.const 0.0))
-                                (struct.new_canon $s (i32.const 17) (array.new_canon_default $bvec (i32.const 7)) (f64.const -1.25))
-                                (struct.new_canon $s (i32.const 5) (array.new_canon_default $bvec (i32.const 2)) (f64.const 3.14))))
+    (array.new_fixed $a 4 (struct.new $s (i32.const 3) (array.new_default $bvec (i32.const 1)) (f64.const 100.1))
+                          (struct.new $s (i32.const 42) (array.new_default $bvec (i32.const 6)) (f64.const 0.0))
+                          (struct.new $s (i32.const 17) (array.new_default $bvec (i32.const 7)) (f64.const -1.25))
+                          (struct.new $s (i32.const 5) (array.new_default $bvec (i32.const 2)) (f64.const 3.14))))
 
   (func (export "get_field0") (param $i i32) (result i32)
     (call $new)
@@ -460,7 +460,7 @@ function testArrayNewFixed() {
   (type $mvec (array (mut f32)))
 
   (func $new (result (ref $vec))
-    (array.new_canon_fixed $vec 2 (f32.const 1) (f32.const 2))
+    (array.new_fixed $vec 2 (f32.const 1) (f32.const 2))
   )
 
   (func $get (param $i i32) (param $v (ref $vec)) (result f32)
@@ -476,7 +476,7 @@ function testArrayNewFixed() {
   )
   (func (export "set_get") (param $i i32) (param $y f32) (result f32)
     (call $set_get (local.get $i)
-      (array.new_canon_fixed $mvec 3 (f32.const 1) (f32.const 2) (f32.const 3))
+      (array.new_fixed $mvec 3 (f32.const 1) (f32.const 2) (f32.const 3))
       (local.get $y)
     )
   )
@@ -502,8 +502,8 @@ function testArrayNewFixedNested() {
   (type $mvec (array (mut (ref $bvec))))
 
   (func $new (result (ref $mvec))
-    (array.new_canon_fixed $mvec 2 (array.new_canon_default $bvec (i32.const 5))
-                                   (array.new_canon_default $bvec (i32.const 3)))
+    (array.new_fixed $mvec 2 (array.new_default $bvec (i32.const 5))
+                             (array.new_default $bvec (i32.const 3)))
   )
 
   (func $set_get_array (param $i i32) (param $v (ref $mvec)) (param $element (ref $bvec)) (result i32)
@@ -519,7 +519,7 @@ function testArrayNewFixedNested() {
   (func (export "set_get_array") (param $i i32) (param $len i32) (result i32)
     (call $set_get_array (local.get $i)
       (call $new)
-      (array.new_canon_default $bvec (local.get $len)))
+      (array.new_default $bvec (local.get $len)))
   )
 
   (func (export "set_get_byte") (param $i i32) (param $j i32) (param $value i32) (result i32)
@@ -560,8 +560,8 @@ function testArrayNewFixedNestedCalls() {
   (type $mvec (array (mut (ref $bvec))))
 
   (func $new (result (ref $mvec))
-    (array.new_canon_fixed $mvec 2 (array.new_canon_fixed $bvec 3 (i32.const 1) (i32.const 42) (i32.const 5))
-                                   (array.new_canon_fixed $bvec 4 (i32.const 2) (i32.const 23) (i32.const 10) (i32.const 1))))
+    (array.new_fixed $mvec 2 (array.new_fixed $bvec 3 (i32.const 1) (i32.const 42) (i32.const 5))
+                             (array.new_fixed $bvec 4 (i32.const 2) (i32.const 23) (i32.const 10) (i32.const 1))))
 
   (func $get_byte (param $i i32) (param $v (ref $mvec)) (param $j i32) (result i32)
     (array.get_u $bvec (array.get $mvec (local.get $v) (local.get $i)) (local.get $j)))
@@ -595,7 +595,7 @@ function testMissingArgumentCount() {
   (type $vec (array f32))
 
   (func $new (export "new") (result (ref $vec))
-    (array.new_canon_fixed $vec)
+    (array.new_fixed $vec)
   ))
      */
 
@@ -606,7 +606,7 @@ function testMissingArgumentCount() {
   (type $vec (array f32))
 
   (func $new (export "new") (result (ref $vec))
-    (array.new_canon_fixed $vec <invalid i32>)
+    (array.new_fixed $vec <invalid i32>)
   ))
 */
     assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x89\x80\x80\x80\x00\x02\x5E\x7D\x00\x60\x00\x01\x6B\x00\x03\x82\x80\x80\x80\x00\x01\x01\x07\x87\x80\x80\x80\x00\x01\x03\x6E\x65\x77\x00\x00\x0A\x91\x80\x80\x80\x00\x01\x8B\x80\x80\x80\x00\x00\x43\x00\x00\x80\x3F\xFB\x19\x00\x99\x99")), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 11: can't get argument count for array.new_fixed, in function at index 0");
@@ -617,7 +617,7 @@ function testTooManyOperands() {
   (type $vec (array i32))
 
   (func $new (export "new") (result (ref $vec))
-    (array.new_canon_fixed $vec 10001)
+    (array.new_fixed $vec 10001)
   ))`;
 
     assert.throws(() => compile(moduleString), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array_new_fixed can take at most 10000 operands. Got 10001, in function at index 0");

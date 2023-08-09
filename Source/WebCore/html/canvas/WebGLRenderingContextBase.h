@@ -28,12 +28,12 @@
 #if ENABLE(WEBGL)
 
 #include "ActivityStateChangeObserver.h"
+#include "EventLoop.h"
 #include "ExceptionOr.h"
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GraphicsContextGL.h"
 #include "ImageBuffer.h"
 #include "PredefinedColorSpace.h"
-#include "SuspendableTimer.h"
 #include "Timer.h"
 #include "WebGLAny.h"
 #include "WebGLBuffer.h"
@@ -76,26 +76,34 @@ namespace WebCore {
 
 class ANGLEInstancedArrays;
 class EXTBlendMinMax;
+class EXTClipControl;
 class EXTColorBufferFloat;
 class EXTColorBufferHalfFloat;
+class EXTConservativeDepth;
+class EXTDepthClamp;
 class EXTDisjointTimerQuery;
 class EXTDisjointTimerQueryWebGL2;
 class EXTFloatBlend;
 class EXTFragDepth;
 class EXTShaderTextureLOD;
 class EXTPolygonOffsetClamp;
+class EXTRenderSnorm;
 class EXTTextureCompressionBPTC;
 class EXTTextureCompressionRGTC;
 class EXTTextureFilterAnisotropic;
+class EXTTextureMirrorClampToEdge;
 class EXTTextureNorm16;
 class EXTsRGB;
 class HTMLImageElement;
 class ImageData;
 class IntSize;
 class KHRParallelShaderCompile;
+class NVShaderNoperspectiveInterpolation;
 class OESDrawBuffersIndexed;
 class OESElementIndexUint;
 class OESFBORenderMipmap;
+class OESSampleVariables;
+class OESShaderMultisampleInterpolation;
 class OESStandardDerivatives;
 class OESTextureFloat;
 class OESTextureFloatLinear;
@@ -125,10 +133,13 @@ class WebGLLoseContext;
 class WebGLMultiDraw;
 class WebGLMultiDrawInstancedBaseVertexBaseInstance;
 class WebGLObject;
+class WebGLPolygonMode;
 class WebGLProvokingVertex;
+class WebGLRenderSharedExponent;
 class WebGLShader;
 class WebGLShaderPrecisionFormat;
 class WebGLSharedObject;
+class WebGLStencilTexturing;
 class WebGLUniformLocation;
 
 #if ENABLE(VIDEO)
@@ -176,6 +187,11 @@ class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBa
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
     using WebGLVersion = GraphicsContextGLWebGLVersion;
+
+    using GPUBasedCanvasRenderingContext::weakPtrFactory;
+    using GPUBasedCanvasRenderingContext::WeakValueType;
+    using GPUBasedCanvasRenderingContext::WeakPtrImplType;
+
     static std::unique_ptr<WebGLRenderingContextBase> create(CanvasBase&, WebGLContextAttributes&, WebGLVersion);
     virtual ~WebGLRenderingContextBase();
 
@@ -602,7 +618,7 @@ protected:
     RefPtr<WebGLContextGroup> m_contextGroup;
     Lock m_objectGraphLock;
 
-    SuspendableTimer m_restoreTimer;
+    EventLoopTimerHandle m_restoreTimer;
     GCGLErrorCodeSet m_errors;
     bool m_needsUpdate;
     bool m_markedCanvasDirty;
@@ -726,23 +742,31 @@ protected:
     // FIXME: Move some of these to WebGLRenderingContext, the ones not needed for WebGL2
     RefPtr<ANGLEInstancedArrays> m_angleInstancedArrays;
     RefPtr<EXTBlendMinMax> m_extBlendMinMax;
+    RefPtr<EXTClipControl> m_extClipControl;
     RefPtr<EXTColorBufferFloat> m_extColorBufferFloat;
     RefPtr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
+    RefPtr<EXTConservativeDepth> m_extConservativeDepth;
+    RefPtr<EXTDepthClamp> m_extDepthClamp;
     RefPtr<EXTDisjointTimerQuery> m_extDisjointTimerQuery;
     RefPtr<EXTDisjointTimerQueryWebGL2> m_extDisjointTimerQueryWebGL2;
     RefPtr<EXTFloatBlend> m_extFloatBlend;
     RefPtr<EXTFragDepth> m_extFragDepth;
     RefPtr<EXTPolygonOffsetClamp> m_extPolygonOffsetClamp;
+    RefPtr<EXTRenderSnorm> m_extRenderSnorm;
     RefPtr<EXTShaderTextureLOD> m_extShaderTextureLOD;
     RefPtr<EXTTextureCompressionBPTC> m_extTextureCompressionBPTC;
     RefPtr<EXTTextureCompressionRGTC> m_extTextureCompressionRGTC;
     RefPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
+    RefPtr<EXTTextureMirrorClampToEdge> m_extTextureMirrorClampToEdge;
     RefPtr<EXTTextureNorm16> m_extTextureNorm16;
     RefPtr<EXTsRGB> m_extsRGB;
     RefPtr<KHRParallelShaderCompile> m_khrParallelShaderCompile;
+    RefPtr<NVShaderNoperspectiveInterpolation> m_nvShaderNoperspectiveInterpolation;
     RefPtr<OESDrawBuffersIndexed> m_oesDrawBuffersIndexed;
     RefPtr<OESElementIndexUint> m_oesElementIndexUint;
     RefPtr<OESFBORenderMipmap> m_oesFBORenderMipmap;
+    RefPtr<OESSampleVariables> m_oesSampleVariables;
+    RefPtr<OESShaderMultisampleInterpolation> m_oesShaderMultisampleInterpolation;
     RefPtr<OESStandardDerivatives> m_oesStandardDerivatives;
     RefPtr<OESTextureFloat> m_oesTextureFloat;
     RefPtr<OESTextureFloatLinear> m_oesTextureFloatLinear;
@@ -765,7 +789,10 @@ protected:
     RefPtr<WebGLLoseContext> m_webglLoseContext;
     RefPtr<WebGLMultiDraw> m_webglMultiDraw;
     RefPtr<WebGLMultiDrawInstancedBaseVertexBaseInstance> m_webglMultiDrawInstancedBaseVertexBaseInstance;
+    RefPtr<WebGLPolygonMode> m_webglPolygonMode;
     RefPtr<WebGLProvokingVertex> m_webglProvokingVertex;
+    RefPtr<WebGLRenderSharedExponent> m_webglRenderSharedExponent;
+    RefPtr<WebGLStencilTexturing> m_webglStencilTexturing;
 
     bool m_areWebGL2TexImageSourceFormatsAndTypesAdded { false };
     bool m_areOESTextureFloatFormatsAndTypesAdded { false };
@@ -1069,6 +1096,7 @@ protected:
 private:
     void scheduleTaskToDispatchContextLostEvent();
     // Helper for restoration after context lost.
+    void maybeRestoreContextSoon(Seconds timeout = 0_s);
     void maybeRestoreContext();
 
     void registerWithWebGLStateTracker();

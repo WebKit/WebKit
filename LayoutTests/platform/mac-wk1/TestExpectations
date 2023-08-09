@@ -612,7 +612,6 @@ imported/w3c/web-platform-tests/fetch/security/1xx-response.any.worker.html [ Sk
 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompoint.single.argument.html [ Skip ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe-in-multicol.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/messagechannel.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/charset-bom.any.sharedworker.html [ Skip ]
@@ -1622,9 +1621,6 @@ fast/html/details-remove-summary-6-and-click.html [ Pass Failure ]
 [ Release ] fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html [ Pass Failure ]
 [ Release ] fast/forms/number/number-spinbutton-in-multi-column.html [ Pass Failure ]
 [ Release ] fast/forms/number/number-spinbutton-state.html [ Pass Failure ]
-
-#rdar://96906411 (REGRESSION(251850@main): imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html is a constant text failure)
-imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html [ Skip ]
 
 webkit.org/b/165541 compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]
 webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]

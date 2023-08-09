@@ -29,20 +29,20 @@
 1662 WIN : dEQP-EGL.functional.render.multi_context.gles2.other = FAIL
 1662 WIN : dEQP-EGL.functional.render.multi_context.gles3.other = FAIL
 1662 WIN : dEQP-EGL.functional.render.multi_context.gles2_gles3.other = FAIL
-1662 WIN : dEQP-EGL.functional.native_coord_mapping.native_window.other_clear = FAIL
-1662 WIN : dEQP-EGL.functional.native_coord_mapping.native_window.other_render = FAIL
 1662 WIN : dEQP-EGL.functional.query_context.get_current_context.other = FAIL
 1662 WIN : dEQP-EGL.functional.query_context.get_current_surface.other = FAIL
 1662 WIN : dEQP-EGL.functional.query_context.get_current_display.other = FAIL
 1662 WIN : dEQP-EGL.functional.query_context.query_context.other = FAIL
-1662 WIN : dEQP-EGL.functional.native_color_mapping.native_window.other_clear = SKIP
-1662 WIN : dEQP-EGL.functional.native_color_mapping.native_window.other_render = SKIP
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 //  Temprory entries: they should be removed once the bugs are fixed.
 //
 ////////////////////////////////////////////////////////////////////////////////
+
+// Fails/crashes everywhere
+8261 : dEQP-EGL.functional.native_color_mapping.native_window.* = SKIP
+8261 : dEQP-EGL.functional.native_coord_mapping.native_window.* = SKIP
 
 // Flaky since we enabled depth/stencil backbuffer in all tests.
 2429 WIN NVIDIA : dEQP-EGL.functional.query_context.query_context.rgba8888_window = FAIL
@@ -63,8 +63,6 @@
 1340 WIN : dEQP-EGL.functional.render.multi_context.gles2_gles3.rgba5551_pbuffer = FAIL
 1340 WIN : dEQP-EGL.functional.negative_api.surface_attrib = SKIP
 1340 WIN : dEQP-EGL.functional.negative_api.swap_interval = FAIL
-2382 WIN : dEQP-EGL.functional.native_color_mapping.native_window.* = SKIP
-1340 WIN : dEQP-EGL.functional.native_coord_mapping.native_window.* = FAIL
 2716 WIN : dEQP-EGL.functional.preserve_swap.preserve.no_read_before_swap.* = SKIP
 2716 WIN : dEQP-EGL.functional.preserve_swap.preserve.read_before_swap.* = SKIP
 1340 WIN : dEQP-EGL.functional.resize.back_buffer.* = SKIP
@@ -93,8 +91,6 @@
 2546 LINUX : dEQP-EGL.functional.negative_api.copy_buffers = SKIP
 2546 LINUX : dEQP-EGL.functional.render.multi_context.* = SKIP
 2546 LINUX : dEQP-EGL.functional.thread_cleanup.* = SKIP
-2546 LINUX : dEQP-EGL.functional.native_color_mapping.native_window.* = FAIL
-2546 LINUX : dEQP-EGL.functional.native_coord_mapping.native_window.* = FAIL
 2546 LINUX : dEQP-EGL.functional.negative_api.swap_interval = FAIL
 2546 LINUX : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_depth_stencil = FAIL
 2546 LINUX : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_no_depth_no_stencil = FAIL
@@ -104,12 +100,6 @@
 5753 LINUX VULKAN : dEQP-EGL.functional.resize.surface_size.* = FAIL
 
 // Mac failures
-
-// New crash on MacBook Pro 2019 macOS 13.2.1, must come before the wildcard native_window.* FAIL below
-8091 MAC METAL AMD : dEQP-EGL.functional.native_color_mapping.native_window.rgba8888_depth_no_stencil_render = SKIP
-
-2546 MAC : dEQP-EGL.functional.native_color_mapping.native_window.* = FAIL
-2546 MAC : dEQP-EGL.functional.native_coord_mapping.native_window.* = FAIL
 2546 MAC : dEQP-EGL.functional.negative_api.copy_buffers = FAIL
 2546 MAC : dEQP-EGL.functional.negative_api.swap_interval = FAIL
 2546 MAC OPENGL : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_depth_stencil = FAIL
@@ -123,10 +113,6 @@
 8169 ANDROID GLES : dEQP-EGL.functional.fence_sync.valid.egl_fence_persistent_buffer = SKIP
 
 // Android failures
-6533 ANDROID VULKAN : dEQP-EGL.functional.native_color_mapping.native_window.* = SKIP
-6533 ANDROID VULKAN : dEQP-EGL.functional.native_coord_mapping.native_window.* = SKIP
-6533 PIXEL4ORXL GLES : dEQP-EGL.functional.native_color_mapping.native_window.* = SKIP
-6533 PIXEL4ORXL GLES : dEQP-EGL.functional.native_coord_mapping.native_window.* = SKIP
 
 // Pixel 6 Vulkan
 6899 PIXEL6 VULKAN : dEQP-EGL.functional.query_context.*.rgb888_window = FAIL
@@ -171,9 +157,9 @@
 7533 VULKAN NVIDIA : dEQP-EGL.functional.create_context_ext.gl_30.* = SKIP
 7533 VULKAN NVIDIA : dEQP-EGL.functional.create_context_ext.robust_gl_30.* = SKIP
 
-b/286921997 SWIFTSHADER LINUX : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.compute = SKIP
-b/286921997 SWIFTSHADER LINUX : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.shader_storage_block.compute = SKIP
-b/286921997 SWIFTSHADER LINUX : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.compute = SKIP
+b/286921997 SWIFTSHADER : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.compute = SKIP
+b/286921997 SWIFTSHADER : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.shader_storage_block.compute = SKIP
+b/286921997 SWIFTSHADER : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.compute = SKIP
 b/286921997 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.fragment = SKIP
 b/286921997 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.vertex_and_fragment = SKIP
 b/286921997 PIXEL6 VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.shader_storage_block.fragment = SKIP

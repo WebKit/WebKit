@@ -1919,23 +1919,31 @@ if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES
         html/canvas/ANGLEInstancedArrays.cpp
         html/canvas/EXTBlendMinMax.cpp
+        html/canvas/EXTClipControl.cpp
         html/canvas/EXTColorBufferFloat.cpp
         html/canvas/EXTColorBufferHalfFloat.cpp
+        html/canvas/EXTConservativeDepth.cpp
+        html/canvas/EXTDepthClamp.cpp
         html/canvas/EXTDisjointTimerQuery.cpp
         html/canvas/EXTDisjointTimerQueryWebGL2.cpp
         html/canvas/EXTFloatBlend.cpp
         html/canvas/EXTFragDepth.cpp
         html/canvas/EXTPolygonOffsetClamp.cpp
+        html/canvas/EXTRenderSnorm.cpp
         html/canvas/EXTShaderTextureLOD.cpp
         html/canvas/EXTTextureCompressionBPTC.cpp
         html/canvas/EXTTextureCompressionRGTC.cpp
         html/canvas/EXTTextureFilterAnisotropic.cpp
+        html/canvas/EXTTextureMirrorClampToEdge.cpp
         html/canvas/EXTTextureNorm16.cpp
         html/canvas/EXTsRGB.cpp
         html/canvas/KHRParallelShaderCompile.cpp
+        html/canvas/NVShaderNoperspectiveInterpolation.cpp
         html/canvas/OESDrawBuffersIndexed.cpp
         html/canvas/OESElementIndexUint.cpp
         html/canvas/OESFBORenderMipmap.cpp
+        html/canvas/OESSampleVariables.cpp
+        html/canvas/OESShaderMultisampleInterpolation.cpp
         html/canvas/OESStandardDerivatives.cpp
         html/canvas/OESTextureFloat.cpp
         html/canvas/OESTextureFloatLinear.cpp
@@ -1966,9 +1974,11 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLMultiDraw.cpp
         html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.cpp
         html/canvas/WebGLObject.cpp
+        html/canvas/WebGLPolygonMode.cpp
         html/canvas/WebGLProgram.cpp
         html/canvas/WebGLProvokingVertex.cpp
         html/canvas/WebGLQuery.cpp
+        html/canvas/WebGLRenderSharedExponent.cpp
         html/canvas/WebGLRenderbuffer.cpp
         html/canvas/WebGLRenderingContext.cpp
         html/canvas/WebGLRenderingContextBase.cpp
@@ -1976,6 +1986,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLShader.cpp
         html/canvas/WebGLShaderPrecisionFormat.cpp
         html/canvas/WebGLSharedObject.cpp
+        html/canvas/WebGLStencilTexturing.cpp
         html/canvas/WebGLSync.cpp
         html/canvas/WebGLTexture.cpp
         html/canvas/WebGLTimerQueryEXT.cpp
@@ -1990,24 +2001,32 @@ endif ()
 list(APPEND WebCore_IDL_FILES
     html/canvas/ANGLEInstancedArrays.idl
     html/canvas/EXTBlendMinMax.idl
+    html/canvas/EXTClipControl.idl
     html/canvas/EXTColorBufferFloat.idl
     html/canvas/EXTColorBufferHalfFloat.idl
+    html/canvas/EXTConservativeDepth.idl
+    html/canvas/EXTDepthClamp.idl
     html/canvas/EXTDisjointTimerQuery.idl
     html/canvas/EXTDisjointTimerQueryWebGL2.idl
     html/canvas/EXTFloatBlend.idl
     html/canvas/EXTFragDepth.idl
     html/canvas/EXTPolygonOffsetClamp.idl
+    html/canvas/EXTRenderSnorm.idl
     html/canvas/EXTShaderTextureLOD.idl
     html/canvas/EXTTextureCompressionBPTC.idl
     html/canvas/EXTTextureCompressionRGTC.idl
     html/canvas/EXTTextureFilterAnisotropic.idl
+    html/canvas/EXTTextureMirrorClampToEdge.idl
     html/canvas/EXTTextureNorm16.idl
     html/canvas/EXTsRGB.idl
     html/canvas/GPUCanvasContext.idl
     html/canvas/KHRParallelShaderCompile.idl
+    html/canvas/NVShaderNoperspectiveInterpolation.idl
     html/canvas/OESDrawBuffersIndexed.idl
     html/canvas/OESElementIndexUint.idl
     html/canvas/OESFBORenderMipmap.idl
+    html/canvas/OESSampleVariables.idl
+    html/canvas/OESShaderMultisampleInterpolation.idl
     html/canvas/OESStandardDerivatives.idl
     html/canvas/OESTextureFloat.idl
     html/canvas/OESTextureFloatLinear.idl
@@ -2036,15 +2055,18 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGLLoseContext.idl
     html/canvas/WebGLMultiDraw.idl
     html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.idl
+    html/canvas/WebGLPolygonMode.idl
     html/canvas/WebGLProgram.idl
     html/canvas/WebGLProvokingVertex.idl
     html/canvas/WebGLQuery.idl
+    html/canvas/WebGLRenderSharedExponent.idl
     html/canvas/WebGLRenderbuffer.idl
     html/canvas/WebGLRenderingContext.idl
     html/canvas/WebGLRenderingContextBase.idl
     html/canvas/WebGLSampler.idl
     html/canvas/WebGLShader.idl
     html/canvas/WebGLShaderPrecisionFormat.idl
+    html/canvas/WebGLStencilTexturing.idl
     html/canvas/WebGLSync.idl
     html/canvas/WebGLTexture.idl
     html/canvas/WebGLTimerQueryEXT.idl
@@ -2409,7 +2431,7 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/HTMLEntityTable.cpp)
 
 # Generate HTTP header names
 add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.h
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.h ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.serialization.in
     MAIN_DEPENDENCY ${WEBCORE_DIR}/platform/network/HTTPHeaderNames.in
     DEPENDS ${WEBCORE_DIR}/platform/network/create-http-header-name-table
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}

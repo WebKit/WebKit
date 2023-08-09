@@ -41,6 +41,7 @@
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
+#include "Quirks.h"
 #include "RenderElement.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
@@ -488,6 +489,8 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     if (animation && !isDeclarative)
         return;
 
+    auto& document = styleable.element.document();
+
     auto hasMatchingTransitionProperty = false;
     auto matchingTransitionDuration = 0.0;
     const Animation* matchingBackingAnimation = nullptr;
@@ -499,7 +502,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
                 matchingTransitionDuration = std::max(0.0, matchingBackingAnimation->duration()) + matchingBackingAnimation->delay();
             }
         }
-    } else {
+    } else if (!document.quirks().needsResettingTransitionCancelsRunningTransitionQuirk()) {
         // If we don't have any transitions in the map, this means that the initial value "all 0s" was set
         // and thus all properties match.
         hasMatchingTransitionProperty = true;
@@ -513,7 +516,6 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         return false;
     };
 
-    auto& document = styleable.element.document();
 
     // https://drafts.csswg.org/css-transitions-1/#before-change-style
     // Define the before-change style as the computed values of all properties on the element as of the previous style change event, except with

@@ -713,19 +713,16 @@ bool AXObjectCache::isIsolatedTreeEnabled()
     return enabled;
 }
 
-void AXObjectCache::initializeSecondaryAXThread()
+void AXObjectCache::initializeAXThreadIfNeeded()
 {
-    // Now that we have created our tree, initialize the secondary thread,
-    // so future requests come in on the other thread.
-    if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread)
-        _AXUIElementUseSecondaryAXThread(true);
-}
+    static bool axThreadInitialized = false;
+    if (LIKELY(axThreadInitialized || !isMainThread()))
+        return;
 
-bool AXObjectCache::usedOnAXThread()
-{
-    ASSERT(isIsolatedTreeEnabled());
-    return _AXSIsolatedTreeModeFunctionIsAvailable()
-        && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread;
+    if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread) {
+        _AXUIElementUseSecondaryAXThread(true);
+        axThreadInitialized = true;
+    }
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 

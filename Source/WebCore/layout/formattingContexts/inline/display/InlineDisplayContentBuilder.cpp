@@ -167,6 +167,22 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
     auto inkOverflow = [&] {
         auto inkOverflow = textRunRect;
 
+        auto addLetterSpacingOverflow = [&] {
+            auto letterSpacing = style.fontCascade().letterSpacing();
+            if (letterSpacing >= 0)
+                return;
+            // Large negative letter spacing can produce text boxes with negative width (when glyphs position order gets completely backwards (123 turns into 321 starting at an offset))
+            // Such spacing should go to ink overflow.
+            auto textRunWidth = textRunRect.width();
+            if (textRunWidth < 0) {
+                inkOverflow.setWidth({ });
+                inkOverflow.shiftLeftTo(textRunWidth);
+            }
+            // Last letter's negative spacing shrinks logical rect. Push it to ink overflow.
+            inkOverflow.expand(-letterSpacing, { });
+        };
+        addLetterSpacingOverflow();
+
         auto addStrokeOverflow = [&] {
             inkOverflow.inflate(ceilf(style.computedStrokeWidth(m_initialContaingBlockSize)));
         };
@@ -177,15 +193,6 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
             inkOverflow.inflate(-textShadow.top(), textShadow.right(), textShadow.bottom(), -textShadow.left());
         };
         addTextShadow();
-
-        auto addLetterSpacingOverflow = [&] {
-            auto letterSpacing = style.fontCascade().letterSpacing();
-            if (letterSpacing >= 0)
-                return;
-            // Last letter's negative spacing shrinks logical rect. Push it to ink overflow.
-            inkOverflow.expand(-letterSpacing, { });
-        };
-        addLetterSpacingOverflow();
 
         auto addGlyphOverflow = [&] {
             if (inlineTextBox.canUseSimpleFontCodePath()) {

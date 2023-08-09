@@ -31,23 +31,31 @@
 #include "JSANGLEInstancedArrays.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSEXTBlendMinMax.h"
+#include "JSEXTClipControl.h"
 #include "JSEXTColorBufferFloat.h"
 #include "JSEXTColorBufferHalfFloat.h"
+#include "JSEXTConservativeDepth.h"
+#include "JSEXTDepthClamp.h"
 #include "JSEXTDisjointTimerQuery.h"
 #include "JSEXTDisjointTimerQueryWebGL2.h"
 #include "JSEXTFloatBlend.h"
 #include "JSEXTFragDepth.h"
 #include "JSEXTPolygonOffsetClamp.h"
+#include "JSEXTRenderSnorm.h"
 #include "JSEXTShaderTextureLOD.h"
 #include "JSEXTTextureCompressionBPTC.h"
 #include "JSEXTTextureCompressionRGTC.h"
 #include "JSEXTTextureFilterAnisotropic.h"
+#include "JSEXTTextureMirrorClampToEdge.h"
 #include "JSEXTTextureNorm16.h"
 #include "JSEXTsRGB.h"
 #include "JSKHRParallelShaderCompile.h"
+#include "JSNVShaderNoperspectiveInterpolation.h"
 #include "JSOESDrawBuffersIndexed.h"
 #include "JSOESElementIndexUint.h"
 #include "JSOESFBORenderMipmap.h"
+#include "JSOESSampleVariables.h"
+#include "JSOESShaderMultisampleInterpolation.h"
 #include "JSOESStandardDerivatives.h"
 #include "JSOESTextureFloat.h"
 #include "JSOESTextureFloatLinear.h"
@@ -72,11 +80,14 @@
 #include "JSWebGLLoseContext.h"
 #include "JSWebGLMultiDraw.h"
 #include "JSWebGLMultiDrawInstancedBaseVertexBaseInstance.h"
+#include "JSWebGLPolygonMode.h"
 #include "JSWebGLProgram.h"
 #include "JSWebGLProvokingVertex.h"
 #include "JSWebGLQuery.h"
+#include "JSWebGLRenderSharedExponent.h"
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLSampler.h"
+#include "JSWebGLStencilTexturing.h"
 #include "JSWebGLTexture.h"
 #include "JSWebGLTimerQueryEXT.h"
 #include "JSWebGLTransformFeedback.h"
@@ -182,23 +193,31 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
     switch (extension.getName()) {
         TO_JS(ANGLEInstancedArrays)
         TO_JS(EXTBlendMinMax)
+        TO_JS(EXTClipControl)
         TO_JS(EXTColorBufferFloat)
         TO_JS(EXTColorBufferHalfFloat)
+        TO_JS(EXTConservativeDepth)
+        TO_JS(EXTDepthClamp)
         TO_JS(EXTDisjointTimerQuery)
         TO_JS(EXTDisjointTimerQueryWebGL2)
         TO_JS(EXTFloatBlend)
         TO_JS(EXTFragDepth)
         TO_JS(EXTPolygonOffsetClamp)
+        TO_JS(EXTRenderSnorm)
         TO_JS(EXTShaderTextureLOD)
         TO_JS(EXTTextureCompressionBPTC)
         TO_JS(EXTTextureCompressionRGTC)
         TO_JS(EXTTextureFilterAnisotropic)
+        TO_JS(EXTTextureMirrorClampToEdge)
         TO_JS(EXTTextureNorm16)
         TO_JS(EXTsRGB)
         TO_JS(KHRParallelShaderCompile)
+        TO_JS(NVShaderNoperspectiveInterpolation)
         TO_JS(OESDrawBuffersIndexed)
         TO_JS(OESElementIndexUint)
         TO_JS(OESFBORenderMipmap)
+        TO_JS(OESSampleVariables)
+        TO_JS(OESShaderMultisampleInterpolation)
         TO_JS(OESStandardDerivatives)
         TO_JS(OESTextureFloat)
         TO_JS(OESTextureFloatLinear)
@@ -221,7 +240,10 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(WebGLLoseContext)
         TO_JS(WebGLMultiDraw)
         TO_JS(WebGLMultiDrawInstancedBaseVertexBaseInstance)
+        TO_JS(WebGLPolygonMode)
         TO_JS(WebGLProvokingVertex)
+        TO_JS(WebGLRenderSharedExponent)
+        TO_JS(WebGLStencilTexturing)
     }
     ASSERT_NOT_REACHED();
     return jsNull();

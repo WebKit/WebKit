@@ -45,7 +45,10 @@ angle_executable("capture_replay_tests") {
     "$angle_root:libGLESv2",
   ]
 
-  configs += [ "$angle_root:library_name_config" ]
+  configs += [
+    "$angle_root:library_name_config",
+    "${angle_root}:libANGLE_config",
+  ]
   defines = []
 
   if ((is_linux || is_chromeos) && !is_component_build) {

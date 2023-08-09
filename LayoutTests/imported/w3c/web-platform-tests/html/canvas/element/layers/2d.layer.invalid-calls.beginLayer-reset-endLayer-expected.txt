@@ -1,0 +1,10 @@
+2d.layer.invalid-calls.beginLayer-reset-endLayer
+Raises exception on beginLayer() + reset() + endLayer().
+Actual output:
+
+FAIL Raises exception on beginLayer() + reset() + endLayer(). assert_throws_dom: function "function() {
+    ctx.beginLayer();
+    ctx.reset();
+    ctx.endLayer();
+  }" threw object "TypeError: ctx.beginLayer is not a function. (In 'ctx.beginLayer()', 'ctx.beginLayer' is undefined)" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+

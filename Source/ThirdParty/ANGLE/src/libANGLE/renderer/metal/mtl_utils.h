@@ -185,7 +185,7 @@ bool DeviceHasMaximumRenderTargetSize(id<MTLDevice> device);
 // has alpha channel.
 MTLClearColor EmulatedAlphaClearColor(MTLClearColor color, MTLColorWriteMask colorMask);
 
-NSUInteger ComputeTotalSizeUsedForMTLRenderPassDescriptor(const MTLRenderPassDescriptor *descriptor,
+NSUInteger ComputeTotalSizeUsedForMTLRenderPassDescriptor(const mtl::RenderPassDesc &descriptor,
                                                           const Context *context,
                                                           const mtl::ContextDevice &device);
 

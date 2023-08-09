@@ -73,6 +73,8 @@ class AccessibilityObject : public AXCoreObject, public CanMakeWeakPtr<Accessibi
 public:
     virtual ~AccessibilityObject();
 
+    ProcessID processID() const override;
+
     // After constructing an AccessibilityObject, it must be given a
     // unique ID, then added to AXObjectCache, and finally init() must
     // be called last.

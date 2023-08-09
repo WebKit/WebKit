@@ -56,6 +56,8 @@ On Linux only, you need to install all the necessary dependencies before going f
 ./build/install-build-deps.sh
 ```
 
+If building for Android (which requires Linux), switch to the [Android steps](https://chromium.googlesource.com/angle/angle.git/+/HEAD/doc/DevSetupAndroid.md) at this point.
+
 After this completes successfully, you are ready to generate the ninja files:
 ```
 gn gen out/Debug

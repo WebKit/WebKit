@@ -217,10 +217,10 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
 
     // State sync with dirty bits.
     angle::Result syncState(const gl::Context *context,
-                            const gl::state::DirtyBits &dirtyBits,
-                            const gl::state::DirtyBits &bitMask,
-                            const gl::state::ExtendedDirtyBits &extendedDirtyBits,
-                            const gl::state::ExtendedDirtyBits &extendedBitMask,
+                            const gl::state::DirtyBits dirtyBits,
+                            const gl::state::DirtyBits bitMask,
+                            const gl::state::ExtendedDirtyBits extendedDirtyBits,
+                            const gl::state::ExtendedDirtyBits extendedBitMask,
                             gl::Command command) override;
 
     // Disjoint timer queries

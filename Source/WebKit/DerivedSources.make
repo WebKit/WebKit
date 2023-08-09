@@ -511,7 +511,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Pasteboard.serialization.in \
 	Shared/PlatformPopupMenuData.serialization.in \
 	Shared/PolicyDecision.serialization.in \
-        Shared/RemoteWorkerType.serialization.in \
+	Shared/RemoteWorkerType.serialization.in \
 	Shared/SameDocumentNavigationType.serialization.in \
 	Shared/SessionState.serialization.in \
 	Shared/ShareableBitmap.serialization.in \
@@ -584,7 +584,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUTextureViewDescriptor.serialization.in \
 	Shared/WebGPU/WebGPUVertexState.serialization.in \
 	Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in \
- 	Shared/WebGPU/WebGPUVertexAttribute.serialization.in \
+	Shared/WebGPU/WebGPUVertexAttribute.serialization.in \
 	Shared/WebGPU/WebGPUValidationError.serialization.in \
 	Shared/WebGPU/WebGPUTextureBindingLayout.serialization.in \
 	Shared/WebGPU/WebGPUSupportedLimits.serialization.in \
@@ -617,10 +617,16 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in \
 #
 
+WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
+	HTTPHeaderNames.serialization.in \
+#
+
+WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH := $(foreach I,$(WEBCORE_SERIALIZATION_DESCRIPTION_FILES),$(WebCorePrivateHeaders)/$I)
+
 all : GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm WebKitPlatformGeneratedSerializers.mm
 
-GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm WebKitPlatformGeneratedSerializers.mm : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make
-	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py mm $(WebKit2)/ $(SERIALIZATION_DESCRIPTION_FILES)
+GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm WebKitPlatformGeneratedSerializers.mm : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make $(WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH)
+	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py mm DIRECTORY $(WebKit2) $(SERIALIZATION_DESCRIPTION_FILES) DIRECTORY $(WebCorePrivateHeaders) $(WEBCORE_SERIALIZATION_DESCRIPTION_FILES)
 
 EXTENSIONS_DIR = $(WebKit2)/WebProcess/Extensions
 EXTENSIONS_SCRIPTS_DIR = $(EXTENSIONS_DIR)/Bindings/Scripts

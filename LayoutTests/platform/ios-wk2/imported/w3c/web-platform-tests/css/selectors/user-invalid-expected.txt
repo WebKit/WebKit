@@ -1,5 +1,11 @@
 
+Test form interactions (reset / submit):
+
+
+
+
 
 FAIL :user-invalid selector should respond to user action assert_true: Typed an invalid email, :user-invalid now matches expected true got false
+PASS :user-invalid selector properly interacts with submit & reset buttons
 PASS :user-error selector should not be supported
 

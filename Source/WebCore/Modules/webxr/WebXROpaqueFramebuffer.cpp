@@ -198,7 +198,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 #endif
 
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    m_completionSyncEvent = data.completionSyncEvent;
+    m_completionSyncEvent = std::tuple(data.completionSyncEvent);
 #endif
 }
 

@@ -52,9 +52,9 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic) BOOL networkCacheSpeculativeValidationEnabled WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic) BOOL fastServerTrustEvaluationEnabled WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic) NSUInteger perOriginStorageQuota WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
-@property (nonatomic, nullable, copy) NSNumber *originQuotaRatio WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, nullable, copy) NSNumber *totalQuotaRatio WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, nullable, copy) NSNumber *standardVolumeCapacity WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSNumber *originQuotaRatio WK_API_AVAILABLE(macos(14.0), ios(17.0));
+@property (nonatomic, nullable, copy) NSNumber *totalQuotaRatio WK_API_AVAILABLE(macos(14.0), ios(17.0));
+@property (nonatomic, nullable, copy) NSNumber *standardVolumeCapacity WK_API_AVAILABLE(macos(14.0), ios(17.0));
 @property (nonatomic, nullable, copy) NSString *boundInterfaceIdentifier WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic) BOOL allowsCellularAccess WK_API_AVAILABLE(macos(10.15.4), ios(14.0));
 @property (nonatomic) BOOL legacyTLSEnabled WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
@@ -65,7 +65,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic) BOOL shouldRunServiceWorkersOnMainThreadForTesting WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic) NSUInteger overrideServiceWorkerRegistrationCountTestingValue WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic) BOOL resourceLoadStatisticsDebugModeEnabled WK_API_AVAILABLE(macos(13.3), ios(16.4));
-@property (nonatomic, readonly) NSUUID *identifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) NSUUID *identifier WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 // FIXME: rdar://86641948 Remove acceptInsecureCertificatesForWebSockets once HAVE(NSURLSESSION_WEBSOCKET) is supported on all Cocoa platforms.
 @property (nonatomic, setter=_setShouldAcceptInsecureCertificatesForWebSockets:) BOOL _shouldAcceptInsecureCertificatesForWebSockets WK_API_AVAILABLE(macos(13.0), ios(16.0));
@@ -100,7 +100,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic, nullable, copy) NSURL *generalStorageDirectory WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic, nullable, copy, setter=setWebPushPartitionString:) NSString *webPushPartitionString WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @property (nonatomic) _WKUnifiedOriginStorageLevel unifiedOriginStorageLevel WK_API_AVAILABLE(macos(13.3), ios(16.4));
-@property (nonatomic, nullable, copy) NSNumber *volumeCapacityOverride WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSNumber *volumeCapacityOverride WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 // Testing only.
 @property (nonatomic) BOOL allLoadsBlockedByDeviceManagementRestrictionsForTesting WK_API_AVAILABLE(macos(10.15), ios(13.0));

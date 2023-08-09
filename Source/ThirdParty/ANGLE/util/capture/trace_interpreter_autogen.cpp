@@ -19,6 +19,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
                              const Token *paramTokens,
                              const TraceStringMap &strings)
 {
+    if (strcmp(nameToken, "eglAcquireExternalContextANGLE") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNEGLACQUIREEXTERNALCONTEXTANGLEPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::EGLAcquireExternalContextANGLE, std::move(params));
+    }
     if (strcmp(nameToken, "eglBindAPI") == 0)
     {
         ParamBuffer params =
@@ -576,6 +583,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
             ParseParameters<std::remove_pointer<PFNEGLRELEASEDEVICEANGLEPROC>::type>(paramTokens,
                                                                                      strings);
         return CallCapture(EntryPoint::EGLReleaseDeviceANGLE, std::move(params));
+    }
+    if (strcmp(nameToken, "eglReleaseExternalContextANGLE") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNEGLRELEASEEXTERNALCONTEXTANGLEPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::EGLReleaseExternalContextANGLE, std::move(params));
     }
     if (strcmp(nameToken, "eglReleaseHighPowerGPUANGLE") == 0)
     {

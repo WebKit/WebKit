@@ -43,7 +43,7 @@ typedef NS_ENUM(NSInteger, WKBackgroundFetchChange) {
     WKBackgroundFetchChangeAddition,
     WKBackgroundFetchChangeRemoval,
     WKBackgroundFetchChangeUpdate,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 WK_API_AVAILABLE(macos(10.15), ios(13.0))
 @protocol _WKWebsiteDataStoreDelegate <NSObject>

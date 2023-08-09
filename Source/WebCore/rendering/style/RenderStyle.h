@@ -27,6 +27,7 @@
 
 #include <unicode/utypes.h>
 #include <wtf/DataRef.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -172,6 +173,7 @@ enum class Overflow : uint8_t;
 enum class OverflowAnchor : bool;
 enum class OverflowWrap : uint8_t;
 enum class OverscrollBehavior : uint8_t;
+enum class PaintBehavior : uint32_t;
 enum class PaintOrder : uint8_t;
 enum class PaintType : uint8_t;
 enum class PointerEvents : uint8_t;
@@ -242,6 +244,7 @@ struct MasonryAutoFlow;
 struct NamedGridAreaMap;
 struct NamedGridLinesMap;
 struct OrderedNamedGridLinesMap;
+
 struct ScrollSnapAlign;
 struct ScrollSnapType;
 struct ScrollbarGutter;
@@ -1730,8 +1733,8 @@ public:
     // Resolves the currentColor keyword, but must not be used for the "color" property which has a different semantic.
     WEBCORE_EXPORT Color colorResolvingCurrentColor(const StyleColor&) const;
 
-    WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID) const;
-    WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID) const;
+    WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID, OptionSet<PaintBehavior> paintBehavior = { }) const;
+    WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID, OptionSet<PaintBehavior> paintBehavior = { }) const;
 
     WEBCORE_EXPORT Color colorByApplyingColorFilter(const Color&) const;
     WEBCORE_EXPORT Color colorWithColorFilter(const StyleColor&) const;

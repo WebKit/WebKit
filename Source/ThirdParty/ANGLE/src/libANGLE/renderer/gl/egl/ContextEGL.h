@@ -29,6 +29,9 @@ class ContextEGL : public ContextGL
     angle::Result onMakeCurrent(const gl::Context *context) override;
     angle::Result onUnMakeCurrent(const gl::Context *context) override;
 
+    void acquireExternalContext(const gl::Context *context) override;
+    void releaseExternalContext(const gl::Context *context) override;
+
     EGLContext getContext() const;
 
   private:

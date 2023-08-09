@@ -14,6 +14,9 @@
 
 // clang-format off
 // Extension Name, Min ESSL Version, Max ESSL Version
+//
+// Note that OES_EGL_image_external and OES_texture_3D are ESSL 100 only extensions, but one app has
+// been found that uses them on GLSL 310.  http://issuetracker.google.com/285871779
 #define LIST_EXTENSIONS(OP)                                      \
     OP(ANDROID_extension_pack_es31a,                   310, 320) \
     OP(ANGLE_base_vertex_base_instance_shader_builtin, 300, 320) \
@@ -50,13 +53,13 @@
     OP(NV_EGL_stream_consumer_external,                100, 320) \
     OP(NV_shader_framebuffer_fetch,                    100, 100) \
     OP(NV_shader_noperspective_interpolation,          300, 320) \
-    OP(OES_EGL_image_external,                         100, 100) \
+    OP(OES_EGL_image_external,                         100, 310) \
     OP(OES_EGL_image_external_essl3,                   300, 320) \
     OP(OES_sample_variables,                           300, 320) \
     OP(OES_shader_multisample_interpolation,           300, 320) \
     OP(OES_shader_image_atomic,                        310, 320) \
     OP(OES_standard_derivatives,                       100, 100) \
-    OP(OES_texture_3D,                                 100, 100) \
+    OP(OES_texture_3D,                                 100, 310) \
     OP(OES_texture_buffer,                             310, 320) \
     OP(OES_texture_cube_map_array,                     310, 320) \
     OP(OES_texture_storage_multisample_2d_array,       310, 320) \

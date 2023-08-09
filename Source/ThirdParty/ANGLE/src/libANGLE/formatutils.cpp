@@ -1709,7 +1709,15 @@ const InternalFormat &GetInternalFormatInfo(GLenum internalFormat, GLenum type)
 GLuint InternalFormat::computePixelBytes(GLenum formatType) const
 {
     const auto &typeInfo = GetTypeInfo(formatType);
-    GLuint components    = typeInfo.specialInterpretation ? 1u : componentCount;
+    GLuint components    = componentCount;
+    if (sizedInternalFormat == GL_RGBX8_ANGLE)
+    {
+        components = 4;
+    }
+    else if (typeInfo.specialInterpretation)
+    {
+        components = 1;
+    }
     return components * typeInfo.bytes;
 }
 

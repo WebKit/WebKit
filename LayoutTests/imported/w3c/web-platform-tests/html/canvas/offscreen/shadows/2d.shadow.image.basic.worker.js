@@ -6,35 +6,21 @@
 importScripts("/resources/testharness.js");
 importScripts("/html/canvas/resources/canvas-tests.js");
 
-var t = async_test("Shadows are drawn for images");
-var t_pass = t.done.bind(t);
-var t_fail = t.step_func(function(reason) {
-    throw reason;
-});
-t.step(function() {
+promise_test(async t => {
 
-var canvas = new OffscreenCanvas(100, 50);
-var ctx = canvas.getContext('2d');
+  var canvas = new OffscreenCanvas(100, 50);
+  var ctx = canvas.getContext('2d');
 
-ctx.fillStyle = '#f00';
-ctx.fillRect(0, 0, 100, 50);
-ctx.shadowColor = '#0f0';
-ctx.shadowOffsetY = 50;
-var promise = new Promise(function(resolve, reject) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", '/images/red.png');
-    xhr.responseType = 'blob';
-    xhr.send();
-    xhr.onload = function() {
-        resolve(xhr.response);
-    };
-});
-promise.then(function(response) {
-    createImageBitmap(response).then(bitmap => {
-        ctx.drawImage(bitmap, 0, -50);
-        _assertPixel(canvas, 50,25, 0,255,0,255, "50,25", "0,255,0,255");
-    }, t_fail);
-}).then(t_pass, t_fail);
+  ctx.fillStyle = '#f00';
+  ctx.fillRect(0, 0, 100, 50);
+  ctx.shadowColor = '#0f0';
+  ctx.shadowOffsetY = 50;
+  var response = await fetch('/images/red.png')
+  var blob = await response.blob();
+  var img = await createImageBitmap(blob);
+  ctx.drawImage(img, 0, -50);
 
-});
+  _assertPixel(canvas, 50,25, 0,255,0,255);
+  t.done();
+}, "Shadows are drawn for images");
 done();

@@ -52,6 +52,8 @@ enum TracePointCode {
     DumpJITMemoryStop,
     FromJSStart,
     FromJSStop,
+    IncrementalSweepStart,
+    IncrementalSweepEnd,
 
     WebCoreRange = 5000,
     MainResourceLoadDidStartProvisional,
@@ -100,6 +102,8 @@ enum TracePointCode {
     ScrollingTreeDisplayDidRefresh,
     RenderTreeLayoutStart,
     RenderTreeLayoutEnd,
+    PerformOpportunisticallyScheduledTasksStart,
+    PerformOpportunisticallyScheduledTasksEnd,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,

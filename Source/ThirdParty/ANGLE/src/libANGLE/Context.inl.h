@@ -92,21 +92,23 @@ ANGLE_INLINE bool Context::noopMultiDraw(GLsizei drawcount) const
 
 ANGLE_INLINE angle::Result Context::syncAllDirtyBits(Command command)
 {
-    const state::DirtyBits &dirtyBits                 = mState.getDirtyBits();
-    const state::ExtendedDirtyBits &extendedDirtyBits = mState.getExtendedDirtyBits();
-    ANGLE_TRY(mImplementation->syncState(this, dirtyBits, mAllDirtyBits, extendedDirtyBits,
-                                         mAllExtendedDirtyBits, command));
+    constexpr state::DirtyBits kAllDirtyBits                 = state::DirtyBits().set();
+    constexpr state::ExtendedDirtyBits kAllExtendedDirtyBits = state::ExtendedDirtyBits().set();
+    const state::DirtyBits dirtyBits                         = mState.getDirtyBits();
+    const state::ExtendedDirtyBits extendedDirtyBits         = mState.getExtendedDirtyBits();
+    ANGLE_TRY(mImplementation->syncState(this, dirtyBits, kAllDirtyBits, extendedDirtyBits,
+                                         kAllExtendedDirtyBits, command));
     mState.clearDirtyBits();
     mState.clearExtendedDirtyBits();
     return angle::Result::Continue;
 }
 
-ANGLE_INLINE angle::Result Context::syncDirtyBits(const state::DirtyBits &bitMask,
-                                                  const state::ExtendedDirtyBits &extendedBitMask,
+ANGLE_INLINE angle::Result Context::syncDirtyBits(const state::DirtyBits bitMask,
+                                                  const state::ExtendedDirtyBits extendedBitMask,
                                                   Command command)
 {
-    const state::DirtyBits &dirtyBits = (mState.getDirtyBits() & bitMask);
-    const state::ExtendedDirtyBits &extendedDirtyBits =
+    const state::DirtyBits dirtyBits = (mState.getDirtyBits() & bitMask);
+    const state::ExtendedDirtyBits extendedDirtyBits =
         (mState.getExtendedDirtyBits() & extendedBitMask);
     ANGLE_TRY(mImplementation->syncState(this, dirtyBits, bitMask, extendedDirtyBits,
                                          extendedBitMask, command));
@@ -125,7 +127,7 @@ ANGLE_INLINE angle::Result Context::prepareForDraw(PrimitiveMode mode)
 {
     if (mGLES1Renderer)
     {
-        ANGLE_TRY(mGLES1Renderer->prepareForDraw(mode, this, &mState));
+        ANGLE_TRY(mGLES1Renderer->prepareForDraw(mode, this, &mState, getMutableGLES1State()));
     }
 
     ANGLE_TRY(syncDirtyObjects(mDrawDirtyObjects, Command::Draw));

@@ -1243,6 +1243,13 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/8229"
     };
 
+    FeatureInfo supportsTimelineSemaphore = {
+        "supportsTimelineSemaphore",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_timeline_semaphore extension",
+        &members,
+    };
+
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

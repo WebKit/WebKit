@@ -917,6 +917,9 @@ private:
     template<typename T>
     void fillTransferMap(const Vector<T>& input, ObjectPool& result)
     {
+        if (input.isEmpty())
+            return;
+
         auto* globalObject = jsCast<JSDOMGlobalObject*>(m_lexicalGlobalObject);
         for (size_t i = 0; i < input.size(); ++i) {
             if (auto* object = toJS(globalObject, globalObject, input[i].get()).getObject())

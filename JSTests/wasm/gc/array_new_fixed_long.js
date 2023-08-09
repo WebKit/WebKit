@@ -24,7 +24,7 @@ function testLongArray() {
   (type $vec (array i32))
 
   (func $new (export "new") (result (ref $vec))
-    (array.new_canon_fixed $vec ` + len + ` ` + elements + `)
+    (array.new_fixed $vec ` + len + ` ` + elements + `)
   )
 
   (func $get (param $i i32) (param $v (ref $vec)) (result i32)

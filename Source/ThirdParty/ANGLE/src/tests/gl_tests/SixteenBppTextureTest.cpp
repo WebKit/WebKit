@@ -574,19 +574,19 @@ void main()
         }
     }
 
-    void bandingTest(GLenum format, Gradient gradient, bool ditheringExpected);
+    void bandingTest(GLuint fbo, GLenum format, Gradient gradient, bool ditheringExpected);
     void bandingTestWithSwitch(GLenum format, Gradient gradient);
 };
 
-void SixteenBppTextureDitheringTestES3::bandingTest(GLenum format,
+void SixteenBppTextureDitheringTestES3::bandingTest(GLuint fbo,
+                                                    GLenum format,
                                                     Gradient gradient,
                                                     bool ditheringExpected)
 {
     int w = getWindowWidth();
     int h = getWindowHeight();
 
-    GLFramebuffer fbo;
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
     GLTexture tex;
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -676,14 +676,23 @@ void SixteenBppTextureDitheringTestES3::bandingTest(GLenum format,
 
 void SixteenBppTextureDitheringTestES3::bandingTestWithSwitch(GLenum format, Gradient gradient)
 {
+    GLFramebuffer fbo;
+    GLFramebuffer anotherFbo;
+
     // GL_DITHER defaults to enabled
-    bandingTest(format, gradient, true);
+    bandingTest(fbo.get(), format, gradient, true);
 
     glDisable(GL_DITHER);
-    bandingTest(format, gradient, false);
+    bandingTest(fbo.get(), format, gradient, false);
+
+    // Check that still disabled after switching to another framebuffer
+    bandingTest(anotherFbo.get(), format, gradient, false);
 
     glEnable(GL_DITHER);
-    bandingTest(format, gradient, true);
+    bandingTest(fbo.get(), format, gradient, true);
+
+    // Check that it is now enabled on another framebuffer
+    bandingTest(anotherFbo.get(), format, gradient, true);
 }
 
 // Test dithering applied to RGBA4.

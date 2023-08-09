@@ -48,8 +48,14 @@ header: <WebCore/ResourceRequest.h>
     bool m_useAdvancedPrivacyProtections;
 };
 
+[Nested] struct WebCore::AttributedString::ParagraphStyleWithTableAndListIDs {
+    RetainPtr<NSParagraphStyle> style
+    Vector<std::optional<WebCore::AttributedString::TextTableID>> tableIDs
+    Vector<WebCore::AttributedString::TextListID> listIDs
+}
+
 [Nested] struct WebCore::AttributedString::AttributeValue {
-    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSPresentationIntent>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<PlatformColor>, RetainPtr<CGColorRef>> value;
+    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::AttributedString::ParagraphStyleWithTableAndListIDs, RetainPtr<NSPresentationIntent>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<PlatformColor>, RetainPtr<CGColorRef>> value;
 }
 
 [Nested] struct WebCore::AttributedString::Range {

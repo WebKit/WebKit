@@ -529,6 +529,13 @@ class MsanScopedDisableInterceptorChecks final : angle::NonCopyable
 #    define ANGLE_NO_SANITIZE_THREAD
 #endif
 
+// Similar to the above, but for cfi-icall.
+#ifdef __clang__
+#    define ANGLE_NO_SANITIZE_CFI_ICALL __attribute__((no_sanitize("cfi-icall")))
+#else
+#    define ANGLE_NO_SANITIZE_CFI_ICALL
+#endif
+
 // The below inlining code lifted from V8.
 #if defined(__clang__) || (defined(__GNUC__) && defined(__has_attribute))
 #    define ANGLE_HAS_ATTRIBUTE_ALWAYS_INLINE (__has_attribute(always_inline))

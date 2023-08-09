@@ -200,10 +200,10 @@ class ContextImpl : public GLImplFactory
 
     // State sync with dirty bits.
     virtual angle::Result syncState(const gl::Context *context,
-                                    const gl::state::DirtyBits &dirtyBits,
-                                    const gl::state::DirtyBits &bitMask,
-                                    const gl::state::ExtendedDirtyBits &extendedDirtyBits,
-                                    const gl::state::ExtendedDirtyBits &extendedBitMask,
+                                    const gl::state::DirtyBits dirtyBits,
+                                    const gl::state::DirtyBits bitMask,
+                                    const gl::state::ExtendedDirtyBits extendedDirtyBits,
+                                    const gl::state::ExtendedDirtyBits extendedBitMask,
                                     gl::Command command) = 0;
 
     // Disjoint timer queries
@@ -256,6 +256,10 @@ class ContextImpl : public GLImplFactory
     // EGL_ANGLE_power_preference implementation.
     virtual egl::Error releaseHighPowerGPU(gl::Context *context);
     virtual egl::Error reacquireHighPowerGPU(gl::Context *context);
+
+    // EGL_ANGLE_external_context_and_surface
+    virtual void acquireExternalContext(const gl::Context *context);
+    virtual void releaseExternalContext(const gl::Context *context);
 
     // GL_ANGLE_vulkan_image
     virtual angle::Result acquireTextures(const gl::Context *context,

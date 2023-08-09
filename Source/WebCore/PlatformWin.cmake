@@ -96,21 +96,14 @@ list(APPEND WebCore_SOURCES
     platform/win/BitmapInfo.cpp
     platform/win/ClipboardUtilitiesWin.cpp
     platform/win/CursorWin.cpp
-    platform/win/DefWndProcWindowClass.cpp
-    platform/win/DelayLoadedModulesEnumerator.cpp
     platform/win/DragDataWin.cpp
     platform/win/DragImageCairoWin.cpp
     platform/win/DragImageWin.cpp
-    platform/win/GDIObjectCounter.cpp
     platform/win/GDIUtilities.cpp
-    platform/win/ImportedFunctionsEnumerator.cpp
-    platform/win/ImportedModulesEnumerator.cpp
     platform/win/KeyEventWin.cpp
-    platform/win/LocalizedStringsWin.cpp
     platform/win/LoggingWin.cpp
     platform/win/MIMETypeRegistryWin.cpp
     platform/win/MainThreadSharedTimerWin.cpp
-    platform/win/PEImage.cpp
     platform/win/PasteboardWin.cpp
     platform/win/PlatformMouseEventWin.cpp
     platform/win/PlatformScreenWin.cpp
@@ -144,8 +137,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/win/BString.h
     platform/win/BitmapInfo.h
     platform/win/COMPtr.h
-    platform/win/DefWndProcWindowClass.h
-    platform/win/GDIObjectCounter.h
     platform/win/GDIUtilities.h
     platform/win/HWndDC.h
     platform/win/SearchPopupMenuDB.h
@@ -157,7 +148,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/win/WindowMessageBroadcaster.h
     platform/win/WindowMessageListener.h
     platform/win/WindowsKeyNames.h
-    platform/win/WindowsTouch.h
 )
 
 list(APPEND WebCore_LIBRARIES

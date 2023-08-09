@@ -24,16 +24,20 @@ ES 3.0 with [known issues][ES1].
 
 ### Platform support via backing renderers
 
-|              |    Direct3D 9  |   Direct3D 11  |   Desktop GL  |    GL ES    |   Vulkan    |    Metal    |
-|-------------:|:--------------:|:--------------:|:-------------:|:-----------:|:-----------:|:-----------:|
-| Windows      |    complete    |    complete    |   complete    |   complete  |   complete  |             |
-| Linux        |                |                |   complete    |             |   complete  |             |
-| Mac OS X     |                |                |   complete    |             |             |   complete  |
-| iOS          |                |                |               |             |             |   complete  |
-| Chrome OS    |                |                |               |   complete  |   planned   |             |
-| Android      |                |                |               |   complete  |   complete  |             |
-| GGP (Stadia) |                |                |               |             |   complete  |             |
-| Fuchsia      |                |                |               |             |   complete  |             |
+|              |    Direct3D 9  |   Direct3D 11  |   Desktop GL  |    GL ES    |   Vulkan    |    Metal             |
+|-------------:|:--------------:|:--------------:|:-------------:|:-----------:|:-----------:|:--------------------:|
+| Windows      |    complete    |    complete    |   complete    |   complete  |   complete  |                      |
+| Linux        |                |                |   complete    |             |   complete  |                      |
+| Mac OS X     |                |                |   complete    |             |             | complete [1]         |
+| iOS          |                |                |               |             |             | complete [2]         |
+| Chrome OS    |                |                |               |   complete  |   planned   |                      |
+| Android      |                |                |               |   complete  |   complete  |                      |
+| GGP (Stadia) |                |                |               |             |   complete  |                      |
+| Fuchsia      |                |                |               |             |   complete  |                      |
+
+[1] Metal is supported on macOS 10.14+
+
+[2] Metal is supported on iOS 12+
 
 ANGLE v1.0.772 was certified compliant by passing the OpenGL ES 2.0.3 conformance tests in October 2011.
 

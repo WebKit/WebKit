@@ -325,8 +325,8 @@ HRESULT SwapChainPanelNativeWindow::createSwapChain(ID3D11Device *device,
 
 HRESULT SwapChainPanelNativeWindow::scaleSwapChain(const Size &windowSize, const RECT &clientRect)
 {
-    Size renderScale = {windowSize.Width / (float)clientRect.right,
-                        windowSize.Height / (float)clientRect.bottom};
+    Size renderScale = {windowSize.Width / std::max(LONG(1), clientRect.right),
+                        windowSize.Height / std::max(LONG(1), clientRect.bottom)};
     // Setup a scale matrix for the swap chain
     DXGI_MATRIX_3X2_F scaleMatrix = {};
     scaleMatrix._11               = renderScale.Width;

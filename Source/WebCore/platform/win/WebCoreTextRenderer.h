@@ -30,19 +30,12 @@
 
 namespace WebCore {
 
-    class Color;
-    class FontCascade;
-    class GraphicsContext;
-    class IntPoint;
+class Color;
+class FontCascade;
+class GraphicsContext;
+class IntPoint;
 
-    void WebCoreDrawDoubledTextAtPoint(GraphicsContext&, const String&, const IntPoint&, const FontCascade&, const Color& topColor, const Color& bottomColor, int underlinedIndex = -1);
-    float WebCoreTextFloatWidth(const String&, const FontCascade&);
-
-    void WebCoreSetShouldUseFontSmoothing(bool);
-    bool WebCoreShouldUseFontSmoothing();
-
-    WEBCORE_EXPORT void WebCoreSetAlwaysUsesComplexTextCodePath(bool);
-    WEBCORE_EXPORT bool WebCoreAlwaysUsesComplexTextCodePath();
+void WebCoreDrawDoubledTextAtPoint(GraphicsContext&, const String&, const IntPoint&, const FontCascade&, const Color& topColor, const Color& bottomColor, int underlinedIndex = -1);
 
 } // namespace WebCore
 

@@ -88,6 +88,15 @@
             <param><ptype>EGLAttrib</ptype> *<name>value</name></param>
         </command>
         <command>
+            <proto>void <name>eglAcquireExternalContextANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+            <param><ptype>EGLSurface</ptype> <name>drawAndRead</name></param>
+        </command>
+        <command>
+            <proto>void <name>eglReleaseExternalContextANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+        </command>
+        <command>
             <proto><ptype>EGLBoolean</ptype> <name>eglSwapBuffersWithFrameTokenANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLSurface</ptype> <name>surface</name></param>
@@ -163,6 +172,15 @@
                 <enum name="EGL_FEATURE_OVERRIDES_ENABLED_ANGLE"/>
                 <enum name="EGL_FEATURE_OVERRIDES_DISABLED_ANGLE"/>
                 <enum name="EGL_FEATURE_ALL_DISABLED_ANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_external_context_and_surface" supported="egl">
+            <require>
+                <command name="eglAcquireExternalContextANGLE"/>
+                <command name="eglReleaseExternalContextANGLE"/>
+                <enum name="EGL_EXTERNAL_CONTEXT_ANGLE"/>
+                <enum name="EGL_EXTERNAL_SURFACE_ANGLE"/>
+                <enum name="EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE"/>
             </require>
         </extension>
         <extension name="EGL_ANGLE_stream_producer_d3d_texture" supported="egl">
@@ -559,8 +577,16 @@
         <enum value="0x348D" name="EGL_DISPLAY_SEMAPHORE_SHARE_GROUP_ANGLE"/>
         <enum value="0x348D" name="EGL_BIND_TO_TEXTURE_TARGET_ANGLE"/>
 
+        <!-- NOTE: More duplicates!. -->
         <enum value="0x348E" name="EGL_PLATFORM_ANGLE_DEVICE_TYPE_EGL_ANGLE"/>
+        <enum value="0x348E" name="EGL_EXTERNAL_CONTEXT_ANGLE"/>
+
+        <!-- NOTE: More duplicates!. -->
         <enum value="0x348F" name="EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE"/>
+        <enum value="0x348F" name="EGL_EXTERNAL_SURFACE_ANGLE"/>
+    </enums>
+    <enums namespace="EGL" start="0x3490" end="0x349F" vendor="ANGLE">
+        <enum value="0x3490" name="EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE"/>
     </enums>
     <enums namespace="EGL" start="0x34A0" end="0x34AF" vendor="ANGLE">
         <enum value="0x34A0" name="EGL_PLATFORM_ANGLE_D3D_LUID_HIGH_ANGLE"/>

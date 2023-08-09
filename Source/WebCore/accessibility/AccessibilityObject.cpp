@@ -84,6 +84,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
+#include "RuntimeApplicationChecks.h"
 #include "Settings.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
@@ -105,6 +106,11 @@ using namespace HTMLNames;
 AccessibilityObject::~AccessibilityObject()
 {
     ASSERT(isDetached());
+}
+
+inline ProcessID AccessibilityObject::processID() const
+{
+    return presentingApplicationPID();
 }
 
 void AccessibilityObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)

@@ -40,6 +40,7 @@
 #include <variant>
 #include <wtf/HashSet.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/ProcessID.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -822,6 +823,7 @@ public:
 
     void setObjectID(AXID axID) { m_id = axID; }
     AXID objectID() const { return m_id; }
+    virtual ProcessID processID() const = 0;
 
     // When the corresponding WebCore object that this accessible object
     // represents is deleted, it must be detached.

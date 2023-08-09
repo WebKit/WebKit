@@ -92,7 +92,7 @@ GLES1State::GLES1State()
 GLES1State::~GLES1State() = default;
 
 // Taken from the GLES 1.x spec which specifies all initial state values.
-void GLES1State::initialize(const Context *context, const State *state)
+void GLES1State::initialize(const Context *context, const PrivateState *state)
 {
     mGLState = state;
 

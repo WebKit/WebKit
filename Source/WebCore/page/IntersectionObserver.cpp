@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "Performance.h"
 #include "RenderBlock.h"
+#include "RenderBoxInlines.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderView.h"

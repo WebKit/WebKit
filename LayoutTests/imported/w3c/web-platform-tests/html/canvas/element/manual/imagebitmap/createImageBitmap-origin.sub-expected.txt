@@ -4,7 +4,6 @@ CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has bee
 CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
-CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
 
 PASS cross-origin HTMLImageElement: origin unclear getImageData
 PASS cross-origin HTMLImageElement: origin unclear 2dContext.drawImage
@@ -21,9 +20,6 @@ PASS redirected to cross-origin HTMLVideoElement: origin unclear bitmaprenderer.
 PASS redirected to same-origin HTMLVideoElement: origin unclear getImageData
 PASS redirected to same-origin HTMLVideoElement: origin unclear 2dContext.drawImage
 PASS redirected to same-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap
-PASS redirected to same-origin HTMLVideoElement via a cross-origin URL: origin unclear getImageData
-PASS redirected to same-origin HTMLVideoElement via a cross-origin URL: origin unclear 2dContext.drawImage
-PASS redirected to same-origin HTMLVideoElement via a cross-origin URL: origin unclear bitmaprenderer.transferFromImageBitmap
 PASS unclean HTMLCanvasElement: origin unclear getImageData
 PASS unclean HTMLCanvasElement: origin unclear 2dContext.drawImage
 PASS unclean HTMLCanvasElement: origin unclear bitmaprenderer.transferFromImageBitmap

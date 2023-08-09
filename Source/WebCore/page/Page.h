@@ -141,6 +141,7 @@ class MediaPlaybackTarget;
 class MediaRecorderProvider;
 class MediaSessionCoordinatorPrivate;
 class ModelPlayerProvider;
+class OpportunisticTaskDeferralScope;
 class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;
@@ -181,6 +182,7 @@ class VisitedLinkStore;
 class WebGLStateTracker;
 class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
+class WindowEventLoop;
 
 struct AXTreeData;
 struct ApplePayAMSUIRequest;
@@ -989,6 +991,7 @@ public:
     void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
     static void forEachDocumentFromMainFrame(const LocalFrame&, const Function<void(Document&)>&);
     void forEachFrame(const Function<void(LocalFrame&)>&);
+    void forEachWindowEventLoop(const Function<void(WindowEventLoop&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
     const HashSet<String>& maskedURLSchemes() const { return m_maskedURLSchemes; }

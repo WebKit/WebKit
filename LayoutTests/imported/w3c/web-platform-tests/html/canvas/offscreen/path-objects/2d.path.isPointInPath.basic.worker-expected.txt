@@ -1,0 +1,3 @@
+
+PASS Verify the winding rule in isPointInPath works for for rect path.
+

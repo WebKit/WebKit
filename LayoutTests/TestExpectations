@@ -837,20 +837,16 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-co
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe-in-multicol.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-007.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/direction-inherit-rtl.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/direction-rtl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/clearRect_alpha_false.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/drawImage_alpha_false.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/fillRect_alpha_false.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/fill_alpha_false.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/initial_color_alpha_false.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/context-attributes/reset_color_alpha_false.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-text-to-the-canvas/canvas.2d.disconnected.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/tentative/canvas-filter-object-blur.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/tentative/canvas-filter-object-component-transfer.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/tentative/canvas-filter-object-convolve-matrix.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/tentative/canvas-filter-object-turbulence.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/layers/layers-several-complex.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-animation-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/appearance/appearance-transition-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-layout-stale-002.html [ ImageOnlyFailure ]
@@ -1233,6 +1229,10 @@ http/wpt/html/browsers/browsing-the-web/navigating-across-documents/href.html
 # Content encoding sniffing is only supported by CFNetwork.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]
 
+# Only supported on CF (Apple) WebKit2 ports for now.
+requestidlecallback [ Skip ]
+imported/w3c/web-platform-tests/requestidlecallback [ Skip ]
+
 # Only supported in WebKit2.
 http/wpt/cross-origin-resource-policy/ [ Skip ]
 
@@ -1282,7 +1282,6 @@ http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-ne
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html [ Skip ]
 
 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure Failure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/size.large.html [ Skip ]
 
@@ -3233,6 +3232,8 @@ http/tests/privateClickMeasurement [ Skip ]
 # Application Manifest tests
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Skip ]
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Skip ]
+webkit.org/b/153152 http/wpt/content-security-policy/sandbox-manifest-blocked.html [ Skip ]
+webkit.org/b/153152 http/wpt/content-security-policy/sandbox-manifest-blocked-cross-origin.sub.html [ Skip ]
 webkit.org/b/158205 applicationmanifest/ [ Skip ]
 
 webkit.org/b/178785 perf/object-keys.html [ Pass Failure ]
@@ -4053,12 +4054,19 @@ webgl/2.0.y/conformance/reading [ Pass ]
 webgl/2.0.y/conformance/renderbuffers [ Pass ]
 webgl/2.0.y/conformance/rendering [ Pass ]
 webgl/2.0.y/conformance/textures/canvas/ [ Pass ]
+webgl/2.0.y/conformance2/extensions/ext-conservative-depth.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/ext-render-snorm.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/nv-shader-noperspective-interpolation.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/oes-draw-buffers-indexed.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/oes-sample-variables.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/oes-shader-multisample-interpolation.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/promoted-extensions-in-shaders.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/webgl-clip-cull-distance.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/webgl-provoking-vertex.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/webgl-render-shared-exponent.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/webgl-stencil-texturing.html [ Pass ]
 webgl/2.0.y/conformance2/rendering/rasterizer-discard-and-implicit-clear.html [ Pass ]
 webgl/2.0.y/conformance2/textures/canvas/ [ Pass ]
 webgl/2.0.y/conformance2/textures/webgl_canvas [ Pass ]
@@ -4569,9 +4577,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height-orientation-none.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient-rotation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-object-blur.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-object-component-transfer.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-object-convolve-matrix.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_system_colors.html [ ImageOnlyFailure ]
 
 # CSS Masonry Layout not supported.
@@ -4904,7 +4909,6 @@ imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-
 http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Skip ]
 http/tests/webgl/2.0.y/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Skip ]
 http/tests/webgl/2.0.y/conformance2/textures/misc/origin-clean-conformance-offscreencanvas.html [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html [ Skip ]
 
 # These are only enabled on Cocoa WK2 ports
 webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html [ Skip ]
@@ -4980,8 +4984,7 @@ webkit.org/b/31278 [ Debug ] fast/multicol/spanner-get-re-added-on-move-crash.ht
 webkit.org/b/225247 [ Debug ] fast/multicol/span/float-becomes-spanner-crash.html [ Skip ]
 
 # Needs display box support.
-[ Debug ] fast/layoutformattingcontext/ [ Skip ]
-[ Release ] fast/layoutformattingcontext/ [ Skip ]
+fast/layoutformattingcontext/ [ Skip ]
 
 # This webstorage test has crashed since it was imported.
 imported/w3c/web-platform-tests/webstorage/storage_session_setitem_quotaexceedederr.window.html [ Skip ]
@@ -5053,7 +5056,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/can
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-canvas.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-image.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.shadow.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.strokeText.html [ Failure ]
@@ -6148,7 +6150,6 @@ imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-
 imported/w3c/web-platform-tests/html/browsers/windows/clear-window-name.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement-siblings.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-colorManaged-convertToBlob-roundtrip.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.get.halftransparent.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.get.halftransparent.worker.html [ Skip ]
 imported/w3c/web-platform-tests/html/capability-delegation/delegation-consumes-activation.https.tentative.html [ Skip ]
@@ -6203,9 +6204,6 @@ imported/w3c/web-platform-tests/payment-request/payment-is-showing.https.html [ 
 imported/w3c/web-platform-tests/permissions/permissions-query-feature-policy-attribute.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_in_pointerlock.html [ Skip ]
 imported/w3c/web-platform-tests/pointerlock/mouse_buttons_back_forward.html [ Skip ]
-imported/w3c/web-platform-tests/requestidlecallback/callback-idle-periods.html [ Skip ]
-imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Skip ]
-imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html [ Skip ]
 imported/w3c/web-platform-tests/resize-observer/observe.html [ Skip ]
 imported/w3c/web-platform-tests/resize-observer/svg.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/entry-attributes.html [ Skip ]
@@ -6554,3 +6552,33 @@ webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass Failure ImageOnlyFailure ]
 
 webkit.org/b/255970 [ Debug ] fullscreen/exit-full-screen-video-crash.html [ Crash ]
+
+# Canvas Layers API not supported yet.
+webkit.org/b/259784 imported/w3c/web-platform-tests/html/canvas/element/layers [ Skip ]
+webkit.org/b/259784 imported/w3c/web-platform-tests/html/canvas/offscreen/layers [ Skip ]
+
+# New failures after re-importing html/canvas
+imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.dropShadow.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-text-to-the-canvas/canvas.2d.disconnected-font-size-math.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-opacity-alpha-and-fillStyle.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-opacity.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow-and-properties-blur.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow-and-properties.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-opacity-blend-modes.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/text/direction-inherit-rtl.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/text/direction-rtl.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/text/fontVariantCaps-1.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/text/fontVariantCaps-3.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/text/fontVariantCaps-4.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.dropShadow.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-1.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-3.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-4.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/text/parent-style-relative-units.html [ Crash ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.dropShadow.tentative.w.html [ Timeout ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.infinity.worker.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.infinity.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.invalid.html [ Skip ]
+

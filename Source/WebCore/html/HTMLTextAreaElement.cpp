@@ -220,6 +220,7 @@ bool HTMLTextAreaElement::appendFormData(DOMFormData& formData)
 
 void HTMLTextAreaElement::reset()
 {
+    setInteractedWithSinceLastFormSubmitEvent(false);
     setNonDirtyValue(defaultValue(), TextControlSetValueSelection::SetSelectionToEnd);
 }
 
