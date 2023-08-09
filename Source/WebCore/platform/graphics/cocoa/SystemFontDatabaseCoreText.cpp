@@ -384,7 +384,7 @@ static inline FontSelectionValue cssWeightOfSystemFontDescriptor(CTFontDescripto
 static CTFontTextStylePlatform fontPlatform()
 {
 #if PLATFORM(VISION)
-    if (!PAL::currentUserInterfaceIdiomIsReality())
+    if (!PAL::currentUserInterfaceIdiomIsVision())
         return kCTFontTextStylePlatformPhone;
 #endif
     return kCTFontTextStylePlatformDefault;
