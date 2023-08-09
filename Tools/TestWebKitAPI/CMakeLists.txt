@@ -96,6 +96,7 @@ set(TestWTF_SOURCES
     Tests/WTF/ScopedLambda.cpp
     Tests/WTF/SentinelLinkedList.cpp
     Tests/WTF/SetForScope.cpp
+    Tests/WTF/Signals.cpp
     Tests/WTF/StackTraceTest.cpp
     Tests/WTF/StdLibExtrasTests.cpp
     Tests/WTF/StringBuilder.cpp

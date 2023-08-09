@@ -36,6 +36,7 @@ list(APPEND WTF_SOURCES
     win/OSAllocatorWin.cpp
     win/PathWalker.cpp
     win/RunLoopWin.cpp
+    win/SignalsWin.cpp
     win/ThreadingWin.cpp
     win/Win32Handle.cpp
 )
