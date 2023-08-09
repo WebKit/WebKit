@@ -28,32 +28,34 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
-#import <WebCore/Device.h>
+#import "Device.h"
+#import <pal/spi/ios/UIKitSPI.h>
 
-namespace WebKit {
+#import <pal/ios/UIKitSoftLink.h>
 
-static std::optional<UserInterfaceIdiom> s_currentUserInterfaceIdiom;
+namespace PAL {
+
+static std::atomic<std::optional<UserInterfaceIdiom>> s_currentUserInterfaceIdiom;
 
 bool currentUserInterfaceIdiomIsSmallScreen()
 {
-    if (!s_currentUserInterfaceIdiom)
+    if (!s_currentUserInterfaceIdiom.load())
         updateCurrentUserInterfaceIdiom();
-    return s_currentUserInterfaceIdiom == UserInterfaceIdiom::SmallScreen;
+    return s_currentUserInterfaceIdiom.load() == UserInterfaceIdiom::SmallScreen;
 }
 
 bool currentUserInterfaceIdiomIsVision()
 {
-    if (!s_currentUserInterfaceIdiom)
+    if (!s_currentUserInterfaceIdiom.load())
         updateCurrentUserInterfaceIdiom();
-    return s_currentUserInterfaceIdiom == UserInterfaceIdiom::Vision;
+    return s_currentUserInterfaceIdiom.load() == UserInterfaceIdiom::Vision;
 }
 
 UserInterfaceIdiom currentUserInterfaceIdiom()
 {
-    if (!s_currentUserInterfaceIdiom)
+    if (!s_currentUserInterfaceIdiom.load())
         updateCurrentUserInterfaceIdiom();
-    return s_currentUserInterfaceIdiom.value_or(UserInterfaceIdiom::Default);
+    return s_currentUserInterfaceIdiom.load().value_or(UserInterfaceIdiom::Default);
 }
 
 void setCurrentUserInterfaceIdiom(UserInterfaceIdiom idiom)
@@ -63,19 +65,19 @@ void setCurrentUserInterfaceIdiom(UserInterfaceIdiom idiom)
 
 bool updateCurrentUserInterfaceIdiom()
 {
-    UserInterfaceIdiom oldIdiom = s_currentUserInterfaceIdiom.value_or(UserInterfaceIdiom::Default);
+    UserInterfaceIdiom oldIdiom = s_currentUserInterfaceIdiom.load().value_or(UserInterfaceIdiom::Default);
 
     // If we are in a daemon, we cannot use UIDevice. Fall back to checking the hardware itself.
     // Since daemons don't ever run in an iPhone-app-on-iPad jail, this will be accurate in the daemon case,
     // but is not sufficient in the application case.
     UserInterfaceIdiom newIdiom = [&] {
-        if (![UIApplication sharedApplication]) {
-            if (WebCore::deviceClassIsSmallScreen())
+        if (![PAL::getUIApplicationClass() sharedApplication]) {
+            if (PAL::deviceClassIsSmallScreen())
                 return UserInterfaceIdiom::SmallScreen;
-            if (WebCore::deviceClassIsVision())
+            if (PAL::deviceClassIsVision())
                 return UserInterfaceIdiom::Vision;
         } else {
-            auto idiom = [[UIDevice currentDevice] userInterfaceIdiom];
+            auto idiom = [[PAL::getUIDeviceClass() currentDevice] userInterfaceIdiom];
             if (idiom == UIUserInterfaceIdiomPhone || idiom == UIUserInterfaceIdiomWatch)
                 return UserInterfaceIdiom::SmallScreen;
 #if PLATFORM(VISION)
@@ -94,6 +96,6 @@ bool updateCurrentUserInterfaceIdiom()
     return true;
 }
 
-}
+} // namespace PAL
 
 #endif

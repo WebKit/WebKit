@@ -275,8 +275,6 @@ typedef NS_ENUM(NSInteger, _UIDatePickerOverlayAnchor) {
 @property (nonatomic, readonly, retain) NSString *buildVersion;
 @end
 
-static const UIUserInterfaceIdiom UIUserInterfaceIdiomWatch = (UIUserInterfaceIdiom)4;
-
 typedef enum {
     kUIKeyboardInputRepeat                 = 1 << 0,
     kUIKeyboardInputPopupVariant           = 1 << 1,

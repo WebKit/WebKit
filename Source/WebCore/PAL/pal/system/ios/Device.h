@@ -23,57 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Device.h"
+#pragma once
 
 #if PLATFORM(IOS_FAMILY)
 
-#include <mutex>
-#include <pal/spi/ios/MobileGestaltSPI.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
 
-namespace WebCore {
+namespace PAL {
 
-bool deviceClassIsSmallScreen()
-{
-    static auto deviceClass = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
-    return deviceClass == MGDeviceClassiPhone || deviceClass == MGDeviceClassiPod || deviceClass == MGDeviceClassWatch;
+String deviceName(); // Thread-safe.
+
+// Returns true only for iPhone, iPod, Apple Watch.
+// Few callers should be making any decisions based on device class.
+// If a check like this is needed, often currentUserInterfaceIdiomIsSmallScreen is preferred.
+PAL_EXPORT bool deviceClassIsSmallScreen();
+
+PAL_EXPORT bool deviceClassIsVision();
+
+// FIXME: How does this differ from !deviceClassIsSmallScreen()?
+PAL_EXPORT bool deviceHasIPadCapability();
+
 }
-
-bool deviceClassIsVision()
-{
-#if PLATFORM(VISION)
-    static auto deviceClass = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
-    return deviceClass == MGDeviceClassRealityDevice;
-#else
-    return false;
-#endif
-}
-
-String deviceName()
-{
-#if ENABLE(MOBILE_GESTALT_DEVICE_NAME)
-    static NeverDestroyed<RetainPtr<CFStringRef>> deviceName;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        deviceName.get() = adoptCF(static_cast<CFStringRef>(MGCopyAnswer(kMGQDeviceName, nullptr)));
-    });
-    return deviceName.get().get();
-#else
-    if (!deviceClassIsSmallScreen())
-        return "iPad"_s;
-    return "iPhone"_s;
-#endif
-}
-
-bool deviceHasIPadCapability()
-{
-    static bool deviceHasIPadCapability = MGGetBoolAnswer(kMGQiPadCapability);
-    return deviceHasIPadCapability;
-}
-
-} // namespace WebCore
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -29,7 +29,6 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "DeprecatedGlobalSettings.h"
-#import "Device.h"
 #import "FloatRect.h"
 #import "FloatSize.h"
 #import "GraphicsContextCG.h"
@@ -39,10 +38,12 @@
 #import "ScreenProperties.h"
 #import "WAKWindow.h"
 #import "Widget.h"
-#import <pal/cocoa/MediaToolboxSoftLink.h>
-#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
+#import <pal/system/ios/Device.h>
+
+#import <pal/cocoa/MediaToolboxSoftLink.h>
+#import <pal/ios/UIKitSoftLink.h>
 
 namespace WebCore {
 
@@ -151,7 +152,7 @@ float screenPPIFactor()
 
 FloatSize screenSize()
 {
-    if (deviceHasIPadCapability() && [[PAL::getUIApplicationClass() sharedApplication] _isClassic])
+    if (PAL::deviceHasIPadCapability() && [[PAL::getUIApplicationClass() sharedApplication] _isClassic])
         return { 320, 480 };
 
     if (auto data = screenData(primaryScreenDisplayID()))
@@ -162,7 +163,7 @@ FloatSize screenSize()
 
 FloatSize availableScreenSize()
 {
-    if (deviceHasIPadCapability() && [[PAL::getUIApplicationClass() sharedApplication] _isClassic])
+    if (PAL::deviceHasIPadCapability() && [[PAL::getUIApplicationClass() sharedApplication] _isClassic])
         return { 320, 480 };
 
     if (auto data = screenData(primaryScreenDisplayID()))
