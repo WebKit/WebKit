@@ -114,7 +114,7 @@ public:
     void clear()
     {
         m_set.clear();
-        m_operationCountSinceLastCleanup = 0;
+        cleanupHappened();
     }
 
     template <typename U>
@@ -146,7 +146,7 @@ public:
         if (result)
             increaseOperationCountSinceLastCleanup(count);
         else
-            m_operationCountSinceLastCleanup = 0;
+            cleanupHappened();
         return result;
     }
 
@@ -177,10 +177,16 @@ public:
 #endif
 
 private:
+    ALWAYS_INLINE void cleanupHappened() const
+    {
+        m_operationCountSinceLastCleanup = 0;
+        m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, m_set.size()) * 2;
+    }
+
     ALWAYS_INLINE bool removeNullReferences()
     {
         bool didRemove = m_set.removeIf([] (auto& value) { return !value.get(); });
-        m_operationCountSinceLastCleanup = 0;
+        cleanupHappened();
         return didRemove;
     }
 
@@ -190,19 +196,16 @@ private:
         return currentCount;
     }
 
-    static constexpr unsigned initialMaxOperationCountWithoutCleanup = 512;
     ALWAYS_INLINE void amortizedCleanupIfNeeded() const
     {
         unsigned currentCount = increaseOperationCountSinceLastCleanup();
-        if (currentCount / 2 > m_set.size() || currentCount > m_maxOperationCountWithoutCleanup) {
-            bool didRemove = const_cast<WeakHashSet&>(*this).removeNullReferences();
-            m_maxOperationCountWithoutCleanup = didRemove ? std::max(initialMaxOperationCountWithoutCleanup, m_maxOperationCountWithoutCleanup / 2) : m_maxOperationCountWithoutCleanup * 2;
-        }
+        if (currentCount > m_maxOperationCountWithoutCleanup)
+            const_cast<WeakHashSet&>(*this).removeNullReferences();
     }
 
     WeakPtrImplSet m_set;
     mutable unsigned m_operationCountSinceLastCleanup { 0 };
-    mutable unsigned m_maxOperationCountWithoutCleanup { initialMaxOperationCountWithoutCleanup };
+    mutable unsigned m_maxOperationCountWithoutCleanup { 0 };
 };
 
 template<typename MapFunction, typename T, typename WeakMapImpl>

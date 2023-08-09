@@ -115,7 +115,7 @@ public:
     {
         Locker locker { m_lock };
         m_map.clear();
-        m_operationCountSinceLastCleanup = 0;
+        cleanupHappened();
     }
 
     template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
@@ -152,7 +152,7 @@ public:
                 }
                 return true;
             });
-            m_operationCountSinceLastCleanup = 0;
+            cleanupHappened();
         }
         return strongReferences;
     }
@@ -171,29 +171,34 @@ public:
     }
 
 private:
+    ALWAYS_INLINE void cleanupHappened() const WTF_REQUIRES_LOCK(m_lock)
+    {
+        m_operationCountSinceLastCleanup = 0;
+        m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, m_map.size()) * 2;
+    }
+
     ALWAYS_INLINE void moveFrom(ThreadSafeWeakHashSet&& other)
     {
         Locker locker { m_lock };
         Locker otherLocker { other.m_lock };
         m_map = std::exchange(other.m_map, { });
         m_operationCountSinceLastCleanup = std::exchange(other.m_operationCountSinceLastCleanup, 0);
+        m_maxOperationCountWithoutCleanup = std::exchange(other.m_maxOperationCountWithoutCleanup, 0);
     }
 
-    static constexpr unsigned initialMaxOperationCountWithoutCleanup = 512;
     ALWAYS_INLINE void amortizedCleanupIfNeeded() const WTF_REQUIRES_LOCK(m_lock)
     {
-        if (++m_operationCountSinceLastCleanup / 2 > m_map.size() || m_operationCountSinceLastCleanup > m_maxOperationCountWithoutCleanup) {
-            bool didRemove = m_map.removeIf([] (auto& pair) {
+        if (++m_operationCountSinceLastCleanup > m_maxOperationCountWithoutCleanup) {
+            m_map.removeIf([] (auto& pair) {
                 return pair.value->objectHasStartedDeletion();
             });
-            m_maxOperationCountWithoutCleanup = didRemove ? std::max(initialMaxOperationCountWithoutCleanup, m_maxOperationCountWithoutCleanup / 2) : m_maxOperationCountWithoutCleanup * 2;
-            m_operationCountSinceLastCleanup = 0;
+            cleanupHappened();
         }
     }
 
     mutable HashMap<const T*, ControlBlockRefPtr> m_map WTF_GUARDED_BY_LOCK(m_lock);
     mutable unsigned m_operationCountSinceLastCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
-    mutable unsigned m_maxOperationCountWithoutCleanup WTF_GUARDED_BY_LOCK(m_lock) { initialMaxOperationCountWithoutCleanup };
+    mutable unsigned m_maxOperationCountWithoutCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     mutable Lock m_lock;
 };
 
