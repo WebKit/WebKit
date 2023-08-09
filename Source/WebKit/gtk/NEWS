@@ -1,3 +1,17 @@
+=================
+WebKitGTK 2.41.90
+=================
+
+What's new in WebKitGTK 2.41.90?
+
+  - Fix the popup menu always shown in github when logged in.
+  - Add API to replace and retrieve the entire cookie jar.
+  - Apply the device scale factor when changed after web view is created.
+  - Do not expose media devices that can't be used in enumerateDevices.
+  - Add support for P010 video format.
+  - Fix non-accelerated rendering that broke web inspector.
+  - Fix several crashes and rendering issues.
+
 ================
 WebKitGTK 2.41.6
 ================
