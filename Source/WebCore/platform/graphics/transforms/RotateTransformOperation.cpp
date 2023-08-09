@@ -41,7 +41,7 @@ RotateTransformOperation::RotateTransformOperation(double x, double y, double z,
     , m_z(z)
     , m_angle(angle)
 {
-    ASSERT(isRotateTransformOperationType());
+    RELEASE_ASSERT(isRotateTransformOperationType(type));
 }
 
 bool RotateTransformOperation::operator==(const TransformOperation& other) const

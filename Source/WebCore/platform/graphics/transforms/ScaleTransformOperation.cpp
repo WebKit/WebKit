@@ -38,7 +38,7 @@ ScaleTransformOperation::ScaleTransformOperation(double sx, double sy, double sz
     , m_y(sy)
     , m_z(sz)
 {
-    ASSERT(isScaleTransformOperationType());
+    RELEASE_ASSERT(isScaleTransformOperationType(type));
 }
 
 bool ScaleTransformOperation::operator==(const TransformOperation& other) const

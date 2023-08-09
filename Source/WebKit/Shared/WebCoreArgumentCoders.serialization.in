@@ -2433,7 +2433,7 @@ header: <WebCore/KeyboardScroll.h>
     WebCore::Length x();
     WebCore::Length y();
     WebCore::Length z();
-    WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isTranslateTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
 }
 
 [RefCounted] class WebCore::RotateTransformOperation {
@@ -2441,20 +2441,20 @@ header: <WebCore/KeyboardScroll.h>
     double y();
     double z();
     double angle();
-    WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isRotateTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
 }
 
 [RefCounted] class WebCore::ScaleTransformOperation {
     double x();
     double y();
     double z();
-    WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isScaleTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
 }
 
 [RefCounted] class WebCore::SkewTransformOperation {
     double angleX();
     double angleY();
-    WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isSkewTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
 }
 
 [RefCounted] class WebCore::PerspectiveTransformOperation {
