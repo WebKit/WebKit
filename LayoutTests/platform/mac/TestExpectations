@@ -137,6 +137,7 @@ accessibility/multiselect-list-reports-active-option.html
 
 # uiController.simulateRotationLikeSafari() is not implemented on macOS.
 fast/screen-orientation/orientation-in-resize-event.html [ Skip ]
+fast/screen-orientation/orientation-types-and-angles.html [ Skip ]
 
 # Need to implement AccessibilityUIElement::clearSelectedChildren()
 accessibility/aria-listbox-clear-selection-crash.html

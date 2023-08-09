@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0" />
+        <script src="../../resources/js-test.js"></script>
+    </head>
+    <body>
+        <script>
+            description(
+                "Checks that screen.orientation.type and angles are as expected when device is rotated (for a portrait device)."
+            );
+            jsTestIsAsync = true;
+
+            const rotations = new Map([
+                [
+                    "landscape-right",
+                    {
+                        type: "landscape-secondary",
+                        angle: 270,
+                        orientation: -90,
+                    },
+                ],
+                [
+                    "portrait",
+                    {
+                        type: "portrait-primary",
+                        angle: 0,
+                        orientation: 0,
+                    },
+                ],
+                [
+                    "landscape-left",
+                    {
+                        type: "landscape-primary",
+                        angle: 90,
+                        orientation: 90,
+                    },
+                ],
+                // Would only work with .lock() enabled
+                // [
+                //     "portrait-upsidedown",
+                //     {
+                //         type: "portrait-secondary",
+                //         angle: 180,
+                //         orientation: 8,
+                //     },
+                // ],
+            ]);
+
+            function runRotationUIScript(rotation) {
+                debug(`\nSimulating rotation to "${rotation}".`);
+                const script = `
+                    (async () => {
+                        await new Promise(r => uiController.simulateRotationLikeSafari("${rotation}", r));
+                        await new Promise(r => uiController.doAfterVisibleContentRectUpdate(r));
+                        uiController.uiScriptComplete();
+                    })();
+                `;
+                const orientationChangeEventPromise = new Promise((r) =>
+                    screen.orientation.addEventListener("change", r, {
+                        once: true,
+                    })
+                );
+                const uiScriptPromise = new Promise((r) =>
+                    testRunner.runUIScript(script, r)
+                );
+                return Promise.all([
+                    orientationChangeEventPromise,
+                    uiScriptPromise,
+                ]);
+            }
+
+            onload = async () => {
+                isPortrait = screen.orientation.type.startsWith("portrait");
+                shouldBeTrue("isPortrait");
+                type = null;
+                for (const [rotation, expected] of rotations.entries()) {
+                    await runRotationUIScript(rotation);
+                    shouldBeEqualToString("screen.orientation.type", expected.type);
+                    shouldBeEqualToNumber("screen.orientation.angle", expected.angle);
+                    shouldBeEqualToNumber("window.orientation", expected.orientation);
+                }
+                finishJSTest();
+            };
+        </script>
+    </body>
+</html>

@@ -184,7 +184,7 @@ uint16_t ScreenOrientation::angle() const
     auto* manager = this->manager();
     auto orientation = manager ? manager->currentOrientation() : naturalScreenOrientationType();
 
-    // https://w3c.github.io/screen-orientation/#dfn-screen-orientation-values-table
+    // https://w3c.github.io/screen-orientation/#the-current-screen-orientation-type-and-angle
     if (isPortrait(naturalScreenOrientationType())) {
         switch (orientation) {
         case Type::PortraitPrimary:

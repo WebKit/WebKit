@@ -316,11 +316,11 @@ void WebPageProxy::setForceAlwaysUserScalable(bool userScalable)
 WebCore::ScreenOrientationType WebPageProxy::toScreenOrientationType(IntDegrees angle)
 {
     if (angle == -90)
-        return WebCore::ScreenOrientationType::LandscapeSecondary;
+        return WebCore::ScreenOrientationType::LandscapePrimary;
     if (angle == 180)
         return WebCore::ScreenOrientationType::PortraitSecondary;
     if (angle == 90)
-        return WebCore::ScreenOrientationType::LandscapePrimary;
+        return WebCore::ScreenOrientationType::LandscapeSecondary;
     return WebCore::ScreenOrientationType::PortraitPrimary;
 }
 

@@ -269,6 +269,7 @@ webaudio/codec-tests/mp3/128kbps-44khz.html [ Pass ]
 
 # uiController.simulateRotationLikeSafari() is not implemented on glib ports.
 fast/screen-orientation/orientation-in-resize-event.html [ Skip ]
+fast/screen-orientation/orientation-types-and-angles.html [ Skip ]
 
 # Pass since r273206
 imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2.html

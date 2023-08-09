@@ -376,7 +376,7 @@ void LocalFrame::orientationChanged()
 IntDegrees LocalFrame::orientation() const
 {
     if (auto* page = this->page())
-        return page->chrome().client().deviceOrientation();
+        return page->chrome().client().deviceOrientation() * -1;
     return 0;
 }
 #endif // ENABLE(ORIENTATION_EVENTS)
