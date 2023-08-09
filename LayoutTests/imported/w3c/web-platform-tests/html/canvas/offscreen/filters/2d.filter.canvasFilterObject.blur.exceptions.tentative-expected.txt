@@ -3,7 +3,7 @@
 Test exceptions on CanvasFilter() blur.object
 
 
-FAIL Test exceptions on CanvasFilter() blur.object assert_throws_js: function "function() { ctx.filter = new CanvasFilter({filter: "gaussianBlur"}); }" threw object "ReferenceError: Can't find variable: CanvasFilter" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Test exceptions on CanvasFilter() blur.object assert_throws_js: function "function() { ctx.filter = new CanvasFilter({filter: 'gaussianBlur'}); }" threw object "ReferenceError: Can't find variable: CanvasFilter" ("ReferenceError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
 

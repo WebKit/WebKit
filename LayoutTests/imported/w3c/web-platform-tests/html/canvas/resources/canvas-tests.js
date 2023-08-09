@@ -32,7 +32,7 @@ function _getPixel(canvas, x,y)
     return [ imgdata.data[0], imgdata.data[1], imgdata.data[2], imgdata.data[3] ];
 }
 
-function _assertPixel(canvas, x, y, r, g, b, a, pos, color)
+function _assertPixel(canvas, x, y, r, g, b, a)
 {
     var c = _getPixel(canvas, x,y);
     assert_equals(c[0], r, 'Red channel of the pixel at (' + x + ', ' + y + ')');
@@ -41,7 +41,7 @@ function _assertPixel(canvas, x, y, r, g, b, a, pos, color)
     assert_equals(c[3], a, 'Alpha channel of the pixel at (' + x + ', ' + y + ')');
 }
 
-function _assertPixelApprox(canvas, x, y, r, g, b, a, pos, color, tolerance)
+function _assertPixelApprox(canvas, x, y, r, g, b, a, tolerance)
 {
     var c = _getPixel(canvas, x,y);
     assert_approx_equals(c[0], r, tolerance, 'Red channel of the pixel at (' + x + ', ' + y + ')');
@@ -191,19 +191,6 @@ function forEachCanvasSource(crossOriginUrl, sameOriginUrl, callback) {
           video.preload = "auto";
           video.onerror = reject;
           video.src = crossOriginUrl + "/common/redirect.py?location=" + getVideoURI(sameOriginUrl + "/media/movie_300");
-        });
-      },
-    },
-
-    {
-      name: "redirected to same-origin HTMLVideoElement via a cross-origin URL",
-      factory: () => {
-        return new Promise((resolve, reject) => {
-          const video = document.createElement("video");
-          video.oncanplaythrough = () => resolve(video);
-          video.preload = "auto";
-          video.onerror = reject;
-          video.src = "/common/redirect.py?location=" + crossOriginUrl + "/common/redirect.py?location=" + getVideoURI(sameOriginUrl + "/media/movie_300");
         });
       },
     },

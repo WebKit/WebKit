@@ -1,7 +1,7 @@
 2d.text.measure.baselines
 
-Testing baselines for OffscreenCanvas
+Testing baselines
 
 
-FAIL Testing baselines for OffscreenCanvas ctx.measureText('A').getBaselines is not a function. (In 'ctx.measureText('A').getBaselines()', 'ctx.measureText('A').getBaselines' is undefined)
+FAIL Testing baselines assert_equals: ctx.measureText('A').ideographicBaseline === 6.25 (got -39[number], expected 6.25[number]) expected 6.25 but got -39
 

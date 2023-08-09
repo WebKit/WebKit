@@ -1,7 +1,7 @@
 2d.text.drawing.style.fontVariant.settings
 
-Testing basic functionalities of fontKerning for canvas
+Testing basic functionalities of fontVariant for canvas
 
 
-FAIL Testing basic functionalities of fontKerning for canvas assert_equals: ctx.fontVariantCaps === "normal" (got [undefined], expected normal[string]) expected (string) "normal" but got (undefined) undefined
+FAIL Testing basic functionalities of fontVariant for canvas assert_equals: ctx.fontVariantCaps === "normal" (got [undefined], expected normal[string]) expected (string) "normal" but got (undefined) undefined
 

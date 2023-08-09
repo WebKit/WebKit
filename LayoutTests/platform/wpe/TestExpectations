@@ -174,9 +174,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-inter
 http/tests/cache/network-error-during-revalidation.html [ DumpJSConsoleLogInStdErr ]
 http/tests/xmlhttprequest/state-after-network-error.html [ DumpJSConsoleLogInStdErr ]
 
-# Still failing in GTK
-webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Pass ]
-
 # WPE passing since (237579@main - 237582@main]. GTK back failing after revert.
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Pass ]

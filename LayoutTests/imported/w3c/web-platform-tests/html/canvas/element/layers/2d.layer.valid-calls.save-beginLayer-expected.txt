@@ -1,0 +1,6 @@
+2d.layer.valid-calls.save-beginLayer
+No exception raised on save() + beginLayer().
+Actual output:
+
+FAIL No exception raised on save() + beginLayer(). ctx.beginLayer is not a function. (In 'ctx.beginLayer()', 'ctx.beginLayer' is undefined)
+

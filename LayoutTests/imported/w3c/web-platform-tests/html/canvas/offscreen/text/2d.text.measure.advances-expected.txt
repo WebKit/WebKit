@@ -1,7 +1,7 @@
 2d.text.measure.advances
 
-Testing width advances for OffscreenCanvas
+Testing width advances
 
 
-FAIL Testing width advances for OffscreenCanvas undefined is not an object (evaluating 'ctx.measureText('Hello').advances[0]')
+FAIL Testing width advances promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'ctx.measureText('Hello').advances[0]')"
 

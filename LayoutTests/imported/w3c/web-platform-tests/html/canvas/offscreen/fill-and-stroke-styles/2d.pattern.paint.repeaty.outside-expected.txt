@@ -1,5 +1,5 @@
 2d.pattern.paint.repeaty.outside
 
 
-PASS OffscreenCanvas test: 2d.pattern.paint.repeaty.outside
+FAIL OffscreenCanvas test: 2d.pattern.paint.repeaty.outside promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

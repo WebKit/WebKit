@@ -3418,7 +3418,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/can
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-canvas.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-image.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.shadow.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.strokeText.html [ Pass ]
@@ -4577,3 +4576,7 @@ platform/ios/mediastream/video-muted-in-background-tab.html [ Crash ]
 imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass ]
 
 editing/selection/ios/show-grammar-replacements-on-tap.html [ Pass ]
+
+# Failures from WPT import
+imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-fillStyle-opacity.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-globalAlpha.html [ ImageOnlyFailure ]

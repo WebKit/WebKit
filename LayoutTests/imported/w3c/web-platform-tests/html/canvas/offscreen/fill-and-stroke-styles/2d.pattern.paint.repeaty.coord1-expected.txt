@@ -1,5 +1,5 @@
 2d.pattern.paint.repeaty.coord1
 
 
-PASS OffscreenCanvas test: 2d.pattern.paint.repeaty.coord1
+FAIL OffscreenCanvas test: 2d.pattern.paint.repeaty.coord1 promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

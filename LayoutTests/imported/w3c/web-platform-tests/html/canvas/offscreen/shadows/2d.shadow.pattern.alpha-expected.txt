@@ -3,5 +3,5 @@
 Shadows are drawn correctly for partially-transparent fill patterns
 
 
-PASS Shadows are drawn correctly for partially-transparent fill patterns
+FAIL Shadows are drawn correctly for partially-transparent fill patterns promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

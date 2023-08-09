@@ -111,7 +111,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.parse.space.png
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.parse.trailingjunk.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.parse.trailingjunk.png
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.parse.whitespace.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.parse.whitespace.png
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.parse.zero.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.reflect.setcontent.html
@@ -152,6 +151,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.setAttribute.zero.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.style.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.style.png
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob-cross-realm-callback-report-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.jpeg.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.null.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.png.html

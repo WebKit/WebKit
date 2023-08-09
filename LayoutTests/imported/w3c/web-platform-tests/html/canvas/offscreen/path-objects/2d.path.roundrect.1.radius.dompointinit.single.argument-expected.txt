@@ -1,0 +1,7 @@
+2d.path.roundrect.1.radius.dompointinit.single.argument
+
+Verify that when one radius is given to roundRect() as a non-array argument, specified as a DOMPointInit, applies to all corners.
+
+
+PASS Verify that when one radius is given to roundRect() as a non-array argument, specified as a DOMPointInit, applies to all corners.
+

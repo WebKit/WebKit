@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.clear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.clear.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.copy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.copy.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.destination-atop.html
@@ -36,6 +38,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.source-over.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.xor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.xor.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.clip.clear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.clip.clear.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.clip.copy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.clip.copy.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.clip.destination-atop.html
@@ -76,6 +80,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.globalAlpha.invalid.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.globalAlpha.range.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.globalAlpha.range.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.image.clear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.image.clear.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.image.copy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.image.copy.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.image.destination-atop.html
@@ -116,6 +122,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.operation.over.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.operation.unrecognised.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.operation.unrecognised.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.solid.clear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.solid.clear.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.solid.copy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.solid.copy.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.solid.destination-atop.html
@@ -138,6 +146,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.solid.source-over.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.solid.xor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.solid.xor.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.transparent.clear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.transparent.clear.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.transparent.copy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.transparent.copy.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.transparent.destination-atop.html

@@ -158,9 +158,6 @@ http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames.h
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response.html [ Pass ]
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-window-bits.html [ Pass ]
 
-# Custom GLIB baseline with different FAIL message from other ports
-webkit.org/b/222020 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.image.broken.html [ Pass ]
-
 imported/w3c/web-platform-tests/css/css-display/display-contents-button.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-017.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013.html [ Pass ]
@@ -1260,9 +1257,6 @@ webkit.org/b/203146 imported/w3c/web-platform-tests/html/canvas/offscreen [ Pass
 
 webkit.org/b/258077 fast/canvas/offscreen-clipped.html [ ImageOnlyFailure ]
 
-# Console log lines may appear in a different order so we silence them.
-imported/w3c/web-platform-tests/html/canvas/offscreen/convert-to-blob/offscreencanvas.convert.to.blob.w.html [ DumpJSConsoleLogInStdErr ]
-
 # OffscreenCanvas tests that are flaky due to console output from unhandled Promise rejections due to unimplemented API.
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.destination-atop.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.canvas.destination-in.html [ DumpJSConsoleLogInStdErr ]
@@ -1274,7 +1268,6 @@ webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/compos
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.uncovered.pattern.source-in.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.uncovered.pattern.source-out.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.3arg.html [ DumpJSConsoleLogInStdErr ]
-webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.animated.poster.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.broken.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.floatsource.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.basic.image.html [ DumpJSConsoleLogInStdErr ]
@@ -1301,7 +1294,6 @@ webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/shadow
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.pattern.transparent.1.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/209144 imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.pattern.transparent.2.html [ DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/filter/offscreencanvas.filter.w.html [ Slow ]
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Slow ]
 
 # Failing since r277543.
@@ -3426,6 +3418,25 @@ imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleL
 [ Debug ] fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Timeout ]
 [ Debug ] http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Timeout ]
 [ Debug ] imported/blink/transitions/remove-accelerated-transition.html [ Timeout ]
+
+# WPT import failures
+imported/w3c/web-platform-tests/html/canvas/offscreen/layers [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.pattern.image.broken.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/text/2d.text.draw.baseline.ideographic.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.get.halftransparent.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.get.halftransparent.worker.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.dropShadow.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.dropShadow.tentative.w.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2d.color.space.p3.convertToBlobp3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.scaleddashes.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.scaleddashes.worker.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.actualBoundingBox.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.actualBoundingBox.worker.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-1.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-3.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/text/fontVariantCaps-4.html [ ImageOnlyFailure ]
+
 
 # End: Common failures between GTK and WPE.
 

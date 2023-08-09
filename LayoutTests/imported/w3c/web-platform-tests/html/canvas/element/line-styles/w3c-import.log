@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.cap.valid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.cross.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.defaults.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.fill.noop.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.invalid.strokestyle.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.join.bevel.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.join.closed.html

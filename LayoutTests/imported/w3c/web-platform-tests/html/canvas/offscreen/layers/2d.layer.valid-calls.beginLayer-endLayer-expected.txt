@@ -1,0 +1,7 @@
+2d.layer.valid-calls.beginLayer-endLayer
+
+No exception raised on beginLayer() + endLayer().
+
+
+FAIL No exception raised on beginLayer() + endLayer(). ctx.beginLayer is not a function. (In 'ctx.beginLayer()', 'ctx.beginLayer' is undefined)
+

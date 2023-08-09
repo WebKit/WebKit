@@ -1,8 +1,0 @@
-2d.text.draw.fontface.notinpage
-@font-face fonts should work even if they are not used in the page
-Actual output:
-Expected output:
-
-
-PASS @font-face fonts should work even if they are not used in the page
-

@@ -1,5 +1,5 @@
 
-FAIL Test exceptions on CanvasFilter() turbulence object assert_throws_js: function "function() { CanvasFilter(filterOptions); }" threw object "ReferenceError: Can't find variable: CanvasFilter" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Test exceptions on CanvasFilter() turbulence object assert_throws_js: function "function() { new CanvasFilter(filterOptions); }" threw object "ReferenceError: Can't find variable: CanvasFilter" ("ReferenceError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
 

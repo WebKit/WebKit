@@ -1,7 +1,7 @@
 2d.path.roundrect.2.radii.1.dompointinit
 
-Verify that when two radii are given to roundRect(), the first radius, specified as a DOMPoint, applies to the top-left and bottomInit-right corners.
+Verify that when two radii are given to roundRect(), the first radius, specified as a DOMPointInit, applies to the top-left and bottom-right corners.
 
 
-PASS Verify that when two radii are given to roundRect(), the first radius, specified as a DOMPoint, applies to the top-left and bottomInit-right corners.
+PASS Verify that when two radii are given to roundRect(), the first radius, specified as a DOMPointInit, applies to the top-left and bottom-right corners.
 

@@ -1,0 +1,7 @@
+2d.composite.solid.clear
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.composite.solid.clear
+
