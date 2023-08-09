@@ -79,13 +79,13 @@
 #include <WebCore/CookieConsentDecisionResult.h>
 #include <WebCore/DataListSuggestionPicker.h>
 #include <WebCore/DatabaseTracker.h>
+#include <WebCore/DocumentFullscreen.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/ElementInlines.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FileIconLoader.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/FullscreenManager.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLParserIdioms.h>
@@ -295,7 +295,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
 {
 #if ENABLE(FULLSCREEN_API)
     if (auto* document = frame.document())
-        document->fullscreenManager().cancelFullscreen();
+        document->fullscreen().cancelFullscreen();
 #endif
 
     auto& webProcess = WebProcess::singleton();

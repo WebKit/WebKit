@@ -21,11 +21,11 @@
 #include "config.h"
 #include "EventPath.h"
 
+#include "DocumentFullscreen.h"
 #include "ElementRareData.h"
 #include "Event.h"
 #include "EventContext.h"
 #include "EventNames.h"
-#include "FullscreenManager.h"
 #include "HTMLSlotElement.h"
 #include "LocalDOMWindow.h"
 #include "MouseEvent.h"

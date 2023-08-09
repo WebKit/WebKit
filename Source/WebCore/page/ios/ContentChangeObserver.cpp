@@ -32,7 +32,7 @@
 #include "ChromeClient.h"
 #include "DOMTimer.h"
 #include "Document.h"
-#include "FullscreenManager.h"
+#include "DocumentFullscreen.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "Logging.h"
@@ -53,12 +53,12 @@ static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
 {
     // Fullscreen status is propagated on the ancestor document chain all the way to the top document.
     auto& document = descendantCandidate.document();
-    auto* topMostFullScreenElement = document.topDocument().fullscreenManager().fullscreenElement();
+    auto* topMostFullScreenElement = document.topDocument().fullscreen().fullscreenElement();
     if (!topMostFullScreenElement)
         return false;
 
     // If the document where the node lives does not have an active fullscreen element, it is a sibling/nephew document -> not a descendant.
-    auto* fullscreenElement = document.fullscreenManager().fullscreenElement();
+    auto* fullscreenElement = document.fullscreen().fullscreenElement();
     if (!fullscreenElement)
         return true;
     return !descendantCandidate.isDescendantOf(*fullscreenElement);

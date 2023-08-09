@@ -29,8 +29,8 @@
 #include "DocumentOrShadowRootFullscreen.h"
 
 #include "Document.h"
+#include "DocumentFullscreen.h"
 #include "Element.h"
-#include "FullscreenManager.h"
 #include "TreeScope.h"
 
 namespace WebCore {
@@ -39,7 +39,7 @@ namespace WebCore {
 Element* DocumentOrShadowRootFullscreen::fullscreenElement(TreeScope& treeScope)
 {
     auto& document = treeScope.documentScope();
-    return treeScope.ancestorElementInThisScope(document.fullscreenManager().fullscreenElement());
+    return treeScope.ancestorElementInThisScope(document.fullscreen().fullscreenElement());
 }
 
 } // namespace WebCore

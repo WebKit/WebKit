@@ -68,6 +68,7 @@
 #include "DisabledAdaptations.h"
 #include "DisplayList.h"
 #include "Document.h"
+#include "DocumentFullscreen.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentTimeline.h"
@@ -88,7 +89,6 @@
 #include "FontCache.h"
 #include "FormController.h"
 #include "FrameLoader.h"
-#include "FullscreenManager.h"
 #include "GCObservation.h"
 #include "GridPosition.h"
 #include "HEVCUtilities.h"
@@ -3689,7 +3689,7 @@ void Internals::webkitWillEnterFullScreenForElement(Element& element)
     Document* document = contextDocument();
     if (!document)
         return;
-    document->fullscreenManager().willEnterFullscreen(element);
+    document->fullscreen().willEnterFullscreen(element);
 }
 
 void Internals::webkitDidEnterFullScreenForElement(Element&)
@@ -3697,7 +3697,7 @@ void Internals::webkitDidEnterFullScreenForElement(Element&)
     Document* document = contextDocument();
     if (!document)
         return;
-    document->fullscreenManager().didEnterFullscreen();
+    document->fullscreen().didEnterFullscreen();
 }
 
 void Internals::webkitWillExitFullScreenForElement(Element&)
@@ -3705,7 +3705,7 @@ void Internals::webkitWillExitFullScreenForElement(Element&)
     Document* document = contextDocument();
     if (!document)
         return;
-    document->fullscreenManager().willExitFullscreen();
+    document->fullscreen().willExitFullscreen();
 }
 
 void Internals::webkitDidExitFullScreenForElement(Element&)
@@ -3713,7 +3713,7 @@ void Internals::webkitDidExitFullScreenForElement(Element&)
     Document* document = contextDocument();
     if (!document)
         return;
-    document->fullscreenManager().didExitFullscreen();
+    document->fullscreen().didExitFullscreen();
 }
 
 bool Internals::isAnimatingFullScreen() const
@@ -3721,7 +3721,7 @@ bool Internals::isAnimatingFullScreen() const
     Document* document = contextDocument();
     if (!document)
         return false;
-    return document->fullscreenManager().isAnimatingFullscreen();
+    return document->fullscreen().isAnimatingFullscreen();
 }
 
 #endif

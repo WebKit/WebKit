@@ -35,8 +35,8 @@
 #include "WebPage.h"
 #include <WebCore/AddEventListenerOptions.h>
 #include <WebCore/Color.h>
+#include <WebCore/DocumentFullscreen.h>
 #include <WebCore/EventNames.h>
-#include <WebCore/FullscreenManager.h>
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/JSDOMPromiseDeferred.h>
 #include <WebCore/LocalFrame.h>
@@ -247,7 +247,7 @@ void WebFullScreenManager::willEnterFullScreen()
 
     ALWAYS_LOG(LOGIDENTIFIER, "<", m_element->tagName(), " id=\"", m_element->getIdAttribute(), "\">");
 
-    if (!m_element->document().fullscreenManager().willEnterFullscreen(*m_element)) {
+    if (!m_element->document().fullscreen().willEnterFullscreen(*m_element)) {
         close();
         return;
     }
@@ -273,7 +273,7 @@ void WebFullScreenManager::didEnterFullScreen()
 
     ALWAYS_LOG(LOGIDENTIFIER, "<", m_element->tagName(), " id=\"", m_element->getIdAttribute(), "\">");
 
-    if (!m_element->document().fullscreenManager().didEnterFullscreen()) {
+    if (!m_element->document().fullscreen().didEnterFullscreen()) {
         close();
         return;
     }
@@ -333,7 +333,7 @@ void WebFullScreenManager::willExitFullScreen()
 #endif
 
     m_finalFrame = screenRectOfContents(m_element.get());
-    if (!m_element->document().fullscreenManager().willExitFullscreen()) {
+    if (!m_element->document().fullscreen().willExitFullscreen()) {
         close();
         return;
     }
@@ -352,7 +352,7 @@ void WebFullScreenManager::didExitFullScreen()
 
     setFullscreenInsets(WebCore::FloatBoxExtent());
     setFullscreenAutoHideDuration(0_s);
-    m_element->document().fullscreenManager().didExitFullscreen();
+    m_element->document().fullscreen().didExitFullscreen();
     clearElement();
 }
 
@@ -361,7 +361,7 @@ void WebFullScreenManager::setAnimatingFullScreen(bool animating)
     ASSERT(m_element);
     if (!m_element)
         return;
-    m_element->document().fullscreenManager().setAnimatingFullscreen(animating);
+    m_element->document().fullscreen().setAnimatingFullscreen(animating);
 }
 
 void WebFullScreenManager::requestRestoreFullScreen()
@@ -378,7 +378,7 @@ void WebFullScreenManager::requestRestoreFullScreen()
 
     ALWAYS_LOG(LOGIDENTIFIER, "<", element->tagName(), " id=\"", element->getIdAttribute(), "\">");
     WebCore::UserGestureIndicator gestureIndicator(WebCore::ProcessingUserGesture, &element->document());
-    element->document().fullscreenManager().requestFullscreenForElement(*element, nullptr, WebCore::FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
+    element->document().fullscreen().requestFullscreenForElement(*element, nullptr, WebCore::DocumentFullscreen::ExemptIFrameAllowFullscreenRequirement);
 }
 
 void WebFullScreenManager::requestExitFullScreen()
@@ -390,13 +390,13 @@ void WebFullScreenManager::requestExitFullScreen()
     }
 
     auto& topDocument = m_element->document().topDocument();
-    if (!topDocument.fullscreenManager().fullscreenElement()) {
+    if (!topDocument.fullscreen().fullscreenElement()) {
         ALWAYS_LOG(LOGIDENTIFIER, "top document not in fullscreen, closing");
         close();
         return;
     }
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_element->document().fullscreenManager().cancelFullscreen();
+    m_element->document().fullscreen().cancelFullscreen();
 }
 
 void WebFullScreenManager::close()
@@ -448,7 +448,7 @@ void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context,
         return;
 
     Ref document = m_element->document();
-    if (&context != document.ptr() || !document->fullscreenManager().isFullscreen())
+    if (&context != document.ptr() || !document->fullscreen().isFullscreen())
         return;
 
     if (targetElement == m_element) {
@@ -473,7 +473,7 @@ void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context,
 
 void WebFullScreenManager::mainVideoElementTextRecognitionTimerFired()
 {
-    if (!m_element || !m_element->document().fullscreenManager().isFullscreen())
+    if (!m_element || !m_element->document().fullscreen().isFullscreen())
         return;
 
     updateMainVideoElement();

@@ -131,7 +131,7 @@ class FontFaceSet;
 class FontLoadRequest;
 class FormController;
 class FrameSelection;
-class FullscreenManager;
+class DocumentFullscreen;
 class GPUCanvasContext;
 class HTMLAllCollection;
 class HTMLAttachmentElement;
@@ -1273,8 +1273,8 @@ public:
     void addDisplayChangedObserver(const DisplayChangedObserver&);
 
 #if ENABLE(FULLSCREEN_API)
-    FullscreenManager& fullscreenManager() { return m_fullscreenManager; }
-    const FullscreenManager& fullscreenManager() const { return m_fullscreenManager; }
+    DocumentFullscreen& fullscreen() { return m_fullscreen; }
+    const DocumentFullscreen& fullscreen() const { return m_fullscreen; }
 #endif
 
 #if ENABLE(POINTER_LOCK)
@@ -2074,7 +2074,7 @@ private:
     WeakHashSet<DisplayChangedObserver> m_displayChangedObservers;
 
 #if ENABLE(FULLSCREEN_API)
-    UniqueRef<FullscreenManager> m_fullscreenManager;
+    UniqueRef<DocumentFullscreen> m_fullscreen;
 #endif
 
     WeakHashSet<HTMLImageElement, WeakPtrImplWithEventTargetData> m_dynamicMediaQueryDependentImages;

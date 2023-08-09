@@ -51,13 +51,13 @@
 #include "DiagnosticLoggingKeys.h"
 #include "DiagnosticLoggingResultType.h"
 #include "Document.h"
+#include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "ElementChildIteratorInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameLoader.h"
-#include "FullscreenManager.h"
 #include "HTMLAudioElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
@@ -6432,7 +6432,7 @@ void HTMLMediaElement::mediaVolumeDidChange()
 bool HTMLMediaElement::elementIsHidden() const
 {
 #if ENABLE(FULLSCREEN_API)
-    auto& fullscreenManager = document().fullscreenManager();
+    auto& fullscreenManager = document().fullscreen();
     if (isVideo() && fullscreenManager.isFullscreen() && fullscreenManager.currentFullscreenElement())
         return false;
 #endif
@@ -6725,7 +6725,7 @@ bool HTMLMediaElement::taintsOrigin(const SecurityOrigin& origin) const
 bool HTMLMediaElement::isFullscreen() const
 {
 #if ENABLE(FULLSCREEN_API)
-    if (document().fullscreenManager().isFullscreen() && document().fullscreenManager().currentFullscreenElement() == this)
+    if (document().fullscreen().isFullscreen() && document().fullscreen().currentFullscreenElement() == this)
         return true;
 #endif
 
@@ -6735,7 +6735,7 @@ bool HTMLMediaElement::isFullscreen() const
 bool HTMLMediaElement::isStandardFullscreen() const
 {
 #if ENABLE(FULLSCREEN_API)
-    if (document().fullscreenManager().isFullscreen() && document().fullscreenManager().currentFullscreenElement() == this)
+    if (document().fullscreen().isFullscreen() && document().fullscreen().currentFullscreenElement() == this)
         return true;
 #endif
 
@@ -6771,7 +6771,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     if (document().settings().fullScreenEnabled() && mode == VideoFullscreenModeStandard) {
         m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
         m_waitingToEnterFullscreen = true;
-        document().fullscreenManager().requestFullscreenForElement(*this, nullptr, FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
+        document().fullscreen().requestFullscreenForElement(*this, nullptr, DocumentFullscreen::ExemptIFrameAllowFullscreenRequirement);
         return;
     }
 #endif
@@ -6835,10 +6835,10 @@ void HTMLMediaElement::exitFullscreen()
     m_waitingToEnterFullscreen = false;
 
 #if ENABLE(FULLSCREEN_API)
-    if (document().settings().fullScreenEnabled() && document().fullscreenManager().currentFullscreenElement() == this) {
-        if (document().fullscreenManager().isFullscreen()) {
+    if (document().settings().fullScreenEnabled() && document().fullscreen().currentFullscreenElement() == this) {
+        if (document().fullscreen().isFullscreen()) {
             m_changingVideoFullscreenMode = true;
-            document().fullscreenManager().cancelFullscreen();
+            document().fullscreen().cancelFullscreen();
         }
 
         if (m_videoFullscreenMode == VideoFullscreenModeStandard)

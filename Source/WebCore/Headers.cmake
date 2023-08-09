@@ -954,7 +954,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/FragmentDirectiveParser.h
     dom/FragmentDirectiveRangeFinder.h
     dom/FragmentScriptingPermission.h
-    dom/FullscreenManager.h
     dom/GCReachableRef.h
     dom/ImageOverlay.h
     dom/InlineStyleSheetOwner.h

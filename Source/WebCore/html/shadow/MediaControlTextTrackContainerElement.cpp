@@ -33,11 +33,11 @@
 #if ENABLE(VIDEO)
 
 #include "DOMTokenList.h"
+#include "DocumentFullscreen.h"
 #include "ElementChildIteratorInlines.h"
 #include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "FullscreenManager.h"
 #include "GraphicsContext.h"
 #include "HTMLVideoElement.h"
 #include "ImageBuffer.h"

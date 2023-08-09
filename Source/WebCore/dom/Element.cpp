@@ -45,6 +45,7 @@
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DOMTokenList.h"
+#include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentSharedObjectPool.h"
 #include "Editing.h"
@@ -60,7 +61,6 @@
 #include "FocusEvent.h"
 #include "FormAssociatedCustomElement.h"
 #include "FrameSelection.h"
-#include "FullscreenManager.h"
 #include "FullscreenOptions.h"
 #include "GetAnimationsOptions.h"
 #include "HTMLBodyElement.h"
@@ -2776,7 +2776,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
 
 #if ENABLE(FULLSCREEN_API)
     if (UNLIKELY(hasFullscreenFlag()))
-        document().fullscreenManager().exitRemovedFullscreenElement(*this);
+        document().fullscreen().exitRemovedFullscreenElement(*this);
 #endif
 
     if (!parentNode() && is<Document>(oldParentOfRemovedTree)) {
@@ -4386,7 +4386,7 @@ void Element::webkitRequestFullscreen()
 // FIXME: Options are currently ignored.
 void Element::requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&& promise)
 {
-    document().fullscreenManager().requestFullscreenForElement(*this, WTFMove(promise), FullscreenManager::EnforceIFrameAllowFullscreenRequirement);
+    document().fullscreen().requestFullscreenForElement(*this, WTFMove(promise), DocumentFullscreen::EnforceIFrameAllowFullscreenRequirement);
 }
 
 void Element::setFullscreenFlag(bool flag)
