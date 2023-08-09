@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include "ActivityStateChangeObserver.h"
+#include "EventLoop.h"
 #include "ExceptionOr.h"
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GraphicsContextGL.h"
@@ -155,8 +156,6 @@ using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
 #if ENABLE(MEDIA_STREAM)
 class VideoFrame;
 #endif
-
-using EventLoopTimerPtr = uintptr_t;
 
 class InspectorScopedShaderProgramHighlight {
 public:
@@ -619,7 +618,7 @@ protected:
     RefPtr<WebGLContextGroup> m_contextGroup;
     Lock m_objectGraphLock;
 
-    EventLoopTimerPtr m_restoreTimer { 0 };
+    EventLoopTimerHandle m_restoreTimer;
     GCGLErrorCodeSet m_errors;
     bool m_needsUpdate;
     bool m_markedCanvasDirty;

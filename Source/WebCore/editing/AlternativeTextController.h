@@ -27,6 +27,7 @@
 
 #include "AlternativeTextClient.h"
 #include "DocumentMarker.h"
+#include "EventLoop.h"
 #include "Position.h"
 #include <variant>
 #include <wtf/Noncopyable.h>
@@ -45,8 +46,6 @@ class VisibleSelection;
 struct DictationAlternative;
 struct SimpleRange;
 struct TextCheckingResult;
-
-using EventLoopTimerPtr = uintptr_t;
 
 #if USE(AUTOCORRECTION_PANEL)
 // These backslashes are for making style checker happy.
@@ -120,7 +119,7 @@ private:
     FloatRect rootViewRectForRange(const SimpleRange&) const;
     void markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand*);
 
-    EventLoopTimerPtr m_timer { 0 };
+    EventLoopTimerHandle m_timer;
     std::optional<SimpleRange> m_rangeWithAlternative;
     bool m_isActive { };
     bool m_isDismissedByEditing { };

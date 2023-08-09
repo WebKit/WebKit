@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "EventLoop.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -34,8 +35,6 @@ namespace WebCore {
 
 class Event;
 class XMLHttpRequest;
-
-using EventLoopTimerPtr = uintptr_t;
 
 enum ProgressEventAction {
     DoNotFlushProgressEvent,
@@ -70,7 +69,7 @@ private:
     unsigned long long m_loaded { 0 };
     unsigned long long m_total { 0 };
 
-    EventLoopTimerPtr m_dispatchThrottledProgressEventTimer { 0 };
+    EventLoopTimerHandle m_dispatchThrottledProgressEventTimer;
 
     bool m_hasPendingThrottledProgressEvent { false };
     bool m_lengthComputable { false };

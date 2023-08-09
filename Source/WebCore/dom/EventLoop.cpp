@@ -35,8 +35,10 @@ namespace WebCore {
 class EventLoopTimer final : public RefCounted<EventLoopTimer>, public TimerBase, public CanMakeWeakPtr<EventLoopTimer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<EventLoopTimer> create(std::unique_ptr<EventLoopTask>&& task) { return adoptRef(*new EventLoopTimer(WTFMove(task))); }
+    enum class Type : bool { OneShot, Repeating };
+    static Ref<EventLoopTimer> create(Type type, std::unique_ptr<EventLoopTask>&& task) { return adoptRef(*new EventLoopTimer(type, WTFMove(task))); }
 
+    Type type() const { return m_type; }
     EventLoopTaskGroup* group() const { return m_task ? m_task->group() : nullptr; }
 
     void stop()
@@ -45,6 +47,7 @@ public:
             TimerBase::stop();
         else
             m_suspended = false;
+        m_task = nullptr;
     }
 
     void suspend()
@@ -69,6 +72,7 @@ public:
 
     void startRepeating(Seconds nextFireInterval, Seconds repeatInterval)
     {
+        ASSERT(m_type == Type::Repeating);
         if (!m_suspended)
             TimerBase::start(nextFireInterval, repeatInterval);
         else {
@@ -80,6 +84,7 @@ public:
 
     void startOneShot(Seconds interval)
     {
+        ASSERT(m_type == Type::OneShot);
         if (!m_suspended)
             TimerBase::startOneShot(interval);
         else {
@@ -90,27 +95,58 @@ public:
     }
 
 private:
-    EventLoopTimer(std::unique_ptr<EventLoopTask>&& task)
+    EventLoopTimer(Type type, std::unique_ptr<EventLoopTask>&& task)
         : m_task(WTFMove(task))
+        , m_type(type)
     {
     }
 
     void fired() final
     {
         Ref protectedThis { *this };
+        if (!m_task)
+            return;
         m_task->execute();
-        auto* group = m_task->group();
-        ASSERT(group);
-        group->didExecuteScheduledTask(*this);
+        if (m_type == Type::OneShot)
+            m_task->group()->removeScheduledTimer(*this);
     }
 
     std::unique_ptr<EventLoopTask> m_task;
 
     Seconds m_savedNextFireInterval;
     Seconds m_savedRepeatInterval;
+    Type m_type;
     bool m_suspended { false };
     bool m_savedIsActive { false };
 };
+
+EventLoopTimerHandle::EventLoopTimerHandle() = default;
+
+EventLoopTimerHandle::EventLoopTimerHandle(EventLoopTimer& timer)
+    : m_timer(&timer)
+{ }
+
+EventLoopTimerHandle::EventLoopTimerHandle(const EventLoopTimerHandle&) = default;
+EventLoopTimerHandle::EventLoopTimerHandle(EventLoopTimerHandle&&) = default;
+
+EventLoopTimerHandle::~EventLoopTimerHandle()
+{
+    if (!m_timer)
+        return;
+    if (auto* group = m_timer->group(); group && m_timer->refCount() == 1) {
+        if (m_timer->type() == EventLoopTimer::Type::OneShot)
+            group->removeScheduledTimer(*m_timer);
+        else
+            group->removeRepeatingTimer(*m_timer);
+    }
+}
+
+EventLoopTimerHandle& EventLoopTimerHandle::operator=(const EventLoopTimerHandle&) = default;
+EventLoopTimerHandle& EventLoopTimerHandle::operator=(std::nullptr_t)
+{
+    m_timer = nullptr;
+    return *this;
+}
 
 EventLoop::EventLoop() = default;
 EventLoop::~EventLoop() = default;
@@ -124,60 +160,42 @@ void EventLoop::queueTask(std::unique_ptr<EventLoopTask>&& task)
     m_tasks.append(WTFMove(task));
 }
 
-EventLoopTimerPtr EventLoop::scheduleTask(Seconds timeout, std::unique_ptr<EventLoopTask>&& action)
+EventLoopTimerHandle EventLoop::scheduleTask(Seconds timeout, std::unique_ptr<EventLoopTask>&& action)
 {
-    auto timer = EventLoopTimer::create(WTFMove(action));
+    auto timer = EventLoopTimer::create(EventLoopTimer::Type::OneShot, WTFMove(action));
     timer->startOneShot(timeout);
 
     ASSERT(timer->group());
     timer->group()->didAddTimer(timer);
 
-    auto handle = reinterpret_cast<EventLoopTimerPtr>(timer.ptr());
-    m_scheduledTasks.add(WTFMove(timer));
+    EventLoopTimerHandle handle { timer };
+    m_scheduledTasks.add(timer);
     return handle;
 }
 
-void EventLoop::cancelScheduledTask(EventLoopTimerPtr handle)
+void EventLoop::removeScheduledTimer(EventLoopTimer& timer)
 {
-    auto it = m_scheduledTasks.find(reinterpret_cast<EventLoopTimer*>(handle));
-    if (it == m_scheduledTasks.end())
-        return;
-    Ref timer = *it;
-    timer->stop();
-    ASSERT(timer->group());
-    timer->group()->didRemoveTimer(timer);
-    m_scheduledTasks.remove(it);
+    ASSERT(timer.type() == EventLoopTimer::Type::OneShot);
+    m_scheduledTasks.remove(timer);
 }
 
-void EventLoop::didExecuteScheduledTask(EventLoopTimer& timer)
+EventLoopTimerHandle EventLoop::scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, std::unique_ptr<EventLoopTask>&& action)
 {
-    m_scheduledTasks.remove(&timer);
-}
-
-// FIXME: Remove the dependency on ScriptExecutionContext.
-EventLoopTimerPtr EventLoop::scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, std::unique_ptr<EventLoopTask>&& action)
-{
-    auto timer = EventLoopTimer::create(WTFMove(action));
+    auto timer = EventLoopTimer::create(EventLoopTimer::Type::Repeating, WTFMove(action));
     timer->startRepeating(nextTimeout, interval);
 
     ASSERT(timer->group());
     timer->group()->didAddTimer(timer);
 
-    auto handle = reinterpret_cast<EventLoopTimerPtr>(timer.ptr());
-    m_repeatingTasks.add(WTFMove(timer));
+    EventLoopTimerHandle handle { timer };
+    m_repeatingTasks.add(timer);
     return handle;
 }
 
-void EventLoop::cancelRepeatingTask(EventLoopTimerPtr handle)
+void EventLoop::removeRepeatingTimer(EventLoopTimer& timer)
 {
-    auto it = m_repeatingTasks.find(reinterpret_cast<EventLoopTimer*>(handle));
-    if (it == m_repeatingTasks.end())
-        return;
-    Ref timer = *it;
-    timer->stop();
-    ASSERT(timer->group());
-    timer->group()->didRemoveTimer(timer);
-    m_repeatingTasks.remove(it);
+    ASSERT(timer.type() == EventLoopTimer::Type::Repeating);
+    m_repeatingTasks.remove(timer);
 }
 
 void EventLoop::queueMicrotask(std::unique_ptr<EventLoopTask>&& microtask)
@@ -372,40 +390,34 @@ void EventLoopTaskGroup::runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&
     microtaskQueue().addCheckpointTask(makeUnique<EventLoopFunctionDispatchTask>(TaskSource::IndexedDB, *this, WTFMove(function)));
 }
 
-EventLoopTimerPtr EventLoopTaskGroup::scheduleTask(Seconds timeout, TaskSource source, EventLoop::TaskFunction&& function)
+EventLoopTimerHandle EventLoopTaskGroup::scheduleTask(Seconds timeout, TaskSource source, EventLoop::TaskFunction&& function)
 {
     if (m_state == State::Stopped || !m_eventLoop)
-        return 0;
+        return { };
     return m_eventLoop->scheduleTask(timeout, makeUnique<EventLoopFunctionDispatchTask>(source, *this, WTFMove(function)));
 }
 
-void EventLoopTaskGroup::cancelScheduledTask(EventLoopTimerPtr timer)
+void EventLoopTaskGroup::removeScheduledTimer(EventLoopTimer& timer)
 {
-    if (m_state == State::Stopped || !m_eventLoop)
-        return;
-    m_eventLoop->cancelScheduledTask(timer);
-}
-
-void EventLoopTaskGroup::didExecuteScheduledTask(EventLoopTimer& timer)
-{
-    if (!m_eventLoop)
-        return;
-    m_eventLoop->didExecuteScheduledTask(timer);
+    ASSERT(timer.type() == EventLoopTimer::Type::OneShot);
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->removeScheduledTimer(timer);
     m_timers.remove(timer);
 }
 
-EventLoopTimerPtr EventLoopTaskGroup::scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TaskSource source, EventLoop::TaskFunction&& function)
+EventLoopTimerHandle EventLoopTaskGroup::scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TaskSource source, EventLoop::TaskFunction&& function)
 {
     if (m_state == State::Stopped || !m_eventLoop)
-        return 0;
+        return { };
     return m_eventLoop->scheduleRepeatingTask(nextTimeout, interval, makeUnique<EventLoopFunctionDispatchTask>(source, *this, WTFMove(function)));
 }
 
-void EventLoopTaskGroup::cancelRepeatingTask(EventLoopTimerPtr timer)
+void EventLoopTaskGroup::removeRepeatingTimer(EventLoopTimer& timer)
 {
-    if (m_state == State::Stopped || !m_eventLoop)
-        return;
-    m_eventLoop->cancelRepeatingTask(timer);
+    ASSERT(timer.type() == EventLoopTimer::Type::Repeating);
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->removeRepeatingTimer(timer);
+    m_timers.remove(timer);
 }
 
 void EventLoopTaskGroup::didAddTimer(EventLoopTimer& timer)

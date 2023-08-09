@@ -118,10 +118,7 @@ void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
 
     m_hasPendingThrottledProgressEvent = false;
     // We stop the timer as this is called when no more events are supposed to occur.
-    if (m_dispatchThrottledProgressEventTimer) {
-        m_target.scriptExecutionContext()->eventLoop().cancelRepeatingTask(m_dispatchThrottledProgressEventTimer);
-        m_dispatchThrottledProgressEventTimer = 0;
-    }
+    m_dispatchThrottledProgressEventTimer = nullptr;
 
     dispatchEventWhenPossible(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, m_lengthComputable, m_loaded, m_total));
 }
@@ -131,8 +128,7 @@ void XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEventTimerFir
     ASSERT(m_dispatchThrottledProgressEventTimer);
     if (!m_hasPendingThrottledProgressEvent) {
         // No progress event was queued since the previous dispatch, we can safely stop the timer.
-        m_target.scriptExecutionContext()->eventLoop().cancelRepeatingTask(m_dispatchThrottledProgressEventTimer);
-        m_dispatchThrottledProgressEventTimer = 0;
+        m_dispatchThrottledProgressEventTimer = nullptr;
         return;
     }
 

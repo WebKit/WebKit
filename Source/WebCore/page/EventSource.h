@@ -32,6 +32,7 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "EventLoop.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "ThreadableLoaderClient.h"
@@ -44,8 +45,6 @@ namespace WebCore {
 class MessageEvent;
 class TextResourceDecoder;
 class ThreadableLoader;
-
-using EventLoopTimerPtr = uintptr_t;
 
 class EventSource final : public RefCounted<EventSource>, public EventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(EventSource);
@@ -115,7 +114,7 @@ private:
 
     Ref<TextResourceDecoder> m_decoder;
     RefPtr<ThreadableLoader> m_loader;
-    EventLoopTimerPtr m_connectTimer { 0 };
+    EventLoopTimerHandle m_connectTimer;
     Vector<UChar> m_receiveBuffer;
     bool m_discardTrailingNewline { false };
     bool m_requestInFlight { false };

@@ -61,7 +61,29 @@ private:
     WeakPtr<EventLoopTaskGroup> m_group;
 };
 
-using EventLoopTimerPtr = uintptr_t;
+class EventLoopTimerHandle {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    EventLoopTimerHandle();
+    EventLoopTimerHandle(EventLoopTimer&);
+    EventLoopTimerHandle(const EventLoopTimerHandle&);
+    EventLoopTimerHandle(EventLoopTimerHandle&&);
+    ~EventLoopTimerHandle();
+
+    EventLoopTimerHandle& operator=(const EventLoopTimerHandle&);
+    EventLoopTimerHandle& operator=(std::nullptr_t);
+
+    // This conversion operator allows implicit conversion to bool but not to other integer types.
+    using UnspecifiedBoolType = void (EventLoopTimerHandle::*)() const;
+    operator UnspecifiedBoolType() const { return m_timer ? &EventLoopTimerHandle::unspecifiedBoolTypeInstance : nullptr; }
+
+private:
+    friend class EventLoop;
+
+    void unspecifiedBoolTypeInstance() const { }
+
+    RefPtr<EventLoopTimer> m_timer;
+};
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#event-loop
 class EventLoop : public RefCounted<EventLoop>, public CanMakeWeakPtr<EventLoop> {
@@ -71,12 +93,11 @@ public:
     typedef Function<void ()> TaskFunction;
     void queueTask(std::unique_ptr<EventLoopTask>&&);
 
-    EventLoopTimerPtr scheduleTask(Seconds timeout, std::unique_ptr<EventLoopTask>&&);
-    void cancelScheduledTask(EventLoopTimerPtr);
-    void didExecuteScheduledTask(EventLoopTimer&);
+    EventLoopTimerHandle scheduleTask(Seconds timeout, std::unique_ptr<EventLoopTask>&&);
+    void removeScheduledTimer(EventLoopTimer&);
 
-    EventLoopTimerPtr scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, std::unique_ptr<EventLoopTask>&&);
-    void cancelRepeatingTask(EventLoopTimerPtr);
+    EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, std::unique_ptr<EventLoopTask>&&);
+    void removeRepeatingTimer(EventLoopTimer&);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-microtask
     void queueMicrotask(std::unique_ptr<EventLoopTask>&&);
@@ -111,8 +132,8 @@ private:
 
     // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
     Vector<std::unique_ptr<EventLoopTask>> m_tasks;
-    HashSet<Ref<EventLoopTimer>> m_scheduledTasks;
-    HashSet<Ref<EventLoopTimer>> m_repeatingTasks;
+    WeakHashSet<EventLoopTimer> m_scheduledTasks;
+    WeakHashSet<EventLoopTimer> m_repeatingTasks;
     WeakHashSet<EventLoopTaskGroup> m_associatedGroups;
     WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspendedTasks;
     WeakHashSet<ScriptExecutionContext> m_associatedContexts;
@@ -180,12 +201,12 @@ public:
 
     void runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&);
 
-    EventLoopTimerPtr scheduleTask(Seconds timeout, TaskSource, EventLoop::TaskFunction&&);
-    void cancelScheduledTask(EventLoopTimerPtr);
+    EventLoopTimerHandle scheduleTask(Seconds timeout, TaskSource, EventLoop::TaskFunction&&);
     void didExecuteScheduledTask(EventLoopTimer&);
+    void removeScheduledTimer(EventLoopTimer&);
 
-    EventLoopTimerPtr scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TaskSource, EventLoop::TaskFunction&&);
-    void cancelRepeatingTask(EventLoopTimerPtr);
+    EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TaskSource, EventLoop::TaskFunction&&);
+    void removeRepeatingTimer(EventLoopTimer&);
 
     void didAddTimer(EventLoopTimer&);
     void didRemoveTimer(EventLoopTimer&);

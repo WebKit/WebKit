@@ -135,8 +135,6 @@ void EventSource::scheduleInitialConnect()
     ASSERT(!m_requestInFlight);
 
     auto* context = scriptExecutionContext();
-    if (m_connectTimer)
-        context->eventLoop().cancelScheduledTask(m_connectTimer);
     m_connectTimer = context->eventLoop().scheduleTask(0_s, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
         if (RefPtr strongThis = weakThis.get())
             strongThis->connect();
@@ -148,8 +146,6 @@ void EventSource::scheduleReconnect()
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForBackForwardCache);
     m_state = CONNECTING;
     auto* context = scriptExecutionContext();
-    if (m_connectTimer)
-        context->eventLoop().cancelScheduledTask(m_connectTimer);
     m_connectTimer = context->eventLoop().scheduleTask(1_ms * m_reconnectDelay, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
         if (RefPtr strongThis = weakThis.get())
             strongThis->connect();
@@ -165,10 +161,7 @@ void EventSource::close()
     }
 
     // Stop trying to connect/reconnect if EventSource was explicitly closed or if ActiveDOMObject::stop() was called.
-    if (auto* context = scriptExecutionContext(); context && m_connectTimer) {
-        context->eventLoop().cancelScheduledTask(m_connectTimer);
-        m_connectTimer = 0;
-    }
+    m_connectTimer = nullptr;
 
     if (m_requestInFlight)
         doExplicitLoadCancellation();
