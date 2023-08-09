@@ -5681,10 +5681,35 @@ sub GenerateAttributeSetterBodyDefinition
         push(@$outputArray, "    return true;\n");
     } else {
         push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") if !$attribute->isStatic;
-       
+
+        my $generateFunctionString = sub {
+            my $nativeValue = shift;
+            my ($baseFunctionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interface->type->name, $attribute);
+            push(@arguments, $nativeValue);
+
+            my $functionName = GetFullyQualifiedImplementationCallName($interface, $attribute, $baseFunctionName, "impl", $conditional);
+            AddAdditionalArgumentsForImplementationCall(\@arguments, $interface, $attribute, "impl", "lexicalGlobalObject", "", "thisObject");
+
+            unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{SetterCallWith}, $outputArray, "false", "thisObject"));
+            unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{CallWith}, $outputArray, "false", "thisObject"));
+
+            return "${functionName}(" . join(", ", @arguments) . ")";
+        };
+
         if ($codeGenerator->IsEnumType($attribute->type)) {
-            # As per section 3.5.6 of https://webidl.spec.whatwg.org/#dfn-attribute-setter, enumerations do not use
-            # the standard conversion, but rather silently fail on invalid enumeration values.
+            # As per section 3.7.6 of https://webidl.spec.whatwg.org/#dfn-attribute-setter, enumerations do not use
+            # the standard conversion, but rather silently fail on invalid enumeration values unless the attribute is nullable.
+            if ($attribute->type->isNullable) {
+                my $functionString = $generateFunctionString->("std::nullopt");
+
+                push(@$outputArray, "    if (value.isUndefinedOrNull()) {\n");
+                push(@$outputArray, "        invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {\n");
+                push(@$outputArray, "            return $functionString;\n");
+                push(@$outputArray, "        });\n");
+                push(@$outputArray, "        return true;\n");
+                push(@$outputArray, "    }\n\n");
+            }
+
             push(@$outputArray, "    auto optionalNativeValue = parseEnumeration<" . GetEnumerationClassName($attribute->type, $interface) . ">(lexicalGlobalObject, value);\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
             push(@$outputArray, "    if (UNLIKELY(!optionalNativeValue))\n");
@@ -5699,15 +5724,7 @@ sub GenerateAttributeSetterBodyDefinition
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
         }
 
-        my ($baseFunctionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interface->type->name, $attribute);
-
-        push(@arguments, PassArgumentExpression("nativeValue", $attribute));
-
-        my $functionName = GetFullyQualifiedImplementationCallName($interface, $attribute, $baseFunctionName, "impl", $conditional);
-        AddAdditionalArgumentsForImplementationCall(\@arguments, $interface, $attribute, "impl", "lexicalGlobalObject", "", "thisObject");
-
-        unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{SetterCallWith}, $outputArray, "false", "thisObject"));
-        unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{CallWith}, $outputArray, "false", "thisObject"));
+        my $functionString = $generateFunctionString->(PassArgumentExpression("nativeValue", $attribute));
 
         my $callTracer = $attribute->extendedAttributes->{CallTracer} || $interface->extendedAttributes->{CallTracer};
         if ($callTracer) {
@@ -5716,7 +5733,6 @@ sub GenerateAttributeSetterBodyDefinition
             GenerateCallTracer($outputArray, $callTracer, $attribute->name, \@callTracerArguments, $indent);
         }
 
-        my $functionString = "${functionName}(" . join(", ", @arguments) . ")";
         push(@$outputArray, "    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {\n");
         push(@$outputArray, "        return $functionString;\n");
         push(@$outputArray, "    });\n");
