@@ -55,7 +55,7 @@ Ref<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
     if (is<ImmutableStyleProperties>(*this))
         return downcast<ImmutableStyleProperties>(const_cast<StyleProperties&>(*this));
     const MutableStyleProperties& mutableThis = downcast<MutableStyleProperties>(*this);
-    return ImmutableStyleProperties::create(mutableThis.m_propertyVector.data(), mutableThis.m_propertyVector.size(), cssParserMode());
+    return ImmutableStyleProperties::createDeduplicating(mutableThis.m_propertyVector.data(), mutableThis.m_propertyVector.size(), cssParserMode());
 }
 
 String serializeLonghandValue(CSSPropertyID property, const CSSValue& value)

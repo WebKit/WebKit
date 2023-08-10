@@ -40,6 +40,7 @@
 #include "HRTFElevation.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNameCache.h"
+#include "ImmutableStyleProperties.h"
 #include "InlineStyleSheetOwner.h"
 #include "InspectorInstrumentation.h"
 #include "LayoutIntegrationLineLayout.h"
@@ -87,6 +88,7 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
 
     InlineStyleSheetOwner::clearCache();
     HTMLNameCache::clear();
+    ImmutableStyleProperties::clearDeduplicationMap();
 }
 
 static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCache maintainBackForwardCache, MaintainMemoryCache maintainMemoryCache)

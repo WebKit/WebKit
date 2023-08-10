@@ -134,7 +134,7 @@ static Ref<ImmutableStyleProperties> createStyleProperties(ParsedPropertyVector&
     filterProperties(true, parsedProperties, results, unusedEntries, seenProperties, seenCustomProperties);
     filterProperties(false, parsedProperties, results, unusedEntries, seenProperties, seenCustomProperties);
 
-    Ref<ImmutableStyleProperties> result = ImmutableStyleProperties::create(results.data() + unusedEntries, results.size() - unusedEntries, mode);
+    Ref<ImmutableStyleProperties> result = ImmutableStyleProperties::createDeduplicating(results.data() + unusedEntries, results.size() - unusedEntries, mode);
     parsedProperties.clear();
     return result;
 }
