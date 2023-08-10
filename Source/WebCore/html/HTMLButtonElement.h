@@ -45,6 +45,8 @@ public:
 
     bool isExplicitlySetSubmitButton() const;
 
+    bool isDevolvableWidget() const override { return true; }
+
 private:
     HTMLButtonElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
 

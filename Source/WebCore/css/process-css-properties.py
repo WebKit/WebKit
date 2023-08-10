@@ -453,6 +453,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("conditional-converter", allowed_types=[str]),
         Schema.Entry("converter", allowed_types=[str]),
         Schema.Entry("custom", allowed_types=[str]),
+        Schema.Entry("disables-native-appearance", allowed_types=[bool], default_value=False),
         Schema.Entry("enable-if", allowed_types=[str]),
         Schema.Entry("fast-path-inherited", allowed_types=[bool], default_value=False),
         Schema.Entry("fill-layer-property", allowed_types=[bool], default_value=False),
@@ -2858,6 +2859,12 @@ class GenerateCSSPropertyNames:
                 to=writer,
                 signature="bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)",
                 iterable=(p for p in self.properties_and_descriptors.style_properties.all if self._property_matches_number_or_integer(p))
+            )
+
+            self.generation_context.generate_property_id_switch_function_bool(
+                to=writer,
+                signature="bool CSSProperty::disablesNativeAppearance(CSSPropertyID id)",
+                iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.disables_native_appearance)
             )
 
             self.generation_context.generate_property_id_switch_function_bool(

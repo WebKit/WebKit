@@ -167,6 +167,8 @@ public:
     WEBCORE_EXPORT bool isTimeField() const;
     WEBCORE_EXPORT bool isWeekField() const;
 
+    bool isDevolvableWidget() const override;
+
     DateComponentsType dateType() const;
 
     HTMLElement* containerElement() const;

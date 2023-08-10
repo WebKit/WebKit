@@ -550,6 +550,8 @@ public:
     virtual bool isSliderThumbElement() const { return false; }
     virtual bool isHTMLTablePartElement() const { return false; }
 
+    virtual bool isDevolvableWidget() const { return false; }
+
     bool canContainRangeEndPoint() const override;
 
     // Used for disabled form elements; if true, prevents mouse events from being dispatched

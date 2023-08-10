@@ -371,6 +371,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'conditional-converter': self.validate_string,
             'converter': self.validate_string,
             'custom': self.validate_string,
+            'disables-native-appearance': self.validate_boolean,
             'enable-if': self.validate_string,
             'fast-path-inherited': self.validate_boolean,
             'fill-layer-property': self.validate_boolean,

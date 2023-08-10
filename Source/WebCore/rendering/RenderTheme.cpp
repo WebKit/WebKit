@@ -182,6 +182,8 @@ static bool isAppearanceAllowedForAllElements(StyleAppearance appearance)
 
 void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const RenderStyle* userAgentAppearanceStyle)
 {
+    (void)userAgentAppearanceStyle;
+
     auto autoAppearance = autoAppearanceForElement(style, element);
     auto appearance = adjustAppearanceForElement(style, element, autoAppearance);
 
@@ -197,23 +199,27 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     else if (style.display() == DisplayType::ListItem || style.display() == DisplayType::Table)
         style.setEffectiveDisplay(DisplayType::Block);
 
-    if (userAgentAppearanceStyle && isControlStyled(style, *userAgentAppearanceStyle)) {
-        switch (appearance) {
-        case StyleAppearance::Menulist:
-            appearance = StyleAppearance::MenulistButton;
-            break;
-        default:
-            appearance = StyleAppearance::None;
-            break;
-        }
+//    if (userAgentAppearanceStyle && isControlStyled(style, *userAgentAppearanceStyle)) {
+//        switch (appearance) {
+//        case StyleAppearance::Menulist:
+//            appearance = StyleAppearance::MenulistButton;
+//            break;
+//        default:
+//            appearance = StyleAppearance::None;
+//            break;
+//        }
+//
+//        style.setEffectiveAppearance(appearance);
+//    }
+//
+//    if (!isAppearanceAllowedForAllElements(appearance)
+//        && !userAgentAppearanceStyle
+//        && autoAppearance == StyleAppearance::None
+//        && !style.borderAndBackgroundEqual(RenderStyle::defaultStyle())) {
+//        style.setEffectiveAppearance(StyleAppearance::None);
+//    }
 
-        style.setEffectiveAppearance(appearance);
-    }
-
-    if (!isAppearanceAllowedForAllElements(appearance)
-        && !userAgentAppearanceStyle
-        && autoAppearance == StyleAppearance::None
-        && !style.borderAndBackgroundEqual(RenderStyle::defaultStyle()))
+    if (element->isDevolvableWidget() && style.isNativeAppearanceDisabled() && !isAppearanceAllowedForAllElements(appearance))
         style.setEffectiveAppearance(StyleAppearance::None);
 
     if (!style.hasEffectiveAppearance())

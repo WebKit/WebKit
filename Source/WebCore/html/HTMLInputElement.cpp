@@ -1944,6 +1944,25 @@ bool HTMLInputElement::isEmptyValue() const
     return m_inputType->isEmptyValue();
 }
 
+bool HTMLInputElement::isDevolvableWidget() const
+{
+    return m_inputType->isTextType()
+        || m_inputType->isTelephoneField()
+        || m_inputType->isURLField()
+        || m_inputType->isURLField()
+        || m_inputType->isEmailField()
+        || m_inputType->isSearchField()
+        || m_inputType->isPasswordField()
+        || m_inputType->isDateField()
+        || m_inputType->isMonthField()
+        || m_inputType->isWeekField()
+        || m_inputType->isTimeField()
+        || m_inputType->isDateTimeLocalField()
+        || m_inputType->isNumberField()
+        || m_inputType->isColorControl()
+        || m_inputType->isTextButton();
+    }
+
 void HTMLInputElement::maxLengthAttributeChanged(const AtomString& newValue)
 {
     unsigned oldEffectiveMaxLength = effectiveMaxLength();

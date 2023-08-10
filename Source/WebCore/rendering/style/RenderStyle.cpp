@@ -227,6 +227,7 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.hasContentNone = false;
     m_nonInheritedFlags.styleType = static_cast<unsigned>(PseudoId::None);
     m_nonInheritedFlags.pseudoBits = static_cast<unsigned>(PseudoId::None);
+    m_nonInheritedFlags.isNativeAppearanceDisabled = false;
 
     static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
     static_assert((sizeof(NonInheritedFlags) <= 8), "NonInheritedFlags does not grow");
@@ -400,6 +401,7 @@ inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheri
     usesContainerUnits = other.usesContainerUnits;
     usesViewportUnits = other.usesViewportUnits;
     verticalAlign = other.verticalAlign;
+    isNativeAppearanceDisabled = other.isNativeAppearanceDisabled;
 }
 
 void RenderStyle::copyNonInheritedFrom(const RenderStyle& other)
