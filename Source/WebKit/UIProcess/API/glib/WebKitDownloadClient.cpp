@@ -111,7 +111,7 @@ private:
         m_download = nullptr;
     }
 
-    void legacyDidCancel(WebKit::DownloadProxy&)
+    void legacyDidCancel(WebKit::DownloadProxy&) override
     {
         ASSERT(m_download);
         webkitDownloadCancelled(m_download.get());
