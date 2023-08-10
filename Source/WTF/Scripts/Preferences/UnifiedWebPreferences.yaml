@@ -3869,17 +3869,17 @@ LinkPreloadEnabled:
 
 LinkPreloadResponsiveImagesEnabled:
   type: bool
-  status: testable
+  status: stable
   category: networking
   humanReadableName: "Link preload responsive images"
   humanReadableDescription: "Enable link preload responsive images"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 LinkSanitizerEnabled:
   type: bool
