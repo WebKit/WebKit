@@ -77,6 +77,8 @@ private:
     // GPUProcessConnection::Client.
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
+    uint32_t totalFrameCount() const;
+
     RemoteAudioDestinationIdentifier m_destinationID; // Call destinationID() getter to make sure the destinationID is valid.
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
@@ -92,6 +94,8 @@ private:
     float m_remoteSampleRate;
 
     RefPtr<Thread> m_renderThread;
+    RefPtr<SharedMemory> m_frameCount;
+    uint32_t m_lastFrameCount { 0 };
     std::atomic<bool> m_shouldStopThread { false };
 };
 

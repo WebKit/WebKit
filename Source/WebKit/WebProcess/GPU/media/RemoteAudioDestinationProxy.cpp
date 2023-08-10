@@ -69,6 +69,12 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
 {
 }
 
+uint32_t RemoteAudioDestinationProxy::totalFrameCount() const
+{
+    RELEASE_ASSERT(m_frameCount->size() == sizeof(std::atomic<uint32_t>));
+    return WTF::atomicLoad(static_cast<uint32_t*>(m_frameCount->data()));
+}
+
 void RemoteAudioDestinationProxy::startRenderingThread()
 {
     ASSERT(!m_renderThread);
@@ -76,14 +82,15 @@ void RemoteAudioDestinationProxy::startRenderingThread()
     auto offThreadRendering = [this]() mutable {
         do {
             m_renderSemaphore.wait();
-            if (m_shouldStopThread)
+            if (m_shouldStopThread || !m_frameCount)
                 break;
 
-            unsigned frameCount = WebCore::AudioUtilities::renderQuantumSize;
-            while (m_renderSemaphore.waitFor(0_s))
-                frameCount += WebCore::AudioUtilities::renderQuantumSize;
+            uint32_t totalFrameCount = this->totalFrameCount();
+            uint32_t frameCount = (totalFrameCount < m_lastFrameCount) ? (totalFrameCount + (std::numeric_limits<uint32_t>::max() - m_lastFrameCount)) : (totalFrameCount - m_lastFrameCount);
 
+            m_lastFrameCount = totalFrameCount;
             renderAudio(frameCount);
+
         } while (!m_shouldStopThread);
     };
     m_renderThread = Thread::create("RemoteAudioDestinationProxy render thread", WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::UserInteractive);
@@ -108,7 +115,14 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         m_gpuProcessConnection = gpuProcessConnection;
         gpuProcessConnection->addClient(*this);
         m_destinationID = RemoteAudioDestinationIdentifier::generate();
-        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore), 0);
+
+        m_lastFrameCount = 0;
+        SharedMemory::Handle frameCountHandle;
+        if ((m_frameCount = SharedMemory::allocate(sizeof(std::atomic<uint32_t>)))) {
+            if (auto localFrameHandle = m_frameCount->createHandle(SharedMemory::Protection::ReadWrite))
+                frameCountHandle = WTFMove(*localFrameHandle);
+        }
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTFMove(frameCountHandle)), 0);
 
 #if PLATFORM(COCOA)
         m_currentFrame = 0;
