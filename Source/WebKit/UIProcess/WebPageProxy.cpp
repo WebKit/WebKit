@@ -4163,10 +4163,10 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
 
         LoadParameters loadParameters;
         loadParameters.request = navigation.currentRequest();
-        loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
+        loadParameters.shouldTreatAsContinuingLoad = navigation.currentRequestIsRedirect() ? WebCore::ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted : WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
         loadParameters.frameIdentifier = frame.frameID();
 
-        frame.prepareForProvisionalNavigationInProcess(newProcess, [loadParameters = WTFMove(loadParameters), newProcess = WTFMove(newProcess), webPageID = webPageID()] {
+        frame.prepareForProvisionalNavigationInProcess(newProcess, navigation, [loadParameters = WTFMove(loadParameters), newProcess = newProcess.copyRef(), webPageID = webPageID()] {
             newProcess->send(Messages::WebPage::LoadRequest(loadParameters), webPageID);
         });
         return;
@@ -6382,7 +6382,8 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     else if (m_needsInitialLinkDecorationFilteringData)
         sendCachedLinkDecorationFilteringData();
 #endif
-    Ref listener = frame.setUpPolicyListenerProxy([this, protectedThis = Ref { *this }, frameProcessBeforeNavigation = Ref { frame.process() }, processInitiatingNavigation = process, frame = Ref { frame }, sender = WTFMove(sender), navigation, navigationAction, frameInfo] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isAppBoundDomain) mutable {
+    Ref frameProcessBeforeNavigation { frame.provisionalFrame() ? frame.provisionalFrame()->process() : frame.process() };
+    Ref listener = frame.setUpPolicyListenerProxy([this, protectedThis = Ref { *this }, frameProcessBeforeNavigation = WTFMove(frameProcessBeforeNavigation), processInitiatingNavigation = process, frame = Ref { frame }, sender = WTFMove(sender), navigation, navigationAction, frameInfo] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isAppBoundDomain) mutable {
         WEBPAGEPROXY_RELEASE_LOG(Loading, "decidePolicyForNavigationAction: listener called: frameID=%llu, isMainFrame=%d, navigationID=%llu, policyAction=%u, safeBrowsingWarning=%d, isAppBoundDomain=%d", frame->frameID().object().toUInt64(), frame->isMainFrame(), navigation ? navigation->navigationID() : 0, (unsigned)policyAction, !!safeBrowsingWarning, !!isAppBoundDomain);
 
         navigation->setWebsitePolicies(WTFMove(policies));

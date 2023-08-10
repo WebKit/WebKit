@@ -28,6 +28,7 @@
 
 #include "WebBackForwardListItem.h"
 #include "WebNavigationState.h"
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/DebugUtilities.h>
@@ -111,6 +112,12 @@ void Navigation::appendRedirectionURL(const WTF::URL& url)
 {
     if (m_redirectChain.isEmpty() || m_redirectChain.last() != url)
         m_redirectChain.append(url);
+}
+
+bool Navigation::currentRequestIsCrossSiteRedirect() const
+{
+    return currentRequestIsRedirect()
+        && RegistrableDomain(m_lastNavigationAction.redirectResponse.url()) != RegistrableDomain(m_currentRequest.url());
 }
 
 #if !LOG_DISABLED
