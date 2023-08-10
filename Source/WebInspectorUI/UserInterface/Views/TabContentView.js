@@ -42,6 +42,7 @@ WI.TabContentView = class TabContentView extends WI.ContentView
         this._detailsSidebarCollapsedSetting = new WI.Setting(this._identifier + "-details-sidebar-collapsed", !this.detailsSidebarExpandedByDefault);
         this._detailsSidebarSelectedPanelSetting = new WI.Setting(this._identifier + "-details-sidebar-selected-panel", null);
         this._detailsSidebarWidthSetting = new WI.Setting(this._identifier + "-details-sidebar-widths", {});
+        this._detailsSidebarHeightSetting = new WI.Setting(this._identifier + "-details-sidebar-height", null);
 
         this._cookieSetting = new WI.Setting(this._identifier + "-tab-cookie", {});
 
@@ -205,6 +206,8 @@ WI.TabContentView = class TabContentView extends WI.ContentView
     get detailsSidebarCollapsedSetting() { return this._detailsSidebarCollapsedSetting; }
     get detailsSidebarSelectedPanelSetting() { return this._detailsSidebarSelectedPanelSetting; }
     get detailsSidebarWidthSetting() { return this._detailsSidebarWidthSetting; }
+    get detailsSidebarHeightSetting() { return this._detailsSidebarHeightSetting; }
 };
 
 WI.TabContentView.DefaultSidebarWidth = 300;
+WI.TabContentView.DefaultSidebarHeight = 400;

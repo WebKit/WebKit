@@ -165,6 +165,7 @@ input[type=range]::-webkit-slider-runnable-track {
 #navigation-sidebar {
     width: 300px;
     height: 100%;
+    grid-area: navigation-sidebar;
 }
 
 body.docked:is(.right, .left) #navigation-sidebar.collapsed > .resizer {
@@ -172,19 +173,41 @@ body.docked:is(.right, .left) #navigation-sidebar.collapsed > .resizer {
 }
 
 #content {
-    display: flex;
+    display: grid;
     height: 100%; /* This reduces paint areas when typing in the console. http://webkit.org/b/145324 */
-    flex: 1;
+}
+
+body:not(.narrow) #content {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "navigation-sidebar tab-browser details-sidebar";
+}
+
+body[dir="rtl"]:not(.narrow) #content {
+    grid-template-areas: "details-sidebar tab-browser navigation-sidebar";
+}
+
+body.narrow #content {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr auto;
+    grid-template-areas: "navigation-sidebar tab-browser" "details-sidebar details-sidebar";
+}
+
+body[dir="rtl"].narrow #content {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "tab-browser navigation-sidebar" "details-sidebar details-sidebar";
 }
 
 #tab-browser {
     flex: 1;
     min-width: 200px; /* Keep in sync with `WI.getMaximumSidebarWidth(...) -> const minimumContentBrowserWidth` */
+    min-height: 110px; /* Keep in sync with `WI.TabBrowser.MinimumHeight` */
+    grid-area: tab-browser;
 }
 
 #details-sidebar {
     min-width: 250px; /* Keep in sync with `WI.Sidebar.AbsoluteMinimumWidth` */
     height: 100%;
+    grid-area: details-sidebar;
 }
 
 #layout-measurement-container {

@@ -515,6 +515,8 @@ localizedStrings["Details"] = "Details";
 localizedStrings["Details @ Sidebar"] = "Details";
 /* Category label for detail sidebar settings. */
 localizedStrings["Details Sidebars: @ Settings Elements Pane"] = "Details Sidebars:";
+/* Category label for detail sidebar settings. */
+localizedStrings["Details Sidebars: @ Settings General Pane"] = "Details Sidebars:";
 localizedStrings["Device %d"] = "Device %d";
 localizedStrings["Device Settings"] = "Device Settings";
 localizedStrings["Diagnoses common accessibility problems affecting screen readers and other assistive technology."] = "Diagnoses common accessibility problems affecting screen readers and other assistive technology.";
@@ -1498,6 +1500,8 @@ localizedStrings["Show hidden tabs\u2026"] = "Show hidden tabs\u2026";
 localizedStrings["Show independent Styles sidebar @ Settings Elements Pane"] = "Show independent Styles sidebar";
 localizedStrings["Show jump to effective property button"] = "Show jump to effective property button";
 localizedStrings["Show jump to variable declaration button"] = "Show jump to variable declaration button";
+/* Settings tab checkbox label for whether the details sidebars (on the right in LTR locales) are at the bottom */
+localizedStrings["Show on bottom when narrow @ Settings General Pane"] = "Show on bottom when narrow";
 localizedStrings["Show page rulers and node border lines"] = "Show page rulers and node border lines";
 localizedStrings["Show property syntax in documentation popover"] = "Show property syntax in documentation popover";
 localizedStrings["Show rulers"] = "Show rulers";

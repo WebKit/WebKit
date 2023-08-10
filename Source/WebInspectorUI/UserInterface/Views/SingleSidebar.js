@@ -43,8 +43,8 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
             this.addSubview(this._navigationBar);
         }
 
-        this._resizer = new WI.Resizer(WI.Resizer.RuleOrientation.Vertical, this);
-        this.element.insertBefore(this._resizer.element, this.element.firstChild);
+        this._widthResizer = new WI.Resizer(WI.Resizer.RuleOrientation.Vertical, this);
+        this.element.insertBefore(this._widthResizer.element, this.element.firstChild);
     }
 
     // Public
@@ -146,11 +146,21 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
 
     resizerDragStarted(resizer)
     {
+        super.resizerDragStarted(resizer);
+        
+        if (resizer !== this._widthResizer)
+            return;
+        
         this._widthBeforeResize = this.width;
     }
 
     resizerDragging(resizer, positionDelta)
     {
+        super.resizerDragging(resizer);
+        
+        if (resizer !== this._widthResizer)
+            return;
+        
         if (this._side === WI.Sidebar.Sides.Leading)
             positionDelta *= -1;
 
@@ -166,7 +176,9 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
 
     resizerDragEnded(resizer)
     {
-        if (this._widthBeforeResize === this.width)
+        super.resizerDragEnded(resizer);
+        
+        if (resizer !== this._widthResizer || this._widthBeforeResize === this.width)
             return;
 
         if (!this.collapsed && this._navigationBar)

@@ -198,6 +198,7 @@ WI.settings = {
     enableControlFlowProfiler: new WI.Setting("enable-control-flow-profiler", false),
     enableElementsTabIndependentStylesDetailsSidebarPanel: new WI.Setting("elements-tab-independent-styles-details-panel", true),
     enableLineWrapping: new WI.Setting("enable-line-wrapping", true),
+    enableNarrowLayoutMode: new WI.Setting("enable-narrow-layout-mode", true),
     flexOverlayShowOrderNumbers: new WI.Setting("flex-overlay-show-order-numbers", false),
     frontendAppearance: new WI.Setting("frontend-appearance", "system"),
     gridOverlayShowAreaNames: new WI.Setting("grid-overlay-show-area-names", false),
