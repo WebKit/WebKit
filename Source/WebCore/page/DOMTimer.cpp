@@ -169,6 +169,8 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutio
     , m_currentTimerInterval(intervalClampedToMinimum())
     , m_userGestureTokenToForward(UserGestureIndicator::currentUserGesture())
 {
+    setTimerAlignment(context);
+    setHasReachedMaxNestingLevel(m_nestingLevel >= (m_oneShot ? maxTimerNestingLevelForOneShotTimers : maxTimerNestingLevelForRepeatingTimers));
     if (m_oneShot)
         startOneShot(m_currentTimerInterval);
     else
@@ -320,8 +322,10 @@ void DOMTimer::fired()
 
     // Simple case for non-one-shot timers.
     if (isActive()) {
+        ASSERT(!m_oneShot);
         if (m_nestingLevel < maxTimerNestingLevel) {
             m_nestingLevel++;
+            setHasReachedMaxNestingLevel(m_nestingLevel >= maxTimerNestingLevelForRepeatingTimers);
             updateTimerIntervalIfNecessary();
         }
 
@@ -404,9 +408,9 @@ Seconds DOMTimer::intervalClampedToMinimum() const
     return interval;
 }
 
-std::optional<MonotonicTime> DOMTimer::alignedFireTime(MonotonicTime fireTime) const
+std::optional<MonotonicTime> ScriptExecutionContext::alignedFireTime(bool hasReachedMaxNestingLevel, MonotonicTime fireTime) const
 {
-    Seconds alignmentInterval = scriptExecutionContext()->domTimerAlignmentInterval(m_nestingLevel >= (m_oneShot ? maxTimerNestingLevelForOneShotTimers : maxTimerNestingLevelForRepeatingTimers));
+    Seconds alignmentInterval = domTimerAlignmentInterval(hasReachedMaxNestingLevel);
     if (!alignmentInterval)
         return std::nullopt;
     

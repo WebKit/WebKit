@@ -478,8 +478,8 @@ void TimerBase::setNextFireTime(MonotonicTime newTime)
     // Keep heap valid while changing the next-fire time.
     MonotonicTime oldTime = nextFireTime();
     // Don't realign zero-delay timers.
-    if (newTime) {
-        if (auto newAlignedTime = alignedFireTime(newTime))
+    if (auto* alignment = m_alignment.get(); newTime && alignment) {
+        if (auto newAlignedTime = alignment->alignedFireTime(m_hasReachedMaxNestingLevel, newTime))
             newTime = newAlignedTime.value();
     }
 

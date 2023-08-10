@@ -35,7 +35,7 @@
 namespace WebCore {
 
 // Do not use this class for new code. Use EventLoop's scheduleTask and scheduleRepeatingTask instead.
-class SuspendableTimerBase : private TimerBase, public ActiveDOMObject {
+class SuspendableTimerBase : public TimerBase, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SuspendableTimerBase(ScriptExecutionContext*);
