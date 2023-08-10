@@ -408,20 +408,21 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 
     networkLoadMetrics().hasCrossOriginRedirect = networkLoadMetrics().hasCrossOriginRedirect || !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url(), WebCore::EmptyOriginAccessPatterns::singleton());
 
+    const auto& previousRequest = m_previousRequest.isNull() ? m_firstRequest : m_previousRequest;
     if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
-        auto body = m_firstRequest.httpBody();
+        auto body = previousRequest.httpBody();
         if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"_s))
             request.setHTTPBody(WTFMove(body));
         
-        String originalContentType = m_firstRequest.httpContentType();
+        String originalContentType = previousRequest.httpContentType();
         if (!originalContentType.isEmpty())
             request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
     } else if (redirectResponse.httpStatusCode() == 303) { // FIXME: (rdar://problem/13706454).
-        if (equalLettersIgnoringASCIICase(m_firstRequest.httpMethod(), "head"_s))
+        if (equalLettersIgnoringASCIICase(previousRequest.httpMethod(), "head"_s))
             request.setHTTPMethod("HEAD"_s);
 
-        String originalContentType = m_firstRequest.httpContentType();
+        String originalContentType = previousRequest.httpContentType();
         if (!originalContentType.isEmpty())
             request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
     }
@@ -471,6 +472,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
                 return completionHandler({ });
             if (!request.isNull())
                 restrictRequestReferrerToOriginIfNeeded(request);
+            m_previousRequest = request;
             completionHandler(WTFMove(request));
         });
     });
