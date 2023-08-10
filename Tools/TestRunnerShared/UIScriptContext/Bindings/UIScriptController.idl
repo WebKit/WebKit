@@ -324,6 +324,7 @@ interface UIScriptController {
     readonly attribute object contentVisibleRect;
     readonly attribute object selectionStartGrabberViewRect;
     readonly attribute object selectionEndGrabberViewRect;
+    readonly attribute object selectionEndGrabberViewShapePathDescription;
     readonly attribute object selectionCaretViewRect;
     readonly attribute object selectionCaretViewRectInGlobalCoordinates;
     readonly attribute object selectionRangeViewRects;
