@@ -787,7 +787,7 @@ private:
     };
 
     Vector<ConstraintHolder> m_variants;
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     int m_generation { 0 };
 #endif
 };
