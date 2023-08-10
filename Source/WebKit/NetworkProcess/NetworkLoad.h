@@ -100,6 +100,7 @@ private:
     RefPtr<NetworkDataTask> m_task;
     WeakPtr<NetworkLoadScheduler> m_scheduler;
 
+    // FIXME: Deduplicate this with NetworkDataTask's m_previousRequest.
     WebCore::ResourceRequest m_currentRequest; // Updated on redirects.
 };
 

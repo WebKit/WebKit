@@ -407,24 +407,25 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
 {
     ASSERT(!redirectResponse.isNull());
 
+    const auto& previousRequest = d->m_previousRequest.isNull() ? d->m_firstRequest : d->m_previousRequest;
     if (redirectResponse.httpStatusCode() == 307) {
         String lastHTTPMethod = d->m_lastHTTPMethod;
         if (!equalIgnoringASCIICase(lastHTTPMethod, request.httpMethod())) {
             request.setHTTPMethod(lastHTTPMethod);
     
-            auto body = d->m_firstRequest.httpBody();
+            auto body = previousRequest.httpBody();
             if (!equalLettersIgnoringASCIICase(lastHTTPMethod, "get"_s) && body && !body->isEmpty())
                 request.setHTTPBody(WTFMove(body));
 
-            String originalContentType = d->m_firstRequest.httpContentType();
+            String originalContentType = previousRequest.httpContentType();
             if (!originalContentType.isEmpty())
                 request.setHTTPHeaderField(HTTPHeaderName::ContentType, originalContentType);
         }
     } else if (redirectResponse.httpStatusCode() == 303) { // FIXME: (rdar://problem/13706454).
-        if (equalLettersIgnoringASCIICase(d->m_firstRequest.httpMethod(), "head"_s))
+        if (equalLettersIgnoringASCIICase(previousRequest.httpMethod(), "head"_s))
             request.setHTTPMethod("HEAD"_s);
 
-        String originalContentType = d->m_firstRequest.httpContentType();
+        String originalContentType = previousRequest.httpContentType();
         if (!originalContentType.isEmpty())
             request.setHTTPHeaderField(HTTPHeaderName::ContentType, originalContentType);
     }
@@ -439,8 +440,8 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
     d->m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
 
-    if (auto authorization = d->m_firstRequest.httpHeaderField(HTTPHeaderName::Authorization); !authorization.isNull()
-        && protocolHostAndPortAreEqual(d->m_firstRequest.url(), request.url()))
+    if (auto authorization = previousRequest.httpHeaderField(HTTPHeaderName::Authorization); !authorization.isNull()
+        && protocolHostAndPortAreEqual(previousRequest.url(), request.url()))
         request.setHTTPHeaderField(HTTPHeaderName::Authorization, authorization);
 
     if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
@@ -468,6 +469,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         // Client call may not preserve the session, especially if the request is sent over IPC.
         if (!request.isNull())
             request.setStorageSession(d->m_storageSession.get());
+        d->m_previousRequest = request;
         completionHandler(WTFMove(request));
     });
 }
