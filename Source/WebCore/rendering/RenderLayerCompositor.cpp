@@ -4157,9 +4157,6 @@ void RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor()
         })();
         m_layerForOverhangAreas->setBackgroundColor(backgroundColor);
     }
-
-    if (!backgroundColor.isValid())
-        m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingOverhang);
 }
 
 #endif // HAVE(RUBBER_BANDING)
