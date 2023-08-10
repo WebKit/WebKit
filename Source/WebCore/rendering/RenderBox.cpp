@@ -3090,20 +3090,20 @@ RenderBoxFragmentInfo* RenderBox::renderBoxFragmentInfo(RenderFragmentContainer*
 static bool shouldFlipBeforeAfterMargins(const RenderStyle& containingBlockStyle, const RenderStyle* childStyle)
 {
     ASSERT(containingBlockStyle.isHorizontalWritingMode() != childStyle->isHorizontalWritingMode());
-    WritingMode childWritingMode = childStyle->writingMode();
+    auto childBlockFlowDirection = childStyle->blockFlowDirection();
     bool shouldFlip = false;
-    switch (containingBlockStyle.writingMode()) {
-    case WritingMode::TopToBottom:
-        shouldFlip = (childWritingMode == WritingMode::RightToLeft);
+    switch (containingBlockStyle.blockFlowDirection()) {
+    case BlockFlowDirection::TopToBottom:
+        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::RightToLeft);
         break;
-    case WritingMode::BottomToTop:
-        shouldFlip = (childWritingMode == WritingMode::RightToLeft);
+    case BlockFlowDirection::BottomToTop:
+        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::RightToLeft);
         break;
-    case WritingMode::RightToLeft:
-        shouldFlip = (childWritingMode == WritingMode::BottomToTop);
+    case BlockFlowDirection::RightToLeft:
+        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::BottomToTop);
         break;
-    case WritingMode::LeftToRight:
-        shouldFlip = (childWritingMode == WritingMode::BottomToTop);
+    case BlockFlowDirection::LeftToRight:
+        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::BottomToTop);
         break;
     }
 
@@ -5299,14 +5299,14 @@ LayoutRect RenderBox::visualOverflowRectForPropagation(const RenderStyle* parent
     // If the writing modes of the child and parent match, then we don't have to 
     // do anything fancy. Just return the result.
     LayoutRect rect = visualOverflowRect();
-    if (parentStyle->writingMode() == style().writingMode())
+    if (parentStyle->blockFlowDirection() == style().blockFlowDirection())
         return rect;
     
     // We are putting ourselves into our parent's coordinate space.  If there is a flipped block mismatch
     // in a particular axis, then we have to flip the rect along that axis.
-    if (style().writingMode() == WritingMode::RightToLeft || parentStyle->writingMode() == WritingMode::RightToLeft)
+    if (style().blockFlowDirection() == BlockFlowDirection::RightToLeft || parentStyle->blockFlowDirection() == BlockFlowDirection::RightToLeft)
         rect.setX(width() - rect.maxX());
-    else if (style().writingMode() == WritingMode::BottomToTop || parentStyle->writingMode() == WritingMode::BottomToTop)
+    else if (style().blockFlowDirection() == BlockFlowDirection::BottomToTop || parentStyle->blockFlowDirection() == BlockFlowDirection::BottomToTop)
         rect.setY(height() - rect.maxY());
 
     return rect;
@@ -5367,14 +5367,14 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parent
     
     // If the writing modes of the child and parent match, then we don't have to 
     // do anything fancy. Just return the result.
-    if (parentStyle->writingMode() == style().writingMode())
+    if (parentStyle->blockFlowDirection() == style().blockFlowDirection())
         return rect;
     
     // We are putting ourselves into our parent's coordinate space.  If there is a flipped block mismatch
     // in a particular axis, then we have to flip the rect along that axis.
-    if (style().writingMode() == WritingMode::RightToLeft || parentStyle->writingMode() == WritingMode::RightToLeft)
+    if (style().blockFlowDirection() == BlockFlowDirection::RightToLeft || parentStyle->blockFlowDirection() == BlockFlowDirection::RightToLeft)
         rect.setX(width() - rect.maxX());
-    else if (style().writingMode() == WritingMode::BottomToTop || parentStyle->writingMode() == WritingMode::BottomToTop)
+    else if (style().blockFlowDirection() == BlockFlowDirection::BottomToTop || parentStyle->blockFlowDirection() == BlockFlowDirection::BottomToTop)
         rect.setY(height() - rect.maxY());
 
     return rect;

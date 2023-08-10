@@ -2897,15 +2897,16 @@ public:
 
     ~ObjectAddingAndRemovingItself()
     {
+        EXPECT_FALSE(m_set.contains(*this));
+        auto sizeBefore = m_set.sizeIncludingEmptyEntriesForTesting();
+        EXPECT_FALSE(m_set.remove(*this));
+        auto sizeAfter = m_set.sizeIncludingEmptyEntriesForTesting();
         static size_t i { 0 };
-        i++;
-        if (i == 8) {
-            // amortized cleanup of the set in contains makes this return false sometimes,
-            // but only in the destructor, where contains is less meaningful.
-            EXPECT_FALSE(m_set.contains(*this));
+        if (++i == 8) {
+            // Amortized cleanup gets this one during the contains call.
+            EXPECT_EQ(sizeBefore, sizeAfter);
         } else
-            EXPECT_TRUE(m_set.contains(*this));
-        m_set.remove(*this);
+            EXPECT_EQ(sizeBefore, sizeAfter + 1);
         EXPECT_FALSE(m_set.contains(*this));
     }
 

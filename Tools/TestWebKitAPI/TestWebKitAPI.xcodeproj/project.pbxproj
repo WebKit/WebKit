@@ -2061,6 +2061,7 @@
 		1C1549A2292ADB64001B9E5B /* WKWebExtensionAPIExtension.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIExtension.mm; sourceTree = "<group>"; };
 		1C1549DA293A6D7F001B9E5B /* WKWebExtensionControllerConfiguration.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionControllerConfiguration.mm; sourceTree = "<group>"; };
 		1C24DEEC263001DE00450D07 /* TextStyleFontSize.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextStyleFontSize.mm; sourceTree = "<group>"; };
+		1C2B4D4C2A81F42800C528A1 /* WKWebExtensionAPIAlarms.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIAlarms.mm; sourceTree = "<group>"; };
 		1C2B817E1C891E4200A5529F /* CancelFontSubresource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelFontSubresource.mm; sourceTree = "<group>"; };
 		1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelFontSubresourcePlugIn.mm; sourceTree = "<group>"; };
 		1C2B81841C8924A200A5529F /* webfont.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = webfont.html; sourceTree = "<group>"; };
@@ -4184,6 +4185,7 @@
 				51C683DD1EA134DB00650183 /* WKURLSchemeHandler-1.mm */,
 				5182C22D1F2BCB410059BA7C /* WKURLSchemeHandler-leaks.mm */,
 				1CFAA40828947999009F894D /* WKWebExtension.mm */,
+				1C2B4D4C2A81F42800C528A1 /* WKWebExtensionAPIAlarms.mm */,
 				B6E1E1E02942B0DD00F314D2 /* WKWebExtensionAPIEvent.mm */,
 				1C1549A2292ADB64001B9E5B /* WKWebExtensionAPIExtension.mm */,
 				330E135E2943C92000367438 /* WKWebExtensionAPINamespace.mm */,

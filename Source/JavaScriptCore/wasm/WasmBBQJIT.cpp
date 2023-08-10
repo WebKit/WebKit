@@ -397,6 +397,8 @@ public:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             return sizeof(EncodedJSValue);
         case TypeKind::Void:
             return 0;
@@ -428,6 +430,8 @@ public:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             return TypeKind::I64;
         case TypeKind::Void:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1428,6 +1432,8 @@ public:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             result = Value::fromRef(type.kind, static_cast<EncodedJSValue>(value));
             LOG_INSTRUCTION("RefConst", makeString(type.kind), RESULT(result));
             break;
@@ -1718,6 +1724,8 @@ public:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
             case TypeKind::Nullref:
+            case TypeKind::Nullfuncref:
+            case TypeKind::Nullexternref:
                 m_jit.load64(Address(wasmScratchGPR), resultLocation.asGPR());
                 break;
             case TypeKind::Void:
@@ -1833,6 +1841,8 @@ public:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
             case TypeKind::Nullref:
+            case TypeKind::Nullfuncref:
+            case TypeKind::Nullexternref:
                 m_jit.store64(valueLocation.asGPR(), Address(wasmScratchGPR));
                 break;
             case TypeKind::Void:
@@ -6825,6 +6835,8 @@ public:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
             case TypeKind::Nullref:
+            case TypeKind::Nullfuncref:
+            case TypeKind::Nullexternref:
                 clear(ClearMode::JSNull, type, m_locals[i]);
                 break;
             default:
@@ -6924,6 +6936,8 @@ public:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             return B3::Type(B3::Int64);
         case TypeKind::F32:
             return B3::Type(B3::Float);
@@ -7173,6 +7187,8 @@ public:
                 case TypeKind::Eqref:
                 case TypeKind::Anyref:
                 case TypeKind::Nullref:
+                case TypeKind::Nullfuncref:
+                case TypeKind::Nullexternref:
                 case TypeKind::Rec:
                 case TypeKind::Sub:
                 case TypeKind::Array:
@@ -7841,6 +7857,8 @@ public:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
         case TypeKind::Rec:
         case TypeKind::Sub:
         case TypeKind::Array:
@@ -9349,6 +9367,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.store64(TrustedImm64(constant.asRef()), loc.asAddress());
             break;
         case TypeKind::I64:
@@ -9390,6 +9410,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.move(TrustedImm64(constant.asRef()), loc.asGPR());
             break;
         case TypeKind::F32:
@@ -9432,6 +9454,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.store64(src.asGPR(), dst.asAddress());
             break;
         case TypeKind::V128:
@@ -9481,6 +9505,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.transfer64(src.asAddress(), dst.asAddress());
             break;
         case TypeKind::V128: {
@@ -9522,6 +9548,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.move(src.asGPR(), dst.asGPR());
             break;
         case TypeKind::F32:
@@ -9572,6 +9600,8 @@ private:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
         case TypeKind::Nullref:
+        case TypeKind::Nullfuncref:
+        case TypeKind::Nullexternref:
             m_jit.load64(src.asAddress(), dst.asGPR());
             break;
         case TypeKind::V128:

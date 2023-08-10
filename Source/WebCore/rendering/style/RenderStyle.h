@@ -105,6 +105,7 @@ enum class AspectRatioType : uint8_t;
 enum class AutoRepeatType : uint8_t;
 enum class BackfaceVisibility : uint8_t;
 enum class BlendMode : uint8_t;
+enum class BlockFlowDirection : uint8_t;
 enum class BlockStepInsert : bool;
 enum class BorderCollapse : bool;
 enum class BorderStyle : uint8_t;
@@ -216,6 +217,7 @@ enum class TextZoom : bool;
 enum class TouchAction : uint8_t;
 enum class TransformBox : uint8_t;
 enum class TransformStyle3D : uint8_t;
+enum class TypographicMode : bool;
 enum class UnicodeBidi : uint8_t;
 enum class UsedClear : uint8_t;
 enum class UsedFloat : uint8_t;
@@ -1009,6 +1011,8 @@ public:
     inline bool isVerticalWritingMode() const;
     inline bool isFlippedLinesWritingMode() const;
     inline bool isFlippedBlocksWritingMode() const;
+    BlockFlowDirection blockFlowDirection() const;
+    TypographicMode typographicMode() const;
 
     inline ImageOrientation imageOrientation() const;
     inline ImageRendering imageRendering() const;
@@ -2198,15 +2202,15 @@ private:
         // 44 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
-        unsigned writingMode : 2; // WritingMode
-        // 46 bits
+        unsigned writingMode : 3; // WritingMode
+        // 47 bits
 
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // 51 bits
-        unsigned hasExplicitlySetColor : 1;
         // 52 bits
+        unsigned hasExplicitlySetColor : 1;
+        // 53 bits
     };
 
     // This constructor is used to implement the replace operation.

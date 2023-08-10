@@ -382,14 +382,21 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
     m_childFrames.add(WTFMove(child));
 }
 
-void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& process, CompletionHandler<void()>&& completionHandler)
+void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& process, const API::Navigation& navigation, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!isMainFrame());
 
     if (m_provisionalFrame && m_provisionalFrame->process().processID() == process.processID())
         return completionHandler();
 
-    if (!m_provisionalFrame) {
+    if (process.coreProcessIdentifier() == m_process->coreProcessIdentifier()) {
+        m_provisionalFrame = nullptr;
+        m_remotePageProxy = nullptr;
+        return completionHandler();
+    }
+
+    if (!m_provisionalFrame || navigation.currentRequestIsCrossSiteRedirect()) {
+        // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain.
         m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, Ref { process });
         // FIXME: This gives too much cookie access. This should be removed when a RemoteFrame is given a topOrigin member.
         auto giveAllCookieAccess = LoadedWebArchive::Yes;
@@ -423,9 +430,9 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
     m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
 }
 
-void WebFrameProxy::setRemotePageProxy(RemotePageProxy& remotePageProxy)
+void WebFrameProxy::setRemotePageProxy(RemotePageProxy* remotePageProxy)
 {
-    m_remotePageProxy = &remotePageProxy;
+    m_remotePageProxy = remotePageProxy;
 }
 
 void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)

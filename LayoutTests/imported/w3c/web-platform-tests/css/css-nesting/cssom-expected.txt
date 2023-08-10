@@ -10,5 +10,5 @@ PASS Simple CSSOM manipulation of subrules 7
 PASS Simple CSSOM manipulation of subrules 8
 PASS Simple CSSOM manipulation of subrules 9
 PASS Simple CSSOM manipulation of subrules 10
-FAIL Simple CSSOM manipulation of subrules 11 assert_equals: invalid rule containing ampersand is kept in serialization expected ".a {\n  :is(!& .foo, .b) { color: green; }\n}" but got ".a {\n  :is(.b) { color: green; }\n}"
+PASS Simple CSSOM manipulation of subrules 11
 

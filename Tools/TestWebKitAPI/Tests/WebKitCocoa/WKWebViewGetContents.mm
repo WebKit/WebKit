@@ -29,8 +29,8 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UIKitSPI.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
-#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation WKWebView (WKWebViewGetContents)

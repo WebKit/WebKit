@@ -291,6 +291,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/cookie-consent/Navigator+CookieConsent.idl
     Modules/cookie-consent/RequestCookieConsentOptions.idl
 
+    Modules/cookie-store/CookieChangeEvent.idl
+    Modules/cookie-store/CookieChangeEventInit.idl
     Modules/cookie-store/CookieInit.idl
     Modules/cookie-store/CookieListItem.idl
     Modules/cookie-store/CookieSameSite.idl

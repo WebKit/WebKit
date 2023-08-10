@@ -26,6 +26,9 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 messages -> WebExtensionContextProxy {
+    // Alarms support
+    DispatchAlarmEvent(struct WebKit::WebExtensionAlarmParameters alarmInfo)
+
     // Permissions support
     DispatchPermissionsEvent(WebKit::WebExtensionEventListenerType type, HashSet<String> permissions, HashSet<String> origins)
 

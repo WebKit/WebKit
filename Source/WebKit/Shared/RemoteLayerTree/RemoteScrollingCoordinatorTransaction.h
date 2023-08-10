@@ -27,25 +27,31 @@
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
-#include <WebCore/ScrollingStateTree.h>
-
 namespace IPC {
 class Decoder;
 class Encoder;
+}
+
+namespace WebCore {
+class ScrollingStateTree;
 }
 
 namespace WebKit {
 
 class RemoteScrollingCoordinatorTransaction {
 public:
-    void setStateTreeToEncode(std::unique_ptr<WebCore::ScrollingStateTree> stateTree) { m_scrollingStateTree = WTFMove(stateTree); }
+    RemoteScrollingCoordinatorTransaction();
+    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool);
+    RemoteScrollingCoordinatorTransaction(RemoteScrollingCoordinatorTransaction&&);
+    RemoteScrollingCoordinatorTransaction& operator=(RemoteScrollingCoordinatorTransaction&&);
+    ~RemoteScrollingCoordinatorTransaction();
+
     std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
 
     void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteScrollingCoordinatorTransaction&);
+    static std::optional<RemoteScrollingCoordinatorTransaction> decode(IPC::Decoder&);
 
     bool clearScrollLatching() const { return m_clearScrollLatching; }
-    void setClearScrollLatching(bool clearLatching) { m_clearScrollLatching = clearLatching; }
 
 #if !defined(NDEBUG) || !LOG_DISABLED
     String description() const;
@@ -53,8 +59,6 @@ public:
 #endif
 
 private:
-    WARN_UNUSED_RETURN bool decode(IPC::Decoder&);
-    
     std::unique_ptr<WebCore::ScrollingStateTree> m_scrollingStateTree;
     
     // Data encoded here should be "imperative" (valid just for one transaction). Stateful things should live on scrolling tree nodes.

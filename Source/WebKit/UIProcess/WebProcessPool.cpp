@@ -1870,8 +1870,9 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled()) {
         RegistrableDomain navigationDomain(navigation.currentRequest().url());
         if (!navigationDomain.isEmpty() && navigationDomain != mainFrameDomain) {
+            frame.setRemotePageProxy(nullptr);
             auto remotePageProxy = RemotePageProxy::create(page, process, navigationDomain);
-            frame.setRemotePageProxy(remotePageProxy);
+            frame.setRemotePageProxy(remotePageProxy.ptr());
             remotePageProxy->injectPageIntoNewProcess();
         }
     }

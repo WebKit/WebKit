@@ -873,19 +873,19 @@ static FloatSize fullscreenPreferencesScreenSize(CGFloat preferredWidth)
 FloatSize WebPageProxy::availableScreenSize()
 {
 #if PLATFORM(VISION)
-    return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
-#else
-    return WebCore::availableScreenSize();
+    if (PAL::currentUserInterfaceIdiomIsVision())
+        return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
 #endif
+    return WebCore::availableScreenSize();
 }
 
 FloatSize WebPageProxy::overrideScreenSize()
 {
 #if PLATFORM(VISION)
-    return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
-#else
-    return WebCore::overrideScreenSize();
+    if (PAL::currentUserInterfaceIdiomIsVision())
+        return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
 #endif
+    return WebCore::overrideScreenSize();
 }
 
 float WebPageProxy::textAutosizingWidth()

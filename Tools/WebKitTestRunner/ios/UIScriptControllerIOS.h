@@ -116,6 +116,7 @@ private:
     JSObjectRef contentVisibleRect() const override;
     JSObjectRef selectionStartGrabberViewRect() const override;
     JSObjectRef selectionEndGrabberViewRect() const override;
+    JSObjectRef selectionEndGrabberViewShapePathDescription() const override;
     JSObjectRef selectionCaretViewRect() const override;
     JSObjectRef selectionCaretViewRectInGlobalCoordinates() const override;
     JSObjectRef selectionCaretViewRect(id<UICoordinateSpace>) const;

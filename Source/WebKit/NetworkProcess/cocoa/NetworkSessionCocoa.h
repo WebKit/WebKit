@@ -184,7 +184,7 @@ private:
     void removeWebSocketTask(SessionSet&, WebSocketTask&) final;
 #endif
 
-    void dataTaskWithRequest(WebPageProxyIdentifier, WebCore::ResourceRequest&&, CompletionHandler<void(DataTaskIdentifier)>&&) final;
+    void dataTaskWithRequest(WebPageProxyIdentifier, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, CompletionHandler<void(DataTaskIdentifier)>&&) final;
     void cancelDataTask(DataTaskIdentifier) final;
     void addWebPageNetworkParameters(WebPageProxyIdentifier, WebPageNetworkParameters&&) final;
     void removeWebPageNetworkParameters(WebPageProxyIdentifier) final;

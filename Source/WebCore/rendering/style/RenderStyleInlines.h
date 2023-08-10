@@ -499,7 +499,7 @@ constexpr WhiteSpace RenderStyle::initialWhiteSpace() { return WhiteSpace::Norma
 constexpr WhiteSpaceCollapse RenderStyle::initialWhiteSpaceCollapse() { return WhiteSpaceCollapse::Collapse; }
 constexpr WordBreak RenderStyle::initialWordBreak() { return WordBreak::Normal; }
 inline Length RenderStyle::initialWordSpacing() { return zeroLength(); }
-constexpr WritingMode RenderStyle::initialWritingMode() { return WritingMode::TopToBottom; }
+constexpr WritingMode RenderStyle::initialWritingMode() { return WritingMode::HorizontalTb; }
 inline InputSecurity RenderStyle::inputSecurity() const { return static_cast<InputSecurity>(m_nonInheritedData->rareData->inputSecurity); }
 inline bool RenderStyle::isColumnFlexDirection() const { return flexDirection() == FlexDirection::Column || flexDirection() == FlexDirection::ColumnReverse; }
 constexpr bool RenderStyle::isDisplayBlockLevel() const { return isDisplayBlockType(display()); }
@@ -968,6 +968,28 @@ constexpr bool RenderStyle::preserveNewline(WhiteSpace mode)
 {
     // Normal and nowrap do not preserve newlines.
     return mode != WhiteSpace::Normal && mode != WhiteSpace::NoWrap;
+}
+
+inline BlockFlowDirection RenderStyle::blockFlowDirection() const
+{
+    return writingModeToBlockFlowDirection(writingMode());
+}
+
+inline TypographicMode RenderStyle::typographicMode() const
+{
+    switch (writingMode()) {
+    case WritingMode::HorizontalTb:
+    case WritingMode::HorizontalBt:
+    case WritingMode::SidewaysLr:
+    case WritingMode::SidewaysRl:
+        return TypographicMode::Horizontal;
+    case WritingMode::VerticalLr:
+    case WritingMode::VerticalRl:
+        return TypographicMode::Vertical;
+    default:
+        ASSERT_NOT_REACHED();
+        return TypographicMode::Horizontal;
+    }
 }
 
 inline bool isSkippedContentRoot(const RenderStyle& style, const Element* element)

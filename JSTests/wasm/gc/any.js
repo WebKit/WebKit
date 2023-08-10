@@ -88,6 +88,86 @@ function testNullref() {
   `).exports.f();
 }
 
+function testNullfuncref() {
+  instantiate(`
+    (module
+      (func (param nullfuncref) (result))
+      (func (export "f") (call 0 (ref.null nofunc))))
+  `).exports.f();
+
+  instantiate(`
+      (module
+        (func (export "f") (result funcref) (ref.null nofunc)))
+  `).exports.f();
+
+  assert.throws(
+    () => compile(`
+      (module
+        (func (export "f") (result nullfuncref) (ref.null func)))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Funcref is not a Nullfuncref"
+  )
+
+  assert.throws(
+    () => compile(`
+      (module
+        (func (export "f") (result nullref) (ref.null nofunc)))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Nullfuncref is not a Nullref"
+  )
+
+  instantiate(`
+    (module
+      (func (result nullfuncref) (local nullfuncref)
+        (local.set 0 (ref.null nofunc))
+        (local.get 0))
+      (func (export "f") (call 0) (drop)))
+  `).exports.f();
+}
+
+function testNullexternref() {
+  instantiate(`
+    (module
+      (func (param nullexternref) (result))
+      (func (export "f") (call 0 (ref.null noextern))))
+  `).exports.f();
+
+  instantiate(`
+      (module
+        (func (export "f") (result externref) (ref.null noextern)))
+  `).exports.f();
+
+  assert.throws(
+    () => compile(`
+      (module
+        (func (export "f") (result nullexternref) (ref.null extern)))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a Nullexternref"
+  )
+
+  assert.throws(
+    () => compile(`
+      (module
+        (func (export "f") (result nullref) (ref.null noextern)))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Nullexternref is not a Nullref"
+  )
+
+  instantiate(`
+    (module
+      (func (result nullexternref) (local nullexternref)
+        (local.set 0 (ref.null noextern))
+        (local.get 0))
+      (func (export "f") (call 0) (drop)))
+  `).exports.f();
+}
+
 testValidation();
 testAnyref();
 testNullref();
+testNullfuncref();
+testNullexternref();

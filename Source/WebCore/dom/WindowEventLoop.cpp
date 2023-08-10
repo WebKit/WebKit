@@ -33,6 +33,7 @@
 #include "IdleCallbackController.h"
 #include "Microtasks.h"
 #include "MutationObserver.h"
+#include "Page.h"
 #include "SecurityOrigin.h"
 #include "ThreadGlobalData.h"
 #include <wtf/RobinHoodHashMap.h>
@@ -116,12 +117,24 @@ MicrotaskQueue& WindowEventLoop::microtaskQueue()
     return *m_microtaskQueue;
 }
 
+void WindowEventLoop::didScheduleRenderingUpdate(Page& page, MonotonicTime nextRenderingUpdate)
+{
+    m_pagesWithRenderingOpportunity.set(page, nextRenderingUpdate);
+}
+
+void WindowEventLoop::didFinishRenderingUpdate(Page& page)
+{
+    m_pagesWithRenderingOpportunity.remove(page);
+}
+
 void WindowEventLoop::opportunisticallyRunIdleCallbacks()
 {
     if (shouldEndIdlePeriod())
         return;
 
-    forEachAssociatedContext([](ScriptExecutionContext& context) {
+    m_lastIdlePeriodStartTime = MonotonicTime::now();
+
+    forEachAssociatedContext([&](ScriptExecutionContext& context) {
         RefPtr document = dynamicDowncast<Document>(context);
         if (!document)
             return;
@@ -138,9 +151,22 @@ bool WindowEventLoop::shouldEndIdlePeriod()
         return true;
     if (!microtaskQueue().isEmpty())
         return true;
-    if (m_hasARenderingOpportunity)
+    if (!m_pagesWithRenderingOpportunity.isEmptyIgnoringNullReferences())
         return true;
     return false;
+}
+
+MonotonicTime WindowEventLoop::computeIdleDeadline()
+{
+    if (!m_pagesWithRenderingOpportunity.isEmptyIgnoringNullReferences()) {
+        MonotonicTime minRenderingUpdateTime = MonotonicTime::infinity();
+        for (auto it : m_pagesWithRenderingOpportunity) {
+            if (it.value < minRenderingUpdateTime)
+                minRenderingUpdateTime = it.value;
+        }
+        return minRenderingUpdateTime;
+    }
+    return m_lastIdlePeriodStartTime + 50_ms;
 }
 
 void WindowEventLoop::didReachTimeToRun()

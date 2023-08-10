@@ -166,27 +166,27 @@ static constexpr float mainArticleSignificantRenderedTextMeanLength = 25;
 
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
 {
-    Overflow overflow = style.overflowY();
+    auto overflow = style.overflowY();
     if (overflow != Overflow::PagedX && overflow != Overflow::PagedY)
         return Unpaginated;
 
     bool isHorizontalWritingMode = style.isHorizontalWritingMode();
-    TextDirection textDirection = style.direction();
-    WritingMode writingMode = style.writingMode();
+    auto textDirection = style.direction();
+    auto blockFlowDirection = writingModeToBlockFlowDirection(style.writingMode());
 
     // paged-x always corresponds to LeftToRightPaginated or RightToLeftPaginated. If the WritingMode
     // is horizontal, then we use TextDirection to choose between those options. If the WritingMode
-    // is vertical, then the direction of the verticality dictates the choice.
+    // is vertical, then the block flow direction dictates the choice.
     if (overflow == Overflow::PagedX) {
-        if ((isHorizontalWritingMode && textDirection == TextDirection::LTR) || writingMode == WritingMode::LeftToRight)
+        if ((isHorizontalWritingMode && textDirection == TextDirection::LTR) || blockFlowDirection == BlockFlowDirection::LeftToRight)
             return LeftToRightPaginated;
         return RightToLeftPaginated;
     }
 
     // paged-y always corresponds to TopToBottomPaginated or BottomToTopPaginated. If the WritingMode
-    // is horizontal, then the direction of the horizontality dictates the choice. If the WritingMode
+    // is horizontal, then the block flow direction dictates the choice. If the WritingMode
     // is vertical, then we use TextDirection to choose between those options. 
-    if (writingMode == WritingMode::TopToBottom || (!isHorizontalWritingMode && textDirection == TextDirection::RTL))
+    if (blockFlowDirection == BlockFlowDirection::TopToBottom || (!isHorizontalWritingMode && textDirection == TextDirection::RTL))
         return TopToBottomPaginated;
     return BottomToTopPaginated;
 }

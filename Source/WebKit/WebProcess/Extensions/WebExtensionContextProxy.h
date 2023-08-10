@@ -44,6 +44,7 @@ namespace WebKit {
 class WebExtensionAPINamespace;
 class WebExtensionMatchPattern;
 class WebFrame;
+struct WebExtensionAlarmParameters;
 
 class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProxy>, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -83,6 +84,9 @@ public:
 private:
     explicit WebExtensionContextProxy(const WebExtensionContextParameters&);
 
+    // Alarms support
+    void dispatchAlarmEvent(const WebExtensionAlarmParameters&);
+
     // webNavigation support
     void dispatchWebNavigationOnBeforeNavigateEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
     void dispatchWebNavigationOnCommittedEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
@@ -91,7 +95,7 @@ private:
     void dispatchWebNavigationOnErrorOccurredEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
 
     // Permissions support
-    void dispatchPermissionsEvent(const WebKit::WebExtensionEventListenerType&, HashSet<String> permissions, HashSet<String> origins);
+    void dispatchPermissionsEvent(const WebExtensionEventListenerType&, HashSet<String> permissions, HashSet<String> origins);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

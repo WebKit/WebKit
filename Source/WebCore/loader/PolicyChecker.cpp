@@ -102,7 +102,9 @@ URLKeepingBlobAlive FrameLoader::PolicyChecker::extendBlobURLLifetimeIfNecessary
     if (mode != PolicyDecisionMode::Asynchronous || !request.url().protocolIsBlob())
         return { };
 
-    return { request.url(), document.topOrigin().data() };
+    bool haveTriggeringRequester = m_frame.loader().policyDocumentLoader() && !m_frame.loader().policyDocumentLoader()->triggeringAction().isEmpty() && m_frame.loader().policyDocumentLoader()->triggeringAction().requester();
+    auto& topOrigin = haveTriggeringRequester ? m_frame.loader().policyDocumentLoader()->triggeringAction().requester()->topOrigin->data() : document.topOrigin().data();
+    return { request.url(), topOrigin };
 }
 
 void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const ResourceResponse& redirectResponse, DocumentLoader* loader, RefPtr<FormState>&& formState, NavigationPolicyDecisionFunction&& function, PolicyDecisionMode policyDecisionMode)

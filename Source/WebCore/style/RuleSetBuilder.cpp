@@ -227,7 +227,6 @@ void RuleSetBuilder::resolveSelectorListWithNesting(StyleRuleWithNesting& rule)
         return;
 
     auto resolvedSelectorList = CSSSelectorParser::resolveNestingParent(rule.originalSelectorList(), parentResolvedSelectorList);
-    ASSERT(!resolvedSelectorList.hasExplicitNestingParent());
     rule.wrapperAdoptSelectorList(WTFMove(resolvedSelectorList));    
 }
 

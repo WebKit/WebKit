@@ -117,7 +117,6 @@ NetworkProcess/NetworkSocketChannel.cpp
 NetworkProcess/PingLoad.cpp
 NetworkProcess/PreconnectTask.cpp
 
-NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp
 NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp
 
 NetworkProcess/Cookies/WebCookieManager.cpp
@@ -554,6 +553,7 @@ UIProcess/Automation/WebAutomationSession.cpp @no-unify
 UIProcess/Downloads/DownloadProxy.cpp
 UIProcess/Downloads/DownloadProxyMap.cpp
 
+UIProcess/Extensions/WebExtensionAlarm.cpp
 UIProcess/Extensions/WebExtensionContext.cpp
 UIProcess/Extensions/WebExtensionController.cpp
 UIProcess/Extensions/WebExtensionControllerConfiguration.cpp

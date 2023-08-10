@@ -36,7 +36,7 @@ namespace WebCore {
 class Document;
 class WeakPtrImplWithEventTargetData;
 
-class IdleCallbackController {
+class IdleCallbackController : public CanMakeWeakPtr<IdleCallbackController> {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
@@ -49,11 +49,11 @@ public:
 
 private:
     void queueTaskToStartIdlePeriod();
-    void queueTaskToInvokeIdleCallbacks(MonotonicTime deadline);
-    void invokeIdleCallbacks(MonotonicTime deadline);
+    void queueTaskToInvokeIdleCallbacks();
+    void invokeIdleCallbacks();
+    void invokeIdleCallbackTimeout(unsigned identifier);
 
     unsigned m_idleCallbackIdentifier { 0 };
-    MonotonicTime m_lastDeadline;
 
     struct IdleRequest {
         unsigned identifier { 0 };

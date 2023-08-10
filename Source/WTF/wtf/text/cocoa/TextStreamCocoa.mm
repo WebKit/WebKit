@@ -51,4 +51,22 @@ TextStream& TextStream::operator<<(NSArray *array)
     return *this << "]";
 }
 
+TextStream& TextStream::operator<<(CGRect rect)
+{
+    *this << "{{" << rect.origin.x << ", " << rect.origin.y << "}, {" << rect.size.width << ", " << rect.size.height << "}}";
+    return *this;
+}
+
+TextStream& TextStream::operator<<(CGSize size)
+{
+    *this << "{" << size.width << ", " << size.height << "}";
+    return *this;
+}
+
+TextStream& TextStream::operator<<(CGPoint point)
+{
+    *this << "{" << point.x << ", " << point.y << "}";
+    return *this;
+}
+
 }

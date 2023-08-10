@@ -34,6 +34,7 @@
 #include "PageClientImpl.h"
 #include "WKAPICast.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebKitDLL.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
@@ -44,7 +45,6 @@
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/WebCoreBundleWin.h>
-#include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebKit/WKPage.h>
 #include <wtf/FileSystem.h>
@@ -204,7 +204,7 @@ bool WebInspectorUIProxy::registerWindowClass()
     wcex.lpfnWndProc = wndProc;
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
-    wcex.hInstance = WebCore::instanceHandle();
+    wcex.hInstance = instanceHandle();
     wcex.hIcon = 0;
     wcex.hCursor = LoadCursor(0, IDC_ARROW);
     wcex.hbrBackground = 0;
@@ -377,7 +377,7 @@ void WebInspectorUIProxy::platformDetach()
         registerWindowClass();
         m_inspectorDetachWindow = ::CreateWindowEx(0, WebInspectorUIProxyClassName, 0, WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT, CW_USEDEFAULT, initialWindowWidth, initialWindowHeight,
-            0, 0, WebCore::instanceHandle(), 0);
+            0, 0, instanceHandle(), 0);
         ::SetProp(m_inspectorDetachWindow, WebInspectorUIProxyPointerProp, reinterpret_cast<HANDLE>(this));
     }
 

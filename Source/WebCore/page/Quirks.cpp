@@ -374,7 +374,6 @@ bool Quirks::isGoogleMaps() const
 // desmos.com rdar://47068176
 // msn.com rdar://49403260
 // flipkart.com rdar://49648520
-// iqiyi.com rdar://53235709
 // soundcloud.com rdar://52915981
 // naver.com rdar://48068610
 // mybinder.org rdar://51770057
@@ -411,8 +410,6 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
         if (host == "msn.com"_s || host.endsWith(".msn.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "flipkart.com"_s || host.endsWith(".flipkart.com"_s))
-            return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "iqiyi.com"_s || host.endsWith(".iqiyi.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "trailers.apple.com"_s)
             return ShouldDispatchSimulatedMouseEvents::Yes;
@@ -991,26 +988,6 @@ bool Quirks::shouldEnableLegacyGetUserMediaQuirk() const
 }
 #endif
 
-// nfl.com rdar://58807210
-bool Quirks::shouldDisableElementFullscreenQuirk() const
-{
-#if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    if (m_shouldDisableElementFullscreenQuirk)
-        return m_shouldDisableElementFullscreenQuirk.value();
-
-    auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
-
-    m_shouldDisableElementFullscreenQuirk = domain == "nfl.com"_s || domain.endsWith(".nfl.com"_s);
-
-    return m_shouldDisableElementFullscreenQuirk.value();
-#else
-    return false;
-#endif
-}
-
 // hulu.com rdar://55041979
 bool Quirks::needsCanPlayAfterSeekedQuirk() const
 {
@@ -1036,16 +1013,6 @@ bool Quirks::shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() co
     // FIXME: We should consider replacing this with a heuristic to determine whether
     // or not the edges of the page mostly lack content after shrinking to fit.
     return isWikipediaDomain(m_document->url());
-}
-
-// shutterstock.com rdar://58843932
-bool Quirks::shouldIgnoreContentObservationForSyntheticClick(bool isFirstSyntheticClickOnPage) const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto host = m_document->url().host();
-    return isFirstSyntheticClickOnPage && (equalLettersIgnoringASCIICase(host, "shutterstock.com"_s) || host.endsWithIgnoringASCIICase(".shutterstock.com"_s));
 }
 
 // mail.yahoo.com rdar://63511613

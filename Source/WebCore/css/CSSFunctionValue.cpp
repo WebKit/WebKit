@@ -107,4 +107,10 @@ String CSSFunctionValue::customCSSText() const
     return result.toString();
 }
 
+bool CSSFunctionValue::addDerivedHash(Hasher& hasher) const
+{
+    add(hasher, m_name);
+    return CSSValueContainingVector::addDerivedHash(hasher);
+}
+
 }

@@ -94,10 +94,9 @@ inline void RefCounter<T>::Count::ref()
 template<typename T>
 inline void RefCounter<T>::Count::deref()
 {
-    ASSERT(m_value);
-
     // GCC gets confused here, see https://webkit.org/b/239338.
 IGNORE_GCC_WARNINGS_BEGIN("use-after-free")
+    ASSERT(m_value);
     --m_value;
 
     if (m_refCounter && m_refCounter->m_valueDidChange) {

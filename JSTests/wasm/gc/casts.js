@@ -848,6 +848,56 @@ function testNullCasts() {
   assert.throws(
     () => instantiate(`
       (module
+        (start 1)
+        (func (param funcref) (result nullfuncref)
+          (ref.cast (ref nofunc) (local.get 0)))
+        (func
+          (call 0 (ref.null func))
+          drop))
+    `),
+    WebAssembly.RuntimeError,
+    "ref.cast failed to cast reference to target heap type"
+  )
+
+  assert.eq(
+    instantiate(`
+      (module
+        (func (param funcref) (result i32)
+          (ref.test (ref nofunc) (local.get 0)))
+        (func (export "f") (result i32)
+          (call 0 (ref.null func))))
+    `).exports.f(),
+    0
+  );
+
+  assert.throws(
+    () => instantiate(`
+      (module
+        (start 1)
+        (func (param externref) (result nullexternref)
+          (ref.cast (ref noextern) (local.get 0)))
+        (func
+          (call 0 (ref.null extern))
+          drop))
+    `),
+    WebAssembly.RuntimeError,
+    "ref.cast failed to cast reference to target heap type"
+  )
+
+  assert.eq(
+    instantiate(`
+      (module
+        (func (param externref) (result i32)
+          (ref.test (ref noextern) (local.get 0)))
+        (func (export "f") (result i32)
+          (call 0 (ref.null extern))))
+    `).exports.f(),
+    0
+  );
+
+  assert.throws(
+    () => instantiate(`
+      (module
         (type (struct (field i32)))
         (start 1)
         (func (param structref) (result nullref)

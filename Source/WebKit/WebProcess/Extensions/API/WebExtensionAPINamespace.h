@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionAPINamespace.h"
+#include "WebExtensionAPIAlarms.h"
 #include "WebExtensionAPIExtension.h"
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionAPIPermissions.h"
@@ -47,6 +48,7 @@ public:
 #if PLATFORM(COCOA)
     bool isPropertyAllowed(String propertyName, WebPage*);
 
+    WebExtensionAPIAlarms& alarms();
     WebExtensionAPIExtension& extension();
     WebExtensionAPIPermissions& permissions();
     WebExtensionAPIRuntime& runtime() final;
@@ -55,6 +57,7 @@ public:
 #endif
 
 private:
+    RefPtr<WebExtensionAPIAlarms> m_alarms;
     RefPtr<WebExtensionAPIExtension> m_extension;
     RefPtr<WebExtensionAPIPermissions> m_permissions;
     RefPtr<WebExtensionAPIRuntime> m_runtime;

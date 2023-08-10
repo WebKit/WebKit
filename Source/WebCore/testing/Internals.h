@@ -298,6 +298,8 @@ public:
     // For animations testing, we need a way to get at pseudo elements.
     ExceptionOr<RefPtr<Element>> pseudoElement(Element&, const String&);
 
+    double preferredRenderingUpdateInterval();
+
     Node* treeScopeRootNode(Node&);
     Node* parentTreeScope(Node&);
 

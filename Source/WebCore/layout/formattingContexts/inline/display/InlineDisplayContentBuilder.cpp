@@ -907,14 +907,14 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(InlineDis
             m_contentHasInkOverflow = true;
             auto inflatedVisualOverflowRect = [&] {
                 auto inkOverflowRect = displayBox.inkOverflow();
-                switch (writingMode) {
-                case WritingMode::TopToBottom:
+                switch (writingModeToBlockFlowDirection(writingMode)) {
+                case BlockFlowDirection::TopToBottom:
                     inkOverflowRect.inflate(decorationOverflow.left, decorationOverflow.top, decorationOverflow.right, decorationOverflow.bottom);
                     break;
-                case WritingMode::LeftToRight:
+                case BlockFlowDirection::LeftToRight:
                     inkOverflowRect.inflate(decorationOverflow.bottom, decorationOverflow.right, decorationOverflow.top, decorationOverflow.left);
                     break;
-                case WritingMode::RightToLeft:
+                case BlockFlowDirection::RightToLeft:
                     inkOverflowRect.inflate(decorationOverflow.top, decorationOverflow.right, decorationOverflow.bottom, decorationOverflow.left);
                     break;
                 default:
@@ -930,15 +930,15 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(InlineDis
 
 InlineRect InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingModeWithinLine(const InlineRect& logicalRect, const InlineRect& lineLogicalRect, WritingMode writingMode) const
 {
-    switch (writingMode) {
-    case WritingMode::TopToBottom:
+    switch (writingModeToBlockFlowDirection(writingMode)) {
+    case BlockFlowDirection::TopToBottom:
         return logicalRect;
-    case WritingMode::LeftToRight: {
+    case BlockFlowDirection::LeftToRight: {
         // Flip content such that the top (visual left) is now relative to the line bottom instead of the line top.
         auto bottomOffset = lineLogicalRect.height() - logicalRect.bottom();
         return { logicalRect.left(), bottomOffset, logicalRect.height(), logicalRect.width() };
     }
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::RightToLeft:
         // See InlineFormattingGeometry for more info.
         return { logicalRect.left(), logicalRect.top(), logicalRect.height(), logicalRect.width() };
     default:
@@ -950,14 +950,14 @@ InlineRect InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingModeWit
 
 InlineRect InlineDisplayContentBuilder::flipRootInlineBoxRectToVisualForWritingMode(const InlineRect& rootInlineBoxLogicalRect, WritingMode writingMode) const
 {
-    switch (writingMode) {
-    case WritingMode::TopToBottom: {
+    switch (writingModeToBlockFlowDirection(writingMode)) {
+    case BlockFlowDirection::TopToBottom: {
         auto visualRect = rootInlineBoxLogicalRect;
         visualRect.moveBy({ m_displayLine.left(), m_displayLine.top() });
         return visualRect;
     }
-    case WritingMode::LeftToRight:
-    case WritingMode::RightToLeft: {
+    case BlockFlowDirection::LeftToRight:
+    case BlockFlowDirection::RightToLeft: {
         // See InlineFormattingGeometry for more info.
         auto visualRect = InlineRect { rootInlineBoxLogicalRect.left(), rootInlineBoxLogicalRect.top(), rootInlineBoxLogicalRect.height(), rootInlineBoxLogicalRect.width() };
         visualRect.moveBy({ m_displayLine.left(), m_displayLine.top() });
@@ -972,12 +972,12 @@ InlineRect InlineDisplayContentBuilder::flipRootInlineBoxRectToVisualForWritingM
 
 void InlineDisplayContentBuilder::setLeftForWritingMode(InlineDisplay::Box& displayBox, InlineLayoutUnit logicalLeft, WritingMode writingMode) const
 {
-    switch (writingMode) {
-    case WritingMode::TopToBottom:
+    switch (writingModeToBlockFlowDirection(writingMode)) {
+    case BlockFlowDirection::TopToBottom:
         displayBox.setLeft(logicalLeft);
         break;
-    case WritingMode::LeftToRight:
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::LeftToRight:
+    case BlockFlowDirection::RightToLeft:
         displayBox.setTop(logicalLeft);
         break;
     default:
@@ -988,12 +988,12 @@ void InlineDisplayContentBuilder::setLeftForWritingMode(InlineDisplay::Box& disp
 
 void InlineDisplayContentBuilder::setRightForWritingMode(InlineDisplay::Box& displayBox, InlineLayoutUnit logicalRight, WritingMode writingMode) const
 {
-    switch (writingMode) {
-    case WritingMode::TopToBottom:
+    switch (writingModeToBlockFlowDirection(writingMode)) {
+    case BlockFlowDirection::TopToBottom:
         displayBox.setRight(logicalRight);
         break;
-    case WritingMode::LeftToRight:
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::LeftToRight:
+    case BlockFlowDirection::RightToLeft:
         displayBox.setBottom(logicalRight);
         break;
     default:

@@ -36,39 +36,74 @@
 
 namespace WebCore {
 
-enum class WritingMode : uint8_t {
-    TopToBottom = 0, // horizontal-tb
-    BottomToTop = 1, // horizontal-bt
-    LeftToRight = 2, // vertical-lr
-    RightToLeft = 3, // vertical-rl
+enum class TypographicMode : bool {
+    Horizontal,
+    Vertical,
 };
 
-constexpr unsigned makeTextFlowInitalizer(WritingMode writingMode, TextDirection direction)
+enum class BlockFlowDirection : uint8_t {
+    TopToBottom,
+    BottomToTop,
+    LeftToRight,
+    RightToLeft,
+};
+
+enum class WritingMode : uint8_t {
+    HorizontalTb,
+    HorizontalBt, // Non-standard
+    VerticalLr,
+    VerticalRl,
+    SidewaysLr,
+    SidewaysRl,
+};
+
+constexpr inline BlockFlowDirection writingModeToBlockFlowDirection(WritingMode writingMode)
 {
-    return static_cast<unsigned>(writingMode) << 1 | static_cast<unsigned>(direction);
+    switch (writingMode) {
+    case WritingMode::HorizontalTb:
+        return BlockFlowDirection::TopToBottom;
+    case WritingMode::HorizontalBt:
+        return BlockFlowDirection::BottomToTop;
+    case WritingMode::SidewaysLr:
+    case WritingMode::VerticalLr:
+        return BlockFlowDirection::LeftToRight;
+    case WritingMode::SidewaysRl:
+    case WritingMode::VerticalRl:
+        return BlockFlowDirection::RightToLeft;
+    }
+    ASSERT_NOT_REACHED();
+    return BlockFlowDirection::TopToBottom;
+}
+
+constexpr unsigned makeTextFlowInitalizer(BlockFlowDirection blockFlow, TextDirection direction)
+{
+    return static_cast<unsigned>(blockFlow) << 1 | static_cast<unsigned>(direction);
 }
 
 // Define the text flow in terms of the writing mode and the text direction. The first
-// part is the line growing direction and the second part is the block growing direction.
+// part is the block flow direction and the second part is the inline base direction.
 enum TextFlow {
-    InlineEastBlockSouth = makeTextFlowInitalizer(WritingMode::TopToBottom, TextDirection::LTR),
-    InlineWestBlockSouth = makeTextFlowInitalizer(WritingMode::TopToBottom, TextDirection::RTL),
-    InlineEastBlockNorth = makeTextFlowInitalizer(WritingMode::BottomToTop, TextDirection::LTR),
-    InlineWestBlockNorth = makeTextFlowInitalizer(WritingMode::BottomToTop, TextDirection::RTL),
-    InlineSouthBlockEast = makeTextFlowInitalizer(WritingMode::LeftToRight, TextDirection::LTR),
-    InlineSouthBlockWest = makeTextFlowInitalizer(WritingMode::LeftToRight, TextDirection::RTL),
-    InlineNorthBlockEast = makeTextFlowInitalizer(WritingMode::RightToLeft, TextDirection::LTR),
-    InlineNorthBlockWest = makeTextFlowInitalizer(WritingMode::RightToLeft, TextDirection::RTL)
+    InlineEastBlockSouth = makeTextFlowInitalizer(BlockFlowDirection::TopToBottom, TextDirection::LTR),
+    InlineWestBlockSouth = makeTextFlowInitalizer(BlockFlowDirection::TopToBottom, TextDirection::RTL),
+    InlineEastBlockNorth = makeTextFlowInitalizer(BlockFlowDirection::BottomToTop, TextDirection::LTR),
+    InlineWestBlockNorth = makeTextFlowInitalizer(BlockFlowDirection::BottomToTop, TextDirection::RTL),
+    InlineSouthBlockEast = makeTextFlowInitalizer(BlockFlowDirection::LeftToRight, TextDirection::LTR),
+    InlineSouthBlockWest = makeTextFlowInitalizer(BlockFlowDirection::LeftToRight, TextDirection::RTL),
+    InlineNorthBlockEast = makeTextFlowInitalizer(BlockFlowDirection::RightToLeft, TextDirection::LTR),
+    InlineNorthBlockWest = makeTextFlowInitalizer(BlockFlowDirection::RightToLeft, TextDirection::RTL)
 };
 
 constexpr inline TextFlow makeTextFlow(WritingMode writingMode, TextDirection direction)
 {
-    return static_cast<TextFlow>(makeTextFlowInitalizer(writingMode, direction));
+    TextDirection inlineBaseDirection = direction;
+    if (writingMode == WritingMode::SidewaysLr)
+        inlineBaseDirection = direction == TextDirection::RTL ? TextDirection::LTR : TextDirection::RTL;
+    return static_cast<TextFlow>(makeTextFlowInitalizer(writingModeToBlockFlowDirection(writingMode), inlineBaseDirection));
 }
 
 constexpr unsigned TextFlowReversedMask = 1;
-constexpr unsigned TextFlowFlippedMask = 2;
-constexpr unsigned TextFlowVerticalMask = 4;
+constexpr unsigned TextFlowFlippedMask = 1 << 1;
+constexpr unsigned TextFlowVerticalMask = 1 << 2;
 
 constexpr inline bool isReversedTextFlow(TextFlow textflow)
 {

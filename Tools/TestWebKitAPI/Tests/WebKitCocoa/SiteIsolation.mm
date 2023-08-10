@@ -1095,20 +1095,39 @@ TEST(SiteIsolation, IframeRedirectSameSite)
 TEST(SiteIsolation, IframeRedirectCrossSite)
 {
     HTTPServer server({
-        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
-        { "/webkit"_s, { 302, { { "Location"_s, "https://apple.com/apple"_s } }, "redirecting..."_s } },
-        { "/apple"_s, { "arrived!"_s } }
+        { "/example1"_s, { "<iframe src='https://webkit.org/webkit1'></iframe>"_s } },
+        { "/webkit1"_s, { 302, { { "Location"_s, "https://apple.com/apple1"_s } }, "redirecting..."_s } },
+        { "/apple1"_s, { "arrived!"_s } },
+        { "/example2"_s, { "<iframe src='https://webkit.org/webkit2'></iframe>"_s } },
+        { "/webkit2"_s, { 302, { { "Location"_s, "https://webkit.org/webkit3"_s } }, "redirecting..."_s } },
+        { "/webkit3"_s, { 302, { { "Location"_s, "https://example.com/example3"_s } }, "redirecting..."_s } },
+        { "/example3"_s, { "arrived!"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     auto configuration = server.httpsProxyConfiguration();
-    // FIXME: call enableSiteIsolation here and make that work.
+    enableSiteIsolation(configuration);
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example1"]]];
     [navigationDelegate waitForDidFinishNavigation];
-    // FIXME: Call checkFrameTreesInProcesses here and make sure the frames are in reasonable processes.
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://apple.com"_s } }
+        }
+    });
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example2"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { "https://example.com"_s } }
+        }
+    });
 }
 
 TEST(SiteIsolation, NavigationWithIFrames)

@@ -95,7 +95,6 @@ public:
     WEBCORE_EXPORT bool shouldIgnoreAriaForFastPathContentObservationCheck() const;
     WEBCORE_EXPORT bool shouldIgnoreViewportArgumentsToAvoidExcessiveZoom() const;
     WEBCORE_EXPORT bool shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() const;
-    WEBCORE_EXPORT bool shouldIgnoreContentObservationForSyntheticClick(bool isFirstSyntheticClickOnPage) const;
     WEBCORE_EXPORT static bool shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin);
 
     WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
@@ -119,8 +118,6 @@ public:
 #if ENABLE(MEDIA_STREAM)
     bool shouldEnableLegacyGetUserMediaQuirk() const;
 #endif
-
-    bool shouldDisableElementFullscreenQuirk() const;
 
     bool needsCanPlayAfterSeekedQuirk() const;
 
@@ -198,7 +195,6 @@ private:
     mutable std::optional<bool> m_needsFullscreenDisplayNoneQuirk;
     mutable std::optional<bool> m_shouldAvoidPastingImagesAsWebContent;
 #endif
-    mutable std::optional<bool> m_shouldDisableElementFullscreenQuirk;
 #if ENABLE(TOUCH_EVENTS)
     enum class ShouldDispatchSimulatedMouseEvents : uint8_t {
         Unknown,

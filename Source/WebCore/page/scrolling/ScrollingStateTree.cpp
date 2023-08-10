@@ -74,8 +74,9 @@ void ScrollingStateTree::setHasChangedProperties(bool changedProperties)
     m_hasChangedProperties = changedProperties;
 
 #if ENABLE(ASYNC_SCROLLING)
-    if (gainedChangedProperties && m_scrollingCoordinator)
-        m_scrollingCoordinator->scrollingStateTreePropertiesChanged();
+    auto scrollingCoordinator = m_scrollingCoordinator.get();
+    if (gainedChangedProperties && scrollingCoordinator)
+        scrollingCoordinator->scrollingStateTreePropertiesChanged();
 #endif
 }
 
@@ -117,7 +118,10 @@ ScrollingNodeID ScrollingStateTree::createUnparentedNode(ScrollingNodeType nodeT
         // If the type has changed, we need to destroy and recreate the node with a new ID.
         if (nodeType != node->nodeType()) {
             unparentChildrenAndDestroyNode(newNodeID);
-            newNodeID = m_scrollingCoordinator->uniqueScrollingNodeID();
+            if (auto scrollingCoordinator = m_scrollingCoordinator.get())
+                newNodeID = scrollingCoordinator->uniqueScrollingNodeID();
+            else
+                ASSERT_NOT_REACHED();
         }
 #endif
     }
@@ -157,8 +161,12 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
 
 #if ENABLE(ASYNC_SCROLLING)
         // If the type has changed, we need to destroy and recreate the node with a new ID.
-        if (nodeType != node->nodeType())
-            newNodeID = m_scrollingCoordinator->uniqueScrollingNodeID();
+        if (nodeType != node->nodeType()) {
+            if (auto scrollingCoordinator = m_scrollingCoordinator.get())
+                newNodeID = scrollingCoordinator->uniqueScrollingNodeID();
+            else
+                ASSERT_NOT_REACHED();
+        }
 #endif
 
         // The node is being re-parented. To do that, we'll remove it, and then create a new node.

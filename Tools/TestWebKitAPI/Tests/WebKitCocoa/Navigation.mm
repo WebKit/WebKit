@@ -1798,3 +1798,60 @@ TEST(WKNavigation, LeakCheck)
     while (navigationToExample)
         Util::spinRunLoop();
 }
+
+TEST(WKNavigation, Multiple303Redirects)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer httpServer({
+        { "http://site.example/page1"_s, { 303, {{ "Location"_s, "http://site.example/page2"_s }}, "see other..."_s } },
+        { "http://site.example/page2"_s, { 303, {{ "Location"_s, "http://site.example/page3"_s }}, "see other..."_s } },
+        { "http://site.example/page3"_s, { "Done."_s  } },
+    });
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port())
+    }];
+
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    __block bool finishedSuccessfully { false };
+    __block bool reachedPage3 { false };
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.path isEqual:@"/page1"]) {
+            EXPECT_WK_STREQ(action.request.URL.path, @"/page1");
+            EXPECT_WK_STREQ(action.request.HTTPMethod, @"POST");
+            EXPECT_WK_STREQ(action.request.allHTTPHeaderFields[@"Content-Type"], @"text/plain");
+        } else if ([action.request.URL.path isEqual:@"/page2"]) {
+            EXPECT_WK_STREQ(action.request.HTTPMethod, @"GET");
+            EXPECT_NULL(action.request.allHTTPHeaderFields[@"Content-Type"]);
+        } else if ([action.request.URL.path isEqual:@"/page3"]) {
+            EXPECT_WK_STREQ(action.request.HTTPMethod, @"GET");
+            EXPECT_NULL(action.request.allHTTPHeaderFields[@"Content-Type"]);
+            reachedPage3 = true;
+        } else
+            EXPECT_TRUE(0);
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedSuccessfully = true;
+    };
+
+    [webView setNavigationDelegate:delegate.get()];
+    auto request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://site.example/page1"]];
+    request.HTTPMethod = @"POST";
+    [request setValue:@"text/plain" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"0" forHTTPHeaderField:@"Content-Length"];
+    [webView loadRequest:request];
+
+    while (!finishedSuccessfully)
+        TestWebKitAPI::Util::spinRunLoop(5);
+
+    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_TRUE(reachedPage3);
+}

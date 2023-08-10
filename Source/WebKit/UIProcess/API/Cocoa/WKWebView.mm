@@ -2460,7 +2460,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_dataTaskWithRequest:(NSURLRequest *)request completionHandler:(void(^)(_WKDataTask *))completionHandler
 {
-    _page->dataTaskWithRequest(request, [completionHandler = makeBlockPtr(completionHandler)] (Ref<API::DataTask>&& task) {
+    _page->dataTaskWithRequest(request, std::nullopt, [completionHandler = makeBlockPtr(completionHandler)] (Ref<API::DataTask>&& task) {
         completionHandler(wrapper(task));
     });
 }

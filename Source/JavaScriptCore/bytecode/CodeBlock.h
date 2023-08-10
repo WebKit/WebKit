@@ -996,7 +996,8 @@ private:
     HashSet<UniquedStringImpl*> m_cachedIdentifierUids;
 #endif
 };
-#if defined(NDEBUG) && COMPILER(GCC_COMPATIBLE)
+/* This check is for normal Release builds; ASSERT_ENABLED changes the size. */
+#if defined(NDEBUG) && !defined(ASSERT_ENABLED) && COMPILER(GCC_COMPATIBLE)
 static_assert(sizeof(CodeBlock) <= 240, "Keep it small for memory saving");
 #endif
 

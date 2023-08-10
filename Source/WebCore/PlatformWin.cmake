@@ -143,7 +143,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/win/SystemInfo.h
     platform/win/WCDataObject.h
     platform/win/WebCoreBundleWin.h
-    platform/win/WebCoreInstanceHandle.h
     platform/win/WebCoreTextRenderer.h
     platform/win/WindowMessageBroadcaster.h
     platform/win/WindowMessageListener.h

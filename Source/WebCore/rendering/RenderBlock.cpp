@@ -3327,12 +3327,12 @@ void RenderBlock::adjustBorderBoxRectForPainting(LayoutRect& paintRect)
     if (style().isHorizontalWritingMode()) {
         LayoutUnit yOff = std::max(0_lu, (legend->height() - RenderBox::borderBefore()) / 2);
         paintRect.setHeight(paintRect.height() - yOff);
-        if (style().writingMode() == WritingMode::TopToBottom)
+        if (style().blockFlowDirection() == BlockFlowDirection::TopToBottom)
             paintRect.setY(paintRect.y() + yOff);
     } else {
         LayoutUnit xOff = std::max(0_lu, (legend->width() - RenderBox::borderBefore()) / 2);
         paintRect.setWidth(paintRect.width() - xOff);
-        if (style().writingMode() == WritingMode::LeftToRight)
+        if (style().blockFlowDirection() == BlockFlowDirection::LeftToRight)
             paintRect.setX(paintRect.x() + xOff);
     }
 }
@@ -3349,11 +3349,11 @@ LayoutRect RenderBlock::paintRectToClipOutFromBorder(const LayoutRect& paintRect
     LayoutUnit borderExtent = RenderBox::borderBefore();
     if (style().isHorizontalWritingMode()) {
         clipRect.setX(paintRect.x() + legend->x());
-        clipRect.setY(style().writingMode() == WritingMode::TopToBottom ? paintRect.y() : paintRect.y() + paintRect.height() - borderExtent);
+        clipRect.setY(style().blockFlowDirection() == BlockFlowDirection::TopToBottom ? paintRect.y() : paintRect.y() + paintRect.height() - borderExtent);
         clipRect.setWidth(legend->width());
         clipRect.setHeight(borderExtent);
     } else {
-        clipRect.setX(style().writingMode() == WritingMode::LeftToRight ? paintRect.x() : paintRect.x() + paintRect.width() - borderExtent);
+        clipRect.setX(style().blockFlowDirection() == BlockFlowDirection::LeftToRight ? paintRect.x() : paintRect.x() + paintRect.width() - borderExtent);
         clipRect.setY(paintRect.y() + legend->y());
         clipRect.setWidth(borderExtent);
         clipRect.setHeight(legend->height());
@@ -3380,28 +3380,28 @@ void RenderBlock::setIntrinsicBorderForFieldset(LayoutUnit padding)
 
 LayoutUnit RenderBlock::borderTop() const
 {
-    if (style().writingMode() != WritingMode::TopToBottom || !intrinsicBorderForFieldset())
+    if (style().blockFlowDirection() != BlockFlowDirection::TopToBottom || !intrinsicBorderForFieldset())
         return RenderBox::borderTop();
     return RenderBox::borderTop() + intrinsicBorderForFieldset();
 }
 
 LayoutUnit RenderBlock::borderLeft() const
 {
-    if (style().writingMode() != WritingMode::LeftToRight || !intrinsicBorderForFieldset())
+    if (style().blockFlowDirection() != BlockFlowDirection::LeftToRight || !intrinsicBorderForFieldset())
         return RenderBox::borderLeft();
     return RenderBox::borderLeft() + intrinsicBorderForFieldset();
 }
 
 LayoutUnit RenderBlock::borderBottom() const
 {
-    if (style().writingMode() != WritingMode::BottomToTop || !intrinsicBorderForFieldset())
+    if (style().blockFlowDirection() != BlockFlowDirection::BottomToTop || !intrinsicBorderForFieldset())
         return RenderBox::borderBottom();
     return RenderBox::borderBottom() + intrinsicBorderForFieldset();
 }
 
 LayoutUnit RenderBlock::borderRight() const
 {
-    if (style().writingMode() != WritingMode::RightToLeft || !intrinsicBorderForFieldset())
+    if (style().blockFlowDirection() != BlockFlowDirection::RightToLeft || !intrinsicBorderForFieldset())
         return RenderBox::borderRight();
     return RenderBox::borderRight() + intrinsicBorderForFieldset();
 }

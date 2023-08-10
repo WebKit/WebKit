@@ -4299,9 +4299,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/individual-transform/animation/individual-transform-ordering.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-008.tentative.html [ ImageOnlyFailure ]
 
-# writing-modes: sideways-lr/sideways-rl support.
-webkit.org/b/166941 imported/w3c/web-platform-tests/css/css-writing-modes/logical-physical-mapping-001.html [ ImageOnlyFailure ]
-
 # Vertical form controls support.
 webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-horizontal.optional.html [ ImageOnlyFailure ]
 webkit.org/b/248262 imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vlr.optional.html [ ImageOnlyFailure ]
@@ -4352,18 +4349,7 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-slr-062.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-slr-063.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-slr-066.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-042.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-045.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-046.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-049.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-051.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-052.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-053.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-057.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-059.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-061.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-064.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-srl-065.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-018.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-017.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-001.html [ ImageOnlyFailure ]
@@ -4372,13 +4358,11 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/ch-uni
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-006.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-007.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/ch-units-vrl-008.html [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/clearance-calculations-vrl-006.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/float-in-htb-in-vrl.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-003.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-005.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-007.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-slr-009.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-srl-008.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/inline-table-alignment-003.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/inline-table-alignment-005.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-slr-043.xht [ ImageOnlyFailure ]
@@ -4390,15 +4374,7 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-b
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-slr-056.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-slr-058.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-slr-060.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-srl-042.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-srl-045.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-srl-046.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-srl-049.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-srl-051.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-srl-052.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-srl-055.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-srl-057.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-srl-059.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vlr-016.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vrl-015.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ ImageOnlyFailure ]
@@ -4416,8 +4392,6 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/overco
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/overconstrained-rel-pos-rtl-top-bottom-vrl-006.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/row-progression-slr-023.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/row-progression-slr-029.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/row-progression-srl-022.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/row-progression-srl-028.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vlr-001.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vlr-004.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vrl-001.xht [ ImageOnlyFailure ]
@@ -4439,11 +4413,8 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/sizing
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-cell-001.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-cell-002.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-column-order-slr-007.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-column-order-srl-006.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-progression-slr-001.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-progression-slr-002.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-progression-srl-001.html [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-progression-srl-002.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-progression-vlr-001.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-progression-vlr-003.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-progression-vlr-004.html [ ImageOnlyFailure ]
@@ -4451,13 +4422,10 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-progression-vrl-003.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/table-progression-vrl-004.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-slr-009.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-srl-008.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-mixed-srl-016.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-mixed-vlr-100.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-mixed-vrl-100.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-sideways-vlr-100.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-sideways-vrl-100.html [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-upright-srl-018.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-upright-vlr-100.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-upright-vrl-100.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/three-levels-of-orthogonal-flows.html [ ImageOnlyFailure ]
@@ -4469,11 +4437,6 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertic
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-033.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-035.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-041.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-srl-028.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-srl-030.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-srl-032.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-srl-034.xht [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-srl-040.xht [ ImageOnlyFailure ]
 
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-012.html [ ImageOnlyFailure ]
 webkit.org/b/219343 imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-005.html [ ImageOnlyFailure ]
@@ -4513,6 +4476,10 @@ webkit.org/b/234704 imported/w3c/web-platform-tests/css/css-writing-modes/text-c
 webkit.org/b/234704 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-compression-006a.html [ ImageOnlyFailure ]
 webkit.org/b/234704 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-compression-007.html [ ImageOnlyFailure ]
 
+# sideways writing-mode with text-combine-upright
+webkit.org/b/260034 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-001.html [ ImageOnlyFailure ]
+webkit.org/b/260034 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-002.html [ ImageOnlyFailure ]
+
 # Used flex-basis should be used to compute definiteness instead of specified.
 webkit.org/b/233196 imported/w3c/web-platform-tests/css/css-flexbox/percentage-heights-016.html [ ImageOnlyFailure ]
 webkit.org/b/233196 imported/w3c/web-platform-tests/css/css-flexbox/percentage-heights-017.html [ ImageOnlyFailure ]
@@ -4530,7 +4497,6 @@ webkit.org/b/221474 imported/w3c/web-platform-tests/css/css-flexbox/svg-root-as-
 # align baseline in flexbox.
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/baseline-synthesis-003.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-006.xhtml [ ImageOnlyFailure ]
-webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-008.xhtml [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-001.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-002.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/dynamic-baseline-change-nested.html [ ImageOnlyFailure ]
@@ -4609,12 +4575,9 @@ webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/availa
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-018.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/direction-upright-001.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/direction-upright-002.html [ ImageOnlyFailure ]
-webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/slr-alongside-vlr-floats.html [ ImageOnlyFailure ]
-webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/srl-alongside-vrl-floats.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/tcy-white-space-processing-001.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-initial.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-001.html [ ImageOnlyFailure ]
-webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-034.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-035.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-036.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-037.html [ ImageOnlyFailure ]
@@ -4632,11 +4595,9 @@ webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-pro
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-049.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-050.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-051.html [ ImageOnlyFailure ]
-webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-052.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-053.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-054.html [ ImageOnlyFailure ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-055.html [ ImageOnlyFailure ]
-webkit.org/b/234762 imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-dynamic-change-003.html [ ImageOnlyFailure ]
 
 # New failures after updating WPT import of css/css-text on 2020-07
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-002.tentative.html [ ImageOnlyFailure ]
@@ -5409,10 +5370,6 @@ imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-si
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout-vertical.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout.html [ Skip ]
-
-# Expected layout is produced by legacy line layout (1px diff).
-imported/w3c/web-platform-tests/css/css-writing-modes/float-rgt-orthog-htb-in-vlr-003.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-writing-modes/float-lft-orthog-htb-in-vlr-002.xht [ ImageOnlyFailure ]
 
 # Disagreeing with the expected result (content should not wrap).
 webkit.org/b/245080 fast/text/whitespace/nowrap-clear-float.html [ Failure ]
@@ -6265,8 +6222,6 @@ imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noop
 imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_parent [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_top [ Skip ]
 
-imported/w3c/web-platform-tests/css/css-nesting/nest-containing-forgiving.html [ ImageOnlyFailure ]
-
 # Needs non-zero line gap in 'Arial'
 fast/text/text-box-edge-no-half-leading-simple.html [ Skip ]
 fast/text/text-box-edge-no-half-leading-with-line-height-simple.html [ Skip ]
@@ -6582,3 +6537,7 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.infinity.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.invalid.html [ Skip ]
 
+# CanvasReneringContext2D.reset()
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.state.clip.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.clip.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.clip.w.html [ Timeout ]

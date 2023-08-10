@@ -196,6 +196,7 @@ private:
     friend class CSSValuePool;
     friend class StaticCSSValuePool;
     friend LazyNeverDestroyed<CSSPrimitiveValue>;
+    friend bool CSSValue::addHash(Hasher&) const;
 
     explicit CSSPrimitiveValue(CSSPropertyID);
     explicit CSSPrimitiveValue(Color);
@@ -218,6 +219,8 @@ private:
     std::optional<double> doubleValueInternal(CSSUnitType targetUnitType) const;
 
     double computeLengthDouble(const CSSToLengthConversionData&) const;
+
+    bool addDerivedHash(Hasher&) const;
 
     ALWAYS_INLINE String serializeInternal() const;
     NEVER_INLINE String formatNumberValue(ASCIILiteral suffix) const;
@@ -429,6 +432,8 @@ inline int CSSValue::integer() const
     ASSERT(isInteger());
     return downcast<CSSPrimitiveValue>(*this).intValue();
 }
+
+void add(Hasher&, const CSSPrimitiveValue&);
 
 } // namespace WebCore
 

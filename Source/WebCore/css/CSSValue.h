@@ -26,6 +26,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIILiteral.h>
 
+namespace WTF {
+class Hasher;
+}
+
 namespace WebCore {
 
 class CSSPrimitiveValue;
@@ -150,6 +154,9 @@ public:
 
     bool equals(const CSSValue&) const;
     bool operator==(const CSSValue& other) const { return equals(other); }
+
+    // Returns false if the hash is computed from the CSSValue pointer instead of the underlying values.
+    bool addHash(Hasher&) const;
 
     // https://www.w3.org/TR/css-values-4/#local-urls
     // Empty URLs and fragment-only URLs should not be resolved relative to the base URL.
@@ -286,6 +293,7 @@ private:
     template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
 
     static inline bool customTraverseSubresources(const Function<bool(const CachedResource&)>&);
+    bool addDerivedHash(Hasher&) const;
 
     mutable unsigned m_refCount { refCountIncrement };
 
@@ -346,6 +354,8 @@ inline bool compareCSSValue(const Ref<CSSValueType>& first, const Ref<CSSValueTy
 {
     return first.get().equals(second);
 }
+
+void add(Hasher&, const CSSValue&);
 
 } // namespace WebCore
 

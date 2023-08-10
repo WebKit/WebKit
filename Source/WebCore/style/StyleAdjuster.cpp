@@ -354,10 +354,10 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setWritingMode(m_parentStyle.writingMode());
 
         // FIXME: Since we don't support block-flow on flexible boxes yet, disallow setting
-        // of block-flow to anything other than WritingMode::TopToBottom.
+        // of block-flow to anything other than WritingMode::HorizontalTb.
         // https://bugs.webkit.org/show_bug.cgi?id=46418 - Flexible box support.
-        if (style.writingMode() != WritingMode::TopToBottom && (style.display() == DisplayType::Box || style.display() == DisplayType::InlineBox))
-            style.setWritingMode(WritingMode::TopToBottom);
+        if (style.writingMode() != WritingMode::HorizontalTb && (style.display() == DisplayType::Box || style.display() == DisplayType::InlineBox))
+            style.setWritingMode(WritingMode::HorizontalTb);
 
         // https://www.w3.org/TR/css-display/#transformations
         // "A parent with a grid or flex display value blockifies the box’s display type."

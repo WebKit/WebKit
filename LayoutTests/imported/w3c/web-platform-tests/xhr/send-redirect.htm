@@ -9,20 +9,28 @@
   <body>
     <div id="log"></div>
     <script>
-      function redirect(code) {
-        var test = async_test(document.title + " (" + code + ")")
+      function redirect(code, method="GET", redirectLocation="content.py") {
+        var test = async_test(`${document.title} (${code}, ${method}, ${redirectLocation})`)
         test.step(function() {
           var client = new XMLHttpRequest()
           client.onreadystatechange = function() {
             test.step(function() {
               if(client.readyState == 4) {
-                assert_equals(client.getResponseHeader("x-request-method"), "GET")
-                assert_equals(client.getResponseHeader("x-request-content-type"), "application/x-pony")
+                let expected_method = method;
+                if (method == "POST" && (code == "301" || code == "302"))
+                  expected_method = "GET";
+                if (code == "303" && method != "GET" && method != "HEAD")
+                  expected_method = "GET";
+                assert_equals(client.getResponseHeader("x-request-method"), expected_method)
+                let expected_content_type = "application/x-pony";
+                if (method == "POST" && (code == "301" || code == "302" || code == "303"))
+                  expected_content_type = "NO";
+                assert_equals(client.getResponseHeader("x-request-content-type"), expected_content_type);
                 test.done()
               }
             })
           }
-          client.open("GET", "resources/redirect.py?location=content.py&code=" + code)
+          client.open(method, `resources/redirect.py?location=${redirectLocation}&code=${code}`)
           client.setRequestHeader("Content-Type", "application/x-pony")
           client.send(null)
         })
@@ -31,6 +39,26 @@
       redirect("302")
       redirect("303")
       redirect("307")
+      redirect("301", "POST")
+      redirect("302", "POST")
+      redirect("303", "POST")
+      redirect("307", "POST")
+      redirect("301", "HEAD")
+      redirect("302", "HEAD")
+      redirect("303", "HEAD")
+      redirect("307", "HEAD")
+      redirect("301", "GET", encodeURIComponent("redirect.py?location=content.py"))
+      redirect("302", "GET", encodeURIComponent("redirect.py?location=content.py"))
+      redirect("303", "GET", encodeURIComponent("redirect.py?location=content.py"))
+      redirect("307", "GET", encodeURIComponent("redirect.py?location=content.py"))
+      redirect("301", "POST", encodeURIComponent("redirect.py?location=content.py"))
+      redirect("302", "POST", encodeURIComponent("redirect.py?location=content.py"))
+      redirect("303", "POST", encodeURIComponent("redirect.py?location=content.py"))
+      redirect("307", "POST", encodeURIComponent("redirect.py?location=content.py"))
+      redirect("301", "HEAD", encodeURIComponent("redirect.py?location=content.py"))
+      redirect("302", "HEAD", encodeURIComponent("redirect.py?location=content.py"))
+      redirect("303", "HEAD", encodeURIComponent("redirect.py?location=content.py"))
+      redirect("307", "HEAD", encodeURIComponent("redirect.py?location=content.py"))
     </script>
   </body>
 </html>

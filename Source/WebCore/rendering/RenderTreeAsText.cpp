@@ -372,13 +372,13 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         bool overridden = o.style().borderImage().overridesBorderWidths();
         if (box.isFieldset()) {
             const auto& block = downcast<RenderBlock>(box);
-            if (o.style().writingMode() == WritingMode::TopToBottom)
+            if (o.style().blockFlowDirection() == BlockFlowDirection::TopToBottom)
                 borderTop -= block.intrinsicBorderForFieldset();
-            else if (o.style().writingMode() == WritingMode::BottomToTop)
+            else if (o.style().blockFlowDirection() == BlockFlowDirection::BottomToTop)
                 borderBottom -= block.intrinsicBorderForFieldset();
-            else if (o.style().writingMode() == WritingMode::LeftToRight)
+            else if (o.style().blockFlowDirection() == BlockFlowDirection::LeftToRight)
                 borderLeft -= block.intrinsicBorderForFieldset();
-            else if (o.style().writingMode() == WritingMode::RightToLeft)
+            else if (o.style().blockFlowDirection() == BlockFlowDirection::RightToLeft)
                 borderRight -= block.intrinsicBorderForFieldset();
             
         }

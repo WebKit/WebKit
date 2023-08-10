@@ -1,0 +1,6 @@
+2d.reset.state.line_dash
+check that the line dash is reset
+Actual output:
+
+FAIL check that the line dash is reset ctx.reset is not a function. (In 'ctx.reset()', 'ctx.reset' is undefined)
+

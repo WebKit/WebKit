@@ -108,7 +108,12 @@ public:
     {
         Locker locker { m_lock };
         amortizedCleanupIfNeeded();
-        return m_map.remove(static_cast<const T*>(&value));
+        auto it = m_map.find(static_cast<const T*>(&value));
+        if (it == m_map.end())
+            return false;
+        bool wasDeleted = it->value && it->value->objectHasStartedDeletion();
+        bool result = m_map.remove(it);
+        return !wasDeleted && result;
     }
 
     void clear()
@@ -123,7 +128,10 @@ public:
     {
         Locker locker { m_lock };
         amortizedCleanupIfNeeded();
-        return m_map.contains(static_cast<const T*>(&value));
+        auto it = m_map.find(static_cast<const T*>(&value));
+        if (it == m_map.end())
+            return false;
+        return it->value && !it->value->objectHasStartedDeletion();
     }
 
     bool isEmptyIgnoringNullReferences() const

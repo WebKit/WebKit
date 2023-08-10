@@ -63,7 +63,7 @@ namespace TestWebKitAPI::Util {
 
 #ifdef __OBJC__
 
-inline NSString *constructScript(NSArray *lines) { return [lines componentsJoinedByString:@";\n"]; }
+inline NSString *constructScript(NSArray *lines) { return [lines componentsJoinedByString:@"\n"]; }
 
 #endif
 

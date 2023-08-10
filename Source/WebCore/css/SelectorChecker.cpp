@@ -629,6 +629,8 @@ static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContex
             return true;
         case CSSSelector::Match::NestingParent:
         case CSSSelector::Match::Unknown:
+        case CSSSelector::Match::ForgivingUnknown:
+        case CSSSelector::Match::ForgivingUnknownNestContaining:
             ASSERT_NOT_REACHED();
             break;
         }
@@ -694,6 +696,14 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             caseSensitive = false;
 
         return anyAttributeMatches(element, selector, attr, caseSensitive);
+    }
+
+    if (selector.match() == CSSSelector::Match::ForgivingUnknown || selector.match() == CSSSelector::Match::ForgivingUnknownNestContaining)
+        return false;
+
+    if (selector.match() == CSSSelector::Match::NestingParent) {
+        ASSERT_NOT_REACHED();
+        return false;
     }
 
     if (selector.match() == CSSSelector::Match::PseudoClass) {

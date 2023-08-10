@@ -46,12 +46,16 @@ public:
     bool equals(const CSSFunctionValue& other) const { return m_name == other.m_name && itemsEqual(other); }
 
 private:
+    friend bool CSSValue::addHash(Hasher&) const;
+
     CSSFunctionValue(CSSValueID name, CSSValueListBuilder);
     explicit CSSFunctionValue(CSSValueID name);
     CSSFunctionValue(CSSValueID name, Ref<CSSValue>);
     CSSFunctionValue(CSSValueID name, Ref<CSSValue>, Ref<CSSValue>);
     CSSFunctionValue(CSSValueID name, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
     CSSFunctionValue(CSSValueID name, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
+
+    bool addDerivedHash(Hasher&) const;
 
     CSSValueID m_name { };
 };

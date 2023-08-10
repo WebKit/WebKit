@@ -57,7 +57,7 @@ public:
         RefPtr<cairo_surface_t> m_surface;
         std::unique_ptr<WebCore::GraphicsContext> m_graphicsContext;
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
         bool m_deletionComplete { false };
 #endif
     };

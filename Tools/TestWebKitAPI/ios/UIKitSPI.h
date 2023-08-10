@@ -351,6 +351,25 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (void)removeEmojiAlternatives;
 @end
 
+@interface NSTextBlock : NSObject
+@end
+
+@interface NSTextTable : NSTextBlock
+@end
+
+@interface NSTextTableBlock : NSTextBlock
+- (NSTextTable *)table;
+- (NSInteger)startingColumn;
+- (NSInteger)startingRow;
+- (NSUInteger)numberOfColumns;
+- (NSInteger)columnSpan;
+- (NSInteger)rowSpan;
+@end
+
+@interface NSParagraphStyle ()
+- (NSArray<NSTextBlock *> *)textBlocks;
+@end
+
 @interface UIResponder (Internal)
 - (void)_share:(id)sender;
 @property (nonatomic, readonly) BOOL _requiresKeyboardWhenFirstResponder;

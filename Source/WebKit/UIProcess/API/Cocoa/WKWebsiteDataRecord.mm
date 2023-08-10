@@ -55,6 +55,7 @@ NSString * const _WKWebsiteDataTypeCredentials = @"_WKWebsiteDataTypeCredentials
 NSString * const _WKWebsiteDataTypeAdClickAttributions = @"_WKWebsiteDataTypeAdClickAttributions";
 NSString * const _WKWebsiteDataTypePrivateClickMeasurements = @"_WKWebsiteDataTypePrivateClickMeasurements";
 NSString * const _WKWebsiteDataTypeAlternativeServices = @"_WKWebsiteDataTypeAlternativeServices";
+NSString * const _WKWebsiteDataTypeFileSystem = WKWebsiteDataTypeFileSystem;
 
 @implementation WKWebsiteDataRecord
 

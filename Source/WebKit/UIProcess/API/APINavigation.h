@@ -112,6 +112,7 @@ public:
     std::optional<WebCore::ProcessIdentifier> currentRequestProcessIdentifier() const { return m_currentRequestProcessIdentifier; }
 
     bool currentRequestIsRedirect() const { return !m_lastNavigationAction.redirectResponse.isNull(); }
+    bool currentRequestIsCrossSiteRedirect() const;
 
     WebKit::WebBackForwardListItem* targetItem() const { return m_targetItem.get(); }
     WebKit::WebBackForwardListItem* fromItem() const { return m_fromItem.get(); }

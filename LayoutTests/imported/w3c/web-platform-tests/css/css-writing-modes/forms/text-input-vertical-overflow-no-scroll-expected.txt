@@ -2,16 +2,30 @@
 
 PASS input[type=text] in vertical-lr: typing characters in input should not cause the page to scroll
 PASS input[type=text] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=text] in sideways-lr: typing characters in input should not cause the page to scroll
+PASS input[type=text] in sideways-rl: typing characters in input should not cause the page to scroll
 PASS input[type=email] in vertical-lr: typing characters in input should not cause the page to scroll
 PASS input[type=email] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=email] in sideways-lr: typing characters in input should not cause the page to scroll
+PASS input[type=email] in sideways-rl: typing characters in input should not cause the page to scroll
 PASS input[type=tel] in vertical-lr: typing characters in input should not cause the page to scroll
 PASS input[type=tel] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=tel] in sideways-lr: typing characters in input should not cause the page to scroll
+PASS input[type=tel] in sideways-rl: typing characters in input should not cause the page to scroll
 PASS input[type=url] in vertical-lr: typing characters in input should not cause the page to scroll
 PASS input[type=url] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=url] in sideways-lr: typing characters in input should not cause the page to scroll
+PASS input[type=url] in sideways-rl: typing characters in input should not cause the page to scroll
 PASS input[type=password] in vertical-lr: typing characters in input should not cause the page to scroll
 PASS input[type=password] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=password] in sideways-lr: typing characters in input should not cause the page to scroll
+PASS input[type=password] in sideways-rl: typing characters in input should not cause the page to scroll
 PASS input[type=search] in vertical-lr: typing characters in input should not cause the page to scroll
 PASS input[type=search] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=search] in sideways-lr: typing characters in input should not cause the page to scroll
+PASS input[type=search] in sideways-rl: typing characters in input should not cause the page to scroll
 PASS input[type=number] in vertical-lr: typing characters in input should not cause the page to scroll
 PASS input[type=number] in vertical-rl: typing characters in input should not cause the page to scroll
+PASS input[type=number] in sideways-lr: typing characters in input should not cause the page to scroll
+PASS input[type=number] in sideways-rl: typing characters in input should not cause the page to scroll
 

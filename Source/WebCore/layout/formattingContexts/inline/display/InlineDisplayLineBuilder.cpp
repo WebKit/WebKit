@@ -36,11 +36,11 @@ namespace Layout {
 
 static InlineRect flipLogicalLineRectToVisualForWritingMode(const InlineRect& lineLogicalRect, WritingMode writingMode)
 {
-    switch (writingMode) {
-    case WritingMode::TopToBottom:
+    switch (writingModeToBlockFlowDirection(writingMode)) {
+    case BlockFlowDirection::TopToBottom:
         return lineLogicalRect;
-    case WritingMode::LeftToRight:
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::LeftToRight:
+    case BlockFlowDirection::RightToLeft:
         // See InlineFormattingGeometry for more info.
         return { lineLogicalRect.left(), lineLogicalRect.top(), lineLogicalRect.height(), lineLogicalRect.width() };
     default:

@@ -551,7 +551,7 @@ bool RenderFlexibleBox::isHorizontalFlow() const
 bool RenderFlexibleBox::isLeftToRightFlow() const
 {
     if (isColumnFlow())
-        return style().writingMode() == WritingMode::TopToBottom || style().writingMode() == WritingMode::LeftToRight;
+        return style().blockFlowDirection() == BlockFlowDirection::TopToBottom || style().blockFlowDirection() == BlockFlowDirection::LeftToRight;
     return style().isLeftToRightDirection() ^ (style().flexDirection() == FlexDirection::RowReverse);
 }
 
@@ -749,22 +749,22 @@ std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(Rende
     return child.computeLogicalWidthInFragmentUsing(sizeType, size, contentLogicalWidth(), *this, fragment) - child.borderAndPaddingLogicalWidth();
 }
 
-WritingMode RenderFlexibleBox::transformedWritingMode() const
+BlockFlowDirection RenderFlexibleBox::transformedBlockFlowDirection() const
 {
-    WritingMode mode = style().writingMode();
+    auto blockFlowDirection = style().blockFlowDirection();
     if (!isColumnFlow())
-        return mode;
+        return blockFlowDirection;
     
-    switch (mode) {
-    case WritingMode::TopToBottom:
-    case WritingMode::BottomToTop:
-        return style().isLeftToRightDirection() ? WritingMode::LeftToRight : WritingMode::RightToLeft;
-    case WritingMode::LeftToRight:
-    case WritingMode::RightToLeft:
-        return style().isLeftToRightDirection() ? WritingMode::TopToBottom : WritingMode::BottomToTop;
+    switch (blockFlowDirection) {
+    case BlockFlowDirection::TopToBottom:
+    case BlockFlowDirection::BottomToTop:
+        return style().isLeftToRightDirection() ? BlockFlowDirection::LeftToRight : BlockFlowDirection::RightToLeft;
+    case BlockFlowDirection::LeftToRight:
+    case BlockFlowDirection::RightToLeft:
+        return style().isLeftToRightDirection() ? BlockFlowDirection::TopToBottom : BlockFlowDirection::BottomToTop;
     }
     ASSERT_NOT_REACHED();
-    return WritingMode::TopToBottom;
+    return BlockFlowDirection::TopToBottom;
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareBorderStart() const
@@ -783,14 +783,14 @@ LayoutUnit RenderFlexibleBox::flowAwareBorderEnd() const
 
 LayoutUnit RenderFlexibleBox::flowAwareBorderBefore() const
 {
-    switch (transformedWritingMode()) {
-    case WritingMode::TopToBottom:
+    switch (transformedBlockFlowDirection()) {
+    case BlockFlowDirection::TopToBottom:
         return borderTop();
-    case WritingMode::BottomToTop:
+    case BlockFlowDirection::BottomToTop:
         return borderBottom();
-    case WritingMode::LeftToRight:
+    case BlockFlowDirection::LeftToRight:
         return borderLeft();
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::RightToLeft:
         return borderRight();
     }
     ASSERT_NOT_REACHED();
@@ -799,14 +799,14 @@ LayoutUnit RenderFlexibleBox::flowAwareBorderBefore() const
 
 LayoutUnit RenderFlexibleBox::flowAwareBorderAfter() const
 {
-    switch (transformedWritingMode()) {
-    case WritingMode::TopToBottom:
+    switch (transformedBlockFlowDirection()) {
+    case BlockFlowDirection::TopToBottom:
         return borderBottom();
-    case WritingMode::BottomToTop:
+    case BlockFlowDirection::BottomToTop:
         return borderTop();
-    case WritingMode::LeftToRight:
+    case BlockFlowDirection::LeftToRight:
         return borderRight();
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::RightToLeft:
         return borderLeft();
     }
     ASSERT_NOT_REACHED();
@@ -829,14 +829,14 @@ LayoutUnit RenderFlexibleBox::flowAwarePaddingEnd() const
 
 LayoutUnit RenderFlexibleBox::flowAwarePaddingBefore() const
 {
-    switch (transformedWritingMode()) {
-    case WritingMode::TopToBottom:
+    switch (transformedBlockFlowDirection()) {
+    case BlockFlowDirection::TopToBottom:
         return paddingTop();
-    case WritingMode::BottomToTop:
+    case BlockFlowDirection::BottomToTop:
         return paddingBottom();
-    case WritingMode::LeftToRight:
+    case BlockFlowDirection::LeftToRight:
         return paddingLeft();
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::RightToLeft:
         return paddingRight();
     }
     ASSERT_NOT_REACHED();
@@ -845,14 +845,14 @@ LayoutUnit RenderFlexibleBox::flowAwarePaddingBefore() const
 
 LayoutUnit RenderFlexibleBox::flowAwarePaddingAfter() const
 {
-    switch (transformedWritingMode()) {
-    case WritingMode::TopToBottom:
+    switch (transformedBlockFlowDirection()) {
+    case BlockFlowDirection::TopToBottom:
         return paddingBottom();
-    case WritingMode::BottomToTop:
+    case BlockFlowDirection::BottomToTop:
         return paddingTop();
-    case WritingMode::LeftToRight:
+    case BlockFlowDirection::LeftToRight:
         return paddingRight();
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::RightToLeft:
         return paddingLeft();
     }
     ASSERT_NOT_REACHED();
@@ -875,14 +875,14 @@ LayoutUnit RenderFlexibleBox::flowAwareMarginEndForChild(const RenderBox& child)
 
 LayoutUnit RenderFlexibleBox::flowAwareMarginBeforeForChild(const RenderBox& child) const
 {
-    switch (transformedWritingMode()) {
-    case WritingMode::TopToBottom:
+    switch (transformedBlockFlowDirection()) {
+    case BlockFlowDirection::TopToBottom:
         return child.marginTop();
-    case WritingMode::BottomToTop:
+    case BlockFlowDirection::BottomToTop:
         return child.marginBottom();
-    case WritingMode::LeftToRight:
+    case BlockFlowDirection::LeftToRight:
         return child.marginLeft();
-    case WritingMode::RightToLeft:
+    case BlockFlowDirection::RightToLeft:
         return child.marginRight();
     }
     ASSERT_NOT_REACHED();
@@ -1508,7 +1508,7 @@ LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(const RenderBox& child)
     // The first scenario below can occur when the flex container has column flex
     // specified and is in horizontal writing-mode with a vertical-rl flex item *or*
     // when they are both vertical and the child is flipped blocks.
-    if ((!style().isFlippedBlocksWritingMode() && child.style().isFlippedBlocksWritingMode()) || (style().isFlippedBlocksWritingMode() && child.style().writingMode() == WritingMode::LeftToRight))
+    if ((!style().isFlippedBlocksWritingMode() && child.style().isFlippedBlocksWritingMode()) || (style().isFlippedBlocksWritingMode() && child.style().blockFlowDirection() == BlockFlowDirection::LeftToRight))
         ascent = child.logicalHeight() - ascent.value();
 
     if (isHorizontalFlow ? child.isScrollContainerY() : child.isScrollContainerX())

@@ -22,6 +22,7 @@
 #include "CSSValueList.h"
 
 #include "CSSPrimitiveValue.h"
+#include <wtf/Hasher.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -257,6 +258,17 @@ bool CSSValueList::equals(const CSSValueList& other) const
 bool CSSValueContainingVector::containsSingleEqualItem(const CSSValue& other) const
 {
     return size() == 1 && (*this)[0].equals(other);
+}
+
+bool CSSValueContainingVector::addDerivedHash(Hasher& hasher) const
+{
+    add(hasher, separator());
+
+    for (auto& item : *this) {
+        if (!item.addHash(hasher))
+            return false;
+    }
+    return true;
 }
 
 bool CSSValueContainingVector::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const

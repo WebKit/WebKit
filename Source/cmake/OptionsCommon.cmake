@@ -210,6 +210,17 @@ if (NOT PORT STREQUAL "GTK" AND NOT PORT STREQUAL "WPE")
     set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Absolute path to install executables executed by the library")
 endif ()
 
+set(ENABLE_ASSERTS "AUTO" CACHE STRING "Enable or disable assertions regardless of build type")
+set_property(CACHE ENABLE_ASSERTS PROPERTY STRINGS "AUTO" "ON" "OFF")
+
+if (ENABLE_ASSERTS STREQUAL "AUTO")
+    # The default value is handled by the NDEBUG define which is generally set by the toolchain module used by CMake.
+elseif (ENABLE_ASSERTS)
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-DASSERT_ENABLED=1)
+elseif (NOT ENABLE_ASSERTS)
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-DASSERT_ENABLED=0)
+endif ()
+
 # Check whether features.h header exists.
 # Including glibc's one defines __GLIBC__, that is used in Platform.h
 WEBKIT_CHECK_HAVE_INCLUDE(HAVE_FEATURES_H features.h)

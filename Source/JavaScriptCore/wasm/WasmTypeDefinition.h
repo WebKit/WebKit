@@ -303,6 +303,8 @@ constexpr size_t typeKindSizeInBytes(TypeKind kind)
     case TypeKind::Eqref:
     case TypeKind::Anyref:
     case TypeKind::Nullref:
+    case TypeKind::Nullfuncref:
+    case TypeKind::Nullexternref:
     case TypeKind::I31ref: {
         break;
     }

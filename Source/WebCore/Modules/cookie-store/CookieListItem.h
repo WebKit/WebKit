@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct CookieListItem {
-    CookieListItem() { };
+    CookieListItem() = default;
 
     CookieListItem(Cookie&& cookie)
     {
@@ -63,8 +63,8 @@ struct CookieListItem {
     String domain;
     String path;
     std::optional<DOMHighResTimeStamp> expires;
-    bool secure;
-    CookieSameSite sameSite;
+    bool secure { false };
+    CookieSameSite sameSite { CookieSameSite::Strict };
 };
 
 }

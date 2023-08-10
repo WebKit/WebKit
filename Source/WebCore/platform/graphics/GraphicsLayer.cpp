@@ -1033,7 +1033,6 @@ TextStream& operator<<(TextStream& ts, const GraphicsLayer::CustomAppearance& cu
 {
     switch (customAppearance) {
     case GraphicsLayer::CustomAppearance::None: ts << "none"; break;
-    case GraphicsLayer::CustomAppearance::ScrollingOverhang: ts << "scrolling-overhang"; break;
     case GraphicsLayer::CustomAppearance::ScrollingShadow: ts << "scrolling-shadow"; break;
     }
     return ts;

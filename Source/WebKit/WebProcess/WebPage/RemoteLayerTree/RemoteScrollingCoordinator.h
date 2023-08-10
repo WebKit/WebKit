@@ -29,9 +29,6 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/AsyncScrollingCoordinator.h>
-#include <WebCore/ScrollTypes.h>
-#include <WebCore/ScrollingConstraints.h>
-#include <WebCore/Timer.h>
 
 namespace IPC {
 class Decoder;
@@ -51,7 +48,7 @@ public:
         return adoptRef(*new RemoteScrollingCoordinator(page));
     }
 
-    void buildTransaction(RemoteScrollingCoordinatorTransaction&);
+    RemoteScrollingCoordinatorTransaction buildTransaction();
 
     void scrollingStateInUIProcessChanged(const RemoteScrollingUIState&);
 

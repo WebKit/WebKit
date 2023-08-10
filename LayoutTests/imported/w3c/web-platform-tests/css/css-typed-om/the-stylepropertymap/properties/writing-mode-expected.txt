@@ -7,8 +7,8 @@ PASS Can set 'writing-mode' to var() references:  var(--A)
 PASS Can set 'writing-mode' to the 'horizontal-tb' keyword: horizontal-tb
 PASS Can set 'writing-mode' to the 'vertical-rl' keyword: vertical-rl
 PASS Can set 'writing-mode' to the 'vertical-lr' keyword: vertical-lr
-FAIL Can set 'writing-mode' to the 'sideways-rl' keyword: sideways-rl Invalid values
-FAIL Can set 'writing-mode' to the 'sideways-lr' keyword: sideways-lr Invalid values
+PASS Can set 'writing-mode' to the 'sideways-rl' keyword: sideways-rl
+PASS Can set 'writing-mode' to the 'sideways-lr' keyword: sideways-lr
 PASS Setting 'writing-mode' to a length: 0px throws TypeError
 PASS Setting 'writing-mode' to a length: -3.14em throws TypeError
 PASS Setting 'writing-mode' to a length: 3.14cm throws TypeError

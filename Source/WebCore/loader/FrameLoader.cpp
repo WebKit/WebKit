@@ -1521,6 +1521,8 @@ void FrameLoader::load(FrameLoadRequest&& request)
         }
     }
 
+    m_provisionalLoadHappeningInAnotherProcess = false;
+
     if (request.shouldCheckNewWindowPolicy()) {
         NavigationAction action { request.requester(), request.resourceRequest(), InitiatedByMainFrame::Unknown, NavigationType::Other, request.shouldOpenExternalURLsPolicy() };
         action.setNewFrameOpenerPolicy(request.newFrameOpenerPolicy());

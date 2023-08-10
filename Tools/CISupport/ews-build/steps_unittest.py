@@ -4580,7 +4580,7 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
                         env=dict(UPLOAD_URL='https://test-s3-url'),
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
-                        timeout=300,
+                        timeout=360,
                         )
             + 0,
         )
@@ -4595,7 +4595,7 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
                         env=dict(UPLOAD_URL='https://test-s3-url'),
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
-                        timeout=300,
+                        timeout=360,
                         )
             + ExpectShell.log('stdio', stdout='''Uploading WebKitBuild/release.zip
 response: <Response [403]>, 403, Forbidden

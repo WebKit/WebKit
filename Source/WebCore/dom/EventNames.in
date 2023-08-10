@@ -14,6 +14,7 @@ BufferedChangeEvent conditional=MANAGED_MEDIA_SOURCE
 ClipboardEvent
 CloseEvent
 CompositionEvent
+CookieChangeEvent
 CSSAnimationEvent
 CSSTransitionEvent
 CustomEvent
