@@ -27,6 +27,7 @@
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "ThreadableLoaderClient.h"
+#include "Timer.h"
 #include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
 #include <wtf/URL.h>
