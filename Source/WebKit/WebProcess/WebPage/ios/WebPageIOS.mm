@@ -2598,7 +2598,10 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
         auto position = makeDeprecatedLegacyPosition(range->start).previous();
         if (position.isNull() || position == makeDeprecatedLegacyPosition(range->start))
             break;
-        range = { { wordRangeFromPosition(position)->start, range->end } };
+        auto startRange = wordRangeFromPosition(position);
+        if (!startRange)
+            continue;
+        range = { { startRange->start, range->end } };
         textForRange = plainTextForContext(range);
     }
 
