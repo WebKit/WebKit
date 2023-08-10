@@ -1015,16 +1015,6 @@ bool Quirks::shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() co
     return isWikipediaDomain(m_document->url());
 }
 
-// shutterstock.com rdar://58843932
-bool Quirks::shouldIgnoreContentObservationForSyntheticClick(bool isFirstSyntheticClickOnPage) const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto host = m_document->url().host();
-    return isFirstSyntheticClickOnPage && (equalLettersIgnoringASCIICase(host, "shutterstock.com"_s) || host.endsWithIgnoringASCIICase(".shutterstock.com"_s));
-}
-
 // mail.yahoo.com rdar://63511613
 bool Quirks::shouldAvoidPastingImagesAsWebContent() const
 {
