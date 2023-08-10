@@ -1394,13 +1394,17 @@ template<> constexpr TextDirection fromCSSValueID(CSSValueID valueID)
 constexpr CSSValueID toCSSValueID(WritingMode e)
 {
     switch (e) {
-    case WritingMode::TopToBottom:
+    case WritingMode::HorizontalTb:
         return CSSValueHorizontalTb;
-    case WritingMode::RightToLeft:
+    case WritingMode::VerticalRl:
         return CSSValueVerticalRl;
-    case WritingMode::LeftToRight:
+    case WritingMode::VerticalLr:
         return CSSValueVerticalLr;
-    case WritingMode::BottomToTop:
+    case WritingMode::SidewaysRl:
+        return CSSValueSidewaysRl;
+    case WritingMode::SidewaysLr:
+        return CSSValueSidewaysLr;
+    case WritingMode::HorizontalBt:
         return CSSValueHorizontalBt;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
@@ -1415,20 +1419,24 @@ template<> constexpr WritingMode fromCSSValueID(CSSValueID valueID)
     case CSSValueLrTb:
     case CSSValueRl:
     case CSSValueRlTb:
-        return WritingMode::TopToBottom;
+        return WritingMode::HorizontalTb;
     case CSSValueVerticalRl:
     case CSSValueTb:
     case CSSValueTbRl:
-        return WritingMode::RightToLeft;
+        return WritingMode::VerticalRl;
     case CSSValueVerticalLr:
-        return WritingMode::LeftToRight;
+        return WritingMode::VerticalLr;
+    case CSSValueSidewaysLr:
+        return WritingMode::SidewaysLr;
+    case CSSValueSidewaysRl:
+        return WritingMode::SidewaysRl;
     case CSSValueHorizontalBt:
-        return WritingMode::BottomToTop;
+        return WritingMode::HorizontalBt;
     default:
         break;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return WritingMode::TopToBottom;
+    return WritingMode::HorizontalTb;
 }
 
 constexpr CSSValueID toCSSValueID(TextCombine e)

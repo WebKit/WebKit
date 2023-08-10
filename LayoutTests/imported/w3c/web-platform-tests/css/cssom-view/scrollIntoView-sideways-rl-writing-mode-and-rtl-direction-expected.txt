@@ -1,11 +1,11 @@
 
-FAIL scrollIntoView({"block":"start","inline":"start"}) assert_approx_equals: scrollY expected -200 +/- 0.5 but got 200
-FAIL scrollIntoView({"block":"start","inline":"center"}) assert_approx_equals: scrollX expected -200 +/- 0.5 but got -158
-FAIL scrollIntoView({"block":"start","inline":"end"}) assert_approx_equals: scrollX expected -200 +/- 0.5 but got -115
-FAIL scrollIntoView({"block":"center","inline":"start"}) assert_approx_equals: scrollX expected -157.5 +/- 0.5 but got -200
-FAIL scrollIntoView({"block":"center","inline":"center"}) assert_approx_equals: scrollY expected -157.5 +/- 0.5 but got 158
-FAIL scrollIntoView({"block":"center","inline":"end"}) assert_approx_equals: scrollX expected -157.5 +/- 0.5 but got -115
-FAIL scrollIntoView({"block":"end","inline":"start"}) assert_approx_equals: scrollX expected -115 +/- 0.5 but got -200
-FAIL scrollIntoView({"block":"end","inline":"center"}) assert_approx_equals: scrollX expected -115 +/- 0.5 but got -158
-FAIL scrollIntoView({"block":"end","inline":"end"}) assert_approx_equals: scrollY expected -115 +/- 0.5 but got 115
+PASS scrollIntoView({"block":"start","inline":"start"})
+PASS scrollIntoView({"block":"start","inline":"center"})
+PASS scrollIntoView({"block":"start","inline":"end"})
+PASS scrollIntoView({"block":"center","inline":"start"})
+PASS scrollIntoView({"block":"center","inline":"center"})
+PASS scrollIntoView({"block":"center","inline":"end"})
+PASS scrollIntoView({"block":"end","inline":"start"})
+PASS scrollIntoView({"block":"end","inline":"center"})
+PASS scrollIntoView({"block":"end","inline":"end"})
 

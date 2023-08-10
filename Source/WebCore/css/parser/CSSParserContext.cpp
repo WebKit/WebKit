@@ -104,6 +104,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssTextUnderlinePositionLeftRightEnabled { document.settings().cssTextUnderlinePositionLeftRightEnabled() }
     , cssTextWrapNewValuesEnabled { document.settings().cssTextWrapNewValuesEnabled() }
     , cssWordBreakAutoEnabled { document.settings().cssWordBreakAutoEnabled() }
+    , sidewaysWritingModesEnabled { document.settings().sidewaysWritingModesEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
 }
@@ -143,6 +144,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.cssTextUnderlinePositionLeftRightEnabled == b.cssTextUnderlinePositionLeftRightEnabled
         && a.cssTextWrapNewValuesEnabled == b.cssTextWrapNewValuesEnabled
         && a.cssWordBreakAutoEnabled == b.cssWordBreakAutoEnabled
+        && a.sidewaysWritingModesEnabled == b.sidewaysWritingModesEnabled
         && a.propertySettings == b.propertySettings
     ;
 }
@@ -176,7 +178,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssTextUnderlinePositionLeftRightEnabled  << 22
         | context.cssTextWrapNewValuesEnabled               << 23
         | context.cssWordBreakAutoEnabled                   << 24
-        | (uint64_t)context.mode                            << 25; // This is multiple bits, so keep it last.
+        | context.sidewaysWritingModesEnabled               << 25
+        | (uint64_t)context.mode                            << 26; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

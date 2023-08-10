@@ -1110,7 +1110,7 @@ manual
 // auto
 touch enable-if=ENABLE_OVERFLOW_SCROLLING_TOUCH
 
-// -webkit-writing-mode
+// writing-mode
 // SVG compatibility
 lr
 rl
@@ -1120,8 +1120,11 @@ rl-tb
 tb-rl
 // Standard values from CSS3
 horizontal-tb
-vertical-rl
 vertical-lr
+vertical-rl
+sideways-lr
+sideways-rl
+// Non-standard
 horizontal-bt
 
 // -webkit-ruby-position
