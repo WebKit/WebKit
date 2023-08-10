@@ -32,7 +32,6 @@
 #import "Download.h"
 #import "DownloadProxyMessages.h"
 #import "Logging.h"
-#import "NWSPI.h"
 #import "NetworkIssueReporter.h"
 #import "NetworkProcess.h"
 #import "NetworkSessionCocoa.h"
@@ -47,6 +46,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/TimingAllowOrigin.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>

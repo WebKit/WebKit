@@ -31,11 +31,11 @@
 #include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
-#include "NWSPI.h"
 #include <WebCore/STUNMessageParsing.h>
 #include <dispatch/dispatch.h>
 #include <ifaddrs.h>
 #include <net/if.h>
+#include <pal/spi/cocoa/NetworkSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/ThreadSafeRefCounted.h>

@@ -1108,8 +1108,11 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
     if (m_parameters.pageHasResourceLoadClient)
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidCompleteWithError(m_parameters.webPageProxyID, resourceLoadInfo(), { }, error), 0);
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    if (error.blockedKnownTracker())
-        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::DidBlockLoadToKnownTracker(m_parameters.webPageProxyID, error.failingURL()), 0);
+    if (error.blockedKnownTracker()) {
+        auto effectiveBlockedURL = error.failingURL();
+        effectiveBlockedURL.setHost(error.blockedTrackerHostName());
+        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::DidBlockLoadToKnownTracker(m_parameters.webPageProxyID, WTFMove(effectiveBlockedURL)), 0);
+    }
 #endif
     cleanup(LoadResult::Failure);
 }
