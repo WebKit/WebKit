@@ -6580,3 +6580,7 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.infinity.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.transform.invalid.html [ Skip ]
 
+# CanvasReneringContext2D.reset()
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/element/reset/2d.reset.state.clip.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.clip.html [ ImageOnlyFailure ]
+webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.clip.w.html [ Timeout ]
