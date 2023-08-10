@@ -27,7 +27,6 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingCoordinator.h"
 #include "ScrollingStateNode.h"
 #include <wtf/RefPtr.h>
  
@@ -101,7 +100,7 @@ private:
     bool isValid() const;
     void traverse(const ScrollingStateNode&, const Function<void(const ScrollingStateNode&)>&) const;
 
-    AsyncScrollingCoordinator* m_scrollingCoordinator;
+    ThreadSafeWeakPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
     // Contains all the nodes we know about (those in the m_rootStateNode tree, and in m_unparentedNodes subtrees).
     StateNodeMap m_stateNodeMap;
     // Owns roots of unparented subtrees.

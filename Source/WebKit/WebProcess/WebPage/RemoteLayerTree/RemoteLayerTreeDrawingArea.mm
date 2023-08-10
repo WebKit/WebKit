@@ -377,7 +377,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         RemoteScrollingCoordinatorTransaction scrollingTransaction;
 #if ENABLE(ASYNC_SCROLLING)
         if (m_webPage.scrollingCoordinator())
-            downcast<RemoteScrollingCoordinator>(*m_webPage.scrollingCoordinator()).buildTransaction(scrollingTransaction);
+            scrollingTransaction = downcast<RemoteScrollingCoordinator>(*m_webPage.scrollingCoordinator()).buildTransaction();
 #endif
         transactions.uncheckedAppend({ WTFMove(layerTransaction), WTFMove(scrollingTransaction) });
     }
