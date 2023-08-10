@@ -106,6 +106,46 @@ static NSDictionary *toNSDictionary(UIEdgeInsets insets)
     };
 }
 
+static RetainPtr<NSDictionary> toNSDictionary(CGPathRef path)
+{
+    auto pathElementTypeToString = [](CGPathElementType type) {
+        switch (type) {
+        case kCGPathElementMoveToPoint:
+            return @"MoveToPoint";
+
+        case kCGPathElementAddLineToPoint:
+            return @"AddLineToPoint";
+
+        case kCGPathElementAddQuadCurveToPoint:
+            return @"AddQuadCurveToPoint";
+
+        case kCGPathElementAddCurveToPoint:
+            return @"AddCurveToPoint";
+
+        case kCGPathElementCloseSubpath:
+            return @"CloseSubpath";
+
+        default:
+            return @"Unknown";
+        }
+    };
+
+    auto attributes = adoptNS([[NSMutableDictionary alloc] init]);
+
+    CGPathApplyWithBlock(path, ^(const CGPathElement *element) {
+        if (!element)
+            return;
+
+        NSString *typeString = pathElementTypeToString(element->type);
+        [attributes setObject:@{
+            @"x": @(element->points->x),
+            @"y": @(element->points->y),
+        } forKey:typeString];
+    });
+
+    return attributes;
+}
+
 static Vector<String> parseModifierArray(JSContextRef context, JSValueRef arrayValue)
 {
     if (!arrayValue)
@@ -880,6 +920,21 @@ JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
     clipSelectionViewRectToContentView(frameInContentViewCoordinates, contentView);
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
+}
+
+JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewShapePathDescription() const
+{
+    UIView *handleView = nil;
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (auto view = textSelectionDisplayInteraction().handleViews.lastObject; !isHiddenOrHasHiddenAncestor(view))
+        handleView = view;
+#else
+    UIView *contentView = platformContentView();
+    handleView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.endGrabber"];
+#endif
+
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary((CGPathRef)[handleView valueForKeyPath:@"stemView.shapeLayer.path"]).get() inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
 JSObjectRef UIScriptControllerIOS::selectionCaretViewRect(id<UICoordinateSpace> coordinateSpace) const
