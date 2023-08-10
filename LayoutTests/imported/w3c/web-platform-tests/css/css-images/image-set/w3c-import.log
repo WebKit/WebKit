@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-all-options-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-all-options-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-calc-x-rendering-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-calc-x-rendering-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-calc-x-rendering-expected.html

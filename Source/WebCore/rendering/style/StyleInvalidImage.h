@@ -39,6 +39,7 @@ public:
 
     bool operator==(const StyleImage&) const final { return false; }
     bool equals(const StyleInvalidImage&) const { return false; }
+    bool canRender(const RenderElement*, float) const final { return false; }
 
     static constexpr bool isFixedSize = true;
 
