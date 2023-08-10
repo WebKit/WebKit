@@ -7860,5 +7860,13 @@
          "zdobersek"
       ],
       "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "ben_schwartz@apple.com"
+      ],
+      "github" : "bls1999",
+      "name" : "Ben Schwartz",
+      "status" : "committer"
    }
 ]
