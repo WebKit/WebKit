@@ -30,7 +30,6 @@
 #import "_WKAttachmentInternal.h"
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <variant>
-#import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/RefPtr.h>
@@ -217,10 +216,6 @@ struct PerWebProcessState {
     // Only used with UI-side compositing.
     RetainPtr<WKScrollView> _scrollView;
     RetainPtr<WKContentView> _contentView;
-
-#if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
-    BlockPtr<void()> _windowSnapshotReadinessHandler;
-#endif
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
@@ -328,10 +323,6 @@ struct PerWebProcessState {
 
 - (BOOL)_isValid;
 - (void)_didChangeEditorState;
-
-#if PLATFORM(MAC) && HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
-- (void)_invalidateWindowSnapshotReadinessHandler;
-#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 - (void)_didRemoveAttachment:(API::Attachment&)attachment;
