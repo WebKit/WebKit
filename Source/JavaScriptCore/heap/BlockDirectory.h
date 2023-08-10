@@ -131,8 +131,11 @@ public:
     
     MarkedBlock::Handle* findEmptyBlockToSteal();
     
-    MarkedBlock::Handle* findBlockToSweep();
+    MarkedBlock::Handle* findBlockToSweep() { return findBlockToSweep(Locker(bitvectorLock()), m_unsweptCursor); }
+    MarkedBlock::Handle* findBlockToSweep(const AbstractLocker&, unsigned& unsweptCursor);
     
+    void didFinishUsingBlock(MarkedBlock::Handle*);
+
     Subspace* subspace() const { return m_subspace; }
     MarkedSpace& markedSpace() const;
     

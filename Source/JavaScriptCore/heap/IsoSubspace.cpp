@@ -79,6 +79,11 @@ void IsoSubspace::didBeginSweepingToFreeList(MarkedBlock::Handle* block)
         });
 }
 
+void IsoSubspace::didBeginSweepingToFreeListConcurrently(MarkedBlock::Handle*)
+{
+    ASSERT(m_cellSets.isEmpty());
+}
+
 void* IsoSubspace::tryAllocateFromLowerTier()
 {
     auto revive = [&] (PreciseAllocation* allocation) {

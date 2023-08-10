@@ -178,6 +178,9 @@ protected:
     // For example, when you have thread pool, you can decrease active threads moderately.
     virtual bool shouldSleep(const AbstractLocker&) { return true; }
     
+    Lock& lock() { return *m_lock; }
+    AutomaticThreadCondition& condition() { return m_condition.get(); }
+
 private:
     friend class AutomaticThreadCondition;
     

@@ -25,6 +25,7 @@
 #include "CodeBlock.h"
 #include "CodeBlockSetInlines.h"
 #include "CollectingScope.h"
+#include "ConcurrentSweeper.h"
 #include "ConservativeRoots.h"
 #include "EdenGCActivityCallback.h"
 #include "Exception.h"
@@ -395,6 +396,9 @@ Heap::Heap(VM& vm, HeapType heapType)
             m_scheduler = makeUnique<StochasticSpaceTimeMutatorScheduler>(*this);
         else
             m_scheduler = makeUnique<SpaceTimeMutatorScheduler>(*this);
+
+        if (Options::useConcurrentSweeper() && heapType == HeapType::Large)
+            m_concurrentSweeper = ConcurrentSweeper::create(vm);
     } else {
         // We simulate turning off concurrent GC by making the scheduler say that the world
         // should always be stopped when the collector is running.
@@ -487,6 +491,18 @@ void Heap::lastChanceToFinalize()
             m_collectContinuouslyCondition.notifyOne();
         }
         m_collectContinuouslyThread->waitForCompletion();
+    }
+
+    if (m_concurrentSweeper) {
+        {
+            Locker locker { m_concurrentSweeper->lock() };
+            m_concurrentSweeper->shouldStop();
+            m_concurrentSweeper->notifyPushedDirectories(locker);
+        }
+        m_concurrentSweeper->join();
+        // Make sure to clear the concurrent sweeper since we could still be running a collection and
+        // we don't want to notify it's thread after stopping.
+        m_concurrentSweeper = nullptr;
     }
 
     dataLogIf(Options::logGC(), "1");
@@ -1632,6 +1648,17 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         removeDeadCompilerWorklistEntries();
     }
 
+    if (m_concurrentSweeper) {
+        Locker locker(m_concurrentSweeper->lock());
+        bool didPushDirectory = false;
+        dateInstanceSpace.forEachDirectory([&] (BlockDirectory& directory) {
+            didPushDirectory = true;
+            m_concurrentSweeper->pushDirectoryToSweep(locker, &directory);
+        });
+        if (didPushDirectory)
+            m_concurrentSweeper->notifyPushedDirectories(locker);
+    }
+
     notifyIncrementalSweeper();
     
     m_codeBlocks->iterateCurrentlyExecuting(
@@ -1745,12 +1772,14 @@ void Heap::stopThePeriphery(GCConductor conn)
         dataLog("FATAL: world already stopped.\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
-    
+
     if (m_mutatorDidRun)
         m_mutatorExecutionVersion++;
     
     m_mutatorDidRun = false;
 
+    if (m_concurrentSweeper)
+        m_concurrentSweeper->suspendSweeping();
     suspendCompilerThreads();
     m_worldIsStopped = true;
 
@@ -1822,6 +1851,8 @@ NEVER_INLINE void Heap::resumeThePeriphery()
         visitor->updateMutatorIsStopped();
     
     resumeCompilerThreads();
+    if (m_concurrentSweeper)
+        m_concurrentSweeper->resumeSweeping();
 }
 
 bool Heap::stopTheMutator()

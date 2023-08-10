@@ -64,7 +64,7 @@ Allocator CompleteSubspace::allocatorForSlow(size_t size)
     // surprises and the algorithm here is pretty easy. Only this code has to hold the lock, to
     // prevent simultaneously BlockDirectory creations from multiple threads. This code ensures
     // that any "forEachAllocator" traversals will only see this allocator after it's initialized
-    // enough: it will have 
+    // enough.
     Locker locker { m_space.directoryLock() };
     if (Allocator allocator = m_allocatorForSizeStep[index])
         return allocator;

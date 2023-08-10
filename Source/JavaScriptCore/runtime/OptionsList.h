@@ -192,6 +192,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, verboseSanitizeStack, false, Normal, nullptr) \
     v(Bool, useGenerationalGC, true, Normal, nullptr) \
     v(Bool, useConcurrentGC, true, Normal, nullptr) \
+    v(Bool, useConcurrentSweeper, true, Normal, "Enables the concurrent sweeper for the main VM") \
     v(Bool, collectContinuously, false, Normal, nullptr) \
     v(Double, collectContinuouslyPeriodMS, 1, Normal, nullptr) \
     v(Bool, forceFencedBarrier, false, Normal, nullptr) \

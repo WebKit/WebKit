@@ -27,7 +27,9 @@
 #include "BlockDirectory.h"
 
 #include "BlockDirectoryInlines.h"
+#include "ConcurrentSweeper.h"
 #include "Heap.h"
+#include "MarkedSpaceInlines.h"
 #include "SubspaceInlines.h"
 #include "SuperSampler.h"
 
@@ -90,30 +92,32 @@ void BlockDirectory::updatePercentageOfPagedOutPages(SimpleStats& stats)
 
 MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
 {
+    Locker locker(bitvectorLock());
     m_emptyCursor = m_bits.empty().findBit(m_emptyCursor, true);
     if (m_emptyCursor >= m_blocks.size())
         return nullptr;
+    setIsInUse(locker, m_emptyCursor, true);
     return m_blocks[m_emptyCursor];
 }
 
 MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allocator)
 {
+    Locker locker(bitvectorLock());
     for (;;) {
-        allocator.m_allocationCursor = (m_bits.canAllocateButNotEmpty() | m_bits.empty()).findBit(allocator.m_allocationCursor, true);
+        allocator.m_allocationCursor = ((m_bits.canAllocateButNotEmpty() | m_bits.empty()) & ~m_bits.inUse()).findBit(allocator.m_allocationCursor, true);
         if (allocator.m_allocationCursor >= m_blocks.size())
             return nullptr;
         
         unsigned blockIndex = allocator.m_allocationCursor++;
         MarkedBlock::Handle* result = m_blocks[blockIndex];
-        setIsCanAllocateButNotEmpty(NoLockingNecessary, blockIndex, false);
+        setIsCanAllocateButNotEmpty(locker, blockIndex, false);
+        setIsInUse(locker, blockIndex, true);
         return result;
     }
 }
 
 MarkedBlock::Handle* BlockDirectory::tryAllocateBlock(Heap& heap)
 {
-    SuperSamplerScope superSamplerScope(false);
-    
     MarkedBlock::Handle* handle = MarkedBlock::tryCreate(heap, subspace()->alignedMemoryAllocator());
     if (!handle)
         return nullptr;
@@ -145,8 +149,9 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
         m_blocks[index] = block;
     }
     
+    Locker locker { m_bitvectorLock };
     forEachBitVector(
-        NoLockingNecessary,
+        locker,
         [&](auto vectorRef) {
             ASSERT_UNUSED(vectorRef, !vectorRef[index]);
         });
@@ -154,8 +159,9 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
     // This is the point at which the block learns of its cellSize() and attributes().
     block->didAddToDirectory(this, index);
     
-    setIsLive(NoLockingNecessary, index, true);
-    setIsEmpty(NoLockingNecessary, index, true);
+    setIsLive(locker, index, true);
+    setIsEmpty(locker, index, true);
+    setIsInUse(locker, index, true);
 }
 
 void BlockDirectory::removeBlock(MarkedBlock::Handle* block, WillDeleteBlock willDelete)
@@ -186,6 +192,8 @@ void BlockDirectory::stopAllocating()
         [&] (LocalAllocator* allocator) {
             allocator->stopAllocating();
         });
+
+    ASSERT(m_bits.inUse().isEmpty());
 }
 
 void BlockDirectory::prepareForAllocation()
@@ -249,12 +257,16 @@ void BlockDirectory::beginMarkingForFullCollection()
 
 void BlockDirectory::endMarking()
 {
+    ConcurrentSweeper* sweeper = subspace()->space().heap().concurrentSweeper();
+    ASSERT_UNUSED(sweeper, !sweeper || sweeper->isSuspended());
+
     m_bits.allocated().clearAll();
     
     // It's surprising and frustrating to comprehend, but the end-of-marking flip does not need to
     // know what kind of collection it is. That knowledge is already encoded in the m_markingXYZ
     // vectors.
     
+    // Sweeper is suspended so we don't need the lock here.
     m_bits.empty() = m_bits.live() & ~m_bits.markingNotEmpty();
     m_bits.canAllocateButNotEmpty() = m_bits.live() & m_bits.markingNotEmpty() & ~m_bits.markingRetired();
 
@@ -275,37 +287,74 @@ void BlockDirectory::endMarking()
 
 void BlockDirectory::snapshotUnsweptForEdenCollection()
 {
+    ConcurrentSweeper* sweeper = subspace()->space().heap().concurrentSweeper();
+    ASSERT_UNUSED(sweeper, !sweeper || sweeper->isSuspended());
     m_bits.unswept() |= m_bits.eden();
 }
 
 void BlockDirectory::snapshotUnsweptForFullCollection()
 {
+    ConcurrentSweeper* sweeper = subspace()->space().heap().concurrentSweeper();
+    ASSERT_UNUSED(sweeper, !sweeper || sweeper->isSuspended());
     m_bits.unswept() = m_bits.live();
 }
 
-MarkedBlock::Handle* BlockDirectory::findBlockToSweep()
+MarkedBlock::Handle* BlockDirectory::findBlockToSweep(const AbstractLocker& locker, unsigned& unsweptCursor)
 {
-    m_unsweptCursor = m_bits.unswept().findBit(m_unsweptCursor, true);
-    if (m_unsweptCursor >= m_blocks.size())
+    unsweptCursor = (m_bits.unswept() & ~m_bits.inUse()).findBit(unsweptCursor, true);
+    if (unsweptCursor >= m_blocks.size())
         return nullptr;
-    return m_blocks[m_unsweptCursor];
+    setIsInUse(locker, unsweptCursor, true);
+    return m_blocks[unsweptCursor];
 }
 
 void BlockDirectory::sweep()
 {
-    m_bits.unswept().forEachSetBit(
-        [&] (size_t index) {
-            MarkedBlock::Handle* block = m_blocks[index];
+    // We need to be careful of a weird race where while we are sweeping a block
+    // the concurrent sweeper comes along and takes the inUse bit for a block
+    // in the same bit vector word as we're currently scanning. If we did't
+    // refresh our view into the word we could see stale data and try to scan
+    // a block already in use.
+
+    Locker locker(bitvectorLock());
+    for (size_t index = 0; index < m_blocks.size(); ++index) {
+        index = (m_bits.unswept() & ~m_bits.inUse()).findBit(index, true);
+        if (index >= m_blocks.size())
+            break;
+
+        MarkedBlock::Handle* block = m_blocks[index];
+        ASSERT(!isInUse(locker, index));
+        setIsInUse(locker, index, true);
+        {
+            DropLockForScope scope(locker);
             block->sweep(nullptr);
-        });
+        }
+        setIsInUse(locker, index, false);
+    }
 }
 
 void BlockDirectory::shrink()
 {
-    (m_bits.empty() & ~m_bits.destructible()).forEachSetBit(
-        [&] (size_t index) {
+    // We need to be careful of a weird race where while we are sweeping a block
+    // the concurrent sweeper comes along and takes the inUse bit for a block
+    // in the same bit vector word as we're currently scanning. If we did't
+    // refresh our view into the word we could see stale data and try to scan
+    // a block already in use.
+
+    Locker locker(bitvectorLock());
+    for (size_t index = 0; index < m_blocks.size(); ++index) {
+        index = (m_bits.empty() & ~m_bits.destructible() & ~m_bits.inUse()).findBit(index, true);
+        if (index >= m_blocks.size())
+            break;
+
+        ASSERT(!isInUse(locker, index));
+        setIsInUse(locker, index, true);
+        {
+            DropLockForScope scope(locker);
             markedSpace().freeBlock(m_blocks[index]);
-        });
+        }
+        setIsInUse(locker, index, false);
+    }
 }
 
 void BlockDirectory::assertNoUnswept()
@@ -319,6 +368,18 @@ void BlockDirectory::assertNoUnswept()
     dataLog("Assertion failed: unswept not empty in ", *this, ".\n");
     dumpBits();
     ASSERT_NOT_REACHED();
+}
+
+void BlockDirectory::didFinishUsingBlock(MarkedBlock::Handle* handle)
+{
+    Locker locker(bitvectorLock());
+    if (UNLIKELY(!isInUse(locker, handle))) {
+        dataLogLn("Finish using on a block that's not in use");
+        dumpBits();
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    setIsInUse(locker, handle, false);
 }
 
 RefPtr<SharedTask<MarkedBlock::Handle*()>> BlockDirectory::parallelNotEmptyBlockSource()
