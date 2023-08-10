@@ -1781,6 +1781,8 @@ localizedStrings["Valid From"] = "Valid From";
 localizedStrings["Valid Until"] = "Valid Until";
 localizedStrings["Value"] = "Value";
 localizedStrings["Variables"] = "Variables";
+/* Title of swatches section in Color Picker */
+localizedStrings["Variables @ Color Picker"] = "Variables";
 /* Section title for font variation properties. */
 localizedStrings["Variation Properties @ Font Details Sidebar Section"] = "Variation Properties";
 localizedStrings["Verbose"] = "Verbose";

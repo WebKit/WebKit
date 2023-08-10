@@ -25,7 +25,7 @@
 
 WI.ColorPicker = class ColorPicker extends WI.Object
 {
-    constructor({preventChangingColorFormats} = {})
+    constructor({preventChangingColorFormats, colorVariables} = {})
     {
         super();
 
@@ -87,7 +87,27 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         this._opacity = 0;
         this._opacityPattern = "url(Images/Checkers.svg)";
 
-        this._color = WI.Color.fromString("white");
+        this.color = WI.Color.fromString("white");
+
+        if (colorVariables?.length) {
+            let variableColorSwatchesContainer = this._element.appendChild(document.createElement("div"));
+            variableColorSwatchesContainer.classList.add("variable-color-swatches");
+
+            let swatchesTitle = variableColorSwatchesContainer.appendChild(document.createElement("h2"));
+            swatchesTitle.textContent = WI.UIString("Variables", "Variables @ Color Picker", "Title of swatches section in Color Picker");
+            
+            let variableColorSwatchesListElement = variableColorSwatchesContainer.appendChild(document.createElement("ul"));
+            let sortedColorVariables = WI.ColorPicker.sortColorVariables(colorVariables);
+
+            for (let variable of sortedColorVariables) {
+                let computedColor = WI.Color.fromString(variable.value)
+                let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, computedColor, {readOnly: true, tooltip: variable.name});
+                swatch.element.addEventListener("click", (event) => {
+                    this._updateColorForVariable(computedColor, variable.name);
+                });
+                variableColorSwatchesListElement.appendChild(document.createElement("li")).appendChild(swatch.element);
+            }
+        }
 
         this._dontUpdateColor = false;
     }
@@ -117,6 +137,38 @@ WI.ColorPicker = class ColorPicker extends WI.Object
             return null;
 
         return WI.Color.fromStringBestMatchingSuggestedFormatAndGamut(pickedColorCSSString, {suggestedFormat, suggestedGamut, forceSuggestedFormatAndGamut});
+    }
+
+    // Static
+
+    static sortColorVariables(colorVariables)
+    {   
+        const rotation = 2;
+        const weights = [Math.E / 11.279, Math.E / 3.934, Math.E / 39.975];
+
+        function visualAppeal(variable) {
+            let color = WI.Color.fromString(variable.value);
+            let [h, s, l] = color.hsl;
+
+            let luminosity = Math.floor(color.rgb.reduce((total, component, i) => total + component * weights[i]));
+
+            let [modifiedH, modifiedLuminosity, modifiedLight] = [h, luminosity, l].map((component) => Math.floor(component * rotation));
+
+            if (modifiedH % 2 === 1) {
+                modifiedLight = rotation - modifiedLight;
+                luminosity = rotation - luminosity;
+            }
+
+            return {lightScore: modifiedLight, luminosityScore: luminosity, hueScore: modifiedH};
+        }
+
+        let colorVariableVisualAppealScores = new Map(colorVariables.map((variable) => [variable, visualAppeal(variable)]));
+
+        return colorVariables.sort((variableA, variableB) => {
+            let appealA = colorVariableVisualAppealScores.get(variableA);
+            let appealB = colorVariableVisualAppealScores.get(variableB);
+            return appealB.hueScore - appealA.hueScore || appealB.luminosityScore - appealA.luminosityScore || appealB.lightScore - appealA.lightScore;
+        });
     }
 
     // Public
@@ -342,6 +394,12 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         });
         this.color = new WI.Color(this._color.format, components, this._color.gamut);
         this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
+    }
+
+    _updateColorForVariable(resolvedColor, variableName)
+    {
+        this.color = resolvedColor;
+        this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color, variableName});
     }
 };
 

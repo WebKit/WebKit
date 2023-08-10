@@ -29,11 +29,14 @@
     position: relative;
     width: 1em;
     height: 1em;
-    margin-right: 3px;
-    vertical-align: -2px;
+    margin-right: var(--inline-swatch-margin-right-override, var(--inline-swatch-margin-right-default));
+    vertical-align: var(--inline-swatch-vertical-align-override, var(--inline-swatch-vertical-align-default));
     border-radius: 2px;
     overflow: hidden;
     cursor: default;
+
+    --inline-swatch-margin-right-default: 3px;
+    --inline-swatch-vertical-align-override: -2px;
 }
 
 .inline-swatch:not(.box-shadow),
