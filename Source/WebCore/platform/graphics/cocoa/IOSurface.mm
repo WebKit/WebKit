@@ -299,10 +299,9 @@ static IntSize computeMaximumSurfaceSize()
 {
     auto maxSize = IntSize { clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth)), clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)) };
 
-#if PLATFORM(IOS_FAMILY)
     // On iOS, there's an additional 8K clamp in CA (rdar://101936907).
+    // On some macOS VMs, IOSurfaceGetPropertyMaximum() returns INT_MAX (rdar://113661708).
     maxSize.clampToMaximumSize(fallbackMaxSurfaceDimension());
-#endif
 
     if (maxSize.isZero())
         maxSize = fallbackMaxSurfaceDimension();
