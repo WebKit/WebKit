@@ -120,8 +120,6 @@ public:
     bool shouldEnableLegacyGetUserMediaQuirk() const;
 #endif
 
-    bool shouldDisableElementFullscreenQuirk() const;
-
     bool needsCanPlayAfterSeekedQuirk() const;
 
     bool shouldAvoidPastingImagesAsWebContent() const;
@@ -198,7 +196,6 @@ private:
     mutable std::optional<bool> m_needsFullscreenDisplayNoneQuirk;
     mutable std::optional<bool> m_shouldAvoidPastingImagesAsWebContent;
 #endif
-    mutable std::optional<bool> m_shouldDisableElementFullscreenQuirk;
 #if ENABLE(TOUCH_EVENTS)
     enum class ShouldDispatchSimulatedMouseEvents : uint8_t {
         Unknown,

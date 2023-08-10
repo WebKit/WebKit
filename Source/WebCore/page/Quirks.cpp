@@ -991,26 +991,6 @@ bool Quirks::shouldEnableLegacyGetUserMediaQuirk() const
 }
 #endif
 
-// nfl.com rdar://58807210
-bool Quirks::shouldDisableElementFullscreenQuirk() const
-{
-#if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    if (m_shouldDisableElementFullscreenQuirk)
-        return m_shouldDisableElementFullscreenQuirk.value();
-
-    auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
-
-    m_shouldDisableElementFullscreenQuirk = domain == "nfl.com"_s || domain.endsWith(".nfl.com"_s);
-
-    return m_shouldDisableElementFullscreenQuirk.value();
-#else
-    return false;
-#endif
-}
-
 // hulu.com rdar://55041979
 bool Quirks::needsCanPlayAfterSeekedQuirk() const
 {
