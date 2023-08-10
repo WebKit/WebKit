@@ -130,6 +130,8 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/win/WebProcessMainWin.cpp
     WebProcess/win/WebProcessWin.cpp
+
+    win/WebKitDLL.cpp
 )
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES

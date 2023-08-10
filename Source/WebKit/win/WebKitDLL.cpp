@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebKitDLL.h"
 
-#include "windows.h"
+namespace WebKit {
 
-namespace WebCore {
+HINSTANCE s_instanceHandle;
 
-HINSTANCE instanceHandle();
-    
+HINSTANCE instanceHandle()
+{
+    ASSERT(s_instanceHandle);
+    return s_instanceHandle;
+}
+
+} // namespace WebKit
+
+BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD reason, LPVOID)
+{
+    switch (reason) {
+    case DLL_PROCESS_ATTACH:
+        WebKit::s_instanceHandle = hInstance;
+        break;
+    }
+    return true;
 }

@@ -37,6 +37,7 @@
 #include "WebContextMenuProxyWin.h"
 #include "WebEditCommandProxy.h"
 #include "WebEventFactory.h"
+#include "WebKitDLL.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
@@ -49,7 +50,6 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Region.h>
-#include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <wtf/FileSystem.h>
 #include <wtf/SoftLinking.h>
