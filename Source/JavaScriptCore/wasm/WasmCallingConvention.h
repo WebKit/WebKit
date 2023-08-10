@@ -185,6 +185,8 @@ public:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
             case TypeKind::Nullref:
+            case TypeKind::Nullfuncref:
+            case TypeKind::Nullexternref:
             case TypeKind::I31ref:
             case TypeKind::Sub:
             case TypeKind::Rec:
@@ -231,6 +233,8 @@ public:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
             case TypeKind::Nullref:
+            case TypeKind::Nullfuncref:
+            case TypeKind::Nullexternref:
             case TypeKind::I31ref:
             case TypeKind::Sub:
             case TypeKind::Rec:

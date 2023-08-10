@@ -2190,10 +2190,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             TypeIndex resultTypeIndex = static_cast<TypeIndex>(heapType);
             switch (static_cast<TypeKind>(heapType)) {
             case TypeKind::Funcref:
+            case TypeKind::Nullfuncref:
                 WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), funcrefType()), opName, " to type ", ref.type(), " expected a funcref");
                 break;
             case TypeKind::Externref:
-                WASM_VALIDATOR_FAIL_IF(!isExternref(ref.type()), opName, " to type ", ref.type(), " expected an externref");
+            case TypeKind::Nullexternref:
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), externrefType()), opName, " to type ", ref.type(), " expected an externref");
                 break;
             case TypeKind::Eqref:
             case TypeKind::Anyref:

@@ -151,6 +151,20 @@ inline bool isNullref(Type type)
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullref);
 }
 
+inline bool isNullfuncref(Type type)
+{
+    if (!Options::useWebAssemblyGC())
+        return false;
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullfuncref);
+}
+
+inline bool isNullexternref(Type type)
+{
+    if (!Options::useWebAssemblyGC())
+        return false;
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullexternref);
+}
+
 inline bool isInternalref(Type type)
 {
     if (!Options::useWebAssemblyGC() || !isRefType(type) || !typeIndexIsType(type.index))
@@ -307,6 +321,12 @@ inline bool isSubtype(Type sub, Type parent)
     if (isNullref(sub))
         return isInternalref(parent);
 
+    if (isNullfuncref(sub))
+        return isSubtype(parent, funcrefType());
+
+    if (isNullexternref(sub))
+        return sub == parent || isExternref(parent);
+
     if (sub.isRef() && parent.isRefNull())
         return sub.index == parent.index;
 
@@ -334,6 +354,8 @@ inline bool isValidHeapTypeKind(TypeKind kind)
     case TypeKind::Eqref:
     case TypeKind::Anyref:
     case TypeKind::Nullref:
+    case TypeKind::Nullfuncref:
+    case TypeKind::Nullexternref:
         return Options::useWebAssemblyGC();
     default:
         break;
