@@ -182,6 +182,8 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
             return maxSpecificity(simpleSelector.selectorList());
         return SelectorSpecificityIncrement::ClassC;
     case CSSSelector::Match::Unknown:
+    case CSSSelector::Match::ForgivingUnknown:
+    case CSSSelector::Match::ForgivingUnknownNestContaining:
         return 0;
     }
     ASSERT_NOT_REACHED();
@@ -398,11 +400,13 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
         if (cs->match() == Match::Id) {
             builder.append('#');
             serializeIdentifier(cs->serializingValue(), builder);
-        } else if (cs->match() == CSSSelector::Match::NestingParent) {
+        } else if (cs->match() == Match::NestingParent) {
             builder.append('&');
-        } else if (cs->match() == CSSSelector::Match::Class) {
+        } else if (cs->match() == Match::Class) {
             builder.append('.');
             serializeIdentifier(cs->serializingValue(), builder);
+        } else if (cs->match() == Match::ForgivingUnknown || cs->match() == Match::ForgivingUnknownNestContaining) {
+            builder.append(cs->value());
         } else if (cs->match() == Match::PseudoClass) {
             switch (cs->pseudoClassType()) {
 #if ENABLE(FULLSCREEN_API)
@@ -1040,8 +1044,12 @@ void CSSSelector::replaceNestingParentByPseudoClassScope()
 bool CSSSelector::hasExplicitNestingParent() const
 {
     auto checkForExplicitParent = [] (const CSSSelector& selector) {
-        if (selector.match() == CSSSelector::Match::NestingParent)
+        if (selector.match() == Match::NestingParent)
             return true;
+
+        if (selector.match() == Match::ForgivingUnknownNestContaining)
+            return true;
+
         return false;
     };
 

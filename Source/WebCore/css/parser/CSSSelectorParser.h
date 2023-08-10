@@ -111,7 +111,10 @@ private:
     const CSSSelectorParserContext m_context;
     const RefPtr<StyleSheetContents> m_styleSheet;
     CSSParserEnum::IsNestedContext m_isNestedContext { CSSParserEnum::IsNestedContext::No };
+
+    // FIXME: This m_failedParsing is ugly and confusing, we should look into removing it (the return value of each function already convey this information).
     bool m_failedParsing { false };
+
     bool m_disallowPseudoElements { false };
     bool m_disallowHasPseudoClass { false };
     bool m_resistDefaultNamespace { false };

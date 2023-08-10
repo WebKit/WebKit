@@ -1545,6 +1545,9 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
         case CSSSelector::Match::Unknown:
             ASSERT_NOT_REACHED();
             return FunctionType::CannotMatchAnything;
+        case CSSSelector::Match::ForgivingUnknown:
+        case CSSSelector::Match::ForgivingUnknownNestContaining:
+            return FunctionType::CannotMatchAnything;
         }
 
         auto relation = selector->relation();

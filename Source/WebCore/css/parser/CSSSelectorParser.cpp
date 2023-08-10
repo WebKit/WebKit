@@ -160,19 +160,41 @@ CSSSelectorList CSSSelectorParser::consumeForgivingSelectorList(CSSParserTokenRa
     Vector<std::unique_ptr<CSSParserSelector>> selectorList;
 
     auto consumeForgiving = [&] {
+        auto initialRange = range;
+        auto unknownSelector = [&] {
+            auto unknownSelector = makeUnique<CSSParserSelector>();
+            auto unknownRange = initialRange.makeSubRange(initialRange.begin(), range.begin());
+            unknownSelector->setMatch(CSSSelector::Match::ForgivingUnknown);
+            // We store the complete range content for serialization.
+            unknownSelector->setValue(AtomString { unknownRange.serialize() });
+            // If the range contains a nesting selector, we mark this unknown selector as "nest containing" (it will be used during rule set building)
+            for (auto& token : unknownRange) {
+                if (token.type() == DelimiterToken && token.delimiter() == '&') {
+                    unknownSelector->setMatch(CSSSelector::Match::ForgivingUnknownNestContaining);
+                    break;
+                }
+            }
+            return unknownSelector;
+        };
+
         auto selector = consumeSelector(range);
 
         if (m_failedParsing && !m_disableForgivingParsing) {
             selector = { };
             m_failedParsing = false;
         }
-        if (!range.atEnd() && range.peek().type() != CommaToken) {
+
+        // Range is not over and next token is not a comma (means there is more to this selector) so this selector is unknown.
+        // Consume until next comma and add the full range as an unknown selector to the selector list.
+        if ((!range.atEnd() && range.peek().type() != CommaToken) || !selector) {
             while (!range.atEnd() && range.peek().type() != CommaToken)
                 range.consume();
+            if (!m_disableForgivingParsing)
+                selectorList.append(unknownSelector());
             return;
         }
-        if (selector)
-            selectorList.append(WTFMove(selector));
+
+        selectorList.append(WTFMove(selector));
     };
 
     consumeForgiving();
