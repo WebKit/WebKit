@@ -61,7 +61,6 @@ private:
 
     void updateStats(GstBuffer*);
 
-    GRefPtr<GstElement> m_fallbackSource;
     GRefPtr<GstElement> m_videoConvert;
     GRefPtr<GstElement> m_videoFlip;
     GRefPtr<GstElement> m_videoRate;
