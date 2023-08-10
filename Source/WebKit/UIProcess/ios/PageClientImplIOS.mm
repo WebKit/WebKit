@@ -114,6 +114,7 @@ void PageClientImpl::setViewNeedsDisplay(const Region&)
 
 void PageClientImpl::requestScroll(const FloatPoint& scrollPosition, const IntPoint& scrollOrigin, ScrollIsAnimated animated)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "mattwoodrow> PageClientImpl/iOS::requestScroll(pos=" << scrollPosition << ", origin=" << scrollOrigin << ", animated=" << int(animated) << ")");
     [webView() _scrollToContentScrollPosition:scrollPosition scrollOrigin:scrollOrigin animated:animated == ScrollIsAnimated::Yes];
 }
 

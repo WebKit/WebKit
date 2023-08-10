@@ -28,6 +28,7 @@
 
 #import "DrawingAreaProxyMessages.h"
 #import "GraphicsLayerCARemote.h"
+#import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerBackingStoreCollection.h"
@@ -61,6 +62,19 @@ using namespace WebCore;
 
 constexpr FramesPerSecond DefaultPreferredFramesPerSecond = 60;
 
+#define LOG_THAT_RLTDA(THAT, ...) ALWAYS_LOG_WITH_STREAM(stream \
+    << "RemoteLayerTreeDrawingArea[" << THAT \
+    << " pgid=" << THAT->m_webPage.identifier() \
+    << " udrt=" << THAT->m_updateRenderingTimer.isActive() \
+    << " rsus=" << THAT->m_isRenderingSuspended \
+    << " hdru=" << THAT->m_hasDeferredRenderingUpdate \
+    << " wbss=" << THAT->m_waitingForBackingStoreSwap \
+    << " druw=" << THAT->m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap \
+    << " scrt=" << THAT->m_scheduleRenderingTimer.isActive() \
+    << " isch=" << THAT->m_isScheduled \
+    << "]" << __VA_ARGS__)
+#define LOG_RLTDA(...) LOG_THAT_RLTDA(this, __VA_ARGS__)
+
 RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaType::RemoteLayerTree, parameters.drawingAreaIdentifier, webPage)
     , m_remoteLayerTreeContext(makeUnique<RemoteLayerTreeContext>(webPage))
@@ -68,6 +82,8 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     , m_scheduleRenderingTimer(*this, &RemoteLayerTreeDrawingArea::scheduleRenderingUpdateTimerFired)
     , m_preferredFramesPerSecond(DefaultPreferredFramesPerSecond)
 {
+    LOG_RLTDA("::RemoteLayerTreeDrawingArea()");
+
     m_webPage.corePage()->settings().setForceCompositingMode(true);
 
     m_commitQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr));
@@ -76,7 +92,10 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
         setViewExposedRect(viewExposedRect);
 }
 
-RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea() = default;
+RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
+{
+    LOG_RLTDA("::~RemoteLayerTreeDrawingArea()");
+}
 
 void RemoteLayerTreeDrawingArea::setNeedsDisplay()
 {
@@ -88,6 +107,7 @@ void RemoteLayerTreeDrawingArea::setNeedsDisplayInRect(const IntRect&)
 
 void RemoteLayerTreeDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
+    LOG_RLTDA("::scroll(rect=" << scrollRect << ", size delta=" << scrollDelta << ")");
 }
 
 GraphicsLayerFactory* RemoteLayerTreeDrawingArea::graphicsLayerFactory()
@@ -146,6 +166,7 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(WebCore::Frame& frame, 
             rootLayer.contentLayer = rootGraphicsLayer;
     }
     updateRootLayers();
+    LOG_RLTDA("::setRootCompositingLayer -> triggerRenderingUpdate");
     triggerRenderingUpdate();
 }
 
@@ -169,6 +190,7 @@ void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool fl
         size = contentSize;
     }
 
+    LOG_RLTDA("::updateGeometry -> triggerRenderingUpdate");
     triggerRenderingUpdate();
     completionHandler();
 }
@@ -214,14 +236,18 @@ DelegatedScrollingMode RemoteLayerTreeDrawingArea::delegatedScrollingMode() cons
 
 void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 {
-    if (m_isRenderingSuspended == isFrozen)
+    if (m_isRenderingSuspended == isFrozen) {
+        LOG_RLTDA("::setLayerTreeStateIsFrozen(" << isFrozen << ") - rsus==isFrozen -> do nothing");
         return;
+    }
 
     tracePoint(isFrozen ? LayerTreeFreezeStart : LayerTreeFreezeEnd);
 
+    LOG_RLTDA("::setLayerTreeStateIsFrozen(" << isFrozen << ") -> rsus=isFrozen=" << isFrozen);
     m_isRenderingSuspended = isFrozen;
 
     if (!m_isRenderingSuspended && m_hasDeferredRenderingUpdate) {
+        LOG_RLTDA("::setLayerTreeStateIsFrozen(" << isFrozen << ") - !rsus&&hdru -> hdru=0, startRenderingUpdateTimer");
         m_hasDeferredRenderingUpdate = false;
         startRenderingUpdateTimer();
     }
@@ -229,9 +255,12 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 
 void RemoteLayerTreeDrawingArea::forceRepaint()
 {
-    if (m_isRenderingSuspended)
+    if (m_isRenderingSuspended) {
+        LOG_RLTDA("::forceRepaint - rsus -> don't updateRendering");
         return;
+    }
 
+    LOG_RLTDA("::forceRepaint -> updateRendering");
     m_webPage.corePage()->forceRepaintAllFrames();
     updateRendering();
 }
@@ -272,23 +301,29 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
         return;
 
     frameView->setExposedContentRect(exposedContentRect);
+    LOG_RLTDA("::setExposedContentRect -> triggerRenderingUpdate");
     triggerRenderingUpdate();
 }
 
 void RemoteLayerTreeDrawingArea::startRenderingUpdateTimer()
 {
-    if (m_updateRenderingTimer.isActive())
+    if (m_updateRenderingTimer.isActive()) {
+        // LOG_RLTDA("::startRenderingUpdateTimer - udrt already active");
         return;
+    }
+    LOG_RLTDA("::startRenderingUpdateTimer -> start udrt");
     m_updateRenderingTimer.startOneShot(0_s);
 }
 
 void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
 {
     if (m_isRenderingSuspended) {
+        // LOG_RLTDA("::triggerRenderingUpdate - rsus -> don't startRenderingUpdateTimer, hdru=1");
         m_hasDeferredRenderingUpdate = true;
         return;
     }
 
+    LOG_RLTDA("::triggerRenderingUpdate -> startRenderingUpdateTimer");
     startRenderingUpdateTimer();
 }
 
@@ -300,21 +335,29 @@ void RemoteLayerTreeDrawingArea::setNextRenderingUpdateRequiresSynchronousImageD
 void RemoteLayerTreeDrawingArea::updateRendering()
 {
     if (m_isRenderingSuspended) {
+        LOG_RLTDA("::updateRendering - rsus -> hdru=1");
         m_hasDeferredRenderingUpdate = true;
         return;
     }
 
     if (m_waitingForBackingStoreSwap) {
+        LOG_RLTDA("::updateRendering - wbss -> druw=1");
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = true;
         return;
     }
 
     // This function is not reentrant, e.g. a rAF callback may force repaint.
-    if (m_inUpdateRendering)
+    if (m_inUpdateRendering) {
+        LOG_RLTDA("::updateRendering - m_inUpdateRendering=1 -> prevent reentrancy");
         return;
+    }
 
-    if (auto* page = m_webPage.corePage(); page && !page->rootFrames().computeSize())
+    if (auto* page = m_webPage.corePage(); page && !page->rootFrames().computeSize()) {
+        LOG_RLTDA("::updateRendering - no corePage or no computedSize -> do nothing");
         return;
+    }
+
+    LOG_RLTDA("::updateRendering...");
 
     scaleViewToFitDocumentIfNeeded();
 
@@ -370,14 +413,22 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         
         willCommitLayerTree(layerTransaction);
         
+        LOG_RLTDA("::updateRendering -> wbss=1, send WillCommitLayerTree(transactionID=" << layerTransaction.transactionID() << ")...");
         m_waitingForBackingStoreSwap = true;
         
-        send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID()));
+        if (!send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID())))
+            LOG_RLTDA("::updateRendering - failed sending WillCommitLayerTree(transactionID=" << layerTransaction.transactionID() << ")!!!!!");
 
         RemoteScrollingCoordinatorTransaction scrollingTransaction;
 #if ENABLE(ASYNC_SCROLLING)
-        if (m_webPage.scrollingCoordinator())
+        if (m_webPage.scrollingCoordinator()) {
             downcast<RemoteScrollingCoordinator>(*m_webPage.scrollingCoordinator()).buildTransaction(scrollingTransaction);
+#if !defined(NDEBUG) || !LOG_DISABLED
+            LOG_RLTDA("::updateRendering - built scrolling transaction: " << scrollingTransaction.description());
+#else
+            LOG_RLTDA("::updateRendering - built scrolling transaction");
+#endif
+        }
 #endif
         transactions.uncheckedAppend({ WTFMove(layerTransaction), WTFMove(scrollingTransaction) });
     }
@@ -397,10 +448,13 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         m_webPage.didPaintLayers();
 
     auto pageID = m_webPage.identifier();
+    LOG_RLTDA("::updateRendering -> dispatch flusher");
     dispatch_async(m_commitQueue.get(), makeBlockPtr([backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] () mutable {
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingArea[pgid=" << pageID << "]::updateRendering::lambda -> BackingStoreFlusher[" << backingStoreFlusher.get() << "].flush() on commit queue...");
         backingStoreFlusher->flush();
 
         RunLoop::main().dispatch([pageID] () mutable {
+            ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingArea[pgid=" << pageID << "]::updateRendering::flusher completion on main thread");
             if (auto* webPage = WebProcess::singleton().webPage(pageID)) {
                 if (auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(webPage->drawingArea())) {
                     drawingArea->didCompleteRenderingUpdateDisplay();
@@ -413,6 +467,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
 void RemoteLayerTreeDrawingArea::didCompleteRenderingUpdateDisplay()
 {
+    LOG_RLTDA("::didCompleteRenderingUpdateDisplay");
     m_webPage.didFlushLayerTreeAtTime(MonotonicTime::now());
     DrawingArea::didCompleteRenderingUpdateDisplay();
 }
@@ -431,13 +486,18 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh()
     }
 
     if (m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap || (m_isScheduled && !m_scheduleRenderingTimer.isActive())) {
+        LOG_RLTDA("::displayDidRefresh -> wbss=1 - druw || (isch && !scrt) -> triggerRenderingUpdate, druw=0 isch=0");
         triggerRenderingUpdate();
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = false;
         m_isScheduled = false;
-    } else if (wasWaitingForBackingStoreSwap && m_updateRenderingTimer.isActive())
+    } else if (wasWaitingForBackingStoreSwap && m_updateRenderingTimer.isActive()) {
+        LOG_RLTDA("::displayDidRefresh -> wbss=1 - was wbss && udrt -> druw=1");
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = true;
-    else
-        send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTreeNotTriggered(nextTransactionID()));
+    } else {
+        LOG_RLTDA("::displayDidRefresh -> wbss=1, send CommitLayerTreeNotTriggered(" << nextTransactionID() << ")");
+        if (!send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTreeNotTriggered(nextTransactionID())))
+            LOG_RLTDA("::displayDidRefresh - FAILED sending CommitLayerTreeNotTriggered!");
+    }
 }
 
 auto RemoteLayerTreeDrawingArea::rootLayerInfoWithFrameIdentifier(WebCore::FrameIdentifier frameID) -> RootLayerInfo*
@@ -487,7 +547,9 @@ void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
     m_hasFlushed = true;
 
     ASSERT(m_commitEncoder);
-    m_connection->sendMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(m_commitEncoder)), { });
+    ALWAYS_LOG_WITH_STREAM(stream << "BackingStoreFlusher[" << this << "]::flush() -> send CommitLayerTree");
+    if (auto error = m_connection->sendMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(m_commitEncoder)), { }); error != IPC::Error::NoError)
+        ALWAYS_LOG_WITH_STREAM(stream << "BackingStoreFlusher[" << this << "]::flush() -- send CommitLayerTree failed: " << errorAsString(error));
 }
 
 void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::ActivityState>, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& callback)
@@ -532,25 +594,33 @@ void RemoteLayerTreeDrawingArea::scheduleRenderingUpdateTimerFired()
 
 bool RemoteLayerTreeDrawingArea::scheduleRenderingUpdate()
 {
-    if (m_isScheduled)
+    if (m_isScheduled) {
+        // LOG_RLTDA("::scheduleRenderingUpdate - already isch");
         return true;
+    }
 
     tracePoint(RemoteLayerTreeScheduleRenderingUpdate, m_waitingForBackingStoreSwap);
 
     m_isScheduled = true;
 
     if (m_preferredFramesPerSecond) {
-        if (displayDidRefreshIsPending())
+        if (displayDidRefreshIsPending()) {
+            LOG_RLTDA("::scheduleRenderingUpdate [" << *m_preferredFramesPerSecond << "fps] - displayDidRefreshIsPending");
             return true;
+        }
 
+        LOG_RLTDA("::scheduleRenderingUpdate [" << *m_preferredFramesPerSecond << "fps] -> queue triggerRenderingUpdate");
         callOnMainRunLoop([self = WeakPtr { this }] () {
             if (self) {
+                LOG_THAT_RLTDA(self.get(), "::scheduleRenderingUpdate::lamda -> isch=0, triggerRenderingUpdate");
                 self->m_isScheduled = false;
                 self->triggerRenderingUpdate();
             }
         });
-    } else
+    } else {
+        LOG_RLTDA("::scheduleRenderingUpdate -> start scrt (" << m_preferredRenderingUpdateInterval.milliseconds() << "ms)");
         m_scheduleRenderingTimer.startOneShot(m_preferredRenderingUpdateInterval);
+    }
 
     return true;
 }

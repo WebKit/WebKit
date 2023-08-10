@@ -181,7 +181,7 @@ IntRect SelectionRangeData::collectBounds(ClipToVisibleContent clipToVisibleCont
             
             auto* block = start->containingBlock();
             while (block && !is<RenderView>(*block)) {
-                LOG_WITH_STREAM(Scrolling, stream << " added block " << *block);
+                ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << " added block " << *block);
                 std::unique_ptr<RenderSelectionInfo>& blockInfo = renderers.add(block, nullptr).iterator->value;
                 if (blockInfo)
                     break;

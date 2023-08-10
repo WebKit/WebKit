@@ -346,7 +346,7 @@ bool AsyncScrollingCoordinator::requestScrollToPosition(ScrollableArea& scrollab
     else
         stateNode->setRequestedScrollData({ ScrollRequestType::PositionUpdate, scrollPosition, options.type, options.clamping, options.animated });
 
-    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::requestScrollToPosition: " << (options.animated == ScrollIsAnimated::Yes ? "isAnimated" : "isntAnimated") << " currentScrollPosition: " << scrollableArea.scrollPosition() << " scrollTo:" << (options.animated == ScrollIsAnimated::Yes ? IntPoint(scrollPosition - scrollableArea.scrollPosition()) : scrollPosition) << " requestedScrollData: " << stateNode->requestedScrollData() << "options" << options);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "AsyncScrollingCoordinator::requestScrollToPosition: " << (options.animated == ScrollIsAnimated::Yes ? "isAnimated" : "isntAnimated") << " currentScrollPosition: " << scrollableArea.scrollPosition() << " scrollTo:" << (options.animated == ScrollIsAnimated::Yes ? IntPoint(scrollPosition - scrollableArea.scrollPosition()) : scrollPosition) << " requestedScrollData: " << stateNode->requestedScrollData() << "options" << options);
 
     // FIXME: This should schedule a rendering update
     commitTreeStateIfNeeded();
@@ -449,7 +449,7 @@ void AsyncScrollingCoordinator::synchronizeStateFromScrollingTree()
 
     m_scrollingTree->traverseScrollingTree([&](ScrollingNodeID nodeID, ScrollingNodeType, std::optional<FloatPoint> scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, bool scrolledSinceLastCommit) {
         if (scrollPosition && scrolledSinceLastCommit) {
-            LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::synchronizeStateFromScrollingTree - node " << nodeID << " scroll position " << scrollPosition);
+            ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "AsyncScrollingCoordinator::synchronizeStateFromScrollingTree - node " << nodeID << " scroll position " << scrollPosition);
             updateScrollPositionAfterAsyncScroll(nodeID, scrollPosition.value(), layoutViewportOrigin, ScrollingLayerPositionAction::Set, ScrollType::User);
         }
     });
@@ -462,7 +462,7 @@ void AsyncScrollingCoordinator::applyPendingScrollUpdates()
 
     auto scrollUpdates = m_scrollingTree->takePendingScrollUpdates();
     for (auto& update : scrollUpdates) {
-        LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::applyPendingScrollUpdates - node " << update.nodeID << " scroll position " << update.scrollPosition);
+        ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "AsyncScrollingCoordinator::applyPendingScrollUpdates - node " << update.nodeID << " scroll position " << update.scrollPosition);
         applyScrollPositionUpdate(WTFMove(update), ScrollType::User);
     }
 }
@@ -569,7 +569,7 @@ void AsyncScrollingCoordinator::animatedScrollDidEndForNode(ScrollingNodeID scro
     if (!frameView)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::animatedScrollDidEndForNode node " << scrollingNodeID);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "AsyncScrollingCoordinator::animatedScrollDidEndForNode node " << scrollingNodeID);
 
     m_hysterisisActivity.stop();
 
@@ -624,7 +624,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
     if (!frameViewPtr)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll node " << scrollingNodeID << " " << scrollType << " scrollPosition " << scrollPosition << " action " << scrollingLayerPositionAction);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll node " << scrollingNodeID << " " << scrollType << " scrollPosition " << scrollPosition << " action " << scrollingLayerPositionAction);
 
     auto& frameView = *frameViewPtr;
 
@@ -656,7 +656,7 @@ void AsyncScrollingCoordinator::reconcileScrollingState(LocalFrameView& frameVie
     auto previousScrollType = frameView.currentScrollType();
     frameView.setCurrentScrollType(scrollType);
 
-    LOG_WITH_STREAM(Scrolling, stream << getCurrentProcessID() << " AsyncScrollingCoordinator " << this << " reconcileScrollingState scrollPosition " << scrollPosition << " type " << scrollType << " stability " << viewportRectStability << " " << scrollingLayerPositionAction);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << getCurrentProcessID() << " AsyncScrollingCoordinator " << this << " reconcileScrollingState scrollPosition " << scrollPosition << " type " << scrollType << " stability " << viewportRectStability << " " << scrollingLayerPositionAction);
 
     std::optional<FloatRect> layoutViewportRect;
 
@@ -851,7 +851,7 @@ Vector<ScrollingNodeID> AsyncScrollingCoordinator::childrenOfNode(ScrollingNodeI
 
 void AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions(ScrollingNodeID scrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
 {
-    LOG_WITH_STREAM(Scrolling, stream << getCurrentProcessID() << " AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions for viewport rect " << viewportRect << " and node " << scrollingNodeID);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << getCurrentProcessID() << " AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions for viewport rect " << viewportRect << " and node " << scrollingNodeID);
 
     m_scrollingStateTree->reconcileViewportConstrainedLayerPositions(scrollingNodeID, viewportRect, action);
 }

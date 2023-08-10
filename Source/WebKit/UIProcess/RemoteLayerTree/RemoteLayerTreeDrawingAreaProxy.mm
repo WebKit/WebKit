@@ -137,13 +137,25 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
     }, m_identifier);
 }
 
+const char* RemoteLayerTreeDrawingAreaProxy::messageStateDescription()
+{
+    switch (m_commitLayerTreeMessageState) {
+    case CommitLayerTreePending: return "Pend";
+    case NeedsDisplayDidRefresh: return "Need";
+    case MissedCommit: return "Miss";
+    case Idle: return "Idle";
+    default: return "????";
+    }
+}
+
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered(TransactionID nextCommitTransactionID)
 {
     if (nextCommitTransactionID <= m_lastLayerTreeTransactionID) {
-        LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered nextCommitTransactionID=" << nextCommitTransactionID << ") already obsoleted by m_lastLayerTreeTransactionID=" << m_lastLayerTreeTransactionID);
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeNotTriggered(nextCommitTransactionID=" << nextCommitTransactionID << ") - already obsoleted!");
         return;
     }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeNotTriggered(nextCommitTransactionID=" << nextCommitTransactionID << ") -> m_commitLayerTreeMessageState=Idle, pauseDisplayRefreshCallbacks");
     m_commitLayerTreeMessageState = Idle;
     pauseDisplayRefreshCallbacks();
 #if ENABLE(ASYNC_SCROLLING)
@@ -153,33 +165,70 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered(TransactionID 
 
 void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(TransactionID transactionID)
 {
-    if (transactionID <= m_lastLayerTreeTransactionID)
+    if (transactionID <= m_lastLayerTreeTransactionID) {
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::willCommitLayerTree(transactionID=" << transactionID << ") - already obsoleted!");
         return;
+    }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::willCommitLayerTree(transactionID=" << transactionID << ")");
     m_pendingLayerTreeTransactionID = transactionID;
 }
 
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connection, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>& transactions)
 {
+    constexpr auto shouldAddTransactionForId = [](auto id) -> bool {
+        static constexpr unsigned behaviorChange = 32u;
+        return (id / behaviorChange) & 0x1u;
+    };
+    auto id = transactions.isEmpty() ? 1u : transactions.first().first.transactionID().toUInt64();
+    bool addTransaction = shouldAddTransactionForId(id) && false;
+    bool addTransactionChanged = (shouldAddTransactionForId(id - 1u) != addTransaction) && false;
+
+    if (addTransactionChanged)
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTree - CATransaction changed          =============================");
+
+    if (addTransaction) {
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTree - before [CATransaction begin]   vvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
+        [CATransaction begin];
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTree - after  [CATransaction begin]");
+    } else
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTree - WITHOUT [CATransaction begin]  v...v...v...v...v...v...v...v");
+
     for (auto& transaction : transactions)
         commitLayerTreeTransaction(connection, transaction.first, transaction.second);
+
+    if (addTransaction) {
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTree - before [CATransaction commit]");
+        [CATransaction commit];
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTree - after  [CATransaction commit]  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+    } else
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTree - WITHOUT [CATransaction commit] ^```^```^```^```^```^```^```^");
 }
 
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection& connection, const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeTransaction(transaction's ID=" << layerTreeTransaction.transactionID() << ")...");
+#if !defined(NDEBUG) || !LOG_DISABLED
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << "]::commitLayerTreeTransaction transaction: " << layerTreeTransaction.description());
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << "]::commitLayerTreeTransaction scrolling tree: " << scrollingTreeTransaction.description());
+#endif
     TraceScope tracingScope(CommitLayerTreeStart, CommitLayerTreeEnd);
 
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree transaction:" << layerTreeTransaction.description());
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree scrolling tree:" << scrollingTreeTransaction.description());
 
     m_lastLayerTreeTransactionID = layerTreeTransaction.transactionID();
-    if (m_pendingLayerTreeTransactionID < m_lastLayerTreeTransactionID)
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeTransaction(transaction's ID=" << layerTreeTransaction.transactionID() << ") - m_pendingLayerTreeTransactionID was " << m_pendingLayerTreeTransactionID << " -> set lastTrID=" << m_lastLayerTreeTransactionID);
+    if (m_pendingLayerTreeTransactionID < m_lastLayerTreeTransactionID) {
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeTransaction(transaction's ID=" << layerTreeTransaction.transactionID() << ") - m_pendingLayerTreeTransactionID was " << m_pendingLayerTreeTransactionID << " too low (reordered willCommit?) -> increased to lastTrID=" << m_lastLayerTreeTransactionID);
         m_pendingLayerTreeTransactionID = m_lastLayerTreeTransactionID;
+    }
 
     bool didUpdateEditorState { false };
     if (layerTreeTransaction.isMainFrameProcessTransaction()) {
         ASSERT(layerTreeTransaction.transactionID() == m_lastVisibleTransactionID.next());
         m_transactionIDForPendingCACommit = layerTreeTransaction.transactionID();
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeTransaction(transaction's ID=" << layerTreeTransaction.transactionID() << ") - layerTreeTransaction.isMainFrameProcessTransaction -> m_activityStateChangeID=" << m_activityStateChangeID << " (was " << layerTreeTransaction.activityStateChangeID() << ")");
         m_activityStateChangeID = layerTreeTransaction.activityStateChangeID();
         
         didUpdateEditorState = layerTreeTransaction.hasEditorState() && m_webPageProxy.updateEditorState(layerTreeTransaction.editorState(), WebPageProxy::ShouldMergeVisualEditorState::Yes);
@@ -207,6 +256,11 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
 #endif
     };
 
+#if ENABLE(ASYNC_SCROLLING)
+    bool needAtomicCATransaction = scrollingTreeTransaction.hasChanges();
+    if (needAtomicCATransaction)
+        [CATransaction begin];
+#endif
     m_webPageProxy.scrollingCoordinatorProxy()->willCommitLayerAndScrollingTrees();
     commitLayerAndScrollingTrees();
     m_webPageProxy.scrollingCoordinatorProxy()->didCommitLayerAndScrollingTrees();
@@ -224,13 +278,20 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     // has updated the view size based on the content size.
     if (requestedScroll) {
         auto previousScrollPosition = m_webPageProxy.scrollingCoordinatorProxy()->currentMainFrameScrollPosition();
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeTransaction(transaction's ID=" << layerTreeTransaction.transactionID() << ") - mattwoodrow> previousScrollPosition=" << previousScrollPosition);
         if (auto previousData = std::exchange(requestedScroll->requestedDataBeforeAnimatedScroll, std::nullopt)) {
             auto& [type, positionOrDeltaBeforeAnimatedScroll, scrollType, clamping] = *previousData;
             previousScrollPosition = type == ScrollRequestType::DeltaUpdate ? (m_webPageProxy.scrollingCoordinatorProxy()->currentMainFrameScrollPosition() + std::get<FloatSize>(positionOrDeltaBeforeAnimatedScroll)) : std::get<FloatPoint>(positionOrDeltaBeforeAnimatedScroll);
+            ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeTransaction(transaction's ID=" << layerTreeTransaction.transactionID() << ") - mattwoodrow> previous type=" << type << " -> previousScrollPosition=" << previousScrollPosition);
         }
 
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeTransaction(transaction's ID=" << layerTreeTransaction.transactionID() << ") - mattwoodrow> -> requestScroll(destinationPosition(prev)=" << requestedScroll->destinationPosition(previousScrollPosition) << ", scrollOrigin=" << layerTreeTransaction.scrollOrigin() << ")");
         m_webPageProxy.requestScroll(requestedScroll->destinationPosition(previousScrollPosition), layerTreeTransaction.scrollOrigin(), requestedScroll->animated);
+
     }
+
+    if (needAtomicCATransaction)
+        [CATransaction commit];
 #endif // ENABLE(ASYNC_SCROLLING)
 
     if (m_debugIndicatorLayerTreeHost) {
@@ -246,11 +307,15 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
 
     m_webPageProxy.layerTreeCommitComplete();
 
-    if (!layerTreeTransaction.isMainFrameProcessTransaction())
+    if (!layerTreeTransaction.isMainFrameProcessTransaction()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeTransaction(transaction's ID=" << layerTreeTransaction.transactionID() << ") -> send DrawingArea::DisplayDidRefresh...");
         connection.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
-    else if (std::exchange(m_commitLayerTreeMessageState, NeedsDisplayDidRefresh) == MissedCommit)
+    } else if (std::exchange(m_commitLayerTreeMessageState, NeedsDisplayDidRefresh) == MissedCommit) {
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeTransaction(transaction's ID=" << layerTreeTransaction.transactionID() << ") -> didRefreshDisplay...");
         didRefreshDisplay();
+    }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::commitLayerTreeTransaction(transaction's ID=" << layerTreeTransaction.transactionID() << ") -> scheduleDisplayRefreshCallbacks");
     scheduleDisplayRefreshCallbacks();
 
     if (didUpdateEditorState)
@@ -406,11 +471,13 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
         return;
 
     if (m_commitLayerTreeMessageState != NeedsDisplayDidRefresh) {
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::didRefreshDisplay -> pauseDisplayRefreshCallbacks");
         if (m_commitLayerTreeMessageState == CommitLayerTreePending)
             m_commitLayerTreeMessageState = MissedCommit;
         pauseDisplayRefreshCallbacks();
         return;
     }
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::didRefreshDisplay -> state=Pend, send DrawingArea::DisplayDidRefresh");
     
     m_commitLayerTreeMessageState = CommitLayerTreePending;
 
@@ -434,8 +501,11 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
 
     // We must send the didUpdate message before blocking on the next commit, otherwise
     // we can be guaranteed that the next commit won't come until after the waitForAndDispatchImmediately times out.
-    if (m_commitLayerTreeMessageState == NeedsDisplayDidRefresh)
+    if (m_commitLayerTreeMessageState == NeedsDisplayDidRefresh) {
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::waitForDidUpdateActivityState(activityStateChangeID=" << activityStateChangeID << ") -> didRefreshDisplay");
         didRefreshDisplay();
+    } else
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::waitForDidUpdateActivityState(activityStateChangeID=" << activityStateChangeID << ")");
 
     static Seconds activityStateUpdateTimeout = [] {
         if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitOverrideActivityStateUpdateTimeout"])
@@ -445,9 +515,26 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
 
     WeakPtr weakThis { *this };
     auto startTime = MonotonicTime::now();
-    while (process.connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_identifier, activityStateUpdateTimeout - (MonotonicTime::now() - startTime), IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError) {
-        if (!weakThis || activityStateChangeID == ActivityStateChangeAsynchronous || activityStateChangeID <= m_activityStateChangeID)
+    ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::waitForDidUpdateActivityState(activityStateChangeID=" << activityStateChangeID << ") -> waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree> start looping...");
+    while (true) {
+        auto error = process.connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_identifier, activityStateUpdateTimeout - (MonotonicTime::now() - startTime), IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+        if (error != IPC::Error::NoError) {
+            ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::waitForDidUpdateActivityState(activityStateChangeID=" << activityStateChangeID << ") - waitForAndDispatchImmediately ended with error=" << errorAsString(error));
             return;
+        }
+        if (!weakThis) {
+            ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::waitForDidUpdateActivityState(activityStateChangeID=" << activityStateChangeID << ") - ended because !weakThis");
+            return;
+        }
+        if (activityStateChangeID == ActivityStateChangeAsynchronous) {
+            ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::waitForDidUpdateActivityState(activityStateChangeID=" << activityStateChangeID << ") - ended because activityStateChangeID == ActivityStateChangeAsynchronous");
+            return;
+        }
+        if (activityStateChangeID <= m_activityStateChangeID) {
+            ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::waitForDidUpdateActivityState(activityStateChangeID=" << activityStateChangeID << ") - ended because activityStateChangeID <= m_activityStateChangeID=" << m_activityStateChangeID);
+            return;
+        }
+        ALWAYS_LOG_WITH_STREAM(stream << "RemoteLayerTreeDrawingAreaProxy[pgid=" << m_webPageProxy.webPageID() << " state=" << messageStateDescription() << " lastTrID=" << m_lastLayerTreeTransactionID << "]::waitForDidUpdateActivityState(activityStateChangeID=" << activityStateChangeID << ") -> waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree> continue looping...");
     }
 }
 

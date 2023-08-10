@@ -63,7 +63,7 @@ void ScrollingTreePositionedNodeCocoa::applyLayerPositions()
     auto delta = scrollDeltaSinceLastCommit();
     auto layerPosition = m_constraints.layerPositionAtLastLayout() - delta;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << delta << " moving layer to " << layerPosition);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << delta << " moving layer to " << layerPosition);
 
     [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)

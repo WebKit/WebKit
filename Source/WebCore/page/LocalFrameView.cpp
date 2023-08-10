@@ -1788,7 +1788,7 @@ void LocalFrameView::setLayoutViewportOverrideRect(std::optional<LayoutRect> rec
     if (oldRect.height() != newRect.height())
         layoutTriggering = TriggerLayoutOrNot::Yes;
 
-    LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " setLayoutViewportOverrideRect() - changing override layout viewport from " << oldRect << " to " << valueOrDefault(m_layoutViewportOverrideRect) << " layoutTriggering " << (layoutTriggering == TriggerLayoutOrNot::Yes ? "yes" : "no"));
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "\nFrameView " << this << " setLayoutViewportOverrideRect() - changing override layout viewport from " << oldRect << " to " << valueOrDefault(m_layoutViewportOverrideRect) << " layoutTriggering " << (layoutTriggering == TriggerLayoutOrNot::Yes ? "yes" : "no"));
 
     if (layoutTriggering == TriggerLayoutOrNot::Yes) {
         if (oldRect != newRect)
@@ -1823,14 +1823,14 @@ void LocalFrameView::updateLayoutViewport()
 
     LayoutRect layoutViewport = layoutViewportRect();
 
-    LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " updateLayoutViewport() totalContentSize " << totalContentsSize() << " unscaledDocumentRect " << (renderView() ? renderView()->unscaledDocumentRect() : IntRect()) << " header height " << headerHeight() << " footer height " << footerHeight() << " fixed behavior " << scrollBehaviorForFixedElements());
-    LOG_WITH_STREAM(Scrolling, stream << "layoutViewport: " << layoutViewport);
-    LOG_WITH_STREAM(Scrolling, stream << "visualViewport: " << visualViewportRect() << " (is override " << (bool)m_visualViewportOverrideRect << ")");
-    LOG_WITH_STREAM(Scrolling, stream << "stable origins: min: " << minStableLayoutViewportOrigin() << " max: "<< maxStableLayoutViewportOrigin());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "\nFrameView " << this << " updateLayoutViewport() totalContentSize " << totalContentsSize() << " unscaledDocumentRect " << (renderView() ? renderView()->unscaledDocumentRect() : IntRect()) << " header height " << headerHeight() << " footer height " << footerHeight() << " fixed behavior " << scrollBehaviorForFixedElements());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "layoutViewport: " << layoutViewport);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "visualViewport: " << visualViewportRect() << " (is override " << (bool)m_visualViewportOverrideRect << ")");
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "stable origins: min: " << minStableLayoutViewportOrigin() << " max: "<< maxStableLayoutViewportOrigin());
     
     if (m_layoutViewportOverrideRect) {
         if (currentScrollType() == ScrollType::Programmatic) {
-            LOG_WITH_STREAM(Scrolling, stream << "computing new override layout viewport because of programmatic scrolling");
+            ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "computing new override layout viewport because of programmatic scrolling");
             LayoutPoint newOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, StickToDocumentBounds);
             setLayoutViewportOverrideRect(LayoutRect(newOrigin, m_layoutViewportOverrideRect.value().size()));
         }
@@ -1841,7 +1841,7 @@ void LocalFrameView::updateLayoutViewport()
     LayoutPoint newLayoutViewportOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, scrollBehaviorForFixedElements());
     if (newLayoutViewportOrigin != m_layoutViewportOrigin) {
         setBaseLayoutViewportOrigin(newLayoutViewportOrigin);
-        LOG_WITH_STREAM(Scrolling, stream << "layoutViewport changed to " << layoutViewportRect());
+        ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "layoutViewport changed to " << layoutViewportRect());
     }
     layoutOrVisualViewportChanged();
 }
@@ -2352,7 +2352,7 @@ bool LocalFrameView::scrollToFragmentInternal(StringView fragmentIdentifier)
     if (fragmentIdentifier.isNull())
         return false;
 
-    LOG_WITH_STREAM(Scrolling, stream << *this << " scrollToFragmentInternal " << fragmentIdentifier);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << *this << " scrollToFragmentInternal " << fragmentIdentifier);
 
     ASSERT(m_frame->document());
     auto& document = *m_frame->document();
@@ -2360,7 +2360,7 @@ bool LocalFrameView::scrollToFragmentInternal(StringView fragmentIdentifier)
 
     RefPtr anchorElement = document.findAnchor(fragmentIdentifier);
 
-    LOG(Scrolling, " anchorElement is %p", anchorElement.get());
+    WTFLogAlways("**Scrolling**  anchorElement is %p", anchorElement.get());
 
     // Setting to null will clear the current target.
     document.setCSSTarget(anchorElement.get());
@@ -2400,7 +2400,7 @@ bool LocalFrameView::scrollToFragmentInternal(StringView fragmentIdentifier)
 
 void LocalFrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
 {
-    LOG(Scrolling, "LocalFrameView::maintainScrollPositionAtAnchor at %p", anchorNode);
+    WTFLogAlways("**Scrolling** LocalFrameView::maintainScrollPositionAtAnchor at %p", anchorNode);
 
     m_maintainScrollPositionAnchor = anchorNode;
     if (!m_maintainScrollPositionAnchor)
@@ -2443,12 +2443,13 @@ void LocalFrameView::scrollElementToRect(const Element& element, const IntRect& 
         bounds = renderer->absoluteAnchorRect();
     int centeringOffsetX = (rect.width() - bounds.width()) / 2;
     int centeringOffsetY = (rect.height() - bounds.height()) / 2;
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalFrameView::scrollElementToRect " << rect << " -> setScrollPosition " << IntPoint(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
     setScrollPosition(IntPoint(bounds.x() - centeringOffsetX - rect.x(), bounds.y() - centeringOffsetY - rect.y()));
 }
 
 void LocalFrameView::setScrollPosition(const ScrollPosition& scrollPosition, const ScrollPositionChangeOptions& options)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::setScrollPosition " << scrollPosition << " animated " << (options.animated == ScrollIsAnimated::Yes) << ", clearing anchor");
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalFrameView::setScrollPosition " << scrollPosition << " animated " << (options.animated == ScrollIsAnimated::Yes) << ", clearing anchor");
 
     auto oldScrollType = currentScrollType();
     setCurrentScrollType(options.type);
@@ -2703,6 +2704,7 @@ void LocalFrameView::scrollRectToVisibleInChildView(const LayoutRect& absoluteRe
 
     // FIXME: Should we use contentDocument()->scrollingElement()?
     // See https://bugs.webkit.org/show_bug.cgi?id=205059
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalFrameView::scrollRectToVisibleInChildView " << absoluteRect << " -> setScrollPosition " << scrollPosition);
     setScrollPosition(scrollPosition, scrollPositionChangeOptionsForElement(*this, element, options));
 
     if (options.shouldAllowCrossOriginScrolling == ShouldAllowCrossOriginScrolling::No && !safeToPropagateScrollToParent()) 
@@ -2762,6 +2764,7 @@ void LocalFrameView::scrollRectToVisibleInTopLevelView(const LayoutRect& absolut
         // FIXME: Should we use document()->scrollingElement()?
         // See https://bugs.webkit.org/show_bug.cgi?id=205059
         ScrollOffset clampedScrollPosition = roundedIntPoint(revealRect.location()).constrainedBetween(minScrollPosition, maxScrollPosition);
+        ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalFrameView::scrollRectToVisibleInTopLevelView " << absoluteRect << " -> setScrollPosition " << clampedScrollPosition);
         setScrollPosition(clampedScrollPosition, scrollPositionChangeOptionsForElement(*this, element, options));
     }
 
@@ -2885,7 +2888,7 @@ void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, co
             renderView->compositor().frameViewDidScroll();
     }
 
-    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView " << this << " scrollPositionChanged from " << oldPosition << " to " << newPosition << " (scale " << frameScaleFactor() << " )");
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalFrameView " << this << " scrollPositionChanged from " << oldPosition << " to " << newPosition << " (scale " << frameScaleFactor() << " )");
     updateLayoutViewport();
     viewportContentsChanged();
 
@@ -3086,7 +3089,7 @@ bool LocalFrameView::requestStopKeyboardScrollAnimation(bool immediate)
 
 bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::requestScrollToPosition " << position << " options  " << options);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalFrameView::requestScrollToPosition " << position << " options  " << options);
 
 #if ENABLE(ASYNC_SCROLLING)
     if (auto* tiledBacking = this->tiledBacking(); tiledBacking && options.animated == ScrollIsAnimated::No) {
@@ -3113,7 +3116,7 @@ bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, con
 void LocalFrameView::stopAsyncAnimatedScroll()
 {
 #if ENABLE(ASYNC_SCROLLING)
-    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::stopAsyncAnimatedScroll");
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalFrameView::stopAsyncAnimatedScroll");
 
     if (auto scrollingCoordinator = this->scrollingCoordinator())
         return scrollingCoordinator->stopAnimatedScroll(*this);
@@ -3689,7 +3692,7 @@ void LocalFrameView::scrollToAnchor()
     if (!anchorNode)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << *this << " scrollToAnchor() " << anchorNode.get());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << *this << " scrollToAnchor() " << anchorNode.get());
 
     if (!anchorNode->renderer())
         return;
@@ -3701,7 +3704,7 @@ void LocalFrameView::scrollToAnchor()
     if (anchorNode != m_frame->document() && anchorNode->renderer())
         rect = anchorNode->renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
 
-    LOG_WITH_STREAM(Scrolling, stream << " anchor node rect " << rect);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << " anchor node rect " << rect);
 
     // Scroll nested layers and frames to reveal the anchor.
     // Align to the top and to the closest side (this matches other browsers).
@@ -3716,7 +3719,7 @@ void LocalFrameView::scrollToAnchor()
         cache->handleScrolledToAnchor(anchorNode.get());
 
     // scrollRectToVisible can call into setScrollPosition(), which resets m_maintainScrollPositionAnchor.
-    LOG_WITH_STREAM(Scrolling, stream << " restoring anchor node to " << anchorNode.get());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << " restoring anchor node to " << anchorNode.get());
     m_maintainScrollPositionAnchor = anchorNode;
     cancelScheduledScrolls();
 }
@@ -3734,7 +3737,7 @@ void LocalFrameView::scrollToTextFragmentRange()
     if (m_pendingTextFragmentIndicatorText != plainText(range))
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << *this << " scrollToTextFragmentRange() " << range);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << *this << " scrollToTextFragmentRange() " << range);
 
     if (!range.startContainer().renderer() || !range.endContainer().renderer())
         return;
@@ -4722,7 +4725,7 @@ bool LocalFrameView::wasScrolledByUser() const
 
 void LocalFrameView::setWasScrolledByUser(bool wasScrolledByUser)
 {
-    LOG(Scrolling, "LocalFrameView::setWasScrolledByUser at %d", wasScrolledByUser);
+    WTFLogAlways("**Scrolling** LocalFrameView::setWasScrolledByUser at %d", wasScrolledByUser);
 
     cancelScheduledScrolls();
     if (currentScrollType() == ScrollType::Programmatic)
@@ -6052,7 +6055,7 @@ void LocalFrameView::setViewExposedRect(std::optional<FloatRect> viewExposedRect
     if (m_viewExposedRect == viewExposedRect)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView " << this << " setViewExposedRect " << (viewExposedRect ? viewExposedRect.value() : FloatRect()));
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalFrameView " << this << " setViewExposedRect " << (viewExposedRect ? viewExposedRect.value() : FloatRect()));
 
     bool hasRectExistenceChanged = !m_viewExposedRect == !viewExposedRect;
     m_viewExposedRect = viewExposedRect;

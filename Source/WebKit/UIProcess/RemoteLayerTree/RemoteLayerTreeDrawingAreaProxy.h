@@ -80,6 +80,8 @@ protected:
 
     bool shouldCoalesceVisualEditorStateUpdates() const override { return true; }
 
+    const char* messageStateDescription();
+
 private:
 
     void sizeDidChange() final;

@@ -69,7 +69,7 @@ void ScrollingTreeStickyNodeNicosia::applyLayerPositions()
 {
     auto layerPosition = computeLayerPosition();
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeStickyNodeNicosia " << scrollingNodeID() << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " layerPosition " << layerPosition);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTreeStickyNodeNicosia " << scrollingNodeID() << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " layerPosition " << layerPosition);
 
     layerPosition -= m_constraints.alignmentOffset();
 

@@ -354,6 +354,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers()
     if ([scrollView() _isAnimatingScroll])
         return;
 
+    WTFLogAlways("mattwoodrow> repositionScrollingLayers %f", scrollingNode().currentScrollOffset().y());
     [scrollView() setContentOffset:scrollingNode().currentScrollOffset()];
     END_BLOCK_OBJC_EXCEPTIONS
 

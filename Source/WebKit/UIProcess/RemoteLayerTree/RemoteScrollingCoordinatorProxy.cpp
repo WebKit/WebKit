@@ -187,7 +187,7 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID
     auto scrollUpdate = ScrollUpdate { scrolledNodeID, newScrollPosition, layoutViewportOrigin, ScrollUpdateType::PositionUpdate, scrollingLayerPositionAction };
     m_scrollingTree->addPendingScrollUpdate(WTFMove(scrollUpdate));
 
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll " << scrolledNodeID << " to " << newScrollPosition << " waitingForDidScrollReply " << m_waitingForDidScrollReply);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll " << scrolledNodeID << " to " << newScrollPosition << " waitingForDidScrollReply " << m_waitingForDidScrollReply);
 
     if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = m_webPageProxy.scrollingPerformanceData())
         scrollPerfData->didScroll(m_scrollingTree->layoutViewport());
@@ -210,7 +210,7 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll()
         const auto& update = scrollUpdates[i];
         bool isLastUpdate = i == scrollUpdates.size() - 1;
 
-        LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll - node " << update.nodeID << " scroll position " << update.scrollPosition << " isLastUpdate " << isLastUpdate);
+        ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll - node " << update.nodeID << " scroll position " << update.scrollPosition << " isLastUpdate " << isLastUpdate);
         m_webPageProxy.sendWithAsyncReply(Messages::RemoteScrollingCoordinator::ScrollPositionChangedForNode(update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction == ScrollingLayerPositionAction::Sync), [weakThis = WeakPtr { *this }, isLastUpdate] {
             if (!weakThis)
                 return;
@@ -224,7 +224,7 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll()
 
 void RemoteScrollingCoordinatorProxy::receivedLastScrollingTreeNodeDidScrollReply()
 {
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::receivedLastScrollingTreeNodeDidScrollReply - has pending updates " << (m_scrollingTree && m_scrollingTree->hasPendingScrollUpdates()));
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RemoteScrollingCoordinatorProxy::receivedLastScrollingTreeNodeDidScrollReply - has pending updates " << (m_scrollingTree && m_scrollingTree->hasPendingScrollUpdates()));
     m_waitingForDidScrollReply = false;
 
     if (!m_scrollingTree || !m_scrollingTree->hasPendingScrollUpdates())

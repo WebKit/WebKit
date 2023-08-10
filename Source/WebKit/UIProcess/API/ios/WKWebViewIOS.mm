@@ -201,6 +201,7 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
     [_contentView setFrame:bounds];
     [_scrollView addSubview:_contentView.get()];
     [_scrollView addSubview:[_contentView unscaledView]];
+    [self layer].name = @"WKWebViewIOS";
 }
 
 - (void)_registerForNotifications
@@ -1325,6 +1326,13 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         if (WTF::areEssentiallyEqual<float>(scrollPosition.y(), 0) && scrollViewContentOffset.y < 0)
             contentOffsetInScrollViewCoordinates.y = scrollViewContentOffset.y;
 
+        ALWAYS_LOG_WITH_STREAM(stream
+            << "mattwoodrow> _scrollToContentScrollPosition(pos=" << scrollPosition << ", origin=" << scrollOrigin << ", animated=" << int(animated)
+            << ") -> contentOffset=" << contentOffset
+            << " zoomScale=" << zoomScale
+            << " scaledOffset=" << scaledOffset
+            << " scrollViewContentOffset=(" << scrollViewContentOffset.x << "," << scrollViewContentOffset.y
+            << ") contentOffsetInScrollViewCoordinates=(" << contentOffsetInScrollViewCoordinates.x << "," << contentOffsetInScrollViewCoordinates.y << ")");
         [_scrollView setContentOffset:contentOffsetInScrollViewCoordinates animated:animated];
     } else if (!_perProcessState.didDeferUpdateVisibleContentRectsForAnyReason) {
         // If we haven't changed anything, and are not deferring updates, there would not be any VisibleContentRect update sent to the content.
@@ -1417,6 +1425,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     LOG_WITH_STREAM(VisibleRects, stream << "_scrollToRect: scrolling to " << [_scrollView contentOffset] + scrollViewOffsetDelta);
 
+    WTFLogAlways("mattwoodrow> _scrollToRect %f", ([_scrollView contentOffset] + scrollViewOffsetDelta).y());
     [_scrollView setContentOffset:([_scrollView contentOffset] + scrollViewOffsetDelta) animated:YES];
     return YES;
 }
@@ -2563,6 +2572,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
             if (!CGPointEqualToPoint(activePoint, currentPoint)) {
                 RetainPtr<WKScrollView> strongScrollView = _scrollView;
                 RunLoop::main().dispatch([strongScrollView, activePoint] {
+                    WTFLogAlways("mattwoodrow> _updateVisibleContentRects async %f", activePoint.y);
                     [strongScrollView setContentOffset:activePoint animated:NO];
                 });
             }

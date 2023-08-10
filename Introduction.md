@@ -1819,7 +1819,7 @@ That first argument is a log channel. These have 2 purposes:
 Here's an example invocation of `LOG_WITH_STREAM()`:
 
 ```
-LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::commitTreeState - removing unvisited node " << nodeID);
+ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTree::commitTreeState - removing unvisited node " << nodeID);
 ```
 
 The macro sets up a local variable named `stream` which the second argument can direct messages to. The second argument is a collection of statements - not expressions like `LOG()` and `RELEASE_LOG()`. So, you can do things like this:

@@ -108,16 +108,16 @@ FloatRect ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition(const
     LayoutRect visualViewport(LocalFrameView::visibleDocumentRect(visibleContentRect, headerHeight(), footerHeight(), totalContentsSize(), scale));
     LayoutRect layoutViewport(m_layoutViewport);
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNode " << scrollingNodeID() << " layoutViewportForScrollPosition: " << "(visibleContentOrigin " << visibleContentOrigin << ", visualViewportSize " << visualViewportSize << ") fixed behavior " << m_behaviorForFixed);
-    LOG_WITH_STREAM(Scrolling, stream << "  layoutViewport: " << layoutViewport);
-    LOG_WITH_STREAM(Scrolling, stream << "  visualViewport: " << visualViewport);
-    LOG_WITH_STREAM(Scrolling, stream << "  scroll positions: min: " << minLayoutViewportOrigin() << " max: "<< maxLayoutViewportOrigin());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ScrollingTreeFrameScrollingNode " << scrollingNodeID() << " layoutViewportForScrollPosition: " << "(visibleContentOrigin " << visibleContentOrigin << ", visualViewportSize " << visualViewportSize << ") fixed behavior " << m_behaviorForFixed);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "  layoutViewport: " << layoutViewport);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "  visualViewport: " << visualViewport);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "  scroll positions: min: " << minLayoutViewportOrigin() << " max: "<< maxLayoutViewportOrigin());
 
     LayoutPoint newLocation = LocalFrameView::computeLayoutViewportOrigin(LayoutRect(visualViewport), LayoutPoint(minLayoutViewportOrigin()), LayoutPoint(maxLayoutViewportOrigin()), layoutViewport, fixedBehavior);
 
     if (layoutViewport.location() != newLocation) {
         layoutViewport.setLocation(newLocation);
-        LOG_WITH_STREAM(Scrolling, stream << " new layoutViewport " << layoutViewport);
+        ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << " new layoutViewport " << layoutViewport);
     }
 
     return layoutViewport;

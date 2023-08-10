@@ -154,7 +154,7 @@ void RemoteScrollingTreeMac::startPendingScrollAnimations()
 
     auto nodesWithPendingScrollAnimations = std::exchange(m_nodesWithPendingScrollAnimations, { });
 
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::startPendingScrollAnimations() - " << nodesWithPendingScrollAnimations.size() << " nodes with pending animations");
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RemoteScrollingTreeMac::startPendingScrollAnimations() - " << nodesWithPendingScrollAnimations.size() << " nodes with pending animations");
 
     for (auto& [nodeID, data] : nodesWithPendingScrollAnimations) {
         RefPtr targetNode = dynamicDowncast<ScrollingTreeScrollingNode>(nodeForID(nodeID));
@@ -309,12 +309,12 @@ void RemoteScrollingTreeMac::waitForEventDefaultHandlingCompletion(const Platfor
         setGestureState(WheelScrollGestureState::NonBlocking);
     }
 
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::waitForEventDefaultHandlingCompletion took " << (MonotonicTime::now() - startTime).milliseconds() << "ms - timed out " << !receivedEvent << " gesture state is " << gestureState());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RemoteScrollingTreeMac::waitForEventDefaultHandlingCompletion took " << (MonotonicTime::now() - startTime).milliseconds() << "ms - timed out " << !receivedEvent << " gesture state is " << gestureState());
 }
 
 void RemoteScrollingTreeMac::receivedEventAfterDefaultHandling(const WebCore::PlatformWheelEvent& wheelEvent, std::optional<WheelScrollGestureState> gestureState)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::receivedEventAfterDefaultHandling - " << wheelEvent << " gestureState " << gestureState);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RemoteScrollingTreeMac::receivedEventAfterDefaultHandling - " << wheelEvent << " gestureState " << gestureState);
 
     ASSERT(isMainRunLoop());
 
@@ -334,7 +334,7 @@ void RemoteScrollingTreeMac::receivedEventAfterDefaultHandling(const WebCore::Pl
 
 WheelEventHandlingResult RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, std::optional<WheelScrollGestureState> gestureState)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling - targetNodeID " << targetNodeID << " gestureState " << gestureState);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling - targetNodeID " << targetNodeID << " gestureState " << gestureState);
 
     ASSERT(ScrollingThread::isCurrentThread());
 

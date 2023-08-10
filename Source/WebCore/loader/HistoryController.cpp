@@ -161,11 +161,13 @@ void FrameLoader::HistoryController::restoreScrollPositionAndViewState()
 
         Page* page = m_frame.page();
         auto desiredScrollPosition = m_currentItem->shouldRestoreScrollPosition() ? m_currentItem->scrollPosition() : view->scrollPosition();
-        LOG(Scrolling, "HistoryController::restoreScrollPositionAndViewState scrolling to %d,%d", desiredScrollPosition.x(), desiredScrollPosition.y());
+        WTFLogAlways("**Scrolling** HistoryController::restoreScrollPositionAndViewState scrolling to %d,%d", desiredScrollPosition.x(), desiredScrollPosition.y());
         if (page && m_frame.isMainFrame() && m_currentItem->pageScaleFactor())
             page->setPageScaleFactor(m_currentItem->pageScaleFactor() * page->viewScaleFactor(), desiredScrollPosition);
-        else
+        else {
+            ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "FrameLoader::HistoryController::restoreScrollPositionAndViewState -> setScrollPosition " << desiredScrollPosition);
             view->setScrollPosition(desiredScrollPosition);
+        }
 
         // If the scroll position doesn't have to be clamped, consider it successfully restored.
         if (m_frame.isMainFrame()) {

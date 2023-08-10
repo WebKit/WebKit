@@ -978,8 +978,10 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
             view->layoutContext().layout();
 
         // Scrolling to the calculated position must be done after the layout.
-        if (scrollPositionAfterZoomed)
+        if (scrollPositionAfterZoomed) {
+            ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "LocalFrame::setPageAndTextZoomFactors -> setScrollPosition " << scrollPositionAfterZoomed.value());
             view->setScrollPosition(scrollPositionAfterZoomed.value());
+        }
     }
 }
 

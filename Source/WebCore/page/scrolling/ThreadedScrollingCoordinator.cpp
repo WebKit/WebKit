@@ -57,7 +57,7 @@ void ThreadedScrollingCoordinator::commitTreeStateIfNeeded()
 {
     willCommitTree();
 
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingCoordinator::commitTreeState, has changes " << scrollingStateTree()->hasChangedProperties());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ThreadedScrollingCoordinator::commitTreeState, has changes " << scrollingStateTree()->hasChangedProperties());
 
     if (!scrollingStateTree()->hasChangedProperties())
         return;
@@ -77,7 +77,7 @@ WheelEventHandlingResult ThreadedScrollingCoordinator::handleWheelEventForScroll
     if (scrollingTree()->willWheelEventStartSwipeGesture(wheelEvent))
         return WheelEventHandlingResult::unhandled();
 
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingCoordinator::handleWheelEventForScrolling " << wheelEvent << " - sending event to scrolling thread, node " << targetNodeID << " gestureState " << gestureState);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ThreadedScrollingCoordinator::handleWheelEventForScrolling " << wheelEvent << " - sending event to scrolling thread, node " << targetNodeID << " gestureState " << gestureState);
 
     auto deferrer = WheelEventTestMonitorCompletionDeferrer { m_page->wheelEventTestMonitor().get(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(targetNodeID), WheelEventTestMonitor::PostMainThreadWheelEventHandling };
 
@@ -90,7 +90,7 @@ WheelEventHandlingResult ThreadedScrollingCoordinator::handleWheelEventForScroll
 
 void ThreadedScrollingCoordinator::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, std::optional<WheelScrollGestureState> gestureState)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingCoordinator::wheelEventWasProcessedByMainThread " << gestureState);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "ThreadedScrollingCoordinator::wheelEventWasProcessedByMainThread " << gestureState);
 
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     threadedScrollingTree->wheelEventWasProcessedByMainThread(wheelEvent, gestureState);

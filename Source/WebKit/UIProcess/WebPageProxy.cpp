@@ -2341,6 +2341,7 @@ void WebPageProxy::setViewNeedsDisplay(const Region& region)
 
 void WebPageProxy::requestScroll(const FloatPoint& scrollPosition, const IntPoint& scrollOrigin, ScrollIsAnimated animated)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "mattwoodrow> WebPageProxy[pgid=" << webPageID() << "]::requestScroll(pos=" << scrollPosition << ", origin=" << scrollOrigin << ", animated=" << int(animated) << ")");
     pageClient().requestScroll(scrollPosition, scrollOrigin, animated);
 }
 

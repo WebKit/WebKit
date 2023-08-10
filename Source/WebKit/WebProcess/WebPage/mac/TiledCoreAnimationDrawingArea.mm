@@ -739,7 +739,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     IntSize scaledTotalContentsSize = frameView.totalContentsSize();
     scaledTotalContentsSize.scale(scale / m_webPage.totalScaleFactor());
 
-    LOG_WITH_STREAM(Scrolling, stream << "TiledCoreAnimationDrawingArea::commitTransientZoom constrainScrollPositionForOverhang - constrainedOrigin: " << constrainedOrigin << " visibleContentRect: " << visibleContentRect << " scaledTotalContentsSize: " << scaledTotalContentsSize << "scrollOrigin :"<<frameView.scrollOrigin() << "headerHeight :" << frameView.headerHeight() << " footerHeight : " << frameView.footerHeight());
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "TiledCoreAnimationDrawingArea::commitTransientZoom constrainScrollPositionForOverhang - constrainedOrigin: " << constrainedOrigin << " visibleContentRect: " << visibleContentRect << " scaledTotalContentsSize: " << scaledTotalContentsSize << "scrollOrigin :"<<frameView.scrollOrigin() << "headerHeight :" << frameView.headerHeight() << " footerHeight : " << frameView.footerHeight());
 
     // Scaling may have exposed the overhang area, so we need to constrain the final
     // layer position exactly like scrolling will once it's committed, to ensure that
@@ -748,7 +748,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     constrainedOrigin.moveBy(-visibleContentRect.location());
     constrainedOrigin = -constrainedOrigin;
 
-    LOG_WITH_STREAM(Scrolling, stream << "TiledCoreAnimationDrawingArea::commitTransientZoom m_transientZoomScale" << m_transientZoomScale << " scale: " << scale << " m_transientZoomOrigin " << m_transientZoomOrigin << " constrainedOrigin " << constrainedOrigin);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "TiledCoreAnimationDrawingArea::commitTransientZoom m_transientZoomScale" << m_transientZoomScale << " scale: " << scale << " m_transientZoomOrigin " << m_transientZoomOrigin << " constrainedOrigin " << constrainedOrigin);
     if (m_transientZoomScale == scale && roundedIntPoint(m_transientZoomOrigin) == roundedIntPoint(constrainedOrigin)) {
         // We're already at the right scale and position, so we don't need to animate.
         applyTransientZoomToPage(scale, origin);

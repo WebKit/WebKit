@@ -233,6 +233,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [self setUserInteractionEnabled:YES];
 
     self.layer.hitTestsAsOpaque = YES;
+    self.layer.name = @"WKContentView";
 
 #if HAVE(UI_FOCUS_EFFECT)
     if ([self respondsToSelector:@selector(setFocusEffect:)])

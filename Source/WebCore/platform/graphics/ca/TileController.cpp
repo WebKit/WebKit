@@ -575,7 +575,7 @@ IntSize TileController::computeTileSize()
     } else if (m_scrollability == Scrollability::VerticallyScrollable)
         tileSize.setWidth(std::min(std::max<int>(ceilf(boundsWithoutMargin().width() * tileGrid().scale()), kDefaultTileSize), maxTileSize.width()));
 
-    LOG_WITH_STREAM(Scrolling, stream << "TileController::tileSize newSize=" << tileSize);
+    ALWAYS_LOG_WITH_STREAM(stream << "**Scrolling** " << "TileController::tileSize newSize=" << tileSize);
 
     m_tileSizeLocked = true;
     return tileSize;
