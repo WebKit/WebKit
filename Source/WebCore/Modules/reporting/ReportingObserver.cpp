@@ -77,10 +77,7 @@ ReportingObserver::ReportingObserver(ScriptExecutionContext& scriptExecutionCont
 {
 }
 
-ReportingObserver::~ReportingObserver()
-{
-    disconnect();
-}
+ReportingObserver::~ReportingObserver() = default;
 
 void ReportingObserver::disconnect()
 {
