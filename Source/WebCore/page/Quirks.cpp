@@ -374,7 +374,6 @@ bool Quirks::isGoogleMaps() const
 // desmos.com rdar://47068176
 // msn.com rdar://49403260
 // flipkart.com rdar://49648520
-// iqiyi.com rdar://53235709
 // soundcloud.com rdar://52915981
 // naver.com rdar://48068610
 // mybinder.org rdar://51770057
@@ -411,8 +410,6 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
         if (host == "msn.com"_s || host.endsWith(".msn.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "flipkart.com"_s || host.endsWith(".flipkart.com"_s))
-            return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "iqiyi.com"_s || host.endsWith(".iqiyi.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "trailers.apple.com"_s)
             return ShouldDispatchSimulatedMouseEvents::Yes;
