@@ -272,10 +272,10 @@
                 "expected": {"gtk": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246472" }}
             },
             "WTF_Lock.ContendedShortSection": {
-                "expected": {"gtk": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246472" }}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/260029" }}
             },
             "WTF_Lock.ContendedLongSection": {
-                "expected": {"gtk": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246472" }}
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/260029" }}
             },
             "WTF_Lock.ManyContendedLongSections": {
                 "expected": {"gtk": {"slow": true, "status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/246472" }}
