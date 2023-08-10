@@ -133,9 +133,6 @@ void PluginView::Stream::start()
     auto* frame = m_pluginView->frame();
     ASSERT(frame);
 
-    if (auto* document = frame->document())
-        m_request.setFirstPartyForCookies(document->topDocument().url());
-
     WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*frame, *this, ResourceRequest {m_request}, [this, protectedThis = Ref { *this }](RefPtr<NetscapePlugInStreamLoader>&& loader) {
         m_loader = WTFMove(loader);
     });
