@@ -124,13 +124,6 @@
             }
         }
     },
-    "TestWebsiteData": {
-        "subtests": {
-            "/webkit/WebKitWebsiteData/cache": {
-                "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/254002"}}
-            }
-        }
-    },
     "TestWebKitWebContext": {
         "subtests": {
             "/webkit/WebKitWebContext/proxy": {
