@@ -3379,10 +3379,16 @@ bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox& 
     // non-anonymous.
     if (containingBlock.isAnonymous())
         return containingBlock.style().display() == DisplayType::Block || containingBlock.style().display() == DisplayType::InlineBlock;
+
+    if (!containingBlock.style().logicalHeight().isAuto())
+        return false;
+
+    if (containingBlock.isGridItem() || containingBlock.isFlexItem() || containingBlock.isRenderGrid() || containingBlock.isFlexibleBoxIncludingDeprecated())
+        return containingBlock.element() && containingBlock.element()->isInShadowTree();
     
     // For quirks mode, we skip most auto-height containing blocks when computing
     // percentages.
-    return document().inQuirksMode() && !containingBlock.isTableCell() && !containingBlock.isOutOfFlowPositioned() && !containingBlock.isRenderGrid() && !containingBlock.isFlexibleBoxIncludingDeprecated() && containingBlock.style().logicalHeight().isAuto();
+    return document().inQuirksMode() && !containingBlock.isTableCell() && !containingBlock.isOutOfFlowPositioned();
 }
 
 bool RenderBox::shouldTreatChildAsReplacedInTableCells() const
