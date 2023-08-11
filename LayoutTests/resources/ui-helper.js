@@ -960,22 +960,6 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static getSelectionEndGrabberViewShapePathDescription()
-    {
-        if (!this.isWebKit2() || !this.isIOSFamily())
-            return Promise.resolve();
-
-        return new Promise(resolve => {
-            testRunner.runUIScript(`(function() {
-                uiController.doAfterNextStablePresentationUpdate(function() {
-                    uiController.uiScriptComplete(JSON.stringify(uiController.selectionEndGrabberViewShapePathDescription));
-                });
-            })()`, jsonString => {
-                resolve(JSON.parse(jsonString));
-            });
-        });
-    }
-
     static midPointOfRect(rect) {
         return { x: rect.left + (rect.width / 2), y: rect.top + (rect.height / 2) };
     }
