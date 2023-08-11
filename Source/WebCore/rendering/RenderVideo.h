@@ -86,7 +86,6 @@ private:
     void updatePlayer();
 
     bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const final;
-    bool inElementOrVideoFullscreen() const;
 
     LayoutSize m_cachedImageSize;
 };
