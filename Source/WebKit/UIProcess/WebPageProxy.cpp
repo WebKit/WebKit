@@ -5506,9 +5506,13 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrameShared(Ref<
 
     auto transaction = internals().pageLoadState.transaction();
 
-    if (frame->isMainFrame())
+    if (frame->isMainFrame()) {
         internals().pageLoadState.didReceiveServerRedirectForProvisionalLoad(transaction, request.url().string());
-
+        // If the main frame in a provisional page is getting a server-side redirect, make sure the
+        // committed page's provisional URL is kept up-to-date too.
+        if (frame != m_mainFrame && !m_mainFrame->frameLoadState().provisionalURL().isEmpty())
+            m_mainFrame->didReceiveServerRedirectForProvisionalLoad(request.url());
+    }
     frame->didReceiveServerRedirectForProvisionalLoad(request.url());
 
     internals().pageLoadState.commitChanges();
