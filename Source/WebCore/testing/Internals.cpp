@@ -1432,11 +1432,7 @@ ExceptionOr<bool> Internals::isTimerThrottled(int timeoutId)
     if (timer->intervalClampedToMinimum() > timer->m_originalInterval)
         return true;
 
-    auto* alignment = timer->timerAlignment();
-    if (!alignment)
-        return false;
-
-    return !!alignment->alignedFireTime(timer->hasReachedMaxNestingLevel(), MonotonicTime { });
+    return !!scriptExecutionContext()->alignedFireTime(timer->hasReachedMaxNestingLevel(), MonotonicTime { });
 }
 
 String Internals::requestAnimationFrameThrottlingReasons() const

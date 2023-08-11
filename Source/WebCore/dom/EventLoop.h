@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ class EventLoopTimer;
 class EventTarget;
 class MicrotaskQueue;
 class ScriptExecutionContext;
+class TimerAlignment;
 
 class EventLoopTask {
     WTF_MAKE_NONCOPYABLE(EventLoopTask);
@@ -79,6 +80,7 @@ public:
 
 private:
     friend class EventLoop;
+    friend class EventLoopTaskGroup;
 
     void unspecifiedBoolTypeInstance() const { }
 
@@ -207,6 +209,12 @@ public:
 
     EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TaskSource, EventLoop::TaskFunction&&);
     void removeRepeatingTimer(EventLoopTimer&);
+
+    void setTimerAlignment(EventLoopTimerHandle, TimerAlignment&);
+    void didChangeTimerAlignmentInterval(EventLoopTimerHandle);
+    void setTimerHasReachedMaxNestingLevel(EventLoopTimerHandle, bool);
+    void adjustTimerNextFireTime(EventLoopTimerHandle, Seconds delta);
+    void adjustTimerRepeatInterval(EventLoopTimerHandle, Seconds delta);
 
     void didAddTimer(EventLoopTimer&);
     void didRemoveTimer(EventLoopTimer&);

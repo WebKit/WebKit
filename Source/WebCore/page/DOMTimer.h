@@ -26,7 +26,8 @@
 
 #pragma once
 
-#include "SuspendableTimer.h"
+#include "ActiveDOMObject.h"
+#include "EventLoop.h"
 #include "UserGestureIndicator.h"
 #include <memory>
 #include <wtf/MonotonicTime.h>
@@ -40,7 +41,7 @@ class DOMTimerFireState;
 class Document;
 class ScheduledAction;
 
-class DOMTimer final : public RefCounted<DOMTimer>, public SuspendableTimerBase, public CanMakeWeakPtr<DOMTimer> {
+class DOMTimer final : public RefCounted<DOMTimer>, public ActiveDOMObject, public CanMakeWeakPtr<DOMTimer> {
     WTF_MAKE_NONCOPYABLE(DOMTimer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -63,6 +64,9 @@ public:
 
     static void scriptDidInteractWithPlugin();
 
+    EventLoopTimerHandle timer() const { return m_timer; }
+    bool hasReachedMaxNestingLevel() const { return m_hasReachedMaxNestingLevel; }
+
 private:
     DOMTimer(ScriptExecutionContext&, Function<void(ScriptExecutionContext&)>&&, Seconds interval, Type);
     friend class Internals;
@@ -72,12 +76,11 @@ private:
     bool isDOMTimersThrottlingEnabled(const Document&) const;
     void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
 
-    // SuspendableTimerBase
-    void fired() override;
-    void didStop() override;
+    void fired();
 
     // ActiveDOMObject API.
-    const char* activeDOMObjectName() const override;
+    const char* activeDOMObjectName() const final;
+    void stop() final;
 
     enum TimerThrottleState {
         Undetermined,
@@ -87,10 +90,12 @@ private:
 
     int m_timeoutId;
     int m_nestingLevel;
+    EventLoopTimerHandle m_timer;
     Function<void(ScriptExecutionContext&)> m_action;
     Seconds m_originalInterval;
     TimerThrottleState m_throttleState;
     bool m_oneShot;
+    bool m_hasReachedMaxNestingLevel;
     Seconds m_currentTimerInterval;
     RefPtr<UserGestureToken> m_userGestureTokenToForward;
 };

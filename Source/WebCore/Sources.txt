@@ -1959,7 +1959,6 @@ page/SettingsBase.cpp
 page/ShadowRealmGlobalScope.cpp
 page/ShareDataReader.cpp
 page/SpatialNavigation.cpp
-page/SuspendableTimer.cpp
 page/TextIndicator.cpp
 page/UndoItem.cpp
 page/UndoManager.cpp
