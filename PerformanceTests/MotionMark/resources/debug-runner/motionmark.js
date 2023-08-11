@@ -560,15 +560,27 @@ Utilities.extendObject(window.benchmarkController, {
             e.stopPropagation();
             e.preventDefault();
         }
-        dropTarget.addEventListener("dragenter", stopEvent, false);
-        dropTarget.addEventListener("dragover", stopEvent, false);
-        dropTarget.addEventListener("dragleave", stopEvent, false);
-        dropTarget.addEventListener("drop", function (e) {
-            e.stopPropagation();
-            e.preventDefault();
+        dropTarget.addEventListener("dragenter", (e) => {
+            dropTarget.classList.add('drag-over');
+            stopEvent(e);
+        }, false);
 
-            if (!e.dataTransfer.files.length)
+        dropTarget.addEventListener("dragover", stopEvent, false);
+
+        dropTarget.addEventListener("dragleave", (e) => {
+            dropTarget.classList.remove('drag-over');
+            stopEvent(e);
+        }, false);
+
+        dropTarget.addEventListener("drop", function (e) {
+            stopEvent(e);
+
+            if (!e.dataTransfer.files.length) {
+                dropTarget.classList.remove('drag-over');
                 return;
+            }
+
+            dropTarget.textContent = 'Processing…';
 
             var file = e.dataTransfer.files[0];
 
