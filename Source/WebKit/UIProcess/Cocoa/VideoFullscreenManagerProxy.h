@@ -73,7 +73,7 @@ public:
     void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
 
     WebAVPlayerLayer *playerLayer() const { return m_playerLayer.get(); }
-    void setPlayerLayer(RetainPtr<WebAVPlayerLayer>&& playerLayer) { m_playerLayer = WTFMove(playerLayer); }
+    void setPlayerLayer(RetainPtr<WebAVPlayerLayer>&&);
 
 #if PLATFORM(IOS_FAMILY)
     WebAVPlayerLayerView *playerView() const { return m_playerView.get(); }

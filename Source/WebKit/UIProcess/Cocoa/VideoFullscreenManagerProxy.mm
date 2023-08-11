@@ -209,6 +209,12 @@ void VideoFullscreenModelContext::removeClient(VideoFullscreenModelClient& clien
     m_clients.remove(&client);
 }
 
+void VideoFullscreenModelContext::setPlayerLayer(RetainPtr<WebAVPlayerLayer>&& playerLayer)
+{
+    m_playerLayer = WTFMove(playerLayer);
+    [m_playerLayer setVideoDimensions:m_videoDimensions];
+}
+
 void VideoFullscreenModelContext::setVideoDimensions(const WebCore::FloatSize& videoDimensions)
 {
     if (m_videoDimensions == videoDimensions)
