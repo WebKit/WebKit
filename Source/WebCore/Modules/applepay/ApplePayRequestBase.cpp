@@ -58,7 +58,7 @@ static ExceptionOr<Vector<String>> convertAndValidate(Document& document, unsign
     return WTFMove(result);
 }
 
-ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document, unsigned version, ApplePayRequestBase& request, const PaymentCoordinator& paymentCoordinator)
+ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document, unsigned version, const ApplePayRequestBase& request, const PaymentCoordinator& paymentCoordinator)
 {
     if (!version || !paymentCoordinator.supportsVersion(document, version))
         return Exception { InvalidAccessError, makeString('"', version, "\" is not a supported version.") };
@@ -103,7 +103,7 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
     result.setApplicationData(request.applicationData);
 
     if (version >= 3)
-        result.setSupportedCountries(WTFMove(request.supportedCountries));
+        result.setSupportedCountries(Vector { request.supportedCountries });
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     if (request.installmentConfiguration) {
