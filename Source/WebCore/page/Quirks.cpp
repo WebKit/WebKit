@@ -129,6 +129,10 @@ bool Quirks::needsAutoplayPlayPauseEvents() const
 }
 
 // netflix.com https://bugs.webkit.org/show_bug.cgi?id=173030
+// This quirk handles several scenarios:
+// - Inserting / Removing Airpods
+// - macOS w/ Touch Bar
+// - iOS PiP
 bool Quirks::needsSeekingSupportDisabled() const
 {
     if (!needsQuirks())
