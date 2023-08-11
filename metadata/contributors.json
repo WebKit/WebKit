@@ -6416,6 +6416,16 @@
    },
    {
       "emails" : [
+         "ryanfuller@apple.com"
+      ],
+      "github" : "rsfuller",
+      "name" : "Ryan Fuller",
+      "nicks" : [
+         "ryanfuller"
+      ]
+   },
+   {
+      "emails" : [
          "ryanhaddad@apple.com"
       ],
       "github" : "ryanhaddad",
