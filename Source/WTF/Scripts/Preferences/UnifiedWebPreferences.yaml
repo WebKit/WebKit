@@ -5201,9 +5201,12 @@ ProcessSwapOnCrossSiteWindowOpenEnabled:
    category: networking
    humanReadableName: "Swap Processes on Cross-Site Window Open"
    humanReadableDescription: "Swap WebContent Processes on cross-site window.open"
-   webcoreBinding: none
    exposed: [ WebKit ]
    defaultValue:
+     WebCore:
+       default: false
+     WebKitLegacy:
+       default: false
      WebKit:
        default: false
 

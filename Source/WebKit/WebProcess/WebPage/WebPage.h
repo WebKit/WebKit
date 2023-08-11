@@ -459,6 +459,7 @@ public:
 
     void layoutIfNeeded();
     void updateRendering();
+    bool hasRootFrames();
     bool shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const;
     void finalizeRenderingUpdate(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
 
