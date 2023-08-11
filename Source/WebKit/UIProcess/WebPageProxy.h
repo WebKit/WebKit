@@ -1771,6 +1771,10 @@ public:
     void clearWheelEventTestMonitor();
     void callAfterNextPresentationUpdate(CompletionHandler<void()>&&);
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+    void callAfterVideoFullscreenPlayerLayerBoundsHaveChanged(CompletionHandler<void()>&&);
+#endif
+
     void didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>);
 
     void didRestoreScrollPosition();

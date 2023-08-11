@@ -357,6 +357,15 @@ void VideoFullscreenModelContext::fullscreenMayReturnToInline()
         m_manager->fullscreenMayReturnToInline(m_contextId);
 }
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+void VideoFullscreenModelContext::didResolvePlayerLayerBounds()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (m_manager)
+        m_manager->didResolvePlayerLayerBounds();
+}
+#endif
+
 void VideoFullscreenModelContext::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
@@ -1136,6 +1145,21 @@ void VideoFullscreenManagerProxy::fullscreenMayReturnToInline(PlaybackSessionCon
 {
     m_page->send(Messages::VideoFullscreenManager::FullscreenMayReturnToInline(contextId, m_page->isViewVisible()));
 }
+
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+
+void VideoFullscreenManagerProxy::callAfterPlayerLayerBoundsHaveChanged(CompletionHandler<void()>&& callback)
+{
+    m_playerLayerBoundsHaveChangedCallbacks.append(WTFMove(callback));
+}
+
+void VideoFullscreenManagerProxy::didResolvePlayerLayerBounds()
+{
+    for (auto& callback : std::exchange(m_playerLayerBoundsHaveChangedCallbacks, { }))
+        callback();
+}
+
+#endif
 
 #endif
 

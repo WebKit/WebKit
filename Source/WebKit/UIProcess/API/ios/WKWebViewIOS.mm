@@ -3056,6 +3056,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [self _ensureResizeAnimationView];
 }
 
+- (void)_doAfterVideoFullscreenPlayerLayerBoundsHaveChanged:(void (^)(void))updateBlock
+{
+    _page->callAfterVideoFullscreenPlayerLayerBoundsHaveChanged([updateBlockCopy = makeBlockPtr(updateBlock)] {
+        if (!updateBlockCopy)
+            return;
+
+        updateBlockCopy();
+    });
+}
+
 - (void)_endLiveResize
 {
     WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _endLiveResize]", self, _page->identifier().toUInt64());
@@ -3074,8 +3084,10 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [self _didStopDeferringGeometryUpdates];
 
     [self _doAfterNextPresentationUpdate:^{
-        [liveResizeSnapshotView removeFromSuperview];
-    }];    
+        [self _doAfterVideoFullscreenPlayerLayerBoundsHaveChanged:^{
+            [liveResizeSnapshotView removeFromSuperview];
+        }];
+    }];
 }
 
 #endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)

@@ -82,6 +82,12 @@ public:
 
     void requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&&);
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+    void callAfterPlayerLayerBoundsHaveChanged(CompletionHandler<void()>&&);
+
+    void didResolvePlayerLayerBounds() final;
+#endif
+
 private:
     friend class VideoFullscreenManagerProxy;
     VideoFullscreenModelContext(VideoFullscreenManagerProxy&, PlaybackSessionModelContext&, PlaybackSessionContextIdentifier);
@@ -184,6 +190,12 @@ public:
 
     void willRemoveLayerForID(PlaybackSessionContextIdentifier);
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+    void callAfterPlayerLayerBoundsHaveChanged(CompletionHandler<void()>&&);
+
+    void didResolvePlayerLayerBounds();
+#endif
+
 private:
     friend class VideoFullscreenModelContext;
 
@@ -257,6 +269,10 @@ private:
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
     WeakHashSet<VideoInPictureInPictureDidChangeObserver> m_pipChangeObservers;
+
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+    Vector<CompletionHandler<void()>> m_playerLayerBoundsHaveChangedCallbacks;
+#endif
 };
 
 } // namespace WebKit

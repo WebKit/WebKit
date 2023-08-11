@@ -300,6 +300,11 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
     [_videoSublayer setFrame:_targetVideoFrame];
 
     [CATransaction commit];
+
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+    if (auto model = _fullscreenModel.get())
+        model->didResolvePlayerLayerBounds();
+#endif
 }
 
 - (void)setVideoGravity:(NSString *)videoGravity

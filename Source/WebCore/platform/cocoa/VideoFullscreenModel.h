@@ -83,6 +83,10 @@ public:
     virtual void didCleanupFullscreen() { };
     virtual void fullscreenMayReturnToInline() { };
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+    virtual void didResolvePlayerLayerBounds() { };
+#endif
+
     virtual void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler) { completionHandler(RouteSharingPolicy::Default, emptyString()); }
 
 #if PLATFORM(IOS_FAMILY)

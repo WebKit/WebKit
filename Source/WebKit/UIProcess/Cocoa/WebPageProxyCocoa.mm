@@ -976,6 +976,15 @@ bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
     return canTakeForegroundAssertions;
 }
 
+#if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+
+void WebPageProxy::callAfterVideoFullscreenPlayerLayerBoundsHaveChanged(CompletionHandler<void()>&& callback)
+{
+    m_videoFullscreenManager->callAfterPlayerLayerBoundsHaveChanged(WTFMove(callback));
+}
+
+#endif
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION
