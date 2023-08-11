@@ -1221,16 +1221,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
-- (void)_web_windowWillEnterFullScreen
-{
-    [self _holdWindowResizeSnapshotWithReason:@"web view entering full screen"];
-}
-
-- (void)_web_windowWillExitFullScreen
-{
-    [self _holdWindowResizeSnapshotWithReason:@"web view exiting full screen"];
-}
-
 #if ENABLE(DRAG_SUPPORT)
 
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
