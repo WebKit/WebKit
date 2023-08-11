@@ -86,6 +86,7 @@ private:
     void addBlankSpace(uint32_t size);
     void addRawValue(uint64_t value);
     void addLEB128ConstantInt32AndLength(uint32_t value, uint32_t length);
+    void addCondensedLocalIndexAndLength(uint32_t index, uint32_t length);
     void addLEB128ConstantAndLengthForType(Type, uint64_t value, uint32_t length);
     void addReturnData(const Vector<Type, 16>& types);
 
@@ -103,9 +104,13 @@ private:
     unsigned m_numArguments { 0 };
     unsigned m_numArgumentsOnStack { 0 };
     unsigned m_nonArgLocalOffset { 0 };
-    Vector<uint32_t> m_argumentLocations { };
+    Vector<uint8_t, 16> m_argumINTBytecode { };
 
     Vector<const TypeDefinition*> m_signatures;
+
+    // Optimization to skip large numbers of blocks
+
+    Vector<uint32_t> m_repeatedControlFlowInstructionMetadataOffsets;
 };
 
 } } // namespace JSC::Wasm

@@ -360,6 +360,8 @@ public:
     const uint32_t m_bytecodeLength;
     Vector<uint8_t> m_metadataVector;
     const uint8_t* m_metadata;
+    Vector<uint8_t> m_argumINTBytecode;
+    const uint8_t* m_argumINTBytecodePointer;
     const uint32_t m_returnMetadata;
 
     unsigned m_localSizeToAlloc;

@@ -51,7 +51,7 @@ let wat = `
 async function test() {
     const instance = await instantiate(wat, {});
     const { test, add } = instance.exports
-    // assert.eq(add(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), 12);
+    assert.eq(add(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), 12);
     assert.eq(test(1), 12)
 }
 

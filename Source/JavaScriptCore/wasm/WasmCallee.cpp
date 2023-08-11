@@ -171,9 +171,10 @@ IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, size_t index
     , m_bytecodeLength(generator.m_bytecodeLength - generator.m_bytecodeOffset)
     , m_metadataVector(WTFMove(generator.m_metadata))
     , m_metadata(m_metadataVector.data())
+    , m_argumINTBytecode(WTFMove(generator.m_argumINTBytecode))
+    , m_argumINTBytecodePointer(m_argumINTBytecode.data())
     , m_returnMetadata(generator.m_returnMetadata)
-    // size to allocate = 16 + number of stack arguments + number of non-argument locals
-    , m_localSizeToAlloc(roundUpToMultipleOf(16, 16 + generator.m_numArgumentsOnStack + generator.m_numLocals - generator.m_numArguments))
+    , m_localSizeToAlloc(roundUpToMultipleOf(2, generator.m_numLocals))
     , m_numLocals(generator.m_numLocals)
     , m_numArgumentsOnStack(generator.m_numArgumentsOnStack)
 {

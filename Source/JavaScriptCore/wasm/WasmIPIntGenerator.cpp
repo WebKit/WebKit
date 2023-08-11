@@ -431,6 +431,8 @@ public:
 
     // Control flow
 
+    void condenseControlFlowInstructions();
+
     ControlType WARN_UNUSED_RETURN addTopLevel(BlockSignature);
     PartialResult WARN_UNUSED_RETURN addBlock(BlockSignature, Stack&, ControlType&, Stack&);
     PartialResult WARN_UNUSED_RETURN addLoop(BlockSignature, Stack&, ControlType&, Stack&, uint32_t);
@@ -560,11 +562,11 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableSet(unsigned index, Exp
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableInit(unsigned elementIndex, unsigned tableIndex, ExpressionType, ExpressionType, ExpressionType)
 {
     auto size = m_metadata->m_metadata.size();
-    m_metadata->addBlankSpace(16);
+    m_metadata->addBlankSpace(9);
     auto tableInitData = m_metadata->m_metadata.data() + size;
     WRITE_TO_METADATA(tableInitData, elementIndex, uint32_t);
     WRITE_TO_METADATA(tableInitData + 4, tableIndex, uint32_t);
-    WRITE_TO_METADATA(tableInitData + 8, getCurrentInstructionLength(), uint64_t);
+    WRITE_TO_METADATA(tableInitData + 8, getCurrentInstructionLength(), uint8_t);
     return { };
 }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElemDrop(unsigned elementIndex)
@@ -590,11 +592,11 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableFill(unsigned tableInde
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex, ExpressionType, ExpressionType, ExpressionType)
 {
     auto size = m_metadata->m_metadata.size();
-    m_metadata->addBlankSpace(16);
+    m_metadata->addBlankSpace(9);
     auto tableInitData = m_metadata->m_metadata.data() + size;
     WRITE_TO_METADATA(tableInitData, dstTableIndex, uint32_t);
     WRITE_TO_METADATA(tableInitData + 4, srcTableIndex, uint32_t);
-    WRITE_TO_METADATA(tableInitData + 8, getCurrentInstructionLength(), uint64_t);
+    WRITE_TO_METADATA(tableInitData + 8, getCurrentInstructionLength(), uint8_t);
     return { };
 }
 
@@ -608,31 +610,35 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArguments(const TypeDefiniti
     auto numArgs = sig->argumentCount();
     m_metadata->m_numLocals += numArgs;
     m_metadata->m_numArguments = numArgs;
-    m_metadata->m_argumentLocations.resize(numArgs);
+    m_metadata->m_argumINTBytecode.resize(numArgs + 1);
 
     int numGPR = 0;
     int numFPR = 0;
-    int stackOffset = 16;
+
+    // 0x00 - 0x07: GPR 0-7
+    // 0x08 - 0x0b: FPR 0-3
+    // 0x0c: stack
+    // 0x0d: end
 
     for (size_t i = 0; i < numArgs; ++i) {
         auto arg = sig->argumentType(i);
         if (arg.isI32() || arg.isI64()) {
             if (numGPR < 8)
-                m_metadata->m_argumentLocations[i] = numGPR++;
+                m_metadata->m_argumINTBytecode[i] = numGPR++;
             else {
                 m_metadata->m_numArgumentsOnStack++;
-                m_metadata->m_argumentLocations[i] = stackOffset++;
+                m_metadata->m_argumINTBytecode[i] = 0x0c;
             }
         } else {
             if (numFPR < 8)
-                m_metadata->m_argumentLocations[i] = 8 + numFPR++;
+                m_metadata->m_argumINTBytecode[i] = 8 + numFPR++;
             else {
                 m_metadata->m_numArgumentsOnStack++;
-                m_metadata->m_argumentLocations[i] = stackOffset++;
+                m_metadata->m_argumINTBytecode[i] = 0x0c;
             }
         }
     }
-    m_metadata->m_nonArgLocalOffset = 16 + m_metadata->m_numArgumentsOnStack - m_metadata->m_numArguments;
+    m_metadata->m_argumINTBytecode.last() = 0x0d;
     return { };
 }
 
@@ -644,18 +650,12 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLocal(Type, uint32_t count)
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::getLocal(uint32_t index, ExpressionType&)
 {
-    if (index >= m_metadata->m_numArguments)
-        m_metadata->addLEB128ConstantInt32AndLength(index + m_metadata->m_nonArgLocalOffset, getCurrentInstructionLength());
-    else
-        m_metadata->addLEB128ConstantInt32AndLength(m_metadata->m_argumentLocations[index], getCurrentInstructionLength());
+    m_metadata->addCondensedLocalIndexAndLength(index, getCurrentInstructionLength());
     return { };
 }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::setLocal(uint32_t index, ExpressionType)
 {
-    if (index >= m_metadata->m_numArguments)
-        m_metadata->addLEB128ConstantInt32AndLength(index + m_metadata->m_nonArgLocalOffset, getCurrentInstructionLength());
-    else
-        m_metadata->addLEB128ConstantInt32AndLength(m_metadata->m_argumentLocations[index], getCurrentInstructionLength());
+    m_metadata->addCondensedLocalIndexAndLength(index, getCurrentInstructionLength());
     return { };
 }
 
@@ -959,13 +959,30 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSelect(ExpressionType, Expre
     m_metadata->addRawValue(getCurrentInstructionLength());
     return { };
 }
+
+inline void IPIntGenerator::condenseControlFlowInstructions()
+{
+    // Peek at the next instruction: if it's not a block or loop, go through and resolve all the metadata entries
+    auto nextOpcode = m_metadata->m_bytecode[m_parser->offset()];
+    if (nextOpcode != OpType::Block && nextOpcode != OpType::Loop) {
+        // next PC (to skip type signature)
+        for (auto offset : m_metadata->m_repeatedControlFlowInstructionMetadataOffsets) {
+            WRITE_TO_METADATA(m_metadata->m_metadata.data() + offset, m_parser->offset() - m_metadata->m_bytecodeOffset, uint32_t);
+            WRITE_TO_METADATA(m_metadata->m_metadata.data() + offset + 4, m_metadata->m_metadata.size(), uint32_t);
+        }
+        m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.clear();
+    }
+}
+
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBlock(BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack)
 {
     splitStack(signature, oldStack, newStack);
     block = ControlType(signature, BlockType::Block);
-    // next PC (to skip type signature)
-    // m_metadata->addLEB128ConstantInt32AndLength(0, getCurrentInstructionLength());
-    m_metadata->addRawValue(m_parser->offset() - m_metadata->m_bytecodeOffset);
+
+    // Allocate space in metadata
+    m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.append(m_metadata->m_metadata.size());
+    m_metadata->addBlankSpace(8);
+    condenseControlFlowInstructions();
     return { };
 }
 
@@ -974,8 +991,12 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLoop(BlockSignature signatur
     splitStack(signature, oldStack, newStack);
     block = ControlType(signature, BlockType::Loop);
     block.m_pendingOffset = -1; // no need to update!
-    // next PC (to skip type signature)
-    m_metadata->addRawValue(m_parser->offset() - m_metadata->m_bytecodeOffset);
+
+    // Allocate space in metadata
+    m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.append(m_metadata->m_metadata.size());
+    m_metadata->addBlankSpace(8);
+    condenseControlFlowInstructions();
+
     // No -1 because we can just have it directly go to the instruction after
     // No point running `loop` since in IPInt it's just a nop
     block.m_pc = m_parser->offset() - m_metadata->m_bytecodeOffset;
@@ -1086,27 +1107,25 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSwitch(ExpressionType, const
 {
     auto size = m_metadata->m_metadata.size();
     // Metadata layout
-    // 0 - 7     number of jump targets (including end)
+    // 0 - 3     number of jump targets (including end)
     // 8 - 15    4B PC for t0, 4B MC for t0
-    // 16 - 23   2B pop, 2B keep, 4B empty
-    // 24 and on repeat for each branch target
-    m_metadata->addBlankSpace(8);
-    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, jumps.size() + 1, uint64_t);
+    // 16 - 19   2B pop, 2B keep, 4B empty
+    // 20 and on repeat for each branch target
+    m_metadata->addBlankSpace(4);
+    WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, jumps.size() + 1, uint32_t);
 
     for (auto block : jumps) {
         auto jumpBase = m_metadata->m_metadata.size();
-        m_metadata->addBlankSpace(16);
+        m_metadata->addBlankSpace(12);
         block->m_awaitingUpdate.append(jumpBase);
         WRITE_TO_METADATA(m_metadata->m_metadata.data() + jumpBase + 8, stack.size() - block->branchTargetArity(), uint16_t);
         WRITE_TO_METADATA(m_metadata->m_metadata.data() + jumpBase + 10, block->branchTargetArity(), uint16_t);
-        WRITE_TO_METADATA(m_metadata->m_metadata.data() + jumpBase + 12, m_parser->offset() - m_metadata->m_bytecodeOffset, uint32_t);
     }
     auto defaultJumpBase = m_metadata->m_metadata.size();
-    m_metadata->addBlankSpace(16);
+    m_metadata->addBlankSpace(12);
     defaultJump.m_awaitingUpdate.append(defaultJumpBase);
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + defaultJumpBase + 8, stack.size() - defaultJump.branchTargetArity(), uint16_t);
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + defaultJumpBase + 10, defaultJump.branchTargetArity(), uint16_t);
-    WRITE_TO_METADATA(m_metadata->m_metadata.data() + defaultJumpBase + 12, m_parser->offset() - m_metadata->m_bytecodeOffset, uint32_t);
 
     return { };
 }
@@ -1118,39 +1137,20 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::endBlock(ControlEntry& entry, S
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack&)
 {
+    const FunctionSignature& signature = *entry.controlData.signature()->as<FunctionSignature>();
+    for (unsigned i = 0; i < signature.returnCount(); i ++)
+        entry.enclosedExpressionStack.constructAndAppend(signature.returnType(i), Value { });
     auto block = entry.controlData;
-    // if, else, block: set metadata of prior instruction to current location
-    // if: jump forward for not taken
-    // else: jump forward for if taken
-    // block: jump forward for br inside
-    if (ControlType::isIf(block)) {
-        // New PC
-        // size - 1 for index of last element
-        // - bytecodeOffset since we index starting there in IPInt
-        WRITE_TO_METADATA(m_metadata->m_metadata.data() + entry.controlData.m_pendingOffset, m_parser->offset() - m_metadata->m_bytecodeOffset - 1, uint32_t);
-        // New MC
-        WRITE_TO_METADATA(m_metadata->m_metadata.data() + entry.controlData.m_pendingOffset + 4, m_metadata->m_metadata.size(), uint32_t);
-    } else if (ControlType::isBlock(block)) {
-        if (block.m_pendingOffset != -1) {
-            // else
-            WRITE_TO_METADATA(m_metadata->m_metadata.data() + entry.controlData.m_pendingOffset, m_parser->offset() - m_metadata->m_bytecodeOffset - 1, uint32_t);
-            // New MC
-            WRITE_TO_METADATA(m_metadata->m_metadata.data() + entry.controlData.m_pendingOffset + 4, m_metadata->m_metadata.size(), uint32_t);
-        } else {
-            // If it's a block, resolve all the jumps
-            for (auto x : block.m_awaitingUpdate) {
-                WRITE_TO_METADATA(m_metadata->m_metadata.data() + x, m_parser->offset() - m_metadata->m_bytecodeOffset - 1, uint32_t);
-                // New MC
-                WRITE_TO_METADATA(m_metadata->m_metadata.data() + x + 4, m_metadata->m_metadata.size(), uint32_t);
-            }
+
+    if (ControlType::isTopLevel(block)) {
+        // Hit the end
+        // Resolve all condensing ends to jump here
+        for (auto x : m_metadata->m_repeatedControlFlowInstructionMetadataOffsets) {
+            WRITE_TO_METADATA(m_metadata->m_metadata.data() + x, m_parser->offset() - m_metadata->m_bytecodeOffset - 1, uint32_t);
+            WRITE_TO_METADATA(m_metadata->m_metadata.data() + x + 4, m_metadata->m_metadata.size(), uint32_t);
         }
-    } else if (ControlType::isLoop(block)) {
-        for (auto x : block.m_awaitingUpdate) {
-            WRITE_TO_METADATA(m_metadata->m_metadata.data() + x, block.m_pc, uint32_t);
-            // New MC
-            WRITE_TO_METADATA(m_metadata->m_metadata.data() + x + 4, block.m_mc, uint32_t);
-        }
-    } else if (ControlType::isTopLevel(block)) {
+        m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.clear();
+
         // Final end
         for (auto x : block.m_awaitingUpdate) {
             WRITE_TO_METADATA(m_metadata->m_metadata.data() + x, m_parser->offset() - m_metadata->m_bytecodeOffset - 1, uint32_t);
@@ -1165,9 +1165,40 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
             types[i] = entry.controlData.branchTargetType(i);
         m_metadata->addReturnData(types);
     }
-    const FunctionSignature& signature = *entry.controlData.signature()->as<FunctionSignature>();
-    for (unsigned i = 0; i < signature.returnCount(); i ++)
-        entry.enclosedExpressionStack.constructAndAppend(signature.returnType(i), Value { });
+
+    // if, else, block: set metadata of prior instruction to current location
+    // if: jump forward for not taken
+    // else: jump forward for if taken
+    // block: jump forward for br inside
+    if (ControlType::isIf(block)) {
+        // if .. end
+        m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.append(entry.controlData.m_pendingOffset);
+    } else if (ControlType::isBlock(block)) {
+        if (block.m_pendingOffset != -1) {
+            // (if..) else .. end
+            m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.append(entry.controlData.m_pendingOffset);
+        } else {
+            // If it's a block, resolve all the jumps
+            for (auto x : block.m_awaitingUpdate) {
+                m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.append(x);
+            }
+        }
+    } else if (ControlType::isLoop(block)) {
+        for (auto x : block.m_awaitingUpdate) {
+            WRITE_TO_METADATA(m_metadata->m_metadata.data() + x, block.m_pc, uint32_t);
+            // New MC
+            WRITE_TO_METADATA(m_metadata->m_metadata.data() + x + 4, block.m_mc, uint32_t);
+        }
+    }
+
+    if (m_metadata->m_bytecode[m_parser->offset()] != OpType::End) {
+        for (auto x : m_metadata->m_repeatedControlFlowInstructionMetadataOffsets) {
+            WRITE_TO_METADATA(m_metadata->m_metadata.data() + x, m_parser->offset() - m_metadata->m_bytecodeOffset - 1, uint32_t);
+            WRITE_TO_METADATA(m_metadata->m_metadata.data() + x + 4, m_metadata->m_metadata.size(), uint32_t);
+        }
+        m_metadata->m_repeatedControlFlowInstructionMetadataOffsets.clear();
+    }
+
     return { };
 }
 
@@ -1177,59 +1208,94 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
 
 void IPIntGenerator::addCallCommonData(const FunctionSignature& signature)
 {
-    // Add function signature
-    // 8B for offsets of GPR, 8B for offsets of FPR, 2B for length of total metadata, 2B for number of arguments, 2B per stack argument
-    auto size = m_metadata->m_metadata.size();
-    m_metadata->addBlankSpace(32);
-    auto signatureMetadata = m_metadata->m_metadata.data() + size;
+    // Metadata structure for calls:
+    // mINT: mini-interpreter / minimalist interpreter (whichever floats your boat)
+    //
+    // 0x00 - 0x07: push into a0, a1, ...
+    // 0x08 - 0x0b: push into fa0, fa1, ...
+    // 0x0c: pop stack value, push onto stack[0]
+    // 0x0d: pop stack value, add another 16B for params, push onto stack[8]
+    // 0x0e: add another 16B for params
+    // 0x0f: stop
 
-    uint16_t stackOffset = signature.argumentCount() - 1;
+#if CPU(ARM64)
+    const uint8_t gprs = 8;
+    const uint8_t fprs = 4;
+#elif CPU(X86_64)
+    const uint8_t gprs = 4;
+    const uint8_t fprs = 4;
+#else
+    const uint8_t gprs = 0;
+    const uint8_t fprs = 0;
+    UNUSED_PARAM(signature);
+    RELEASE_ASSERT_NOT_REACHED("IPInt only supported on ARM64 and X86_64 (for now)");
+#endif
+
     uint8_t gprsUsed = 0;
     uint8_t fprsUsed = 0;
+    uint16_t stackArgs = 0;
 
-    Vector<uint16_t> locations;
-
-#if CPU(X86_64)
-    uint8_t maxGPRs = 6;
-#elif CPU(ARM64)
-    uint8_t maxGPRs = 8;
-#else
-    uint8_t maxGPRs = 0;
-#endif
-    uint8_t maxFPRs = 8;
-
-    WRITE_TO_METADATA(signatureMetadata, 0, uint64_t);
-    WRITE_TO_METADATA(signatureMetadata + 8, 0, uint64_t);
-    WRITE_TO_METADATA(signatureMetadata + 16, 0, uint64_t);
-    WRITE_TO_METADATA(signatureMetadata + 24, 0, uint64_t);
-
-    for (size_t i = 0; i < signature.argumentCount(); ++i, --stackOffset) {
-        auto argType = signature.argumentType(i);
-        if ((argType.isI32() || argType.isI64()) && gprsUsed != maxGPRs)
-            WRITE_TO_METADATA(signatureMetadata + 2 * gprsUsed++, stackOffset, uint16_t);
-        else if ((argType.isF32() || argType.isF64()) && fprsUsed != maxFPRs)
-            WRITE_TO_METADATA(signatureMetadata + 16 + 2 * fprsUsed++, stackOffset, uint16_t);
-        else
-            locations.append(stackOffset);
+    Vector<uint8_t, 16> minINTBytecode;
+    minINTBytecode.append(0x0f);
+    for (size_t i = 0; i < signature.argumentCount(); ++i) {
+        auto type = signature.argumentType(i);
+        if ((type.isI32() || type.isI64()) && gprsUsed != gprs)
+            minINTBytecode.append(gprsUsed++);
+        else if ((type.isF32() || type.isF64()) && fprsUsed != fprs)
+            minINTBytecode.append(8 + fprsUsed++);
+        else {
+            minINTBytecode.append(0x0c + (stackArgs & 1));
+            ++stackArgs;
+        }
     }
 
-    // We can just leave the rest as 0. Doesn't matter what those register values are going into the function
+    if (stackArgs & 1)
+        minINTBytecode.append(0x0e);
+    auto size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(minINTBytecode.size());
+    auto data = m_metadata->m_metadata.data() + size;
+    while (!minINTBytecode.isEmpty()) {
+        WRITE_TO_METADATA(data, minINTBytecode.last(), uint8_t);
+        data += 1;
+        minINTBytecode.removeLast();
+    }
 
-    auto extraSize = roundUpToMultipleOf(8, locations.size() * 2 + 6);
+    // Returns:
+    // 2B for number of arguments on stack (to clean up current call frame)
+    // 2B for number of arguments (to take off arguments)
+    // 0x00 - 0x07: r0 - r7
+    // 0x08 - 0x0b: fr0 - fr3
+    // 0x0c: stack
+    // 0x0d: end
     size = m_metadata->m_metadata.size();
-    m_metadata->addBlankSpace(extraSize);
-    auto extraMetadata = m_metadata->m_metadata.data() + size;
-    WRITE_TO_METADATA(extraMetadata, extraSize, uint16_t);
-    WRITE_TO_METADATA(extraMetadata + 2, signature.argumentCount(), uint16_t);
-    WRITE_TO_METADATA(extraMetadata + 4, locations.size(), uint16_t);
-    for (size_t i = 0; i < locations.size(); ++i)
-        WRITE_TO_METADATA(extraMetadata + 6 + i * 2, locations[i], uint16_t);
+    m_metadata->addBlankSpace(4);
+    data = m_metadata->m_metadata.data() + size;
+    WRITE_TO_METADATA(data, (stackArgs + 1) & (-2), uint16_t);
+    WRITE_TO_METADATA(data + 2, signature.argumentCount(), uint16_t);
 
-    // Returns
-    Vector<Type, 16> returns(signature.returnCount());
-    for (size_t i = 0; i < signature.returnCount(); ++i)
-        returns[i] = signature.returnType(i);
-    m_metadata->addReturnData(returns);
+    minINTBytecode.clear();
+
+    gprsUsed = 0;
+    fprsUsed = 0;
+
+    for (size_t i = 0; i < signature.returnCount(); ++i) {
+        auto type = signature.returnType(i);
+        if ((type.isI32() || type.isI64()) && gprsUsed != gprs)
+            minINTBytecode.append(gprsUsed++);
+        else if ((type.isF32() || type.isF64()) && fprsUsed != fprs)
+            minINTBytecode.append(8 + fprsUsed++);
+        else
+            minINTBytecode.append(0x0c);
+    }
+    minINTBytecode.append(0x0d);
+
+    size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(minINTBytecode.size());
+    data = m_metadata->m_metadata.data() + size;
+    for (auto i : minINTBytecode) {
+        WRITE_TO_METADATA(data, i, uint8_t);
+        ++data;
+    }
 }
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results, CallType)
@@ -1239,14 +1305,13 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const T
         results.append(Value { });
 
     // Function index:
+    // 1B for instruction length
     // 4B for decoded index
-    // 4B for new PC
-    auto newPC = m_parser->offset() - m_metadata->m_bytecodeOffset;
     auto size = m_metadata->m_metadata.size();
-    m_metadata->addBlankSpace(8);
+    m_metadata->addBlankSpace(5);
     auto functionIndexMetadata = m_metadata->m_metadata.data() + size;
-    WRITE_TO_METADATA(functionIndexMetadata, index, uint32_t);
-    WRITE_TO_METADATA(functionIndexMetadata + 4, newPC, uint32_t);
+    WRITE_TO_METADATA(functionIndexMetadata, getCurrentInstructionLength(), uint8_t);
+    WRITE_TO_METADATA(functionIndexMetadata + 1, index, uint32_t);
     addCallCommonData(signature);
     return { };
 }
@@ -1258,18 +1323,15 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableI
         results.append(Value { });
 
     // Function index:
+    // 1B for length
     // 4B for table index
     // 4B for type index
-    auto newPC = m_parser->offset() - m_metadata->m_bytecodeOffset;
     auto size = m_metadata->m_metadata.size();
-    m_metadata->addBlankSpace(16);
+    m_metadata->addBlankSpace(9);
     auto functionIndexMetadata = m_metadata->m_metadata.data() + size;
-    WRITE_TO_METADATA(functionIndexMetadata, tableIndex, uint32_t);
-    WRITE_TO_METADATA(functionIndexMetadata + 4, m_metadata->addSignature(type), uint32_t);
-
-    // 4B empty
-    // 4B for PC
-    WRITE_TO_METADATA(functionIndexMetadata + 12, newPC, uint32_t);
+    WRITE_TO_METADATA(functionIndexMetadata, getCurrentInstructionLength(), uint8_t);
+    WRITE_TO_METADATA(functionIndexMetadata + 1, tableIndex, uint32_t);
+    WRITE_TO_METADATA(functionIndexMetadata + 5, m_metadata->addSignature(type), uint32_t);
 
     addCallCommonData(signature);
     return { };

@@ -44,24 +44,35 @@ unsigned FunctionIPIntMetadataGenerator::addSignature(const TypeDefinition& sign
 
 void FunctionIPIntMetadataGenerator::addBlankSpace(uint32_t size)
 {
-    auto s = m_metadata.size();
-    m_metadata.grow(m_metadata.size() + size);
-    std::iota(m_metadata.data() + s, m_metadata.data() + s + size, 0x41);
+    m_metadata.resize(m_metadata.size() + size);
 }
 
 void FunctionIPIntMetadataGenerator::addRawValue(uint64_t value)
 {
     auto size = m_metadata.size();
-    m_metadata.grow(m_metadata.size() + 8);
+    m_metadata.resize(m_metadata.size() + 8);
     WRITE_TO_METADATA(m_metadata.data() + size, value, uint64_t);
 }
 
 void FunctionIPIntMetadataGenerator::addLEB128ConstantInt32AndLength(uint32_t value, uint32_t length)
 {
     size_t size = m_metadata.size();
-    m_metadata.grow(size + 8);
-    WRITE_TO_METADATA(m_metadata.data() + size, value, uint32_t);
-    WRITE_TO_METADATA(m_metadata.data() + size + 4, length, uint32_t);
+    m_metadata.resize(size + 5);
+    WRITE_TO_METADATA(m_metadata.data() + size, length, uint8_t);
+    WRITE_TO_METADATA(m_metadata.data() + size + 1, value, uint32_t);
+}
+
+void FunctionIPIntMetadataGenerator::addCondensedLocalIndexAndLength(uint32_t index, uint32_t length)
+{
+    size_t size = m_metadata.size();
+    if (length == 2) {
+        m_metadata.resize(size + 1);
+        WRITE_TO_METADATA(m_metadata.data() + size, 0, uint8_t);
+    } else {
+        m_metadata.resize(size + 5);
+        WRITE_TO_METADATA(m_metadata.data() + size, length, uint8_t);
+        WRITE_TO_METADATA(m_metadata.data() + size + 1, index, uint32_t);
+    }
 }
 
 void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type, uint64_t value, uint32_t length)
@@ -76,54 +87,53 @@ void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type
 
     if (type.isI32()) {
         size_t size = m_metadata.size();
-        m_metadata.grow(size + 8);
-        WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint32_t>(value), uint32_t);
-        WRITE_TO_METADATA(m_metadata.data() + size + 4, static_cast<uint32_t>(length), uint32_t);
+        if (length == 2) {
+            m_metadata.resize(size + 1);
+            WRITE_TO_METADATA(m_metadata.data() + size, (value >> 7) & 1, uint8_t);
+        } else {
+            m_metadata.resize(size + 5);
+            WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
+            WRITE_TO_METADATA(m_metadata.data() + size + 1, static_cast<uint32_t>(value), uint32_t);
+        }
     } else if (type.isI64()) {
         size_t size = m_metadata.size();
-        m_metadata.grow(size + 16);
-        WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint64_t>(value), uint64_t);
-        WRITE_TO_METADATA(m_metadata.data() + size + 8, static_cast<uint64_t>(length), uint64_t);
+        m_metadata.resize(size + 9);
+        WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
+        WRITE_TO_METADATA(m_metadata.data() + size + 1, static_cast<uint64_t>(value), uint64_t);
     }  else if (type.isFuncref()) {
         size_t size = m_metadata.size();
-        m_metadata.grow(size + 8);
-        WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint32_t>(value), uint32_t);
-        WRITE_TO_METADATA(m_metadata.data() + size + 4, static_cast<uint32_t>(length), uint32_t);
+        m_metadata.resize(size + 5);
+        WRITE_TO_METADATA(m_metadata.data() + size, static_cast<uint8_t>(length), uint8_t);
+        WRITE_TO_METADATA(m_metadata.data() + size + 1, static_cast<uint32_t>(value), uint32_t);
     } else if (!type.isF32() && !type.isF64())
         ASSERT_NOT_IMPLEMENTED_YET();
 }
 
 void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type, 16>& types)
 {
-    size_t size = m_metadata.size();
-    m_returnMetadata = size;
-    // 2 bytes for count (just in case we have a lot. if you're returning more than 65k values,
-    // congratulations?) Actually is count to skip since the round up
-    // 1 byte for each value returned (bit 0 = use FPR, bit 1 = on stack, bit 2 = valid)
-    m_metadata.grow(size + roundUpToMultipleOf(8, types.size() + 2));
-    WRITE_TO_METADATA(m_metadata.data() + size, m_metadata.size() - size, uint16_t);
-    int returnRegLeft = 2;
-    int floatReturnLeft = 1;
+    const int returnGPRs = 2;
+    const int returnFPRs = 1;
+    // uINT: the interpreter smaller than mINT
+    // 0x00: r0
+    // 0x01: r1
+    // 0x02: fr0
+    // 0x03: stack (TODO)
+    // 0x04: return
+    Vector<uint8_t, 16> uINTBytecode;
+    int gprsUsed = 0;
+    int fprsUsed = 0;
     for (size_t i = 0; i < types.size(); ++i) {
         auto type = types[i];
-        if (type.isI32() || type.isI64()) {
-            if (!returnRegLeft)
-                m_metadata[size + 2 + i] = 0b110;
-            else {
-                m_metadata[size + 2 + i] = 0b100;
-                returnRegLeft--;
-            }
-        } else if (type.isF32() || type.isF64()) {
-            if (!floatReturnLeft)
-                m_metadata[size + 2 + i] = 0b111;
-            else {
-                m_metadata[size + 2 + i] = 0b101;
-                floatReturnLeft--;
-            }
-        }
+        if ((type.isI32() || type.isI64()) && gprsUsed != returnGPRs)
+            uINTBytecode.append(gprsUsed++);
+        else if ((type.isF32() || type.isF64()) && fprsUsed != returnFPRs)
+            uINTBytecode.append(2 + fprsUsed++);
+        else
+            uINTBytecode.append(0x03);
     }
-    for (size_t i = size + types.size() + 2; i < m_metadata.size(); ++i)
-        m_metadata[i] = 0;
+    uINTBytecode.append(0x04);
+    m_returnMetadata = m_metadata.size();
+    m_metadata.appendVector(uINTBytecode);
 }
 
 } }
