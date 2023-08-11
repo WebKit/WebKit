@@ -1137,6 +1137,14 @@
    },
    {
       "emails" : [
+         "ben_schwartz@apple.com"
+      ],
+      "github" : "bls1999",
+      "name" : "Ben Schwartz",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "benwells@chromium.org"
       ],
       "name" : "Ben Wells",
@@ -7881,13 +7889,5 @@
          "zdobersek"
       ],
       "status" : "reviewer"
-   },
-   {
-      "emails" : [
-         "ben_schwartz@apple.com"
-      ],
-      "github" : "bls1999",
-      "name" : "Ben Schwartz",
-      "status" : "committer"
    }
 ]
