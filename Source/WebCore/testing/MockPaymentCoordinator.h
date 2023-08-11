@@ -71,6 +71,7 @@ public:
     const Vector<ApplePayLineItem>& lineItems() const { return m_lineItems; }
     const Vector<MockPaymentError>& errors() const { return m_errors; }
     const Vector<ApplePayShippingMethod>& shippingMethods() const { return m_shippingMethods; }
+    const Vector<String>& supportedCountries() const { return m_supportedCountries; }
     const MockPaymentContactFields& requiredBillingContactFields() const { return m_requiredBillingContactFields; }
     const MockPaymentContactFields& requiredShippingContactFields() const { return m_requiredShippingContactFields; }
 
@@ -144,6 +145,7 @@ private:
     Vector<ApplePayLineItem> m_lineItems;
     Vector<MockPaymentError> m_errors;
     Vector<ApplePayShippingMethod> m_shippingMethods;
+    Vector<String> m_supportedCountries;
     HashSet<String, ASCIICaseInsensitiveHash> m_availablePaymentNetworks;
     MockPaymentContactFields m_requiredBillingContactFields;
     MockPaymentContactFields m_requiredShippingContactFields;

@@ -1,0 +1,4 @@
+
+PASS Should not have a default value for `supportedCountries`.
+PASS Should propagate `supportedCountries` if provided.
+
