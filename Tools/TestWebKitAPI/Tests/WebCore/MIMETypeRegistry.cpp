@@ -80,4 +80,14 @@ TEST(MIMETypeRegistry, CanShowMIMEType)
     ASSERT_FALSE(MIMETypeRegistry::canShowMIMEType("text/vcard"_s));
 }
 
+TEST(MIMETypeRegistry, PreferredExtensionForMIMEType)
+{
+    EXPECT_TRUE(MIMETypeRegistry::preferredExtensionForMIMEType({ }).isEmpty());
+}
+
+TEST(MIMETypeRegistry, ExtensionsForMIMEType)
+{
+    EXPECT_EQ(MIMETypeRegistry::extensionsForMIMEType({ }).size(), 0U);
+}
+
 } // namespace TestWebKitAPI
