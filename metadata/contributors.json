@@ -2792,6 +2792,17 @@
    },
    {
       "emails" : [
+         "frances_c@cox.net"
+      ],
+      "expertise" : "Web Inspector",
+      "github" : "francescorn",
+      "name" : "Frances Cornwall",
+      "nicks" : [
+         "Frances"
+      ]
+   },
+   {
+      "emails" : [
          "fgriessh@adobe.com"
       ],
       "name" : "Frank Grie\u00dfhammer"
