@@ -70,12 +70,12 @@ bool defaultShouldPrintBackgrounds()
 
 bool defaultAlternateFormControlDesignEnabled()
 {
-    return PAL::currentUserInterfaceIdiomIsVision();
+    return PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy();
 }
 
 bool defaultVideoFullscreenRequiresElementFullscreen()
 {
-    return PAL::currentUserInterfaceIdiomIsVision();
+    return PAL::currentUserInterfaceIdiomIsVisionOrVisionLegacy();
 }
 
 #endif
