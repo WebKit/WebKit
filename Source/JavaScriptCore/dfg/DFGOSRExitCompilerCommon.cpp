@@ -120,10 +120,10 @@ void handleExitCounts(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     int32_t clippedValue;
     switch (jit.codeBlock()->jitType()) {
     case JITType::DFGJIT:
-        clippedValue = BaselineExecutionCounter::clippedThreshold(targetValue);
+        clippedValue = BaselineExecutionCounter::clippedThreshold(jit.codeBlock(), targetValue);
         break;
     case JITType::FTLJIT:
-        clippedValue = UpperTierExecutionCounter::clippedThreshold(targetValue);
+        clippedValue = UpperTierExecutionCounter::clippedThreshold(jit.codeBlock(), targetValue);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

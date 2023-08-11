@@ -856,6 +856,8 @@ public:
 
     bool loopHintsAreEligibleForFuzzingEarlyReturn() { return m_unlinkedCode->loopHintsAreEligibleForFuzzingEarlyReturn(); }
 
+    double optimizationThresholdScalingFactor() const;
+
 protected:
     void finalizeLLIntInlineCaches();
 #if ENABLE(JIT)
@@ -879,8 +881,6 @@ private:
     CodeBlock* specialOSREntryBlockOrNull();
     
     void noticeIncomingCall(CallFrame* callerFrame);
-    
-    double optimizationThresholdScalingFactor();
 
     void updateAllNonLazyValueProfilePredictionsAndCountLiveness(const ConcurrentJSLocker&, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 
