@@ -73,11 +73,13 @@
     height: auto;
 }
 
-.popover .local-resource-override-popover-content.request .editor:is(.url, .redirect) {
+.popover .local-resource-override-popover-content.request .editor:is(.url, .redirect),
+.popover .local-resource-override-popover-content.response-mapped-directory :is(.editor:is(.url, .mapped-directory-subpath), .mapped-directory-path) {
     width: 344px;
 }
 
-.popover .local-resource-override-popover-content:is(.response, .block) .editor.url {
+.popover .local-resource-override-popover-content.block .editor.url,
+.popover .local-resource-override-popover-content.response :is(.editor.url, .mapped-file-path) {
     width: 330px;
 }
 
@@ -100,6 +102,20 @@
 .popover .local-resource-override-popover-content .editor.status-text {
     width: 168px;
     margin-inline-start: 12px;
+}
+
+.popover .local-resource-override-popover-content :is(.mapped-directory-path, .mapped-file-path) {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.popover .local-resource-override-popover-content :is(.mapped-directory-path, .mapped-file-path) > .value:not(:empty) + .placeholder {
+    display: none;
+}
+
+.popover .local-resource-override-popover-content :is(.mapped-directory-path, .mapped-file-path) > button {
+    margin-inline-end: 4px;
 }
 
 .popover .local-resource-override-popover-content .data-grid {

@@ -1469,6 +1469,7 @@ WI.showLocalResourceOverride = function(localResourceOverride, options = {})
 
     switch (localResourceOverride.type) {
     case WI.LocalResourceOverride.InterceptType.Response:
+    case WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory:
     case WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork:
         if (options.overriddenResource) {
             const onlyExisting = true;

@@ -98,6 +98,11 @@ WI.LocalResource = class LocalResource extends WI.Resource
         return InspectorFrontendHost.canLoad();
     }
 
+    static resetPathsThatFailedToLoadFromFileSystem()
+    {
+        WI.LocalResource._pathsThatFailedToLoadFromFileSystem.clear();
+    }
+
     static headersArrayToHeadersObject(headers)
     {
         let result = {};
@@ -258,16 +263,26 @@ WI.LocalResource = class LocalResource extends WI.Resource
         this._mappedFilePath = mappedFilePath;
 
         const forceUpdate = true;
-        this._loadFromFileSystem(forceUpdate).then(() => {
+        this._updateContentFromFileSystem(forceUpdate).then(() => {
             this.dispatchEventToListeners(WI.LocalResource.Event.MappedFilePathChanged);
         });
+    }
+
+    get isMappedToDirectory()
+    {
+        return this._mappedFilePath?.endsWith("/");
+    }
+
+    async requestContentFromMappedDirectory(subpath)
+    {
+        return this._loadFromFileSystem({subpath});
     }
 
     // Protected
 
     async requestContent()
     {
-        await this._loadFromFileSystem();
+        await this._updateContentFromFileSystem();
 
         return super.requestContent();
     }
@@ -291,36 +306,49 @@ WI.LocalResource = class LocalResource extends WI.Resource
 
     // Private
 
-    async _loadFromFileSystem(forceUpdate)
+    async _loadFromFileSystem({subpath} = {})
     {
-        if (!this._mappedFilePath)
-            return;
+        let path = this._mappedFilePath;
+        if (!path)
+            return null;
 
-        let content = "";
-        try {
-            content = await InspectorFrontendHost.load(this._mappedFilePath);
-        } catch {
-            if (this._didWarnAboutFailureToLoadFromFileSystem)
-                return;
+        if (this.isMappedToDirectory) {
+            if (!subpath)
+                return null;
 
-            this._didWarnAboutFailureToLoadFromFileSystem = true;
-            setTimeout(() => {
-                this._didWarnAboutFailureToLoadFromFileSystem = false;
-            });
-
-            let message = WI.UIString("Local Override: could not load \u201C%s\u201D").format(this._mappedFilePath);
-
-            if (window.InspectorTest) {
-                console.warn(message);
-                return;
-            }
-
-            let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, message);
-            consoleMessage.shouldRevealConsole = true;
-
-            WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
-            return;
+            path += subpath;
         }
+
+        let content = null;
+        try {
+            content = await InspectorFrontendHost.load(path);
+        } catch { }
+
+        if (typeof content === "string")
+            WI.LocalResource._pathsThatFailedToLoadFromFileSystem.delete(path);
+        else if (!WI.LocalResource._pathsThatFailedToLoadFromFileSystem.has(path)) {
+            WI.LocalResource._pathsThatFailedToLoadFromFileSystem.add(path);
+
+            let message = WI.UIString("Local Override: could not load \u201C%s\u201D").format(path);
+
+            if (window.InspectorTest)
+                console.warn(message);
+            else {
+                let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, message);
+                consoleMessage.shouldRevealConsole = true;
+
+                WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
+            }
+        }
+
+        return content;
+    }
+
+    async _updateContentFromFileSystem(forceUpdate)
+    {
+        let content = await this._loadFromFileSystem();
+        if (typeof content !== "string")
+            return;
 
         if (!forceUpdate && content === this.currentRevision.content)
             return;
@@ -328,6 +356,8 @@ WI.LocalResource = class LocalResource extends WI.Resource
         this.editableRevision.updateRevisionContent(content);
     }
 };
+
+WI.LocalResource._pathsThatFailedToLoadFromFileSystem = new Set;
 
 WI.LocalResource.Event = {
     MappedFilePathChanged: "local-resource-mapped-file-path-changed",

@@ -1426,6 +1426,7 @@ inspector/page/overrideSetting-PrivateClickMeasurementDebugModeEnabled.html [ Sk
 inspector/page/overrideSetting-ITPDebugModeEnabled.html [ Skip ]
 
 # Network interception with a mapped file is only mac-wk2 for now.
+http/tests/inspector/network/local-resource-override-mapped-to-directory.html [ Skip ]
 http/tests/inspector/network/local-resource-override-mapped-to-file.html [ Skip ]
 
 # Network throttling is currently only enabled on Cocoa platforms.
