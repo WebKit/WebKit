@@ -32,11 +32,13 @@ namespace PAL {
 enum class UserInterfaceIdiom : uint8_t {
     Default,
     SmallScreen,
-    Vision
+    Vision,
+    VisionLegacy
 };
 
 PAL_EXPORT bool currentUserInterfaceIdiomIsSmallScreen();
-PAL_EXPORT bool currentUserInterfaceIdiomIsVision();
+PAL_EXPORT bool currentUserInterfaceIdiomIsVisionOrVisionLegacy();
+PAL_EXPORT bool currentUserInterfaceIdiomIsVisionLegacy();
 
 PAL_EXPORT UserInterfaceIdiom currentUserInterfaceIdiom();
 PAL_EXPORT void setCurrentUserInterfaceIdiom(UserInterfaceIdiom);
