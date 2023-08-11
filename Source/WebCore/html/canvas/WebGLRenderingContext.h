@@ -35,7 +35,7 @@ namespace WebCore {
 class WebGLRenderingContext final : public WebGLRenderingContextBase {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContext);
 public:
-    static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, Ref<GraphicsContextGL>&&, GraphicsContextGLAttributes);
+    static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, GraphicsContextGLAttributes);
 
     ~WebGLRenderingContext();
 
@@ -61,7 +61,7 @@ protected:
     RefPtr<WebGLTimerQueryEXT> m_activeQuery;
 
 private:
-    WebGLRenderingContext(CanvasBase&, Ref<GraphicsContextGL>&&, GraphicsContextGLAttributes);
+    using WebGLRenderingContextBase::WebGLRenderingContextBase;
 };
 
 } // namespace WebCore
