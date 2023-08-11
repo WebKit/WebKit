@@ -453,3 +453,10 @@ endif ()
 
 # FIXME: Enable pre-compiled headers for all ports <https://webkit.org/b/139438>
 set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON)
+
+# It fails to compile with `gcc -Og`
+set(WEBKIT_NO_INLINE_HINTS OFF CACHE BOOL "Disable funtion attribute always_inline for WebKit")
+
+if (WEBKIT_NO_INLINE_HINTS)
+    add_definitions(-DWEBKIT_NO_INLINE_HINTS)
+endif ()
