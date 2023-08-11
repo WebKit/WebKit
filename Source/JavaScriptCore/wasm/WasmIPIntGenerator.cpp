@@ -1160,7 +1160,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
 
         // Metadata = round up 8 bytes, one for each
         m_metadata->m_bytecodeLength = m_parser->offset();
-        Vector<Type> types(entry.controlData.branchTargetArity());
+        Vector<Type, 16> types(entry.controlData.branchTargetArity());
         for (size_t i = 0; i < entry.controlData.branchTargetArity(); ++i)
             types[i] = entry.controlData.branchTargetType(i);
         m_metadata->addReturnData(types);
@@ -1226,7 +1226,7 @@ void IPIntGenerator::addCallCommonData(const FunctionSignature& signature)
         WRITE_TO_METADATA(extraMetadata + 6 + i * 2, locations[i], uint16_t);
 
     // Returns
-    Vector<Type> returns(signature.returnCount());
+    Vector<Type, 16> returns(signature.returnCount());
     for (size_t i = 0; i < signature.returnCount(); ++i)
         returns[i] = signature.returnType(i);
     m_metadata->addReturnData(returns);

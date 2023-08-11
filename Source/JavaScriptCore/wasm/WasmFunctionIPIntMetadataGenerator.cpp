@@ -93,7 +93,7 @@ void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type
         ASSERT_NOT_IMPLEMENTED_YET();
 }
 
-void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type>& types)
+void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type, 16>& types)
 {
     size_t size = m_metadata.size();
     m_returnMetadata = size;
