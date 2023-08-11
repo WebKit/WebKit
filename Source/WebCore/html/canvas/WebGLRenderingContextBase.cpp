@@ -600,7 +600,6 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     // FIXME: Should we try get the devicePixelRatio for workers for the page that created
     // the worker? What if it's a shared worker, and there's multiple answers?
 
-    attributes.noExtensions = true;
     attributes.shareResources = false;
     attributes.initialPowerPreference = attributes.powerPreference;
     attributes.webGLVersion = type;
@@ -862,9 +861,6 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
         textureUnit.texture2DBinding = nullptr;
         textureUnit.textureCubeMapBinding = nullptr;
     }
-
-    m_blackTexture2D = nullptr;
-    m_blackTextureCubeMap = nullptr;
 
     detachAndRemoveAllObjects();
     loseExtensions(LostContextMode::RealLostContext);
@@ -2075,9 +2071,6 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveAttrib(WebGLProgram&
     GraphicsContextGLActiveInfo info;
     if (!m_context->getActiveAttrib(program.object(), index, info))
         return nullptr;
-
-    LOG(WebGL, "Returning active attribute %d: %s", index, info.name.utf8().data());
-
     return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 
@@ -2093,8 +2086,6 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram
         if (info.size > 1 && !info.name.endsWith("[0]"_s))
             info.name = makeString(info.name, "[0]"_s);
     }
-    LOG(WebGL, "Returning active uniform %d: %s", index, info.name.utf8().data());
-
     return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 

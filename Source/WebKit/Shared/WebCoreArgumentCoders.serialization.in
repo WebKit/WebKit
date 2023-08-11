@@ -2542,7 +2542,6 @@ struct WebCore::GraphicsContextGLAttributes {
     bool failIfMajorPerformanceCaveat;
     WebCore::GraphicsContextGLPowerPreference powerPreference;
     bool shareResources;
-    bool noExtensions;
     float devicePixelRatio;
     WebCore::GraphicsContextGLPowerPreference initialPowerPreference;
     WebCore::GraphicsContextGLWebGLVersion webGLVersion;

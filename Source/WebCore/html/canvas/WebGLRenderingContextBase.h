@@ -670,9 +670,6 @@ protected:
     Vector<TextureUnitState> m_textureUnits;
     unsigned long m_activeTextureUnit;
 
-    RefPtr<WebGLTexture> m_blackTexture2D;
-    RefPtr<WebGLTexture> m_blackTextureCubeMap;
-
     Vector<GCGLenum> m_compressedTextureFormats;
 
     // Fixed-size cache of reusable image buffers for video texImage2D calls.
