@@ -14,8 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-crash-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-crash-002.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-crash-003.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-crash-004.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/crashtests/contain-nested-relayout-boundary.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/crashtests/content-visibility-transition-finished-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/crashtests/first-line-and-inline-block.html

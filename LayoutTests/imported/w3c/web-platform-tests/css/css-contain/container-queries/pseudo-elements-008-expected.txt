@@ -1,0 +1,12 @@
+First-line
+First-line
+
+FAIL Originating element container for ::before assert_equals: expected "20px" but got "30px"
+FAIL Originating element container for ::after assert_equals: expected "20px" but got "30px"
+FAIL Originating element container for ::marker assert_equals: expected "20px" but got "30px"
+FAIL Originating element container for ::first-line assert_equals: expected "20px" but got "30px"
+FAIL Originating element container for ::first-letter assert_equals: expected "20px" but got "30px"
+FAIL Originating element container for outer ::first-line assert_equals: expected "30px" but got "40px"
+FAIL Originating element container for outer ::first-letter assert_equals: expected "30px" but got "40px"
+FAIL Originating element container for ::backdrop assert_equals: ::backdrop rendered expected "10px" but got "30px"
+
