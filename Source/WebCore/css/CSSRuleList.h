@@ -69,10 +69,12 @@ private:
     Vector<RefPtr<CSSRule>> m_rules;
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LiveCSSRuleList);
+
 // The rule owns the live list.
 template <class Rule>
 class LiveCSSRuleList final : public CSSRuleList {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LiveCSSRuleList);
 public:
     LiveCSSRuleList(Rule& rule)
         : m_rule(rule)

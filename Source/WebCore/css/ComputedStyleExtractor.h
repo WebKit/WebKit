@@ -25,6 +25,8 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ComputedStyleExtractor);
+
 class Animation;
 class CSSFunctionValue;
 class CSSPrimitiveValue;
@@ -52,7 +54,7 @@ enum class SVGPaintType : uint8_t;
 using CSSValueListBuilder = Vector<Ref<CSSValue>, 4>;
 
 class ComputedStyleExtractor {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ComputedStyleExtractor);
 public:
     ComputedStyleExtractor(Node*, bool allowVisitedStyle = false);
     ComputedStyleExtractor(Node*, bool allowVisitedStyle, PseudoId);

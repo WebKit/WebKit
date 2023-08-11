@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCounterStyleRegistry);
+
 struct ListStyleType;
 class StyleRuleCounterStyle;
 enum CSSValueID : uint16_t;
@@ -39,7 +41,7 @@ enum CSSValueID : uint16_t;
 using CounterStyleMap = HashMap<AtomString, RefPtr<CSSCounterStyle>>;
 
 class CSSCounterStyleRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSCounterStyleRegistry);
 public:
     CSSCounterStyleRegistry() = default;
     RefPtr<CSSCounterStyle> resolvedCounterStyle(const ListStyleType&);

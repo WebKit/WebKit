@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSVariableData);
+
 template<typename CharacterType> void CSSVariableData::updateTokens(const CSSParserTokenRange& range)
 {
     const CharacterType* currentOffset = m_backingString.characters<CharacterType>();

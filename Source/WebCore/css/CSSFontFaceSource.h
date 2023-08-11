@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFaceSource);
+
 class CSSFontFace;
 class CSSFontSelector;
 class SharedBuffer;
@@ -45,7 +47,7 @@ class WeakPtrImplWithEventTargetData;
 struct FontCustomPlatformData;
 
 class CSSFontFaceSource final : public FontLoadRequestClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSFontFaceSource);
 public:
     CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName);
     CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName, SVGFontFaceElement&);

@@ -25,6 +25,8 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSParserSelector);
+
 enum class CSSParserSelectorCombinator {
     Child,
     DescendantSpace,
@@ -33,7 +35,7 @@ enum class CSSParserSelectorCombinator {
 };
 
 class CSSParserSelector {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSParserSelector);
 public:
     static std::unique_ptr<CSSParserSelector> parsePseudoClassSelector(StringView);
     static std::unique_ptr<CSSParserSelector> parsePseudoElementSelector(StringView);

@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace);
+
 CSSSegmentedFontFace::CSSSegmentedFontFace()
 {
 }

@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSNumericFactory);
+
 CSSNumericFactory* CSSNumericFactory::from(DOMCSSNamespace& css)
 {
     auto* supplement = static_cast<CSSNumericFactory*>(Supplement<DOMCSSNamespace>::from(&css, supplementName()));

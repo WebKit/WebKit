@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace);
+
 class CSSFontSelector;
 class FontCreationContext;
 class FontDescription;
@@ -40,7 +42,7 @@ class FontPaletteValues;
 class FontRanges;
 
 class CSSSegmentedFontFace final : public RefCounted<CSSSegmentedFontFace>, public CSSFontFace::Client {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace);
 public:
     static Ref<CSSSegmentedFontFace> create()
     {

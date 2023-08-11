@@ -49,6 +49,9 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSStyleSheet);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSStyleSheet);
+
 static Style::Scope& styleScopeFor(ContainerNode& treeScope)
 {
     ASSERT(is<Document>(treeScope) || is<ShadowRoot>(treeScope));
@@ -58,7 +61,7 @@ static Style::Scope& styleScopeFor(ContainerNode& treeScope)
 }
 
 class StyleSheetCSSRuleList final : public CSSRuleList {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleSheetCSSRuleList);
 public:
     StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
     

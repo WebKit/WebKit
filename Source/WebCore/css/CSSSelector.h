@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSelector);
+
 class CSSSelectorList;
 
 struct PossiblyQuotedIdentifier {
@@ -46,7 +48,7 @@ struct PossiblyQuotedIdentifier {
     // Selector for a StyleRule.
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
     class CSSSelector {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelector);
     public:
         CSSSelector() = default;
         CSSSelector(const CSSSelector&);

@@ -47,6 +47,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFaceSource);
+
 inline void CSSFontFaceSource::setStatus(Status newStatus)
 {
     switch (newStatus) {

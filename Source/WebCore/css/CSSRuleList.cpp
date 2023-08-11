@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+DDEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSRuleList);
+
 CSSRuleList::CSSRuleList() = default;
 
 CSSRuleList::~CSSRuleList() = default;

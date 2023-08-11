@@ -31,10 +31,12 @@
 
 namespace WebCore {
 
+WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelectorList)
+
 class CSSParserSelector;
 
 class CSSSelectorList {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSelectorList);
 public:
     CSSSelectorList() = default;
     CSSSelectorList(const CSSSelectorList&);

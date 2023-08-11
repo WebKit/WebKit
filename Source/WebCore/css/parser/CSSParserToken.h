@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSParserToken);
+
 enum CSSParserTokenType {
     IdentToken = 0,
     FunctionToken,
@@ -89,7 +91,7 @@ enum HashTokenType {
 };
 
 class CSSParserToken {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSParserToken);
 public:
     enum BlockType {
         NotBlock,
