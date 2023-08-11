@@ -81,7 +81,7 @@ private:
     GCGLOwnedRenderbuffer m_multisampleColorBuffer;
     GCGLOwnedRenderbuffer m_multisampleDepthStencilBuffer;
     GCGLOwnedFramebuffer m_resolvedFBO;
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     GCGLOwnedTexture m_colorTexture;
     GCEGLImage m_colorImage { };
     GCEGLImage m_depthStencilImage { };

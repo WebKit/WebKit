@@ -290,10 +290,7 @@ public:
         };
 
         struct LayerData {
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-            std::unique_ptr<WebCore::IOSurface> surface;
-            bool isShared { false };
-#elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
             std::tuple<MachSendRight, bool> colorTexture = { MachSendRight(), false };
             std::tuple<MachSendRight, bool> depthStencilBuffer = { MachSendRight(), false };
 #else
@@ -580,11 +577,7 @@ std::optional<Device::FrameData::StageParameters> Device::FrameData::StageParame
 template<class Encoder>
 void Device::FrameData::LayerData::encode(Encoder& encoder) const
 {
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    MachSendRight surfaceSendRight = surface ? surface->createSendRight() : MachSendRight();
-    encoder << WTFMove(surfaceSendRight);
-    encoder << isShared;
-#elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     encoder << std::tuple(colorTexture);
     encoder << std::tuple(depthStencilBuffer);
 #else
@@ -599,14 +592,7 @@ template<class Decoder>
 std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData::LayerData layerData;
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    MachSendRight surfaceSendRight;
-    if (!decoder.decode(surfaceSendRight))
-        return std::nullopt;
-    layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight));
-    if (!decoder.decode(layerData.isShared))
-        return std::nullopt;
-#elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     if (!decoder.decode(layerData.colorTexture))
         return std::nullopt;
     if (!decoder.decode(layerData.depthStencilBuffer))

@@ -36,7 +36,7 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/Scope.h>
 
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
 #include "GraphicsContextGLCocoa.h"
 #endif
 
@@ -44,7 +44,7 @@ namespace WebCore {
 
 using GL = GraphicsContextGL;
 
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
 static std::optional<GL::EGLImageAttachResult> createAndBindCompositorTexture(GL& gl, GCGLenum target, GCGLOwnedTexture& texture, GL::EGLImageSource source)
 {
     texture.ensure(gl);
@@ -105,7 +105,7 @@ WebXROpaqueFramebuffer::WebXROpaqueFramebuffer(PlatformXR::LayerHandle handle, R
 WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
 {
     if (auto gl = m_context.graphicsContextGL()) {
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
         m_colorTexture.release(*gl);
 #endif
         m_depthStencilBuffer.release(*gl);
@@ -115,7 +115,7 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
     } else {
         // The GraphicsContextGL is gone, so disarm the GCGLOwned objects so
         // their destructors don't assert.
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
         m_colorTexture.release(*gl);
 #endif
         m_depthStencilBuffer.leakObject();
@@ -151,21 +151,15 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     // FIXME: Actually do the clearing (not using invalidateFramebuffer). This will have to be done after we've attached
     // the textures/renderbuffers.
 
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    // FIXME: This is temporary until Cocoa-specific platforms migrate to MTLTEXTURE_FOR_XR_LAYER_DATA.
-    auto colorTextureSource = makeEGLImageSource({ data.surface->createSendRight(), false });
-    auto depthStencilBufferSource = makeEGLImageSource({ MachSendRight(), false });
-#elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     auto colorTextureSource = makeEGLImageSource(data.colorTexture);
-    auto depthStencilBufferSource = makeEGLImageSource(data.depthStencilBuffer);
-#endif
-
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     auto colorTextureAttachment = createAndBindCompositorTexture(gl, textureTarget, m_colorTexture, colorTextureSource);
-    auto depthStencilBufferAttachment = createAndBindCompositorBuffer(gl, m_depthStencilBuffer, depthStencilBufferSource);
 
     if (!colorTextureAttachment)
         return;
+
+    auto depthStencilBufferSource = makeEGLImageSource(data.depthStencilBuffer);
+    auto depthStencilBufferAttachment = createAndBindCompositorBuffer(gl, m_depthStencilBuffer, depthStencilBufferSource);
 
     IntSize bufferSize;
     std::tie(m_colorImage, bufferSize) = colorTextureAttachment.value();
@@ -258,7 +252,7 @@ void WebXROpaqueFramebuffer::endFrame()
     gl.finish();
 #endif
 
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#if USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     if (m_colorImage) {
         gl.destroyEGLImage(m_colorImage);
         m_colorImage = nullptr;
